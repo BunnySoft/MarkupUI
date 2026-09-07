@@ -1,0 +1,14 @@
+:root { font-family: system-ui, sans-serif; color: #242424; background: #fafafa; }
+body { margin: 0; }
+main { max-width: 1000px; margin: auto; padding: 32px; }
+main > section { margin-block: 24px; padding-block: 12px; border-bottom: 1px solid #ddd; }
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.2rem; }
+.examples, .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-block: 16px; }
+.preset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-block: 16px; }
+.text-line { --mui-skeleton-width: 8em; --mui-skeleton-height: 1em; }
+.rows { --mui-skeleton-height: 18px; --mui-skeleton-gap: 8px; }
+.percentage-box { width: 320px; max-width: 100%; margin-block: 16px; }
+.relative-height-box { width: 320px; max-width: 100%; height: 200px; }
+.static-placeholder { --mui-skeleton-width: 160px; --mui-skeleton-height: 24px; }
+button, input { font: inherit; padding: 5px 8px; }

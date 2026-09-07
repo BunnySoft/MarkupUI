@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Skeleton</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-skeleton.css">
+  <link rel="stylesheet" href="./skeleton.css">
+  <script defer src="../../dist/markup-ui-skeleton.global.js"></script>
+  <script defer src="./skeleton.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Skeleton: decorative placeholders, not a loading-state controller</h1>
+    <p>The application owns busy state, meaningful status and real content. Only generated placeholder spans are hidden from assistive technology and inert.</p>
+    <section aria-labelledby="geometry-heading">
+      <h2 id="geometry-heading">Native dimensions, shapes and presets</h2>
+      <div class="examples" id="shapes">
+        <mui-skeleton id="rectangle" width="120px" height="32px"></mui-skeleton>
+        <mui-skeleton id="soft" width="120" height="32" sharp="false"></mui-skeleton>
+        <mui-skeleton id="round" width="120" height="32" round></mui-skeleton>
+        <mui-skeleton id="circle" width="48" height="20" circle></mui-skeleton>
+      </div>
+      <div class="preset-grid" id="presets">
+        <mui-skeleton size="small"></mui-skeleton>
+        <mui-skeleton size="medium"></mui-skeleton>
+        <mui-skeleton size="large"></mui-skeleton>
+      </div>
+      <p>Inline text: <mui-skeleton id="text-line" text class="text-line"></mui-skeleton> remains aligned with native text.</p>
+      <div class="percentage-box"><mui-skeleton id="percentage" width="50%" height="12px"></mui-skeleton></div>
+      <div class="percentage-box"><mui-skeleton id="percentage-circle" width="25%" circle></mui-skeleton></div>
+      <div class="percentage-box"><mui-skeleton id="calculated" width="calc(100% - 40px)" height="16px"></mui-skeleton></div>
+      <p>Each row below is 25% of a definite 200px containing height.</p>
+      <div class="relative-height-box"><mui-skeleton id="relative-height" width="120px" height="25%" repeat="3"></mui-skeleton></div>
+    </section>
+    <section aria-labelledby="repeat-heading">
+      <h2 id="repeat-heading">Bounded native repetition and explicit validation</h2>
+      <mui-skeleton id="repeated" repeat="3" class="rows"></mui-skeleton>
+      <div class="controls">
+        <label>Repeat (0–100) <input id="repeat-input" type="text" value="3"></label>
+        <button type="button" id="apply-repeat">Apply attribute</button>
+        <button type="button" id="toggle-animation">Toggle animation</button>
+      </div>
+      <p id="validation-status" role="status">Valid repeat: 3.</p>
+    </section>
+    <section id="content-owner" aria-labelledby="owner-heading" aria-busy="true">
+      <h2 id="owner-heading">Application-owned loading transition</h2>
+      <mui-skeleton id="loading-placeholder" repeat="2" class="rows"></mui-skeleton>
+      <div id="loaded-content" hidden><p>Actual content is outside the Skeleton placeholder.</p><button type="button" id="content-action">Native content action</button></div>
+      <p id="loading-status" role="status">Loading the profile.</p>
+      <button type="button" id="toggle-loading">Toggle application loading</button>
+    </section>
+    <section aria-labelledby="ownership-heading">
+      <h2 id="ownership-heading">Authored nodes and inert templates stay owned by the application</h2>
+      <mui-skeleton id="authored" repeat="1" class="rows">
+        <p id="authored-caption">Preserved native caption, outside the decorative group.</p>
+        <button type="button" id="authored-action">Native authored action</button>
+        <template id="unconsumed-template"><button type="button">Inert template control</button></template>
+      </mui-skeleton>
+      <p id="action-status" role="status">0 authored actions.</p>
+      <button type="button" id="reconnect">Reconnect Skeleton</button>
+    </section>
+    <section aria-labelledby="static-heading">
+      <h2 id="static-heading">CSS-only native placeholder</h2>
+      <span id="static-placeholder" class="mui-skeleton static-placeholder" aria-hidden="true" inert data-round data-animated="false"></span>
+      <p>A static native span needs no Custom Element. It is explicitly decorative and does not hide real content.</p>
+    </section>
+  </main>
+</body>
+</html>
