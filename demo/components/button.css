@@ -1,0 +1,9 @@
+:root { font-family: system-ui, sans-serif; color: #242424; background: #fafafa; }
+body { margin: 0; }
+main { max-width: 1000px; margin: auto; padding: 32px; }
+section { padding-block: 16px; border-bottom: 1px solid #ddd; }
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.2rem; }
+.examples { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-block: 16px; }
+input { font: inherit; padding: 6px; }
+.brand { --mui-button-color: #7040a0; --mui-button-hover-color: #8555b5; --mui-button-pressed-color: #502080; }

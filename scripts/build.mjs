@@ -60,6 +60,21 @@ await Promise.all([
   }),
   build({
     ...shared,
+    entryPoints: [resolve(root, "src", "components", "button", "index.ts")],
+    format: "esm",
+    minify: true,
+    outfile: resolve(dist, "markup-ui-button.js"),
+  }),
+  build({
+    ...shared,
+    entryPoints: [resolve(root, "src", "components", "button", "index.ts")],
+    format: "iife",
+    globalName: "MarkupUIButton",
+    minify: true,
+    outfile: resolve(dist, "markup-ui-button.global.js"),
+  }),
+  build({
+    ...shared,
     entryPoints: [resolve(root, "src", "components", "avatar", "index.ts")],
     format: "esm",
     minify: true,
@@ -76,6 +91,7 @@ await Promise.all([
 ])
 
 await copyFile(resolve(root, "src", "components", "avatar", "avatar.css"), resolve(dist, "markup-ui-avatar.css"))
+await copyFile(resolve(root, "src", "components", "button", "button.css"), resolve(dist, "markup-ui-button.css"))
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
@@ -85,6 +101,9 @@ const bundleBudgets = {
   "markup-ui-avatar.js": 4_000,
   "markup-ui-avatar.global.js": 4_000,
   "markup-ui-avatar.css": 1_500,
+  "markup-ui-button.js": 4_000,
+  "markup-ui-button.global.js": 4_000,
+  "markup-ui-button.css": 2_500,
 }
 const bundles = {}
 

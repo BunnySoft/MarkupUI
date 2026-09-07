@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Button</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="./button.css">
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="./button.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Button: native controls, external CSS and plain JavaScript</h1>
+    <p>This page loads only Button. The native child owns focus, form submission and activation.</p>
+    <section aria-labelledby="types-heading">
+      <h2 id="types-heading">Semantic types and treatments</h2>
+      <div class="examples" id="types">
+        <mui-button>Default</mui-button>
+        <mui-button type="primary">Primary</mui-button>
+        <mui-button type="info">Info</mui-button>
+        <mui-button type="success">Success</mui-button>
+        <mui-button type="warning">Warning</mui-button>
+        <mui-button type="error">Error</mui-button>
+        <mui-button type="tertiary">Tertiary type</mui-button>
+      </div>
+      <div class="examples" id="treatments">
+        <mui-button type="primary" secondary>Secondary</mui-button>
+        <mui-button type="info" tertiary>Tertiary</mui-button>
+        <mui-button quaternary>Quaternary</mui-button>
+        <mui-button type="primary" ghost>Ghost</mui-button>
+        <mui-button dashed>Dashed</mui-button>
+        <mui-button type="error" text>Text</mui-button>
+        <mui-button bordered="false">Borderless</mui-button>
+      </div>
+    </section>
+    <section aria-labelledby="sizes-heading">
+      <h2 id="sizes-heading">Sizes, shapes and authored icons</h2>
+      <div class="examples" id="sizes">
+        <mui-button size="tiny">Tiny</mui-button>
+        <mui-button size="small">Small</mui-button>
+        <mui-button size="medium">Medium</mui-button>
+        <mui-button size="large">Large</mui-button>
+        <mui-button round strong>Round and strong</mui-button>
+        <mui-button circle aria-label="Add"><span data-mui-button-icon aria-hidden="true">+</span></mui-button>
+        <mui-button icon-placement="right"><button type="button"><span data-mui-button-icon aria-hidden="true">→</span>Next</button></mui-button>
+        <mui-button class="brand" type="primary">Custom color</mui-button>
+      </div>
+      <mui-button block secondary>Full-width action</mui-button>
+    </section>
+    <section aria-labelledby="form-heading">
+      <h2 id="form-heading">Native validation, submitter and reset</h2>
+      <form id="editor">
+        <label>Title <input id="title-input" name="title" value="Draft" required></label>
+        <div class="examples">
+          <mui-button id="save" type="primary"><button type="submit" name="action" value="save">Save</button></mui-button>
+          <mui-button id="reset"><button type="reset">Reset</button></mui-button>
+          <mui-button id="ordinary">No submission</mui-button>
+        </div>
+      </form>
+      <mui-button id="external-submit" attr-type="submit" form="editor" name="action" value="publish" ghost>Publish from outside form</mui-button>
+      <p id="form-status" role="status">No submissions yet.</p>
+    </section>
+    <section aria-labelledby="states-heading">
+      <h2 id="states-heading">States, native links and keyboard activation</h2>
+      <div class="examples">
+        <mui-button id="count-action" type="primary"><button type="button"><span data-mui-button-icon aria-hidden="true">+</span><span id="count-label">Count action</span></button></mui-button>
+        <mui-button id="disabled-action" disabled>Disabled</mui-button>
+        <mui-button id="loading-action" loading>Loading</mui-button>
+        <mui-button id="native-link"><a href="#link-target">Native link</a></mui-button>
+        <mui-button id="disabled-link" disabled><a href="#link-target">Disabled link</a></mui-button>
+        <mui-button focusable="false">Excluded from Tab order</mui-button>
+      </div>
+      <p><button type="button" id="toggle-loading">Toggle count loading</button> <button type="button" id="toggle-disabled">Toggle count disabled</button></p>
+      <p id="click-status" role="status">0 activations.</p>
+      <p id="link-target">Link destination. Links activate with Enter, not Space.</p>
+    </section>
+    <section aria-labelledby="groups-heading">
+      <h2 id="groups-heading">Groups retain individual native tab stops</h2>
+      <div class="examples">
+        <mui-button-group id="horizontal-group" size="small" aria-label="Edit actions">
+          <mui-button>Cut</mui-button><mui-button>Copy</mui-button><mui-button>Paste</mui-button>
+        </mui-button-group>
+        <mui-button-group id="vertical-group" vertical size="large" aria-label="History actions">
+          <mui-button>Undo</mui-button><mui-button>Redo</mui-button>
+        </mui-button-group>
+        <mui-button-group dir="rtl" aria-label="Right-to-left actions">
+          <mui-button>First</mui-button><mui-button>Last</mui-button>
+        </mui-button-group>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

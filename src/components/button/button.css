@@ -1,0 +1,110 @@
+/* Specificity isolates rich hosts even when legacy aggregate CSS is installed later. */
+mui-button[data-mui-button][data-mui-button][data-mui-button] {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  vertical-align: middle;
+}
+mui-button[data-mui-button][data-mui-button][data-mui-button]::before,
+mui-button[data-mui-button][data-mui-button][data-mui-button]::after { content: none; }
+mui-button[data-mui-button][data-mui-button][data-mui-button][block] { display: flex; width: 100%; }
+mui-button[data-mui-button][data-mui-button][data-mui-button][hidden],
+mui-button-group[data-mui-button-group][hidden] { display: none; }
+
+mui-button[data-mui-button] {
+  --_mui-button-tone: var(--mui-button-color, var(--mui-text-primary, #333639));
+  --_mui-button-hover: var(--mui-button-hover-color, var(--mui-color-primary-hover, #36ad6a));
+  --_mui-button-pressed: var(--mui-button-pressed-color, var(--mui-color-primary-pressed, #0c7a43));
+}
+mui-button[data-mui-button]:is([type="primary"], [variant="primary"]) { --_mui-button-tone: var(--mui-button-color, var(--mui-color-primary, #18a058)); }
+mui-button[data-mui-button]:is([type="info"], [variant="info"]) { --_mui-button-tone: var(--mui-button-color, var(--mui-color-info, #2080f0)); --_mui-button-hover: var(--mui-button-hover-color, var(--mui-color-info-hover, #4098fc)); --_mui-button-pressed: var(--mui-button-pressed-color, var(--mui-color-info-pressed, #1060c9)); }
+mui-button[data-mui-button]:is([type="success"], [variant="success"]) { --_mui-button-tone: var(--mui-button-color, var(--mui-color-success, #18a058)); --_mui-button-hover: var(--mui-button-hover-color, var(--mui-color-success-hover, #36ad6a)); --_mui-button-pressed: var(--mui-button-pressed-color, var(--mui-color-success-pressed, #0c7a43)); }
+mui-button[data-mui-button]:is([type="warning"], [variant="warning"]) { --_mui-button-tone: var(--mui-button-color, var(--mui-color-warning, #f0a020)); --_mui-button-hover: var(--mui-button-hover-color, var(--mui-color-warning-hover, #fcb040)); --_mui-button-pressed: var(--mui-button-pressed-color, var(--mui-color-warning-pressed, #c97c10)); }
+mui-button[data-mui-button]:is([type="error"], [variant="error"]) { --_mui-button-tone: var(--mui-button-color, var(--mui-color-error, #d03050)); --_mui-button-hover: var(--mui-button-hover-color, var(--mui-color-error-hover, #de576d)); --_mui-button-pressed: var(--mui-button-pressed-color, var(--mui-color-error-pressed, #ab1f3f)); }
+
+mui-button-group[data-mui-button-group][size="tiny"], mui-button[data-mui-button][size="tiny"] { --mui-button-height: 22px; --mui-button-padding: 8px; --mui-button-font-size: 12px; }
+mui-button-group[data-mui-button-group][size="small"], mui-button[data-mui-button][size="small"] { --mui-button-height: 28px; --mui-button-padding: 10px; --mui-button-font-size: 14px; }
+mui-button-group[data-mui-button-group][size="medium"], mui-button[data-mui-button][size="medium"] { --mui-button-height: 34px; --mui-button-padding: 14px; --mui-button-font-size: 14px; }
+mui-button-group[data-mui-button-group][size="large"], mui-button[data-mui-button][size="large"] { --mui-button-height: 40px; --mui-button-padding: 18px; --mui-button-font-size: 15px; }
+
+mui-button[data-mui-button] > [data-mui-button-control] {
+  box-sizing: border-box;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--mui-button-icon-gap, 8px);
+  min-width: 0;
+  min-height: var(--mui-button-height, 34px);
+  padding: 0 var(--mui-button-padding, 14px);
+  border: 1px solid var(--mui-button-border-color, #c2c2c2);
+  border-radius: var(--mui-button-radius, 3px);
+  background: var(--mui-button-background, transparent);
+  color: var(--mui-button-label-color, var(--mui-text-primary, #333639));
+  font: inherit;
+  font-size: var(--mui-button-font-size, 14px);
+  line-height: 1.4;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  appearance: none;
+  transition: color .2s, background-color .2s, border-color .2s;
+}
+mui-button[data-mui-button] > [data-mui-button-control]:hover { border-color: var(--_mui-button-hover); color: var(--_mui-button-hover); }
+mui-button[data-mui-button] > [data-mui-button-control]:active { border-color: var(--_mui-button-pressed); color: var(--_mui-button-pressed); }
+mui-button[data-mui-button]:is([type="primary"], [type="info"], [type="success"], [type="warning"], [type="error"], [variant="primary"], [variant="info"], [variant="success"], [variant="warning"], [variant="error"]) > [data-mui-button-control] {
+  border-color: transparent;
+  background: var(--_mui-button-tone);
+  color: var(--mui-button-label-color, var(--mui-button-contrast, #fff));
+}
+mui-button[data-mui-button]:is([type="primary"], [type="info"], [type="success"], [type="warning"], [type="error"], [variant="primary"], [variant="info"], [variant="success"], [variant="warning"], [variant="error"]) > [data-mui-button-control]:hover { background: var(--_mui-button-hover); }
+mui-button[data-mui-button]:is([type="primary"], [type="info"], [type="success"], [type="warning"], [type="error"], [variant="primary"], [variant="info"], [variant="success"], [variant="warning"], [variant="error"]) > [data-mui-button-control]:active { background: var(--_mui-button-pressed); }
+mui-button[data-mui-button]:is([secondary], [tertiary], [quaternary], [ghost], [dashed], [text], [type="text"], [type="tertiary"]) > [data-mui-button-control] {
+  border-color: transparent;
+  background: transparent;
+  color: var(--mui-button-label-color, var(--_mui-button-tone));
+}
+mui-button[data-mui-button][secondary] > [data-mui-button-control] { background: color-mix(in srgb, var(--_mui-button-tone) 12%, transparent); }
+mui-button[data-mui-button]:is([tertiary], [type="tertiary"]) > [data-mui-button-control] { background: var(--mui-bg-muted, #f1f2f3); }
+mui-button[data-mui-button]:is([secondary], [tertiary], [quaternary], [type="tertiary"]) > [data-mui-button-control]:hover { background: color-mix(in srgb, var(--_mui-button-tone) 18%, transparent); }
+mui-button[data-mui-button]:is([secondary], [tertiary], [quaternary], [type="tertiary"]) > [data-mui-button-control]:active { background: color-mix(in srgb, var(--_mui-button-tone) 24%, transparent); }
+mui-button[data-mui-button]:is([ghost], [dashed], [text], [type="text"]) > [data-mui-button-control]:is(:hover, :active) { background: transparent; color: var(--_mui-button-hover); }
+mui-button[data-mui-button]:is([ghost], [dashed]) > [data-mui-button-control] { border-color: currentColor; }
+mui-button[data-mui-button][dashed] > [data-mui-button-control] { border-style: dashed; }
+mui-button[data-mui-button]:is([text], [type="text"]) > [data-mui-button-control] { min-height: 0; padding: 0 4px; }
+mui-button[data-mui-button][bordered="false"] > [data-mui-button-control] { border-color: transparent; }
+mui-button[data-mui-button][strong] > [data-mui-button-control] { font-weight: 600; }
+mui-button[data-mui-button][round] > [data-mui-button-control] { border-radius: 999px; padding-inline: calc(var(--mui-button-padding, 14px) + 4px); }
+mui-button[data-mui-button][circle] > [data-mui-button-control] { width: var(--mui-button-height, 34px); padding: 0; border-radius: 50%; }
+mui-button[data-mui-button][block] > [data-mui-button-control] { width: 100%; }
+mui-button[data-mui-button] > [data-mui-button-control]:focus-visible { outline: 3px solid var(--mui-button-focus-color, var(--mui-focus-ring, #2080f080)); outline-offset: 2px; z-index: 1; }
+mui-button[data-mui-button] > [data-mui-button-control]:is(:disabled, [aria-disabled="true"]) { opacity: var(--mui-button-disabled-opacity, .5); cursor: not-allowed; }
+
+mui-button[data-mui-button] > [data-mui-button-control] > :is([data-mui-button-icon], [data-mui-button-spinner]) { flex: none; order: -1; }
+mui-button[data-mui-button][icon-placement="right"] > [data-mui-button-control] > :is([data-mui-button-icon], [data-mui-button-spinner]) { order: 1; }
+mui-button[data-mui-button][loading] > [data-mui-button-control] > [data-mui-button-icon] { display: none; }
+mui-button[data-mui-button] > [data-mui-button-control] > [data-mui-button-spinner] {
+  box-sizing: border-box;
+  width: var(--mui-button-spinner-size, 1em);
+  height: var(--mui-button-spinner-size, 1em);
+  border: var(--mui-button-spinner-width, 2px) solid var(--mui-button-spinner-color, currentColor);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: mui-button-spin .8s linear infinite;
+}
+@keyframes mui-button-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  mui-button[data-mui-button] > [data-mui-button-control] { transition: none; }
+  mui-button[data-mui-button] > [data-mui-button-control] > [data-mui-button-spinner] { animation: none; }
+}
+
+mui-button-group[data-mui-button-group] { box-sizing: border-box; display: inline-flex; vertical-align: middle; }
+mui-button-group[data-mui-button-group][vertical] { flex-direction: column; }
+mui-button-group[data-mui-button-group] > mui-button[data-mui-button] > [data-mui-button-control] { border-radius: 0; width: 100%; }
+mui-button-group[data-mui-button-group]:not([vertical]) > mui-button[data-mui-button] + mui-button[data-mui-button] > [data-mui-button-control] { margin-inline-start: -1px; }
+mui-button-group[data-mui-button-group]:not([vertical]) > mui-button[data-mui-button]:first-child > [data-mui-button-control] { border-start-start-radius: var(--mui-button-radius, 3px); border-end-start-radius: var(--mui-button-radius, 3px); }
+mui-button-group[data-mui-button-group]:not([vertical]) > mui-button[data-mui-button]:last-child > [data-mui-button-control] { border-start-end-radius: var(--mui-button-radius, 3px); border-end-end-radius: var(--mui-button-radius, 3px); }
+mui-button-group[data-mui-button-group][vertical] > mui-button[data-mui-button] + mui-button[data-mui-button] > [data-mui-button-control] { margin-block-start: -1px; }
+mui-button-group[data-mui-button-group][vertical] > mui-button[data-mui-button]:first-child > [data-mui-button-control] { border-start-start-radius: var(--mui-button-radius, 3px); border-start-end-radius: var(--mui-button-radius, 3px); }
+mui-button-group[data-mui-button-group][vertical] > mui-button[data-mui-button]:last-child > [data-mui-button-control] { border-end-start-radius: var(--mui-button-radius, 3px); border-end-end-radius: var(--mui-button-radius, 3px); }

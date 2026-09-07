@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./button": {
+      "types": "./dist/components/button/index.d.ts",
+      "import": "./dist/markup-ui-button.js"
+    },
+    "./button/style.css": "./dist/markup-ui-button.css",
     "./avatar": {
       "types": "./dist/components/avatar/index.d.ts",
       "import": "./dist/markup-ui-avatar.js"
