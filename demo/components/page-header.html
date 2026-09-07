@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Page Header — native composition</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-page-header.css">
+  <link rel="stylesheet" href="./page-header.css">
+  <script src="./page-header.js" defer></script>
+</head>
+<body>
+  <header class="mui-page-header panel" id="page-banner">
+    <nav class="mui-page-header-header breadcrumb" aria-label="Breadcrumb">
+      <a href="#workspace">Workspace</a><span aria-hidden="true"> / </span><span aria-current="page">Project</span>
+    </nav>
+    <div class="mui-page-header-main">
+      <div class="mui-page-header-lead">
+        <a class="mui-page-header-back" id="destination-back" href="#workspace" target="_self" rel="help">
+          <svg class="back-graphic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M20 12H4m7-7-7 7 7 7"></path></svg>
+          <span>Workspace</span>
+        </a>
+        <span class="mui-page-header-avatar" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 40 40" focusable="false">
+            <rect width="40" height="40" rx="8" fill="#e6eef9"></rect>
+            <path d="M9 27V13h7l4 5h11v9Z" fill="#175fbb"></path>
+          </svg>
+        </span>
+        <div class="mui-page-header-titles">
+          <h1 class="mui-page-header-title" id="project-title">Project migration</h1>
+          <p class="mui-page-header-subtitle">One native heading, original content and explicit navigation</p>
+        </div>
+      </div>
+      <div class="mui-page-header-extra">
+        <a href="#record">Edit example record</a>
+        <span>Draft</span>
+      </div>
+    </div>
+    <div class="mui-page-header-content">
+      <p>Page Header is CSS-only. This top-level native header is the page banner by HTML context, not a library-added role.</p>
+    </div>
+    <div class="mui-page-header-footer">Footer information remains ordinary authored content.</div>
+  </header>
+  <main>
+    <section id="workspace" tabindex="-1" aria-labelledby="workspace-title">
+      <h2 id="workspace-title">Workspace destination</h2>
+      <p>The back link has a known native href; it does not guess browser history.</p>
+    </section>
+    <form id="record-form">
+      <article id="record" aria-labelledby="record-title">
+        <header class="mui-page-header panel" id="record-header">
+          <div class="mui-page-header-main">
+            <div class="mui-page-header-lead">
+              <button class="mui-page-header-back" type="button" id="application-back">
+                <svg class="back-graphic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M20 12H4m7-7-7 7 7 7"></path></svg>
+                <span>Application back action</span>
+              </button>
+              <div class="mui-page-header-titles">
+                <h2 class="mui-page-header-title" id="record-title">AnExtremelyLongOriginalRecordTitleThatWrapsWithoutClippingOrReplacingItsNativeHeading</h2>
+                <p class="mui-page-header-subtitle">This nested header is not another page banner.</p>
+              </div>
+            </div>
+            <div class="mui-page-header-extra">
+              <button type="submit" id="save-record">Save</button>
+              <button type="reset" id="reset-record">Reset</button>
+              <button type="button" disabled id="disabled-action">Unavailable</button>
+            </div>
+          </div>
+          <div class="mui-page-header-content">
+            <label for="record-name">Record name</label>
+            <input id="record-name" name="name" value="Initial record" required>
+          </div>
+          <div class="mui-page-header-footer">
+            <p>The application back button records its ordinary native click; it does not submit or navigate automatically.</p>
+            <output id="application-result" for="record-name" aria-label="Application action result">No application action yet.</output>
+          </div>
+        </header>
+      </article>
+    </form>
+    <article dir="rtl" lang="ar" aria-labelledby="rtl-title">
+      <header class="mui-page-header panel" id="rtl-header">
+        <div class="mui-page-header-main">
+          <div class="mui-page-header-lead">
+            <a class="mui-page-header-back" id="rtl-back" href="#workspace">
+              <svg class="back-graphic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M20 12H4m7-7-7 7 7 7"></path></svg>
+              <span>رجوع</span>
+            </a>
+            <div class="mui-page-header-titles">
+              <h2 class="mui-page-header-title" id="rtl-title">عنوان أصلي لصفحة المشروع</h2>
+              <p class="mui-page-header-subtitle">ترتيب المحتوى واتجاهه يحددهما المستند</p>
+            </div>
+          </div>
+          <div class="mui-page-header-extra"><a href="#record">تحرير</a></div>
+        </div>
+      </header>
+    </article>
+    <p id="outside">Outside the opt-in, native headings, links and document styles stay unchanged.</p>
+  </main>
+</body>
+</html>

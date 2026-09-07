@@ -2,7 +2,7 @@
 
 **Plan state: 🟠 In progress — P1 pilots and the P2-02 Tag/Badge/Alert/Empty/Skeleton/Spin workstream
 and P2-03 Progress/Statistic are Verified for retained scope. Whole P2 is not complete;
-Typography `53d3974`, Icon `829970d`, Gradient Text `38dcf6f` and Ellipsis's linked native CSS/disclosure record are Verified; Page Header is next.** Existing MarkupUI features are a partial baseline,
+Typography `53d3974`, Icon `829970d`, Gradient Text `38dcf6f`, Ellipsis `5fabe7f` and Page Header's linked native CSS record are Verified; Divider is next.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -30,7 +30,7 @@ coverage, implementation status, and upstream feature parity separate.
 | --- | --- | --- | --- | --- |
 | P0 — Architecture and contracts | 🔵 Planned | Establish separated sources, compatible loading, lifecycle, events and native-control conventions. | None | A minimal external-CSS example works without a consumer build step, and existing loading remains supported. |
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
-| P2 — Primitives and layout | 🟠 In progress | P2-02/P2-03 and Typography/Icon/Gradient Text/Ellipsis scopes complete; Page Header next, then remaining content/layout. | P1 pattern | Retained features have evidence; styling-only features do not acquire unnecessary controllers. |
+| P2 — Primitives and layout | 🟠 In progress | P2-02/P2-03 and Typography/Icon/Gradient Text/Ellipsis/Page Header scopes complete; Divider next, then remaining content/layout. | P1 pattern | Retained features have evidence; styling-only features do not acquire unnecessary controllers. |
 | P3 — Interaction foundations | 🔵 Planned | Implement predictable focus, keyboard, overlays and navigation. | P0 lifecycle; P1 controls | Nested interaction, dismissal and focus behavior are defined and demonstrated. |
 | P4 — Forms and selection | 🔵 Planned | Make native controls dependable, then add optional richer selection. | P0 form contract; P3 for popup variants | Values, labels, submission, reset, validity and event semantics are consistent. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
@@ -76,11 +76,11 @@ rewrite all components before demonstrating one useful vertical slice.
 
 | Task | Status | Action | Deliverable |
 | --- | --- | --- | --- |
-| P2-01 — Typography and content | 🟠 In progress | Typography `53d3974`, Icon `829970d`, Gradient Text `38dcf6f` and Ellipsis Verified as native CSS compositions; Page Header next. | [Typography acceptance](../components/typography.md): 300 tests; [Icon acceptance](../components/icon.md): 308; [Gradient Text acceptance](../components/gradient-text.md): 316; [Ellipsis acceptance](../components/ellipsis.md): 327 plus Chromium overflow/native disclosure/names/selection/print/zoom evidence. |
+| P2-01 — Typography and content | 🟠 In progress | Typography `53d3974`, Icon `829970d`, Gradient Text `38dcf6f` and Ellipsis `5fabe7f` Verified as native CSS compositions; broader content scope remains open. | [Typography acceptance](../components/typography.md): 300 tests; [Icon acceptance](../components/icon.md): 308; [Gradient Text acceptance](../components/gradient-text.md): 316; [Ellipsis acceptance](../components/ellipsis.md): 327 plus Chromium overflow/native disclosure/names/selection/print/zoom evidence. |
 | P2-02 — Small feedback | 🟢 Verified | Tag `6605d29`, Badge `69c9480`, Alert `2a1eb42`, Empty `27a435b`, Skeleton `05c6546`, and Spin `6c7f35b` complete their retained scopes. | [Tag](../components/tag.md): 118 tests; [Badge](../components/badge.md): 141; [Alert](../components/alert.md): 167; [Empty](../components/empty.md): 190; [Skeleton](../components/skeleton.md): 213; [Spin](../components/spin.md): 241 plus Chromium timing/native-state/motion evidence. |
 | P2-03 — Progress and statistics | 🟢 Verified | Progress `8d7757c` and Statistic `1ed3a98` complete retained native scopes; Number Animation remains separate. | [Progress acceptance](../components/progress.md): 270 tests; [Statistic acceptance](../components/statistic.md): 290 plus Chromium native value/region/formatting-string/typography evidence. |
-| P2-04 — Layout | 🔵 Planned | Express Space, Flex, Grid, Layout, Divider and simple alignment through CSS. | Responsive, logical-direction layout without JS measurement unless demonstrably necessary. |
-| P2-05 — Static compound display | 🔵 Planned | Define List, Descriptions, Timeline, Breadcrumb and similar content anatomy. | Reusable markup conventions with no compulsory data renderer or router. |
+| P2-04 — Layout | 🔵 Planned | Next sequence: Divider, then Flex, Space, Grid and Layout through native CSS. | Responsive, logical-direction layout without JS measurement unless demonstrably necessary. |
+| P2-05 — Static compound display | 🟠 In progress | Page Header retained native scope complete; List, Descriptions, Timeline and Breadcrumb remain pending. | [Page Header acceptance](../components/page-header.md): 340 tests and Chromium native landmark/heading/action/form/wrapping evidence; no compulsory renderer or router. |
 | P2-06 — Wave sign-off | 🔵 Planned | Close retained feature gaps and document any intentionally simplified visual variations. | Updated per-component trackers and isolated payload accounting. |
 
 Ellipsis's retained native details/summary disclosure needs no custom P3 overlay machinery.
@@ -185,8 +185,9 @@ excluded from delivery scope but never counted as implemented.
 
 ## First implementation slice
 
-**Current component: Ellipsis (P2-01/native disclosure slice), retained CSS-only implementation and acceptance complete.**
-**Next component: Page Header, awaiting coordinator selection; not started.**
+**Current component: Page Header (P2-05), retained CSS-only implementation and acceptance complete.**
+**Next component: Divider, awaiting coordinator selection; not started.**
+Ellipsis completed its retained native CSS/disclosure implementation and acceptance in `5fabe7f`.
 Gradient Text completed its retained CSS-only implementation and acceptance in `38dcf6f`.
 Icon/IconWrapper completed their retained CSS-only implementation and acceptance in `829970d`.
 Typography completed its retained CSS-only implementation and acceptance in `53d3974`.
@@ -261,9 +262,16 @@ targets and 6 omissions. Its four tasks are closed with [327-test/Chromium evide
 covering original text, native details/summary open/toggle, keyboard/pointer/AX names/selection,
 defensive native-control unclipping, unsupported/invalid/print fallbacks, font/width/RTL/zoom
 and CSS-before/after-legacy composition. No Tooltip, observer or hover-remount runtime exists.
-The index records 3,116 rows and 60 accepted retained tasks out of 384, not full upstream parity.
-Await coordinator selection of Page Header and remaining content/layout
-work from the index, while preserving native
+Page Header's [reference inventory](components/page-header.md) preserves twelve original
+props/callback/slot rows plus three source theme supplements: 12 Verified ADAPTED native
+targets and 3 omissions. Its four tasks close with [340-test/Chromium evidence](../components/page-header.md):
+all eight authored regions, native headings/contextual landmarks/back links and clicks/forms,
+stable nodes/assets, 280px long-title wrapping, RTL/zoom/print and CSS-only coexistence.
+The demo's application handlers are not a library runtime. P2-05 is In progress, not complete.
+The index records 3,119 rows and 64 accepted retained tasks out of 384, not full upstream parity.
+Await coordinator selection of **Divider**, then **Flex, Space, Grid, Layout, List,
+Descriptions, Timeline and Breadcrumb**, in that order. Residual content and cross-phase
+components remain on the index; this queue does not close all P2. Preserve native
 semantics and the legacy aggregate. Each component gets its own documentation update, build,
 acceptance evidence and commit before advancing. No dates or effort estimates are assigned
 until retained feature scope and optional exclusions are settled.
