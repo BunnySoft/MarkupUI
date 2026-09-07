@@ -1,7 +1,7 @@
 # MarkupUI migration plan
 
-**Plan state: 🟠 In progress — the Avatar, Button and Card pilots and P2 Tag/Badge/Alert/Empty/Skeleton are completed
-for their retained scope; Spin is next, not started.** Existing MarkupUI features are a partial baseline,
+**Plan state: 🟠 In progress — P1 pilots and the P2-02 Tag/Badge/Alert/Empty/Skeleton/Spin workstream
+are Verified for retained scope. Whole P2 is not complete; Progress is next, not started.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -29,7 +29,7 @@ coverage, implementation status, and upstream feature parity separate.
 | --- | --- | --- | --- | --- |
 | P0 — Architecture and contracts | 🔵 Planned | Establish separated sources, compatible loading, lifecycle, events and native-control conventions. | None | A minimal external-CSS example works without a consumer build step, and existing loading remains supported. |
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
-| P2 — Primitives and layout | 🟠 In progress | Tag, Badge, Alert, Empty and Skeleton verified; Spin next, expanding feedback with native markup and CSS first. | P1 pattern | Retained features have evidence; styling-only features do not acquire unnecessary controllers. |
+| P2 — Primitives and layout | 🟠 In progress | P2-02 small feedback retained scope complete; Progress/Statistic next, then remaining typography/layout/content. | P1 pattern | Retained features have evidence; styling-only features do not acquire unnecessary controllers. |
 | P3 — Interaction foundations | 🔵 Planned | Implement predictable focus, keyboard, overlays and navigation. | P0 lifecycle; P1 controls | Nested interaction, dismissal and focus behavior are defined and demonstrated. |
 | P4 — Forms and selection | 🔵 Planned | Make native controls dependable, then add optional richer selection. | P0 form contract; P3 for popup variants | Values, labels, submission, reset, validity and event semantics are consistent. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
@@ -76,8 +76,8 @@ rewrite all components before demonstrating one useful vertical slice.
 | Task | Status | Action | Deliverable |
 | --- | --- | --- | --- |
 | P2-01 — Typography and content | 🔵 Planned | Map headings, text, icon wrappers, ellipsis and decorative text to semantic HTML and CSS. | Native reading structure; no icon library or syntax engine dependency. |
-| P2-02 — Small feedback | 🟠 In progress | Tag in `6605d29`, Badge in `69c9480`, Alert in `2a1eb42`, Empty in `27a435b` verified; Skeleton verified in this change; Spin next. | [Tag](../components/tag.md): 118 tests; [Badge](../components/badge.md): 141; [Alert](../components/alert.md): 167; [Empty](../components/empty.md): 190; [Skeleton](../components/skeleton.md): 213 plus Chromium geometry/inertness/motion evidence. |
-| P2-03 — Progress and statistics | 🔵 Planned | Define determinate/indeterminate and numeric formatting behavior; separate optional animation from static content. | Accessible values and reduced-motion-aware presentation. |
+| P2-02 — Small feedback | 🟢 Verified | Tag `6605d29`, Badge `69c9480`, Alert `2a1eb42`, Empty `27a435b`, Skeleton `05c6546`, and Spin in this change complete their retained scopes. | [Tag](../components/tag.md): 118 tests; [Badge](../components/badge.md): 141; [Alert](../components/alert.md): 167; [Empty](../components/empty.md): 190; [Skeleton](../components/skeleton.md): 213; [Spin](../components/spin.md): 241 plus Chromium timing/native-state/motion evidence. |
+| P2-03 — Progress and statistics | 🔵 Planned | Next: Progress, then Statistic; define determinate/indeterminate and numeric formatting behavior, separating optional animation from static content. | Accessible values and reduced-motion-aware presentation. |
 | P2-04 — Layout | 🔵 Planned | Express Space, Flex, Grid, Layout, Divider and simple alignment through CSS. | Responsive, logical-direction layout without JS measurement unless demonstrably necessary. |
 | P2-05 — Static compound display | 🔵 Planned | Define List, Descriptions, Timeline, Breadcrumb and similar content anatomy. | Reusable markup conventions with no compulsory data renderer or router. |
 | P2-06 — Wave sign-off | 🔵 Planned | Close retained feature gaps and document any intentionally simplified visual variations. | Updated per-component trackers and isolated payload accounting. |
@@ -183,8 +183,9 @@ excluded from delivery scope but never counted as implemented.
 
 ## First implementation slice
 
-**Next component: Spin (P2-02), not started; coordinator selection pending.**
-Skeleton completed its retained implementation and acceptance in this component change.
+**Next component: Progress (P2-03), not started; coordinator selection pending.**
+Spin completed its retained implementation and acceptance in this component change.
+Skeleton completed its retained implementation and acceptance in `05c6546`.
 Empty completed its retained implementation and acceptance in `27a435b`.
 Alert completed its retained implementation and acceptance in `2a1eb42`.
 Badge completed its retained implementation and acceptance in `69c9480`.
@@ -213,8 +214,15 @@ closed with [213-test/Chromium evidence](../components/skeleton.md), covering bo
 validated numeric/CSS/percentage geometry, inert decorative groups, preserved author content,
 application-owned loading, reduced motion and load ordering. The dynamic style/CSP boundary
 is explicit rather than hidden in a runtime stylesheet renderer.
-The index now records 3,059 rows and 32 accepted retained tasks out of 384, not full upstream parity.
-Await coordinator selection of Spin, while preserving native
+Spin's [reference inventory](components/spin.md) retains fourteen pinned rows plus four
+deprecated/theme supplements: 13 Verified ADAPTED targets and 5 omissions. Its four tasks
+are closed with [241-test/Chromium evidence](../components/spin.md), including real delayed
+visibility/cancellation, native content and state preservation, explicit app-owned blocking,
+SVG parameters, reduced motion and loading order.
+**P2-02 small feedback is now Verified for retained scope; P2 overall remains In progress.**
+The index records 3,063 rows and 36 accepted retained tasks out of 384, not full upstream parity.
+Await coordinator selection of Progress, then Statistic and remaining typography/layout/content
+work from the index, while preserving native
 semantics and the legacy aggregate. Each component gets its own documentation update, build,
 acceptance evidence and commit before advancing. No dates or effort estimates are assigned
 until retained feature scope and optional exclusions are settled.

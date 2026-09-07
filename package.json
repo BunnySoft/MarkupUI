@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./spin": {
+      "types": "./dist/components/spin/index.d.ts",
+      "import": "./dist/markup-ui-spin.js"
+    },
+    "./spin/style.css": "./dist/markup-ui-spin.css",
     "./skeleton": {
       "types": "./dist/components/skeleton/index.d.ts",
       "import": "./dist/markup-ui-skeleton.js"
