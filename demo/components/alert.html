@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Alert</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-alert.css">
+  <link rel="stylesheet" href="./alert.css">
+  <script defer src="../../dist/markup-ui-alert.global.js"></script>
+  <script defer src="./alert.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Alert: authored notices, explicit announcements and native close intent</h1>
+    <p>Static notices do not become assertive live regions automatically. Applications choose native role/live settings and own actual removal.</p>
+
+    <section aria-labelledby="types-heading">
+      <h2 id="types-heading">Types and readable severity</h2>
+      <div class="examples" id="types">
+        <mui-alert title="Default notice">Neutral appearance; no empty icon is created.</mui-alert>
+        <mui-alert type="info" title="Information">Your changes can be reviewed before submission.</mui-alert>
+        <mui-alert type="success" title="Success">Your report was saved.</mui-alert>
+        <mui-alert type="warning" title="Warning">Your session will expire soon.</mui-alert>
+        <mui-alert type="error" title="Error">The report could not be saved.</mui-alert>
+      </div>
+    </section>
+
+    <section aria-labelledby="close-heading">
+      <h2 id="close-heading">Authored regions, actions and close policy</h2>
+      <form id="notice-form">
+        <mui-alert id="notice" type="warning" closable close-label="Dismiss save warning" role="region" aria-labelledby="notice-heading">
+          <span data-mui-alert-icon aria-hidden="true">⚑</span>
+          <header data-mui-alert-header><h3 id="notice-heading">Warning: review before retrying</h3></header>
+          <div data-mui-alert-content>
+            <p id="notice-copy">The original action, input and content nodes are preserved.</p>
+            <label>Note <input id="notice-input" name="note" value="Draft"></label>
+            <div data-mui-alert-actions><button type="submit" id="retry">Retry save</button><button type="button" id="details">View details</button></div>
+          </div>
+        </mui-alert>
+      </form>
+      <p id="close-status" role="status">0 close requests; the notice remains visible.</p>
+      <p id="submit-status" role="status">0 submissions.</p>
+      <p id="action-status" role="status">0 detail actions.</p>
+      <div class="controls">
+        <button type="button" id="toggle-icon">Toggle icon</button>
+        <button type="button" id="toggle-close">Toggle closable</button>
+        <button type="button" id="reconnect">Reconnect notice</button>
+        <button type="button" id="toggle-border">Toggle border</button>
+      </div>
+    </section>
+
+    <section aria-labelledby="live-heading">
+      <h2 id="live-heading">Explicit native announcement choices</h2>
+      <p>The following roles are authored in HTML. Badge, Alert and other components do not create competing announcers for them.</p>
+      <mui-alert id="polite-notice" type="info" role="status" aria-live="polite" aria-atomic="true">
+        <p data-mui-alert-content id="polite-copy">Ready to check for saved changes.</p>
+      </mui-alert>
+      <mui-alert id="urgent-notice" type="error" role="alert" aria-atomic="true" hidden>
+        <p data-mui-alert-content id="urgent-copy">Your connection was lost. Save a local copy before leaving.</p>
+      </mui-alert>
+      <div class="controls">
+        <button type="button" id="update-status">Update polite status</button>
+        <button type="button" id="show-urgent">Show authored urgent notice</button>
+      </div>
+      <p>Actual spoken timing varies by browser and assistive technology; this demo does not certify announcements.</p>
+    </section>
+
+    <section aria-labelledby="static-heading">
+      <h2 id="static-heading">Native CSS-only notice and appearance controls</h2>
+      <section class="mui-alert" data-type="info" id="static-notice">
+        <span data-mui-alert-icon aria-hidden="true">ⓘ</span>
+        <div data-mui-alert-body><h3 data-mui-alert-header>CSS-only information</h3><p data-mui-alert-content>This native section needs no Custom Element controller.</p></div>
+      </section>
+      <mui-alert id="borderless" type="success" bordered="false" show-icon="false" title="Borderless, no icon">The same readable notice with simpler presentation.</mui-alert>
+      <mui-alert id="rtl-notice" type="warning" dir="rtl" closable title="RTL notice">Logical icon and close positioning follows direction.</mui-alert>
+    </section>
+  </main>
+</body>
+</html>

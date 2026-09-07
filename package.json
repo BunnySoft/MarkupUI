@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./alert": {
+      "types": "./dist/components/alert/index.d.ts",
+      "import": "./dist/markup-ui-alert.js"
+    },
+    "./alert/style.css": "./dist/markup-ui-alert.css",
     "./badge": {
       "types": "./dist/components/badge/index.d.ts",
       "import": "./dist/markup-ui-badge.js"
