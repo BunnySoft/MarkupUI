@@ -374,6 +374,16 @@ of every built-in and optional component.
 
 ## Documentation
 
+The [migration plan](docs/naive-ui/migration-plan.md) organizes phases, tasks and status.
+The [Naive UI component index](docs/naive-ui/index.md) tracks component and property-level
+planning. Its [architecture proposal](docs/naive-ui/architecture.md) keeps
+MarkupUI dependency-free with separate HTML, JavaScript, and CSS. Proposed APIs in these
+documents are not implemented APIs or a claim of full Naive UI compatibility.
+
+Completed standalone components have separate usage and retained-scope records:
+[Avatar and Avatar Group](docs/components/avatar.md),
+[Button and Button Group](docs/components/button.md), and [Card](docs/components/card.md).
+
 See the
 [architecture and usage guide](https://github.com/BunnySoft/DataEngine/blob/v10.0/archived/docs/2026/09-%2001-pre-product-roadmap/13-markup-ui-architecture-and-usage.md)
 for implementation details, complete API usage, plugin guidance, browser support, and limitations.
