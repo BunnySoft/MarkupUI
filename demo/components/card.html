@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Card</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-card.css">
+  <link rel="stylesheet" href="./card.css">
+  <script defer src="../../dist/markup-ui-card.global.js"></script>
+  <script defer src="./card.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Card: authored native regions and an optional close control</h1>
+    <p>Only Card is loaded. Passive regions have no controllers, and closing emits intent without removing content.</p>
+
+    <section aria-labelledby="anatomy-heading">
+      <h2 id="anatomy-heading">Complete native anatomy</h2>
+      <form id="card-form">
+        <mui-card id="anatomy-card" closable segmented role="region" aria-labelledby="report-heading" close-label="Close quarterly report">
+          <div data-mui-card-cover>
+            <img alt="Abstract blue cover" width="960" height="140"
+              src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='960' height='140'%3E%3Crect width='960' height='140' fill='%23d9ecff'/%3E%3Ccircle cx='820' cy='65' r='110' fill='%232080f0'/%3E%3C/svg%3E">
+          </div>
+          <header data-mui-card-header>
+            <h3 id="report-heading">Quarterly report</h3>
+            <div data-mui-card-header-extra><button type="button" id="extra-action">Star report</button></div>
+          </header>
+          <section data-mui-card-content>
+            <p>Authored nodes and event listeners survive title, state and reconnect updates.</p>
+            <label>Report note <input id="report-note" name="note" value="Draft"></label>
+          </section>
+          <footer data-mui-card-footer>Prepared by the project team</footer>
+          <div data-mui-card-action><button type="submit">Save note</button></div>
+        </mui-card>
+      </form>
+      <p id="close-status" role="status">0 close requests; the card remains visible.</p>
+      <p id="star-status" role="status">0 stars.</p>
+      <p id="form-status" role="status">0 submissions.</p>
+      <div class="controls">
+        <button type="button" id="toggle-close">Toggle closable</button>
+        <button type="button" id="reconnect-card">Reconnect card</button>
+        <label>Content divider
+          <select id="content-divider"><option value="true">Full</option><option value="soft">Inset</option><option value="false">None</option></select>
+        </label>
+        <label>Card size
+          <select id="card-size"><option>small</option><option selected>medium</option><option>large</option><option>huge</option></select>
+        </label>
+      </div>
+    </section>
+
+    <section aria-labelledby="sizes-heading">
+      <h2 id="sizes-heading">Sizes and appearance</h2>
+      <div class="grid" id="sizes">
+        <mui-card size="small" title="Small">16px region padding</mui-card>
+        <mui-card size="medium" title="Medium">24px region padding</mui-card>
+        <mui-card size="large" title="Large">32px region padding</mui-card>
+        <mui-card size="huge" title="Huge">40px region padding</mui-card>
+      </div>
+      <div class="grid">
+        <mui-card id="hover-card" hoverable title="Hoverable">Pointer hover changes the border and shadow, not behavior.</mui-card>
+        <mui-card id="embedded-card" embedded title="Embedded">A muted surface controlled by external CSS tokens.</mui-card>
+        <mui-card id="borderless-card" bordered="false" title="Borderless">Transparent border preserves layout geometry.</mui-card>
+      </div>
+    </section>
+
+    <section aria-labelledby="legacy-heading">
+      <h2 id="legacy-heading">Free-form and existing compound markup</h2>
+      <div class="grid">
+        <mui-card id="freeform-card"><h3>Free-form content</h3><p>These original nodes move into a native content wrapper without cloning.</p></mui-card>
+        <mui-card id="compound-card" segmented-footer="soft">
+          <mui-card-header><h3>Existing compound tags</h3></mui-card-header>
+          <mui-card-content>Passive tags remain supported alongside native data-marked regions.</mui-card-content>
+          <mui-card-footer><a href="#anatomy-heading">Back to anatomy</a></mui-card-footer>
+        </mui-card>
+      </div>
+    </section>
+
+    <section aria-labelledby="scroll-heading">
+      <h2 id="scroll-heading">Native content-only scrolling</h2>
+      <mui-card id="scroll-card" class="scroll-card" content-scrollable segmented>
+        <header data-mui-card-header><h3>Stationary header and footer</h3></header>
+        <div data-mui-card-content tabindex="0" role="region" aria-label="Scrollable report">
+          <p>Focus this native region and press Page Down or Arrow Down.</p>
+          <p>Item 1 — Content scrolling uses browser-native overflow.</p>
+          <p>Item 2 — No custom scrollbar runtime is required.</p>
+          <p>Item 3 — Header and footer remain in the card's flex layout.</p>
+          <p>Item 4 — Explicit height is supplied through the external stylesheet.</p>
+          <p>Item 5 — Authored focus and region labels are not overwritten.</p>
+          <p>Item 6 — Native keyboard scrolling remains available.</p>
+          <p>Item 7 — The content's layout does not need measurement JavaScript.</p>
+          <p>Item 8 — End of report.</p>
+        </div>
+        <footer data-mui-card-footer>End of report</footer>
+      </mui-card>
+    </section>
+  </main>
+</body>
+</html>

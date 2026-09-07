@@ -1,0 +1,13 @@
+:root { font-family: system-ui, sans-serif; color: #242424; background: #fafafa; }
+body { margin: 0; }
+main { max-width: 1040px; margin: auto; padding: 32px; }
+main > section { margin-block: 24px; }
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.2rem; }
+p { margin-block: 0 12px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-block: 16px; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-block: 16px; }
+button, input, select { font: inherit; }
+button, input, select { padding: 5px 8px; }
+.scroll-card { --mui-card-height: 320px; }
+[data-mui-card-content]:focus-visible { outline: 3px solid #2080f080; outline-offset: -3px; }
