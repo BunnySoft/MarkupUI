@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Divider — native CSS and semantics</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-divider.css">
+  <link rel="stylesheet" href="./divider.css">
+</head>
+<body>
+  <main>
+    <h1>Native Divider anatomy</h1>
+    <p>No JavaScript, generated roles or heading synthesis. Choose a thematic break, a named separator, or purely decorative rules deliberately.</p>
+    <section aria-labelledby="rules-title">
+      <h2 id="rules-title">Thematic and decorative rules</h2>
+      <p>A native thematic break follows this paragraph.</p>
+      <hr class="mui-divider" id="thematic">
+      <p>A dashed native break can have an explicit author-selected name.</p>
+      <hr class="mui-divider" data-dashed aria-label="End of introduction" id="dashed">
+      <span class="mui-divider custom-rule" aria-hidden="true" id="decorative"></span>
+      <p>The thicker decorative rule is not another announced separator.</p>
+    </section>
+    <section aria-labelledby="caption-title">
+      <h2 id="caption-title">Named separator: one accessible owner</h2>
+      <div class="mui-divider mui-divider-captioned" role="separator" aria-labelledby="settings-label" id="named">
+        <span class="mui-divider-label" id="settings-label" aria-hidden="true">Settings</span>
+      </div>
+      <p>The visible caption is referenced once as the separator's name, not copied into a hidden label. Keep real headings outside this presentational separator.</p>
+      <div class="mui-divider mui-divider-captioned" data-placement="left" role="separator" aria-labelledby="left-label" id="left">
+        <span class="mui-divider-label" id="left-label" aria-hidden="true">Left label</span>
+      </div>
+      <div class="mui-divider mui-divider-captioned" data-placement="right" data-dashed role="separator" aria-labelledby="right-label" id="right">
+        <span class="mui-divider-label" id="right-label" aria-hidden="true">Right label</span>
+      </div>
+      <div class="mui-divider mui-divider-captioned narrow" role="separator" aria-labelledby="long-label" id="long">
+        <span class="mui-divider-label" id="long-label" aria-hidden="true">AnOriginalLongUnbrokenCaptionThatWrapsWithoutClippingOrReplacingAnyOfItsText</span>
+      </div>
+    </section>
+    <section aria-labelledby="real-heading">
+      <div class="mui-divider mui-divider-captioned" data-placement="start" id="heading-decoration">
+        <h2 class="mui-divider-label" id="real-heading">A real native heading with decorative rules</h2>
+      </div>
+      <p>This neutral wrapper has no separator role and is not aria-hidden. The h2 keeps its real heading semantics.</p>
+    </section>
+    <section aria-labelledby="vertical-title">
+      <h2 id="vertical-title">Vertical orientation</h2>
+      <div class="actions">
+        <a href="#destination" id="first-action">First action</a>
+        <span class="mui-divider" role="separator" aria-orientation="vertical" aria-label="Action groups" id="vertical"></span>
+        <a href="#destination" id="second-action">Second action</a>
+        <span class="mui-divider tall" data-dashed data-orientation="vertical" aria-hidden="true" id="vertical-decorative"></span>
+        <span>Decorative dashed rule</span>
+      </div>
+      <p id="destination" tabindex="-1">Native action destination.</p>
+    </section>
+    <section dir="rtl" lang="ar" aria-labelledby="rtl-title">
+      <h2 id="rtl-title">الفواصل الأصلية</h2>
+      <div class="mui-divider mui-divider-captioned" data-placement="start" role="separator" aria-labelledby="rtl-start-label" id="rtl-start">
+        <span class="mui-divider-label" id="rtl-start-label" aria-hidden="true">بداية السطر</span>
+      </div>
+      <div class="mui-divider mui-divider-captioned" data-placement="left" role="separator" aria-labelledby="rtl-left-label" id="rtl-left">
+        <span class="mui-divider-label" id="rtl-left-label" aria-hidden="true">اليسار الفعلي</span>
+      </div>
+    </section>
+    <section aria-labelledby="grid-title">
+      <h2 id="grid-title">Native grid placement</h2>
+      <div class="divider-grid" id="grid">
+        <span>First group</span><span>Original value</span>
+        <hr class="mui-divider" id="grid-divider">
+        <span>Second group</span><span>Another value</span>
+      </div>
+    </section>
+    <hr id="outside">
+    <p>Outside the opt-in, a native hr keeps browser styling.</p>
+  </main>
+</body>
+</html>

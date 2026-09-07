@@ -1,0 +1,14 @@
+body { margin: 0; font-family: system-ui, sans-serif; line-height: 1.5; color: #242426; background: #fafafa; }
+main { box-sizing: border-box; max-inline-size: 960px; margin-inline: auto; padding: 24px; }
+section { margin-block: 24px; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.2rem; }
+.custom-rule { --mui-divider-thickness: 3px; --mui-divider-color: #175fbb; --mui-divider-space: 1rem; }
+.narrow { max-inline-size: 22rem; }
+.tall { --mui-divider-length: 2rem; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.divider-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+.divider-grid > .mui-divider { grid-column: 1 / -1; --mui-divider-space: .25rem; }
+a { color: #175fbb; }
+a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+@media (max-width: 400px) { main { padding: 12px; } }
