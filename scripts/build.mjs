@@ -24,6 +24,7 @@ const shared = {
 }
 const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic"]
 const classicEntries = { progress: "global.ts" }
+const styleOnlyComponents = ["typography"]
 
 await Promise.all([
   build({
@@ -79,7 +80,7 @@ await Promise.all([
   ]),
 ])
 
-await Promise.all(components.map((name) =>
+await Promise.all([...components, ...styleOnlyComponents].map((name) =>
   copyFile(resolve(root, "src", "components", name, `${name}.css`), resolve(dist, `markup-ui-${name}.css`)),
 ))
 
@@ -121,6 +122,7 @@ const bundleBudgets = {
   "markup-ui-statistic.js": 2_000,
   "markup-ui-statistic.global.js": 2_000,
   "markup-ui-statistic.css": 1_500,
+  "markup-ui-typography.css": 2_500,
 }
 const bundles = {}
 

@@ -1,0 +1,9 @@
+body { margin: 0; font-family: system-ui, sans-serif; background: #fafafa; }
+main { max-width: 960px; margin-inline: auto; padding: 32px; }
+#outside { border: 1px dashed #aaa; padding: 12px; }
+.status-row { display: flex; flex-wrap: wrap; gap: 16px; }
+.alignment-examples, .rtl-example { padding-inline: 24px; }
+.narrow { max-width: 24ch; }
+.rtl-example { margin-block: 32px; }
+#native-link svg { vertical-align: -.125em; }
+pre { overflow: auto; }

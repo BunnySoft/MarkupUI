@@ -2,7 +2,7 @@
 
 **Plan state: 🟠 In progress — P1 pilots and the P2-02 Tag/Badge/Alert/Empty/Skeleton/Spin workstream
 and P2-03 Progress/Statistic are Verified for retained scope. Whole P2 is not complete;
-Typography is next, not started.** Existing MarkupUI features are a partial baseline,
+CSS-only Typography is individually Verified; Icon is next, not started.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -30,7 +30,7 @@ coverage, implementation status, and upstream feature parity separate.
 | --- | --- | --- | --- | --- |
 | P0 — Architecture and contracts | 🔵 Planned | Establish separated sources, compatible loading, lifecycle, events and native-control conventions. | None | A minimal external-CSS example works without a consumer build step, and existing loading remains supported. |
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
-| P2 — Primitives and layout | 🟠 In progress | P2-02 and P2-03 retained scopes complete; Typography next, then Icon and remaining content/layout. | P1 pattern | Retained features have evidence; styling-only features do not acquire unnecessary controllers. |
+| P2 — Primitives and layout | 🟠 In progress | P2-02/P2-03 and individual CSS-only Typography complete; Icon next, then remaining content/layout. | P1 pattern | Retained features have evidence; styling-only features do not acquire unnecessary controllers. |
 | P3 — Interaction foundations | 🔵 Planned | Implement predictable focus, keyboard, overlays and navigation. | P0 lifecycle; P1 controls | Nested interaction, dismissal and focus behavior are defined and demonstrated. |
 | P4 — Forms and selection | 🔵 Planned | Make native controls dependable, then add optional richer selection. | P0 form contract; P3 for popup variants | Values, labels, submission, reset, validity and event semantics are consistent. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
@@ -76,9 +76,9 @@ rewrite all components before demonstrating one useful vertical slice.
 
 | Task | Status | Action | Deliverable |
 | --- | --- | --- | --- |
-| P2-01 — Typography and content | 🔵 Planned | Next: Typography, then Icon; map headings, text, icon wrappers, ellipsis and decorative text to native HTML/CSS. | Native reading structure; no icon library or syntax engine dependency. |
+| P2-01 — Typography and content | 🟠 In progress | Typography Verified as native HTML/scoped CSS only; Icon next, then remaining content. | [Typography acceptance](../components/typography.md): 300 tests plus Chromium native semantics/links/RTL/zoom/coexistence; no artificial JS runtime. |
 | P2-02 — Small feedback | 🟢 Verified | Tag `6605d29`, Badge `69c9480`, Alert `2a1eb42`, Empty `27a435b`, Skeleton `05c6546`, and Spin `6c7f35b` complete their retained scopes. | [Tag](../components/tag.md): 118 tests; [Badge](../components/badge.md): 141; [Alert](../components/alert.md): 167; [Empty](../components/empty.md): 190; [Skeleton](../components/skeleton.md): 213; [Spin](../components/spin.md): 241 plus Chromium timing/native-state/motion evidence. |
-| P2-03 — Progress and statistics | 🟢 Verified | Progress `8d7757c` and Statistic in this change complete retained native scopes; Number Animation remains separate. | [Progress acceptance](../components/progress.md): 270 tests; [Statistic acceptance](../components/statistic.md): 290 plus Chromium native value/region/formatting-string/typography evidence. |
+| P2-03 — Progress and statistics | 🟢 Verified | Progress `8d7757c` and Statistic `1ed3a98` complete retained native scopes; Number Animation remains separate. | [Progress acceptance](../components/progress.md): 270 tests; [Statistic acceptance](../components/statistic.md): 290 plus Chromium native value/region/formatting-string/typography evidence. |
 | P2-04 — Layout | 🔵 Planned | Express Space, Flex, Grid, Layout, Divider and simple alignment through CSS. | Responsive, logical-direction layout without JS measurement unless demonstrably necessary. |
 | P2-05 — Static compound display | 🔵 Planned | Define List, Descriptions, Timeline, Breadcrumb and similar content anatomy. | Reusable markup conventions with no compulsory data renderer or router. |
 | P2-06 — Wave sign-off | 🔵 Planned | Close retained feature gaps and document any intentionally simplified visual variations. | Updated per-component trackers and isolated payload accounting. |
@@ -184,8 +184,9 @@ excluded from delivery scope but never counted as implemented.
 
 ## First implementation slice
 
-**Next component: Typography (P2-01), not started; coordinator selection pending.**
-Statistic completed its retained implementation and acceptance in this component change.
+**Next component: Icon (P2-01), not started; coordinator selection pending.**
+Typography completed its retained CSS-only implementation and acceptance in this change.
+Statistic completed its retained implementation and acceptance in `1ed3a98`.
 Progress completed its retained implementation and acceptance in `8d7757c`.
 Spin completed its retained implementation and acceptance in `6c7f35b`.
 Skeleton completed its retained implementation and acceptance in `05c6546`.
@@ -234,8 +235,14 @@ closed with [290-test/Chromium evidence](../components/statistic.md), covering l
 native regions/ARIA/actions, application Intl strings, tabular CSS, namespace-safe aliases
 and quiet updates. Formatting and Number Animation are not hidden dependencies.
 **P2-03 Progress/Statistic is now Verified for retained scope; P2 overall remains In progress.**
-The index records 3,072 rows and 44 accepted retained tasks out of 384, not full upstream parity.
-Await coordinator selection of Typography, then Icon and remaining content/layout
+Typography's [reference inventory](components/typography.md) retains fifteen grouped public
+rows and adds 25 explicit source owner/deprecated/grouped-theme supplements: 17 Verified
+ADAPTED native targets and 23 omitted runtime/framework contracts. Its four tasks are closed
+with [300-test/Chromium evidence](../components/typography.md), using scoped native CSS only:
+no Custom Element, ESM/classic JS entry, observer, router or highlighting dependency.
+P2-01 and P2 overall remain In progress.
+The index records 3,097 rows and 48 accepted retained tasks out of 384, not full upstream parity.
+Await coordinator selection of Icon and remaining content/layout
 work from the index, while preserving native
 semantics and the legacy aggregate. Each component gets its own documentation update, build,
 acceptance evidence and commit before advancing. No dates or effort estimates are assigned

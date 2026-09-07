@@ -3,7 +3,7 @@
 This is a **proposal and migration inventory, not a shipped compatibility layer**.
 Explicitly Verified retained targets, currently Avatar/Avatar Group in `9afc818`,
 Button/ButtonGroup in `43dd57f`, Card in `cebc6d7`, Tag in `6605d29`, Badge in
-`69c9480`, Alert in `2a1eb42`, Empty in `27a435b`, Skeleton in `05c6546`, Spin in `6c7f35b`, Progress in `8d7757c`, and Statistic in the current component change have implementation and acceptance evidence; the remaining
+`69c9480`, Alert in `2a1eb42`, Empty in `27a435b`, Skeleton in `05c6546`, Spin in `6c7f35b`, Progress in `8d7757c`, Statistic in `1ed3a98`, and CSS-only Typography in this change have implementation and acceptance evidence; the remaining
 catalog must not inherit that status.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
 Use the [master migration plan](migration-plan.md) for phase dependencies and current execution
@@ -28,7 +28,7 @@ framework-prop passthrough**. No component implementation is added by these docu
   HTTP 404 response; immutable repository Markdown remains the API authority.
 - Original MarkupUI comparison baseline: `5dcb190`, package 0.11.0. Avatar's later retained
   implementation is `9afc818`, Button's is `43dd57f`, Card's is `cebc6d7`, and Tag's is `6605d29`;
-  Badge's, Alert's, Empty's, Skeleton's, Spin's, Progress's and Statistic's retained implementation/evidence are linked below; other unreviewed slices
+  Badge's, Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's and Typography's retained implementation/evidence are linked below; other unreviewed slices
   retain the historical baseline.
   Evidence links point to
   [core registry](../../src/components/elements.ts),
@@ -56,8 +56,8 @@ implementation and acceptance evidence exist. Existing-source evidence is kept i
 The numbered component checklists distinguish proposed work from accepted implementation.
 Avatar's four retained-scope tasks are checked using `9afc818`, Button's four using
 `43dd57f`, Card's four using `cebc6d7`, Tag's four using `6605d29`, and Badge's four using
-its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's and Statistic's four each with retained acceptance records;
-the other **340 tasks remain unchecked**. Typography is next, not started. Reconcile later implementation evidence
+its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's and Typography's four each with retained acceptance records;
+the other **336 tasks remain unchecked**. Icon is next, not started. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
 ### Native browser capabilities reduce implementation scope
@@ -170,8 +170,8 @@ build and **43 tests** (16 Avatar-focused plus 27 existing), along with **Chromi
 acceptance. Separate ESM/classic JavaScript ceilings are 4,000 gzip bytes each; CSS has a
 1,500-byte ceiling. Browser coverage is not all-browser certification or pixel parity.
 The reference Avatar page reconciles all **35 rows: 19 Verified adapted targets and
-16 Intentionally omitted contracts**. Button, Card, Tag, Badge, Alert, Empty, Skeleton, Spin, Progress and Statistic are also verified as recorded below;
-**Typography is next, not started**, and the master plan owns
+16 Intentionally omitted contracts**. Button, Card, Tag, Badge, Alert, Empty, Skeleton, Spin, Progress, Statistic and CSS-only Typography are also verified as recorded below;
+**Icon is next, not started**, and the master plan owns
 the sequential implementation/build/commit workflow.
 
 ### Button pilot: accepted native scope
@@ -210,7 +210,7 @@ Card never removes itself in response to close intent or infers a heading/landma
 close focusability defaults true. The three pilot ESM entries also composed together before
 the legacy aggregate with one native form submission and separate CSS in Chromium.
 
-The pilot, P2-02 small-feedback and P2-03 Progress/Statistic retained scopes are complete; **Typography is next, not started**.
+The pilot, P2-02, P2-03 and individual CSS-only Typography retained scopes are complete; **Icon is next, not started**.
 This closes Tag/Badge/Alert/Empty/Skeleton/Spin, not all P2 typography/layout/content work. Detailed
 phase progress and per-component commits belong in the master migration plan.
 
@@ -348,7 +348,7 @@ unimplemented typography/layout/content work is not promoted by these completion
 ### Statistic: verified passive P2-03 scope and workstream close
 
 The [Statistic implementation and acceptance record](../components/statistic.md) closes the
-retained scope in this component change: passive native label/value/prefix/suffix regions,
+retained scope in `1ed3a98`: passive native label/value/prefix/suffix regions,
 literal finite-number/string semantics, tabular numeric CSS and reversible authored-content
 precedence. It does not parse formatted strings, generate output/live/progress roles, infer
 units or import Number Animation. Native Intl formatting is an application example, not a
@@ -365,7 +365,28 @@ are 1,540/1,745/577 gzip bytes. Exports are `@dataengine/markup-ui/statistic` an
 `@dataengine/markup-ui/statistic/style.css`.
 
 **P2-03 Progress + Statistic is Verified for retained scope; whole P2 is not complete.**
-Typography (P2-01) is next, then Icon and remaining content/layout work from this index.
+Typography's subsequent CSS-only acceptance is recorded below; Icon and remaining content/layout follow.
+
+### Typography: verified CSS-only P2-01 scope
+
+The [Typography implementation and acceptance record](../components/typography.md) closes
+its retained scope through scoped native HTML/CSS only. There is **no** Typography Custom
+Element, observer, JS entry/global, registration contract or fake JS budget. The export is
+`@dataengine/markup-ui/typography/style.css`, linked natively in browsers. CSS may load
+before or after the unchanged legacy aggregate/aliases.
+
+All **15 grouped public rows** remain. **25 explicit source supplements** cover A/Li/Hr,
+deprecated Text `as`, and three theme contracts for each of seven grouped source owners.
+The page records **40 rows: 17 Verified ADAPTED native targets and 23 Intentionally omitted
+runtime/framework contracts**. H1–H6 and Ul/Ol stay grouped, not inflated into new routes.
+Native a/li/hr, headings, text/decorations, P, lists, quotations and inline code preserve
+actual semantics and attributes without routing or highlighting dependencies.
+
+Four tasks are accepted against **300 passing tests**, CSS-only build/export checks and
+Chromium native hierarchy/links/focus/selection, RTL/alignment, wrapping, 200% CSS zoom and
+legacy-coexistence evidence. Core stays 14,611/15,000 gzip bytes; the only new distribution
+is **1,423 gzip bytes of CSS**, under a 2,500-byte CSS ceiling.
+Icon is next. P2-01 and P2 overall remain In progress.
 
 ## Common Components (15)
 
@@ -383,7 +404,7 @@ Typography (P2-01) is next, then Icon and remaining content/layout work from thi
 | [Icon](components/icon.md) | 🔵 Planned | Native assets only | P2 |
 | [Page Header](components/page-header.md) | 🔵 Planned | Related structure | P2 |
 | [Tag](components/tag.md) | 🟢 Verified retained scope; 7 explicit omissions | Standalone native Tag, `6605d29`; basic aggregate preserved | P2 |
-| [Typography](components/typography.md) | 🔵 Planned | Partial core | P2 |
+| [Typography](components/typography.md) | 🟢 Verified CSS-only scope; 23 explicit omissions | Scoped native CSS; [accepted evidence](../components/typography.md), no new runtime | P2 |
 | [Watermark](components/watermark.md) | 🔵 Planned | None | P6 |
 | [Float Button](components/float-button.md) | 🔵 Planned | Related button | P2, P3 |
 
@@ -534,15 +555,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 588: 366 inline fields, 174 type/helper/exclusion entries and 48 explicit Button/Card/Tag/Badge/Alert/Empty/Skeleton/Spin/Progress/Statistic source supplements |
+| Supplementary named declarations | 613: 366 inline fields, 174 type/helper/exclusion entries and 73 explicit component/grouped Typography source supplements |
 | Explicit inherited tracker rows | 264 |
-| Total tracker rows | 3,072; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 44 Avatar/Button/Card/Tag/Badge/Alert/Empty/Skeleton/Spin/Progress/Statistic retained-scope tasks accepted, 340 unchecked |
+| Total tracker rows | 3,097; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 48 Avatar/Button/Card/Tag/Badge/Alert/Empty/Skeleton/Spin/Progress/Statistic/Typography retained-scope tasks accepted, 336 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,072 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress and 7 Statistic Verified rows cite acceptance evidence |
-| Source agreement | All 2,220 direct source rows remain covered; 85 unchanged inventories match extraction; Avatar/Button/Card/Tag/Badge/Alert/Empty/Skeleton/Spin/Progress/Statistic preserve named rows with accepted dispositions |
-| Local links | 694 relative file links validated after Statistic reconciliation; the historical 612-link snapshot also checked heading anchors |
+| Status presentation | All 3,097 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic and 17 Typography Verified targets cite native acceptance, not runtime parity |
+| Source agreement | All 2,220 direct source rows remain covered; 84 unchanged inventories match extraction; the twelve accepted component pages preserve named/grouped rows with explicit dispositions |
+| Local links | 701 relative file links validated after Typography reconciliation; the historical 612-link snapshot also checked heading anchors |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript
