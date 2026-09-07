@@ -22,7 +22,7 @@ const shared = {
   sourcemap: true,
   target: ["es2022"],
 }
-const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress"]
+const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic"]
 const classicEntries = { progress: "global.ts" }
 
 await Promise.all([
@@ -118,6 +118,9 @@ const bundleBudgets = {
   "markup-ui-progress.js": 6_000,
   "markup-ui-progress.global.js": 6_000,
   "markup-ui-progress.css": 2_500,
+  "markup-ui-statistic.js": 2_000,
+  "markup-ui-statistic.global.js": 2_000,
+  "markup-ui-statistic.css": 1_500,
 }
 const bundles = {}
 

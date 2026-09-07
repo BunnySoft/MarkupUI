@@ -1,35 +1,48 @@
 # Statistic
 
-**Plan: Planned. Current baseline: partial core statistic; not parity-verified.**
+**Migration status: 🟢 Verified for the retained passive native scope in this component change.**
+Verified rows are **ADAPTED targets**, not formatter/provider or pixel parity.
+All seven original pinned rows remain individually present; source supplements are explicit.
 
 ## Baseline and target
 
-[B1: navigation.ts](../../../src/components/navigation.ts) generates label/value spans from label/value/prefix/suffix attributes.
+[A1: retained contract and evidence](../../components/statistic.md), [S1: controller](../../../src/components/statistic/statistic.ts),
+[S2: external CSS](../../../src/components/statistic/statistic.css) and [S3: registration](../../../src/components/statistic/index.ts)
+implement the standalone slice. [B1: legacy navigation.ts](../../../src/components/navigation.ts)
+keeps its original label/value/prefix/suffix attribute implementation unchanged.
 
-- **HTML:** labelled value with authored prefix/suffix regions; prefer an output or description pair.
-- **JS:** optional live value update; number formatting uses native `Intl`.
-- **CSS:** external label/value hierarchy.
-- **Placement:** proposed `src/components/statistic/`.
+- **HTML:** native label/value/prefix/suffix regions and preserved headings/actions; a static dl pair needs no controller.
+- **JS:** safe literal text updates and native region adoption only; optional Intl runs in application code.
+- **CSS:** external hierarchy, logical spacing and tabular numeric typography.
+- **Placement:** standalone `src/components/statistic/`, no provider/formatter/animation dependency.
 
 ## Acceptance and gaps
 
-Test live updates, units, localized numbers, empty values and preserved rich children. Initial generated text is not all slot or formatting behavior.
+A1 records **290 passing tests** (20 Statistic-focused), build/budget gates and Chromium
+literal values, authored precedence, native actions/forms/names, Intl-string presentation,
+tabular typography, reconnect and load-order acceptance. Core stays 14,611/15,000 gzip bytes.
+Statistic ESM/classic/CSS are 1,540/1,745/577 gzip bytes. Formatting options and Number Animation
+are not part of the pinned API and are not silently added.
 
 ## Migration steps
 
-**Delivery phase:** P2 — numeric display. **Task state:** 🔵 Planned.
-**Prerequisites:** P0 child ownership and P2 Typography in the [master plan](../migration-plan.md).
-**Next task:** define label/value/prefix/suffix anatomy that preserves authored rich content.
+**Delivery phase:** P2 — numeric display. **Task state:** 🟢 Verified retained scope.
+**Prerequisites:** P0 child ownership/native CSS contracts in the [master plan](../migration-plan.md); no Typography runtime import is required.
+**Next task:** coordinator selection of Typography (P2-01), then Icon and remaining content/layout.
 
-1. [ ] **Choose semantic output.** Use a labelled output or description pair and specify empty/invalid value display.
-2. [ ] **Resolve formatting.** Separate numeric value, localized presentation and units with native Intl where needed.
-3. [ ] **Extract visual hierarchy.** Move label/value sizing and region spacing into CSS; leave animation outside this component.
-4. [ ] **Verify updates.** Test live values, localized units, rich prefixes/suffixes and meaningful announcements without subtree replacement.
+1. [x] **Choose semantic output.** A1 defines literal zero/blank/missing/nonfinite values, native labelled regions and static dl markup without auto-live output roles.
+2. [x] **Resolve formatting.** Statistic preserves strings verbatim; applications can pass native Intl output. No formatter or currency/precision prop is invented.
+3. [x] **Extract visual hierarchy.** S2 owns label/value/affix styling and tabular figures; no inline styles or Number Animation dependency.
+4. [x] **Accept native updates.** A1 covers authored nodes/headings/ARIA, reversible overrides, native actions/forms, quiet updates, templates, pre-upgrade/reconnect and load ordering.
 
 ### Native primitives and fallback
 
-- **Native path:** labelled native output or a dl pair, with authored prefix/suffix text. Static statistics need only HTML and external CSS.
-- **Small enhancement:** a custom element is optional for live updates and supported Intl formatting; it changes text/property values without replacing authored regions. Unsupported formatting falls back to an explicitly supplied readable string. CSS grid/logical spacing handles layout, and numeric animation remains a separate module.
+- **Native path:** a labelled native text/dl pair with explicit prefix/suffix content.
+  Static `.mui-statistic` CSS needs no Custom Element. Native output/live semantics are
+  author choices, not generated just to display a number.
+- **Small enhancement:** the controller adopts four native regions and changes only safe
+  text/owned visibility. It never parses formatted strings, clones templates, generates
+  user events or infers group/heading/progress/loading roles.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
@@ -40,29 +53,40 @@ Test live updates, units, localized numbers, empty values and preserved rich chi
 - [Pinned implementation source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic)
 - [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
 
-Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **7 local table rows + 0 supplementary declarations + 0 inherited rows = 7 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
+Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`;
+historical baseline **5dcb190 / 0.11.0**, retained implementation/evidence in A1/S1–S3.
+Inventory: **7 original public-document rows + 3 explicit source theme supplements = 10 rows**:
+**7 Verified ADAPTED targets and 3 Intentionally omitted contracts**.
+Legacy prefix/suffix attributes remain target extensions; `.valuePrefix`/`.valueSuffix`
+avoid shadowing native readonly `Element.prefix`. There are no formatter/animation props,
+events, methods or companion APIs to invent as upstream rows.
 
 
 ### Statistic Props
 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
-| [`label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L17) | Prop | Candidate `label` attribute or JS `label`; exact target contract not reviewed. | ⚪ Not reviewed | B1 initial label text; partial only, verify this row. |
-| [`tabular-nums`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L18) | Prop | Candidate presence attribute `tabular-nums`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L19) | Prop | Candidate live JS `value` state; native value/default/event contract needs review. | ⚪ Not reviewed | B1 initial value text; partial only, verify this row. |
+| [`label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L17) | Prop | ADAPTED string attribute/property with nonempty-prop precedence. | 🟢 Verified | Native authored label/heading nodes return when the override is cleared; no inferred heading or group role. |
+| [`tabular-nums`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L18) | Prop | ADAPTED Boolean `.tabularNums` / attribute and CSS font-variant-numeric. | 🟢 Verified | False by default; numeric typography only, not parsing/formatting. |
+| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L19) | Prop | ADAPTED literal string/finite-number attribute/property. | 🟢 Verified | Zero/blank/missing distinct; no NaN/zero coercion, formatter or automatic animation. |
 
 ### Statistic Slots
 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L25) | Slot | Candidate authored `default` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L26) | Slot | Candidate authored `label` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`prefix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L27) | Slot | Candidate authored `prefix` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`suffix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L28) | Slot | Candidate authored `suffix` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L25) | Slot | ADAPTED default/value-region native content. | 🟢 Verified | Present value prop overrides reversibly, including explicit empty; nodes/listeners are not discarded. |
+| [`label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L26) | Slot | ADAPTED `data-mui-statistic-label` native region. | 🟢 Verified | Authored headings/IDs/ARIA preserved under defined prop precedence. |
+| [`prefix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L27) | Slot | ADAPTED native `data-mui-statistic-prefix`. | 🟢 Verified | Native SVG/text/actions retained, preferred over legacy text fallback; no renderer. |
+| [`suffix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L28) | Slot | ADAPTED native `data-mui-statistic-suffix`. | 🟢 Verified | Units/links/buttons stay native with preserved form types/listeners. |
+
+### Explicit source-only supplements
+
+These inherited source declarations are separate from the seven pinned public rows.
+
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / scope |
+| --- | --- | --- | --- | --- |
+| [`theme`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/src/Statistic.tsx) | Inherited source prop | External CSS/custom properties. | ⏭️ Intentionally omitted | No framework theme object/provider injection. |
+| [`themeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/src/Statistic.tsx) | Inherited source prop | External scoped CSS. | ⏭️ Intentionally omitted | No runtime object-shape compatibility. |
+| [`builtinThemeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/src/Statistic.tsx) | Inherited source prop | External CSS source of truth. | ⏭️ Intentionally omitted | No internal framework override machinery. |
 
 <!-- END PINNED API INVENTORY -->

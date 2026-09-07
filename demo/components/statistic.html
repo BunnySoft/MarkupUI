@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Statistic</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-statistic.css">
+  <link rel="stylesheet" href="./statistic.css">
+  <script defer src="../../dist/markup-ui-statistic.global.js"></script>
+  <script defer src="./statistic.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Statistic: passive values and native content</h1>
+    <p>No formatter, number-animation or provider runtime is loaded. Text remains exactly the text the application supplied.</p>
+    <section aria-labelledby="values-heading">
+      <h2 id="values-heading">Legacy attributes, zero and literal strings</h2>
+      <div class="examples">
+        <mui-statistic label="Revenue" value="12345.60" prefix="$" suffix="USD" tabular-nums></mui-statistic>
+        <mui-statistic label="Zero is a value" value="0"></mui-statistic>
+        <mui-statistic label="Leading zeros" value="0012"></mui-statistic>
+        <mui-statistic label="Unknown supplied as text" value="N/A"></mui-statistic>
+        <mui-statistic label="Missing value"></mui-statistic>
+      </div>
+    </section>
+    <section aria-labelledby="authored-heading">
+      <h2 id="authored-heading">Authored headings, values, prefix and suffix</h2>
+      <form id="metric-form">
+        <mui-statistic id="authored" role="group" aria-labelledby="metric-label" tabular-nums>
+          <h3 data-mui-statistic-label id="metric-label">Active users</h3>
+          <span data-mui-statistic-prefix aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M3 14 8 9l4 3 5-7" fill="none" stroke="currentColor" stroke-width="2"></path></svg></span>
+          <strong id="authored-value">128</strong>
+          <span data-mui-statistic-suffix><a id="details-link" href="#native-heading">people</a><button type="button" id="details-action">Details</button><button type="submit" id="submit-action">Submit metric</button></span>
+        </mui-statistic>
+      </form>
+      <div class="controls">
+        <button type="button" id="override">Set property value to zero</button>
+        <button type="button" id="blank">Set explicit empty value</button>
+        <button type="button" id="restore">Restore authored value</button>
+        <button type="button" id="tabular">Toggle tabular figures</button>
+        <button type="button" id="reconnect">Reconnect Statistic</button>
+      </div>
+      <p id="action-status" role="status">0 detail actions.</p>
+      <p id="submit-status" role="status">0 native submissions.</p>
+    </section>
+    <section aria-labelledby="format-heading">
+      <h2 id="format-heading">Application-owned native Intl formatting</h2>
+      <mui-statistic id="formatted" label="Localized amount" suffix="EUR" tabular-nums></mui-statistic>
+      <div class="controls"><button type="button" id="german">German format</button><button type="button" id="english">English format</button></div>
+      <p>Intl runs in the application script. Statistic receives the resulting string without parsing separators or changing units.</p>
+    </section>
+    <section aria-labelledby="native-heading">
+      <h2 id="native-heading">Native description list without JavaScript</h2>
+      <dl class="mui-statistic" tabular-nums>
+        <dt data-mui-statistic-label>Archived reports</dt>
+        <dd data-mui-statistic-display><span data-mui-statistic-value>42</span><span data-mui-statistic-suffix>reports</span></dd>
+      </dl>
+      <p>Static semantic HTML plus CSS is enough. Live announcements or animated numbers are separate application decisions.</p>
+    </section>
+  </main>
+</body>
+</html>

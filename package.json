@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./statistic": {
+      "types": "./dist/components/statistic/index.d.ts",
+      "import": "./dist/markup-ui-statistic.js"
+    },
+    "./statistic/style.css": "./dist/markup-ui-statistic.css",
     "./progress": {
       "types": "./dist/components/progress/index.d.ts",
       "import": "./dist/markup-ui-progress.js"

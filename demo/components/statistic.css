@@ -1,0 +1,9 @@
+:root { font-family: system-ui, sans-serif; color: #242424; background: #fafafa; }
+body { margin: 0; }
+main { max-width: 1000px; margin: auto; padding: 32px; }
+main > section { margin-block: 24px; padding-block: 12px; border-bottom: 1px solid #ddd; }
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.2rem; }
+.examples, .controls { display: flex; align-items: start; flex-wrap: wrap; gap: 24px; margin-block: 20px; }
+button { font: inherit; padding: 5px 8px; }
+#authored [data-mui-statistic-suffix] button { font-size: 14px; margin-inline-start: 8px; }

@@ -1,0 +1,39 @@
+mui-statistic[data-mui-statistic][data-mui-statistic], .mui-statistic {
+  box-sizing: border-box;
+  display: grid;
+  gap: var(--mui-statistic-gap, 4px);
+  min-width: 0;
+  margin: 0;
+}
+:is(mui-statistic[data-mui-statistic], .mui-statistic) > [data-mui-statistic-label] {
+  display: block;
+  margin: 0;
+  color: var(--mui-statistic-label-color, var(--mui-text-secondary, #636366));
+  font-size: var(--mui-statistic-label-size, 14px);
+  font-weight: var(--mui-statistic-label-weight, 400);
+}
+:is(mui-statistic[data-mui-statistic], .mui-statistic) > [data-mui-statistic-display] {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--mui-statistic-unit-gap, 4px);
+  min-width: 0;
+  margin: 0;
+  color: var(--mui-statistic-value-color, var(--mui-text-primary, #333639));
+  font-size: var(--mui-statistic-value-size, 28px);
+  font-weight: var(--mui-statistic-value-weight, 700);
+  line-height: var(--mui-statistic-line-height, 1.1);
+  font-variant-numeric: normal;
+}
+:is(mui-statistic[data-mui-statistic], .mui-statistic)[tabular-nums] > [data-mui-statistic-display] { font-variant-numeric: tabular-nums; }
+:is(mui-statistic[data-mui-statistic], .mui-statistic) > [data-mui-statistic-display] > [data-mui-statistic-prefix] { color: var(--mui-statistic-prefix-color, inherit); }
+:is(mui-statistic[data-mui-statistic], .mui-statistic) > [data-mui-statistic-display] > [data-mui-statistic-suffix] { color: var(--mui-statistic-suffix-color, inherit); }
+:is(mui-statistic[data-mui-statistic], .mui-statistic) > [data-mui-statistic-display] > :is([data-mui-statistic-prefix], [data-mui-statistic-value], [data-mui-statistic-suffix]) { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+:is(mui-statistic[data-mui-statistic], .mui-statistic) > [data-mui-statistic-display] > :is([data-mui-statistic-prefix], [data-mui-statistic-suffix]) :is(svg, img) { inline-size: 1em; block-size: 1em; object-fit: contain; vertical-align: -.125em; }
+mui-statistic[data-mui-statistic][data-mui-statistic][hidden], .mui-statistic[hidden],
+:is(mui-statistic[data-mui-statistic], .mui-statistic) > [hidden],
+:is(mui-statistic[data-mui-statistic], .mui-statistic) > [data-mui-statistic-display] > [hidden],
+:is(mui-statistic[data-mui-statistic], .mui-statistic) [data-mui-statistic-text][hidden],
+:is(mui-statistic[data-mui-statistic], .mui-statistic) [data-mui-statistic-slot][hidden] { display: none; }
+mui-statistic[data-mui-statistic][data-mui-statistic] > :is(template, script, style),
+.mui-statistic.mui-statistic > :is(template, script, style) { display: none; }
