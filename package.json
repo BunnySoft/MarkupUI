@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./empty": {
+      "types": "./dist/components/empty/index.d.ts",
+      "import": "./dist/markup-ui-empty.js"
+    },
+    "./empty/style.css": "./dist/markup-ui-empty.css",
     "./alert": {
       "types": "./dist/components/alert/index.d.ts",
       "import": "./dist/markup-ui-alert.js"

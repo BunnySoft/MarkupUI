@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Empty</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-empty.css">
+  <link rel="stylesheet" href="./empty.css">
+  <script defer src="../../dist/markup-ui-empty.global.js"></script>
+  <script defer src="./empty.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Empty: readable native content and optional fallbacks</h1>
+    <p>Only Empty is loaded. It does not create actions, interactive roles or live announcers.</p>
+    <section aria-labelledby="sizes-heading">
+      <h2 id="sizes-heading">Original decorative illustration and five sizes</h2>
+      <div class="grid" id="sizes">
+        <mui-empty size="tiny" description="Tiny"></mui-empty>
+        <mui-empty size="small" description="Small"></mui-empty>
+        <mui-empty size="medium" description="Medium"></mui-empty>
+        <mui-empty size="large" description="Large"></mui-empty>
+        <mui-empty size="huge" description="Huge"></mui-empty>
+      </div>
+      <mui-empty id="fallback"></mui-empty>
+      <div class="controls">
+        <button type="button" id="localize">Use localized text</button>
+        <button type="button" id="restore-description">Restore default text</button>
+        <button type="button" id="glyph">Use legacy text glyph</button>
+        <button type="button" id="illustration">Restore illustration</button>
+      </div>
+    </section>
+    <section aria-labelledby="authored-heading">
+      <h2 id="authored-heading">Authored description, illustration and recovery controls</h2>
+      <form id="report-form">
+        <mui-empty id="authored" description="Fallback must not replace authored content" role="region" aria-labelledby="empty-heading">
+          <svg data-mui-empty-icon aria-hidden="true" focusable="false" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="M8 12h8" stroke="currentColor" stroke-width="2"></path></svg>
+          <div data-mui-empty-description><h3 id="empty-heading">No reports yet</h3><p>Create a report or browse the examples.</p></div>
+          <div data-mui-empty-extra>
+            <label>Report name <input id="report-name" name="report" value="Draft"></label>
+            <button type="submit" id="create-report">Create report</button>
+            <button type="reset" id="reset-report">Reset name</button>
+            <button type="button" id="browse">Browse examples</button>
+            <a id="help-link" href="#static-heading">Empty-state help</a>
+          </div>
+        </mui-empty>
+      </form>
+      <p id="form-status" role="status">0 submissions.</p>
+      <p id="action-status" role="status">0 browse actions.</p>
+      <div class="controls">
+        <button type="button" id="toggle-description">Toggle description</button>
+        <button type="button" id="toggle-icon">Toggle icon</button>
+        <button type="button" id="toggle-extra">Toggle native extra hidden</button>
+        <button type="button" id="reconnect">Reconnect empty state</button>
+      </div>
+    </section>
+    <section aria-labelledby="template-heading">
+      <h2 id="template-heading">Application-owned native template cloning</h2>
+      <template id="empty-template">
+        <h3 data-mui-empty-description>No saved searches</h3>
+        <div data-mui-empty-extra><button type="button">Create saved search</button></div>
+      </template>
+      <mui-empty id="template-target" description="Template has not been cloned yet"></mui-empty>
+      <button type="button" id="clone-template">Clone native template</button>
+      <p id="template-status" role="status">0 template actions.</p>
+    </section>
+    <section aria-labelledby="static-heading">
+      <h2 id="static-heading">CSS-only native empty state</h2>
+      <section class="mui-empty compact" data-size="small">
+        <h3 data-mui-empty-description>No archived reports</h3>
+        <div data-mui-empty-extra><a href="#authored-heading">Create your first report</a></div>
+      </section>
+      <p>This native section needs no Custom Element or JavaScript. If announcements are needed, author one suitable native live region rather than duplicating it automatically.</p>
+    </section>
+  </main>
+</body>
+</html>

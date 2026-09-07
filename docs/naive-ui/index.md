@@ -3,7 +3,7 @@
 This is a **proposal and migration inventory, not a shipped compatibility layer**.
 Explicitly Verified retained targets, currently Avatar/Avatar Group in `9afc818`,
 Button/ButtonGroup in `43dd57f`, Card in `cebc6d7`, Tag in `6605d29`, Badge in
-`69c9480`, and Alert in the current component change, have implementation and acceptance evidence; the remaining
+`69c9480`, Alert in `2a1eb42`, and Empty in the current component change have implementation and acceptance evidence; the remaining
 catalog must not inherit that status.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
 Use the [master migration plan](migration-plan.md) for phase dependencies and current execution
@@ -28,7 +28,7 @@ framework-prop passthrough**. No component implementation is added by these docu
   HTTP 404 response; immutable repository Markdown remains the API authority.
 - Original MarkupUI comparison baseline: `5dcb190`, package 0.11.0. Avatar's later retained
   implementation is `9afc818`, Button's is `43dd57f`, Card's is `cebc6d7`, and Tag's is `6605d29`;
-  Badge's and Alert's retained implementation/evidence are linked below; other unreviewed slices
+  Badge's, Alert's and Empty's retained implementation/evidence are linked below; other unreviewed slices
   retain the historical baseline.
   Evidence links point to
   [core registry](../../src/components/elements.ts),
@@ -56,8 +56,8 @@ implementation and acceptance evidence exist. Existing-source evidence is kept i
 The numbered component checklists distinguish proposed work from accepted implementation.
 Avatar's four retained-scope tasks are checked using `9afc818`, Button's four using
 `43dd57f`, Card's four using `cebc6d7`, Tag's four using `6605d29`, and Badge's four using
-its linked acceptance record, plus Alert's four with its retained acceptance record;
-the other **360 tasks remain unchecked**. Empty is next, not started. Reconcile later implementation evidence
+its linked acceptance record, plus Alert's and Empty's four each with their retained acceptance records;
+the other **356 tasks remain unchecked**. Skeleton is next, not started. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
 ### Native browser capabilities reduce implementation scope
@@ -170,8 +170,8 @@ build and **43 tests** (16 Avatar-focused plus 27 existing), along with **Chromi
 acceptance. Separate ESM/classic JavaScript ceilings are 4,000 gzip bytes each; CSS has a
 1,500-byte ceiling. Browser coverage is not all-browser certification or pixel parity.
 The reference Avatar page reconciles all **35 rows: 19 Verified adapted targets and
-16 Intentionally omitted contracts**. Button, Card, Tag, Badge and Alert are also verified as recorded below;
-**Empty is next, not started**, and the master plan owns
+16 Intentionally omitted contracts**. Button, Card, Tag, Badge, Alert and Empty are also verified as recorded below;
+**Skeleton is next, not started**, and the master plan owns
 the sequential implementation/build/commit workflow.
 
 ### Button pilot: accepted native scope
@@ -210,7 +210,7 @@ Card never removes itself in response to close intent or infers a heading/landma
 close focusability defaults true. The three pilot ESM entries also composed together before
 the legacy aggregate with one native form submission and separate CSS in Chromium.
 
-The pilot retained scopes, Tag, Badge and Alert are complete; **Empty is next, not started**. Detailed
+The pilot retained scopes, Tag, Badge, Alert and Empty are complete; **Skeleton is next, not started**. Detailed
 phase progress and per-component commits belong in the master migration plan.
 
 ### Tag: accepted P2 native scope
@@ -249,7 +249,7 @@ Alert's subsequent retained acceptance is recorded below.
 ### Alert: verified P2 native scope
 
 The [Alert implementation and acceptance record](../components/alert.md) closes the retained
-scope in this component change: optional ESM/classic and external CSS, native header/content/
+scope in `2a1eb42`: optional ESM/classic and external CSS, native header/content/
 HTML-or-SVG icon regions, native actions, safe title fallback and labelled close intent.
 Default notices have no forced assertive role. Author-supplied live-region semantics are
 preserved without nested announcers or redundant ARIA writes during text updates.
@@ -262,7 +262,25 @@ Chromium native keyboard/focus/forms, roles/DOM stability, SVG/CSS/RTL and load-
 Actual screen-reader speech timing is not certified. Core stays 14,611/15,000 gzip bytes;
 Alert ESM/classic/CSS are 1,770/1,981/1,233 gzip bytes. Exports are
 `@dataengine/markup-ui/alert` and `@dataengine/markup-ui/alert/style.css`.
-Empty is next, followed by Skeleton/Spin, only through coordinator selection.
+Empty's subsequent retained acceptance is recorded below; Skeleton/Spin follow afterward.
+
+### Empty: verified P2 native scope
+
+The [Empty implementation and acceptance record](../components/empty.md) closes its retained
+scope in this component change: optional ESM/classic and external CSS, safe localizable
+description fallback, original decorative SVG, native description/icon/extra content and
+five CSS sizes. Authored content wins without losing native headings, action listeners,
+input state, form types or explicit ARIA. Templates remain inert; applications may clone
+them with native DOM APIs. Static `.mui-empty` sections require no controller.
+
+The reference retains all **seven pinned rows** and adds **four explicit source render/theme
+supplements**: **11 rows, 7 Verified ADAPTED native targets and 4 Intentionally omitted**.
+Four retained tasks are accepted against **190 passing tests**, build/budget gates and
+Chromium SVG namespace/size, localization, native form/keyboard/focus, region visibility,
+template/reconnect and load-order evidence. No role, action or live announcer is generated.
+Core stays 14,611/15,000 gzip bytes; Empty ESM/classic/CSS are 1,596/1,805/759 gzip bytes.
+Exports are `@dataengine/markup-ui/empty` and `@dataengine/markup-ui/empty/style.css`.
+Skeleton is next, then Spin, only through coordinator selection.
 
 ## Common Components (15)
 
@@ -319,7 +337,7 @@ Empty is next, followed by Skeleton/Spin, only through coordinator selection.
 | [Code](components/code.md) | 🔵 Planned; ⏭️ highlighter omitted | Code styling only | P2; exclusions |
 | [Data Table](components/data-table.md) | 🔵 Planned | Partial advanced grid | P5 |
 | [Descriptions](components/descriptions.md) | 🔵 Planned | Partial core | P2 |
-| [Empty](components/empty.md) | 🔵 Planned | Partial core | P2 |
+| [Empty](components/empty.md) | 🟢 Verified retained scope; 4 explicit omissions | Standalone native Empty; [accepted evidence](../components/empty.md), basic aggregate preserved | P2 |
 | [Equation](components/equation.md) | ⏭️ Intentionally omitted: TeX renderer | None | Exclusions |
 | [Image](components/image.md) | 🔵 Planned | Related avatar | P2, P6 |
 | [List](components/list.md) | 🔵 Planned | List/item roles and styles | P2 |
@@ -431,15 +449,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 568: 366 inline fields, 174 type/helper/exclusion entries and 28 explicit Button/Card/Tag/Badge/Alert source supplements |
+| Supplementary named declarations | 572: 366 inline fields, 174 type/helper/exclusion entries and 32 explicit Button/Card/Tag/Badge/Alert/Empty source supplements |
 | Explicit inherited tracker rows | 264 |
-| Total tracker rows | 3,052; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 24 Avatar/Button/Card/Tag/Badge/Alert retained-scope tasks accepted, 360 unchecked |
+| Total tracker rows | 3,056; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 28 Avatar/Button/Card/Tag/Badge/Alert/Empty retained-scope tasks accepted, 356 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,052 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge and 9 Alert Verified rows cite acceptance evidence |
-| Source agreement | All 2,220 direct source rows remain covered; 90 unchanged inventories match extraction; Avatar/Button/Card/Tag/Badge/Alert preserve named rows with accepted dispositions |
-| Local links | 648 relative file links validated after Alert reconciliation; the historical 612-link snapshot also checked heading anchors |
+| Status presentation | All 3,056 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert and 7 Empty Verified rows cite acceptance evidence |
+| Source agreement | All 2,220 direct source rows remain covered; 89 unchanged inventories match extraction; Avatar/Button/Card/Tag/Badge/Alert/Empty preserve named rows with accepted dispositions |
+| Local links | 657 relative file links validated after Empty reconciliation; the historical 612-link snapshot also checked heading anchors |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

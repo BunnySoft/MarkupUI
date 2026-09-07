@@ -1,7 +1,7 @@
 # MarkupUI migration plan
 
-**Plan state: 🟠 In progress — the Avatar, Button and Card pilots and P2 Tag/Badge/Alert are completed
-for their retained scope; Empty is next, not started.** Existing MarkupUI features are a partial baseline,
+**Plan state: 🟠 In progress — the Avatar, Button and Card pilots and P2 Tag/Badge/Alert/Empty are completed
+for their retained scope; Skeleton is next, not started.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -29,7 +29,7 @@ coverage, implementation status, and upstream feature parity separate.
 | --- | --- | --- | --- | --- |
 | P0 — Architecture and contracts | 🔵 Planned | Establish separated sources, compatible loading, lifecycle, events and native-control conventions. | None | A minimal external-CSS example works without a consumer build step, and existing loading remains supported. |
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
-| P2 — Primitives and layout | 🟠 In progress | Tag, Badge and Alert verified; Empty next, expanding feedback with native markup and CSS first. | P1 pattern | Retained features have evidence; styling-only features do not acquire unnecessary controllers. |
+| P2 — Primitives and layout | 🟠 In progress | Tag, Badge, Alert and Empty verified; Skeleton next, expanding feedback with native markup and CSS first. | P1 pattern | Retained features have evidence; styling-only features do not acquire unnecessary controllers. |
 | P3 — Interaction foundations | 🔵 Planned | Implement predictable focus, keyboard, overlays and navigation. | P0 lifecycle; P1 controls | Nested interaction, dismissal and focus behavior are defined and demonstrated. |
 | P4 — Forms and selection | 🔵 Planned | Make native controls dependable, then add optional richer selection. | P0 form contract; P3 for popup variants | Values, labels, submission, reset, validity and event semantics are consistent. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
@@ -76,7 +76,7 @@ rewrite all components before demonstrating one useful vertical slice.
 | Task | Status | Action | Deliverable |
 | --- | --- | --- | --- |
 | P2-01 — Typography and content | 🔵 Planned | Map headings, text, icon wrappers, ellipsis and decorative text to semantic HTML and CSS. | Native reading structure; no icon library or syntax engine dependency. |
-| P2-02 — Small feedback | 🟠 In progress | Tag verified in `6605d29`; Badge in `69c9480`; Alert verified in this change; Empty next, then Skeleton/Spin. | [Tag acceptance](../components/tag.md): 118 tests; [Badge acceptance](../components/badge.md): 141; [Alert acceptance](../components/alert.md): 167 plus Chromium native-role/control/loading evidence. |
+| P2-02 — Small feedback | 🟠 In progress | Tag in `6605d29`, Badge in `69c9480`, Alert in `2a1eb42` verified; Empty verified in this change; Skeleton next, then Spin. | [Tag acceptance](../components/tag.md): 118 tests; [Badge](../components/badge.md): 141; [Alert](../components/alert.md): 167; [Empty](../components/empty.md): 190 plus Chromium native-display/action/template evidence. |
 | P2-03 — Progress and statistics | 🔵 Planned | Define determinate/indeterminate and numeric formatting behavior; separate optional animation from static content. | Accessible values and reduced-motion-aware presentation. |
 | P2-04 — Layout | 🔵 Planned | Express Space, Flex, Grid, Layout, Divider and simple alignment through CSS. | Responsive, logical-direction layout without JS measurement unless demonstrably necessary. |
 | P2-05 — Static compound display | 🔵 Planned | Define List, Descriptions, Timeline, Breadcrumb and similar content anatomy. | Reusable markup conventions with no compulsory data renderer or router. |
@@ -183,8 +183,9 @@ excluded from delivery scope but never counted as implemented.
 
 ## First implementation slice
 
-**Next component: Empty (P2-02), not started; coordinator selection pending.**
-Alert completed its retained implementation and acceptance in this component change.
+**Next component: Skeleton (P2-02), not started; coordinator selection pending.**
+Empty completed its retained implementation and acceptance in this component change.
+Alert completed its retained implementation and acceptance in `2a1eb42`.
 Badge completed its retained implementation and acceptance in `69c9480`.
 Avatar and its group were committed in `9afc818`; Button and
 its group in `43dd57f`; Card in `cebc6d7`; Tag in `6605d29`. These demonstrate the standalone external-CSS
@@ -200,8 +201,13 @@ source supplements: 9 Verified ADAPTED targets and 5 omissions. Its four tasks a
 with [167-test/Chromium evidence](../components/alert.md), covering native labelled close
 intent, explicit-only live semantics, preserved nodes/actions, HTML/SVG icons and load ordering.
 It does not reproduce upstream auto-hide/Boolean-promise or after-leave contracts.
-The index now records 3,052 rows and 24 accepted retained tasks out of 384, not full upstream parity.
-Await coordinator selection of Empty, then Skeleton/Spin, while preserving native
+Empty's [reference inventory](components/empty.md) preserves seven pinned rows plus four
+source render/theme supplements: 7 Verified ADAPTED targets and 4 omissions. Its four tasks
+are closed with [190-test/Chromium evidence](../components/empty.md), including original
+SVG namespaces/sizes, authored fallback precedence, native recovery actions/forms/focus,
+inert templates/application cloning, reconnect and loading order.
+The index now records 3,056 rows and 28 accepted retained tasks out of 384, not full upstream parity.
+Await coordinator selection of Skeleton, then Spin, while preserving native
 semantics and the legacy aggregate. Each component gets its own documentation update, build,
 acceptance evidence and commit before advancing. No dates or effort estimates are assigned
 until retained feature scope and optional exclusions are settled.
