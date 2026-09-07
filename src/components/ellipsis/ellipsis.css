@@ -1,0 +1,80 @@
+.mui-ellipsis {
+  display: block;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+@supports selector(:has(*)) {
+  .mui-ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .mui-ellipsis[data-multiline] {
+    overflow: visible;
+    white-space: normal;
+    text-overflow: clip;
+  }
+  @supports (-webkit-line-clamp: 2) or (line-clamp: 2) {
+    .mui-ellipsis[data-multiline] {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: var(--mui-ellipsis-lines, 2);
+      line-clamp: var(--mui-ellipsis-lines, 2);
+      overflow: hidden;
+    }
+  }
+}
+.mui-ellipsis:is(a, button, input, select, textarea, summary, details, area, [usemap], iframe, object, embed, audio, video, [tabindex], [contenteditable]),
+.mui-ellipsis:has(:is(a, button, input, select, textarea, summary, details, area, [usemap], iframe, object, embed, audio, video, [tabindex], [contenteditable])),
+:is(a, button, [tabindex], [contenteditable]) .mui-ellipsis {
+  display: revert;
+  overflow: visible;
+  white-space: normal;
+  text-overflow: clip;
+  -webkit-line-clamp: unset;
+  line-clamp: none;
+}
+details.mui-ellipsis-disclosure {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+details.mui-ellipsis-disclosure > summary {
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+details.mui-ellipsis-disclosure > summary:focus-visible {
+  outline: 2px solid var(--mui-ellipsis-focus-color, currentColor);
+  outline-offset: 3px;
+}
+details.mui-ellipsis-disclosure > summary > .mui-ellipsis-hint {
+  display: block;
+  margin-block-start: .25em;
+  font-size: .875em;
+  text-decoration: underline;
+  text-underline-offset: .15em;
+}
+details.mui-ellipsis-disclosure[open] > summary > .mui-ellipsis {
+  display: block;
+  overflow: visible;
+  white-space: normal;
+  text-overflow: clip;
+  -webkit-line-clamp: unset;
+  line-clamp: none;
+}
+.mui-ellipsis[hidden],
+.mui-ellipsis-hint[hidden],
+details.mui-ellipsis-disclosure[hidden],
+template.mui-ellipsis { display: none !important; }
+@media print {
+  .mui-ellipsis, .mui-ellipsis[data-multiline] {
+    display: block;
+    overflow: visible;
+    white-space: normal;
+    text-overflow: clip;
+    -webkit-line-clamp: unset;
+    line-clamp: none;
+  }
+  details.mui-ellipsis-disclosure > summary { cursor: auto; }
+  details.mui-ellipsis-disclosure > summary > .mui-ellipsis-hint { display: none; }
+}

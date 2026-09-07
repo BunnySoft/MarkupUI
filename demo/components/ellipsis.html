@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Ellipsis — native CSS and disclosure</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-ellipsis.css">
+  <link rel="stylesheet" href="./ellipsis.css">
+</head>
+<body>
+  <main>
+    <h1>Native text truncation and disclosure</h1>
+    <p>Original text, no JavaScript or tooltip. Use the visible native disclosure when readers need the full text on touch or keyboard.</p>
+    <section aria-labelledby="disclosure-heading">
+      <h2 id="disclosure-heading">One copy, native expansion</h2>
+      <details class="mui-ellipsis-disclosure bounded" id="single-disclosure">
+        <summary id="single-summary">
+          <span class="mui-ellipsis" id="single">This is the complete original sentence, kept in one native text node even when its visual presentation is abbreviated.</span>
+          <span class="mui-ellipsis-hint">Expand or collapse full text</span>
+        </summary>
+      </details>
+      <details class="mui-ellipsis-disclosure bounded" id="multi-disclosure">
+        <summary id="multi-summary">
+          <span class="mui-ellipsis" data-multiline id="multi">A longer description uses two lines when the browser supports native clamping. The complete text stays here, including <strong>important native emphasis</strong>. Open this disclosure to read or select all of it without a tooltip or duplicate hidden label. Close it again using the same native control.</span>
+          <span class="mui-ellipsis-hint">Expand or collapse description</span>
+        </summary>
+      </details>
+    </section>
+    <section aria-labelledby="passive-heading">
+      <h2 id="passive-heading">Passive summaries with a visible full-content route</h2>
+      <div class="row">
+        <p class="mui-ellipsis" id="flex-text">A flexible row keeps a very long descriptive sentence within its allocated space while the adjacent native link remains outside the clipping boundary.</p>
+        <a href="#complete-content" id="full-link">Read complete section</a>
+      </div>
+      <div class="grid">
+        <p class="mui-ellipsis three-lines" data-multiline id="grid-text">LongUnbrokenNativeTextStillWrapsWithinTheAvailableInlineSpaceRatherThanForcingTheGridTrackToGrowBeyondItsContainer. Another sentence demonstrates three author-selected lines and automatic response to native layout changes.</p>
+        <span>Adjacent cell</span>
+      </div>
+      <p>Use only noninteractive phrasing content inside truncation. An accidentally nested native control below makes this region expand rather than clip its focus target:</p>
+      <p class="mui-ellipsis bounded" id="safe-content">A complete deliberately long sentence before <button type="button" id="safe-button">Native action</button> remains visible; this region is not truncated.</p>
+    </section>
+    <section dir="rtl" lang="ar" aria-labelledby="rtl-heading">
+      <h2 id="rtl-heading">نص أصلي</h2>
+      <details class="mui-ellipsis-disclosure bounded" id="rtl-disclosure">
+        <summary id="rtl-summary">
+          <span class="mui-ellipsis" id="rtl">هذا نص عربي كامل يحتفظ باتجاهه ومحتواه الأصلي ويمكن توسيعه باستخدام عنصر إفصاح أصلي دون نسخ النص أو إخفاء عناصر تفاعلية</span>
+          <span class="mui-ellipsis-hint">توسيع النص أو طيه</span>
+        </summary>
+      </details>
+    </section>
+    <section id="complete-content" tabindex="-1">
+      <h2>Complete section</h2>
+      <p>A destination for the adjacent native link. Applications supply their actual full-content route; a title attribute is not a replacement for accessible disclosure.</p>
+    </section>
+    <p id="outside">Outside the opt-in classes, ordinary text remains unchanged.</p>
+  </main>
+</body>
+</html>

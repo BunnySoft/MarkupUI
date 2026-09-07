@@ -1,0 +1,20 @@
+body { margin: 0; font-family: system-ui, sans-serif; color: #242426; background: #fafafa; line-height: 1.5; }
+main { max-width: 960px; margin-inline: auto; padding: 32px; }
+section { margin-block: 24px; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.2rem; }
+.bounded { inline-size: 30ch; max-inline-size: 100%; }
+.mui-ellipsis-disclosure { box-sizing: border-box; margin-block: 16px; padding: 12px; border: 1px solid #96969d; border-radius: 6px; }
+.row { display: flex; align-items: start; gap: 16px; max-inline-size: 38rem; }
+.row > p { flex: 1; margin: 0; }
+.row > a { flex: none; max-inline-size: 12ch; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 8rem); gap: 16px; max-inline-size: 38rem; }
+.three-lines { --mui-ellipsis-lines: 3; }
+a { color: #175fbb; }
+a:focus-visible, button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+@media (max-width: 420px) {
+  main { padding: 16px; }
+  .row { flex-direction: column; }
+  .row > p { inline-size: 100%; }
+  .row > a { max-inline-size: none; }
+}

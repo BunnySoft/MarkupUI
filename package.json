@@ -10,6 +10,7 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./ellipsis/style.css": "./dist/markup-ui-ellipsis.css",
     "./gradient-text/style.css": "./dist/markup-ui-gradient-text.css",
     "./icon/style.css": "./dist/markup-ui-icon.css",
     "./typography/style.css": "./dist/markup-ui-typography.css",
