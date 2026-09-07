@@ -22,7 +22,7 @@ const shared = {
   sourcemap: true,
   target: ["es2022"],
 }
-const components = ["avatar", "button", "card", "tag"]
+const components = ["avatar", "button", "card", "tag", "badge"]
 
 await Promise.all([
   build({
@@ -99,6 +99,9 @@ const bundleBudgets = {
   "markup-ui-tag.js": 3_500,
   "markup-ui-tag.global.js": 3_500,
   "markup-ui-tag.css": 2_500,
+  "markup-ui-badge.js": 2_500,
+  "markup-ui-badge.global.js": 2_500,
+  "markup-ui-badge.css": 2_000,
 }
 const bundles = {}
 

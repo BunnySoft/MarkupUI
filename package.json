@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./badge": {
+      "types": "./dist/components/badge/index.d.ts",
+      "import": "./dist/markup-ui-badge.js"
+    },
+    "./badge/style.css": "./dist/markup-ui-badge.css",
     "./tag": {
       "types": "./dist/components/tag/index.d.ts",
       "import": "./dist/markup-ui-tag.js"

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Badge</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-badge.css">
+  <link rel="stylesheet" href="./badge.css">
+  <script defer src="../../dist/markup-ui-badge.global.js"></script>
+  <script defer src="./badge.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Badge: passive counts and preserved native targets</h1>
+    <p>Badge formats and positions an indicator. Target names and announcements remain explicitly owned by the application.</p>
+    <section aria-labelledby="dynamic-heading">
+      <h2 id="dynamic-heading">Dynamic count with a separately named native action</h2>
+      <form id="message-form">
+        <mui-badge id="unread" value="12" max="99" decorative>
+          <button id="inbox" type="submit" aria-label="Inbox, 12 unread messages">Inbox</button>
+        </mui-badge>
+      </form>
+      <p id="unread-status" role="status">12 unread messages.</p>
+      <p id="submit-status" role="status">0 native submissions.</p>
+      <div class="examples">
+        <button type="button" id="increment">Add one</button>
+        <button type="button" id="zero">Set zero</button>
+        <button type="button" id="overflow">Set 105</button>
+        <label><input type="checkbox" id="show-zero"> Show zero</label>
+        <label><input type="checkbox" id="show-indicator" checked> Show indicator</label>
+        <button type="button" id="reconnect">Reconnect Badge</button>
+      </div>
+    </section>
+    <section aria-labelledby="values-heading">
+      <h2 id="values-heading">Standalone values and a CSS-only native badge</h2>
+      <div class="examples" id="types">
+        <mui-badge value="8"> </mui-badge>
+        <mui-badge value="8" type="success"></mui-badge>
+        <mui-badge value="8" type="error"></mui-badge>
+        <mui-badge value="8" type="warning"></mui-badge>
+        <mui-badge value="8" type="info"></mui-badge>
+        <mui-badge value="NEW" class="brand"></mui-badge>
+        <span class="mui-badge-value">CSS only</span>
+      </div>
+      <p>Signed balance: <mui-badge id="negative" value="-3" show-zero></mui-badge></p>
+      <p>Authored status: <mui-badge id="custom-value" value="0"><span data-mui-badge-value><strong>Ready</strong></span></mui-badge></p>
+      <p>Background job running <mui-badge id="processing" dot processing decorative type="success"></mui-badge></p>
+    </section>
+    <section aria-labelledby="placement-heading">
+      <h2 id="placement-heading">Logical placement and external CSS offsets</h2>
+      <div class="examples placements">
+        <mui-badge value="3" placement="top-start" decorative><button type="button">Top start</button></mui-badge>
+        <mui-badge value="3" placement="top-end" decorative><button type="button">Top end</button></mui-badge>
+        <mui-badge value="3" placement="bottom-start" decorative><button type="button">Bottom start</button></mui-badge>
+        <mui-badge value="3" placement="bottom-end" decorative><button type="button">Bottom end</button></mui-badge>
+        <mui-badge id="offset-badge" value="3" class="offset" decorative><button type="button">Inset offset</button></mui-badge>
+        <mui-badge id="rtl-badge" value="3" dir="rtl" decorative><button type="button">RTL end</button></mui-badge>
+      </div>
+      <p>Large external CSS sizing: <mui-badge id="large-badge" value="1000" class="large"></mui-badge></p>
+    </section>
+    <section aria-labelledby="native-heading">
+      <h2 id="native-heading">Disabled and described targets remain native</h2>
+      <div class="examples">
+        <mui-badge value="4" decorative><button type="button" disabled aria-label="Disabled inbox, 4 unread">Disabled inbox</button></mui-badge>
+        <mui-badge id="described-badge"><button type="button" aria-describedby="badge-description">Notifications</button><span data-mui-badge-value id="badge-description">New</span></mui-badge>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
