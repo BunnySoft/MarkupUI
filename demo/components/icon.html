@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Icon — CSS only</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-icon.css">
+  <link rel="stylesheet" href="./icon.css">
+</head>
+<body>
+  <main>
+    <h1>Icon and IconWrapper use authored native assets</h1>
+    <p>No JavaScript, icon package, remote asset loader or synthetic role is needed.</p>
+    <section aria-labelledby="paint-heading">
+      <h2 id="paint-heading">Current color, fixed multicolor and stroke-only artwork</h2>
+      <div class="examples">
+        <span class="mui-icon blue" id="current-color" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></span>
+        <svg class="mui-icon large" id="multicolor" role="img" aria-labelledby="multi-title" aria-describedby="multi-description" viewBox="0 0 32 24">
+          <title id="multi-title">Two colored circles</title>
+          <desc id="multi-description">Original simple overlapping shapes.</desc>
+          <circle cx="11" cy="12" r="8" fill="#e85d4a"></circle>
+          <circle cx="21" cy="12" r="8" fill="#3388cc" opacity=".8"></circle>
+        </svg>
+        <svg class="mui-icon large" id="stroke-only" aria-hidden="true" color="#a04080" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 13 4 4L20 5"></path></svg>
+        <span class="mui-icon large" id="glyph" aria-hidden="true">◇</span>
+      </div>
+      <p>These are original minimal SVG/text examples, not imported vendor assets. Fixed fills and strokes are never rewritten by the stylesheet.</p>
+    </section>
+    <section aria-labelledby="size-heading">
+      <h2 id="size-heading">Sizing, intrinsic aspect ratio and nested viewports</h2>
+      <div class="examples">
+        <span class="mui-icon rectangular" id="aspect" aria-hidden="true"><svg viewBox="0 0 40 20" preserveAspectRatio="xMidYMid meet"><rect x="2" y="2" width="36" height="16" rx="2" fill="#3388cc"></rect></svg></span>
+        <svg class="mui-icon large" id="outer-svg" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" fill="#eee"></rect><svg id="nested-svg" x="10" y="12" width="20" height="10" viewBox="0 0 20 10"><rect width="20" height="10" fill="#e85d4a"></rect></svg></svg>
+        <img class="mui-icon large" id="native-image" width="40" height="20" alt="Original blue rectangle" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='20'%3E%3Crect width='40' height='20' fill='%233388cc'/%3E%3C/svg%3E">
+      </div>
+      <p>Supply a viewBox for scalable inline SVG. The native preserveAspectRatio choice remains yours; nested SVG viewport dimensions are not reset.</p>
+    </section>
+    <section aria-labelledby="depth-heading">
+      <h2 id="depth-heading">Five explicit CSS depths</h2>
+      <div class="examples" id="depths">
+        <span class="mui-icon large" data-depth="1" aria-hidden="true">◆</span>
+        <span class="mui-icon large" data-depth="2" aria-hidden="true">◆</span>
+        <span class="mui-icon large" data-depth="3" aria-hidden="true">◆</span>
+        <span class="mui-icon large" data-depth="4" aria-hidden="true">◆</span>
+        <span class="mui-icon large" data-depth="5" aria-hidden="true">◆</span>
+      </div>
+      <p>Depth changes graphic opacity, not meaning or interactivity. Forced-colors mode restores full opacity.</p>
+    </section>
+    <section aria-labelledby="wrapper-heading">
+      <h2 id="wrapper-heading">Native wrapper shapes and accessible actions</h2>
+      <div class="examples">
+        <span class="mui-icon-wrapper" id="default-wrapper" aria-hidden="true"><span class="mui-icon">+</span></span>
+        <span class="mui-icon-wrapper custom-wrapper" id="custom-wrapper" aria-hidden="true"><span class="mui-icon">✓</span></span>
+        <button type="button" class="icon-action" id="save-button" aria-label="Save"><span class="mui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 13 4 4L20 5"></path></svg></span></button>
+        <a class="mui-icon-wrapper action-wrapper" id="native-link" href="#destination" aria-label="Next section"><span class="mui-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></span></a>
+      </div>
+      <p>Name the button/link once, and hide its decorative graphic. For a meaningful standalone SVG, use its own title/description/name instead of a second wrapper name.</p>
+      <p id="destination" tabindex="-1">Native link destination.</p>
+    </section>
+    <section dir="rtl" lang="ar" aria-labelledby="rtl-heading">
+      <h2 id="rtl-heading">رمز ونص</h2>
+      <p><span class="mui-icon blue" aria-hidden="true">◆</span> نص عربي</p>
+    </section>
+    <section aria-labelledby="outside-heading">
+      <h2 id="outside-heading">Unrelated SVG stays outside the opt-in</h2>
+      <svg id="outside-svg" width="70" height="30" viewBox="0 0 70 30" aria-hidden="true"><rect width="70" height="30" fill="#556677"></rect></svg>
+    </section>
+  </main>
+</body>
+</html>

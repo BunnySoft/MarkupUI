@@ -1,0 +1,13 @@
+body { margin: 0; font-family: system-ui, sans-serif; background: #fafafa; color: #242426; }
+main { max-width: 960px; margin-inline: auto; padding: 32px; }
+section { margin-block: 24px; }
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.2rem; }
+.examples { display: flex; align-items: center; flex-wrap: wrap; gap: 24px; margin-block: 16px; }
+.blue { --mui-icon-color: #175fbb; --mui-icon-size: 32px; }
+.large { --mui-icon-size: 40px; }
+.rectangular { --mui-icon-size: 48px; }
+.custom-wrapper { --mui-icon-wrapper-size: 40px; --mui-icon-wrapper-radius: 50%; --mui-icon-wrapper-background: #edf0fa; --mui-icon-wrapper-color: #7040a0; --mui-icon-size: 24px; }
+.icon-action, .action-wrapper { width: 44px; height: 44px; }
+.icon-action { display: inline-flex; align-items: center; justify-content: center; font-size: 24px; }
+.action-wrapper { --mui-icon-size: 24px; }

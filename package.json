@@ -10,6 +10,7 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./icon/style.css": "./dist/markup-ui-icon.css",
     "./typography/style.css": "./dist/markup-ui-typography.css",
     "./statistic": {
       "types": "./dist/components/statistic/index.d.ts",
