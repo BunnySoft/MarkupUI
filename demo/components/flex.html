@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Flex — native CSS only</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-flex.css">
+  <link rel="stylesheet" href="./flex.css">
+</head>
+<body>
+  <main>
+    <h1>Native Flex without a runtime</h1>
+    <p>Original elements, native layout and DOM order. No child wrappers, role changes, gap detection or JavaScript size parser.</p>
+    <section aria-labelledby="presets-title">
+      <h2 id="presets-title">Pinned spacing presets</h2>
+      <div class="mui-flex measurement" data-size="small" id="small"><span>Small 1</span><span>Small 2</span><span>Small 3</span></div>
+      <div class="mui-flex measurement" id="medium"><span>Med 1</span><span>Med 2</span><span>Med 3</span></div>
+      <div class="mui-flex measurement" data-size="large" id="large"><span>Large 1</span><span>Large 2</span><span>Large 3</span></div>
+    </section>
+    <section aria-labelledby="tuple-title">
+      <h2 id="tuple-title">Tuple axes and native wrapping</h2>
+      <p>The source tuple [20, 6] means column-gap:20px and row-gap:6px. The same CSS gaps apply in a column; they are not swapped.</p>
+      <div class="mui-flex measurement tuple" id="tuple"><span>One</span><span>Two</span><span>Three</span></div>
+      <div class="mui-flex measurement tuple" data-vertical data-wrap="true" id="vertical"><span>One</span><span>Two</span><span>Three</span></div>
+      <p>Vertical mode stays nowrap, matching the pinned source, even with data-wrap="true".</p>
+      <div class="mui-flex measurement no-wrap" data-wrap="false" id="no-wrap"><span>One</span><span>Two</span><span>Three</span></div>
+      <p class="inline-example">Native inline text before <span class="mui-flex" data-inline data-size="small" id="inline"><span>one</span><span>two</span></span> and after.</p>
+    </section>
+    <section aria-labelledby="alignment-title">
+      <h2 id="alignment-title">Native alignment and justification</h2>
+      <div class="mui-flex measurement aligned" id="aligned"><span>First</span><span>Last</span></div>
+    </section>
+    <section aria-labelledby="nested-title">
+      <h2 id="nested-title">Independent nested presets and hidden items</h2>
+      <div class="mui-flex" data-size="large" id="nested-outer">
+        <div class="mui-flex measurement" data-size="small" id="nested-small"><span>A</span><span>B</span></div>
+        <div class="mui-flex measurement" id="nested-medium"><span>C</span><span>D</span></div>
+      </div>
+      <div class="mui-flex measurement" id="hidden-items"><span id="visible-first">First</span><span hidden id="hidden-item">Hidden</span><span id="visible-last">Last</span></div>
+      <div class="mui-flex" data-inline hidden id="hidden-root"><button type="button">Still hidden</button></div>
+      <template class="mui-flex" id="native-template"><span>Application-owned inert template</span></template>
+      <div class="native-grid">
+        <div class="mui-flex" id="nested-grid-flex"><p class="long-copy">AnOriginalUnbrokenTextValueThatWrapsInsideANativeFlexItemWithoutForcingItsGridTrackToOverflow</p></div>
+        <span>Grid cell</span>
+      </div>
+    </section>
+    <section aria-labelledby="native-title">
+      <h2 id="native-title">Native list markers, actions and forms</h2>
+      <ol class="mui-flex" data-vertical data-size="small" type="A" start="3" id="native-list">
+        <li><a href="#destination" id="list-first">First native list link</a></li>
+        <li><a href="#destination" id="list-second">Second native list link</a></li>
+      </ol>
+      <form class="mui-flex" data-vertical id="native-form" method="get" action="./flex.html#destination">
+        <div class="mui-flex" data-size="small">
+          <label for="native-name">Name</label>
+          <input name="name" id="native-name" value="Original" required>
+        </div>
+        <div class="mui-flex" data-size="small">
+          <button type="submit" id="native-submit">Native submit</button>
+          <button type="reset" id="native-reset">Native reset</button>
+          <button type="button" disabled id="native-disabled">Unavailable</button>
+          <a href="#destination" id="native-link">Native link</a>
+        </div>
+      </form>
+      <p id="destination" tabindex="-1">The form submits through normal GET navigation to this same static example; no application handler is installed.</p>
+    </section>
+    <section aria-labelledby="rtl-title" dir="rtl" lang="ar">
+      <h2 id="rtl-title">ترتيب أصلي</h2>
+      <div class="mui-flex measurement" data-size="large" id="rtl"><span id="rtl-first">الأول</span><span id="rtl-second">الثاني</span></div>
+      <p>No row-reverse is required: native document direction defines inline start.</p>
+    </section>
+    <p id="outside">Outside the opt-in, layout and native semantics remain unchanged.</p>
+  </main>
+</body>
+</html>

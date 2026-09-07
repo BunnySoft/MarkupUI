@@ -1,0 +1,29 @@
+.mui-flex {
+  --_mui-flex-row-gap: 8px;
+  --_mui-flex-column-gap: 12px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: var(--mui-flex-align, normal);
+  justify-content: var(--mui-flex-justify, start);
+  row-gap: var(--mui-flex-row-gap, var(--_mui-flex-row-gap));
+  column-gap: var(--mui-flex-column-gap, var(--_mui-flex-column-gap));
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+.mui-flex > * { min-inline-size: 0; }
+.mui-flex[data-size="small"] {
+  --_mui-flex-row-gap: 4px;
+  --_mui-flex-column-gap: 8px;
+}
+.mui-flex[data-size="large"] {
+  --_mui-flex-row-gap: 12px;
+  --_mui-flex-column-gap: 16px;
+}
+.mui-flex[data-inline] { display: inline-flex; }
+.mui-flex[data-vertical] { flex-direction: column; }
+.mui-flex:is([data-vertical], [data-wrap="false"]) { flex-wrap: nowrap; }
+:where(.mui-flex, .mui-flex > *)[hidden]:not([hidden="until-found"]),
+template.mui-flex,
+.mui-flex > template { display: none !important; }

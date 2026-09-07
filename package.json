@@ -10,6 +10,7 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./flex/style.css": "./dist/markup-ui-flex.css",
     "./divider/style.css": "./dist/markup-ui-divider.css",
     "./page-header/style.css": "./dist/markup-ui-page-header.css",
     "./ellipsis/style.css": "./dist/markup-ui-ellipsis.css",

@@ -1,0 +1,18 @@
+body { margin: 0; font-family: system-ui, sans-serif; line-height: 1.5; color: #242426; background: #fafafa; }
+main { box-sizing: border-box; max-inline-size: 960px; margin-inline: auto; padding: 24px; }
+section { margin-block: 24px; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.2rem; }
+.measurement { margin-block: 12px; }
+.measurement > span { box-sizing: border-box; inline-size: 64px; block-size: 32px; flex: none; border: 1px solid #96969d; text-align: center; }
+.tuple { --mui-flex-column-gap: 20px; --mui-flex-row-gap: 6px; inline-size: 10rem; }
+.no-wrap { inline-size: 10rem; overflow-x: auto; }
+.aligned { --mui-flex-align: center; --mui-flex-justify: space-between; inline-size: 24rem; block-size: 96px; border: 1px solid #96969d; box-sizing: border-box; }
+.native-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 6rem); gap: 12px; }
+.long-copy { margin: 0; }
+form { margin-block: 16px; }
+input, button { font: inherit; }
+a { color: #175fbb; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+@media (max-width: 400px) { main { padding: 12px; } }
+@media print { .no-wrap { inline-size: auto; overflow: visible; } }
