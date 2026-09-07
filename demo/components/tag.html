@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Tag</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-tag.css">
+  <link rel="stylesheet" href="./tag.css">
+  <script defer src="../../dist/markup-ui-tag.global.js"></script>
+  <script defer src="./tag.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Tag: passive labels and native optional interactions</h1>
+    <p>This page loads only Tag. Checking uses a native toggle button; closing emits intent without removing the tag.</p>
+    <section aria-labelledby="types-heading">
+      <h2 id="types-heading">Types, sizes and appearance</h2>
+      <div class="examples" id="types">
+        <mui-tag>Default</mui-tag><mui-tag type="primary">Primary</mui-tag>
+        <mui-tag type="info">Info</mui-tag><mui-tag type="success">Success</mui-tag>
+        <mui-tag type="warning">Warning</mui-tag><mui-tag type="error">Error</mui-tag>
+      </div>
+      <div class="examples" id="sizes">
+        <mui-tag size="tiny">Tiny</mui-tag><mui-tag size="small">Small</mui-tag>
+        <mui-tag size="medium">Medium</mui-tag><mui-tag size="large">Large</mui-tag>
+        <mui-tag round strong>Round and strong</mui-tag>
+        <mui-tag bordered="false">Borderless</mui-tag>
+        <mui-tag class="brand">Custom CSS colors</mui-tag>
+      </div>
+    </section>
+    <section aria-labelledby="check-heading">
+      <h2 id="check-heading">Checkable native controls</h2>
+      <form id="tag-form">
+        <div class="examples">
+          <mui-tag id="topic" checkable type="error"><button type="button"><span data-mui-tag-icon aria-hidden="true">★</span><strong id="topic-label">Design</strong></button></mui-tag>
+          <mui-tag id="checked-topic" checkable checked>Checked</mui-tag>
+          <mui-tag id="disabled-topic" checkable disabled>Disabled</mui-tag>
+          <mui-tag id="combined-topic" checkable closable>Checkable overrides closable</mui-tag>
+        </div>
+      </form>
+      <p id="change-status" role="status">0 changes; Design is unchecked.</p>
+      <p id="form-status" role="status">0 submissions.</p>
+      <div class="controls">
+        <button type="button" id="assign-checked">Assign checked silently</button>
+        <button type="button" id="toggle-disabled">Toggle Design disabled</button>
+        <button type="button" id="reconnect-topic">Reconnect Design</button>
+      </div>
+    </section>
+    <section aria-labelledby="close-heading">
+      <h2 id="close-heading">Close intent and click propagation</h2>
+      <div class="examples">
+        <mui-tag id="closable-tag" closable close-label="Remove project label">Project</mui-tag>
+        <mui-tag id="disabled-close" closable disabled>Disabled close</mui-tag>
+      </div>
+      <label><input type="checkbox" id="propagate-close"> Allow the original close click to bubble</label>
+      <p id="close-status" role="status">0 close requests; Project remains visible.</p>
+      <p id="click-status" role="status">0 tag click callbacks.</p>
+    </section>
+    <section aria-labelledby="content-heading">
+      <h2 id="content-heading">Authored content, icon and avatar</h2>
+      <div class="examples">
+        <mui-tag id="avatar-tag" round>
+          <span data-mui-tag-avatar aria-hidden="true"><img alt="" width="24" height="24" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Crect width='24' height='24' fill='%232080f0'/%3E%3C/svg%3E"></span>
+          Ada
+        </mui-tag>
+        <mui-tag id="icon-tag"><span data-mui-tag-icon aria-hidden="true">✓</span>Verified</mui-tag>
+        <mui-tag id="icon-priority"><span data-mui-tag-avatar aria-hidden="true">A</span><span data-mui-tag-icon aria-hidden="true">★</span>Icon takes precedence</mui-tag>
+        <mui-tag checkable aria-label="Favorite"><span data-mui-tag-icon aria-hidden="true">★</span></mui-tag>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

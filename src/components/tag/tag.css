@@ -1,0 +1,105 @@
+/* Keep the optional host independent of later-installed legacy Tag styles. */
+mui-tag[data-mui-tag][data-mui-tag][data-mui-tag] {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  gap: var(--mui-tag-gap, 4px);
+  min-width: 0;
+  min-height: var(--mui-tag-height, var(--_mui-tag-height));
+  padding: 0 var(--mui-tag-padding, 7px);
+  border: 1px solid var(--mui-tag-border-color, var(--_mui-tag-border));
+  border-radius: var(--mui-tag-radius, 3px);
+  background: var(--mui-tag-background, var(--_mui-tag-background));
+  color: var(--mui-tag-color, var(--_mui-tag-color));
+  font-size: var(--mui-tag-font-size, var(--_mui-tag-font-size));
+  font-weight: 400;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+mui-tag[data-mui-tag] {
+  --_mui-tag-height: 28px;
+  --_mui-tag-font-size: 14px;
+  --_mui-tag-border: var(--mui-border, #e0e0e6);
+  --_mui-tag-background: var(--mui-bg-muted, #fafafc);
+  --_mui-tag-color: var(--mui-text-primary, #333639);
+  --_mui-tag-tone: var(--mui-color-primary, #18a058);
+}
+mui-tag[data-mui-tag][type="primary"] { --_mui-tag-tone: var(--mui-color-primary, #18a058); }
+mui-tag[data-mui-tag][type="info"] { --_mui-tag-tone: var(--mui-color-info, #2080f0); }
+mui-tag[data-mui-tag][type="success"] { --_mui-tag-tone: var(--mui-color-success, #18a058); }
+mui-tag[data-mui-tag][type="warning"] { --_mui-tag-tone: var(--mui-color-warning, #f0a020); }
+mui-tag[data-mui-tag][type="error"] { --_mui-tag-tone: var(--mui-color-error, #d03050); }
+mui-tag[data-mui-tag]:is([type="primary"], [type="info"], [type="success"], [type="warning"], [type="error"]) {
+  --_mui-tag-background: color-mix(in srgb, var(--_mui-tag-tone) 12%, transparent);
+  --_mui-tag-border: color-mix(in srgb, var(--_mui-tag-tone) 30%, transparent);
+  --_mui-tag-color: var(--_mui-tag-tone);
+}
+mui-tag[data-mui-tag][size="tiny"] { --_mui-tag-height: 20px; --_mui-tag-font-size: 12px; }
+mui-tag[data-mui-tag][size="small"] { --_mui-tag-height: 22px; --_mui-tag-font-size: 12px; }
+mui-tag[data-mui-tag][size="large"] { --_mui-tag-height: 34px; --_mui-tag-font-size: 14px; }
+mui-tag[data-mui-tag][data-mui-tag][data-mui-tag][bordered="false"] { border-color: transparent; }
+mui-tag[data-mui-tag][data-mui-tag][data-mui-tag][round] { border-radius: 999px; }
+mui-tag[data-mui-tag][data-mui-tag][data-mui-tag][strong] { font-weight: 600; }
+mui-tag[data-mui-tag][data-mui-tag][data-mui-tag][disabled] { opacity: var(--mui-tag-disabled-opacity, .5); }
+mui-tag[data-mui-tag][data-mui-tag][data-mui-tag][hidden] { display: none; }
+
+mui-tag[data-mui-tag] > span[data-mui-tag-content],
+mui-tag[data-mui-tag] > button > span[data-mui-tag-content] { display: inline-flex; align-items: center; gap: var(--mui-tag-gap, 4px); min-width: 0; }
+mui-tag[data-mui-tag] :is([data-mui-tag-content]) > :is([data-mui-tag-icon], [data-mui-tag-avatar]) { display: inline-flex; align-items: center; flex: none; order: -1; }
+mui-tag[data-mui-tag] [data-mui-tag-content] > [data-mui-tag-avatar] { width: var(--mui-tag-avatar-size, calc(var(--mui-tag-height, var(--_mui-tag-height)) - 8px)); height: var(--mui-tag-avatar-size, calc(var(--mui-tag-height, var(--_mui-tag-height)) - 8px)); border-radius: var(--mui-tag-avatar-radius, 3px); overflow: hidden; }
+mui-tag[data-mui-tag][round] [data-mui-tag-content] > [data-mui-tag-avatar] { border-radius: 50%; }
+mui-tag[data-mui-tag] [data-mui-tag-avatar] > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+mui-tag[data-mui-tag] [data-mui-tag-content]:has(> [data-mui-tag-icon]) > [data-mui-tag-avatar],
+mui-tag[data-mui-tag] [data-mui-tag-content] > :is([data-mui-tag-icon], [data-mui-tag-avatar])[hidden] { display: none; }
+
+mui-tag[data-mui-tag][data-mui-tag][data-mui-tag][checkable] { padding: 0; border: 0; background: transparent; color: inherit; }
+mui-tag[data-mui-tag] > [data-mui-tag-toggle] {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--mui-tag-height, var(--_mui-tag-height));
+  padding: 0 var(--mui-tag-padding, 7px);
+  border: 1px solid transparent;
+  border-radius: inherit;
+  background: var(--mui-tag-checkable-background, transparent);
+  color: var(--mui-tag-checkable-color, var(--mui-text-primary, #333639));
+  font: inherit;
+  cursor: pointer;
+  appearance: none;
+  transition: background-color .2s, color .2s;
+}
+mui-tag[data-mui-tag] > [data-mui-tag-toggle]:hover { background: var(--mui-tag-checkable-hover-background, var(--mui-bg-hover, #f0f0f4)); }
+mui-tag[data-mui-tag] > [data-mui-tag-toggle]:active { background: var(--mui-tag-checkable-pressed-background, #e5e5eb); }
+mui-tag[data-mui-tag] > [data-mui-tag-toggle][aria-pressed="true"] { background: var(--mui-tag-checked-background, var(--mui-color-primary, #18a058)); color: var(--mui-tag-checked-color, #fff); }
+mui-tag[data-mui-tag] > [data-mui-tag-toggle][aria-pressed="true"]:hover { background: var(--mui-tag-checked-hover-background, var(--mui-color-primary-hover, #36ad6a)); }
+mui-tag[data-mui-tag] > [data-mui-tag-toggle][aria-pressed="true"]:active { background: var(--mui-tag-checked-pressed-background, var(--mui-color-primary-pressed, #0c7a43)); }
+mui-tag[data-mui-tag] > [data-mui-tag-close] {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--mui-tag-close-size, 16px);
+  height: var(--mui-tag-close-size, 16px);
+  padding: 0;
+  border: 0;
+  border-radius: var(--mui-tag-close-radius, 3px);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  appearance: none;
+}
+mui-tag[data-mui-tag] > [data-mui-tag-close]:hover { background: var(--mui-tag-close-hover-background, #0000000d); }
+mui-tag[data-mui-tag][round] > [data-mui-tag-close] { border-radius: 50%; }
+mui-tag[data-mui-tag] > :is([data-mui-tag-toggle], [data-mui-tag-close]):focus-visible { outline: 3px solid var(--mui-tag-focus-color, var(--mui-focus-ring, #2080f080)); outline-offset: 2px; }
+mui-tag[data-mui-tag] > :is([data-mui-tag-toggle], [data-mui-tag-close]):disabled { cursor: not-allowed; }
+mui-tag[data-mui-tag] > :is(span[data-mui-tag-content], [data-mui-tag-toggle], [data-mui-tag-close])[hidden],
+mui-tag[data-mui-tag] > button > span[data-mui-tag-content][hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  mui-tag[data-mui-tag] > [data-mui-tag-toggle] { transition: none; }
+}

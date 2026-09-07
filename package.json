@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./tag": {
+      "types": "./dist/components/tag/index.d.ts",
+      "import": "./dist/markup-ui-tag.js"
+    },
+    "./tag/style.css": "./dist/markup-ui-tag.css",
     "./card": {
       "types": "./dist/components/card/index.d.ts",
       "import": "./dist/markup-ui-card.js"

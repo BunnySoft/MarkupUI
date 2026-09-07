@@ -22,6 +22,7 @@ const shared = {
   sourcemap: true,
   target: ["es2022"],
 }
+const components = ["avatar", "button", "card", "tag"]
 
 await Promise.all([
   build({
@@ -58,56 +59,28 @@ await Promise.all([
     minify: true,
     outfile: resolve(dist, "markup-ui-widgets.js"),
   }),
-  build({
-    ...shared,
-    entryPoints: [resolve(root, "src", "components", "card", "index.ts")],
-    format: "esm",
-    minify: true,
-    outfile: resolve(dist, "markup-ui-card.js"),
-  }),
-  build({
-    ...shared,
-    entryPoints: [resolve(root, "src", "components", "card", "index.ts")],
-    format: "iife",
-    globalName: "MarkupUICard",
-    minify: true,
-    outfile: resolve(dist, "markup-ui-card.global.js"),
-  }),
-  build({
-    ...shared,
-    entryPoints: [resolve(root, "src", "components", "button", "index.ts")],
-    format: "esm",
-    minify: true,
-    outfile: resolve(dist, "markup-ui-button.js"),
-  }),
-  build({
-    ...shared,
-    entryPoints: [resolve(root, "src", "components", "button", "index.ts")],
-    format: "iife",
-    globalName: "MarkupUIButton",
-    minify: true,
-    outfile: resolve(dist, "markup-ui-button.global.js"),
-  }),
-  build({
-    ...shared,
-    entryPoints: [resolve(root, "src", "components", "avatar", "index.ts")],
-    format: "esm",
-    minify: true,
-    outfile: resolve(dist, "markup-ui-avatar.js"),
-  }),
-  build({
-    ...shared,
-    entryPoints: [resolve(root, "src", "components", "avatar", "index.ts")],
-    format: "iife",
-    globalName: "MarkupUIAvatar",
-    minify: true,
-    outfile: resolve(dist, "markup-ui-avatar.global.js"),
-  }),
+  ...components.flatMap((name) => [
+    build({
+      ...shared,
+      entryPoints: [resolve(root, "src", "components", name, "index.ts")],
+      format: "esm",
+      minify: true,
+      outfile: resolve(dist, `markup-ui-${name}.js`),
+    }),
+    build({
+      ...shared,
+      entryPoints: [resolve(root, "src", "components", name, "index.ts")],
+      format: "iife",
+      globalName: `MarkupUI${name[0].toUpperCase()}${name.slice(1)}`,
+      minify: true,
+      outfile: resolve(dist, `markup-ui-${name}.global.js`),
+    }),
+  ]),
 ])
 
-await copyFile(resolve(root, "src", "components", "avatar", "avatar.css"), resolve(dist, "markup-ui-avatar.css"))
-await copyFile(resolve(root, "src", "components", "button", "button.css"), resolve(dist, "markup-ui-button.css"))
-await copyFile(resolve(root, "src", "components", "card", "card.css"), resolve(dist, "markup-ui-card.css"))
+await Promise.all(components.map((name) =>
+  copyFile(resolve(root, "src", "components", name, `${name}.css`), resolve(dist, `markup-ui-${name}.css`)),
+))
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
@@ -123,6 +96,9 @@ const bundleBudgets = {
   "markup-ui-card.js": 3_000,
   "markup-ui-card.global.js": 3_000,
   "markup-ui-card.css": 2_500,
+  "markup-ui-tag.js": 3_500,
+  "markup-ui-tag.global.js": 3_500,
+  "markup-ui-tag.css": 2_500,
 }
 const bundles = {}
 
