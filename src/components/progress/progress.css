@@ -1,0 +1,96 @@
+mui-progress[data-mui-progress][data-mui-progress] {
+  box-sizing: border-box;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--mui-progress-gap, 8px);
+  min-width: 0;
+  height: auto;
+  overflow: visible;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--_mui-progress-text-color, var(--mui-progress-text-color, var(--mui-text-primary, #333639)));
+  font-size: var(--mui-progress-font-size, 14px);
+}
+mui-progress[data-mui-progress] {
+  --_mui-progress-tone: var(--mui-color-primary, #18a058);
+  --_mui-progress-height: initial;
+  --_mui-progress-radius: initial;
+  --_mui-progress-fill-radius: initial;
+  --_mui-progress-text-color: initial;
+  --_mui-progress-default-height: 8px;
+}
+mui-progress[data-mui-progress][status="success"] { --_mui-progress-tone: var(--mui-color-success, #18a058); }
+mui-progress[data-mui-progress][status="error"] { --_mui-progress-tone: var(--mui-color-error, #d03050); }
+mui-progress[data-mui-progress][status="warning"] { --_mui-progress-tone: var(--mui-color-warning, #f0a020); }
+mui-progress[data-mui-progress][status="info"] { --_mui-progress-tone: var(--mui-color-info, #2080f0); }
+mui-progress[data-mui-progress] > [data-mui-progress-native-group] { display: block; position: relative; min-width: 0; grid-column: 1; grid-row: 1; }
+mui-progress[data-mui-progress] > [data-mui-progress-native-group] > progress {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--_mui-progress-height, var(--mui-progress-height, var(--_mui-progress-default-height)));
+  border: 0;
+  border-radius: var(--_mui-progress-radius, var(--mui-progress-border-radius, 999px));
+  overflow: hidden;
+  appearance: none;
+  background: var(--_mui-progress-rail, var(--mui-progress-rail-color, #e7e7ed));
+  color: var(--_mui-progress-fill-start, var(--mui-progress-color, var(--_mui-progress-tone)));
+}
+mui-progress[data-mui-progress] > [data-mui-progress-native-group] > progress::-webkit-progress-bar { background: var(--_mui-progress-rail, var(--mui-progress-rail-color, #e7e7ed)); border-radius: inherit; }
+mui-progress[data-mui-progress] > [data-mui-progress-native-group] > progress::-webkit-progress-value {
+  background: linear-gradient(90deg, var(--_mui-progress-fill-start, var(--mui-progress-color, var(--_mui-progress-tone))), var(--_mui-progress-fill-end, var(--mui-progress-color, var(--_mui-progress-tone))));
+  border-radius: var(--_mui-progress-fill-radius, var(--mui-progress-fill-border-radius, var(--_mui-progress-radius, var(--mui-progress-border-radius, 999px))));
+}
+mui-progress[data-mui-progress] > [data-mui-progress-native-group] > progress::-moz-progress-bar {
+  background: linear-gradient(90deg, var(--_mui-progress-fill-start, var(--mui-progress-color, var(--_mui-progress-tone))), var(--_mui-progress-fill-end, var(--mui-progress-color, var(--_mui-progress-tone))));
+  border-radius: var(--_mui-progress-fill-radius, var(--mui-progress-fill-border-radius, var(--_mui-progress-radius, var(--mui-progress-border-radius, 999px))));
+}
+mui-progress[data-mui-progress] > [data-mui-progress-indicator] { display: inline-flex; align-items: center; justify-content: center; gap: 4px; text-align: center; min-width: 0; }
+mui-progress[data-mui-progress][status="success"] > [data-mui-progress-indicator] > [data-mui-progress-text]::after { content: " ✓"; }
+mui-progress[data-mui-progress][status="error"] > [data-mui-progress-indicator] > [data-mui-progress-text]::after { content: " ×"; }
+mui-progress[data-mui-progress][status="warning"] > [data-mui-progress-indicator] > [data-mui-progress-text]::after { content: " !"; }
+mui-progress[data-mui-progress][status="info"] > [data-mui-progress-indicator] > [data-mui-progress-text]::after { content: " ⓘ"; }
+mui-progress[data-mui-progress][data-mui-progress-type="line"][data-mui-progress-placement="inside"] { --_mui-progress-default-height: 24px; }
+mui-progress[data-mui-progress][data-mui-progress-type="line"][show-indicator="false"] { grid-template-columns: minmax(0, 1fr); gap: 0; }
+mui-progress[data-mui-progress][data-mui-progress-type="line"][data-mui-progress-placement="inside"] > [data-mui-progress-indicator] { grid-column: 1; grid-row: 1; z-index: 1; justify-self: center; }
+mui-progress[data-mui-progress][data-mui-progress-type="line"][data-mui-progress-placement="inside"] > [data-mui-progress-indicator] > [data-mui-progress-text] { background: var(--mui-progress-indicator-background, #ffffffd9); border-radius: 3px; padding-inline: 4px; }
+mui-progress[data-mui-progress][data-mui-progress]:not([data-mui-progress-type="line"]) { display: inline-grid; grid-template-columns: 1fr; width: var(--mui-progress-size, 120px); }
+mui-progress[data-mui-progress]:not([data-mui-progress-type="line"]) > [data-mui-progress-native-group] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+mui-progress[data-mui-progress] > [data-mui-progress-graphic] { display: block; grid-column: 1; grid-row: 1; width: 100%; aspect-ratio: 1; }
+mui-progress[data-mui-progress] > [data-mui-progress-graphic] > svg { display: block; width: 100%; height: 100%; }
+mui-progress[data-mui-progress] [data-mui-progress-rail]:not([color]) { color: var(--mui-progress-rail-color, #e7e7ed); }
+mui-progress[data-mui-progress] [data-mui-progress-fill]:not([color]) { color: var(--mui-progress-color, var(--_mui-progress-tone)); }
+mui-progress[data-mui-progress]:is([data-mui-progress-type="circle"], [data-mui-progress-type="dashboard"]) > [data-mui-progress-indicator] { grid-column: 1; grid-row: 1; z-index: 1; max-width: 80%; justify-self: center; }
+mui-progress[data-mui-progress][data-mui-progress-type="multiple-circle"] > [data-mui-progress-indicator] { grid-column: 1; grid-row: 2; overflow-wrap: anywhere; }
+mui-progress[data-mui-progress] > [data-mui-progress-label] { grid-column: 1 / -1; grid-row: 1; }
+mui-progress[data-mui-progress][data-mui-progress-has-label] > :is([data-mui-progress-native-group], [data-mui-progress-graphic], [data-mui-progress-indicator]) { grid-row: 2; }
+mui-progress[data-mui-progress][data-mui-progress-has-label][data-mui-progress-type="line"][data-mui-progress-placement="inside"] > [data-mui-progress-indicator] { grid-row: 2; }
+mui-progress[data-mui-progress][data-mui-progress-has-label][data-mui-progress-type="multiple-circle"] > [data-mui-progress-indicator] { grid-row: 3; }
+mui-progress[data-mui-progress][data-mui-progress-type="line"]:is([processing], [data-mui-progress-indeterminate]) > [data-mui-progress-native-group]::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--_mui-progress-percent, 0%);
+  pointer-events: none;
+  border-radius: var(--_mui-progress-fill-radius, var(--mui-progress-fill-border-radius, 999px));
+  background: linear-gradient(90deg, transparent, #ffffff99, transparent);
+  background-size: 200% 100%;
+  animation: mui-progress-shine 1.5s linear infinite;
+}
+mui-progress[data-mui-progress][data-mui-progress-type="line"][data-mui-progress-indeterminate] > [data-mui-progress-native-group]::after { width: 30%; background: var(--mui-progress-color, var(--_mui-progress-tone)); animation: mui-progress-travel 1.5s ease-in-out infinite alternate; }
+mui-progress[data-mui-progress] [data-mui-progress-indeterminate-fill] { animation: mui-progress-pulse 1.5s ease-in-out infinite alternate; }
+@keyframes mui-progress-shine { to { background-position: -200% 0; } }
+@keyframes mui-progress-travel { to { transform: translateX(233.333%); } }
+@keyframes mui-progress-pulse { to { opacity: .25; } }
+mui-progress[data-mui-progress][data-mui-progress][hidden],
+mui-progress[data-mui-progress] > [hidden],
+mui-progress[data-mui-progress] > [data-mui-progress-indicator] > [hidden] { display: none; }
+mui-progress[data-mui-progress][data-mui-progress] > :is(template, script, style) { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  mui-progress[data-mui-progress][data-mui-progress-type="line"]:is([processing], [data-mui-progress-indeterminate]) > [data-mui-progress-native-group]::after,
+  mui-progress[data-mui-progress] [data-mui-progress-indeterminate-fill] { animation: none; }
+}

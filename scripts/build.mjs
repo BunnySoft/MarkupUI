@@ -22,7 +22,8 @@ const shared = {
   sourcemap: true,
   target: ["es2022"],
 }
-const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin"]
+const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress"]
+const classicEntries = { progress: "global.ts" }
 
 await Promise.all([
   build({
@@ -69,9 +70,9 @@ await Promise.all([
     }),
     build({
       ...shared,
-      entryPoints: [resolve(root, "src", "components", name, "index.ts")],
+      entryPoints: [resolve(root, "src", "components", name, classicEntries[name] ?? "index.ts")],
       format: "iife",
-      globalName: `MarkupUI${name[0].toUpperCase()}${name.slice(1)}`,
+      globalName: classicEntries[name] ? undefined : `MarkupUI${name[0].toUpperCase()}${name.slice(1)}`,
       minify: true,
       outfile: resolve(dist, `markup-ui-${name}.global.js`),
     }),
@@ -114,6 +115,9 @@ const bundleBudgets = {
   "markup-ui-spin.js": 3_500,
   "markup-ui-spin.global.js": 3_500,
   "markup-ui-spin.css": 2_000,
+  "markup-ui-progress.js": 6_000,
+  "markup-ui-progress.global.js": 6_000,
+  "markup-ui-progress.css": 2_500,
 }
 const bundles = {}
 

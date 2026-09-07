@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Progress</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-progress.css">
+  <link rel="stylesheet" href="./progress.css">
+  <script defer src="../../dist/markup-ui-progress.global.js"></script>
+  <script defer src="./progress.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Progress: native range semantics with optional native SVG visuals</h1>
+    <p>Each measure has one native progress owner. Labels and application announcements remain explicit.</p>
+    <section aria-labelledby="line-heading">
+      <h2 id="line-heading">Linear percentage and legacy value/max</h2>
+      <mui-progress id="upload" percentage="40" label="Upload"></mui-progress>
+      <mui-progress id="legacy" value="25" max="50" label="Processed files"></mui-progress>
+      <mui-progress id="inside" percentage="60" indicator-placement="inside" height="24" color="#176b3a" label="Inside indicator"></mui-progress>
+      <mui-progress id="processing" percentage="65" processing label="Processing report"></mui-progress>
+      <mui-progress id="unknown" indeterminate label="Unknown completion"></mui-progress>
+      <mui-progress id="named-native" percentage="30">
+        <label data-mui-progress-label for="native-range">Native labelled range</label>
+        <progress id="native-range" max="10" value="3"></progress>
+      </mui-progress>
+      <div class="controls">
+        <button type="button" id="advance">Advance upload</button>
+        <button type="button" id="toggle-unknown">Toggle indeterminate</button>
+        <button type="button" id="toggle-indicator">Toggle visual indicator</button>
+        <button type="button" id="invalid-max">Set invalid legacy max</button>
+        <button type="button" id="restore-max">Restore legacy max</button>
+      </div>
+      <p id="value-status" role="status">Upload is 40%.</p>
+      <p id="validation-status" role="status">Legacy range is valid.</p>
+    </section>
+    <section aria-labelledby="radial-heading">
+      <h2 id="radial-heading">Circle, dashboard, offsets and multiple measures</h2>
+      <div class="radials">
+        <mui-progress id="circle" type="circle" percentage="55" label="Circle upload"></mui-progress>
+        <mui-progress id="dashboard" type="dashboard" percentage="70" label="Dashboard completion"></mui-progress>
+        <mui-progress id="offset" type="circle" percentage="40" offset-degree="90" gap-degree="60" gap-offset-degree="30" label="Offset arc"></mui-progress>
+        <mui-progress id="multiple" type="multiple-circle" percentage="[25,65,90]">
+          <progress max="100" value="25" aria-label="Files"></progress>
+          <progress max="100" value="65" aria-label="Network"></progress>
+          <progress max="100" value="90" aria-label="Index"></progress>
+        </mui-progress>
+      </div>
+    </section>
+    <section aria-labelledby="appearance-heading">
+      <h2 id="appearance-heading">Gradients, rails, status and authored indicator</h2>
+      <mui-progress id="gradient-line" percentage="65" label="Gradient line"></mui-progress>
+      <div class="radials">
+        <mui-progress id="gradient-circle" type="circle" percentage="65" label="Gradient circle"></mui-progress>
+        <mui-progress percentage="85" type="circle" status="warning" label="Warning completion"></mui-progress>
+        <mui-progress percentage="20" type="circle" status="error" label="Failed transfer" aria-valuetext="Transfer failed at twenty percent"></mui-progress>
+      </div>
+      <mui-progress id="custom-indicator" percentage="30" label="Downloaded data"><strong id="custom-text">3 of 10 MB</strong></mui-progress>
+      <p>The status choice is explicit; reaching 100% does not generate a success state or change application busy state.</p>
+    </section>
+    <section aria-labelledby="native-heading">
+      <h2 id="native-heading">Native HTML without any component</h2>
+      <label for="plain-progress">Static native upload</label>
+      <progress id="plain-progress" value="35" max="100">35%</progress>
+      <p>Application controls belong beside progress, not inside a progressbar or decorative SVG.</p>
+      <button type="button" id="reconnect">Reconnect upload component</button>
+    </section>
+  </main>
+</body>
+</html>
