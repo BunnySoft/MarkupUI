@@ -1,0 +1,13 @@
+body { margin: 0; font-family: system-ui, sans-serif; color: #242426; background: #fafafa; }
+main { max-width: 960px; margin-inline: auto; padding: 32px; }
+section { margin-block: 24px; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.2rem; }
+.examples { display: flex; flex-wrap: wrap; gap: 20px; font-size: 1.25rem; }
+.custom-size { font-size: 1.5rem; --mui-gradient-text-weight: 500; }
+.custom-gradient { --mui-gradient-text-from: #7040a0; --mui-gradient-text-to: #2080f0; --mui-gradient-text-angle: 90deg; --mui-gradient-text-fallback: #503070; }
+.custom-image { --mui-gradient-text-image: linear-gradient(45deg, #7040a0, #175fbb, #127542); }
+.no-image { --mui-gradient-text-image: none; }
+.narrow { width: 18ch; }
+code { background: #ededf3; padding: .1em .3em; }
+a:focus-visible { outline: 2px solid #2080f0; outline-offset: 2px; }

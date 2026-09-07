@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Gradient Text — CSS only</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-gradient-text.css">
+  <link rel="stylesheet" href="./gradient-text.css">
+</head>
+<body>
+  <main>
+    <h1 class="mui-gradient-text" id="heading">Gradient decoration on a real native heading</h1>
+    <p>No JavaScript, generated text, image asset, role or live announcer is required. Solid text remains the fallback.</p>
+    <section aria-labelledby="types-heading">
+      <h2 id="types-heading">Types and author-controlled size/weight</h2>
+      <div class="examples" id="types">
+        <span class="mui-gradient-text">Primary</span>
+        <span class="mui-gradient-text" data-type="info">Information</span>
+        <span class="mui-gradient-text" data-type="success">Success</span>
+        <span class="mui-gradient-text" data-type="warning">Warning</span>
+        <span class="mui-gradient-text" data-type="error">Error</span>
+        <span class="mui-gradient-text" data-type="danger">Source danger alias</span>
+      </div>
+      <p><span class="mui-gradient-text custom-size" id="sized">External CSS sets native font size and weight.</span></p>
+    </section>
+    <section aria-labelledby="gradient-heading">
+      <h2 id="gradient-heading">External gradient colors and angles</h2>
+      <p><span class="mui-gradient-text custom-gradient" id="custom">Two author-selected colors at 90 degrees</span></p>
+      <p><span class="mui-gradient-text custom-image" id="image">A native multi-stop CSS gradient</span></p>
+      <p><span class="mui-gradient-text no-image" id="no-image">A missing gradient still leaves solid clipped text.</span></p>
+      <p>Print preview uses ordinary black foreground text, so disabling background graphics does not remove the words.</p>
+    </section>
+    <section aria-labelledby="content-heading">
+      <h2 id="content-heading">Native content, selection and nested text</h2>
+      <p class="narrow"><span class="mui-gradient-text" id="wrapping">LongUnbrokenSelectableGradientTextThatWrapsInsideANarrowNativeContainer</span></p>
+      <p><span class="mui-gradient-text" id="nested">Gradient parent with <strong id="strong">native strong text</strong>,
+        <code id="code">nativeCode()</code> and <a id="nested-link" href="#destination">a normal native link</a>.
+        Non-gradient descendants retain their ordinary text fill.</span></p>
+      <p><a class="mui-gradient-text" id="gradient-link" href="#destination" target="_self" rel="help">Native gradient link with visible underline and focus</a></p>
+      <p id="destination" tabindex="-1">Native destination.</p>
+    </section>
+    <section dir="rtl" lang="ar" aria-labelledby="rtl-heading">
+      <h2 id="rtl-heading">نص متدرج</h2>
+      <p><span class="mui-gradient-text" data-type="info" id="rtl-text">نص عربي أصلي قابل للتحديد</span></p>
+    </section>
+    <p id="outside">Outside the opt-in, ordinary text and native semantics are unchanged.</p>
+  </main>
+</body>
+</html>

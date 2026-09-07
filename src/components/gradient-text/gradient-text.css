@@ -1,0 +1,61 @@
+.mui-gradient-text {
+  --_mui-gradient-from: #36ad6a;
+  --_mui-gradient-to: #0c7a43;
+  --_mui-gradient-fallback: #17583b;
+  color: var(--mui-gradient-text-fallback, var(--_mui-gradient-fallback));
+  -webkit-text-fill-color: currentColor;
+  font-weight: var(--mui-gradient-text-weight, 700);
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.mui-gradient-text[data-type="info"] {
+  --_mui-gradient-from: #4098fc;
+  --_mui-gradient-to: #1060c9;
+  --_mui-gradient-fallback: #154f99;
+}
+.mui-gradient-text[data-type="success"] {
+  --_mui-gradient-from: #36ad6a;
+  --_mui-gradient-to: #0c7a43;
+  --_mui-gradient-fallback: #17583b;
+}
+.mui-gradient-text[data-type="warning"] {
+  --_mui-gradient-from: #f0a020;
+  --_mui-gradient-to: #8a5500;
+  --_mui-gradient-fallback: #754600;
+}
+.mui-gradient-text:is([data-type="error"], [data-type="danger"]) {
+  --_mui-gradient-from: #de576d;
+  --_mui-gradient-to: #ab1f3f;
+  --_mui-gradient-fallback: #941d36;
+}
+@supports ((background-clip: text) or (-webkit-background-clip: text)) and (-webkit-text-fill-color: transparent) {
+  .mui-gradient-text {
+    background-color: currentColor;
+    background-image: var(--mui-gradient-text-image, linear-gradient(var(--mui-gradient-text-angle, 252deg), var(--mui-gradient-text-from, var(--_mui-gradient-from)), var(--mui-gradient-text-to, var(--_mui-gradient-to))));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+.mui-gradient-text :not(.mui-gradient-text) { -webkit-text-fill-color: currentColor; }
+.mui-gradient-text::selection {
+  color: HighlightText;
+  -webkit-text-fill-color: HighlightText;
+  background: Highlight;
+}
+@media (forced-colors: active) {
+  .mui-gradient-text {
+    background: none !important;
+    color: CanvasText !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+  a.mui-gradient-text[href] { color: LinkText !important; }
+}
+@media print {
+  .mui-gradient-text {
+    background: none !important;
+    color: #000 !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+}

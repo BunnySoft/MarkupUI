@@ -2,7 +2,7 @@
 
 **Plan state: 🟠 In progress — P1 pilots and the P2-02 Tag/Badge/Alert/Empty/Skeleton/Spin workstream
 and P2-03 Progress/Statistic are Verified for retained scope. Whole P2 is not complete;
-CSS-only Typography/Icon are individually Verified; Gradient Text is next, not started.** Existing MarkupUI features are a partial baseline,
+Typography `53d3974`, Icon `829970d` and CSS-only Gradient Text's linked retained record are Verified; Ellipsis is next.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -30,7 +30,7 @@ coverage, implementation status, and upstream feature parity separate.
 | --- | --- | --- | --- | --- |
 | P0 — Architecture and contracts | 🔵 Planned | Establish separated sources, compatible loading, lifecycle, events and native-control conventions. | None | A minimal external-CSS example works without a consumer build step, and existing loading remains supported. |
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
-| P2 — Primitives and layout | 🟠 In progress | P2-02/P2-03 and individual Typography/Icon scopes complete; Gradient Text next, then remaining content/layout. | P1 pattern | Retained features have evidence; styling-only features do not acquire unnecessary controllers. |
+| P2 — Primitives and layout | 🟠 In progress | P2-02/P2-03 and Typography/Icon/Gradient Text scopes complete; Ellipsis next, then remaining content/layout. | P1 pattern | Retained features have evidence; styling-only features do not acquire unnecessary controllers. |
 | P3 — Interaction foundations | 🔵 Planned | Implement predictable focus, keyboard, overlays and navigation. | P0 lifecycle; P1 controls | Nested interaction, dismissal and focus behavior are defined and demonstrated. |
 | P4 — Forms and selection | 🔵 Planned | Make native controls dependable, then add optional richer selection. | P0 form contract; P3 for popup variants | Values, labels, submission, reset, validity and event semantics are consistent. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
@@ -76,7 +76,7 @@ rewrite all components before demonstrating one useful vertical slice.
 
 | Task | Status | Action | Deliverable |
 | --- | --- | --- | --- |
-| P2-01 — Typography and content | 🟠 In progress | Typography `53d3974` and Icon/IconWrapper in this change Verified as CSS only; Gradient Text next. | [Typography acceptance](../components/typography.md): 300 tests; [Icon acceptance](../components/icon.md): 308 plus Chromium native paint/sizing/names/focus/forced-color/zoom evidence. |
+| P2-01 — Typography and content | 🟠 In progress | Typography `53d3974`, Icon `829970d` and Gradient Text Verified as CSS only; Ellipsis next. | [Typography acceptance](../components/typography.md): 300 tests; [Icon acceptance](../components/icon.md): 308; [Gradient Text acceptance](../components/gradient-text.md): 316 plus Chromium fallback/print/forced-colors/native-text/zoom evidence. |
 | P2-02 — Small feedback | 🟢 Verified | Tag `6605d29`, Badge `69c9480`, Alert `2a1eb42`, Empty `27a435b`, Skeleton `05c6546`, and Spin `6c7f35b` complete their retained scopes. | [Tag](../components/tag.md): 118 tests; [Badge](../components/badge.md): 141; [Alert](../components/alert.md): 167; [Empty](../components/empty.md): 190; [Skeleton](../components/skeleton.md): 213; [Spin](../components/spin.md): 241 plus Chromium timing/native-state/motion evidence. |
 | P2-03 — Progress and statistics | 🟢 Verified | Progress `8d7757c` and Statistic `1ed3a98` complete retained native scopes; Number Animation remains separate. | [Progress acceptance](../components/progress.md): 270 tests; [Statistic acceptance](../components/statistic.md): 290 plus Chromium native value/region/formatting-string/typography evidence. |
 | P2-04 — Layout | 🔵 Planned | Express Space, Flex, Grid, Layout, Divider and simple alignment through CSS. | Responsive, logical-direction layout without JS measurement unless demonstrably necessary. |
@@ -184,8 +184,9 @@ excluded from delivery scope but never counted as implemented.
 
 ## First implementation slice
 
-**Next component: Gradient Text (P2-01), not started; coordinator selection pending.**
-Icon/IconWrapper completed their retained CSS-only implementation and acceptance in this change.
+**Current component: Gradient Text (P2-01), retained CSS-only implementation and acceptance complete.**
+**Next component: Ellipsis, awaiting coordinator selection; not started.**
+Icon/IconWrapper completed their retained CSS-only implementation and acceptance in `829970d`.
 Typography completed its retained CSS-only implementation and acceptance in `53d3974`.
 Statistic completed its retained implementation and acceptance in `1ed3a98`.
 Progress completed its retained implementation and acceptance in `8d7757c`.
@@ -246,8 +247,14 @@ Icon's [reference inventory](components/icon.md) retains nine pinned rows plus e
 source type/companion-slot/theme supplements: 10 Verified ADAPTED targets and 7 omissions.
 Its four tasks are closed with [308-test/Chromium evidence](../components/icon.md), preserving
 native paints, aspect/viewports, names/actions, forced colors and CSS-only loading with no asset library.
-The index records 3,105 rows and 52 accepted retained tasks out of 384, not full upstream parity.
-Await coordinator selection of Gradient Text and remaining content/layout
+Gradient Text's [reference inventory](components/gradient-text.md) retains seven pinned rows plus
+six source alias/type/theme supplements: 10 Verified ADAPTED native targets and 3 omissions.
+Its four tasks are closed with [316-test/Chromium evidence](../components/gradient-text.md),
+covering native text/links, solid underpaint, guarded clipping, forced colors, print without
+background graphics, selection, RTL/wrapping/zoom and CSS-only coexistence. Gradient-object
+and theme runtime adapters are not shipped; contrast remains application-owned.
+The index records 3,111 rows and 56 accepted retained tasks out of 384, not full upstream parity.
+Await coordinator selection of Ellipsis and remaining content/layout
 work from the index, while preserving native
 semantics and the legacy aggregate. Each component gets its own documentation update, build,
 acceptance evidence and commit before advancing. No dates or effort estimates are assigned
