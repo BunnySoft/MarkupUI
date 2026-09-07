@@ -2,7 +2,7 @@
 
 This is a **proposal and migration inventory, not a shipped compatibility layer**.
 Explicitly Verified retained targets, currently Avatar/Avatar Group in `9afc818`,
-Button/ButtonGroup in `43dd57f`, and Card in `cebc6d7`, have
+Button/ButtonGroup in `43dd57f`, Card in `cebc6d7`, and Tag in `6605d29`, have
 committed implementation evidence; the remaining catalog must not inherit that status.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
 Use the [master migration plan](migration-plan.md) for phase dependencies and current execution
@@ -26,7 +26,7 @@ framework-prop passthrough**. No component implementation is added by these docu
   reference and may change after this snapshot. Research rendered the live SPA despite an
   HTTP 404 response; immutable repository Markdown remains the API authority.
 - Original MarkupUI comparison baseline: `5dcb190`, package 0.11.0. Avatar's later retained
-  implementation is `9afc818`, Button's is `43dd57f`, and Card's is `cebc6d7`;
+  implementation is `9afc818`, Button's is `43dd57f`, Card's is `cebc6d7`, and Tag's is `6605d29`;
   other unreviewed slices retain the historical baseline.
   Evidence links point to
   [core registry](../../src/components/elements.ts),
@@ -53,8 +53,8 @@ implementation and acceptance evidence exist. Existing-source evidence is kept i
 
 The numbered component checklists distinguish proposed work from accepted implementation.
 Avatar's four retained-scope tasks are checked using `9afc818`, Button's four using
-`43dd57f`, and Card's four using `cebc6d7`, each with a standalone acceptance record;
-the other **372 tasks remain unchecked**. Tag is in progress. Reconcile later implementation evidence
+`43dd57f`, Card's four using `cebc6d7`, and Tag's four using `6605d29`, each with an acceptance record;
+the other **368 tasks remain unchecked**. Badge is next. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
 ### Native browser capabilities reduce implementation scope
@@ -167,8 +167,8 @@ build and **43 tests** (16 Avatar-focused plus 27 existing), along with **Chromi
 acceptance. Separate ESM/classic JavaScript ceilings are 4,000 gzip bytes each; CSS has a
 1,500-byte ceiling. Browser coverage is not all-browser certification or pixel parity.
 The reference Avatar page reconciles all **35 rows: 19 Verified adapted targets and
-16 Intentionally omitted contracts**. Button and Card are also accepted as recorded below;
-**Tag is active**, and the master plan owns
+16 Intentionally omitted contracts**. Button, Card and Tag are also accepted as recorded below;
+**Badge is next**, and the master plan owns
 the sequential implementation/build/commit workflow.
 
 ### Button pilot: accepted native scope
@@ -207,8 +207,24 @@ Card never removes itself in response to close intent or infers a heading/landma
 close focusability defaults true. The three pilot ESM entries also composed together before
 the legacy aggregate with one native form submission and separate CSS in Chromium.
 
-The pilot retained scopes are complete; **Tag is in progress**, followed by Badge. Detailed
+The pilot retained scopes and Tag are complete; **Badge is next**. Detailed
 phase progress and per-component commits belong in the master migration plan.
+
+### Tag: accepted P2 native scope
+
+Commit **`6605d29`** delivers `@dataengine/markup-ui/tag` and
+`@dataengine/markup-ui/tag/style.css`: passive text/span content, native checking and close
+intent, preserved authored nodes, silent checked assignment and external CSS. The
+[accepted contract](../components/tag.md) records **118 passing tests**, Chromium
+keyboard/focus/form-safety/lifecycle and load-order evidence, and explicit framework/native
+scope differences. Checkable suppresses closable, close never removes content, and Boolean
+`mui:change` is emitted only for activation, not programmatic assignment.
+
+The reference page preserves **19 original rows** and adds **12 explicitly source-declared
+supplements**: **31 rows, 24 Verified ADAPTED native targets and 7 Intentionally omitted**.
+Verified native event/CSS/DOM equivalents are not claims of upstream object-shape parity.
+Core remains 14,611/15,000 gzip bytes; Tag ESM/classic/CSS are 2,246/2,455/1,386 gzip bytes.
+Four retained Tag tasks are accepted. Badge is the next sequential component.
 
 ## Common Components (15)
 
@@ -225,7 +241,7 @@ phase progress and per-component commits belong in the master migration plan.
 | [Gradient Text](components/gradient-text.md) | 🔵 Planned | None | P2 |
 | [Icon](components/icon.md) | 🔵 Planned | Native assets only | P2 |
 | [Page Header](components/page-header.md) | 🔵 Planned | Related structure | P2 |
-| [Tag](components/tag.md) | 🟠 In progress | Standalone migration active; historical partial core preserved | P2 |
+| [Tag](components/tag.md) | 🟢 Verified retained scope; 7 explicit omissions | Standalone native Tag, `6605d29`; basic aggregate preserved | P2 |
 | [Typography](components/typography.md) | 🔵 Planned | Partial core | P2 |
 | [Watermark](components/watermark.md) | 🔵 Planned | None | P6 |
 | [Float Button](components/float-button.md) | 🔵 Planned | Related button | P2, P3 |
@@ -377,15 +393,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 548: 366 inline fields, 174 type/helper/exclusion entries and 8 explicit Button/Card source supplements |
+| Supplementary named declarations | 560: 366 inline fields, 174 type/helper/exclusion entries and 20 explicit Button/Card/Tag source supplements |
 | Explicit inherited tracker rows | 264 |
-| Total tracker rows | 3,032; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 12 Avatar/Button/Card retained-scope tasks accepted, 372 unchecked |
+| Total tracker rows | 3,044; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 16 Avatar/Button/Card/Tag retained-scope tasks accepted, 368 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,032 rows retain canonical text with emoji color; 19 Avatar, 29 Button and 26 Card Verified rows cite accepted implementation |
-| Source agreement | All 2,220 direct source rows remain covered; 93 unchanged inventories match extraction; Avatar/Button/Card preserve named rows with accepted dispositions |
-| Local links | Relative file links checked after implementation overlays; the initial 612-link snapshot also checked heading anchors |
+| Status presentation | All 3,044 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card and 24 Tag Verified rows cite accepted implementation |
+| Source agreement | All 2,220 direct source rows remain covered; 92 unchanged inventories match extraction; Avatar/Button/Card/Tag preserve named rows with accepted dispositions |
+| Local links | 630 relative file links validated after Tag reconciliation; the historical 612-link snapshot also checked heading anchors |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript
