@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Avatar</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-avatar.css">
+  <link rel="stylesheet" href="./avatar.css">
+  <script defer src="../../dist/markup-ui-avatar.global.js"></script>
+  <script defer src="./avatar.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Avatar: native HTML, external CSS and plain JavaScript</h1>
+    <p>This page loads only the Avatar component. No framework, inline styles or remote assets are required.</p>
+
+    <section aria-labelledby="basic-heading">
+      <h2 id="basic-heading">Authored content and sizes</h2>
+      <div class="examples">
+        <mui-avatar size="small" alt="Ada">A</mui-avatar>
+        <mui-avatar alt="Grace">G</mui-avatar>
+        <mui-avatar size="large" alt="Linus">L</mui-avatar>
+        <mui-avatar square bordered alt="Team" class="brand">UI</mui-avatar>
+        <mui-avatar alt="Blue portrait" lazy>
+          <img alt="Blue portrait" width="36" height="36"
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Crect width='36' height='36' fill='%232080f0'/%3E%3C/svg%3E">
+        </mui-avatar>
+      </div>
+    </section>
+
+    <section aria-labelledby="fallback-heading">
+      <h2 id="fallback-heading">Image lifecycle and authored templates</h2>
+      <mui-avatar id="dynamic-avatar" alt="Dynamic profile" size="large">
+        DP
+        <template data-mui-avatar-placeholder><span>...</span></template>
+        <template data-mui-avatar-fallback><span>?</span></template>
+      </mui-avatar>
+      <p>
+        <button type="button" id="load-image">Load image</button>
+        <button type="button" id="fail-image">Show fallback</button>
+        <button type="button" id="clear-image">Restore text</button>
+      </p>
+      <p id="image-status" role="status">Text content is shown initially.</p>
+    </section>
+
+    <section aria-labelledby="group-heading">
+      <h2 id="group-heading">Group with native disclosure</h2>
+      <p>Tab to the overflow summary and use Enter or Space to disclose the remaining avatars.</p>
+      <mui-avatar-group max="2" label="Project team">
+        <mui-avatar alt="Ada">A</mui-avatar>
+        <mui-avatar alt="Grace">G</mui-avatar>
+        <mui-avatar alt="Linus">L</mui-avatar>
+        <mui-avatar alt="Margaret">M</mui-avatar>
+      </mui-avatar-group>
+    </section>
+  </main>
+</body>
+</html>

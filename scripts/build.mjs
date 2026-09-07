@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process"
 import { gzipSync } from "node:zlib"
-import { readFile, rm, writeFile } from "node:fs/promises"
+import { copyFile, readFile, rm, writeFile } from "node:fs/promises"
 import { resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { build } from "esbuild"
@@ -58,13 +58,33 @@ await Promise.all([
     minify: true,
     outfile: resolve(dist, "markup-ui-widgets.js"),
   }),
+  build({
+    ...shared,
+    entryPoints: [resolve(root, "src", "components", "avatar", "index.ts")],
+    format: "esm",
+    minify: true,
+    outfile: resolve(dist, "markup-ui-avatar.js"),
+  }),
+  build({
+    ...shared,
+    entryPoints: [resolve(root, "src", "components", "avatar", "index.ts")],
+    format: "iife",
+    globalName: "MarkupUIAvatar",
+    minify: true,
+    outfile: resolve(dist, "markup-ui-avatar.global.js"),
+  }),
 ])
+
+await copyFile(resolve(root, "src", "components", "avatar", "avatar.css"), resolve(dist, "markup-ui-avatar.css"))
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
   "markup-ui.min.js": 15_000,
   "markup-ui-advanced.js": 3_000,
   "markup-ui-widgets.js": 4_000,
+  "markup-ui-avatar.js": 4_000,
+  "markup-ui-avatar.global.js": 4_000,
+  "markup-ui-avatar.css": 1_500,
 }
 const bundles = {}
 

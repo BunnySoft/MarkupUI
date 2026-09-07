@@ -1,0 +1,7 @@
+body { margin: 0; background: #fafafa; color: #18181b; font: 16px/1.5 system-ui, sans-serif; }
+main { max-inline-size: 60rem; margin-inline: auto; padding: 2rem; }
+section { margin-block: 2rem; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; background: white; }
+.examples { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; }
+.brand { --mui-avatar-background: #e7f5ee; --mui-avatar-color: #087443; }
+button { padding: .5rem 1rem; font: inherit; cursor: pointer; }
+button:focus-visible { outline: 2px solid #087443; outline-offset: 2px; }

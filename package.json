@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./avatar": {
+      "types": "./dist/components/avatar/index.d.ts",
+      "import": "./dist/markup-ui-avatar.js"
+    },
+    "./avatar/style.css": "./dist/markup-ui-avatar.css",
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/markup-ui.js"
