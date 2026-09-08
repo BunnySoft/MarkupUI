@@ -3,7 +3,7 @@
 This is a **proposal and migration inventory, not a shipped compatibility layer**.
 Explicitly Verified retained targets, currently Avatar/Avatar Group in `9afc818`,
 Button/ButtonGroup in `43dd57f`, Card in `cebc6d7`, Tag in `6605d29`, Badge in
-`69c9480`, Alert in `2a1eb42`, Empty in `27a435b`, Skeleton in `05c6546`, Spin in `6c7f35b`, Progress in `8d7757c`, Statistic in `1ed3a98`, Typography in `53d3974`, Icon in `829970d`, Gradient Text in `38dcf6f`, Ellipsis in `5fabe7f`, Page Header in `5f9faf3`, Divider in `2e1a6c0`, Flex in `720a92c`, Space in `d495a12`, and Grid's linked retained record have implementation and acceptance evidence; the remaining
+`69c9480`, Alert in `2a1eb42`, Empty in `27a435b`, Skeleton in `05c6546`, Spin in `6c7f35b`, Progress in `8d7757c`, Statistic in `1ed3a98`, Typography in `53d3974`, Icon in `829970d`, Gradient Text in `38dcf6f`, Ellipsis in `5fabe7f`, Page Header in `5f9faf3`, Divider in `2e1a6c0`, Flex in `720a92c`, Space in `d495a12`, and Grid's and Layout's linked retained records have implementation and acceptance evidence; the remaining
 catalog must not inherit that status.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
 Use the [master migration plan](migration-plan.md) for phase dependencies and current execution
@@ -57,7 +57,8 @@ The numbered component checklists distinguish proposed work from accepted implem
 Avatar's four retained-scope tasks are checked using `9afc818`, Button's four using
 `43dd57f`, Card's four using `cebc6d7`, Tag's four using `6605d29`, and Badge's four using
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's and Grid's four each with retained acceptance records;
-the other **304 tasks remain unchecked**. Layout is next, not started. Reconcile later implementation evidence
+the other **300 tasks remain unchecked** after accepting Layout's four native-scope tasks.
+List is next, not started. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
 ### Native browser capabilities reduce implementation scope
@@ -171,7 +172,7 @@ acceptance. Separate ESM/classic JavaScript ceilings are 4,000 gzip bytes each; 
 1,500-byte ceiling. Browser coverage is not all-browser certification or pixel parity.
 The reference Avatar page reconciles all **35 rows: 19 Verified adapted targets and
 16 Intentionally omitted contracts**. Button, Card, Tag, Badge, Alert, Empty, Skeleton, Spin, Progress, Statistic, Typography, Icon, Gradient Text, Ellipsis, Page Header, Divider, Flex, Space and Grid are also verified as recorded below;
-**Layout is next**, and the master plan owns
+**List is next**, and the master plan owns
 the sequential implementation/build/commit workflow.
 
 ### Button pilot: accepted native scope
@@ -210,7 +211,7 @@ Card never removes itself in response to close intent or infers a heading/landma
 close focusability defaults true. The three pilot ESM entries also composed together before
 the legacy aggregate with one native form submission and separate CSS in Chromium.
 
-The pilot, P2-02, P2-03 and individual Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid retained scopes are complete; **Layout is next**.
+The pilot, P2-02, P2-03, P2-04 and individual Typography/Icon/Gradient Text/Ellipsis/Page Header retained scopes are complete; **List is next**.
 This closes Tag/Badge/Alert/Empty/Skeleton/Spin, not all P2 typography/layout/content work. Detailed
 phase progress and per-component commits belong in the master migration plan.
 
@@ -543,7 +544,28 @@ Four tasks are accepted against **385 passing tests**, build/export gates and Ch
 column/span/gap/placement, self-versus-screen queries, nested/hidden/native focus/forms,
 RTL/zoom/print and unchanged legacy-columns coexistence evidence.
 Grid CSS is **527 gzip bytes / 1,500 ceiling**; core stays **14,611/15,000**.
-Layout is next, followed by remaining ordered content. P2 is still In progress.
+Layout's accepted native composition is recorded below. P2 is still In progress.
+
+### Layout: verified native CSS/disclosure/scrolling scope
+
+The [Layout and companion-region acceptance record](../components/layout.md) completes
+the retained P2-04 layout workstream through native header/content/footer/aside structure,
+details/summary disclosure and Element scrolling. No component runtime, observer, provider,
+custom scrollbar or registration is added. The export is
+`@dataengine/markup-ui/layout/style.css`.
+
+All **42 original owner-specific rows** remain: **32 Verified adapted native targets and
+10 Intentionally omitted contracts**. Closed native disclosure hides content rather than
+translating/clipping focusable navigation. Native toggle timing, logical DOM-order side
+placement, normal/absolute positioning and author-specified scroll constraints are explicit;
+runtime style objects and transition callbacks are not emulated.
+
+Four tasks are accepted against **396 tests**, build/budget gates and Chromium nested-shell,
+scroll/sticky/absolute geometry, keyboard disclosure and hidden focus safety, native forms,
+RTL/320px/200%-zoom, print, forced-colors and legacy-coexistence evidence.
+Layout CSS is **874 gzip bytes / 1,500 ceiling**; core remains **14,611/15,000**.
+P2-04 is complete for retained scope; **List, Descriptions, Timeline and Breadcrumb** follow.
+Whole P2 remains incomplete pending its remaining catalog scope.
 
 ## Common Components (15)
 
@@ -657,7 +679,7 @@ Layout is next, followed by remaining ordered content. P2 is still In progress.
 | Component | Plan direction | Current baseline | Phase |
 | --- | --- | --- | --- |
 | [Flex](components/flex.md) | 🟢 Verified CSS-only native scope; 4 explicit omissions | Native flex/gap layout; [accepted evidence](../components/flex.md), no child/runtime mutation | P2 |
-| [Layout](components/layout.md) | 🔵 Planned | Partial structural wrappers | P2, P3 |
+| [Layout](components/layout.md) | 🟢 Verified retained native scope; 10 explicit omissions | Native CSS/disclosure/scrolling; [accepted evidence](../components/layout.md) | P2, P3 |
 | [Legacy Grid](components/legacy-grid.md) | ⏭️ Intentionally omitted: legacy API | Related modern grid | Exclusions |
 | [Grid](components/grid.md) | 🟢 Verified retained CSS scope; 11 explicit omissions | Native Grid/GridItem CSS; [accepted evidence](../components/grid.md), packing algorithms omitted | P2 |
 | [Space](components/space.md) | 🟢 Verified CSS-only native scope; 5 explicit omissions | Authored item/group CSS; [accepted evidence](../components/space.md), no wrapper/gap runtime | P2 |
@@ -715,12 +737,12 @@ such rows or adopting exact callback return/default semantics.
 | Supplementary named declarations | 659: 367 inline fields, 175 type/helper/exclusion entries and 117 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid source supplements |
 | Explicit inherited tracker rows | 264 |
 | Total tracker rows | 3,143; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 80 Avatar/Button/Card/Tag/Badge/Alert/Empty/Skeleton/Spin/Progress/Statistic/Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid retained-scope tasks accepted, 304 unchecked |
+| Component execution checklists | 96 checklists with four numbered tasks each: 84 retained-scope tasks accepted across 21 component pages, 300 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,143 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space and 10 Grid Verified targets cite native acceptance |
-| Source agreement | All 2,220 direct source rows remain covered; 76 unchanged inventories match extraction; the twenty accepted component pages preserve named/grouped rows with explicit dispositions |
-| Local links | 757 relative file links validated after Grid reconciliation; the historical 612-link snapshot also checked heading anchors |
+| Status presentation | All 3,143 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid and 32 Layout Verified targets cite native acceptance |
+| Source agreement | All 2,220 direct source rows remain covered; 75 unchanged inventories match extraction; the 21 accepted component pages preserve named/grouped rows with explicit dispositions |
+| Local links | Relative file links validated after Layout reconciliation; the historical 612-link snapshot also checked heading anchors |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

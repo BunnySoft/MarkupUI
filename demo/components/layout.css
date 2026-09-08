@@ -1,0 +1,26 @@
+body { margin: 0; color: #18181b; background: #fafafa; font: 16px/1.5 system-ui, sans-serif; }
+main, .demo-intro { max-inline-size: 64rem; margin-inline: auto; padding: 1rem; }
+section { margin-block-end: 2rem; }
+.demo-padding { padding: 1rem; }
+.demo-shell, .rtl-shell, .absolute-container { border: 1px solid #a1a1aa; }
+.demo-shell { --mui-layout-sider-width: 200px; --mui-layout-sider-collapsed-width: 64px; }
+.nested-shell { margin-block-start: 1rem; border: 1px solid #a1a1aa; }
+.activity { block-size: 220px; border: 1px solid #a1a1aa; margin-block-start: 1rem; }
+.activity li { padding: 1rem; }
+.activity > a { display: inline-block; margin: 1rem; }
+.sticky-header { position: sticky; inset-block-start: 0; }
+.rtl-shell { --mui-layout-sider-width: 180px; }
+.absolute-container { position: relative; block-size: 220px; }
+.absolute-content { padding-block: 4rem; }
+input, button { box-sizing: border-box; max-inline-size: 100%; font: inherit; }
+button { padding: .35rem .65rem; }
+nav a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid #087443; outline-offset: 2px; }
+@media (max-width: 40rem) {
+  .demo-body[data-has-sider], .rtl-shell[data-has-sider] { flex-direction: column; }
+  .demo-body > .mui-layout-sider, .rtl-shell > .mui-layout-sider { inline-size: 100%; }
+}
+@media print {
+  .absolute-container { block-size: auto; }
+  .absolute-container [data-position="absolute"] { position: static; }
+  .absolute-content { padding-block: 1rem; }
+}

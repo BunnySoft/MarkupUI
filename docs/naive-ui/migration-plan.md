@@ -2,7 +2,7 @@
 
 **Plan state: 🟠 In progress — P1 pilots and the P2-02 Tag/Badge/Alert/Empty/Skeleton/Spin workstream
 and P2-03 Progress/Statistic are Verified for retained scope. Whole P2 is not complete;
-Typography `53d3974`, Icon `829970d`, Gradient Text `38dcf6f`, Ellipsis `5fabe7f`, Page Header `5f9faf3`, Divider `2e1a6c0`, Flex `720a92c`, Space `d495a12` and Grid's linked native CSS record are Verified; Layout is next.** Existing MarkupUI features are a partial baseline,
+Typography `53d3974`, Icon `829970d`, Gradient Text `38dcf6f`, Ellipsis `5fabe7f`, Page Header `5f9faf3`, Divider `2e1a6c0`, Flex `720a92c`, Space `d495a12` and Grid's/Layout's linked native records are Verified; List is next.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -30,7 +30,7 @@ coverage, implementation status, and upstream feature parity separate.
 | --- | --- | --- | --- | --- |
 | P0 — Architecture and contracts | 🔵 Planned | Establish separated sources, compatible loading, lifecycle, events and native-control conventions. | None | A minimal external-CSS example works without a consumer build step, and existing loading remains supported. |
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
-| P2 — Primitives and layout | 🟠 In progress | P2-02/P2-03 and Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid retained scopes complete; Layout next, then remaining content. | P1 pattern | Retained features have evidence; styling-only features do not acquire unnecessary controllers. |
+| P2 — Primitives and layout | 🟠 In progress | P2-02/P2-03/P2-04 retained scopes complete; List and remaining structured content next. | P1 pattern | Retained features have evidence; styling-only features do not acquire unnecessary controllers. |
 | P3 — Interaction foundations | 🔵 Planned | Implement predictable focus, keyboard, overlays and navigation. | P0 lifecycle; P1 controls | Nested interaction, dismissal and focus behavior are defined and demonstrated. |
 | P4 — Forms and selection | 🔵 Planned | Make native controls dependable, then add optional richer selection. | P0 form contract; P3 for popup variants | Values, labels, submission, reset, validity and event semantics are consistent. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
@@ -79,7 +79,7 @@ rewrite all components before demonstrating one useful vertical slice.
 | P2-01 — Typography and content | 🟠 In progress | Typography `53d3974`, Icon `829970d`, Gradient Text `38dcf6f` and Ellipsis `5fabe7f` Verified as native CSS compositions; broader content scope remains open. | [Typography acceptance](../components/typography.md): 300 tests; [Icon acceptance](../components/icon.md): 308; [Gradient Text acceptance](../components/gradient-text.md): 316; [Ellipsis acceptance](../components/ellipsis.md): 327 plus Chromium overflow/native disclosure/names/selection/print/zoom evidence. |
 | P2-02 — Small feedback | 🟢 Verified | Tag `6605d29`, Badge `69c9480`, Alert `2a1eb42`, Empty `27a435b`, Skeleton `05c6546`, and Spin `6c7f35b` complete their retained scopes. | [Tag](../components/tag.md): 118 tests; [Badge](../components/badge.md): 141; [Alert](../components/alert.md): 167; [Empty](../components/empty.md): 190; [Skeleton](../components/skeleton.md): 213; [Spin](../components/spin.md): 241 plus Chromium timing/native-state/motion evidence. |
 | P2-03 — Progress and statistics | 🟢 Verified | Progress `8d7757c` and Statistic `1ed3a98` complete retained native scopes; Number Animation remains separate. | [Progress acceptance](../components/progress.md): 270 tests; [Statistic acceptance](../components/statistic.md): 290 plus Chromium native value/region/formatting-string/typography evidence. |
-| P2-04 — Layout | 🟠 In progress | Divider `2e1a6c0`, Flex `720a92c`, Space `d495a12` and Grid retained native scopes complete; Layout remains pending. | [Divider](../components/divider.md): 351 tests; [Flex](../components/flex.md): 362; [Space](../components/space.md): 373; [Grid](../components/grid.md): 385 plus native query/placement/disclosure evidence; Grid packing/overflow algorithms explicitly omitted. |
+| P2-04 — Layout | 🟢 Verified | Divider, Flex, Space, Grid and Layout retained native scopes complete. | [Layout acceptance](../components/layout.md): 396 tests plus Chromium native shell/disclosure/scrolling evidence; upstream packing, rendering and transition algorithms have explicit scope exclusions. |
 | P2-05 — Static compound display | 🟠 In progress | Page Header `5f9faf3` retained native scope complete; List, Descriptions, Timeline and Breadcrumb remain pending. | [Page Header acceptance](../components/page-header.md): 340 tests and Chromium native landmark/heading/action/form/wrapping evidence; no compulsory renderer or router. |
 | P2-06 — Wave sign-off | 🔵 Planned | Close retained feature gaps and document any intentionally simplified visual variations. | Updated per-component trackers and isolated payload accounting. |
 
@@ -183,10 +183,11 @@ excluded from delivery scope but never counted as implemented.
 - [ ] Combined JS+CSS sizes and existing bundle ceilings are respected.
 - [ ] Component, property and phase records agree on actual progress.
 
-## First implementation slice
+## Current migration position
 
-**Current component: Grid/GridItem (P2-04), retained CSS-only implementation and acceptance complete.**
-**Next component: Layout, awaiting coordinator selection; not started.**
+**Current component: Layout and companion regions (P2-04), retained native scope accepted.**
+**Next component: List, then Descriptions, Timeline and Breadcrumb.**
+Grid/GridItem completed its retained native CSS scope in `c659646`.
 Space completed its retained native CSS implementation and acceptance in `d495a12`.
 Flex completed its retained native CSS implementation and acceptance in `720a92c`.
 Divider completed its retained native CSS implementation and acceptance in `2e1a6c0`.
@@ -297,9 +298,12 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The index records 3,143 rows and 80 accepted retained tasks out of 384, not full upstream parity.
-Await coordinator selection of **Layout**, then **List,
-Descriptions, Timeline and Breadcrumb**, in that order. Residual content and cross-phase
+The index records 3,143 rows and 84 accepted retained tasks out of 384, not full upstream parity.
+Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
+scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
+and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
+
+Continue with **List, Descriptions, Timeline and Breadcrumb**, in that order. Residual content and cross-phase
 components remain on the index; this queue does not close all P2. Preserve native
 semantics and the legacy aggregate. Each component gets its own documentation update, build,
 acceptance evidence and commit before advancing. No dates or effort estimates are assigned

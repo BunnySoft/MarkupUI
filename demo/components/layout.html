@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Layout</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-layout.css">
+  <link rel="stylesheet" href="./layout.css">
+  <script defer src="./layout.js"></script>
+</head>
+<body>
+  <header class="demo-intro">
+    <h1>Native Layout</h1>
+    <p>Semantic regions, external CSS, native disclosure and ordinary scrolling. No component JavaScript is loaded.</p>
+  </header>
+  <main>
+    <section aria-labelledby="shell-heading">
+      <h2 id="shell-heading">Authored shell and sidebar</h2>
+      <div class="mui-layout demo-shell" id="shell">
+        <header class="mui-layout-header demo-padding" data-bordered>Project workspace</header>
+        <div class="mui-layout demo-body" data-has-sider id="shell-body">
+          <details class="mui-layout-sider" data-bordered open id="sidebar">
+            <summary id="sidebar-trigger">Menu</summary>
+            <nav aria-label="Project navigation" class="demo-padding">
+              <ul>
+                <li><a href="#workspace" id="navigation-link">Workspace</a></li>
+                <li><a href="#scroll-heading">Activity</a></li>
+              </ul>
+            </nav>
+          </details>
+          <section class="mui-layout-content demo-padding" id="workspace" aria-labelledby="workspace-heading">
+            <h3 id="workspace-heading">Workspace</h3>
+            <p>The sidebar uses native <code>details</code>. Closing it hides its navigation from focus and accessibility traversal.</p>
+            <form id="native-form">
+              <label for="native-name">Name</label>
+              <input id="native-name" name="name" value="Original">
+              <button type="submit" id="native-submit">Submit</button>
+              <button type="reset" id="native-reset">Reset</button>
+              <button type="button" disabled id="native-disabled">Disabled</button>
+            </form>
+            <div class="mui-layout nested-shell" id="nested-shell">
+              <div class="mui-layout-header demo-padding" data-bordered>Nested header without a new landmark</div>
+              <div class="mui-layout-content demo-padding" data-embedded>Nested authored content</div>
+            </div>
+          </section>
+        </div>
+        <footer class="mui-layout-footer demo-padding" data-bordered>Project footer</footer>
+      </div>
+      <p id="form-status" role="status"></p>
+    </section>
+
+    <section aria-labelledby="scroll-heading">
+      <h2 id="scroll-heading">Explicit scrolling and sticky header</h2>
+      <p>Only this named, keyboard-focusable region is constrained.</p>
+      <button type="button" id="scroll-bottom">Scroll activity to the bottom</button>
+      <div class="mui-layout-scroll activity" id="activity" tabindex="0" role="region" aria-labelledby="scroll-heading">
+        <div class="mui-layout-header sticky-header demo-padding" data-bordered>Sticky activity header</div>
+        <ol>
+          <li>Project created.</li><li>Team invited.</li><li>Data connected.</li><li>Preview generated.</li>
+          <li>Review requested.</li><li>Review completed.</li><li>Release prepared.</li><li>Release published.</li>
+        </ol>
+        <a href="#shell-heading" id="activity-end">Return to workspace</a>
+      </div>
+    </section>
+
+    <section aria-labelledby="rtl-heading">
+      <h2 id="rtl-heading">Logical end placement</h2>
+      <div class="mui-layout rtl-shell" data-has-sider dir="rtl" id="rtl-shell">
+        <div class="mui-layout-content demo-padding">Content first in reading order.</div>
+        <aside class="mui-layout-sider demo-padding" data-side="end" data-bordered data-inverted id="end-sidebar">
+          <p>Sidebar last in reading order.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section aria-labelledby="absolute-heading">
+      <h2 id="absolute-heading">Explicit containing block</h2>
+      <div class="absolute-container" id="absolute-container">
+        <div class="mui-layout" data-position="absolute" id="absolute-shell">
+          <div class="mui-layout-header demo-padding" data-position="absolute" data-bordered id="absolute-header">Pinned header</div>
+          <div class="mui-layout-content absolute-content demo-padding">Application CSS reserves space for positioned regions.</div>
+          <div class="mui-layout-footer demo-padding" data-position="absolute" data-bordered id="absolute-footer">Pinned footer</div>
+        </div>
+      </div>
+    </section>
+    <div class="mui-layout" hidden id="hidden-shell"><button>Hidden control</button></div>
+    <template class="mui-layout" id="native-template"><p>Inert authored template</p></template>
+    <p id="outside">An ordinary paragraph outside every layout.</p>
+  </main>
+</body>
+</html>

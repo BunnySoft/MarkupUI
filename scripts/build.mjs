@@ -24,7 +24,7 @@ const shared = {
 }
 const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic"]
 const classicEntries = { progress: "global.ts" }
-const styleOnlyComponents = ["typography", "icon", "gradient-text", "ellipsis", "page-header", "divider", "flex", "space", "grid"]
+const styleOnlyComponents = ["typography", "icon", "gradient-text", "ellipsis", "page-header", "divider", "flex", "space", "grid", "layout"]
 
 await Promise.all([
   build({
@@ -131,6 +131,7 @@ const bundleBudgets = {
   "markup-ui-flex.css": 1_000,
   "markup-ui-space.css": 1_000,
   "markup-ui-grid.css": 1_500,
+  "markup-ui-layout.css": 1_500,
 }
 const bundles = {}
 
