@@ -1,0 +1,47 @@
+.mui-loading-bar {
+  display: grid; gap: .35rem; color: var(--mui-loading-bar-text, #193b5e);
+  background: var(--mui-loading-bar-background, #fff);
+}
+.mui-loading-bar progress {
+  appearance: none; display: block; inline-size: 100%; block-size: var(--mui-loading-bar-height, .5rem);
+  overflow: hidden; border: 0; border-radius: .15rem; background: var(--mui-loading-bar-track, #dbe4ef);
+  color: var(--mui-loading-bar-color, #2472bf); accent-color: var(--mui-loading-bar-color, #2472bf);
+}
+.mui-loading-bar progress::-webkit-progress-bar { background: var(--mui-loading-bar-track, #dbe4ef); }
+.mui-loading-bar progress::-webkit-progress-value { background: var(--mui-loading-bar-color, #2472bf); }
+.mui-loading-bar progress::-moz-progress-bar { background: var(--mui-loading-bar-color, #2472bf); }
+.mui-loading-bar progress:indeterminate,
+.mui-loading-bar progress:indeterminate::-webkit-progress-bar {
+  background: repeating-linear-gradient(110deg, var(--mui-loading-bar-track, #dbe4ef) 0 .7rem, var(--mui-loading-bar-color, #2472bf) .7rem 1rem);
+  background-size: 2rem 100%; animation: mui-loading-bar-stripes 1s linear infinite;
+}
+.mui-loading-bar progress:indeterminate::-moz-progress-bar { background: transparent; }
+.mui-loading-bar progress:indeterminate::-webkit-progress-value { background: transparent; }
+.mui-loading-bar [data-loading-bar-status] { padding: .15rem .4rem; font: inherit; }
+.mui-loading-bar[data-loading-bar-state="success"] { --mui-loading-bar-color: #176243; }
+.mui-loading-bar[data-loading-bar-state="error"] { color: var(--mui-loading-bar-error, #a1272f); border-block-start: var(--mui-loading-bar-height, .5rem) solid currentColor; }
+.mui-loading-bar[data-loading-bar-state="error"] progress { display: none; }
+.mui-loading-bar[data-loading-bar-state="idle"], .mui-loading-bar[hidden], .mui-loading-bar [hidden] { display: none !important; }
+.mui-loading-bar--fixed {
+  position: fixed; z-index: var(--mui-loading-bar-z-index, 20); pointer-events: none;
+  inset-block-start: max(var(--mui-loading-bar-top, 0px), env(safe-area-inset-top, 0px));
+  inset-inline-start: max(var(--mui-loading-bar-inset, 0px), env(safe-area-inset-left, 0px));
+  inset-inline-end: max(var(--mui-loading-bar-inset, 0px), env(safe-area-inset-right, 0px));
+}
+.mui-loading-bar--fixed:dir(rtl) {
+  inset-inline-start: max(var(--mui-loading-bar-inset, 0px), env(safe-area-inset-right, 0px));
+  inset-inline-end: max(var(--mui-loading-bar-inset, 0px), env(safe-area-inset-left, 0px));
+}
+@keyframes mui-loading-bar-stripes { to { background-position: 2rem 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .mui-loading-bar progress:indeterminate, .mui-loading-bar progress:indeterminate::-webkit-progress-bar { animation: none; }
+}
+@media (forced-colors: active) {
+  .mui-loading-bar { color: CanvasText; background: Canvas; --mui-loading-bar-color: Highlight; --mui-loading-bar-track: Canvas; }
+  .mui-loading-bar progress { border: 1px solid CanvasText; }
+  .mui-loading-bar progress:indeterminate, .mui-loading-bar progress:indeterminate::-webkit-progress-bar { background: Canvas; animation: none; }
+}
+@media print {
+  .mui-loading-bar { position: static; color: black; }
+  .mui-loading-bar progress:indeterminate, .mui-loading-bar progress:indeterminate::-webkit-progress-bar { animation: none; }
+}

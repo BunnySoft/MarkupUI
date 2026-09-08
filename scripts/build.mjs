@@ -22,8 +22,8 @@ const shared = {
   sourcemap: true,
   target: ["es2022"],
 }
-const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image", "popover", "tooltip", "popconfirm", "dropdown", "menu", "tabs", "collapse", "anchor", "back-top", "pagination", "steps"]
-const classicEntries = { progress: "global.ts", popover: "global.ts", tooltip: "global.ts", popconfirm: "global.ts", dropdown: "global.ts", menu: "global.ts", tabs: "global.ts", collapse: "global.ts", anchor: "global.ts", "back-top": "global.ts", pagination: "global.ts", steps: "global.ts" }
+const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image", "popover", "tooltip", "popconfirm", "dropdown", "menu", "tabs", "collapse", "anchor", "back-top", "pagination", "steps", "loading-bar"]
+const classicEntries = { progress: "global.ts", popover: "global.ts", tooltip: "global.ts", popconfirm: "global.ts", dropdown: "global.ts", menu: "global.ts", tabs: "global.ts", collapse: "global.ts", anchor: "global.ts", "back-top": "global.ts", pagination: "global.ts", steps: "global.ts", "loading-bar": "global.ts" }
 const styleOnlyComponents = ["typography", "icon", "gradient-text", "ellipsis", "page-header", "divider", "flex", "space", "grid", "layout", "list", "descriptions", "timeline", "breadcrumb", "thing", "table", "affix", "result", "code", "scrollbar", "float-button"]
 
 await Promise.all([
@@ -187,6 +187,9 @@ const bundleBudgets = {
   "markup-ui-steps.js": 4_000,
   "markup-ui-steps.global.js": 4_000,
   "markup-ui-steps.css": 1_250,
+  "markup-ui-loading-bar.js": 3_500,
+  "markup-ui-loading-bar.global.js": 3_500,
+  "markup-ui-loading-bar.css": 1_250,
 }
 const bundles = {}
 

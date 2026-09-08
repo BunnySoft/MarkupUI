@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./loading-bar": {
+      "types": "./dist/components/loading-bar/index.d.ts",
+      "import": "./dist/markup-ui-loading-bar.js"
+    },
+    "./loading-bar/style.css": "./dist/markup-ui-loading-bar.css",
     "./steps": {
       "types": "./dist/components/steps/index.d.ts",
       "import": "./dist/markup-ui-steps.js"

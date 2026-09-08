@@ -1,0 +1,320 @@
+import { readFileSync } from "node:fs"
+import { join } from "node:path"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import { createLoadingBar } from "../src/components/loading-bar/index.js"
+import type { LoadingBarController, LoadingBarOptions } from "../src/components/loading-bar/index.js"
+
+const controllers: LoadingBarController[] = []
+let sequence = 0
+function fixture() {
+  const parsed = new DOMParser().parseFromString(readFileSync(join("demo", "components", "loading-bar.html"), "utf8"), "text/html")
+  const root = document.importNode(parsed.querySelector("#inline-bar")!, true) as HTMLElement
+  const progress = root.querySelector("progress")!, status = root.querySelector<HTMLElement>("[data-loading-bar-status]")!
+  const id = ++sequence
+  root.id = `bar-${id}`; progress.id = `progress-${id}`; status.id = `status-${id}`
+  root.querySelector("label")!.htmlFor = progress.id
+  progress.setAttribute("aria-describedby", status.id)
+  document.body.append(root)
+  return { root, progress, status }
+}
+function bind(options: LoadingBarOptions = {}) {
+  const pair = fixture(), controller = createLoadingBar(pair.root, options)
+  controllers.push(controller)
+  return { ...pair, controller }
+}
+afterEach(() => { controllers.splice(0).forEach(c => c.disconnect()); document.body.replaceChildren(); vi.useRealTimers(); vi.restoreAllMocks() })
+
+describe("truthful Loading Bar lifecycle", () => {
+  it("connects idle without an event, then starts native indeterminate progress", () => {
+    const { root, progress } = fixture(), change = vi.fn()
+    root.addEventListener("mui:loading-bar-change", change)
+    const c = createLoadingBar(root); controllers.push(c)
+    expect(c.state).toBe("idle"); expect(change).not.toHaveBeenCalled()
+    c.start()
+    expect(c.state).toBe("loading"); expect(c.value).toBeNull()
+    expect(progress.hasAttribute("value")).toBe(false)
+    expect(progress.getAttribute("aria-valuetext")).toBe("Loading")
+    expect(change.mock.calls[0]![0].detail).toEqual({ state: "loading", previous: "idle" })
+  })
+  it("accepts only caller-supplied measured units and never auto-finishes at max", () => {
+    const { progress, controller } = bind()
+    controller.start(); controller.setProgress(40.5)
+    expect(controller.value).toBe(40.5)
+    expect(progress.getAttribute("aria-valuetext")).toBeNull()
+    controller.setProgress(100)
+    expect(controller.state).toBe("loading")
+    controller.finish()
+    expect(controller.state).toBe("success"); expect(controller.value).toBe(100)
+  })
+  it("shows error words without pretending unknown work completed", () => {
+    const { root, status, progress, controller } = bind()
+    controller.error()
+    expect(controller.state).toBe("error")
+    expect(status.textContent).toBe("Failed")
+    expect(progress.hasAttribute("value")).toBe(false)
+    expect(root.getAttribute("data-loading-bar-state")).toBe("error")
+  })
+  it("keeps the last known measurement at error, rather than faking 100 percent", () => {
+    const { controller } = bind()
+    controller.start(); controller.setProgress(35); controller.error()
+    expect(controller.value).toBe(35)
+    expect(controller.state).toBe("error")
+  })
+  it("allows an explicit terminal report from idle and makes the first terminal result win", () => {
+    const { controller } = bind()
+    controller.finish(); controller.error(); controller.finish()
+    expect(controller.state).toBe("success")
+    controller.start(); controller.error(); controller.finish()
+    expect(controller.state).toBe("error")
+    controller.stop()
+    expect(controller.state).toBe("idle"); expect(controller.value).toBeNull()
+  })
+  it("hides successful state after its hold, without resetting the hold on repeated finish", () => {
+    vi.useFakeTimers()
+    const { controller } = bind()
+    controller.finish(); vi.advanceTimersByTime(500); controller.finish()
+    vi.advanceTimersByTime(99); expect(controller.state).toBe("success")
+    vi.advanceTimersByTime(1); expect(controller.state).toBe("idle")
+    expect(vi.getTimerCount()).toBe(0)
+  })
+  it("keeps errors until an explicit reset by default and supports a bounded error hold", () => {
+    vi.useFakeTimers()
+    const first = bind(), second = bind({ errorDelay: 25, finishDelay: null })
+    first.controller.error(); second.controller.error()
+    vi.advanceTimersByTime(25)
+    expect(first.controller.state).toBe("error")
+    expect(second.controller.state).toBe("idle")
+    second.controller.stop(); second.controller.finish(); vi.advanceTimersByTime(60_000)
+    expect(second.controller.state).toBe("success")
+  })
+  it("protects rapid start/finish/restart and stop against stale terminal timers", () => {
+    vi.useFakeTimers()
+    const { controller } = bind({ finishDelay: 20, errorDelay: 20 })
+    controller.start(); controller.finish(); controller.start()
+    vi.advanceTimersByTime(100); expect(controller.state).toBe("loading")
+    controller.error(); controller.start()
+    vi.advanceTimersByTime(100); expect(controller.state).toBe("loading")
+    controller.finish(); controller.stop(); vi.advanceTimersByTime(100)
+    expect(controller.state).toBe("idle"); expect(vi.getTimerCount()).toBe(0)
+  })
+  it("retains the first terminal outcome after auto-hide until explicit start or stop", () => {
+    vi.useFakeTimers()
+    const { controller } = bind({ finishDelay: 0, errorDelay: 0 })
+    controller.start(); controller.finish(); vi.runAllTimers()
+    expect(controller.state).toBe("idle"); expect(controller.outcome).toBe("success")
+    controller.error(); controller.finish()
+    expect(controller.state).toBe("idle"); expect(vi.getTimerCount()).toBe(0)
+    controller.stop(); controller.error(); vi.runAllTimers()
+    expect(controller.outcome).toBe("error"); expect(controller.state).toBe("idle")
+    controller.start(); expect(controller.outcome).toBeNull()
+  })
+  it("handles zero-delay and reentrant state listeners without hiding restarted work", () => {
+    vi.useFakeTimers()
+    const { root, controller } = bind({ finishDelay: 0 })
+    root.addEventListener("mui:loading-bar-change", event => {
+      if ((event as CustomEvent).detail.state === "success") controller.start()
+    })
+    controller.finish(); vi.runAllTimers()
+    expect(controller.state).toBe("loading")
+    expect(vi.getTimerCount()).toBe(0)
+  })
+  it("does not invent user events for measurement updates or repeated starts", () => {
+    const { root, controller } = bind(), change = vi.fn()
+    root.addEventListener("mui:loading-bar-change", change)
+    controller.start(); controller.start(); controller.setProgress(25)
+    expect(change).toHaveBeenCalledTimes(1)
+    expect(change.mock.calls[0]![0].bubbles).toBe(false)
+  })
+  it.each([NaN, Infinity, -1, 101, "40"])("rejects invalid measured progress %s without changing state", value => {
+    const { controller } = bind()
+    controller.start()
+    expect(() => controller.setProgress(value as number)).toThrow()
+    expect(controller.state).toBe("loading"); expect(controller.value).toBeNull()
+  })
+  it("rejects measurement outside the loading phase and operation calls after disposal", () => {
+    const { controller } = bind()
+    expect(() => controller.setProgress(20)).toThrow(/started/)
+    controller.disconnect()
+    for (const method of ["start", "finish", "error", "stop"] as const) expect(() => controller[method]()).toThrow(/Connect/)
+  })
+})
+
+describe("root ownership, native semantics and cleanup", () => {
+  it("keeps independent roots and timers separate, while preventing duplicate controllers", () => {
+    vi.useFakeTimers()
+    const first = bind({ finishDelay: 10 }), second = bind()
+    first.controller.start(); second.controller.start()
+    first.controller.finish(); vi.advanceTimersByTime(10)
+    expect(first.controller.state).toBe("idle")
+    expect(second.controller.state).toBe("loading")
+    expect(() => createLoadingBar(second.root)).toThrow(/active controller/)
+  })
+  it("preserves original value/max/name/hidden/styles, status text node and labels on disposal", () => {
+    const { root, progress, status } = fixture(), node = status.firstChild, label = root.querySelector("label")
+    progress.setAttribute("name", "authored"); progress.hidden = true
+    progress.style.inlineSize = "80%"
+    const attrs = () => Object.fromEntries([...progress.attributes].map(attr => [attr.name, attr.value]))
+    const before = attrs(), beforeText = status.textContent
+    const c = createLoadingBar(root); controllers.push(c)
+    c.start(); c.finish(); c.disconnect()
+    expect(attrs()).toEqual(before)
+    expect(status.firstChild).toBe(node); expect(status.textContent).toBe(beforeText)
+    expect(root.querySelector("label")).toBe(label)
+    expect(root.hasAttribute("data-loading-bar-state")).toBe(false)
+  })
+  it("preserves external hidden/style/ARIA and foreign value/text changes", async () => {
+    const { root, progress, status, controller } = bind()
+    controller.start()
+    root.hidden = true; root.style.color = "red"; progress.setAttribute("aria-describedby", "author")
+    progress.value = 55; status.firstChild!.textContent = "Author result"
+    await Promise.resolve()
+    controller.disconnect()
+    expect(root.hidden).toBe(true); expect(root.style.color).toBe("red")
+    expect(progress.value).toBe(55); expect(progress.getAttribute("aria-describedby")).toBe("author")
+    expect(status.textContent).toBe("Author result")
+  })
+  it("treats identical external attribute/text writes as the newest author baseline", () => {
+    const { progress, status, controller } = bind()
+    controller.start()
+    progress.setAttribute("aria-valuetext", "Loading")
+    status.firstChild!.textContent = "Loading"
+    controller.setProgress(40)
+    progress.setAttribute("value", "40")
+    controller.finish(); controller.disconnect()
+    expect(progress.value).toBe(40)
+    expect(progress.getAttribute("aria-valuetext")).toBe("Loading")
+    expect(status.textContent).toBe("Loading")
+  })
+  it("clears terminal timers immediately after root or ancestor removal is observed", async () => {
+    vi.useFakeTimers()
+    const { root, controller } = bind()
+    const wrapper = document.createElement("section"); document.body.append(wrapper); wrapper.append(root)
+    await Promise.resolve()
+    controller.finish(); wrapper.remove()
+    await Promise.resolve()
+    expect(controller.connected).toBe(false)
+    expect(vi.getTimerCount()).toBe(0)
+    expect(root.hasAttribute("data-loading-bar-state")).toBe(false)
+  })
+  it("rebinds ancestor removal observation after same-document reparenting", async () => {
+    vi.useFakeTimers()
+    const { root, controller } = bind()
+    const parent = document.createElement("section"); document.body.append(parent); parent.append(root)
+    await Promise.resolve()
+    controller.finish(); parent.remove(); await Promise.resolve()
+    expect(controller.connected).toBe(false); expect(vi.getTimerCount()).toBe(0)
+  })
+  it("reports live anatomy faults instead of mutating replacement progress nodes", async () => {
+    vi.useFakeTimers()
+    const { root, progress, controller } = bind(), fault = vi.fn()
+    root.addEventListener("mui:loading-bar-fault", fault)
+    controller.finish()
+    const replacement = progress.cloneNode(true) as HTMLProgressElement
+    progress.replaceWith(replacement)
+    await Promise.resolve()
+    expect(controller.connected).toBe(false); expect(fault).toHaveBeenCalledTimes(1)
+    expect(vi.getTimerCount()).toBe(0)
+    expect(replacement.value).toBe(100)
+  })
+  it("disconnects when the status marker moves, preserving the newly designated author node", async () => {
+    const { root, status, controller } = bind(), fault = vi.fn()
+    root.addEventListener("mui:loading-bar-fault", fault)
+    controller.start()
+    status.removeAttribute("data-loading-bar-status")
+    const replacement = document.createElement("span")
+    replacement.setAttribute("data-loading-bar-status", ""); replacement.textContent = "Replacement ready"
+    root.append(replacement); await Promise.resolve()
+    expect(controller.connected).toBe(false); expect(fault).toHaveBeenCalledTimes(1)
+    expect(replacement.textContent).toBe("Replacement ready")
+    expect(() => controller.error()).toThrow(/Connect/)
+  })
+  it("does not move focus, disable other controls, or mark the document busy", () => {
+    const { controller } = bind()
+    const input = document.createElement("input"); document.body.append(input); input.focus()
+    controller.start(); controller.setProgress(50); controller.finish(); controller.stop(); controller.error()
+    expect(document.activeElement).toBe(input); expect(input.disabled).toBe(false)
+    expect(document.body.hasAttribute("aria-busy")).toBe(false)
+    expect(document.documentElement.hasAttribute("aria-busy")).toBe(false)
+  })
+  it("can disconnect during notification without leaving a stale timer", () => {
+    vi.useFakeTimers()
+    const { root, controller } = bind()
+    root.addEventListener("mui:loading-bar-change", () => controller.disconnect(), { once: true })
+    controller.finish()
+    expect(controller.connected).toBe(false); expect(vi.getTimerCount()).toBe(0)
+  })
+  it("reconnects idle and makes repeated disposal unable to overwrite a new owner", () => {
+    const { root, controller, status } = bind()
+    controller.start(); controller.disconnect(); controller.connect()
+    expect(controller.state).toBe("idle")
+    controller.disconnect()
+    const next = createLoadingBar(root); controllers.push(next)
+    next.start()
+    controller.disconnect()
+    expect(status.textContent).toBe("Loading")
+    expect(next.state).toBe("loading")
+  })
+  it("allows authored live status semantics without adding duplicate progressbar roles", () => {
+    const { root, progress, status } = fixture()
+    status.setAttribute("role", "status")
+    const c = createLoadingBar(root); controllers.push(c)
+    c.error()
+    expect(root.hasAttribute("role")).toBe(false)
+    expect(progress.hasAttribute("role")).toBe(false)
+    expect(status.getAttribute("role")).toBe("status")
+  })
+})
+
+describe("validated passive anatomy and packaging", () => {
+  it.each([{ finishDelay: -1 }, { errorDelay: Infinity }, { finishDelay: 1.5 }, { errorDelay: 60001 }, { finishDelay: "50" }, { duration: 600 }, { labels: null }, { labels: { loading: "Loading" } }])("rejects invalid options %j", options => {
+    const { root } = fixture()
+    expect(() => createLoadingBar(root, options as LoadingBarOptions)).toThrow()
+  })
+  it.each(["0", "-1", "Infinity", "0x10", "bad"])("rejects invalid native maximum %s", max => {
+    const { root, progress } = fixture(); progress.setAttribute("max", max)
+    expect(() => createLoadingBar(root)).toThrow()
+  })
+  it("accepts valid fractional maxima and default native max=1", () => {
+    const { root, progress } = fixture()
+    progress.max = .5; progress.value = .25
+    const c = createLoadingBar(root); controllers.push(c)
+    c.start(); c.setProgress(.5); c.finish()
+    expect(c.value).toBe(.5)
+    c.disconnect(); progress.removeAttribute("value"); progress.removeAttribute("max")
+    c.connect(); c.finish(); expect(c.value).toBe(1)
+  })
+  it("rejects duplicate semantics, unlabelled progress and interactive surfaces", () => {
+    const { root, progress } = fixture()
+    root.setAttribute("role", "progressbar")
+    expect(() => createLoadingBar(root)).toThrow(/only progressbar/)
+    root.removeAttribute("role"); root.querySelector("label")!.remove()
+    expect(() => createLoadingBar(root)).toThrow(/Name/)
+    progress.setAttribute("aria-label", "Job")
+    root.append(document.createElement("button"))
+    expect(() => createLoadingBar(root)).toThrow(/passive/)
+  })
+  it("rejects native-value ARIA overrides and nested loading roots", () => {
+    const { root, progress } = fixture()
+    progress.setAttribute("aria-valuenow", "40")
+    expect(() => createLoadingBar(root)).toThrow(/numeric/)
+    progress.removeAttribute("aria-valuenow")
+    const child = document.createElement("div"); child.setAttribute("data-loading-bar", ""); root.append(child)
+    expect(() => createLoadingBar(root)).toThrow(/nested/)
+  })
+  it("requires independent error text outside the native progress element", () => {
+    const first = fixture()
+    first.progress.append(first.status)
+    expect(() => createLoadingBar(first.root)).toThrow(/anatomy/)
+    const second = fixture()
+    second.status.remove(); second.progress.setAttribute("data-loading-bar-status", "")
+    expect(() => createLoadingBar(second.root)).toThrow(/anatomy/)
+  })
+  it("uses literal status text and external motion/forced-color/print styles only", () => {
+    const { status, controller } = bind({ labels: { idle: "Idle", loading: "<b>Loading</b>", success: "Done", error: "Failure" } })
+    controller.start(); expect(status.textContent).toBe("<b>Loading</b>"); expect(status.children).toHaveLength(0)
+    const css = readFileSync(join("src", "components", "loading-bar", "loading-bar.css"), "utf8")
+    const source = readFileSync(join("src", "components", "loading-bar", "loading-bar.ts"), "utf8")
+    expect(css).toContain("prefers-reduced-motion"); expect(css).toContain("forced-colors"); expect(css).toContain("@media print")
+    expect(source).not.toMatch(/innerHTML|setInterval|requestAnimationFrame|fetch\(|\.style\./)
+  })
+})

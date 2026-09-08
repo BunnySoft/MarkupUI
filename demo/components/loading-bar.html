@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Loading Bar</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-loading-bar.css">
+  <link rel="stylesheet" href="./loading-bar.css">
+  <script defer src="../../dist/markup-ui-loading-bar.global.js"></script>
+  <script defer src="./loading-bar.js"></script>
+</head>
+<body>
+  <header><h1>Root-owned Loading Bar</h1><p>Local demonstrations only. Unknown work has no percentage; measured values come from explicit application calls. No network activity or global request tracking.</p></header>
+  <main>
+    <section><h2>Independent inline operation</h2>
+      <div class="mui-loading-bar" data-loading-bar id="inline-bar">
+        <label for="inline-progress">Local report preparation</label>
+        <progress id="inline-progress" max="100" value="25" aria-describedby="inline-status">25%</progress>
+        <span id="inline-status" data-loading-bar-status>Native baseline: 25 of 100 supplied by the author.</span>
+      </div>
+      <div class="demo-controls" id="controls" hidden>
+        <button type="button" id="start">Start unknown work</button>
+        <button type="button" id="measure">Report measured 40 of 100</button>
+        <button type="button" id="finish">Finish</button>
+        <button type="button" id="error">Report error</button>
+        <button type="button" id="stop">Stop UI only</button>
+        <button type="button" id="restart">Start, finish, restart immediately</button>
+        <button type="button" id="reset">Disconnect and reconnect</button>
+      </div>
+    </section>
+    <section><h2>Independent fixed surface</h2><p>The second bar does not share the first bar's timers or state.</p>
+      <div class="mui-loading-bar mui-loading-bar--fixed" data-loading-bar id="fixed-bar" hidden>
+        <progress max="1" aria-label="Separate local operation" aria-describedby="fixed-status">Unknown amount</progress>
+        <span id="fixed-status" data-loading-bar-status>Separate operation ready.</span>
+      </div>
+      <div class="demo-controls" id="fixed-controls" hidden>
+        <button type="button" id="fixed-start">Start second bar</button>
+        <button type="button" id="fixed-finish">Finish second bar</button>
+        <button type="button" id="fixed-error">Error second bar, then hide</button>
+      </div>
+    </section>
+    <form id="native-form"><label>Unrelated focus/form control <input id="outside-input" name="note" value="Preserved"></label><button type="submit">Native submit</button></form>
+    <output id="events">Without JavaScript, the labelled native progress example remains meaningful.</output>
+    <p id="limits">UI stop/restart is not cancellation of external work. Applications own concurrent operations and their results.</p>
+  </main>
+</body>
+</html>
