@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Pagination</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-pagination.css">
+  <link rel="stylesheet" href="./pagination.css">
+  <script defer src="../../dist/markup-ui-pagination.global.js"></script>
+  <script defer src="./pagination.js"></script>
+</head>
+<body>
+  <header><h1>Native Pagination, local state only</h1><p>No network fetch, URL rewrite or client router. The server-style fallback links target local examples.</p></header>
+  <main>
+    <form id="native-form">
+      <nav class="mui-pagination" data-pagination id="pager" aria-label="Example result pages">
+        <span id="prefix">Local results:</span>
+        <div data-pagination-fallback>
+          <a href="#local-one" aria-current="page" id="server-one">Page 1</a>
+          <a href="#local-two" id="server-two">Page 2</a>
+        </div>
+        <div class="mui-pagination__controls" data-pagination-enhancement hidden>
+          <button type="button" data-pagination-previous>Previous</button>
+          <div data-pagination-pages></div>
+          <button type="button" data-pagination-next>Next</button>
+          <label>Items per page <select data-pagination-size name="page-size"><option value="10">10 items</option><option value="25">25 items</option><option value="100">100 items</option></select></label>
+          <label>Go to page <input data-pagination-jump type="number" name="page-draft"></label>
+          <button data-pagination-go type="button">Go</button>
+          <span>of <span data-pagination-count>0</span> pages</span>
+        </div>
+        <span id="suffix">No automatic data loading</span>
+        <template data-pagination-page><button type="button"><span class="mui-pagination__visually-hidden">Page </span><span data-pagination-number></span></button></template>
+        <template data-pagination-gap><button type="button"><span aria-hidden="true">…</span><span class="mui-pagination__visually-hidden">Jump to page <span data-pagination-number></span></span></button></template>
+      </nav>
+      <p><label>Unrelated form input <input id="outside-input" name="notes" value="Preserved"></label></p>
+    </form>
+    <div class="demo-controls">
+      <button type="button" id="shrink">Shrink to 12 items</button>
+      <button type="button" id="empty">Empty results</button>
+      <button type="button" id="huge">One trillion pages</button>
+      <button type="button" id="reset">Restore 237 items</button>
+      <button type="button" id="simple">Toggle simple view</button>
+      <button type="button" id="disabled">Toggle disabled</button>
+      <button type="button" id="cancel">Cancel next user request</button>
+    </div>
+    <output id="state">JavaScript is optional; native local fallback links are usable.</output>
+    <section id="local-one"><h2>Local example one</h2><p>The demo reports paging state without fetching or replacing this authored content.</p></section>
+    <section id="local-two"><h2>Local example two</h2><p>Without JavaScript, server-rendered links could point to actual page URLs instead of these local fragments.</p></section>
+  </main>
+</body>
+</html>

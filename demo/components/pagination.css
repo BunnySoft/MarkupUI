@@ -1,0 +1,8 @@
+body { margin: 0; background: #f5f8fc; color: #1b314e; font: 1rem/1.6 system-ui, sans-serif; }
+header, main { max-inline-size: 70rem; margin-inline: auto; padding: 1.25rem; }
+header { background: #e6eef8; }
+nav { padding: 1rem; background: white; border: 1px solid #c0cbd8; border-radius: .5rem; }
+.demo-controls { display: flex; flex-wrap: wrap; gap: .6rem; margin-block: 1rem; }
+button, input, select { font: inherit; }
+output { display: block; overflow-wrap: anywhere; min-block-size: 3rem; }
+section { min-block-size: 15rem; }

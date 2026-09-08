@@ -1,0 +1,28 @@
+.mui-pagination, .mui-pagination [data-pagination-pages], .mui-pagination__controls {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .4rem;
+}
+.mui-pagination { font-size: var(--mui-pagination-font-size, 1rem); color: var(--mui-pagination-color, #18324f); }
+.mui-pagination :is(button, a, select, input) { box-sizing: border-box; font: inherit; }
+.mui-pagination :is(button, a) {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-inline-size: var(--mui-pagination-size, 2.25rem); min-block-size: var(--mui-pagination-size, 2.25rem);
+  padding: .3rem .6rem; border: 1px solid var(--mui-pagination-border, #abb9ca);
+  border-radius: .3rem; color: inherit; background: var(--mui-pagination-background, #fff);
+  text-decoration: none; cursor: pointer;
+}
+.mui-pagination [aria-current="page"] { border-color: currentColor; background: var(--mui-pagination-current, #dceaff); font-weight: 700; }
+.mui-pagination :is(button, a):hover { background: var(--mui-pagination-hover, #edf4ff); }
+.mui-pagination :is(button, select, input):disabled { opacity: .55; cursor: not-allowed; }
+.mui-pagination :is(button, a, input, select):focus-visible { outline: 3px solid var(--mui-pagination-focus, #176ac2); outline-offset: 2px; }
+.mui-pagination [data-pagination-jump] { inline-size: 6rem; padding: .3rem; }
+.mui-pagination [data-pagination-size] { padding: .3rem; max-inline-size: 100%; }
+.mui-pagination [hidden] { display: none !important; }
+.mui-pagination--small { --mui-pagination-size: 1.9rem; --mui-pagination-font-size: .875rem; }
+.mui-pagination--large { --mui-pagination-size: 2.75rem; --mui-pagination-font-size: 1.125rem; }
+.mui-pagination__visually-hidden { position: absolute; inline-size: 1px; block-size: 1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (forced-colors: active) {
+  .mui-pagination :is(button, a) { color: ButtonText; background: ButtonFace; border-color: ButtonText; }
+  .mui-pagination [aria-current="page"] { border: 2px solid Highlight; }
+  .mui-pagination :focus-visible { outline-color: Highlight; }
+}
+@media print { .mui-pagination { break-inside: avoid; } .mui-pagination :is(button, a) { color: black; background: white; box-shadow: none; } }

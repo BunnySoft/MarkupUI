@@ -14,7 +14,8 @@ Tabs and its paired Tab/TabPane scope now have [accepted evidence](../components
 Collapse/CollapseItem now also have [accepted native disclosure evidence](../components/collapse.md).
 Anchor/AnchorLink now also have [accepted native scrollspy evidence](../components/anchor.md).
 Back Top now also has [accepted native return/threshold evidence](../components/back-top.md).
-P3 as a whole remains in progress, with Pagination next, then Steps.
+Pagination now also has [accepted bounded native paging evidence](../components/pagination.md).
+P3 as a whole remains in progress, with Steps next.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
 Use the [master migration plan](migration-plan.md) for phase dependencies and current execution
 evidence. Every component page now includes its own numbered task checklist, prerequisites and next task.
@@ -67,8 +68,8 @@ The numbered component checklists distinguish proposed work from accepted implem
 Avatar's four retained-scope tasks are checked using `9afc818`, Button's four using
 `43dd57f`, Card's four using `cebc6d7`, Tag's four using `6605d29`, and Badge's four using
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
-Popover, Tooltip, Popconfirm, Dropdown, Menu, Tabs, Collapse, Anchor and Back Top add four accepted tasks each; the other **212 tasks remain unchecked**.
-P2 retained scopes remain reconciled; these nine retained P3 scopes are accepted and Pagination is next. Reconcile later implementation evidence
+Popover, Tooltip, Popconfirm, Dropdown, Menu, Tabs, Collapse, Anchor, Back Top and Pagination add four accepted tasks each; the other **208 tasks remain unchecked**.
+P2 retained scopes remain reconciled; these ten retained P3 scopes are accepted and Steps is next. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
 ### Native browser capabilities reduce implementation scope
@@ -186,7 +187,7 @@ acceptance. Separate ESM/classic JavaScript ceilings are 4,000 gzip bytes each; 
 1,500-byte ceiling. Browser coverage is not all-browser certification or pixel parity.
 The reference Avatar page reconciles all **35 rows: 19 Verified adapted targets and
 16 Intentionally omitted contracts**. Button, Card, Tag, Badge, Alert, Empty, Skeleton, Spin, Progress, Statistic, Typography, Icon, Gradient Text, Ellipsis, Page Header, Divider, Flex, Space, Grid, Layout, List, Descriptions, Timeline, Breadcrumb, Thing, Table, Highlight, Affix, Result, Code, Scrollbar, Float Button and Image are also verified as recorded below;
-**Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top retained scopes are accepted; Pagination is next**, and the master plan owns
+**Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination retained scopes are accepted; Steps is next**, and the master plan owns
 the sequential implementation/build/commit workflow.
 
 ### Button pilot: accepted native scope
@@ -1093,9 +1094,9 @@ reduced motion. External CSS supplies logical placement, safe areas, size/shape 
 states. No portal, mutation observer, provider, animation engine or mandatory Float Button asset.
 
 The [tracker](components/back-top.md) preserves **seven original identities** and adds nine
-explicit source supplements: **10 adapted targets, six omissions**. The catalog now has
-**3,289 rows**, **172/384 accepted tasks across 43 pages**; P3 remains incomplete.
-**Pagination is next, then Steps.**
+explicit source supplements: **10 adapted targets, six omissions**. At Back Top sign-off the catalog had
+**3,289 rows**, **172/384 accepted tasks across 43 pages**. Pagination is accepted below;
+P3 remains incomplete.
 
 **104 targeted tests** (42 Back Top, 35 Anchor, 27 native/legacy), build/budgets and Chromium
 cover native keyboard/links/forms/cancellation, threshold/focus/Tab, scroll-root isolation and
@@ -1103,6 +1104,24 @@ x preservation, refresh/disposal, RTL/narrow/zoom/motion/print, fallback and loa
 Read-only review fixed portable test paths. ESM/classic/CSS are **3,212/3,281/682 gzip bytes**
 under new **3,500/3,500/1,000** limits; one format plus CSS is **3,894/3,963**.
 All previous optional/core/plugin sources, outputs and ceilings remain unchanged.
+
+### Pagination: verified bounded native paging scope
+
+[Pagination acceptance](../components/pagination.md) retains item/page-count precedence,
+safe numeric state, defaults and silent clamp, a bounded keyed page/gap-button window,
+native size/jump controls and combined cancelable request/accepted-change events.
+Authored nav/labels/controls/templates and server-link fallback remain native; no router,
+data fetch, VNode renderer, hover range dropdown or mandatory Select/InputNumber dependency.
+
+The [tracker](components/pagination.md) preserves **42 original identities** and adds thirteen
+source supplements: **36 adapted targets, 19 omissions**. The catalog now has **3,302 rows**,
+**176/384 accepted tasks across 44 pages**; **Steps is next**, and P3 remains incomplete.
+**80 targeted tests** (53 Pagination, 27 native/legacy), build/budgets and Chromium cover
+huge/zero/shrinking totals, native keyboard/forms/validity, size/cancellation, current/focus,
+ownership/replacements/disposal and responsive/RTL/zoom/fallback/loading behavior.
+Review fixes prevent untouched jump inputs blocking unrelated forms and modified Enter submitting.
+ESM/classic/CSS are **5,011/5,080/816 gzip bytes** under new **5,500/5,500/1,250** ceilings;
+one format plus CSS is **5,827/5,896**. Previous optional/core/plugin outputs and ceilings are unchanged.
 
 ## Common Components (15)
 
@@ -1186,7 +1205,7 @@ All previous optional/core/plugin sources, outputs and ceilings remain unchanged
 | [Breadcrumb](components/breadcrumb.md) | 🟢 Verified retained native scope; 3 explicit omissions | Native navigation/current/separator semantics; [accepted evidence](../components/breadcrumb.md) | P2 |
 | [Loading Bar](components/loading-bar.md) | 🔵 Planned | Related progress | P3 |
 | [Menu](components/menu.md) | 🟢 Verified navigation/disclosure scope; 20 explicit omissions | Native hierarchy/state/shortcuts; [accepted evidence](../components/menu.md) | P3 |
-| [Pagination](components/pagination.md) | 🔵 Planned | Partial core | P3 |
+| [Pagination](components/pagination.md) | 🟢 Verified retained scope; 19 explicit omissions | Bounded native paging/model/templates, select and validated jump | P3 |
 | [Steps](components/steps.md) | 🔵 Planned | Partial core | P3 |
 | [Tabs](components/tabs.md) | 🟢 Verified paired native scope; 10 explicit omissions | Authored guarded Tabs/Tab/TabPane; [accepted evidence](../components/tabs.md) | P3 |
 
@@ -1271,15 +1290,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 805: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 258 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top source supplements |
+| Supplementary named declarations | 818: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 271 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination source supplements |
 | Explicit inherited tracker rows | 264 |
-| Total tracker rows | 3,289; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 172 retained-scope tasks accepted across 43 component pages, 212 unchecked |
+| Total tracker rows | 3,302; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 176 retained-scope tasks accepted across 44 component pages, 208 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,289 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor and 10 Back Top Verified adapted targets cite acceptance |
-| Source agreement | All 2,220 direct source rows and 264 inherited rows remain covered; 53 unchanged inventories match extraction; the 43 accepted pages preserve named/grouped identities with explicit dispositions |
-| Local links | Relative file links validated after Back Top reconciliation; the historical 612-link snapshot also checked heading anchors |
+| Status presentation | All 3,302 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top and 36 Pagination Verified adapted targets cite acceptance |
+| Source agreement | All 2,220 direct source rows and 264 inherited rows remain covered; 52 unchanged inventories match extraction; the 44 accepted pages preserve named/grouped identities with explicit dispositions |
+| Local links | Relative file links validated after Pagination reconciliation; the historical 612-link snapshot also checked heading anchors |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript
