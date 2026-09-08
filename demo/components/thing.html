@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Thing</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-thing.css">
+  <link rel="stylesheet" href="./thing.css">
+  <script defer src="./thing.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Native Thing</h1>
+    <p>Authored media, headings, description, content, footer and real actions. The library uses CSS only.</p>
+  </header>
+  <main>
+    <section aria-labelledby="full-heading">
+      <h2 id="full-heading">All authored regions</h2>
+      <article class="mui-thing demo-panel" aria-labelledby="project-title" id="project-thing">
+        <template class="mui-thing-avatar" id="native-template"><span>Inert avatar template</span></template>
+        <div class="mui-thing-avatar" id="project-avatar">
+          <img id="project-image" width="48" height="48" alt="Blue project emblem" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Crect width='48' height='48' rx='8' fill='%230369a1'/%3E%3Ccircle cx='24' cy='24' r='12' fill='white'/%3E%3C/svg%3E">
+        </div>
+        <div class="mui-thing-lead" id="project-lead">
+          <header class="mui-thing-header" id="project-header">
+            <h3 class="mui-thing-title" id="project-title"><a href="#project-details" id="project-link">Atlas project</a></h3>
+            <div class="mui-thing-header-extra" id="project-extra"><span>Private</span><button type="button" aria-pressed="false" id="follow-project">Follow project</button></div>
+          </header>
+          <p class="mui-thing-description project-description" id="project-description">A description remains separate from the main content.</p>
+        </div>
+        <div class="mui-thing-content project-content" id="project-content">
+          <p>Without indentation, this region starts at the full root edge.</p>
+          <form id="project-form">
+            <label for="project-name">Project name</label>
+            <input id="project-name" name="project" value="Original" required>
+            <fieldset disabled><legend>Read-only publishing</legend><label><input type="checkbox" name="publish" checked> Publish now</label></fieldset>
+          </form>
+        </div>
+        <footer class="mui-thing-footer" id="project-footer">Updated <time datetime="2026-09-08">8 September 2026</time>.</footer>
+        <div class="mui-thing-action" id="project-actions">
+          <button type="submit" form="project-form" id="native-submit">Save project</button>
+          <button type="reset" form="project-form" id="native-reset">Reset project</button>
+          <button type="button" disabled id="native-disabled">Unavailable action</button>
+          <a href="#project-details" id="details-link">Project details</a>
+        </div>
+      </article>
+      <p id="form-status" role="status"></p>
+      <p id="follow-status" role="status"></p>
+    </section>
+
+    <section aria-labelledby="indent-heading">
+      <h2 id="indent-heading">Indented content, RTL and nested Things</h2>
+      <article class="mui-thing demo-panel aligned-thing" data-content-indented dir="rtl" aria-labelledby="beta-title" id="indented-thing">
+        <div class="mui-thing-avatar" id="beta-avatar"><svg width="40" height="40" viewBox="0 0 40 40" role="img" aria-labelledby="beta-symbol-title"><title id="beta-symbol-title">Beta project symbol</title><circle cx="20" cy="20" r="18" fill="#15803d"></circle><path d="m10 20 7 7 13-15" fill="none" stroke="white" stroke-width="3"></path></svg></div>
+        <div class="mui-thing-lead" id="beta-lead">
+          <div class="mui-thing-header"><h3 class="mui-thing-title" id="beta-title">Beta project with an authored heading</h3><div class="mui-thing-header-extra">Draft</div></div>
+          <p class="mui-thing-description">Content, footer and actions align with this lead region at logical inline-start.</p>
+        </div>
+        <div class="mui-thing-content" id="beta-content">
+          <p>AnUnbrokenAuthoredContentIdentifierThatMustWrapWithoutClippingAtNarrowWidths0123456789</p>
+          <div class="mui-thing nested-thing" id="nested-thing">
+            <div class="mui-thing-lead"><div class="mui-thing-header"><h4 class="mui-thing-title">Nested note</h4></div><p class="mui-thing-description">A generic container, not a new article or generated landmark.</p></div>
+            <div class="mui-thing-content" id="nested-content"><ul><li>Native list content.</li><li>No inherited indentation flag.</li></ul></div>
+          </div>
+        </div>
+        <div class="mui-thing-footer" id="beta-footer">An authored footer region.</div>
+        <div class="mui-thing-action" id="beta-action"><a href="#project-details">View Beta details</a></div>
+      </article>
+    </section>
+
+    <section aria-labelledby="sparse-heading">
+      <h2 id="sparse-heading">Sparse and hidden regions</h2>
+      <div class="mui-thing demo-panel compact-thing" id="description-only">
+        <div class="mui-thing-avatar" aria-hidden="true"><span class="demo-initials">AB</span></div>
+        <div class="mui-thing-lead"><p class="mui-thing-description">Description with an avatar but no header. This authored description is not suppressed.</p></div>
+      </div>
+      <div class="mui-thing demo-panel" id="content-only"><div class="mui-thing-content">Content without an avatar, heading or empty placeholder regions.</div></div>
+      <div class="mui-thing demo-panel" id="action-only"><div class="mui-thing-action"><button type="reset" form="project-form">Reset the main project form</button></div></div>
+      <div class="mui-thing demo-panel" id="hidden-regions">
+        <div class="mui-thing-avatar" hidden><span>Hidden avatar</span></div>
+        <div class="mui-thing-lead"><div class="mui-thing-header"><h3 class="mui-thing-title">Visible title</h3><div class="mui-thing-header-extra" hidden><button type="button">Hidden header action</button></div></div><p class="mui-thing-description" hidden>Hidden description</p></div>
+        <div class="mui-thing-content">No unused avatar column is exposed.</div>
+        <div class="mui-thing-footer" hidden>Hidden footer</div>
+        <div class="mui-thing-action" hidden><button type="button">Hidden action</button></div>
+      </div>
+      <div class="mui-thing" id="empty-thing"></div>
+    </section>
+
+    <section id="project-details" aria-labelledby="details-heading">
+      <h2 id="details-heading">Native list composition</h2>
+      <ul id="native-list"><li id="native-list-item"><div class="mui-thing"><div class="mui-thing-lead"><div class="mui-thing-header"><h3 class="mui-thing-title">A Thing inside a real list item</h3></div></div><div class="mui-thing-content">List semantics and markers belong to the outer native list.</div></div></li></ul>
+      <p id="outside-content">Ordinary content outside any Thing.</p>
+    </section>
+    <div class="mui-thing" hidden id="hidden-thing"><div class="mui-thing-action"><button type="button">Hidden root action</button></div></div>
+  </main>
+</body>
+</html>

@@ -1,35 +1,41 @@
 # Thing
 
-**Plan: Planned as composition. Current baseline: card/list primitives only.**
+**Plan: 🟢 Verified for retained native Thing scope; five explicit style/theme omissions.**
 
 ## Baseline and target
 
-[B1: content.ts](../../../src/components/content.ts) supplies cards, not a Thing controller.
+[B1: content.ts](../../../src/components/content.ts) supplies legacy cards, not a Thing
+controller. Card/List/PageHeader conventions informed the native composition, but their
+runtimes/styles are not dependencies and the aggregate remains unchanged.
 
-- **HTML:** article/list item with authored image, heading, description and actions.
-- **JS:** unnecessary beyond native action controls.
-- **CSS:** external media-object layout with responsive region alignment.
-- **Placement:** proposed `src/components/thing/thing.css`; prefer composition over another controller.
+- **HTML:** author-selected article/div, avatar, lead/header/header-extra/description, content, footer and native action regions.
+- **JS:** none in the component; optional application listeners own submit/follow behavior.
+- **CSS:** isolated native grid indentation, media/header/action alignment and logical wrapping.
+- **Placement:** [thing.css](../../../src/components/thing/thing.css), stylesheet export and [native demo](../../../demo/components/thing.html); no component constructor.
 
 ## Acceptance and gaps
 
-Test missing regions, long content, heading/link semantics and action order. Framework component props are replaced by explicit child anatomy.
+The [canonical acceptance record](../../components/thing.md) reports 455 passing tests
+(12 Thing cases), build/budget gates and Chromium anatomy/names/forms/focus/indent/hidden/
+nested/narrow/RTL/zoom/print/forced-colors/legacy/no-JS evidence. CSS is 841 gzip bytes;
+component JS is zero, core remains 14,611/15,000 and widgets 2,779/4,000 gzip bytes.
+Framework prop/slot shapes become explicit native anatomy, not constructor/renderer parity.
 
 ## Migration steps
 
-**Delivery phase:** P2 — compound content. **Task state:** 🔵 Planned.
+**Delivery phase:** P2 — compound content. **Task state:** 🟢 Verified retained scope.
 **Prerequisites:** P1 Card and P2 List/Typography in the [master plan](../migration-plan.md).
-**Next task:** define an article/list-item composition rather than a new general-purpose renderer.
+**Next task:** Table. Eight residual P2-assigned catalog rows remain Planned; full P2 is not complete.
 
-1. [ ] **Name authored regions.** Resolve image, header, description, content and action areas with semantic headings.
-2. [ ] **Keep interactions native.** Use real links/buttons in action regions; avoid making the entire content object implicitly clickable.
-3. [ ] **Implement media-object CSS.** Align optional regions responsively while preserving DOM reading order.
-4. [ ] **Exercise sparse content.** Test missing regions, long descriptions, stacked actions and nested headings with no controller import.
+1. [x] **Name authored regions.** Seven native regions with author-selected headings, media names and content.
+2. [x] **Keep interactions native.** Passive host, independent native links/buttons and real form association.
+3. [x] **Implement media-object CSS.** Native grid indentation and wrapping header/actions without moving nodes or changing reading order.
+4. [x] **Exercise sparse content.** Missing/hidden/template/nested regions, long text, native controls and no-JS forms accepted without a controller.
 
 ### Native primitives and fallback
 
-- **Native path:** an article/list item containing a heading, image, text and native actions. Repeated application items may clone an authored template with explicit node updates.
-- **Small enhancement:** CSS grid/flex and optional container queries align media/content; block flow is the usable fallback. No dedicated custom element, generic item renderer or Shadow DOM slot projection is needed for this composition. Native action controls retain their own lifecycle/behavior.
+- **Native path:** an authored article/div containing native headings/media/text/actions; place it inside a real li for list composition. Templates may be cloned explicitly by the application.
+- **Small enhancement:** grid/flex/logical gaps align regions and indent content; normal authored flow is the fallback. No dedicated custom element, runtime renderer, style-object bridge, provider or Shadow DOM slot projection.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
@@ -41,37 +47,50 @@ Test missing regions, long content, heading/link semantics and action order. Fra
 - [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
 
 Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **16 local table rows + 0 supplementary declarations + 0 inherited rows = 16 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
+Documentation inventory: **16 original local table rows + 3 explicit source-only supplements + 0 inherited rows = 19 tracker rows**.
+Every original owner/row/pinned identity remains: **14 Verified ADAPTED native targets and
+5 Intentionally omitted contracts**. Thing and presentation source were reviewed for this
+retained scope, not every framework edge case. Defaults, anatomy, omissions and actual
+evidence are recorded in the canonical implementation document.
 
 
 ### Thing Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | Retained MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`content-indented`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L20) | Prop | Candidate presence attribute `content-indented`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`content`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L21) | Prop | Candidate `content` attribute or JS `content`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`content-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L22) | Prop | Candidate `content-class` attribute or JS `contentClass`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`content-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L23) | Prop | External CSS class/custom property for `content-style`; no inline style-object passthrough. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`description`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L24) | Prop | Candidate `description` attribute or JS `description`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`description-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L25) | Prop | Candidate `description-class` attribute or JS `descriptionClass`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`description-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L26) | Prop | External CSS class/custom property for `description-style`; no inline style-object passthrough. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`title-extra`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L27) | Prop | Candidate `title-extra` attribute or JS `titleExtra`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`title`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L28) | Prop | Candidate `title` attribute or JS `title`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`content-indented`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L20) | Prop | Presence data-content-indented; default absent spans content/footer/actions full-width. Visible avatar enables their lead-column alignment. | 🟢 Verified ADAPTED target | Live 60px alignment change preserved nodes/focus; hidden/template avatars do not create a phantom indent. |
+| [`content`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L21) | Prop | Authored .mui-thing-content text/nodes; textContent for plain dynamic strings. | 🟢 Verified ADAPTED target | Rich forms/lists/long content and original nodes retained; no string renderer. |
+| [`content-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L22) | Prop | Native classes/classList on the actual content region. | 🟢 Verified ADAPTED target | Authored content class and listener identity preserved; no host forwarding. |
+| [`content-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L23) | Prop | External CSS on actual content rather than runtime string/object forwarding. | ⏭️ Intentionally omitted | No CSS-in-JS/style-object adapter or prop evaluator. |
+| [`description`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L24) | Prop | Native .mui-thing-description inside lead; independent of whether a header is present. | 🟢 Verified ADAPTED target | Description-only/avatar case remains visible; no source conditional suppression or generated heading. |
+| [`description-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L25) | Prop | Native classes/classList on the description node. | 🟢 Verified ADAPTED target | Original class and authored content retained without runtime forwarding. |
+| [`description-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L26) | Prop | External CSS on the native description region. | ⏭️ Intentionally omitted | Runtime string/object style contract is not reproduced. |
+| [`title-extra`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L27) | Prop | Authored .mui-thing-header-extra text or native controls beside the title. | 🟢 Verified ADAPTED target | Logical wrapping/alignment and native action names; no string/slot precedence engine. |
+| [`title`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L28) | Prop | Actual .mui-thing-title heading/header content, with author-selected level. | 🟢 Verified ADAPTED target | Native names/headings/links; no tooltip mapping or generated heading. |
 
 ### Thing Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | Retained MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`action`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L34) | Slot | Candidate authored `action` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`avatar`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L35) | Slot | Candidate authored `avatar` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L36) | Slot | Candidate authored `default` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`description`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L37) | Slot | Candidate authored `description` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`footer`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L38) | Slot | Candidate authored `footer` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`header-extra`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L39) | Slot | Candidate authored `header-extra` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`header`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L40) | Slot | Candidate authored `header` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`action`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L34) | Slot | Authored .mui-thing-action region with independent links/buttons. | 🟢 Verified ADAPTED target | Native keyboard, disabled/fieldset, external form association, validation/reset/submission and no-JS GET behavior. |
+| [`avatar`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L35) | Slot | Actual .mui-thing-avatar media/glyph region before lead. | 🟢 Verified ADAPTED target | Image alt/src/dimensions and SVG name preserved; no Avatar/Icon dependency or node move. |
+| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L36) | Slot | Native rich content children in .mui-thing-content. | 🟢 Verified ADAPTED target | Long/nested/list/form content retains ownership and order; no VNode projection. |
+| [`description`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L37) | Slot | Authored description nodes inside lead. | 🟢 Verified ADAPTED target | Sparse and hidden regions handled without truthiness rendering or placeholders. |
+| [`footer`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L38) | Slot | Optional authored .mui-thing-footer; native footer semantics only when appropriate. | 🟢 Verified ADAPTED target | Original metadata/time content, indentation and hidden behavior preserved. |
+| [`header-extra`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L39) | Slot | Authored .mui-thing-header-extra alongside title. | 🟢 Verified ADAPTED target | Native named follow button and wrapping/RTL alignment; no generated action root. |
+| [`header`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md#L40) | Slot | Authored title/header nodes inside native header region. | 🟢 Verified ADAPTED target | Author-selected heading/landmark semantics; no title/slot fallback evaluation. |
+
+### Explicit source-only supplements
+
+These three mixed-in declarations supplement, rather than replace, the 16 public rows.
+Reviewed source has no size/alignment/prefix props or slots, render callbacks, or
+component-specific event/method API. Native CSS customization and leading-avatar content
+are not credited as invented upstream features.
+
+| Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
+| --- | --- | --- | --- | --- |
+| [`theme`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts) | Source-only mixed-in Thing prop | External CSS instead of a framework theme/provider object. | ⏭️ Intentionally omitted | Thing spreads useTheme.props; no native runtime/provider is needed. |
+| [`themeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts) | Source-only mixed-in Thing prop | CSS tokens rather than runtime override merging. | ⏭️ Intentionally omitted | No style-object bridge, theme execution or animation dependency. |
+| [`builtinThemeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts) | Source-only mixed-in Thing prop | No built-in override object. | ⏭️ Intentionally omitted | Author-owned external styles; zero runtime dependencies. |
 
 <!-- END PINNED API INVENTORY -->
