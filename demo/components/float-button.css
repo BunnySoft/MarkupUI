@@ -1,0 +1,26 @@
+body {
+  max-inline-size: 64rem;
+  margin: 2rem auto;
+  padding-inline: 1rem 6rem;
+  padding-block-end: 8rem;
+  font: 1rem/1.5 system-ui, sans-serif;
+  overflow-wrap: anywhere;
+  color: #18181b;
+  background: #fafafa;
+}
+main > section { margin-block: 2rem; }
+h2, p { margin-block: 0 .75rem; }
+input { font: inherit; box-sizing: border-box; max-inline-size: 100%; }
+.demo-row { display: flex; flex-wrap: wrap; align-items: start; gap: 1rem; padding-block: .5rem; }
+.demo-badge { position: absolute; inset-block-start: -.25rem; inset-inline-end: -.25rem; min-inline-size: 1rem; padding: .125rem; border-radius: 1rem; color: #fff; background: #b91c1c; font-size: .75rem; }
+#form-group { margin-block-start: 1rem; }
+.absolute-container { position: relative; min-block-size: 14rem; padding: 1rem 1rem 7rem; border: 1px solid #a1a1aa; }
+.absolute-actions { --mui-float-inline-end: 1rem; --mui-float-block-end: 1rem; }
+.demo-dock { --mui-float-inline-end: max(1rem, env(safe-area-inset-right, 0px)); --mui-float-opposite-clearance: max(1rem, env(safe-area-inset-left, 0px)); --mui-float-block-end: max(1rem, env(safe-area-inset-bottom, 0px)); --mui-float-trigger-size: 2.5rem; }
+.demo-dock:dir(rtl) { --mui-float-inline-end: max(1rem, env(safe-area-inset-left, 0px)); --mui-float-opposite-clearance: max(1rem, env(safe-area-inset-right, 0px)); }
+.long-content { min-block-size: 30rem; }
+#action-feedback, #form-feedback, #toggle-feedback { min-block-size: 1.5em; }
+@media print {
+  body { max-inline-size: none; margin: 0; padding: 0; background: transparent; }
+  .long-content { min-block-size: 0; }
+}

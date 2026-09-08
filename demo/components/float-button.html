@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Float Button</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-float-button.css">
+  <link rel="stylesheet" href="./float-button.css">
+  <script defer src="./float-button.js"></script>
+</head>
+<body>
+  <header id="home"><h1>Native Float Button and Group</h1><p>Real buttons/links, explicit CSS placement and browser-owned popover disclosure. No component JavaScript.</p></header>
+  <main>
+    <section aria-labelledby="actions-heading">
+      <h2 id="actions-heading">Native actions and description content</h2>
+      <div class="demo-row">
+        <button type="button" class="mui-float-button" data-position="relative" aria-label="Record an action" id="single-action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2"></path></svg></button>
+        <a class="mui-float-button" data-position="relative" data-shape="square" data-type="primary" href="#home" id="home-action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 11 9-8 9 8v10h-7v-7h-4v7H3Z" fill="none" stroke="currentColor" stroke-width="2"></path></svg><span class="mui-float-description">Home</span></a>
+        <button type="button" class="mui-float-button demo-badge-button" data-position="relative" aria-label="Notifications, 3 unread" aria-describedby="badge-help" id="badge-action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 17h14l-2-3V9a5 5 0 0 0-10 0v5ZM10 20h4" fill="none" stroke="currentColor" stroke-width="2"></path></svg><span class="demo-badge" aria-hidden="true">3</span></button>
+      </div>
+      <p id="badge-help">The count and this visible help text are authored composition, not Badge or Tooltip props.</p>
+      <p id="action-feedback"></p>
+    </section>
+
+    <section aria-labelledby="form-heading">
+      <h2 id="form-heading">Square group and native form semantics</h2>
+      <form id="native-form"><label for="native-name">Project name</label><input id="native-name" name="project" value="Original" required>
+        <div class="mui-float-group" data-position="relative" data-shape="square" role="group" aria-label="Project form actions" id="form-group">
+          <button type="submit" class="mui-float-button" data-type="primary" id="native-submit"><span class="mui-float-description">Save</span></button>
+          <button type="reset" class="mui-float-button" id="native-reset"><span class="mui-float-description">Reset</span></button>
+          <button type="button" class="mui-float-button" disabled id="native-disabled"><span class="mui-float-description">Locked</span></button>
+          <template class="mui-float-button" id="native-template">Inert authored template</template>
+          <button type="button" class="mui-float-button" hidden id="hidden-group-action">Hidden action</button>
+        </div>
+      </form>
+      <p id="form-feedback"></p>
+    </section>
+
+    <section aria-labelledby="placement-heading">
+      <h2 id="placement-heading">Absolute positioning with an authored containing block</h2>
+      <div class="absolute-container" id="absolute-container" dir="rtl">
+        <p>Logical end is physically left in this RTL example. Reading order is unchanged.</p>
+        <div class="mui-float-group absolute-actions" data-position="absolute" role="group" aria-label="Local actions" id="absolute-group">
+          <a class="mui-float-button" href="#home" aria-label="Local home" id="absolute-home"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 11 9-8 9 8v10h-7v-7h-4v7H3Z" fill="none" stroke="currentColor" stroke-width="2"></path></svg></a>
+          <button type="button" class="mui-float-button" disabled aria-label="Unavailable local action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2"></path></svg></button>
+        </div>
+      </div>
+    </section>
+    <section aria-labelledby="popover-heading">
+      <h2 id="popover-heading">Native quick actions</h2>
+      <p>Use the fixed corner trigger. Escape, outside click and the close command are native popover behavior. Without Popover support, the group is visible here and the unavailable disclosure commands are hidden.</p>
+      <p id="toggle-feedback"></p>
+      <div class="demo-dock" id="quick-dock">
+        <button type="button" class="mui-float-button mui-float-trigger" data-type="primary" popovertarget="quick-panel" aria-label="Quick actions" id="quick-trigger"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2"></path></svg></button>
+        <div class="mui-float-panel" popover="auto" role="group" aria-label="Quick action controls" id="quick-panel">
+          <div class="mui-float-group" data-position="relative" data-shape="square" role="group" aria-label="Available quick actions" id="quick-group">
+            <button type="button" class="mui-float-button" popovertarget="quick-panel" popovertargetaction="hide" id="record-action">Record action</button>
+            <a class="mui-float-button" href="#home" id="panel-home">Go home</a>
+            <button type="button" class="mui-float-button" disabled id="panel-disabled">Unavailable</button>
+            <button type="button" class="mui-float-button mui-float-popover-command" popovertarget="quick-panel" popovertargetaction="hide" id="close-panel">Close actions</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="long-content"><h2>Underlying content remains reachable</h2><p>The application reserves an inline-end gutter and bottom space for its fixed trigger. It uses no giant global z-index or invisible duplicate controls.</p><a href="#form-heading" id="outside-link">Return to project form</a></section>
+    <button type="button" class="mui-float-button" hidden id="hidden-float">Hidden floating action</button>
+  </main>
+</body>
+</html>
