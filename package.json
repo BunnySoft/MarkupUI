@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./dropdown": {
+      "types": "./dist/components/dropdown/index.d.ts",
+      "import": "./dist/markup-ui-dropdown.js"
+    },
+    "./dropdown/style.css": "./dist/markup-ui-dropdown.css",
     "./popconfirm": {
       "types": "./dist/components/popconfirm/index.d.ts",
       "import": "./dist/markup-ui-popconfirm.js"

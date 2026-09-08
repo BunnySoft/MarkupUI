@@ -1,0 +1,12 @@
+body { margin: 2rem; font: 1rem/1.5 system-ui, sans-serif; background: #f6f8fc; color: #172030; }
+main { max-width: 65rem; }
+section { margin-block: 2rem; }
+button, input { font: inherit; }
+button:not([data-dropdown-item]) { padding: .4rem .7rem; margin: .3rem; }
+label { display: block; margin-block: .5rem; }
+output { display: block; min-height: 1.5em; }
+.scroll-box { overflow: auto; width: min(29rem, 85vw); height: 10rem; border: 2px solid #8390a2; }
+.scroll-content { padding: 1rem; height: 26rem; }
+#bottom-trigger { position: fixed; bottom: 8px; right: 8px; }
+#outside { position: fixed; top: 8px; right: 8px; }
+@media (max-width: 30rem) { body { margin: 1rem; } }

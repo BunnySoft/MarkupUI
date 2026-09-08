@@ -1,0 +1,50 @@
+/* The build prepends the maintained Popover stylesheet. */
+.mui-dropdown {
+  --mui-popover-padding: .3rem;
+  list-style: none;
+  font-size: var(--mui-dropdown-font-size, 1rem);
+}
+.mui-dropdown [data-dropdown-group] { margin: 0; padding: 0; list-style: none; }
+.mui-dropdown li { list-style: none; }
+.mui-dropdown[hidden], .mui-dropdown [hidden] { display: none !important; }
+.mui-dropdown [data-dropdown-item] {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  box-sizing: border-box;
+  width: 100%;
+  border: 0;
+  border-radius: .2rem;
+  padding: var(--mui-dropdown-item-padding, .45rem .7rem);
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  text-align: start;
+  text-decoration: none;
+  white-space: normal;
+  cursor: pointer;
+}
+.mui-dropdown [data-dropdown-item]:not(:disabled):hover,
+.mui-dropdown [data-dropdown-item]:focus { background: var(--mui-dropdown-hover, #e8edf6); }
+.mui-dropdown [data-dropdown-item]:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
+.mui-dropdown [data-dropdown-item][data-dropdown-selected] { background: var(--mui-dropdown-selected, #dce8ff); font-weight: 600; }
+.mui-dropdown [data-dropdown-item]:disabled { opacity: .5; cursor: not-allowed; }
+.mui-dropdown [data-dropdown-group-label] { display: block; padding: .4rem .7rem; font-size: .85em; font-weight: 600; }
+.mui-dropdown [data-dropdown-divider] { border-block-start: 1px solid var(--mui-popover-border, #8b929e); margin-block: .3rem; }
+.mui-dropdown [data-dropdown-suffix] { margin-inline-start: auto; }
+.mui-dropdown--small { --mui-dropdown-item-padding: .25rem .5rem; --mui-dropdown-font-size: .875rem; }
+.mui-dropdown--large { --mui-dropdown-item-padding: .6rem .85rem; --mui-dropdown-font-size: 1.1rem; }
+.mui-dropdown--huge { --mui-dropdown-item-padding: .8rem 1rem; --mui-dropdown-font-size: 1.2rem; }
+.mui-dropdown--inverted {
+  --mui-popover-background: #202630;
+  --mui-popover-color: #fff;
+  --mui-dropdown-hover: #3b4556;
+  --mui-dropdown-selected: #365685;
+}
+@media (forced-colors: active) {
+  .mui-dropdown [data-dropdown-item]:focus,
+  .mui-dropdown [data-dropdown-selected] { outline: 2px solid Highlight; outline-offset: -2px; }
+}
+@media print {
+  .mui-dropdown [data-dropdown-item] { color: #000; background: transparent; }
+}

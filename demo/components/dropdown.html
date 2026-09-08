@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Dropdown command menu</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-dropdown.css">
+  <link rel="stylesheet" href="./dropdown.css">
+  <script defer src="../../dist/markup-ui-dropdown.global.js"></script>
+  <script defer src="./dropdown.js"></script>
+</head>
+<body>
+  <h1>Authored Dropdown command menus</h1>
+  <p>Arrow keys, Home/End and typeahead move among enabled items. Links keep native navigation; no action sends data to a backend.</p>
+  <noscript><p>Without enhancement these remain native disclosure/action lists. Links and ordinary Tab navigation work; custom command callbacks require JavaScript.</p></noscript>
+  <main>
+    <section>
+      <h2>Native actions, links and nested submenus</h2>
+      <form id="demo-form">
+        <label>Local title <input id="title" name="title" value="Local draft" required></label>
+        <button type="button" id="main-trigger" popovertarget="main-menu">Draft actions</button>
+        <ul class="mui-popover mui-dropdown mui-popover--animated" data-dropdown-menu id="main-menu" popover="auto" aria-label="Draft actions">
+          <li><button type="button" data-dropdown-item data-dropdown-key="edit" data-dropdown-label="Edit draft" id="edit"><span aria-hidden="true">✎</span> <span id="preserved-label">Edit draft</span></button></li>
+          <li><button type="button" data-dropdown-item data-dropdown-key="export" disabled id="disabled-item">Export unavailable</button></li>
+          <li><a data-dropdown-item data-dropdown-key="preview" href="#destination" id="preview">Preview destination</a></li>
+          <li data-dropdown-divider></li>
+          <li><span data-dropdown-group-label id="group-name">Local display</span>
+            <ul data-dropdown-group aria-labelledby="group-name">
+              <li><button type="button" data-dropdown-item data-dropdown-key="print" id="print" data-dropdown-label="Print locally"><span aria-hidden="true">▣</span> Print locally</button></li>
+              <li><button type="button" data-dropdown-item data-dropdown-key="profile" id="profile">Profile view</button></li>
+            </ul>
+          </li>
+          <li>
+            <button type="button" data-dropdown-item data-dropdown-key="more" popovertarget="more-menu" id="more-trigger">More actions <span data-dropdown-suffix aria-hidden="true">›</span></button>
+            <ul class="mui-popover mui-dropdown" data-dropdown-menu id="more-menu" popover="auto" aria-label="More actions">
+              <li><button type="button" data-dropdown-item data-dropdown-key="rename" id="rename">Rename locally</button></li>
+              <li>
+                <button type="button" data-dropdown-item data-dropdown-key="share" popovertarget="share-menu" id="share-trigger">Share choices <span data-dropdown-suffix aria-hidden="true">›</span></button>
+                <ul class="mui-popover mui-dropdown" data-dropdown-menu id="share-menu" popover="auto" aria-label="Share choices">
+                  <li><button type="button" data-dropdown-item data-dropdown-key="copy" id="copy">Copy local label</button></li>
+                  <li><a data-dropdown-item data-dropdown-key="separate" href="#destination" target="_blank" id="separate">Open destination separately</a></li>
+                </ul>
+              </li>
+              <li><button type="button" data-dropdown-item data-dropdown-key="archive" id="archive">Archive preview</button></li>
+            </ul>
+          </li>
+        </ul>
+        <button type="submit" id="submit-form">Ordinary form submit</button>
+        <button type="reset" id="reset-form">Reset</button>
+      </form>
+      <button type="button" id="outside">Outside focus target</button>
+      <button type="button" id="toggle-profile">Toggle Profile item visibility</button>
+      <output id="selection-log" aria-live="polite">No menu selection.</output>
+    </section>
+    <section>
+      <h2>RTL and scroll clipping</h2>
+      <div class="scroll-box" id="scroll-box" dir="rtl"><div class="scroll-content">
+        <button type="button" id="rtl-trigger" popovertarget="rtl-menu">RTL actions</button>
+        <ul class="mui-popover mui-dropdown mui-dropdown--inverted" data-dropdown-menu id="rtl-menu" popover="auto" aria-label="RTL actions">
+          <li><button type="button" data-dropdown-item data-dropdown-key="rtl-first" id="rtl-first">First RTL action</button></li>
+          <li><button type="button" data-dropdown-item data-dropdown-key="rtl-more" popovertarget="rtl-child" id="rtl-more">Nested RTL actions</button>
+            <ul class="mui-popover mui-dropdown mui-dropdown--inverted" data-dropdown-menu id="rtl-child" popover="auto" aria-label="Nested RTL actions">
+              <li><button type="button" data-dropdown-item data-dropdown-key="rtl-leaf" id="rtl-leaf">Local RTL choice</button></li>
+            </ul>
+          </li>
+        </ul>
+      </div></div>
+    </section>
+    <p id="destination">Native destination. Navigating here did not need a router.</p>
+    <button type="button" id="bottom-trigger" popovertarget="bottom-menu">Bottom edge actions</button>
+    <ul class="mui-popover mui-dropdown mui-dropdown--large" data-dropdown-menu id="bottom-menu" popover="auto" aria-label="Bottom edge actions">
+      <li><button type="button" data-dropdown-item data-dropdown-key="bottom-first" id="bottom-first">First bottom action</button></li>
+      <li><a data-dropdown-item data-dropdown-key="bottom-link" href="#destination">Bottom destination</a></li>
+    </ul>
+  </main>
+</body>
+</html>

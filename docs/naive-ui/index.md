@@ -8,7 +8,8 @@ catalog must not inherit that status.
 Popover now also has a [Verified retained native foundation](../components/popover.md);
 Tooltip now also has an [accepted descriptive scope](../components/tooltip.md).
 Popconfirm now also has an [accepted native action scope](../components/popconfirm.md).
-P3 as a whole remains in progress, with Dropdown next.
+Dropdown now also has an [accepted native command-menu scope](../components/dropdown.md).
+P3 as a whole remains in progress, with Menu next.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
 Use the [master migration plan](migration-plan.md) for phase dependencies and current execution
 evidence. Every component page now includes its own numbered task checklist, prerequisites and next task.
@@ -61,8 +62,8 @@ The numbered component checklists distinguish proposed work from accepted implem
 Avatar's four retained-scope tasks are checked using `9afc818`, Button's four using
 `43dd57f`, Card's four using `cebc6d7`, Tag's four using `6605d29`, and Badge's four using
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
-Popover, Tooltip and Popconfirm add four accepted tasks each; the other **236 tasks remain unchecked**.
-P2 retained scopes remain reconciled; these three retained P3 scopes are accepted and Dropdown is next. Reconcile later implementation evidence
+Popover, Tooltip, Popconfirm and Dropdown add four accepted tasks each; the other **232 tasks remain unchecked**.
+P2 retained scopes remain reconciled; these four retained P3 scopes are accepted and Menu is next. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
 ### Native browser capabilities reduce implementation scope
@@ -180,7 +181,7 @@ acceptance. Separate ESM/classic JavaScript ceilings are 4,000 gzip bytes each; 
 1,500-byte ceiling. Browser coverage is not all-browser certification or pixel parity.
 The reference Avatar page reconciles all **35 rows: 19 Verified adapted targets and
 16 Intentionally omitted contracts**. Button, Card, Tag, Badge, Alert, Empty, Skeleton, Spin, Progress, Statistic, Typography, Icon, Gradient Text, Ellipsis, Page Header, Divider, Flex, Space, Grid, Layout, List, Descriptions, Timeline, Breadcrumb, Thing, Table, Highlight, Affix, Result, Code, Scrollbar, Float Button and Image are also verified as recorded below;
-**Popover/Tooltip/Popconfirm retained scopes are accepted; Dropdown is next**, and the master plan owns
+**Popover/Tooltip/Popconfirm/Dropdown retained scopes are accepted; Menu is next**, and the master plan owns
 the sequential implementation/build/commit workflow.
 
 ### Button pilot: accepted native scope
@@ -875,8 +876,8 @@ One mode plus CSS costs **4,086 (ESM)** or **4,321 (classic)** gzip bytes. Core/
 The final catalog audit checked **all 96 routes and all 31 P2-assigned reference inventories**:
 no retained Planned/Not reviewed/In progress/Implemented rows remain on those pages.
 P2 is **Verified for its declared native scopes and omissions**, not full Naive UI or P6
-viewer parity. At Image sign-off 19 P3-assigned routes remained Planned; **16 remain after
-Popconfirm**, listed in the [master next-phase inventory](migration-plan.md#remaining-p3-inventory-after-popconfirm).
+viewer parity. At Image sign-off 19 P3-assigned routes remained Planned; **15 remain after
+Dropdown**, listed in the [master next-phase inventory](migration-plan.md#remaining-p3-inventory-after-dropdown).
 The Image sign-off recommended **Popover foundation before Tooltip/Popconfirm/Dropdown**; no next component was
 implemented in this Image change.
 P2 remains complete for its declared retained native scopes, not full upstream parity.
@@ -948,8 +949,8 @@ cancel external side effects. Unsupported native popovers retain usable inline c
 The [tracker](components/popconfirm.md) preserves **44 original identities** (10 local,
 34 inherited), adds eight source-only supplements, and resolves **30 adapted targets plus
 22 omissions**. No Button/VNode/theme/locale/provider forwarding, transient hover confirmation,
-portal, virtual anchor or fake modal/trap is claimed. The index now has **3,248 rows** and
-**148/384 accepted tasks across 37 pages**. P3 remains in progress; **Dropdown is next**.
+portal, virtual anchor or fake modal/trap is claimed. At Popconfirm sign-off the index had
+**3,248 rows** and **148/384 accepted tasks across 37 pages**. Dropdown is accepted below.
 
 **161 targeted tests** (40 Popconfirm, 52 Popover, 42 Tooltip, 27 native/core), build/budgets
 and Chromium cover callbacks/false/rejection/duplicate/stale results, native forms/Tab/
@@ -961,6 +962,34 @@ Standalone ESM/classic/complete CSS measure **6,247/6,320/1,162 gzip bytes**, wi
 Popover, Tooltip, core and plugins remain byte-for-byte source/size unchanged; prior ceilings
 were not relaxed and runtime dependencies remain zero.
 
+### Dropdown: verified native command-menu scope
+
+[Dropdown acceptance](../components/dropdown.md) adds authored native action/link menus,
+groups/dividers, string keys and nested submenus, not an option/VNode renderer. A small
+scoped roving/typeahead primitive is ready for Menu as its next consumer. Native trigger
+activation, first/last entry, directional/Home/End/typeahead, button/anchor activation,
+logical RTL submenu arrows, deepest-child Escape, untrapped Tab and pointer-gap retention
+are accepted. Native href/target/modifier/defaultPrevented behavior remains authoritative.
+
+The [tracker](components/dropdown.md) preserves **69 original identities**, adds six explicit
+source-only supplements, and resolves **42 adapted targets plus 33 omissions**. Numeric/raw
+option callbacks, render widgets, root hover, check/radio roles, portals, raw and provider/
+router forwarding are not claimed. The index now has **3,254 rows** and **152/384 accepted
+tasks across 38 pages**. P3 remains in progress; **Menu is next**.
+
+**210 targeted tests** (48 Dropdown, 53 Popover, 42 Tooltip, 40 Popconfirm, 27 native/core),
+build/budgets and Chromium cover deep nesting, native keyboard/forms/links, selection,
+refresh/hidden/disabled ownership, reentrant disposal, hover gaps, RTL/scroll/resize/zoom,
+fallback and legacy/standalone loading. Review fixed stale post-native operations after
+disposal. Real deep menus required the narrow shared fix to stop clipping above an open
+top-layer popover; no positioning engine was copied and prior ceilings still pass.
+
+ESM/classic/complete CSS measure **8,726/8,801/1,465 gzip bytes** within new
+**9,000/9,000/1,750** ceilings; one format plus CSS costs **10,191/10,266**.
+The shared correction makes Popover **3,927/3,997**, Tooltip **4,882/4,953**, and Popconfirm
+**6,250/6,323** ESM/classic gzip bytes, within unchanged limits. Core/advanced/widgets remain
+**14,611/2,181/2,779**, unchanged. No all-browser/AT certification is claimed.
+
 ## Common Components (15)
 
 | Component | Plan direction | Current baseline | Phase |
@@ -971,7 +1000,7 @@ were not relaxed and runtime dependencies remain zero.
 | [Carousel](components/carousel.md) | 🔵 Planned | Partial widgets | P6 |
 | [Collapse](components/collapse.md) | 🔵 Planned | Partial core accordion | P3 |
 | [Divider](components/divider.md) | 🟢 Verified CSS-only native scope; 3 explicit omissions | Native hr/separator/caption CSS; [accepted evidence](../components/divider.md), legacy preserved | P2 |
-| [Dropdown](components/dropdown.md) | 🔵 Planned | Related menu/popover | P3 |
+| [Dropdown](components/dropdown.md) | 🟢 Verified command-menu scope; 33 explicit omissions | Native hierarchy/keyboard/shared Popover; [accepted evidence](../components/dropdown.md) | P3 |
 | [Ellipsis](components/ellipsis.md) | 🟢 Verified native CSS/disclosure scope; 6 explicit omissions | Native text/summary CSS; [accepted evidence](../components/ellipsis.md), no Tooltip/runtime | P2, P3 |
 | [Gradient Text](components/gradient-text.md) | 🟢 Verified CSS-only scope; 3 explicit omissions | Native text CSS with readable fallbacks; [accepted evidence](../components/gradient-text.md), no runtime | P2 |
 | [Icon](components/icon.md) | 🟢 Verified CSS-only scope; 7 explicit omissions | Native Icon/IconWrapper CSS; [accepted evidence](../components/icon.md), no asset/runtime dependency | P2 |
@@ -1128,15 +1157,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 764: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 217 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm source supplements |
+| Supplementary named declarations | 770: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 223 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown source supplements |
 | Explicit inherited tracker rows | 264 |
-| Total tracker rows | 3,248; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 148 retained-scope tasks accepted across 37 component pages, 236 unchecked |
+| Total tracker rows | 3,254; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 152 retained-scope tasks accepted across 38 component pages, 232 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,248 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip and 30 Popconfirm Verified adapted targets cite acceptance |
-| Source agreement | All 2,220 direct source rows and 264 inherited rows remain covered; 59 unchanged inventories match extraction; the 37 accepted pages preserve named/grouped identities with explicit dispositions |
-| Local links | Relative file links validated after Popconfirm reconciliation; the historical 612-link snapshot also checked heading anchors |
+| Status presentation | All 3,254 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm and 42 Dropdown Verified adapted targets cite acceptance |
+| Source agreement | All 2,220 direct source rows and 264 inherited rows remain covered; 58 unchanged inventories match extraction; the 38 accepted pages preserve named/grouped identities with explicit dispositions |
+| Local links | Relative file links validated after Dropdown reconciliation; the historical 612-link snapshot also checked heading anchors |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

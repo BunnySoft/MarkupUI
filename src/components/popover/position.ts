@@ -87,14 +87,16 @@ export function createPopoverPositioner(trigger: HTMLElement, panel: HTMLElement
       for (let parent = trigger.parentElement; parent; parent = parent.parentElement) {
         const style = view.getComputedStyle(parent)
         const rect = parent.getBoundingClientRect()
-        if (/(auto|scroll|hidden|clip)/.test(style.overflowX)) {
+        if (style.overflowX && style.overflowX !== "visible") {
           clipLeft = Math.max(clipLeft, rect.left)
           clipRight = Math.min(clipRight, rect.right)
         }
-        if (/(auto|scroll|hidden|clip)/.test(style.overflowY)) {
+        if (style.overflowY && style.overflowY !== "visible") {
           clipTop = Math.max(clipTop, rect.top)
           clipBottom = Math.min(clipBottom, rect.bottom)
         }
+        // A top-layer ancestor escapes the clipping ancestors above it.
+        if (parent.matches(":popover-open")) break
       }
       if (a.right <= clipLeft || a.left >= clipRight || a.bottom <= clipTop || a.top >= clipBottom) return false
       const margin = Math.min(options.margin, width / 2, height / 2)

@@ -271,6 +271,15 @@ parent closes even without ResizeObserver. [Tooltip acceptance](tooltip.md) incl
 original `62435fa` payload; the current shared-controller ESM/classic measure
 **3,923/3,994 gzip bytes**, still below their unchanged 4,000-byte ceilings. CSS stays 904.
 
+### Deep Dropdown clipping correction
+
+Dropdown's actual second submenu level exposed a top-layer boundary: clipping walks must
+stop above the nearest open popover ancestor, rather than treating its outer DOM scrollers
+as visual ancestors. That narrow positioner correction preserves the nearest panel's own
+clip and all core semantics. [Dropdown acceptance](dropdown.md) includes the additional
+Popover regression and real deep-menu geometry evidence. Current Popover ESM/classic are
+**3,927/3,997 gzip bytes**, within the same 4,000-byte ceilings; core/plugins are unchanged.
+
 Only exercised Chromium behavior is claimed. Firefox/Safari, screen readers and physical
 touch-device/pinch-zoom behavior require separate acceptance; no all-browser/AT certification.
 P3 remains in progress; **Tooltip is next**, not implemented by this component.

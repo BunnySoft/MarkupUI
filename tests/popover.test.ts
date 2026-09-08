@@ -392,6 +392,22 @@ describe("local viewport positioning and external distribution", () => {
     trigger.getBoundingClientRect = () => rect(NaN, 20, 100, 20)
     expect(controller.open()).toBe(false)
   })
+  it("does not apply an outer DOM clip above an open top-layer ancestor", () => {
+    const outer = bind()
+    outer.panel.getBoundingClientRect = () => rect(200, 150, 300, 300)
+    outer.panel.style.overflowX = "auto"
+    outer.panel.style.overflowY = "auto"
+    const clipper = document.createElement("div")
+    clipper.style.overflowX = "hidden"
+    clipper.style.overflowY = "hidden"
+    clipper.getBoundingClientRect = () => rect(0, 0, 100, 100)
+    document.body.append(clipper)
+    clipper.append(outer.panel)
+    const inner = bind()
+    outer.panel.append(inner.trigger, inner.panel)
+    expect(outer.controller.open()).toBe(true)
+    expect(inner.controller.open()).toBe(true)
+  })
   it("checks every anchor capability and falls back if one is absent", () => {
     const supports = vi.fn((name: string) => name !== "top")
     vi.stubGlobal("CSS", { supports })
