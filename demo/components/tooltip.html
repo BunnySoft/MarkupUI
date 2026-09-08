@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI descriptive Tooltip</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-tooltip.css">
+  <link rel="stylesheet" href="./tooltip.css">
+  <script defer src="../../dist/markup-ui-popover.global.js"></script>
+  <script defer src="../../dist/markup-ui-tooltip.global.js"></script>
+  <script defer src="./tooltip.js"></script>
+</head>
+<body>
+  <h1>Descriptive, noninteractive Tooltip</h1>
+  <p>Important instructions stay visible. These supplementary descriptions support hover and keyboard focus, not actions or menus.</p>
+  <main>
+    <section>
+      <h2>Native form and description ownership</h2>
+      <p id="permanent-help">Save submits the current form. This instruction is always visible.</p>
+      <form id="tip-form">
+        <label>Draft name <input id="draft" name="draft" value="Field notes" required></label>
+        <button type="submit" id="save" aria-describedby="permanent-help">Save draft</button>
+        <span class="mui-popover mui-tooltip mui-popover--arrow mui-popover--animated" role="tooltip" popover="manual" id="save-tip">Only the current <strong id="preserved-description">draft</strong> is saved.</span>
+        <button type="reset" id="reset">Reset</button>
+      </form>
+      <a id="ordinary-link" href="#destination">Read the destination</a>
+      <span class="mui-popover mui-tooltip" role="tooltip" popover="manual" id="link-tip">Navigates to the destination on this page.</span>
+      <button type="button" id="outside">Outside focus target</button>
+      <output id="form-log" aria-live="polite"></output>
+    </section>
+    <section>
+      <h2>Independent descriptions and pointer travel</h2>
+      <button type="button" id="hover-trigger">Hover or focus</button>
+      <span class="mui-popover mui-tooltip mui-popover--arrow" role="tooltip" popover="manual" id="hover-tip">The pointer may move onto this text. Escape hides it until a new trigger entry.</span>
+      <button type="button" id="peer-trigger">Another description</button>
+      <span class="mui-popover mui-tooltip" role="tooltip" popover="manual" id="peer-tip">A second manual tooltip does not dismiss its peer.</span>
+      <button type="button" id="request-show">Application show request</button>
+      <button type="button" id="request-hide">Application hide request</button>
+    </section>
+    <section>
+      <h2>Tooltip inside a native Popover</h2>
+      <button type="button" id="popover-trigger" popovertarget="parent-panel">Open rich content</button>
+      <div class="mui-popover" popover="auto" id="parent-panel" aria-label="Rich content example">
+        <p>Actions belong in this Popover, not in a tooltip.</p>
+        <button type="button" id="nested-trigger">An ordinary action</button>
+        <span class="mui-popover mui-tooltip" role="tooltip" popover="manual" id="nested-tip">Supplementary description inside the parent.</span>
+        <button type="button" id="parent-close" popovertarget="parent-panel" popovertargetaction="hide">Close rich content</button>
+      </div>
+    </section>
+    <section>
+      <h2>Disabled control: explicit accessible alternative</h2>
+      <button type="button" disabled>Export unavailable</button>
+      <button type="button" id="disabled-help">Why export is unavailable</button>
+      <span class="mui-popover mui-tooltip" role="tooltip" popover="manual" id="disabled-tip">Finish the visible required draft field first.</span>
+      <p>Export requires a complete draft. This requirement never depends on a disabled button receiving focus.</p>
+    </section>
+    <section>
+      <h2>Scroll boundary and RTL</h2>
+      <div class="scroll-box" id="scroll-box" dir="rtl">
+        <div class="scroll-content">
+          <button type="button" id="edge-trigger">RTL start</button>
+          <span class="mui-popover mui-tooltip mui-popover--arrow" role="tooltip" popover="manual" id="edge-tip">A short description with RTL start alignment.</span>
+        </div>
+      </div>
+    </section>
+    <p id="destination">Ordinary link destination.</p>
+    <button type="button" id="bottom-trigger">Bottom edge description</button>
+    <span class="mui-popover mui-tooltip" role="tooltip" popover="manual" id="bottom-tip">The preferred bottom placement flips above.</span>
+  </main>
+</body>
+</html>

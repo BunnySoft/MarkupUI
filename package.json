@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./tooltip": {
+      "types": "./dist/components/tooltip/index.d.ts",
+      "import": "./dist/markup-ui-tooltip.js"
+    },
+    "./tooltip/style.css": "./dist/markup-ui-tooltip.css",
     "./popover": {
       "types": "./dist/components/popover/index.d.ts",
       "import": "./dist/markup-ui-popover.js"

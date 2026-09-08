@@ -29,6 +29,23 @@ export interface PopoverController {
 const owners = new WeakMap<HTMLElement, PopoverController>()
 
 export function createPopover(trigger: HTMLElement, panel: HTMLElement, options: PopoverOptions = {}): PopoverController {
+  return createPopoverController(trigger, panel, options)
+}
+
+/** Internal description semantics used by Tooltip, not a public Popover option. */
+export interface PopoverSemantics {
+  validate(): void
+  connect(): () => void
+  attributes: string[]
+  errorEvent: string
+}
+
+export function createPopoverController(
+  trigger: HTMLElement,
+  panel: HTMLElement,
+  options: PopoverOptions,
+  semantics?: PopoverSemantics,
+): PopoverController {
   const document = trigger?.ownerDocument
   const view = document?.defaultView
   if (!view || !(trigger instanceof view.HTMLElement) || !(panel instanceof view.HTMLElement)
@@ -64,6 +81,7 @@ export function createPopover(trigger: HTMLElement, panel: HTMLElement, options:
   let active = false
   let observer: MutationObserver | undefined
   let resize: ResizeObserver | undefined
+  let cleanup: (() => void) | undefined
   const bindings: (() => void)[] = []
   const activeBindings: (() => void)[] = []
   const pointers = new Set<EventTarget>()
@@ -94,13 +112,20 @@ export function createPopover(trigger: HTMLElement, panel: HTMLElement, options:
   }
   function observeLifecycle() {
     if (observer) return
+    for (let parent = trigger.parentElement; parent; parent = parent.parentElement) {
+      if (!parent.hasAttribute("popover")) continue
+      const ancestor = parent
+      listen(ancestor, "toggle", () => {
+        if (!ancestor.matches(":popover-open")) controller.close()
+      }, activeBindings)
+    }
     observer = new view!.MutationObserver(() => {
       if (!trigger.isConnected || !panel.isConnected) controller.disconnect()
       else if (unavailable()) controller.close()
       else {
         try { validate() } catch (error) {
           controller.disconnect()
-          panel.dispatchEvent(new view!.CustomEvent("mui:popover-error", { detail: { error } }))
+          panel.dispatchEvent(new view!.CustomEvent(semantics?.errorEvent ?? "mui:popover-error", { detail: { error } }))
           return
         }
         if (isOpen()) schedulePosition()
@@ -108,7 +133,7 @@ export function createPopover(trigger: HTMLElement, panel: HTMLElement, options:
     })
     observer.observe(document!, {
       subtree: true, childList: true, attributes: true,
-      attributeFilter: ["hidden", "inert", "disabled", "popover", "id", "popovertarget"],
+      attributeFilter: ["hidden", "inert", "disabled", "popover", "id", "popovertarget", ...semantics?.attributes ?? []],
     })
   }
   function startActive() {
@@ -137,13 +162,13 @@ export function createPopover(trigger: HTMLElement, panel: HTMLElement, options:
   function reconcile() {
     if (!connected || !supported) return
     if (isOpen() && !unavailable()) {
-      aria.attr(trigger, "aria-expanded", "true")
+      if (!semantics) aria.attr(trigger, "aria-expanded", "true")
       startActive()
       controller.syncPosition()
     } else {
       if (isOpen()) panel.hidePopover()
       stopActive()
-      aria.attr(trigger, "aria-expanded", "false")
+      if (!semantics) aria.attr(trigger, "aria-expanded", "false")
     }
   }
   function within(target: EventTarget | null) {
@@ -187,24 +212,25 @@ export function createPopover(trigger: HTMLElement, panel: HTMLElement, options:
     if (!within((event as FocusEvent).relatedTarget) && (mode !== "hover" || !pointers.size)) request(false, duration)
   }
   function validate() {
+    semantics?.validate()
     if (!trigger.isConnected || !panel.isConnected || trigger.getRootNode() !== document || panel.getRootNode() !== document
       || !panel.id || panel.id !== panelId || /\s/.test(panel.id) || document!.getElementById(panel.id) !== panel
       || [...document!.querySelectorAll("[id]")].filter(node => node.id === panel.id).length !== 1
       || !panel.classList.contains("mui-popover") || !["auto", "manual"].includes(panel.getAttribute("popover") ?? "")
-      || panel.hasAttribute("hidden")) throw new TypeError("Popover requires connected light-DOM .mui-popover[popover=auto|manual] with a unique ID and no hidden attribute.")
+      || panel.hasAttribute("hidden")) throw new TypeError("Popover needs connected light-DOM, a unique ID, .mui-popover and popover=auto|manual; no hidden.")
     if (trigger.closest("mui-popover") || panel.closest("mui-popover")) throw new TypeError("Do not bind native Popover inside legacy mui-popover anatomy.")
     const parentPopover = trigger.parentElement?.closest("[popover]")
-    if (parentPopover && !parentPopover.contains(panel)) throw new TypeError("Nested Popover panels must remain inside their parent popover; portalled nesting is not supported.")
+    if (parentPopover && !parentPopover.contains(panel)) throw new TypeError("Keep nested panels inside their parent; portalled nesting is unsupported.")
     if (mode === "click") {
       if (!(trigger instanceof view!.HTMLButtonElement) || trigger.type !== "button"
         || trigger.getAttribute("popovertarget") !== panel.id
         || !["", "toggle"].includes(trigger.getAttribute("popovertargetaction") ?? "")) {
-        throw new TypeError("Click Popover requires a native type=button popovertarget with toggle action.")
+        throw new TypeError("Click Popover needs type=button and a matching popovertarget toggle.")
       }
     } else {
       if (trigger.hasAttribute("popovertarget")) throw new TypeError("Only click mode owns a declarative popovertarget.")
       if (mode !== "manual" && !trigger.matches("button, input:not([type=hidden]), select, textarea, a[href]")) {
-        throw new TypeError("Hover/focus Popover requires a native focusable control or link.")
+        throw new TypeError("Use a native focusable control or link.")
       }
     }
   }
@@ -222,8 +248,9 @@ export function createPopover(trigger: HTMLElement, panel: HTMLElement, options:
       if (!connected || !supported || unavailable()) return false
       validate()
       clearTimer()
-      // Older native implementations ignore this optional dictionary; no focus order polyfill.
-      ;(panel.showPopover as (options: { source: HTMLElement }) => void)({ source: trigger })
+      // Descriptions must not acquire invoker/expanded or focus-navigation semantics.
+      if (semantics) panel.showPopover()
+      else (panel.showPopover as (options: { source: HTMLElement }) => void)({ source: trigger })
       reconcile()
       return isOpen()
     },
@@ -250,19 +277,22 @@ export function createPopover(trigger: HTMLElement, panel: HTMLElement, options:
     connect() {
       if (connected) return
       validate()
-      if (owners.has(trigger) || owners.has(panel)) throw new Error("Popover node already has an active controller.")
-      if (isOpen()) throw new Error("Connect Popover while closed; then explicitly request open.")
+      if (owners.has(trigger) || owners.has(panel)) throw new Error("Node has an active controller.")
+      if (isOpen()) throw new Error("Connect while closed.")
       owners.set(trigger, controller)
       owners.set(panel, controller)
       connected = true
       generation++
+      cleanup = semantics?.connect()
       if (!supported) {
         aria.attr(panel, "popover", null)
         return
       }
-      const controls = trigger.getAttribute("aria-controls")?.split(/\s+/).filter(Boolean) ?? []
-      if (!controls.includes(panel.id)) aria.attr(trigger, "aria-controls", [...controls, panel.id].join(" "))
-      aria.attr(trigger, "aria-expanded", "false")
+      if (!semantics) {
+        const controls = trigger.getAttribute("aria-controls")?.split(/\s+/).filter(Boolean) ?? []
+        if (!controls.includes(panel.id)) aria.attr(trigger, "aria-controls", [...controls, panel.id].join(" "))
+        aria.attr(trigger, "aria-expanded", "false")
+      }
       listen(panel, "beforetoggle", event => {
         if (event.target !== panel) return
         const opening = (event as ToggleEvent).newState === "open"
@@ -293,6 +323,8 @@ export function createPopover(trigger: HTMLElement, panel: HTMLElement, options:
       aria.restore()
       owners.delete(trigger)
       owners.delete(panel)
+      cleanup?.()
+      cleanup = undefined
     },
   }
   controller.connect()

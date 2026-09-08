@@ -74,6 +74,7 @@ describe("Popover native visibility ownership (native API mocked, not browser ce
     const action = vi.fn()
     panel.addEventListener("click", action)
     expect(controller.open()).toBe(true)
+    expect(trigger.getAttribute("aria-controls")).toBe(panel.id)
     expect(controller.show).toBe(true)
     expect(trigger.getAttribute("aria-expanded")).toBe("true")
     expect(controller.setShow(false)).toBe(false)
@@ -221,6 +222,7 @@ describe("Popover native visibility ownership (native API mocked, not browser ce
     expect(panel.getAttribute("popover")).toBe("auto")
   })
   it("keeps independent and nested node ownership local", () => {
+    vi.stubGlobal("ResizeObserver", undefined)
     const parent = bind()
     const child = bind()
     parent.panel.append(child.trigger, child.panel)
@@ -229,6 +231,10 @@ describe("Popover native visibility ownership (native API mocked, not browser ce
     child.controller.disconnect()
     expect(parent.controller.show).toBe(true)
     expect(parent.trigger.getAttribute("aria-expanded")).toBe("true")
+    child.controller.connect()
+    child.controller.open()
+    parent.controller.close()
+    expect(child.controller.show).toBe(false)
   })
   it("rejects portalled nested panels rather than claiming native source ancestry support", () => {
     const parent = bind({ trigger: "focus" })

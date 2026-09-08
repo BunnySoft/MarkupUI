@@ -1,0 +1,15 @@
+/* build.mjs prepends the maintained Popover CSS; no runtime relative import. */
+.mui-tooltip {
+  --mui-popover-max-width: 20rem;
+  --mui-popover-padding: .5rem .75rem;
+  --mui-popover-background: #202630;
+  --mui-popover-color: #fff;
+  --mui-popover-border: #59616f;
+  --mui-popover-radius: .3rem;
+  font-size: .875rem;
+  line-height: 1.5;
+  overflow: clip;
+}
+@media print {
+  .mui-tooltip { color: #000; background: transparent; overflow: visible; }
+}

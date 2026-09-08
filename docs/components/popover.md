@@ -261,6 +261,16 @@ hooks, deprecated prop/callback aliases. Those receive no implementation credit.
 Load one JS format plus CSS: **4,757 gzip bytes ESM**, or **4,826 classic**.
 No runtime dependency or legacy/core/plugin source was changed; old budgets were not raised.
 
+### Shared Tooltip lifecycle update
+
+The following Tooltip migration reuses the side-effect-free controller through a narrow
+internal semantics adapter; public Popover options and expanded/controls behavior remain
+unchanged. Ancestor native toggle listeners now close pending/open child panels when a
+parent closes even without ResizeObserver. [Tooltip acceptance](tooltip.md) includes
+52 Popover regression tests plus native and Tooltip cases. The table above records the
+original `62435fa` payload; the current shared-controller ESM/classic measure
+**3,923/3,994 gzip bytes**, still below their unchanged 4,000-byte ceilings. CSS stays 904.
+
 Only exercised Chromium behavior is claimed. Firefox/Safari, screen readers and physical
 touch-device/pinch-zoom behavior require separate acceptance; no all-browser/AT certification.
 P3 remains in progress; **Tooltip is next**, not implemented by this component.
