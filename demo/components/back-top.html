@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Back Top</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-back-top.css">
+  <link rel="stylesheet" href="./back-top.css">
+  <script defer src="../../dist/markup-ui-back-top.global.js"></script>
+  <script defer src="./back-top.js"></script>
+</head>
+<body>
+  <header id="page-top"><h1>Native Back Top</h1><p>Scroll down 180 pixels. Fragment links keep native URL, focus and history; buttons scroll only their explicit root.</p><a href="#examples" id="skip">Go to local examples</a></header>
+  <main>
+    <section class="long-section"><h2>Read first</h2><p>No generated content, portal or scroll animation engine. This section deliberately leaves enough space for native scrolling.</p></section>
+    <section id="examples">
+      <h2>Independent reader</h2>
+      <div id="reader" class="reader" role="region" aria-label="Local reader" tabindex="0">
+        <div class="wide-content">
+          <h3 id="reader-top">Reader start</h3><p>Horizontal scroll is preserved by the explicit button.</p>
+          <div class="reader-space"><p>Long local content for testing vertical and horizontal native scrolling.</p></div>
+          <p id="reader-bottom">Reader end. <a href="#reader-top" id="reader-native-top">Native return link, usable without JavaScript</a></p>
+        </div>
+      </div>
+      <form id="reader-form">
+        <button class="mui-back-top mui-back-top--square" id="reader-action" type="button" aria-controls="reader" hidden><span aria-hidden="true">↑</span> Reader top</button>
+        <button type="button" id="reader-end">Scroll reader to end</button>
+        <button type="button" id="cancel-next">Cancel next reader-top click</button>
+        <label>Unrelated input <input id="preserved-input" value="Native form state"></label>
+      </form>
+      <p>Focused enhanced actions stay visible at the top until blur. No automatic focus movement or live announcement.</p>
+      <output id="state">Native links are available; optional enhancement not connected yet.</output>
+    </section>
+    <section class="long-section"><h2>More local content</h2><p>Resize, zoom or change direction to inspect logical placement.</p><a href="#page-top" class="mui-back-top mui-back-top--square" id="plain-top">Always-visible native top link</a></section>
+  </main>
+  <footer><p>End of local document.</p><button type="button" id="after">Ordinary focus destination</button></footer>
+  <a class="mui-back-top mui-back-top--fixed" href="#page-top" id="page-action"><span aria-hidden="true">↑</span> Top</a>
+  <button class="mui-back-top mui-back-top--fixed mui-back-top--square page-button" type="button" id="page-button" hidden><span aria-hidden="true">↑</span> Scroll page</button>
+</body>
+</html>

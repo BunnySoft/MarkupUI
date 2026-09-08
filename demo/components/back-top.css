@@ -1,0 +1,14 @@
+html { scroll-behavior: smooth; }
+body { margin: 0; color: #172a43; background: #f7f9fd; font: 1rem/1.6 system-ui, sans-serif; }
+header, main, footer { max-inline-size: 65rem; margin-inline: auto; padding: 1.25rem; }
+header, footer { background: #e9eff8; }
+.long-section { min-block-size: 75vh; }
+.reader { block-size: 17rem; overflow: auto; border: 2px solid #6e829e; background: white; }
+.wide-content { inline-size: 70rem; padding: 1rem; }
+.reader-space { block-size: 45rem; }
+form { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; margin-block: 1rem; }
+button, input { font: inherit; }
+output { display: block; min-block-size: 2rem; }
+.page-button { --mui-back-top-block-end: 6.5rem; }
+@media (max-width: 30rem) { .mui-back-top--fixed { --mui-back-top-inline-end: .8rem; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
