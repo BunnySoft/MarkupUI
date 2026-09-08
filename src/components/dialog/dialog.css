@@ -1,0 +1,46 @@
+.mui-dialog {
+  --mui-dialog-accent: #315ba6;
+  inline-size: var(--mui-dialog-width, 32rem);
+  border: 1px solid transparent;
+  border-radius: .75rem;
+  padding: clamp(.75rem, 3vi, 1.5rem);
+  box-shadow: 0 .75rem 3rem rgb(0 0 0 / 20%);
+  font: inherit;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.mui-dialog[data-dialog-bordered] { border-color: var(--mui-dialog-border, #9aa5b3); }
+.mui-dialog[data-dialog-type="success"] { --mui-dialog-accent: #176a43; }
+.mui-dialog[data-dialog-type="warning"] { --mui-dialog-accent: #835000; }
+.mui-dialog[data-dialog-type="error"] { --mui-dialog-accent: #ac2635; }
+.mui-dialog [data-dialog-header] { display: flex; align-items: start; gap: .75rem; }
+.mui-dialog [data-dialog-title] { margin: 0; flex: 1; font-size: 1.25rem; line-height: 1.4; }
+.mui-dialog [data-dialog-icon] {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 1.75rem;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  color: var(--mui-dialog-accent);
+  font-weight: 700;
+}
+.mui-dialog[data-dialog-icon-placement="top"] [data-dialog-header] { flex-wrap: wrap; }
+.mui-dialog[data-dialog-icon-placement="top"] [data-dialog-icon] { margin-inline-end: calc(100% - 1.75rem); }
+.mui-dialog [data-dialog-content] { margin-block: 1rem; }
+.mui-dialog [data-dialog-actions] { display: flex; flex-wrap: wrap; justify-content: end; gap: .5rem; }
+.mui-dialog button { min-block-size: 2.5rem; max-inline-size: 100%; font: inherit; white-space: normal; }
+.mui-dialog [data-dialog-action="positive"] { color: var(--mui-dialog-accent); font-weight: 700; }
+.mui-dialog [data-dialog-error] { border-inline-start: .25rem solid #ac2635; padding-inline-start: .5rem; }
+.mui-dialog [data-dialog-pending] { font-weight: 600; }
+.mui-dialog :focus-visible { outline: 2px solid var(--mui-dialog-accent); outline-offset: 3px; }
+.mui-dialog [hidden] { display: none !important; }
+@media (forced-colors: active) {
+  .mui-dialog { border-color: CanvasText; box-shadow: none; }
+  .mui-dialog [data-dialog-icon], .mui-dialog [data-dialog-action="positive"] { color: ButtonText; }
+  .mui-dialog [data-dialog-error] { border-color: CanvasText; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mui-dialog, .mui-dialog::backdrop { animation: none; transition: none; scroll-behavior: auto; }
+}

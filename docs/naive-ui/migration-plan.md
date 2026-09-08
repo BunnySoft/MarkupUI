@@ -32,7 +32,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P0 — Architecture and contracts | 🔵 Planned | Establish separated sources, compatible loading, lifecycle, events and native-control conventions. | None | A minimal external-CSS example works without a consumer build step, and existing loading remains supported. |
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
 | P2 — Primitives and layout | 🟢 Verified retained scope | All 31 P2-assigned pages reconciled; native Image/fallback/dialog scope accepted with advanced P6 exclusions. | P1 pattern | Full 96-route and P2 reference audit found no retained unresolved P2 rows. This is not global P3/P6 or framework parity. |
-| P3 — Interaction foundations | 🟠 In progress | Popover/Tooltip/Popconfirm, declared navigation scopes through Steps and Loading Bar accepted; modal/feedback/transition/service scopes remain incomplete. | P0 lifecycle; P1 controls | Nested interaction, dismissal and focus behavior are defined and demonstrated per component. |
+| P3 — Interaction foundations | 🟠 In progress | Popover/Tooltip/Popconfirm, declared navigation through Steps, Loading Bar and Dialog accepted; remaining modal/feedback/transition/service scopes are incomplete. | P0 lifecycle; P1 controls | Nested interaction, dismissal and focus behavior are defined and demonstrated per component. |
 | P4 — Forms and selection | 🔵 Planned | Make native controls dependable, then add optional richer selection. | P0 form contract; P3 for popup variants | Values, labels, submission, reset, validity and event semantics are consistent. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
 | P6 — Specialized modules | 🔵 Planned | Deliver independently justified, opt-in advanced features. | Component-specific earlier work | Explicit imports, independent size budgets and no runtime dependencies. |
@@ -94,7 +94,7 @@ smuggling an overlay implementation into the CSS-only native composition.
 | --- | --- | --- | --- |
 | P3-01 — Focus and keyboard | 🟠 In progress | Dropdown and Menu now share a tested primitive with explicit command-roving versus native-navigation Tab policies; other composites remain separate. | [Dropdown](../components/dropdown.md) and [Menu](../components/menu.md): native activation, logical keys/typeahead, ownership and no focus trap. |
 | P3-02 — Floating surfaces | 🟠 In progress | Popover now supplies native top-layer/anchor use and a local flip/clamp fallback; later popup consumers remain separate. | [Popover acceptance](../components/popover.md): native dismissal, scroll/resize/RTL/clipping and cleanup without external positioning code. |
-| P3-03 — Modal surfaces | 🔵 Planned | Define native dialog/top-layer behavior, accessible names, cancellation and focus restoration. | Dialog/Drawer/Modal foundations that support nested ownership. |
+| P3-03 — Modal surfaces | 🟠 In progress | Dialog retained native lifetime/decision scope accepted; Modal then Drawer remain separate. | [Dialog](../components/dialog.md) verifies native naming/modes/forms/cancellation/focus/nesting and reusable lifetime ownership. |
 | P3-04 — Tooltip and Popover | 🟢 Verified retained scope | Both native retained scopes are accepted, with explicit differences and omissions. | [Popover](../components/popover.md) and [Tooltip](../components/tooltip.md): native state, pointer/focus retention, descriptive ARIA, cleanup and author-owned content. |
 | P3-05 — Navigation | 🟢 Verified retained scope | Dropdown, Menu, Tabs, Collapse, Anchor, Back Top, Pagination and Steps declared native scopes accepted. | Native links/disclosures/scroll locations, bounded paging and explicit progress/intents; no router, wizard or source-parity claim. |
 | P3-06 — Managed feedback | 🟠 In progress | Popconfirm and Loading Bar retained local scopes accepted; Message, Notification and Discrete services remain separate. | [Popconfirm](../components/popconfirm.md) and [Loading Bar](../components/loading-bar.md): explicit root ownership, error/lifetime cleanup and no provider or global request store. |
@@ -187,7 +187,7 @@ excluded from delivery scope but never counted as implemented.
 ## Current migration position
 
 **Current component: Anchor / AnchorLink (P3), native fragment/location scope accepted.**
-**Next: Dialog (P3), then Modal/Drawer in prerequisite order; separate implementation/acceptance/commit.**
+**Next: Modal (P3), then Drawer; separate implementation/acceptance/commit.**
 Collapse/CollapseItem completed native disclosure scope in `28fb44c`.
 Tabs/Tab/TabPane completed their paired native scope in `8cd7cb1`.
 Menu completed its retained native navigation/disclosure scope in `f7ae2b8`.
@@ -320,8 +320,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The index records 3,317 rows and 184 accepted retained tasks out of 384 across 46 component
-pages (200 unchecked), not full upstream parity.
+The index records 3,333 rows and 188 accepted retained tasks out of 384 across 47 component
+pages (196 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -636,8 +636,32 @@ Review fixes preserve the terminal latch after hide, status-marker identity and 
 error text. Timer/removal/author-state cleanup, native semantics/focus, motion/forced colors,
 RTL/zoom and fallback/coexistence are accepted. Previous outputs/ceilings remain unchanged.
 
-Dialog is next, then Modal/Drawer in prerequisite order. P3-05 navigation remains Verified
+Dialog is now accepted below; Modal is next, then Drawer. P3-05 navigation remains Verified
 only for retained scopes; P3 overall and P3-06 managed feedback remain in progress.
+
+### Dialog retained-scope acceptance
+
+[Dialog](../components/dialog.md) closes four tasks with native modal/modeless/inline
+lifetime, authored content and optional false/Promise decision controls. Unmarked
+method=dialog forms retain native validation and returnValue. Explicit owners clone
+trusted templates; no injection/reactive services, global scroll/focus manager or native
+top-layer imitation is included. Legacy MuiDialog and prior optional assets are unchanged.
+
+The tracker preserves **105 original identities**, adds **10 source-only supplements and
+six inherited options**, and reconciles **121 rows: 80 adapted targets, 41 omissions**.
+**157 targeted tests** (59 Dialog, 31 Image, 40 Popconfirm, 27 native/legacy),
+build/budget and Chromium gates cover native forms, nested surfaces/Escape/focus,
+backdrop/padding/drag policy, false/reject/async duplicate/stale completion, teardown/
+reparenting/reentrant handlers, fallback/coexistence and narrow RTL/2x CSS zoom. A read-only
+review led to regression fixes for focus/closure/disposal reentrancy and lost ancestry
+observation; real browser checks corrected oversized viewport-unit height at CSS zoom.
+ESM/classic/CSS measure **4,319/4,442/1,007 gzip bytes** under **5,500/5,500/1,500**
+ceilings; one format plus CSS is **5,326/5,449**. Core/advanced/widgets remain
+**14,611/2,181/2,779**. Exact acceptance details are in the canonical record.
+
+Reuse `src/components/dialog/native.ts`, `attributes.ts` and `native.css` for Modal,
+not Dialog's decision footer. Per-node Symbol.for ownership survives separate bundles.
+Modal and Drawer must still complete their own original inventories and acceptance.
 
 ### Residual P2 inventory after Breadcrumb
 
@@ -651,21 +675,23 @@ Image's advanced P6 viewer/gesture/renderer/download/fullscreen contracts remain
 omitted; accepting its useful native dialog path does not complete all P6 media capabilities.
 Likewise the native Float Button popover and Image dialog do not automatically close P3.
 
-### Remaining P3 inventory after Loading Bar
+<a id="remaining-p3-inventory-after-loading-bar"></a>
+
+### Remaining P3 inventory after Dialog
 
 The Image catalog check left 19 Planned P3-assigned components. Popover, Tooltip,
-Popconfirm, Dropdown, Menu, Tabs, Collapse, Anchor, Back Top, Pagination, Steps and Loading Bar now close four tasks each; **7 P3-assigned components remain Planned**:
+Popconfirm, Dropdown, Menu, Tabs, Collapse, Anchor, Back Top, Pagination, Steps, Loading Bar and Dialog now close four tasks each; **6 P3-assigned components remain Planned**:
 
 - **P3 disclosure:** Collapse Transition.
 - **P3 navigation:** No Planned routes remain in the declared native navigation workstream; P3-05 is accepted for retained scopes.
-- **P3 overlays/feedback:** Dialog, Drawer, Message, Modal, Notification.
+- **P3 overlays/feedback:** Drawer, Message, Modal, Notification.
 - **P3; exclusions:** Discrete API.
 
-**Dialog is next, then Modal/Drawer in prerequisite order**. Accepted Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar retained scopes
+**Modal is next, then Drawer**. Accepted Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog retained scopes
 do not complete those inventories or global P3. Original public/inherited source identities
 remain intact, with explicit native adaptations and omissions rather than upstream parity.
 P2 remains complete for its 31 accepted adapted scopes, not all source parity.
-No Dialog/Drawer/Modal/Message/Notification, Collapse Transition or Discrete API implementation is added in this Loading Bar change.
+No Drawer/Modal/Message/Notification, Collapse Transition or Discrete API implementation is added in this Dialog change.
 Preserve native semantics and the legacy aggregate. Each component gets its own documentation update, build,
 acceptance evidence and commit before advancing. No dates or effort estimates are assigned
 until retained feature scope and optional exclusions are settled.

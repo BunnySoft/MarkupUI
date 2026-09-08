@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Native Dialog — MarkupUI</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-dialog.css">
+  <link rel="stylesheet" href="dialog.css">
+  <script src="../../dist/markup-ui-dialog.global.js" defer></script>
+  <script src="dialog.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>Dialog: authored content, native lifetime</h1>
+    <p>No provider or generated business actions. Only local simulated decisions run here.</p>
+    <p><a href="#inline-example">Read the inline confirmation without JavaScript</a></p>
+    <div id="controls" hidden>
+      <button id="open" type="button">Open modal decision</button>
+      <button id="modeless" type="button">Open modeless decision</button>
+      <button id="spawn" type="button">Create template dialog</button>
+      <button id="destroy" type="button">Dispose owned clones</button>
+    </div>
+    <p id="events" role="status">Native inline content and forms work without enhancement.</p>
+    <section id="inline-example" class="mui-dialog" data-dialog-bordered aria-labelledby="inline-title">
+      <header data-dialog-header><span data-dialog-icon aria-hidden="true">i</span><h2 id="inline-title" data-dialog-title>Inline review</h2></header>
+      <p data-dialog-content>This is presentational content, not a modal. Native links remain useful without scripting.</p>
+      <footer data-dialog-actions><a href="#native-form-example">Continue to the native form example</a></footer>
+    </section>
+    <dialog id="native-form-example" class="mui-native-dialog mui-dialog" open aria-labelledby="native-title">
+      <h2 id="native-title" data-dialog-title>Native form baseline</h2>
+      <form method="dialog">
+        <label>Required reference <input name="reference" required></label>
+        <button value="native-saved">Submit native form</button>
+        <button value="native-cancelled" formnovalidate>Cancel native form</button>
+      </form>
+    </dialog>
+    <p class="page-tail">Background page content remains ordinary document content. Modal top-layer blocking belongs to the browser; this helper does not lock document scrolling.</p>
+  </main>
+  <dialog id="decision" class="mui-native-dialog mui-dialog" data-dialog-bordered data-dialog-type="warning" aria-labelledby="decision-title" aria-describedby="decision-description">
+    <header data-dialog-header>
+      <span data-dialog-icon aria-hidden="true">!</span>
+      <h2 data-dialog-title id="decision-title" tabindex="-1" autofocus>Review this local change</h2>
+      <button type="button" data-dialog-action="close" aria-label="Close review">×</button>
+    </header>
+    <div data-dialog-content>
+      <p id="decision-description">Choose a local outcome. Rejection stays open and exposes an authored error; false stays open without declaring failure.</p>
+      <label>Decision behavior
+        <select id="behavior">
+          <option value="accept">Accept</option>
+          <option value="false">Return false</option>
+          <option value="reject">Reject</option>
+          <option value="slow">Resolve after 800 ms</option>
+        </select>
+      </label>
+      <button type="button" id="open-inner">Open nested modal</button>
+      <details id="long-content">
+        <summary>Long content and native controls</summary>
+        <p>Review all information before deciding. Content stays in light DOM and the whole native surface scrolls, including its footer.</p>
+        <p>Native focus entry uses the authored autofocus heading. Tab and Shift+Tab belong to the browser, not a custom trap.</p>
+        <p>At narrow widths and enlarged text, labels and decision buttons wrap. No fixed pixel height clips the action area.</p>
+        <p>Modeless dialogs do not block other document controls. Escape follows the platform's modal cancellation, not a synthetic global key listener.</p>
+        <p>External asynchronous work is not cancelled when the UI closes. A generation only prevents late work changing another opening.</p>
+        <p>Native form actions below bypass the optional decision callbacks on purpose. Constraint validation must succeed before method=dialog closes.</p>
+        <label>Additional note <textarea rows="4"></textarea></label>
+      </details>
+      <form method="dialog" id="decision-form">
+        <label>Required local reference <input id="reference" name="reference" required></label>
+        <button id="native-save" value="form-saved">Save native form</button>
+        <button id="native-cancel" value="form-cancelled" formnovalidate>Cancel native form</button>
+      </form>
+    </div>
+    <p role="alert" data-dialog-error hidden>The local decision failed. Review the input and try again.</p>
+    <p role="status" data-dialog-pending hidden>Waiting for the local decision…</p>
+    <footer data-dialog-actions>
+      <button type="button" data-dialog-action="negative">Not now</button>
+      <button type="button" data-dialog-action="positive">Confirm change</button>
+    </footer>
+  </dialog>
+  <dialog id="inner" class="mui-native-dialog mui-dialog" aria-labelledby="inner-title">
+    <h2 id="inner-title" data-dialog-title>Nested native surface</h2>
+    <p data-dialog-content>Closing this surface returns focus inside the still-open parent.</p>
+    <form method="dialog"><button id="inner-close" value="inner-done" autofocus>Return to parent</button></form>
+  </dialog>
+  <div id="owned-dialogs"></div>
+  <template id="dialog-template">
+    <dialog class="mui-native-dialog mui-dialog" data-dialog-type="info" aria-label="Template information">
+      <header data-dialog-header><span data-dialog-icon aria-hidden="true">i</span><h2 data-dialog-title>Template title</h2><button type="button" data-dialog-action="close">Close</button></header>
+      <p data-dialog-content>Template content</p>
+      <p role="alert" data-dialog-error hidden>Local action failed.</p>
+      <p role="status" data-dialog-pending hidden>Waiting…</p>
+      <footer data-dialog-actions><button type="button" data-dialog-action="positive">Understood</button></footer>
+    </dialog>
+  </template>
+</body>
+</html>

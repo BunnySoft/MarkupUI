@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./dialog": {
+      "types": "./dist/components/dialog/index.d.ts",
+      "import": "./dist/markup-ui-dialog.js"
+    },
+    "./dialog/style.css": "./dist/markup-ui-dialog.css",
     "./loading-bar": {
       "types": "./dist/components/loading-bar/index.d.ts",
       "import": "./dist/markup-ui-loading-bar.js"
