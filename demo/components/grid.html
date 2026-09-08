@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Grid — native tracks and authored responsiveness</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-grid.css">
+  <link rel="stylesheet" href="./grid.css">
+</head>
+<body>
+  <main>
+    <h1>Native Grid and GridItem</h1>
+    <p>Original items, explicit CSS tracks/spans and native responsive queries. No responsive string parser, placement engine, observer or automatic ARIA grid role.</p>
+    <section aria-labelledby="fixed-title">
+      <h2 id="fixed-title">Fixed columns, tracks, spans and gaps</h2>
+      <p>The untouched default is 24 equal tracks; only three native items are authored here.</p>
+      <div class="mui-grid default-preview" id="default-grid"><span>1</span><span>2</span><span>3</span></div>
+      <div class="mui-grid four-columns" id="fixed">
+        <div class="mui-grid-item cell" id="fixed-first">One</div>
+        <div class="mui-grid-item cell span-two" id="fixed-wide">Two-column span</div>
+        <div class="mui-grid-item cell" id="fixed-last">Four</div>
+        <p class="cell" id="plain-child">A plain native child is not filtered out.</p>
+      </div>
+      <div class="mui-grid custom-tracks" id="tracks"><span class="mui-grid-item cell">Fixed track</span><span class="mui-grid-item cell">Native flexible track</span></div>
+      <div class="mui-grid four-columns aligned" id="aligned"><span class="mui-grid-item cell">Item</span></div>
+    </section>
+    <section aria-labelledby="placement-title">
+      <h2 id="placement-title">Absolute start is not relative offset</h2>
+      <div class="mui-grid four-columns" id="absolute">
+        <span class="mui-grid-item cell span-two">Two tracks first</span>
+        <span class="mui-grid-item cell start-three" id="absolute-third">Absolute start 3: adjacent, not offset by 3</span>
+        <span class="mui-grid-item cell">Next in DOM order</span>
+      </div>
+      <div class="mui-grid four-columns" id="spaced">
+        <span class="mui-grid-item cell span-two">Two tracks first</span>
+        <span class="mui-grid-item spacer" aria-hidden="true" id="authored-spacer"></span>
+        <span class="mui-grid-item cell" id="after-spacer">One explicit empty track before this item</span>
+      </div>
+      <p>A spacer is a separate authored item. It can wrap separately; it does not reproduce the source's atomic offset-plus-span packing.</p>
+    </section>
+    <section aria-labelledby="responsive-title">
+      <h2 id="responsive-title">Self versus screen responsiveness</h2>
+      <div class="mui-grid-container self-frame" id="query-container">
+        <div class="mui-grid self-grid" id="self-grid">
+          <span class="mui-grid-item cell self-feature" id="self-feature">The query targets this descendant grid and its item.</span>
+          <span class="mui-grid-item cell">Original second item</span>
+          <a class="mui-grid-item cell wide-only" href="#result" id="wide-link">Optional wide-view result link</a>
+        </div>
+      </div>
+      <p><a href="#result" id="always-result">The result destination is always available here.</a></p>
+      <div class="mui-grid screen-grid" id="screen-grid"><span class="mui-grid-item cell screen-feature">Viewport-query feature</span><span class="mui-grid-item cell">Screen item</span><span class="mui-grid-item cell">Screen item</span></div>
+      <p>The self container has an explicitly authored width; no query tries to restyle its own query container. Unsupported container queries keep the single-column baseline.</p>
+    </section>
+    <section aria-labelledby="nested-title">
+      <h2 id="nested-title">Independent nested grids and hidden items</h2>
+      <div class="mui-grid four-columns" id="outer-grid">
+        <div class="mui-grid mui-grid-item inner-grid span-two" id="inner-grid"><span class="mui-grid-item cell" id="inner-first">Inner one</span><span class="mui-grid-item cell">Inner two</span></div>
+        <span class="mui-grid-item cell">Outer peer</span>
+      </div>
+      <div class="mui-grid four-columns" id="hidden-items"><span class="mui-grid-item cell">Visible first</span><button type="button" class="mui-grid-item cell" hidden id="hidden-item">Hidden native item</button><span class="mui-grid-item cell" id="visible-second">Visible second</span></div>
+      <div class="mui-grid" hidden id="hidden-root"><button type="button">Hidden root action</button></div>
+      <template class="mui-grid" id="native-template"><span class="mui-grid-item">Inert authored template</span></template>
+    </section>
+    <section aria-labelledby="collapse-title">
+      <h2 id="collapse-title">Authored preview and real native disclosure</h2>
+      <div class="mui-grid two-columns" id="preview-grid"><a class="mui-grid-item cell" href="#result" id="preview-link">Visible preview result</a><span class="mui-grid-item cell">Application-selected preview item</span></div>
+      <details class="mui-grid-disclosure" id="more-results">
+        <summary id="more-summary">Show or hide remaining results</summary>
+        <div class="mui-grid two-columns" id="extra-grid">
+          <a class="mui-grid-item cell" href="#result" id="extra-link">Additional result</a>
+          <label class="mui-grid-item cell field">Additional field <input id="extra-field" value="Original"></label>
+        </div>
+      </details>
+      <a href="#result" id="after-disclosure">Next native action</a>
+      <p>These are two explicit grids. Native details hides its body and controls; no row-count packing, overflow signal or hidden-but-focusable clipped content is claimed.</p>
+      <div class="mui-grid four-columns" id="trailing-grid"><span class="mui-grid-item cell">First</span><span class="mui-grid-item cell">Second</span><div class="mui-grid-item trailing-action" id="trailing-action"><a href="#result">Authored final action on its own row</a></div></div>
+      <p>The final action is DOM-last, not an automatically reserved overflow-aware suffix.</p>
+    </section>
+    <section aria-labelledby="native-title">
+      <h2 id="native-title">Native lists, forms and reading order</h2>
+      <ol class="mui-grid two-columns" type="A" id="native-list"><li class="mui-grid-item"><a href="#result" id="list-first">Native list item</a></li><li class="mui-grid-item"><a href="#result" id="list-second">Native list item</a></li></ol>
+      <form class="mui-grid form-grid" method="get" action="./grid.html#result" id="native-form">
+        <label class="mui-grid-item field" for="native-name">Name <input name="name" id="native-name" value="Original" required></label>
+        <div class="mui-grid-item native-actions"><button type="submit" id="native-submit">Submit</button><button type="reset" id="native-reset">Reset</button><button type="button" disabled id="native-disabled">Unavailable</button><a href="#result" id="native-link">Native link</a></div>
+      </form>
+      <p id="result" tabindex="-1">Native result destination; GET form submission returns to this static example.</p>
+    </section>
+    <section dir="rtl" lang="ar" aria-labelledby="rtl-title">
+      <h2 id="rtl-title">شبكة أصلية</h2>
+      <div class="mui-grid four-columns" id="rtl-grid"><span class="mui-grid-item cell" id="rtl-first">الأول</span><span class="mui-grid-item cell span-two" id="rtl-wide">عنصر واسع</span><span class="mui-grid-item cell">الأخير</span></div>
+    </section>
+    <p id="outside">Outside the opt-in, native layout and semantics remain unchanged.</p>
+  </main>
+</body>
+</html>

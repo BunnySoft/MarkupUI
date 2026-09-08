@@ -1,0 +1,41 @@
+body { margin: 0; font-family: system-ui, sans-serif; line-height: 1.5; color: #242426; background: #fafafa; }
+main { box-sizing: border-box; max-inline-size: 960px; margin-inline: auto; padding: 24px; }
+section { margin-block: 24px; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.2rem; }
+.mui-grid { margin-block: 12px; }
+.cell { padding: .5rem; border: 1px solid #96969d; margin: 0; background: #fff; }
+.default-preview { font-size: .75rem; }
+.four-columns { --mui-grid-cols: 4; --mui-grid-x-gap: 12px; --mui-grid-y-gap: 8px; }
+.two-columns { --mui-grid-cols: 2; --mui-grid-x-gap: 12px; --mui-grid-y-gap: 8px; }
+.span-two { --mui-grid-span: 2; }
+.start-three { --mui-grid-start: 3; }
+.custom-tracks { --mui-grid-tracks: 5rem minmax(0, 1fr); --mui-grid-x-gap: 10px; }
+.aligned { --mui-grid-align: center; --mui-grid-justify: center; grid-auto-rows: 96px; }
+.spacer { outline: 1px dashed #96969d; outline-offset: -1px; }
+.self-frame { container-name: example-grid; inline-size: 40rem; }
+.self-grid { --mui-grid-cols: 1; --mui-grid-x-gap: 8px; --mui-grid-y-gap: 8px; }
+.self-grid > .wide-only { display: none; }
+.screen-grid { --mui-grid-cols: 2; --mui-grid-x-gap: 8px; --mui-grid-y-gap: 8px; }
+.inner-grid { --mui-grid-cols: 2; --mui-grid-x-gap: 4px; --mui-grid-y-gap: 4px; margin: 0; }
+.trailing-action { grid-column: 1 / -1; justify-self: end; }
+.field { display: grid; gap: .25rem; }
+.field > input { box-sizing: border-box; max-inline-size: 100%; min-inline-size: 0; }
+.form-grid { --mui-grid-cols: 2; --mui-grid-x-gap: 12px; --mui-grid-y-gap: 8px; }
+.native-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+input, button { font: inherit; }
+a { color: #175fbb; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+@container example-grid (min-width: 30rem) {
+  .self-grid { --mui-grid-cols: 3; --mui-grid-x-gap: 12px; }
+  .self-grid > .self-feature { --mui-grid-span: 2; }
+  .self-grid > .wide-only { display: revert; }
+}
+@media (min-width: 48rem) {
+  .screen-grid { --mui-grid-cols: 4; --mui-grid-x-gap: 16px; }
+  .screen-grid > .screen-feature { --mui-grid-span: 2; }
+}
+@media (max-width: 400px) {
+  main { padding: 12px; }
+  .form-grid { --mui-grid-cols: 1; }
+}

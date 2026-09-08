@@ -10,6 +10,7 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./grid/style.css": "./dist/markup-ui-grid.css",
     "./space/style.css": "./dist/markup-ui-space.css",
     "./flex/style.css": "./dist/markup-ui-flex.css",
     "./divider/style.css": "./dist/markup-ui-divider.css",

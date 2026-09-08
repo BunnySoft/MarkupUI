@@ -1,0 +1,46 @@
+:where(.mui-grid) {
+  --mui-grid-cols: 24;
+  --mui-grid-tracks: initial;
+  --mui-grid-x-gap: 0px;
+  --mui-grid-y-gap: 0px;
+  --mui-grid-align: normal;
+  --mui-grid-justify: normal;
+  display: grid;
+  grid-template-columns: var(--mui-grid-tracks, repeat(var(--mui-grid-cols), minmax(0, 1fr)));
+  grid-auto-flow: row;
+  column-gap: var(--mui-grid-x-gap);
+  row-gap: var(--mui-grid-y-gap);
+  align-items: var(--mui-grid-align);
+  justify-items: var(--mui-grid-justify);
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+:where(.mui-grid) > :where(*) {
+  --mui-grid-span: 1;
+  --mui-grid-start: auto;
+  grid-column: var(--mui-grid-start) / span var(--mui-grid-span);
+  min-inline-size: 0;
+}
+:where(.mui-grid) > :where(.mui-grid-item) {
+  box-sizing: border-box;
+  max-inline-size: 100%;
+}
+:where(.mui-grid-container) {
+  container-type: inline-size;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+details.mui-grid-disclosure > summary {
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+details.mui-grid-disclosure > summary:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+details.mui-grid-disclosure > .mui-grid { margin-block-start: 1rem; }
+:where(.mui-grid, .mui-grid > *, .mui-grid-container, .mui-grid-disclosure)[hidden]:not([hidden="until-found"]),
+template.mui-grid,
+.mui-grid > template { display: none !important; }
