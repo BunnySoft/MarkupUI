@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./collapse-transition": {
+      "types": "./dist/components/collapse-transition/index.d.ts",
+      "import": "./dist/markup-ui-collapse-transition.js"
+    },
+    "./collapse-transition/style.css": "./dist/markup-ui-collapse-transition.css",
     "./notification": {
       "types": "./dist/components/notification/index.d.ts",
       "import": "./dist/markup-ui-notification.js"

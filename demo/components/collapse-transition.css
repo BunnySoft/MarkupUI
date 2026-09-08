@@ -1,0 +1,11 @@
+body { margin: 0; background: #f4f6f9; color: #20252b; font: 1rem/1.5 system-ui, sans-serif; }
+main { max-inline-size: 60rem; margin-inline: auto; padding: 1rem; overflow-wrap: anywhere; }
+#controls { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 1rem; }
+#controls[hidden] { display: none; }
+button, input { font: inherit; max-inline-size: 100%; box-sizing: border-box; }
+button { min-block-size: 2.5rem; }
+label { display: block; margin-block: .5rem; }
+.panel-content { padding: 1rem; border: 1px solid #a1aab8; background: white; }
+.panel-content h2 { margin-block-start: 0; }
+@media (forced-colors: active) { .panel-content { border-color: CanvasText; } }
+@media print { #controls { display: none; } }

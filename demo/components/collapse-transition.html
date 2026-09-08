@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Collapse Transition</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-collapse-transition.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-collapse.css">
+  <link rel="stylesheet" href="collapse-transition.css">
+  <script src="../../dist/markup-ui-collapse-transition.global.js" defer></script>
+  <script src="collapse-transition.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>Collapse Transition: authored content, optional native motion</h1>
+    <p>No renderer, focus trap, generated heading or change to the native Collapse component.</p>
+    <div id="controls" hidden>
+      <button type="button" id="toggle" aria-controls="panel" aria-expanded="true">Toggle content</button>
+      <button type="button" id="show">Show</button><button type="button" id="hide">Hide</button>
+      <button type="button" id="reverse">Rapid reversal</button>
+      <button type="button" id="finish">Finish motion</button><button type="button" id="cancel">Cancel motion</button>
+      <button type="button" id="grow">Add authored content</button><button type="button" id="dispose">Dispose controller</button>
+      <label><input id="throw-hook" type="checkbox"> Throw in next after-enter hook</label>
+    </div>
+    <p id="status" role="status">Without scripts, the authored content is readable and native controls work.</p>
+    <form id="native-form">
+      <div id="panel" class="mui-collapse-transition">
+        <div data-collapse-transition-content class="panel-content">
+          <h2>Authored heading</h2>
+          <p>All padding and border belong to this inner flow-root. Only the outer wrapper's temporary height is animated.</p>
+          <label>Required reference <input id="reference" required name="reference"></label>
+          <button id="submit" type="submit">Submit local form</button>
+          <button id="inside-hide" type="button">Hide from inside</button>
+          <a href="#baseline">Native local link</a>
+          <div id="extra"></div>
+        </div>
+      </div>
+    </form>
+    <h2>Explicit initial appearance</h2>
+    <div id="appearance" class="mui-collapse-transition" hidden>
+      <div data-collapse-transition-content class="panel-content"><p>Explicit show=true/appear=true reveals this authored content with optional motion.</p></div>
+    </div>
+    <h2 id="baseline">Independent native disclosure</h2>
+    <div class="mui-collapse">
+      <details data-collapse-item><summary>Native details remains independent</summary><div data-collapse-content><p>This behavior does not load or depend on the transition helper.</p><input aria-label="Native details field"></div></details>
+    </div>
+  </main>
+</body>
+</html>
