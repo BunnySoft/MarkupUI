@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Timeline</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-timeline.css">
+  <link rel="stylesheet" href="./timeline.css">
+  <script defer src="./timeline.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Native Timeline and TimelineItem</h1>
+    <p>Chronology is authored in HTML. Status words, dates and real actions remain independent of decorative colors and lines.</p>
+  </header>
+  <main>
+    <section aria-labelledby="history-heading">
+      <h2 id="history-heading">Project history</h2>
+      <ol class="mui-timeline" data-markerless role="list" aria-labelledby="history-heading" id="history">
+        <li class="mui-timeline-item" id="created-event">
+          <span class="mui-timeline-marker" aria-hidden="true"></span>
+          <div class="mui-timeline-body">
+            <h3 class="mui-timeline-title">Project created — Recorded</h3>
+            <p>Default event appearance. The status is present as text.</p>
+            <div class="mui-timeline-footer"><time class="mui-timeline-time" datetime="2026-09-01" id="created-time">1 September 2026</time></div>
+          </div>
+        </li>
+        <li class="mui-timeline-item" data-type="info" id="review-event">
+          <span class="mui-timeline-marker" aria-hidden="true"></span>
+          <div class="mui-timeline-body">
+            <h3 class="mui-timeline-title">Review opened — Information</h3>
+            <p><a href="#milestones-heading" id="review-link">View release milestones</a></p>
+            <div class="mui-timeline-footer"><time class="mui-timeline-time" datetime="2026-09-02">2 September 2026</time></div>
+          </div>
+        </li>
+        <li class="mui-timeline-item" hidden id="hidden-middle"><span class="mui-timeline-marker" aria-hidden="true"></span><div class="mui-timeline-body"><button type="button">Hidden action</button></div></li>
+        <li class="mui-timeline-item" data-type="success" id="approved-event">
+          <span class="mui-timeline-marker" data-icon aria-hidden="true" id="authored-icon"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 8 6 12 14 3" fill="none" stroke="currentColor" stroke-width="2"></path></svg></span>
+          <div class="mui-timeline-body">
+            <h3 class="mui-timeline-title">Review approved — Success</h3>
+            <p>Independent checks are recorded in a nested list.</p>
+            <ul class="mui-timeline nested-timeline" data-markerless role="list" aria-label="Review checks" id="nested-timeline">
+              <li class="mui-timeline-item"><span class="mui-timeline-marker" aria-hidden="true"></span><div class="mui-timeline-body"><h4 class="mui-timeline-title">Content checked</h4></div></li>
+              <li class="mui-timeline-item" id="nested-last"><span class="mui-timeline-marker" aria-hidden="true"></span><div class="mui-timeline-body"><h4 class="mui-timeline-title">Permissions checked</h4></div></li>
+            </ul>
+            <div class="mui-timeline-footer"><time class="mui-timeline-time" datetime="2026-09-03">3 September 2026</time></div>
+          </div>
+        </li>
+        <li class="mui-timeline-item" data-type="warning" data-line-type="dashed" id="delayed-event">
+          <span class="mui-timeline-marker" aria-hidden="true"></span>
+          <div class="mui-timeline-body">
+            <h3 class="mui-timeline-title">Release delayed — Warning</h3>
+            <p>AnUnbrokenAuthoredEventDescriptionThatMustWrapAtNarrowWidthsWithoutHidingTheNextAction0123456789</p>
+            <div class="mui-timeline-footer"><time class="mui-timeline-time" datetime="2026-09-04">4 September 2026</time></div>
+          </div>
+        </li>
+        <li class="mui-timeline-item" data-type="error" id="failed-event">
+          <span class="mui-timeline-marker" aria-hidden="true"></span>
+          <div class="mui-timeline-body">
+            <h3 class="mui-timeline-title">Retry required — Error</h3>
+            <form id="native-form">
+              <label for="native-name">Recovery note</label>
+              <input id="native-name" name="note" value="Original" required>
+              <div class="demo-actions">
+                <button type="submit" id="native-submit">Save recovery note</button>
+                <button type="reset" id="native-reset">Reset note</button>
+                <button type="button" disabled id="native-disabled">Unavailable retry</button>
+              </div>
+              <fieldset disabled><legend>Locked settings</legend><label><input type="checkbox" name="publish" checked> Publish immediately</label></fieldset>
+            </form>
+            <div class="mui-timeline-footer"><time class="mui-timeline-time" datetime="2026-09-05">5 September 2026</time></div>
+          </div>
+        </li>
+        <li class="mui-timeline-item custom-event-color" data-type="success" id="completed-event">
+          <span class="mui-timeline-marker" aria-hidden="true"></span>
+          <div class="mui-timeline-body">
+            <h3 class="mui-timeline-title">Release completed — Success</h3>
+            <p>Custom marker color does not replace this success label.</p>
+            <div class="mui-timeline-footer"><time class="mui-timeline-time" datetime="2026-09-06">6 September 2026</time></div>
+          </div>
+        </li>
+        <li class="mui-timeline-item" hidden id="hidden-last">Hidden trailing event</li>
+        <template class="mui-timeline-item" id="native-template"><li class="mui-timeline-item">Inert event template</li></template>
+      </ol>
+      <p id="form-status" role="status"></p>
+    </section>
+
+    <section aria-labelledby="milestones-heading">
+      <h2 id="milestones-heading">Horizontal milestones</h2>
+      <p id="scroll-help">Scroll horizontally, or use Tab to reach every milestone action. The lane has native scrollbars.</p>
+      <div class="mui-timeline-scroll" tabindex="0" role="region" aria-label="Scrollable release milestones" aria-describedby="scroll-help" id="milestone-scroll">
+        <ol class="mui-timeline custom-icon-size" data-horizontal data-markerless role="list" aria-labelledby="milestones-heading" id="milestones">
+          <li class="mui-timeline-item" data-type="info" id="milestone-one"><span class="mui-timeline-marker" aria-hidden="true"></span><div class="mui-timeline-body"><h3 class="mui-timeline-title">Plan — Information</h3><button type="button" data-demo-milestone="Plan" id="phase-one">View plan</button><div class="mui-timeline-footer"><time class="mui-timeline-time" datetime="2026-09-01">1 September</time></div></div></li>
+          <li class="mui-timeline-item" data-type="warning" data-line-type="dashed" id="milestone-two"><span class="mui-timeline-marker" aria-hidden="true"></span><div class="mui-timeline-body"><h3 class="mui-timeline-title">Review — Warning</h3><button type="button" data-demo-milestone="Review" id="phase-two">View review</button><div class="mui-timeline-footer"><time class="mui-timeline-time" datetime="2026-09-03">3 September</time></div></div></li>
+          <li class="mui-timeline-item" data-type="success" id="milestone-three"><span class="mui-timeline-marker" aria-hidden="true"></span><div class="mui-timeline-body"><h3 class="mui-timeline-title">Release — Success</h3><button type="button" data-demo-milestone="Release" id="phase-three">View release</button><div class="mui-timeline-footer"><time class="mui-timeline-time" datetime="2026-09-06">6 September</time></div></div></li>
+        </ol>
+      </div>
+      <p id="action-status" role="status"></p>
+    </section>
+
+    <section aria-labelledby="placement-heading">
+      <h2 id="placement-heading">Logical end placement in RTL</h2>
+      <ol class="mui-timeline" data-item-placement="right" data-size="large" data-markerless role="list" dir="rtl" aria-labelledby="placement-heading" id="end-timeline">
+        <li class="mui-timeline-item" id="end-first"><span class="mui-timeline-marker" aria-hidden="true" id="end-marker"></span><div class="mui-timeline-body" id="end-body"><h3 class="mui-timeline-title">Event received — Recorded</h3><p>The marker is at logical end; reading order is not reversed.</p><div class="mui-timeline-footer"><span class="mui-timeline-time">Time not recorded</span></div></div></li>
+        <li class="mui-timeline-item"><span class="mui-timeline-marker" aria-hidden="true"></span><div class="mui-timeline-body"><h3 class="mui-timeline-title">Awaiting follow-up — Recorded</h3><p>No date is inferred from position.</p></div></li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="newest-heading">
+      <h2 id="newest-heading">Newest first, authored order</h2>
+      <ol class="mui-timeline" aria-labelledby="newest-heading" id="newest-first">
+        <li class="mui-timeline-item"><span class="mui-timeline-marker" aria-hidden="true"></span><div class="mui-timeline-body"><h3 class="mui-timeline-title">Latest update</h3><time class="mui-timeline-time" datetime="2026-09-08">8 September 2026</time></div></li>
+        <li class="mui-timeline-item"><span class="mui-timeline-marker" aria-hidden="true"></span><div class="mui-timeline-body"><h3 class="mui-timeline-title">Previous update</h3><time class="mui-timeline-time" datetime="2026-09-07">7 September 2026</time></div></li>
+      </ol>
+      <ol id="outside-list"><li>Native list outside the timeline.</li></ol>
+    </section>
+    <ol class="mui-timeline" hidden id="hidden-timeline"><li class="mui-timeline-item">Hidden root event</li></ol>
+  </main>
+</body>
+</html>
