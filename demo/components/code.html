@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Code</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="./code.css">
+</head>
+<body>
+  <header><h1>Native plain Code</h1><p>No syntax engine, code execution, URI decoding, automatic trimming or clipboard action. Source is authored as text.</p></header>
+  <main>
+    <section aria-labelledby="plain-heading">
+      <h2 id="plain-heading">Literal source and native scrolling</h2>
+      <p id="plain-help">Tab to the code block and use native horizontal scrolling. Select text for manual copying; no clipboard button is installed.</p>
+      <pre class="mui-code-block" id="plain-block" tabindex="0" role="region" aria-labelledby="plain-heading" aria-describedby="plain-help"><code class="mui-code" id="plain-code">&#10;	&lt;script&gt;This is literal text, never executable code.&lt;/script&gt;
+const longName = "AnUnbrokenAuthoredSourceLineThatMustRemainSelectableWithoutClippingTheBeginningOrEnd01234567890123456789012345678901234567890123456789";
+const emoji = "😀"; // Unicode stays authored.
+
+</code></pre>
+      <p>Inline code remains inline: <code class="mui-code" id="inline-code">a  &lt; b	&amp;&amp;  x</code> inside an ordinary paragraph.</p>
+    </section>
+    <section aria-labelledby="numbered-heading">
+      <h2 id="numbered-heading">Authored physical lines with decorative numbers</h2>
+      <p id="numbered-help">The source uses CRLF character references, tabs, Unicode and a final empty line. Number cells have no text nodes.</p>
+      <pre class="mui-code-block" data-line-numbers id="numbered-block" tabindex="0" role="region" aria-labelledby="numbered-heading" aria-describedby="numbered-help"><code class="mui-code" id="numbered-code"><span class="mui-code-line"><span class="mui-code-number" aria-hidden="true"></span>&#9;const message = "&lt;b&gt;literal&lt;/b&gt;";&#13;&#10;</span><span class="mui-code-line"><span class="mui-code-number" aria-hidden="true"></span>console.log(message); // 😀&#13;&#10;</span><span class="mui-code-line"><span class="mui-code-number" aria-hidden="true"></span>&#13;&#10;</span><span class="mui-code-line"><span class="mui-code-number" aria-hidden="true"></span>return message;&#13;&#10;</span><span class="mui-code-line"><span class="mui-code-number" aria-hidden="true"></span></span></code></pre>
+    </section>
+    <section aria-labelledby="wrap-heading">
+      <h2 id="wrap-heading">Word wrapping disables line numbers</h2>
+      <p>The same source-line markup can wrap, but numbering is suppressed as in the documented API. Soft wraps do not create numbered source lines.</p>
+      <pre class="mui-code-block" data-line-numbers data-word-wrap id="wrapped-block" tabindex="0" role="region" aria-labelledby="wrap-heading"><code class="mui-code" id="wrapped-code"><span class="mui-code-line"><span class="mui-code-number" aria-hidden="true"></span>const longIdentifier = "AnUnbrokenLiteralSourceValueThatSoftWrapsWithoutBecomingSeveralNumberedPhysicalLines012345678901234567890";&#10;</span><span class="mui-code-line"><span class="mui-code-number" aria-hidden="true"></span>	secondPhysicalLine();&#10;</span><span class="mui-code-line"><span class="mui-code-number" aria-hidden="true"></span></span></code></pre>
+    </section>
+    <section aria-labelledby="tokens-heading">
+      <h2 id="tokens-heading">Application-authored token spans</h2>
+      <p>No tokenizer runs. These reviewed spans are static author markup; language metadata alone does not color any source.</p>
+      <pre class="mui-code-block custom-font" id="token-block" data-language="javascript" tabindex="0" role="region" aria-labelledby="tokens-heading"><code class="mui-code" id="token-code"><span class="mui-code-token" data-code-token="keyword">const</span> answer = <span class="mui-code-token" data-code-token="number">42</span>;
+<span class="mui-code-token" data-code-token="comment">// The application supplied these token boundaries.</span>
+<span class="mui-code-token" data-code-token="string">"&lt;img src=x onerror=example&gt;"</span></code></pre>
+    </section>
+    <section aria-labelledby="rtl-heading" dir="rtl">
+      <h2 id="rtl-heading">Native direction is explicit</h2>
+      <p>An RTL layout can keep source explicitly LTR, or author RTL source with a logical-end gutter.</p>
+      <pre class="mui-code-block" dir="ltr" id="ltr-in-rtl" tabindex="0" role="region" aria-labelledby="rtl-heading"><code class="mui-code">const direction = "authored LTR";</code></pre>
+      <pre class="mui-code-block" data-line-numbers dir="rtl" id="rtl-block" tabindex="0" role="region" aria-label="RTL source example"><code class="mui-code" id="rtl-code"><span class="mui-code-line"><span class="mui-code-number" aria-hidden="true"></span>مثال&#10;</span><span class="mui-code-line"><span class="mui-code-number" aria-hidden="true"></span>نص</span></code></pre>
+    </section>
+    <p><a href="#plain-heading" id="native-link">Return to the source example</a></p>
+    <pre class="mui-code-block" hidden id="hidden-code"><code class="mui-code">Hidden source.</code></pre>
+    <template class="mui-code" id="native-template">Inert code template</template>
+    <pre id="outside-pre">Native pre.</pre>
+  </main>
+</body>
+</html>
