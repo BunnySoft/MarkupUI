@@ -1,35 +1,41 @@
 # Table
 
-**Plan: Planned. Current baseline: data-grid-generated table is related only.**
+**Plan: 🟢 Verified for retained native Table scope; four explicit type/theme omissions.**
 
 ## Baseline and target
 
-[B1: advanced.ts](../../../src/plugins/advanced.ts) generates a table for data grids; no dedicated simple table element is registered.
+[B1: advanced.ts](../../../src/plugins/advanced.ts) retains its separate generated data-grid
+table. Native Table is an independent stylesheet, not that renderer or a new custom element.
 
-- **HTML:** authored native table, caption, column/row headings and body.
-- **JS:** none for simple table presentation.
-- **CSS:** external borders, striping, size and overflow wrapper.
-- **Placement:** proposed `src/components/table/table.css`; independent of data-table JavaScript.
+- **HTML:** actual table/caption/colgroup/thead/tbody/tfoot/tr/th/td, with authored scope/headers/spans and native controls.
+- **JS:** none in the component; optional application form feedback only.
+- **CSS:** scoped borders, stripe/density variants and explicit native scrolling; never grid/block-card table conversion.
+- **Placement:** [table.css](../../../src/components/table/table.css), stylesheet export and [native demo](../../../demo/components/table.html); independent of Data Table.
 
 ## Acceptance and gaps
 
-Test heading associations, row/column spans, narrow viewports, print and high contrast. Sorting, selection and virtualization belong to Data Table, not this CSS-only scope.
+The [canonical acceptance record](../../components/table.md) reports 467 passing tests
+(12 Table cases), build/budget gates and Chromium native structure/header/span/border/
+stripe/form/scroll/hidden/nested/RTL/zoom/print/forced-color/legacy/no-JS evidence.
+CSS is 1,023 gzip bytes and component JS is zero. Core/widgets/advanced remain unchanged.
+Native collapsed borders and data-row-header/visible-row striping adaptations are explicit,
+not source pixel parity. Sorting, selection and virtualization remain separate Data Table work.
 
 ## Migration steps
 
-**Delivery phase:** P2 — semantic display. **Task state:** 🔵 Planned.
+**Delivery phase:** P2 — semantic display. **Task state:** 🟢 Verified retained scope.
 **Prerequisites:** P0 authored HTML and P2 CSS tokens in the [master plan](../migration-plan.md).
-**Next task:** author a captioned native table and keep simple presentation independent of Data Table JavaScript.
+**Next task:** Highlight; seven P2-assigned catalog rows remain Planned, so full P2 is not complete.
 
-1. [ ] **Define native anatomy.** Preserve caption, head/body/footer, row/column headings and cell spans.
-2. [ ] **Extract table variants.** Implement borders, striping, sizes and hover styles in external CSS.
-3. [ ] **Specify narrow-screen behavior.** Use an explicit overflow wrapper without changing table semantics or moving cells into div grids.
-4. [ ] **Verify readable structure.** Test heading associations, spanning cells, print, forced colors and keyboard scrolling where applicable.
+1. [x] **Define native anatomy.** Caption/rowgroups/headers/cells/colgroups and native spans/associations preserved.
+2. [x] **Extract table variants.** Actual border axes, bottom-edge interactions, sizes and stripe scope implemented; no invented row hover.
+3. [x] **Specify narrow-screen behavior.** Explicit named native scrolling without grid roles, cell moves or hidden controls.
+4. [x] **Verify readable structure.** Associations/spans, 16 border combinations, forms/focus, hidden/nested, print/forced-color and no-JS behavior accepted.
 
 ### Native primitives and fallback
 
-- **Native path:** native table, caption, thead/tbody/tfoot and th/td preserve reading/heading semantics. Optional row templates only assist application-authored repeated rows.
-- **Small enhancement:** none is required for presentation. External CSS borders, logical alignment and overflow wrappers work without a controller; sticky headers or container-query enhancements must fall back to normal scrolling/table layout. Do not require custom elements, virtualization or a table polyfill for simple tabular HTML.
+- **Native path:** actual table/caption/rowgroups/headers/cells with native associations, spans and controls. Authored templates stay inert until explicitly cloned by the application.
+- **Small enhancement:** native collapsed borders, logical edges, CSS striping and an explicit overflow wrapper. No renderer, grid role, table polyfill, measurement, wrapper constructor or mandatory plugin.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
@@ -41,22 +47,54 @@ Test heading associations, row/column spans, narrow viewports, print and high co
 - [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
 
 Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **6 local table rows + 0 supplementary declarations + 0 inherited rows = 6 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
+Documentation inventory: **6 original local table rows + 5 public helper/default-content groups + 5 explicit source-only entries + 0 inherited rows = 16 tracker rows**.
+All six original property identities remain: **12 Verified ADAPTED native targets and
+4 Intentionally omitted contracts**. The five named helpers were present in public prose
+but absent from the initial six-row tracker; they are not mislabeled as source-only discoveries.
+Their simple default-child source behavior is grouped with each helper row below.
+Table, helper and presentation source were reviewed for this retained scope, not every
+framework edge case or browser. The canonical record defines adaptations and actual evidence.
 
 
 ### Table Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | Retained MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`bottom-bordered`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#L28) | Prop | Candidate presence attribute `bottom-bordered`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`bordered`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#L29) | Prop | External CSS token/class for `bordered`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`single-column`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#L30) | Prop | Candidate presence attribute `single-column`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`single-line`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#L31) | Prop | Candidate presence attribute `single-line`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#L32) | Prop | External CSS token/class for `size`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`striped`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#L33) | Prop | Candidate presence attribute `striped`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`bottom-bordered`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#L28) | Prop | Default on; exact data-bottom-bordered="false" suppresses the bottom perimeter only when data-bordered="false". | 🟢 Verified ADAPTED target | Four outer-edge combinations checked; bordered=true keeps its bottom edge regardless. Native collapsed-border handling includes spanning cells. |
+| [`bordered`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#L29) | Prop | Default enclosing border; exact data-bordered="false" suppresses perimeter edges except optional bottom. | 🟢 Verified ADAPTED target | Native collapsed borders, not source separate-border/corner clipping. Internal row/column axes stay independent. |
+| [`single-column`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#L30) | Prop | Presence data-single-column removes tbody/tfoot row dividers; it does not change column count. | 🟢 Verified ADAPTED target | Native th/td data-row consistency; header separators retained. Source td-only/non-final-row details explicitly documented as adapted. |
+| [`single-line`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#L31) | Prop | Column dividers off by default; exact data-single-line="false" enables them. | 🟢 Verified ADAPTED target | Logical cell edges and all 16 border-flag combinations checked. Not a nowrap/text-layout feature. |
+| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#L32) | Prop | data-size small/medium/large; absent/unknown uses medium. | 🟢 Verified ADAPTED target | 6/12/12px cell padding and 14/16/18px native rem text measured at a 16px root; no provider-font lookup. |
+| [`striped`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#L33) | Prop | Presence data-striped; alternate tbody row cells, including row headers. | 🟢 Verified ADAPTED target | Modern visible-row filtering ignores hidden/template entries; DOM-row fallback and source td-only parity differences documented. |
+
+### Public named helper/default-content expansions
+
+The [Components paragraph](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#components)
+names these five wrappers in addition to the Table owner. Each source wrapper only emits
+its corresponding native tag and default children; those two aspects are grouped per row.
+There are no separately declared helper props/events here. Framework wrapper exports and
+dependency-collection machinery are not part of the native target.
+
+| Upstream item · public source | Kind | Native target | Status | Source/default-content evidence |
+| --- | --- | --- | --- | --- |
+| [`n-thead`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#components) | Public helper/default-content group | Native thead with authored rows. | 🟢 Verified ADAPTED target | [Thead source](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/src/Thead.tsx); native header-group display preserved. |
+| [`n-tbody`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#components) | Public helper/default-content group | Native tbody with authored rows. | 🟢 Verified ADAPTED target | [Tbody source](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/src/Tbody.tsx); hidden/templates and rowgroups remain native. |
+| [`n-tr`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#components) | Public helper/default-content group | Native tr with actual cells. | 🟢 Verified ADAPTED target | [Tr source](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/src/Tr.tsx); original row/cell order and native row display. |
+| [`n-th`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#components) | Public helper/default-content group | Native th with authored scope, IDs, spans and content. | 🟢 Verified ADAPTED target | [Th source](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/src/Th.tsx); row/column/group header semantics inspected. |
+| [`n-td`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/demos/enUS/index.demo-entry.md#components) | Public helper/default-content group | Native td with authored headers/spans/rich content. | 🟢 Verified ADAPTED target | [Td source](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/src/Td.tsx); native forms and nested table content preserved. |
+
+### Explicit source-only supplements
+
+These five entries were not present in the six-row public property table or named-helper
+paragraph. Caption/colgroup/tfoot remain native HTML options, not invented wrapper APIs.
+There are no source Table sorting, selection, hover or virtualization props/methods.
+
+| Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
+| --- | --- | --- | --- | --- |
+| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/src/Table.tsx) | Source-only Table slot | Actual authored native table children. | 🟢 Verified ADAPTED target | No VNode renderer, data array or template evaluator; caption/rowgroups/cells/controls retained. |
+| [`TableSize`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/table/src/public-types.ts) | Source-only exported type | No exported TypeScript alias; size vocabulary is accounted for in its property row. | ⏭️ Intentionally omitted | CSS-only entry, not a framework prop/type API. |
+| [`theme`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts) | Source-only mixed-in Table prop | External CSS, not a framework theme/provider object. | ⏭️ Intentionally omitted | Table spreads useTheme.props; no provider or generated theme CSS. |
+| [`themeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts) | Source-only mixed-in Table prop | CSS tokens instead of runtime override merging. | ⏭️ Intentionally omitted | No style-object bridge, modal/popover mode detection or theme execution. |
+| [`builtinThemeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts) | Source-only mixed-in Table prop | No built-in override object. | ⏭️ Intentionally omitted | External scoped presentation; zero runtime dependencies. |
 
 <!-- END PINNED API INVENTORY -->

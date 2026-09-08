@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Table</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-table.css">
+  <link rel="stylesheet" href="./table.css">
+  <script defer src="./table.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Native Table, not Data Table</h1>
+    <p>Authored captions, headers, cells and controls. No row renderer, sorting, selection or virtualization.</p>
+  </header>
+  <main>
+    <section aria-labelledby="report-heading">
+      <h2 id="report-heading">Captioned report and native form</h2>
+      <p id="scroll-help">Scroll horizontally or Tab to reach controls in the Actions column.</p>
+      <div class="mui-table-scroll" tabindex="0" role="region" aria-labelledby="report-caption" aria-describedby="scroll-help" id="report-scroll">
+        <table class="mui-table wide-table" data-single-line="false" data-striped id="report-table">
+          <caption id="report-caption">Project capacity report</caption>
+          <colgroup><col class="project-column"></colgroup>
+          <colgroup span="2" class="hours-columns" id="hours-colgroup"></colgroup>
+          <colgroup><col class="actions-column"></colgroup>
+          <thead id="report-head">
+            <tr id="header-first"><th scope="col" rowspan="2" id="project-column-header">Project</th><th scope="colgroup" colspan="2" id="hours-header">Hours</th><th scope="col" rowspan="2" id="actions-header">Actions</th></tr>
+            <tr id="header-second"><th scope="col" id="planned-header">Planned</th><th scope="col" id="actual-header">Actual</th></tr>
+          </thead>
+          <tbody id="report-body">
+            <tr hidden id="hidden-first"><th scope="row">Hidden first project</th><td>0</td><td>0</td><td>Hidden</td></tr>
+            <template id="native-template"><tr><th scope="row">Inert project</th><td>0</td><td>0</td><td>Inert</td></tr></template>
+            <tr id="alpha-row">
+              <th scope="row" id="alpha-header">Alpha</th>
+              <td headers="alpha-header hours-header planned-header" class="numeric" id="alpha-planned">40</td>
+              <td headers="alpha-header hours-header actual-header" class="numeric">36</td>
+              <td headers="alpha-header actions-header">
+                <form id="note-form">
+                  <label for="note">Note for Alpha</label>
+                  <input id="note" name="note" value="Original" required>
+                  <div class="cell-actions">
+                    <button type="submit" id="native-submit">Save note</button>
+                    <button type="reset" id="native-reset">Reset note</button>
+                    <button type="button" disabled id="native-disabled">Unavailable action</button>
+                  </div>
+                  <fieldset disabled><legend>Read-only settings</legend><label><input type="checkbox" name="publish" checked> Publish now</label></fieldset>
+                </form>
+              </td>
+            </tr>
+            <tr hidden id="hidden-middle"><th scope="row">Hidden middle project</th><td>0</td><td>0</td><td><button type="button">Hidden action</button></td></tr>
+            <tr id="beta-row">
+              <th scope="row" id="beta-header">Beta</th>
+              <td headers="beta-header hours-header planned-header" class="numeric" id="beta-planned">32</td>
+              <td headers="beta-header hours-header actual-header" class="numeric">28</td>
+              <td headers="beta-header actions-header">
+                <table id="nested-plain"><caption>Local note metadata</caption><tbody><tr><th scope="row">Source</th><td>Manual</td></tr><tr><th scope="row">Review</th><td>Complete</td></tr></tbody></table>
+                <a href="#footnotes" id="beta-details">Beta details</a>
+              </td>
+            </tr>
+            <tr hidden id="hidden-last"><th scope="row">Hidden last project</th><td>0</td><td>0</td><td>Hidden</td></tr>
+          </tbody>
+          <tfoot><tr id="total-row"><th scope="row" id="total-header">Reported total</th><td headers="total-header planned-header" class="numeric">72</td><td headers="total-header actual-header" class="numeric">64</td><td>Authored totals, not calculated by Table.</td></tr></tfoot>
+        </table>
+      </div>
+      <p id="form-status" role="status"></p>
+    </section>
+
+    <section aria-labelledby="variants-heading">
+      <h2 id="variants-heading">Border flags and explicit native widths</h2>
+      <div class="mui-table-scroll" tabindex="0" role="region" aria-labelledby="attribute-caption">
+        <table class="mui-table" width="360" id="attribute-table"><caption id="attribute-caption">Defaults; native width 360</caption><colgroup><col width="120"><col></colgroup><thead><tr><th scope="col">Item</th><th scope="col" align="right">Value</th></tr></thead><tbody><tr><th scope="row">First</th><td align="right" id="aligned-cell">12</td></tr><tr><th scope="row">Second</th><td align="right">24</td></tr></tbody></table>
+      </div>
+      <div class="mui-table-scroll" tabindex="0" role="region" aria-labelledby="columns-caption">
+        <table class="mui-table" data-bordered="false" data-single-column data-single-line="false" id="columns-table"><caption id="columns-caption">Column separators, no body row dividers, bottom edge retained</caption><thead><tr><th scope="col">Item</th><th scope="col">Value</th></tr></thead><tbody><tr><th scope="row">First</th><td>12</td></tr><tr><th scope="row">Second</th><td>24</td></tr></tbody></table>
+      </div>
+      <div class="mui-table-scroll" tabindex="0" role="region" aria-labelledby="bare-caption">
+        <table class="mui-table" data-bordered="false" data-bottom-bordered="false" data-single-column data-striped data-size="small" id="bare-table"><caption id="bare-caption">Small, striped, no enclosing/bottom/body-row borders</caption><thead><tr><th scope="col">Item</th><th scope="col">Value</th></tr></thead><tbody><tr><th scope="row">First</th><td>12</td></tr><tr><th scope="row">Second</th><td>24</td></tr></tbody></table>
+      </div>
+    </section>
+
+    <section aria-labelledby="span-heading">
+      <h2 id="span-heading">Large, RTL and native spanning cells</h2>
+      <div class="mui-table-scroll" tabindex="0" role="region" aria-labelledby="span-caption" dir="rtl">
+        <table class="mui-table" data-size="large" data-single-line="false" id="span-table">
+          <caption id="span-caption">Team work log</caption>
+          <thead><tr><th scope="col" id="team-column">Team</th><th scope="col" id="work-column">Work</th><th scope="col" id="hours-column">Hours</th></tr></thead>
+          <tbody><tr id="span-first-row"><th scope="rowgroup" rowspan="2" id="team-a">Team A</th><td headers="team-a work-column" id="design-cell">Design</td><td headers="team-a hours-column">2</td></tr><tr id="span-second-row"><td headers="team-a work-column" id="build-cell">Build</td><td headers="team-a hours-column">3</td></tr></tbody>
+          <tfoot><tr><th scope="row" colspan="2" id="span-total">Team A total</th><td headers="span-total hours-column">5</td></tr></tfoot>
+        </table>
+      </div>
+    </section>
+    <section id="footnotes"><h2>Native content remains native</h2><p>Header associations, spans, captions, form controls and data are authored. No hover/select/sort behavior is added.</p><table id="outside-table"><caption>Unstyled table</caption><tbody><tr><th scope="row">Outside</th><td>Unmodified native cell</td></tr></tbody></table></section>
+    <table class="mui-table" hidden id="hidden-table"><caption>Hidden table</caption><tbody><tr><td>Hidden content</td></tr></tbody></table>
+  </main>
+</body>
+</html>

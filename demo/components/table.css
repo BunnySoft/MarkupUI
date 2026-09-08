@@ -1,0 +1,30 @@
+body {
+  max-inline-size: 64rem;
+  margin: 2rem auto;
+  padding-inline: 1rem;
+  font: 1rem/1.5 system-ui, sans-serif;
+  overflow-wrap: anywhere;
+  color: #18181b;
+  background: #fafafa;
+}
+main > section { margin-block: 2rem; }
+h2, p { margin-block: 0 .75rem; }
+button, input { font: inherit; }
+button, input, fieldset { box-sizing: border-box; min-inline-size: 0; max-inline-size: 100%; }
+button { white-space: normal; overflow-wrap: anywhere; }
+fieldset { margin: .5rem 0 0; }
+.cell-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-block-start: .5rem; }
+.mui-table-scroll { margin-block: 1rem; }
+#report-scroll { max-inline-size: 42rem; border: 1px solid #a1a1aa; }
+.wide-table { min-inline-size: 56rem; }
+.project-column { width: 12rem; }
+.hours-columns { width: 8rem; }
+.actions-column { width: 18rem; }
+.numeric { text-align: end; }
+#form-status { min-block-size: 1.5em; }
+@media print {
+  body { max-inline-size: none; margin: 0; background: transparent; }
+  #report-scroll { max-inline-size: none; border: 0; }
+  .wide-table { min-inline-size: 0; }
+  .wide-table > colgroup, .wide-table > colgroup > col { width: auto; }
+}
