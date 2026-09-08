@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./steps": {
+      "types": "./dist/components/steps/index.d.ts",
+      "import": "./dist/markup-ui-steps.js"
+    },
+    "./steps/style.css": "./dist/markup-ui-steps.css",
     "./pagination": {
       "types": "./dist/components/pagination/index.d.ts",
       "import": "./dist/markup-ui-pagination.js"

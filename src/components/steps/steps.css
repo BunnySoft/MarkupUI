@@ -1,0 +1,54 @@
+.mui-steps {
+  --mui-steps-gap: 1.5rem;
+  --mui-steps-marker: #385b82;
+  display: flex; flex-wrap: nowrap; gap: var(--mui-steps-gap);
+  margin-block: 1rem; padding-block: .5rem; padding-inline: 2rem .5rem;
+  overflow: auto; list-style: decimal outside; color: var(--mui-steps-color, #21334d);
+}
+.mui-steps > .mui-step { position: relative; flex: 1 0 11rem; min-inline-size: 0; padding-inline-end: .75rem; }
+.mui-steps > .mui-step::marker { font-weight: 700; color: var(--mui-steps-marker, #385b82); }
+.mui-step > .mui-step__layout { display: flex; gap: .5rem; align-items: flex-start; }
+.mui-step__layout > .mui-step__body { min-inline-size: 0; overflow-wrap: anywhere; }
+.mui-step__body > [data-step-title] { margin-block: 0 .25rem; font-size: 1.05em; }
+.mui-step__body > [data-step-status-text] { display: block; font-size: .9em; font-weight: 600; }
+.mui-step__body > p { margin-block: .3rem; }
+.mui-step__layout > .mui-step__icon { flex: 0 0 auto; font-size: 1.25em; }
+.mui-steps > .mui-step::after { content: none; position: absolute; pointer-events: none; }
+.mui-steps[data-steps-connected] > .mui-step[data-step-following]::after {
+  content: ""; inset-inline-end: -.6rem; inset-block-start: .8em; inline-size: 1rem; border-block-start: 2px solid var(--mui-steps-line, #a4b4c7);
+}
+@supports selector(li:has(~ li)) {
+  .mui-steps:not([data-steps-connected]) > .mui-step:has(~ .mui-step:not([hidden]))::after {
+    content: ""; inset-inline-end: -.6rem; inset-block-start: .8em; inline-size: 1rem; border-block-start: 2px solid var(--mui-steps-line, #a4b4c7);
+  }
+}
+.mui-steps > .mui-step[aria-current="step"] > .mui-step__layout { outline: 2px solid var(--mui-steps-current, #2472bf); outline-offset: .2rem; border-radius: .2rem; }
+.mui-steps > .mui-step[data-step-state="error"] { --mui-steps-marker: #a1272f; }
+.mui-steps > .mui-step[data-step-state="finish"] { --mui-steps-marker: #176243; }
+.mui-steps > .mui-step[data-step-action-disabled] [data-step-action]:disabled { opacity: .65; cursor: not-allowed; }
+.mui-steps [data-step-action] { font: inherit; color: inherit; text-align: start; cursor: pointer; }
+.mui-steps :is(button, a):focus-visible { outline: 3px solid var(--mui-steps-focus, #176ac2); outline-offset: 3px; }
+.mui-steps [hidden] { display: none !important; }
+.mui-steps--small { font-size: .875rem; }
+.mui-steps--bottom > .mui-step > .mui-step__layout { flex-direction: column; }
+.mui-steps--vertical { flex-direction: column; overflow: visible; }
+.mui-steps--vertical > .mui-step { flex-basis: auto; }
+.mui-steps--vertical > .mui-step > .mui-step__layout { flex-direction: row; }
+.mui-steps--vertical > .mui-step::after {
+  inset-inline-start: -1.15rem !important; inset-inline-end: auto !important;
+  inset-block-start: 100% !important; inline-size: 0 !important; block-size: var(--mui-steps-gap); border-block-start: 0 !important; border-inline-start: 2px solid var(--mui-steps-line, #a4b4c7);
+}
+@media (max-width: 40rem) {
+  .mui-steps { flex-direction: column; overflow: visible; }
+  .mui-steps > .mui-step { flex-basis: auto; }
+  .mui-steps > .mui-step::after { content: none !important; }
+}
+@media (forced-colors: active) {
+  .mui-steps { --mui-steps-color: CanvasText; --mui-steps-line: CanvasText; --mui-steps-current: Highlight; --mui-steps-focus: Highlight; }
+  .mui-steps > .mui-step::marker { color: CanvasText; }
+}
+@media print {
+  .mui-steps { display: block; overflow: visible; color: black; }
+  .mui-steps > .mui-step { break-inside: avoid; margin-block: .75rem; }
+  .mui-steps > .mui-step::after { content: none !important; }
+}

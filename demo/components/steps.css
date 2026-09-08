@@ -1,0 +1,7 @@
+body { margin: 0; color: #21334d; background: #f5f8fc; font: 1rem/1.6 system-ui, sans-serif; }
+header, main { max-inline-size: 78rem; margin-inline: auto; padding: 1.25rem; }
+header { background: #e6edf8; }
+button, input { font: inherit; }
+.demo-controls { display: flex; flex-wrap: wrap; gap: .6rem; margin-block: 1rem; }
+output { display: block; min-block-size: 3rem; overflow-wrap: anywhere; }
+#native-note { margin-block-start: 12rem; }

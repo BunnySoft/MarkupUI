@@ -1,35 +1,41 @@
 # Steps
 
-**Plan: Planned. Current baseline: partial current-step list; not parity-verified.**
+**Plan: 🟢 Verified retained Steps/Step native summary and selection-intent scope; seven explicit omissions.**
 
 ## Baseline and target
 
-[B1: navigation.ts](../../../src/components/navigation.ts) sets step indices/current/complete markers and emits current changes.
-
-- **HTML:** ordered steps with headings; use links/buttons only if navigation is permitted.
-- **JS:** explicit current/status updates without assuming all prior steps succeeded.
-- **CSS:** external connectors, orientation and status indicators.
-- **Placement:** proposed `src/components/steps/`.
+[B1: navigation.ts](../../../src/components/navigation.ts) remains the historical current/
+complete-marker implementation. The new [optional controller](../../../src/components/steps/steps.ts)
+keeps native ol/li, authored headings/descriptions/status text and typed actions; it never
+assumes previous business steps succeeded. [External CSS](../../../src/components/steps/steps.css)
+owns markers/connectors/layout. See the [canonical contract and acceptance](../../components/steps.md).
 
 ## Acceptance and gaps
 
-Test blocked/error steps, dynamic children, one-based indexing and non-color status. Current completion-by-index is not a workflow validation engine.
+70 targeted tests, build/budgets and Chromium cover indexing/status precedence, native
+activation/forms/disabled controls, hidden/reordered/nested items, focus and conditional
+restoration. This is progress/navigation presentation, not a wizard or controlled Vue
+compatibility layer. No router, implicit validation/advancement, renderer or Icon dependency.
 
 ## Migration steps
 
-**Delivery phase:** P3 — workflow navigation. **Task state:** 🔵 Planned.
+**Delivery phase:** P3 — native progress/navigation. **Task state:** 🟢 Verified retained scope.
 **Prerequisites:** P2 ordered-list/status presentation and P0 event rules in the [master plan](../migration-plan.md).
-**Next task:** separate current step, completed state and error/blocked status instead of inferring success from index.
+**Next task:** Loading Bar; the navigation workstream is accepted for declared retained scopes,
+not all P3 overlays/feedback/transition/service inventories.
 
-1. [ ] **Define Step anatomy.** Use headings, descriptive text and explicit native links/buttons only when navigation is allowed.
-2. [ ] **Resolve state ownership.** Preserve one-based compatibility while documenting programmatic current/status changes.
-3. [ ] **Extract orientation styling.** Implement connectors and horizontal/vertical status variants with non-color meaning.
-4. [ ] **Verify workflow changes.** Test inserted steps, rejected navigation, incomplete prior steps, errors and keyboard order.
+1. [x] **Define Step anatomy.** Authored ol/li, chosen heading levels, status words, icons and native controls.
+2. [x] **Resolve state ownership.** One-based current/default adaptation, explicit completion and silent programmatic updates.
+3. [x] **Extract orientation styling.** Logical markers/connectors, horizontal/vertical/content placement and non-color status.
+4. [x] **Verify workflow changes.** Selection intents, application rejection, native keyboard, hidden/reordered/current identity and cleanup.
 
 ### Native primitives and fallback
 
-- **Native path:** an ordered list with headings, status text and real links/buttons only where navigation is allowed. Repeated steps may clone authored templates without a workflow renderer.
-- **Small enhancement:** a small lifecycle-managed controller updates current/status attributes; CSS logical connectors and responsive grid/flex handle orientation. Static step descriptions remain readable without scripting. Optional `:has()` state styling falls back to explicit attributes, and no generic workflow/state framework is introduced.
+- **Native path:** ordered progress summary, authored status words and real links; JS-only buttons
+  can remain hidden until setup. Native templates stay inert until the application chooses to clone them.
+- **Small enhancement:** an explicit controller adopts existing nodes, changes one status Text
+  node and owned state attributes, and reports native button intents. CSS/explicit refresh replaces
+  layout polling and generated workflow DOM. No-JS summaries and destinations remain usable.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
@@ -38,50 +44,69 @@ Test blocked/error steps, dynamic children, one-based indexing and non-color sta
 - [Official website](https://www.naiveui.com/en-US/os-theme/components/steps)
 - [Pinned public API Markdown](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md)
 - [Pinned implementation source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps)
-- [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
+- [Catalog and provenance](../index.md) · [Architecture and statuses](../architecture.md)
 
-Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **16 local table rows + 0 supplementary declarations + 0 inherited rows = 16 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
+Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`;
+historical MarkupUI baseline **5dcb190 / 0.11.0**.
+Inventory: **16 original local table rows + seven explicit source supplements + zero inherited
+rows = 23 tracker rows**. All original owner/name/source identities remain.
+**16 Verified adapted targets; seven intentionally omitted targets.**
 
+Pinned Steps.tsx, Step.tsx, public index and Markdown were reviewed. The source injects parent
+state and indexes flattened children, treats undefined current as all-process, derives earlier
+finish by index and only invokes current callbacks on item clicks. The target instead uses
+direct native li identity, null/unset and explicit completion. Per-item status override
+precedence is retained. These differences are intentional, not source-parity claims.
+There is no upstream defaultCurrent prop; that optional target-only seed is documented separately.
 
 ### Steps Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`content-placement`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L25) | Prop | Candidate explicit JS `contentPlacement` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`current`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L26) | Prop | Candidate `current` attribute or JS `current`; exact target contract not reviewed. | ⚪ Not reviewed | B1 one-based current markers; partial only, verify this row. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L27) | Prop | External CSS token/class for `size`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`status`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L28) | Prop | Candidate `status` attribute or JS `status`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`vertical`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L29) | Prop | External CSS token/class for `vertical`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:current`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L30) | Callback | Candidate DOM `mui:change:current` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`content-placement`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L25) | Prop | Native icon/body right/bottom flow via external class. | 🟢 Verified | Horizontal only; vertical overrides placement without moving nodes. |
+| [`current`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L26) | Prop | Silent nullable one-based current, zero before-first and count+1 after-last. | 🟢 Verified | Visible-item indexing, identity-preserving refresh and explicit bounds; no implicit completion. |
+| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L27) | Prop | External small/medium CSS. | 🟢 Verified | Native text wrapping and marker scaling, no measured geometry. |
+| [`status`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L28) | Prop | Current item's default process/wait/finish/error state. | 🟢 Verified | Explicit per-item status wins; noncurrent defaults wait. Literal readable labels. |
+| [`vertical`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L29) | Prop | External vertical class, logical connectors. | 🟢 Verified | Responsive stacking is presentation, not a controlled callback. |
+| [`on-update:current`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L30) | Callback | mui:steps-request with ordinal, previous position and actual li/button. | 🟢 Verified | Intent only; application explicitly accepts/declines. No synthesized programmatic events. |
 
 ### Step Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`description`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L36) | Prop | Candidate `description` attribute or JS `description`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L37) | Prop | Candidate presence attribute `disabled`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`status`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L38) | Prop | Candidate `status` attribute or JS `status`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`title`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L39) | Prop | Candidate `title` attribute or JS `title`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`description`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L36) | Prop | Authored description HTML/text. | 🟢 Verified | Original nodes and native links preserved. |
+| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L37) | Prop | Native action button disabled/fieldset; native non-link text for unavailable destinations. | 🟢 Verified | No aria-disabled-only fake disabling, changed hrefs or disabled-state overwrite. |
+| [`status`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L38) | Prop | Authored data-step-status with four validated values. | 🟢 Verified | Overrides current status; wait/error may coexist with current position. |
+| [`title`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L39) | Prop | Authored data-step-title with chosen heading level. | 🟢 Verified | No title renderer or heading replacement. |
 
 ### Steps Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L45) | Slot | Candidate authored `default` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`finish-icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L46) | Slot | Candidate authored `finish-icon` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`error-icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L47) | Slot | Candidate authored `error-icon` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L45) | Slot | Direct authored li children; optional inert templates. | 🟢 Verified | No flattening/VDOM/provider; nested lists independent. |
+| [`finish-icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L46) | Slot | Authored decorative completed-state icon per item. | 🟢 Verified | No shared slot projection or automatic icon renderer; words carry status. |
+| [`error-icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L47) | Slot | Authored decorative error icon per item. | 🟢 Verified | No mandatory Icon or switch transition. |
 
 ### Step Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L53) | Slot | Candidate authored `default` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L54) | Slot | Candidate authored `icon` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`title`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L55) | Slot | Candidate authored `title` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L53) | Slot | Authored descriptive content. | 🟢 Verified | Not a generated/hidden tabpanel or form step. |
+| [`icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L54) | Slot | Optional native decorative icon child. | 🟢 Verified | Authored identity/markup and accessible status text retained. |
+| [`title`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L55) | Slot | Authored title/heading region. | 🟢 Verified | Buttons/links remain native separate actions, not whole-item clickable spans. |
+
+### Steps / Step explicit source-only supplements
+
+These source additions are distinct from the sixteen original public Markdown rows.
+
+| Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
+| --- | --- | --- | --- | --- |
+| [`onUpdateCurrent`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/src/Steps.tsx#L51-L53) | Source callback alias | One native request notification. | ⏭️ Intentionally omitted | No alias arrays/duplicate callbacks. |
+| [`useTheme.props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/src/Steps.tsx#L33) | Source theme group | External CSS/author styles. | ⏭️ Intentionally omitted | No theme objects/provider/CSS-in-JS. |
+| [`StepsProps`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/src/Steps.tsx#L63) | Public source type | Native StepsOptions/StepsController. | ⏭️ Intentionally omitted | No Vue prop extraction compatibility. |
+| [`StepsSlots`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/src/Steps.tsx#L65-L69) | Public source type | Native authored children. | ⏭️ Intentionally omitted | No VNode callback record. |
+| [`StepProps`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/src/Step.tsx#L31) | Public source type | Native li/attributes and StepState snapshot. | ⏭️ Intentionally omitted | No prop constructor. |
+| [`StepSlots`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/src/Step.tsx#L33-L37) | Public source type | Native title/content/icon regions. | ⏭️ Intentionally omitted | No slot function signatures. |
+| [`internalIndex`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/src/Step.tsx#L24-L28) | Explicit internal boundary | Native visible DOM ordinal. | ⏭️ Intentionally omitted | Source says parent-only, not a public user-settable Step prop. |
 
 <!-- END PINNED API INVENTORY -->

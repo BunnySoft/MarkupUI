@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Steps and Step</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-steps.css">
+  <link rel="stylesheet" href="./steps.css">
+  <script defer src="../../dist/markup-ui-steps.global.js"></script>
+  <script defer src="./steps.js"></script>
+</head>
+<body>
+  <header id="intro"><h1>Steps: a progress summary, not a wizard</h1><p>Explicit status is separate from current position. Local buttons request a selection; no form validation, routing or automatic advancement is built in.</p></header>
+  <main>
+    <form id="native-form">
+      <ol class="mui-steps" data-steps id="steps" aria-label="Example progress">
+        <li class="mui-step" data-step id="details" data-step-status="finish">
+          <div class="mui-step__layout"><span class="mui-step__icon" aria-hidden="true">✓</span><div class="mui-step__body">
+            <h2 data-step-title>Details</h2><span data-step-status-text>Completed</span><p>Explicitly completed by the application, not inferred from order.</p>
+            <button type="button" data-step-action hidden>Select details</button>
+          </div></div>
+        </li>
+        <li class="mui-step" data-step id="review" aria-current="step">
+          <div class="mui-step__layout"><span class="mui-step__icon" aria-hidden="true">○</span><div class="mui-step__body">
+            <h2 data-step-title>Review</h2><span data-step-status-text>In progress</span><p>Changing current does not imply earlier work succeeded.</p>
+            <button type="button" data-step-action hidden>Select review</button>
+          </div></div>
+        </li>
+        <li class="mui-step" data-step id="approval" data-step-status="error">
+          <div class="mui-step__layout"><span class="mui-step__icon" aria-hidden="true">!</span><div class="mui-step__body">
+            <h2 data-step-title>Approval</h2><span data-step-status-text>Error</span><p>Explicit error state overrides positional/current styling. Selection is blocked natively.</p>
+            <button type="button" data-step-action disabled hidden>Select approval</button>
+            <ol class="mui-steps mui-steps--vertical mui-steps--small" data-steps id="nested" aria-label="Independent approval details">
+              <li class="mui-step" data-step><div class="mui-step__layout"><div class="mui-step__body"><h3 data-step-title>Policy review</h3><span data-step-status-text>Waiting</span></div></div></li>
+              <li class="mui-step" data-step data-step-status="finish"><div class="mui-step__layout"><div class="mui-step__body"><h3 data-step-title>Identity check</h3><span data-step-status-text>Completed</span></div></div></li>
+            </ol>
+          </div></div>
+        </li>
+        <li class="mui-step" data-step id="publish">
+          <div class="mui-step__layout"><span class="mui-step__icon" aria-hidden="true">○</span><div class="mui-step__body">
+            <h2 data-step-title>Publish</h2><span data-step-status-text>Waiting</span><p><a href="#native-note" id="native-link">Read the native destination</a></p>
+            <button type="button" data-step-action hidden>Select publish</button>
+          </div></div>
+        </li>
+        <template id="extra-step"><li class="mui-step" data-step><div class="mui-step__layout"><div class="mui-step__body"><h2 data-step-title>Additional authored step</h2><span data-step-status-text>Waiting</span><button type="button" data-step-action>Select additional step</button></div></div></li></template>
+      </ol>
+      <label>Unrelated native form value <input id="outside-input" value="Preserved"></label>
+      <button type="submit" id="save">Save unrelated form</button>
+    </form>
+    <div class="demo-controls">
+      <button type="button" id="before">Before first</button><button type="button" id="after">After last</button>
+      <button type="button" id="unset">Clear current</button><button type="button" id="status">Toggle current error</button>
+      <button type="button" id="finish-review">Mark review completed</button><button type="button" id="hide-last">Toggle last visible step</button>
+      <button type="button" id="insert">Insert authored step before current</button><button type="button" id="remove">Remove current step</button>
+      <button type="button" id="direction">Toggle vertical</button><button type="button" id="placement">Toggle icon/content placement</button>
+      <button type="button" id="reject">Reject next selection</button>
+    </div>
+    <output id="state">Native list and links remain useful without JavaScript.</output>
+    <section id="native-note"><h2>Native destination</h2><p>Links retain native focus/hash/history and modified-click behavior.</p></section>
+  </main>
+</body>
+</html>
