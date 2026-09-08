@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Anchor and AnchorLink</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-anchor.css">
+  <link rel="stylesheet" href="./anchor.css">
+  <script defer src="../../dist/markup-ui-anchor.global.js"></script>
+  <script defer src="./anchor.js"></script>
+</head>
+<body>
+  <header><h1>Native fragment navigation with optional location tracking</h1><p>Links own URL/history/focus. Tracking never synthesizes navigation.</p></header>
+  <div class="page-layout">
+    <nav class="mui-anchor mui-anchor--sticky" data-anchor id="page-toc" aria-label="Page contents">
+      <ul>
+        <li><a href="#intro" id="intro-link">Introduction</a></li>
+        <li><a href="#sections" id="sections-link">Sections and nested contents</a>
+          <ul><li><a href="#%E9%9B%AA%20%2F%23%5B%5D%25" id="unicode-link">Unicode and special ID</a></li></ul>
+        </li>
+        <li><a href="#last" id="last-link">Short final section</a></li>
+        <li><a href="#missing" id="missing-link">Native unresolved link</a></li>
+        <li><a href="#intro" target="_blank" id="separate-link">Introduction in another context</a></li>
+      </ul>
+    </nav>
+    <main id="article">
+      <section class="mui-anchor-target page-section" id="intro"><h2>Introduction</h2><p id="preserved-text">This original text and all link nodes remain authored.</p><label>Unrelated native input <input id="native-input" value="Retained focus"></label><p>Scroll to track actual location. The helper does not focus this section.</p></section>
+      <section class="mui-anchor-target page-section" id="sections"><h2>Sections and an explicit inner scroll root</h2><p>The page TOC tracks this full section. The following independent TOC tracks its own native scroll element.</p>
+        <div class="reader-layout">
+          <nav class="mui-anchor mui-anchor--block" data-anchor id="reader-toc" aria-label="Reader contents">
+            <ol><li><a href="#reader-one" id="reader-link-one">Reader one</a></li><li><a href="#reader-two" id="reader-link-two">Reader two</a></li><li><a href="#reader-last" id="reader-link-last">Reader last</a></li></ol>
+          </nav>
+          <div class="reader mui-anchor-scroll" id="reader" role="region" aria-label="Local scrolling reader" tabindex="0">
+            <section id="reader-one" class="mui-anchor-target reader-section"><h3>Reader one</h3><p>Native scrolling, no replacement scrollbar.</p></section>
+            <div class="reader-gap" aria-hidden="true"></div>
+            <section id="reader-two" class="mui-anchor-target reader-section"><h3>Reader two</h3><p>Gaps are explicit. Default tracking clears current when the top reference line is between section boxes.</p></section>
+            <section id="reader-last" class="mui-anchor-target reader-last"><h3>Short final reader section</h3></section>
+          </div>
+        </div>
+        <button type="button" id="scroll-reader-last">Scroll reader to last (no URL change)</button>
+        <button type="button" id="reader-top">Reset reader natively</button>
+      </section>
+      <section class="mui-anchor-target page-section page-long" id="雪 /#[]%"><h2>Unicode and special-character identifiers</h2><p>No selector interpolation is needed. The fragment decodes to this exact authored ID.</p><a href="#intro" id="ordinary-back">Native return link</a></section>
+      <section class="mui-anchor-target page-last" id="last"><h2>Short final section</h2><p>At page bottom this visible final section becomes current even when it cannot reach the top boundary.</p></section>
+    </main>
+  </div>
+  <output id="location-log" aria-live="polite"></output>
+</body>
+</html>
