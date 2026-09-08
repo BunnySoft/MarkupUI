@@ -10,6 +10,7 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./affix/style.css": "./dist/markup-ui-affix.css",
     "./highlight": {
       "types": "./dist/components/highlight/index.d.ts",
       "import": "./dist/markup-ui-highlight.js"

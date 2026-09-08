@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native sticky Affix</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-affix.css">
+  <link rel="stylesheet" href="./affix.css">
+  <script defer src="./affix.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Native sticky Affix</h1>
+    <p>CSS sticking keeps the original flow space and containing-block limits. It is not viewport-fixed Affix, teleportation or a separate trigger/notification controller.</p>
+  </header>
+  <main>
+    <section class="window-boundary" id="window-boundary" aria-labelledby="window-heading">
+      <h2 id="window-heading">Window scrolling, bounded by this section</h2>
+      <details id="layout-shift"><summary>Expand content before the toolbar</summary><p class="expanded-note">This native disclosure changes normal-flow geometry. The browser recalculates sticky positioning without an observer.</p></details>
+      <div class="mui-affix window-affix toolbar" id="window-toolbar">
+        <strong>Document tools</strong><a href="#window-notes" id="notes-link">Notes</a><a href="#form-heading" id="form-link">Form</a>
+      </div>
+      <ol class="demo-log">
+        <li>Read the initial proposal.</li><li>Check the project requirements.</li><li>Review the native markup.</li><li>Verify the authored labels.</li>
+      </ol>
+      <section id="window-notes" class="anchor-target"><h3>Window notes</h3><p>Root scroll padding reserves room for the toolbar. Target scroll margin adds a small gap.</p></section>
+      <ol class="demo-log" start="5"><li>Check native keyboard behavior.</li><li>Review containing-block limits.</li><li>Preserve content and listeners.</li><li>Confirm the footer boundary.</li></ol>
+      <section class="anchor-target" aria-labelledby="form-heading">
+        <h3 id="form-heading" class="anchor-target">Native form in the same document</h3>
+        <form id="native-form">
+          <label for="native-name">Project name</label><input name="project" value="Original" required id="native-name">
+          <button type="submit" id="native-submit">Save</button><button type="reset" id="native-reset">Reset</button><button type="button" disabled id="native-disabled">Unavailable</button>
+        </form>
+        <p id="form-status" role="status"></p>
+      </section>
+    </section>
+
+    <section aria-labelledby="nested-heading">
+      <h2 id="nested-heading">Nested scrolling with a transformed ancestor</h2>
+      <p>Only this scroll container controls its toolbar. The transform does not make it viewport-fixed.</p>
+      <div class="demo-scroll transformed" id="nested-scroll" tabindex="0" role="region" aria-labelledby="nested-heading">
+        <div class="scroll-content" id="nested-content">
+          <p id="nested-start">Content before the local toolbar.</p>
+          <div class="mui-affix local-affix toolbar" id="nested-toolbar"><strong>Nested tools</strong><button type="button" id="nested-end">To end</button><a href="#nested-target">Notes</a></div>
+          <ol class="demo-log"><li>First local record.</li><li>Second local record.</li><li>Third local record.</li><li>Fourth local record.</li></ol>
+          <section id="nested-target" class="anchor-target"><h3>Local notes</h3><p>This target stays clear of the local sticky toolbar.</p><a href="#nested-start" id="nested-return">Return to local start</a></section>
+          <ol class="demo-log" start="5"><li>Fifth local record.</li><li>Sixth local record.</li><li>Seventh local record.</li><li>Last local record.</li></ol>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="bottom-heading">
+      <h2 id="bottom-heading">Bottom sticking needs the correct flow position</h2>
+      <div class="demo-scroll bottom-scroll" id="bottom-scroll" tabindex="0" role="region" aria-labelledby="bottom-heading">
+        <div class="scroll-content" id="bottom-content">
+          <ol class="demo-log"><li>Bottom toolbar follows this content in DOM order.</li><li>Its normal flow position is near the end.</li><li>It can be shifted upward to the scrollport end constraint.</li><li>It is not a fixed overlay detached from its parent.</li><li>Leave room for focusable content.</li><li id="bottom-target" class="anchor-target"><a href="#bottom-heading" id="bottom-link">Last content link</a></li></ol>
+          <div class="mui-affix bottom-affix toolbar" id="bottom-toolbar"><strong>Bottom tools</strong><button type="button" id="bottom-start">To start</button><a href="#bottom-target">Notes</a></div>
+        </div>
+      </div>
+      <div class="demo-scroll short-scroll" id="early-bottom-scroll" tabindex="0" role="region" aria-label="Early bottom-sticky counterexample">
+        <div class="scroll-content">
+          <div class="mui-affix bottom-affix toolbar" id="early-bottom">Bottom inset on an early item does not dock it to the bottom.</div>
+          <ol class="demo-log"><li>Early content scrolls normally.</li><li>A bottom inset is not a “place at viewport bottom” command.</li><li>Choose authored flow position deliberately.</li></ol>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="constraints-heading">
+      <h2 id="constraints-heading">Containing-block and simultaneous-inset constraints</h2>
+      <div class="overflow-capture" id="overflow-capture"><div class="mui-affix local-affix toolbar" id="captured-sticky">This overflow:hidden ancestor captures the scroll reference; window scrolling does not pin this to the viewport.</div><p>There is no independently scrolling interior here. This is a constraint demonstration, not a sticky polyfill.</p></div>
+      <div class="demo-scroll short-scroll" id="constraint-scroll" tabindex="0" role="region" aria-labelledby="constraints-heading" dir="rtl">
+        <div class="short-boundary" id="short-boundary">
+          <p>Short containing block.</p>
+          <div class="mui-affix both-affix toolbar" id="both-toolbar">Both block insets use native sticky constraints.</div>
+          <p>The element cannot escape this short boundary.</p>
+        </div>
+        <ol class="demo-log"><li>Content outside the sticky containing block.</li><li>The toolbar releases at the boundary.</li><li>No clone or placeholder is added.</li></ol>
+      </div>
+    </section>
+    <div class="mui-affix toolbar" id="no-inset">With neither inset set, this is an ordinary flow position.</div>
+    <div class="mui-affix toolbar" hidden id="hidden-affix"><button type="button">Hidden action</button></div>
+    <template class="mui-affix" id="native-template"><p>Inert authored template</p></template>
+  </main>
+</body>
+</html>
