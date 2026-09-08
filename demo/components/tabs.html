@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI authored Tabs, Tab and TabPane</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-tabs.css">
+  <link rel="stylesheet" href="./tabs.css">
+  <script defer src="../../dist/markup-ui-tabs.global.js"></script>
+  <script defer src="./tabs.js"></script>
+</head>
+<body>
+  <h1>Authored Tabs and preserved panes</h1>
+  <p>Buttons become real tabs only when enhanced. Without JavaScript all titled panes remain readable. Guards and add/close examples are local only.</p>
+  <label>Local leave guard <select id="guard-mode"><option value="allow">Allow</option><option value="deny">Return false</option><option value="reject">Reject</option><option value="slow">Allow after 700ms</option><option value="slow-reject">Reject after 700ms</option></select></label>
+  <form id="demo-form">
+    <div class="mui-tabs mui-tabs--animated" data-tabs data-tabs-type="card" data-tabs-placement="top" id="main-tabs">
+      <div data-tabs-bar>
+        <span data-tabs-prefix>Draft</span>
+        <div data-tabs-list aria-label="Draft views">
+          <button type="button" data-tabs-tab data-tabs-key="overview" data-tabs-target="overview-pane" data-tabs-closable id="overview-tab">Overview</button>
+          <button type="button" data-tabs-tab data-tabs-key="details" data-tabs-target="details-pane" data-tabs-closable id="details-tab"><span id="preserved-tab-label">Details</span></button>
+          <button type="button" data-tabs-tab data-tabs-key="history" data-tabs-target="history-pane" id="history-tab">History</button>
+          <button type="button" data-tabs-tab data-tabs-key="unavailable" data-tabs-target="unavailable-pane" id="unavailable-tab" disabled>Unavailable</button>
+        </div>
+        <span data-tabs-suffix>Local preview</span>
+      </div>
+      <div data-tabs-panels>
+        <section data-tabs-pane id="overview-pane"><h2>Overview</h2><label>Retained draft <input id="retained-input" name="draft" value="Original local draft"></label><p id="preserved-pane-text">This pane and its listeners are never recreated.</p></section>
+        <section data-tabs-pane id="details-pane">
+          <h2>Details</h2>
+          <div class="mui-tabs" data-tabs data-tabs-type="segment" id="nested-tabs">
+            <div data-tabs-bar><div data-tabs-list aria-label="Detail subviews"><button type="button" data-tabs-tab data-tabs-key="alpha" data-tabs-target="alpha-pane" id="alpha-tab">Alpha</button><button type="button" data-tabs-tab data-tabs-key="beta" data-tabs-target="beta-pane" id="beta-tab">Beta</button></div></div>
+            <div data-tabs-panels><section data-tabs-pane id="alpha-pane"><h3>Alpha details</h3><input aria-label="Nested retained input" value="Nested state"></section><section data-tabs-pane id="beta-pane"><h3>Beta details</h3><a href="#destination">Ordinary pane link</a></section></div>
+            <div data-tabs-messages><p data-tabs-empty hidden>No detail views available.</p><p data-tabs-status role="status" hidden>Checking detail switch.</p><p data-tabs-error role="alert" hidden>Detail switch failed.</p></div>
+          </div>
+        </section>
+        <section data-tabs-pane id="history-pane"><h2>History</h2><p>Local history content.</p></section>
+        <section data-tabs-pane id="unavailable-pane"><h2>Unavailable view</h2><p>Readable without enhancement; the enhanced tab is disabled.</p></section>
+      </div>
+      <div data-tabs-messages>
+        <p data-tabs-empty hidden>No draft views are available.</p>
+        <p data-tabs-status role="status" hidden>Checking whether the current view can be left. Other tab requests may supersede this check.</p>
+        <p data-tabs-error role="alert" hidden>The local view switch failed. Choose another guard outcome and retry.</p>
+      </div>
+      <div data-tabs-actions>
+        <button type="button" data-tabs-add id="add-view">Add local view</button>
+        <button type="button" data-tabs-close="overview" id="close-overview">Close Overview</button>
+        <button type="button" data-tabs-close="details" id="close-details">Close Details</button>
+      </div>
+    </div>
+    <button type="submit" id="submit-form">Ordinary form submit</button>
+    <button type="reset" id="reset-form">Reset form</button>
+  </form>
+  <section>
+    <h2>Manual activation and logical start placement</h2>
+    <div class="mui-tabs" data-tabs data-tabs-placement="start" data-tabs-type="line" id="manual-tabs">
+      <div data-tabs-bar><div data-tabs-list aria-label="Manual reference views"><button type="button" data-tabs-tab data-tabs-key="one" data-tabs-target="one-pane" id="one-tab">One</button><button type="button" data-tabs-tab data-tabs-key="two" data-tabs-target="two-pane" id="two-tab">Two</button><button type="button" data-tabs-tab data-tabs-key="three" data-tabs-target="three-pane" id="three-tab">Three with a longer authored label</button></div></div>
+      <div data-tabs-panels><section data-tabs-pane id="one-pane"><h3>One</h3><p>Arrows move focus; Enter or Space activates.</p></section><section data-tabs-pane id="two-pane"><h3>Two</h3><p>Manual reference content.</p></section><section data-tabs-pane id="three-pane"><h3>Three</h3><p>Third manual reference.</p></section></div>
+      <div data-tabs-messages><p data-tabs-empty hidden>No manual views available.</p><p data-tabs-status role="status" hidden>Checking switch.</p><p data-tabs-error role="alert" hidden>Switch failed.</p></div>
+    </div>
+  </section>
+  <p id="destination">Native link destination, not a router.</p>
+  <button type="button" id="outside">Outside focus target</button>
+  <output id="event-log" aria-live="polite">No user change yet.</output>
+  <template id="pair-template">
+    <button type="button" data-tabs-tab data-tabs-closable></button>
+    <section data-tabs-pane><h2></h2><p>Application-cloned local pane; no renderer is involved.</p></section>
+  </template>
+</body>
+</html>

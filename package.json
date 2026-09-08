@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./tabs": {
+      "types": "./dist/components/tabs/index.d.ts",
+      "import": "./dist/markup-ui-tabs.js"
+    },
+    "./tabs/style.css": "./dist/markup-ui-tabs.css",
     "./menu": {
       "types": "./dist/components/menu/index.d.ts",
       "import": "./dist/markup-ui-menu.js"
