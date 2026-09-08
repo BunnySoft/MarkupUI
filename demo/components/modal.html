@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Modal</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-modal.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-dialog.css">
+  <link rel="stylesheet" href="modal.css">
+  <script src="../../dist/markup-ui-modal.global.js" defer></script>
+  <script src="modal.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>Generic Modal: real native top layer</h1>
+    <p>A modal is not a confirmation service. The content, controls and forms are authored.</p>
+    <p><a id="open" href="#inline">Open modal or read the inline alternative</a></p>
+    <div id="controls" hidden>
+      <button id="modeless" type="button">Open deliberate modeless surface</button>
+      <button id="template-open" type="button">Open authored template</button>
+      <button id="dialog-composition" type="button">Open Dialog-styled native form</button>
+      <button id="destroy" type="button">Destroy owned clones</button>
+    </div>
+    <p id="events" role="status">Inline content works without JavaScript.</p>
+    <section id="inline" aria-labelledby="inline-title">
+      <h2 id="inline-title">Inline project information</h2>
+      <p>If native modality is unavailable, this ordinary section remains readable. No modeless surface is falsely called modal.</p>
+      <form id="background-form"><label>Background note <input name="note"></label><button>Save local note</button></form>
+    </section>
+    <dialog open class="mui-native-dialog mui-modal" aria-labelledby="baseline-title" id="baseline">
+      <h2 id="baseline-title" data-modal-title>Unenhanced native form</h2>
+      <form method="dialog"><label>Required note <input name="note" required></label><button value="baseline-saved">Save native note</button><button formnovalidate value="baseline-cancelled">Cancel native note</button></form>
+    </dialog>
+    <p class="page-tail">The helper does not change body/document overflow or lock scrolling. Modal background focus blocking belongs to the browser.</p>
+  </main>
+  <dialog id="surface" class="mui-native-dialog mui-modal" data-modal-segmented aria-labelledby="surface-title" aria-describedby="surface-description">
+    <header data-modal-header>
+      <h2 data-modal-title id="surface-title" tabindex="-1" autofocus>Project information</h2>
+      <form method="dialog"><button id="close" value="dismissed" aria-label="Close project information">×</button></form>
+    </header>
+    <div data-modal-content>
+      <p id="surface-description">A native form validates before closing. Escape and backdrop cancellation are separate, observable native requests.</p>
+      <button type="button" id="nested-open">Open nested modal</button>
+      <label><input type="checkbox" id="veto">Prevent native cancel requests</label>
+      <details id="long-content">
+        <summary>Long authored content</summary>
+        <p>Native top-layer order determines which surface owns interaction. Closing a child restores focus inside its parent.</p>
+        <p>Each explicit owner disposes only its own cloned elements. The rest of the document keeps its authored styles and content.</p>
+        <p>Content remains connected while the native dialog is closed, preserving native form values. Disposal is explicit rather than a rendering directive.</p>
+        <p>A transparent backdrop is still a modal with a blocked background. Use the explicit modeless method for nonmodal interaction.</p>
+        <p>There are no enter or leave transitions, no hidden focusable controls, and no animation-completion callback pretending to be a Vue hook.</p>
+        <p>At narrow widths, enlarged text and RTL, the complete native surface scrolls; the footer stays reachable without a custom scrollbar.</p>
+        <label>Extended notes <textarea rows="6"></textarea></label>
+      </details>
+      <form method="dialog" id="native-form">
+        <label>Required reference <input id="reference" name="reference" required></label>
+        <button id="save" value="saved">Save native form</button>
+        <button id="cancel-form" formnovalidate value="cancelled">Cancel without validation</button>
+      </form>
+    </div>
+    <footer data-modal-footer><p>Closing this surface never submits an unrelated form.</p></footer>
+  </dialog>
+  <dialog id="nested" class="mui-native-dialog mui-modal" data-modal-placement="start" aria-labelledby="nested-title">
+    <h2 data-modal-title id="nested-title">Nested top layer</h2>
+    <p data-modal-content>Escape is disabled here; use the authored native button. The parent stays modal.</p>
+    <form method="dialog"><button id="nested-close" value="nested-done" autofocus>Return to parent</button></form>
+  </dialog>
+  <dialog id="composition" class="mui-native-dialog mui-modal mui-dialog" data-dialog-type="warning" aria-labelledby="composition-title">
+    <header data-dialog-header><span data-dialog-icon aria-hidden="true">!</span><h2 data-dialog-title id="composition-title">Authored Dialog presentation</h2></header>
+    <p data-dialog-content>This uses Dialog CSS only. There are no implicit positive/negative callbacks.</p>
+    <form method="dialog" data-dialog-actions><button value="not-now">Not now</button><button value="proceed">Proceed</button></form>
+  </dialog>
+  <div id="owner-root"></div>
+  <template id="modal-template">
+    <dialog class="mui-native-dialog mui-modal" aria-label="Owned project information">
+      <h2 data-modal-title>Template title</h2>
+      <p data-modal-content>Template text</p>
+      <form method="dialog"><button value="template-done" autofocus>Close native template</button></form>
+    </dialog>
+  </template>
+</body>
+</html>

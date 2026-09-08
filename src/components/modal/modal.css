@@ -1,0 +1,38 @@
+dialog.mui-modal {
+  inline-size: var(--mui-modal-width, 40rem);
+  border: 1px solid var(--mui-modal-border, #a1aab8);
+  border-radius: var(--mui-modal-radius, .75rem);
+  padding: var(--mui-modal-padding, clamp(.75rem, 3vi, 1.5rem));
+  font: inherit;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  box-shadow: 0 1rem 3rem rgb(0 0 0 / 20%);
+}
+dialog.mui-modal:modal {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+}
+dialog.mui-modal:modal[data-modal-placement="start"] { margin-block-start: 1rem; }
+dialog.mui-modal:modal[data-modal-placement="end"] { margin-block-end: 1rem; }
+dialog.mui-modal:modal[data-modal-backdrop="transparent"]::backdrop { background: transparent; }
+.mui-modal [data-modal-header] { display: flex; align-items: start; gap: 1rem; }
+.mui-modal [data-modal-title] { margin: 0; flex: 1; font-size: 1.375rem; }
+.mui-modal [data-modal-content] { margin-block: 1rem; }
+.mui-modal [data-modal-footer] { display: flex; flex-wrap: wrap; justify-content: end; gap: .5rem; }
+.mui-modal [data-modal-header], .mui-modal [data-modal-content], .mui-modal [data-modal-footer] { min-inline-size: 0; }
+.mui-modal[data-modal-segmented] [data-modal-footer] { border-block-start: 1px solid var(--mui-modal-border, #a1aab8); padding-block-start: 1rem; }
+.mui-modal :is(input, select, textarea, button) { box-sizing: border-box; max-inline-size: 100%; font: inherit; }
+.mui-modal button { min-block-size: 2.5rem; white-space: normal; }
+.mui-modal :focus-visible { outline: 2px solid var(--mui-modal-focus, #315ba6); outline-offset: 3px; }
+.mui-modal [hidden], dialog.mui-modal[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  dialog.mui-modal, dialog.mui-modal::backdrop { animation: none; transition: none; scroll-behavior: auto; }
+}
+@media (forced-colors: active) {
+  dialog.mui-modal { border-color: CanvasText; box-shadow: none; }
+  .mui-modal[data-modal-segmented] [data-modal-footer] { border-color: CanvasText; }
+}
+@media print {
+  dialog.mui-modal:modal { position: static; inset: auto; margin: 0; max-block-size: none; max-inline-size: 100%; box-shadow: none; }
+}

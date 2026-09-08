@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./modal": {
+      "types": "./dist/components/modal/index.d.ts",
+      "import": "./dist/markup-ui-modal.js"
+    },
+    "./modal/style.css": "./dist/markup-ui-modal.css",
     "./dialog": {
       "types": "./dist/components/dialog/index.d.ts",
       "import": "./dist/markup-ui-dialog.js"

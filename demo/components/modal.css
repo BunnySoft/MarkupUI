@@ -1,0 +1,13 @@
+body { margin: 0; color: #20252b; background: #f4f6f9; font: 1rem/1.5 system-ui, sans-serif; }
+main { max-inline-size: 64rem; margin-inline: auto; padding: 1rem; }
+button, input, select, textarea { font: inherit; }
+button { min-block-size: 2.5rem; }
+#controls { display: flex; flex-wrap: wrap; gap: .5rem; }
+#controls[hidden] { display: none; }
+#inline { padding: 1rem; border: 1px solid #a1aab8; background: white; }
+form { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .5rem; }
+label { display: flex; flex-direction: column; gap: .25rem; max-inline-size: 100%; margin-block: .5rem; }
+input, select, textarea { box-sizing: border-box; max-inline-size: 100%; min-inline-size: 0; }
+details { margin-block: 1rem; }
+.page-tail { min-block-size: 100vh; }
+@media print { #controls { display: none; } .page-tail { min-block-size: 0; } }
