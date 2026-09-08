@@ -2,7 +2,7 @@
 
 **Plan state: 🟠 In progress — P1 pilots and the P2-02 Tag/Badge/Alert/Empty/Skeleton/Spin workstream
 and P2-03 Progress/Statistic are Verified for retained scope. Whole P2 is not complete;
-Typography `53d3974`, Icon `829970d`, Gradient Text `38dcf6f`, Ellipsis `5fabe7f`, Page Header `5f9faf3`, Divider `2e1a6c0`, Flex `720a92c`, Space `d495a12` and Grid's/Layout's/List's/Descriptions'/Timeline's/Breadcrumb's/Thing's/Table's/Highlight's/Affix's/Result's/Code's linked retained records are Verified. Three P2-assigned catalog rows remain Planned; Scrollbar is next.** Existing MarkupUI features are a partial baseline,
+Typography `53d3974`, Icon `829970d`, Gradient Text `38dcf6f`, Ellipsis `5fabe7f`, Page Header `5f9faf3`, Divider `2e1a6c0`, Flex `720a92c`, Space `d495a12` and Grid's/Layout's/List's/Descriptions'/Timeline's/Breadcrumb's/Thing's/Table's/Highlight's/Affix's/Result's/Code's/Scrollbar's linked retained records are Verified. Two P2-assigned catalog rows remain Planned; Float Button then Image follow.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -30,7 +30,7 @@ coverage, implementation status, and upstream feature parity separate.
 | --- | --- | --- | --- | --- |
 | P0 — Architecture and contracts | 🔵 Planned | Establish separated sources, compatible loading, lifecycle, events and native-control conventions. | None | A minimal external-CSS example works without a consumer build step, and existing loading remains supported. |
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
-| P2 — Primitives and layout | 🟠 In progress | Named retained scopes including plain Code complete; Scrollbar, Float Button and Image remain Planned below. | P1 pattern | Remaining catalog targets and exclusions need individual decisions/evidence; the short queue is not whole-phase sign-off. |
+| P2 — Primitives and layout | 🟠 In progress | Named retained scopes including native Scrollbar complete; Float Button and Image remain Planned below. | P1 pattern | Remaining catalog targets and exclusions need individual decisions/evidence; the short queue is not whole-phase sign-off. |
 | P3 — Interaction foundations | 🔵 Planned | Implement predictable focus, keyboard, overlays and navigation. | P0 lifecycle; P1 controls | Nested interaction, dismissal and focus behavior are defined and demonstrated. |
 | P4 — Forms and selection | 🔵 Planned | Make native controls dependable, then add optional richer selection. | P0 form contract; P3 for popup variants | Values, labels, submission, reset, validity and event semantics are consistent. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
@@ -185,8 +185,9 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Code (P2 plain/native code), retained native scope accepted.**
-**Next component: Scrollbar (P2 native-only scope), before Float Button/Image interactions.**
+**Current component: Scrollbar (P2 native-only scope), retained native scope accepted.**
+**Next component: Float Button (P2/P3), then Image (P2/P6).**
+Code completed retained native plain/physical-line presentation in `d5eb01c`.
 Result completed retained authored outcome/status/artwork scope in `b659f48`.
 Affix completed retained CSS-sticky positioning/constraint scope in `5c8076d`.
 Highlight completed retained bounded literal matching/native mark scope in `cec8bc7`.
@@ -308,8 +309,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The index records 3,189 rows and 124 accepted retained tasks out of 384 across 31 component
-pages (260 unchecked), not full upstream parity.
+The index records 3,200 rows and 128 accepted retained tasks out of 384 across 32 component
+pages (256 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -399,11 +400,19 @@ CRLF, trailing blank lines, exact selected source without number text, soft-wrap
 suppression, native focus/scroll/navigation, RTL/zoom/print/forced colors, Typography/legacy
 and no-JS rendering were exercised without clipboard access. CSS adds 1,087 gzip bytes and
 zero component/demo JS. No lexer, URI/trim pipeline, clipboard action or text renderer.
+Scrollbar's [accepted record](../components/scrollbar.md) closes native overflow/APIs/events
+and optional standards styling with 540 tests (12 focused) plus Chromium evidence. All 16
+original public/inline rows remain with 11 source declaration/internal exclusion groups:
+12 adapted targets and 15 omissions/groups. Native wheel/keyboard, absolute/relative APIs,
+unchanged RTL coordinates, focus reveal, nested chaining/opt-in containment, forms,
+resizing and independent observer cleanup, native styling, narrow/zoom/print/forced colors,
+aggregate/plugins and no-JS paths were exercised. CSS adds 468 gzip bytes and zero component
+JS; no custom rails, no-op sync, reactive ref adapter, resize event or input interception.
 
 ### Residual P2 inventory after Breadcrumb
 
-Updated after Code on 2026-09-08: all **96 component catalog rows** in the index were
-rechecked. Filtering Planned statuses whose assigned phase includes **P2** leaves these **three** rows, including
+Updated after Scrollbar on 2026-09-08: all **96 component catalog rows** in the index were
+rechecked. Filtering Planned statuses whose assigned phase includes **P2** leaves these **two** rows, including
 cross-phase and exclusion-qualified entries. This is a phase/status reconciliation, not
 fresh API acceptance or implementation of these components.
 
@@ -411,15 +420,12 @@ fresh API acceptance or implementation of these components.
 | --- | --- | --- |
 | [Float Button](components/float-button.md) | P2, P3 | Planned; related Button baseline, not accepted floating/interaction scope. |
 | [Image](components/image.md) | P2, P6 | Planned; related Avatar baseline does not accept the separate Image scope. |
-| [Scrollbar](components/scrollbar.md) | P2; custom-emulation exclusions | Native overflow target remains Planned; custom emulation is outside scope. |
 
-**Deliberate queue ordering: Scrollbar next**, continuing the simpler P2 utilities after
-accepted plain Code, before Float Button's P2/P3 interactions and Image's P2/P6 scope.
-Code has no syntax engine; Scrollbar must retain native scrolling rather than custom
-emulation. Its own retained rows/exclusions still need implementation acceptance.
-No Scrollbar implementation is included in Code's change; its page remains Planned.
-The later Float Button/Image work retains separate interaction/specialized scope decisions.
-Full P2 is **not complete**: these three catalog targets and P2-06 sign-off remain open.
+**Deliberate queue ordering: Float Button next, then Image.** The simpler Code and native
+Scrollbar utilities are now accepted, with their syntax/custom-emulation exclusions explicit.
+No Float Button/Image implementation is included in Scrollbar's change; their pages remain
+Planned and retain separate P3/P6 interaction/specialized scope decisions.
+Full P2 is **not complete**: these two catalog targets and P2-06 sign-off remain open.
 Preserve native semantics and the legacy aggregate. Each component gets its own documentation update, build,
 acceptance evidence and commit before advancing. No dates or effort estimates are assigned
 until retained feature scope and optional exclusions are settled.

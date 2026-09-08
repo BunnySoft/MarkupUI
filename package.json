@@ -10,6 +10,7 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./scrollbar/style.css": "./dist/markup-ui-scrollbar.css",
     "./code/style.css": "./dist/markup-ui-code.css",
     "./result/style.css": "./dist/markup-ui-result.css",
     "./affix/style.css": "./dist/markup-ui-affix.css",

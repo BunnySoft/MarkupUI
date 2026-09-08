@@ -1,0 +1,43 @@
+:where(.mui-scrollbar) {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  min-block-size: 0;
+  max-inline-size: 100%;
+  padding: var(--mui-scrollbar-padding, .25rem);
+  overflow: auto;
+}
+:where(.mui-scrollbar > .mui-scrollbar-content) {
+  box-sizing: border-box;
+  min-inline-size: 0;
+}
+:where(.mui-scrollbar):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+@supports (scrollbar-width: thin) {
+  :where(.mui-scrollbar[data-thin]) { scrollbar-width: thin; }
+}
+@supports (scrollbar-color: auto) {
+  :where(.mui-scrollbar[data-colored]) {
+    scrollbar-color: var(--mui-scrollbar-thumb-color, #71717a) var(--mui-scrollbar-track-color, #e4e4e7);
+  }
+}
+@supports (scrollbar-gutter: stable) {
+  :where(.mui-scrollbar[data-stable-gutter]) { scrollbar-gutter: stable; }
+}
+:where(.mui-scrollbar, .mui-scrollbar-content)[hidden]:not([hidden="until-found"]),
+template.mui-scrollbar,
+.mui-scrollbar > template { display: none !important; }
+@media (forced-colors: active) {
+  :where(.mui-scrollbar[data-colored]) { scrollbar-color: auto; }
+  :where(.mui-scrollbar[data-thin]) { scrollbar-width: auto; }
+}
+@media print {
+  :where(.mui-scrollbar) {
+    overflow: visible !important;
+    block-size: auto !important;
+    min-block-size: 0 !important;
+    max-block-size: none !important;
+    scrollbar-gutter: auto;
+  }
+}

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Scrollbar</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-scrollbar.css">
+  <link rel="stylesheet" href="./scrollbar.css">
+  <script defer src="./scrollbar.js"></script>
+</head>
+<body>
+  <header><h1>Native Scrollbar</h1><p>The browser supplies scrolling and scrollbars. No custom rails, drag engine, wheel interception or synchronization controller.</p></header>
+  <main>
+    <section aria-labelledby="vertical-heading">
+      <h2 id="vertical-heading">Native scrolling APIs and controls</h2>
+      <p id="vertical-help">Focus this named region for keyboard scrolling, use native scrollbars, or Tab to the form.</p>
+      <div class="demo-actions"><button type="button" id="scroll-by">Scroll down 120px</button><button type="button" id="scroll-top">Go to top</button><button type="button" id="scroll-bottom">Go to bottom</button><button type="button" id="resize-region">Toggle region height</button></div>
+      <div class="mui-scrollbar native-panel" id="vertical-scroll" tabindex="0" role="region" aria-labelledby="vertical-heading" aria-describedby="vertical-help">
+        <div class="mui-scrollbar-content padded-content" id="vertical-content">
+          <h3>Activity</h3>
+          <ol class="activity"><li>Project created.</li><li>Content authored.</li><li>Names reviewed.</li><li>Keyboard behavior checked.</li><li>Native scrolling retained.</li><li>Form ready.</li></ol>
+          <form id="native-form"><label for="native-note">Activity note</label><input id="native-note" name="note" value="Original" required><div class="demo-actions"><button type="submit" id="native-submit">Save note</button><button type="reset" id="native-reset">Reset note</button><button type="button" disabled id="native-disabled">Unavailable action</button></div><fieldset disabled><legend>Read-only settings</legend><label><input type="checkbox" name="notify" checked> Notify team</label></fieldset></form>
+          <a href="#vertical-heading" id="vertical-last">Return to activity heading</a>
+        </div>
+        <template class="mui-scrollbar-content" id="native-template">Inert content template</template>
+      </div>
+      <p id="scroll-position">Native scroll positions are reported by application listeners.</p>
+      <p id="form-feedback"></p>
+    </section>
+
+    <section aria-labelledby="horizontal-heading">
+      <h2 id="horizontal-heading">Horizontal overflow and focus discovery</h2>
+      <p>Content width is author CSS. Native APIs do not normalize RTL coordinates or invent element/index overloads.</p>
+      <button type="button" id="reveal-far">Reveal and focus far link</button>
+      <div class="mui-scrollbar horizontal-panel" id="horizontal-scroll" tabindex="0" role="region" aria-labelledby="horizontal-heading">
+        <div class="mui-scrollbar-content wide-content"><div class="wide-row"><a href="#horizontal-heading" id="near-link">Near link</a><a href="#native-end" id="far-link">Far link</a></div><p>One deliberately wide native content area. No generated content wrapper or fit-content switch.</p></div>
+      </div>
+      <div class="mui-scrollbar horizontal-panel" dir="rtl" id="rtl-scroll" tabindex="0" role="region" aria-label="RTL horizontal example">
+        <div class="mui-scrollbar-content wide-content"><div class="wide-row"><span>Logical start in RTL</span><a href="#native-end" id="rtl-far">Far RTL link</a></div><p>scrollLeft is browser-owned and may be negative. No sign adapter is installed.</p></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="nested-heading">
+      <h2 id="nested-heading">Nested scrolling and explicit chaining policy</h2>
+      <label><input type="checkbox" id="contain-toggle"> Application opts into overscroll containment for the inner region</label>
+      <div class="mui-scrollbar outer-panel" id="outer-scroll" tabindex="0" role="region" aria-labelledby="nested-heading">
+        <div class="mui-scrollbar-content padded-content">
+          <p>Outer content before the inner region.</p>
+          <div class="mui-scrollbar inner-panel" id="inner-scroll" tabindex="0" role="region" aria-label="Inner activity">
+            <ol class="activity"><li>Inner first record.</li><li>Inner second record.</li><li>Inner third record.</li><li>Inner fourth record.</li><li>Inner fifth record.</li><li>Inner last record.</li></ol>
+          </div>
+          <ol class="activity"><li>Outer continuation one.</li><li>Outer continuation two.</li><li>Outer continuation three.</li><li>Outer continuation four.</li></ol>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="style-heading">
+      <h2 id="style-heading">Optional standards styling</h2>
+      <p>Thin/color/gutter hints depend on browser and OS preferences; they are not pixel-sized or always-visible custom rails.</p>
+      <div class="mui-scrollbar native-panel" data-thin data-colored data-stable-gutter id="styled-scroll" tabindex="0" role="region" aria-labelledby="style-heading"><ol class="activity"><li>Native styled example.</li><li>Native keyboard/touch behavior stays available.</li><li>Overlay scrollbar visibility is platform-controlled.</li><li>Forced colors restores native appearance.</li><li>End of styled content.</li></ol></div>
+    </section>
+    <section id="native-end"><h2>Native endpoint</h2><p>Ordinary anchors remain available with or without JavaScript.</p><p id="outside-content">Unmodified content outside the scroll regions.</p></section>
+    <div class="mui-scrollbar native-panel" hidden id="hidden-scroll"><button type="button">Hidden control</button></div>
+  </main>
+</body>
+</html>

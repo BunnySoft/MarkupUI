@@ -1,0 +1,33 @@
+body {
+  max-inline-size: 60rem;
+  margin: 2rem auto;
+  padding-inline: 1rem;
+  font: 1rem/1.5 system-ui, sans-serif;
+  overflow-wrap: anywhere;
+  color: #18181b;
+  background: #fafafa;
+}
+main > section { margin-block: 2rem; }
+h2, h3, p { margin-block: 0 .75rem; }
+button, input { box-sizing: border-box; max-inline-size: 100%; font: inherit; }
+button { white-space: normal; overflow-wrap: anywhere; }
+fieldset { min-inline-size: 0; margin-block: .5rem; }
+.demo-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-block: .5rem; }
+.native-panel, .horizontal-panel, .outer-panel, .inner-panel { border: 1px solid #a1a1aa; background: #fff; }
+.native-panel { block-size: 14rem; }
+.native-panel.taller { block-size: 22rem; }
+.horizontal-panel { block-size: 10rem; max-inline-size: 36rem; margin-block: 1rem; scroll-padding-inline: 1rem; }
+.padded-content { padding: .75rem; }
+.activity { margin-block: .5rem; padding-inline-start: 2rem; }
+.activity > li { padding-block: 1.25rem; }
+.wide-content { inline-size: 60rem; min-block-size: 12rem; padding: .75rem; }
+.wide-row { display: flex; justify-content: space-between; gap: 1rem; margin-block-end: 2rem; }
+.outer-panel { block-size: 20rem; margin-block-start: 1rem; }
+.inner-panel { block-size: 10rem; }
+.inner-panel.contain-scroll { overscroll-behavior: contain; }
+#scroll-position, #form-feedback { min-block-size: 1.5em; }
+@media print {
+  body { max-inline-size: none; margin: 0; background: transparent; }
+  .wide-content { inline-size: auto; min-block-size: 0; }
+  .activity > li { padding-block: .25rem; }
+}
