@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Collapse and CollapseItem</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-collapse.css">
+  <link rel="stylesheet" href="./collapse.css">
+  <script defer src="../../dist/markup-ui-collapse.global.js"></script>
+  <script defer src="./collapse.js"></script>
+</head>
+<body>
+  <h1>Native Collapse disclosures</h1>
+  <p>Details/summary owns disclosure, keyboard and open state. Extra actions are outside summaries. The optional helper adds scoped groups, disabled activation and aggregate events.</p>
+  <noscript><p>Native disclosures and links still work. Disabled-marker enforcement requires the helper; without it these remain ordinary readable disclosures. Native name exclusivity depends on browser support.</p></noscript>
+  <main>
+    <form id="demo-form">
+      <div class="mui-collapse mui-collapse--arrow-motion" data-collapse id="primary-group">
+        <div class="mui-collapse-row">
+          <details data-collapse-item data-collapse-key="one" data-collapse-custom-arrow name="demo-primary" id="item-one" open>
+            <summary id="summary-one"><span data-collapse-arrow class="mui-collapse-arrow-rotate" aria-hidden="true">›</span><span data-collapse-title id="preserved-title">First local section</span></summary>
+            <div data-collapse-content><p id="preserved-content">The original content and listeners remain.</p><label>Local note <input id="retained-input" name="note" value="Retained note"></label><a href="#destination" id="content-link">Native destination</a></div>
+          </details>
+          <div data-collapse-extra><button type="button" id="extra-action">Inspect locally</button></div>
+        </div>
+        <div class="mui-collapse-row">
+          <details data-collapse-item data-collapse-key="two" data-collapse-custom-arrow name="demo-primary" id="item-two">
+            <summary id="summary-two"><span data-collapse-arrow class="mui-collapse-arrow-rotate" aria-hidden="true">›</span><span data-collapse-title>Nested native disclosures</span></summary>
+            <div data-collapse-content>
+              <p>This group's items cannot close a separate nested group.</p>
+              <div class="mui-collapse" data-collapse id="nested-group" data-collapse-arrow-placement="right">
+                <details data-collapse-item data-collapse-key="one" data-collapse-custom-arrow name="demo-nested" id="nested-one"><summary id="nested-summary-one"><span data-collapse-arrow class="mui-collapse-arrow-rotate" aria-hidden="true">›</span><span data-collapse-title>Nested first</span></summary><div data-collapse-content><button type="button" id="nested-content-action">Nested local action</button></div></details>
+                <details data-collapse-item data-collapse-key="two" data-collapse-custom-arrow name="demo-nested" id="nested-two"><summary id="nested-summary-two"><span data-collapse-arrow class="mui-collapse-arrow-rotate" aria-hidden="true">›</span><span data-collapse-title>Nested second</span></summary><div data-collapse-content><p>Independent keyed content.</p></div></details>
+              </div>
+            </div>
+          </details>
+        </div>
+        <div class="mui-collapse-row">
+          <details data-collapse-item data-collapse-key="disabled" data-collapse-disabled name="demo-primary" id="disabled-item">
+            <summary id="disabled-summary">Temporarily unavailable toggle</summary>
+            <div data-collapse-content><p>Programmatic open is an explicit application override; disabled blocks activation, not reading/content state.</p></div>
+          </details>
+        </div>
+      </div>
+      <button type="submit" id="submit-form">Ordinary submit</button>
+      <button type="reset" id="reset-form">Reset form</button>
+    </form>
+    <button type="button" id="toggle-accordion">Toggle primary accordion</button>
+    <button type="button" id="toggle-disabled">Toggle disabled marker</button>
+    <button type="button" id="open-disabled">Programmatically open disabled item</button>
+    <button type="button" id="outside">Outside focus target</button>
+    <section>
+      <h2>Separate group, reusable keys and native arrows</h2>
+      <div class="mui-collapse" data-collapse id="separate-group" dir="rtl">
+        <details data-collapse-item data-collapse-key="one" name="demo-separate" id="separate-one"><summary id="separate-summary-one">Separate first section</summary><div data-collapse-content><p>Native marker, no custom icon dependency.</p></div></details>
+        <details data-collapse-item data-collapse-key="two" name="demo-separate" id="separate-two"><summary id="separate-summary-two">Separate second section</summary><div data-collapse-content><p>RTL follows the native summary and logical CSS.</p></div></details>
+      </div>
+    </section>
+    <p id="destination">Ordinary native link destination.</p>
+    <output id="event-log" aria-live="polite">No header interaction.</output>
+  </main>
+</body>
+</html>

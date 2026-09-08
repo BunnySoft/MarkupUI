@@ -1,35 +1,57 @@
 # Collapse
 
-**Plan: Planned. Current baseline: partial core accordion; not parity-verified.**
+**🟢 Verified for retained native Collapse/CollapseItem scope.**
+All **27 original identities** remain: 19 public rows and eight original inline fields.
+Six source-only additions make **33 rows: 19 Verified adapted targets, 14 omissions**.
 
-## Baseline and target
+## Baseline and delivery
 
-[B1: dynamic.ts](../../../src/components/dynamic.ts) creates a native header button and toggles authored content visibility from initial `open` state. [B2: styles.ts](../../../src/components/styles.ts) supplies presentation. Group-level exclusive expansion is absent.
+Historical [dynamic.ts](../../../src/components/dynamic.ts) generates a legacy accordion
+header button/content wrapper and remains unchanged. The new native baseline is authored
+details/summary with [external CSS](../../../src/components/collapse/collapse.css).
+The optional [small helper](../../../src/components/collapse/collapse.ts) adds only actual
+key aggregation, scoped exclusivity, disabled activation, events and ownership cleanup.
 
-- **HTML:** native `details`/`summary` inside retained accordion naming conventions.
-- **JS:** optional exclusive-open coordination and change notification.
-- **CSS:** spacing, separators, indicator state and reduced-motion treatment.
-- **Placement:** proposed `src/components/collapse/`; native-only use requires no controller.
+- **HTML:** first meaningful native summary, direct authored content and sibling header-extra
+  actions; existing nodes/listeners/templates and open state remain native.
+- **JS:** string names, one-time defaults/live open requests, root-specific names, disabled
+  click prevention without inert/hidden labels, and explicit native toggle/header reporting.
+- **CSS:** spacing/borders/focus/RTL, native or authored arrows and optional arrow-only motion.
+  No height measurement, renderer or CollapseTransition dependency.
+- **Evidence:** [API/loading/limits/acceptance](../../components/collapse.md),
+  [demo](../../../demo/components/collapse.html), [tests](../../../tests/collapse.test.ts).
 
-## Acceptance and gaps
+## Upstream source evidence
 
-Verify independent and exclusive disclosure, disabled policy, nested panels, dynamic children and no-JS operation. Expanded-key and companion item contracts require new design.
+Pinned [Collapse state/events](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/src/Collapse.tsx#L30-L210),
+[CollapseItem trigger/disabled/header behavior](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/src/CollapseItem.tsx#L26-L180)
+and [content rendering](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/src/CollapseItemContent.tsx)
+were read. The native design replaces controlled/default merging, generated random names,
+rendered header trigger areas and mount/transition machinery with authored disclosure.
+Disabled source behavior blocks header activation, not explicit controlled expansion.
 
 ## Migration steps
 
-**Delivery phase:** P3 — interactions. **Task state:** 🔵 Planned.
-**Prerequisites:** P0 content ownership and P3 disclosure/focus rules in the [master plan](../migration-plan.md).
-**Next task:** map current accordion headers/open state onto native `details`/`summary` without losing compatibility.
+**Delivery phase:** P3 — interactions. **Task state:** 🟢 Verified retained scope.
+**Prerequisites:** native ownership/disclosure contracts; no mandatory animation package.
+**Next task:** Anchor, then Back Top. CollapseTransition remains a separate later route.
 
-1. [ ] **Adopt disclosure markup.** Preserve panel children and meaningful summaries; define generated fallback anatomy for legacy items.
-2. [ ] **Specify group state.** Resolve item keys, controlled/default expansion and exclusive-open behavior independently from individual disclosure.
-3. [ ] **Extract panel presentation.** Move indicators, separators and optional expansion motion to CSS with reduced-motion handling.
-4. [ ] **Exercise nested panels.** Test disabled policy, dynamic children, independent/exclusive opening and keyboard access with JavaScript disabled.
+1. [x] **Adopt disclosure markup.** Native summaries/content and valid extra actions retain
+   original DOM; legacy generated anatomy remains unchanged rather than being silently upgraded.
+2. [x] **Specify group state.** String names/defaults/native open, exclusive naming scope,
+   disabled activation and native event timing accepted.
+3. [x] **Separate presentation.** External indicators/borders/spacing/RTL/motion/print with
+   no height observer, renderer or duplicated expanded semantics.
+4. [x] **Exercise nested panels.** Pointer/native keyboard, disabled labels, nested/independent
+   groups, transfers/refresh/focus and no-JS disclosures verified.
 
 ### Native primitives and fallback
 
-- **Native path:** `details`/`summary` implement disclosure and keyboard activation without custom focus code. A light-DOM wrapper only coordinates approved exclusive-open behavior and events.
-- **Small enhancement:** preserve native `toggle` behavior and release coordination listeners on disconnect. CSS `[open]`, logical borders and reduced-motion rules style panels. Detect any optional exclusive-details capability; independent disclosures are the fallback rather than a replicated disclosure framework.
+CSS-only details/summary is usable without a controller. Native names are document-scoped,
+so authors must avoid cross-group collisions and verify browser support. The helper isolates
+names while bound, supplies a small open-mutation exclusivity fallback and real disabled
+activation prevention. Without it, disabled markers do not claim to disable native summaries.
+Print follows native open state; hidden content is not advertised as universally printed.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
@@ -38,91 +60,129 @@ Verify independent and exclusive disclosure, disabled policy, nested panels, dyn
 - [Official website](https://www.naiveui.com/en-US/os-theme/components/collapse)
 - [Pinned public API Markdown](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md)
 - [Pinned implementation source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse)
-- [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
+- [Catalog/provenance](../index.md) · [Architecture/statuses](../architecture.md)
 
-Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **19 local table rows + 8 supplementary declarations + 0 inherited rows = 27 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
-
+Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`;
+historical MarkupUI baseline **5dcb190 / 0.11.0**.
+Inventory: **19 public rows + 8 original inline fields + 6 source-only additions = 33**.
+All original owner/name/source-line identities remain. **ADAPTED** denotes the linked native
+contract, not identical Vue props, numeric/random keys, controlled callbacks or slot objects.
+Omissions receive no implementation credit.
 
 ### Collapse Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`accordion`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L27) | Prop | Candidate presence attribute `accordion`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`arrow-placement`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L28) | Prop | Candidate explicit JS `arrowPlacement` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default-expanded-names`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L29) | Prop | Candidate native default/reset state for `default-expanded-names`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`display-directive`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L30) | Prop | No framework if/show directive; document native hidden/open state and node preservation instead. | ⏭️ Intentionally omitted | No implementation credit; retain documented alternative. |
-| [`expanded-names`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L31) | Prop | Candidate JS `expandedNames` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`trigger-areas`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L32) | Prop | Candidate JS `triggerAreas` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-item-header-click`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L33) | Callback | Candidate DOM `mui:item-header-click` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:expanded-names`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L34) | Callback | Candidate DOM `mui:change:expanded-names` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`accordion`][a27] | Prop | ADAPTED scoped exclusive native disclosures. | 🟢 Verified | Root-unique names and fallback; author names are document-global outside helper ownership. |
+| [`arrow-placement`][a28] | Prop | ADAPTED custom-arrow left/right CSS/RTL order. | 🟢 Verified | Native marker otherwise remains browser-owned; no JS placement engine. |
+| [`default-expanded-names`][a29] | Prop | ADAPTED one-time string/scalar/array/null defaults. | 🟢 Verified | Explicit live option wins; native open persists and defaults never replay. |
+| [`display-directive`][a30] | Prop | No if/show renderer. | ⏭️ Intentionally omitted | Native details preserves content and form state. |
+| [`expanded-names`][a31] | Prop | ADAPTED validated native open requests and array getter. | 🟢 Verified | No continuous controlled lock; numeric names omitted. |
+| [`trigger-areas`][a32] | Prop | No configurable main/arrow/extra trigger array. | ⏭️ Intentionally omitted | Native summary toggles; external sibling extra actions remain independent. |
+| [`on-item-header-click`][a33] | Callback | ADAPTED mui:collapse-header-click after accepted native click. | 🟢 Verified | Final defaultPrevented/disabled checks and actual deferred state. |
+| [`on-update:expanded-names`][a34] | Callback | ADAPTED mui:collapse-change reflecting native toggle. | 🟢 Verified | Async/coalesced; includes programmatic changes, not a fake user-only update. |
 
 ### CollapseItem Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L40) | Prop | Candidate presence attribute `disabled`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`display-directive`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L41) | Prop | No framework if/show directive; document native hidden/open state and node preservation instead. | ⏭️ Intentionally omitted | No implementation credit; retain documented alternative. |
-| [`name`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L42) | Prop | Candidate `name` attribute or JS `name`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`title`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L43) | Prop | Candidate `title` attribute or JS `title`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`disabled`][a40] | Prop | ADAPTED data-collapse-disabled/setDisabled activation lock. | 🟢 Verified | Real click/Enter/Space prevention; readable focusable summary, no inert or fake expanded state. |
+| [`display-directive`][a41] | Prop | No item renderer/mount directive. | ⏭️ Intentionally omitted | Original native content remains. |
+| [`name`][a42] | Prop | ADAPTED unique explicit string data-collapse-key. | 🟢 Verified | Separate from native name grouping; no numeric/random identity. |
+| [`title`][a43] | Prop | ADAPTED authored meaningful summary text/markup. | 🟢 Verified | No title-to-HTML renderer or generated label. |
 
 ### Collapse Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`arrow`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L49) | Slot | Candidate authored `arrow` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L50) | Slot | Candidate authored `default` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`header`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L51) | Slot | Candidate authored `header` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`arrow`][a49] | Slot | ADAPTED authored decorative arrow/native marker. | 🟢 Verified | External [open] CSS; no VNode slot callback. |
+| [`default`][a50] | Slot | ADAPTED authored native items/content. | 🟢 Verified | Stable nodes/listeners/templates and explicit group boundaries. |
+| [`header`][a51] | Slot | ADAPTED authored native summary/header content. | 🟢 Verified | No duplicated button/expanded semantics. |
 
 ### CollapseItem Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`arrow`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L57) | Slot | Candidate authored `arrow` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L58) | Slot | Candidate authored `default` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`header`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L59) | Slot | Candidate authored `header` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`header-extra`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L60) | Slot | Candidate authored `header-extra` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`arrow`][a57] | Slot | ADAPTED decorative native child/CSS. | 🟢 Verified | aria-hidden custom artwork, no icon dependency. |
+| [`default`][a58] | Slot | ADAPTED original direct content region. | 🟢 Verified | Native hidden-by-details behavior; no state destruction. |
+| [`header`][a59] | Slot | ADAPTED noninteractive native summary markup. | 🟢 Verified | Native keyboard and explicit disabled policy. |
+| [`header-extra`][a60] | Slot | ADAPTED sibling extra region outside details/summary. | 🟢 Verified | Explicit native button type; no nested-button trap or unintended toggle. |
 
 ### Collapse Props: on-item-header-click inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`on-item-header-click.name`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L33) | Inline record field | Candidate DOM `mui:item-header-click.name` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-item-header-click.expanded`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L33) | Inline record field | Candidate DOM `mui:item-header-click.expanded` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-item-header-click.event`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L33) | Inline record field | Candidate DOM `mui:item-header-click.event` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`on-item-header-click.name`][a33] | Inline record field | ADAPTED string detail.name. | 🟢 Verified | Captured stable item identity, not numeric/random names. |
+| [`on-item-header-click.expanded`][a33] | Inline record field | ADAPTED actual detail.expanded. | 🟢 Verified | State when the post-dispatch notification runs, not synchronous requested Vue state. |
+| [`on-item-header-click.event`][a33] | Inline record field | ADAPTED original native MouseEvent. | 🟢 Verified | Disabled/canceled header clicks do not notify. |
 
 ### Collapse Slots: arrow inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`arrow.collapsed`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L49) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`arrow.collapsed`][a49] | Inline record field | No renderer slot-prop object. | ⏭️ Intentionally omitted | Read native !details.open or style [open] instead. |
 
 ### Collapse Slots: header inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`header.collapsed`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L51) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`header.collapsed`][a51] | Inline record field | No renderer slot-prop object. | ⏭️ Intentionally omitted | Native state remains available without pretending CSS emits callback props. |
 
 ### CollapseItem Slots: arrow inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`arrow.collapsed`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L57) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`arrow.collapsed`][a57] | Inline record field | No item renderer slot object. | ⏭️ Intentionally omitted | Authored [open] CSS/native open property. |
 
 ### CollapseItem Slots: header inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`header.collapsed`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L59) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`header.collapsed`][a59] | Inline record field | No item renderer slot object. | ⏭️ Intentionally omitted | Native summary/open state rather than function forwarding. |
 
 ### CollapseItem Slots: header-extra inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`header-extra.collapsed`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L60) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`header-extra.collapsed`][a60] | Inline record field | No extra renderer slot object. | ⏭️ Intentionally omitted | Sibling actions can explicitly read native item.open; not generated callbacks. |
+
+### Source-only supplements — six explicit groups
+
+| Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
+| --- | --- | --- | --- | --- |
+| [`CollapseSlots.header-extra`][s87] | Source-only root slot | No root fallback slot renderer. | ⏭️ Intentionally omitted | Each item authors its own safe sibling extras. |
+| [`onUpdateExpandedNames`, `onExpandedNamesChange`][s60] | Source-only callback aliases | No alias/array compatibility. | ⏭️ Intentionally omitted | Explicit native change/header events instead. |
+| [`CollapseProps`][collapse-type], [`CollapseItemProps`][item-type], [slot/header/update types][types] | Source-only type group | No Vue extracted-prop/slot aliases. | ⏭️ Intentionally omitted | Native controller/options/detail types are independent. |
+| [`NCollapseInjection`, `collapseInjectionKey`, theme/RTL/cssVars][s90] | Source-only provider/theme group | No injection/config/style renderer. | ⏭️ Intentionally omitted | External CSS and native direction; theme spread at source line 31. |
+| [`randomName`, `mergedNameRef`][item47] | Source-only identity defaults | No generated random item key. | ⏭️ Intentionally omitted | Explicit string data keys, distinct from helper-scoped native group names. |
+| [`CollapseItemContent`, `useFalseUntilTruthy`, `NFadeInExpandTransition`][content] | Source-only render/transition group | No lazy mount/fade-height framework. | ⏭️ Intentionally omitted | Native details; CollapseTransition remains a separate later catalog route. |
+
+[a27]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L27
+[a28]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L28
+[a29]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L29
+[a30]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L30
+[a31]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L31
+[a32]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L32
+[a33]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L33
+[a34]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L34
+[a40]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L40
+[a41]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L41
+[a42]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L42
+[a43]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L43
+[a49]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L49
+[a50]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L50
+[a51]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L51
+[a57]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L57
+[a58]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L58
+[a59]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L59
+[a60]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/demos/enUS/index.demo-entry.md#L60
+[s87]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/src/Collapse.tsx#L87
+[s60]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/src/Collapse.tsx#L60-L78
+[types]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/src/interface.ts
+[collapse-type]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/src/Collapse.tsx#L81
+[item-type]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/src/CollapseItem.tsx#L33
+[s90]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/src/Collapse.tsx#L90-L103
+[item47]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/src/CollapseItem.tsx#L47-L50
+[content]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/collapse/src/CollapseItemContent.tsx
 
 <!-- END PINNED API INVENTORY -->
