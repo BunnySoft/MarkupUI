@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./popover": {
+      "types": "./dist/components/popover/index.d.ts",
+      "import": "./dist/markup-ui-popover.js"
+    },
+    "./popover/style.css": "./dist/markup-ui-popover.css",
     "./image": {
       "types": "./dist/components/image/index.d.ts",
       "import": "./dist/markup-ui-image.js"

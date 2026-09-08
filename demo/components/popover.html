@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Popover</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-popover.css">
+  <link rel="stylesheet" href="./popover.css">
+  <script defer src="../../dist/markup-ui-popover.global.js"></script>
+  <script defer src="./popover.js"></script>
+</head>
+<body>
+  <h1>Native nonmodal Popover</h1>
+  <p>Native buttons own click, Tab, Escape and outside dismissal. No focus trap or generated role. Without Popover support the panels remain readable in flow.</p>
+  <main>
+    <section>
+      <h2>Click and nested content</h2>
+      <form id="demo-form">
+        <label>Native required field <input name="note" required value="Retained input"></label>
+        <button type="button" id="click-trigger" popovertarget="click-panel" aria-controls="author-note" aria-describedby="author-note">Click information</button>
+        <span id="author-note">A nonmodal authored panel.</span>
+        <button type="submit" id="submit-button">Submit form</button>
+        <button type="reset" id="reset-button">Reset form</button>
+        <div class="mui-popover mui-popover--arrow mui-popover--animated" popover="auto" id="click-panel" aria-labelledby="click-heading">
+          <header><h2 id="click-heading">Authored heading</h2></header>
+          <p id="preserved">This node and its listeners are never replaced.</p>
+          <label>Panel field <input name="panel-note" value="Still in the form"></label>
+          <a href="#destination" id="panel-link">Normal link</a>
+          <button type="button" id="nested-trigger" popovertarget="nested-panel">Nested panel</button>
+          <div class="mui-popover" popover="auto" id="nested-panel" aria-label="Nested information">
+            <p>Escape dismisses this child before its parent.</p>
+            <button type="button" popovertarget="nested-panel" popovertargetaction="hide">Close child</button>
+          </div>
+          <footer><button type="button" id="close-click" popovertarget="click-panel" popovertargetaction="hide">Close information</button></footer>
+        </div>
+      </form>
+    </section>
+    <section class="modes">
+      <h2>Hover and focus</h2>
+      <button type="button" id="hover-trigger">Hover or focus (100/150ms)</button>
+      <div class="mui-popover mui-popover--arrow" popover="auto" id="hover-panel">
+        <p>Cross the gap without flicker. Tab can reach this content.</p>
+        <a href="#destination" id="hover-link">Hover panel link</a>
+      </div>
+      <a href="#destination" id="focus-trigger">Focus me; clicking still navigates</a>
+      <div class="mui-popover" popover="auto" id="focus-panel">
+        <p>Focus can move from the link into this panel.</p>
+        <button type="button" id="focus-action">Ordinary action</button>
+      </div>
+    </section>
+    <section>
+      <h2>Manual visibility, explicit close</h2>
+      <button type="button" id="manual-trigger">Application open request</button>
+      <div class="mui-popover" popover="manual" id="manual-panel">
+        <p>Manual panels do not light-dismiss or close on Escape; use this close action.</p>
+        <button type="button" id="manual-close">Close manual panel</button>
+      </div>
+    </section>
+    <section>
+      <h2>Scroll clipping, RTL and edge flip</h2>
+      <div class="scroll-box" id="scroll-box" dir="rtl">
+        <div class="scroll-content">
+          <button type="button" id="edge-trigger" popovertarget="edge-panel">RTL start</button>
+          <div class="mui-popover mui-popover--arrow edge-panel" popover="auto" id="edge-panel">
+            <p>Forced local fallback. Top-layer content escapes this scroll box, but a completely clipped trigger closes it.</p>
+          </div>
+        </div>
+      </div>
+      <button type="button" id="edge-bottom" popovertarget="bottom-panel">Bottom edge flip</button>
+      <div class="mui-popover" popover="auto" id="bottom-panel"><p>The preferred bottom placement flips above when space is insufficient.</p></div>
+    </section>
+    <p id="destination">Ordinary navigation destination.</p>
+    <button type="button" id="outside">Outside focus target</button>
+    <output id="event-log" aria-live="polite"></output>
+  </main>
+</body>
+</html>

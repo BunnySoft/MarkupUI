@@ -5,6 +5,8 @@ Explicitly Verified retained targets, currently Avatar/Avatar Group in `9afc818`
 Button/ButtonGroup in `43dd57f`, Card in `cebc6d7`, Tag in `6605d29`, Badge in
 `69c9480`, Alert in `2a1eb42`, Empty in `27a435b`, Skeleton in `05c6546`, Spin in `6c7f35b`, Progress in `8d7757c`, Statistic in `1ed3a98`, Typography in `53d3974`, Icon in `829970d`, Gradient Text in `38dcf6f`, Ellipsis in `5fabe7f`, Page Header in `5f9faf3`, Divider in `2e1a6c0`, Flex in `720a92c`, Space in `d495a12`, and Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's linked retained records have implementation and acceptance evidence; the remaining
 catalog must not inherit that status.
+Popover now also has a [Verified retained native foundation](../components/popover.md);
+P3 as a whole remains in progress, with Tooltip next.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
 Use the [master migration plan](migration-plan.md) for phase dependencies and current execution
 evidence. Every component page now includes its own numbered task checklist, prerequisites and next task.
@@ -57,8 +59,8 @@ The numbered component checklists distinguish proposed work from accepted implem
 Avatar's four retained-scope tasks are checked using `9afc818`, Button's four using
 `43dd57f`, Card's four using `cebc6d7`, Tag's four using `6605d29`, and Badge's four using
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
-the other **248 tasks remain unchecked** after accepting Image's four retained-scope tasks.
-P2 retained scopes are reconciled; Popover foundation is recommended next before Tooltip/Popconfirm. Reconcile later implementation evidence
+Popover adds four accepted tasks; the other **244 tasks remain unchecked**.
+P2 retained scopes remain reconciled; Popover's P3 foundation is accepted and Tooltip is next. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
 ### Native browser capabilities reduce implementation scope
@@ -144,6 +146,10 @@ compositions and narrow optional imports. Track CSS and total loaded assets afte
 KaTeX, language highlighters, chart engines and QR packages must not appear as hidden dependencies.
 The catalog is a prioritization tool, not a promise to add every route to core.
 
+The component delivery sections below retain historical checkpoints; earlier statements
+that P2 was in progress describe those checkpoints, not the current dashboard. P2's
+31 retained adapted scopes are now accepted, and P3 is in progress after Popover.
+
 ### Avatar pilot: standalone delivery and registration order
 
 The accepted Avatar record reports a core measurement of **14,611 bytes gzip** against the
@@ -172,7 +178,7 @@ acceptance. Separate ESM/classic JavaScript ceilings are 4,000 gzip bytes each; 
 1,500-byte ceiling. Browser coverage is not all-browser certification or pixel parity.
 The reference Avatar page reconciles all **35 rows: 19 Verified adapted targets and
 16 Intentionally omitted contracts**. Button, Card, Tag, Badge, Alert, Empty, Skeleton, Spin, Progress, Statistic, Typography, Icon, Gradient Text, Ellipsis, Page Header, Divider, Flex, Space, Grid, Layout, List, Descriptions, Timeline, Breadcrumb, Thing, Table, Highlight, Affix, Result, Code, Scrollbar, Float Button and Image are also verified as recorded below;
-**Popover foundation is recommended next**, and the master plan owns
+**Popover's retained foundation is accepted; Tooltip is next**, and the master plan owns
 the sequential implementation/build/commit workflow.
 
 ### Button pilot: accepted native scope
@@ -867,11 +873,35 @@ One mode plus CSS costs **4,086 (ESM)** or **4,321 (classic)** gzip bytes. Core/
 The final catalog audit checked **all 96 routes and all 31 P2-assigned reference inventories**:
 no retained Planned/Not reviewed/In progress/Implemented rows remain on those pages.
 P2 is **Verified for its declared native scopes and omissions**, not full Naive UI or P6
-viewer parity. **19 P3-assigned routes remain Planned**, listed in the
-[master next-phase inventory](migration-plan.md#remaining-p3-inventory-after-image).
-Recommend **Popover foundation before Tooltip/Popconfirm/Dropdown**; no next component is
+viewer parity. At Image sign-off 19 P3-assigned routes remained Planned; **18 remain after
+Popover**, listed in the [master next-phase inventory](migration-plan.md#remaining-p3-inventory-after-popover).
+The Image sign-off recommended **Popover foundation before Tooltip/Popconfirm/Dropdown**; no next component was
 implemented in this Image change.
-Whole P2 remains incomplete pending its remaining catalog scope.
+P2 remains complete for its declared retained native scopes, not full upstream parity.
+
+### Popover: verified native nonmodal foundation
+
+[Popover's accepted record](../components/popover.md) adds a standalone native controller,
+local anchor/fallback placement and external CSS; core and plugins are unchanged. Native
+click commands own activation, auto popovers own light-dismiss/Escape/nesting, and the helper
+adds hover/focus retention and delays plus explicit manual control. Authored nodes, native
+forms/links and ARIA/style ownership survive teardown. Portalled nesting is rejected.
+
+The [reference tracker](components/popover.md) preserves all 38 original owner/name/source
+identities and adds 11 source-only supplements: **28 Verified adapted targets, 21 omissions**.
+No controlled Vue props/default-show, renderer/provider/teleport, x/y virtual anchor, exact
+arrow-center/wrapper, outside-reason callback or top-layer z-index management is claimed.
+Four accepted tasks bring the index to **140/384**, across **35 pages**, with **3,233 API
+tracker rows**. P3/P3-02/P3-04 are in progress, not complete; **Tooltip is next**.
+
+**91 targeted integration tests** (52 Popover) and Chromium cover native click/keyboard/
+Tab/dismissal/nesting, hover/focus/manual timing, forms/links, scroll/resize/clipping/RTL,
+anchors and measured fallback, 320px boundaries, emulated 2x visual viewport, motion/print/
+forced colors, state ownership/reconnect, unsupported static fallback, no-JS native click,
+separate documents and both legacy load orders. No all-browser/AT certification is claimed.
+ESM/classic/CSS measure **3,853/3,922/904 gzip bytes** against independent **4,000/4,000/1,000**
+ceilings. One JS format plus CSS costs **4,757 (ESM)** or **4,826 (classic)** gzip bytes.
+Core/advanced/widgets stay **14,611/2,181/2,779**, with unchanged ceilings and zero dependencies.
 
 ## Common Components (15)
 
@@ -972,7 +1002,7 @@ Whole P2 remains incomplete pending its remaining catalog scope.
 | [Modal](components/modal.md) | 🔵 Planned | Shared controller only | P3 |
 | [Notification](components/notification.md) | 🔵 Planned | Partial service | P3 |
 | [Popconfirm](components/popconfirm.md) | 🔵 Planned | Related popover/button | P3 |
-| [Popover](components/popover.md) | 🔵 Planned | Partial core | P3 |
+| [Popover](components/popover.md) | 🟢 Verified native scope; 21 explicit omissions | Native triggers/top layer/anchor fallback; [accepted evidence](../components/popover.md) | P3 |
 | [Popselect](components/popselect.md) | 🔵 Planned | Related popover/select | P5 |
 | [Progress](components/progress.md) | 🟢 Verified retained scope; 4 explicit omissions | Standalone native Progress; [accepted evidence](../components/progress.md), legacy core preserved | P2 |
 | [Result](components/result.md) | 🟢 Verified retained native scope; 4 explicit omissions | Authored outcome/artwork/actions with CSS palettes; [accepted evidence](../components/result.md) | P2 |
@@ -1040,15 +1070,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 738: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 191 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image source supplements |
+| Supplementary named declarations | 749: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 202 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover source supplements |
 | Explicit inherited tracker rows | 264 |
-| Total tracker rows | 3,222; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 136 retained-scope tasks accepted across 34 component pages, 248 unchecked |
+| Total tracker rows | 3,233; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 140 retained-scope tasks accepted across 35 component pages, 244 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,222 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button and 41 Image Verified adapted targets cite acceptance |
-| Source agreement | All 2,220 direct source rows remain covered; 62 unchanged inventories match extraction; the 34 accepted pages preserve named/grouped identities with explicit dispositions |
-| Local links | Relative file links validated after Image reconciliation; the historical 612-link snapshot also checked heading anchors |
+| Status presentation | All 3,233 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image and 28 Popover Verified adapted targets cite acceptance |
+| Source agreement | All 2,220 direct source rows remain covered; 61 unchanged inventories match extraction; the 35 accepted pages preserve named/grouped identities with explicit dispositions |
+| Local links | Relative file links validated after Popover reconciliation; the historical 612-link snapshot also checked heading anchors |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

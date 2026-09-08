@@ -1,0 +1,15 @@
+body { margin: 2rem; font: 1rem/1.5 system-ui, sans-serif; background: #f5f7fb; color: #18202c; }
+main { max-width: 65rem; }
+section { margin-block: 2rem; }
+button, input { font: inherit; }
+button, a { margin: .3rem; }
+button { padding: .4rem .7rem; }
+label { display: block; margin-block: .5rem; }
+.mui-popover p { margin-block: .25rem .75rem; }
+.mui-popover a { display: inline-block; }
+.scroll-box { overflow: auto; width: min(26rem, 90vw); height: 9rem; border: 2px solid #8290a2; }
+.scroll-content { height: 22rem; padding: 1rem; }
+.edge-panel { --mui-popover-max-width: 18rem; }
+#edge-bottom { position: fixed; bottom: 8px; right: 8px; }
+#event-log { display: block; min-height: 1.5em; }
+@media (max-width: 30rem) { body { margin: 1rem; } }

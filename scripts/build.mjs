@@ -22,8 +22,8 @@ const shared = {
   sourcemap: true,
   target: ["es2022"],
 }
-const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image"]
-const classicEntries = { progress: "global.ts" }
+const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image", "popover"]
+const classicEntries = { progress: "global.ts", popover: "global.ts" }
 const styleOnlyComponents = ["typography", "icon", "gradient-text", "ellipsis", "page-header", "divider", "flex", "space", "grid", "layout", "list", "descriptions", "timeline", "breadcrumb", "thing", "table", "affix", "result", "code", "scrollbar", "float-button"]
 
 await Promise.all([
@@ -149,6 +149,9 @@ const bundleBudgets = {
   "markup-ui-image.js": 4_000,
   "markup-ui-image.global.js": 4_000,
   "markup-ui-image.css": 1_000,
+  "markup-ui-popover.js": 4_000,
+  "markup-ui-popover.global.js": 4_000,
+  "markup-ui-popover.css": 1_000,
 }
 const bundles = {}
 

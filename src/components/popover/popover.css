@@ -1,0 +1,63 @@
+.mui-popover {
+  box-sizing: border-box;
+  width: max-content;
+  max-width: min(var(--mui-popover-max-width, 24rem), var(--mui-popover-available-width, calc(100vw - 16px)));
+  max-height: var(--mui-popover-available-height, calc(100dvh - 16px));
+  overflow: auto;
+  padding: var(--mui-popover-padding, 1rem);
+  border: 1px solid var(--mui-popover-border, #8b929e);
+  border-radius: var(--mui-popover-radius, .5rem);
+  color: var(--mui-popover-color, #18202c);
+  background: var(--mui-popover-background, #fff);
+  box-shadow: 0 .25rem 1rem #0002;
+  overflow-wrap: anywhere;
+}
+.mui-popover[popover]:popover-open {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+}
+.mui-popover--raw {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.mui-popover header, .mui-popover footer { display: block; }
+.mui-popover footer { margin-block-start: .75rem; }
+.mui-popover h2 { margin-block: 0 .5rem; font-size: 1.1em; }
+.mui-popover--animated:popover-open { animation: mui-popover-appear 100ms ease-out; }
+/* Inset arrows avoid clipped overflow and never create an interactive pseudo-element. */
+.mui-popover--arrow[data-popover-arrow="visible"]::before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: .45rem;
+  height: .45rem;
+  background: currentColor;
+  pointer-events: none;
+  opacity: .55;
+}
+.mui-popover--arrow[data-popover-placement^="bottom"]::before { top: 2px; left: calc(50% - .225rem); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.mui-popover--arrow[data-popover-placement^="top"]::before { bottom: 2px; left: calc(50% - .225rem); clip-path: polygon(0 0, 100% 0, 50% 100%); }
+.mui-popover--arrow[data-popover-placement^="right"]::before { left: 2px; top: calc(50% - .225rem); clip-path: polygon(0 50%, 100% 0, 100% 100%); }
+.mui-popover--arrow[data-popover-placement^="left"]::before { right: 2px; top: calc(50% - .225rem); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+@keyframes mui-popover-appear { from { opacity: .65; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .mui-popover--animated:popover-open { animation: none; } }
+@media (forced-colors: active) {
+  .mui-popover { border: 1px solid CanvasText; color: CanvasText; background: Canvas; box-shadow: none; }
+}
+@media print {
+  .mui-popover, .mui-popover[popover]:popover-open {
+    position: static !important;
+    inset: auto !important;
+    display: block !important;
+    width: auto;
+    max-width: none;
+    max-height: none;
+    overflow: visible;
+    box-shadow: none;
+    animation: none;
+  }
+  .mui-popover::before { display: none !important; }
+}
