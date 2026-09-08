@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./popconfirm": {
+      "types": "./dist/components/popconfirm/index.d.ts",
+      "import": "./dist/markup-ui-popconfirm.js"
+    },
+    "./popconfirm/style.css": "./dist/markup-ui-popconfirm.css",
     "./tooltip": {
       "types": "./dist/components/tooltip/index.d.ts",
       "import": "./dist/markup-ui-tooltip.js"

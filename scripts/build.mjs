@@ -22,8 +22,8 @@ const shared = {
   sourcemap: true,
   target: ["es2022"],
 }
-const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image", "popover", "tooltip"]
-const classicEntries = { progress: "global.ts", popover: "global.ts", tooltip: "global.ts" }
+const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image", "popover", "tooltip", "popconfirm"]
+const classicEntries = { progress: "global.ts", popover: "global.ts", tooltip: "global.ts", popconfirm: "global.ts" }
 const styleOnlyComponents = ["typography", "icon", "gradient-text", "ellipsis", "page-header", "divider", "flex", "space", "grid", "layout", "list", "descriptions", "timeline", "breadcrumb", "thing", "table", "affix", "result", "code", "scrollbar", "float-button"]
 
 await Promise.all([
@@ -83,7 +83,7 @@ await Promise.all([
 await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
   const source = resolve(root, "src", "components", name, `${name}.css`)
   const output = resolve(dist, `markup-ui-${name}.css`)
-  if (name === "tooltip") {
+  if (name === "tooltip" || name === "popconfirm") {
     const base = await readFile(resolve(root, "src", "components", "popover", "popover.css"), "utf8")
     await writeFile(output, `${base}\n${await readFile(source, "utf8")}`)
   } else await copyFile(source, output)
@@ -160,6 +160,9 @@ const bundleBudgets = {
   "markup-ui-tooltip.js": 5_000,
   "markup-ui-tooltip.global.js": 5_000,
   "markup-ui-tooltip.css": 1_250,
+  "markup-ui-popconfirm.js": 6_500,
+  "markup-ui-popconfirm.global.js": 6_500,
+  "markup-ui-popconfirm.css": 1_250,
 }
 const bundles = {}
 

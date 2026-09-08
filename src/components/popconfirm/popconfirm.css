@@ -1,0 +1,14 @@
+/* The build prepends maintained Popover CSS, without a runtime relative import. */
+.mui-popconfirm { --mui-popover-max-width: 26rem; }
+.mui-popconfirm [data-popconfirm-actions] { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .5rem; margin-block-start: 1rem; }
+.mui-popconfirm [data-popconfirm-icon] { color: var(--mui-popconfirm-icon-color, #8a4b00); margin-inline-end: .5rem; }
+.mui-popconfirm [data-popconfirm-content] { margin-block: .5rem; }
+.mui-popconfirm [data-popconfirm-pending],
+.mui-popconfirm [data-popconfirm-error],
+.mui-popconfirm [data-popconfirm-complete] { margin-block: .75rem 0; }
+.mui-popconfirm [data-popconfirm-error] { color: var(--mui-popconfirm-error-color, #a51f2b); }
+.mui-popconfirm [data-popconfirm-actions] button { font: inherit; }
+.mui-popconfirm[data-popconfirm-state="pending"] [data-popconfirm-actions] button:disabled { cursor: wait; }
+@media (forced-colors: active) {
+  .mui-popconfirm [data-popconfirm-icon], .mui-popconfirm [data-popconfirm-error] { color: CanvasText; }
+}

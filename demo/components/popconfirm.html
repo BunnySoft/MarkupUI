@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Popconfirm</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-popconfirm.css">
+  <link rel="stylesheet" href="./popconfirm.css">
+  <script defer src="../../dist/markup-ui-popconfirm.global.js"></script>
+  <script defer src="../../dist/markup-ui-popover.global.js"></script>
+  <script defer src="./popconfirm.js"></script>
+</head>
+<body>
+  <h1>Native nonmodal confirmation</h1>
+  <p>All actions below are local simulations. No backend, deletion, payment or external request is performed.</p>
+  <noscript><p>The local confirmation callbacks need JavaScript. No draft is changed when scripting is unavailable.</p></noscript>
+  <main>
+    <section>
+      <h2>Promise outcomes and native form ownership</h2>
+      <form id="demo-form">
+        <label>Draft title <input id="draft-title" name="draft" value="Local draft" required></label>
+        <button type="button" id="main-trigger" popovertarget="main-panel">Review local preview</button>
+        <button type="submit" id="submit-form">Submit ordinary form</button>
+        <button type="reset" id="reset-form">Reset form</button>
+        <div class="mui-popover mui-popconfirm mui-popover--arrow mui-popover--animated" id="main-panel" popover="auto" role="dialog" aria-labelledby="main-heading" aria-describedby="main-description">
+          <h2 id="main-heading"><span data-popconfirm-icon aria-hidden="true">?</span>Update this local preview?</h2>
+          <p id="main-description" data-popconfirm-content>The draft itself is not sent anywhere. This original <strong id="preserved-text">description</strong> stays authored.</p>
+          <label>Simulated positive result
+            <select id="outcome"><option value="success">Success after 450ms</option><option value="false">Return false and stay open</option><option value="reject">Reject with an error</option><option value="slow">Slow success after 1400ms</option><option value="slow-reject">Slow rejection after 1400ms</option></select>
+          </label>
+          <div data-popconfirm-actions>
+            <button type="button" data-popconfirm-negative id="main-negative">Keep draft</button>
+            <button type="button" data-popconfirm-positive id="main-positive"><span aria-hidden="true">✓</span> Update preview</button>
+          </div>
+          <p data-popconfirm-pending role="status" hidden>Working locally. Escape or clicking outside may dismiss this panel.</p>
+          <p data-popconfirm-error role="alert" hidden>The local simulation failed. Choose another outcome and try again.</p>
+          <p data-popconfirm-complete role="status" hidden>The inline decision completed. No popup support was required.</p>
+        </div>
+      </form>
+      <button type="button" id="outside">Outside focus target</button>
+      <output id="result-log" aria-live="polite">No local action yet.</output>
+    </section>
+    <section>
+      <h2>Nested confirmation with custom native action markup</h2>
+      <button type="button" id="parent-trigger" popovertarget="parent-panel">Open rich parent</button>
+      <div class="mui-popover" id="parent-panel" popover="auto" aria-label="Local parent panel">
+        <p>This parent is a regular Popover.</p>
+        <button type="button" id="nested-trigger" popovertarget="nested-panel">Review nested choice</button>
+        <div class="mui-popover mui-popconfirm" id="nested-panel" popover="auto" role="dialog" aria-label="Nested local choice" aria-describedby="nested-description">
+          <p id="nested-description" data-popconfirm-content>Apply this local display preference?</p>
+          <footer data-popconfirm-actions><span><button type="button" data-popconfirm-negative>Leave unchanged</button></span><strong><button type="button" data-popconfirm-positive>Apply locally</button></strong></footer>
+          <p data-popconfirm-pending role="status" hidden>Checking the local choice.</p>
+          <p data-popconfirm-error role="alert" hidden>The local choice could not be applied.</p>
+          <p data-popconfirm-complete role="status" hidden>The inline local choice finished.</p>
+        </div>
+        <button type="button" popovertarget="parent-panel" popovertargetaction="hide">Close parent</button>
+      </div>
+    </section>
+    <section>
+      <h2>RTL scroll boundary</h2>
+      <div id="scroll-box" class="scroll-box" dir="rtl"><div class="scroll-content">
+        <button type="button" id="edge-trigger" popovertarget="edge-panel">RTL local choice</button>
+        <div class="mui-popover mui-popconfirm" id="edge-panel" popover="auto" role="dialog" aria-label="RTL local choice" aria-describedby="edge-description">
+          <p id="edge-description" data-popconfirm-content>Keep this native alignment?</p>
+          <div data-popconfirm-actions><button type="button" data-popconfirm-negative>Cancel</button><button type="button" data-popconfirm-positive>Keep alignment</button></div>
+          <p data-popconfirm-pending role="status" hidden>Checking locally.</p>
+          <p data-popconfirm-error role="alert" hidden>Local check failed.</p>
+          <p data-popconfirm-complete role="status" hidden>Inline check completed.</p>
+        </div>
+      </div></div>
+    </section>
+    <button type="button" id="bottom-trigger" popovertarget="bottom-panel">Bottom edge confirmation</button>
+    <div class="mui-popover mui-popconfirm" id="bottom-panel" popover="auto" role="dialog" aria-label="Edge local choice" aria-describedby="bottom-description">
+      <p id="bottom-description" data-popconfirm-content>Apply the edge example?</p>
+      <div data-popconfirm-actions><button type="button" data-popconfirm-negative>No</button><button type="button" data-popconfirm-positive>Yes, locally</button></div>
+      <p data-popconfirm-pending role="status" hidden>Checking locally.</p>
+      <p data-popconfirm-error role="alert" hidden>Local check failed.</p>
+      <p data-popconfirm-complete role="status" hidden>Inline check completed.</p>
+    </div>
+  </main>
+</body>
+</html>
