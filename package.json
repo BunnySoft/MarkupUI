@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./notification": {
+      "types": "./dist/components/notification/index.d.ts",
+      "import": "./dist/markup-ui-notification.js"
+    },
+    "./notification/style.css": "./dist/markup-ui-notification.css",
     "./message": {
       "types": "./dist/components/message/index.d.ts",
       "import": "./dist/markup-ui-message.js"

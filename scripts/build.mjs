@@ -22,8 +22,8 @@ const shared = {
   sourcemap: true,
   target: ["es2022"],
 }
-const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image", "popover", "tooltip", "popconfirm", "dropdown", "menu", "tabs", "collapse", "anchor", "back-top", "pagination", "steps", "loading-bar", "dialog", "modal", "drawer", "message"]
-const classicEntries = { progress: "global.ts", popover: "global.ts", tooltip: "global.ts", popconfirm: "global.ts", dropdown: "global.ts", menu: "global.ts", tabs: "global.ts", collapse: "global.ts", anchor: "global.ts", "back-top": "global.ts", pagination: "global.ts", steps: "global.ts", "loading-bar": "global.ts", dialog: "global.ts", modal: "global.ts", drawer: "global.ts", message: "global.ts" }
+const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image", "popover", "tooltip", "popconfirm", "dropdown", "menu", "tabs", "collapse", "anchor", "back-top", "pagination", "steps", "loading-bar", "dialog", "modal", "drawer", "message", "notification"]
+const classicEntries = { progress: "global.ts", popover: "global.ts", tooltip: "global.ts", popconfirm: "global.ts", dropdown: "global.ts", menu: "global.ts", tabs: "global.ts", collapse: "global.ts", anchor: "global.ts", "back-top": "global.ts", pagination: "global.ts", steps: "global.ts", "loading-bar": "global.ts", dialog: "global.ts", modal: "global.ts", drawer: "global.ts", message: "global.ts", notification: "global.ts" }
 const styleOnlyComponents = ["typography", "icon", "gradient-text", "ellipsis", "page-header", "divider", "flex", "space", "grid", "layout", "list", "descriptions", "timeline", "breadcrumb", "thing", "table", "affix", "result", "code", "scrollbar", "float-button"]
 
 await Promise.all([
@@ -89,7 +89,7 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
   } else if (name === "dialog" || name === "modal" || name === "drawer") {
     const base = await readFile(resolve(root, "src", "components", "dialog", "native.css"), "utf8")
     await writeFile(output, `${base}\n${await readFile(source, "utf8")}`)
-  } else if (name === "message") {
+  } else if (name === "message" || name === "notification") {
     const base = await readFile(resolve(root, "src", "components", "feedback", "feedback.css"), "utf8")
     await writeFile(output, `${base}\n${await readFile(source, "utf8")}`)
   } else await copyFile(source, output)
@@ -97,6 +97,9 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-notification.js": 6_500,
+  "markup-ui-notification.global.js": 6_500,
+  "markup-ui-notification.css": 2_000,
   "markup-ui-message.js": 6_000,
   "markup-ui-message.global.js": 6_000,
   "markup-ui-message.css": 1_750,

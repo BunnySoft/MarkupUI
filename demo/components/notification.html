@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI root-owned Notification</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-notification.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-modal.css">
+  <link rel="stylesheet" href="notification.css">
+  <script src="../../dist/markup-ui-notification.global.js" defer></script>
+  <script src="../../dist/markup-ui-modal.global.js" defer></script>
+  <script src="notification.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>Notification: authored cards, explicit owners</h1>
+    <article class="mui-notification baseline" aria-labelledby="baseline-title">
+      <header data-notification-header><strong data-notification-kind>Information</strong><h2 data-notification-title id="baseline-title">Native baseline</h2></header>
+      <p data-notification-content>Readable authored content without scripts. No OS notification permissions or side effects.</p>
+      <div data-notification-actions><a href="#details">Read local details</a></div>
+    </article>
+    <div id="controls" hidden>
+      <label>Close outcome <select id="behavior"><option value="accept">Accept</option><option value="false">Return false</option><option value="reject">Reject Promise</option><option value="throw">Throw</option><option value="slow">Accept after 800ms</option></select></label>
+      <label>Duration <select id="duration"><option value="0">Persistent</option><option value="800">800 milliseconds</option><option value="3000">3 seconds</option></select></label>
+      <label>Placement <select id="placement"><option>top-right</option><option>top-left</option><option>bottom-right</option><option>bottom-left</option><option>top</option><option>bottom</option></select></label>
+      <div id="types" class="buttons">
+        <button type="button" id="create" data-type="create">Create notification</button><button type="button" data-type="info">Info</button>
+        <button type="button" data-type="success">Success</button><button type="button" data-type="warning">Warning</button><button type="button" data-type="error">Error</button>
+      </div>
+      <div class="buttons">
+        <button type="button" id="update">Update last card</button><button type="button" id="destroy-last">Destroy last</button>
+        <button type="button" id="clear">Destroy fixed cards</button><button type="button" id="inline-create">Create silent inline card</button>
+        <button type="button" id="open-modal">Open modal-local host</button>
+      </div>
+    </div>
+    <p id="operation-error" role="status"></p>
+    <p id="events">Only local simulated close decisions are used.</p>
+    <label>Unrelated native field <input id="outside-field"></label>
+    <section id="details"><h2>Local details</h2><p>Actions stay native links, buttons and forms, not a card-wide clickable surface.</p></section>
+    <div id="inline-host" class="mui-feedback-host mui-notification-host">
+      <div class="mui-feedback-list" data-notification-items></div>
+      <p class="mui-feedback-announcer" data-notification-announcer role="status" aria-live="off" aria-atomic="true"></p>
+    </div>
+    <p class="page-tail">A native modal has its own inside host; fixed CSS does not cross its top layer.</p>
+  </main>
+  <div id="fixed-host" class="mui-feedback-host mui-feedback-host--fixed mui-notification-host" data-feedback-placement="top-right">
+    <div class="mui-feedback-list" data-notification-items></div>
+    <p class="mui-feedback-announcer" data-notification-announcer role="status" aria-atomic="true"></p>
+  </div>
+  <dialog id="local-modal" class="mui-native-dialog mui-modal" aria-labelledby="modal-title">
+    <h2 data-modal-title id="modal-title">Modal-local notifications</h2>
+    <button type="button" id="inside-create" autofocus>Create inside card</button><p id="inside-error" role="status"></p>
+    <div id="inside-host" class="mui-feedback-host mui-notification-host">
+      <div class="mui-feedback-list" data-notification-items></div>
+      <p class="mui-feedback-announcer" data-notification-announcer role="status" aria-atomic="true"></p>
+    </div>
+    <form method="dialog"><button value="closed">Close modal</button></form>
+  </dialog>
+  <template id="notification-template">
+    <article class="mui-notification" aria-label="Local project notification">
+      <span data-notification-avatar aria-hidden="true">AB</span>
+      <header data-notification-header><strong data-notification-kind></strong><h3 data-notification-title>Authored project heading</h3></header>
+      <button type="button" data-notification-close aria-label="Dismiss project notification">×</button>
+      <p data-notification-description></p><p data-notification-content>Authored content</p><small data-notification-meta></small>
+      <p data-notification-action-text></p>
+      <div data-notification-actions>
+        <a href="#details">Read local details</a>
+        <form><label>Local reference <input name="reference" required></label><button type="submit">Use reference locally</button></form>
+      </div>
+      <p data-notification-pending hidden>Waiting for close approval…</p>
+      <p data-notification-error hidden>The local close decision failed. Try again.</p>
+    </article>
+  </template>
+</body>
+</html>

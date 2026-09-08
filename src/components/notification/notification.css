@@ -1,0 +1,48 @@
+.mui-notification-host { --mui-feedback-width: 28rem; }
+.mui-notification-host.mui-feedback-host--fixed:not([data-feedback-placement]) { right: 1rem; left: auto; margin-inline: 0; }
+.mui-notification {
+  --mui-notification-accent: #315ba6;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: .6rem .75rem;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  padding: 1rem;
+  border: 1px solid var(--mui-notification-border, #9ba6b5);
+  border-inline-start: .25rem solid var(--mui-notification-accent);
+  border-radius: .6rem;
+  background: var(--mui-notification-background, #fff);
+  color: var(--mui-notification-color, #20252b);
+  box-shadow: 0 .3rem 1rem rgb(0 0 0 / 15%);
+  font: inherit;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.mui-notification[data-notification-type="success"] { --mui-notification-accent: #176a43; }
+.mui-notification[data-notification-type="warning"] { --mui-notification-accent: #835000; }
+.mui-notification[data-notification-type="error"] { --mui-notification-accent: #ac2635; }
+.mui-notification :is([data-notification-avatar], [data-notification-icon]) { grid-column: 1; grid-row: 1; max-inline-size: 3rem; color: var(--mui-notification-accent); font-weight: 700; }
+.mui-notification [data-notification-avatar] img { display: block; max-inline-size: 100%; block-size: auto; }
+.mui-notification [data-notification-header] { grid-column: 2; min-inline-size: 0; }
+.mui-notification [data-notification-kind] { display: block; font-size: .875em; color: var(--mui-notification-accent); }
+.mui-notification [data-notification-title] { margin: 0; font: inherit; font-weight: 700; font-size: 1.15em; }
+.mui-notification [data-notification-close] { grid-column: 3; grid-row: 1; min-inline-size: 2.5rem; min-block-size: 2.5rem; }
+.mui-notification :is([data-notification-description], [data-notification-content], [data-notification-meta], [data-notification-action-text]) { grid-column: 2 / -1; min-inline-size: 0; margin: 0; }
+.mui-notification [data-notification-content] { white-space: pre-wrap; }
+.mui-notification [data-notification-meta] { font-size: .875em; }
+.mui-notification :is([data-notification-actions], [data-notification-pending], [data-notification-error]) { grid-column: 1 / -1; min-inline-size: 0; margin: 0; }
+.mui-notification [data-notification-actions] { display: flex; flex-wrap: wrap; gap: .5rem; }
+.mui-notification [data-notification-actions] > * { min-inline-size: 0; max-inline-size: 100%; }
+.mui-notification :is(button, input, select, textarea) { box-sizing: border-box; font: inherit; max-inline-size: 100%; min-inline-size: 0; }
+.mui-notification button { min-block-size: 2.5rem; }
+.mui-notification [data-notification-error] { border-inline-start: .25rem solid #ac2635; padding-inline-start: .5rem; }
+.mui-notification :focus-visible { outline: 2px solid var(--mui-notification-accent); outline-offset: -2px; }
+.mui-notification [hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) { .mui-notification { animation: none; transition: none; } }
+@media (forced-colors: active) {
+  .mui-notification { border-color: CanvasText; box-shadow: none; }
+  .mui-notification :is([data-notification-icon], [data-notification-avatar], [data-notification-kind]) { color: CanvasText; }
+  .mui-notification [data-notification-error] { border-color: CanvasText; }
+}
+@media print { .mui-notification { box-shadow: none; break-inside: avoid; } }
