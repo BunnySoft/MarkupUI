@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./highlight": {
+      "types": "./dist/components/highlight/index.d.ts",
+      "import": "./dist/markup-ui-highlight.js"
+    },
+    "./highlight/style.css": "./dist/markup-ui-highlight.css",
     "./table/style.css": "./dist/markup-ui-table.css",
     "./thing/style.css": "./dist/markup-ui-thing.css",
     "./breadcrumb/style.css": "./dist/markup-ui-breadcrumb.css",

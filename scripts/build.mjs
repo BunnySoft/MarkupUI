@@ -22,7 +22,7 @@ const shared = {
   sourcemap: true,
   target: ["es2022"],
 }
-const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic"]
+const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight"]
 const classicEntries = { progress: "global.ts" }
 const styleOnlyComponents = ["typography", "icon", "gradient-text", "ellipsis", "page-header", "divider", "flex", "space", "grid", "layout", "list", "descriptions", "timeline", "breadcrumb", "thing", "table"]
 
@@ -138,6 +138,9 @@ const bundleBudgets = {
   "markup-ui-breadcrumb.css": 1_500,
   "markup-ui-thing.css": 1_000,
   "markup-ui-table.css": 1_500,
+  "markup-ui-highlight.js": 2_000,
+  "markup-ui-highlight.global.js": 2_000,
+  "markup-ui-highlight.css": 750,
 }
 const bundles = {}
 

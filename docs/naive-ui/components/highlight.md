@@ -1,35 +1,41 @@
 # Highlight
 
-**Plan: Planned. Current baseline: no text-match highlighter identified.**
+**Plan: 🟢 Verified for bounded literal matching; two full-row omissions plus an explicit raw-regexp-mode exclusion.**
 
 ## Baseline and target
 
-[B1: registry](../../../src/components/elements.ts) has no highlight component.
+[B1: registry](../../../src/components/elements.ts) still has no Highlight element.
+The accepted implementation is an optional stateless helper, not a new custom-element controller.
 
-- **HTML:** text nodes with native `mark` around matched ranges.
-- **JS:** optional literal matching with explicit case/overlap rules; preserve text and never parse it as HTML.
-- **CSS:** external mark color and contrast.
-- **Placement:** proposed `src/optional/highlight/`; not a syntax-highlighting engine.
+- **HTML:** native text/mark nodes inside an explicitly owned HTML span.
+- **JS:** bounded literal matching with case/overlap/UTF-16 rules, immutable input handling and explicit updates; no HTML parsing.
+- **CSS:** independent mark colors, whitespace/wrapping, forced-color and print rules.
+- **Placement:** [helper source](../../../src/components/highlight/highlight.ts), [CSS](../../../src/components/highlight/highlight.css), ESM/classic helpers and [native demo](../../../demo/components/highlight.html); not Code syntax highlighting.
 
 ## Acceptance and gaps
 
-Test repeated/overlapping patterns, Unicode, empty patterns, escaping and live updates. Regex or locale-sensitive expansion requires separate scope.
+The [canonical acceptance record](../../components/highlight.md) reports 494 passing tests
+(27 Highlight cases), build/budget gates and Chromium matching/selection/ownership/hidden/
+RTL/narrow/zoom/print/forced-colors/module/classic/coexistence/no-JS evidence.
+ESM/classic/CSS are 1,169/1,401/345 gzip bytes; core and other bundles remain unchanged.
+Arbitrary regex, locale/full case expansion, rich-child preservation and tag/style render
+contracts are intentionally outside the retained scope.
 
 ## Migration steps
 
-**Delivery phase:** P2 — text enhancement. **Task state:** 🔵 Planned.
+**Delivery phase:** P2 — text enhancement. **Task state:** 🟢 Verified retained scope.
 **Prerequisites:** P0 safe text handling and P2 Typography in the [master plan](../migration-plan.md).
-**Next task:** choose literal matching semantics for repeated, overlapping and case-sensitive patterns.
+**Next task:** Affix. Six P2-assigned catalog rows remain Planned; full P2 is not complete.
 
-1. [ ] **Preserve source text.** Wrap only matched text ranges in native mark elements; never treat input text as HTML.
-2. [ ] **Define match updates.** Resolve empty patterns, overlap precedence and changes without destroying unrelated authored nodes.
-3. [ ] **Extract mark styling.** Use external contrast-safe highlights and keep plain text readable without CSS.
-4. [ ] **Test text boundaries.** Cover Unicode, repeated patterns, literal regex characters, escaped markup and live updates; defer language parsing.
+1. [x] **Preserve source text.** Original slices become native text/mark nodes, never parsed HTML; the dedicated span explicitly owns/replaces its children.
+2. [x] **Define match updates.** Empty/duplicate patterns, order-based overlap, bounded work and explicit update/clear behavior; surrounding host/parent nodes remain intact.
+3. [x] **Extract mark styling.** Independent CSS with native-mark/no-JS, wrapping, print and forced-color paths.
+4. [x] **Test text boundaries.** Unicode/code-unit offsets, literal metacharacters/HTML, atomic errors, selection and module/classic/browser evidence accepted.
 
 ### Native primitives and fallback
 
-- **Native path:** text nodes and native `mark` elements represent literal matches; use explicit DOM ranges/node splitting rather than evaluating a template or injecting HTML.
-- **Small enhancement:** a small optional custom element updates matches and cleans owned listeners when needed. CSS styles marks, with readable unhighlighted text as fallback. Any advanced native text-highlighting capability must be feature-detected; lack of support reduces decoration rather than requiring a syntax/highlight polyfill.
+- **Native path:** authored mark/text works alone. Automatic rendering uses fixed native mark creation and original text slices in a dedicated HTML span.
+- **Small enhancement:** explicit stateless findHighlightRanges/highlightText helpers, with no attribute/pre-upgrade/reconnect protocol, listeners, observers, timers or global highlight registry to clean up. Successful calls replace owned children; selection/caret persistence across updates and unrelated rich-child/listener preservation are not promised.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
@@ -41,23 +47,24 @@ Test repeated/overlapping patterns, Unicode, empty patterns, escaping and live u
 - [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
 
 Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **7 local table rows + 0 supplementary declarations + 0 inherited rows = 7 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
+Documentation inventory: **7 original local table rows + 0 supplementary declarations + 0 inherited rows = 7 tracker rows**.
+All original identities remain: **5 Verified ADAPTED targets and 2 fully Intentionally
+omitted rows**. The adapted auto-escape row additionally excludes raw-regexp false mode.
+Reviewed source adds no separate public prop/slot/event surface: HighlightProps derives
+these same fields, the splitting utility is internal, and there are no useTheme.props
+declarations. Local helper APIs/limits are documented separately, not invented upstream rows.
 
 
 ### Highlight Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | Retained MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`auto-escape`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L22) | Prop | Candidate presence attribute `auto-escape`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`case-sensitive`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L23) | Prop | Candidate presence attribute `case-sensitive`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`highlight-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L24) | Prop | Candidate `highlight-class` attribute or JS `highlightClass`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`highlight-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L25) | Prop | External CSS class/custom property for `highlight-style`; no inline style-object passthrough. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`highlight-tag`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L26) | Prop | Candidate `highlight-tag` attribute or JS `highlightTag`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`patterns`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L27) | Prop | Candidate JS `patterns` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`text`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L28) | Prop | Candidate `text` attribute or JS `text`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`auto-escape`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L22) | Prop | Always-literal safe-default behavior; no autoEscape switch. Raw-regexp false mode is intentionally excluded. | 🟢 Verified ADAPTED literal path | Metacharacters/HTML/regex-looking strings stay literal; unknown autoEscape option throws before DOM mutation. Bounded native matching, no user regex program. |
+| [`case-sensitive`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L23) | Prop | caseSensitive boolean option; default false, explicit helper update. | 🟢 Verified ADAPTED target | Unicode simple folding with original UTF-16 offsets; never lowercase the whole text. No locale/full-fold/normalization promise. |
+| [`highlight-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L24) | Prop | highlightClass string option on native marks plus fixed mui-highlight-mark class. | 🟢 Verified ADAPTED target | Native class property, multiple classes, 256-unit bound and attribute-injection checks; no inline styles. |
+| [`highlight-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L25) | Prop | External classes/color tokens instead of object/string forwarding. | ⏭️ Intentionally omitted | No style-object bridge or CSS-in-JS; unsupported helper option rejected. |
+| [`highlight-tag`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L26) | Prop | Rendering always uses native mark; arbitrary tags/components are not accepted. | ⏭️ Intentionally omitted | No interactive/raw-text tag constructor or render callback; unsupported option rejected atomically. |
+| [`patterns`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L27) | Prop | Explicit readonly string array, default empty (also the source runtime default). | 🟢 Verified ADAPTED target | Empty entries ignored, exact duplicates removed, earliest/input-order/non-overlap rules; 64-pattern, length/work/output bounds. No mutation or attribute parser. |
+| [`text`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L28) | Prop | Explicit owned string argument, default empty; native text nodes only. | 🟢 Verified ADAPTED target | Exact text/selection after rendering, HTML safety, 65,536-unit bound, clear/update and error atomicity. Child content/listeners are intentionally replaced; host/parent preserved. |
 
 <!-- END PINNED API INVENTORY -->

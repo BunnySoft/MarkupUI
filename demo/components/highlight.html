@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native text Highlight</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-highlight.css">
+  <link rel="stylesheet" href="./highlight.css">
+  <script defer src="../../dist/markup-ui-highlight.global.js"></script>
+  <script defer src="./highlight.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Literal text Highlight</h1>
+    <p>Native marks and a small opt-in helper. This is not Code syntax highlighting or a regular-expression editor.</p>
+  </header>
+  <main>
+    <section aria-labelledby="editor-heading">
+      <h2 id="editor-heading">Explicit text-only matching surface</h2>
+      <form id="highlight-form">
+        <fieldset disabled id="matching-controls">
+          <legend>Literal matcher controls</legend>
+        <label for="text-input">Text</label>
+        <textarea id="text-input" name="text" rows="4" maxlength="65536">Atlas and atlas. Literal [a+b] stays text. &lt;b&gt;not HTML&lt;/b&gt;. İx x 😀.</textarea>
+        <label for="pattern-input">Literal patterns, one per line; empty lines are ignored</label>
+        <textarea id="pattern-input" name="patterns" rows="4" maxlength="4096">Atlas
+[a+b]
+x
+😀</textarea>
+        <div class="editor-actions">
+          <label><input id="case-sensitive" type="checkbox"> Case sensitive</label>
+          <label for="palette">Mark appearance</label>
+          <select id="palette"><option value="">Default</option><option value="demo-match">Custom class</option></select>
+          <button type="submit" id="apply-highlight">Apply matching</button>
+          <button type="button" id="clear-patterns">Clear patterns</button>
+        </div>
+        </fieldset>
+      </form>
+      <noscript><p>Automatic matching controls require JavaScript. Authored marks and navigation remain readable.</p></noscript>
+      <h3 id="preview-heading">Preview</h3>
+      <p id="feedback">Seven authored fallback marks; matching starts when the optional helper loads.</p>
+      <p id="error-message"></p>
+      <span class="mui-highlight preview" id="preview"><mark class="mui-highlight-mark">Atlas</mark> and <mark class="mui-highlight-mark">atlas</mark>. Literal <mark class="mui-highlight-mark">[a+b]</mark> stays te<mark class="mui-highlight-mark">x</mark>t. &lt;b&gt;not HTML&lt;/b&gt;. İ<mark class="mui-highlight-mark">x</mark> <mark class="mui-highlight-mark">x</mark> <mark class="mui-highlight-mark">😀</mark>.</span>
+      <p>Updates intentionally replace this span's children. Do not put unrelated rich content or child listeners inside it.</p>
+    </section>
+    <section aria-labelledby="native-heading">
+      <h2 id="native-heading">Authored marks without JavaScript</h2>
+      <p>A <mark class="mui-highlight-mark" id="static-mark">native mark</mark> remains ordinary readable text.</p>
+      <p><a href="#native-heading" id="native-link">Open <span class="mui-highlight" id="link-surface">Atlas notes</span></a> — the link and its listeners remain outside the owned text surface.</p>
+      <p dir="rtl" id="rtl-example"><span class="mui-highlight" id="rtl-surface">بحث Atlas بحث</span></p>
+      <p>Case-insensitive matching uses Unicode simple case folding, not locale-specific expansion or normalization.</p>
+    </section>
+    <span class="mui-highlight preview" hidden id="hidden-surface">Hidden fallback text</span>
+    <template class="mui-highlight" id="native-template">Inert authored template</template>
+    <p id="outside-content">Ordinary text outside the highlight surfaces.</p>
+  </main>
+</body>
+</html>

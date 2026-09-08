@@ -1,0 +1,23 @@
+body {
+  max-inline-size: 58rem;
+  margin: 2rem auto;
+  padding-inline: 1rem;
+  font: 1rem/1.5 system-ui, sans-serif;
+  overflow-wrap: anywhere;
+  color: #18181b;
+  background: #fafafa;
+}
+main > section { margin-block: 2rem; }
+h2, h3, p { margin-block: 0 .75rem; }
+fieldset { min-inline-size: 0; margin: 0; padding: 0; border: 0; }
+legend { margin-block-end: .5rem; font-weight: 600; }
+textarea { display: block; inline-size: 100%; margin-block: .25rem 1rem; }
+input, select, textarea, button { box-sizing: border-box; max-inline-size: 100%; font: inherit; }
+button { white-space: normal; overflow-wrap: anywhere; }
+.editor-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-block-end: 1rem; }
+.preview { display: block; min-block-size: 5rem; padding: 1rem; border: 1px solid #a1a1aa; }
+mark.demo-match { --mui-highlight-background: #dbeafe; --mui-highlight-color: #172554; }
+#error-message { color: #b91c1c; }
+@media print {
+  body { max-inline-size: none; margin: 0; background: transparent; }
+}
