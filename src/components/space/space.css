@@ -1,0 +1,33 @@
+.mui-space {
+  --_mui-space-row-gap: 8px;
+  --_mui-space-column-gap: 12px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: var(--mui-space-align, normal);
+  justify-content: var(--mui-space-justify, flex-start);
+  row-gap: var(--mui-space-row-gap, var(--_mui-space-row-gap));
+  column-gap: var(--mui-space-column-gap, var(--_mui-space-column-gap));
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+.mui-space > * { min-inline-size: 0; }
+.mui-space > .mui-space-item {
+  box-sizing: border-box;
+  max-inline-size: 100%;
+}
+.mui-space[data-size="small"] {
+  --_mui-space-row-gap: 4px;
+  --_mui-space-column-gap: 8px;
+}
+.mui-space[data-size="large"] {
+  --_mui-space-row-gap: 12px;
+  --_mui-space-column-gap: 16px;
+}
+.mui-space[data-inline] { display: inline-flex; }
+.mui-space[data-vertical] { flex-direction: column; }
+.mui-space:is([data-vertical], [data-wrap="false"]) { flex-wrap: nowrap; }
+:where(.mui-space, .mui-space > *)[hidden]:not([hidden="until-found"]),
+template.mui-space,
+.mui-space > template { display: none !important; }

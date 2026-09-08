@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Space — authored native items</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-space.css">
+  <link rel="stylesheet" href="./space.css">
+</head>
+<body>
+  <main>
+    <h1>Space with author-owned items</h1>
+    <p>Use Flex for direct-child layout. Space documents optional native item groups and per-item classes; neither component inserts wrappers or requires JavaScript.</p>
+    <section aria-labelledby="items-title">
+      <h2 id="items-title">Authored wrappers and mixed content</h2>
+      <div class="mui-space" id="authored-items">
+        <span class="mui-space-item card-item" id="text-item">Plain text is an explicit item.</span>
+        <div class="mui-space-item card-item rich-item" id="rich-item">
+          <strong>One grouped item</strong>
+          <p>Native inline and block content stay together.</p>
+          <a href="#destination" id="group-link">Native link</a>
+        </div>
+        <span class="mui-space-item accent-item" id="styled-item">External CSS owns this item's appearance.</span>
+      </div>
+      <div class="mui-space" id="unwrapped">Bare native text <a href="#destination" id="unwrapped-link">Unwrapped link</a><button type="button">Unwrapped button</button></div>
+      <p>No wrap-item flag is interpreted: the actual HTML decides whether a group exists. Bare text is not discarded; wrap it explicitly when stable item boundaries matter.</p>
+    </section>
+    <section aria-labelledby="gaps-title">
+      <h2 id="gaps-title">Pinned gaps and tuple axes</h2>
+      <div class="mui-space measurement" data-size="small" id="small"><span class="mui-space-item">S1</span><span class="mui-space-item">S2</span></div>
+      <div class="mui-space measurement" id="medium"><span class="mui-space-item">M1</span><span class="mui-space-item">M2</span></div>
+      <div class="mui-space measurement" data-size="large" id="large"><span class="mui-space-item">L1</span><span class="mui-space-item">L2</span></div>
+      <div class="mui-space measurement tuple" id="tuple"><span class="mui-space-item">One</span><span class="mui-space-item">Two</span><span class="mui-space-item">Three</span></div>
+      <div class="mui-space measurement tuple" data-vertical data-wrap="true" id="vertical"><span class="mui-space-item">One</span><span class="mui-space-item">Two</span><span class="mui-space-item">Three</span></div>
+      <p>Tuple [20,6] is column-gap:20px and row-gap:6px, including in a source-compatible nowrap column.</p>
+      <div class="mui-space measurement scroll-row" data-wrap="false" id="nowrap"><span class="mui-space-item">One</span><span class="mui-space-item">Two</span><span class="mui-space-item">Three</span></div>
+      <p>Inline native text <span class="mui-space" data-inline data-size="small" id="inline"><span class="mui-space-item">one</span><span class="mui-space-item">two</span></span> stays in its paragraph.</p>
+      <div class="mui-space measurement aligned" id="aligned"><span class="mui-space-item">First</span><span class="mui-space-item">Last</span></div>
+    </section>
+    <section aria-labelledby="separator-title">
+      <h2 id="separator-title">Explicit separators, not a Space API</h2>
+      <div class="mui-space" id="separate-items">
+        <span class="mui-space-item">First</span><span aria-hidden="true" id="free-separator">/</span><span class="mui-space-item">Second</span>
+      </div>
+      <p>An independent separator is an ordinary flex item, with gaps on both sides; it can wrap independently.</p>
+      <div class="mui-space" id="paired-items">
+        <span class="mui-space-item paired-item" id="paired-item"><a href="#destination" id="paired-first">Terms</a><span aria-hidden="true" id="paired-separator">/</span><a href="#destination" id="paired-second">Privacy</a></span>
+        <span class="mui-space-item">The application authored one grouped item.</span>
+      </div>
+    </section>
+    <section aria-labelledby="hidden-title">
+      <h2 id="hidden-title">Hidden units, nested presets and narrow content</h2>
+      <div class="mui-space measurement" id="hidden-items"><span class="mui-space-item">First</span><span class="mui-space-item" hidden id="hidden-item">Hidden unit</span><span class="mui-space-item">Last</span></div>
+      <div class="mui-space" id="empty-items"><span class="mui-space-item" id="empty-item"><button type="button" hidden>Hidden inner control</button></span><span class="mui-space-item">An empty authored wrapper still exists; hide the wrapper to remove its layout gap.</span></div>
+      <div class="mui-space" data-inline hidden id="hidden-root"><button type="button">Hidden root control</button></div>
+      <template class="mui-space" id="item-template"><span class="mui-space-item">Inert application template</span></template>
+      <div class="mui-space" data-size="large" id="nested-outer"><div class="mui-space mui-space-item measurement" data-size="small" id="nested-small"><span class="mui-space-item">A</span><span class="mui-space-item">B</span></div><div class="mui-space mui-space-item measurement" id="nested-medium"><span class="mui-space-item">C</span><span class="mui-space-item">D</span></div></div>
+      <div class="native-grid"><div class="mui-space"><div class="mui-space-item card-item" id="long-item">AnOriginalUnbrokenTextValueInsideAnAuthoredItemThatWrapsWithinItsNativeGridTrackWithoutMeasurement</div></div><span>Grid cell</span></div>
+    </section>
+    <section aria-labelledby="native-title">
+      <h2 id="native-title">Native lists and forms</h2>
+      <ol class="mui-space" data-vertical type="A" start="2" id="native-list"><li class="mui-space-item"><a href="#destination" id="list-first">First native list item</a></li><li class="mui-space-item"><a href="#destination" id="list-second">Second native list item</a></li></ol>
+      <form class="mui-space" data-vertical id="native-form" method="get" action="./space.html#destination">
+        <div class="mui-space-item field"><label for="native-name">Name</label><input id="native-name" name="name" value="Original" required></div>
+        <div class="mui-space-item native-actions"><button type="submit" id="native-submit">Native submit</button><button type="reset" id="native-reset">Native reset</button><button type="button" disabled id="native-disabled">Unavailable</button><a href="#destination" id="native-link">Native link</a></div>
+      </form>
+      <p id="destination" tabindex="-1">The form uses native GET navigation back to this static example. No event handler or router is installed.</p>
+    </section>
+    <section dir="rtl" lang="ar" aria-labelledby="rtl-title">
+      <h2 id="rtl-title">عناصر أصلية</h2>
+      <div class="mui-space measurement" data-size="large" id="rtl"><span class="mui-space-item" id="rtl-first">الأول</span><span class="mui-space-item" id="rtl-second">الثاني</span></div>
+    </section>
+    <p id="outside">Outside the opt-in, native content and styles remain unchanged.</p>
+  </main>
+</body>
+</html>
