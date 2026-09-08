@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Result</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-result.css">
+  <link rel="stylesheet" href="./result.css">
+  <script defer src="./result.js"></script>
+</head>
+<body>
+  <header id="home"><h1>Native Result</h1><p>Authored outcomes, original simple artwork and real recovery actions. No HTTP handling or result renderer is loaded.</p></header>
+  <main>
+    <section class="mui-result demo-panel" data-status="error" aria-labelledby="retry-title" id="recovery-result">
+      <div class="mui-result-icon" aria-hidden="true" id="recovery-icon"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="m8 8 8 8m0-8-8 8" stroke="currentColor" stroke-width="2"></path></svg></div>
+      <div class="mui-result-header"><h2 class="mui-result-title" id="retry-title">Error — request not saved</h2><p class="mui-result-description" id="retry-description">Review the recovery address and choose an action. Nothing is retried automatically.</p></div>
+      <div class="mui-result-content" id="recovery-content">
+        <form id="retry-form"><label for="recovery-email">Recovery email</label><input id="recovery-email" name="email" type="email" required value="reader@example.test"><fieldset disabled><legend>Read-only options</legend><label><input type="checkbox" name="notify" checked> Notify the team</label></fieldset></form>
+        <p id="attempt-feedback">No request has been sent by this demonstration.</p>
+      </div>
+      <div class="mui-result-footer" id="recovery-actions"><button type="submit" form="retry-form" id="retry-action">Retry request</button><button type="reset" form="retry-form" id="reset-action">Reset form</button><a href="#home" id="home-link">Return home</a><button type="button" disabled id="disabled-action">Unavailable action</button></div>
+    </section>
+
+    <section aria-labelledby="variants-heading">
+      <h2 id="variants-heading">Named outcomes and all four sizes</h2>
+      <div class="outcome-grid">
+        <div class="mui-result demo-panel" data-status="info" data-size="small" id="info-result"><div class="mui-result-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="M12 10v7" stroke="currentColor" stroke-width="2"></path><circle cx="12" cy="6.5" r="1" fill="currentColor"></circle></svg></div><div class="mui-result-header"><h3 class="mui-result-title">Information — review pending</h3><p class="mui-result-description">Small. The visible message carries the meaning.</p></div></div>
+        <div class="mui-result demo-panel" data-status="success" id="success-result"><div class="mui-result-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="m6 12 4 4 8-9" fill="none" stroke="currentColor" stroke-width="2"></path></svg></div><div class="mui-result-header"><h3 class="mui-result-title">Success — settings saved</h3><p class="mui-result-description">Medium is the default size.</p></div></div>
+        <div class="mui-result demo-panel" data-status="warning" data-size="large" id="warning-result"><div class="mui-result-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2 23 22H1Z" fill="none" stroke="currentColor" stroke-width="1.5"></path><path d="M12 8v7" stroke="currentColor" stroke-width="2"></path><circle cx="12" cy="18" r="1" fill="currentColor"></circle></svg></div><div class="mui-result-header"><h3 class="mui-result-title">Warning — review required</h3><p class="mui-result-description">Large. Color is decoration, not the only status cue.</p></div></div>
+        <div class="mui-result demo-panel" data-status="error" data-size="huge" id="error-result"><div class="mui-result-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="m8 8 8 8m0-8-8 8" stroke="currentColor" stroke-width="2"></path></svg></div><div class="mui-result-header"><h3 class="mui-result-title">Error — operation failed</h3><p class="mui-result-description">Huge. Heading levels remain authored.</p></div></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="codes-heading">
+      <h2 id="codes-heading">Authored code-labelled outcomes</h2>
+      <div class="outcome-grid">
+        <div class="mui-result demo-panel" data-status="404" data-size="small" id="not-found-result"><div class="mui-result-icon" aria-hidden="true"><span class="mui-result-symbol">404</span></div><div class="mui-result-header"><h3 class="mui-result-title">404 — content not found</h3><p class="mui-result-description">The application supplied this message; no response status is inspected.</p></div><div class="mui-result-footer"><a href="#home">Return home</a></div></div>
+        <div class="mui-result demo-panel" data-status="403" data-size="small" id="forbidden-result"><div class="mui-result-icon" aria-hidden="true"><span class="mui-result-symbol">403</span></div><div class="mui-result-header"><h3 class="mui-result-title">403 — access not granted</h3><p class="mui-result-description">Permission and navigation policy stay in application code.</p></div></div>
+        <div class="mui-result demo-panel" data-status="500" data-size="small" id="server-result"><div class="mui-result-icon" aria-hidden="true"><span class="mui-result-symbol">500</span></div><div class="mui-result-header"><h3 class="mui-result-title">500 — service unavailable</h3><p class="mui-result-description">No automatic retry, timer or generated action.</p></div></div>
+        <div class="mui-result demo-panel" data-status="418" data-size="small" id="teapot-result"><div class="mui-result-icon" aria-hidden="true"><span class="mui-result-symbol">418</span></div><div class="mui-result-header"><h3 class="mui-result-title">418 — example outcome</h3><p class="mui-result-description">An authored code symbol replaces bundled illustrations.</p></div></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="custom-heading">
+      <h2 id="custom-heading">Custom artwork, alignment and nested content</h2>
+      <div class="mui-result demo-panel start-aligned" data-status="warning" dir="rtl" id="custom-result">
+        <div class="mui-result-icon" id="custom-icon"><svg viewBox="0 0 40 40" role="img" aria-labelledby="emblem-title" focusable="false"><title id="emblem-title">Project emblem</title><rect x="3" y="3" width="34" height="34" rx="6" fill="none" stroke="currentColor" stroke-width="2"></rect><path d="m10 20 7 7 13-15" fill="none" stroke="currentColor" stroke-width="2"></path></svg></div>
+        <div class="mui-result-header"><h3 class="mui-result-title">Warning — custom illustration</h3><p class="mui-result-description">AnUnbrokenAuthoredOutcomeDescriptionThatMustWrapWithoutClippingOrGeneratedEllipsis0123456789</p></div>
+        <div class="mui-result-content">
+          <div class="mui-result nested-result" id="nested-result"><div class="mui-result-header"><h4 class="mui-result-title">Information — nested note</h4><p class="mui-result-description">Independent default size, status palette and alignment.</p></div></div>
+        </div>
+        <div class="mui-result-footer"><a href="#home">Return to the beginning</a></div>
+      </div>
+      <div class="mui-result demo-panel" id="image-result"><div class="mui-result-icon"><img id="authored-image" width="48" height="48" alt="Project archive symbol" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Crect x='4' y='8' width='40' height='32' rx='3' fill='%230369a1'/%3E%3Cpath d='M4 18h40M18 26h12' stroke='white' stroke-width='3'/%3E%3C/svg%3E"></div><div class="mui-result-header"><h3 class="mui-result-title">Information — authored image</h3><p class="mui-result-description">Image attributes, namespace and alternative text are not rewritten.</p></div></div>
+    </section>
+
+    <section aria-labelledby="sparse-heading">
+      <h2 id="sparse-heading">Missing and hidden regions</h2>
+      <div class="mui-result demo-panel" id="text-result"><div class="mui-result-header"><h3 class="mui-result-title">Information — no illustration required</h3><p class="mui-result-description">Readable without an icon or generated fallback.</p></div></div>
+      <div class="mui-result demo-panel" id="hidden-regions"><div class="mui-result-icon" hidden><span class="mui-result-symbol">!</span></div><div class="mui-result-header"><h3 class="mui-result-title">Visible authored title</h3><p class="mui-result-description" hidden>Hidden description</p></div><div class="mui-result-content" hidden>Hidden content</div><div class="mui-result-footer" hidden><button type="button">Hidden action</button></div><template class="mui-result-icon" id="native-template">Inert icon template</template></div>
+      <div class="mui-result" id="empty-result"></div>
+      <div class="mui-result" hidden id="hidden-result"><div class="mui-result-footer"><button type="button">Hidden root action</button></div></div>
+      <p id="outside-content">Ordinary content outside Result.</p>
+    </section>
+  </main>
+</body>
+</html>
