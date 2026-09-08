@@ -1,0 +1,11 @@
+body { margin: 2rem; font: 1rem/1.5 system-ui, sans-serif; background: #f6f8fc; color: #172030; }
+main { max-width: 65rem; }
+section { margin-block: 2rem; }
+button, input { font: inherit; }
+button:not([data-menu-item]) { margin: .3rem; padding: .4rem .7rem; }
+label { display: block; margin-block: .5rem; }
+#vertical-menu { max-inline-size: 25rem; }
+#horizontal-menu { max-inline-size: 45rem; }
+output { display: block; min-block-size: 1.5em; }
+#outside { position: fixed; top: 8px; right: 8px; }
+@media (max-width: 30rem) { body { margin: 1rem; } }

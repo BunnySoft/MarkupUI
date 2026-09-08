@@ -9,6 +9,8 @@ export function menuEntryAvailable(element: HTMLElement, menu: HTMLElement): boo
   const view = menu.ownerDocument.defaultView!
   if (!element.isConnected || element.matches(":disabled") || element.closest("[hidden], [inert]")) return false
   for (let node: HTMLElement | null = element; node && node !== menu; node = node.parentElement) {
+    if (node.localName === "details" && !(node as HTMLDetailsElement).open
+      && !(node.firstElementChild?.localName === "summary" && node.firstElementChild.contains(element))) return false
     const style = view.getComputedStyle(node)
     if (style.display === "none" || style.visibility === "hidden" || style.visibility === "collapse") return false
   }
@@ -16,7 +18,7 @@ export function menuEntryAvailable(element: HTMLElement, menu: HTMLElement): boo
 }
 
 /** Scoped roving/typeahead only: no popovers, activation, roles or application selection. */
-export function createMenuKeyboard(menu: HTMLElement, duration = 500) {
+export function createMenuKeyboard(menu: HTMLElement, duration = 500, roving = true) {
   const view = menu.ownerDocument.defaultView!
   const writes = ownedWrites()
   let entries: MenuEntry[] = []
@@ -27,7 +29,7 @@ export function createMenuKeyboard(menu: HTMLElement, duration = 500) {
   const available = () => entries.filter(entry => menuEntryAvailable(entry.element, menu))
   function remember(element: HTMLElement | null) {
     current = element
-    for (const entry of entries) writes.attr(entry.element, "tabindex", entry.element === current ? "0" : "-1")
+    if (roving) for (const entry of entries) writes.attr(entry.element, "tabindex", entry.element === current ? "0" : "-1")
   }
   function clear() {
     view.clearTimeout(timer)

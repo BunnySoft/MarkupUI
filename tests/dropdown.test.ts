@@ -355,6 +355,21 @@ describe("complete retained scoped menu keyboard behavior", () => {
     expect(edit.hasAttribute("tabindex")).toBe(false)
     expect(preview.hasAttribute("tabindex")).toBe(false)
   })
+  it("keeps default roving behavior while ignoring content hidden by native details", () => {
+    const { menu, edit, preview } = nodes()
+    const details = document.createElement("details")
+    const summary = document.createElement("summary")
+    summary.textContent = "Disclosure"
+    details.append(summary, preview)
+    menu.append(details)
+    const keyboard = createMenuKeyboard(menu)
+    keyboard.refresh([{ element: edit, label: "Edit" }, { element: preview, label: "Preview" }])
+    expect(keyboard.available).toEqual([edit])
+    expect(edit.tabIndex).toBe(0)
+    details.open = true
+    expect(keyboard.available).toEqual([edit, preview])
+    keyboard.disconnect()
+  })
 })
 
 describe("native selection, submenu intent and lifetime", () => {

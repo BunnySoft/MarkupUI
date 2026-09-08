@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native navigation Menu</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-menu.css">
+  <link rel="stylesheet" href="./menu.css">
+  <script defer src="../../dist/markup-ui-menu.global.js"></script>
+  <script defer src="./menu.js"></script>
+</head>
+<body>
+  <h1>Native navigation Menu</h1>
+  <p>This is site navigation, not an ARIA menu/menubar. Tab, links and details/summary remain native; optional arrow/typeahead shortcuts do not remove Tab stops.</p>
+  <main>
+    <section>
+      <h2>Vertical navigation and native overall disclosure</h2>
+      <form id="demo-form">
+        <label>Local note <input id="note" name="note" value="Local example" required></label>
+        <nav class="mui-menu" data-menu data-menu-mode="vertical" id="vertical-menu" aria-label="Documentation">
+          <details data-menu-collapse open id="nav-disclosure">
+            <summary id="nav-summary"><span data-menu-icon aria-hidden="true">☰</span> Browse documentation</summary>
+            <ul data-menu-list>
+              <li><a data-menu-item data-menu-key="home" href="#home" id="home-link" aria-current="page">Home</a></li>
+              <li><details data-menu-branch data-menu-key="guide" id="guide">
+                <summary id="guide-summary">Guide</summary>
+                <ul data-menu-list>
+                  <li><a data-menu-item data-menu-key="install" href="#installation" id="install-link">Installation</a></li>
+                  <li><a data-menu-item data-menu-key="examples" href="#examples" id="examples-link">Examples</a></li>
+                  <li><details data-menu-branch data-menu-key="advanced" id="advanced">
+                    <summary id="advanced-summary">Advanced</summary>
+                    <ul data-menu-list>
+                      <li><a data-menu-item data-menu-key="performance" href="#performance" id="performance-link">Performance</a></li>
+                      <li><a data-menu-item data-menu-key="separate" href="#examples" target="_blank" id="separate-link">Separate examples</a></li>
+                    </ul>
+                  </details></li>
+                </ul>
+              </details></li>
+              <li data-menu-divider data-menu-key="divider"></li>
+              <li><span data-menu-group-label id="account-label">Account and local actions</span>
+                <ul data-menu-group data-menu-key="account-group" aria-labelledby="account-label">
+                  <li><details data-menu-branch data-menu-key="settings" id="settings">
+                    <summary id="settings-summary" data-menu-label="Settings"><span data-menu-icon aria-hidden="true">⚙</span> Settings</summary>
+                    <ul data-menu-list><li><a data-menu-item data-menu-key="profile" href="#profile" id="profile-link">Profile</a></li></ul>
+                  </details></li>
+                  <li><button type="button" data-menu-item data-menu-key="preview" id="preview-action"><span id="preserved-label">Preview locally</span><span data-menu-extra aria-hidden="true">local only</span></button></li>
+                  <li><button type="button" data-menu-item data-menu-key="unavailable" disabled id="unavailable">Unavailable action</button></li>
+                </ul>
+              </li>
+              <li><details data-menu-branch data-menu-key="restricted" inert>
+                <summary>Unavailable branch</summary>
+                <ul data-menu-list><li><a data-menu-item data-menu-key="restricted-child" href="#home">Unavailable destination</a></li></ul>
+              </details></li>
+            </ul>
+          </details>
+        </nav>
+        <button type="submit" id="submit-form">Ordinary submit</button>
+        <button type="reset" id="reset-form">Reset</button>
+      </form>
+      <button type="button" id="show-performance">Reveal Performance, without navigation</button>
+      <button type="button" id="toggle-collapse">Toggle overall disclosure</button>
+      <button type="button" id="toggle-accordion">Toggle accordion</button>
+      <button type="button" id="outside">Outside focus target</button>
+      <output id="event-log" aria-live="polite">No navigation selection.</output>
+    </section>
+    <section>
+      <h2>Horizontal, wrapping navigation</h2>
+      <nav class="mui-menu mui-menu--inverted mui-menu--compact" data-menu data-menu-mode="horizontal" id="horizontal-menu" aria-label="Horizontal local navigation">
+        <ul data-menu-list>
+          <li><a data-menu-item data-menu-key="h-home" href="#home" id="h-home">Home</a></li>
+          <li><details data-menu-branch data-menu-key="h-guide" id="h-guide">
+            <summary id="h-summary">Guide</summary>
+            <ul data-menu-list><li><a data-menu-item data-menu-key="h-install" href="#installation" id="h-install">Installation</a></li><li><a data-menu-item data-menu-key="h-examples" href="#examples" id="h-examples">Examples</a></li></ul>
+          </details></li>
+          <li><a data-menu-item data-menu-key="h-profile" href="#profile" id="h-profile">Profile</a></li>
+        </ul>
+      </nav>
+    </section>
+    <section id="destinations">
+      <h2>Native destinations</h2>
+      <p id="home">Home remains the authored current page; selection alone does not change aria-current.</p>
+      <p id="installation">Installation destination.</p>
+      <p id="examples">Examples destination.</p>
+      <p id="performance">Performance destination.</p>
+      <p id="profile">Profile destination.</p>
+    </section>
+  </main>
+</body>
+</html>

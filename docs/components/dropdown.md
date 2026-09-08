@@ -291,3 +291,10 @@ remains unchanged; no old ceiling was increased.
 No all-browser,
 screen-reader, physical touch/pinch or universal AT certification is claimed.
 P2 retained scopes remain complete; P3 remains in progress. **Menu is next, not implemented here.**
+
+### Native Menu keyboard reuse
+
+The subsequent Menu change adds a nonroving mode and native closed-details availability to
+the existing keyboard primitive. Dropdown retains its default roving/command behavior and
+passes 49 focused regressions. No Popover logic or old ceiling changes. Current Dropdown
+ESM/classic are **8,767/8,840 gzip bytes** under the same 9,000-byte ceilings; CSS stays 1,465.
