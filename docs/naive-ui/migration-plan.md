@@ -2,7 +2,7 @@
 
 **Plan state: 🟠 In progress — P1 pilots and the P2-02 Tag/Badge/Alert/Empty/Skeleton/Spin workstream
 and P2-03 Progress/Statistic are Verified for retained scope. Whole P2 is not complete;
-Typography `53d3974`, Icon `829970d`, Gradient Text `38dcf6f`, Ellipsis `5fabe7f`, Page Header `5f9faf3`, Divider `2e1a6c0`, Flex `720a92c`, Space `d495a12` and Grid's/Layout's/List's/Descriptions'/Timeline's linked native records are Verified; Breadcrumb is next.** Existing MarkupUI features are a partial baseline,
+Typography `53d3974`, Icon `829970d`, Gradient Text `38dcf6f`, Ellipsis `5fabe7f`, Page Header `5f9faf3`, Divider `2e1a6c0`, Flex `720a92c`, Space `d495a12` and Grid's/Layout's/List's/Descriptions'/Timeline's/Breadcrumb's linked native records are Verified. Nine P2-assigned catalog rows remain Planned; Thing is suggested next.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -30,7 +30,7 @@ coverage, implementation status, and upstream feature parity separate.
 | --- | --- | --- | --- | --- |
 | P0 — Architecture and contracts | 🔵 Planned | Establish separated sources, compatible loading, lifecycle, events and native-control conventions. | None | A minimal external-CSS example works without a consumer build step, and existing loading remains supported. |
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
-| P2 — Primitives and layout | 🟠 In progress | P2-02/P2-03/P2-04, List, Descriptions and Timeline retained scopes complete; Breadcrumb and residual-index review next. | P1 pattern | Retained features have evidence; styling-only features do not acquire unnecessary controllers. |
+| P2 — Primitives and layout | 🟠 In progress | Named retained scopes including Breadcrumb complete; full residual-index check found nine Planned P2-assigned components below. | P1 pattern | Remaining catalog targets and exclusions need individual decisions/evidence; the short queue is not whole-phase sign-off. |
 | P3 — Interaction foundations | 🔵 Planned | Implement predictable focus, keyboard, overlays and navigation. | P0 lifecycle; P1 controls | Nested interaction, dismissal and focus behavior are defined and demonstrated. |
 | P4 — Forms and selection | 🔵 Planned | Make native controls dependable, then add optional richer selection. | P0 form contract; P3 for popup variants | Values, labels, submission, reset, validity and event semantics are consistent. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
@@ -80,7 +80,7 @@ rewrite all components before demonstrating one useful vertical slice.
 | P2-02 — Small feedback | 🟢 Verified | Tag `6605d29`, Badge `69c9480`, Alert `2a1eb42`, Empty `27a435b`, Skeleton `05c6546`, and Spin `6c7f35b` complete their retained scopes. | [Tag](../components/tag.md): 118 tests; [Badge](../components/badge.md): 141; [Alert](../components/alert.md): 167; [Empty](../components/empty.md): 190; [Skeleton](../components/skeleton.md): 213; [Spin](../components/spin.md): 241 plus Chromium timing/native-state/motion evidence. |
 | P2-03 — Progress and statistics | 🟢 Verified | Progress `8d7757c` and Statistic `1ed3a98` complete retained native scopes; Number Animation remains separate. | [Progress acceptance](../components/progress.md): 270 tests; [Statistic acceptance](../components/statistic.md): 290 plus Chromium native value/region/formatting-string/typography evidence. |
 | P2-04 — Layout | 🟢 Verified | Divider, Flex, Space, Grid and Layout retained native scopes complete. | [Layout acceptance](../components/layout.md): 396 tests plus Chromium native shell/disclosure/scrolling evidence; upstream packing, rendering and transition algorithms have explicit scope exclusions. |
-| P2-05 — Static compound display | 🟠 In progress | Page Header `5f9faf3`, List/ListItem, Descriptions/DescriptionItem and Timeline/TimelineItem retained native scopes complete; Breadcrumb remains pending. | [Timeline acceptance](../components/timeline.md): 431 tests and Chromium native list/time/connector/scroll/action/form/no-JS evidence; no compulsory renderer or router. |
+| P2-05 — Static compound display | 🟠 In progress | Page Header, List/ListItem, Descriptions/DescriptionItem, Timeline/TimelineItem and Breadcrumb/BreadcrumbItem retained scopes complete; residual Thing/Result targets remain Planned. | [Breadcrumb acceptance](../components/breadcrumb.md): 443 tests and Chromium native navigation/current/separator/keyboard/no-JS evidence; no compulsory renderer or router. |
 | P2-06 — Wave sign-off | 🔵 Planned | Close retained feature gaps and document any intentionally simplified visual variations. | Updated per-component trackers and isolated payload accounting. |
 
 Ellipsis's retained native details/summary disclosure needs no custom P3 overlay machinery.
@@ -185,8 +185,9 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Timeline and TimelineItem (P2-05), retained native scope accepted.**
-**Next component: Breadcrumb.**
+**Current component: Breadcrumb and BreadcrumbItem (P2-05), retained native scope accepted.**
+**Suggested next component: Thing (P2), based on the residual inventory below; not started.**
+Timeline/TimelineItem completed retained native list/time/connector/scroll scope in `4fed2a5`.
 Descriptions/DescriptionItem completed retained native term/definition/grid scope in `cda5732`.
 List/ListItem completed retained native CSS/list/action scope in `27c5940`.
 Layout and companion regions completed retained native CSS/disclosure/scrolling scope in `ebe5ced`.
@@ -301,8 +302,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The index records 3,157 rows and 96 accepted retained tasks out of 384 across 24 component
-pages (288 unchecked), not full upstream parity.
+The index records 3,161 rows and 100 accepted retained tasks out of 384 across 25 component
+pages (284 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -331,9 +332,38 @@ zoom/print/forced-colors, focus-revealed horizontal actions, safe connector fall
 aggregate/widgets/no-JS coexistence were exercised. CSS adds 1,320 gzip bytes and zero
 component JS; core remains 14,611/15,000 and widgets 2,779/4,000 gzip bytes. No date
 inference, reverse prop, framework provider, generated heading or automatic announcement.
+Breadcrumb's [accepted record](../components/breadcrumb.md) closes native navigation,
+current-page markup, passive items and decorative wrapping separators with 443 tests
+(12 focused) and Chromium evidence. Eight original rows plus four source click/theme
+supplements remain: 9 adapted targets and 3 omissions. Native href/target/rel and click
+events, unavailable keyboard exclusion, hidden/custom/nested separator boundaries,
+narrow/RTL/zoom/print/forced-colors, aggregate/widgets and no-JS navigation were exercised.
+CSS adds 928 gzip bytes and zero component/demo JS; core remains 14,611/15,000 and widgets
+2,779/4,000 gzip bytes. No automatic router/current-URL inference or pseudo-link behavior.
 
-Continue with **Breadcrumb** next. Residual content and cross-phase
-components remain on the index; this queue does not close all P2. Preserve native
-semantics and the legacy aggregate. Each component gets its own documentation update, build,
+### Residual P2 inventory after Breadcrumb
+
+On 2026-09-08, all **96 component catalog rows** in the index were inspected. Filtering
+Planned statuses whose assigned phase includes **P2** leaves these **nine** rows, including
+cross-phase and exclusion-qualified entries. This is a phase/status reconciliation, not
+fresh API acceptance or implementation of these components.
+
+| Remaining component | Index phase | Remaining scope boundary |
+| --- | --- | --- |
+| [Float Button](components/float-button.md) | P2, P3 | Planned; related Button baseline, not accepted floating/interaction scope. |
+| [Code](components/code.md) | P2; exclusions | Code styling remains Planned; language highlighter is intentionally omitted. |
+| [Image](components/image.md) | P2, P6 | Planned; related Avatar baseline does not accept the separate Image scope. |
+| [Table](components/table.md) | P2 | Planned native table target; related generated table is not retained-scope acceptance. |
+| [Thing](components/thing.md) | P2 | Planned compound content; related Card/List baseline. Suggested next, not started. |
+| [Highlight](components/highlight.md) | P2 | Planned; no dedicated accepted target recorded. |
+| [Affix](components/affix.md) | P2 | Planned native sticky candidate; no retained acceptance yet. |
+| [Result](components/result.md) | P2 | Planned compound result content; related Empty/content baseline only. |
+| [Scrollbar](components/scrollbar.md) | P2; custom-emulation exclusions | Native overflow target remains Planned; custom emulation is outside scope. |
+
+**Thing is the suggested next component**, continuing the already accepted Card/List
+compound-content pattern before cross-phase floating controls. Its reference page remains
+Planned; no next-component implementation is included in Breadcrumb's change.
+Full P2 is **not complete**: these nine catalog targets and P2-06 sign-off remain open.
+Preserve native semantics and the legacy aggregate. Each component gets its own documentation update, build,
 acceptance evidence and commit before advancing. No dates or effort estimates are assigned
 until retained feature scope and optional exclusions are settled.

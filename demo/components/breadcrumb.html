@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Breadcrumb</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-breadcrumb.css">
+  <link rel="stylesheet" href="./breadcrumb.css">
+</head>
+<body>
+  <header id="home">
+    <h1>Native Breadcrumb and BreadcrumbItem</h1>
+    <p>Native navigation and explicit current-page state. This demo loads no JavaScript.</p>
+  </header>
+  <main>
+    <section aria-labelledby="path-heading">
+      <h2 id="path-heading">Project path</h2>
+      <nav class="mui-breadcrumb" aria-label="Project breadcrumb" id="project-breadcrumb">
+        <ol class="mui-breadcrumb-list" role="list" id="project-list">
+          <li class="mui-breadcrumb-item" hidden id="hidden-first"><span class="mui-breadcrumb-row"><a class="mui-breadcrumb-link" href="#home">Hidden ancestor</a><span class="mui-breadcrumb-separator" aria-hidden="true"></span></span></li>
+          <li class="mui-breadcrumb-item" id="home-item"><span class="mui-breadcrumb-row"><a class="mui-breadcrumb-link" href="#home" id="home-link"><svg class="demo-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m2 7 6-5 6 5v7H9v-4H7v4H2Z" fill="none" stroke="currentColor"></path></svg> Home</a><span class="mui-breadcrumb-separator" aria-hidden="true" id="home-separator"></span></span></li>
+          <li class="mui-breadcrumb-item" hidden id="hidden-middle"><span class="mui-breadcrumb-row"><span class="mui-breadcrumb-link">Hidden collection</span><span class="mui-breadcrumb-separator" aria-hidden="true"></span></span></li>
+          <li class="mui-breadcrumb-item" id="projects-item"><span class="mui-breadcrumb-row"><a class="mui-breadcrumb-link" href="#projects" id="projects-link">Projects</a><span class="mui-breadcrumb-separator" aria-hidden="true" id="projects-separator"></span></span></li>
+          <li class="mui-breadcrumb-item" id="unavailable-item"><span class="mui-breadcrumb-row"><span class="mui-breadcrumb-link" aria-disabled="true" id="unavailable-link">Archive (unavailable)</span><span class="mui-breadcrumb-separator" aria-hidden="true" id="unavailable-separator"></span></span></li>
+          <li class="mui-breadcrumb-item" id="current-item"><span class="mui-breadcrumb-row"><span class="mui-breadcrumb-link" aria-current="page" id="current-page">Current project</span><span class="mui-breadcrumb-separator" aria-hidden="true" id="current-separator"></span></span></li>
+          <li class="mui-breadcrumb-item" hidden id="hidden-last">Hidden trailing item</li>
+          <template class="mui-breadcrumb-item" id="native-template"><li class="mui-breadcrumb-item">Inert breadcrumb template</li></template>
+        </ol>
+      </nav>
+    </section>
+
+    <section aria-labelledby="custom-heading">
+      <h2 id="custom-heading">Authored separators and a current-page link</h2>
+      <nav class="mui-breadcrumb" aria-label="Reference breadcrumb" id="custom-breadcrumb">
+        <ul class="mui-breadcrumb-list" role="list">
+          <li class="mui-breadcrumb-item"><span class="mui-breadcrumb-row"><a class="mui-breadcrumb-link" href="./breadcrumb.html?view=reference#references" target="_blank" rel="noopener noreferrer" id="reference-link">Reference (new tab)</a><span class="mui-breadcrumb-separator" aria-hidden="true" id="custom-text-separator">›</span></span></li>
+          <li class="mui-breadcrumb-item" data-show-separator="false" id="no-separator-item"><span class="mui-breadcrumb-row"><a class="mui-breadcrumb-link" href="#projects" id="custom-projects-link">Projects</a><span class="mui-breadcrumb-separator" aria-hidden="true" id="suppressed-separator">/</span></span></li>
+          <li class="mui-breadcrumb-item"><span class="mui-breadcrumb-row"><a class="mui-breadcrumb-link" href="#references">Guide</a><span class="mui-breadcrumb-separator" aria-hidden="true" id="custom-svg-separator"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" stroke-width="2"></path></svg></span></span></li>
+          <li class="mui-breadcrumb-item"><span class="mui-breadcrumb-row"><a class="mui-breadcrumb-link" href="#current-project" aria-current="page" id="current-page-link">Current project</a><span class="mui-breadcrumb-separator" aria-hidden="true"></span></span></li>
+        </ul>
+      </nav>
+      <p>Separator opt-out is explicit on “Projects”. A current-page anchor remains a real link.</p>
+    </section>
+
+    <section aria-labelledby="rtl-heading">
+      <h2 id="rtl-heading">RTL and long names</h2>
+      <nav class="mui-breadcrumb" aria-label="RTL project breadcrumb" dir="rtl" id="rtl-breadcrumb">
+        <ol class="mui-breadcrumb-list" role="list">
+          <li class="mui-breadcrumb-item" id="rtl-home"><span class="mui-breadcrumb-row"><a class="mui-breadcrumb-link" href="#home">Home</a><span class="mui-breadcrumb-separator" aria-hidden="true">/</span></span></li>
+          <li class="mui-breadcrumb-item" id="rtl-projects"><span class="mui-breadcrumb-row"><a class="mui-breadcrumb-link" href="#projects">Projects</a><span class="mui-breadcrumb-separator" aria-hidden="true">/</span></span></li>
+          <li class="mui-breadcrumb-item"><span class="mui-breadcrumb-row"><span class="mui-breadcrumb-link" aria-current="page">AnUnbrokenAuthoredProjectNameThatMustWrapWithoutTruncationOrAnOverflowMenu0123456789</span><span class="mui-breadcrumb-separator" aria-hidden="true">/</span></span></li>
+        </ol>
+      </nav>
+    </section>
+
+    <section aria-labelledby="nested-heading">
+      <h2 id="nested-heading">Nested scope check</h2>
+      <nav class="mui-breadcrumb" aria-label="Parent breadcrumb" id="parent-breadcrumb">
+        <ol class="mui-breadcrumb-list" role="list">
+          <li class="mui-breadcrumb-item" id="parent-first">
+            <span class="mui-breadcrumb-row"><a class="mui-breadcrumb-link" href="#home">Parent</a><span class="mui-breadcrumb-separator" aria-hidden="true" id="parent-separator"></span></span>
+            <nav class="mui-breadcrumb nested-breadcrumb" aria-label="Nested reference breadcrumb" id="nested-breadcrumb">
+              <ol class="mui-breadcrumb-list" role="list">
+                <li class="mui-breadcrumb-item"><span class="mui-breadcrumb-row"><a class="mui-breadcrumb-link" href="#references">Reference</a><span class="mui-breadcrumb-separator" aria-hidden="true" id="nested-first-separator"></span></span></li>
+                <li class="mui-breadcrumb-item"><span class="mui-breadcrumb-row"><span class="mui-breadcrumb-link" aria-current="page">Nested page</span><span class="mui-breadcrumb-separator" aria-hidden="true" id="nested-last-separator"></span></span></li>
+              </ol>
+            </nav>
+          </li>
+          <li class="mui-breadcrumb-item"><span class="mui-breadcrumb-row"><span class="mui-breadcrumb-link" aria-current="page">Parent page</span><span class="mui-breadcrumb-separator" aria-hidden="true"></span></span></li>
+        </ol>
+      </nav>
+      <p>Each named navigation owns its own list, current page and separator boundaries.</p>
+    </section>
+
+    <section id="projects" aria-labelledby="projects-heading"><h2 id="projects-heading">Projects</h2><p>A real fragment destination, not intercepted by a router.</p></section>
+    <section id="current-project" aria-labelledby="current-heading"><h2 id="current-heading">Current project</h2><p>The current-page state is authored and does not follow hash changes automatically.</p></section>
+    <section id="references" aria-labelledby="references-heading"><h2 id="references-heading">References</h2><p>The reference link demonstrates native target and rel behavior.</p></section>
+    <nav class="mui-breadcrumb" aria-label="Hidden breadcrumb" hidden id="hidden-breadcrumb"><ol class="mui-breadcrumb-list"><li class="mui-breadcrumb-item">Hidden path</li></ol></nav>
+    <ol id="outside-list"><li><a href="#home">Unstyled list link outside Breadcrumb</a></li></ol>
+  </main>
+</body>
+</html>
