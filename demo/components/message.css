@@ -1,0 +1,11 @@
+body { margin: 0; background: #f4f6f9; color: #20252b; font: 1rem/1.5 system-ui, sans-serif; }
+main { max-inline-size: 64rem; margin-inline: auto; padding: 1rem; overflow-wrap: anywhere; }
+button, input, select { font: inherit; }
+button { min-block-size: 2.5rem; }
+label { display: flex; flex-direction: column; gap: .25rem; margin-block: .5rem; min-inline-size: 0; max-inline-size: 100%; }
+input, select { box-sizing: border-box; max-inline-size: 100%; min-inline-size: 0; }
+.buttons { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .5rem; }
+.baseline { max-inline-size: 32rem; }
+#operation-error:not(:empty) { border-inline-start: .25rem solid #ac2635; padding-inline-start: .5rem; }
+.page-tail { min-block-size: 80vh; }
+@media print { #controls { display: none; } .page-tail { min-block-size: 0; } }

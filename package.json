@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./message": {
+      "types": "./dist/components/message/index.d.ts",
+      "import": "./dist/markup-ui-message.js"
+    },
+    "./message/style.css": "./dist/markup-ui-message.css",
     "./drawer": {
       "types": "./dist/components/drawer/index.d.ts",
       "import": "./dist/markup-ui-drawer.js"

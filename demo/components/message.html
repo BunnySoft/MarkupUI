@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI root-owned Message</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-message.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-modal.css">
+  <link rel="stylesheet" href="message.css">
+  <script src="../../dist/markup-ui-message.global.js" defer></script>
+  <script src="../../dist/markup-ui-modal.global.js" defer></script>
+  <script src="message.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>Message: explicit roots, native controls</h1>
+    <p>Messages never become modal or move focus on creation. Loading is persistent by default.</p>
+    <ul class="mui-feedback-list baseline"><li class="mui-message"><strong data-message-kind>Information</strong><span data-message-content>Authored native message text remains readable without JavaScript.</span></li></ul>
+    <div id="controls" hidden>
+      <label>Lifetime <select id="duration"><option value="3000">3 seconds</option><option value="1000">1 second</option><option value="0">Persistent</option></select></label>
+      <label>Placement <select id="placement"><option>top</option><option>top-left</option><option>top-right</option><option>bottom</option><option>bottom-left</option><option>bottom-right</option></select></label>
+      <div class="buttons" id="kinds">
+        <button type="button" id="create" data-kind="create">Create message</button>
+        <button type="button" data-kind="info">Info</button><button type="button" data-kind="success">Success</button>
+        <button type="button" data-kind="warning">Warning</button><button type="button" data-kind="error">Error</button>
+        <button type="button" id="loading" data-kind="loading">Loading</button>
+      </div>
+      <div class="buttons">
+        <button type="button" id="update">Update last to success</button>
+        <button type="button" id="destroy-last">Destroy last</button>
+        <button type="button" id="clear">Destroy all fixed messages</button>
+        <button type="button" id="callback-error">Close callback throws</button>
+        <button type="button" id="callback-async-error">Close callback rejects later</button>
+        <button type="button" id="interactive">Create interactive template</button>
+        <button type="button" id="open-modal">Open modal-local host</button>
+      </div>
+    </div>
+    <p id="operation-error" role="status"></p>
+    <p id="events">Local lifecycle events appear here without duplicating message announcements.</p>
+    <label>Unrelated native field <input id="outside-field"></label>
+    <h2>Independent local template owner</h2>
+    <div id="inline-host" class="mui-feedback-host mui-message-host">
+      <ol class="mui-feedback-list" data-message-items aria-label="Local messages"></ol>
+      <p class="mui-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p>
+    </div>
+    <p class="page-tail">Fixed CSS does not cross native top layers. Use an owner inside the active modal instead.</p>
+  </main>
+  <div id="fixed-host" class="mui-feedback-host mui-feedback-host--fixed mui-message-host" data-feedback-placement="top">
+    <ol class="mui-feedback-list" data-message-items aria-label="Messages"></ol>
+    <p class="mui-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p>
+  </div>
+  <dialog id="local-modal" class="mui-native-dialog mui-modal" aria-labelledby="modal-title">
+    <h2 id="modal-title" data-modal-title>Modal-local messages</h2>
+    <button type="button" id="inside-create" autofocus>Create inside message</button>
+    <p id="inside-error" role="status"></p>
+    <div id="inside-host" class="mui-feedback-host mui-message-host">
+      <ol class="mui-feedback-list" data-message-items aria-label="Messages inside this modal"></ol>
+      <p class="mui-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p>
+    </div>
+    <form method="dialog"><button value="closed">Close modal</button></form>
+  </dialog>
+  <template id="message-template">
+    <li class="mui-message">
+      <span data-message-icon aria-hidden="true">◆</span><strong data-message-kind></strong>
+      <span data-message-content></span><button type="button" data-message-close aria-label="Dismiss local message">×</button>
+      <p data-message-error hidden>The local close callback failed. Try again.</p>
+      <div data-message-actions><form><label>Local note <input required name="note"></label><button type="submit">Use note locally</button></form></div>
+    </li>
+  </template>
+</body>
+</html>

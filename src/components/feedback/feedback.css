@@ -1,0 +1,30 @@
+.mui-feedback-host { box-sizing: border-box; max-inline-size: 100%; }
+.mui-feedback-list { display: grid; gap: .5rem; padding: 0; margin: 0; list-style: none; }
+.mui-feedback-announcer {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.mui-feedback-host--fixed {
+  position: fixed;
+  top: max(1rem, env(safe-area-inset-top));
+  bottom: auto;
+  left: 1rem;
+  right: 1rem;
+  width: min(var(--mui-feedback-width, 32rem), calc(100% - 2rem));
+  max-height: calc(100% - 2rem);
+  margin-inline: auto;
+  overflow: auto;
+  z-index: var(--mui-feedback-z-index, 100);
+  pointer-events: none;
+}
+.mui-feedback-host--fixed .mui-feedback-list > * { pointer-events: auto; }
+.mui-feedback-host--fixed:is([data-feedback-placement="top-left"], [data-feedback-placement="bottom-left"]) { left: 1rem; right: auto; margin-inline: 0; }
+.mui-feedback-host--fixed:is([data-feedback-placement="top-right"], [data-feedback-placement="bottom-right"]) { right: 1rem; left: auto; margin-inline: 0; }
+.mui-feedback-host--fixed:is([data-feedback-placement="bottom"], [data-feedback-placement="bottom-left"], [data-feedback-placement="bottom-right"]) { top: auto; bottom: max(1rem, env(safe-area-inset-bottom)); }
+@media print { .mui-feedback-host--fixed { position: static; width: auto; max-height: none; margin: 0; overflow: visible; } }
