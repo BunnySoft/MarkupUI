@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Image and group preview</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-image.css">
+  <link rel="stylesheet" href="./image.css">
+  <script defer src="../../dist/markup-ui-image.global.js"></script>
+  <script defer src="./image.js"></script>
+</head>
+<body>
+  <header><h1>Native Image and dialog preview</h1><p>Original image/link nodes stay authored. The optional helper owns only its cloned dialog and explicit loading/fallback state.</p></header>
+  <main>
+    <section aria-labelledby="gallery-heading">
+      <h2 id="gallery-heading">Linked responsive images</h2>
+      <button type="button" id="open-gallery">Open the first gallery image</button>
+      <div data-image-group id="gallery">
+        <div class="gallery-grid">
+          <figure class="mui-image-frame" data-image-frame id="first-frame">
+            <a data-image-preview href="./image.first.svg" id="first-link">
+              <picture><source media="(min-width: 40rem)" srcset="./image.first.svg 1x, ./image.first.svg?scale=2 2x"><img class="mui-image" id="responsive-image" src="./image.first.svg" srcset="./image.first.svg 1x, ./image.first.svg?scale=2 2x" sizes="(max-width: 40rem) 160px, 200px" width="200" height="125" alt="Amber mountains beneath a sun" decoding="async" referrerpolicy="no-referrer" crossorigin="anonymous"></picture>
+            </a>
+            <figcaption>First authored landscape.</figcaption>
+            <p data-image-placeholder>Native image loading; the original link remains available.</p>
+            <p data-image-error hidden>The thumbnail could not load.</p>
+          </figure>
+          <figure class="mui-image-frame" data-image-frame>
+            <a data-image-preview href="./image.second.svg" id="second-link"><img class="mui-image" src="./image.second.svg" width="200" height="125" alt="Blue waves" decoding="async"></a>
+            <figcaption>Second authored landscape.</figcaption><p data-image-error hidden>The thumbnail could not load.</p>
+          </figure>
+          <figure class="mui-image-frame" data-image-frame id="fallback-frame">
+            <a data-image-preview href="./image.fallback.svg" id="fallback-link"><img class="mui-image" id="fallback-image" src="./image.missing.svg" data-image-fallback="./image.fallback.svg" width="200" height="125" alt="Fallback landscape placeholder"></a>
+            <figcaption>A one-attempt fallback for a plain src image.</figcaption><p data-image-placeholder>Loading uses the original nonzero image box.</p><p data-image-error hidden>The primary thumbnail failed; any configured fallback is attempted once.</p>
+          </figure>
+        </div>
+        <p><a data-image-preview data-preview-disabled href="./image.first.svg" id="disabled-preview">Open original without enhancement</a> · <a data-image-preview target="_blank" rel="noopener" href="./image.second.svg" id="external-preview">Original in another tab</a></p>
+        <div data-image-group id="nested-gallery">
+          <h3>Independent nested group</h3>
+          <a data-image-preview href="./image.second.svg" id="nested-link"><img class="mui-image" src="./image.second.svg" width="120" height="75" alt="Nested blue wave image"></a>
+          <template data-image-preview-template><dialog aria-label="Nested image preview"><header><h2>Nested preview</h2><button type="button" data-image-close>Close image preview</button></header><p data-image-position></p><div data-image-stage><img data-image-full alt="" decoding="async" referrerpolicy="no-referrer"></div><p data-image-preview-error hidden>The preview image could not load.</p><div data-image-toolbar><button type="button" data-image-prev>Previous image</button><button type="button" data-image-next>Next image</button><a data-image-original target="_blank" rel="noopener noreferrer">Open original</a></div></dialog></template>
+        </div>
+        <template data-image-preview-template id="gallery-template">
+          <dialog aria-label="Image preview">
+            <header><h2>Image preview</h2><button type="button" data-image-close>Close image preview</button></header>
+            <p data-image-position></p>
+            <div data-image-stage><img data-image-full alt="" decoding="async" referrerpolicy="no-referrer"></div>
+            <p data-image-preview-error hidden>The preview image could not load. The original link remains available.</p>
+            <div data-image-toolbar><button type="button" data-image-prev>Previous image</button><button type="button" data-image-next>Next image</button><a data-image-original target="_blank" rel="noopener noreferrer">Open original</a></div>
+          </dialog>
+        </template>
+      </div>
+      <p id="gallery-feedback"></p>
+    </section>
+    <section aria-labelledby="lazy-heading" class="lazy-section">
+      <h2 id="lazy-heading">Native lazy image keeps its box</h2>
+      <div data-image-group id="lazy-gallery">
+        <figure class="mui-image-frame" data-image-frame id="lazy-frame"><a data-image-preview href="./image.first.svg" id="lazy-link"><img class="mui-image" id="lazy-image" src="./image.first.svg?lazy=1" loading="lazy" decoding="async" width="200" height="125" alt="Lazy amber mountains"></a><figcaption>A reserved native image box, never hidden to implement loading.</figcaption><p data-image-placeholder>Native lazy loading may wait for the browser viewport threshold.</p><p data-image-error hidden>The lazy image could not load.</p></figure>
+        <template data-image-preview-template><dialog aria-label="Lazy image preview"><header><h2>Lazy image preview</h2><button type="button" data-image-close>Close image preview</button></header><p data-image-position></p><div data-image-stage><img data-image-full alt="" decoding="async"></div><p data-image-preview-error hidden>The preview image could not load.</p><div data-image-toolbar><a data-image-original target="_blank" rel="noopener noreferrer">Open original</a></div></dialog></template>
+      </div>
+    </section>
+    <div data-image-group hidden id="hidden-gallery"><a data-image-preview href="./image.first.svg"><img class="mui-image" width="100" height="60" alt="Hidden authored image" src="./image.first.svg"></a></div>
+  </main>
+</body>
+</html>

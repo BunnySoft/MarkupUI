@@ -1,8 +1,9 @@
 # MarkupUI migration plan
 
-**Plan state: 🟠 In progress — P1 pilots and the P2-02 Tag/Badge/Alert/Empty/Skeleton/Spin workstream
-and P2-03 Progress/Statistic are Verified for retained scope. Whole P2 is not complete;
-Typography `53d3974`, Icon `829970d`, Gradient Text `38dcf6f`, Ellipsis `5fabe7f`, Page Header `5f9faf3`, Divider `2e1a6c0`, Flex `720a92c`, Space `d495a12` and Grid's/Layout's/List's/Descriptions'/Timeline's/Breadcrumb's/Thing's/Table's/Highlight's/Affix's/Result's/Code's/Scrollbar's/Float Button's linked retained records are Verified. Only Image remains Planned among P2-assigned catalog rows; global P3 remains open.** Existing MarkupUI features are a partial baseline,
+**Plan state: 🟠 In progress overall — P1 pilots and P2 are Verified for declared retained
+native scopes and explicit omissions. All 31 P2-assigned pages now have closed property
+dispositions and four accepted tasks, including Image's limited P6 dialog scope. Global
+P3/P4/P5/P6 and full framework/viewer parity are not complete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -30,7 +31,7 @@ coverage, implementation status, and upstream feature parity separate.
 | --- | --- | --- | --- | --- |
 | P0 — Architecture and contracts | 🔵 Planned | Establish separated sources, compatible loading, lifecycle, events and native-control conventions. | None | A minimal external-CSS example works without a consumer build step, and existing loading remains supported. |
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
-| P2 — Primitives and layout | 🟠 In progress | Named retained scopes including native Float Button/Group complete; Image remains Planned below. | P1 pattern | Remaining Image scope/exclusions and P2-06 still need acceptance; native Float Button does not complete global P3. |
+| P2 — Primitives and layout | 🟢 Verified retained scope | All 31 P2-assigned pages reconciled; native Image/fallback/dialog scope accepted with advanced P6 exclusions. | P1 pattern | Full 96-route and P2 reference audit found no retained unresolved P2 rows. This is not global P3/P6 or framework parity. |
 | P3 — Interaction foundations | 🔵 Planned | Implement predictable focus, keyboard, overlays and navigation. | P0 lifecycle; P1 controls | Nested interaction, dismissal and focus behavior are defined and demonstrated. |
 | P4 — Forms and selection | 🔵 Planned | Make native controls dependable, then add optional richer selection. | P0 form contract; P3 for popup variants | Values, labels, submission, reset, validity and event semantics are consistent. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
@@ -76,12 +77,12 @@ rewrite all components before demonstrating one useful vertical slice.
 
 | Task | Status | Action | Deliverable |
 | --- | --- | --- | --- |
-| P2-01 — Typography and content | 🟢 Verified | Typography, Icon, Gradient Text, Ellipsis, literal Highlight and plain Code named retained scopes complete; syntax engines remain excluded. | [Code acceptance](../components/code.md): 528 tests plus Chromium source/CRLF/selection/line geometry/native display evidence. Residual catalog scopes and whole-P2 sign-off remain open. |
+| P2-01 — Typography and content | 🟢 Verified | Typography, Icon, Gradient Text, Ellipsis, literal Highlight and plain Code named retained scopes complete; syntax engines remain excluded. | [Code acceptance](../components/code.md): 528 tests plus Chromium source/CRLF/selection/line geometry/native display evidence. Final retained-scope P2 sign-off is recorded in P2-06 and the Image audit below. |
 | P2-02 — Small feedback | 🟢 Verified | Tag `6605d29`, Badge `69c9480`, Alert `2a1eb42`, Empty `27a435b`, Skeleton `05c6546`, and Spin `6c7f35b` complete their retained scopes. | [Tag](../components/tag.md): 118 tests; [Badge](../components/badge.md): 141; [Alert](../components/alert.md): 167; [Empty](../components/empty.md): 190; [Skeleton](../components/skeleton.md): 213; [Spin](../components/spin.md): 241 plus Chromium timing/native-state/motion evidence. |
 | P2-03 — Progress and statistics | 🟢 Verified | Progress `8d7757c` and Statistic `1ed3a98` complete retained native scopes; Number Animation remains separate. | [Progress acceptance](../components/progress.md): 270 tests; [Statistic acceptance](../components/statistic.md): 290 plus Chromium native value/region/formatting-string/typography evidence. |
 | P2-04 — Layout | 🟢 Verified | Divider, Flex, Space, Grid, Layout and native-sticky Affix retained scopes complete. | [Affix acceptance](../components/affix.md): 504 tests plus Chromium native flow/scroll/ancestor constraints; source fixed/absolute targets/triggers and other upstream algorithms have explicit exclusions. |
-| P2-05 — Static compound display | 🟢 Verified | Page Header, List/ListItem, Descriptions/DescriptionItem, Timeline/TimelineItem, Breadcrumb/BreadcrumbItem, Thing and Result named retained scopes complete. | [Result acceptance](../components/result.md): 516 tests and Chromium authored outcome/artwork/actions/forms/no-JS evidence; no compulsory renderer, icon package or router. Whole P2 remains open for the residual catalog. |
-| P2-06 — Wave sign-off | 🔵 Planned | Close retained feature gaps and document any intentionally simplified visual variations. | Updated per-component trackers and isolated payload accounting. |
+| P2-05 — Static compound display | 🟢 Verified | Page Header, List/ListItem, Descriptions/DescriptionItem, Timeline/TimelineItem, Breadcrumb/BreadcrumbItem, Thing and Result named retained scopes complete. | [Result acceptance](../components/result.md): 516 tests and Chromium authored outcome/artwork/actions/forms/no-JS evidence; no compulsory renderer, icon package or router. Final retained-scope P2 sign-off is recorded in P2-06 and the Image audit below. |
+| P2-06 — Wave sign-off | 🟢 Verified retained scope | All P2-assigned retained rows are accepted or explicitly omitted; independent payload limits remain intact. | Image acceptance plus audit of all 96 catalog routes/31 P2 reference inventories below; advanced P6 viewer contracts remain omitted. |
 
 Ellipsis's retained native details/summary disclosure needs no custom P3 overlay machinery.
 Automatic overflow controls and popup/Tooltip variants remain separate P3 work rather than
@@ -185,8 +186,9 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Float Button and FloatButtonGroup (P2/P3), retained native scope accepted.**
-**Next component: Image (P2/P6).**
+**Current component: Image and native group preview (P2/P6), retained native scope accepted.**
+**Recommended next: Popover foundation (P3), before Tooltip/Popconfirm/Dropdown; not started.**
+Float Button/Group completed retained native action/popover dock scope in `879eeb4`.
 Scrollbar completed retained native-only overflow/API scope in `49db31f`.
 Code completed retained native plain/physical-line presentation in `d5eb01c`.
 Result completed retained authored outcome/status/artwork scope in `b659f48`.
@@ -245,7 +247,7 @@ deprecated/theme supplements: 13 Verified ADAPTED targets and 5 omissions. Its f
 are closed with [241-test/Chromium evidence](../components/spin.md), including real delayed
 visibility/cancellation, native content and state preservation, explicit app-owned blocking,
 SVG parameters, reduced motion and loading order.
-**P2-02 small feedback is now Verified for retained scope; P2 overall remains In progress.**
+**P2-02 small feedback is Verified for retained scope; final P2 sign-off follows the Image audit below.**
 Progress's [reference inventory](components/progress.md) preserves all 21 original rows and
 adds six source geometry/alias/theme supplements: 23 Verified ADAPTED targets and 4 omissions.
 Its four tasks are closed with [270-test/Chromium evidence](../components/progress.md),
@@ -256,13 +258,13 @@ three theme supplements: 7 Verified ADAPTED targets and 3 omissions. Its four ta
 closed with [290-test/Chromium evidence](../components/statistic.md), covering literal values,
 native regions/ARIA/actions, application Intl strings, tabular CSS, namespace-safe aliases
 and quiet updates. Formatting and Number Animation are not hidden dependencies.
-**P2-03 Progress/Statistic is now Verified for retained scope; P2 overall remains In progress.**
+**P2-03 Progress/Statistic is Verified for retained scope; final P2 sign-off follows the Image audit below.**
 Typography's [reference inventory](components/typography.md) retains fifteen grouped public
 rows and adds 25 explicit source owner/deprecated/grouped-theme supplements: 17 Verified
 ADAPTED native targets and 23 omitted runtime/framework contracts. Its four tasks are closed
 with [300-test/Chromium evidence](../components/typography.md), using scoped native CSS only:
 no Custom Element, ESM/classic JS entry, observer, router or highlighting dependency.
-P2-01 and P2 overall remain In progress.
+P2-01 and P2 final retained-scope sign-off are recorded above and in the Image audit below.
 Icon's [reference inventory](components/icon.md) retains nine pinned rows plus eight
 source type/companion-slot/theme supplements: 10 Verified ADAPTED targets and 7 omissions.
 Its four tasks are closed with [308-test/Chromium evidence](../components/icon.md), preserving
@@ -284,13 +286,13 @@ props/callback/slot rows plus three source theme supplements: 12 Verified ADAPTE
 targets and 3 omissions. Its four tasks close with [340-test/Chromium evidence](../components/page-header.md):
 all eight authored regions, native headings/contextual landmarks/back links and clicks/forms,
 stable nodes/assets, 280px long-title wrapping, RTL/zoom/print and CSS-only coexistence.
-The demo's application handlers are not a library runtime. P2-05 is In progress, not complete.
+The demo's application handlers are not a library runtime. P2-05's completed retained scope is recorded above.
 Divider's [reference inventory](components/divider.md) preserves four public prop/slot rows
 plus three source theme supplements: 4 Verified ADAPTED native targets and 3 omissions.
 Its four tasks close with [351-test/Chromium evidence](../components/divider.md): native hr/
 explicit separator or decoration, one named-caption owner versus a real heading, authoritative
 orientation, dashed/placement/size-token geometry, narrow/grid/RTL/zoom/print and unchanged
-legacy behavior. P2-04 is now In progress, not complete.
+legacy behavior. P2-04's completed retained scope is recorded above.
 Flex's [reference inventory](components/flex.md) preserves seven public prop/slot rows plus
 six source reverse/type/theme supplements: 9 Verified ADAPTED native targets and 4 omissions.
 Its four tasks close with [362-test/Chromium evidence](../components/flex.md): correct native
@@ -310,8 +312,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The index records 3,209 rows and 132 accepted retained tasks out of 384 across 33 component
-pages (252 unchecked), not full upstream parity.
+The index records 3,222 rows and 136 accepted retained tasks out of 384 across 34 component
+pages (248 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -418,23 +420,45 @@ fixed/relative/absolute/RTL/safe-area geometry, narrow/short/zoom, static fallba
 forced colors, aggregate/plugins and no-JS interaction were exercised. CSS is 1,340 gzip
 bytes with zero component JS; core/plugins remain unchanged. The dock is not a universal
 anchor positioning engine or global P3 implementation.
+Image's [accepted record](../components/image.md) closes native responsive images, bounded
+single-src fallback and an owned-template native-dialog/group path with 583 tests (31 focused)
+plus Chromium evidence. All 77 original identities remain, with 13 explicit source groups:
+41 adapted targets and 49 omissions across 90 rows. Thumbnail identity/attributes, lazy box,
+load/fallback/error/stale request behavior, native modifiers, modal cancel/focus, nested
+ownership, disconnect/reconnect and queued close/reopen races were verified. Native previous/
+next/close/original links are retained; gesture/zoom/rotation/renderer/provider and automated
+permission-bearing tools are excluded. ESM/classic/CSS measure 3,430/3,665/656 gzip bytes
+under 4,000/4,000/1,000 ceilings; core/plugins remain unchanged. Local SVG fixtures required
+the demo-server MIME addition; validation used attached server 4188 without disturbing 4187.
 
 ### Residual P2 inventory after Breadcrumb
 
-Updated after Float Button on 2026-09-08: all **96 component catalog rows** in the index were
-rechecked. Filtering Planned statuses whose assigned phase includes **P2** leaves this **one** row, including
-cross-phase and exclusion-qualified entries. This is a phase/status reconciliation, not
-fresh API acceptance or implementation of these components.
+Final audit after Image on 2026-09-08 checked **all 96 catalog rows** and the property
+inventories of **all 31 P2-assigned pages**. There are **zero Planned P2-assigned routes**
+and **zero retained Not reviewed/Planned/In progress/Implemented property rows** in those
+P2 inventories. All 31 four-task checklists are accepted. P2/P2-06 is therefore Verified
+for the explicitly declared native scopes and omissions, not because the short queue ended.
 
-| Remaining component | Index phase | Remaining scope boundary |
-| --- | --- | --- |
-| [Image](components/image.md) | P2, P6 | Planned; related Avatar baseline does not accept the separate Image scope. |
+Image's advanced P6 viewer/gesture/renderer/download/fullscreen contracts remain explicitly
+omitted; accepting its useful native dialog path does not complete all P6 media capabilities.
+Likewise the native Float Button popover and Image dialog do not automatically close P3.
 
-**Image is next.** The native Float Button/Group record is accepted, but its constrained
-browser popover composition does not close the global P3 interaction backlog. No Image
-implementation is included in Float Button's change; its page remains Planned and retains
-separate P2/P6 specialized scope decisions.
-Full P2 is **not complete**: Image and P2-06 sign-off remain open.
+### Remaining P3 inventory after Image
+
+The same full catalog check leaves **19 Planned P3-assigned components**:
+
+- **P3 disclosure:** Collapse, Collapse Transition.
+- **P3 navigation:** Dropdown, Anchor, Back Top, Menu, Pagination, Steps, Tabs.
+- **P3 overlays/feedback:** Loading Bar, Dialog, Drawer, Message, Modal, Notification,
+  Popconfirm, Popover, Tooltip.
+- **P3; exclusions:** Discrete API.
+
+**Recommend Popover foundation next**, before Tooltip/Popconfirm/Dropdown. Native browser
+popover/dialog primitives and author control ownership already have component evidence,
+but generic trigger/dismissal/placement/nesting APIs still need their own retained-scope
+implementation. This is a dependency-ready recommendation, not a claim that all P3
+foundations or any of these 19 component inventories are already accepted.
+No next component is implemented in the Image change.
 Preserve native semantics and the legacy aggregate. Each component gets its own documentation update, build,
 acceptance evidence and commit before advancing. No dates or effort estimates are assigned
 until retained feature scope and optional exclusions are settled.

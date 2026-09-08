@@ -1,0 +1,13 @@
+body { max-inline-size: 62rem; margin: 2rem auto; padding-inline: 1rem; font: 1rem/1.5 system-ui, sans-serif; overflow-wrap: anywhere; color: #18181b; background: #fafafa; }
+main > section { margin-block: 2rem; }
+h2, h3, p { margin-block: 0 .75rem; }
+button { font: inherit; max-inline-size: 100%; white-space: normal; overflow-wrap: anywhere; }
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: 1rem; margin-block: 1rem; }
+.mui-image-frame { padding: .5rem; border: 1px solid #d4d4d8; background: #fff; }
+.mui-image-frame [data-image-placeholder], .mui-image-frame [data-image-error] { font-size: .875rem; }
+.mui-image-frame [data-image-error] { color: #b91c1c; }
+.mui-image-preview > header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; }
+.mui-image-preview > header > h2 { margin: 0; }
+.lazy-section { padding-block-start: 45rem; }
+#gallery-feedback { min-block-size: 1.5em; }
+@media print { body { max-inline-size: none; margin: 0; background: transparent; } .lazy-section { padding-block-start: 0; } }

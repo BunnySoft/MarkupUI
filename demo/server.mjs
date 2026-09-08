@@ -15,6 +15,7 @@ const contentTypes = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".map": "application/json; charset=utf-8",
+  ".svg": "image/svg+xml",
 }
 
 function resolveRequest(pathname) {

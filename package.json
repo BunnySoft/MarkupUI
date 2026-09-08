@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./image": {
+      "types": "./dist/components/image/index.d.ts",
+      "import": "./dist/markup-ui-image.js"
+    },
+    "./image/style.css": "./dist/markup-ui-image.css",
     "./float-button/style.css": "./dist/markup-ui-float-button.css",
     "./scrollbar/style.css": "./dist/markup-ui-scrollbar.css",
     "./code/style.css": "./dist/markup-ui-code.css",
