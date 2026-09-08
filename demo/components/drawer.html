@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Drawer and DrawerContent</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-drawer.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-modal.css">
+  <link rel="stylesheet" href="drawer.css">
+  <script src="../../dist/markup-ui-drawer.global.js" defer></script>
+  <script src="../../dist/markup-ui-modal.global.js" defer></script>
+  <script src="drawer.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>Native Drawer and authored DrawerContent</h1>
+    <p><a id="open" href="#inline">Open drawer or read inline information</a></p>
+    <div id="controls" hidden>
+      <label>Edge <select id="placement"><option>right</option><option>left</option><option>top</option><option>bottom</option><option>inline-start</option><option>inline-end</option></select></label>
+      <label>Authored CSS size <select id="size"><option value="default">Default</option><option value="compact">Compact</option><option value="wide">Wide</option></select></label>
+      <button id="modeless" type="button">Show inline/modeless</button>
+      <button id="spawn" type="button">Open owned template</button>
+      <button id="destroy" type="button">Dispose owned drawers</button>
+    </div>
+    <p id="events" role="status">Inline content and native forms work without scripts.</p>
+    <section id="inline"><h2>Inline information</h2><p>When native modality is unavailable, ordinary content and links remain useful.</p><label>Background reference <input id="background-input"></label></section>
+    <dialog id="baseline" class="mui-native-dialog mui-drawer" open aria-labelledby="baseline-title">
+      <form class="mui-drawer-content" method="dialog">
+        <header data-drawer-header><h2 id="baseline-title" data-drawer-title>Native baseline</h2></header>
+        <div data-drawer-body><div data-drawer-body-content><label>Required note <input required name="note"></label></div></div>
+        <footer data-drawer-footer><button value="baseline-saved">Save native form</button><button formnovalidate value="baseline-cancel">Cancel</button></footer>
+      </form>
+    </dialog>
+    <p class="page-tail">The library never locks body scrolling or installs a provider/focus manager.</p>
+  </main>
+  <dialog id="drawer" class="mui-native-dialog mui-drawer" aria-labelledby="drawer-title" aria-describedby="drawer-description">
+    <div class="mui-drawer-content">
+      <header data-drawer-header>
+        <h2 id="drawer-title" data-drawer-title tabindex="-1" autofocus>Project side panel</h2>
+        <form method="dialog"><button id="close" value="closed" aria-label="Close side panel">×</button></form>
+      </header>
+      <section data-drawer-body tabindex="0" aria-label="Project details">
+        <form id="native-form" data-drawer-body-content method="dialog">
+          <p id="drawer-description">Header and footer remain separate from this native scrolling body. Physical edges do not flip in RTL.</p>
+          <button id="nested-open" type="button">Open nested modal</button>
+          <button id="check-close" type="button">Close after local check</button>
+          <p id="check-status" role="status">No local check pending.</p>
+          <label><input id="veto" type="checkbox"> Prevent native cancel</label>
+          <label>Required reference <input id="reference" name="reference" required></label>
+          <p>All native controls are authored. Constraint validation runs normally before a method=dialog submit closes the panel.</p>
+          <p>The body uses the browser scrollbar. There is no Scrollbar component, pointer resize handle or fabricated width/height callback.</p>
+          <p>Native showModal owns top-layer order and background focus blocking. A transparent backdrop is still modal.</p>
+          <p>Closing then reopening preserves form values. Disposing an owned template removes only that clone, not other dialogs.</p>
+          <p>External work is not cancelled. The local check above captures a native generation so stale results cannot close a newer opening.</p>
+          <p>Native lifetime and pure CSS edge layout stay independent. No slide animation hides the actions while the dialog still owns focus.</p>
+          <label>Additional details <textarea rows="6"></textarea></label>
+          <p id="last-detail">End of the scrollable body.</p>
+        </form>
+      </section>
+      <footer data-drawer-footer>
+        <button id="save" form="native-form" value="saved">Save native form</button>
+        <button id="cancel-form" form="native-form" value="cancelled" formnovalidate>Cancel form</button>
+      </footer>
+    </div>
+  </dialog>
+  <dialog id="nested" class="mui-native-dialog mui-modal" aria-labelledby="nested-title">
+    <h2 id="nested-title" data-modal-title>Nested modal</h2>
+    <p data-modal-content>Closing returns to the still-open drawer.</p>
+    <form method="dialog"><button id="nested-close" value="nested-done" autofocus>Return to drawer</button></form>
+  </dialog>
+  <div id="owner-root"></div>
+  <template id="drawer-template">
+    <dialog class="mui-native-dialog mui-drawer" data-drawer-placement="left" aria-label="Owned side panel">
+      <form class="mui-drawer-content" method="dialog">
+        <header data-drawer-header><h2 data-drawer-title>Authored template title</h2></header>
+        <div data-drawer-body><div data-drawer-body-content><p>Owned native template content, not a render callback.</p></div></div>
+        <footer data-drawer-footer><button value="template-done" autofocus>Close template</button></footer>
+      </form>
+    </dialog>
+  </template>
+</body>
+</html>

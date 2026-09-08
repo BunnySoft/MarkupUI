@@ -1,0 +1,13 @@
+body { margin: 0; color: #20252b; background: #f4f6f9; font: 1rem/1.5 system-ui, sans-serif; }
+main { max-inline-size: 64rem; margin-inline: auto; padding: 1rem; }
+button, input, select, textarea { font: inherit; }
+button { min-block-size: 2.5rem; }
+#controls { display: flex; flex-wrap: wrap; align-items: end; gap: .5rem; }
+#controls[hidden] { display: none; }
+label { display: flex; flex-direction: column; gap: .25rem; max-inline-size: 100%; margin-block: .5rem; }
+input, select, textarea { box-sizing: border-box; max-inline-size: 100%; min-inline-size: 0; }
+#inline { padding: 1rem; border: 1px solid #a1aab8; }
+#drawer[data-demo-size="compact"] { --mui-drawer-width: 18rem; --mui-drawer-height: 18rem; }
+#drawer[data-demo-size="wide"] { --mui-drawer-width: 36rem; --mui-drawer-height: 36rem; }
+.page-tail { min-block-size: 100vh; }
+@media print { #controls { display: none; } .page-tail { min-block-size: 0; } }

@@ -1,0 +1,88 @@
+dialog.mui-native-dialog.mui-drawer {
+  box-sizing: border-box;
+  width: min(var(--mui-drawer-width, 24rem), 100%);
+  max-inline-size: 100%;
+  max-block-size: 100%;
+  padding: 0;
+  border: 1px solid var(--mui-drawer-border, #9ca7b6);
+  border-radius: var(--mui-drawer-radius, 0);
+  color: var(--mui-drawer-color, #20252b);
+  background: var(--mui-drawer-background, #fff);
+  font: inherit;
+  line-height: 1.5;
+  overflow: auto;
+  overflow-wrap: anywhere;
+}
+dialog.mui-drawer:modal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: auto;
+  height: 100%;
+  margin: 0;
+}
+dialog.mui-drawer:modal[data-drawer-placement="left"] { left: 0; right: auto; }
+dialog.mui-drawer:modal[data-drawer-placement="inline-start"] { inset-inline-start: 0; inset-inline-end: auto; }
+dialog.mui-drawer:modal[data-drawer-placement="inline-end"] { inset-inline-end: 0; inset-inline-start: auto; }
+dialog.mui-drawer:modal:is([data-drawer-placement="top"], [data-drawer-placement="bottom"]) {
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: min(var(--mui-drawer-height, 24rem), 100%);
+}
+dialog.mui-drawer:modal[data-drawer-placement="top"] { bottom: auto; }
+dialog.mui-drawer:modal[data-drawer-placement="bottom"] { top: auto; bottom: 0; }
+dialog.mui-drawer:modal[data-drawer-mask="transparent"]::backdrop { background: transparent; }
+dialog.mui-drawer > .mui-drawer-content {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  min-block-size: 0;
+  margin: 0;
+}
+dialog.mui-drawer:modal > .mui-drawer-content { block-size: 100%; }
+.mui-drawer-content > :is([data-drawer-header], [data-drawer-footer]) {
+  box-sizing: border-box;
+  display: flex;
+  align-items: start;
+  flex: 0 0 auto;
+  gap: .75rem;
+  padding: var(--mui-drawer-padding, 1rem);
+  overflow: auto;
+  max-block-size: 35%;
+}
+.mui-drawer-content > [data-drawer-header] { border-block-end: 1px solid var(--mui-drawer-border, #9ca7b6); }
+.mui-drawer-content [data-drawer-title] { margin: 0; flex: 1; min-inline-size: 0; font-size: 1.25rem; }
+.mui-drawer-content > [data-drawer-footer] { justify-content: end; flex-wrap: wrap; border-block-start: 1px solid var(--mui-drawer-border, #9ca7b6); }
+.mui-drawer-content > [data-drawer-body] {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  min-block-size: 3rem;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.mui-drawer-content [data-drawer-body-content] { padding: var(--mui-drawer-padding, 1rem); }
+.mui-drawer-content :is(input, select, textarea, button) { box-sizing: border-box; max-inline-size: 100%; font: inherit; }
+.mui-drawer-content button { min-block-size: 2.5rem; white-space: normal; }
+.mui-drawer-content :focus-visible { outline: 2px solid var(--mui-drawer-focus, #315ba6); outline-offset: -3px; }
+dialog.mui-drawer[hidden], .mui-drawer-content [hidden] { display: none !important; }
+@media (max-height: 20rem) {
+  dialog.mui-drawer:modal > .mui-drawer-content { block-size: auto; min-block-size: 100%; }
+  .mui-drawer-content > :is([data-drawer-header], [data-drawer-body], [data-drawer-footer]) {
+    max-block-size: none;
+    overflow: visible;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  dialog.mui-drawer, dialog.mui-drawer::backdrop { animation: none; transition: none; scroll-behavior: auto; }
+}
+@media (forced-colors: active) {
+  dialog.mui-native-dialog.mui-drawer, .mui-drawer-content > :is([data-drawer-header], [data-drawer-footer]) { border-color: CanvasText; }
+}
+@media print {
+  dialog.mui-drawer:modal { position: static; inset: auto; width: 100%; height: auto; max-block-size: none; margin: 0; }
+  dialog.mui-drawer:modal > .mui-drawer-content { block-size: auto; }
+  .mui-drawer-content > :is([data-drawer-header], [data-drawer-body], [data-drawer-footer]) { overflow: visible; max-block-size: none; }
+}
