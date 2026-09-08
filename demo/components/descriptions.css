@@ -1,0 +1,28 @@
+body {
+  max-inline-size: 66rem;
+  margin: 2rem auto;
+  padding-inline: 1rem;
+  font: 1rem/1.5 system-ui, sans-serif;
+  color: #18181b;
+  background: #fafafa;
+}
+main > section { margin-block: 2rem; }
+h2, p { margin-block: 0 .75rem; }
+button, input { font: inherit; }
+button, input, fieldset { box-sizing: border-box; min-inline-size: 0; max-inline-size: 100%; }
+button { white-space: normal; overflow-wrap: anywhere; }
+fieldset { margin: 0; }
+.span-two { --mui-description-span: 2; }
+.span-all { grid-column: 1 / -1; }
+.horizontal-descriptions { --mui-descriptions-columns: 2; }
+.single-description, .nested-descriptions { --mui-descriptions-columns: 1; }
+#horizontal-details { --mui-descriptions-content-align: center; }
+.demo-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+#action-status, #form-status { min-block-size: 1.5em; margin-block-start: .5rem; }
+@media (max-width: 40rem) {
+  .responsive-descriptions { --mui-descriptions-columns: 1; }
+  .responsive-descriptions > .mui-description-item { --mui-description-span: 1; }
+}
+@media print {
+  body { max-inline-size: none; margin: 0; background: transparent; }
+}

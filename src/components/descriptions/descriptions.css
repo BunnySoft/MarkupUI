@@ -1,0 +1,92 @@
+:where(dl.mui-descriptions) {
+  --mui-descriptions-columns: 3;
+  --mui-descriptions-gap: 1rem;
+  --mui-descriptions-label-align: start;
+  --mui-descriptions-content-align: start;
+  --_mui-descriptions-padding-block: .75rem;
+  --_mui-descriptions-padding-inline: 1rem;
+  display: grid;
+  grid-template-columns: repeat(var(--mui-descriptions-columns), minmax(0, 1fr));
+  grid-auto-flow: row;
+  gap: var(--mui-descriptions-gap);
+  margin: 0;
+  min-inline-size: 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  color: var(--mui-descriptions-color, var(--mui-text-primary, #18181b));
+}
+:where(dl.mui-descriptions[data-size="small"]) {
+  --_mui-descriptions-padding-block: .5rem;
+  --_mui-descriptions-padding-inline: .75rem;
+}
+:where(dl.mui-descriptions[data-size="large"]) {
+  --_mui-descriptions-padding-block: 1rem;
+  --_mui-descriptions-padding-inline: 1.25rem;
+}
+:where(dl.mui-descriptions[data-label-align="left"]) { --mui-descriptions-label-align: left; }
+:where(dl.mui-descriptions[data-label-align="center"]) { --mui-descriptions-label-align: center; }
+:where(dl.mui-descriptions[data-label-align="right"]) { --mui-descriptions-label-align: right; }
+:where(dl.mui-descriptions > div.mui-description-item) {
+  --mui-description-span: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  grid-column: span var(--mui-description-span);
+  box-sizing: border-box;
+  min-inline-size: 0;
+  background: var(--mui-descriptions-background, var(--mui-bg-surface, #fff));
+}
+:where(dl.mui-descriptions[data-label-placement="left"] > div.mui-description-item) {
+  grid-template-columns: var(--mui-descriptions-label-width, minmax(0, 1fr)) minmax(0, 2fr);
+  grid-template-rows: auto;
+}
+:where(dl.mui-descriptions > div.mui-description-item > dt, dl.mui-descriptions > div.mui-description-item > dd) {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  margin: 0;
+  padding-block: var(--mui-descriptions-padding-block, var(--_mui-descriptions-padding-block));
+  padding-inline: var(--mui-descriptions-padding-inline, var(--_mui-descriptions-padding-inline));
+}
+:where(dl.mui-descriptions > div.mui-description-item > dt) {
+  font-weight: 600;
+  text-align: var(--mui-descriptions-label-align);
+  color: var(--mui-descriptions-label-color, inherit);
+}
+:where(dl.mui-descriptions > div.mui-description-item > dd) {
+  text-align: var(--mui-descriptions-content-align);
+}
+:where(dl.mui-descriptions[data-bordered] > div.mui-description-item) {
+  border: 1px solid var(--mui-descriptions-border-color, var(--mui-border, #e4e4e7));
+  border-radius: var(--mui-descriptions-border-radius, .25rem);
+}
+:where(dl.mui-descriptions[data-bordered] > div.mui-description-item > dt) {
+  border-block-end: 1px solid var(--mui-descriptions-border-color, var(--mui-border, #e4e4e7));
+  background: var(--mui-descriptions-label-background, var(--mui-bg-muted, #f3f4f6));
+}
+:where(dl.mui-descriptions[data-bordered][data-label-placement="left"] > div.mui-description-item > dt) {
+  border-block-end: 0;
+  border-inline-end: 1px solid var(--mui-descriptions-border-color, var(--mui-border, #e4e4e7));
+}
+:where(.mui-descriptions-separator) { display: none; }
+:where(dl.mui-descriptions[data-label-placement="left"]:not([data-bordered]) > div.mui-description-item > dt > .mui-descriptions-separator) {
+  display: inline;
+  padding-inline-start: .25em;
+}
+:where(.mui-descriptions, .mui-description-item, .mui-descriptions-separator)[hidden]:not([hidden="until-found"]),
+:where(dl.mui-descriptions > div.mui-description-item > dt, dl.mui-descriptions > div.mui-description-item > dd)[hidden]:not([hidden="until-found"]),
+template:where(.mui-descriptions, .mui-description-item),
+dl.mui-descriptions > template {
+  display: none !important;
+}
+@media (forced-colors: active) {
+  :where(dl.mui-descriptions, dl.mui-descriptions > div.mui-description-item, dl.mui-descriptions > div.mui-description-item > dt) {
+    color: CanvasText;
+    background: Canvas;
+    border-color: CanvasText;
+  }
+}
+@media print {
+  :where(dl.mui-descriptions > div.mui-description-item) {
+    break-inside: avoid;
+  }
+}
