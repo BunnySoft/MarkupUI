@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI explicit service composition — Discrete resolution</title>
+  <!-- This selectable demo explicitly loads all five existing stylesheets. Real applications omit unused ones. -->
+  <link rel="stylesheet" href="../../dist/markup-ui-message.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-notification.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-loading-bar.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-dialog.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-modal.css">
+  <link rel="stylesheet" href="discrete.css">
+  <script type="module" src="discrete.js"></script>
+</head>
+<body>
+  <main id="discrete-example">
+    <h1>Explicit service composition, not a new factory</h1>
+    <p>Only selected JavaScript entries are imported. Native roots, templates, CSS, lang and dir belong to this application.</p>
+    <div data-enhanced-controls hidden>
+      <fieldset><legend>Choose services before mounting</legend>
+        <label><input type="checkbox" data-include="message" checked> Message</label>
+        <label><input type="checkbox" data-include="notification"> Notification</label>
+        <label><input type="checkbox" data-include="loadingBar" checked> Loading Bar</label>
+        <label><input type="checkbox" data-include="dialog"> Dialog</label>
+        <label><input type="checkbox" data-include="modal"> Modal</label>
+      </fieldset>
+      <div class="buttons"><button type="button" data-mount>Mount selected owners</button><button type="button" data-release>Dispose selected scope</button></div>
+      <div class="buttons">
+        <button type="button" data-operation="message">Post message</button>
+        <button type="button" data-operation="notification">Post notification</button>
+        <button type="button" data-operation="loading-start">Start loading</button>
+        <button type="button" data-operation="loading-finish">Finish loading</button>
+        <button type="button" data-operation="loading-error">Loading error</button>
+        <button type="button" data-operation="dialog">Open confirmation</button>
+        <button type="button" data-operation="modal">Open workspace modal</button>
+        <button type="button" data-operation="resolve">Complete local decisions</button>
+      </div>
+    </div>
+    <p data-example-status role="status">No JavaScript is needed to read this ordinary composition example.</p>
+    <div class="mui-loading-bar" data-loading-bar data-example-loading-bar>
+      <progress max="100" value="25" aria-label="Local example work">25%</progress>
+      <span data-loading-bar-status>Authored baseline: 25 of 100.</span>
+    </div>
+    <div data-example-message class="mui-feedback-host mui-message-host">
+      <ol class="mui-feedback-list" data-message-items aria-label="Page messages"></ol>
+      <p class="mui-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p>
+    </div>
+    <div data-example-notification class="mui-feedback-host mui-notification-host">
+      <div class="mui-feedback-list" data-notification-items></div>
+      <p class="mui-feedback-announcer" data-notification-announcer role="status" aria-atomic="true"></p>
+    </div>
+    <div data-example-dialog-owner></div><div data-example-modal-owner></div>
+    <section id="inline-alternative"><h2>Native inline alternative</h2><p>When modality is unavailable, use this ordinary document content and native controls instead of a fake focus trap or portal.</p><label>Unrelated native input <input id="unrelated-input"></label></section>
+    <template data-example-dialog-template>
+      <dialog class="mui-native-dialog mui-dialog" aria-label="Local confirmation">
+        <header data-dialog-header><h2 data-dialog-title>Confirm local action</h2><button type="button" data-dialog-action="close">Close</button></header>
+        <p data-dialog-content>Confirm starts a local pending decision. The unmarked native button resolves it.</p>
+        <button type="button" data-resolve-decision>Complete local decisions</button>
+        <button type="button" data-dispose-confirmation-scope>Dispose scope while pending</button>
+        <p data-dialog-error role="alert" hidden>The local decision failed.</p><p data-dialog-pending role="status" hidden>Waiting for local completion…</p>
+        <footer data-dialog-actions><button type="button" data-dialog-action="negative">Cancel</button><button type="button" data-dialog-action="positive">Confirm</button></footer>
+      </dialog>
+    </template>
+    <template data-example-modal-template>
+      <dialog class="mui-native-dialog mui-modal" aria-label="Native workspace">
+        <h2 data-modal-title tabindex="-1" autofocus>Native workspace</h2>
+        <p>Feedback roots are inside this modal, not projected above it by z-index.</p>
+        <div class="buttons">
+          <button type="button" data-inside-message-button>Create modal-local message</button>
+          <button type="button" data-inside-notification-button>Create modal-local notification</button>
+          <button type="button" data-inside-dialog-button>Open nested confirmation</button>
+          <button type="button" data-dispose-scope>Dispose this whole example scope</button>
+        </div>
+        <p data-inside-error role="status"></p>
+        <div data-inside-message class="mui-feedback-host mui-message-host"><ol class="mui-feedback-list" data-message-items aria-label="Workspace messages"></ol><p class="mui-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p></div>
+        <div data-inside-notification class="mui-feedback-host mui-notification-host"><div class="mui-feedback-list" data-notification-items></div><p class="mui-feedback-announcer" data-notification-announcer role="status" aria-atomic="true"></p></div>
+        <form method="dialog"><button value="workspace-closed">Close workspace</button></form>
+      </dialog>
+    </template>
+  </main>
+</body>
+</html>

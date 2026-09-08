@@ -1,0 +1,10 @@
+body { margin: 0; color: #20252b; background: #f4f6f9; font: 1rem/1.5 system-ui, sans-serif; }
+main { max-inline-size: 64rem; margin-inline: auto; padding: 1rem; overflow-wrap: anywhere; }
+button, input { font: inherit; max-inline-size: 100%; box-sizing: border-box; }
+button { min-block-size: 2.5rem; }
+fieldset { display: flex; flex-wrap: wrap; gap: .8rem; }
+label { display: block; }
+.buttons { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .7rem; }
+.mui-feedback-host { margin-block: 1rem; }
+[data-example-status], [data-inside-error] { min-block-size: 1.5rem; }
+@media print { [data-enhanced-controls] { display: none; } }

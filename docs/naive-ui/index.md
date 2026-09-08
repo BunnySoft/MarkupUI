@@ -23,7 +23,10 @@ Drawer/DrawerContent now also have [accepted native edge-panel evidence](../comp
 Message now also has [accepted bounded root-owned feedback evidence](../components/message.md).
 Notification now also has [accepted native card/guarded-close evidence](../components/notification.md).
 Collapse Transition now also has [accepted optional native-motion evidence](../components/collapse-transition.md).
-The declared navigation and modal-surface workstreams are accepted for retained scopes. P3 overall remains in progress, with Discrete API next.
+Discrete API now has an [accepted explicit composition resolution](../components/discrete.md), with no new runtime.
+**P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
+are reconciled. P0/P4/P5/P6 and full framework parity remain independent. **Next recommended:
+native Input/control contracts in P4, before Form enhancements.**
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
 Use the [master migration plan](migration-plan.md) for phase dependencies and current execution
 evidence. Every component page now includes its own numbered task checklist, prerequisites and next task.
@@ -76,9 +79,13 @@ The numbered component checklists distinguish proposed work from accepted implem
 Avatar's four retained-scope tasks are checked using `9afc818`, Button's four using
 `43dd57f`, Card's four using `cebc6d7`, Tag's four using `6605d29`, and Badge's four using
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
-Popover, Tooltip, Popconfirm, Dropdown, Menu, Tabs, Collapse, Anchor, Back Top, Pagination, Steps, Loading Bar, Dialog, Modal, Drawer, Message, Notification and Collapse Transition add four accepted tasks each; the other **176 tasks remain unchecked**.
-P2 retained scopes remain reconciled; these eighteen retained P3 scopes are accepted and Discrete API is next. Reconcile later implementation evidence
+Popover, Tooltip, Popconfirm, Dropdown, Menu, Tabs, Collapse, Anchor, Back Top, Pagination, Steps, Loading Bar, Dialog, Modal, Drawer, Message, Notification, Collapse Transition and Discrete API add four accepted tasks each; the other **172 tasks remain unchecked**.
+P2 retained scopes remain reconciled; the nineteen sequential P3 scopes plus three mixed P2/P3 pages pass the complete P3 audit. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
+
+Earlier component acceptance sections retain checkpoint-specific queue/progress statements.
+The final P3 audit and current master dashboard supersede those historical “next/P3 incomplete”
+remarks; no later P4/P5/P6 component inherits P3 acceptance.
 
 ### Native browser capabilities reduce implementation scope
 
@@ -195,7 +202,7 @@ acceptance. Separate ESM/classic JavaScript ceilings are 4,000 gzip bytes each; 
 1,500-byte ceiling. Browser coverage is not all-browser certification or pixel parity.
 The reference Avatar page reconciles all **35 rows: 19 Verified adapted targets and
 16 Intentionally omitted contracts**. Button, Card, Tag, Badge, Alert, Empty, Skeleton, Spin, Progress, Statistic, Typography, Icon, Gradient Text, Ellipsis, Page Header, Divider, Flex, Space, Grid, Layout, List, Descriptions, Timeline, Breadcrumb, Thing, Table, Highlight, Affix, Result, Code, Scrollbar, Float Button and Image are also verified as recorded below;
-**Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition retained scopes are accepted; Discrete API is next**, and the master plan owns
+**All retained P3 scopes, including Discrete API's native composition recipe, are accepted; native Input is the recommended P4 next step**, and the master plan owns
 the sequential implementation/build/commit workflow.
 
 ### Button pilot: accepted native scope
@@ -890,8 +897,8 @@ One mode plus CSS costs **4,086 (ESM)** or **4,321 (classic)** gzip bytes. Core/
 The final catalog audit checked **all 96 routes and all 31 P2-assigned reference inventories**:
 no retained Planned/Not reviewed/In progress/Implemented rows remain on those pages.
 P2 is **Verified for its declared native scopes and omissions**, not full Naive UI or P6
-viewer parity. At Image sign-off 19 P3-assigned routes remained Planned; **one remains after
-Collapse Transition**, listed in the [master next-phase inventory](migration-plan.md#remaining-p3-inventory-after-collapse-transition).
+viewer parity. At Image sign-off 19 P3-assigned routes remained Planned; **none remain after
+Discrete API**, verified in the [complete P3 audit](migration-plan.md#p3-retained-scope-sign-off-after-discrete-api).
 The Image sign-off recommended **Popover foundation before Tooltip/Popconfirm/Dropdown**; no next component was
 implemented in this Image change.
 P2 remains complete for its declared retained native scopes, not full upstream parity.
@@ -1164,7 +1171,7 @@ provider, global request singleton or cosmetic percentage simulation.
 The [tracker](components/loading-bar.md) preserves **10 original identities** and adds eight
 explicit source supplements: **10 adapted targets, eight omissions**. At Loading Bar sign-off the catalog had
 **3,317 rows**, **184/384 accepted tasks across 46 pages**, with **seven Planned P3 routes**.
-Dialog, Modal, Drawer, Message, Notification and Collapse Transition are now accepted below; **Discrete API is next**. Navigation remains accepted for
+Dialog, Modal, Drawer, Message, Notification, Collapse Transition and Discrete API are now accepted below. Navigation remains accepted for
 its declared retained scopes; global P3 and managed feedback are not complete.
 
 **74 targeted tests** (47 Loading Bar, 27 native/legacy), build/budgets and Chromium cover
@@ -1187,7 +1194,7 @@ The [tracker](components/dialog.md) preserves **105 original owner/name/source i
 adds **10 source-only supplements and six explicit inherited options**, and closes
 **121 rows: 80 Verified adapted targets, 41 omissions**. At Dialog sign-off the catalog had **3,333 rows**,
 **188/384 accepted tasks across 47 pages**, with **six Planned P3 routes**.
-Modal, Drawer, Message, Notification and Collapse Transition are now accepted below; **Discrete API is next**, with its own build/acceptance/commit.
+Modal, Drawer, Message, Notification, Collapse Transition and Discrete API are now accepted below, each with separate acceptance evidence.
 
 **157 targeted tests** (59 Dialog, 31 Image, 40 Popconfirm, 27 native/legacy),
 build/declarations/budgets and Chromium acceptance cover real native forms,
@@ -1213,7 +1220,7 @@ The [tracker](components/modal.md) retains **121 original identities**, includin
 duplicated Provider table and all preset/Options/Reactive inheritance, and adds **30 source
 supplements plus three inherited fields**. **154 rows: 74 adapted targets, 80 omissions.**
 At Modal sign-off catalog totals were **3,366 rows**, **192/384 accepted tasks across 48 pages**, with
-**five Planned P3 routes**. Drawer, Message, Notification and Collapse Transition are accepted below; **Discrete API is next; P3 is not complete.**
+**five Planned P3 routes** at that checkpoint. The remaining retained P3 scopes are accepted below; the final audit closes P3 without claiming framework parity.
 
 **130 targeted tests** (44 Modal, 59 Dialog, 27 native/legacy), build/declarations/budgets
 and Chromium cover real modal/background focus, native forms/returnValue/cancel/nesting,
@@ -1262,7 +1269,7 @@ Capacity rejects instead of evicting focused items or adding hidden queues.
 The [tracker](components/message.md) preserves **47 original identities** and adds **20
 source supplements**: **67 rows, 35 adapted targets and 32 omissions**. At Message sign-off catalog totals were
 **3,406 rows**, **200/384 accepted tasks across 50 pages**, with **three Planned P3 routes**.
-Notification and Collapse Transition are now accepted below; **Discrete API is next**.
+Notification, Collapse Transition and Discrete API are now accepted below.
 
 **86 targeted tests** (59 Message, 27 native/legacy), build/budgets and Chromium cover
 native close/form/focus behavior, actual hover/focus expiry protection, updates/restarts,
@@ -1308,7 +1315,7 @@ ResizeObserver/animation framework is added.
 
 The [tracker](components/collapse-transition.md) preserves **four original identities** and
 adds **16 explicit source/internal-hook/style supplements**: **20 rows, eight adapted
-targets and 12 omissions**. Current totals are **3,444 rows**, **208/384 accepted tasks
+targets and 12 omissions**. At Collapse Transition sign-off totals were **3,444 rows**, **208/384 accepted tasks
 across 52 pages**, with **one Planned P3 route: Discrete API**.
 
 **160 targeted tests** (43 transition, 33 Collapse, 57 Notification/shared ownership,
@@ -1320,7 +1327,35 @@ clipping; same-task removal is disposal, not a spurious animation failure.
 ESM/classic/CSS are **3,715/3,837/274 gzip bytes** under **4,500/4,500/750** ceilings;
 one format plus CSS is **3,989/4,111**. All prior sources/outputs/ceilings remain unchanged,
 including core/advanced/widgets **14,611/2,181/2,779**. No arbitrary geometry or all-browser/
-AT/framework-transition parity is claimed. **Discrete API is next; P3 is not complete.**
+AT/framework-transition parity is claimed. Discrete API is resolved below and the final P3 audit is complete.
+
+### Discrete API: verified composition, no new runtime
+
+[Discrete acceptance](../components/discrete.md) resolves the useful outside-framework
+capability through existing selected native Message/Notification/Loading Bar/Dialog/Modal
+owners. The real demo uses conditional imports, authored roots/templates and explicit,
+ordered, reported/retryable application cleanup. No library createDiscreteApi, hidden app,
+provider graph, reactive context bridge, new distribution/export or budget is added.
+
+The [tracker](components/discrete.md) preserves **16 original identities** and adds **12
+source supplements**: **28 rows, seven adapted capabilities and 21 omissions**. Current
+catalog totals are **3,456 rows**, **212/384 accepted tasks across 53 pages**.
+**307 targeted tests** (14 composition plus 293 existing owner/native tests), unchanged
+build/budgets and Chromium validate selected imports, all-five composition, modal-local
+feedback, nested pending cleanup, focus, partial setup/disposal error reporting/retry,
+unowned-resource preservation and native fallback.
+
+**Complete P3 audit:** all **22 P3-assigned pages** (including mixed Ellipsis/Float Button/
+Layout assignments), **1,086 tracker rows = 631 Verified adapted + 455 omitted**, and
+**88/88 page tasks** are resolved. There are **zero Planned P3 routes and zero unresolved
+retained rows**. P0 and P4+ do not inherit this status. Existing assets and all byte ceilings
+remain unchanged; core/advanced/widgets are **14,611/2,181/2,779 gzip bytes**.
+
+**P4 next recommendation: Input (native input/textarea/control contract), then dependent
+Form work.** All **17 P4-assigned routes remain Planned**: Auto Complete, Color Picker,
+Checkbox, Date Picker, Dynamic Input, Dynamic Tags, Form, Input, Input Number, Input OTP,
+Mention, Radio, Rate, Select, Slider, Switch and Time Picker. No P4 implementation begins
+in this Discrete resolution.
 
 ## Common Components (15)
 
@@ -1445,7 +1480,7 @@ AT/framework-transition parity is claimed. **Discrete API is next; P3 is not com
 | Component | Plan direction | Current baseline | Phase |
 | --- | --- | --- | --- |
 | [Collapse Transition](components/collapse-transition.md) | 🟢 Verified optional native-motion scope; 12 explicit omissions | Authored wrapper, native height animation/hidden/inert and guarded ownership; [accepted evidence](../components/collapse-transition.md) | P3 |
-| [Discrete API](components/discrete.md) | 🔵 Planned; ⏭️ Vue app omitted | Message/notification functions | P3; exclusions |
+| [Discrete API](components/discrete.md) | 🟢 Verified native composition; 21 explicit omissions | Existing selected native owners; no new factory/bundle; [accepted evidence](../components/discrete.md) | P3; exclusions |
 | [Scrollbar](components/scrollbar.md) | 🟢 Verified native-only scope; 15 explicit exclusion groups | Native APIs/events/overflow and standards hints; [accepted evidence](../components/scrollbar.md) | P2; custom-emulation exclusions |
 | [Virtual List](components/virtual-list.md) | 🔵 Planned | Partial fixed-height advanced | P5 |
 
@@ -1489,15 +1524,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 949: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 402 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition source supplements |
+| Supplementary named declarations | 961: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 414 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete source supplements |
 | Explicit inherited tracker rows | 275, including six source-inherited DialogReactive options, three ModalReactive fields and two NotificationReactive fields |
-| Total tracker rows | 3,444; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 208 retained-scope tasks accepted across 52 component pages, 176 unchecked |
+| Total tracker rows | 3,456; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 212 retained-scope tasks accepted across 53 component pages, 172 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,444 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification and 8 Collapse Transition Verified adapted targets cite acceptance |
-| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 44 unchanged inventories match extraction; the 52 accepted pages preserve named/grouped identities with explicit dispositions |
-| Local links | Relative file links validated after Collapse Transition reconciliation; the historical 612-link snapshot also checked heading anchors |
+| Status presentation | All 3,456 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition and 7 Discrete native capabilities cite acceptance |
+| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 43 unchanged inventories match extraction; the 53 accepted pages preserve named/grouped identities with explicit dispositions |
+| Local links | Relative file links validated after Discrete/P3 reconciliation; the historical 612-link snapshot also checked heading anchors |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript
