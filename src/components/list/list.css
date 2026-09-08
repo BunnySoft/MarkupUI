@@ -1,0 +1,130 @@
+:where(.mui-list) {
+  --_mui-list-padding-block: .75rem;
+  --_mui-list-padding-inline: 1rem;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  color: var(--mui-list-color, var(--mui-text-primary, #18181b));
+  background: var(--mui-list-background, var(--mui-bg-surface, #fff));
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+:where(.mui-list[data-size="small"]) {
+  --_mui-list-padding-block: .5rem;
+  --_mui-list-padding-inline: .75rem;
+}
+:where(.mui-list[data-size="large"]) {
+  --_mui-list-padding-block: 1rem;
+  --_mui-list-padding-inline: 1.25rem;
+}
+:where(.mui-list[data-bordered]) {
+  border: 1px solid var(--mui-list-border-color, var(--mui-border, #e4e4e7));
+  border-radius: var(--mui-list-border-radius, .375rem);
+}
+:where(.mui-list > .mui-list-items) {
+  margin: 0;
+  padding-block: 0;
+  padding-inline-start: 1.75rem;
+  padding-inline-end: 0;
+}
+:where(.mui-list > .mui-list-items[data-markerless]) {
+  list-style: none;
+  padding-inline-start: 0;
+}
+:where(.mui-list > .mui-list-items > .mui-list-item) {
+  display: list-item;
+}
+:where(.mui-list > .mui-list-items > .mui-list-item, .mui-list > .mui-list-header, .mui-list > .mui-list-footer) {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  padding-block: var(--mui-list-padding-block, var(--_mui-list-padding-block));
+  padding-inline: var(--mui-list-padding-inline, var(--_mui-list-padding-inline));
+}
+:where(.mui-list > .mui-list-items > li.mui-list-item:not([hidden]) ~ li.mui-list-item:not([hidden]), .mui-list > .mui-list-footer) {
+  border-block-start: 1px solid var(--mui-list-border-color, var(--mui-border, #e4e4e7));
+}
+:where(.mui-list > .mui-list-header) {
+  border-block-end: 1px solid var(--mui-list-border-color, var(--mui-border, #e4e4e7));
+}
+:where(.mui-list[data-show-divider="false"] > .mui-list-items > .mui-list-item) {
+  border-block-start: 0;
+}
+:where(.mui-list-row, .mui-list-actions) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mui-list-gap, .75rem);
+  min-inline-size: 0;
+}
+:where(.mui-list-row > *) {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+:where(.mui-list-content) {
+  flex: 1 1 12rem;
+}
+:where(.mui-list-prefix, .mui-list-suffix) {
+  flex: 0 1 auto;
+}
+:where(button.mui-list-action, a.mui-list-action[href]) {
+  box-sizing: border-box;
+  inline-size: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+:where(a.mui-list-action[href]) {
+  text-decoration: underline;
+  text-underline-offset: .15em;
+}
+:where(button.mui-list-action:disabled) {
+  opacity: .6;
+}
+:where(.mui-list[data-clickable] > .mui-list-items > .mui-list-item > button.mui-list-action:not(:disabled),
+  .mui-list[data-clickable] > .mui-list-items > .mui-list-item > a.mui-list-action[href]) {
+  cursor: pointer;
+}
+:where(.mui-list-action):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+@media (hover: hover) {
+  :where(.mui-list[data-hoverable] > .mui-list-items > .mui-list-item:hover) {
+    background: var(--mui-list-hover-background, var(--mui-bg-muted, #f3f4f6));
+  }
+}
+:where(.mui-list, .mui-list-items, .mui-list-item, .mui-list-header, .mui-list-footer,
+  .mui-list-row, .mui-list-prefix, .mui-list-content, .mui-list-suffix, .mui-list-actions, .mui-list-action)[hidden]:not([hidden="until-found"]),
+template:where(.mui-list, .mui-list-items, .mui-list-item, .mui-list-row, .mui-list-actions),
+:where(.mui-list, .mui-list-items, .mui-list-item, .mui-list-row, .mui-list-actions) > template {
+  display: none !important;
+}
+@media (forced-colors: active) {
+  :where(.mui-list) {
+    color: CanvasText;
+    background: Canvas;
+    border-color: CanvasText;
+  }
+  :where(.mui-list > .mui-list-header, .mui-list > .mui-list-footer, .mui-list > .mui-list-items > .mui-list-item) {
+    border-color: CanvasText;
+  }
+  :where(button.mui-list-action:disabled) {
+    color: GrayText;
+    opacity: 1;
+  }
+}
+@media print {
+  :where(.mui-list) {
+    color: #000;
+    background: transparent;
+  }
+  :where(.mui-list > .mui-list-items > .mui-list-item) {
+    break-inside: avoid;
+    background: transparent !important;
+  }
+}

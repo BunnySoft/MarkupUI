@@ -10,6 +10,7 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./list/style.css": "./dist/markup-ui-list.css",
     "./layout/style.css": "./dist/markup-ui-layout.css",
     "./grid/style.css": "./dist/markup-ui-grid.css",
     "./space/style.css": "./dist/markup-ui-space.css",
