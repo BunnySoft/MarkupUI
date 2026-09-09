@@ -43,13 +43,14 @@ Date Picker now has [accepted native calendar/wall-clock/range evidence](../comp
 Time Picker now has [accepted native time-only/overnight-bound evidence](../components/time-picker.md), with no hidden date anchor or timezone conversion.
 Virtual List now has [accepted fixed-height/native-window evidence](../components/virtual-list.md), with stable keys, one focused pin and bounded native DOM.
 Tree now has [accepted native-outline/hierarchy evidence](../components/tree.md), with distinct native selection/checking, disabled cascade barriers and guarded lazy nodes.
+Cascader now has [accepted native dependent-select/path evidence](../components/cascader.md), with captured-default reconstruction, real form gates and guarded passive-source loading.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
 are reconciled. **P4 is Verified for retained native scopes:** all 17 assigned routes,
 984 tracker rows and 68 page tasks are resolved, with no Planned P4 routes or unresolved
-retained rows. **P5 is active, not complete:** Virtual List and Tree foundations are
-accepted; eight P5 routes remain. P0/P6 and full framework parity remain independent.
-Recommended next: **Cascader**, then Tree Select, with explicit native hierarchy/path/chooser
-ownership. No next collection was started in this Tree commit.
+retained rows. **P5 is active, not complete:** Virtual List, Tree and Cascader retained
+foundations are accepted; seven P5 routes remain. P0/P6 and full framework parity remain independent.
+Recommended next: **Tree Select**, with its own native chooser/value/reset ownership.
+No next collection was started in this Cascader commit.
 Component acceptance sections below retain their sign-off snapshots; earlier counts and
 “next”/“In progress” statements are historical, not the current phase dashboard.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
@@ -106,7 +107,7 @@ Avatar's four retained-scope tasks are checked using `9afc818`, Button's four us
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
 Popover through Rate, the subsequent Form/Auto Complete/Input OTP/Dynamic Input/Dynamic
 Tags/Mention/Color Picker/Date Picker/Time Picker records, and now Virtual List each add
-four accepted tasks; Tree now adds four more. The current total is **288/384 accepted across 72 pages, 96 unchecked**.
+four accepted tasks; Tree and Cascader each add four more. The current total is **292/384 accepted across 73 pages, 92 unchecked**.
 P2 retained scopes remain reconciled; the nineteen sequential P3 scopes plus three mixed P2/P3 pages pass the complete P3 audit. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
@@ -229,7 +230,7 @@ acceptance. Separate ESM/classic JavaScript ceilings are 4,000 gzip bytes each; 
 1,500-byte ceiling. Browser coverage is not all-browser certification or pixel parity.
 The reference Avatar page reconciles all **35 rows: 19 Verified adapted targets and
 16 Intentionally omitted contracts**. Button, Card, Tag, Badge, Alert, Empty, Skeleton, Spin, Progress, Statistic, Typography, Icon, Gradient Text, Ellipsis, Page Header, Divider, Flex, Space, Grid, Layout, List, Descriptions, Timeline, Breadcrumb, Thing, Table, Highlight, Affix, Result, Code, Scrollbar, Float Button and Image are also verified as recorded below;
-**All retained P3 and P4 scopes are accepted; Virtual List and Tree are accepted, with Cascader next**, and the master plan owns
+**All retained P3 and P4 scopes are accepted; Virtual List/Tree/Cascader are accepted, with Tree Select next**, and the master plan owns
 the sequential implementation/build/commit workflow.
 
 ### Button pilot: accepted native scope
@@ -1829,7 +1830,7 @@ RTL/zoom/media/no-JS and legacy coexistence. A **500-node** native outline kept 
 rows (not virtualized); End reached the last node with **seven computed-style reads**,
 not a layout scan over every row. Detailed timings and payloads are in the canonical record.
 
-Current catalog: **3,710 rows, 288/384 accepted tasks across 72 pages, 96 unchecked**.
+At Tree sign-off: **3,710 rows, 288/384 accepted tasks across 72 pages, 96 unchecked**.
 P5 remains **In progress**: two of ten routes accepted; **622 rows = 86 adapted +
 105 omitted + 431 unresolved**. P4 remains 17 routes / 984 rows / 68 tasks, no unresolved
 retained rows.
@@ -1844,6 +1845,37 @@ retained rows.
 **Recommended next: Cascader**, followed by Tree Select. Reuse real-node hierarchy/index
 and cancellation concepts where anatomy truly matches; each chooser still needs its own
 path/value/keyboard/popup/reset contract. No next component is implemented here.
+
+## Cascader: accepted native dependent paths
+
+[Canonical Cascader acceptance](../components/cascader.md) delivers stable native selects
+projected from a separate passive authored Tree hierarchy. Strict string value/path/leaf
+semantics, disabled ancestors, clear/readout, captured default paths and native validation
+are explicit. The reset-settlement gap is gated; missing defaults never select an unrelated
+sibling. Async native batches use AbortSignal, branch/key/generation and actual-select-value
+guards. No hidden terminal field, competing Tree/Select owner, renderer, provider or popup.
+
+**69 original section/member/kind/API-line identities + 26 source supplements = 95 rows:
+40 adapted and 55 omitted.** Four tasks close. **212 targeted tests** and build/declarations/
+budgets pass. Chromium verified dependent path changes, native keyboard/labels/forms,
+pending/reset/missing-default validation, cancellation/stale values, focus/refresh,
+RTL/zoom/no-JS and classic/ESM/legacy coexistence; detailed evidence is canonical.
+
+Current catalog: **3,736 tracker rows / 292 of 384 tasks across 73 accepted pages /
+92 unchecked tasks**. **P5 remains In progress:** three of ten routes accepted, **648 rows =
+126 adapted + 160 omitted + 362 unresolved**. P4 remains unchanged: 17 routes, 984 rows,
+68 accepted tasks and no unresolved retained rows.
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P0 (3) | Config Provider, Element, Global Style | 97 / 8 |
+| P5 (7) | Transfer, Tree Select, Data Table, Log, Infinite Scroll, Popselect, Split | 365 / 362 |
+| P6 (9) | Carousel, Watermark, Upload, Calendar, Countdown, Number Animation, Time, Heatmap, Marquee | 232 / 232 |
+| Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Next: Tree Select.** Reuse real-node key/path indexing and reset/validation/lifetime
+contracts where appropriate, not a second renderer or two owners for the same Tree/Select.
+No Tree Select implementation is included here.
 
 ## Common Components (15)
 
@@ -1870,7 +1902,7 @@ path/value/keyboard/popup/reset contract. No next component is implemented here.
 | Component | Plan direction | Current baseline | Phase |
 | --- | --- | --- | --- |
 | [Auto Complete](components/auto-complete.md) | 🟢 Verified native datalist/loader scope; 29 explicit omissions | Native field/suggestions with guarded bounded optional loader; [accepted evidence](../components/auto-complete.md) | P4; P5 rich exclusions |
-| [Cascader](components/cascader.md) | 🔵 Planned | Partial widgets | P5 |
+| [Cascader](components/cascader.md) | 🟢 Verified retained native paths; 55 explicit omissions | Native dependent selects; legacy widgets preserved | P5 |
 | [Color Picker](components/color-picker.md) | 🟢 Verified classic native RGB scope; 25 explicit omissions | Original color control/readout and draft-safe optional hex editing; [accepted evidence](../components/color-picker.md) | P4; P6 advanced color exclusions |
 | [Checkbox](components/checkbox.md) | 🟢 Verified retained native scope; 14 explicit omissions | CSS-only native checkbox and bounded fieldset group helper; [accepted evidence](../components/checkbox.md) | P4 |
 | [Date Picker](components/date-picker.md) | 🟢 Verified native calendar/wall-clock/range scope; 162 explicit omissions | Detached native grammar checks, real endpoint fields, safe clear/default/order contracts; [accepted evidence](../components/date-picker.md) | P4; P6 calendar/format exclusions |
@@ -2012,15 +2044,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,215: 367 inline fields, 182 type/helper/exclusion entries (including five Table public helper groups and Virtual List/Tree named ScrollTo types) and 666 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree source supplements |
+| Supplementary named declarations | 1,241: 367 inline fields, 182 type/helper/exclusion entries (including five Table public helper groups and Virtual List/Tree named ScrollTo types) and 692 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader source supplements |
 | Explicit inherited tracker rows | 275, including six source-inherited DialogReactive options, three ModalReactive fields and two NotificationReactive fields |
-| Total tracker rows | 3,710; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 288 retained-scope tasks accepted across 72 component pages, 96 unchecked |
+| Total tracker rows | 3,736; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 292 retained-scope tasks accepted across 73 component pages, 92 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,710 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate, 68 Form, 27 Auto Complete, 17 Input OTP, 28 Dynamic Input, 25 Dynamic Tags, 30 Mention, 10 Color Picker, 37 Date Picker, 16 Time Picker, 26 Virtual List and 60 Tree native capabilities cite acceptance |
-| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 24 unchanged inventories match extraction; the 72 accepted pages preserve named/grouped identities with explicit dispositions; Tree's 119 original section/member/kind/pinned API-line identities match its preceding inventory in order; P4 remains fully reconciled |
-| Local links | All 478 scoped Tree/reference/index/master relative links resolve; prior per-component/link snapshots remain historical evidence |
+| Status presentation | All 3,736 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate, 68 Form, 27 Auto Complete, 17 Input OTP, 28 Dynamic Input, 25 Dynamic Tags, 30 Mention, 10 Color Picker, 37 Date Picker, 16 Time Picker, 26 Virtual List, 60 Tree and 40 Cascader native capabilities cite acceptance |
+| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 23 unchanged inventories match extraction; the 73 accepted pages preserve named/grouped identities with explicit dispositions; Cascader's 69 original section/member/kind/pinned API-line identities match its preceding inventory in order; P4 remains fully reconciled |
+| Local links | All 483 scoped Cascader/reference/index/master relative links resolve; prior per-component/link snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

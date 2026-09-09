@@ -1,0 +1,14 @@
+:root { font: 16px/1.5 system-ui, sans-serif; color: #16324b; background: #f5f8fc; }
+body { margin: 0; }
+main { max-width: 950px; margin: 1rem auto; padding: 1rem; overflow-wrap: anywhere; }
+button, select, input { font: inherit; }
+button { padding: .3rem .65rem; }
+.mui-cascader { min-inline-size: 0; margin-block: 1rem; padding: 1rem; border: 1px solid #7890a5; background: white; }
+legend { font-weight: 600; }
+.source-description { margin-block-end: 1rem; }
+.tools { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin-block: 1rem; }
+.tools[hidden] { display: none; }
+output, pre { display: block; white-space: pre-wrap; overflow-wrap: anywhere; }
+[data-cascader-path] { font-weight: 600; }
+@media (max-width: 480px) { main, .mui-cascader { padding: .5rem; } }
+@media (forced-colors: active) { .mui-cascader { border-color: CanvasText; } }

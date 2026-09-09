@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MarkupUI native Cascader paths</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-cascader.css">
+  <link rel="stylesheet" href="./cascader.css">
+  <script defer src="../../dist/markup-ui-cascader.global.js"></script>
+  <script defer src="./cascader.js"></script>
+</head>
+<body>
+<main>
+  <h1>Native dependent selects</h1>
+  <p>One string terminal value, an explicit key path, and real native fields at each level.
+    A partial or loading leaf path cannot pass native form validation. There is no hidden
+    terminal-value field, popup renderer or network request.</p>
+  <form id="location-form">
+    <fieldset class="mui-cascader" data-cascader id="location" disabled>
+      <legend>Required leaf destination</legend>
+      <details class="source-description">
+        <summary>Authored hierarchy and no-JS fallback</summary>
+        <p>Without JavaScript this outline remains readable/disclosable. Dependent selects
+          stay disabled, rather than pretending static options can follow parent changes.</p>
+        <section class="mui-tree" data-tree data-cascader-source aria-label="Destination hierarchy">
+          <ul data-tree-list>
+            <li data-tree-key="eu"><div data-tree-row><span data-tree-label>Europe</span></div><details data-tree-branch><summary>Europe choices</summary><ul data-tree-list>
+              <li data-tree-key="fr"><div data-tree-row><span data-tree-label>France</span></div><details data-tree-branch><summary>France choices</summary><ul data-tree-list>
+                <li data-tree-key="paris"><div data-tree-row><span data-tree-label>Paris</span></div></li>
+                <li data-tree-key="lyon"><div data-tree-row><span data-tree-label>Lyon</span></div></li>
+              </ul></details></li>
+            </ul></details></li>
+            <li data-tree-key="us"><div data-tree-row><span data-tree-label>United States</span></div><details data-tree-branch><summary>United States choices</summary><ul data-tree-list>
+              <li data-tree-key="nyc"><div data-tree-row><span data-tree-label>New York</span></div></li>
+            </ul></details></li>
+            <li data-tree-key="island"><div data-tree-row><span data-tree-label>Island terminal</span></div></li>
+            <li data-tree-key="remote"><div data-tree-row><span data-tree-label>Lazy destinations</span></div><details data-tree-branch data-tree-lazy><summary>JavaScript loads these choices</summary><ul data-tree-list></ul></details></li>
+            <li data-tree-key="blocked" data-tree-disabled><div data-tree-row><span data-tree-label>Unavailable region</span></div></li>
+          </ul>
+        </section>
+      </details>
+      <div data-cascader-columns>
+        <label data-cascader-column>Region<select data-cascader-control name="place[]" required><option value="" selected>Choose region</option></select></label>
+        <label data-cascader-column>Country or city<select data-cascader-control name="place[]"><option value="" selected>Choose next level</option></select></label>
+        <label data-cascader-column>City<select data-cascader-control name="place[]"><option value="" selected>Choose city</option></select></label>
+      </div>
+      <p data-cascader-path></p>
+      <p data-cascader-status role="status"></p>
+      <button type="button" data-cascader-clear hidden>Clear destination</button>
+    </fieldset>
+    <button>Submit native fields</button><button type="reset">Restore default path</button>
+  </form>
+  <div id="tools" class="tools" hidden>
+    <button type="button" id="new-york">Set New York silently</button>
+    <button type="button" id="default-lyon">Set default to Lyon</button>
+    <button type="button" id="cancel-reset">Cancel next reset</button>
+    <button type="button" id="missing-default">Remove default Paris key</button>
+    <button type="button" id="rename">Rename Lyon and refresh</button>
+    <button type="button" id="retry">Retry selected lazy branch</button>
+    <button type="button" id="race">Load then clear immediately</button>
+    <label><input id="ignore-abort" type="checkbox">Simulate late result despite abort</label>
+    <label><input id="duplicate" type="checkbox">Return duplicate key</label>
+    <button type="button" id="disabled">Toggle native fieldset disabled</button>
+    <button type="button" id="rtl">Toggle RTL</button>
+    <button type="button" id="disconnect">Disconnect both enhancements</button>
+  </div>
+  <output id="state" aria-label="Current path state"></output>
+  <p id="events" role="status"></p>
+  <pre id="submission"></pre>
+  <form id="branch-form">
+    <fieldset class="mui-cascader" data-cascader id="branch" disabled>
+      <legend>Any-node policy, optional path</legend>
+      <section class="mui-tree" data-tree data-cascader-source aria-label="Branch policy hierarchy">
+        <ul data-tree-list><li data-tree-key="category"><div data-tree-row><span data-tree-label>Category</span></div><details data-tree-branch><summary>Category choices</summary><ul data-tree-list>
+          <li data-tree-key="entry"><div data-tree-row><span data-tree-label>Entry</span></div></li>
+        </ul></details></li></ul>
+      </section>
+      <div data-cascader-columns>
+        <label data-cascader-column>Category<select data-cascader-control name="branchPath[]"><option value="" selected>Choose category</option></select></label>
+        <label data-cascader-column>Optional entry<select data-cascader-control name="branchPath[]"><option value="" selected>Keep category selection</option></select></label>
+      </div>
+      <p data-cascader-path></p><p data-cascader-status></p>
+      <button type="button" data-cascader-clear hidden>Clear branch choice</button>
+    </fieldset>
+    <p>An accepted category is a terminal value in this policy. Its active blank child field
+      still serializes an empty string natively; FormData is not silently rewritten.</p>
+    <button>Inspect any-node FormData</button>
+  </form>
+  <template id="lazy-source"><li><div data-tree-row><span data-tree-label></span></div></li></template>
+</main>
+</body>
+</html>

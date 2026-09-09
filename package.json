@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./cascader": {
+      "types": "./dist/components/cascader/index.d.ts",
+      "import": "./dist/markup-ui-cascader.js"
+    },
+    "./cascader/style.css": "./dist/markup-ui-cascader.css",
     "./tree": {
       "types": "./dist/components/tree/index.d.ts",
       "import": "./dist/markup-ui-tree.js"
