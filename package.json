@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./dynamic-tags": {
+      "types": "./dist/components/dynamic-tags/index.d.ts",
+      "import": "./dist/markup-ui-dynamic-tags.js"
+    },
+    "./dynamic-tags/style.css": "./dist/markup-ui-dynamic-tags.css",
     "./dynamic-input": {
       "types": "./dist/components/dynamic-input/index.d.ts",
       "import": "./dist/markup-ui-dynamic-input.js"

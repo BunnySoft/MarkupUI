@@ -1,0 +1,11 @@
+:root { font-family: system-ui, sans-serif; color-scheme: light dark; }
+body { margin: 0; }
+main { max-inline-size: 60rem; margin-inline: auto; padding: 1rem; }
+fieldset { margin-block: 1rem; padding: 1rem; border: 1px solid GrayText; }
+.tools { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .75rem; }
+button, input { font: inherit; }
+button { padding: .5rem; }
+input { max-inline-size: 100%; box-sizing: border-box; }
+p, label, pre { overflow-wrap: anywhere; }
+pre { white-space: pre-wrap; padding: .75rem; border: 1px solid GrayText; }
+[hidden] { display: none !important; }

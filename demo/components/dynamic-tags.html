@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Dynamic Tags</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-dynamic-tags.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
+  <link rel="stylesheet" href="./dynamic-tags.css">
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
+  <script defer src="../../dist/markup-ui-dynamic-tags.global.js"></script>
+  <script defer src="./dynamic-tags.js"></script>
+</head>
+<body>
+<main>
+  <h1>Dynamic Tags: native values, explicit commits</h1>
+  <p>Committed tags are visible readonly named fields, not hidden proxies. Enter or Add commits one whole draft. Blur, Escape and Backspace do not remove or commit tags. Duplicates are allowed in this example and removed by stable row key.</p>
+  <form id="tags-form" action="dynamic-tags.html" method="get">
+    <label>Collection title (required) <input id="title" name="title" value="Local tags" required></label>
+    <fieldset class="mui-dynamic-tags" data-dynamic-tags data-dynamic-input data-round data-type="info" id="topics">
+      <legend>Topics — maximum four tags</legend>
+      <ul class="mui-dynamic-tags__list" data-dynamic-rows>
+        <li class="mui-dynamic-tags__tag" data-dynamic-row data-dynamic-key="native">
+          <input class="mui-dynamic-tags__value" data-tags-value type="text" readonly name="tags[]" value="native" aria-label="Committed tag">
+          <button type="button" data-dynamic-action="remove" hidden>Remove tag</button>
+        </li>
+        <li class="mui-dynamic-tags__tag" data-dynamic-row data-dynamic-key="forms">
+          <input class="mui-dynamic-tags__value" data-tags-value type="text" readonly name="tags[]" value="forms" aria-label="Committed tag">
+          <button type="button" data-dynamic-action="remove" hidden>Remove tag</button>
+        </li>
+      </ul>
+      <template data-dynamic-template>
+        <li class="mui-dynamic-tags__tag" data-dynamic-row>
+          <input class="mui-dynamic-tags__value" data-tags-value type="text" readonly name="tags[]" aria-label="Committed tag">
+          <button type="button" data-dynamic-action="remove" hidden>Remove tag</button>
+        </li>
+      </template>
+      <div class="mui-dynamic-tags__entry" data-tags-entry hidden>
+        <label for="draft">New tag (not submitted until added)</label>
+        <input id="draft" data-tags-editor type="text" maxlength="64" aria-describedby="tags-help">
+        <button type="button" data-dynamic-add hidden>Add tag</button>
+      </div>
+      <p id="tags-help">No trim, case conversion or comma splitting. Blank-only text is rejected without clearing. Try “fail” to simulate a synchronous creation failure.</p>
+      <p class="mui-dynamic-tags__status" data-tags-status>Authored tags remain native without JavaScript.</p>
+      <p id="tags-error" class="mui-form-item__feedback" hidden></p>
+    </fieldset>
+    <div class="tools">
+      <button type="submit" name="intent" value="inspect">Inspect native submission</button>
+      <button type="reset">Reset current native fields</button>
+      <button type="button" id="validate" hidden>Validate tags and title</button>
+    </div>
+  </form>
+  <div class="tools">
+    <button type="button" id="silent" hidden>Silent draft assignment + refresh</button>
+    <button type="button" id="disabled" hidden>Toggle native fieldset disabled</button>
+    <button type="button" id="readonly" hidden>Toggle draft readonly</button>
+    <button type="button" id="rtl">Toggle RTL</button>
+    <button type="button" id="disconnect" hidden>Disconnect helper, keep tags</button>
+  </div>
+  <p id="events">No enhanced changes yet.</p>
+  <pre id="submission">Local inspection only; no backend request from the demo script.</pre>
+</main>
+</body>
+</html>

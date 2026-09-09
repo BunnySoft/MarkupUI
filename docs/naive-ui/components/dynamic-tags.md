@@ -1,125 +1,136 @@
 # Dynamic Tags
 
-**Plan: Planned. Current baseline: tag/input primitives only.**
+**Plan: 🟢 Verified retained native string-tag/editor scope.**
 
-## Baseline and target
-
-[B1: content.ts](../../../src/components/content.ts) provides closeable tags; [B2: forms.ts](../../../src/components/forms.ts) provides text input. Collection editing is absent.
-
-- **HTML:** tag list, labelled input and native remove buttons.
-- **JS:** insertion/removal, duplicate policy, IME-safe commit and value events.
-- **CSS:** wrapping layout and editing/focus states.
-- **Placement:** proposed `src/optional/dynamic-tags/`.
-
-## Acceptance and gaps
-
-Test empty/duplicate tags, max limits, focus after deletion, paste and composition. Input/tag customization must be explicitly scoped, not arbitrary framework-prop bags.
+[Canonical anatomy, value/intent/ownership contracts and evidence](../../components/dynamic-tags.md).
+Dynamic Input is reused for bounded row/template/removal/focus/lifetime behavior. Tags are
+visible readonly named fields, with one unnamed native draft editor. No Tag/Input runtime,
+VNode/object renderer, hidden proxy value, controlled array store or implicit blur commit.
 
 ## Migration steps
 
-**Delivery phase:** P4 — enhanced entry; P5 for collection behavior. **Task state:** 🔵 Planned.
-**Prerequisites:** P2 Tag, P4 Input and explicit list identity in the [master plan](../migration-plan.md).
-**Next task:** define tag value/label uniqueness and the exact user action that commits entered text.
+**Delivery phase:** P4 — native enhanced entry; P5 renderer/object-model contracts omitted.
+**Task state:** 🟢 Verified retained scope.
+**Prerequisites:** accepted native Dynamic Input/Form contracts.
+**Next task:** Mention; overall P4 remains In progress.
 
-1. [ ] **Compose native editing.** Retain a labelled input, tag list and real remove buttons with predictable keyboard order.
-2. [ ] **Specify insertion policy.** Resolve whitespace, duplicates, limits, paste and composition without committing incomplete IME text.
-3. [ ] **Define removal/defaults.** Keep external value changes silent and restore sensible focus when selected tags disappear.
-4. [ ] **Exercise customized tags.** Test record labels, authored templates, rejected insertion and reset without input/tag prop passthrough.
+1. [x] **Compose native editing.** Original readonly values/list/editor/actions and inherited row ownership.
+2. [x] **Specify insertion policy.** Whole strings, exact duplicate policy, bounded results and IME-safe explicit commit.
+3. [x] **Define removal/defaults.** Stable-key removal, native current-field reset and draft-safe focus/teardown.
+4. [x] **Exercise customized tags.** Authored templates/native fields, callback errors, no-JS and browser evidence; object/render overloads omitted.
 
 ### Native primitives and fallback
 
-- **Native path:** a real text input, authored list and native remove buttons; optional tag templates clone DOM rather than interpret expressions. Stable tag keys retain existing nodes.
-- **Small enhancement:** a custom element handles composition-aware insertion/removal and disposes listeners; CSS flex/gap wraps tags. Native form/text-list output is the fallback when enhancement is absent. Feature-detect optional suggestion popovers and reduce to plain entry instead of installing a token-input framework.
+Native readonly named inputs own committed values and FormData. The editor is unnamed;
+unsaved text is not a duplicate submitted value. Existing tags remain readable/submittable
+without JS, while editor/action enhancements are hidden. No provider, hidden Tag selection
+state or keyboard layer outside the actual draft editor.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
 ## Reference and review boundary
 
 - [Official website](https://www.naiveui.com/en-US/os-theme/components/dynamic-tags)
-- [Pinned public API Markdown](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md)
-- [Pinned implementation source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags)
-- [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
+- [Pinned public API](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md)
+- [Pinned source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags)
+- [Catalog](../index.md) · [Master plan](../migration-plan.md)
 
-Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **19 local table rows + 13 supplementary declarations + 0 inherited rows = 32 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
+Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
+All **32 original identities** remain: **19 local table rows + 13 declarations/inline fields**,
+no inherited rows. **Ten explicit source supplements** give **42 total rows**.
+Verified means an **ADAPTED** native target, not framework object/signature parity.
+Canonical evidence applies to retained rows; omissions receive no implementation credit.
 
-Referenced public component types (composition, not automatic API inheritance): [Input](input.md). Opaque types without local member definitions remain unreviewed.
-
+DynamicTags.tsx, interface.ts, public-types.ts, index exports and the Tag common-props
+declaration were reviewed. Source object unions, indexed rendering, trigger/input swapping,
+blur auto-commit and NTag/NInput/NSpace providers are not accidentally imported.
+Native labels for controls are distinct from the omitted DynamicTagsOption.label model field.
 
 ### DynamicTags Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`closable`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L23) | Prop | Candidate presence attribute `closable`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`color`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L24) | Prop | External CSS token/class for `color`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`default-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L25) | Prop | Candidate native default/reset state for `default-value`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L26) | Prop | Candidate presence attribute `disabled`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`input-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L27) | Prop | Candidate explicit native-child configuration for `input-props`; no unrestricted prop forwarding. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`input-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L28) | Prop | Candidate `input-class` attribute or JS `inputClass`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`input-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L29) | Prop | External CSS class/custom property for `input-style`; no inline style-object passthrough. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`max`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L30) | Prop | Candidate `max` attribute or JS `max`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`round`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L31) | Prop | External CSS token/class for `round`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`render-tag`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L32) | Prop | Candidate authored `render-tag` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L33) | Prop | External CSS token/class for `size`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`tag-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L34) | Prop | Candidate `tag-class` attribute or JS `tagClass`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`tag-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L35) | Prop | External CSS class/custom property for `tag-style`; no inline style-object passthrough. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`type`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L36) | Prop | Candidate `type` attribute or JS `type`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L37) | Prop | Candidate JS `value` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-create`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L38) | Callback | Explicit `on-create` function/before-event contract needed; preserve return/cancellation semantics. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L39) | Callback | Candidate DOM `mui:change` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`closable`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L23) | Prop | Optional authored native sibling remove button. | 🟢 Verified | Stable-key removal, not a selectable/checkable Tag runtime. |
+| [`color`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L24) | Prop | External background/border/text CSS variables. | 🟢 Verified | No JS color object or CSS-in-JS. |
+| [`default-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L25) | Prop | Authored initial native tags and field defaultValue. | 🟢 Verified | Reset affects current fields, not an initial array. |
+| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L26) | Prop | Actual native fieldset/controls. | 🟢 Verified | Native FormData filtering; no hidden enabled proxy value. |
+| [`input-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L27) | Prop | Authored unnamed native text editor attributes. | 🟢 Verified | ADAPTED, no InputProps forwarding/runtime. |
+| [`input-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L28) | Prop | Original editor classes. | 🟢 Verified | No editor replacement. |
+| [`input-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L29) | Prop | External editor CSS. | 🟢 Verified | No inline style-object forwarding. |
+| [`max`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L30) | Prop | Reused bounded row cap, default 20, maximum 100. | 🟢 Verified | Capacity rejection preserves drafts. |
+| [`round`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L31) | Prop | data-round external chip border-radius. | 🟢 Verified | Presentation only. |
+| [`render-tag`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L32) | Prop | Authored native template alternative. | ⏭️ Intentionally omitted | No VNode renderer or object-label display layer. |
+| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L33) | Prop | Small/medium/large external CSS. | 🟢 Verified | No provider sizing. |
+| [`tag-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L34) | Prop | Authored row/readonly field classes. | 🟢 Verified | Original tag controls retained. |
+| [`tag-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L35) | Prop | External row/field CSS. | 🟢 Verified | No hidden field plus mirrored tag text. |
+| [`type`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L36) | Prop | data-type default/primary/info/success/warning/error styling. | 🟢 Verified | No validity/checkable state implied by color. |
+| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L37) | Prop | Native readonly field values; fresh values getter. | 🟢 Verified | ADAPTED string ownership, no controlled array setter/store. |
+| [`on-create`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L38) | Callback | Optional synchronous string-to-string create callback. | 🟢 Verified | Explicit derivation only; object branch/async results rejected. |
+| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L39) | Callback | Committed mui:dynamic-tags-change string snapshot. | 🟢 Verified | Native setters/refresh/reset remain silent; no model-provider emitter. |
 
 ### DynamicTags Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`input`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L54) | Slot | Candidate authored `input` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`trigger`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L55) | Slot | Candidate authored `trigger` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`input`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L54) | Slot | Persistent authored native editor/label/entry region. | 🟢 Verified | No generated Input/VNode swap or arbitrary input runtime. |
+| [`trigger`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L55) | Slot | Authored native Add button and label/focus actions. | 🟢 Verified | ADAPTED persistent editor; no trigger-to-renderer activation graph. |
 
 ### DynamicTagsOption
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L45) | Record field | Candidate plain-JS `label` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L46) | Record field | Candidate plain-JS `value` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L45) | Record field | No separate object display label. | ⏭️ Intentionally omitted | Native field displays its canonical string value. |
+| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L46) | Record field | No object option branch/hidden serialized value. | ⏭️ Intentionally omitted | Strings only; native control value remains authoritative. |
 
 ### DynamicTags Props: color inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`color.color?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L24) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`color.borderColor?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L24) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`color.textColor?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L24) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`color.color?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L24) | Inline record field | --mui-tags-background external CSS. | 🟢 Verified | No color-object parser. |
+| [`color.borderColor?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L24) | Inline record field | --mui-tags-border external CSS. | 🟢 Verified | Native focus outline remains visible. |
+| [`color.textColor?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L24) | Inline record field | --mui-tags-text external CSS. | 🟢 Verified | No selected/checked color semantics. |
 
 ### DynamicTags Props: render-tag inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`render-tag.label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L32) | Inline record field | Candidate authored `render-tag.label` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`render-tag.value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L32) | Inline record field | Candidate authored `render-tag.value` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`render-tag.label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L32) | Inline record field | No VNode label context. | ⏭️ Intentionally omitted | Author static native anatomy instead. |
+| [`render-tag.value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L32) | Inline record field | No renderer model value. | ⏭️ Intentionally omitted | Native field value is not an injected object renderer. |
 
 ### DynamicTags Props: on-create inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`on-create.label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L38) | Inline record field | Candidate DOM `mui:create.label` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-create.value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L38) | Inline record field | Candidate DOM `mui:create.value` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`on-create.label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L38) | Inline record field | Object-return label branch excluded. | ⏭️ Intentionally omitted | String callback result only. |
+| [`on-create.value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L38) | Inline record field | Object-return value branch excluded. | ⏭️ Intentionally omitted | No implicit object conversion. |
 
 ### DynamicTags Slots: input inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`input.submit`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L54) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`input.deactivate`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L54) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`input.submit`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L54) | Inline record field | commit() of current native draft. | 🟢 Verified | ADAPTED command, no any-value slot callback or form submission. |
+| [`input.deactivate`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L54) | Inline record field | Blur/Escape preserve draft, do not auto-commit/hide. | ⏭️ Intentionally omitted | Deliberate safety reduction from source handleInputBlur. |
 
 ### DynamicTags Slots: trigger inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`trigger.activate`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L55) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`trigger.disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L55) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`trigger.activate`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L55) | Inline record field | Native label/input.focus and authored Add intent. | 🟢 Verified | Persistent editor, no source show-input renderer method. |
+| [`trigger.disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L55) | Inline record field | Native Add disabled at max and native fieldset inheritance. | 🟢 Verified | Editor remains available at capacity; rejected draft is retained. |
+
+### Explicit source supplements — not original public table rows
+
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
+| --- | --- | --- | --- | --- |
+| [`DynamicTags.defaultValue / value (source object union)`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/src/DynamicTags.tsx) | Source shape discrepancy | Preserve wider source string/object union identity explicitly. | ⏭️ Intentionally omitted | Public string rows adapted above; mixed object arrays not accepted. |
+| [`onUpdateValue / deprecated onChange`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/src/DynamicTags.tsx) | Source callback alias group | Explicit Tags change event instead. | ⏭️ Intentionally omitted | No callback-array or duplicate model update ABI. |
+| [`theme / themeOverrides / builtinThemeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/src/DynamicTags.tsx) | Source theme group | External native CSS. | ⏭️ Intentionally omitted | No Tag/Input/Space provider runtime. |
+| [`DynamicTagsProps / dynamicTagsProps / NDynamicTags`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/index.ts) | Source public type/export group | Narrow DynamicTagsOptions/native anatomy. | ⏭️ Intentionally omitted | No framework constructor/prop aliases. |
+| [`DynamicTagsSlots`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/src/DynamicTags.tsx) | Source public slot type | Authored editor/trigger/tag template instead. | ⏭️ Intentionally omitted | No VNode slot-type compatibility. |
+| [`DynamicTagsOption`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/src/interface.ts) | Source public record type | Canonical native strings only. | ⏭️ Intentionally omitted | No separated label/value record model. |
+| [`DynamicTagsInputSlotProps / DynamicTagsTriggerSlotProps`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/src/interface.ts) | Source public record type group | Native editor/current-draft command and button attributes. | ⏭️ Intentionally omitted | No injected any-value/deactivate/activation object ABI. |
+| [`OnCreate`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/src/interface.ts) | Source callback type | Strict synchronous string derivation alternative. | ⏭️ Intentionally omitted | Source object/string union not aliased. |
+| [`OnUpdateValue / OnUpdateValueImpl`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/src/interface.ts) | Source callback type group | Committed native string snapshots. | ⏭️ Intentionally omitted | No mixed model-array callback signatures. |
+| [`DynamicTagsSize`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/src/public-types.ts) | Source public type | Small/medium/large CSS vocabulary. | 🟢 Verified | ADAPTED native styles, no TypeScript alias claim. |
 
 <!-- END PINNED API INVENTORY -->

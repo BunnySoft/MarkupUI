@@ -36,9 +36,10 @@ Form/FormItem/FormItemGi now have [accepted native validation/feedback/grid evid
 Auto Complete now has [accepted native datalist/bounded-loader evidence](../components/auto-complete.md), with honest native keyboard/selection limitations.
 Input OTP now has [accepted native single-field/completion evidence](../components/input-otp.md), without code payloads, per-cell editing or authentication effects.
 Dynamic Input now has [accepted bounded native-row/template evidence](../components/dynamic-input.md), with explicit resources and focus-safe actual-node moves.
+Dynamic Tags now has [accepted native string-tag/editor evidence](../components/dynamic-tags.md), reusing that collection without Tag/Input runtimes or hidden proxies.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
-are reconciled. **P4 is In progress**, with Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP and Dynamic Input accepted and five routes Planned.
-P0/P5/P6 and full framework parity remain independent. **Next: Dynamic Tags**,
+are reconciled. **P4 is In progress**, with Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP, Dynamic Input and Dynamic Tags accepted and four routes Planned.
+P0/P5/P6 and full framework parity remain independent. **Next: Mention**,
 before remaining mention/picker routes.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
 Use the [master migration plan](migration-plan.md) for phase dependencies and current execution
@@ -1597,7 +1598,7 @@ Native reset affects current fields only; disconnect keeps edited rows and hides
 custom actions. No preset/VNode/model/path/drag/provider engine is introduced.
 
 All **32 original identities + ten source supplements = 42 rows: 28 adapted and
-14 omitted**. Four tasks close; catalog totals are **3,603 rows, 260/384 accepted tasks
+14 omitted**. Four tasks close; at Dynamic Input sign-off catalog totals were **3,603 rows, 260/384 accepted tasks
 across 65 pages**, with **124 unchecked tasks**. **156 targeted tests**, build/budgets and
 Chromium actual-node/caret/action focus, labels/required/forms/reset, failed-add cleanup,
 native no-JS rows, RTL/narrow/200% CSS zoom/media and Input/Form/legacy coexistence passed.
@@ -1613,8 +1614,33 @@ ESM/classic/CSS: **5,567/5,634/414 gzip bytes** under **6,500/6,500/1,000** ceil
 All **152 previous top-level JS/CSS assets** byte-match the pre-component HEAD recipe;
 core/plugins remain **14,611/2,181/2,779** and previous budgets are unchanged.
 
-**Next: Dynamic Tags.** Other Planned P4 routes are **Mention, Color Picker, Date Picker
+Dynamic Tags is accepted below. Other Planned P4 routes were **Mention, Color Picker, Date Picker
 and Time Picker**. P4-06 and overall P4 remain In progress.
+
+### Dynamic Tags: committed native fields and explicit draft intent
+
+[Dynamic Tags acceptance](../components/dynamic-tags.md) reuses Dynamic Input's bounded
+row/template/focus/resource owner. Committed strings live in visible readonly named text
+fields; one unnamed native editor owns the draft. Explicit Enter/Add, exact duplicate
+policy, scalar creation callbacks, draft-safe rejection/reset and key-based removal avoid
+a hidden array model or extra Tag/Input/renderer runtime.
+
+All **32 original identities + ten source supplements = 42 rows: 25 adapted and
+17 omitted**. Four tasks close; totals are **3,613 rows, 264/384 accepted tasks across
+66 pages**, with **120 unchecked tasks**. **212 targeted tests**, build/budgets and Chromium
+IME/Enter/Escape/limits/duplicates/drafts, callbacks/focus/required/FormData/reset, native
+no-JS values and RTL/zoom/media/coexistence passed. Review fixes preserve wrapper/base
+ownership after refused reentrant teardown and protect reset-restored drafts during commit.
+
+Blur/deactivate auto-commit, object label/value mode, VNode rendering and checkable Tag
+behavior are explicitly omitted. Native setters/refresh/reset remain silent; commit/remove
+are documented eventful commands. ESM/classic **including the reused collection** measure
+**8,985/9,052 gzip bytes**, complete CSS **685**, under **10,000/10,000/1,500** ceilings.
+All **155 prior top-level JS/CSS assets** byte-match the pre-Tags HEAD recipe; prior
+helper/core/plugin code and ceilings remain unchanged (**14,611/2,181/2,779** core/plugins).
+
+**Next: Mention.** Remaining Planned P4 routes are **Mention, Color Picker, Date Picker
+and Time Picker**. This is retained native scope, not full P4/P0/P5/P6 or framework parity.
 
 ## Common Components (15)
 
@@ -1646,7 +1672,7 @@ and Time Picker**. P4-06 and overall P4 remain In progress.
 | [Checkbox](components/checkbox.md) | 🟢 Verified retained native scope; 14 explicit omissions | CSS-only native checkbox and bounded fieldset group helper; [accepted evidence](../components/checkbox.md) | P4 |
 | [Date Picker](components/date-picker.md) | 🔵 Planned | Native advanced input | P4, P6 |
 | [Dynamic Input](components/dynamic-input.md) | 🟢 Verified bounded native-row scope; 14 explicit omissions | Authored templates, stable fields/keys, actual-node moves and explicit cleanup; [accepted evidence](../components/dynamic-input.md) | P4; P5 renderer/model exclusions |
-| [Dynamic Tags](components/dynamic-tags.md) | 🔵 Planned | Related tag/input | P4, P5 |
+| [Dynamic Tags](components/dynamic-tags.md) | 🟢 Verified native string-tag/editor scope; 17 explicit omissions | Real readonly values, draft-safe commits and reused native collection; [accepted evidence](../components/dynamic-tags.md) | P4; P5 renderer/object exclusions |
 | [Form](components/form.md) | 🟢 Verified native Form/FormItem/FormItemGi scope; 43 explicit omissions | Native fields/constraints, explicit guarded callbacks and owned feedback/grid CSS; [accepted evidence](../components/form.md) | P4 |
 | [Input](components/input.md) | 🟢 Verified retained native scope; 13 explicit omissions | Authored Input/textarea, group/addon/pair CSS and optional clear/reveal/count; [accepted evidence](../components/input.md) | P4 |
 | [Input Number](components/input-number.md) | 🟢 Verified retained native scope; 13 explicit omissions | Native number input, decimal/grid stepping and clear; [accepted evidence](../components/input-number.md) | P4 |
@@ -1783,15 +1809,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,108: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 561 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input source supplements |
+| Supplementary named declarations | 1,118: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 571 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags source supplements |
 | Explicit inherited tracker rows | 275, including six source-inherited DialogReactive options, three ModalReactive fields and two NotificationReactive fields |
-| Total tracker rows | 3,603; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 260 retained-scope tasks accepted across 65 component pages, 124 unchecked |
+| Total tracker rows | 3,613; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 264 retained-scope tasks accepted across 66 component pages, 120 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,603 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate, 68 Form, 27 Auto Complete, 17 Input OTP and 28 Dynamic Input native capabilities cite acceptance |
-| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 31 unchanged inventories match extraction; the 65 accepted pages preserve named/grouped identities with explicit dispositions; Dynamic Input's 32 original section/source/kind identities match pre-migration HEAD exactly and in order |
-| Local links | Relative file links in the four edited Dynamic Input/index/master documents checked at sign-off; OTP/Auto Complete/Form/Rate/Slider/Input Number/Select/Switch/Radio/Checkbox/Input/Discrete/P3 and historical 612-link/anchor snapshots remain historical evidence |
+| Status presentation | All 3,613 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate, 68 Form, 27 Auto Complete, 17 Input OTP, 28 Dynamic Input and 25 Dynamic Tags native capabilities cite acceptance |
+| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 30 unchanged inventories match extraction; the 66 accepted pages preserve named/grouped identities with explicit dispositions; Dynamic Tags' 32 original section/source/kind identities match pre-migration HEAD exactly and in order |
+| Local links | Relative file links in the four edited Dynamic Tags/index/master documents checked at sign-off; Dynamic Input/OTP/Auto Complete/Form/Rate/Slider/Input Number/Select/Switch/Radio/Checkbox/Input/Discrete/P3 and historical 612-link/anchor snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

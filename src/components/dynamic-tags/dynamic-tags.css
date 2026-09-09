@@ -1,0 +1,20 @@
+.mui-dynamic-tags { --mui-tags-background: Canvas; --mui-tags-border: GrayText; --mui-tags-text: CanvasText; display: grid; gap: .75rem; min-inline-size: 0; }
+.mui-dynamic-tags__list { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; margin: 0; padding: 0; min-inline-size: 0; }
+.mui-dynamic-tags__tag { display: inline-flex; align-items: center; gap: .375rem; max-inline-size: 100%; min-inline-size: 0; padding: .375rem .5rem; border: 1px solid var(--mui-tags-border); border-radius: .25rem; color: var(--mui-tags-text); background: var(--mui-tags-background); }
+.mui-dynamic-tags__value { box-sizing: border-box; inline-size: 14ch; max-inline-size: 100%; min-inline-size: 2ch; border: 0; padding: .125rem; font: inherit; color: inherit; background: transparent; }
+.mui-dynamic-tags__entry { display: flex; flex-wrap: wrap; align-items: end; gap: .5rem; min-inline-size: 0; }
+.mui-dynamic-tags__entry label { display: grid; gap: .25rem; min-inline-size: 0; }
+.mui-dynamic-tags__entry input { box-sizing: border-box; max-inline-size: 100%; min-inline-size: 0; font: inherit; padding: .5rem; }
+.mui-dynamic-tags button { font: inherit; padding: .375rem .5rem; }
+.mui-dynamic-tags[data-round] .mui-dynamic-tags__tag { border-radius: 999px; }
+.mui-dynamic-tags[data-size="small"] { font-size: .875rem; }
+.mui-dynamic-tags[data-size="large"] { font-size: 1.125rem; }
+.mui-dynamic-tags[data-type="primary"], .mui-dynamic-tags[data-type="info"] { --mui-tags-border: #2474b5; }
+.mui-dynamic-tags[data-type="success"] { --mui-tags-border: #287445; }
+.mui-dynamic-tags[data-type="warning"] { --mui-tags-border: #916800; }
+.mui-dynamic-tags[data-type="error"] { --mui-tags-border: #ba3434; }
+.mui-dynamic-tags__status { margin: 0; overflow-wrap: anywhere; }
+.mui-dynamic-tags__status[data-tags-state="rejected"], .mui-dynamic-tags__status[data-tags-state="error"] { font-weight: 600; }
+.mui-dynamic-tags :focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+.mui-dynamic-tags [hidden] { display: none !important; }
+@media (forced-colors: active) { .mui-dynamic-tags .mui-dynamic-tags__tag { border-color: ButtonText; color: CanvasText; background: Canvas; } }
