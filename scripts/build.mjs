@@ -42,6 +42,8 @@ components.push("date-picker")
 classicEntries["date-picker"] = "global.ts"
 components.push("time-picker")
 classicEntries["time-picker"] = "global.ts"
+components.push("virtual-list")
+classicEntries["virtual-list"] = "global.ts"
 
 await Promise.all([
   build({
@@ -114,6 +116,9 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-virtual-list.js": 5_000,
+  "markup-ui-virtual-list.global.js": 5_000,
+  "markup-ui-virtual-list.css": 1_000,
   "markup-ui-time-picker.js": 4_000,
   "markup-ui-time-picker.global.js": 4_000,
   "markup-ui-time-picker.css": 1_000,

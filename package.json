@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./virtual-list": {
+      "types": "./dist/components/virtual-list/index.d.ts",
+      "import": "./dist/markup-ui-virtual-list.js"
+    },
+    "./virtual-list/style.css": "./dist/markup-ui-virtual-list.css",
     "./time-picker": {
       "types": "./dist/components/time-picker/index.d.ts",
       "import": "./dist/markup-ui-time-picker.js"

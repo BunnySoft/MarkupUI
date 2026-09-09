@@ -1,0 +1,31 @@
+.mui-virtual-list {
+  height: var(--mui-virtual-list-height);
+  max-height: 16384px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overflow-anchor: none;
+  scroll-behavior: auto;
+  padding: 0;
+  writing-mode: horizontal-tb;
+}
+.mui-virtual-list:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.mui-virtual-list > .mui-virtual-list__items {
+  position: relative;
+  display: block;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mui-virtual-list__items > .mui-virtual-list__row {
+  position: absolute;
+  box-sizing: border-box;
+  height: var(--mui-virtual-row-size);
+  min-height: var(--mui-virtual-row-size);
+  max-height: var(--mui-virtual-row-size);
+  inset-inline: 0;
+  margin: 0;
+  overflow: hidden;
+}
+@media (forced-colors: active) {
+  .mui-virtual-list:focus-visible { outline-color: Highlight; }
+}

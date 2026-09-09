@@ -5,7 +5,8 @@ native scopes and explicit omissions. All 31 P2-assigned pages and all 22 P3-ass
 have closed property dispositions and four accepted tasks. P3 includes Discrete API's
 verified no-new-runtime composition resolution. P4 retained native scopes are now reconciled
 across all 17 assigned routes, including Time Picker: 984 rows and 68/68 page tasks, with no
-unresolved retained rows or Planned P4 routes. P0/P5/P6 and full framework/viewer
+unresolved retained rows or Planned P4 routes. P5 is now active with Virtual List's first
+fixed-height collection foundation accepted; nine P5 routes remain. P0/P5/P6 and full framework/viewer
 parity remain independent and incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
@@ -37,7 +38,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P2 — Primitives and layout | 🟢 Verified retained scope | All 31 P2-assigned pages reconciled; native Image/fallback/dialog scope accepted with advanced P6 exclusions. | P1 pattern | Full 96-route and P2 reference audit found no retained unresolved P2 rows. This is not global P3/P6 or framework parity. |
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
 | P4 — Forms and selection | 🟢 Verified retained scope | All 17 P4-assigned routes, 984 tracker rows and 68 page tasks reconciled. | Relevant native P0/P3 contracts | 478 adapted + 506 omitted, no unresolved rows; 889 P4 tests plus native browser evidence. No P0/P5/P6 or full framework parity implied. |
-| P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
+| P5 — Collections and scale | 🟠 In progress | Virtual List's fixed-height native window is accepted; nine routes and async/hierarchy consumers remain. | P3 focus; P4 selection | Bounded DOM/key/focus foundation verified; no phase-wide selection/async parity yet. |
 | P6 — Specialized modules | 🔵 Planned | Deliver independently justified, opt-in advanced features. | Component-specific earlier work | Explicit imports, independent size budgets and no runtime dependencies. |
 
 The [component index](index.md) is the exhaustive catalog-to-phase assignment. The phase
@@ -119,11 +120,11 @@ smuggling an overlay implementation into the CSS-only native composition.
 
 | Task | Status | Action | Deliverable |
 | --- | --- | --- | --- |
-| P5-01 — Identity and async contracts | 🔵 Planned | Define stable keys, selection persistence, loading, cancellation and error reporting. | Shared concepts without creating a mandatory global store. |
+| P5-01 — Identity and async contracts | 🟠 In progress | Virtual List establishes stable keys, same-node updates, focus pinning and synchronous failure/cancellation rules. Async/loading/selection consumers remain separate. | [Native window ownership](../components/virtual-list.md); no mandatory global store. |
 | P5-02 — Tree family | 🔵 Planned | Improve Tree, Tree Select and Cascader from static hierarchy to optional lazy data. | Keyboard hierarchy, explicit selection/checking rules and node identity. |
 | P5-03 — Transfer | 🔵 Planned | Add multi-selection, filtering and bulk movement only within accepted scope. | Predictable source/target order and selection with accessible controls. |
 | P5-04 — Table family | 🔵 Planned | Keep semantic Table simple; extend optional Data Table sorting/filtering/selection and pagination incrementally. | Static table remains usable; advanced behavior has explicit column/row contracts. |
-| P5-05 — Virtual windows | 🔵 Planned | Extract a narrowly scoped virtual-list primitive; define fixed-height support before variable heights. | Bounded DOM, stable keys, scroll/focus semantics and explicit accessibility limitations. |
+| P5-05 — Virtual windows | 🟢 Verified retained fixed-height scope | Explicit native Virtual List with safe row factories, required updater and native scroll/resize. Variable heights and horizontal/grid modes intentionally omitted. | [100k DOM/geometry/focus evidence](../components/virtual-list.md); one focused pin, independent budgets, legacy plugin unchanged. |
 | P5-06 — Collection sign-off | 🔵 Planned | Resolve row/node replacement, reordering, asynchronous results and large-data behavior. | Retained features proven without forcing virtualization into small datasets. |
 
 ### P6 — Specialized modules
@@ -189,14 +190,15 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Time Picker (P4), verified native time-only/overnight-bound scope.**
+**Current component: Virtual List (P5), verified native fixed-height collection foundation.**
 **P1/P2/P3/P4 declared retained scopes are complete. P4-07 closes after the full 17-route audit.**
-Recommended next: **Virtual List's fixed-height collection foundation**, applying P5-01
-identity/focus rules within P5-05. No next collection was started. Do not infer P0, full
-P5/P6 or source framework compatibility from retained native P4 completion.
+**P5 is active, not complete.** Recommended next: **Tree**, establishing native hierarchy
+contracts before Tree Select/Cascader. Nine P5 routes remain. No next component was started
+in this Virtual List commit. Do not infer P0, full P5/P6 or framework compatibility.
 
 The following component records form a historical execution sequence. Earlier “next” or
-“P3 incomplete” checkpoint statements are superseded by the final P3 audit below.
+phase-incomplete checkpoint statements are superseded by the current dashboard and latest
+acceptance record below.
 Collapse/CollapseItem completed native disclosure scope in `28fb44c`.
 Tabs/Tab/TabPane completed their paired native scope in `8cd7cb1`.
 Menu completed its retained native navigation/disclosure scope in `f7ae2b8`.
@@ -329,8 +331,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 3,670 rows and 280 accepted retained tasks out of 384 across 70 component
-pages (104 unchecked), not full upstream parity.
+The current index records 3,682 rows and 284 accepted retained tasks out of 384 across 71 component
+pages (100 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -1376,3 +1378,52 @@ policy with a static/paginated fallback; do not assume the small upstream vueuc 
 is a ready algorithm. This unlocks Log/Infinite Scroll/Data Table work. Variable-height/grid
 and generic renderer APIs stay separate. Tree is another viable native hierarchy foundation,
 but **neither it nor Virtual List was started** in this Time/P4 sign-off commit.
+
+## Virtual List — first main P5 collection accepted
+
+[Canonical implementation/acceptance](../components/virtual-list.md) and
+[reference dispositions](components/virtual-list.md) close this component only. An explicit
+native fixed-height helper owns a constrained viewport's ul/ol spacer and bounded keyed
+li rows. Callers supply safe native factories, a mandatory same-key updater and optional
+synchronous cleanup. Native scroll/resize, start/center/end/nearest navigation, one focused
+pin, removal focus and fail-closed lifecycle are implemented without a renderer, provider,
+scrollbar package, automatic child helpers or data fetch.
+
+The basic advanced-plugin `MuiVirtualList` remains unchanged. The new helper registers
+no custom element, so there is no silent redefinition or artificial loading-order rule.
+ESM/classic namespace/legacy coexistence were measured. Dynamic heights, horizontal/tree/
+grid modes, source framework types and smooth/debounce behavior are explicit omissions.
+
+**41 tracker rows = 29 preserved original identities + twelve supplements = 26 adapted
++ 15 omitted; four accepted tasks.** **71 targeted tests** pass (44 Virtual List plus
+27 existing native/legacy tests); declarations, build and all unchanged budgets pass.
+Optional ESM/classic/CSS are **4,149/4,289/376 gzip bytes** under **5,000/5,000/1,000**
+ceilings. Core/advanced/widgets remain **14,611/2,181/2,779**, with their original
+**15,000/3,000/4,000** ceilings and no runtime dependencies.
+
+Chromium **151.0.7922.174** measured the **100,000 × 32px, 320px viewport** fixture:
+**13/16/13 mounted rows** at start/middle/end; maximum **17** across 101 offsets; native
+height **3,200,000px**, end offset **3,199,680**, last-row bottom error **0px**. A focused
+100k row stayed connected as one pin. The **8,000,000px** supported ceiling also reached
+its last row and correctly rejected larger datasets. Native keyboard, hidden/resize,
+CSS/visual zoom, RTL, keyed updates/reverse/remove, mounted-only FormData, no-JS fallback,
+failure cleanup and legacy coexistence have actual browser evidence. Browser review fixed
+large-height CSS exponent-serialization cleanup and narrow demo metrics wrapping.
+
+Current catalog: **96 routes, 3,682 rows, 284/384 accepted tasks across 71 pages,
+100 unchecked**. **P5 is active, not complete:** one route accepted; all ten P5 routes
+contain **594 rows = 26 adapted + 18 omitted + 550 unresolved**. The nine remaining P5
+routes contain **553 rows / 550 unresolved**:
+
+**Cascader, Transfer, Tree Select, Data Table, Log, Tree, Infinite Scroll, Popselect, Split.**
+
+P4 remains unchanged at **17 routes / 984 rows / 68 tasks**, no unresolved retained rows.
+Other remaining routes: P0 Config Provider/Element/Global Style (97 rows, eight unresolved);
+P6 Carousel/Watermark/Upload/Calendar/Countdown/Number Animation/Time/Heatmap/Marquee
+(232 rows, all unresolved); Equation/QR Code/Legacy Grid/Legacy Transfer remain the four
+explicit exclusions (35 rows, zero unresolved). There are **25 unaccepted routes:
+21 Planned plus four exclusions**.
+
+**Recommended next: Tree**, to establish native hierarchy/key/focus rules before
+Tree Select/Cascader. This commit does not start Tree or any other component; the authorized
+sequential migration continues only after this component's separate completed commit.

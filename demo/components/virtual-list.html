@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MarkupUI native Virtual List</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-virtual-list.css">
+  <link rel="stylesheet" href="./virtual-list.css">
+  <script defer src="../../dist/markup-ui-virtual-list.global.js"></script>
+  <script defer src="./virtual-list.js"></script>
+</head>
+<body>
+<main>
+  <h1>Fixed-height native Virtual List</h1>
+  <p>100,000 data items, 32px rows, 320px viewport, three rows of overscan per edge.
+    This is a list, not an interactive grid or a form serialization engine.</p>
+  <p id="fallback">Without JavaScript use this static sample or application-owned pagination:</p>
+  <ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul>
+  <div class="tools" id="tools" hidden>
+    <button type="button" id="start">First</button>
+    <button type="button" id="middle">Middle (50,001)</button>
+    <button type="button" id="end">Last</button>
+    <button type="button" id="resize">Toggle 160/320px</button>
+    <button type="button" id="hide">Hide/show viewport</button>
+    <button type="button" id="update">Update visible text</button>
+    <button type="button" id="rtl">Toggle RTL</button>
+    <button type="button" id="disconnect">Disconnect both lists</button>
+  </div>
+  <h2 id="large-title">100,000 items</h2>
+  <div id="large" class="mui-virtual-list" aria-labelledby="large-title" hidden>
+    <ol class="mui-virtual-list__items" aria-labelledby="large-title" role="list"></ol>
+  </div>
+  <output id="metrics" aria-label="Window metrics"></output>
+  <h2 id="editor-title">Mounted controls only</h2>
+  <p>Native input, select and textarea drafts are saved to caller data on input/change.
+    Only mounted controls submit; scrolling is not FormData serialization.
+    A focused row is pinned until focus leaves. Fixed 48px rows cannot expand for text.</p>
+  <form id="editor-form">
+    <div id="editors" class="mui-virtual-list" aria-labelledby="editor-title" hidden>
+      <ul class="mui-virtual-list__items" aria-labelledby="editor-title" role="list"></ul>
+    </div>
+    <div id="editor-tools" class="tools" hidden>
+      <button type="button" id="edit-end">Scroll editors to end</button>
+      <button type="button" id="reverse">Reverse stable keys</button>
+      <button type="button" id="remove-first">Remove key 0</button>
+      <button>Inspect mounted FormData</button>
+    </div>
+  </form>
+  <pre id="submission"></pre>
+  <p id="events"></p>
+  <template id="text-row"><li><span></span></li></template>
+  <template id="editor-row"><li><label><span></span><input></label><label>Mode<select><option>One</option><option>Two</option></select></label><label>Note<textarea rows="1"></textarea></label></li></template>
+</main>
+</body>
+</html>

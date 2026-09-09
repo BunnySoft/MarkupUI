@@ -1,0 +1,22 @@
+:root { font: 16px/1.5 system-ui, sans-serif; color: #172738; background: #f6f8fc; }
+body { margin: 0; }
+main { max-width: 850px; margin: 2rem auto; padding: 1rem; }
+button, input, select, textarea { font: inherit; }
+button { padding: .3rem .7rem; }
+.tools { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 1rem; }
+[hidden] { display: none !important; }
+.mui-virtual-list { --mui-virtual-list-height: 320px; border: 1px solid #607080; background: white; }
+.mui-virtual-list.short { --mui-virtual-list-height: 160px; }
+.mui-virtual-list__row { padding-inline: .5rem; border-bottom: 1px solid #dde3eb; white-space: nowrap; }
+#large .mui-virtual-list__row { line-height: 31px; }
+#editors { --mui-virtual-list-height: 192px; }
+#editors .mui-virtual-list__row { display: flex; align-items: center; gap: .5rem; }
+#editors label { display: flex; align-items: center; gap: .25rem; min-width: 0; }
+#editors input, #editors textarea { min-width: 0; width: 8rem; }
+#editors textarea { height: 1.6rem; resize: none; }
+output { display: block; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 480px) {
+  #editors input, #editors textarea { width: 3rem; }
+  main { padding: .5rem; }
+}
