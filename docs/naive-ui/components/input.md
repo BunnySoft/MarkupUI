@@ -1,148 +1,182 @@
 # Input
 
-**Plan: Planned. Current baseline: partial input/textarea wrappers; not parity-verified.**
+**🟢 Verified for the retained native Input/textarea/InputGroup/InputGroupLabel scope,
+with explicit omissions. Not upstream/Vue/Form-validation parity.**
 
 ## Baseline and target
 
-[B1: forms.ts](../../../src/components/forms.ts) creates native controls, copies a limited initial attribute set and exposes value/input/change.
+[Legacy forms.ts](../../../src/components/forms.ts) remains unchanged. The new optional
+[native helper](../../../src/components/input/input.ts) enhances authored fields without
+registering Custom Elements, replacing controls or adding proxy submission values.
+[Canonical loading/anatomy/mapping/evidence](../../components/input.md) and the separate
+[local demo](../../../demo/components/input.html) define the accepted contract.
 
-- **HTML:** adopt authored input/textarea and labels; preserve native name, type and constraints.
-- **JS:** deliberate live attribute/value synchronization, clear action, composition and optional autosize.
-- **CSS:** external input/group/prefix/suffix layout and validity/focus states.
-- **Placement:** proposed `src/components/input/`; keep `mui-textarea`.
-
-## Acceptance and gaps
-
-Test selection, IME, password reveal, reset, disabled/readonly changes and authored listeners. Count, pair inputs, group labels and framework render hooks are not covered by value access alone.
+- **HTML:** real labelled/named input/textarea, explicit affixes/actions/count and group/addon content.
+- **JS:** explicit root ownership, silent setters/refresh, clear, click reveal, text count and post-native reset.
+- **CSS:** scoped external input/group/status/size/RTL/focus; native field-sizing with honest rows fallback.
 
 ## Migration steps
 
-**Delivery phase:** P4 — forms. **Task state:** 🔵 Planned.
-**Prerequisites:** P0 native-child, attribute and form contracts in the [master plan](../migration-plan.md).
-**Next task:** replace destructive connection behavior with adoption of authored input/textarea nodes.
+**Delivery phase:** P4 — forms. **Task state:** 🟢 Verified retained scope.
+**Prerequisites:** relevant P0 native-control ownership contracts applied here, not global P0 completion.
+**Next task:** Checkbox, then Radio/Switch/Select and other native controls before Form enhancements.
 
-1. [ ] **Preserve editing state.** Keep selection, listeners, pre-upgrade values and labels when the wrapper connects or reconnects.
-2. [ ] **Specify live attributes.** Resolve name/type/constraints, disabled/readonly, current/default values and native/custom event deduplication.
-3. [ ] **Separate adornments.** Define group labels, prefix/suffix, clear/password actions and optional autosize with external CSS.
-4. [ ] **Validate editing paths.** Test IME, autofill, reset, selection methods, password visibility and late children for both single-line and textarea controls.
+1. [x] **Preserve editing state.** Original control/value/default/listeners/labels and selection survive enhancement; no input rewrite during ordinary editing/composition.
+2. [x] **Specify live attributes.** Native ownership, silent assignments, explicit refresh, disabled/readonly/fieldset and post-default/cancelled/associated form resets documented and tested.
+3. [x] **Separate adornments.** Labelled clear/click-reveal, count, prefix/suffix, group/addon/pair markup and CSS-only textarea sizing retained; renderer/hold/validation omissions explicit.
+4. [x] **Validate editing paths.** Targeted tests and Chromium typing/CDP composition/paste/selection/undo/clear/reveal/reset/submission/media/no-JS acceptance recorded; real password-manager/OS-IME parity not claimed.
 
 ### Native primitives and fallback
 
-- **Native path:** a custom element adopts authored `input`/`textarea`, real labels and native selection/validity/default properties. Native input types, autocomplete and form reset replace custom equivalents.
-- **Small enhancement:** connected/disconnected lifecycle preserves controls and cleans composition/input listeners. CSS grid/flex and optional `:has()` arrange adornments with explicit-class fallback; detect native autosizing or use a separately scoped small measurement path. Never replace a usable native input with a required template/reactive framework.
+Native controls, not a custom-element form model, own editing and submission. The helper
+is optional and fixes its anatomy for one lifetime; disconnect and recreate for replacement
+children. Without JS, controls and native form reset/submission still work and enhancement
+buttons stay hidden. Unsupported field-sizing falls back to authored rows/manual resize.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
 ## Reference and review boundary
 
 - [Official website](https://www.naiveui.com/en-US/os-theme/components/input)
-- [Pinned public API Markdown](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md)
-- [Pinned implementation source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input)
-- [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
+- [API]: pinned public table; each row below retains its original owner/name and source line.
+- [Input source], [Group source], [Label source], [public types], [interface source], [theme source]
+- [Catalog/provenance](../index.md) · [Architecture/statuses](../architecture.md)
 
-Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **45 local table rows + 7 supplementary declarations + 0 inherited rows = 52 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
+[API]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md
+[Input source]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/src/Input.tsx
+[Group source]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/src/InputGroup.tsx
+[Label source]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/src/InputGroupLabel.tsx
+[public types]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/src/public-types.ts
+[interface source]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/src/interface.ts
+[theme source]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts
 
+Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
+**45 original local rows + 7 original inline declarations + 19 explicit source-only
+supplements = 71 tracker rows**. All 52 original owner/property/slot/method/inline identities
+remain below. Upstream sources were read for scope, not copied. Every green row means the
+**adapted** contract in the canonical document, not source implementation or framework parity.
+Acceptance evidence **I1** = [Input tests](../../../tests/input.test.ts);
+**I2** = [obtained Chromium/build evidence](../../components/input.md#acceptance-and-boundaries).
 
 ### Input Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`allow-input`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L35) | Prop | Candidate explicit JS `allowInput` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`autofocus`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L36) | Prop | Explicit native `autofocus` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`autosize`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L37) | Prop | Candidate JS `autosize` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`clearable`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L38) | Prop | Candidate presence attribute `clearable`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`count-graphemes`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L39) | Prop | Candidate explicit JS `countGraphemes` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L40) | Prop | Candidate native default/reset state for `default-value`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L41) | Prop | Explicit native `disabled` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`input-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L42) | Prop | Candidate explicit native-child configuration for `input-props`; no unrestricted prop forwarding. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`loading`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L43) | Prop | Candidate presence attribute `loading`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`maxlength`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L44) | Prop | Explicit native `maxlength` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`minlength`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L45) | Prop | Explicit native `minlength` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`pair`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L46) | Prop | Candidate presence attribute `pair`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`passively-activated`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L47) | Prop | Candidate presence attribute `passively-activated`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L48) | Prop | Explicit native `placeholder` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | B1 initial input placeholder; partial only, verify this row. |
-| [`readonly`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L49) | Prop | Explicit native `readonly` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`render-count`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L50) | Prop | Candidate authored `render-count` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`round`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L51) | Prop | External CSS token/class for `round`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`rows`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L52) | Prop | Explicit native `rows` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`separator`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L53) | Prop | Candidate `separator` attribute or JS `separator`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show-count`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L54) | Prop | Candidate live JS `showCount` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show-password-on`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L55) | Prop | Candidate live JS `showPasswordOn` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L56) | Prop | External CSS token/class for `size`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`status`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L57) | Prop | Candidate `status` attribute or JS `status`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`type`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L58) | Prop | Candidate `type` attribute or JS `type`; exact target contract not reviewed. | ⚪ Not reviewed | B1 initial native input type; partial only, verify this row. |
-| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L59) | Prop | Candidate live JS `value` state; native value/default/event contract needs review. | ⚪ Not reviewed | B1 native value getter/setter; partial only, verify this row. |
-| [`on-blur`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L60) | Callback | Candidate DOM `mui:blur` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-change`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L61) | Callback | Candidate DOM `mui:change` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-clear`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L62) | Callback | Candidate DOM `mui:clear` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-focus`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L63) | Callback | Candidate DOM `mui:focus` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-input`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L64) | Callback | Candidate DOM `mui:input` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L65) | Callback | Candidate DOM `mui:change` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `allow-input` · [API] L35 | Prop | Native constraints/validity or application-owned beforeinput, not rollback | ⏭️ Intentionally omitted | Vetoing/replacing drafts risks IME/undo/caret; no predicate API. |
+| `autofocus` · [API] L36 | Prop | Authored native autofocus | 🟢 Verified | I1/I2 native ownership; timing is browser-owned, not helper refocusing. |
+| `autosize` · [API] L37 | Prop | CSS field-sizing with explicit line bounds | 🟢 Verified | I2 growth/shrink; unsupported engines use rows/manual resize. |
+| `clearable` · [API] L38 | Prop | Authored clear button/controller clear | 🟢 Verified | I1/I2 focus, readonly/disabled, ordered single notifications. |
+| `count-graphemes` · [API] L39 | Prop | No custom constraint/count algorithm | ⏭️ Intentionally omitted | Native UTF-16 maxlength/minlength remain; do not claim grapheme parity. |
+| `default-value` · [API] L40 | Prop | Native defaultValue/initial HTML | 🟢 Verified | I1/I2 changed defaults, post-default reset; no null/tuple state. |
+| `disabled` · [API] L41 | Prop | Native field disabled and fieldset inheritance | 🟢 Verified | I1/I2; original field attribute is never rewritten. |
+| `input-props` · [API] L42 | Prop | Authored control attributes/properties/listeners | 🟢 Verified | I1/I2 identity/ARIA/name/constraints; no object forwarding. |
+| `loading` · [API] L43 | Prop | No managed loading indicator/reservation | ⏭️ Intentionally omitted | Author suffix busy text or explicitly compose Spin; not a spinner prop. |
+| `maxlength` · [API] L44 | Prop | Native maxlength | 🟢 Verified | I1/I2 UTF-16 units and count; no truncating programmatic assignments. |
+| `minlength` · [API] L45 | Prop | Native minlength | 🟢 Verified | I1 preserved constraints; native user-edit validity, not eager schema validation. |
+| `pair` · [API] L46 | Prop | Two independently labelled/named native fields | 🟢 Verified | I2 native paired submission; no tuple renderer/state. |
+| `passively-activated` · [API] L47 | Prop | Native focus only | ⏭️ Intentionally omitted | No wrapper role/tabstop/activation state. |
+| `placeholder` · [API] L48 | Prop | Native placeholder on each field | 🟢 Verified | I1/I2 no implicit label/default translation/tuple placeholder. |
+| `readonly` · [API] L49 | Prop | Native readonly; helper actions disabled | 🟢 Verified | I1/I2 submission/selection retained. |
+| `render-count` · [API] L50 | Prop | Plain text localization instead of renderer | ⏭️ Intentionally omitted | formatCount returns a string, never VNode/HTML. |
+| `round` · [API] L51 | Prop | data-round CSS | 🟢 Verified | I2 authored single-line example; no runtime shape. |
+| `rows` · [API] L52 | Prop | Native textarea rows | 🟢 Verified | I1/I2; field-sizing overrides rows only in supported opt-in mode. |
+| `separator` · [API] L53 | Prop | Authored separator text | 🟢 Verified | I2 pair/group example; no prop-vs-slot precedence algorithm. |
+| `show-count` · [API] L54 | Prop | Optional text-only span[data-input-count] | 🟢 Verified | I1/I2 count refresh/reset; not an automatic live region. |
+| `show-password-on` · [API] L55 | Prop | Click/keyboard toggle with pressed state | 🟢 Verified | I1/I2 masking/selection; mousedown/hold explicitly omitted. |
+| `size` · [API] L56 | Prop | Explicit tiny/small/medium/large CSS | 🟢 Verified | I2 variants/wrapping; no inherited Form size. |
+| `status` · [API] L57 | Prop | success/warning/error border CSS | 🟢 Verified | I2; not automatic aria-invalid, announcements or validity. |
+| `type` · [API] L58 | Prop | Authored input/textarea with helper type constraints | 🟢 Verified | I1 rejects nontext helper types; I2 password/textarea. |
+| `value` · [API] L59 | Prop | Original native current value; silent setValue/refresh | 🟢 Verified | I1/I2; defaults remain independent, no model/tuple binding. |
+| `on-blur` · [API] L60 | Callback | Native blur listener | 🟢 Verified | I1/I2 native focus departure; no duplicate custom blur. |
+| `on-change` · [API] L61 | Callback | Native change listener | 🟢 Verified | I1/I2 user edit commit and one documented clear change. |
+| `on-clear` · [API] L62 | Callback | mui:input-clear detail.previous | 🟢 Verified | I1/I2 after input/change, successful clears only. |
+| `on-focus` · [API] L63 | Callback | Native focus listener | 🟢 Verified | I1/I2; wrapper never receives an extra tabstop. |
+| `on-input` · [API] L64 | Callback | Native input listener, read control.value | 🟢 Verified | I1/I2 no per-keystroke rewrite or duplicate event. |
+| `on-update:value` · [API] L65 | Callback | Observe native input, not a separate binding event | 🟢 Verified | I1/I2 silent setters; no reactive model protocol. |
 
 ### Input Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`clear-icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L71) | Slot | Candidate authored `clear-icon` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`count`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L72) | Slot | Candidate authored `count` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`password-invisible-icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L73) | Slot | Candidate authored `password-invisible-icon` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`password-visible-icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L74) | Slot | Candidate authored `password-visible-icon` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`prefix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L75) | Slot | Candidate authored `prefix` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`separator`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L76) | Slot | Candidate authored `separator` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`suffix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L77) | Slot | Candidate authored `suffix` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `clear-icon` · [API] L71 | Slot | Authored named clear button children | 🟢 Verified | I1/I2 original children/listeners remain. |
+| `count` · [API] L72 | Slot | Text-only span, plain-string formatter | 🟢 Verified | I1/I2 safe textContent, no renderer. |
+| `password-invisible-icon` · [API] L73 | Slot | Authored .mui-input__password-invisible child | 🟢 Verified | CSS pressed-state selector; retain stable button name. |
+| `password-visible-icon` · [API] L74 | Slot | Authored .mui-input__password-visible child | 🟢 Verified | CSS pressed-state selector; no icon package. |
+| `prefix` · [API] L75 | Slot | Authored .mui-input__affix before field | 🟢 Verified | I2; does not substitute for a label. |
+| `separator` · [API] L76 | Slot | Authored pair separator | 🟢 Verified | I2 independent field names/labels. |
+| `suffix` · [API] L77 | Slot | Authored suffix/independent actions | 🟢 Verified | I1/I2 no interactive decoration inside labels. |
 
 ### InputGroup Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L83) | Slot | Candidate authored `default` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `default` · [API] L83 | Slot | Authored .mui-input-group children | 🟢 Verified | I2 flex wrapping/RTL/pair submission; no role/tuple renderer. |
 
 ### InputGroupLabel Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L89) | Slot | Candidate authored `default` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `default` · [API] L89 | Slot | Authored .mui-input-group-label content | 🟢 Verified | I2; only an actual label[for] or explicit association labels a field. |
 
 ### Input Methods
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`blur`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L95) | Method | Candidate plain-JS `blur` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`clear`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L96) | Method | Candidate plain-JS `clear` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`focus`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L97) | Method | Candidate plain-JS `focus` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`scrollTo`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L98) | Method | Candidate plain-JS `scrollTo` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`select`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L99) | Method | Candidate plain-JS `select` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `blur` · [API] L95 | Method | Native control.blur() | 🟢 Verified | I1/I2 focus lifecycle; not a wrapper ref. |
+| `clear` · [API] L96 | Method | controller.clear() | 🟢 Verified | I1/I2 documented no-op/editability/events. |
+| `focus` · [API] L97 | Method | Native control.focus() | 🟢 Verified | I1/I2 selection/focus recovery. |
+| `scrollTo` · [API] L98 | Method | Native control.scrollTo(options) | 🟢 Verified | Native scroll behavior; no scrollbar wrapper. |
+| `select` · [API] L99 | Method | Native control.select() | 🟢 Verified | I1/I2 selection remains on original field. |
 
 ### Input Props: autosize inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`autosize.minRows?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L37) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`autosize.maxRows?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L37) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `autosize.minRows?` · [API] L37 | Inline record field | --mui-input-min-rows CSS token | 🟢 Verified | I2 minimum height; positive author value, no JS row parser. |
+| `autosize.maxRows?` · [API] L37 | Inline record field | --mui-input-max-rows CSS token | 🟢 Verified | I2 bounded growth/scroll; max must be at least min. |
 
 ### Input Props: render-count inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`render-count.value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L50) | Inline record field | Candidate authored `render-count.value` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `render-count.value` · [API] L50 | Inline record field | No renderer context | ⏭️ Intentionally omitted | Plain-string formatCount is not renderer parity. |
 
 ### Input Slots: count inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`count.value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L72) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `count.value` · [API] L72 | Inline record field | formatCount receives the native string value | 🟢 Verified | I1 safe localized text; native constraints unchanged. |
 
 ### Input Methods: scrollTo inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`scrollTo.left?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L98) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`scrollTo.top?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L98) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`scrollTo.behavior?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input/demos/enUS/index.demo-entry.md#L98) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `scrollTo.left?` · [API] L98 | Inline record field | Native ScrollToOptions.left | 🟢 Verified | Browser-owned scrolling, no coordinate proxy. |
+| `scrollTo.top?` · [API] L98 | Inline record field | Native ScrollToOptions.top | 🟢 Verified | Browser-owned textarea scrolling. |
+| `scrollTo.behavior?` · [API] L98 | Inline record field | Native ScrollToOptions.behavior | 🟢 Verified | Native auto/smooth semantics/support; not a custom animation. |
+
+### Explicit source-only supplements (not additions to the official API table)
+
+| Upstream owner/item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
+| --- | --- | --- | --- | --- |
+| Input `bordered` · [Input source] | Source prop | data-borderless CSS | 🟢 Verified | External border/focus styling, not a provider default. |
+| Input `resizable` · [Input source] | Source prop | Native vertical resize / .mui-input__fixed | 🟢 Verified | CSS only, no resize observer/mirror. |
+| Input `stateful` · [Input source] | Source prop | Native editing state only | ⏭️ Intentionally omitted | No framework controlled/uncontrolled activation mode. |
+| Input `onMousedown` · [Input source] | Source callback | Native mousedown listener | 🟢 Verified | Author listeners preserved; not hold reveal. |
+| Input `onKeydown` · [Input source] | Source callback | Native keydown listener | 🟢 Verified | Native keyboard editing remains. |
+| Input `onKeyup` · [Input source] | Source callback | Native keyup listener | 🟢 Verified | No framework callback-array dispatcher. |
+| Input `onClick` · [Input source] | Source callback | Native click listener | 🟢 Verified | I1 cancellation; no wrapper activation model. |
+| Input `onUpdateValue` · [Input source] | Source alias | Native input observation | 🟢 Verified | No duplicate alias event/two-way binding. |
+| Input `showPasswordToggle` · [Input source] | Deprecated source prop | Use explicit reveal button | ⏭️ Intentionally omitted | Deprecated boolean alias is not exposed. |
+| Input `theme`, `themeOverrides`, `builtinThemeOverrides` · [Input source], [theme source] | Source theme group | External CSS tokens instead | ⏭️ Intentionally omitted | No theme-object/provider/CSS-in-JS translation. |
+| Input `textDecoration`, `attrSize`, `onInputBlur`, `onInputFocus`, `onDeactivate`, `onActivate`, `onWrapperFocus`, `onWrapperBlur`, `internalDeactivateOnEnter`, `internalForceFocus`, `internalLoadingBeforeSuffix` · [Input source] | Private source group | Native attributes/listeners and author CSS only | ⏭️ Intentionally omitted | No private wrapper/Form integration hooks. |
+| InputGroupLabel `size` · [Label source] | Source prop | Explicit data-size CSS | 🟢 Verified | No Form-inherited size. |
+| InputGroupLabel `bordered` · [Label source] | Source prop | data-borderless CSS | 🟢 Verified | Independent label/addon presentation. |
+| InputGroupLabel `theme`, `themeOverrides`, `builtinThemeOverrides` · [Label source], [theme source] | Source theme group | External CSS tokens instead | ⏭️ Intentionally omitted | No provider/object props. |
+| Input `InputSize` · [public types] | Source type | Four authored CSS sizes | 🟢 Verified | tiny/small/medium/large retained. |
+| Input `InputInst` · [public types] | Source type | Explicit controller plus original native control | 🟢 Verified | Native methods, not an UnwrapRef facade. |
+| Input `InputWrappedRef` · [interface source] | Source type | controller.control/native methods | 🟢 Verified | wrapperElRef/textareaElRef/inputElRef/isCompositing and activate/deactivate ref API omitted. |
+| Input `OnUpdateValue`, `OnUpdateValueImpl` · [interface source] | Source callback type group | Native Event + control.value | ⏭️ Intentionally omitted | No tuple/intersection value type or source 0/1/clear metadata contract. |
+| Input `inputInjectionKey` · [interface source] | Source injection | None | ⏭️ Intentionally omitted | No injected count/value/maxlength/class-prefix refs. |
 
 <!-- END PINNED API INVENTORY -->

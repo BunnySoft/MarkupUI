@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Input acceptance</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-input.css">
+  <link rel="stylesheet" href="./input.css">
+  <script defer src="../../dist/markup-ui-input.global.js"></script>
+  <script defer src="./input.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Input: the authored field owns the value</h1>
+    <p>Local dummy data only. Clear/reveal buttons are hidden without JavaScript. No network or password logging.</p>
+    <form id="entry" action="input.html" method="get">
+      <label for="title">Title (required)</label>
+      <div class="mui-input" data-input id="title-root">
+        <span class="mui-input__affix" aria-hidden="true">✎</span>
+        <input data-input-control id="title" name="title" value="Native draft" required minlength="2" maxlength="24" autocomplete="off" inputmode="text" aria-describedby="title-help title-count">
+        <button data-input-clear type="button" hidden aria-label="Clear title">Clear</button>
+        <span data-input-count id="title-count">Count available with JavaScript</span>
+      </div>
+      <p id="title-help">Native constraints count UTF-16 code units. The count is not a live announcement.</p>
+      <label for="secret">Dummy password (not submitted)</label>
+      <div class="mui-input" data-input id="secret-root">
+        <input data-input-control id="secret" type="password" value="dummy-only" autocomplete="off">
+        <button data-input-reveal type="button" hidden>Show password</button>
+        <button data-input-clear type="button" hidden aria-label="Clear dummy password">Clear</button>
+      </div>
+      <label for="notes">Notes: CSS autosize, two to six lines</label>
+      <div class="mui-input" data-input id="notes-root">
+        <textarea data-input-control class="mui-input__autosize" id="notes" name="notes" rows="3" maxlength="240" aria-describedby="notes-count">Two native
+lines</textarea>
+        <button data-input-clear type="button" hidden aria-label="Clear notes">Clear</button>
+        <span data-input-count id="notes-count">Count available with JavaScript</span>
+      </div>
+      <p>Without field-sizing support, rows="3" and manual vertical resize remain. No measuring mirror.</p>
+      <fieldset id="controls-fieldset">
+        <legend>Native fieldset</legend>
+        <label for="field">Editable fieldset member</label>
+        <div class="mui-input" data-input id="field-root" data-size="small">
+          <input data-input-control id="field" name="field" value="Member">
+          <button data-input-clear type="button" hidden>Clear member</button>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>InputGroup / pair: independently named endpoints</legend>
+        <div class="mui-input-group" id="pair">
+          <label class="mui-input-group-label" for="from">From</label>
+          <div class="mui-input" data-size="small"><input data-input-control id="from" name="from" value="A"></div>
+          <span class="mui-input-group-label" aria-hidden="true">→</span>
+          <label class="mui-input-group-label" for="to">To</label>
+          <div class="mui-input" data-size="small"><input data-input-control id="to" name="to" value="B"></div>
+          <span class="mui-input-group-label">km</span>
+        </div>
+      </fieldset>
+      <label for="read">Readonly, round and large</label>
+      <div class="mui-input" data-input id="read-root" data-round data-size="large">
+        <input data-input-control id="read" name="read" value="Copy this" readonly>
+        <button data-input-clear type="button" hidden>Clear readonly</button>
+      </div>
+      <label for="warning">Warning is presentation, not validation</label>
+      <div class="mui-input" data-status="warning" data-size="tiny">
+        <input data-input-control id="warning" name="warning" placeholder="Native placeholder">
+        <span class="mui-input__affix">Review later</span>
+      </div>
+      <label for="external">Associated with the other form</label>
+      <div class="mui-input" data-input id="external-root" data-status="success">
+        <input data-input-control id="external" name="external" form="other" value="Other default">
+        <span data-input-count>Count available with JavaScript</span>
+      </div>
+      <input type="hidden" name="token" value="local-only">
+      <p><button type="submit">Local GET fallback / inspect submission</button> <button type="reset">Native reset</button></p>
+    </form>
+    <form id="other"><button type="reset">Reset associated field only</button></form>
+    <div class="demo-tools">
+      <button type="button" id="toggle-fieldset">Toggle disabled fieldset</button>
+      <button type="button" id="toggle-readonly">Toggle title readonly</button>
+      <button type="button" id="toggle-rtl">Toggle RTL</button>
+      <button type="button" id="programmatic">Silent value + refresh</button>
+      <button type="button" id="new-default">Change default for next reset</button>
+      <button type="button" id="cancel-reset">Cancel next reset</button>
+      <button type="button" id="dispose">Disconnect helpers</button>
+    </div>
+    <h2>Local submission (dummy password has no name)</h2>
+    <pre id="submission">Nothing submitted.</pre>
+    <p id="events">Title events: input 0, change 0, clear 0</p>
+    <details><summary>CSS-only control</summary><label for="plain">Unaffected without any helper</label><div class="mui-input"><input data-input-control id="plain" value="Native"></div></details>
+  </main>
+</body>
+</html>

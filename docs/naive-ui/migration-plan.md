@@ -3,7 +3,8 @@
 **Plan state: 🟠 In progress overall — P1 pilots, P2 and P3 are Verified for declared retained
 native scopes and explicit omissions. All 31 P2-assigned pages and all 22 P3-assigned pages
 have closed property dispositions and four accepted tasks. P3 includes Discrete API's
-verified no-new-runtime composition resolution. P0/P4/P5/P6 and full framework/viewer
+verified no-new-runtime composition resolution. P4 is In progress with Input's native
+control scope accepted and 16 routes Planned. P0/P5/P6 and full framework/viewer
 parity remain independent and incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
@@ -34,7 +35,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
 | P2 — Primitives and layout | 🟢 Verified retained scope | All 31 P2-assigned pages reconciled; native Image/fallback/dialog scope accepted with advanced P6 exclusions. | P1 pattern | Full 96-route and P2 reference audit found no retained unresolved P2 rows. This is not global P3/P6 or framework parity. |
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
-| P4 — Forms and selection | 🔵 Planned | Make native controls dependable, then add optional richer selection. | P0 form contract; P3 for popup variants | Values, labels, submission, reset, validity and event semantics are consistent. |
+| P4 — Forms and selection | 🟠 In progress | Input/textarea/group/addon native contract accepted; Checkbox next, then remaining native controls. | Relevant P0 form contract; P3 for popup variants | Input evidence establishes values/defaults, labels, submission/reset, native validity and events; no Form-level validation completion. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
 | P6 — Specialized modules | 🔵 Planned | Deliver independently justified, opt-in advanced features. | Component-specific earlier work | Explicit imports, independent size budgets and no runtime dependencies. |
 
@@ -105,7 +106,7 @@ smuggling an overlay implementation into the CSS-only native composition.
 
 | Task | Status | Action | Deliverable |
 | --- | --- | --- | --- |
-| P4-01 — Native entry | 🔵 Planned | Enhance Input/Textarea without replacing authored controls; synchronize documented attributes and defaults. | Composition-friendly editing, labels, reset and native submission. |
+| P4-01 — Native entry | 🟢 Verified retained scope | Explicit authored Input/textarea helper and group/addon/pair CSS; native controls own attributes/value/defaults. | [Input acceptance](../components/input.md): clear/click-reveal/count, composition/selection, reset/association/submission and independent assets; renderer/veto/hold exclusions explicit. |
 | P4-02 — Boolean and exclusive choice | 🔵 Planned | Define Checkbox/Radio/Switch and companion groups, including indeterminate versus submitted values. | Clear group naming, keyboard behavior and state semantics. |
 | P4-03 — Native selection | 🔵 Planned | Improve Select and datalist-based Auto Complete as a minimal baseline. | Accessible native fallback and explicit limits relative to rich upstream options. |
 | P4-04 — Numeric and bounded entry | 🔵 Planned | Define Input Number, Slider and Rate parsing, clamping, keyboard and readonly/disabled distinctions. | Native value contracts with separately scoped advanced presentations. |
@@ -187,9 +188,9 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Discrete API (P3), verified native composition with no new runtime.**
-**P3 retained scope is complete. Recommended next: Input (P4), native input/textarea/control
-contract before Form enhancements. Do not infer P0 or P4+ completion.**
+**Current component: Input (P4), verified authored native input/textarea/group/addon contract.**
+**P3 retained scope is complete; P4 is In progress. Next: Checkbox, then Radio/Switch/Select
+and other native controls before Form enhancements. Do not infer P0 or full P4 completion.**
 
 The following component records form a historical execution sequence. Earlier “next” or
 “P3 incomplete” checkpoint statements are superseded by the final P3 audit below.
@@ -325,8 +326,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The index records 3,456 rows and 212 accepted retained tasks out of 384 across 53 component
-pages (172 unchecked), not full upstream parity.
+The index records 3,475 rows and 216 accepted retained tasks out of 384 across 54 component
+pages (168 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -843,21 +844,38 @@ intact. P0/P4/P5/P6 and framework/viewer exclusions remain independent.
 Discrete adds no distribution or byte ceiling. Existing inputs/outputs/budgets are unchanged;
 core/advanced/widgets remain **14,611/2,181/2,779 gzip bytes** under **15,000/3,000/4,000**.
 
-### Remaining P4 inventory and dependency-ready recommendation
+### Input native-control acceptance and remaining P4
 
-All **17 P4-assigned routes remain Planned** (zero accepted P4 page tasks):
-**Auto Complete, Color Picker, Checkbox, Date Picker, Dynamic Input, Dynamic Tags, Form,
-Input, Input Number, Input OTP, Mention, Radio, Rate, Select, Slider, Switch, Time Picker**.
-Their 770 rows include 767 unresolved entries and three explicit omissions; this is a
-planning inventory, not implementation credit.
+[Input](../components/input.md) completes the first P4 retained contract with authored
+Input/textarea, InputGroup/InputGroupLabel, pair/affix markup and optional root-owned
+clear/click-reveal/UTF-16 count. CSS field-sizing has a native rows/manual resize fallback.
+No controls are replaced, registered or duplicated for submission. Legacy forms.ts stays
+unchanged. Current/default values, selection/IME, native constraints, readonly/fieldset,
+changed form ownership, cancelled/post-default reset and user-event sequences are explicit.
 
-**Recommended first: [Input](components/input.md)**, establishing native input/textarea
-adoption, labels, name/type/constraints, current/default values, selection/IME/autofill,
-reset/submission and event deduplication before [Form](components/form.md) enhancements.
-Use the relevant P0 native-control/ownership rules without marking all of P0 complete.
-P3 popup/focus foundations are available for later selection work, but rich asynchronous/
-virtualized P4/P5 or specialized P6 variants still require their own scope and acceptance.
+The reference preserves **52 original identities** plus **19 source supplements**:
+**71 rows = 58 Verified adapted targets + 13 explicit omissions**, with four accepted tasks.
+Catalog totals are **3,475 rows and 216/384 accepted tasks across 54 pages**. P4 is
+**In progress**, not Form validation or full upstream parity.
 
-No P4 implementation starts in this Discrete resolution. Continue one component at a time
-with its own documentation, build, acceptance and commit; preserve native semantics and
-the unchanged legacy aggregate.
+**189 targeted tests** (52 Input, 137 native/Button/Pagination/Collapse) and build/type/budget
+gates passed. Chromium validated editing/CDP composition/paste/undo, count/clear/reveal,
+reset/default/form association, fieldset/readonly, native submission, CSS autosizing,
+RTL/narrow/CSS zoom/media, no-JS and ESM/classic/legacy coexistence. ESM/classic/CSS are
+**3,110/3,180/1,267 gzip bytes** within new **4,000/4,000/1,750** ceilings. All **121 previous
+top-level JS/CSS assets** are byte-identical; core/advanced/widgets remain
+**14,611/2,181/2,779 gzip bytes**. See the canonical record for precise evidence/limitations.
+
+The **16 remaining Planned P4 routes** are **Auto Complete, Color Picker, Checkbox,
+Date Picker, Dynamic Input, Dynamic Tags, Form, Input Number, Input OTP, Mention, Radio,
+Rate, Select, Slider, Switch, Time Picker**. Their historical 718 rows (715 unresolved and
+three omissions) remain planning inventory, not implementation credit. Input's source
+supplements bring the P4 inventory to 789 rows without promoting other components.
+
+**Next: Checkbox**, then Radio/Switch/Select and other native controls before
+[Form](components/form.md) enhancements. The shared contract is an authored semantic
+control owning current/default/checked state, labels/name/form/fieldset/reset/validity,
+silent native property writes with explicit refresh for decorations, no duplicate events
+or submission fields, and root-owned reversible enhancement state. Apply these conventions
+to later controls without importing Input's text-only behavior or inventing a form model.
+Continue one component/documentation/build/acceptance/commit at a time.

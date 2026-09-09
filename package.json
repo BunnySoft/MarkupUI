@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./input": {
+      "types": "./dist/components/input/index.d.ts",
+      "import": "./dist/markup-ui-input.js"
+    },
+    "./input/style.css": "./dist/markup-ui-input.css",
     "./collapse-transition": {
       "types": "./dist/components/collapse-transition/index.d.ts",
       "import": "./dist/markup-ui-collapse-transition.js"

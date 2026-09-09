@@ -1,0 +1,10 @@
+body { margin: 0; padding: 1rem; color: #17212b; background: #f6f8fa; font: 1rem/1.5 system-ui, sans-serif; }
+main { max-inline-size: 54rem; margin-inline: auto; }
+form > label { display: block; margin-block-start: 1rem; }
+fieldset { min-inline-size: 0; margin-block: 1rem; border: 1px solid #687787; }
+p { overflow-wrap: anywhere; }
+button { font: inherit; }
+.demo-tools { display: flex; flex-wrap: wrap; gap: .5rem; }
+#notes-root { --mui-input-min-rows: 2; --mui-input-max-rows: 6; }
+#submission { white-space: pre-wrap; overflow-wrap: anywhere; padding: .5rem; background: white; }
+@media print { .demo-tools { display: none; } }
