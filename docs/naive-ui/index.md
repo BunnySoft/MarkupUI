@@ -47,13 +47,14 @@ Cascader now has [accepted native dependent-select/path evidence](../components/
 Tree Select now has [accepted native path-aware single/multiple evidence](../components/tree-select.md), composing the hierarchy index and one Select owner with selection-preserving handoff.
 Transfer now has [accepted native membership/staging evidence](../components/transfer.md), with locked/bulk movement, explicit formdata ownership and non-resurrecting handoff.
 Data Table now has [accepted native stable-row/table evidence](../components/data-table.md), with explicit sort/filter/page/selection scopes and whole-form reveal before validation.
+Log now has [accepted bounded native retained-text evidence](../components/log.md), with literal append/retention, stable line nodes, selection protection and conditional follow.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
 are reconciled. **P4 is Verified for retained native scopes:** all 17 assigned routes,
 984 tracker rows and 68 page tasks are resolved, with no Planned P4 routes or unresolved
 retained rows. **P5 is active, not complete:** Virtual List, Tree, Cascader, Tree Select
-and Transfer/Data Table retained scopes are accepted; four P5 routes remain. P0/P6 and full framework parity remain independent.
-Recommended next: **Log**, then Infinite Scroll, Popselect and Split.
-No next collection was started in this Data Table commit.
+and Transfer/Data Table/Log retained scopes are accepted; three P5 routes remain. P0/P6 and full framework parity remain independent.
+Recommended next: **Infinite Scroll**, then Popselect and Split.
+No next collection was started in this Log commit.
 Component acceptance sections below retain their sign-off snapshots; earlier counts and
 “next”/“In progress” statements are historical, not the current phase dashboard.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
@@ -110,7 +111,7 @@ Avatar's four retained-scope tasks are checked using `9afc818`, Button's four us
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
 Popover through Rate, the subsequent Form/Auto Complete/Input OTP/Dynamic Input/Dynamic
 Tags/Mention/Color Picker/Date Picker/Time Picker records, and now Virtual List each add
-four accepted tasks; Tree, Cascader, Tree Select, Transfer and Data Table each add four more. The current total is **304/384 accepted across 76 pages, 80 unchecked**.
+four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table and Log each add four more. The current total is **308/384 accepted across 77 pages, 76 unchecked**.
 P2 retained scopes remain reconciled; the nineteen sequential P3 scopes plus three mixed P2/P3 pages pass the complete P3 audit. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
@@ -1970,6 +1971,37 @@ Current catalog: **3,853 rows / 304 of 384 tasks across 76 accepted pages / 80 u
 **Next: Log.** Reuse native text/overflow/lifecycle contracts where appropriate; no later
 collection source is included in this separate Data Table completion.
 
+## Log: accepted bounded native retained text
+
+[Canonical acceptance](../components/log.md) reuses native Code CSS and preserves real
+pre/code line/Text nodes for full retained-text selection/find/printing. Explicit CRLF/LF/
+partial-CR normalization, append, display trim, whole-head retention, generations, loading
+and selection-safe conditional follow require no highlighter, terminal, transport or
+duplicate Virtual List window. All retained records stay mounted; no virtualization claim.
+
+**21 original identities + 25 explicit source supplements = 46 rows: 19 adapted +
+27 omitted**; four tasks close. **98 targeted tests** (59 Log, 12 Code, 27 native/legacy),
+declarations/build/budgets and Chromium native scroll/selection/long-line/CRLF/follow/
+retention/resize/RTL/zoom/print/no-JS/coexistence acceptance. The 10,000-record fixture
+really mounted **10,000 line spans and 10,000 Text nodes**, retained 377,055 units and
+selected/found offscreen text natively. Twenty 25-record bursts remained at the 10,000
+record cap; the documented p95 batch time is 292.4ms, not a high-throughput/window SLA.
+All **190 previous JS/CSS assets byte-match**, including Data Table and native Code.
+
+Current catalog: **3,878 rows / 308 of 384 tasks across 77 accepted pages / 76 unchecked**.
+**P5 remains In progress:** seven of ten routes accepted; **790 rows = 288 adapted +
+425 omitted + 77 unresolved**. P4 remains 17 routes/984 rows/68 tasks, no unresolved retained rows.
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P0 (3) | Config Provider, Element, Global Style | 97 / 8 |
+| P5 (3) | Infinite Scroll, Popselect, Split | 78 / 77 |
+| P6 (9) | Carousel, Watermark, Upload, Calendar, Countdown, Number Animation, Time, Heatmap, Marquee | 232 / 232 |
+| Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Next: Infinite Scroll**, with its own native request/observer/backpressure lifetime;
+Log edge notifications are not an automatic data loader. Popselect and Split follow.
+
 ## Common Components (15)
 
 | Component | Plan direction | Current baseline | Phase |
@@ -2029,7 +2061,7 @@ collection source is included in this separate Data Table completion.
 | [Equation](components/equation.md) | ⏭️ Intentionally omitted: TeX renderer | None | Exclusions |
 | [Image](components/image.md) | 🟢 Verified native/dialog scope; 49 explicit omissions | Native responsive images, bounded fallback/group preview; [accepted evidence](../components/image.md) | P2, P6 |
 | [List](components/list.md) | 🟢 Verified retained native scope; 3 explicit omissions | Native CSS lists/items/actions; [accepted evidence](../components/list.md) | P2 |
-| [Log](components/log.md) | 🔵 Planned; ⏭️ highlighter omitted | Related virtual list | P5; exclusions |
+| [Log](components/log.md) | 🟢 Verified native retained-text scope; 27 explicit omissions | Native Code/line records, bounded append/retention and conditional follow; [accepted evidence](../components/log.md) | P5; exclusions |
 | [Number Animation](components/number-animation.md) | 🔵 Planned | Related statistic | P6 |
 | [QR Code](components/qr-code.md) | ⏭️ Intentionally omitted: encoder | None | Exclusions |
 | [Statistic](components/statistic.md) | 🟢 Verified retained scope; 3 explicit omissions | Standalone native Statistic; [accepted evidence](../components/statistic.md), legacy core preserved | P2 |
@@ -2137,15 +2169,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,358: 367 inline fields, 182 type/helper/exclusion entries (including five Table public helper groups and Virtual List/Tree named ScrollTo types) and 809 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table source supplements |
+| Supplementary named declarations | 1,383: 367 inline fields, 182 type/helper/exclusion entries (including five Table public helper groups and Virtual List/Tree named ScrollTo types) and 834 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log source supplements |
 | Explicit inherited tracker rows | 275, including six source-inherited DialogReactive options, three ModalReactive fields and two NotificationReactive fields |
-| Total tracker rows | 3,853; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 304 retained-scope tasks accepted across 76 component pages, 80 unchecked |
+| Total tracker rows | 3,878; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 308 retained-scope tasks accepted across 77 component pages, 76 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,853 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate, 68 Form, 27 Auto Complete, 17 Input OTP, 28 Dynamic Input, 25 Dynamic Tags, 30 Mention, 10 Color Picker, 37 Date Picker, 16 Time Picker, 26 Virtual List, 60 Tree, 40 Cascader, 39 Tree Select, 28 Transfer and 76 Data Table native capabilities cite acceptance |
-| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 20 unchanged inventories match extraction; the 76 accepted pages preserve named/grouped identities with explicit dispositions; Data Table's 147 original section/member/kind/pinned API-line identities match its preceding inventory in order; P4 remains fully reconciled |
-| Local links | All 503 scoped Data Table/reference/index/master relative links resolve; prior per-component/link snapshots remain historical evidence |
+| Status presentation | All 3,878 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate, 68 Form, 27 Auto Complete, 17 Input OTP, 28 Dynamic Input, 25 Dynamic Tags, 30 Mention, 10 Color Picker, 37 Date Picker, 16 Time Picker, 26 Virtual List, 60 Tree, 40 Cascader, 39 Tree Select, 28 Transfer, 76 Data Table and 19 Log native capabilities cite acceptance |
+| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 19 unchanged inventories match extraction; the 77 accepted pages preserve named/grouped identities with explicit dispositions; Log's 21 original section/member/kind/pinned API-line identities match its preceding inventory in order; P4 remains fully reconciled |
+| Local links | All 511 scoped Log/reference/index/master relative links resolve; prior per-component/link snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

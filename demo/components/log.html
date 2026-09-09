@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Native Log · MarkupUI</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-log.css">
+  <link rel="stylesheet" href="./log.css">
+  <script type="module" src="./log.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Log: bounded, fully retained native text</h1>
+    <p>No syntax highlighter, terminal escapes, automatic links, network stream, clipboard
+      or virtual-window engine. The large local fixture has <strong>10,000 actual line
+      spans</strong>, not one giant text node presented as virtualization.</p>
+    <p id="log-help">Tab to the readout and use native arrows/PageDown/End. Select text
+      normally. LF/CRLF/lone CR normalize to LF; a final CR in an append waits for another
+      chunk or Flush. Follow only advances when already near the bottom and no selection
+      is active. Updates that would change selected text are rejected for explicit retry.</p>
+    <section class="mui-log" data-log aria-label="Local retained log">
+      <h2 id="log-heading">Local application log</h2>
+      <pre class="mui-code-block" data-log-viewport data-line-numbers tabindex="0" role="region" aria-labelledby="log-heading" aria-describedby="log-help"><code class="mui-code" data-log-output>[local] Ready.
+[local] Native text remains selectable.
+[local] &lt;b&gt;This is literal, not markup.&lt;/b&gt;
+
+[local] Last partial line</code></pre>
+      <p data-log-loading hidden>Application reports loading; retained text stays readable.</p>
+    </section>
+    <div class="actions" data-enhancement hidden>
+      <button type="button" data-action="large">Load 10,000 local lines</button>
+      <button type="button" data-action="append">Append 25 lines</button>
+      <button type="button" data-action="partial">Append partial chunk</button>
+      <button type="button" data-action="cr">Append trailing CR</button>
+      <button type="button" data-action="flush">Flush final CR</button>
+      <button type="button" data-action="trim">Trim first 100 records</button>
+      <button type="button" data-action="clear">Clear / new generation</button>
+      <button type="button" data-action="top">Top</button>
+      <button type="button" data-action="middle">Middle</button>
+      <button type="button" data-action="bottom">Bottom</button>
+      <button type="button" data-action="long">Replace with 16,384-character line</button>
+      <button type="button" data-action="loading">Toggle loading</button>
+      <button type="button" data-action="disconnect">Disconnect to static text</button>
+      <label><input type="checkbox" id="follow">Follow when already near bottom</label>
+      <label><input type="checkbox" id="trim-display">Trim displayed line whitespace only</label>
+      <label><input type="checkbox" id="wrap">Native soft wrap</label>
+      <label><input type="checkbox" id="rtl">RTL presentation</label>
+      <label>Visible rows <select id="size"><option value="15">15</option><option value="8">8</option><option value="25">25</option></select></label>
+    </div>
+    <p><label>Unrelated native field <input id="outside" value="Focus stays here during updates"></label></p>
+    <pre id="feedback" aria-label="Last local operation">Static fallback: five readable lines. No background producer runs.</pre>
+    <noscript><p>Without JavaScript the original pre/code text is fully readable/selectable;
+      native scroll and the unrelated field still work. Enhancement controls stay hidden.</p></noscript>
+    <h2>Retention and selection are explicit</h2>
+    <p>This demo retains at most 10,000 LF-delimited records and 1,000,000 UTF-16 code units.
+      Each record is at most 16,384 code units. Blank and final empty records count.
+      Appending never inserts a newline for you; the 25-line button deliberately does.
+      Old complete records are removed at capacity. No record is truncated partway.
+      Selection of an affected record blocks the update; deselect before retrying.</p>
+    <p>All retained records are in the DOM for native selection/find/printing. Line numbers
+      are decorative retained-buffer positions, not stable identities. Print expands and
+      wraps the full retained text. No full-history or clipboard-copy promise is made.</p>
+    <p><a href="./code.html">Independent static Code</a> ·
+      <a href="./virtual-list.html">Separate fixed-height Virtual List</a></p>
+  </main>
+</body>
+</html>

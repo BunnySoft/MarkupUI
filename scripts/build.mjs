@@ -54,6 +54,8 @@ components.push("transfer")
 classicEntries.transfer = "global.ts"
 components.push("data-table")
 classicEntries["data-table"] = "global.ts"
+components.push("log")
+classicEntries.log = "global.ts"
 
 await Promise.all([
   build({
@@ -124,11 +126,17 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
   } else if (name === "data-table") {
     const base = await readFile(resolve(root, "src", "components", "table", "table.css"), "utf8")
     await writeFile(output, `${base}\n${await readFile(source, "utf8")}`)
+  } else if (name === "log") {
+    const base = await readFile(resolve(root, "src", "components", "code", "code.css"), "utf8")
+    await writeFile(output, `${base}\n${await readFile(source, "utf8")}`)
   } else await copyFile(source, output)
 }))
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-log.js": 6_000,
+  "markup-ui-log.global.js": 6_000,
+  "markup-ui-log.css": 1_750,
   "markup-ui-data-table.js": 9_000,
   "markup-ui-data-table.global.js": 9_000,
   "markup-ui-data-table.css": 2_000,

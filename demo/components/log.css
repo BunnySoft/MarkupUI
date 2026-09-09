@@ -1,0 +1,11 @@
+body { margin: 0; font: 1rem/1.5 system-ui, sans-serif; background: #f7f9fc; color: #172536; }
+main { max-inline-size: 72rem; padding: 1rem; margin-inline: auto; overflow-wrap: anywhere; }
+h1 { font-size: clamp(1.5rem, 4vw, 2rem); }
+button, input, select { font: inherit; max-inline-size: 100%; box-sizing: border-box; }
+button { padding: .3rem .5rem; }
+.actions:not([hidden]) { display: flex; flex-wrap: wrap; gap: .75rem; margin-block: 1rem; align-items: center; }
+.mui-log[data-visible-rows="8"] { --mui-log-rows: 8; }
+.mui-log[data-visible-rows="25"] { --mui-log-rows: 25; }
+#feedback { white-space: pre-wrap; overflow-wrap: anywhere; padding: .75rem; border: 1px solid #bac7d6; background: white; }
+#outside { inline-size: 24rem; }
+@media print { .actions, #feedback { display: none; } body { background: white; } }

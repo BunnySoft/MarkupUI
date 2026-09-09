@@ -1,92 +1,159 @@
 # Log
 
-**Plan: Planned for plain logs; syntax-highlighting engine intentionally omitted. Current baseline: no log viewer.**
+**🟢 Verified retained plain-log scope.** Native pre/code, actual retained line/Text nodes,
+explicit append/replace/retention limits, display trimming, selection-safe updates and
+conditional follow-tail. No terminal emulator, highlighter, autolinks, network producer,
+clipboard, hidden store or virtual-window claim.
 
-## Baseline and target
+[Canonical API/ownership/acceptance](../../components/log.md) ·
+[Native Code](../../components/code.md) · [Separate Virtual List](../../components/virtual-list.md).
+This implementation reuses Code's external CSS. It intentionally keeps all bounded retained
+records selectable/findable/printable instead of duplicating Virtual List's window engine.
 
-[B1: advanced.ts](../../../src/plugins/advanced.ts) contains a basic virtual list that may inform optional bounded rendering.
+**Delivery phase:** P5. **Task state:** 🟢 Verified retained native scope.
+**Next:** Infinite Scroll, then Popselect and Split. P5 remains incomplete.
 
-- **HTML:** readable `pre`/`code` or a labelled ordered record list.
-- **JS:** optional follow-tail, append limits and scroll control; no language parser.
-- **CSS:** monospace wrapping and external viewport presentation.
-- **Placement:** proposed `src/optional/log/`.
-
-## Acceptance and gaps
-
-Test high-volume append, user-scrolled position, bounded memory, clear/reconnect and literal untrusted text. Avoid announcing every line; highlighter configuration remains excluded.
-
-## Migration steps
-
-**Delivery phase:** P5 — bounded collections; highlighting remains excluded. **Task state:** 🔵 Planned.
-**Prerequisites:** P2 Code and P5 Virtual List only for large logs in the [master plan](../migration-plan.md).
-**Next task:** define plain-text log records, retention limits and when follow-tail stops after user scrolling.
-
-1. [ ] **Build a readable fallback.** Use pre/code or an ordered record list with explicit line identity and safe text insertion.
-2. [ ] **Specify append/clear behavior.** Bound retained data and preserve user scroll/selection when new records arrive.
-3. [ ] **Gate virtual rendering.** Add independent windowing only for approved scale; keep syntax-engine configuration omitted.
-4. [ ] **Test streaming conditions.** Cover burst appends, follow-tail toggling, disconnect, clear and literal hostile-looking text without announcement flooding.
+1. [x] **Build a readable fallback.** Passive labelled pre/code with literal authored text;
+   enhanced records are concrete native spans with stable keys and Text nodes.
+2. [x] **Specify append/clear behavior.** LF normalization, partial CR settlement, whole-line
+   retention, explicit replace/clear generations and native selection protection.
+3. [x] **Gate virtual rendering.** No Log virtualization. Declare and measure 10,000 actual
+   mounted line spans and bounded retained characters, rather than count one giant text node.
+4. [x] **Test streaming conditions.** Local burst/scroll/follow/selection/clear/resize/
+   teardown tests, browser acceptance, declarations/build/budgets and unchanged prior assets.
 
 ### Native primitives and fallback
 
-- **Native path:** native pre/code or an ordered text-record list; append text nodes or explicitly cloned line templates without parsing source as HTML.
-- **Small enhancement:** a light-DOM controller owns append/follow-tail and optional windowing. Feature-detect observers and use bounded complete/paginated logs when unavailable; native scrollTop/scrollTo is sufficient for basic scrolling. Release listeners on disconnect. No syntax engine, custom scrollbar polyfill or reactive log renderer is required.
-
-<!-- BEGIN PINNED API INVENTORY -->
+Keep native pre/code, normal browser selection/find/scroll, decorative empty line-number
+markers and outside application controls. Only append/replace/trim/loading state is owned.
+Scroll observation is passive; ResizeObserver is scoped to the viewport, with explicit
+refresh fallback. No frame/timer/wheel/data-loader loop or highlighter configuration.
+Disconnect leaves current native text readable instead of restoring stale source data.
 
 ## Reference and review boundary
 
-- [Official website](https://www.naiveui.com/en-US/os-theme/components/log)
-- [Pinned public API Markdown](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md)
-- [Pinned implementation source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log)
-- [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
+- [Live official page](https://www.naiveui.com/en-US/os-theme/components/log), rendered
+  Naive UI 2.45.3 on 2026-09-09 despite HTTP 404.
+- [Pinned API][api], [Log source/interfaces][log], [line rendering/trim][line],
+  [loading source][loader], [public exports][exports], [public types][public].
+- [Catalog](../index.md) · [Architecture](../architecture.md).
 
-Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **14 local table rows + 7 supplementary declarations + 0 inherited rows = 21 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
+Revision **42a52e6436b38bed456fee19eb0b89cdcd00fcc2**.
+Source log splitting uses LF, uses truthy log before lines, and trims each displayed line.
+Markdown lines defaults to undefined while source defaults to []; an empty log string falls
+back to lines in source. The native target rejects simultaneous text/lines and defines empty
+text as one empty appendable record. CRLF/lone CR normalize explicitly; raw normalized
+retained text is separate from optional per-line display trimming.
 
+Source uses Code, a custom Scrollbar, reactive per-line components, injected highlighter
+state and loading animation. The native target takes no syntax-engine path, and never writes
+log data through innerHTML. Wheel-at-boundary retry and implicit require-more loading are
+omitted; one native edge event only reports a real observed boundary transition.
+
+**All 21 original section/member/kind/API-line identities remain in order**:
+14 original table rows + seven original inline fields.
+`API:Lnn` means the pinned [API][api] URL plus `#Lnn`.
+Source-only entries below are explicit supplements, not invented original API.
+Verified means the stated native adaptation, never framework/highlighter parity.
+**21 original identities + 25 source-only supplements = 46 rows:
+19 adapted native capabilities + 27 intentional omissions; zero unresolved.**
+
+<!-- BEGIN PINNED API INVENTORY -->
 
 ### Log Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`font-size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L60) | Prop | External CSS token/class for `font-size`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`hljs`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L61) | Prop | Plain text or pre-authored marks only; no syntax-highlighter engine. | ⏭️ Intentionally omitted | No implementation credit; retain documented alternative. |
-| [`language`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L62) | Prop | Plain text or pre-authored marks only; no syntax-highlighter engine. | ⏭️ Intentionally omitted | No implementation credit; retain documented alternative. |
-| [`line-height`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L63) | Prop | Candidate `line-height` attribute or JS `lineHeight`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`lines`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L64) | Prop | Candidate JS `lines` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`loading`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L65) | Prop | Candidate presence attribute `loading`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`log`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L66) | Prop | Candidate `log` attribute or JS `log`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`rows`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L67) | Prop | Candidate `rows` attribute or JS `rows`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`spin-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L68) | Prop | Candidate explicit native-child configuration for `spin-props`; no unrestricted prop forwarding. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`trim`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L69) | Prop | Candidate presence attribute `trim`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-require-more`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L70) | Callback | Candidate DOM `mui:require-more` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-reach-top`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L71) | Callback | Candidate DOM `mui:reach-top` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-reach-bottom`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L72) | Callback | Candidate DOM `mui:reach-bottom` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `font-size` · API:L60 | Prop | External --mui-log-font-size, default .875rem; native scalable font, no numeric prop bridge. | 🟢 Verified |
+| `hljs` · API:L61 | Prop | No external syntax engine, adapter, grammar or engine-object promise. | ⏭️ Intentionally omitted |
+| `language` · API:L62 | Prop | Always literal text; no language detection or unsafe fallback renderer. | ⏭️ Intentionally omitted |
+| `line-height` · API:L63 | Prop | External --mui-log-line-height, default 1.25; actual native block metrics. | 🟢 Verified |
+| `lines` · API:L64 | Prop | Initial lines/setLines, explicit strings without CR/LF; replacement creates a new generation. | 🟢 Verified |
+| `loading` · API:L65 | Prop | Owned aria-busy plus optional authored loading text; readable content remains. | 🟢 Verified |
+| `log` · API:L66 | Prop | Authored literal code text or initial text/setText/append, with explicit normalization/retention. | 🟢 Verified |
+| `rows` · API:L67 | Prop | External --mui-log-rows (15 default) or --mui-log-height; no hidden virtual row count. | 🟢 Verified |
+| `spin-props` · API:L68 | Prop | Native loading text; no spinner/theme/prop forwarding. | ⏭️ Intentionally omitted |
+| `trim` · API:L69 | Prop | Display-only String.trim per LF record; raw normalized retained text remains accessible. | 🟢 Verified |
+| `on-require-more` · API:L70 | Callback | No loading/retry/backpressure protocol or repeated wheel-at-edge trigger; application owns production. | ⏭️ Intentionally omitted |
+| `on-reach-top` · API:L71 | Callback | mui:log-edge position=top, observed native transition with 1px rounding tolerance. | 🟢 Verified |
+| `on-reach-bottom` · API:L72 | Callback | mui:log-edge position=bottom, native transition within nearBottom tolerance. | 🟢 Verified |
 
 ### Log Methods
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`scrollTo`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L78) | Method | Candidate plain-JS `scrollTo` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `scrollTo` · API:L78 | Method | One finite top or top/bottom position, optional silent; native vertical scrolling, no focus or horizontal reset. | 🟢 Verified |
 
 ### Log Props: spin-props inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`spin-props.strokeWidth?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L68) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`spin-props.stroke?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L68) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`spin-props.scale?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L68) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`spin-props.radius?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L68) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `spin-props.strokeWidth?` · API:L68 | Inline record field | No spinner. | ⏭️ Intentionally omitted |
+| `spin-props.stroke?` · API:L68 | Inline record field | No spinner. | ⏭️ Intentionally omitted |
+| `spin-props.scale?` · API:L68 | Inline record field | No spinner. | ⏭️ Intentionally omitted |
+| `spin-props.radius?` · API:L68 | Inline record field | No spinner. | ⏭️ Intentionally omitted |
 
 ### Log Methods: scrollTo inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`scrollTo.top?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L78) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`scrollTo.position?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L78) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`scrollTo.silent?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md#L78) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `scrollTo.top?` · API:L78 | Inline record field | Finite CSS-pixel top, native clamping; mutually exclusive with position. | 🟢 Verified |
+| `scrollTo.position?` · API:L78 | Inline record field | Exact top/bottom, no implicit target or line-key overload. | 🟢 Verified |
+| `scrollTo.silent?` · API:L78 | Inline record field | Suppress owned edge notifications for the resulting native scroll target; not a global event mute. | 🟢 Verified |
+
+### Source-only public exports
+
+These identities are explicit [index.ts][exports]/[public-types.ts][public] evidence.
+
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `NLog` · exports | Component export | createLog on a native pre/code owner; no custom element or Vue registration. | 🟢 Verified |
+| `logProps` · exports | Props record | No runtime Vue prop schema. | ⏭️ Intentionally omitted |
+| `LogInst` · exports | Interface | Independently typed LogController; retains scroll intent and adds explicit native buffer operations. | 🟢 Verified |
+| `LogProps` · exports | Type alias | No ExtractPublicPropTypes compatibility alias. | ⏭️ Intentionally omitted |
+| `LogSpinProps` · public | Type alias | Opaque SharedSpinProps excluded; original four inline members remain separately recorded. | ⏭️ Intentionally omitted |
+
+### Source-only Log props, methods and injection
+
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `offsetTop` · Log.tsx | Prop | No configurable top threshold; native boundary has 1px rounding tolerance. | ⏭️ Intentionally omitted |
+| `offsetBottom` · Log.tsx | Prop | Explicit nearBottom 0..256 CSS pixels (default 4), shared by edge/follow observation. | 🟢 Verified |
+| `scrollToTop` · Log.tsx | Deprecated method | Use scrollTo({position:top}); legacy alias not exported. | ⏭️ Intentionally omitted |
+| `scrollToBottom` · Log.tsx | Deprecated method | Use scrollTo({position:bottom}); legacy alias not exported. | ⏭️ Intentionally omitted |
+| `LogInst.scrollTo({silent?,position})` · Log.tsx | Overload | Discriminated top/bottom position overload. | 🟢 Verified |
+| `LogInst.scrollTo({silent?,top})` · Log.tsx | Overload | Discriminated finite top overload. | 🟢 Verified |
+| `on-require-more.from` · Log.tsx | Parameter | No transport/require-more callback contract. | ⏭️ Intentionally omitted |
+| `theme` · Log.tsx useTheme.props | Prop | Native external CSS, no theme object/provider. | ⏭️ Intentionally omitted |
+| `themeOverrides` · Log.tsx useTheme.props | Prop | No theme object merging. | ⏭️ Intentionally omitted |
+| `builtinThemeOverrides` · Log.tsx useTheme.props | Prop | No private theme override schema. | ⏭️ Intentionally omitted |
+| `LogInjection` · Log.tsx | Interface | No injected shared log/provider state. | ⏭️ Intentionally omitted |
+| `LogInjection.trimRef` · Log.tsx | Record field | Direct native owner trim flag; no reactive Ref alias. | ⏭️ Intentionally omitted |
+| `LogInjection.languageRef` · Log.tsx | Record field | No language/highlighter provider. | ⏭️ Intentionally omitted |
+| `LogInjection.highlightRef` · Log.tsx | Record field | No highlight mode. | ⏭️ Intentionally omitted |
+| `LogInjection.mergedHljsRef` · Log.tsx | Record field | No external engine or merged provider. | ⏭️ Intentionally omitted |
+
+### Source-only line/loader companions
+
+Private companion identities are not promoted into public runtime exports.
+
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `LogLine` · LogLine.tsx | Private component | No child component constructor/provider; concrete native spans only. | ⏭️ Intentionally omitted |
+| `LogLine.line` · LogLine.tsx | Prop | Literal native record text; normalized retained source and display trim are distinct. | 🟢 Verified |
+| `LogLoader` · LogLoader.tsx | Private component | Optional authored loading text, not a custom loading component. | ⏭️ Intentionally omitted |
+| `LogLoader.clsPrefix` · LogLoader.tsx | Prop | Scoped external CSS, no class-prefix provider. | ⏭️ Intentionally omitted |
+| `LogLoader.spinProps` · LogLoader.tsx | Prop | No spinner dependency/forwarding. | ⏭️ Intentionally omitted |
 
 <!-- END PINNED API INVENTORY -->
+
+Follow, append, flush, stable generated keys, retention/character limits and native-selection
+guards are explicit **target extensions**, not added Naive UI props. See the canonical
+document for every retained API, omitted boundary and measured actual-DOM acceptance.
+
+[api]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/demos/enUS/index.demo-entry.md
+[log]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/src/Log.tsx
+[line]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/src/LogLine.tsx
+[loader]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/src/LogLoader.tsx
+[exports]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/index.ts
+[public]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/log/src/public-types.ts

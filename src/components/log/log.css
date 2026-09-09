@@ -1,0 +1,19 @@
+/* The build composes native Code CSS; these rules only configure the log viewport. */
+.mui-log {
+  --mui-code-font-size: var(--mui-log-font-size, .875rem);
+  --mui-code-line-height: var(--mui-log-line-height, 1.25);
+  --mui-code-padding: var(--mui-log-padding, .5rem);
+  --mui-code-gutter: var(--mui-log-gutter, 5ch);
+  min-inline-size: 0;
+}
+.mui-log > pre.mui-code-block[data-log-viewport] {
+  position: relative;
+  block-size: var(--mui-log-height, calc(var(--mui-log-rows, 15) * 1lh + 2 * var(--mui-log-padding, .5rem) + 2px));
+  overflow-anchor: none;
+  scroll-behavior: auto;
+}
+.mui-log > [data-log-loading] { margin-block: .5rem; }
+.mui-log > pre.mui-code-block[aria-busy="true"] { border-style: dashed; }
+@media print {
+  .mui-log > [data-log-loading] { display: none; }
+}
