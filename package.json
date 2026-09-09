@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./switch": {
+      "types": "./dist/components/switch/index.d.ts",
+      "import": "./dist/markup-ui-switch.js"
+    },
+    "./switch/style.css": "./dist/markup-ui-switch.css",
     "./radio": {
       "types": "./dist/components/radio/index.d.ts",
       "import": "./dist/markup-ui-radio.js"

@@ -1,0 +1,73 @@
+.mui-switch {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .5em;
+  max-inline-size: 100%;
+  color: var(--mui-switch-color, #17212b);
+  font: var(--mui-switch-font, 1rem)/1.5 system-ui, sans-serif;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.mui-switch > input[type="checkbox"][role="switch"] {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  inline-size: 1.125em;
+  block-size: 1.125em;
+  margin: 0;
+  accent-color: var(--mui-switch-active, #075eae);
+  cursor: inherit;
+}
+.mui-switch > input:focus-visible { outline: 2px solid var(--mui-switch-focus, #075eae); outline-offset: 3px; }
+.mui-switch > input:disabled { cursor: not-allowed; }
+.mui-switch > input[aria-busy="true"] { cursor: wait; }
+.mui-switch > input[aria-disabled="true"]:not([aria-busy="true"]) { cursor: not-allowed; }
+.mui-switch > input:disabled ~ .mui-switch__label { color: var(--mui-switch-disabled, #64707a); }
+.mui-switch__label { min-inline-size: 0; }
+.mui-switch__state,
+.mui-switch > [data-switch-loading] { font-size: .875em; }
+.mui-switch > input:not(:checked) ~ .mui-switch__state :is(.mui-switch__on, .mui-switch__checked-icon),
+.mui-switch > input:checked ~ .mui-switch__state :is(.mui-switch__off, .mui-switch__unchecked-icon) { display: none; }
+@supports (appearance: none) and (background-image: radial-gradient(circle, white, transparent)) {
+  .mui-switch > input[type="checkbox"][role="switch"]:not(:indeterminate) {
+    appearance: none;
+    inline-size: var(--mui-switch-width, 2.75rem);
+    block-size: var(--mui-switch-height, 1.5rem);
+    border: 1px solid var(--mui-switch-border, #596774);
+    border-radius: var(--mui-switch-radius, 999px);
+    background-color: var(--mui-switch-rail, #687787);
+    background-image: var(--mui-switch-thumb-image, radial-gradient(ellipse at center, var(--mui-switch-thumb, white) 65%, transparent 70%));
+    background-size: var(--mui-switch-thumb-size, 1.125rem) var(--mui-switch-thumb-size, 1.125rem);
+    background-repeat: no-repeat;
+    background-position: 2px center;
+  }
+  .mui-switch > input[type="checkbox"][role="switch"]:checked {
+    background-color: var(--mui-switch-active, #075eae);
+    background-position: calc(100% - 2px) center;
+  }
+  .mui-switch > input[type="checkbox"][role="switch"]:dir(rtl):not(:checked) { background-position: calc(100% - 2px) center; }
+  .mui-switch > input[type="checkbox"][role="switch"]:dir(rtl):checked { background-position: 2px center; }
+  .mui-switch > input[type="checkbox"][role="switch"]:focus { border-color: var(--mui-switch-focus, #075eae); }
+  .mui-switch > input:disabled { opacity: .65; }
+  .mui-switch > input[type="checkbox"][role="switch"][aria-busy="true"] { border-style: dashed; }
+}
+.mui-switch[data-size="small"] { --mui-switch-font: .875rem; --mui-switch-width: 2.25rem; --mui-switch-height: 1.25rem; --mui-switch-thumb-size: .875rem; }
+.mui-switch[data-size="medium"] { --mui-switch-font: 1rem; --mui-switch-width: 2.75rem; --mui-switch-height: 1.5rem; --mui-switch-thumb-size: 1.125rem; }
+.mui-switch[data-size="large"] { --mui-switch-font: 1.125rem; --mui-switch-width: 3.25rem; --mui-switch-height: 1.75rem; --mui-switch-thumb-size: 1.375rem; }
+.mui-switch[data-square] { --mui-switch-radius: .25rem; --mui-switch-thumb-image: linear-gradient(var(--mui-switch-thumb, white), var(--mui-switch-thumb, white)); }
+.mui-switch[data-status="warning"] { --mui-switch-border: #8b5c00; }
+.mui-switch[data-status="error"] { --mui-switch-border: #bd2020; }
+.mui-switch[hidden], .mui-switch [hidden] { display: none !important; }
+@media (forced-colors: active), print {
+  .mui-switch > input[type="checkbox"][role="switch"],
+  .mui-switch > input[type="checkbox"][role="switch"]:not(:indeterminate) {
+    appearance: auto;
+    inline-size: 1.125em;
+    block-size: 1.125em;
+    background: none;
+    accent-color: auto;
+    opacity: 1;
+  }
+  .mui-switch > input:focus-visible { outline-color: Highlight; }
+}
+@media print { .mui-switch { break-inside: avoid; } }

@@ -1,0 +1,8 @@
+body { margin: 0; padding: 1rem; color: #17212b; background: #f6f8fa; font: 1rem/1.5 system-ui, sans-serif; }
+main { max-inline-size: 54rem; margin-inline: auto; }
+fieldset { min-inline-size: 0; margin-block: 1rem; border: 1px solid #687787; }
+.demo-tools { display: flex; flex-wrap: wrap; gap: .5rem; }
+button { font: inherit; }
+h1, p, pre { overflow-wrap: anywhere; }
+pre { white-space: pre-wrap; background: white; padding: .5rem; }
+@media print { .demo-tools { display: none; } }

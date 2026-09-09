@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Switch</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-switch.css">
+  <link rel="stylesheet" href="./switch.css">
+  <script defer src="../../dist/markup-ui-switch.global.js"></script>
+  <script defer src="./switch.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Switch: one native binary control</h1>
+    <p>The native input itself paints the rail and thumb. On/off text is decorative; the accessible setting name stays fixed. Loading cancels native activation without disabling submission or moving focus.</p>
+    <form id="settings" method="get" action="switch.html">
+      <p>
+        <label class="mui-switch" data-switch id="alerts-switch">
+          <input data-switch-control id="alerts" type="checkbox" role="switch" name="alerts" value="enabled" checked aria-labelledby="alerts-label" aria-describedby="alerts-help">
+          <span class="mui-switch__label" id="alerts-label">Email alerts</span>
+          <span class="mui-switch__state" aria-hidden="true">
+            <span class="mui-switch__checked-icon">✓</span><span class="mui-switch__on">On</span>
+            <span class="mui-switch__unchecked-icon">×</span><span class="mui-switch__off">Off</span>
+          </span>
+          <span data-switch-loading hidden aria-hidden="true">Working…</span>
+        </label>
+      </p>
+      <p id="alerts-help">Checked submits the string “enabled”. Off submits nothing. No hidden unchecked value. Loading is an explicit local flag, not a network request.</p>
+      <fieldset id="preferences">
+        <legend>Native fieldset</legend>
+        <label class="mui-switch" data-switch id="digest-switch" data-size="small" data-square>
+          <input data-switch-control id="digest" type="checkbox" role="switch" name="digest" value="daily" aria-labelledby="digest-label">
+          <span class="mui-switch__label" id="digest-label">Daily digest with a longer wrapping setting name</span>
+          <span class="mui-switch__state" aria-hidden="true"><span class="mui-switch__icon">✉</span></span>
+          <span data-switch-loading hidden aria-hidden="true">Busy</span>
+        </label>
+      </fieldset>
+      <p>
+        <label class="mui-switch" data-switch id="external-switch" data-size="large">
+          <input data-switch-control id="external-setting" type="checkbox" role="switch" name="external" form="other-settings" value="external-on" checked aria-labelledby="external-label">
+          <span class="mui-switch__label" id="external-label">Externally associated setting</span>
+          <span class="mui-switch__state" aria-hidden="true"><span class="mui-switch__on">Enabled</span><span class="mui-switch__off">Disabled</span></span>
+        </label>
+      </p>
+      <p>
+        <label class="mui-switch" data-switch id="required-switch" data-status="warning">
+          <input data-switch-control id="required-setting" type="checkbox" role="switch" name="consent" value="yes" required aria-labelledby="required-label">
+          <span class="mui-switch__label" id="required-label">Required local consent (native constraint)</span>
+        </label>
+      </p>
+      <p>
+        <label class="mui-switch">
+          <input id="author-disabled" type="checkbox" role="switch" name="disabled-example" value="omitted" disabled checked aria-labelledby="disabled-label">
+          <span class="mui-switch__label" id="disabled-label">Author-disabled CSS-only switch</span>
+        </label>
+      </p>
+      <input type="hidden" name="local" value="only">
+      <p><button type="submit">Inspect native submission / local GET fallback</button> <button type="reset">Native reset</button></p>
+    </form>
+    <form id="other-settings"><button type="reset">Reset externally associated setting</button></form>
+    <div class="demo-tools">
+      <button type="button" id="busy">Toggle alerts loading</button>
+      <button type="button" id="silent">Silent setChecked toggle</button>
+      <button type="button" id="default">Change defaultChecked</button>
+      <button type="button" id="token">Change native defaultValue submission string</button>
+      <button type="button" id="fieldset">Toggle disabled fieldset</button>
+      <button type="button" id="cancel">Cancel next reset</button>
+      <button type="button" id="rtl">Toggle RTL</button>
+      <button type="button" id="disconnect">Disconnect helpers</button>
+    </div>
+    <p id="state">No JS: native binary editing, labels and forms still work; loading enhancement is absent.</p>
+    <p id="events">Native alerts events: input 0, change 0</p>
+    <pre id="submission">No submission yet.</pre>
+    <p>There is no mixed switch state. Clear indeterminate before enhancing; refresh reports invalid writes. Checkbox readonly is not a supported state: use disabled or loading.</p>
+  </main>
+</body>
+</html>

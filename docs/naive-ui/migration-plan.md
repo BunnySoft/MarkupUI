@@ -3,8 +3,8 @@
 **Plan state: 🟠 In progress overall — P1 pilots, P2 and P3 are Verified for declared retained
 native scopes and explicit omissions. All 31 P2-assigned pages and all 22 P3-assigned pages
 have closed property dispositions and four accepted tasks. P3 includes Discrete API's
-verified no-new-runtime composition resolution. P4 is In progress with Input, Checkbox and Radio
-native scopes accepted and 14 routes Planned. P0/P5/P6 and full framework/viewer
+verified no-new-runtime composition resolution. P4 is In progress with Input, Checkbox, Radio and Switch
+native scopes accepted and 13 routes Planned. P0/P5/P6 and full framework/viewer
 parity remain independent and incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
@@ -35,7 +35,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
 | P2 — Primitives and layout | 🟢 Verified retained scope | All 31 P2-assigned pages reconciled; native Image/fallback/dialog scope accepted with advanced P6 exclusions. | P1 pattern | Full 96-route and P2 reference audit found no retained unresolved P2 rows. This is not global P3/P6 or framework parity. |
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
-| P4 — Forms and selection | 🟠 In progress | Input, Checkbox/CheckboxGroup and Radio/RadioGroup/RadioButton native contracts accepted; Switch next. | Relevant P0 form contract; P3 for popup variants | Values/defaults/checked/mixed/native exclusivity, labels, submission/reset, validity and events documented; no Form-level validation completion. |
+| P4 — Forms and selection | 🟠 In progress | Input, Checkbox, Radio and Switch native contracts accepted; Select next. | Relevant P0 form contract; P3 for popup variants | Values/defaults/checked/mixed/native exclusivity/binary busy behavior, labels, submission/reset and events documented; no Form-level validation completion. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
 | P6 — Specialized modules | 🔵 Planned | Deliver independently justified, opt-in advanced features. | Component-specific earlier work | Explicit imports, independent size budgets and no runtime dependencies. |
 
@@ -107,7 +107,7 @@ smuggling an overlay implementation into the CSS-only native composition.
 | Task | Status | Action | Deliverable |
 | --- | --- | --- | --- |
 | P4-01 — Native entry | 🟢 Verified retained scope | Explicit authored Input/textarea helper and group/addon/pair CSS; native controls own attributes/value/defaults. | [Input acceptance](../components/input.md): clear/click-reveal/count, composition/selection, reset/association/submission and independent assets; renderer/veto/hold exclusions explicit. |
-| P4-02 — Boolean and exclusive choice | 🟠 In progress | Checkbox and Radio companion scopes accepted; Switch remains Planned. | [Checkbox](../components/checkbox.md) and [Radio](../components/radio.md): native checked/default/mixed/exclusivity/form contracts, complete native peers and optional explicit group APIs; no extra selection engine. |
+| P4-02 — Boolean and exclusive choice | 🟢 Verified retained scope | Checkbox, Radio and Switch declared native scopes and companions accepted; explicit omissions remain. | [Checkbox](../components/checkbox.md), [Radio](../components/radio.md), [Switch](../components/switch.md): native boolean/default/mixed-or-binary/exclusive state, names/forms and focus-safe loading; no extra selection engine or hidden payloads. |
 | P4-03 — Native selection | 🔵 Planned | Improve Select and datalist-based Auto Complete as a minimal baseline. | Accessible native fallback and explicit limits relative to rich upstream options. |
 | P4-04 — Numeric and bounded entry | 🔵 Planned | Define Input Number, Slider and Rate parsing, clamping, keyboard and readonly/disabled distinctions. | Native value contracts with separately scoped advanced presentations. |
 | P4-05 — Form validation | 🔵 Planned | Extend Form/Form Item with native validity and narrowly specified optional async validators. | Pending/error/reset behavior without importing a validation schema framework. |
@@ -188,8 +188,8 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Radio (P4), verified native Radio/RadioGroup/RadioButton contract.**
-**P3 retained scope is complete; P4 is In progress. Next: Switch, then Select
+**Current component: Switch (P4), verified native binary/focus-safe-loading contract.**
+**P3 retained scope and P4-02's declared native scopes are complete; P4 is In progress. Next: Select
 and other native controls before Form enhancements. Do not infer P0 or full P4 completion.**
 
 The following component records form a historical execution sequence. Earlier “next” or
@@ -326,8 +326,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The index records 3,502 rows and 224 accepted retained tasks out of 384 across 56 component
-pages (160 unchecked), not full upstream parity.
+The index records 3,510 rows and 228 accepted retained tasks out of 384 across 57 component
+pages (156 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -899,8 +899,8 @@ explicit conflicts, not secretly isolated. Setters are strict string/null and si
 native state/default/reset/peer effects are never rewritten to mimic a framework.
 
 The reference preserves **20 original identities** plus **14 source supplements**:
-**34 rows = 23 adapted targets + 11 omissions**, with four accepted tasks. Catalog totals
-are **3,502 rows and 224/384 tasks across 56 pages**. **165 targeted tests** and build/budgets
+**34 rows = 23 adapted targets + 11 omissions**, with four accepted tasks. At Radio sign-off
+totals were **3,502 rows and 224/384 tasks across 56 pages**. **165 targeted tests** and build/budgets
 passed; Chromium covers native keyboard/label/required/exclusivity/rollback, external forms,
 defaults/reset, dynamic peer conflicts, segmented fallback, media/no-JS and coexistence.
 Native-only jsdom form-owner/cancelled-radio limitations are recorded in the canonical
@@ -909,13 +909,31 @@ ESM/classic/CSS are **1,751/1,819/958 gzip bytes** under **3,000/3,000/1,250** c
 All **127 previous top-level JS/CSS outputs** are byte-identical; core/plugins remain
 **14,611/2,181/2,779**.
 
-The **14 remaining Planned P4 routes** are **Auto Complete, Color Picker,
-Date Picker, Dynamic Input, Dynamic Tags, Form, Input Number, Input OTP, Mention,
-Rate, Select, Slider, Switch, Time Picker**. Their historical 669 rows (666 unresolved and
-three omissions) remain planning inventory, not implementation credit. Input/Checkbox/Radio
-source supplements bring the P4 inventory to 816 rows without promoting other components.
+### Switch native-binary acceptance and remaining P4
 
-**Next: Switch**, then Select and other native controls before
+[Switch](../components/switch.md) accepts one native checkbox with role switch, stable
+name and CSS rail/thumb/state decorations. The optional loading helper cancels native
+activation without setting native disabled, hiding the focused control or removing a
+checked form value. Boolean checked/defaultChecked are explicitly not value/defaultValue
+submission strings. Mixed/readonly and arbitrary payload tokens are not accepted states.
+No new key/drag engine, proxy, Spin dependency, async service or Form model is added.
+
+All **23 original identities** plus **eight source supplements** resolve to **31 rows:
+17 adapted targets + 14 omissions**. Four tasks close; totals are **3,510 rows and
+228/384 accepted tasks across 57 pages**. **163 targeted tests**, build/type/budget and
+Chromium native/AX-tree/RTL/media/no-JS/coexistence acceptance passed. ESM/classic/CSS are
+**2,268/2,343/1,119 gzip bytes** within **3,500/3,500/1,250** ceilings. All **130 prior
+top-level JS/CSS assets** are byte-identical; core/plugins remain **14,611/2,181/2,779**.
+P4-02 is Verified for the declared Checkbox/Radio/Switch retained scopes, not upstream
+parity or overall P4 completion.
+
+The **13 remaining Planned P4 routes** are **Auto Complete, Color Picker,
+Date Picker, Dynamic Input, Dynamic Tags, Form, Input Number, Input OTP, Mention,
+Rate, Select, Slider, Time Picker**. Their historical 646 rows (643 unresolved and
+three omissions) remain planning inventory, not implementation credit. Input/Checkbox/Radio/Switch
+source supplements bring the P4 inventory to 824 rows without promoting other components.
+
+**Next: Select**, then other native controls before
 [Form](components/form.md) enhancements. The shared contract is an authored semantic
 control owning current/default/checked state, labels/name/form/fieldset/reset/validity,
 silent native property writes with explicit refresh for decorations, no duplicate events
