@@ -1,0 +1,56 @@
+.mui-select {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  min-inline-size: 0;
+  color: var(--mui-select-color, #17212b);
+  font: var(--mui-select-font, 1rem)/1.5 system-ui, sans-serif;
+}
+.mui-select [data-select-control] {
+  box-sizing: border-box;
+  flex: 1 1 12rem;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  padding: var(--mui-select-pad, .5rem);
+  border: 1px solid var(--mui-select-border, #687787);
+  border-radius: .375rem;
+  color: inherit;
+  background-color: var(--mui-select-background, #fff);
+  font: inherit;
+}
+.mui-select [data-select-control]:focus-visible,
+.mui-select [data-select-filter]:focus-visible,
+.mui-select [data-select-clear]:focus-visible { outline: 2px solid var(--mui-select-focus, #075eae); outline-offset: 2px; }
+.mui-select [data-select-control]:disabled { color: var(--mui-select-disabled, #64707a); cursor: not-allowed; }
+.mui-select [data-select-clear] {
+  padding: .375rem .625rem;
+  border: 1px solid currentColor;
+  border-radius: .25rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.mui-select [data-select-clear]:disabled { cursor: not-allowed; opacity: .6; }
+.mui-select [data-select-search] { flex-basis: 100%; min-inline-size: 0; }
+.mui-select [data-select-filter] { box-sizing: border-box; max-inline-size: 100%; padding: .375rem; font: inherit; }
+.mui-select [data-select-empty] { flex-basis: 100%; overflow-wrap: anywhere; }
+.mui-select__affix { overflow-wrap: anywhere; }
+.mui-select[data-size="tiny"] { --mui-select-font: .75rem; --mui-select-pad: .125rem; }
+.mui-select[data-size="small"] { --mui-select-font: .875rem; --mui-select-pad: .25rem; }
+.mui-select[data-size="medium"] { --mui-select-font: 1rem; --mui-select-pad: .5rem; }
+.mui-select[data-size="large"] { --mui-select-font: 1.125rem; --mui-select-pad: .75rem; }
+.mui-select[data-borderless] { --mui-select-border: transparent; }
+.mui-select[data-status="success"] { --mui-select-border: #187245; }
+.mui-select[data-status="warning"] { --mui-select-border: #8b5c00; }
+.mui-select[data-status="error"] { --mui-select-border: #bd2020; }
+.mui-select[hidden], .mui-select [hidden] { display: none !important; }
+@media (forced-colors: active) {
+  .mui-select [data-select-control] { color: CanvasText; background-color: Canvas; border-color: CanvasText; }
+  .mui-select [data-select-control]:disabled { color: GrayText; }
+}
+@media print {
+  .mui-select { break-inside: avoid; }
+  .mui-select [data-select-search], .mui-select [data-select-clear] { display: none !important; }
+}

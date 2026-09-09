@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Select</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-select.css">
+  <link rel="stylesheet" href="./select.css">
+  <script defer src="../../dist/markup-ui-select.global.js"></script>
+  <script defer src="./select.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Select: keep the native control and its options</h1>
+    <p>Single dropdown and multiple/native lists, not a replacement combobox. The optional literal filter is outside the list. Selected choices stay visible even when they do not match.</p>
+    <form id="selection-form" action="select.html" method="get">
+      <label for="language">Language (native required)</label>
+      <div class="mui-select" data-select id="language-root">
+        <span class="mui-select__affix" aria-hidden="true">⌘</span>
+        <select data-select-control id="language" name="language" required>
+          <option data-select-placeholder value="" disabled selected>Choose a language</option>
+          <optgroup label="Languages">
+            <option value="typescript">TypeScript</option>
+            <option value="rust">Rust</option>
+            <option value="go">Go</option>
+          </optgroup>
+        </select>
+        <button data-select-clear type="button" hidden>Clear language</button>
+      </div>
+      <fieldset id="tool-fieldset">
+        <legend>Native multiple list and independent filter</legend>
+        <div class="mui-select" data-select id="tools-root" data-size="small">
+          <div data-select-search hidden>
+            <label for="tool-filter">Filter option/group text</label>
+            <input data-select-filter id="tool-filter" type="search" aria-controls="tools" autocomplete="off">
+          </div>
+          <label for="tools">Tools (Ctrl/Command or Shift for native multiple selection)</label>
+          <select data-select-control id="tools" name="tools" multiple size="7" aria-describedby="filter-help">
+            <optgroup label="Web">
+              <option value="html" selected>HTML</option>
+              <option value="css">CSS</option>
+              <option value="js">JavaScript</option>
+            </optgroup>
+            <optgroup label="Locked group" disabled>
+              <option value="server" selected>Server</option>
+              <option value="database">Database</option>
+            </optgroup>
+            <optgroup label="Older tools">
+              <option value="legacy" disabled selected>Legacy (disabled option)</option>
+              <option value="archive" hidden>Author-hidden archive</option>
+            </optgroup>
+          </select>
+          <button data-select-clear type="button" hidden>Clear all tools</button>
+          <p data-select-empty hidden>No matching options. Selected choices are kept visible.</p>
+        </div>
+        <p id="filter-help">Filtering hides only unselected nonmatches. Disabled selected options/groups remain selected but are not successful form values.</p>
+      </fieldset>
+      <label for="external-select">Associated with the other form (no placeholder)</label>
+      <div class="mui-select" data-select id="external-root" data-size="large">
+        <select data-select-control id="external-select" name="external" form="other-form">
+          <option value="a" selected>External A</option>
+          <option value="b">External B</option>
+        </select>
+        <button data-select-clear type="button" hidden>Clear external choice</button>
+      </div>
+      <input type="hidden" name="local" value="only">
+      <p><button type="submit">Inspect native submission / local GET fallback</button> <button type="reset">Native reset</button></p>
+    </form>
+    <form id="other-form"><button type="reset">Reset external choice only</button></form>
+    <div class="demo-tools">
+      <button type="button" id="assign">Silent setValue(TypeScript)</button>
+      <button type="button" id="none">Single no-selection (null)</button>
+      <button type="button" id="default">Make Rust the reset default</button>
+      <button type="button" id="filter">Silent filter: CSS</button>
+      <button type="button" id="add">Append authored option and refresh</button>
+      <button type="button" id="fieldset">Toggle disabled tool fieldset</button>
+      <button type="button" id="mode">Disconnect/rebind external multiple mode</button>
+      <button type="button" id="picker">Request native showPicker</button>
+      <button type="button" id="cancel">Cancel next reset</button>
+      <button type="button" id="rtl">Toggle RTL</button>
+      <button type="button" id="disconnect">Disconnect helpers</button>
+    </div>
+    <template id="option-template"><option value="python">Python</option></template>
+    <p id="state">Without JS, native options, labels, reset and submission still work.</p>
+    <p id="picker-result">No picker request. There is no hidePicker API.</p>
+    <p id="events">Language events: input 0, change 0, clear 0</p>
+    <pre id="submission">No submission yet.</pre>
+  </main>
+</body>
+</html>

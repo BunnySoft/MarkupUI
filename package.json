@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./select": {
+      "types": "./dist/components/select/index.d.ts",
+      "import": "./dist/markup-ui-select.js"
+    },
+    "./select/style.css": "./dist/markup-ui-select.css",
     "./switch": {
       "types": "./dist/components/switch/index.d.ts",
       "import": "./dist/markup-ui-switch.js"
