@@ -6,7 +6,7 @@ have closed property dispositions and four accepted tasks. P3 includes Discrete 
 verified no-new-runtime composition resolution. P4 retained native scopes are now reconciled
 across all 17 assigned routes, including Time Picker: 984 rows and 68/68 page tasks, with no
 unresolved retained rows or Planned P4 routes. P5 is now active with Virtual List's fixed-height
-window, Tree/Cascader/Tree Select hierarchy scopes, Transfer membership, Data Table local operations, Log retained text and Infinite Scroll loading permission accepted; two P5 routes remain. P0/P5/P6 and full framework/viewer
+window, Tree/Cascader/Tree Select hierarchy scopes, Transfer membership, Data Table local operations, Log retained text, Infinite Scroll loading permission and Popselect selection disclosure accepted; Split remains in P5. P0/P5/P6 and full framework/viewer
 parity remain independent and incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
@@ -38,7 +38,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P2 — Primitives and layout | 🟢 Verified retained scope | All 31 P2-assigned pages reconciled; native Image/fallback/dialog scope accepted with advanced P6 exclusions. | P1 pattern | Full 96-route and P2 reference audit found no retained unresolved P2 rows. This is not global P3/P6 or framework parity. |
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
 | P4 — Forms and selection | 🟢 Verified retained scope | All 17 P4-assigned routes, 984 tracker rows and 68 page tasks reconciled. | Relevant native P0/P3 contracts | 478 adapted + 506 omitted, no unresolved rows; 889 P4 tests plus native browser evidence. No P0/P5/P6 or full framework parity implied. |
-| P5 — Collections and scale | 🟠 In progress | Virtual List, Tree, Cascader, Tree Select, Transfer, Data Table, Log and Infinite Scroll retained scopes accepted; two routes remain. | P3 focus; P4 selection | Native collection and guarded-load contracts verified; no phase-wide parity yet. |
+| P5 — Collections and scale | 🟠 In progress | Nine retained scopes accepted, including composed native Popselect; Split remains. | P3 focus; P4 selection | Native collection/load/selection contracts verified; no phase-wide parity yet. |
 | P6 — Specialized modules | 🔵 Planned | Deliver independently justified, opt-in advanced features. | Component-specific earlier work | Explicit imports, independent size budgets and no runtime dependencies. |
 
 The [component index](index.md) is the exhaustive catalog-to-phase assignment. The phase
@@ -190,10 +190,10 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Infinite Scroll (P5), verified native sentinel/manual/guarded-load scope.**
+**Current component: Popselect (P5), verified native selection-disclosure/form-reveal scope.**
 **P1/P2/P3/P4 declared retained scopes are complete. P4-07 closes after the full 17-route audit.**
-**P5 is active, not complete.** Recommended next: **Popselect**, then Split.
-Two P5 routes remain. No next component was started in this Infinite Scroll commit.
+**P5 is active, not complete.** Recommended next: **Split**, the final remaining P5 route.
+No Split implementation was started in this Popselect commit.
 Do not infer P0, full P5/P6 or framework compatibility.
 
 The following component records form a historical execution sequence. Earlier “next” or
@@ -331,8 +331,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 3,882 rows and 312 accepted retained tasks out of 384 across 78 component
-pages (72 unchecked), not full upstream parity.
+The current index records 3,905 rows and 316 accepted retained tasks out of 384 across 79 component
+pages (68 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -1715,3 +1715,40 @@ P4 stays 17 routes/984 rows/68 tasks, no unresolved retained rows. P0's three ro
 
 **Next: Popselect, then Split.** No later collection implementation is included in this
 separate Infinite Scroll component commit.
+
+## Popselect — composed native selection disclosure accepted
+
+[Canonical Popselect acceptance](../components/popselect.md) and [full inherited tracker](components/popselect.md)
+close this component only. Existing Popover/Select helpers retain original native select/
+option/optgroup/name/defaultSelected/required/fieldset semantics. The popup is a labelled
+region containing a native listbox, not a fake combobox/menu or option renderer.
+
+Selection is immediate in single/multiple modes. Arrow/typeahead/change does not close;
+Done/Escape/outside close without a rollback model. Silent setters/reset/readout, native
+clear notifications, nested focus recovery and explicit first-invalid-field reveal are
+accepted. Quiet validation does not open or focus a peer. No-JS/unsupported/disconnected
+controls stay inline and usable; CSS zoom outside the reused positioner's contract is
+rejected with a safe inline handoff instead of modifying the near-full Popover base.
+
+**56 original identities (13 local + 43 inherited) + 23 source-only supplements = 79 rows:
+38 adapted + 41 omitted; four accepted tasks.** **181 tests** pass (35 Popselect,
+53 Popover, 40 Select, 53 Form), plus declarations/build/budgets and Chromium native
+keys/Done/single/multi/clear/disabled/defaults/forms/quiet-reveal/nesting/focus/placement/
+fallback/RTL/media/coexistence acceptance. All 2,000 original options survived the bounded
+fixture. Visual-viewport scale 2 stayed bounded; CSS zoom 2 deliberately exposed inline choices.
+
+Popselect ESM/classic/composed CSS: **9,380/9,507/1,674 gzip bytes**, under independent
+**10,000/10,000/2,500** ceilings. All **196 prior JS/CSS assets byte-match**. Core/advanced/
+widgets remain **14,611/2,181/2,779** under their original ceilings. No existing Popover,
+Select, Form or other component source/budget changed.
+
+Current catalog: **96 routes / 3,905 rows / 316 of 384 tasks across 79 accepted pages /
+68 unchecked**. **P5 remains In progress:** nine of ten routes accepted; **817 rows =
+330 adapted + 468 omitted + 19 unresolved**. Remaining **Split: 19 rows / 19 unresolved**.
+
+P4 stays 17 routes/984 rows/68 tasks with no unresolved retained rows. P0's three routes
+remain (97/eight unresolved), P6's nine remain (232/all unresolved), and four exclusions
+remain (35/zero unresolved). **17 unaccepted routes = 13 Planned + four explicit exclusions.**
+
+**Next: Split.** Resolve its own native layout/resize/keyboard/focus contract and acceptance;
+no Split implementation is included in this separate Popselect completion.

@@ -1,0 +1,16 @@
+/* Composed native Popover and Select styles precede this small layout layer. */
+.mui-popselect { min-inline-size: 0; }
+.mui-popselect [data-popselect-value] { overflow-wrap: anywhere; }
+.mui-popover[data-popselect-panel]:not([popover]) { width: 100%; max-width: 100%; }
+.mui-popover[data-popselect-panel] > .mui-select { display: grid; align-items: start; }
+.mui-popselect [data-popselect-trigger],
+.mui-popover [data-popselect-done] { font: inherit; padding: .375rem .625rem; }
+.mui-popselect [data-popselect-trigger]:focus-visible,
+.mui-popover [data-popselect-done]:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.mui-popselect [data-popselect-trigger][aria-disabled="true"] { cursor: not-allowed; }
+.mui-popselect[data-size="small"] { --mui-select-font: .875rem; --mui-select-pad: .25rem; }
+.mui-popselect[data-size="large"] { --mui-select-font: 1.125rem; --mui-select-pad: .75rem; }
+@media print {
+  .mui-popselect [data-popselect-trigger],
+  .mui-popover [data-popselect-done] { display: none; }
+}

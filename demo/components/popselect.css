@@ -1,0 +1,13 @@
+body { margin: 0; font: 1rem/1.5 system-ui, sans-serif; background: #f7f9fc; color: #172536; }
+main { max-inline-size: 70rem; margin-inline: auto; padding: 1rem; overflow-wrap: anywhere; }
+h1 { font-size: clamp(1.5rem, 4vw, 2rem); }
+input, button { font: inherit; max-inline-size: 100%; box-sizing: border-box; }
+button { padding: .35rem .6rem; }
+fieldset { min-inline-size: 0; border: 1px solid #abbace; }
+.actions:not([hidden]) { display: flex; flex-wrap: wrap; gap: .75rem; }
+[data-popselect-value] { margin-inline-start: .5rem; }
+[data-popselect-panel] header p { margin-block: .25rem .5rem; }
+[data-popselect-panel] footer > .mui-popselect { margin-block-start: .75rem; }
+#feedback { white-space: pre-wrap; overflow-wrap: anywhere; padding: .75rem; border: 1px solid #bac7d6; background: white; }
+#outside-field { inline-size: 29rem; }
+@media print { .actions, #feedback { display: none; } body { background: white; } }

@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./popselect": {
+      "types": "./dist/components/popselect/index.d.ts",
+      "import": "./dist/markup-ui-popselect.js"
+    },
+    "./popselect/style.css": "./dist/markup-ui-popselect.css",
     "./infinite-scroll": {
       "types": "./dist/components/infinite-scroll/index.d.ts",
       "import": "./dist/markup-ui-infinite-scroll.js"

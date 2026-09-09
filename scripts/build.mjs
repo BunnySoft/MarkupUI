@@ -58,6 +58,8 @@ components.push("log")
 classicEntries.log = "global.ts"
 components.push("infinite-scroll")
 classicEntries["infinite-scroll"] = "global.ts"
+components.push("popselect")
+classicEntries.popselect = "global.ts"
 
 await Promise.all([
   build({
@@ -131,11 +133,18 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
   } else if (name === "log") {
     const base = await readFile(resolve(root, "src", "components", "code", "code.css"), "utf8")
     await writeFile(output, `${base}\n${await readFile(source, "utf8")}`)
+  } else if (name === "popselect") {
+    const popover = await readFile(resolve(root, "src", "components", "popover", "popover.css"), "utf8")
+    const select = await readFile(resolve(root, "src", "components", "select", "select.css"), "utf8")
+    await writeFile(output, `${popover}\n${select}\n${await readFile(source, "utf8")}`)
   } else await copyFile(source, output)
 }))
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-popselect.js": 10_000,
+  "markup-ui-popselect.global.js": 10_000,
+  "markup-ui-popselect.css": 2_500,
   "markup-ui-infinite-scroll.js": 7_000,
   "markup-ui-infinite-scroll.global.js": 7_000,
   "markup-ui-infinite-scroll.css": 1_000,

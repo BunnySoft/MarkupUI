@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Native Popselect · MarkupUI</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-popselect.css">
+  <link rel="stylesheet" href="./popselect.css">
+  <script type="module" src="./popselect.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Popselect: a native selection disclosure</h1>
+    <p id="policy">Values change immediately. Arrow keys, typeahead, pointer selection and
+      Enter do not invoke a wrapper close action. Done (close), the trigger, Escape or an
+      outside click close the panel; <strong>dismissal does not revert values</strong>.
+      Enter in a select retains native form behavior. These are named regions containing
+      listboxes, not combobox/menu widgets.</p>
+    <form id="preferences-form" novalidate>
+      <section class="mui-popselect" data-popselect id="work-mode">
+        <p><button type="button" data-popselect-trigger popovertarget="work-panel" aria-describedby="work-value policy" hidden>Choose work mode</button>
+          <span id="work-value" data-popselect-value hidden>Office</span></p>
+        <div id="work-panel" class="mui-popover" data-popselect-panel role="region" aria-labelledby="work-heading">
+          <header><h2 id="work-heading">Work mode choices</h2><p>Single native listbox; use Tab to reach Done.</p></header>
+          <div class="mui-select" data-select>
+            <label for="work-select">Work mode (required)</label>
+            <select id="work-select" data-select-control name="workMode" size="5" required>
+              <option value="office" selected>Office</option>
+              <option value="hybrid">Hybrid</option>
+              <optgroup label="Remote arrangements">
+                <option value="remote">Remote</option>
+                <option value="locked" disabled>Disabled arrangement</option>
+              </optgroup>
+            </select>
+            <button type="button" data-select-clear hidden>Clear work mode</button>
+            <p data-select-empty hidden>No work modes are available.</p>
+          </div>
+          <footer><button type="button" data-popselect-done popovertarget="work-panel" popovertargetaction="hide" hidden>Done (close work mode)</button></footer>
+        </div>
+      </section>
+      <fieldset id="native-channels">
+        <legend>Native multiple selection <label data-js-only hidden><input type="checkbox" data-native-disabled>Disable this fieldset (legend remains usable)</label></legend>
+        <section class="mui-popselect" data-popselect id="channels">
+          <p><button type="button" data-popselect-trigger popovertarget="channels-panel" aria-describedby="channels-value policy" hidden>Choose channels</button>
+            <span id="channels-value" data-popselect-value hidden>Email, Locked archive</span></p>
+          <div id="channels-panel" class="mui-popover" data-popselect-panel role="region" aria-labelledby="channels-heading">
+            <header><h2 id="channels-heading">Channel choices</h2><p>Native Ctrl/Shift selection remains browser-owned.</p></header>
+            <div class="mui-select" data-select>
+              <label for="channels-select">Channels (required)</label>
+              <select id="channels-select" data-select-control name="channels" multiple size="6" required>
+                <optgroup label="Current"><option value="email" selected>Email</option><option value="chat">Chat</option><option value="sms">SMS</option></optgroup>
+                <optgroup label="Archive" disabled><option value="archive" selected>Locked archive</option></optgroup>
+              </select>
+              <button type="button" data-select-clear hidden>Clear channels</button>
+              <p data-select-empty hidden>No channel options are available.</p>
+            </div>
+            <footer>
+              <button type="button" data-popselect-done popovertarget="channels-panel" popovertargetaction="hide" hidden>Done (close channels)</button>
+              <section class="mui-popselect" data-popselect id="nested">
+                <p><button type="button" data-popselect-trigger popovertarget="nested-panel" hidden>Choose nested detail</button>
+                  <span data-popselect-value hidden>Normal</span></p>
+                <div id="nested-panel" class="mui-popover" data-popselect-panel role="region" aria-labelledby="nested-heading">
+                  <header><h2 id="nested-heading">Nested detail choices</h2></header>
+                  <div class="mui-select" data-select>
+                    <label for="nested-select">Detail level</label>
+                    <select id="nested-select" data-select-control name="detail" size="3"><option value="normal" selected>Normal</option><option value="verbose">Verbose</option><option value="">Empty string</option></select>
+                  </div>
+                  <footer><button type="button" data-popselect-done popovertarget="nested-panel" popovertargetaction="hide" hidden>Done (close detail)</button></footer>
+                </div>
+              </section>
+            </footer>
+          </div>
+        </section>
+      </fieldset>
+      <p><button type="submit" data-enhancement hidden disabled>Validate, explicitly reveal first error, inspect FormData</button>
+        <button type="reset">Native reset</button></p>
+    </form>
+    <div class="actions" data-enhancement hidden>
+      <button type="button" data-quiet>Quiet validity check (never opens)</button>
+      <button type="button" data-program-clear>Silent clear work mode</button>
+      <button type="button" data-program-set>Silent set work mode to Hybrid</button>
+      <button type="button" data-add-option>Add a native option without replacing choices</button>
+      <button type="button" data-rtl>Toggle RTL</button>
+      <button type="button" data-disconnect>Disconnect all to inline native choices</button>
+    </div>
+    <p><label>Unrelated focus target <input id="outside-field" value="No popup should open from quiet validation"></label></p>
+    <pre id="feedback" aria-label="Local application feedback">Without JavaScript, all choices below their labels remain inline and usable. Native reset works.</pre>
+    <noscript><p>No custom element or JavaScript is required to choose values in these inline
+      native lists. Enhancement buttons and the application-gated submission are unavailable.</p></noscript>
+    <p>Closed popover fields <strong>still serialize and validate</strong>. The submit demo
+      first runs quiet native Form validation, explicitly reveals only the first invalid
+      field's owner/ancestors, then focuses and reports that one control. It never silently
+      disables a hidden required field or treats dismissal as Cancel.</p>
+    <p>Popup geometry reuses the existing Popover contract. CSS zoom on its ancestor context
+      is rejected with a readable inline handoff; native browser/visual-viewport zoom remains
+      separate. No second positioning engine is added to compensate for unsupported CSS zoom.</p>
+  </main>
+</body>
+</html>
