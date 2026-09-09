@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./radio": {
+      "types": "./dist/components/radio/index.d.ts",
+      "import": "./dist/markup-ui-radio.js"
+    },
+    "./radio/style.css": "./dist/markup-ui-radio.css",
     "./checkbox": {
       "types": "./dist/components/checkbox/index.d.ts",
       "import": "./dist/markup-ui-checkbox.js"

@@ -1,0 +1,71 @@
+.mui-radio,
+.mui-radio-button {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: .5em;
+  box-sizing: border-box;
+  max-inline-size: 100%;
+  color: var(--mui-radio-color, #17212b);
+  font: var(--mui-radio-font, 1rem)/1.5 system-ui, sans-serif;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+:is(.mui-radio, .mui-radio-button) > input[type="radio"] {
+  flex: 0 0 auto;
+  inline-size: var(--mui-radio-size, 1.125rem);
+  block-size: var(--mui-radio-size, 1.125rem);
+  margin: .2em 0 0;
+  accent-color: var(--mui-radio-accent, #075eae);
+  cursor: inherit;
+}
+:is(.mui-radio, .mui-radio-button) > input[type="radio"]:focus-visible {
+  outline: 2px solid var(--mui-radio-focus, #075eae);
+  outline-offset: 3px;
+}
+:is(.mui-radio, .mui-radio-button) > input[type="radio"]:disabled { cursor: not-allowed; }
+:is(.mui-radio, .mui-radio-button) > input[type="radio"]:disabled + span { color: var(--mui-radio-disabled, #64707a); }
+.mui-radio-button {
+  border: 1px solid var(--mui-radio-border, #687787);
+  border-radius: .375rem;
+  padding: var(--mui-radio-pad, .5rem) .75rem;
+  background: var(--mui-radio-background, #fff);
+}
+.mui-radio-button > input:checked + span { font-weight: 650; text-decoration: underline; text-underline-offset: .2em; }
+@supports selector(:has(*)) {
+  .mui-radio-button:has(> input:checked) {
+    border-color: var(--mui-radio-accent, #075eae);
+    background: var(--mui-radio-active, #e3effb);
+  }
+  .mui-radio-button:has(> input:focus-visible) { outline: 2px solid var(--mui-radio-focus, #075eae); outline-offset: 2px; }
+  :is(.mui-radio, .mui-radio-button):has(> input:disabled) { cursor: not-allowed; }
+}
+.mui-radio-group {
+  min-inline-size: 0;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--mui-radio-border, #687787);
+  border-radius: .375rem;
+  color: var(--mui-radio-color, #17212b);
+  font: var(--mui-radio-font, 1rem)/1.5 system-ui, sans-serif;
+}
+.mui-radio-group > legend { max-inline-size: 100%; padding-inline: .375rem; overflow-wrap: anywhere; }
+.mui-radio-group__items,
+.mui-radio-group__buttons { display: flex; flex-wrap: wrap; gap: .75rem 1rem; }
+.mui-radio-group__buttons { gap: .375rem; }
+:is(.mui-radio, .mui-radio-button, .mui-radio-group)[data-size="small"] { --mui-radio-font: .875rem; --mui-radio-size: 1rem; --mui-radio-pad: .25rem; }
+:is(.mui-radio, .mui-radio-button, .mui-radio-group)[data-size="medium"] { --mui-radio-font: 1rem; --mui-radio-size: 1.125rem; --mui-radio-pad: .5rem; }
+:is(.mui-radio, .mui-radio-button, .mui-radio-group)[data-size="large"] { --mui-radio-font: 1.125rem; --mui-radio-size: 1.375rem; --mui-radio-pad: .75rem; }
+.mui-radio-group[data-status="error"] { --mui-radio-border: #bd2020; }
+.mui-radio-group[data-status="warning"] { --mui-radio-border: #8b5c00; }
+.mui-radio[hidden], .mui-radio [hidden],
+.mui-radio-button[hidden], .mui-radio-button [hidden],
+.mui-radio-group[hidden], .mui-radio-group [hidden] { display: none !important; }
+@media (forced-colors: active) {
+  .mui-radio, .mui-radio-button, .mui-radio-group { color: CanvasText; border-color: CanvasText; }
+  .mui-radio-button { background: Canvas; }
+  :is(.mui-radio, .mui-radio-button) > input[type="radio"] { accent-color: auto; }
+  :is(.mui-radio, .mui-radio-button) > input[type="radio"]:focus-visible { outline-color: Highlight; }
+}
+@media print {
+  .mui-radio, .mui-radio-button, .mui-radio-group { break-inside: avoid; }
+}

@@ -26,10 +26,11 @@ Collapse Transition now also has [accepted optional native-motion evidence](../c
 Discrete API now has an [accepted explicit composition resolution](../components/discrete.md), with no new runtime.
 Input/textarea/InputGroup/InputGroupLabel now have an [accepted native control contract](../components/input.md).
 Checkbox/CheckboxGroup now have [accepted native selection and limit evidence](../components/checkbox.md).
+Radio/RadioGroup/RadioButton now have [accepted native exclusivity and peer-boundary evidence](../components/radio.md).
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
-are reconciled. **P4 is In progress**, with Input and Checkbox accepted and 15 routes Planned.
-P0/P5/P6 and full framework parity remain independent. **Next: Radio, then
-Switch/Select and other native controls before Form enhancements.**
+are reconciled. **P4 is In progress**, with Input, Checkbox and Radio accepted and 14 routes Planned.
+P0/P5/P6 and full framework parity remain independent. **Next: Switch, then
+Select and other native controls before Form enhancements.**
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
 Use the [master migration plan](migration-plan.md) for phase dependencies and current execution
 evidence. Every component page now includes its own numbered task checklist, prerequisites and next task.
@@ -82,7 +83,7 @@ The numbered component checklists distinguish proposed work from accepted implem
 Avatar's four retained-scope tasks are checked using `9afc818`, Button's four using
 `43dd57f`, Card's four using `cebc6d7`, Tag's four using `6605d29`, and Badge's four using
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
-Popover, Tooltip, Popconfirm, Dropdown, Menu, Tabs, Collapse, Anchor, Back Top, Pagination, Steps, Loading Bar, Dialog, Modal, Drawer, Message, Notification, Collapse Transition, Discrete API, Input and Checkbox add four accepted tasks each; the other **164 tasks remain unchecked**.
+Popover, Tooltip, Popconfirm, Dropdown, Menu, Tabs, Collapse, Anchor, Back Top, Pagination, Steps, Loading Bar, Dialog, Modal, Drawer, Message, Notification, Collapse Transition, Discrete API, Input, Checkbox and Radio add four accepted tasks each; the other **160 tasks remain unchecked**.
 P2 retained scopes remain reconciled; the nineteen sequential P3 scopes plus three mixed P2/P3 pages pass the complete P3 audit. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
@@ -205,7 +206,7 @@ acceptance. Separate ESM/classic JavaScript ceilings are 4,000 gzip bytes each; 
 1,500-byte ceiling. Browser coverage is not all-browser certification or pixel parity.
 The reference Avatar page reconciles all **35 rows: 19 Verified adapted targets and
 16 Intentionally omitted contracts**. Button, Card, Tag, Badge, Alert, Empty, Skeleton, Spin, Progress, Statistic, Typography, Icon, Gradient Text, Ellipsis, Page Header, Divider, Flex, Space, Grid, Layout, List, Descriptions, Timeline, Breadcrumb, Thing, Table, Highlight, Affix, Result, Code, Scrollbar, Float Button and Image are also verified as recorded below;
-**All retained P3 scopes and P4's native Input/Checkbox contracts are accepted; Radio is next**, and the master plan owns
+**All retained P3 scopes and P4's native Input/Checkbox/Radio contracts are accepted; Switch is next**, and the master plan owns
 the sequential implementation/build/commit workflow.
 
 ### Button pilot: accepted native scope
@@ -1385,15 +1386,32 @@ Click cancellation uses native pre-activation rollback; derived ARIA never disab
 controls for submission. There is no unchecked proxy value, options renderer or Form validator.
 
 All **29 original identities** plus **13 source supplements** are reconciled:
-**42 rows = 28 Verified adapted targets + 14 Intentionally omitted**. Catalog totals are
-**3,488 rows and 220/384 accepted tasks across 55 pages**. P4 is **In progress**, with
-**15 Planned routes**. **Next Radio**, then Switch/Select/native controls before Form enhancements.
+**42 rows = 28 Verified adapted targets + 14 Intentionally omitted**. At Checkbox sign-off totals were
+**3,488 rows and 220/384 accepted tasks across 55 pages**, with **15 Planned P4 routes**.
+Radio is accepted below; Switch/Select/native controls precede Form enhancements.
 The canonical record contains targeted tests, real Chromium acceptance and independent
 ESM/classic/CSS accounting; previous outputs and ceilings are preserved.
 **124 targeted tests** (45 Checkbox, 52 Input, 27 native), build/budgets and Chromium
 passed. ESM/classic/CSS are **2,171/2,246/741 gzip bytes** within new
 **3,500/3,500/1,000** ceilings. All **124 previous top-level JS/CSS assets** remain
 byte-identical; standalone Checkbox needs no JS.
+
+### Radio: native exclusivity, group boundaries and segmented labels
+
+[Radio acceptance](../components/radio.md) retains CSS-only native Radio/RadioButton and
+an optional complete-native-group helper: common nonempty names, actual form/tree scope,
+strict string keys, silent selection, native defaults/reset and one user-change snapshot.
+No second arrow/roving/click engine, renamed controls, hidden values or radiogroup role.
+Outside peers invalidate enhancement without falsifying native exclusivity/submission.
+
+All **20 original identities** plus **14 source supplements** resolve to **34 rows:
+23 Verified adapted targets + 11 Intentionally omitted**. Catalog totals are
+**3,502 rows and 224/384 accepted tasks across 56 pages**. P4 remains **In progress**
+with **14 Planned routes**; **next Switch**, then Select/native controls before Form.
+**165 targeted tests**, build/budgets and real Chromium acceptance passed; jsdom native
+form-owner/cancellation limitations are explicitly recorded rather than patched in production.
+ESM/classic/CSS are **1,751/1,819/958 gzip bytes** under **3,000/3,000/1,250** ceilings.
+All **127 previous top-level JS/CSS outputs** are byte-identical.
 
 ## Common Components (15)
 
@@ -1431,7 +1449,7 @@ byte-identical; standalone Checkbox needs no JS.
 | [Input Number](components/input-number.md) | 🔵 Planned | Partial widgets | P4 |
 | [Input OTP](components/input-otp.md) | 🔵 Planned | Related input | P4 |
 | [Mention](components/mention.md) | 🔵 Planned | Related input | P4, P5 |
-| [Radio](components/radio.md) | 🔵 Planned | Partial core | P4 |
+| [Radio](components/radio.md) | 🟢 Verified retained native scope; 11 explicit omissions | Native Radio/RadioButton CSS and complete-group helper; [accepted evidence](../components/radio.md) | P4 |
 | [Rate](components/rate.md) | 🔵 Planned | Partial widgets rating | P4 |
 | [Select](components/select.md) | 🔵 Planned | Partial native select | P4, P5 |
 | [Slider](components/slider.md) | 🔵 Planned | Partial native range | P4 |
@@ -1562,15 +1580,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 993: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 446 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox source supplements |
+| Supplementary named declarations | 1,007: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 460 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio source supplements |
 | Explicit inherited tracker rows | 275, including six source-inherited DialogReactive options, three ModalReactive fields and two NotificationReactive fields |
-| Total tracker rows | 3,488; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 220 retained-scope tasks accepted across 55 component pages, 164 unchecked |
+| Total tracker rows | 3,502; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 224 retained-scope tasks accepted across 56 component pages, 160 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,488 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input and 28 Checkbox native capabilities cite acceptance |
-| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 41 unchanged inventories match extraction; the 55 accepted pages preserve named/grouped identities with explicit dispositions |
-| Local links | Relative file links in the four edited Checkbox/index/master documents validated at Checkbox sign-off; Input/Discrete/P3 reconciliation and historical 612-link/anchor snapshot remain historical evidence |
+| Status presentation | All 3,502 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox and 23 Radio native capabilities cite acceptance |
+| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 40 unchanged inventories match extraction; the 56 accepted pages preserve named/grouped identities with explicit dispositions |
+| Local links | Relative file links in the four edited Radio/index/master documents validated at Radio sign-off; Checkbox/Input/Discrete/P3 reconciliation and historical 612-link/anchor snapshot remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

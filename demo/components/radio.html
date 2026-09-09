@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Radio, RadioGroup and RadioButton</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-radio.css">
+  <link rel="stylesheet" href="./radio.css">
+  <script defer src="../../dist/markup-ui-radio.global.js"></script>
+  <script defer src="./radio.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Radio: the browser owns exclusive selection</h1>
+    <p>All controls, including button-like choices, are visible native radios. The optional group helper adds strict scope checks, silent setters and aggregate change notifications, not keyboard handling.</p>
+    <form id="subscription" action="radio.html" method="get">
+      <fieldset class="mui-radio-group">
+        <legend>CSS-only individual radios, no helper</legend>
+        <label class="mui-radio"><input id="news-on" type="radio" name="news" value="on" checked><span>News on</span></label>
+        <label class="mui-radio"><input id="news-off" type="radio" name="news" value="off"><span>News off</span></label>
+      </fieldset>
+      <fieldset class="mui-radio-group" data-radio-group id="plans" aria-describedby="plan-help">
+        <legend>Required plan</legend>
+        <p id="plan-help">One shared native name and actual form owner. Required on Basic requires one selection in this native group, not every radio.</p>
+        <div class="mui-radio-group__items" id="plan-items">
+          <label class="mui-radio"><input data-radio id="basic" type="radio" name="plan" value="basic" required checked><span>Basic</span></label>
+          <label class="mui-radio"><input data-radio id="pro" type="radio" name="plan" value="pro"><span>Professional with a longer wrapping label</span></label>
+          <label class="mui-radio"><input data-radio id="locked" type="radio" name="plan" value="locked" disabled><span>Author-disabled plan</span></label>
+          <label class="mui-radio" hidden><input data-radio id="hidden-plan" type="radio" name="plan" value="hidden"><span>Authored hidden option (not a proxy)</span></label>
+        </div>
+        <template id="plan-template"><label class="mui-radio"><input data-radio type="radio" name="plan" value="team"><span>Team, cloned by the application</span></label></template>
+        <fieldset class="mui-radio-group" data-radio-group id="billing" data-size="small">
+          <legend>Nested group with a different native name</legend>
+          <label class="mui-radio"><input data-radio id="bill-monthly" type="radio" name="billing" value="monthly" checked><span>Monthly billing</span></label>
+          <label class="mui-radio"><input data-radio id="bill-yearly" type="radio" name="billing" value="yearly"><span>Yearly billing</span></label>
+        </fieldset>
+      </fieldset>
+      <fieldset class="mui-radio-group" data-radio-group id="layouts" data-size="large">
+        <legend>RadioButton: native segmented choices</legend>
+        <div class="mui-radio-group__buttons">
+          <label class="mui-radio-button"><input data-radio id="layout-grid" type="radio" name="layout" value="grid" checked><span>Grid</span></label>
+          <label class="mui-radio-button"><input data-radio id="layout-list" type="radio" name="layout" value="list"><span>List</span></label>
+          <label class="mui-radio-button"><input data-radio id="layout-compact" type="radio" name="layout" value="compact" disabled><span>Compact (disabled)</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="mui-radio-group" data-radio-group id="external">
+        <legend>Same plan name, different actual form owner</legend>
+        <label class="mui-radio"><input data-radio id="external-monthly" type="radio" name="plan" value="monthly" form="alternate" checked><span>External monthly</span></label>
+        <label class="mui-radio"><input data-radio id="external-yearly" type="radio" name="plan" value="yearly" form="alternate"><span>External yearly</span></label>
+      </fieldset>
+      <div id="peer-region"></div>
+      <template id="peer-template"><label class="mui-radio"><input type="radio" name="plan" value="outside"><span>Conflicting outside native peer: still browser-owned</span></label></template>
+      <input type="hidden" name="local" value="only">
+      <p><button type="submit">Inspect native submission / local GET fallback</button> <button type="reset">Native reset</button></p>
+    </form>
+    <form id="alternate"><button type="reset">Reset external plan only</button></form>
+    <div class="demo-tools">
+      <button type="button" id="silent">Silent setValue(pro)</button>
+      <button type="button" id="clear">Silent clear selection</button>
+      <button type="button" id="default">Make Pro the next reset default</button>
+      <button type="button" id="add">Clone Team and refresh</button>
+      <button type="button" id="remove">Remove selected plan and refresh</button>
+      <button type="button" id="disabled">Toggle disabled Plans fieldset</button>
+      <button type="button" id="peer">Toggle conflicting outside peer</button>
+      <button type="button" id="cancel">Cancel next reset</button>
+      <button type="button" id="rtl">Toggle RTL</button>
+      <button type="button" id="disconnect">Disconnect helpers</button>
+    </div>
+    <p id="state">Without JS, native radio selection and submission work unchanged.</p>
+    <p id="events">Accepted plan changes: 0</p>
+    <pre id="submission">No submission yet.</pre>
+    <fieldset class="mui-radio-group" disabled>
+      <legend><label class="mui-radio"><input id="legend-radio" type="radio" name="legend-radio" value="allowed"><span>Native first-legend exception</span></label></legend>
+      <label class="mui-radio"><input id="disabled-radio" type="radio" name="legend-radio" value="blocked"><span>Disabled fieldset member</span></label>
+    </fieldset>
+  </main>
+</body>
+</html>
