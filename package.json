@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./watermark": {
+      "types": "./dist/components/watermark/index.d.ts",
+      "import": "./dist/markup-ui-watermark.js"
+    },
+    "./watermark/style.css": "./dist/markup-ui-watermark.css",
     "./carousel": {
       "types": "./dist/components/carousel/index.d.ts",
       "import": "./dist/markup-ui-carousel.js"

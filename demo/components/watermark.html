@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Native Watermark · MarkupUI</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-watermark.css">
+  <link rel="stylesheet" href="./watermark.css">
+  <script type="module" src="./watermark.js"></script>
+</head>
+<body>
+  <header class="page">
+    <h1>Watermark: one decorative native tile</h1>
+    <p>This local example is labelled <strong>LOCAL DRAFT</strong> in ordinary readable
+      text. The repeated pixels are decoration, not security, access control or screenshot prevention.</p>
+    <div class="controls" data-enhancement hidden>
+      <label>Literal content <textarea id="content" rows="2">LOCAL DRAFT
+MarkupUI example</textarea></label>
+      <label>Rotation <input id="rotate" type="number" value="-24" min="-360" max="360"></label>
+      <label>Font size <input id="font-size" type="number" value="20" min="1" max="256"></label>
+      <label>Font color <input id="color" type="text" value="rgba(35, 85, 140, .35)"></label>
+      <label>Overall opacity <input id="opacity" type="range" min="0" max="1" step=".05" value="1"></label>
+      <label>Pixel ratio <select id="pixel-ratio"><option value="auto">Auto (0.5–4)</option><option>1</option><option>2</option><option>3</option></select></label>
+      <label><input id="cross" type="checkbox">Cross pattern</label>
+      <label><input id="debug" type="checkbox">Debug tile/mark borders</label>
+      <label><input id="fullscreen" type="checkbox">Viewport-fixed overlay</label>
+      <label><input id="narrow" type="checkbox">Narrow wrapper</label>
+      <label><input id="zoom" type="checkbox">CSS zoom 200%</label>
+      <label><input id="rtl" type="checkbox">RTL content</label>
+      <label><input id="self-scroll" type="checkbox">Make wrapper itself scroll (limited coverage)</label>
+      <button type="button" id="apply">Render literal text</button>
+      <button type="button" id="use-image">Use decoded local image</button>
+      <button type="button" id="race">Replace a pending caller loader</button>
+      <button type="button" id="error">Try invalid native image</button>
+      <button type="button" id="clear">Clear decoration</button>
+      <button type="button" id="refresh">Refresh after fonts/DPR change</button>
+      <button type="button" id="disconnect">Disconnect</button>
+    </div>
+    <figure><img id="local-image" src="./watermark.svg" width="160" height="80" alt="Original local MarkupUI geometric mark">
+      <figcaption>The application owns this already-requested image. The helper does not set its URL or credentials.</figcaption></figure>
+  </header>
+  <section id="watermark" class="mui-watermark watermark-host page" data-watermark aria-labelledby="document-title">
+    <h2 id="document-title">Original native document and controls</h2>
+    <form id="native-form">
+      <label>Title <input id="title" name="title" required value="Keep my original draft"></label>
+      <label>Notes <textarea name="notes">Text and caret remain native.</textarea></label>
+      <label>Stage <select name="stage"><option>Draft</option><option>Review</option></select></label>
+      <label><input type="checkbox" name="approved" value="yes" checked>Approved</label>
+      <button type="submit" data-enhancement hidden>Validate and show local FormData</button>
+      <button type="reset">Reset native fields</button>
+      <button type="button" id="count" data-enhancement hidden>Native action count: 0</button>
+    </form>
+    <div class="content-scroller" tabindex="0" aria-label="Scrollable draft body">
+      <p id="selection">Select this original text through the decorative overlay. Links,
+        controls, selection, copy and form validation remain native.</p>
+      <p>A positioned outer wrapper covers the visible inner scrollport. Repetition is
+        a CSS background, not one DOM element per stamp.</p>
+      <p>If the positioned wrapper itself scrolls, its absolute overlay moves with the
+        initial box and does not cover the full scrollHeight. This is a real limitation,
+        not an anti-tamper mechanism.</p>
+      <p>Viewport-fixed mode requires a direct-body root without transformed, filtered
+        or contained root/body/html ancestors. Native dialogs/popovers can appear above it.</p>
+      <p>No font download, image transport, canvas package or remote watermark service is installed.</p>
+      <p>Pixel colors do not automatically become theme tokens. Important classifications
+        belong in ordinary text too. Print and forced-colors omit decoration.</p>
+      <p>There are no hidden form fields, selection blockers, global storage or security promises.</p>
+      <a id="local-link" href="#after">Native link to the footer</a>
+    </div>
+    <div data-watermark-overlay hidden aria-hidden="true"></div>
+  </section>
+  <footer class="page" id="after">
+    <pre id="feedback" aria-label="Watermark generation and local form result">No JavaScript: original document, text, image, form fields and links remain; the decorative overlay is hidden.</pre>
+    <label>Outside focus target <input id="outside" value="No focus stealing"></label>
+    <p>Resizing repeats the same tile without re-rendering the document. Automatic DPR
+      updates are event-driven and bounded; late image/PNG results cannot replace a newer tile.</p>
+  </footer>
+</body>
+</html>

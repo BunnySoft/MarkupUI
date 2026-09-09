@@ -14,7 +14,8 @@ and four accepted tasks. Global Style closes explicit document CSS: 16 source ro
 seven adapted, nine omitted and four accepted tasks. All three P0 catalog routes and
 the separately audited P3 Discrete route are reconciled. P6 is now active: Carousel/
 CarouselItem completes its native single-slide scope (50 rows, 35 adapted, 15 omitted,
-four accepted tasks); eight specialized routes remain Planned. Broad P0 foundation tasks,
+four accepted tasks); Watermark completes its native decorative tile scope (31 rows,
+26 adapted, five omitted, four accepted tasks). Seven specialized routes remain Planned. Broad P0 foundation tasks,
 remaining P6 and full framework/viewer parity remain incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
@@ -47,7 +48,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
 | P4 — Forms and selection | 🟢 Verified retained scope | All 17 P4-assigned routes, 984 tracker rows and 68 page tasks reconciled. | Relevant native P0/P3 contracts | 478 adapted + 506 omitted, no unresolved rows; 889 P4 tests plus native browser evidence. No P0/P5/P6 or full framework parity implied. |
 | P5 — Collections and scale | 🟢 Verified retained scope | All ten P5-assigned routes, 827 rows and 40 page tasks reconciled. | P3 focus; P4 selection | 349 native adaptations + 478 omissions, zero unresolved; 526-test/native browser/asset audit. No full framework or P0/P6 parity implied. |
-| P6 — Specialized modules | 🟠 In progress; Carousel retained scope Verified | First of nine specialized routes accepted; eight remain Planned. | Component-specific earlier work | Carousel/CarouselItem: explicit ESM/classic/CSS, 50 reconciled rows, 4/4 tasks, native/browser evidence; other 191 rows remain unresolved. |
+| P6 — Specialized modules | 🟠 In progress; Carousel and Watermark retained scopes Verified | Two of nine specialized routes accepted; seven remain Planned. | Component-specific earlier work | Explicit ESM/classic/CSS, 81 reconciled rows, 8/8 tasks, native/browser evidence; other 164 rows remain unresolved. |
 
 The [component index](index.md) is the exhaustive catalog-to-phase assignment. The phase
 groups below name principal workstreams, not additional promises that every catalog feature
@@ -142,7 +143,7 @@ smuggling an overlay implementation into the CSS-only native composition.
 | P6-01 — Date/time and calendar | 🔵 Planned | Keep native date/time inputs as baseline; scope ranges/calendar panels and locale behavior separately. | Documented date-only/time-zone semantics using browser facilities, not an imported date engine. |
 | P6-02 — Upload | 🔵 Planned | Separate file selection from optional transport, progress, cancellation and retry. | Explicit application transport hooks and surfaced errors; no implicit upload destination. |
 | P6-03 — Media and carousel | 🟢 Verified Carousel retained scope; advanced viewer/effects excluded | Native scroll-snap Carousel/CarouselItem, original DOM, manual/wrap controls and opt-in gated autoplay. | [Carousel acceptance](../components/carousel.md): settled targets, lifetime, focus/forms, browser/legacy/no-JS and independent budgets; no seamless clone loop or advanced image-viewer parity. |
-| P6-04 — Other utilities | 🔵 Planned | Review remaining catalog utilities against native HTML/CSS and small optional modules. | A disposition for every remaining component, not blanket core inclusion. |
+| P6-04 — Other utilities | 🟠 In progress; Watermark retained scope Verified | Native bounded Canvas/decorative overlay accepted; other utility routes remain independent. | [Watermark acceptance](../components/watermark.md): 31 reconciled rows, four tasks, guarded native generation/ownership and explicit no-security/coverage limits. |
 | P6-05 — Dependency-heavy exclusions | 🔵 Planned | Resolve QR generation, math typesetting, full language highlighting and framework-only provider APIs individually. | Independent feasibility decision or explicit omission; no hidden dependencies. |
 | P6-06 — Deprecated surfaces | 🔵 Planned | Record Legacy Transfer and deprecated aliases without reproducing redundant legacy APIs. | A documented replacement and omission decision, not a missing tracker row. |
 | P6-07 — Packaging sign-off | 🔵 Planned | Demonstrate explicit optional loading in supported classic/module modes and record combined asset sizes. | Specialized features stay out of the default dependency graph. |
@@ -198,11 +199,11 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Carousel/CarouselItem (P6), verified native single-slide scroll-snap scope.**
+**Current component: Watermark (P6), verified bounded native decorative tile/overlay scope.**
 **P1/P2/P3/P4/P5 declared retained scopes are complete. P4-07 and P5-06 close against their full assigned-route audits.**
 **P5 is Verified for retained scopes:** all ten routes are resolved.
-Recommended next: **Watermark (P6-04)**, as an independent optional native decoration
-scope. No second P6 route is implemented here. P0 component-route acceptance
+Recommended next: **Upload (P6-02)**, with native file selection and explicit
+application-owned transport. No Upload implementation is included here. P0 component-route acceptance
 does not close broader foundation tasks or imply full upstream/framework compatibility.
 
 The following component records form a historical execution sequence. Earlier “next” or
@@ -340,8 +341,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 3,975 rows and 336 accepted retained tasks out of 384 across 84 component
-pages (48 unchecked), not full upstream parity.
+The current index records 3,979 rows and 340 accepted retained tasks out of 384 across 85 component
+pages (44 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -2061,3 +2062,50 @@ inline-theme compatibility exceptions are not globally fixed by this component.
 ownership conventions are ready for a separately bounded decoration/accessibility
 scope. Time/Number Animation/Countdown may later justify shared temporal primitives,
 but none is started in this Carousel commit.
+
+## Watermark acceptance — bounded native decoration
+
+[Canonical Watermark](../components/watermark.md) and its
+[complete reference](components/watermark.md) close the second retained P6 route:
+one bounded native Canvas PNG and one authored decorative/pointer-transparent overlay,
+literal text or caller-owned images, useful font/rotation/gap/phase/cross/opacity/debug
+and constrained local/viewport-fixed placement. No per-tile DOM renderer, automatic
+containing-block rewrite, image/credential transport, anti-tamper observer, global
+storage, clipboard/screen capture or security/DRM promise is introduced.
+
+**27 original rows + one source fontStretch supplement + three source-inherited theme
+props = 31 rows: 26 adapted + five omitted, zero unresolved; 4/4 tasks accepted.**
+Global layer rotation, selection suppression and provider/theme bags are explicit
+omissions. Native pixels require explicit colors/fonts, proper image/CORS permissions
+and a separately readable classification when meaningful.
+
+**88 tests pass** (61 Watermark + 27 native/legacy), declarations/build and every old/new
+budget pass. Level-nine gzip: **5,755 ESM / 5,889 classic / 319 CSS**, combined
+**6,074 / 6,208** JS+CSS, under **7,000 / 7,000 / 1,000** ceilings. The complete local
+example including HTML/CSS/JS/original SVG is **10,498** gzip bytes. Prior exports and
+budgets are unchanged. Core/advanced/widgets stay **14,611 / 2,181 / 2,779** under
+**15,000 / 3,000 / 4,000**; prior Carousel stays **5,367 / 5,509 / 656**.
+
+Dedicated native Chromium checks inspected actual generated text/image pixels,
+rotation/repetition/cross/debug, DPR2/fonts, original text selection/controls/forms/
+listeners, loader/serialized-PNG races, actual decode/tainted-Canvas errors, prior-tile
+retention and owned URL release. Resize/RTL/CSS zoom and inner versus self-scroller/
+fixed coverage limits were observed. Print/forced-colors omit decoration; strict
+external-script/style CSP with blob images, no-JS fallback, classic generation and
+unchanged legacy coexistence passed. No all-browser/AT, universal top-layer/print,
+font/theme or screen-protection parity is claimed.
+
+**Current catalog: 96 routes / 3,979 rows / 340 of 384 accepted tasks across 85 pages /
+44 unchecked. P6: 245 rows = 61 adapted + 20 omitted + 164 unresolved; two of nine
+specialized routes accepted.** P2–P5 and the three P0 catalog-route resolutions are
+unchanged. Broad P0-01–P0-09 task states stay open/partial: legacy stylesheet extraction,
+aggregate auto-install and inline-theme compatibility exceptions are not closed here.
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P6 (7 Planned) | Upload, Calendar, Countdown, Number Animation, Time, Heatmap, Marquee | 164 / 164 |
+| Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Next: Upload (P6-02).** Native file selection and an explicit bounded application
+transport/cancellation contract are dependency-ready. No Upload code is included;
+this commit completes only Watermark and its owned integration/status records.

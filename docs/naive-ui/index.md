@@ -60,6 +60,9 @@ Global Style now has an [accepted explicit document stylesheet](../components/gl
 Carousel/CarouselItem now have [accepted native scroll-snap evidence](../components/carousel.md):
 original slides, settled/current targets, wrap commands and explicitly gated autoplay,
 with no cloned infinite track or custom gesture/effect engine.
+Watermark now has [accepted native Canvas/overlay evidence](../components/watermark.md):
+one bounded decorative tile, caller-owned images, guarded generation and untouched
+native content, with no anti-tamper or security claim.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
 are reconciled. **P4 is Verified for retained native scopes:** all 17 assigned routes,
 984 tracker rows and 68 page tasks are resolved, with no Planned P4 routes or unresolved
@@ -68,10 +71,9 @@ retained rows. **P5 is Verified for retained native scopes:** all ten assigned r
 P0 architecture/P6 and full framework parity remain independent.
 The three P0 catalog routes are resolved, and the related Discrete audit remains accepted
 under P3; broader foundation task IDs are not automatically completed.
-**P6 is active:** Carousel is the first accepted specialized route; eight routes remain
-Planned. Recommended next: **Watermark (P6-04)** as an independent optional native
-decoration scope. Time/Number Animation/Countdown remain separate possible temporal work.
-No second P6 route is implemented in this Carousel commit.
+**P6 is active:** Carousel and Watermark are accepted; seven routes remain Planned.
+Recommended next: **Upload (P6-02)**, with native file selection and explicitly
+application-owned transport. No Upload implementation is included in this Watermark commit.
 Component acceptance sections below retain their sign-off snapshots; earlier counts and
 “next”/“In progress” statements are historical, not the current phase dashboard.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
@@ -128,7 +130,7 @@ Avatar's four retained-scope tasks are checked using `9afc818`, Button's four us
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
 Popover through Rate, the subsequent Form/Auto Complete/Input OTP/Dynamic Input/Dynamic
 Tags/Mention/Color Picker/Date Picker/Time Picker records, and now Virtual List each add
-four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style and Carousel each add four more. The current total is **336/384 accepted across 84 pages, 48 unchecked**.
+four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style, Carousel and Watermark each add four more. The current total is **340/384 accepted across 85 pages, 44 unchecked**.
 P2 retained scopes remain reconciled; the nineteen sequential P3 scopes plus three mixed P2/P3 pages pass the complete P3 audit. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
@@ -2307,6 +2309,52 @@ scope acceptance and the prior three P0 catalog-route resolutions remain valid.
 ownership prerequisites are available; define a bounded decoration/accessibility
 contract before implementation. No next route is started here.
 
+## Watermark accepted
+
+[Canonical acceptance](../components/watermark.md) completes the second retained P6
+route: one native Canvas PNG repeated by external CSS on an authored decorative
+overlay. Literal multiline text, caller-owned native images, font/rotation/size/gap/
+phase/cross/opacity/debug options and bounded local/fixed placement are implemented.
+Content, form membership, pointer selection, focus, author ARIA and listeners remain
+native. No per-stamp DOM grid, automatic containing-block rewrite, remote rendering,
+selection blocker, anti-tamper observer, CSS-in-JS framework or security/DRM claim.
+
+**27 original identities + one source fontStretch supplement + three source-inherited
+theme props = 31 rows: 26 adapted, five omitted, zero unresolved; four accepted tasks.**
+Whole-layer globalRotate, selection suppression and three theme/provider props are
+explicitly omitted. Image URLs/credentials remain caller-owned; font/color grammar,
+dimensions/area/DPR and rotated fit are bounded, with explicit retained subsets.
+
+**88 targeted tests pass** (61 Watermark + 27 native/legacy), declarations/build and
+all old/new budgets pass. Level-nine gzip assets: **5,755 ESM / 5,889 classic / 319 CSS**
+(raw **14,495 / 14,784 / 850**), under independent **7,000 / 7,000 / 1,000** ceilings.
+Combined ESM+CSS **6,074**, classic+CSS **6,208**; the complete four-file local ESM
+example totals **10,498** gzip bytes. Prior export/budget entries are unchanged.
+Core/advanced/widgets remain **14,611 / 2,181 / 2,779** under the unchanged
+**15,000 / 3,000 / 4,000** ceilings. Carousel assets remain **5,367 / 5,509 / 656**.
+
+Dedicated Chromium acceptance inspected actual PNG pixels/rotation/cross/debug and
+decoded local image output; native decode and cross-origin Canvas SecurityError kept
+the previous valid tile. Loader/PNG generation races, serialized encoder work,
+teardown/owned URL release, native pointer/text selection/forms, original node identity,
+resize/RTL/CSS zoom, DPR2, fixed versus scroll-wrapper coverage, print/forced-colors
+omission, strict external-script/style CSP with blob images, no-JS and classic/legacy
+coexistence were verified. Generated pixels are not automatically themed, guaranteed
+print graphics or security controls; native top-layer and self-scroller limits remain.
+
+**Current catalog: 96 routes / 3,979 rows / 340 of 384 tasks across 85 accepted pages /
+44 unchecked. P6: 245 rows = 61 adapted + 20 omitted + 164 unresolved; two of nine
+specialized routes accepted.** Broader P0-01–P0-09 statuses/exceptions are unchanged;
+P2–P5 and prior P0 component-route acceptance remain intact.
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P6 (7 Planned) | Upload, Calendar, Countdown, Number Animation, Time, Heatmap, Marquee | 164 / 164 |
+| Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Next: Upload (P6-02).** Native file selection and a separately bounded application
+transport/cancellation contract are dependency-ready. No Upload code is started here.
+
 ## Common Components (15)
 
 | Component | Plan direction | Current baseline | Phase |
@@ -2324,7 +2372,7 @@ contract before implementation. No next route is started here.
 | [Page Header](components/page-header.md) | 🟢 Verified CSS-only native scope; 3 explicit omissions | Authored region/action CSS; [accepted evidence](../components/page-header.md), no runtime | P2 |
 | [Tag](components/tag.md) | 🟢 Verified retained scope; 7 explicit omissions | Standalone native Tag, `6605d29`; basic aggregate preserved | P2 |
 | [Typography](components/typography.md) | 🟢 Verified CSS-only scope; 23 explicit omissions | Scoped native CSS; [accepted evidence](../components/typography.md), no new runtime | P2 |
-| [Watermark](components/watermark.md) | 🔵 Planned | None | P6 |
+| [Watermark](components/watermark.md) | 🟢 Verified native decorative tile scope; five explicit omissions | Optional Canvas/one-overlay helper; [accepted evidence](../components/watermark.md), no security/anti-tamper claim | P6 |
 | [Float Button](components/float-button.md) | 🟢 Verified native scope; 7 explicit omissions | Native actions/groups/popover dock; [accepted evidence](../components/float-button.md) | P2, P3 |
 
 ## Data Input Components (21)
@@ -2474,15 +2522,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,474: 367 inline fields, 182 type/helper/exclusion entries (including five Table public helper groups and Virtual List/Tree named ScrollTo types) and 925 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel source supplements |
-| Explicit inherited tracker rows | 281, including six source-inherited DialogReactive options, three ModalReactive fields, two NotificationReactive fields and three each Element/Carousel theme props |
-| Total tracker rows | 3,975; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 336 retained-scope tasks accepted across 84 component pages, 48 unchecked |
+| Supplementary named declarations | 1,475: 367 inline fields, 182 type/helper/exclusion entries (including five Table public helper groups and Virtual List/Tree named ScrollTo types) and 926 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel/Watermark source supplements |
+| Explicit inherited tracker rows | 284, including six source-inherited DialogReactive options, three ModalReactive fields, two NotificationReactive fields and three each Element/Carousel/Watermark theme props |
+| Total tracker rows | 3,979; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 340 retained-scope tasks accepted across 85 component pages, 44 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,975 rows retain canonical text with emoji color: 1,926 Verified native adaptations, 1,858 intentional omissions, 173 Not reviewed and 18 Planned. Carousel contributes 35 adaptations/15 omissions; other retained component counts and linked acceptance records are unchanged. |
-| Source agreement | All 2,220 direct source rows and 281 inherited rows remain covered; 12 unchanged inventories match extraction; the 84 accepted pages preserve named/grouped identities with explicit dispositions; Carousel preserves all 41 original identities/links and adds six source plus three inherited identities; all four requested foundation-related route inventories remain reconciled |
-| Local links | All 551 scoped Carousel/reference/index/master file links resolve; earlier Global Style/four-route/component link snapshots remain historical evidence |
+| Status presentation | All 3,979 rows retain canonical text with emoji color: 1,952 Verified native adaptations, 1,863 intentional omissions, 154 Not reviewed and 10 Planned. Watermark contributes 26 adaptations/five omissions; other retained component counts and linked acceptance records are unchanged. |
+| Source agreement | All 2,220 direct source rows and 284 inherited rows remain covered; 11 unchanged inventories match extraction; the 85 accepted pages preserve named/grouped identities with explicit dispositions; Watermark preserves all 27 original identities/links and adds one source plus three inherited identities; all four requested foundation-related route inventories remain reconciled |
+| Local links | All 557 scoped Watermark/reference/index/master file links resolve; earlier Carousel/Global Style/four-route/component link snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

@@ -1,0 +1,21 @@
+body { margin: 0; font: 1rem/1.5 system-ui, sans-serif; color: #172b43; background: #eef3f8; }
+.page { max-inline-size: 66rem; margin: 1.25rem auto; padding: 1rem; }
+.watermark-host { position: relative; box-sizing: border-box; background: white; border: 2px solid #9db4cc; border-radius: .75rem; }
+.controls { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; }
+label { display: block; margin-block: .5rem; }
+input, textarea, select, button { font: inherit; max-inline-size: 100%; }
+input[type="number"] { inline-size: 5rem; }
+button { padding: .4rem .65rem; }
+textarea { display: block; }
+figure { margin-inline: 0; }
+figcaption { font-size: .9rem; }
+.content-scroller { max-block-size: 18rem; overflow: auto; padding: 1rem; border: 1px solid #bacbdc; margin-block-start: 1rem; }
+.watermark-host.narrow { max-inline-size: 28rem; }
+.watermark-host.zoomed { zoom: 2; }
+.watermark-host.self-scrolling { block-size: 25rem; overflow: auto; }
+.watermark-host.self-scrolling .content-scroller { max-block-size: none; overflow: visible; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; background: white; border: 1px solid #bacbdc; }
+:focus-visible { outline: 3px solid #175cd3; outline-offset: 2px; }
+[hidden] { display: none !important; }
+footer { min-block-size: 20rem; }
+@media (max-width: 40rem) { .page { margin: .5rem; padding: .75rem; } }

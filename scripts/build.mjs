@@ -64,6 +64,8 @@ components.push("split")
 classicEntries.split = "global.ts"
 components.push("carousel")
 classicEntries.carousel = "global.ts"
+components.push("watermark")
+classicEntries.watermark = "global.ts"
 
 await Promise.all([
   build({
@@ -146,6 +148,9 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-watermark.js": 7_000,
+  "markup-ui-watermark.global.js": 7_000,
+  "markup-ui-watermark.css": 1_000,
   "markup-ui-carousel.js": 7_000,
   "markup-ui-carousel.global.js": 7_000,
   "markup-ui-carousel.css": 1_500,
