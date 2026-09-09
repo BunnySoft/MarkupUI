@@ -52,6 +52,8 @@ components.push("tree-select")
 classicEntries["tree-select"] = "global.ts"
 components.push("transfer")
 classicEntries.transfer = "global.ts"
+components.push("data-table")
+classicEntries["data-table"] = "global.ts"
 
 await Promise.all([
   build({
@@ -119,11 +121,17 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
   } else if (name === "message" || name === "notification") {
     const base = await readFile(resolve(root, "src", "components", "feedback", "feedback.css"), "utf8")
     await writeFile(output, `${base}\n${await readFile(source, "utf8")}`)
+  } else if (name === "data-table") {
+    const base = await readFile(resolve(root, "src", "components", "table", "table.css"), "utf8")
+    await writeFile(output, `${base}\n${await readFile(source, "utf8")}`)
   } else await copyFile(source, output)
 }))
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-data-table.js": 9_000,
+  "markup-ui-data-table.global.js": 9_000,
+  "markup-ui-data-table.css": 2_000,
   "markup-ui-transfer.js": 8_000,
   "markup-ui-transfer.global.js": 8_000,
   "markup-ui-transfer.css": 1_250,

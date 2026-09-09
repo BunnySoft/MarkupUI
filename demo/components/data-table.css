@@ -1,0 +1,29 @@
+body { margin: 0; font: 1rem/1.5 system-ui, sans-serif; color: #172536; background: #f7f9fc; }
+main { max-inline-size: 74rem; margin-inline: auto; padding: 1rem; }
+h1 { font-size: clamp(1.4rem, 4vw, 2rem); }
+button, input, select { font: inherit; max-inline-size: 100%; }
+button { padding: .3rem .5rem; }
+input[type="number"] { inline-size: 5rem; }
+input:not([type="checkbox"]) { box-sizing: border-box; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; background: white; border: 1px solid #bdc8d6; }
+.mui-data-table { --mui-data-table-max-height: 26rem; }
+.mui-data-table-scroll > .mui-table { min-inline-size: 60rem; }
+.selection-column { width: 9rem; }
+.project-column { width: 12rem; }
+.category-column { width: 8rem; }
+.score-column { width: 10rem; }
+.notes-column { width: 20rem; }
+.mui-data-table-scroll > .mui-table > :is(thead, tbody) > tr > :first-child {
+  position: sticky; inset-inline-start: 0; background: #f1f4f8; z-index: 1;
+}
+.mui-data-table-scroll > .mui-table > thead > tr > :first-child { z-index: 2; }
+.mui-data-table-controls[hidden] { display: none; }
+.mui-data-table-controls label { max-inline-size: 100%; }
+.mui-data-table-controls input { inline-size: 12rem; }
+.nested-example { font-size: .875rem; }
+@media print {
+  body { background: white; }
+  .mui-data-table-scroll > .mui-table { min-inline-size: 0; }
+  .mui-data-table-scroll > .mui-table > :is(thead, tbody) > tr > :first-child { position: static; }
+  #feedback { display: none; }
+}

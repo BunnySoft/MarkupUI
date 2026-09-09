@@ -1,0 +1,50 @@
+/* The build composes the independent native Table stylesheet before these rules. */
+:where(.mui-data-table) {
+  min-inline-size: 0;
+  color: var(--mui-data-table-color, inherit);
+}
+:where(.mui-data-table) > .mui-data-table-scroll {
+  overflow: auto;
+  max-block-size: var(--mui-data-table-max-height, none);
+  min-block-size: var(--mui-data-table-min-height, 0);
+  padding: .25rem;
+}
+:where(.mui-data-table) > .mui-data-table-controls:not([hidden]) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .75rem;
+  margin-block: .75rem;
+}
+:where(.mui-data-table) > .mui-data-table-scroll > .mui-table > thead > tr > th > [data-data-sort] {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  margin-inline-start: .25rem;
+}
+:where(.mui-data-table) > .mui-data-table-scroll > .mui-table > thead > tr > th[aria-sort="ascending"] > [data-data-sort]::after { content: " ↑"; }
+:where(.mui-data-table) > .mui-data-table-scroll > .mui-table > thead > tr > th[aria-sort="descending"] > [data-data-sort]::after { content: " ↓"; }
+:where(.mui-data-table) > .mui-data-table-scroll > .mui-table > tbody > tr:has(> :is(th, td) > [data-data-check]:checked, > :is(th, td) > label > [data-data-check]:checked) > :is(th, td) {
+  background-color: var(--mui-data-table-selected-background, #e7f2ff);
+}
+:where(.mui-data-table) > .mui-data-table-scroll > .mui-table[data-data-sticky-header] > thead > tr > th {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+}
+:where(.mui-data-table) > .mui-data-table-scroll > .mui-table[aria-busy="true"] {
+  border-style: dashed;
+}
+:where(.mui-data-table) > :is([data-data-empty], [data-data-loading]) { padding-block: .5rem; }
+@media print {
+  :where(.mui-data-table) > .mui-data-table-scroll { overflow: visible; max-block-size: none; }
+  :where(.mui-data-table) > .mui-data-table-controls,
+  :where(.mui-data-table) > .mui-data-table-scroll > .mui-table > thead > tr > th > [data-data-sort] { display: none; }
+  :where(.mui-data-table) > .mui-data-table-scroll > .mui-table[data-data-sticky-header] > thead > tr > th { position: static; }
+}
+@media (forced-colors: active) {
+  :where(.mui-data-table) > .mui-data-table-scroll > .mui-table > tbody > tr:has(> :is(th, td) > [data-data-check]:checked, > :is(th, td) > label > [data-data-check]:checked) > :is(th, td) {
+    outline: 1px solid Highlight;
+    outline-offset: -1px;
+  }
+}

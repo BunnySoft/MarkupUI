@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Native Data Table · MarkupUI</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-data-table.css">
+  <link rel="stylesheet" href="./data-table.css">
+  <script type="module" src="./data-table.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Data Table: original rows, explicit operations</h1>
+    <p>A real table with native editable fields. Sorting moves rows; filtering and paging
+      hide them, never unmount them. <strong>Hidden named fields still submit.</strong></p>
+    <p id="policy">Validate/save first reveals every helper-hidden row, then calls native
+      reportValidity. Disabled selection is a lock; disabled checkbox values do not submit.
+      Row keys are not a substitute for the other field values.</p>
+    <form id="scores-form" novalidate>
+      <section class="mui-data-table" data-data-table aria-label="Editable project scores" aria-describedby="policy">
+        <div class="mui-data-table-controls" data-enhancement hidden>
+          <label>Project filter <input type="search" data-data-filter="project" placeholder="Literal project text"></label>
+          <label>Category <select data-data-filter="category"><option value="">All categories</option><option>Engineering</option><option>Design</option></select></label>
+          <label>Rows per page <select data-data-page-size><option value="2" selected>2</option><option value="5">5</option><option value="all">All (reveal for validation)</option></select></label>
+          <button type="button" data-data-page="previous" hidden>Previous</button>
+          <button type="button" data-data-page="next" hidden>Next</button>
+          <span data-data-count></span>
+        </div>
+        <p id="sort-help">Use the header Sort buttons: ascending, descending, then original order.
+          Scroll this region horizontally or Tab to cell controls. Apply a text filter with Enter
+          or by leaving its field. Native reset restores checkbox and input defaults.</p>
+        <div class="mui-data-table-scroll" tabindex="0" role="region" aria-labelledby="scores-caption" aria-describedby="sort-help">
+          <table class="mui-table" data-data-table-table data-data-sticky-header data-striped data-size="small">
+            <caption id="scores-caption">Local project scores</caption>
+            <colgroup><col class="selection-column"><col class="project-column"><col class="category-column"><col class="score-column"><col class="notes-column"></colgroup>
+            <thead><tr>
+              <th scope="col"><label><input type="checkbox" data-data-check-all data-data-scope="page" disabled>Check page</label></th>
+              <th scope="col" id="project-heading" data-data-column="project">Project <button type="button" data-data-sort="project" hidden>Sort projects</button></th>
+              <th scope="col" id="category-heading" data-data-column="category">Category</th>
+              <th scope="col" id="score-heading" data-data-column="score">Score <button type="button" data-data-sort="score" hidden>Sort scores</button></th>
+              <th scope="col" id="notes-heading">Native notes and actions</th>
+            </tr></thead>
+            <tbody>
+              <tr data-data-key="alpha"><td><label><input type="checkbox" data-data-check name="checkedKeys" value="alpha">Alpha</label></td><th scope="row" id="alpha-heading">Alpha</th><td>Engineering</td><td headers="alpha-heading score-heading"><label>Alpha score <input type="number" name="alpha-score" value="10" min="0" max="100" required></label></td><td><label>Alpha note <input name="alpha-note" value="Keep this edit"></label><button type="button" data-note-action>Mark reviewed</button></td></tr>
+              <tr data-data-key="bravo"><td><label><input type="checkbox" data-data-check name="checkedKeys" value="bravo">Bravo</label></td><th scope="row" id="bravo-heading">Bravo</th><td>Design</td><td headers="bravo-heading score-heading"><label>Bravo score <input type="number" name="bravo-score" value="2" min="0" max="100" required></label></td><td><details><summary>Native details in this cell</summary><p>Not a generated full-width expanded row.</p></details></td></tr>
+              <tr data-data-key="charlie"><td><label><input type="checkbox" data-data-check name="checkedKeys" value="charlie" checked>Charlie</label></td><th scope="row" id="charlie-heading">Charlie</th><td>Engineering</td><td headers="charlie-heading score-heading"><label>Charlie score <input type="number" name="charlie-score" value="2" min="0" max="100" required></label></td><td><label>Charlie note <input name="charlie-note" value="Hidden rows still submit"></label></td></tr>
+              <tr data-data-key="delta"><td><label><input type="checkbox" data-data-check name="checkedKeys" value="delta" checked disabled>Delta (locked)</label></td><th scope="row" id="delta-heading">Delta</th><td>Design</td><td headers="delta-heading score-heading"><label>Delta score <input type="number" name="delta-score" value="30" min="0" max="100" required></label></td><td><table class="nested-example"><caption>Unrelated nested table</caption><tbody><tr><td>Native nested cell</td></tr></tbody></table></td></tr>
+              <tr data-data-key="echo"><td><label><input type="checkbox" data-data-check name="checkedKeys" value="echo">Echo</label></td><th scope="row" id="echo-heading">Echo</th><td>Engineering</td><td headers="echo-heading score-heading"><label>Echo score <input type="number" name="echo-score" value="5" min="0" max="100" required></label></td><td><a href="#static-table">Go to static table</a></td></tr>
+              <tr data-data-key="foxtrot"><td><label><input type="checkbox" data-data-check name="checkedKeys" value="foxtrot">Foxtrot</label></td><th scope="row" id="foxtrot-heading">Foxtrot</th><td>Design</td><td headers="foxtrot-heading score-heading"><label>Foxtrot score <input type="number" name="foxtrot-score" value="8" min="0" max="100" required></label></td><td>Text remains authored.</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><th scope="row" colspan="3">Current page score total</th><td><span data-data-summary="page">57</span></td><td>Application numeric extractor</td></tr>
+              <tr><th scope="row" colspan="3">All filtered score total</th><td><span data-data-summary="filtered">57</span></td><td>Independent of the page</td></tr>
+            </tfoot>
+          </table>
+        </div>
+        <p data-data-empty hidden>No projects match these filters.</p>
+        <p data-data-loading hidden>Application reports loading; native fields remain usable.</p>
+        <div class="mui-data-table-controls" data-enhancement hidden>
+          <button type="button" data-select-filtered>Check all filtered</button>
+          <button type="button" data-clear-all>Uncheck all enabled data</button>
+          <button type="button" data-reveal>Reveal Charlie</button>
+          <button type="button" data-reveal-all>Reveal all / clear filters</button>
+          <button type="button" data-refresh>Refresh edited values</button>
+          <button type="button" data-loading>Toggle loading status</button>
+          <button type="button" data-rtl>Toggle RTL</button>
+          <button type="button" data-disconnect>Disconnect enhancement</button>
+        </div>
+      </section>
+      <p><button type="submit" data-enhancement hidden>Reveal all, validate and inspect FormData</button>
+        <button type="reset">Native reset</button></p>
+      <noscript><p>All six source rows and controls remain readable/editable; native reset works.
+        Enhancement actions and JavaScript-gated submission are unavailable.</p></noscript>
+    </form>
+    <pre id="feedback" aria-label="Last application action">No user table operations yet.</pre>
+    <h2 id="static-table">Static no-JavaScript table</h2>
+    <table class="mui-table"><caption>Grouped headings and spans stay in CSS-only Table</caption>
+      <thead><tr><th scope="col" rowspan="2">Team</th><th scope="colgroup" colspan="2">Weeks</th></tr><tr><th scope="col">One</th><th scope="col">Two</th></tr></thead>
+      <tbody><tr><th scope="row">Native authors</th><td>4</td><td>5</td></tr></tbody>
+    </table>
+    <p>Enhanced Data Table deliberately rejects grouped headers and body spans, virtual rows,
+      trees, custom cell renderers, drag/resize and CSV export. Maximum: 2,000 local native rows;
+      pagination does not reduce mounted DOM. Print preserves the current visible view; reveal all
+      before printing the full dataset.</p>
+  </main>
+</body>
+</html>

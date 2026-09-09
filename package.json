@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./data-table": {
+      "types": "./dist/components/data-table/index.d.ts",
+      "import": "./dist/markup-ui-data-table.js"
+    },
+    "./data-table/style.css": "./dist/markup-ui-data-table.css",
     "./transfer": {
       "types": "./dist/components/transfer/index.d.ts",
       "import": "./dist/markup-ui-transfer.js"
