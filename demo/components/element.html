@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Element — native authoring, not a wrapper</title>
+  <link rel="stylesheet" href="config-provider.css">
+  <link rel="stylesheet" href="element.css">
+  <script type="module" src="element.js"></script>
+</head>
+<body>
+  <main id="config-example" data-element-example>
+    <h1>Choose the real HTML element</h1>
+    <p>No Element factory, custom tag, role replacement or theme-variable generator is loaded.
+      This example reuses the configuration example's external application palettes.</p>
+    <fieldset data-element-enhanced hidden>
+      <legend>Local example controls</legend>
+      <label>Scope palette <select data-palette>
+        <option value="system">System preference</option><option value="light">Light</option><option value="dark">Dark</option>
+      </select></label>
+      <label>Nested palette <select data-nested-palette><option value="inherit">Inherit</option><option value="light">Light</option></select></label>
+      <label>Scope direction <select data-direction><option value="ltr">LTR</option><option value="rtl">RTL</option></select></label>
+      <button type="button" data-disconnect>Disconnect example listeners</button>
+    </fieldset>
+    <p data-example-status role="status">Without JavaScript, native links, labels, fields, reset and disclosure still work.</p>
+    <div class="example-columns">
+      <section id="element-scope" class="example-frame" data-example-palette="system" lang="en" dir="ltr">
+        <h2 class="element-heading">A real heading inside a configured ancestor</h2>
+        <p><a class="element-link" href="#element-target">Follow this actual local link</a>, or use the native controls below.</p>
+        <article class="element-surface" aria-labelledby="element-article-title">
+          <h3 id="element-article-title">Authored content stays authored</h3>
+          <p data-authored-text>Preserve this <strong>emphasis</strong>, <code>code</code> and
+            <span class="element-heading">inherited accent</span>, rather than returning VNodes.</p>
+          <div data-element-enhanced hidden>
+            <button id="element-action" class="element-action" type="button" data-action>Count native activations</button>
+            <output for="element-action" aria-label="Native activation count" data-count>0</output>
+          </div>
+          <details>
+            <summary>Native disclosure works without JavaScript</summary>
+            <ul><li>Real list item</li><li>No injected roles or slot projection</li></ul>
+          </details>
+          <p data-hidden-sample hidden>This authored hidden paragraph does not occupy layout.</p>
+        </article>
+        <section id="element-nested" class="element-surface">
+          <h3 class="element-heading">Nested: no explicit palette initially</h3>
+          <p class="element-heading example-author-accent">This local author class overrides only its accent.</p>
+          <form id="element-form">
+            <fieldset>
+              <legend>Native form controls</legend>
+              <label>Title <input name="title" value="Local draft" required></label>
+              <label>Email <input name="email" type="email" value="reader@example.invalid" required></label>
+              <label><input name="reviewed" type="checkbox" value="yes" checked> Reviewed</label>
+            </fieldset>
+            <fieldset disabled>
+              <legend>Disabled native group</legend>
+              <label>Excluded value <input name="disabled-value" value="not submitted"></label>
+            </fieldset>
+            <button type="button" data-preview data-element-enhanced hidden>Validate and preview locally</button>
+            <button type="reset">Native reset</button>
+          </form>
+          <p>No submit button is authored. Two text-entry controls prevent no-JS implicit
+            submission. The optional preview requests native validation, handles submit locally
+            and displays FormData; it never sends a request.</p>
+          <output aria-label="Last local form preview" data-preview-output>Nothing previewed yet.</output>
+        </section>
+      </section>
+      <section id="element-outside" class="element-surface">
+        <h2 id="element-target" tabindex="-1">Outside the configured scope</h2>
+        <p>This sibling uses native system-color fallbacks when no shared tokens are inherited.</p>
+        <a class="element-link" href="#element-scope">Return to the configured scope</a>
+        <p>Settings follow DOM ancestry. A plain element never creates a ConfigProvider,
+          imports every Naive theme variable, or translates text from lang metadata.</p>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,32 @@
+/* Application presentation only; no Element stylesheet is published by the library. */
+#config-example[data-element-example] .element-surface {
+  min-inline-size: 0;
+  margin-block: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--mui-border, ButtonBorder);
+  border-radius: .4rem;
+  background: var(--mui-bg-surface, Canvas);
+  color: var(--mui-text-primary, CanvasText);
+  overflow-wrap: anywhere;
+}
+#config-example[data-element-example] .element-heading { color: var(--mui-color-primary, CanvasText); }
+#config-example[data-element-example] .element-link { color: var(--mui-color-primary, LinkText); text-underline-offset: .15em; }
+#config-example[data-element-example] .element-action {
+  padding: .5rem 1rem;
+  border: 1px solid var(--mui-border, ButtonBorder);
+  border-radius: .25rem;
+  background: var(--mui-color-primary, ButtonFace);
+  color: var(--mui-button-contrast, ButtonText);
+}
+#config-example[data-element-example] :is(input, button) { box-sizing: border-box; min-inline-size: 0; }
+#config-example[data-element-example] :focus-visible { outline: 2px solid var(--mui-color-primary, Highlight); outline-offset: 2px; }
+#config-example[data-element-example] fieldset { min-inline-size: 0; }
+#config-example[data-element-example] label { min-inline-size: 0; max-inline-size: 100%; }
+#config-example[data-element-example] output { display: block; margin-block: .5rem; overflow-wrap: anywhere; white-space: pre-wrap; }
+@media print {
+  #config-example[data-element-example] .example-columns { display: block; }
+  #config-example[data-element-example] [data-element-enhanced] { display: none; }
+}
+@media (forced-colors: active) {
+  #config-example[data-element-example] .element-action { border-color: ButtonText; }
+}

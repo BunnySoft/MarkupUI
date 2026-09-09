@@ -9,7 +9,9 @@ unresolved retained rows or Planned P4 routes. P5's final Split acceptance and a
 close all ten assigned retained scopes: 827 rows, 349 adapted, 478 omitted, zero unresolved
 and 40/40 component tasks. Config Provider now closes its retained native composition with
 no new runtime: 117 rows, eight adapted, 109 omitted and four accepted tasks.
-P0 (including Element/Global Style), P6 and full framework/viewer parity remain incomplete.** Existing MarkupUI features are a partial baseline,
+Element also closes native authoring composition: 15 rows, three adapted, twelve omitted
+and four accepted tasks. P0 (including Global Style), P6 and full framework/viewer parity
+remain incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -35,7 +37,7 @@ coverage, implementation status, and upstream feature parity separate.
 
 | Phase | Status | Goal | Prerequisite | Exit gate |
 | --- | --- | --- | --- | --- |
-| P0 — Architecture and contracts | 🟠 In progress; Config Provider retained composition Verified | Establish separated sources, compatible loading, lifecycle, events and native-control conventions. | None | [Scoped native configuration](../components/config-provider.md) passes; Element/Global Style and broader architectural gates remain independent. |
+| P0 — Architecture and contracts | 🟠 In progress; Config Provider/Element retained compositions Verified | Establish separated sources, compatible loading, lifecycle, events and native-control conventions. | None | [Scoped native configuration](../components/config-provider.md) and [native Element authoring](../components/element.md) pass; Global Style and broader architectural gates remain independent. |
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
 | P2 — Primitives and layout | 🟢 Verified retained scope | All 31 P2-assigned pages reconciled; native Image/fallback/dialog scope accepted with advanced P6 exclusions. | P1 pattern | Full 96-route and P2 reference audit found no retained unresolved P2 rows. This is not global P3/P6 or framework parity. |
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
@@ -192,11 +194,11 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Config Provider (P0), verified native composition without a new runtime.**
+**Current component: Element (P0), verified native authoring composition without a wrapper/runtime.**
 **P1/P2/P3/P4/P5 declared retained scopes are complete. P4-07 and P5-06 close against their full assigned-route audits.**
 **P5 is Verified for retained scopes:** all ten routes are resolved.
-Recommended next: **Element, then Global Style**, narrowly resolving their native authoring/
-style contracts before P6. No Element/Global Style implementation is included here.
+Recommended next: **Global Style**, resolving its explicitly opt-in document-wide style
+contract before P6. No Global Style implementation is included in this Element scope.
 Do not infer P0/P6 completion or full upstream/framework compatibility.
 
 The following component records form a historical execution sequence. Earlier “next” or
@@ -334,8 +336,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 3,937 rows and 324 accepted retained tasks out of 384 across 81 component
-pages (60 unchecked), not full upstream parity.
+The current index records 3,950 rows and 328 accepted retained tasks out of 384 across 82 component
+pages (56 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -1864,3 +1866,50 @@ All three P0 catalog routes contain **119 rows: eight adapted, 110 omitted, one 
 **four of twelve page tasks** are accepted. Global Style has no API table rows but still
 has four outstanding tasks. Broader architectural P0 gates are not automatically closed.
 **Next: Element, then Global Style, before P6**, with their own acceptance and commits.
+
+## Element acceptance — native tags, children and explicit tokens
+
+[Canonical Element evidence](../components/element.md) and
+[reference tracker](components/element.md) close this P0 catalog scope without a native
+tag factory, custom-element wrapper, provider or new runtime. Real HTML owns semantics,
+children, attributes and native actions/forms; author CSS consumes explicit supported
+tokens. The demo reuses Config Provider's unchanged application palette stylesheet instead
+of copying a second palette. Existing MuiElement is an abstract controller base, not a
+new wrapper/theme-vars equivalent.
+
+**Two original identities + ten explicit source supplements + three source-inherited
+theme props = 15 rows: three adapted, twelve omitted, zero unresolved; four tasks accepted.**
+Source automatic role none, generated class prefixes/theme mounting, renderer aliases,
+theme object props and common-theme interfaces/variable generation are omitted. There
+is no automatic upstream --primary-color/--n-* to --mui-* aliasing or theme parity.
+
+**51 tests passed** (12 Element, 12 Config Provider and 27 native/legacy). Declarations,
+build and all budgets pass; **all 1,142 existing distribution files byte-match**.
+Chromium verifies actual native heading/link/button/group semantics, fragment focus,
+Space/Enter activation, labelled/disabled native fields, validation focus and literal
+local FormData preview/reset. Authored children/listeners/values remain stable across
+scope changes/disconnect. Actual inside/outside/nested appearances, explicit light/
+removal, local/inline overrides, media/RTL, hidden/disclosure, 320px/2x zoom,
+forced colors/print, strict external-CSS CSP (including form-action none), no-JS native
+editing/Enter/reset/disclosure and separate legacy coexistence all pass.
+
+No source/runtime/registration/export/distributed CSS/JS/budget was added. The normal
+demo imports no library JS; its three new application files plus the unchanged reused
+configuration CSS cost **11,942 raw / 4,184 gzip bytes**. Core/advanced/widgets remain
+**14,611/2,181/2,779 gzip bytes** under **15,000/3,000/4,000**. No dependencies,
+storage, backend submission, clipboard or OS effects were added.
+
+Current catalog: **96 routes / 3,950 rows / 328 of 384 tasks across 82 accepted pages /
+56 unchecked**. Retained P5 remains **827 rows / 349 adapted / 478 omitted / 40 tasks**.
+**14 unaccepted routes = ten Planned + four explicit exclusions**:
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P0/configuration | Global Style — four outstanding tasks despite zero API rows | 0 / 0 |
+| P6 | Carousel, Watermark, Upload, Calendar, Countdown, Number Animation, Time, Heatmap, Marquee | 232 / 232 |
+| Explicit exclusions | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+P0's three catalog pages now have **132 rows: eleven adapted, 121 omitted, zero unresolved**,
+but only **eight of twelve page tasks** are accepted. Zero unresolved property rows does
+not close Global Style's four tasks or the broader architecture gates. **Next: Global
+Style**, separately before P6; this commit does not implement that document-wide policy.

@@ -53,14 +53,16 @@ Popselect now has [accepted native selection-disclosure evidence](../components/
 Split now has [accepted native pane/separator evidence](../components/split.md), with pointer/keyboard parity, explicit ratio/pixel bounds and safe native collapse/print behavior.
 Config Provider now has an [accepted native scoped composition resolution](../components/config-provider.md):
 external CSS/native lang/dir/explicit options, without a new provider runtime or bundle.
+Element now has an [accepted native authoring resolution](../components/element.md):
+real semantic tags/children and explicit token consumption, with no wrapper/runtime.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
 are reconciled. **P4 is Verified for retained native scopes:** all 17 assigned routes,
 984 tracker rows and 68 page tasks are resolved, with no Planned P4 routes or unresolved
 retained rows. **P5 is Verified for retained native scopes:** all ten assigned routes,
 827 rows and 40 page tasks are resolved: 349 adapted, 478 omitted, zero unresolved.
 P0/P6 and full framework parity remain independent.
-Recommended next: **Element, then Global Style**, resolving their native authoring/style
-contracts before specialized P6 work. Config Provider is resolved; P0 remains incomplete.
+Recommended next: **Global Style**, resolving its explicit document-wide style policy
+before specialized P6 work. Config Provider and Element are resolved; P0 remains incomplete.
 No next component was implemented in this Split/P5 sign-off commit.
 Component acceptance sections below retain their sign-off snapshots; earlier counts and
 “next”/“In progress” statements are historical, not the current phase dashboard.
@@ -118,7 +120,7 @@ Avatar's four retained-scope tasks are checked using `9afc818`, Button's four us
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
 Popover through Rate, the subsequent Form/Auto Complete/Input OTP/Dynamic Input/Dynamic
 Tags/Mention/Color Picker/Date Picker/Time Picker records, and now Virtual List each add
-four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split and Config Provider each add four more. The current total is **324/384 accepted across 81 pages, 60 unchecked**.
+four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider and Element each add four more. The current total is **328/384 accepted across 82 pages, 56 unchecked**.
 P2 retained scopes remain reconciled; the nineteen sequential P3 scopes plus three mixed P2/P3 pages pass the complete P3 audit. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
@@ -2158,6 +2160,44 @@ only Config Provider's four of twelve page tasks are accepted. Global Style has 
 inventoried API rows but four outstanding tasks. Broader architectural P0 work is not
 automatically complete. **Next: Element, then Global Style, before P6**, each separately.
 
+## Element accepted as native authoring composition
+
+[Canonical Element acceptance](../components/element.md) verifies actual native tags,
+real authored children/attributes/listeners, labelled controls, native link/button/form
+behavior and explicit inherited/local CSS custom properties. No tag factory, wrapper,
+provider, global reset, new runtime/export/asset budget or second palette is added.
+The existing MuiElement controller base is **not** represented as an NElement equivalent.
+
+**Two original identities + ten source supplements + three source-inherited theme props
+= 15 rows: three adapted native capabilities + twelve omissions, zero unresolved**.
+All four tasks are accepted. Source automatic role none, generated prefixes/theme classes,
+renderer aliases, inherited theme objects and common-theme variable/type graphs remain
+omitted. The source's unprefixed kebab-case variables are not silently promised as --mui-*
+or --n-* aliases.
+
+**51 tests passed** (12 Element, 12 Config Provider, 27 native/legacy), declarations/build
+and all budgets pass; **all 1,142 previous distribution files byte-match**. Chromium
+verified real heading/link/button/group semantics, fragment focus, native Space/Enter,
+validation focus, literal local FormData preview/disabled exclusions/reset, stable
+children/listeners, nested/outside/local tokens, system media/RTL, hidden/disclosure,
+320px/2x zoom, forced colors/print, strict CSP/no-JS and separate legacy coexistence.
+The full four-file application example is **4,184 gzip bytes**; normal use imports no
+library JS. Core/advanced/widgets remain **14,611/2,181/2,779 gzip bytes**.
+
+Current catalog: **3,950 rows / 328 of 384 tasks across 82 accepted pages / 56 unchecked**.
+All P0 catalog property rows now have dispositions: **132 rows / eleven adapted /
+121 omitted / zero unresolved**. This does **not** finish P0: only **eight of twelve**
+page tasks are accepted, and broader architectural gates remain independent.
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P0 (1) | Global Style — four outstanding tasks despite zero API rows | 0 / 0 |
+| P6 (9) | Carousel, Watermark, Upload, Calendar, Countdown, Number Animation, Time, Heatmap, Marquee | 232 / 232 |
+| Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Next: Global Style**, separately, before P6. No Global Style implementation is included
+in this Element scope; no all-browser/AT or complete framework/theme-variable parity is implied.
+
 ## Common Components (15)
 
 | Component | Plan direction | Current baseline | Phase |
@@ -2290,7 +2330,7 @@ automatically complete. **Next: Element, then Global Style, before P6**, each se
 | Component | Plan direction | Current baseline | Phase |
 | --- | --- | --- | --- |
 | [Config Provider](components/config-provider.md) | 🟢 Verified native composition; 109 explicit omissions | External CSS/native attributes/explicit owners; [accepted evidence](../components/config-provider.md), no new runtime | P0; exclusions |
-| [Element](components/element.md) | 🔵 Planned: native composition | Custom-element base | P0 |
+| [Element](components/element.md) | 🟢 Verified native composition; twelve explicit omissions | Authored semantic HTML/children/tokens; [accepted evidence](../components/element.md), no new wrapper/runtime | P0 |
 | [Global Style](components/global-style.md) | 🔵 Planned: external CSS | Injected core CSS | P0 |
 
 ## Deprecated Components (1)
@@ -2325,15 +2365,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,442: 367 inline fields, 182 type/helper/exclusion entries (including five Table public helper groups and Virtual List/Tree named ScrollTo types) and 893 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider source supplements |
-| Explicit inherited tracker rows | 275, including six source-inherited DialogReactive options, three ModalReactive fields and two NotificationReactive fields |
-| Total tracker rows | 3,937; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 324 retained-scope tasks accepted across 81 component pages, 60 unchecked |
+| Supplementary named declarations | 1,452: 367 inline fields, 182 type/helper/exclusion entries (including five Table public helper groups and Virtual List/Tree named ScrollTo types) and 903 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element source supplements |
+| Explicit inherited tracker rows | 278, including six source-inherited DialogReactive options, three ModalReactive fields, two NotificationReactive fields and three Element theme props |
+| Total tracker rows | 3,950; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 328 retained-scope tasks accepted across 82 component pages, 56 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,937 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate, 68 Form, 27 Auto Complete, 17 Input OTP, 28 Dynamic Input, 25 Dynamic Tags, 30 Mention, 10 Color Picker, 37 Date Picker, 16 Time Picker, 26 Virtual List, 60 Tree, 40 Cascader, 39 Tree Select, 28 Transfer, 76 Data Table, 19 Log, four Infinite Scroll, 38 Popselect, 19 Split and eight Config Provider native capabilities cite acceptance |
-| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 15 unchanged inventories match extraction; the 81 accepted pages preserve named/grouped identities with explicit dispositions; Config Provider's 95 original section/member/kind/API-line identities match its preceding inventory; retained P5 remains fully reconciled |
-| Local links | All 567 scoped Config Provider/reference/index/master relative file links resolve; earlier component/link snapshots remain historical evidence |
+| Status presentation | All 3,950 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate, 68 Form, 27 Auto Complete, 17 Input OTP, 28 Dynamic Input, 25 Dynamic Tags, 30 Mention, 10 Color Picker, 37 Date Picker, 16 Time Picker, 26 Virtual List, 60 Tree, 40 Cascader, 39 Tree Select, 28 Transfer, 76 Data Table, 19 Log, four Infinite Scroll, 38 Popselect, 19 Split, eight Config Provider and three Element native capabilities cite acceptance |
+| Source agreement | All 2,220 direct source rows and 278 inherited rows remain covered; 14 unchanged inventories match extraction; the 82 accepted pages preserve named/grouped identities with explicit dispositions; Element's two original owner/member/kind/API-line identities match its preceding inventory; retained P5 remains fully reconciled |
+| Local links | All 541 scoped Element/reference/index/master relative file links resolve; earlier component/link snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript
