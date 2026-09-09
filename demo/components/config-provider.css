@@ -1,0 +1,81 @@
+/* Application palette examples, not a second copy of the legacy built-in themes. */
+#config-example {
+  max-inline-size: 72rem;
+  margin-inline: auto;
+  padding: 1rem;
+  font: 1rem/1.5 system-ui, sans-serif;
+}
+#config-example [hidden] { display: none !important; }
+#config-example :is(input, select, button) { max-inline-size: 100%; font: inherit; }
+#config-example fieldset { display: flex; flex-wrap: wrap; gap: .75rem; margin-block: 1rem; }
+#config-example label { display: inline-flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+#config-example .example-columns { display: grid; gap: 1rem; }
+#config-example .example-frame {
+  min-inline-size: 0;
+  padding: 1rem;
+  margin-block: .75rem;
+  border-inline-start: .25rem solid var(--mui-color-primary, #235789);
+  background: var(--mui-bg-surface, Canvas);
+  color: var(--mui-text-primary, CanvasText);
+  overflow-wrap: anywhere;
+}
+#config-example [data-example-palette="light"],
+#config-example [data-example-palette="system"] {
+  color-scheme: light;
+  --mui-bg-surface: #fffaf2;
+  --mui-text-primary: #29241e;
+  --mui-border: #867563;
+  --mui-color-primary: #245c85;
+  --mui-button-contrast: #ffffff;
+}
+#config-example [data-example-palette="dark"] {
+  color-scheme: dark;
+  --mui-bg-surface: #172b35;
+  --mui-text-primary: #eef5f4;
+  --mui-border: #88aaa9;
+  --mui-color-primary: #91d8c2;
+  --mui-button-contrast: #172b35;
+}
+@media (prefers-color-scheme: dark) {
+  #config-example [data-example-palette="system"] {
+    color-scheme: dark;
+    --mui-bg-surface: #172b35;
+    --mui-text-primary: #eef5f4;
+    --mui-border: #88aaa9;
+    --mui-color-primary: #91d8c2;
+    --mui-button-contrast: #172b35;
+  }
+}
+#config-example [data-example-palette="native"] {
+  color-scheme: normal;
+  --mui-bg-surface: Canvas;
+  --mui-text-primary: CanvasText;
+  --mui-border: ButtonBorder;
+  --mui-color-primary: Highlight;
+  --mui-button-contrast: HighlightText;
+}
+#config-example .example-author-accent { --mui-color-primary: #663399; --mui-button-contrast: white; }
+/* Bridge only the consumers used here, on the consumer so nested tokens resolve locally. */
+#config-example .mui-loading-bar {
+  --mui-loading-bar-background: var(--mui-bg-surface);
+  --mui-loading-bar-text: var(--mui-text-primary);
+  --mui-loading-bar-track: var(--mui-border);
+  --mui-loading-bar-color: var(--mui-color-primary);
+  margin-block: 1rem;
+}
+#config-example dialog {
+  box-sizing: border-box;
+  max-inline-size: min(36rem, calc(100% - 2rem));
+  max-block-size: calc(100% - 2rem);
+  overflow: auto;
+  color: var(--mui-text-primary, CanvasText);
+  background: var(--mui-bg-surface, Canvas);
+  border: 2px solid var(--mui-border, ButtonBorder);
+}
+#config-example dialog::backdrop { background: rgb(0 0 0 / 45%); }
+@media (min-width: 56rem) {
+  #config-example .example-columns { grid-template-columns: 2fr 1fr; }
+}
+@media (forced-colors: active) {
+  #config-example .example-frame { border-color: CanvasText; }
+}

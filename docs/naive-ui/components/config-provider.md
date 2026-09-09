@@ -1,39 +1,54 @@
 # Config Provider
 
-**Plan: Planned for scoped native configuration; framework/theme-engine surfaces intentionally omitted. Current baseline: theme API.**
+**🟢 Verified retained native composition; no new ConfigProvider runtime or export.**
 
 ## Baseline and target
 
-[B1: theme API](../../../src/theme/index.ts) manages themes and writes CSS properties; [B2: foundation.ts](../../../src/components/foundation.ts) supplies `mui-theme`.
+[Canonical contract and acceptance](../../components/config-provider.md) resolves useful
+configuration through native ancestors, external CSS tokens/media queries, `lang`/`dir`
+and explicit existing helper options. [Legacy theme API](../../../src/theme/index.ts)
+remains unchanged; [Discrete](../../components/discrete.md) is the no-new-runtime precedent.
 
-- **HTML:** inherited `lang`/`dir`, root classes and optional explicit config root.
-- **JS:** small scoped locale/service configuration, not dependency injection or component-prop passthrough.
-- **CSS:** external themes/tokens and breakpoints; remove mandatory CSS-in-JS.
-- **Placement:** proposed `src/core/` configuration plus `src/styles/`; no new provider framework.
+- **HTML:** real ancestors and authored children, language hints, native direction and modal hosts.
+- **JS:** explicit per-helper options/lifetime; no config-root helper, injection or reactive bridge.
+- **CSS:** original application token subsets and explicit media queries, not duplicated legacy palettes.
+- **Placement:** separate [demo HTML](../../../demo/components/config-provider.html),
+  [CSS](../../../demo/components/config-provider.css), [JS](../../../demo/components/config-provider.js)
+  and [composition tests](../../../tests/config-provider.test.ts). No source/bundle/export/budget added.
 
 ## Acceptance and gaps
 
-Test nested roots, locale/direction changes, strict CSP and disposal. KaTeX, generated class prefixes, style-mount targets and upstream theme-object graphs are not required compatibility surfaces.
+86 targeted tests, unchanged declarations/build/budgets and Chromium scope/media/RTL/
+native-modal/no-JS/strict-CSP/legacy/independent-document evidence pass. All 1,142 previous
+distribution files byte-match. Native `lang` is not translation or OS picker localization;
+custom properties inherit only through actual DOM ancestry. Helper options do not become
+reactive. Provider objects, component defaults, renderer/style mounting and adapters are omitted.
 
 ## Upstream implementation evidence
 
-Targeted review of [configuration source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider) and RTL plumbing found framework-scoped configuration; the English API table does not expose a stable general RTL prop. Do not invent one from internal source. MarkupUI should inherit native `dir` and use logical CSS from the first retained implementation, while per-component keyboard/direction behavior remains subject to acceptance tests.
+Reviewed pinned English API, ConfigProvider.ts, interface.ts, internal-interface.ts,
+context.ts and config.ts. The English table has no general RTL prop; source-only `rtl`
+is an array of component/style descriptors, **not a boolean direction API**. The explicit
+supplement below records that distinction. Source-only `bordered`, `hljs`, `icons`, deprecated
+`as`, and the default slot are separately identified. No SSR/hydration control appears in
+the provider props; do not invent such a row. Native composition does not implement Vue
+refs, theme hashes/merges, dependency injection, CSS-render mounting or SSR machinery.
 
 ## Migration steps
 
-**Delivery phase:** P0 — scoped configuration; framework-provider APIs remain excluded. **Task state:** 🔵 Planned.
+**Delivery phase:** P0 — scoped native configuration only. **Task state:** 🟢 Verified.
 **Prerequisites:** zero-dependency/CSP constraints and ownership decisions in the [master plan](../migration-plan.md).
-**Next task:** separate inherited lang/dir/theme CSS from optional explicit service configuration.
+**Next task:** Element, then Global Style; P0 remains incomplete and P6 is independent.
 
-1. [ ] **Define native inheritance.** Use root lang/dir/classes and scoped CSS tokens rather than framework injection.
-2. [ ] **Reconcile current theme APIs.** Preserve compatibility while adding external named themes and clear strict-CSP boundaries.
-3. [ ] **Resolve provider-only fields.** Explicitly omit KaTeX, generated class/style-mount machinery and component-prop bags.
-4. [ ] **Test configuration scope.** Cover nested roots, locale/direction changes, multiple documents and disposal without an imported provider runtime.
+1. [x] **Define native inheritance.** Actual ancestors, external tokens, nested/independent roots and author overrides.
+2. [x] **Reconcile current theme APIs.** Preserve legacy inline calls; demonstrate external light/dark/system/native policies and strict-CSP boundaries.
+3. [x] **Resolve provider-only fields.** All original rows and explicit source/type supplements have named dispositions.
+4. [x] **Test configuration scope.** Verify lang/dir versus labels, nested/modal/document scope, no-JS/CSP and explicit owner teardown.
 
 ### Native primitives and fallback
 
-- **Native path:** inherited lang/dir, root classes and external CSS custom properties/media queries replace framework configuration injection. Explicit services receive ordinary root/document options.
-- **Small enhancement:** feature-detect retained Intl/CSS capabilities and use supplied locale labels/basic styles when unavailable. If a config custom element is justified, it owns only scoped listeners and disposes them; no Shadow DOM requirement, component-prop bag, template evaluator or provider polyfill is introduced.
+- **Native path:** inherited lang/dir and supported custom properties; media queries and explicit native hosts/options. No theme attribute on a nested scope means no local light reset.
+- **Small enhancement:** demo controls change only application attributes or explicitly recreate one existing Loading Bar owner with supplied labels. Without JS, authored controls/progress and external CSS remain usable. Native modal control is hidden when unsupported; ordinary inline content remains available. No config custom element or provider polyfill.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
@@ -45,33 +60,33 @@ Targeted review of [configuration source](https://github.com/tusen-ai/naive-ui/t
 - [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
 
 Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **14 local table rows + 81 supplementary declarations + 0 inherited rows = 95 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
+Documentation inventory: **14 local table rows + 103 supplementary declarations + 0 inherited rows = 117 tracker rows**.
+All **95 original owner/name/kind/source identities** remain; **22 source supplements**
+are explicit below. **Eight adapted capabilities + 109 omissions; zero unresolved rows**.
+🟢 Verified means the narrowly described native capability, not upstream prop/type compatibility.
+⏭️ Intentionally omitted means no implementation credit. Canonical evidence above governs.
 
-Referenced public component types (composition, not automatic API inheritance): [Button](button.md), [Card](card.md), [Dropdown](dropdown.md), [Tag](tag.md), [AutoComplete](auto-complete.md), [Cascader](cascader.md), [ColorPicker](color-picker.md), [Checkbox](checkbox.md), [DatePicker](date-picker.md), [DynamicTags](dynamic-tags.md), [Form](form.md), [Input](input.md), [InputNumber](input-number.md), [InputOtp](input-otp.md), [Mention](mention.md), [Radio](radio.md), [Rate](rate.md), [Select](select.md), [Switch](switch.md), [TimePicker](time-picker.md), [Transfer](transfer.md), [TreeSelect](tree-select.md), [DataTable](data-table.md), [Descriptions](descriptions.md), [Empty](empty.md), [Table](table.md), [Pagination](pagination.md), [Tabs](tabs.md), [Popselect](popselect.md), [Result](result.md), [Skeleton](skeleton.md), [Space](space.md). Opaque types without local member definitions remain unreviewed.
+Referenced public component types (composition, not automatic API inheritance): [Button](button.md), [Card](card.md), [Dropdown](dropdown.md), [Tag](tag.md), [AutoComplete](auto-complete.md), [Cascader](cascader.md), [ColorPicker](color-picker.md), [Checkbox](checkbox.md), [DatePicker](date-picker.md), [DynamicTags](dynamic-tags.md), [Form](form.md), [Input](input.md), [InputNumber](input-number.md), [InputOtp](input-otp.md), [Mention](mention.md), [Radio](radio.md), [Rate](rate.md), [Select](select.md), [Switch](switch.md), [TimePicker](time-picker.md), [Transfer](transfer.md), [TreeSelect](tree-select.md), [DataTable](data-table.md), [Descriptions](descriptions.md), [Empty](empty.md), [Table](table.md), [Pagination](pagination.md), [Tabs](tabs.md), [Popselect](popselect.md), [Result](result.md), [Skeleton](skeleton.md), [Space](space.md). Referenced framework locale/theme/prop/render types are omitted in this provider scope, not inferred native contracts.
 
 
 ### ConfigProvider Props
 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
-| [`abstract`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L26) | Prop | Candidate presence attribute `abstract`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`breakpoints`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L27) | Prop | Candidate JS `breakpoints` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`abstract`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L26) | Prop | ADAPTED: use an existing native ancestor without an added wrapper; no wrapperless injected context. | 🟢 Verified | Authored DOM identities/ancestry and no-JS composition accepted. |
+| [`breakpoints`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L27) | Prop | ADAPTED: explicit author media queries; no root breakpoint map or automatic Grid propagation. | 🟢 Verified | Demo one/two-column layouts at native widths and zoom. |
 | [`cls-prefix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L28) | Prop | External scoped CSS/tokens replace framework style-engine configuration. | ⏭️ Intentionally omitted | No implementation credit; retain documented alternative. |
 | [`component-options`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L29) | Prop | No framework component-prop bag for `component-options`; use scoped CSS or explicit component configuration. | ⏭️ Intentionally omitted | No implementation credit; retain documented alternative. |
-| [`date-locale`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L30) | Prop | Candidate explicit JS `dateLocale` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`date-locale`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L30) | Prop | No DateLocale dictionary/date-format engine injection; native controls or explicit application Intl formatting instead. | ⏭️ Intentionally omitted | Native lang does not guarantee OS picker language; no null/default date-locale semantics. |
 | [`inline-theme-disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L31) | Prop | External scoped CSS/tokens replace framework style-engine configuration. | ⏭️ Intentionally omitted | No implementation credit; retain documented alternative. |
 | [`katex`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L32) | Prop | No math-rendering runtime dependency. | ⏭️ Intentionally omitted | No implementation credit; retain documented alternative. |
-| [`locale`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L33) | Prop | Candidate explicit JS `locale` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`locale`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L33) | Prop | ADAPTED: native lang hint, authored text and explicit per-helper labels, not Locale objects or translation. | 🟢 Verified | Changing lang leaves helper snapshots unchanged; explicit French labels affect only one recreated owner. |
 | [`namespace`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L34) | Prop | External scoped CSS/tokens replace framework style-engine configuration. | ⏭️ Intentionally omitted | No implementation credit; retain documented alternative. |
-| [`preflight-style-disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L35) | Prop | External CSS class/custom property for `preflight-style-disabled`; no inline style-object passthrough. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
+| [`preflight-style-disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L35) | Prop | No provider preflight flag; scoped recipe adds no document reset. Global Style is separately opt-in and unresolved here. | ⏭️ Intentionally omitted | No global body/style mutation in this recipe. |
 | [`style-mount-target`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L36) | Prop | External scoped CSS/tokens replace framework style-engine configuration. | ⏭️ Intentionally omitted | No implementation credit; retain documented alternative. |
-| [`tag`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L37) | Prop | Candidate `tag` attribute or JS `tag`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`theme`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L38) | Prop | External scoped CSS/tokens replace framework style-engine configuration. | ⏭️ Intentionally omitted | No implementation credit; retain documented alternative. |
-| [`theme-overrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L39) | Prop | External scoped CSS/tokens replace framework style-engine configuration. | ⏭️ Intentionally omitted | No implementation credit; retain documented alternative. |
+| [`tag`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L37) | Prop | ADAPTED: author the actual semantic ancestor; no dynamic tag prop/renderer. | 🟢 Verified | Stable section/dialog/control nodes and listeners preserved. |
+| [`theme`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L38) | Prop | ADAPTED: scoped external token choices and optional color-scheme; no Theme object merge or null-reset API. | 🟢 Verified | Actual Card/Button/Loading Bar light/dark/system/native appearances and no local reset on unthemed nested scope. |
+| [`theme-overrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L39) | Prop | ADAPTED: authored CSS custom properties and real cascade precedence; no ThemeOverrides graph or null-clearing semantics. | 🟢 Verified | Nested/author class/inline/removal behavior and unchanged legacy theme.apply/register. |
 
 ### GlobalComponentConfig
 
@@ -245,7 +260,7 @@ Referenced public component types (composition, not automatic API inheritance): 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
 | [`description`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L89) | Configuration field | No framework component-prop bag for `description`; use scoped CSS or explicit component configuration. | ⏭️ Intentionally omitted | No implementation credit; retain documented alternative. |
-| [`renderIcon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L89) | Render hook | Candidate authored `renderIcon` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`renderIcon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L89) | Render hook | No injected Empty VNode icon callback; author supported native Empty icon/content nodes instead. | ⏭️ Intentionally omitted | Preserve this Pick-expanded identity; no provider render-hook propagation. |
 
 ### GlobalComponentConfig
 
@@ -503,5 +518,69 @@ Referenced public component types (composition, not automatic API inheritance): 
 | --- | --- | --- | --- | --- |
 | [`size?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L155) | Configuration field | No framework component-prop bag for `size?`; use scoped CSS or explicit component configuration. | ⏭️ Intentionally omitted | No implementation credit; retain documented alternative. |
 | [`renderEmpty?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/demos/enUS/index.demo-entry.md#L156) | Configuration field | No framework component-prop bag for `renderEmpty?`; use scoped CSS or explicit component configuration. | ⏭️ Intentionally omitted | No implementation credit; retain documented alternative. |
+
+## Explicit source supplements (22)
+
+These identities come from pinned implementation/type source, **not** extra English API
+table rows. Grouped type-boundary rows do not enumerate all transitive component styles,
+locale dictionaries or Vue internals as new native APIs. Original owner sections above
+remain untouched. There is no additional public SSR/hydration prop inferred from style flags.
+
+### ConfigProvider Props — source-only
+
+| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| --- | --- | --- | --- | --- |
+| [`bordered`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/ConfigProvider.ts#L26-L29) | Source prop | No injected boolean default; author supported component attributes or CSS individually. | ⏭️ Intentionally omitted | Not in the English API table; no global prop bag. |
+| [`rtl`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/ConfigProvider.ts#L34) | Source prop | ADAPTED: native dir and logical CSS, not an RtlProp array or component-style enablement graph. | 🟢 Verified | Chromium inherited RTL/nested/modal and independent LTR sibling; no blanket JS keyboard parity. |
+| [`hljs`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/ConfigProvider.ts#L39) | Source prop | No highlight.js provider adapter; authored code content uses existing Code contract. | ⏭️ Intentionally omitted | Zero runtime dependencies. |
+| [`icons`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/ConfigProvider.ts#L44) | Source prop | No injected GlobalIconConfig VNode factories; author supported native icon/content nodes. | ⏭️ Intentionally omitted | No renderer or asset dependency. |
+| [`as`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/ConfigProvider.ts#L52-L60) | Deprecated source prop | No deprecated dynamic-tag alias; use actual native HTML. | ⏭️ Intentionally omitted | Source deprecation kept explicit, not promoted to new API. |
+
+### ConfigProvider Slots — source-only
+
+| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| --- | --- | --- | --- | --- |
+| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/ConfigProvider.ts#L233-L242) | Source slot | ADAPTED: actual authored children under the chosen ancestor; no Vue slot callback/projection. | 🟢 Verified | Stable native child identity, listeners, value, modal parent and no-JS anatomy. |
+
+### GlobalTheme — source fields
+
+| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| --- | --- | --- | --- | --- |
+| [`name`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/interface.ts#L10) | Source type field | No GlobalTheme identity/hash contract; author classes or unchanged legacy theme names instead. | ⏭️ Intentionally omitted | CSS capability does not imply type compatibility. |
+| [`common?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/interface.ts#L11) | Source type field | No ThemeCommonVars graph; supported --mui-* CSS properties are a different contract. | ⏭️ Intentionally omitted | Only actual demo consumers verified. |
+
+### GlobalThemeOverrides — source fields
+
+| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| --- | --- | --- | --- | --- |
+| [`common?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/interface.ts#L15) | Source type field | No Partial common/custom-theme object merger; native cascade overrides instead. | ⏭️ Intentionally omitted | No null-clearing or deep-merge semantics. |
+| [`[key in keyof GlobalThemeWithoutCommon]?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/interface.ts#L17-L19) | Source mapped field | No per-component extracted theme/peer graph forwarding. | ⏭️ Intentionally omitted | Author only each component's documented CSS hooks. |
+
+### Source type and internal boundaries
+
+| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| --- | --- | --- | --- | --- |
+| [`CustomThemeCommonVars`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/interface.ts#L7) | Source extension interface | No framework theme declaration-merging extension; author CSS names instead. | ⏭️ Intentionally omitted | Not a ThemeTokens alias. |
+| [`ConfigProviderInjection`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/internal-interface.ts#L381-L400) | Internal source interface boundary | No computed refs, theme hash, injected options or nonreactive mounting/preflight controls. | ⏭️ Intentionally omitted | Explicit native hosts/options and external styles, no global app/SSR/hydration manager. |
+| [`RtlProp`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/internal-interface.ts#L373) | Source type alias | No RtlItem array acceptance; native dir is not this source type. | ⏭️ Intentionally omitted | Source-only rtl capability above is deliberately narrower. |
+| [`GlobalIconConfig`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/internal-interface.ts#L347-L366) | Source interface boundary | All 18 optional VNode icon callbacks omitted as a group; authored nodes instead. | ⏭️ Intentionally omitted | No injected icon factory bag or renderer. |
+| [`Breakpoints`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/internal-interface.ts#L379) | Source type alias | No Record mapping/type export; author media/container queries explicitly. | ⏭️ Intentionally omitted | Responsive native capability does not expose this object. |
+| [`ThemeCommonVars`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/interface.ts#L5) | Source re-export boundary | No transitive framework common-style interface; native supported CSS tokens instead. | ⏭️ Intentionally omitted | Do not infer full palette parity. |
+| [`GlobalThemeWithoutCommon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/internal-interface.ts#L136) | Source interface boundary | No transitive per-component theme registry/peer styling objects. | ⏭️ Intentionally omitted | Existing component CSS stays independently owned. |
+| [`ConfigProviderProps`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/ConfigProvider.ts#L63-L65) | Source type alias | No Vue ExtractPropTypes/Partial provider props export. | ⏭️ Intentionally omitted | No new config runtime/types entry. |
+
+### RtlItem — source fields
+
+| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| --- | --- | --- | --- | --- |
+| [`name`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/internal-interface.ts#L369) | Source type field | No component-key RTL registration; use native dir where appropriate. | ⏭️ Intentionally omitted | Direction behavior remains component-specific. |
+| [`style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/internal-interface.ts#L370) | Source type field | No CSS-render CNode injection; external logical-property CSS instead. | ⏭️ Intentionally omitted | No runtime style mounting. |
+| [`peers?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/internal-interface.ts#L371) | Source type field | No recursive peer component-style graph. | ⏭️ Intentionally omitted | Native inheritance is DOM-based, not a component graph. |
+
+### config.ts — source constant
+
+| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| --- | --- | --- | --- | --- |
+| [`defaultBreakpoints`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/config.ts#L1-L8) | Source constant | No xs/s/m/l/xl/xxl map export; choose application layout breakpoints explicitly. | ⏭️ Intentionally omitted | Demo uses its own 56rem media query, not upstream numerical parity. |
 
 <!-- END PINNED API INVENTORY -->

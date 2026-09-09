@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native configuration composition</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-card.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-loading-bar.css">
+  <link rel="stylesheet" href="config-provider.css">
+  <script type="module" src="config-provider.js"></script>
+</head>
+<body>
+  <main id="config-example">
+    <h1>Configuration without a provider</h1>
+    <p>These are application-authored token sets, not a new MarkupUI theme API.
+      CSS and lang/dir follow actual DOM ancestry; helper labels are explicit options.</p>
+    <fieldset data-enhanced hidden>
+      <legend>Change this example only</legend>
+      <label>Outer palette <select data-palette-control>
+        <option value="dark" selected>Dark</option><option value="light">Light</option>
+        <option value="system">System preference</option><option value="native">Native system colors</option>
+      </select></label>
+      <label>Nested palette <select data-nested-control>
+        <option value="inherit">Inherit (no attribute)</option><option value="light">Light</option>
+        <option value="dark">Dark</option><option value="system">System preference</option>
+        <option value="native">Native system colors</option>
+      </select></label>
+      <label>Outer language hint <select data-language-control>
+        <option value="en">English</option><option value="fr">French</option><option value="ar">Arabic</option>
+      </select></label>
+      <label>Outer direction <select data-direction-control><option value="ltr">LTR</option><option value="rtl">RTL</option></select></label>
+      <button type="button" data-french-labels>Recreate outer helper with French labels</button>
+      <button type="button" data-dispose>Disconnect demo behavior</button>
+    </fieldset>
+    <p data-example-status role="status">Without JavaScript, cards, buttons, fields and authored progress remain usable.</p>
+    <div class="example-columns">
+      <section id="config-scope" class="example-frame" data-example-palette="dark" lang="en" dir="ltr">
+        <h2 lang="en">Outer scope</h2>
+        <mui-card data-mui-card id="outer-card">
+          <div data-mui-card-content>
+            <p lang="en">Card uses shared surface, text and border tokens.</p>
+            <mui-button data-mui-button type="primary" lang="en"><button type="button" data-mui-button-control>Native button</button></mui-button>
+            <label lang="en">Native date <input type="date" value="2026-09-09"></label>
+          </div>
+        </mui-card>
+        <div class="mui-loading-bar" data-loading-bar data-outer-loading>
+          <progress max="100" value="25" aria-label="Outer local work" lang="en">25%</progress>
+          <span data-loading-bar-status lang="en">Authored outer progress: 25 of 100.</span>
+        </div>
+        <section id="config-nested" class="example-frame">
+          <h3 lang="en">Nested scope: inherits unless explicitly chosen</h3>
+          <mui-card data-mui-card id="nested-card"><div data-mui-card-content>
+            <p lang="en">No theme attribute means no light reset.</p>
+            <mui-button data-mui-button type="primary" lang="en"><button type="button" data-mui-button-control>Inherited accent</button></mui-button>
+            <mui-button data-mui-button type="primary" class="example-author-accent" lang="en"><button type="button" data-mui-button-control>Author override</button></mui-button>
+          </div></mui-card>
+        </section>
+        <button type="button" data-open-modal hidden lang="en">Open native modal inside this scope</button>
+        <dialog id="config-modal" aria-labelledby="config-modal-title">
+          <h2 id="config-modal-title" lang="en" tabindex="-1" autofocus>Native top layer, same DOM ancestry</h2>
+          <p lang="en">This progress host is inside the dialog. The sibling page host is outside it and cannot be raised above it with z-index.</p>
+          <div class="mui-loading-bar" data-loading-bar data-modal-loading>
+            <progress max="100" value="40" aria-label="Modal local work" lang="en">40%</progress>
+            <span data-loading-bar-status lang="en">Authored modal progress: 40 of 100.</span>
+          </div>
+          <form method="dialog"><button value="closed" lang="en">Close native modal</button></form>
+        </dialog>
+      </section>
+      <section id="config-sibling" class="example-frame" data-example-palette="light" lang="en" dir="ltr">
+        <h2>Independent light sibling</h2>
+        <mui-card data-mui-card id="sibling-card"><div data-mui-card-content>
+          <p>No inherited settings from the adjacent dark scope.</p>
+          <mui-button data-mui-button type="primary"><button type="button" data-mui-button-control>Sibling accent</button></mui-button>
+        </div></mui-card>
+        <div class="mui-loading-bar" data-loading-bar data-sibling-loading>
+          <progress max="100" value="60" aria-label="Sibling local work">60%</progress>
+          <span data-loading-bar-status lang="en">Authored sibling progress: 60 of 100.</span>
+        </div>
+        <p>Changing lang does not translate these words or guarantee an OS date-picker language.
+          Only the explicit French-label action changes the outer helper's labels.</p>
+      </section>
+    </div>
+    <p>Disconnect releases only this demo's listeners and three progress owners, closes its
+      open dialog, and leaves application-authored palette/lang/dir choices intact.
+      It does not clear body styles, inline overrides, other roots or storage.</p>
+  </main>
+</body>
+</html>
