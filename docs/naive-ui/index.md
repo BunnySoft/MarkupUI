@@ -50,13 +50,16 @@ Data Table now has [accepted native stable-row/table evidence](../components/dat
 Log now has [accepted bounded native retained-text evidence](../components/log.md), with literal append/retention, stable line nodes, selection protection and conditional follow.
 Infinite Scroll now has [accepted native sentinel/request-permission evidence](../components/infinite-scroll.md), with bounded automatic loading, guarded commits and serialized cancellation.
 Popselect now has [accepted native selection-disclosure evidence](../components/popselect.md), composing Popover/Select without a second value or option-rendering model.
+Split now has [accepted native pane/separator evidence](../components/split.md), with pointer/keyboard parity, explicit ratio/pixel bounds and safe native collapse/print behavior.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
 are reconciled. **P4 is Verified for retained native scopes:** all 17 assigned routes,
 984 tracker rows and 68 page tasks are resolved, with no Planned P4 routes or unresolved
-retained rows. **P5 is active, not complete:** Virtual List, Tree, Cascader, Tree Select
-and Transfer/Data Table/Log/Infinite Scroll/Popselect retained scopes are accepted; only Split remains in P5. P0/P6 and full framework parity remain independent.
-Recommended next: **Split**.
-No Split implementation was started in this Popselect commit.
+retained rows. **P5 is Verified for retained native scopes:** all ten assigned routes,
+827 rows and 40 page tasks are resolved: 349 adapted, 478 omitted, zero unresolved.
+P0/P6 and full framework parity remain independent.
+Recommended next: **Config Provider, Element and Global Style**, narrowly resolving native
+CSS theme/context and element/style contracts before specialized P6 work.
+No next component was implemented in this Split/P5 sign-off commit.
 Component acceptance sections below retain their sign-off snapshots; earlier counts and
 “next”/“In progress” statements are historical, not the current phase dashboard.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
@@ -113,7 +116,7 @@ Avatar's four retained-scope tasks are checked using `9afc818`, Button's four us
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
 Popover through Rate, the subsequent Form/Auto Complete/Input OTP/Dynamic Input/Dynamic
 Tags/Mention/Color Picker/Date Picker/Time Picker records, and now Virtual List each add
-four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll and Popselect each add four more. The current total is **316/384 accepted across 79 pages, 68 unchecked**.
+four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect and Split each add four more. The current total is **320/384 accepted across 80 pages, 64 unchecked**.
 P2 retained scopes remain reconciled; the nineteen sequential P3 scopes plus three mixed P2/P3 pages pass the complete P3 audit. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
@@ -2069,6 +2072,53 @@ Current catalog: **3,905 rows / 316 of 384 tasks across 79 accepted pages / 68 u
 
 **Next: Split.** P5 is not complete until that independent native layout/resize scope is resolved.
 
+## Split accepted; all retained P5 scopes reconciled
+
+[Canonical Split acceptance](../components/split.md) preserves two native pane subtrees,
+with an owned named separator, physical keyboard/RTL semantics, pointer capture and final
+pointerup processing. Ratio/pixel preferences are distinct from effective layout; infeasible
+bounds expose readable stacked panes. Hidden/inert collapsed fields retain native FormData/
+validation, with explicit reveal. No body interaction hack, renderer or drag framework.
+
+**19 original identities + ten explicit source supplements = 29 rows: 19 adapted +
+ten omitted**, with four accepted tasks. Split/native-layout coverage is **98 tests**;
+the full retained P5 gate passed **526 tests across 13 files** (476 P5 + 50 layout/native).
+Declarations/build/budgets and real Chromium drag/keys/cancel/RTL/zoom/scale/forms/print/
+fallback/coexistence passed. All **199 prior JS/CSS assets byte-match**.
+
+The final audit checked **every row** of all ten P5-assigned inventories:
+
+| P5 route | Rows | Adapted | Omitted | Unresolved | Accepted tasks |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Virtual List | 41 | 26 | 15 | 0 | 4 |
+| Tree | 147 | 60 | 87 | 0 | 4 |
+| Cascader | 95 | 40 | 55 | 0 | 4 |
+| Tree Select | 120 | 39 | 81 | 0 | 4 |
+| Transfer | 52 | 28 | 24 | 0 | 4 |
+| Data Table | 211 | 76 | 135 | 0 | 4 |
+| Log | 46 | 19 | 27 | 0 | 4 |
+| Infinite Scroll | 7 | 4 | 3 | 0 | 4 |
+| Popselect | 79 | 38 | 41 | 0 | 4 |
+| Split | 29 | 19 | 10 | 0 | 4 |
+| **P5 total** | **827** | **349** | **478** | **0** | **40** |
+
+**P5 is Verified for the declared retained scope**, not upstream/framework parity.
+All **79 P5 canonical/reference relative file links** resolve. Prior component evidence
+and its narrower exclusions remain authoritative; no omitted feature becomes implemented.
+
+Current catalog: **3,915 rows / 320 of 384 tasks across 80 accepted pages / 64 unchecked**.
+P4 remains unchanged at 17 routes/984 rows/68 tasks with no unresolved retained rows.
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P0 (3) | Config Provider, Element, Global Style | 97 / 8 |
+| P6 (9) | Carousel, Watermark, Upload, Calendar, Countdown, Number Animation, Time, Heatmap, Marquee | 232 / 232 |
+| Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Recommended next:** resolve Config Provider, Element and Global Style as narrow native
+CSS/context/element contracts before P6, not as a new provider or global-reset framework.
+No next component is started here.
+
 ## Common Components (15)
 
 | Component | Plan direction | Current baseline | Phase |
@@ -2185,7 +2235,7 @@ Current catalog: **3,905 rows / 316 of 384 tasks across 79 accepted pages / 68 u
 | [Legacy Grid](components/legacy-grid.md) | ⏭️ Intentionally omitted: legacy API | Related modern grid | Exclusions |
 | [Grid](components/grid.md) | 🟢 Verified retained CSS scope; 11 explicit omissions | Native Grid/GridItem CSS; [accepted evidence](../components/grid.md), packing algorithms omitted | P2 |
 | [Space](components/space.md) | 🟢 Verified CSS-only native scope; 5 explicit omissions | Authored item/group CSS; [accepted evidence](../components/space.md), no wrapper/gap runtime | P2 |
-| [Split](components/split.md) | 🔵 Planned | None | P5 |
+| [Split](components/split.md) | 🟢 Verified native two-pane/separator scope; ten explicit omissions | Native grid, ratio/px bounds, pointer+keyboard and safe collapse; [accepted evidence](../components/split.md) | P5 |
 
 ## Utility Components (4)
 
@@ -2236,15 +2286,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,410: 367 inline fields, 182 type/helper/exclusion entries (including five Table public helper groups and Virtual List/Tree named ScrollTo types) and 861 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect source supplements |
+| Supplementary named declarations | 1,420: 367 inline fields, 182 type/helper/exclusion entries (including five Table public helper groups and Virtual List/Tree named ScrollTo types) and 871 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split source supplements |
 | Explicit inherited tracker rows | 275, including six source-inherited DialogReactive options, three ModalReactive fields and two NotificationReactive fields |
-| Total tracker rows | 3,905; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 316 retained-scope tasks accepted across 79 component pages, 68 unchecked |
+| Total tracker rows | 3,915; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 320 retained-scope tasks accepted across 80 component pages, 64 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,905 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate, 68 Form, 27 Auto Complete, 17 Input OTP, 28 Dynamic Input, 25 Dynamic Tags, 30 Mention, 10 Color Picker, 37 Date Picker, 16 Time Picker, 26 Virtual List, 60 Tree, 40 Cascader, 39 Tree Select, 28 Transfer, 76 Data Table, 19 Log, four Infinite Scroll and 38 Popselect native capabilities cite acceptance |
-| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 17 unchanged inventories match extraction; the 79 accepted pages preserve named/grouped identities with explicit dispositions; Popselect's 56 original local/inherited section/member/kind/API-line identities match the preceding inventory in order; P4 remains fully reconciled |
-| Local links | All 521 scoped Popselect/reference/index/master relative links resolve; prior per-component/link snapshots remain historical evidence |
+| Status presentation | All 3,915 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate, 68 Form, 27 Auto Complete, 17 Input OTP, 28 Dynamic Input, 25 Dynamic Tags, 30 Mention, 10 Color Picker, 37 Date Picker, 16 Time Picker, 26 Virtual List, 60 Tree, 40 Cascader, 39 Tree Select, 28 Transfer, 76 Data Table, 19 Log, four Infinite Scroll, 38 Popselect and 19 Split native capabilities cite acceptance |
+| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 16 unchanged inventories match extraction; the 80 accepted pages preserve named/grouped identities with explicit dispositions; Split's 19 original section/member/kind/API-line identities match its preceding inventory; every P5 row now has a resolved disposition |
+| Local links | All 79 P5 canonical/reference file links and all 519 scoped Split/reference/index/master file links resolve; earlier link snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

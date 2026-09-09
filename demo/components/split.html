@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Native Split · MarkupUI</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-split.css">
+  <link rel="stylesheet" href="./split.css">
+  <script type="module" src="./split.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Split: two native panes, one owned separator</h1>
+    <p id="resize-help">Drag the handle, or focus it and use physical Arrow keys.
+      Shift uses a 100px coarse step; normal arrows use 10px. Home/End choose first-pane
+      min/max. Escape cancels an active drag. Horizontal means side-by-side panes with a
+      vertical separator; vertical means top/bottom panes with a horizontal separator.</p>
+    <div class="controls" data-enhancement hidden>
+      <label>Arrangement <select data-direction><option value="horizontal">Side by side</option><option value="vertical">Top and bottom</option></select></label>
+      <label><input type="checkbox" data-rtl>RTL (first pane on the right when side by side)</label>
+      <label><input type="checkbox" data-disabled>Disable resizing, not fields</label>
+      <label>CSS zoom <select data-zoom><option value="1">100%</option><option value="2">200%</option></select></label>
+      <button type="button" data-action="quarter">25% preference</button>
+      <button type="button" data-action="pixels">240px preference</button>
+      <button type="button" data-action="reset">Reset layout size</button>
+      <button type="button" data-action="default">Set future reset to 180px</button>
+      <button type="button" data-action="collapse-first">Collapse first</button>
+      <button type="button" data-action="collapse-second">Collapse second</button>
+      <button type="button" data-action="reveal">Reveal both</button>
+      <button type="button" data-action="infeasible">Too-small mixed bounds</button>
+      <button type="button" data-action="normal">Restore feasible bounds</button>
+      <button type="button" data-action="invalid">Create a hidden required error</button>
+      <button type="button" data-action="quiet">Quiet validity only</button>
+      <button type="button" data-action="disconnect">Disconnect to static layout</button>
+    </div>
+    <form id="split-form" novalidate>
+      <div class="geometry-stage" id="stage">
+        <section class="mui-split" data-split id="editor-split">
+          <section data-split-pane="1" id="editor-pane" aria-labelledby="editor-title">
+            <div class="pane-content">
+              <h2 id="editor-title">Primary editor</h2>
+              <p>Original native controls and this selectable text remain the same nodes.</p>
+              <label>Required title <input id="title-field" name="title" value="Retained title" required></label>
+              <label>Native mode <select name="mode"><option>Draft</option><option>Published</option></select></label>
+              <label>Native notes <textarea name="notes" rows="3">Keep current edits while resizing.</textarea></label>
+              <a href="#after-splits">Go to the outside footer</a>
+            </div>
+          </section>
+          <div data-split-handle hidden aria-label="Resize primary editor" aria-describedby="resize-help"></div>
+          <section data-split-pane="2" id="preview-pane" aria-labelledby="preview-title">
+            <div class="pane-content">
+              <h2 id="preview-title">Preview and nested Split</h2>
+              <section class="mui-split" data-split data-split-direction="vertical" id="detail-split">
+                <section data-split-pane="1" id="summary-pane" aria-label="Nested summary"><div class="pane-content"><p>Nested top pane. Its separator has an independent owner.</p><button type="button" data-note-action data-enhancement hidden>Update native title</button></div></section>
+                <div data-split-handle hidden aria-label="Resize nested summary" aria-describedby="resize-help"></div>
+                <section data-split-pane="2" id="details-pane" aria-label="Nested details"><div class="pane-content"><label>Native detail <input name="detail" value="Still a real field"></label><p>Hidden/inert collapsed fields still submit and validate.</p><template><span>Native inert template</span></template></div></section>
+              </section>
+            </div>
+          </section>
+        </section>
+      </div>
+      <p><button type="submit" data-enhancement hidden disabled>Reveal first invalid pane, validate and inspect FormData</button>
+        <button type="reset">Native field reset (not layout)</button></p>
+    </form>
+    <pre id="feedback" aria-label="Split state and local interaction">Without JavaScript both native panes remain visible in static layout. No fake resizable handle is exposed.</pre>
+    <footer id="after-splits">
+      <label>Outside focus target <input id="outside-field" value="Resizing must not steal this focus"></label>
+      <p>Only the handle gets pointer capture, touch-action and user-select rules. No body
+        cursor/selection override, renderer, drag dependency or layout store is installed.</p>
+    </footer>
+    <noscript><p>Static panes, fields, links, text selection and native field reset remain
+      usable. Pointer/keyboard resizing and the application submit gate require JavaScript.</p></noscript>
+  </main>
+</body>
+</html>

@@ -60,6 +60,8 @@ components.push("infinite-scroll")
 classicEntries["infinite-scroll"] = "global.ts"
 components.push("popselect")
 classicEntries.popselect = "global.ts"
+components.push("split")
+classicEntries.split = "global.ts"
 
 await Promise.all([
   build({
@@ -142,6 +144,9 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-split.js": 8_000,
+  "markup-ui-split.global.js": 8_000,
+  "markup-ui-split.css": 1_500,
   "markup-ui-popselect.js": 10_000,
   "markup-ui-popselect.global.js": 10_000,
   "markup-ui-popselect.css": 2_500,

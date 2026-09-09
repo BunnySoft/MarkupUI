@@ -1,13 +1,13 @@
 # MarkupUI migration plan
 
-**Plan state: 🟠 In progress overall — P1 pilots, P2, P3 and P4 are Verified for declared retained
+**Plan state: 🟠 In progress overall — P1 pilots, P2, P3, P4 and P5 are Verified for declared retained
 native scopes and explicit omissions. All 31 P2-assigned pages and all 22 P3-assigned pages
 have closed property dispositions and four accepted tasks. P3 includes Discrete API's
 verified no-new-runtime composition resolution. P4 retained native scopes are now reconciled
 across all 17 assigned routes, including Time Picker: 984 rows and 68/68 page tasks, with no
-unresolved retained rows or Planned P4 routes. P5 is now active with Virtual List's fixed-height
-window, Tree/Cascader/Tree Select hierarchy scopes, Transfer membership, Data Table local operations, Log retained text, Infinite Scroll loading permission and Popselect selection disclosure accepted; Split remains in P5. P0/P5/P6 and full framework/viewer
-parity remain independent and incomplete.** Existing MarkupUI features are a partial baseline,
+unresolved retained rows or Planned P4 routes. P5's final Split acceptance and all-route audit
+close all ten assigned retained scopes: 827 rows, 349 adapted, 478 omitted, zero unresolved
+and 40/40 component tasks. P0, P6 and full framework/viewer parity remain independent and incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -38,7 +38,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P2 — Primitives and layout | 🟢 Verified retained scope | All 31 P2-assigned pages reconciled; native Image/fallback/dialog scope accepted with advanced P6 exclusions. | P1 pattern | Full 96-route and P2 reference audit found no retained unresolved P2 rows. This is not global P3/P6 or framework parity. |
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
 | P4 — Forms and selection | 🟢 Verified retained scope | All 17 P4-assigned routes, 984 tracker rows and 68 page tasks reconciled. | Relevant native P0/P3 contracts | 478 adapted + 506 omitted, no unresolved rows; 889 P4 tests plus native browser evidence. No P0/P5/P6 or full framework parity implied. |
-| P5 — Collections and scale | 🟠 In progress | Nine retained scopes accepted, including composed native Popselect; Split remains. | P3 focus; P4 selection | Native collection/load/selection contracts verified; no phase-wide parity yet. |
+| P5 — Collections and scale | 🟢 Verified retained scope | All ten P5-assigned routes, 827 rows and 40 page tasks reconciled. | P3 focus; P4 selection | 349 native adaptations + 478 omissions, zero unresolved; 526-test/native browser/asset audit. No full framework or P0/P6 parity implied. |
 | P6 — Specialized modules | 🔵 Planned | Deliver independently justified, opt-in advanced features. | Component-specific earlier work | Explicit imports, independent size budgets and no runtime dependencies. |
 
 The [component index](index.md) is the exhaustive catalog-to-phase assignment. The phase
@@ -120,12 +120,12 @@ smuggling an overlay implementation into the CSS-only native composition.
 
 | Task | Status | Action | Deliverable |
 | --- | --- | --- | --- |
-| P5-01 — Identity and async contracts | 🟠 In progress | Virtual List, Tree, Data Table and Log establish native key/focus/data lifetimes; remaining request/observer consumers stay separate. | [Native window](../components/virtual-list.md), [hierarchy ownership](../components/tree.md) and [bounded Log text](../components/log.md); no mandatory global store. |
+| P5-01 — Identity and async contracts | 🟢 Verified retained consumer scopes | All assigned consumers now have explicit native identity/focus/cancellation/ownership boundaries; no shared application model was introduced. | Final ten-route row audit plus native window/hierarchy/table/log/sentinel/selection/separator evidence below. |
 | P5-02 — Tree family | 🟢 Verified retained native scopes | Tree, Cascader and Tree Select complete their declared native scopes; source popup/check-renderer parity is explicitly excluded. | [Tree](../components/tree.md), [Cascader](../components/cascader.md), [Tree Select](../components/tree-select.md): actual-node/native-control ownership, defaults and lifetime evidence. |
 | P5-03 — Transfer | 🟢 Verified retained native scope | Native staging versus target membership, locked/matched bulk moves, captured defaults and explicit FormData ownership. | [Transfer evidence](../components/transfer.md): stable native options, no hidden proxy, preserved current membership/handoff. |
 | P5-04 — Table family | 🟢 Verified retained native scope | Semantic Table stays CSS-only; optional Data Table owns explicit local sort/filter/page/selection scopes on original rows. | [Data Table evidence](../components/data-table.md): 2,000-row bound, native fields and whole-form reveal policy; virtualization/remote/renderers/body spans omitted. |
 | P5-05 — Virtual windows | 🟢 Verified retained fixed-height scope | Explicit native Virtual List with safe row factories, required updater and native scroll/resize. Variable heights and horizontal/grid modes intentionally omitted. | [100k DOM/geometry/focus evidence](../components/virtual-list.md); one focused pin, independent budgets, legacy plugin unchanged. |
-| P5-06 — Collection sign-off | 🔵 Planned | Resolve row/node replacement, reordering, asynchronous results and large-data behavior. | Retained features proven without forcing virtualization into small datasets. |
+| P5-06 — Collection sign-off | 🟢 Verified retained scope | All ten P5 inventories are resolved: 827 rows, 40 tasks, zero unresolved. | Full P5 test gate and per-component native browser evidence; omitted rich/virtual/renderer surfaces remain omitted. |
 
 ### P6 — Specialized modules
 
@@ -190,11 +190,12 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Popselect (P5), verified native selection-disclosure/form-reveal scope.**
-**P1/P2/P3/P4 declared retained scopes are complete. P4-07 closes after the full 17-route audit.**
-**P5 is active, not complete.** Recommended next: **Split**, the final remaining P5 route.
-No Split implementation was started in this Popselect commit.
-Do not infer P0, full P5/P6 or framework compatibility.
+**Current component: Split (P5), verified native pane/separator scope; retained P5 audit complete.**
+**P1/P2/P3/P4/P5 declared retained scopes are complete. P4-07 and P5-06 close against their full assigned-route audits.**
+**P5 is Verified for retained scopes:** all ten routes are resolved.
+Recommended next: **Config Provider, Element and Global Style**, narrowly resolving native
+theme/context and element/style contracts before P6. No next component was implemented here.
+Do not infer P0/P6 completion or full upstream/framework compatibility.
 
 The following component records form a historical execution sequence. Earlier “next” or
 phase-incomplete checkpoint statements are superseded by the current dashboard and latest
@@ -331,8 +332,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 3,905 rows and 316 accepted retained tasks out of 384 across 79 component
-pages (68 unchecked), not full upstream parity.
+The current index records 3,915 rows and 320 accepted retained tasks out of 384 across 80 component
+pages (64 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -1752,3 +1753,63 @@ remain (35/zero unresolved). **17 unaccepted routes = 13 Planned + four explicit
 
 **Next: Split.** Resolve its own native layout/resize/keyboard/focus contract and acceptance;
 no Split implementation is included in this separate Popselect completion.
+
+## Split accepted — retained P5 phase audit closed
+
+[Canonical Split acceptance](../components/split.md) and [reference tracker](components/split.md)
+complete the final Planned P5 route. Two original named pane regions and an owned separator
+use native grid, explicit ratio/decimal-pixel current/default/bounds, correct physical
+keyboard/RTL orientation, scoped pointer capture and final pointerup processing.
+Collapsed fields are hidden/inert rather than disabled; explicit reveal gates native
+validation. Infeasible layouts stack readable content, and print suspends/resumes rather
+than invalidating an otherwise healthy grid.
+
+**19 original identities + ten source-only supplements = 29 rows: 19 adapted + ten omitted;
+four accepted tasks.** Split/layout coverage includes 98 tests. The complete retained
+P5 gate passed **526 tests across 13 files**: 476 tests for all ten P5 components plus
+50 Grid/Layout/native tests. Build/declarations/budgets and actual Chromium pointer/keys/
+capture/cancellation/RTL/zoom/scale/hidden/forms/print/fallback/coexistence were accepted.
+
+Split ESM/classic/CSS: **6,169/6,311/773 gzip bytes** under new **8,000/8,000/1,500** limits.
+All **199 prior JS/CSS assets byte-match**. Core/advanced/widgets remain
+**14,611/2,181/2,779** under **15,000/3,000/4,000** ceilings. No prior component/helper
+source, budget or dependency changed.
+
+### All P5-assigned rows and tasks
+
+The audit read each of the ten canonical/reference pairs and counted every inventoried
+row by resolved disposition, rather than promoting the phase from a single working demo.
+All 79 P5 canonical/reference relative file links resolve.
+
+| Route | Rows | Adapted | Omitted | Unresolved | Accepted tasks |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Virtual List | 41 | 26 | 15 | 0 | 4 |
+| Tree | 147 | 60 | 87 | 0 | 4 |
+| Cascader | 95 | 40 | 55 | 0 | 4 |
+| Tree Select | 120 | 39 | 81 | 0 | 4 |
+| Transfer | 52 | 28 | 24 | 0 | 4 |
+| Data Table | 211 | 76 | 135 | 0 | 4 |
+| Log | 46 | 19 | 27 | 0 | 4 |
+| Infinite Scroll | 7 | 4 | 3 | 0 | 4 |
+| Popselect | 79 | 38 | 41 | 0 | 4 |
+| Split | 29 | 19 | 10 | 0 | 4 |
+| **Total** | **827** | **349** | **478** | **0** | **40** |
+
+**P5 is 🟢 Verified for its retained native scopes and explicit omissions.** There are no
+Planned P5 routes or unresolved P5 rows. This does not implement the omitted framework,
+renderer, terminal, arbitrary geometry, remote or rich virtual-grid APIs.
+
+Current catalog: **96 routes / 3,915 rows / 320 of 384 tasks across 80 accepted pages /
+64 unchecked**. P4 remains 17 routes/984 rows/68 tasks with no unresolved retained rows.
+**16 unaccepted routes = 12 Planned + four explicit exclusions**:
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P0/configuration | Config Provider, Element, Global Style | 97 / 8 |
+| P6 | Carousel, Watermark, Upload, Calendar, Countdown, Number Animation, Time, Heatmap, Marquee | 232 / 232 |
+| Explicit exclusions | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Recommended next:** resolve Config Provider, Element and Global Style before P6 where
+shared native CSS custom-property/theme context and element/style lifetime will reduce
+repetition. Keep this narrow and native: no new provider framework, global reset or
+automatic application layout model. No next component is implemented in this commit.

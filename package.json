@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./split": {
+      "types": "./dist/components/split/index.d.ts",
+      "import": "./dist/markup-ui-split.js"
+    },
+    "./split/style.css": "./dist/markup-ui-split.css",
     "./popselect": {
       "types": "./dist/components/popselect/index.d.ts",
       "import": "./dist/markup-ui-popselect.js"
