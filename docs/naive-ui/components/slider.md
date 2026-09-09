@@ -1,84 +1,87 @@
 # Slider
 
-**Plan: Planned. Current baseline: partial native range input; not parity-verified.**
+**🟢 Verified retained native scalar/two-track-pair scope, with explicit omissions.**
 
-## Baseline and target
-
-[B1: forms.ts](../../../src/components/forms.ts) creates range input with min/max/step/value and numeric input/change events.
-
-- **HTML:** labelled native range, visible value/output and optional ticks.
-- **JS:** optional two-handle coordination with explicit crossing/bounds semantics.
-- **CSS:** native track/thumb treatment, logical direction and vertical layout.
-- **Placement:** proposed `src/components/slider/`; multi-handle enhancement optional.
-
-## Acceptance and gaps
-
-Test bounds, fractional steps, keyboard, RTL, reset and accessible value text. Marks, tooltip formatting, range arrays and custom handles are not provided by the existing single control.
-
-## Upstream implementation evidence
-
-Targeted [keyboard stepping](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/src/Slider.tsx#L414-L448) and [handle semantics](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/src/Slider.tsx#L740-L770) show custom slider-role handles with value bounds/orientation and reverse-aware movement. Prefer a native range for MarkupUI's basic case. Any independently implemented multi-handle extension must explicitly test direction, orientation, focus and value announcements rather than assuming upstream ARIA attributes alone confer parity.
+Original native range controls own movement/defaults/bounds/form values. Optional
+[helpers](../../../src/components/slider/slider.ts) update non-live readouts and expose
+strict scalar/pair setters plus pair committed changes. The pair allows crossing and never
+rewrites endpoint min/max. [Legacy forms.ts](../../../src/components/forms.ts) is unchanged.
+[Canonical contract/evidence](../../components/slider.md) · [Native demo](../../../demo/components/slider.html).
 
 ## Migration steps
 
-**Delivery phase:** P4 — bounded entry. **Task state:** 🔵 Planned.
-**Prerequisites:** P0 numeric/form contracts and P4 native range conventions in the [master plan](../migration-plan.md).
-**Next task:** define labelled native range/output anatomy and preserve the current scalar value contract.
+**Delivery phase:** P4 — bounded entry. **Task state:** 🟢 Verified retained scope.
+**Prerequisites:** native InputNumber/control ownership/reset conventions, not a numeric or
+gesture framework. **Next:** Rate, then remaining native controls before Form enhancements.
 
-1. [ ] **Adopt range input.** Keep name, min/max/step, label association and reset behavior on the native control.
-2. [ ] **Map presentation.** Move track/thumb, ticks, orientation and focus styles into CSS with logical direction.
-3. [ ] **Separate multiple handles.** Decide crossing, range values and tooltip formatting in an optional extension with its own accessibility contract.
-4. [ ] **Verify movement.** Test fractional steps, bounds, arrows, RTL/reverse orientation, accessible value text and unchanged programmatic event semantics.
+1. [x] **Adopt range input.** Preserve labelled native controls/names/bounds/defaults and midpoint sanitization; no nullable number or proxy-slider model.
+2. [x] **Map presentation.** Native accent/focus, datalist ticks/static labels and writing-mode/direction CSS; readouts are not tooltip parity.
+3. [x] **Separate multiple handles.** Explicit two-track pair allows crossing, keeps tuple order and never derives bounds that corrupt reset; complex multi-thumb source behavior omitted.
+4. [x] **Verify movement.** Native drag/keys/step/bounds, immediate pair defaults/reset, native FormData, non-live output/formatting, vertical/RTL/media/no-JS/coexistence acceptance recorded.
 
 ### Native primitives and fallback
 
-- **Native path:** a labelled native range input with output and optional datalist ticks supplies bounds, keyboard and form behavior. A custom wrapper only synchronizes approved events/presentation.
-- **Small enhancement:** CSS accent-color, logical dimensions and reduced motion simplify styling. Feature-detect orientation/tick affordances and keep a horizontal range or numeric input fallback. Multi-handle behavior is separately scoped; it must not force a slider/gesture polyfill into the single-input baseline.
+No hidden field, synthetic slider handle, pointer geometry or keyboard engine. The CSS-only
+native range remains usable without JS; live readouts are initially hidden. Pair controls
+remain independently labelled and submitted, not a fake shared track or hidden sorted tuple.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
 ## Reference and review boundary
 
-- [Official website](https://www.naiveui.com/en-US/os-theme/components/slider)
-- [Pinned public API Markdown](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md)
-- [Pinned implementation source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider)
-- [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
+[Official page](https://www.naiveui.com/en-US/os-theme/components/slider) · [API] ·
+[Source] · [Types]. Pinned Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
+**19 original local rows + nine explicit source supplements = 28 rows:
+13 Verified adapted targets + 15 Intentionally omitted.** Original owner/prop/slot identities
+are preserved. Green means native adaptation, not exact source geometry/model behavior.
+**L1** = [tests](../../../tests/slider.test.ts); **L2** =
+[obtained acceptance](../../components/slider.md#acceptance).
 
-Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **19 local table rows + 0 supplementary declarations + 0 inherited rows = 19 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
-
+[API]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md
+[Source]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/src/Slider.tsx
+[Types]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/src/interface.ts
 
 ### Slider Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`default-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L29) | Prop | Candidate native default/reset state for `default-value`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L30) | Prop | Explicit native `disabled` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`format-tooltip`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L31) | Prop | Candidate explicit JS `formatTooltip` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`keyboard`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L32) | Prop | Candidate presence attribute `keyboard`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`marks`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L33) | Prop | Candidate authored `marks` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`max`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L34) | Prop | Explicit native `max` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | B1 initial max; partial only, verify this row. |
-| [`min`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L35) | Prop | Explicit native `min` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | B1 initial min; partial only, verify this row. |
-| [`placement`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L36) | Prop | Candidate explicit JS `placement` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`range`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L37) | Prop | Candidate presence attribute `range`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`reverse`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L38) | Prop | Candidate presence attribute `reverse`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show-tooltip`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L39) | Prop | Candidate live JS `showTooltip` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`step`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L40) | Prop | Explicit native `step` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | B1 initial step; partial only, verify this row. |
-| [`tooltip`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L41) | Prop | Candidate presence attribute `tooltip`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`vertical`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L42) | Prop | External CSS token/class for `vertical`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L43) | Prop | Candidate live JS `value` state; native value/default/event contract needs review. | ⚪ Not reviewed | B1 single numeric range; partial only, verify this row. |
-| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L44) | Callback | Candidate DOM `mui:change` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-dragstart`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L45) | Callback | Candidate DOM `mui:dragstart` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-dragend`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L46) | Callback | Candidate DOM `mui:dragend` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `default-value` · [API] L29 | Prop | Native defaultValue/value HTML per field | 🟢 Verified | L1/L2 midpoint when absent; no framework null/zero seed or dynamic reset bounds. |
+| `disabled` · [API] L30 | Prop | Native disabled/fieldset | 🟢 Verified | Native pointer/keyboard/submission behavior. |
+| `format-tooltip` · [API] L31 | Prop | Separate plain-text native readout formatter instead | ⏭️ Intentionally omitted | No popup or tooltip-format parity. |
+| `keyboard` · [API] L32 | Prop | Native keyboard always retained | 🟢 Verified | L2 no second Arrow/Home/End engine; false override omitted. |
+| `marks` · [API] L33 | Prop | Authored datalist ticks and scale labels | 🟢 Verified | Native tick support varies; no object/VNode marks or mark-only snapping. |
+| `max` · [API] L34 | Prop | Native max and sanitization | 🟢 Verified | L1/L2 no manual clamping arithmetic. |
+| `min` · [API] L35 | Prop | Native min and sanitization | 🟢 Verified | Native range defaults/degenerate bounds preserved. |
+| `placement` · [API] L36 | Prop | No tooltip popup | ⏭️ Intentionally omitted | No anchored geometry/portal. |
+| `range` · [API] L37 | Prop | Explicit two labelled native tracks | 🟢 Verified | Crossing allowed, tuple order preserved; not one-track dual-thumb parity. |
+| `reverse` · [API] L38 | Prop | Authored native input dir | 🟢 Verified | L2 browser-owned reversed direction/keys. |
+| `show-tooltip` · [API] L39 | Prop | No controlled popup visibility | ⏭️ Intentionally omitted | Non-live output is not a tooltip. |
+| `step` · [API] L40 | Prop | Native step/grid rules | 🟢 Verified | Numeric/any native behavior; source 'mark' contract omitted. |
+| `tooltip` · [API] L41 | Prop | No tooltip service | ⏭️ Intentionally omitted | No mandatory Tooltip/Popover dependency. |
+| `vertical` · [API] L42 | Prop | Native writing-mode CSS | 🟢 Verified | L2 vertical range geometry/keys; horizontal fallback where unsupported. |
+| `value` · [API] L43 | Prop | Finite native scalar or two-number tuple | 🟢 Verified | L1/L2 setters silent; null/arbitrary handle arrays omitted. |
+| `on-update:value` · [API] L44 | Callback | Native events/current values; pair committed snapshot | 🟢 Verified | No duplicate per-input event/model updates. |
+| `on-dragstart` · [API] L45 | Callback | Application may observe native pointer events | ⏭️ Intentionally omitted | No drag lifecycle engine/proxy. |
+| `on-dragend` · [API] L46 | Callback | Native commit/pointer behavior | ⏭️ Intentionally omitted | No synthetic drag-end contract. |
 
 ### Slider Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`thumb`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/slider/demos/enUS/index.demo-entry.md#L52) | Slot | Candidate authored `thumb` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `thumb` · [API] L52 | Slot | Real native range thumb | ⏭️ Intentionally omitted | No custom handle/rendered role-slider. |
+
+### Explicit source-only supplements
+
+| Upstream owner/item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
+| --- | --- | --- | --- | --- |
+| Slider `to` · [Source] | Source portal prop | None | ⏭️ Intentionally omitted | No tooltip portal/container API. |
+| Slider `theme`, `themeOverrides`, `builtinThemeOverrides` · [Source] | Source theme group | External CSS tokens | ⏭️ Intentionally omitted | No provider/theme-object/CSS-in-JS translation. |
+| Slider `onUpdateValue` · [Source] | Source alias | Native change/input observation | 🟢 Verified | No duplicate alias callback. |
+| Slider source `defaultValue: 0` versus public null default · [Source] | Source default supplement | Native midpoint/defaultValue only | ⏭️ Intentionally omitted | Source default differs from public table; neither overrides native absent-value sanitization. |
+| Slider `value`/`defaultValue` arbitrary number[] and more-than-two handles · [Source] | Source value extension | Exactly two independent native fields maximum | ⏭️ Intentionally omitted | No complex coupled/multi-thumb layout, sorted fill or handle engine. |
+| Slider `ClosestMark` · [Source] | Source geometry type | Native datalist/step only | ⏭️ Intentionally omitted | No distance/index snapping algorithm. |
+| Slider `OnUpdateValueImpl` · [Types] | Source callback type | Native events and own tuple snapshot | ⏭️ Intentionally omitted | No source number/arbitrary-array callback registration. |
+| Slider `SliderSlots.default` · [Source] | Source slot declaration | Authored native DOM only | ⏭️ Intentionally omitted | No VNode default-slot API. |
+| Slider `SliderSlots` · [Source] | Source VNode slot type | None | ⏭️ Intentionally omitted | No thumb/default renderer map. |
 
 <!-- END PINNED API INVENTORY -->

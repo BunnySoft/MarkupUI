@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Slider and two-track pair</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-slider.css">
+  <link rel="stylesheet" href="./slider.css">
+  <script defer src="../../dist/markup-ui-slider.global.js"></script>
+  <script defer src="./slider.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Slider: native movement, defaults and values</h1>
+    <p>Native ranges own dragging, Arrow keys, Home/End, clamping, reset and submission. The helper updates non-live readouts, not a custom gesture or tooltip engine.</p>
+    <form id="ranges" action="slider.html" method="get">
+      <label for="volume">Volume (no value attribute: native midpoint default)</label>
+      <div class="mui-slider" data-slider id="volume-root">
+        <input data-slider-control id="volume" type="range" name="volume" min="0" max="100" step="5" list="volume-marks">
+        <output data-slider-output for="volume" aria-live="off" hidden>50</output>
+        <datalist id="volume-marks"><option value="0" label="Low"></option><option value="50" label="Middle"></option><option value="100" label="High"></option></datalist>
+        <div class="mui-slider__marks" aria-hidden="true"><span>0 — Low</span><span>50</span><span>100 — High</span></div>
+      </div>
+      <fieldset class="mui-slider-pair" data-slider-pair id="window-pair" aria-describedby="pair-help">
+        <legend>Window endpoints: two independent native tracks</legend>
+        <p id="pair-help">Crossing is allowed and reported, not silently sorted. Bounds stay authored; there is no shared-track dual-thumb behavior or hidden tuple value.</p>
+        <div class="mui-slider-pair__fields">
+          <div class="mui-slider">
+            <label for="start">Start minutes</label>
+            <input data-slider-control id="start" type="range" name="start" min="0" max="100" step="1" value="20">
+            <output data-slider-output for="start" aria-live="off" hidden>20</output>
+          </div>
+          <div class="mui-slider">
+            <label for="end">End minutes</label>
+            <input data-slider-control id="end" type="range" name="end" min="0" max="100" step="1" value="80">
+            <output data-slider-output for="end" aria-live="off" hidden>80</output>
+          </div>
+        </div>
+      </fieldset>
+      <label for="balance">Reversed horizontal balance (input dir=rtl)</label>
+      <div class="mui-slider" data-slider id="balance-root">
+        <input data-slider-control id="balance" type="range" name="balance" min="-10" max="10" step="0.5" value="0" dir="rtl">
+        <output data-slider-output for="balance" aria-live="off" hidden>0</output>
+      </div>
+      <label for="vertical">Vertical level (native writing-mode, high at top)</label>
+      <div class="mui-slider" data-slider data-vertical id="vertical-root">
+        <input data-slider-control id="vertical" type="range" name="vertical" min="0" max="1" step="0.1" value="0.5" dir="rtl">
+        <output data-slider-output for="vertical" aria-live="off" hidden>0.5</output>
+      </div>
+      <label for="external-range">Associated with another form</label>
+      <div class="mui-slider" data-slider id="external-root">
+        <input data-slider-control id="external-range" type="range" name="external" form="other-ranges" min="0" max="10" value="3">
+        <output data-slider-output for="external-range" form="other-ranges" aria-live="off" hidden>3</output>
+      </div>
+      <label for="plain-range">CSS-only range, no helper</label>
+      <div class="mui-slider"><input data-slider-control id="plain-range" type="range" name="plain" min="0" max="10" value="2"></div>
+      <input type="hidden" name="local" value="only">
+      <p><button type="submit">Inspect native submission / local GET fallback</button> <button type="reset">Native reset</button></p>
+    </form>
+    <form id="other-ranges"><button type="reset">Reset external range only</button></form>
+    <div class="demo-tools">
+      <button type="button" id="narrow">Set pair to 65 / 75</button>
+      <button type="button" id="cross">Set crossed pair 90 / 10</button>
+      <button type="button" id="defaults">Set pair defaults 15 / 85</button>
+      <button type="button" id="disabled">Toggle native pair fieldset disabled</button>
+      <button type="button" id="clamp">Silent volume setValue(999)</button>
+      <button type="button" id="bounds">Toggle volume max 60 / 100</button>
+      <button type="button" id="cancel">Cancel next reset</button>
+      <button type="button" id="rtl">Toggle page RTL</button>
+      <button type="button" id="disconnect">Disconnect helpers</button>
+    </div>
+    <p id="state">Without JS, native ranges and datalist ticks remain usable; live text readouts stay hidden.</p>
+    <p id="events">Pair commits: 0</p>
+    <pre id="submission">No submission yet.</pre>
+  </main>
+</body>
+</html>
