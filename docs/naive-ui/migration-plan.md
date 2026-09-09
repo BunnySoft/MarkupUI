@@ -6,7 +6,7 @@ have closed property dispositions and four accepted tasks. P3 includes Discrete 
 verified no-new-runtime composition resolution. P4 retained native scopes are now reconciled
 across all 17 assigned routes, including Time Picker: 984 rows and 68/68 page tasks, with no
 unresolved retained rows or Planned P4 routes. P5 is now active with Virtual List's fixed-height
-window and Tree/Cascader/Tree Select retained native hierarchy scopes accepted; six P5 routes remain. P0/P5/P6 and full framework/viewer
+window, Tree/Cascader/Tree Select hierarchy scopes and Transfer membership accepted; five P5 routes remain. P0/P5/P6 and full framework/viewer
 parity remain independent and incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
@@ -38,7 +38,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P2 — Primitives and layout | 🟢 Verified retained scope | All 31 P2-assigned pages reconciled; native Image/fallback/dialog scope accepted with advanced P6 exclusions. | P1 pattern | Full 96-route and P2 reference audit found no retained unresolved P2 rows. This is not global P3/P6 or framework parity. |
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
 | P4 — Forms and selection | 🟢 Verified retained scope | All 17 P4-assigned routes, 984 tracker rows and 68 page tasks reconciled. | Relevant native P0/P3 contracts | 478 adapted + 506 omitted, no unresolved rows; 889 P4 tests plus native browser evidence. No P0/P5/P6 or full framework parity implied. |
-| P5 — Collections and scale | 🟠 In progress | Virtual List, Tree, Cascader and Tree Select retained scopes accepted; six routes remain. | P3 focus; P4 selection | Native window/hierarchy/path/selection contracts verified; no phase-wide parity yet. |
+| P5 — Collections and scale | 🟠 In progress | Virtual List, Tree, Cascader, Tree Select and Transfer retained scopes accepted; five routes remain. | P3 focus; P4 selection | Native window/hierarchy/path/membership contracts verified; no phase-wide parity yet. |
 | P6 — Specialized modules | 🔵 Planned | Deliver independently justified, opt-in advanced features. | Component-specific earlier work | Explicit imports, independent size budgets and no runtime dependencies. |
 
 The [component index](index.md) is the exhaustive catalog-to-phase assignment. The phase
@@ -122,7 +122,7 @@ smuggling an overlay implementation into the CSS-only native composition.
 | --- | --- | --- | --- |
 | P5-01 — Identity and async contracts | 🟠 In progress | Virtual List and Tree establish stable native identity, focus and guarded async node loading. Remaining consumer contracts stay separate. | [Native window](../components/virtual-list.md) and [hierarchy ownership](../components/tree.md); no mandatory global store. |
 | P5-02 — Tree family | 🟢 Verified retained native scopes | Tree, Cascader and Tree Select complete their declared native scopes; source popup/check-renderer parity is explicitly excluded. | [Tree](../components/tree.md), [Cascader](../components/cascader.md), [Tree Select](../components/tree-select.md): actual-node/native-control ownership, defaults and lifetime evidence. |
-| P5-03 — Transfer | 🔵 Planned | Add multi-selection, filtering and bulk movement only within accepted scope. | Predictable source/target order and selection with accessible controls. |
+| P5-03 — Transfer | 🟢 Verified retained native scope | Native staging versus target membership, locked/matched bulk moves, captured defaults and explicit FormData ownership. | [Transfer evidence](../components/transfer.md): stable native options, no hidden proxy, preserved current membership/handoff. |
 | P5-04 — Table family | 🔵 Planned | Keep semantic Table simple; extend optional Data Table sorting/filtering/selection and pagination incrementally. | Static table remains usable; advanced behavior has explicit column/row contracts. |
 | P5-05 — Virtual windows | 🟢 Verified retained fixed-height scope | Explicit native Virtual List with safe row factories, required updater and native scroll/resize. Variable heights and horizontal/grid modes intentionally omitted. | [100k DOM/geometry/focus evidence](../components/virtual-list.md); one focused pin, independent budgets, legacy plugin unchanged. |
 | P5-06 — Collection sign-off | 🔵 Planned | Resolve row/node replacement, reordering, asynchronous results and large-data behavior. | Retained features proven without forcing virtualization into small datasets. |
@@ -190,11 +190,11 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Tree Select (P5), verified native path-aware single/multiple selection.**
+**Current component: Transfer (P5), verified native membership/staging/formdata scope.**
 **P1/P2/P3/P4 declared retained scopes are complete. P4-07 closes after the full 17-route audit.**
-**P5 is active, not complete.** Recommended next: **Transfer**, with its own native
-source/target movement and selection contract. Six P5 routes remain. No next component
-was started in this Tree Select commit. Do not infer P0, full P5/P6 or framework compatibility.
+**P5 is active, not complete.** Recommended next: **Data Table**, with its own native
+row/order/selection/scale contract. Five P5 routes remain. No next component was started
+in this Transfer commit. Do not infer P0, full P5/P6 or framework compatibility.
 
 The following component records form a historical execution sequence. Earlier “next” or
 phase-incomplete checkpoint statements are superseded by the current dashboard and latest
@@ -331,8 +331,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 3,769 rows and 296 accepted retained tasks out of 384 across 74 component
-pages (88 unchecked), not full upstream parity.
+The current index records 3,789 rows and 300 accepted retained tasks out of 384 across 75 component
+pages (84 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -1540,7 +1540,7 @@ default/reset/source mutation, disabled-path clearing, focus handoff, narrow/RTL
 media/no-JS and classic/ESM/core Tree/Select coexistence. Source-renderer and all-browser/
 assistive-technology parity are not inferred.
 
-Current catalog: **96 routes / 3,769 rows / 296 of 384 tasks across 74 accepted pages /
+At Tree Select sign-off: **96 routes / 3,769 rows / 296 of 384 tasks across 74 accepted pages /
 88 unchecked tasks**. **P5 remains In progress:** four routes accepted; **681 rows =
 165 adapted + 241 omitted + 275 unresolved**. Tree-family retained native scopes are
 reconciled, while the remaining six P5 routes contain **278 rows / 275 unresolved**:
@@ -1555,3 +1555,41 @@ Equation/QR Code/Legacy Grid/Legacy Transfer remain the four exclusions (35/zero
 **Next: Transfer.** Reuse narrow native option/value/filter ownership where appropriate,
 but source/target order and movement must be accepted independently. No Transfer code
 is included in this completed Tree Select component commit.
+
+## Transfer — native membership and staging accepted
+
+[Canonical Transfer acceptance](../components/transfer.md) and [reference tracker](components/transfer.md)
+close this component alone. Original option nodes move between two unnamed native
+multi-selects. Target location is membership, option.selected is staging, option.disabled
+locks membership, and filtered bulk scope is explicit. No renderer/drag/virtualization
+framework, mandatory Select runtime or hidden form proxy is added.
+
+An exclusive formdata name serializes all target members, including locked/unhighlighted/
+filtered members. Native names and staging required flags are rejected rather than
+misrepresented or silently removed. Native membership validity, captured membership
+defaults, native defaultSelected staging, cancellation and focus/handoff are verified.
+
+**32 original identities + 20 source supplements = 52 rows: 28 adapted + 24 omitted;
+four accepted tasks.** **161 tests** pass (41 Transfer, 40 Select, 53 Form, 27 native/legacy),
+plus declarations/build/budgets and real Chromium membership/FormData/keyboard/bulk/filter/
+locked/reset/focus/name-collision/nesting/RTL/zoom/no-JS/coexistence acceptance.
+All **184 prior top-level JS/CSS assets byte-match** the pre-Transfer build.
+Transfer ESM/classic/CSS are **5,986/6,125/493 gzip bytes** under independent
+**8,000/8,000/1,250** ceilings. Core/advanced/widgets remain **14,611/2,181/2,779**
+under the original **15,000/3,000/4,000** ceilings.
+
+Current catalog: **96 routes / 3,789 rows / 300 of 384 tasks across 75 accepted pages /
+84 unchecked**. **P5 remains In progress:** five of ten routes accepted; **701 rows =
+193 adapted + 265 omitted + 243 unresolved**. Remaining five P5 routes contain
+**246 rows / 243 unresolved**:
+
+**Data Table, Log, Infinite Scroll, Popselect, Split.**
+
+P4 remains 17 routes/984 rows/68 tasks, no unresolved retained rows. P0's three routes
+remain (97/eight unresolved), P6's nine remain (232/all unresolved), and Equation/QR Code/
+Legacy Grid/Legacy Transfer remain four exclusions (35/zero unresolved).
+**21 unaccepted routes = 17 Planned + four explicit exclusions.**
+
+**Next: Data Table.** Reuse native membership/selection ownership concepts only where
+the row/column/form contract fits; no Data Table implementation is included in this
+separate Transfer completion commit.

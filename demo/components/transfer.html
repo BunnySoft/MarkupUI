@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MarkupUI native Transfer membership</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-transfer.css">
+  <link rel="stylesheet" href="./transfer.css">
+  <script defer src="../../dist/markup-ui-transfer.global.js"></script>
+  <script defer src="./transfer.js"></script>
+</head>
+<body>
+<main>
+  <h1>Transfer: membership is not highlighting</h1>
+  <p>The two native multi-selects are unnamed staging controls. Every option physically
+    in Target is a member, highlighted or not. An explicitly owned formdata field serializes
+    all target keys, including locked/filtered members; there are no hidden proxy inputs.</p>
+  <noscript><p>Without JavaScript these are readable native lists with staging highlights
+    only. Movement and membership submission are unavailable; their controls stay hidden.</p></noscript>
+  <form id="members-form">
+    <fieldset class="mui-transfer" data-transfer data-transfer-name="members[]" data-transfer-required id="transfer">
+      <legend>Project access membership</legend>
+      <div data-transfer-columns>
+        <section data-transfer-pane>
+          <h2>Source</h2>
+          <label>Filter source<input type="search" data-transfer-filter="source" placeholder="Match source labels"></label>
+          <label>Highlight pending additions<select data-transfer-source multiple size="7">
+            <option value="alpha" selected>Alpha access</option>
+            <option value="bravo">Bravo access</option>
+            <option value="charlie">Charlie access</option>
+            <option value="locked-source" disabled>Locked source item</option>
+          </select></label>
+          <output data-transfer-count="source">4 available</output>
+          <div class="stage-actions">
+            <button type="button" data-transfer-action="select-source" hidden>Highlight source matches</button>
+            <button type="button" data-transfer-action="clear-source" hidden>Clear source highlights</button>
+          </div>
+        </section>
+        <div data-transfer-actions>
+          <button type="button" data-transfer-action="add" hidden>Add highlighted matches →</button>
+          <button type="button" data-transfer-action="remove" hidden>← Remove highlighted matches</button>
+          <button type="button" data-transfer-action="add-all" hidden>Add all source matches</button>
+          <button type="button" data-transfer-action="remove-all" hidden>Remove all target matches</button>
+        </div>
+        <section data-transfer-pane>
+          <h2>Target membership</h2>
+          <label>Filter target<input type="search" data-transfer-filter="target" placeholder="Match target labels"></label>
+          <label>Highlight pending removals<select data-transfer-target multiple size="7">
+            <option value="core" disabled>Core access (locked member)</option>
+            <option value="reader">Reader access</option>
+          </select></label>
+          <output data-transfer-count="target">2 members</output>
+          <div class="stage-actions">
+            <button type="button" data-transfer-action="select-target" hidden>Highlight target matches</button>
+            <button type="button" data-transfer-action="clear-target" hidden>Clear target highlights</button>
+          </div>
+        </section>
+      </div>
+      <p data-transfer-status role="status"></p>
+    </fieldset>
+    <button type="submit" id="submit-transfer" hidden>Inspect real FormData</button>
+    <button type="reset" id="reset-transfer" hidden>Reset membership and staging defaults</button>
+  </form>
+  <div id="tools" class="tools" hidden>
+    <button type="button" id="program">Set Core + Bravo silently</button>
+    <button type="button" id="defaults">Default membership to Core + Charlie</button>
+    <button type="button" id="cancel-reset">Cancel next reset</button>
+    <button type="button" id="remove-data">Remove Reader from the dataset</button>
+    <button type="button" id="append">Add fresh Delta data</button>
+    <button type="button" id="disable">Toggle native fieldset disabled</button>
+    <button type="button" id="rtl">Toggle RTL</button>
+    <button type="button" id="disconnect">Hand off current native lists</button>
+  </div>
+  <output id="state" aria-label="Observed membership and staging"></output>
+  <p id="events" role="status"></p>
+  <pre id="submission"></pre>
+  <p>Move-selected and bulk actions use enabled, filter-matching, non-hidden options.
+    Hidden highlights remain staged. A target filter never changes membership or submission.
+    Locked membership survives remove-all and reset. Native Ctrl/Shift/arrow behavior remains native.</p>
+</main>
+</body>
+</html>

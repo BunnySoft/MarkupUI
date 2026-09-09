@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./transfer": {
+      "types": "./dist/components/transfer/index.d.ts",
+      "import": "./dist/markup-ui-transfer.js"
+    },
+    "./transfer/style.css": "./dist/markup-ui-transfer.css",
     "./tree-select": {
       "types": "./dist/components/tree-select/index.d.ts",
       "import": "./dist/markup-ui-tree-select.js"

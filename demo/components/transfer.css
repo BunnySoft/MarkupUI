@@ -1,0 +1,12 @@
+:root { font: 16px/1.5 system-ui, sans-serif; color: #17324c; background: #f6f8fc; }
+body { margin: 0; }
+main { max-width: 1080px; margin: 1rem auto; padding: 1rem; overflow-wrap: anywhere; }
+fieldset { min-inline-size: 0; border: 1px solid #7b91a5; padding: 1rem; background: white; }
+legend { font-weight: 600; }
+h2 { margin-block: .2rem .5rem; font-size: 1.1rem; }
+button { font: inherit; padding: .3rem .55rem; overflow-wrap: anywhere; }
+.tools, .stage-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .75rem; }
+.tools[hidden] { display: none; }
+output, pre { display: block; white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 600px) { main, fieldset { padding: .5rem; } }
+@media (forced-colors: active) { fieldset { border-color: CanvasText; } }
