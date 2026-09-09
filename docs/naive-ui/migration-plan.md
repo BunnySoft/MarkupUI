@@ -3,8 +3,8 @@
 **Plan state: 🟠 In progress overall — P1 pilots, P2 and P3 are Verified for declared retained
 native scopes and explicit omissions. All 31 P2-assigned pages and all 22 P3-assigned pages
 have closed property dispositions and four accepted tasks. P3 includes Discrete API's
-verified no-new-runtime composition resolution. P4 is In progress with Input, Checkbox, Radio, Switch, Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP, Dynamic Input, Dynamic Tags and Mention
-native scopes accepted and three routes Planned. P0/P5/P6 and full framework/viewer
+verified no-new-runtime composition resolution. P4 is In progress with Input, Checkbox, Radio, Switch, Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP, Dynamic Input, Dynamic Tags, Mention and Color Picker
+native scopes accepted and two routes Planned. P0/P5/P6 and full framework/viewer
 parity remain independent and incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
@@ -35,7 +35,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
 | P2 — Primitives and layout | 🟢 Verified retained scope | All 31 P2-assigned pages reconciled; native Image/fallback/dialog scope accepted with advanced P6 exclusions. | P1 pattern | Full 96-route and P2 reference audit found no retained unresolved P2 rows. This is not global P3/P6 or framework parity. |
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
-| P4 — Forms and selection | 🟠 In progress | Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP, Dynamic Input, Dynamic Tags and Mention accepted; Color Picker next. | Relevant P0 form contract; P3 for popup variants | Declared native enhanced-entry scopes accepted; three picker routes and rich P5/P6 scopes remain separate. |
+| P4 — Forms and selection | 🟠 In progress | Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP, Dynamic Input, Dynamic Tags, Mention and Color Picker accepted; Date Picker next. | Relevant P0 form contract; P3 for popup variants | Declared native enhanced-entry/RGB scopes accepted; date/time routes and rich P5/P6 scopes remain separate. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
 | P6 — Specialized modules | 🔵 Planned | Deliver independently justified, opt-in advanced features. | Component-specific earlier work | Explicit imports, independent size budgets and no runtime dependencies. |
 
@@ -188,9 +188,9 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Mention (P4), verified native editor/caret-snapshot/insertion scope.**
+**Current component: Color Picker (P4), verified classic native RGB/draft scope.**
 **P3 retained scope and P4-02/P4-03/P4-04/P4-05/P4-06's declared native scopes are complete; P4 is In progress.
-Next: Color Picker, then Date Picker and Time Picker. Do not infer P0 or full P4 completion.**
+Next: Date Picker, then Time Picker. Do not infer P0 or full P4 completion.**
 
 The following component records form a historical execution sequence. Earlier “next” or
 “P3 incomplete” checkpoint statements are superseded by the final P3 audit below.
@@ -326,8 +326,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 3,624 rows and 268 accepted retained tasks out of 384 across 67 component
-pages (116 unchecked), not full upstream parity.
+The current index records 3,634 rows and 272 accepted retained tasks out of 384 across 68 component
+pages (112 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -1186,7 +1186,7 @@ unchanged, with core/plugins **14,611/2,181/2,779**.
 Time Picker**. Continue preserving native text/IME/selection/forms and explicit identity/
 lifetime contracts; no full P4/P0/P5/P6 or universal browser/AT claim is implied.
 
-### Mention acceptance and native picker handoff
+### Mention acceptance and historical native picker handoff
 
 [Mention](../components/mention.md) completes the retained native enhanced-text scope.
 Original input/textarea, code-unit caret/prefix snapshots and bounded safe options support
@@ -1212,6 +1212,37 @@ All **158 prior top-level JS/CSS assets** byte-match the pre-Mention HEAD recipe
 helper/core/plugin source and budgets remain unchanged (core/plugins **14,611/2,181/2,779**).
 P4-06 is Verified only for the declared native enhanced-entry scopes, not full P4/P5/P6.
 
-**Next: Color Picker**, followed by **Date Picker** and **Time Picker**. Preserve native
+At Mention sign-off, next was Color Picker, followed by Date Picker and Time Picker. Preserve native
 fields/defaults/constraints/forms and existing ownership/refresh contracts; keep the
 authorized one-component → docs/build/acceptance → separate-commit sequence.
+
+### Color Picker acceptance and Date Picker handoff
+
+[Color Picker](../components/color-picker.md) completes retained classic native RGB scope.
+The original labelled color input owns chooser/preview, current/default values, native
+fieldset/forms and literal datalist options. A small optional helper validates six-digit
+hex before setters can reach native black fallback and coordinates a plain readout/unnamed
+validatable hex draft. Dirty drafts survive primary changes; null/clear, alpha/gamut
+conversion, HSV planes, popup/toolbar state and VNode rendering are explicit exclusions.
+
+All **25 original section/source/kind identities** remain in order plus **ten supplements**:
+**35 rows, 10 adapted and 25 omitted**. Four tasks close. Catalog totals are **3,634 rows,
+272/384 accepted tasks across 68 pages, 112 unchecked**. P4 has **948 rows**, with **two
+Planned routes / 213 unresolved rows** remaining.
+
+**153 targeted tests** (48 Color Picker, 52 Input, 53 Form), build/type/budgets and Chromium
+value grammar/draft/event/FormData/reset/fieldset/caret/CDP IME/no-JS/RTL/zoom/media and
+explicit core/widgets coexistence passed. Review fixes reconcile after actual reset clicks,
+avoid unrelated DOM cancellation, clear obsolete reset dirty state and process distinct
+reentrant input events. Original native custom validity/ARIA/values/defaults remain owned.
+
+Native type/showPicker availability and datalist values were inspected without opening a
+real chooser, screen picker or clipboard. No all-browser native-dialog UI/confirmation,
+alpha/gamut or AT compatibility is claimed. ESM/classic/CSS are **3,892/3,964/458 gzip
+bytes**, within **4,500/4,500/1,000** ceilings. All **161 prior top-level JS/CSS assets**
+byte-match the pre-component HEAD recipe; core/plugins remain **14,611/2,181/2,779**
+under unchanged ceilings. Legacy widgets color behavior is not silently upgraded.
+
+**Next: Date Picker, then Time Picker.** Keep native date/time values, constraints,
+selection/default/reset/form ownership and explicit optional lifetime policies; overall
+P4/P0/P5/P6 completion is not implied.

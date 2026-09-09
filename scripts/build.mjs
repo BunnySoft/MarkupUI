@@ -36,6 +36,8 @@ components.push("dynamic-tags")
 classicEntries["dynamic-tags"] = "global.ts"
 components.push("mention")
 classicEntries.mention = "global.ts"
+components.push("color-picker")
+classicEntries["color-picker"] = "global.ts"
 
 await Promise.all([
   build({
@@ -108,6 +110,9 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-color-picker.js": 4_500,
+  "markup-ui-color-picker.global.js": 4_500,
+  "markup-ui-color-picker.css": 1_000,
   "markup-ui-mention.js": 6_500,
   "markup-ui-mention.global.js": 6_500,
   "markup-ui-mention.css": 1_250,

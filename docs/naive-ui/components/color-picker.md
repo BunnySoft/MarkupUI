@@ -1,91 +1,104 @@
 # Color Picker
 
-**Plan: Planned. Current baseline: partial native color input in widgets.**
+**Plan: 🟢 Verified retained classic native RGB scope; advanced P6 color editing omitted.**
 
-## Baseline and target
-
-[B1: widgets.ts](../../../src/plugins/widgets.ts) creates `input[type=color]`, exposes a string value and emits input/change.
-
-- **HTML:** labelled native color input and optional text value.
-- **JS:** explicit format conversion only if retained; no external color library.
-- **CSS:** control and swatch presentation outside JavaScript.
-- **Placement:** proposed `src/optional/color-picker/`; native baseline first.
-
-## Acceptance and gaps
-
-Test keyboard/native picker use, invalid values, reset and readable swatch labels. Alpha, alternate formats, palettes and custom panel controls are not supplied by the existing wrapper.
+[Canonical anatomy, value/draft/ownership contracts and evidence](../../components/color-picker.md).
+The real color input owns choosing/preview/defaults/FormData. A small optional helper
+validates RGB hex setters and synchronizes a plain readout/optional native hex draft.
+Black is a color, not clear/null. No color parser, HSV/alpha plane, popup framework or
+permission/screen/clipboard side effect.
 
 ## Migration steps
 
-**Delivery phase:** P4 — native control; P6 for richer color editing. **Task state:** 🔵 Planned.
-**Prerequisites:** P0 value/reset rules and P4 Input conventions in the [master plan](../migration-plan.md).
-**Next task:** specify the native color-string baseline and invalid/empty-value policy.
+**Delivery phase:** P4 — native control; P6 advanced modes/geometry explicitly omitted.
+**Task state:** 🟢 Verified retained scope.
+**Prerequisites:** native Input/Form/default/reset ownership contracts.
+**Next task:** Date Picker, then Time Picker; P4 as a whole remains In progress.
 
-1. [ ] **Adopt the native picker.** Preserve input identity, label, name and form reset instead of regenerating the control.
-2. [ ] **Expose readable values.** Pair swatches with text and define silent property changes versus user input/change.
-3. [ ] **Decide advanced formats.** Review alpha, palettes and alternate formats independently; reject hidden color-library imports.
-4. [ ] **Test browser differences.** Cover keyboard/native dialogs, invalid input, reset, contrast and supported-format limitations.
+1. [x] **Adopt the native picker.** Original field/label/name/default/reset/datalist retained.
+2. [x] **Expose readable values.** Plain readout and optional native validatable hex drafts, silent setters and honest events.
+3. [x] **Decide advanced formats.** Strict six-digit RGB; null/alpha/gamut/mode/popup machinery excluded, never flattened.
+4. [x] **Test browser differences.** Targeted tests/review/build and Chromium native value/forms/focus/fallback evidence; chooser UI not invoked.
 
 ### Native primitives and fallback
 
-- **Native path:** adopt a labelled `input[type=color]` and optional readable text field; native picker behavior and form participation remove most controller code.
-- **Small enhancement:** feature-detect the actual retained color format/alpha capability rather than assuming it from input type. Unsupported advanced formats stay text-only or out of scope. Lifecycle listeners synchronize explicit values; CSS styles swatches. Do not replace missing capabilities with a color-picker dependency.
+Native input[type=color] is the usable no-JS chooser. Optional literal datalist colors remain
+browser-owned. Readout/hex entry/actions start hidden, the unnamed auxiliary field disabled;
+only the actual color field submits. Native chooser availability is not a universal open/
+hide/confirm callback, and black is not an empty state.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
 ## Reference and review boundary
 
 - [Official website](https://www.naiveui.com/en-US/os-theme/components/color-picker)
-- [Pinned public API Markdown](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md)
-- [Pinned implementation source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker)
-- [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
+- [Pinned public API](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md)
+- [Pinned source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker)
+- [Catalog](../index.md) · [Master plan](../migration-plan.md)
 
-Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **22 local table rows + 3 supplementary declarations + 0 inherited rows = 25 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
+Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
+All **25 original identities** remain: **22 local table rows + three inline declarations**,
+no inherited rows. **Ten explicit source supplements** give **35 total rows**.
+Verified means the documented **ADAPTED** native target, not source format/UI/ABI parity.
+Canonical tests/browser/build evidence applies to retained rows; omissions receive no credit.
 
+ColorPicker.tsx, interface/public-types, exports and the legacy widgets color wrapper were
+reviewed. Source HSV/alpha/palette/toolbar/history/nullable behavior is not inferred merely
+from having a native type=color input. No source EyeDropper integration is invented.
 
 ### ColorPicker Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`default-show`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L26) | Prop | Candidate native default/reset state for `default-show`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L27) | Prop | Candidate native default/reset state for `default-value`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`modes`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L28) | Prop | Candidate JS `modes` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`placement`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L29) | Prop | Candidate explicit JS `placement` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`render-label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L30) | Prop | Candidate authored `render-label` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L31) | Prop | Candidate live JS `show` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show-alpha`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L32) | Prop | Candidate live JS `showAlpha` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show-preview`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L33) | Prop | Candidate live JS `showPreview` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L34) | Prop | External CSS token/class for `size`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L35) | Prop | Explicit native `disabled` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`swatches`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L36) | Prop | Candidate JS `swatches` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`to`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L37) | Prop | Candidate explicit JS `to` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L38) | Prop | Candidate live JS `value` state; native value/default/event contract needs review. | ⚪ Not reviewed | B1 native color string only; partial only, verify this row. |
-| [`on-complete`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L39) | Callback | Candidate DOM `mui:complete` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-confirm`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L40) | Callback | Candidate DOM `mui:confirm` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-clear`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L41) | Callback | Candidate DOM `mui:clear` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:show`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L42) | Callback | Candidate DOM `mui:change:show` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L43) | Callback | Candidate DOM `mui:change` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`actions`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L44) | Prop | Candidate JS `actions` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`default-show`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L26) | Prop | No native default-open state controller. | ⏭️ Intentionally omitted | User/platform owns chooser activation. |
+| [`default-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L27) | Prop | Actual native six-digit hex defaultValue/value attribute. | 🟢 Verified | Invalid explicit defaults rejected; omitted native default may be black. |
+| [`modes`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L28) | Prop | Classic RGB hex only. | ⏭️ Intentionally omitted | No RGB/HSL/HSV format selector/parser. |
+| [`placement`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L29) | Prop | Native chooser placement belongs to the browser/OS. | ⏭️ Intentionally omitted | No popup geometry. |
+| [`render-label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L30) | Prop | Plain authored label/readout instead. | ⏭️ Intentionally omitted | No VNode callback. |
+| [`show`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L31) | Prop | No owned native dialog visibility state. | ⏭️ Intentionally omitted | No universal hide-picker API or inferred open state. |
+| [`show-alpha`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L32) | Prop | Advanced alpha markup remains outside this helper. | ⏭️ Intentionally omitted | Alpha/colorspace attributes rejected without flattening data. |
+| [`show-preview`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L33) | Prop | Native control swatch plus optional readable RGB text. | 🟢 Verified | ADAPTED native preview, not a separate source panel. |
+| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L34) | Prop | External small/medium/large control CSS. | 🟢 Verified | No native dialog sizing claim. |
+| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L35) | Prop | Actual input/fieldset disabled. | 🟢 Verified | Native first-legend and FormData semantics retained. |
+| [`swatches`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L36) | Prop | Authored native datalist with literal #RRGGBB options. | 🟢 Verified | Browser-dependent UI; no JS/VNode palette renderer or fake selection event. |
+| [`to`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L37) | Prop | No portal target. | ⏭️ Intentionally omitted | Native chooser remains outside helper ownership. |
+| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L38) | Prop | Strict validated RGB setter/native string value. | 🟢 Verified | Null/empty/advanced formats excluded; black remains a real color. |
+| [`on-complete`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L39) | Callback | Native change remains a browser event, not this callback. | ⏭️ Intentionally omitted | No universal source completion timing from native picker. |
+| [`on-confirm`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L40) | Callback | Hex Apply is a separate documented draft action. | ⏭️ Intentionally omitted | Not source/native-dialog confirmation parity. |
+| [`on-clear`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L41) | Callback | No nullable clear mode. | ⏭️ Intentionally omitted | Revert affects draft only; never maps clear to black. |
+| [`on-update:show`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L42) | Callback | No inferred native chooser visibility event. | ⏭️ Intentionally omitted | showPicker availability is not visibility ownership. |
+| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L43) | Callback | Original input/change plus one changed explicit Apply pair. | 🟢 Verified | Setters/reset/refresh silent, native events not duplicated. |
+| [`actions`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L44) | Prop | No source confirm/clear toolbar renderer. | ⏭️ Intentionally omitted | Authored hex Apply/Revert have independent native contracts. |
 
 ### ColorPicker Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`action`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L50) | Slot | Candidate authored `action` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L51) | Slot | Candidate authored `label` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`trigger`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L52) | Slot | Candidate authored `trigger` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`action`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L50) | Slot | Authored native auxiliary actions outside the chooser. | 🟢 Verified | ADAPTED markup, no custom popup/VNode slot. |
+| [`label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L51) | Slot | Original native label and separate plain readout. | 🟢 Verified | No mutable label renderer. |
+| [`trigger`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L52) | Slot | Use the actual native color control. | ⏭️ Intentionally omitted | No replacement trigger component/ref/activation graph. |
 
 ### ColorPicker Slots: trigger inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`trigger.value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L52) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`trigger.onClick`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L52) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`trigger.ref`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L52) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`trigger.value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L52) | Inline record field | Read native control.value outside any slot API. | ⏭️ Intentionally omitted | No nullable trigger payload. |
+| [`trigger.onClick`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L52) | Inline record field | Native user activation, not an injected callback. | ⏭️ Intentionally omitted | No automatic chooser or permission request. |
+| [`trigger.ref`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/demos/enUS/index.demo-entry.md#L52) | Inline record field | Original native reference instead of ComponentPublicInstance callback. | ⏭️ Intentionally omitted | No trigger/portal measurement graph. |
+
+### Explicit source supplements — not original public table rows
+
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
+| --- | --- | --- | --- | --- |
+| [`onUpdateShow`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/src/ColorPicker.tsx) | Source callback alias | No owned picker visibility. | ⏭️ Intentionally omitted | No callback-array alias. |
+| [`onUpdateValue`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/src/ColorPicker.tsx) | Source callback alias | Original native events. | ⏭️ Intentionally omitted | No duplicate controlled-value ABI. |
+| [`internalActions`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/src/ColorPicker.tsx) | Source private prop | No custom undo/redo color-history toolbar. | ⏭️ Intentionally omitted | Native editing/chooser remains browser-owned. |
+| [`theme / themeOverrides / builtinThemeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/src/ColorPicker.tsx) | Source theme group | External native CSS. | ⏭️ Intentionally omitted | No CSS-in-JS/provider object. |
+| [`ColorPickerProps / colorPickerProps / NColorPicker`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/index.ts) | Source public type/export group | Explicit native root/controller instead. | ⏭️ Intentionally omitted | No framework constructor/prop aliases. |
+| [`ColorPickerSlots.default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/src/ColorPicker.tsx) | Source slot declaration | Original authored fields, no VNode[] slot injection. | ⏭️ Intentionally omitted | Distinct from original public slot rows. |
+| [`ColorPickerSlots`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/index.ts) | Source public slot type | Native labels/auxiliary markup alternatives. | ⏭️ Intentionally omitted | No source callback/ref record ABI. |
+| [`ColorPickerSize`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/src/public-types.ts) | Source public type | Small/medium/large external CSS vocabulary. | 🟢 Verified | ADAPTED control size, not dialog UI/type alias parity. |
+| [`OnUpdateValue / OnUpdateValueImpl / OnConfirm / OnConfirmImpl / OnClear`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/src/interface.ts) | Source callback type group | Native events and explicit draft methods. | ⏭️ Intentionally omitted | Source string-and-null intersection differs from implementation union; no nullable callback compatibility. |
+| [`RenderLabel`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/color-picker/src/interface.ts) | Source render type | Plain nonlive text only. | ⏭️ Intentionally omitted | No VNodeChild function. |
 
 <!-- END PINNED API INVENTORY -->

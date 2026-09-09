@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native RGB Color Picker</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-color-picker.css">
+  <link rel="stylesheet" href="./color-picker.css">
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
+  <script defer src="../../dist/markup-ui-color-picker.global.js"></script>
+  <script defer src="./color-picker.js"></script>
+</head>
+<body>
+<main>
+  <h1>Color Picker: classic native RGB, not a color framework</h1>
+  <p>The real color input owns its chooser and preview. This example accepts only six-digit sRGB hex; alpha, gamut conversion and empty/null colors are not enhanced. Black is an actual color, never “cleared”.</p>
+  <form id="appearance" action="color-picker.html" method="get">
+    <fieldset class="mui-color-picker" data-color-picker id="accent-picker">
+      <legend>Accent color</legend>
+      <div class="mui-color-picker__native">
+        <label for="accent">Choose native color</label>
+        <input class="mui-color-picker__control" data-color-control id="accent" type="color" name="accent" value="#336699" list="palette">
+        <span class="mui-color-picker__output" data-color-output hidden></span>
+      </div>
+      <datalist id="palette">
+        <option value="#336699" label="Blue"></option>
+        <option value="#cc5533" label="Orange"></option>
+        <option value="#008844" label="Green"></option>
+      </datalist>
+      <p>Native datalist swatches may appear in your browser's chooser. The helper does not render a palette or track whether that chooser is open.</p>
+      <div class="mui-color-picker__entry" data-color-entry hidden>
+        <label for="accent-hex">Optional hex draft — Apply before submitting
+          <input class="mui-color-picker__hex" data-color-hex id="accent-hex" type="text" value="#336699"
+                 required pattern="#[0-9a-fA-F]{6}" maxlength="7" autocomplete="off" disabled aria-describedby="hex-help">
+        </label>
+        <button type="button" data-color-apply hidden>Apply hex draft</button>
+        <button type="button" data-color-revert hidden>Revert draft to current color</button>
+      </div>
+      <p id="hex-help">Incomplete drafts remain until Apply/Revert/reset. Enter applies a valid draft; it does not submit the form. The draft is unnamed; only the actual color input submits a color value.</p>
+    </fieldset>
+    <div class="tools">
+      <button type="submit" name="intent" value="inspect">Inspect native submission</button>
+      <button type="reset">Reset native defaults</button>
+    </div>
+  </form>
+  <div class="tools">
+    <button type="button" id="set-green" hidden>Silent valid setter</button>
+    <button type="button" id="invalid" hidden>Reject unsupported setter</button>
+    <button type="button" id="disabled" hidden>Toggle native fieldset disabled</button>
+    <button type="button" id="cancel" hidden>Cancel next reset</button>
+    <button type="button" id="rtl">Toggle RTL</button>
+    <button type="button" id="disconnect" hidden>Disconnect helper</button>
+  </div>
+  <p id="events">No enhanced event counts yet.</p>
+  <p id="capability">Native color controls remain usable without JavaScript.</p>
+  <pre id="submission">Local inspection only.</pre>
+</main>
+</body>
+</html>
