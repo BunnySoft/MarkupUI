@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./time-picker": {
+      "types": "./dist/components/time-picker/index.d.ts",
+      "import": "./dist/markup-ui-time-picker.js"
+    },
+    "./time-picker/style.css": "./dist/markup-ui-time-picker.css",
     "./date-picker": {
       "types": "./dist/components/date-picker/index.d.ts",
       "import": "./dist/markup-ui-date-picker.js"

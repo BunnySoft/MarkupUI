@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Time Picker</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-time-picker.css">
+  <link rel="stylesheet" href="./time-picker.css">
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
+  <script defer src="../../dist/markup-ui-time-picker.global.js"></script>
+  <script defer src="./time-picker.js"></script>
+</head>
+<body>
+<main>
+  <h1>Time Picker: time-of-day strings, not instants</h1>
+  <p>Native fields own editing, 12/24-hour UI and constraints. No hidden date, timezone conversion, DST adjustment or epoch model is introduced. These local examples do not contact a backend.</p>
+  <form id="schedule" action="time-picker.html" method="get">
+    <fieldset class="mui-time-picker" data-time-picker id="meeting">
+      <legend>Single local clock value</legend>
+      <label for="meeting-field">Meeting time (required) <input data-time-control id="meeting-field" type="time" name="meeting" value="09:30" step="1" required></label>
+      <p class="mui-time-picker__output" data-time-output hidden></p>
+      <button type="button" data-time-clear hidden>Clear meeting time</button>
+    </fieldset>
+    <fieldset class="mui-time-picker" data-time-picker id="office">
+      <legend>Native daytime bounds and step</legend>
+      <label for="office-field">Office slot <input data-time-control id="office-field" type="time" name="office" value="09:30" min="08:00" max="18:00" step="900"></label>
+      <p>15-minute step from the authored native base. A valid time string may still fail these native constraints.</p>
+      <p class="mui-time-picker__output" data-time-output hidden></p>
+      <button type="button" data-time-clear hidden>Clear office slot</button>
+    </fieldset>
+    <fieldset class="mui-time-picker" data-time-picker id="overnight">
+      <legend>Native midnight-wrapping bounds</legend>
+      <label for="overnight-field">Night slot <input data-time-control id="overnight-field" type="time" name="night" value="23:00" min="22:00" max="02:00" step="900"></label>
+      <p>min greater than max is an overnight allowed interval, not an invalid date range. No bounds are swapped.</p>
+      <p class="mui-time-picker__output" data-time-output hidden></p>
+      <button type="button" data-time-clear hidden>Clear night slot</button>
+    </fieldset>
+    <fieldset class="mui-time-picker" data-time-picker id="precision">
+      <legend>Native seconds and millisecond precision</legend>
+      <label for="precision-field">Precise time <input data-time-control id="precision-field" type="time" name="precise" value="12:34:56.789" step="0.001"></label>
+      <p class="mui-time-picker__output" data-time-output hidden></p>
+      <button type="button" data-time-clear hidden>Clear precise time</button>
+    </fieldset>
+    <div class="tools">
+      <button type="submit" name="intent" value="inspect">Inspect native submission</button>
+      <button type="reset">Reset native defaults</button>
+    </div>
+  </form>
+  <div class="tools">
+    <button type="button" id="now" hidden>Set local clock parts silently</button>
+    <button type="button" id="midnight" hidden>Set midnight silently</button>
+    <button type="button" id="invalid" hidden>Reject 24:00</button>
+    <button type="button" id="readonly" hidden>Toggle meeting readonly</button>
+    <button type="button" id="disabled" hidden>Toggle meeting fieldset disabled</button>
+    <button type="button" id="cancel" hidden>Cancel next reset</button>
+    <button type="button" id="validate" hidden>Report native constraints</button>
+    <button type="button" id="rtl">Toggle RTL</button>
+    <button type="button" id="disconnect" hidden>Disconnect helpers</button>
+  </div>
+  <p id="capability">No JS: supported native time fields remain usable; unsupported types are ordinary text, not equivalent time validation.</p>
+  <p id="events">No helper actions yet.</p>
+  <pre id="submission">Only named native fields will be inspected.</pre>
+</main>
+</body>
+</html>

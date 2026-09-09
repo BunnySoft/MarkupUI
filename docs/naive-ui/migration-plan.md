@@ -1,10 +1,11 @@
 # MarkupUI migration plan
 
-**Plan state: 🟠 In progress overall — P1 pilots, P2 and P3 are Verified for declared retained
+**Plan state: 🟠 In progress overall — P1 pilots, P2, P3 and P4 are Verified for declared retained
 native scopes and explicit omissions. All 31 P2-assigned pages and all 22 P3-assigned pages
 have closed property dispositions and four accepted tasks. P3 includes Discrete API's
-verified no-new-runtime composition resolution. P4 is In progress with Input, Checkbox, Radio, Switch, Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP, Dynamic Input, Dynamic Tags, Mention, Color Picker and Date Picker
-native scopes accepted; Time Picker is the one remaining Planned P4 route. P0/P5/P6 and full framework/viewer
+verified no-new-runtime composition resolution. P4 retained native scopes are now reconciled
+across all 17 assigned routes, including Time Picker: 984 rows and 68/68 page tasks, with no
+unresolved retained rows or Planned P4 routes. P0/P5/P6 and full framework/viewer
 parity remain independent and incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
@@ -35,7 +36,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
 | P2 — Primitives and layout | 🟢 Verified retained scope | All 31 P2-assigned pages reconciled; native Image/fallback/dialog scope accepted with advanced P6 exclusions. | P1 pattern | Full 96-route and P2 reference audit found no retained unresolved P2 rows. This is not global P3/P6 or framework parity. |
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
-| P4 — Forms and selection | 🟠 In progress | Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP, Dynamic Input, Dynamic Tags, Mention, Color Picker and Date Picker accepted; Time Picker next. | Relevant P0 form contract; P3 for popup variants | Declared native scopes accepted; Time Picker/sign-off and rich P5/P6 scopes remain separate. |
+| P4 — Forms and selection | 🟢 Verified retained scope | All 17 P4-assigned routes, 984 tracker rows and 68 page tasks reconciled. | Relevant native P0/P3 contracts | 478 adapted + 506 omitted, no unresolved rows; 889 P4 tests plus native browser evidence. No P0/P5/P6 or full framework parity implied. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
 | P6 — Specialized modules | 🔵 Planned | Deliver independently justified, opt-in advanced features. | Component-specific earlier work | Explicit imports, independent size budgets and no runtime dependencies. |
 
@@ -112,7 +113,7 @@ smuggling an overlay implementation into the CSS-only native composition.
 | P4-04 — Numeric and bounded entry | 🟢 Verified retained scope | Input Number, Slider and Rate declared native scopes accepted, with explicit limitations. | [Input Number](../components/input-number.md), [Slider](../components/slider.md), [Rate](../components/rate.md): native number/range/radio semantics, reset-safe states, no proxy or extra keyboard/gesture engine. |
 | P4-05 — Form validation | 🟢 Verified retained scope | Form/FormItem/FormItemGi native fields, explicit feedback/grid anatomy and narrow optional validators accepted. | [Form evidence](../components/form.md): generation/snapshot/abort/error/reset ownership; native custom validity and submission remain application/browser-owned, no schema framework. |
 | P4-06 — Enhanced entry | 🟢 Verified retained scope | Input OTP, Dynamic Input, Dynamic Tags and Mention declared native scopes accepted. Rich Select/Auto Complete and source renderer/geometry engines remain explicit exclusions. | [OTP](../components/input-otp.md), [Dynamic Input](../components/dynamic-input.md), [Dynamic Tags](../components/dynamic-tags.md), [Mention](../components/mention.md): native fields, explicit bounded lifetimes and guarded insertion, not full framework parity. |
-| P4-07 — Form sign-off | 🔵 Planned | Exercise changed values/defaults, labels, fieldsets, composition, submission, reset and stale validation work. | Accepted property rows and plain-HTML form examples. |
+| P4-07 — Form sign-off | 🟢 Verified retained scope | All 17 assigned native scopes and companions audited; native fields/defaults/forms/IME/ownership/reset/value boundaries are explicit. | 984 rows = 478 adapted + 506 omitted, 68/68 page tasks, all 889 P4 tests, per-component Chromium evidence and preserved budget ceilings. |
 
 ### P5 — Collections and scale
 
@@ -188,9 +189,11 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Date Picker (P4), verified native calendar/wall-clock/endpoint-pair scope.**
-**P3 retained scope and P4-02/P4-03/P4-04/P4-05/P4-06's declared native scopes are complete; P4 is In progress.
-Next: Time Picker. Do not infer P0 or full P4 completion.**
+**Current component: Time Picker (P4), verified native time-only/overnight-bound scope.**
+**P1/P2/P3/P4 declared retained scopes are complete. P4-07 closes after the full 17-route audit.**
+Recommended next: **Virtual List's fixed-height collection foundation**, applying P5-01
+identity/focus rules within P5-05. No next collection was started. Do not infer P0, full
+P5/P6 or source framework compatibility from retained native P4 completion.
 
 The following component records form a historical execution sequence. Earlier “next” or
 “P3 incomplete” checkpoint statements are superseded by the final P3 audit below.
@@ -326,8 +329,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 3,654 rows and 276 accepted retained tasks out of 384 across 69 component
-pages (108 unchecked), not full upstream parity.
+The current index records 3,670 rows and 280 accepted retained tasks out of 384 across 70 component
+pages (104 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -1247,7 +1250,7 @@ At Color Picker sign-off, next was Date Picker, then Time Picker. Keep native da
 selection/default/reset/form ownership and explicit optional lifetime policies; overall
 P4/P0/P5/P6 completion is not implied.
 
-### Date Picker acceptance and Time Picker handoff
+### Date Picker acceptance and historical Time Picker handoff
 
 [Date Picker](../components/date-picker.md) completes the retained native date/month/week/
 datetime-local and same-mode endpoint-pair scope. A tiny detached native probe verifies
@@ -1279,6 +1282,97 @@ All **164 prior top-level JS/CSS assets** byte-match the pre-Date Picker HEAD re
 core/plugins stay **14,611/2,181/2,779** and prior ceilings remain unchanged.
 The temporal probe is concrete reusable DOM infrastructure, not a generic date engine.
 
-**Next: Time Picker**, the last Planned P4 route. Reuse the native temporal capability/
+At Date sign-off, next was Time Picker, the last Planned P4 route. Reuse the native temporal capability/
 grammar/default/ownership conventions with an explicit time-only string contract; do not
 infer full P4/P0/P5/P6 completion before its acceptance and remaining sign-off.
+
+### Time Picker acceptance and retained P4 closure
+
+[Time Picker](../components/time-picker.md) completes native single-time scope: canonical
+HH:mm/seconds/fraction strings, midnight versus empty, periodic min>max bounds, native
+step/default/required/readonly/fieldset/FormData, explicit clear and reversible readout.
+Detached native probes and integer within-day precision checks do not create a date,
+instant, timezone or duration model. Native picker UI/format/confirmation is not inferred.
+The installed jsdom short-fraction defect is rejected rather than patched into production;
+Chromium verifies the requested .1/.01/.001 precision.
+
+All **34 original Time Picker identities** remain in order, plus **16 source supplements**:
+**50 rows, 16 adapted and 34 omitted**. Its four tasks close. **245 targeted tests**
+(64 Time, 76 Date, 53 Form, 52 Input) and **all 889 tests across the 17 P4 files** passed.
+Existing build/declaration/budget gates and Chromium time/overnight/precision/forms/reset/
+clear/readonly/focus/local-clock/no-JS/RTL/zoom/media/coexistence checks passed.
+
+Review found a coupled Date/Time native-blur path while hiding a focused clear action.
+The shared `temporal/focus.ts` primitive moves focus before the action is hidden/disabled,
+while ownership observation is active, and interrupted disposal stops subsequent writes.
+Both helpers have regressions and real browser probes; Date's native four-mode public gate
+still rejects time. There is no new range API in Time Picker.
+
+| Output | Gzip bytes | Ceiling / disposition |
+| --- | ---: | --- |
+| Time ESM | 3,425 | 4,000 |
+| Time classic | 3,497 | 4,000 |
+| Time external CSS | 388 | 1,000 |
+| Date ESM after coupled fix | 3,967 | 4,500 unchanged ceiling; previously 3,882 |
+| Date classic after coupled fix | 4,038 | 4,500 unchanged ceiling; previously 3,953 |
+| Core / advanced / widgets | 14,611 / 2,181 / 2,779 | 15,000 / 3,000 / 4,000 unchanged |
+
+Comparison against actual pre-Time HEAD source found **165/167 prior top-level JS/CSS
+assets byte-identical**. The only changed outputs are Date ESM/classic for the explicit
+temporal focus correction. No earlier budget ceiling was relaxed.
+
+### Complete P4 route/row/task audit
+
+Every index-assigned P4 route, including mixed P4/P5/P6 pages, was counted from its actual
+pinned inventory and checklist. Green counts apply only to documented native adaptations;
+all excluded source branches remain explicit, including grouped Date year/quarter modes.
+
+| P4 route | Rows | Adapted | Omitted | Unresolved | Tasks |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| [Auto Complete](components/auto-complete.md) | 56 | 27 | 29 | 0 | 4/4 |
+| [Checkbox](components/checkbox.md) | 42 | 28 | 14 | 0 | 4/4 |
+| [Color Picker](components/color-picker.md) | 35 | 10 | 25 | 0 | 4/4 |
+| [Date Picker](components/date-picker.md) | 199 | 37 | 162 | 0 | 4/4 |
+| [Dynamic Input](components/dynamic-input.md) | 42 | 28 | 14 | 0 | 4/4 |
+| [Dynamic Tags](components/dynamic-tags.md) | 42 | 25 | 17 | 0 | 4/4 |
+| [Form](components/form.md) | 111 | 68 | 43 | 0 | 4/4 |
+| [Input](components/input.md) | 71 | 58 | 13 | 0 | 4/4 |
+| [Input Number](components/input-number.md) | 46 | 33 | 13 | 0 | 4/4 |
+| [Input OTP](components/input-otp.md) | 34 | 17 | 17 | 0 | 4/4 |
+| [Mention](components/mention.md) | 46 | 30 | 16 | 0 | 4/4 |
+| [Radio](components/radio.md) | 34 | 23 | 11 | 0 | 4/4 |
+| [Rate](components/rate.md) | 19 | 13 | 6 | 0 | 4/4 |
+| [Select](components/select.md) | 98 | 35 | 63 | 0 | 4/4 |
+| [Slider](components/slider.md) | 28 | 13 | 15 | 0 | 4/4 |
+| [Switch](components/switch.md) | 31 | 17 | 14 | 0 | 4/4 |
+| [Time Picker](components/time-picker.md) | 50 | 16 | 34 | 0 | 4/4 |
+| **Total: 17 routes** | **984** | **478** | **506** | **0** | **68/68** |
+
+**P4 is Verified for retained native scopes.** There are no Planned P4 routes or unresolved
+P4 rows. This is not calendar/format/renderer parity, all-browser/AT certification, or
+automatic completion of P0/P5/P6. The historical defaults, cancelled reset, partial/invalid
+draft, async stale-result, native-input/form/ARIA ownership and no-JS boundaries remain
+those documented per component.
+
+Full catalog totals: **96 routes, 3,670 tracker rows, 280/384 accepted tasks across
+70 retained-scope pages, 104 unchecked**. The remaining **26 route pages** comprise
+**22 Planned pages and four explicit exclusions**, grouped below. Their **946 rows**
+contain **819 unresolved** and **127 already explicit omitted** rows; they receive no
+P4 implementation credit.
+
+### Remaining catalog after P4
+
+| Group | Routes | Rows / unresolved | Scope boundary |
+| --- | --- | ---: | --- |
+| P0 / configuration (3) | [Config Provider](components/config-provider.md), [Element](components/element.md), [Global Style](components/global-style.md) | 97 / 8 | Native configuration/composition/external-CSS work remains; framework provider exclusions stay excluded. Global Style has zero API rows but four unaccepted page tasks. |
+| P5 collections (10) | [Cascader](components/cascader.md), [Transfer](components/transfer.md), [Tree Select](components/tree-select.md), [Data Table](components/data-table.md), [Log](components/log.md), [Tree](components/tree.md), [Infinite Scroll](components/infinite-scroll.md), [Popselect](components/popselect.md), [Split](components/split.md), [Virtual List](components/virtual-list.md) | 582 / 579 | Existing partial implementations/shared-helper research are not acceptance. Log highlighter and selected dependency surfaces remain explicit omissions. |
+| P6 specialized (9) | [Carousel](components/carousel.md), [Watermark](components/watermark.md), [Upload](components/upload.md), [Calendar](components/calendar.md), [Countdown](components/countdown.md), [Number Animation](components/number-animation.md), [Time](components/time.md), [Heatmap](components/heatmap.md), [Marquee](components/marquee.md) | 232 / 232 | Native baselines/optional transport/media/time/graphics scopes require individual review; automatic-motion/advanced feature limits remain explicit. |
+| Explicit exclusions (4) | [Equation](components/equation.md), [QR Code](components/qr-code.md), [Legacy Grid](components/legacy-grid.md), [Legacy Transfer](components/legacy-transfer.md) | 35 / 0 | TeX/QR engines and redundant legacy APIs are not silently implemented. Omitted routes are not counted as accepted component tasks. |
+
+**Recommended dependency-ready next foundation: Virtual List (P5-01 + P5-05), fixed-height
+scope first.** Relevant P3 native scrolling/focus and P4 stable-row/template/lifetime
+patterns are available. Establish its own stable keys, bounded window and focused-item
+policy with a static/paginated fallback; do not assume the small upstream vueuc wrapper
+is a ready algorithm. This unlocks Log/Infinite Scroll/Data Table work. Variable-height/grid
+and generic renderer APIs stay separate. Tree is another viable native hierarchy foundation,
+but **neither it nor Virtual List was started** in this Time/P4 sign-off commit.

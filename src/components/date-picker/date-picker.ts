@@ -1,5 +1,6 @@
 import { isDatePickerTypeSupported, nativeDateValue } from "./native.js"
 import type { NativeDateType } from "./native.js"
+import { prepareTemporalActionFocus } from "../temporal/focus.js"
 
 export type DatePickerValue = string | readonly [string, string]
 export interface DatePickerState {
@@ -171,6 +172,10 @@ export function createDatePicker(root: HTMLElement): DatePickerController {
   function refresh() {
     if (!connected) return
     settleReset()
+    mark(observer.takeRecords())
+    prepareTemporalActionFocus(clearButton, inputs,
+      !hasEntry() || !editable() || !!clearButton && (!available(clearButton) || attributes.some(item => item.node === clearButton && item.base !== null)), available)
+    if (!connected) return
     pause()
     let previous: Element | null = null
     try { previous = synchronize(); error = null }

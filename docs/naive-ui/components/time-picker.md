@@ -1,100 +1,114 @@
 # Time Picker
 
-**Plan: Planned. Current baseline: partial native time input in advanced plugin.**
+**Plan: 🟢 Verified retained native single-time scope.**
 
-## Baseline and target
-
-[B1: advanced.ts](../../../src/plugins/advanced.ts) exposes native time value/min/max/step and string events.
-
-- **HTML:** labelled `input[type=time]` with seconds precision when supported.
-- **JS:** explicit time-only serialization, bounds and optional panel navigation using native `Intl`.
-- **CSS:** external input/panel presentation.
-- **Placement:** proposed `src/optional/time-picker/`.
-
-## Acceptance and gaps
-
-Test midnight, second steps, empty values, locale display and crossing-day bounds. Format tokens, disabled hour/minute callbacks and timestamp conversion require explicit decisions, not a date-library dependency.
+[Canonical time/precision/ownership contracts and evidence](../../components/time-picker.md).
+The original native time input owns its string/defaults/constraints/FormData. Shared
+temporal probing and focus primitives avoid date anchoring and preserve native clear/reset.
+No range API, timezone/formatter/column renderer, hidden proxy or dependency.
 
 ## Migration steps
 
-**Delivery phase:** P4 — native time input; P6 for custom panels. **Task state:** 🔵 Planned.
-**Prerequisites:** P0 time-only serialization, P4 Input and P3 panel focus in the [master plan](../migration-plan.md).
-**Next task:** distinguish native time strings from upstream timestamp values and document conversion boundaries.
+**Delivery phase:** P4 — native time entry; P6 custom panel/format/timezone scope omitted.
+**Task state:** 🟢 Verified retained scope.
+**Prerequisites:** native temporal probe and accepted form/default/ownership contracts.
+**Next task:** audit retained P4 and recommend a P5 collection foundation; no next component starts here.
 
-1. [ ] **Adopt native time entry.** Preserve label, name, seconds precision, min/max/step and form reset.
-2. [ ] **Resolve time rules.** Define empty values, midnight, crossing-day bounds and disabled-time callback scope.
-3. [ ] **Gate panel features.** Add hour/minute/second choices and locale display only as optional behavior using native Intl.
-4. [ ] **Test temporal edges.** Cover seconds steps, invalid entry, timezone conversion decisions and locale changes without reproducing a date-library token engine.
+1. [x] **Adopt native time entry.** Original label/name/precision/constraints/default/reset retained.
+2. [x] **Resolve time rules.** Time-only strings, midnight/empty, native wrapping bounds and precision checks.
+3. [x] **Gate panel features.** Native clear/readout only; source format/hour-list/timezone/popup machinery omitted.
+4. [x] **Test temporal edges.** Targeted/P4-wide tests, native browser probes and explicit platform limits.
 
 ### Native primitives and fallback
 
-- **Native path:** adopt a labelled `input[type=time]` with min/max/step and native form semantics; detect retained seconds/time-entry support and allow simple validated text when unavailable.
-- **Small enhancement:** optional choice panels clone native templates, format with Intl and use feature-detected popover positioning. Custom-element lifecycle owns listeners and observers; CSS lays out columns. Missing advanced panel support reduces scope rather than importing a date/time parser or picker polyfill.
+Native input[type=time] remains the no-JS field. Empty string is still a successful named
+empty field; midnight is 00:00. Missing native parsing/precision is an explicit fallback,
+not a calendar/token library. Native min>max may wrap midnight and is never reordered.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
 ## Reference and review boundary
 
 - [Official website](https://www.naiveui.com/en-US/os-theme/components/time-picker)
-- [Pinned public API Markdown](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md)
-- [Pinned implementation source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker)
-- [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
+- [Pinned API](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md)
+- [Pinned implementation](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker)
+- [Catalog](../index.md) · [Master plan](../migration-plan.md)
 
-Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **34 local table rows + 0 supplementary declarations + 0 inherited rows = 34 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
-
+Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
+All **34 original identities** remain; **16 explicit source supplements** give **50 rows**.
+Verified means an **ADAPTED retained native target**, not source epoch/format/UI parity.
+Canonical tests/browser/build evidence applies to retained rows; omissions receive no credit.
+TimePicker.tsx, interface/public-types and exports were reviewed; source date-fns/date-fns-tz
+formatting and date-anchored strictParse are not ported.
 
 ### TimePicker Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`actions`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L28) | Prop | Candidate JS `actions` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`clearable`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L29) | Prop | Candidate presence attribute `clearable`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L30) | Prop | Candidate native default/reset state for `default-value`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default-formatted-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L31) | Prop | Candidate native default/reset state for `default-formatted-value`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L32) | Prop | Explicit native `disabled` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`format`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L33) | Prop | Candidate explicit JS `format` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`formatted-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L34) | Prop | Candidate explicit JS `formattedValue` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`hours`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L35) | Prop | Candidate JS `hours` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`minutes`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L36) | Prop | Candidate JS `minutes` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`seconds`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L37) | Prop | Candidate JS `seconds` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`input-readonly`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L38) | Prop | Candidate presence attribute `input-readonly`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`is-hour-disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L39) | Prop | Candidate explicit JS `isHourDisabled` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`is-minute-disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L40) | Prop | Candidate explicit JS `isMinuteDisabled` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`is-second-disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L41) | Prop | Candidate explicit JS `isSecondDisabled` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L42) | Prop | Explicit native `placeholder` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`placement`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L43) | Prop | Candidate explicit JS `placement` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L44) | Prop | Candidate live JS `show` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L45) | Prop | External CSS token/class for `size`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`status`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L46) | Prop | Candidate `status` attribute or JS `status`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`time-zone`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L47) | Prop | Candidate `time-zone` attribute or JS `timeZone`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`to`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L48) | Prop | Candidate explicit JS `to` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`use-12-hours`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L49) | Prop | Candidate presence attribute `use-12-hours`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L50) | Prop | Current native time string differs from upstream timestamp; define time-only/timezone conversion explicitly. | ⚪ Not reviewed | B1 time string, not upstream timestamp; partial only, verify this row. |
-| [`value-format`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L51) | Prop | Candidate explicit JS `valueFormat` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-blur`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L52) | Callback | Candidate DOM `mui:blur` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-clear`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L53) | Callback | Candidate DOM `mui:clear` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-confirm`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L54) | Callback | Candidate DOM `mui:confirm` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-focus`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L55) | Callback | Candidate DOM `mui:focus` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:formatted-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L56) | Callback | Candidate DOM `mui:change:formatted-value` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:show`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L57) | Callback | Candidate DOM `mui:change:show` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L58) | Callback | Candidate DOM `mui:change` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native disposition | Status |
+| --- | --- | --- | --- |
+| [`actions`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L28) | Prop | No source clear/now/confirm toolbar array. | ⏭️ Intentionally omitted |
+| [`clearable`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L29) | Prop | Authored native type=button clear. | 🟢 Verified |
+| [`default-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L30) | Prop | Actual native time-string defaults; no epoch/null model conversion. | 🟢 Verified |
+| [`default-formatted-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L31) | Prop | No formatted default model; Markdown number differs from source String. | ⏭️ Intentionally omitted |
+| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L32) | Prop | Native input/fieldset disabled and successful-control filtering. | 🟢 Verified |
+| [`format`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L33) | Prop | Native time strings, no date-fns tokens. | ⏭️ Intentionally omitted |
+| [`formatted-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L34) | Prop | No second formatted binding/hidden date anchor. | ⏭️ Intentionally omitted |
+| [`hours`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L35) | Prop | Native constraints are not selectable hour arrays. | ⏭️ Intentionally omitted |
+| [`minutes`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L36) | Prop | No custom minute column/list. | ⏭️ Intentionally omitted |
+| [`seconds`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L37) | Prop | Native seconds precision/step, not a source seconds array. | ⏭️ Intentionally omitted |
+| [`input-readonly`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L38) | Prop | Actual readonly, including native picker/validation behavior. | 🟢 Verified |
+| [`is-hour-disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L39) | Prop | No arbitrary disabled native popup hours. | ⏭️ Intentionally omitted |
+| [`is-minute-disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L40) | Prop | No minute/hour-dependent cell predicate. | ⏭️ Intentionally omitted |
+| [`is-second-disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L41) | Prop | No second/minute/hour-dependent cell predicate. | ⏭️ Intentionally omitted |
+| [`placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L42) | Prop | Native labels/hints; platform placeholder UI is not controlled. | ⏭️ Intentionally omitted |
+| [`placement`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L43) | Prop | No native popup positioning API. | ⏭️ Intentionally omitted |
+| [`show`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L44) | Prop | No owned picker visibility state. | ⏭️ Intentionally omitted |
+| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L45) | Prop | External small/medium/large native CSS. | 🟢 Verified |
+| [`status`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L46) | Prop | Native/Form validity and plain readout, no date/instant validity claim. | 🟢 Verified |
+| [`time-zone`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L47) | Prop | Time-of-day has no timezone; conversion requires application policy. | ⏭️ Intentionally omitted |
+| [`to`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L48) | Prop | No portal target. | ⏭️ Intentionally omitted |
+| [`use-12-hours`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L49) | Prop | Native locale UI is not a configurable twelve-hour panel. | ⏭️ Intentionally omitted |
+| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L50) | Prop | Validated native time strings only; no timestamp anchoring. | 🟢 Verified |
+| [`value-format`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L51) | Prop | No formatted binding token API. | ⏭️ Intentionally omitted |
+| [`on-blur`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L52) | Callback | Original native blur event. | 🟢 Verified |
+| [`on-clear`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L53) | Callback | Explicit native input/change and time-clear notification. | 🟢 Verified |
+| [`on-confirm`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L54) | Callback | Native change is not source timestamp/formatted confirmation. | ⏭️ Intentionally omitted |
+| [`on-focus`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L55) | Callback | Original native focus event. | 🟢 Verified |
+| [`on-update:formatted-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L56) | Callback | No dual formatted/timestamp emitter. | ⏭️ Intentionally omitted |
+| [`on-update:show`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L57) | Callback | No inferred native open/hide notification. | ⏭️ Intentionally omitted |
+| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L58) | Callback | Native time-string input/change; silent setters/reset/refresh. | 🟢 Verified |
 
 ### TimePicker Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L64) | Slot | Candidate authored `icon` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native disposition | Status |
+| --- | --- | --- | --- |
+| [`icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L64) | Slot | Authored decorative affix, not native-popup icon replacement. | 🟢 Verified |
 
 ### TimePicker Methods
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`focus`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L70) | Method | Candidate plain-JS `focus` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`blur`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L71) | Method | Candidate plain-JS `blur` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native disposition | Status |
+| --- | --- | --- | --- |
+| [`focus`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L70) | Method | Original native control.focus(options). | 🟢 Verified |
+| [`blur`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/demos/enUS/index.demo-entry.md#L71) | Method | Original native control.blur(). | 🟢 Verified |
+
+### Explicit source supplements — not original public table rows
+
+| Upstream item · source | Kind | Native disposition | Status |
+| --- | --- | --- | --- |
+| [`bordered`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/src/TimePicker.tsx) | Source prop | External native input border CSS. | 🟢 Verified |
+| [`showIcon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/src/TimePicker.tsx) | Source prop | No native-picker icon toggle. | ⏭️ Intentionally omitted |
+| [`stateful`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/src/TimePicker.tsx) | Source private prop | Native current/default field, no framework stateful-mode switch. | ⏭️ Intentionally omitted |
+| [`onUpdateValue / deprecated onChange`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/src/TimePicker.tsx) | Source callback alias group | Native events, no duplicate callback-array ABI. | ⏭️ Intentionally omitted |
+| [`onUpdateShow`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/src/TimePicker.tsx) | Source callback alias | No native visibility model. | ⏭️ Intentionally omitted |
+| [`onUpdateFormattedValue / onUpdate:formattedValue`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/src/TimePicker.tsx) | Source callback alias group | No source formatted/timezone binding channel. | ⏭️ Intentionally omitted |
+| [`theme / themeOverrides / builtinThemeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/src/TimePicker.tsx) | Source theme group | External CSS, no provider or CSS-in-JS. | ⏭️ Intentionally omitted |
+| [`TimePickerProps / timePickerProps / NTimePicker`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/index.ts) | Source public type/export group | Explicit native root/controller, no framework aliases. | ⏭️ Intentionally omitted |
+| [`TimePickerSlots.default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/src/TimePicker.tsx) | Source slot declaration | Authored native input, no VNode[] injection. | ⏭️ Intentionally omitted |
+| [`TimePickerSlots`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/index.ts) | Source public slot type | Native markup rather than a renderer ABI. | ⏭️ Intentionally omitted |
+| [`TimePickerInst`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/src/interface.ts) | Source public interface | Native focus/blur with separate controller type. | ⏭️ Intentionally omitted |
+| [`TimePickerSize`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/src/public-types.ts) | Source public type | Small/medium/large CSS vocabulary. | 🟢 Verified |
+| [`OnUpdateValue / OnUpdateValueImpl / OnUpdateFormattedValue / OnUpdateFormattedValueImpl`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/src/interface.ts) | Source callback type group | No epoch/formatted callback signature compatibility. | ⏭️ Intentionally omitted |
+| [`IsHourDisabled / IsMinuteDisabled / IsSecondDisabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/src/interface.ts) | Source validator type group | Native constraints are not arbitrary disabled-time cells. | ⏭️ Intentionally omitted |
+| [`TimePickerInjection / timePickerInjectionKey / PanelRef`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/src/interface.ts) | Source internal provider/ref group | No scrolling-column/provider graph. | ⏭️ Intentionally omitted |
+| [`Item / ItemValue`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time-picker/src/interface.ts) | Source internal column types | No number/am/pm item renderer/model. | ⏭️ Intentionally omitted |
 
 <!-- END PINNED API INVENTORY -->

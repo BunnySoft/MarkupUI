@@ -189,6 +189,18 @@ describe("clear, native events, focus and lifetime", () => {
     helper.clear(); helper.setValue("2024-03-01")
     expect(output.hidden).toBe(true); expect(clear.disabled).toBe(true)
   })
+  it("keeps native blur callback overrides when a clear action becomes hidden", () => {
+    const { helper, clear, output } = fixture()
+    clear.focus(); clear.addEventListener("blur", () => { clear.disabled = true; output.hidden = true }, { once: true })
+    helper.clear(); helper.setValue("2024-03-01")
+    expect(clear.disabled).toBe(true); expect(output.hidden).toBe(true)
+  })
+  it("stops Date synchronization if a clear-button blur callback disconnects it", () => {
+    const { helper, clear, output } = fixture()
+    clear.focus(); clear.addEventListener("blur", () => helper.disconnect(), { once: true })
+    helper.clear()
+    expect(helper.connected).toBe(false); expect(output.hidden).toBe(true); expect(output.textContent).toBe("Original output")
+  })
   it("cancelled clicks/resets and superseded clear requests never discard newer values", async () => {
     const { helper, first, clear, form } = fixture()
     clear.addEventListener("click", event => event.preventDefault(), { once: true }); clear.click(); await flush()

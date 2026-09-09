@@ -178,9 +178,10 @@ uses post-default tasks, without overwriting newer fields. Input/change, setters
 never create fake native popup confirmation/open/hide events.
 
 A disappearing/unusable focused clear button recovers to an available local endpoint.
-Clearing from an outside programmatic focus does not steal it. Attribute write observation
-resumes **before** focus events, preserving application hidden/disabled overrides made by
-focus handlers. No synthetic selection/focus/keyboard engine is added to date segments.
+Clearing from an outside programmatic focus does not steal it. The shared temporal action
+primitive moves focus **before** hiding/disabling the action while observation is active,
+preserving application hidden/disabled overrides made by native blur/focus handlers.
+No synthetic selection/keyboard engine is added to date segments.
 
 `mui:date-picker-error` reports unsupported runtime anatomy/values; direct API errors throw.
 Control identities/order/type/form-owner changes require explicit recreation. Owned action
@@ -265,8 +266,8 @@ panels. None of that is silently substituted with local Date parsing.
 
 | Asset | Raw bytes | Gzip bytes, level 9 | Ceiling |
 | --- | ---: | ---: | ---: |
-| Date Picker ESM | 9,360 | 3,882 | 4,500 |
-| Date Picker classic | 9,531 | 3,953 | 4,500 |
+| Date Picker ESM (shared Time follow-up) | 9,586 | 3,967 | 4,500 unchanged |
+| Date Picker classic (shared Time follow-up) | 9,758 | 4,038 | 4,500 unchanged |
 | External CSS | 974 | 421 | 1,000 |
 | Core | 62,558 | 14,611 | 15,000 unchanged |
 | Advanced | 6,554 | 2,181 | 3,000 unchanged |
@@ -276,7 +277,20 @@ All **164 prior top-level JS/CSS assets** were built in memory with the pre-Date
 HEAD recipe and byte-compared against current outputs; all match. No prior optional ceiling
 was relaxed. Reference audit: **179 original mode-specific section/source/kind identities
 exactly preserved + twenty supplements = 199 rows (37 adapted, 162 omitted)**.
-Catalog: **3,654 rows, 276/384 tasks across 69 accepted pages**, 108 unchecked. P4 has
-**968 rows**, with **Time Picker's 34 unresolved rows** still Planned. **420 scoped relative
-file links** and diff whitespace were checked. **Next: Time Picker**, not a timezone-bearing date engine;
+At original Date sign-off, catalog totals were **3,654 rows, 276/384 tasks across 69 accepted pages**,
+108 unchecked. P4 then had **968 rows**, with **Time Picker's 34 unresolved rows** still Planned. **420 scoped relative
+file links** and diff whitespace were checked. At Date sign-off, next was Time Picker, not a timezone-bearing date engine;
 no full P4/P0/P5/P6 or source calendar/formatter parity is claimed.
+
+### Coupled Time Picker follow-up
+
+Time Picker review exposed a native blur path while a focused clear action was being hidden.
+Date and Time now share the small temporal pre-transition focus primitive: focus moves while
+attribute observation is active, and a callback that disconnects the owner stops further UI
+writes. Two Date regressions and real Chromium probes preserve blur-handler hidden/disabled
+overrides and teardown state. Date's four-mode public gate remains unchanged.
+
+Date ESM/classic increased from **3,882/3,953** to **3,967/4,038 gzip bytes**, still within
+the unchanged **4,500-byte** ceilings; CSS is unchanged. The shared follow-up passed
+**245 targeted Time/Date/Form/Input tests** and **all 889 P4 tests**. Original Date sign-off
+counts above remain historical; final retained P4 reconciliation is in the master plan.
