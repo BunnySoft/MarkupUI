@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./rate": {
+      "types": "./dist/components/rate/index.d.ts",
+      "import": "./dist/markup-ui-rate.js"
+    },
+    "./rate/style.css": "./dist/markup-ui-rate.css",
     "./slider": {
       "types": "./dist/components/slider/index.d.ts",
       "import": "./dist/markup-ui-slider.js"

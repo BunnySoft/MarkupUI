@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Rate</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-rate.css">
+  <link rel="stylesheet" href="./rate.css">
+  <script defer src="../../dist/markup-ui-rate.global.js"></script>
+  <script defer src="./rate.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Rate: real labelled radio choices</h1>
+    <p>Stars are decoration. Native radios own arrows, Space, Tab, labels, checked state and submission. Half ratings are explicit visible choices, not invisible half-star hit zones.</p>
+    <form id="review" action="rate.html" method="get">
+      <fieldset class="mui-rate mui-radio-group" data-rate data-radio-group data-rate-cumulative id="quality" aria-describedby="quality-help">
+        <legend>Quality (required native radio group)</legend>
+        <p id="quality-help">No selected radio means no rating and no submitted value. Choosing zero explicitly submits “0”. Clear is a separate action, not clicking a selected star again.</p>
+        <div class="mui-rate__choices">
+          <label class="mui-rate__choice"><input data-radio id="quality-0" type="radio" name="quality" value="0"><span class="mui-rate__score">0 of 5 (no stars)</span></label>
+          <label class="mui-rate__choice"><input data-radio id="quality-1" type="radio" name="quality" value="1" required><span class="mui-rate__glyph" aria-hidden="true">★</span><span class="mui-rate__score">1 of 5</span></label>
+          <label class="mui-rate__choice"><input data-radio id="quality-2" type="radio" name="quality" value="2"><span class="mui-rate__glyph" aria-hidden="true">★</span><span class="mui-rate__score">2 of 5</span></label>
+          <label class="mui-rate__choice"><input data-radio id="quality-3" type="radio" name="quality" value="3" checked><span class="mui-rate__glyph" aria-hidden="true">★</span><span class="mui-rate__score">3 of 5</span></label>
+          <label class="mui-rate__choice"><input data-radio id="quality-4" type="radio" name="quality" value="4"><span class="mui-rate__glyph" aria-hidden="true">★</span><span class="mui-rate__score">4 of 5</span></label>
+          <label class="mui-rate__choice"><input data-radio id="quality-5" type="radio" name="quality" value="5"><span class="mui-rate__glyph" aria-hidden="true">★</span><span class="mui-rate__score">5 of 5</span></label>
+        </div>
+        <span data-rate-output hidden>Not rated</span>
+        <button data-rate-clear type="button" hidden>Clear quality (no rating)</button>
+      </fieldset>
+      <fieldset class="mui-rate mui-radio-group" data-rate data-radio-group id="detail" data-size="large">
+        <legend>Detail: half-step choices, maximum 3</legend>
+        <div class="mui-rate__choices">
+          <label class="mui-rate__choice"><input data-radio id="detail-half" type="radio" name="detail" value="0.5"><span class="mui-rate__glyph" data-half aria-hidden="true">★<span class="mui-rate__half-fill">★</span></span><span class="mui-rate__score">0.5 of 3</span></label>
+          <label class="mui-rate__choice"><input data-radio id="detail-1" type="radio" name="detail" value="1"><span class="mui-rate__glyph" aria-hidden="true">★</span><span class="mui-rate__score">1 of 3</span></label>
+          <label class="mui-rate__choice"><input data-radio id="detail-one-half" type="radio" name="detail" value="1.5" checked><span class="mui-rate__glyph" data-half aria-hidden="true">★<span class="mui-rate__half-fill">★</span></span><span class="mui-rate__score">1.5 of 3</span></label>
+          <label class="mui-rate__choice"><input data-radio id="detail-2" type="radio" name="detail" value="2"><span class="mui-rate__glyph" aria-hidden="true">★</span><span class="mui-rate__score">2 of 3</span></label>
+          <label class="mui-rate__choice"><input data-radio id="detail-two-half" type="radio" name="detail" value="2.5"><span class="mui-rate__glyph" data-half aria-hidden="true">★<span class="mui-rate__half-fill">★</span></span><span class="mui-rate__score">2.5 of 3</span></label>
+          <label class="mui-rate__choice"><input data-radio id="detail-3" type="radio" name="detail" value="3"><span class="mui-rate__glyph" aria-hidden="true">★</span><span class="mui-rate__score">3 of 3</span></label>
+        </div>
+        <span data-rate-output hidden>Not rated</span>
+        <button data-rate-clear type="button" hidden>Clear detail</button>
+      </fieldset>
+      <fieldset class="mui-rate mui-radio-group" data-rate data-radio-group id="locked-rate" disabled data-size="small">
+        <legend>Disabled interactive rating</legend>
+        <div class="mui-rate__choices">
+          <label class="mui-rate__choice"><input data-radio type="radio" name="locked-score" value="1"><span class="mui-rate__glyph" aria-hidden="true">♥</span><span class="mui-rate__score">1 of 3</span></label>
+          <label class="mui-rate__choice"><input data-radio type="radio" name="locked-score" value="2" checked><span class="mui-rate__glyph" aria-hidden="true">♥</span><span class="mui-rate__score">2 of 3</span></label>
+          <label class="mui-rate__choice"><input data-radio type="radio" name="locked-score" value="3"><span class="mui-rate__glyph" aria-hidden="true">♥</span><span class="mui-rate__score">3 of 3</span></label>
+        </div>
+        <span data-rate-output hidden>2 of 3</span>
+        <button data-rate-clear type="button" hidden>Clear disabled rating</button>
+      </fieldset>
+      <section aria-labelledby="readonly-title">
+        <h2 id="readonly-title">Static read-only rating</h2>
+        <p class="mui-rate-readonly" id="readonly-score">
+          <span class="mui-rate__glyph" aria-hidden="true">★★★</span><span class="mui-rate__glyph" data-half aria-hidden="true">★<span class="mui-rate__half-fill">★</span></span><span class="mui-rate__glyph" aria-hidden="true">☆</span>
+          <span>3.5 out of 5 — existing published score. No form control or submitted rating.</span>
+        </p>
+      </section>
+      <input type="hidden" name="local" value="only">
+      <p><button type="submit">Inspect native submission / local GET fallback</button> <button type="reset">Native reset</button></p>
+    </form>
+    <div class="demo-tools">
+      <button type="button" id="set-four">Silent quality 4</button>
+      <button type="button" id="set-zero">Silent quality 0</button>
+      <button type="button" id="set-none">Silent no rating (null)</button>
+      <button type="button" id="set-half">Silent detail 2.5</button>
+      <button type="button" id="defaults">Set quality reset default to 2</button>
+      <button type="button" id="disabled">Toggle quality fieldset disabled</button>
+      <button type="button" id="cancel">Cancel next reset</button>
+      <button type="button" id="rtl">Toggle RTL</button>
+      <button type="button" id="disconnect">Disconnect helpers</button>
+    </div>
+    <p id="events">Quality native changes: 0; radio commits: 0; clears: 0</p>
+    <pre id="state">No JS: native radio choices and form reset remain usable.</pre>
+    <pre id="submission">No submission yet.</pre>
+  </main>
+</body>
+</html>

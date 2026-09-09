@@ -22,8 +22,8 @@ const shared = {
   sourcemap: true,
   target: ["es2022"],
 }
-const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image", "popover", "tooltip", "popconfirm", "dropdown", "menu", "tabs", "collapse", "anchor", "back-top", "pagination", "steps", "loading-bar", "dialog", "modal", "drawer", "message", "notification", "collapse-transition", "input", "checkbox", "radio", "switch", "select", "input-number", "slider"]
-const classicEntries = { progress: "global.ts", popover: "global.ts", tooltip: "global.ts", popconfirm: "global.ts", dropdown: "global.ts", menu: "global.ts", tabs: "global.ts", collapse: "global.ts", anchor: "global.ts", "back-top": "global.ts", pagination: "global.ts", steps: "global.ts", "loading-bar": "global.ts", dialog: "global.ts", modal: "global.ts", drawer: "global.ts", message: "global.ts", notification: "global.ts", "collapse-transition": "global.ts", input: "global.ts", checkbox: "global.ts", radio: "global.ts", switch: "global.ts", select: "global.ts", "input-number": "global.ts", slider: "global.ts" }
+const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image", "popover", "tooltip", "popconfirm", "dropdown", "menu", "tabs", "collapse", "anchor", "back-top", "pagination", "steps", "loading-bar", "dialog", "modal", "drawer", "message", "notification", "collapse-transition", "input", "checkbox", "radio", "switch", "select", "input-number", "slider", "rate"]
+const classicEntries = { progress: "global.ts", popover: "global.ts", tooltip: "global.ts", popconfirm: "global.ts", dropdown: "global.ts", menu: "global.ts", tabs: "global.ts", collapse: "global.ts", anchor: "global.ts", "back-top": "global.ts", pagination: "global.ts", steps: "global.ts", "loading-bar": "global.ts", dialog: "global.ts", modal: "global.ts", drawer: "global.ts", message: "global.ts", notification: "global.ts", "collapse-transition": "global.ts", input: "global.ts", checkbox: "global.ts", radio: "global.ts", switch: "global.ts", select: "global.ts", "input-number": "global.ts", slider: "global.ts", rate: "global.ts" }
 const styleOnlyComponents = ["typography", "icon", "gradient-text", "ellipsis", "page-header", "divider", "flex", "space", "grid", "layout", "list", "descriptions", "timeline", "breadcrumb", "thing", "table", "affix", "result", "code", "scrollbar", "float-button"]
 
 await Promise.all([
@@ -97,6 +97,9 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-rate.js": 4_000,
+  "markup-ui-rate.global.js": 4_000,
+  "markup-ui-rate.css": 1_500,
   "markup-ui-slider.js": 3_500,
   "markup-ui-slider.global.js": 3_500,
   "markup-ui-slider.css": 1_000,
