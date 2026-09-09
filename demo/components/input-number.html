@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Input Number</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-input-number.css">
+  <link rel="stylesheet" href="./input-number.css">
+  <script defer src="../../dist/markup-ui-input-number.global.js"></script>
+  <script defer src="./input-number.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Input Number: native editing, validity and stepping</h1>
+    <p>Empty is not zero. Invalid drafts stay browser-owned. Custom actions use native stepUp/stepDown, not arithmetic or a parser. Native arrows remain available without JS.</p>
+    <form id="numbers" action="input-number.html" method="get">
+      <label for="quantity">Quantity (required, 0 to 1, step 0.1)</label>
+      <div class="mui-input-number" data-input-number id="quantity-root">
+        <span class="mui-input-number__affix" aria-hidden="true">±</span>
+        <input data-number-control id="quantity" type="number" name="quantity" value="0.1" min="0" max="1" step="0.1" required aria-describedby="quantity-help">
+        <button data-number-decrement type="button" hidden aria-label="Decrease quantity">−</button>
+        <button data-number-increment type="button" hidden aria-label="Increase quantity">+</button>
+        <button data-number-clear type="button" hidden>Clear quantity</button>
+        <span class="mui-input-number__affix">units</span>
+      </div>
+      <p id="quantity-help">Typed out-of-range and off-grid numbers remain invalid, not silently clamped. A temporarily invalid native draft can expose empty .value with badInput=true.</p>
+      <fieldset id="grid-fieldset">
+        <legend>Native value-attribute grid base; authored buttons on both sides</legend>
+        <label for="grid-number">Grid (default 0.15, step 0.2, no min)</label>
+        <div class="mui-input-number" data-input-number id="grid-root" data-size="small">
+          <button data-number-decrement type="button" hidden>Decrease grid</button>
+          <input data-number-control id="grid-number" type="number" name="grid" value="0.15" step="0.2">
+          <button data-number-increment type="button" hidden>Increase grid</button>
+          <button data-number-clear type="button" hidden>Clear grid</button>
+        </div>
+      </fieldset>
+      <label for="any-number">Any-step number (custom stepping unavailable)</label>
+      <div class="mui-input-number" data-input-number id="any-root" data-round data-status="warning">
+        <input data-number-control id="any-number" type="number" name="any" value="2.5" step="any">
+        <button data-number-decrement type="button" hidden>Decrease any-step</button>
+        <button data-number-increment type="button" hidden>Increase any-step</button>
+        <button data-number-clear type="button" hidden>Clear any-step</button>
+      </div>
+      <label for="external-number">External form owner</label>
+      <div class="mui-input-number" data-input-number id="external-root" data-size="large">
+        <input data-number-control id="external-number" type="number" name="external" form="other-numbers" value="10" min="4" max="20" step="2">
+        <button data-number-decrement type="button" hidden>Decrease external</button>
+        <button data-number-increment type="button" hidden>Increase external</button>
+      </div>
+      <label for="plain-number">CSS-only native field</label>
+      <div class="mui-input-number">
+        <input data-number-control id="plain-number" type="number" name="plain" value="3" min="0" step="1">
+      </div>
+      <input type="hidden" name="local" value="only">
+      <p><button type="submit">Inspect native submission / local GET fallback</button> <button type="reset">Native reset</button></p>
+    </form>
+    <form id="other-numbers"><button type="reset">Reset external number only</button></form>
+    <div class="demo-tools">
+      <button type="button" id="off-grid">Silent off-grid quantity 0.15</button>
+      <button type="button" id="out-of-range">Silent out-of-range quantity 2</button>
+      <button type="button" id="blank">Silent null / empty</button>
+      <button type="button" id="defaults">DefaultValue for next reset: 0.4</button>
+      <button type="button" id="readonly">Toggle quantity readonly</button>
+      <button type="button" id="fieldset">Toggle disabled grid fieldset</button>
+      <button type="button" id="bounds">Toggle quantity max 0.3 / 1</button>
+      <button type="button" id="any-step">Try unsupported custom step (reports error)</button>
+      <button type="button" id="cancel">Cancel next reset</button>
+      <button type="button" id="rtl">Toggle RTL</button>
+      <button type="button" id="disconnect">Disconnect helpers</button>
+    </div>
+    <pre id="state">No JS: native number fields and form fallback remain usable.</pre>
+    <p id="events">Quantity events: input 0, change 0, clear 0</p>
+    <p id="step-error">No explicit stepping error requested.</p>
+    <pre id="submission">No submission yet.</pre>
+  </main>
+</body>
+</html>

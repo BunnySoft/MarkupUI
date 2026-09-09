@@ -1,0 +1,53 @@
+.mui-input-number {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .375rem;
+  min-inline-size: 0;
+  color: var(--mui-number-color, #17212b);
+  font: var(--mui-number-font, 1rem)/1.5 system-ui, sans-serif;
+}
+.mui-input-number [data-number-control] {
+  box-sizing: border-box;
+  flex: 1 1 8rem;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  padding: var(--mui-number-pad, .5rem);
+  border: 1px solid var(--mui-number-border, #687787);
+  border-radius: var(--mui-number-radius, .375rem);
+  background: var(--mui-number-background, #fff);
+  color: inherit;
+  font: inherit;
+}
+.mui-input-number [data-number-control]:focus-visible,
+.mui-input-number button:focus-visible { outline: 2px solid var(--mui-number-focus, #075eae); outline-offset: 2px; }
+.mui-input-number :is([data-number-decrement], [data-number-increment], [data-number-clear]) {
+  padding: .375rem .625rem;
+  border: 1px solid currentColor;
+  border-radius: .25rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.mui-input-number button:disabled { cursor: not-allowed; opacity: .6; }
+.mui-input-number [data-number-control]:disabled { color: var(--mui-number-disabled, #64707a); cursor: not-allowed; }
+.mui-input-number__affix { overflow-wrap: anywhere; }
+.mui-input-number[data-size="tiny"] { --mui-number-font: .75rem; --mui-number-pad: .125rem; }
+.mui-input-number[data-size="small"] { --mui-number-font: .875rem; --mui-number-pad: .25rem; }
+.mui-input-number[data-size="medium"] { --mui-number-font: 1rem; --mui-number-pad: .5rem; }
+.mui-input-number[data-size="large"] { --mui-number-font: 1.125rem; --mui-number-pad: .75rem; }
+.mui-input-number[data-round] { --mui-number-radius: 2rem; }
+.mui-input-number[data-borderless] { --mui-number-border: transparent; }
+.mui-input-number[data-status="success"] { --mui-number-border: #187245; }
+.mui-input-number[data-status="warning"] { --mui-number-border: #8b5c00; }
+.mui-input-number[data-status="error"] { --mui-number-border: #bd2020; }
+.mui-input-number[hidden], .mui-input-number [hidden] { display: none !important; }
+@media (forced-colors: active) {
+  .mui-input-number [data-number-control] { color: CanvasText; background: Canvas; border-color: CanvasText; }
+  .mui-input-number [data-number-control]:disabled { color: GrayText; }
+}
+@media print {
+  .mui-input-number { break-inside: avoid; }
+  .mui-input-number button { display: none !important; }
+}

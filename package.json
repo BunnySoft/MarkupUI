@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./input-number": {
+      "types": "./dist/components/input-number/index.d.ts",
+      "import": "./dist/markup-ui-input-number.js"
+    },
+    "./input-number/style.css": "./dist/markup-ui-input-number.css",
     "./select": {
       "types": "./dist/components/select/index.d.ts",
       "import": "./dist/markup-ui-select.js"

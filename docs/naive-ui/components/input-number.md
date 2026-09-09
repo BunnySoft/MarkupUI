@@ -1,107 +1,119 @@
 # Input Number
 
-**Plan: Planned. Current baseline: partial native number stepper in widgets.**
+**🟢 Verified retained native number-input scope, with explicit omissions.**
 
-## Baseline and target
-
-[B1: widgets.ts](../../../src/plugins/widgets.ts) creates number input and step buttons; exposes numeric value and min/max/step attributes.
-
-- **HTML:** labelled native number input and named decrement/increment buttons.
-- **JS:** empty/NaN semantics, bounds, precision policy and optional locale display without a parser dependency.
-- **CSS:** external button/input grouping.
-- **Placement:** proposed `src/optional/input-number/`.
-
-## Acceptance and gaps
-
-Test decimal steps, negative bounds, empty input, keyboard stepping, reset and invalid text. Custom parsing/formatting needs a documented return contract; current native stepping is not arbitrary precision arithmetic.
+The original labelled input[type=number] owns numeric editing, constraints/defaults and forms.
+The [optional helper](../../../src/components/input-number/input-number.ts) derives button
+availability with a never-inserted native stepping probe and calls native stepUp/stepDown
+on the actual field. No text parser/model/decimal engine is added.
+[Legacy widgets](../../../src/plugins/widgets.ts) remain unchanged.
+[Canonical contract/evidence](../../components/input-number.md) · [Native demo](../../../demo/components/input-number.html).
 
 ## Migration steps
 
-**Delivery phase:** P4 — forms. **Task state:** 🔵 Planned.
-**Prerequisites:** P4 Input and P0 numeric/default-event contracts in the [master plan](../migration-plan.md).
-**Next task:** choose explicit empty/NaN semantics before extending the current native number stepper.
+**Delivery phase:** P4 — forms. **Task state:** 🟢 Verified retained scope.
+**Prerequisites:** relevant Input/native ownership, event and reset conventions only.
+**Next:** Slider, then Rate/native controls before Form enhancements.
 
-1. [ ] **Adopt numeric anatomy.** Keep a labelled number input and accessible decrement/increment buttons with native name and constraints.
-2. [ ] **Resolve stepping.** Define min/max, decimal step, keyboard/wheel policy and behavior at bounds.
-3. [ ] **Scope formatting hooks.** Separate displayed text from numeric value; document parse/format returns without a numeric parser dependency.
-4. [ ] **Test numeric edges.** Cover negative bounds, fractional steps, invalid text, empty input, reset and duplicate change notifications.
+1. [x] **Adopt numeric anatomy.** Original labelled native input and named type=button actions retained; no proxy, duplicate spinbutton role or inserted probe.
+2. [x] **Resolve stepping.** Native decimal/grid/min/max/default-base behavior, empty/badInput distinction, no-op/error availability and native keyboard/wheel policy specified.
+3. [x] **Scope formatting hooks.** Parser/formatter/precision/model-timing/validator/loading exclusions explicit; no arbitrary-precision or locale inverse parser.
+4. [x] **Test numeric edges.** Fractional/off-grid/bounds/empty/invalid-draft/readonly/reset/form/focus/event/media/no-JS/coexistence acceptance recorded.
 
 ### Native primitives and fallback
 
-- **Native path:** `input[type=number]`, native stepUp/stepDown and actual buttons handle bounded numeric entry inside a light-DOM wrapper.
-- **Small enhancement:** use lifecycle listeners for explicit value events and native Intl.NumberFormat only for approved presentation, not an assumed inverse parser. Feature-detect any required number-input behavior and fall back to validated text/server entry. CSS grid/flex controls grouping; no numeric-control or arbitrary-precision dependency is introduced.
+Native input is never replaced and its own steppers are not hidden. Without JS, labelled
+numeric entry, keyboard, constraints, reset and submission remain usable; custom buttons
+stay hidden. The helper uses reversible action state and a local off-DOM native number
+probe with no name/form/insertion, not a hidden submitted value or measurement framework.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
 ## Reference and review boundary
 
-- [Official website](https://www.naiveui.com/en-US/os-theme/components/input-number)
-- [Pinned public API Markdown](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md)
-- [Pinned implementation source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number)
-- [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
+[Official page](https://www.naiveui.com/en-US/os-theme/components/input-number) · [API] ·
+[Source] · [Interface] · [Size]. Pinned Naive UI **2.45.3**,
+`42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
+**34 original local rows + two original inline fields + ten explicit source supplements =
+46 rows: 33 Verified adapted targets + 13 Intentionally omitted.** All 36 original
+owner/prop/slot/method/inline identities remain. Green is native adaptation, not source parity.
+**N1** = [tests](../../../tests/input-number.test.ts); **N2** =
+[obtained native/browser/build record](../../components/input-number.md#acceptance).
 
-Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **34 local table rows + 2 supplementary declarations + 0 inherited rows = 36 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
-
+[API]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md
+[Source]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/src/InputNumber.tsx
+[Interface]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/src/interface.ts
+[Size]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/src/public-types.ts
 
 ### InputNumber Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`autofocus`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L33) | Prop | Explicit native `autofocus` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`bordered`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L34) | Prop | External CSS token/class for `bordered`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`button-placement`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L35) | Prop | Candidate explicit JS `buttonPlacement` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`clearable`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L36) | Prop | Candidate presence attribute `clearable`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L37) | Prop | Candidate native default/reset state for `default-value`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L38) | Prop | Explicit native `disabled` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`format`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L39) | Prop | Candidate explicit JS `format` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`input-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L40) | Prop | Candidate explicit native-child configuration for `input-props`; no unrestricted prop forwarding. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`keyboard`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L41) | Prop | Candidate JS `keyboard` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`loading`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L42) | Prop | Candidate presence attribute `loading`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`max`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L43) | Prop | Explicit native `max` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | B1 native max; partial only, verify this row. |
-| [`min`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L44) | Prop | Explicit native `min` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | B1 native min; partial only, verify this row. |
-| [`parse`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L45) | Prop | Candidate explicit JS `parse` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L46) | Prop | Explicit native `placeholder` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`precision`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L47) | Prop | Candidate explicit JS `precision` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`round`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L48) | Prop | External CSS token/class for `round`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`readonly`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L49) | Prop | Explicit native `readonly` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`show-button`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L50) | Prop | Candidate live JS `showButton` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L51) | Prop | External CSS token/class for `size`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`status`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L52) | Prop | Candidate `status` attribute or JS `status`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`step`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L53) | Prop | Explicit native `step` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | B1 native step; partial only, verify this row. |
-| [`update-value-on-input`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L54) | Prop | Candidate presence attribute `update-value-on-input`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`validator`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L55) | Prop | Candidate explicit JS `validator` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L56) | Prop | Candidate live JS `value` state; native value/default/event contract needs review. | ⚪ Not reviewed | B1 numeric native value; partial only, verify this row. |
-| [`on-blur`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L57) | Callback | Candidate DOM `mui:blur` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-clear`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L58) | Callback | Candidate DOM `mui:clear` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-focus`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L59) | Callback | Candidate DOM `mui:focus` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L60) | Callback | Candidate DOM `mui:change` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `autofocus` · [API] L33 | Prop | Native autofocus | 🟢 Verified | Browser-owned timing, no helper refocus on connect. |
+| `bordered` · [API] L34 | Prop | External data-borderless CSS | 🟢 Verified | Native focus retained. |
+| `button-placement` · [API] L35 | Prop | Authored right/both-side button order | 🟢 Verified | N2 no CSS/JS reorder or extra keyboard engine. |
+| `clearable` · [API] L36 | Prop | Optional native clear button/controller clear | 🟢 Verified | N1/N2 empty/badInput/focus/event behavior. |
+| `default-value` · [API] L37 | Prop | Native defaultValue/value attribute | 🟢 Verified | N1/N2 separate current/reset state and step base. |
+| `disabled` · [API] L38 | Prop | Native disabled/fieldset | 🟢 Verified | N1/N2 no child disabled rewrites. |
+| `format` · [API] L39 | Prop | Native number rendering | ⏭️ Intentionally omitted | No string/locale formatter or text proxy. |
+| `input-props` · [API] L40 | Prop | Actual native attributes/properties | 🟢 Verified | No prop forwarding/type override; real number required. |
+| `keyboard` · [API] L41 | Prop | Native keyboard and repeat always retained | 🟢 Verified | Per-key suppression omitted. |
+| `loading` · [API] L42 | Prop | Application-owned external status | ⏭️ Intentionally omitted | No spinner/dependency/reserved-space prop. |
+| `max` · [API] L43 | Prop | Native max/validity/stepping | 🟢 Verified | N1/N2 no typing-time clamp. |
+| `min` · [API] L44 | Prop | Native min/validity/step base | 🟢 Verified | N1/N2 below-bound drafts remain native. |
+| `parse` · [API] L45 | Prop | Native number grammar/valueAsNumber | ⏭️ Intentionally omitted | No general string parser or formatting inverse. |
+| `placeholder` · [API] L46 | Prop | Authored native placeholder | 🟢 Verified | No implicit translated default/label substitution. |
+| `precision` · [API] L47 | Prop | Native JS/browser number precision | ⏭️ Intentionally omitted | No requested rounding/fixed decimals/arbitrary precision. |
+| `round` · [API] L48 | Prop | data-round CSS | 🟢 Verified | External input border shape. |
+| `readonly` · [API] L49 | Prop | Native readonly; custom actions blocked | 🟢 Verified | N1/N2 copy/focus/submission remain native. |
+| `show-button` · [API] L50 | Prop | Authored optional custom actions | 🟢 Verified | Native steppers not suppressed, including no-JS. |
+| `size` · [API] L51 | Prop | Four CSS sizes | 🟢 Verified | tiny/small/medium/large, no provider state. |
+| `status` · [API] L52 | Prop | Native-field border CSS | 🟢 Verified | No automatic aria-invalid/live/schema validation. |
+| `step` · [API] L53 | Prop | Native stepUp/stepDown rules | 🟢 Verified | N1/N2 decimals/grid/no-ops/any errors; no numeric engine. |
+| `update-value-on-input` · [API] L54 | Prop | Observe native input/change explicitly | ⏭️ Intentionally omitted | No last-valid-value or model commit/blur timing policy. |
+| `validator` · [API] L55 | Prop | Native validity/application custom validity | ⏭️ Intentionally omitted | No callback validator. |
+| `value` · [API] L56 | Prop | Native finite number/null state plus badInput/validity | 🟢 Verified | N1/N2 empty and invalid are not zero; setters silent. |
+| `on-blur` · [API] L57 | Callback | Native blur event | 🟢 Verified | No clamp/round-on-blur. |
+| `on-clear` · [API] L58 | Callback | mui:input-number-clear after input/change | 🟢 Verified | N1/N2 previous number/text/badInput snapshot. |
+| `on-focus` · [API] L59 | Callback | Native focus event | 🟢 Verified | N1/N2 boundary/clear focus recovery. |
+| `on-update:value` · [API] L60 | Callback | Native events, state.value and native flags | 🟢 Verified | No duplicate numeric callback/model event. |
 
 ### InputNumber Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`add-icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L66) | Slot | Candidate authored `add-icon` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`minus-icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L67) | Slot | Candidate authored `minus-icon` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`prefix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L68) | Slot | Candidate authored `prefix` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`suffix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L69) | Slot | Candidate authored `suffix` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `add-icon` · [API] L66 | Slot | Authored named increment button content | 🟢 Verified | No Icon/Button component dependency. |
+| `minus-icon` · [API] L67 | Slot | Authored named decrement button content | 🟢 Verified | Keep actual accessible button name. |
+| `prefix` · [API] L68 | Slot | Authored affix content | 🟢 Verified | Label/description association stays author-owned. |
+| `suffix` · [API] L69 | Slot | Authored affix content | 🟢 Verified | No VNode renderer. |
 
 ### InputNumber Methods
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`blur`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L75) | Method | Candidate plain-JS `blur` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`focus`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L76) | Method | Candidate plain-JS `focus` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `blur` · [API] L75 | Method | Native control.blur() | 🟢 Verified | No wrapper/ref facade. |
+| `focus` · [API] L76 | Method | Native control.focus() | 🟢 Verified | Native focusability and disabled rules. |
 
 ### InputNumber Props: keyboard inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`keyboard.ArrowUp?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L41) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`keyboard.ArrowDown?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-number/demos/enUS/index.demo-entry.md#L41) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `keyboard.ArrowUp?` · [API] L41 | Inline record field | Native ArrowUp left untouched | ⏭️ Intentionally omitted | No disabling flag or extra key listener. |
+| `keyboard.ArrowDown?` · [API] L41 | Inline record field | Native ArrowDown left untouched | ⏭️ Intentionally omitted | No disabling flag or global suppression. |
+
+### Explicit source-only supplements
+
+| Upstream owner/item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
+| --- | --- | --- | --- | --- |
+| InputNumber min/max/step Number-or-String declarations · [Source] | Source type group | Native raw attribute strings | 🟢 Verified | Native grammar/default fallback, not custom parseNumber/abs-step normalization. |
+| InputNumber `onUpdateValue` · [Source] | Source alias | Native input/change observation | 🟢 Verified | No duplicate alias event. |
+| InputNumber `onChange` · [Source] | Deprecated source alias | Native change instead | ⏭️ Intentionally omitted | No deprecated callback-array registration. |
+| InputNumber `theme`, `themeOverrides`, `builtinThemeOverrides` · [Source] | Source theme group | External CSS tokens | ⏭️ Intentionally omitted | No provider/theme-object/CSS-in-JS integration. |
+| InputNumber `InputNumberSize`, `Size` · [Size], [Interface] | Source type aliases | Four explicit CSS sizes | 🟢 Verified | No Form/provider inheritance. |
+| InputNumber `InputNumberInst` · [Interface] | Source type | Original native control methods | 🟢 Verified | Native method support, not a component ref facade. |
+| InputNumber `select` · [Interface] | Source-only method | Native control.select() | 🟢 Verified | Number selection APIs remain browser-limited; no caret/range shim. |
+| InputNumber `OnUpdateValue` · [Interface] | Source callback type | Native event + nullable numeric snapshot | ⏭️ Intentionally omitted | No numeric callback registration contract. |
+| InputNumber `InputNumberSlots` · [Source] | Source VNode slot type | Authored DOM only | ⏭️ Intentionally omitted | No function/VNode slot map. |
+| InputNumber `HOLDING_CHANGE_THRESHOLD`, `HOLDING_CHANGE_INTERVAL` / hold timers · [Source] | Source interaction implementation | Native key repeat, one custom action per click | ⏭️ Intentionally omitted | No custom 800ms/100ms press-repeat engine. |
 
 <!-- END PINNED API INVENTORY -->
