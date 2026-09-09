@@ -3,8 +3,8 @@
 **Plan state: 🟠 In progress overall — P1 pilots, P2 and P3 are Verified for declared retained
 native scopes and explicit omissions. All 31 P2-assigned pages and all 22 P3-assigned pages
 have closed property dispositions and four accepted tasks. P3 includes Discrete API's
-verified no-new-runtime composition resolution. P4 is In progress with Input, Checkbox, Radio, Switch, Select, Input Number, Slider, Rate and Form
-native scopes accepted and eight routes Planned. P0/P5/P6 and full framework/viewer
+verified no-new-runtime composition resolution. P4 is In progress with Input, Checkbox, Radio, Switch, Select, Input Number, Slider, Rate, Form and Auto Complete
+native scopes accepted and seven routes Planned. P0/P5/P6 and full framework/viewer
 parity remain independent and incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
@@ -35,7 +35,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
 | P2 — Primitives and layout | 🟢 Verified retained scope | All 31 P2-assigned pages reconciled; native Image/fallback/dialog scope accepted with advanced P6 exclusions. | P1 pattern | Full 96-route and P2 reference audit found no retained unresolved P2 rows. This is not global P3/P6 or framework parity. |
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
-| P4 — Forms and selection | 🟠 In progress | Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate and Form accepted; Auto Complete next. | Relevant P0 form contract; P3 for popup variants | Native controls/defaults/constraints and explicit guarded Form coordination accepted; eight P4 routes and rich P5 scopes remain separate. |
+| P4 — Forms and selection | 🟠 In progress | Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate, Form and Auto Complete accepted; Input OTP next. | Relevant P0 form contract; P3 for popup variants | Native controls/defaults/constraints, Form coordination and bounded datalist loading accepted; seven P4 routes and rich P5 scopes remain separate. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
 | P6 — Specialized modules | 🔵 Planned | Deliver independently justified, opt-in advanced features. | Component-specific earlier work | Explicit imports, independent size budgets and no runtime dependencies. |
 
@@ -108,10 +108,10 @@ smuggling an overlay implementation into the CSS-only native composition.
 | --- | --- | --- | --- |
 | P4-01 — Native entry | 🟢 Verified retained scope | Explicit authored Input/textarea helper and group/addon/pair CSS; native controls own attributes/value/defaults. | [Input acceptance](../components/input.md): clear/click-reveal/count, composition/selection, reset/association/submission and independent assets; renderer/veto/hold exclusions explicit. |
 | P4-02 — Boolean and exclusive choice | 🟢 Verified retained scope | Checkbox, Radio and Switch declared native scopes and companions accepted; explicit omissions remain. | [Checkbox](../components/checkbox.md), [Radio](../components/radio.md), [Switch](../components/switch.md): native boolean/default/mixed-or-binary/exclusive state, names/forms and focus-safe loading; no extra selection engine or hidden payloads. |
-| P4-03 — Native selection | 🟠 In progress | Native Select retained scope accepted; Auto Complete remains Planned. | [Select evidence](../components/select.md): original single/multiple controls/options/groups, native defaults/forms, clear and external literal list filtering; explicit P5 exclusions. |
+| P4-03 — Native selection | 🟢 Verified retained scope | Native Select and Auto Complete retained scopes accepted. | [Select](../components/select.md) and [Auto Complete](../components/auto-complete.md): real native options/fields/defaults/forms, explicit bounded results/lifetime; rich P5 popup/render/selection inference exclusions remain. |
 | P4-04 — Numeric and bounded entry | 🟢 Verified retained scope | Input Number, Slider and Rate declared native scopes accepted, with explicit limitations. | [Input Number](../components/input-number.md), [Slider](../components/slider.md), [Rate](../components/rate.md): native number/range/radio semantics, reset-safe states, no proxy or extra keyboard/gesture engine. |
 | P4-05 — Form validation | 🟢 Verified retained scope | Form/FormItem/FormItemGi native fields, explicit feedback/grid anatomy and narrow optional validators accepted. | [Form evidence](../components/form.md): generation/snapshot/abort/error/reset ownership; native custom validity and submission remain application/browser-owned, no schema framework. |
-| P4-06 — Enhanced entry | 🔵 Planned | Scope rich select/autocomplete, OTP, mention, dynamic input and dynamic tags as independent enhancements. | Authored templates and explicit async/event contracts; no JSX or template evaluator. |
+| P4-06 — Enhanced entry | 🔵 Planned | Input OTP next; Mention, Dynamic Input and Dynamic Tags remain independent. Rich Select/Auto Complete engines are excluded from their accepted native scopes. | Authored templates and explicit async/event contracts; no JSX or template evaluator. |
 | P4-07 — Form sign-off | 🔵 Planned | Exercise changed values/defaults, labels, fieldsets, composition, submission, reset and stale validation work. | Accepted property rows and plain-HTML form examples. |
 
 ### P5 — Collections and scale
@@ -188,9 +188,9 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Form/FormItem/FormItemGi (P4), verified native validation/feedback/grid scope.**
-**P3 retained scope and P4-02/P4-04/P4-05's declared native scopes are complete; P4 is In progress.
-Next: Auto Complete, before remaining OTP/dynamic/picker routes. Do not infer P0 or full P4 completion.**
+**Current component: Auto Complete (P4), verified native datalist/bounded-loader scope.**
+**P3 retained scope and P4-02/P4-03/P4-04/P4-05's declared native scopes are complete; P4 is In progress.
+Next: Input OTP, before remaining dynamic/mention/picker routes. Do not infer P0 or full P4 completion.**
 
 The following component records form a historical execution sequence. Earlier “next” or
 “P3 incomplete” checkpoint statements are superseded by the final P3 audit below.
@@ -326,8 +326,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 3,572 rows and 248 accepted retained tasks out of 384 across 62 component
-pages (136 unchecked), not full upstream parity.
+The current index records 3,582 rows and 252 accepted retained tasks out of 384 across 63 component
+pages (132 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -1016,7 +1016,7 @@ programmatic updates, and never synthesizing hidden model fields. Rate's explici
 mui:rate-clear can be observed in capture for validation refresh; it intentionally emits no
 fake native radio change. See [Rate's Form prerequisites](../components/rate.md#native-prerequisites-handed-to-form).
 
-### Form/FormItem/FormItemGi acceptance and Auto Complete handoff
+### Form/FormItem/FormItemGi acceptance and historical Auto Complete handoff
 
 [Form](../components/form.md) completes the retained native coordination scope. The helper
 never creates or replaces controls, sets values/defaults, claims setCustomValidity, disables
@@ -1042,9 +1042,43 @@ with dedicated internal/external/unchanged-value regressions. No production jsdo
 were added. All **143 prior top-level JS/CSS outputs** byte-match the pre-Form HEAD build
 recipe. Core/plugins remain **14,611/2,181/2,779 gzip bytes** under unchanged ceilings.
 
-**Next: Auto Complete**. Remaining Planned P4 routes are **Auto Complete, Color Picker,
+**At Form sign-off, next was Auto Complete**. Remaining Planned P4 routes were **Auto Complete, Color Picker,
 Date Picker, Dynamic Input, Dynamic Tags, Input OTP, Mention and Time Picker**.
 Reuse actual native fields and Input's explicit setters/refresh/lifetime rather than copying
 its editing logic. Invalidate Form after silent programmatic transactions; original names
 remain literal and callbacks remain validation, not a business submission engine. Keep the
 same one-component → documentation/build/acceptance → separate-commit sequence.
+
+### Auto Complete acceptance and Input OTP handoff
+
+[Auto Complete](../components/auto-complete.md) completes retained native datalist/loader
+scope. Original fields, values/defaults, labels/form associations, free text, native
+constraints and native keyboard remain authoritative. Existing Input clears/sets values;
+Form observes the same original events. The small optional writer handles only bounded
+typed suggestion results, debounce/minLength, AbortSignal/snapshots, composition/reset
+generations and reversible original options/templates/status. Static lists may be shared;
+managed writers require explicit exclusive input/list ownership.
+
+All **46 original identities** are preserved exactly in order; **ten explicit source
+supplements** yield **56 rows: 27 adapted and 29 omitted**. Four tasks close. Catalog:
+**3,582 rows, 252/384 accepted tasks across 63 pages, 132 unchecked**. P4 has **896 rows**,
+with **seven Planned routes / 360 unresolved rows** remaining.
+
+**213 targeted tests** (68 Auto Complete, 52 Input, 53 Form, 40 Select), build/type/budgets
+and Chromium native association/free-text Enter/forms/required/clear/reset/availability,
+asynchronous error/stale/disposal, CDP IME, no-JS, RTL/narrow/200% CSS zoom/media and
+ESM/classic/Input/Form/legacy coexistence evidence are recorded in the canonical document.
+The reviewer-found same-task external-edit, synchronous abort-transfer and composition-reset
+generation defects were fixed and covered by dedicated regressions/browser probes.
+
+Native popup selection was not verified: this automation's ArrowDown/Enter kept “Lo”
+and submitted natively. The helper does not fake on-select, append, clear/blur-after-select,
+expanded state, popup matching/group/rendering or universal AT announcements.
+ESM/classic/CSS: **3,183/3,252/494 gzip bytes** under **4,500/4,500/1,000** ceilings.
+All **146 prior top-level JS/CSS outputs** byte-match the pre-Auto Complete HEAD build
+recipe. Core/plugins remain **14,611/2,181/2,779** and no earlier ceiling was changed.
+
+**Next: Input OTP.** Other remaining Planned P4 routes are **Dynamic Input, Dynamic Tags,
+Mention, Color Picker, Date Picker and Time Picker**. Keep native field/value/default/
+form/IME semantics, explicit silent-setter refresh and one separate accepted-component
+commit at a time. Overall P4/P0/P5/P6 completion is not implied.

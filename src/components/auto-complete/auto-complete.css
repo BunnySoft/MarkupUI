@@ -1,0 +1,12 @@
+.mui-auto-complete { display: grid; gap: .375rem; min-inline-size: 0; }
+.mui-auto-complete__field { display: flex; align-items: center; gap: .5rem; min-inline-size: 0; }
+.mui-auto-complete__field > input { box-sizing: border-box; min-inline-size: 0; flex: 1; max-inline-size: 100%; padding: .5rem .625rem; font: inherit; color: inherit; background: Field; border: 1px solid GrayText; border-radius: .25rem; }
+.mui-auto-complete__field > input:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+.mui-auto-complete__field > input:disabled { opacity: .65; }
+.mui-auto-complete__status { margin: 0; font-size: .875em; overflow-wrap: anywhere; }
+.mui-auto-complete__status[data-auto-complete-state="loading"] { border-inline-start: .2rem dotted currentColor; padding-inline-start: .5rem; }
+.mui-auto-complete__status[data-auto-complete-state="error"] { color: #a82020; }
+.mui-auto-complete[data-size="small"] { font-size: .875rem; }
+.mui-auto-complete[data-size="large"] { font-size: 1.125rem; }
+@media (prefers-color-scheme: dark) { .mui-auto-complete__status[data-auto-complete-state="error"] { color: #ffb4ab; } }
+@media (forced-colors: active) { .mui-auto-complete__status[data-auto-complete-state] { color: CanvasText; } }

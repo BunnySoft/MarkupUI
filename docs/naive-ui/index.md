@@ -33,10 +33,11 @@ Input Number now has [accepted native numeric/stepping/nullable-draft evidence](
 Slider now has [accepted native range/two-track-pair/readout evidence](../components/slider.md).
 Rate now has [accepted native integer/half/clear/static-readonly evidence](../components/rate.md), reusing Radio.
 Form/FormItem/FormItemGi now have [accepted native validation/feedback/grid evidence](../components/form.md), without owning native custom validity or submission.
+Auto Complete now has [accepted native datalist/bounded-loader evidence](../components/auto-complete.md), with honest native keyboard/selection limitations.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
-are reconciled. **P4 is In progress**, with Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate and Form accepted and eight routes Planned.
-P0/P5/P6 and full framework parity remain independent. **Next: Auto Complete**,
-before remaining OTP/dynamic/picker routes.
+are reconciled. **P4 is In progress**, with Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate, Form and Auto Complete accepted and seven routes Planned.
+P0/P5/P6 and full framework parity remain independent. **Next: Input OTP**,
+before remaining dynamic/mention/picker routes.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
 Use the [master migration plan](migration-plan.md) for phase dependencies and current execution
 evidence. Every component page now includes its own numbered task checklist, prerequisites and next task.
@@ -1514,7 +1515,7 @@ The application-owned local submit recipe preserves submitter and latest-intent 
 custom results do not silently block native submission or bypass native invalid timing.
 
 All **93 original identities** plus **18 explicit source supplements** resolve to **111 rows:
-68 adapted targets + 43 omissions**. Four tasks close. The catalog now has **3,572 rows,
+68 adapted targets + 43 omissions**. Four tasks close. At Form sign-off the catalog had **3,572 rows,
 248/384 accepted tasks across 62 pages**, with **136 unchecked tasks**. Native field/grid
 and async/error/feedback/reset tests, Chromium forms/focus/no-JS/RTL/zoom/media/coexistence
 and the independent build/budget gates are recorded in the canonical acceptance.
@@ -1523,10 +1524,38 @@ defects; both were fixed and regression-tested. **143 prior top-level JS/CSS ass
 byte-compared against the pre-Form HEAD build recipe; all match. Core/advanced/widgets
 remain **14,611/2,181/2,779 gzip bytes**, under unchanged **15,000/3,000/4,000** ceilings.
 
-**P4-05 is Verified for this retained native scope, not all P4.** Remaining Planned routes:
+**P4-05 is Verified for this retained native scope, not all P4.** At that checkpoint, Planned routes were:
 **Auto Complete, Color Picker, Date Picker, Dynamic Input, Dynamic Tags, Input OTP, Mention,
-Time Picker**. Recommended next: **Auto Complete**, reusing Input/native datalist rather
+Time Picker**. Auto Complete is accepted below, reusing Input/native datalist rather
 than importing a rich selection schema or model store.
+
+### Auto Complete: native datalist and bounded suggestion loading
+
+[Auto Complete acceptance](../components/auto-complete.md) retains original native fields,
+authored/shareable static datalists, free text, defaults/reset and native keyboard/form
+behavior. Optional exclusive writers support bounded strict results, debounce/minLength,
+AbortSignal, composition/reset generations, native value snapshots and reversible option/
+template ownership. Existing Input clear/setters and Form feedback coexist without ARIA
+rewrites, hidden values, a second editing engine or an HTTP client.
+
+All **46 original identities + ten source supplements = 56 rows: 27 adapted targets and
+29 omissions**. Four tasks close; exact catalog totals are **3,582 rows, 252/384 accepted
+tasks across 63 pages**, with **132 unchecked tasks**. **213 targeted tests**, build/budgets
+and Chromium native association/Enter/free-text forms, clear/reset/availability, asynchronous
+error/stale/disposal, CDP IME, no-JS, RTL/narrow/zoom/media and coexistence passed.
+Read-only review found same-task external-option edits, reentrant abort transfer and
+reset/composition bookkeeping defects; fixes have dedicated tests and browser probes.
+
+Native popup selection was **not verified**: ArrowDown/Enter in this automation kept “Lo”
+and submitted natively. No on-select, clear/blur-after-select, append, fake aria-expanded,
+custom popup matching/group/rendering or AT speech parity is claimed.
+ESM/classic/CSS are **3,183/3,252/494 gzip bytes** under **4,500/4,500/1,000** ceilings.
+All **146 previous top-level JS/CSS assets** byte-match the pre-Auto Complete build recipe;
+core/plugins remain **14,611/2,181/2,779**, with all previous ceilings unchanged.
+
+**P4-03 is Verified for retained native Select/Auto Complete scope; P4 remains In progress.**
+Next **Input OTP**. Remaining Planned routes: **Input OTP, Dynamic Input, Dynamic Tags,
+Mention, Color Picker, Date Picker and Time Picker**.
 
 ## Common Components (15)
 
@@ -1552,7 +1581,7 @@ than importing a rich selection schema or model store.
 
 | Component | Plan direction | Current baseline | Phase |
 | --- | --- | --- | --- |
-| [Auto Complete](components/auto-complete.md) | 🔵 Planned | Partial datalist | P4, P5 |
+| [Auto Complete](components/auto-complete.md) | 🟢 Verified native datalist/loader scope; 29 explicit omissions | Native field/suggestions with guarded bounded optional loader; [accepted evidence](../components/auto-complete.md) | P4; P5 rich exclusions |
 | [Cascader](components/cascader.md) | 🔵 Planned | Partial widgets | P5 |
 | [Color Picker](components/color-picker.md) | 🔵 Planned | Native widgets input | P4, P6 |
 | [Checkbox](components/checkbox.md) | 🟢 Verified retained native scope; 14 explicit omissions | CSS-only native checkbox and bounded fieldset group helper; [accepted evidence](../components/checkbox.md) | P4 |
@@ -1695,15 +1724,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,077: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 530 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form source supplements |
+| Supplementary named declarations | 1,087: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 540 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete source supplements |
 | Explicit inherited tracker rows | 275, including six source-inherited DialogReactive options, three ModalReactive fields and two NotificationReactive fields |
-| Total tracker rows | 3,572; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 248 retained-scope tasks accepted across 62 component pages, 136 unchecked |
+| Total tracker rows | 3,582; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 252 retained-scope tasks accepted across 63 component pages, 132 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,572 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate and 68 Form native capabilities cite acceptance |
-| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 34 unchanged inventories match extraction; the 62 accepted pages preserve named/grouped identities with explicit dispositions; Form's 93 original section/source/kind identities match pre-Form HEAD exactly and in order |
-| Local links | Relative file links in the four edited Form/index/master documents checked at Form sign-off; historical Rate/Slider/Input Number/Select/Switch/Radio/Checkbox/Input/Discrete/P3 and 612-link/anchor snapshots remain historical evidence |
+| Status presentation | All 3,582 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate, 68 Form and 27 Auto Complete native capabilities cite acceptance |
+| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 33 unchanged inventories match extraction; the 63 accepted pages preserve named/grouped identities with explicit dispositions; Auto Complete's 46 original section/source/kind identities match pre-migration HEAD exactly and in order |
+| Local links | Relative file links in the four edited Auto Complete/index/master documents checked at sign-off; Form/Rate/Slider/Input Number/Select/Switch/Radio/Checkbox/Input/Discrete/P3 and historical 612-link/anchor snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

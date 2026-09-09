@@ -1,0 +1,10 @@
+:root { font-family: system-ui, sans-serif; color-scheme: light dark; }
+body { margin: 0; }
+main { max-inline-size: 56rem; margin-inline: auto; padding: 1rem; }
+button { font: inherit; padding: .5rem; }
+.actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .75rem; }
+pre, p { overflow-wrap: anywhere; }
+pre { white-space: pre-wrap; padding: .75rem; border: 1px solid GrayText; }
+.mui-auto-complete__field { flex-wrap: wrap; }
+.mui-auto-complete__field > input { flex-basis: 10rem; }
+[hidden] { display: none !important; }

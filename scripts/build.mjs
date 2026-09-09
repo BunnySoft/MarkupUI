@@ -26,6 +26,8 @@ const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty"
 const classicEntries = { progress: "global.ts", popover: "global.ts", tooltip: "global.ts", popconfirm: "global.ts", dropdown: "global.ts", menu: "global.ts", tabs: "global.ts", collapse: "global.ts", anchor: "global.ts", "back-top": "global.ts", pagination: "global.ts", steps: "global.ts", "loading-bar": "global.ts", dialog: "global.ts", modal: "global.ts", drawer: "global.ts", message: "global.ts", notification: "global.ts", "collapse-transition": "global.ts", input: "global.ts", checkbox: "global.ts", radio: "global.ts", switch: "global.ts", select: "global.ts", "input-number": "global.ts", slider: "global.ts", rate: "global.ts" }
 const styleOnlyComponents = ["typography", "icon", "gradient-text", "ellipsis", "page-header", "divider", "flex", "space", "grid", "layout", "list", "descriptions", "timeline", "breadcrumb", "thing", "table", "affix", "result", "code", "scrollbar", "float-button"]
 classicEntries.form = "global.ts"
+components.push("auto-complete")
+classicEntries["auto-complete"] = "global.ts"
 
 await Promise.all([
   build({
@@ -98,6 +100,9 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-auto-complete.js": 4_500,
+  "markup-ui-auto-complete.global.js": 4_500,
+  "markup-ui-auto-complete.css": 1_000,
   "markup-ui-form.js": 5_000,
   "markup-ui-form.global.js": 5_000,
   "markup-ui-form.css": 1_250,

@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./auto-complete": {
+      "types": "./dist/components/auto-complete/index.d.ts",
+      "import": "./dist/markup-ui-auto-complete.js"
+    },
+    "./auto-complete/style.css": "./dist/markup-ui-auto-complete.css",
     "./form": {
       "types": "./dist/components/form/index.d.ts",
       "import": "./dist/markup-ui-form.js"
