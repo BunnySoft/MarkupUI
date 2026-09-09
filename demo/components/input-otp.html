@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI single-field Input OTP</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-input-otp.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
+  <link rel="stylesheet" href="./input-otp.css">
+  <script defer src="../../dist/markup-ui-input.global.js"></script>
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
+  <script defer src="../../dist/markup-ui-input-otp.global.js"></script>
+  <script defer src="./input-otp.js"></script>
+</head>
+<body>
+<main>
+  <h1>Input OTP: one native field, not six focus stops</h1>
+  <p>Use dummy codes only. Completion reports local format, not authentication or a submit intent. No code is logged, copied to status text, stored or sent.</p>
+  <dialog id="example" aria-labelledby="example-title" open>
+    <h2 id="example-title">Local code-entry example</h2>
+    <p>This nonmodal example uses a native method=dialog form. Without JavaScript, valid submission only closes this dialog: no code enters a URL or network request.</p>
+    <form id="verification" class="mui-form" method="dialog">
+      <div class="mui-form-item" id="otp-item">
+        <label for="otp">Six-digit code (required)</label>
+        <div class="mui-input" data-input id="otp-input">
+          <input id="otp" class="mui-input-otp" data-input-control name="code" type="password"
+                 autocomplete="one-time-code" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" required
+                 aria-describedby="otp-help">
+        </div>
+        <p id="otp-help">Leading zeroes count. Numeric inputmode is only a keyboard hint. Password masking is presentation, not encryption. SMS autofill depends on your browser and operating system.</p>
+        <p class="mui-input-otp-status" id="otp-status">Enter six ASCII digits in the original field.</p>
+        <p id="otp-error" class="mui-form-item__feedback" hidden></p>
+      </div>
+      <div class="actions">
+        <button type="submit" name="intent" value="local-demo">Finish local example</button>
+        <button type="reset">Native reset</button>
+        <button type="button" id="validate" hidden>Check native constraints</button>
+      </div>
+    </form>
+  </dialog>
+  <div class="actions">
+    <button type="button" id="dummy" hidden>Set dummy code silently</button>
+    <button type="button" id="clear" hidden>Clear silently</button>
+    <button type="button" id="mask" hidden>Toggle native masking</button>
+    <button type="button" id="readonly" hidden>Toggle readonly</button>
+    <button type="button" id="disable" hidden>Toggle disabled</button>
+    <button type="button" id="cancel" hidden>Cancel next reset</button>
+    <button type="button" id="rtl">Toggle RTL</button>
+    <button type="button" id="disconnect" hidden>Disconnect helpers</button>
+  </div>
+  <p id="completion">Completion signals: 0. No authentication is performed.</p>
+  <p id="submission">No local submission yet. Submitted codes are never displayed.</p>
+</main>
+</body>
+</html>

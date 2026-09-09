@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./input-otp": {
+      "types": "./dist/components/input-otp/index.d.ts",
+      "import": "./dist/markup-ui-input-otp.js"
+    },
+    "./input-otp/style.css": "./dist/markup-ui-input-otp.css",
     "./auto-complete": {
       "types": "./dist/components/auto-complete/index.d.ts",
       "import": "./dist/markup-ui-auto-complete.js"

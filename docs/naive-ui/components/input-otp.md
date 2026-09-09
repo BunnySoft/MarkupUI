@@ -1,101 +1,114 @@
 # Input OTP
 
-**Plan: Planned. Current baseline: input primitive only.**
+**Plan: 🟢 Verified retained native single-field scope.**
 
-## Baseline and target
-
-[B1: forms.ts](../../../src/components/forms.ts) has no OTP controller.
-
-- **HTML:** prefer one labelled input with `autocomplete="one-time-code"`; segmented presentation must retain one accessible value.
-- **JS:** optional segment navigation, paste distribution and complete/change events.
-- **CSS:** visual cell spacing without hiding native focus.
-- **Placement:** proposed `src/optional/input-otp/`.
-
-## Acceptance and gaps
-
-Test autofill, full/partial paste, backspace, IME, mobile keyboards and screen-reader reading order. Never log OTP values or imply client-side security validation.
+[Canonical anatomy, API, sensitive-data/completion contracts and evidence](../../components/input-otp.md).
+One original text/password input owns the whole string, native selection/paste/IME,
+constraints/defaults and form value. The small optional helper emits metadata-only,
+deduplicated local completion and optional nonlive count presentation.
+No per-cell editor, auth/WebOTP/SMS/clipboard client, code logging/storage or dependency.
 
 ## Migration steps
 
-**Delivery phase:** P4 — enhanced entry. **Task state:** 🔵 Planned.
-**Prerequisites:** P4 Input/IME handling and P0 form/label contracts in the [master plan](../migration-plan.md).
-**Next task:** choose one accessible input with one-time-code autofill as the baseline before segmenting its appearance.
+**Delivery phase:** P4 — enhanced entry. **Task state:** 🟢 Verified retained scope.
+**Prerequisites:** native Input/IME and Form contracts.
+**Next task:** Dynamic Input, then Dynamic Tags; overall P4 remains In progress.
 
-1. [ ] **Define the value contract.** Specify length, allowed characters, empty/default state and when completion is announced.
-2. [ ] **Preserve native autofill.** Keep autocomplete, mobile input hints, submission and readable labelling on the actual input.
-3. [ ] **Add optional segmentation.** Define paste distribution, selection and backspace without creating confusing duplicate accessible controls.
-4. [ ] **Test sensitive entry.** Cover full/partial paste, IME, autofill and reset; never log codes or imply client-side validation provides security.
+1. [x] **Define the value contract.** Whole strings, bounded ASCII length and local completion stretches.
+2. [x] **Preserve native autofill.** Original one-time-code hint/label/name/form/default/selection semantics.
+3. [x] **Add optional segmentation.** Single-field letter-spacing adaptation; multi-cell rendering/navigation explicitly omitted.
+4. [x] **Test sensitive entry.** Native forms, leading zeroes, insertion/composition/reset/review fixes; no code payloads or auth effects.
 
 ### Native primitives and fallback
 
-- **Native path:** one labelled input with autocomplete one-time-code, inputmode and native selection is the default; CSS may present cells without multiplying accessible values.
-- **Small enhancement:** optional segment templates/controllers must preserve paste, autofill and composition, with listeners released on disconnect. Browser/OS autofill is an enhancement, not a guarantee; ordinary text entry is always the fallback. Do not require WebOTP, a custom keyboard, Shadow DOM or an OTP package.
+One labelled native field remains usable without JS. Matching maxlength/pattern and
+inputmode/autocomplete hints are authored, not provider-generated. Mobile autofill remains
+platform-dependent. Native password masking is presentation, not a security guarantee.
+The demo uses method=dialog to avoid code-bearing URLs/network requests even without JS.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
 ## Reference and review boundary
 
 - [Official website](https://www.naiveui.com/en-US/os-theme/components/input-otp)
-- [Pinned public API Markdown](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md)
-- [Pinned implementation source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp)
-- [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
+- [Pinned public API](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md)
+- [Pinned source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp)
+- [Catalog](../index.md) · [Master plan](../migration-plan.md)
 
-Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **18 local table rows + 5 supplementary declarations + 0 inherited rows = 23 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
+Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
+All **23 original identities** remain: **18 local table rows + five inline declarations**,
+no inherited rows. **Eleven explicit source supplements** identify implementation/type
+discrepancies and exports; **34 total rows**. Verified means the documented **ADAPTED**
+single-field native target, not per-cell/source signature parity. Retained rows use
+canonical acceptance evidence; omissions receive no implementation credit.
 
-Referenced public component types (composition, not automatic API inheritance): [Input](input.md). Opaque types without local member definitions remain unreviewed.
-
+InputOtp.tsx, public-types.ts and exports were reviewed. The source pads/truncates arrays,
+distributes/vetoes paste, forwards cell InputProps and intercepts navigation/deletion.
+Those behaviors are intentionally not ported. Original source identities—including
+InputOtp-prefixed type names and the public value string/source array discrepancy—are preserved.
 
 ### InputOTP Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`allow-input`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L26) | Prop | Candidate explicit JS `allowInput` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`block`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L27) | Prop | External CSS token/class for `block`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`default-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L28) | Prop | Candidate native default/reset state for `default-value`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L29) | Prop | Explicit native `disabled` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`gap`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L30) | Prop | External CSS token/class for `gap`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`length`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L31) | Prop | Candidate `length` attribute or JS `length`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`mask`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L32) | Prop | Candidate presence attribute `mask`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L33) | Prop | Explicit native `placeholder` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`readonly`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L34) | Prop | Explicit native `readonly` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L35) | Prop | External CSS token/class for `size`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`status`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L36) | Prop | Candidate `status` attribute or JS `status`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L37) | Prop | Candidate live JS `value` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-blur`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L38) | Callback | Candidate DOM `mui:blur` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-finish`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L39) | Callback | Candidate DOM `mui:finish` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-focus`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L40) | Callback | Candidate DOM `mui:focus` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L41) | Callback | Candidate DOM `mui:change` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`allow-input`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L26) | Prop | Native pattern/validity, no character veto or normalization. | ⏭️ Intentionally omitted | Never strips pasted separators or rewrites case. |
+| [`block`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L27) | Prop | `.mui-input-otp[data-block]` native full width. | 🟢 Verified | External CSS only. |
+| [`default-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L28) | Prop | Native defaultValue/value attribute string. | 🟢 Verified | ADAPTED from source string array; native reset owns defaults. |
+| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L29) | Prop | Actual input/fieldset disabled. | 🟢 Verified | Native FormData and first-legend eligibility preserved. |
+| [`gap`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L30) | Prop | --mui-input-otp-gap letter spacing. | 🟢 Verified | ADAPTED single-field presentation, not inter-cell gaps. |
+| [`length`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L31) | Prop | Fixed integer 1–12 with matching native maxlength/ASCII pattern. | 🟢 Verified | No cell generation or secret truncation. |
+| [`mask`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L32) | Prop | Actual input type=password or text. | 🟢 Verified | Native presentation only, no security guarantee. |
+| [`placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L33) | Prop | Authored native placeholder. | 🟢 Verified | Not a label or per-cell renderer. |
+| [`readonly`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L34) | Prop | Actual input.readOnly. | 🟢 Verified | Never emits completion while readonly; native form behavior unchanged. |
+| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L35) | Prop | data-size small/large, medium default. | 🟢 Verified | External native field CSS. |
+| [`status`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L36) | Prop | Native/Form validation and optional count/state presentation. | 🟢 Verified | Local format is not auth success. |
+| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L37) | Prop | Original input.value string, including leading zeroes/empty. | 🟢 Verified | Docs say string/null; implementation uses array/null; neither array normalization nor hidden null model is ported. |
+| [`on-blur`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L38) | Callback | Original native blur event. | 🟢 Verified | No per-cell index. |
+| [`on-finish`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L39) | Callback | mui:input-otp-complete with length/characters only. | 🟢 Verified | ADAPTED one-per-complete-stretch, no code payload/authentication/submit. |
+| [`on-focus`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L40) | Callback | Original native focus event. | 🟢 Verified | One field, no automatic focus navigation. |
+| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L41) | Callback | Native input/change with original input.value. | 🟢 Verified | No duplicate array/diff/index/source notification. |
 
 ### InputOTP Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L47) | Slot | Candidate authored `default` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L47) | Slot | One authored native code input. | 🟢 Verified | ADAPTED anatomy; no repeated InputProps/VNode templates. |
 
 ### InputOTP Methods
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`focusOnChar`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L53) | Method | Candidate plain-JS `focusOnChar` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`focusOnChar`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L53) | Method | Native input.focus/setSelectionRange are explicit application alternatives. | ⏭️ Intentionally omitted | No per-cell focus engine or injected index refs. |
 
 ### InputOTP Props: on-update:value inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`on-update:value.diff`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L41) | Inline record field | Candidate DOM `mui:change:value.diff` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:value.index`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L41) | Inline record field | Candidate DOM `mui:change:value.index` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:value.source`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L41) | Inline record field | Candidate DOM `mui:change:value.source` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`on-update:value.diff`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L41) | Inline record field | No duplicate changed-code payload. | ⏭️ Intentionally omitted | Native input event/field remains authoritative. |
+| [`on-update:value.index`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L41) | Inline record field | No fabricated cell index. | ⏭️ Intentionally omitted | One native selection range. |
+| [`on-update:value.source`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L41) | Inline record field | Native InputEvent information, no rewritten source enum. | ⏭️ Intentionally omitted | No custom paste/deletion engine. |
 
 ### InputOTP Slots: default inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`default.index`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L47) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default.ref`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L47) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`default.index`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L47) | Inline record field | No per-cell template index. | ⏭️ Intentionally omitted | Single original field. |
+| [`default.ref`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/demos/enUS/index.demo-entry.md#L47) | Inline record field | Direct original input reference, no ref callback graph. | ⏭️ Intentionally omitted | Native identity/listeners retained. |
+
+### Explicit source supplements — not original public table rows
+
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
+| --- | --- | --- | --- | --- |
+| [`InputOtpProps.value (source array)`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/src/InputOtp.tsx) | Source shape discrepancy | Preserve explicit source array/null versus public string/null distinction. | ⏭️ Intentionally omitted | Native whole-string adaptation, not source controlled-array parity. |
+| [`onUpdateValue`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/src/InputOtp.tsx) | Source callback alias | Native input/change instead of duplicate callback props. | ⏭️ Intentionally omitted | No callback arrays. |
+| [`theme / themeOverrides / builtinThemeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/src/InputOtp.tsx) | Source theme group | External CSS only. | ⏭️ Intentionally omitted | No provider or CSS-in-JS. |
+| [`InputOtpProps / inputOtpProps / NInputOtp`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/index.ts) | Source public type/export group | Narrow InputOtpOptions and authored native HTML. | ⏭️ Intentionally omitted | No framework constructor/prop-object aliases. |
+| [`InputOtpAllowInput`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/src/public-types.ts) | Source public type | Native pattern/validity instead of char/index/array veto. | ⏭️ Intentionally omitted | No mutation filtering/normalization. |
+| [`InputOtpSize`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/src/public-types.ts) | Source public type | Small/medium/large CSS vocabulary. | 🟢 Verified | ADAPTED native style, no TS alias claim. |
+| [`InputOtpOnFocus / InputOtpOnBlur`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/src/public-types.ts) | Source callback type group | Native events on one input. | ⏭️ Intentionally omitted | No cell-index callback signature. |
+| [`InputOtpOnFinish`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/src/public-types.ts) | Source callback type | Metadata-only completion alternative. | ⏭️ Intentionally omitted | No string-array code payload. |
+| [`InputOtpOnUpdateValue / InputOtpOnUpdateValueMeta / InputOtpOnUpdateValueMetaSource`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/src/public-types.ts) | Source callback/meta type group | Native field/event state. | ⏭️ Intentionally omitted | No array/diff/index/source ABI. |
+| [`InputOtpSlots / InputOtpDefaultSlot`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/src/public-types.ts) | Source slot type group | Original native input; no VNode/InputProps template. | ⏭️ Intentionally omitted | No implicit Input prop inheritance. |
+| [`InputOtpInst`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/input-otp/src/public-types.ts) | Source public type | Native focus/selection APIs instead. | ⏭️ Intentionally omitted | focusOnChar interface not exported as compatibility alias. |
 
 <!-- END PINNED API INVENTORY -->

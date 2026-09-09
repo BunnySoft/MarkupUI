@@ -1,0 +1,23 @@
+.mui-input-otp {
+  box-sizing: border-box;
+  inline-size: calc(var(--mui-input-otp-length, 6) * 1.5ch + 2rem);
+  max-inline-size: 100%;
+  padding: .625rem .75rem;
+  border: 1px solid GrayText;
+  border-radius: .25rem;
+  background: Field;
+  color: FieldText;
+  font: 1.25rem ui-monospace, monospace;
+  letter-spacing: var(--mui-input-otp-gap, .5ch);
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.mui-input-otp[data-block] { inline-size: 100%; }
+.mui-input-otp[data-size="small"] { font-size: 1rem; padding-block: .375rem; }
+.mui-input-otp[data-size="large"] { font-size: 1.5rem; padding-block: .875rem; }
+.mui-input-otp:focus-visible { outline: 2px solid Highlight; outline-offset: 3px; }
+.mui-input-otp:disabled { opacity: .65; }
+.mui-input-otp[aria-invalid="true"] { border-style: dashed; }
+.mui-input-otp-status { margin: 0; font-size: .875em; overflow-wrap: anywhere; }
+.mui-input-otp-status[data-input-otp-state="complete"] { font-weight: 600; }
+@media (forced-colors: active) { .mui-input-otp { border-color: ButtonText; } }
