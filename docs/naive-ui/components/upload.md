@@ -1,35 +1,54 @@
-# Upload
+# Upload, UploadTrigger and UploadDragger
 
-**Plan: Planned. Current baseline: file selection only in advanced plugin.**
+**🟢 Verified retained native file/queue scope.** A real labelled file input, one
+authored row per selection occurrence, synchronized FileList/FormData, bounded
+caller-supplied transport and honest cancellation. No upload package, implicit backend,
+provider, hidden membership fields, remote-file renderer, previews or downloads.
 
-## Baseline and target
+## Baseline and implementation evidence
 
-[B1: advanced.ts](../../../src/plugins/advanced.ts) creates file input, copies accept/multiple and emits selected File objects. It performs no network upload.
+The unchanged [advanced plugin](../../../src/plugins/advanced.ts) provides legacy
+mui-upload file selection/accept/multiple and a selected File[] event, not transport.
+The [new helper](../../../src/components/upload/upload.ts) is separate opt-in native
+DOM ownership; no custom element is registered. [External CSS](../../../src/components/upload/upload.css)
+owns native list/actions/progress/drop/media. See the [canonical contract and acceptance](../../components/upload.md),
+[tests](../../../tests/upload.test.ts) and [local fake-transport demo](../../../demo/components/upload.html).
 
-- **HTML:** named native file input, labelled trigger and accessible file/status list.
-- **JS:** optional explicit transport with cancellation, progress, retry and bounded concurrency; application endpoint configuration only.
-- **CSS:** external drop-target, preview and status presentation.
-- **Placement:** proposed `src/optional/upload/`; transport must not become mandatory.
-
-## Acceptance and gaps
-
-Test cancellation, rejection, duplicate files, directory capability detection, failures and object-URL cleanup. Client accept/type checks are not server validation. Custom-request fields and download helper are tracked separately from file input behavior.
+Pinned source review covered [props](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/src/Upload.tsx#L300-L399),
+[request callbacks/XHR](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/src/Upload.tsx#L77-L298),
+[selection and submit](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/src/Upload.tsx#L520-L650),
+[public file/request/instance types](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/src/public-types.ts#L5-L59),
+[file actions](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/src/UploadFile.tsx#L116-L206),
+[Trigger](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/src/UploadTrigger.tsx#L15-L89)
+and [Dragger](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/src/UploadDragger.tsx#L7-L37).
+Source parallel additions, hidden XHR assumptions, post-finish File changes, async
+vetoes and recursive drop handling are not claimed as native parity.
 
 ## Migration steps
 
-**Delivery phase:** P6 — specialized transport. **Task state:** 🔵 Planned.
-**Prerequisites:** P4 native file entry, P0 resource disposal and explicit network policy in the [master plan](../migration-plan.md).
-**Next task:** separate file-selection state from any optional application-configured upload transport.
+**Delivery phase:** P6 — specialized transport. **Task state:** 🟢 Verified retained scope.
+**Prerequisites:** native P4 controls/form ownership and scoped lifetime/budget conventions;
+broader P0-01–P0-09 task IDs remain open/partial.
+**Next task:** Calendar, separately. No Calendar implementation is included here.
 
-1. [ ] **Preserve native selection.** Adopt named file input/trigger and define accept, multiple, directory support and labelled file-list anatomy.
-2. [ ] **Define file records.** Resolve stable IDs, status/progress, thumbnails and object-URL cleanup for UploadFileInfo.
-3. [ ] **Specify transport hooks.** Add explicit cancellation, retry, concurrency and custom-request returns without an implicit destination.
-4. [ ] **Test failure lifecycles.** Cover rejected files, duplicate selection, aborted requests, failed retries and drag keyboard alternatives; keep server validation mandatory.
+1. [x] **Preserve native selection.** Label/input/accept/multiple/name/form/reset,
+   FileList synchronization, explicit unsupported-browser fallback and flat drop verified.
+2. [x] **Define file records.** Stable occurrence/batch IDs, real File identity,
+   native status/progress/text rows and explicit remote/thumbnail/URL omissions.
+3. [x] **Specify transport.** Explicit typed caller transport, 1..4 occupied slots,
+   attempt/owner guards, cancellation/retry and ignored-abort ownership draining.
+4. [x] **Test failure lifecycles.** Rejections, callback failures, native reset ordering,
+   stale work, focus/forms/disabled/drop/no-JS/legacy, build/budgets and exact inventory.
 
 ### Native primitives and fallback
 
-- **Native path:** native file input, label/trigger, form encoding and an authored/template-based file list; real File/FormData objects replace framework file wrappers where possible.
-- **Small enhancement:** a custom element owns optional fetch/AbortController transport, or explicitly scoped XMLHttpRequest when upload progress is retained. Feature-detect directory/drag capabilities and retain file selection/form submission as fallback. Dispose request listeners and object URLs; do not import an upload/drag polyfill or promise unsupported fetch upload progress.
+Native input type=file and FileList/FormData remain authoritative. A detached
+DataTransfer capability probe gates enhancement; failure leaves native selection and
+hidden enhancement controls untouched. Unsupported runtime synchronization fails closed
+by clearing selection, disconnecting and reporting an error. Native templates are cloned
+once per accepted File occurrence; no preloaded URL is made into a fake File.
+Flat Files are dropped into a scoped optional native region, not a directory crawler.
+No helper opens the OS chooser or starts a request without explicit caller configuration.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
@@ -38,204 +57,188 @@ Test cancellation, rejection, duplicate files, directory capability detection, f
 - [Official website](https://www.naiveui.com/en-US/os-theme/components/upload)
 - [Pinned public API Markdown](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md)
 - [Pinned implementation source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload)
-- [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
+- [Catalog/provenance](../index.md) · [Architecture/statuses](../architecture.md)
 
-Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **64 local table rows + 31 supplementary declarations + 0 inherited rows = 95 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
-
+Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`;
+historical MarkupUI baseline **5dcb190 / 0.11.0**.
+Inventory: **64 original public table rows + 31 original supplementary declarations +
+three explicit source/type supplements + three source-inherited theme rows = 101
+tracker rows**. Every original identity/link remains one-for-one. Verified denotes
+the stated native adaptation, not omitted flag variants, veto/renderer semantics,
+transport protocols or all-browser/server parity.
+**57 native adaptations + 44 intentional omissions; zero unresolved.**
 
 ### Upload Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`abstract`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L29) | Prop | Candidate presence attribute `abstract`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`accept`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L30) | Prop | Explicit native `accept` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | B1 initial native accept; partial only, verify this row. |
-| [`action`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L31) | Prop | Candidate `action` attribute or JS `action`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`always-show-actions`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L32) | Prop | Candidate presence attribute `always-show-actions`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`create-thumbnail-url`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L33) | Prop | Candidate explicit JS `createThumbnailUrl` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`custom-request`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L34) | Prop | Candidate explicit JS `customRequest` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`custom-download`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L35) | Prop | Candidate explicit JS `customDownload` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`data`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L36) | Prop | Candidate explicit JS `data` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default-file-list`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L37) | Prop | Candidate native default/reset state for `default-file-list`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default-upload`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L38) | Prop | Candidate native default/reset state for `default-upload`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`directory`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L39) | Prop | Candidate presence attribute `directory`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`directory-dnd`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L40) | Prop | Candidate presence attribute `directory-dnd`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L41) | Prop | Explicit native `disabled` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`file-list-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L42) | Prop | Candidate `file-list-class` attribute or JS `fileListClass`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`file-list-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L43) | Prop | External CSS class/custom property for `file-list-style`; no inline style-object passthrough. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`file-list`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L44) | Prop | Candidate JS `fileList` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`headers`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L45) | Prop | Candidate explicit JS `headers` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`input-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L46) | Prop | Candidate explicit native-child configuration for `input-props`; no unrestricted prop forwarding. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`image-group-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L47) | Prop | Candidate explicit native-child configuration for `image-group-props`; no unrestricted prop forwarding. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`is-error-state`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L48) | Prop | Candidate explicit JS `isErrorState` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`list-type`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L49) | Prop | Candidate `list-type` attribute or JS `listType`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`max`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L50) | Prop | Explicit native `max` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`method`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L51) | Prop | Candidate `method` attribute or JS `method`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`multiple`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L52) | Prop | Explicit native `multiple` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | B1 initial native multiple; partial only, verify this row. |
-| [`name`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L53) | Prop | Explicit native `name` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`render-icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L54) | Prop | Candidate authored `render-icon` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`response-type`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L55) | Prop | Candidate `response-type` attribute or JS `responseType`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`should-use-thumbnail-url`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L56) | Prop | Candidate explicit JS `shouldUseThumbnailUrl` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show-cancel-button`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L57) | Prop | Candidate live JS `showCancelButton` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show-download-button`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L58) | Prop | Candidate live JS `showDownloadButton` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show-file-list`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L59) | Prop | Candidate live JS `showFileList` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show-preview-button`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L60) | Prop | Candidate live JS `showPreviewButton` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show-remove-button`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L61) | Prop | Candidate live JS `showRemoveButton` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show-retry-button`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L62) | Prop | Candidate live JS `showRetryButton` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show-trigger`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L63) | Prop | Candidate live JS `showTrigger` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`trigger-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L64) | Prop | Candidate `trigger-class` attribute or JS `triggerClass`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`trigger-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L65) | Prop | External CSS class/custom property for `trigger-style`; no inline style-object passthrough. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`with-credentials`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L66) | Prop | Candidate presence attribute `with-credentials`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-change`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L67) | Callback | Candidate DOM `mui:change` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | B1 selected File[] event only; partial only, verify this row. |
-| [`on-error`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L68) | Callback | Explicit `on-error` function/before-event contract needed; preserve return/cancellation semantics. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-finish`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L69) | Callback | Explicit `on-finish` function/before-event contract needed; preserve return/cancellation semantics. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-before-upload`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L70) | Callback | Explicit `on-before-upload` function/before-event contract needed; preserve return/cancellation semantics. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-download`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L71) | Callback | Explicit `on-download` function/before-event contract needed; preserve return/cancellation semantics. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-preview`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L72) | Callback | Candidate DOM `mui:preview` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-remove`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L73) | Callback | Explicit `on-remove` function/before-event contract needed; preserve return/cancellation semantics. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-retry`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L74) | Callback | Explicit `on-retry` function/before-event contract needed; preserve return/cancellation semantics. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:file-list`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L75) | Callback | Candidate DOM `mui:change:file-list` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Retained mapping / explicit boundary | Status |
+| --- | --- | --- | --- |
+| [`abstract`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L29) | Prop | No abstract/image-card renderer mode; an explicit named native scope is required. | ⏭️ Intentionally omitted |
+| [`accept`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L30) | Prop | Original input.accept; chooser hint, not content/security validation or automatic drop filtering. | 🟢 Verified |
+| [`action`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L31) | Prop | No endpoint option, implicit request destination or backend. | ⏭️ Intentionally omitted |
+| [`always-show-actions`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L32) | Prop | Native actions remain visible with state-specific disabling; no hover-only action mode. | 🟢 Verified |
+| [`create-thumbnail-url`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L33) | Prop | No thumbnail loader, file-body read or object-URL preview ownership. | ⏭️ Intentionally omitted |
+| [`custom-request`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L34) | Prop | transport(File, context) returns typed finished result/promise; explicit caller policy, AbortSignal and byte progress. | 🟢 Verified |
+| [`custom-download`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L35) | Prop | No download callback or side effect. | ⏭️ Intentionally omitted |
+| [`data`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L36) | Prop | Application transport closure owns its request body; no injected HTTP data bag. | ⏭️ Intentionally omitted |
+| [`default-file-list`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L37) | Prop | No remote/default metadata list. Valid initial real FileList can be adopted; native reset has no file defaults. | ⏭️ Intentionally omitted |
+| [`default-upload`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L38) | Prop | autoUpload explicit opt-in, false by default; requires transport. | 🟢 Verified |
+| [`directory`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L39) | Prop | Author native webkitdirectory/multiple hints; adopt only the browser's bounded flat FileList/path metadata. | 🟢 Verified |
+| [`directory-dnd`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L40) | Prop | No directory entry recursion/crawler; directory drops reject. | ⏭️ Intentionally omitted |
+| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L41) | Prop | Native input/fieldset disabled plus hidden host gates; abort requested work without freeing unsettled slots. | 🟢 Verified |
+| [`file-list-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L42) | Prop | Original native ul/ol class and external CSS. | 🟢 Verified |
+| [`file-list-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L43) | Prop | No inline object/string styles; author external CSS. | ⏭️ Intentionally omitted |
+| [`file-list`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L44) | Prop | Readonly controller.files over synchronized real FileList; explicit add/remove/clear/refresh, no controlled metadata renderer. | 🟢 Verified |
+| [`headers`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L45) | Prop | Caller transport owns headers, no implicit forwarding/defaults. | ⏭️ Intentionally omitted |
+| [`input-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L46) | Prop | Author the actual native input attributes/form/label; no prop bag. | 🟢 Verified |
+| [`image-group-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L47) | Prop | No ImageGroup/viewer integration or preview pipeline. | ⏭️ Intentionally omitted |
+| [`is-error-state`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L48) | Prop | No XHR status hook; transport must reject errors and fulfill an explicit finished result. | ⏭️ Intentionally omitted |
+| [`list-type`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L49) | Prop | Text/native-row scope only; no image/image-card renderer modes. | ⏭️ Intentionally omitted |
+| [`max`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L50) | Prop | maxFiles 1..100 plus byte/metadata bounds; atomic rejected batch, not invented input.max support. | 🟢 Verified |
+| [`method`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L51) | Prop | No implicit POST/PUT/DELETE or HTTP method option. | ⏭️ Intentionally omitted |
+| [`multiple`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L52) | Prop | Original native multiple attribute; false limits the actual selected list to one. | 🟢 Verified |
+| [`name`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L53) | Prop | Original input.name and native form association; no transport field-name guessing. | 🟢 Verified |
+| [`render-icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L54) | Prop | Author native decorative row-template markup/icons; no VNode callback or asset package. | 🟢 Verified |
+| [`response-type`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L55) | Prop | No bundled XHR/response parser; response data stays opaque. | ⏭️ Intentionally omitted |
+| [`should-use-thumbnail-url`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L56) | Prop | No thumbnail inference or URL chooser. | ⏭️ Intentionally omitted |
+| [`show-cancel-button`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L57) | Prop | Real cancel action, always present/state-disabled; no visibility flag or focus-destroying replacement. | 🟢 Verified |
+| [`show-download-button`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L58) | Prop | No download action. | ⏭️ Intentionally omitted |
+| [`show-file-list`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L59) | Prop | Required native list is exposed only when enhanced; no listless queue mode. | 🟢 Verified |
+| [`show-preview-button`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L60) | Prop | No preview action or automatic URL navigation. | ⏭️ Intentionally omitted |
+| [`show-remove-button`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L61) | Prop | Real remove action synchronizes native membership before removing a row. | 🟢 Verified |
+| [`show-retry-button`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L62) | Prop | Real retry action gated by settled error/cancelled status, never an occupied cancelled attempt. | 🟢 Verified |
+| [`show-trigger`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L63) | Prop | Original keyboard-accessible native file chooser remains; no hidden-trigger mode. | 🟢 Verified |
+| [`trigger-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L64) | Prop | Author native label/input classes and ::file-selector-button CSS. | 🟢 Verified |
+| [`trigger-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L65) | Prop | No inline object/string trigger styles. | ⏭️ Intentionally omitted |
+| [`with-credentials`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L66) | Prop | No credential/cookie defaults or forwarding; caller transport owns policy. | ⏭️ Intentionally omitted |
+| [`on-change`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L67) | Callback | mui:upload-change plus optional synchronous onChange notification. Exceptions surface; no veto/rollback. | 🟢 Verified |
+| [`on-error`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L68) | Callback | Error status/change and mui:upload-error diagnostics; no return-value FileInfo rewrite. | 🟢 Verified |
+| [`on-finish`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L69) | Callback | Finished change only after typed result settlement; no mutating finish callback or File nulling. | 🟢 Verified |
+| [`on-before-upload`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L70) | Callback | No asynchronous validator/pre-upload veto pipeline. Validate in caller transport or before explicit add/start. | ⏭️ Intentionally omitted |
+| [`on-download`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L71) | Callback | No download hook/effect; source callback is also labelled currently unused in props. | ⏭️ Intentionally omitted |
+| [`on-preview`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L72) | Callback | No preview hook, viewer or navigable result URLs. | ⏭️ Intentionally omitted |
+| [`on-remove`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L73) | Callback | No false/Promise/error remove veto. Explicit remove command emits a non-veto post-change instead. | ⏭️ Intentionally omitted |
+| [`on-retry`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L74) | Callback | No retry veto hook; explicit guarded retry plus post-change notification. | ⏭️ Intentionally omitted |
+| [`on-update:file-list`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L75) | Callback | change.files snapshot after actual FileList synchronization; no controlled metadata array. | 🟢 Verified |
 
 ### UploadFileInfo Type
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`id`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L81) | Record field | Candidate plain-JS `id` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`name`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L82) | Record field | Candidate plain-JS `name` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`status`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L83) | Record field | Candidate plain-JS `status` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`batchId?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L84) | Record field | Candidate plain-JS `batchId?` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`file?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L85) | Record field | Candidate plain-JS `file?` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`fullPath?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L86) | Record field | Candidate plain-JS `fullPath?` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`percentage?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L87) | Record field | Candidate plain-JS `percentage?` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`thumbnailUrl?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L88) | Record field | Candidate plain-JS `thumbnailUrl?` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`type?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L89) | Record field | Candidate plain-JS `type?` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`url?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L90) | Record field | Candidate plain-JS `url?` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Retained mapping / explicit boundary | Status |
+| --- | --- | --- | --- |
+| [`id`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L81) | Record field | Generated stable string occurrence ID; never accepted/reused from caller metadata. Source type is string, unlike English string/number. | 🟢 Verified |
+| [`name`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L82) | Record field | Actual File.name written as literal text. | 🟢 Verified |
+| [`status`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L83) | Record field | Pending/uploading/error/finished/removed plus queued/cancelling/cancelled native lifecycle distinctions. | 🟢 Verified |
+| [`batchId?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L84) | Record field | Generated batch ID per accepted selection. | 🟢 Verified |
+| [`file?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L85) | Record field | Always a real retained File, including finished/cancelled selected entries. | 🟢 Verified |
+| [`fullPath?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L86) | Record field | Native webkitRelativePath or empty; no fabricated filesystem path/crawler. | 🟢 Verified |
+| [`percentage?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L87) | Record field | Derived from validated loaded/total bytes; null for unknown/zero total, matching source nullable type. | 🟢 Verified |
+| [`thumbnailUrl?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L88) | Record field | No thumbnail URL or preview resource. | ⏭️ Intentionally omitted |
+| [`type?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L89) | Record field | Actual File.type metadata, not validated content/security classification. | 🟢 Verified |
+| [`url?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L90) | Record field | No promoted navigable remote URL. Opaque response data never becomes a File or anchor. | ⏭️ Intentionally omitted |
 
 ### UploadTrigger Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`abstract`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L96) | Prop | Candidate presence attribute `abstract`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Retained mapping / explicit boundary | Status |
+| --- | --- | --- | --- |
+| [`abstract`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L96) | Prop | Native label/file input replace the companion; no abstract provider/renderer mode. | ⏭️ Intentionally omitted |
 
 ### Upload Methods
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`clear`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L121) | Method | Candidate plain-JS `clear` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`openOpenFileDialog`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L122) | Method | Candidate plain-JS `openOpenFileDialog` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`submit`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L123) | Method | Candidate plain-JS `submit` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Retained mapping / explicit boundary | Status |
+| --- | --- | --- | --- |
+| [`clear`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L121) | Method | controller.clear clears real native membership and cancels work, not other form fields. | 🟢 Verified |
+| [`openOpenFileDialog`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L122) | Method | No helper dialog-opening alias. Original native input/label owns chooser activation; app may use native APIs with user activation. | ⏭️ Intentionally omitted |
+| [`submit`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L123) | Method | start(id?) and explicit retry(id), distinct from native form submission; no implicit endpoint. | 🟢 Verified |
 
 ### Upload Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L129) | Slot | Candidate authored `default` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Retained mapping / explicit boundary | Status |
+| --- | --- | --- | --- |
+| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L129) | Slot | Original native scope/input/list/template/readout children. | 🟢 Verified |
 
 ### UploadDragger Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L135) | Slot | Candidate authored `default` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Retained mapping / explicit boundary | Status |
+| --- | --- | --- | --- |
+| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L135) | Slot | Authored hidden-until-enhanced native drop region and keyboard chooser alternative. | 🟢 Verified |
 
 ### UploadTrigger Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L141) | Slot | Candidate authored `default` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Retained mapping / explicit boundary | Status |
+| --- | --- | --- | --- |
+| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L141) | Slot | Original label/input and native controls, no injected scoped-slot renderer. | 🟢 Verified |
 
 ### UploadCustomRequestOptions
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`file`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L102) | Record field | Candidate plain-JS `file` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`action?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L103) | Record field | Candidate plain-JS `action?` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`data?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L104) | Record field | Candidate plain-JS `data?` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`withCredentials?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L107) | Record field | Candidate plain-JS `withCredentials?` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`headers?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L108) | Record field | Candidate plain-JS `headers?` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`onProgress`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L111) | Record field | Candidate DOM `mui:progress` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`onFinish`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L112) | Record field | Candidate DOM `mui:finish` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`onError`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L113) | Record field | Candidate DOM `mui:error` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Retained mapping / explicit boundary | Status |
+| --- | --- | --- | --- |
+| [`file`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L102) | Record field | Real File argument plus context ID/attempt/generation; no nullable remote-file record. | 🟢 Verified |
+| [`action?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L103) | Record field | No injected request endpoint. | ⏭️ Intentionally omitted |
+| [`data?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L104) | Record field | Caller transport owns body, including source string/Blob variants; no data bag. | ⏭️ Intentionally omitted |
+| [`withCredentials?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L107) | Record field | No credential policy is inferred or forwarded. | ⏭️ Intentionally omitted |
+| [`headers?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L108) | Record field | No request-header adapter. | ⏭️ Intentionally omitted |
+| [`onProgress`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L111) | Record field | context.reportProgress(loaded,total?) with stale/finite/monotonic guards and native progress. | 🟢 Verified |
+| [`onFinish`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L112) | Record field | Explicit fulfilled {status:finished,response?}; no fire-and-forget finish callback freeing hidden work. | 🟢 Verified |
+| [`onError`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L113) | Record field | Transport throw/rejection remains error; malformed results also error. | 🟢 Verified |
 
 ### UploadCustomRequestOptions.onProgress
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`percent`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L111) | Record field | Candidate plain-JS `percent` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Retained mapping / explicit boundary | Status |
+| --- | --- | --- | --- |
+| [`percent`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L111) | Record field | Derived record.percentage; no unbounded direct percentage setter. 100% bytes is not server success. | 🟢 Verified |
 
 ### Exported helper
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`uploadDownload`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L145) | Method | Candidate plain-JS `uploadDownload` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Retained mapping / explicit boundary | Status |
+| --- | --- | --- | --- |
+| [`uploadDownload`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L145) | Method | No download helper or automatic navigation of returned URLs. | ⏭️ Intentionally omitted |
 
-### Upload Props: on-change inline fields
+### Original callback/method/trigger inline declarations
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`on-change.file`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L67) | Inline record field | Candidate DOM `mui:change.file` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-change.fileList`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L67) | Inline record field | Candidate DOM `mui:change.file-list` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-change.event?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L67) | Inline record field | Candidate DOM `mui:change.event` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+These are the same original scoped identities/links, grouped without dropping any fields.
 
-### Upload Props: on-error inline fields
+| Upstream item · source | Kind | Retained mapping / explicit boundary | Status |
+| --- | --- | --- | --- |
+| [`on-change.file`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L67) | Inline field | change.file is nullable for batch operations; selection.added carries accepted entries. | 🟢 Verified |
+| [`on-change.fileList`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L67) | Inline field | Frozen change.files after native synchronization. | 🟢 Verified |
+| [`on-change.event?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L67) | Inline field | No original-event forwarding; native input events remain native and are not redispatched. | ⏭️ Intentionally omitted |
+| [`on-error.file`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L68) | Inline field | Error diagnostics/change contain the actual file record when applicable. | 🟢 Verified |
+| [`on-error.event?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L68) | Inline field | No private XHR ProgressEvent contract. | ⏭️ Intentionally omitted |
+| [`on-finish.file`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L69) | Inline field | Finished change.file retains its real File, status and opaque typed result. | 🟢 Verified |
+| [`on-finish.event?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L69) | Inline field | No XHR event forwarding or finish-transform callback. | ⏭️ Intentionally omitted |
+| [`on-before-upload.file`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L70) | Inline field | No before-upload veto context; caller transport receives File directly. | ⏭️ Intentionally omitted |
+| [`on-before-upload.fileList`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L70) | Inline field | No asynchronous batch validator/veto context. | ⏭️ Intentionally omitted |
+| [`on-preview.event`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L72) | Inline field | No preview event, anchor interception or viewer. | ⏭️ Intentionally omitted |
+| [`on-remove.file`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L73) | Inline field | Non-veto post-remove change.file reports the removed real File record. | 🟢 Verified |
+| [`on-remove.fileList`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L73) | Inline field | Post-remove change.files is the remaining synchronized native selection. | 🟢 Verified |
+| [`on-remove.index`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L73) | Inline field | No veto index context; operations address stable IDs, not shifting list indices. | ⏭️ Intentionally omitted |
+| [`on-retry.file`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L74) | Inline field | Non-veto retry change.file, with fresh attempt on actual invocation. | 🟢 Verified |
+| [`submit.fileId?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L123) | Inline field | start(id?) selects one stable entry or all pending entries. | 🟢 Verified |
+| [`submit.retry?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L123) | Inline field | Explicit retry(id) instead of an overloaded submit option; never retries an unsettled cancelled attempt. | 🟢 Verified |
+| [`default.handleClick`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L141) | Trigger slot field | Native labelled file input activation; no injected callback or fake trigger semantics. | 🟢 Verified |
+| [`default.handleDragOver`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L141) | Trigger slot field | Scoped Files-only dragover and external drop-state CSS. | 🟢 Verified |
+| [`default.handleDragEnter`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L141) | Trigger slot field | Scoped Files-only dragenter; no global drag interception. | 🟢 Verified |
+| [`default.handleDragLeave`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L141) | Trigger slot field | Clears only owned drop feedback. | 🟢 Verified |
+| [`default.handleDrop`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L141) | Trigger slot field | Bounded flat Files drop, atomic rejection and native FileList write; no recursive directory import. | 🟢 Verified |
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`on-error.file`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L68) | Inline record field | Candidate DOM `mui:error.file` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-error.event?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L68) | Inline record field | Candidate DOM `mui:error.event` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+### Explicit source/type supplements
 
-### Upload Props: on-finish inline fields
+These three identities are additional source evidence, not invented English table rows.
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`on-finish.file`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L69) | Inline record field | Candidate DOM `mui:finish.file` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-finish.event?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L69) | Inline record field | Candidate DOM `mui:finish.event` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Retained mapping / explicit boundary | Status |
+| --- | --- | --- | --- |
+| [`onUpdateFileList`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/src/Upload.tsx#L349) | Source alias | One current-files DOM notification; no second alias/array-of-callback compatibility layer. | 🟢 Verified |
+| [`UploadInst`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/src/public-types.ts#L5-L9) | Source public interface | Native UploadController commands and original input reference; no Vue instance or chooser-opening alias. | 🟢 Verified |
+| [`UploadSettledFileInfo`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/src/public-types.ts#L35) | Source public type | No Required source metadata/nullable URL/thumbnail type alias; use native UploadFile with actual File. | ⏭️ Intentionally omitted |
 
-### Upload Props: on-before-upload inline fields
+### Explicit source-inherited theme props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`on-before-upload.file`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L70) | Inline record field | Candidate DOM `mui:before-upload.file` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-before-upload.fileList`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L70) | Inline record field | Candidate DOM `mui:before-upload.file-list` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+The [source spread](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/src/Upload.tsx#L301)
+adds these three inherited source rows.
 
-### Upload Props: on-preview inline fields
-
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`on-preview.event`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L72) | Inline record field | Candidate DOM `mui:preview.event` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-
-### Upload Props: on-remove inline fields
-
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`on-remove.file`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L73) | Inline record field | Candidate DOM `mui:remove.file` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-remove.fileList`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L73) | Inline record field | Candidate DOM `mui:remove.file-list` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-remove.index`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L73) | Inline record field | Candidate DOM `mui:remove.index` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-
-### Upload Props: on-retry inline fields
-
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`on-retry.file`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L74) | Inline record field | Candidate DOM `mui:retry.file` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-
-### Upload Methods: submit inline fields
-
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`submit.fileId?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L123) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`submit.retry?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L123) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-
-### UploadTrigger Slots: default inline fields
-
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`default.handleClick`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L141) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default.handleDragOver`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L141) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default.handleDragEnter`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L141) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default.handleDragLeave`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L141) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default.handleDrop`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L141) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Retained mapping / explicit boundary | Status |
+| --- | --- | --- | --- |
+| [`theme`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts#L170) | Inherited source prop | No provider/theme graph; explicit external native CSS. | ⏭️ Intentionally omitted |
+| [`themeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts#L171) | Inherited source prop | No runtime theme object or generated style rules. | ⏭️ Intentionally omitted |
+| [`builtinThemeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts#L172) | Inherited source prop | No internal theme merge precedence; legacy/P0 exceptions remain independent. | ⏭️ Intentionally omitted |
 
 <!-- END PINNED API INVENTORY -->

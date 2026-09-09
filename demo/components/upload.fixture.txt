@@ -1,0 +1,1 @@
+Local Upload acceptance fixture. No user files or network transport.

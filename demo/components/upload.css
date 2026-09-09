@@ -1,0 +1,18 @@
+body { margin: 0; font: 1rem/1.5 system-ui, sans-serif; background: #f2f5f9; color: #1b2d44; }
+main { max-inline-size: 68rem; margin-inline: auto; padding: 1.5rem; }
+label { display: block; margin-block: .6rem; }
+input, select, button { font: inherit; max-inline-size: 100%; }
+button { padding: .4rem .7rem; }
+.demo-controls { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; margin-block: 1rem; }
+fieldset { border: 1px solid #aab9ca; border-radius: .5rem; background: white; }
+.mui-upload { padding: .5rem; }
+.mui-upload.narrow { max-inline-size: 27rem; }
+.mui-upload.zoomed { zoom: 2; }
+[data-upload-drop] { margin-block-start: 1rem; }
+.file-description { display: grid; gap: .25rem; }
+[data-upload-name] { font-weight: 650; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; background: white; border: 1px solid #aab9ca; }
+:focus-visible { outline: 3px solid #175cd3; outline-offset: 2px; }
+[hidden] { display: none !important; }
+footer { min-block-size: 18rem; padding-block-start: 1rem; }
+@media (max-width: 40rem) { main { padding: .75rem; } }

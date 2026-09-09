@@ -15,7 +15,9 @@ seven adapted, nine omitted and four accepted tasks. All three P0 catalog routes
 the separately audited P3 Discrete route are reconciled. P6 is now active: Carousel/
 CarouselItem completes its native single-slide scope (50 rows, 35 adapted, 15 omitted,
 four accepted tasks); Watermark completes its native decorative tile scope (31 rows,
-26 adapted, five omitted, four accepted tasks). Seven specialized routes remain Planned. Broad P0 foundation tasks,
+26 adapted, five omitted, four accepted tasks). Upload and native Trigger/Dragger close
+their synchronized file/queue scope (101 rows, 57 adapted, 44 omitted, four accepted tasks).
+Six specialized routes remain Planned. Broad P0 foundation tasks,
 remaining P6 and full framework/viewer parity remain incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
@@ -48,7 +50,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
 | P4 — Forms and selection | 🟢 Verified retained scope | All 17 P4-assigned routes, 984 tracker rows and 68 page tasks reconciled. | Relevant native P0/P3 contracts | 478 adapted + 506 omitted, no unresolved rows; 889 P4 tests plus native browser evidence. No P0/P5/P6 or full framework parity implied. |
 | P5 — Collections and scale | 🟢 Verified retained scope | All ten P5-assigned routes, 827 rows and 40 page tasks reconciled. | P3 focus; P4 selection | 349 native adaptations + 478 omissions, zero unresolved; 526-test/native browser/asset audit. No full framework or P0/P6 parity implied. |
-| P6 — Specialized modules | 🟠 In progress; Carousel and Watermark retained scopes Verified | Two of nine specialized routes accepted; seven remain Planned. | Component-specific earlier work | Explicit ESM/classic/CSS, 81 reconciled rows, 8/8 tasks, native/browser evidence; other 164 rows remain unresolved. |
+| P6 — Specialized modules | 🟠 In progress; Carousel, Watermark and Upload retained scopes Verified | Three of nine specialized routes accepted; six remain Planned. | Component-specific earlier work | Explicit ESM/classic/CSS, 182 reconciled rows, 12/12 tasks, native/browser evidence; other 69 rows remain unresolved. |
 
 The [component index](index.md) is the exhaustive catalog-to-phase assignment. The phase
 groups below name principal workstreams, not additional promises that every catalog feature
@@ -141,7 +143,7 @@ smuggling an overlay implementation into the CSS-only native composition.
 | Task | Status | Action | Deliverable |
 | --- | --- | --- | --- |
 | P6-01 — Date/time and calendar | 🔵 Planned | Keep native date/time inputs as baseline; scope ranges/calendar panels and locale behavior separately. | Documented date-only/time-zone semantics using browser facilities, not an imported date engine. |
-| P6-02 — Upload | 🔵 Planned | Separate file selection from optional transport, progress, cancellation and retry. | Explicit application transport hooks and surfaced errors; no implicit upload destination. |
+| P6-02 — Upload | 🟢 Verified retained native queue scope | Real FileList/FormData, explicit bounded caller transport, progress/cancel/retry/remove and native Trigger/Dragger. | [Upload acceptance](../components/upload.md): 101 reconciled rows/four tasks, honest ignored-abort slots and native reset/disabled/focus/fallback evidence; previews/downloads/vetoes/backend assumptions omitted. |
 | P6-03 — Media and carousel | 🟢 Verified Carousel retained scope; advanced viewer/effects excluded | Native scroll-snap Carousel/CarouselItem, original DOM, manual/wrap controls and opt-in gated autoplay. | [Carousel acceptance](../components/carousel.md): settled targets, lifetime, focus/forms, browser/legacy/no-JS and independent budgets; no seamless clone loop or advanced image-viewer parity. |
 | P6-04 — Other utilities | 🟠 In progress; Watermark retained scope Verified | Native bounded Canvas/decorative overlay accepted; other utility routes remain independent. | [Watermark acceptance](../components/watermark.md): 31 reconciled rows, four tasks, guarded native generation/ownership and explicit no-security/coverage limits. |
 | P6-05 — Dependency-heavy exclusions | 🔵 Planned | Resolve QR generation, math typesetting, full language highlighting and framework-only provider APIs individually. | Independent feasibility decision or explicit omission; no hidden dependencies. |
@@ -199,11 +201,11 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Watermark (P6), verified bounded native decorative tile/overlay scope.**
+**Current component: Upload/UploadTrigger/UploadDragger (P6), verified synchronized native file/queue scope.**
 **P1/P2/P3/P4/P5 declared retained scopes are complete. P4-07 and P5-06 close against their full assigned-route audits.**
 **P5 is Verified for retained scopes:** all ten routes are resolved.
-Recommended next: **Upload (P6-02)**, with native file selection and explicit
-application-owned transport. No Upload implementation is included here. P0 component-route acceptance
+Recommended next: **Calendar (P6-01)**, with a separately bounded native date/grid
+contract. No Calendar implementation is included here. P0 component-route acceptance
 does not close broader foundation tasks or imply full upstream/framework compatibility.
 
 The following component records form a historical execution sequence. Earlier “next” or
@@ -341,8 +343,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 3,979 rows and 340 accepted retained tasks out of 384 across 85 component
-pages (44 unchecked), not full upstream parity.
+The current index records 3,985 rows and 344 accepted retained tasks out of 384 across 86 component
+pages (40 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -2109,3 +2111,54 @@ aggregate auto-install and inline-theme compatibility exceptions are not closed 
 **Next: Upload (P6-02).** Native file selection and an explicit bounded application
 transport/cancellation contract are dependency-ready. No Upload code is included;
 this commit completes only Watermark and its owned integration/status records.
+
+## Upload acceptance — native files and an honest transport pool
+
+[Canonical Upload/Trigger/Dragger](../components/upload.md) and its
+[complete reference](components/upload.md) close the third retained P6 route. Original
+native chooser/form/disabled/reset ownership, real synchronized FileList membership,
+atomic append/replacement/rejection, stable authored template rows and bounded explicit
+caller transport are implemented. Start/cancel/retry/remove/clear, byte/indeterminate
+progress, native focus and flat drop remain small local capabilities, not a provider/
+renderer/HTTP framework or directory crawler.
+
+**95 original identities + three source/type supplements + three inherited theme
+props = 101 rows: 57 adapted + 44 omitted, zero unresolved; 4/4 tasks.** Endpoints,
+methods/headers/credentials/data forwarding, preloaded remote file metadata, preview/
+download/object URLs, async veto pipelines and theme graphs are explicitly omitted.
+Accept/metadata limits are UX, not server/content security.
+
+**85 tests pass** (58 Upload + 27 native/legacy), declarations/build and all prior/new
+budgets pass. Level-nine gzip: **7,727 ESM / 7,855 classic / 560 CSS**, combined
+**8,287 / 8,415** under **9,000 / 9,000 / 1,250** ceilings. Full local ESM example
+including two tiny acceptance fixtures: **12,398** gzip bytes. Prior exports/budgets
+are unchanged; core/advanced/widgets remain **14,611 / 2,181 / 2,779**, with
+**15,000 / 3,000 / 4,000** ceilings unchanged.
+
+Dedicated Chromium selection used only committed local text fixtures or new in-memory
+Files; no OS chooser, user files, actual network upload or download. Native FileList/
+FormData, duplicate/limit/removal/clear, failed first attempt/retry, cancellation slots,
+focused action disabling/removal, native reset/cancelled reset, external form/modal,
+drop, RTL/zoom/narrow/media, no-JS/missing-DataTransfer fallback, strict CSP with
+connect-src:none and classic/advanced coexistence were verified. Native reset-button
+testing found and fixed a microtask-before-default-action bug; a single task now reads
+post-reset native membership and holds completions without polling.
+
+Abort does not free actual concurrency or undo server effects. Removed/disconnected
+ignored-abort transports retain slots/ownership until real settlement, with no stale
+progress/completion into reused rows. Reentrant callback/result mutations are guarded;
+unknown response data is never markup, navigation or native File content.
+
+**Current catalog: 96 routes / 3,985 rows / 344 of 384 accepted tasks across 86 pages /
+40 unchecked. P6: 251 rows = 118 adapted + 64 omitted + 69 unresolved; three of nine
+specialized routes accepted.** Broad P0-01–P0-09 task states and legacy CSS extraction/
+auto-install/inline-theme exceptions remain independently open or partial. Previous
+P2–P5 and P0 component-route acceptance remains unchanged.
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P6 (6 Planned) | Calendar, Countdown, Number Animation, Time, Heatmap, Marquee | 69 / 69 |
+| Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Next: Calendar (P6-01).** Existing native date/control contracts support a separately
+bounded authored calendar/date grid. No Calendar code is included in this Upload commit.

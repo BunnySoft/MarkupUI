@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Native Upload queue · MarkupUI</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-upload.css">
+  <link rel="stylesheet" href="./upload.css">
+  <script type="module" src="./upload.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Upload: real FileList, explicit fake transport</h1>
+    <p><strong>No file is transmitted by this demo.</strong> Native file selection and
+      FormData are real; transport is a local timer. A finished fake request is not
+      a server/security claim. Accept is a chooser hint, not validation.</p>
+    <div class="demo-controls" data-enhancement hidden>
+      <button type="button" id="fixtures">Add small local fixtures</button>
+      <label>Fixture addition <select id="mode"><option value="append">Append</option><option value="replace">Replace</option></select></label>
+      <label><input id="ignore-abort" type="checkbox">Fake transport ignores abort until its timer settles</label>
+      <label><input id="disabled" type="checkbox">Disable native fieldset</label>
+      <label><input id="prevent-reset" type="checkbox">Cancel native reset</label>
+      <label><input id="rtl" type="checkbox">RTL</label>
+      <label><input id="narrow" type="checkbox">Narrow scope</label>
+      <label><input id="zoom" type="checkbox">CSS zoom 200%</label>
+      <button type="button" id="external-clear">Clear input.value and refresh</button>
+      <button type="button" id="disconnect">Disconnect to native chooser</button>
+    </div>
+    <form id="upload-form">
+      <fieldset id="upload-fields">
+        <legend>Native attachment field</legend>
+        <section class="mui-upload" data-upload tabindex="-1" aria-labelledby="upload-title" id="upload">
+          <h2 id="upload-title">Local attachment queue</h2>
+          <label for="files">Files (chooser selections append; up to 5 files, 16KiB each)</label>
+          <input id="files" data-upload-input type="file" name="attachments" multiple accept=".txt,.json,image/png" aria-describedby="file-help">
+          <p id="file-help">Removing a row removes the actual file from native FormData.
+            Cancelling does not remove selection or undo server effects. A file named
+            “fail-once.txt” fails its first fake attempt and can be retried.</p>
+          <div data-upload-actions hidden>
+            <button type="button" data-upload-action="start">Start all pending files</button>
+            <button type="button" data-upload-action="cancel">Cancel active and queued files</button>
+            <button type="button" data-upload-action="clear">Clear native file selection</button>
+          </div>
+          <div data-upload-drop hidden>Drop a small number of flat local files here, or
+            use the keyboard-accessible native chooser above. No directory drop crawler.</div>
+          <ul data-upload-list hidden></ul>
+          <template data-upload-row>
+            <li>
+              <div class="file-description"><span data-upload-name></span> <span data-upload-size></span></div>
+              <span data-upload-status></span>
+              <progress data-upload-progress max="100" hidden></progress>
+              <div data-upload-row-actions>
+                <button type="button" data-upload-action="start">Start</button>
+                <button type="button" data-upload-action="cancel">Cancel</button>
+                <button type="button" data-upload-action="retry">Retry</button>
+                <button type="button" data-upload-action="remove">Remove</button>
+              </div>
+            </li>
+          </template>
+          <p data-upload-status>Without JavaScript this remains a native labelled file
+            chooser. The enhanced queue, drop target and manual transport controls stay hidden.</p>
+        </section>
+      </fieldset>
+      <label>Original native title <input id="title" name="title" value="Keep my draft" required></label>
+      <p><button type="submit" data-enhancement hidden>Inspect native FormData (no request)</button>
+        <button type="reset">Reset native fields and selected files</button></p>
+    </form>
+    <pre id="feedback" aria-label="Local queue and native FormData inspection">No JavaScript: original fields, chooser, accept/multiple/name/disabled/form/reset remain native. No transport is installed.</pre>
+    <footer><label>Outside focus target <input id="outside" value="No automatic focus jumps"></label>
+      <p>Image previews, downloads, preloaded remote files, directory crawling and async
+        veto hooks are deliberately not included. No object URLs, hidden membership fields,
+        implicit HTTP method/headers/credentials or backend endpoints are created.</p></footer>
+  </main>
+</body>
+</html>

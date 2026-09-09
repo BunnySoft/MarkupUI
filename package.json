@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./upload": {
+      "types": "./dist/components/upload/index.d.ts",
+      "import": "./dist/markup-ui-upload.js"
+    },
+    "./upload/style.css": "./dist/markup-ui-upload.css",
     "./watermark": {
       "types": "./dist/components/watermark/index.d.ts",
       "import": "./dist/markup-ui-watermark.js"

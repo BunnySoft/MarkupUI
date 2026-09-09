@@ -1,0 +1,1 @@
+Local Upload retry fixture. The fake transport rejects its first attempt.

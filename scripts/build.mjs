@@ -66,6 +66,8 @@ components.push("carousel")
 classicEntries.carousel = "global.ts"
 components.push("watermark")
 classicEntries.watermark = "global.ts"
+components.push("upload")
+classicEntries.upload = "global.ts"
 
 await Promise.all([
   build({
@@ -148,6 +150,9 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-upload.js": 9_000,
+  "markup-ui-upload.global.js": 9_000,
+  "markup-ui-upload.css": 1_250,
   "markup-ui-watermark.js": 7_000,
   "markup-ui-watermark.global.js": 7_000,
   "markup-ui-watermark.css": 1_000,
