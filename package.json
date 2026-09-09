@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./carousel": {
+      "types": "./dist/components/carousel/index.d.ts",
+      "import": "./dist/markup-ui-carousel.js"
+    },
+    "./carousel/style.css": "./dist/markup-ui-carousel.css",
     "./global-style/style.css": "./dist/markup-ui-global-style.css",
     "./split": {
       "types": "./dist/components/split/index.d.ts",

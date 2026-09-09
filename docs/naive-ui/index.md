@@ -57,6 +57,9 @@ Element now has an [accepted native authoring resolution](../components/element.
 real semantic tags/children and explicit token consumption, with no wrapper/runtime.
 Global Style now has an [accepted explicit document stylesheet](../components/global-style.md):
 661 raw/310 gzip bytes of opt-in low-specificity CSS, with no runtime or automatic import.
+Carousel/CarouselItem now have [accepted native scroll-snap evidence](../components/carousel.md):
+original slides, settled/current targets, wrap commands and explicitly gated autoplay,
+with no cloned infinite track or custom gesture/effect engine.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
 are reconciled. **P4 is Verified for retained native scopes:** all 17 assigned routes,
 984 tracker rows and 68 page tasks are resolved, with no Planned P4 routes or unresolved
@@ -65,9 +68,10 @@ retained rows. **P5 is Verified for retained native scopes:** all ten assigned r
 P0 architecture/P6 and full framework parity remain independent.
 The three P0 catalog routes are resolved, and the related Discrete audit remains accepted
 under P3; broader foundation task IDs are not automatically completed.
-Recommended next: **Carousel (P6-03)**, starting with native manual navigation and a
-readable slide list; no P6 implementation is included in this Global Style resolution.
-No next component was implemented in this Split/P5 sign-off commit.
+**P6 is active:** Carousel is the first accepted specialized route; eight routes remain
+Planned. Recommended next: **Watermark (P6-04)** as an independent optional native
+decoration scope. Time/Number Animation/Countdown remain separate possible temporal work.
+No second P6 route is implemented in this Carousel commit.
 Component acceptance sections below retain their sign-off snapshots; earlier counts and
 “next”/“In progress” statements are historical, not the current phase dashboard.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
@@ -124,7 +128,7 @@ Avatar's four retained-scope tasks are checked using `9afc818`, Button's four us
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
 Popover through Rate, the subsequent Form/Auto Complete/Input OTP/Dynamic Input/Dynamic
 Tags/Mention/Color Picker/Date Picker/Time Picker records, and now Virtual List each add
-four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element and Global Style each add four more. The current total is **332/384 accepted across 83 pages, 52 unchecked**.
+four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style and Carousel each add four more. The current total is **336/384 accepted across 84 pages, 48 unchecked**.
 P2 retained scopes remain reconciled; the nineteen sequential P3 scopes plus three mixed P2/P3 pages pass the complete P3 audit. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
@@ -2257,6 +2261,52 @@ packaging foundations support manual slide navigation. Preserve slide/focus iden
 prefer native scrolling/scroll snap and bound autoplay/effects separately.
 No P6 component is implemented in this commit.
 
+## Carousel and CarouselItem accepted
+
+[Canonical acceptance](../components/carousel.md) completes the first main P6
+specialized route: original single-slide-per-view native scrolling, real controls,
+settled/current/default/target indices, previous/next/to, command wrap, vertical/RTL,
+bounded native completion, identity-preserving refresh and opt-in accessible autoplay.
+Inactive slides stay in native reading/focus/form order. No slide clones, renderer,
+wheel/key hijacking, runtime dependency, automatic CSS installer or fake registration.
+
+**41 original identities + six source supplements + three source-inherited theme props
+= 50 rows: 35 adapted, 15 omitted, zero unresolved; four accepted tasks.** CarouselItem
+default-slot fields map to original content/read-only markers, not hidden option VNodes.
+Multislide/variable-width/centered/gap/custom effects/drag/intercepted wheel/transition
+frameworks are explicitly omitted. Native command wrap is not seamless infinite swipe.
+
+**73 targeted tests pass** (46 Carousel + 27 native/legacy); declarations/build and all
+old/new budgets pass. Level-nine gzip assets are **5,367 ESM / 5,509 classic / 656 CSS**
+bytes (raw **14,557 / 14,843 / 2,053**), under independent **7,000 / 7,000 / 1,500**
+ceilings. Combined ESM+CSS **6,023**, classic+CSS **6,165** gzip bytes.
+Including the three local application demo files, the ESM example totals **9,486** gzip bytes.
+Core/advanced/widgets remain **14,611 / 2,181 / 2,779**, under **15,000 / 3,000 / 4,000**.
+No previous export, budget, core/plugin source or runtime dependency changed.
+
+Dedicated local Chromium acceptance verified native wheel/touch snapping, button and
+viewport keyboard commands, rapid successive targets with one completion, disabled
+focused boundaries, preserved fields/validation reveal/identity, independent nested
+owners, closed details and resize, negative RTL coordinates, vertical layout, CSS zoom
+and reduced motion. Real autoplay paused for focus/hover/user choice; unit tests cover
+document-hidden/lifetime/reentrant reasons. No-JS kept scrolling and field edits with
+enhancement controls hidden. ESM/classic and unchanged widgets coexist on separate roots.
+See the canonical record for actual dimensions and explicit browser/AT limitations.
+
+**Current catalog: 96 routes / 3,975 rows / 336 of 384 tasks across 84 accepted pages /
+48 unchecked.** P6 now has **241 rows: 35 adapted + 15 omitted + 191 unresolved**.
+Broader P0-01–P0-09 foundation tasks remain unchanged/open or partial. P2–P5 retained
+scope acceptance and the prior three P0 catalog-route resolutions remain valid.
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P6 (8 Planned) | Watermark, Upload, Calendar, Countdown, Number Animation, Time, Heatmap, Marquee | 191 / 191 |
+| Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Recommended next: Watermark (P6-04).** The optional external-CSS/loading and native
+ownership prerequisites are available; define a bounded decoration/accessibility
+contract before implementation. No next route is started here.
+
 ## Common Components (15)
 
 | Component | Plan direction | Current baseline | Phase |
@@ -2264,7 +2314,7 @@ No P6 component is implemented in this commit.
 | [Avatar](components/avatar.md) | 🟢 Verified retained scope; 16 explicit omissions | Standalone Avatar + Group, `9afc818`; basic aggregate preserved | P1 |
 | [Button](components/button.md) | 🟢 Verified retained scope; 9 explicit omissions | Standalone Button + Group, `43dd57f`; basic aggregate preserved | P1 |
 | [Card](components/card.md) | 🟢 Verified retained scope; 8 explicit omissions | Standalone native Card, `cebc6d7`; basic aggregate preserved | P1 |
-| [Carousel](components/carousel.md) | 🔵 Planned | Partial widgets | P6 |
+| [Carousel](components/carousel.md) | 🟢 Verified native Carousel/CarouselItem scope; 15 explicit omissions | Optional native scroll-snap/helper; [accepted evidence](../components/carousel.md), legacy widgets preserved | P6 |
 | [Collapse](components/collapse.md) | 🟢 Verified native disclosure scope; 14 explicit omissions | Native Collapse/CollapseItem; [accepted evidence](../components/collapse.md) | P3 |
 | [Divider](components/divider.md) | 🟢 Verified CSS-only native scope; 3 explicit omissions | Native hr/separator/caption CSS; [accepted evidence](../components/divider.md), legacy preserved | P2 |
 | [Dropdown](components/dropdown.md) | 🟢 Verified command-menu scope; 33 explicit omissions | Native hierarchy/keyboard/shared Popover; [accepted evidence](../components/dropdown.md) | P3 |
@@ -2424,15 +2474,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,468: 367 inline fields, 182 type/helper/exclusion entries (including five Table public helper groups and Virtual List/Tree named ScrollTo types) and 919 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style source supplements |
-| Explicit inherited tracker rows | 278, including six source-inherited DialogReactive options, three ModalReactive fields, two NotificationReactive fields and three Element theme props |
-| Total tracker rows | 3,966; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 332 retained-scope tasks accepted across 83 component pages, 52 unchecked |
+| Supplementary named declarations | 1,474: 367 inline fields, 182 type/helper/exclusion entries (including five Table public helper groups and Virtual List/Tree named ScrollTo types) and 925 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel source supplements |
+| Explicit inherited tracker rows | 281, including six source-inherited DialogReactive options, three ModalReactive fields, two NotificationReactive fields and three each Element/Carousel theme props |
+| Total tracker rows | 3,975; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 336 retained-scope tasks accepted across 84 component pages, 48 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,966 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate, 68 Form, 27 Auto Complete, 17 Input OTP, 28 Dynamic Input, 25 Dynamic Tags, 30 Mention, 10 Color Picker, 37 Date Picker, 16 Time Picker, 26 Virtual List, 60 Tree, 40 Cascader, 39 Tree Select, 28 Transfer, 76 Data Table, 19 Log, four Infinite Scroll, 38 Popselect, 19 Split, eight Config Provider, three Element and seven Global Style native capabilities cite acceptance |
-| Source agreement | All 2,220 direct source rows and 278 inherited rows remain covered; 13 unchanged inventories match extraction; the 83 accepted pages preserve named/grouped identities with explicit dispositions; Global Style retains zero public API rows and adds 16 explicit source supplements; all four requested foundation-related route inventories are reconciled |
-| Local links | All 550 scoped Global Style/reference/index/master file links and all 125 requested four-route canonical/reference file links resolve; earlier component/link snapshots remain historical evidence |
+| Status presentation | All 3,975 rows retain canonical text with emoji color: 1,926 Verified native adaptations, 1,858 intentional omissions, 173 Not reviewed and 18 Planned. Carousel contributes 35 adaptations/15 omissions; other retained component counts and linked acceptance records are unchanged. |
+| Source agreement | All 2,220 direct source rows and 281 inherited rows remain covered; 12 unchanged inventories match extraction; the 84 accepted pages preserve named/grouped identities with explicit dispositions; Carousel preserves all 41 original identities/links and adds six source plus three inherited identities; all four requested foundation-related route inventories remain reconciled |
+| Local links | All 551 scoped Carousel/reference/index/master file links resolve; earlier Global Style/four-route/component link snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

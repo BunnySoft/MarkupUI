@@ -12,8 +12,10 @@ no new runtime: 117 rows, eight adapted, 109 omitted and four accepted tasks.
 Element also closes native authoring composition: 15 rows, three adapted, twelve omitted
 and four accepted tasks. Global Style closes explicit document CSS: 16 source rows,
 seven adapted, nine omitted and four accepted tasks. All three P0 catalog routes and
-the separately audited P3 Discrete route are reconciled. Broad P0 foundation tasks,
-P6 and full framework/viewer parity remain incomplete.** Existing MarkupUI features are a partial baseline,
+the separately audited P3 Discrete route are reconciled. P6 is now active: Carousel/
+CarouselItem completes its native single-slide scope (50 rows, 35 adapted, 15 omitted,
+four accepted tasks); eight specialized routes remain Planned. Broad P0 foundation tasks,
+remaining P6 and full framework/viewer parity remain incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -45,7 +47,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
 | P4 — Forms and selection | 🟢 Verified retained scope | All 17 P4-assigned routes, 984 tracker rows and 68 page tasks reconciled. | Relevant native P0/P3 contracts | 478 adapted + 506 omitted, no unresolved rows; 889 P4 tests plus native browser evidence. No P0/P5/P6 or full framework parity implied. |
 | P5 — Collections and scale | 🟢 Verified retained scope | All ten P5-assigned routes, 827 rows and 40 page tasks reconciled. | P3 focus; P4 selection | 349 native adaptations + 478 omissions, zero unresolved; 526-test/native browser/asset audit. No full framework or P0/P6 parity implied. |
-| P6 — Specialized modules | 🔵 Planned | Deliver independently justified, opt-in advanced features. | Component-specific earlier work | Explicit imports, independent size budgets and no runtime dependencies. |
+| P6 — Specialized modules | 🟠 In progress; Carousel retained scope Verified | First of nine specialized routes accepted; eight remain Planned. | Component-specific earlier work | Carousel/CarouselItem: explicit ESM/classic/CSS, 50 reconciled rows, 4/4 tasks, native/browser evidence; other 191 rows remain unresolved. |
 
 The [component index](index.md) is the exhaustive catalog-to-phase assignment. The phase
 groups below name principal workstreams, not additional promises that every catalog feature
@@ -139,7 +141,7 @@ smuggling an overlay implementation into the CSS-only native composition.
 | --- | --- | --- | --- |
 | P6-01 — Date/time and calendar | 🔵 Planned | Keep native date/time inputs as baseline; scope ranges/calendar panels and locale behavior separately. | Documented date-only/time-zone semantics using browser facilities, not an imported date engine. |
 | P6-02 — Upload | 🔵 Planned | Separate file selection from optional transport, progress, cancellation and retry. | Explicit application transport hooks and surfaced errors; no implicit upload destination. |
-| P6-03 — Media and carousel | 🔵 Planned | Scope image preview, carousel controls and autoplay independently. | Focus handling, pause controls and reduced-motion support with separate imports. |
+| P6-03 — Media and carousel | 🟢 Verified Carousel retained scope; advanced viewer/effects excluded | Native scroll-snap Carousel/CarouselItem, original DOM, manual/wrap controls and opt-in gated autoplay. | [Carousel acceptance](../components/carousel.md): settled targets, lifetime, focus/forms, browser/legacy/no-JS and independent budgets; no seamless clone loop or advanced image-viewer parity. |
 | P6-04 — Other utilities | 🔵 Planned | Review remaining catalog utilities against native HTML/CSS and small optional modules. | A disposition for every remaining component, not blanket core inclusion. |
 | P6-05 — Dependency-heavy exclusions | 🔵 Planned | Resolve QR generation, math typesetting, full language highlighting and framework-only provider APIs individually. | Independent feasibility decision or explicit omission; no hidden dependencies. |
 | P6-06 — Deprecated surfaces | 🔵 Planned | Record Legacy Transfer and deprecated aliases without reproducing redundant legacy APIs. | A documented replacement and omission decision, not a missing tracker row. |
@@ -196,11 +198,11 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Global Style (P0), verified explicit document CSS; requested related-route audit complete.**
+**Current component: Carousel/CarouselItem (P6), verified native single-slide scroll-snap scope.**
 **P1/P2/P3/P4/P5 declared retained scopes are complete. P4-07 and P5-06 close against their full assigned-route audits.**
 **P5 is Verified for retained scopes:** all ten routes are resolved.
-Recommended next: **Carousel (P6-03)**, beginning with manual native navigation and stable
-authored slides. No P6 implementation is included here. P0 component-route acceptance
+Recommended next: **Watermark (P6-04)**, as an independent optional native decoration
+scope. No second P6 route is implemented here. P0 component-route acceptance
 does not close broader foundation tasks or imply full upstream/framework compatibility.
 
 The following component records form a historical execution sequence. Earlier “next” or
@@ -338,8 +340,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 3,966 rows and 332 accepted retained tasks out of 384 across 83 component
-pages (52 unchecked), not full upstream parity.
+The current index records 3,975 rows and 336 accepted retained tasks out of 384 across 84 component
+pages (48 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -2012,3 +2014,50 @@ native scrolling/scroll snap and manual previous/next controls, preserving slide
 identity; make autoplay optional with explicit pause policies and bound drag/effects
 separately. Existing widgets behavior is only a legacy baseline.
 **No P6 implementation is included in this Global Style commit.**
+
+## Carousel acceptance — first main P6 specialized route
+
+[Canonical Carousel/CarouselItem](../components/carousel.md) and its
+[complete reference](components/carousel.md) close the retained native scope with
+original authored slides, single-slide layout, native touch/wheel/snap, real labelled
+controls, actual/default/pending-target indices, direction/RTL, wrap commands and
+bounded completion. Autoplay is opt-in with explicit pause/play and persistent user
+pause, plus focus/hover/visibility/motion/layout/lifetime gates. No cloned infinite
+track, VDOM/provider, gesture/animation package or default-graph dependency is added.
+
+**41 original rows + six source additions + three source-inherited theme props =
+50 rows: 35 adapted + 15 omitted, zero unresolved; 4/4 tasks accepted.**
+Source CarouselItem content/context is explicitly represented by original native
+children and current/previous/next/index markers. Multi-slide/variable-width/
+centered/spacing/drag/effects and transition/theme framework bags are scoped out.
+Inactive slides remain focusable/readable/form-participating; native validation
+and focus can reveal them. Commands wrap between native extents, not seamless swipe.
+
+**73 tests pass** (46 Carousel + 27 native/legacy), declarations/build and every
+existing/new budget pass. New level-nine gzip assets: **5,367 ESM / 5,509 classic /
+656 CSS**, combined **6,023 / 6,165** JS+CSS; ceilings **7,000 / 7,000 / 1,500**.
+Core/advanced/widgets stay **14,611 / 2,181 / 2,779**, with unchanged
+**15,000 / 3,000 / 4,000** ceilings and zero runtime dependencies.
+
+Dedicated Chromium evidence covers native wheel/touch snap, keyboard/button activation,
+rapid command completion, focused disabled boundaries, nested ownership, native
+validation reveal/FormData/listeners, resize/closed-details/RTL/vertical/CSS zoom,
+autoplay user/focus/hover pause, reduced motion, no-JS scrolling/hidden enhancement
+controls and ESM/classic/unchanged legacy widgets coexistence. Numeric observations
+and browser/AT/geometry limitations are recorded in the canonical acceptance.
+
+**Current catalog: 96 routes / 3,975 rows / 336 of 384 accepted tasks across 84 pages /
+48 unchecked. P6: 241 rows = 35 adapted + 15 omitted + 191 unresolved; one of nine
+routes accepted.** P2–P5 and the three P0 component-route resolutions are unchanged.
+P0-01–P0-09 retain their statuses; legacy CSS extraction, aggregate auto-install and
+inline-theme compatibility exceptions are not globally fixed by this component.
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P6 (8 Planned) | Watermark, Upload, Calendar, Countdown, Number Animation, Time, Heatmap, Marquee | 191 / 191 |
+| Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Recommend Watermark next (P6-04):** existing optional external-CSS/loading and native
+ownership conventions are ready for a separately bounded decoration/accessibility
+scope. Time/Number Animation/Countdown may later justify shared temporal primitives,
+but none is started in this Carousel commit.

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Native Carousel · MarkupUI</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-carousel.css">
+  <link rel="stylesheet" href="./carousel.css">
+  <script type="module" src="./carousel.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Carousel: native scrolling, original slide nodes</h1>
+    <p>Touch, trackpad and wheel remain browser scrolling. Focus the slide viewport for
+      Left/Right (Up/Down vertically), Home or End. Field editing keys remain native.
+      Commands wrap, but swiping stops at the native ends—there are no duplicate slides.</p>
+    <div class="demo-controls" data-enhancement hidden>
+      <label>Direction <select id="direction"><option value="horizontal">Horizontal</option><option value="vertical">Vertical</option></select></label>
+      <label><input id="rtl" type="checkbox">RTL</label>
+      <label><input id="loop" type="checkbox" checked>Wrap commands</label>
+      <label><input id="autoplay" type="checkbox">Enable autoplay (2 seconds)</label>
+      <label><input id="disable" type="checkbox">Disable enhancement</label>
+      <label><input id="narrow" type="checkbox">Narrow containing block</label>
+      <label><input id="zoom" type="checkbox">CSS zoom 200%</label>
+      <button type="button" id="reorder">Move current node to first</button>
+      <button type="button" id="remove">Remove current node</button>
+      <button type="button" id="add">Append a native template slide</button>
+      <button type="button" id="hide">Hide/show main carousel</button>
+      <button type="button" id="disconnect">Disconnect to plain scrolling</button>
+    </div>
+    <form id="fields">
+      <section class="mui-carousel" data-carousel id="main-carousel" aria-labelledby="carousel-title">
+        <h2 id="carousel-title">Local interactive examples</h2>
+        <div data-carousel-viewport tabindex="0" aria-label="Example slides" id="main-viewport">
+          <article data-carousel-item>
+            <div class="slide-content"><h3>1. Keep your draft</h3><p>These controls never get cloned, hidden or made inert.</p>
+              <label>Title <input id="draft-title" name="title" required value="My original draft"></label>
+              <label>Notes <textarea name="notes">Edits survive every move.</textarea></label>
+              <a href="#after">Native link to the page footer</a>
+            </div>
+          </article>
+          <article data-carousel-item>
+            <div class="slide-content"><h3>2. Native choices</h3>
+              <label>Colour <select name="colour"><option>Blue</option><option>Green</option></select></label>
+              <label><input name="approved" type="checkbox" value="yes" checked>Approved</label>
+              <p>All named controls still participate in validation and FormData, even offscreen.</p>
+              <button type="button" id="counter" data-enhancement hidden>Local click count: 0</button>
+            </div>
+          </article>
+          <article data-carousel-item>
+            <div class="slide-content"><h3>3. Independent nested carousel</h3>
+              <section class="mui-carousel nested" data-carousel id="nested-carousel" aria-label="Nested cards">
+                <div data-carousel-viewport tabindex="0" aria-label="Nested slides" id="nested-viewport">
+                  <article data-carousel-item><div class="slide-content"><p>Nested one</p><label>Detail <input name="detail" value="Still native"></label></div></article>
+                  <article data-carousel-item><div class="slide-content"><p>Nested two</p><a href="#after">Footer link</a></div></article>
+                </div>
+                <div data-carousel-controls hidden><button type="button" data-carousel-prev>Previous nested slide</button><button type="button" data-carousel-next>Next nested slide</button></div>
+                <p data-carousel-readout>Scroll both nested cards.</p>
+              </section>
+            </div>
+          </article>
+        </div>
+        <div data-carousel-controls hidden>
+          <button type="button" data-carousel-prev>Previous slide</button>
+          <button type="button" data-carousel-next>Next slide</button>
+          <button type="button" data-carousel-to="0" aria-label="Go to slide 1">1</button>
+          <button type="button" data-carousel-to="1" aria-label="Go to slide 2">2</button>
+          <button type="button" data-carousel-to="2" aria-label="Go to slide 3">3</button>
+          <button type="button" data-carousel-toggle>Pause / play rotation</button>
+        </div>
+        <p data-carousel-readout>Scroll all three examples.</p>
+      </section>
+      <p><button type="submit" data-enhancement hidden>Validate and inspect local FormData</button>
+        <button type="reset">Reset native fields</button></p>
+    </form>
+    <details id="hidden-case"><summary>Initially hidden carousel (open to measure)</summary>
+      <section class="mui-carousel" data-carousel id="hidden-carousel" aria-label="Initially hidden examples">
+        <div data-carousel-viewport tabindex="0" aria-label="Hidden example slides" id="hidden-viewport">
+          <article data-carousel-item><div class="slide-content"><p>Hidden first</p><a href="#after">Native footer link</a></div></article>
+          <article data-carousel-item><div class="slide-content"><p>Hidden second (initial index)</p><input aria-label="Hidden case draft" value="Kept"></div></article>
+        </div>
+        <div data-carousel-controls hidden><button type="button" data-carousel-prev>Previous hidden example</button><button type="button" data-carousel-next>Next hidden example</button></div>
+        <p data-carousel-readout>Open and scroll both examples.</p>
+      </section>
+    </details>
+    <template id="new-slide"><article data-carousel-item><div class="slide-content"><h3>New authored template slide</h3><label>Extra draft <input name="extra" value="New native field"></label></div></article></template>
+    <pre id="feedback" aria-label="Local interaction result">No JavaScript: plain scrolling, original native fields and links. Enhancement buttons remain hidden.</pre>
+    <footer id="after"><label>Outside focus target <input id="outside" value="No automatic focus movement"></label>
+      <p>Single slide per view. No fade, 3D/card effect, mouse drag engine, virtualized content or seamless loop.</p></footer>
+  </main>
+</body>
+</html>

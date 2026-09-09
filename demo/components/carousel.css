@@ -1,0 +1,19 @@
+body { margin: 0; font: 1rem/1.5 system-ui, sans-serif; color: #182230; background: #f5f7fa; }
+main { max-width: 64rem; padding: 1.5rem; margin-inline: auto; }
+label { display: block; margin-block: .5rem; }
+input, textarea, select, button { font: inherit; max-inline-size: 100%; }
+textarea { display: block; }
+button { padding: .4rem .7rem; }
+.demo-controls { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; margin-block: 1rem; }
+[hidden] { display: none !important; }
+.mui-carousel { --mui-carousel-height: 24rem; }
+.mui-carousel.nested { --mui-carousel-height: 10rem; }
+.slide-content { box-sizing: border-box; min-block-size: 100%; padding: 1.25rem; background: #e4efff; border: 2px solid #91b7e8; }
+[data-carousel-item]:nth-child(2) > .slide-content { background: #e0f2e8; border-color: #6ba781; }
+[data-carousel-item]:nth-child(3) > .slide-content { background: #fff0d2; border-color: #c79c4b; }
+#main-carousel.narrow { max-inline-size: 25rem; }
+#main-carousel.zoomed { zoom: 2; }
+#hidden-carousel { --mui-carousel-height: 13rem; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; border: 1px solid #ccd2dd; background: white; }
+footer { min-block-size: 22rem; padding-block-start: 2rem; }
+@media (max-width: 40rem) { main { padding: .75rem; } }
