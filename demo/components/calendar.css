@@ -1,0 +1,16 @@
+body { margin: 0; font: 1rem/1.5 system-ui, sans-serif; color: #1d2d42; background: #f3f6fa; }
+main { max-inline-size: 68rem; margin-inline: auto; padding: 1.5rem; }
+.demo-controls { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; margin-block: 1rem; }
+label { display: block; margin-block: .6rem; }
+input, select, button { font: inherit; max-inline-size: 100%; }
+button { padding: .4rem .6rem; }
+.mui-calendar { padding: 1rem; border: 1px solid #b5c5d6; border-radius: .6rem; background: white; }
+.mui-calendar.narrow { max-inline-size: 25rem; }
+.mui-calendar.zoomed { zoom: 2; }
+[data-calendar-body] td { block-size: 5rem; }
+[data-calendar-status] { min-block-size: 1.5em; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; border: 1px solid #b5c5d6; background: white; }
+:focus-visible { outline: 3px solid #175cd3; outline-offset: 2px; }
+[hidden] { display: none !important; }
+footer { min-block-size: 18rem; margin-block-start: 2rem; }
+@media (max-width: 40rem) { main { padding: .75rem; } .mui-calendar { padding: .5rem; } }

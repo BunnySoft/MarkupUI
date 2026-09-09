@@ -17,7 +17,8 @@ CarouselItem completes its native single-slide scope (50 rows, 35 adapted, 15 om
 four accepted tasks); Watermark completes its native decorative tile scope (31 rows,
 26 adapted, five omitted, four accepted tasks). Upload and native Trigger/Dragger close
 their synchronized file/queue scope (101 rows, 57 adapted, 44 omitted, four accepted tasks).
-Six specialized routes remain Planned. Broad P0 foundation tasks,
+Calendar closes its native Gregorian table scope (23 rows, 20 adapted, three omitted,
+four accepted tasks). Five specialized routes remain Planned. Broad P0 foundation tasks,
 remaining P6 and full framework/viewer parity remain incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
@@ -50,7 +51,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
 | P4 — Forms and selection | 🟢 Verified retained scope | All 17 P4-assigned routes, 984 tracker rows and 68 page tasks reconciled. | Relevant native P0/P3 contracts | 478 adapted + 506 omitted, no unresolved rows; 889 P4 tests plus native browser evidence. No P0/P5/P6 or full framework parity implied. |
 | P5 — Collections and scale | 🟢 Verified retained scope | All ten P5-assigned routes, 827 rows and 40 page tasks reconciled. | P3 focus; P4 selection | 349 native adaptations + 478 omissions, zero unresolved; 526-test/native browser/asset audit. No full framework or P0/P6 parity implied. |
-| P6 — Specialized modules | 🟠 In progress; Carousel, Watermark and Upload retained scopes Verified | Three of nine specialized routes accepted; six remain Planned. | Component-specific earlier work | Explicit ESM/classic/CSS, 182 reconciled rows, 12/12 tasks, native/browser evidence; other 69 rows remain unresolved. |
+| P6 — Specialized modules | 🟠 In progress; Carousel, Watermark, Upload and Calendar retained scopes Verified | Four of nine specialized routes accepted; five remain Planned. | Component-specific earlier work | Explicit ESM/classic/CSS, 205 reconciled rows, 16/16 tasks, native/browser evidence; other 55 rows remain unresolved. |
 
 The [component index](index.md) is the exhaustive catalog-to-phase assignment. The phase
 groups below name principal workstreams, not additional promises that every catalog feature
@@ -142,7 +143,7 @@ smuggling an overlay implementation into the CSS-only native composition.
 
 | Task | Status | Action | Deliverable |
 | --- | --- | --- | --- |
-| P6-01 — Date/time and calendar | 🔵 Planned | Keep native date/time inputs as baseline; scope ranges/calendar panels and locale behavior separately. | Documented date-only/time-zone semantics using browser facilities, not an imported date engine. |
+| P6-01 — Date/time and calendar | 🟠 In progress; Calendar retained scope Verified | Native Gregorian date-only month table accepted; Time and later temporal utilities remain independent. | [Calendar acceptance](../components/calendar.md): canonical date validation/pure arithmetic, roving native table, explicit Today/locale/bounds and atomic notes; no instant/provider/date-fns parity. |
 | P6-02 — Upload | 🟢 Verified retained native queue scope | Real FileList/FormData, explicit bounded caller transport, progress/cancel/retry/remove and native Trigger/Dragger. | [Upload acceptance](../components/upload.md): 101 reconciled rows/four tasks, honest ignored-abort slots and native reset/disabled/focus/fallback evidence; previews/downloads/vetoes/backend assumptions omitted. |
 | P6-03 — Media and carousel | 🟢 Verified Carousel retained scope; advanced viewer/effects excluded | Native scroll-snap Carousel/CarouselItem, original DOM, manual/wrap controls and opt-in gated autoplay. | [Carousel acceptance](../components/carousel.md): settled targets, lifetime, focus/forms, browser/legacy/no-JS and independent budgets; no seamless clone loop or advanced image-viewer parity. |
 | P6-04 — Other utilities | 🟠 In progress; Watermark retained scope Verified | Native bounded Canvas/decorative overlay accepted; other utility routes remain independent. | [Watermark acceptance](../components/watermark.md): 31 reconciled rows, four tasks, guarded native generation/ownership and explicit no-security/coverage limits. |
@@ -201,11 +202,11 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Upload/UploadTrigger/UploadDragger (P6), verified synchronized native file/queue scope.**
+**Current component: Calendar (P6), verified native Gregorian date-only table scope.**
 **P1/P2/P3/P4/P5 declared retained scopes are complete. P4-07 and P5-06 close against their full assigned-route audits.**
 **P5 is Verified for retained scopes:** all ten routes are resolved.
-Recommended next: **Calendar (P6-01)**, with a separately bounded native date/grid
-contract. No Calendar implementation is included here. P0 component-route acceptance
+Recommended next: **Time**, for native formatting, then Countdown/Number Animation
+in dependency order; Heatmap/Marquee remain separate. No next component is implemented here. P0 component-route acceptance
 does not close broader foundation tasks or imply full upstream/framework compatibility.
 
 The following component records form a historical execution sequence. Earlier “next” or
@@ -343,8 +344,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 3,985 rows and 344 accepted retained tasks out of 384 across 86 component
-pages (40 unchecked), not full upstream parity.
+The current index records 3,994 rows and 348 accepted retained tasks out of 384 across 87 component
+pages (36 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -2162,3 +2163,51 @@ P2–P5 and P0 component-route acceptance remains unchanged.
 
 **Next: Calendar (P6-01).** Existing native date/control contracts support a separately
 bounded authored calendar/date grid. No Calendar code is included in this Upload commit.
+
+## Calendar acceptance — native Gregorian dates and table focus
+
+[Canonical Calendar](../components/calendar.md) and the [complete reference](components/calendar.md)
+close the fourth retained P6 route: a native captioned six-week table with type=button
+dates and month/year controls, canonical date-only selection/defaults, independent
+roving focus, explicit Today/first weekday/locale and safe synchronous annotations.
+Only Date Picker's canonical native validator is reused; private Gregorian arithmetic
+and explicit Gregorian/UTC label carriers avoid local DST and Date.UTC's year 0–99 trap.
+
+**14 original identities + three explicit missing slot inline fields + three source
+alias/behavior supplements + three inherited theme rows = 23 rows: 20 adapted +
+three omitted, zero unresolved, 4/4 tasks.** No timestamp ABI, date-fns/formatter-token
+or provider/VNode parity is implied. Today is supplied by the application; no global
+clock timer/polling, date-picker UI, grid-role assertion or hidden form field is added.
+
+**157 tests pass** (54 Calendar + 76 shared Date Picker + 27 native/legacy), declarations/
+build and all budgets pass. Level-nine gzip: **7,438 ESM / 7,570 classic / 640 CSS**;
+combined **8,078 / 8,210** under **8,000 / 8,000 / 1,250** ceilings. Full three-file
+local ESM example: **12,015** gzip bytes. Existing Date Picker remains **3,967**;
+core/advanced/widgets remain **14,611 / 2,181 / 2,779** under unchanged
+**15,000 / 3,000 / 4,000** ceilings. Prior exports/budgets/sources are preserved.
+
+Real Chromium verified native table/caption/columnheader/button AX, one date tab stop,
+arrows/Home/End/Page/Shift-Page, Enter/Space exactly once, selection versus focus,
+adjacent/leap/century/year1/9999 transitions, all-disabled/one-day policies, atomic
+annotation failure, original heading/ARIA/fallback, external focus/forms, RTL/zoom/
+narrow/media/no-JS and strict CSP. A Buddhist locale preference still yielded Gregorian
+2024; explicit app-local Today differed correctly between +08:00 and America/New_York,
+without changing the Gregorian grid. Classic/native Date Picker and unchanged advanced
+plugin coexistence passed. No all-browser/AT, native OS picker, print or timezone-parity
+claim is inferred from that evidence.
+
+**Current catalog: 96 routes / 3,994 rows / 348 of 384 accepted tasks across 87 pages /
+36 unchecked. P6: 260 rows = 138 adapted + 67 omitted + 55 unresolved; four of nine
+specialized routes accepted.** Previous P2–P5/P0 component-route resolutions remain
+unchanged. Broad P0-01–P0-09 and legacy stylesheet extraction/auto-install/inline-theme
+exceptions stay open or partial, not completed by this component.
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P6 (5 Planned) | Time, Countdown, Number Animation, Heatmap, Marquee | 55 / 55 |
+| Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Next: Time**, to establish explicit native formatting policy, then Countdown/
+Number Animation as their real shared temporal needs justify. Calendar date-only
+strings are not silently promoted to instants. Heatmap and Marquee remain separate;
+no next route is implemented in this Calendar commit.

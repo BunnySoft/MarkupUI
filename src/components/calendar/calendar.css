@@ -1,0 +1,33 @@
+.mui-calendar { min-inline-size: 0; }
+.mui-calendar [hidden] { display: none !important; }
+.mui-calendar [data-calendar-controls] { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .75rem; }
+.mui-calendar [data-calendar-scroll] { overflow: auto; }
+.mui-calendar [data-calendar-table] {
+  border-collapse: collapse;
+  table-layout: fixed;
+  inline-size: 100%;
+  min-inline-size: 23rem;
+}
+.mui-calendar caption { text-align: start; font-weight: 650; padding-block: .5rem; }
+.mui-calendar th, .mui-calendar td { padding: .25rem; border: 1px solid var(--mui-calendar-border, #bbc7d6); vertical-align: top; }
+.mui-calendar th { font-weight: 600; }
+.mui-calendar [data-calendar-day] {
+  inline-size: 100%;
+  min-inline-size: 2.75rem;
+  min-block-size: 2.75rem;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.mui-calendar [data-calendar-controls] button { min-block-size: 2.75rem; font: inherit; }
+.mui-calendar [data-calendar-marks], .mui-calendar [data-calendar-note] { display: block; overflow-wrap: anywhere; font-size: .8em; }
+.mui-calendar [data-calendar-adjacent] { background: var(--mui-calendar-adjacent, #f1f4f8); }
+.mui-calendar [data-calendar-day][aria-pressed="true"] { outline: 2px solid currentColor; outline-offset: -3px; font-weight: 750; }
+.mui-calendar [data-calendar-day][aria-current="date"] { text-decoration: underline; text-decoration-thickness: 2px; }
+.mui-calendar [aria-disabled="true"] { opacity: .6; cursor: default; }
+.mui-calendar :focus-visible { outline: 3px solid var(--mui-calendar-focus, #175cd3); outline-offset: -3px; }
+@media print {
+  .mui-calendar [data-calendar-controls], .mui-calendar [data-calendar-status] { display: none; }
+  .mui-calendar [data-calendar-scroll] { overflow: visible; }
+  .mui-calendar [data-calendar-table] { min-inline-size: 0; }
+}

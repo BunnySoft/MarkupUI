@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Native Gregorian Calendar · MarkupUI</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-calendar.css">
+  <link rel="stylesheet" href="./calendar.css">
+  <script type="module" src="./calendar.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Calendar: Gregorian dates, not inferred instants</h1>
+    <p id="calendar-help">Tab enters the date table once. Arrows move focus, Home/End
+      choose the week edges, Page Up/Down move months, Shift+Page Up/Down move years.
+      Enter/Space select once. Unavailable dates remain focusable for discovery but
+      cannot be selected. No Tab trap or automatic selection on arrows.</p>
+    <div class="demo-controls" data-enhancement hidden>
+      <label>First weekday <select id="week-start"><option value="1">Monday</option><option value="0">Sunday</option><option value="6">Saturday</option></select></label>
+      <label>Names locale <select id="locale"><option value="en-US">English</option><option value="th-TH-u-ca-buddhist">Thai, requested Buddhist locale</option><option value="ar-EG">Arabic</option></select></label>
+      <label><input id="even-disabled" type="checkbox">Even-numbered dates unavailable</label>
+      <label><input id="all-disabled" type="checkbox">All dates unavailable</label>
+      <label><input id="disabled" type="checkbox">Disable Calendar interaction</label>
+      <label><input id="rtl" type="checkbox">RTL layout</label>
+      <label><input id="narrow" type="checkbox">Narrow scroll container</label>
+      <label><input id="zoom" type="checkbox">CSS zoom 200%</label>
+      <label>Panel <input id="panel" type="month" value="2024-02"></label>
+      <button type="button" id="jan31">Select January 31, 2024</button>
+      <button type="button" id="year1">Year 0001</button>
+      <button type="button" id="year9999">Year 9999</button>
+      <button type="button" id="one-day">Only February 29, 2024 in bounds</button>
+      <button type="button" id="full-bounds">Restore full year bounds</button>
+      <button type="button" id="today-snapshot">Refresh app-local Today snapshot</button>
+      <button type="button" id="reset-calendar">Reset Calendar to its default</button>
+      <button type="button" id="failed-note">Try a failing annotation callback</button>
+      <button type="button" id="disconnect">Disconnect to authored fallback</button>
+    </div>
+    <form id="calendar-form">
+      <section id="calendar" class="mui-calendar" data-calendar data-calendar-month="2024-02"
+        tabindex="-1" aria-labelledby="calendar-heading" aria-describedby="calendar-help">
+        <h2 id="calendar-heading">Original <em>team schedule</em> heading</h2>
+        <div data-calendar-controls hidden>
+          <button type="button" data-calendar-action="prev-year">Previous year</button>
+          <button type="button" data-calendar-action="prev-month">Previous month</button>
+          <button type="button" data-calendar-action="today">Go to app-local Today</button>
+          <button type="button" data-calendar-action="next-month">Next month</button>
+          <button type="button" data-calendar-action="next-year">Next year</button>
+          <button type="button" data-calendar-action="clear">Clear selected date</button>
+        </div>
+        <div data-calendar-scroll>
+          <table data-calendar-table>
+            <caption>Gregorian month: <span data-calendar-caption>February 2024</span></caption>
+            <thead data-calendar-weekdays><tr><th scope="col">Mon</th><th scope="col">Tue</th><th scope="col">Wed</th><th scope="col">Thu</th><th scope="col">Fri</th><th scope="col">Sat</th><th scope="col">Sun</th></tr></thead>
+            <tbody data-calendar-body>
+              <tr><td>29 Jan</td><td>30 Jan</td><td>31 Jan</td><td><time datetime="2024-02-01">1</time></td><td>2</td><td>3</td><td>4</td></tr>
+              <tr><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td></tr>
+              <tr><td>12</td><td>13</td><td>14<br>Planning notes</td><td>15</td><td>16</td><td>17</td><td>18</td></tr>
+              <tr><td>19</td><td>20</td><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td></tr>
+              <tr><td>26</td><td>27</td><td>28</td><td><time datetime="2024-02-29">29</time></td><td>1 Mar</td><td>2 Mar</td><td>3 Mar</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <template data-calendar-cell><td><button type="button" data-calendar-day><span data-calendar-number></span></button><span data-calendar-marks aria-hidden="true"></span><span data-calendar-note></span></td></template>
+        <p data-calendar-value>No date selected in the static fallback.</p>
+        <p data-calendar-status></p>
+      </section>
+      <label>Visible native date field <input id="native-date" name="meeting-date" type="date"></label>
+      <label>Original native title <input id="title" name="title" value="Weekly planning" required></label>
+      <p>The demo explicitly synchronizes this visible date field in application listeners.
+        Calendar itself owns no form value or hidden proxy. Native form reset does not
+        reset the Calendar's separate selected/default state.</p>
+      <button type="submit" data-enhancement hidden>Inspect native FormData (no request)</button>
+      <button type="reset">Reset native fields only</button>
+    </form>
+    <pre id="feedback" aria-label="Calendar state and native form inspection">No JavaScript: the authored February 2024 table remains readable; native date/title fields and reset remain available. Enhancement controls are hidden.</pre>
+    <footer><label>Outside focus target <input id="outside" value="Calendar must not steal this focus"></label>
+      <p>One native six-week table. No grid-role promise, date library, epoch model,
+        provider, arbitrary HTML annotation renderer or automatic clock timer.</p></footer>
+  </main>
+</body>
+</html>
