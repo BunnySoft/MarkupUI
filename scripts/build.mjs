@@ -48,6 +48,8 @@ components.push("tree")
 classicEntries.tree = "global.ts"
 components.push("cascader")
 classicEntries.cascader = "global.ts"
+components.push("tree-select")
+classicEntries["tree-select"] = "global.ts"
 
 await Promise.all([
   build({
@@ -120,6 +122,9 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-tree-select.js": 9_000,
+  "markup-ui-tree-select.global.js": 9_000,
+  "markup-ui-tree-select.css": 1_250,
   "markup-ui-cascader.js": 10_000,
   "markup-ui-cascader.global.js": 10_000,
   "markup-ui-cascader.css": 1_250,

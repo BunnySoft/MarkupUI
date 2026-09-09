@@ -1,0 +1,11 @@
+.mui-tree-select { overflow-wrap: anywhere; }
+.mui-tree-select [data-select-control] { font: inherit; color: inherit; box-sizing: border-box; max-inline-size: 100%; min-inline-size: 0; padding: .35rem; }
+.mui-tree-select[data-tree-select-size=small] [data-select-control] { padding: .15rem; }
+.mui-tree-select[data-tree-select-size=large] [data-select-control] { padding: .6rem; }
+.mui-tree-select [data-select-search] { margin-block: .5rem; }
+.mui-tree-select [data-select-filter] { font: inherit; box-sizing: border-box; max-inline-size: 100%; }
+.mui-tree-select [data-tree-select-value] { white-space: pre-wrap; }
+.mui-tree-select [data-tree-select-source] [data-tree-list] { padding-inline-start: 1.25rem; }
+.mui-tree-select :focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+.mui-tree-select [hidden] { display: none !important; }
+@media (forced-colors: active) { .mui-tree-select [data-select-control] { border-color: CanvasText; } }

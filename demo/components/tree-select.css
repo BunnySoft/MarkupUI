@@ -1,0 +1,14 @@
+:root { font: 16px/1.5 system-ui, sans-serif; color: #15324b; background: #f5f8fc; }
+body { margin: 0; }
+main { max-width: 950px; margin: 1rem auto; padding: 1rem; overflow-wrap: anywhere; }
+fieldset { min-inline-size: 0; padding: 1rem; margin-block: 1rem; border: 1px solid #758ea5; background: white; }
+legend { font-weight: 600; }
+button { font: inherit; padding: .3rem .6rem; }
+label { display: grid; gap: .3rem; margin-block: .5rem; }
+select, input { inline-size: 100%; }
+.tools { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 1rem; }
+.tools[hidden] { display: none; }
+output, pre { display: block; white-space: pre-wrap; overflow-wrap: anywhere; }
+[data-tree-select-value] { font-weight: 600; }
+@media (max-width: 480px) { main, fieldset { padding: .5rem; } }
+@media (forced-colors: active) { fieldset { border-color: CanvasText; } }

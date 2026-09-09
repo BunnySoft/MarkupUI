@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./tree-select": {
+      "types": "./dist/components/tree-select/index.d.ts",
+      "import": "./dist/markup-ui-tree-select.js"
+    },
+    "./tree-select/style.css": "./dist/markup-ui-tree-select.css",
     "./cascader": {
       "types": "./dist/components/cascader/index.d.ts",
       "import": "./dist/markup-ui-cascader.js"

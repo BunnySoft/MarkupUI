@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MarkupUI native Tree Select</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-tree-select.css">
+  <link rel="stylesheet" href="./tree-select.css">
+  <script defer src="../../dist/markup-ui-tree-select.global.js"></script>
+  <script defer src="./tree-select.js"></script>
+</head>
+<body>
+<main>
+  <h1>Hierarchy-aware native selection</h1>
+  <p>Full-path option labels make a flat native select unambiguous. Native multiple keys
+    are independent—not cascade checks, indeterminate parents or an expandable popup.
+    Without JavaScript, the authored flat options and native forms still work.</p>
+  <form id="files-form">
+    <fieldset class="mui-tree-select" data-tree-select id="single">
+      <legend>Single key, branches allowed</legend>
+      <details><summary>Passive hierarchy</summary>
+        <section class="mui-tree" data-tree data-tree-select-source aria-label="Single file hierarchy">
+          <ul data-tree-list>
+            <li data-tree-key="docs"><div data-tree-row><span data-tree-label>Documents</span></div><details data-tree-branch><summary>Documents</summary><ul data-tree-list>
+              <li data-tree-key="docs-guide"><div data-tree-row><span data-tree-label>Guide</span></div></li>
+              <li data-tree-key="notes"><div data-tree-row><span data-tree-label>Notes</span></div></li>
+            </ul></details></li>
+            <li data-tree-key="media"><div data-tree-row><span data-tree-label>Media</span></div><details data-tree-branch><summary>Media</summary><ul data-tree-list>
+              <li data-tree-key="media-guide"><div data-tree-row><span data-tree-label>Guide</span></div></li>
+            </ul></details></li>
+            <li data-tree-key="archive" data-tree-disabled><div data-tree-row><span data-tree-label>Archive</span></div><details data-tree-branch><summary>Archive</summary><ul data-tree-list>
+              <li data-tree-key="archived"><div data-tree-row><span data-tree-label>Old file</span></div></li>
+            </ul></details></li>
+          </ul>
+        </section>
+      </details>
+      <div class="mui-select" data-select data-tree-select-field>
+        <label>File<select data-select-control name="file" required>
+          <option value="" data-select-placeholder>Choose file</option>
+          <option value="docs">Documents</option><option value="docs-guide" selected>Documents / Guide</option>
+          <option value="notes">Documents / Notes</option><option value="media">Media</option>
+          <option value="media-guide">Media / Guide</option><option value="archive" disabled>Archive</option>
+          <option value="archived" disabled>Archive / Old file</option>
+        </select></label>
+      </div>
+      <p data-tree-select-value></p><p data-tree-select-status role="status"></p>
+      <button type="button" data-tree-select-clear hidden>Clear single file</button>
+    </fieldset>
+    <fieldset class="mui-tree-select" data-tree-select id="multiple">
+      <legend>Independent leaf keys, native multiple selection</legend>
+      <details><summary>Passive hierarchy</summary>
+        <section class="mui-tree" data-tree data-tree-select-source aria-label="Multiple file hierarchy">
+          <ul data-tree-list>
+            <li data-tree-key="docs"><div data-tree-row><span data-tree-label>Documents</span></div><details data-tree-branch><summary>Documents</summary><ul data-tree-list>
+              <li data-tree-key="docs-guide"><div data-tree-row><span data-tree-label>Guide</span></div></li>
+              <li data-tree-key="notes"><div data-tree-row><span data-tree-label>Notes</span></div></li>
+            </ul></details></li>
+            <li data-tree-key="media"><div data-tree-row><span data-tree-label>Media</span></div><details data-tree-branch><summary>Media</summary><ul data-tree-list>
+              <li data-tree-key="media-guide"><div data-tree-row><span data-tree-label>Guide</span></div></li>
+            </ul></details></li>
+            <li data-tree-key="archive" data-tree-disabled><div data-tree-row><span data-tree-label>Archive</span></div><details data-tree-branch><summary>Archive</summary><ul data-tree-list>
+              <li data-tree-key="archived"><div data-tree-row><span data-tree-label>Old file</span></div></li>
+            </ul></details></li>
+          </ul>
+        </section>
+      </details>
+      <div class="mui-select" data-select data-tree-select-field>
+        <div data-select-search hidden>
+          <label>Filter full paths<input type="search" data-select-filter></label>
+          <p data-select-empty hidden>No matches. Selected choices remain visible.</p>
+        </div>
+        <label>Files<select data-select-control name="files[]" multiple size="6" required>
+          <option value="docs-guide" selected>Documents / Guide</option>
+          <option value="notes">Documents / Notes</option><option value="media-guide">Media / Guide</option>
+          <option value="archived" disabled>Archive / Old file</option>
+        </select></label>
+      </div>
+      <p>Use the platform's native multiple-selection gestures. Filtering does not
+        delete selected values or change native FormData.</p>
+      <p data-tree-select-value></p><p data-tree-select-status role="status"></p>
+      <button type="button" data-tree-select-clear hidden>Clear multiple files</button>
+    </fieldset>
+    <button>Inspect native submission</button><button type="reset">Reset native defaults</button>
+  </form>
+  <div class="tools" id="tools" hidden>
+    <button type="button" id="select">Select Media Guide silently</button>
+    <button type="button" id="defaults">Default single to Notes</button>
+    <button type="button" id="remove">Remove single's default Guide source</button>
+    <button type="button" id="rename">Rename Documents</button>
+    <button type="button" id="disable-path">Toggle disabled Documents path</button>
+    <button type="button" id="cancel-reset">Cancel next reset</button>
+    <button type="button" id="fieldset">Toggle native multiple fieldset disabled</button>
+    <button type="button" id="rtl">Toggle RTL</button>
+    <button type="button" id="disconnect">Hand off native selections</button>
+  </div>
+  <output id="state" aria-label="Native selection state"></output>
+  <p id="events" role="status"></p><pre id="submission"></pre>
+</main>
+</body>
+</html>

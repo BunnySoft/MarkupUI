@@ -1,214 +1,257 @@
 # Tree Select
 
-**Plan: Planned. Current baseline: separate tree/select primitives only.**
+**🟢 Verified retained path-aware native Select scope.** One labelled native single or
+multiple select with full-path labels, distinct real string keys, literal filtering,
+native defaults/forms and a deliberate native-option handoff on disconnect.
+No expandable checkbox popup, mixed-state tree, renderer, provider or virtualization.
 
-## Baseline and target
+[Canonical implementation and acceptance](../../components/tree-select.md) composes the
+existing `readTreeHierarchy`/`TreeNode` index and exactly one Native Select owner.
+The source is passive and separate; a live Tree's controls cannot be hidden or stolen.
+There was no dedicated legacy Tree Select contract to redefine; core Tree/Select and
+all prior standalone assets remain unchanged.
 
-[B1: navigation.ts](../../../src/components/navigation.ts) supplies a basic tree; [B2: forms.ts](../../../src/components/forms.ts) supplies a native select. No tree-select contract combines them.
+**Delivery phase:** P5. **Task state:** 🟢 Verified retained scope.
+**Next:** Transfer, with its own source/target order, multi-selection and form contract.
 
-- **HTML:** labelled selection control and hierarchical list, with a simple select fallback.
-- **JS:** stable keys, expanded/checked state, keyboard focus and cancellable loading.
-- **CSS:** separate tree popup and selected-value presentation.
-- **Placement:** proposed `src/optional/tree-select/`.
-
-## Acceptance and gaps
-
-Test parent/child check strategies, filtering, disabled branches, multiple values and focus restoration. Virtualization and lazy data must remain optional and independently accepted.
-
-## Upstream implementation evidence
-
-Only related shared/tree selection internals were reviewed, including [tree keyboard behavior](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree/src/keyboard.tsx#L45-L168). That is evidence for focus/expansion cases, not a direct audit of Tree Select's combined value, checking and popup contracts. Its detailed implementation remains **Not reviewed**; independently test composition boundaries before reusing any MarkupUI helpers.
-
-## Migration steps
-
-**Delivery phase:** P5 — hierarchical selection. **Task state:** 🔵 Planned.
-**Prerequisites:** P3 popup focus, P4 Select and P5 Tree identity/checking in the [master plan](../migration-plan.md).
-**Next task:** choose a value/check strategy and a simple native fallback before composing a tree popup.
-
-1. [ ] **Define stable selection.** Specify keys, labels, parent/leaf values and single/multiple serialized state.
-2. [ ] **Compose focus and expansion.** Keep trigger, tree navigation and selected-value removal in one explicit keyboard contract.
-3. [ ] **Stage lazy/filter modes.** Preserve checking across filtered branches and cancel obsolete loads; keep virtual rendering optional.
-4. [ ] **Test combined behavior.** Cover disabled ancestors, replaced nodes, Escape/refocus, reset and selected labels after remote data changes.
+1. [x] **Define stable selection.** Read pinned API/controller/interfaces/exports and live
+   reference; preserve all original identities and explicit native value/path semantics.
+2. [x] **Compose native behavior.** Reuse one Native Select for fields/filtering; preserve
+   labels, keys, option identity and native focus/keyboard instead of a fabricated tree popup.
+3. [x] **Scope filter/data modes.** Preserve selected/form values under filtering; prune
+   invalid source keys/defaults; leave loading and expansion application-owned.
+4. [x] **Test behavior and handoff.** Native forms/defaults/filter/focus/ownership/source
+   replacement, browser evidence, build/budgets and non-resurrecting teardown accepted.
 
 ### Native primitives and fallback
 
-- **Native path:** a labelled native select or hierarchical authored list is the simple fallback. Optional tree options clone native templates and preserve stable-key nodes inside a light-DOM custom element.
-- **Small enhancement:** feature-detect popover, observers and cancellable request support before enabling the rich popup. Reuse only narrow approved focus/selection helpers and dispose their resources. Unsupported rich behavior reduces to the fallback instead of shipping a tree-select framework or Shadow DOM slot adapter.
-
-<!-- BEGIN PINNED API INVENTORY -->
+Author the initial flat native options with full-path labels, plus a readable passive
+hierarchy. The select remains usable without JS. Optional filter/clear enhancements start
+hidden. Disconnect releases observation/ownership and retains the **current** native
+options, selections and surviving defaults; it never restores stale original data.
 
 ## Reference and review boundary
 
-- [Official website](https://www.naiveui.com/en-US/os-theme/components/tree-select)
-- [Pinned public API Markdown](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md)
-- [Pinned implementation source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select)
-- [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
+- [Current reference](https://www.naiveui.com/en-US/os-theme/components/tree-select):
+  rendered/reviewed 2026-09-09, Naive UI 2.45.3 (SPA rendered despite HTTP 404).
+- [Pinned API][api], [controller][controller], [interfaces][interface], [exports][exports],
+  [public types][public], related [Tree source][tree].
+- [Catalog](../index.md) · [Architecture](../architecture.md).
 
-Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **66 local table rows + 21 supplementary declarations + 0 inherited rows = 87 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
+Revision: **42a52e6436b38bed456fee19eb0b89cdcd00fcc2**.
+The source combines NTree, internal selection, treemate and floating followers, with
+different checked/selected paths, injected pending state, tag rendering and form callbacks.
+The native target deliberately does not reproduce that graph. Its independent native
+multiple selection is not cascade/check-strategy/indeterminate behavior.
 
-Referenced public component types (composition, not automatic API inheritance): [Tree](tree.md), [Popover](popover.md). Opaque types without local member definitions remain unreviewed.
+**66 original API rows + 21 original inline declarations + 33 source supplements =
+120 tracker rows.** All **87 original section/member/kind/API-line identities** remain
+in order. `API:Lnn` means the exact pinned `[api]` URL with fragment `#Lnn`.
+Verified refers to the stated adaptation, not source prop/type compatibility.
+All rows are resolved: **39 adapted native capabilities and 81 intentional omissions**.
 
+<!-- BEGIN PINNED API INVENTORY -->
 
 ### TreeSelect Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`allow-checking-not-loaded`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L28) | Prop | Candidate presence attribute `allow-checking-not-loaded`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`cascade`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L29) | Prop | Candidate explicit JS `cascade` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`checkable`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L30) | Prop | Candidate presence attribute `checkable`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`check-strategy`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L31) | Prop | Candidate explicit JS `checkStrategy` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`children-field`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L32) | Prop | Candidate `children-field` attribute or JS `childrenField`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`clearable`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L33) | Prop | Candidate presence attribute `clearable`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`clear-filter-after-select`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L34) | Prop | Candidate explicit JS `clearFilterAfterSelect` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`consistent-menu-width`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L35) | Prop | Candidate presence attribute `consistent-menu-width`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L36) | Prop | Candidate native default/reset state for `default-value`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default-expand-all`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L37) | Prop | Candidate native default/reset state for `default-expand-all`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default-expanded-keys`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L38) | Prop | Candidate native default/reset state for `default-expanded-keys`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L39) | Prop | Candidate presence attribute `disabled`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`ellipsis-tag-popover-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L40) | Prop | Candidate explicit native-child configuration for `ellipsis-tag-popover-props`; no unrestricted prop forwarding. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`expanded-keys`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L41) | Prop | Candidate JS `expandedKeys` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`indent`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L42) | Prop | Candidate `indent` attribute or JS `indent`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`indeterminate-keys`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L43) | Prop | Candidate JS `indeterminateKeys` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`filterable`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L44) | Prop | Candidate explicit JS `filterable` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`filter`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L45) | Prop | Candidate explicit JS `filter` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`get-children`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L46) | Prop | Candidate explicit JS `getChildren` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`key-field`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L47) | Prop | Candidate `key-field` attribute or JS `keyField`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`label-field`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L48) | Prop | Candidate `label-field` attribute or JS `labelField`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`disabled-field`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L49) | Prop | Candidate `disabled-field` attribute or JS `disabledField`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`loading`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L50) | Prop | Candidate presence attribute `loading`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`max-tag-count`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L51) | Prop | Candidate `max-tag-count` attribute or JS `maxTagCount`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`menu-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L52) | Prop | Candidate explicit native-child configuration for `menu-props`; no unrestricted prop forwarding. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`multiple`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L53) | Prop | Candidate presence attribute `multiple`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`node-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L54) | Prop | Candidate explicit native-child configuration for `node-props`; no unrestricted prop forwarding. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`options`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L55) | Prop | Candidate JS `options` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`override-default-node-click-behavior`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L56) | Prop | Candidate explicit JS `overrideDefaultNodeClickBehavior` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L57) | Prop | Candidate `placeholder` attribute or JS `placeholder`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`placement`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L58) | Prop | Candidate explicit JS `placement` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`render-label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L59) | Prop | Candidate authored `render-label` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`render-prefix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L60) | Prop | Candidate authored `render-prefix` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`render-suffix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L61) | Prop | Candidate authored `render-suffix` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`render-switcher-icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L62) | Prop | Candidate authored `render-switcher-icon` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`render-tag`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L63) | Prop | Candidate authored `render-tag` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`separator`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L64) | Prop | Candidate `separator` attribute or JS `separator`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show-line`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L65) | Prop | Candidate live JS `showLine` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show-path`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L66) | Prop | Candidate live JS `showPath` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L67) | Prop | External CSS token/class for `size`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`status`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L68) | Prop | Candidate `status` attribute or JS `status`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`to`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L69) | Prop | Candidate explicit JS `to` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L70) | Prop | Candidate JS `value` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`virtual-scroll`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L71) | Prop | Candidate explicit JS `virtualScroll` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`watch-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L72) | Prop | Candidate explicit native-child configuration for `watch-props`; no unrestricted prop forwarding. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-blur`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L73) | Callback | Candidate DOM `mui:blur` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-focus`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L74) | Callback | Candidate DOM `mui:focus` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-load`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L75) | Callback | Explicit `on-load` function/before-event contract needed; preserve return/cancellation semantics. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:expanded-keys`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L76) | Callback | Candidate DOM `mui:change:expanded-keys` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:indeterminate-keys`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L77) | Callback | Candidate DOM `mui:change:indeterminate-keys` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L78) | Callback | Candidate DOM `mui:change` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `allow-checking-not-loaded` · API:L28 | Prop | No unloaded-subtree checking promise. | ⏭️ Intentionally omitted |
+| `cascade` · API:L29 | Prop | Native multiple keys are independent. | ⏭️ Intentionally omitted |
+| `checkable` · API:L30 | Prop | No checkbox-tree owner or checkbox proxy. | ⏭️ Intentionally omitted |
+| `check-strategy` · API:L31 | Prop | No parent/child check reports; explicit leaf/any eligibility is a separate contract. | ⏭️ Intentionally omitted |
+| `children-field` · API:L32 | Prop | Authored nested source lists, not a field-name data parser. | 🟢 Verified |
+| `clearable` · API:L33 | Prop | Optional native clear action; one explicit value change. | 🟢 Verified |
+| `clear-filter-after-select` · API:L34 | Prop | Query remains user-controlled; no popup-closing/filter-reset model. | ⏭️ Intentionally omitted |
+| `consistent-menu-width` · API:L35 | Prop | No floating menu width/virtualization coupling. | ⏭️ Intentionally omitted |
+| `default-value` · API:L36 | Prop | Strict mode-specific defaults and native defaultSelected flags. | 🟢 Verified |
+| `default-expand-all` · API:L37 | Prop | No interactive tree expansion mode. | ⏭️ Intentionally omitted |
+| `default-expanded-keys` · API:L38 | Prop | No picker expansion model. | ⏭️ Intentionally omitted |
+| `disabled` · API:L39 | Prop | Native select/fieldset disabling and disabled source paths. | 🟢 Verified |
+| `ellipsis-tag-popover-props` · API:L40 | Prop | No tags/overflow popover. | ⏭️ Intentionally omitted |
+| `expanded-keys` · API:L41 | Prop | Passive source disclosure is not a selectable expanded-key model. | ⏭️ Intentionally omitted |
+| `indent` · API:L42 | Prop | Full-path labels replace tree-row geometry. | ⏭️ Intentionally omitted |
+| `indeterminate-keys` · API:L43 | Prop | No mixed checkbox state. | ⏭️ Intentionally omitted |
+| `filterable` · API:L44 | Prop | Optional labelled Native Select filter for multiple or size>=2 list controls. | 🟢 Verified |
+| `filter` · API:L45 | Prop | Literal full-path filtering only; no custom predicate/VNode search renderer. | ⏭️ Intentionally omitted |
+| `get-children` · API:L46 | Prop | Native index references actual child nodes; no data getter callback. | 🟢 Verified |
+| `key-field` · API:L47 | Prop | Required unique source data-tree-key strings. | 🟢 Verified |
+| `label-field` · API:L48 | Prop | Named source spans, projected safely as full-path option text. | 🟢 Verified |
+| `disabled-field` · API:L49 | Prop | Source data-tree-disabled, including unavailable ancestor paths. | 🟢 Verified |
+| `loading` · API:L50 | Prop | Application owns data loading/busy status. | ⏭️ Intentionally omitted |
+| `max-tag-count` · API:L51 | Prop | No selected-tag renderer. | ⏭️ Intentionally omitted |
+| `menu-props` · API:L52 | Prop | No menu/attribute forwarding object. | ⏭️ Intentionally omitted |
+| `multiple` · API:L53 | Prop | Authored native multiple mode; independent key array in DOM order. | 🟢 Verified |
+| `node-props` · API:L54 | Prop | Authored source/control attributes, not callback prop forwarding. | 🟢 Verified |
+| `options` · API:L55 | Prop | Passive authored hierarchy plus native options; no parallel TreeSelectOption[] renderer. | 🟢 Verified |
+| `override-default-node-click-behavior` · API:L56 | Prop | Native select behavior is not a tree click dispatcher. | ⏭️ Intentionally omitted |
+| `placeholder` · API:L57 | Prop | Authored empty option for single dropdowns; no empty choice in multiple mode. | 🟢 Verified |
+| `placement` · API:L58 | Prop | In-flow native field, not a positioned popup. | ⏭️ Intentionally omitted |
+| `render-label` · API:L59 | Prop | Plain full-path labels; arbitrary VNode content excluded. | 🟢 Verified |
+| `render-prefix` · API:L60 | Prop | No per-option renderer. | ⏭️ Intentionally omitted |
+| `render-suffix` · API:L61 | Prop | No per-option renderer. | ⏭️ Intentionally omitted |
+| `render-switcher-icon` · API:L62 | Prop | No tree switcher in the native select. | ⏭️ Intentionally omitted |
+| `render-tag` · API:L63 | Prop | No tag/handleClose renderer. | ⏭️ Intentionally omitted |
+| `separator` · API:L64 | Prop | Literal full-path separator, <=32 characters. | 🟢 Verified |
+| `show-line` · API:L65 | Prop | No picker tree connecting lines. | ⏭️ Intentionally omitted |
+| `show-path` · API:L66 | Prop | Controls selected readout detail; option labels always retain full paths for disambiguation. | 🟢 Verified |
+| `size` · API:L67 | Prop | External small/medium/large native control styling; native size attribute controls list rows separately. | 🟢 Verified |
+| `status` · API:L68 | Prop | Real native validity and explicit source/default status text. | 🟢 Verified |
+| `to` · API:L69 | Prop | No portal/teleport. | ⏭️ Intentionally omitted |
+| `value` · API:L70 | Prop | String/null single value or independent native string[] multiple value. | 🟢 Verified |
+| `virtual-scroll` · API:L71 | Prop | All bounded native options remain mounted; no Virtual List runtime. | ⏭️ Intentionally omitted |
+| `watch-props` · API:L72 | Prop | Explicit setters/refresh and native default flags, not reactive prop watching. | ⏭️ Intentionally omitted |
+| `on-blur` · API:L73 | Callback | Native control/filter blur events. | 🟢 Verified |
+| `on-focus` · API:L74 | Callback | Native control/filter focus events. | 🟢 Verified |
+| `on-load` · API:L75 | Callback | Application updates source atomically and refreshes; no built-in lazy loader. | ⏭️ Intentionally omitted |
+| `on-update:expanded-keys` · API:L76 | Callback | No expansion state event. | ⏭️ Intentionally omitted |
+| `on-update:indeterminate-keys` · API:L77 | Callback | No mixed-state event. | ⏭️ Intentionally omitted |
+| `on-update:value` · API:L78 | Callback | One mui:tree-select-change with explicit native value/keys/paths/action/event. | 🟢 Verified |
 
 ### TreeSelectOption Properties
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`key`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L84) | Record field | Candidate plain-JS `key` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L85) | Record field | Candidate plain-JS `label` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`children?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L86) | Record field | Candidate plain-JS `children?` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`disabled?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L87) | Record field | Candidate plain-JS `disabled?` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`isLeaf?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L88) | Record field | Candidate plain-JS `isLeaf?` field; value shape/ownership not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `key` · API:L84 | Record field | Stable unique native string key; numbers are not coerced. | 🟢 Verified |
+| `label` · API:L85 | Record field | Original source label and full-path native option text. | 🟢 Verified |
+| `children?` · API:L86 | Record field | Native lists/details hierarchy, indexed iteratively. | 🟢 Verified |
+| `disabled?` · API:L87 | Record field | Disabled paths cannot remain selected/submitted as eligible values. | 🟢 Verified |
+| `isLeaf?` · API:L88 | Record field | Leaf means no authored branch; known empty/lazy branches are not automatically promoted. | 🟢 Verified |
 
 ### TreeSelect Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`header`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L94) | Slot | Candidate authored `header` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`action`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L95) | Slot | Candidate authored `action` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`arrow`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L96) | Slot | Candidate authored `arrow` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`empty`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L97) | Slot | Candidate authored `empty` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `header` · API:L94 | Slot | Authored native field/source headings. | 🟢 Verified |
+| `action` · API:L95 | Slot | Authored native actions outside select/options. | 🟢 Verified |
+| `arrow` · API:L96 | Slot | Browser owns the native arrow; no replacement slot. | ⏭️ Intentionally omitted |
+| `empty` · API:L97 | Slot | Plain authored empty/filter message, not a menu renderer. | 🟢 Verified |
 
 ### TreeSelect Methods
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`blur`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L103) | Method | Candidate plain-JS `blur` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`blurInput`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L104) | Method | Candidate plain-JS `blurInput` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`focus`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L105) | Method | Candidate plain-JS `focus` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`focusInput`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L106) | Method | Candidate plain-JS `focusInput` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`getCheckedData`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L107) | Method | Candidate plain-JS `getCheckedData` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`getIndeterminateData`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L108) | Method | Candidate plain-JS `getIndeterminateData` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `blur` · API:L103 | Method | Native controller.control.blur(). | 🟢 Verified |
+| `blurInput` · API:L104 | Method | Native optional filter.blur(). | 🟢 Verified |
+| `focus` · API:L105 | Method | Native controller.control.focus(); no popup promise. | 🟢 Verified |
+| `focusInput` · API:L106 | Method | Native optional filter.focus(). | 🟢 Verified |
+| `getCheckedData` · API:L107 | Method | No tree-check report; explicit selected keys/paths instead. | ⏭️ Intentionally omitted |
+| `getIndeterminateData` · API:L108 | Method | No indeterminate model. | ⏭️ Intentionally omitted |
 
 ### TreeSelect Props: node-props inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`node-props.option`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L54) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `node-props.option` · API:L54 | Inline record field | No callback data record. | ⏭️ Intentionally omitted |
 
 ### TreeSelect Props: override-default-node-click-behavior inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`override-default-node-click-behavior.option`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L56) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `override-default-node-click-behavior.option` · API:L56 | Inline record field | No tree click dispatcher. | ⏭️ Intentionally omitted |
 
 ### TreeSelect Props: render-label inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`render-label.option`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L59) | Inline record field | Candidate authored `render-label.option` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`render-label.checked`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L59) | Inline record field | Candidate authored `render-label.checked` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`render-label.selected`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L59) | Inline record field | Candidate authored `render-label.selected` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `render-label.option` · API:L59 | Inline record field | No renderer record. | ⏭️ Intentionally omitted |
+| `render-label.checked` · API:L59 | Inline record field | No checkbox renderer state. | ⏭️ Intentionally omitted |
+| `render-label.selected` · API:L59 | Inline record field | Native selectedness is not a VNode callback argument. | ⏭️ Intentionally omitted |
 
 ### TreeSelect Props: render-prefix inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`render-prefix.option`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L60) | Inline record field | Candidate authored `render-prefix.option` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`render-prefix.checked`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L60) | Inline record field | Candidate authored `render-prefix.checked` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`render-prefix.selected`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L60) | Inline record field | Candidate authored `render-prefix.selected` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `render-prefix.option` · API:L60 | Inline record field | No renderer record. | ⏭️ Intentionally omitted |
+| `render-prefix.checked` · API:L60 | Inline record field | No checkbox renderer state. | ⏭️ Intentionally omitted |
+| `render-prefix.selected` · API:L60 | Inline record field | No renderer state. | ⏭️ Intentionally omitted |
 
 ### TreeSelect Props: render-suffix inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`render-suffix.option`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L61) | Inline record field | Candidate authored `render-suffix.option` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`render-suffix.checked`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L61) | Inline record field | Candidate authored `render-suffix.checked` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`render-suffix.selected`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L61) | Inline record field | Candidate authored `render-suffix.selected` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `render-suffix.option` · API:L61 | Inline record field | No renderer record. | ⏭️ Intentionally omitted |
+| `render-suffix.checked` · API:L61 | Inline record field | No checkbox renderer state. | ⏭️ Intentionally omitted |
+| `render-suffix.selected` · API:L61 | Inline record field | No renderer state. | ⏭️ Intentionally omitted |
 
 ### TreeSelect Props: render-tag inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`render-tag.option`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L63) | Inline record field | Candidate authored `render-tag.option` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`render-tag.handleClose`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L63) | Inline record field | Candidate authored `render-tag.handleClose` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `render-tag.option` · API:L63 | Inline record field | No tag renderer. | ⏭️ Intentionally omitted |
+| `render-tag.handleClose` · API:L63 | Inline record field | Native selection/clear is not a tag callback. | ⏭️ Intentionally omitted |
 
 ### TreeSelect Props: on-update:expanded-keys inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`on-update:expanded-keys.node`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L76) | Inline record field | Candidate DOM `mui:change:expanded-keys.node` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:expanded-keys.action`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L76) | Inline record field | Candidate DOM `mui:change:expanded-keys.action` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `on-update:expanded-keys.node` · API:L76 | Inline record field | No expansion payload. | ⏭️ Intentionally omitted |
+| `on-update:expanded-keys.action` · API:L76 | Inline record field | No expand/collapse/filter action union. | ⏭️ Intentionally omitted |
 
 ### TreeSelect Props: on-update:value inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`on-update:value.node`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L78) | Inline record field | Candidate DOM `mui:change:value.node` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:value.action`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L78) | Inline record field | Candidate DOM `mui:change:value.action` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `on-update:value.node` · API:L78 | Inline record field | Native event uses explicit keys/paths, not a TreeOption object. | ⏭️ Intentionally omitted |
+| `on-update:value.action` · API:L78 | Inline record field | Narrow select/clear action on one native notification; no tag-delete/tree-unselect union. | 🟢 Verified |
 
 ### TreeSelect Methods: getCheckedData inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`getCheckedData.keys`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L107) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`getCheckedData.options`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L107) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `getCheckedData.keys` · API:L107 | Inline record field | No tree-check report. | ⏭️ Intentionally omitted |
+| `getCheckedData.options` · API:L107 | Inline record field | No TreeOption/null array report. | ⏭️ Intentionally omitted |
 
 ### TreeSelect Methods: getIndeterminateData inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
-| --- | --- | --- | --- | --- |
-| [`getIndeterminateData.keys`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L108) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`getIndeterminateData.options`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md#L108) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `getIndeterminateData.keys` · API:L108 | Inline record field | No mixed keys. | ⏭️ Intentionally omitted |
+| `getIndeterminateData.options` · API:L108 | Inline record field | No mixed option report. | ⏭️ Intentionally omitted |
+
+### Source-only supplements
+
+| Upstream item · source | Kind | Native mapping / boundary | Status |
+| --- | --- | --- | --- |
+| `NTreeSelect` · [exports][exports] | Export supplement | No Vue alias/custom element. | ⏭️ Intentionally omitted |
+| `treeSelectProps` · [exports][exports] | Export supplement | No framework prop schema. | ⏭️ Intentionally omitted |
+| `TreeSelectProps` · [exports][exports] | Type supplement | No ExtractPublicPropTypes compatibility. | ⏭️ Intentionally omitted |
+| `TreeSelectSlots` · [controller][controller] | Type supplement | No VNode slot object. | ⏭️ Intentionally omitted |
+| `TreeSelectInst` · [interface][interface] | Type supplement | Native controller is distinct from the source instance. | ⏭️ Intentionally omitted |
+| `TreeSelectNodeProps` · [exports][exports] | Type supplement | No callback attribute object. | ⏭️ Intentionally omitted |
+| `TreeSelectOption` · [interface][interface] | Type supplement | Source TreeOptionBase-derived data type not reproduced; the source interface omits isLeaf while Markdown names it. Native branch/leaf policy is explicit. | ⏭️ Intentionally omitted |
+| `TreeSelectRenderLabel` · [exports][exports] | Type supplement | No VNode renderer type. | ⏭️ Intentionally omitted |
+| `TreeSelectRenderPrefix` · [exports][exports] | Type supplement | No VNode renderer type. | ⏭️ Intentionally omitted |
+| `TreeSelectRenderSuffix` · [exports][exports] | Type supplement | No VNode renderer type. | ⏭️ Intentionally omitted |
+| `TreeSelectRenderTag` · [exports][exports] | Type supplement | No option/handleClose VNode tag type. | ⏭️ Intentionally omitted |
+| `TreeSelectSize` · [public][public] | Type supplement | Native small/medium/large CSS choice. | 🟢 Verified |
+| `TreeSelectOverrideNodeClickBehavior` · [exports][exports] | Re-export supplement | No Tree click-dispatch callback. | ⏭️ Intentionally omitted |
+| `TreeSelectOverrideNodeClickBehaviorReturn` · [exports][exports] | Re-export supplement | No toggleExpand/toggleSelect/toggleCheck/default/none dispatcher union. | ⏭️ Intentionally omitted |
+| `bordered` · [controller][controller] | Prop supplement | Native author CSS borders; no provider toggle. | ⏭️ Intentionally omitted |
+| `defaultShow` · [controller][controller] | Prop supplement | No popup default state. | ⏭️ Intentionally omitted |
+| `show` · [controller][controller] | Prop supplement | No popup visibility state. | ⏭️ Intentionally omitted |
+| `onUpdateShow` · [controller][controller] | Callback supplement | No popup callback. | ⏭️ Intentionally omitted |
+| `onUpdate:show` · [controller][controller] | Callback alias supplement | No popup callback. | ⏭️ Intentionally omitted |
+| `onUpdateValue` · [controller][controller] | Callback alias supplement | Same single native change adaptation as colon spelling, not duplicate emissions. | 🟢 Verified |
+| `leafOnly` · [controller][controller] | Deprecated prop supplement | Explicit selection=leaf policy; no deprecated prop alias. | 🟢 Verified |
+| `onUpdateExpandedKeys` · [tree][tree] | Shared callback alias supplement | No expansion event. | ⏭️ Intentionally omitted |
+| `onUpdateIndeterminateKeys` · [tree][tree] | Shared callback alias supplement | No indeterminate event. | ⏭️ Intentionally omitted |
+| `Value` · [interface][interface] | Type supplement | Strict native single string/null or multiple string[]; numeric members excluded. | 🟢 Verified |
+| `TreeSelectTmNode` · [interface][interface] | Type supplement | Opaque treemate node not adopted. | ⏭️ Intentionally omitted |
+| `TreeSelectRenderProps` · [interface][interface] | Type supplement | No option/checked/selected VNode record. | ⏭️ Intentionally omitted |
+| `TreeSelectRenderTreePart` · [interface][interface] | Type supplement | No callback renderer alias. | ⏭️ Intentionally omitted |
+| `OnUpdateValue` · [interface][interface] | Type supplement | Source intersection callback type not reproduced. | ⏭️ Intentionally omitted |
+| `OnUpdateValueImpl` · [interface][interface] | Type supplement | Broad option/node/tag action unions replaced by explicit native event detail. | ⏭️ Intentionally omitted |
+| `OnUpdateIndeterminateKeysImpl` · [interface][interface] | Type supplement | No mixed-state callback type. | ⏭️ Intentionally omitted |
+| `TreeSelectInjection`, `treeSelectInjectionKey` · [interface][interface] | Internal group supplement | No pending-key/provider/dataTreeMate graph. | ⏭️ Intentionally omitted |
+| `ThemeProps`, `treeSharedProps` · [controller][controller] | Mixin group supplement | No framework theme/form/config/shared-prop injection. | ⏭️ Intentionally omitted |
+| `OnLoad` · [controller][controller] | Type supplement | No implicit lazy callback; application owns loading and refresh. | ⏭️ Intentionally omitted |
 
 <!-- END PINNED API INVENTORY -->
+
+[api]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/demos/enUS/index.demo-entry.md
+[controller]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/src/TreeSelect.tsx
+[interface]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/src/interface.ts
+[exports]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/index.ts
+[public]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree-select/src/public-types.ts
+[tree]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tree/src/Tree.tsx
