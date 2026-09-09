@@ -10,6 +10,7 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./global-style/style.css": "./dist/markup-ui-global-style.css",
     "./split": {
       "types": "./dist/components/split/index.d.ts",
       "import": "./dist/markup-ui-split.js"

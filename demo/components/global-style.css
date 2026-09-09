@@ -1,0 +1,13 @@
+/* Application-only controls and overrides; no duplicate light/dark palette. */
+#global-style-example { max-inline-size: 70rem; margin-inline: auto; padding: 1rem; overflow-wrap: anywhere; }
+#global-style-example fieldset { display: flex; flex-wrap: wrap; gap: .75rem; margin-block: 1rem; min-inline-size: 0; }
+#global-style-example label { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .35rem; min-inline-size: 0; max-inline-size: 100%; }
+#global-style-example :is(input, select, button) { box-sizing: border-box; min-inline-size: 0; max-inline-size: 100%; }
+#global-style-example [hidden] { display: none !important; }
+html[data-global-style-scheme="light"] { color-scheme: light; }
+html[data-global-style-scheme="dark"] { color-scheme: dark; }
+html[data-global-style-scheme="native"] { color-scheme: normal; }
+html[data-global-style-type] { --mui-font-family: Georgia, serif; --mui-font-size: 18px; --mui-line-height: 1.7; }
+html[data-global-style-colors] { --mui-bg-page: Lavender; --mui-text-primary: MidnightBlue; }
+body[data-global-style-author] { margin: 12px; padding: 8px; font-family: monospace; background-color: Honeydew; color: DarkGreen; }
+@media print { #global-style-example [data-demo-controls] { display: none; } }

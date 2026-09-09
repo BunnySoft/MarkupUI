@@ -1,0 +1,25 @@
+/* Linking this stylesheet explicitly opts the document into these defaults. */
+:where(html) {
+  color-scheme: light dark;
+}
+:where(body) {
+  margin: 0;
+  font-family: var(--mui-font-family, system-ui, sans-serif);
+  font-size: var(--mui-font-size, 1rem);
+  line-height: var(--mui-line-height, 1.5);
+  color: var(--mui-text-primary, CanvasText);
+  background-color: var(--mui-bg-page, Canvas);
+}
+@media (forced-colors: active) {
+  :where(body) {
+    color: CanvasText;
+    background-color: Canvas;
+  }
+}
+@media print {
+  :where(html) { color-scheme: light; }
+  :where(body) {
+    color: CanvasText;
+    background-color: Canvas;
+  }
+}

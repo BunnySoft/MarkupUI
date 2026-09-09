@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI Global Style — explicit document opt-in</title>
+  <link id="global-style-link" rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-card.css">
+  <link rel="stylesheet" href="config-provider.css">
+  <link rel="stylesheet" href="global-style.css">
+  <script type="module" src="global-style.js"></script>
+</head>
+<body>
+  <main id="global-style-example">
+    <h1>An explicit document stylesheet, not an installer</h1>
+    <p id="document-copy">This ordinary paragraph inherits body typography and color.
+      Only the linked Global Style stylesheet supplies the package's document defaults.</p>
+    <fieldset data-demo-controls hidden>
+      <legend>Application-owned stylesheet and author choices</legend>
+      <label><input type="checkbox" data-enabled checked> Enable the attached stylesheet</label>
+      <button type="button" data-attach>Remove stylesheet link</button>
+      <label>Document color-scheme <select data-scheme>
+        <option value="system">Stylesheet default (system when linked)</option>
+        <option value="light">Explicit light</option><option value="dark">Explicit dark</option><option value="native">Native normal</option>
+      </select></label>
+      <label><input type="checkbox" data-document-type> Author document typography tokens</label>
+      <label><input type="checkbox" data-document-colors> Author two document color tokens</label>
+      <label><input type="checkbox" data-author-body> Author body-rule override</label>
+      <button type="button" data-disconnect>Disconnect demo listeners</button>
+    </fieldset>
+    <p data-demo-status role="status">The stylesheet is explicitly linked. No JavaScript is needed for its document styling.</p>
+    <section aria-labelledby="native-title">
+      <h2 id="native-title">Native HTML remains native</h2>
+      <p><a href="#scope-title">Visit the scoped example</a>. Global Style does not remove native link decoration, lists, focus indicators or control appearance.</p>
+      <ul><li>Native list marker</li><li>Native spacing and semantic children</li></ul>
+      <form>
+        <fieldset><legend>Native form group</legend>
+          <label>Title <input name="title" value="Local document" required></label>
+          <label>Email <input name="email" type="email" value="reader@example.invalid" required></label>
+          <label>Choice <select name="choice"><option value="one">One</option><option value="two">Two</option></select></label>
+          <label><input name="confirmed" type="checkbox" value="yes" checked> Confirmed</label>
+        </fieldset>
+        <fieldset disabled><legend>Disabled group</legend><label>Excluded <input name="excluded" value="Not submitted"></label></fieldset>
+        <button type="reset">Native reset</button>
+      </form>
+      <p>This local example has no submit button and two text-entry fields; it does not submit to a backend.</p>
+      <details><summary>Native disclosure</summary><p>Readable with or without the document stylesheet.</p></details>
+      <p hidden data-hidden-sample>Native hidden content stays hidden without a universal reset.</p>
+    </section>
+    <div id="config-example">
+      <section id="local-scope" class="example-frame" data-example-palette="dark" lang="en" dir="rtl">
+        <h2 id="scope-title" tabindex="-1">A scoped dark section is not the document theme</h2>
+        <p>This scope reuses the accepted configuration demo's token subset. Its dark colors and RTL do not propagate upward into body.</p>
+        <mui-card data-mui-card><div data-mui-card-content>
+          <h3>Existing Card stylesheet</h3><p>The Card consumes supported scoped tokens, not an injected Global Style provider.</p>
+        </div></mui-card>
+        <section class="example-frame" id="nested-scope"><h3>Nested native scope</h3><p>No local palette: retain the actual ancestor's tokens.</p></section>
+      </section>
+    </div>
+    <p>Disable or remove the stylesheet to reveal the normal cascade. Author body rules,
+      inline declarations and root choices are not erased. This page's demo controls
+      are application wiring; the library ships CSS only. Link state labels describe
+      attached/enabled flags, not completion of the browser's stylesheet loading.</p>
+  </main>
+</body>
+</html>
