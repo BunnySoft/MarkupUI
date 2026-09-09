@@ -37,10 +37,11 @@ Auto Complete now has [accepted native datalist/bounded-loader evidence](../comp
 Input OTP now has [accepted native single-field/completion evidence](../components/input-otp.md), without code payloads, per-cell editing or authentication effects.
 Dynamic Input now has [accepted bounded native-row/template evidence](../components/dynamic-input.md), with explicit resources and focus-safe actual-node moves.
 Dynamic Tags now has [accepted native string-tag/editor evidence](../components/dynamic-tags.md), reusing that collection without Tag/Input runtimes or hidden proxies.
+Mention now has [accepted native caret-snapshot/insertion evidence](../components/mention.md), with adjacent native choice buttons rather than a caret mirror or fake combobox.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
-are reconciled. **P4 is In progress**, with Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP, Dynamic Input and Dynamic Tags accepted and four routes Planned.
-P0/P5/P6 and full framework parity remain independent. **Next: Mention**,
-before remaining mention/picker routes.
+are reconciled. **P4 is In progress**, with Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP, Dynamic Input, Dynamic Tags and Mention accepted and three routes Planned.
+P0/P5/P6 and full framework parity remain independent. **Next: Color Picker**,
+then Date Picker and Time Picker.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
 Use the [master migration plan](migration-plan.md) for phase dependencies and current execution
 evidence. Every component page now includes its own numbered task checklist, prerequisites and next task.
@@ -1626,7 +1627,7 @@ policy, scalar creation callbacks, draft-safe rejection/reset and key-based remo
 a hidden array model or extra Tag/Input/renderer runtime.
 
 All **32 original identities + ten source supplements = 42 rows: 25 adapted and
-17 omitted**. Four tasks close; totals are **3,613 rows, 264/384 accepted tasks across
+17 omitted**. Four tasks close; at Dynamic Tags sign-off totals were **3,613 rows, 264/384 accepted tasks across
 66 pages**, with **120 unchecked tasks**. **212 targeted tests**, build/budgets and Chromium
 IME/Enter/Escape/limits/duplicates/drafts, callbacks/focus/required/FormData/reset, native
 no-JS values and RTL/zoom/media/coexistence passed. Review fixes preserve wrapper/base
@@ -1639,8 +1640,33 @@ are documented eventful commands. ESM/classic **including the reused collection*
 All **155 prior top-level JS/CSS assets** byte-match the pre-Tags HEAD recipe; prior
 helper/core/plugin code and ceilings remain unchanged (**14,611/2,181/2,779** core/plugins).
 
-**Next: Mention.** Remaining Planned P4 routes are **Mention, Color Picker, Date Picker
+Mention is accepted below. At that checkpoint Planned P4 routes were **Mention, Color Picker, Date Picker
 and Time Picker**. This is retained native scope, not full P4/P0/P5/P6 or framework parity.
+
+### Mention: native editor, caret snapshots and real choice buttons
+
+[Mention acceptance](../components/mention.md) retains original input/textarea state,
+code-unit caret/prefix snapshots, bounded static/async suggestions and explicit insertion
+through native setRangeText. Native Tab + Enter/Space or pointer choice works; ordinary
+editor Enter/newline/Tab/arrows remain native. Only the prefix-to-caret fragment changes,
+with surrounding text/defaults/forms retained and maxlength checked before mutation.
+The named panel is field-adjacent document flow, not caret-anchored or a fake listbox.
+
+All **35 original identities + eleven source supplements = 46 rows: 30 adapted and
+16 omitted**. Four tasks close; totals are **3,624 rows, 268/384 accepted tasks across
+67 pages**, with **116 unchecked tasks**. **248 targeted tests**, build/budgets and Chromium
+real keyboard/pointer insertion, Unicode/caret/IME/maxlength/async/reset/focus, native forms,
+no-JS and RTL/zoom/media/coexistence passed. Review fixes address the native focusout/BODY
+transition race and reset rebasing after reentrant abort queries.
+
+No caret mirror, portal/follower/tree/menu renderer, rich text, HTTP client or user-text
+logging/storage is introduced. ESM/classic/CSS are **5,367/5,435/558 gzip bytes**, under
+**6,500/6,500/1,250** ceilings. All **158 prior top-level JS/CSS assets** byte-match the
+pre-Mention HEAD recipe; prior helper/core/plugin code and budgets remain unchanged
+(core/plugins **14,611/2,181/2,779**).
+
+**P4-06 is Verified for the declared native OTP/Dynamic Input/Dynamic Tags/Mention scopes.**
+Overall P4 remains In progress. **Next: Color Picker**, then **Date Picker** and **Time Picker**.
 
 ## Common Components (15)
 
@@ -1677,7 +1703,7 @@ and Time Picker**. This is retained native scope, not full P4/P0/P5/P6 or framew
 | [Input](components/input.md) | 🟢 Verified retained native scope; 13 explicit omissions | Authored Input/textarea, group/addon/pair CSS and optional clear/reveal/count; [accepted evidence](../components/input.md) | P4 |
 | [Input Number](components/input-number.md) | 🟢 Verified retained native scope; 13 explicit omissions | Native number input, decimal/grid stepping and clear; [accepted evidence](../components/input-number.md) | P4 |
 | [Input OTP](components/input-otp.md) | 🟢 Verified native single-field scope; 17 explicit omissions | Original code field, metadata-only guarded completion and native defaults/forms; [accepted evidence](../components/input-otp.md) | P4 |
-| [Mention](components/mention.md) | 🔵 Planned | Related input | P4, P5 |
+| [Mention](components/mention.md) | 🟢 Verified native caret/insertion scope; 16 explicit omissions | Original editor, guarded token search and adjacent native choice buttons; [accepted evidence](../components/mention.md) | P4; P5 renderer/geometry exclusions |
 | [Radio](components/radio.md) | 🟢 Verified retained native scope; 11 explicit omissions | Native Radio/RadioButton CSS and complete-group helper; [accepted evidence](../components/radio.md) | P4 |
 | [Rate](components/rate.md) | 🟢 Verified retained native scope; six explicit omissions | Bounded native radio scores/halves, clear and static readonly; [accepted evidence](../components/rate.md) | P4 |
 | [Select](components/select.md) | 🟢 Verified retained native scope; 63 explicit omissions | Original native select/options/groups, clear and external literal-list filter; [accepted evidence](../components/select.md) | P4; P5 rich exclusions |
@@ -1809,15 +1835,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,118: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 571 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags source supplements |
+| Supplementary named declarations | 1,129: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 582 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention source supplements |
 | Explicit inherited tracker rows | 275, including six source-inherited DialogReactive options, three ModalReactive fields and two NotificationReactive fields |
-| Total tracker rows | 3,613; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 264 retained-scope tasks accepted across 66 component pages, 120 unchecked |
+| Total tracker rows | 3,624; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 268 retained-scope tasks accepted across 67 component pages, 116 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,613 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate, 68 Form, 27 Auto Complete, 17 Input OTP, 28 Dynamic Input and 25 Dynamic Tags native capabilities cite acceptance |
-| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 30 unchanged inventories match extraction; the 66 accepted pages preserve named/grouped identities with explicit dispositions; Dynamic Tags' 32 original section/source/kind identities match pre-migration HEAD exactly and in order |
-| Local links | Relative file links in the four edited Dynamic Tags/index/master documents checked at sign-off; Dynamic Input/OTP/Auto Complete/Form/Rate/Slider/Input Number/Select/Switch/Radio/Checkbox/Input/Discrete/P3 and historical 612-link/anchor snapshots remain historical evidence |
+| Status presentation | All 3,624 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate, 68 Form, 27 Auto Complete, 17 Input OTP, 28 Dynamic Input, 25 Dynamic Tags and 30 Mention native capabilities cite acceptance |
+| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 29 unchanged inventories match extraction; the 67 accepted pages preserve named/grouped identities with explicit dispositions; Mention's 35 original section/source/kind identities match pre-migration HEAD exactly and in order |
+| Local links | Relative file links in the four edited Mention/index/master documents checked at sign-off; Dynamic Tags/Dynamic Input/OTP/Auto Complete/Form/Rate/Slider/Input Number/Select/Switch/Radio/Checkbox/Input/Discrete/P3 and historical 612-link/anchor snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

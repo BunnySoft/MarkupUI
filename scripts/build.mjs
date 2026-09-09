@@ -34,6 +34,8 @@ components.push("dynamic-input")
 classicEntries["dynamic-input"] = "global.ts"
 components.push("dynamic-tags")
 classicEntries["dynamic-tags"] = "global.ts"
+components.push("mention")
+classicEntries.mention = "global.ts"
 
 await Promise.all([
   build({
@@ -106,6 +108,9 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-mention.js": 6_500,
+  "markup-ui-mention.global.js": 6_500,
+  "markup-ui-mention.css": 1_250,
   "markup-ui-dynamic-tags.js": 10_000,
   "markup-ui-dynamic-tags.global.js": 10_000,
   "markup-ui-dynamic-tags.css": 1_500,

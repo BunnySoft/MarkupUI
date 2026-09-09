@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Mention</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-mention.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
+  <link rel="stylesheet" href="./mention.css">
+  <script defer src="../../dist/markup-ui-input.global.js"></script>
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
+  <script defer src="../../dist/markup-ui-mention.global.js"></script>
+  <script defer src="./mention.js"></script>
+</head>
+<body>
+<main>
+  <h1>Mention: native text and explicit choice buttons</h1>
+  <p>The panel is ordinary document flow below its field, not caret-anchored. Type @al or #do, then Tab to a native button and use Enter/Space, or click it. Ordinary editor Enter/Tab/arrows remain native.</p>
+  <dialog id="composer" aria-labelledby="composer-title" open>
+    <h2 id="composer-title">Local composer</h2>
+    <p>Use example text only. Nothing is sent, logged or stored. Without JavaScript, this method=dialog form only closes the local example.</p>
+    <form id="compose-form" method="dialog">
+      <div class="mui-mention">
+        <div class="mui-input" data-input id="message-input">
+          <label for="message">Message (required)</label>
+          <textarea class="mui-mention__editor" data-input-control data-autosize id="message" name="message" rows="4" maxlength="256" required aria-describedby="message-help message-count">Hello </textarea>
+          <span id="message-count" data-input-count>6 / 256</span>
+        </div>
+        <p id="message-help">Prefixes @ and # use the nearest match before the caret. Query starts after one character. Try @fail for a local error or @slow for a delayed result. Text after the caret is preserved.</p>
+        <section class="mui-mention__panel" id="message-panel" aria-labelledby="message-panel-title" hidden>
+          <h3 id="message-panel-title">Message mention choices</h3>
+          <p>Native buttons: Tab to a choice, Enter/Space inserts; Escape closes. No listbox/combobox keyboard mode.</p>
+          <ul class="mui-mention__options" data-mention-options></ul>
+          <p data-mention-status>No search yet.</p>
+        </section>
+        <p class="mui-form-item__feedback" id="message-error" hidden></p>
+      </div>
+      <div class="mui-mention">
+        <label for="subject">Subject — static # topics</label>
+        <input class="mui-mention__editor" id="subject" type="text" name="subject" value="Topic " maxlength="80">
+        <section class="mui-mention__panel" id="subject-panel" aria-label="Subject mention choices" hidden>
+          <ul class="mui-mention__options" data-mention-options></ul>
+          <p data-mention-status>No search yet.</p>
+        </section>
+      </div>
+      <div class="tools">
+        <button type="submit" name="intent" value="local">Inspect locally without displaying text</button>
+        <button type="reset">Native reset</button>
+        <button type="button" id="sample" hidden>Load sample silently, then query</button>
+        <button type="button" id="limit" hidden>Try maxlength rejection</button>
+        <button type="button" id="readonly" hidden>Toggle message readonly</button>
+        <button type="button" id="cancel" hidden>Cancel next reset</button>
+        <button type="button" id="disconnect" hidden>Disconnect helpers</button>
+      </div>
+    </form>
+  </dialog>
+  <button type="button" id="rtl">Toggle RTL</button>
+  <p id="events">No mention selection yet.</p>
+  <p id="submission">Local inspection reports counts only; no text is copied into this output.</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,10 @@
+:root { font-family: system-ui, sans-serif; color-scheme: light dark; }
+body { margin: 0; }
+main { max-inline-size: 60rem; margin-inline: auto; padding: 1rem; }
+dialog[open] { position: static; box-sizing: border-box; inline-size: 100%; margin: 0; padding: 1rem; border: 1px solid GrayText; border-radius: .5rem; }
+form { display: grid; gap: 1rem; }
+label { display: block; margin-block-end: .375rem; }
+button { font: inherit; padding: .5rem; }
+.tools { display: flex; flex-wrap: wrap; gap: .5rem; }
+p, label { overflow-wrap: anywhere; }
+[hidden] { display: none !important; }

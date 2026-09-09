@@ -1,0 +1,14 @@
+.mui-mention { display: grid; gap: .5rem; min-inline-size: 0; }
+.mui-mention__editor { box-sizing: border-box; inline-size: 100%; max-inline-size: 100%; min-inline-size: 0; padding: .625rem; font: inherit; color: FieldText; background: Field; border: 1px solid GrayText; border-radius: .25rem; }
+textarea.mui-mention__editor { resize: vertical; }
+.mui-mention__panel { box-sizing: border-box; border: 1px solid GrayText; border-radius: .25rem; padding: .75rem; max-inline-size: 100%; color: CanvasText; background: Canvas; }
+.mui-mention__panel h2 { margin-block: 0 .375rem; font-size: 1rem; }
+.mui-mention__panel p { margin-block: .375rem; overflow-wrap: anywhere; }
+.mui-mention__options { display: flex; flex-wrap: wrap; gap: .375rem; list-style: none; margin: 0; padding: .25rem; max-block-size: 16rem; overflow: auto; }
+.mui-mention__choice { font: inherit; padding: .5rem .75rem; max-inline-size: 100%; overflow-wrap: anywhere; }
+.mui-mention :focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+.mui-mention [hidden] { display: none !important; }
+.mui-mention[data-size="small"] { font-size: .875rem; }
+.mui-mention[data-size="large"] { font-size: 1.125rem; }
+@supports (field-sizing: content) { textarea.mui-mention__editor[data-autosize] { field-sizing: content; min-block-size: 4lh; max-block-size: 12lh; } }
+@media (forced-colors: active) { .mui-mention__panel, .mui-mention__editor { border-color: ButtonText; } }
