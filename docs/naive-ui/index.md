@@ -39,10 +39,10 @@ Dynamic Input now has [accepted bounded native-row/template evidence](../compone
 Dynamic Tags now has [accepted native string-tag/editor evidence](../components/dynamic-tags.md), reusing that collection without Tag/Input runtimes or hidden proxies.
 Mention now has [accepted native caret-snapshot/insertion evidence](../components/mention.md), with adjacent native choice buttons rather than a caret mirror or fake combobox.
 Color Picker now has [accepted classic native RGB/draft evidence](../components/color-picker.md), without null/alpha/gamut flattening or owned dialog state.
+Date Picker now has [accepted native calendar/wall-clock/range evidence](../components/date-picker.md), without implicit timestamps, timezone shifts or linked-bound mutation.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
-are reconciled. **P4 is In progress**, with Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP, Dynamic Input, Dynamic Tags, Mention and Color Picker accepted and two routes Planned.
-P0/P5/P6 and full framework parity remain independent. **Next: Date Picker**,
-then Time Picker.
+are reconciled. **P4 is In progress**, with Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP, Dynamic Input, Dynamic Tags, Mention, Color Picker and Date Picker accepted; Time Picker is the one remaining Planned P4 route.
+P0/P5/P6 and full framework parity remain independent. **Next: Time Picker**.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
 Use the [master migration plan](migration-plan.md) for phase dependencies and current execution
 evidence. Every component page now includes its own numbered task checklist, prerequisites and next task.
@@ -1678,7 +1678,7 @@ drafts until Apply/Revert/reset. Native validity owns feedback; no custom validi
 hidden duplicate value, color parser, HSV plane, popup or alpha/gamut conversion is added.
 
 All **25 original identities + ten source supplements = 35 rows: 10 adapted and
-25 omitted**. Four tasks close; totals are **3,634 rows, 272/384 accepted tasks across
+25 omitted**. Four tasks close; at Color Picker sign-off totals were **3,634 rows, 272/384 accepted tasks across
 68 pages**, with **112 unchecked tasks**. **153 targeted tests**, build/budgets and Chromium
 grammar/null policy, dirty synchronization, actual reset-button timing, reentrant events,
 native form/caret/IME/fieldset/no-JS and RTL/zoom/media/coexistence passed. Review fixes
@@ -1691,8 +1691,37 @@ or universal gamut support is claimed. ESM/classic/CSS: **3,892/3,964/458 gzip b
 **4,500/4,500/1,000** ceilings. All **161 prior top-level JS/CSS assets** byte-match the
 pre-component HEAD recipe; core/plugins stay **14,611/2,181/2,779**, with old budgets intact.
 
-**Next: Date Picker, then Time Picker.** Overall P4/P0/P5/P6 and full source format/UI parity
-remain independent.
+Date Picker is accepted below; Time Picker remains. Overall P4/P0/P5/P6 and full source
+format/UI parity remain independent.
+
+### Date Picker: native calendar strings and explicit endpoint pairs
+
+[Date Picker acceptance](../components/date-picker.md) retains native date/month/week/
+datetime-local fields and same-mode pairs. A tiny shared temporal capability probe validates
+grammar before real setters; numeric coordinates are used only for same-mode ordering,
+not as a claim of local-midnight/instant equivalence. Empty/partial/reversed values remain
+explicit. Native bounds/defaults/labels/FormData are never reindexed or cross-linked.
+
+All **179 original mode-specific identities + twenty source supplements = 199 rows:
+37 adapted and 162 omitted**. Grouped MonthRange/YearRange/QuarterRange and clear-slot
+owners remain intact; only named native branches receive adapted credit. Four tasks close.
+Catalog totals: **3,654 rows, 276/384 accepted tasks across 69 pages**, **108 unchecked**.
+P4 has **968 rows**, with **Time Picker's 34 unresolved rows** still Planned.
+
+**179 targeted tests**, build/budgets and Chromium grammar/leap/week/seconds/range/
+constraints/clear/reset/FormData/focus, no-JS and RTL/zoom/media passed. Review fixes preserve
+all clear notifications across cancelled resets and action-attribute overrides made by focus
+handlers. Two timezone contexts retained date/local-wall-clock strings unchanged; a fixed-clock
+local-Today recipe produced different correct local calendar days without UTC slicing.
+That proves no implicit conversion, not validity of real zoned DST instants.
+
+ESM/classic/CSS are **3,882/3,953/421 gzip bytes**, under **4,500/4,500/1,000** ceilings.
+All **164 prior top-level JS/CSS assets** byte-match the pre-Date Picker HEAD recipe;
+core/plugins remain **14,611/2,181/2,779** under unchanged budgets. No native popup UI,
+year/quarter grid, arbitrary blackout cells, format engine or universal AT parity is claimed.
+
+**Next: Time Picker.** Overall P4 remains In progress until its remaining native scope and
+sign-off are complete; P0/P5/P6 do not inherit completion.
 
 ## Common Components (15)
 
@@ -1722,7 +1751,7 @@ remain independent.
 | [Cascader](components/cascader.md) | 🔵 Planned | Partial widgets | P5 |
 | [Color Picker](components/color-picker.md) | 🟢 Verified classic native RGB scope; 25 explicit omissions | Original color control/readout and draft-safe optional hex editing; [accepted evidence](../components/color-picker.md) | P4; P6 advanced color exclusions |
 | [Checkbox](components/checkbox.md) | 🟢 Verified retained native scope; 14 explicit omissions | CSS-only native checkbox and bounded fieldset group helper; [accepted evidence](../components/checkbox.md) | P4 |
-| [Date Picker](components/date-picker.md) | 🔵 Planned | Native advanced input | P4, P6 |
+| [Date Picker](components/date-picker.md) | 🟢 Verified native calendar/wall-clock/range scope; 162 explicit omissions | Detached native grammar checks, real endpoint fields, safe clear/default/order contracts; [accepted evidence](../components/date-picker.md) | P4; P6 calendar/format exclusions |
 | [Dynamic Input](components/dynamic-input.md) | 🟢 Verified bounded native-row scope; 14 explicit omissions | Authored templates, stable fields/keys, actual-node moves and explicit cleanup; [accepted evidence](../components/dynamic-input.md) | P4; P5 renderer/model exclusions |
 | [Dynamic Tags](components/dynamic-tags.md) | 🟢 Verified native string-tag/editor scope; 17 explicit omissions | Real readonly values, draft-safe commits and reused native collection; [accepted evidence](../components/dynamic-tags.md) | P4; P5 renderer/object exclusions |
 | [Form](components/form.md) | 🟢 Verified native Form/FormItem/FormItemGi scope; 43 explicit omissions | Native fields/constraints, explicit guarded callbacks and owned feedback/grid CSS; [accepted evidence](../components/form.md) | P4 |
@@ -1861,15 +1890,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,139: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 592 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker source supplements |
+| Supplementary named declarations | 1,159: 367 inline fields, 180 type/helper/exclusion entries (including five Table public helper groups) and 612 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker source supplements |
 | Explicit inherited tracker rows | 275, including six source-inherited DialogReactive options, three ModalReactive fields and two NotificationReactive fields |
-| Total tracker rows | 3,634; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 272 retained-scope tasks accepted across 68 component pages, 112 unchecked |
+| Total tracker rows | 3,654; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 276 retained-scope tasks accepted across 69 component pages, 108 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,634 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate, 68 Form, 27 Auto Complete, 17 Input OTP, 28 Dynamic Input, 25 Dynamic Tags, 30 Mention and 10 Color Picker native capabilities cite acceptance |
-| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 28 unchanged inventories match extraction; the 68 accepted pages preserve named/grouped identities with explicit dispositions; Color Picker's 25 original section/source/kind identities match pre-migration HEAD exactly and in order |
-| Local links | Relative file links in the four edited Color Picker/index/master documents checked at sign-off; Mention/Dynamic Tags/Dynamic Input/OTP/Auto Complete/Form/Rate/Slider/Input Number/Select/Switch/Radio/Checkbox/Input/Discrete/P3 and historical 612-link/anchor snapshots remain historical evidence |
+| Status presentation | All 3,654 rows retain canonical text with emoji color; 19 Avatar, 29 Button, 26 Card, 24 Tag, 11 Badge, 9 Alert, 7 Empty, 9 Skeleton, 13 Spin, 23 Progress, 7 Statistic, 17 Typography, 10 Icon, 10 Gradient Text, 4 Ellipsis, 12 Page Header, 4 Divider, 9 Flex, 13 Space, 10 Grid, 32 Layout, 11 List, 17 Descriptions, 16 Timeline, 9 Breadcrumb, 14 Thing, 12 Table, 5 Highlight, 3 Affix, 7 Result, 6 Code, 12 Scrollbar, 22 Float Button, 41 Image, 28 Popover, 21 Tooltip, 30 Popconfirm, 42 Dropdown, 36 Menu, 40 Tabs, 19 Collapse, 12 Anchor, 10 Back Top, 36 Pagination, 16 Steps, 10 Loading Bar, 80 Dialog, 74 Modal, 30 Drawer, 35 Message, 39 Notification, 8 Collapse Transition, 7 Discrete, 58 Input, 28 Checkbox, 23 Radio, 17 Switch, 35 Select, 33 Input Number, 13 Slider, 13 Rate, 68 Form, 27 Auto Complete, 17 Input OTP, 28 Dynamic Input, 25 Dynamic Tags, 30 Mention, 10 Color Picker and 37 Date Picker native capabilities cite acceptance |
+| Source agreement | All 2,220 direct source rows and 275 inherited rows remain covered; 27 unchanged inventories match extraction; the 69 accepted pages preserve named/grouped identities with explicit dispositions; Date Picker's 179 original section/source/kind identities match pre-migration HEAD exactly and in order |
+| Local links | Relative file links in the four edited Date Picker/index/master documents checked at sign-off; Color Picker/Mention/Dynamic Tags/Dynamic Input/OTP/Auto Complete/Form/Rate/Slider/Input Number/Select/Switch/Radio/Checkbox/Input/Discrete/P3 and historical link snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

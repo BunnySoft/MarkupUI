@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Date Picker modes</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-date-picker.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
+  <link rel="stylesheet" href="./date-picker.css">
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
+  <script defer src="../../dist/markup-ui-date-picker.global.js"></script>
+  <script defer src="./date-picker.js"></script>
+</head>
+<body>
+<main>
+  <h1>Date Picker: native calendar and wall-clock strings</h1>
+  <p>No timestamps are inferred. Date/month/week values are calendar identifiers; datetime-local is a local wall-clock string without a timezone. Native UI localization is not a format-token API.</p>
+  <form id="planning" action="date-picker.html" method="get">
+    <fieldset class="mui-date-picker" data-date-picker id="day">
+      <legend>Date</legend>
+      <label for="day-field">Planning day <input data-date-control id="day-field" type="date" name="day" value="2024-02-29" min="2020-01-01" max="2030-12-31" required></label>
+      <p class="mui-date-picker__output" data-date-output hidden></p>
+      <button type="button" data-date-clear hidden>Clear date</button>
+    </fieldset>
+    <fieldset class="mui-date-picker" data-date-picker id="month">
+      <legend>Month</legend>
+      <label for="month-field">Planning month <input data-date-control id="month-field" type="month" name="month" value="2024-02" min="2020-01" max="2030-12" step="1"></label>
+      <p class="mui-date-picker__output" data-date-output hidden></p>
+      <button type="button" data-date-clear hidden>Clear month</button>
+    </fieldset>
+    <fieldset class="mui-date-picker" data-date-picker id="week">
+      <legend>ISO week</legend>
+      <label for="week-field">Planning week <input data-date-control id="week-field" type="week" name="week" value="2020-W53" min="2020-W01" max="2030-W52"></label>
+      <p class="mui-date-picker__output" data-date-output hidden></p>
+      <button type="button" data-date-clear hidden>Clear week</button>
+    </fieldset>
+    <fieldset class="mui-date-picker" data-date-picker id="wall">
+      <legend>Local wall-clock date and time</legend>
+      <label for="wall-field">Appointment (no timezone) <input data-date-control id="wall-field" type="datetime-local" name="appointment" value="2024-03-10T02:30" step="1"></label>
+      <p>This string is accepted independently of whether a particular timezone has a DST gap at this wall time.</p>
+      <p class="mui-date-picker__output" data-date-output hidden></p>
+      <button type="button" data-date-clear hidden>Clear appointment</button>
+    </fieldset>
+    <fieldset class="mui-date-picker" data-date-picker id="trip">
+      <legend>Two native date endpoints</legend>
+      <div class="mui-date-picker__fields">
+        <label for="trip-start">Start <input data-date-control id="trip-start" type="date" name="trip.start" value="2024-03-01" min="2024-01-01" max="2024-12-31" required></label>
+        <span aria-hidden="true">→</span>
+        <label for="trip-end">End <input data-date-control id="trip-end" type="date" name="trip.end" value="2024-03-10" min="2024-01-01" max="2024-12-31" required></label>
+      </div>
+      <p>Bounds never cross-link. Reversed/partial state is preserved; the explicit application validator can reject it without disabling calendar cells.</p>
+      <p class="mui-date-picker__output" data-date-output hidden></p>
+      <p class="mui-form-item__feedback" id="trip-error" hidden></p>
+      <button type="button" data-date-clear hidden>Clear both date endpoints</button>
+    </fieldset>
+    <fieldset class="mui-date-picker" data-date-picker id="wall-range">
+      <legend>Two wall-clock endpoints</legend>
+      <div class="mui-date-picker__fields">
+        <label>Start <input data-date-control type="datetime-local" name="wall[]" value="2024-11-03T01:15" step="60"></label>
+        <label>End <input data-date-control type="datetime-local" name="wall[]" value="2024-11-03T01:45" step="60"></label>
+      </div>
+      <p class="mui-date-picker__output" data-date-output hidden></p>
+      <button type="button" data-date-clear hidden>Clear both wall-clock endpoints</button>
+    </fieldset>
+    <fieldset class="mui-date-picker" data-date-picker id="month-range">
+      <legend>Two month endpoints</legend>
+      <div class="mui-date-picker__fields">
+        <label>Start month <input data-date-control type="month" name="months[]" value="2024-01"></label>
+        <label>End month <input data-date-control type="month" name="months[]" value="2024-03"></label>
+      </div>
+      <p class="mui-date-picker__output" data-date-output hidden></p>
+      <button type="button" data-date-clear hidden>Clear both months</button>
+    </fieldset>
+    <div class="tools">
+      <button type="submit" name="intent" value="inspect">Inspect local native submission</button>
+      <button type="reset">Reset current native defaults</button>
+    </div>
+  </form>
+  <div class="tools">
+    <button type="button" id="today" hidden>Set browser-local today silently</button>
+    <button type="button" id="reverse" hidden>Set reversed date pair silently</button>
+    <button type="button" id="partial" hidden>Set partial date pair silently</button>
+    <button type="button" id="validate" hidden>Validate current form</button>
+    <button type="button" id="invalid" hidden>Reject impossible leap date</button>
+    <button type="button" id="readonly" hidden>Toggle start readonly</button>
+    <button type="button" id="disabled" hidden>Toggle date fieldset disabled</button>
+    <button type="button" id="cancel" hidden>Cancel next reset</button>
+    <button type="button" id="rtl">Toggle RTL</button>
+    <button type="button" id="disconnect" hidden>Disconnect helpers</button>
+  </div>
+  <p id="capabilities">Without enhancement, the browser supplies supported native modes. Unsupported modes are ordinary text, not equivalent calendars or validation.</p>
+  <p id="events">No helper actions yet.</p>
+  <pre id="submission">Local inspection only.</pre>
+</main>
+</body>
+</html>

@@ -3,8 +3,8 @@
 **Plan state: 🟠 In progress overall — P1 pilots, P2 and P3 are Verified for declared retained
 native scopes and explicit omissions. All 31 P2-assigned pages and all 22 P3-assigned pages
 have closed property dispositions and four accepted tasks. P3 includes Discrete API's
-verified no-new-runtime composition resolution. P4 is In progress with Input, Checkbox, Radio, Switch, Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP, Dynamic Input, Dynamic Tags, Mention and Color Picker
-native scopes accepted and two routes Planned. P0/P5/P6 and full framework/viewer
+verified no-new-runtime composition resolution. P4 is In progress with Input, Checkbox, Radio, Switch, Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP, Dynamic Input, Dynamic Tags, Mention, Color Picker and Date Picker
+native scopes accepted; Time Picker is the one remaining Planned P4 route. P0/P5/P6 and full framework/viewer
 parity remain independent and incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
@@ -35,7 +35,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
 | P2 — Primitives and layout | 🟢 Verified retained scope | All 31 P2-assigned pages reconciled; native Image/fallback/dialog scope accepted with advanced P6 exclusions. | P1 pattern | Full 96-route and P2 reference audit found no retained unresolved P2 rows. This is not global P3/P6 or framework parity. |
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
-| P4 — Forms and selection | 🟠 In progress | Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP, Dynamic Input, Dynamic Tags, Mention and Color Picker accepted; Date Picker next. | Relevant P0 form contract; P3 for popup variants | Declared native enhanced-entry/RGB scopes accepted; date/time routes and rich P5/P6 scopes remain separate. |
+| P4 — Forms and selection | 🟠 In progress | Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP, Dynamic Input, Dynamic Tags, Mention, Color Picker and Date Picker accepted; Time Picker next. | Relevant P0 form contract; P3 for popup variants | Declared native scopes accepted; Time Picker/sign-off and rich P5/P6 scopes remain separate. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
 | P6 — Specialized modules | 🔵 Planned | Deliver independently justified, opt-in advanced features. | Component-specific earlier work | Explicit imports, independent size budgets and no runtime dependencies. |
 
@@ -188,9 +188,9 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Color Picker (P4), verified classic native RGB/draft scope.**
+**Current component: Date Picker (P4), verified native calendar/wall-clock/endpoint-pair scope.**
 **P3 retained scope and P4-02/P4-03/P4-04/P4-05/P4-06's declared native scopes are complete; P4 is In progress.
-Next: Date Picker, then Time Picker. Do not infer P0 or full P4 completion.**
+Next: Time Picker. Do not infer P0 or full P4 completion.**
 
 The following component records form a historical execution sequence. Earlier “next” or
 “P3 incomplete” checkpoint statements are superseded by the final P3 audit below.
@@ -326,8 +326,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 3,634 rows and 272 accepted retained tasks out of 384 across 68 component
-pages (112 unchecked), not full upstream parity.
+The current index records 3,654 rows and 276 accepted retained tasks out of 384 across 69 component
+pages (108 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -1216,7 +1216,7 @@ At Mention sign-off, next was Color Picker, followed by Date Picker and Time Pic
 fields/defaults/constraints/forms and existing ownership/refresh contracts; keep the
 authorized one-component → docs/build/acceptance → separate-commit sequence.
 
-### Color Picker acceptance and Date Picker handoff
+### Color Picker acceptance and historical Date Picker handoff
 
 [Color Picker](../components/color-picker.md) completes retained classic native RGB scope.
 The original labelled color input owns chooser/preview, current/default values, native
@@ -1243,6 +1243,42 @@ bytes**, within **4,500/4,500/1,000** ceilings. All **161 prior top-level JS/CSS
 byte-match the pre-component HEAD recipe; core/plugins remain **14,611/2,181/2,779**
 under unchanged ceilings. Legacy widgets color behavior is not silently upgraded.
 
-**Next: Date Picker, then Time Picker.** Keep native date/time values, constraints,
+At Color Picker sign-off, next was Date Picker, then Time Picker. Keep native date/time values, constraints,
 selection/default/reset/form ownership and explicit optional lifetime policies; overall
 P4/P0/P5/P6 completion is not implied.
+
+### Date Picker acceptance and Time Picker handoff
+
+[Date Picker](../components/date-picker.md) completes the retained native date/month/week/
+datetime-local and same-mode endpoint-pair scope. A tiny detached native probe verifies
+capability/grammar before setters touch real fields. Calendar/month/ISO week/local wall
+strings are not implicitly timezone-bearing instants; no Date parsing, epoch conversion,
+DST normalization, formatter library or calendar grid is added.
+
+All **179 original mode-specific section/source/kind identities** remain exactly in order;
+**twenty source supplements** yield **199 rows: 37 adapted and 162 omitted**. Grouped
+MonthRange/QuarterRange/YearRange and slot owners remain intact with explicit retained
+branch qualifications, never blanket promotion of year/quarter modes. Four tasks close.
+Catalog: **3,654 rows, 276/384 accepted tasks across 69 pages, 108 unchecked**. P4 has
+**968 rows**, with **Time Picker's 34 unresolved rows** still Planned.
+
+**179 targeted tests** (74 Date Picker, 53 Form, 52 Input), build/type/budgets and Chromium
+grammar/leap/week/year/seconds/range/order/min-max-step/clear/default-reset/FormData/focus,
+no-JS and RTL/zoom/media passed. Review fixes preserve clear notifications across cancelled
+resets and attribute overrides made during native focus recovery. Bounds never cross-link,
+values never swap/clamp and native reset never resurrects a hidden tuple model.
+
+Two isolated timezone contexts preserved date-only and local DST-gap/fold strings unchanged.
+The application local-parts Today example produced different correct local days at one
+fixed test clock. This proves absence of conversion, not real timezone scheduling validity.
+Native picker UI/weekday layout, arbitrary disabled cells, format tokens, year/quarter
+grids and universal browser/AT behavior remain excluded/unverified.
+
+ESM/classic/CSS: **3,882/3,953/421 gzip bytes** under **4,500/4,500/1,000** ceilings.
+All **164 prior top-level JS/CSS assets** byte-match the pre-Date Picker HEAD recipe;
+core/plugins stay **14,611/2,181/2,779** and prior ceilings remain unchanged.
+The temporal probe is concrete reusable DOM infrastructure, not a generic date engine.
+
+**Next: Time Picker**, the last Planned P4 route. Reuse the native temporal capability/
+grammar/default/ownership conventions with an explicit time-only string contract; do not
+infer full P4/P0/P5/P6 completion before its acceptance and remaining sign-off.

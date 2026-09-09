@@ -1,0 +1,11 @@
+.mui-date-picker { display: grid; gap: .5rem; min-inline-size: 0; }
+.mui-date-picker__fields { display: flex; flex-wrap: wrap; align-items: end; gap: .75rem; min-inline-size: 0; }
+.mui-date-picker label { display: grid; gap: .25rem; min-inline-size: 0; }
+.mui-date-picker input { box-sizing: border-box; max-inline-size: 100%; min-inline-size: 0; padding: .5rem; font: inherit; color: FieldText; background: Field; border: 1px solid GrayText; border-radius: .25rem; }
+.mui-date-picker button { font: inherit; padding: .5rem; }
+.mui-date-picker__output { margin: 0; overflow-wrap: anywhere; font-size: .875em; }
+.mui-date-picker :focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+.mui-date-picker[data-size="small"] { font-size: .875rem; }
+.mui-date-picker[data-size="large"] { font-size: 1.125rem; }
+.mui-date-picker [hidden] { display: none !important; }
+@media (forced-colors: active) { .mui-date-picker input { border-color: ButtonText; } }

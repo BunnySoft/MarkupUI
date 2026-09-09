@@ -1,0 +1,10 @@
+:root { font-family: system-ui, sans-serif; color-scheme: light dark; }
+body { margin: 0; }
+main { max-inline-size: 62rem; margin-inline: auto; padding: 1rem; }
+form { display: grid; gap: 1rem; }
+fieldset { padding: 1rem; border: 1px solid GrayText; min-inline-size: 0; }
+.tools { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .75rem; }
+button { font: inherit; padding: .5rem; }
+p, label, pre { overflow-wrap: anywhere; }
+pre { white-space: pre-wrap; padding: .75rem; border: 1px solid GrayText; }
+[hidden] { display: none !important; }
