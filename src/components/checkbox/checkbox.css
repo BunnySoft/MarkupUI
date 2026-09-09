@@ -1,0 +1,52 @@
+.mui-checkbox {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: .5em;
+  max-inline-size: 100%;
+  color: var(--mui-checkbox-color, #17212b);
+  font: var(--mui-checkbox-font, 1rem)/1.5 system-ui, sans-serif;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.mui-checkbox > input[type="checkbox"] {
+  flex: 0 0 auto;
+  inline-size: var(--mui-checkbox-size, 1.125rem);
+  block-size: var(--mui-checkbox-size, 1.125rem);
+  margin: .2em 0 0;
+  accent-color: var(--mui-checkbox-accent, #075eae);
+  cursor: inherit;
+}
+.mui-checkbox > input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--mui-checkbox-focus, #075eae);
+  outline-offset: 3px;
+}
+.mui-checkbox > input[type="checkbox"]:disabled,
+.mui-checkbox > input[type="checkbox"][aria-disabled="true"] { cursor: not-allowed; }
+.mui-checkbox:has(> input:disabled) { color: var(--mui-checkbox-disabled, #64707a); cursor: not-allowed; }
+.mui-checkbox-group {
+  min-inline-size: 0;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--mui-checkbox-border, #687787);
+  border-radius: .375rem;
+  color: var(--mui-checkbox-color, #17212b);
+  font: var(--mui-checkbox-font, 1rem)/1.5 system-ui, sans-serif;
+}
+.mui-checkbox-group > legend { padding-inline: .375rem; overflow-wrap: anywhere; max-inline-size: 100%; }
+.mui-checkbox-group__items { display: flex; flex-wrap: wrap; gap: .75rem 1rem; }
+:is(.mui-checkbox, .mui-checkbox-group)[data-size="small"] { --mui-checkbox-font: .875rem; --mui-checkbox-size: 1rem; }
+:is(.mui-checkbox, .mui-checkbox-group)[data-size="medium"] { --mui-checkbox-font: 1rem; --mui-checkbox-size: 1.125rem; }
+:is(.mui-checkbox, .mui-checkbox-group)[data-size="large"] { --mui-checkbox-font: 1.125rem; --mui-checkbox-size: 1.375rem; }
+.mui-checkbox-group[data-status="error"] { --mui-checkbox-border: #bd2020; }
+.mui-checkbox-group[data-status="warning"] { --mui-checkbox-border: #8b5c00; }
+.mui-checkbox[hidden], .mui-checkbox [hidden],
+.mui-checkbox-group[hidden], .mui-checkbox-group [hidden] { display: none !important; }
+@media (forced-colors: active) {
+  .mui-checkbox { color: CanvasText; }
+  .mui-checkbox-group { border-color: CanvasText; }
+  .mui-checkbox > input[type="checkbox"] { accent-color: auto; }
+  .mui-checkbox > input[type="checkbox"]:focus-visible { outline-color: Highlight; }
+}
+@media print {
+  .mui-checkbox, .mui-checkbox-group { break-inside: avoid; }
+}

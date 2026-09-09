@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./checkbox": {
+      "types": "./dist/components/checkbox/index.d.ts",
+      "import": "./dist/markup-ui-checkbox.js"
+    },
+    "./checkbox/style.css": "./dist/markup-ui-checkbox.css",
     "./input": {
       "types": "./dist/components/input/index.d.ts",
       "import": "./dist/markup-ui-input.js"

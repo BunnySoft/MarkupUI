@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Checkbox and CheckboxGroup</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-checkbox.css">
+  <link rel="stylesheet" href="./checkbox.css">
+  <script defer src="../../dist/markup-ui-checkbox.global.js"></script>
+  <script defer src="./checkbox.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Checkbox: native checkedness and submission</h1>
+    <p>Native controls and labels work without JavaScript. Group interaction limits require the optional helper; they are not form validation.</p>
+    <form id="choices-form" method="get" action="checkbox.html">
+      <p><label class="mui-checkbox" data-size="large"><input id="terms" type="checkbox" name="terms" value="yes" required><span>Accept this local example (native required)</span></label></p>
+      <p><label class="mui-checkbox"><input id="mixed" type="checkbox" name="mixed" value="checked-mixed" checked><span>Mixed presentation (JS sets indeterminate, checked still submits)</span></label></p>
+      <fieldset class="mui-checkbox-group" data-checkbox-group id="topics" aria-describedby="topic-rule">
+        <legend>Topics</legend>
+        <p id="topic-rule">With enhancement, retain at least one and at most two selections. A disabled selected topic counts but is not submitted. Limits never disable checked fields for submission.</p>
+        <div class="mui-checkbox-group__items" id="topic-items">
+          <label class="mui-checkbox"><input data-checkbox id="alpha" type="checkbox" name="topics" value="alpha" checked><span>Alpha</span></label>
+          <label class="mui-checkbox"><input data-checkbox id="beta" type="checkbox" name="topics" value="beta"><span>Beta</span></label>
+          <label class="mui-checkbox"><input data-checkbox id="gamma" type="checkbox" name="topics" value="gamma"><span>Gamma with a long wrapping native label</span></label>
+          <label class="mui-checkbox"><input data-checkbox id="locked" type="checkbox" name="topics" value="locked" disabled><span>Author-disabled topic</span></label>
+        </div>
+        <template id="topic-template"><label class="mui-checkbox"><input data-checkbox type="checkbox" name="topics" value="delta"><span>Delta (authored template)</span></label></template>
+      </fieldset>
+      <fieldset class="mui-checkbox-group" data-checkbox-group id="delivery" data-size="small">
+        <legend>Delivery and nested independent group</legend>
+        <div class="mui-checkbox-group__items">
+          <label class="mui-checkbox"><input data-checkbox id="mail" type="checkbox" name="delivery" value="mail" checked><span>Mail</span></label>
+          <label class="mui-checkbox"><input data-checkbox id="external-choice" type="checkbox" name="external" form="other-form" value="external" checked><span>Associated with the other form</span></label>
+        </div>
+        <fieldset class="mui-checkbox-group" data-checkbox-group id="nested">
+          <legend>Independent nested choices</legend>
+          <label class="mui-checkbox"><input data-checkbox id="nested-mail" type="checkbox" name="nested" value="mail"><span>Same key allowed in another group</span></label>
+        </fieldset>
+      </fieldset>
+      <input type="hidden" name="local" value="only">
+      <p><button type="submit">Inspect native submission / local GET fallback</button> <button type="reset">Native reset</button></p>
+    </form>
+    <form id="other-form"><button type="reset">Reset the externally associated choice</button></form>
+    <div class="demo-tools">
+      <button type="button" id="toggle-fieldset">Toggle disabled Topics fieldset</button>
+      <button type="button" id="toggle-mixed">Toggle native indeterminate</button>
+      <button type="button" id="default">Change Alpha defaultChecked</button>
+      <button type="button" id="silent">Silent group setValues</button>
+      <button type="button" id="add">Add Delta and refresh</button>
+      <button type="button" id="limits">Change max between two and three</button>
+      <button type="button" id="cancel">Cancel next reset</button>
+      <button type="button" id="rtl">Toggle RTL</button>
+      <button type="button" id="disconnect">Disconnect group helpers</button>
+    </div>
+    <p id="state">No JS: no group limits or custom events.</p>
+    <p id="event-count">Accepted group changes: 0</p>
+    <pre id="submission">No submission yet.</pre>
+    <fieldset class="mui-checkbox-group" disabled>
+      <legend><label class="mui-checkbox"><input id="legend-choice" type="checkbox" name="legend" value="allowed"><span>Native first-legend exception</span></label></legend>
+      <label class="mui-checkbox"><input id="disabled-field" type="checkbox" name="disabled" value="blocked"><span>Disabled fieldset member</span></label>
+    </fieldset>
+  </main>
+</body>
+</html>

@@ -1,115 +1,134 @@
 # Checkbox
 
-**Plan: Planned. Current baseline: partial core control; not parity-verified.**
+**🟢 Verified retained native Checkbox/CheckboxGroup scope, with explicit omissions.**
 
-## Baseline and target
-
-[B1: forms.ts](../../../src/components/forms.ts) creates a checkbox, reflects initial checked state and emits boolean change.
-
-- **HTML:** real labelled checkboxes with names/values; groups use fieldset/legend.
-- **JS:** live checked/indeterminate/default state and group selection bounds.
-- **CSS:** external checked, mixed, disabled and focus treatment.
-- **Placement:** proposed `src/components/checkbox/`.
-
-## Acceptance and gaps
-
-Test native submission, reset, disabled fieldsets, mixed state, group limits and keyboard use. Existing text spans are not sufficient proof of label association or group parity.
+Individual controls are CSS-only native input/label. The optional
+[group helper](../../../src/components/checkbox/group.ts) adds selected-string operations,
+min/max interaction limits, reversible ARIA and one aggregate user notification.
+[Legacy forms.ts](../../../src/components/forms.ts) is unchanged.
+[Canonical contract and acceptance](../../components/checkbox.md) ·
+[Separate HTML/CSS/JS demo](../../../demo/components/checkbox.html).
 
 ## Migration steps
 
-**Delivery phase:** P4 — forms. **Task state:** 🔵 Planned.
-**Prerequisites:** P0 native labels/submission/defaults and P1 focus styling in the [master plan](../migration-plan.md).
-**Next task:** define authored checkbox/label anatomy and distinguish checked, indeterminate and submitted value.
+**Delivery phase:** P4 — forms. **Task state:** 🟢 Verified retained scope.
+**Prerequisites:** relevant P0 native-control rules and Input's concrete ownership/reset
+conventions, not global P0 completion. **Next:** Radio, then Switch/Select/native controls
+before Form enhancements.
 
-1. [ ] **Retain native form behavior.** Adopt a named input with a real label and disabled-fieldset/reset support.
-2. [ ] **Specify state reflection.** Separate initial checked/default state, live checked and indeterminate appearance from submitted values.
-3. [ ] **Design CheckboxGroup.** Use fieldset/legend, stable option values and explicit min/max group constraints.
-4. [ ] **Verify selection boundaries.** Test mixed state, keyboard, group limits, duplicate events and native form data before closing retained rows.
+1. [x] **Retain native form behavior.** Original checkbox/label/name/form identity, native disabled-fieldset and reset retained; no proxies.
+2. [x] **Specify state reflection.** Boolean checked/defaultChecked, independent indeterminate and native string submission are explicit; setters/refresh/reset silent.
+3. [x] **Design CheckboxGroup.** Native fieldset/legend, unique string keys, nested/external-form ownership, selected values and min/max interaction bounds retained.
+4. [x] **Verify selection boundaries.** Native pre-activation cancellation/rollback, mixed state, labels/Space, form data, refresh/disposal and browser/media/no-JS acceptance obtained.
 
 ### Native primitives and fallback
 
-- **Native path:** native checkbox inputs, labels and fieldset/legend supply submission, reset, disabled-fieldset and keyboard semantics. A light-DOM wrapper adds only group constraints and documented custom events.
-- **Small enhancement:** use native checked/defaultChecked/indeterminate properties and lifecycle-managed change listeners. CSS accent-color, logical spacing and optional `:has()` simplify presentation; explicit state selectors remain the fallback. Retained native controls make ElementInternals or a checkbox polyfill unnecessary.
+No Checkbox custom element, synthetic toggle or options renderer is introduced. Authored
+native checkboxes retain their browser rendering, labels, Space, required and submission.
+Without JS the group remains a usable native fieldset but has no min/max helper bounds.
+The standalone mixed property needs explicit native JS initialization; checked HTML remains
+the no-JS fallback, not a fake three-state submitted value.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
 ## Reference and review boundary
 
-- [Official website](https://www.naiveui.com/en-US/os-theme/components/checkbox)
-- [Pinned public API Markdown](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md)
-- [Pinned implementation source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox)
-- [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
+[Official page](https://www.naiveui.com/en-US/os-theme/components/checkbox) · [API] ·
+[Checkbox source] · [Group source] · [Interface source] · [Size source].
+Pinned Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
+**24 original local rows + five original inline declarations + 13 explicit source
+supplements = 42 rows: 28 Verified adapted targets and 14 Intentionally omitted.**
+All 29 original owner/prop/slot/method/inline identities remain; source line numbers refer
+to the immutable public table. Green means the documented native adaptation, not Vue parity.
+Evidence **C1** = [targeted tests](../../../tests/checkbox.test.ts);
+**C2** = [browser/build/scope record](../../components/checkbox.md#acceptance).
 
-Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **24 local table rows + 5 supplementary declarations + 0 inherited rows = 29 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
-
+[API]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md
+[Checkbox source]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/src/Checkbox.tsx
+[Group source]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/src/CheckboxGroup.tsx
+[Interface source]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/src/interface.ts
+[Size source]: https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/src/public-types.ts
 
 ### Checkbox Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`checked`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L26) | Prop | Candidate live JS `checked` state; native value/default/event contract needs review. | ⚪ Not reviewed | B1 boolean native checked access; partial only, verify this row. |
-| [`checked-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L27) | Prop | Candidate live JS `checkedValue` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default-checked`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L28) | Prop | Candidate native default/reset state for `default-checked`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L29) | Prop | Explicit native `disabled` attribute/property on the authored control; validate reflection and defaults. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`focusable`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L30) | Prop | Candidate presence attribute `focusable`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`indeterminate`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L31) | Prop | Candidate presence attribute `indeterminate`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L32) | Prop | Candidate `label` attribute or JS `label`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L33) | Prop | External CSS token/class for `size`; define supported values and responsive behavior. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`unchecked-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L34) | Prop | Candidate `unchecked-value` attribute or JS `uncheckedValue`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L35) | Prop | Candidate live JS `value` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:checked`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L36) | Callback | Candidate DOM `mui:change` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | B1 boolean mui:change event; different signature; partial only, verify this row. |
+| `checked` · [API] L26 | Prop | Native boolean checked | 🟢 Verified | C1/C2; no token-valued checked property. |
+| `checked-value` · [API] L27 | Prop | Native value string for checked submission, not custom state tokens | ⏭️ Intentionally omitted | String/number/boolean payload protocol is omitted. |
+| `default-checked` · [API] L28 | Prop | Native defaultChecked/checked HTML | 🟢 Verified | C1/C2 changed default/native reset; independent current state. |
+| `disabled` · [API] L29 | Prop | Native disabled and fieldset inheritance | 🟢 Verified | C1/C2; no derived disabled writes that remove submissions. |
+| `focusable` · [API] L30 | Prop | Native focus/tabindex, no wrapper focusability mode | ⏭️ Intentionally omitted | Focusable false/Enter-toggle source behavior not emulated. |
+| `indeterminate` · [API] L31 | Prop | Native independent indeterminate property | 🟢 Verified | C1/C2 mixed rollback and checked submission; no third payload. |
+| `label` · [API] L32 | Prop | Actual native label content/for association | 🟢 Verified | C1/C2 original label/control identity and native activation. |
+| `size` · [API] L33 | Prop | small/medium/large CSS | 🟢 Verified | External font/control sizes, native appearance. |
+| `unchecked-value` · [API] L34 | Prop | Unchecked controls are absent from native submission | ⏭️ Intentionally omitted | No token event model or hidden unchecked field. |
+| `value` · [API] L35 | Prop | Native string value; explicit unique group key | 🟢 Verified | C1/C2 numeric keys not silently coerced; values and names separate. |
+| `on-update:checked` · [API] L36 | Callback | Native change listener reads checked | 🟢 Verified | C1/C2; no extra custom individual checkbox event. |
 
 ### CheckboxGroup Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L42) | Prop | Candidate presence attribute `disabled`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L43) | Prop | Candidate native default/reset state for `default-value`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`label-field`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L44) | Prop | Candidate `label-field` attribute or JS `labelField`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`max`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L45) | Prop | Candidate `max` attribute or JS `max`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`min`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L46) | Prop | Candidate `min` attribute or JS `min`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`options`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L47) | Prop | Candidate JS `options` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L48) | Prop | Candidate JS `value` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`value-field`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L49) | Prop | Candidate live JS `valueField` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L50) | Callback | Candidate DOM `mui:change` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `disabled` · [API] L42 | Prop | Native fieldset disabled | 🟢 Verified | C1/C2 first-legend exception preserved. |
+| `default-value` · [API] L43 | Prop | Each native defaultChecked; no separate default array | 🟢 Verified | C1/C2 independent resets including external forms. |
+| `label-field` · [API] L44 | Prop | Author real labels | ⏭️ Intentionally omitted | No options object field lookup. |
+| `max` · [API] L45 | Prop | Nonnegative integer interaction upper bound or null | 🟢 Verified | C1/C2 native click cancellation; not validation/clamping. |
+| `min` · [API] L46 | Prop | Nonnegative integer interaction lower bound | 🟢 Verified | C1/C2; never required on every member. |
+| `options` · [API] L47 | Prop | Authored controls instead of options rendering | ⏭️ Intentionally omitted | No object renderer, label fallback or slot precedence. |
+| `value` · [API] L48 | Prop | state.values / silent setValues(existing strings) | 🟢 Verified | C1/C2 DOM order, strict keys, disabled selected members included. |
+| `value-field` · [API] L49 | Prop | Explicit native value | ⏭️ Intentionally omitted | No configurable object field mapping. |
+| `on-update:value` · [API] L50 | Callback | mui:checkbox-group-change on group root | 🟢 Verified | C1/C2 one accepted user snapshot; no synthetic setter/reset events. |
 
 ### Checkbox Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L56) | Slot | Candidate authored `default` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `default` · [API] L56 | Slot | Authored label/span content | 🟢 Verified | C1/C2 identity preserved; no renderer. |
 
 ### CheckboxGroup Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L62) | Slot | Candidate authored `default` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `default` · [API] L62 | Slot | Authored fieldset/legend/children | 🟢 Verified | C1/C2 nested ownership and template clone adoption. |
 
 ### Checkbox Methods
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`focus`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L68) | Method | Candidate plain-JS `focus` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`blur`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L69) | Method | Candidate plain-JS `blur` operation; arguments, return value and lifecycle not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `focus` · [API] L68 | Method | Native input.focus() | 🟢 Verified | C1/C2 native focus, not a wrapper method. |
+| `blur` · [API] L69 | Method | Native input.blur() | 🟢 Verified | Native browser method, no custom focus protocol. |
 
 ### CheckboxGroup Props: options inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`options.label?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L47) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`options.value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L47) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`options.disabled?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L47) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `options.label?` · [API] L47 | Inline record field | Authored native label text | 🟢 Verified | Not an accepted options-array property. |
+| `options.value` · [API] L47 | Inline record field | Authored explicit native string value | 🟢 Verified | C1 validates uniqueness/missing/changed values. |
+| `options.disabled?` · [API] L47 | Inline record field | Native disabled on authored input | 🟢 Verified | C1/C2 submission and limits distinguish disabled selected state. |
 
 ### CheckboxGroup Props: on-update:value inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`on-update:value.actionType`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L50) | Inline record field | Candidate DOM `mui:change:value.action-type` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:value.value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/checkbox/demos/enUS/index.demo-entry.md#L50) | Inline record field | Candidate DOM `mui:change:value.value` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| `on-update:value.actionType` · [API] L50 | Inline record field | detail.actionType check/uncheck | 🟢 Verified | C1 accepted change snapshot only. |
+| `on-update:value.value` · [API] L50 | Inline record field | detail.value native string key | 🟢 Verified | C1 no number/string coercion or unknown-key success. |
+
+### Explicit source-only supplements
+
+| Upstream owner/item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
+| --- | --- | --- | --- | --- |
+| Checkbox checked/defaultChecked string/number expansion · [Checkbox source] | Source type supplement | Native booleans only | ⏭️ Intentionally omitted | Source accepts wider state tokens than the official boolean table; not promoted. |
+| Checkbox `onUpdateChecked` · [Checkbox source] | Source alias | Native change reading checked | 🟢 Verified | No duplicated alias notification. |
+| Checkbox `onChange` · [Checkbox source] | Deprecated source alias | Native change instead | ⏭️ Intentionally omitted | No deprecated callback-array protocol. |
+| Checkbox `privateInsideTable` · [Checkbox source] | Private source prop | None | ⏭️ Intentionally omitted | No private Table/theme integration. |
+| Checkbox `theme`, `themeOverrides`, `builtinThemeOverrides` · [Checkbox source] | Source theme group | External CSS tokens | ⏭️ Intentionally omitted | No provider/theme-object/CSS-in-JS translation. |
+| Checkbox `CheckboxSize` · [Size source] | Source type | Three explicit CSS sizes | 🟢 Verified | small/medium/large retained. |
+| Checkbox `CheckboxInst` · [Interface source] | Source type | Original native input focus/blur | 🟢 Verified | No component instance/ref facade. |
+| Checkbox `OnUpdateChecked`, `OnUpdateCheckedImpl` · [Interface source] | Source callback type group | Native Event and boolean checked | ⏭️ Intentionally omitted | No intersection/union state-token or MouseEvent/KeyboardEvent callback API. |
+| CheckboxGroup `size` · [Group source] | Source prop | Group CSS size inherited by labels | 🟢 Verified | No Form/provider size inheritance. |
+| CheckboxGroup `onUpdateValue` · [Group source] | Source alias | Root group-change snapshot | 🟢 Verified | One event, not duplicate callback aliases. |
+| CheckboxGroup `onChange` · [Group source] | Deprecated source alias | Root group-change instead | ⏭️ Intentionally omitted | No deprecated callback API. |
+| CheckboxGroup `CheckboxGroupOption`, optional `value?`, `[key: string]` · [Group source] | Source option type group | Authored native controls only | ⏭️ Intentionally omitted | Source optional value differs from public table; helper requires explicit strings, no object fields. |
+| CheckboxGroup `CheckboxGroupInjection`, `checkboxGroupInjectionKey` · [Group source] | Source injection group | None | ⏭️ Intentionally omitted | No injected refs/provider graph. |
 
 <!-- END PINNED API INVENTORY -->
