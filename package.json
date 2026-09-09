@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./infinite-scroll": {
+      "types": "./dist/components/infinite-scroll/index.d.ts",
+      "import": "./dist/markup-ui-infinite-scroll.js"
+    },
+    "./infinite-scroll/style.css": "./dist/markup-ui-infinite-scroll.css",
     "./log": {
       "types": "./dist/components/log/index.d.ts",
       "import": "./dist/markup-ui-log.js"

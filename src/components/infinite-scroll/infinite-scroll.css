@@ -1,0 +1,25 @@
+.mui-infinite-scroll { min-inline-size: 0; }
+.mui-infinite-scroll__viewport {
+  overflow: auto;
+  max-block-size: var(--mui-infinite-scroll-height, 20rem);
+  border: 1px solid var(--mui-infinite-scroll-border, #b8c4d2);
+  padding: var(--mui-infinite-scroll-padding, .5rem);
+}
+.mui-infinite-scroll__viewport:focus-visible,
+.mui-infinite-scroll [data-infinite-load]:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.mui-infinite-scroll [data-infinite-sentinel] { block-size: 1px; inline-size: 100%; pointer-events: none; }
+.mui-infinite-scroll [data-infinite-message] { margin-block: .5rem; }
+.mui-infinite-scroll [data-infinite-message="error"] { color: var(--mui-infinite-scroll-error, #a31919); }
+.mui-infinite-scroll [data-infinite-load][aria-disabled="true"] { cursor: not-allowed; }
+@media (prefers-reduced-motion: reduce) {
+  .mui-infinite-scroll__viewport { scroll-behavior: auto; }
+}
+@media print {
+  .mui-infinite-scroll__viewport { overflow: visible; max-block-size: none; border: 0; }
+  .mui-infinite-scroll [data-infinite-load],
+  .mui-infinite-scroll [data-infinite-sentinel],
+  .mui-infinite-scroll [data-infinite-message] { display: none; }
+}
+@media (forced-colors: active) {
+  .mui-infinite-scroll [data-infinite-message="error"] { color: CanvasText; }
+}

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Native Infinite Scroll · MarkupUI</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-infinite-scroll.css">
+  <link rel="stylesheet" href="./infinite-scroll.css">
+  <script type="module" src="./infinite-scroll.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Infinite Scroll: native items, bounded loading permission</h1>
+    <p>One load per visible-sentinel entry, at most three automatic loads per restart.
+      Manual loading never renews that budget. A no-growth result or failure pauses
+      automatic loading. This demo uses controlled local timers, never HTTP.</p>
+    <p><a href="#after-feed">Skip to the reachable footer</a> ·
+      <a href="#static-sample">Read the complete static twelve-item sample</a></p>
+    <div class="demo-controls" data-enhancement hidden>
+      <label>Next fake result <select data-demo-mode><option value="growth">Growth (up to three items)</option><option value="no-growth">No growth, hasMore=true</option><option value="error">Error</option><option value="end">Finished</option><option value="ignore-abort">Growth ignoring abort</option><option value="late-error">Error ignoring abort</option></select></label>
+      <label>Local delay <select data-demo-delay><option value="150">150ms</option><option value="600">600ms</option><option value="1500">1500ms</option></select></label>
+      <label>Scroll root <select data-demo-root><option value="panel">Native panel</option><option value="page">Document viewport</option></select></label>
+      <label>Distance <select data-demo-distance><option value="0">0px</option><option value="64">64px</option><option value="160">160px</option></select></label>
+      <label><input type="checkbox" data-demo-automatic checked>Automatic enhancement</label>
+      <label><input type="checkbox" data-demo-disabled>Pause loading only</label>
+      <button type="button" data-demo-restart>Restart dataset (replaces local sample)</button>
+      <button type="button" data-demo-reset>Reset permission only (keep items)</button>
+      <button type="button" data-demo-rtl>Toggle RTL</button>
+      <button type="button" data-demo-dispose>Disconnect enhancement</button>
+    </div>
+    <p id="feed-help">The application owns items, editable values and transport. A validated
+      current completion can append its native nodes; cancelled results cannot run that
+      commit. Abort-ignoring work keeps the owner in Cancelling until it settles.</p>
+    <form id="sample-form">
+      <fieldset id="native-gate">
+        <legend>Editable local items <label data-js-only hidden><input type="checkbox" data-demo-native-disabled>Native fieldset disable (this legend control stays usable)</label></legend>
+        <section class="mui-infinite-scroll" data-infinite-scroll data-scroll-mode="panel">
+          <h2 id="feed-title">Local editable feed</h2>
+          <div class="mui-infinite-scroll__viewport" data-feed-viewport tabindex="0" role="region" aria-labelledby="feed-title" aria-describedby="feed-help">
+            <ul data-infinite-content>
+              <li><label><span data-item-title>Local item 1</span> <input name="note-1" value="Editable note 1" required></label><button type="button" data-item-action data-js-only hidden>Review item</button></li>
+              <li><label><span data-item-title>Local item 2</span> <input name="note-2" value="Editable note 2" required></label><button type="button" data-item-action data-js-only hidden>Review item</button></li>
+            </ul>
+            <div data-infinite-sentinel aria-hidden="true"></div>
+          </div>
+          <p><button type="button" data-infinite-load hidden>Load more / Retry</button></p>
+          <p data-infinite-message="loading" hidden>Loading one local batch. Existing fields remain usable.</p>
+          <p data-infinite-message="cancelling" hidden>Cancelling the prior batch. Wait for it to settle before loading again.</p>
+          <p data-infinite-message="error" hidden>The load failed or returned an invalid result. Choose Load more / Retry.</p>
+          <p data-infinite-message="finished" hidden>Finished: the application reports no more items.</p>
+          <p data-infinite-message="disabled" hidden>Loading is disabled, hidden or inert. Existing content remains application-owned.</p>
+          <p data-infinite-message="paused" hidden>Automatic loading is paused. Use Load more / Retry to continue deliberately.</p>
+          <p><a href="#static-sample">Static complete sample: available without JavaScript</a></p>
+        </section>
+      </fieldset>
+      <p><button type="button" data-demo-values data-enhancement hidden>Inspect real native FormData</button></p>
+    </form>
+    <pre id="diagnostics" aria-label="Local request diagnostics">No-JavaScript fallback: existing items and the complete static sample remain readable.</pre>
+    <footer id="after-feed" tabindex="-1">
+      <h2>Reachable footer</h2>
+      <p>No automatic focus movement or unbounded refill loop keeps this footer moving away.</p>
+      <button type="button" id="footer-action">Outside footer action</button>
+    </footer>
+    <section id="static-sample">
+      <h2>Complete static twelve-item sample</h2>
+      <ol><li>Local item 1</li><li>Local item 2</li><li>Local item 3</li><li>Local item 4</li><li>Local item 5</li><li>Local item 6</li><li>Local item 7</li><li>Local item 8</li><li>Local item 9</li><li>Local item 10</li><li>Local item 11</li><li>Local item 12</li></ol>
+    </section>
+    <noscript><p>Dynamic loading is unavailable, not an inactive visible button. Use the static
+      sample link; existing native fields and footer navigation still work.</p></noscript>
+    <template id="item-template"><li><label><span data-item-title></span> <input required></label><button type="button" data-item-action>Review item</button></li></template>
+  </main>
+</body>
+</html>

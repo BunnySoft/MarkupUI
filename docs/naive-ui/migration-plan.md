@@ -6,7 +6,7 @@ have closed property dispositions and four accepted tasks. P3 includes Discrete 
 verified no-new-runtime composition resolution. P4 retained native scopes are now reconciled
 across all 17 assigned routes, including Time Picker: 984 rows and 68/68 page tasks, with no
 unresolved retained rows or Planned P4 routes. P5 is now active with Virtual List's fixed-height
-window, Tree/Cascader/Tree Select hierarchy scopes, Transfer membership, Data Table local operations and Log retained text accepted; three P5 routes remain. P0/P5/P6 and full framework/viewer
+window, Tree/Cascader/Tree Select hierarchy scopes, Transfer membership, Data Table local operations, Log retained text and Infinite Scroll loading permission accepted; two P5 routes remain. P0/P5/P6 and full framework/viewer
 parity remain independent and incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
@@ -38,7 +38,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P2 — Primitives and layout | 🟢 Verified retained scope | All 31 P2-assigned pages reconciled; native Image/fallback/dialog scope accepted with advanced P6 exclusions. | P1 pattern | Full 96-route and P2 reference audit found no retained unresolved P2 rows. This is not global P3/P6 or framework parity. |
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
 | P4 — Forms and selection | 🟢 Verified retained scope | All 17 P4-assigned routes, 984 tracker rows and 68 page tasks reconciled. | Relevant native P0/P3 contracts | 478 adapted + 506 omitted, no unresolved rows; 889 P4 tests plus native browser evidence. No P0/P5/P6 or full framework parity implied. |
-| P5 — Collections and scale | 🟠 In progress | Virtual List, Tree, Cascader, Tree Select, Transfer, Data Table and Log retained scopes accepted; three routes remain. | P3 focus; P4 selection | Native window/hierarchy/path/membership/table/retained-text contracts verified; no phase-wide parity yet. |
+| P5 — Collections and scale | 🟠 In progress | Virtual List, Tree, Cascader, Tree Select, Transfer, Data Table, Log and Infinite Scroll retained scopes accepted; two routes remain. | P3 focus; P4 selection | Native collection and guarded-load contracts verified; no phase-wide parity yet. |
 | P6 — Specialized modules | 🔵 Planned | Deliver independently justified, opt-in advanced features. | Component-specific earlier work | Explicit imports, independent size budgets and no runtime dependencies. |
 
 The [component index](index.md) is the exhaustive catalog-to-phase assignment. The phase
@@ -190,10 +190,10 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Log (P5), verified bounded native retained-text/append/follow scope.**
+**Current component: Infinite Scroll (P5), verified native sentinel/manual/guarded-load scope.**
 **P1/P2/P3/P4 declared retained scopes are complete. P4-07 closes after the full 17-route audit.**
-**P5 is active, not complete.** Recommended next: **Infinite Scroll**, then Popselect
-and Split. Three P5 routes remain. No next component was started in this Log commit.
+**P5 is active, not complete.** Recommended next: **Popselect**, then Split.
+Two P5 routes remain. No next component was started in this Infinite Scroll commit.
 Do not infer P0, full P5/P6 or framework compatibility.
 
 The following component records form a historical execution sequence. Earlier “next” or
@@ -331,8 +331,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 3,878 rows and 308 accepted retained tasks out of 384 across 77 component
-pages (76 unchecked), not full upstream parity.
+The current index records 3,882 rows and 312 accepted retained tasks out of 384 across 78 component
+pages (72 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -1676,3 +1676,42 @@ remain (35/zero unresolved). **19 unaccepted routes = 15 Planned + four explicit
 **Next: Infinite Scroll**, with its own native sentinel/request/backpressure lifecycle,
 then Popselect and Split. No Infinite Scroll implementation is included in this separate
 Log component commit.
+
+## Infinite Scroll — native sentinel and serialized loading accepted
+
+[Canonical Infinite Scroll acceptance](../components/infinite-scroll.md) and
+[reference tracker](components/infinite-scroll.md) close this component alone. Authored
+content/items/forms remain application-owned. Native IntersectionObserver page/element
+roots and bottom distance complement a real manual button, six authored status messages
+and a reachable footer/static fallback. No HTTP, renderer or mandatory virtualization.
+
+Explicit added/hasMore/guarded synchronous commit replaces void/silent-error completion.
+One pending loader includes unacknowledged cancellation; settings/reset/root/native-disable/
+dispose generations block stale commits/errors. No-progress and failures pause automatic
+loading. One load per visible entry and a default three/max twenty automatic requests per
+reset prevent unbounded underfill; manual loading does not renew the budget.
+
+**Three original identities + four source-only supplements = seven rows: four adapted +
+three omitted; four accepted tasks.** **139 tests** pass (59 Infinite Scroll, 53 existing
+native-attribute/Popover and 27 native/legacy), plus declarations/build/budgets and Chromium
+actual intersections/threshold/manual/underfill/no-growth/error/ignored-abort/root/nesting/
+fieldset/focus/footer/RTL/zoom/print/fallback/coexistence evidence.
+The 40px-outside-root fixture did not load at distance 0 and loaded once at distance 64;
+maximum observed active load count stayed **one**, including cancellation races.
+
+ESM/classic/CSS are **4,627/4,761/462 gzip bytes** under new **7,000/7,000/1,000** ceilings.
+All **193 prior top-level JS/CSS assets byte-match**. Core/advanced/widgets remain
+**14,611/2,181/2,779** under original ceilings; no prior component/helper source or budget
+changed. The existing owned-attribute lease was reused without a mandatory Popover runtime.
+
+Current catalog: **96 routes / 3,882 rows / 312 of 384 tasks across 78 accepted pages /
+72 unchecked**. **P5 remains In progress:** eight of ten routes accepted; **794 rows =
+292 adapted + 428 omitted + 74 unresolved**. Remaining **Popselect and Split** contain
+**75 rows / 74 unresolved**.
+
+P4 stays 17 routes/984 rows/68 tasks, no unresolved retained rows. P0's three routes remain
+(97/eight unresolved), P6's nine remain (232/all unresolved), and four exclusions remain
+(35/zero unresolved). **18 unaccepted routes = 14 Planned + four explicit exclusions.**
+
+**Next: Popselect, then Split.** No later collection implementation is included in this
+separate Infinite Scroll component commit.

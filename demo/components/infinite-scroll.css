@@ -1,0 +1,18 @@
+body { margin: 0; font: 1rem/1.5 system-ui, sans-serif; background: #f7f9fc; color: #172536; }
+main { max-inline-size: 70rem; padding: 1rem; margin-inline: auto; overflow-wrap: anywhere; }
+h1 { font-size: clamp(1.4rem, 4vw, 2rem); }
+input, select, button { font: inherit; max-inline-size: 100%; box-sizing: border-box; }
+button { padding: .3rem .5rem; }
+fieldset { min-inline-size: 0; border: 1px solid #afbecf; }
+.demo-controls:not([hidden]) { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
+.demo-controls label { max-inline-size: 100%; }
+.mui-infinite-scroll { --mui-infinite-scroll-height: 12rem; }
+.mui-infinite-scroll[data-scroll-mode="page"] > .mui-infinite-scroll__viewport { max-block-size: none; overflow: visible; }
+[data-infinite-content] { padding-inline-start: 1.5rem; margin-block: 0; }
+[data-infinite-content] > li { padding-block: .5rem; border-block-end: 1px solid #d4dbe5; }
+[data-infinite-content] > li > label { display: inline-block; max-inline-size: 100%; margin-inline-end: .5rem; }
+[data-infinite-content] input { inline-size: 15rem; }
+[data-infinite-sentinel] { background: #9fb7ce; }
+#diagnostics { padding: .75rem; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid #bdc8d5; background: white; }
+#after-feed { border: 2px solid #547699; padding: .75rem; margin-block: 1rem; }
+@media print { .demo-controls, #diagnostics { display: none; } body { background: white; } }

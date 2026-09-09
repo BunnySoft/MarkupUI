@@ -56,6 +56,8 @@ components.push("data-table")
 classicEntries["data-table"] = "global.ts"
 components.push("log")
 classicEntries.log = "global.ts"
+components.push("infinite-scroll")
+classicEntries["infinite-scroll"] = "global.ts"
 
 await Promise.all([
   build({
@@ -134,6 +136,9 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-infinite-scroll.js": 7_000,
+  "markup-ui-infinite-scroll.global.js": 7_000,
+  "markup-ui-infinite-scroll.css": 1_000,
   "markup-ui-log.js": 6_000,
   "markup-ui-log.global.js": 6_000,
   "markup-ui-log.css": 1_750,
