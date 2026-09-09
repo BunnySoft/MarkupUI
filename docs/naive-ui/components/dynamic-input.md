@@ -1,120 +1,131 @@
 # Dynamic Input
 
-**Plan: Planned. Current baseline: input/form primitives only.**
+**Plan: 🟢 Verified retained bounded native-row scope; renderer/model contracts omitted.**
 
-## Baseline and target
-
-[B1: forms.ts](../../../src/components/forms.ts) contains individual controls, not a repeatable collection controller.
-
-- **HTML:** authored row `template`, native labelled controls and add/remove buttons.
-- **JS:** stable row identity, bounded insertion/removal, value collection and focus recovery.
-- **CSS:** row/action layout in a separate stylesheet.
-- **Placement:** proposed `src/optional/dynamic-input/`.
-
-## Acceptance and gaps
-
-Test min/max rows, pair presets, reorder, validation paths and removing the focused row. Creation hooks need explicit return/error contracts; no general-purpose template language is proposed.
+[Canonical anatomy, API, hook/error/focus contracts and evidence](../../components/dynamic-input.md).
+An explicit helper clones an authored native template, preserves original rows, and moves
+actual nodes. Native controls/names/defaults/FormData remain authoritative. No VNode preset
+renderer, object-path model, drag framework, hidden Form registration or dependency.
 
 ## Migration steps
 
-**Delivery phase:** P4 — enhanced entry; P5 for collection behavior. **Task state:** 🔵 Planned.
-**Prerequisites:** P4 Input/Form and P5 stable-row identity in the [master plan](../migration-plan.md).
-**Next task:** specify an authored row template and stable key for each repeated input.
+**Delivery phase:** P4 — native enhanced entry; P5 renderer/model scope explicitly omitted.
+**Task state:** 🟢 Verified retained scope.
+**Prerequisites:** native Input/Form, DOM templates and explicit ownership.
+**Next task:** Dynamic Tags; P4 as a whole remains In progress.
 
-1. [ ] **Define row anatomy.** Provide labelled native controls and add/remove buttons for ordinary and pair presets.
-2. [ ] **Implement bounded edits.** Specify min/max insertion, removal and creation-hook returns while preserving unaffected row nodes.
-3. [ ] **Integrate value/validation.** Define array serialization, defaults/reset and stable error paths after rows move.
-4. [ ] **Test editing focus.** Exercise removal of the focused row, rejected creation, preset changes and reset without a template-expression engine.
+1. [x] **Define row anatomy.** Authored native input/pair templates, labels and hidden no-JS custom actions.
+2. [x] **Implement bounded edits.** Stable keys, validated limits, insertion/removal/actual-node reorder and failure cleanup.
+3. [x] **Integrate value/validation.** Literal names, native FormData/current defaults and explicit Form/resource refresh.
+4. [x] **Test editing focus.** Native moveBefore/fallback caret/focus, action boundaries, callbacks, nested scopes, reset/no-JS and review fixes.
 
 ### Native primitives and fallback
 
-- **Native path:** an authored `template` containing labelled native controls and add/remove buttons is cloned through `HTMLTemplateElement.content.cloneNode(true)` for each new stable row. Existing rows are updated in place.
-- **Small enhancement:** a light-DOM custom element owns row listeners and value collection; native forms still submit real controls. CSS grid/container queries handle row layout with stacked fallback. Without custom-element/template capability, keep server/authored static rows rather than adding a reactive form renderer.
+HTMLTemplateElement content is imported/cloned without expressions or string HTML.
+Existing/server rows remain native and editable without JS; hidden custom actions are not
+presented as working. Native reset affects current fields, not a saved row list.
+Disconnect keeps current edited rows and disposes only explicitly registered resources.
 
 <!-- BEGIN PINNED API INVENTORY -->
 
 ## Reference and review boundary
 
 - [Official website](https://www.naiveui.com/en-US/os-theme/components/dynamic-input)
-- [Pinned public API Markdown](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md)
-- [Pinned implementation source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input)
-- [Catalog and provenance](../index.md) · [Architecture, statuses and shared acceptance](../architecture.md)
+- [Pinned public API](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md)
+- [Pinned source](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input)
+- [Catalog](../index.md) · [Master plan](../migration-plan.md)
 
-Snapshot: Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; MarkupUI baseline **5dcb190 / 0.11.0**.
-Documentation inventory: **23 local table rows + 9 supplementary declarations + 0 inherited rows = 32 tracker rows**.
-Detailed upstream implementation/edge-case review: **Not reviewed** per item unless explicitly stated.
-Current baseline evidence above is a source-inspected slice, not full parity or browser verification.
-Every mapping below is a proposal. Planned rows still require implementation and the page/shared acceptance cases.
-Not reviewed rows identify a candidate only; they do not promise that an attribute, event, field or method already exists.
+Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
+All **32 original identities** remain: **23 local table rows + nine inline declarations**,
+no inherited rows. **Ten explicit source supplements** give **42 total rows**.
+Verified means an **ADAPTED** native target, not framework signature/model parity.
+Canonical tests/browser/build evidence applies to retained rows; omissions receive no credit.
 
-Referenced public component types (composition, not automatic API inheritance): [Button](button.md). Opaque types without local member definitions remain unreviewed.
-
+DynamicInput.tsx, InputPreset.tsx, PairPreset.tsx, interface.ts and exports were reviewed.
+Controlled arrays, object/index key derivation, injected paths/themes and VNode presets
+are deliberately not ported. Source create-after-index and callbacks are mapped explicitly,
+not represented as an identical operation/signature.
 
 ### DynamicInput Props
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`create-button-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L28) | Prop | Candidate explicit native-child configuration for `create-button-props`; no unrestricted prop forwarding. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L29) | Prop | Candidate native default/reset state for `default-value`; distinguish live state and defaults. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L30) | Prop | Candidate presence attribute `disabled`; semantics/interaction not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`item-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L31) | Prop | Candidate `item-class` attribute or JS `itemClass`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`item-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L32) | Prop | External CSS class/custom property for `item-style`; no inline style-object passthrough. | 🔵 Planned | No row-level baseline established; apply page acceptance cases. |
-| [`key-field`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L33) | Prop | Candidate `key-field` attribute or JS `keyField`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`min`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L34) | Prop | Candidate `min` attribute or JS `min`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`max`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L35) | Prop | Candidate `max` attribute or JS `max`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`preset`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L36) | Prop | Candidate `preset` attribute or JS `preset`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`show-sort-button`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L37) | Prop | Candidate explicit JS `showSortButton` contract; behavior and lifetime not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L38) | Prop | Candidate JS `value` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-create`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L39) | Callback | Candidate DOM `mui:create` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-remove`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L40) | Callback | Candidate DOM `mui:remove` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L41) | Callback | Candidate DOM `mui:change` notification; detail/timing must be reviewed, preserving existing events. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`create-button-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L28) | Prop | Authored labelled hidden type=button and native attributes. | 🟢 Verified | No unrestricted ButtonProps forwarding. |
+| [`default-value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L29) | Prop | Existing authored row set plus native field defaults. | 🟢 Verified | ADAPTED; reset does not recreate a default row array. |
+| [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L30) | Prop | Native fieldset/buttons/fields. | 🟢 Verified | User actions honor native eligibility; explicit programmatic transactions remain allowed. |
+| [`item-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L31) | Prop | Original row classes. | 🟢 Verified | No row recreation. |
+| [`item-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L32) | Prop | External row/pair/action CSS. | 🟢 Verified | No inline style-object API. |
+| [`key-field`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L33) | Prop | Immutable data-dynamic-key and stable row descriptors. | 🟢 Verified | ADAPTED DOM identity, not object-path lookup or index renaming. |
+| [`min`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L34) | Prop | Validated min count, default 0. | 🟢 Verified | Never allocates implicit minimum rows. |
+| [`max`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L35) | Prop | Default 20, hard ceiling 100; explicit bounded updates. | 🟢 Verified | ADAPTED finite policy, no source unbounded default. |
+| [`preset`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L36) | Prop | Authored input/pair row templates instead. | ⏭️ Intentionally omitted | No preset enum renderer. |
+| [`show-sort-button`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L37) | Prop | Optional native up/down buttons, hidden until enhancement. | 🟢 Verified | Actual node moves, no drag framework. |
+| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L38) | Prop | Native fields/rows/FormData, no unknown[] model. | ⏭️ Intentionally omitted | No controlled array or deep mutation store. |
+| [`on-create`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L39) | Callback | Detached initialize and attached connect hooks, with explicit cleanup. | 🟢 Verified | ADAPTED sync/void contract; no return-value model overload. |
+| [`on-remove`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L40) | Callback | Committed remove event and owned resource cleanup. | 🟢 Verified | Not a before-remove veto callback; committed cleanup errors are explicit. |
+| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L41) | Callback | Structural change event plus original native input/change. | 🟢 Verified | No duplicate aggregate value array. |
 
 ### DynamicInput Props (Input Preset)
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L47) | Prop | Candidate JS `value` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L48) | Prop | Candidate `placeholder` attribute or JS `placeholder`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L47) | Prop | Actual native string fields with literal/repeated names. | 🟢 Verified | FormData filtering/order remains native; no array setter. |
+| [`placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L48) | Prop | Authored input placeholder. | 🟢 Verified | No generated locale/provider default. |
 
 ### DynamicInput Props (Pair Preset)
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L54) | Prop | Candidate JS `value` data property or authored children; shape and identity not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`key-placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L55) | Prop | Candidate `key-placeholder` attribute or JS `keyPlaceholder`; exact target contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`value-placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L56) | Prop | Candidate live JS `valuePlaceholder` state; native value/default/event contract needs review. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L54) | Prop | Two original native fields per authored row. | 🟢 Verified | ADAPTED pair anatomy, not Array<{key,value}> mutation/serialization. |
+| [`key-placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L55) | Prop | Native first-field placeholder. | 🟢 Verified | Pair key value is not stable row identity. |
+| [`value-placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L56) | Prop | Native second-field placeholder. | 🟢 Verified | No injected preset provider. |
 
 ### DynamicInput Slots
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`action`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L62) | Slot | Candidate authored `action` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L63) | Slot | Candidate authored `default` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`create-button-default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L64) | Slot | Candidate authored `create-button-default` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`create-button-icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L65) | Slot | Candidate authored `create-button-icon` child region/template; exact DOM/ownership contract not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`action`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L62) | Slot | Authored labelled native action buttons. | 🟢 Verified | Fixed action identities, reversible attributes, no renderer callback. |
+| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L63) | Slot | HTMLTemplateElement row and existing native DOM. | 🟢 Verified | No expression/VNode engine. |
+| [`create-button-default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L64) | Slot | Native add-button text/aria-label. | 🟢 Verified | Usable label and no-JS hidden fallback. |
+| [`create-button-icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L65) | Slot | Authored decorative noninteractive icon. | 🟢 Verified | No icon dependency; meaningful button name stays native. |
 
 ### DynamicInput Props (Pair Preset): value inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`value.key`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L54) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`value.value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L54) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`value.key`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L54) | Inline record field | First actual pair field. | 🟢 Verified | Not the collection's stable key or a deep path. |
+| [`value.value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L54) | Inline record field | Second actual pair field. | 🟢 Verified | Native current/default/disabled/reset semantics. |
 
 ### DynamicInput Slots: action inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`action.value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L62) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`action.index`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L62) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`action.create`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L62) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`action.remove`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L62) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`action.move`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L62) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`action.value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L62) | Inline record field | Read original native row controls explicitly. | ⏭️ Intentionally omitted | No injected unknown model value. |
+| [`action.index`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L62) | Inline record field | Current rows/DOM order and structural event index. | 🟢 Verified | No index paths in native names. |
+| [`action.create`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L62) | Inline record field | add(insertionIndex); row add-after action. | 🟢 Verified | Explicit zero-based insertion, not source create-after-index signature. |
+| [`action.remove`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L62) | Inline record field | remove(stableKey), respecting min. | 🟢 Verified | Original node removed; no silent data resurrection. |
+| [`action.move`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L62) | Inline record field | move(stableKey, absoluteIndex), native up/down actions. | 🟢 Verified | Native moveBefore/focus-safe fallback with documented state limits. |
 
 ### DynamicInput Slots: default inline fields
 
-| Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`default.value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L63) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
-| [`default.index`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L63) | Inline record field | Documented inline member; candidate plain-JS record/DOM context field. Exact shape and semantics not reviewed. | ⚪ Not reviewed | No row-level baseline established; apply page acceptance cases. |
+| [`default.value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L63) | Inline record field | Original native controls, not slot model injection. | ⏭️ Intentionally omitted | No reactive value renderer. |
+| [`default.index`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/demos/enUS/index.demo-entry.md#L63) | Inline record field | Native row order/metadata; creation context index is call-time only. | 🟢 Verified | No live interpolation or relabelling after moves. |
+
+### Explicit source supplements — not original public table rows
+
+| Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
+| --- | --- | --- | --- | --- |
+| [`onUpdateValue / deprecated onInput`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/src/DynamicInput.tsx) | Source callback alias group | Native events and explicit structural notification instead. | ⏭️ Intentionally omitted | No callback-array/controlled model ABI. |
+| [`deprecated onClear`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/src/DynamicInput.tsx) | Source callback | Explicit bounded remove operations. | ⏭️ Intentionally omitted | No clear-list shortcut or implicit row reset. |
+| [`theme / themeOverrides / builtinThemeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/src/DynamicInput.tsx) | Source theme group | External native CSS. | ⏭️ Intentionally omitted | No CSS-in-JS/provider object. |
+| [`DynamicInputProps / dynamicInputProps / NDynamicInput`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/index.ts) | Source public type/export group | Narrow DynamicInputOptions/native anatomy. | ⏭️ Intentionally omitted | No framework constructor/prop aliases. |
+| [`DynamicInputSlots`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/src/DynamicInput.tsx) | Source public slot type | Authored native template/buttons. | ⏭️ Intentionally omitted | Original named slots adapted above, no VNode[] type compatibility. |
+| [`DynamicInputDefaultSlotProps`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/src/interface.ts) | Source public record type | Actual row element plus stable key/call-time context. | ⏭️ Intentionally omitted | No any-value/index slot injection ABI. |
+| [`DynamicInputActionSlotProps`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/src/interface.ts) | Source public record type | Explicit native buttons/controller operations. | ⏭️ Intentionally omitted | Different stable-key and insertion/absolute-move signatures. |
+| [`OnUpdateValue`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/src/interface.ts) | Source generic callback type | Native fields/FormData instead of generic T[] updates. | ⏭️ Intentionally omitted | No model emitter. |
+| [`DynamicInputInjection / dynamicInputInjectionKey`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/src/interface.ts) | Source internal provider group | Explicit root/lifecycle ownership only. | ⏭️ Intentionally omitted | No injected placeholder/theme/provider graph. |
+| [`InputPreset.path / PairPreset.path`](https://github.com/tusen-ai/naive-ui/tree/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-input/src) | Source private preset prop group | Literal native names and explicit Form mappings. | ⏭️ Intentionally omitted | No deep validation path or preset FormItem renderer. |
 
 <!-- END PINNED API INVENTORY -->

@@ -30,6 +30,8 @@ components.push("auto-complete")
 classicEntries["auto-complete"] = "global.ts"
 components.push("input-otp")
 classicEntries["input-otp"] = "global.ts"
+components.push("dynamic-input")
+classicEntries["dynamic-input"] = "global.ts"
 
 await Promise.all([
   build({
@@ -102,6 +104,9 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-dynamic-input.js": 6_500,
+  "markup-ui-dynamic-input.global.js": 6_500,
+  "markup-ui-dynamic-input.css": 1_000,
   "markup-ui-input-otp.js": 3_000,
   "markup-ui-input-otp.global.js": 3_000,
   "markup-ui-input-otp.css": 1_000,

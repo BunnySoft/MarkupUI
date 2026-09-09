@@ -3,8 +3,8 @@
 **Plan state: 🟠 In progress overall — P1 pilots, P2 and P3 are Verified for declared retained
 native scopes and explicit omissions. All 31 P2-assigned pages and all 22 P3-assigned pages
 have closed property dispositions and four accepted tasks. P3 includes Discrete API's
-verified no-new-runtime composition resolution. P4 is In progress with Input, Checkbox, Radio, Switch, Select, Input Number, Slider, Rate, Form, Auto Complete and Input OTP
-native scopes accepted and six routes Planned. P0/P5/P6 and full framework/viewer
+verified no-new-runtime composition resolution. P4 is In progress with Input, Checkbox, Radio, Switch, Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP and Dynamic Input
+native scopes accepted and five routes Planned. P0/P5/P6 and full framework/viewer
 parity remain independent and incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
@@ -35,7 +35,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
 | P2 — Primitives and layout | 🟢 Verified retained scope | All 31 P2-assigned pages reconciled; native Image/fallback/dialog scope accepted with advanced P6 exclusions. | P1 pattern | Full 96-route and P2 reference audit found no retained unresolved P2 rows. This is not global P3/P6 or framework parity. |
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
-| P4 — Forms and selection | 🟠 In progress | Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate, Form, Auto Complete and Input OTP accepted; Dynamic Input then Dynamic Tags next. | Relevant P0 form contract; P3 for popup variants | Native controls/defaults/constraints, Form/datalist coordination and single-field OTP accepted; six P4 routes and rich P5 scopes remain separate. |
+| P4 — Forms and selection | 🟠 In progress | Input, Checkbox, Radio, Switch, native Select, Input Number, Slider, Rate, Form, Auto Complete, Input OTP and Dynamic Input accepted; Dynamic Tags next. | Relevant P0 form contract; P3 for popup variants | Native control/validation/datalist/OTP and bounded row scopes accepted; five P4 routes and rich P5 scopes remain separate. |
 | P5 — Collections and scale | 🔵 Planned | Add stable-key, async and virtualized collection behavior. | P3 focus; P4 selection | Selection survives updates, stale async work is handled and large rendering is bounded. |
 | P6 — Specialized modules | 🔵 Planned | Deliver independently justified, opt-in advanced features. | Component-specific earlier work | Explicit imports, independent size budgets and no runtime dependencies. |
 
@@ -111,7 +111,7 @@ smuggling an overlay implementation into the CSS-only native composition.
 | P4-03 — Native selection | 🟢 Verified retained scope | Native Select and Auto Complete retained scopes accepted. | [Select](../components/select.md) and [Auto Complete](../components/auto-complete.md): real native options/fields/defaults/forms, explicit bounded results/lifetime; rich P5 popup/render/selection inference exclusions remain. |
 | P4-04 — Numeric and bounded entry | 🟢 Verified retained scope | Input Number, Slider and Rate declared native scopes accepted, with explicit limitations. | [Input Number](../components/input-number.md), [Slider](../components/slider.md), [Rate](../components/rate.md): native number/range/radio semantics, reset-safe states, no proxy or extra keyboard/gesture engine. |
 | P4-05 — Form validation | 🟢 Verified retained scope | Form/FormItem/FormItemGi native fields, explicit feedback/grid anatomy and narrow optional validators accepted. | [Form evidence](../components/form.md): generation/snapshot/abort/error/reset ownership; native custom validity and submission remain application/browser-owned, no schema framework. |
-| P4-06 — Enhanced entry | 🟠 In progress | Input OTP retained native scope accepted; Dynamic Input then Dynamic Tags next, Mention remains independent. Rich Select/Auto Complete engines are excluded from their accepted native scopes. | [OTP](../components/input-otp.md): one field, native editing/autofill hints and metadata-only local completion; no per-cell/auth engine. |
+| P4-06 — Enhanced entry | 🟠 In progress | Input OTP and Dynamic Input retained native scopes accepted; Dynamic Tags next, Mention remains independent. Rich Select/Auto Complete engines are excluded from their accepted native scopes. | [OTP](../components/input-otp.md) and [Dynamic Input](../components/dynamic-input.md): native fields, bounded metadata/rows and explicit lifetimes; no per-cell/auth/model renderer. |
 | P4-07 — Form sign-off | 🔵 Planned | Exercise changed values/defaults, labels, fieldsets, composition, submission, reset and stale validation work. | Accepted property rows and plain-HTML form examples. |
 
 ### P5 — Collections and scale
@@ -188,9 +188,9 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Input OTP (P4), verified native single-field/completion scope.**
+**Current component: Dynamic Input (P4), verified bounded native-row/template scope.**
 **P3 retained scope and P4-02/P4-03/P4-04/P4-05's declared native scopes are complete; P4 is In progress.
-Next: Dynamic Input, then Dynamic Tags, before remaining mention/picker routes. Do not infer P0 or full P4 completion.**
+Next: Dynamic Tags, before remaining mention/picker routes. Do not infer P0 or full P4 completion.**
 
 The following component records form a historical execution sequence. Earlier “next” or
 “P3 incomplete” checkpoint statements are superseded by the final P3 audit below.
@@ -326,8 +326,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 3,593 rows and 256 accepted retained tasks out of 384 across 64 component
-pages (128 unchecked), not full upstream parity.
+The current index records 3,603 rows and 260 accepted retained tasks out of 384 across 65 component
+pages (124 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -1083,7 +1083,7 @@ Mention, Color Picker, Date Picker and Time Picker**. Keep native field/value/de
 form/IME semantics, explicit silent-setter refresh and one separate accepted-component
 commit at a time. Overall P4/P0/P5/P6 completion is not implied.
 
-### Input OTP acceptance and Dynamic Input handoff
+### Input OTP acceptance and historical Dynamic Input handoff
 
 [Input OTP](../components/input-otp.md) completes the retained **single native field** scope.
 Whole ASCII strings/leading zeroes, native text/password presentation, one-time-code hints,
@@ -1112,8 +1112,44 @@ changing their source. ESM/classic/CSS are **2,280/2,352/507 gzip bytes** under
 **3,000/3,000/1,000** ceilings. All **149 prior top-level JS/CSS outputs** byte-match the
 pre-OTP HEAD recipe; core/plugins remain **14,611/2,181/2,779**, with all prior ceilings intact.
 
-**Next: Dynamic Input, then Dynamic Tags.** The six remaining Planned P4 routes are
+**At OTP sign-off, next was Dynamic Input, then Dynamic Tags.** The six Planned P4 routes were
 **Dynamic Input, Dynamic Tags, Mention, Color Picker, Date Picker and Time Picker**.
 Preserve original repeated native fields/names/defaults/FormData and explicit Form refresh
 when adding/removing fields; use authored templates rather than introducing a model/provider
 engine. Continue one component/documentation/build/acceptance/separate commit at a time.
+
+### Dynamic Input acceptance and Dynamic Tags handoff
+
+[Dynamic Input](../components/dynamic-input.md) completes retained bounded native collection
+scope. One authored HTML template creates rows; existing row/input/label identities,
+current/default values, literal names and native FormData order are preserved. Stable-key
+add/remove/absolute moves use native moveBefore when present, with a guarded same-node
+fallback and focus/caret recovery. Native reset resets current fields only; disconnect
+keeps edited rows and releases only explicitly registered lifecycle resources.
+
+All **32 original section/source/kind identities** remain in order; **ten source supplements**
+yield **42 rows: 28 adapted and 14 omitted**. Four tasks close. Catalog totals:
+**3,603 rows, 260/384 accepted tasks across 65 pages, 124 unchecked**. P4 has **917 rows**,
+with **five Planned routes / 305 unresolved rows** remaining.
+
+**156 targeted tests** (51 Dynamic Input, 52 Input, 53 Form), build/type/budgets and Chromium
+actual-node/caret/action focus, native labels/required/forms/reset, failed-add/resource
+cleanup, native no-JS rows and RTL/narrow/200% CSS zoom/media/coexistence passed.
+Review fixes cover fallback blur reentrancy, root-level checked-radio protection,
+connect-hook action state ownership and detached action lease release; fixed action
+identities prevent stale controls. Source presets, controlled arrays, theme/path injection,
+generic renderers and callback model overloads are explicitly omitted.
+
+Template contents are ID-free; initialization may explicitly assign validated unique
+IDs and resolving internal/external references. Native names are never reindexed.
+New checked radios/autofocus are rejected before insertion; choose native selection after
+a committed add. Rollback cannot undo arbitrary application side effects, and fallback
+iframe/animation/active-IME state is not promised. The helper never fetches or submits.
+ESM/classic/CSS measure **5,567/5,634/414 gzip bytes** under **6,500/6,500/1,000** ceilings.
+All **152 prior top-level JS/CSS assets** byte-match the pre-component HEAD recipe;
+core/plugins remain **14,611/2,181/2,779**, with every earlier ceiling unchanged.
+
+**Next: Dynamic Tags.** Remaining Planned P4 routes are **Dynamic Tags, Mention, Color
+Picker, Date Picker and Time Picker**. Reuse concrete native row/field/lifetime concepts
+where appropriate, not a generic reactive store. Keep the authorized one-component,
+documentation/build/acceptance and separate-commit sequence.

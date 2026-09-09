@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Dynamic Input</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-dynamic-input.css">
+  <link rel="stylesheet" href="./dynamic-input.css">
+  <script defer src="../../dist/markup-ui-input.global.js"></script>
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
+  <script defer src="../../dist/markup-ui-dynamic-input.global.js"></script>
+  <script defer src="./dynamic-input.js"></script>
+</head>
+<body>
+<main>
+  <h1>Dynamic Input: authored rows, original native fields</h1>
+  <p>This local example edits non-sensitive display settings. Keys identify rows; input names stay literal and repeated. Native reset resets fields in the current rows, never a saved row array.</p>
+  <form id="settings" action="dynamic-input.html" method="get">
+    <fieldset class="mui-dynamic-input" data-dynamic-input id="properties">
+      <legend>Display properties (one to four rows)</legend>
+      <div class="mui-dynamic-input__rows" data-dynamic-rows>
+        <div class="mui-dynamic-input__row" data-dynamic-row data-dynamic-key="initial">
+          <div class="mui-dynamic-input__fields">
+            <label>Property name <span class="mui-input" data-input><input data-input-control name="property.name[]" value="accent" placeholder="Property" required></span></label>
+            <label>Property value <span class="mui-input" data-input><input data-input-control name="property.value[]" value="blue" placeholder="Value" required></span></label>
+          </div>
+          <div class="mui-dynamic-input__actions">
+            <button type="button" data-dynamic-action="up" hidden>Move up</button>
+            <button type="button" data-dynamic-action="down" hidden>Move down</button>
+            <button type="button" data-dynamic-action="add" hidden>Add after</button>
+            <button type="button" data-dynamic-action="remove" hidden>Remove row</button>
+          </div>
+        </div>
+      </div>
+      <template data-dynamic-template>
+        <div class="mui-dynamic-input__row" data-dynamic-row>
+          <div class="mui-dynamic-input__fields">
+            <label>Property name <span class="mui-input" data-input><input data-input-control name="property.name[]" placeholder="Property" required></span></label>
+            <label>Property value <span class="mui-input" data-input><input data-input-control name="property.value[]" placeholder="Value" required></span></label>
+          </div>
+          <div class="mui-dynamic-input__actions">
+            <button type="button" data-dynamic-action="up" hidden>Move up</button>
+            <button type="button" data-dynamic-action="down" hidden>Move down</button>
+            <button type="button" data-dynamic-action="add" hidden>Add after</button>
+            <button type="button" data-dynamic-action="remove" hidden>Remove row</button>
+          </div>
+        </div>
+      </template>
+      <button type="button" data-dynamic-add hidden>Add property row</button>
+    </fieldset>
+    <div class="tools"><button type="submit" name="intent" value="inspect">Inspect native submission</button> <button type="reset">Reset current fields</button></div>
+  </form>
+  <div class="tools">
+    <button type="button" id="program-add" hidden>Programmatic add (no new-row focus)</button>
+    <button type="button" id="move-first" hidden>Move first row to end</button>
+    <button type="button" id="bounds" hidden>Toggle maximum 2 / 4</button>
+    <button type="button" id="disabled" hidden>Toggle native fieldset disabled</button>
+    <button type="button" id="validate" hidden>Report native validity</button>
+    <button type="button" id="fail" hidden>Reject next initialization</button>
+    <button type="button" id="rtl">Toggle RTL</button>
+    <button type="button" id="disconnect" hidden>Disconnect helpers (keep current rows)</button>
+  </div>
+  <p id="state">No JS: the authored row remains editable; only native submit/reset are available.</p>
+  <p id="outcome" role="status">No collection action yet.</p>
+  <pre id="submission">No local submission yet.</pre>
+</main>
+</body>
+</html>

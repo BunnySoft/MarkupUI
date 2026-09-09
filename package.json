@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./dynamic-input": {
+      "types": "./dist/components/dynamic-input/index.d.ts",
+      "import": "./dist/markup-ui-dynamic-input.js"
+    },
+    "./dynamic-input/style.css": "./dist/markup-ui-dynamic-input.css",
     "./input-otp": {
       "types": "./dist/components/input-otp/index.d.ts",
       "import": "./dist/markup-ui-input-otp.js"

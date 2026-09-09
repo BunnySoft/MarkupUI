@@ -1,0 +1,12 @@
+.mui-dynamic-input { display: grid; gap: 1rem; min-inline-size: 0; }
+.mui-dynamic-input__rows { display: grid; gap: .75rem; min-inline-size: 0; }
+.mui-dynamic-input__row { display: flex; flex-wrap: wrap; align-items: start; gap: .75rem; min-inline-size: 0; }
+.mui-dynamic-input__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; flex: 1 1 24rem; min-inline-size: 0; }
+.mui-dynamic-input__fields[data-single] { grid-template-columns: minmax(0, 1fr); }
+.mui-dynamic-input__fields label { display: grid; gap: .375rem; min-inline-size: 0; overflow-wrap: anywhere; }
+.mui-dynamic-input__fields :is(input, select, textarea) { box-sizing: border-box; inline-size: 100%; min-inline-size: 0; font: inherit; padding: .5rem; }
+.mui-dynamic-input__actions { display: flex; flex-wrap: wrap; gap: .375rem; }
+.mui-dynamic-input button { font: inherit; padding: .375rem .5rem; }
+.mui-dynamic-input :focus-visible { outline: 2px solid Highlight; outline-offset: 3px; }
+.mui-dynamic-input [hidden] { display: none !important; }
+@media (max-width: 30rem) { .mui-dynamic-input__fields { grid-template-columns: minmax(0, 1fr); } }
