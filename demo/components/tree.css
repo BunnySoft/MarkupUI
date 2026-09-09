@@ -1,0 +1,14 @@
+:root { font: 16px/1.5 system-ui, sans-serif; color: #163149; background: #f5f8fc; }
+body { margin: 0; }
+main { max-width: 900px; margin: 1rem auto; padding: 1rem; overflow-wrap: anywhere; }
+button, input { font: inherit; }
+button { cursor: pointer; padding: .3rem .6rem; }
+button:disabled { cursor: default; }
+.mui-tree { padding: .75rem; border: 1px solid #7f91a4; margin-block: 1rem; background: white; }
+.mui-tree h2 { margin-block: 0 .75rem; }
+.tools { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-block: 1rem; }
+.tools[hidden] { display: none; }
+output, pre { display: block; white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 480px) { main { padding: .5rem; } .mui-tree { --mui-tree-indent: .8rem; padding: .5rem; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+@media (forced-colors: active) { .mui-tree { border-color: CanvasText; } }

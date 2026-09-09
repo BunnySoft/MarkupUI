@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./tree": {
+      "types": "./dist/components/tree/index.d.ts",
+      "import": "./dist/markup-ui-tree.js"
+    },
+    "./tree/style.css": "./dist/markup-ui-tree.css",
     "./virtual-list": {
       "types": "./dist/components/virtual-list/index.d.ts",
       "import": "./dist/markup-ui-virtual-list.js"

@@ -1,0 +1,20 @@
+.mui-tree { --mui-tree-indent: 1.5rem; color: inherit; overflow-wrap: anywhere; }
+.mui-tree [data-tree-list] { list-style: none; margin: 0; padding-inline-start: var(--mui-tree-indent); }
+.mui-tree > [data-tree-list] { padding-inline-start: 0; }
+.mui-tree [data-tree-key] { margin-block: .25rem; }
+.mui-tree [data-tree-row] { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.mui-tree [data-tree-label] { overflow-wrap: anywhere; }
+.mui-tree[data-tree-block-labels] [data-tree-label] { flex: 1; }
+.mui-tree[data-tree-ellipsis] [data-tree-label] { max-inline-size: var(--mui-tree-label-max, 20rem); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.mui-tree button[data-tree-label] { font: inherit; color: inherit; background: transparent; border: 1px solid currentColor; border-radius: .2rem; padding: .2rem .5rem; }
+.mui-tree [data-tree-label][aria-pressed=true] { font-weight: bold; background: Canvas; outline: 2px solid Highlight; }
+.mui-tree [data-tree-check] { accent-color: Highlight; }
+.mui-tree summary { cursor: pointer; margin-block: .25rem; }
+.mui-tree [aria-disabled=true] { opacity: .65; }
+.mui-tree [data-tree-branch][aria-busy=true] > summary::after { content: " …"; }
+.mui-tree[data-tree-lines] [data-tree-list] [data-tree-list] { border-inline-start: 1px solid GrayText; }
+.mui-tree :focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+.mui-tree [hidden] { display: none !important; }
+@media (forced-colors: active) {
+  .mui-tree [data-tree-label][aria-pressed=true] { border-color: Highlight; }
+}

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MarkupUI native Tree outline</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-tree.css">
+  <link rel="stylesheet" href="./tree.css">
+  <script defer src="../../dist/markup-ui-tree.global.js"></script>
+  <script defer src="./tree.js"></script>
+</head>
+<body>
+<main>
+  <h1>Native hierarchy, not a virtual ARIA tree</h1>
+  <p>Details disclose real nested lists. Selection buttons and named checkboxes are separate.
+    Arrow/Home/End/typeahead shortcuts enhance labels; native Tab, checkbox Space, button Enter
+    and links stay native. No-JS still has readable lists, disclosure and native checkboxes;
+    custom selection buttons start disabled.</p>
+  <form id="files-form">
+    <section class="mui-tree" data-tree data-tree-lines id="files" aria-labelledby="files-title">
+      <h2 id="files-title">Project files</h2>
+      <ul data-tree-list role="list">
+        <li data-tree-key="project">
+          <div data-tree-row><button type="button" data-tree-label data-tree-select data-tree-enable disabled>Project</button><label><input type="checkbox" data-tree-check name="files" value="project">Include Project</label></div>
+          <details data-tree-branch open>
+            <summary>Project contents</summary>
+            <ul data-tree-list role="list">
+              <li data-tree-key="readme"><div data-tree-row><button type="button" data-tree-label data-tree-select data-tree-enable disabled>README</button><label><input type="checkbox" data-tree-check name="files" value="readme" checked>Include README</label><a href="#destination">Open README help</a></div></li>
+              <li data-tree-key="notes"><div data-tree-row><button type="button" data-tree-label data-tree-select data-tree-enable disabled>Notes</button><label><input type="checkbox" data-tree-check name="files" value="notes">Include Notes</label></div></li>
+              <li data-tree-key="locked" data-tree-disabled><div data-tree-row><button type="button" data-tree-label data-tree-select disabled>Locked item</button><label><input type="checkbox" data-tree-check name="files" value="locked" disabled>Include Locked</label></div></li>
+            </ul>
+          </details>
+        </li>
+        <li data-tree-key="remote">
+          <div data-tree-row><button type="button" data-tree-label data-tree-select data-tree-enable disabled>Remote examples</button><label><input type="checkbox" data-tree-check name="files" value="remote">Include Remote</label></div>
+          <details data-tree-branch data-tree-lazy>
+            <summary>Load remote examples (local simulation)</summary>
+            <p>JavaScript supplies at most two native rows; no network requests. Unknown children cannot be cascade-checked.</p>
+            <ul data-tree-list role="list"></ul>
+          </details>
+        </li>
+        <li data-tree-key="links" data-tree-group>
+          <div data-tree-row><span data-tree-label>Reference links</span></div>
+          <details data-tree-branch><summary>Reference links</summary><ul data-tree-list role="list">
+            <li data-tree-key="help"><div data-tree-row><a data-tree-label href="#destination">Documentation</a></div></li>
+          </ul></details>
+        </li>
+      </ul>
+    </section>
+    <button>Inspect native FormData</button><button type="reset">Reset native checks</button>
+  </form>
+  <div class="tools" id="tools" hidden>
+    <button id="select" type="button">Select Notes silently</button>
+    <button id="check" type="button">Check Project silently</button>
+    <button id="reveal" type="button">Reveal Notes</button>
+    <button id="rename" type="button">Rename Notes and refresh</button>
+    <button id="race" type="button">Start then collapse lazy branch</button>
+    <button id="retry" type="button">Load/retry remote</button>
+    <label><input id="ignore-abort" type="checkbox">Simulate late result despite abort</label>
+    <label><input id="duplicate" type="checkbox">Return duplicate key</label>
+    <button id="rtl" type="button">Toggle RTL</button>
+    <button id="disconnect" type="button">Disconnect enhancements</button>
+  </div>
+  <output id="state" aria-label="Observed hierarchy state"></output>
+  <p id="events" role="status"></p>
+  <pre id="submission"></pre>
+  <section class="mui-tree" data-tree id="independent" aria-labelledby="independent-title">
+    <h2 id="independent-title">Independent single selection, no cascade</h2>
+    <ul data-tree-list role="list">
+      <li data-tree-key="one"><div data-tree-row><button type="button" data-tree-label data-tree-select data-tree-enable disabled>One</button><label><input type="checkbox" data-tree-check name="independent" value="one">Check One</label></div></li>
+      <li data-tree-key="two"><div data-tree-row><button type="button" data-tree-label data-tree-select data-tree-enable disabled>Two</button></div></li>
+    </ul>
+  </section>
+  <h2 id="destination" tabindex="-1">Authored link destination</h2>
+  <p>Native links keep their href and browser behavior. Tree selection does not submit a hidden value.</p>
+  <template id="lazy-row"><li><div data-tree-row><button type="button" data-tree-label data-tree-select></button><label><input type="checkbox" data-tree-check name="files"><span></span></label></div></li></template>
+</main>
+</body>
+</html>
