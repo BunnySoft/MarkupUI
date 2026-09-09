@@ -1,0 +1,36 @@
+.mui-form {
+  --mui-form-gap: 1rem;
+  --mui-form-label-width: 10rem;
+  --mui-form-label-align: start;
+  display: grid;
+  gap: var(--mui-form-gap);
+  color: inherit;
+}
+.mui-form-item { min-inline-size: 0; margin: 0; display: grid; gap: .375rem; align-content: start; }
+.mui-form-item__label { text-align: var(--mui-form-label-align, start); font-weight: 600; }
+.mui-form-item__content { min-inline-size: 0; }
+.mui-form-item__feedback { margin: 0; white-space: pre-line; overflow-wrap: anywhere; font-size: .875em; }
+.mui-form-item__required { color: #a82020; }
+.mui-form-item[data-form-status="error"] > .mui-form-item__feedback { color: #a82020; }
+.mui-form-item[data-form-status="warning"] > .mui-form-item__feedback { color: #765000; }
+.mui-form-item[data-form-status="pending"] { border-inline-start: .2rem dotted currentColor; padding-inline-start: .5rem; }
+.mui-form[data-size="small"] { --mui-form-gap: .625rem; font-size: .875rem; }
+.mui-form[data-size="large"] { --mui-form-gap: 1.5rem; font-size: 1.125rem; }
+.mui-form[data-inline] { display: flex; flex-wrap: wrap; align-items: start; }
+.mui-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--mui-form-gap, 1rem); }
+.mui-form-item-gi { grid-column: auto / span var(--mui-form-span, 1); }
+.mui-form-item-gi[data-form-span="full"] { grid-column: 1 / -1; }
+@media (min-width: 40rem) {
+  .mui-form[data-label-placement="left"] > .mui-form-item:not(fieldset),
+  .mui-form-item[data-label-placement="left"]:not(fieldset) { grid-template-columns: var(--mui-form-label-width, 10rem) minmax(0, 1fr); }
+  .mui-form[data-label-placement="left"] > .mui-form-item:not(fieldset) > .mui-form-item__feedback,
+  .mui-form-item[data-label-placement="left"]:not(fieldset) > .mui-form-item__feedback { grid-column: 2; }
+}
+@media (max-width: 40rem) { .mui-form-grid { grid-template-columns: minmax(0, 1fr); } .mui-form-item-gi { grid-column: 1 / -1; } }
+@media (prefers-color-scheme: dark) {
+  .mui-form-item__required, .mui-form-item[data-form-status="error"] > .mui-form-item__feedback { color: #ffb4ab; }
+  .mui-form-item[data-form-status="warning"] > .mui-form-item__feedback { color: #ffd580; }
+}
+@media (forced-colors: active) {
+  .mui-form-item__required, .mui-form-item[data-form-status] > .mui-form-item__feedback { color: CanvasText; }
+}

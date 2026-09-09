@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI native Form and FormItem</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-input.css">
+  <link rel="stylesheet" href="./form.css">
+  <script defer src="../../dist/markup-ui-input.global.js"></script>
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
+  <script defer src="./form.js"></script>
+</head>
+<body>
+<main>
+  <h1>Form: native controls, explicit validation</h1>
+  <p>Required fields use native constraints. Optional local checks simulate a reserved name and matching confirmation, without network requests. No JavaScript: the ordinary GET form and reset still work.</p>
+  <form class="mui-form" id="profile" action="form.html" method="get">
+    <div class="mui-form-item" id="name-item">
+      <label class="mui-form-item__label" for="name">Name <span class="mui-form-item__required" aria-hidden="true">*</span> (required)</label>
+      <div class="mui-form-item__content mui-input" data-input id="name-input">
+        <input id="name" name="profile.name" value="Ada" required minlength="2" maxlength="32" data-input-control aria-describedby="name-help name-count">
+        <span id="name-count" data-input-count>3 / 32</span>
+      </div>
+      <p id="name-help">Try “reserved” for a local asynchronous error. Editing any form field cancels outstanding checks.</p>
+      <p class="mui-form-item__feedback" id="name-error" hidden></p>
+    </div>
+    <div class="mui-form-grid">
+      <div class="mui-form-item mui-form-item-gi" id="email-item">
+        <label class="mui-form-item__label" for="email">Email (required)</label>
+        <input id="email" type="email" name="contact[email]" value="ada@example.test" required>
+        <p class="mui-form-item__feedback" id="email-error" hidden></p>
+      </div>
+      <div class="mui-form-item mui-form-item-gi" id="confirm-item">
+        <label class="mui-form-item__label" for="confirm">Confirm email (required)</label>
+        <input id="confirm" type="email" name="contact[confirm]" value="ada@example.test" required>
+        <p class="mui-form-item__feedback" id="confirm-error" hidden></p>
+      </div>
+      <fieldset class="mui-form-item mui-form-item-gi" id="topics-item" data-form-span="full">
+        <legend>Topics — choose at least one for the enhanced check</legend>
+        <div><label><input type="checkbox" name="topics[]" value="html" checked> HTML</label>
+          <label><input type="checkbox" name="topics[]" value="css"> CSS</label></div>
+        <p class="mui-form-item__feedback" id="topics-error" hidden></p>
+      </fieldset>
+    </div>
+    <fieldset disabled>
+      <legend>Disabled native fields</legend>
+      <label>Locked value <input name="locked" required value=""></label>
+    </fieldset>
+    <label>Read-only reference <input name="reference" readonly value="local-only"></label>
+    <div class="actions">
+      <button type="submit" name="intent" value="save">Validate and inspect save</button>
+      <button type="submit" name="intent" value="draft" formnovalidate>Inspect draft (skip checks)</button>
+      <button type="reset">Native reset</button>
+      <button type="button" id="validate" hidden>Validate without submission or focus</button>
+      <button type="button" id="report" hidden>Report native constraints</button>
+    </div>
+  </form>
+  <label>External form-associated note <input id="note" form="profile" name='notes[0].text' value="outside"></label>
+  <div class="actions">
+    <button type="button" id="restore" hidden>Restore owned feedback</button>
+    <button type="button" id="cancel" hidden>Cancel next reset</button>
+    <button type="button" id="rtl">Toggle RTL</button>
+    <button type="button" id="disconnect" hidden>Disconnect helpers</button>
+  </div>
+  <p id="status" role="status">Native constraints remain enabled. No backend requests.</p>
+  <pre id="submission">No submission yet.</pre>
+</main>
+</body>
+</html>

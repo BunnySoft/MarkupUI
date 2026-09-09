@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./form": {
+      "types": "./dist/components/form/index.d.ts",
+      "import": "./dist/markup-ui-form.js"
+    },
+    "./form/style.css": "./dist/markup-ui-form.css",
     "./rate": {
       "types": "./dist/components/rate/index.d.ts",
       "import": "./dist/markup-ui-rate.js"

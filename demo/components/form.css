@@ -1,0 +1,11 @@
+:root { font-family: system-ui, sans-serif; color-scheme: light dark; }
+body { margin: 0; }
+main { max-inline-size: 58rem; margin-inline: auto; padding: 1rem; }
+input:not([type="checkbox"]) { box-sizing: border-box; max-inline-size: 100%; min-inline-size: 0; padding: .5rem; font: inherit; }
+label { overflow-wrap: anywhere; }
+button { font: inherit; padding: .5rem .75rem; }
+fieldset { min-inline-size: 0; border: 1px solid GrayText; padding: .75rem; }
+.actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .75rem; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: .75rem; border: 1px solid GrayText; }
+:focus-visible { outline: 3px solid Highlight; outline-offset: 3px; }
+[hidden] { display: none !important; }
