@@ -5,6 +5,61 @@ Modal owns generic visibility, not a decision footer. It imports only the accept
 `dialog/native.ts` lifetime primitive and its owned attributes, never the Dialog action
 helper. The shared native sources and previous Dialog assets are unchanged.
 
+## Default-style audit — 2026-09-10
+
+The [rendered audit](../style-audit/components/modal.md) compares actual pinned Naive UI
+2.45.3/Vue 3.5.30 **raw, Card and Dialog** Modal presentations, without adding a
+`preset` option or changing native lifetime.
+
+- **Raw authored content:** `.mui-modal` without direct Modal header/title regions or
+  `.mui-dialog` is a transparent, borderless, zero-padding, square-cornered surface.
+  Its native fixed-position box uses `fit-content` to reproduce the reference raw
+  child's shrink-to-content width; an automatic width would stretch between native
+  fixed insets. There is no longer an arbitrary 40rem default.
+- **Authored Card intent:** a direct child with `data-modal-header` or `data-modal-title`
+  opts into the existing Card-like layout conventions: 3px radius, a modal-colored
+  surface, 19px/24px/20px frame padding, 18px/500 title, and 14px/1.6 body text.
+  Width defaults to 100%, still constrained by native viewport bounds. The local
+  `:has()` only recognizes these direct authored regions; a nested dialog's title
+  does not change its parent's skin. It never selects or locks the document.
+- **Authored Dialog intent:** `.mui-modal.mui-dialog` uses the separately loaded
+  Dialog stylesheet, its 446px default width and 16px/28px/20px padding. Modal adds
+  the measured wrapper shadow without overwriting Dialog typography or anatomy.
+  No Dialog decision runtime is imported.
+
+These are CSS conventions on an existing native node, not preset objects, prop
+forwarding, automatic components or generated controls. Card uses the actual preset's
+smaller, theme-dependent shadow; raw/Dialog use the reference Modal shadow. Default
+mask paint is now **black at .4 alpha** in both themes, scoped to Modal only. This
+changes neither opt-in dismissal nor the native meaning of a transparent backdrop.
+
+Light/dark defaults follow `data-mui-theme` boundaries. Foreground/surface roles are
+**#333639 / white** and **white .82 / #2c2c32** for Card/Dialog; raw remains transparent.
+They do not reuse the incompatible legacy neutral palette. With core CSS, load the
+matching theme preset for shared semantic roles such as the focus color.
+Existing `--mui-modal-width`, padding, radius, border and focus variables remain
+author-owned; foreground/background retain `--mui-dialog-color` and
+`--mui-dialog-background` from the shared native contract. Modal width takes precedence
+over Dialog width in composed presentation. The border variable sets its color;
+the new unbordered default requires an authored border width to show a border.
+
+**Native safety differences are retained.** Ordinary authored buttons keep their
+2.5rem minimum height and inherited font, unlike upstream raw/browser buttons or its
+small SVG Card close control. Thus Card with an authored close is taller than the
+reference; without that control, the 600px-width fixture matches **600×152.58px**.
+Without the footer, both measure **600×110.19px**. Native buttons keep browser hover/
+disabled behavior and remain keyboard accessible; vendor icons and NButton prop bags
+are not fabricated. Segmented footer spacing remains the existing native convention.
+
+All **108** stylesheet-order × theme × presentation × opening-mode browser cases passed,
+including fixed modal positioning on an already-scrolled page and further scrolling,
+close activation, and author overrides. Explicit reduced-motion resets, forced-color
+borders, print/backdrop resets, native forms, cancellation and focus remain intact.
+**49 targeted Modal tests pass.** Private production-equivalent outputs are
+**3,533 ESM / 3,661 classic / 1,188 composed CSS gzip bytes**, under unchanged
+**4,000 / 4,000 / 1,250** ceilings. No shared CSS/runtime, Dialog CSS, runtime dependency
+or builder changed. The historical migration acceptance below predates this audit.
+
 ## Loading and authored anatomy
 
 | Entry | Contract |
@@ -125,7 +180,9 @@ generated close/positive/negative buttons, type mutations, duplicate submit/requ
 calls or automatic business actions. Ordinary form values survive close and reopen.
 
 - **Generic content:** author header/content/footer/section/article/figure/form nodes.
-  `data-modal-header/title/content/footer` supply small external layout conventions.
+  Unmarked raw content stays unskinned apart from Modal text/shadow and native bounds.
+  `data-modal-header/title/content/footer` supply external layout conventions;
+  a direct header/title region selects the Card-like frame described above.
 - **Card intent:** author the required native heading/body/cover/extra/footer/actions.
   `data-modal-segmented` adds a footer rule; CSS tokens own width, border and padding.
   This is not automatic CardProps forwarding, a tag switch, embedded/hover state or an
@@ -162,7 +219,8 @@ A trusted template contains exactly one closed, non-hidden native dialog. Script
 iframe, object and embed elements are rejected. This is not a sanitizer for untrusted
 markup/URLs/event attributes. Text options title/content require one nonempty text-only
 data-modal-title/content region; no rich authored controls are replaced or HTML evaluated.
-There is no render function or implicit preset. mode defaults to modal; modeless must be
+There is no render function or runtime preset. CSS reacts only to authored regions and
+classes; it never constructs a Card or Dialog component. mode defaults to modal; modeless must be
 explicit. Failed modal creation releases the clone/owner before throwing.
 
 Template and authored nodes are never moved; clones have their own lifetime. Listeners

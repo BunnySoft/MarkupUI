@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 48/96 scopes (50%).** The other **48** are not yet accepted in this
+**Reviewed and integrated: 49/96 scopes.** The other **47** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -99,7 +99,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Icon](../naive-ui/components/icon.md) | 🟢 Fixed / 🟡 Remaining | [Inline metrics, theme depth and native SVG paint limits](components/icon.md) |
 | [Image](../naive-ui/components/image.md) | 🟢 Fixed / 🟡 Remaining | [Preview fitting, chrome and native toolbar limits](components/image.md) |
 | [Infinite Scroll](../naive-ui/components/infinite-scroll.md) | ⚪ Pending | — |
-| [Input Number](../naive-ui/components/input-number.md) | ⚪ Pending | — |
+| [Input Number](../naive-ui/components/input-number.md) | 🟠 Reviewing | — |
 | [Input OTP](../naive-ui/components/input-otp.md) | ⚪ Pending | — |
 | [Input](../naive-ui/components/input.md) | 🟢 Fixed / 🟡 Remaining | [Native field geometry, theme states and textarea/icon limits](components/input.md) |
 | [Layout](../naive-ui/components/layout.md) | 🟢 Fixed / 🟡 Remaining | [Region palettes, author tokens and native scrolling limits](components/layout.md) |
@@ -112,7 +112,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Mention](../naive-ui/components/mention.md) | ⚪ Pending | — |
 | [Menu](../naive-ui/components/menu.md) | 🟠 Reviewing | — |
 | [Message](../naive-ui/components/message.md) | ⚪ Pending | — |
-| [Modal](../naive-ui/components/modal.md) | 🟠 Reviewing | — |
+| [Modal](../naive-ui/components/modal.md) | 🟢 Fixed / 🟡 Remaining | [Raw/Card/Dialog surfaces, protected modality and retained native controls](components/modal.md) |
 | [Notification](../naive-ui/components/notification.md) | ⚪ Pending | — |
 | [Number Animation](../naive-ui/components/number-animation.md) | ⚪ Pending | — |
 | [Page Header](../naive-ui/components/page-header.md) | 🟢 Fixed / 🟡 Remaining | [Header metrics, back control and authored/narrow-layout limits](components/page-header.md) |

@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { createModal, createModalOwner } from "../src/components/modal/index.js"
 import { createNativeDialog } from "../src/components/dialog/native.js"
@@ -11,6 +12,9 @@ const names = ["showModal", "show", "close", "requestClose"] as const
 const descriptors = new Map<string, PropertyDescriptor | undefined>()
 const flush = async () => { await Promise.resolve(); await Promise.resolve(); await Promise.resolve() }
 const tick = async () => { await new Promise(resolve => setTimeout(resolve, 5)) }
+const modalCSS = () => readFileSync(resolve("src", "components", "modal", "modal.css"), "utf8")
+  .replace(/\s+/g, " ").replace(/\s*([{};,])\s*/g, "$1").replace(/:\s+/g, ":")
+  .replace(/\[([\w-]+)="([\w-]+)"\]/g, "[$1=$2]").replace(/;}/g, "}").trim()
 function fixture() {
   const root = document.createElement("div")
   root.innerHTML = `<button type="button" data-opener>Open</button><dialog class="mui-native-dialog mui-modal" aria-label="Project information"><h2 data-modal-title>Project information</h2><p data-modal-content>Authored content</p><form method="dialog"><label>Reference <input required name="reference"></label><button value="saved">Save</button><button value="cancelled" formnovalidate>Cancel</button></form></dialog>`
@@ -406,7 +410,54 @@ describe("Explicit native template ownership", () => {
     expect(css).toContain("forced-colors")
     expect(css).toContain("prefers-reduced-motion")
     expect(css).toContain("@media print")
-    expect(css).not.toContain(":has(")
+    expect(css).not.toMatch(/\b(?:html|body)\s*:has\(/)
     expect(css).not.toContain("@keyframes")
+  })
+  it("separates raw content, authored Card intent and existing Dialog presentation", () => {
+    const css = modalCSS()
+    expect(css).toContain("dialog.mui-native-dialog.mui-modal:where(:not(.mui-dialog))")
+    expect(css).toContain("inline-size:var(--mui-modal-width,fit-content)")
+    expect(css).toContain("background:var(--mui-dialog-background,transparent)")
+    expect(css).toContain(":where(:not(.mui-dialog):has(>[data-modal-header],>[data-modal-title]))")
+    expect(css).toContain("padding:var(--mui-modal-padding,19px 24px 20px)")
+    expect(css).toContain("font-size:18px;font-weight:500")
+    expect(css).toContain("[data-modal-content]:last-child{margin-block-end:0}")
+    expect(css).toContain("dialog.mui-modal.mui-dialog{inline-size:var(--mui-modal-width,var(--mui-dialog-width,446px))")
+    expect(css).toContain("padding:var(--mui-modal-padding,16px 28px 20px)")
+  })
+  it("uses measured neutral surfaces and distinct Card and wrapper shadows", () => {
+    const css = modalCSS()
+    expect(css).toContain("light-dark(#333639,#ffffffd1)")
+    expect(css).toContain("light-dark(#fff,#2c2c32)")
+    expect(css).toContain("0 6px 16px -9px #00000014,0 9px 28px #0000000d,0 12px 48px 16px #00000008")
+    expect(css).toContain("0 1px 2px -2px light-dark(#00000014,#0000003d)")
+    expect(css).not.toMatch(/--mui-(?:text-primary|text-secondary|bg-surface|border),/)
+    expect(css).toContain("var(--mui-modal-focus,var(--mui-color-primary,light-dark(#18a058,#63e2b7)))")
+  })
+  it("keeps fixed native modality and sufficient specificity against repeated base styles", () => {
+    const css = modalCSS()
+    expect(css).toContain("dialog.mui-modal:modal{position:fixed;inset:0;margin:auto}")
+    expect(css).not.toContain("position:relative")
+    expect(css).toContain("dialog.mui-native-dialog.mui-modal::backdrop{background:rgb(0 0 0 / 40%)}")
+    expect(css).toContain("dialog.mui-modal:modal[data-modal-backdrop=transparent]::backdrop{background:transparent}")
+    expect(css).toContain("dialog.mui-modal :focus-visible{outline:2px solid var(--mui-modal-focus")
+    for (const name of ["width", "padding", "radius", "border", "focus"]) {
+      expect(css).not.toMatch(new RegExp(`--mui-modal-${name}:`))
+    }
+  })
+  it("retains native control, reduced-motion, forced-color and print safety policies", () => {
+    const css = modalCSS()
+    expect(css).toContain("button{min-block-size:2.5rem;white-space:normal}")
+    expect(css).toContain("box-sizing:border-box;max-inline-size:100%;font:inherit")
+    expect(css).toContain("animation:none;transition:none;scroll-behavior:auto")
+    expect(css).toContain("border:1px solid CanvasText;box-shadow:none")
+    expect(css).toContain("[data-modal-footer]{border-color:CanvasText}")
+    expect(css).toContain("@media print{dialog.mui-native-dialog.mui-modal{box-shadow:none}dialog.mui-native-dialog.mui-modal:modal::backdrop{background:transparent}}")
+    expect(css).toContain("@media print{dialog.mui-modal:modal{position:static;inset:auto;margin:0;max-block-size:none;max-inline-size:100%;box-shadow:none}}")
+  })
+  it("keeps the exact production composed CSS within the unchanged gzip ceiling", () => {
+    const native = readFileSync(resolve("src", "components", "dialog", "native.css"), "utf8")
+    const css = readFileSync(resolve("src", "components", "modal", "modal.css"), "utf8")
+    expect(gzipSync(`${native}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(1250)
   })
 })
