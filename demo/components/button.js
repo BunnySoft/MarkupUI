@@ -13,7 +13,7 @@ editor.addEventListener("reset", () => {
 
 const action = document.querySelector("#count-action")
 let clicks = 0
-action.control.addEventListener("click", () => {
+action.querySelector(":scope > button").addEventListener("click", () => {
   document.querySelector("#click-status").textContent = `${++clicks} activations.`
 })
 document.querySelector("#toggle-loading").addEventListener("click", () => {

@@ -138,6 +138,20 @@ does not wrap authored native-control contents, and is cleaned from replaced con
 
 ## Validation, budgets and shared-token findings
 
+- **Demo startup follow-up:** the demo previously called
+  `action.control.addEventListener(...)` during script initialization. If enhancement had
+  not registered/upgraded yet, `control` was undefined and the remaining demo listeners
+  were never installed. The script now binds the already-authored direct native button,
+  whose identity is preserved during upgrade; it does not merely suppress the exception.
+  A fresh normal context did not reproduce the timing failure, but delaying registration
+  reproduced the reported TypeError and a nonworking counter before the fix. Fresh isolated
+  Chromium contexts now pass normal loading, delayed registration and an unavailable
+  enhancement asset: zero uncaught page errors, one activation, and a working theme selector.
+  The unavailable-asset case retains native demo behavior, not enhanced Button functionality.
+  `pnpm test tests\button-demo.test.ts tests\button.test.ts --reporter=dot` passed **33 tests**,
+  including binding before definition, queued pre-upgrade loading state and listener/control
+  identity after upgrade. This follow-up required **no build or dist changes** and touched
+  no root demo shell files.
 - `pnpm build` passed all existing ceilings. Targeted:
   `pnpm test tests\button.test.ts tests\native.test.ts tests\global-style.test.ts tests\legacy-styles.test.ts tests\config-provider.test.ts tests\avatar.test.ts --reporter=dot`
   — **118 passed in 6 files**: 32 Button, 27 native, 13 Global Style, 9 generator/legacy,
