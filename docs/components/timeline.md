@@ -4,6 +4,19 @@
 Timeline is authored list HTML and external CSS. Chronology, headings, dates, statuses
 and actions stay in the document; no component runtime or chronology engine exists.
 
+## Default-style audit — 2026-09-10
+
+The [isolated rendered audit](../style-audit/components/timeline.md) corrects title/
+content/metadata metrics, node and rail alignment, event spacing, intrinsic horizontal
+sizing and light/dark colors. Dark status markers use Naive's **supplementary** colors.
+**16 focused tests pass**; 60 item comparisons and 60 line/terminal slots matched
+the checked reference properties in light/dark LTR. Logical RTL and native dashed
+borders remain explicit adaptations.
+
+CSS is **6,891 raw / 1,471 gzip bytes**, below the unchanged **1,500-byte ceiling**.
+The coordinator's isolated release build and all **16 Timeline tests** pass;
+no shared source or generated adapter changed.
+
 ## Loading and source boundary
 
 | Asset | Purpose |
@@ -85,9 +98,9 @@ No parsing, date formatting, inference, automatic announcements or live sorting 
 | Upstream surface | Native target and default |
 | --- | --- |
 | Timeline `horizontal` | Presence `data-horizontal` creates a single non-wrapping lane; default is vertical. Use the explicit scrolling composition below when needed. |
-| Timeline `icon-size` | `--mui-timeline-icon-size` on the real list, default `.875rem`; supply a positive CSS length, not a unitless number/attribute. |
+| Timeline `icon-size` | `--mui-timeline-icon-size` on the real list, default `14px` in both sizes; supply a positive CSS length, not a unitless number/attribute. |
 | Timeline `item-placement` | Default/`"left"`/unknown values put the rail at logical start. `data-item-placement="right"` puts it at logical end and end-aligns the body. Ignored in horizontal mode. |
-| Timeline `size` | Default/`"medium"`/unknown values use medium; `data-size="large"` increases title size and event spacing. No small preset. |
+| Timeline `size` | Default/`"medium"`/unknown values use 14px titles; `data-size="large"` uses 16px titles with the source -2px top margin. Event spacing and icon size do not increase. No small preset. |
 | TimelineItem `type` | `data-type="default"` / `"success"` / `"info"` / `"warning"` / `"error"`; missing/unknown values use neutral default marker color. |
 | TimelineItem `color` | `--mui-timeline-item-color` on the actual item overrides its marker border/icon color, not status text or chronology. |
 | TimelineItem `line-type` | Default/`"default"`/unknown values use a solid connector; `data-line-type="dashed"` uses a native dashed border. |
@@ -131,6 +144,25 @@ is not forcibly replaced with `display:none`; that browser reveal path is not se
 certified. No custom-element lifecycle, duplicate event data, SVG generator, Houdini
 registration, animation or gradient-transition engine is shipped.
 
+The list uses native column flex layout while its real `li` nodes retain list-item
+semantics. Content defaults to 14px/1.25, title weight 500 and bottom margin 6px;
+metadata is 12px with a 6px top margin. Vertical spacing comes from the authored
+body's 20px end margin, not an invented row-height floor or extra item padding.
+The last-visible body loses that end margin through the same guarded sibling rule.
+
+An explicit empty footer can retain source content-only spacing without inventing a date:
+
+```html
+<div class="mui-timeline-body">
+  <div>Oops</div>
+  <div class="mui-timeline-footer"></div>
+</div>
+```
+
+No footer is generated when omitted. Rich paragraphs/headings/controls retain
+native/application margins. Marker position follows the declared title/icon sizes;
+large icons may extend above an item, so clipping ancestors remain application-owned.
+
 ## Horizontal scrolling, forms and print
 
 ```html
@@ -143,13 +175,18 @@ registration, animation or gradient-transition engine is shipped.
 </div>
 ```
 
-The author chooses the region's name, focusability and instruction. Items use a default
-16rem basis, and the wrapper has native horizontal scrolling; it does not conceal controls
+The author chooses the region's name, focusability and instruction. Items use an intrinsic
+`auto` basis with a 40px logical end gap, matching ordinary source sizing. The wrapper
+provides native horizontal scrolling when needed; it does not conceal controls
 with `overflow:hidden` or invent roving focus. Native Tab focus scrolls offscreen actions
 into view. For RTL lanes, put `dir="rtl"` on the scrolling region so direction and scroll
 geometry agree. The horizontal lane does not automatically wrap into ambiguous connected
 rows or trigger a JavaScript breakpoint. Use the vertical composition when horizontal
 navigation is unnecessary.
+
+Set `--mui-timeline-item-width:16rem` or another length when fixed-width items are
+desired. This remains a native flex-basis choice, not an upstream width prop or
+JavaScript item-sizing algorithm.
 
 Links, typed buttons and form controls retain native names, keyboard behavior, validation,
 disabled/fieldset semantics, submission and reset. The list/items are not action roots.
@@ -166,10 +203,10 @@ status words remain the primary information. Long body content wraps without tru
 
 | Token | Default / scope |
 | --- | --- |
-| `--mui-timeline-icon-size` | `.875rem` on each list; inherited by its items and reset at nested lists. |
-| `--mui-timeline-item-gap` | Medium `1.5rem`, large `2rem`; reset on each list. |
-| `--mui-timeline-title-size` | Medium `1rem`, large `1.125rem`; adapted typography, not pixel parity. |
-| `--mui-timeline-item-width` | Horizontal item basis `16rem`; set an appropriate CSS length in application styles. |
+| `--mui-timeline-icon-size` | `14px` in medium/large; inherited by items and reset at nested lists. |
+| `--mui-timeline-item-gap` | Vertical `20px`, horizontal `40px`, independent of size; reset on each list. |
+| `--mui-timeline-title-size` | Medium `14px`, large `16px`. |
+| `--mui-timeline-item-width` | Horizontal item basis `auto`; set a length for fixed-width items. |
 | `--mui-timeline-item-color` | Per-item marker override; resets on each item rather than leaking to nested items. |
 | `--mui-timeline-line-color` | Neutral connector color, independent of marker type. |
 | `--mui-timeline-text-color`, `--mui-timeline-time-color` | Body and secondary metadata text colors. |
@@ -178,7 +215,34 @@ Use external CSS classes or stylesheets on the actual nodes. Private `--_mui-tim
 values are not API. Native CSS validation/cascade applies; there is no numeric length
 parser, theme-object bridge or automatic media-query configuration.
 
-## Migration steps and acceptance
+### Light/dark role colors
+
+Use `data-mui-theme="light|dark"` on an ancestor or the list. No marker means light.
+Private dark defaults reset at nested light boundaries; public per-item/color/size
+overrides remain authoritative.
+
+| Role | Light | Dark |
+| --- | --- | --- |
+| Title | `#1f2225` | white `.9` |
+| Body | `#333639` | white `.82` |
+| Metadata / neutral marker | `#767c82` | white `.52` |
+| Rail | `#dbdbdf` | white `.2` |
+| Information | `#2080f0` | `#3889c5` |
+| Success | `#18a058` | `#2a947d` |
+| Warning | `#f0a020` | `#f08a00` |
+| Error | `#d03050` | `#d03a52` |
+
+Dark statuses use **supplementary**, not normal dark semantic colors. Legacy
+primary/secondary text and general border tokens are not equivalent roles.
+Defaults stay local; applications may explicitly map a correctly chosen shared
+color through `--mui-timeline-item-color` on the actual item.
+
+Shared `--mui-font-size` supplies body sizing, falling back to 14px; title presets
+and 12px metadata remain independent. Family, backdrop and `color-scheme` stay
+application-owned. `--mui-timeline-text-color` overrides title/body; ordinary title
+CSS can supply a separately authored title color.
+
+## Original migration steps and acceptance (historical)
 
 1. [x] Define authored title/time/body/icon/footer regions without generating chronology.
 2. [x] Keep vertical, end-side and horizontal layouts in meaningful DOM/Tab order.
@@ -208,9 +272,10 @@ On 2026-09-08, `pnpm --dir D:\repos\MarkupUI check` passed build/budget gates an
 - A JavaScript-disabled Chromium context retained six visible top-level events, native
   reset and GET submission to `?note=NoJS`.
 
-Library CSS is **6,259 bytes / 1,320 gzip bytes**, under its new **1,500-byte** ceiling.
+At original delivery library CSS was **6,259 bytes / 1,320 gzip bytes**, under its **1,500-byte** ceiling.
 Component JS is **0 bytes**. Demo-only JS is **483 / 277 gzip bytes** and CSS is
 **1,022 / 486 gzip bytes**. Core remains **62,558 / 14,611 gzip bytes** under **15,000**;
 widgets remains **10,858 / 2,779 gzip bytes** under **4,000**. Existing outputs/budgets
-and zero runtime dependencies are unchanged. Evidence is retained-scope Chromium work,
+and zero runtime dependencies were unchanged. These are historical figures, not
+evidence of a newly run integrated build. Evidence is retained-scope Chromium work,
 not all-browser, browser-UI zoom, screen-reader speech, animation or framework parity.

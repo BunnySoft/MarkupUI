@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 36/96 scopes.** The other **60** are not yet accepted in this
+**Reviewed and integrated: 38/96 scopes.** The other **58** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -77,7 +77,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Data Table](../naive-ui/components/data-table.md) | ⚪ Pending | — |
 | [Date Picker](../naive-ui/components/date-picker.md) | ⚪ Pending | — |
 | [Descriptions](../naive-ui/components/descriptions.md) | 🟢 Fixed / 🟡 Remaining | [Density, text roles and retained grid/table differences](components/descriptions.md) |
-| [Dialog](../naive-ui/components/dialog.md) | ⚪ Pending | — |
+| [Dialog](../naive-ui/components/dialog.md) | 🟠 Reviewing | — |
 | [Discrete API](../naive-ui/components/discrete.md) | ⚪ Pending | — |
 | [Divider](../naive-ui/components/divider.md) | 🟢 Fixed / 🟡 Remaining | [Rule geometry, colors and native orientation limits](components/divider.md) |
 | [Drawer](../naive-ui/components/drawer.md) | ⚪ Pending | — |
@@ -95,13 +95,13 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Gradient Text](../naive-ui/components/gradient-text.md) | 🟢 Fixed / 🟡 Remaining | [Paint metrics, theme stops and safe compositing limits](components/gradient-text.md) |
 | [Grid](../naive-ui/components/grid.md) | 🟢 Matched / 🟡 Remaining | [Retained tracks match; responsive/offset algorithm limits](components/grid.md) |
 | [Heatmap](../naive-ui/components/heatmap.md) | ⚪ Pending | — |
-| [Highlight](../naive-ui/components/highlight.md) | ⚪ Pending | — |
+| [Highlight](../naive-ui/components/highlight.md) | 🟢 Fixed | [Native mark defaults, print contrast and retained helper scope](components/highlight.md) |
 | [Icon](../naive-ui/components/icon.md) | 🟢 Fixed / 🟡 Remaining | [Inline metrics, theme depth and native SVG paint limits](components/icon.md) |
 | [Image](../naive-ui/components/image.md) | 🟢 Fixed / 🟡 Remaining | [Preview fitting, chrome and native toolbar limits](components/image.md) |
 | [Infinite Scroll](../naive-ui/components/infinite-scroll.md) | ⚪ Pending | — |
 | [Input Number](../naive-ui/components/input-number.md) | ⚪ Pending | — |
 | [Input OTP](../naive-ui/components/input-otp.md) | ⚪ Pending | — |
-| [Input](../naive-ui/components/input.md) | ⚪ Pending | — |
+| [Input](../naive-ui/components/input.md) | 🟠 Reviewing | — |
 | [Layout](../naive-ui/components/layout.md) | 🟢 Fixed / 🟡 Remaining | [Region palettes, author tokens and native scrolling limits](components/layout.md) |
 | [Legacy Grid](../naive-ui/components/legacy-grid.md) | ⚪ Pending | — |
 | [Legacy Transfer](../naive-ui/components/legacy-transfer.md) | ⚪ Pending | — |
@@ -110,7 +110,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Log](../naive-ui/components/log.md) | ⚪ Pending | — |
 | [Marquee](../naive-ui/components/marquee.md) | ⚪ Pending | — |
 | [Mention](../naive-ui/components/mention.md) | ⚪ Pending | — |
-| [Menu](../naive-ui/components/menu.md) | ⚪ Pending | — |
+| [Menu](../naive-ui/components/menu.md) | 🟠 Reviewing | — |
 | [Message](../naive-ui/components/message.md) | ⚪ Pending | — |
 | [Modal](../naive-ui/components/modal.md) | ⚪ Pending | — |
 | [Notification](../naive-ui/components/notification.md) | ⚪ Pending | — |
@@ -141,7 +141,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Thing](../naive-ui/components/thing.md) | 🟢 Fixed / 🟡 Remaining | [Typography, indentation and authored composition limits](components/thing.md) |
 | [Time Picker](../naive-ui/components/time-picker.md) | ⚪ Pending | — |
 | [Time](../naive-ui/components/time.md) | ⚪ Pending | — |
-| [Timeline](../naive-ui/components/timeline.md) | 🟠 Reviewing | — |
+| [Timeline](../naive-ui/components/timeline.md) | 🟢 Fixed / 🟡 Remaining | [Node/rail alignment, supplementary colors and native RTL/dash limits](components/timeline.md) |
 | [Tooltip](../naive-ui/components/tooltip.md) | 🟢 Fixed / 🟡 Remaining | [Shared dark surface, typography and native tooltip limits](components/tooltip.md) |
 | [Transfer](../naive-ui/components/transfer.md) | ⚪ Pending | — |
 | [Tree Select](../naive-ui/components/tree-select.md) | ⚪ Pending | — |
