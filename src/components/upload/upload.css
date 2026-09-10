@@ -1,27 +1,36 @@
-.mui-upload { min-inline-size: 0; }
-.mui-upload [hidden] { display: none !important; }
-.mui-upload input[type="file"] { max-inline-size: 100%; font: inherit; }
-.mui-upload input[type="file"]::file-selector-button,
-.mui-upload button { min-block-size: 2.75rem; font: inherit; }
-.mui-upload [data-upload-actions],
-.mui-upload [data-upload-row-actions] { display: flex; flex-wrap: wrap; gap: .5rem; }
-.mui-upload [data-upload-list] { list-style: none; margin-block: 1rem; padding: 0; }
-.mui-upload [data-upload-list] > li {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: .5rem 1rem;
-  padding: 1rem;
-  border: 1px solid var(--mui-upload-border, #aab9ca);
-  margin-block: .5rem;
+.mui-upload{min-inline-size:0;font-size:var(--mui-upload-font-size, 14px);line-height:1.6;color:var(--mui-upload-color, var(--_mui-upload-text, #333639))}
+:where([data-mui-theme=light]){--_mui-upload-text: initial;--_mui-upload-border: initial;--_mui-upload-drop: initial;--_mui-upload-hover: initial;--_mui-upload-error: initial;--_mui-upload-error-hover: initial;--_mui-upload-rail: initial}
+:where([data-mui-theme=dark]){--_mui-upload-text: rgba(255,255,255,.82);--_mui-upload-border: rgba(255,255,255,.24);--_mui-upload-drop: rgba(255,255,255,.06);--_mui-upload-hover: rgba(255,255,255,.09);--_mui-upload-error: #e88080;--_mui-upload-error-hover: rgba(232,128,128,.09);--_mui-upload-rail: rgba(255,255,255,.12)}
+.mui-upload [hidden]{display:none!important}
+.mui-upload input[type=file]{max-inline-size:100%;font:inherit;color:inherit}
+.mui-upload input[type=file]::file-selector-button,.mui-upload button{min-block-size:var(--mui-upload-button-size, 34px);padding:0 14px;font:inherit;color:inherit;background:transparent;border:1px solid var(--mui-upload-border, var(--_mui-upload-border, #e0e0e6));border-radius:var(--mui-upload-radius, 3px)}
+.mui-upload button:enabled:not([aria-disabled=true]):hover,.mui-upload input[type=file]:enabled::file-selector-button:hover{color:var(--mui-upload-action-color, var(--mui-color-primary, #18a058));border-color:currentColor}
+.mui-upload [data-upload-actions],.mui-upload [data-upload-row-actions]{display:flex;flex-wrap:wrap;gap:.5rem}
+.mui-upload [data-upload-list]{list-style:none;margin-block:8px;padding:0}
+.mui-upload [data-upload-list]>li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 8px;padding:6px 12px 6px 6px;border-radius:var(--mui-upload-radius, 3px)}
+.mui-upload [data-upload-list]>li:hover{background:var(--mui-upload-hover, var(--_mui-upload-hover, #f3f3f5))}
+.mui-upload li[data-upload-state=error]:hover{background:var(--mui-upload-hover, var(--_mui-upload-error-hover, rgba(208,48,80,.06)))}
+.mui-upload [data-upload-name],.mui-upload [data-upload-status]{overflow-wrap:anywhere}
+.mui-upload [data-upload-row-actions],.mui-upload [data-upload-progress]{grid-column:1 / -1}
+.mui-upload [data-upload-progress]{inline-size:100%;accent-color:var(--mui-upload-progress, var(--mui-color-info, #2080f0))}
+.mui-upload progress[value]{appearance:none;block-size:2px;border:0;border-radius:1px;overflow:hidden;background:var(--mui-upload-rail, var(--_mui-upload-rail, #ebebeb))}
+.mui-upload progress::-webkit-progress-bar{background:transparent}
+.mui-upload progress::-webkit-progress-value{background:var(--mui-upload-progress, var(--mui-color-info, #2080f0))}
+.mui-upload progress::-moz-progress-bar{background:var(--mui-upload-progress, var(--mui-color-info, #2080f0))}
+.mui-upload [data-upload-drop]{box-sizing:border-box;padding:var(--mui-upload-drop-padding, 24px);text-align:center;background:var(--mui-upload-drop-background, var(--_mui-upload-drop, #fafafc));border:1px dashed var(--mui-upload-border, var(--_mui-upload-border, #e0e0e6));border-radius:var(--mui-upload-radius, 3px)}
+.mui-upload:not(:has(input:disabled)) [data-upload-drop]:is(:hover,[data-upload-dragover]){border-color:var(--mui-upload-action-color, var(--mui-color-primary, #18a058))}
+.mui-upload [data-upload-dragover],.mui-upload :focus-visible{outline:3px solid var(--mui-upload-focus, #175cd3);outline-offset:2px}
+.mui-upload :is([aria-disabled=true],button:disabled,input:disabled),.mui-upload:has(input:disabled) [data-upload-drop]{opacity:.5}
+.mui-upload [data-upload-state=error] [data-upload-name]{color:var(--mui-upload-error, var(--_mui-upload-error, #d03050))}
+@media(max-width:40rem){.mui-upload [data-upload-list]>li{grid-template-columns:minmax(0,1fr)}
 }
-.mui-upload [data-upload-name] { overflow-wrap: anywhere; }
-.mui-upload [data-upload-progress] { inline-size: 100%; max-inline-size: 24rem; }
-.mui-upload [data-upload-drop] { padding: 1rem; border: 2px dashed var(--mui-upload-border, #aab9ca); }
-.mui-upload [data-upload-dragover] { outline: 3px solid var(--mui-upload-focus, #175cd3); }
-.mui-upload :focus-visible { outline: 3px solid var(--mui-upload-focus, #175cd3); outline-offset: 2px; }
-.mui-upload [aria-disabled="true"] { opacity: .55; }
-.mui-upload [data-upload-state="error"] { border-inline-start: .3rem solid var(--mui-upload-error, #b42318); }
-@media (max-width: 40rem) { .mui-upload [data-upload-list] > li { grid-template-columns: minmax(0, 1fr); } }
-@media print {
-  .mui-upload [data-upload-actions], .mui-upload [data-upload-row-actions], .mui-upload [data-upload-drop] { display: none; }
+@media(forced-colors:active){.mui-upload,.mui-upload [data-upload-name]{color:CanvasText!important}
+.mui-upload button,.mui-upload input::file-selector-button{color:ButtonText!important;border-color:ButtonText!important}
+.mui-upload [data-upload-drop]{border-color:CanvasText!important}
+.mui-upload :is([aria-disabled=true],button:disabled,input:disabled),.mui-upload:has(input:disabled) [data-upload-drop],.mui-upload input:is(:disabled,[aria-disabled=true])::file-selector-button{opacity:1;color:GrayText!important;border-color:GrayText!important}
+.mui-upload :focus-visible{outline-color:Highlight}
+.mui-upload progress{accent-color:auto;appearance:auto!important;block-size:1em!important}
+}
+@media print{.mui-upload [data-upload-actions],.mui-upload [data-upload-row-actions],.mui-upload [data-upload-drop]{display:none}
+.mui-upload,.mui-upload [data-upload-name],.mui-upload [data-upload-list]>li{color:black!important;background:white!important}
 }

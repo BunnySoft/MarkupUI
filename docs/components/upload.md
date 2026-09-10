@@ -281,7 +281,7 @@ webkit entry recursion, directory-tree renderer or universal directory-drop prom
 Directory drop entries are explicitly rejected. Unsupported directory hints retain the
 ordinary native chooser rather than importing a polyfill.
 
-External CSS owns wrapping, rows, action targets, error borders, progress dimensions,
+External CSS owns wrapping, rows, action targets, error filename color, progress dimensions,
 focus, drop presentation, RTL/zoom/narrow/media behavior. There are no JS style strings,
 drag/animation packages or geometry calculations. Native forms/dialogs remain in their
 authored hosts; no portal/provider/focus trap is introduced. Native FileList support and
@@ -289,7 +289,54 @@ CSS loading are required for enhancement; no-JS keeps chooser/form behavior with
 enhancement-only controls. Print hides enhancement actions/drop region, not the file
 status text. No all-browser/AT/OS directory/transport/server guarantees are claimed.
 
-## Acceptance — 2026-09-10
+## Default presentation and author styling
+
+The [rendered Upload style audit](../style-audit/components/upload.md) compares the
+pinned Naive UI default with this retained native workflow. Defaults use 14px type,
+1.6 line height, 34px minimum button height, 3px corners, a centered 24px-padded
+one-pixel dashed drop region, borderless rows and local light/dark filename, hover,
+drop and error colors. The filename becomes red on error; the explicit failure text
+and Retry action remain. Finished files do not become links or green preview names.
+
+Determinate native progress spans the row with a 2px rail and themed info fill.
+Unknown totals keep native indeterminate appearance and platform sizing/motion.
+High contrast restores native progress appearance and uses unfaded GrayText text/
+borders for disabled or aria-disabled actions, inputs, picker buttons and drop regions;
+print uses black row/status text
+and hides actions/drop. There is no added animation; source hover/row/progress
+transitions are not reproduced.
+
+| Public CSS token | Default / purpose |
+| --- | --- |
+| `--mui-upload-font-size`, `--mui-upload-color` | 14px; light/dark text |
+| `--mui-upload-button-size`, `--mui-upload-radius` | 34px minimum; 3px corners |
+| `--mui-upload-border`, `--mui-upload-action-color` | Theme border; primary enabled action/drop hover |
+| `--mui-upload-drop-padding`, `--mui-upload-drop-background` | 24px; light/dark action surface |
+| `--mui-upload-hover`, `--mui-upload-error` | Row hover surface; error filename color |
+| `--mui-upload-progress`, `--mui-upload-rail` | Info fill; neutral progress rail |
+| `--mui-upload-focus` | Visible keyboard/drag outline |
+
+Local theme defaults use private tokens so public author tokens remain effective,
+including within nested light/dark scopes. An authored error color does not implicitly
+recalculate the hover surface; set `--mui-upload-hover` when changing that surface.
+Native disabled inputs/actions are dimmed, but status text stays readable. The
+deliberately focus-retained `aria-disabled` action cannot gain enabled hover styling.
+
+The real chooser and its platform filename UI remain visible. There is no synthetic
+trigger, attachment/trash/preview artwork, thumbnail/card, or hidden hover-only action
+strip. All four row buttons, size and status remain, so row geometry is intentionally
+larger than Naive UI's compact text list. The noninteractive drop text does not become
+a picker button. Native control chrome, indeterminate motion and OS dialogs are not
+claimed as pixel-identical to the source.
+
+Style-pass source acceptance: **66 targeted tests (58 workflow + 8 style)**; isolated
+level-nine gzip **7,727 ESM / 7,855 classic / 1,219 CSS**, within unchanged
+**9,000 / 9,000 / 1,250** ceilings. Real Chromium evidence covers synthetic FileList/
+FormData, focus, transport settlement, reset, disabled, RTL/narrow, media, author
+overrides and no-JS fallback. Controller code is unchanged. Integrated build and
+publication remain the coordinating parent's responsibility.
+
+## Historical native-workflow acceptance — 2026-09-10
 
 1. Preserve selection: real FileList/FormData, append/replace/limits/rejection/duplicate
    identity, native reset/cancelled reset, refresh/disabled/forms and fallback verified.

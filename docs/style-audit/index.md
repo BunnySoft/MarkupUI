@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 62/96 scopes.** The other **34** are not yet accepted in this
+**Reviewed and integrated: 63/96 scopes.** The other **33** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -66,7 +66,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Calendar](../naive-ui/components/calendar.md) | ⚪ Pending | — |
 | [Card](../naive-ui/components/card.md) | 🟢 Fixed / 🟡 Remaining | [Native regions, theme scope and legacy boundary](components/card.md) |
 | [Carousel](../naive-ui/components/carousel.md) | ⚪ Pending | — |
-| [Cascader](../naive-ui/components/cascader.md) | ⚪ Pending | — |
+| [Cascader](../naive-ui/components/cascader.md) | 🟠 Reviewing | — |
 | [Checkbox](../naive-ui/components/checkbox.md) | 🟢 Fixed / 🟡 Remaining | [Box/label metrics, theme accents and retained native skin](components/checkbox.md) |
 | [Code](../naive-ui/components/code.md) | 🟢 Fixed / 🟡 Remaining | [Plain typography, gutters and authored token limits](components/code.md) |
 | [Collapse Transition](../naive-ui/components/collapse-transition.md) | 🟢 Fixed / 🟡 Remaining | [Height/fade curves and native scheduling/geometry limits](components/collapse-transition.md) |
@@ -147,6 +147,6 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Tree Select](../naive-ui/components/tree-select.md) | 🟠 Reviewing | — |
 | [Tree](../naive-ui/components/tree.md) | 🟢 Fixed / 🟡 Remaining | [Native row styling, high-contrast checks and disclosure/marker limits](components/tree.md) |
 | [Typography](../naive-ui/components/typography.md) | 🟢 Fixed / 🟡 Remaining | [Text, headings, code and native presentation limits](components/typography.md) |
-| [Upload](../naive-ui/components/upload.md) | 🟠 Reviewing | — |
+| [Upload](../naive-ui/components/upload.md) | 🟢 Fixed / 🟡 Remaining | [Drop/row/progress styling, protected disabled contrast and native picker/layout limits](components/upload.md) |
 | [Virtual List](../naive-ui/components/virtual-list.md) | ⚪ Pending | — |
 | [Watermark](../naive-ui/components/watermark.md) | ⚪ Pending | — |
