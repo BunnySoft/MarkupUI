@@ -5,6 +5,20 @@ explicitly omitted, not implemented by native typeahead.** The authored select, 
 and optgroups remain the only selection controls and submitted values. Legacy `MuiSelect`
 in `src/components/forms.ts` is unchanged.
 
+## Default-style audit — 2026-09-11
+
+The [isolated rendered audit](../style-audit/components/select.md) corrects native
+field size/font presets, border radius, light/dark paint, disabled paint and focus
+border colors. **22 closed single-field comparisons matched** the checked reference
+properties. Native listboxes, arrows, popup rows and focus outlines remain native,
+not copies of Naive's custom trigger/menu renderer.
+
+**81 targeted tests pass:** 40 Select, six CSS and 35 Popselect consumer tests.
+Select CSS is **3,164 raw / 982 gzip bytes**, below the unchanged **1,000-byte ceiling**.
+The current in-memory Popselect composition is **1,986/2,500 gzip bytes**; consumer
+sources were not edited. The coordinator's isolated release build and **81 Select/
+Popselect tests** pass; actual composed Popselect CSS is **1,991/2,500 gzip bytes**.
+
 ## Loading and anatomy
 
 | Export / asset | Contract |
@@ -206,6 +220,53 @@ Tokens: `--mui-select-color`, `-font`, `-pad`, `-border`, `-background`, `-disab
 (all use the `--mui-select` prefix). Logical dimensions/wrapping, focus, hidden safety,
 forced colors and print are external. No animation or CSS-in-JS is introduced.
 
+### Field defaults and native theme policy
+
+| Size | Font | Minimum field height |
+| --- | ---: | ---: |
+| tiny | 12px | 22px |
+| small | 14px | 28px |
+| medium / absent | 14px | 34px |
+| large | 15px | 40px |
+
+Default padding is `0 12px` with a 3px border radius. Height is a **minimum**, not
+a fixed block size: native `multiple` and size≥2 lists retain their own row-driven
+height. Size/status/borderless recipes now set private defaults, so public font,
+padding and border tokens remain first-priority author overrides.
+
+`data-mui-theme="light|dark"` chooses the native component's color scheme.
+CSS `light-dark()` supplies reference text/background/border colors and keeps the
+native popup/list theme coherent. This requires a browser supporting `light-dark()`;
+it is not a runtime theme watcher or native-popup renderer.
+
+| Role | Light | Dark |
+| --- | --- | --- |
+| Text | `#333639` | white `.82` |
+| Field background | white | white `.1` |
+| Disabled text | `#c2c2c2` | white `.38` |
+| Disabled background | `#fafafc` | white `.06` |
+| Default border | `#e0e0e6` | transparent |
+| Focus/hover border | `#36ad6a` | `#7fe7c4` |
+
+Warning/error use the matching semantic border/focus colors; success remains the
+existing native-only appearance choice. Borderless controls do not acquire a colored
+border on hover/focus, but retain the native helper's visible focus outline.
+The 2px solid outline is deliberately not Naive's light halo/dark blur shadow.
+
+Shared font family can be supplied through `--mui-font-family`; existing
+`--mui-select-font` still participates in the font shorthand. Options/optgroups
+are not restyled, wrapped or converted to chips. Print selects light native UI
+and system text/background/disabled colors, keeping dark-theme fields readable.
+
+### Popselect composition impact
+
+The existing builder concatenates Popover + Select + Popselect CSS. This correction
+therefore changes Popselect's embedded native field palette/radius automatically,
+without editing Popselect or its helpers. Its explicit small/large public overrides
+remain **14px/4px padding** and **18px/12px padding**; measured list heights were
+unchanged. Those consumer-specific values are not silently replaced by standalone
+Select's large 15px preset. See the audit for exact payload and geometry accounting.
+
 Native popup dimensions, placement, internal scroll/checkmarks/arrows and option rendering
 are platform-owned. Authored option class/style remains in DOM, but styling support in
 native popups differs by browser/OS. No universal popup pixel parity is claimed.
@@ -248,7 +309,7 @@ SelectSize and SelectInst are adapted to CSS/native controls. The reference pres
 original render inline identity even where source group-render types differ from the public
 table. No rich P5 module is shipped by this commit.
 
-## Acceptance
+## Original acceptance (historical)
 
 Obtained locally with server 4188 and a dedicated Select tab on 2026-09-09.
 No all-browser/AT or P5 parity is claimed.
@@ -295,10 +356,11 @@ sources changed.
 | `markup-ui-select.global.js` | 9,073 | 3,515 | 4,000 |
 | `markup-ui-select.css` | 2,615 | 780 | 1,000 |
 
-CSS-only native Select needs **780 gzip bytes**, no JS. One helper format plus CSS costs
+At original delivery, CSS-only native Select needed **780 gzip bytes**, no JS. One helper format plus CSS cost
 **4,220 ESM / 4,295 classic gzip bytes**. All **133 previous top-level JS/CSS outputs**
 are SHA-256 byte-identical. Core/advanced/widgets remain **14,611/2,181/2,779 gzip bytes**
-under unchanged **15,000/3,000/4,000** ceilings.
+under unchanged **15,000/3,000/4,000** ceilings. These are historical delivery figures,
+not current integrated-build verification for the default-style corrections above.
 
 All **79 original identities** remain with 19 source supplements: **98 rows = 35 adapted
 targets + 63 omissions**, with zero inherited Select rows. Catalog totals are **3,529 rows

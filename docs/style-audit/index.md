@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 59/96 scopes.** The other **37** are not yet accepted in this
+**Reviewed and integrated: 60/96 scopes.** The other **36** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -90,7 +90,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Equation](../naive-ui/components/equation.md) | ⚪ Pending | — |
 | [Flex](../naive-ui/components/flex.md) | 🟢 Matched / 🟡 Remaining | [Default layout matches; intrinsic sizing and RTL boundaries](components/flex.md) |
 | [Float Button](../naive-ui/components/float-button.md) | 🟢 Fixed / 🟡 Remaining | [Action metrics, shadows and native joined-group/dock limits](components/float-button.md) |
-| [Form](../naive-ui/components/form.md) | ⚪ Pending | — |
+| [Form](../naive-ui/components/form.md) | 🟠 Reviewing | — |
 | [Global Style](../naive-ui/components/global-style.md) | 🟢 Fixed / 🟡 Remaining | [Body defaults and opt-in shared-preset boundaries](components/global-style.md) |
 | [Gradient Text](../naive-ui/components/gradient-text.md) | 🟢 Fixed / 🟡 Remaining | [Paint metrics, theme stops and safe compositing limits](components/gradient-text.md) |
 | [Grid](../naive-ui/components/grid.md) | 🟢 Matched / 🟡 Remaining | [Retained tracks match; responsive/offset algorithm limits](components/grid.md) |
@@ -126,7 +126,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Rate](../naive-ui/components/rate.md) | 🟢 Fixed / 🟡 Remaining | [Glyph palette/sizing with retained native choices and artwork limits](components/rate.md) |
 | [Result](../naive-ui/components/result.md) | 🟢 Fixed / 🟡 Remaining | [Region spacing, title roles and authored artwork limits](components/result.md) |
 | [Scrollbar](../naive-ui/components/scrollbar.md) | 🟢 Fixed / 🟡 Remaining | [Opt-in native thumb palette and OS/browser geometry limits](components/scrollbar.md) |
-| [Select](../naive-ui/components/select.md) | 🟠 Reviewing | — |
+| [Select](../naive-ui/components/select.md) | 🟢 Fixed / 🟡 Remaining | [Native field metrics, theme states and popup/list geometry limits](components/select.md) |
 | [Skeleton](../naive-ui/components/skeleton.md) | 🟢 Fixed / 🟡 Remaining | [Animated endpoints and retained shape/repeat limits](components/skeleton.md) |
 | [Slider](../naive-ui/components/slider.md) | 🟢 Fixed / 🟡 Remaining | [Native range footprint/accents and retained track/readout limits](components/slider.md) |
 | [Space](../naive-ui/components/space.md) | 🟢 Matched / 🟡 Remaining | [Default layout matches; intrinsic nowrap limits](components/space.md) |
@@ -147,6 +147,6 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Tree Select](../naive-ui/components/tree-select.md) | ⚪ Pending | — |
 | [Tree](../naive-ui/components/tree.md) | 🟢 Fixed / 🟡 Remaining | [Native row styling, high-contrast checks and disclosure/marker limits](components/tree.md) |
 | [Typography](../naive-ui/components/typography.md) | 🟢 Fixed / 🟡 Remaining | [Text, headings, code and native presentation limits](components/typography.md) |
-| [Upload](../naive-ui/components/upload.md) | ⚪ Pending | — |
+| [Upload](../naive-ui/components/upload.md) | 🟠 Reviewing | — |
 | [Virtual List](../naive-ui/components/virtual-list.md) | ⚪ Pending | — |
 | [Watermark](../naive-ui/components/watermark.md) | ⚪ Pending | — |
