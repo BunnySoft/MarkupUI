@@ -1,0 +1,50 @@
+/* Application migration rules using existing native layout assets. */
+#legacy-grid-example {
+  box-sizing: border-box;
+  max-inline-size: 64rem;
+  margin-inline: auto;
+  padding: 1rem;
+  font: 1rem/1.5 system-ui, sans-serif;
+  color: CanvasText;
+  background: Canvas;
+  overflow-wrap: anywhere;
+}
+#legacy-grid-example .migration-nav { --mui-flex-align: center; --mui-flex-justify: space-between; }
+#legacy-grid-example .migration-columns,
+#legacy-grid-example .four-columns {
+  --mui-grid-cols: 1;
+  --mui-grid-x-gap: 12px;
+  --mui-grid-y-gap: 8px;
+}
+#legacy-grid-example .nested-columns { --mui-grid-cols: 2; --mui-grid-x-gap: 4px; --mui-grid-y-gap: 4px; }
+#legacy-grid-example .query-columns { --mui-grid-cols: 1; --mui-grid-x-gap: 12px; --mui-grid-y-gap: 8px; }
+#legacy-grid-example .known-spacer { display: none; }
+#legacy-grid-example .migration-container { container-name: migration; margin-block: 1rem; }
+#legacy-grid-example .compact-container { max-inline-size: 20rem; }
+#legacy-grid-example .cell { box-sizing: border-box; margin: 0; padding: .5rem; border: 1px solid ButtonBorder; }
+#legacy-grid-example .cell > h3 { margin-block: 0 .5rem; }
+#legacy-grid-example fieldset { min-inline-size: 0; }
+#legacy-grid-example input { box-sizing: border-box; max-inline-size: 100%; min-inline-size: 0; font: inherit; }
+#legacy-grid-example button { min-block-size: 2.75rem; font: inherit; }
+#legacy-grid-example #form-actions { margin-block: 1rem; }
+#legacy-grid-example a { color: LinkText; }
+#legacy-grid-example :focus-visible { outline: 3px solid Highlight; outline-offset: -3px; }
+@media (min-width: 48rem) {
+  #legacy-grid-example .migration-columns { --mui-grid-cols: 24; }
+  #legacy-grid-example .first-column { --mui-grid-span: 8; }
+  #legacy-grid-example .second-column { --mui-grid-span: 16; }
+  #legacy-grid-example .full-column { --mui-grid-span: 24; }
+  #legacy-grid-example .four-columns { --mui-grid-cols: 4; }
+  #legacy-grid-example .two-tracks { --mui-grid-span: 2; }
+  #legacy-grid-example .known-spacer { display: block; }
+  #legacy-grid-example .start-three { --mui-grid-start: 3; }
+}
+@supports (container-type: inline-size) {
+  @container migration (min-width: 30rem) {
+    #legacy-grid-example .query-columns { --mui-grid-cols: 3; }
+    #legacy-grid-example .query-feature { --mui-grid-span: 2; }
+  }
+}
+@media print {
+  #legacy-grid-example { max-inline-size: none; padding: 0; }
+}

@@ -91,6 +91,9 @@ All eight Equation API/type/source rows remain intentionally omitted.
 QR Code now has a [resolved exclusion / verified native link-and-text handoff](../components/qr-code.md):
 an actual readable destination without a fake QR symbol, supplied-image scan claim,
 encoder or new runtime. All 19 QR API/type/source/inherited rows remain omitted.
+Legacy Grid now has a [resolved native Grid/Flex/Space replacement](../components/legacy-grid.md):
+six verified native layout/content mappings and nine explicit omissions, without
+deprecated constructors, responsive syntax or a relative-offset/push/pull engine.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
 are reconciled. **P4 is Verified for retained native scopes:** all 17 assigned routes,
 984 tracker rows and 68 page tasks are resolved, with no Planned P4 routes or unresolved
@@ -102,10 +105,10 @@ under P3; broader foundation task IDs are not automatically completed.
 **All nine main P6 retained routes are accepted:** Carousel, Watermark, Upload,
 Calendar, Time, Countdown, Number Animation, Heatmap and Marquee. Their **288 rows
 = 199 native adaptations + 89 omissions**, with **36/36 tasks**, are reconciled;
-omitted advanced behavior is not implemented parity. Equation and QR Code's eight
-alternative tasks are accepted without typesetter/encoder implementation credit.
-Legacy Grid and Legacy Transfer still have **eight unchecked alternative-guidance
-tasks** despite their 21 omitted API rows. **Recommend Legacy Grid resolution next**;
+omitted advanced behavior is not implemented parity. Equation, QR Code and Legacy
+Grid have **12 accepted alternative/replacement tasks**, not typesetter/encoder or
+legacy-constructor compatibility. Only Legacy Transfer retains **four unchecked
+resolution tasks** and 16 omitted API rows. **Recommend Legacy Transfer next**;
 it is not started here.
 Component acceptance sections below retain their sign-off snapshots; earlier counts and
 “next”/“In progress” statements are historical, not the current phase dashboard.
@@ -163,7 +166,7 @@ Avatar's four retained-scope tasks are checked using `9afc818`, Button's four us
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
 Popover through Rate, the subsequent Form/Auto Complete/Input OTP/Dynamic Input/Dynamic
 Tags/Mention/Color Picker/Date Picker/Time Picker records, and now Virtual List each add
-four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style, Carousel, Watermark, Upload, Calendar, Time, Countdown, Number Animation, Heatmap and Marquee each add four more. Equation and QR Code add eight resolved-exclusion/native-alternative tasks, not typesetter/encoder implementation. The current total is **376/384 accepted across 94 pages: 368 retained-scope tasks plus eight alternative-resolution tasks, eight unchecked**.
+four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style, Carousel, Watermark, Upload, Calendar, Time, Countdown, Number Animation, Heatmap and Marquee each add four more. Equation, QR Code and Legacy Grid add twelve native-alternative/replacement tasks, not typesetter/encoder/legacy-constructor parity. The current total is **380/384 accepted across 95 pages: 368 retained-scope tasks plus twelve resolution tasks, four unchecked**.
 P2 retained scopes remain reconciled; the nineteen sequential P3 scopes plus three mixed P2/P3 pages pass the complete P3 audit. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
@@ -2781,6 +2784,47 @@ intentional omissions; zero unresolved**. Main P6 stays nine routes/288 rows/36 
 **Next: Legacy Grid resolution**, then Legacy Transfer separately. Broad parent-owned
 P0 foundations remain pending/partial; their rows are unchanged. No next route starts here.
 
+## Legacy Grid resolved: migrate to the shipped native layout
+
+[Canonical Legacy Grid evidence](../components/legacy-grid.md) explicitly loads the
+existing Grid/Flex/Space CSS for native spans/gaps, alignment, actual child content,
+nested controls and responsive layouts. No new runtime/export, deprecated constructor,
+Row/Col prop or breakpoint parser is introduced. Source relative offset/push/pull,
+gutter compensation and required Row injection remain omitted.
+
+**Five original Row/Col identities + three type/export groups + seven source
+supplements = 15 rows: six verified native replacements + nine omissions; 4/4
+resolution tasks.** Source fixed Span numbers/strings are recorded; there are no
+pinned named breakpoint props to invent. The 48rem media/30rem container thresholds
+are explicit application choices, not legacy syntax.
+
+**51 targeted tests** (12 replacement + 12 modern Grid + 27 native/legacy), build/
+declarations/budgets and Chromium geometry/order/forms/hidden/RTL/narrow/zoom/media/
+no-JS/CSP/coexistence passed. Actual 8/16-of-24 spans, gaps, 767/768px viewport and
+479/480px query transitions were measured. Absolute line 3 was adjacent after a
+two-track item; an authored spacer produced a distinct empty third track.
+
+All **1,316 existing distribution files byte-matched**; no core/plugin/build/package
+or P0 foundation row changed. The complete HTML/CSS example plus reused Grid/Flex/
+Space assets is **4,583 gzip bytes**, with **3,243** new demo-only bytes and no runtime.
+Modern Grid source/reference/acceptance stays intact.
+
+**Current catalog: 96 routes / 4,045 rows / 380 of 384 accepted tasks across 95 pages /
+four unchecked.** API statuses: **2,096 verified native capabilities + 1,949 omissions,
+zero unresolved**. Accepted tasks comprise **368 retained-scope plus twelve native
+alternative/replacement tasks**. Main P6 remains nine routes/288 rows/36 accepted tasks.
+
+| Alternative/deprecated route | Tracker disposition | Resolution tasks |
+| --- | --- | ---: |
+| Equation | 8 omitted; native MathML alternative | 4/4 |
+| QR Code | 19 omitted; native link/text handoff | 4/4 |
+| Legacy Grid | 6 native replacements + 9 omissions | 4/4 |
+| Legacy Transfer | 16 omitted; replacement next | 0/4 |
+| **Total** | **58 rows: 6 native replacements + 52 omissions** | **12/16 accepted** |
+
+**Next: Legacy Transfer resolution**, not started here. Broad parent-owned P0
+foundation work remains pending/partial and its rows are untouched.
+
 ## Common Components (15)
 
 | Component | Plan direction | Current baseline | Phase |
@@ -2894,7 +2938,7 @@ P0 foundations remain pending/partial; their rows are unchanged. No next route s
 | --- | --- | --- | --- |
 | [Flex](components/flex.md) | 🟢 Verified CSS-only native scope; 4 explicit omissions | Native flex/gap layout; [accepted evidence](../components/flex.md), no child/runtime mutation | P2 |
 | [Layout](components/layout.md) | 🟢 Verified retained native scope; 10 explicit omissions | Native CSS/disclosure/scrolling; [accepted evidence](../components/layout.md) | P2, P3 |
-| [Legacy Grid](components/legacy-grid.md) | ⏭️ Intentionally omitted: legacy API | Related modern grid | Exclusions |
+| [Legacy Grid](components/legacy-grid.md) | Resolved migration / 🟢 Verified native replacement; nine omissions | Shipped Grid/Flex/Space CSS; [accepted recipe](../components/legacy-grid.md), no Row/Col facade | Exclusions; 4/4 resolution tasks |
 | [Grid](components/grid.md) | 🟢 Verified retained CSS scope; 11 explicit omissions | Native Grid/GridItem CSS; [accepted evidence](../components/grid.md), packing algorithms omitted | P2 |
 | [Space](components/space.md) | 🟢 Verified CSS-only native scope; 5 explicit omissions | Authored item/group CSS; [accepted evidence](../components/space.md), no wrapper/gap runtime | P2 |
 | [Split](components/split.md) | 🟢 Verified native two-pane/separator scope; ten explicit omissions | Native grid, ratio/px bounds, pointer+keyboard and safe collapse; [accepted evidence](../components/split.md) | P5 |
@@ -2948,15 +2992,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,516: 370 inline fields, 194 type/helper/exclusion entries (including five Table public helper groups, Virtual List/Tree named ScrollTo types, UploadInst/UploadSettledFileInfo, CountdownTimeInfo/CountdownInst, NumberAnimationInst, four Heatmap public type groups, two Equation type/export groups and one QR Code type/export group) and 952 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel/Watermark/Upload/Calendar/Time/Countdown/Number Animation/Heatmap/Marquee/Equation/QR Code source supplements |
+| Supplementary named declarations | 1,526: 370 inline fields, 197 type/helper/exclusion entries (including five Table public helper groups, Virtual List/Tree named ScrollTo types, UploadInst/UploadSettledFileInfo, CountdownTimeInfo/CountdownInst, NumberAnimationInst, four Heatmap public type groups, two Equation type/export groups, one QR Code type/export group and three Legacy Grid type/export groups) and 959 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel/Watermark/Upload/Calendar/Time/Countdown/Number Animation/Heatmap/Marquee/Equation/QR Code/Legacy Grid source supplements |
 | Explicit inherited tracker rows | 299, including six source-inherited DialogReactive options, three ModalReactive fields, two NotificationReactive fields and three each Element/Carousel/Watermark/Upload/Calendar/Heatmap/Marquee/QR Code theme props |
-| Total tracker rows | 4,035; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 four-task checklists: 376/384 accepted across 94 pages (368 retained-scope tasks on 92 pages plus eight Equation/QR alternative tasks); eight unchecked legacy-exclusion tasks |
+| Total tracker rows | 4,045; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 four-task checklists: 380/384 accepted across 95 pages (368 retained-scope tasks on 92 pages plus twelve Equation/QR/Legacy Grid resolution tasks); four Legacy Transfer tasks unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 4,035 rows retain canonical text with emoji color: 2,090 Verified native adaptations and 1,945 intentional omissions; no Not reviewed or Planned row remains. QR Code adds eight omissions and accepts alternative tasks, not encoder features; prior retained counts remain unchanged. |
-| Source agreement | All 2,220 direct source rows and 299 inherited rows remain covered; two pending legacy inventories remain unchanged; 94 accepted pages preserve named/grouped identities; QR Code retains all eleven original identities/links and adds one grouped type/export, four source behaviors and three inherited theme omissions; foundation-related route inventories remain reconciled |
-| Local links | All 614 scoped QR Code/reference/index/master file links resolve; earlier Equation/Marquee/Heatmap/Number Animation/Countdown/Time/Calendar/Upload/Watermark/Carousel/Global Style/four-route/component link snapshots remain historical evidence |
+| Status presentation | All 4,045 rows retain canonical text with emoji color: 2,096 Verified native capabilities and 1,949 intentional omissions; no Not reviewed or Planned row remains. Legacy Grid maps six native replacements/nine omissions without constructor/syntax compatibility; modern Grid and prior retained counts remain unchanged. |
+| Source agreement | All 2,220 direct source rows and 299 inherited rows remain covered; the pending Legacy Transfer inventory remains unchanged; 95 accepted pages preserve named/grouped identities; Legacy Grid retains five original links and adds three type/export plus seven source rows, with no invented breakpoint/theme identities; foundation-related routes remain reconciled |
+| Local links | All 625 scoped Legacy Grid/reference/index/master file links resolve; earlier QR Code/Equation/Marquee/Heatmap/Number Animation/Countdown/Time/Calendar/Upload/Watermark/Carousel/Global Style/four-route/component link snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

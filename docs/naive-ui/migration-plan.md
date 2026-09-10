@@ -30,8 +30,10 @@ resolved: eight omitted API/type/source rows, four accepted alternative tasks, n
 TeX implementation credit or new runtime. QR Code's native link/text alternative
 also resolves its lane: 19 omitted API/type/source/inherited rows, four accepted
 alternative tasks, no encoder or QR-image verification claim. Broad P0 foundation
-tasks, the remaining two legacy-exclusion acceptances and full framework/viewer
-parity remain incomplete.** Existing MarkupUI features are a partial baseline,
+tasks remain independent. Legacy Grid now resolves through shipped native Grid/Flex/
+Space CSS: 15 rows, six native replacements/nine omissions, four resolution tasks.
+Only Legacy Transfer's four catalog tasks remain unchecked; broader P0 foundations
+and full framework/viewer parity remain incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -63,7 +65,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
 | P4 — Forms and selection | 🟢 Verified retained scope | All 17 P4-assigned routes, 984 tracker rows and 68 page tasks reconciled. | Relevant native P0/P3 contracts | 478 adapted + 506 omitted, no unresolved rows; 889 P4 tests plus native browser evidence. No P0/P5/P6 or full framework parity implied. |
 | P5 — Collections and scale | 🟢 Verified retained scope | All ten P5-assigned routes, 827 rows and 40 page tasks reconciled. | P3 focus; P4 selection | 349 native adaptations + 478 omissions, zero unresolved; 526-test/native browser/asset audit. No full framework or P0/P6 parity implied. |
-| P6 — Specialized modules | 🟢 Verified nine main retained scopes; two legacy exclusions open | Carousel, Watermark, Upload, Calendar, Time, Countdown, Number Animation, Heatmap and Marquee accepted; Equation/QR Code native-alternative resolutions accepted separately. | Component-specific earlier work | Explicit ESM/classic/CSS, 288 main-route rows (199 adapted/89 omitted), 36/36 tasks and native/browser evidence. Equation/QR: 27 omissions/eight alternative tasks; Legacy Grid/Legacy Transfer still have eight unchecked tasks. Not full advanced parity. |
+| P6 — Specialized modules | 🟢 Verified nine main retained scopes; Legacy Transfer resolution open | Carousel, Watermark, Upload, Calendar, Time, Countdown, Number Animation, Heatmap and Marquee accepted; Equation/QR/Legacy Grid resolutions accepted separately. | Component-specific earlier work | Explicit ESM/classic/CSS, 288 main-route rows (199 adapted/89 omitted), 36/36 tasks and native/browser evidence. Three alternative/replacement routes have twelve accepted tasks; Legacy Transfer has four unchecked. Not full advanced parity. |
 
 The [component index](index.md) is the exhaustive catalog-to-phase assignment. The phase
 groups below name principal workstreams, not additional promises that every catalog feature
@@ -160,7 +162,7 @@ smuggling an overlay implementation into the CSS-only native composition.
 | P6-03 — Media and carousel | 🟢 Verified Carousel retained scope; advanced viewer/effects excluded | Native scroll-snap Carousel/CarouselItem, original DOM, manual/wrap controls and opt-in gated autoplay. | [Carousel acceptance](../components/carousel.md): settled targets, lifetime, focus/forms, browser/legacy/no-JS and independent budgets; no seamless clone loop or advanced image-viewer parity. |
 | P6-04 — Other utilities | 🟢 Verified Watermark/Countdown/Number Animation/Heatmap/Marquee retained scopes | Bounded decoration, elapsed duration, numeric interpolation, calendar data and single-track controlled motion accepted. | Per-component native ownership/generation/timing/data/media evidence, not security/alarm/financial/chart/seamless/renderer parity. |
 | P6-05 — Dependency-heavy exclusions | 🟢 Verified Equation/QR native-alternative resolutions | TeX/KaTeX and QR encoding remain omitted; authored MathML and real link/text handoff accepted. Other feature exclusions retain their individual dispositions. | Eight alternative tasks/27 omitted rows and no-new-runtime evidence; no typesetter/encoder/scanner implementation credit or hidden dependencies. |
-| P6-06 — Deprecated surfaces | 🔵 Planned | Record Legacy Transfer and deprecated aliases without reproducing redundant legacy APIs. | A documented replacement and omission decision, not a missing tracker row. |
+| P6-06 — Deprecated surfaces | 🟠 In progress; Legacy Grid native replacement resolved | Legacy Grid migrates explicitly to shipped native layout CSS; Legacy Transfer remains next. | Grid: 15 reconciled rows/four resolution tasks, measured layout and no constructor facade; Transfer's four tasks still unchecked. |
 | P6-07 — Packaging sign-off | 🟢 Verified nine main retained scopes | Explicit optional ESM/classic/external CSS, combined payloads and unchanged previous ceilings verified per route. | Main specialized features stay out of the default dependency graph; exclusion-route resolutions and broader P0 legacy extraction/auto-install remain separate. |
 
 ## Per-component migration steps
@@ -214,14 +216,14 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: QR Code, resolved exclusion / verified native link-and-text handoff; encoding remains omitted.**
+**Current component: Legacy Grid, resolved migration / verified native Grid/Flex/Space replacement; deprecated constructors/syntax remain omitted.**
 **P1/P2/P3/P4/P5 declared retained scopes are complete. P4-07 and P5-06 close against their full assigned-route audits.**
 **P5 is Verified for retained scopes:** all ten routes are resolved.
 **All nine main P6 retained scopes are accepted:** 288 rows and 36/36 tasks.
-Equation and QR Code add eight accepted alternative-guidance tasks without a new
-runtime or typesetter/encoder implementation. Recommended next: **Legacy Grid
-resolution**. Legacy Grid and Legacy Transfer still have eight unchecked alternative
-tasks; API omissions alone are not acceptance.
+Equation, QR Code and Legacy Grid add twelve accepted native-alternative/replacement
+tasks without a new runtime or typesetter/encoder/deprecated-constructor implementation.
+Recommended next: **Legacy Transfer resolution**. Its four tasks remain unchecked;
+API omissions alone are not acceptance.
 No next component is implemented here. P0 component-route acceptance
 does not close broader foundation tasks or imply full upstream/framework compatibility.
 
@@ -360,9 +362,9 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 4,035 rows and 376 accepted tasks out of 384 across 94 pages:
-368 retained-scope tasks plus eight Equation/QR native-alternative tasks, with eight
-unchecked legacy-exclusion tasks. This is not full upstream parity or encoder/typesetter credit.
+The current index records 4,045 rows and 380 accepted tasks out of 384 across 95 pages:
+368 retained-scope tasks plus twelve Equation/QR/Legacy Grid resolution tasks, with
+four Legacy Transfer tasks unchecked. This is not full upstream or legacy-API parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -2566,3 +2568,58 @@ retained routes/288 rows (199 adapted/89 omitted)/36 tasks, unchanged.
 No next route is implemented here. Broad P0-01–P0-09 foundation work, legacy CSS
 extraction, aggregate auto-install and inline-theme exceptions remain parent-owned
 and separately pending/partial; no foundation task is altered by this resolution.
+
+## Legacy Grid resolution — native replacement without deprecated constructors
+
+[Canonical Legacy Grid](../components/legacy-grid.md) and the
+[complete Row/Col reference](components/legacy-grid.md) resolve this lane using
+the actual shipped Grid/Flex/Space CSS. Original semantic containers, controls,
+forms and child nodes replace framework wrappers/slots. Native gaps/spans and Flex
+alignment are explicit capabilities; relative offset/push/pull, half-gutter
+compensation, required Row injection and deprecated constructor/prop syntax remain
+omitted. Absolute grid start is not relative offset, and visual shifts must not
+contradict DOM/tab order.
+
+**Five original identities + three type/export groups + seven source supplements
+= 15 rows: six verified native replacements + nine omissions; four resolution
+tasks accepted.** Source Row/Col default slots and alignItems/justifyContent are
+explicitly sourced. Fixed Span 1..24 number/string variants are recorded; no named
+breakpoint props or inherited theme rows exist to invent. The 48rem viewport and
+30rem container rules are application CSS, not a recreated responsive grammar.
+
+**51 tests passed** (12 replacement + 12 unchanged modern Grid + 27 native/legacy),
+declarations/build and all existing ceilings. All **1,316 distribution files
+byte-matched**. No core/plugin/build/package or P0 foundation row changed.
+Modern Grid's source/reference/acceptance stays intact.
+
+Real Chromium geometry: 992px container with 8/16-of-24 spans about 322.66/657.34px,
+12px x gap and 8px y gap; nested grid remained two tracks/4px. Viewport 767→768px
+changed one→24 tracks, query wrapper 479→480px changed one→three tracks, and the
+compact 320px wrapper stayed single-column. The spacer consumed a real empty track;
+absolute start line 3 was instead adjacent after a two-track item.
+
+Native Tab order, RTL right-to-left layout without DOM reversal, reset/FormData,
+hidden versus disabled behavior, original identities, 360px/200% zoom, print/forced
+colors, native AX, no-JS/strict-CSP and legacy-wrapper coexistence were verified.
+The source physical positioning/wrapping algorithms are not claimed as reproduced.
+The complete example is **4,583 gzip bytes**, including existing Grid/Flex/Space
+CSS at **527/390/423**; new demo-only HTML/CSS is **3,243**, no runtime.
+
+**Current catalog: 96 routes / 4,045 rows / 380 of 384 accepted tasks across 95 pages /
+four unchecked.** Accepted work: **368 retained-scope tasks plus twelve native
+alternative/replacement tasks**. API statuses: **2,096 verified native capabilities +
+1,949 omissions; zero unresolved**. Main P6 remains nine routes/288 rows/36 accepted
+tasks; no modern Grid count or acceptance is replaced.
+
+| Alternative/deprecated route | Tracker disposition | Resolution tasks |
+| --- | --- | ---: |
+| Equation | 8 omitted; native MathML alternative | 4/4 |
+| QR Code | 19 omitted; native link/text handoff | 4/4 |
+| Legacy Grid | 6 native replacements + 9 omissions | 4/4 |
+| Legacy Transfer | 16 omitted; replacement pending | 0/4 |
+| **Total** | **58 rows: 6 native replacements + 52 omissions** | **12/16 accepted** |
+
+**Recommend Legacy Transfer resolution next.** It is not started here. Broad
+P0-01–P0-09 foundation follow-through remains parent-owned and pending/partial;
+legacy CSS extraction, aggregate auto-install and inline-theme exceptions are not
+altered or completed by this native layout recipe.

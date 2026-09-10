@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Legacy Grid migration: native layout, not Row/Col compatibility</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-grid.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-flex.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-space.css">
+  <link rel="stylesheet" href="legacy-grid.css">
+</head>
+<body>
+  <main id="legacy-grid-example">
+    <h1>Replace Legacy Row/Col with authored native layout</h1>
+    <p>These containers load the existing Grid, Flex and Space stylesheets. They do
+      not parse legacy props, breakpoint strings or Vue slots. Application CSS owns
+      the 48rem viewport and 30rem container thresholds below.</p>
+    <nav class="mui-flex migration-nav" aria-label="Native migration examples">
+      <a href="#spans-title">Spans and native form</a>
+      <a href="#offset-title">Spacer versus start line</a>
+      <a href="#query-title">Container queries</a>
+    </nav>
+
+    <section aria-labelledby="spans-title">
+      <h2 id="spans-title" tabindex="-1">Explicit spans, gutters and nested defaults</h2>
+      <p>Below 48rem: one column. At 48rem and above: 24 tracks with 8/16 spans,
+        a 12px column gap and an 8px row gap. This is not the old percentage-width,
+        half-padding and negative-margin algorithm.</p>
+      <form id="migration-form">
+        <div id="span-grid" class="mui-grid migration-columns">
+          <label id="first-cell" class="mui-grid-item cell first-column">Reader
+            <input id="reader" name="reader" value="Original reader"></label>
+          <fieldset id="second-cell" class="mui-grid-item cell second-column">
+            <legend>Original nested controls</legend>
+            <div id="nested-grid" class="mui-grid nested-columns">
+              <label>Notes <input id="notes" name="notes" value="Native notes"></label>
+              <label>Project <input id="project" name="project" value="Local project"></label>
+            </div>
+          </fieldset>
+          <label id="hidden-cell" class="mui-grid-item cell full-column" hidden>Hidden note
+            <input id="hidden-note" name="hidden-note" value="Still a named field"></label>
+          <fieldset id="disabled-cell" class="mui-grid-item cell full-column" disabled>
+            <legend>Native disabled group</legend>
+            <label>Excluded value <input name="excluded" value="Not submitted"></label>
+          </fieldset>
+        </div>
+        <div id="form-actions" class="mui-space" data-size="small">
+          <button class="mui-space-item" type="reset" id="reset-notes">Reset native notes</button>
+          <a class="mui-space-item" href="#layout-notes">Read form and ordering limits</a>
+        </div>
+      </form>
+      <p>The hidden item occupies no layout/tab stop, but its named field remains
+        in FormData. The disabled fieldset does not. No submit button is authored;
+        these three visible text fields, reset and layout need no JavaScript.</p>
+    </section>
+
+    <section aria-labelledby="offset-title">
+      <h2 id="offset-title" tabindex="-1">A known spacer is not a relative-offset engine</h2>
+      <p>At 48rem: the first item spans two of four tracks, an empty noninteractive
+        spacer occupies the third, and the following item occupies the fourth.
+        In compact layout the spacer is removed and both content items stack.</p>
+      <div id="spacer-grid" class="mui-grid four-columns">
+        <p id="spacer-first" class="cell two-tracks">First: two tracks</p>
+        <span id="authored-spacer" class="known-spacer" aria-hidden="true"></span>
+        <p id="after-spacer" class="cell">After the known empty track</p>
+      </div>
+      <p>By contrast, absolute start line 3 after a two-track item is immediately
+        adjacent. It is not an offset of three tracks from the preceding item.</p>
+      <div id="start-grid" class="mui-grid four-columns">
+        <p id="start-first" class="cell two-tracks">First: two tracks</p>
+        <p id="absolute-third" class="cell start-three">Absolute line 3</p>
+      </div>
+      <p>A spacer can wrap separately from the following item. This fixed composition
+        does not recreate atomic offset-plus-span wrapping or physical push/pull.</p>
+    </section>
+
+    <section aria-labelledby="query-title">
+      <h2 id="query-title" tabindex="-1">Available container width, not a responsive prop</h2>
+      <p>Both independent wrappers start with one-column descendants. When a wrapper
+        reaches 30rem, its descendant grid uses three columns and a 2/1 split.
+        The compact wrapper stays narrow even on a wide screen.</p>
+      <div id="wide-container" class="mui-grid-container migration-container">
+        <div id="wide-query" class="mui-grid query-columns">
+          <article class="cell query-feature"><h3>Wide feature</h3><p>Original article and text.</p></article>
+          <p class="cell">Wide secondary</p>
+        </div>
+      </div>
+      <div id="compact-container" class="mui-grid-container migration-container compact-container">
+        <div id="compact-query" class="mui-grid query-columns">
+          <article class="cell query-feature"><h3>Compact feature</h3><p>Same authored rules, smaller ancestor.</p></article>
+          <p class="cell">Compact secondary</p>
+        </div>
+      </div>
+    </section>
+
+    <section dir="rtl" aria-labelledby="rtl-title">
+      <h2 id="rtl-title">Native RTL inline direction, original reading order</h2>
+      <div id="rtl-grid" class="mui-grid four-columns">
+        <a id="rtl-first" class="cell two-tracks" href="#layout-notes">First in the DOM</a>
+        <a id="rtl-second" class="cell two-tracks" href="#layout-notes">Second in the DOM</a>
+      </div>
+      <p>At wide sizes the first item starts on the right. Tab still visits first,
+        then second. There is no visual push/pull, dense packing or order reversal.</p>
+    </section>
+
+    <details class="mui-grid-disclosure">
+      <summary>Native disclosure for additional original content</summary>
+      <div class="mui-grid nested-columns">
+        <p class="cell">First extra item</p>
+        <a class="cell" href="#layout-notes">Second extra item: native link</a>
+      </div>
+    </details>
+    <section aria-labelledby="layout-notes">
+      <h2 id="layout-notes" tabindex="-1">Migration and native form limits</h2>
+      <p>Keep visual placement consistent with semantic DOM/tab order. Rewrite the
+        meaningful source order rather than swapping controls with push, pull,
+        grid rows or order. An offset is not an absolute grid start line.</p>
+      <p>Hidden named fields still submit and can validate; hiding is not disabling.
+        This example keeps the hidden value non-required. Applications must reveal
+        hidden invalid controls before validation, or explicitly choose another policy.</p>
+      <p>No legacy Row/Col constructors, responsive parser, generated item wrapper,
+        layout timer or new distribution asset is provided. Existing legacy MarkupUI
+        wrappers and modern Grid acceptance are unchanged.</p>
+    </section>
+  </main>
+</body>
+</html>
