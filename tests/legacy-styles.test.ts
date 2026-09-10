@@ -30,17 +30,18 @@ describe("canonical legacy CSS and theme sources", () => {
   })
 
   it("preserves the approved runtime CSS baselines exactly", () => {
-    // Core includes the reviewed Avatar/default typography correction; see docs/style-audit/components/avatar.md.
+    // Core includes the reviewed Avatar and Button corrections; see docs/style-audit/components/.
     // Advanced and widget baselines remain byte-identical to source extraction.
     expect(runtimeStyles.map(hash)).toEqual([
-      "e9da85e704ec41b78d8c514f4ece69c01903572f9c4ee34be2a05a05af87be05",
+      "6eb63c78564b604d6193af7fdbda6c69e7206b5b2f6ad07c5551e95aa4f0ee91",
       "191b9b19d5ab85393ddfa50a537b911133685fb87304c71b6c0eb478c1b9c1e7",
       "2eef3afb63382e8a64c34740c6d9afec38b552640239d2e9e19fac7b6d33c24d",
     ])
   })
 
-  it("keeps all built-in theme tokens identical to the legacy registrations", () => {
-    expect(hash(JSON.stringify(builtInThemeTokens.light))).toBe("207e2b0aabc35c662ee89d1d35258d13c37d6023f15bf47218dd15b6fb9d0f31")
+  it("keeps approved built-in theme baselines and generated registrations in sync", () => {
+    // Only the light Button text/border tokens changed in the rendered Button audit.
+    expect(hash(JSON.stringify(builtInThemeTokens.light))).toBe("fee147d6edd693cb4f0b34eb79061c8546ec1a7050c155072e585addba435863")
     expect(hash(JSON.stringify(builtInThemeTokens.dark))).toBe("85c12e00ef529e54d1c8b07df9847d593dc053eae48b3880e1dcddcbef4d28eb")
     expect(builtInThemeTokens).toEqual(JSON.parse(read("src/theme/presets.json")))
     expect(normalizeLines(read("src/theme/presets.ts"))).toBe(themeModule(builtInThemeTokens))

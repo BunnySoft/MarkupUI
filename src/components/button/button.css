@@ -1,110 +1,201 @@
-/* Specificity isolates rich hosts even when legacy aggregate CSS is installed later. */
-mui-button[data-mui-button][data-mui-button][data-mui-button] {
+/* Isolate hosts from legacy CSS. */
+mui-button[data-mui-button][data-mui-button][data-mui-button][data-mui-button] {
   all: unset;
   box-sizing: border-box;
   display: inline-flex;
+  flex: none;
   vertical-align: middle;
 }
-mui-button[data-mui-button][data-mui-button][data-mui-button]::before,
-mui-button[data-mui-button][data-mui-button][data-mui-button]::after { content: none; }
-mui-button[data-mui-button][data-mui-button][data-mui-button][block] { display: flex; width: 100%; }
-mui-button[data-mui-button][data-mui-button][data-mui-button][hidden],
+mui-button[data-mui-button][data-mui-button][data-mui-button][data-mui-button]::before,
+mui-button[data-mui-button][data-mui-button][data-mui-button][data-mui-button]::after { content: none; }
+mui-button[data-mui-button][data-mui-button][data-mui-button][data-mui-button][block] { display: flex; width: 100%; }
+mui-button[data-mui-button][data-mui-button][data-mui-button][data-mui-button][hidden],
 mui-button-group[data-mui-button-group][hidden] { display: none; }
 
+:where([data-mui-theme="light"]) {
+  --_mui-button-contrast: initial;
+  --_mui-button-muted: initial;
+  --_mui-button-soft: initial;
+  --_mui-button-soft-hover: initial;
+  --_mui-button-soft-pressed: initial;
+  --_mui-button-opacity: initial;
+  --_mui-button-alpha-hover: initial;
+  --_mui-button-alpha-pressed: initial;
+}
+:where([data-mui-theme="dark"]) {
+  --_mui-button-contrast: #000;
+  --_mui-button-muted: rgba(255, 255, 255, .52);
+  --_mui-button-soft: rgba(255, 255, 255, .08);
+  --_mui-button-soft-hover: rgba(255, 255, 255, .12);
+  --_mui-button-soft-pressed: rgba(255, 255, 255, .08);
+  --_mui-button-opacity: .38;
+  --_mui-button-alpha-hover: .2;
+  --_mui-button-alpha-pressed: .12;
+}
 mui-button[data-mui-button] {
-  --_mui-button-tone: var(--mui-button-color, var(--mui-text-primary, #333639));
+  --_mui-button-tone: var(--mui-button-color, var(--mui-button-text-color, #333639));
   --_mui-button-hover: var(--mui-button-hover-color, var(--mui-color-primary-hover, #36ad6a));
   --_mui-button-pressed: var(--mui-button-pressed-color, var(--mui-color-primary-pressed, #0c7a43));
+  --_mui-button-bg: #0000;
+  --_mui-button-bg-hover: #0000;
+  --_mui-button-bg-pressed: #0000;
+  --_mui-button-bg-disabled: var(--_mui-button-bg);
+  --_mui-button-label: var(--_mui-button-tone);
+  --_mui-button-label-hover: var(--_mui-button-hover);
+  --_mui-button-label-pressed: var(--_mui-button-pressed);
+  --_mui-button-label-disabled: var(--_mui-button-label);
+  --_mui-button-border: var(--mui-button-border-color, #e0e0e6);
 }
 mui-button[data-mui-button]:is([type="primary"], [variant="primary"]) { --_mui-button-tone: var(--mui-button-color, var(--mui-color-primary, #18a058)); }
 mui-button[data-mui-button]:is([type="info"], [variant="info"]) { --_mui-button-tone: var(--mui-button-color, var(--mui-color-info, #2080f0)); --_mui-button-hover: var(--mui-button-hover-color, var(--mui-color-info-hover, #4098fc)); --_mui-button-pressed: var(--mui-button-pressed-color, var(--mui-color-info-pressed, #1060c9)); }
 mui-button[data-mui-button]:is([type="success"], [variant="success"]) { --_mui-button-tone: var(--mui-button-color, var(--mui-color-success, #18a058)); --_mui-button-hover: var(--mui-button-hover-color, var(--mui-color-success-hover, #36ad6a)); --_mui-button-pressed: var(--mui-button-pressed-color, var(--mui-color-success-pressed, #0c7a43)); }
 mui-button[data-mui-button]:is([type="warning"], [variant="warning"]) { --_mui-button-tone: var(--mui-button-color, var(--mui-color-warning, #f0a020)); --_mui-button-hover: var(--mui-button-hover-color, var(--mui-color-warning-hover, #fcb040)); --_mui-button-pressed: var(--mui-button-pressed-color, var(--mui-color-warning-pressed, #c97c10)); }
 mui-button[data-mui-button]:is([type="error"], [variant="error"]) { --_mui-button-tone: var(--mui-button-color, var(--mui-color-error, #d03050)); --_mui-button-hover: var(--mui-button-hover-color, var(--mui-color-error-hover, #de576d)); --_mui-button-pressed: var(--mui-button-pressed-color, var(--mui-color-error-pressed, #ab1f3f)); }
+mui-button[data-mui-button]:is([type="primary"], [type="info"], [type="success"], [type="warning"], [type="error"], [variant="primary"], [variant="info"], [variant="success"], [variant="warning"], [variant="error"]) {
+  --_mui-button-bg: var(--_mui-button-tone);
+  --_mui-button-bg-hover: var(--_mui-button-hover);
+  --_mui-button-bg-pressed: var(--_mui-button-pressed);
+  --_mui-button-label: var(--mui-button-contrast, var(--_mui-button-contrast, #fff));
+  --_mui-button-label-hover: var(--_mui-button-label);
+  --_mui-button-label-pressed: var(--_mui-button-label);
+  --_mui-button-border: var(--_mui-button-tone);
+}
+mui-button[data-mui-button][type="tertiary"] { --_mui-button-tone: var(--mui-button-color, var(--_mui-button-muted, #767c82)); }
+mui-button[data-mui-button]:is([ghost], [dashed], [text], [type="text"]) {
+  --_mui-button-bg: #0000;
+  --_mui-button-bg-hover: #0000;
+  --_mui-button-bg-pressed: #0000;
+  --_mui-button-label: var(--_mui-button-tone);
+  --_mui-button-label-hover: var(--_mui-button-hover);
+  --_mui-button-label-pressed: var(--_mui-button-pressed);
+}
+mui-button[data-mui-button]:is([secondary], [tertiary], [quaternary]) {
+  --_mui-button-bg: var(--_mui-button-soft, rgba(46, 51, 56, .05));
+  --_mui-button-bg-hover: var(--_mui-button-soft-hover, rgba(46, 51, 56, .09));
+  --_mui-button-bg-pressed: var(--_mui-button-soft-pressed, rgba(46, 51, 56, .13));
+  --_mui-button-label: var(--_mui-button-tone);
+  --_mui-button-label-hover: var(--_mui-button-tone);
+  --_mui-button-label-pressed: var(--_mui-button-tone);
+}
+mui-button[data-mui-button][secondary]:is([type="primary"], [type="info"], [type="success"], [type="warning"], [type="error"], [variant="primary"], [variant="info"], [variant="success"], [variant="warning"], [variant="error"]) {
+  --_mui-button-bg: rgb(from var(--_mui-button-tone) r g b / .16);
+  --_mui-button-bg-hover: rgb(from var(--_mui-button-tone) r g b / var(--_mui-button-alpha-hover, .22));
+  --_mui-button-bg-pressed: rgb(from var(--_mui-button-tone) r g b / var(--_mui-button-alpha-pressed, .28));
+  --_mui-button-bg-disabled: var(--_mui-button-soft, rgba(46, 51, 56, .05));
+}
+mui-button[data-mui-button][quaternary] { --_mui-button-bg: #0000; }
+mui-button[data-mui-button]:is([text], [type="text"]) { --_mui-button-label-disabled: var(--mui-button-text-color, #333639); }
 
-mui-button-group[data-mui-button-group][size="tiny"], mui-button[data-mui-button][size="tiny"] { --mui-button-height: 22px; --mui-button-padding: 8px; --mui-button-font-size: 12px; }
-mui-button-group[data-mui-button-group][size="small"], mui-button[data-mui-button][size="small"] { --mui-button-height: 28px; --mui-button-padding: 10px; --mui-button-font-size: 14px; }
-mui-button-group[data-mui-button-group][size="medium"], mui-button[data-mui-button][size="medium"] { --mui-button-height: 34px; --mui-button-padding: 14px; --mui-button-font-size: 14px; }
-mui-button-group[data-mui-button-group][size="large"], mui-button[data-mui-button][size="large"] { --mui-button-height: 40px; --mui-button-padding: 18px; --mui-button-font-size: 15px; }
+mui-button-group[data-mui-button-group][size="tiny"], mui-button[data-mui-button][size="tiny"] { --mui-button-height: 22px; --mui-button-padding: 6px; --mui-button-font-size: 12px; --mui-button-icon-size: 14px; }
+mui-button-group[data-mui-button-group][size="small"], mui-button[data-mui-button][size="small"] { --mui-button-height: 28px; --mui-button-padding: 10px; --mui-button-font-size: 14px; --mui-button-icon-size: 18px; }
+mui-button-group[data-mui-button-group][size="medium"], mui-button[data-mui-button][size="medium"] { --mui-button-height: 34px; --mui-button-padding: 14px; --mui-button-font-size: 14px; --mui-button-icon-size: 18px; }
+mui-button-group[data-mui-button-group][size="large"], mui-button[data-mui-button][size="large"] { --mui-button-height: 40px; --mui-button-padding: 18px; --mui-button-font-size: 15px; --mui-button-icon-size: 20px; }
 
 mui-button[data-mui-button] > [data-mui-button-control] {
   box-sizing: border-box;
   position: relative;
   display: inline-flex;
+  flex: none;
   align-items: center;
   justify-content: center;
-  gap: var(--mui-button-icon-gap, 8px);
   min-width: 0;
-  min-height: var(--mui-button-height, 34px);
+  height: var(--mui-button-height, 34px);
   padding: 0 var(--mui-button-padding, 14px);
-  border: 1px solid var(--mui-button-border-color, #c2c2c2);
+  border: 0;
   border-radius: var(--mui-button-radius, 3px);
-  background: var(--mui-button-background, transparent);
-  color: var(--mui-button-label-color, var(--mui-text-primary, #333639));
+  background: var(--mui-button-background, var(--_mui-button-bg));
+  color: var(--mui-button-label-color, var(--_mui-button-label));
   font: inherit;
   font-size: var(--mui-button-font-size, 14px);
-  line-height: 1.4;
+  font-weight: 400;
+  line-height: 1;
   text-align: center;
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
   appearance: none;
-  transition: color .2s, background-color .2s, border-color .2s;
+  outline: none;
+  transition: color .3s cubic-bezier(.4, 0, .2, 1), background-color .3s cubic-bezier(.4, 0, .2, 1), opacity .3s cubic-bezier(.4, 0, .2, 1), border-color .3s cubic-bezier(.4, 0, .2, 1);
 }
-mui-button[data-mui-button] > [data-mui-button-control]:hover { border-color: var(--_mui-button-hover); color: var(--_mui-button-hover); }
-mui-button[data-mui-button] > [data-mui-button-control]:active { border-color: var(--_mui-button-pressed); color: var(--_mui-button-pressed); }
-mui-button[data-mui-button]:is([type="primary"], [type="info"], [type="success"], [type="warning"], [type="error"], [variant="primary"], [variant="info"], [variant="success"], [variant="warning"], [variant="error"]) > [data-mui-button-control] {
-  border-color: transparent;
-  background: var(--_mui-button-tone);
-  color: var(--mui-button-label-color, var(--mui-button-contrast, #fff));
+mui-button[data-mui-button] > [data-mui-button-control]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--_mui-button-current-border, var(--_mui-button-border));
+  border-radius: inherit;
+  pointer-events: none;
+  transition: border-color .3s cubic-bezier(.4, 0, .2, 1);
 }
-mui-button[data-mui-button]:is([type="primary"], [type="info"], [type="success"], [type="warning"], [type="error"], [variant="primary"], [variant="info"], [variant="success"], [variant="warning"], [variant="error"]) > [data-mui-button-control]:hover { background: var(--_mui-button-hover); }
-mui-button[data-mui-button]:is([type="primary"], [type="info"], [type="success"], [type="warning"], [type="error"], [variant="primary"], [variant="info"], [variant="success"], [variant="warning"], [variant="error"]) > [data-mui-button-control]:active { background: var(--_mui-button-pressed); }
-mui-button[data-mui-button]:is([secondary], [tertiary], [quaternary], [ghost], [dashed], [text], [type="text"], [type="tertiary"]) > [data-mui-button-control] {
-  border-color: transparent;
-  background: transparent;
-  color: var(--mui-button-label-color, var(--_mui-button-tone));
-}
-mui-button[data-mui-button][secondary] > [data-mui-button-control] { background: color-mix(in srgb, var(--_mui-button-tone) 12%, transparent); }
-mui-button[data-mui-button]:is([tertiary], [type="tertiary"]) > [data-mui-button-control] { background: var(--mui-bg-muted, #f1f2f3); }
-mui-button[data-mui-button]:is([secondary], [tertiary], [quaternary], [type="tertiary"]) > [data-mui-button-control]:hover { background: color-mix(in srgb, var(--_mui-button-tone) 18%, transparent); }
-mui-button[data-mui-button]:is([secondary], [tertiary], [quaternary], [type="tertiary"]) > [data-mui-button-control]:active { background: color-mix(in srgb, var(--_mui-button-tone) 24%, transparent); }
-mui-button[data-mui-button]:is([ghost], [dashed], [text], [type="text"]) > [data-mui-button-control]:is(:hover, :active) { background: transparent; color: var(--_mui-button-hover); }
-mui-button[data-mui-button]:is([ghost], [dashed]) > [data-mui-button-control] { border-color: currentColor; }
-mui-button[data-mui-button][dashed] > [data-mui-button-control] { border-style: dashed; }
-mui-button[data-mui-button]:is([text], [type="text"]) > [data-mui-button-control] { min-height: 0; padding: 0 4px; }
-mui-button[data-mui-button][bordered="false"] > [data-mui-button-control] { border-color: transparent; }
-mui-button[data-mui-button][strong] > [data-mui-button-control] { font-weight: 600; }
-mui-button[data-mui-button][round] > [data-mui-button-control] { border-radius: 999px; padding-inline: calc(var(--mui-button-padding, 14px) + 4px); }
-mui-button[data-mui-button][circle] > [data-mui-button-control] { width: var(--mui-button-height, 34px); padding: 0; border-radius: 50%; }
+mui-button[data-mui-button]:is([secondary], [tertiary], [quaternary], [text], [type="text"], [bordered="false"]) > [data-mui-button-control]::after { content: none; }
+mui-button[data-mui-button][dashed] > [data-mui-button-control]::after { border-style: dashed; }
+mui-button[data-mui-button][strong] > [data-mui-button-control] { font-weight: 500; }
+mui-button[data-mui-button][round] > [data-mui-button-control] { border-radius: var(--mui-button-radius, var(--mui-button-height, 34px)); padding-inline: calc(var(--mui-button-padding, 14px) + 4px); }
+mui-button[data-mui-button][circle]:not([text], [type="text"]) > [data-mui-button-control] { width: var(--mui-button-height, 34px); padding: 0; border-radius: var(--mui-button-radius, var(--mui-button-height, 34px)); }
 mui-button[data-mui-button][block] > [data-mui-button-control] { width: 100%; }
-mui-button[data-mui-button] > [data-mui-button-control]:focus-visible { outline: 3px solid var(--mui-button-focus-color, var(--mui-focus-ring, #2080f080)); outline-offset: 2px; z-index: 1; }
-mui-button[data-mui-button] > [data-mui-button-control]:is(:disabled, [aria-disabled="true"]) { opacity: var(--mui-button-disabled-opacity, .5); cursor: not-allowed; }
-
-mui-button[data-mui-button] > [data-mui-button-control] > :is([data-mui-button-icon], [data-mui-button-spinner]) { flex: none; order: -1; }
-mui-button[data-mui-button][icon-placement="right"] > [data-mui-button-control] > :is([data-mui-button-icon], [data-mui-button-spinner]) { order: 1; }
+mui-button[data-mui-button]:is([text], [type="text"]) > [data-mui-button-control] { height: auto; padding: 0; border-radius: 0; }
+mui-button[data-mui-button] > [data-mui-button-control]:focus-visible { outline: 3px solid var(--mui-button-focus-color); outline-offset: 2px; }
+mui-button[data-mui-button] > [data-mui-button-control]:is(:disabled, [aria-disabled="true"]) {
+  opacity: var(--mui-button-disabled-opacity, var(--_mui-button-opacity, .5));
+  cursor: not-allowed;
+  background: var(--mui-button-background, var(--_mui-button-bg-disabled));
+  color: var(--mui-button-label-color, var(--_mui-button-label-disabled));
+}
+mui-button[data-mui-button][loading]:not([disabled]) > [data-mui-button-control] { opacity: 1; cursor: wait; background: var(--mui-button-background, var(--_mui-button-bg)); color: var(--mui-button-label-color, var(--_mui-button-label)); }
+mui-button[data-mui-button]:not([disabled]) > [data-mui-button-control]:is(:not(:disabled, [aria-disabled="true"]), [aria-busy="true"]):is(:hover, :focus) {
+  --_mui-button-current-border: var(--_mui-button-hover);
+  background: var(--mui-button-background-hover, var(--_mui-button-bg-hover));
+  color: var(--mui-button-label-color, var(--_mui-button-label-hover));
+  z-index: 1;
+}
+mui-button[data-mui-button]:not([disabled]) > [data-mui-button-control]:is(:not(:disabled, [aria-disabled="true"]), [aria-busy="true"]):active {
+  --_mui-button-current-border: var(--_mui-button-pressed);
+  background: var(--mui-button-background-pressed, var(--_mui-button-bg-pressed));
+  color: var(--mui-button-label-color, var(--_mui-button-label-pressed));
+}
+mui-button[data-mui-button] > [data-mui-button-control] > :is([data-mui-button-icon], [data-mui-button-spinner]) {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  order: -1;
+  width: var(--mui-button-icon-size, 18px);
+  height: var(--mui-button-icon-size, 18px);
+  font-size: var(--mui-button-icon-size, 18px);
+  margin: var(--mui-button-icon-gap, 6px);
+  margin-inline-start: 0;
+}
+mui-button[data-mui-button][icon-placement="right"] > [data-mui-button-control] > :is([data-mui-button-icon], [data-mui-button-spinner]) { order: 1; margin-inline: var(--mui-button-icon-gap, 6px) 0; }
+mui-button[data-mui-button] [data-mui-button-control][data-mui-button-icon-only] > :is([data-mui-button-icon], [data-mui-button-spinner]) { margin: 0; }
 mui-button[data-mui-button][loading] > [data-mui-button-control] > [data-mui-button-icon] { display: none; }
-mui-button[data-mui-button] > [data-mui-button-control] > [data-mui-button-spinner] {
-  box-sizing: border-box;
-  width: var(--mui-button-spinner-size, 1em);
-  height: var(--mui-button-spinner-size, 1em);
-  border: var(--mui-button-spinner-width, 2px) solid var(--mui-button-spinner-color, currentColor);
-  border-top-color: transparent;
-  border-radius: 50%;
-  animation: mui-button-spin .8s linear infinite;
-}
+mui-button[data-mui-button] > [data-mui-button-control] > [data-mui-button-spinner] { width: var(--mui-button-spinner-size, var(--mui-button-icon-size, 18px)); height: var(--mui-button-spinner-size, var(--mui-button-icon-size, 18px)); }
+mui-button [data-mui-button-spinner] > svg { animation: mui-button-spin 3s linear infinite; }
+mui-button [data-mui-button-spinner] circle { stroke: var(--mui-button-spinner-color, currentColor); stroke-width: var(--mui-button-spinner-width, 10%); r: calc(50% - var(--mui-button-spinner-width, 10%) / 2); }
 @keyframes mui-button-spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) {
-  mui-button[data-mui-button] > [data-mui-button-control] { transition: none; }
-  mui-button[data-mui-button] > [data-mui-button-control] > [data-mui-button-spinner] { animation: none; }
-}
 
 mui-button-group[data-mui-button-group] { box-sizing: border-box; display: inline-flex; vertical-align: middle; }
 mui-button-group[data-mui-button-group][vertical] { flex-direction: column; }
-mui-button-group[data-mui-button-group] > mui-button[data-mui-button] > [data-mui-button-control] { border-radius: 0; width: 100%; }
-mui-button-group[data-mui-button-group]:not([vertical]) > mui-button[data-mui-button] + mui-button[data-mui-button] > [data-mui-button-control] { margin-inline-start: -1px; }
-mui-button-group[data-mui-button-group]:not([vertical]) > mui-button[data-mui-button]:first-child > [data-mui-button-control] { border-start-start-radius: var(--mui-button-radius, 3px); border-end-start-radius: var(--mui-button-radius, 3px); }
-mui-button-group[data-mui-button-group]:not([vertical]) > mui-button[data-mui-button]:last-child > [data-mui-button-control] { border-start-end-radius: var(--mui-button-radius, 3px); border-end-end-radius: var(--mui-button-radius, 3px); }
-mui-button-group[data-mui-button-group][vertical] > mui-button[data-mui-button] + mui-button[data-mui-button] > [data-mui-button-control] { margin-block-start: -1px; }
-mui-button-group[data-mui-button-group][vertical] > mui-button[data-mui-button]:first-child > [data-mui-button-control] { border-start-start-radius: var(--mui-button-radius, 3px); border-start-end-radius: var(--mui-button-radius, 3px); }
-mui-button-group[data-mui-button-group][vertical] > mui-button[data-mui-button]:last-child > [data-mui-button-control] { border-end-start-radius: var(--mui-button-radius, 3px); border-end-end-radius: var(--mui-button-radius, 3px); }
+mui-button-group[data-mui-button-group][vertical] > mui-button[data-mui-button] > [data-mui-button-control] { width: 100%; }
+mui-button-group[data-mui-button-group]:not([vertical]) > mui-button[data-mui-button]:not(:last-child) > [data-mui-button-control] { border-start-end-radius: 0; border-end-end-radius: 0; }
+mui-button-group[data-mui-button-group]:not([vertical]) > mui-button[data-mui-button]:not(:first-child) > [data-mui-button-control] { border-start-start-radius: 0; border-end-start-radius: 0; }
+mui-button-group[data-mui-button-group][vertical] > mui-button[data-mui-button]:not(:last-child) > [data-mui-button-control] { border-end-start-radius: 0; border-end-end-radius: 0; }
+mui-button-group[data-mui-button-group][vertical] > mui-button[data-mui-button]:not(:first-child) > [data-mui-button-control] { border-start-start-radius: 0; border-start-end-radius: 0; }
+mui-button-group[data-mui-button-group] > mui-button:is(
+  mui-button:is(:not([type], [variant]), [type="default"], [variant="default"]) + :is(:not([type], [variant]), [type="default"], [variant="default"]),
+  mui-button[ghost]:is([type="primary"], [variant="primary"]) + :is([type="primary"], [variant="primary"]),
+  mui-button[ghost]:is([type="info"], [variant="info"]) + :is([type="info"], [variant="info"]),
+  mui-button[ghost]:is([type="success"], [variant="success"]) + :is([type="success"], [variant="success"]),
+  mui-button[ghost]:is([type="warning"], [variant="warning"]) + :is([type="warning"], [variant="warning"]),
+  mui-button[ghost]:is([type="error"], [variant="error"]) + :is([type="error"], [variant="error"])
+) > [data-mui-button-control] { --_mui-button-joined-width: 0px; --_mui-button-joined-offset: -1px; }
+mui-button-group[data-mui-button-group]:not([vertical]) > mui-button[data-mui-button] + mui-button[data-mui-button] > [data-mui-button-control]::after { border-inline-start-width: var(--_mui-button-joined-width, 1px); }
+mui-button-group[data-mui-button-group][vertical] > mui-button[data-mui-button] + mui-button[data-mui-button] > [data-mui-button-control]::after { border-block-start-width: var(--_mui-button-joined-width, 1px); }
+mui-button-group[data-mui-button-group]:not([vertical]) > mui-button[data-mui-button]:not([disabled]) > [data-mui-button-control]:is(:not(:disabled, [aria-disabled="true"]), [aria-busy="true"]):is(:hover, :focus, :active)::after { inset-inline-start: var(--_mui-button-joined-offset, 0px); border-inline-start-width: 1px; }
+mui-button-group[data-mui-button-group][vertical] > mui-button[data-mui-button]:not([disabled]) > [data-mui-button-control]:is(:not(:disabled, [aria-disabled="true"]), [aria-busy="true"]):is(:hover, :focus, :active)::after { inset-block-start: var(--_mui-button-joined-offset, 0px); border-block-start-width: 1px; }
+@media (prefers-reduced-motion: reduce) {
+  mui-button[data-mui-button] > [data-mui-button-control],
+  mui-button[data-mui-button] > [data-mui-button-control]::after { transition: none; }
+  mui-button [data-mui-button-spinner] > svg { animation: none; }
+}
+@media (forced-colors: active) {
+  mui-button[data-mui-button] > [data-mui-button-control]:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+}

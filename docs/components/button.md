@@ -42,7 +42,23 @@ If also using the legacy aggregate, **load Button before the aggregate**. Use or
 external Button CSS isolates the wrapper from later-installed legacy Button styling.
 Legacy-first loading throws an explicit conflict before registering either rich class.
 Do not load both Button ESM and classic builds in one document. The legacy aggregate still
-contains its original basic implementation and has unchanged output sizes and budget.
+contains its original basic controller. The new [default-style audit](../style-audit/components/button.md)
+corrects its applicable presentation too; historical migration byte counts below are not
+current size claims. All existing budget ceilings remain unchanged.
+
+For the documented defaults, also link `@dataengine/markup-ui/global-style/style.css`.
+For explicit light/dark themes, link `@dataengine/markup-ui/themes.css` and set
+`data-mui-theme="light"` or `"dark"` on the document or containing scope. No theme runtime
+is required. Button consumes Button-specific text/border tokens; the surrounding document
+palette is not claimed to match Naive UI.
+
+Default medium buttons have 34px height, 14px normal-weight text at line-height 1,
+14px horizontal padding and 3px corners. A non-layout 1px border overlay avoids adding
+2px to the control width. Tiny/small/medium/large use heights 22/28/34/40px,
+padding 6/10/14/18px, font sizes 12/14/14/15px and icons 14/18/18/20px, with a 6px icon gap
+when label content exists. Icon-only controls remain centered without that margin; live text
+edits update this distinction without inserting a content wrapper.
+`round` adds 4px horizontal padding; text buttons remove padding, fixed height and radius.
 
 ## Native markup contract
 
@@ -105,7 +121,7 @@ Host `href`/`tag` are not supported; author an `<a>` for navigation.
   activation; use `.click()` when submission/activation is intended.
 - Buttons activate with native Enter/Space behavior; anchors with Enter, not Space.
   Loading and disabled states suppress click/auxclick at host capture and native buttons
-  become disabled. Loading sets native `aria-busy="true"` and adds one decorative spinner;
+  become disabled. Loading sets native `aria-busy="true"` and adds one decorative native SVG;
   icon nodes are hidden by CSS, not discarded. Child text/listeners remain intact.
 - Disabled/loading links temporarily lose `href`, leave the Tab order, and retain
   `role="link"` plus `aria-disabled="true"` (an authored role is preserved). This prevents
@@ -122,6 +138,9 @@ Host `href`/`tag` are not supported; author an `<a>` for navigation.
   host contents with one new control restores overrides on the old control. Observers
   and capture listeners are removed on disconnect and reinstated on reconnect; detached
   native markup is not kept synchronized until reconnection.
+- The loading arc uses native SVG animation with a 1.6s sweep/rotation and 3s outer rotation.
+  A media-query listener exists only while loading and connected; reduced motion pauses the
+  SVG at a stable arc, and detach/completion removes the listener and pauses its clock.
 
 ## Per-property and slot migration tracker
 
@@ -132,10 +151,10 @@ scope · ⏭️ Intentionally omitted framework API.
 | --- | --- | --- |
 | `attr-type` | Host `attr-type` / `.attrType`; or authored native `button[type]`. | 🟢 Real button/submit/reset behavior; generated default `button`, authored default native `submit`. |
 | `block` | Boolean `block` / `.block`. | 🟢 Full-width host and native control. |
-| `bordered` | `bordered="false"` / `.bordered = false`; default true. | 🟢 Transparent border when false; border geometry remains stable. |
-| `circle` | Boolean `circle` / `.circle`. | 🟢 Equal preset width/height, circular corners. Keep content short/icon-only. |
+| `bordered` | `bordered="false"` / `.bordered = false`; default true. | 🟢 Omits the border overlay without changing control geometry. |
+| `circle` | Boolean `circle` / `.circle`. | 🟢 Equal preset width/height unless `text` is also set; keep content short/icon-only. |
 | `color` | `--mui-button-color`, `--mui-button-hover-color`, `--mui-button-pressed-color`. | 🟡 External CSS tokens; no color-string JS parser or auto-generated hover colors. |
-| `dashed` | Boolean `dashed` / `.dashed`. | 🟢 Dashed native-control border. |
+| `dashed` | Boolean `dashed` / `.dashed`. | 🟢 Dashed border overlay. |
 | `disabled` | Boolean `disabled` / `.disabled`, or authored native disabled. | 🟢 Actual button disabling; explicit link navigation suppression and ARIA. |
 | `focusable` | `focusable="false"` / `.focusable = false`. | 🟡 Excludes sequential Tab focus via native `tabindex=-1`; pointer/programmatic focus remains native, not forcibly prevented. |
 | `ghost` | Boolean `ghost` / `.ghost`. | 🟢 Transparent fill with semantic text/border. |
@@ -144,16 +163,16 @@ scope · ⏭️ Intentionally omitted framework API.
 | `keyboard` | Always retain native keyboard defaults. | 🟡 No API to suppress accessible Enter/Space activation and no custom keydown click synthesis. |
 | `quaternary` | Boolean `quaternary` / `.quaternary`. | 🟢 Transparent resting surface, subtle hover/pressed fill. |
 | `loading` | Boolean `loading` / `.loading`. | 🟢 Busy state, decorative spinner, suppressed activation, native disabling. No automatic promise tracking. |
-| `spin-props` | `--mui-button-spinner-size`, `--mui-button-spinner-width`, `--mui-button-spinner-color`. | 🟡 CSS spinner controls size/stroke/color; no object prop or SVG radius/scale model. Reduced motion disables animation. |
+| `spin-props` | `--mui-button-spinner-size`, `--mui-button-spinner-width`, `--mui-button-spinner-color`. | 🟡 Native SVG size/stroke/color controls; default stroke is 10% of its viewport. Author CSS lengths remain supported; no framework object prop. Reduced motion pauses the native arc. |
 | `render-icon` | Authored direct `[data-mui-button-icon]` child. | ⏭️ VNode render callback omitted; native content equivalent implemented. |
 | `round` | Boolean `round` / `.round`. | 🟢 Pill corners; `circle` wins when both are present. |
 | `secondary` | Boolean `secondary` / `.secondary`. | 🟢 Low-opacity semantic fill. |
-| `size` | `size="tiny\|small\|medium\|large"` / `.size`. | 🟢 22/28/34/40px minimum height; medium default. CSS can customize dimensions. |
-| `strong` | Boolean `strong` / `.strong`. | 🟢 Font weight 600. |
+| `size` | `size="tiny\|small\|medium\|large"` / `.size`. | 🟢 Fixed 22/28/34/40px heights; medium default. CSS can customize dimensions. |
+| `strong` | Boolean `strong` / `.strong`. | 🟢 Font weight 500. |
 | `tertiary` | Boolean `tertiary` / `.tertiary`. | 🟢 Muted surface and hover/pressed state. |
 | `text` | Boolean `text` / `.text`; legacy `type="text"` also accepted. | 🟢 Compact, borderless appearance; not a link unless the authored control is an anchor. |
 | `text-color` | `--mui-button-label-color`. | 🟡 External CSS override; not an inline style/object prop. |
-| `type` | `type` / `.type`: default, primary, info, success, warning, error, tertiary; legacy `variant` / `.variant` aliases semantic colors. | 🟢 Semantic treatments retained; `type=tertiary` deliberately maps to the muted treatment, not exact upstream text-color parity. Do not combine conflicting `type` and `variant` values. |
+| `type` | `type` / `.type`: default, primary, info, success, warning, error, tertiary; legacy `variant` / `.variant` aliases semantic colors. | 🟢 `type=tertiary` now uses muted text with the ordinary transparent surface/border; the Boolean `tertiary` treatment instead uses a soft fill. Do not combine conflicting `type` and `variant` values. |
 | `tag` | Author one native `<button>` or `<a>`. | ⏭️ Arbitrary tag rendering is omitted; no clickable div/span impersonation. |
 | `onClick` (source prop) / DOM events demo | `addEventListener("click", handler)` on the native child or host. | 🟢 Ordinary cancellable event and bubbling; no function/array prop adapter. |
 | `theme`, `themeOverrides`, `builtinThemeOverrides` (inherited theme plumbing) | External component CSS and custom properties. | ⏭️ Vue theme injection, CSS-in-JS and framework theme objects omitted. |
@@ -167,11 +186,16 @@ Choose one main treatment; combinations that upstream rejects (ghost/dashed/text
 secondary/tertiary/quaternary) are not a supported precedence contract.
 
 Additional CSS tokens include `--mui-button-height`, `--mui-button-padding`,
-`--mui-button-font-size`, `--mui-button-radius`, `--mui-button-icon-gap`,
+`--mui-button-font-size`, `--mui-button-radius`, `--mui-button-icon-size`, `--mui-button-icon-gap`,
 `--mui-button-border-color`, `--mui-button-background` (default surface),
 `--mui-button-contrast`, `--mui-button-focus-color` and `--mui-button-disabled-opacity`.
 Use external stylesheets, not runtime style objects. Application colors remain responsible
 for contrast in their actual theme; this is not blanket accessibility certification.
+`--mui-button-background-hover` and `--mui-button-background-pressed` customize those states.
+Ordinary focus uses the verified theme focus border/text colors, without a default outer
+halo. An explicit `--mui-button-focus-color` still requests the authored 3px focus-visible
+ring; forced-colors mode uses a 2px system Highlight outline. Reduced motion disables
+control/border transitions and the decorative spinner animation.
 
 ## ButtonGroup
 
@@ -190,8 +214,10 @@ for contrast in their actual theme; this is not blanket accessibility certificat
 | Default slot | Authored direct `mui-button` children. | 🟢 Order/identity preserved, no renderer. |
 | Group semantics | Default `role="group"`; author `aria-label` or `aria-labelledby`. | 🟢 Individual native controls retain Tab stops. No roving tab index, arrow-key toolbar behavior or selection state is invented. |
 
-Logical margins/corners support RTL. Group join styling overrides individual rounded/circle
-corners; use separate buttons instead for independent shapes. There is no framework form-item
+Logical margins/corners support RTL. Only internal corners are removed: rounded outer ends
+and single-member shapes are preserved. Members do not overlap by a negative margin.
+Compatible default-type and same-type ghost borders collapse; mixed types retain their
+separate boundary, including correct hovered/focused seam restoration. There is no framework form-item
 or provider-derived sizing; use group/child attributes or inherited CSS.
 
 ## Numbered migration steps and acceptance

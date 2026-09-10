@@ -128,9 +128,9 @@ describe("native elements", () => {
     expect(loading.getAttribute("aria-busy")).toBe("false")
     expect(loading.querySelector("[data-mui-button-spinner]")).toBeNull()
     const styles = document.getElementById("mui-styles")?.textContent ?? ""
-    expect(styles).toContain('mui-button[type="warning"]')
+    expect(styles).toContain('mui-button[type=warning]')
     expect(styles).toContain('mui-button[secondary]')
-    expect(styles).toContain('mui-button[size="large"]')
+    expect(styles).toContain('mui-button[size=large]')
     expect(styles).toContain('mui-button[circle]')
   })
 

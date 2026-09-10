@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
+import { readFileSync } from "node:fs"
 import { MuiButton, MuiButtonGroup, registerButton } from "../src/components/button/index.js"
 import { registerElements } from "../src/components/elements.js"
 import { installActions, registerAction } from "../src/actions/index.js"
@@ -6,6 +7,78 @@ import { installActions, registerAction } from "../src/actions/index.js"
 afterEach(() => {
   document.body.replaceChildren()
   vi.restoreAllMocks()
+  vi.unstubAllGlobals()
+})
+
+describe("audited Button styles", () => {
+  const css = readFileSync("src/components/button/button.css", "utf8")
+  const legacy = readFileSync("src/components/styles.css", "utf8")
+
+  it("uses overlay borders instead of adding border width to native button geometry", () => {
+    expect(css).toContain("border: 0;")
+    expect(css).toContain('[data-mui-button-control]::after {')
+    expect(css).toContain("border: 1px solid var(--_mui-button-current-border")
+    expect(css).toContain("height: var(--mui-button-height, 34px)")
+    expect(css).toContain("line-height: 1;")
+    expect(css).toContain("font-weight: 400;")
+    expect(css).toContain('[strong] > [data-mui-button-control] { font-weight: 500; }')
+    expect(css).toContain('height: auto; padding: 0; border-radius: 0;')
+  })
+
+  it("matches pinned size, round-padding and icon metrics without changing native control types", () => {
+    for (const [size, height, padding, font, icon] of [
+      ["tiny", 22, 6, 12, 14], ["small", 28, 10, 14, 18],
+      ["medium", 34, 14, 14, 18], ["large", 40, 18, 15, 20],
+    ]) {
+      expect(css).toContain(`[size="${size}"] { --mui-button-height: ${height}px; --mui-button-padding: ${padding}px; --mui-button-font-size: ${font}px; --mui-button-icon-size: ${icon}px; }`)
+    }
+    expect(css).toContain("calc(var(--mui-button-padding, 14px) + 4px)")
+    expect(css).toContain("var(--mui-button-icon-gap, 6px)")
+    expect(css).toContain('[data-mui-button-spinner] > svg')
+    for (const type of ["primary", "text", "tertiary", "error"]) {
+      const element = button(`<mui-button type="${type}"><button type="reset">Action</button></mui-button>`)
+      expect((element.control as HTMLButtonElement).type).toBe("reset")
+    }
+  })
+
+  it("uses Button-specific reference colors without changing the document palette", () => {
+    const themes = JSON.parse(readFileSync("src/theme/presets.json", "utf8"))
+    expect(themes.light["button-text-color"]).toBe("#333639")
+    expect(themes.light["button-border-color"]).toBe("#e0e0e6")
+    expect(themes.light["text-primary"]).toBe("#18181b")
+    expect(themes.light["bg-page"]).toBe("#f6f7f9")
+    expect(themes.dark["button-text-color"]).toBe("rgba(255, 255, 255, .82)")
+    expect(css).toContain("--_mui-button-contrast: #000")
+    expect(css).toContain("--_mui-button-opacity: .38")
+    expect(css).toContain("rgba(46, 51, 56, .05)")
+    expect(css).toContain("rgba(255, 255, 255, .12)")
+    expect(css).toContain("r g b / .16")
+    expect(css).not.toContain("var(--mui-text-primary")
+    expect(legacy).toContain("--mui-button-text-color:#333639;--mui-button-border-color:#e0e0e6")
+  })
+
+  it("keeps disabled colors static and loading appearance independent from native disabled ownership", () => {
+    expect(css).toContain(':is(:not(:disabled, [aria-disabled="true"]), [aria-busy="true"])')
+    expect(css).toContain('[loading]:not([disabled]) > [data-mui-button-control] { opacity: 1; cursor: wait;')
+    expect(css).toContain("var(--_mui-button-bg-disabled)")
+    expect(css).toContain("var(--_mui-button-label-disabled)")
+    expect(css).toContain("border-color .3s cubic-bezier(.4, 0, .2, 1)")
+    expect(css).toContain("@media (forced-colors: active)")
+    expect(css).toContain("@media (prefers-reduced-motion: reduce)")
+    expect(css).toContain(":focus-visible { outline: 2px solid Highlight")
+  })
+
+  it("isolates native hosts from later legacy soft-state declarations and joins only compatible borders", () => {
+    expect(css).toContain(`mui-button${"[data-mui-button]".repeat(4)} {`)
+    expect(css).toContain("all: unset")
+    expect(css).not.toContain("margin-inline-start: -1px")
+    expect(css).toContain("var(--_mui-button-joined-width, 1px)")
+    expect(css).toContain("var(--_mui-button-joined-offset, 0px)")
+    for (const type of ["primary", "info", "success", "warning", "error"]) {
+      expect(css).toContain(`mui-button[ghost]:is([type="${type}"], [variant="${type}"]) + :is([type="${type}"], [variant="${type}"])`)
+    }
+    expect(css).toContain('mui-button:is(:not([type], [variant]), [type="default"], [variant="default"]) + :is(:not([type], [variant]), [type="default"], [variant="default"])')
+  })
 })
 
 function button(markup = "<mui-button>Action</mui-button>"): MuiButton {
@@ -275,6 +348,75 @@ describe("standalone Button", () => {
     expect(element.querySelector("strong")).toBe(label)
     expect(element.control!.getAttribute("aria-label")).toBe("Add")
     expect(element.control!.hasAttribute("aria-busy")).toBe(false)
+  })
+
+  it("uses an owned native SVG for the measured loading arc without changing the accessible name", () => {
+    const element = button("<mui-button loading>Save</mui-button>")
+    const spinner = element.querySelector("[data-mui-button-spinner]")!
+    const svg = spinner.querySelector("svg")!
+    expect(spinner.getAttribute("aria-hidden")).toBe("true")
+    expect(svg.getAttribute("focusable")).toBe("false")
+    expect(svg.querySelector("circle")?.getAttribute("stroke-dasharray")).toBe("283.5%")
+    expect(svg.querySelector("animateTransform")?.getAttribute("values")).toBe("0;270;720")
+    expect(svg.querySelector("animate")?.getAttribute("values")).toBe("283.5%;71%;283.5%")
+    expect(svg.querySelector("animate")?.getAttribute("dur")).toBe("1.6s")
+    expect(element.control?.textContent).toBe("Save")
+    element.setAttribute("aria-label", "Save document")
+    expect(element.querySelectorAll("[data-mui-button-spinner]")).toHaveLength(1)
+    expect(element.querySelector("[data-mui-button-spinner] svg")).toBe(svg)
+  })
+
+  it("derives icon-only spacing from live content without wrapping or replacing authored nodes", async () => {
+    const element = button('<mui-button circle icon-placement="right" aria-label="Add"><span data-mui-button-icon>+</span></mui-button>')
+    const control = element.control!
+    const icon = control.firstChild
+    expect(control.hasAttribute("data-mui-button-icon-only")).toBe(true)
+    const label = document.createTextNode("Save")
+    control.append(label)
+    await Promise.resolve()
+    expect(control.hasAttribute("data-mui-button-icon-only")).toBe(false)
+    label.nodeValue = ""
+    await Promise.resolve()
+    expect(control.hasAttribute("data-mui-button-icon-only")).toBe(true)
+    expect(control.firstChild).toBe(icon)
+    expect(control.lastChild).toBe(label)
+    element.loading = true
+    expect(control.hasAttribute("data-mui-button-icon-only")).toBe(true)
+    const replacement = document.createElement("button")
+    replacement.textContent = "New"
+    element.replaceChildren(replacement)
+    await Promise.resolve()
+    expect(control.hasAttribute("data-mui-button-icon-only")).toBe(false)
+  })
+
+  it("pauses native loading motion for reduced motion and releases its listener on detach or completion", () => {
+    const query = { matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }
+    vi.stubGlobal("matchMedia", vi.fn(() => query))
+    const element = button("<mui-button loading>Save</mui-button>")
+    const svg = element.querySelector("svg")!
+    const pause = vi.fn(), resume = vi.fn(), seek = vi.fn()
+    Object.assign(svg, { pauseAnimations: pause, unpauseAnimations: resume, setCurrentTime: seek })
+    const changed = query.addEventListener.mock.calls[0]![1] as () => void
+    query.matches = true
+    changed()
+    expect(pause).toHaveBeenCalledOnce()
+    expect(seek).toHaveBeenCalledWith(.8)
+    query.matches = false
+    changed()
+    expect(resume).toHaveBeenCalledOnce()
+    element.setAttribute("aria-label", "Save document")
+    expect(query.addEventListener).toHaveBeenCalledOnce()
+    element.remove()
+    expect(query.removeEventListener).toHaveBeenCalledWith("change", changed)
+    resume.mockClear()
+    changed()
+    expect(resume).not.toHaveBeenCalled()
+    document.body.append(element)
+    expect(element.querySelector("svg")).toBe(svg)
+    expect(query.addEventListener).toHaveBeenCalledTimes(2)
+    element.loading = false
+    expect(query.removeEventListener).toHaveBeenCalledTimes(2)
+    expect(element.querySelector("svg")).toBeNull()
   })
 
   it("cleans up observers and capture listeners while disconnected", async () => {

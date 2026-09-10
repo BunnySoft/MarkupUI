@@ -27,9 +27,16 @@ committed in `43dd57f`, independently of the basic aggregate Button.
 
 ## Acceptance and gaps
 
-A1 records a successful `pnpm build && pnpm test`: **67 tests** (24 Button, 16 Avatar,
+A1's historical migration record reports `pnpm build && pnpm test`: **67 tests** (24 Button, 16 Avatar,
 27 legacy/native), plus **Chromium** keyboard, forms, focus, accessible-name, state/content,
 CSS and registration-order checks. These recorded results were not rerun for this doc edit.
+
+The [new default-style audit](../../style-audit/components/button.md) records the later
+rendered Naive 2.45.3 comparison and corrections: border-box geometry with overlay borders,
+34px/14px default metrics, weight 500 for strong, exact light/dark treatments and state colors,
+logical group joins, and native SVG loading motion. It supersedes the original deliberate
+`type=tertiary` surface difference. Current measurements and remaining native/legacy boundaries
+belong to that report, not the historical migration totals.
 
 Generated buttons default to native `type="button"`; authored buttons without type retain
 the browser's submit default. Host `type` is visual; `attr-type` changes the native action.
@@ -53,7 +60,8 @@ Register Button **before** the legacy aggregate. The aggregate preserves rich re
 legacy-first loading throws a clear conflict rather than claiming an upgrade. Both retained
 load modes and the conflict path have acceptance evidence.
 
-Core remains **14,611 / 15,000 gzip bytes**. Standalone ESM/classic JavaScript each have a
+The original migration measured core at **14,611 gzip bytes**; the **15,000 ceiling** remains.
+Consult the current manifest/style audit for updated bytes. Standalone ESM/classic JavaScript each have a
 **4,000-byte gzip ceiling**, and Button CSS has a **2,500-byte ceiling**. Exact outputs belong
 to the build manifest; ceilings do not assert actual compressed sizes.
 
@@ -120,16 +128,16 @@ It does not certify Vue callbacks, identical visual/default behavior or all-brow
 | [`keyboard`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L45) | Prop | No API suppresses native keyboard defaults or synthesizes keydown clicks; buttons use Enter/Space, anchors Enter only. | ⏭️ Intentionally omitted | A1/S1: native activation accepted; suppression toggle excluded. |
 | [`quaternary`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L46) | Prop | Boolean `quaternary` / `.quaternary`; transparent resting surface with subtle hover/pressed fill. | 🟢 Verified | A1/S3: retained treatment, not pixel parity. |
 | [`loading`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L47) | Prop | Boolean `loading` / `.loading`; native busy/disabled state, one decorative spinner and suppressed activation; no automatic Promise tracking. | 🟢 Verified | A1/S1/S3: content preserved; Tab behavior deliberately differs upstream. |
-| [`spin-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L48) | Prop | CSS spinner-size/spinner-width/spinner-color tokens replace the object prop; no SVG radius/scale model. | 🟢 Verified | A1/S3: narrower CSS controls and reduced-motion evidence. |
+| [`spin-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L48) | Prop | CSS spinner-size/spinner-width/spinner-color tokens style an owned native SVG; no framework object prop. | 🟢 Verified | A1/S3: measured arc geometry/motion and live reduced-motion cleanup. |
 | [`render-icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L49) | Prop | No VNode/render callback; author a direct marked icon node in the native control. | ⏭️ Intentionally omitted | A1: authored-icon alternative verified under Icon slot. |
 | [`round`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L50) | Prop | Boolean `round` / `.round` creates pill corners; circle wins, and group joins may override independent rounding. | 🟢 Verified | A1/S3: documented shape precedence. |
 | [`secondary`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L51) | Prop | Boolean `secondary` / `.secondary`; low-opacity semantic fill. | 🟢 Verified | A1/S3: retained CSS treatment. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L52) | Prop | `size` / `.size`: tiny/small/medium/large minimum heights 22/28/34/40px; medium default, external CSS customization. | 🟢 Verified | A1/S3: browser size and group-precedence evidence. |
-| [`strong`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L53) | Prop | Boolean `strong` / `.strong`; font weight 600. | 🟢 Verified | A1/S3: external CSS treatment. |
+| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L52) | Prop | `size` / `.size`: fixed tiny/small/medium/large heights 22/28/34/40px; medium default, external CSS customization. | 🟢 Verified | A1/S3 and default-style audit: browser size and group-precedence evidence. |
+| [`strong`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L53) | Prop | Boolean `strong` / `.strong`; font weight 500. | 🟢 Verified | A1/S3 and rendered default-style audit. |
 | [`tertiary`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L54) | Prop | Boolean `tertiary` / `.tertiary`; muted surface and hover/pressed treatment. | 🟢 Verified | A1/S3: retained CSS treatment. |
 | [`text`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L55) | Prop | Boolean `text` / `.text`, or legacy visual `type=text`; compact borderless styling, not implicit anchor semantics. | 🟢 Verified | A1/S3: native control identity stays unchanged. |
 | [`text-color`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L56) | Prop | External `--mui-button-label-color`; no inline style/object prop. | 🟢 Verified | A1/S3: narrower CSS-token replacement. |
-| [`type`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L57) | Prop | Visual `type` / `.type` supports default/primary/info/success/warning/error/tertiary; legacy variant aliases semantic colors. | 🟢 Verified | A1/S3: tertiary is intentionally muted; avoid conflicting type/variant values. |
+| [`type`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L57) | Prop | Visual `type` / `.type` supports default/primary/info/success/warning/error/tertiary; legacy variant aliases semantic colors. | 🟢 Verified | A1/S3: tertiary type uses muted text with ordinary border/transparent fill, distinct from the tertiary flag; avoid conflicting type/variant values. |
 | [`tag`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/button/demos/enUS/index.demo-entry.md#L58) | Prop | Author exactly one native button or anchor; no arbitrary tag/host-href renderer. | ⏭️ Intentionally omitted | A1/S1: native control alternative; no clickable div/span imitation. |
 
 ### ButtonGroup Props

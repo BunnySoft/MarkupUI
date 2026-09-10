@@ -22,3 +22,6 @@ document.querySelector("#toggle-loading").addEventListener("click", () => {
 document.querySelector("#toggle-disabled").addEventListener("click", () => {
   action.disabled = !action.disabled
 })
+document.querySelector("#button-theme").addEventListener("change", (event) => {
+  document.documentElement.dataset.muiTheme = event.target.value
+})

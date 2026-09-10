@@ -21,6 +21,7 @@ export class MuiButton extends HTMLElement {
   private spinner: HTMLSpanElement | null = null
   private readonly overrides = new Map<string, Override>()
   private observer: MutationObserver | undefined
+  private motion: MediaQueryList | undefined
   private upgraded = false
 
   public connectedCallback(): void {
@@ -45,6 +46,7 @@ export class MuiButton extends HTMLElement {
     this.observer?.disconnect()
     this.removeEventListener("click", this.onActivation, true)
     this.removeEventListener("auxclick", this.onActivation, true)
+    this.stopMotion()
   }
 
   public attributeChangedCallback(): void {
@@ -164,18 +166,68 @@ export class MuiButton extends HTMLElement {
         this.spinner = this.ownerDocument.createElement("span")
         this.spinner.dataset.muiButtonSpinner = ""
         this.spinner.setAttribute("aria-hidden", "true")
+        const svg = this.ownerDocument.createElementNS("http://www.w3.org/2000/svg", "svg")
+        svg.setAttribute("width", "100%")
+        svg.setAttribute("height", "100%")
+        svg.setAttribute("focusable", "false")
+        const circle = this.ownerDocument.createElementNS(svg.namespaceURI, "circle")
+        for (const [name, value] of Object.entries({
+          cx: "50%", cy: "50%", r: "45%", fill: "none", "stroke-linecap": "round",
+          "stroke-dasharray": "283.5%", "stroke-dashoffset": "71%", "transform-origin": "50% 50%",
+        })) circle.setAttribute(name, value)
+        // Compose the two reference angular tracks into one native rotation.
+        for (const [tag, attribute, values] of [
+          ["animateTransform", "transform", "0;270;720"],
+          ["animate", "stroke-dashoffset", "283.5%;71%;283.5%"],
+        ]) {
+          const animation = this.ownerDocument.createElementNS(svg.namespaceURI, tag!)
+          animation.setAttribute("attributeName", attribute!)
+          animation.setAttribute("values", values!)
+          animation.setAttribute("dur", "1.6s")
+          animation.setAttribute("repeatCount", "indefinite")
+          if (tag === "animateTransform") animation.setAttribute("type", "rotate")
+          circle.append(animation)
+        }
+        svg.append(circle)
+        this.spinner.append(svg)
       }
       if (this.spinner.parentNode !== control) control.prepend(this.spinner)
+      if (!this.motion) {
+        this.motion = this.ownerDocument.defaultView?.matchMedia?.("(prefers-reduced-motion: reduce)")
+        this.motion?.addEventListener("change", this.synchronizeMotion)
+      }
+      this.synchronizeMotion()
     } else {
+      this.stopMotion()
       this.spinner?.remove()
       this.spinner = null
     }
+    const hasContent = [...control.childNodes].some(node => node.nodeType === Node.TEXT_NODE
+      ? Boolean(node.textContent?.trim())
+      : node instanceof Element && !node.matches("[data-mui-button-icon], [data-mui-button-spinner]"))
+    control.toggleAttribute("data-mui-button-icon-only", !hasContent)
     if (this.isConnected) {
       this.observer?.observe(this, {
-        subtree: true, childList: true, attributes: true,
+        subtree: true, childList: true, characterData: true, attributes: true,
         attributeFilter: [...forwarded, "disabled", "type", "tabindex", "aria-disabled", "aria-busy", "href", "role"],
       })
     }
+  }
+
+  private readonly synchronizeMotion = (): void => {
+    if (!this.isConnected) return
+    const svg = this.spinner?.firstElementChild as SVGSVGElement | null
+    if (this.motion?.matches) {
+      svg?.pauseAnimations?.()
+      svg?.setCurrentTime?.(.8)
+    } else svg?.unpauseAnimations?.()
+  }
+
+  private stopMotion(): void {
+    this.motion?.removeEventListener("change", this.synchronizeMotion)
+    this.motion = undefined
+    const svg = this.spinner?.firstElementChild as SVGSVGElement | null
+    svg?.pauseAnimations?.()
   }
 
   private manage(name: string, value: string | null | undefined): void {
@@ -203,9 +255,11 @@ export class MuiButton extends HTMLElement {
   }
 
   private restoreControl(): void {
+    this.stopMotion()
     if (this.nativeControl) {
       for (const name of this.overrides.keys()) this.manage(name, undefined)
       this.nativeControl.removeAttribute("data-mui-button-control")
+      this.nativeControl.removeAttribute("data-mui-button-icon-only")
     }
     this.spinner?.remove()
     this.spinner = null

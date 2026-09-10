@@ -1,9 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-mui-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MarkupUI Button</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="./button.css">
   <script defer src="../../dist/markup-ui-button.global.js"></script>
@@ -12,7 +14,9 @@
 <body>
   <main>
     <h1>Button: native controls, external CSS and plain JavaScript</h1>
-    <p>This page loads only Button. The native child owns focus, form submission and activation.</p>
+    <p>This page loads Button plus opt-in document/theme CSS. The native child owns focus,
+      form submission and activation.</p>
+    <label>Theme <select id="button-theme"><option value="light">Light</option><option value="dark">Dark</option></select></label>
     <section aria-labelledby="types-heading">
       <h2 id="types-heading">Semantic types and treatments</h2>
       <div class="examples" id="types">
@@ -24,6 +28,8 @@
         <mui-button type="error">Error</mui-button>
         <mui-button type="tertiary">Tertiary type</mui-button>
       </div>
+      <p>Medium defaults: 34px high, 14px text/padding, 3px corners and an overlay border.
+        Strong uses weight 500; text buttons have no extra padding.</p>
       <div class="examples" id="treatments">
         <mui-button type="primary" secondary>Secondary</mui-button>
         <mui-button type="info" tertiary>Tertiary</mui-button>
@@ -86,6 +92,12 @@
         </mui-button-group>
         <mui-button-group dir="rtl" aria-label="Right-to-left actions">
           <mui-button>First</mui-button><mui-button>Last</mui-button>
+        </mui-button-group>
+        <mui-button-group aria-label="Mixed types">
+          <mui-button type="primary">Primary</mui-button><mui-button>Default</mui-button><mui-button>Default</mui-button>
+        </mui-button-group>
+        <mui-button-group aria-label="Rounded ends">
+          <mui-button round>First</mui-button><mui-button round>Last</mui-button>
         </mui-button-group>
       </div>
     </section>

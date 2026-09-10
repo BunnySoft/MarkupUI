@@ -14,12 +14,12 @@
   --mui-color-success:#18a058;--mui-color-success-hover:#36ad6a;--mui-color-success-pressed:#0c7a43;
   --mui-color-warning:#f0a020;--mui-color-warning-hover:#fcb040;--mui-color-warning-pressed:#c97c10;
   --mui-color-error:#d03050;--mui-color-error-hover:#de576d;--mui-color-error-pressed:#ab1f3f;
-  --mui-button-text-color:rgba(0,0,0,.82);--mui-button-border-color:rgba(0,0,0,.24);
+  --mui-button-text-color:#333639;--mui-button-border-color:#e0e0e6;
   --mui-shadow-color:rgb(24 24 27/.1);--mui-motion-fast:160ms;--mui-motion:220ms;
   --mui-ease:cubic-bezier(.2,0,0,1);
 }
 [hidden]{display:none!important}
-mui-app,mui-header,mui-main,mui-section,mui-stack,mui-row,mui-wrap,mui-center,mui-grid,mui-card,mui-card-header,mui-card-content,mui-card-footer,mui-include,mui-tabs,mui-tab,mui-accordion,mui-accordion-item,mui-alert,mui-field,mui-form,mui-form-item,mui-dialog-header,mui-dialog-content,mui-dialog-footer,mui-drawer-header,mui-drawer-content,mui-drawer-footer,mui-divider,mui-progress,mui-skeleton,mui-avatar,mui-empty,mui-tag,mui-button-group,mui-tooltip,mui-popover,mui-popover-trigger,mui-popover-content,mui-spin,mui-message,mui-notification,mui-overlay-host,mui-menu,mui-menu-item,mui-pagination,mui-steps,mui-step,mui-list,mui-list-item,mui-descriptions,mui-description-item,mui-statistic,mui-tree,mui-tree-node{box-sizing:border-box;min-width:0;min-height:0}
+mui-app,mui-header,mui-main,mui-section,mui-stack,mui-row,mui-wrap,mui-center,mui-grid,mui-card,mui-card-header,mui-card-content,mui-card-footer,mui-include,mui-tabs,mui-tab,mui-accordion,mui-accordion-item,mui-alert,mui-field,mui-form,mui-form-item,mui-dialog-header,mui-dialog-content,mui-dialog-footer,mui-drawer-header,mui-drawer-content,mui-drawer-footer,mui-divider,mui-progress,mui-skeleton,mui-avatar,mui-empty,mui-tag,mui-button,mui-button-group,mui-tooltip,mui-popover,mui-popover-trigger,mui-popover-content,mui-spin,mui-message,mui-notification,mui-overlay-host,mui-menu,mui-menu-item,mui-pagination,mui-steps,mui-step,mui-list,mui-list-item,mui-descriptions,mui-description-item,mui-statistic,mui-tree,mui-tree-node{box-sizing:border-box;min-width:0;min-height:0}
 mui-header,mui-main,mui-section,mui-heading,mui-text,mui-field{display:block}
 mui-heading{font-weight:700;line-height:1.2}mui-heading[level="1"]{font-size:2em}mui-heading[level="2"]{font-size:1.5em}mui-heading[level="3"]{font-size:1.17em}
 mui-text[inline],mui-strong,mui-code{display:inline}mui-strong{font-weight:700}mui-code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
@@ -37,11 +37,6 @@ mui-card[structured]{padding:0;overflow:hidden}
 mui-card-header,mui-dialog-header,mui-drawer-header{display:flex;align-items:center;justify-content:space-between;gap:var(--mui-space-md);padding:var(--mui-space-md);border-bottom:1px solid var(--mui-border)}
 mui-card-content,mui-dialog-content,mui-drawer-content{display:block;padding:var(--mui-space-md)}
 mui-card-footer,mui-dialog-footer,mui-drawer-footer{display:flex;align-items:center;justify-content:flex-end;gap:var(--mui-space-sm);padding:var(--mui-space-md);border-top:1px solid var(--mui-border)}
-mui-button{display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:0 12px;border:1px solid var(--mui-border);border-radius:var(--mui-radius-md);background:var(--mui-bg-surface);color:var(--mui-text-primary);cursor:pointer}
-mui-button[variant="primary"]{border-color:var(--mui-color-primary);background:var(--mui-color-primary);color:#fff}
-mui-button:hover{border-color:var(--mui-color-primary-hover)}
-mui-button[disabled]{opacity:.5;pointer-events:none}
-mui-button-group{display:inline-flex}mui-button-group>mui-button{border-radius:0}mui-button-group>mui-button+mui-button{margin-left:-1px}mui-button-group>mui-button:first-child{border-radius:var(--mui-radius-md) 0 0 var(--mui-radius-md)}mui-button-group>mui-button:last-child{border-radius:0 var(--mui-radius-md) var(--mui-radius-md) 0}
 mui-input,mui-textarea,mui-select,mui-autocomplete,mui-slider,mui-checkbox,mui-switch,mui-radio,mui-radio-group{display:inline-flex}
 mui-option{display:none}
 mui-input>input,mui-textarea>textarea,mui-select>select,mui-autocomplete>input{width:100%;min-height:32px;padding:0 10px;border:1px solid var(--mui-border);border-radius:var(--mui-radius-md);background:var(--mui-bg-surface);color:var(--mui-text-primary);font:inherit}
@@ -137,41 +132,37 @@ mui-app{color:var(--mui-text-primary);font-family:var(--mui-font-family);font-si
 mui-heading{letter-spacing:-.015em}mui-heading[level="1"]{font-size:2.25em}mui-heading[level="2"]{font-size:1.5em}mui-heading[level="3"]{font-size:1.125em}
 mui-card{border-radius:8px;box-shadow:0 1px 2px var(--mui-shadow-color);transition:border-color var(--mui-motion) var(--mui-ease),box-shadow var(--mui-motion) var(--mui-ease)}
 mui-card[hoverable]:hover{border-color:var(--mui-border-hover);box-shadow:0 4px 14px var(--mui-shadow-color)}
-mui-button,mui-input>input,mui-textarea>textarea,mui-select>select,mui-autocomplete>input,mui-pagination>button,mui-menu-item,mui-tabs>[role="tablist"]>button{transition:color var(--mui-motion-fast) var(--mui-ease),background-color var(--mui-motion-fast) var(--mui-ease),border-color var(--mui-motion-fast) var(--mui-ease),box-shadow var(--mui-motion-fast) var(--mui-ease)}
-mui-button{--mui-button-theme:var(--mui-text-primary);--mui-button-hover:var(--mui-color-primary-hover);--mui-button-pressed:var(--mui-color-primary-pressed);--mui-button-border:var(--mui-button-border-color);--mui-button-ease:cubic-bezier(.4,0,.2,1);position:relative;min-height:34px;padding:0 14px;border:0;border-radius:3px;background:transparent;color:var(--mui-button-text-color);box-shadow:none;font-size:14px;font-weight:400;line-height:1;white-space:nowrap;transition:color .3s var(--mui-button-ease),background-color .3s var(--mui-button-ease),opacity .3s var(--mui-button-ease)}
-mui-button::after{position:absolute;inset:0;border:1px solid var(--mui-button-border);border-radius:inherit;content:"";pointer-events:none;transition:border-color .3s var(--mui-button-ease)}
-mui-button::before{position:absolute;inset:0;border:1px solid transparent;border-radius:inherit;content:"";pointer-events:none;transition:border-color .3s var(--mui-button-ease)}
-mui-button:hover{--mui-button-border:var(--mui-button-hover);background:transparent;color:var(--mui-button-hover)}
-mui-button:active{--mui-button-border:var(--mui-button-pressed);color:var(--mui-button-pressed)}
-mui-button[type="primary"],mui-button[variant="primary"]{--mui-button-theme:var(--mui-color-primary);--mui-button-hover:var(--mui-color-primary-hover);--mui-button-pressed:var(--mui-color-primary-pressed)}
-mui-button[type="info"]{--mui-button-theme:var(--mui-color-info);--mui-button-hover:var(--mui-color-info-hover);--mui-button-pressed:var(--mui-color-info-pressed)}
-mui-button[type="success"]{--mui-button-theme:var(--mui-color-success);--mui-button-hover:var(--mui-color-success-hover);--mui-button-pressed:var(--mui-color-success-pressed)}
-mui-button[type="warning"]{--mui-button-theme:var(--mui-color-warning);--mui-button-hover:var(--mui-color-warning-hover);--mui-button-pressed:var(--mui-color-warning-pressed)}
-mui-button[type="error"]{--mui-button-theme:var(--mui-color-error);--mui-button-hover:var(--mui-color-error-hover);--mui-button-pressed:var(--mui-color-error-pressed)}
-mui-button[type="primary"],mui-button[variant="primary"],mui-button[type="info"],mui-button[type="success"],mui-button[type="warning"],mui-button[type="error"]{--mui-button-border:transparent;background:var(--mui-button-theme);color:var(--mui-color-primary-contrast)}
-mui-button[type="primary"]:hover,mui-button[variant="primary"]:hover,mui-button[type="info"]:hover,mui-button[type="success"]:hover,mui-button[type="warning"]:hover,mui-button[type="error"]:hover{--mui-button-border:transparent;background:var(--mui-button-hover);color:var(--mui-color-primary-contrast)}
-mui-button[type="primary"]:active,mui-button[variant="primary"]:active,mui-button[type="info"]:active,mui-button[type="success"]:active,mui-button[type="warning"]:active,mui-button[type="error"]:active{background:var(--mui-button-pressed);color:var(--mui-color-primary-contrast)}
-mui-button[secondary],mui-button[tertiary],mui-button[quaternary],mui-button[ghost],mui-button[dashed],mui-button[type="text"]{--mui-button-border:transparent;background:transparent;color:var(--mui-button-theme)}
-mui-button[secondary]{background:color-mix(in srgb,var(--mui-button-theme) 12%,transparent);font-weight:500}
-mui-button[secondary]:hover{background:color-mix(in srgb,var(--mui-button-theme) 18%,transparent);color:var(--mui-button-hover)}
-mui-button[tertiary]{background:var(--mui-bg-muted);color:var(--mui-text-secondary)}
-mui-button[tertiary]:hover,mui-button[quaternary]:hover{background:var(--mui-bg-hover);color:var(--mui-button-hover)}
-mui-button[ghost]{--mui-button-border:var(--mui-button-theme)}
-mui-button[ghost]:hover{--mui-button-border:var(--mui-button-hover);color:var(--mui-button-hover)}
-mui-button[dashed]{--mui-button-border:currentColor}mui-button[dashed]::after{border-style:dashed}
-mui-button[type="text"]{min-height:auto;padding:0 4px}
-mui-button[strong]{font-weight:500}
-mui-button[round]{padding-inline:18px;border-radius:999px}
-mui-button[circle]{width:34px;padding:0;border-radius:50%}
-mui-button[size="tiny"]{min-height:22px;padding-inline:8px;font-size:12px}mui-button[size="tiny"][circle]{width:22px}
-mui-button[size="small"]{min-height:28px;padding-inline:10px}mui-button[size="small"][circle]{width:28px}
-mui-button[size="large"]{min-height:40px;padding-inline:18px;font-size:15px}mui-button[size="large"][circle]{width:40px}
+mui-input>input,mui-textarea>textarea,mui-select>select,mui-autocomplete>input,mui-pagination>button,mui-menu-item,mui-tabs>[role="tablist"]>button{transition:color var(--mui-motion-fast) var(--mui-ease),background-color var(--mui-motion-fast) var(--mui-ease),border-color var(--mui-motion-fast) var(--mui-ease),box-shadow var(--mui-motion-fast) var(--mui-ease)}
+:where([data-mui-theme="light"]){--_button-scheme:light;--_button-opacity:.5;--_button-alpha-hover:.22;--_button-alpha-pressed:.28}
+:where([data-mui-theme="dark"]){--_button-scheme:dark;--_button-opacity:.38;--_button-alpha-hover:.2;--_button-alpha-pressed:.12}
+mui-button{--mui-button-theme:var(--mui-button-text-color);--mui-button-hover:var(--mui-color-primary-hover);--mui-button-pressed:var(--mui-color-primary-pressed);--mui-button-border:var(--mui-button-border-color);--_button-state:var(--mui-button-theme);color-scheme:var(--_button-scheme,light);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;height:var(--mui-button-height,34px);padding:0 var(--mui-button-padding,14px);border-radius:3px;color:var(--_button-state);font-size:14px;font-weight:400;line-height:1;white-space:nowrap;cursor:pointer;transition:color .3s var(--mui-button-ease,cubic-bezier(.4,0,.2,1)),background-color .3s var(--mui-button-ease,cubic-bezier(.4,0,.2,1)),opacity .3s var(--mui-button-ease,cubic-bezier(.4,0,.2,1))}
+mui-button::after{position:absolute;inset:0;border:1px solid var(--mui-button-border);border-radius:inherit;content:"";pointer-events:none;transition:border-color .3s var(--mui-button-ease,cubic-bezier(.4,0,.2,1))}
+mui-button:not([disabled]):is(:hover,:focus){--_button-state:var(--mui-button-hover);--mui-button-border:var(--_button-state);--_button-neutral:light-dark(rgba(46,51,56,.09),rgba(255,255,255,.12));--_button-alpha:var(--_button-alpha-hover,.22)}
+mui-button:not([disabled]):active{--_button-state:var(--mui-button-pressed);--mui-button-border:var(--_button-state);--_button-neutral:light-dark(rgba(46,51,56,.13),rgba(255,255,255,.08));--_button-alpha:var(--_button-alpha-pressed,.28)}
+mui-button:is([type=primary],[variant=primary]){--mui-button-theme:var(--mui-color-primary)}
+mui-button[type=info]{--mui-button-theme:var(--mui-color-info);--mui-button-hover:var(--mui-color-info-hover);--mui-button-pressed:var(--mui-color-info-pressed)}
+mui-button[type=success]{--mui-button-theme:var(--mui-color-success);--mui-button-hover:var(--mui-color-success-hover);--mui-button-pressed:var(--mui-color-success-pressed)}
+mui-button[type=warning]{--mui-button-theme:var(--mui-color-warning);--mui-button-hover:var(--mui-color-warning-hover);--mui-button-pressed:var(--mui-color-warning-pressed)}
+mui-button[type=error]{--mui-button-theme:var(--mui-color-error);--mui-button-hover:var(--mui-color-error-hover);--mui-button-pressed:var(--mui-color-error-pressed)}
+mui-button:is([type=primary],[type=info],[type=success],[type=warning],[type=error],[variant=primary]){background:var(--_button-state);color:light-dark(#fff,#000);--mui-button-border:var(--_button-state)}
+mui-button:is([ghost],[dashed],[text],[type=text]){background:transparent;color:var(--_button-state)}
+mui-button:is([secondary],[tertiary],[quaternary]){background:var(--_button-neutral,light-dark(rgba(46,51,56,.05),rgba(255,255,255,.08)));color:var(--mui-button-theme)}
+mui-button[quaternary]:not(:hover,:focus,:active),mui-button[quaternary][disabled]{background:transparent}
+mui-button[secondary]:is([type=primary],[type=info],[type=success],[type=warning],[type=error],[variant=primary]):not([disabled]){background:rgb(from var(--mui-button-theme) r g b/var(--_button-alpha,.16))}
+mui-button:is([secondary],[tertiary],[quaternary],[text],[type=text],[bordered=false])::after{content:none}
+mui-button[dashed]::after{border-style:dashed}mui-button[strong]{font-weight:500}
+mui-button[size=tiny]{--mui-button-height:22px;--mui-button-padding:6px;font-size:12px}
+mui-button[size=small]{--mui-button-height:28px;--mui-button-padding:10px}
+mui-button[size=large]{--mui-button-height:40px;--mui-button-padding:18px;font-size:15px}
+mui-button[round]{padding-inline:calc(var(--mui-button-padding,14px) + 4px);border-radius:var(--mui-button-height,34px)}
+mui-button[circle]{width:var(--mui-button-height,34px);padding:0;border-radius:var(--mui-button-height,34px)}
+mui-button:is([text],[type=text]){height:auto;padding:0;border-radius:0}mui-button:is([text],[type=text])[disabled]{color:var(--mui-button-text-color)}
 mui-button[block]{display:flex;width:100%}
-mui-button[loading]{pointer-events:none}
-mui-button>[data-mui-button-spinner]{width:14px;height:14px;margin-right:8px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:mui-spin .8s linear infinite}
-mui-button[disabled]{opacity:.38;pointer-events:none}
-mui-button:focus-visible{box-shadow:none}mui-button:focus-visible::before{border-color:var(--mui-focus-ring)}
-mui-button-group>mui-button+mui-button{margin-left:-1px}mui-button-group>mui-button:first-child{border-radius:3px 0 0 3px}mui-button-group>mui-button:last-child{border-radius:0 3px 3px 0}
+mui-button[loading]{pointer-events:none}mui-button[disabled]{opacity:var(--_button-opacity,.5);pointer-events:none}
+mui-button>[data-mui-button-spinner]{box-sizing:border-box;flex:none;width:18px;height:18px;margin-inline-end:6px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:mui-spin .8s linear infinite}
+mui-button-group{display:inline-flex}
+mui-button-group>mui-button:not(:last-child){border-start-end-radius:0;border-end-end-radius:0}mui-button-group>mui-button:not(:first-child){border-start-start-radius:0;border-end-start-radius:0}
+mui-button-group>mui-button+mui-button::after{border-inline-start-width:0}
 mui-button:focus-visible,mui-menu-item:focus-visible,mui-tabs>[role="tablist"]>button:focus-visible,mui-pagination>button:focus-visible{outline:0;box-shadow:0 0 0 3px var(--mui-focus-ring)}
 mui-input>input,mui-textarea>textarea,mui-select>select,mui-autocomplete>input{min-height:var(--mui-control-height);border-radius:6px}
 mui-input>input:hover,mui-textarea>textarea:hover,mui-select>select:hover,mui-autocomplete>input:hover{border-color:var(--mui-border-hover)}

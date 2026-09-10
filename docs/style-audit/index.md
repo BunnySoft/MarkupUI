@@ -53,7 +53,7 @@ through the remaining catalog one component at a time.
 | [Back Top](../naive-ui/components/back-top.md) | ⚪ Pending | — |
 | [Badge](../naive-ui/components/badge.md) | ⚪ Pending | — |
 | [Breadcrumb](../naive-ui/components/breadcrumb.md) | ⚪ Pending | — |
-| [Button](../naive-ui/components/button.md) | ⚪ Pending | — |
+| [Button](../naive-ui/components/button.md) | 🟢 Fixed / 🟡 Remaining | [Defaults, state endpoints and remaining motion](components/button.md) |
 | [Calendar](../naive-ui/components/calendar.md) | ⚪ Pending | — |
 | [Card](../naive-ui/components/card.md) | ⚪ Pending | — |
 | [Carousel](../naive-ui/components/carousel.md) | ⚪ Pending | — |
