@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createMenu } from "../src/components/menu/index.js"
 import type { MenuController, MenuOptions } from "../src/components/menu/index.js"
@@ -205,6 +206,30 @@ describe("native navigation, defaults and state", () => {
 })
 
 describe("shared keyboard shortcuts without roving navigation Tab stops", () => {
+  it("excludes self-inert links/summaries and nested inert branches without disabling unrelated rows", async () => {
+    const { root, node, summary, branch, controller } = bind({ defaultExpandedKeys: ["guide", "advanced"] })
+    const selected = vi.fn()
+    root.addEventListener("mui:menu-select", selected)
+    node("home").setAttribute("inert", "")
+    summary("guide").setAttribute("inert", "")
+    branch("advanced").setAttribute("inert", "")
+    expect(menuEntryAvailable(node("home"), root)).toBe(false)
+    expect(menuEntryAvailable(summary("guide"), root)).toBe(false)
+    expect(menuEntryAvailable(summary("advanced"), root)).toBe(false)
+    expect(menuEntryAvailable(node("performance"), root)).toBe(false)
+    expect(menuEntryAvailable(node("install"), root)).toBe(true)
+    node("home").click()
+    node("performance").click()
+    await flush()
+    expect(selected).not.toHaveBeenCalled()
+    expect(controller.value).toBeNull()
+    branch("guide").setAttribute("inert", "")
+    expect(menuEntryAvailable(node("install"), root)).toBe(false)
+    expect(menuEntryAvailable(node("preview"), root)).toBe(true)
+    expect(branch("advanced").hasAttribute("inert")).toBe(true)
+    expect(summary("guide").hasAttribute("inert")).toBe(true)
+  })
+
   it("moves among the current level, skipping group labels, dividers and disabled controls", () => {
     const { node, summary } = bind()
     node("home").focus()
@@ -501,9 +526,32 @@ describe("native selection, refresh and cleanup", () => {
     expect(source).not.toContain("createPopover(")
     expect(source).not.toContain("innerHTML")
     expect(source).not.toContain("customElements")
-    expect(css).toContain("flex-wrap: wrap")
+    expect(css).toMatch(/flex-wrap:\s*wrap/)
     expect(css).toContain("[hidden]")
     expect(css).toContain("forced-colors")
     expect(css).toContain("@media print")
+  })
+  it("keeps the corrected native visual defaults inside the unchanged stylesheet ceiling", () => {
+    const css = readFileSync("src/components/menu/menu.css", "utf8")
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
+    expect(css).toContain("--mui-menu-item-height,42px")
+    expect(css).toContain("font-size:14px")
+    expect(css).toContain("line-height:1.75")
+    expect(css).toContain("margin-top:6px")
+    expect(css).toContain("--mui-menu-root-indent,32px")
+    expect(css).toContain("--mui-menu-icon-size,20px")
+    expect(css).not.toContain("font-weight:700")
+  })
+  it("preserves native disclosure, disabled and current-route representations in CSS", () => {
+    const css = readFileSync("src/components/menu/menu.css", "utf8")
+    expect(css).toContain("list-style-position:outside")
+    expect(css).toContain("&:is(:disabled,[inert],[inert] *)")
+    expect(css).not.toContain(":is(:disabled,[inert] [data-menu-item],[inert] summary)")
+    expect(css.match(/opacity:/g)).toHaveLength(1)
+    expect(css).toContain("opacity:.45")
+    expect(css).toContain("[aria-current=page]")
+    expect(css).toContain("--mui-menu-collapsed-width,12rem")
+    expect(css).not.toMatch(/(?:^|[;{])\s*content:/)
+    expect(css).not.toContain("overflow:hidden")
   })
 })

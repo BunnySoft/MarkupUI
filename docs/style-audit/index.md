@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 51/96 scopes.** The other **45** are not yet accepted in this
+**Reviewed and integrated: 52/96 scopes.** The other **44** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -110,7 +110,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Log](../naive-ui/components/log.md) | ⚪ Pending | — |
 | [Marquee](../naive-ui/components/marquee.md) | ⚪ Pending | — |
 | [Mention](../naive-ui/components/mention.md) | ⚪ Pending | — |
-| [Menu](../naive-ui/components/menu.md) | 🟠 Reviewing | — |
+| [Menu](../naive-ui/components/menu.md) | 🟢 Fixed / 🟡 Remaining | [Row density, inert-state paint and native branch/collapse limits](components/menu.md) |
 | [Message](../naive-ui/components/message.md) | 🟠 Reviewing | — |
 | [Modal](../naive-ui/components/modal.md) | 🟢 Fixed / 🟡 Remaining | [Raw/Card/Dialog surfaces, protected modality and retained native controls](components/modal.md) |
 | [Notification](../naive-ui/components/notification.md) | ⚪ Pending | — |
@@ -126,7 +126,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Rate](../naive-ui/components/rate.md) | ⚪ Pending | — |
 | [Result](../naive-ui/components/result.md) | 🟢 Fixed / 🟡 Remaining | [Region spacing, title roles and authored artwork limits](components/result.md) |
 | [Scrollbar](../naive-ui/components/scrollbar.md) | 🟢 Fixed / 🟡 Remaining | [Opt-in native thumb palette and OS/browser geometry limits](components/scrollbar.md) |
-| [Select](../naive-ui/components/select.md) | ⚪ Pending | — |
+| [Select](../naive-ui/components/select.md) | 🟠 Reviewing | — |
 | [Skeleton](../naive-ui/components/skeleton.md) | 🟢 Fixed / 🟡 Remaining | [Animated endpoints and retained shape/repeat limits](components/skeleton.md) |
 | [Slider](../naive-ui/components/slider.md) | ⚪ Pending | — |
 | [Space](../naive-ui/components/space.md) | 🟢 Matched / 🟡 Remaining | [Default layout matches; intrinsic nowrap limits](components/space.md) |

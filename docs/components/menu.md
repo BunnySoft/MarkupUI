@@ -229,6 +229,58 @@ display rules do not override hidden. Reduced motion/forced-colors/print are inc
 Print keeps browser-owned disclosure state and uses ink-friendly styling; no JS print hook
 opens branches or promises all-browser disclosure expansion.
 
+### Audited visual defaults
+
+The default menu is now unframed and transparent, with 14px text, 42px minimum item rows,
+6px row spacing and 6px bottom spacing. Leaf text uses line-height 1.75. Selected text keeps
+normal weight instead of becoming bold. Native summaries retain their disclosure marker,
+using a row-height line box; they are not replaced by end-aligned framework chevrons.
+
+| Appearance / token | Default / retained contract |
+| --- | --- |
+| Normal text | `#333639` light / white `.82` dark |
+| Icon color | `#1f2225` light / white `.9` dark |
+| Group/extra text | `#767c82` light / white `.52` dark |
+| Selection | `#18a058` / `#63e2b7` text; approximately `.1` / `.15` matching-color fill |
+| Vertical hover | `#f3f3f5` light / white `.09` dark; selected hover keeps selection |
+| Horizontal hover | `#36ad6a` / `#7fe7c4` text/icon; no row fill |
+| `--mui-menu-padding` | `0 8px 6px` vertical; `0` horizontal |
+| `--mui-menu-root-indent`, `--mui-menu-indent` | `32px`, `32px` |
+| `--mui-menu-item-height` | `42px` minimum; native wrapping can grow a row |
+| `--mui-menu-item-padding` | `0 10px` vertical, with managed start indentation; `0 20px` horizontal |
+| `--mui-menu-icon-size` | Default visible glyph `20px` in a `24px` box; an explicit override sizes both |
+| Group label / extra font | `.93em`; group row `36px` |
+| `--mui-menu-collapsed-width` | `12rem` for the native overall disclosure, not a rail |
+
+The default 8px navigation inset supplies the highlight inset. Consequently native hit/focus
+boxes are inset, unlike upstream's full-width item plus decorative inset background.
+At the default padding, text starts at 32px, branch levels at 64/96px, root group children
+at 48px, and icon labels add a 24px box plus 8px gap. Structural CSS variables handle nesting,
+including half-step group indentation, without controller geometry/style writes.
+
+Changing root padding changes that coordinate system: text start is the authored inline
+padding plus `--mui-menu-root-indent - 8px`. Adjust both when designing a custom frame.
+`--mui-menu-border` now colors dividers rather than forcing a navigation border. Author
+ordinary root border/box-sizing CSS if a framed, explicitly sized navigation is required.
+Existing color/background/hover/selected tokens remain available; use ordinary scoped CSS
+for foreground/typography overrides not represented by a token.
+
+`data-mui-theme="dark"` on the root/ancestor selects a local navigation color scheme.
+Nested light scopes reset it. This palette uses modern CSS nesting and `light-dark()`;
+there is no runtime theme adapter. Native nav/links/details remain the fallback when
+these visual features are unavailable, but old-engine visual parity is not claimed.
+`.mui-menu--compact` uses a 34px row and 24px root/branch indent.
+`.mui-menu--inverted` is explicitly a **native dark-palette skin** on `#202630`, not the
+different upstream `inverted` palette/option contract.
+
+The controller still marks only the selected leaf. It does not infer upstream active-path
+ancestor coloring; aria-current underlining stays author/navigation state. Native extra text
+uses a `.25em` visual gap, not the renderer's inserted text-space, so exact extra-label
+spacing/accessibility wording remains authored. No separator text is generated.
+
+See the [rendered Menu audit](../style-audit/components/menu.md) for reference measurements,
+keyboard checks, dependency boundaries and explicit overflow/collapse/state limits.
+
 There are no geometry or style-text writes, CSS-in-JS, third-party runtime dependencies,
 provider/router state or mandatory Icon/Tooltip/Dropdown assets. Menu CSS is self-contained;
 shared keyboard code is bundled, not a broken runtime source import.
@@ -236,7 +288,7 @@ No-JS keeps native nav, href, Tab and details/summary destinations usable. Accor
 selected marker and extra arrow/typeahead shortcuts require the helper; CSS reflow is not
 reported as a controlled state callback.
 
-## Acceptance — 2026-09-08
+## Initial acceptance — 2026-09-08 (historical appearance)
 
 - **113 targeted tests pass:** 37 Menu, 49 Dropdown/shared keyboard, 27 native/core.
   `npm exec vitest run -- tests\menu.test.ts tests\dropdown.test.ts tests\native.test.ts`.
@@ -276,6 +328,27 @@ One Menu JS format plus CSS costs **6,808 gzip bytes ESM** or **6,876 classic**.
 Dropdown CSS remains 1,465 gzip bytes; Popover/Tooltip/Popconfirm assets and ceilings stay
 unchanged. Menu imports only the concrete keyboard/attribute primitives, not a popup engine.
 
-No all-browser, screen-reader,
-physical touch/zoom or universal AT certification is claimed. P3 remains in progress.
-**Next: Tabs, then Collapse and the remaining P3 inventory.**
+## Visual-default audit — 2026-09-10
+
+- `pnpm test -- tests\menu.test.ts`: **40 tests passed**, including self-inert row availability.
+- Actual Naive vertical/horizontal/collapsed/group/disabled/selected/inverted examples
+  were rendered in both themes. Flat height changed **127.708→150px**, rows
+  **36.792→42px**, and default icon-label start **43.854→64px**.
+- Plain vertical light/dark screenshots were pixel-identical; icon/group/compact
+  comparisons retained a small extra-label spacing difference. Native disclosure markers,
+  ancestor colors, collapse, overflow and inverted-skin differences are recorded explicitly.
+- Real keyboard checks covered native Tab, disabled skipping, typeahead, Enter/Space,
+  logical branch navigation/Escape, horizontal RTL, collapse focus repair and explicit reveal.
+  Native href navigation and unchanged aria-current were also checked.
+- Menu controller and both shared helper files were left unchanged. No Dropdown/floating
+  helper modification was required or made.
+- Prior isolated ESM/classic measurements are **5,815 / 5,883 gzip bytes**. The self-inert
+  CSS correction directly measures **1,246 / 1,250 gzip bytes**, with **4 bytes spare**.
+  A focused budget regression protects it; no build was run for this correction.
+- Self-inert links/summaries and rows beneath nested inert branches now receive `.45`
+  opacity and a not-allowed cursor. Container opacity stays 1, so nesting does not multiply
+  dimming; unrelated native controls are not targeted. Browser checks verified blocked
+  native focus/pointer activation, Tab skipping and still-active non-inert siblings.
+
+No all-browser, screen-reader, physical touch/zoom or universal AT certification is claimed.
+No next component is introduced by this audit.
