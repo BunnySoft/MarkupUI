@@ -41,24 +41,27 @@ for both upstream owners, not a separate PerformantEllipsis framework wrapper.
 
 Use `.mui-ellipsis` on a native text container containing **noninteractive phrasing content**:
 text, span, strong, em or code without interactive/focusable descendants. It becomes a
-single-line block with native overflow ellipsis when the safety-selector enhancement is
+single-line inline-block with native overflow ellipsis when the safety-selector enhancement is
 supported. The original full text remains in the DOM; no abbreviation is substituted.
 
 ```html
-<p class="mui-ellipsis result-summary">Original complete descriptive text…</p>
+<span class="mui-ellipsis result-summary">Original complete descriptive text…</span>
 <a href="./complete-result.html">Read complete result</a>
 ```
 
 The ellipsis character above is ordinary authored example punctuation, not a second generated
 summary. Supply a meaningful visible full-content route for passive truncation of important
 information. Native `title` is not an accessible overlay or a touch/keyboard disclosure.
-For inline phrasing within a paragraph, use a span; the opt-in establishes its own block box.
+For inline phrasing within a paragraph, use a span; the opt-in now establishes an inline-level
+box, with `vertical-align: bottom`, matching the rendered reference. Short text shrink-wraps
+rather than occupying the entire row. Supply an appropriate width when surrounding text
+must fit on that same row. Native/authored margins are not reset.
 
 `data-multiline` is a **presence-only styling switch**. Even `data-multiline="false"` is
 present; remove the attribute to return to one line. Multiline defaults to two lines:
 
 ```html
-<p class="mui-ellipsis three-lines" data-multiline>Original long description…</p>
+<span class="mui-ellipsis three-lines" data-multiline>Original long description…</span>
 ```
 
 ```css
@@ -75,8 +78,17 @@ native line-clamp; they remove clamping rather than being silently changed to a 
 `none` deliberately shows all lines. The token has no effect in single-line mode.
 CSS custom properties inherit normally; set a value explicitly for independent nested cases.
 
+Clamped passive text uses `-webkit-inline-box` with baseline alignment, also matching the
+reference. Its surrounding line box can include baseline space beneath the clipped box.
+Authors who need the earlier full-width block presentation can explicitly use block display
+for single-line text, or `-webkit-box` for clamped multiline text, with a suitable width.
+Native disclosure previews retain their existing block layout rather than adopting the
+passive inline behavior.
+
 There is no fixed height/max-height, pixel measurement or polling loop. Width, font and content
 changes are handled by native layout. Long unbroken words wrap in multiline/expanded mode.
+That wrapping is a retained safe native difference from upstream's horizontal clipping of
+an unbreakable word; it is not exact unbroken-word clipping parity.
 The text box has `min-inline-size:0` and `max-inline-size:100%`; set a usable available width.
 If an outer wrapper is the actual flex/grid item, it also needs `min-inline-size:0`;
 use `minmax(0,1fr)` where a grid track would otherwise retain its min-content width.
@@ -102,6 +114,12 @@ The text stays in that same summary both closed and open. Opening removes trunca
 closing restores the selected single/multiline form. No hidden duplicate, generated label,
 template cloning or content move is needed. Additional details-body content is ordinary
 author-owned HTML and is not automatically opened for print.
+
+The native marker, visible hint and block preview deliberately give this disclosure a
+different layout from an upstream clickable text span. Upstream multiline click expansion
+and the native alternative both expose the full text. The pinned single-line click path
+removes the ellipsis marker but retains nowrap/hidden overflow; native disclosure instead
+fully wraps that text. This useful native behavior is not represented as click-handler parity.
 
 - The real summary owns native disclosure semantics, focus, keyboard and activation.
   Enter/Space and pointer activation use browser defaults; there are no duplicate handlers.
@@ -137,7 +155,7 @@ This is a fail-open guard, not DOM validation: it does not inspect arbitrary cus
 shadow roots, author-made role widgets without native focus attributes or external clipping.
 Those are outside the supported noninteractive-content contract.
 
-The native summary ancestor is the deliberate exception for the supported disclosure above;
+An ordinary native summary ancestor is the deliberate exception for the supported disclosure above;
 do not put `.mui-ellipsis` directly on summary or truncate the hint. Author `hidden` content
 and native templates stay hidden/inert, including in open disclosures and print.
 Scoped hidden/template display preservation uses `!important` to defeat the open-state selector;
@@ -159,6 +177,12 @@ CSS does not parse/evaluate HTML, duplicate strings or intercept clicks. Origina
 listeners, attributes, late authored content and templates remain application-owned.
 No pre-upgrade properties, observer cleanup, disconnect/reconnect hooks or disposal API
 are necessary. The source introduces no global styles or runtime/CSS-in-JS declarations.
+
+Ellipsis has no independent typography or text palette: font family/size, line height and
+foreground color inherit from the surrounding page in both light and dark contexts.
+No font/color theme object or token parser is added. See the
+[rendered visual-default audit](../style-audit/components/ellipsis.md) for measurements,
+fixed-origin screenshots and explicit retained differences.
 
 ## API and slot tracker
 
@@ -190,7 +214,7 @@ P3 tooltip/overlay work remains separate; native details does not make all P3 co
 6. [x] Validate build/budgets and Chromium geometry, selection, names, activation and coexistence.
 7. [x] Reconcile reference rows/four tasks, catalog totals and next Page Header.
 
-### Evidence — 2026-09-08
+### Initial migration evidence — 2026-09-08 (historical block appearance)
 
 - Focused Ellipsis tests and final `pnpm build && pnpm test` passed:
   **327 tests**, including **11 Ellipsis tests** and all 316 earlier tests.
@@ -229,6 +253,22 @@ P3 tooltip/overlay work remains separate; native details does not make all P3 co
 - Reference validation preserved all five original name/source rows plus five explicit source
   supplements: **96 pages, 3,116 rows, 384 tasks (60 accepted), 722 relative file links**.
 
+### Visual-default audit — 2026-09-10
+
+- `pnpm test -- tests\ellipsis.test.ts`: **12 tests passed**.
+- Thirteen ordinary passive cases matched pinned reference clipping/layout/text metrics in
+  both themes and RTL, including initial PerformantEllipsis rendering. Unbroken-word
+  safety and native disclosure were measured separately as deliberate differences.
+- Short width changed **260→105.734px**; an inline-limited row changed **67.172→22.391px**
+  high. Inline multiline composition changed **89.563→51.172px**, matching the reference.
+- Twelve fixed-origin light/dark screenshot comparisons had **zero differing RGB pixels**.
+- Native Enter/Space/pointer toggled once each, preserving one original preview and exact
+  expanded selection. Author overrides, invalid clamp values, nested-control guards,
+  hidden/templates, print/system modes and unsupported-feature simulations were verified.
+- CSS is **788 / unchanged 1,500 gzip bytes**, with zero component JS/dependencies.
+  The coordinator's isolated release build and all **12 Ellipsis tests** pass;
+  no shared source or generated adapter was edited.
+
 This is retained native/CSS scope, not all-browser/AT, arbitrary interactive-content or
-vendor-tooltip/pixel parity certification. Page Header is next through coordinator selection;
-P2-01, whole P2 and broader P3 remain incomplete.
+vendor-tooltip/pixel parity certification. No tooltip runtime, binder or next component is
+introduced by this audit.

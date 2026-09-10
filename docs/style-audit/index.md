@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 24/96 scopes.** The other **72** are not yet accepted in this
+**Reviewed and integrated: 25/96 scopes.** The other **71** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -85,7 +85,7 @@ a separate follow-up; its work-in-progress is not included in published componen
 | [Dynamic Input](../naive-ui/components/dynamic-input.md) | ⚪ Pending | — |
 | [Dynamic Tags](../naive-ui/components/dynamic-tags.md) | ⚪ Pending | — |
 | [Element](../naive-ui/components/element.md) | ⚪ Pending | — |
-| [Ellipsis](../naive-ui/components/ellipsis.md) | 🟠 Reviewing | — |
+| [Ellipsis](../naive-ui/components/ellipsis.md) | 🟢 Fixed / 🟡 Remaining | [Inline clipping defaults and native disclosure limits](components/ellipsis.md) |
 | [Empty](../naive-ui/components/empty.md) | 🟢 Fixed / 🟡 Remaining | [Content spacing, muted roles and original illustration](components/empty.md) |
 | [Equation](../naive-ui/components/equation.md) | ⚪ Pending | — |
 | [Flex](../naive-ui/components/flex.md) | 🟢 Matched / 🟡 Remaining | [Default layout matches; intrinsic sizing and RTL boundaries](components/flex.md) |
@@ -141,7 +141,7 @@ a separate follow-up; its work-in-progress is not included in published componen
 | [Thing](../naive-ui/components/thing.md) | 🟢 Fixed / 🟡 Remaining | [Typography, indentation and authored composition limits](components/thing.md) |
 | [Time Picker](../naive-ui/components/time-picker.md) | ⚪ Pending | — |
 | [Time](../naive-ui/components/time.md) | ⚪ Pending | — |
-| [Timeline](../naive-ui/components/timeline.md) | ⚪ Pending | — |
+| [Timeline](../naive-ui/components/timeline.md) | 🟠 Reviewing | — |
 | [Tooltip](../naive-ui/components/tooltip.md) | 🟠 Reviewing | — |
 | [Transfer](../naive-ui/components/transfer.md) | ⚪ Pending | — |
 | [Tree Select](../naive-ui/components/tree-select.md) | ⚪ Pending | — |

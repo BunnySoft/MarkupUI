@@ -74,6 +74,17 @@ describe("CSS-only Ellipsis and native disclosure", () => {
     expect(css).not.toContain("block-size:")
   })
 
+  it("uses inline passive boxes while retaining native disclosure preview layout", () => {
+    expect(css).toContain("display: inline-block")
+    expect(css).toContain("vertical-align: bottom")
+    expect(css).toContain("display: -webkit-inline-box")
+    expect(css).toContain("vertical-align: baseline")
+    expect(css).toContain(":where(details.mui-ellipsis-disclosure > summary) > .mui-ellipsis { display: block; }")
+    expect(css).toContain(":where(details.mui-ellipsis-disclosure > summary) > .mui-ellipsis[data-multiline]")
+    expect(css).not.toContain("list-style: none")
+    expect(css).not.toContain("::marker")
+  })
+
   it("has fail-open guards for native actions/editable or focusable text instead of clipping controls", () => {
     expect(css).toContain(".mui-ellipsis:has(:is(a, button")
     expect(css).toContain(":is(a, button, [tabindex], [contenteditable]) .mui-ellipsis")
