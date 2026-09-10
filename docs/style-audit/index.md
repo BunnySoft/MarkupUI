@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 35/96 scopes.** The other **61** are not yet accepted in this
+**Reviewed and integrated: 36/96 scopes.** The other **60** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -81,7 +81,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Discrete API](../naive-ui/components/discrete.md) | ⚪ Pending | — |
 | [Divider](../naive-ui/components/divider.md) | 🟢 Fixed / 🟡 Remaining | [Rule geometry, colors and native orientation limits](components/divider.md) |
 | [Drawer](../naive-ui/components/drawer.md) | ⚪ Pending | — |
-| [Dropdown](../naive-ui/components/dropdown.md) | ⚪ Pending | — |
+| [Dropdown](../naive-ui/components/dropdown.md) | 🟠 Reviewing | — |
 | [Dynamic Input](../naive-ui/components/dynamic-input.md) | ⚪ Pending | — |
 | [Dynamic Tags](../naive-ui/components/dynamic-tags.md) | ⚪ Pending | — |
 | [Element](../naive-ui/components/element.md) | ⚪ Pending | — |
@@ -115,7 +115,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Modal](../naive-ui/components/modal.md) | ⚪ Pending | — |
 | [Notification](../naive-ui/components/notification.md) | ⚪ Pending | — |
 | [Number Animation](../naive-ui/components/number-animation.md) | ⚪ Pending | — |
-| [Page Header](../naive-ui/components/page-header.md) | 🟠 Reviewing | — |
+| [Page Header](../naive-ui/components/page-header.md) | 🟢 Fixed / 🟡 Remaining | [Header metrics, back control and authored/narrow-layout limits](components/page-header.md) |
 | [Pagination](../naive-ui/components/pagination.md) | ⚪ Pending | — |
 | [Popconfirm](../naive-ui/components/popconfirm.md) | 🟢 Fixed / 🟡 Remaining | [Shared surface, local layout and native action-paint limits](components/popconfirm.md) |
 | [Popover](../naive-ui/components/popover.md) | 🟢 Fixed / 🟡 Remaining | [Standalone surface, protected consumers and native popup limits](components/popover.md) |

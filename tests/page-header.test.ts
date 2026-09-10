@@ -185,6 +185,38 @@ describe("CSS-only Page Header", () => {
     expect(css).not.toMatch(/(?:^|\n)(?:h1|header|a|button|body)\s*[{,]/)
   })
 
+  it("uses reference-sized title/back typography and unframed native back controls", () => {
+    fixture()
+    install()
+    const root = document.querySelector("#page-banner")!
+    const back = document.querySelector("#destination-back")!
+    expect(getComputedStyle(root).display).toBe("block")
+    expect(getComputedStyle(back).borderTopWidth).toBe("0px")
+    expect(css).toContain("--mui-page-header-title-size, 18px")
+    expect(css).toContain("--mui-page-header-title-weight, 500")
+    expect(css).toContain("--mui-page-header-back-size, 22px")
+    expect(css).toContain("--mui-page-header-line-height, 1.5")
+    expect(css).toContain("--mui-page-header-gap, 20px")
+    expect(css).toContain("--mui-page-header-main-gap, 16px 0px")
+    expect(getComputedStyle(root.querySelector(".mui-page-header-lead")!).flexBasis).toBe("12rem")
+  })
+
+  it("provides explicit dark role defaults without substituting legacy text colors", () => {
+    fixture()
+    const root = document.querySelector<HTMLElement>("#page-banner")!
+    root.dataset.muiTheme = "dark"
+    install()
+    const theme = getComputedStyle(root)
+    expect(theme.getPropertyValue("--_mui-page-header-title")).toBe("rgba(255,255,255,.9)")
+    expect(theme.getPropertyValue("--_mui-page-header-subtitle")).toBe("rgba(255,255,255,.52)")
+    expect(theme.getPropertyValue("--_mui-page-header-back")).toBe("rgba(255,255,255,.82)")
+    expect(theme.getPropertyValue("--_mui-page-header-hover")).toBe("#7fe7c4")
+    expect(theme.getPropertyValue("--_mui-page-header-pressed")).toBe("#5acea7")
+    expect(css).not.toContain("--mui-text-primary")
+    expect(css).not.toContain("--mui-text-secondary")
+    expect(css).not.toContain("color-scheme")
+  })
+
   it("allows the heading group to wrap rather than collapse beside a long back label", () => {
     fixture()
     install()
