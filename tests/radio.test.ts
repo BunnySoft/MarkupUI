@@ -27,6 +27,36 @@ function addPeer(form: HTMLElement) {
 }
 afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
 
+describe("Radio stylesheet contract", () => {
+  const css = readFileSync(join("src", "components", "radio", "radio.css"), "utf8")
+  it("keeps theme, size and status defaults private for inherited author tokens", () => {
+    expect(css).not.toMatch(/--mui-radio-[\w-]+\s*:/)
+    for (const size of [14, 16, 18]) expect(css).toMatch(new RegExp(`--_mui-radio-size:\\s*${size}px`))
+    expect(css).toMatch(/data-mui-theme="?dark"?/)
+    expect(css).not.toContain("var(--mui-text-primary")
+  })
+  it("retains visible native circles, including the button variant", () => {
+    expect(css).toContain("accent-color:")
+    expect(css).not.toMatch(/appearance\s*:|::before|::after|position:\s*absolute|pointer-events:\s*none|opacity:\s*0[;}]/)
+  })
+  it("uses the reference button heights without synthetic checked-text decorations", () => {
+    for (const height of [28, 34, 40]) expect(css).toMatch(new RegExp(`--_mui-radio-height:\\s*${height}px`))
+    expect(css).not.toMatch(/text-decoration:\s*underline|font-weight:\s*650/)
+    expect(css).toMatch(/input:checked\s*\+\s*span\s*\{[^}]*var\(--_mui-radio-tone\)/)
+    expect(css).toMatch(/vertical-align:\s*top/)
+  })
+  it("retains forced-color focus and authored hidden-state safeguards", () => {
+    expect(css).toMatch(/@media\s*\(forced-colors:\s*active\)/)
+    expect(css).toMatch(/outline:\s*2px solid Highlight/)
+    expect(css).toMatch(/\[hidden\][^{]*\{[^}]*display:\s*none\s*!important/)
+  })
+  it("does not compound system disabled paint with RadioButton opacity in forced colors", () => {
+    const forcedColors = css.split(/@media\s*\(forced-colors:\s*active\)/)[1]?.split("@media print")[0] ?? ""
+    expect(forcedColors).toMatch(/\.mui-radio-button:has\(\s*>\s*input:disabled\)\s*\{\s*opacity:\s*1\s*;?\s*\}/)
+    expect(css).toMatch(/opacity:\s*var\(--_mui-radio-opacity,\s*\.5\)/)
+  })
+})
+
 describe("authored Radio/RadioButton ownership", () => {
   it("keeps native control/label/content/attributes/listeners and pre-enhancement state", () => {
     const { root, helper, field } = fixture()

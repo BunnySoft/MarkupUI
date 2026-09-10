@@ -175,9 +175,10 @@ Use the **same native radio** inside `.mui-radio-button` rather than an HTML but
 
 The labelled choices have button-like borders/padding and wrap as segments, but the
 **native radio circle stays visible and focusable**. There is no display:none,
-appearance:none or offscreen replacement. Baseline `input:checked + span` text treatment
-and native focus outlines work without `:has()`. Optional `:has()` enhances the selected
-label background/border/focus; losing those rules does not remove the radio or its state.
+appearance:none or offscreen replacement. Baseline `input:checked + span` accent text
+and the button's focus-within ring work without `:has()`. Optional `:has()` enhances the
+selected label background/border/contrast; losing those rules does not remove the radio
+or its state. Checked labels use normal weight without an added underline.
 No source VNode child classifier, generated splitter or border-priority algorithm exists.
 
 `data-size="small|medium|large"` on labels or group provides explicit inherited size,
@@ -186,6 +187,29 @@ including a medium override inside small/large groups. Optional group
 semantics separately. Logical spacing/wrapping supports RTL, with native arrow policy
 left to the browser. Forced colors retain native rendering; print retains real radios.
 No animations are introduced, so reduced motion requires no runtime.
+
+The [default-style audit](../style-audit/components/radio.md) aligns native circle
+boxes to **14/16/18px**, label fonts to **14/14/15px**, and ordinary text line-height to
+1.6. Ordinary labels have an 8px text gap and 8px trailing space; the native circle
+aligns to the first label line. Top inline alignment avoids extra native baseline space.
+RadioButton minimum heights are **28/34/40px**, with 14px horizontal padding and an
+always-visible native circle. Long labels and authored padding can grow those minimums.
+
+An ancestor `data-mui-theme="light|dark"` selects the scheme; standalone controls
+default to light. Local reference-matched neutral fallbacks avoid the legacy shared
+neutral-role mismatch, while semantic accents reuse the shared primary role.
+Size/status/theme defaults are private: inherited public tokens still win.
+`-pad` provides additional vertical RadioButton padding (default zero).
+
+Native unchecked/disabled paint, hover edges, dot size and focus-ring shape remain
+browser-owned adaptations, not exact Naive pixel parity. RadioButton selected colors
+are primary text on white in light, black text on primary in dark; native disabled
+buttons retain the reference whole-label opacity of .5/.38 in normal themes. Forced
+colors resets disabled button labels to opacity 1 so system disabled paint is not
+faded a second time. Visible circles make
+buttons wider than Naive's hidden-input variant. Buttons remain separately rounded
+wrapping choices with 4px gaps, not generated connected splitters. Native groups retain
+their labelled fieldset boundary and 12px padding rather than a bare group `div`.
 
 Tokens: `--mui-radio-color`, `-font`, `-size`, `-accent`, `-focus`, `-disabled`, `-border`,
 `-background`, `-active`, `-pad` (all share the `--mui-radio` prefix).
@@ -215,8 +239,11 @@ There is no global control reset, theme provider, injected style or CSS-in-JS.
 
 ## Acceptance
 
+### Original native-contract acceptance (historical)
+
 Local evidence is obtained on 2026-09-09 using server 4188 and a dedicated Radio tab.
-This is not all-engine/AT/native-theme pixel parity or framework compatibility.
+This is not all-engine/AT/native-theme pixel parity or framework compatibility. The
+asset bytes and sizing below describe that original revision.
 
 - **165 targeted tests passed**: 41 Radio, 52 Input, 45 Checkbox and 27 native regressions,
   using `pnpm test -- tests\radio.test.ts tests\input.test.ts tests\checkbox.test.ts
@@ -266,3 +293,34 @@ All **20 original Radio identities** remain, plus 14 explicit source supplements
 **34 rows (23 adapted, 11 omitted)**. Catalog totals are **3,502 rows and 224/384 accepted
 tasks across 56 pages**; local edited-document links pass. P4 remains In progress.
 **Next Switch**, then Select/native controls before Form enhancements.
+
+### Default-style audit, 2026-09-10
+
+**46 Radio-only tests passed**: all 41 original native cases plus five CSS regressions.
+Isolated Chromium comparison covered all three sizes, checked/unchecked/disabled,
+ordinary/long labels, inherited group sizes, RadioButton sizes, hover/focus and both
+schemes. Actual screenshot pixels document the remaining native-skin differences.
+
+Browser checks passed for native ArrowRight selection/focus, skipped disabled peers,
+Space on the current selection without extra events, cancelled label rollback,
+visible RadioButton circles/arrows, native reset/required/FormData and fieldset/
+first-legend behavior. All ten public tokens won over size/theme/state defaults.
+Forced colors, print, RTL at 360px/200% CSS zoom and no-JS arrows/reset with independent
+same-name groups in separate forms also passed. A follow-up forced-colors probe verified
+opacity 1 for checked/unchecked RadioButtons with explicit and fieldset disabling in
+both schemes, retained native appearance/focus and author tokens, and restored normal
+.5/.38 opacity when forced colors ended. Simulated removal of `:has()` rules
+kept dark selected text readable and native radios visible; this is not certification
+of an unsupported browser engine.
+
+| Isolated asset | Raw bytes | Gzip level 9 | Unchanged ceiling |
+| --- | ---: | ---: | ---: |
+| `markup-ui-radio.js` | 4,143 | 1,751 | 3,000 |
+| `markup-ui-radio.global.js` | 4,300 | 1,819 | 3,000 |
+| `markup-ui-radio.css` (working LF) | 4,554 | 1,234 | 1,250 |
+| Same CSS with CRLF checkout | 4,555 | 1,236 | 1,250 |
+
+Source CSS is equivalently whitespace-compacted with existing esbuild tooling.
+One helper plus CSS costs **2,985 ESM / 3,053 classic gzip bytes** in this working tree
+(**2,987 / 3,055** with CRLF). JavaScript, dependencies, shared styles, generated assets
+and budgets are unchanged. No full release build, commit or push was performed here.
