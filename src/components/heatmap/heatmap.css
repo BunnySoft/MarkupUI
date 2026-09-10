@@ -1,0 +1,43 @@
+.mui-heatmap {
+  --mui-heatmap-level-0: #e3f3e6;
+  --mui-heatmap-level-1: #a7d9af;
+  --mui-heatmap-level-2: #63b974;
+  --mui-heatmap-level-3: #2d8843;
+  --mui-heatmap-level-4: #14532d;
+  min-inline-size: 0;
+}
+.mui-heatmap[data-heatmap-theme="blue"] { --mui-heatmap-level-0: #e3efff; --mui-heatmap-level-1: #a9ccf7; --mui-heatmap-level-2: #639fe8; --mui-heatmap-level-3: #326ec1; --mui-heatmap-level-4: #173e7e; }
+.mui-heatmap[data-heatmap-theme="orange"] { --mui-heatmap-level-0: #fff0da; --mui-heatmap-level-1: #f5ce8b; --mui-heatmap-level-2: #e7a446; --mui-heatmap-level-3: #b96915; --mui-heatmap-level-4: #75400c; }
+.mui-heatmap[data-heatmap-theme="purple"] { --mui-heatmap-level-0: #f3e8ff; --mui-heatmap-level-1: #d2b4ee; --mui-heatmap-level-2: #aa7bd2; --mui-heatmap-level-3: #7b49a4; --mui-heatmap-level-4: #4d276d; }
+.mui-heatmap[data-heatmap-theme="red"] { --mui-heatmap-level-0: #ffe8e7; --mui-heatmap-level-1: #f3b6b1; --mui-heatmap-level-2: #df7d75; --mui-heatmap-level-3: #b3443c; --mui-heatmap-level-4: #762a25; }
+.mui-heatmap [hidden] { display: none !important; }
+.mui-heatmap [data-heatmap-scroll] { overflow: auto; }
+.mui-heatmap [data-heatmap-table] { border-collapse: separate; border-spacing: var(--mui-heatmap-x-gap, .25rem) var(--mui-heatmap-y-gap, .25rem); }
+.mui-heatmap caption { text-align: start; font-weight: 650; padding-block: .5rem; }
+.mui-heatmap th { font-weight: 600; }
+.mui-heatmap th[scope="row"] { text-align: start; }
+.mui-heatmap [data-heatmap-day] { min-inline-size: var(--mui-heatmap-cell-size, 3rem); min-block-size: 4.5rem; padding: .25rem; font: inherit; color: inherit; background: transparent; border: 1px solid var(--mui-heatmap-border, #a7b6c8); cursor: pointer; }
+.mui-heatmap[data-heatmap-size="small"] { --mui-heatmap-cell-size: 2.75rem; }
+.mui-heatmap[data-heatmap-size="large"] { --mui-heatmap-cell-size: 3.5rem; }
+.mui-heatmap [data-heatmap-date], .mui-heatmap [data-heatmap-value], .mui-heatmap [data-heatmap-code] { display: block; }
+.mui-heatmap [data-heatmap-date], .mui-heatmap [data-heatmap-code] { font-size: .75em; }
+.mui-heatmap [data-heatmap-value] { overflow-wrap: anywhere; max-inline-size: 8rem; font-variant-numeric: tabular-nums; }
+.mui-heatmap [data-heatmap-level="0"] { --mui-heatmap-cell-color: var(--mui-heatmap-level-0); }
+.mui-heatmap [data-heatmap-level="1"] { --mui-heatmap-cell-color: var(--mui-heatmap-level-1); }
+.mui-heatmap [data-heatmap-level="2"] { --mui-heatmap-cell-color: var(--mui-heatmap-level-2); }
+.mui-heatmap [data-heatmap-level="3"] { --mui-heatmap-cell-color: var(--mui-heatmap-level-3); }
+.mui-heatmap [data-heatmap-level="4"] { --mui-heatmap-cell-color: var(--mui-heatmap-level-4); }
+.mui-heatmap [data-heatmap-swatch] { display: block; block-size: .85rem; min-inline-size: 1.5rem; background: var(--mui-heatmap-cell-color, #dce1e8); border: 1px solid currentColor; border-radius: .15rem; }
+.mui-heatmap [data-heatmap-missing] [data-heatmap-swatch] { background: repeating-linear-gradient(135deg, #ffffff 0 3px, #c6ccd5 3px 6px); }
+.mui-heatmap [data-heatmap-current] [data-heatmap-day] { outline: 2px solid currentColor; outline-offset: -2px; }
+.mui-heatmap [data-heatmap-bands] { display: flex; flex-wrap: wrap; gap: .75rem; list-style: none; padding: 0; }
+.mui-heatmap [data-heatmap-bands] li { max-inline-size: 15rem; }
+.mui-heatmap .mui-heatmap-visually-hidden { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.mui-heatmap :focus-visible { outline: 3px solid var(--mui-heatmap-focus, #175cd3); outline-offset: 2px; }
+@media (forced-colors: active) { .mui-heatmap [data-heatmap-swatch], .mui-heatmap [data-heatmap-missing] [data-heatmap-swatch] { background: Canvas; border-color: CanvasText; } }
+@media print {
+  .mui-heatmap [data-heatmap-scroll] { overflow: visible; }
+  .mui-heatmap [data-heatmap-day] { border-color: currentColor; }
+  .mui-heatmap time[data-heatmap-date] { font-size: 0; }
+  .mui-heatmap time[data-heatmap-date]::after { content: attr(datetime); font-size: 10pt; }
+}

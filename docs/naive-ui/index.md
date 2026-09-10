@@ -79,6 +79,9 @@ targets and finish-once delivery, without wall-clock alarm or VNode-renderer cla
 Number Animation now has [accepted native finite-number evidence](../components/number-animation.md):
 overflow-safe monotonic interpolation, exact endpoints, native Intl text, reduced-motion
 settlement and explicit interruption/ownership without an animation/provider framework.
+Heatmap now has [accepted native calendar-data evidence](../components/heatmap.md):
+bounded date-only week cells, missing-versus-zero/domain/band rules, native value/legend
+text and one-tab-stop inspection, without a chart/Tooltip/provider renderer.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
 are reconciled. **P4 is Verified for retained native scopes:** all 17 assigned routes,
 984 tracker rows and 68 page tasks are resolved, with no Planned P4 routes or unresolved
@@ -87,9 +90,9 @@ retained rows. **P5 is Verified for retained native scopes:** all ten assigned r
 P0 architecture/P6 and full framework parity remain independent.
 The three P0 catalog routes are resolved, and the related Discrete audit remains accepted
 under P3; broader foundation task IDs are not automatically completed.
-**P6 is active:** Carousel, Watermark, Upload, Calendar, Time, Countdown and Number
-Animation are accepted; two routes remain Planned. Recommended next: **Heatmap**, then
-Marquee as a separate route. No next component is implemented in this Number Animation commit.
+**P6 is active:** Carousel, Watermark, Upload, Calendar, Time, Countdown, Number
+Animation and Heatmap are accepted. **Marquee** is the remaining Planned route.
+No Marquee implementation is included in this Heatmap commit.
 Component acceptance sections below retain their sign-off snapshots; earlier counts and
 “next”/“In progress” statements are historical, not the current phase dashboard.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
@@ -146,7 +149,7 @@ Avatar's four retained-scope tasks are checked using `9afc818`, Button's four us
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
 Popover through Rate, the subsequent Form/Auto Complete/Input OTP/Dynamic Input/Dynamic
 Tags/Mention/Color Picker/Date Picker/Time Picker records, and now Virtual List each add
-four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style, Carousel, Watermark, Upload, Calendar, Time, Countdown and Number Animation each add four more. The current total is **360/384 accepted across 90 pages, 24 unchecked**.
+four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style, Carousel, Watermark, Upload, Calendar, Time, Countdown, Number Animation and Heatmap each add four more. The current total is **364/384 accepted across 91 pages, 20 unchecked**.
 P2 retained scopes remain reconciled; the nineteen sequential P3 scopes plus three mixed P2/P3 pages pass the complete P3 audit. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
@@ -2598,6 +2601,48 @@ inline-theme exceptions stay open/partial; prior retained P2–P5/P0 routes are 
 **Next: Heatmap**, then Marquee. Each remains an independently bounded native scope;
 no next component is started in this Number Animation commit.
 
+## Heatmap accepted
+
+[Canonical Heatmap acceptance](../components/heatmap.md) closes the eighth retained P6
+route using the reference's actual calendar-by-week model. Native Gregorian date/value
+records, bounded range, missing/zero distinction, rejected duplicates, signed numeric
+domain/threshold bands, native legend/detail and one roving date-button tab stop replace
+timestamp/zero-fill/hover-only chart assumptions. Existing Calendar arithmetic is reused
+without changing its assets; external CSS owns palette/geometry/focus/media.
+
+**27 original identities + four grouped/type supplements + three source-behavior
+supplements + three inherited theme props = 37 rows: 26 adapted, 11 omitted, zero
+unresolved; four accepted tasks.** Loading matrices/data, TooltipProps/VNode injection,
+random mock generation, source gap/color algorithms and theme graphs are explicit
+omissions, not partial success or fake data.
+
+**133 targeted tests pass** (52 Heatmap + 54 shared Calendar + 27 native/legacy),
+declarations/build and all prior/new budgets pass. Level-nine gzip:
+**7,822 ESM / 7,956 classic / 1,126 CSS** (raw **20,395 / 20,680 / 4,106**), under
+**8,000 / 8,000 / 2,000** ceilings. Combined **8,948 / 9,082** JS+CSS; full three-file
+local ESM example **13,029** gzip bytes. Prior exports/budgets stay unchanged; Calendar
+remains **7,438**, core/advanced/widgets **14,611 / 2,181 / 2,779** under existing ceilings.
+
+Dedicated Chromium verified actual numeric/missing cell colors, normalized legend/
+constant/clamped domains, persistent native detail, table/row/column AX, scoped keys/
+native activation/focus/identity, empty/leap/year1/9999/oversized/rejected cases,
+native forms/author controls, RTL/zoom/forced-colors/print, no-JS, strict CSP and
+classic/Calendar-date/legacy coexistence. The 366-day test produced **54 weeks /
+378 padded slots / 372 real date buttons / one tab stop**, with actual 3010px content
+in a 1086px scrollport. No unlimited chart, hover-tooltip, print-width or AT parity claim.
+
+**Current catalog: 96 routes / 4,014 rows / 364 of 384 tasks across 91 accepted pages /
+20 unchecked. P6: 280 rows = 194 adapted + 83 omitted + three unresolved; eight of
+nine specialized routes accepted.** Prior retained P2–P5/P0 routes and broader P0-01–09
+legacy CSS/auto-install/inline-theme exceptions remain independently unchanged/open.
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P6 (1 Planned) | Marquee | 3 / 3 |
+| Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Next: Marquee.** It remains separately scoped; no implementation is started here.
+
 ## Common Components (15)
 
 | Component | Plan direction | Current baseline | Phase |
@@ -2668,7 +2713,7 @@ no next component is started in this Number Animation commit.
 | [Tree](components/tree.md) | 🟢 Verified retained native outline; 87 explicit omissions | Native hierarchy/check/load helper; legacy core preserved | P5 |
 | [Infinite Scroll](components/infinite-scroll.md) | 🟢 Verified native load-permission scope; three explicit omissions | Native sentinel/manual loading, guarded completion and serialized cancellation; [accepted evidence](../components/infinite-scroll.md) | P5 |
 | [Highlight](components/highlight.md) | 🟢 Verified literal scope; 2 omitted rows and raw-regexp exclusion | Bounded ESM/classic matching + native mark CSS; [accepted evidence](../components/highlight.md) | P2 |
-| [Heatmap](components/heatmap.md) | 🔵 Planned | None | P6 |
+| [Heatmap](components/heatmap.md) | 🟢 Verified native calendar-data scope; 11 explicit omissions | Bounded Gregorian table/bands/detail; [accepted evidence](../components/heatmap.md), no chart/Tooltip renderer | P6 |
 
 ## Navigation Components (9)
 
@@ -2765,15 +2810,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,494: 370 inline fields, 187 type/helper/exclusion entries (including five Table public helper groups, Virtual List/Tree named ScrollTo types, UploadInst/UploadSettledFileInfo, CountdownTimeInfo/CountdownInst and NumberAnimationInst) and 937 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel/Watermark/Upload/Calendar/Time/Countdown/Number Animation source supplements |
-| Explicit inherited tracker rows | 290, including six source-inherited DialogReactive options, three ModalReactive fields, two NotificationReactive fields and three each Element/Carousel/Watermark/Upload/Calendar theme props |
-| Total tracker rows | 4,004; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 360 retained-scope tasks accepted across 90 component pages, 24 unchecked |
+| Supplementary named declarations | 1,501: 370 inline fields, 191 type/helper/exclusion entries (including five Table public helper groups, Virtual List/Tree named ScrollTo types, UploadInst/UploadSettledFileInfo, CountdownTimeInfo/CountdownInst, NumberAnimationInst and four Heatmap public type groups) and 940 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel/Watermark/Upload/Calendar/Time/Countdown/Number Animation/Heatmap source supplements |
+| Explicit inherited tracker rows | 293, including six source-inherited DialogReactive options, three ModalReactive fields, two NotificationReactive fields and three each Element/Carousel/Watermark/Upload/Calendar/Heatmap theme props |
+| Total tracker rows | 4,014; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 364 retained-scope tasks accepted across 91 component pages, 20 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 4,004 rows retain canonical text with emoji color: 2,059 Verified native adaptations, 1,915 intentional omissions, 27 Not reviewed and three Planned. Number Animation contributes 11 adaptations/one omission; other retained component counts and linked acceptance records are unchanged. |
-| Source agreement | All 2,220 direct source rows and 290 inherited rows remain covered; six unchanged inventories match extraction; the 90 accepted pages preserve named/grouped identities with explicit dispositions; Number Animation preserves all nine original identities/links and adds three source/type supplements; all four requested foundation-related route inventories remain reconciled |
-| Local links | All 588 scoped Number Animation/reference/index/master file links resolve; earlier Countdown/Time/Calendar/Upload/Watermark/Carousel/Global Style/four-route/component link snapshots remain historical evidence |
+| Status presentation | All 4,014 rows retain canonical text with emoji color: 2,085 Verified native adaptations, 1,926 intentional omissions and three Not reviewed; no Planned row remains. Heatmap contributes 26 adaptations/11 omissions; other retained component counts and linked acceptance records are unchanged. |
+| Source agreement | All 2,220 direct source rows and 293 inherited rows remain covered; five unchanged inventories match extraction; the 91 accepted pages preserve named/grouped identities with explicit dispositions; Heatmap preserves all 27 original identities/links and adds seven source/type plus three inherited identities; all four requested foundation-related route inventories remain reconciled |
+| Local links | All 591 scoped Heatmap/reference/index/master file links resolve; earlier Number Animation/Countdown/Time/Calendar/Upload/Watermark/Carousel/Global Style/four-route/component link snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

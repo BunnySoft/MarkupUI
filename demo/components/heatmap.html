@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Native calendar Heatmap · MarkupUI</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-heatmap.css">
+  <link rel="stylesheet" href="./heatmap.css">
+  <script type="module" src="./heatmap.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Heatmap: actual dates and values, not color alone</h1>
+    <p id="help">One Tab stop enters the native calendar table. Up/Down move weekday
+      rows; Left/Right move weeks (physical directions adapt to RTL). Home/End choose
+      the first/last week in the row; Ctrl+Home/End choose first/last dates. Focus or
+      tap a date to inspect the persistent detail below. No tooltip or grid-role promise.</p>
+    <div class="demo-controls" data-enhancement hidden>
+      <button type="button" id="normal">Normal signed/fractional values</button>
+      <button type="button" id="zero">All zero values</button>
+      <button type="button" id="missing">Missing values and records</button>
+      <button type="button" id="empty">Empty data/range</button>
+      <button type="button" id="year">Bounded leap-year scale</button>
+      <button type="button" id="first">Year 0001 boundary</button>
+      <button type="button" id="last">Year 9999 boundary</button>
+      <button type="button" id="equal">Equal numeric domain</button>
+      <label>Palette <select id="theme"><option>green</option><option>blue</option><option>orange</option><option>purple</option><option>red</option></select></label>
+      <label>Cell size <select id="size"><option>medium</option><option>small</option><option>large</option></select></label>
+      <label>First weekday <select id="week"><option value="0">Monday (0)</option><option value="6">Sunday (6)</option><option value="5">Saturday (5)</option></select></label>
+      <label>Names locale <select id="locale"><option value="en-US">English</option><option value="th-TH-u-ca-buddhist">Thai requesting Buddhist</option></select></label>
+      <label><input id="leading" type="checkbox">Show leading dates as missing (never zero)</label>
+      <label><input id="fixed-domain" type="checkbox">Fixed domain [-10,10]</label>
+      <label><input id="thresholds" type="checkbox">Thresholds .1/.25/.5/.9</label>
+      <label><input id="custom-colors" type="checkbox">Five explicit hex colors</label>
+      <label><input id="minimum-color" type="checkbox">Override numeric L0 color</label>
+      <label><input id="loading" type="checkbox">Updating (retain real values)</label>
+      <label><input id="month-labels" type="checkbox" checked>Month labels</label>
+      <label><input id="week-labels" type="checkbox" checked>Weekday labels</label>
+      <label><input id="legend" type="checkbox" checked>Legend</label>
+      <label><input id="rtl" type="checkbox">RTL</label>
+      <label><input id="zoom" type="checkbox">CSS zoom 200%</label>
+      <button type="button" id="duplicate">Try duplicate dates</button>
+      <button type="button" id="huge">Try unbounded range</button>
+      <button type="button" id="disconnect">Disconnect to authored data</button>
+    </div>
+    <form id="native-form">
+      <section id="heatmap" class="mui-heatmap" data-heatmap tabindex="-1" aria-labelledby="heatmap-heading" aria-describedby="help">
+        <h2 id="heatmap-heading">Original <em>daily measurements</em> heading</h2>
+        <div data-heatmap-scroll>
+          <table data-heatmap-table>
+            <caption>Local daily measurements: <span data-heatmap-caption>February–March 2024</span></caption>
+            <thead data-heatmap-head><tr><th scope="col">Date</th><th scope="col">Value</th></tr></thead>
+            <tbody data-heatmap-body>
+              <tr><td><time datetime="2024-02-01">2024-02-01</time></td><td>-4</td></tr>
+              <tr><td><time datetime="2024-02-05">2024-02-05</time></td><td>0</td></tr>
+              <tr><td><time datetime="2024-02-14">2024-02-14</time></td><td>Missing</td></tr>
+              <tr><td><time datetime="2024-02-29">2024-02-29</time></td><td>20</td></tr>
+              <tr><td><time datetime="2024-03-10">2024-03-10</time></td><td>5.5</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <template data-heatmap-cell><td><button type="button" data-heatmap-day><span data-heatmap-swatch aria-hidden="true"></span><time data-heatmap-date></time><span data-heatmap-value></span><span data-heatmap-code></span></button></td></template>
+        <div data-heatmap-legend>
+          <strong>Original legend introduction:</strong>
+          <ul data-heatmap-bands><li>Actual numeric values and Missing are distinct. Color is supplementary.</li></ul>
+          <span>Original legend suffix: data is local and descriptive, not a security/risk judgment.</span>
+        </div>
+        <p data-heatmap-status>Static data table remains readable without JavaScript.</p>
+        <p data-heatmap-detail>Focus/tap enhancement is optional; all static values remain text.</p>
+        <footer><button type="button" id="author-action" data-enhancement hidden>Original action count: 0</button></footer>
+      </section>
+      <label>Independent native note <input id="note" name="note" value="Heatmap must not change this"></label>
+      <button type="submit" data-enhancement hidden>Inspect native FormData (no request)</button>
+      <button type="reset">Reset the native note</button>
+    </form>
+    <pre id="feedback" aria-label="Local Heatmap state and errors">Without JavaScript, the original date/value table, legend and native field remain. No dead day buttons or data fetch.</pre>
+    <footer><label>Outside focus target <input id="outside" value="No automatic focus changes"></label>
+      <p>At most 366 input/range days, 378 padded cells, 54 week columns and one roving
+        date tab stop. A year view uses native horizontal scrolling; it is not an
+        unlimited chart or guaranteed full-width printed page.</p></footer>
+  </main>
+</body>
+</html>

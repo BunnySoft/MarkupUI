@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./heatmap": {
+      "types": "./dist/components/heatmap/index.d.ts",
+      "import": "./dist/markup-ui-heatmap.js"
+    },
+    "./heatmap/style.css": "./dist/markup-ui-heatmap.css",
     "./number-animation": {
       "types": "./dist/components/number-animation/index.d.ts",
       "import": "./dist/markup-ui-number-animation.js"

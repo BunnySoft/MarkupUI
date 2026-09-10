@@ -21,8 +21,9 @@ Calendar closes its native Gregorian table scope (23 rows, 20 adapted, three omi
 four accepted tasks). Time closes native instant/relative formatting (nine rows, seven
 adapted, two omitted, four tasks). Countdown closes elapsed native text/unit timing
 (14 rows, 12 adapted, two omitted, four tasks). Number Animation closes native finite
-interpolation/text (12 rows, 11 adapted, one omitted, four tasks). Two specialized routes
-remain Planned. Broad P0 foundation tasks,
+interpolation/text (12 rows, 11 adapted, one omitted, four tasks). Heatmap closes its
+native calendar-data scope (37 rows, 26 adapted, 11 omitted, four tasks). Only Marquee
+remains Planned among specialized routes. Broad P0 foundation tasks,
 remaining P6 and full framework/viewer parity remain incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
@@ -55,7 +56,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
 | P4 — Forms and selection | 🟢 Verified retained scope | All 17 P4-assigned routes, 984 tracker rows and 68 page tasks reconciled. | Relevant native P0/P3 contracts | 478 adapted + 506 omitted, no unresolved rows; 889 P4 tests plus native browser evidence. No P0/P5/P6 or full framework parity implied. |
 | P5 — Collections and scale | 🟢 Verified retained scope | All ten P5-assigned routes, 827 rows and 40 page tasks reconciled. | P3 focus; P4 selection | 349 native adaptations + 478 omissions, zero unresolved; 526-test/native browser/asset audit. No full framework or P0/P6 parity implied. |
-| P6 — Specialized modules | 🟠 In progress; Carousel, Watermark, Upload, Calendar, Time, Countdown and Number Animation retained scopes Verified | Seven of nine specialized routes accepted; Heatmap/Marquee remain Planned. | Component-specific earlier work | Explicit ESM/classic/CSS, 240 reconciled rows, 28/28 tasks, native/browser evidence; other 30 rows remain unresolved. |
+| P6 — Specialized modules | 🟠 In progress; eight retained scopes Verified | Carousel, Watermark, Upload, Calendar, Time, Countdown, Number Animation and Heatmap accepted; Marquee remains Planned. | Component-specific earlier work | Explicit ESM/classic/CSS, 277 reconciled rows, 32/32 tasks, native/browser evidence; three Marquee rows remain unresolved. |
 
 The [component index](index.md) is the exhaustive catalog-to-phase assignment. The phase
 groups below name principal workstreams, not additional promises that every catalog feature
@@ -150,7 +151,7 @@ smuggling an overlay implementation into the CSS-only native composition.
 | P6-01 — Date/time and calendar | 🟢 Verified Calendar/Time retained scopes; counters remain separate | Native Gregorian date-only table and explicit instant/relative formatting accepted as distinct domains. | [Calendar](../components/calendar.md) and [Time](../components/time.md): bounded native arithmetic/Intl/text/focus/lifetime; no token/provider/alternate-calendar or floating-to-instant inference. |
 | P6-02 — Upload | 🟢 Verified retained native queue scope | Real FileList/FormData, explicit bounded caller transport, progress/cancel/retry/remove and native Trigger/Dragger. | [Upload acceptance](../components/upload.md): 101 reconciled rows/four tasks, honest ignored-abort slots and native reset/disabled/focus/fallback evidence; previews/downloads/vetoes/backend assumptions omitted. |
 | P6-03 — Media and carousel | 🟢 Verified Carousel retained scope; advanced viewer/effects excluded | Native scroll-snap Carousel/CarouselItem, original DOM, manual/wrap controls and opt-in gated autoplay. | [Carousel acceptance](../components/carousel.md): settled targets, lifetime, focus/forms, browser/legacy/no-JS and independent budgets; no seamless clone loop or advanced image-viewer parity. |
-| P6-04 — Other utilities | 🟠 In progress; Watermark/Countdown/Number Animation retained scopes Verified | Bounded decoration, elapsed duration and numeric interpolation accepted; Heatmap/Marquee remain independent. | [Watermark](../components/watermark.md), [Countdown](../components/countdown.md) and [Number Animation](../components/number-animation.md): native ownership/generation/timing evidence, not security/alarm/financial/renderer parity. |
+| P6-04 — Other utilities | 🟠 In progress; Watermark/Countdown/Number Animation/Heatmap retained scopes Verified | Bounded decoration, elapsed duration, numeric interpolation and calendar data accepted; Marquee remains independent. | Per-component native ownership/generation/timing/data evidence, not security/alarm/financial/chart/renderer parity. |
 | P6-05 — Dependency-heavy exclusions | 🔵 Planned | Resolve QR generation, math typesetting, full language highlighting and framework-only provider APIs individually. | Independent feasibility decision or explicit omission; no hidden dependencies. |
 | P6-06 — Deprecated surfaces | 🔵 Planned | Record Legacy Transfer and deprecated aliases without reproducing redundant legacy APIs. | A documented replacement and omission decision, not a missing tracker row. |
 | P6-07 — Packaging sign-off | 🔵 Planned | Demonstrate explicit optional loading in supported classic/module modes and record combined asset sizes. | Specialized features stay out of the default dependency graph. |
@@ -206,10 +207,10 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Number Animation (P6), verified native finite-number/text scope.**
+**Current component: Heatmap (P6), verified bounded native calendar-data scope.**
 **P1/P2/P3/P4/P5 declared retained scopes are complete. P4-07 and P5-06 close against their full assigned-route audits.**
 **P5 is Verified for retained scopes:** all ten routes are resolved.
-Recommended next: **Heatmap**, then Marquee as a separate route.
+Recommended next: **Marquee**, as the remaining separately scoped P6 route.
 No next component is implemented here. P0 component-route acceptance
 does not close broader foundation tasks or imply full upstream/framework compatibility.
 
@@ -348,8 +349,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 4,004 rows and 360 accepted retained tasks out of 384 across 90 component
-pages (24 unchecked), not full upstream parity.
+The current index records 4,014 rows and 364 accepted retained tasks out of 384 across 91 component
+pages (20 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -2342,3 +2343,45 @@ stay separately open or partial.
 | Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
 
 **Next: Heatmap**, then Marquee. Neither is implemented in this Number Animation commit.
+
+## Heatmap acceptance — bounded calendar data, not a chart renderer
+
+[Canonical Heatmap](../components/heatmap.md) and its [complete reference](components/heatmap.md)
+close the eighth retained P6 route using the actual reference calendar-by-week model.
+Existing Gregorian/date-only primitives support bounded records/ranges; native table/
+headers/buttons/value text, deterministic domain/threshold bands, external CSS palette
+and persistent nonlive detail preserve non-color meaning and keyboard/touch access.
+No chart library, timestamp inference, zero-fill/duplicate coercion, fake loading data,
+title-only Tooltip, opaque renderer, provider or external data fetch is introduced.
+
+**27 original identities + four grouped/type supplements + three source behaviors +
+three inherited theme props = 37 rows: 26 adapted + 11 omitted, zero unresolved;
+4/4 tasks.** Source gap/color/loading algorithms, Tooltip/loading-data/mock/theme
+surfaces remain explicit omissions rather than native parity claims.
+
+**133 tests pass** (52 Heatmap + 54 shared Calendar + 27 native/legacy), declarations/
+build and all budgets pass. Level-nine gzip: **7,822 ESM / 7,956 classic / 1,126 CSS**;
+combined **8,948 / 9,082** under **8,000 / 8,000 / 2,000** ceilings. Full local ESM
+example: **13,029** gzip bytes. Existing Calendar stays **7,438**; prior exports/budgets
+and core/advanced/widgets **14,611 / 2,181 / 2,779** remain unchanged.
+
+Native Chromium verified actual data/color/legend, missing versus zero, signed/
+constant/clamped domains, persistent details, native table AX and scoped keys, update/
+focus/identity, empty/leap/year1/9999/range limits, native forms/author controls,
+RTL/zoom/forced-colors/print/no-JS, strict CSP and classic/native-date/legacy coexistence.
+The supported full-year case measured **54 columns, 378 slots, 372 real date buttons
+and one date tab stop**; 3010px content used a 1086px native scrollport. No unlimited
+chart, Tooltip/renderer, print-width or all-browser/AT guarantee is implied.
+
+**Current catalog: 96 routes / 4,014 rows / 364 of 384 accepted tasks across 91 pages /
+20 unchecked. P6: 280 rows = 194 adapted + 83 omitted + three unresolved; eight of
+nine specialized routes accepted.** Broad P0-01–P0-09 and legacy CSS extraction/
+auto-install/inline-theme exceptions stay open/partial; prior retained P2–P5/P0 routes
+are unchanged.
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P6 (1 Planned) | Marquee | 3 / 3 |
+| Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Next: Marquee.** No Marquee implementation is included in this Heatmap commit.
