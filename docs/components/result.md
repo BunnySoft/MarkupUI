@@ -76,7 +76,7 @@ assets or a status-illustration package.
 | --- | --- |
 | `description` | Authored `.mui-result-description` text/nodes. No description attribute renderer. |
 | `title` | Authored `.mui-result-title` heading/text. No tooltip mapping or inferred heading level. |
-| `status` | `data-status` selects the icon-region palette for info/success/warning/error/404/403/500/418. Absent/unknown values use the native info palette. |
+| `status` | `data-status` selects info/success/warning/error icon colors. 404/403/500/418 inherit the neutral text color for authored artwork/code symbols. Absent/unknown values use the native info palette. |
 | `size` | `data-size` small/medium/large/huge; absent/unknown values use medium. |
 | Default slot | Actual `.mui-result-content` children, including rich text, nested results or native forms. |
 | Footer slot | Actual `.mui-result-footer` children; no generated retry/home actions or route/history policy. |
@@ -92,43 +92,64 @@ text or inspect an HTTP response. Changing only `data-status` does not turn an e
 into a success message; application code must keep content and presentation consistent.
 
 The four HTTP-like status strings are visual variants, not network status handlers.
-Their native neutral/error/purple palettes and code symbols are deliberate alternatives
-to upstream multi-color illustrations. No vendor asset, router, timer, fetch, observer or
+Their authored neutral code symbols remain deliberate alternatives to upstream multi-color
+illustrations. The previous invented red-500/purple-418 tints are no longer defaults.
+No vendor asset, router, timer, fetch, observer or
 VDOM dependency is hidden behind them.
 
 Strings map to authored native text; dynamic plain strings can use `textContent`.
 No render/prop schema is interpreted. Omitted or hidden regions create no placeholder.
 An empty root stays empty, including when given a status attribute. Deliberately authored
-empty regions remain nodes and can still contribute grid spacing.
+empty regions remain nodes and can still contribute their region margins.
 
 ## Size, alignment and styling
 
-The native rem dimensions follow the pinned size constants at a 16px root:
+The native pixel dimensions now follow the pinned size constants independently of the
+root font size. Explicit author tokens may still use rem units if preferred:
 
 | Size | Icon box | Title text | Body text |
 | --- | --- | --- | --- |
-| small | 64px / 4rem | 26px / 1.625rem | 14px / .875rem |
-| medium | 80px / 5rem | 32px / 2rem | 14px / .875rem |
-| large | 100px / 6.25rem | 40px / 2.5rem | 15px / .9375rem |
-| huge | 125px / 7.8125rem | 48px / 3rem | 16px / 1rem |
+| small | 64px | 26px | 14px |
+| medium | 80px | 32px | 14px |
+| large | 100px | 40px | 15px |
+| huge | 125px | 48px | 16px |
 
-Spacing/layout is an explicit native adaptation, not pixel parity: regions use a default
-1.5rem grid gap and the header a .25rem title/description gap. Header text, icon and footer
-content are centered by default; main content uses normal logical start alignment.
+Spacing now follows rendered upstream defaults: 16px above an authored title, 4px above
+an authored description, and 24px above authored content/footer regions. These margins
+also apply when earlier regions are omitted. There is no blanket grid gap. The title
+defaults to weight 500 and Result text to line-height 1.6. Header text, icon and footer
+content are centered by default, including wrapped footer text; main content uses logical start alignment.
 Native CSS—not an invented `align` prop—can select start/end alignment.
 
 Tokens: `--mui-result-gap`, `--mui-result-align`, `--mui-result-footer-justify`,
 `--mui-result-action-gap`, `--mui-result-icon-size`, `--mui-result-icon-color`,
 `--mui-result-title-size`, `--mui-result-title-weight`, `--mui-result-title-color`,
-`--mui-result-font-size` and `--mui-result-color`. Supply valid external CSS values.
+`--mui-result-font-size`, `--mui-result-line-height` and `--mui-result-color`.
+`--mui-result-gap` overrides title/content/footer margins together; without it, the
+16px/24px defaults differ intentionally. Description margin remains 4px and can be
+customized through ordinary authored CSS. Supply valid external CSS values.
 Private `--_mui-result-*` presets are not API. Nested Results reset status/size/alignment
-presets; intentional public color overrides and native direction may inherit.
+presets; intentional public color/gap overrides and native direction may inherit.
+
+Set `data-mui-theme="dark"` on the root or an ancestor for explicit dark defaults;
+nested `data-mui-theme="light"` resets them. Light body/title colors are `#333639` /
+`#1f2225`; dark colors are white at `.82` / `.9`. Semantic icons use normal severity
+colors (light `#2080f0/#18a058/#f0a020/#d03050`, dark
+`#70c0e8/#63e2b7/#f2c97d/#e88080`), not Alert's dark supplemental colors.
+Legacy global text roles are not substituted for these different Result roles.
+This stylesheet does not change native form controls' `color-scheme`.
 
 Direct icon media scale into the icon box with contained fitting; authored src/alt/namespace/
 width attributes and nodes are not rewritten. `.mui-result-symbol` is a local helper for
 authored code/glyph text, not a generated status label. Long text and footer controls wrap
 in DOM order with logical RTL behavior; no overflow menu or clipping controller is added.
 The stylesheet adds no panel borders/backgrounds; demo panel decoration is application CSS.
+Authored icon content is still required. Result's icon-region color can tint a custom
+`currentColor` SVG; upstream's custom icon slot does not automatically receive its built-in
+icon tint. Use `--mui-result-icon-color` or explicit artwork colors for your desired result.
+
+See the [rendered Result visual audit](../style-audit/components/result.md) for the
+measured geometry, palette, authored-artwork boundary, budget and remaining limitations.
 
 ## Native actions, hidden content and fallback
 
@@ -152,9 +173,11 @@ cleanup or observer is necessary for this passive composition.
 ## Migration steps and acceptance
 
 1. [x] Author native heading/description/icon/content/footer regions without generated semantics.
-2. [x] Retain the eight visual status variants and four sizes with explicit text and artwork ownership.
+2. [x] Retain the eight status values and four sizes with explicit text and artwork ownership.
 3. [x] Ship independent scoped palettes, dimensions, logical alignment and wrapping CSS.
 4. [x] Verify native recovery controls/forms, sparse/hidden/nested content and browser fallback.
+
+### Initial migration acceptance — 2026-09-08 (historical appearance)
 
 On 2026-09-08, `pnpm --dir D:\repos\MarkupUI check` passed build/budget gates and
 **516 tests**, including **12 Result cases**. Chromium acceptance exercised:
@@ -177,3 +200,20 @@ Component JS is **0 bytes**. Demo JS is **302 / 228 gzip bytes**, demo CSS **1,1
 Core remains **14,611/15,000**, widgets **2,779/4,000**, advanced **2,181/3,000** gzip bytes,
 with unchanged outputs/ceilings and zero runtime dependencies. This is not all-browser,
 screen-reader speech, browser-UI zoom, vendor illustration or framework/pixel parity.
+
+### Visual-default audit — 2026-09-10
+
+- `pnpm test -- tests\result.test.ts`: **13 tests passed**.
+- Twenty cases in each light/dark theme matched reference host and icon-box geometry,
+  title/description/content/footer typography and spacing. The same geometry checks
+  passed in RTL; original authored artwork remains intentionally different.
+- Title top changed **104→96px**, weight **600→500**, description-only height
+  **125→106.391px**, and footer-only height **21→46.391px**.
+- At a 20px root font, the old default icon/title/body sizes became 100/40/17.5px;
+  corrected sizes stay **80/32/14px**, matching upstream.
+- Author overrides, nested theme reset, legacy CSS loaded afterward, node identity,
+  hidden/empty roots and native keyboard submit/reset behavior were verified.
+- Result remains CSS-only, **996 gzip bytes under the unchanged 1,000-byte ceiling**,
+  with zero component JS and zero dependencies. Compact source formatting keeps the
+  actual fixes within that ceiling; no build gate was relaxed. The coordinated
+  full build and all **13 Result tests** pass.
