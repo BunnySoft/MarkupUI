@@ -14,12 +14,14 @@
   outline: 2px solid currentColor;
   outline-offset: 2px;
 }
+:where([data-mui-theme="light"]) { --_mui-scrollbar-thumb: rgba(0, 0, 0, .25); }
+:where([data-mui-theme="dark"]) { --_mui-scrollbar-thumb: rgba(255, 255, 255, .2); }
 @supports (scrollbar-width: thin) {
   :where(.mui-scrollbar[data-thin]) { scrollbar-width: thin; }
 }
 @supports (scrollbar-color: auto) {
   :where(.mui-scrollbar[data-colored]) {
-    scrollbar-color: var(--mui-scrollbar-thumb-color, #71717a) var(--mui-scrollbar-track-color, #e4e4e7);
+    scrollbar-color: var(--mui-scrollbar-thumb-color, var(--_mui-scrollbar-thumb, rgba(0, 0, 0, .25))) var(--mui-scrollbar-track-color, transparent);
   }
 }
 @supports (scrollbar-gutter: stable) {

@@ -145,17 +145,42 @@ The following are **local CSS presentation conventions**, not new upstream props
 
 - `data-thin`: guarded `scrollbar-width:thin`.
 - `data-colored`: guarded `scrollbar-color`, using `--mui-scrollbar-thumb-color` /
-  `--mui-scrollbar-track-color` (defaults `#71717a` / `#e4e4e7`).
+  `--mui-scrollbar-track-color`. Defaults now match the pinned custom renderer's base
+  palette: black .25 in light / white .2 in dark, with a transparent track.
 - `data-stable-gutter`: guarded `scrollbar-gutter:stable`.
 
 They are presence flags, including when their value is the string `"false"`; remove them
 to opt out. Without the supported standards or flags, native appearance/cascade remains.
+Set `data-mui-theme="light|dark"` on the native context to choose the opt-in default thumb
+color. A colored scroller in a nested light scope restores black .25. No shared theme
+stylesheet or provider is needed for these color defaults; public color tokens still win.
 `scrollbar-color` inherits normally: explicitly set it to `auto` on a nested region if
 that region should not inherit an ancestor's chosen colors.
 No default scrollbar hiding, vendor pseudo-element implementation or pixel-sized rail
 promise exists. “Thin” and “stable” do not override OS overlay preferences or guarantee
 always-visible chrome. Forced colors restores auto color/width so the user's native
 contrast and sizing policy can take precedence.
+
+### Actual custom-renderer versus native-chrome comparison
+
+The pinned renderer hides native bars and draws its own 5px thumb/rail with a 5px radius,
+transparent rail, explicit insets and hover state. Its measured thumb-hover colors are
+black .4 / white .3. This native alternative does **not** add per-thumb vendor selectors,
+whole-region hover recoloring, custom visibility timers or a fake `trigger` adapter.
+Native hover, arrow buttons, corner treatment, radius, minimum thumb length and visibility
+remain browser/OS decisions; the requested `scrollbar-color` tuple is not a guarantee of
+identical native rasterization.
+
+In the tested Windows/Chromium session, ordinary native bars consumed 15px of scrollport
+width and `thin` consumed 10px, versus the source's overlaid 5px DOM thumb. These are
+observed gutters, **not universal thumb dimensions**. RTL put the native vertical gutter
+on the left; the source's default custom y-placement remained right. Overlay-scrollbar
+settings, browser versions, zoom, accessibility settings and OS theme can change this.
+The unflagged default still requests native `auto` color/width rather than forcing the
+source palette or hiding native chrome.
+
+See the [Scrollbar style audit](../style-audit/components/scrollbar.md) for the actual
+light/dark/LTR/RTL captures, controlled color corrections and platform boundaries.
 
 Print expands overflow and clears fixed/min/max block constraints; application wide content
 may need its own print width override, as demonstrated. Hidden roots/content/templates stay
@@ -169,6 +194,26 @@ requiring explicit application scroll commands are not library methods or no-JS 
 2. [x] Provide opt-in standards styling with native/forced-color fallback, not custom rails.
 3. [x] Map public methods/events to existing Element APIs and explicitly omit sync/ref/resize adapters.
 4. [x] Verify nested/RTL/focus/forms/resize/print/no-JS behavior and native platform boundaries.
+
+### Default-style acceptance — 2026-09-10
+
+- Nine reference/native cases covered default, opt-in colors/thin/gutter, both axes,
+  no overflow, padding override and authored colors in light/dark and LTR/RTL.
+- The corrected opt-in requested colors match source base thumb/transparent rail colors.
+  Native default `auto` styling, geometry, overflow and actual scrolling ownership remain.
+  Captured target measurements were identical after later legacy CSS loading.
+- Real ArrowDown/wheel, native scrollTo/scrollBy with omitted-axis preservation, negative
+  RTL coordinates and focus reveal passed. Forced colors reset color/width to auto; print
+  expanded content and cleared the gutter. Author colors and nested light scope worked.
+- With JavaScript disabled, keyboard scrolling, native validation/reset/disabled controls
+  and GET submission worked; the target page contained no scripts or custom rails.
+- `pnpm test -- tests\scrollbar.test.ts`: **15 tests passed**. CSS is **520 / 750 gzip
+  bytes at level 9**; JS remains **0**. The coordinator's isolated release build and
+  all 15 tests pass. This does not certify native scrollbar pixels across operating systems.
+
+### Historical acceptance — 2026-09-08
+
+The original opt-in colors and byte counts below predate the style corrections.
 
 On 2026-09-08, `pnpm --dir D:\repos\MarkupUI check` passed build/budget gates and
 **540 tests**, including **12 Scrollbar cases**. Chromium acceptance exercised:

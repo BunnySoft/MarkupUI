@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 33/96 scopes.** The other **63** are not yet accepted in this
+**Reviewed and integrated: 34/96 scopes.** The other **62** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -59,7 +59,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Anchor](../naive-ui/components/anchor.md) | ⚪ Pending | — |
 | [Auto Complete](../naive-ui/components/auto-complete.md) | ⚪ Pending | — |
 | [Avatar](../naive-ui/components/avatar.md) | 🟢 Fixed | [Defaults including text fit; architectural boundaries](components/avatar.md) |
-| [Back Top](../naive-ui/components/back-top.md) | ⚪ Pending | — |
+| [Back Top](../naive-ui/components/back-top.md) | 🟠 Reviewing | — |
 | [Badge](../naive-ui/components/badge.md) | 🟢 Fixed / 🟡 Remaining | [Numeric cells, palette, wave and legacy limits](components/badge.md) |
 | [Breadcrumb](../naive-ui/components/breadcrumb.md) | 🟢 Fixed / 🟡 Remaining | [Text states, separator spacing and native current-page limits](components/breadcrumb.md) |
 | [Button](../naive-ui/components/button.md) | 🟢 Fixed / 🟡 Remaining | [Defaults, wave/insertion and blocked swap/exit motion](components/button.md) |
@@ -125,7 +125,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Radio](../naive-ui/components/radio.md) | ⚪ Pending | — |
 | [Rate](../naive-ui/components/rate.md) | ⚪ Pending | — |
 | [Result](../naive-ui/components/result.md) | 🟢 Fixed / 🟡 Remaining | [Region spacing, title roles and authored artwork limits](components/result.md) |
-| [Scrollbar](../naive-ui/components/scrollbar.md) | 🟠 Reviewing | — |
+| [Scrollbar](../naive-ui/components/scrollbar.md) | 🟢 Fixed / 🟡 Remaining | [Opt-in native thumb palette and OS/browser geometry limits](components/scrollbar.md) |
 | [Select](../naive-ui/components/select.md) | ⚪ Pending | — |
 | [Skeleton](../naive-ui/components/skeleton.md) | 🟢 Fixed / 🟡 Remaining | [Animated endpoints and retained shape/repeat limits](components/skeleton.md) |
 | [Slider](../naive-ui/components/slider.md) | ⚪ Pending | — |

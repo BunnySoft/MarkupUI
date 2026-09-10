@@ -187,4 +187,31 @@ describe("native-only Scrollbar", () => {
     expect(css).toContain("scrollbar-color: auto")
     expect(css).toContain("scrollbar-width: auto")
   })
+
+  it("uses the pinned light/dark thumb colors only through the opt-in standards rule", () => {
+    install()
+    const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
+    const light = rules.find(rule => rule.selectorText === ':where([data-mui-theme="light"])')!
+    const dark = rules.find(rule => rule.selectorText === ':where([data-mui-theme="dark"])')!
+    expect(light.style.getPropertyValue("--_mui-scrollbar-thumb")).toBe("rgba(0, 0, 0, .25)")
+    expect(dark.style.getPropertyValue("--_mui-scrollbar-thumb")).toBe("rgba(255, 255, 255, .2)")
+    const root = rules.find(rule => rule.selectorText === ":where(.mui-scrollbar)")!
+    expect(root.style.getPropertyValue("scrollbar-color")).toBe("")
+    expect(root.style.getPropertyValue("scrollbar-width")).toBe("")
+  })
+
+  it("keeps a transparent default track and gives authored colors precedence", () => {
+    expect(css).toContain("var(--mui-scrollbar-thumb-color, var(--_mui-scrollbar-thumb,")
+    expect(css).toContain("var(--mui-scrollbar-track-color, transparent)")
+    expect(css).not.toContain("#71717a")
+    expect(css).not.toContain("#e4e4e7")
+  })
+
+  it("does not impersonate custom-thumb hover or promise pixel-sized native rails", () => {
+    expect(css).not.toContain(":hover")
+    expect(css).not.toContain("::-webkit-scrollbar")
+    expect(css).not.toContain("scrollbar-width: 5px")
+    expect(css).not.toContain("scrollbar-width: none")
+    expect(css).not.toContain("pointer-events")
+  })
 })
