@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QR Code exclusion: native link and text fallback</title>
+  <link rel="stylesheet" href="qr-code.css">
+</head>
+<body>
+  <main id="qr-code-example">
+    <h1>No QR encoder: use the readable destination</h1>
+    <p>This is a plain-link and text alternative, not a QR code. No verified QR
+      image is supplied in this recipe, so no image or QR-looking pattern is shown.
+      No script, encoder, scanner, font or external service is loaded.</p>
+
+    <section class="handoff" aria-labelledby="destination-title">
+      <h2 id="destination-title">A fixed, trusted local destination</h2>
+      <p><a id="destination-link" href="equation.html">Read the native Equation example</a></p>
+      <p>Local destination: <code id="destination-text" dir="ltr">equation.html</code></p>
+      <p>This relative link opens an existing local page. It is not a generated
+        QR symbol or a portable cross-device QR payload. The destination stays
+        readable and usable without scanning or JavaScript.</p>
+    </section>
+
+    <section class="handoff" dir="rtl" aria-labelledby="text-title">
+      <h2 id="text-title">An opaque reference is text, not a URL</h2>
+      <pre dir="ltr"><code id="opaque-payload">Reference: LOCAL-0042
+Desk: North
+Note: A &amp; B</code></pre>
+      <p>This original multiline text can be selected normally. It is not placed
+        in a link, interpreted as HTML, uploaded or sent to a QR service. The
+        surrounding RTL layout does not reverse the reference's stored text.</p>
+    </section>
+
+    <details>
+      <summary>If the application later supplies a real QR image</summary>
+      <ul>
+        <li>Supply a trusted, independently verified original asset; this recipe
+          neither generates it nor proves what it encodes.</li>
+        <li>Keep the full verified image, including its quiet zone. Do not crop,
+          recolor, distort or cover it with a logo and assume it remains scannable.</li>
+        <li>Author appropriate dimensions and alt text, with the exact readable
+          payload nearby. Link only a separately approved destination.</li>
+        <li>Verify the actual decoded payload and target scanners, display sizes
+          and print output in the application. Native image display is not encoding
+          or scan verification.</li>
+      </ul>
+    </details>
+    <p>Browsers display supplied images but do not provide a general native QR
+      encoder. BarcodeDetector, where available, is a decoder, not an encoder.
+      This page does not invoke it or request camera, upload or clipboard access.</p>
+  </main>
+</body>
+</html>

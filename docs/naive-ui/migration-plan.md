@@ -27,8 +27,11 @@ single-track controlled traversal (11 rows, five adapted, six omitted, four task
 All nine main P6 retained routes are reconciled: 288 rows, 199 adapted, 89 omitted,
 zero unresolved and 36/36 tasks. Equation's exclusion/native MathML alternative is
 resolved: eight omitted API/type/source rows, four accepted alternative tasks, no
-TeX implementation credit or new runtime. Broad P0 foundation tasks, the remaining
-three exclusion-route acceptances and full framework/viewer parity remain incomplete.** Existing MarkupUI features are a partial baseline,
+TeX implementation credit or new runtime. QR Code's native link/text alternative
+also resolves its lane: 19 omitted API/type/source/inherited rows, four accepted
+alternative tasks, no encoder or QR-image verification claim. Broad P0 foundation
+tasks, the remaining two legacy-exclusion acceptances and full framework/viewer
+parity remain incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -60,7 +63,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
 | P4 — Forms and selection | 🟢 Verified retained scope | All 17 P4-assigned routes, 984 tracker rows and 68 page tasks reconciled. | Relevant native P0/P3 contracts | 478 adapted + 506 omitted, no unresolved rows; 889 P4 tests plus native browser evidence. No P0/P5/P6 or full framework parity implied. |
 | P5 — Collections and scale | 🟢 Verified retained scope | All ten P5-assigned routes, 827 rows and 40 page tasks reconciled. | P3 focus; P4 selection | 349 native adaptations + 478 omissions, zero unresolved; 526-test/native browser/asset audit. No full framework or P0/P6 parity implied. |
-| P6 — Specialized modules | 🟢 Verified nine main retained scopes; three separate exclusions open | Carousel, Watermark, Upload, Calendar, Time, Countdown, Number Animation, Heatmap and Marquee accepted; Equation native-alternative resolution accepted separately. | Component-specific earlier work | Explicit ESM/classic/CSS, 288 main-route rows (199 adapted/89 omitted), 36/36 tasks and native/browser evidence. Equation: eight omissions/four alternative tasks; QR Code/Legacy Grid/Legacy Transfer still have 12 unchecked tasks. Not full advanced parity. |
+| P6 — Specialized modules | 🟢 Verified nine main retained scopes; two legacy exclusions open | Carousel, Watermark, Upload, Calendar, Time, Countdown, Number Animation, Heatmap and Marquee accepted; Equation/QR Code native-alternative resolutions accepted separately. | Component-specific earlier work | Explicit ESM/classic/CSS, 288 main-route rows (199 adapted/89 omitted), 36/36 tasks and native/browser evidence. Equation/QR: 27 omissions/eight alternative tasks; Legacy Grid/Legacy Transfer still have eight unchecked tasks. Not full advanced parity. |
 
 The [component index](index.md) is the exhaustive catalog-to-phase assignment. The phase
 groups below name principal workstreams, not additional promises that every catalog feature
@@ -156,7 +159,7 @@ smuggling an overlay implementation into the CSS-only native composition.
 | P6-02 — Upload | 🟢 Verified retained native queue scope | Real FileList/FormData, explicit bounded caller transport, progress/cancel/retry/remove and native Trigger/Dragger. | [Upload acceptance](../components/upload.md): 101 reconciled rows/four tasks, honest ignored-abort slots and native reset/disabled/focus/fallback evidence; previews/downloads/vetoes/backend assumptions omitted. |
 | P6-03 — Media and carousel | 🟢 Verified Carousel retained scope; advanced viewer/effects excluded | Native scroll-snap Carousel/CarouselItem, original DOM, manual/wrap controls and opt-in gated autoplay. | [Carousel acceptance](../components/carousel.md): settled targets, lifetime, focus/forms, browser/legacy/no-JS and independent budgets; no seamless clone loop or advanced image-viewer parity. |
 | P6-04 — Other utilities | 🟢 Verified Watermark/Countdown/Number Animation/Heatmap/Marquee retained scopes | Bounded decoration, elapsed duration, numeric interpolation, calendar data and single-track controlled motion accepted. | Per-component native ownership/generation/timing/data/media evidence, not security/alarm/financial/chart/seamless/renderer parity. |
-| P6-05 — Dependency-heavy exclusions | 🟠 In progress; Equation native alternative resolved | TeX/KaTeX remains omitted; authored MathML recipe accepted. QR Code resolution remains next; other feature exclusions retain their individual dispositions. | Equation's four alternative tasks/eight omitted rows and no-new-runtime evidence; no typesetting implementation credit or hidden dependencies. |
+| P6-05 — Dependency-heavy exclusions | 🟢 Verified Equation/QR native-alternative resolutions | TeX/KaTeX and QR encoding remain omitted; authored MathML and real link/text handoff accepted. Other feature exclusions retain their individual dispositions. | Eight alternative tasks/27 omitted rows and no-new-runtime evidence; no typesetter/encoder/scanner implementation credit or hidden dependencies. |
 | P6-06 — Deprecated surfaces | 🔵 Planned | Record Legacy Transfer and deprecated aliases without reproducing redundant legacy APIs. | A documented replacement and omission decision, not a missing tracker row. |
 | P6-07 — Packaging sign-off | 🟢 Verified nine main retained scopes | Explicit optional ESM/classic/external CSS, combined payloads and unchanged previous ceilings verified per route. | Main specialized features stay out of the default dependency graph; exclusion-route resolutions and broader P0 legacy extraction/auto-install remain separate. |
 
@@ -211,14 +214,14 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Equation, resolved exclusion / verified native MathML alternative; TeX/KaTeX remains omitted.**
+**Current component: QR Code, resolved exclusion / verified native link-and-text handoff; encoding remains omitted.**
 **P1/P2/P3/P4/P5 declared retained scopes are complete. P4-07 and P5-06 close against their full assigned-route audits.**
 **P5 is Verified for retained scopes:** all ten routes are resolved.
 **All nine main P6 retained scopes are accepted:** 288 rows and 36/36 tasks.
-Equation adds four accepted alternative-guidance tasks without a new runtime or
-TeX implementation. Recommended next: **QR Code resolution**. QR Code, Legacy Grid
-and Legacy Transfer still have 12 unchecked alternative tasks; API omissions alone
-are not acceptance.
+Equation and QR Code add eight accepted alternative-guidance tasks without a new
+runtime or typesetter/encoder implementation. Recommended next: **Legacy Grid
+resolution**. Legacy Grid and Legacy Transfer still have eight unchecked alternative
+tasks; API omissions alone are not acceptance.
 No next component is implemented here. P0 component-route acceptance
 does not close broader foundation tasks or imply full upstream/framework compatibility.
 
@@ -357,9 +360,9 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 4,027 rows and 372 accepted tasks out of 384 across 93 pages:
-368 retained-scope tasks plus four Equation native-alternative tasks, with 12 unchecked
-exclusion-route tasks. This is not full upstream parity or TeX implementation credit.
+The current index records 4,035 rows and 376 accepted tasks out of 384 across 94 pages:
+368 retained-scope tasks plus eight Equation/QR native-alternative tasks, with eight
+unchecked legacy-exclusion tasks. This is not full upstream parity or encoder/typesetter credit.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -2512,3 +2515,54 @@ routes, 288 rows (199 adapted/89 omitted), 36/36 tasks; Equation is not a tenth 
 is included. Broad P0-01–P0-09 work, legacy CSS extraction, aggregate auto-install and
 inline-theme compatibility remain separately pending/partial and parent-owned;
 this recipe does not modify or complete those foundation rows.
+
+## QR Code resolution — encoding excluded, native destination handoff accepted
+
+[Canonical QR Code](../components/qr-code.md) and the
+[complete reference](components/qr-code.md) resolve the native-alternative lane,
+not QR generation. A real fixed local link and exact original multiline text remain
+usable without scanning or JavaScript. No verified QR fixture is supplied for this
+scope, so there is no img/canvas/SVG, fake pattern, broken asset, scan claim, encoder,
+upload/scanner, service, helper/export, font or distribution. BarcodeDetector is a
+decoder, not a native encoder, and is not used.
+
+**Eleven original identities + one grouped type/export + four source behaviors +
+three inherited themes = 19 rows, all intentionally omitted; four alternative
+tasks accepted.** No generation/value/correction/color/logo/size/type/padding API
+receives implementation credit. The source bundled encoder, reactive canvas/logo
+drawing, SVG string renderer and inherited theme pipeline stay omitted. Conditional
+trusted-image handoff preserves application responsibility for payload agreement,
+quiet zone, dimensions/contrast, decoding and actual target scanner/print evidence.
+
+**36 tests passed** (nine QR alternative + 27 native/legacy), declarations/build and
+all existing budgets. **1,316 pre-existing distribution files byte-matched**. No
+package/build/source or P0 foundation row changed. The local HTML/CSS recipe costs
+**1,272 / 471 gzip bytes**, **1,743 combined**, with no JS or library asset.
+
+Chromium verified the real named link following to the existing local Equation page
+via Enter, native Space disclosure, exact reference/newlines/ampersand and unchanged
+selection/Text-node identity. Native AX exposes heading/region/link/code, not a QR
+image. RTL text policy, 360px/200% zoom without horizontal page overflow, forced
+colors and print preserve readable text/destination. A fresh JavaScript-disabled
+strict-CSP context loaded only local HTML/CSS before native link activation, with no
+errors. This verifies alternative usability, not QR encoding, actual-image rendering/
+contrast/quiet zones, scan compatibility or all-browser/AT behavior.
+
+**Current catalog: 96 routes / 4,035 tracker rows / 376 of 384 accepted tasks across
+94 pages / eight unchecked.** Accepted work is **368 retained-scope tasks on 92
+pages plus eight Equation/QR alternative tasks**. API statuses: **2,090 native
+adaptations + 1,945 intentional omissions; zero unresolved**. Main P6 remains nine
+retained routes/288 rows (199 adapted/89 omitted)/36 tasks, unchanged.
+
+| Exclusion route | API rows | Alternative acceptance |
+| --- | ---: | --- |
+| Equation | 8 omitted | Resolved native MathML alternative; 4/4 |
+| QR Code | 19 omitted | Resolved plain-link/text handoff; 4/4 |
+| Legacy Grid | 5 omitted | Next; 0/4, not started here |
+| Legacy Transfer | 16 omitted | Pending; 0/4 |
+| **Total** | **48 omitted** | **8/16 accepted; eight unchecked** |
+
+**Recommend Legacy Grid resolution next**, then Legacy Transfer separately.
+No next route is implemented here. Broad P0-01–P0-09 foundation work, legacy CSS
+extraction, aggregate auto-install and inline-theme exceptions remain parent-owned
+and separately pending/partial; no foundation task is altered by this resolution.

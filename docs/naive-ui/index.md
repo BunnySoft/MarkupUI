@@ -88,6 +88,9 @@ static reading, without clones, seamless loops or an animation/renderer dependen
 Equation now has a [resolved exclusion / verified native MathML alternative](../components/equation.md):
 authored inline/block structure and mathematical explanations, with no parser/runtime.
 All eight Equation API/type/source rows remain intentionally omitted.
+QR Code now has a [resolved exclusion / verified native link-and-text handoff](../components/qr-code.md):
+an actual readable destination without a fake QR symbol, supplied-image scan claim,
+encoder or new runtime. All 19 QR API/type/source/inherited rows remain omitted.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
 are reconciled. **P4 is Verified for retained native scopes:** all 17 assigned routes,
 984 tracker rows and 68 page tasks are resolved, with no Planned P4 routes or unresolved
@@ -99,10 +102,11 @@ under P3; broader foundation task IDs are not automatically completed.
 **All nine main P6 retained routes are accepted:** Carousel, Watermark, Upload,
 Calendar, Time, Countdown, Number Animation, Heatmap and Marquee. Their **288 rows
 = 199 native adaptations + 89 omissions**, with **36/36 tasks**, are reconciled;
-omitted advanced behavior is not implemented parity. Equation's four alternative
-tasks are now accepted without TeX implementation credit. QR Code, Legacy Grid and
-Legacy Transfer still have **12 unchecked alternative-guidance tasks** despite their
-32 explicitly omitted API rows. **Recommend QR Code resolution next**; it is not started here.
+omitted advanced behavior is not implemented parity. Equation and QR Code's eight
+alternative tasks are accepted without typesetter/encoder implementation credit.
+Legacy Grid and Legacy Transfer still have **eight unchecked alternative-guidance
+tasks** despite their 21 omitted API rows. **Recommend Legacy Grid resolution next**;
+it is not started here.
 Component acceptance sections below retain their sign-off snapshots; earlier counts and
 “next”/“In progress” statements are historical, not the current phase dashboard.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
@@ -159,7 +163,7 @@ Avatar's four retained-scope tasks are checked using `9afc818`, Button's four us
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
 Popover through Rate, the subsequent Form/Auto Complete/Input OTP/Dynamic Input/Dynamic
 Tags/Mention/Color Picker/Date Picker/Time Picker records, and now Virtual List each add
-four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style, Carousel, Watermark, Upload, Calendar, Time, Countdown, Number Animation, Heatmap and Marquee each add four more. Equation adds four resolved-exclusion/native-alternative tasks, not TeX implementation. The current total is **372/384 accepted across 93 pages: 368 retained-scope tasks plus four alternative-resolution tasks, 12 unchecked**.
+four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style, Carousel, Watermark, Upload, Calendar, Time, Countdown, Number Animation, Heatmap and Marquee each add four more. Equation and QR Code add eight resolved-exclusion/native-alternative tasks, not typesetter/encoder implementation. The current total is **376/384 accepted across 94 pages: 368 retained-scope tasks plus eight alternative-resolution tasks, eight unchecked**.
 P2 retained scopes remain reconciled; the nineteen sequential P3 scopes plus three mixed P2/P3 pages pass the complete P3 audit. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
@@ -2740,6 +2744,43 @@ zero unresolved**. Main P6 remains **288 rows / 36 tasks across nine accepted sc
 and broad parent-owned P0 foundations remain pending/partial. This scope changes no
 P0 foundation row and starts no next route.
 
+## QR Code resolved exclusion: native link/text handoff
+
+[Canonical QR Code evidence](../components/qr-code.md) accepts an honest alternative
+with a real fixed native link and exact opaque text, not generated QR content.
+Browsers display supplied images but do not provide a general QR encoder;
+BarcodeDetector is a decoder. No verified fixture is supplied here, so the recipe
+has no image, fake grid, broken reference, scanner/upload, script or scan claim.
+Conditional trusted-image handoff and independent payload/quiet-zone/size/scanner
+verification remain application responsibilities.
+
+**Eleven original identities + one grouped type/export + four source behaviors +
+three inherited theme rows = 19 rows, all intentionally omitted; 4/4 alternative
+tasks accepted, zero QR APIs marked implemented.** Source value conversion, correction
+levels, canvas/SVG/module colors/logo composition and theme surfaces remain omitted.
+
+**36 targeted tests** (nine QR alternative + 27 native/legacy), declarations/build/
+budgets and Chromium native link/text/AX/disclosure/selection/RTL/zoom/media/no-JS/CSP
+acceptance passed. All **1,316 existing distribution files byte-matched**. No source,
+package, build or P0 foundation change. Complete local HTML+CSS is **1,743 gzip bytes**,
+with no JS/library asset. Nothing here certifies image encoding or scan compatibility.
+
+**Current catalog: 96 routes / 4,035 rows / 376 of 384 accepted tasks across 94 pages /
+eight unchecked.** Accepted work is **368 retained-scope tasks on 92 pages plus eight
+Equation/QR alternative tasks**. API statuses: **2,090 native adaptations + 1,945
+intentional omissions; zero unresolved**. Main P6 stays nine routes/288 rows/36 tasks.
+
+| Exclusion-route acceptance | API dispositions | Page tasks |
+| --- | ---: | ---: |
+| Equation: resolved native MathML alternative | 8 omitted | 4/4 |
+| QR Code: resolved native link/text alternative | 19 omitted | 4/4 |
+| Legacy Grid: next, not started here | 5 omitted | 0/4 |
+| Legacy Transfer | 16 omitted | 0/4 |
+| **Four exclusion routes** | **48 omitted** | **8/16 accepted** |
+
+**Next: Legacy Grid resolution**, then Legacy Transfer separately. Broad parent-owned
+P0 foundations remain pending/partial; their rows are unchanged. No next route starts here.
+
 ## Common Components (15)
 
 | Component | Plan direction | Current baseline | Phase |
@@ -2801,7 +2842,7 @@ P0 foundation row and starts no next route.
 | [List](components/list.md) | 🟢 Verified retained native scope; 3 explicit omissions | Native CSS lists/items/actions; [accepted evidence](../components/list.md) | P2 |
 | [Log](components/log.md) | 🟢 Verified native retained-text scope; 27 explicit omissions | Native Code/line records, bounded append/retention and conditional follow; [accepted evidence](../components/log.md) | P5; exclusions |
 | [Number Animation](components/number-animation.md) | 🟢 Verified native number/text scope; one provider omission | Optional finite interpolation/Intl/RAF owner; [accepted evidence](../components/number-animation.md), no financial/renderer claim | P6 |
-| [QR Code](components/qr-code.md) | ⏭️ Intentionally omitted: encoder | None | Exclusions |
+| [QR Code](components/qr-code.md) | Resolved exclusion / 🟢 Verified native handoff; all 19 API rows omitted | Real plain link/text; [accepted recipe](../components/qr-code.md), no encoder/QR fixture/runtime | Exclusions; 4/4 alternative tasks |
 | [Statistic](components/statistic.md) | 🟢 Verified retained scope; 3 explicit omissions | Standalone native Statistic; [accepted evidence](../components/statistic.md), legacy core preserved | P2 |
 | [Table](components/table.md) | 🟢 Verified retained native scope; 4 explicit omissions | Native table/border/stripe/scroll semantics; [accepted evidence](../components/table.md) | P2 |
 | [Thing](components/thing.md) | 🟢 Verified retained native scope; 5 explicit omissions | Native seven-region composition/indentation; [accepted evidence](../components/thing.md) | P2 |
@@ -2907,15 +2948,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,511: 370 inline fields, 193 type/helper/exclusion entries (including five Table public helper groups, Virtual List/Tree named ScrollTo types, UploadInst/UploadSettledFileInfo, CountdownTimeInfo/CountdownInst, NumberAnimationInst, four Heatmap public type groups and two Equation type/export groups) and 948 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel/Watermark/Upload/Calendar/Time/Countdown/Number Animation/Heatmap/Marquee/Equation source supplements |
-| Explicit inherited tracker rows | 296, including six source-inherited DialogReactive options, three ModalReactive fields, two NotificationReactive fields and three each Element/Carousel/Watermark/Upload/Calendar/Heatmap/Marquee theme props |
-| Total tracker rows | 4,027; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 four-task checklists: 372/384 accepted across 93 pages (368 retained-scope tasks on 92 pages plus four Equation native-alternative tasks); 12 unchecked exclusion-route tasks |
+| Supplementary named declarations | 1,516: 370 inline fields, 194 type/helper/exclusion entries (including five Table public helper groups, Virtual List/Tree named ScrollTo types, UploadInst/UploadSettledFileInfo, CountdownTimeInfo/CountdownInst, NumberAnimationInst, four Heatmap public type groups, two Equation type/export groups and one QR Code type/export group) and 952 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel/Watermark/Upload/Calendar/Time/Countdown/Number Animation/Heatmap/Marquee/Equation/QR Code source supplements |
+| Explicit inherited tracker rows | 299, including six source-inherited DialogReactive options, three ModalReactive fields, two NotificationReactive fields and three each Element/Carousel/Watermark/Upload/Calendar/Heatmap/Marquee/QR Code theme props |
+| Total tracker rows | 4,035; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 four-task checklists: 376/384 accepted across 94 pages (368 retained-scope tasks on 92 pages plus eight Equation/QR alternative tasks); eight unchecked legacy-exclusion tasks |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 4,027 rows retain canonical text with emoji color: 2,090 Verified native adaptations and 1,937 intentional omissions; no Not reviewed or Planned row remains. Equation adds five omissions and accepts alternative tasks, not TeX features; previous retained counts remain unchanged. |
-| Source agreement | All 2,220 direct source rows and 296 inherited rows remain covered; three pending exclusion inventories remain unchanged; 93 accepted pages preserve named/grouped identities; Equation retains all three original identities/links and adds two grouped type/export plus three source-behavior omissions; foundation-related route inventories remain reconciled |
-| Local links | All 608 scoped Equation/reference/index/master file links resolve; earlier Marquee/Heatmap/Number Animation/Countdown/Time/Calendar/Upload/Watermark/Carousel/Global Style/four-route/component link snapshots remain historical evidence |
+| Status presentation | All 4,035 rows retain canonical text with emoji color: 2,090 Verified native adaptations and 1,945 intentional omissions; no Not reviewed or Planned row remains. QR Code adds eight omissions and accepts alternative tasks, not encoder features; prior retained counts remain unchanged. |
+| Source agreement | All 2,220 direct source rows and 299 inherited rows remain covered; two pending legacy inventories remain unchanged; 94 accepted pages preserve named/grouped identities; QR Code retains all eleven original identities/links and adds one grouped type/export, four source behaviors and three inherited theme omissions; foundation-related route inventories remain reconciled |
+| Local links | All 614 scoped QR Code/reference/index/master file links resolve; earlier Equation/Marquee/Heatmap/Number Animation/Countdown/Time/Calendar/Upload/Watermark/Carousel/Global Style/four-route/component link snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

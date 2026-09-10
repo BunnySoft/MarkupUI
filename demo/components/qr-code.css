@@ -1,0 +1,28 @@
+/* Local fallback presentation only; no QR image or pattern is generated. */
+#qr-code-example {
+  box-sizing: border-box;
+  max-inline-size: 58rem;
+  margin-inline: auto;
+  padding: 1rem;
+  color: CanvasText;
+  background: Canvas;
+  font: 1rem/1.6 system-ui, sans-serif;
+  overflow-wrap: anywhere;
+}
+#qr-code-example .handoff {
+  margin-block: 1rem;
+  padding: 1rem;
+  border: 1px solid ButtonBorder;
+}
+#qr-code-example a { color: LinkText; text-decoration: underline; text-underline-offset: .15em; }
+#qr-code-example :focus-visible { outline: 3px solid Highlight; outline-offset: 3px; }
+#qr-code-example pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+#qr-code-example code { unicode-bidi: isolate; }
+#qr-code-example details { margin-block: 1rem; }
+@media print {
+  #qr-code-example { max-inline-size: none; padding: 0; }
+  #qr-code-example .handoff { break-inside: avoid; }
+}
+@media (forced-colors: active) {
+  #qr-code-example .handoff { border-color: CanvasText; }
+}
