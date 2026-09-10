@@ -13,10 +13,19 @@ See the [canonical API and acceptance](../../components/loading-bar.md).
 
 ## Acceptance and gaps
 
-74 targeted tests, build/budgets and Chromium cover unknown/measured work, terminal outcomes,
+The historical 74-test acceptance, build/budgets and Chromium cover unknown/measured work, terminal outcomes,
 restart/holds, independent roots, observer/timer cleanup, author restoration and native
 semantics. Cosmetic 0→80 width simulation is deliberately replaced by native indeterminate
 progress. External request concurrency/cancellation remains application-owned.
+
+The [new default-style audit](../../style-audit/components/loading-bar.md) corrects the
+paint layer: 2px square primary rail, transparent track, theme-correct error color,
+fixed z-index 5999, 300ms entry and 200ms error/completion paint transitions. Native measured
+values, unknown-state semantics, holds/outcome latching, readable error words and cleanup
+are unchanged. Provider simulation and terminal fade policies are not claimed as equivalent.
+The fixed-mode readability follow-up uses a configurable native root backing for all visible
+label/status words and applies entry fading only to the rail. It does not promise collision-free placement over
+arbitrary headers; applications retain clearance and explicit contrast ownership.
 
 ## Migration steps
 
@@ -56,8 +65,9 @@ eight intentionally omitted targets**.
 
 Pinned Markdown, provider/instance API, private LoadingBar implementation and public index
 were reviewed. Source provider methods forward start/error/finish around mount timing;
-the target requires an explicit connected root. Source width/transition/teleport machinery is
-not reproduced. Target stop/setProgress/delay/outcome operations are explicit additions,
+the target requires an explicit connected root. Source simulated progress/teleport machinery
+is not reproduced; the verified paint transitions are separately documented in the audit.
+Target stop/setProgress/delay/outcome operations are explicit additions,
 not newly discovered upstream public methods.
 
 ### LoadingBarProvider Props

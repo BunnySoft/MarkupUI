@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 60/96 scopes.** The other **36** are not yet accepted in this
+**Reviewed and integrated: 61/96 scopes.** The other **35** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -57,7 +57,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Affix](../naive-ui/components/affix.md) | 🟡 Remaining | [Native sticky reviewed; fixed positioning and flow differences](components/affix.md) |
 | [Alert](../naive-ui/components/alert.md) | 🟢 Fixed / 🟡 Remaining | [Geometry, severity palettes and SVG limits](components/alert.md) |
 | [Anchor](../naive-ui/components/anchor.md) | 🟢 Fixed / 🟡 Remaining | [Link/rail styling with native navigation and local-indicator limits](components/anchor.md) |
-| [Auto Complete](../naive-ui/components/auto-complete.md) | ⚪ Pending | — |
+| [Auto Complete](../naive-ui/components/auto-complete.md) | 🟠 Reviewing | — |
 | [Avatar](../naive-ui/components/avatar.md) | 🟢 Fixed | [Defaults including text fit; architectural boundaries](components/avatar.md) |
 | [Back Top](../naive-ui/components/back-top.md) | 🟢 Fixed / 🟡 Remaining | [Control/icon metrics, shadows and native scroll/visibility limits](components/back-top.md) |
 | [Badge](../naive-ui/components/badge.md) | 🟢 Fixed / 🟡 Remaining | [Numeric cells, palette, wave and legacy limits](components/badge.md) |
@@ -106,7 +106,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Legacy Grid](../naive-ui/components/legacy-grid.md) | ⚪ Pending | — |
 | [Legacy Transfer](../naive-ui/components/legacy-transfer.md) | ⚪ Pending | — |
 | [List](../naive-ui/components/list.md) | 🟢 Fixed / 🟡 Remaining | [Presentation only; marker and density adaptations](components/list.md) |
-| [Loading Bar](../naive-ui/components/loading-bar.md) | 🟠 Reviewing | — |
+| [Loading Bar](../naive-ui/components/loading-bar.md) | 🟢 Fixed / 🟡 Remaining | [Thin rail, readable fixed status and retained native progress/timing policies](components/loading-bar.md) |
 | [Log](../naive-ui/components/log.md) | ⚪ Pending | — |
 | [Marquee](../naive-ui/components/marquee.md) | ⚪ Pending | — |
 | [Mention](../naive-ui/components/mention.md) | ⚪ Pending | — |
@@ -119,7 +119,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Pagination](../naive-ui/components/pagination.md) | 🟢 Fixed / 🟡 Remaining | [Page/auxiliary controls, print readability and native renderer limits](components/pagination.md) |
 | [Popconfirm](../naive-ui/components/popconfirm.md) | 🟢 Fixed / 🟡 Remaining | [Shared surface, local layout and native action-paint limits](components/popconfirm.md) |
 | [Popover](../naive-ui/components/popover.md) | 🟢 Fixed / 🟡 Remaining | [Standalone surface, protected consumers and native popup limits](components/popover.md) |
-| [Popselect](../naive-ui/components/popselect.md) | ⚪ Pending | — |
+| [Popselect](../naive-ui/components/popselect.md) | 🟠 Reviewing | — |
 | [Progress](../naive-ui/components/progress.md) | 🟢 Fixed / 🟡 Remaining | [Native rails, ring geometry, motion and indicator limits](components/progress.md) |
 | [QR Code](../naive-ui/components/qr-code.md) | ⚪ Pending | — |
 | [Radio](../naive-ui/components/radio.md) | 🟢 Fixed / 🟡 Remaining | [Circle/button metrics, high-contrast protection and native skin limits](components/radio.md) |
@@ -144,7 +144,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Timeline](../naive-ui/components/timeline.md) | 🟢 Fixed / 🟡 Remaining | [Node/rail alignment, supplementary colors and native RTL/dash limits](components/timeline.md) |
 | [Tooltip](../naive-ui/components/tooltip.md) | 🟢 Fixed / 🟡 Remaining | [Shared dark surface, typography and native tooltip limits](components/tooltip.md) |
 | [Transfer](../naive-ui/components/transfer.md) | 🟠 Reviewing | — |
-| [Tree Select](../naive-ui/components/tree-select.md) | ⚪ Pending | — |
+| [Tree Select](../naive-ui/components/tree-select.md) | 🟠 Reviewing | — |
 | [Tree](../naive-ui/components/tree.md) | 🟢 Fixed / 🟡 Remaining | [Native row styling, high-contrast checks and disclosure/marker limits](components/tree.md) |
 | [Typography](../naive-ui/components/typography.md) | 🟢 Fixed / 🟡 Remaining | [Text, headings, code and native presentation limits](components/typography.md) |
 | [Upload](../naive-ui/components/upload.md) | 🟠 Reviewing | — |

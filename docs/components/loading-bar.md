@@ -75,8 +75,23 @@ The native max defaults to 1 when absent. Authored max must be positive and fini
 if present, must be a valid finite native number from zero to max. Fractional maxima/values
 are supported. Malformed/negative/out-of-range values are rejected rather than treated as
 successful measurements. setProgress requires loading and valid bounds; it changes native
-value directly, without a tween or simulated percentage. At max, the phase remains loading
+value directly, without a measured-update tween or simulated percentage. At max, the phase remains loading
 until the application explicitly calls finish.
+
+The later [default-style audit](../style-audit/components/loading-bar.md) corrects the visible
+rail independently of those timing policies. The default rail is now **2px**, square-cornered,
+primary-colored in both loading and success, with a transparent track. Inline roots remain
+transparent; fixed roots use the configurable readability backing described below.
+Explicit light/dark scopes use the pinned loading colors and error colors: light `#d03050`,
+dark red `#f00`. Existing `--mui-loading-bar-*` overrides and application primary tokens remain.
+The optional fixed surface uses z-index **5999** and retains logical safe-area/inset controls.
+
+New loading presentation fades in over 300ms with the reference easing. In fixed mode only
+the rail fades, keeping required label/status words and their backing fully readable from
+the first frame. Error cue color
+changes over 200ms linear. On declared success, supported native progress painting transitions
+to full width over 200ms linear; the native value and outcome still update immediately.
+Measured loading updates remain immediate, and no numeric value is added to unknown work.
 
 Start removes value, preserving native indeterminate semantics. Loading/error/success words
 use aria-valuetext as appropriate; measured loading removes that override so native value
@@ -104,6 +119,10 @@ There is at most one terminal timer per controller. Restart/stop/disconnect/remo
 it, and a generation check protects already-stale callbacks. Timers are scheduled before
 phase notifications, so a listener that restarts/disposes cannot be followed by a late timer
 write from the previous phase. CSS transitionend is not used as a state machine.
+The 600ms success hold and persistent error policy are unchanged: this is not the reference
+provider's 800ms terminal fade-out or automatic 0→80% simulation. Repeated `start()` during
+the same loading phase does not force a CSS fade restart. Status words remain visible
+native content, not hidden merely to make the entire surface two pixels high.
 
 `mui:loading-bar-change` is a nonbubbling `{ state, previous }` notification for actual phase
 changes, including programmatic calls and automatic hiding. It is **not a user event** or a
@@ -144,15 +163,33 @@ silent rebind to the wrong node. Reconnect explicitly to adopt new valid anatomy
 Prefer disconnect before intentional removal/cross-document handoff. Each root has one
 active controller; separate roots have separate timers/state. No provider or global work store.
 
-## CSS and acceptance — 2026-09-09
+## CSS and historical acceptance — 2026-09-09
 
 Inline flow is the default. The optional fixed class uses logical insets, safe-area minimums,
 external height/color/track/z-index tokens and pointer-events:none, so this passive surface
 does not block page actions. Native fixed-position containing blocks/transforms still apply;
 there is no portal or universal viewport-following promise.
 
+Fixed mode uses an opaque native `Canvas` root backing by default, configurable through
+`--mui-loading-bar-background`. This protects all visible words, including arbitrary spans
+referenced by `aria-labelledby`, not only native labels and the status marker. The rail
+remains 2px with a transparent unfilled track; the larger backed native status surface is
+an explicit difference from the source provider's two-pixel-only UI. Inline behavior is unchanged.
+
+Labels/status markers remain content-sized and wrap long words. Their optional
+`--mui-loading-bar-status-background` defaults to transparent over the root backing, avoiding
+duplicated translucent layers. Foreground/text/error overrides are unchanged.
+
+This protects the status words, not the header content behind them. Applications must still
+choose clearance/placement with `--mui-loading-bar-top`, insets or normal flow when header
+content must remain unobscured. Explicit transparent root backing or root opacity can reintroduce
+overlap; those choices require author-managed clearance/contrast. There is no collision or
+header-layout engine. Print removes default root/word backings and uses a light scheme with
+black words, including the error state; forced colors uses native
+system-color behavior.
+
 Indeterminate stripes are decoration without a numeric value. Reduced motion makes them
-static; forced colors supplies a static outlined native progress cue plus words. Error is
+static and disables the added fades/transitions; forced colors supplies a static outlined native progress cue plus words. Error is
 not color-only. Print makes fixed bars static and stops stripe animation; authored/idle
 hidden states remain hidden. Unsupported custom progress painting retains native progress
 and status text, not an animation polyfill.

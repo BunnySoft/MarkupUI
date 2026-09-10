@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createLoadingBar } from "../src/components/loading-bar/index.js"
 import type { LoadingBarController, LoadingBarOptions } from "../src/components/loading-bar/index.js"
@@ -269,6 +270,95 @@ describe("validated passive anatomy and packaging", () => {
   it.each([{ finishDelay: -1 }, { errorDelay: Infinity }, { finishDelay: 1.5 }, { errorDelay: 60001 }, { finishDelay: "50" }, { duration: 600 }, { labels: null }, { labels: { loading: "Loading" } }])("rejects invalid options %j", options => {
     const { root } = fixture()
     expect(() => createLoadingBar(root, options as LoadingBarOptions)).toThrow()
+  })
+
+  describe("audited Loading Bar paint", () => {
+    const css = readFileSync(join("src", "components", "loading-bar", "loading-bar.css"), "utf8")
+
+    it("uses the pinned thin square rail and transparent surfaces", () => {
+      expect(css).toContain("block-size: var(--mui-loading-bar-height, 2px)")
+      expect(css).toContain("border-radius: 0")
+      expect(css).toContain("var(--mui-loading-bar-track, transparent)")
+      expect(css).toContain("var(--mui-loading-bar-background, transparent)")
+      expect(css).not.toContain("#dbe4ef")
+      expect(css).not.toContain(".5rem")
+    })
+
+    it("uses reference loading/success and exact light/dark error colors without overriding authors", () => {
+      expect(css).toContain("var(--mui-loading-bar-color, var(--mui-color-primary, light-dark(#18a058, #63e2b7)))")
+      expect(css).toContain("var(--mui-loading-bar-error, light-dark(#d03050, #f00))")
+      expect(css).not.toContain("#2472bf")
+      expect(css).not.toContain("#176243")
+      expect(css).not.toContain('#a1272f')
+      expect(css).not.toMatch(/\[data-loading-bar-state="success"\]\s*\{\s*--mui-loading-bar-color/)
+    })
+
+    it("matches fixed positioning while preserving explicit placement and safe-area overrides", () => {
+      expect(css).toContain("z-index: var(--mui-loading-bar-z-index, 5999)")
+      expect(css).toContain("var(--mui-loading-bar-top, 0px)")
+      expect(css).toContain("var(--mui-loading-bar-inset, 0px)")
+      expect(css).toContain("env(safe-area-inset-left")
+      expect(css).toContain(":dir(rtl)")
+      expect(css).toContain("pointer-events: none")
+    })
+
+    it("animates only terminal completion width while leaving measured updates truthful", () => {
+      expect(css).toContain('[data-loading-bar-state="success"] progress::-webkit-progress-value { transition: width .2s linear, background .2s linear; }')
+      expect(css).toContain('progress::-webkit-progress-value { background: var(--_mui-loading-bar-color); transition: background .2s linear; }')
+      expect(css).toContain("transition: border-color .2s linear")
+      expect(css).toContain("mui-loading-bar-enter .3s cubic-bezier(.4, 0, .2, 1)")
+      const { controller, progress } = bind({ finishDelay: null })
+      controller.start()
+      expect(progress.hasAttribute("value")).toBe(false)
+      controller.setProgress(37.5)
+      expect(progress.value).toBe(37.5)
+      controller.finish()
+      expect(progress.value).toBe(100)
+      expect(controller.state).toBe("success")
+    })
+
+    it("retains readable error and native motion/media adaptations within the CSS ceiling", () => {
+      expect(css).toContain('[data-loading-bar-state="error"] progress { display: none; }')
+      expect(css).toContain("@media (prefers-reduced-motion: reduce)")
+      expect(css).toContain("transition: none !important")
+      expect(css).toContain("@media (forced-colors: active)")
+      expect(css).toContain("@media print")
+      expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
+      const { controller, status, progress } = bind()
+      controller.start()
+      controller.setProgress(35)
+      controller.error()
+      expect(progress.value).toBe(35)
+      expect(status.textContent).toBe("Failed")
+      expect(status.hidden).toBe(false)
+    })
+
+    it("backs all fixed-mode words while preserving rail, foreground and author overrides", () => {
+      expect(css).toContain(".mui-loading-bar--fixed :is(label, [data-loading-bar-status])")
+      expect(css).toContain("justify-self: start; max-inline-size: 100%; overflow-wrap: anywhere")
+      expect(css).toContain("background: var(--mui-loading-bar-background, Canvas)")
+      expect(css).toContain("background: var(--mui-loading-bar-status-background, transparent)")
+      expect(css).toContain(".mui-loading-bar--fixed[data-loading-bar-state=\"loading\"] { animation: none; }")
+      expect(css).toContain(".mui-loading-bar--fixed[data-loading-bar-state=\"loading\"] progress { animation: mui-loading-bar-enter")
+      expect(css.slice(css.indexOf("@media print"))).toContain(".mui-loading-bar--fixed :is(label, [data-loading-bar-status]) { background: transparent; }")
+      expect(css.slice(css.indexOf("@media print"))).toContain(".mui-loading-bar--fixed { background: transparent; }")
+      expect(css.slice(css.indexOf("@media print"))).toContain(".mui-loading-bar, .mui-loading-bar[data-loading-bar-state] { color-scheme: light; position: static; color: black;")
+      expect(css).toContain("progress { border: 1px solid CanvasText; animation: none !important; }")
+      const { root, progress, status, controller } = bind()
+      root.classList.add("mui-loading-bar--fixed")
+      root.style.setProperty("--mui-loading-bar-background", "navy")
+      root.style.setProperty("--mui-loading-bar-text", "white")
+      root.style.setProperty("--mui-loading-bar-error", "orange")
+      const before = root.getAttribute("style")
+      controller.start()
+      controller.setProgress(20)
+      controller.error()
+      expect(progress.value).toBe(20)
+      expect(status.textContent).toBe("Failed")
+      expect(status.hidden).toBe(false)
+      controller.disconnect()
+      expect(root.getAttribute("style")).toBe(before)
+    })
   })
   it.each(["0", "-1", "Infinity", "0x10", "bad"])("rejects invalid native maximum %s", max => {
     const { root, progress } = fixture(); progress.setAttribute("max", max)
