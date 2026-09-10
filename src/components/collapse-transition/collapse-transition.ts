@@ -41,6 +41,7 @@ interface Operation {
   token: number
   show: boolean
   from: number
+  fromOpacity: number
   animation: Animation | null
   expectedCancel: boolean
   forceFinish: boolean
@@ -142,6 +143,10 @@ export function createCollapseTransition(element: HTMLElement, options: Collapse
     const value = Number.parseFloat(view!.getComputedStyle(element).height)
     return Number.isFinite(value) ? Math.max(0, value) : element.offsetHeight
   }
+  function opacity(): number {
+    const value = Number.parseFloat(view!.getComputedStyle(element).opacity)
+    return Number.isFinite(value) ? value : 1
+  }
   function stopAnimation(operation: Operation) {
     const animation = operation.animation
     operation.animation = null
@@ -207,9 +212,15 @@ export function createCollapseTransition(element: HTMLElement, options: Collapse
       if (!operation.show) evacuate()
       if (!current(operation)) return
       const target = operation.show ? inner!.offsetHeight : 0
+      const targetOpacity = operation.show ? opacity() : 0
       if (!Number.isFinite(operation.from) || !Number.isFinite(target) || operation.from < 0 || target < 0) throw new RangeError("Transition geometry must be finite and nonnegative.")
       if (!animate || operation.forceFinish || Math.abs(operation.from - target) < .5) { settle(operation); return }
-      const animation = element.animate([{ height: `${operation.from}px` }, { height: `${target}px` }], { duration, easing: "ease-in-out", fill: "both" })
+      // Separate zero-offset frames give each property its source easing in one owned effect.
+      const animation = element.animate([
+        { height: `${operation.from}px`, offset: 0, easing: "cubic-bezier(.4, 0, .2, 1)" },
+        { opacity: operation.fromOpacity, offset: 0, easing: operation.show ? "cubic-bezier(.4, 0, 1, 1)" : "cubic-bezier(0, 0, .2, 1)" },
+        { height: `${target}px`, opacity: targetOpacity, offset: 1 },
+      ], { duration, easing: "linear", fill: "both" })
       operation.animation = animation
       void animation.finished.then(() => settle(operation), reason => {
         if (expectedAbort(reason) && operation.expectedCancel) return
@@ -225,8 +236,9 @@ export function createCollapseTransition(element: HTMLElement, options: Collapse
     structure()
     if (!appear && desired === show && (active || element.hidden !== show)) return active?.promise ?? Promise.resolve(true)
     const from = appear ? 0 : height()
+    const fromOpacity = appear || element.hidden ? 0 : opacity()
     const previous = active
-    const operation = { token: ++generation, show, from, animation: null, expectedCancel: false, forceFinish: false, started: false, hookStarted: false, appear } as Operation
+    const operation = { token: ++generation, show, from, fromOpacity, animation: null, expectedCancel: false, forceFinish: false, started: false, hookStarted: false, appear } as Operation
     operation.promise = new Promise<boolean>((resolve, reject) => { operation.resolve = resolve; operation.reject = reject })
     void operation.promise.catch(() => {})
     active = operation

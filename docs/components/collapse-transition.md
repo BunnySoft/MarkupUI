@@ -1,4 +1,4 @@
-# Collapse Transition: optional native height motion
+# Collapse Transition: optional native height/fade motion
 
 **🟢 Verified retained native scope, not Vue transition or pixel parity.**
 This opt-in controller adopts an authored outer/inner pair. It does not render/unmount
@@ -49,7 +49,7 @@ escaping the measurement box. This is not arbitrary table/inline, flex/grid stre
 positioned/overflowing children, 3D transform or vertical-writing support.
 
 CSS owns display and transient clipping through an owned marker. Script owns only hidden/
-inert/marker attributes and its own Animation. It never writes inline height/overflow,
+inert/marker attributes and its own Animation. It never writes inline height/opacity/overflow,
 uses commitStyles, clones/moves nodes, installs a stylesheet or forces unrelated animations
 to finish. Do not mix another outer-wrapper animation/geometry controller with this one.
 
@@ -76,24 +76,39 @@ appear=true requests initial opening motion on a microtask so the controller exi
 callbacks. If authored content already has focus, initial appearance is immediate rather
 than making it clipped/inert. Initial hidden content stays hidden unless explicitly shown.
 
-Duration is an integer **0–10,000 ms**, default **300 ms**. Zero is immediate. Easing is a
-native ease-in-out curve, not a forwarded theme/style object. Missing Element.animate,
+Duration is an integer **0–10,000 ms**, default **300 ms**. Zero is immediate. Default
+height easing is now `cubic-bezier(.4, 0, .2, 1)`, matching the pinned source; opacity
+uses `cubic-bezier(.4, 0, 1, 1)` on entry and `cubic-bezier(0, 0, .2, 1)` on exit.
+These fixed curves are not a forwarded theme/style object. Missing Element.animate,
 native inert or motion-preference detection, missing effective clipping CSS, reduced motion
 or print uses an immediate safe target. A motion/print preference change during animation
 finishes the current target immediately. Print preserves settled hidden content as hidden.
 
-Motion samples the current computed height and the inner native offsetHeight **once per
-request**, in layout CSS pixels. The inner measurement includes its padding/border and
+Motion samples the current computed height/opacity before cancelling an interrupted effect,
+then samples the inner native offsetHeight and authored opening opacity for the new target.
+These are bounded request-time reads, not per-frame measurements. Height uses layout CSS
+pixels; the inner measurement includes its padding/border and
 can round by a layout pixel. These measured heights exist only in native animation
-keyframes, with fill=both while active. Cancellation/settlement releases the effect back
-to ordinary intrinsic auto height. CSS zoom does not get multiplied into pixel keyframes.
+keyframes, with fill=both while active. One native Animation owns both properties: separate
+zero-offset keyframes provide independent property easings. Cancellation/settlement releases
+the effect back to ordinary intrinsic auto height and current authored opacity. CSS zoom
+does not get multiplied into pixel keyframes.
 
-Rapid reversal samples the currently displayed height before cancelling the old effect;
+Rapid reversal samples the currently displayed height and opacity before cancelling the old effect;
 old expected completions cannot hide/reopen the newer state. Same-target requests do not
 re-measure or restart. Content/width/image/font changes during motion are **not continuously
 retargeted**: the animation retains its sampled endpoint, then releases to the latest
-intrinsic size at settlement. This may produce a final size adjustment, but never retains
-a stale fixed height. No ResizeObserver height engine, animation-frame loop or resize polling.
+intrinsic size/opacity at settlement. This may produce a final adjustment, but never retains
+a stale fixed height or fade style. No ResizeObserver height engine, animation-frame loop or
+resize polling. Fade accompanies actual height motion; zero-distance/immediate fallbacks
+remain immediate rather than becoming a separate opacity animation service.
+
+The source uses CSS max-height transitions and Vue frame/class scheduling. Native height
+and opacity begin together; source opacity began about 31ms after height in the recorded
+fixture. Matching the 300ms property curves is **not** matching framework wall-clock staging.
+Fractional measured heights can differ near settlement, and an authored opacity such as .6
+is the native fade endpoint rather than being replaced with 1. See the
+[rendered motion audit](../style-audit/components/collapse-transition.md) for concrete samples.
 
 ## Focus and attribute ownership
 
@@ -119,7 +134,10 @@ the author change. Removing the clipping marker or losing clipping after a start
 not allowed to leave an unclipped but inert moving wrapper. Do not directly mutate reserved
 visibility/motion attributes while using the controller; dispose/rebind when changing owners.
 
-Outer inline colors/styles are never rewritten. Authored geometry changes are not normalized
+Outer inline colors/styles are never rewritten. Authored opacity is sampled as the open
+endpoint; later author opacity edits become authoritative again when the effect is released.
+Do not run a competing outer height/opacity animation under this owner; independent motion
+on inner content remains application-owned. Authored geometry changes are not normalized
 into a universal animation model. The external CSS marker temporarily overrides overflow
 for clipping; restoring the marker restores ordinary author overflow. CSP must permit the
 explicit script/stylesheet and browser Web Animations use. No unsafe-inline style injection
@@ -183,16 +201,42 @@ theme and transition-style supplements.
 | enter/leave/after-enter/after-leave hooks | 🟢 Verified | Explicit native timing above, not Vue attribute forwarding |
 | display-directive | ⏭️ Intentionally omitted | No if/show rendering directive; native hidden retains nodes |
 | collapsed | ⏭️ Intentionally omitted | Deprecated inverted source alias is not reproduced |
-| theme objects/bezier forwarding | ⏭️ Intentionally omitted | External presentation and one native easing curve |
+| theme objects/bezier forwarding | ⏭️ Intentionally omitted | External presentation and fixed source-matched height/fade curves |
 | group/mode/width/reverse | ⏭️ Intentionally omitted | No transition-group orchestration, width/reverse mode or keyed VNodes |
-| private max-height/reflow and margin/padding/opacity options | ⏭️ Intentionally omitted | Sampled native height on the constrained wrapper only |
+| private max-height/reflow and margin/padding/fade configuration | ⏭️ Intentionally omitted | One constrained height/fade effect, not private transition-option forwarding |
+
+Horizontal writing mode, RTL and ordinary container width changes remain supported within
+the declared height-layout model. **Horizontal width motion is not an option**: `width`,
+`horizontal`, group/mode/reverse and rendering directives remain rejected/omitted. Use native
+details/summary or authored visible/hidden content for a no-script alternative, or separately
+own a different width effect; do not attach a general animation model to this wrapper.
 
 1. [x] Define native wrapper/visibility/focus ownership and preserve content.
 2. [x] Implement optional native motion with immediate reduced/unsupported fallback.
 3. [x] Bound measurement/cancellation/hooks without a rendering or resize framework.
 4. [x] Verify reversals, content changes, removal, styles, focus and browser/package gates.
 
-### Acceptance — 2026-09-09
+### Motion-style acceptance — 2026-09-10
+
+- Measured source CSS transitions were 300ms with distinct height/entry-opacity/exit-opacity
+  curves. Corrected native animation-local height/opacity samples matched at five points in
+  each direction for the 120px fixture. Source frame-start offsets remain explicitly different.
+- Midpoint entry changed from 60px / opacity 1 to 93.0625px / .324815; midpoint exit is now
+  26.927084px / .160755. Both properties use one owned native Animation.
+- Real reversal preserved height and opacity without a jump, same-target requests reused
+  the Promise, styles/input values survived settlement, and unrelated animations kept running.
+  Fractional endpoints, author-opacity edits, RTL/2× zoom, appearance and reduced/print
+  fallbacks were checked. Native details/hidden alternatives worked with JavaScript disabled.
+- `pnpm test -- tests\collapse-transition.test.ts`: **48 tests passed**; isolated strict
+  TypeScript passed. Exact level-9 isolated ESM/classic/CSS sizes are **3,810 / 3,935 / 274**
+  bytes, within unchanged **4,500 / 4,500 / 750** ceilings.
+- The coordinator's isolated release build and all **48 tests** pass with those same
+  manifest sizes. No shared helper, existing Collapse, CSS asset, template/binding
+  or dependency changes are included.
+
+### Historical acceptance — 2026-09-09
+
+The earlier height-only motion and byte counts below predate the easing/fade correction.
 
 - **160 targeted tests passed:** 43 Collapse Transition, 33 Collapse, 57 Notification/
   shared ownership and 27 native/legacy.

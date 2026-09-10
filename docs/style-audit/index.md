@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 40/96 scopes.** The other **56** are not yet accepted in this
+**Reviewed and integrated: 41/96 scopes.** The other **55** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -69,7 +69,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Cascader](../naive-ui/components/cascader.md) | ⚪ Pending | — |
 | [Checkbox](../naive-ui/components/checkbox.md) | 🟢 Fixed / 🟡 Remaining | [Box/label metrics, theme accents and retained native skin](components/checkbox.md) |
 | [Code](../naive-ui/components/code.md) | 🟢 Fixed / 🟡 Remaining | [Plain typography, gutters and authored token limits](components/code.md) |
-| [Collapse Transition](../naive-ui/components/collapse-transition.md) | 🟠 Reviewing | — |
+| [Collapse Transition](../naive-ui/components/collapse-transition.md) | 🟢 Fixed / 🟡 Remaining | [Height/fade curves and native scheduling/geometry limits](components/collapse-transition.md) |
 | [Collapse](../naive-ui/components/collapse.md) | ⚪ Pending | — |
 | [Color Picker](../naive-ui/components/color-picker.md) | ⚪ Pending | — |
 | [Config Provider](../naive-ui/components/config-provider.md) | ⚪ Pending | — |
@@ -122,7 +122,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Popselect](../naive-ui/components/popselect.md) | ⚪ Pending | — |
 | [Progress](../naive-ui/components/progress.md) | 🟢 Fixed / 🟡 Remaining | [Native rails, ring geometry, motion and indicator limits](components/progress.md) |
 | [QR Code](../naive-ui/components/qr-code.md) | ⚪ Pending | — |
-| [Radio](../naive-ui/components/radio.md) | ⚪ Pending | — |
+| [Radio](../naive-ui/components/radio.md) | 🟠 Reviewing | — |
 | [Rate](../naive-ui/components/rate.md) | ⚪ Pending | — |
 | [Result](../naive-ui/components/result.md) | 🟢 Fixed / 🟡 Remaining | [Region spacing, title roles and authored artwork limits](components/result.md) |
 | [Scrollbar](../naive-ui/components/scrollbar.md) | 🟢 Fixed / 🟡 Remaining | [Opt-in native thumb palette and OS/browser geometry limits](components/scrollbar.md) |

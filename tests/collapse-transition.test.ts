@@ -84,7 +84,13 @@ describe("Native Collapse Transition", () => {
     const root = fixture(true); const c = enhance({}, root); const style = root.style.cssText
     const done = c.setShow(true)
     expect(c.state).toBe("opening"); expect(root.hidden).toBe(false); expect(root.hasAttribute("inert")).toBe(true)
-    expect(animations[0]!.frames).toEqual([{ height: "0px" }, { height: "100px" }])
+    expect(animations[0]!.frames).toEqual([
+      { height: "0px", offset: 0, easing: "cubic-bezier(.4, 0, .2, 1)" },
+      { opacity: 0, offset: 0, easing: "cubic-bezier(.4, 0, 1, 1)" },
+      { height: "100px", opacity: 1, offset: 1 },
+    ])
+    expect(animations[0]!.options.duration).toBe(300)
+    expect(animations[0]!.options.easing).toBe("linear")
     expect(animations[0]!.options.fill).toBe("both")
     animations[0]!.finish(); await expect(done).resolves.toBe(true)
     expect(c.state).toBe("open"); expect(root.hasAttribute("inert")).toBe(false)
@@ -98,6 +104,35 @@ describe("Native Collapse Transition", () => {
     expect(c.state).toBe("closing"); expect(root.hidden).toBe(false)
     animations[0]!.finish(); await done
     expect(root.hidden).toBe(true); expect(c.state).toBe("closed"); expect(root.hasAttribute("inert")).toBe(false)
+  })
+  it("uses the source leave-opacity easing in the same owned height animation", async () => {
+    const root = fixture(); const c = enhance({}, root); const done = c.setShow(false)
+    expect(animations).toHaveLength(1)
+    expect(animations[0]!.frames[1]).toEqual({ opacity: 1, offset: 0, easing: "cubic-bezier(0, 0, .2, 1)" })
+    expect(animations[0]!.frames[2]).toEqual({ height: "0px", opacity: 0, offset: 1 })
+    c.finish(); await done
+    expect(root.style.opacity).toBe("")
+  })
+  it.each([0, .6])("preserves authored opacity %s through opening, closing and disposal", async value => {
+    const root = fixture(true); root.style.opacity = String(value); root.style.color = "red"
+    const authored = root.style.cssText; const c = enhance({}, root)
+    const open = c.setShow(true)
+    expect(animations[0]!.frames[2]?.opacity).toBe(value)
+    c.finish(); await open
+    expect(root.style.cssText).toBe(authored)
+    const close = c.setShow(false)
+    expect(animations[1]!.frames[1]?.opacity).toBe(value)
+    c.finish(); await close; c.dispose()
+    expect(root.style.cssText).toBe(authored)
+  })
+  it("releases opacity to a later author style instead of retaining its sampled endpoint", async () => {
+    const root = fixture(true); root.style.opacity = ".6"
+    const c = enhance({}, root); const open = c.setShow(true)
+    expect(animations[0]!.frames[2]?.opacity).toBe(.6)
+    root.style.opacity = ".3"
+    c.finish(); await open
+    expect(root.style.opacity).toBe("0.3")
+    expect(root.hasAttribute("inert")).toBe(false)
   })
   it.each(["zero", "reduced", "no-animation", "no-inert", "no-media", "print"])("uses safe immediate fallback for %s", async kind => {
     if (kind === "reduced") Object.defineProperty(reduced, "matches", { value: true })
@@ -138,6 +173,8 @@ describe("Native Collapse Transition", () => {
   it("rejects arbitrary/unstable wrappers and framework options", () => {
     const root = fixture()
     expect(() => enhance({ displayDirective: "if" } as never, root)).toThrow()
+    expect(() => enhance({ width: true } as never, root)).toThrow()
+    expect(() => enhance({ horizontal: true } as never, root)).toThrow()
     root.style.paddingTop = "10px"; expect(() => enhance({}, root)).toThrow(/unstyled/)
     root.style.paddingTop = ""; root.append(document.createElement("div"))
     expect(() => enhance({}, root)).toThrow(/one direct/)
@@ -173,6 +210,28 @@ describe("Interruption, hooks and focus ownership", () => {
     if (c.animation) c.finish()
     await expect(open).resolves.toBe(true); await flush()
     expect(root.hidden).toBe(false); expect(c.lastError).toBeNull(); expect(afterLeave).not.toHaveBeenCalled()
+  })
+  it("samples both height and opacity before cancelling a reversed effect", async () => {
+    const root = fixture(); root.style.opacity = ".6"
+    const c = enhance({}, root); const close = c.setShow(false)
+    let sampling = true
+    const originalStyle = window.getComputedStyle.bind(window)
+    vi.spyOn(window, "getComputedStyle").mockImplementation((element, pseudo) => new Proxy(originalStyle(element, pseudo), {
+      get(target, name) {
+        if (element === root && sampling && name === "height") return "40px"
+        if (element === root && sampling && name === "opacity") return "0.35"
+        return Reflect.get(target, name, target)
+      },
+    }))
+    const cancel = animations[0]!.cancel.bind(animations[0])
+    vi.spyOn(animations[0]!, "cancel").mockImplementation(() => { sampling = false; cancel() })
+    const open = c.setShow(true)
+    expect(animations[1]!.frames[0]?.height).toBe("40px")
+    expect(animations[1]!.frames[1]?.opacity).toBe(.35)
+    expect(animations[1]!.frames[2]?.opacity).toBe(.6)
+    await expect(close).resolves.toBe(false)
+    c.finish(); await expect(open).resolves.toBe(true)
+    expect(root.style.opacity).toBe("0.6")
   })
   it("cancel settles the target safely without successful after hooks", async () => {
     const after = vi.fn(); const cancel = vi.fn(); const root = fixture(); const c = enhance({ onAfterLeave: after, onCancel: cancel }, root)
