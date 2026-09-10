@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 31/96 scopes.** The other **65** are not yet accepted in this
+**Reviewed and integrated: 32/96 scopes.** The other **64** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -96,7 +96,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Grid](../naive-ui/components/grid.md) | 🟢 Matched / 🟡 Remaining | [Retained tracks match; responsive/offset algorithm limits](components/grid.md) |
 | [Heatmap](../naive-ui/components/heatmap.md) | ⚪ Pending | — |
 | [Highlight](../naive-ui/components/highlight.md) | ⚪ Pending | — |
-| [Icon](../naive-ui/components/icon.md) | 🟠 Reviewing | — |
+| [Icon](../naive-ui/components/icon.md) | 🟢 Fixed / 🟡 Remaining | [Inline metrics, theme depth and native SVG paint limits](components/icon.md) |
 | [Image](../naive-ui/components/image.md) | 🟢 Fixed / 🟡 Remaining | [Preview fitting, chrome and native toolbar limits](components/image.md) |
 | [Infinite Scroll](../naive-ui/components/infinite-scroll.md) | ⚪ Pending | — |
 | [Input Number](../naive-ui/components/input-number.md) | ⚪ Pending | — |
@@ -125,7 +125,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Radio](../naive-ui/components/radio.md) | ⚪ Pending | — |
 | [Rate](../naive-ui/components/rate.md) | ⚪ Pending | — |
 | [Result](../naive-ui/components/result.md) | 🟢 Fixed / 🟡 Remaining | [Region spacing, title roles and authored artwork limits](components/result.md) |
-| [Scrollbar](../naive-ui/components/scrollbar.md) | ⚪ Pending | — |
+| [Scrollbar](../naive-ui/components/scrollbar.md) | 🟠 Reviewing | — |
 | [Select](../naive-ui/components/select.md) | ⚪ Pending | — |
 | [Skeleton](../naive-ui/components/skeleton.md) | 🟢 Fixed / 🟡 Remaining | [Animated endpoints and retained shape/repeat limits](components/skeleton.md) |
 | [Slider](../naive-ui/components/slider.md) | ⚪ Pending | — |

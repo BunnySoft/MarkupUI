@@ -38,6 +38,12 @@ budget. CSS can load before or after the unchanged legacy aggregate and Typograp
 The library does not import, fetch, generate from a catalog, or license third-party icon assets
 on the application's behalf.
 
+The [default-style audit](../style-audit/components/icon.md) records the later rendered
+Naive 2.45.3 comparison. Link the opt-in Global Style CSS for documented document typography.
+Explicit `data-mui-theme="light|dark"` selects Icon's local depth/contrast defaults; existing
+application primary-color tokens and author Icon tokens still take precedence. The general
+document palette is not claimed to match Naive.
+
 ## Native graphic sizing and color
 
 Use `.mui-icon` on a neutral native span/i or directly on an authored SVG/image:
@@ -60,6 +66,14 @@ Use `.mui-icon` on a neutral native span/i or directly on an authored SVG/image:
 Size is one em by default, inheriting the current font size. `--mui-icon-size` takes ordinary
 CSS lengths such as `24px`, `1.5rem` or a valid CSS expression. Numeric upstream values map
 to explicit CSS units; no JavaScript interprets a `size` attribute or coerces bare data values.
+The icon box is inline-block, relatively positioned, center-aligned and baseline-aligned;
+the previous negative vertical offset is removed. An authored `i` keeps native italic text,
+matching the reference's `i` root; a span/SVG keeps its own inherited font style.
+
+There are no semantic `type`, `rotate` or `rotation` props in the pinned Icon API. Use author
+CSS `color`/`--mui-icon-color` and `transform` for those effects. Rotation declarations and
+SVG transform attributes are not rewritten. Native button `type` remains a form action,
+not an Icon style flag.
 
 For predictable wrapper sizing, put a single SVG/image directly inside the neutral
 `.mui-icon` span/i. Direct asset sizing is **not** a recursive SVG selector: nested SVG
@@ -89,11 +103,17 @@ copied vendor assets. Consumers provide any other appropriately licensed assets 
 
 ## Depth and IconWrapper
 
-`data-depth="1|2|3|4|5"` on `.mui-icon` selects graphic opacity:
-**1 / .8 / .6 / .4 / .2**. Tokens `--mui-icon-depth-1` through `--mui-icon-depth-5` customize
-them. Absence does not reset an authored SVG opacity. This is a deliberate CSS adaptation:
-depth affects the entire SVG/image/glyph graphic, not only upstream SVG descendants, and
-does not force a base paint color.
+`data-depth="1|2|3|4|5"` on `.mui-icon` selects the verified graphic opacity:
+**.82 / .72 / .38 / .24 / .18** in light and **.9 / .82 / .52 / .38 / .28** in dark.
+Depth supplies black/white inherited `color`, unless an Icon color override or direct SVG
+`color` attribute is authored. It never assigns fill/stroke. Tokens `--mui-icon-depth-1`
+through `--mui-icon-depth-5` remain overrides.
+
+Absence does not reset an authored SVG opacity. The retained native adaptation affects the
+whole SVG/image/glyph graphic, whereas upstream attenuates SVG descendants only. Thus native
+glyphs/images still de-emphasize, and a wrapper preserves any additional opacity on its SVG
+child instead of overwriting it. These are explicit differences, not full paint-model parity.
+Color/opacity changes transition for .3s with the reference easing; reduced motion disables them.
 
 Depth is visual de-emphasis, not meaning, disability or an accessible label. Avoid low
 opacity for essential icon-only controls; verify contrast in the actual context.
@@ -119,7 +139,8 @@ IconWrapper is an ordinary `.mui-icon-wrapper` element:
 ```
 
 Wrapper defaults are **24px** square, **6px** radius, primary-colored background and white
-inherited icon color. Its tokens are `--mui-icon-wrapper-size`,
+icon color in light / black in dark. The default border is zero, and the inline wrapper uses
+its native baseline rather than a middle offset. Its tokens are `--mui-icon-wrapper-size`,
 `--mui-icon-wrapper-radius`, `--mui-icon-wrapper-background` and `--mui-icon-wrapper-color`.
 Icon size and wrapper size are independent, as in the source composition. A wrapper does
 not recolor fixed-paint artwork.
@@ -175,8 +196,9 @@ attributes are untouched. Normal CSS automatically handles later native content 
 there are no fake pre-upgrade/reconnect or disposal APIs.
 
 Native templates remain application-owned/inert. CSS performs no cloning, HTML evaluation,
-asset lookup or fetching. No animation/transition is supplied; no reduced-motion controller
-is necessary. Custom native animations remain the author's separate choice.
+asset lookup or fetching. Only the scoped color/opacity transitions are supplied; reduced
+motion and forced colors disable them through CSS, with no controller. Custom native
+animations remain the author's separate choice.
 
 ## API and slot tracker
 

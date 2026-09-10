@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it } from "vitest"
 
 const css = readFileSync(resolve("src", "components", "icon", "icon.css"), "utf8")
@@ -91,7 +92,7 @@ describe("CSS-only Icon and IconWrapper", () => {
     expect(getComputedStyle(document.querySelector(".mui-icon-wrapper")!).display).toBe("none")
   })
 
-  it("defines depth and forced-color fallback without animation or disabled-control emulation", () => {
+  it("defines depth and forced-color fallback without keyframes or disabled-control emulation", () => {
     document.body.innerHTML = '<span class="mui-icon" data-depth="5">◇</span>'
     install()
     expect(css).toContain('@media (forced-colors: active)')
@@ -99,5 +100,67 @@ describe("CSS-only Icon and IconWrapper", () => {
     expect(css).not.toContain("@keyframes")
     expect(css).not.toContain("pointer-events: none")
     expect(document.querySelector(".mui-icon")?.hasAttribute("role")).toBe(false)
+  })
+
+  it("uses the verified inline-box and baseline defaults without forcing native font style", () => {
+    expect(css).toContain("display: inline-block")
+    expect(css).toContain("position: relative")
+    expect(css).toContain("text-align: center")
+    expect(css).toContain("font-size: var(--mui-icon-size, 1em)")
+    expect(css).not.toContain("vertical-align: -.125em")
+    expect(css).not.toContain("vertical-align: middle")
+    expect(css).not.toContain("font-style: normal")
+    document.body.innerHTML = '<i class="mui-icon">A</i><span class="mui-icon">A</span>'
+    install()
+    expect(getComputedStyle(document.querySelector("i")!).fontStyle).toBe("italic")
+    expect(getComputedStyle(document.querySelector("span")!).display).toBe("inline-block")
+  })
+
+  it("encodes the pinned light and dark depth values with retained author overrides", () => {
+    for (const [depth, light, dark] of [[1, ".82", ".9"], [2, ".72", ".82"], [3, ".38", ".52"], [4, ".24", ".38"], [5, ".18", ".28"]]) {
+      expect(css).toContain(`opacity: var(--mui-icon-depth-${depth}, var(--_mui-icon-depth-${depth}, ${light}))`)
+      expect(css).toContain(`--_mui-icon-depth-${depth}: ${dark}`)
+    }
+    expect(css).toContain("--_mui-icon-color: light-dark(#000, #fff)")
+    expect(css).toContain("var(--mui-icon-color, var(--_mui-icon-color, inherit))")
+    expect(css).toContain('.mui-icon:not(svg[color])')
+  })
+
+  it("uses theme-correct wrapper contrast and transitions without adding default border geometry", () => {
+    expect(css).toContain("border: 0")
+    expect(css).toContain("light-dark(#fff, #000)")
+    expect(css).toContain("light-dark(#18a058, #63e2b7)")
+    expect(css).toContain("color .3s cubic-bezier(.4, 0, .2, 1)")
+    expect(css).toContain("opacity .3s cubic-bezier(.4, 0, .2, 1)")
+    expect(css).toContain("@media (prefers-reduced-motion: reduce)")
+    expect(css).toContain(".mui-icon[data-depth], .mui-icon-wrapper { transition: none; }")
+    expect(css).toContain(".mui-icon-wrapper { border: 1px solid CanvasText; transition: none; }")
+  })
+
+  it("preserves authored rotation, SVG color/opacity and explicit sizes rather than inventing type/rotation props", () => {
+    document.body.innerHTML = '<svg class="mui-icon" color="#a04080" opacity=".45" style="transform:rotate(30deg);font-size:28.5px" viewBox="0 0 20 20" preserveAspectRatio="none"><rect fill="currentColor" width="20" height="20"></rect></svg>'
+    const svg = document.querySelector("svg")!
+    const before = svg.outerHTML
+    install()
+    expect(svg.outerHTML).toBe(before)
+    expect(getComputedStyle(svg).transform).toBe("rotate(30deg)")
+    expect(css).not.toMatch(/\[(?:data-)?(?:type|rotate|rotation)[= \]]/)
+    expect(css).not.toMatch(/(?:^|[;{])\s*transform\s*:/m)
+  })
+
+  it("keeps all native wrapper action types and successful form controls unchanged", () => {
+    document.body.innerHTML = '<form><input name="value" value="before"><button class="mui-icon-wrapper" type="reset" aria-label="Reset">R</button><button class="mui-icon-wrapper" type="submit" name="action" value="save">S</button></form>'
+    install()
+    const form = document.querySelector("form")!
+    const input = form.querySelector("input")!
+    input.value = "after"
+    form.querySelector<HTMLButtonElement>('[type="reset"]')!.click()
+    expect(input.value).toBe("before")
+    expect(new FormData(form, form.querySelector<HTMLButtonElement>('[type="submit"]')!).get("action")).toBe("save")
+    expect(form.querySelector("button")!.getAttribute("aria-label")).toBe("Reset")
+  })
+
+  it("stays within the unchanged CSS-only payload ceiling", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
   })
 })

@@ -17,10 +17,18 @@ ESM/classic runtime is introduced. Every pinned public row is retained.
 
 ## Acceptance and gaps
 
-A1 records **308 passing tests** (8 Icon-focused), CSS-only build/export checks and Chromium
+A1's historical migration record reports **308 passing tests** (8 Icon-focused), CSS-only build/export checks and Chromium
 native paint/aspect/viewport, names/actions/focus, depth/wrapper, forced-color, RTL/zoom and
 legacy-coexistence acceptance. CSS is 609 gzip bytes under a 1,000-byte CSS ceiling; core
-stays 14,611/15,000 gzip bytes. Consumers supply assets and accessible ownership explicitly.
+was 14,611/15,000 gzip bytes at that checkpoint. Consumers supply assets and accessible ownership explicitly.
+
+The later [default-style audit](../../style-audit/components/icon.md) supersedes the old
+vertical offsets, depth values and dark wrapper contrast. Icon now uses an inline-block,
+relative, baseline-aligned box; native `i` font style is no longer forcibly reset. Depths
+use the pinned light/dark values and base colors, while the retained whole-graphic opacity
+and paint-preservation adaptations remain explicit. Wrapper contrast is white in light and
+black in dark, with no default border. Type/rotation remain author-selected native markup
+and CSS, not invented upstream props.
 
 ## Migration steps
 
@@ -64,7 +72,7 @@ replace source automatic i/div/img-role defaults without a renderer.
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
 | [`color`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L20) | Prop | ADAPTED external `--mui-icon-color` / inherited currentColor. | 🟢 Verified | No forced fill/stroke; explicit native paints remain authoritative. |
-| [`depth`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L21) | Prop | ADAPTED data-depth 1–5 and CSS opacity tokens. | 🟢 Verified | Whole-graphic de-emphasis, no forced base paint; forced colors restore visibility. |
+| [`depth`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L21) | Prop | ADAPTED data-depth 1–5 and CSS opacity tokens; pinned light/dark levels and inherited base color. | 🟢 Verified | Whole-graphic de-emphasis retained; no fill/stroke rewrite. Source's SVG-only depth model is not implied. |
 | [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L22) | Prop | ADAPTED CSS length in `--mui-icon-size`, inherited 1em default. | 🟢 Verified | No JS number/unit parser, attribute mutation or nested viewport reset. |
 | [`component`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L23) | Prop | Author native SVG/img/glyph content. | ⏭️ Intentionally omitted | No framework constructor/render adapter or icon-library dependency. |
 
