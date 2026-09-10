@@ -16,6 +16,12 @@ export class MuiAvatar extends MuiElement {
   private initialLoading: string | null = null
   private upgraded = false
   private connectedOnce = false
+  private sizeOverride: string | undefined
+  private fitOverride: string | undefined
+  private authoredSize = ""
+  private authoredFit = ""
+  private authoredSizePriority = ""
+  private authoredFitPriority = ""
   private state: "empty" | "loading" | "loaded" | "error" = "empty"
 
   public connectedCallback(): void {
@@ -103,15 +109,31 @@ export class MuiAvatar extends MuiElement {
 
     const numericSize = Number(this.getAttribute("size"))
     if (Number.isFinite(numericSize) && numericSize > 0) {
+      if (this.sizeOverride === undefined) {
+        this.authoredSize = this.style.getPropertyValue("--mui-avatar-size")
+        this.authoredSizePriority = this.style.getPropertyPriority("--mui-avatar-size")
+      }
       this.style.setProperty("--mui-avatar-size", `${numericSize}px`)
-    } else {
-      this.style.removeProperty("--mui-avatar-size")
+      this.sizeOverride = `${numericSize}px`
+    } else if (this.sizeOverride !== undefined) {
+      if (this.style.getPropertyValue("--mui-avatar-size") === this.sizeOverride) {
+        this.style.setProperty("--mui-avatar-size", this.authoredSize, this.authoredSizePriority)
+      }
+      this.sizeOverride = undefined
     }
     const fit = this.getAttribute("object-fit")
     if (fit && ["fill", "contain", "cover", "none", "scale-down"].includes(fit)) {
+      if (this.fitOverride === undefined) {
+        this.authoredFit = this.style.getPropertyValue("--mui-avatar-object-fit")
+        this.authoredFitPriority = this.style.getPropertyPriority("--mui-avatar-object-fit")
+      }
       this.style.setProperty("--mui-avatar-object-fit", fit)
-    } else {
-      this.style.removeProperty("--mui-avatar-object-fit")
+      this.fitOverride = fit
+    } else if (this.fitOverride !== undefined) {
+      if (this.style.getPropertyValue("--mui-avatar-object-fit") === this.fitOverride) {
+        this.style.setProperty("--mui-avatar-object-fit", this.authoredFit, this.authoredFitPriority)
+      }
+      this.fitOverride = undefined
     }
     this.update()
   }

@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>MarkupUI Avatar</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-avatar.css">
   <link rel="stylesheet" href="./avatar.css">
   <script defer src="../../dist/markup-ui-avatar.global.js"></script>
@@ -17,15 +18,20 @@
     <section aria-labelledby="basic-heading">
       <h2 id="basic-heading">Authored content and sizes</h2>
       <div class="examples">
+        <mui-avatar size="tiny" alt="Tiny">T</mui-avatar>
         <mui-avatar size="small" alt="Ada">A</mui-avatar>
         <mui-avatar alt="Grace">G</mui-avatar>
         <mui-avatar size="large" alt="Linus">L</mui-avatar>
+        <mui-avatar size="huge" alt="Huge">H</mui-avatar>
+        <mui-avatar round alt="Round">R</mui-avatar>
         <mui-avatar square bordered alt="Team" class="brand">UI</mui-avatar>
         <mui-avatar alt="Blue portrait" lazy>
-          <img alt="Blue portrait" width="36" height="36"
+          <img alt="Blue portrait" width="34" height="34"
             src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Crect width='36' height='36' fill='%232080f0'/%3E%3C/svg%3E">
         </mui-avatar>
       </div>
+      <p>Default: 34px, 3px corners, white normal text. Sizes: 22 / 28 / 34 / 40 / 46px.
+        A border adds 4px. Images default to fill; use object-fit="cover" to crop.</p>
     </section>
 
     <section aria-labelledby="fallback-heading">

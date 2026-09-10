@@ -4,9 +4,9 @@
 }
 :where(body) {
   margin: 0;
-  font-family: var(--mui-font-family, system-ui, sans-serif);
-  font-size: var(--mui-font-size, 1rem);
-  line-height: var(--mui-line-height, 1.5);
+  font-family: var(--mui-font-family, v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol");
+  font-size: var(--mui-font-size, 14px);
+  line-height: var(--mui-line-height, 1.6);
   color: var(--mui-text-primary, CanvasText);
   background-color: var(--mui-bg-page, Canvas);
 }

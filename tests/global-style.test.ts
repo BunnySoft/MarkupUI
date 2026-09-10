@@ -85,6 +85,15 @@ describe("Explicit external Global Style", () => {
     expect(source).toContain("color: CanvasText")
     expect(source).toContain("background-color: Canvas")
   })
+  it("uses the verified reference typography without changing native control or author ownership", () => {
+    const legacy = readFileSync(resolve("src", "components", "styles.css"), "utf8")
+    const family = 'v-sans,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"'
+    expect(source.replace(/, /g, ",")).toContain(`var(--mui-font-family,${family})`)
+    expect(source).toContain("font-size: var(--mui-font-size, 14px)")
+    expect(source).toContain("line-height: var(--mui-line-height, 1.6)")
+    expect(legacy).toContain(`--mui-font-family:${family}`)
+    expect(legacy).toContain("--mui-font-size:14px;--mui-line-height:1.6")
+  })
   it("does not overwrite author body inline declarations when installed or removed", () => {
     document.body.style.cssText = "margin: 13px; padding: 7px; color: purple; overflow: auto"
     const before = document.body.getAttribute("style")

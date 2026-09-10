@@ -34,6 +34,11 @@ asset-serving mechanism, or copy the distribution CSS and link it directly. A pl
 application imports the served `markup-ui-avatar.js` path instead of the npm package specifier.
 Consumers need no compiler or runtime dependency.
 
+For the documented document typography, also link `@dataengine/markup-ui/global-style/style.css`.
+It is opt-in and never injected by Avatar. Without it, text inherits the application's font.
+The [default-style audit](../style-audit/components/avatar.md) records the Naive UI 2.45.3
+rendered comparison and intentional remaining native differences.
+
 If also using the legacy aggregate, load the Avatar entry **before** that aggregate. With
 classic scripts, use `defer` on both and put Avatar first. With ES modules, import Avatar
 before importing the aggregate. The aggregate's registry preserves existing definitions.
@@ -45,7 +50,7 @@ of the same component in one document.
 
 ```html
 <mui-avatar alt="Ada" lazy>
-  <img src="./ada.png" alt="Ada" width="36" height="36">
+  <img src="./ada.png" alt="Ada" width="34" height="34">
   A
   <template data-mui-avatar-placeholder><span>...</span></template>
   <template data-mui-avatar-fallback><span>?</span></template>
@@ -69,11 +74,11 @@ over generated host semantics.
 | --- | --- | --- |
 | `src` | `src` attribute and `.src` property; an authored direct `img` is also accepted. | 🟢 Verified; source changes restart loading. |
 | `fallback-src` | `fallback-src` / `.fallbackSrc`. | 🟢 Verified; one alternate image attempt per primary source. Set before changing the primary source. |
-| `size` | `size="small\|medium\|large"` or a positive numeric pixel value; `.size` accepts a string or number. | 🟢 Verified; default 36px, small 28px, large 48px. CSS tokens support custom sizing. |
-| `round` | `round` and `square` attributes; circle remains the legacy-compatible default. | 🟢 Verified with an intentional default difference from upstream; `round` wins when both are present. |
+| `size` | `size="tiny\|small\|medium\|large\|huge"` or a positive numeric pixel value; `.size` accepts a string or number. | 🟢 Verified; 22/28/34/40/46px content boxes, default 34px. Borders add 4px to the outer dimensions. |
+| `round` | Default is a 3px-radius square; `round` requests a circle and `square` explicitly requests the default shape. | 🟢 Verified against the default reference; `round` wins when both are present. |
 | `bordered` | Boolean `bordered` attribute and external CSS. | 🟢 Verified. |
 | `color` | `--mui-avatar-background` and `--mui-avatar-color` in author CSS. | 🟢 Verified as CSS tokens, not an inline style prop. |
-| `object-fit` | `object-fit` attribute or `--mui-avatar-object-fit`; accepts native object-fit keywords. | 🟢 Verified; default cover. |
+| `object-fit` | `object-fit` attribute or `--mui-avatar-object-fit`; accepts native object-fit keywords. | 🟢 Verified; default fill, matching upstream's unset native image fit; use cover to crop. |
 | `img-props` | Author native image attributes directly, including alt, decoding and referrer policy. | 🟢 Verified as native HTML, not an object passthrough API. |
 | `lazy` | Boolean `lazy` / `.lazy`, using native image loading. | 🟢 Verified; authored loading behavior is restored when the override is removed. |
 | `intersection-observer-options` | Native image lazy loading. | ⏭️ Intentionally omitted; no redundant observer configuration. |
@@ -89,6 +94,16 @@ over generated host semantics.
 user input/change events. Numeric `size` and the `object-fit` convenience attribute write
 isolated CSS custom properties; use stylesheet tokens and preset sizes when avoiding inline
 style mutations is required by your CSP.
+
+Default text is white, 14px, inherited normal weight; its line-height is 1.25. Light
+background is `#ccc`; explicit `data-mui-theme="dark"` uses `#424245` and `#18181c`
+border (light border is white). `--mui-avatar-size`, `--mui-avatar-font-size`,
+`--mui-avatar-radius`, `--mui-avatar-background`, `--mui-avatar-color`,
+`--mui-avatar-border-color` and `--mui-avatar-object-fit` remain author overrides.
+Numeric size/fit attributes temporarily override authored inline tokens and restore them
+when removed; source updates and reconnection no longer erase unrelated inline tokens.
+Named child sizes override inherited group sizing; an authored inline `--mui-avatar-size`
+can override a named preset. Ordinary CSS specificity/cascade governs stylesheet overrides.
 
 ## Group
 
@@ -113,6 +128,10 @@ style mutations is required by your CSP.
 Overflow avatars move into the native disclosure rather than being recreated. Group updates
 preserve child identities. `label` names the group; `rest-label` supplies a localized
 accessible label for the overflow summary. Without it the summary uses an English count.
+Group members and the summary default to circles with real 2px borders and -12px overlap:
+three default members occupy 90×38px (38×90px vertically). Explicit `square` and author
+radius/border/group-background tokens remain available; unlike upstream, `square` can
+opt a group member out of the round default. Native disclosure/count semantics are unchanged.
 
 ## Migration steps and acceptance
 
@@ -138,7 +157,8 @@ with Enter, replaced group content, and a failed image reconnecting. Both classi
 ES-module loading before the legacy aggregate were exercised; standalone examples inject no
 style tags. Browser coverage here is Chromium, not a claim of all-browser certification.
 
-The existing core remains 14,611 gzip bytes under its 15,000-byte ceiling. Avatar has separate
+The original acceptance measured core at 14,611 gzip bytes; consult the current build manifest
+and style audit for updated sizes. The core keeps its 15,000-byte ceiling. Avatar has separate
 4,000-byte gzip ceilings for ESM/classic JavaScript and a 1,500-byte CSS ceiling, enforced by
 the build; the manifest records exact output sizes. This page records the retained scope,
 not pixel parity or blanket accessibility conformance.

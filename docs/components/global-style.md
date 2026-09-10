@@ -26,17 +26,21 @@ Every selector is zero-specificity **`:where(html)` or `:where(body)`**:
 | --- | --- |
 | html | `color-scheme: light dark`; native system preference is permitted |
 | body | `margin: 0` — deliberate document-edge default, not a universal spacing reset |
-| body font family | `var(--mui-font-family, system-ui, sans-serif)` |
-| body font size | `var(--mui-font-size, 1rem)` |
-| body line height | `var(--mui-line-height, 1.5)` |
+| body font family | `--mui-font-family`, falling back to the Naive UI `v-sans`, system/UI and emoji family stack (no font download) |
+| body font size | `var(--mui-font-size, 14px)` |
+| body line height | `var(--mui-line-height, 1.6)` |
 | body text | `var(--mui-text-primary, CanvasText)` |
 | body background | `var(--mui-bg-page, Canvas)` |
 | forced colors | body uses native `CanvasText`/`Canvas` |
 | print | html permits light colors; body uses native `CanvasText`/`Canvas` |
 
 No custom property is defined by this asset. It consumes existing supported `--mui-*`
-tokens and otherwise uses browser/system defaults: **no second full theme palette**,
+tokens and otherwise uses reference typography and browser/system colors: **no second full theme palette**,
 font download or external runtime dependency.
+
+The [Avatar default-style audit](../style-audit/components/avatar.md) verifies the 14px/1.6
+typography correction and matching canonical core family token. All selectors remain
+zero-specificity; author styles, form controls and system-color/forced-color behavior retain ownership.
 
 The stylesheet does **not** reset padding, lists, links, headings, native form-control
 appearance, focus indicators, box sizing, selection, text-size adjustment or tap

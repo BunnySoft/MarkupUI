@@ -29,10 +29,11 @@ describe("canonical legacy CSS and theme sources", () => {
     })
   })
 
-  it("preserves the pre-extraction runtime CSS exactly", () => {
-    // These baselines protect the legacy visual contract during source separation.
+  it("preserves the approved runtime CSS baselines exactly", () => {
+    // Core includes the reviewed Avatar/default typography correction; see docs/style-audit/components/avatar.md.
+    // Advanced and widget baselines remain byte-identical to source extraction.
     expect(runtimeStyles.map(hash)).toEqual([
-      "9f62233fa6a57d57682110d9d487a7569d79ead4cb398af24df27b6422308d29",
+      "e9da85e704ec41b78d8c514f4ece69c01903572f9c4ee34be2a05a05af87be05",
       "191b9b19d5ab85393ddfa50a537b911133685fb87304c71b6c0eb478c1b9c1e7",
       "2eef3afb63382e8a64c34740c6d9afec38b552640239d2e9e19fac7b6d33c24d",
     ])

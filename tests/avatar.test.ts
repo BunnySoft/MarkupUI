@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
+import { readFileSync } from "node:fs"
 import { MuiAvatar, MuiAvatarGroup, registerAvatar } from "../src/components/avatar/index.js"
 
 afterEach(() => {
@@ -160,6 +161,31 @@ describe("standalone Avatar", () => {
     expect(element.dataset.muiAvatarState).toBe("empty")
   })
 
+  it("preserves authored size and fit tokens across upgrade, source changes and reconnect", () => {
+    const element = avatar('<mui-avatar style="--mui-avatar-size:60px;--mui-avatar-object-fit:contain">AB</mui-avatar>')
+    element.alt = "Ada"
+    element.remove()
+    document.body.append(element)
+    expect(element.style.getPropertyValue("--mui-avatar-size")).toBe("60px")
+    expect(element.style.getPropertyValue("--mui-avatar-object-fit")).toBe("contain")
+    // JSDOM drops custom-property priorities; verify the native API passthrough here.
+    vi.spyOn(element.style, "getPropertyPriority").mockReturnValue("important")
+    const write = vi.spyOn(element.style, "setProperty")
+    element.size = 52
+    element.setAttribute("object-fit", "cover")
+    expect(element.style.getPropertyValue("--mui-avatar-size")).toBe("52px")
+    element.size = "large"
+    element.removeAttribute("object-fit")
+    expect(element.style.getPropertyValue("--mui-avatar-size")).toBe("60px")
+    expect(element.style.getPropertyValue("--mui-avatar-object-fit")).toBe("contain")
+    expect(write).toHaveBeenCalledWith("--mui-avatar-size", "60px", "important")
+    expect(write).toHaveBeenCalledWith("--mui-avatar-object-fit", "contain", "important")
+    element.size = 48
+    element.style.setProperty("--mui-avatar-size", "64px")
+    element.size = "medium"
+    expect(element.style.getPropertyValue("--mui-avatar-size")).toBe("64px")
+  })
+
   it("registers idempotently and reports conflicts instead of claiming an upgrade", () => {
     expect(() => registerAvatar()).not.toThrow()
     const registry = {
@@ -168,6 +194,38 @@ describe("standalone Avatar", () => {
     }
     expect(() => registerAvatar(registry)).toThrow("already defined")
     expect(registry.define).not.toHaveBeenCalled()
+  })
+
+  describe("audited default Avatar styles", () => {
+    const css = readFileSync("src/components/avatar/avatar.css", "utf8")
+    const legacy = readFileSync("src/components/styles.css", "utf8")
+    it("keeps the native and canonical legacy defaults aligned to the pinned light reference", () => {
+      for (const source of [css, legacy]) {
+        const compact = source.replace(/\s+/g, "")
+        expect(compact).toContain("box-sizing:content-box")
+        expect(compact).toContain("var(--mui-avatar-size,34px)")
+        expect(compact).toContain("border-radius:var(--mui-avatar-radius,3px)")
+        expect(compact).toContain("var(--mui-avatar-default-background,#ccc)")
+        expect(compact).toContain("color:var(--mui-avatar-color,#fff)")
+        expect(compact).toContain("font-size:var(--mui-avatar-font-size,14px)")
+        expect(compact).toContain("font-weight:inherit")
+        expect(compact).toContain("object-fit:var(--mui-avatar-object-fit,fill)")
+        expect(compact).toContain("border:2pxsolidvar(--mui-avatar-border-color")
+        expect(compact).toContain("--mui-avatar-default-background:#424245")
+        expect(compact).toContain("--mui-avatar-default-border:#18181c")
+        for (const [size, pixels] of [["tiny", 22], ["small", 28], ["medium", 34], ["large", 40], ["huge", 46]]) {
+          expect(compact).toContain(`mui-avatar[size="${size}"]{--mui-avatar-size:${pixels}px`)
+        }
+      }
+    })
+    it("uses real group borders, reference overlap, bounded text and native focus", () => {
+      expect(css).toContain("var(--mui-avatar-overlap, -12px)")
+      expect(css).not.toContain("outline: 2px solid var(--mui-avatar-group-background")
+      expect(css).toContain("line-height: 1.25")
+      expect(css).toContain("text-overflow: ellipsis")
+      expect(css).toContain("summary:focus-visible")
+      expect(css).toContain("@media (prefers-reduced-motion: reduce)")
+    })
   })
 })
 

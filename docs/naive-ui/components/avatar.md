@@ -34,7 +34,10 @@ Covered cases include preserved nodes, fallback/source changes, templates, pre-u
 reconnect, group replacement/order, native lazy loading, overflow keyboard activation and
 registration conflicts. These are recorded results, not tests rerun by this documentation edit.
 
-Round remains the compatibility default; `square` opts out and `round` wins if both occur.
+The new [default-style audit](../../style-audit/components/avatar.md) supersedes the original
+compatibility-default decision: Avatar now defaults to a 34px, 3px-radius square, with white
+normal 14px text and `#ccc` light background. Group members remain round. `square` is still
+explicitly supported, and `round` wins if both attributes occur.
 Native loading replaces observer configuration. Framework render callbacks, data-option
 rendering, arbitrary rest rendering and hover-only expansion are excluded. Automatic text
 fitting is simplified to CSS font sizing/ellipsis. See A1 for exact bounds and limitations.
@@ -51,7 +54,8 @@ already-defined names; loading enhanced Avatar after the legacy basic definition
 clear conflict rather than silently upgrading it. Do not mix the ESM and classic Avatar
 distributions in one document.
 
-Core remains **14,611 bytes gzip / 15,000 ceiling**. The separate Avatar ESM/classic entries
+Original migration core was **14,611 bytes gzip**; the **15,000 ceiling** remains unchanged.
+See the current manifest/style audit for updated measurements. The separate Avatar ESM/classic entries
 each have **4,000-byte gzip ceilings**, and CSS has a **1,500-byte ceiling**. Consult the
 build manifest for exact standalone output sizes; these ceilings are not actual size claims.
 
@@ -113,11 +117,11 @@ all-browser behavior. Textual statuses and explicit omission reasons are authori
 | [`img-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L29) | Prop | Author native image attributes directly, including alt/decoding/referrer policy; object forwarding is not supported. | 🟢 Verified | A1/S1: native-HTML replacement, not prop-bag compatibility. |
 | [`intersection-observer-options`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L30) | Prop | Native image lazy loading replaces configurable intersection observation. | ⏭️ Intentionally omitted | A1: no redundant observer API. |
 | [`lazy`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L31) | Prop | Boolean `lazy` / `.lazy`; native image loading; removing the override restores authored loading behavior. | 🟢 Verified | A1/S1: native lazy-loading and restoration evidence. |
-| [`object-fit`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L32) | Prop | Native fit keywords through `object-fit` or CSS `--mui-avatar-object-fit`; default cover. | 🟢 Verified | A1/S1/S3; convenience attribute mutates an isolated CSS property. |
+| [`object-fit`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L32) | Prop | Native fit keywords through `object-fit` or CSS `--mui-avatar-object-fit`; default fill. | 🟢 Verified | A1/S1/S3; convenience attribute mutates an isolated CSS property and restores authored tokens. |
 | [`render-fallback`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L33) | Prop | No render callback/VNode API; use the accepted authored fallback template/span below. | ⏭️ Intentionally omitted | A1: framework rendering excluded; native content alternative verified separately. |
 | [`render-placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L34) | Prop | No render callback/VNode API; use the accepted authored placeholder template/span below. | ⏭️ Intentionally omitted | A1: framework rendering excluded; native content alternative verified separately. |
-| [`round`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L35) | Prop | Circle is the compatibility default; `square` opts out, and `round` wins if both attributes occur. | 🟢 Verified | A1/S3: intentional upstream-default difference. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L36) | Prop | `size` / `.size`: small 28px, medium/default 36px, large 48px or positive numeric pixels; stylesheet tokens available. | 🟢 Verified | A1/S1/S3: numeric convenience writes isolated CSS; use presets/tokens for strict CSP. |
+| [`round`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L35) | Prop | Default 3px-radius square; `round` opts into a circle and wins over explicit `square`. Groups default round. | 🟢 Verified | A1/S3 and rendered default-style audit; supersedes the old intentional difference. |
+| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L36) | Prop | `size` / `.size`: tiny 22px, small 28px, medium/default 34px, large 40px, huge 46px or positive numeric pixels; borders add 4px. | 🟢 Verified | A1/S1/S3: numeric convenience writes isolated CSS; use presets/tokens for strict CSP. |
 | [`src`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L37) | Prop | `src` / `.src` or authored direct image; source changes restart loading while preserving nodes. | 🟢 Verified | A1/S1: source, authored-image and reconnect tests. |
 | [`on-error`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L38) | Callback | Bubbling `mui:error` detail contains `src`, `fallback`, `state`; handler return values do not control fallback. | 🟢 Verified | A1/S1: explicit notification adaptation. |
 
@@ -129,7 +133,7 @@ all-browser behavior. Textual statuses and explicit omission reasons are authori
 | [`max`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L55) | Prop | `max` / `.max` counts directly visible avatars, excluding summary; absent shows all, zero moves all to overflow, negative clamps to zero. | 🟢 Verified | A1/S2: order, replacement and boundary evidence. |
 | [`max-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L56) | Prop | Style the native overflow summary in external CSS; no `max-style` object API. | 🟢 Verified | A1/S3: adapted summary styling, not object passthrough. |
 | [`options`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L57) | Prop | Author child avatars; application code may clone native templates for data-driven members. | ⏭️ Intentionally omitted | A1/S2: no library-owned options renderer. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L58) | Prop | Group CSS custom properties provide shared sizing; explicit child attributes override their appearance. | 🟢 Verified | A1/S3: inheritance, not a second group size-prop model. |
+| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L58) | Prop | Group CSS custom properties provide shared sizing; explicit child sizes override inherited group sizing. | 🟢 Verified | A1/S3: inheritance, not a second group size-prop model; author inline tokens override named presets. |
 | [`vertical`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L59) | Prop | Boolean `vertical` attribute with CSS logical stacking/overlap. | 🟢 Verified | A1/S3: retained group orientation. |
 
 ### Avatar Slots
