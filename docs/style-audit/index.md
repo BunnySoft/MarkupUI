@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 17/96 scopes.** The other **79** are not yet accepted in this
+**Reviewed and integrated: 21/96 scopes.** The other **75** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -49,6 +49,9 @@ audit now uses parallel component-owned work, with shared theme changes, builds 
 coordinated centrally. Reviewing does not mean matched; each component still needs its own
 rendered evidence and acceptance report.
 
+Release builds isolate ready changes from unfinished agent work. Button motion remains
+a separate follow-up; its work-in-progress is not included in published component fixes.
+
 | Component | Status | Style report |
 | --- | --- | --- |
 | [Affix](../naive-ui/components/affix.md) | ⚪ Pending | — |
@@ -65,7 +68,7 @@ rendered evidence and acceptance report.
 | [Carousel](../naive-ui/components/carousel.md) | ⚪ Pending | — |
 | [Cascader](../naive-ui/components/cascader.md) | ⚪ Pending | — |
 | [Checkbox](../naive-ui/components/checkbox.md) | ⚪ Pending | — |
-| [Code](../naive-ui/components/code.md) | 🟠 Reviewing | — |
+| [Code](../naive-ui/components/code.md) | 🟢 Fixed / 🟡 Remaining | [Plain typography, gutters and authored token limits](components/code.md) |
 | [Collapse Transition](../naive-ui/components/collapse-transition.md) | ⚪ Pending | — |
 | [Collapse](../naive-ui/components/collapse.md) | ⚪ Pending | — |
 | [Color Picker](../naive-ui/components/color-picker.md) | ⚪ Pending | — |
@@ -90,7 +93,7 @@ rendered evidence and acceptance report.
 | [Form](../naive-ui/components/form.md) | ⚪ Pending | — |
 | [Global Style](../naive-ui/components/global-style.md) | 🟢 Fixed / 🟡 Remaining | [Body defaults and opt-in shared-preset boundaries](components/global-style.md) |
 | [Gradient Text](../naive-ui/components/gradient-text.md) | ⚪ Pending | — |
-| [Grid](../naive-ui/components/grid.md) | 🟠 Reviewing | — |
+| [Grid](../naive-ui/components/grid.md) | 🟢 Matched / 🟡 Remaining | [Retained tracks match; responsive/offset algorithm limits](components/grid.md) |
 | [Heatmap](../naive-ui/components/heatmap.md) | ⚪ Pending | — |
 | [Highlight](../naive-ui/components/highlight.md) | ⚪ Pending | — |
 | [Icon](../naive-ui/components/icon.md) | ⚪ Pending | — |
@@ -99,7 +102,7 @@ rendered evidence and acceptance report.
 | [Input Number](../naive-ui/components/input-number.md) | ⚪ Pending | — |
 | [Input OTP](../naive-ui/components/input-otp.md) | ⚪ Pending | — |
 | [Input](../naive-ui/components/input.md) | ⚪ Pending | — |
-| [Layout](../naive-ui/components/layout.md) | ⚪ Pending | — |
+| [Layout](../naive-ui/components/layout.md) | 🟢 Fixed / 🟡 Remaining | [Region palettes, author tokens and native scrolling limits](components/layout.md) |
 | [Legacy Grid](../naive-ui/components/legacy-grid.md) | ⚪ Pending | — |
 | [Legacy Transfer](../naive-ui/components/legacy-transfer.md) | ⚪ Pending | — |
 | [List](../naive-ui/components/list.md) | ⚪ Pending | — |
@@ -135,7 +138,7 @@ rendered evidence and acceptance report.
 | [Table](../naive-ui/components/table.md) | ⚪ Pending | — |
 | [Tabs](../naive-ui/components/tabs.md) | ⚪ Pending | — |
 | [Tag](../naive-ui/components/tag.md) | 🟢 Fixed / 🟡 Remaining | [Sizing, palettes, close states and native limits](components/tag.md) |
-| [Thing](../naive-ui/components/thing.md) | 🟠 Reviewing | — |
+| [Thing](../naive-ui/components/thing.md) | 🟢 Fixed / 🟡 Remaining | [Typography, indentation and authored composition limits](components/thing.md) |
 | [Time Picker](../naive-ui/components/time-picker.md) | ⚪ Pending | — |
 | [Time](../naive-ui/components/time.md) | ⚪ Pending | — |
 | [Timeline](../naive-ui/components/timeline.md) | ⚪ Pending | — |
