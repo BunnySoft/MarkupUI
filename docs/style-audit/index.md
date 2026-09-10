@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 32/96 scopes.** The other **64** are not yet accepted in this
+**Reviewed and integrated: 33/96 scopes.** The other **63** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -54,7 +54,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 
 | Component | Status | Style report |
 | --- | --- | --- |
-| [Affix](../naive-ui/components/affix.md) | 🟠 Reviewing | — |
+| [Affix](../naive-ui/components/affix.md) | 🟡 Remaining | [Native sticky reviewed; fixed positioning and flow differences](components/affix.md) |
 | [Alert](../naive-ui/components/alert.md) | 🟢 Fixed / 🟡 Remaining | [Geometry, severity palettes and SVG limits](components/alert.md) |
 | [Anchor](../naive-ui/components/anchor.md) | ⚪ Pending | — |
 | [Auto Complete](../naive-ui/components/auto-complete.md) | ⚪ Pending | — |

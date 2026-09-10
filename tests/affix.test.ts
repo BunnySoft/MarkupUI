@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it } from "vitest"
 
 const css = readFileSync(resolve("src", "components", "affix", "affix.css"), "utf8")
@@ -151,5 +152,30 @@ describe("CSS-native sticky Affix", () => {
     expect(css).toContain("z-index: auto !important")
     expect(appCss).toContain(".demo-scroll { block-size: auto; overflow: visible; }")
     expect(css).not.toContain("animation")
+  })
+
+  it("leaves authored paint and typography alone within the unchanged CSS budget", () => {
+    expect(css).not.toMatch(/(?:^|[;{])\s*(?:color|background(?:-[\w-]+)?|font(?:-[\w-]+)?|padding(?:-[\w-]+)?|border(?:-[\w-]+)?)\s*:/m)
+    expect(css).not.toContain("overflow")
+    expect(css).not.toContain("content:")
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(500)
+  })
+
+  it("honors element-local inset/layer tokens without leaking offsets into nested affixes", () => {
+    document.body.innerHTML = '<div class="mui-affix" id="outer" style="--mui-affix-block-start:24px;--mui-affix-block-end:12px;--mui-affix-z-index:7"><div class="mui-affix" id="inner">Authored content</div></div>'
+    const outer = document.querySelector<HTMLElement>("#outer")!
+    const inner = document.querySelector<HTMLElement>("#inner")!
+    const authored = outer.getAttribute("style")
+    install()
+    const parentStyle = getComputedStyle(outer), childStyle = getComputedStyle(inner)
+    expect(parentStyle.getPropertyValue("--mui-affix-block-start")).toBe("24px")
+    expect(parentStyle.getPropertyValue("--mui-affix-block-end")).toBe("12px")
+    expect(parentStyle.getPropertyValue("--mui-affix-z-index")).toBe("7")
+    expect(childStyle.getPropertyValue("--mui-affix-block-start")).toBe("auto")
+    expect(childStyle.getPropertyValue("--mui-affix-block-end")).toBe("auto")
+    expect(childStyle.getPropertyValue("--mui-affix-z-index")).toBe("1")
+    expect(outer.getAttribute("style")).toBe(authored)
+    expect(outer.firstElementChild).toBe(inner)
+    expect(inner.textContent).toBe("Authored content")
   })
 })

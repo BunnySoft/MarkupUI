@@ -4,6 +4,12 @@
 This is ordinary authored HTML with `position: sticky`, not the upstream scroll-triggered
 fixed/absolute controller. Incompatible target/trigger/position contracts are explicitly omitted.
 
+**Rendered audit (2026-09-10):** the existing stylesheet is correct for this retained
+native-sticky contract and was **left unchanged**. The [comparison report](../style-audit/components/affix.md)
+records actual default/top/bottom scrolling, containing-block release, width and flow
+differences, styled-content inheritance, dark/RTL cases and JavaScript-disabled behavior.
+Matching inherited colors or an unclamped box is not presented as fixed-controller parity.
+
 ## Loading and source boundary
 
 | Asset | Purpose |
@@ -59,6 +65,14 @@ can differ from its eventual CSS top/bottom offsets. The inspected source does *
 teleport or create a placeholder; this target introduces neither. Native sticky is not
 claimed to reproduce fixed/absolute activation, global overlay escape or any hypothetical
 teleported variant.
+
+For example, the audit's 500px toolbar remained 500px wide and retained its flow slot
+when sticky. The reference switched to a 203.484375px shrink-to-fit fixed box, with no
+placeholder, and its following content moved upward by the toolbar height. At the
+containing-block end the native toolbar released; the reference stayed viewport-fixed.
+In a nested scroller, the same numeric 8px setting constrained native content 8px inside
+the scrollport, while the reference's fixed CSS `top:8px` remained viewport-relative.
+These are intentional model differences, not missing paint tokens to be patched.
 
 ## Property dispositions
 
