@@ -5,6 +5,20 @@ Layout, Content, Header, Footer and Sider are CSS-only compositions of ordinary 
 There is no component controller, registration, provider, custom scrollbar or generated
 application shell.
 
+## Default-style audit — 2026-09-10
+
+The [isolated light/dark audit](../style-audit/components/layout.md) corrects body,
+content, header, footer, sider, embedded and inverted colors without changing
+native layout/disclosure/scroll behavior. Region-specific defaults now follow the
+reference rather than unrelated shared primary-text/surface/border roles.
+Inverted presentation no longer overwrites inherited public author tokens.
+
+**16 focused tests pass.** All **96 scoped rendered comparisons** matched the
+checked colors/outer dimensions; collapsed disclosure height and internal scrollbar/
+border anatomy remain intentionally different. Source CSS is **4,930 raw / 1,051
+gzip bytes**, below the unchanged **1,500-byte ceiling**. The coordinator's isolated
+release build and all **16 Layout tests** pass; no other component or shared source changed.
+
 ## Distribution and references
 
 | Asset | Purpose |
@@ -114,6 +128,45 @@ scroll trap or hidden viewport state. Native sticky positioning is also applicat
 Responsive stacking in the demo is an authored media query. It does not toggle `open`,
 invent a breakpoint event or implement a controlled-collapse model.
 
+## Appearance and shared-token ownership
+
+Select `data-mui-theme="light|dark"` on an ancestor or the actual layout. No marker
+means light. Only private Layout defaults are defined at that boundary; this is
+not a theme watcher, body stylesheet or provider. Nested light boundaries reset
+the private defaults under dark.
+
+| Role | Light | Dark |
+| --- | --- | --- |
+| Layout / Content | `#fff` | `#101014` |
+| Embedded Layout / Content | `#fafafc` | `#101014` |
+| Header / Sider | `#fff` | `#18181c` |
+| Footer | `#fafafc` | `#18181c` |
+| Normal text | `#333639` | white `.82` |
+| Normal borders | `#efeff5` | white `.09` |
+| Inverted Header/Footer/Sider | `#001428` | `#18181c` |
+| Inverted text / borders | white / `#001428` | white `.82` / white `.09` |
+
+Each actual region resets its own private role selection. For example, normal
+Content nested inside an inverted Header keeps body defaults rather than inheriting
+the Header's internal inverted color choice.
+
+Public `--mui-layout-background`, `--mui-layout-color` and
+`--mui-layout-border-color` remain first-priority overrides, including when inherited
+into inverted regions. `--mui-layout-embedded-background` takes precedence over the
+generic background token on embedded regions; otherwise the generic token can
+override that background too. Public author overrides intentionally inherit until
+the application scopes them differently.
+
+The former implicit fallbacks to `--mui-text-primary`, `--mui-bg-surface`,
+`--mui-bg-muted` and `--mui-border` are removed: they do not represent all of these
+Naive roles. Applications deliberately using those colors should choose their
+mapping through local Layout tokens, not assume a global palette migration. No
+shared preset is rewritten merely to recolor this shell.
+
+Font family, size and line height remain inherited from application CSS; no global
+typography correction is repeated here. The stylesheet also does not change
+`color-scheme` or the document background.
+
 ## Property and callback scope
 
 The reference page has **42 rows: 32 Verified adapted native targets and 10 Intentionally
@@ -150,7 +203,7 @@ External tokens include `--mui-layout-background`, `--mui-layout-color`,
 forced-colors fallbacks. Explicit author styles can override the low-specificity defaults.
 No animation engine, automatic ARIA naming, synthetic runtime or runtime dependency exists.
 
-## Migration steps and acceptance
+## Original migration steps and acceptance (historical)
 
 1. [x] Reconcile all five owners and use authored semantic regions without duplicate landmarks.
 2. [x] Implement external shell, border, positioning, scrolling and responsive-composition CSS.
@@ -162,6 +215,7 @@ Chromium acceptance covered a 200px expanded / 64px custom collapsed sidebar, na
 disclosure with hidden links skipped, one form submission and reset, a 220px scroll region
 with sticky header, absolute header/footer edges, logical RTL end placement, 320px responsive
 stacking, 200% CSS zoom, forced colors, print expansion and later legacy-aggregate loading.
-The stylesheet is **874 gzip bytes** under its 1,500-byte ceiling; the aggregate remains
+At that original delivery the stylesheet was **874 gzip bytes** under its 1,500-byte ceiling; the aggregate was
 **14,611 / 15,000 gzip bytes**. This is retained-scope Chromium evidence, not all-browser,
-screen-reader speech, animation or framework parity certification.
+screen-reader speech, animation or framework parity certification, and not evidence
+that the new coordinated build has already passed.

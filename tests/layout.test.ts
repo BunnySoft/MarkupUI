@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it } from "vitest"
 
 const css = readFileSync(resolve("src", "components", "layout", "layout.css"), "utf8")
@@ -55,7 +56,7 @@ describe("CSS-only native Layout", () => {
     expect(getComputedStyle(document.querySelector("#nested-shell")!).flexDirection).toBe("column")
     expect(css).not.toContain(":has(")
     expect(css).not.toContain("row-reverse")
-    expect(css).not.toContain("order:")
+    expect(css).not.toMatch(/(?:^|[;{])\s*order:/m)
   })
 
   it("adapts collapse to native details open/toggle without copying content", () => {
@@ -166,5 +167,57 @@ describe("CSS-only native Layout", () => {
     expect(css).toContain("color: CanvasText")
     expect(css).toContain("@media print")
     expect(css).toContain("overflow: visible !important")
+  })
+
+  it("keeps source CSS within its unchanged 1500 gzip-byte ceiling", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
+  })
+
+  it("defines only private theme and inverted defaults rather than overwriting author tokens", () => {
+    install()
+    const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
+    const defaults = rules.filter(rule => rule.selectorText?.includes("data-mui-theme") || rule.selectorText?.includes("data-inverted"))
+    expect(defaults).toHaveLength(3)
+    for (const rule of defaults) {
+      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_mui-layout-/)
+    }
+    expect(css).toContain("color: var(--mui-layout-color, var(--_mui-layout-color))")
+    expect(css).toContain("background: var(--mui-layout-background, var(--_mui-layout-background))")
+    expect(css).toContain("var(--mui-layout-border-color, var(--_mui-layout-border))")
+  })
+
+  it("preserves distinct body, surface, footer, embedded and inverted reference roles", () => {
+    expect(css).toContain("--_mui-layout-body: #101014")
+    expect(css).toContain("--_mui-layout-surface: #18181c")
+    expect(css).toContain("--_mui-layout-footer: #fafafc")
+    expect(css).toContain("--_mui-layout-embedded: #fafafc")
+    expect(css).toContain("--_mui-layout-text: rgb(255 255 255 / .82)")
+    expect(css).toContain("--_mui-layout-divider: rgb(255 255 255 / .09)")
+    expect(css).toContain("--_mui-layout-inverted: #001428")
+    expect(css).toContain("--_mui-layout-inverted: #18181c")
+    expect(css).toContain("--_mui-layout-background: var(--_mui-layout-body, #fff)")
+    expect(css).toContain("--_mui-layout-background: var(--_mui-layout-surface, #fff)")
+    expect(css).toContain("--_mui-layout-background: var(--_mui-layout-footer, #fafafc)")
+    expect(css).toContain("var(--mui-layout-embedded-background, var(--mui-layout-background, var(--_mui-layout-embedded, #fafafc)))")
+  })
+
+  it("does not substitute unrelated shared legacy palette roles for Layout's theme values", () => {
+    for (const token of ["--mui-text-primary", "--mui-bg-surface", "--mui-bg-muted", "--mui-border"]) {
+      expect(css).not.toContain(token)
+    }
+    expect(css).not.toContain("color-scheme")
+    expect(css).not.toContain("prefers-color-scheme")
+    expect(css).not.toContain("font")
+  })
+
+  it("preserves direct authored geometry and palette on inverted regions", () => {
+    document.body.innerHTML = '<header class="mui-layout-header" data-inverted data-bordered style="color:purple;background:ivory;border-color:teal;--mui-layout-background:ivory;--mui-layout-color:purple;--mui-layout-border-color:teal">Author</header>'
+    const header = document.querySelector("header")!
+    const before = header.outerHTML
+    install()
+    expect(header.outerHTML).toBe(before)
+    expect(getComputedStyle(header).color).toBe("rgb(128, 0, 128)")
+    expect(getComputedStyle(header).backgroundColor).toBe("rgb(255, 255, 240)")
+    expect(getComputedStyle(header).getPropertyValue("--mui-layout-background")).toBe("ivory")
   })
 })
