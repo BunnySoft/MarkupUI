@@ -29,7 +29,7 @@ presentation value, mapped here to ordinary CSS.
 
 ```html
 <link rel="stylesheet" href="./vendor/markup-ui-gradient-text.css">
-<h1 class="mui-gradient-text">Original native heading text</h1>
+<h1><span class="mui-gradient-text">Original native heading text</span></h1>
 <p><span class="mui-gradient-text" data-type="info">Original native text</span></p>
 ```
 
@@ -39,9 +39,12 @@ legacy aggregate; there is no custom-element registration or conflict rule for t
 
 ## Presentation contract
 
-Apply `.mui-gradient-text` to the actual native text element. No attribute except optional
-`data-type` is interpreted: native `font-size` sets size, including responsive CSS expressions.
-No default size, display, heading level, line height, document language or direction is reset.
+Apply `.mui-gradient-text` to the actual native text element. `data-type` and existing
+`data-mui-theme` scopes select CSS presets; native `font-size` sets size, including responsive
+CSS expressions. Enhanced clipping now establishes an inline-block paint box, matching the
+reference's text/gradient bounds. No default size, heading level, line height, document
+language or direction is assigned. Native margins remain authored; use a span inside a
+heading when the outer heading should retain its block box.
 Upstream numeric sizes require explicit CSS units here; no JS converts numbers into pixels.
 
 | Input | Retained CSS contract |
@@ -51,8 +54,9 @@ Upstream numeric sizes require explicit CSS units here; no JS converts numbers i
 | `--mui-gradient-text-to` | Native CSS color for the last endpoint; defaults to the selected palette. |
 | `--mui-gradient-text-angle` | Native CSS angle, default `252deg`; use units, including `0deg`. |
 | `--mui-gradient-text-image` | Complete native CSS background-image, such as a multi-stop linear gradient; overrides endpoint construction. |
-| `--mui-gradient-text-fallback` | Solid foreground color, default a darker selected-palette color. |
-| `--mui-gradient-text-weight` | Native font weight, default `700`. |
+| `--mui-gradient-text-surface` | Opaque canvas color for the default light fade, default `#fff`; see compositing below. Does not rewrite custom images/endpoints. |
+| `--mui-gradient-text-fallback` | Solid foreground color; darker selected-palette color in light, readable normal severity color in dark. |
+| `--mui-gradient-text-weight` | Native font weight, default `500`. |
 | Author `font-size` / `color` | Normal CSS cascade; no runtime `size`, `fontSize` or `color` property adapter. |
 
 ```html
@@ -81,6 +85,45 @@ choose one final CSS declaration rather than assigning either framework alias. N
 can update dynamically through application-authored classes/styles without a controller.
 Custom tokens inherit normally; override them on nested independently decorated text if needed.
 
+### Theme stops and light-surface compositing
+
+The angle remains `252deg`, with explicit 0%/100% stops. Light defaults fade from the
+selected semantic color at 60% over an opaque canvas to its full color. Dark defaults
+run from normal severity color to supplemental severity color:
+
+| Type | Light full color | Dark start → end |
+| --- | --- | --- |
+| primary / success | `#18a058` | `#63e2b7` → `#2a947d` |
+| info | `#2080f0` | `#70c0e8` → `#3889c5` |
+| warning | `#f0a020` | `#f2c97d` → `#f08a00` |
+| error / danger | `#d03050` | `#e88080` → `#d03a52` |
+
+Use `data-mui-theme="dark"` on the text or an ancestor; nested light scopes reset defaults.
+Correct shared light semantic colors are reused, but no shared theme file is required.
+
+Upstream's light start is genuinely translucent. This native stylesheet deliberately
+precomposites that default start with `--mui-gradient-text-surface` using `color-mix`,
+and interpolates in sRGB. This preserves the solid safety underpaint below without
+darkening the intended light fade. On a nonwhite **opaque** canvas, supply its color:
+
+```css
+.warm-canvas {
+  background-color: #ead8c4;
+  --mui-gradient-text-surface: #ead8c4;
+}
+```
+
+No background sampling occurs. An omitted/mismatched surface, image backdrop or translucent
+custom gradient is not automatically reproduced as upstream transparency. The rendered
+default-white cases differed by at most 2 RGB channel levels from upstream; the tested
+explicit colored surface by at most 3. Dark opaque defaults/custom opaque images matched
+exactly in the audited cases.
+
+For deliberately exact alpha compositing, author the actual translucent endpoints and
+override only `background-color: transparent` on the gradient text. That explicit override
+disables the in-enhancement missing-image underpaint safeguard, so use it only with a valid
+gradient and verified contrast. Print/forced-color restoration still applies.
+
 ## Readable fallback and nested text
 
 The base rule always supplies ordinary nontransparent `color` and
@@ -106,10 +149,11 @@ Use native gradients rather than remote image assets; the library has no asset U
   own a separate gradient. Replaced content such as inline SVG keeps its own native paints;
   there is no shape/fill/stroke reset.
 
-Normal wrapping is retained, unlike the source's nowrap presentation. `overflow-wrap:anywhere`
-allows long unbroken text to fit narrow containers; box-decoration-break cloning accommodates
-multiline inline decoration where supported. Gradient continuity across lines/nested elements
-is browser painting behavior, not pixel-identical upstream rendering.
+Normal wrapping is retained, unlike the source's nowrap presentation. `max-inline-size:100%`
+and `overflow-wrap:anywhere` keep the enhanced paint box within a narrow container.
+Box-decoration-break cloning remains available for fragmentation where supported. Gradient
+continuity across wrapped lines/nested elements is browser painting behavior, not
+pixel-identical upstream rendering.
 
 No automatic contrast guarantee is made: test every gradient stop, solid fallback and actual
 background at the text size/weight used. Essential status must not depend on gradient color
@@ -131,6 +175,9 @@ Original nodes/listeners/attributes, later content and inert templates stay appl
 There is no lifecycle, pre-upgrade property, observer or reconnect cleanup to emulate.
 Styles are opt-in; unrelated text is not reset. No motion is supplied, so there is no animation
 runtime or reduced-motion override to configure. Code highlighting remains a separate component.
+
+See the [rendered Gradient Text audit](../style-audit/components/gradient-text.md) for exact
+measurements, the light compositing tradeoff, author checks and remaining differences.
 
 ## API and slot tracker
 
@@ -166,7 +213,7 @@ All seven original rows remain individually traceable, with six explicit source 
 6. [x] Validate build/budgets and Chromium fallback, print, forced colors, links, zoom and coexistence.
 7. [x] Reconcile reference rows/four tasks, catalog totals and next Ellipsis.
 
-### Evidence — 2026-09-08
+### Initial migration evidence — 2026-09-08 (historical palette/display)
 
 - `pnpm test -- tests\gradient-text.test.ts`: **8 focused tests passed**.
 - `pnpm build && pnpm test`: stylesheet-only distribution/budget checks and **316 tests passed**
@@ -195,5 +242,23 @@ All seven original rows remain individually traceable, with six explicit source 
   **Gradient Text CSS: 2,175 raw / 596 gzip bytes, under its 1,500-byte ceiling**.
   No JavaScript bundle or new dependency exists.
 
-This is retained native/CSS scope, not all-browser/AT, automatic contrast or pixel certification.
-Ellipsis is next only through coordinator selection; P2-01 and P2 overall remain In progress.
+### Visual-default audit — 2026-09-10
+
+- `pnpm test -- tests\gradient-text.test.ts`: **9 tests passed**.
+- Nineteen nonwrapping cases matched reference font/box metrics in both themes and RTL.
+  Default weight changed **700→500**, width **87.219→83.344px**, and paint-box height
+  **19→22.391px**, without setting a default font size.
+- All six semantic values, inherited/numeric/rem/responsive sizes, heading text,
+  252°/90°/0° and custom multi-stop images were actually rendered.
+- Sixteen ordinary dark cases and three opaque custom light-gradient cases were
+  pixel-identical. The safe light composites retain the small RGB differences above;
+  no blanket transparency/pixel parity is claimed.
+- Native text/selection/link activation, nested light reset, image-none/invalid safeguards,
+  explicit raw-alpha override, legacy stylesheet order, print, forced colors and simulated
+  unsupported clipping were verified.
+- CSS is **961 / unchanged 1,500 gzip bytes**, with zero component JS/dependencies.
+  The coordinator's isolated release build and all **9 Gradient Text tests** pass;
+  no shared source or generated adapter was edited.
+
+This is retained native/CSS scope, not all-browser/AT, automatic contrast or universal
+pixel certification. No next component is introduced by this audit.

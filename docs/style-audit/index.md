@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 28/96 scopes.** The other **68** are not yet accepted in this
+**Reviewed and integrated: 29/96 scopes.** The other **67** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -92,11 +92,11 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Float Button](../naive-ui/components/float-button.md) | 🟠 Reviewing | — |
 | [Form](../naive-ui/components/form.md) | ⚪ Pending | — |
 | [Global Style](../naive-ui/components/global-style.md) | 🟢 Fixed / 🟡 Remaining | [Body defaults and opt-in shared-preset boundaries](components/global-style.md) |
-| [Gradient Text](../naive-ui/components/gradient-text.md) | 🟠 Reviewing | — |
+| [Gradient Text](../naive-ui/components/gradient-text.md) | 🟢 Fixed / 🟡 Remaining | [Paint metrics, theme stops and safe compositing limits](components/gradient-text.md) |
 | [Grid](../naive-ui/components/grid.md) | 🟢 Matched / 🟡 Remaining | [Retained tracks match; responsive/offset algorithm limits](components/grid.md) |
 | [Heatmap](../naive-ui/components/heatmap.md) | ⚪ Pending | — |
 | [Highlight](../naive-ui/components/highlight.md) | ⚪ Pending | — |
-| [Icon](../naive-ui/components/icon.md) | ⚪ Pending | — |
+| [Icon](../naive-ui/components/icon.md) | 🟠 Reviewing | — |
 | [Image](../naive-ui/components/image.md) | 🟢 Fixed / 🟡 Remaining | [Preview fitting, chrome and native toolbar limits](components/image.md) |
 | [Infinite Scroll](../naive-ui/components/infinite-scroll.md) | ⚪ Pending | — |
 | [Input Number](../naive-ui/components/input-number.md) | ⚪ Pending | — |
@@ -117,7 +117,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Number Animation](../naive-ui/components/number-animation.md) | ⚪ Pending | — |
 | [Page Header](../naive-ui/components/page-header.md) | ⚪ Pending | — |
 | [Pagination](../naive-ui/components/pagination.md) | ⚪ Pending | — |
-| [Popconfirm](../naive-ui/components/popconfirm.md) | ⚪ Pending | — |
+| [Popconfirm](../naive-ui/components/popconfirm.md) | 🟠 Reviewing | — |
 | [Popover](../naive-ui/components/popover.md) | 🟢 Fixed / 🟡 Remaining | [Standalone surface, protected consumers and native popup limits](components/popover.md) |
 | [Popselect](../naive-ui/components/popselect.md) | ⚪ Pending | — |
 | [Progress](../naive-ui/components/progress.md) | 🟢 Fixed / 🟡 Remaining | [Native rails, ring geometry, motion and indicator limits](components/progress.md) |

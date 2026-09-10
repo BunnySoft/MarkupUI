@@ -1,38 +1,71 @@
+:where([data-mui-theme="light"]) {
+  --_mui-gradient-primary-start: initial;
+  --_mui-gradient-primary-end: initial;
+  --_mui-gradient-info-start: initial;
+  --_mui-gradient-info-end: initial;
+  --_mui-gradient-success-start: initial;
+  --_mui-gradient-success-end: initial;
+  --_mui-gradient-warning-start: initial;
+  --_mui-gradient-warning-end: initial;
+  --_mui-gradient-error-start: initial;
+  --_mui-gradient-error-end: initial;
+}
+:where([data-mui-theme="dark"]) {
+  --_mui-gradient-primary-start: #63e2b7;
+  --_mui-gradient-primary-end: #2a947d;
+  --_mui-gradient-info-start: #70c0e8;
+  --_mui-gradient-info-end: #3889c5;
+  --_mui-gradient-success-start: #63e2b7;
+  --_mui-gradient-success-end: #2a947d;
+  --_mui-gradient-warning-start: #f2c97d;
+  --_mui-gradient-warning-end: #f08a00;
+  --_mui-gradient-error-start: #e88080;
+  --_mui-gradient-error-end: #d03a52;
+}
 .mui-gradient-text {
-  --_mui-gradient-from: #36ad6a;
-  --_mui-gradient-to: #0c7a43;
-  --_mui-gradient-fallback: #17583b;
+  --_mui-gradient-color: var(--mui-color-primary, #18a058);
+  /* Composite the light fade so the solid safety underpaint cannot darken it. */
+  --_mui-gradient-light-start: color-mix(in srgb, var(--_mui-gradient-color) 60%, var(--mui-gradient-text-surface, #fff));
+  --_mui-gradient-from: var(--_mui-gradient-primary-start, var(--_mui-gradient-light-start));
+  --_mui-gradient-to: var(--_mui-gradient-primary-end, var(--_mui-gradient-color));
+  --_mui-gradient-fallback: var(--_mui-gradient-primary-start, #17583b);
   color: var(--mui-gradient-text-fallback, var(--_mui-gradient-fallback));
   -webkit-text-fill-color: currentColor;
-  font-weight: var(--mui-gradient-text-weight, 700);
+  font-weight: var(--mui-gradient-text-weight, 500);
   overflow-wrap: anywhere;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
 .mui-gradient-text[data-type="info"] {
-  --_mui-gradient-from: #4098fc;
-  --_mui-gradient-to: #1060c9;
-  --_mui-gradient-fallback: #154f99;
+  --_mui-gradient-color: var(--mui-color-info, #2080f0);
+  --_mui-gradient-from: var(--_mui-gradient-info-start, var(--_mui-gradient-light-start));
+  --_mui-gradient-to: var(--_mui-gradient-info-end, var(--_mui-gradient-color));
+  --_mui-gradient-fallback: var(--_mui-gradient-info-start, #154f99);
 }
 .mui-gradient-text[data-type="success"] {
-  --_mui-gradient-from: #36ad6a;
-  --_mui-gradient-to: #0c7a43;
-  --_mui-gradient-fallback: #17583b;
+  --_mui-gradient-color: var(--mui-color-success, #18a058);
+  --_mui-gradient-from: var(--_mui-gradient-success-start, var(--_mui-gradient-light-start));
+  --_mui-gradient-to: var(--_mui-gradient-success-end, var(--_mui-gradient-color));
+  --_mui-gradient-fallback: var(--_mui-gradient-success-start, #17583b);
 }
 .mui-gradient-text[data-type="warning"] {
-  --_mui-gradient-from: #f0a020;
-  --_mui-gradient-to: #8a5500;
-  --_mui-gradient-fallback: #754600;
+  --_mui-gradient-color: var(--mui-color-warning, #f0a020);
+  --_mui-gradient-from: var(--_mui-gradient-warning-start, var(--_mui-gradient-light-start));
+  --_mui-gradient-to: var(--_mui-gradient-warning-end, var(--_mui-gradient-color));
+  --_mui-gradient-fallback: var(--_mui-gradient-warning-start, #754600);
 }
 .mui-gradient-text:is([data-type="error"], [data-type="danger"]) {
-  --_mui-gradient-from: #de576d;
-  --_mui-gradient-to: #ab1f3f;
-  --_mui-gradient-fallback: #941d36;
+  --_mui-gradient-color: var(--mui-color-error, #d03050);
+  --_mui-gradient-from: var(--_mui-gradient-error-start, var(--_mui-gradient-light-start));
+  --_mui-gradient-to: var(--_mui-gradient-error-end, var(--_mui-gradient-color));
+  --_mui-gradient-fallback: var(--_mui-gradient-error-start, #941d36);
 }
 @supports ((background-clip: text) or (-webkit-background-clip: text)) and (-webkit-text-fill-color: transparent) {
   .mui-gradient-text {
+    display: inline-block;
+    max-inline-size: 100%;
     background-color: currentColor;
-    background-image: var(--mui-gradient-text-image, linear-gradient(var(--mui-gradient-text-angle, 252deg), var(--mui-gradient-text-from, var(--_mui-gradient-from)), var(--mui-gradient-text-to, var(--_mui-gradient-to))));
+    background-image: var(--mui-gradient-text-image, linear-gradient(var(--mui-gradient-text-angle, 252deg) in srgb, var(--mui-gradient-text-from, var(--_mui-gradient-from)) 0%, var(--mui-gradient-text-to, var(--_mui-gradient-to)) 100%));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;

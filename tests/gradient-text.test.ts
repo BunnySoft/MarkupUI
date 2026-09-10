@@ -48,18 +48,38 @@ describe("CSS-only Gradient Text", () => {
     expect(css).not.toContain("forced-color-adjust: none")
   })
 
-  it("does not reset native font size, display, selection or document direction", () => {
+  it("preserves native font size, selection and direction while establishing an enhanced paint box", () => {
     document.body.innerHTML = '<section dir="rtl" lang="ar"><h2 class="mui-gradient-text">عنوان</h2></section><p id="outside">Outside</p>'
     const heading = document.querySelector("h2")!
-    const before = { size: getComputedStyle(heading).fontSize, display: getComputedStyle(heading).display, outside: getComputedStyle(document.querySelector("#outside")!).color }
+    const before = { size: getComputedStyle(heading).fontSize, outside: getComputedStyle(document.querySelector("#outside")!).color }
     install()
     expect(getComputedStyle(heading).fontSize).toBe(before.size)
-    expect(getComputedStyle(heading).display).toBe(before.display)
+    expect(heading.tagName).toBe("H2")
+    expect(css.slice(css.indexOf("@supports"))).toContain("display: inline-block")
+    expect(css).not.toContain("font-size:")
     expect(getComputedStyle(document.querySelector("#outside")!).color).toBe(before.outside)
     expect(document.querySelector("section")?.dir).toBe("rtl")
     expect(document.querySelector("section")?.lang).toBe("ar")
     expect(css).not.toContain("white-space: nowrap")
     expect(css).not.toContain("user-select: none")
+  })
+
+  it("matches theme endpoint roles and retains surface-aware light compositing", () => {
+    document.body.innerHTML = '<span class="mui-gradient-text" data-mui-theme="dark">Text</span>'
+    install()
+    const theme = getComputedStyle(document.querySelector("span")!)
+    for (const [type, from, to] of [
+      ["primary", "#63e2b7", "#2a947d"], ["success", "#63e2b7", "#2a947d"],
+      ["info", "#70c0e8", "#3889c5"], ["warning", "#f2c97d", "#f08a00"],
+      ["error", "#e88080", "#d03a52"],
+    ]) {
+      expect(theme.getPropertyValue(`--_mui-gradient-${type}-start`)).toBe(from)
+      expect(theme.getPropertyValue(`--_mui-gradient-${type}-end`)).toBe(to)
+    }
+    expect(css).toContain("font-weight: var(--mui-gradient-text-weight, 500)")
+    expect(css).toContain("var(--_mui-gradient-color) 60%, var(--mui-gradient-text-surface, #fff)")
+    expect(css).toContain("252deg) in srgb")
+    expect(css).not.toContain("@property")
   })
 
   it("keeps native link attributes and listeners instead of intercepting activation", () => {
