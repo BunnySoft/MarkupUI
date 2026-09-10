@@ -424,6 +424,50 @@ describe("bounded native thumbnail fallback", () => {
     expect(probes).toHaveLength(1)
   })
 
+  describe("audited Image presentation", () => {
+    it("retains responsive native thumbnails and inherits authored thumbnail rounding", () => {
+      expect(css).toContain(":where(img.mui-image)")
+      expect(css).toContain("max-inline-size: 100%")
+      expect(css).toContain("object-fit: var(--mui-image-fit, fill)")
+      expect(css).toContain("border-radius: inherit")
+      expect(css).not.toContain("cursor: zoom-in")
+    })
+
+    it("centers the natural preview in a transparent viewport instead of a 65vh framed panel", () => {
+      expect(css).toContain("inline-size: 100%")
+      expect(css).toContain("block-size: 100%")
+      expect(css).toContain("max-inline-size: min(100%, calc(100vw - 32px))")
+      expect(css).toContain("max-block-size: min(100%, calc(100vh - 32px))")
+      expect(css).toContain("margin: auto")
+      expect(css).toContain("[data-image-stage] { position: fixed; inset: 0;")
+      expect(css).toContain("background: var(--mui-image-preview-background, transparent)")
+      expect(css).toContain("background: var(--mui-image-backdrop, #0000004d)")
+      expect(css).not.toContain("65vh")
+    })
+
+    it("uses scoped light/dark chrome without assigning public theme overrides", () => {
+      expect(css).toContain(':where([data-mui-theme="dark"]) { --_mui-image-color: #ffffffd1; }')
+      expect(css).toContain(':where([data-mui-theme="light"]) { --_mui-image-color: initial; }')
+      expect(css).toContain("var(--mui-image-preview-color, var(--_mui-image-color, #ffffffe6))")
+      expect(css).toContain("var(--mui-image-toolbar-background, #00000059)")
+      expect(css).not.toMatch(/(?:^|[;{])\s*--mui-image-[\w-]+\s*:/m)
+    })
+
+    it("matches toolbar surface geometry while retaining wrap, native focus and disabled controls", () => {
+      expect(css).toContain("bottom: 40px")
+      expect(css).toMatch(/\[data-image-toolbar\]\s*\{\s*position:\s*fixed;/)
+      expect(css).toContain("min-height: 48px")
+      expect(css).toContain("padding: 0 12px")
+      expect(css).toContain("border-radius: 24px")
+      expect(css).toContain("flex-wrap: wrap")
+      expect(css).toContain("max-width: calc(100% - 32px)")
+      expect(css).toContain("button:disabled { opacity: .5; cursor: default; }")
+      expect(css).not.toMatch(/outline:\s*(?:none|0)\b/)
+      expect(css).toContain("@media (forced-colors: active)")
+      expect(css).toContain("@media print")
+    })
+  })
+
   it("does not loop on a failed fallback or retry the same URL", () => {
     const { root, image, probes } = brokenFixture()
     enhance(root)

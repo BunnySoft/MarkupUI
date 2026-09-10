@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 16/96 scopes.** The other **80** are not yet accepted in this
+**Reviewed and integrated: 17/96 scopes.** The other **79** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -65,7 +65,7 @@ rendered evidence and acceptance report.
 | [Carousel](../naive-ui/components/carousel.md) | ⚪ Pending | — |
 | [Cascader](../naive-ui/components/cascader.md) | ⚪ Pending | — |
 | [Checkbox](../naive-ui/components/checkbox.md) | ⚪ Pending | — |
-| [Code](../naive-ui/components/code.md) | ⚪ Pending | — |
+| [Code](../naive-ui/components/code.md) | 🟠 Reviewing | — |
 | [Collapse Transition](../naive-ui/components/collapse-transition.md) | ⚪ Pending | — |
 | [Collapse](../naive-ui/components/collapse.md) | ⚪ Pending | — |
 | [Color Picker](../naive-ui/components/color-picker.md) | ⚪ Pending | — |
@@ -90,11 +90,11 @@ rendered evidence and acceptance report.
 | [Form](../naive-ui/components/form.md) | ⚪ Pending | — |
 | [Global Style](../naive-ui/components/global-style.md) | 🟢 Fixed / 🟡 Remaining | [Body defaults and opt-in shared-preset boundaries](components/global-style.md) |
 | [Gradient Text](../naive-ui/components/gradient-text.md) | ⚪ Pending | — |
-| [Grid](../naive-ui/components/grid.md) | ⚪ Pending | — |
+| [Grid](../naive-ui/components/grid.md) | 🟠 Reviewing | — |
 | [Heatmap](../naive-ui/components/heatmap.md) | ⚪ Pending | — |
 | [Highlight](../naive-ui/components/highlight.md) | ⚪ Pending | — |
 | [Icon](../naive-ui/components/icon.md) | ⚪ Pending | — |
-| [Image](../naive-ui/components/image.md) | 🟠 Reviewing | — |
+| [Image](../naive-ui/components/image.md) | 🟢 Fixed / 🟡 Remaining | [Preview fitting, chrome and native toolbar limits](components/image.md) |
 | [Infinite Scroll](../naive-ui/components/infinite-scroll.md) | ⚪ Pending | — |
 | [Input Number](../naive-ui/components/input-number.md) | ⚪ Pending | — |
 | [Input OTP](../naive-ui/components/input-otp.md) | ⚪ Pending | — |

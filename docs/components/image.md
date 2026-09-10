@@ -5,6 +5,11 @@ Native thumbnails remain authored `img`/`picture`/links. An optional dependency-
 adds bounded plain-image fallback and an owned, authored-template dialog with previous/next/
 close controls. This is not a gesture/zoom/rotation/fullscreen/download viewer framework.
 
+**Default-style audit: 🟢 thumbnail defaults and preview surfaces verified / 🟡 native
+toolbar differences retained.** The [2026-09-10 rendered report](../style-audit/components/image.md)
+records the corrected viewport fitting and light/dark chrome, separately from the
+historical migration acceptance below.
+
 ## Distribution and loading
 
 | Asset / export | Purpose |
@@ -182,11 +187,47 @@ are not implemented. No fake no-op tool API is exported. Use Open original and o
 browser controls/gestures where appropriate; cross-origin navigation, save permissions
 and data/blob restrictions remain browser-owned. Tests did not perform real downloads.
 
-CSS owns fitting, viewport caps, scrollable dialog/stage layout, backdrop and responsive
+CSS owns fitting, viewport caps, scrollable dialog layout, backdrop and responsive
 controls. JavaScript writes no geometry/style objects or CSS text, so there is no injected
 CSS-in-JS source to authorize; normal trusted template/CSP resource policy still applies.
 No animation, viewer/gesture/icon/modal package or runtime dependency is added. Print hides
 the preview overlay and retains authored images; forced colors preserve readable controls.
+
+### Audited default presentation and author overrides
+
+The preview is now a **transparent viewport-sized native dialog**, not the former white,
+rounded 56rem panel. The backdrop is black at .3 opacity. Images retain natural size
+without upscaling, centered in the viewport with maximum dimensions `100vw - 32px` and
+`100vh - 32px`. Percentage caps additionally keep native fitting usable under CSS zoom.
+The optional stage is a positioning layer; fitting also works without that wrapper.
+Authored close/header, position and error content stays above the image on
+translucent chrome, rather than being removed or hidden to imitate the upstream markup.
+
+The toolbar is centered 40px above the bottom, with 12px horizontal padding, 24px radius,
+black .35 fill, and 48px minimum height. Its width follows the **retained authored text
+controls**, not Naive's nine-icon toolbar. It wraps at narrow widths instead of clipping
+labels. Close stays outside the optional toolbar; controls keep native focus and disabled
+semantics. Thumbnails retain `object-fit: fill` by default and now inherit authored
+rounding from their immediate parent.
+
+Public CSS tokens:
+
+- `--mui-image-fit`: thumbnail object-fit.
+- `--mui-image-preview-color`: foreground for overlay chrome; white .9 by default and
+  white .82 under an explicit dark theme.
+- `--mui-image-preview-background`: dialog surface; transparent by default.
+- `--mui-image-backdrop`: native modal backdrop; black .3 by default.
+- `--mui-image-toolbar-background`: toolbar and authored chrome fill; black .35.
+- `--mui-image-border-color`, `--mui-image-border-width`: optional authored dialog border;
+  the new default is zero width. A formerly customized frame color needs a nonzero border
+  width to remain visible.
+
+Tokens inherit from the author root and are never assigned public defaults by Image CSS.
+`data-mui-theme="dark"` changes only a private Image foreground default; a nested explicit
+light boundary resets it. No aggregate stylesheet or shared palette is required. Typography
+continues to inherit from the document; chrome opacity, geometry and Image theme roles stay
+component-local. Authors can override presentation with ordinary CSS without changing the
+controller or its existing trusted-template contract.
 
 ## Source reconciliation and acceptance
 
