@@ -1,0 +1,6 @@
+.mui-countdown { font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.mui-countdown [data-countdown-units] { display: inline-flex; flex-wrap: wrap; gap: .35em; }
+.mui-countdown:focus-visible, .mui-countdown [data-countdown-text]:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}

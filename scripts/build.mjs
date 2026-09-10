@@ -72,6 +72,8 @@ components.push("calendar")
 classicEntries.calendar = "global.ts"
 components.push("time")
 classicEntries.time = "global.ts"
+components.push("countdown")
+classicEntries.countdown = "global.ts"
 
 await Promise.all([
   build({
@@ -154,6 +156,9 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-countdown.js": 6_000,
+  "markup-ui-countdown.global.js": 6_000,
+  "markup-ui-countdown.css": 750,
   "markup-ui-time.js": 6_000,
   "markup-ui-time.global.js": 6_000,
   "markup-ui-time.css": 500,

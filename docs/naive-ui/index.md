@@ -73,6 +73,9 @@ timestamp/provider claim.
 Time now has [accepted native instant-formatting evidence](../components/time.md):
 pure Intl formatting, explicit Date/epoch units and paired native time/text ownership,
 with opt-in bounded relative refresh rather than a token/provider/clock framework.
+Countdown now has [accepted native elapsed-duration evidence](../components/countdown.md):
+timestamp-derived remaining time, explicit pause/reset/current value, native text/unit
+targets and finish-once delivery, without wall-clock alarm or VNode-renderer claims.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
 are reconciled. **P4 is Verified for retained native scopes:** all 17 assigned routes,
 984 tracker rows and 68 page tasks are resolved, with no Planned P4 routes or unresolved
@@ -81,10 +84,9 @@ retained rows. **P5 is Verified for retained native scopes:** all ten assigned r
 P0 architecture/P6 and full framework parity remain independent.
 The three P0 catalog routes are resolved, and the related Discrete audit remains accepted
 under P3; broader foundation task IDs are not automatically completed.
-**P6 is active:** Carousel, Watermark, Upload, Calendar and Time are accepted; four
-routes remain Planned. Recommended next: **Countdown**, then Number Animation in
-dependency order. Heatmap/Marquee remain separate.
-No next component is implemented in this Time commit.
+**P6 is active:** Carousel, Watermark, Upload, Calendar, Time and Countdown are accepted;
+three routes remain Planned. Recommended next: **Number Animation**, then Heatmap and
+Marquee as independently scoped routes. No next component is implemented in this Countdown commit.
 Component acceptance sections below retain their sign-off snapshots; earlier counts and
 “next”/“In progress” statements are historical, not the current phase dashboard.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
@@ -141,7 +143,7 @@ Avatar's four retained-scope tasks are checked using `9afc818`, Button's four us
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
 Popover through Rate, the subsequent Form/Auto Complete/Input OTP/Dynamic Input/Dynamic
 Tags/Mention/Color Picker/Date Picker/Time Picker records, and now Virtual List each add
-four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style, Carousel, Watermark, Upload, Calendar and Time each add four more. The current total is **352/384 accepted across 88 pages, 32 unchecked**.
+four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style, Carousel, Watermark, Upload, Calendar, Time and Countdown each add four more. The current total is **356/384 accepted across 89 pages, 28 unchecked**.
 P2 retained scopes remain reconciled; the nineteen sequential P3 scopes plus three mixed P2/P3 pages pass the complete P3 audit. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
@@ -2506,6 +2508,50 @@ P0-01–P0-09 open/partial compatibility exceptions remain unchanged.
 only if their actual contracts justify it, not a speculative application clock.
 Heatmap/Marquee remain separate; no next component is started here.
 
+## Countdown accepted
+
+[Canonical Countdown acceptance](../components/countdown.md) closes the sixth retained
+P6 route: native text or explicit unit Text nodes, monotonic elapsed duration rather
+than interval subtraction, separate future duration/current value, active pause/resume,
+reset/new-run generations, bounded rounded display and finish once per current run.
+Rendering suppression does not freeze elapsed time. No absolute wall-clock deadline,
+alarm service, date/animation library, provider, VNode renderer, hidden form value or
+completion sound/network/navigation/focus behavior is added.
+
+**Ten original identities + two source type supplements + two source behavior
+supplements = 14 rows: 12 adapted, two omitted, zero unresolved; four accepted tasks.**
+The VNode renderer and source duration watcher rewrite remain explicitly omitted.
+Native literal formatting/unit targets and explicit reset/current-value rules replace them.
+
+**92 targeted tests pass** (65 Countdown + 27 native/legacy), declarations/build and
+all prior/new budgets pass. Level-nine gzip: **4,588 ESM / 4,717 classic / 208 CSS**
+(raw **11,167 / 11,458 / 322**) under **6,000 / 6,000 / 750** ceilings. Combined
+JS+CSS **4,796 / 4,925**; complete three-file local ESM example **8,479** gzip bytes.
+Previous exports/budgets are unchanged; Time remains **4,767** gzip bytes and
+core/advanced/widgets remain **14,611 / 2,181 / 2,779** under **15,000 / 3,000 / 4,000**.
+
+Dedicated Chromium verified actual elapsed pause/resume, rounded text/duration metadata,
+independent unit nodes, hidden/selected completion without extra finish, error/recovery,
+reentrant reset, late-clock observation, original text/markup/focus/form preservation,
+RTL/zoom/media, no-JS, strict CSP, classic and unchanged Time/legacy coexistence.
+The helper's hard 50ms timeout floor and boundary/completion scheduling avoid source-like
+short-remainder loops. Clock/browser sleep/throttling limits remain explicit; this is not
+an alarm or universal timing/AT guarantee.
+
+**Current catalog: 96 routes / 4,001 rows / 356 of 384 tasks across 89 accepted pages /
+28 unchecked. P6: 267 rows = 157 adapted + 71 omitted + 39 unresolved; six of nine
+specialized routes accepted.** Broad P0-01–P0-09 and legacy stylesheet/auto-install/
+inline-theme exceptions remain open/partial; prior retained P2–P5/P0 routes are unchanged.
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P6 (3 Planned) | Number Animation, Heatmap, Marquee | 39 / 39 |
+| Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Next: Number Animation**, reusing only concrete native timing/text behavior where
+its actual contract warrants it. Heatmap/Marquee remain separate; no next component
+is started in this Countdown commit.
+
 ## Common Components (15)
 
 | Component | Plan direction | Current baseline | Phase |
@@ -2557,7 +2603,7 @@ Heatmap/Marquee remain separate; no next component is started here.
 | Component | Plan direction | Current baseline | Phase |
 | --- | --- | --- | --- |
 | [Calendar](components/calendar.md) | 🟢 Verified native Gregorian table scope; three explicit theme omissions | Optional date-only table/roving buttons; [accepted evidence](../components/calendar.md), no timestamp/grid-role/provider claim | P6 |
-| [Countdown](components/countdown.md) | 🔵 Planned | None | P6 |
+| [Countdown](components/countdown.md) | 🟢 Verified native elapsed-duration scope; two explicit omissions | Optional monotonic text/unit helper; [accepted evidence](../components/countdown.md), no alarm/renderer parity | P6 |
 | [Code](components/code.md) | 🟢 Verified native plain scope; 8 explicit omissions | Native pre/code, authored lines/tokens; [accepted evidence](../components/code.md) | P2; exclusions |
 | [Data Table](components/data-table.md) | 🟢 Verified retained native scope; 135 explicit omissions | Original native rows, sort/filter/page/selection and form reveal; [accepted evidence](../components/data-table.md) | P5 |
 | [Descriptions](components/descriptions.md) | 🟢 Verified retained native scope; 10 explicit omissions | Native terms/definitions and grid spans; [accepted evidence](../components/descriptions.md) | P2 |
@@ -2673,15 +2719,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,487: 370 inline fields, 184 type/helper/exclusion entries (including five Table public helper groups, Virtual List/Tree named ScrollTo types and UploadInst/UploadSettledFileInfo) and 933 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel/Watermark/Upload/Calendar/Time source supplements |
+| Supplementary named declarations | 1,491: 370 inline fields, 186 type/helper/exclusion entries (including five Table public helper groups, Virtual List/Tree named ScrollTo types, UploadInst/UploadSettledFileInfo and CountdownTimeInfo/CountdownInst) and 935 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel/Watermark/Upload/Calendar/Time/Countdown source supplements |
 | Explicit inherited tracker rows | 290, including six source-inherited DialogReactive options, three ModalReactive fields, two NotificationReactive fields and three each Element/Carousel/Watermark/Upload/Calendar theme props |
-| Total tracker rows | 3,997; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 352 retained-scope tasks accepted across 88 component pages, 32 unchecked |
+| Total tracker rows | 4,001; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 356 retained-scope tasks accepted across 89 component pages, 28 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,997 rows retain canonical text with emoji color: 2,036 Verified native adaptations, 1,912 intentional omissions, 46 Not reviewed and three Planned. Time contributes seven adaptations/two omissions; other retained component counts and linked acceptance records are unchanged. |
-| Source agreement | All 2,220 direct source rows and 290 inherited rows remain covered; eight unchanged inventories match extraction; the 88 accepted pages preserve named/grouped identities with explicit dispositions; Time preserves all six original identities/links and adds three source supplements; all four requested foundation-related route inventories remain reconciled |
-| Local links | All 576 scoped Time/reference/index/master file links resolve; earlier Calendar/Upload/Watermark/Carousel/Global Style/four-route/component link snapshots remain historical evidence |
+| Status presentation | All 4,001 rows retain canonical text with emoji color: 2,048 Verified native adaptations, 1,914 intentional omissions, 36 Not reviewed and three Planned. Countdown contributes 12 adaptations/two omissions; other retained component counts and linked acceptance records are unchanged. |
+| Source agreement | All 2,220 direct source rows and 290 inherited rows remain covered; seven unchanged inventories match extraction; the 89 accepted pages preserve named/grouped identities with explicit dispositions; Countdown preserves all ten original identities/links and adds four source/type supplements; all four requested foundation-related route inventories remain reconciled |
+| Local links | All 582 scoped Countdown/reference/index/master file links resolve; earlier Time/Calendar/Upload/Watermark/Carousel/Global Style/four-route/component link snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

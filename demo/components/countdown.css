@@ -1,0 +1,14 @@
+body { margin: 0; font: 1rem/1.5 system-ui, sans-serif; color: #1d3046; background: #f2f6fa; }
+main { max-inline-size: 68rem; margin-inline: auto; padding: 1.5rem; }
+label { display: block; margin-block: .5rem; }
+input, select, button { font: inherit; max-inline-size: 100%; }
+button { min-block-size: 2.75rem; padding: .4rem .65rem; }
+.controls { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; margin-block: 1rem; }
+article, details { padding: 1rem; margin-block: 1rem; background: white; border: 1px solid #bac9d9; border-radius: .5rem; }
+.mui-countdown { font-size: 1.8rem; }
+.zoomed { zoom: 2; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; border: 1px solid #bac9d9; background: white; }
+:focus-visible { outline: 3px solid #175cd3; outline-offset: 2px; }
+[hidden] { display: none !important; }
+footer { min-block-size: 18rem; margin-block-start: 1rem; }
+@media (max-width: 40rem) { main { padding: .75rem; } .mui-countdown { font-size: 1.4rem; } }

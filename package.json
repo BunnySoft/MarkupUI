@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./countdown": {
+      "types": "./dist/components/countdown/index.d.ts",
+      "import": "./dist/markup-ui-countdown.js"
+    },
+    "./countdown/style.css": "./dist/markup-ui-countdown.css",
     "./time": {
       "types": "./dist/components/time/index.d.ts",
       "import": "./dist/markup-ui-time.js"
