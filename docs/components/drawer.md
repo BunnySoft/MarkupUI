@@ -6,6 +6,47 @@ dialog lifetime/CSS. It imports no Modal presentation, Dialog decision footer, S
 Icon, Button, provider, positioning or animation dependency. DrawerContent is authored
 HTML and external CSS, not another custom element or renderer.
 
+## Default-style audit — 2026-09-10
+
+The [rendered audit](../style-audit/components/drawer.md) compares pinned Naive UI
+2.45.3/Vue 3.5.30 Drawer and DrawerContent defaults against this retained native model.
+The default side remains physical **right**; default side width and top/bottom height
+are now **251px**, not 24rem. The outer border is removed, exposed-edge corners use
+**3px** radii, and the measured three-layer shadow is supplied. Header/body/footer
+padding is **16px 24px**, the header is **18px/500 with 18px leading**, and body leading
+is **1.6**. Header/footer dividers use the reference divider colors.
+
+Light/dark scopes use `data-mui-theme="light|dark"`. Surface/body/title colors are
+**white / #333639 / #1f2225** and **#2c2c32 / white .82 / white .9**, not the legacy
+neutral palette. Drawer-only mask paint is **black at .3 alpha**—different from Modal's
+.4. Mask painting does not change native modality, cancellation or opt-in dismissal.
+
+Existing width/height/padding/border/radius/color/background/focus variables remain
+author-owned in all supported directions. The border variable sets color; an authored
+border width is needed if a visible outer border is desired. Radius overrides win over
+the physical/logical corner defaults. Internal corner state resets per surface so nested
+Drawers do not inherit another edge's rounding.
+
+Source DrawerContent is **not closable by default**. Omit the native close form for
+that presentation; no button is generated. If authored, native close keeps the existing
+**2.5rem minimum height**, native hover/disabled behavior and keyboard reachability.
+It is not the source's small SVG close control. With no close, all eight physical-side/
+theme comparisons matched header/body/footer heights, padding, typography, foreground/
+background, shadow and corner paint. Document scrollbar differences remain intentional:
+the native helper does not emulate source body locking or gap compensation.
+
+**216 composed-order/theme/placement/mode cases passed**, including opening on an
+already-scrolled page and further scrolling; **36 print cases passed** across modal,
+modeless and fallback modes. Print explicitly clears every open Drawer's shadow and
+edge sizing, including top/bottom variants. Existing body/header/footer scroll safeguards,
+short-viewport whole-panel scrolling, reduced-motion resets and forced-color borders
+remain intact. **41 Drawer tests pass**.
+
+Private production-equivalent outputs: **3,956 ESM / 4,082 classic / 1,354 composed CSS
+gzip bytes**, below unchanged **4,750 / 4,750 / 1,500** ceilings. No shared native file,
+Modal/Dialog CSS, runtime, dependency, builder or generated entry changed. The historical
+migration acceptance below predates this visual audit.
+
 ## Loading and authored structure
 
 | Entry | Contract |
@@ -117,8 +158,8 @@ Physical left/right **do not flip in RTL**. Logical aliases are intended for hor
 writing modes; vertical-writing behavior is not claimed. Placement is an authored
 attribute, not a JS option or an automatic direction conversion.
 
-- `--mui-drawer-width`: left/right and logical side extent; default **24rem**, not 251px.
-- `--mui-drawer-height`: top/bottom extent; default **24rem**, not 251px.
+- `--mui-drawer-width`: left/right and logical side extent; default **251px**.
+- `--mui-drawer-height`: top/bottom extent; default **251px**.
 - `--mui-drawer-padding/border/radius/color/background/focus`: external appearance tokens.
 - Sizes are CSS lengths capped to **100% of the native fixed containing viewport**.
   Percentage bounds accommodate viewport changes and CSS zoom without multiplying dvh by

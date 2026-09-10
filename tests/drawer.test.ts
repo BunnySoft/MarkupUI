@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { createDrawer, createDrawerOwner } from "../src/components/drawer/index.js"
 import { createModal } from "../src/components/modal/index.js"
@@ -12,6 +13,9 @@ const names = ["showModal", "show", "close", "requestClose"] as const
 const descriptors = new Map<string, PropertyDescriptor | undefined>()
 const flush = async () => { await Promise.resolve(); await Promise.resolve(); await Promise.resolve() }
 const tick = async () => { await new Promise(resolve => setTimeout(resolve, 5)) }
+const drawerCSS = () => readFileSync(resolve("src", "components", "drawer", "drawer.css"), "utf8")
+  .replace(/\s+/g, " ").replace(/\s*([{};,])\s*/g, "$1").replace(/:\s+/g, ":")
+  .replace(/\[([\w-]+)="([\w-]+)"\]/g, "[$1=$2]").replace(/;}/g, "}").trim()
 function fixture() {
   const host = document.createElement("div")
   host.innerHTML = `<button data-opener type="button">Open</button><dialog class="mui-native-dialog mui-drawer" aria-label="Drawer details"><form class="mui-drawer-content" method="dialog"><header data-drawer-header><h3 data-drawer-title>Authored level three</h3></header><div data-drawer-body tabindex="0" aria-label="Details"><div data-drawer-body-content><label>Reference <input required name="reference"></label><p>Details</p></div></div><footer data-drawer-footer><button value="saved">Save</button><button value="closed" formnovalidate>Close</button><button value="cancelled" formnovalidate>Cancel</button></footer></form></dialog>`
@@ -278,19 +282,66 @@ describe("Drawer backdrop and template owners", () => {
     expect(() => o.create(template(), { title: "Text" } as never)).toThrow(/text/)
   })
   it("ships native edge/body CSS without custom resizer, scroll-lock or animation dependencies", () => {
-    const css = readFileSync(resolve("src", "components", "drawer", "drawer.css"), "utf8")
+    const css = drawerCSS()
     for (const name of ["left", "right", "top", "bottom", "inline-start", "inline-end"]) expect(css).toContain(name)
-    expect(css).toContain("height: min(var(--mui-drawer-height")
+    expect(css).toContain("height:min(var(--mui-drawer-height")
     expect(css).toContain("dialog.mui-native-dialog.mui-drawer")
     expect(css).toContain("[data-drawer-body]")
-    expect(css).toContain("min-block-size: 3rem")
-    expect(css).toContain("(max-height: 20rem)")
-    expect(css).toContain("overflow: auto")
+    expect(css).toContain("min-block-size:3rem")
+    expect(css).toContain("(max-height:20rem)")
+    expect(css).toContain("overflow:auto")
     expect(css).toContain("forced-colors")
     expect(css).toContain("prefers-reduced-motion")
     expect(css).toContain("@media print")
     expect(css).not.toContain(":has(")
     expect(css).not.toContain("resize:")
     expect(css).not.toContain("@keyframes")
+  })
+  it("uses measured default dimensions, region padding and header typography", () => {
+    const css = drawerCSS()
+    expect(css).toContain("width:min(var(--mui-drawer-width,251px),100%)")
+    expect(css).toContain("height:min(var(--mui-drawer-height,251px),100%)")
+    expect(css).toContain("padding:var(--mui-drawer-padding,16px 24px)")
+    expect(css).toContain("font-size:18px;font-weight:500;line-height:1")
+    expect(css).toContain("font:inherit;line-height:1.6")
+    expect(css).not.toContain("24rem")
+  })
+  it("keeps physical and logical corner mappings private and author overrides intact", () => {
+    const css = drawerCSS()
+    expect(css).toContain("--_drawer-radius:initial")
+    expect(css).toContain("border-radius:var(--mui-drawer-radius,var(--_drawer-radius,3px 0 0 3px))")
+    expect(css).toContain("[data-drawer-placement=left]{left:0;right:auto;--_drawer-radius:0 3px 3px 0}")
+    expect(css).toContain("[data-drawer-placement=inline-start]:dir(ltr),[data-drawer-placement=inline-end]:dir(rtl)")
+    expect(css).toContain("[data-drawer-placement=top]{bottom:auto;--_drawer-radius:0 0 3px 3px}")
+    expect(css).toContain("[data-drawer-placement=bottom]{top:auto;bottom:0;--_drawer-radius:3px 3px 0 0}")
+    for (const name of ["width", "height", "padding", "border", "radius", "color", "background", "focus"]) {
+      expect(css).not.toMatch(new RegExp(`--mui-drawer-${name}:`))
+    }
+  })
+  it("uses Drawer-specific neutral paint and mask without weakening repeated-base guards", () => {
+    const css = drawerCSS()
+    expect(css).toContain("dialog.mui-native-dialog.mui-drawer{")
+    expect(css).toContain("light-dark(#333639,#ffffffd1)")
+    expect(css).toContain("light-dark(#fff,#2c2c32)")
+    expect(css).toContain("light-dark(#efeff5,#ffffff17)")
+    expect(css).toContain("0 6px 16px -9px #00000014,0 9px 28px #0000000d,0 12px 48px 16px #00000008")
+    expect(css).toContain("dialog.mui-native-dialog.mui-drawer::backdrop{background:rgb(0 0 0 / 30%)}")
+    expect(css).not.toMatch(/--mui-(?:text-primary|text-secondary|bg-surface|border),/)
+  })
+  it("preserves fixed modality, control and scrolling safety, and all-mode print resets", () => {
+    const css = drawerCSS()
+    expect(css).toContain("dialog.mui-drawer:modal{position:fixed;top:0;bottom:0;right:0;left:auto;height:100%;margin:0}")
+    expect(css).not.toContain("position:relative")
+    expect(css).toContain("min-block-size:2.5rem;white-space:normal")
+    expect(css).toContain("max-block-size:35%")
+    expect(css).toContain("animation:none;transition:none;scroll-behavior:auto")
+    expect(css).toContain("border:1px solid CanvasText;box-shadow:none")
+    expect(css).toContain("@media print{dialog.mui-native-dialog.mui-drawer[open]{position:static;inset:auto;width:100%;height:auto;max-block-size:none;margin:0;box-shadow:none}")
+    expect(css).toContain("dialog.mui-native-dialog.mui-drawer::backdrop{background:transparent}")
+  })
+  it("keeps exact production composed CSS inside its unchanged gzip ceiling", () => {
+    const native = readFileSync(resolve("src", "components", "dialog", "native.css"), "utf8")
+    const css = readFileSync(resolve("src", "components", "drawer", "drawer.css"), "utf8")
+    expect(gzipSync(`${native}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(1500)
   })
 })

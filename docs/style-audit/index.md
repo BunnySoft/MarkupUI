@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 49/96 scopes.** The other **47** are not yet accepted in this
+**Reviewed and integrated: 50/96 scopes.** The other **46** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -80,7 +80,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Dialog](../naive-ui/components/dialog.md) | 🟢 Fixed / 🟡 Remaining | [Surface/action styling with protected modality, load order and native limits](components/dialog.md) |
 | [Discrete API](../naive-ui/components/discrete.md) | ⚪ Pending | — |
 | [Divider](../naive-ui/components/divider.md) | 🟢 Fixed / 🟡 Remaining | [Rule geometry, colors and native orientation limits](components/divider.md) |
-| [Drawer](../naive-ui/components/drawer.md) | ⚪ Pending | — |
+| [Drawer](../naive-ui/components/drawer.md) | 🟢 Fixed / 🟡 Remaining | [Edge geometry, theme surfaces and protected native modes/scrolling](components/drawer.md) |
 | [Dropdown](../naive-ui/components/dropdown.md) | 🟠 Reviewing | — |
 | [Dynamic Input](../naive-ui/components/dynamic-input.md) | ⚪ Pending | — |
 | [Dynamic Tags](../naive-ui/components/dynamic-tags.md) | ⚪ Pending | — |
