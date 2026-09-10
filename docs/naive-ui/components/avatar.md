@@ -23,7 +23,8 @@ standalone implementation is now committed as `9afc818`.
 - **JS:** the standalone controllers adopt nodes, synchronize retained attributes, own
   listeners/observers and move overflow members without recreating them.
 - **CSS:** external component CSS owns appearance. Numeric size and the object-fit convenience
-  attribute write isolated CSS properties; use preset sizes/stylesheet tokens for strict CSP.
+  attribute write isolated CSS properties; automatic fitting also writes a private scale
+  property on the content wrapper. Account for these inline CSSOM writes in strict CSP.
 - **Placement:** implemented under `src/components/avatar/`; not added to the aggregate core.
 
 ## Acceptance and gaps
@@ -40,7 +41,9 @@ normal 14px text and `#ccc` light background. Group members remain round. `squar
 explicitly supported, and `round` wins if both attributes occur.
 Native loading replaces observer configuration. Framework render callbacks, data-option
 rendering, arbitrary rest rendering and hover-only expansion are excluded. Automatic text
-fitting is simplified to CSS font sizing/ellipsis. See A1 for exact bounds and limitations.
+fitting uses the pinned 90%-of-outer-box scale rule, with scoped ResizeObserver updates and
+preserved text/node ownership. The new default-style follow-up supersedes the migration's
+font-sizing/ellipsis simplification. See A1 for exact bounds and limitations.
 
 ## Standalone loading and budgets
 
@@ -121,7 +124,7 @@ all-browser behavior. Textual statuses and explicit omission reasons are authori
 | [`render-fallback`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L33) | Prop | No render callback/VNode API; use the accepted authored fallback template/span below. | ⏭️ Intentionally omitted | A1: framework rendering excluded; native content alternative verified separately. |
 | [`render-placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L34) | Prop | No render callback/VNode API; use the accepted authored placeholder template/span below. | ⏭️ Intentionally omitted | A1: framework rendering excluded; native content alternative verified separately. |
 | [`round`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L35) | Prop | Default 3px-radius square; `round` opts into a circle and wins over explicit `square`. Groups default round. | 🟢 Verified | A1/S3 and rendered default-style audit; supersedes the old intentional difference. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L36) | Prop | `size` / `.size`: tiny 22px, small 28px, medium/default 34px, large 40px, huge 46px or positive numeric pixels; borders add 4px. | 🟢 Verified | A1/S1/S3: numeric convenience writes isolated CSS; use presets/tokens for strict CSP. |
+| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L36) | Prop | `size` / `.size`: tiny 22px, small 28px, medium/default 34px, large 40px, huge 46px or positive numeric pixels; borders add 4px. | 🟢 Verified | A1/S1/S3: numeric convenience and text fitting use CSSOM writes; see A1's CSP note. |
 | [`src`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L37) | Prop | `src` / `.src` or authored direct image; source changes restart loading while preserving nodes. | 🟢 Verified | A1/S1: source, authored-image and reconnect tests. |
 | [`on-error`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L38) | Callback | Bubbling `mui:error` detail contains `src`, `fallback`, `state`; handler return values do not control fallback. | 🟢 Verified | A1/S1: explicit notification adaptation. |
 

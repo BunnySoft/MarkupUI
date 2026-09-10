@@ -5,6 +5,7 @@ import { MuiAvatar, MuiAvatarGroup, registerAvatar } from "../src/components/ava
 afterEach(() => {
   document.body.replaceChildren()
   vi.restoreAllMocks()
+  vi.unstubAllGlobals()
 })
 
 function avatar(markup: string): MuiAvatar {
@@ -169,7 +170,8 @@ describe("standalone Avatar", () => {
     expect(element.style.getPropertyValue("--mui-avatar-size")).toBe("60px")
     expect(element.style.getPropertyValue("--mui-avatar-object-fit")).toBe("contain")
     // JSDOM drops custom-property priorities; verify the native API passthrough here.
-    vi.spyOn(element.style, "getPropertyPriority").mockReturnValue("important")
+    vi.spyOn(element.style, "getPropertyPriority").mockImplementation((name) =>
+      ["60px", "contain"].includes(element.style.getPropertyValue(name)) ? "important" : "")
     const write = vi.spyOn(element.style, "setProperty")
     element.size = 52
     element.setAttribute("object-fit", "cover")
@@ -218,14 +220,155 @@ describe("standalone Avatar", () => {
         }
       }
     })
-    it("uses real group borders, reference overlap, bounded text and native focus", () => {
+    it("uses real group borders, reference overlap, natural-width fitted text and native focus", () => {
       expect(css).toContain("var(--mui-avatar-overlap, -12px)")
       expect(css).not.toContain("outline: 2px solid var(--mui-avatar-group-background")
       expect(css).toContain("line-height: 1.25")
-      expect(css).toContain("text-overflow: ellipsis")
+      expect(css).toContain("inline-size: max-content")
+      expect(css).toContain("scale(var(--mui-avatar-text-scale, 1))")
+      expect(css).not.toContain("text-overflow: ellipsis")
       expect(css).toContain("summary:focus-visible")
       expect(css).toContain("@media (prefers-reduced-motion: reduce)")
     })
+  })
+})
+
+describe("Avatar text fitting", () => {
+  function measure() {
+    const observers: Array<{ notify: () => void; observe: ReturnType<typeof vi.fn>; unobserve: ReturnType<typeof vi.fn>; disconnect: ReturnType<typeof vi.fn> }> = []
+    vi.stubGlobal("ResizeObserver", class {
+      observe = vi.fn()
+      unobserve = vi.fn()
+      disconnect = vi.fn()
+      constructor(public notify: () => void) { observers.push(this) }
+    })
+    const dimensions = { textWidth: 65, textHeight: 18 }
+    vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockImplementation(function (this: HTMLElement) {
+      if (this.hidden) return 0
+      if (this.matches("mui-avatar")) return Number.parseFloat(this.style.getPropertyValue("--mui-avatar-size")) || 34
+      return this.textContent === "AB" ? 17 : dimensions.textWidth
+    })
+    vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockImplementation(function (this: HTMLElement) {
+      if (this.hidden) return 0
+      return this.matches("mui-avatar") ? Number.parseFloat(this.style.getPropertyValue("--mui-avatar-size")) || 34 : dimensions.textHeight
+    })
+    return { observers, dimensions }
+  }
+  const scale = (element: Element) => Number((element as HTMLElement).style.getPropertyValue("--mui-avatar-text-scale"))
+
+  it("fits initial natural text to 90% of the outer box without replacing nodes or author transforms", () => {
+    const { observers } = measure()
+    const element = document.createElement("mui-avatar")
+    const text = document.createElement("span")
+    text.dataset.muiAvatarContent = ""
+    text.textContent = "Alexandria"
+    text.style.transform = "rotate(2deg)"
+    const click = vi.fn()
+    text.addEventListener("click", click)
+    element.append(text)
+    document.body.append(element)
+    expect(scale(text)).toBe(34 / 65 * .9)
+    expect(text.style.transform).toBe("rotate(2deg)")
+    expect(element.firstElementChild).toBe(text)
+    text.click()
+    expect(click).toHaveBeenCalledOnce()
+    expect(observers[0].observe).toHaveBeenCalledWith(element, { box: "border-box" })
+    expect(observers[0].observe).toHaveBeenCalledWith(text)
+  })
+
+  it("refits character data and nested child replacement while keeping the full accessible label", async () => {
+    measure()
+    const element = avatar("<mui-avatar><strong>Alexandria</strong></mui-avatar>")
+    const text = element.querySelector<HTMLElement>("[data-mui-avatar-content]")!
+    const strong = element.querySelector("strong")!
+    expect(scale(text)).toBe(34 / 65 * .9)
+    strong.firstChild!.nodeValue = "AB"
+    await Promise.resolve()
+    expect(scale(text)).toBe(1)
+    expect(element.getAttribute("aria-label")).toBe("AB")
+    strong.textContent = "Alexandria"
+    await Promise.resolve()
+    expect(scale(text)).toBe(34 / 65 * .9)
+    expect(element.getAttribute("aria-label")).toBe("Alexandria")
+    expect(element.querySelector("strong")).toBe(strong)
+  })
+
+  it("refits numeric sizes and resize/font changes using untransformed width and height", () => {
+    const { observers, dimensions } = measure()
+    const element = avatar("<mui-avatar>Alexandria</mui-avatar>")
+    const text = element.querySelector("[data-mui-avatar-content]")!
+    element.size = 22
+    expect(scale(text)).toBe(22 / 65 * .9)
+    element.size = 100
+    expect(scale(text)).toBe(1)
+    dimensions.textWidth = 200
+    observers[0].notify()
+    expect(scale(text)).toBe(100 / 200 * .9)
+    dimensions.textHeight = 300
+    observers[0].notify()
+    expect(scale(text)).toBe(100 / 300 * .9)
+    const write = vi.spyOn((text as HTMLElement).style, "setProperty")
+    observers[0].notify()
+    expect(write).not.toHaveBeenCalled()
+  })
+
+  it("fits only visible content, then recalculates when placeholder, fallback or text is revealed", () => {
+    const { dimensions } = measure()
+    const element = avatar(`<mui-avatar src="/missing.png">Alexandria
+      <template data-mui-avatar-placeholder>Loading profile</template>
+      <template data-mui-avatar-fallback>Unavailable profile</template>
+    </mui-avatar>`)
+    const content = element.querySelector<HTMLElement>("[data-mui-avatar-content]")!
+    const placeholder = element.querySelector<HTMLElement>("span[data-mui-avatar-placeholder]")!
+    const fallback = element.querySelector<HTMLElement>("span[data-mui-avatar-fallback]")!
+    expect(scale(placeholder)).toBe(34 / 65 * .9)
+    expect(content.style.getPropertyValue("--mui-avatar-text-scale")).toBe("")
+    expect(fallback.style.getPropertyValue("--mui-avatar-text-scale")).toBe("")
+    dimensions.textWidth = 100
+    element.querySelector("img")!.dispatchEvent(new Event("error"))
+    expect(scale(fallback)).toBe(34 / 100 * .9)
+    element.src = ""
+    expect(content.hidden).toBe(false)
+    expect(scale(content)).toBe(34 / 100 * .9)
+  })
+
+  it("unobserves replaced content and disconnects all measurements until reconnection", async () => {
+    const { observers, dimensions } = measure()
+    const element = avatar("<mui-avatar>Alexandria</mui-avatar>")
+    const text = element.querySelector<HTMLElement>("[data-mui-avatar-content]")!
+    element.textContent = "AB"
+    await Promise.resolve()
+    expect(observers[0].unobserve).toHaveBeenCalledWith(text)
+    const replacement = element.querySelector<HTMLElement>("[data-mui-avatar-content]")!
+    expect(scale(replacement)).toBe(1)
+    element.remove()
+    expect(observers[0].disconnect).toHaveBeenCalledOnce()
+    replacement.textContent = "Alexandria"
+    dimensions.textWidth = 100
+    observers[0].notify()
+    expect(scale(replacement)).toBe(1)
+    document.body.append(element)
+    expect(observers).toHaveLength(2)
+    expect(scale(replacement)).toBe(34 / 100 * .9)
+    expect(observers[1].observe).toHaveBeenCalledWith(replacement)
+  })
+
+  it("does not erase an authored size/fit override on unrelated synchronization", () => {
+    measure()
+    const element = avatar('<mui-avatar size="52" object-fit="cover">Alexandria</mui-avatar>')
+    element.style.setProperty("--mui-avatar-size", "60px")
+    element.style.setProperty("--mui-avatar-object-fit", "contain")
+    element.alt = "Profile"
+    element.remove()
+    document.body.append(element)
+    expect(element.style.getPropertyValue("--mui-avatar-size")).toBe("60px")
+    expect(element.style.getPropertyValue("--mui-avatar-object-fit")).toBe("contain")
+    element.size = 48
+    element.setAttribute("object-fit", "fill")
+    element.removeAttribute("size")
+    element.removeAttribute("object-fit")
+    expect(element.style.getPropertyValue("--mui-avatar-size")).toBe("60px")
+    expect(element.style.getPropertyValue("--mui-avatar-object-fit")).toBe("contain")
   })
 })
 

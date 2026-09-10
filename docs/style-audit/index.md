@@ -49,7 +49,7 @@ through the remaining catalog one component at a time.
 | [Alert](../naive-ui/components/alert.md) | ⚪ Pending | — |
 | [Anchor](../naive-ui/components/anchor.md) | ⚪ Pending | — |
 | [Auto Complete](../naive-ui/components/auto-complete.md) | ⚪ Pending | — |
-| [Avatar](../naive-ui/components/avatar.md) | 🟢 Fixed / 🟡 Remaining | [Completed audit and native limitations](components/avatar.md) |
+| [Avatar](../naive-ui/components/avatar.md) | 🟢 Fixed | [Defaults including text fit; architectural boundaries](components/avatar.md) |
 | [Back Top](../naive-ui/components/back-top.md) | ⚪ Pending | — |
 | [Badge](../naive-ui/components/badge.md) | ⚪ Pending | — |
 | [Breadcrumb](../naive-ui/components/breadcrumb.md) | ⚪ Pending | — |

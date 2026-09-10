@@ -8,6 +8,8 @@ export class MuiAvatar extends MuiElement {
   private image: HTMLImageElement | undefined
   private generatedImage: HTMLImageElement | undefined
   private observer: MutationObserver | undefined
+  private resizeObserver: ResizeObserver | undefined
+  private readonly textElements = new Set<HTMLElement>()
   private source = ""
   private fallbackImageSource: string | undefined
   private fallbackAttempted = false
@@ -25,6 +27,10 @@ export class MuiAvatar extends MuiElement {
   private state: "empty" | "loading" | "loaded" | "error" = "empty"
 
   public connectedCallback(): void {
+    if (typeof ResizeObserver !== "undefined") {
+      this.resizeObserver = new ResizeObserver(this.fitText)
+      this.resizeObserver.observe(this, { box: "border-box" })
+    }
     if (!this.upgraded) {
       this.upgraded = true
       for (const name of ["src", "fallbackSrc", "alt", "lazy", "size"]) {
@@ -42,12 +48,16 @@ export class MuiAvatar extends MuiElement {
     this.connectedOnce = true
     this.observer = new MutationObserver((records) => {
       if (records.some(({ target }) => target === this || target === this.image)) this.synchronize()
+      else this.update()
     })
-    this.observer.observe(this, { childList: true, subtree: true, attributes: true, attributeFilter: ["src", "alt"] })
+    this.observer.observe(this, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ["src", "alt"] })
   }
 
   public disconnectedCallback(): void {
     this.observer?.disconnect()
+    this.resizeObserver?.disconnect()
+    this.resizeObserver = undefined
+    this.textElements.clear()
     this.unlisten()
   }
 
@@ -109,28 +119,37 @@ export class MuiAvatar extends MuiElement {
 
     const numericSize = Number(this.getAttribute("size"))
     if (Number.isFinite(numericSize) && numericSize > 0) {
-      if (this.sizeOverride === undefined) {
-        this.authoredSize = this.style.getPropertyValue("--mui-avatar-size")
-        this.authoredSizePriority = this.style.getPropertyPriority("--mui-avatar-size")
+      const value = `${numericSize}px`
+      if (this.sizeOverride !== value) {
+        if (this.style.getPropertyValue("--mui-avatar-size") !== this.sizeOverride
+          || this.style.getPropertyPriority("--mui-avatar-size")) {
+          this.authoredSize = this.style.getPropertyValue("--mui-avatar-size")
+          this.authoredSizePriority = this.style.getPropertyPriority("--mui-avatar-size")
+        }
+        this.style.setProperty("--mui-avatar-size", value)
+        this.sizeOverride = value
       }
-      this.style.setProperty("--mui-avatar-size", `${numericSize}px`)
-      this.sizeOverride = `${numericSize}px`
     } else if (this.sizeOverride !== undefined) {
-      if (this.style.getPropertyValue("--mui-avatar-size") === this.sizeOverride) {
+      if (this.style.getPropertyValue("--mui-avatar-size") === this.sizeOverride
+        && !this.style.getPropertyPriority("--mui-avatar-size")) {
         this.style.setProperty("--mui-avatar-size", this.authoredSize, this.authoredSizePriority)
       }
       this.sizeOverride = undefined
     }
     const fit = this.getAttribute("object-fit")
     if (fit && ["fill", "contain", "cover", "none", "scale-down"].includes(fit)) {
-      if (this.fitOverride === undefined) {
-        this.authoredFit = this.style.getPropertyValue("--mui-avatar-object-fit")
-        this.authoredFitPriority = this.style.getPropertyPriority("--mui-avatar-object-fit")
+      if (this.fitOverride !== fit) {
+        if (this.style.getPropertyValue("--mui-avatar-object-fit") !== this.fitOverride
+          || this.style.getPropertyPriority("--mui-avatar-object-fit")) {
+          this.authoredFit = this.style.getPropertyValue("--mui-avatar-object-fit")
+          this.authoredFitPriority = this.style.getPropertyPriority("--mui-avatar-object-fit")
+        }
+        this.style.setProperty("--mui-avatar-object-fit", fit)
+        this.fitOverride = fit
       }
-      this.style.setProperty("--mui-avatar-object-fit", fit)
-      this.fitOverride = fit
     } else if (this.fitOverride !== undefined) {
-      if (this.style.getPropertyValue("--mui-avatar-object-fit") === this.fitOverride) {
+      if (this.style.getPropertyValue("--mui-avatar-object-fit") === this.fitOverride
+        && !this.style.getPropertyPriority("--mui-avatar-object-fit")) {
         this.style.setProperty("--mui-avatar-object-fit", this.authoredFit, this.authoredFitPriority)
       }
       this.fitOverride = undefined
@@ -189,6 +208,34 @@ export class MuiAvatar extends MuiElement {
     if (!this.hasAttribute("aria-label") || this.getAttribute("aria-label") === this.label) {
       this.setAttribute("aria-label", label)
       this.label = label
+    }
+    const elements = new Set([content, fallback, placeholder].filter((element): element is HTMLElement => element !== null))
+    for (const element of this.textElements) {
+      if (!elements.has(element)) {
+        this.resizeObserver?.unobserve(element)
+        this.textElements.delete(element)
+      }
+    }
+    for (const element of elements) {
+      if (!this.textElements.has(element)) {
+        this.textElements.add(element)
+        this.resizeObserver?.observe(element)
+      }
+    }
+    this.fitText()
+  }
+
+  private readonly fitText = (): void => {
+    if (!this.isConnected) return
+    const width = this.offsetWidth, height = this.offsetHeight
+    if (!width || !height) return
+    for (const element of this.textElements) {
+      const textWidth = element.offsetWidth, textHeight = element.offsetHeight
+      if (element.hidden || !textWidth || !textHeight) continue
+      const scale = String(Math.min(width / textWidth * .9, height / textHeight * .9, 1))
+      if (element.style.getPropertyValue("--mui-avatar-text-scale") !== scale) {
+        element.style.setProperty("--mui-avatar-text-scale", scale)
+      }
     }
   }
 

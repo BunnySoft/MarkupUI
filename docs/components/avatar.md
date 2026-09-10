@@ -86,14 +86,16 @@ over generated host semantics.
 | Default content | Authored text/image/icon nodes. | 🟢 Verified without a VNode renderer. |
 | Fallback slot | `template[data-mui-avatar-fallback]` or authored `span[data-mui-avatar-fallback]`. | 🟢 Verified as light-DOM content, not native slot projection. |
 | Placeholder slot | `template[data-mui-avatar-placeholder]` or authored `span[data-mui-avatar-placeholder]`. | 🟢 Verified as light-DOM content. |
-| Automatic text fitting | CSS font size token and ellipsis for overflow. | ⏭️ Intentionally simplified; no JS text-measurement engine. |
+| Automatic text fitting | Natural-width text scaled by `min(0.9 × hostWidth / textWidth, 0.9 × hostHeight / textHeight, 1)`. | 🟢 Verified against rendered Naive short/long text; scoped native ResizeObserver updates fit without replacing content or truncating labels. |
 | Theme/render framework plumbing | External CSS, native children and DOM events. | ⏭️ Framework-specific API compatibility is intentionally omitted. |
 
 `mui:load` is an additional bubbling notification with `{ src }`. State is exposed through
 `data-mui-avatar-state="empty|loading|loaded|error"`. Property assignment does not fabricate
 user input/change events. Numeric `size` and the `object-fit` convenience attribute write
-isolated CSS custom properties; use stylesheet tokens and preset sizes when avoiding inline
-style mutations is required by your CSP.
+isolated CSS custom properties. Automatic text fitting also writes its private
+`--mui-avatar-text-scale` value on the content wrapper; account for these inline CSSOM writes
+in your CSP. The component does not inject stylesheets or change authored font-size/transform
+declarations.
 
 Default text is white, 14px, inherited normal weight; its line-height is 1.25. Light
 background is `#ccc`; explicit `data-mui-theme="dark"` uses `#424245` and `#18181c`
@@ -101,9 +103,19 @@ border (light border is white). `--mui-avatar-size`, `--mui-avatar-font-size`,
 `--mui-avatar-radius`, `--mui-avatar-background`, `--mui-avatar-color`,
 `--mui-avatar-border-color` and `--mui-avatar-object-fit` remain author overrides.
 Numeric size/fit attributes temporarily override authored inline tokens and restore them
-when removed; source updates and reconnection no longer erase unrelated inline tokens.
+when removed; source/text updates and reconnection do not erase later author changes,
+even while the corresponding convenience attribute remains present.
 Named child sizes override inherited group sizing; an authored inline `--mui-avatar-size`
 can override a named preset. Ordinary CSS specificity/cascade governs stylesheet overrides.
+
+Text is measured with untransformed integer `offsetWidth`/`offsetHeight`, including the
+host border, as in the pinned reference. A single native ResizeObserver per connected Avatar
+watches the host and content/placeholder/fallback wrappers; the existing MutationObserver
+handles text/node changes. Size, font loading/font changes and newly visible content refit.
+Observers disconnect when detached; reconnect measures existing nodes again. Text, accessible
+labels and listeners remain intact. Without ResizeObserver, initial and attribute/text-triggered
+fitting still works, but CSS-only/font resize changes are not observed. This fallback is not a
+polyfill or a certification of older browsers.
 
 ## Group
 

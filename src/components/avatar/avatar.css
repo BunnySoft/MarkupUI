@@ -40,7 +40,7 @@ mui-avatar[bordered] { border: 2px solid var(--mui-avatar-border-color, var(--mu
 }
 mui-avatar > img, mui-avatar > span { grid-area: 1 / 1; }
 mui-avatar[data-mui-avatar-state="loading"] > img { visibility: hidden; }
-mui-avatar > span { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%); max-inline-size: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.25; }
+mui-avatar > span { position: absolute; inset: 50% auto auto 50%; transform: translate(-50%, -50%) scale(var(--mui-avatar-text-scale, 1)); inline-size: max-content; white-space: nowrap; line-height: 1.25; }
 mui-avatar > [hidden] { display: none !important; }
 mui-avatar-group { display: inline-flex; align-items: center; isolation: isolate; }
 mui-avatar-group > mui-avatar + mui-avatar,

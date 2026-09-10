@@ -36,6 +36,9 @@ default. No Button work is included. No runtime dependency or budget was added.
   **after** Avatar registration. `?core&reverse` reverses external CSS order.
   `?core&legacy` loads only the legacy Avatar definition/CSS; groups there are intentionally
   unregistered, illustrating the documented entrypoint boundary.
+  Text-fit follow-up routes use `?fit` for Alexandria in every text/group case and `?font=28`
+  for an explicit font-size override. Combine with `&dark`, `&core`, or `&core&reverse`.
+  These are labeled variants; the unqualified routes retain normal defaults.
 - Separate documents isolate both libraries' styles. Same Chromium **151.0.7922.174**,
   Windows font environment, **1000×1250 CSS-pixel viewport, DPR 1**, `AB`/`Alexandria` labels,
   and local image. No webfont downloaded; the common `v-sans` stack falls through to the
@@ -63,7 +66,7 @@ Unless separately stated, “after” applies to both. Sources of fixes:
 | Default and square shape | 3px radius, not round | Native default 50%, square 4px; legacy 50%, ignored square | A/L: default/square 3px; explicit round 50% | Fixed |
 | Light fill | rgb(204,204,204), composited card/avatar color | rgb(243,244,246) | A/L: `#ccc` | Fixed |
 | Light text / weight | White, inherited normal weight (400 here), 14px | rgb(82,82,91), 700; native already 14px | A/L: rgb(255,255,255), 400, 14px | Fixed; font size matched |
-| Text leading / centering | Text line-height 17.5px; `AB` box 17.0625×17.5 | Native line-height 16.8px; box 18.828125×16.796875 due also to bold weight; legacy host 21px | A: absolute-centered bounded text at 1.25; L: raw text at 1.25. `AB` glyph Range is 17.0625×19 at relative offset (8.46875,7.25) in **both** native and legacy, identical to Naive | Fixed |
+| Text leading / centering | Text line-height 17.5px; `AB` box 17.0625×17.5 | Native line-height 16.8px; box 18.828125×16.796875 due also to bold weight; legacy host 21px | A: absolute-centered natural-width text at 1.25; L: raw text at 1.25. `AB` glyph Range is 17.0625×19 at relative offset (8.46875,7.25) in **both** native and legacy, identical to Naive | Fixed |
 | Inline alignment | Baseline | Native `vertical-align:middle` | A: baseline; text-only host now has the same positioned-content baseline anatomy as reference | Fixed |
 | Border and outer box | 2px solid white, content-box; outer 38×38 | Native 1px solid rgb(228,228,231), border-box outer 36×36; legacy ignored bordered | A/L: 2px white, content-box, outer 38×38 | Fixed |
 | Default image fit | Native unset object-fit computes to `fill`; rendered 34×34 image | `cover`, 36×36; cropped the 2:1 test image | A/L: `fill`, 34×34 loaded image; explicit cover/contain retained | Fixed |
@@ -75,16 +78,77 @@ Unless separately stated, “after” applies to both. Sources of fixes:
 | Authored inline size token | Explicit 60px override renders 60px | Native controller erased `--mui-avatar-size` on upgrade/source updates; result 36px. Legacy ignored Avatar tokens | B preserves/restores owned convenience overrides; A/L consume tokens. 60px/9px-radius, 18px monospace/600, rgb(1,2,3) fill and rgb(4,5,6) text all render as authored | Fixed coupled ownership defect |
 | Shared document font family | `v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"` | Standalone global fallback system-ui/sans-serif; core began Inter/ui-sans-serif and lacked emoji fallbacks | G/L exact common stack; computed family identical on native/core/legacy. No font assets added | Fixed verified shared default |
 | Shared body size / leading | 14px / 22.4px (1.6) | Global fallback 16px / 24px (1.5); core 14px / 21px | G/L: 14px / 22.4px | Fixed verified shared default |
+| Long-text fitting | Alexandria scale 0.470769, visual bounds 30.526428×8.238464px at default size | At first-pass `ac6b260`, standalone remained 34×17.5px, scale 1, with ellipsis | Follow-up A/B: natural text is 65×18 integer layout pixels; native scale 0.47076923076923083, visual bounds exactly 30.526428×8.238464px | Fixed; no ellipsis/shrink proxy |
+| Author override retained during unrelated synchronization | Later author size/fit changes remain authoritative until the convenience attribute itself changes | Even after first pass, an unchanged numeric size/fit attribute could overwrite a newer inline token when alt/src changed or the element reconnected | B now writes convenience styles only when that attribute value changes; preserves newer author values/priorities and restores them after subsequent temporary overrides | Fixed coupled style-ownership defect |
+
+## Text-fitting follow-up
+
+The earlier migration's “no measurement engine” omission is superseded. This is a small,
+Avatar-local implementation, not a new dependency or generic layout engine. It uses the
+source rule from `Avatar.tsx`:
+
+`scale = min(0.9 × host.offsetWidth / text.offsetWidth, 0.9 × host.offsetHeight / text.offsetHeight, 1)`.
+
+Integer **untransformed** layout dimensions are important: Alexandria's natural width is
+64.84375 CSS pixels, but `offsetWidth` is 65, matching the reference calculation. CSS retains
+natural width and applies centered translation followed by scaling. The private computed
+scale does not overwrite author font-size, transform, text, labels, or child nodes.
+
+One native ResizeObserver watches the host border box and its content/placeholder/fallback
+wrappers. The existing MutationObserver now handles character data and nested child changes.
+Initial render, numeric sizing, CSS-only sizing, font metrics, border changes and newly
+visible fallback/text all refit; hidden zero-size elements are skipped. Removed wrappers are
+unobserved. Detach disconnects both observers, and reconnect measures the same nodes anew.
+Unlike an inner-HTML-only cached calculation, the native implementation also recomputes
+when sizes/fonts change without changing text. No transform-induced resize loop was observed.
+
+### Actual Alexandria measurements (identical in pinned Naive and standalone)
+
+| Variant | Outer size | Computed scale (rounded) | Visual text width × height |
+| --- | ---: | ---: | ---: |
+| Tiny | 22 | 0.304615 | 19.752411 × 5.330780 |
+| Small | 28 | 0.387692 | 25.139435 × 6.784607 |
+| Medium/default | 34 | 0.470769 | 30.526428 × 8.238464 |
+| Large | 40 | 0.553846 | 35.913452 × 9.692322 |
+| Huge | 46 | 0.636923 | 41.300476 × 11.146179 |
+| Numeric 52 | 52 | 0.720000 | 46.687500 × 12.599976 |
+| Bordered / group member | 38 | 0.526154 | 34.117798 × 9.207642 |
+| Default with explicit 28px font | 34 | 0.235385 | 30.526428 × 8.238464 |
+
+Full computed-property/geometry/transform/overflow comparisons returned **zero differences**
+for short and long default content, all presets, numeric size, square/round/bordered, images,
+monospace/color/font overrides, horizontal/vertical groups, light/dark, and native+core CSS
+in both orders. The old long-text exclusion no longer applies. Surrounding page palette and
+the explicit architectural boundaries below are still outside that equality claim.
+
+Dynamic Chromium checks additionally measured:
+- Character-data edit Alexandria → AB: scale 0.470769 → 1, full accessible label updated.
+- Numeric 52px → authored 60px plus 28px font: scale 0.72 → 0.415385 (natural 130×35).
+- Change that font to bold monospace: scale 0.350649 (natural 154×35).
+- Add border to default: scale 0.526154; hide/change/show text: refits to 0.197688.
+- Detach leaves the last scale unchanged; reconnect with AB refits to 1, retaining the
+  exact Text node. Explicit accessibility labels and node listeners remain owned by authors.
+- Actual failed image reveals “Unavailable profile”: scale 0.266087; clearing the source
+  reveals Alexandria at 0.470769. No page errors/ResizeObserver loop errors occurred.
+
+The runnable demo now includes editable name and size controls, preserving its authored
+content element rather than replacing the Avatar. Numeric size, fit and computed text scale
+use CSSOM custom-property writes; strict-CSP documentation now explicitly accounts for them.
+It was verified at `http://127.0.0.1:4191/demo/components/avatar.html` using the existing
+demo server: from `D:\repos\MarkupUI`, `$env:PORT='4191'; node demo\server.mjs`.
+Attached session **`avatar-fit-demo`** remains available separately from reference **4190**.
+Editing the name to “An exceptionally long profile name” at 52px produced scale 0.217674,
+kept the original content node/listener and full label, and retained image-failure recovery
+and Enter-operated native group disclosure.
 
 ### Remaining differences — do not claim complete equivalence
 
-- **Automatic text fitting:** Naive renders `Alexandria` with scale **0.470769** and visual
-  text bounds **30.526428×8.238464px**. Native deliberately has no text measurement engine:
-  it remains **34×17.5px**, scale 1, with ellipsis. This is a visible, measured native
-  limitation, not a color/font mismatch. Author font sizing remains available.
-  Legacy raw text has no enhanced text wrapper/ellipsis; use the standalone entry for that
-  retained behavior. Icons/arbitrary rich content and modal/popover color contexts were
-  not certified by this basic default-content pass.
+- **Legacy raw-text boundary:** standalone long text is now fitted exactly. The basic legacy
+  controller still has no fitted-text wrapper and clips oversized raw text; it is not
+  silently treated as equivalent. The near-full core was not expanded for this follow-up.
+  Icons/arbitrary rich content and modal/popover color contexts were not certified by this
+  ordinary default-text pass. Without native ResizeObserver, CSS-only/font-resize changes
+  are not observed; initial and text/attribute-triggered fitting still runs.
 - **Native overflow:** `max` continues to count visible members *excluding* the summary,
   unlike Naive's count including the rest avatar. The keyboard/touch `details` disclosure
   remains in normal flow; open layout is not Naive hover expansion/popover rendering.
@@ -110,14 +174,20 @@ Unless separately stated, “after” applies to both. Sources of fixes:
 
 - `pnpm build` regenerates `src/components/styles.ts` from canonical CSS; generated code
   was not edited manually. Existing core/Avatar/Global Style budgets passed unchanged.
-- Targeted command:
+- First-pass `ac6b260` targeted command:
   `pnpm test tests\avatar.test.ts tests\native.test.ts tests\global-style.test.ts tests\legacy-styles.test.ts tests\config-provider.test.ts tests\element.test.ts`
   — **92 passing tests in 6 files** (19 Avatar, 27 native, 13 Global Style, 9 generator/
   legacy CSS, 12 Config Provider, 12 Element). Not a full-suite claim.
-- Browser comparison found **zero property/short-text-geometry/group-offset mismatches**
+- First-pass browser comparison found **zero property/short-text-geometry/group-offset mismatches**
   for default, five presets, numeric 52px, square, round, bordered, loaded image and explicit
-  overrides, in standalone light/dark and native+core CSS in both orders. Long-text scale
-  is excluded from that equality claim and recorded above.
+  overrides, in standalone light/dark and native+core CSS in both orders. The follow-up
+  extends this verification to long-text scale and geometry as recorded above.
+- Follow-up `pnpm build` and
+  `pnpm test tests\avatar.test.ts tests\native.test.ts tests\legacy-styles.test.ts` passed:
+  **61 tests in 3 files** (25 Avatar, 27 native, 9 generator/legacy CSS). New tests cover exact
+  width/height fitting, dynamic text and accessibility, fonts/sizes, visible fallback states,
+  observer replacement/disconnect/reconnect, author transforms, and style ownership.
+  JSDOM geometry is explicitly mocked; the real rendered comparison is separate above.
 - Legacy rendered short-text glyph positions and transitions also match, not merely the
   source tokens. No enhanced registration after core is implied: the documented registration
   conflict remains; Avatar must register before core.
@@ -136,8 +206,9 @@ Unless separately stated, “after” applies to both. Sources of fixes:
 - Native form validation, disabled-fieldset exclusion from FormData, successful controls
   and reset were preserved; input computed font/appearance did not change when Global
   Style was disabled. Body author Georgia/18px/2 remained Georgia/18px/36px. Nested
-  explicit light/dark and reduced-motion rules were verified. No new observers, focus
-  managers, form controls, clone policies or runtime dependencies were introduced.
+  explicit light/dark and reduced-motion rules were verified. The follow-up adds only the
+  scoped measurement observer described above; no focus managers, form controls, clone
+  policies or runtime dependencies were introduced.
 - `git diff --check` passed. Only the intentional core CSS hash changed:
   `9f62233fa6a57d57682110d9d487a7569d79ead4cb398af24df27b6422308d29`
   → `e9da85e704ec41b78d8c514f4ece69c01903572f9c4ee34be2a05a05af87be05`.
@@ -147,9 +218,9 @@ Unless separately stated, “after” applies to both. Sources of fixes:
 | Final asset | Gzip bytes | Existing ceiling |
 | --- | ---: | ---: |
 | Core `markup-ui.min.js` | 14,911 (before 14,633) | 15,000 |
-| Avatar ESM | 2,563 | 4,000 |
-| Avatar classic | 2,777 | 4,000 |
-| Avatar CSS | 1,028 | 1,500 |
+| Avatar ESM | 2,893 (first pass 2,563) | 4,000 |
+| Avatar classic | 3,106 (first pass 2,777) | 4,000 |
+| Avatar CSS | 1,033 (first pass 1,028) | 1,500 |
 | Global Style CSS | 374 | 500 |
 
 Core now has **89 bytes** of headroom: subsequent components should prefer surgical reuse

@@ -10,3 +10,9 @@ document.getElementById("clear-image").addEventListener("click", () => {
   avatar.removeAttribute("src")
   status.textContent = "Text content restored."
 })
+document.getElementById("text-fit-name").addEventListener("input", (event) => {
+  document.getElementById("text-fit-content").textContent = event.target.value
+})
+document.getElementById("text-fit-size").addEventListener("input", (event) => {
+  document.getElementById("text-fit-avatar").size = Number(event.target.value)
+})

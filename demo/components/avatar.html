@@ -13,7 +13,8 @@
 <body>
   <main>
     <h1>Avatar: native HTML, external CSS and plain JavaScript</h1>
-    <p>This page loads only the Avatar component. No framework, inline styles or remote assets are required.</p>
+    <p>This page loads only the Avatar component and opt-in document CSS. No framework or remote
+      assets are required; native geometry supplies the component's text-fit scale.</p>
 
     <section aria-labelledby="basic-heading">
       <h2 id="basic-heading">Authored content and sizes</h2>
@@ -32,6 +33,17 @@
       </div>
       <p>Default: 34px, 3px corners, white normal text. Sizes: 22 / 28 / 34 / 40 / 46px.
         A border adds 4px. Images default to fill; use object-fit="cover" to crop.</p>
+    </section>
+
+    <section aria-labelledby="fit-heading">
+      <h2 id="fit-heading">Automatic text fitting</h2>
+      <div class="examples">
+        <mui-avatar id="text-fit-avatar"><span id="text-fit-content">Alexandria</span></mui-avatar>
+        <label>Name <input id="text-fit-name" value="Alexandria"></label>
+        <label>Size <input id="text-fit-size" type="range" min="22" max="72" value="34"></label>
+      </div>
+      <p>Long text scales down instead of being replaced by an ellipsis. Editing the name or
+        size preserves the original content nodes and full accessible label.</p>
     </section>
 
     <section aria-labelledby="fallback-heading">
