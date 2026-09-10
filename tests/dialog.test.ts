@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { createDialog, createDialogOwner, createNativeDialog } from "../src/components/dialog/index.js"
 import type { DialogController, DialogOptions, DialogOwner, NativeDialogController } from "../src/components/dialog/index.js"
@@ -10,6 +11,10 @@ const names = ["showModal", "show", "close", "requestClose"] as const
 const descriptors = new Map<string, PropertyDescriptor | undefined>()
 const tick = async () => { await new Promise(resolve => setTimeout(resolve, 5)) }
 const flush = async () => { await Promise.resolve(); await Promise.resolve(); await Promise.resolve() }
+const normalizeCSS = (css: string) => css.replace(/\s+/g, " ")
+  .replace(/\s*([{};,])\s*/g, "$1").replace(/:\s+/g, ":")
+  .replace(/\[([\w-]+)="([\w-]+)"\]/g, "[$1=$2]").replace(/;}/g, "}").trim()
+const dialogCSS = () => normalizeCSS(readFileSync(resolve("src", "components", "dialog", "dialog.css"), "utf8"))
 function deferred() {
   let resolve!: (value: unknown) => void
   let reject!: (error: unknown) => void
@@ -506,14 +511,78 @@ describe("Explicit template owners and CSS", () => {
     expect(a.dialogs).toHaveLength(0)
   })
   it("ships external native viewport/scroll and decorative type/accessibility styles without injection", () => {
-    const css = readFileSync(resolve("src", "components", "dialog", "dialog.css"), "utf8")
-    const native = readFileSync(resolve("src", "components", "dialog", "native.css"), "utf8")
+    const css = dialogCSS()
+    const native = normalizeCSS(readFileSync(resolve("src", "components", "dialog", "native.css"), "utf8"))
     expect(css).toContain("forced-colors")
     expect(css).toContain("prefers-reduced-motion")
-    expect(css).toContain("flex-wrap: wrap")
-    expect(native).toContain("max-block-size: calc(100% - 2rem)")
-    expect(native).toContain("overflow: auto")
+    expect(css).toContain("flex-wrap:wrap")
+    expect(native).toContain("max-block-size:calc(100% - 2rem)")
+    expect(native).toContain("overflow:auto")
     expect(native).toContain("@media print")
     expect(css + native).not.toContain("@import")
+  })
+  it("keeps inline content distinct from native surface sizing and uses audited theme roles", () => {
+    const css = dialogCSS()
+    expect(css).toContain("inline-size:var(--mui-dialog-width,auto)")
+    expect(css).toContain("dialog.mui-dialog{inline-size:var(--mui-dialog-width,446px)")
+    expect(css).toContain("padding:16px 28px 20px")
+    expect(css).toContain("font-size:18px;font-weight:500")
+    expect(css).toContain("margin:8px 0 16px")
+    expect(css).toContain("gap:12px")
+    expect(css).toContain("light-dark(#333639,#ffffffd1)")
+    expect(css).toContain("light-dark(#fff,#2c2c32)")
+    for (const type of ["info", "success", "warning", "error"]) {
+      expect(css).toContain(`--mui-color-${type},`)
+      expect(css).toContain(`--mui-color-${type}-hover,`)
+    }
+    expect(css).not.toMatch(/--mui-(?:text-primary|text-secondary|bg-surface|border),/)
+  })
+  it("styles only authored decision buttons and preserves author accents and disabled states", () => {
+    const css = dialogCSS()
+    expect(css).toContain('.mui-dialog :where(button)[data-dialog-action]')
+    expect(css).toContain('[data-dialog-action=positive]:enabled:hover')
+    expect(css).toContain('[data-dialog-action=negative]:enabled:hover')
+    expect(css).toContain('[data-dialog-action=close]:enabled:hover')
+    expect(css).toContain("--_dialog-disabled:.38")
+    expect(css).toContain("var(--mui-dialog-accent,var(--_dialog-hover))")
+    expect(css).not.toMatch(/--mui-dialog-accent\s*:/)
+    expect(css).toContain(":focus-visible")
+    expect(css).toContain(':where(:has([data-dialog-action=close]:not([hidden])))')
+  })
+  it("leaves native modal positioning to the browser and anchors only nonmodal screen content", () => {
+    const css = dialogCSS()
+    expect(css.match(/\.mui-dialog\{([^{}]*)\}/)?.[1]).not.toContain("position:")
+    expect(css).toContain("@media screen{.mui-dialog:not(dialog),dialog.mui-native-dialog.mui-dialog[open]:not(:modal){position:relative}}")
+    expect(css).toContain("button[data-dialog-action=close]{position:absolute")
+    expect(css).not.toMatch(/:modal\{position:(?:absolute|relative)/)
+  })
+  it("keeps Dialog paint and nonmodal anchoring more specific than repeated native base styles", () => {
+    const css = dialogCSS()
+    const native = normalizeCSS(readFileSync(resolve("src", "components", "dialog", "native.css"), "utf8"))
+    expect(native).toContain("dialog.mui-native-dialog{")
+    expect(native).toContain("dialog.mui-native-dialog[open]:not(:modal){position:static")
+    expect(native).toContain("dialog.mui-native-dialog[data-native-dialog-inline][open]{display:block;position:static")
+    expect(css).toContain(".mui-dialog,dialog.mui-native-dialog.mui-dialog{color:var(--mui-dialog-color,light-dark(")
+    expect(css).toContain("background:var(--mui-dialog-background,light-dark(")
+    expect(css).toContain("dialog.mui-native-dialog.mui-dialog[open]:not(:modal){position:relative}")
+    expect(css).not.toContain(".mui-dialog,dialog.mui-dialog{")
+  })
+  it("retains explicit reduced-motion overrides and native error/pending feedback", () => {
+    const css = dialogCSS()
+    expect(css).toContain("@media(prefers-reduced-motion:reduce){.mui-dialog,.mui-dialog::backdrop{animation:none;transition:none;scroll-behavior:auto}}")
+    expect(css).toContain("[data-dialog-error]{border-inline-start:.25rem solid #ac2635;padding-inline-start:.5rem}")
+    expect(css).toContain("[data-dialog-pending]{font-weight:600}")
+    expect(css).toContain("[data-dialog-error]{border-color:CanvasText}")
+  })
+  it("keeps exact production composed CSS under its unchanged gzip ceiling", () => {
+    const native = readFileSync(resolve("src", "components", "dialog", "native.css"), "utf8")
+    const css = readFileSync(resolve("src", "components", "dialog", "dialog.css"), "utf8")
+    expect(gzipSync(`${native}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(1500)
+  })
+  it("normalizes formatter whitespace without hiding selector or value-token changes", () => {
+    expect(normalizeCSS(".mui-dialog :where(button) { padding: 16px 28px; }"))
+      .toBe(".mui-dialog :where(button){padding:16px 28px}")
+    expect(normalizeCSS(".mui-dialog :where(button){padding:16px 28px}"))
+      .not.toBe(normalizeCSS(".mui-dialog:where(button){padding:16px28px}"))
   })
 })

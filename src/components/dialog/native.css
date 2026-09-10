@@ -1,16 +1,1 @@
-dialog.mui-native-dialog {
-  box-sizing: border-box;
-  max-inline-size: calc(100% - 2rem);
-  max-block-size: calc(100% - 2rem);
-  overflow: auto;
-  overscroll-behavior: contain;
-  color: var(--mui-dialog-color, #20252b);
-  background: var(--mui-dialog-background, #fff);
-}
-dialog.mui-native-dialog::backdrop { background: rgb(15 23 42 / 48%); }
-dialog.mui-native-dialog[open]:not(:modal) { position: static; margin-block: 1rem; }
-dialog.mui-native-dialog[data-native-dialog-inline][open] { display: block; position: static; }
-@media print {
-  dialog.mui-native-dialog[open] { position: static; max-block-size: none; max-inline-size: 100%; box-shadow: none; }
-  dialog.mui-native-dialog::backdrop { background: transparent; }
-}
+dialog.mui-native-dialog{box-sizing:border-box;max-inline-size:calc(100% - 2rem);max-block-size:calc(100% - 2rem);overflow:auto;overscroll-behavior:contain;color:var(--mui-dialog-color, #20252b);background:var(--mui-dialog-background, #fff)}dialog.mui-native-dialog::backdrop{background:rgb(15 23 42 / 48%)}dialog.mui-native-dialog[open]:not(:modal){position:static;margin-block:1rem}dialog.mui-native-dialog[data-native-dialog-inline][open]{display:block;position:static}@media print{dialog.mui-native-dialog[open]{position:static;max-block-size:none;max-inline-size:100%;box-shadow:none}dialog.mui-native-dialog::backdrop{background:transparent}}

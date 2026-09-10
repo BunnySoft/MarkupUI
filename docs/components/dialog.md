@@ -10,6 +10,74 @@ false/Promise decisions. MarkupUI keeps these responsibilities separate:
 - `createDialog(dialog, options)` adds explicit optional positive/negative/close decisions.
 - `createDialogOwner(root)` owns a collection of authored template clones, not injection.
 
+## Default-style audit — 2026-09-10
+
+The [rendered audit](../style-audit/components/dialog.md) compares pinned Naive UI
+2.45.3/Vue 3.5.30 with this retained native presentation. It fixes content spacing,
+typography, semantic colors, action buttons, close placement and light/dark surfaces;
+it does **not** replace the native controller with an upstream provider.
+
+**Integration status: integrated after review corrections.** Parent review identified a
+modal positioning regression and the omission of pre-existing feedback/motion policies. Those
+defects are corrected and browser-verified. Approved whitespace-only formatting,
+including the coordinator's shared native stylesheet change, preserves every policy
+within the unchanged CSS ceiling.
+
+The isolated release build and **192 Dialog/Modal/Drawer/Radio tests** pass. Actual
+release Dialog CSS is **5,219 raw / 1,496 gzip bytes**; the shared stylesheet changed
+only formatting. Composed stylesheet order and scrolled modal positioning remain protected.
+
+Inline `.mui-dialog` now fills its authored container without a fixed default width,
+border or shadow, matching inline NDialog. A native `dialog.mui-dialog` instead uses
+the source **wrapper's** 446px width, still constrained by the existing native viewport
+bounds. `--mui-dialog-width` overrides either target. Padding is **16px 28px 20px**,
+radius **3px**, title **18px/500**, body **14px/1.6**, action spacing **12px**, marked
+action height **28px**, and close size **22px**. Top-icon layout centers its content.
+No action region means no trailing content margin; a hidden/omitted close control
+does not reserve title space.
+
+Use `data-mui-theme="light|dark"` on a surrounding region or the surface. When also
+loading the core stylesheet, load the theme stylesheet/preset to supply its matching
+shared semantic roles. Neutral surface/title/body defaults are Dialog-specific,
+not the incompatible legacy surface/text palette. Inherited/per-element
+`--mui-dialog-color`, `--mui-dialog-background`, `--mui-dialog-accent`,
+`--mui-dialog-border` and `--mui-dialog-width` remain author-owned. Accent overrides
+win even on semantic types and hover. Ordinary external CSS can override typography,
+spacing, title color and other presentation.
+
+Only marked native decision buttons receive the action skin; native form controls are
+not restyled or intercepted. Actions support enabled hover and disabled opacity
+(light **.5**, dark **.38**); keyboard focus retains the explicit visible outline.
+The close button remains natively keyboard reachable, unlike source `closeFocusable=false`.
+Authored icon/close text is not vendor artwork: the icon region is 28px, but glyph
+shape and text size are deliberate differences. Error text retains its original
+`.25rem` red border and `.5rem` inset; pending text retains weight 600, alongside
+authored status/alert semantics and without a fabricated spinner.
+Distinct pressed shades, button waves and animated theme transitions are not supplied;
+pressed pointer buttons retain their hover paint. The explicit reduced-motion rule
+restores `animation:none`, `transition:none` and `scroll-behavior:auto` on the surface
+and backdrop, including overrides of earlier same-specificity authored motion.
+
+The native backdrop, opt-in dismissal, form validation/return values, focus, cancellation,
+async decisions and lifecycle are unchanged. Legacy `<mui-dialog>` is not restyled by
+this audit. Modal positioning remains browser-owned/fixed; relative positioning is
+limited to inline sections and open nonmodal/fallback dialogs on screen, anchoring
+their close controls without changing print rules. Native Dialog paint and nonmodal
+positioning selectors include **both** `.mui-native-dialog` and `.mui-dialog`, so later
+Modal/Drawer stylesheets cannot override them with their repeated shared base rules.
+**66 targeted Dialog tests pass.** Outputs are
+**4,319 ESM / 4,442 classic / 1,496 composed CSS gzip bytes** against
+unchanged **5,500 / 5,500 / 1,500** ceilings; no runtime dependency was added.
+The CSS measurement uses the actual files, including their line endings, after the
+coordinator applied approved `native.css` formatting with existing esbuild
+`minifyWhitespace:true, minifySyntax:false, legalComments:"none"`. Local Dialog cleanup
+only compacts insignificant colon/comma whitespace. Selectors, declarations, native
+behavior and safety policies are preserved; no budget or builder change was made.
+Final browser verification passed **36 stylesheet-order/theme/mode combinations**,
+including repeated base copies, close placement/activation, scrolled modal positioning
+and author color/background/accent overrides.
+The historical migration measurements below predate these presentation changes.
+
 ## Loading and native structure
 
 | Entry | Contract |
