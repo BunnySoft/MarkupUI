@@ -155,9 +155,19 @@ Authored baseline:
 ```
 
 `--mui-highlight-background` and `--mui-highlight-color` customize external presentation.
-The helper never writes inline styles. Optional `span.mui-highlight` preserves whitespace
-and wraps long text; base mark CSS changes no font metrics and adds no padding. Forced colors use
+Default colors now use native `Mark`/`MarkText` (yellow/black in the verified light and dark
+Chromium reference), with zero padding and zero radius. Naive Highlight does not inject a
+component theme/stylesheet: its default is an ordinary native mark. Fonts, weight, style and
+line-height remain inherited; the mark foreground is not inherited from surrounding text.
+The [default-style audit](../style-audit/components/highlight.md) records the measured correction.
+
+The helper never writes inline styles or adds a class to the target span. A bare target has
+normal inherited whitespace, matching the default reference. **Opting into**
+`span.mui-highlight` preserves whitespace and wraps long text; this remains an explicit
+native convenience, not a claim that Naive does so by default. Forced colors use
 system highlight/text colors, and print uses an underline when backgrounds are not printed.
+Print retains the native mark foreground (or explicit color token), avoiding white inherited
+text from a dark-themed parent.
 Native hidden surfaces remain hidden even when their text is updated; standalone CSS does
 not force `hidden="until-found"` to display:none. That reveal path is not separately certified.
 

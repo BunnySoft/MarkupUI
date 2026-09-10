@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it } from "vitest"
 import { HIGHLIGHT_LIMITS, findHighlightRanges, highlightText } from "../src/components/highlight/index.js"
 import type { HighlightMatchOptions, HighlightOptions } from "../src/components/highlight/index.js"
@@ -123,6 +124,58 @@ describe("native owned Highlight surface", () => {
     expect(target.textContent).toBe(original)
     expect([...target.querySelectorAll("mark")].map(mark => mark.textContent)).toEqual(marks)
     expect(marks).toHaveLength(7)
+  })
+
+  describe("audited native mark presentation", () => {
+    it("uses native mark colors and zero-radius geometry without resetting inherited typography", () => {
+      expect(css).toContain("color: var(--mui-highlight-color, MarkText)")
+      expect(css).toContain("background: var(--mui-highlight-background, Mark)")
+      expect(css).toContain("padding: 0")
+      expect(css).toContain("border-radius: 0")
+      expect(css).not.toContain("#fef08a")
+      expect(css).not.toContain(".125em")
+      expect(css).not.toMatch(/(?:^|[;{])\s*(?:font(?:-[\w-]+)?|line-height)\s*:/m)
+    })
+
+    it("preserves authored mark styles and zero-specificity component selectors", () => {
+      const target = surface()
+      highlightText(target, "A needle appears.", ["needle"], { highlightClass: "custom" })
+      const mark = target.querySelector("mark")!
+      mark.style.cssText = "color: rgb(12, 34, 56); background: rgb(220, 230, 240); padding: 1px 3px; border-radius: 4px; font-weight: 700"
+      const original = mark.getAttribute("style")
+      const library = document.createElement("style")
+      library.textContent = css
+      document.head.append(library)
+      try {
+        expect(getComputedStyle(mark).color).toBe("rgb(12, 34, 56)")
+        expect(getComputedStyle(mark).padding).toBe("1px 3px")
+        expect(getComputedStyle(mark).borderRadius).toBe("4px")
+        expect(getComputedStyle(mark).fontWeight).toBe("700")
+        expect(mark.getAttribute("style")).toBe(original)
+        expect(mark.classList.contains("custom")).toBe(true)
+        expect(css).toContain(":where(mark.mui-highlight-mark)")
+      } finally { library.remove() }
+    })
+
+    it("does not opt an ordinary text surface into whitespace or wrapping behavior", () => {
+      const target = document.createElement("span")
+      document.body.append(target)
+      highlightText(target, "A  needle\nneedle", ["needle"])
+      expect(target.hasAttribute("class")).toBe(false)
+      expect(target.textContent).toBe("A  needle\nneedle")
+      expect(css).toContain(":where(span.mui-highlight)")
+      expect(css).toContain("white-space: pre-wrap")
+      expect(css).toContain("overflow-wrap: anywhere")
+    })
+
+    it("retains native media adaptations and the existing stylesheet ceiling", () => {
+      expect(css).toContain("color: HighlightText")
+      expect(css).toContain("background: Highlight")
+      expect(css).toContain("text-decoration: underline")
+      expect(css.slice(css.indexOf("@media print"))).not.toContain("color: inherit")
+      expect(css.slice(css.indexOf("@media print"))).toContain("color: var(--mui-highlight-color, MarkText)")
+      expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(750)
+    })
   })
 
   it("constructs only text and mark nodes while retaining the exact source string", () => {

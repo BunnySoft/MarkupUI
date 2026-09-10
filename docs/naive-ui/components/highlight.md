@@ -14,12 +14,20 @@ The accepted implementation is an optional stateless helper, not a new custom-el
 
 ## Acceptance and gaps
 
-The [canonical acceptance record](../../components/highlight.md) reports 494 passing tests
+The historical [canonical acceptance record](../../components/highlight.md) reports 494 passing tests
 (27 Highlight cases), build/budget gates and Chromium matching/selection/ownership/hidden/
 RTL/narrow/zoom/print/forced-colors/module/classic/coexistence/no-JS evidence.
-ESM/classic/CSS are 1,169/1,401/345 gzip bytes; core and other bundles remain unchanged.
+ESM/classic/CSS were 1,169/1,401/345 gzip bytes at that checkpoint; core and other bundles
+were unchanged.
 Arbitrary regex, locale/full case expansion, rich-child preservation and tag/style render
 contracts are intentionally outside the retained scope.
+
+The [new default-style audit](../../style-audit/components/highlight.md) verifies that the
+pinned Highlight has no injected component stylesheet/theme. Native mark colors and zero
+radius now replace the old pale-yellow/inherited-color/rounded defaults. Typography and
+padding already matched. A bare helper target retains default whitespace; the optional
+`mui-highlight` class still explicitly opts into preserved whitespace and long-text wrapping.
+No matching, parsing, validation, DOM ownership or API scope was expanded.
 
 ## Migration steps
 

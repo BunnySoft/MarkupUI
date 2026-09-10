@@ -3,10 +3,10 @@
   overflow-wrap: anywhere;
 }
 :where(mark.mui-highlight-mark) {
-  color: var(--mui-highlight-color, inherit);
-  background: var(--mui-highlight-background, #fef08a);
+  color: var(--mui-highlight-color, MarkText);
+  background: var(--mui-highlight-background, Mark);
   padding: 0;
-  border-radius: .125em;
+  border-radius: 0;
 }
 :where(span.mui-highlight, mark.mui-highlight-mark)[hidden]:not([hidden="until-found"]),
 template.mui-highlight { display: none !important; }
@@ -19,7 +19,7 @@ template.mui-highlight { display: none !important; }
 }
 @media print {
   :where(mark.mui-highlight-mark) {
-    color: inherit;
+    color: var(--mui-highlight-color, MarkText);
     background: transparent;
     text-decoration: underline;
   }
