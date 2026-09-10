@@ -5,6 +5,12 @@ Authored links, URL/hash/history and focus remain browser-owned. An optional sma
 marks one current location using deterministic geometry and supplies explicit native scrolling.
 It is not a router, Affix dependency, generated TOC or positioning/animation framework.
 
+**Default-style audit (2026-09-10):** corrected 13px link typography, 4px continuous
+rail, 16px indentation, reference spacing and light/dark interaction colors.
+See the [rendered audit](../style-audit/components/anchor.md) for measured improvements
+and remaining link-owned marker/background differences. Controller, shared scroll
+utilities, native URL/history/focus and explicit-root ownership are unchanged.
+
 ## Loading and native baseline
 
 | Export / asset | Contract |
@@ -168,9 +174,37 @@ or independent module-copy handoff.
 ## CSS-only presentation and fallback
 
 Rail/block, optional no-rail/no-background, native focus and nested indentation are external
-CSS classes/tokens. Active styling uses each link's own border/background, not measured rail
-positions. Nested independent roots reset presentation tokens rather than inheriting a
+CSS classes/tokens. The default rail is now one continuous root border, not disconnected
+gray borders on each link. Active styling still uses each link's own border/background,
+not a measured/sliding root-rail marker. In particular, an active nested link marks its
+own indented edge; it does not move a shared marker back to the outer rail.
+Nested independent roots reset private presentation presets rather than inheriting a
 parent's block/no-rail mode accidentally.
+
+| Token / presentation | Default and responsibility |
+| --- | --- |
+| `--mui-anchor-font-size` | 13px on links; leading is 1.5. Ordinary authored font-family is inherited. |
+| `--mui-anchor-link-padding` | Rail: `0 16px`; block: `2px 8px`; no-rail rail mode retains a 4px leading inset. |
+| `--mui-anchor-indent` | 16px per native nested list. |
+| `--mui-anchor-rail-width`, `--mui-anchor-rail` | 4px; `#dbdbdf` in light, white/.2 in dark. |
+| `--mui-anchor-color` | `#333639` in light, white/.82 in dark. |
+| `--mui-anchor-active-color` | Shared primary color when supplied, otherwise `#18a058` / `#63e2b7`; also colors the link-owned active border. |
+| `--mui-anchor-hover-color`, `--mui-anchor-pressed-color` | Local overrides over shared primary hover/pressed roles, then pinned light/dark fallbacks. |
+| `--mui-anchor-active-background` | Primary color at 15% alpha via native CSS color mixing; a local value overrides the tint unless a no-background/no-rail mode suppresses it. |
+
+An ancestor/root `data-mui-theme="dark"` selects dark fallback roles; nested explicit
+`"light"` restores light. Shared primary-color tokens are reused, but mismatched legacy
+generic text/rail colors are not. Link hover/focus changes color rather than introducing
+an underline; the native focus-visible outline remains an accessibility adaptation.
+The active border keeps the active color while hovered text uses the hover color.
+
+Rail links have half-font-size spacing (6.5px by default); block links use 4px spacing
+and 3px corners. Native block padding/background belongs to each actual link rather than
+the upstream wrapper containing its descendants. Nested block offsets and final wrapper
+spacing therefore remain adaptations. Long native titles wrap instead of receiving the
+upstream ellipsis/automatic `title` tooltip.
+No-rail removes the rail/marker and default rail-mode background; no-background explicitly
+removes the native active fill, including when combined with block mode.
 
 `.mui-anchor--sticky` is optional native CSS sticky: the nearest scroll/containing block
 constrains it, as in the [Affix retained scope](affix.md). No Affix or Scrollbar asset is a
@@ -179,7 +213,9 @@ Native root overflow follows the [Scrollbar conventions](scrollbar.md).
 
 `.mui-anchor-scroll` is an explicit opt-in smooth-scroll class; its media rules respect
 reduced motion. Print makes sticky navigation static and uses ink-friendly colors.
-Forced colors preserve visible location/focus cues. No-JS retains real nested fragment
+Forced colors preserve visible location/focus cues. Color/border/background transitions
+last 0.3s and are disabled under reduced motion; there is no measured indicator-motion
+renderer. No-JS retains real nested fragment
 links, browser history and authored targets; only location tracking is absent.
 All scrolling/geometry reads are explicit; no CSS-in-JS, generated style text, implicit
 document styling or readonly scroll-field override is used.

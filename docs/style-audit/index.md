@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 46/96 scopes.** The other **50** are not yet accepted in this
+**Reviewed and integrated: 47/96 scopes.** The other **49** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -56,7 +56,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | --- | --- | --- |
 | [Affix](../naive-ui/components/affix.md) | 🟡 Remaining | [Native sticky reviewed; fixed positioning and flow differences](components/affix.md) |
 | [Alert](../naive-ui/components/alert.md) | 🟢 Fixed / 🟡 Remaining | [Geometry, severity palettes and SVG limits](components/alert.md) |
-| [Anchor](../naive-ui/components/anchor.md) | ⚪ Pending | — |
+| [Anchor](../naive-ui/components/anchor.md) | 🟢 Fixed / 🟡 Remaining | [Link/rail styling with native navigation and local-indicator limits](components/anchor.md) |
 | [Auto Complete](../naive-ui/components/auto-complete.md) | ⚪ Pending | — |
 | [Avatar](../naive-ui/components/avatar.md) | 🟢 Fixed | [Defaults including text fit; architectural boundaries](components/avatar.md) |
 | [Back Top](../naive-ui/components/back-top.md) | 🟢 Fixed / 🟡 Remaining | [Control/icon metrics, shadows and native scroll/visibility limits](components/back-top.md) |
@@ -116,7 +116,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Notification](../naive-ui/components/notification.md) | ⚪ Pending | — |
 | [Number Animation](../naive-ui/components/number-animation.md) | ⚪ Pending | — |
 | [Page Header](../naive-ui/components/page-header.md) | 🟢 Fixed / 🟡 Remaining | [Header metrics, back control and authored/narrow-layout limits](components/page-header.md) |
-| [Pagination](../naive-ui/components/pagination.md) | ⚪ Pending | — |
+| [Pagination](../naive-ui/components/pagination.md) | 🟠 Reviewing | — |
 | [Popconfirm](../naive-ui/components/popconfirm.md) | 🟢 Fixed / 🟡 Remaining | [Shared surface, local layout and native action-paint limits](components/popconfirm.md) |
 | [Popover](../naive-ui/components/popover.md) | 🟢 Fixed / 🟡 Remaining | [Standalone surface, protected consumers and native popup limits](components/popover.md) |
 | [Popselect](../naive-ui/components/popselect.md) | ⚪ Pending | — |

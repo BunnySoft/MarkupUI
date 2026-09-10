@@ -1,4 +1,6 @@
 import { readFileSync } from "node:fs"
+import { join } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createAnchor } from "../src/components/anchor/index.js"
 import { createScrollContext, fragmentId } from "../src/components/anchor/scroll.js"
@@ -437,14 +439,57 @@ describe("location ownership, observers and cleanup", () => {
   it("exports independent native assets without click hijacking, provider or animation engine", () => {
     const pkg = JSON.parse(readFileSync("package.json", "utf8"))
     expect(pkg.exports["./anchor"].import).toBe("./dist/markup-ui-anchor.js")
-    const source = readFileSync("src/components/anchor/anchor.ts", "utf8")
-    const css = readFileSync("src/components/anchor/anchor.css", "utf8")
+    const source = readFileSync(join("src", "components", "anchor", "anchor.ts"), "utf8")
+    const css = readFileSync(join("src", "components", "anchor", "anchor.css"), "utf8")
     expect(source).not.toContain('listen(nav, "click"')
     expect(source).not.toContain("innerHTML")
     expect(source).not.toContain("customElements")
-    expect(css).toContain("position: sticky")
+    expect(css).toContain("position:sticky")
     expect(css).toContain("scroll-margin-block-start")
     expect(css).toContain("prefers-reduced-motion")
     expect(css).toContain("@media print")
+  })
+  it("keeps audited typography, rail, interaction colors and reduced motion within budget", () => {
+    const css = readFileSync(join("src", "components", "anchor", "anchor.css"), "utf8")
+    expect(css).toContain("var(--mui-anchor-font-size,13px)")
+    expect(css).toContain("line-height:1.5")
+    expect(css).toContain("var(--mui-anchor-rail-width,4px)")
+    expect(css).toContain("var(--mui-anchor-indent,16px)")
+    expect(css).toContain("--_mui-anchor-padding:2px 8px")
+    expect(css).toContain("--_mui-anchor-radius:3px")
+    expect(css).toContain("#333639")
+    expect(css).toContain("#dbdbdf")
+    expect(css).toContain("rgba(255,255,255,.82)")
+    expect(css).toContain("rgba(255,255,255,.2)")
+    expect(css).toContain("var(--mui-color-primary,")
+    expect(css).toContain("var(--mui-color-primary-hover,")
+    expect(css).toContain("var(--mui-color-primary-pressed,")
+    expect(css).toContain("color-mix(in srgb,var(--_mui-anchor-accent) 15%,transparent)")
+    expect(css).not.toContain("text-decoration:underline")
+    expect(css).toContain(".mui-anchor a[href]{color:#000;background:transparent}")
+    const style = document.createElement("style")
+    style.textContent = css
+    document.head.append(style)
+    try {
+      const media = [...style.sheet!.cssRules].filter(rule => rule.type === CSSRule.MEDIA_RULE)
+        .map(rule => (rule as CSSMediaRule).media.mediaText)
+      expect(media).toContain("(prefers-reduced-motion:reduce)")
+    } finally { style.remove() }
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+  })
+  it("preserves authored styles, hrefs and native focus during current-marker updates", () => {
+    const { nav, root, links, controller } = bind()
+    nav.style.cssText = "--mui-anchor-font-size:16px;--mui-anchor-active-color:rgb(1,2,3);--mui-anchor-rail-width:6px"
+    const style = nav.getAttribute("style"), hrefs = links.map(link => link.getAttribute("href")), url = document.URL
+    links[0]!.focus()
+    root.scrollTop = 150
+    controller.update()
+    controller.refresh()
+    expect(nav.getAttribute("style")).toBe(style)
+    expect(links.map(link => link.getAttribute("href"))).toEqual(hrefs)
+    expect([...nav.querySelectorAll("a")]).toEqual(links)
+    expect(document.URL).toBe(url)
+    expect(document.activeElement).toBe(links[0])
+    expect(nav.querySelectorAll("[data-anchor-active]")).toHaveLength(1)
   })
 })
