@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 22/96 scopes.** The other **74** are not yet accepted in this
+**Reviewed and integrated: 23/96 scopes.** The other **73** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -118,7 +118,7 @@ a separate follow-up; its work-in-progress is not included in published componen
 | [Page Header](../naive-ui/components/page-header.md) | ⚪ Pending | — |
 | [Pagination](../naive-ui/components/pagination.md) | ⚪ Pending | — |
 | [Popconfirm](../naive-ui/components/popconfirm.md) | ⚪ Pending | — |
-| [Popover](../naive-ui/components/popover.md) | ⚪ Pending | — |
+| [Popover](../naive-ui/components/popover.md) | 🟢 Fixed / 🟡 Remaining | [Standalone surface, protected consumers and native popup limits](components/popover.md) |
 | [Popselect](../naive-ui/components/popselect.md) | ⚪ Pending | — |
 | [Progress](../naive-ui/components/progress.md) | 🟢 Fixed / 🟡 Remaining | [Native rails, ring geometry, motion and indicator limits](components/progress.md) |
 | [QR Code](../naive-ui/components/qr-code.md) | ⚪ Pending | — |

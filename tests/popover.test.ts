@@ -4,6 +4,46 @@ import { createPopover } from "../src/components/popover/index.js"
 import { createPopoverPositioner, ownedWrites } from "../src/components/popover/position.js"
 import type { PopoverController, PopoverOptions } from "../src/components/popover/index.js"
 
+describe("audited standalone Popover styles", () => {
+  const css = readFileSync("src/components/popover/popover.css", "utf8")
+  const standalone = css.match(/\.mui-popover:where\(:not\(\.mui-tooltip,\.mui-popconfirm,\.mui-dropdown,\.mui-popselect \*\)\)\{([^}]+)\}/)![1]!
+
+  it("scopes corrected density and palette away from unaudited composed consumers", () => {
+    expect(standalone).toContain("padding:var(--mui-popover-padding,8px 14px)")
+    expect(standalone).toContain("border-width:0")
+    expect(standalone).toContain("border-radius:var(--mui-popover-radius,3px)")
+    expect(standalone).toContain("color:var(--mui-popover-color,var(--_pop-c,#333639))")
+    expect(css).toContain("padding:var(--mui-popover-padding,1rem)")
+    expect(css).toContain("border:1px solid var(--mui-popover-border,#8b929e)")
+  })
+
+  it("preserves inherited author overrides and resets private palette values at light boundaries", () => {
+    expect(standalone).toContain("background:var(--mui-popover-background,var(--_pop-b,#fff))")
+    expect(css).toContain("[data-mui-theme=dark]){--_pop-c: #ffffffd1;--_pop-b: #48484e;")
+    for (const name of ["--_pop-c", "--_pop-b", "--_pop-s"]) expect(css).toContain(`${name}: initial`)
+    expect(css).not.toMatch(/(?:^|[;{])\s*--mui-popover-[\w-]+\s*:/m)
+  })
+
+  it("retains native scrolling, raw styling and the explicitly inset, noninteractive indicator", () => {
+    expect(css).toContain("overflow:auto")
+    expect(css).toContain("--mui-popover-available-width")
+    expect(css).toContain("--mui-popover-available-height")
+    expect(css).toContain(".mui-popover--raw{padding:0;border:0;border-radius:0;box-shadow:none}")
+    expect(css).toContain("[data-popover-arrow=visible]:before")
+    expect(css).toContain("top:2px;left:calc(50% - .225rem)")
+    expect(css).toContain("pointer-events:none")
+  })
+
+  it("keeps the native motion contract, forced colors and readable print fallback", () => {
+    expect(css).toContain("animation:mui-popover-appear .1s ease-out")
+    expect(css).toContain("@media(prefers-reduced-motion:reduce)")
+    expect(css).toContain("border:1px solid CanvasText;color:CanvasText;background:Canvas;box-shadow:none")
+    expect(css).toContain("@media print")
+    expect(css).toContain("@media screen{:where([data-mui-theme=dark])")
+    expect(css).toContain("display:block!important")
+  })
+})
+
 const controllers: PopoverController[] = []
 let open: WeakSet<HTMLElement>
 const matches = HTMLElement.prototype.matches

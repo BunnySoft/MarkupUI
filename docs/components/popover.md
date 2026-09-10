@@ -6,6 +6,10 @@ authored native Popover elements. The browser owns top-layer visibility, click c
 light dismissal, Escape and focus navigation. No role, focus trap, provider, portal,
 inert application state, renderer or positioning package is introduced.
 
+**Default-style audit: 🟢 standalone surface fixed / 🟡 native layout and motion
+boundaries remain.** The [2026-09-10 rendered report](../style-audit/components/popover.md)
+records measured light/dark density, shadows, placements and composed-consumer isolation.
+
 ## Loading and native anatomy
 
 | Distribution | Contract |
@@ -181,12 +185,33 @@ or a different positioning scheme.
 
 CSS is external: panel/content/header/footer classes, `--mui-popover-max-width`, padding,
 radius, border, color/background tokens and ordinary width declarations provide presentation.
+The audited standalone panel defaults to **8px 14px padding, 3px radius and no visible
+border**. Light foreground/surface are **#333639 / #fff**; an explicit dark theme uses
+**white .82 / #48484e**, with the corresponding three-layer Popover shadow.
+These defaults are local to ordinary Popover panels, excluding Tooltip, Popconfirm,
+Dropdown and panels within Popselect. Their existing composed skins are preserved for
+their own audits. No shared preset, controller or positioning helper was changed.
+
+Public padding/radius/color/background tokens still take precedence over private defaults,
+including inherited ancestor overrides. `--mui-popover-border` still controls border color,
+but a standalone author must set a nonzero CSS `border-width` to display a custom border.
+Font family/size/leading continue to inherit from the document; the comparison uses the
+documented opt-in Global Style's 14px/1.6 baseline, not a new typography reset.
+Private dark defaults apply on screen only; nested explicit light scopes reset them, and
+print falls back to dark text on a light surface. Author-supplied colors remain author-owned.
+
 `mui-popover--raw` removes the standard padding/border/shadow, not geometry or overflow safety.
+It retains the native surface fill; it is intentionally not Naive's raw presentation.
+Authored header/footer content also retains ordinary native flow rather than introducing
+upstream slot wrappers or automatic full-width separators.
 The outer panel is natively scrollable within its available height; use an authored inner
 scroll region when a fixed header/footer is needed. Trigger-width matching is not automated.
 `mui-popover--animated` opts into a short opacity entrance; reduced motion disables it.
 There is no leave-animation scheduler. Forced colors use system colors; print exposes
 closed content in normal flow.
+An already-open top-layer popover can still compute as absolutely positioned during print,
+despite CSS requesting static positioning; close it before printing when normal-flow
+placement is required. The helper does not add a shared print lifecycle handler.
 
 `mui-popover--arrow` opts into a small **inset decorative side indicator**, not an
 interactive node or an exact center tether. It is suppressed after collision shifting;
