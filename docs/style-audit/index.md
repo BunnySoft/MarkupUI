@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 21/96 scopes.** The other **75** are not yet accepted in this
+**Reviewed and integrated: 22/96 scopes.** The other **74** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -61,7 +61,7 @@ a separate follow-up; its work-in-progress is not included in published componen
 | [Avatar](../naive-ui/components/avatar.md) | 🟢 Fixed | [Defaults including text fit; architectural boundaries](components/avatar.md) |
 | [Back Top](../naive-ui/components/back-top.md) | ⚪ Pending | — |
 | [Badge](../naive-ui/components/badge.md) | 🟢 Fixed / 🟡 Remaining | [Numeric cells, palette, wave and legacy limits](components/badge.md) |
-| [Breadcrumb](../naive-ui/components/breadcrumb.md) | ⚪ Pending | — |
+| [Breadcrumb](../naive-ui/components/breadcrumb.md) | 🟠 Reviewing | — |
 | [Button](../naive-ui/components/button.md) | 🟢 Fixed / 🟡 Remaining | [Defaults, state endpoints and remaining motion](components/button.md) |
 | [Calendar](../naive-ui/components/calendar.md) | ⚪ Pending | — |
 | [Card](../naive-ui/components/card.md) | 🟢 Fixed / 🟡 Remaining | [Native regions, theme scope and legacy boundary](components/card.md) |
@@ -76,7 +76,7 @@ a separate follow-up; its work-in-progress is not included in published componen
 | [Countdown](../naive-ui/components/countdown.md) | ⚪ Pending | — |
 | [Data Table](../naive-ui/components/data-table.md) | ⚪ Pending | — |
 | [Date Picker](../naive-ui/components/date-picker.md) | ⚪ Pending | — |
-| [Descriptions](../naive-ui/components/descriptions.md) | ⚪ Pending | — |
+| [Descriptions](../naive-ui/components/descriptions.md) | 🟠 Reviewing | — |
 | [Dialog](../naive-ui/components/dialog.md) | ⚪ Pending | — |
 | [Discrete API](../naive-ui/components/discrete.md) | ⚪ Pending | — |
 | [Divider](../naive-ui/components/divider.md) | 🟢 Fixed / 🟡 Remaining | [Rule geometry, colors and native orientation limits](components/divider.md) |
@@ -85,7 +85,7 @@ a separate follow-up; its work-in-progress is not included in published componen
 | [Dynamic Input](../naive-ui/components/dynamic-input.md) | ⚪ Pending | — |
 | [Dynamic Tags](../naive-ui/components/dynamic-tags.md) | ⚪ Pending | — |
 | [Element](../naive-ui/components/element.md) | ⚪ Pending | — |
-| [Ellipsis](../naive-ui/components/ellipsis.md) | ⚪ Pending | — |
+| [Ellipsis](../naive-ui/components/ellipsis.md) | 🟠 Reviewing | — |
 | [Empty](../naive-ui/components/empty.md) | 🟢 Fixed / 🟡 Remaining | [Content spacing, muted roles and original illustration](components/empty.md) |
 | [Equation](../naive-ui/components/equation.md) | ⚪ Pending | — |
 | [Flex](../naive-ui/components/flex.md) | 🟢 Matched / 🟡 Remaining | [Default layout matches; intrinsic sizing and RTL boundaries](components/flex.md) |
@@ -120,7 +120,7 @@ a separate follow-up; its work-in-progress is not included in published componen
 | [Popconfirm](../naive-ui/components/popconfirm.md) | ⚪ Pending | — |
 | [Popover](../naive-ui/components/popover.md) | ⚪ Pending | — |
 | [Popselect](../naive-ui/components/popselect.md) | ⚪ Pending | — |
-| [Progress](../naive-ui/components/progress.md) | 🟠 Reviewing | — |
+| [Progress](../naive-ui/components/progress.md) | 🟢 Fixed / 🟡 Remaining | [Native rails, ring geometry, motion and indicator limits](components/progress.md) |
 | [QR Code](../naive-ui/components/qr-code.md) | ⚪ Pending | — |
 | [Radio](../naive-ui/components/radio.md) | ⚪ Pending | — |
 | [Rate](../naive-ui/components/rate.md) | ⚪ Pending | — |

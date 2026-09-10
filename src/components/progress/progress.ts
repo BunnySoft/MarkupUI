@@ -351,7 +351,10 @@ export class MuiProgress extends HTMLElement {
   }
 
   private renderRings(config: ReturnType<MuiProgress["configuration"]>): void {
-    this.svg!.setAttribute("viewBox", `0 0 ${config.viewBoxWidth} ${config.viewBoxWidth}`)
+    const width = config.viewBoxWidth!
+    // Keep native viewBox coordinates while matching the source's stroke-expanded circle.
+    const stroke = config.strokeWidth! / (config.multiple ? 1 : 1 + config.strokeWidth! / width)
+    this.svg!.setAttribute("viewBox", `0 0 ${width} ${width}`)
     while (this.rings.length > config.measures.length) {
       const ring = this.rings.pop()!
       ring.group.remove()
@@ -367,10 +370,10 @@ export class MuiProgress extends HTMLElement {
       const paint = config.color?.[this.getAttribute("color")?.trim().startsWith("[") ? index : 0]
       const rail = config.railColor?.[this.getAttribute("rail-color")?.trim().startsWith("[") ? index : 0]
       updateRing(ring, {
-        center: config.viewBoxWidth! / 2,
-        radius: config.viewBoxWidth! / 2 - config.strokeWidth! / 2 - (config.multiple ? index : 0) * (config.strokeWidth! + config.circleGap!),
-        strokeWidth: config.strokeWidth!, gap: config.multiple ? 0 : config.gapDegree!,
-        gapOffset: config.multiple ? 0 : config.gapOffsetDegree!, offset: config.multiple ? 0 : config.offsetDegree!,
+        center: width / 2,
+        radius: width / 2 - stroke / 2 - (config.multiple ? index : 0) * (stroke + config.circleGap!),
+        strokeWidth: stroke, gap: config.multiple ? 0 : config.gapDegree!,
+        gapOffset: config.multiple ? 0 : config.gapOffsetDegree!, offset: config.multiple ? 0 : config.offsetDegree! + (config.gapDegree ? 0 : 180),
         value: config.measures[index]!.percentage, color: paint, railColor: typeof rail === "string" ? rail : undefined,
       })
     })

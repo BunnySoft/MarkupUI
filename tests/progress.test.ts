@@ -154,9 +154,11 @@ describe("standalone Progress", () => {
     const svg = element.querySelector("svg")!
     expect(svg.namespaceURI).toBe("http://www.w3.org/2000/svg")
     expect(svg.getAttribute("viewBox")).toBe("0 0 100 100")
-    expect(fill(element).getAttribute("r")).toBe("46.5")
+    expect(Number(fill(element).getAttribute("r"))).toBeCloseTo(50 - 7 / 1.07 / 2)
+    expect(Number(fill(element).getAttribute("stroke-width"))).toBeCloseTo(7 / 1.07)
+    expect(element.strokeWidth).toBe(7)
     expect(fill(element).getAttribute("stroke-dasharray")).toBe("50 100")
-    expect(fill(element).getAttribute("transform")).toBe("rotate(-90 50 50)")
+    expect(fill(element).getAttribute("transform")).toBe("rotate(90 50 50)")
     expect(element.controls).toHaveLength(1)
     expect(element.controls[0]?.value).toBe(50)
     expect(element.querySelector("[data-mui-progress-graphic]")?.getAttribute("aria-hidden")).toBe("true")
@@ -173,7 +175,7 @@ describe("standalone Progress", () => {
     element.gapDegree = 0
     element.gapOffsetDegree = 30
     element.offsetDegree = 45
-    expect(fill(element).getAttribute("transform")).toBe("rotate(-15 50 50)")
+    expect(fill(element).getAttribute("transform")).toBe("rotate(165 50 50)")
     element.gapOffsetDegree = Number.MAX_VALUE
     element.offsetDegree = Number.MAX_VALUE
     expect(fill(element).getAttribute("transform")).not.toContain("Infinity")
@@ -187,7 +189,7 @@ describe("standalone Progress", () => {
     element.indicatorPlacement = "outside"
     expect(element.offsetDegress).toBe(90)
     expect(element.indicatorPosition).toBe("outside")
-    expect(fill(element).getAttribute("transform")).toBe("rotate(0 50 50)")
+    expect(fill(element).getAttribute("transform")).toBe("rotate(180 50 50)")
   })
 
   it("never paints a zero-percent round-cap dot", () => {
@@ -198,6 +200,20 @@ describe("standalone Progress", () => {
     element.indeterminate = true
     expect(element.controls[0]?.hasAttribute("value")).toBe(false)
     expect(fill(element).hasAttribute("data-mui-progress-indeterminate-fill")).toBe(true)
+  })
+
+  it("retains the native value and semantic owner when statuses replace decorative text visually", () => {
+    const element = progress('<mui-progress percentage="42.25" label="Upload"></mui-progress>')
+    const owner = element.controls[0]
+    for (const status of ["info", "success", "warning", "error"]) {
+      element.status = status
+      expect(element.controls).toEqual([owner])
+      expect(owner?.value).toBe(42.25)
+      expect(owner?.getAttribute("aria-label")).toBe("Upload")
+      expect(element.hasAttribute("role")).toBe(false)
+      expect(element.querySelector("[data-mui-progress-text]")?.textContent).toBe("42.25%")
+      expect(element.querySelector("[data-mui-progress-text]")?.getAttribute("aria-hidden")).toBe("true")
+    }
   })
 
   it("implements multiple circles with separate named native measures and consistent order", () => {
@@ -260,6 +276,8 @@ describe("standalone Progress", () => {
     const firstFill = fill(first)
     expect(firstFill.getAttribute("stroke")).toMatch(/^url\(#mui-progress-gradient-/)
     const ids = [...first.querySelectorAll("linearGradient")].map((node) => node.id)
+    const gradient = first.querySelector("linearGradient")!
+    expect(["x1", "y1", "x2", "y2"].map((name) => gradient.getAttribute(name))).toEqual(["100%", "100%", "0%", "0%"])
     expect(first.querySelector("[data-mui-progress-rail]")?.getAttribute("color")).toBe("silver")
     const second = document.createElement("mui-progress") as MuiProgress
     second.type = "circle"

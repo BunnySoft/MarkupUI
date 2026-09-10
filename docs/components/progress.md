@@ -143,10 +143,13 @@ Supply native `aria-valuetext` or adjacent readable status wording when needed.
 `type` accepts `line`, `circle`, `dashboard`, `multiple-circle`.
 
 - **Line:** a real native `<progress>` track/fill, styled through standard browser progress
-  pseudo-elements. Height defaults to 8px, or 24px for an inside indicator; explicit height
+  pseudo-elements. Height defaults to 8px, or 16px for an inside indicator; explicit height
   overrides that. Browser-native progress is the fallback when fine styling differs.
 - **Circle:** native SVG circles with normalized `pathLength`, not a chart renderer.
-  `view-box-width` / `.viewBoxWidth` defaults 100; stroke width defaults 7.
+  `view-box-width` / `.viewBoxWidth` defaults 100; stroke width defaults 7. Single-ring
+  drawing normalizes that stroke to `strokeWidth / (1 + strokeWidth / viewBoxWidth)`,
+  matching upstream's stroke-expanded default circle without changing native viewBox
+  coordinates or the public stroke-width value. Multiple rings retain unscaled stroke units.
 - **Dashboard:** defaults to a 75-degree gap. Circle defaults to zero gap. `gap-degree`
   accepts 0–360; this target uses actual angular degrees rather than copying source
   path-length quirks. A 360-degree gap produces no visible arc.
@@ -154,6 +157,8 @@ Supply native `aria-valuetext` or adjacent readable status wording when needed.
   rotates circular fill; the pinned `offset-degress` / `.offsetDegress` spelling is also
   accepted. Current spelling wins when both are present. Finite angles are normalized
   modulo 360 for bounded native transforms.
+- Nongapped single-ring fill now starts at the bottom, matching upstream; multiple rings
+  start at the top. Set a 180-degree fill offset to retain the earlier top-start single ring.
 - Zero-valued fill is hidden, preventing a round-linecap dot from looking like nonzero
   progress. Indeterminate radial fill uses a small pulsing arc plus an unknown indicator,
   not a fabricated numeric completion percentage.
@@ -169,10 +174,12 @@ not silently dropped or rendered as negative shapes. Each ring has its own nativ
 owner. Multiple authored native controls can provide ratios and individual indeterminate
 states when the host percentage source is absent.
 
-Gap/offset options apply to circle/dashboard, not multiple-circle. Multiple indicator values
-are shown below the rings rather than squeezed into a tiny center. Other radial indicators
-are centered; `indicator-placement` applies to line. These are explicit native-layout
-adaptations, not pixel/Fragment parity.
+Gap/offset options apply to circle/dashboard, not multiple-circle. Circle/dashboard default
+to 120px and multiple-circle to 200px. Generated multiple indicator values remain below the
+rings rather than squeezed into a tiny center; an authored custom multiple indicator is
+centered, matching the source slot. Other radial indicators are centered;
+`indicator-placement` applies to line. The generated multiple summary remains an explicit
+native-layout adaptation, not pixel/Fragment parity.
 
 ## Colors, gradients, rails and indicators
 
@@ -191,7 +198,8 @@ multiple.railColor = ["#eee", "#ddd", "#ccc"];
   are limited to 8,192 characters; no expressions or callback renderer are evaluated.
 - Native linear gradients are declared in external CSS using isolated color variables.
   Radial gradients use native SVG defs/stops with unique per-instance/ring IDs, avoiding
-  cross-component gradient collisions.
+  cross-component gradient collisions. Endpoints account for the default single/multiple
+  ring rotations so stop colors follow the reference orientation.
 - `rail-style` string/object forwarding is intentionally omitted; author external CSS
   against native controls/rails instead.
 
@@ -207,17 +215,40 @@ labels. `indicator-placement="inside|outside"` defaults outside; source-only
 centered over the track with a readable backing, not clipped into a zero-width fill.
 
 The default indicator shows bounded values with `unit` (default `%`); unit changes the
-suffix, never the range basis. Non-default status adds a small decorative CSS glyph while
-retaining numeric context. Custom default child content replaces generated indicator text
+suffix, never the range basis. Non-default status uses a decorative 18px line / 36px radial
+vector mask in place of the generated number for a determinate single-range outside/center
+indicator. The real native `<progress>` still owns the unchanged numeric value. Inside,
+multiple and indeterminate indicators retain their visible value/unknown text.
+Custom default child content replaces generated indicator text
 without cloning and is outside both native progress and decorative SVG descendants.
 Templates remain inert and unconsumed.
+
+### Default appearance and theme scope
+
+Default progress fill is the info palette (`#2080f0` light / `#70c0e8` with dark themes),
+not the legacy primary green. Status colors continue to use their shared semantic tokens.
+Local neutral defaults are `#ebebeb` rails / `#333639` text in light, and white at .12 /
+.82 alpha in dark. Use the existing themes stylesheet for the semantic palette and
+`data-mui-theme="light|dark"` scopes; nested light scopes reset Progress's local neutrals.
+
+Outside line indicators reserve 44px, matching upstream; custom outside indicators use a
+14px gap. Rail radius defaults to 5px (10px inside), or half an explicit height, while
+existing radius overrides retain precedence. Circle numbers use 28px text; custom content
+inherits surrounding typography. Multiple custom indicators stay centered when a separate
+authored heading is present.
+
+Inside text remains centered with a readable backing rather than moving/clipping inside the
+fill. This retained native-value presentation deliberately differs from upstream, including
+at zero. The corrected inside layout uses the complete track width rather than leaving an
+empty grid-column gap.
 
 ## Styling, CSP and lifecycle
 
 Public CSS tokens include `--mui-progress-color`, `--mui-progress-rail-color`,
-`--mui-progress-height`, `--mui-progress-size` (120px radial default),
+`--mui-progress-height`, `--mui-progress-size` (120px circle/dashboard; 200px multiple-circle),
 `--mui-progress-border-radius`, `--mui-progress-fill-border-radius`,
-`--mui-progress-text-color`, `--mui-progress-font-size`, `--mui-progress-gap` and
+`--mui-progress-text-color`, `--mui-progress-font-size`, `--mui-progress-circle-font-size`,
+`--mui-progress-icon-color`, `--mui-progress-gap` and
 `--mui-progress-indicator-background`.
 
 For retained attribute/data APIs, validated dimensions/radii/colors and numeric processing
@@ -226,7 +257,15 @@ native attributes. No stylesheet strings, CSS-in-JS engine, canvas/chart package
 animation scheduler or measurements are introduced. This is an explicit inline-style/CSP
 boundary; prefer external CSS/native markup when such attribute writes are disallowed.
 
-Processing/indeterminate effects are CSS-only. Reduced motion disables those animations.
+Status masks are small SVG data images embedded in the external CSS, not runtime icon nodes,
+font glyphs or an icon package. They need CSS mask support and a CSP permitting data images.
+For a stricter image policy or a different visual status, provide an authored custom indicator;
+native names/values do not depend on the decorative mask.
+
+Processing uses the pinned two-second growing/fading highlight rather than the old sliding
+shine. Radial stroke/dash changes transition through CSS. Reduced motion disables these
+animations/transitions and removes the determinate processing wash; an indeterminate native
+owner remains unknown, with a static visual segment. No completion state is inferred.
 Computed CSS variables, browser progress-pseudo styling and actual theme contrast remain
 application/browser responsibilities; syntax validation does not certify computed appearance.
 
@@ -258,7 +297,7 @@ Generated-part replacement preserves still-owned authored controls/indicator nod
 | `rail-color` | Validated scalar or per-ring colors. | 🟢 Native track/SVG rail colors. |
 | `rail-style` | External authored CSS instead. | ⏭️ String/object/array style passthrough omitted. |
 | `show-indicator` | `show-indicator="false"` / `.showIndicator`, true default. | 🟢 Visual-only visibility; labels/range owners remain. |
-| `status` | Default/success/error/warning/info attribute/property. | 🟢 Explicit color/glyph; no inferred success or live announcement. |
+| `status` | Default/success/error/warning/info attribute/property. | 🟢 Explicit color/decorative mask; native value retained, no inferred success or live announcement. |
 | `stroke-width` | Nonnegative numeric attribute / `.strokeWidth`, default 7. | 🟢 SVG thickness and ring-fit validation. |
 | `type` | Line/circle/dashboard/multiple-circle attribute/property. | 🟢 Native range owners plus CSS/SVG visuals. |
 | `unit` | Safe text attribute/property, default `%`. | 🟢 Display suffix only. |
@@ -285,7 +324,29 @@ HTML; only `show-indicator` uses explicit `"false"` to opt out of its true defau
 8. [x] Keep measured optional budgets by deduplication and a lean classic entry, not relaxed ceilings.
 9. [x] Reconcile retained reference rows/four tasks, index totals and master next Statistic.
 
-### Acceptance evidence — 2026-09-08
+### Style acceptance — 2026-09-10
+
+- Chromium compared 36 cases in light/dark: native lines, circles, multiple circles,
+  dashboard boundary, statuses, caps/heights, indicators/custom content, gradients and motion.
+  **58 of 62 corresponding indicator boxes** matched within .02px; the four retained
+  inside-indicator comparisons intentionally use the native centered/backed presentation.
+- Screenshot-pixel sampling matched all 24 sampled line fill/rail colors, including dark
+  alpha rails. Rendering exposed and fixed double-compositing of the native WebKit rail.
+  Corrected matrices remained identical with later legacy CSS/aggregate loading.
+- Real native value/clamping/unknown/multiple-owner checks, author tokens, hidden/custom
+  layouts, centered multiple headings and four processing-animation phases were verified.
+- `pnpm test -- tests\progress.test.ts tests\progress.styles.test.ts`: **33 tests passed**.
+  Isolated strict TypeScript passed; no full build was run during this component pass.
+- Exact optional recipes with the build script's **gzip level 9**: ESM/classic/CSS
+  **5,951 / 5,982 / 2,348 bytes**, below unchanged **6,000 / 6,000 / 2,500** ceilings.
+  The coordinator's isolated release build confirms these sizes, and all **33 Progress
+  tests** pass. The classic bundle has only 18 gzip bytes of headroom.
+- See the [rendered Progress audit](../style-audit/components/progress.md) for native
+  adaptations, independent icon geometry, evidence and non-parity boundaries.
+
+### Historical acceptance evidence — 2026-09-08
+
+Initial geometry, glyph and byte-count observations below predate the style corrections.
 
 - `pnpm test -- tests\progress.test.ts`: **29 focused tests passed**.
 - `pnpm build && pnpm test`: declarations and unchanged budget gates passed;

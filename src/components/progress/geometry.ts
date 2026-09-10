@@ -34,9 +34,10 @@ export function createRing(document: Document, id: string): Ring {
   group.append(rail, fill)
   const gradient = document.createElementNS(namespace, "linearGradient")
   gradient.id = id
-  gradient.setAttribute("x1", "0%")
+  // Align the gradient with the default single/multiple ring rotations.
+  gradient.setAttribute("x1", "100%")
   gradient.setAttribute("y1", "100%")
-  gradient.setAttribute("x2", "100%")
+  gradient.setAttribute("x2", "0%")
   gradient.setAttribute("y2", "0%")
   const stops = [document.createElementNS(namespace, "stop"), document.createElementNS(namespace, "stop")]
   stops[0]!.setAttribute("offset", "0%")
