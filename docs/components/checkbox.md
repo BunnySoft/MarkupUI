@@ -191,13 +191,34 @@ Native checkbox rendering and `accent-color` remain intact; no appearance:none, 
 checkmark SVG, role substitution or global input reset. `.mui-checkbox` styles the label
 layout; `.mui-checkbox-group__items` wraps children. `data-size="small|medium|large"`
 on an individual label or group sets explicit inherited CSS sizes (medium default).
+The native boxes are **14/16/18px** and the label fonts **14/14/15px**, respectively.
+Labels use 1.6 line-height, an 8px text gap and 8px trailing space; boxes align with
+the first label line, including multiline labels. Top inline alignment avoids additional
+native-control baseline space beneath the label. Explicit medium resets an inherited
+small size, while inherited public sizing tokens still take precedence.
 Optional group `data-status="warning|error"` changes its border only; include author status
-text where useful, never infer schema validity. Logical spacing, focus-visible outlines,
+text where useful, never infer schema validity. Logical spacing, focus-visible rings,
 hidden safety, forced colors, print and wrapping are external CSS. No animation is added,
 so reduced motion requires no runtime. Native checked/mixed visuals follow browser/platform.
 
 Tokens: `--mui-checkbox-color`, `-font`, `-size`, `-accent`, `-focus`, `-disabled`, `-border`
 (all share the `--mui-checkbox` prefix). No provider/theme-object/CSS-in-JS translation.
+An ancestor `data-mui-theme="light|dark"` selects the native color scheme; standalone
+controls default to light. Size/status/theme defaults use private variables and never
+overwrite public tokens. Neutral label colors use local reference-matched fallbacks,
+not legacy shared neutral roles; the default accent reuses the shared primary role.
+`-focus` colors the 2px keyboard-focus ring, with an explicit system outline in forced
+colors. It does not recolor the browser's native checkbox border or tick.
+
+The [default-style audit](../style-audit/components/checkbox.md) records exact geometry,
+computed styles and rendered pixel evidence. **Native skin is intentionally retained**:
+unchecked/hover borders, disabled fills, tick/mixed glyphs and mark contrast cannot be
+made identical to Naive's drawn checkbox through `accent-color`. No hidden native input,
+replacement role, copied SVG or synthetic keyboard handling is introduced for parity.
+The native fieldset/legend envelope also remains: 12px padding, 3px corner radius and
+a subtle boundary, rather than Naive's bare group `div`. Items now use the label's own
+spacing instead of an additional flex gap. Group limit `aria-disabled` still preserves
+native checked-value submission and does not apply native-disabled label paint.
 
 | Upstream owner/property | Retained adaptation or omission |
 | --- | --- |
@@ -222,9 +243,11 @@ Tokens: `--mui-checkbox-color`, `-font`, `-size`, `-accent`, `-focus`, `-disable
 
 ## Acceptance
 
+### Original native-contract acceptance (historical)
+
 Obtained locally on 2026-09-09, server 4188, dedicated Checkbox tab. The retained scope
 does not claim all-browser/AT, native OS theme pixel parity, framework models or Form-level
-validation.
+validation. The sizes and asset bytes below describe that original revision.
 
 - **124 targeted tests passed**: 45 Checkbox, 52 Input and 27 native regressions, using
   `pnpm test -- tests\checkbox.test.ts tests\input.test.ts tests\native.test.ts`.
@@ -270,3 +293,30 @@ The local documentation audit preserves all **29 original Checkbox identities** 
 resolves **42 rows (28 adapted, 14 omitted)**. The catalog has **3,488 colored rows across
 96 pages and 220/384 accepted tasks across 55 pages**; edited local file links pass.
 P4 is still In progress. **Next Radio**, then Switch/Select/native controls before Form.
+
+### Default-style audit, 2026-09-10
+
+**49 Checkbox-only tests passed**: all 45 original native cases plus four CSS regressions.
+Isolated Chromium comparison covered unchecked/checked/indeterminate in all three sizes,
+disabled variants, hover/focus, long labels, groups and inherited group sizes in light/dark.
+Actual screenshot pixels confirm matching checked accents and explicitly document the
+remaining native-skin differences, rather than inferring native fill from computed CSS.
+
+Browser checks passed for Space/input/change order, label activation, cancelled mixed
+activation, min/max rollback and FormData, reset retaining native indeterminate, disabled
+fieldset/first-legend paint, explicit child sizing and every public color/sizing token.
+Forced colors, print, RTL at 360px/200% CSS zoom and no-JS label/reset checks passed.
+No browser-engine, operating-system or assistive-technology certification is implied.
+
+Existing isolated esbuild recipes and gzip level 9 produced:
+
+| Asset | Raw bytes | Gzip bytes | Unchanged ceiling |
+| --- | ---: | ---: | ---: |
+| `markup-ui-checkbox.js` | 5,410 | 2,171 | 3,500 |
+| `markup-ui-checkbox.global.js` | 5,576 | 2,246 | 3,500 |
+| `markup-ui-checkbox.css` | 3,215 | 989 | 1,000 |
+
+The CSS source is readable and already CRLF; a normalized CRLF checkout measures the
+same bytes. CSS-only Checkbox costs **989 gzip bytes**. Enhanced groups cost **3,160
+ESM / 3,235 classic gzip bytes** including CSS. JavaScript is unchanged; no full build,
+shared/generated file updates, dependency additions, commit or push were performed.

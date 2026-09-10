@@ -18,6 +18,32 @@ function fixture(id = "topics", options: CheckboxGroupOptions = { min: 1, max: 2
 }
 afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
 
+describe("Checkbox stylesheet contract", () => {
+  const css = readFileSync(join("src", "components", "checkbox", "checkbox.css"), "utf8")
+  it("keeps size, status and scheme defaults private for inherited author tokens", () => {
+    expect(css).not.toMatch(/--mui-checkbox-[\w-]+\s*:/)
+    for (const size of [14, 16, 18]) expect(css).toMatch(new RegExp(`--_mui-checkbox-size:\\s*${size}px`))
+    expect(css).toMatch(/data-mui-theme="?dark"?/)
+    expect(css).toMatch(/vertical-align:\s*top/)
+    expect(css).not.toContain("var(--mui-text-primary")
+  })
+  it("retains the native checkbox skin instead of drawing replacement checks", () => {
+    expect(css).toContain("accent-color:")
+    expect(css).not.toMatch(/appearance\s*:|::before|::after|url\(/)
+    expect(css).not.toMatch(/opacity:\s*0|pointer-events:\s*none/)
+  })
+  it("uses native disabled state for label paint, not the group's temporary limit ARIA", () => {
+    expect(css).toContain(":has(> input:disabled)")
+    expect(css).not.toMatch(/:has\([^)]*aria-disabled/)
+  })
+  it("retains forced-color keyboard focus and hidden-control safety", () => {
+    expect(css).toMatch(/:focus-visible\s*\{[^}]*box-shadow:/)
+    expect(css).toMatch(/@media\s*\(forced-colors:\s*active\)/)
+    expect(css).toMatch(/outline:\s*2px solid Highlight/)
+    expect(css).toMatch(/\[hidden\][^{]*\{[^}]*display:\s*none\s*!important/)
+  })
+})
+
 describe("native Checkbox and group ownership", () => {
   it("preserves native controls, label content, checked/default/value and listeners", () => {
     const { root, helper, field } = fixture()
