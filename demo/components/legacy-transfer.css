@@ -1,0 +1,25 @@
+/* Local application presentation; the existing Transfer asset owns the dual lists. */
+#legacy-transfer-example {
+  box-sizing: border-box;
+  max-inline-size: 68rem;
+  margin-inline: auto;
+  padding: 1rem;
+  font: 1rem/1.5 system-ui, sans-serif;
+  color: CanvasText;
+  background: Canvas;
+  overflow-wrap: anywhere;
+}
+#legacy-transfer-example [hidden] { display: none !important; }
+#legacy-transfer-example fieldset { min-inline-size: 0; margin-block: 1rem; }
+#legacy-transfer-example h2 { font-size: 1.1rem; }
+#legacy-transfer-example .native-fields { display: flex; flex-wrap: wrap; gap: 1rem; }
+#legacy-transfer-example .native-fields label { min-inline-size: 0; }
+#legacy-transfer-example input { box-sizing: border-box; max-inline-size: 100%; font: inherit; }
+#legacy-transfer-example button { min-block-size: 2.75rem; font: inherit; }
+#legacy-transfer-example #migration-tools { display: flex; flex-wrap: wrap; gap: .5rem; }
+#legacy-transfer-example pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+#legacy-transfer-example :focus-visible { outline: 3px solid Highlight; outline-offset: 2px; }
+@media print {
+  #legacy-transfer-example { max-inline-size: none; padding: 0; }
+  #legacy-transfer-example #migration-tools { display: none; }
+}

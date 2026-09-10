@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Legacy Transfer migration: native membership and staging</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-transfer.css">
+  <link rel="stylesheet" href="legacy-transfer.css">
+  <script type="module" src="legacy-transfer.js"></script>
+</head>
+<body>
+  <main id="legacy-transfer-example">
+    <h1>Replace Legacy Transfer with explicit native membership</h1>
+    <p>Every option in Target is a member. Native highlights stage possible moves;
+      they are not the membership value. This example uses the existing Transfer
+      helper, not a deprecated constructor, object-options adapter or virtual renderer.</p>
+    <p id="handoff-note">Without enhancement: original lists and highlights remain,
+      but movement, filtering, membership reset and membership serialization are unavailable.
+      Their controls stay hidden. The staging selects have no names.</p>
+    <form id="migration-form">
+      <div class="native-fields">
+        <label>Project <input id="project-name" name="project" value="Local project" required></label>
+        <label>Application note <input name="note" value="Original native fields"></label>
+      </div>
+      <fieldset id="membership" class="mui-transfer" data-transfer data-transfer-name="reviewers[]" data-transfer-required>
+        <legend>Project review membership</legend>
+        <div data-transfer-columns>
+          <section data-transfer-pane>
+            <h2>Available people</h2>
+            <label data-demo-enhanced hidden>Filter available labels
+              <input id="source-filter" type="search" data-transfer-filter="source" placeholder="Match available labels"></label>
+            <label>Highlight additions
+              <select id="source-list" data-transfer-source multiple size="6">
+                <option value="alpha" selected>Alpha reviewer</option>
+                <option value="beta">Beta reviewer</option>
+                <option value="gamma">Gamma reviewer</option>
+                <option value="locked-source" disabled>Unavailable reviewer (locked source)</option>
+              </select></label>
+            <p data-transfer-count="source">4 available options</p>
+            <button type="button" data-transfer-action="clear-source" hidden>Clear source highlights</button>
+          </section>
+          <div data-transfer-actions>
+            <button type="button" data-transfer-action="add" hidden>Add highlighted matches</button>
+            <button type="button" data-transfer-action="remove" hidden>Remove highlighted matches</button>
+            <button type="button" data-transfer-action="add-all" hidden>Add all available matches</button>
+            <button type="button" data-transfer-action="remove-all" hidden>Remove all unlocked matches</button>
+          </div>
+          <section data-transfer-pane>
+            <h2>Target members</h2>
+            <label data-demo-enhanced hidden>Filter member labels
+              <input id="target-filter" type="search" data-transfer-filter="target" placeholder="Match member labels"></label>
+            <label>Highlight removals
+              <select id="target-list" data-transfer-target multiple size="6">
+                <option value="core" disabled>Core reviewer (locked member)</option>
+                <option value="reader">Reader member</option>
+              </select></label>
+            <p data-transfer-count="target">2 members, regardless of highlighting</p>
+            <button type="button" data-transfer-action="clear-target" hidden>Clear target highlights</button>
+          </section>
+        </div>
+        <p data-transfer-status role="status"></p>
+      </fieldset>
+      <div id="migration-tools" data-demo-enhanced hidden>
+        <button type="button" id="preview">Inspect real FormData</button>
+        <button type="reset" id="reset-membership">Reset membership, highlights and fields</button>
+        <button type="button" id="set-value">Set exact target order: Core, Beta, Alpha</button>
+        <button type="button" id="set-defaults">Set future reset membership: Core, Gamma</button>
+        <button type="button" id="disable-membership">Toggle native fieldset disabled</button>
+        <button type="button" id="disconnect">Disconnect and keep current native lists</button>
+      </div>
+    </form>
+    <p id="demo-events">No move or serialization has occurred.</p>
+    <pre id="membership-state" aria-label="Membership and staging snapshot">Static source and target content remain readable without JavaScript.</pre>
+    <pre id="formdata-preview" aria-label="Actual native FormData preview">No membership submission is implied without enhancement.</pre>
+    <details>
+      <summary>Ordering, locks and fallback limits</summary>
+      <p>Moves append in origin order; setValue sets exact target order. A locked target
+        stays a member even if it is unhighlighted or filtered out. Clearing highlights
+        never clears membership. Reset membership defaults are separate from native
+        option defaultSelected flags. Neither staging select is named or required.</p>
+      <p>The application exclusively reserves reviewers[] for the helper's formdata
+        listener. It does not name staging selects or add hidden proxy fields.
+        Disabled panes contribute no membership entries. No submit button, backend,
+        clipboard, upload or network request is added by the local preview.</p>
+    </details>
+  </main>
+</body>
+</html>
