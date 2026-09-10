@@ -141,21 +141,38 @@ count in an automatic live region; `aria-describedby` is optional author semanti
 
 ## CSS, textarea, groups and pair fields
 
-`.mui-input` supplies border, padding, focus, wrapped affixes/actions/counts and native
+`.mui-input` supplies border, padding, focus, wrapped affixes/actions and native
 control sizing. Only descendants marked `data-input-control` are styled. No global input
 reset, inline styles, animation, theme provider or CSS-in-JS. Native `:disabled` drives
 disabled color and helper availability, including fieldset inheritance.
 
 | Presentation | Mapping |
 | --- | --- |
-| `data-size="tiny|small|medium|large"` | Explicit CSS font/padding; medium is the default |
+| `data-size="tiny|small|medium|large"` | Heights 22/28/34/40px, fonts 12/14/14/15px, horizontal padding 8/10/12/14px; medium is the default |
 | `data-round` | Optional round shape, intended for single-line fields |
-| `data-borderless` | Transparent border; focus outline remains |
+| `data-borderless` | Transparent resting border; visible focus boundary remains |
 | `data-status="success|warning|error"` | Border presentation only, never automatic validity/ARIA/live announcements |
 | `.mui-input__affix` | Authored prefix/suffix; meaningful text should be associated appropriately |
 | `.mui-input-group` | Wrapping flex composition, no invented group role or tuple renderer |
 | `.mui-input-group-label` | Authored addon/label styling; explicit size/borderless also supported |
-| CSS tokens | `--mui-input-color`, `-background`, `-border`, `-focus`, `-placeholder`, `-disabled`, `-disabled-background`, `-active`, `-addon-background`, `-pad`, `-font`, `-radius` (all share `--mui-input` prefix) |
+| CSS tokens | `--mui-input-color`, `-background`, `-border`, `-focus`, `-placeholder`, `-disabled`, `-disabled-background`, `-active`, `-addon-background`, `-pad`, `-font`, `-radius`, `-height` (all share `--mui-input` prefix) |
+
+The [default-style audit](../style-audit/components/input.md) aligns the retained
+field geometry and light/dark paint with the pinned Naive reference. An ancestor
+`data-mui-theme="light|dark"` selects the scheme; standalone fields default to light.
+Defaults use private variables: inherited public tokens still win over size, status
+and theme defaults. `-pad` now controls horizontal padding, while `-height` and
+`-font` determine vertical alignment. Use explicit lengths for these sizing tokens.
+Neutral colors are local reference-matched fallbacks, not the legacy shared text roles.
+Shared primary/warning/error roles remain usable without changing the shared palette.
+
+The boundary is a pointer-transparent pseudo-element, not a second native control or
+an inset editing outline. Clear/reveal buttons have borderless, intrinsic authored
+content; use a named button with an independently authored 16px decorative icon for
+reference-sized actions. Text labels remain supported and are not clipped to icon width.
+No vendor eye/cross artwork is supplied. Textarea counts sit at the bottom inline end
+without adding a row and do not intercept pointer input. Long text can reach this count
+overlay; omit the optional count or provide application-owned spacing when needed.
 
 For a pair, author two separately labelled and named fields with optional separator text.
 `InputGroupLabel` styling **does not itself label an input**: use `<label for>`, a separate
@@ -173,7 +190,9 @@ mirror, per-frame polling or promise of upstream pixel/row parity.
 
 Logical sizing/padding supports RTL and narrow wrapping. Forced colors retains native
 boundaries; print hides action buttons. There are no animations to disable for reduced
-motion. Native `:has()` adds only disabled background/textarea count layout, not behavior.
+motion. Native `:has()` adds disabled/focus presentation and textarea count layout, not behavior.
+Only the native field's `:disabled` state dims the root; temporarily disabled enhancement
+buttons during IME composition do not remove the field's focus indication.
 
 ## Complete upstream disposition
 
@@ -219,7 +238,11 @@ formatting nor allow-input rollback is invented as a new native helper feature.
 
 ## Acceptance and boundaries
 
-Obtained on **2026-09-09** with local server **4188** and a dedicated Input demo tab:
+### Original native-contract acceptance (historical)
+
+Obtained on **2026-09-09** with local server **4188** and a dedicated Input demo tab.
+The asset sizes and textarea sizing below describe that original revision, not the
+subsequent style audit:
 
 - **189 targeted Vitest tests passed**: 52 Input, 27 native, 24 Button, 53 Pagination
   and 33 Collapse; native state/selection/
@@ -271,3 +294,20 @@ P4 remains In progress; Checkbox is next.
 
 Only obtained evidence is claimed; no Form schema/async validation, Vue compatibility,
 arbitrary renderers, synthetic grapheme constraints or universal browser/AT parity.
+
+### Default-style audit, 2026-09-10
+
+**56 Input-only tests passed**, including all 52 original native-contract cases.
+Isolated Chromium comparison covered four sizes, ordinary/password/textarea, placeholder,
+clear, prefix/suffix, count, disabled, hover/focus, error/warning, round and borderless
+fields in both schemes. Native keyboard replacement, CDP composition, clear, reset/
+FormData, selection-preserving reveal, Escape masking, forced colors, print and narrow
+200% CSS zoom checks also passed. See the linked audit for exact measurements and
+limitations; this is not OS IME, password-manager or all-engine certification.
+
+Current isolated assets (existing esbuild recipe, gzip level 9): ESM **7,704 raw /
+3,110 gzip**, classic **7,861 / 3,180**, CSS **7,053 / 1,737** bytes. Unchanged gzip
+ceilings are **4,000 / 4,000 / 1,750**. One helper plus CSS is **4,847 ESM / 4,917
+classic gzip bytes**. Source CSS is whitespace-compacted equivalently to remain within
+its existing ceiling; no build-script or budget changes. JavaScript is unchanged.
+No full release build, generated-asset updates, commit or push were performed here.

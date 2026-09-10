@@ -21,6 +21,30 @@ function fixture(id = "title-root", options: InputOptions = {}) {
 }
 afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
 
+describe("Input stylesheet contract", () => {
+  const css = readFileSync(join("src", "components", "input", "input.css"), "utf8")
+  it("keeps size, status and theme defaults private so inherited author tokens win", () => {
+    expect(css).not.toMatch(/--mui-input-[\w-]+\s*:/)
+    for (const height of [22, 28, 34, 40]) expect(css).toMatch(new RegExp(`--_mui-input-height:\\s*${height}px`))
+    expect(css).toMatch(/data-mui-theme="?dark"?/)
+    expect(css).not.toContain("var(--mui-text-primary")
+  })
+  it("does not confuse disabled action buttons during IME with a disabled field", () => {
+    expect(css).not.toContain(":has(:disabled)")
+    expect(css).toContain(":has([data-input-control]:disabled)")
+  })
+  it("paints the boundary without taking space from native rows and field height", () => {
+    expect(css).toMatch(/\.mui-input::before\s*\{[^}]*pointer-events:\s*none/)
+    expect(css).toMatch(/input\[data-input-control\]\s*\{[^}]*block-size:\s*var\(--mui-input-height/)
+    expect(css).toMatch(/textarea\[data-input-control\]\s*\{[^}]*line-height:\s*1\.6/)
+  })
+  it("retains hidden, forced-color and print action safeguards", () => {
+    expect(css).toMatch(/\[hidden\][^{]*\{[^}]*display:\s*none\s*!important/)
+    expect(css).toMatch(/@media\s*\(forced-colors:\s*active\)/)
+    expect(css).toMatch(/@media print/)
+  })
+})
+
 describe("authored Input ownership", () => {
   it("preserves node/listeners, attributes, defaults and editing state", () => {
     const { root, control, helper } = fixture()
