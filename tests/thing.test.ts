@@ -1,8 +1,10 @@
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it } from "vitest"
 
 const css = readFileSync(resolve("src", "components", "thing", "thing.css"), "utf8")
+const compactCss = css.replace(/\s+/g, "")
 const demo = readFileSync(resolve("demo", "components", "thing.html"), "utf8")
 const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
 let style: HTMLStyleElement | undefined
@@ -82,7 +84,7 @@ describe("CSS-only native Thing", () => {
     // Chromium covers the complex :where() cascade and actual column geometry.
     for (const region of ["content", "footer", "action"]) {
       expect(root.querySelector(`:scope > .mui-thing-${region}`)!.matches(indented(region))).toBe(true)
-      expect(css).toContain(indented(region))
+      expect(compactCss).toContain(indented(region).replace(/\s+/g, ""))
     }
     root.dataset.contentIndented = "false"
     expect(content.matches(indented("content"))).toBe(true)
@@ -166,16 +168,17 @@ describe("CSS-only native Thing", () => {
     template.className = "mui-thing"
     document.body.append(template)
     expect(getComputedStyle(template).display).toBe("none")
-    expect(css).toContain(':not([hidden="until-found"])')
+    expect(css).toContain(':not([hidden=until-found])')
   })
 
-  it("resets nested layout defaults and leaves outer native list semantics intact", () => {
+  it("keeps nested grid placement local without overwriting inherited author tokens", () => {
     fixture()
     install()
     const outer = document.querySelector<HTMLElement>("#indented-thing")!
     outer.style.setProperty("--mui-thing-row-gap", "4rem")
-    const nested = document.querySelector("#nested-thing")!
-    expect(getComputedStyle(nested).getPropertyValue("--mui-thing-row-gap")).toBe(".75rem")
+    expect(outer.style.getPropertyValue("--mui-thing-row-gap")).toBe("4rem")
+    expect(css).not.toContain("--mui-thing-row-gap:")
+    expect(css).toContain("var(--mui-thing-row-gap,12px)")
     expect(getComputedStyle(document.querySelector("#nested-content")!).gridColumn).toBe("1 / -1")
     expect(getComputedStyle(document.querySelector("#native-list-item")!).display).toBe("list-item")
     expect(getComputedStyle(document.querySelector("#native-list")!).listStyleType).toBe("disc")
@@ -202,13 +205,50 @@ describe("CSS-only native Thing", () => {
     expect(getComputedStyle(outside).display).toBe(before)
     expect(getComputedStyle(document.querySelector("#project-header")!).flexWrap).toBe("wrap")
     expect(getComputedStyle(document.querySelector("#project-actions")!).flexWrap).toBe("wrap")
-    expect(css).toContain("margin-inline-start")
-    expect(css).toContain("overflow-wrap: anywhere")
+    expect(css).toContain("column-gap:var(--mui-thing-column-gap,12px)")
+    expect(compactCss).toContain("overflow-wrap:anywhere")
     expect(css).toContain("@media print")
-    expect(css).toContain("@media (forced-colors: active)")
+    expect(compactCss).toContain("@media(forced-colors:active)")
     expect(css).not.toContain("row-reverse")
-    expect(css).not.toContain("transition:")
+    expect(css).toContain("transition:color .3s cubic-bezier(.4,0,.2,1)")
     expect(css).not.toContain("animation:")
     expect(css).not.toMatch(/(?:^|[;{])\s*order\s*:/m)
+  })
+
+  it("keeps audited typography, theme roles, avatar spacing and motion within the CSS budget", () => {
+    expect(css).toContain("var(--mui-thing-font-size,var(--mui-font-size,14px))")
+    expect(css).toContain("var(--mui-thing-font-family,var(--mui-font-family,inherit))")
+    expect(css).toContain("var(--mui-thing-line-height,var(--mui-line-height,1.6))")
+    expect(css).toContain("var(--mui-thing-title-size,16px)")
+    expect(css).toContain("var(--mui-thing-title-weight,var(--mui-font-weight-strong,500))")
+    expect(css).toContain("var(--mui-thing-color,var(--_mui-thing-color,#333639))")
+    expect(css).toContain("var(--mui-thing-title-color,var(--_mui-thing-title,#1f2225))")
+    expect(css).toContain("rgba(255,255,255,.82)")
+    expect(css).toContain("rgba(255,255,255,.9)")
+    expect(css).not.toContain("--mui-text-primary")
+    expect(css).toContain("margin-block-start:2px")
+    expect(css).toContain("grid-row:1 / span 4")
+    expect(css).toContain("grid-template:auto auto auto 1fr/auto minmax(0,1fr)")
+    expect(css).toContain("var(--mui-thing-avatar-width,none)")
+    expect(css).toContain("max(0px,var(--mui-thing-row-gap,12px) - var(--mui-thing-lead-gap,4px))")
+    expect(compactCss).toContain("@media(prefers-reduced-motion:reduce)")
+    expect(css).toContain("transition:none")
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+  })
+
+  it("preserves authored shared and local typography and spacing without a controller", () => {
+    document.body.innerHTML = '<div style="--mui-font-size:18px;--mui-line-height:2;--mui-font-family:monospace;--mui-thing-row-gap:16px"><article class="mui-thing" style="--mui-thing-font-size:20px;--mui-thing-title-size:24px;--mui-thing-title-weight:600;--mui-thing-color:rgb(1,2,3)"><div class="mui-thing-lead"><header class="mui-thing-header"><h2 class="mui-thing-title">Title</h2></header></div><div class="mui-thing-content">Content</div></article></div>'
+    const root = document.querySelector<HTMLElement>(".mui-thing")!
+    const parent = root.parentElement!
+    const shared = parent.getAttribute("style"), local = root.getAttribute("style")
+    const heading = root.querySelector("h2")
+    install()
+    root.dataset.contentIndented = ""
+    root.remove()
+    parent.append(root)
+    expect(parent.getAttribute("style")).toBe(shared)
+    expect(root.getAttribute("style")).toBe(local)
+    expect(root.querySelector("h2")).toBe(heading)
+    expect(root.querySelector("[role],[aria-live],script")).toBeNull()
   })
 })

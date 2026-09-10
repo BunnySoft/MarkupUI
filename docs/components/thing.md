@@ -4,6 +4,12 @@
 Thing is an external-CSS composition of authored media, heading, description, content,
 footer and action regions. It has no controller, renderer, provider or component constructor.
 
+**Default-style audit (2026-09-10):** the retained composition now uses the pinned
+reference's 14px body, 16px/500 title, 1.6 leading, region margins, avatar alignment and
+light/dark text roles. See the [rendered audit](../style-audit/components/thing.md) for
+before/after geometry, authored-token precedence, strict CSS budget and remaining limits.
+There is still **zero component JavaScript**.
+
 ## Loading and reference boundary
 
 | Asset | Purpose |
@@ -71,8 +77,10 @@ region rather than relying on a renderer to wrap anonymous root text.
 
 Use meaningful image `alt` or explicitly decorative media, and name meaningful SVGs.
 The avatar region accepts authored media/glyphs, not an Avatar/Icon component instance.
-CSS bounds direct avatar images/SVGs proportionally; content images and unusual media need
-their own author constraints. Nodes, source attributes, alternative text, classes, labels,
+An optional `--mui-thing-avatar-width` bounds direct avatar images/SVGs proportionally;
+there is no default 48px cap. Media keeps its authored size, as an upstream avatar slot does.
+Large media, content images and unusual media need their own author constraints.
+Nodes, source attributes, alternative text, classes, labels,
 listeners, links, native controls and content order remain unchanged.
 
 ## Property and slot mappings
@@ -126,8 +134,10 @@ when indentation changes or suppress an authored description merely because an a
 exists without header/title content. Description-only, content-only, action-only and empty
 examples remain explicit HTML, without generated placeholders or headings.
 
-Nested Things use their own root and reset layout/spacing/heading defaults. Indentation
-does not leak to nested content; ordinary native `dir` and shared color tokens may inherit.
+Nested Things use their own grid placement, so indentation does not leak into nested
+content. Default values are CSS fallbacks, not assignments that erase inherited author
+tokens: a shared/ancestor Thing override now inherits normally, and an explicit nested
+override wins. Native `dir`, typography and authored color tokens may also inherit.
 Logical grid columns and margins support RTL without reversing DOM reading/Tab order.
 Header-extra and action controls wrap naturally; no measurement, responsive string parser,
 container controller or hidden overflow is introduced.
@@ -147,14 +157,29 @@ its own listener. No lifecycle/cleanup machinery is necessary for CSS-only prese
 
 | CSS token | Default / responsibility |
 | --- | --- |
-| `--mui-thing-column-gap`, `--mui-thing-row-gap` | `.75rem`; reset on each root. |
-| `--mui-thing-avatar-width` | `3rem` maximum avatar region width; actual media can be smaller. Use a valid CSS length. |
-| `--mui-thing-title-size`, `--mui-thing-title-weight` | `1.125rem` / `600`; native heading levels remain author-selected. |
-| `--mui-thing-lead-gap` | `.25rem` between header and description; reset on each root. |
+| `--mui-thing-column-gap`, `--mui-thing-row-gap` | `12px`; avatar-column spacing and margins before subsequent content/footer/action regions. Use nonnegative lengths. |
+| `--mui-thing-avatar-width` | No default cap; optional maximum avatar-region width. Media retains authored dimensions unless constrained. |
+| `--mui-thing-title-size`, `--mui-thing-title-weight` | `16px` / shared `--mui-font-weight-strong`, then `500`; heading levels remain author-selected. |
+| `--mui-thing-lead-gap` | `4px` margin below the header, including header-only content. Use a nonnegative length. |
 | `--mui-thing-header-align` | `center`; valid native flex `align-items` values. |
-| `--mui-thing-action-gap`, `--mui-thing-action-justify` | `.5rem` / `start`; native wrapping flex spacing/justification. |
-| `--mui-thing-font-size`, `--mui-thing-color` | Inherited font size / body text color. |
-| `--mui-thing-title-color`, `--mui-thing-description-color` | Optional title/description color overrides. |
+| `--mui-thing-action-gap`, `--mui-thing-action-justify` | `0` / `start`; explicit native wrapping-flex spacing/justification conveniences. |
+| `--mui-thing-font-size` | Shared `--mui-font-size`, then `14px`. |
+| `--mui-thing-font-family`, `--mui-thing-line-height` | Shared `--mui-font-family`, then inherited family; shared `--mui-line-height`, then `1.6`. |
+| `--mui-thing-color` | `#333639` in light; white/.82 in explicit dark. |
+| `--mui-thing-title-color`, `--mui-thing-description-color` | Title defaults to `#1f2225` / white/.9; description inherits body color unless locally overridden. |
+
+Local tokens win over shared typography/defaults, including when inherited from an ancestor.
+`data-mui-theme="dark"` on a host or ancestor selects dark role fallbacks; nested explicit
+`"light"` resets them. Legacy `--mui-text-primary` does not represent Naive's body/title
+roles and is deliberately not reused. Changing body color does not implicitly recolor
+the title; both roles have independent local overrides.
+
+The avatar starts 2px below the top. With indentation, it spans the four logical
+lead/content/footer/action tracks without moving any DOM node; the final flexible track
+absorbs excess avatar height so a tall avatar does not push later text downward.
+Header-only indented content accounts for the reference's collapsed margins, including
+row gaps smaller than the header gap. Ordinary named regions should remain in the
+documented order.
 
 Apply valid values through external CSS classes/stylesheets. There is no `data-size` or
 alignment prop parser. The demo's compact/aligned styles and panel borders are application
@@ -164,7 +189,8 @@ It also adds no List semantics/dividers or PageHeader back-navigation behavior.
 Native hidden roots/regions/controls and templates remain hidden/inert. Standalone CSS
 does not force `hidden="until-found"` to `display:none`; that reveal path is browser-owned
 and not separately certified. Print requests unbroken Things where pagination permits;
-forced colors preserve readable body/title/description text. There is no animation.
+forced colors preserve readable body/title/description text. Body/title color changes
+transition for 0.3s; reduced motion removes those transitions. There is no runtime animation.
 
 ## Migration steps and acceptance
 
