@@ -108,14 +108,44 @@ describe("CSS-only native Table", () => {
     fixture()
     install()
     const root = document.querySelector<HTMLElement>("#attribute-table")!
-    expect(getComputedStyle(root).getPropertyValue("--_mui-table-padding")).toBe(".75rem")
+    expect(getComputedStyle(root).getPropertyValue("--_mui-table-padding")).toBe("12px")
     root.dataset.size = "small"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-table-padding")).toBe(".375rem")
+    expect(getComputedStyle(root).getPropertyValue("--_mui-table-padding")).toBe("6px")
     root.dataset.size = "large"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-table-padding")).toBe(".75rem")
-    expect(getComputedStyle(root).getPropertyValue("--_mui-table-font-size")).toBe("1.125rem")
+    expect(getComputedStyle(root).getPropertyValue("--_mui-table-padding")).toBe("12px")
+    expect(getComputedStyle(root).getPropertyValue("--_mui-table-font-size")).toBe("15px")
     root.dataset.size = "unknown"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-table-font-size")).toBe("1rem")
+    expect(getComputedStyle(root).getPropertyValue("--_mui-table-font-size")).toBe("14px")
+  })
+
+  it("uses scoped light/dark Table colors rather than unrelated legacy surface tokens", () => {
+    install()
+    const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
+    const light = rules.find(rule => rule.selectorText === ':where([data-mui-theme="light"])')!
+    const dark = rules.find(rule => rule.selectorText === ':where([data-mui-theme="dark"])')!
+    expect(light.style.getPropertyValue("--_mui-table-color")).toBe("#333639")
+    expect(light.style.getPropertyValue("--_mui-table-header-background")).toBe("#fafafc")
+    expect(light.style.getPropertyValue("--_mui-table-border-color")).toBe("#efeff5")
+    expect(dark.style.getPropertyValue("--_mui-table-background")).toBe("#18181c")
+    expect(dark.style.getPropertyValue("--_mui-table-header-background")).toBe("#26262a")
+    expect(dark.style.getPropertyValue("--_mui-table-striped-background")).toBe("#242427")
+    expect(css).not.toContain("--mui-bg-")
+    expect(css).not.toContain("--mui-text-primary")
+  })
+
+  it("retains independent header color/weight and line-height author overrides", () => {
+    expect(css).toContain("var(--mui-table-header-weight, 500)")
+    expect(css).toContain("var(--mui-table-header-color, var(--mui-table-color,")
+    expect(css).toContain("line-height: var(--mui-table-line-height, 1.6)")
+    expect(css).toContain("font-variant-numeric: tabular-nums")
+  })
+
+  it("stops scoped color transitions for reduced motion without adding runtime animation", () => {
+    install()
+    const reduced = [...style!.sheet!.cssRules].find(rule =>
+      rule.type === CSSRule.MEDIA_RULE && (rule as CSSMediaRule).conditionText === "(prefers-reduced-motion: reduce)") as CSSMediaRule
+    expect((reduced.cssRules[0] as CSSStyleRule).style.getPropertyValue("transition")).toBe("none")
+    expect(css).not.toContain("@keyframes")
   })
 
   it("confines striping to body cells and supports visible-row filtering without a controller", () => {

@@ -134,14 +134,29 @@ This target deliberately keeps header/footer summaries outside zebra striping an
 body row headers the same background as their row. Plain nested tables do not receive
 the parent's cell borders, padding or striping. Normal font/color inheritance still applies.
 
-Small uses `.375rem` cell padding and `.875rem` font size; medium uses `.75rem`/`1rem`;
-large uses `.75rem`/`1.125rem`. The small/medium/large padding pattern follows the pinned
-6/12/12px constants at a 16px root; typography is an explicit native rem adaptation rather
-than a provider-font lookup.
+Small/medium/large now use **6/12/12px padding** and **14/14/15px text**, matching the
+pinned default theme rather than the earlier 14/16/18px rem-based adaptation.
+Line-height is 1.6 and header weight is 500. These fixed CSS presets still scale with
+browser zoom; use relative units in the public tokens when root-font-relative sizing is
+desired.
+
+Plain-table colors are local to this stylesheet. Light defaults are body `#fff` /
+`#333639`, header `#fafafc` / `#1f2225`, border `#efeff5`, and stripe `#fafafc`.
+Dark defaults are body `#18181c` / white .82, header `#26262a` / white .9, border
+`#2d2d30`, and stripe `#242427`. Set `data-mui-theme="dark"` on the native context;
+nested `data-mui-theme="light"` scopes restore light colors without a shared theme
+stylesheet. Public Table tokens remain author overrides.
+
+**The border/radius model is intentionally unchanged:** native collapsed borders retain
+a square perimeter, not upstream's 3px rounded, separately bordered/clipped surface.
+This preserves spanning-cell perimeter conflict resolution and unclipped cell controls.
+The [rendered Table audit](../style-audit/components/table.md) distinguishes the matching
+typography/palette from this retained geometry boundary.
 
 Tokens: `--mui-table-cell-padding`, `--mui-table-font-size`, `--mui-table-color`,
 `--mui-table-background`, `--mui-table-header-background`, `--mui-table-header-weight`,
-`--mui-table-border-color` and `--mui-table-striped-background`. Private
+`--mui-table-header-color`, `--mui-table-line-height`, `--mui-table-border-color` and
+`--mui-table-striped-background`. Private
 `--_mui-table-*` presets are not API. Use valid values in external CSS; native CSS
 validation applies. Source `theme`, `themeOverrides`, `builtinThemeOverrides` and the
 exported TypeScript `TableSize` alias are intentionally not implemented. The native size
@@ -182,7 +197,8 @@ deleting nodes. Standalone CSS does not force `hidden="until-found"` to display:
 that reveal path is not separately certified. Print expands scrolling wrappers while
 retaining native table/header-group rendering; author fixed/minimum widths may need print
 overrides, as demonstrated. Forced colors retain text and borders instead of relying on
-zebra color alone. No animation or runtime measurement is required.
+zebra color alone. Color/background/border changes use ordinary .3s CSS transitions;
+reduced motion disables those transitions. No animation loop or runtime measurement is required.
 
 ## Migration steps and acceptance
 
@@ -190,6 +206,30 @@ zebra color alone. No animation or runtime measurement is required.
 2. [x] Implement the actual border axes, bottom-edge combinations, sizes and striping.
 3. [x] Use explicitly named native overflow without converting table semantics or cell order.
 4. [x] Verify associations, geometry, controls, hidden/nested scope, print and forced colors.
+
+### Default-style acceptance — 2026-09-10
+
+- Compared 25 cases in light/dark, including all 16 border-flag combinations, sizes,
+  stripes, row headers, hidden rows, native width hints and author overrides.
+- All **400 measured cell typography/foreground samples** matched reference font size,
+  line-height, weight, padding and text color. Default table height is now 190.5625px
+  and large 197px in the controlled fixture, matching source.
+- Header/body/border/stripe palette defaults match the pinned plain-table theme. Native
+  collapsed-border/radius, row-header/visible-row stripes and width-hint handling remain
+  explicit adaptations rather than claims of complete pixel parity.
+- Later legacy CSS retained identical captured target measurements. Native accessibility
+  snapshot, caption/headers/rowspan, scrolling, forced colors, print, author tokens and
+  nested light scope were verified. A JavaScript-disabled context retained required
+  validation, reset, disabled controls and native GET submission.
+- `pnpm test -- tests\table.test.ts`: **15 tests passed**. CSS is **1,218 gzip bytes**
+  at the build script's level 9, below the unchanged **1,500-byte** ceiling; runtime JS
+  remains **0 bytes**. The coordinator's isolated release build and **77 combined
+  Table/Data Table tests** pass. The composed Data Table CSS inherits this base
+  presentation and remains **1,693/2,000 gzip bytes**; its own visual audit is separate.
+
+### Historical acceptance — 2026-09-08
+
+The initial typography and byte-count observations below predate the style corrections.
 
 On 2026-09-08, `pnpm --dir D:\repos\MarkupUI check` passed build/budget gates and
 **467 tests**, including **12 Table cases**. Chromium acceptance exercised:

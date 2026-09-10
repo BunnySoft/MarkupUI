@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 26/96 scopes.** The other **70** are not yet accepted in this
+**Reviewed and integrated: 27/96 scopes.** The other **69** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -105,7 +105,7 @@ a separate follow-up; its work-in-progress is not included in published componen
 | [Layout](../naive-ui/components/layout.md) | 🟢 Fixed / 🟡 Remaining | [Region palettes, author tokens and native scrolling limits](components/layout.md) |
 | [Legacy Grid](../naive-ui/components/legacy-grid.md) | ⚪ Pending | — |
 | [Legacy Transfer](../naive-ui/components/legacy-transfer.md) | ⚪ Pending | — |
-| [List](../naive-ui/components/list.md) | ⚪ Pending | — |
+| [List](../naive-ui/components/list.md) | 🟠 Reviewing | — |
 | [Loading Bar](../naive-ui/components/loading-bar.md) | ⚪ Pending | — |
 | [Log](../naive-ui/components/log.md) | ⚪ Pending | — |
 | [Marquee](../naive-ui/components/marquee.md) | ⚪ Pending | — |
@@ -135,7 +135,7 @@ a separate follow-up; its work-in-progress is not included in published componen
 | [Statistic](../naive-ui/components/statistic.md) | 🟢 Fixed / 🟡 Remaining | [Inline value geometry, text roles and native limits](components/statistic.md) |
 | [Steps](../naive-ui/components/steps.md) | ⚪ Pending | — |
 | [Switch](../naive-ui/components/switch.md) | ⚪ Pending | — |
-| [Table](../naive-ui/components/table.md) | 🟠 Reviewing | — |
+| [Table](../naive-ui/components/table.md) | 🟢 Fixed / 🟡 Remaining | [Typography, palette and native collapsed-border limits](components/table.md) |
 | [Tabs](../naive-ui/components/tabs.md) | ⚪ Pending | — |
 | [Tag](../naive-ui/components/tag.md) | 🟢 Fixed / 🟡 Remaining | [Sizing, palettes, close states and native limits](components/tag.md) |
 | [Thing](../naive-ui/components/thing.md) | 🟢 Fixed / 🟡 Remaining | [Typography, indentation and authored composition limits](components/thing.md) |

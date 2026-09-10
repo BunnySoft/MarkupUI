@@ -1,22 +1,37 @@
 :where(table.mui-table) {
-  --_mui-table-padding: .75rem;
-  --_mui-table-font-size: 1rem;
+  --_mui-table-padding: 12px;
+  --_mui-table-font-size: 14px;
   border-collapse: collapse;
-  border: 1px solid var(--mui-table-border-color, var(--mui-border, #d4d4d8));
+  border: 1px solid var(--mui-table-border-color, var(--_mui-table-border-color, #efeff5));
   font-size: var(--mui-table-font-size, var(--_mui-table-font-size));
   font-variant-numeric: tabular-nums;
-  line-height: 1.5;
+  line-height: var(--mui-table-line-height, 1.6);
   text-align: start;
-  color: var(--mui-table-color, var(--mui-text-primary, #18181b));
-  background: var(--mui-table-background, var(--mui-bg-surface, #fff));
+  color: var(--mui-table-color, var(--_mui-table-color, #333639));
+  background: var(--mui-table-background, var(--_mui-table-background, #fff));
   overflow-wrap: anywhere;
+}
+:where([data-mui-theme="light"]) {
+  --_mui-table-color: #333639;
+  --_mui-table-header-color: #1f2225;
+  --_mui-table-background: #fff;
+  --_mui-table-header-background: #fafafc;
+  --_mui-table-border-color: #efeff5;
+  --_mui-table-striped-background: #fafafc;
+}
+:where([data-mui-theme="dark"]) {
+  --_mui-table-color: rgba(255, 255, 255, .82);
+  --_mui-table-header-color: rgba(255, 255, 255, .9);
+  --_mui-table-background: #18181c;
+  --_mui-table-header-background: #26262a;
+  --_mui-table-border-color: #2d2d30;
+  --_mui-table-striped-background: #242427;
 }
 :where(table.mui-table:not([width])) { inline-size: 100%; }
 :where(table.mui-table[data-size="small"]) {
-  --_mui-table-padding: .375rem;
-  --_mui-table-font-size: .875rem;
+  --_mui-table-padding: 6px;
 }
-:where(table.mui-table[data-size="large"]) { --_mui-table-font-size: 1.125rem; }
+:where(table.mui-table[data-size="large"]) { --_mui-table-font-size: 15px; }
 :where(table.mui-table > caption) {
   padding-block: .5rem;
   font-weight: 600;
@@ -24,18 +39,19 @@
 :where(table.mui-table > caption:not([align])) { text-align: start; }
 :where(table.mui-table > :is(thead, tbody, tfoot) > tr > :is(th, td)) {
   padding: var(--mui-table-cell-padding, var(--_mui-table-padding));
-  border: 0 solid var(--mui-table-border-color, var(--mui-border, #d4d4d8));
+  border: 0 solid var(--mui-table-border-color, var(--_mui-table-border-color, #efeff5));
   border-block-end-width: 1px;
-  background: var(--mui-table-background, var(--mui-bg-surface, #fff));
+  background: var(--mui-table-background, var(--_mui-table-background, #fff));
 }
 :where(table.mui-table > :is(thead, tbody, tfoot) > tr > :is(th, td):not([align])) {
   text-align: inherit;
 }
 :where(table.mui-table > :is(thead, tbody, tfoot) > tr > th) {
-  font-weight: var(--mui-table-header-weight, 600);
+  font-weight: var(--mui-table-header-weight, 500);
+  color: var(--mui-table-header-color, var(--mui-table-color, var(--_mui-table-header-color, #1f2225)));
 }
 :where(table.mui-table > thead > tr > :is(th, td)) {
-  background: var(--mui-table-header-background, var(--mui-bg-muted, #f3f4f6));
+  background: var(--mui-table-header-background, var(--_mui-table-header-background, #fafafc));
 }
 :where(table.mui-table[data-single-line="false"] > :is(thead, tbody, tfoot) > tr > :is(th, td)) {
   border-inline-end-width: 1px;
@@ -46,18 +62,21 @@
 /* Native collapsed-border conflict resolution also handles cells spanning the perimeter. */
 :where(table.mui-table[data-bordered="false"]) { border-style: hidden; }
 :where(table.mui-table[data-bordered="false"]:not([data-bottom-bordered="false"])) {
-  border-block-end: 1px solid var(--mui-table-border-color, var(--mui-border, #d4d4d8));
+  border-block-end: 1px solid var(--mui-table-border-color, var(--_mui-table-border-color, #efeff5));
 }
 :where(table.mui-table[data-striped] > tbody > tr:nth-of-type(even) > :is(th, td)) {
-  background: var(--mui-table-striped-background, #f4f4f5);
+  background: var(--mui-table-striped-background, var(--_mui-table-striped-background, #fafafc));
 }
 @supports selector(:nth-child(2 of tr:not([hidden]))) {
   :where(table.mui-table[data-striped] > tbody > tr > :is(th, td)) {
-    background: var(--mui-table-background, var(--mui-bg-surface, #fff));
+    background: var(--mui-table-background, var(--_mui-table-background, #fff));
   }
   :where(table.mui-table[data-striped] > tbody > tr:nth-child(even of tr:not([hidden])) > :is(th, td)) {
-    background: var(--mui-table-striped-background, #f4f4f5);
+    background: var(--mui-table-striped-background, var(--_mui-table-striped-background, #fafafc));
   }
+}
+:where(table.mui-table, table.mui-table > :is(thead, tbody, tfoot) > tr > :is(th, td)) {
+  transition: color .3s cubic-bezier(.4, 0, .2, 1), background-color .3s cubic-bezier(.4, 0, .2, 1), border-color .3s cubic-bezier(.4, 0, .2, 1);
 }
 :where(.mui-table-scroll) {
   box-sizing: border-box;
@@ -95,4 +114,7 @@ table.mui-table > :is(thead, tbody, tfoot) > tr > template {
     max-block-size: none !important;
   }
   :where(table.mui-table > :is(thead, tbody, tfoot) > tr) { break-inside: avoid; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(table.mui-table, table.mui-table > :is(thead, tbody, tfoot) > tr > :is(th, td)) { transition: none; }
 }
