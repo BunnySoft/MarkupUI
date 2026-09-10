@@ -9,6 +9,20 @@ ResizeObserver, provider, child renderer, packing engine or new Custom Element.
 overflow-aware suffixes, the overflow slot signal and framework SSR/layout-shift flags are
 intentionally omitted. Native alternatives below are not presented as identical algorithms.
 
+## Default-style audit — 2026-09-10
+
+The [isolated source/rendered audit](../style-audit/components/grid.md) verified **200
+retained-geometry comparisons** across fixed columns/gaps/spans, native zero-span
+visibility adaptation, authored self/screen queries, light/dark and RTL. All matched
+the measured reference at equal available widths. Relative offsets, oversized-span
+clamping and oversized query frames were tested separately as explicit limitations.
+
+No default CSS correction was necessary. Source remains **1,448 raw / 527 gzip
+bytes**, below the strict **1,500-byte ceiling**. **16 focused tests pass**.
+Only tests/documentation changed; no responsive parser, shared theme source,
+or component CSS changes were added. The coordinator's isolated release build and
+all **16 Grid tests** pass; unrelated unfinished component changes were excluded.
+
 ## Pinned reference and distribution
 
 Reference: Naive UI `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
@@ -138,6 +152,11 @@ owns the wrapper's available width and optional container name. Give flex/grid a
 appropriate sizing; size containment is not a shrink-to-fit content measurement.
 Keep feature spans at one in the base/compact rule, as the example explicitly does.
 
+The helper's max-inline-size:100% also bounds an oversized authored wrapper: a
+nominal 640px wrapper in a 500px parent measured 500px, unlike an unbounded 640px
+source fixture. Compare **actual available widths**, not just width declarations.
+Any deliberate overflow/max-size override and its scrolling policy are application-owned.
+
 For screen mode, use a viewport media query on the actual grid/items:
 
 ```css
@@ -184,6 +203,18 @@ This example has a four-column grid and a two-column featured item. The spacer c
 separately from its neighbor; it does not implement atomic offset-plus-span packing.
 Group or place the units explicitly when that distinction matters. The automatic relative
 offset prop is intentionally omitted, rather than mislabeled as the start token.
+
+The audit measured these distinctions in a 480px/four-column grid with 12px gaps:
+
+- In simple LTR placement, explicit one-track spacers matched two `offset=1` items
+  at x **123px** and **369px**.
+- After a three-column item, source offset-plus-span packing placed the next item
+  at x **123px** on row two; a separately wrapping native spacer put it at **0px**.
+- After a two-column item, native absolute start line 3 placed the next item at
+  **246px**, while source relative offset 1 placed it at **369px**.
+- Source offset styling uses physical `margin-left`. In RTL the same simple
+  spacer composition therefore differs: native x **246/0px** versus source
+  **369/123px**. No physical-margin workaround is injected into the native API.
 
 Auto-flow is **row, never dense**. No order/reverse helper or explicit grid-row interface is
 provided. Keep placement consistent with DOM/reading/tab order; arbitrary application row
@@ -240,6 +271,12 @@ inline sizing; interiors of arbitrary fixed-width controls/assets remain author-
 There is no truncation, animation or forced-color opt-out. Print preserves native disclosure
 and hidden states, not an automatic expansion of every closed section.
 
+Grid declares no theme-prop mixin or default font/color palette. Shared font/color
+tokens and `data-mui-theme` are not interpreted by this stylesheet; application
+typography still inherits normally. Light/dark do not need separate Grid rules.
+Root/item configuration must remain on the actual owner because the explicit local
+defaults reset inherited grid tokens, unlike a framework configuration provider.
+
 ## API tracker and numbered acceptance
 
 🟢 Verified **native adaptation**, not a compatible renderer/prop/type API.
@@ -276,7 +313,7 @@ All thirteen original rows plus two explicit public expansions and six source su
 6. [x] Validate build/budgets and Chromium geometry/responsiveness/focus/RTL/print/coexistence.
 7. [x] Reconcile all reference rows/four tasks, inventory counts and next Layout.
 
-### Evidence — 2026-09-08
+### Original migration evidence — 2026-09-08 (historical)
 
 - Focused Grid tests passed; `pnpm build && pnpm test` passed **385 tests**
   (12 Grid/GridItem tests and all 373 prior tests).
@@ -313,6 +350,7 @@ All thirteen original rows plus two explicit public expansions and six source su
   757 relative file links**. The new public inline/type expansions are counted separately
   from the source-only additions.
 
+The figures above describe original delivery, not a newly run integrated build.
 Browser evidence is Chromium, not all-browser/AT, hydration/zero-CLS or automatic packing
 certification. Layout is next through coordinator selection; P2 and retained algorithm
 omissions remain explicit rather than being hidden behind a CSS-only success claim.

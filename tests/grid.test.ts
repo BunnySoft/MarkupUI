@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it } from "vitest"
 
 const css = readFileSync(resolve("src", "components", "grid", "grid.css"), "utf8")
@@ -187,5 +188,53 @@ describe("CSS-only native Grid and GridItem", () => {
     expect(css).not.toContain("list-style")
     expect(css).not.toContain("transition:")
     expect(css).not.toContain("@keyframes")
+  })
+
+  it("keeps the strict source-only budget without adding theme or responsive-engine bytes", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
+    expect(css).not.toContain("data-mui-theme")
+    expect(css).not.toContain("--mui-color")
+    expect(css).not.toContain("attr(")
+    expect(css).not.toContain("responsive")
+  })
+
+  it("keeps explicit tracks ahead of column counts and native gaps on their correct axes", () => {
+    install()
+    const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
+    const root = rules.find(rule => rule.selectorText === ":where(.mui-grid)")!
+    expect(root.style.getPropertyValue("grid-template-columns")).toBe("var(--mui-grid-tracks, repeat(var(--mui-grid-cols), minmax(0, 1fr)))")
+    expect(root.style.getPropertyValue("column-gap")).toBe("var(--mui-grid-x-gap)")
+    expect(root.style.getPropertyValue("row-gap")).toBe("var(--mui-grid-y-gap)")
+    expect(root.style.getPropertyValue("grid-auto-flow")).toBe("row")
+    expect(root.style.getPropertyValue("--mui-grid-tracks")).toBe("initial")
+  })
+
+  it("honors inline author tracks and item placement without rewriting them", () => {
+    document.body.innerHTML = '<div class="mui-grid authored-grid" style="--mui-grid-cols:3;--mui-grid-tracks:80px minmax(0,1fr);--mui-grid-x-gap:7px"><div class="mui-grid-item authored-item" style="--mui-grid-span:2;--mui-grid-start:2">Original</div></div>'
+    const before = document.body.innerHTML
+    install()
+    const root = getComputedStyle(document.querySelector(".authored-grid")!)
+    const item = getComputedStyle(document.querySelector(".authored-item")!)
+    expect(root.getPropertyValue("--mui-grid-cols").trim()).toBe("3")
+    expect(root.getPropertyValue("--mui-grid-tracks").trim()).toBe("80px minmax(0,1fr)")
+    expect(root.getPropertyValue("--mui-grid-x-gap").trim()).toBe("7px")
+    expect(item.getPropertyValue("--mui-grid-span").trim()).toBe("2")
+    expect(item.getPropertyValue("--mui-grid-start").trim()).toBe("2")
+    expect(document.body.innerHTML).toBe(before)
+  })
+
+  it("retains bounded query wrappers and absolute item lines without a relative-offset mapping", () => {
+    install()
+    const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
+    const wrapper = rules.find(rule => rule.selectorText === ":where(.mui-grid-container)")!
+    const item = rules.find(rule => rule.selectorText === ":where(.mui-grid) > :where(*)")!
+    expect(wrapper.style.getPropertyValue("container-type")).toBe("inline-size")
+    expect(wrapper.style.getPropertyValue("max-inline-size")).toBe("100%")
+    expect(item.style.getPropertyValue("grid-column")).toBe("var(--mui-grid-start) / span var(--mui-grid-span)")
+    expect(item.style.getPropertyValue("margin-left")).toBe("")
+    expect(item.style.getPropertyValue("--mui-grid-start")).toBe("auto")
+    expect(css).not.toContain("--mui-grid-offset")
+    expect(css).not.toContain("[span")
+    expect(css).not.toContain("[offset")
   })
 })
