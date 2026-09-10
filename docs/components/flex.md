@@ -5,6 +5,18 @@
 flexbox/gap rules own layout. There is no Custom Element, child traversal/wrapping, observer,
 gap-support probe, size parser, renderer or runtime dependency.
 
+## Default-style audit — 2026-09-10
+
+The [isolated Naive Flex audit](../style-audit/components/flex.md) measured **30 cases
+in light/dark × native LTR/RTL**. **116 of 120 comparisons matched every measured
+layout property**; the four differences are the same pre-existing intrinsic-minimum
+adaptation for oversized grouped content in a narrow nowrap row.
+
+Defaults already match, so CSS is **unchanged: 1,006 raw / 390 gzip bytes**, below
+the strict **1,000-byte ceiling**. **15 focused tests pass**. Author tokens, nested
+presets, native direction and an intrinsic-sizing opt-in were verified. The coordinator's
+full build and all 15 Flex tests pass; no component CSS change was needed.
+
 ## Pinned reference and loading
 
 Reference: Naive UI `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
@@ -143,6 +155,14 @@ inherit normally: explicitly override them, or set them to `initial` to use a ne
 when an inherited custom gap/alignment is not desired. Native gap shorthands and application
 selectors participate in the ordinary CSS cascade.
 
+### Theme neutrality
+
+Pinned Flex light/dark themes return the same three gap constants and consume no
+common font/color roles. Flex neither needs nor defines a palette or theme marker.
+Shared font/color tokens and `data-mui-theme` are not interpreted by this stylesheet;
+ordinary application-authored typography/color still inherit normally. Use the four
+`--mui-flex-*` layout tokens or native CSS, not a shared palette migration.
+
 ## Narrow containers, hidden state and fallbacks
 
 The container has min-inline-size:0/max-inline-size:100%, and **direct element children**
@@ -155,6 +175,24 @@ and appropriate sizing for fixed-width native widgets/images. Wrap=false can ove
 design; the library does not clip or hide focusable controls. Choose an explicit application
 overflow/scroll policy when needed. The demo's nowrap region uses native scrolling and an
 application print rule to show its full row on paper.
+
+The direct-child minimum is a deliberate native adaptation, not source-identical
+intrinsic sizing. In the audit's 150px nowrap row, three authored groups containing
+fixed 60/80/50px boxes shrank to **39.797/53.047/33.156px**; Naive kept the groups'
+intrinsic widths and overflowed. Fixed inner content can overflow or overlap when
+its parent group shrinks. Bound that content when shrinking is intended, or opt into
+intrinsic group minima with an application class:
+
+```css
+/* Application-owned class on the existing native Flex root. */
+.intrinsic-flex > * {
+  min-inline-size: auto;
+}
+```
+
+That declaration matched the reference grouped-nowrap geometry in both themes and
+directions. It does not create groups, disable all flex shrinking, add scrolling or
+promise containment for arbitrary widgets. The application owns the overflow policy.
 
 Hidden roots and direct hidden children stay display:none despite flex/inline-flex styling,
 so they do not produce gap slots. The stylesheet does not treat aria-hidden as display:none.
@@ -203,7 +241,7 @@ The reference preserves seven original rows plus six explicit source supplements
 6. [x] Validate build/budgets and Chromium dimensions/markers/forms/RTL/zoom/print/coexistence.
 7. [x] Reconcile reference rows/four tasks, catalog totals and next Space.
 
-### Evidence — 2026-09-08
+### Original migration evidence — 2026-09-08 (historical)
 
 - `pnpm test -- tests\flex.test.ts`: **11 focused tests passed**.
 - `pnpm build && pnpm test`: CSS-only build/budgets and **362 tests passed**
@@ -237,6 +275,7 @@ The reference preserves seven original rows plus six explicit source supplements
 - Reference validation preserved all seven original name/source rows plus six explicit
   source supplements: **96 pages, 3,128 rows, 384 tasks (72 accepted), 743 relative file links**.
 
+The figures above describe original delivery, not a newly run integrated build.
 This is retained native/CSS scope, not older-browser gap, reverse-order, arbitrary widget
 sizing or all-browser/AT certification. Space is next through coordinator selection, then
 Grid and Layout; P2-04/P2 and remaining content/cross-phase work are not complete.

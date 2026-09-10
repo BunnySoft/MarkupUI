@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it } from "vitest"
 
 const css = readFileSync(resolve("src", "components", "flex", "flex.css"), "utf8")
@@ -153,5 +154,52 @@ describe("CSS-only native Flex", () => {
     expect(css).not.toMatch(/(?:^|[;{])\s*content:/m)
     expect(css).not.toContain("transition:")
     expect(css).not.toContain("@keyframes")
+  })
+
+  it("keeps the strict source-only budget and remains theme-neutral", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+    expect(css).not.toContain("data-mui-theme")
+    expect(css).not.toContain("--mui-color")
+    expect(css).not.toContain("--mui-font")
+    expect(css).not.toContain("--mui-text")
+  })
+
+  it("matches Naive's native start default and lets author tokens outrank every preset", () => {
+    install()
+    const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
+    const root = rules.find(rule => rule.selectorText === ".mui-flex")!
+    expect(root.style.getPropertyValue("justify-content")).toBe("var(--mui-flex-justify, start)")
+    expect(root.style.getPropertyValue("align-items")).toBe("var(--mui-flex-align, normal)")
+    expect(root.style.getPropertyValue("row-gap")).toBe("var(--mui-flex-row-gap, var(--_mui-flex-row-gap))")
+    expect(root.style.getPropertyValue("column-gap")).toBe("var(--mui-flex-column-gap, var(--_mui-flex-column-gap))")
+    for (const rule of rules.filter(rule => rule.selectorText?.includes("data-size"))) {
+      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_mui-flex-/)
+    }
+  })
+
+  it("preserves authored intrinsic minima and native layout declarations", () => {
+    document.body.innerHTML = '<div class="mui-flex" data-wrap="false" style="gap:5px 7px;align-items:center;justify-content:space-evenly"><section style="min-inline-size:auto">Intrinsic native group</section></div>'
+    const root = document.querySelector(".mui-flex")!
+    const item = root.firstElementChild!
+    const before = root.outerHTML
+    install()
+    expect(root.outerHTML).toBe(before)
+    expect(getComputedStyle(root).gap).toBe("5px 7px")
+    expect(getComputedStyle(root).alignItems).toBe("center")
+    expect(getComputedStyle(root).justifyContent).toBe("space-evenly")
+    expect(getComputedStyle(item).minInlineSize).toBe("auto")
+  })
+
+  it("retains bounded direct-child sizing without adding wrappers or coercing direction", () => {
+    install()
+    const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
+    const child = rules.find(rule => rule.selectorText === ".mui-flex > *")!
+    expect(child.style.getPropertyValue("min-inline-size")).toBe("0")
+    expect(child.style.getPropertyValue("display")).toBe("")
+    expect(child.style.getPropertyValue("box-sizing")).toBe("")
+    expect(child.style.getPropertyValue("flex-shrink")).toBe("")
+    expect(css).not.toContain("[dir")
+    expect(css).not.toContain("::before")
+    expect(css).not.toContain("::after")
   })
 })
