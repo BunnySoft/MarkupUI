@@ -3,9 +3,9 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 8/96 scopes.** The other **88** are not yet accepted in this
+**Reviewed and integrated: 10/96 scopes.** The other **86** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
-differences; it does not mean eight components have complete pixel/API parity.
+differences; it does not mean ten components have complete pixel/API parity.
 
 The comparison starts with Naive UI's **default light theme**, default component props
 and only the content/values needed to render a useful example. The reference version,
@@ -76,14 +76,14 @@ rendered evidence and acceptance report.
 | [Descriptions](../naive-ui/components/descriptions.md) | ⚪ Pending | — |
 | [Dialog](../naive-ui/components/dialog.md) | ⚪ Pending | — |
 | [Discrete API](../naive-ui/components/discrete.md) | ⚪ Pending | — |
-| [Divider](../naive-ui/components/divider.md) | 🟠 Reviewing | — |
+| [Divider](../naive-ui/components/divider.md) | 🟢 Fixed / 🟡 Remaining | [Rule geometry, colors and native orientation limits](components/divider.md) |
 | [Drawer](../naive-ui/components/drawer.md) | ⚪ Pending | — |
 | [Dropdown](../naive-ui/components/dropdown.md) | ⚪ Pending | — |
 | [Dynamic Input](../naive-ui/components/dynamic-input.md) | ⚪ Pending | — |
 | [Dynamic Tags](../naive-ui/components/dynamic-tags.md) | ⚪ Pending | — |
 | [Element](../naive-ui/components/element.md) | ⚪ Pending | — |
 | [Ellipsis](../naive-ui/components/ellipsis.md) | ⚪ Pending | — |
-| [Empty](../naive-ui/components/empty.md) | 🟠 Reviewing | — |
+| [Empty](../naive-ui/components/empty.md) | 🟢 Fixed / 🟡 Remaining | [Content spacing, muted roles and original illustration](components/empty.md) |
 | [Equation](../naive-ui/components/equation.md) | ⚪ Pending | — |
 | [Flex](../naive-ui/components/flex.md) | ⚪ Pending | — |
 | [Float Button](../naive-ui/components/float-button.md) | ⚪ Pending | — |
@@ -94,7 +94,7 @@ rendered evidence and acceptance report.
 | [Heatmap](../naive-ui/components/heatmap.md) | ⚪ Pending | — |
 | [Highlight](../naive-ui/components/highlight.md) | ⚪ Pending | — |
 | [Icon](../naive-ui/components/icon.md) | ⚪ Pending | — |
-| [Image](../naive-ui/components/image.md) | ⚪ Pending | — |
+| [Image](../naive-ui/components/image.md) | 🟠 Reviewing | — |
 | [Infinite Scroll](../naive-ui/components/infinite-scroll.md) | ⚪ Pending | — |
 | [Input Number](../naive-ui/components/input-number.md) | ⚪ Pending | — |
 | [Input OTP](../naive-ui/components/input-otp.md) | ⚪ Pending | — |
@@ -129,7 +129,7 @@ rendered evidence and acceptance report.
 | [Space](../naive-ui/components/space.md) | ⚪ Pending | — |
 | [Spin](../naive-ui/components/spin.md) | ⚪ Pending | — |
 | [Split](../naive-ui/components/split.md) | ⚪ Pending | — |
-| [Statistic](../naive-ui/components/statistic.md) | ⚪ Pending | — |
+| [Statistic](../naive-ui/components/statistic.md) | 🟠 Reviewing | — |
 | [Steps](../naive-ui/components/steps.md) | ⚪ Pending | — |
 | [Switch](../naive-ui/components/switch.md) | ⚪ Pending | — |
 | [Table](../naive-ui/components/table.md) | ⚪ Pending | — |
