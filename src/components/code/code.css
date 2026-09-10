@@ -1,29 +1,43 @@
+:where([data-mui-theme="light"]) {
+  --_mui-code-number: initial;
+  --_mui-code-keyword: initial;
+  --_mui-code-string: initial;
+  --_mui-code-number-token: initial;
+  --_mui-code-comment: initial;
+}
+:where([data-mui-theme="dark"]) {
+  --_mui-code-number: rgba(255,255,255,.52);
+  --_mui-code-keyword: #c678dd;
+  --_mui-code-string: #98c379;
+  --_mui-code-number-token: #d19a66;
+  --_mui-code-comment: #5c6370;
+}
 code.mui-code,
 pre.mui-code-block {
-  font-family: var(--mui-code-font-family, var(--mui-typography-mono-font, ui-monospace, SFMono-Regular, Consolas, monospace));
-  font-size: var(--mui-code-font-size, .875rem);
-  line-height: var(--mui-code-line-height, 1.6);
-  tab-size: var(--mui-code-tab-size, 4);
+  font-family: var(--mui-code-font-family, var(--mui-typography-mono-font, v-mono, SFMono-Regular, Menlo, Consolas, Courier, monospace));
+  font-size: var(--mui-code-font-size, var(--mui-font-size, 14px));
+  line-height: var(--mui-code-line-height, inherit);
+  tab-size: var(--mui-code-tab-size, 8);
   color: var(--mui-code-color, inherit);
   font-variant-ligatures: none;
+  border: 0;
+  border-radius: 0;
+  background: var(--mui-code-background, transparent);
+  box-shadow: inset 0 0 0 1px var(--mui-code-border-color, transparent);
 }
 code.mui-code {
-  padding: .05em .3em;
-  border: 1px solid var(--mui-code-border-color, #d4d4d8);
-  border-radius: .2rem;
-  background: var(--mui-code-background, #f4f4f5);
+  display: inline;
+  padding: 0;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 pre.mui-code-block {
+  --_mui-code-gutter: 3ch;
   box-sizing: border-box;
   min-inline-size: 0;
   max-inline-size: 100%;
   margin: 0;
-  padding: var(--mui-code-padding, 1rem);
-  border: 1px solid var(--mui-code-border-color, #d4d4d8);
-  border-radius: .25rem;
-  background: var(--mui-code-background, #f4f4f5);
+  padding: var(--mui-code-padding, 0px);
   white-space: pre;
   overflow-wrap: normal;
   word-break: normal;
@@ -36,6 +50,7 @@ pre.mui-code-block > code.mui-code {
   border: 0;
   border-radius: 0;
   background: transparent;
+  box-shadow: none;
   font-size: inherit;
   line-height: inherit;
   white-space: inherit;
@@ -46,33 +61,41 @@ pre.mui-code-block > code.mui-code {
 pre.mui-code-block[data-word-wrap] {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+  word-break: break-all;
 }
 pre.mui-code-block > code.mui-code > .mui-code-line {
   display: block;
   position: relative;
   min-block-size: calc(var(--mui-code-line-height, 1.6) * 1em);
+  min-block-size: 1lh;
   counter-increment: mui-code-line;
 }
 .mui-code-line > .mui-code-number { display: none; }
+@supports selector(:has(> .mui-code-line:nth-child(10 of .mui-code-line))) {
+  pre.mui-code-block { --_mui-code-gutter: 1ch; }
+  pre.mui-code-block:has(> code.mui-code > .mui-code-line:nth-child(10 of .mui-code-line)) { --_mui-code-gutter: 2ch; }
+  pre.mui-code-block:has(> code.mui-code > .mui-code-line:nth-child(100 of .mui-code-line)) { --_mui-code-gutter: 3ch; }
+  pre.mui-code-block:has(> code.mui-code > .mui-code-line:nth-child(1000 of .mui-code-line)) { --_mui-code-gutter: 4ch; }
+}
 pre.mui-code-block[data-line-numbers]:not([data-word-wrap]) > code.mui-code > .mui-code-line {
-  padding-inline-start: calc(var(--mui-code-gutter, 3ch) + 1ch);
+  padding-inline-start: calc(var(--mui-code-gutter, var(--_mui-code-gutter)) + 12px);
 }
 pre.mui-code-block[data-line-numbers]:not([data-word-wrap]) > code.mui-code > .mui-code-line > .mui-code-number {
   display: block;
   position: absolute;
   inset-block-start: 0;
   inset-inline-start: 0;
-  inline-size: var(--mui-code-gutter, 3ch);
-  color: var(--mui-code-number-color, #52525b);
+  inline-size: var(--mui-code-gutter, var(--_mui-code-gutter));
+  color: var(--mui-code-number-color, var(--_mui-code-number, #767c82));
   text-align: end;
   pointer-events: none;
 }
 /* Empty number nodes keep source text clean; user-select:none would lose a trailing selected newline. */
 .mui-code-number::before { content: counter(mui-code-line); }
-.mui-code .mui-code-token[data-code-token="keyword"] { color: var(--mui-code-keyword-color, #6d28d9); }
-.mui-code .mui-code-token[data-code-token="string"] { color: var(--mui-code-string-color, #166534); }
-.mui-code .mui-code-token[data-code-token="number"] { color: var(--mui-code-number-token-color, #9f1239); }
-.mui-code .mui-code-token[data-code-token="comment"] { color: var(--mui-code-comment-color, #52525b); font-style: italic; }
+.mui-code .mui-code-token[data-code-token="keyword"] { color: var(--mui-code-keyword-color, var(--_mui-code-keyword, #a626a4)); }
+.mui-code .mui-code-token[data-code-token="string"] { color: var(--mui-code-string-color, var(--_mui-code-string, #50a14f)); }
+.mui-code .mui-code-token[data-code-token="number"] { color: var(--mui-code-number-token-color, var(--_mui-code-number-token, #986801)); }
+.mui-code .mui-code-token[data-code-token="comment"] { color: var(--mui-code-comment-color, var(--_mui-code-comment, #a0a1a7)); font-style: italic; }
 pre.mui-code-block:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 2px;

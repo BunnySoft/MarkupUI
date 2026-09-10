@@ -20,8 +20,10 @@ There is no syntax engine, URI parser, code execution, renderer or clipboard fea
 ```
 
 No `./code` JS entry or new `mui-code` definition exists. Legacy `mui-code` remains unchanged.
-The mono-font fallback reuses Typography's optional `--mui-typography-mono-font` convention,
-but no Typography stylesheet/runtime import is required. Explicit Code classes retain their
+The font fallbacks reuse Typography's optional `--mui-typography-mono-font` and the common
+`--mui-font-size` roles, but no Typography stylesheet/runtime import is required.
+The mono stack is `v-mono, SFMono-Regular, Menlo, Consolas, Courier, monospace`.
+Explicit Code classes retain their
 font/whitespace rules when composed with that generic typography stylesheet.
 
 Authority: [official page](https://www.naiveui.com/en-US/os-theme/components/code),
@@ -62,7 +64,7 @@ clipboard newline conversion remain browser behavior, not a byte-copy service.
 | --- | --- |
 | `code` | Actual authored code text, or an explicit native textContent assignment. No code-string attribute renderer. |
 | `inline` | Choose `code.mui-code` in inline content, or `pre.mui-code-block > code.mui-code` for a block. No inline attribute parser. |
-| `word-wrap` | Presence `data-word-wrap` on the pre selects pre-wrap/anywhere wrapping. Absent keeps preformatted horizontal scrolling. |
+| `word-wrap` | Presence `data-word-wrap` on the pre selects pre-wrap/break-all wrapping, matching the rendered reference. Absent keeps preformatted horizontal scrolling. |
 | `show-line-numbers` | Presence `data-line-numbers` on an unwrapped pre enables decorative counters for **authored physical-line markup**, described below. Suppressed when word-wrap is present; unavailable for inline code. |
 | `trim` | ⏭️ Automatic trimming omitted. Plain text stays verbatim; applications can intentionally transform their source before authoring it. |
 | `hljs` | ⏭️ External syntax-engine object/configuration omitted. No highlight.js/Prism/parser dependency or adapter. |
@@ -102,8 +104,11 @@ Important rules:
    trailing selected newline. The retained CSS keeps normal selection; generated digits
    are not source text. The CRLF/trailing-empty-line demo was checked with both Range and
    Selection text, without touching the real clipboard.
-5. Set `--mui-code-gutter` wide enough for the largest number. The default is `3ch`;
-   long files can author `4ch`/`5ch` rather than requiring JS measurement.
+5. Modern CSS sizes the gutter from the authored line count: `1ch` for 1–9 lines,
+   `2ch` for 10–99, `3ch` for 100–999 and `4ch` for 1,000–9,999, followed by a fixed
+   12px gap. No text splitting or JS measurement occurs. Set `--mui-code-gutter`
+   explicitly for larger files or custom font requirements. Engines lacking the
+   structural-selector support retain a `3ch` fallback; author a sufficient width there.
 6. Inline and word-wrapped code do not show numbers, matching the documented restriction.
    The same authored physical-line spans may soft-wrap, but each still represents one
    original source line; visual wraps are not renumbered.
@@ -112,20 +117,44 @@ The native pre/code order intentionally corrects the source implementation's out
 inner pre wrapper shape. No separate text-filled number column or hidden duplicate full
 source string is introduced. Repeated blocks reset their counters independently.
 
+The rendered pinned plain `code`-prop fallback removes its initial number column during
+mount when no highlighter is supplied. The audit therefore also renders upstream's
+authored default-slot `pre` path, which retains its actual counter column, to compare
+gutter geometry/colors without installing a syntax engine. Native authored counters are
+not disabled merely to reproduce that fallback behavior.
+
 ## Typography, authored tokens and native interaction
 
-Tokens: `--mui-code-font-family`, `--mui-code-font-size` (default `.875rem`),
-`--mui-code-line-height` (unitless multiplier, default `1.6`), `--mui-code-tab-size`
-(default `4`), `--mui-code-padding`, `--mui-code-gutter`, `--mui-code-color`,
+Tokens: `--mui-code-font-family`, `--mui-code-font-size` (shared font-size fallback, then
+`14px`), `--mui-code-line-height` (unitless multiplier override; otherwise inherited),
+`--mui-code-tab-size` (default `8`), `--mui-code-padding`, `--mui-code-gutter`, `--mui-code-color`,
 `--mui-code-background`, `--mui-code-border-color` and `--mui-code-number-color`.
 Use external CSS with valid values. No numeric/preset prop parser is provided.
 
+Defaults no longer add an inline chip or block panel: padding/radius/border width are zero,
+and the background is transparent. `--mui-code-padding` still provides optional block
+padding; background and border-color tokens remain opt-in decoration. Border color now
+paints a 1px inset frame without consuming content space. Author ordinary CSS for custom
+radius/inline padding. The nested code does not paint a duplicate background/frame.
+
+Plain text color inherits from the surrounding page, as the reference's unhighlighted
+path does. A dark theme marker is **not** a background or plain-text renderer: author the
+page foreground/background appropriately, or use the explicit Code color tokens.
+Line height also inherits; modern `1lh` keeps blank physical lines as tall as actual text.
+Older engines retain the previous unitless-token/1.6 minimum-height fallback.
+
 Optional `.mui-code-token[data-code-token="keyword|string|number|comment"]` conventions
-are a small **local author-markup palette**, not a grammar or highlighter interface.
+are a small **author-markup palette**, not a grammar or highlighter interface.
 Token boundaries are supplied by the application. Their colors can use
 `--mui-code-keyword-color`, `--mui-code-string-color`, `--mui-code-number-token-color`,
-and `--mui-code-comment-color`. The demo supplies static safe spans; it does not tokenize
-the language metadata or reproduce a vendor theme.
+and `--mui-code-comment-color`. These four roles now match the rendered pinned token colors.
+Set `data-mui-theme="dark"` on a host or ancestor for dark token/number colors; nested light
+scopes reset them. Ordinary source text still inherits the page color. No other syntax
+classes, language metadata, engine methods or grammar are interpreted. The demo remains
+static safe author markup rather than a tokenizer.
+
+See the [rendered Code visual audit](../style-audit/components/code.md) for exact colors,
+before/after measurements, authored overrides and retained differences.
 
 For a standalone scrolling block, authors can put `tabindex="0"`, a meaningful region
 name and instructions on the actual pre. Native Arrow keys scroll it; no keyboard
@@ -150,6 +179,8 @@ animation or parser cleanup is necessary.
 3. [x] Keep token markup application-owned and omit undocumented copy/clipboard actions.
 4. [x] Verify whitespace/selection/safety, line geometry, no-JS behavior and explicit engine exclusions.
 
+### Initial migration acceptance — 2026-09-08 (historical appearance)
+
 On 2026-09-08, `pnpm --dir D:\repos\MarkupUI check` passed build/budget gates and
 **528 tests**, including **12 Code cases**. Chromium acceptance exercised:
 
@@ -171,3 +202,21 @@ Component/demo JS is **0 bytes**; demo CSS is **473 / 279 gzip bytes**.
 Core remains **14,611/15,000**, widgets **2,779/4,000**, advanced **2,181/3,000** gzip bytes,
 with unchanged outputs/budgets and zero runtime dependencies. This is not syntax-engine,
 all-browser, browser-UI zoom or framework/pixel parity certification.
+
+### Visual-default audit — 2026-09-10
+
+- `pnpm test -- tests\code.test.ts`: **14 tests passed**.
+- Real Naive Code was rendered without a highlighter in both themes. Plain, wrapped,
+  authored-slot numbered and authored-token panels produced **zero differing RGB pixels**
+  in eight fixed-origin Chromium comparisons.
+- Plain block height changed **78.781→44.781px** and wrapped example **123.563→67.172px**.
+  One-/two-digit source starts are within 1/64px of reference; line-number and all four
+  token colors match. Inline preserved whitespace and final empty physical lines remain
+  explicit native differences.
+- Verified inherited line height/color, root-font independence, automatic gutter thresholds,
+  author font/padding/frame/colors, nested theme reset, later Typography/core styles,
+  exact CRLF Range/Selection text, native keyboard scrolling, print and forced colors.
+- CSS measures **1,325 / 1,500 gzip bytes**, with zero component/demo JS or dependencies.
+  An isolated check of the existing derived Log CSS measured **1,563 / 1,750 bytes**;
+  the coordinator's isolated release build confirms both budgets. All **14 Code**,
+  **59 Log** and **16 Grid tests** pass together against that release snapshot.

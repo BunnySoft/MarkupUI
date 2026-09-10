@@ -72,6 +72,7 @@ describe("CSS-only native plain Code", () => {
     expect(css).toContain("content: counter(mui-code-line)")
     expect(css).not.toContain("user-select: none;")
     expect(css).toContain("min-block-size: calc(var(--mui-code-line-height, 1.6) * 1em)")
+    expect(css).toContain("min-block-size: 1lh")
   })
 
   it("retains exact selected source across physical-line wrappers", () => {
@@ -148,7 +149,37 @@ describe("CSS-only native plain Code", () => {
     expect(getComputedStyle(block).getPropertyValue("--mui-code-font-size")).toBe("15px")
     expect(getComputedStyle(block).getPropertyValue("--mui-code-tab-size")).toBe("2")
     expect(css).toContain("--mui-typography-mono-font")
+    expect(css).toContain("--mui-font-size")
+    expect(css).toContain("v-mono, SFMono-Regular, Menlo, Consolas, Courier, monospace")
     expect(css).not.toContain("[data-size")
+  })
+
+  it("removes default chip/panel borders and sizes gutters from authored physical lines", () => {
+    fixture()
+    install()
+    expect(getComputedStyle(document.querySelector("#plain-block")!).borderTopWidth).toBe("0px")
+    expect(getComputedStyle(document.querySelector("#inline-code")!).padding).toBe("0px")
+    expect(css).toContain("--_mui-code-gutter: 1ch")
+    expect(css).toContain("@supports selector(:has(> .mui-code-line:nth-child(10 of .mui-code-line)))")
+    for (const [threshold, width] of [[10, 2], [100, 3], [1000, 4]]) {
+      expect(css).toContain(`nth-child(${threshold} of .mui-code-line)) { --_mui-code-gutter: ${width}ch; }`)
+    }
+    expect(css).toContain("var(--_mui-code-gutter)) + 12px")
+    expect(css).toContain("word-break: break-all")
+  })
+
+  it("themes only authored tokens and decorative numbers while plain code inherits text color", () => {
+    fixture()
+    install()
+    const block = document.querySelector<HTMLElement>("#token-block")!
+    block.dataset.muiTheme = "dark"
+    const theme = getComputedStyle(block)
+    for (const [name, value] of [["keyword", "#c678dd"], ["string", "#98c379"], ["number-token", "#d19a66"], ["comment", "#5c6370"]]) {
+      expect(theme.getPropertyValue(`--_mui-code-${name}`)).toBe(value)
+    }
+    expect(theme.getPropertyValue("--_mui-code-number")).toBe("rgba(255,255,255,.52)")
+    expect(css).toContain("color: var(--mui-code-color, inherit)")
+    expect(css).not.toContain("color-scheme")
   })
 
   it("keeps hidden blocks/templates inert and does not reset ordinary pre elements", () => {
