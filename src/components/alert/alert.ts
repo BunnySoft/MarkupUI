@@ -1,5 +1,28 @@
-const icons: Readonly<Record<string, string>> = { info: "ⓘ", success: "✓", warning: "!", error: "×" }
+const circle = "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Z"
+const icons: Readonly<Record<string, string>> = {
+  info: "M12 1.714a10.286 10.286 0 1 0 0 20.572 10.286 10.286 0 0 0 0-20.572ZM12 5.786a1.071 1.071 0 1 0 0 2.142 1.071 1.071 0 0 0 0-2.142ZM12 9.429a.857.857 0 0 0-.857.857v6.857a.857.857 0 0 0 1.714 0v-6.857A.857.857 0 0 0 12 9.429Z",
+  success: circle + "m-4.3 10.1a.625.625 0 0 0 0 .9l2.25 2.25a.625.625 0 0 0 .9 0l5.5-5.5a.625.625 0 0 0-.9-.9l-5.05 5.05-1.8-1.8a.625.625 0 0 0-.9 0Z",
+  warning: circle + "M12 7a1 1 0 0 0-1 1v5a1 1 0 0 0 2 0V8a1 1 0 0 0-1-1Zm0 8a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z",
+  error: circle + "m-3.05 6.05a.625.625 0 0 0-.9.9L11.1 12l-3.05 3.05a.625.625 0 0 0 .9.9L12 12.9l3.05 3.05a.625.625 0 0 0 .9-.9L12.9 12l3.05-3.05a.625.625 0 0 0-.9-.9L12 11.1Z",
+}
 const inert = "template,script,style"
+
+function graphic(document: Document, path: string, close = false): SVGSVGElement {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+  svg.setAttribute("viewBox", close ? "0 0 12 12" : "0 0 24 24")
+  svg.setAttribute("aria-hidden", "true")
+  svg.setAttribute("focusable", "false")
+  const shape = document.createElementNS(svg.namespaceURI, "path")
+  shape.setAttribute("d", path)
+  shape.setAttribute("fill", close ? "none" : "currentColor")
+  shape.setAttribute("fill-rule", "evenodd")
+  if (close) {
+    shape.setAttribute("stroke", "currentColor")
+    shape.setAttribute("stroke-linecap", "round")
+  }
+  svg.append(shape)
+  return svg
+}
 
 export interface AlertCloseDetail { originalEvent: MouseEvent }
 
@@ -91,7 +114,9 @@ export class MuiAlert extends HTMLElement {
         this.generatedIcon.setAttribute("aria-hidden", "true")
       }
       icon = this.generatedIcon
-      if (icon.textContent !== icons[this.type]) icon.textContent = icons[this.type]!
+      if (icon.querySelector("path")?.getAttribute("d") !== icons[this.type]) {
+        icon.replaceChildren(graphic(this.ownerDocument, icons[this.type]!))
+      }
       if (icon.parentNode !== this) this.insertBefore(icon, body)
     } else {
       this.generatedIcon?.remove()
@@ -147,10 +172,7 @@ export class MuiAlert extends HTMLElement {
         this.closeButton = this.ownerDocument.createElement("button")
         this.closeButton.type = "button"
         this.closeButton.dataset.muiAlertClose = ""
-        const glyph = this.ownerDocument.createElement("span")
-        glyph.setAttribute("aria-hidden", "true")
-        glyph.textContent = "×"
-        this.closeButton.append(glyph)
+        this.closeButton.append(graphic(this.ownerDocument, "M2.5 2.5l7 7m0-7-7 7", true))
       }
       if (this.closeButton.getAttribute("aria-label") !== this.closeLabel) this.closeButton.setAttribute("aria-label", this.closeLabel)
       if (this.lastElementChild !== this.closeButton) this.append(this.closeButton)

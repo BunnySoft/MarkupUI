@@ -77,12 +77,13 @@ Use one body/header/content/icon region each.
   header exists. An authored header takes precedence, as upstream does. No heading level
   is inferred; use native `h2`, `h3`, etc. when appropriate. The attribute also retains its
   ordinary HTML tooltip meaning; prefer an authored header if that tooltip is unwanted.
-- Generated type icons are dependency-free decorative glyphs: info `ⓘ`, success `✓`,
-  warning `!`, error `×`. Default/unknown types create no empty icon. Custom native
+- Generated type icons are dependency-free decorative native SVGs: filled circular
+  info, success, warning and error symbols. Default/unknown types create no empty icon
+  node, but retain the upstream 44px content inset until `show-icon="false"`. Custom native
   HTML/SVG icon nodes take precedence and retain their own ARIA and listeners.
   Direct SVGs and nested SVG/images are sized with external CSS, not JS measurement.
 - `show-icon="false"` hides authored icons through CSS rather than discarding them.
-  Generated glyphs are library-owned; custom icon nodes remain available when enabled again.
+  Generated SVGs are library-owned; custom icon nodes remain available when enabled again.
   Mark duplicate decorative icons `aria-hidden="true"` and keep icons noninteractive.
 - Actions are ordinary native controls in default content. `data-mui-alert-actions` is a
   CSS layout convenience, **not a new upstream slot or action controller**. Native button
@@ -173,11 +174,11 @@ itself has no `disabled` API, and the host is not an interactive control.
 
 | Upstream item | Mapping | Status / limits |
 | --- | --- | --- |
-| `bordered` | `bordered="false"` / `.bordered`, true default. | 🟢 External border/accent; false makes borders transparent without geometry shifts. |
+| `bordered` | `bordered="false"` / `.bordered`, true default. | 🟢 External uniform 1px border overlay; false removes it without geometry shifts. |
 | `closable` | Boolean attribute / `.closable`. | 🟢 Native close intent; no automatic hiding/removal. |
 | `show-icon` | `show-icon="false"` / `.showIcon`, true default. | 🟢 Generated/custom icons; no empty default icon. |
 | `title` | Native string attribute/property fallback, or authored header. | 🟢 Safe text, authored header wins; native tooltip and explicit heading-level differences noted above. |
-| `type` | Attribute / `.type`: default, info, success, warning, error. | 🟢 External semantic appearance/glyphs; does not set urgency/live semantics. |
+| `type` | Attribute / `.type`: default, info, success, warning, error. | 🟢 External semantic appearance/SVGs; does not set urgency/live semantics. |
 | `on-after-leave` | Application owns completion of its own hiding/removal. | ⏭️ No automatic leave or complex transition engine, so no misleading after-leave event. |
 | `on-close` | Cancellable bubbling `mui:close`, `detail.originalEvent`. | 🟡 Verified native intent, not Boolean/promise callback-result parity. Default removal intentionally absent. |
 | Default slot | Authored default content, optionally `data-mui-alert-content`. | 🟢 Native nodes/actions preserved without cloning or VNodes. |
@@ -195,16 +196,31 @@ are true. No action slot, visibility prop or automatic announcer is invented as 
 Tokens include `--mui-alert-padding`, `--mui-alert-radius`, `--mui-alert-background`,
 `--mui-alert-accent`, `--mui-alert-border-color`, `--mui-alert-color`,
 `--mui-alert-font-size`, `--mui-alert-line-height`, `--mui-alert-title-size`,
-`--mui-alert-title-weight`, `--mui-alert-title-color`, `--mui-alert-content-gap`,
+`--mui-alert-title-weight`, `--mui-alert-title-color`, `--mui-alert-title-line-height`, `--mui-alert-content-gap`,
 `--mui-alert-gap`, `--mui-alert-icon-size`, `--mui-alert-icon-color`,
 `--mui-alert-action-gap`, `--mui-alert-action-margin`, `--mui-alert-close-size`,
 `--mui-alert-close-radius`, `--mui-alert-close-color`, `--mui-alert-close-hover-background`,
-`--mui-alert-close-pressed-background` and `--mui-alert-focus-color`.
+`--mui-alert-close-pressed-background`, `--mui-alert-focus-color`,
+`--mui-alert-icon-offset`, `--mui-alert-icon-top`, `--mui-alert-close-offset`,
+`--mui-alert-close-top` and `--mui-alert-close-icon-size`.
 
-CSS grid/logical properties separate icon, body and close regions; there are no JS geometry
-style mutations. RTL reverses the visual icon/close edge and start accent. Reduced motion
-removes appearance transitions. Applications remain responsible for theme contrast, useful
-severity wording and the behavior of their authored actions.
+Defaults now follow the rendered pinned reference: 13px padding, 3px radius, a uniform
+1px border overlay, 16px/19px/500 title, 9px content gap, 24px semantic icons and a
+20px close control with a 16px SVG. The icon inset is 12px plus 24px plus an 8px gap.
+The close control overlays the title row; body-only notices reserve its trailing space.
+CSS positioning/logical properties perform layout without JS geometry writes. RTL reverses
+the visual icon/close edge. Reduced motion removes appearance transitions.
+
+Set `data-mui-theme="dark"` on the host or an ancestor for the explicit dark palette;
+nested `data-mui-theme="light"` resets the defaults. No automatic OS-theme choice is made.
+Component color tokens remain author overrides. Shared font-size/line-height and light
+semantic colors are reused; legacy global text/surface/divider roles are not silently
+substituted for Alert's different upstream roles. Dark semantic icons use supplemental
+colors, not the brighter ordinary dark button colors. Applications remain responsible
+for contrast after overriding tokens, useful severity wording and authored actions.
+
+See the [rendered visual-default audit](../style-audit/components/alert.md) for before/after
+measurements, screenshot differences, tested states and remaining limitations.
 
 ## Lifecycle and compatibility
 
@@ -232,7 +248,7 @@ provider, removal animation or general reactive framework are introduced.
 8. [x] Review live-update DOM stability, SVG handling and native browser loading/interaction.
 9. [x] Reconcile reference rows/four retained tasks, index totals and master current/next status.
 
-### Acceptance evidence — 2026-09-08
+### Initial migration acceptance — 2026-09-08 (historical appearance)
 
 - `pnpm test -- tests\alert.test.ts`: **26 focused tests passed**.
 - `pnpm build && pnpm test`: declarations and all budget gates succeeded;
@@ -267,7 +283,20 @@ provider, removal animation or general reactive framework are introduced.
   Alert ESM/classic/CSS are **1,770 / 1,981 / 1,233 gzip bytes**, under separate
   **2,500 / 2,500 / 2,000** ceilings; exact figures are in `dist/manifest.json`.
 
+### Visual-default audit — 2026-09-10
+
+- `pnpm test -- tests\alert.test.ts`: **27 tests passed**, including SVG namespace,
+  decorative accessibility, distinct semantic paths and stable generated-node identity.
+- Ten rendered cases in each explicit light/dark theme now match reference host heights
+  and text/icon/close geometry. At 360px width the titled notice changed from 79.984px
+  to 76.391px, and wrapped content from 147.156px to 121.172px.
+- Semantic, default, no-icon, body-only, title-only, borderless and wrapped content were
+  compared against Naive UI 2.45.3/Vue 3.5.30 from the pinned source lineage.
+- Isolated component bundles remain below the unchanged 2,500/2,500/2,000-byte
+  ESM/classic/CSS gzip ceilings. The coordinated full build and all 27 Alert tests
+  also pass; final distribution sizes are **2,243 / 2,460 / 1,701 gzip bytes**.
+
 This is retained native scope, not Vue lifecycle/pixel parity or all-browser/screen-reader
 certification. Browser acceptance here is Chromium. Safari/Firefox, touch devices, spoken
 announcements and application-specific themes/focus policies need downstream verification.
-Empty is next only through coordinator selection; it is not started by this change.
+No next component is implied by this audit.

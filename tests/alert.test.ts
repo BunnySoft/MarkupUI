@@ -96,19 +96,44 @@ describe("standalone Alert", () => {
     expect(element.querySelector("strong")).toBe(body)
   })
 
-  it("uses decorative semantic glyphs, with no empty default icon", () => {
+  it("uses decorative native SVG semantic icons, with no empty default icon", () => {
     const element = alert()
     expect(element.querySelector("[data-mui-alert-icon]")).toBeNull()
-    for (const [type, glyph] of [["info", "ⓘ"], ["success", "✓"], ["warning", "!"], ["error", "×"]]) {
-      element.type = type!
+    const paths = new Set<string>()
+    for (const type of ["info", "success", "warning", "error"]) {
+      element.type = type
       const icon = element.querySelector("[data-mui-alert-icon]")!
-      expect(icon.textContent).toBe(glyph)
+      const svg = icon.querySelector("svg")!
+      expect(icon.textContent).toBe("")
       expect(icon.getAttribute("aria-hidden")).toBe("true")
+      expect(svg.namespaceURI).toBe("http://www.w3.org/2000/svg")
+      expect(svg.getAttribute("viewBox")).toBe("0 0 24 24")
+      expect(svg.getAttribute("focusable")).toBe("false")
+      expect(svg.getAttribute("aria-hidden")).toBe("true")
+      expect(svg.querySelector("path")?.getAttribute("fill")).toBe("currentColor")
+      expect(svg.querySelector("path")?.getAttribute("fill-rule")).toBe("evenodd")
+      paths.add(svg.querySelector("path")!.getAttribute("d")!)
     }
+    expect(paths.size).toBe(4)
     element.type = "constructor"
     expect(element.querySelector("[data-mui-alert-icon]")).toBeNull()
     element.type = "default"
     expect(element.querySelector("[data-mui-alert-icon]")).toBeNull()
+  })
+
+  it("does not rebuild generated SVGs on content or close-label changes", async () => {
+    const element = alert('<mui-alert type="info" closable>Before</mui-alert>')
+    const icon = element.querySelector("[data-mui-alert-icon] svg")
+    const glyph = close(element).querySelector("svg")
+    element.querySelector("[data-mui-alert-content]")!.textContent = "After"
+    element.closeLabel = "Dismiss"
+    await Promise.resolve()
+    expect(element.querySelector("[data-mui-alert-icon] svg")).toBe(icon)
+    expect(close(element).querySelector("svg")).toBe(glyph)
+    element.showIcon = false
+    expect(element.querySelector("[data-mui-alert-icon]")).toBeNull()
+    element.showIcon = true
+    expect(element.querySelectorAll("[data-mui-alert-icon] svg")).toHaveLength(1)
   })
 
   it("preserves authored icon identity, listeners and ARIA across type/show changes", () => {
@@ -232,7 +257,9 @@ describe("standalone Alert", () => {
     expect(native.type).toBe("button")
     expect(native.tabIndex).toBe(0)
     expect(native.getAttribute("aria-label")).toBe("Dismiss warning")
-    expect(native.querySelector("span")?.getAttribute("aria-hidden")).toBe("true")
+    expect(native.querySelector("svg")?.getAttribute("aria-hidden")).toBe("true")
+    expect(native.querySelector("svg")?.getAttribute("viewBox")).toBe("0 0 12 12")
+    expect(native.querySelector("path")?.getAttribute("stroke")).toBe("currentColor")
     native.focus()
     expect(document.activeElement).toBe(native)
     native.click()
