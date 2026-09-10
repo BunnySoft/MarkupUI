@@ -1,19 +1,28 @@
 /* The build composes native Code CSS; these rules only configure the log viewport. */
 .mui-log {
-  --mui-code-font-size: var(--mui-log-font-size, .875rem);
+  --mui-code-font-size: var(--mui-log-font-size, 14px);
   --mui-code-line-height: var(--mui-log-line-height, 1.25);
-  --mui-code-padding: var(--mui-log-padding, .5rem);
-  --mui-code-gutter: var(--mui-log-gutter, 5ch);
+  --mui-code-padding: var(--mui-log-padding, 0px);
+  /* An unset Log gutter leaves Code's digit-count fallback available. */
+  --mui-code-gutter: var(--mui-log-gutter);
   min-inline-size: 0;
 }
 .mui-log > pre.mui-code-block[data-log-viewport] {
   position: relative;
-  block-size: var(--mui-log-height, calc(var(--mui-log-rows, 15) * 1lh + 2 * var(--mui-log-padding, .5rem) + 2px));
+  block-size: var(--mui-log-height, calc(var(--mui-log-rows, 15) * 1lh + 2 * var(--mui-log-padding, 0px)));
+  block-size: var(--mui-log-height, calc(round(nearest, var(--mui-log-rows, 15) * 1lh, 1px) + 2 * var(--mui-log-padding, 0px)));
   overflow-anchor: none;
   scroll-behavior: auto;
 }
+@media screen {
+  .mui-log > pre.mui-code-block[data-log-viewport]:not([data-word-wrap]) {
+    white-space: var(--mui-log-white-space, pre-wrap);
+    word-break: var(--mui-log-word-break, break-word);
+  }
+}
 .mui-log > [data-log-loading] { margin-block: .5rem; }
-.mui-log > pre.mui-code-block[aria-busy="true"] { border-style: dashed; }
 @media print {
+  .mui-log { color-scheme: light; color: CanvasText; background: Canvas; }
+  .mui-log :is(pre.mui-code-block, code.mui-code) { color: CanvasText; background: transparent; }
   .mui-log > [data-log-loading] { display: none; }
 }

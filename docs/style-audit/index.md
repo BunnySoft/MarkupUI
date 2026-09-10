@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 64/96 scopes.** The other **32** are not yet accepted in this
+**Reviewed and integrated: 65/96 scopes.** The other **31** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -75,7 +75,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Config Provider](../naive-ui/components/config-provider.md) | ⚪ Pending | — |
 | [Countdown](../naive-ui/components/countdown.md) | ⚪ Pending | — |
 | [Data Table](../naive-ui/components/data-table.md) | 🟢 Fixed / 🟡 Remaining | [Native density/sort/selection paint and explicit renderer/width limits](components/data-table.md) |
-| [Date Picker](../naive-ui/components/date-picker.md) | ⚪ Pending | — |
+| [Date Picker](../naive-ui/components/date-picker.md) | 🟠 Reviewing | — |
 | [Descriptions](../naive-ui/components/descriptions.md) | 🟢 Fixed / 🟡 Remaining | [Density, text roles and retained grid/table differences](components/descriptions.md) |
 | [Dialog](../naive-ui/components/dialog.md) | 🟢 Fixed / 🟡 Remaining | [Surface/action styling with protected modality, load order and native limits](components/dialog.md) |
 | [Discrete API](../naive-ui/components/discrete.md) | ⚪ Pending | — |
@@ -107,7 +107,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Legacy Transfer](../naive-ui/components/legacy-transfer.md) | ⚪ Pending | — |
 | [List](../naive-ui/components/list.md) | 🟢 Fixed / 🟡 Remaining | [Presentation only; marker and density adaptations](components/list.md) |
 | [Loading Bar](../naive-ui/components/loading-bar.md) | 🟢 Fixed / 🟡 Remaining | [Thin rail, readable fixed status and retained native progress/timing policies](components/loading-bar.md) |
-| [Log](../naive-ui/components/log.md) | 🟠 Reviewing | — |
+| [Log](../naive-ui/components/log.md) | 🟢 Fixed / 🟡 Remaining | [Viewport/wrap/gutter defaults, print contrast and retained native record/scroll limits](components/log.md) |
 | [Marquee](../naive-ui/components/marquee.md) | ⚪ Pending | — |
 | [Mention](../naive-ui/components/mention.md) | ⚪ Pending | — |
 | [Menu](../naive-ui/components/menu.md) | 🟢 Fixed / 🟡 Remaining | [Row density, inert-state paint and native branch/collapse limits](components/menu.md) |

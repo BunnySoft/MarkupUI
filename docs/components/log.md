@@ -11,7 +11,7 @@ and opt-in conditional follow. No terminal, syntax engine, transport or virtuali
 | `@dataengine/markup-ui/log` | createLog, native controller/options/state/line/update/scroll types and limits |
 | `dist/markup-ui-log.js` | Independent ESM; registers no custom element |
 | `dist/markup-ui-log.global.js` | Classic MarkupUILog namespace; replacement rejected |
-| `@dataengine/markup-ui/log/style.css` | External CSS composing the unchanged native Code stylesheet |
+| `@dataengine/markup-ui/log/style.css` | External CSS composing native Code plus Log-local defaults/media rules |
 | [Local demo](../../demo/components/log.html) | Separate HTML/CSS/JS, with no autonomous producer |
 | [Local fixture generator](../../demo/components/log.fixture.js) | Deterministic, generated 10,000-record local data; no fetch/socket/file |
 | [Complete reference inventory](../naive-ui/components/log.md) | All original identities and explicit source supplements |
@@ -19,7 +19,7 @@ and opt-in conditional follow. No terminal, syntax engine, transport or virtuali
 ```html
 <section class="mui-log" data-log>
   <h2 id="log-title">Application log</h2>
-  <pre class="mui-code-block" data-log-viewport data-line-numbers
+  <pre class="mui-code-block" data-log-viewport
        tabindex="0" role="region" aria-labelledby="log-title"><code
        class="mui-code" data-log-output>Ready.
 Waiting for a local update.</code></pre>
@@ -216,23 +216,31 @@ with `{error}`. Neither event includes retained log contents.
 ## Native presentation, loading and forms
 
 The stylesheet composes [Code's native presentation](code.md), with log-scoped tokens:
---mui-log-font-size (.875rem), --mui-log-line-height (1.25),
+--mui-log-font-size (14px), --mui-log-line-height (1.25),
 --mui-log-rows (15), --mui-log-height (optional explicit CSS override),
---mui-log-padding (.5rem), and --mui-log-gutter (5ch).
+--mui-log-padding (0px), and --mui-log-gutter (Code's automatic digit-count width).
 
-Default height is fifteen native line heights plus padding/borders. Font size, rows and
-line height are **external CSS**, not a JavaScript number-to-style bridge. Code font-family,
-tab-size/color/border tokens remain available. JS writes no geometry or presentation styles.
+Default height is **263px**: fifteen 17.5px line heights rounded to the nearest CSS pixel,
+matching pinned NLog. An authored padding length adds twice that inset; there is no default
+border allowance. Browsers without CSS `round()` use the unrounded calculation (262.5px
+at defaults). Font size, rows and line height are **external CSS**, not a JavaScript
+number-to-style bridge. Code font-family, tab-size/color/background/border tokens remain
+available. JS writes no geometry or presentation styles.
 
-Without data-word-wrap the native pre scrolls long lines horizontally. Presence
-data-word-wrap opts into native wrapping; numbering is suppressed when wrapped, following
-Code's existing contract. Logical RTL gutter placement never reverses record order.
+Long lines now **wrap by default**, preserving whitespace and breaking an overlong word
+when needed, as NLog does. Set `--mui-log-white-space: pre` and
+`--mui-log-word-break: normal` to restore horizontal scrolling on screen.
+Presence `data-word-wrap` explicitly selects Code's stronger anywhere/break-all wrapping
+and suppresses numbering; it takes precedence over those two Log tokens. Default soft
+wrapping can retain optional numbers, which label logical records, not visual sublines.
+Logical RTL gutter placement never reverses record order.
 Very long records are bounded by maxLineLength; no horizontal width measurement/mirror or
 clipping-based fake virtualization is used.
 
 Presence data-line-numbers uses empty aria-hidden markers and Code's CSS counters.
 Numbers describe **current retained-buffer positions**, not stable keys or original
-evicted line numbers. Generated digits are not source text. Native selection/find covers
+evicted line numbers. NLog itself has no default or public line-number option; numbering
+is an explicit native extension. Generated digits are not source text. Native selection/find covers
 all retained records, including offscreen records; there is no mounted-only window caveat
 because every retained record is mounted.
 
@@ -250,8 +258,25 @@ reset does not clear the log. Outside inputs/labels/actions remain native and re
 own submission/reset behavior. No hidden value proxy or fake readonly textarea is inserted.
 
 Print expands/wraps the entire retained readout and suppresses decorative numbers. Forced
-colors retain readable native text/borders. There is no assertion of paper-pagination,
+colors retain readable native text/borders. Log supplies a light Canvas/CanvasText print
+surface, including inside a dark-themed ancestor; screen color/background tokens do not
+override this print fallback. The optional loading status is omitted from print.
+There is no assertion of paper-pagination,
 browser-toolbar zoom, all-browser or screen-reader speech parity.
+
+### Rendered default-style audit
+
+The [pinned 2.45.3 comparison](../style-audit/components/log.md) records the 280.5px to
+263px viewport correction, removed 8px inset, fixed 14px sizing under root-font overrides,
+default wrapping, automatic optional gutter and dark-print correction. Plain Log text
+continues to inherit its surrounding color. Adding the optional general theme palette
+changes that inherited color; Log does not replace global palette tokens.
+
+Native scrollbars can reserve horizontal space that NLog's custom overlay scrollbar does
+not. Empty/blank retained records keep one native line box each, whereas source empty
+`pre` lines collapse and an empty default NLog has no records. Native loading stays
+authored text outside the viewport, not an animated overlay pill. These are explicit
+retained-scope differences, not full visual or provider parity.
 
 ## API and explicit lifecycle
 
@@ -319,8 +344,8 @@ framework/terminal/highlighter parity.
 
 ### Why there is no Log virtualization
 
-The approved subset favors bounded full native selection/find/printing and long-line
-horizontal scrolling. [Virtual List](virtual-list.md) is already the separate fixed-height,
+The approved subset favors bounded full native selection/find/printing and optional
+long-line horizontal scrolling. [Virtual List](virtual-list.md) is already the separate fixed-height,
 bounded-window helper; its horizontal clipping and mounted-only native selection/find
 contract is not silently substituted here.
 
@@ -335,6 +360,10 @@ application's real content. The measured burst costs below are intentionally pub
 do not treat this as a 100k-line streaming/virtualization benchmark.
 
 ## Four accepted steps and measured evidence — 2026-09-09
+
+This is the historical migration acceptance, before the default-style pass. Its panel,
+no-wrap, payload and catalog measurements are not current defaults; the linked style
+report supersedes those presentation measurements without changing the controller.
 
 1. [x] Read pinned Log/LogLine/loader/interfaces/exports, native Code and Virtual List;
    retain every original identity and separate source-only supplements.
