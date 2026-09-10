@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Equation alternative: authored native MathML</title>
+  <link rel="stylesheet" href="equation.css">
+</head>
+<body>
+  <main id="equation-example">
+    <h1>Equation: native MathML, not TeX conversion</h1>
+    <p>These are original authored MathML elements. No script, parser, remote font,
+      typesetter or MarkupUI Equation component is loaded. Plain explanations remain
+      available independently of mathematical layout and assistive pronunciation.</p>
+
+    <section aria-labelledby="inline-title">
+      <h2 id="inline-title">Inline powers</h2>
+      <p id="inline-sentence">For a right triangle,
+        <math id="inline-equation" xmlns="http://www.w3.org/1998/Math/MathML" display="inline" dir="ltr"
+          aria-label="a squared plus b squared equals c squared">
+          <mrow><msup><mi>a</mi><mn>2</mn></msup><mo>+</mo><msup><mi>b</mi><mn>2</mn></msup><mo>=</mo><msup><mi>c</mi><mn>2</mn></msup></mrow>
+        </math>
+        relates the side lengths.</p>
+      <p>The sum of the squares of the two perpendicular side lengths equals the
+        square of the hypotenuse length. Here c is the hypotenuse.</p>
+    </section>
+
+    <figure class="equation-panel" tabindex="0" aria-labelledby="fraction-title">
+      <figcaption id="fraction-title">Block fractions: a common denominator</figcaption>
+      <math id="fraction-equation" xmlns="http://www.w3.org/1998/Math/MathML" display="block" dir="ltr"
+        aria-label="one half plus one third equals five sixths">
+        <mrow><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>+</mo><mfrac><mn>1</mn><mn>3</mn></mfrac><mo>=</mo><mfrac><mn>5</mn><mn>6</mn></mfrac></mrow>
+      </math>
+      <p>One half is three sixths; one third is two sixths. Together they make five sixths.</p>
+    </figure>
+
+    <figure class="equation-panel" tabindex="0" aria-labelledby="root-title">
+      <figcaption id="root-title">A square root and a subscript</figcaption>
+      <math id="root-equation" xmlns="http://www.w3.org/1998/Math/MathML" display="block" dir="ltr"
+        aria-label="x subscript zero equals the square root of nine equals three">
+        <mrow><msub><mi>x</mi><mn>0</mn></msub><mo>=</mo><msqrt><mn>9</mn></msqrt><mo>=</mo><mn>3</mn></mrow>
+      </math>
+      <p>The value labelled x subscript zero is the principal square root of nine: three.</p>
+    </figure>
+
+    <section dir="rtl" aria-labelledby="matrix-title">
+      <h2 id="matrix-title">RTL container, explicitly LTR algebra</h2>
+      <figure class="equation-panel" tabindex="0" aria-labelledby="matrix-caption">
+        <figcaption id="matrix-caption">A two-by-two identity matrix</figcaption>
+        <math id="matrix-equation" xmlns="http://www.w3.org/1998/Math/MathML" display="block" dir="ltr"
+          aria-label="I equals the two by two matrix with rows one zero and zero one">
+          <mrow><mi>I</mi><mo>=</mo><mo>(</mo><mtable><mtr><mtd><mn>1</mn></mtd><mtd><mn>0</mn></mtd></mtr><mtr><mtd><mn>0</mn></mtd><mtd><mn>1</mn></mtd></mtr></mtable><mo>)</mo></mrow>
+        </math>
+        <p>The first row is one, zero. The second row is zero, one.
+          This is the identity matrix: it leaves a two-coordinate vector unchanged.</p>
+      </figure>
+    </section>
+
+    <details>
+      <summary>Raw TeX remains literal text, not browser-rendered math</summary>
+      <p><code id="literal-tex">\frac{1}{2}</code> is a source string. This recipe does
+        not convert it. Author the fraction with native mfrac/mn elements instead.
+        Do not paste untrusted markup into a MathML or HTML string parser.</p>
+    </details>
+    <form id="equation-form">
+      <fieldset>
+        <legend>Independent native notes</legend>
+        <label>Reader <input name="reader" value="Local reader"></label>
+        <label>Notes <input name="notes" value="The expressions stay authored."></label>
+        <button type="reset">Reset notes</button>
+      </fieldset>
+    </form>
+    <p>This local form has two text fields and no submit button. MathML adds no
+      hidden fields, values, listeners or submission policy. Native reset still works.</p>
+    <p>Focus a bordered figure to scroll an oversized expression with native keys.
+      Selection, zoom, printing and native disclosure do not require JavaScript.
+      Labels and nearby explanations can be read separately; pronunciation and
+      duplicate announcements depend on the browser and assistive technology.</p>
+  </main>
+</body>
+</html>

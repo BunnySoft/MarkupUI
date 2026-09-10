@@ -85,6 +85,9 @@ text and one-tab-stop inspection, without a chart/Tooltip/provider renderer.
 Marquee now has [accepted single-track native-motion evidence](../components/marquee.md):
 one original bounded track, opt-in controlled alternating traversal and full native
 static reading, without clones, seamless loops or an animation/renderer dependency.
+Equation now has a [resolved exclusion / verified native MathML alternative](../components/equation.md):
+authored inline/block structure and mathematical explanations, with no parser/runtime.
+All eight Equation API/type/source rows remain intentionally omitted.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
 are reconciled. **P4 is Verified for retained native scopes:** all 17 assigned routes,
 984 tracker rows and 68 page tasks are resolved, with no Planned P4 routes or unresolved
@@ -96,10 +99,10 @@ under P3; broader foundation task IDs are not automatically completed.
 **All nine main P6 retained routes are accepted:** Carousel, Watermark, Upload,
 Calendar, Time, Countdown, Number Animation, Heatmap and Marquee. Their **288 rows
 = 199 native adaptations + 89 omissions**, with **36/36 tasks**, are reconciled;
-omitted advanced behavior is not implemented parity. Equation, QR Code, Legacy Grid
-and Legacy Transfer still have **16 unchecked alternative-guidance tasks** despite
-their 35 explicitly omitted API rows. **Recommend Equation resolution next**, using
-authored native MathML as a possible no-parser alternative; it is not started here.
+omitted advanced behavior is not implemented parity. Equation's four alternative
+tasks are now accepted without TeX implementation credit. QR Code, Legacy Grid and
+Legacy Transfer still have **12 unchecked alternative-guidance tasks** despite their
+32 explicitly omitted API rows. **Recommend QR Code resolution next**; it is not started here.
 Component acceptance sections below retain their sign-off snapshots; earlier counts and
 “next”/“In progress” statements are historical, not the current phase dashboard.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
@@ -156,7 +159,7 @@ Avatar's four retained-scope tasks are checked using `9afc818`, Button's four us
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
 Popover through Rate, the subsequent Form/Auto Complete/Input OTP/Dynamic Input/Dynamic
 Tags/Mention/Color Picker/Date Picker/Time Picker records, and now Virtual List each add
-four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style, Carousel, Watermark, Upload, Calendar, Time, Countdown, Number Animation, Heatmap and Marquee each add four more. The current total is **368/384 accepted across 92 pages, 16 unchecked**.
+four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style, Carousel, Watermark, Upload, Calendar, Time, Countdown, Number Animation, Heatmap and Marquee each add four more. Equation adds four resolved-exclusion/native-alternative tasks, not TeX implementation. The current total is **372/384 accepted across 93 pages: 368 retained-scope tasks plus four alternative-resolution tasks, 12 unchecked**.
 P2 retained scopes remain reconciled; the nineteen sequential P3 scopes plus three mixed P2/P3 pages pass the complete P3 audit. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
@@ -2700,6 +2703,43 @@ financial interpolation or full chart/renderer parity. Each omitted row remains 
 **Next recommendation: Equation resolution**, considering native authored MathML
 without a parser/typesetting dependency. No Equation or other next scope is implemented.
 
+## Equation resolved exclusion: authored native MathML
+
+[Canonical Equation evidence](../components/equation.md) resolves the alternative-
+guidance lane with original native inline powers, block fractions, subscript/root,
+two-by-two matrix and plain explanations. There is no Equation source/controller,
+export, parser, KaTeX/provider bridge, HTML renderer, script, remote font or new bundle.
+Raw TeX stays literal text; native display=inline/block is not an options converter.
+
+**Three original identities + two grouped type/export supplements + three source
+behaviors = eight rows, all intentionally omitted. Four alternative-resolution
+tasks are accepted; zero TeX/KaTeX API rows receive implementation credit.**
+
+**39 targeted tests** (12 Equation recipe + 27 native/legacy), build/declarations/
+budgets and Chromium native namespace/geometry/AX/selection/form/disclosure/RTL/
+zoom/print/forced-colors/no-JS/strict-CSP acceptance passed. Native fractions actually
+stacked, superscripts rose above identifiers and the matrix kept two rows/two columns.
+All **1,316 pre-existing distribution files byte-matched**; no package/build/source/
+P0 foundation changes. The local HTML+CSS recipe is **2,277 gzip bytes** with no JS.
+All-browser/AT pronunciation, duplicate-free speech and TeX parity remain unclaimed.
+
+**Current catalog: 96 routes / 4,027 rows / 372 of 384 accepted tasks across 93 pages /
+12 unchecked.** This is **368 retained-scope tasks across 92 pages plus four Equation
+alternative tasks**. API statuses: **2,090 native adaptations + 1,937 omissions;
+zero unresolved**. Main P6 remains **288 rows / 36 tasks across nine accepted scopes**.
+
+| Exclusion-route acceptance | API dispositions | Page tasks |
+| --- | ---: | ---: |
+| Equation: resolved exclusion / native alternative | 8 omitted, zero implemented | 4/4 accepted |
+| QR Code: next, not started here | 11 omitted | 0/4 |
+| Legacy Grid | 5 omitted | 0/4 |
+| Legacy Transfer | 16 omitted | 0/4 |
+| **Four exclusion routes** | **40 omitted** | **4/16 accepted** |
+
+**Next: QR Code resolution**, separately. Legacy Grid/Legacy Transfer acceptance
+and broad parent-owned P0 foundations remain pending/partial. This scope changes no
+P0 foundation row and starts no next route.
+
 ## Common Components (15)
 
 | Component | Plan direction | Current baseline | Phase |
@@ -2756,7 +2796,7 @@ without a parser/typesetting dependency. No Equation or other next scope is impl
 | [Data Table](components/data-table.md) | 🟢 Verified retained native scope; 135 explicit omissions | Original native rows, sort/filter/page/selection and form reveal; [accepted evidence](../components/data-table.md) | P5 |
 | [Descriptions](components/descriptions.md) | 🟢 Verified retained native scope; 10 explicit omissions | Native terms/definitions and grid spans; [accepted evidence](../components/descriptions.md) | P2 |
 | [Empty](components/empty.md) | 🟢 Verified retained scope; 4 explicit omissions | Standalone native Empty; [accepted evidence](../components/empty.md), basic aggregate preserved | P2 |
-| [Equation](components/equation.md) | ⏭️ Intentionally omitted: TeX renderer | None | Exclusions |
+| [Equation](components/equation.md) | Resolved exclusion / 🟢 Verified native alternative; all eight API rows omitted | Authored MathML + explanations; [accepted recipe](../components/equation.md), no parser/runtime | Exclusions; 4/4 alternative tasks |
 | [Image](components/image.md) | 🟢 Verified native/dialog scope; 49 explicit omissions | Native responsive images, bounded fallback/group preview; [accepted evidence](../components/image.md) | P2, P6 |
 | [List](components/list.md) | 🟢 Verified retained native scope; 3 explicit omissions | Native CSS lists/items/actions; [accepted evidence](../components/list.md) | P2 |
 | [Log](components/log.md) | 🟢 Verified native retained-text scope; 27 explicit omissions | Native Code/line records, bounded append/retention and conditional follow; [accepted evidence](../components/log.md) | P5; exclusions |
@@ -2867,15 +2907,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,506: 370 inline fields, 191 type/helper/exclusion entries (including five Table public helper groups, Virtual List/Tree named ScrollTo types, UploadInst/UploadSettledFileInfo, CountdownTimeInfo/CountdownInst, NumberAnimationInst and four Heatmap public type groups) and 945 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel/Watermark/Upload/Calendar/Time/Countdown/Number Animation/Heatmap/Marquee source supplements |
+| Supplementary named declarations | 1,511: 370 inline fields, 193 type/helper/exclusion entries (including five Table public helper groups, Virtual List/Tree named ScrollTo types, UploadInst/UploadSettledFileInfo, CountdownTimeInfo/CountdownInst, NumberAnimationInst, four Heatmap public type groups and two Equation type/export groups) and 948 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel/Watermark/Upload/Calendar/Time/Countdown/Number Animation/Heatmap/Marquee/Equation source supplements |
 | Explicit inherited tracker rows | 296, including six source-inherited DialogReactive options, three ModalReactive fields, two NotificationReactive fields and three each Element/Carousel/Watermark/Upload/Calendar/Heatmap/Marquee theme props |
-| Total tracker rows | 4,022; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 368 retained-scope tasks accepted across 92 component pages, 16 unchecked exclusion-route tasks |
+| Total tracker rows | 4,027; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 four-task checklists: 372/384 accepted across 93 pages (368 retained-scope tasks on 92 pages plus four Equation native-alternative tasks); 12 unchecked exclusion-route tasks |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 4,022 rows retain canonical text with emoji color: 2,090 Verified native adaptations and 1,932 intentional omissions; no Not reviewed or Planned row remains. Marquee contributes five adaptations/six omissions; other retained counts and linked acceptance records are unchanged. |
-| Source agreement | All 2,220 direct source rows and 296 inherited rows remain covered; four unchanged exclusion inventories retain their omission dispositions; the 92 accepted pages preserve named/grouped identities; Marquee preserves all three original identities/links and adds five source-behavior plus three inherited identities; foundation-related route inventories remain reconciled |
-| Local links | All 602 scoped Marquee/reference/index/master file links resolve; earlier Heatmap/Number Animation/Countdown/Time/Calendar/Upload/Watermark/Carousel/Global Style/four-route/component link snapshots remain historical evidence |
+| Status presentation | All 4,027 rows retain canonical text with emoji color: 2,090 Verified native adaptations and 1,937 intentional omissions; no Not reviewed or Planned row remains. Equation adds five omissions and accepts alternative tasks, not TeX features; previous retained counts remain unchanged. |
+| Source agreement | All 2,220 direct source rows and 296 inherited rows remain covered; three pending exclusion inventories remain unchanged; 93 accepted pages preserve named/grouped identities; Equation retains all three original identities/links and adds two grouped type/export plus three source-behavior omissions; foundation-related route inventories remain reconciled |
+| Local links | All 608 scoped Equation/reference/index/master file links resolve; earlier Marquee/Heatmap/Number Animation/Countdown/Time/Calendar/Upload/Watermark/Carousel/Global Style/four-route/component link snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

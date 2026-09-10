@@ -25,8 +25,10 @@ interpolation/text (12 rows, 11 adapted, one omitted, four tasks). Heatmap close
 native calendar-data scope (37 rows, 26 adapted, 11 omitted, four tasks). Marquee closes
 single-track controlled traversal (11 rows, five adapted, six omitted, four tasks).
 All nine main P6 retained routes are reconciled: 288 rows, 199 adapted, 89 omitted,
-zero unresolved and 36/36 tasks. Broad P0 foundation tasks, the four exclusion-route
-alternative acceptances and full framework/viewer parity remain incomplete.** Existing MarkupUI features are a partial baseline,
+zero unresolved and 36/36 tasks. Equation's exclusion/native MathML alternative is
+resolved: eight omitted API/type/source rows, four accepted alternative tasks, no
+TeX implementation credit or new runtime. Broad P0 foundation tasks, the remaining
+three exclusion-route acceptances and full framework/viewer parity remain incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -58,7 +60,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
 | P4 — Forms and selection | 🟢 Verified retained scope | All 17 P4-assigned routes, 984 tracker rows and 68 page tasks reconciled. | Relevant native P0/P3 contracts | 478 adapted + 506 omitted, no unresolved rows; 889 P4 tests plus native browser evidence. No P0/P5/P6 or full framework parity implied. |
 | P5 — Collections and scale | 🟢 Verified retained scope | All ten P5-assigned routes, 827 rows and 40 page tasks reconciled. | P3 focus; P4 selection | 349 native adaptations + 478 omissions, zero unresolved; 526-test/native browser/asset audit. No full framework or P0/P6 parity implied. |
-| P6 — Specialized modules | 🟢 Verified nine main retained scopes; separate exclusions open | Carousel, Watermark, Upload, Calendar, Time, Countdown, Number Animation, Heatmap and Marquee accepted. | Component-specific earlier work | Explicit ESM/classic/CSS, 288 reconciled rows (199 adapted/89 omitted), 36/36 tasks and native/browser evidence. Four exclusion routes still have 16 alternative tasks; not full advanced parity. |
+| P6 — Specialized modules | 🟢 Verified nine main retained scopes; three separate exclusions open | Carousel, Watermark, Upload, Calendar, Time, Countdown, Number Animation, Heatmap and Marquee accepted; Equation native-alternative resolution accepted separately. | Component-specific earlier work | Explicit ESM/classic/CSS, 288 main-route rows (199 adapted/89 omitted), 36/36 tasks and native/browser evidence. Equation: eight omissions/four alternative tasks; QR Code/Legacy Grid/Legacy Transfer still have 12 unchecked tasks. Not full advanced parity. |
 
 The [component index](index.md) is the exhaustive catalog-to-phase assignment. The phase
 groups below name principal workstreams, not additional promises that every catalog feature
@@ -154,7 +156,7 @@ smuggling an overlay implementation into the CSS-only native composition.
 | P6-02 — Upload | 🟢 Verified retained native queue scope | Real FileList/FormData, explicit bounded caller transport, progress/cancel/retry/remove and native Trigger/Dragger. | [Upload acceptance](../components/upload.md): 101 reconciled rows/four tasks, honest ignored-abort slots and native reset/disabled/focus/fallback evidence; previews/downloads/vetoes/backend assumptions omitted. |
 | P6-03 — Media and carousel | 🟢 Verified Carousel retained scope; advanced viewer/effects excluded | Native scroll-snap Carousel/CarouselItem, original DOM, manual/wrap controls and opt-in gated autoplay. | [Carousel acceptance](../components/carousel.md): settled targets, lifetime, focus/forms, browser/legacy/no-JS and independent budgets; no seamless clone loop or advanced image-viewer parity. |
 | P6-04 — Other utilities | 🟢 Verified Watermark/Countdown/Number Animation/Heatmap/Marquee retained scopes | Bounded decoration, elapsed duration, numeric interpolation, calendar data and single-track controlled motion accepted. | Per-component native ownership/generation/timing/data/media evidence, not security/alarm/financial/chart/seamless/renderer parity. |
-| P6-05 — Dependency-heavy exclusions | 🔵 Planned | Resolve QR generation, math typesetting, full language highlighting and framework-only provider APIs individually. | Independent feasibility decision or explicit omission; no hidden dependencies. |
+| P6-05 — Dependency-heavy exclusions | 🟠 In progress; Equation native alternative resolved | TeX/KaTeX remains omitted; authored MathML recipe accepted. QR Code resolution remains next; other feature exclusions retain their individual dispositions. | Equation's four alternative tasks/eight omitted rows and no-new-runtime evidence; no typesetting implementation credit or hidden dependencies. |
 | P6-06 — Deprecated surfaces | 🔵 Planned | Record Legacy Transfer and deprecated aliases without reproducing redundant legacy APIs. | A documented replacement and omission decision, not a missing tracker row. |
 | P6-07 — Packaging sign-off | 🟢 Verified nine main retained scopes | Explicit optional ESM/classic/external CSS, combined payloads and unchanged previous ceilings verified per route. | Main specialized features stay out of the default dependency graph; exclusion-route resolutions and broader P0 legacy extraction/auto-install remain separate. |
 
@@ -209,13 +211,13 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Marquee (P6), verified single-track controlled native-motion scope.**
+**Current component: Equation, resolved exclusion / verified native MathML alternative; TeX/KaTeX remains omitted.**
 **P1/P2/P3/P4/P5 declared retained scopes are complete. P4-07 and P5-06 close against their full assigned-route audits.**
 **P5 is Verified for retained scopes:** all ten routes are resolved.
 **All nine main P6 retained scopes are accepted:** 288 rows and 36/36 tasks.
-Recommended next: **Equation alternative resolution**, considering authored native
-MathML without a parser. Equation, QR Code, Legacy Grid and Legacy Transfer still
-have 16 unchecked alternative-guidance/acceptance tasks; their API omissions alone
+Equation adds four accepted alternative-guidance tasks without a new runtime or
+TeX implementation. Recommended next: **QR Code resolution**. QR Code, Legacy Grid
+and Legacy Transfer still have 12 unchecked alternative tasks; API omissions alone
 are not acceptance.
 No next component is implemented here. P0 component-route acceptance
 does not close broader foundation tasks or imply full upstream/framework compatibility.
@@ -355,8 +357,9 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 4,022 rows and 368 accepted retained tasks out of 384 across 92 component
-pages (16 unchecked exclusion-route tasks), not full upstream parity.
+The current index records 4,027 rows and 372 accepted tasks out of 384 across 93 pages:
+368 retained-scope tasks plus four Equation native-alternative tasks, with 12 unchecked
+exclusion-route tasks. This is not full upstream parity or TeX implementation credit.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -2459,3 +2462,53 @@ P0's Config Provider/Element/Global Style route resolutions and P1–P5 retained
 stay accepted without broad foundation or framework parity being inferred.
 **Recommend Equation resolution next**, using authored native MathML as a possible
 no-parser alternative. No Equation or other next component is implemented in this commit.
+
+## Equation resolution — exclusion retained, native MathML recipe accepted
+
+[Canonical Equation](../components/equation.md) and its
+[complete reference](components/equation.md) resolve the alternative-guidance lane,
+not a TeX/KaTeX runtime. Original inline powers, block fractions, subscript/root and
+two-by-two matrix use native MathML, semantic labels and plain explanations. Only
+local scoped HTML/CSS is needed; raw TeX remains literal text. No parser, provider,
+renderer, font bundle, script, export, new distribution or dependency is introduced.
+
+**Three original identities + two grouped type/export supplements + three source
+behaviors = eight API rows, all intentionally omitted. Four alternative-resolution
+tasks are accepted; zero TeX/KaTeX features receive implementation credit.**
+Native display=inline/block is an authoring alternative, not a KaTeX options adapter.
+The provider/renderToString/throwOnError/missing-output/HTML wrapper contracts remain
+explicit omissions. Native known-node/text authoring is not an untrusted markup sanitizer.
+
+**39 tests passed** (12 Equation recipe + 27 native/legacy); declarations/build and
+every previous budget passed. All **1,316 existing distribution files byte-matched**.
+Local HTML/CSS measure **1,729 / 548 gzip bytes**, **2,277 combined**, with no library
+asset. No package, build, legacy source or P0 foundation row changed.
+
+Dedicated Chromium evidence covers real MathML namespace and stacked numerator/
+denominator, superscripts above identifiers, square root/subscript and aligned matrix
+rows. Native AX exposes MathMLMath/Fraction/Sup/Sub/SquareRoot/Table/Row/Cell plus
+authored names. Selection, original identities, native forms/disclosure/reset and
+local-only requests remain intact. At 360px/200% zoom the page fits; a 320px/200% RTL
+matrix scrollport responds natively to ArrowLeft without losing focus. Forced-colors/
+print and a fresh JavaScript-disabled strict-CSP context retain native math rendering.
+Only local HTML/CSS load; no all-browser/AT pronunciation, duplicate-free speech,
+arbitrary-formula fitting, image-generation or TeX parity is claimed.
+
+**Current catalog: 96 routes / 4,027 rows / 372 of 384 accepted tasks across 93 pages /
+12 unchecked.** Accepted work is **368 retained-scope tasks on 92 pages plus four
+Equation alternative tasks**. API status totals: **2,090 native adaptations + 1,937
+intentional omissions, zero unresolved**. Main P6 remains nine accepted retained
+routes, 288 rows (199 adapted/89 omitted), 36/36 tasks; Equation is not a tenth main route.
+
+| Exclusion route | API rows | Alternative-guidance acceptance |
+| --- | ---: | --- |
+| Equation | 8 omitted | Resolved native alternative; 4/4 tasks, no TeX implementation |
+| QR Code | 11 omitted | Next; 0/4 tasks, not started here |
+| Legacy Grid | 5 omitted | Pending; 0/4 tasks |
+| Legacy Transfer | 16 omitted | Pending; 0/4 tasks |
+| **Total** | **40 omitted** | **4/16 tasks accepted; 12 unchecked** |
+
+**Recommend QR Code resolution next.** No QR Code or other next-route implementation
+is included. Broad P0-01–P0-09 work, legacy CSS extraction, aggregate auto-install and
+inline-theme compatibility remain separately pending/partial and parent-owned;
+this recipe does not modify or complete those foundation rows.
