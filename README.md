@@ -373,9 +373,14 @@ regenerates their checked-in compatibility adapters; do not hand-edit those gene
 See the [foundation and loading guide](docs/naive-ui/foundations.md) for source locations,
 external CSS/theme exports, native helper loading and retained legacy behavior.
 
-Open `http://localhost:4173`. The dependency-free documentation app provides searchable component
-navigation, live examples, source toggles, copy actions, an on-page outline, and complete coverage
-of every built-in and optional component.
+Open `http://localhost:4173/demo/`. The plain HTML/CSS/JavaScript component browser has
+searchable navigation and one independently addressable page per component, for example
+`/demo/?component=avatar`. Each current standalone example loads in an isolated frame so
+styles, registrations and demo state do not leak between components; its toolbar also
+links to the standalone page. The shell itself needs no build step. Component examples
+use the browser-ready JavaScript/CSS produced by `pnpm build`.
+
+The older grouped showcase remains available at `/demo/legacy.html`.
 
 ## Documentation
 

@@ -1,415 +1,208 @@
-import { mui } from "../dist/markup-ui.js?v=11.1"
-import { advancedPlugin } from "../dist/markup-ui-advanced.js?v=11.1"
-import { widgetsPlugin } from "../dist/markup-ui-widgets.js?v=11.1"
+import { componentGroups, components } from "./catalog.js"
 
-mui.use(advancedPlugin)
-mui.use(widgetsPlugin)
-
-mui.theme.register("ocean", {
-  "color-primary": "#0284c7",
-  "color-primary-hover": "#0369a1",
-  "bg-page": "#f0f9ff",
-  "bg-surface": "#ffffff",
-  "bg-muted": "#e0f2fe",
-  "text-primary": "#0c4a6e",
-  "text-secondary": "#47677a",
-  "border": "#bae6fd",
-})
-
-const savedTheme = localStorage.getItem("mui-theme")
-mui.theme.set(["light", "dark", "ocean"].includes(savedTheme) ? savedTheme : "light")
-
-const app = document.querySelector("#demo-app")
-const store = app?.store
-const panelNames = [
-  "layout",
-  "content",
-  "forms",
-  "navigation",
-  "advanced",
-  "widgets",
-  "themes",
-  "overlays",
-  "runtime",
-  "distribution",
-]
-
-store?.set("form.name", "Ada")
-store?.set("form.role", "developer")
-store?.set("form.city", "London")
-store?.set("form.plan", "professional")
-store?.set("form.confidence", 70)
-store?.set("form.notes", "Building a browser-native UI.")
-store?.set("form.newsletter", true)
-store?.set("form.notifications", false)
-store?.set("form.busy", false)
-store?.set("form.saved", false)
-store?.set("form.valid", false)
-store?.set("form.invalid", false)
-store?.set("metrics.clicks", 0)
-store?.set("events.latest", "Waiting for interaction")
-store?.set("navigation.selection", "reports")
-
-const advancedGrid = document.querySelector("#advanced-grid")
-advancedGrid.rows = [
-  { name: "Ada", role: "Engineer", score: 98 },
-  { name: "Grace", role: "Reviewer", score: 94 },
-  { name: "Linus", role: "Maintainer", score: 91 },
-  { name: "Margaret", role: "Architect", score: 99 },
-]
-
-const advancedVirtualList = document.querySelector("#advanced-virtual-list")
-advancedVirtualList.items = Array.from({ length: 10000 }, (_, index) => `Virtual row ${index + 1}`)
-
-const widgetTransfer = document.querySelector("#widget-transfer")
-widgetTransfer.options = [
-  { label: "Reports", value: "reports" },
-  { label: "Metrics", value: "metrics" },
-  { label: "Dashboards", value: "dashboards" },
-  { label: "Stories", value: "stories" },
-]
-widgetTransfer.value = ["reports"]
-
-const widgetCascader = document.querySelector("#widget-cascader")
-widgetCascader.options = [
-  {
-    label: "Analytics",
-    value: "analytics",
-    children: [
-      { label: "Reports", value: "reports" },
-      { label: "Metrics", value: "metrics" },
-    ],
-  },
-  {
-    label: "Data",
-    value: "data",
-    children: [
-      { label: "Datasets", value: "datasets" },
-      { label: "Connections", value: "connections" },
-    ],
-  },
-]
-
-function selectPanel(name, scroll = false) {
-  if (!panelNames.includes(name)) return
-  const workspace = document.querySelector(".showcase-workspace")
-  let workspaceTop
-  if (scroll && workspace) {
-    workspaceTop = Math.max(0, window.scrollY + workspace.getBoundingClientRect().top - 76)
-    window.scrollTo({ top: workspaceTop, behavior: "auto" })
+export function createComponentBrowser(document = globalThis.document, view = globalThis.window) {
+  const navigation = document.getElementById("component-navigation")
+  const sidebar = document.getElementById("component-sidebar")
+  const toggle = document.getElementById("navigation-toggle")
+  const search = document.getElementById("component-search")
+  const empty = document.getElementById("no-results")
+  const count = document.getElementById("component-count")
+  const title = document.getElementById("component-title")
+  const category = document.getElementById("component-category")
+  const standalone = document.getElementById("standalone-link")
+  const note = document.getElementById("component-note")
+  const status = document.getElementById("page-status")
+  let frame = document.getElementById("component-frame")
+  if ([navigation, sidebar, toggle, search, empty, count, title, category, standalone, note, status, frame].some(node => !node)) {
+    throw new Error("Component browser markup is incomplete.")
   }
-  panelNames.forEach((panel) => store?.set(`panels.${panel}`, panel === name))
-  document.querySelectorAll(".sidebar-item").forEach((item) => {
-    const active = item.getAttribute("mui-param-panel") === name
-    item.classList.toggle("active", active)
-    if (active) item.setAttribute("aria-current", "page")
-    else item.removeAttribute("aria-current")
-  })
-  history.replaceState(null, "", `#${name}`)
-  if (workspaceTop !== undefined) {
-    window.scrollTo({ top: workspaceTop, behavior: "auto" })
-    requestAnimationFrame(() => window.scrollTo({ top: workspaceTop, behavior: "auto" }))
+
+  const entries = new Map(components.map(component => [component.slug, component]))
+  const links = new Map()
+  const groups = []
+  const media = view.matchMedia("(max-width: 760px)")
+  const alternatives = new Set(["equation", "qr-code", "legacy-grid", "legacy-transfer"])
+  let menuOpen = false
+  let current = null
+  const fragment = document.createDocumentFragment()
+
+  for (const [index, group] of componentGroups.entries()) {
+    const section = document.createElement("section")
+    section.className = "nav-group"
+    const heading = document.createElement("h2")
+    heading.id = `component-group-${index}`
+    heading.textContent = group.name
+    section.setAttribute("aria-labelledby", heading.id)
+    const list = document.createElement("ul")
+    list.setAttribute("role", "list")
+    const items = []
+    for (const [slug, name] of group.items) {
+      const item = document.createElement("li")
+      const link = document.createElement("a")
+      const url = new URL(view.location.href)
+      url.search = ""
+      url.searchParams.set("component", slug)
+      url.hash = ""
+      link.href = url.href
+      link.className = "component-link"
+      link.dataset.component = slug
+      link.textContent = name
+      item.append(link)
+      list.append(item)
+      links.set(slug, link)
+      items.push({ item, name, slug })
+    }
+    section.append(heading, list)
+    fragment.append(section)
+    groups.push({ section, items })
   }
-  requestAnimationFrame(updateOutline)
-}
+  navigation.replaceChildren(fragment)
 
-const requestedPanel = location.hash.slice(1)
-selectPanel(panelNames.includes(requestedPanel) ? requestedPanel : "layout")
-
-function record(message) {
-  store?.set("events.latest", message)
-}
-
-mui.actions.register("demo.theme", ({ parameters }) => {
-  const name = parameters.name ?? "light"
-  mui.theme.set(name)
-  record(`theme changed to ${name}`)
-})
-
-mui.actions.register("demo.panel", ({ event, parameters }) => {
-  event.preventDefault()
-  const name = parameters.panel ?? "layout"
-  selectPanel(name, true)
-  record(`showing ${name} panel`)
-})
-
-mui.actions.register("demo.increment", ({ store: actionStore }) => {
-  const current = Number(actionStore?.get("metrics.clicks") ?? 0)
-  actionStore?.set("metrics.clicks", current + 1)
-  record("demo.increment action")
-})
-
-mui.actions.register("demo.progress", () => {
-  const progress = document.querySelector("#demo-progress")
-  if (!progress) return
-  const current = Number(progress.getAttribute("value") ?? 0)
-  progress.setAttribute("value", String(current >= 100 ? 0 : current + 10))
-  record("progress value updated")
-})
-
-mui.actions.register("demo.message", () => {
-  mui.message.show("Profile saved successfully.", {
-    duration: 2500,
-    type: "success",
-  })
-  record("message service invoked")
-})
-
-mui.actions.register("demo.notification", () => {
-  mui.notification.show({
-    title: "Build complete",
-    content: "MarkupUI generated all browser distributions.",
-    duration: 4000,
-    type: "default",
-  })
-  record("notification service invoked")
-})
-
-mui.actions.register("demo.next-step", () => {
-  const steps = document.querySelector("#demo-steps")
-  if (!steps) return
-  steps.current = steps.current >= 3 ? 1 : steps.current + 1
-  record(`advanced to step ${steps.current}`)
-})
-
-mui.actions.register("demo.outline", ({ event, parameters }) => {
-  event.preventDefault()
-  const target = parameters.target
-  if (!target) return
-  document.querySelector(target)?.scrollIntoView({
-    behavior: "smooth",
-    block: "start",
-  })
-})
-
-mui.actions.register("demo.toggle-source", ({ element, parameters }) => {
-  const target = parameters.target
-  if (!target) return
-  const source = document.querySelector(target)
-  if (!source) return
-  source.hidden = !source.hidden
-  element.textContent = source.hidden ? "View code" : "Hide code"
-})
-
-mui.actions.register("demo.copy-source", async ({ parameters }) => {
-  const target = parameters.target
-  if (!target) return
-  const source = document.querySelector(target)
-  if (!source) return
-  await navigator.clipboard.writeText(source.textContent ?? "")
-  mui.message.show("Example copied.", { duration: 1800, type: "success" })
-})
-
-mui.actions.register("demo.save", async ({ store: actionStore }) => {
-  const form = document.querySelector("#profile-form")
-  if (typeof form?.validate === "function" && !form.validate()) return
-  actionStore?.set("form.busy", true)
-  actionStore?.set("form.saved", false)
-  record("saving profile")
-  await new Promise((resolve) => setTimeout(resolve, 500))
-  actionStore?.set("form.busy", false)
-  actionStore?.set("form.saved", true)
-  record("profile saved")
-})
-
-mui.actions.register("demo.reset", ({ store: actionStore }) => {
-  actionStore?.set("form.name", "Ada")
-  actionStore?.set("form.role", "developer")
-  actionStore?.set("form.city", "London")
-  actionStore?.set("form.plan", "professional")
-  actionStore?.set("form.confidence", 70)
-  actionStore?.set("form.notes", "Building a browser-native UI.")
-  actionStore?.set("form.newsletter", true)
-  actionStore?.set("form.notifications", false)
-  actionStore?.set("form.saved", false)
-  actionStore?.set("form.valid", false)
-  actionStore?.set("form.invalid", false)
-  actionStore?.set("metrics.clicks", 0)
-  const newsletter = document.querySelector("#newsletter")
-  const notifications = document.querySelector("#notifications")
-  if (newsletter) newsletter.checked = true
-  if (notifications) notifications.checked = false
-  record("state reset")
-})
-
-mui.actions.register("demo.reload", async () => {
-  const include = document.querySelector("#activity")
-  if (typeof include?.load === "function") {
-    record("reloading dynamic fragment")
-    await include.load()
+  function updateNavigation() {
+    const hidden = media.matches && !menuOpen
+    if (hidden && sidebar.contains(document.activeElement)) toggle.focus()
+    sidebar.hidden = hidden
+    toggle.hidden = !media.matches
+    toggle.setAttribute("aria-expanded", String(!hidden))
   }
-})
 
-mui.actions.register("demo.sanitize", () => {
-  const target = document.querySelector("#sanitized-output")
-  if (!target) return
-  mui.html.set(
-    target,
-    `<mui-alert onclick="alert('blocked')">
-      Unsafe handler and script removed.
-      <script>window.demoUnsafe = true</script>
-      <mui-link href="javascript:alert('blocked')">Unsafe URL removed</mui-link>
-    </mui-alert>`,
-  )
-  record("unsafe HTML sanitized")
-})
+  function filter() {
+    const query = search.value.trim().toLowerCase()
+    let visible = 0
+    for (const group of groups) {
+      let groupVisible = 0
+      for (const { item, name, slug } of group.items) {
+        item.hidden = !`${name} ${slug}`.toLowerCase().includes(query)
+        if (!item.hidden) groupVisible++
+      }
+      group.section.hidden = groupVisible === 0
+      visible += groupVisible
+    }
+    empty.hidden = visible !== 0
+    count.textContent = `${visible} of ${components.length} components`
+  }
 
-mui.use({
-  name: "demo.highlight",
-  install(api) {
-    api.queryExtensions.register("highlight", function () {
-      return this.addClass("plugin-highlight")
-    })
-  },
-})
+  function requestedComponent() {
+    const url = new URL(view.location.href)
+    return url.searchParams.get("component")
+      ?? (entries.has(url.hash.slice(1)) ? url.hash.slice(1) : "avatar")
+  }
 
-mui.actions.register("demo.plugin", () => {
-  const target = mui("#plugin-target")
-  target.highlight()
-  record("plugin query extension executed")
-  setTimeout(() => target.removeClass("plugin-highlight"), 900)
-})
+  function navigateFrame(url, hidden = false) {
+    // A fresh context avoids adding iframe-only entries to browser Back/Forward history.
+    const next = frame.cloneNode(false)
+    next.src = url
+    next.hidden = hidden
+    frame.removeEventListener("load", onLoad)
+    frame.removeEventListener("error", onError)
+    frame.replaceWith(next)
+    frame = next
+    frame.addEventListener("load", onLoad)
+    frame.addEventListener("error", onError)
+  }
 
-const profileForm = document.querySelector("#profile-form")
-profileForm?.addEventListener("mui:valid", () => {
-  store?.set("form.valid", true)
-  store?.set("form.invalid", false)
-  record("form validation passed")
-})
-profileForm?.addEventListener("mui:invalid", () => {
-  store?.set("form.valid", false)
-  store?.set("form.invalid", true)
-  record("form validation failed")
-})
+  function select(slug, historyMode = null, focus = false) {
+    const component = entries.get(slug)
+    for (const [key, link] of links) {
+      if (component && key === slug) link.setAttribute("aria-current", "page")
+      else link.removeAttribute("aria-current")
+    }
+    if (!component) {
+      current = null
+      title.textContent = "Component not found"
+      category.textContent = "Components"
+      note.textContent = "Choose a component from the navigation."
+      standalone.hidden = true
+      frame.removeAttribute("aria-busy")
+      navigateFrame("about:blank", true)
+      status.hidden = false
+      status.textContent = "The requested component is not in this catalog."
+      document.title = "Component not found - MarkupUI"
+      return
+    }
+    if (historyMode) {
+      const url = new URL(view.location.href)
+      url.searchParams.set("component", slug)
+      url.hash = ""
+      view.history[historyMode === "push" ? "pushState" : "replaceState"](null, "", url)
+    }
+    const url = new URL(`./components/${slug}.html`, document.baseURI)
+    title.textContent = component.name
+    category.textContent = component.category
+    standalone.href = url.href
+    standalone.hidden = false
+    note.textContent = alternatives.has(slug)
+      ? "This page documents a native alternative or explicit API exclusion, not full upstream compatibility."
+      : "Current standalone examples. This page loads its own component styles and scripts."
+    document.title = `${component.name} - MarkupUI`
+    if (current !== slug) {
+      current = slug
+      frame.title = `${component.name} examples`
+      frame.setAttribute("aria-busy", "true")
+      status.hidden = false
+      status.textContent = `Loading ${component.name} examples...`
+      navigateFrame(url.href)
+    }
+    menuOpen = false
+    updateNavigation()
+    if (focus) title.focus({ preventScroll: true })
+  }
 
-document.querySelector("#demo-tag")?.addEventListener("mui:close", (event) => {
-  event.currentTarget?.remove()
-  record("closable tag emitted mui:close")
-})
+  function onClick(event) {
+    const link = event.target.closest?.("a[data-component]")
+    if (!link || !navigation.contains(link) || event.defaultPrevented || event.button !== 0
+      || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
+    event.preventDefault()
+    const slug = link.dataset.component
+    select(slug, current === slug ? null : "push", true)
+  }
+  function onPopState() { select(requestedComponent()) }
+  function onToggle() { menuOpen = !menuOpen; updateNavigation() }
+  function onMediaChange() { menuOpen = false; updateNavigation() }
+  function onKeyDown(event) {
+    if (event.key === "Escape" && media.matches && menuOpen) {
+      menuOpen = false
+      updateNavigation()
+      toggle.focus()
+    }
+  }
+  function onLoad() {
+    frame.removeAttribute("aria-busy")
+    if (current) status.hidden = true
+  }
+  function onError() {
+    frame.removeAttribute("aria-busy")
+    status.hidden = false
+    status.textContent = "The example could not be loaded. Try the standalone link."
+  }
 
-document.querySelector("#demo-menu")?.addEventListener("mui:change", (event) => {
-  store?.set("navigation.selection", event.detail)
-})
+  navigation.addEventListener("click", onClick)
+  search.addEventListener("input", filter)
+  toggle.addEventListener("click", onToggle)
+  sidebar.addEventListener("keydown", onKeyDown)
+  frame.addEventListener("load", onLoad)
+  frame.addEventListener("error", onError)
+  view.addEventListener("popstate", onPopState)
+  media.addEventListener("change", onMediaChange)
+  filter()
+  updateNavigation()
+  select(requestedComponent(), "replace")
 
-document.querySelector("#demo-pagination")?.addEventListener("mui:change", (event) => {
-  store?.set("navigation.selection", `page ${event.detail}`)
-})
-
-document.querySelector("#demo-tree")?.addEventListener("mui:change", (event) => {
-  store?.set("navigation.selection", event.detail)
-})
-
-widgetTransfer?.addEventListener("mui:change", (event) => {
-  const target = document.querySelector("#transfer-value")
-  if (target) target.textContent = event.detail.join(", ") || "None"
-})
-
-widgetCascader?.addEventListener("mui:change", (event) => {
-  const target = document.querySelector("#cascader-value")
-  if (target) target.textContent = event.detail.join(" / ")
-})
-
-document.querySelector("#component-search")?.addEventListener("mui:input", (event) => {
-  const query = String(event.detail ?? "").trim().toLowerCase()
-  const items = [...document.querySelectorAll(".sidebar-item")]
-  let visible = 0
-  items.forEach((item) => {
-    const match = !query || item.textContent?.toLowerCase().includes(query)
-    item.hidden = !match
-    if (match) visible += 1
-  })
-  const empty = document.querySelector("#search-empty")
-  if (empty) empty.hidden = visible !== 0
-})
-
-function updateOutline() {
-  const panel = document.querySelector(".showcase-section:not([hidden])")
-  const outline = document.querySelector("#page-outline")
-  if (!panel || !outline) return
-  const headings = [...panel.querySelectorAll("mui-heading[level='2'],mui-heading[level='3']")]
-  const items = headings.map((heading, index) => {
-    heading.id ||= `outline-${panel.id}-${index + 1}`
-    const item = document.createElement("mui-button")
-    item.className = "outline-item"
-    item.setAttribute("quaternary", "")
-    item.setAttribute("mui-action", "demo.outline")
-    item.setAttribute("mui-param-target", `#${heading.id}`)
-    item.dataset.level = heading.getAttribute("level") ?? "3"
-    item.textContent = heading.textContent
-    return item
-  })
-  outline.replaceChildren(...items)
+  return {
+    get current() { return current },
+    disconnect() {
+      navigation.removeEventListener("click", onClick)
+      search.removeEventListener("input", filter)
+      toggle.removeEventListener("click", onToggle)
+      sidebar.removeEventListener("keydown", onKeyDown)
+      frame.removeEventListener("load", onLoad)
+      frame.removeEventListener("error", onError)
+      view.removeEventListener("popstate", onPopState)
+      media.removeEventListener("change", onMediaChange)
+    },
+  }
 }
 
-function topLevelCards(root) {
-  return [...root.querySelectorAll("mui-card")]
-    .filter((card) => card.parentElement?.closest("mui-card") === null)
+if (document.getElementById("component-app")) {
+  createComponentBrowser()
 }
-
-async function installDemoCards() {
-  const response = await fetch("./index.html")
-  if (!response.ok) throw new Error(`Unable to load demo source: HTTP ${response.status}.`)
-  const sourceDocument = new DOMParser().parseFromString(await response.text(), "text/html")
-  panelNames.forEach((panelName) => {
-    const livePanel = document.querySelector(`#${panelName}`)
-    const sourcePanel = sourceDocument.querySelector(`#${panelName}`)
-    if (!livePanel || !sourcePanel) return
-    const liveCards = topLevelCards(livePanel)
-    const sourceCards = topLevelCards(sourcePanel)
-    liveCards.forEach((card, index) => {
-      if (card.querySelector(":scope > .demo-card-tools")) return
-      card.classList.add("demo-card")
-      const source = document.createElement("mui-code")
-      source.id = `demo-source-${panelName}-${index + 1}`
-      source.className = "demo-source"
-      source.hidden = true
-      source.textContent = sourceCards[index]?.outerHTML.trim() ?? card.outerHTML.trim()
-      const tools = document.createElement("mui-row")
-      tools.className = "demo-card-tools"
-      tools.setAttribute("align", "center")
-      tools.setAttribute("gap", "xs")
-      const spacer = document.createElement("mui-spacer")
-      const toggle = document.createElement("mui-button")
-      toggle.setAttribute("quaternary", "")
-      toggle.setAttribute("size", "small")
-      toggle.setAttribute("mui-action", "demo.toggle-source")
-      toggle.setAttribute("mui-param-target", `#${source.id}`)
-      toggle.textContent = "View code"
-      const copy = document.createElement("mui-button")
-      copy.setAttribute("quaternary", "")
-      copy.setAttribute("size", "small")
-      copy.setAttribute("mui-action", "demo.copy-source")
-      copy.setAttribute("mui-param-target", `#${source.id}`)
-      copy.textContent = "Copy"
-      tools.append(spacer, toggle, copy)
-      card.append(tools, source)
-    })
-  })
-  updateOutline()
-}
-
-void installDemoCards().catch((error) => {
-  console.error("Unable to install demo documentation tools.", error)
-  mui.message.show("Demo source tools failed to load.", { type: "error" })
-})
-
-app?.addEventListener("mui:input", (event) => {
-  record(`${event.target.localName} emitted mui:input`)
-})
-
-app?.addEventListener("mui:change", (event) => {
-  record(`${event.target.localName} emitted mui:change`)
-})
-
-const include = document.querySelector("#activity")
-const includeStatus = document.querySelector("#include-status")
-
-include?.addEventListener("mui:load", () => {
-  if (includeStatus) includeStatus.textContent = "Loaded"
-  record("dynamic fragment loaded")
-})
-
-include?.addEventListener("mui:error", (event) => {
-  if (includeStatus) includeStatus.textContent = "Failed"
-  console.error("Dynamic content failed to load.", event.detail)
-})
