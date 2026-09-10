@@ -5,6 +5,21 @@ This is not a wizard, tablist, validation pipeline or workflow engine. Authored 
 visible; the helper does not create panels, fetch data, navigate or advance business state.
 The legacy `mui-steps`/`mui-step` classes and registration remain unchanged.
 
+## Default-style audit — 2026-09-10
+
+The [isolated rendered audit](../style-audit/components/steps.md) corrects status-role
+colors, medium/small title and glyph typography, description spacing and connector
+color/thickness. **49 targeted tests pass**: 43 controller tests plus six style
+regressions. Fifty-six aligned-status item comparisons matched the checked
+typography/color properties in light/dark.
+
+This native ordered-list composition still differs geometrically from Naive's
+generated numbered circles, title-integrated rails and implicit completion model.
+Those differences are measured explicitly, not claimed as pixel parity. CSS is
+**4,292 raw / 1,250 gzip bytes**, at the unchanged **1,250-byte ceiling**.
+Controller/shared code is unchanged. The coordinator's isolated release build and all
+**49 Steps tests** pass, including the dark-print contrast correction.
+
 ## Loading and native baseline
 
 | Export / asset | Contract |
@@ -160,7 +175,57 @@ focus fallback. Existing author tabindex is preserved; an owned fallback tabinde
 disconnect. Outside focus is never stolen. Tab order remains native, and no trap is introduced.
 Call disconnect before removing a whole list; there is no automatic document removal observer.
 
-## External CSS and acceptance — 2026-09-09
+## External CSS defaults and native limits
+
+Medium/small titles and native ordinal markers use **16/14px**, with title weight
+**500** and line height **1**. Optional authored glyphs use **18/14px**. Body sizing
+uses shared `--mui-font-size`, falling back to 14px; family and ordinary body line
+height remain inherited. Descriptions use a 12px top margin, or 8px for explicit
+vertical composition. Required status words and real action buttons remain readable
+body content, not disabled-looking description text.
+
+Use `data-mui-theme="light|dark"` on an ancestor or list; absent means light.
+Only private role defaults change. Root/list and item rules reset their own
+defaults for nested steps. Public `--mui-steps-marker`, `--mui-steps-color`,
+`--mui-steps-line`, `--mui-steps-current`, `--mui-steps-focus` and gap overrides
+remain available on the actual owner.
+
+| Status / role | Light | Dark |
+| --- | --- | --- |
+| Wait title/description/marker | `#c2c2c2` | white `.38` |
+| Process title | `#1f2225` | white `.9` |
+| Process description | `#333639` | white `.82` |
+| Process/finish marker; finish connector | `#18a058` | `#63e2b7` |
+| Finish title/description | `#c2c2c2` | white `.38` |
+| Error title/description/marker | `#d03050` | `#e88080` |
+| Other connectors | `#c2c2c2` | white `.38` |
+
+Steps uses normal primary/error roles, **not supplementary** semantic colors.
+Shared `--mui-color-primary` and `--mui-color-error` can supply those correct roles;
+local marker/color/line overrides win. Status rules no longer overwrite the public
+marker property on each finish/error item.
+
+The marker color corresponds to Naive's **indicator border** role. Native decimal
+markers and flat authored glyphs do not become generated circular nodes, and process
+glyphs therefore stay readable accent color rather than white/black ink intended
+for a filled circle. The explicit current-step outline remains a separate native cue.
+No-JS status words remain authoritative; computed status paint is provided by the
+existing helper, not a new CSS status parser.
+
+Horizontal items share available width rather than imposing an 11rem minimum.
+Native list framing, horizontal gaps and connector stubs remain; fixed-width
+scrolling groups can be authored with ordinary item `flex-basis` CSS. Vertical
+and narrow stacked layouts use a 16px gap. Connector strokes are 1px, with the
+existing item-end clearance preserved so labels do not run underneath the stub.
+
+Print reuses the forced-color text/marker token resets and selects a scoped light
+color scheme on the list. Default titles, descriptions, visible status words,
+ordinal markers and optional glyphs therefore print black in all four states,
+even under an inherited dark color scheme. More-specific author colors/tokens
+remain authoritative; no new `!important` color override is used. Screen theme
+colors return naturally after printing.
+
+## Original CSS acceptance — 2026-09-09 (historical)
 
 Native decimal list markers preserve ordered-list semantics. Small/medium presentation,
 decorative icons, right/bottom icon-content layout and horizontal/vertical classes use logical
@@ -199,9 +264,10 @@ There is no animation, geometry write, CSS-in-JS, provider or mandatory Icon/Too
 | Steps classic | 9,116 | 3,611 | 4,000 |
 | Steps CSS | 3,626 | 1,081 | 1,250 |
 
-One helper format + CSS: **4,621 ESM / 4,692 classic gzip bytes**. Previous optional/core/plugin
+At original delivery, one helper format + CSS was **4,621 ESM / 4,692 classic gzip bytes**. Previous optional/core/plugin
 sources, outputs and ceilings are unchanged; core **14,611/15,000**, advanced **2,181/3,000**,
-widgets **2,779/4,000**. No all-browser, physical-touch or screen-reader certification.
+widgets **2,779/4,000**. These are historical delivery measurements, not a newly run
+integrated build. No all-browser, physical-touch or screen-reader certification.
 The declared P3 navigation workstream is accepted for retained native scopes; P3 overall
 is still in progress. **Next: Loading Bar**, followed by the remaining overlay/feedback and
 separate Collapse Transition/Discrete API scopes.

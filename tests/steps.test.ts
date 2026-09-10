@@ -296,7 +296,7 @@ describe("native identity, hidden items and ownership", () => {
   it("keeps native list markers and external CSS without a renderer or layout observer", () => {
     const css = readFileSync(join("src", "components", "steps", "steps.css"), "utf8")
     const source = readFileSync(join("src", "components", "steps", "steps.ts"), "utf8")
-    expect(css).toContain("list-style: decimal")
+    expect(css.replace(/\s/g, "")).toContain("list-style:decimal")
     expect(css).toContain("data-step-following")
     expect(css).toContain("forced-colors")
     expect(css).toContain("@media print")

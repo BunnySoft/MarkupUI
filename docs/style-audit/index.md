@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 50/96 scopes.** The other **46** are not yet accepted in this
+**Reviewed and integrated: 51/96 scopes.** The other **45** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -111,7 +111,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Marquee](../naive-ui/components/marquee.md) | ⚪ Pending | — |
 | [Mention](../naive-ui/components/mention.md) | ⚪ Pending | — |
 | [Menu](../naive-ui/components/menu.md) | 🟠 Reviewing | — |
-| [Message](../naive-ui/components/message.md) | ⚪ Pending | — |
+| [Message](../naive-ui/components/message.md) | 🟠 Reviewing | — |
 | [Modal](../naive-ui/components/modal.md) | 🟢 Fixed / 🟡 Remaining | [Raw/Card/Dialog surfaces, protected modality and retained native controls](components/modal.md) |
 | [Notification](../naive-ui/components/notification.md) | ⚪ Pending | — |
 | [Number Animation](../naive-ui/components/number-animation.md) | ⚪ Pending | — |
@@ -133,7 +133,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Spin](../naive-ui/components/spin.md) | 🟢 Fixed / 🟡 Remaining | [SVG motion, theme dimming and native interaction limits](components/spin.md) |
 | [Split](../naive-ui/components/split.md) | ⚪ Pending | — |
 | [Statistic](../naive-ui/components/statistic.md) | 🟢 Fixed / 🟡 Remaining | [Inline value geometry, text roles and native limits](components/statistic.md) |
-| [Steps](../naive-ui/components/steps.md) | 🟠 Reviewing | — |
+| [Steps](../naive-ui/components/steps.md) | 🟢 Fixed / 🟡 Remaining | [Status roles, typography, print contrast and native marker/layout limits](components/steps.md) |
 | [Switch](../naive-ui/components/switch.md) | 🟢 Fixed / 🟡 Remaining | [Rail/thumb metrics, theme paint and retained native-content limits](components/switch.md) |
 | [Table](../naive-ui/components/table.md) | 🟢 Fixed / 🟡 Remaining | [Typography, palette and native collapsed-border limits](components/table.md) |
 | [Tabs](../naive-ui/components/tabs.md) | 🟢 Fixed / 🟡 Remaining | [Variants, placement spacing and native indicator/motion limits](components/tabs.md) |
