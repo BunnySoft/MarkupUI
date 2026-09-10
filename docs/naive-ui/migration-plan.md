@@ -12,7 +12,7 @@ no new runtime: 117 rows, eight adapted, 109 omitted and four accepted tasks.
 Element also closes native authoring composition: 15 rows, three adapted, twelve omitted
 and four accepted tasks. Global Style closes explicit document CSS: 16 source rows,
 seven adapted, nine omitted and four accepted tasks. All three P0 catalog routes and
-the separately audited P3 Discrete route are reconciled. P6 is now active: Carousel/
+the separately audited P3 Discrete route are reconciled. P6 retained evidence: Carousel/
 CarouselItem completes its native single-slide scope (50 rows, 35 adapted, 15 omitted,
 four accepted tasks); Watermark completes its native decorative tile scope (31 rows,
 26 adapted, five omitted, four accepted tasks). Upload and native Trigger/Dragger close
@@ -22,9 +22,11 @@ four accepted tasks). Time closes native instant/relative formatting (nine rows,
 adapted, two omitted, four tasks). Countdown closes elapsed native text/unit timing
 (14 rows, 12 adapted, two omitted, four tasks). Number Animation closes native finite
 interpolation/text (12 rows, 11 adapted, one omitted, four tasks). Heatmap closes its
-native calendar-data scope (37 rows, 26 adapted, 11 omitted, four tasks). Only Marquee
-remains Planned among specialized routes. Broad P0 foundation tasks,
-remaining P6 and full framework/viewer parity remain incomplete.** Existing MarkupUI features are a partial baseline,
+native calendar-data scope (37 rows, 26 adapted, 11 omitted, four tasks). Marquee closes
+single-track controlled traversal (11 rows, five adapted, six omitted, four tasks).
+All nine main P6 retained routes are reconciled: 288 rows, 199 adapted, 89 omitted,
+zero unresolved and 36/36 tasks. Broad P0 foundation tasks, the four exclusion-route
+alternative acceptances and full framework/viewer parity remain incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -56,7 +58,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
 | P4 — Forms and selection | 🟢 Verified retained scope | All 17 P4-assigned routes, 984 tracker rows and 68 page tasks reconciled. | Relevant native P0/P3 contracts | 478 adapted + 506 omitted, no unresolved rows; 889 P4 tests plus native browser evidence. No P0/P5/P6 or full framework parity implied. |
 | P5 — Collections and scale | 🟢 Verified retained scope | All ten P5-assigned routes, 827 rows and 40 page tasks reconciled. | P3 focus; P4 selection | 349 native adaptations + 478 omissions, zero unresolved; 526-test/native browser/asset audit. No full framework or P0/P6 parity implied. |
-| P6 — Specialized modules | 🟠 In progress; eight retained scopes Verified | Carousel, Watermark, Upload, Calendar, Time, Countdown, Number Animation and Heatmap accepted; Marquee remains Planned. | Component-specific earlier work | Explicit ESM/classic/CSS, 277 reconciled rows, 32/32 tasks, native/browser evidence; three Marquee rows remain unresolved. |
+| P6 — Specialized modules | 🟢 Verified nine main retained scopes; separate exclusions open | Carousel, Watermark, Upload, Calendar, Time, Countdown, Number Animation, Heatmap and Marquee accepted. | Component-specific earlier work | Explicit ESM/classic/CSS, 288 reconciled rows (199 adapted/89 omitted), 36/36 tasks and native/browser evidence. Four exclusion routes still have 16 alternative tasks; not full advanced parity. |
 
 The [component index](index.md) is the exhaustive catalog-to-phase assignment. The phase
 groups below name principal workstreams, not additional promises that every catalog feature
@@ -151,10 +153,10 @@ smuggling an overlay implementation into the CSS-only native composition.
 | P6-01 — Date/time and calendar | 🟢 Verified Calendar/Time retained scopes; counters remain separate | Native Gregorian date-only table and explicit instant/relative formatting accepted as distinct domains. | [Calendar](../components/calendar.md) and [Time](../components/time.md): bounded native arithmetic/Intl/text/focus/lifetime; no token/provider/alternate-calendar or floating-to-instant inference. |
 | P6-02 — Upload | 🟢 Verified retained native queue scope | Real FileList/FormData, explicit bounded caller transport, progress/cancel/retry/remove and native Trigger/Dragger. | [Upload acceptance](../components/upload.md): 101 reconciled rows/four tasks, honest ignored-abort slots and native reset/disabled/focus/fallback evidence; previews/downloads/vetoes/backend assumptions omitted. |
 | P6-03 — Media and carousel | 🟢 Verified Carousel retained scope; advanced viewer/effects excluded | Native scroll-snap Carousel/CarouselItem, original DOM, manual/wrap controls and opt-in gated autoplay. | [Carousel acceptance](../components/carousel.md): settled targets, lifetime, focus/forms, browser/legacy/no-JS and independent budgets; no seamless clone loop or advanced image-viewer parity. |
-| P6-04 — Other utilities | 🟠 In progress; Watermark/Countdown/Number Animation/Heatmap retained scopes Verified | Bounded decoration, elapsed duration, numeric interpolation and calendar data accepted; Marquee remains independent. | Per-component native ownership/generation/timing/data evidence, not security/alarm/financial/chart/renderer parity. |
+| P6-04 — Other utilities | 🟢 Verified Watermark/Countdown/Number Animation/Heatmap/Marquee retained scopes | Bounded decoration, elapsed duration, numeric interpolation, calendar data and single-track controlled motion accepted. | Per-component native ownership/generation/timing/data/media evidence, not security/alarm/financial/chart/seamless/renderer parity. |
 | P6-05 — Dependency-heavy exclusions | 🔵 Planned | Resolve QR generation, math typesetting, full language highlighting and framework-only provider APIs individually. | Independent feasibility decision or explicit omission; no hidden dependencies. |
 | P6-06 — Deprecated surfaces | 🔵 Planned | Record Legacy Transfer and deprecated aliases without reproducing redundant legacy APIs. | A documented replacement and omission decision, not a missing tracker row. |
-| P6-07 — Packaging sign-off | 🔵 Planned | Demonstrate explicit optional loading in supported classic/module modes and record combined asset sizes. | Specialized features stay out of the default dependency graph. |
+| P6-07 — Packaging sign-off | 🟢 Verified nine main retained scopes | Explicit optional ESM/classic/external CSS, combined payloads and unchanged previous ceilings verified per route. | Main specialized features stay out of the default dependency graph; exclusion-route resolutions and broader P0 legacy extraction/auto-install remain separate. |
 
 ## Per-component migration steps
 
@@ -207,10 +209,14 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Heatmap (P6), verified bounded native calendar-data scope.**
+**Current component: Marquee (P6), verified single-track controlled native-motion scope.**
 **P1/P2/P3/P4/P5 declared retained scopes are complete. P4-07 and P5-06 close against their full assigned-route audits.**
 **P5 is Verified for retained scopes:** all ten routes are resolved.
-Recommended next: **Marquee**, as the remaining separately scoped P6 route.
+**All nine main P6 retained scopes are accepted:** 288 rows and 36/36 tasks.
+Recommended next: **Equation alternative resolution**, considering authored native
+MathML without a parser. Equation, QR Code, Legacy Grid and Legacy Transfer still
+have 16 unchecked alternative-guidance/acceptance tasks; their API omissions alone
+are not acceptance.
 No next component is implemented here. P0 component-route acceptance
 does not close broader foundation tasks or imply full upstream/framework compatibility.
 
@@ -349,8 +355,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 4,014 rows and 364 accepted retained tasks out of 384 across 91 component
-pages (20 unchecked), not full upstream parity.
+The current index records 4,022 rows and 368 accepted retained tasks out of 384 across 92 component
+pages (16 unchecked exclusion-route tasks), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -2385,3 +2391,71 @@ are unchanged.
 | Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
 
 **Next: Marquee.** No Marquee implementation is included in this Heatmap commit.
+
+## Marquee acceptance — one original track and main P6 sign-off
+
+[Canonical Marquee](../components/marquee.md) and [complete reference](components/marquee.md)
+close the ninth main P6 route with bounded noninteractive original native content,
+optional Web Animations and external scroll/layout/media CSS. Every pause cancels
+translation into a reachable native static view. Sticky user intent, available real
+pause controls, focus/hover/selection/visibility/media reasons, physical left/right,
+finite/infinite alternating passes and event-driven resize/content restart are explicit.
+No obsolete tag, clone/mirror, duplicated seamless track, per-frame layout polling,
+renderer, animation dependency or application scheduler is introduced.
+
+**3 original identities + five source behaviors + three inherited theme identities =
+11 rows: five native adaptations + six omissions, zero unresolved; 4/4 tasks.**
+Original auto-fill/slot/speed identities remain visible; source duplication,
+forced-reflow iteration restart and theme surfaces remain explicit omissions.
+
+**69 targeted tests pass** (42 Marquee + 27 native/legacy), declarations/build and all
+budgets pass. Gzip level nine: **4,920 ESM / 5,062 classic / 552 CSS**, combined
+**5,472 / 5,614**, under **6,000 / 6,000 / 1,000** individual ceilings. Full local
+ESM HTML/CSS/JS/SVG example: **9,281** gzip bytes. Prior optional sources/exports/
+budgets remain unchanged; core/advanced/widgets remain **14,611 / 2,181 / 2,779**
+under **15,000 / 3,000 / 4,000**, with runtime dependencies `{}`.
+
+Chromium verified actual computed motion and finite finish once, real mouse/Enter/
+Space controls, native scrolling/selection/focus/forms, no clones, resize/content/
+hidden/fitting/static states, RTL/zoom, reduced/forced/print, narrow/no-JS, strict CSP
+and classic/native ESM/legacy coexistence. The 1854px original track in a 672px viewport
+traversed 1182px at 48px/s (24625ms/pass). Review found and fixed continued motion
+after disabling the pause control; disabled/hidden/fieldset state now stops motion
+without being overwritten. Deterministic tests guard stale native callbacks, reentrant
+finish/disconnect and errors, including falsy thrown values. No all-browser/AT,
+essential automatic-content or advanced source parity is claimed.
+
+### Final audit of the nine main P6-assigned routes
+
+| Route | Rows | Native adaptations | Intentional omissions | Accepted tasks |
+| --- | ---: | ---: | ---: | ---: |
+| Carousel/CarouselItem | 50 | 35 | 15 | 4/4 |
+| Watermark | 31 | 26 | 5 | 4/4 |
+| Upload/Trigger/Dragger | 101 | 57 | 44 | 4/4 |
+| Calendar | 23 | 20 | 3 | 4/4 |
+| Time | 9 | 7 | 2 | 4/4 |
+| Countdown | 14 | 12 | 2 | 4/4 |
+| Number Animation | 12 | 11 | 1 | 4/4 |
+| Heatmap | 37 | 26 | 11 | 4/4 |
+| Marquee | 11 | 5 | 6 | 4/4 |
+| **Nine main retained scopes: zero unresolved rows** | **288** | **199** | **89** | **36/36** |
+
+This signs off retained native functionality and its packaging, not cloned seamless/
+custom effects, Watermark security, automatic backend/preview/renderer, arbitrary
+date-token/provider, financial-decimal or full chart parity. The source omissions are
+not counted as implementations and remain visible in each reference.
+
+**Current catalog: 96 routes / 4,022 tracker rows / 368 of 384 accepted tasks across
+92 pages / 16 unchecked.** API status totals: **2,090 native adaptations + 1,932
+intentional omissions; zero Not reviewed/Planned rows.** Earlier component sign-off
+counts above are historical snapshots, not conflicting current totals.
+
+| Separate unresolved work | Status |
+| --- | --- |
+| Equation, QR Code, Legacy Grid, Legacy Transfer | 35 API rows intentionally omitted, but 16 alternative-guidance/acceptance tasks remain unchecked; P6-05/P6-06 are not completed by this main-route audit |
+| Broad P0-01–P0-09 foundation work | Open/partial independently: legacy CSS extraction, aggregate style/auto-install compatibility, inline-theme exceptions and cross-component contract follow-through remain |
+
+P0's Config Provider/Element/Global Style route resolutions and P1–P5 retained scopes
+stay accepted without broad foundation or framework parity being inferred.
+**Recommend Equation resolution next**, using authored native MathML as a possible
+no-parser alternative. No Equation or other next component is implemented in this commit.

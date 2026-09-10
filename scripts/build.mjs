@@ -78,6 +78,8 @@ components.push("number-animation")
 classicEntries["number-animation"] = "global.ts"
 components.push("heatmap")
 classicEntries.heatmap = "global.ts"
+components.push("marquee")
+classicEntries.marquee = "global.ts"
 
 await Promise.all([
   build({
@@ -160,6 +162,9 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-marquee.js": 6_000,
+  "markup-ui-marquee.global.js": 6_000,
+  "markup-ui-marquee.css": 1_000,
   "markup-ui-heatmap.js": 8_000,
   "markup-ui-heatmap.global.js": 8_000,
   "markup-ui-heatmap.css": 2_000,

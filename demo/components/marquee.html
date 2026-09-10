@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Native single-track Marquee · MarkupUI</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-marquee.css">
+  <link rel="stylesheet" href="./marquee.css">
+  <script type="module" src="./marquee.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Marquee: one original track, optional motion</h1>
+    <p>Motion is off initially. Static view uses native horizontal scrolling so the
+      full content is always reachable. Hover/focus/select the viewport to stop and read;
+      explicit pause stays paused after those temporary reasons end. Reduced motion,
+      forced colors and print use a wrapped static view.</p>
+    <div class="demo-controls" data-enhancement hidden>
+      <label>Speed (CSS px/s) <input id="speed" type="number" min="1" max="1000" step="1" value="48"></label>
+      <label>First pass <select id="direction"><option value="left">Left</option><option value="right">Right</option></select></label>
+      <label>Passes <select id="iterations"><option>1</option><option>2</option><option>4</option><option value="infinite">Infinite alternating</option></select></label>
+      <label>Initial delay (ms) <input id="delay" type="number" min="0" max="60000" step="1" value="0"></label>
+      <button type="button" id="apply">Apply motion settings</button>
+      <label><input id="narrow" type="checkbox">Narrow viewport</label>
+      <label><input id="wide" type="checkbox">Wide viewport</label>
+      <label><input id="rtl" type="checkbox">RTL content/layout</label>
+      <label><input id="zoom" type="checkbox">CSS zoom 200%</label>
+      <button type="button" id="extra">Add/remove an original native text suffix</button>
+      <button type="button" id="interactive">Add/remove an unsupported control (static fallback)</button>
+      <button type="button" id="hidden-play">Request motion in hidden example</button>
+      <button type="button" id="disconnect">Disconnect all enhancements</button>
+    </div>
+    <section class="mui-marquee stage" data-marquee id="main-marquee" aria-labelledby="main-heading">
+      <h2 id="main-heading">Original native announcement</h2>
+      <div data-marquee-viewport tabindex="0" aria-label="Scrollable original announcement">
+        <div data-marquee-content><strong id="original">Original content:</strong> <img src="./marquee.svg" width="56" height="32" alt="Local MarkupUI marker"> This entire sentence remains one original DOM sequence. Native text selection, readable labels, images and listeners stay intact. <em>No duplicate visual track, hidden mirror, obsolete marquee tag or seamless-loop claim.</em></div>
+      </div>
+      <div data-marquee-controls hidden><button type="button" data-marquee-toggle><span data-marquee-label>Play motion</span></button></div>
+      <p data-marquee-status>Static announcement: focus the viewport or use its scrollbar to read all text.</p>
+    </section>
+    <section class="mui-marquee stage" data-marquee id="short-marquee" aria-label="Short fitting text example">
+      <div data-marquee-viewport tabindex="0" aria-label="Short static text"><div data-marquee-content>This text fits and needs no motion.</div></div>
+      <div data-marquee-controls hidden><button type="button" data-marquee-toggle><span data-marquee-label>Play motion</span></button></div>
+      <p data-marquee-status>Short readable static content.</p>
+    </section>
+    <details id="hidden-example">
+      <summary>Initially hidden original content</summary>
+      <section class="mui-marquee stage" data-marquee id="hidden-marquee" aria-label="Hidden measurement example">
+        <div data-marquee-viewport tabindex="0" aria-label="Hidden example static scroll"><div data-marquee-content>Hidden containers do not guess geometry. On reveal, a ResizeObserver can measure this original long text and start a requested traversal, without adding duplicate content or a per-frame layout loop.</div></div>
+        <div data-marquee-controls hidden><button type="button" data-marquee-toggle><span data-marquee-label>Play motion</span></button></div>
+        <p data-marquee-status>Open and read this native static text.</p>
+      </section>
+    </details>
+    <p id="completion" aria-live="polite">Application-owned finite-motion completion notice.</p>
+    <form id="native-form"><label>Independent native field <input id="title" name="title" value="Motion must not change this"></label>
+      <button type="reset">Reset this native field only</button></form>
+    <pre id="feedback" aria-label="Marquee state and local diagnostics">Without JavaScript, all original content is static and reachable, with no dead motion controls.</pre>
+    <footer><label>Outside focus target <input id="outside" value="Pause must not steal focus"></label>
+      <p>Each pass traverses only the overflow extent; subsequent passes alternate.
+        Resume/reflow restarts from the configured edge. This is not a duplicated seamless
+        ticker, clipping/anchoring engine or a way to make essential content motion-only.</p></footer>
+  </main>
+</body>
+</html>

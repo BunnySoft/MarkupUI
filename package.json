@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./marquee": {
+      "types": "./dist/components/marquee/index.d.ts",
+      "import": "./dist/markup-ui-marquee.js"
+    },
+    "./marquee/style.css": "./dist/markup-ui-marquee.css",
     "./heatmap": {
       "types": "./dist/components/heatmap/index.d.ts",
       "import": "./dist/markup-ui-heatmap.js"

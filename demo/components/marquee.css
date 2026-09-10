@@ -1,0 +1,17 @@
+body { margin: 0; font: 1rem/1.5 system-ui, sans-serif; color: #1c3046; background: #f3f6fa; }
+main { max-inline-size: 70rem; margin-inline: auto; padding: 1.5rem; }
+label { display: block; margin-block: .5rem; }
+input, select, button { font: inherit; max-inline-size: 100%; }
+button { min-block-size: 2.75rem; padding: .4rem .65rem; }
+.demo-controls { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; margin-block: 1rem; }
+.stage { max-inline-size: 42rem; padding: 1rem; margin-block: 1rem; background: white; border: 1px solid #b5c6d6; border-radius: .5rem; }
+.stage.narrow { max-inline-size: 22rem; }
+.stage.wide { max-inline-size: 64rem; }
+.stage.zoomed { zoom: 2; }
+#hidden-marquee { max-inline-size: 30rem; }
+[data-marquee-content] { font-size: 1.1rem; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; background: white; border: 1px solid #b5c6d6; }
+:focus-visible { outline: 3px solid #175cd3; outline-offset: 2px; }
+[hidden] { display: none !important; }
+main > footer { min-block-size: 18rem; margin-block-start: 1rem; }
+@media (max-width: 40rem) { main { padding: .75rem; } .stage { padding: .5rem; } }
