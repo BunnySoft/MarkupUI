@@ -107,7 +107,6 @@ export class MuiCard extends HTMLElement {
         this.closeButton.dataset.muiCardClose = ""
         const icon = this.ownerDocument.createElement("span")
         icon.setAttribute("aria-hidden", "true")
-        icon.textContent = "×"
         this.closeButton.append(icon)
       }
       this.closeButton.setAttribute("aria-label", this.closeLabel)

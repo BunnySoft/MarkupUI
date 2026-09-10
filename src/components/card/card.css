@@ -1,3 +1,30 @@
+/* Palette defaults are local: the legacy surface/text/divider roles differ. */
+:where([data-mui-theme="light"]) {
+  --_mui-card-surface: initial;
+  --_mui-card-text: initial;
+  --_mui-card-heading: initial;
+  --_mui-card-border: initial;
+  --_mui-card-action: initial;
+  --_mui-card-embedded: initial;
+  --_mui-card-close: initial;
+  --_mui-card-close-hover: initial;
+  --_mui-card-close-pressed: initial;
+  --_mui-card-shadow: initial;
+  --_mui-card-primary: initial;
+}
+:where([data-mui-theme="dark"]) {
+  --_mui-card-surface: #18181c;
+  --_mui-card-text: rgba(255, 255, 255, .82);
+  --_mui-card-heading: rgba(255, 255, 255, .9);
+  --_mui-card-border: rgba(255, 255, 255, .09);
+  --_mui-card-action: rgba(255, 255, 255, .06);
+  --_mui-card-embedded: #18181c;
+  --_mui-card-close: rgba(255, 255, 255, .52);
+  --_mui-card-close-hover: rgba(255, 255, 255, .12);
+  --_mui-card-close-pressed: rgba(255, 255, 255, .08);
+  --_mui-card-shadow: 0 1px 2px -2px #0000003d, 0 3px 6px #0000002e, 0 5px 12px 4px #0000001f;
+  --_mui-card-primary: #63e2b7;
+}
 /* Outrank legacy host styles, including structured overflow and hover effects. */
 mui-card[data-mui-card][data-mui-card][data-mui-card] {
   box-sizing: border-box;
@@ -9,79 +36,87 @@ mui-card[data-mui-card][data-mui-card][data-mui-card] {
   padding: 0;
   block-size: var(--mui-card-height, auto);
   max-block-size: var(--mui-card-max-height, none);
-  border: 1px solid var(--mui-card-border-color, var(--mui-border, #e0e0e6));
-  border-radius: var(--mui-card-radius, 8px);
-  background: var(--mui-card-background, var(--mui-bg-surface, #fff));
-  color: var(--mui-card-color, var(--mui-text-primary, #333639));
-  font-size: var(--mui-card-font-size, 14px);
-  line-height: var(--mui-card-line-height, 1.6);
+  border: 1px solid var(--mui-card-border-color, var(--_mui-card-border, #efeff5));
+  border-radius: var(--mui-card-radius, 3px);
+  background: var(--mui-card-background, var(--_mui-card-surface, #fff));
+  color: var(--mui-card-color, var(--_mui-card-text, #333639));
+  font-size: var(--mui-card-font-size, var(--mui-font-size, 14px));
+  line-height: var(--mui-card-line-height, var(--mui-line-height, 1.6));
   overflow: visible;
   overflow-wrap: anywhere;
   box-shadow: none;
-  transition: border-color .2s, background-color .2s, box-shadow .2s;
+  transition: color .3s var(--mui-card-ease, cubic-bezier(.4,0,.2,1)), border-color .3s var(--mui-card-ease, cubic-bezier(.4,0,.2,1)), background-color .3s var(--mui-card-ease, cubic-bezier(.4,0,.2,1)), box-shadow .3s var(--mui-card-ease, cubic-bezier(.4,0,.2,1));
 }
 mui-card[data-mui-card][data-mui-card][data-mui-card][hidden] { display: none; }
-mui-card[data-mui-card][data-mui-card][data-mui-card][bordered="false"] { border-color: transparent; }
-mui-card[data-mui-card][data-mui-card][data-mui-card][embedded] { background: var(--mui-card-embedded-background, var(--mui-bg-muted, #f5f5f7)); }
+mui-card[data-mui-card][data-mui-card][data-mui-card][bordered="false"] { border: 0; }
+mui-card[data-mui-card][data-mui-card][data-mui-card][embedded] { background: var(--mui-card-embedded-background, var(--_mui-card-embedded, #fafafc)); }
 mui-card[data-mui-card][data-mui-card][data-mui-card][hoverable]:hover {
-  border-color: var(--mui-card-hover-border-color, var(--mui-border-hover, #c2c2c8));
-  box-shadow: var(--mui-card-hover-shadow, 0 4px 16px #0000001a);
+  border-color: var(--mui-card-hover-border-color, var(--mui-card-border-color, var(--_mui-card-border, #efeff5)));
+  box-shadow: var(--mui-card-hover-shadow, var(--_mui-card-shadow, 0 1px 2px -2px #00000014, 0 3px 6px #0000000f, 0 5px 12px 4px #0000000a));
 }
-mui-card[data-mui-card][data-mui-card][data-mui-card][hoverable][bordered="false"]:hover { border-color: transparent; }
-mui-card[data-mui-card] { --_mui-card-padding: 24px; --_mui-card-title-size: 18px; }
-mui-card[data-mui-card][size="small"] { --_mui-card-padding: 16px; --_mui-card-title-size: 16px; }
-mui-card[data-mui-card][size="medium"] { --_mui-card-padding: 24px; --_mui-card-title-size: 18px; }
-mui-card[data-mui-card][size="large"] { --_mui-card-padding: 32px; --_mui-card-title-size: 18px; }
-mui-card[data-mui-card][size="huge"] { --_mui-card-padding: 40px; --_mui-card-title-size: 20px; }
+mui-card[data-mui-card][data-mui-card][data-mui-card]:target { border-color: var(--mui-card-target-color, var(--mui-color-primary, var(--_mui-card-primary, #18a058))); }
+mui-card[data-mui-card] {
+  --_mui-card-padding: 24px;
+  --_mui-card-top: 19px;
+  --_mui-card-bottom: 20px;
+  --_mui-card-title-size: 18px;
+}
+mui-card[data-mui-card][size="small"] { --_mui-card-padding: 16px; --_mui-card-top: 12px; --_mui-card-bottom: 12px; --_mui-card-title-size: 16px; }
+mui-card[data-mui-card][size="large"] { --_mui-card-padding: 32px; --_mui-card-top: 23px; --_mui-card-bottom: 24px; }
+mui-card[data-mui-card][size="huge"] { --_mui-card-padding: 40px; --_mui-card-top: 27px; --_mui-card-bottom: 28px; }
 
 mui-card[data-mui-card] > :is(mui-card-header, [data-mui-card-header], mui-card-content, [data-mui-card-content], mui-card-footer, [data-mui-card-footer], mui-card-action, [data-mui-card-action]) {
   box-sizing: border-box;
   min-width: 0;
   min-height: 0;
   flex: 0 0 auto;
-  padding: var(--mui-card-padding, var(--_mui-card-padding, 24px));
+  padding: 0 var(--mui-card-padding, var(--_mui-card-padding)) var(--mui-card-padding, var(--_mui-card-bottom));
   border: 0;
   --_mui-card-divider: 0;
+  transition: border-color .3s var(--mui-card-ease, cubic-bezier(.4,0,.2,1)), background-color .3s var(--mui-card-ease, cubic-bezier(.4,0,.2,1)), color .3s var(--mui-card-ease, cubic-bezier(.4,0,.2,1));
 }
 mui-card[data-mui-card] > :is(mui-card-header, [data-mui-card-header]) {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: var(--mui-card-header-gap, 12px);
+  gap: var(--mui-card-header-gap, 0px);
+  padding-block-start: var(--mui-card-padding, var(--_mui-card-top));
   font-size: var(--mui-card-title-size, var(--_mui-card-title-size, 18px));
-  font-weight: var(--mui-card-title-weight, 600);
-  color: var(--mui-card-title-color, inherit);
+  font-weight: var(--mui-card-title-weight, 500);
+  color: var(--mui-card-title-color, var(--_mui-card-heading, #1f2225));
 }
 mui-card[data-mui-card] > :is(mui-card-header, [data-mui-card-header]) > :is(h1, h2, h3, h4, h5, h6) { margin: 0; font: inherit; }
+mui-card[data-mui-card] > :is(mui-card-header, [data-mui-card-header]) > :is([data-mui-card-title], h1, h2, h3, h4, h5, h6) { flex: 1; min-width: 0; }
 mui-card[data-mui-card] > :is(mui-card-header, [data-mui-card-header]) > :is(mui-card-header-extra, [data-mui-card-header-extra]) {
   display: flex;
   align-items: center;
   gap: var(--mui-card-header-gap, 12px);
   margin-inline-start: auto;
   min-width: 0;
-  font-size: var(--mui-card-font-size, 14px);
+  font-size: var(--mui-card-font-size, var(--mui-font-size, 14px));
   font-weight: 400;
+  color: var(--mui-card-color, var(--_mui-card-text, #333639));
 }
 mui-card[data-mui-card] > :is(mui-card-content, [data-mui-card-content]) { display: block; flex: 1 1 auto; }
 mui-card[data-mui-card] > :is(mui-card-footer, [data-mui-card-footer], mui-card-action, [data-mui-card-action]) {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
+  display: block;
   gap: var(--mui-card-action-gap, 8px);
   flex-wrap: wrap;
 }
 mui-card[data-mui-card] > :is(mui-card-action, [data-mui-card-action]) {
-  background: var(--mui-card-action-background, var(--mui-bg-muted, #fafafc));
-  border-end-start-radius: var(--mui-card-radius, 8px);
-  border-end-end-radius: var(--mui-card-radius, 8px);
+  padding-block-start: var(--mui-card-padding, var(--_mui-card-bottom));
+  background: var(--mui-card-action-background, var(--_mui-card-action, #fafafc));
+  background-clip: padding-box;
+  border-end-start-radius: var(--mui-card-radius, 3px);
+  border-end-end-radius: var(--mui-card-radius, 3px);
 }
 mui-card[data-mui-card] > :is(mui-card-cover, [data-mui-card-cover]) {
   display: block;
   flex: 0 0 auto;
   min-width: 0;
   overflow: hidden;
-  border-start-start-radius: var(--mui-card-radius, 8px);
-  border-start-end-radius: var(--mui-card-radius, 8px);
+  border-start-start-radius: var(--mui-card-radius, 3px);
+  border-start-end-radius: var(--mui-card-radius, 3px);
 }
 mui-card[data-mui-card] > :is(mui-card-cover, [data-mui-card-cover]) > img { display: block; width: 100%; height: auto; }
 mui-card[data-mui-card][content-scrollable] > :is(mui-card-content, [data-mui-card-content]) { overflow: auto; overscroll-behavior: contain; }
@@ -92,8 +127,11 @@ mui-card[data-mui-card][segmented]:not([segmented-footer="false"]) > :is(mui-car
 mui-card[data-mui-card][segmented-footer]:not([segmented-footer="false"]) > :is(mui-card-footer, [data-mui-card-footer]),
 mui-card[data-mui-card][segmented]:not([segmented-action="false"]) > :is(mui-card-action, [data-mui-card-action]),
 mui-card[data-mui-card][segmented-action]:not([segmented-action="false"]) > :is(mui-card-action, [data-mui-card-action]) {
-  --_mui-card-divider: 1px solid var(--mui-card-border-color, var(--mui-border, #e0e0e6));
+  --_mui-card-divider: 1px solid var(--mui-card-border-color, var(--_mui-card-border, #efeff5));
+  padding-block-start: var(--mui-card-padding, var(--_mui-card-bottom));
 }
+/* Hidden and inert siblings must not remove the first visible region's top space. */
+mui-card[data-mui-card] > :is(mui-card-content, [data-mui-card-content], mui-card-footer, [data-mui-card-footer]):not(:is(mui-card-header, [data-mui-card-header], mui-card-cover, [data-mui-card-cover], mui-card-content, [data-mui-card-content], mui-card-footer, [data-mui-card-footer], mui-card-action, [data-mui-card-action]):not([hidden]) ~ *) { padding-block-start: var(--mui-card-padding, var(--_mui-card-bottom)); }
 mui-card[data-mui-card] > :is(mui-card-header, [data-mui-card-header], mui-card-cover, [data-mui-card-cover], mui-card-content, [data-mui-card-content], mui-card-footer, [data-mui-card-footer], mui-card-action, [data-mui-card-action]):not([hidden]) ~ :is(mui-card-content, [data-mui-card-content], mui-card-footer, [data-mui-card-footer], mui-card-action, [data-mui-card-action]) { border-block-start: var(--_mui-card-divider); }
 mui-card[data-mui-card][segmented-content="soft"] > :is(mui-card-content, [data-mui-card-content]),
 mui-card[data-mui-card][segmented-footer="soft"] > :is(mui-card-footer, [data-mui-card-footer]),
@@ -108,27 +146,51 @@ mui-card[data-mui-card] > :is(mui-card-header, [data-mui-card-header]) > [data-m
   align-items: center;
   justify-content: center;
   flex: none;
-  width: var(--mui-card-close-size, 28px);
-  height: var(--mui-card-close-size, 28px);
+  position: relative;
+  width: var(--mui-card-close-size, 18px);
+  height: var(--mui-card-close-size, 18px);
   margin-inline-start: auto;
+  margin-inline-end: 0;
   padding: 0;
   border: 0;
   border-radius: var(--mui-card-close-radius, 3px);
   background: transparent;
-  color: var(--mui-card-close-color, var(--mui-text-secondary, #666));
+  color: var(--mui-card-close-color, var(--_mui-card-close, #666));
   font: inherit;
-  font-size: 22px;
+  font-size: 18px;
   line-height: 1;
   cursor: pointer;
   appearance: none;
+  transition: color .3s var(--mui-card-ease, cubic-bezier(.4,0,.2,1));
 }
-mui-card[data-mui-card] > :is(mui-card-header, [data-mui-card-header]) > :is(mui-card-header-extra, [data-mui-card-header-extra]) ~ [data-mui-card-close] { margin-inline-start: 0; }
-mui-card[data-mui-card] > :is(mui-card-header, [data-mui-card-header]) > [data-mui-card-close]:hover { background: var(--mui-card-close-hover-background, var(--mui-bg-hover, #f0f0f4)); }
-mui-card[data-mui-card] > :is(mui-card-header, [data-mui-card-header]) > [data-mui-card-close]:active { background: var(--mui-card-close-pressed-background, #e5e5eb); }
+mui-card[data-mui-card] > :is(mui-card-header, [data-mui-card-header]) > :is(mui-card-header-extra, [data-mui-card-header-extra]) ~ [data-mui-card-close] { margin-inline-start: 8px; }
+mui-card[data-mui-card] [data-mui-card-close]::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  transition: background-color .3s var(--mui-card-ease, cubic-bezier(.4,0,.2,1));
+}
+mui-card[data-mui-card] [data-mui-card-close] > span { position: relative; width: 1em; height: 1em; }
+mui-card[data-mui-card] [data-mui-card-close] > span::before,
+mui-card[data-mui-card] [data-mui-card-close] > span::after {
+  content: "";
+  position: absolute;
+  inset: calc(50% - .75px) .5px;
+  border-radius: 1px;
+  background: currentColor;
+  transform: rotate(45deg);
+}
+mui-card[data-mui-card] [data-mui-card-close] > span::after { transform: rotate(-45deg); }
+mui-card[data-mui-card] [data-mui-card-close]:hover::before { background: var(--mui-card-close-hover-background, var(--_mui-card-close-hover, rgba(0,0,0,.09))); }
+mui-card[data-mui-card] [data-mui-card-close]:active::before { background: var(--mui-card-close-pressed-background, var(--_mui-card-close-pressed, rgba(0,0,0,.13))); }
 mui-card[data-mui-card] > :is(mui-card-header, [data-mui-card-header]) > [data-mui-card-close]:focus-visible { outline: 3px solid var(--mui-card-focus-color, var(--mui-focus-ring, #2080f080)); outline-offset: 2px; }
 mui-card[data-mui-card] > :is(mui-card-header, [data-mui-card-header]) > [data-mui-card-close]:disabled { opacity: .5; cursor: not-allowed; }
 mui-card[data-mui-card] > :is(mui-card-header, [data-mui-card-header], mui-card-content, [data-mui-card-content], mui-card-footer, [data-mui-card-footer], mui-card-cover, [data-mui-card-cover], mui-card-action, [data-mui-card-action])[hidden] { display: none; }
 mui-card[data-mui-card] > :is(mui-card-header, [data-mui-card-header]) > :is(mui-card-header-extra, [data-mui-card-header-extra], [data-mui-card-close])[hidden] { display: none; }
 @media (prefers-reduced-motion: reduce) {
-  mui-card[data-mui-card][data-mui-card][data-mui-card] { transition: none; }
+  mui-card[data-mui-card][data-mui-card][data-mui-card],
+  mui-card[data-mui-card][data-mui-card][data-mui-card] > *,
+  mui-card[data-mui-card][data-mui-card][data-mui-card] [data-mui-card-close],
+  mui-card[data-mui-card][data-mui-card][data-mui-card] [data-mui-card-close]::before { transition: none; }
 }

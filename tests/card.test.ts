@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
+import { readFileSync } from "node:fs"
 import { MuiCard, registerCard } from "../src/components/card/index.js"
 import type { CardCloseDetail } from "../src/components/card/index.js"
 import { registerElements } from "../src/components/elements.js"
@@ -201,6 +202,7 @@ describe("standalone Card", () => {
     const close = closeButton(element)
     expect(close.getAttribute("aria-label")).toBe("Close card")
     expect(close.querySelector("span")?.getAttribute("aria-hidden")).toBe("true")
+    expect(close.querySelector("span")?.textContent).toBe("")
     expect(close.tabIndex).toBe(0)
     close.focus()
     expect(document.activeElement).toBe(close)
@@ -212,6 +214,53 @@ describe("standalone Card", () => {
     expect(close.tabIndex).toBe(0)
     element.closeLabel = " "
     expect(close.getAttribute("aria-label")).toBe("Close card")
+  })
+
+  describe("audited Card styles", () => {
+    const css = readFileSync("src/components/card/card.css", "utf8")
+
+    it("keeps shared typography and focus overrides ahead of standalone fallbacks", () => {
+      expect(css).toContain("var(--mui-card-font-size, var(--mui-font-size, 14px))")
+      expect(css).toContain("var(--mui-card-line-height, var(--mui-line-height, 1.6))")
+      expect(css).toContain("var(--mui-card-focus-color, var(--mui-focus-ring, #2080f080))")
+      expect(css).toContain("var(--mui-card-target-color, var(--mui-color-primary, var(--_mui-card-primary, #18a058)))")
+    })
+
+    it("does not map Card colors to unequal legacy palette roles or overwrite public tokens", () => {
+      expect(css).not.toMatch(/--mui-(bg-surface|bg-muted|text-primary|text-secondary|border-hover)\b/)
+      expect(css).not.toMatch(/(?:^|[;{])\s*--mui-card-[\w-]+\s*:/m)
+      expect(css).toContain("var(--mui-card-background, var(--_mui-card-surface, #fff))")
+      expect(css).toContain("var(--mui-card-border-color, var(--_mui-card-border, #efeff5))")
+      expect(css).toContain("var(--mui-card-title-weight, 500)")
+      expect(css).toContain("var(--mui-card-radius, 3px)")
+    })
+
+    it("resets all private dark palette defaults at explicit nested light boundaries", () => {
+      const light = css.match(/:where\(\[data-mui-theme="light"\]\) \{([^}]+)\}/)![1]!
+      const dark = css.match(/:where\(\[data-mui-theme="dark"\]\) \{([^}]+)\}/)![1]!
+      const names = [...dark.matchAll(/(--_mui-card-[\w-]+):/g)].map(match => match[1])
+      expect(names.length).toBe(11)
+      for (const name of names) expect(light).toContain(`${name}: initial;`)
+    })
+
+    it("preserves measured asymmetric size geometry and unsegmented region spacing", () => {
+      expect(css).toContain("--_mui-card-top: 19px")
+      expect(css).toContain("--_mui-card-bottom: 20px")
+      for (const [size, horizontal, top, bottom] of [["small", 16, 12, 12], ["large", 32, 23, 24], ["huge", 40, 27, 28]]) {
+        expect(css).toContain(`[size="${size}"] { --_mui-card-padding: ${horizontal}px; --_mui-card-top: ${top}px; --_mui-card-bottom: ${bottom}px;`)
+      }
+      expect(css).toContain("padding: 0 var(--mui-card-padding, var(--_mui-card-padding)) var(--mui-card-padding, var(--_mui-card-bottom))")
+      expect(css).toContain('[bordered="false"] { border: 0; }')
+      expect(css).not.toContain("justify-content: flex-end")
+    })
+
+    it("keeps a font-independent close mark, expanded state paint and reduced-motion opt-out", () => {
+      expect(css).toContain("width: var(--mui-card-close-size, 18px)")
+      expect(css).toContain("inset: -2px")
+      expect(css).toContain("transform: rotate(-45deg)")
+      expect(css).toContain("@media (prefers-reduced-motion: reduce)")
+      expect(css).toContain('[data-mui-card-close]::before { transition: none; }')
+    })
   })
 
   it("removes generated-only headers and close listeners when closable is unset", () => {

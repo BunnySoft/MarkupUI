@@ -5,6 +5,10 @@ Card is a dependency-free optional component, separate from the legacy aggregate
 Card. All documented upstream props and six slots are mapped, with deliberate native
 replacements and framework omissions identified individually.
 
+**Default-style audit: 🟢 native defaults fixed / 🟡 legacy and rendering boundaries.**
+The [rendered comparison](../style-audit/components/card.md) records the 2026-09-10
+light/dark measurements separately from the historical migration acceptance below.
+
 ## Sources and loading
 
 Inventory pinned to Naive UI commit `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`:
@@ -216,9 +220,46 @@ Public CSS tokens: `--mui-card-padding`, `--mui-card-height`, `--mui-card-max-he
 `--mui-card-title-color`, `--mui-card-header-gap`, `--mui-card-action-gap`,
 `--mui-card-hover-border-color`, `--mui-card-hover-shadow`, `--mui-card-close-size`,
 `--mui-card-close-radius`, `--mui-card-close-color`, `--mui-card-close-hover-background`,
-`--mui-card-close-pressed-background` and `--mui-card-focus-color`.
+`--mui-card-close-pressed-background`, `--mui-card-focus-color`, `--mui-card-target-color`
+and `--mui-card-ease`.
 Private size defaults reset on nested cards; explicit theme tokens can still inherit.
 Logical margins/corners support RTL and reduced motion removes transitions.
+
+### Default geometry and theme ownership
+
+| Size | Header top / horizontal / bottom | Content/footer bottom | Title |
+| --- | --- | --- | --- |
+| Small | 12 / 16 / 12px | 12px | 16px / 500 |
+| Medium (default) | 19 / 24 / 20px | 20px | 18px / 500 |
+| Large | 23 / 32 / 24px | 24px | 18px / 500 |
+| Huge | 27 / 40 / 28px | 28px | 18px / 500 |
+
+Unsegmented content and footer have no top padding after a visible preceding region.
+First visible content/footer and segmented regions use the bottom-padding value at
+the top too. Actions always have that vertical padding. Footer/action are ordinary
+start-aligned block flow; authors can opt into flex/grid and use `--mui-card-action-gap`
+with that layout. `--mui-card-padding` overrides the positive padding values as one
+length, but does not introduce an unsegmented top gap. Radius is 3px; borderless cards
+have no layout-consuming border. Close has an 18px layout box and a 22px state surface.
+
+Shared tokens are reused only for equivalent roles: `--mui-font-size`,
+`--mui-line-height`, `--mui-focus-ring`, and the fragment-target `--mui-color-primary`.
+An explicit `--mui-card-*` override takes precedence. Font family inherits normally.
+Geometry, title scale, state easing and Card palette defaults stay in Card CSS.
+Explicit `data-mui-theme="dark"` selects the audited dark palette; nested
+`data-mui-theme="light"` resets it. This works with Card CSS alone, the external theme
+stylesheet, or `theme.apply()`, without requiring aggregate CSS.
+
+The existing generic surface, muted, text and border palette is **not** equivalent
+to these Card roles (for example, the light Card divider is `#efeff5`, not the generic
+`#e4e4e7`). This pass neither recolors unaudited components nor creates a second
+global palette. Card no longer implicitly aliases those unequal generic color
+tokens. Applications that intentionally relied on that alias should set public Card
+tokens explicitly, for example `--mui-card-color: var(--mui-text-primary)` and
+`--mui-card-background: var(--mui-bg-surface)`. Shared custom palettes can set those
+aliases on an ancestor or register Card tokens through `theme.register()`.
+Card CSS never assigns public override tokens; inherited and per-card values remain
+author-owned. The canonical preset JSON and generated theme/core adapters are unchanged.
 
 ## Compatibility and lifecycle limits
 
@@ -226,8 +267,8 @@ Logical margins/corners support RTL and reduced motion removes transitions.
   listeners. `structured` reflects the current normalized anatomy, including generated
   content; it is library-managed rather than an author configuration switch.
 - Standalone default separators are **off**, unlike the legacy compound header/footer
-  borders. Opt into `segmented` to retain dividers. Each region is padded; exact upstream
-  spacing/pixel parity is not claimed. Footer/action retain legacy-compatible end alignment.
+  borders. Opt into `segmented` to retain dividers. Audited native region spacing now
+  follows the table above, not the legacy equal-padding/end-aligned layout.
 - Legacy `basis`/`overflow` convenience attributes are not interpreted by this standalone
   entry. Use ordinary external CSS `flex-basis`/`overflow`; content scrolling has its own
   dedicated Boolean. Passive regions do not gain controllers or geometry style mutations.

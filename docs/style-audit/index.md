@@ -55,7 +55,7 @@ through the remaining catalog one component at a time.
 | [Breadcrumb](../naive-ui/components/breadcrumb.md) | ⚪ Pending | — |
 | [Button](../naive-ui/components/button.md) | 🟢 Fixed / 🟡 Remaining | [Defaults, state endpoints and remaining motion](components/button.md) |
 | [Calendar](../naive-ui/components/calendar.md) | ⚪ Pending | — |
-| [Card](../naive-ui/components/card.md) | ⚪ Pending | — |
+| [Card](../naive-ui/components/card.md) | 🟢 Fixed / 🟡 Remaining | [Native regions, theme scope and legacy boundary](components/card.md) |
 | [Carousel](../naive-ui/components/carousel.md) | ⚪ Pending | — |
 | [Cascader](../naive-ui/components/cascader.md) | ⚪ Pending | — |
 | [Checkbox](../naive-ui/components/checkbox.md) | ⚪ Pending | — |
