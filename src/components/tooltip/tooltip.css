@@ -1,15 +1,27 @@
-/* build.mjs prepends the maintained Popover CSS; no runtime relative import. */
-.mui-tooltip {
-  --mui-popover-max-width: 20rem;
-  --mui-popover-padding: .5rem .75rem;
-  --mui-popover-background: #202630;
-  --mui-popover-color: #fff;
-  --mui-popover-border: #59616f;
-  --mui-popover-radius: .3rem;
-  font-size: .875rem;
-  line-height: 1.5;
+/* Reuse the composed Popover dark palette. */
+.mui-popover.mui-tooltip {
+  max-width: min(var(--mui-popover-max-width, 20rem), var(--mui-popover-available-width, calc(100vw - 16px)));
+  border-width: 0;
+  color: var(--mui-popover-color, var(--_pop-c, #fff));
+  background: var(--mui-popover-background, var(--_pop-b, #262626));
+  font-size: var(--mui-font-size, 14px);
+  line-height: var(--mui-line-height, 1.6);
   overflow: clip;
 }
+.mui-tooltip:not(.mui-popover--raw) {
+  padding: var(--mui-popover-padding, 8px 14px);
+  border-radius: var(--mui-popover-radius, 3px);
+  box-shadow: var(--_pop-s, 0 3px 6px -4px #0000001f, 0 6px 16px #00000014, 0 9px 28px 8px #0000000d);
+}
+@media (forced-colors: active) {
+  .mui-tooltip { outline: 1px solid; }
+}
 @media print {
-  .mui-tooltip { color: #000; background: transparent; overflow: visible; }
+  .mui-popover.mui-tooltip {
+    color: #000;
+    background: transparent;
+    overflow: visible;
+    max-width: none;
+    box-shadow: none;
+  }
 }

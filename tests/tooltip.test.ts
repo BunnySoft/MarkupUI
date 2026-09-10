@@ -4,6 +4,51 @@ import { createTooltip } from "../src/components/tooltip/index.js"
 import { createPopover } from "../src/components/popover/index.js"
 import type { TooltipController, TooltipOptions } from "../src/components/tooltip/index.js"
 
+describe("audited Tooltip presentation", () => {
+  const css = readFileSync("src/components/tooltip/tooltip.css", "utf8")
+  const base = readFileSync("src/components/popover/popover.css", "utf8")
+
+  it("corrects the ordinary skin without overriding the retained raw geometry", () => {
+    expect(css).toContain(".mui-tooltip:not(.mui-popover--raw)")
+    expect(css).toContain("padding: var(--mui-popover-padding, 8px 14px)")
+    expect(css).toContain("border-radius: var(--mui-popover-radius, 3px)")
+    expect(css).toContain("border-width: 0")
+    const common = css.match(/\.mui-popover\.mui-tooltip \{([^}]+)\}/)![1]!
+    expect(common).not.toMatch(/(?:padding|border-radius|box-shadow):/)
+  })
+
+  it("consumes inherited author tokens instead of assigning defaults that shadow them", () => {
+    expect(css).not.toMatch(/(?:^|[;{])\s*--mui-popover-[\w-]+\s*:/m)
+    expect(css).toContain("var(--mui-popover-max-width, 20rem)")
+    expect(css).toContain("var(--mui-popover-color, var(--_pop-c, #fff))")
+    expect(css).toContain("var(--mui-popover-background, var(--_pop-b, #262626))")
+    expect(css).toContain("font-size: var(--mui-font-size, 14px)")
+    expect(css).toContain("line-height: var(--mui-line-height, 1.6)")
+  })
+
+  it("reuses the composed base's matching dark overlay palette without duplicating theme state", () => {
+    for (const name of ["--_pop-c", "--_pop-b", "--_pop-s"]) {
+      expect(base).toContain(`${name}:`)
+      expect(css).toContain(`var(${name},`)
+    }
+    expect(css).not.toContain("data-mui-theme")
+    expect(css).not.toContain("@import")
+    expect(base).toContain(":not(.mui-tooltip,")
+  })
+
+  it("keeps clipping and higher-specificity print overrides independent of base load order", () => {
+    expect(css).toContain(".mui-popover.mui-tooltip")
+    expect(css).toContain("overflow: clip")
+    expect(css).toContain("@media (forced-colors: active)")
+    expect(css).toContain("outline: 1px solid")
+    expect(css).toContain("@media print")
+    expect(css).toContain("background: transparent")
+    expect(css).toContain("overflow: visible")
+    expect(css).toContain("max-width: none")
+    expect(css).toContain("box-shadow: none")
+  })
+})
+
 const controllers: TooltipController[] = []
 const matches = HTMLElement.prototype.matches
 let open: WeakSet<HTMLElement>

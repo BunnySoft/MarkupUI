@@ -5,6 +5,10 @@ Authored short text/markup is linked to a meaningful native trigger with aria-de
 Hover and keyboard focus reveal it; Escape dismisses it. It is not a menu, dialog,
 expandable control or place for actions. Essential instructions must remain visible.
 
+**Default-style audit: 🟢 skin and inherited overrides fixed / 🟡 native arrow/motion
+boundaries retained.** See the [2026-09-10 rendered report](../style-audit/components/tooltip.md)
+for light/dark, alternate-surface, typography and composed-order evidence.
+
 ## Loading and authored anatomy
 
 | Asset / export | Purpose |
@@ -187,6 +191,39 @@ opt-in `.mui-popover--arrow` inset decorative side indicator, and optional
 `.mui-popover--animated`. Indicators disappear after collision shifting. Reduced motion,
 forced colors and print rules are included in the single compiled stylesheet.
 There is no automatic trigger-width matching or separate arrow-wrapper/header/footer API.
+
+### Audited skin and theme ownership
+
+The ordinary skin now uses **8px 14px padding**, **3px radius**, no layout border and
+**14px / 1.6** default typography. Light-theme Tooltip is intentionally a dark/inverted
+surface: **#262626 with white text**. Dark theme uses **#48484e with white .82 text**.
+Both use the pinned theme's three-layer overlay shadow.
+
+Tooltip consumes the matching private dark overlay defaults already provided by its
+composed Popover base; it does not edit or duplicate that palette. These private variables
+are internal composition details, not application APIs. The complete Tooltip stylesheet
+is still required; its source-only skin is not a substitute for the composed distribution.
+
+Public `--mui-popover-max-width`, `--mui-popover-padding`, `--mui-popover-radius`,
+`--mui-popover-color` and `--mui-popover-background` now work from **ancestors as well as
+the panel itself**. Earlier Tooltip CSS assigned defaults to these public variables on
+every panel, accidentally masking inherited author choices. The audited skin only consumes
+them. A visible custom border can use `--mui-popover-border` plus authored CSS `border-width`.
+Shared `--mui-font-size` and `--mui-line-height` are used for equivalent typography roles;
+font family still inherits. Ordinary author CSS can override other presentation.
+
+The selectors outrank the generic Popover base, so loading a separate base stylesheet
+after Tooltip does not restore the old skin. Raw panels are excluded from ordinary
+padding/radius/shadow declarations, preserving their documented native raw behavior.
+Forced colors add an outline without making the description focusable. Print overrides
+restore readable text, transparent background, visible overflow and unrestricted width.
+Close an open manual popover before printing when normal-flow placement is required;
+CSS alone cannot remove it from the native top layer.
+
+The pinned Tooltip API has **no `inverted` prop**. Its light-theme default is already
+dark. For an alternate light surface, author paired foreground/background values, for
+example `--mui-popover-background: #fff; --mui-popover-color: #333639`; do not infer an
+unimplemented inversion option. Ensure custom color pairs retain adequate contrast.
 
 If native show/hide is missing, shared fallback temporarily removes popover so the original
 description is visible static content; aria-describedby remains useful. Disconnect restores
