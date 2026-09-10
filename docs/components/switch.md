@@ -157,11 +157,14 @@ current/default values, change author roles or introduce reset-only payload fiel
 The baseline is a visible native checkbox with accent-color. Where appearance/gradient
 support is available, **the same input box itself** paints a rail and background-image
 thumb. It is never display:none, transparent over a proxy, replaced by a role-switch span,
-or removed from focus/hit testing. Native focus-visible outlines remain on that input.
+or removed from focus/hit testing. Focus remains on that input: the custom skin uses
+a focus ring/glow, while native fallback uses a visible outline.
 Forced colors and print deliberately return to native checkbox painting and keep the
 authored switch semantics.
 
-- `data-size="small|medium|large"` sets explicit font/rail/thumb sizes; medium is default.
+- `data-size="small|medium|large"` sets **32×18 / 40×22 / 48×26px** rails and
+  **14/18/22px** thumb images; medium is default. Labels/state text default to 14px
+  in the retained system font stack, with an 8px label gap.
 - Rounded rail/thumb is default; `data-square` uses a squared rail and thumb.
 - `:checked`, `:focus`, `:focus-visible` and inherited `:dir(rtl)` own state/focus/direction.
   The thumb moves to the logical checked side. Loading adds a dashed border plus the
@@ -179,6 +182,27 @@ Tokens (all share `--mui-switch`): `-color`, `-font`, `-width`, `-height`, `-thu
 `-thumb`, `-thumb-image`, `-rail`, `-active`, `-border`, `-radius`, `-focus`, `-disabled`.
 Use external selectors/tokens instead of rail-style callbacks, inline style objects or
 CSS-in-JS. There is no global control reset or provider/theme dependency.
+
+The [default-style audit](../style-audit/components/switch.md) records actual geometry,
+paint, thumb pixels and native-policy checks. An ancestor `data-mui-theme="light|dark"`
+selects the scheme; standalone controls default to light. Size/square/status defaults
+use private variables, so public author tokens remain authoritative. The thumb image
+uses the border box as its origin, keeping the default 2px edge inset independent of
+the transparent border retained for authored status/loading boundaries.
+
+The light active rail follows the shared primary role; the dark default is the pinned
+Switch supplementary primary **#2a947d**, not the ordinary dark primary **#63e2b7**.
+Use `--mui-switch-active` to override it. Unchecked rails use black 14% / white 20%.
+Normal disabled **input** opacity is .5 in both schemes, matching the rendered reference;
+loading alone does not dim or natively disable it. Forced colors and print restore native
+appearance, background/box-shadow removal and opacity 1, with a system focus outline.
+No animation or transition is added, including under reduced motion.
+
+The gradient thumb does not reproduce the reference's independent drop/inset shadows.
+`data-square` retains a flat square thumb rather than Naive's separately rounded knob.
+State text/icons and loading text stay authored adjacent decorations, not content
+inserted into a void input: no content-measurement mirror, thumb slot or spinner renderer
+was added. The rail therefore does not automatically widen for On/Off text.
 
 ## Complete upstream disposition
 
@@ -201,8 +225,11 @@ CSS-in-JS. There is no global control reset or provider/theme dependency.
 
 ## Acceptance
 
+### Original native-contract acceptance (historical)
+
 Evidence is from the local 4188 server and dedicated Switch tab on 2026-09-09.
 This is not universal browser/AT/native-theme parity, an async service or Form validation.
+The dimensions and asset sizes below describe that original revision.
 
 - **163 targeted tests passed**: 39 Switch, 45 Checkbox, 52 Input and 27 native regressions,
   using `pnpm test -- tests\switch.test.ts tests\checkbox.test.ts tests\input.test.ts
@@ -250,3 +277,37 @@ All **23 original identities** remain plus eight source supplements: **31 rows =
 adapted targets + 14 omissions**. The catalog now has **3,510 rows and 228/384 accepted
 tasks across 57 pages**. Edited relative file links pass. P4-02's Checkbox/Radio/Switch
 retained scopes are complete; P4 overall remains In progress. **Next Select.**
+
+### Default-style audit, 2026-09-10
+
+**44 Switch-only tests passed**: all 39 original native cases plus five CSS regressions.
+Private Chromium comparison covered three sizes, checked/unchecked, disabled, focus/
+hover, square rails, authored state text/icons and loading in light/dark. Actual PNG
+samples confirmed corrected rail colors and thumb placement, with shadow/slot differences
+documented rather than hidden behind an exact-parity claim.
+
+Real keyboard/native event ordering, loading rollback/focus/submission, boolean setters,
+reset/default submission strings, cancellation, mixed fallback and fieldset/first-legend
+checks passed. The browser accessibility tree retained one input role switch named
+“Email alerts”, focused and busy, while checked changed true→false. Public sizing,
+color, radius, border, focus and thumb-image overrides were verified.
+
+Forced-colors and print probes covered checked/unchecked, explicit/fieldset disabled,
+enabled and busy inputs in both schemes: native appearance, opacity 1 and visible
+system focus were retained. Normal opacity returned to .5; reduced/no-preference motion
+contexts both had zero animations and 0s transitions. RTL positioning, 360px/200% CSS zoom
+and no-JS Space/state-text/reset/FormData also passed. These are Chromium observations,
+not all-engine, OS animation or assistive-technology certification.
+
+| Isolated asset | Raw bytes | Gzip level 9 | Unchanged ceiling |
+| --- | ---: | ---: | ---: |
+| `markup-ui-switch.js` | 5,513 | 2,268 | 3,500 |
+| `markup-ui-switch.global.js` | 5,673 | 2,343 | 3,500 |
+| `markup-ui-switch.css`, working LF | 4,188 | 1,243 | 1,250 |
+| Same CSS, CRLF checkout | 4,189 | 1,246 | 1,250 |
+
+Source CSS uses equivalent whitespace/private-name compaction; native fallback, loading,
+hidden, disabled and motion policies were not removed for the ceiling. CSS-only Switch
+costs **1,243 gzip bytes**; enhanced totals are **3,511 ESM / 3,586 classic** (**3,514 /
+3,589** with CRLF). JavaScript and all shared/generated files are unchanged. No full
+release build, dependency addition, commit or push was performed.

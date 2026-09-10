@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 47/96 scopes.** The other **49** are not yet accepted in this
+**Reviewed and integrated: 48/96 scopes (50%).** The other **48** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -74,7 +74,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Color Picker](../naive-ui/components/color-picker.md) | ⚪ Pending | — |
 | [Config Provider](../naive-ui/components/config-provider.md) | ⚪ Pending | — |
 | [Countdown](../naive-ui/components/countdown.md) | ⚪ Pending | — |
-| [Data Table](../naive-ui/components/data-table.md) | ⚪ Pending | — |
+| [Data Table](../naive-ui/components/data-table.md) | 🟠 Reviewing | — |
 | [Date Picker](../naive-ui/components/date-picker.md) | ⚪ Pending | — |
 | [Descriptions](../naive-ui/components/descriptions.md) | 🟢 Fixed / 🟡 Remaining | [Density, text roles and retained grid/table differences](components/descriptions.md) |
 | [Dialog](../naive-ui/components/dialog.md) | 🟢 Fixed / 🟡 Remaining | [Surface/action styling with protected modality, load order and native limits](components/dialog.md) |
@@ -134,7 +134,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Split](../naive-ui/components/split.md) | ⚪ Pending | — |
 | [Statistic](../naive-ui/components/statistic.md) | 🟢 Fixed / 🟡 Remaining | [Inline value geometry, text roles and native limits](components/statistic.md) |
 | [Steps](../naive-ui/components/steps.md) | 🟠 Reviewing | — |
-| [Switch](../naive-ui/components/switch.md) | 🟠 Reviewing | — |
+| [Switch](../naive-ui/components/switch.md) | 🟢 Fixed / 🟡 Remaining | [Rail/thumb metrics, theme paint and retained native-content limits](components/switch.md) |
 | [Table](../naive-ui/components/table.md) | 🟢 Fixed / 🟡 Remaining | [Typography, palette and native collapsed-border limits](components/table.md) |
 | [Tabs](../naive-ui/components/tabs.md) | 🟢 Fixed / 🟡 Remaining | [Variants, placement spacing and native indicator/motion limits](components/tabs.md) |
 | [Tag](../naive-ui/components/tag.md) | 🟢 Fixed / 🟡 Remaining | [Sizing, palettes, close states and native limits](components/tag.md) |

@@ -17,6 +17,38 @@ function fixture(id = "alerts-switch", options: SwitchOptions = {}) {
 }
 afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
 
+describe("Switch stylesheet contract", () => {
+  const css = readFileSync(join("src", "components", "switch", "switch.css"), "utf8")
+  it("keeps size, square and status defaults private for author overrides", () => {
+    expect(css).not.toMatch(/--mui-switch-[\w-]+\s*:/)
+    for (const width of [32, 40, 48]) expect(css).toMatch(new RegExp(`--_sw-width:\\s*${width}px`))
+    expect(css).toMatch(/data-mui-theme="?dark"?/)
+    expect(css).toContain("#2a947d")
+    expect(css).not.toContain("var(--mui-text-primary")
+  })
+  it("paints the original binary input with a border-box-aligned thumb", () => {
+    expect(css).toMatch(/:not\(:indeterminate\)\s*\{[^}]*appearance:\s*none/)
+    expect(css).toMatch(/background-origin:\s*border-box/)
+    expect(css).not.toMatch(/position:\s*absolute|pointer-events:\s*none|opacity:\s*0[;}]/)
+  })
+  it("restores native paint and full opacity in forced colors and print", () => {
+    const fallback = css.split(/@media\s*\(forced-colors:\s*active\),\s*print/)[1]?.split("@media print")[0] ?? ""
+    for (const declaration of ["appearance:auto", "background:none", "box-shadow:none", "accent-color:auto", "opacity:1"]) {
+      expect(fallback.replace(/\s+/g, "")).toContain(declaration)
+    }
+    expect(fallback).toMatch(/outline:\s*2px solid Highlight/)
+  })
+  it("retains disabled and reduced-motion policies without animation", () => {
+    expect(css).toMatch(/input:disabled\s*\{\s*opacity:\s*\.5/)
+    expect(css).not.toMatch(/(?:animation|transition)(?:-[a-z]+)?\s*:/)
+  })
+  it("preserves visible busy boundaries, RTL placement and hidden safety", () => {
+    expect(css).toMatch(/\[aria-busy="?true"?\]\s*\{[^}]*border-style:\s*dashed;[^}]*border-color:/)
+    expect(css).toMatch(/:dir\(rtl\):checked\s*\{[^}]*background-position:\s*2px/)
+    expect(css).toMatch(/\[hidden\][^{]*\{[^}]*display:\s*none\s*!important/)
+  })
+})
+
 describe("native Switch anatomy and binary state", () => {
   it("preserves the actual input, name, content, listeners, checked/default and ARIA", () => {
     const { root, helper, control } = fixture()
