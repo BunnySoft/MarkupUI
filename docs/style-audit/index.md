@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 29/96 scopes.** The other **67** are not yet accepted in this
+**Reviewed and integrated: 30/96 scopes.** The other **66** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -105,7 +105,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Layout](../naive-ui/components/layout.md) | 🟢 Fixed / 🟡 Remaining | [Region palettes, author tokens and native scrolling limits](components/layout.md) |
 | [Legacy Grid](../naive-ui/components/legacy-grid.md) | ⚪ Pending | — |
 | [Legacy Transfer](../naive-ui/components/legacy-transfer.md) | ⚪ Pending | — |
-| [List](../naive-ui/components/list.md) | 🟠 Reviewing | — |
+| [List](../naive-ui/components/list.md) | 🟢 Fixed / 🟡 Remaining | [Presentation only; marker and density adaptations](components/list.md) |
 | [Loading Bar](../naive-ui/components/loading-bar.md) | ⚪ Pending | — |
 | [Log](../naive-ui/components/log.md) | ⚪ Pending | — |
 | [Marquee](../naive-ui/components/marquee.md) | ⚪ Pending | — |
@@ -115,7 +115,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Modal](../naive-ui/components/modal.md) | ⚪ Pending | — |
 | [Notification](../naive-ui/components/notification.md) | ⚪ Pending | — |
 | [Number Animation](../naive-ui/components/number-animation.md) | ⚪ Pending | — |
-| [Page Header](../naive-ui/components/page-header.md) | ⚪ Pending | — |
+| [Page Header](../naive-ui/components/page-header.md) | 🟠 Reviewing | — |
 | [Pagination](../naive-ui/components/pagination.md) | ⚪ Pending | — |
 | [Popconfirm](../naive-ui/components/popconfirm.md) | 🟠 Reviewing | — |
 | [Popover](../naive-ui/components/popover.md) | 🟢 Fixed / 🟡 Remaining | [Standalone surface, protected consumers and native popup limits](components/popover.md) |

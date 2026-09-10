@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it } from "vitest"
 
 const css = readFileSync(resolve("src", "components", "list", "list.css"), "utf8")
@@ -132,14 +133,14 @@ describe("CSS-only native List and ListItem", () => {
     fixture()
     install()
     const root = document.querySelector<HTMLElement>("#projects")!
-    expect(getComputedStyle(root).getPropertyValue("--_mui-list-padding-block")).toBe(".75rem")
+    expect(getComputedStyle(root).getPropertyValue("--_mui-list-padding-block")).toBe("12px")
     root.dataset.size = "small"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-list-padding-block")).toBe(".5rem")
+    expect(getComputedStyle(root).getPropertyValue("--_mui-list-padding-block")).toBe("8px")
     root.dataset.size = "large"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-list-padding-block")).toBe("1rem")
+    expect(getComputedStyle(root).getPropertyValue("--_mui-list-padding-block")).toBe("16px")
     root.dataset.size = "unsupported"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-list-padding-block")).toBe(".75rem")
-    expect(css).not.toContain("transition:")
+    expect(getComputedStyle(root).getPropertyValue("--_mui-list-padding-block")).toBe("12px")
+    expect(css).toContain("transition: background-color .3s")
   })
 
   it("separates divider opt-out from borders and skips hidden siblings and templates", () => {
@@ -147,14 +148,23 @@ describe("CSS-only native List and ListItem", () => {
     install()
     const first = document.querySelector("#project-alpha")!
     const second = document.querySelector("#project-beta")!
-    const divided = ".mui-list > .mui-list-items > li.mui-list-item:not([hidden]) ~ li.mui-list-item:not([hidden])"
-    expect(first.matches(divided)).toBe(false)
-    expect(second.matches(divided)).toBe(true)
+    const divided = ".mui-list > .mui-list-items > li.mui-list-item:not([hidden]):has(~ li.mui-list-item:not([hidden]))"
+    const beforeFooter = ".mui-list > .mui-list-items:has(~ .mui-list-footer:not(template):not([hidden])) > li.mui-list-item"
+    expect(first.matches(divided)).toBe(true)
+    expect(second.matches(divided)).toBe(false)
+    expect(second.matches(beforeFooter)).toBe(true)
     expect(css).toContain(divided)
-    expect(css).toContain("border-block-start: 1px solid")
+    expect(css).toContain(beforeFooter)
+    expect(css).toContain("block-size: 1px")
+    expect(css).toContain("inset-block-end: 0")
+    expect(css).not.toContain("border-block-start: 1px")
     const root = document.querySelector<HTMLElement>("#projects")!
     root.dataset.showDivider = "false"
-    expect(getComputedStyle(second).borderBlockStart).toBe("0")
+    expect(css).toContain('.mui-list[data-show-divider="false"] > .mui-list-items > .mui-list-item)::after { content: none; }')
+    const footer = root.querySelector<HTMLElement>(".mui-list-footer")!
+    footer.hidden = true
+    // Chromium separately verifies the resulting sibling :has() divider paint.
+    expect(footer.matches(".mui-list-footer:not(template):not([hidden])")).toBe(false)
     expect(css).toContain('.mui-list[data-bordered]')
     expect(css).toContain('.mui-list > .mui-list-header')
     expect(css).toContain('.mui-list > .mui-list-footer')
@@ -204,5 +214,48 @@ describe("CSS-only native List and ListItem", () => {
     expect(css).toContain("color: GrayText")
     expect(document.querySelectorAll(".mui-list [aria-selected], .mui-list [aria-live], .mui-list [role=status]")).toHaveLength(0)
     expect(document.querySelectorAll(".mui-list [tabindex]")).toHaveLength(0)
+  })
+
+  it("keeps audited defaults, independent affix margins and reduced motion within budget", () => {
+    install()
+    expect(css).toContain("--_mui-list-padding-inline: 0px")
+    expect(css).toContain("--_mui-list-padding-inline: 20px")
+    expect(css).toContain("var(--mui-list-font-size, var(--mui-font-size, 14px))")
+    expect(css).toContain("var(--mui-list-line-height, var(--mui-line-height, 1.6))")
+    expect(css).toContain("var(--mui-list-border-radius, 3px)")
+    expect(css).toContain("var(--mui-list-color, var(--_mui-list-color, #333639))")
+    expect(css).toContain("rgba(255,255,255,.82)")
+    expect(css).toContain("rgba(255,255,255,.09)")
+    expect(css).toContain("#efeff5")
+    expect(css).toContain("#f3f3f5")
+    expect(css).not.toContain("--mui-text-primary")
+    expect(css).not.toContain("--mui-bg-muted")
+    expect(css).toContain("margin-inline-end: var(--mui-list-gap, 20px)")
+    expect(css).toContain("margin-inline-start: var(--mui-list-gap, 20px)")
+    const media = [...style!.sheet!.cssRules]
+      .filter(rule => rule.type === CSSRule.MEDIA_RULE)
+      .map(rule => (rule as CSSMediaRule).media.mediaText)
+    expect(media).toContain("(prefers-reduced-motion: reduce)")
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
+  })
+
+  it("preserves author tokens, markers and nodes when density and border flags change", () => {
+    fixture()
+    const root = document.querySelector<HTMLElement>("#projects")!
+    const list = root.querySelector<HTMLElement>(".mui-list-items")!
+    root.style.cssText = "--mui-list-padding-block:4px;--mui-list-padding-inline:10px;--mui-list-font-size:20px;--mui-list-gap:8px;--mui-list-color:rgb(1,2,3)"
+    const authored = root.getAttribute("style")
+    const nodes = [...list.children]
+    install()
+    root.dataset.size = "large"
+    root.removeAttribute("data-bordered")
+    root.removeAttribute("data-hoverable")
+    list.removeAttribute("data-markerless")
+    root.remove()
+    document.body.append(root)
+    expect(root.getAttribute("style")).toBe(authored)
+    expect([...list.children]).toEqual(nodes)
+    expect(getComputedStyle(document.querySelector("#project-alpha")!).display).toBe("list-item")
+    expect(root.querySelector("script,[aria-selected],[aria-live]")).toBeNull()
   })
 })

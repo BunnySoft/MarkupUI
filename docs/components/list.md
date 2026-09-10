@@ -4,6 +4,13 @@
 List and ListItem are external CSS plus authored `ul`/`ol`/`li` HTML. No controller,
 registration, renderer, provider or runtime dependency is required.
 
+**Default-style audit (2026-09-10):** corrected default padding, type/leading, borders,
+header/footer boundaries, affix spacing and light/dark hover paint. The comparison uses
+an explicitly markerless native equivalent; ordinary native markers remain opt-in to
+remove, not silently suppressed. See the [rendered audit](../style-audit/components/list.md)
+for exact results and retained size/marker adaptations. No data binding, template or
+repeater implementation is part of this change.
+
 ## Loading and reference boundary
 
 | Asset | Purpose |
@@ -89,9 +96,9 @@ Empty lists/regions do not cause generated placeholders or announcements.
 | Upstream surface | Retained native mapping and default |
 | --- | --- |
 | `bordered` | `data-bordered` on the shell; absent means no enclosing border. |
-| `hoverable` | `data-hoverable` adds pointer-hover background on direct items on hover-capable devices; absent means no hover treatment. Does not imply an action. |
+| `hoverable` | `data-hoverable` adds pointer-hover background and 3px item corners on hover-capable devices, and hides the hovered item's bottom divider. Does not imply an action. |
 | `clickable` | `data-clickable` supplies pointer cursor **only on direct native row-action buttons/links**, not passive `li`. No focusability or event is generated. |
-| `show-divider` | Item dividers are on by default. Exact `data-show-divider="false"` removes them. Header/footer separators are independent. |
+| `show-divider` | Item dividers are on by default. Exact `data-show-divider="false"` removes them, including the final item/footer boundary. The header separator is independent. |
 | `size` (source-only) | `data-size="small"` / `"medium"` / `"large"` density presets; missing or unknown values use medium. |
 | List `default` | Authored `ul`/`ol` and direct `li` children. |
 | List `header`, `footer` | `.mui-list-header` / `.mui-list-footer` siblings outside the list, omitted by leaving out the node. |
@@ -103,20 +110,41 @@ Presence switches (`data-bordered`, `data-hoverable`, `data-clickable`, `data-ma
 are enabled even with a value of `"false"`; remove the attribute to disable them.
 `data-show-divider="false"` is the one explicit value-based opt-out. CSS updates immediately
 when attributes/classes change; no live-property bridge or lifecycle cleanup is needed.
-Only visible `[hidden]`-free sibling items get dividing borders; hidden items and templates
-do not create a leading separator. Hiding an item solely through unrelated application CSS
-is outside that selector contract; use its native `hidden` state for filtering.
+Item dividers are 1px empty `::after` decorations at the item bottom, not layout-consuming
+borders. A visible following item or footer enables the line; the last item without a
+footer has none. Header-only/footer-only compositions have no orphan separator.
+Hidden items/templates do not create a leading or trailing item divider. Hiding content
+solely through unrelated application CSS is outside that selector contract; use native
+`hidden` when appropriate.
 
-Small/medium/large padding defaults are respectively `.5rem/.75rem/1rem` in the block axis
-and `.75rem/1rem/1.25rem` inline. Pinned source declares `size` with medium default but
-does not consume it in List's render or stylesheet; these useful native density presets
-are an **explicit adaptation**, not proof of an upstream visual effect.
+Default/medium padding is **12px block / 0 inline**, changing to **12px / 20px** when
+bordered or hoverable, matching the reference. Small **8px / 12px** and large
+**16px / 20px** remain useful native density presets. Pinned source declares `size`
+but never consumes it in render/style, so those small/large effects remain an
+**explicit adaptation**, not an upstream visual-effect claim. Unknown sizes use medium.
+Public padding tokens override all presets; use them for rem-based application density.
 
 Public tokens: `--mui-list-color`, `--mui-list-background`, `--mui-list-border-color`,
 `--mui-list-border-radius`, `--mui-list-hover-background`, `--mui-list-padding-block`,
-`--mui-list-padding-inline` and `--mui-list-gap` (default `.75rem`). Supply valid CSS values
-in external application styles. The private `--_mui-list-*` preset variables are not API.
-Nested shells reset presets; public token inheritance follows ordinary CSS.
+`--mui-list-padding-inline`, `--mui-list-font-size`, `--mui-list-font-family`,
+`--mui-list-line-height` and `--mui-list-gap`.
+
+- Font size/family/leading use local tokens, then shared `--mui-font-size`,
+  `--mui-font-family`, `--mui-line-height`; fallbacks are 14px, inherited family and 1.6.
+- Body text defaults to `#333639` / white-.82; surface to white / `#18181c`;
+  border to `#efeff5` / white-.09; hover to `#f3f3f5` / white-.09. The dark alpha
+  paints composite over the list surface. Border/hover corners default to 3px.
+- `data-mui-theme="dark"` on an ancestor or shell selects dark fallback roles;
+  nested explicit `"light"` restores light. Generic legacy text/surface/border
+  tokens are not equivalent and are not silently reused.
+- Prefix end and suffix start margins each default to **20px**. Both still apply when
+  main content is absent, giving 40px between affixes. `--mui-list-gap` overrides each.
+  The optional `.mui-list-actions` helper retains its separate 12px default gap;
+  the same explicit gap token overrides it.
+
+Supply valid CSS values in external application styles. The private `--_mui-list-*`
+preset variables are not API. Nested shells reset state presets; public token inheritance
+follows ordinary CSS and local overrides remain authoritative.
 
 Neither pinned List nor ListItem declares an `extra`, `action` or `content` slot or a
 component event/method API. `.mui-list-content` and `.mui-list-actions` are **local anatomy
@@ -159,7 +187,8 @@ templates remain hidden/inert. Native `hidden="until-found"` is not forcibly con
 Wrapping uses flex/gap and logical properties, not measurements, reordering or a breakpoint
 controller. No truncation, fixed row height, virtualization or overflow clipping is imposed.
 Forced-colors fallbacks preserve borders and disabled text; print removes hover backgrounds
-and requests unbroken items where pagination allows. There is no animation.
+and requests unbroken items where pagination allows. Paint transitions last 0.3s;
+reduced motion removes them. There is no runtime animation or data processing.
 
 ## Migration steps and acceptance
 
