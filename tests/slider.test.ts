@@ -23,6 +23,39 @@ function pair(options: SliderOptions = {}) {
 }
 afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
 
+describe("Slider stylesheet contract", () => {
+  const css = readFileSync(join("src", "components", "slider", "slider.css"), "utf8")
+  it("keeps author tokens authoritative and uses the supplementary dark accent", () => {
+    expect(css).not.toMatch(/--mui-slider-[\w-]+\s*:/)
+    expect(css).toMatch(/data-mui-theme="?dark"?/)
+    expect(css).toContain("#2a947d")
+    expect(css).not.toContain("var(--mui-text-primary")
+  })
+  it("retains native rail/thumb painting and room for intrinsic datalist ticks", () => {
+    expect(css).not.toMatch(/appearance\s*:|slider-thumb|slider-runnable-track|range-thumb|range-track|position:\s*absolute/)
+    expect(css).toMatch(/min-block-size:\s*18px/)
+    expect(css).not.toMatch(/(?:^|[;{])\s*block-size:\s*18px/)
+  })
+  it("includes pair padding in authored widths without a global reset", () => {
+    expect(css).toMatch(/\.mui-slider,\s*\.mui-slider-pair\s*\{[^}]*box-sizing:\s*border-box/)
+    expect(css).toMatch(/\[data-slider-control\]\s*\{[^}]*box-sizing:\s*border-box/)
+  })
+  it("keeps native contrast and focus visible in forced colors and print", () => {
+    const fallback = css.split(/@media\s*\(forced-colors:\s*active\),\s*print/)[1] ?? ""
+    expect(fallback).toMatch(/accent-color:\s*auto;\s*opacity:\s*1/)
+    expect(fallback).toMatch(/outline-color:\s*Highlight/)
+    expect(fallback).toMatch(/background:\s*Canvas/)
+    expect(fallback).toMatch(/color-scheme:\s*light/)
+    expect(css.split("@media")[0]).not.toMatch(/opacity\s*:/)
+  })
+  it("preserves vertical length, hidden readouts and instant motion policy", () => {
+    expect(css).toMatch(/writing-mode:\s*vertical-lr/)
+    expect(css).toMatch(/inline-size:\s*var\(--mui-slider-length,\s*12rem\)/)
+    expect(css).toMatch(/\[hidden\][^{]*\{[^}]*display:\s*none\s*!important/)
+    expect(css).not.toMatch(/(?:animation|transition)(?:-[a-z]+)?\s*:/)
+  })
+})
+
 describe("native slider ownership", () => {
   it("retains the native midpoint rather than inventing a zero or null default", () => {
     const { control, helper } = single()

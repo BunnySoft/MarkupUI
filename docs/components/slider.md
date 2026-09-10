@@ -181,7 +181,27 @@ or a restricted selectable-value set. Native numeric step is independent.
 CSS keeps native range rendering and accent-color, full inline sizing, focus outlines,
 wrapping, disabled behavior and hidden safety. Tokens are `--mui-slider-color`,
 `--mui-slider-accent`, `--mui-slider-focus`, `--mui-slider-border`, `--mui-slider-length`.
-No custom track/thumb geometry, CSS-in-JS or body-wide form reset.
+No custom track/thumb painting, CSS-in-JS or body-wide form reset.
+
+The [default-style audit](../style-audit/components/slider.md) aligns the ordinary
+control's **18px minimum block size**, removes its old 8px top/bottom margins, and uses
+14px readout/scale typography. This is a native **control-box minimum**, not an 18px
+replacement thumb: a datalist range may keep its larger intrinsic footprint (22px in
+the tested Chromium). Pair padding remains included in authored widths by border-box
+sizing; there is no dependency on a global `*` reset.
+
+An ancestor `data-mui-theme="light|dark"` selects the scheme. Standalone sliders default
+to light. The default accent is light primary **#18a058** and dark supplementary primary
+**#2a947d**; the dark value is not ordinary primary #63e2b7. Public tokens win over
+these defaults. Local neutral text/border fallbacks avoid legacy shared-role mismatches.
+The pair fieldset uses a subtle boundary, 12px padding and 3px radius.
+
+Native rail thickness, colored thumb, unfilled track, disabled colors and hover paint
+remain browser-owned. They do not become the reference's 4px rail and separate white
+18px shadowed handle merely because the input box is 18px tall. No thumb pseudo-element,
+duplicate role or hidden input is introduced for visual parity. Native disabling is
+not compounded with another whole-control opacity; readouts remain non-live text, not
+hover/focus tooltip popups.
 
 For reverse direction, author `dir` on the actual input; choose ltr/rtl deliberately
 relative to page direction. There is no boolean reverse algorithm. For vertical layout,
@@ -189,8 +209,10 @@ relative to page direction. There is no boolean reverse algorithm. For vertical 
 places the high end at the top. The @supports test checks the CSS property, not every
 engine's native range orientation. Use horizontal presentation where native vertical
 range support is unavailable; no geometry/orientation polyfill is supplied.
-Forced colors keep native controls; print retains them. There is no animation to suppress
-under reduced motion.
+Forced colors keep native controls, auto accent, full opacity and an explicit Highlight
+focus outline. Print retains native controls and already-visible readouts, using a light
+system canvas/text palette for owned content. Originally hidden readouts stay hidden.
+There is no animation to suppress under reduced motion.
 
 ## Complete upstream disposition
 
@@ -212,8 +234,11 @@ under reduced motion.
 
 ## Acceptance
 
+### Original native-contract acceptance (historical)
+
 Local server 4188 and a dedicated Slider tab were used on 2026-09-09. This is not
 one-track multi-thumb, native-theme pixel, all-browser/AT or upstream framework parity.
+The geometry and asset sizes below describe that original revision.
 
 - **101 targeted tests passed**: 37 Slider, 37 InputNumber and 27 native/legacy regressions
   with `pnpm test -- tests\slider.test.ts tests\input-number.test.ts tests\native.test.ts`.
@@ -264,3 +289,34 @@ All **19 original identities** and source lines remain with nine source suppleme
 **28 rows = 13 adapted targets + 15 omissions**. Catalog totals are **3,548 rows and
 240/384 accepted tasks across 60 pages**. Edited local links pass. P4 remains In progress.
 **Next Rate.**
+
+### Default-style audit, 2026-09-11
+
+**42 Slider-only tests passed**: all 37 original native cases plus five CSS regressions.
+Private Chromium comparison covered endpoints/intermediate values, width, marks,
+formatted tooltip versus persistent readout, disabled/focus/hover, reverse/vertical and
+the intentionally different pair models in light/dark. Screenshots and pixel samples
+record the remaining native rail/thumb/disabled-paint differences explicitly.
+
+Native midpoint, Arrow/Home/End, pointer drag, clamp/grid/any-step sanitization, crossing
+and immediate pair reset were verified. Pair changes retained one deferred nonbubbling
+commit; real FormData preserved endpoint order and excluded disabled fields. All five
+public tokens, native vertical/reverse keys and explicit full-width pair sizing passed.
+
+Forced colors/print retained visible native ranges, full opacity and keyboard focus,
+without value/bound changes. Print-owned content was black on a white system canvas.
+Reduced motion retained 0s transitions/no animations; RTL at 360px/200% CSS zoom had
+no overflow. No-JS crossing/reset/submission and hidden stale readouts also passed.
+The current Chromium AX probe still exposed raw numeric valuetext despite correct DOM
+formatted aria-valuetext; formatted speech remains uncertified.
+
+| Isolated asset | Raw bytes | Gzip level 9 | Unchanged ceiling |
+| --- | ---: | ---: | ---: |
+| `markup-ui-slider.js` | 6,493 | 2,612 | 3,500 |
+| `markup-ui-slider.global.js` | 6,650 | 2,680 | 3,500 |
+| `markup-ui-slider.css` | 2,480 | 854 | 1,000 |
+
+Readable CRLF source CSS and normalized CRLF checkout have the same bytes. CSS-only
+Slider costs **854 gzip bytes**; enhanced totals are **3,466 ESM / 3,534 classic**.
+JavaScript, shared styles/helpers, dependencies and generated files are unchanged.
+No full release build, commit or push was performed.
