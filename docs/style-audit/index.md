@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 45/96 scopes.** The other **51** are not yet accepted in this
+**Reviewed and integrated: 46/96 scopes.** The other **50** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -70,7 +70,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Checkbox](../naive-ui/components/checkbox.md) | 🟢 Fixed / 🟡 Remaining | [Box/label metrics, theme accents and retained native skin](components/checkbox.md) |
 | [Code](../naive-ui/components/code.md) | 🟢 Fixed / 🟡 Remaining | [Plain typography, gutters and authored token limits](components/code.md) |
 | [Collapse Transition](../naive-ui/components/collapse-transition.md) | 🟢 Fixed / 🟡 Remaining | [Height/fade curves and native scheduling/geometry limits](components/collapse-transition.md) |
-| [Collapse](../naive-ui/components/collapse.md) | 🟠 Reviewing | — |
+| [Collapse](../naive-ui/components/collapse.md) | 🟢 Fixed / 🟡 Remaining | [Disclosure spacing, hidden boundaries and native marker/motion limits](components/collapse.md) |
 | [Color Picker](../naive-ui/components/color-picker.md) | ⚪ Pending | — |
 | [Config Provider](../naive-ui/components/config-provider.md) | ⚪ Pending | — |
 | [Countdown](../naive-ui/components/countdown.md) | ⚪ Pending | — |
@@ -112,7 +112,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Mention](../naive-ui/components/mention.md) | ⚪ Pending | — |
 | [Menu](../naive-ui/components/menu.md) | 🟠 Reviewing | — |
 | [Message](../naive-ui/components/message.md) | ⚪ Pending | — |
-| [Modal](../naive-ui/components/modal.md) | ⚪ Pending | — |
+| [Modal](../naive-ui/components/modal.md) | 🟠 Reviewing | — |
 | [Notification](../naive-ui/components/notification.md) | ⚪ Pending | — |
 | [Number Animation](../naive-ui/components/number-animation.md) | ⚪ Pending | — |
 | [Page Header](../naive-ui/components/page-header.md) | 🟢 Fixed / 🟡 Remaining | [Header metrics, back control and authored/narrow-layout limits](components/page-header.md) |
@@ -134,7 +134,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Split](../naive-ui/components/split.md) | ⚪ Pending | — |
 | [Statistic](../naive-ui/components/statistic.md) | 🟢 Fixed / 🟡 Remaining | [Inline value geometry, text roles and native limits](components/statistic.md) |
 | [Steps](../naive-ui/components/steps.md) | 🟠 Reviewing | — |
-| [Switch](../naive-ui/components/switch.md) | ⚪ Pending | — |
+| [Switch](../naive-ui/components/switch.md) | 🟠 Reviewing | — |
 | [Table](../naive-ui/components/table.md) | 🟢 Fixed / 🟡 Remaining | [Typography, palette and native collapsed-border limits](components/table.md) |
 | [Tabs](../naive-ui/components/tabs.md) | 🟢 Fixed / 🟡 Remaining | [Variants, placement spacing and native indicator/motion limits](components/tabs.md) |
 | [Tag](../naive-ui/components/tag.md) | 🟢 Fixed / 🟡 Remaining | [Sizing, palettes, close states and native limits](components/tag.md) |

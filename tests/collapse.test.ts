@@ -383,6 +383,61 @@ describe("focus, refresh and cleanup", () => {
     expect(css).toContain("forced-colors")
     expect(css).toContain("prefers-reduced-motion")
     expect(css).toContain("@media print")
-    expect(css).not.toContain("height:")
+    expect(css).not.toMatch(/(^|[;{])\s*(?:max-)?height\s*:/m)
+    expect(source).not.toContain("collapse-transition")
+  })
+})
+
+describe("Collapse default styling", () => {
+  const css = readFileSync("src/components/collapse/collapse.css", "utf8")
+  function withRules(check: (rules: CSSStyleRule[]) => void) {
+    const style = document.createElement("style")
+    style.textContent = css
+    document.head.append(style)
+    try { check([...style.sheet!.cssRules] as CSSStyleRule[]) } finally { style.remove() }
+  }
+  it("uses borderless source typography and distinct dark header/content/disabled colors", () => {
+    withRules(rules => {
+      const root = rules.find(rule => rule.selectorText === ".mui-collapse")!
+      expect(root.style.getPropertyValue("font-size")).toBe("var(--mui-collapse-font-size,14px)")
+      expect(root.style.getPropertyValue("border")).toBe("")
+      const header = rules.find(rule => rule.style?.getPropertyValue("font-weight"))!
+      expect(header.style.getPropertyValue("font-weight")).toBe("var(--mui-collapse-header-weight,400)")
+      const dark = rules.find(rule => rule.selectorText === ':where([data-mui-theme="dark"])')!
+      expect(dark.style.getPropertyValue("--_mui-collapse-title")).toBe("rgba(255,255,255,.9)")
+      expect(dark.style.getPropertyValue("--_mui-collapse-text")).toBe("rgba(255,255,255,.82)")
+      expect(dark.style.getPropertyValue("--_mui-collapse-disabled")).toBe("rgba(255,255,255,.38)")
+    })
+  })
+  it("spaces mixed native rows/items and keeps custom arrows at the source size and gap", () => {
+    withRules(rules => {
+      const sibling = rules.find(rule => rule.selectorText?.includes(" ~ "))!
+      expect(sibling.selectorText).toContain(":is(.mui-collapse-row,[data-collapse-item])")
+      expect(sibling.style.getPropertyValue("--_mui-collapse-padding")).toBe("16px 0 0")
+      expect(sibling.style.getPropertyValue("margin-block-start")).toBe("var(--mui-collapse-item-gap,16px)")
+      const custom = rules.find(rule => rule.style?.getPropertyValue("list-style") === "none")!
+      expect(custom.style.getPropertyValue("gap")).toBe("4px")
+      const arrow = rules.find(rule => rule.style?.getPropertyValue("inline-size") === "1em")!
+      expect(arrow.style.getPropertyValue("font-size")).toBe("var(--mui-collapse-arrow-size,18px)")
+    })
+  })
+  it("limits motion to the opt-in arrow with source timing and reduced/print protection", () => {
+    expect(css).toContain("transition:transform 150ms cubic-bezier(.4,0,.2,1)")
+    expect(css).toContain("@media (prefers-reduced-motion:reduce),print")
+    expect(css).toContain("transition:none !important")
+    expect(css).not.toContain("grid-template-rows")
+    expect(css).not.toContain("max-height")
+  })
+  it("does not leave a leading divider or gap after hidden rows and items", () => {
+    document.body.innerHTML = '<div class="mui-collapse"><details data-collapse-item hidden><summary>Hidden</summary></details><div class="mui-collapse-row" id="first"><details data-collapse-item><summary>First</summary></details></div><div class="mui-collapse-row" hidden></div><details data-collapse-item id="last"><summary>Last</summary></details></div>'
+    withRules(rules => {
+      const selector = rules.find(rule => rule.selectorText?.includes(" ~ "))!.selectorText
+      const first = document.querySelector<HTMLElement>("#first")!
+      const last = document.querySelector("#last")!
+      expect(first.matches(selector)).toBe(false)
+      expect(last.matches(selector)).toBe(true)
+      first.hidden = true
+      expect(last.matches(selector)).toBe(false)
+    })
   })
 })

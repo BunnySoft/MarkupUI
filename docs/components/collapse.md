@@ -179,20 +179,69 @@ described above; it is not an application-wide exclusivity service.
 ## External CSS and retained limits
 
 CSS controls borders, spacing, logical flow, focus, disabled presentation and optional icons.
+Default presentation now follows the pinned source's borderless group, 14px text and
+400-weight headers. The first header has no padding; later items have a 16px preceding
+gap, divider and 16px header top padding. Content has 16px top padding without the former
+horizontal/bottom inset or first-child margin reset. Authored child margins remain authored.
+Mixed direct details and `.mui-collapse-row` siblings receive consistent separators;
+nested groups use a 32px logical-start indent.
+
+Light body/header/disabled colors are `#333639` / `#1f2225` / `#c2c2c2`, with `#efeff5`
+dividers. Dark scopes use white at .82 / .9 / .38 and .09 divider alpha. Set
+`data-mui-theme="light|dark"` on the native context. These neutral defaults are local CSS,
+not a theme provider. Disabled colors still require the helper's real `aria-disabled`
+activation contract; a CSS-only disabled marker does not falsely acquire disabled styling.
+
+Presentation tokens include `--mui-collapse-color`, `--mui-collapse-header-color`,
+`--mui-collapse-disabled-color`, `--mui-collapse-border`, `--mui-collapse-font-size`,
+`--mui-collapse-header-weight`, `--mui-collapse-header-padding`,
+`--mui-collapse-content-padding`, `--mui-collapse-item-gap`, `--mui-collapse-extra-padding`
+and `--mui-collapse-arrow-size`. Author tokens override defaults, including first-header
+padding. Extra controls retain their own native font rather than receiving a button reset.
+
 The default keeps the native summary marker. For an authored custom arrow, use
 data-collapse-custom-arrow on the item and a decorative data-collapse-arrow element with
-data-collapse-title. Group data-collapse-arrow-placement left/right controls custom-arrow
-order, including RTL; native marker positioning otherwise remains browser-owned.
-`.mui-collapse-arrow-rotate` and `.mui-collapse--arrow-motion` opt into a small arrow rotation,
-not panel-height animation. Reduced motion disables it; forced colors use system colors.
+data-collapse-title. Custom graphics default to 18px with a 4px title gap. Group
+data-collapse-arrow-placement left/right retains its **physical** custom-arrow ordering
+in RTL; the source RTL provider uses logical-side ordering and a different rotation
+direction. Native marker shape/spacing/positioning otherwise remains browser-owned.
+`.mui-collapse-arrow-rotate` and `.mui-collapse--arrow-motion` opt into a 150ms
+`cubic-bezier(.4,0,.2,1)` arrow rotation, not panel-height animation. Reduced motion and
+print disable it; forced colors use system colors. Focus uses an independent info-color
+outline so the focusable disabled summary does not get a faint disabled-color outline.
 
 There is **no height measurement, ResizeObserver animation, CSS-in-JS, provider, renderer,
 mandatory CollapseTransition or transition library**. The independent CollapseTransition
-route remains later work. Print uses ink-friendly summary/content presentation and native
+module remains separate and is not loaded by this helper. Print uses ink-friendly summary/content presentation and native
 open state; it does not force closed content to print or claim that every browser prints it.
 No-JS independent/exclusive-native disclosure and plain content are the baseline.
+See the [rendered Collapse audit](../style-audit/components/collapse.md) for actual comparisons
+and the retained native marker, RTL, extra-column and motion boundaries.
 
-## Acceptance — 2026-09-08
+## Default-style acceptance — 2026-09-10
+
+- Ten reference/native cases covered closed/open/accordion/disabled, custom left/right
+  arrows, extra actions, nesting and overrides in light/dark and LTR/RTL.
+  All **40 group heights** matched the reference fixture; ordinary header/content geometry
+  and LTR custom-arrow placement matched. Native marker and RTL custom ordering remain explicit.
+- Default closed/open heights changed from approximately 94.792/137.188px to
+  77.458/115.854px in this browser fixture, matching source without an enclosing card.
+  Hover retained the same transparent/header-color treatment.
+- Native Enter/Space, scoped exclusivity, readable/focusable disabled summaries,
+  programmatic disabled override, independent extra action and nested focus repair passed.
+  JavaScript-disabled disclosures remained usable without false disabled ARIA; native
+  name-based exclusivity worked.
+- Reference content showed 150ms max-height/opacity transitions. Native content opened
+  immediately with no panel animation; only the authored opt-in arrow uses 150ms motion.
+- The coordinator's isolated release build and **37 tests passed**, including a
+  hidden-row spacing regression. Final ESM/classic/CSS are **3,784 / 3,855 / 991 bytes**, within unchanged
+  **4,000 / 4,000 / 1,000** ceilings. The helper and shared dependencies were not changed.
+- Compact CSS preserves the retained scope within its ceiling; parent owns integrated
+  release validation. No CollapseTransition, renderer or animation dependency was added.
+
+## Historical acceptance — 2026-09-08
+
+The earlier card-like spacing and byte counts below predate the style correction.
 
 - **60 targeted tests pass:** 33 Collapse, 27 native/legacy
   (`npm exec vitest run -- tests\collapse.test.ts tests\native.test.ts`).
