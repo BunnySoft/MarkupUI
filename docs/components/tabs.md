@@ -5,6 +5,23 @@ The helper owns one tablist/tab/tabpanel relationship and native hidden state ov
 buttons and pane nodes. It does not generate tabs, destroy panes, render VNodes or install
 a provider. Automatic/manual keyboard activation and asynchronous leave guards are explicit.
 
+## Default-style audit — 2026-09-10
+
+The [isolated rendered audit](../style-audit/components/tabs.md) corrects the default
+bar/line/card/segment typography, small/medium/large tab metrics, palette, hover,
+selected treatment and unboxed pane spacing. Controller/keyboard/guard code is unchanged.
+**52 targeted tests pass**: 43 controller cases plus nine CSS regressions.
+
+Forty top-placement bar/line/card/default comparisons matched the checked geometry/
+text properties in light/dark × LTR/RTL. Twelve Segment comparisons matched geometry
+and enabled-tab styles, with the explicitly retained disabled-color distinction.
+The placement follow-up also matched pane/tab padding in **120 non-top reference
+cases**, including RTL start/end and all three vertical-card densities. Indicator
+rounding/baseline and card-edge limits remain documented.
+CSS is **7,344 raw / 1,750 gzip bytes**, at the unchanged **1,750-byte ceiling**.
+The coordinator's isolated release build and all **52 Tabs tests** pass;
+no shared source or generated adapter changed.
+
 ## Loading and anatomy
 
 | Export / asset | Contract |
@@ -185,6 +202,55 @@ relative imports or style text; geometry is not measured/written by the controll
 Centering follows accepted guarded activation or the explicit scrolling method; direct value
 overrides do not force a scroll.
 
+### Corrected default appearance and bounded visual differences
+
+With no type attribute, the stylesheet uses **bar**, matching the reference default.
+Small/medium tabs use 14px text and large tabs 16px, all at 1.5 line height.
+Bar/line/card active weight is 400; Segment active weight is 500.
+
+| Top-placement type | Small / medium / large padding | Gap |
+| --- | --- | --- |
+| bar | `4px 0` / `6px 0` / `10px 0` | 36px |
+| line | `6px 0` / `10px 0` / `14px 0` | 36px |
+| card | `8px 16px` / `10px 20px` / `12px 24px` | 4px |
+| segment | `4px 0` / `6px 0` / `8px 0` | 0, equal-width tabs in a 3px-padded rail |
+
+Panes default to transparent/unbordered, with 8/12/16px padding by size on the edge
+next to the strip: top, bottom, physical left/right, or logical start/end.
+Start/end swap under RTL; physical left/right do not. Vertical card padding is
+`8px 12px` / `10px 16px` / `12px 20px` for small/medium/large.
+There is no extra root grid gap or forced first-child margin reset. Pane content
+keeps its application typography/margins; size classes no longer scale all pane text.
+
+Select `data-mui-theme="light|dark"` on the root or an ancestor. Private defaults
+use title-role tab text, body-role pane text, divider-role borders and correct
+card/segment surfaces. Shared `--mui-color-primary` is consumed only for its
+correct active/hover brand role; it does not recolor Segment's neutral selection.
+The application still owns document background and `color-scheme`.
+
+Existing public padding/color/background/indicator tokens remain authoritative.
+`--mui-tabs-hover` and `--mui-tabs-disabled` additionally customize those states.
+Small/large/type defaults are private rather than writes to the public padding token.
+Public `--mui-tabs-pane-padding` and `--mui-tabs-tab-padding` override every
+placement/size recipe. A just-disabled selected tab can exist until the controller's
+observer refresh; disabled foreground wins immediately, and the controller then
+selects an available pair. Direct assignment of a disabled selection is rejected.
+
+This is not a complete placement/artwork renderer:
+
+- The native line indicator is per-tab and measured 1px above the source's
+  border-overlapping line; bar geometry matches within ordinary pixel rounding.
+- Segment paints the selected button instead of a measured moving capsule.
+  Its native disabled button stays visibly muted; the pinned Segment CSS leaves
+  disabled text at the ordinary tab color.
+- Card corner/open-border orientation and continuous gap/baseline artwork remain
+  simplified. The vertical line strip still retains the native block-end baseline;
+  its sampled outer height differs by the rendered border thickness, not by
+  incorrect pane padding or tab density.
+- Native scrollbar dimensions, clipping and per-tab indicators are not the
+  source scroll-mask/buttons/measured-motion system. These differences are not
+  claims that equivalent artwork is impossible with additional application CSS.
+
 ## Leave guards and races
 
 `beforeLeave(nextKey, previousKeyOrNull)` accepts a boolean or Promise/thenable of boolean.
@@ -243,7 +309,7 @@ an error rather than claiming a partial binding. IDs are never helper-generated.
 default/native-state compatibility is limited to the declared anatomy and styles, not a
 universal renderer or arbitrary framework mutation protocol.
 
-## Acceptance — 2026-09-08
+## Original acceptance — 2026-09-08 (historical)
 
 - **69 targeted tests pass:** 42 Tabs plus 27 native/legacy cases
   (`npm exec vitest run -- tests\tabs.test.ts tests\native.test.ts`).
@@ -279,9 +345,10 @@ universal renderer or arbitrary framework mutation protocol.
 | Advanced, unchanged | 6,554 | 2,181 | 3,000 unchanged |
 | Widgets, unchanged | 10,858 | 2,779 | 4,000 unchanged |
 
-One JS format plus CSS is **6,663 gzip bytes ESM** or **6,731 classic**.
+At original delivery, one JS format plus CSS was **6,663 gzip bytes ESM** or **6,731 classic**.
 Previous optional bundles/ceilings remain unchanged; no shared keyboard or popup engine was
-modified or bundled as a dependency.
+modified or bundled as a dependency. These are historical delivery measurements,
+not evidence that the current integrated build has already passed.
 
 No all-browser,
 screen-reader, physical touch/zoom or universal AT certification is claimed.

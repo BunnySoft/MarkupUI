@@ -99,6 +99,16 @@ describe("authored Tabs, Tab and TabPane contracts", () => {
     controller.connect()
     expect(controller.value).toBe("three")
   })
+  it("rejects disabled selection and recovers the transient selected-plus-disabled state", async () => {
+    const { controller, tab, pane } = bind()
+    tab("one").disabled = true
+    expect(tab("one").getAttribute("aria-selected")).toBe("true")
+    expect(() => { controller.value = "one" }).toThrow(RangeError)
+    await flush()
+    expect(controller.value).toBe("two")
+    expect(tab("one").getAttribute("aria-selected")).toBe("false")
+    expect(pane("one").hidden).toBe(true)
+  })
   it("restores only owned roles/tabindex/hidden/ARIA and preserves author additions", () => {
     const pair = nodes()
     pair.tab("one").setAttribute("tabindex", "3")
@@ -561,7 +571,7 @@ describe("add/close, refresh and distribution", () => {
     expect(source).not.toContain("innerHTML")
     expect(source).not.toContain("createPopover")
     expect(source).not.toContain("createMenuKeyboard")
-    expect(css).toContain("display: none !important")
+    expect(css.replace(/\s/g, "")).toContain("display:none!important")
     expect(css).toContain("prefers-reduced-motion")
     expect(css).toContain("forced-colors")
     expect(css).toContain("@media print")

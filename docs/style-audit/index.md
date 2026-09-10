@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 42/96 scopes.** The other **54** are not yet accepted in this
+**Reviewed and integrated: 43/96 scopes.** The other **53** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -136,7 +136,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Steps](../naive-ui/components/steps.md) | ⚪ Pending | — |
 | [Switch](../naive-ui/components/switch.md) | ⚪ Pending | — |
 | [Table](../naive-ui/components/table.md) | 🟢 Fixed / 🟡 Remaining | [Typography, palette and native collapsed-border limits](components/table.md) |
-| [Tabs](../naive-ui/components/tabs.md) | 🟠 Reviewing | — |
+| [Tabs](../naive-ui/components/tabs.md) | 🟢 Fixed / 🟡 Remaining | [Variants, placement spacing and native indicator/motion limits](components/tabs.md) |
 | [Tag](../naive-ui/components/tag.md) | 🟢 Fixed / 🟡 Remaining | [Sizing, palettes, close states and native limits](components/tag.md) |
 | [Thing](../naive-ui/components/thing.md) | 🟢 Fixed / 🟡 Remaining | [Typography, indentation and authored composition limits](components/thing.md) |
 | [Time Picker](../naive-ui/components/time-picker.md) | ⚪ Pending | — |
