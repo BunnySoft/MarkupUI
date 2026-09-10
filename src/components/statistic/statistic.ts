@@ -107,7 +107,6 @@ export class MuiStatistic extends HTMLElement {
       hide(region.content, override)
       hide(region.area, !override && !authored || (name !== "value" && !authored && text === ""))
     }
-    hide(this.display, (["prefix", "value", "suffix"] as const).every((name) => this.regions.get(name)!.area.hidden))
     if (this.isConnected) this.observer?.observe(this, {
       childList: true, subtree: true, characterData: true, attributes: true,
       attributeFilter: names.map((name) => `data-mui-statistic-${name}`),

@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
 import { MuiStatistic, registerStatistic } from "../src/components/statistic/index.js"
 import { registerElements } from "../src/components/elements.js"
 
@@ -23,6 +25,61 @@ function slot(element: MuiStatistic, name: string): HTMLElement {
 }
 
 describe("standalone Statistic", () => {
+  it("retains the passive display container and its spacing when values are absent", () => {
+    const element = statistic()
+    const display = element.querySelector<HTMLElement>("[data-mui-statistic-display]")!
+    expect(display.hidden).toBe(false)
+    expect(region(element, "value").hidden).toBe(true)
+    element.label = "Revenue"
+    element.value = 123
+    element.value = null
+    element.label = null
+    expect(display.hidden).toBe(false)
+    expect(element.querySelector("[data-mui-statistic-display]")).toBe(display)
+    expect(element.querySelector("output,[role],[aria-live]")).toBeNull()
+  })
+
+  it("preserves authored shared and local tokens through updates and reconnection", () => {
+    const element = statistic('<div style="--mui-font-size:18px;--mui-font-family:monospace;--mui-line-height:2;--mui-font-weight:600"><mui-statistic label="Revenue" value="123" style="--mui-statistic-label-size:16px;--mui-statistic-value-size:32px;--mui-statistic-line-height:1.5;--mui-statistic-value-color:rgb(1,2,3);--mui-statistic-prefix-color:rgb(4,5,6);--mui-statistic-gap:8px"></mui-statistic></div>')
+    const parent = element.parentElement!
+    const shared = parent.getAttribute("style")
+    const local = element.getAttribute("style")
+    element.value = 0
+    element.valuePrefix = "$"
+    element.valueSuffix = "USD"
+    element.tabularNums = true
+    element.remove()
+    parent.append(element)
+    expect(parent.getAttribute("style")).toBe(shared)
+    expect(element.getAttribute("style")).toBe(local)
+    expect(element.querySelector("[style],style")).toBeNull()
+    expect(text(element, "value").textContent).toBe("0")
+  })
+
+  it("keeps audited inline geometry, independent color roles and typography in CSS", () => {
+    const css = readFileSync(resolve("src", "components", "statistic", "statistic.css"), "utf8")
+    expect(css).toContain("var(--mui-statistic-value-size, 24px)")
+    expect(css).toContain("var(--mui-statistic-label-size, var(--mui-font-size, 14px))")
+    expect(css).toContain("var(--mui-statistic-value-weight, var(--mui-font-weight, 400))")
+    expect(css).toContain("var(--mui-statistic-line-height, var(--mui-line-height, 1.6))")
+    expect(css).toContain("var(--mui-statistic-font-family, var(--mui-font-family, inherit))")
+    expect(css).toContain("margin: var(--mui-statistic-gap, 4px) 0 0")
+    expect(css).toContain("margin-inline-end: var(--mui-statistic-unit-gap, 4px)")
+    expect(css).toContain("margin-inline-start: var(--mui-statistic-unit-gap, 4px)")
+    expect(css).toContain("display: inline")
+    expect(css).toContain("[data-mui-statistic-slot]:not([hidden])")
+    expect(css).toContain("var(--mui-statistic-label-color, var(--_mui-statistic-label-color, #767c82))")
+    for (const role of ["value", "prefix", "suffix"]) {
+      expect(css).toContain(`var(--mui-statistic-${role}-color, var(--_mui-statistic-value-color, #333639))`)
+    }
+    expect(css).not.toContain("--mui-text-primary")
+    expect(css).not.toContain("--mui-text-secondary")
+    expect(css).toContain('rgba(255, 255, 255, .52)')
+    expect(css).toContain('rgba(255, 255, 255, .82)')
+    expect(css).toContain("@media (prefers-reduced-motion: reduce)")
+    expect(css).toContain("transition: none")
+  })
+
   it("does not turn missing values into zero or fabricate semantics", () => {
     const element = statistic()
     expect(element.value).toBeUndefined()

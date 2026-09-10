@@ -4,6 +4,12 @@
 Statistic presents a label, value and optional native prefix/suffix content. It performs no
 numeric parsing, automatic formatting, value animation or implicit live announcement.
 
+**Default-style audit (2026-09-10):** enhanced Statistic now uses the pinned reference's
+14px label, **24px normal-weight value**, inline affixes, 4px value-row margin and
+light/dark text roles. See the [rendered audit](../style-audit/components/statistic.md)
+for measured before/after results, token precedence and remaining native/legacy limits.
+This supersedes the earlier retained 28px bold styling, not the literal-value contract.
+
 ## Pinned inventory and loading
 
 Reference: Naive UI commit `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
@@ -132,9 +138,36 @@ CSS tokens include `--mui-statistic-gap`, `--mui-statistic-unit-gap`,
 `--mui-statistic-label-color`, `--mui-statistic-label-size`,
 `--mui-statistic-label-weight`, `--mui-statistic-value-color`,
 `--mui-statistic-value-size`, `--mui-statistic-value-weight`,
-`--mui-statistic-line-height`, `--mui-statistic-prefix-color` and
-`--mui-statistic-suffix-color`. Defaults retain a 14px label and 28px bold value hierarchy.
-SVG/image affixes are sized through CSS. No inline styles, measurement or animation is added.
+`--mui-statistic-line-height`, `--mui-statistic-font-family`,
+`--mui-statistic-prefix-color` and `--mui-statistic-suffix-color`.
+
+- Label size defaults to shared `--mui-font-size`, then 14px; the value and affixes
+  default to 24px. Both weights default to shared `--mui-font-weight`, then 400.
+  Explicit local size/weight tokens win. There is no upstream `size` enum.
+- Family uses local `--mui-statistic-font-family`, then shared `--mui-font-family`,
+  then inherited native typography. Leading uses local `--mui-statistic-line-height`,
+  then shared `--mui-line-height`, then 1.6. With normal document defaults this is
+  22.4px for the label and 38.4px for the inline value/affixes.
+- `--mui-statistic-gap` defaults to a **4px margin above the value container**,
+  including value-only, label-only and empty cases. The passive empty container is
+  retained for this spacing; it does not manufacture a value or accessible announcement.
+- `--mui-statistic-unit-gap` supplies a 4px end margin on the prefix and a 4px start
+  margin on the suffix. Without a value, both margins still apply. Value/affixes use
+  ordinary inline layout, not a wrapping flex row.
+- Explicit `data-mui-theme="dark"` on an ancestor or host selects white/.52 label
+  and white/.82 value/affix roles; nested `"light"` restores `#767c82` / `#333639`.
+  These local defaults work without core CSS and deliberately do not reuse the legacy
+  `--mui-text-primary` / `--mui-text-secondary` palette, whose meanings/values differ.
+  Each local color token overrides its own role; setting value color does not implicitly
+  recolor the prefix/suffix.
+- SVG/image affixes remain CSS-sized to 1em with native baseline alignment. Color changes
+  transition for 0.3s; reduced motion disables those transitions. No inline styles,
+  measurement or numeric animation renderer is introduced.
+
+Use the optional Global Style stylesheet, shared typography tokens, or your own native
+document typography as appropriate; Statistic does not install a document reset.
+Long unbreakable values and block content in authored inline regions retain normal browser
+layout behavior rather than an automatic truncation/wrapping engine.
 
 ## Semantics and native actions
 
@@ -162,15 +195,14 @@ technology behavior.
 ```html
 <dl class="mui-statistic" tabular-nums>
   <dt data-mui-statistic-label>Archived reports</dt>
-  <dd data-mui-statistic-display>
-    <span data-mui-statistic-value>42</span>
-    <span data-mui-statistic-suffix>reports</span>
-  </dd>
+  <dd data-mui-statistic-display><span data-mui-statistic-value>42</span><span data-mui-statistic-suffix>reports</span></dd>
 </dl>
 ```
 
 This native definition list needs only CSS. It supplies semantic label/value structure
 without a controller or implicit live output.
+Adjacent spans avoid additional authored whitespace between inline regions; literal spaces
+in static HTML remain ordinary text spacing.
 
 Templates remain inert, even with region markers. Statistic never clones/evaluates them;
 applications can use ordinary native template cloning themselves when needed.
