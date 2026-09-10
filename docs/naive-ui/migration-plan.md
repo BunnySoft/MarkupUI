@@ -18,7 +18,8 @@ four accepted tasks); Watermark completes its native decorative tile scope (31 r
 26 adapted, five omitted, four accepted tasks). Upload and native Trigger/Dragger close
 their synchronized file/queue scope (101 rows, 57 adapted, 44 omitted, four accepted tasks).
 Calendar closes its native Gregorian table scope (23 rows, 20 adapted, three omitted,
-four accepted tasks). Five specialized routes remain Planned. Broad P0 foundation tasks,
+four accepted tasks). Time closes native instant/relative formatting (nine rows, seven
+adapted, two omitted, four tasks). Four specialized routes remain Planned. Broad P0 foundation tasks,
 remaining P6 and full framework/viewer parity remain incomplete.** Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
@@ -51,7 +52,7 @@ coverage, implementation status, and upstream feature parity separate.
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
 | P4 — Forms and selection | 🟢 Verified retained scope | All 17 P4-assigned routes, 984 tracker rows and 68 page tasks reconciled. | Relevant native P0/P3 contracts | 478 adapted + 506 omitted, no unresolved rows; 889 P4 tests plus native browser evidence. No P0/P5/P6 or full framework parity implied. |
 | P5 — Collections and scale | 🟢 Verified retained scope | All ten P5-assigned routes, 827 rows and 40 page tasks reconciled. | P3 focus; P4 selection | 349 native adaptations + 478 omissions, zero unresolved; 526-test/native browser/asset audit. No full framework or P0/P6 parity implied. |
-| P6 — Specialized modules | 🟠 In progress; Carousel, Watermark, Upload and Calendar retained scopes Verified | Four of nine specialized routes accepted; five remain Planned. | Component-specific earlier work | Explicit ESM/classic/CSS, 205 reconciled rows, 16/16 tasks, native/browser evidence; other 55 rows remain unresolved. |
+| P6 — Specialized modules | 🟠 In progress; Carousel, Watermark, Upload, Calendar and Time retained scopes Verified | Five of nine specialized routes accepted; four remain Planned. | Component-specific earlier work | Explicit ESM/classic/CSS, 214 reconciled rows, 20/20 tasks, native/browser evidence; other 49 rows remain unresolved. |
 
 The [component index](index.md) is the exhaustive catalog-to-phase assignment. The phase
 groups below name principal workstreams, not additional promises that every catalog feature
@@ -143,7 +144,7 @@ smuggling an overlay implementation into the CSS-only native composition.
 
 | Task | Status | Action | Deliverable |
 | --- | --- | --- | --- |
-| P6-01 — Date/time and calendar | 🟠 In progress; Calendar retained scope Verified | Native Gregorian date-only month table accepted; Time and later temporal utilities remain independent. | [Calendar acceptance](../components/calendar.md): canonical date validation/pure arithmetic, roving native table, explicit Today/locale/bounds and atomic notes; no instant/provider/date-fns parity. |
+| P6-01 — Date/time and calendar | 🟢 Verified Calendar/Time retained scopes; counters remain separate | Native Gregorian date-only table and explicit instant/relative formatting accepted as distinct domains. | [Calendar](../components/calendar.md) and [Time](../components/time.md): bounded native arithmetic/Intl/text/focus/lifetime; no token/provider/alternate-calendar or floating-to-instant inference. |
 | P6-02 — Upload | 🟢 Verified retained native queue scope | Real FileList/FormData, explicit bounded caller transport, progress/cancel/retry/remove and native Trigger/Dragger. | [Upload acceptance](../components/upload.md): 101 reconciled rows/four tasks, honest ignored-abort slots and native reset/disabled/focus/fallback evidence; previews/downloads/vetoes/backend assumptions omitted. |
 | P6-03 — Media and carousel | 🟢 Verified Carousel retained scope; advanced viewer/effects excluded | Native scroll-snap Carousel/CarouselItem, original DOM, manual/wrap controls and opt-in gated autoplay. | [Carousel acceptance](../components/carousel.md): settled targets, lifetime, focus/forms, browser/legacy/no-JS and independent budgets; no seamless clone loop or advanced image-viewer parity. |
 | P6-04 — Other utilities | 🟠 In progress; Watermark retained scope Verified | Native bounded Canvas/decorative overlay accepted; other utility routes remain independent. | [Watermark acceptance](../components/watermark.md): 31 reconciled rows, four tasks, guarded native generation/ownership and explicit no-security/coverage limits. |
@@ -202,11 +203,11 @@ excluded from delivery scope but never counted as implemented.
 
 ## Current migration position
 
-**Current component: Calendar (P6), verified native Gregorian date-only table scope.**
+**Current component: Time (P6), verified native instant/relative formatting and text scope.**
 **P1/P2/P3/P4/P5 declared retained scopes are complete. P4-07 and P5-06 close against their full assigned-route audits.**
 **P5 is Verified for retained scopes:** all ten routes are resolved.
-Recommended next: **Time**, for native formatting, then Countdown/Number Animation
-in dependency order; Heatmap/Marquee remain separate. No next component is implemented here. P0 component-route acceptance
+Recommended next: **Countdown**, then Number Animation in dependency order;
+Heatmap/Marquee remain separate. No next component is implemented here. P0 component-route acceptance
 does not close broader foundation tasks or imply full upstream/framework compatibility.
 
 The following component records form a historical execution sequence. Earlier “next” or
@@ -344,8 +345,8 @@ public type/overflow-field expansions and six source item-style/private/alias su
 self queries versus media queries, nested/hidden/native control order, explicit disclosure
 and legacy coexistence. Relative offsets, automatic row budgets, suffix reservation,
 overflow callback signals and framework modes remain omitted, not disguised as native parity.
-The current index records 3,994 rows and 348 accepted retained tasks out of 384 across 87 component
-pages (36 unchecked), not full upstream parity.
+The current index records 3,997 rows and 352 accepted retained tasks out of 384 across 88 component
+pages (32 unchecked), not full upstream parity.
 Layout's [accepted record](../components/layout.md) closes its native CSS/disclosure/scroll
 scope with 396 tests and Chromium evidence. All 42 reference rows remain: 32 adapted targets
 and 10 omissions. Layout adds 874 gzip bytes of CSS with no runtime; core remains unchanged.
@@ -2211,3 +2212,46 @@ exceptions stay open or partial, not completed by this component.
 Number Animation as their real shared temporal needs justify. Calendar date-only
 strings are not silently promoted to instants. Heatmap and Marquee remain separate;
 no next route is implemented in this Calendar commit.
+
+## Time acceptance — explicit instants and native text
+
+[Canonical Time](../components/time.md) and the [complete reference](components/time.md)
+close the fifth retained P6 route: pure Intl.DateTimeFormat/RelativeTimeFormat plus
+an optional existing native time/Text-node owner. Date or integer epoch inputs are
+explicit, zero/negative/units/year/locale/timezone/options validated, and machine
+datetime/visible text are paired. Calendar/date-picker floating values are not
+silently parsed as instants. No token/date dependency, provider, VNode renderer,
+global clock service, storage/network or injected role/live region exists.
+
+**Six original identities + three explicit source supplements = nine rows:
+seven adapted + two omitted, zero unresolved; 4/4 tasks.** Native Intl options replace
+format tokens; locale/dateLocale provider graphs remain omitted. Static references,
+opt-in live clock references and fixed elapsed relative units have explicit contracts.
+
+**93 tests pass** (66 Time + 27 native/legacy); declarations/build and all budgets pass.
+Level-nine gzip: **4,767 ESM / 4,892 classic / 139 CSS**, combined **4,906 / 5,031**;
+ceilings **6,000 / 6,000 / 500**. Full three-file local ESM example: **8,670** gzip bytes.
+Prior exports/budgets stay unchanged; core/advanced/widgets remain
+**14,611 / 2,181 / 2,779** under **15,000 / 3,000 / 4,000**.
+
+Native Chromium verified zero/negative/year1, DST fold zone/instant agreement,
+Gregorian locale override, static/live text, selection/focus pause and paired deferral,
+original Text/prefix identity, no redundant writes, hidden-element reveal, RTL/zoom/
+media/no-JS, strict CSP and classic/unchanged Time Picker coexistence. Deterministic
+tests cover document-hidden resumption, boundary timers, errors and reentrancy. The
+headless tab experiment did not expose document.hidden and is not promoted to browser
+evidence. No all-browser/AT/token or timezone-calendar relative arithmetic claim.
+
+**Current catalog: 96 routes / 3,997 rows / 352 of 384 accepted tasks across 88 pages /
+32 unchecked. P6: 263 rows = 145 adapted + 69 omitted + 49 unresolved; five of nine
+specialized routes accepted.** Broad P0-01–P0-09 and legacy extraction/auto-install/
+inline-theme exceptions remain open/partial; prior P2–P5/P0 component routes are unchanged.
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P6 (4 Planned) | Countdown, Number Animation, Heatmap, Marquee | 49 / 49 |
+| Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Next: Countdown**, then Number Animation. Share concrete owned text/timing behavior
+only when their actual contracts need it; do not create an application clock framework.
+Heatmap/Marquee remain separate. No next component is implemented in this Time commit.

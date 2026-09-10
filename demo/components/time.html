@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Native Time formatting · MarkupUI</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-time.css">
+  <link rel="stylesheet" href="./time.css">
+  <script type="module" src="./time.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Time: explicit instants and native formatting</h1>
+    <p>Numbers are integer epoch milliseconds or integer seconds. Date objects always
+      represent their own instant. Calendar/date-picker date-only and local-clock
+      strings are not parsed here. All displayed calendars are explicitly Gregorian.</p>
+    <div class="controls" data-enhancement hidden>
+      <label>Epoch value <input id="epoch" type="number" step="1" value="1710055800000"></label>
+      <label>Numeric units <select id="unit"><option value="milliseconds">Milliseconds</option><option value="seconds">Seconds</option></select></label>
+      <label>Display <select id="type"><option value="datetime">Date and time</option><option value="date">Date only (instant projection)</option><option value="time">Time only (instant projection)</option></select></label>
+      <label>Locale <select id="locale"><option value="en-US">English</option><option value="th-TH-u-ca-buddhist">Thai requesting Buddhist calendar</option><option value="ar-EG">Arabic</option></select></label>
+      <label>Time zone <select id="zone"><option value="UTC">UTC</option><option value="America/New_York">America/New_York</option><option value="Asia/Tokyo">Asia/Tokyo</option></select></label>
+      <button type="button" id="apply">Apply native format</button>
+      <button type="button" id="zero">Epoch zero</button>
+      <button type="button" id="negative">Before the epoch</button>
+      <button type="button" id="fold-first">First DST fold instant</button>
+      <button type="button" id="fold-second">Second DST fold instant</button>
+      <button type="button" id="year1">UTC year 0001</button>
+      <button type="button" id="bad-string">Try a floating date string</button>
+      <button type="button" id="bad-options">Try incompatible Intl options</button>
+      <label><input id="rtl" type="checkbox">RTL layout</label>
+      <label><input id="zoom" type="checkbox">CSS zoom 200%</label>
+      <button type="button" id="hide">Hide/show examples</button>
+      <button type="button" id="freeze">Freeze live relative reference</button>
+      <button type="button" id="disconnect">Disconnect bindings</button>
+    </div>
+    <section id="examples" aria-labelledby="examples-heading">
+      <h2 id="examples-heading">Actual native time elements</h2>
+      <article>
+        <h3>Static instant, explicit zone</h3>
+        <time id="absolute-time" class="mui-time" data-time datetime="2024-03-10T07:30:00.000Z"><strong>Recorded: </strong><span data-time-text>March 10, 2024 at 07:30 UTC</span></time>
+        <p>Only the marked Text node and datetime pair are bound; the original strong
+          prefix and its listener remain. Date/time display subsets are still instants.</p>
+      </article>
+      <article>
+        <h3>Static relative reference</h3>
+        <time id="static-relative" class="mui-time" data-time datetime="1970-01-01T00:00:00.000Z">January 1, 1970 at 00:00 UTC</time>
+        <p>Compared with the fixed instant 60 seconds after the epoch. No timer. This
+          remains one minute ago relative to that reference, not relative to today.</p>
+      </article>
+      <article>
+        <h3>Opt-in live relative reference</h3>
+        <time id="live-relative" class="mui-time" data-time tabindex="0" datetime="2024-01-01T00:00:00.000Z">January 1, 2024 at 00:00 UTC (static fallback)</time>
+        <p>The application supplies an instant two seconds before binding. Focus or select
+          this text to pause. Leaving resumes once at the current clock, without a catch-up
+          loop. No ARIA live region is added and no constant time announcement is requested.</p>
+      </article>
+      <details id="hidden-example">
+        <summary>Initially hidden relative text</summary>
+        <time id="hidden-time" class="mui-time" data-time datetime="2024-01-01T00:00:00.000Z">January 1, 2024 at 00:00 UTC (static fallback)</time>
+      </details>
+    </section>
+    <form id="native-form">
+      <label>Independent native field <input id="title" name="title" value="Time changes must not edit this field"></label>
+      <button type="reset">Reset this native field</button>
+    </form>
+    <pre id="feedback" aria-label="Local time formatting and lifecycle inspection">No JavaScript: the authored time elements retain meaningful datetime attributes and readable static text. Enhancement controls remain hidden.</pre>
+    <footer><label>Outside focus target <input id="outside" value="No focus stealing"></label>
+      <p>Relative days/weeks/months/years use fixed elapsed durations, not local calendar
+        boundaries. Months mean 30 days and years 365 days. Native numeric:auto wording
+        is optional and does not change that arithmetic.</p></footer>
+  </main>
+</body>
+</html>

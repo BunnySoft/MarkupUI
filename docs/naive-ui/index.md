@@ -70,6 +70,9 @@ Calendar now has [accepted native Gregorian table evidence](../components/calend
 canonical date-only values, bounded month/year arithmetic, roving native buttons,
 explicit Today/week-start policy and atomic literal annotations, without a grid-role/
 timestamp/provider claim.
+Time now has [accepted native instant-formatting evidence](../components/time.md):
+pure Intl formatting, explicit Date/epoch units and paired native time/text ownership,
+with opt-in bounded relative refresh rather than a token/provider/clock framework.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
 are reconciled. **P4 is Verified for retained native scopes:** all 17 assigned routes,
 984 tracker rows and 68 page tasks are resolved, with no Planned P4 routes or unresolved
@@ -78,10 +81,10 @@ retained rows. **P5 is Verified for retained native scopes:** all ten assigned r
 P0 architecture/P6 and full framework parity remain independent.
 The three P0 catalog routes are resolved, and the related Discrete audit remains accepted
 under P3; broader foundation task IDs are not automatically completed.
-**P6 is active:** Carousel, Watermark, Upload and Calendar are accepted; five routes remain
-Planned. Recommended next: **Time**, for explicit native formatting, then Countdown/
-Number Animation in dependency order. Heatmap/Marquee remain separate.
-No next component is implemented in this Calendar commit.
+**P6 is active:** Carousel, Watermark, Upload, Calendar and Time are accepted; four
+routes remain Planned. Recommended next: **Countdown**, then Number Animation in
+dependency order. Heatmap/Marquee remain separate.
+No next component is implemented in this Time commit.
 Component acceptance sections below retain their sign-off snapshots; earlier counts and
 “next”/“In progress” statements are historical, not the current phase dashboard.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
@@ -138,7 +141,7 @@ Avatar's four retained-scope tasks are checked using `9afc818`, Button's four us
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
 Popover through Rate, the subsequent Form/Auto Complete/Input OTP/Dynamic Input/Dynamic
 Tags/Mention/Color Picker/Date Picker/Time Picker records, and now Virtual List each add
-four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style, Carousel, Watermark, Upload and Calendar each add four more. The current total is **348/384 accepted across 87 pages, 36 unchecked**.
+four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style, Carousel, Watermark, Upload, Calendar and Time each add four more. The current total is **352/384 accepted across 88 pages, 32 unchecked**.
 P2 retained scopes remain reconciled; the nineteen sequential P3 scopes plus three mixed P2/P3 pages pass the complete P3 audit. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
@@ -2458,6 +2461,51 @@ exceptions remain open/partial; prior retained P2–P5/P0 component routes are u
 their actual shared temporal requirements justify. Calendar date-only values are not
 implicitly instants. Heatmap and Marquee remain separately scoped; none is started here.
 
+## Time accepted
+
+[Canonical Time acceptance](../components/time.md) closes the fifth retained P6 route:
+pure native Intl absolute/relative formatting and one optional native time/Text-node
+binding. Explicit Date or integer epoch units preserve zero/negative values, validate
+year/locale/timezone/options, and pair canonical datetime with readable text. Calendar/
+Date Picker floating strings are rejected rather than implicitly promoted to instants.
+No token parser, VNode renderer, provider, role/live-region injection, clock framework,
+storage/network effect or default-entry dependency is added.
+
+**Six original identities + three explicit source supplements = nine rows:
+seven adapted, two omitted, zero unresolved; four accepted tasks.** There are no
+invented inherited theme props. Native date/time projections and fixed elapsed relative
+units are distinct from date-fns tokens, timezone calendar arithmetic or framework ABI.
+
+**93 targeted tests pass** (66 Time + 27 native/legacy), declarations/build and all
+prior/new budgets pass. Level-nine gzip: **4,767 ESM / 4,892 classic / 139 CSS**
+(raw **11,690 / 11,965 / 159**), under **6,000 / 6,000 / 500** ceilings. Combined
+JS+CSS **4,906 / 5,031**; the complete three-file local ESM example totals **8,670**
+gzip bytes. Previous exports/budgets remain unchanged; core/advanced/widgets stay
+**14,611 / 2,181 / 2,779** under **15,000 / 3,000 / 4,000**.
+
+Dedicated Chromium verified epoch zero/negative/year1 and DST fold datetime/text
+consistency, Gregorian locale override, static versus live references, native
+selection/focus pauses, deferred paired updates, unchanged Text/prefix identity,
+zero redundant static writes, hidden-element reveal, RTL/zoom/media, no-JS markup,
+strict self-hosted CSP, classic and unchanged native Time Picker coexistence.
+Deterministic tests cover document-hidden catch-up/error/timer boundaries; the headless
+tab switch did not expose document.hidden and is not claimed as that browser evidence.
+No universal AT/browser/token/locale-provider or calendar-day-relative parity is implied.
+
+**Current catalog: 96 routes / 3,997 rows / 352 of 384 tasks across 88 accepted pages /
+32 unchecked. P6: 263 rows = 145 adapted + 69 omitted + 49 unresolved; five of nine
+specialized routes accepted.** Previous retained P2–P5/P0 component routes and broader
+P0-01–P0-09 open/partial compatibility exceptions remain unchanged.
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P6 (4 Planned) | Countdown, Number Animation, Heatmap, Marquee | 49 / 49 |
+| Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Next: Countdown**, then Number Animation. Reuse concrete proven text/timing behavior
+only if their actual contracts justify it, not a speculative application clock.
+Heatmap/Marquee remain separate; no next component is started here.
+
 ## Common Components (15)
 
 | Component | Plan direction | Current baseline | Phase |
@@ -2523,7 +2571,7 @@ implicitly instants. Heatmap and Marquee remain separately scoped; none is start
 | [Statistic](components/statistic.md) | 🟢 Verified retained scope; 3 explicit omissions | Standalone native Statistic; [accepted evidence](../components/statistic.md), legacy core preserved | P2 |
 | [Table](components/table.md) | 🟢 Verified retained native scope; 4 explicit omissions | Native table/border/stripe/scroll semantics; [accepted evidence](../components/table.md) | P2 |
 | [Thing](components/thing.md) | 🟢 Verified retained native scope; 5 explicit omissions | Native seven-region composition/indentation; [accepted evidence](../components/thing.md) | P2 |
-| [Time](components/time.md) | 🔵 Planned | None | P6 |
+| [Time](components/time.md) | 🟢 Verified native instant/relative text scope; two explicit omissions | Pure Intl plus paired native time binding; [accepted evidence](../components/time.md), no token/provider model | P6 |
 | [Timeline](components/timeline.md) | 🟢 Verified retained native scope; 3 explicit omissions | Native list/time/markers and scrolling; [accepted evidence](../components/timeline.md) | P2 |
 | [Tree](components/tree.md) | 🟢 Verified retained native outline; 87 explicit omissions | Native hierarchy/check/load helper; legacy core preserved | P5 |
 | [Infinite Scroll](components/infinite-scroll.md) | 🟢 Verified native load-permission scope; three explicit omissions | Native sentinel/manual loading, guarded completion and serialized cancellation; [accepted evidence](../components/infinite-scroll.md) | P5 |
@@ -2625,15 +2673,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,484: 370 inline fields, 184 type/helper/exclusion entries (including five Table public helper groups, Virtual List/Tree named ScrollTo types and UploadInst/UploadSettledFileInfo) and 930 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel/Watermark/Upload/Calendar source supplements |
+| Supplementary named declarations | 1,487: 370 inline fields, 184 type/helper/exclusion entries (including five Table public helper groups, Virtual List/Tree named ScrollTo types and UploadInst/UploadSettledFileInfo) and 933 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel/Watermark/Upload/Calendar/Time source supplements |
 | Explicit inherited tracker rows | 290, including six source-inherited DialogReactive options, three ModalReactive fields, two NotificationReactive fields and three each Element/Carousel/Watermark/Upload/Calendar theme props |
-| Total tracker rows | 3,994; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 348 retained-scope tasks accepted across 87 component pages, 36 unchecked |
+| Total tracker rows | 3,997; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 352 retained-scope tasks accepted across 88 component pages, 32 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 3,994 rows retain canonical text with emoji color: 2,029 Verified native adaptations, 1,910 intentional omissions, 52 Not reviewed and three Planned. Calendar contributes 20 adaptations/three omissions; other retained component counts and linked acceptance records are unchanged. |
-| Source agreement | All 2,220 direct source rows and 290 inherited rows remain covered; nine unchanged inventories match extraction; the 87 accepted pages preserve named/grouped identities with explicit dispositions; Calendar preserves all 14 original identities/links and adds three inline, three source and three inherited identities; all four requested foundation-related route inventories remain reconciled |
-| Local links | All 572 scoped Calendar/reference/index/master file links resolve; earlier Upload/Watermark/Carousel/Global Style/four-route/component link snapshots remain historical evidence |
+| Status presentation | All 3,997 rows retain canonical text with emoji color: 2,036 Verified native adaptations, 1,912 intentional omissions, 46 Not reviewed and three Planned. Time contributes seven adaptations/two omissions; other retained component counts and linked acceptance records are unchanged. |
+| Source agreement | All 2,220 direct source rows and 290 inherited rows remain covered; eight unchanged inventories match extraction; the 88 accepted pages preserve named/grouped identities with explicit dispositions; Time preserves all six original identities/links and adds three source supplements; all four requested foundation-related route inventories remain reconciled |
+| Local links | All 576 scoped Time/reference/index/master file links resolve; earlier Calendar/Upload/Watermark/Carousel/Global Style/four-route/component link snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

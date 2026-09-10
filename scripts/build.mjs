@@ -70,6 +70,8 @@ components.push("upload")
 classicEntries.upload = "global.ts"
 components.push("calendar")
 classicEntries.calendar = "global.ts"
+components.push("time")
+classicEntries.time = "global.ts"
 
 await Promise.all([
   build({
@@ -152,6 +154,9 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-time.js": 6_000,
+  "markup-ui-time.global.js": 6_000,
+  "markup-ui-time.css": 500,
   "markup-ui-calendar.js": 8_000,
   "markup-ui-calendar.global.js": 8_000,
   "markup-ui-calendar.css": 1_250,
