@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 57/96 scopes.** The other **39** are not yet accepted in this
+**Reviewed and integrated: 59/96 scopes.** The other **37** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -123,12 +123,12 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Progress](../naive-ui/components/progress.md) | 🟢 Fixed / 🟡 Remaining | [Native rails, ring geometry, motion and indicator limits](components/progress.md) |
 | [QR Code](../naive-ui/components/qr-code.md) | ⚪ Pending | — |
 | [Radio](../naive-ui/components/radio.md) | 🟢 Fixed / 🟡 Remaining | [Circle/button metrics, high-contrast protection and native skin limits](components/radio.md) |
-| [Rate](../naive-ui/components/rate.md) | 🟠 Reviewing | — |
+| [Rate](../naive-ui/components/rate.md) | 🟢 Fixed / 🟡 Remaining | [Glyph palette/sizing with retained native choices and artwork limits](components/rate.md) |
 | [Result](../naive-ui/components/result.md) | 🟢 Fixed / 🟡 Remaining | [Region spacing, title roles and authored artwork limits](components/result.md) |
 | [Scrollbar](../naive-ui/components/scrollbar.md) | 🟢 Fixed / 🟡 Remaining | [Opt-in native thumb palette and OS/browser geometry limits](components/scrollbar.md) |
 | [Select](../naive-ui/components/select.md) | 🟠 Reviewing | — |
 | [Skeleton](../naive-ui/components/skeleton.md) | 🟢 Fixed / 🟡 Remaining | [Animated endpoints and retained shape/repeat limits](components/skeleton.md) |
-| [Slider](../naive-ui/components/slider.md) | 🟠 Reviewing | — |
+| [Slider](../naive-ui/components/slider.md) | 🟢 Fixed / 🟡 Remaining | [Native range footprint/accents and retained track/readout limits](components/slider.md) |
 | [Space](../naive-ui/components/space.md) | 🟢 Matched / 🟡 Remaining | [Default layout matches; intrinsic nowrap limits](components/space.md) |
 | [Spin](../naive-ui/components/spin.md) | 🟢 Fixed / 🟡 Remaining | [SVG motion, theme dimming and native interaction limits](components/spin.md) |
 | [Split](../naive-ui/components/split.md) | ⚪ Pending | — |

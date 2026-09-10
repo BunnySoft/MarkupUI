@@ -163,17 +163,37 @@ visible labels and star styling still work. Native reset or an authored zero cho
 the no-JS alternative; it is not identical to the helper's null clear.
 
 CSS owns size, color, current/hover/partial-fill/focus/RTL/forced-color/print presentation.
-`data-size="small|medium|large"` supplies standard icon sizes; external `--mui-rate-size`
-supports explicit CSS lengths such as 24px. Tokens: `--mui-rate-text`, `--mui-rate-active`,
-`--mui-rate-muted`, `--mui-rate-size`, `--mui-rate-border`, `--mui-rate-focus`.
+`data-size="small|medium|large"` now supplies the pinned **16/20/24px** glyph font sizes,
+with 20px default; external `--mui-rate-size` overrides those private presets.
+Tokens: `--mui-rate-text`, `--mui-rate-active`, `--mui-rate-muted`, `--mui-rate-size`,
+`--mui-rate-gap`, `--mui-rate-border`, `--mui-rate-focus`. Choice gap defaults to 6px.
+This is spacing between native choice chips, not a promise that visible radios/labels
+collapse into the source's compact star strip.
+
+Default active color is `#ffcc33` in light and `#ccaa33` in dark; inactive decoration is
+`#dbdbdf` / white .2. Native labels use `#333639` / white .82. Local
+`data-mui-theme="light|dark"` scopes select these defaults; public color tokens remain
+author overrides. No provider or color parser is added.
+
 `data-rate-cumulative` on an **integer** group optionally colors preceding choices via
 :has; half-choice groups show their selected/hovered choice instead. Hover is visual
-emphasis, not the upstream numeric hover-preview callback/model. No animation is required.
+emphasis, not the upstream numeric hover-preview callback/model. Disabled inputs/fieldsets
+no longer acquire hover fill, while disabled checked/cumulative selections remain readable.
+No animation or source hover-scale effect is added.
+
+Artwork remains authored. Unicode glyph advances and multi-character spans are not forced
+to one-em widths or replaced by generated SVG. Authored SVGs render as blocks at one em,
+removing the extra baseline gap. Half fill clips half of the authored glyph's actual width:
+the tested 20px SVG gave 10px, while the system-font star gave about 8.333px. A multi-star
+span such as `★★★` remains intact. See the
+[rendered Rate audit](../style-audit/components/rate.md) for these artwork/state limits.
 
 Without :has, actual checked radios, selected score text/underline and individual glyph
 styles remain usable. RTL keeps ascending DOM order and logical half-fill direction.
 Forced colors may reduce decorative fill differences, but visible numeric labels and
-native checked indicators still convey the exact score. Focusable choices are never
+native checked indicators still convey the exact score. Print uses readable text/borders,
+monochrome current-color decoration and native radio accents, hides the clear action, and
+does not change checked values. Focusable choices are never
 overflow-clipped; only the decorative half glyph is clipped.
 
 Radio owns native-group lifetime and peer validation. Rate adds only readout/clear
@@ -215,7 +235,27 @@ explicitly; it intentionally does not fabricate a native radio change.
 Form should add native validation before remaining Auto Complete/OTP/dynamic/picker work,
 not replace these controls with a schema/provider/wizard.
 
-## Acceptance
+## Default-style acceptance — 2026-09-11
+
+- Ten reference/native cases in light/dark covered integer/empty/sizes, half steps,
+  disabled/noninteractive colors, authored SVG, overrides and static readonly artwork.
+  Compared base glyph color sequences matched source for the retained cumulative states.
+- 16/20/24px sizing, source gold/inactive colors and 6px choice gaps are corrected.
+  SVG half geometry matched 10×20px; Unicode shape/advance and native chip layout remain
+  explicit artwork differences.
+- Disabled whole/individual choices no longer show false hover value fill. Native arrows,
+  repeat Space, one Radio commit, explicit null clear/focus return, reset/defaultChecked,
+  half submission and disabled exclusion passed without controller changes.
+- High contrast/print preserved numeric labels and real checked radios. RTL retained
+  ascending DOM order/logical half fill; author size/color tokens and multi-character
+  readonly artwork survived. JavaScript-disabled half selection/reset/GET submission worked.
+- `pnpm test -- tests\rate.test.ts tests\rate.styles.test.ts`: **38 tests passed**.
+  Exact isolated level-9 ESM/classic/CSS: **3,904 / 3,976 / 1,243 bytes**, within unchanged
+  **4,000 / 4,000 / 1,500** ceilings. Parent owns integrated release validation.
+
+## Historical acceptance — 2026-09-09
+
+The earlier sizes/colors and byte counts below predate the default-style corrections.
 
 Local server 4188 and a dedicated Rate tab were used on 2026-09-09. This is not upstream
 pointer/hover renderer, all-browser/AT or native-theme pixel parity.
