@@ -5,6 +5,20 @@
 function, observer, renderer, lifecycle adapter or runtime dependency. Real native elements
 are the implementation; a stylesheet must not manufacture semantics or a controller per tag.
 
+## Default-style audit — 2026-09-10
+
+The [isolated reference audit](../style-audit/components/typography.md) corrects the
+default heading scale/weight, text depths, semantic/link colors, inline code, list,
+blockquote, rule and boundary spacing. **39 specimens per theme** matched the measured
+Naive light/dark style properties; individual native classes were checked separately
+from the prose container. Author tokens, nested themes, RTL and native hidden code
+were also verified.
+
+**16 focused tests pass.** CSS source is **11,357 raw / 1,875 gzip bytes**, below the
+unchanged **2,500-byte ceiling**. The coordinated full build, copied distribution and
+manifest/budget gates pass. No shared palette/core/generated
+files or the completed Global Style component were changed.
+
 ## Pinned owners and distribution
 
 Reference: Naive UI commit `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
@@ -84,7 +98,8 @@ normal cascade; there are no “upgrade”, reconnect or synchronization APIs to
 ## Presentation and semantics
 
 - Choose real `h1`–`h6` for hierarchy, not a div plus generated heading roles. The default
-  scale is 2.25/1.75/1.5/1.25/1.1/1em and can be changed with tokens.
+  scale is **30/22/18/16/16/16px**, weight **500**, with a default **1.6** line height;
+  all can be changed with tokens.
 - Use native `<strong>` and `<em>` when importance/emphasis is intended. For purely visual
   compatibility, `data-strong`, `data-italic` and `data-underline` style text without changing
   its tag or adding semantic roles.
@@ -94,10 +109,11 @@ normal cascade; there are no “upgrade”, reconnect or synchronization APIs to
 - Native `<u>` or `data-underline` provides underline presentation. Underline plus native
   deletion retains both lines. Use underlining thoughtfully so it is not confused with links.
 - `data-depth="1|2|3"` supplies text/paragraph shades. Semantic `data-type="success|info|
-  warning|error"` takes precedence over depth; default leaves the normal color.
-- Heading `data-type` colors both its text and decorative bar in this target. This follows
-  the public color intent but is not exact source parity: the pinned heading implementation
-  primarily maps type to the bar color.
+  warning|error"` takes precedence over depth; default leaves the normal color. Inline
+  code uses its code-color token rather than semantic/depth color, matching the reference.
+- Heading `data-type` colors its decorative bar, **not its heading text**, matching the
+  pinned source. Use `--mui-typography-heading-color` to recolor the text. This corrects
+  the earlier local adaptation that colored both.
 
 Data attributes are presentation choices, not JS component properties. Unsupported values
 have no special rule; CSS does not parse/evaluate them or fabricate validation callbacks.
@@ -109,6 +125,7 @@ The upstream `align-text` options mean alignment with adjacent prose:
 
 - Heading `data-prefix="bar"` adds a decorative logical-start bar and padding.
   Add `data-align-text` to remove that padding and let the bar hang in the start margin.
+  H1/H2 use **16px** space and a **4px** bar; H3–H6 use **12px** and **3px**.
   Without a bar, this option does not invent a new alignment behavior.
 - `ul`/`ol[data-align-text]` removes start indentation so text aligns with prose and markers
   hang outside. Native markers, `type`, `start`, `reversed` and `li[value]` are preserved.
@@ -139,6 +156,38 @@ inline-code boxes; block-code markup retains native behavior. There is no syntax
 language highlighter or Code-component import. Code remains a separate catalog component.
 No animations/transitions are supplied, so no reduced-motion runtime or timer is needed.
 
+## Explicit light/dark themes and shared-token ownership
+
+```html
+<article class="mui-typography" data-mui-theme="dark">
+  <h2>Dark heading</h2>
+  <p>Dark prose on an application-owned dark background.</p>
+  <section class="mui-typography" data-mui-theme="light">
+    <p>Light prose on an application-owned light background.</p>
+  </section>
+</article>
+```
+
+The nearest `data-mui-theme="light|dark"` boundary supplies **private Typography
+fallbacks only**. No boundary means light, as in Naive without a dark provider.
+There is no OS watcher, body/background styling, `color-scheme` override or theme
+runtime. Authors must supply matching backgrounds. Theme attributes alone do not
+paint the sections in the example.
+
+Existing public `--mui-typography-*` tokens remain the first override. Semantic
+colors then consume shared **normal** `--mui-color-info/success/warning/error`
+tokens; links and untyped bars use `--mui-color-primary`. These are not the
+supplementary colors used by some other components. Private fallback colors follow
+when no shared token is present. A nested theme does not erase inherited public
+author/shared overrides; scope those explicitly when different values are intended.
+
+Prose typography consumes shared `--mui-font-family`, `--mui-font-size` and
+`--mui-line-height` after its local tokens. Family otherwise inherits the application;
+no font is loaded. Individual text/anchor elements retain ambient font sizing, while
+paragraphs, lists and quotes supply the reference 14px size. Shared legacy
+`--mui-text-primary`, `--mui-border` and surface colors are deliberately not substituted
+for Naive's distinct text-depth, quote-border, code and rule roles.
+
 ## CSS tokens and defaults
 
 `--mui-typography-font-family`, `--mui-typography-font-size`, `--mui-typography-line-height`,
@@ -158,7 +207,24 @@ No animations/transitions are supplied, so no reduced-motion runtime or timer is
 `--mui-typography-link-color`, `--mui-typography-link-hover-color`,
 `--mui-typography-focus-color` and `--mui-typography-rule-color` provide external customization.
 
-Defaults use readable native text scale and conservative colors, not a copied theme object.
+Defaults use the measured reference values, not a runtime theme object:
+
+| Role | Light | Dark |
+| --- | --- | --- |
+| Body text / depth 2 | `#333639` | white / `.82` |
+| Heading / depth 1 | `#1f2225` | white / `.9` |
+| Depth 3 | `#767c82` | white / `.52` |
+| Inline-code background | `#f4f4f8` | white / `.12` |
+| Quote border | `#e0e0e6` | white / `.24` |
+| Rule | `#efeff5` | white / `.09` |
+
+Paragraph block margins are 16px; quote/rule margins are 12px. Headings start with
+28px and end with 20px (H1–H3) or 18px (H4–H6). First-child headings/paragraphs/lists/
+quotes lose their start margin; last-child paragraphs/lists/quotes lose their end
+margin. These boundary rules also apply to individual classes and nested prose,
+not only a container's immediate first heading. Author native margin rules can
+override them; margin tokens control the ordinary non-boundary spacing.
+
 Applications remain responsible for contrast in their actual background/theme. Long prose
 and inline links can wrap without JS measurements. Native preformatted content remains
 preformatted; provide an appropriate overflow container for long block code.
@@ -179,7 +245,7 @@ preformatted; provide an appropriate overflow container for long block code.
 | Text `tag` | Choose native markup. | ⏭️ Runtime tag-selection/replacement prop omitted. |
 | P `depth` | Native paragraph with data-depth. | 🟢 Paragraph shade/layout. |
 | H1–H6 `align-text` | Native heading data-align-text with prefix bar. | 🟢 Logical hanging decoration, not generic text-align. |
-| H1–H6 `type` | Heading data-type. | 🟢 Native text/bar color adaptation, not source pixel parity. |
+| H1–H6 `type` | Heading data-type. | 🟢 Semantic bar color; heading text retains its own role. |
 | H1–H6 `prefix` | `data-prefix="bar"` on native heading. | 🟢 Decorative empty pseudo-element. |
 | Ul/Ol `align-text` | Native list data-align-text. | 🟢 Text/marker alignment; numbering attributes preserved. |
 | Blockquote `align-text` | Native quotation data-align-text. | 🟢 Logical margin/padding/border. |
@@ -193,6 +259,13 @@ three native owners, one deprecated Text alias and 21 grouped theme contracts.
 That is **40 rows: 17 Verified adapted targets and 23 intentional omissions**. A stylesheet
 does not receive parity credit for omitted framework APIs.
 
+The retained local `data-type` set remains default/info/success/warning/error; source
+Text's additional primary type is not added in this audit. Arbitrary prefix strings,
+runtime tag/as replacement, providers/theme merging and routing are not implemented.
+The native adaptation intentionally retains logical RTL decorations, `.12em` underline
+offset, explicit focus-visible outline and no transitions. These differences prevent a
+claim of complete API or pixel parity even where the measured defaults now match.
+
 ## Numbered migration steps and acceptance
 
 1. [x] Inventory all grouped public owners/props/content plus actual A/Li/Hr/deprecated/theme sources.
@@ -203,7 +276,7 @@ does not receive parity credit for omitted framework APIs.
 6. [x] Validate CSS-only export/build budget, existing integration suite and Chromium behavior.
 7. [x] Reconcile grouped reference rows/four tasks, source additions and master next Icon.
 
-### Evidence — 2026-09-08
+### Original migration evidence — 2026-09-08 (historical)
 
 - `pnpm test -- tests\typography.test.ts`: **10 focused tests passed**.
 - `pnpm build && pnpm test`: CSS copy/budget and all **300 tests** passed
@@ -230,7 +303,8 @@ does not receive parity credit for omitted framework APIs.
   Typography is **CSS only: 1,423 gzip bytes / 2,500 ceiling**. No fake JS bundle budget exists;
   exact figures are in `dist/manifest.json`.
 
-This is native/CSS retained scope, not Vue tag/theme/router or pixel parity. Chromium and
+The figures above describe the original delivery, not the current integrated build.
+This is native/CSS retained scope, not Vue tag/theme/router or complete pixel parity. Chromium and
 CSS zoom were exercised, not every browser/screen-reader/page-zoom combination. Native CSS
 support, custom themes and application document structure remain downstream responsibilities.
 P2-01 and P2 remain in progress; Icon is next only through coordinator selection.

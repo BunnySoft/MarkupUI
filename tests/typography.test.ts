@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it } from "vitest"
 
 const css = readFileSync(resolve("src", "components", "typography", "typography.css"), "utf8")
@@ -112,5 +113,77 @@ describe("CSS-only Typography", () => {
     expect(document.querySelector("#block")?.parentElement?.tagName).toBe("PRE")
     expect(document.querySelector("#block")?.textContent).toBe("const value = 1")
     expect(css).toContain(":not(:where(pre code))")
+  })
+
+  it("keeps the source-only CSS within its unchanged 2500 gzip-byte budget", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(2500)
+  })
+
+  it("uses measured reference heading sizes, weights, paragraph and list spacing", () => {
+    for (const [level, size] of [[1, 30], [2, 22], [3, 18], [4, 16], [5, 16], [6, 16]]) {
+      expect(css).toContain(`var(--mui-typography-h${level}-size, ${size}px)`)
+    }
+    expect(css).toContain("var(--mui-typography-heading-weight, 500)")
+    expect(css).toContain("var(--mui-typography-strong-weight, 500)")
+    expect(css).toContain("var(--mui-typography-paragraph-margin, 16px)")
+    expect(css).toContain("var(--mui-typography-list-indent, 2em)")
+    expect(css).toContain("margin-block: .25em 0")
+    expect(css).toContain("var(--mui-typography-font-size, var(--mui-font-size, 14px))")
+  })
+
+  it("sets only private defaults at light/dark theme boundaries and retains public override precedence", () => {
+    install()
+    const rules = [...stylesheet!.sheet!.cssRules] as CSSStyleRule[]
+    for (const theme of ["light", "dark"]) {
+      const rule = rules.find(rule => rule.selectorText === `:where([data-mui-theme="${theme}"])`)!
+      expect(rule).toBeDefined()
+      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_mui-typography-/)
+    }
+    expect(css).toContain("var(--mui-typography-color, var(--_mui-typography-color, #333639))")
+    expect(css).toContain("var(--mui-typography-info, var(--mui-color-info, var(--_mui-typography-info, #2080f0)))")
+    expect(css).toContain("--_mui-typography-color: rgb(255 255 255 / .82)")
+    expect(css).toContain("--_mui-typography-heading: rgb(255 255 255 / .9)")
+    expect(css).toContain("--_mui-typography-muted: rgb(255 255 255 / .52)")
+    expect(css).not.toContain("--mui-text-primary")
+    expect(css).not.toContain("-suppl")
+  })
+
+  it("colors a typed heading's bar, not its text, and preserves the explicit bar override", () => {
+    install()
+    const rules = [...stylesheet!.sheet!.cssRules] as CSSStyleRule[]
+    const types = rules.filter(rule => rule.selectorText?.includes('.mui-h)[data-type='))
+    expect(types).toHaveLength(4)
+    for (const rule of types) {
+      expect(rule.style.getPropertyValue("color")).toBe("")
+      expect(rule.style.getPropertyValue("--_mui-typography-accent")).not.toBe("")
+    }
+    expect(css).toContain("background: var(--mui-typography-bar-color, var(--_mui-typography-accent,")
+    expect(css).toContain("--_mui-typography-prefix: 16px; --_mui-typography-bar: 4px")
+    expect(css).toContain("inset-block: 0")
+  })
+
+  it("matches inline-code metrics without revealing hidden code or changing block code", () => {
+    document.body.innerHTML = '<article class="mui-typography"><code id="hidden" hidden>Hidden</code><code id="inline">Visible</code><pre><code id="block">Block</code></pre></article>'
+    install()
+    expect(getComputedStyle(document.querySelector("#hidden")!).display).toBe("none")
+    expect(getComputedStyle(document.querySelector("#inline")!).display).toBe("inline-block")
+    expect(css).toContain(':where(code:not([hidden])):not(:where(pre code))')
+    expect(css).toContain("v-mono, SFMono-Regular, Menlo, Consolas, Courier, monospace")
+    expect(css).toContain("line-height: 1.4")
+    expect(css).toContain("padding: .05em .35em 0")
+    expect(css).toContain("var(--mui-typography-code-border, transparent)")
+    expect(css).toContain("var(--mui-typography-code-radius, 2px)")
+  })
+
+  it("keeps first/last block spacing rules scoped, last in the cascade and overridable", () => {
+    install()
+    const rules = [...stylesheet!.sheet!.cssRules] as CSSStyleRule[]
+    expect(rules.at(-2)!.selectorText).toContain(":where(:first-child)")
+    expect(rules.at(-1)!.selectorText).toContain(":where(:last-child)")
+    expect(rules.at(-2)!.style.getPropertyValue("margin-block-start")).toBe("0")
+    expect(rules.at(-1)!.style.getPropertyValue("margin-block-end")).toBe("0")
+    document.body.innerHTML = '<article class="mui-typography"><h1 style="font-size:41px;color:purple;margin-block-start:11px">Title</h1></article>'
+    expect(getComputedStyle(document.querySelector("h1")!).fontSize).toBe("41px")
+    expect(getComputedStyle(document.querySelector("h1")!).color).toBe("rgb(128, 0, 128)")
   })
 })
