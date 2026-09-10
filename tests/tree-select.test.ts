@@ -1,4 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { createTreeSelect } from "../src/components/tree-select/index.js"
 import type { TreeSelectController, TreeSelectOptions } from "../src/components/tree-select/index.js"
 import { createTree } from "../src/components/tree/index.js"
@@ -6,6 +9,7 @@ import { createSelect } from "../src/components/select/index.js"
 import { createForm } from "../src/components/form/index.js"
 
 const controllers: TreeSelectController[] = []
+const pickerCss = readFileSync(resolve("src", "components", "tree-select", "tree-select.css"), "utf8")
 const wait = () => new Promise(resolve => setTimeout(resolve, 25))
 function row(key: string, label: string, children = "", extra = "") {
   return `<li data-tree-key="${key}" ${extra}><div data-tree-row><span data-tree-label>${label}</span></div>${children ? `<details data-tree-branch><summary>${label} children</summary><ul data-tree-list>${children}</ul></details>` : ""}</li>`
@@ -26,6 +30,33 @@ function fixture(options: TreeSelectOptions = {}, config: { multiple?: boolean; 
 afterEach(() => {
   for (const controller of controllers.splice(0)) { try { controller.disconnect() } catch { /* Fault teardown is asserted separately. */ } }
   document.body.replaceChildren(); vi.restoreAllMocks()
+})
+
+describe("native Tree Select visual defaults", () => {
+  it("keeps four trigger size defaults and native listbox sizing within budget", () => {
+    expect(gzipSync(pickerCss, { level: 9 }).length).toBeLessThanOrEqual(1250)
+    for (const height of [22, 28, 34, 40]) expect(pickerCss).toContain(`--_tree-select-height: ${height}px`)
+    expect(pickerCss).toContain("min-block-size: var(--mui-tree-select-height")
+    expect(pickerCss).not.toMatch(/(?:^|[;{])\s*(?:height|block-size):/m)
+    expect(pickerCss).not.toContain("appearance:")
+    expect(pickerCss).not.toContain("input[type=checkbox]")
+  })
+  it("supports standalone palette defaults and the existing Select author tokens", () => {
+    for (const token of ["--mui-select-border", "--mui-select-background", "--mui-select-color", "--mui-select-focus", "--mui-select-pad"]) {
+      expect(pickerCss).toContain(token)
+    }
+    expect(pickerCss).toContain("light-dark(#e0e0e6, transparent)")
+    expect(pickerCss).toContain("light-dark(#fafafc, rgba(255,255,255,.06))")
+    expect(pickerCss).toContain("color: GrayText !important")
+    expect(pickerCss).toContain("border-color: CanvasText !important")
+  })
+  it("keeps passive source indentation and native visibility rather than adding a popup", () => {
+    expect(pickerCss).toContain("--mui-tree-select-indent, 24px")
+    expect(pickerCss).toContain("[data-tree-select-source] > [data-tree-list] { padding-inline-start: 0; }")
+    expect(pickerCss).toContain("[hidden] { display: none !important; }")
+    expect(pickerCss).not.toContain("position: fixed")
+    expect(pickerCss).not.toContain("@import")
+  })
 })
 
 describe("native hierarchy projection and value policy", () => {

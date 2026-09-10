@@ -1,11 +1,46 @@
-.mui-tree-select { overflow-wrap: anywhere; }
-.mui-tree-select [data-select-control] { font: inherit; color: inherit; box-sizing: border-box; max-inline-size: 100%; min-inline-size: 0; padding: .35rem; }
-.mui-tree-select[data-tree-select-size=small] [data-select-control] { padding: .15rem; }
-.mui-tree-select[data-tree-select-size=large] [data-select-control] { padding: .6rem; }
-.mui-tree-select [data-select-search] { margin-block: .5rem; }
-.mui-tree-select [data-select-filter] { font: inherit; box-sizing: border-box; max-inline-size: 100%; }
+:where([data-mui-theme=light]) { --_tree-select-scheme: light; }
+:where([data-mui-theme=dark]) { --_tree-select-scheme: dark; }
+.mui-tree-select { --_tree-select-height: 34px; --_tree-select-font: 14px; overflow-wrap: anywhere; }
+.mui-tree-select[data-tree-select-size=tiny] { --_tree-select-height: 22px; --_tree-select-font: 12px; }
+.mui-tree-select[data-tree-select-size=small] { --_tree-select-height: 28px; }
+.mui-tree-select[data-tree-select-size=large] { --_tree-select-height: 40px; --_tree-select-font: 15px; }
+.mui-tree-select [data-tree-select-field] { display: block; font: inherit; color: inherit; color-scheme: var(--_tree-select-scheme, light); }
+.mui-tree-select [data-tree-select-field] [data-select-control] {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: var(--mui-tree-select-height, var(--_tree-select-height));
+  padding: var(--mui-tree-select-padding, var(--mui-select-pad, 0 12px));
+  border: 1px solid var(--mui-tree-select-border, var(--mui-select-border, light-dark(#e0e0e6, transparent)));
+  border-radius: var(--mui-tree-select-radius, 3px);
+  background-color: var(--mui-tree-select-background, var(--mui-select-background, light-dark(#fff, rgba(255,255,255,.1))));
+  color: var(--mui-tree-select-color, var(--mui-select-color, light-dark(#333639, rgba(255,255,255,.82))));
+  font: inherit;
+  font-size: var(--mui-tree-select-font-size, var(--mui-select-font, var(--_tree-select-font)));
+  line-height: 1.5;
+}
+.mui-tree-select [data-tree-select-field] [data-select-control]:disabled {
+  color: var(--mui-tree-select-disabled-color, var(--mui-select-disabled, light-dark(#c2c2c2, rgba(255,255,255,.38))));
+  background-color: var(--mui-tree-select-background, var(--mui-select-background, light-dark(#fafafc, rgba(255,255,255,.06))));
+  cursor: not-allowed;
+}
+.mui-tree-select[data-tree-select] [data-tree-select-field] [data-select-control]:not(:disabled):is(:hover,:focus) {
+  border-color: var(--mui-tree-select-focus-color, var(--mui-select-focus, light-dark(#36ad6a, #7fe7c4)));
+}
+.mui-tree-select [data-select-search] { margin-block: 8px; }
+.mui-tree-select [data-tree-select-field] [data-select-filter] { font: inherit; box-sizing: border-box; max-inline-size: 100%; padding: 6px; }
 .mui-tree-select [data-tree-select-value] { white-space: pre-wrap; }
-.mui-tree-select [data-tree-select-source] [data-tree-list] { padding-inline-start: 1.25rem; }
+.mui-tree-select [data-tree-select-source] [data-tree-list] { padding-inline-start: var(--mui-tree-select-indent, 24px); }
+.mui-tree-select [data-tree-select-source] > [data-tree-list] { padding-inline-start: 0; }
 .mui-tree-select :focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
+.mui-tree-select [data-tree-select-field] :is([data-select-control],[data-select-filter]):focus-visible { outline-color: var(--mui-tree-select-focus-color, var(--mui-select-focus, light-dark(#36ad6a, #7fe7c4))); }
 .mui-tree-select [hidden] { display: none !important; }
-@media (forced-colors: active) { .mui-tree-select [data-select-control] { border-color: CanvasText; } }
+@media (forced-colors: active), print {
+  .mui-tree-select [data-tree-select-field] [data-select-control] { color: CanvasText !important; background-color: Canvas !important; border-color: CanvasText !important; }
+  .mui-tree-select [data-tree-select-field] [data-select-control]:disabled { color: GrayText !important; }
+}
+@media print {
+  .mui-tree-select [data-tree-select-field] { color-scheme: light; }
+}

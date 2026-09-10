@@ -9,6 +9,10 @@ The implementation composes **readTreeHierarchy/TreeNode** with **one createSele
 It does not initialize Tree on the same source or a second Select on the same field.
 There was no dedicated legacy Tree Select to replace; all earlier components stay intact.
 
+The style audit reuses Select's public CSS tokens where appropriate, but does not import
+its stylesheet or edit its controller. Tree hierarchy, shared Select and shared Popover
+sources remain separate ownership boundaries. No popup dependency is needed by this native UI.
+
 ## Loading and authored native fallback
 
 | Asset/export | Contract |
@@ -162,6 +166,50 @@ Application custom-validity messages take precedence and survive conditional res
 Changing the select's form owner or single/multiple mode requires rebind; explicit
 external form association is supported without changing names or moving controls.
 
+## Native styling and renderer boundary
+
+The stylesheet now supplies complete standalone native-control defaults rather than just
+padding. The field fills the available width, with a 3px radius and a native border.
+`data-tree-select-size` on the outer root selects:
+
+| Size | Minimum control height | Font size |
+| --- | ---: | ---: |
+| tiny | 22px | 12px |
+| small | 28px | 14px |
+| medium / absent | 34px | 14px |
+| large | 40px | 15px |
+
+These match the rendered pinned trigger metrics. Native multiple/listbox `size` still
+controls its visible option rows: no fixed trigger height is imposed on a listbox.
+The native arrow, option rows, selection highlight and multiple gestures remain browser-owned.
+The stylesheet never removes native select appearance or draws a checkbox/tree popup.
+
+Light controls use `#333639`, white fill and `#e0e0e6` border; dark controls use white `.82`,
+white `.1` fill and a transparent border. Disabled foreground/fill are `#c2c2c2`/`#fafafc`
+in light and white `.38`/`.06` in dark. An explicit theme marker on a root/ancestor selects
+a local field color scheme. Focus remains a visible native outline rather than a copied
+framework focus-shadow renderer.
+
+Author tokens include `--mui-tree-select-height`, `--mui-tree-select-font-size`,
+`--mui-tree-select-padding`, `--mui-tree-select-radius`, `--mui-tree-select-border`,
+`--mui-tree-select-background`, `--mui-tree-select-color`, `--mui-tree-select-disabled-color`,
+`--mui-tree-select-focus-color`, and `--mui-tree-select-indent`. Matching `--mui-select-*`
+color/border/padding/font/focus tokens are supported as fallbacks, without requiring that
+stylesheet. The field-qualified rules retain their defaults/overrides when Select CSS loads
+afterward. Use Tree Select's outer size marker for this composition.
+
+The passive source remains authored and visible unless the author explicitly hides it.
+Its first list starts at zero and nested lists default to 24px indentation; linking Tree's
+separate stylesheet is still an author choice, not an automatic Tree controller binding.
+Readout/status/clear content stays outside the field, with its original semantics.
+
+The native representation deliberately differs from upstream: full-path options rather
+than leaf-only trigger text, a blank native unselected state rather than a generated
+placeholder, native listboxes rather than multiple-value tags, and no popup mixed/check
+tree. Browser-native popup rendering is not controllable as upstream DOM rows. The
+[rendered style audit](../style-audit/components/tree-select.md) records the actual
+reference popup, row/check dimensions and these limits rather than claiming popup parity.
+
 ## Defaults, reset and source changes
 
 Without options, default keys come from native defaultSelected flags. `defaultValue`
@@ -260,7 +308,7 @@ This completes Tree/Tree Select/Cascader's **declared retained** hierarchy wave,
 framework/check-popup parity or P5 as a whole. **Next: Transfer**, with a separate
 source/target movement, selection/order and form acceptance contract.
 
-## Measured acceptance — 2026-09-09
+## Initial measured acceptance — 2026-09-09 (historical styling)
 
 `pnpm exec vitest run tests\tree-select.test.ts tests\tree.test.ts tests\cascader.test.ts
 tests\select.test.ts tests\form.test.ts tests\native.test.ts`: **248 tests passed**
@@ -298,7 +346,7 @@ These are native DOM/browser observations, not all-browser/assistive-technology 
 framework-popup parity. Review corrected selectedness observation, rejected-owner
 construction rollback and conditional restoration of plain views.
 
-### Payload and prior-output preservation
+### Initial payload and prior-output preservation
 
 | Asset | Bytes | gzip bytes | gzip ceiling |
 | --- | ---: | ---: | ---: |
@@ -321,3 +369,18 @@ tasks / 74 accepted pages**. P5 remains active with six routes: **Transfer, Data
 Log, Infinite Scroll, Popselect, Split**.
 All **487 scoped Tree Select/reference/index/master relative links** resolve. P4's
 984 rows remain unchanged: 478 adapted and 506 omitted.
+
+## Style audit — 2026-09-11
+
+- `pnpm test -- tests\tree-select.test.ts`: **39 tests passed**.
+- Trigger width changed **171.188→320px** in the 320px fixture. Tiny/small/medium/large
+  controls now match **22/28/34/40px** and **12/14/14/15px** reference typography.
+- Light/dark normal and disabled surfaces, author overrides, native keyboard selection,
+  disabled-path skipping, filtering/FormData and original option/control/label identities
+  were verified in a dedicated headless Chrome profile/context.
+- Reference popup/row/check states were actually rendered and recorded. Native visible
+  listboxes remained **102px** for the five-row fixture, not a 34px tag trigger or a 158px
+  checkbox-tree popup. No renderer or cascade/check facade was introduced.
+- Isolated ESM/classic/CSS measured **8,844 / 8,977 / 845 gzip bytes**, within unchanged
+  **9,000 / 9,000 / 1,250** ceilings. Runtime/shared sources remain unchanged; parent owns
+  the full isolated release build. No next component is implied by this audit.
