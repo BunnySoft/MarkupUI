@@ -1,0 +1,2 @@
+.mui-number-animation { font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.mui-number-animation:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }

@@ -10,6 +10,11 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./number-animation": {
+      "types": "./dist/components/number-animation/index.d.ts",
+      "import": "./dist/markup-ui-number-animation.js"
+    },
+    "./number-animation/style.css": "./dist/markup-ui-number-animation.css",
     "./countdown": {
       "types": "./dist/components/countdown/index.d.ts",
       "import": "./dist/markup-ui-countdown.js"

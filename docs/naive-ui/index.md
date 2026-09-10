@@ -76,6 +76,9 @@ with opt-in bounded relative refresh rather than a token/provider/clock framewor
 Countdown now has [accepted native elapsed-duration evidence](../components/countdown.md):
 timestamp-derived remaining time, explicit pause/reset/current value, native text/unit
 targets and finish-once delivery, without wall-clock alarm or VNode-renderer claims.
+Number Animation now has [accepted native finite-number evidence](../components/number-animation.md):
+overflow-safe monotonic interpolation, exact endpoints, native Intl text, reduced-motion
+settlement and explicit interruption/ownership without an animation/provider framework.
 **P3 is Verified for retained native scopes:** all 22 P3-assigned pages and their 1,086 rows
 are reconciled. **P4 is Verified for retained native scopes:** all 17 assigned routes,
 984 tracker rows and 68 page tasks are resolved, with no Planned P4 routes or unresolved
@@ -84,9 +87,9 @@ retained rows. **P5 is Verified for retained native scopes:** all ten assigned r
 P0 architecture/P6 and full framework parity remain independent.
 The three P0 catalog routes are resolved, and the related Discrete audit remains accepted
 under P3; broader foundation task IDs are not automatically completed.
-**P6 is active:** Carousel, Watermark, Upload, Calendar, Time and Countdown are accepted;
-three routes remain Planned. Recommended next: **Number Animation**, then Heatmap and
-Marquee as independently scoped routes. No next component is implemented in this Countdown commit.
+**P6 is active:** Carousel, Watermark, Upload, Calendar, Time, Countdown and Number
+Animation are accepted; two routes remain Planned. Recommended next: **Heatmap**, then
+Marquee as a separate route. No next component is implemented in this Number Animation commit.
 Component acceptance sections below retain their sign-off snapshots; earlier counts and
 “next”/“In progress” statements are historical, not the current phase dashboard.
 Read the [architecture and status definitions](architecture.md) before implementing a tracker row.
@@ -143,7 +146,7 @@ Avatar's four retained-scope tasks are checked using `9afc818`, Button's four us
 its linked acceptance record, plus Alert's, Empty's, Skeleton's, Spin's, Progress's, Statistic's, Typography's, Icon's, Gradient Text's, Ellipsis's, Page Header's, Divider's, Flex's, Space's, Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's four each with retained acceptance records;
 Popover through Rate, the subsequent Form/Auto Complete/Input OTP/Dynamic Input/Dynamic
 Tags/Mention/Color Picker/Date Picker/Time Picker records, and now Virtual List each add
-four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style, Carousel, Watermark, Upload, Calendar, Time and Countdown each add four more. The current total is **356/384 accepted across 89 pages, 28 unchecked**.
+four accepted tasks; Tree, Cascader, Tree Select, Transfer, Data Table, Log, Infinite Scroll, Popselect, Split, Config Provider, Element, Global Style, Carousel, Watermark, Upload, Calendar, Time, Countdown and Number Animation each add four more. The current total is **360/384 accepted across 90 pages, 24 unchecked**.
 P2 retained scopes remain reconciled; the nineteen sequential P3 scopes plus three mixed P2/P3 pages pass the complete P3 audit. Reconcile later implementation evidence
 with individual retained rows before promoting the historical reference inventory.
 
@@ -2552,6 +2555,49 @@ inline-theme exceptions remain open/partial; prior retained P2–P5/P0 routes ar
 its actual contract warrants it. Heatmap/Marquee remain separate; no next component
 is started in this Countdown commit.
 
+## Number Animation accepted
+
+[Canonical Number Animation acceptance](../components/number-animation.md) closes the
+seventh retained P6 route: finite monotonic/RAF interpolation, exact requested targets,
+native Intl precision/grouping/locale text, explicit pause/play/replay/retarget/cancel/
+reset and reduced-motion final values. Existing text/data ownership follows the proven
+Time/Countdown lease approach and common owned-attribute primitive without importing
+date/duration formatting or changing prior assets. No animation/provider/renderer,
+global scheduler, financial-decimal or completion side-effect claim is added.
+
+**Nine original identities + one source type + two source behavior supplements =
+12 rows: 11 adapted, one omitted, zero unresolved; four accepted tasks.** Source versus
+Markdown duration/to default differences are explicit, as are native localized-digit/
+rounding differences and omitted locale-provider behavior.
+
+**89 targeted tests pass** (62 Number Animation + 27 native/legacy), declarations/build
+and all prior/new budgets pass. Level-nine gzip: **5,224 ESM / 5,359 classic / 147 CSS**
+(raw **13,639 / 13,949 / 183**), under **6,000 / 6,000 / 500** ceilings. Combined
+JS+CSS **5,371 / 5,506**; complete three-file local ESM example **8,995** gzip bytes.
+Prior exports/budgets stay unchanged; Time/Countdown remain **4,767 / 4,588**,
+core/advanced/widgets **14,611 / 2,181 / 2,779**, with unchanged ceilings.
+
+Dedicated Chromium verified actual intermediate/paused/retargeted values and exact
+fractional/extreme endpoints, selected/hidden deferred completion, same/zero/reduced
+settlement, formatter failure, native localized grouping/digits, original nodes/forms/
+focus, RTL/zoom/media, no-JS, strict CSP and classic/Time/Countdown/legacy coexistence.
+Tests also enforce zero per-frame layout reads, RAF-ID-zero cancellation and stale
+frame/media/reentrant finish guards. Reduced-motion preference is sampled before delayed
+media events can wrongly start animation. No all-browser/AT or decimal-finance parity.
+
+**Current catalog: 96 routes / 4,004 rows / 360 of 384 tasks across 90 accepted pages /
+24 unchecked. P6: 270 rows = 168 adapted + 72 omitted + 30 unresolved; seven of nine
+specialized routes accepted.** Broad P0-01–P0-09 and legacy extraction/auto-install/
+inline-theme exceptions stay open/partial; prior retained P2–P5/P0 routes are unchanged.
+
+| Remaining group | Routes | Rows / unresolved |
+| --- | --- | ---: |
+| P6 (2 Planned) | Heatmap, Marquee | 30 / 30 |
+| Explicit exclusions (4) | Equation, QR Code, Legacy Grid, Legacy Transfer | 35 / 0 |
+
+**Next: Heatmap**, then Marquee. Each remains an independently bounded native scope;
+no next component is started in this Number Animation commit.
+
 ## Common Components (15)
 
 | Component | Plan direction | Current baseline | Phase |
@@ -2612,7 +2658,7 @@ is started in this Countdown commit.
 | [Image](components/image.md) | 🟢 Verified native/dialog scope; 49 explicit omissions | Native responsive images, bounded fallback/group preview; [accepted evidence](../components/image.md) | P2, P6 |
 | [List](components/list.md) | 🟢 Verified retained native scope; 3 explicit omissions | Native CSS lists/items/actions; [accepted evidence](../components/list.md) | P2 |
 | [Log](components/log.md) | 🟢 Verified native retained-text scope; 27 explicit omissions | Native Code/line records, bounded append/retention and conditional follow; [accepted evidence](../components/log.md) | P5; exclusions |
-| [Number Animation](components/number-animation.md) | 🔵 Planned | Related statistic | P6 |
+| [Number Animation](components/number-animation.md) | 🟢 Verified native number/text scope; one provider omission | Optional finite interpolation/Intl/RAF owner; [accepted evidence](../components/number-animation.md), no financial/renderer claim | P6 |
 | [QR Code](components/qr-code.md) | ⏭️ Intentionally omitted: encoder | None | Exclusions |
 | [Statistic](components/statistic.md) | 🟢 Verified retained scope; 3 explicit omissions | Standalone native Statistic; [accepted evidence](../components/statistic.md), legacy core preserved | P2 |
 | [Table](components/table.md) | 🟢 Verified retained native scope; 4 explicit omissions | Native table/border/stripe/scroll semantics; [accepted evidence](../components/table.md) | P2 |
@@ -2719,15 +2765,15 @@ such rows or adopting exact callback return/default semantics.
 | --- | --- |
 | Official route documents | 96 of 96, across the nine categories above |
 | Direct public API table rows | 2,220; retained one-for-one, including repeated/mode-specific rows |
-| Supplementary named declarations | 1,491: 370 inline fields, 186 type/helper/exclusion entries (including five Table public helper groups, Virtual List/Tree named ScrollTo types, UploadInst/UploadSettledFileInfo and CountdownTimeInfo/CountdownInst) and 935 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel/Watermark/Upload/Calendar/Time/Countdown source supplements |
+| Supplementary named declarations | 1,494: 370 inline fields, 187 type/helper/exclusion entries (including five Table public helper groups, Virtual List/Tree named ScrollTo types, UploadInst/UploadSettledFileInfo, CountdownTimeInfo/CountdownInst and NumberAnimationInst) and 937 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel/Watermark/Upload/Calendar/Time/Countdown/Number Animation source supplements |
 | Explicit inherited tracker rows | 290, including six source-inherited DialogReactive options, three ModalReactive fields, two NotificationReactive fields and three each Element/Carousel/Watermark/Upload/Calendar theme props |
-| Total tracker rows | 4,001; an inventory denominator, **not** an implementation-completion count |
-| Component execution checklists | 96 checklists with four numbered tasks each: 356 retained-scope tasks accepted across 89 component pages, 28 unchecked |
+| Total tracker rows | 4,004; an inventory denominator, **not** an implementation-completion count |
+| Component execution checklists | 96 checklists with four numbered tasks each: 360 retained-scope tasks accepted across 90 component pages, 24 unchecked |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
-| Status presentation | All 4,001 rows retain canonical text with emoji color: 2,048 Verified native adaptations, 1,914 intentional omissions, 36 Not reviewed and three Planned. Countdown contributes 12 adaptations/two omissions; other retained component counts and linked acceptance records are unchanged. |
-| Source agreement | All 2,220 direct source rows and 290 inherited rows remain covered; seven unchanged inventories match extraction; the 89 accepted pages preserve named/grouped identities with explicit dispositions; Countdown preserves all ten original identities/links and adds four source/type supplements; all four requested foundation-related route inventories remain reconciled |
-| Local links | All 582 scoped Countdown/reference/index/master file links resolve; earlier Time/Calendar/Upload/Watermark/Carousel/Global Style/four-route/component link snapshots remain historical evidence |
+| Status presentation | All 4,004 rows retain canonical text with emoji color: 2,059 Verified native adaptations, 1,915 intentional omissions, 27 Not reviewed and three Planned. Number Animation contributes 11 adaptations/one omission; other retained component counts and linked acceptance records are unchanged. |
+| Source agreement | All 2,220 direct source rows and 290 inherited rows remain covered; six unchanged inventories match extraction; the 90 accepted pages preserve named/grouped identities with explicit dispositions; Number Animation preserves all nine original identities/links and adds three source/type supplements; all four requested foundation-related route inventories remain reconciled |
+| Local links | All 588 scoped Number Animation/reference/index/master file links resolve; earlier Countdown/Time/Calendar/Upload/Watermark/Carousel/Global Style/four-route/component link snapshots remain historical evidence |
 | Pinned links | Repository paths and referenced line bounds checked against the local pinned checkout |
 
 Repeatable extraction used the pinned public checkout and MarkupUI's already-installed TypeScript

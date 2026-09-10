@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Native Number Animation · MarkupUI</title>
+  <link rel="stylesheet" href="../../dist/markup-ui-number-animation.css">
+  <link rel="stylesheet" href="./number-animation.css">
+  <script type="module" src="./number-animation.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Number Animation: finite values, native frames and text</h1>
+    <p>Intl handles localized digits and grouping. Interpolation uses elapsed monotonic
+      time, not accumulated additions. Display rounding is not financial-decimal arithmetic.
+      Reduced motion presents the final value without forcing animation.</p>
+    <div class="controls" data-enhancement hidden>
+      <label>From <input id="from" type="number" value="0" step="any"></label>
+      <label>To <input id="to" type="number" value="2500.5" step="any"></label>
+      <label>Duration (ms) <input id="duration" type="number" value="1500" min="0" max="3600000" step="1"></label>
+      <label>Precision <input id="precision" type="number" value="2" min="0" max="20" step="1"></label>
+      <label>Locale <select id="locale"><option value="en-US">English</option><option value="de-DE">German</option><option value="ar-EG">Arabic</option></select></label>
+      <label>Easing <select id="easing"><option value="ease-out">Ease out quint</option><option value="linear">Linear</option></select></label>
+      <label><input id="group" type="checkbox" checked>Native grouping</label>
+      <label><input id="active" type="checkbox">Active (pause/resume)</label>
+      <button type="button" id="apply">Apply settings (new endpoint run)</button>
+      <button type="button" id="play">Play/resume/replay</button>
+      <button type="button" id="pause">Pause</button>
+      <button type="button" id="cancel">Cancel at last sample</button>
+      <button type="button" id="reset">Reset from configured start</button>
+      <button type="button" id="retarget">Retarget from current value</button>
+      <button type="button" id="extremes">Opposite finite extremes</button>
+      <button type="button" id="equal">Same endpoints</button>
+      <button type="button" id="zero">Zero duration</button>
+      <button type="button" id="fail-format">Install failing formatter</button>
+      <button type="button" id="recover">Restore native formatter</button>
+      <button type="button" id="hidden-play">Play hidden example</button>
+      <button type="button" id="hide">Hide/show main display</button>
+      <label><input id="rtl" type="checkbox">RTL</label>
+      <label><input id="zoom" type="checkbox">CSS zoom 200%</label>
+      <button type="button" id="disconnect">Disconnect</button>
+    </div>
+    <section id="display" aria-label="Native animated number">
+      <h2>Original native value and prefix</h2>
+      <data class="mui-number-animation" id="number" data-number-animation value="2500.5" tabindex="0"><strong>Total: </strong><span data-number-text>2,500.50</span></data>
+      <p>Focus or select the displayed number to defer rendering/finish. Elapsed active
+        time continues; release catches up once. The Text node and strong prefix stay intact.</p>
+    </section>
+    <details id="hidden-example">
+      <summary>Initially hidden animation</summary>
+      <data class="mui-number-animation" id="hidden-number" data-number-animation value="0">0</data>
+      <p>Hidden frames stop. Completion is delivered when the current/final value is observed after reveal.</p>
+    </details>
+    <p id="completion" aria-live="polite" aria-atomic="true">Application-owned completion notice, not a frame-by-frame live region.</p>
+    <form id="native-form"><label>Independent native field <input id="title" name="title" value="Animation must not change this"></label>
+      <button type="reset">Reset this native field</button></form>
+    <pre id="feedback" aria-label="Numeric run and error inspection">No JavaScript: the meaningful final-value fallbacks remain and enhancement controls stay hidden.</pre>
+    <footer><label>Outside focus target <input id="outside" value="No automatic focus change"></label>
+      <p>No animation/formatting library, provider, global scheduler, network/sound/navigation,
+        financial precision claim or arbitrary child renderer is installed.</p></footer>
+  </main>
+</body>
+</html>

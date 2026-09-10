@@ -74,6 +74,8 @@ components.push("time")
 classicEntries.time = "global.ts"
 components.push("countdown")
 classicEntries.countdown = "global.ts"
+components.push("number-animation")
+classicEntries["number-animation"] = "global.ts"
 
 await Promise.all([
   build({
@@ -156,6 +158,9 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-number-animation.js": 6_000,
+  "markup-ui-number-animation.global.js": 6_000,
+  "markup-ui-number-animation.css": 500,
   "markup-ui-countdown.js": 6_000,
   "markup-ui-countdown.global.js": 6_000,
   "markup-ui-countdown.css": 750,
