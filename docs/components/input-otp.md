@@ -177,15 +177,51 @@ fallback. This is a local test recipe, not an authentication transport implement
 
 ## External CSS and single-field adaptation
 
+The [rendered style audit](../style-audit/components/input-otp.md) compares the pinned
+six-cell renderer against this deliberately single-field adaptation.
 `.mui-input-otp` styles the real field using a monospace font, visible native selection and
 focus outline, character spacing and logical sizing. It is **not six hidden/native cells**.
 `--mui-input-otp-length` defaults to 6 for width geometry only; author a matching CSS override
 for another length. It does not set maxlength or validation policy.
-`--mui-input-otp-gap` defaults to .5ch and controls letter spacing, not inter-input navigation.
+`--mui-input-otp-gap` defaults to **8px** and controls letter spacing, not inter-input
+navigation. Width now includes that authored spacing instead of assuming a fixed .5ch
+gap, so a larger gap does not silently clip a full code at the default content width.
 Tokens are read on the field; no JS style/measurement writes or provider inheritance.
-`data-block` uses full available width; `data-size="small|large"` changes font/padding,
-with medium default. Code direction stays **LTR** inside RTL layout because retained
+`data-block` uses full available width; small/medium/large fields have **28/34/40px**
+heights and **14/14/15px** fonts. These match source cell heights/font sizes, not the
+source group's width or per-cell glyph positions. Code direction stays **LTR** inside RTL layout because retained
 codes are ordered ASCII strings; labels/layout remain authored RTL. No digit reversal.
+
+Standalone defaults use 3px corners, themed light/dark text, surfaces and placeholders.
+Enabled hover/focus use primary borders and source-style light ring/dark glow; the
+additional visible system focus outline remains. Native disabled/fieldset-disabled
+fields use disabled colors without fading. `aria-invalid="true"` retains its dashed
+cue and gains the source error hue; it does not set native validity. Warning status
+and per-cell success decoration are not introduced. A complete count is never painted
+as authentication success.
+
+| Public CSS tokens | Purpose / default |
+| --- | --- |
+| `--mui-input-otp-length`, `--mui-input-otp-gap` | Width length 6; character spacing 8px |
+| `--mui-input-otp-height`, `--mui-input-otp-font-size` | Override the private size presets |
+| `--mui-input-otp-padding`, `--mui-input-otp-radius` | Whole-field horizontal padding 12px; radius 3px |
+| `--mui-input-otp-color`, `--mui-input-otp-background`, `--mui-input-otp-border` | Standalone field paint |
+| `--mui-input-otp-focus`, `--mui-input-otp-placeholder` | Focus/caret paint; placeholder paint |
+| `--mui-input-otp-disabled-color`, `--mui-input-otp-disabled-background` | Native disabled field paint |
+
+Author tokens survive small/large presets. Font family can be changed with ordinary CSS;
+the default remains monospace rather than replacing the existing native glyph policy.
+At constrained widths the real input may scroll its content; no hidden per-digit layout
+or full-code mirror is created.
+
+When composed as Input's `[data-input-control]`, shared Input owns the wrapper face,
+font and sizing. OTP does not add a second focused/disabled surface over that owner.
+OTP supplies spacing/direction and its retained native selection/focus behavior.
+Forced colors use unfaded GrayText disabled text/borders, including placeholders.
+Print resets the actual field, placeholder and count to black on white.
+The parent-owned Input wrapper still needs its own disabled forced-color border and
+focused/status print reset; see the audit's explicit shared proposal. No shared Input
+CSS or runtime was changed in this pass.
 
 | Source surface | Retained mapping / explicit omission |
 | --- | --- |
@@ -219,7 +255,24 @@ declares array/null; this discrepancy is retained explicitly rather than called 
 3. [x] Single-field CSS adaptation accepted; per-cell rendering/navigation omitted.
 4. [x] Targeted tests, build/budgets, review fixes and browser evidence recorded.
 
-### Evidence and limitations
+### Style-pass source acceptance
+
+**81 focused tests** (73 existing OTP + eight style regressions) pass with the current
+source. Isolated level-nine gzip is **2,280 ESM / 2,352 classic / 994 CSS**; simulated
+Windows checkout CSS is **997 bytes**, within unchanged **3,000 / 3,000 / 1,000**
+ceilings. Existing esbuild formatting keeps all local focus/media safeguards in budget.
+No controller, dependency, shared source or generated asset was changed.
+
+Private actual Chromium evidence covers default/sizes/disabled/readonly/password/
+placeholder/error/block/length/author/composed cases in both themes, source-only
+warning/success, native input/selection, synthetic paste plus CDP insertion, IME,
+completion metadata/deduplication, custom validity, reset, fieldset first-legend
+behavior, RTL/zoom, forced-disabled and dark print. Native no-JS required validation
+and local method=dialog submission remain. Actual OS clipboard/SMS autofill and
+all-platform password artwork are not certified. Integrated release build/publication
+and the shared Input wrapper proposal remain with the parent.
+
+### Historical native-workflow evidence and limitations
 
 - **178 tests passed**: OTP **73**, Input 52, Form 53.
   `pnpm exec vitest run tests\input-otp.test.ts tests\input.test.ts tests\form.test.ts`

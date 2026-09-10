@@ -26,6 +26,23 @@ inputmode/autocomplete hints are authored, not provider-generated. Mobile autofi
 platform-dependent. Native password masking is presentation, not a security guarantee.
 The demo uses method=dialog to avoid code-bearing URLs/network requests even without JS.
 
+### Rendered default-style comparison
+
+The [Input OTP style audit](../../style-audit/components/input-otp.md) records actual
+pinned light/dark rendering and the retained single-field limits. Native small/medium/
+large heights now match source **28/34/40px**, with **14/14/15px** type, 3px radius and
+source light/dark border, placeholder, disabled and error palettes. Eight-pixel native
+letter spacing is an adaptation of the source's eight-pixel **inter-cell** gap, not
+a claim of six-cell geometry or navigation parity. Authored gap participates in width.
+
+The original monospace field, visible system focus outline, dashed aria-invalid cue,
+one native form value and metadata-only completion remain. Warning decoration and
+cell/slot rendering remain outside the retained model. Input-owned wrappers are not
+repainted by OTP focus/disabled rules. OTP's disabled/media text is corrected; shared
+Input wrapper forced-disabled borders and focused print paint are explicitly proposed
+to the parent, not changed in this scope. No inventory identities or omissions below
+were expanded into new runtime APIs.
+
 <!-- BEGIN PINNED API INVENTORY -->
 
 ## Reference and review boundary

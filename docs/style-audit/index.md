@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 66/96 scopes.** The other **30** are not yet accepted in this
+**Reviewed and integrated: 67/96 scopes.** The other **29** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -71,7 +71,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Code](../naive-ui/components/code.md) | 🟢 Fixed / 🟡 Remaining | [Plain typography, gutters and authored token limits](components/code.md) |
 | [Collapse Transition](../naive-ui/components/collapse-transition.md) | 🟢 Fixed / 🟡 Remaining | [Height/fade curves and native scheduling/geometry limits](components/collapse-transition.md) |
 | [Collapse](../naive-ui/components/collapse.md) | 🟢 Fixed / 🟡 Remaining | [Disclosure spacing, hidden boundaries and native marker/motion limits](components/collapse.md) |
-| [Color Picker](../naive-ui/components/color-picker.md) | ⚪ Pending | — |
+| [Color Picker](../naive-ui/components/color-picker.md) | 🟠 Reviewing | — |
 | [Config Provider](../naive-ui/components/config-provider.md) | ⚪ Pending | — |
 | [Countdown](../naive-ui/components/countdown.md) | ⚪ Pending | — |
 | [Data Table](../naive-ui/components/data-table.md) | 🟢 Fixed / 🟡 Remaining | [Native density/sort/selection paint and explicit renderer/width limits](components/data-table.md) |
@@ -100,7 +100,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Image](../naive-ui/components/image.md) | 🟢 Fixed / 🟡 Remaining | [Preview fitting, chrome and native toolbar limits](components/image.md) |
 | [Infinite Scroll](../naive-ui/components/infinite-scroll.md) | ⚪ Pending | — |
 | [Input Number](../naive-ui/components/input-number.md) | 🟢 Fixed / 🟡 Remaining | [Field/stepper styling, bounded sizing and native numeric limits](components/input-number.md) |
-| [Input OTP](../naive-ui/components/input-otp.md) | 🟠 Reviewing | — |
+| [Input OTP](../naive-ui/components/input-otp.md) | 🟢 Fixed / 🟡 Remaining | [Single-field sizing/palette, native cell limits and pending shared Input media follow-up](components/input-otp.md) |
 | [Input](../naive-ui/components/input.md) | 🟢 Fixed / 🟡 Remaining | [Native field geometry, theme states and textarea/icon limits](components/input.md) |
 | [Layout](../naive-ui/components/layout.md) | 🟢 Fixed / 🟡 Remaining | [Region palettes, author tokens and native scrolling limits](components/layout.md) |
 | [Legacy Grid](../naive-ui/components/legacy-grid.md) | ⚪ Pending | — |
