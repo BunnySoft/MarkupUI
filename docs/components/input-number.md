@@ -174,7 +174,10 @@ action failures. Native step errors can also be inspected through state.stepErro
 
 ## CSS and complete upstream mapping
 
-CSS supplies flex/wrapping, native input border/padding/focus, action shapes and affixes.
+CSS supplies a shared field background/inset boundary, flex/wrapping, native input
+sizing/focus, action shapes and affixes. The real input is neither hidden nor replaced.
+The root uses border-box sizing so explicit widths include its padding; the original
+native control retains `max-inline-size:100%`, including for authored nonshrinking widths.
 For button-placement right, author decrement/increment after the input; for both, author
 decrement before and increment after it. There is no CSS reordering that changes visual
 order independently of native Tab order. No show-button renderer: omit/hide optional
@@ -186,6 +189,31 @@ validity or a live announcement. Logical dimensions preserve RTL/wrapping. Force
 retain native controls; print hides custom actions. No animations need motion overrides.
 Tokens share `--mui-number`: `-color`, `-font`, `-pad`, `-border`, `-radius`, `-background`,
 `-focus`, `-disabled`. No Input/Button/theme-provider/CSS-in-JS dependency.
+
+The [default-style audit](../style-audit/components/input-number.md) records measured
+geometry, paint and retained differences. Field heights are **22/28/34/40px**, fonts
+**12/14/14/15px**, and leading insets **8/10/12/14px**, with an 8px trailing inset.
+`-pad` controls the leading field inset; background, border and radius tokens now paint
+the combined field rather than separate boxes around the input and every action.
+An ancestor `data-mui-theme="light|dark"` selects the local preset; standalone fields
+default to light. Private size/status defaults never overwrite public author tokens.
+Neutral defaults do not use the legacy shared text roles.
+
+Custom actions are borderless, intrinsic authored buttons. An authored 18px decorative
+icon produces an 18px action box; text labels remain supported and are not clipped to
+icon width. No plus/minus/clear artwork is generated or copied. Button order and native
+Tab order remain authored; adjacent decrement/increment icons have no extra internal gap.
+All other authored siblings use a 4px gap. Naive's extra 10px prefix/suffix slot margins
+are not inferred from arbitrary child content; authors can add external spacing where
+their intended prefix/suffix anatomy requires it.
+
+Ordinary focus uses the light primary ring or dark primary glow and field tint. Explicit
+status remains the retained **border-only** presentation; it does not import Input's
+separate status-specific hover/caret/focus palette. Borderless retains a visible keyboard
+focus ring. Native number spinners, editing/selection support, caret and locale grammar
+remain browser-owned rather than replaced by Naive's text-field/parser machinery.
+Forced colors supplies explicit field/action focus outlines and system disabled colors,
+without compounded button opacity. Print retains the native field and hides custom actions.
 
 | Upstream item | Retained adaptation or explicit omission |
 | --- | --- |
@@ -209,9 +237,11 @@ Tokens share `--mui-number`: `-color`, `-font`, `-pad`, `-border`, `-radius`, `-
 
 ## Acceptance
 
+### Original native-contract acceptance (historical)
+
 Local evidence is obtained on 2026-09-09 with server 4188 and a dedicated Input Number tab.
 No universal browser/AT/native-formatting, arbitrary-precision or upstream framework parity
-is claimed.
+is claimed. The dimensions and asset bytes below describe that original revision.
 
 - **116 targeted tests passed**: 37 InputNumber, 52 Input and 27 native/legacy regressions,
   using `pnpm test -- tests\input-number.test.ts tests\input.test.ts tests\native.test.ts`.
@@ -259,3 +289,39 @@ All **36 original identities** remain plus ten source supplements: **46 rows = 3
 targets + 13 omissions**. Catalog totals are **3,539 rows and 236/384 accepted tasks across
 59 pages**, with edited local file links validated. P4 remains In progress.
 **Next Slider**, then Rate/native controls before Form enhancements.
+
+### Default-style audit, 2026-09-10
+
+**42 Input Number-only tests passed**: all 37 original native cases plus five CSS
+regressions. Private Chromium comparisons covered four sizes, empty/disabled/readonly,
+min/max availability, both action placements, prefix/suffix, clear, round/borderless,
+status presentation, hover/focus and both schemes. The linked audit explicitly separates
+matched geometry from authored-affix, native-spinner and peer-theme differences.
+
+Browser probes passed for a real native-spinner click (2→2.5), custom boundary stepping
+and focus recovery (9.5→10), no-op event suppression, native value-attribute step base
+(0.3→0.35), bad-input drafts, out-of-range values, clear event order and focus, step=any,
+native selection API limits, reset and readonly/disabled FormData. No stepping probe
+appeared in the DOM. All eight public tokens were verified.
+
+Forced colors preserved native number appearance, explicit field/action focus, and full
+disabled-button opacity with system colors. First-legend disabling, print, reduced motion,
+RTL at 360px/200% CSS zoom, and no-JS ArrowUp/reset/FormData passed. These are Chromium
+observations, not all-engine, physical high-contrast, OS locale or IME certification.
+
+The sizing follow-up used no global box-sizing reset: explicit 360px and full-width
+360px roots both remained 360px, rather than the prior 380px. A 160px container with
+28px public leading padding and 18px font bounded an authored nonshrinking 1000px input
+to the available 124px. Narrow/RTL/200% CSS zoom had no container or page overflow;
+native appearance and forced-color focus remained intact.
+
+| Isolated asset | Raw bytes | Gzip level 9 | Unchanged ceiling |
+| --- | ---: | ---: | ---: |
+| `markup-ui-input-number.js` | 7,320 | 2,859 | 3,500 |
+| `markup-ui-input-number.global.js` | 7,495 | 2,932 | 3,500 |
+| `markup-ui-input-number.css` | 3,064 | 999 | 1,000 |
+
+The equivalently compacted CSS is one line without a trailing line ending, so a CRLF
+checkout has the same bytes. Enhanced totals are **3,858 ESM / 3,931 classic gzip bytes**.
+JavaScript, Input/shared helpers, dependencies, build scripts and generated files are
+unchanged. No full build, commit or push was performed.

@@ -19,6 +19,35 @@ function fixture(id = "quantity-root") {
 }
 afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
 
+describe("Input Number stylesheet contract", () => {
+  const css = readFileSync(join("src", "components", "input-number", "input-number.css"), "utf8")
+  it("keeps size, round and status defaults private for author tokens", () => {
+    expect(css).not.toMatch(/--mui-number-[\w-]+\s*:/)
+    for (const height of [22, 28, 34, 40]) expect(css).toMatch(new RegExp(`--_n-h:\\s*${height}px`))
+    expect(css).toMatch(/data-mui-theme="?dark"?/)
+    expect(css).not.toContain("var(--mui-text-primary")
+  })
+  it("does not suppress native spinners, reorder actions or hide the number control", () => {
+    expect(css).not.toMatch(/appearance\s*:|spin-button|[;{]\s*order\s*:|position:\s*absolute|pointer-events:\s*none/)
+    expect(css).toMatch(/\[hidden\][^{]*\{[^}]*display:\s*none\s*!important/)
+  })
+  it("does not mistake a bounded stepper for a disabled number field", () => {
+    expect(css).toContain(":has([data-number-control]:disabled)")
+    expect(css).not.toContain(":has(:disabled)")
+  })
+  it("provides explicit forced-color boundaries and keyboard action focus", () => {
+    const forced = css.split(/@media\s*\(forced-colors:\s*active\)/)[1]?.split("@media print")[0] ?? ""
+    expect(forced).toMatch(/outline:\s*1px solid CanvasText/)
+    expect(forced).toMatch(/outline:\s*2px solid Highlight/)
+    expect(forced).toMatch(/color:\s*GrayText;\s*opacity:\s*1/)
+    expect(css).toMatch(/button:focus-visible\s*\{[^}]*outline:/)
+  })
+  it("includes frame padding in authored widths and bounds the original native field", () => {
+    expect(css).toMatch(/\.mui-input-number\s*\{[^}]*box-sizing:\s*border-box/)
+    expect(css).toMatch(/\[data-number-control\]\s*\{[^}]*max-inline-size:\s*100%/)
+  })
+})
+
 describe("authored native number ownership", () => {
   it("preserves control/listeners/labels/defaults and never inserts a stepping probe", () => {
     const { root, helper, control, beforeCount } = fixture()
