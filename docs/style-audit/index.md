@@ -3,6 +3,10 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
+**Reviewed and integrated: 8/96 scopes.** The other **88** are not yet accepted in this
+pass. Reviewed includes explicitly documented remaining native, legacy and motion
+differences; it does not mean eight components have complete pixel/API parity.
+
 The comparison starts with Naive UI's **default light theme**, default component props
 and only the content/values needed to render a useful example. The reference version,
 fixture conditions and measured values are recorded in each report. Dark-mode and
@@ -40,18 +44,20 @@ claiming a match or silently skipping the component.
 ## Queue
 
 Component links lead to the existing scope inventory. A style-report link is added when
-that component's review is available. Review begins Avatar, Button, Card, then proceeds
-through the remaining catalog one component at a time.
+that component's review is available. Avatar and Button were reviewed first. The remaining
+audit now uses parallel component-owned work, with shared theme changes, builds and commits
+coordinated centrally. Reviewing does not mean matched; each component still needs its own
+rendered evidence and acceptance report.
 
 | Component | Status | Style report |
 | --- | --- | --- |
 | [Affix](../naive-ui/components/affix.md) | ⚪ Pending | — |
-| [Alert](../naive-ui/components/alert.md) | ⚪ Pending | — |
+| [Alert](../naive-ui/components/alert.md) | 🟢 Fixed / 🟡 Remaining | [Geometry, severity palettes and SVG limits](components/alert.md) |
 | [Anchor](../naive-ui/components/anchor.md) | ⚪ Pending | — |
 | [Auto Complete](../naive-ui/components/auto-complete.md) | ⚪ Pending | — |
 | [Avatar](../naive-ui/components/avatar.md) | 🟢 Fixed | [Defaults including text fit; architectural boundaries](components/avatar.md) |
 | [Back Top](../naive-ui/components/back-top.md) | ⚪ Pending | — |
-| [Badge](../naive-ui/components/badge.md) | ⚪ Pending | — |
+| [Badge](../naive-ui/components/badge.md) | 🟢 Fixed / 🟡 Remaining | [Numeric cells, palette, wave and legacy limits](components/badge.md) |
 | [Breadcrumb](../naive-ui/components/breadcrumb.md) | ⚪ Pending | — |
 | [Button](../naive-ui/components/button.md) | 🟢 Fixed / 🟡 Remaining | [Defaults, state endpoints and remaining motion](components/button.md) |
 | [Calendar](../naive-ui/components/calendar.md) | ⚪ Pending | — |
@@ -70,19 +76,19 @@ through the remaining catalog one component at a time.
 | [Descriptions](../naive-ui/components/descriptions.md) | ⚪ Pending | — |
 | [Dialog](../naive-ui/components/dialog.md) | ⚪ Pending | — |
 | [Discrete API](../naive-ui/components/discrete.md) | ⚪ Pending | — |
-| [Divider](../naive-ui/components/divider.md) | ⚪ Pending | — |
+| [Divider](../naive-ui/components/divider.md) | 🟠 Reviewing | — |
 | [Drawer](../naive-ui/components/drawer.md) | ⚪ Pending | — |
 | [Dropdown](../naive-ui/components/dropdown.md) | ⚪ Pending | — |
 | [Dynamic Input](../naive-ui/components/dynamic-input.md) | ⚪ Pending | — |
 | [Dynamic Tags](../naive-ui/components/dynamic-tags.md) | ⚪ Pending | — |
 | [Element](../naive-ui/components/element.md) | ⚪ Pending | — |
 | [Ellipsis](../naive-ui/components/ellipsis.md) | ⚪ Pending | — |
-| [Empty](../naive-ui/components/empty.md) | ⚪ Pending | — |
+| [Empty](../naive-ui/components/empty.md) | 🟠 Reviewing | — |
 | [Equation](../naive-ui/components/equation.md) | ⚪ Pending | — |
 | [Flex](../naive-ui/components/flex.md) | ⚪ Pending | — |
 | [Float Button](../naive-ui/components/float-button.md) | ⚪ Pending | — |
 | [Form](../naive-ui/components/form.md) | ⚪ Pending | — |
-| [Global Style](../naive-ui/components/global-style.md) | ⚪ Pending | — |
+| [Global Style](../naive-ui/components/global-style.md) | 🟢 Fixed / 🟡 Remaining | [Body defaults and opt-in shared-preset boundaries](components/global-style.md) |
 | [Gradient Text](../naive-ui/components/gradient-text.md) | ⚪ Pending | — |
 | [Grid](../naive-ui/components/grid.md) | ⚪ Pending | — |
 | [Heatmap](../naive-ui/components/heatmap.md) | ⚪ Pending | — |
@@ -118,7 +124,7 @@ through the remaining catalog one component at a time.
 | [Result](../naive-ui/components/result.md) | ⚪ Pending | — |
 | [Scrollbar](../naive-ui/components/scrollbar.md) | ⚪ Pending | — |
 | [Select](../naive-ui/components/select.md) | ⚪ Pending | — |
-| [Skeleton](../naive-ui/components/skeleton.md) | ⚪ Pending | — |
+| [Skeleton](../naive-ui/components/skeleton.md) | 🟠 Reviewing | — |
 | [Slider](../naive-ui/components/slider.md) | ⚪ Pending | — |
 | [Space](../naive-ui/components/space.md) | ⚪ Pending | — |
 | [Spin](../naive-ui/components/spin.md) | ⚪ Pending | — |
@@ -128,7 +134,7 @@ through the remaining catalog one component at a time.
 | [Switch](../naive-ui/components/switch.md) | ⚪ Pending | — |
 | [Table](../naive-ui/components/table.md) | ⚪ Pending | — |
 | [Tabs](../naive-ui/components/tabs.md) | ⚪ Pending | — |
-| [Tag](../naive-ui/components/tag.md) | ⚪ Pending | — |
+| [Tag](../naive-ui/components/tag.md) | 🟢 Fixed / 🟡 Remaining | [Sizing, palettes, close states and native limits](components/tag.md) |
 | [Thing](../naive-ui/components/thing.md) | ⚪ Pending | — |
 | [Time Picker](../naive-ui/components/time-picker.md) | ⚪ Pending | — |
 | [Time](../naive-ui/components/time.md) | ⚪ Pending | — |
@@ -137,7 +143,7 @@ through the remaining catalog one component at a time.
 | [Transfer](../naive-ui/components/transfer.md) | ⚪ Pending | — |
 | [Tree Select](../naive-ui/components/tree-select.md) | ⚪ Pending | — |
 | [Tree](../naive-ui/components/tree.md) | ⚪ Pending | — |
-| [Typography](../naive-ui/components/typography.md) | ⚪ Pending | — |
+| [Typography](../naive-ui/components/typography.md) | 🟢 Fixed / 🟡 Remaining | [Text, headings, code and native presentation limits](components/typography.md) |
 | [Upload](../naive-ui/components/upload.md) | ⚪ Pending | — |
 | [Virtual List](../naive-ui/components/virtual-list.md) | ⚪ Pending | — |
 | [Watermark](../naive-ui/components/watermark.md) | ⚪ Pending | — |
