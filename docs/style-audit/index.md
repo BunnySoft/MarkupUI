@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 12/96 scopes.** The other **84** are not yet accepted in this
+**Reviewed and integrated: 14/96 scopes.** The other **82** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -85,7 +85,7 @@ rendered evidence and acceptance report.
 | [Ellipsis](../naive-ui/components/ellipsis.md) | ⚪ Pending | — |
 | [Empty](../naive-ui/components/empty.md) | 🟢 Fixed / 🟡 Remaining | [Content spacing, muted roles and original illustration](components/empty.md) |
 | [Equation](../naive-ui/components/equation.md) | ⚪ Pending | — |
-| [Flex](../naive-ui/components/flex.md) | ⚪ Pending | — |
+| [Flex](../naive-ui/components/flex.md) | 🟠 Reviewing | — |
 | [Float Button](../naive-ui/components/float-button.md) | ⚪ Pending | — |
 | [Form](../naive-ui/components/form.md) | ⚪ Pending | — |
 | [Global Style](../naive-ui/components/global-style.md) | 🟢 Fixed / 🟡 Remaining | [Body defaults and opt-in shared-preset boundaries](components/global-style.md) |
@@ -127,9 +127,9 @@ rendered evidence and acceptance report.
 | [Skeleton](../naive-ui/components/skeleton.md) | 🟢 Fixed / 🟡 Remaining | [Animated endpoints and retained shape/repeat limits](components/skeleton.md) |
 | [Slider](../naive-ui/components/slider.md) | ⚪ Pending | — |
 | [Space](../naive-ui/components/space.md) | 🟢 Matched / 🟡 Remaining | [Default layout matches; intrinsic nowrap limits](components/space.md) |
-| [Spin](../naive-ui/components/spin.md) | ⚪ Pending | — |
+| [Spin](../naive-ui/components/spin.md) | 🟢 Fixed / 🟡 Remaining | [SVG motion, theme dimming and native interaction limits](components/spin.md) |
 | [Split](../naive-ui/components/split.md) | ⚪ Pending | — |
-| [Statistic](../naive-ui/components/statistic.md) | 🟠 Reviewing | — |
+| [Statistic](../naive-ui/components/statistic.md) | 🟢 Fixed / 🟡 Remaining | [Inline value geometry, text roles and native limits](components/statistic.md) |
 | [Steps](../naive-ui/components/steps.md) | ⚪ Pending | — |
 | [Switch](../naive-ui/components/switch.md) | ⚪ Pending | — |
 | [Table](../naive-ui/components/table.md) | ⚪ Pending | — |
