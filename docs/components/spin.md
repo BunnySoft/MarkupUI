@@ -78,7 +78,7 @@ Wrapped content stays operable while the indicator is visible. This deliberately
 from upstream's pointer-blocking CSS.
 
 The overlay ignores pointer hit-testing. Visible wrapped content is dimmed by external CSS
-(`--mui-spin-content-opacity`, default `.65`); hiding/disconnecting removes that private
+(`--mui-spin-content-opacity`, default `.5` in light and `.38` in dark); hiding/disconnecting removes that private
 visual state so the author's original CSS applies again. No author opacity attribute/style
 is overwritten.
 
@@ -129,7 +129,7 @@ or a separate live description outside a busy content region. Explicit host/chil
 preserved, not duplicated. Do not indiscriminately label a wrapped host in a way that overrides
 the semantics of its native controls.
 
-The default graphic is an original simple partial-circle SVG, created in the SVG namespace,
+The default graphic is a native circle SVG with a CSS-animated arc, created in the SVG namespace,
 decorative and nonfocusable. It has no SMIL elements or icon-library dependency. The visible
 description/accessible fallback carries the meaning, not rotation or color.
 
@@ -146,6 +146,9 @@ description/accessible fallback carries the meaning, not rotation or color.
   circle radius `radius - strokeWidth / 2`. Combined geometry requires a finite positive
   viewBox and stroke width less than twice radius. Scale can zoom/crop the ring as upstream's
   coordinate model does; choose values suited to the visible graphic.
+- The circle's native `pathLength` normalizes dash units by the configured radius. Fixed
+  CSS dash values 567/142 then correspond to upstream's `5.67 × radius` / `1.42 × radius`
+  across supported stroke/radius/scale combinations, without extra style-property writes.
 - `stroke` / `.stroke` is a browser-supported CSS color, validated with a detached native
   color declaration and applied through SVG `color` with `stroke="currentColor"` rather
   than a broader paint-server URL contract. Empty/invalid values and CSS-wide cascade
@@ -153,8 +156,21 @@ description/accessible fallback carries the meaning, not rotation or color.
 - Geometry/stroke props affect the default graphic, not an authored icon's path/stroke.
   Configuration is still validated consistently when custom content is present.
 - `rotate="false"` / `.rotate = false` stops rotation of **custom** icons. The default
-  graphic retains its own CSS rotation, matching the documented distinction.
-  Reduced-motion preference stops both kinds.
+  graphic retains its own CSS rotation and arc animation, matching the documented distinction.
+  Reduced-motion preference stops both kinds and leaves a readable stationary partial ring.
+
+Default motion now follows the pinned loading graphic: a three-second full rotation plus
+a 1.6-second arc cycle. The latter combines the source's nested rotations into
+0° → 270° → 720°, while its dash offset moves 567 → 142 → 567. Both cycles are linear.
+Custom icons retain their separate two-second rotation. No SMIL, animation frame loop or
+JavaScript animation controller is introduced.
+
+Descriptions inherit surrounding typography and, in standalone mode, surrounding text color.
+Wrapped descriptions use the primary theme color by default. This matches the actual pinned
+rendering, including its mode-dependent description color. Public description/font tokens
+override these defaults. Use the existing themes stylesheet with `data-mui-theme="dark"` for
+the shared primary palette; content dimming is scoped locally by the Spin stylesheet.
+Nested `data-mui-theme="light"` scopes restore its light dimming value.
 
 Numeric size uses one isolated private custom-property write, `--_mui-spin-size`; this is
 an explicit style-attribute/CSP boundary, not a runtime stylesheet or prop-object adapter.
@@ -226,7 +242,28 @@ not invented upstream inventory rows.
 
 The demo includes a native `.mui-spin` wrapper with an authored decorative SVG, explicit
 description and the same external CSS. It needs no controller when delayed wrapping is
-unnecessary. Templates stay inert and are never cloned or rendered by the component.
+unnecessary. An existing arbitrary static SVG may retain only whole-graphic rotation.
+For the complete default arc motion, the equivalent 34px native markup is:
+
+```html
+<span class="mui-spin">
+  <span data-mui-spin-indicator>
+    <span data-mui-spin-icon-box>
+      <svg data-mui-spin-default aria-hidden="true" focusable="false"
+           viewBox="0 0 200 200" fill="none" stroke="currentColor">
+        <circle data-mui-spin-arc cx="100" cy="100" r="91" stroke-width="18"
+                stroke-linecap="round" pathLength="571.7698629533425"
+                stroke-dasharray="567" stroke-dashoffset="142"></circle>
+      </svg>
+    </span>
+    <span data-mui-spin-description-area data-mui-spin-visible-description>Loading</span>
+  </span>
+</span>
+```
+
+The normalized `pathLength` above is specific to radius 100 / stroke width 18. Preserve
+that geometry or recalculate it when authoring a different static ring; the enhanced
+controller does so automatically. Templates stay inert and are never cloned or rendered.
 
 Public CSS tokens: `--mui-spin-size`, `--mui-spin-color`, `--mui-spin-font-size`,
 `--mui-spin-description-color`, `--mui-spin-description-gap`, `--mui-spin-content-opacity`,
@@ -250,7 +287,28 @@ HTML-string evaluator, stylesheet injection or runtime dependency is introduced.
 8. [x] Review nested CSS/hidden-state issues and verify native browser timing, focus and load order.
 9. [x] Reconcile reference rows/four tasks, catalog totals and P2-02 retained-workstream completion.
 
-### Acceptance evidence — 2026-09-08
+### Style acceptance — 2026-09-10
+
+- Actual Chromium reference/source comparisons covered 20 cases in both themes: all sizes,
+  numeric size, stroke/radius/scale, standalone/wrapped descriptions, custom icons, show/off,
+  delayed wrapping and authored tokens. Corrected geometry, text metrics/colors and content
+  opacity matched all corresponding visible reference regions.
+- Five timeline samples across five geometries in both themes matched arc angles within
+  .001°; normalized dash values reproduce the source's radius-scaled arc cycle.
+  Later-loaded legacy CSS/aggregate retained identical corrected measurements.
+- Real wrapped delay, short-load cancellation, native input/click usability, author tokens,
+  adjacent-text baseline, static CSS-only motion and reduced motion were checked separately.
+- `pnpm test -- tests\spin.test.ts tests\spin.styles.test.ts`: **32 tests passed**.
+  Isolated strict TypeScript passed. Existing exact build recipes exercised without `dist`
+  writes produced ESM/classic/CSS **3,117 / 3,325 / 1,194 gzip bytes**. The subsequent
+  coordinated build passed with final manifest counts **3,111 / 3,319 / 1,190**,
+  below unchanged **3,500 / 3,500 / 2,000** ceilings; all 32 Spin tests passed again.
+- See the [rendered Spin style audit](../style-audit/components/spin.md) for evidence,
+  deliberate native differences and the distinction between matching samples and pixel parity.
+
+### Historical acceptance evidence — 2026-09-08
+
+The initial fixed-arc motion, `.65` opacity and byte counts below predate the style corrections.
 
 - `pnpm test -- tests\spin.test.ts`: **28 focused tests passed**.
 - `pnpm build && pnpm test`: declarations and budgets passed; **241 tests passed**

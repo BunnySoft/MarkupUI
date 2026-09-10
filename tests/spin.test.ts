@@ -284,7 +284,26 @@ describe("standalone Spin", () => {
     expect(circle.getAttribute("cx")).toBe("40")
     expect(circle.getAttribute("r")).toBe("75")
     expect(circle.getAttribute("stroke-width")).toBe("10")
+    expect(Number(circle.getAttribute("pathLength"))).toBeCloseTo(75 / 80 * Math.PI * 200)
+    expect(circle.getAttribute("stroke-dasharray")).toBe("567")
+    expect(circle.getAttribute("stroke-dashoffset")).toBe("142")
+    expect(circle.hasAttribute("data-mui-spin-arc")).toBe(true)
     expect(element.style.getPropertyValue("--_mui-spin-size")).toBe("48px")
+  })
+
+  it("normalizes CSS arc motion without SMIL, style injection or replacing the circle", () => {
+    const element = spin()
+    const circle = element.querySelector("circle")!
+    expect(Number(circle.getAttribute("pathLength"))).toBeCloseTo(.91 * Math.PI * 200)
+    element.strokeWidth = 0
+    expect(element.querySelector("circle")).toBe(circle)
+    expect(Number(circle.getAttribute("pathLength"))).toBeCloseTo(Math.PI * 200)
+    element.radius = 80
+    element.strokeWidth = 10
+    element.scale = 2
+    expect(element.querySelector("circle")).toBe(circle)
+    expect(Number(circle.getAttribute("pathLength"))).toBeCloseTo(75 / 80 * Math.PI * 200)
+    expect(element.querySelector("animate,animateTransform,style,[style]")).toBeNull()
   })
 
   it("rejects invalid numeric/color property assignments before changing their attributes", () => {

@@ -174,6 +174,8 @@ export class MuiSpin extends HTMLElement {
       this.circleNode!.setAttribute("cy", String(center))
       this.circleNode!.setAttribute("r", String(config.radius! - config.strokeWidth! / 2))
       this.circleNode!.setAttribute("stroke-width", String(config.strokeWidth))
+      // Normalize dash units by radius so CSS can animate every validated geometry.
+      this.circleNode!.setAttribute("pathLength", String((config.radius! - config.strokeWidth! / 2) / config.radius! * Math.PI * 200))
     } else if (this.hasCustomIcon()) {
       this.svg?.remove()
     }
@@ -280,8 +282,9 @@ export class MuiSpin extends HTMLElement {
       this.svg.setAttribute("fill", "none")
       this.svg.setAttribute("stroke", "currentColor")
       this.circleNode = this.ownerDocument.createElementNS(namespace, "circle")
-      this.circleNode.setAttribute("pathLength", "100")
-      this.circleNode.setAttribute("stroke-dasharray", "72 28")
+      this.circleNode.setAttribute("data-mui-spin-arc", "")
+      this.circleNode.setAttribute("stroke-dasharray", "567")
+      this.circleNode.setAttribute("stroke-dashoffset", "142")
       this.circleNode.setAttribute("stroke-linecap", "round")
       this.svg.append(this.circleNode)
     }
