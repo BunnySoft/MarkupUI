@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it } from "vitest"
 
 const css = readFileSync(resolve("src", "components", "divider", "divider.css"), "utf8")
@@ -149,5 +150,56 @@ describe("CSS-only native Divider", () => {
     expect(separator.firstElementChild).toBe(caption)
     expect(caption?.textContent).toBe("Original caption")
     expect(separator.getAttribute("aria-orientation")).toBe("vertical")
+  })
+
+  it("keeps source CSS within the unchanged 1500 gzip-byte budget", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
+  })
+
+  it("defines only private theme defaults and preserves local color override precedence", () => {
+    install()
+    const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
+    for (const theme of ["light", "dark"]) {
+      const rule = rules.find(rule => rule.selectorText === `:where([data-mui-theme="${theme}"])`)!
+      expect(rule).toBeDefined()
+      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_mui-divider-/)
+    }
+    expect(css).toContain("var(--mui-divider-color, var(--_mui-divider-color, #efeff5))")
+    expect(css).toContain("var(--mui-divider-text-color, var(--_mui-divider-text-color, #1f2225))")
+    expect(css).toContain("--_mui-divider-color: rgb(255 255 255 / .09)")
+    expect(css).toContain("--_mui-divider-text-color: rgb(255 255 255 / .9)")
+    expect(css).not.toContain("--mui-border")
+    expect(css).not.toContain("--mui-text-primary")
+  })
+
+  it("uses reference 16px divider sizing, 500 caption weight and root-independent spacing", () => {
+    expect(css).toContain("font-size: 16px")
+    expect(css).toContain("var(--mui-divider-label-size, 16px)")
+    expect(css).toContain("var(--mui-divider-label-weight, 500)")
+    expect(css).toContain("var(--mui-divider-space, 24px)")
+    expect(css).toContain("var(--mui-divider-inline-space, 8px)")
+    expect(css).toContain("var(--mui-divider-label-gap, 12px)")
+    expect(css).toContain("var(--mui-font-family, inherit)")
+  })
+
+  it("lets edge rules shrink like the reference while bounding a wrappable caption", () => {
+    expect(css).toContain("flex: 1 1 100%")
+    expect(css).toContain("flex: 0 1 var(--mui-divider-edge, 28px)")
+    expect(css).toContain("flex: 0 0 auto")
+    expect(css).toContain("max(0px, calc(100% - 2 * (var(--mui-divider-label-gap, 12px) + var(--mui-divider-rule-min, 1rem))))")
+    expect(css).toContain("--_mui-divider-label-max: 100%")
+    expect(css).toContain("overflow-wrap: anywhere")
+  })
+
+  it("does not overwrite authored divider or caption declarations", () => {
+    document.body.innerHTML = '<div class="mui-divider mui-divider-captioned" style="color:purple;margin-block:31px"><span class="mui-divider-label" style="font-size:21px;font-weight:800">Author</span></div>'
+    const divider = document.querySelector(".mui-divider")!
+    const caption = divider.firstElementChild!
+    const before = divider.outerHTML
+    install()
+    expect(divider.outerHTML).toBe(before)
+    expect(getComputedStyle(divider).color).toBe("rgb(128, 0, 128)")
+    expect(getComputedStyle(caption).fontSize).toBe("21px")
+    expect(getComputedStyle(caption).fontWeight).toBe("800")
   })
 })

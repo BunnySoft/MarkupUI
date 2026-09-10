@@ -5,6 +5,19 @@
 owns meaning; external borders/flex layout supply presentation. There is no new Custom
 Element, runtime, observer, theme renderer or focus/keyboard handler.
 
+## Default-style audit — 2026-09-10
+
+The [isolated light/dark audit](../style-audit/components/divider.md) corrects rule/
+caption colors, 16px divider sizing, 500 caption weight and fixed-pixel spacing.
+Caption edge rules now shrink like the rendered reference instead of always staying
+28px. Ordinary default/dashed/vertical/center/left/right geometry matches the measured
+reference at 640px and 320px; wrapping and native semantic adaptations remain explicit.
+
+**16 focused tests pass.** Source CSS is **3,513 raw / 904 gzip bytes**, below the
+unchanged **1,500-byte ceiling**. The coordinated full build, distribution copy and
+manifest gates pass. No shared source or completed Global Style/Typography
+files changed.
+
 ## Pinned reference and loading
 
 Reference: Naive UI `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
@@ -78,7 +91,8 @@ links/buttons outside separator descendants; their tab order and activation rema
 
 Absence of aria-orientation, or an explicit horizontal value, uses the horizontal rule.
 CSS does not set ARIA from a separate visual flag, so the semantic/native owner is unambiguous.
-The vertical rule defaults to one em tall, one CSS pixel thick, centered in a flex row or
+The vertical rule defaults to one em tall (**16px** at the divider's own default font
+size), one CSS pixel thick, centered in a flex row or
 aligned to the middle in inline text. It is not automatically stretched to arbitrary siblings.
 
 **Decorative vertical separator:**
@@ -156,20 +170,31 @@ alternatives. Left/right use native `:dir()` matching; without that selector sup
 decoration falls back to centered placement, while text and logical start/end remain usable.
 Unknown placement values retain the base centered style; no runtime parser claims validation.
 
+The short edge token is a **flex basis**, not a guaranteed painted length: with a
+640px container and the audited “Divider title” text, `28px` resolves to a **22.266px**
+short rule, matching Naive; at 320px it resolves to **16.984px**. The existing rule
+minimum can clamp it at narrower widths. Captions reserve intrinsic width until the
+available container space requires wrapping; their maximum leaves room for two
+minimum rules and both gaps.
+
+Use native `dir` for this physical-placement contract: CSS `direction` alone does not
+change `:dir()` matching. Naive's left/right classes follow flex item order under RTL;
+this target intentionally retains physical left/right and explicit logical start/end.
+
 `data-dashed` is a presence-only CSS switch. Remove it for a solid rule; a present
 `data-dashed="false"` is still present, not a parsed framework Boolean.
 
 | CSS token | Default / purpose |
 | --- | --- |
-| `--mui-divider-color` | `#b8b8c3`, rule color |
-| `--mui-divider-text-color` | `inherit`, native caption color |
+| `--mui-divider-color` | `#efeff5` light / white `.09` dark, rule color |
+| `--mui-divider-text-color` | `#1f2225` light / white `.9` dark, native caption color |
 | `--mui-divider-thickness` | `1px`, positive native border width |
-| `--mui-divider-space` | `1.5rem`, horizontal block spacing |
-| `--mui-divider-inline-space` | `.5rem`, vertical inline spacing |
+| `--mui-divider-space` | `24px`, horizontal block spacing |
+| `--mui-divider-inline-space` | `8px`, vertical inline spacing |
 | `--mui-divider-length` | `1em`, vertical length; minimum for captioned vertical composition |
-| `--mui-divider-label-gap` | `.75rem`, label/rule gap |
-| `--mui-divider-label-size`, `--mui-divider-label-weight` | `1rem`, `600`; presentation only, not a heading role |
-| `--mui-divider-edge` | `28px`, preferred short rule at an edge placement |
+| `--mui-divider-label-gap` | `12px`, label/rule gap |
+| `--mui-divider-label-size`, `--mui-divider-label-weight` | `16px`, `500`; presentation only, not a heading role |
+| `--mui-divider-edge` | `28px`, shrinkable short-rule flex basis at an edge placement |
 | `--mui-divider-rule-min` | `1rem`, minimum horizontal caption rule length |
 
 Use valid native CSS values and sensible positive geometry. Invalid/zero widths or colors
@@ -178,6 +203,30 @@ Minimum rule lengths and label gaps need physical space: reduce those tokens for
 tiny containers rather than relying on clipping. Container dimensions/grid placement are
 application CSS; horizontal width is 100%, with border-box sizing and min-inline-size zero.
 The demo's grid separator explicitly spans both native grid columns; no Grid module is needed.
+
+### Theme and author ownership
+
+Set `data-mui-theme="light|dark"` on a document or scoped ancestor, or directly on a
+divider. The closest explicit theme boundary supplies private Divider defaults; no
+boundary means light. Nested light scopes reset those private defaults under dark.
+The existing public `--mui-divider-color` and `--mui-divider-text-color` tokens
+still win, including inherited author overrides across a nested theme boundary.
+
+```html
+<section data-mui-theme="dark">
+  <hr class="mui-divider">
+</section>
+```
+
+The application owns background and `color-scheme`; this stylesheet sets neither and
+does not observe system preference. It consumes shared `--mui-font-family` when
+present and otherwise inherits family. Divider's own font size is 16px; native CSS
+can override it. Line height remains inherited. Local caption sizing remains separate.
+
+Shared legacy `--mui-border` and `--mui-text-primary` are not equivalent to Naive's
+divider-color/textColor1 roles and are deliberately not consumed. No global palette
+migration is needed to obtain the reference fallback colors. For a custom theme,
+author the two Divider tokens rather than recoloring unrelated shared-token components.
 
 Borders print without background graphics. Forced-colors uses CanvasText rules and does not
 disable browser color adjustment. There is no animation/transition, so reduced motion requires
@@ -213,7 +262,7 @@ All four original public rows plus three explicit source supplements remain:
 6. [x] Validate build/budgets and Chromium geometry/naming/RTL/zoom/print/coexistence.
 7. [x] Reconcile reference rows/four tasks, catalog totals and next Flex.
 
-### Evidence — 2026-09-08
+### Original migration evidence — 2026-09-08 (historical)
 
 - Focused Divider tests passed; final `pnpm build && pnpm test` passed **351 tests**,
   including **11 Divider tests** and all 340 earlier tests.
@@ -248,5 +297,6 @@ All four original public rows plus three explicit source supplements remain:
 - Reference validation preserved all four original name/source rows plus three explicit
   source supplements: **96 pages, 3,122 rows, 384 tasks (68 accepted), 736 relative file links**.
 
+The figures above describe original delivery, not the current integrated build.
 This closes retained Divider scope, not all P2 layout or cross-phase work. Flex is next
 through coordinator selection, then Space, Grid and Layout; later content remains on the plan.
