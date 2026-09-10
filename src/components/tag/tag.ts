@@ -147,9 +147,16 @@ export class MuiTag extends HTMLElement {
         this.closeButton.type = "button"
         this.closeButton.dataset.muiTagClose = ""
         this.closeButton.dataset.muiClose = ""
-        const icon = this.ownerDocument.createElement("span")
+        const icon = this.ownerDocument.createElementNS("http://www.w3.org/2000/svg", "svg")
         icon.setAttribute("aria-hidden", "true")
-        icon.textContent = "×"
+        icon.setAttribute("viewBox", "0 0 12 12")
+        icon.setAttribute("focusable", "false")
+        const path = this.ownerDocument.createElementNS(icon.namespaceURI, "path")
+        path.setAttribute("d", "M2.5 2.5l7 7m0-7-7 7")
+        path.setAttribute("fill", "none")
+        path.setAttribute("stroke", "currentColor")
+        path.setAttribute("stroke-linecap", "round")
+        icon.append(path)
         this.closeButton.append(icon)
       }
       this.closeButton.setAttribute("aria-label", this.closeLabel)

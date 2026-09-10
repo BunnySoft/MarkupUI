@@ -16,6 +16,38 @@ function close(element: MuiTag): HTMLButtonElement {
 }
 
 describe("standalone Tag", () => {
+  it("keeps the decorative vector close glyph stable across visual state changes", () => {
+    const element = tag("<mui-tag closable>Topic</mui-tag>")
+    const button = close(element)
+    const icon = button.querySelector("svg")
+    for (const [name, value] of [["size", "tiny"], ["type", "warning"], ["round", ""], ["strong", ""], ["bordered", "false"]]) {
+      element.setAttribute(name!, value!)
+    }
+    element.disabled = true
+    element.disabled = false
+    expect(close(element)).toBe(button)
+    expect(button.querySelector("svg")).toBe(icon)
+    expect(icon?.namespaceURI).toBe("http://www.w3.org/2000/svg")
+    expect(element.querySelector("[style], style")).toBeNull()
+  })
+
+  it("treats SVG close descendants as native close intent without host activation", () => {
+    const element = tag("<mui-tag closable>Topic</mui-tag>")
+    const intent = vi.fn()
+    const hostClick = vi.fn()
+    element.addEventListener("mui:close", intent)
+    element.addEventListener("click", hostClick)
+    const path = close(element).querySelector("path")!
+    const event = new MouseEvent("click", { bubbles: true, cancelable: true })
+    path.dispatchEvent(event)
+    expect(intent).toHaveBeenCalledOnce()
+    expect(intent.mock.calls[0]![0].detail.originalEvent).toBe(event)
+    expect(hostClick).not.toHaveBeenCalled()
+    element.disabled = true
+    path.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }))
+    expect(intent).toHaveBeenCalledOnce()
+  })
+
   it("uses a passive native span and preserves authored nodes and listeners", () => {
     const element = document.createElement("mui-tag") as MuiTag
     const label = document.createElement("strong")
@@ -264,7 +296,11 @@ describe("standalone Tag", () => {
     element.addEventListener("mui:close", intent)
     expect(close(element).type).toBe("button")
     expect(close(element).getAttribute("aria-label")).toBe("Remove tag")
-    expect(close(element).querySelector("span")?.getAttribute("aria-hidden")).toBe("true")
+    const icon = close(element).querySelector("svg")
+    expect(icon?.getAttribute("aria-hidden")).toBe("true")
+    expect(icon?.getAttribute("focusable")).toBe("false")
+    expect(icon?.getAttribute("viewBox")).toBe("0 0 12 12")
+    expect(icon?.querySelector("path")?.getAttribute("stroke")).toBe("currentColor")
     close(element).click()
     expect(intent).not.toHaveBeenCalled()
     element.closeLabel = "Remove topic"

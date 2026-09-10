@@ -149,15 +149,15 @@ There is no Backspace/Delete-to-remove shortcut or application removal/focus-man
 
 | Upstream property | Mapping | Status / limits |
 | --- | --- | --- |
-| `bordered` | `bordered="false"` / `.bordered`; true by default. | 🟢 Transparent passive border when false; ignored for borderless native checkable treatment, matching upstream. |
+| `bordered` | `bordered="false"` / `.bordered`; true by default. | 🟢 Removes the non-layout border and selects the borderless surface; ignored for borderless native checkable treatment, matching upstream. |
 | `checkable` | Boolean `checkable` / `.checkable`; native toggle button. | 🟢 Real keyboard/focus behavior; type palette and close affordance are suppressed in this mode. |
 | `checked` | Boolean `checked` / `.checked`; native `aria-pressed`. | 🟢 Local reflected state, silent programmatic assignment; no false native form-field claim. |
 | `closable` | Boolean `closable` / `.closable`. | 🟢 Native close intent, not automatic removal; suppressed when checkable. |
 | `color` | `--mui-tag-background`, `--mui-tag-border-color`, `--mui-tag-color`. | 🟡 External CSS equivalents override passive semantic colors; no JS color object/parser or inline styles. Checkable palettes have separate tokens. |
 | `disabled` | Boolean `disabled` / `.disabled`. | 🟢 Native buttons disabled, check/close activation suppressed, focus helpers guarded, passive appearance dimmed. |
 | `round` | Boolean `round` / `.round`. | 🟢 Pill shape; authored avatar wrapper becomes circular. |
-| `size` | `size="tiny\|small\|medium\|large"` / `.size`. | 🟢 20/22/28/34px presets, medium default; not a claim of upstream pixel parity or the legacy 24px default. |
-| `strong` | Boolean `strong` / `.strong`. | 🟢 Font weight 600; independently authored native text formatting remains intact. |
+| `size` | `size="tiny\|small\|medium\|large"` / `.size`. | 🟢 16/22/28/34px heights, medium default, matching the pinned default theme; the legacy aggregate remains 24px. |
+| `strong` | Boolean `strong` / `.strong`. | 🟢 Default font weight 500, matching upstream; override with `--mui-tag-font-weight-strong`. Authored native text formatting remains intact. |
 | `trigger-click-on-close` | Boolean attribute / `.triggerClickOnClose`. | 🟢 Explicit native click-bubbling opt-in; no duplicate click dispatch. |
 | `type` | `type` / `.type`: default, primary, info, success, warning, error. | 🟢 Passive semantic surfaces/borders/text. Checkable uses its own palette regardless of type. |
 | `on-close` / source `onClose` | `mui:close`, `detail.originalEvent`. | 🟢 Native close intent; function/array callback-prop adapter omitted. |
@@ -184,13 +184,40 @@ Generated close/toggle markers are library-owned output, not additional authorin
 All layout/state styles are external. Additional tokens include `--mui-tag-height`,
 `--mui-tag-font-size`, `--mui-tag-padding`, `--mui-tag-gap`, `--mui-tag-radius`,
 `--mui-tag-disabled-opacity`, `--mui-tag-avatar-size`, `--mui-tag-avatar-radius`,
-`--mui-tag-close-size`, `--mui-tag-close-radius`, `--mui-tag-close-hover-background` and
+`--mui-tag-close-size`, `--mui-tag-close-hit-size`, `--mui-tag-close-radius`,
+`--mui-tag-close-color`, `--mui-tag-close-hover-background`, `--mui-tag-close-pressed-background` and
 `--mui-tag-focus-color`. Checkable tokens are `--mui-tag-checkable-background`,
 `--mui-tag-checkable-color`, `--mui-tag-checkable-hover-background`,
 `--mui-tag-checkable-pressed-background`, `--mui-tag-checked-background`,
 `--mui-tag-checked-color`, `--mui-tag-checked-hover-background` and
 `--mui-tag-checked-pressed-background`. Reduced motion removes transitions.
 Applications remain responsible for contrast in custom themes and for short tag content.
+
+### Default styling and theme scope
+
+The optional Tag now uses the pinned Naive UI defaults for its own neutral surface/text/
+border colors, rather than the different legacy `--mui-bg-muted`, `--mui-text-primary` and
+`--mui-border` palette. Semantic types still use the shared `--mui-color-*` properties.
+Load the existing themes stylesheet for the semantic dark palette and set
+`data-mui-theme="dark"` on an ancestor (or the Tag); nested `data-mui-theme="light"` scopes
+reset Tag's private dark values. Public `--mui-tag-*` properties remain author overrides.
+Text font family is inherited; Tag does not impose a global font reset.
+
+Defaults are 12/12/14/14px text, line-height 1, a 2px radius, and 7px horizontal padding.
+Round padding and icon/avatar offsets vary with height, as upstream does. A non-layout
+border avoids changing the content width. Borderless tags use distinct surfaces, including
+the warning/error opacity exceptions; dark bordered tags have transparent backgrounds.
+
+The close control uses a decorative SVG instead of a font-dependent multiplication sign:
+12px for tiny/small and 14px for medium/large. Its centered hover/focus background extends
+to 16/18px respectively (`--mui-tag-close-hit-size`), without expanding the label layout.
+Close color is independent of the text-color override, as in upstream; use
+`--mui-tag-close-color` to customize it explicitly. Disabled controls do not acquire
+hover/pressed fills. The retained 3px native keyboard focus ring is intentionally stronger
+than upstream's background-only close focus indication.
+
+See the [rendered Tag style audit](../style-audit/components/tag.md) for actual before/after
+measurements, light/dark comparisons, author overrides and remaining comparison boundaries.
 
 ## Lifecycle and scope limitations
 
@@ -203,7 +230,7 @@ a new baseline; remove the host override first in that case.
 Reflected properties support pre-definition assignment. Observers and native/host capture
 listeners are removed on disconnect and restored once on reconnect. Detached markup is not
 continuously synchronized. Core basic Tag behavior is unchanged; richer state and this
-component's minimum sizes are intentionally opt-in. Tag does not implement form association,
+component's preset heights are intentionally opt-in. Tag does not implement form association,
 data-driven tag lists, truncation measurement, removal animation, or framework theme/slot
 rendering. Native CSS/image/content APIs remain available instead.
 
@@ -219,7 +246,24 @@ rendering. Native CSS/image/content APIs remain available instead.
 8. [x] Add separate HTML/CSS/JS demo; run focused tests, full integration suite and build.
 9. [x] Review, fix findings and verify native interaction/loading order in Chromium.
 
-### Acceptance evidence — 2026-09-08
+### Style acceptance — 2026-09-10
+
+- Chromium compared 32 cases in light and dark against installed Naive UI 2.45.3/Vue
+  3.5.30, grounded in the pinned source above. The final default width/height, font size/
+  line-height/weight, radius and disabled opacity matched in all 64 cases.
+- The same 64 cases retained their measurements and hover/pressed styles with later
+  legacy CSS/aggregate loading. External color, size, padding, radius and close-control
+  overrides, nested light scope, native Enter/Space and reduced motion were also checked.
+- `pnpm test -- tests\tag.test.ts`: **28 tests passed**. Existing native behavior remains
+  covered; two additional tests cover stable decorative SVG identity and SVG close clicks.
+- The coordinated full build and all 28 Tag tests pass. Final distribution gzip:
+  **2,389 ESM / 2,602 classic / 2,282 CSS bytes**, within unchanged ceilings.
+  The rendered audit used isolated current source, not a stale Tag distribution.
+
+### Historical acceptance evidence — 2026-09-08
+
+The initial geometry/color observations and byte counts below describe the original
+migration, before the 2026-09-10 default-style corrections.
 
 - `pnpm test -- tests\tag.test.ts`: **26 focused tests passed** after fixing disabled focus
   delegation. `pnpm build && pnpm test`: budgeted distributions/declarations succeeded and
