@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it } from "vitest"
 
 const css = readFileSync(resolve("src", "components", "space", "space.css"), "utf8")
@@ -181,5 +182,54 @@ describe("CSS-only native Space", () => {
     expect(css).not.toContain("transition:")
     expect(css).not.toContain("@keyframes")
     expect(css).not.toContain("@supports")
+  })
+
+  it("retains its unchanged strict source CSS budget without theme or runtime bytes", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+    expect(css).not.toContain("data-mui-theme")
+    expect(css).not.toContain("--mui-color")
+    expect(css).not.toContain("--mui-font")
+    expect(css).not.toContain("--mui-text")
+  })
+
+  it("matches the rendered default flex alignment and gives local tokens priority over presets", () => {
+    install()
+    const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
+    const root = rules.find(rule => rule.selectorText === ".mui-space")!
+    expect(root.style.getPropertyValue("align-items")).toBe("var(--mui-space-align, normal)")
+    expect(root.style.getPropertyValue("justify-content")).toBe("var(--mui-space-justify, flex-start)")
+    expect(root.style.getPropertyValue("row-gap")).toBe("var(--mui-space-row-gap, var(--_mui-space-row-gap))")
+    expect(root.style.getPropertyValue("column-gap")).toBe("var(--mui-space-column-gap, var(--_mui-space-column-gap))")
+    for (const rule of rules.filter(rule => rule.selectorText?.includes("data-size"))) {
+      expect(rule.style.getPropertyValue("row-gap")).toBe("")
+      expect(rule.style.getPropertyValue("column-gap")).toBe("")
+      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_mui-space-/)
+    }
+  })
+
+  it("preserves explicit author layout and intrinsic-nowrap item ownership", () => {
+    document.body.innerHTML = '<div class="mui-space" data-wrap="false" style="gap:5px 7px;align-items:center;justify-content:space-between"><div class="mui-space-item" style="flex:none;min-inline-size:auto">Fixed authored item</div></div>'
+    const root = document.querySelector(".mui-space")!
+    const item = root.firstElementChild!
+    const before = root.outerHTML
+    install()
+    expect(root.outerHTML).toBe(before)
+    expect(getComputedStyle(root).gap).toBe("5px 7px")
+    expect(getComputedStyle(root).alignItems).toBe("center")
+    expect(getComputedStyle(root).justifyContent).toBe("space-between")
+    expect(getComputedStyle(item).minInlineSize).toBe("auto")
+    expect(item.getAttribute("style")).toContain("flex:none")
+  })
+
+  it("keeps narrow-item safety an explicit native adaptation rather than generated wrapper parity", () => {
+    install()
+    const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
+    const children = rules.find(rule => rule.selectorText === ".mui-space > *")!
+    const item = rules.find(rule => rule.selectorText === ".mui-space > .mui-space-item")!
+    expect(children.style.getPropertyValue("min-inline-size")).toBe("0")
+    expect(item.style.getPropertyValue("box-sizing")).toBe("border-box")
+    expect(item.style.getPropertyValue("max-inline-size")).toBe("100%")
+    expect(item.style.getPropertyValue("flex-shrink")).toBe("")
+    expect(css).not.toContain("min-width: auto")
   })
 })

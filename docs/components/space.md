@@ -5,6 +5,20 @@
 There is no wrapper generator, child traversal, gap detector/polyfill, size parser, Custom
 Element, renderer, observer or mandatory Flex/Divider dependency.
 
+## Default-style audit — 2026-09-10
+
+The [isolated Naive layout audit](../style-audit/components/space.md) measured **28
+cases in light/dark × LTR/RTL**. Default gaps, sizes, alignment, distribution,
+horizontal/vertical wrapping and authored/direct item paths already match:
+**108 of 112 comparisons matched all checked properties**.
+
+The four differences are the same intentionally bounded native item-minimum case:
+oversized fixed content in a narrow nowrap row. Its exact geometry and an opt-in
+intrinsic-minimum recipe are documented below. No CSS change or palette migration
+was warranted; source remains **1,122 raw / 423 gzip bytes** under the **1,000-byte
+ceiling**. The coordinated full build and **15 focused tests pass**. No component
+CSS or generated-source changes were needed.
+
 ## Pinned reference and loading
 
 Reference: Naive UI `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
@@ -188,6 +202,15 @@ Internal preset defaults reset per container, so an outer large preset does not 
 a nested small/default Space. Public custom properties inherit normally; override them
 or use `initial` when a nested container should return to its own preset/default.
 
+### Light/dark and shared theming
+
+Pinned Space light/dark themes contain the same three gap presets and no color or
+font roles. The native stylesheet likewise paints nothing and changes no typography.
+`data-mui-theme` and shared palette/font tokens are not interpreted by Space;
+application-authored font/color rules still inherit normally. No theme marker,
+palette override or global token change is needed for Space default-layout parity.
+Use the four supported `--mui-space-*` layout tokens or ordinary native CSS.
+
 ## Order, responsiveness and scope
 
 Reverse is deliberately omitted, including row/column/wrap reversal helpers. Native
@@ -201,6 +224,30 @@ An item's interior is not traversed or restyled: constrain oversized native cont
 inside it explicitly. The demo's field class bounds its input using ordinary application CSS.
 For surrounding grids use suitable minmax(0,1fr) tracks; arbitrary fixed-width widgets are
 not automatically repaired.
+
+### Intrinsic sizing in narrow nowrap rows
+
+The direct-child `min-inline-size:0` and authored-item border-box/max-size policy
+are intentional native safety adaptations, **not copies of Naive's generated
+content-box wrappers and automatic minimum sizes**.
+
+In the audit's 150px nowrap row, fixed inner boxes of 60/80/50px made Naive wrappers
+retain those widths and overflow. Native wrappers instead shrank to approximately
+39.797/53.047/33.156px; their fixed inner boxes could overflow or overlap. Constrain
+the inner content when shrinkable grouping is intended. If intrinsic wrapper sizing
+and scrolling overflow are desired, opt in using application CSS:
+
+```css
+/* Application class on the existing Space root; not a package API. */
+.intrinsic-space > .mui-space-item {
+  min-inline-size: auto;
+}
+```
+
+This restored the reference widths/positions in both directions and both themes.
+For deliberately fixed, nonshrinking groups, authored `flex:none` also matched the
+fixture. Neither recipe inserts wrappers or adds a scrolling container: the
+application must still choose its own overflow/scroll policy.
 
 No overflow clipping or focus trapping is supplied. A nowrap row may overflow by design;
 choose an explicit application scrolling/print policy rather than hiding usable controls.
@@ -252,7 +299,7 @@ There is no invented separator API row.
 6. [x] Validate build/budgets and Chromium grouping/gaps/actions/RTL/zoom/print/coexistence.
 7. [x] Reconcile reference rows/four tasks, catalog totals and next Grid.
 
-### Evidence — 2026-09-08
+### Original migration evidence — 2026-09-08 (historical)
 
 - `pnpm test -- tests\space.test.ts`: **11 focused tests passed**.
 - `pnpm build && pnpm test`: **373 tests passed**, including all 362 prior tests.
@@ -288,6 +335,7 @@ There is no invented separator API row.
 - Reference validation preserved all eleven original name/source rows plus seven explicit
   source supplements: **96 pages, 3,135 rows, 384 tasks (76 accepted), 750 relative file links**.
 
+The figures above describe original delivery, not a newly run integrated build.
 This is retained native item/CSS scope, not source wrapper-runtime, old-browser gap,
 all-browser/AT or automatic separator behavior. Grid is next through coordinator selection,
 then Layout; P2-04/P2 and remaining content work are not complete.

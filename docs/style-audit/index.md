@@ -3,9 +3,9 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 11/96 scopes.** The other **85** are not yet accepted in this
+**Reviewed and integrated: 12/96 scopes.** The other **84** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
-differences; it does not mean eleven components have complete pixel/API parity.
+differences; reviewed scopes do not imply complete pixel/API parity.
 
 The comparison starts with Naive UI's **default light theme**, default component props
 and only the content/values needed to render a useful example. The reference version,
@@ -126,7 +126,7 @@ rendered evidence and acceptance report.
 | [Select](../naive-ui/components/select.md) | ⚪ Pending | — |
 | [Skeleton](../naive-ui/components/skeleton.md) | 🟢 Fixed / 🟡 Remaining | [Animated endpoints and retained shape/repeat limits](components/skeleton.md) |
 | [Slider](../naive-ui/components/slider.md) | ⚪ Pending | — |
-| [Space](../naive-ui/components/space.md) | 🟠 Reviewing | — |
+| [Space](../naive-ui/components/space.md) | 🟢 Matched / 🟡 Remaining | [Default layout matches; intrinsic nowrap limits](components/space.md) |
 | [Spin](../naive-ui/components/spin.md) | ⚪ Pending | — |
 | [Split](../naive-ui/components/split.md) | ⚪ Pending | — |
 | [Statistic](../naive-ui/components/statistic.md) | 🟠 Reviewing | — |
