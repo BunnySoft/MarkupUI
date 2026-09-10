@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 30/96 scopes.** The other **66** are not yet accepted in this
+**Reviewed and integrated: 31/96 scopes.** The other **65** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -54,7 +54,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 
 | Component | Status | Style report |
 | --- | --- | --- |
-| [Affix](../naive-ui/components/affix.md) | ⚪ Pending | — |
+| [Affix](../naive-ui/components/affix.md) | 🟠 Reviewing | — |
 | [Alert](../naive-ui/components/alert.md) | 🟢 Fixed / 🟡 Remaining | [Geometry, severity palettes and SVG limits](components/alert.md) |
 | [Anchor](../naive-ui/components/anchor.md) | ⚪ Pending | — |
 | [Auto Complete](../naive-ui/components/auto-complete.md) | ⚪ Pending | — |
@@ -89,7 +89,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Empty](../naive-ui/components/empty.md) | 🟢 Fixed / 🟡 Remaining | [Content spacing, muted roles and original illustration](components/empty.md) |
 | [Equation](../naive-ui/components/equation.md) | ⚪ Pending | — |
 | [Flex](../naive-ui/components/flex.md) | 🟢 Matched / 🟡 Remaining | [Default layout matches; intrinsic sizing and RTL boundaries](components/flex.md) |
-| [Float Button](../naive-ui/components/float-button.md) | 🟠 Reviewing | — |
+| [Float Button](../naive-ui/components/float-button.md) | 🟢 Fixed / 🟡 Remaining | [Action metrics, shadows and native joined-group/dock limits](components/float-button.md) |
 | [Form](../naive-ui/components/form.md) | ⚪ Pending | — |
 | [Global Style](../naive-ui/components/global-style.md) | 🟢 Fixed / 🟡 Remaining | [Body defaults and opt-in shared-preset boundaries](components/global-style.md) |
 | [Gradient Text](../naive-ui/components/gradient-text.md) | 🟢 Fixed / 🟡 Remaining | [Paint metrics, theme stops and safe compositing limits](components/gradient-text.md) |

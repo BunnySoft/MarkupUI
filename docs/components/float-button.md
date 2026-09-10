@@ -58,7 +58,7 @@ action root or turn a passive div into a focusable pseudo-button.
 Native disabled/fieldset/form/focus/Enter/Space behavior remains authoritative. Group
 labels/roles are authored; a group is not itself an action. Direct grouped actions keep DOM
 order, use relative positioning and the group's circle/square treatment rather than
-individual placement/shape. Square groups use a shared outlined surface and visible-sibling
+individual placement/shape. Square groups use a shared shadowed surface and visible-sibling
 separators without clipping focus; templates/hidden controls do not create a leading divider.
 This adapts, rather than pixel-reproduces, the source's injected shape and joined surfaces.
 
@@ -68,7 +68,7 @@ This adapts, rather than pixel-reproduces, the source's injected shape and joine
 | --- | --- |
 | Both owners' `top`, `bottom`, `left`, `right` | `--mui-float-block-start`, `--mui-float-block-end`, `--mui-float-inline-start`, `--mui-float-inline-end` CSS lengths/auto. Left/right adapt to logical start/end in RTL. |
 | Both owners' `position` | Default fixed; `data-position="relative"` / `"absolute"` select native CSS modes. Unknown values use fixed. No sticky preset is invented. |
-| FloatButton `width`, `height` | `--mui-float-width` / `--mui-float-height`, defaults 2.5rem (40px at a 16px root). Height is a **minimum**, so descriptions can grow without clipping. |
+| FloatButton `width`, `height` | `--mui-float-width` / `--mui-float-height`, defaults 40px. Height is a **minimum**, so descriptions can grow without clipping. |
 | Both owners' `shape` | Circle default or `data-shape="square"`; group shape owns direct children. |
 | FloatButton `type` | Default appearance or `data-type="primary"`; never the native form type attribute. |
 | FloatButton `menu-trigger` | Native click/keyboard `popovertarget` command. No hover-only open mode or trigger-attribute parser. |
@@ -90,6 +90,41 @@ The upstream Badge and Tooltip demos compose separate components. The native dem
 authors a badge count with an explicit accessible name and visible descriptive help.
 It does not provide a hover-tooltip engine, hidden count model or mandatory peer module.
 Do not rely on a native title tooltip as the sole name or touch/keyboard explanation.
+
+### Default style and native group boundaries
+
+Defaults now match the pinned source's 40px dimensions, 18px icon size, 12px/14px
+description typography, 2px content gap, borderless action surface, 4096px circle radius
+and 3px square radius. The native action carries the 2px/4px content padding itself,
+instead of generating the source's body wrapper. Public width/height/icon/radius tokens
+still override these defaults; use relative units explicitly for root-font-relative sizing.
+
+Light defaults use white / `#333639`; dark uses `#48484e` / white .82. Primary uses the
+shared `--mui-color-primary` palette, with white text in light and black in dark. Load the
+existing themes stylesheet for semantic dark colors; the component's neutral colors,
+contrast and shadows follow `data-mui-theme="light|dark"` scopes. Public
+`--mui-float-background`, `--mui-float-color` and `--mui-float-shadow` now remain above
+the primary fallback rather than being reassigned by the primary selector.
+
+Standalone shadows are 0 2px 8px at black .16/.12 in light/dark, and 0 2px 12px at
+.24/.18 on hover/press. The measured pinned standalone hover-fill element has zero area;
+the target matches its visible shadow change without adding a hover-fill renderer.
+
+Circle groups use a 16px gap. Square groups have no extra padding/outer border and use a
+shared .12 shadow. Two default actions occupy 40×81px, including one separator. Native
+visible-sibling separators belong to the following action, preserving hidden/template
+behavior and each action's minimum height. Grouped primary actions deliberately retain
+their filled, legible surface; upstream clears their background in square groups.
+Native joined-group hover still uses whole-control brightness rather than upstream's
+inset fill layer. These group details remain explicit adaptations.
+
+Native focus uses a 2px info-color outline, rather than inheriting black primary text in
+dark mode. Forced colors suppress the group brightness filter. Action borders are now
+absent by default; `--mui-float-border-color` continues to style separators/panels, and
+ordinary authored CSS can add an action border when desired.
+
+See the [rendered FloatButton audit](../style-audit/components/float-button.md) for actual
+geometry/palette comparisons, RTL, native interaction evidence and remaining differences.
 
 ## Native popover composition and fallback
 
@@ -131,7 +166,7 @@ separately when that disclosure model is preferred.
 
 The provided popover presentation is specifically an **authored fixed-corner dock**, not a
 general trigger-positioning engine. Trigger and panel share concrete end/bottom offsets;
-the icon-only trigger has an explicit `--mui-float-trigger-size` (default 2.5rem), and the
+the icon-only trigger has an explicit `--mui-float-trigger-size` (default 40px), and the
 panel is placed .75rem above it. CSS Anchor Positioning is **not used or required**. No
 unconditional anchor rules or JS measurements are injected.
 
@@ -173,7 +208,8 @@ panel width/background/color, border, foreground/background and shadow. They are
 values, not style-object props. Hidden roots/actions/templates remain hidden/inert.
 Standalone hidden-until-found is not forcibly replaced, and is not separately certified.
 Print returns static actions/groups to flow and omits popover-only controls/panels.
-There is no animation; reduced-motion transition emulation is unnecessary.
+There is no animation or CSS transition; state styling changes immediately. Reduced-motion
+transition emulation is unnecessary. This intentionally omits source transition timing.
 
 ## Migration steps and acceptance
 
@@ -181,6 +217,27 @@ There is no animation; reduced-motion transition emulation is unnecessary.
 2. [x] Keep group order/labels and native popover disclosure separate from action roots.
 3. [x] Provide scoped fixed/relative/absolute, logical/safe-area dock CSS with static fallback.
 4. [x] Validate focus/dismiss/reopen, obstruction, hidden state, native forms and viewport limits.
+
+### Default-style acceptance — 2026-09-10
+
+- 13 reference/native cases in light/dark and LTR/RTL matched **52 outer action/group
+  boxes** and **68 icon boxes** within .02px. The original LTR baseline was captured too.
+- Corrected standalone surfaces, type colors, dimensions, descriptions, radii and shadows
+  matched the reference; later legacy CSS retained all captured target measurements.
+- Enter/Space activated a native action once each; native validation/submission/reset and
+  disabled behavior remained. Native popovers opened, scrolled, skipped disabled actions
+  and returned focus on Escape at a 320×240 viewport, without menu roles or a controller.
+- JavaScript-disabled LTR/RTL popover operation, reset and GET submission passed. Author
+  size/color tokens, dark-primary focus contrast and forced-color filter suppression were
+  verified separately.
+- `pnpm test -- tests\float-button.test.ts`: **15 tests passed**. Rule-oriented compact
+  CSS keeps the complete retained fallback within **1,484 / 1,500 gzip bytes** at level 9;
+  runtime JS remains **0**. The coordinator's isolated release build and all
+  **15 Float Button tests** pass with that same manifest size.
+
+### Historical acceptance — 2026-09-08
+
+The original typography, outlining and byte-count observations below predate the corrections.
 
 On 2026-09-08, `pnpm --dir D:\repos\MarkupUI check` passed **552 tests**, including
 **12 FloatButton cases**. A targeted rebuild/test then verified the final tighter budget

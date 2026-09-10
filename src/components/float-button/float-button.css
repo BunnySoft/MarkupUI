@@ -1,144 +1,44 @@
 :where(button, a[href]).mui-float-button,
-.mui-float-group {
-  position: fixed;
-  inset-block-start: var(--mui-float-block-start, auto);
-  inset-block-end: var(--mui-float-block-end, auto);
-  inset-inline-start: var(--mui-float-inline-start, auto);
-  inset-inline-end: var(--mui-float-inline-end, auto);
-  z-index: var(--mui-float-z-index, 10);
-  box-sizing: border-box;
-}
-:where(button, a[href]).mui-float-button {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: .125rem;
-  inline-size: var(--mui-float-width, 2.5rem);
-  min-block-size: var(--mui-float-height, 2.5rem);
-  max-inline-size: 100%;
-  min-inline-size: 0;
-  padding: .25rem;
-  border: 1px solid var(--mui-float-border-color, #d4d4d8);
-  border-radius: 999px;
-  background: var(--mui-float-background, #fff);
-  color: var(--mui-float-color, #18181b);
-  font: inherit;
-  line-height: 1.25;
-  text-align: center;
-  white-space: normal;
-  overflow-wrap: anywhere;
-  box-shadow: var(--mui-float-shadow, 0 2px 8px #0002);
-  cursor: pointer;
-}
-a.mui-float-button[href] { text-decoration: underline; text-underline-offset: .12em; }
-.mui-float-button[data-type="primary"] {
-  --mui-float-background: #075985;
-  --mui-float-color: #fff;
-}
-.mui-float-button[data-shape="square"] { border-radius: var(--mui-float-square-radius, .375rem); }
+.mui-float-group{position: fixed;inset-block: var(--mui-float-block-start, auto) var(--mui-float-block-end, auto);inset-inline: var(--mui-float-inline-start, auto) var(--mui-float-inline-end, auto);z-index: var(--mui-float-z-index, 10);box-sizing: border-box;}
+:where(button, a[href]).mui-float-button{display: inline-flex;flex-direction: column;align-items: center;justify-content: center;gap: 2px;inline-size: var(--mui-float-width, 40px);min-block-size: var(--mui-float-height, 40px);max-inline-size: 100%;min-inline-size: 0;padding: 2px 4px;border: 0;border-radius: 4096px;background: var(--mui-float-background, var(--_mui-float-bg, #fff));color: var(--mui-float-color, var(--_mui-float-fg, #333639));font: inherit;font-size: 18px;text-align: center;white-space: normal;overflow-wrap: anywhere;box-shadow: var(--mui-float-shadow, 0 2px 8px rgb(0 0 0 / var(--_mui-float-alpha, .16)));cursor: pointer;}
+:where([data-mui-theme="light"]){--_mui-float-bg: initial;--_mui-float-fg: initial;--_mui-float-alpha: initial;--_mui-float-hover-alpha: initial;--_mui-float-contrast: initial;--_mui-float-border: initial;}
+:where([data-mui-theme="dark"]){--_mui-float-bg: #48484e;--_mui-float-fg: rgba(255, 255, 255, .82);--_mui-float-alpha: .12;--_mui-float-hover-alpha: .18;--_mui-float-contrast: #000;--_mui-float-border: rgba(255, 255, 255, .09);}
+a.mui-float-button[href]{text-decoration: underline;text-underline-offset: .12em;}
+.mui-float-button[data-type="primary"]{--_mui-float-bg: var(--mui-color-primary, #18a058);--_mui-float-fg: var(--_mui-float-contrast, #fff);}
+.mui-float-button[data-shape="square"],
+.mui-float-group[data-shape="square"]{border-radius: var(--mui-float-square-radius, 3px);}
 :where(button, a[href]).mui-float-button[data-position="relative"],
-.mui-float-group[data-position="relative"] { position: relative; }
+.mui-float-group[data-position="relative"]{position: relative;}
 :where(button, a[href]).mui-float-button[data-position="absolute"],
-.mui-float-group[data-position="absolute"] { position: absolute; }
-.mui-float-button:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 3px;
-}
-button.mui-float-button:disabled { opacity: .55; cursor: default; }
-:where(button:enabled, a[href]).mui-float-button:hover { filter: brightness(.96); }
+.mui-float-group[data-position="absolute"]{position: absolute;}
+.mui-float-button:focus-visible{outline: 2px solid var(--mui-color-info, #2080f0);outline-offset: 3px;}
+button.mui-float-button:disabled{opacity: .55;cursor: default;}
+:where(button:enabled, a[href]).mui-float-button:is(:hover, :active){box-shadow: var(--mui-float-shadow, 0 2px 12px rgb(0 0 0 / var(--_mui-float-hover-alpha, .24)));}
 .mui-float-button > svg,
-.mui-float-button > .mui-float-icon {
-  inline-size: var(--mui-float-icon-size, 1.25rem);
-  block-size: var(--mui-float-icon-size, 1.25rem);
-  flex: none;
-}
-.mui-float-description { font-size: .75em; }
-.mui-float-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--mui-float-group-gap, 1rem);
-  inline-size: fit-content;
-  max-inline-size: 100%;
-}
-.mui-float-group > .mui-float-button {
-  position: relative;
-  inset: auto;
-  border-radius: 999px;
-}
-.mui-float-group[data-shape="square"] {
-  gap: 0;
-  padding: .25rem;
-  border: 1px solid var(--mui-float-border-color, #d4d4d8);
-  border-radius: var(--mui-float-square-radius, .375rem);
-  background: var(--mui-float-background, #fff);
-}
-.mui-float-group[data-shape="square"] > .mui-float-button {
-  border: 0;
-  border-radius: var(--mui-float-square-radius, .375rem);
-  box-shadow: none;
-}
-.mui-float-group[data-shape="square"] > :where(button, a[href]).mui-float-button:not([hidden]) ~ :where(button, a[href]).mui-float-button:not([hidden]) {
-  border-block-start: 1px solid var(--mui-float-border-color, #d4d4d8);
-}
+.mui-float-button > .mui-float-icon{inline-size: var(--mui-float-icon-size, 18px);block-size: var(--mui-float-icon-size, 18px);flex: none;}
+.mui-float-description{font-size: 12px;line-height: 14px;}
+.mui-float-group{display: flex;flex-direction: column;align-items: center;gap: var(--mui-float-group-gap, 16px);inline-size: fit-content;max-inline-size: 100%;}
+.mui-float-group > .mui-float-button{position: relative;inset: auto;border-radius: 4096px;}
+.mui-float-group[data-shape="square"]{gap: 0;background: var(--mui-float-background, var(--_mui-float-bg, #fff));box-shadow: var(--mui-float-shadow, 0 2px 8px rgb(0 0 0 / .12));}
+.mui-float-group[data-shape="square"] > .mui-float-button{border: 0;border-radius: inherit;box-shadow: none;}
+.mui-float-group[data-shape="square"] > :where(button, a[href]).mui-float-button:not([hidden]) ~ :where(button, a[href]).mui-float-button:not([hidden]){border-block-start: 1px solid var(--mui-float-border-color, var(--_mui-float-border, #efeff5));min-block-size: calc(var(--mui-float-height, 40px) + 1px);}
+.mui-float-group[data-shape="square"] > :where(button:enabled, a[href]).mui-float-button:hover{filter: brightness(.96);}
 button.mui-float-trigger,
-button.mui-float-popover-command { display: none; }
-.mui-float-panel {
-  box-sizing: border-box;
-  inline-size: var(--mui-float-panel-width, 16rem);
-  max-inline-size: 100%;
-  margin-block: 1rem;
-  padding: .75rem;
-  border: 1px solid var(--mui-float-border-color, #d4d4d8);
-  border-radius: .5rem;
-  background: var(--mui-float-panel-background, #fff);
-  color: var(--mui-float-panel-color, #18181b);
-  overflow-wrap: anywhere;
-}
-.mui-float-panel > .mui-float-group {
-  position: static;
-  inset: auto;
-  inline-size: 100%;
-  --mui-float-width: 100%;
-}
-@supports selector(:popover-open) {
-  button.mui-float-trigger,
-  button.mui-float-popover-command { display: inline-flex; }
-  button.mui-float-trigger {
-    block-size: var(--mui-float-trigger-size, 2.5rem);
-    inline-size: var(--mui-float-trigger-size, 2.5rem);
-  }
-  .mui-float-panel[popover] {
-    position: fixed;
-    inset: auto;
-    inset-inline-end: var(--mui-float-inline-end, 1rem);
-    inset-block-end: calc(var(--mui-float-block-end, 1rem) + var(--mui-float-trigger-size, 2.5rem) + .75rem);
-    max-inline-size: calc(100% - var(--mui-float-inline-end, 1rem) - var(--mui-float-opposite-clearance, 1rem));
-    max-block-size: calc(100% - var(--mui-float-block-end, 1rem) - var(--mui-float-trigger-size, 2.5rem) - .75rem - max(1rem, env(safe-area-inset-top, 0px)));
-    margin: 0;
-    overflow: auto;
-  }
+button.mui-float-popover-command{display: none;}
+.mui-float-panel{box-sizing: border-box;inline-size: var(--mui-float-panel-width, 16rem);max-inline-size: 100%;margin-block: 1rem;padding: .75rem;border: 1px solid var(--mui-float-border-color, var(--_mui-float-border, #efeff5));border-radius: .5rem;background: var(--mui-float-panel-background, var(--_mui-float-bg, #fff));color: var(--mui-float-panel-color, var(--_mui-float-fg, #333639));overflow-wrap: anywhere;}
+.mui-float-panel > .mui-float-group{position: static;inset: auto;inline-size: 100%;--mui-float-width: 100%;}
+@supports selector(:popover-open){button.mui-float-trigger,
+  button.mui-float-popover-command{display: inline-flex;}
+button.mui-float-trigger{block-size: var(--mui-float-trigger-size, 40px);inline-size: var(--mui-float-trigger-size, 40px);}
+.mui-float-panel[popover]{position: fixed;inset: auto;inset-inline-end: var(--mui-float-inline-end, 1rem);inset-block-end: calc(var(--mui-float-block-end, 1rem) + var(--mui-float-trigger-size, 40px) + .75rem);max-inline-size: calc(100% - var(--mui-float-inline-end, 1rem) - var(--mui-float-opposite-clearance, 1rem));max-block-size: calc(100% - var(--mui-float-block-end, 1rem) - var(--mui-float-trigger-size, 40px) - .75rem - max(1rem, env(safe-area-inset-top, 0px)));margin: 0;overflow: auto;}
 }
 :where(.mui-float-button, .mui-float-group, .mui-float-panel, .mui-float-icon, .mui-float-description)[hidden]:not([hidden="until-found"]),
 template.mui-float-group,
 template.mui-float-button,
-.mui-float-group > template { display: none !important; }
-@media (forced-colors: active) {
-  :where(button, a[href]).mui-float-button, .mui-float-group, .mui-float-panel {
-    background: Canvas;
-    color: CanvasText;
-    border-color: CanvasText;
-    box-shadow: none;
-    filter: none;
-  }
-  button.mui-float-button:disabled { color: GrayText; opacity: 1; }
+.mui-float-group > template{display: none !important;}
+@media (forced-colors: active){:where(button, a[href]).mui-float-button, .mui-float-group, .mui-float-panel{background: Canvas;color: CanvasText;border-color: CanvasText;box-shadow: none;filter: none!important;}
+button.mui-float-button:disabled{color: GrayText;opacity: 1;}
 }
-@media print {
-  :where(button, a[href]).mui-float-button, .mui-float-group {
-    position: static !important;
-    inset: auto !important;
-    box-shadow: none;
-  }
-  button.mui-float-trigger, .mui-float-panel[popover] { display: none !important; }
+@media print{:where(button, a[href]).mui-float-button, .mui-float-group{position: static !important;inset: auto !important;box-shadow: none;}
+button.mui-float-trigger, .mui-float-panel[popover]{display: none !important;}
 }
