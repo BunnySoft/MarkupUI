@@ -3,9 +3,9 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 10/96 scopes.** The other **86** are not yet accepted in this
+**Reviewed and integrated: 11/96 scopes.** The other **85** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
-differences; it does not mean ten components have complete pixel/API parity.
+differences; it does not mean eleven components have complete pixel/API parity.
 
 The comparison starts with Naive UI's **default light theme**, default component props
 and only the content/values needed to render a useful example. The reference version,
@@ -121,12 +121,12 @@ rendered evidence and acceptance report.
 | [QR Code](../naive-ui/components/qr-code.md) | ⚪ Pending | — |
 | [Radio](../naive-ui/components/radio.md) | ⚪ Pending | — |
 | [Rate](../naive-ui/components/rate.md) | ⚪ Pending | — |
-| [Result](../naive-ui/components/result.md) | ⚪ Pending | — |
+| [Result](../naive-ui/components/result.md) | 🟠 Reviewing | — |
 | [Scrollbar](../naive-ui/components/scrollbar.md) | ⚪ Pending | — |
 | [Select](../naive-ui/components/select.md) | ⚪ Pending | — |
-| [Skeleton](../naive-ui/components/skeleton.md) | 🟠 Reviewing | — |
+| [Skeleton](../naive-ui/components/skeleton.md) | 🟢 Fixed / 🟡 Remaining | [Animated endpoints and retained shape/repeat limits](components/skeleton.md) |
 | [Slider](../naive-ui/components/slider.md) | ⚪ Pending | — |
-| [Space](../naive-ui/components/space.md) | ⚪ Pending | — |
+| [Space](../naive-ui/components/space.md) | 🟠 Reviewing | — |
 | [Spin](../naive-ui/components/spin.md) | ⚪ Pending | — |
 | [Split](../naive-ui/components/split.md) | ⚪ Pending | — |
 | [Statistic](../naive-ui/components/statistic.md) | 🟠 Reviewing | — |

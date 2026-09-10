@@ -174,9 +174,13 @@ intended to size or conceal a loaded-content subtree.
 
 ## Animation and CSS-only path
 
-`animated` defaults true; `animated="false"` / `.animated = false` stops the CSS opacity
-pulse. `prefers-reduced-motion: reduce` also disables animation for both enhanced and static
-placeholders. There is no animation runtime, Houdini property registration or loading timer.
+`animated` defaults true; `animated="false"` / `.animated = false` stops the CSS background-
+color pulse. The default two-second cycle matches the pinned reference: start color at
+0%, end color at 40%, then start color again at 80% and 100%, using
+`cubic-bezier(.36, 0, .64, 1)`. It does not animate opacity, so authored opacity is preserved.
+`prefers-reduced-motion: reduce` disables animation and background transitions for both
+enhanced and static placeholders. This retained reduced-motion policy is stronger than the
+pinned upstream default. There is no animation runtime, Houdini registration or loading timer.
 
 For a static placeholder, load only the CSS:
 
@@ -195,10 +199,30 @@ semantics; CSS cannot supply accessibility attributes. An application may build 
 static native spans when a controller is unnecessary.
 
 Public tokens: `--mui-skeleton-width`, `--mui-skeleton-height`, `--mui-skeleton-gap`,
-`--mui-skeleton-radius` and `--mui-skeleton-color`. Private attribute variables/presets reset
+`--mui-skeleton-radius`, `--mui-skeleton-color` and `--mui-skeleton-color-end`.
+The color token supplies the static/start color; the end token supplies the animated peak.
+Override both colors when customizing the complete pulse, or disable animation for one
+constant custom color. Radius overrides apply to soft and round shapes; circle retains 50%.
+Private attribute variables/presets reset
 on nested components to avoid geometry leakage; explicitly inherited public tokens remain
 application-owned. Use a nonnegative CSS length for the gap (for example `8px` or `0px`),
 not a percentage or intrinsic keyword, when relying on relative-height track calculations.
+
+### Default colors and theme scope
+
+Defaults now follow the pinned Naive UI theme: light `#eee` to `#ddd`, and dark white at
+.12 to .18 alpha. Set `data-mui-theme="dark"` on an ancestor or the native/static placeholder;
+nested `data-mui-theme="light"` scopes restore the light endpoints. These neutral defaults
+are local to the Skeleton stylesheet, so even the CSS-only path needs no shared theme
+stylesheet or JavaScript controller. Explicit public color tokens still take precedence.
+
+The 1em default, 28/34/40px presets, 3px soft radius and text baseline treatment are retained.
+The round-radius default is now 4096px, matching upstream; at ordinary dimensions both the
+old 999px and new value render as pills. Existing true-square circle geometry, repeated-row
+gaps and zero-repeat behavior remain deliberate native differences.
+
+See the [rendered Skeleton style audit](../style-audit/components/skeleton.md) for measured
+default/shape/text/color/animation comparisons and the exact retained boundaries.
 
 ## Per-property tracker
 
@@ -245,7 +269,26 @@ Unstyled meaningful fallback/status text remains application-owned and readable.
 8. [x] Run focused/integration/build/browser gates and resolve coupled review findings.
 9. [x] Reconcile reference rows/four tasks, catalog totals and master progression.
 
-### Acceptance evidence — 2026-09-08
+### Style acceptance — 2026-09-10
+
+- Compared 24 cases in both themes against installed Naive UI 2.45.3/Vue 3.5.30 using
+  current source, original source and later-loaded legacy CSS/aggregate.
+- The 21 comparable variants per theme matched visible bar geometry, radius, inherited
+  font size, fill, opacity and animation timing. Default/percentage circles and repeat zero
+  retain the documented native differences; repeated bars retain their 8px grid gap.
+- Browser animation samples at 0/400/800/1200/1600/1900ms matched upstream colors in both
+  themes, including custom endpoint overrides. Static CSS-only dark rendering, nested
+  light scope, custom dimensions/radius/opacity and reduced motion were verified separately.
+- `pnpm test -- tests\skeleton.test.ts tests\skeleton.styles.test.ts`: **26 tests passed**,
+  including three stylesheet regressions for endpoints/phases, shared static/bar timing
+  and light/dark/reduced-motion rules.
+- The coordinated full build and all **26 Skeleton tests** pass. Final manifest
+  ESM/classic/CSS sizes are **1,802 / 2,007 / 912 gzip bytes**, below the unchanged
+  **2,500 / 2,500 / 1,500** ceilings.
+
+### Historical acceptance evidence — 2026-09-08
+
+The original pulse observations and byte counts below predate the default-style corrections.
 
 - `pnpm test -- tests\skeleton.test.ts`: **23 focused tests passed**.
 - `pnpm build && pnpm test`: declarations and budget gates succeeded; **213 tests passed**
