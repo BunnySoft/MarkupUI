@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createBackTop } from "../src/components/back-top/index.js"
 import type { BackTopController, BackTopOptions } from "../src/components/back-top/index.js"
@@ -363,5 +364,57 @@ describe("validation, ownership and cleanup", () => {
     expect(css).toContain("forced-colors")
     expect(css).toContain("@media print")
     expect(source).not.toMatch(/innerHTML|MutationObserver|keydown|createElement|setInterval/)
+  })
+  it("keeps audited geometry, author-owned SVG styling and motion inside the CSS ceiling", () => {
+    const css = readFileSync(join("src", "components", "back-top", "back-top.css"), "utf8")
+    expect(css).toContain("--_mui-back-top-size:44px")
+    expect(css).toContain("font-size:var(--mui-back-top-icon-size,26px)")
+    expect(css).toContain(".mui-back-top-icon>svg{")
+    expect(css).not.toContain(".mui-back-top-icon svg{")
+    expect(css).toContain("var(--mui-back-top-inline-end,40px)")
+    expect(css).toContain("var(--mui-back-top-block-end,40px)")
+    expect(css).toContain("padding:0")
+    expect(css).toContain("border:0 solid")
+    expect(css).toContain("#333639")
+    expect(css).toContain("#48484e")
+    expect(css).toContain("rgba(255,255,255,.82)")
+    expect(css).toContain("0 2px 8px rgba(0,0,0,.12)")
+    expect(css).toContain("0 2px 12px rgba(0,0,0,.18)")
+    expect(css).toContain("var(--mui-color-primary-hover")
+    expect(css).toContain("var(--mui-color-primary-pressed")
+    expect(css).toContain(":not(:disabled,[aria-disabled=true])")
+    expect(css).not.toContain("--mui-back-top-size:")
+    expect(css).not.toContain("--mui-back-top-radius:")
+    expect(css).not.toMatch(/url\(|(?:^|[;{])\s*content\s*:/m)
+    const style = document.createElement("style")
+    style.textContent = css
+    document.head.append(style)
+    try {
+      const media = [...style.sheet!.cssRules]
+        .filter(rule => rule.type === CSSRule.MEDIA_RULE)
+        .map(rule => (rule as CSSMediaRule).media.mediaText)
+      expect(media).toContain("(prefers-reduced-motion:reduce)")
+    } finally { style.remove() }
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+  })
+  it("preserves authored icon nodes and local style tokens through visibility and focus changes", () => {
+    const { action, root } = nodes()
+    action.setAttribute("aria-label", "Back to top")
+    action.style.cssText = "--mui-back-top-size:60px;--mui-back-top-radius:8px;--mui-back-top-icon-size:30px;--mui-back-top-icon-color:rgb(1,2,3)"
+    action.innerHTML = '<span class="mui-back-top-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v16"/></svg></span>'
+    const icon = action.querySelector("svg")
+    const markup = action.innerHTML, style = action.getAttribute("style")
+    const controller = createBackTop(action, { root })
+    controllers.push(controller)
+    root.scrollTop = 220
+    controller.update()
+    action.focus()
+    controller.show = false
+    expect(controller.visible).toBe(true)
+    controller.disconnect()
+    expect(action.querySelector("svg")).toBe(icon)
+    expect(action.innerHTML).toBe(markup)
+    expect(action.getAttribute("style")).toBe(style)
+    expect(action.getAttribute("aria-label")).toBe("Back to top")
   })
 })

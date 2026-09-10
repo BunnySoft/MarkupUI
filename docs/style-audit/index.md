@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 41/96 scopes.** The other **55** are not yet accepted in this
+**Reviewed and integrated: 42/96 scopes.** The other **54** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -59,7 +59,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Anchor](../naive-ui/components/anchor.md) | ⚪ Pending | — |
 | [Auto Complete](../naive-ui/components/auto-complete.md) | ⚪ Pending | — |
 | [Avatar](../naive-ui/components/avatar.md) | 🟢 Fixed | [Defaults including text fit; architectural boundaries](components/avatar.md) |
-| [Back Top](../naive-ui/components/back-top.md) | 🟠 Reviewing | — |
+| [Back Top](../naive-ui/components/back-top.md) | 🟢 Fixed / 🟡 Remaining | [Control/icon metrics, shadows and native scroll/visibility limits](components/back-top.md) |
 | [Badge](../naive-ui/components/badge.md) | 🟢 Fixed / 🟡 Remaining | [Numeric cells, palette, wave and legacy limits](components/badge.md) |
 | [Breadcrumb](../naive-ui/components/breadcrumb.md) | 🟢 Fixed / 🟡 Remaining | [Text states, separator spacing and native current-page limits](components/breadcrumb.md) |
 | [Button](../naive-ui/components/button.md) | 🟢 Fixed / 🟡 Remaining | [Defaults, wave/insertion and blocked swap/exit motion](components/button.md) |
@@ -70,7 +70,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Checkbox](../naive-ui/components/checkbox.md) | 🟢 Fixed / 🟡 Remaining | [Box/label metrics, theme accents and retained native skin](components/checkbox.md) |
 | [Code](../naive-ui/components/code.md) | 🟢 Fixed / 🟡 Remaining | [Plain typography, gutters and authored token limits](components/code.md) |
 | [Collapse Transition](../naive-ui/components/collapse-transition.md) | 🟢 Fixed / 🟡 Remaining | [Height/fade curves and native scheduling/geometry limits](components/collapse-transition.md) |
-| [Collapse](../naive-ui/components/collapse.md) | ⚪ Pending | — |
+| [Collapse](../naive-ui/components/collapse.md) | 🟠 Reviewing | — |
 | [Color Picker](../naive-ui/components/color-picker.md) | ⚪ Pending | — |
 | [Config Provider](../naive-ui/components/config-provider.md) | ⚪ Pending | — |
 | [Countdown](../naive-ui/components/countdown.md) | ⚪ Pending | — |

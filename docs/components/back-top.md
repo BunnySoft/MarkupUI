@@ -5,6 +5,12 @@ Native fragments are the no-JS baseline. The optional controller reuses
 [Anchor's native scroll context](../../src/components/anchor/scroll.ts), not its scrollspy
 or any popup/positioning engine. No Float Button, Icon, Affix, portal or provider is required.
 
+**Default-style audit (2026-09-10):** corrected the 44px control, 40px fixed offsets,
+surface/shadows, 26px authored SVG treatment and light/dark hover/pressed colors.
+The [rendered audit](../style-audit/components/back-top.md) separates the matched visual
+scope from native focus/target/visibility behavior. The helper/controller is unchanged;
+no icon, portal or transition renderer was added.
+
 ## Loading and anatomy
 
 | Asset / export | Contract |
@@ -127,20 +133,67 @@ identity. Cross-document or separate helper-copy handoff needs explicit disconne
 
 ## External presentation and native fallback
 
-Default inline presentation, round/square and small/large classes require no JS. The optional
-`mui-back-top--fixed` class uses logical inline/block-end offsets (2.5rem defaults), safe-area
-minimums and an explicit z-index token. Author `--mui-back-top-size`, `--mui-back-top-radius`,
-`--mui-back-top-inline-end`, `--mui-back-top-block-end`, color/border/background/focus tokens,
-or ordinary external CSS for custom icon and unequal width/height requirements.
+Default inline presentation, round/square and small/large classes require no JS. The default
+minimum size is **44px**, with zero padding/border and a 22px radius at that size. Small and
+large remain native 36px/52px presets; public size/radius overrides win over those presets.
+The minimum-size behavior can expand for authored content, unlike the reference's fixed
+44px height. Square is an explicit native shape convenience, not an upstream prop.
+
+The optional `mui-back-top--fixed` class uses logical inline/block-end offsets (**40px**
+defaults), safe-area minimums and an explicit z-index token (default 10).
+Pixel defaults no longer drift when the document root font size changes.
+Author `--mui-back-top-size`, `--mui-back-top-radius`, `--mui-back-top-inline-end`,
+`--mui-back-top-block-end`, color/background/focus tokens or ordinary external CSS.
+The retained `--mui-back-top-border` color token applies when an author explicitly sets
+`border-width`; there is no normal-state border by default.
+
+The default surface/text are white / `#333639` in light and `#48484e` / white-.82 under
+an ancestor `data-mui-theme="dark"`. Nested explicit `"light"` restores light fallbacks.
+The rest shadow is `0 2px 8px rgba(0,0,0,.12)`; hover and pressed use
+`0 2px 12px rgba(0,0,0,.18)` without recoloring the surface.
+`--mui-back-top-shadow`, `--mui-back-top-hover-shadow`, `--mui-back-top-pressed-shadow`
+override them independently. The existing `--mui-back-top-hover` remains an explicit
+native hover-background override.
+
+### Authored icons, not an icon renderer
+
+Existing arrow text, SVGs and custom content are never replaced. To size/tint a decorative
+SVG, explicitly author a `.mui-back-top-icon` wrapper; it defaults to a 26px square.
+For example, this is an application-owned arrow illustration, not a bundled stock glyph:
+
+```html
+<button type="button" class="mui-back-top mui-back-top--fixed" aria-label="Back to top" hidden>
+  <span class="mui-back-top-icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 5h14M12 9v12M7 14l5-5 5 5"/>
+    </svg>
+  </span>
+</button>
+```
+
+The native button still needs explicit application binding and the JS-only hidden/fallback
+policy described above. The class itself only styles authored content.
+`--mui-back-top-icon-size`, `--mui-back-top-icon-color`,
+`--mui-back-top-icon-hover-color` and `--mui-back-top-icon-pressed-color` are local tokens.
+Normal icon color inherits the action; hover/pressed reuse shared primary-hover/pressed
+roles when supplied, otherwise pinned light/dark fallbacks. Local icon tokens win.
+SVG pointer hit-testing is disabled only within this opted-in decorative icon wrapper.
+The audit authored the same pinned SVG for a controlled comparison; no SVG asset is shipped
+or inserted by the helper.
 
 Logical inline-end moves to the left in RTL, unlike upstream's physical right. Fixed position
 is constrained by native transformed/containing blocks; no teleport, body scroll-lock
 compensation, portal-position or pinch-viewport-following guarantee. Place the control in a
 suitable authored ancestor. Insets assume horizontal writing. Responsive CSS, readable text,
 native focus and browser zoom remain authorable without geometry writes or injected styles.
-Forced colors preserve border/focus cues; print hides actions. There is no decorative motion
-to suppress in component CSS. Native link smoothness is opt-in author CSS and must itself
-respect reduced motion, as in the demo. No-JS links remain visible and navigate normally.
+Forced colors add a visible system-color border and preserve focus cues; print hides actions.
+Color/shadow paint transitions last 0.3s and are disabled under reduced motion. There is no
+Vue-style scale/fade visibility renderer: helper hiding still uses the owned display marker,
+and focused actions retain visibility until blur. Disabled/aria-disabled controls do not
+receive hover/pressed emphasis.
+Native link smoothness is opt-in author CSS and must itself respect reduced motion, as in
+the demo. No-JS links remain visible and navigate normally.
 
 ## Acceptance — 2026-09-09
 
