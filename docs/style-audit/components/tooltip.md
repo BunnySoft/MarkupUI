@@ -150,3 +150,6 @@ ESM/classic budgets. Unfinished unrelated work is excluded; integration is compl
 The subsequent shared Popconfirm guard change reduces composed Tooltip CSS to **1,202
 gzip bytes**. Its skin is still excluded from ordinary Popover surface defaults; all
 46 Tooltip tests passed within the **233-test** popup-family integration batch.
+
+The later Dropdown surface reuse reduces composed Tooltip CSS to **1,196 gzip bytes**;
+all 46 Tooltip cases passed again in the **237-test** popup-family release batch.

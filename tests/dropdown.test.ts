@@ -4,6 +4,49 @@ import { createDropdown } from "../src/components/dropdown/index.js"
 import { createMenuKeyboard } from "../src/components/dropdown/keyboard.js"
 import type { DropdownController, DropdownOptions } from "../src/components/dropdown/index.js"
 
+describe("audited Dropdown styles", () => {
+  const css = readFileSync("src/components/dropdown/dropdown.css", "utf8")
+
+  it("uses measured menu density without forcing fixed-height or flex-split labels", () => {
+    expect(css).toMatch(/padding:var\(--mui-popover-padding,\s*4px 0\)/)
+    expect(css).toContain("min-height:var(--_dd-h, 34px)")
+    expect(css).toContain("--_dd-h: 28px")
+    expect(css).toContain("--_dd-h: 40px")
+    expect(css).toContain("--_dd-h: 46px")
+    expect(css).toContain("display:block")
+    expect(css).toContain("white-space:normal")
+    expect(css).not.toContain("font-weight:600")
+  })
+
+  it("matches theme-state roles while keeping disabled selections unpainted", () => {
+    expect(css).toContain("light-dark(#f3f3f5, #ffffff17)")
+    expect(css).toContain("var(--_dd-alpha, 10%)")
+    expect(css).toContain("--_dd-alpha: 15%")
+    expect(css).toContain("--_dd-opacity: .38")
+    expect(css).toContain("[data-dropdown-selected]:not(:disabled)")
+    expect(css).toContain("var(--mui-color-primary-suppl, #2a947d)")
+    expect(css).not.toContain("--_dd-line")
+  })
+
+  it("preserves inherited public overrides and logical label placement", () => {
+    expect(css).not.toMatch(/(?:^|[;{])\s*--mui-(?:dropdown|popover)-[\w-]+\s*:/m)
+    expect(css).toContain("var(--mui-dropdown-item-padding,")
+    expect(css).toContain("var(--mui-dropdown-hover,")
+    expect(css).toContain("var(--mui-dropdown-selected,")
+    expect(css).toContain("[data-dropdown-item]:dir(rtl)")
+    expect(css).toContain("padding-inline:calc(")
+    expect(css).toContain("float:inline-end")
+  })
+
+  it("retains hidden, focus, forced-colors and print safety", () => {
+    expect(css).toContain("[hidden]{display:none!important}")
+    expect(css).toContain(":focus-visible{outline:2px solid currentColor")
+    expect(css).toContain("@media(forced-colors:active)")
+    expect(css).toContain("@media print")
+    expect(css).toContain("color:#000!important;background:transparent!important")
+  })
+})
+
 const controllers: DropdownController[] = []
 const matches = HTMLElement.prototype.matches
 let opened: WeakSet<HTMLElement>

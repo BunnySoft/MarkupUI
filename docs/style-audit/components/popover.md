@@ -60,11 +60,12 @@ unchanged. Four source-style regressions were added to the existing Popover test
 ## Isolation, author overrides and payload constraints
 
 The shared surface uses a low-specificity `:where(:not(...))` guard. It excludes
-`.mui-tooltip`, `.mui-dropdown`, and Popover descendants of `.mui-popselect`. Popselect
+`.mui-tooltip` and Popover descendants of `.mui-popselect`. Popselect
 keeps its panel in that component boundary, including in the top layer. Popconfirm was
 also excluded in the initial audit below; its later comparison verified that it uses
 the same Popover theme, so it now shares the corrected surface instead of duplicating it.
-The other skins retain their separate ownership.
+Dropdown subsequently verified the same normal surface roles and opted into this base
+as well, while retaining its local density/state rules.
 
 Before/after rendered consumer checks cover light/dark surface geometry, padding, border,
 radius, color, background, font, line-height, shadow and overflow. The retained inset-arrow
@@ -152,11 +153,11 @@ Popconfirm/Dropdown/Popselect tests** passed. Final manifest CSS remains
 **961/1,136/1,246/1,584/1,803 gzip bytes** respectively, within unchanged ceilings.
 Unfinished unrelated work is excluded from the release snapshot; integration is complete.
 
-## Shared surface follow-up: Popconfirm
+## Shared surface follow-up: Popconfirm and Dropdown
 
-The later Popconfirm audit verified its unchanged Popover peer theme before opting it
-into the same surface rule. Only its exclusion was removed; Tooltip, Dropdown and
-Popselect skin boundaries remain. The isolated release build and **233 popup-family
-tests** passed after this shared/local integration. Current CSS gzip values are
-**955 Popover / 1,202 Tooltip / 1,247 Popconfirm / 1,579 Dropdown / 1,797 Popselect**,
+The later Popconfirm and Dropdown audits verified their Popover peer surface roles before
+opting into the same rule. Their exclusions were removed in coordinated releases;
+Tooltip and Popselect skin boundaries remain. The isolated release build and **237
+popup-family tests** passed after the latest shared/local integration. Current CSS gzip values are
+**947 Popover / 1,196 Tooltip / 1,241 Popconfirm / 1,744 Dropdown / 1,791 Popselect**,
 all within unchanged ceilings. These supersede the initial integration sizes above.

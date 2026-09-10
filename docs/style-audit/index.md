@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 55/96 scopes.** The other **41** are not yet accepted in this
+**Reviewed and integrated: 56/96 scopes.** The other **40** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -81,7 +81,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Discrete API](../naive-ui/components/discrete.md) | ⚪ Pending | — |
 | [Divider](../naive-ui/components/divider.md) | 🟢 Fixed / 🟡 Remaining | [Rule geometry, colors and native orientation limits](components/divider.md) |
 | [Drawer](../naive-ui/components/drawer.md) | 🟢 Fixed / 🟡 Remaining | [Edge geometry, theme surfaces and protected native modes/scrolling](components/drawer.md) |
-| [Dropdown](../naive-ui/components/dropdown.md) | 🟠 Reviewing | — |
+| [Dropdown](../naive-ui/components/dropdown.md) | 🟢 Fixed / 🟡 Remaining | [Shared popup surface, density/state palette and authored-column limits](components/dropdown.md) |
 | [Dynamic Input](../naive-ui/components/dynamic-input.md) | ⚪ Pending | — |
 | [Dynamic Tags](../naive-ui/components/dynamic-tags.md) | ⚪ Pending | — |
 | [Element](../naive-ui/components/element.md) | ⚪ Pending | — |
@@ -143,7 +143,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Time](../naive-ui/components/time.md) | ⚪ Pending | — |
 | [Timeline](../naive-ui/components/timeline.md) | 🟢 Fixed / 🟡 Remaining | [Node/rail alignment, supplementary colors and native RTL/dash limits](components/timeline.md) |
 | [Tooltip](../naive-ui/components/tooltip.md) | 🟢 Fixed / 🟡 Remaining | [Shared dark surface, typography and native tooltip limits](components/tooltip.md) |
-| [Transfer](../naive-ui/components/transfer.md) | ⚪ Pending | — |
+| [Transfer](../naive-ui/components/transfer.md) | 🟠 Reviewing | — |
 | [Tree Select](../naive-ui/components/tree-select.md) | ⚪ Pending | — |
 | [Tree](../naive-ui/components/tree.md) | ⚪ Pending | — |
 | [Typography](../naive-ui/components/typography.md) | 🟢 Fixed / 🟡 Remaining | [Text, headings, code and native presentation limits](components/typography.md) |

@@ -166,3 +166,7 @@ passed: 45 Popconfirm, 58 Popover, 46 Tooltip, 49 Dropdown and 35 Popselect.
 Final composed CSS is **1,247/1,250 gzip bytes**, with the **955-byte Popover base**.
 The approved shared guard and local corrections are integrated together; no runtime
 controller or ceiling changed.
+
+The subsequent Dropdown surface reuse reduces the shared base to **947 gzip bytes**
+and composed Popconfirm CSS to **1,241 bytes**. All 45 Popconfirm cases passed again
+within the **237-test** popup-family release batch; its local skin/runtime did not change.

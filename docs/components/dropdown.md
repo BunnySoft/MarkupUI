@@ -5,6 +5,10 @@ This is more than a floating list: enabled-item roving focus, directional naviga
 Home/End, typeahead, native activation, submenu intent, Escape and untrapped Tab are
 implemented over the existing Popover controller. There is no option renderer or app store.
 
+**Default-style audit: 🟢 surface, density and state colors fixed / 🟡 renderer-specific
+column/artwork limits retained.** See the [rendered report](../style-audit/components/dropdown.md)
+for the coordinated base reuse, light/dark/inverted comparisons and keyboard checks.
+
 ## Distribution and markup
 
 | Asset / export | Purpose |
@@ -226,8 +230,41 @@ clip polygons, portals, global z-index and automatic outside-click reason callba
 The complete external CSS includes shared surface/arrow/animation/scroll/print/motion rules,
 plus menu items/groups/dividers/focus/selected/disabled styling. Four sizes use
 `.mui-dropdown--small`, default medium, `--large`, `--huge`; `.mui-dropdown--inverted`
-sets inherited color tokens. Item-padding/font/hover/selected custom properties cascade
+styles the root and inherited submenu appearance. Item-padding/font/hover/selected custom properties cascade
 into submenus. Icons and directional suffix artwork remain authored. Raw is not a Dropdown API.
+
+### Audited skin
+
+Normal menus reuse the approved Popover surface rather than duplicating its palette:
+3px corners, no border and the corresponding light/dark overlay shadow. Menu padding is
+4px vertically, zero horizontally. Item minimum heights are **28/34/40/46px** for
+small/medium/large/huge; fonts are **14/14/15/16px**. Minimum height and ordinary inline
+text flow preserve wrapping rather than forcing clipped single-line labels.
+
+Native actions are inset 4px on each side, matching the reference's visible state
+background bounds. Their actual hit boxes are therefore inset too; Naive uses a full-width
+option wrapper with an inset paint layer. Keyboard focus retains a visible inset outline.
+Group labels use one pixel smaller text and half the normal leading inset; dividers use
+1px height and 4px vertical margins.
+
+Hover/focus, selected and disabled-selected colors now match the pinned normal/inverted
+themes. Disabled rows use .5 opacity in light and .38 in dark and do not receive the
+ordinary selected fill. Public padding/font/hover/selected and Popover color/background/
+radius/border tokens are consumed, not assigned defaults that mask ancestor overrides.
+Semantic primary colors come from the existing theme tokens; load the theme stylesheet
+or apply the registered theme for full dark semantic colors.
+
+The skin uses `light-dark()` and `color-mix()` for state colors. The explicit theme
+attribute selects the local color scheme; modern native-Popover browsers are the tested
+target. Author hover/selected overrides can replace those colors. No theme preset or
+runtime helper is added.
+
+Icons and suffixes are still authored content, not generated prefix/suffix wrappers.
+The library does not reserve empty icon columns or a submenu-arrow column across every
+sibling. Complex menus may therefore be narrower than Naive. Its persistent ancestor
+“child-active” coloring is also not synthesized from the native leaf-only value marker.
+These presentation limits do not change menu ownership or keyboard navigation.
+
 CSS is composed in the existing build, with no runtime relative @import or hand-copied base.
 Loading Popover CSS again is unnecessary when complete Dropdown CSS is already loaded.
 

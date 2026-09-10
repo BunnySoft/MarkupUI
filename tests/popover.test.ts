@@ -6,7 +6,7 @@ import type { PopoverController, PopoverOptions } from "../src/components/popove
 
 describe("audited standalone Popover styles", () => {
   const css = readFileSync("src/components/popover/popover.css", "utf8")
-  const surface = css.match(/(\.mui-popover:where\(:not\(\.mui-tooltip,\.mui-dropdown,\.mui-popselect \*\)\))\{([^}]+)\}/)!
+  const surface = css.match(/(\.mui-popover:where\(:not\(\.mui-tooltip,\.mui-popselect \*\)\))\{([^}]+)\}/)!
   const standalone = surface[2]!
 
   it("scopes corrected density and palette away from distinct composed skins", () => {
@@ -18,14 +18,14 @@ describe("audited standalone Popover styles", () => {
     expect(css).toContain("border:1px solid var(--mui-popover-border,#8b929e)")
   })
 
-  it("shares the verified surface with Popconfirm while retaining other skin boundaries", () => {
+  it("shares verified surfaces with Popconfirm and Dropdown while retaining other skin boundaries", () => {
     const panel = document.createElement("div")
-    panel.className = "mui-popover mui-popconfirm"
-    expect(panel.matches(surface[1]!)).toBe(true)
-    for (const skin of ["mui-tooltip", "mui-dropdown"]) {
+    for (const skin of ["mui-popconfirm", "mui-dropdown"]) {
       panel.className = `mui-popover ${skin}`
-      expect(panel.matches(surface[1]!)).toBe(false)
+      expect(panel.matches(surface[1]!)).toBe(true)
     }
+    panel.className = "mui-popover mui-tooltip"
+    expect(panel.matches(surface[1]!)).toBe(false)
     const select = document.createElement("div")
     select.className = "mui-popselect"
     panel.className = "mui-popover"
