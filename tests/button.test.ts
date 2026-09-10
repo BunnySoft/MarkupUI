@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
+import { gzipSync } from "node:zlib"
+import { execFileSync } from "node:child_process"
 import { MuiButton, MuiButtonGroup, registerButton } from "../src/components/button/index.js"
 import { registerElements } from "../src/components/elements.js"
 import { installActions, registerAction } from "../src/actions/index.js"
@@ -13,16 +15,30 @@ afterEach(() => {
 describe("audited Button styles", () => {
   const css = readFileSync("src/components/button/button.css", "utf8")
   const legacy = readFileSync("src/components/styles.css", "utf8")
+  const normalizeCSS = (value: string) => value.replace(/\s+/g, "")
+    .replace(/\[([\w-]+)="([\w-]+)"\]/g, "[$1=$2]").replace(/;}/g, "}")
+  const containsCSS = (value: string) => expect(normalizeCSS(css)).toContain(normalizeCSS(value))
+
+  it("keeps the accepted Button-only packaging transform within the unchanged distribution ceiling", () => {
+    // esbuild needs Node's typed-array realm, not jsdom's mixed globals.
+    const built = execFileSync(process.execPath, ["-e", `
+      const fs = require("node:fs"), { transformSync } = require("esbuild");
+      process.stdout.write(transformSync(fs.readFileSync(process.argv[1], "utf8"), {
+        loader: "css", minifyWhitespace: true, minifySyntax: false, legalComments: "none"
+      }).code);
+    `, "src\\components\\button\\button.css"], { encoding: "utf8" })
+    expect(gzipSync(built, { level: 9 }).length).toBeLessThanOrEqual(2500)
+  })
 
   it("uses overlay borders instead of adding border width to native button geometry", () => {
-    expect(css).toContain("border: 0;")
-    expect(css).toContain('[data-mui-button-control]::after {')
-    expect(css).toContain("border: 1px solid var(--_mui-button-current-border")
-    expect(css).toContain("height: var(--mui-button-height, 34px)")
-    expect(css).toContain("line-height: 1;")
-    expect(css).toContain("font-weight: 400;")
-    expect(css).toContain('[strong] > [data-mui-button-control] { font-weight: 500; }')
-    expect(css).toContain('height: auto; padding: 0; border-radius: 0;')
+    containsCSS("border: 0;")
+    containsCSS('[data-mui-button-control]::after {')
+    containsCSS("border: 1px solid var(--_mui-button-current-border")
+    containsCSS("height: var(--mui-button-height, 34px)")
+    containsCSS("line-height: 1;")
+    containsCSS("font-weight: 400;")
+    containsCSS('[strong] > [data-mui-button-control] { font-weight: 500; }')
+    containsCSS('height: auto; padding: 0; border-radius: 0; }')
   })
 
   it("matches pinned size, round-padding and icon metrics without changing native control types", () => {
@@ -30,11 +46,11 @@ describe("audited Button styles", () => {
       ["tiny", 22, 6, 12, 14], ["small", 28, 10, 14, 18],
       ["medium", 34, 14, 14, 18], ["large", 40, 18, 15, 20],
     ]) {
-      expect(css).toContain(`[size="${size}"] { --mui-button-height: ${height}px; --mui-button-padding: ${padding}px; --mui-button-font-size: ${font}px; --mui-button-icon-size: ${icon}px; }`)
+      containsCSS(`[size="${size}"] { --mui-button-height: ${height}px; --mui-button-padding: ${padding}px; --mui-button-font-size: ${font}px; --mui-button-icon-size: ${icon}px; }`)
     }
-    expect(css).toContain("calc(var(--mui-button-padding, 14px) + 4px)")
-    expect(css).toContain("var(--mui-button-icon-gap, 6px)")
-    expect(css).toContain('[data-mui-button-spinner] > svg')
+    containsCSS("calc(var(--mui-button-padding, 14px) + 4px)")
+    containsCSS("var(--mui-button-icon-gap, 6px)")
+    containsCSS('[data-mui-button-spinner] > svg')
     for (const type of ["primary", "text", "tertiary", "error"]) {
       const element = button(`<mui-button type="${type}"><button type="reset">Action</button></mui-button>`)
       expect((element.control as HTMLButtonElement).type).toBe("reset")
@@ -48,36 +64,213 @@ describe("audited Button styles", () => {
     expect(themes.light["text-primary"]).toBe("#18181b")
     expect(themes.light["bg-page"]).toBe("#f6f7f9")
     expect(themes.dark["button-text-color"]).toBe("rgba(255, 255, 255, .82)")
-    expect(css).toContain("--_mui-button-contrast: #000")
-    expect(css).toContain("--_mui-button-opacity: .38")
-    expect(css).toContain("rgba(46, 51, 56, .05)")
-    expect(css).toContain("rgba(255, 255, 255, .12)")
-    expect(css).toContain("r g b / .16")
-    expect(css).not.toContain("var(--mui-text-primary")
+    containsCSS("light-dark(#fff, #000)")
+    containsCSS("--_mui-button-opacity: .38")
+    containsCSS("rgba(46, 51, 56, .05)")
+    containsCSS("rgba(255, 255, 255, .12)")
+    containsCSS("r g b / .16")
+    expect(normalizeCSS(css)).not.toContain("var(--mui-text-primary")
     expect(legacy).toContain("--mui-button-text-color:#333639;--mui-button-border-color:#e0e0e6")
   })
 
+  describe("Button motion ownership", () => {
+    function animation(name: string, target: Element) {
+      let resolve!: () => void
+      const finished = new Promise<void>(done => { resolve = done })
+      const value = {
+        animationName: name, effect: { target }, currentTime: 200,
+        playState: "running", finished, onfinish: null as (() => void) | null,
+        oncancel: null as (() => void) | null,
+        play: vi.fn(), cancel: vi.fn(),
+      }
+      value.cancel.mockImplementation(() => { value.playState = "idle" })
+      return { value, resolve }
+    }
+
+    it("restarts only its own wave and leaves native activation and author animations intact", () => {
+      const element = button('<mui-button type="primary"><button type="button">Save</button></mui-button>')
+      const control = element.control!
+      const wave = animation("mui-button-wave", control).value
+      const author = animation("author-pulse", control).value
+      Object.defineProperty(control, "getAnimations", { value: vi.fn(() => [author, wave]) })
+      const click = vi.fn()
+      control.addEventListener("click", click)
+      element.click()
+      expect(click).toHaveBeenCalledOnce()
+      expect(wave.currentTime).toBe(0)
+      expect(wave.play).toHaveBeenCalledOnce()
+      expect(control.hasAttribute("data-mui-button-wave")).toBe(true)
+      wave.currentTime = 300
+      element.click()
+      expect(wave.currentTime).toBe(0)
+      expect(wave.play).toHaveBeenCalledTimes(2)
+      expect(author.cancel).not.toHaveBeenCalled()
+      wave.playState = "finished"
+      wave.onfinish?.()
+      expect(control.hasAttribute("data-mui-button-wave")).toBe(false)
+      expect(wave.cancel).toHaveBeenCalledOnce()
+    })
+
+    it("suppresses waves for disabled, loading, text, soft and reduced-motion controls", () => {
+      for (const attrs of ["disabled", "loading", "text", 'type="text"', "secondary", "tertiary", "quaternary"]) {
+        const element = button(`<mui-button ${attrs}>Save</mui-button>`)
+        const wave = animation("mui-button-wave", element.control!).value
+        Object.defineProperty(element.control!, "getAnimations", { value: () => [wave] })
+        element.click()
+        expect(wave.play).not.toHaveBeenCalled()
+      }
+      vi.stubGlobal("matchMedia", () => ({ matches: true }))
+      const element = button()
+      const wave = animation("mui-button-wave", element.control!).value
+      Object.defineProperty(element.control!, "getAnimations", { value: () => [wave] })
+      element.click()
+      expect(wave.play).not.toHaveBeenCalled()
+    })
+
+    it("cleans wave state on detach and control replacement without stale callback effects", async () => {
+      const element = button()
+      const control = element.control!
+      const wave = animation("mui-button-wave", control).value
+      Object.defineProperty(control, "getAnimations", { value: () => [wave] })
+      element.click()
+      const oldFinish = wave.onfinish
+      element.remove()
+      expect(control.hasAttribute("data-mui-button-wave")).toBe(false)
+      expect(wave.cancel).toHaveBeenCalledOnce()
+      oldFinish?.()
+      expect(wave.cancel).toHaveBeenCalledOnce()
+      document.body.append(element)
+      element.click()
+      const next = document.createElement("button")
+      next.type = "button"
+      element.replaceChildren(next)
+      await Promise.resolve()
+      expect(element.control).toBe(next)
+      expect(control.hasAttribute("data-mui-button-wave")).toBe(false)
+      expect(wave.cancel).toHaveBeenCalledTimes(2)
+    })
+
+    function insertionFixture(withStyle = false, svg = false, cssWidth = "18px") {
+      const computed = { animationName: "none", display: "inline-flex", width: cssWidth }
+      vi.spyOn(window, "getComputedStyle").mockReturnValue(computed as CSSStyleDeclaration)
+      const element = button()
+      const icon = svg
+        ? document.createElementNS("http://www.w3.org/2000/svg", "svg")
+        : document.createElement("span")
+      icon.dataset.muiButtonIcon = ""
+      icon.textContent = "+"
+      if (withStyle) icon.style.cssText = "color: purple; transform: rotate(10deg)"
+      Object.defineProperty(icon, "getClientRects", { configurable: true, value: () => [{}] })
+      const width = animation("mui-button-enter-width", icon)
+      const alpha = animation("mui-button-enter-alpha", icon)
+      Object.defineProperty(icon, "getAnimations", {
+        value: () => icon.hasAttribute("data-mui-button-enter") ? [width.value, alpha.value] : [],
+      })
+      return { element, icon, width, alpha, computed }
+    }
+
+    it("animates inserted icons without replacing nodes, listeners or author styles", async () => {
+      const { element, icon, width, alpha } = insertionFixture(true)
+      const style = icon.getAttribute("style")
+      const click = vi.fn()
+      icon.addEventListener("click", click)
+      element.control!.append(icon)
+      await Promise.resolve()
+      expect(icon.parentNode).toBe(element.control)
+      expect(icon.style.getPropertyValue("--_mui-button-enter-width")).toBe("18px")
+      expect(icon.style.transform).toBe("rotate(10deg)")
+      width.resolve()
+      alpha.resolve()
+      await Promise.resolve()
+      await Promise.resolve()
+      expect(icon.hasAttribute("data-mui-button-enter")).toBe(false)
+      expect(icon.getAttribute("style")).toBe(style)
+      icon.click()
+      expect(click).toHaveBeenCalledOnce()
+    })
+
+    it("cancels insertion on detach and restores an originally absent style attribute", async () => {
+      const { element, icon, width, alpha } = insertionFixture()
+      element.control!.append(icon)
+      await Promise.resolve()
+      expect(icon.hasAttribute("data-mui-button-enter")).toBe(true)
+      element.remove()
+      expect(width.value.cancel).toHaveBeenCalledOnce()
+      expect(alpha.value.cancel).toHaveBeenCalledOnce()
+      expect(icon.hasAttribute("style")).toBe(false)
+      expect(icon.hasAttribute("data-mui-button-enter")).toBe(false)
+      document.body.append(element)
+      expect(icon.parentNode).toBe(element.control)
+      expect(icon.hasAttribute("data-mui-button-enter")).toBe(false)
+    })
+
+    it.each([false, true])("uses fractional untransformed CSS width for SVG=%s and restores author sizing", async svg => {
+      const { element, icon, width, alpha } = insertionFixture(true, svg, "18.375px")
+      icon.style.cssText = "width: 18.375px; max-width: 18.375px; padding: 1.5px; border: 1px solid; transform: scale(2)"
+      const original = icon.getAttribute("style")
+      if (!svg) Object.defineProperty(icon, "offsetWidth", { value: 23 })
+      else expect("offsetWidth" in icon).toBe(false)
+      Object.defineProperty(icon, "getBoundingClientRect", { value: () => ({ width: 46.75 }) })
+      element.control!.append(icon)
+      await Promise.resolve()
+      expect(icon.style.getPropertyValue("--_mui-button-enter-width")).toBe("18.375px")
+      expect(icon.hasAttribute("data-mui-button-enter")).toBe(true)
+      expect(icon.parentNode).toBe(element.control)
+      width.resolve()
+      alpha.resolve()
+      await Promise.resolve()
+      await Promise.resolve()
+      expect(icon.getAttribute("style")).toBe(original)
+      expect(icon.hasAttribute("data-mui-button-enter")).toBe(false)
+    })
+
+    it.each(["hidden", "no-box", "auto", "zero"])("does not measure an unavailable icon layout: %s", async mode => {
+      const { element, icon, computed } = insertionFixture(false, true)
+      if (mode === "hidden") computed.display = "none"
+      if (mode === "no-box") Object.defineProperty(icon, "getClientRects", { value: () => [] })
+      if (mode === "auto") computed.width = "auto"
+      if (mode === "zero") computed.width = "0px"
+      element.control!.append(icon)
+      await Promise.resolve()
+      expect(icon.hasAttribute("data-mui-button-enter")).toBe(false)
+      expect(icon.hasAttribute("style")).toBe(false)
+    })
+
+    it("does not replace an author's animation with an insertion effect", async () => {
+      const element = button()
+      const icon = document.createElement("span")
+      icon.dataset.muiButtonIcon = ""
+      const author = animation("author-pulse", icon).value
+      Object.defineProperty(icon, "getAnimations", { value: () => [author] })
+      element.control!.append(icon)
+      await Promise.resolve()
+      expect(icon.hasAttribute("data-mui-button-enter")).toBe(false)
+      expect(icon.hasAttribute("style")).toBe(false)
+      expect(author.cancel).not.toHaveBeenCalled()
+    })
+  })
+
   it("keeps disabled colors static and loading appearance independent from native disabled ownership", () => {
-    expect(css).toContain(':is(:not(:disabled, [aria-disabled="true"]), [aria-busy="true"])')
-    expect(css).toContain('[loading]:not([disabled]) > [data-mui-button-control] { opacity: 1; cursor: wait;')
-    expect(css).toContain("var(--_mui-button-bg-disabled)")
-    expect(css).toContain("var(--_mui-button-label-disabled)")
-    expect(css).toContain("border-color .3s cubic-bezier(.4, 0, .2, 1)")
-    expect(css).toContain("@media (forced-colors: active)")
-    expect(css).toContain("@media (prefers-reduced-motion: reduce)")
-    expect(css).toContain(":focus-visible { outline: 2px solid Highlight")
+    containsCSS(':is(:not(:disabled, [aria-disabled="true"]), [aria-busy="true"])')
+    containsCSS('[loading]:not([disabled]) > [data-mui-button-control] { opacity: 1; cursor: wait;')
+    containsCSS("var(--_mui-button-bg-disabled)")
+    containsCSS("var(--_mui-button-label-disabled)")
+    containsCSS("border-color .3s cubic-bezier(.4, 0, .2, 1)")
+    containsCSS("@media (forced-colors: active)")
+    containsCSS("@media (prefers-reduced-motion: reduce)")
+    containsCSS(":focus-visible { outline: 2px solid Highlight")
   })
 
   it("isolates native hosts from later legacy soft-state declarations and joins only compatible borders", () => {
-    expect(css).toContain(`mui-button${"[data-mui-button]".repeat(4)} {`)
-    expect(css).toContain("all: unset")
-    expect(css).not.toContain("margin-inline-start: -1px")
-    expect(css).toContain("var(--_mui-button-joined-width, 1px)")
-    expect(css).toContain("var(--_mui-button-joined-offset, 0px)")
+    containsCSS(`mui-button${"[data-mui-button]".repeat(4)} {`)
+    containsCSS("all: unset")
+    expect(normalizeCSS(css)).not.toContain("margin-inline-start:-1px")
+    containsCSS("var(--_mui-button-joined-width, 1px)")
+    containsCSS("var(--_mui-button-joined-offset, 0px)")
     for (const type of ["primary", "info", "success", "warning", "error"]) {
-      expect(css).toContain(`mui-button[ghost]:is([type="${type}"], [variant="${type}"]) + :is([type="${type}"], [variant="${type}"])`)
+      containsCSS(`mui-button[ghost]:is([type="${type}"], [variant="${type}"]) + :is([type="${type}"], [variant="${type}"])`)
     }
-    expect(css).toContain('mui-button:is(:not([type], [variant]), [type="default"], [variant="default"]) + :is(:not([type], [variant]), [type="default"], [variant="default"])')
+    containsCSS('mui-button:is(:not([type], [variant]), [type="default"], [variant="default"]) + :is(:not([type], [variant]), [type="default"], [variant="default"])')
   })
 })
 

@@ -3,7 +3,7 @@ import { gzipSync } from "node:zlib"
 import { copyFile, readFile, rm, writeFile } from "node:fs/promises"
 import { resolve } from "node:path"
 import { fileURLToPath } from "node:url"
-import { build } from "esbuild"
+import { build, transform } from "esbuild"
 import { emitLegacyStylesheets, generateLegacyStyleModules } from "./legacy-styles.mjs"
 
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)))
@@ -140,7 +140,16 @@ await Promise.all([
 await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
   const source = resolve(root, "src", "components", name, `${name}.css`)
   const output = resolve(dist, `markup-ui-${name}.css`)
-  if (name === "tooltip" || name === "popconfirm" || name === "dropdown") {
+  if (name === "button") {
+    // Keep authored motion CSS readable without increasing its distributed payload ceiling.
+    const { code } = await transform(await readFile(source, "utf8"), {
+      loader: "css",
+      minifyWhitespace: true,
+      minifySyntax: false,
+      legalComments: "none",
+    })
+    await writeFile(output, code)
+  } else if (name === "tooltip" || name === "popconfirm" || name === "dropdown") {
     const base = await readFile(resolve(root, "src", "components", "popover", "popover.css"), "utf8")
     await writeFile(output, `${base}\n${await readFile(source, "utf8")}`)
   } else if (name === "dialog" || name === "modal" || name === "drawer") {

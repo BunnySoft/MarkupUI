@@ -49,8 +49,8 @@ audit now uses parallel component-owned work, with shared theme changes, builds 
 coordinated centrally. Reviewing does not mean matched; each component still needs its own
 rendered evidence and acceptance report.
 
-Release builds isolate ready changes from unfinished agent work. Button motion remains
-a separate follow-up; its work-in-progress is not included in published component fixes.
+Release builds isolate ready changes from unfinished agent work. Button's wave and
+insertion are integrated; its icon swap/exit transition remains an explicit budget blocker.
 
 | Component | Status | Style report |
 | --- | --- | --- |
@@ -62,7 +62,7 @@ a separate follow-up; its work-in-progress is not included in published componen
 | [Back Top](../naive-ui/components/back-top.md) | ⚪ Pending | — |
 | [Badge](../naive-ui/components/badge.md) | 🟢 Fixed / 🟡 Remaining | [Numeric cells, palette, wave and legacy limits](components/badge.md) |
 | [Breadcrumb](../naive-ui/components/breadcrumb.md) | 🟢 Fixed / 🟡 Remaining | [Text states, separator spacing and native current-page limits](components/breadcrumb.md) |
-| [Button](../naive-ui/components/button.md) | 🟢 Fixed / 🟡 Remaining | [Defaults, state endpoints and remaining motion](components/button.md) |
+| [Button](../naive-ui/components/button.md) | 🟢 Fixed / 🟡 Remaining | [Defaults, wave/insertion and blocked swap/exit motion](components/button.md) |
 | [Calendar](../naive-ui/components/calendar.md) | ⚪ Pending | — |
 | [Card](../naive-ui/components/card.md) | 🟢 Fixed / 🟡 Remaining | [Native regions, theme scope and legacy boundary](components/card.md) |
 | [Carousel](../naive-ui/components/carousel.md) | ⚪ Pending | — |

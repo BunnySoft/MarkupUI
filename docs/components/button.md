@@ -18,7 +18,7 @@ Inventory pinned to Naive UI commit `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`:
 | --- | --- |
 | `dist/markup-ui-button.js` | ESM; exports `MuiButton`, `MuiButtonGroup`, `registerButton()`; registers on browser import. |
 | `dist/markup-ui-button.global.js` | Classic script; registers and exposes `MarkupUIButton`. |
-| `dist/markup-ui-button.css` | Required external CSS; no style injection or inline styles. |
+| `dist/markup-ui-button.css` | Required external CSS; no stylesheet injection. Insertion briefly leases a private inline geometry token, restored afterward. |
 | `demo/components/button.html`, `.css`, `.js` | Separate runnable HTML, CSS and plain JavaScript demo. |
 | `dist/components/button/index.d.ts` | TypeScript declarations, also selected by the package export. |
 
@@ -196,6 +196,25 @@ Ordinary focus uses the verified theme focus border/text colors, without a defau
 halo. An explicit `--mui-button-focus-color` still requests the authored 3px focus-visible
 ring; forced-colors mode uses a 2px system Highlight outline. Reduced motion disables
 control/border transitions and the decorative spinner animation.
+
+### Motion follow-up
+
+The source follow-up adds a 600ms post-click exterior wave and dynamic icon/spinner insertion:
+width and horizontal margins expand over 200ms, while opacity runs for 200ms after a 100ms
+delay. HTML and direct SVG icons use resolved, untransformed CSS widths, including fractional
+widths and the appropriate content-/border-box semantics for `max-width`. Hidden/non-rendered
+icons and existing author animations are left alone. Initial mount/reconnect does not replay
+insertion; authored nodes/listeners and inline styles are preserved.
+
+These effects are skipped in reduced-motion mode and cleaned on cancellation, disconnect
+or control replacement. Insertion temporarily writes a private numeric CSS custom property
+and restores it (including an originally absent style attribute) when finished.
+
+**Integrated:** readable Button CSS is 2,672 gzip bytes; the Button-only esbuild
+whitespace transform produces 2,495 bytes within the unchanged 2,500-byte built ceiling.
+The isolated release build and 94 related tests pass. The 300ms icon↔spinner crossfade/scale and exit transition
+remain blocked by that ceiling, not claimed as implemented. See the
+[motion evidence and exact blocker](../style-audit/components/button.md#motion-follow-up-integrated-wave-and-insertion).
 
 ## ButtonGroup
 

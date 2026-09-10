@@ -109,11 +109,10 @@ does not wrap authored native-control contents, and is cleaned from replaced con
 
 ## Remaining gaps and scope boundaries
 
-- **Remaining visual motion:** the reference's `.6s` post-click exterior wave and animated
-  icon insertion/swap transitions are still absent. Native icon replacement is immediate.
-  This is not claimed to be an inherent browser impossibility or full motion parity. Rest,
-  hover, focus, pressed, disabled and steady-loading comparisons do not certify these
-  transient effects.
+- **Remaining visual motion:** the integrated follow-up below implements the exterior wave and
+  insertion. Icon↔spinner crossfade/scale and exit transitions
+  remain immediate and explicitly blocked. This is not claimed to be an inherent browser
+  impossibility or full motion parity.
 - **Native interaction choices remain:** loading uses actual native disabled controls,
   `aria-busy` and removal from Tab order rather than Naive's loading-focus retention;
   `focusable=false` excludes sequential Tab focus but does not intercept native pointer focus.
@@ -201,3 +200,149 @@ Changes are scoped to Button implementation/styles, canonical/generated styles a
 tokens, targeted tests, Button demo/docs, and this audit/index. Unrelated README and main-demo
 work is deliberately excluded. Reference packages, generated reference bundles and snapshots
 remain outside the repository. No amend or push is performed.
+
+## Motion follow-up: integrated wave and insertion
+
+Runtime and visual changes are scoped to Button. The coordinator adds a Button-only
+whitespace transform to the existing build script, distribution regression coverage and
+loading documentation. Core/shared themes, generated compatibility adapters, root demo/README
+and other component implementations are unchanged by this follow-up.
+
+### Implemented and rendered
+
+- Accepted native clicks drive an owned `::before` CSS animation. The existing capture gate
+  still blocks disabled/loading activation; text/soft treatments and reduced motion produce
+  no wave. Rapid clicks restart only that animation. Finish/cancel, disconnect and native
+  control replacement clean the private state without cancelling author animations.
+- Newly inserted HTML/SVG icons, and a loading spinner inserted when no icon exists, expand
+  using resolved, untransformed CSS width in the same box model as `max-width`. Authored
+  nodes are neither cloned nor wrapped. Their inline
+  properties and an originally absent style attribute are restored after the effect.
+  Existing author animation is not replaced. Initial connection/reconnection does not animate.
+- Light/dark defaults were factored into equivalent Button-local paired colors; group
+  border restoration reuses the existing hover/focus state variables instead of duplicate
+  selectors. Static comparisons still match **73 controls** in light, dark, RTL and reversed
+  optional/core CSS loading order. Shared palette values were not changed.
+
+The isolated private fixture is
+`C:\Users\chengzhu\.copilot\session-state\99fde562-4396-4c35-9601-b00d03e1c14e\files\button-motion`.
+Run `node build.mjs` there; this compiles **only private outputs**, including the exact Button
+source entry and CSS. `$env:PORT='53082'; node server.mjs` serves explicit assets only.
+The attached session is **`button-motion-preview`**, at **http://127.0.0.1:53082**.
+Use `/reference.html` and `/native.html`; query `?icon`, `?type=primary`, `?dark`,
+`?round`, `?circle`, `?size=tiny`, or `?icon-placement=right` as needed.
+`window.setLoading(boolean)` and `window.setIcon(boolean)` exercise transitions.
+All browser tests used separately created browser contexts/pages; shared active tabs were
+not navigated. Source/runtime remains the pinned Naive 2.45.3 / Vue 3.5.30 baseline.
+
+**Wave comparison:** measured source and native values were identical at fixed animation
+times, including radius 3px/default and 34px/round/circle:
+
+| Time | Light opacity | Dark opacity | Shadow spread | Blur |
+| --- | ---: | ---: | ---: | ---: |
+| 0ms | .6 | .8 | 0px | .5px |
+| 150ms | .253456 | .337942 | 2.59908px | .5px |
+| 300ms | .096453 | .128604 | 3.7766px | .5px |
+| 599ms | .000000868553 | .00000115807 | 4.49999px | .5px |
+
+The native implementation combines the source's two equally timed tracks into one CSS
+animation; this is measured paint equivalence, not merely equal duration labels.
+
+**Insertion comparison:** a medium spinner appearing beside `Save` matched the reference:
+
+| Time | Icon width | End margin | Opacity | Button width |
+| --- | ---: | ---: | ---: | ---: |
+| 0ms | 0 | 0 | 0 | 56.59375 |
+| 50ms | 4.25 | 1.41952 | 0 | 62.25 |
+| 100ms | 13.953125 | 4.65337 | 0 | 75.1875 |
+| 150ms | 17.265625 | 5.75621 | .236587 | 79.609375 |
+| 200ms | 18 | 6 | .775561 | 80.59375 |
+| 250ms | 18 | 6 | .959368 | 80.59375 |
+| 299ms | 18 | 6 | .999987 | 80.59375 |
+
+### Explicit swap/exit blocker
+
+The reference keeps the shared 18px icon slot while simultaneously fading/scaling its old
+and new children over 300ms. At 150ms, source outgoing opacity/scale are `.224439/.806110`;
+incoming are `.775561/.943890`. Native still hides the authored icon immediately and shows
+the spinner at full size/opacity. Both endpoint button widths are 80.59375px, which does
+**not** establish motion parity.
+
+A swap requires correct simultaneous overlap without cloning/reparenting authored nodes,
+plus lifecycle cleanup and the reverse/exit path. I did not substitute a width-changing
+two-flex-item fade or override author positioning to claim a match.
+
+**Measured packaging constraint:** readable source CSS is **2,672 gzip bytes**. Existing
+esbuild with `{ loader: "css", minifyWhitespace: true, minifySyntax: false,
+legalComments: "none" }` produces **2,495 gzip bytes**, preserving color values and the
+existing **2,500 built ceiling**. `scripts/build.mjs` now applies this **Button-only
+distribution transform** while keeping source CSS readable. The private fixture's
+`parked` directory preserves the working
+copy and patch. CSS regression assertions normalize only
+formatting, optional identifier quotes and final semicolons, retaining the same selectors
+and value checks. The exact source ESM/classic entries privately bundle to **3,505 / 3,714 gzip
+bytes** before the width/type follow-up; the corrected entries are **3,557 / 3,764 bytes**,
+each below its 4,000 ceiling.
+
+The coordinator integrated that exact transform. No core/theme adapter, other component
+CSS or ceiling was changed by this follow-up.
+
+Only 5 CSS bytes remain after that clean normalization. A measured minimal swap fade/scale
+rule/keyframe addition alone yields **2,542 bytes**, before the required overlap and
+lifecycle styling. Therefore swap and controlled exit are explicitly unimplemented pending
+further Button-local restructuring/funding; no budget was weakened or parity pretended.
+
+Focused validation:
+`pnpm test tests\button.test.ts tests\button-demo.test.ts --reporter=dot`
+— **46 tests passed**. New coverage includes the accepted transform and unchanged built-CSS budget,
+accepted/blocked/reduced-motion waves,
+repeat activation, preserving author animations, stale callbacks, control replacement,
+inserted-node/listener identity, restoring author style values/absence, and detach cleanup.
+The subsequent coordinator release build and distribution checks are recorded below.
+The Button entry also passed a targeted existing-TypeScript `--noEmit` check with the
+repository's strict flags. Real-browser cleanup checks confirmed one wave after repeated
+clicks (restart time 0), preservation of an authored red control shadow, removal of wave
+state when reduced motion is enabled, and cancellation/restoration of an in-progress
+insertion on detach (no remaining animation, private flag or empty style attribute).
+
+### Direct SVG and fractional-width correction
+
+Parent review identified that `offsetWidth` excluded direct SVG icons and rounded authored
+HTML widths. The corrected motion element type is `HTMLElement | SVGElement`; measurement
+uses resolved CSS `width`, not integer `offsetWidth` or transformed bounding-box width.
+It checks for a rendered box, a positive finite pixel width, and existing author animation.
+No CSS, builder, shared theme or generated adapter changes were needed for this correction.
+
+Private Chromium checks inserted HTML and direct SVG icons at **18.375px**, with
+`transform:scale(2)`. Both now start the two insertion animations and capture **18.375px**.
+At 200ms and after cleanup, visual widths remained **36.75px** and button widths
+**80.96875px**: no completion jump. With content-box padding 1.5px and border 1px, the
+captured width still correctly remained 18.375px, while visual width was **46.75px** and
+button width **85.96875px**, unchanged at completion. A padded border-box SVG likewise
+kept its correct 18.375px box / 36.75px transformed width.
+
+Every tested icon retained its exact author style attribute, parent identity and click
+listener after cleanup. Hidden SVG produced no entry flag or width token. Focused tests
+also cover non-rendered, zero and unresolved-width layouts and preserve author-animation
+exclusion. Button-only strict type checking passed; private CSS remains **2,495 gzip bytes**.
+
+### Coordinated release integration
+
+The isolated release `pnpm build` and **94 related tests** passed: 45 Button, one Button
+demo, two actual-distribution tests, nine legacy/theme, ten browser-shell and 27 native/core.
+The distribution test compares emitted CSS with the exact whitespace-only transform and
+checks actual manifest bytes; unrelated Avatar CSS remains a byte-for-byte copy.
+
+| Integrated output | gzip bytes | Unchanged ceiling |
+| --- | ---: | ---: |
+| Button ESM | 3,590 | 4,000 |
+| Button classic | 3,801 | 4,000 |
+| Button CSS | 2,495 | 2,500 |
+| Core minified ESM | 14,996 | 15,000 |
+
+These manifest values supersede private runtime estimates above. The coordinator also
+served the actual release output in an isolated Chromium context. At 150ms the emitted
+wave had opacity **.253456** and **2.59908px** spread; insertion had **17.265625px** width
+and opacity **.236587**, matching the reference samples. A direct **18.375px SVG** used
+that fractional width and restored its exact author style after completion. No uncaught
+errors occurred. Swap/exit remains explicitly blocked rather than included in this result.

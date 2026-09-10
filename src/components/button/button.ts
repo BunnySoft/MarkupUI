@@ -1,4 +1,5 @@
 type Control = HTMLButtonElement | HTMLAnchorElement
+type IconElement = HTMLElement | SVGElement
 type Override = { original: string | null; applied: string | null }
 
 const forwarded = [
@@ -23,6 +24,11 @@ export class MuiButton extends HTMLElement {
   private observer: MutationObserver | undefined
   private motion: MediaQueryList | undefined
   private upgraded = false
+  private wave: Animation | undefined
+  private readonly acceptedClicks = new WeakSet<Event>()
+  private ready = false
+  private readonly entering = new Map<IconElement, { animations: Animation[]; hadStyle: boolean; width: string; original: string; priority: string }>()
+  private readonly icons = new Set<IconElement>()
 
   public connectedCallback(): void {
     if (!this.upgraded) {
@@ -38,14 +44,20 @@ export class MuiButton extends HTMLElement {
     this.dataset.muiButton = ""
     this.addEventListener("click", this.onActivation, true)
     this.addEventListener("auxclick", this.onActivation, true)
+    this.addEventListener("click", this.onWave)
     this.observer ??= new MutationObserver(() => this.synchronize())
     this.synchronize()
+    this.ready = true
   }
 
   public disconnectedCallback(): void {
     this.observer?.disconnect()
     this.removeEventListener("click", this.onActivation, true)
     this.removeEventListener("auxclick", this.onActivation, true)
+    this.removeEventListener("click", this.onWave)
+    this.stopWave()
+    this.ready = false
+    this.stopEntries()
     this.stopMotion()
   }
 
@@ -110,7 +122,36 @@ export class MuiButton extends HTMLElement {
     if (this.blocked) {
       event.preventDefault()
       event.stopImmediatePropagation()
+    } else if (event.type === "click") this.acceptedClicks.add(event)
+  }
+
+  private readonly onWave = (event: Event): void => {
+    const control = this.nativeControl
+    if (!this.acceptedClicks.delete(event) || !this.isConnected || !control
+      || !event.composedPath().includes(control) || this.text || this.type === "text"
+      || this.secondary || this.tertiary || this.quaternary
+      || this.ownerDocument.defaultView?.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return
+    control.toggleAttribute("data-mui-button-wave", true)
+    const wave = control.getAnimations?.({ subtree: true }).find(animation =>
+      "animationName" in animation && animation.animationName === "mui-button-wave"
+      && (animation.effect as KeyframeEffect | null)?.target === control)
+    if (!wave) {
+      control.removeAttribute("data-mui-button-wave")
+      return
     }
+    this.wave = wave
+    wave.onfinish = wave.oncancel = () => {
+      if (this.wave === wave && (wave.playState === "finished" || wave.playState === "idle")) this.stopWave()
+    }
+    wave.currentTime = 0
+    wave.play()
+  }
+
+  private stopWave(): void {
+    const wave = this.wave
+    this.wave = undefined
+    wave?.cancel()
+    this.nativeControl?.removeAttribute("data-mui-button-wave")
   }
 
   private synchronize(): void {
@@ -161,6 +202,7 @@ export class MuiButton extends HTMLElement {
     this.manage("tabindex", disabled || !this.focusable ? "-1" : undefined)
     this.manage("aria-disabled", disabled ? "true" : undefined)
     this.manage("aria-busy", this.loading ? "true" : undefined)
+    const createdSpinner = this.loading && !this.spinner
     if (this.loading) {
       if (!this.spinner) {
         this.spinner = this.ownerDocument.createElement("span")
@@ -198,6 +240,7 @@ export class MuiButton extends HTMLElement {
       }
       this.synchronizeMotion()
     } else {
+      if (this.spinner) this.finishEntry(this.spinner)
       this.stopMotion()
       this.spinner?.remove()
       this.spinner = null
@@ -206,12 +249,65 @@ export class MuiButton extends HTMLElement {
       ? Boolean(node.textContent?.trim())
       : node instanceof Element && !node.matches("[data-mui-button-icon], [data-mui-button-spinner]"))
     control.toggleAttribute("data-mui-button-icon-only", !hasContent)
+    const icons = [...control.querySelectorAll<IconElement>(":scope > [data-mui-button-icon]")]
+    for (const icon of this.icons) if (!icons.includes(icon)) this.finishEntry(icon)
+    if (this.ready) {
+      for (const icon of icons) if (!this.icons.has(icon) && !this.loading) this.enterIcon(icon)
+      if (createdSpinner && this.spinner && !icons.length) this.enterIcon(this.spinner)
+    }
+    this.icons.clear()
+    icons.forEach(icon => this.icons.add(icon))
     if (this.isConnected) {
       this.observer?.observe(this, {
         subtree: true, childList: true, characterData: true, attributes: true,
         attributeFilter: [...forwarded, "disabled", "type", "tabindex", "aria-disabled", "aria-busy", "href", "role"],
       })
     }
+  }
+
+  private enterIcon(element: IconElement): void {
+    if (this.ownerDocument.defaultView?.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+      || (element.getAnimations?.().length ?? 0) > 0) return
+    const style = getComputedStyle(element)
+    const width = Number.parseFloat(style.width)
+    // Resolved CSS width shares max-width's box model, without transforms or integer rounding.
+    if (style.animationName !== "none" || style.display === "none" || !element.getClientRects().length
+      || !style.width.endsWith("px") || !Number.isFinite(width) || width <= 0) return
+    const record = {
+      animations: [] as Animation[], hadStyle: element.hasAttribute("style"), width: style.width,
+      original: element.style.getPropertyValue("--_mui-button-enter-width"),
+      priority: element.style.getPropertyPriority("--_mui-button-enter-width"),
+    }
+    this.entering.set(element, record)
+    element.style.setProperty("--_mui-button-enter-width", record.width)
+    element.toggleAttribute("data-mui-button-enter", true)
+    const animations = element.getAnimations?.().filter(animation =>
+      "animationName" in animation && String(animation.animationName).startsWith("mui-button-enter-")) ?? []
+    if (!animations.length) {
+      this.finishEntry(element)
+      return
+    }
+    record.animations = animations
+    const done = () => {
+      if (this.entering.get(element) === record) this.finishEntry(element)
+    }
+    void Promise.all(animations.map(animation => animation.finished)).then(done, done)
+  }
+
+  private finishEntry(element: IconElement): void {
+    const record = this.entering.get(element)
+    this.entering.delete(element)
+    record?.animations.forEach(animation => animation.cancel())
+    element.removeAttribute("data-mui-button-enter")
+    if (record && element.style.getPropertyValue("--_mui-button-enter-width") === record.width) {
+      element.style.setProperty("--_mui-button-enter-width", record.original, record.priority)
+      if (!record.hadStyle && !element.getAttribute("style")) element.removeAttribute("style")
+    }
+  }
+
+  private stopEntries(): void {
+    for (const element of this.entering.keys()) this.finishEntry(element)
+    this.icons.clear()
   }
 
   private readonly synchronizeMotion = (): void => {
@@ -255,6 +351,8 @@ export class MuiButton extends HTMLElement {
   }
 
   private restoreControl(): void {
+    this.stopEntries()
+    this.stopWave()
     this.stopMotion()
     if (this.nativeControl) {
       for (const name of this.overrides.keys()) this.manage(name, undefined)

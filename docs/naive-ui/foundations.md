@@ -148,6 +148,15 @@ in that asset. Sum the files the application really loads; do not add ESM and cl
 though both were required, ignore repeated embedded helper code across independent
 bundles, or call moving bytes from JavaScript to CSS a payload reduction.
 
+The later Button motion audit keeps canonical CSS readable while applying the existing
+esbuild whitespace-only transform to **Button's distributed stylesheet only**. Syntax
+minification is disabled; other standalone copies, composed CSS and legacy adapters keep
+their existing build paths. The manifest measures the actual output against the unchanged
+2,500-byte Button CSS ceiling. This adds no runtime dependency or consumer build step.
+
+The following figures describe the historical foundation checkpoint, not later visual-audit
+payloads; use the current manifest and individual style reports for those.
+
 | Foundation asset | Gzip bytes | Ceiling |
 | --- | --- | --- |
 | Legacy core JavaScript | 14,633 | 15,000 |
