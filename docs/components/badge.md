@@ -5,6 +5,12 @@ Badge preserves authored targets and value content. Its small optional controlle
 dynamic values and visibility; positioning, colors, size and processing motion are external
 CSS. Static badges can be ordinary spans without any Custom Element or JavaScript.
 
+**Default-style audit (2026-09-10):** the enhanced Badge now matches the pinned reference's
+18px pill, 12px type, fixed-width integer cells, 8px dot, light/dark status fills and
+processing wave for the measured scope. See the [rendered audit](../style-audit/components/badge.md)
+for before/after evidence, theme roles and remaining limits. This does not restyle the
+legacy aggregate Badge or introduce binding/templates.
+
 ## Pinned inventory and loading
 
 Reference: Naive UI commit `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
@@ -114,6 +120,12 @@ dot mode hides custom value content as well as numeric text. There is no odomete
 enter/leave transition renderer, localized number parser or automatic raw-value tooltip.
 Use explicit native target text/ARIA/title when the full uncapped value matters.
 
+Unsigned integer count text and its overflow `+` use passive `.6em`-wide character spans,
+matching upstream numeric geometry without old/new digit copies or animation machinery.
+Leading zeroes remain intact. Signed, decimal, exponent and arbitrary text keep natural
+text layout. Unlike Vue, HTML cannot distinguish a numeric prop from a numeric-string prop:
+both integer forms take the fixed-cell path here. CSS-only static spans use natural text.
+
 ## Accessible naming and announcements
 
 The component never adds a role, accessible name, tab stop or keyboard handler to the host
@@ -171,11 +183,24 @@ Only `show` uses the explicit string `"false"` to opt out of its true default.
 Top-end is default; unsupported values fall back to it. Logical anchors work in RTL;
 offset X/Y remain physical directions. This convenience is not an upstream Badge prop.
 
-Size is CSS-only: `--mui-badge-size` (18px minimum), `--mui-badge-dot-size` (8px),
-`--mui-badge-font-size` (12px), `--mui-badge-padding`, `--mui-badge-radius`,
-`--mui-badge-background`, `--mui-badge-color`, and `--mui-badge-z-index` are available.
+Size is CSS-only: `--mui-badge-size` (18px height/leading; an explicit value also sets a
+minimum width), `--mui-badge-dot-size` (8px), `--mui-badge-font-size` (12px),
+`--mui-badge-font-family` (shared `--mui-font-family`, then the reference system stack),
+`--mui-badge-font-weight` (inherited), `--mui-badge-padding` (6px horizontally),
+`--mui-badge-radius` (9px), `--mui-badge-background`, `--mui-badge-color` (white), and
+`--mui-badge-z-index` (2) are available.
 There is no invented upstream size enum. Standalone/static badges remain in ordinary flow;
 use normal native CSS if they need additional positioning.
+
+An ancestor or host `data-mui-theme="dark"` selects Naive's supplementary dark Badge fills;
+explicit nested `"light"` restores the light roles. This works without aggregate CSS.
+Light roles reuse `--mui-color-error`, `--mui-color-success`, `--mui-color-warning`,
+and `--mui-color-info`. Dark roles use the corresponding `--mui-color-*-suppl` token when
+provided, otherwise local pinned fallbacks; ordinary dark semantic text colors are **not**
+interchangeable with these badge fills. Set shared roles at the theme boundary; set
+`--mui-badge-background` for a per-badge override. No shared theme adapter is installed.
+The processing wave uses a 2s box-shadow spread with a 1s delay; reduced motion removes it
+and the 0.3s color transitions.
 
 Attached indicators ignore pointer hit-testing so they cannot steal target activation.
 They may extend outside the target box; application ancestors with clipping/overflow must

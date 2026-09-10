@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
 import { MuiBadge, registerBadge } from "../src/components/badge/index.js"
 import { registerElements } from "../src/components/elements.js"
 
@@ -36,6 +38,90 @@ describe("standalone Badge", () => {
     expect(number(element).textContent).toBe("200")
     element.max = 0
     expect(number(element).textContent).toBe("0+")
+  })
+
+  it("gives integer counts and overflow suffixes stable digit cells without a transition renderer", () => {
+    const element = badge('<mui-badge value="105" max="99"></mui-badge>')
+    expect([...number(element).children].map((digit) => digit.textContent)).toEqual(["9", "9", "+"])
+    expect(number(element).querySelectorAll("[data-mui-badge-digit]")).toHaveLength(3)
+    element.max = undefined
+    element.value = "001"
+    expect(number(element).textContent).toBe("001")
+    expect(number(element).children).toHaveLength(3)
+    const digits = [...number(element).children]
+    element.dot = true
+    element.dot = false
+    expect([...number(element).children]).toEqual(digits)
+    for (const value of ["2.5", "-3", "1e3", "New", "12+"]) {
+      element.value = value
+      expect(number(element).textContent).toBe(value)
+      expect(number(element).children).toHaveLength(0)
+    }
+    element.value = 5
+    expect(number(element).children).toHaveLength(1)
+    expect(element.querySelector("[style],[role],[aria-live]")).toBeNull()
+  })
+
+  it("switches formatting modes when capped and literal values have the same displayed text", () => {
+    const element = badge('<mui-badge value="105" max="99"></mui-badge>')
+    const content = number(element)
+    expect(content.querySelectorAll("[data-mui-badge-digit]")).toHaveLength(3)
+    element.value = "99+"
+    expect(content.textContent).toBe("99+")
+    expect(content.childElementCount).toBe(0)
+    const literal = content.firstChild
+    expect(literal?.nodeType).toBe(Node.TEXT_NODE)
+    element.value = "99+"
+    element.dot = true
+    element.dot = false
+    expect(content.firstChild).toBe(literal)
+
+    element.value = 105
+    expect(content.textContent).toBe("99+")
+    expect(content.querySelectorAll("[data-mui-badge-digit]")).toHaveLength(3)
+    const cells = [...content.children]
+    element.value = 200
+    element.show = false
+    element.show = true
+    element.dot = true
+    element.dot = false
+    expect(content.children).toHaveLength(cells.length)
+    cells.forEach((cell, index) => expect(content.children[index]).toBe(cell))
+  })
+
+  it("retains authored Badge tokens through formatting, dot changes and reconnection", () => {
+    const element = badge('<mui-badge value="5" style="--mui-badge-size:28px;--mui-badge-font-size:16px;--mui-badge-font-family:monospace;--mui-badge-background:rgb(1,2,3);--mui-badge-offset-x:6px"></mui-badge>')
+    const authored = element.getAttribute("style")
+    element.value = 105
+    element.max = 99
+    element.dot = true
+    element.dot = false
+    element.remove()
+    document.body.append(element)
+    expect(element.getAttribute("style")).toBe(authored)
+    expect(number(element).textContent).toBe("99+")
+    expect(element.querySelector("[style]")).toBeNull()
+  })
+
+  it("keeps the audited geometry, theme fallback roles and reduced-motion styling external", () => {
+    const css = readFileSync(resolve("src", "components", "badge", "badge.css"), "utf8")
+    expect(css).toContain('inline-size: .6em')
+    expect(css).toContain('block-size: var(--mui-badge-size, 18px)')
+    expect(css).toContain('line-height: var(--mui-badge-size, 18px)')
+    expect(css).toContain('border-radius: var(--mui-badge-radius, 9px)')
+    expect(css).toContain('z-index: var(--mui-badge-z-index, 2)')
+    expect(css).toContain('inset-inline-start: 100%')
+    expect(css).toContain('overflow: hidden')
+    for (const [role, color] of [["error", "#d03a52"], ["success", "#2a947d"], ["warning", "#f08a00"], ["info", "#3889c5"]]) {
+      expect(css).toContain(`var(--mui-color-${role}-suppl, ${color})`)
+    }
+    expect(css).toContain(':where([data-mui-theme="light"])')
+    expect(css).toContain(':where([data-mui-theme="dark"])')
+    expect(css).toContain('var(--mui-badge-font-family, var(--mui-font-family, v-sans')
+    expect(css).toContain('4.5px var(--mui-badge-background')
+    expect(css).toContain('@media (prefers-reduced-motion: reduce)')
+    expect(css).toContain('transition: none')
+    expect(css).toContain('animation: none; content: none')
   })
 
   it("handles zero and negative counts explicitly", () => {

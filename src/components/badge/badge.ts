@@ -93,7 +93,17 @@ export class MuiBadge extends HTMLElement {
     const count = numeric(value ?? null)
     const max = this.max
     const text = count !== undefined && max !== undefined && count > max ? `${max}+` : value ?? ""
-    if (number.textContent !== text) number.textContent = text
+    const useDigitCells = count !== undefined && /^\d+\+?$/.test(text)
+    if (number.textContent !== text || useDigitCells !== (number.childElementCount > 0)) {
+      if (useDigitCells) {
+        number.replaceChildren(...[...text].map((character) => {
+          const digit = this.ownerDocument.createElement("span")
+          digit.dataset.muiBadgeDigit = ""
+          digit.textContent = character
+          return digit
+        }))
+      } else number.textContent = text
+    }
     const authoredValue = custom.hasChildNodes()
     number.hidden = this.dot || authoredValue
     custom.hidden = this.dot
