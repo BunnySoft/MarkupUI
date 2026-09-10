@@ -260,14 +260,33 @@ consumer or mandatory controller. Use `validateField(key)` for item-level checks
 `restoreValidation()` for shared invalidation. Item-specific restore, measured-label
 invalidation and deprecated positional method overloads are omitted.
 
-`.mui-form` defaults to stacked grid layout. `data-inline` uses wrapping flex;
-`data-size="small|large"` adjusts gap/text; medium is default.
+`.mui-form` defaults to stacked grid layout with no invented gap between items.
+`data-inline` uses wrapping flex with the pinned 18px item separation.
+`data-size="small|medium|large"` selects Form-owned label, blank and feedback metrics;
+missing or unknown values use medium. It does not resize native fields or composed controls.
 `data-label-placement="left"` enables native two-column label/content layout at 40rem and
-above for non-fieldset items; below that it stacks. `--mui-form-label-width` defaults to
-10rem, `--mui-form-label-align` to logical start, `--mui-form-gap` to 1rem.
-External CSS may choose native lengths/max-content, alignment, mark placement or visually
-hidden labels with a preserved accessible name. There is no global width measurement,
-automatic source `label-width="auto"` synchronization, or physical-LTR placement algorithm.
+above for non-fieldset items; below that it stacks. The default width is 10rem. Top labels
+align to logical start, while left labels align to logical end like the pinned source.
+`--mui-form-label-width`, `--mui-form-label-align` and `--mui-form-gap` remain inherited,
+author-owned overrides; the package never assigns them. External CSS may choose native
+lengths/max-content, alignment, mark placement or visually hidden labels with a preserved
+accessible name. There is no global width measurement, automatic source
+`label-width="auto"` synchronization, or physical-LTR placement algorithm.
+
+Pinned label heights are 24/26/28px for small/medium/large, with top-label type
+13/14/14px, left-label type 14/14/15px, weight 400 and source padding. Feedback reserves
+24/24/26px for a mapped hidden surface on non-fieldset items, then uses the same total
+height when populated. Native fieldset feedback expands naturally rather than adding
+package padding to the fieldset. Label, neutral feedback, required/error and warning paint
+uses the pinned light/dark roles. Public `--mui-form-label-color`,
+`--mui-form-feedback-color`, `--mui-form-feedback-height`, `--mui-form-required-color`,
+`--mui-form-error-color` and `--mui-form-warning-color` remain authoritative.
+
+`.mui-form-item__content` preserves authored flow. Its blank-height default excludes a
+composed `.mui-input`, so Form cannot enlarge an independently sized Input root; Form also
+never styles descendant input/select/textarea controls. Hidden content stays hidden,
+forced colors use CanvasText and print selects the light color scheme. There is no
+animation or transition.
 
 FormItemGi is explicit grid composition: `.mui-form-grid` has two minmax tracks and stacks
 below 40rem; `.mui-form-item-gi` accepts native `--mui-form-span` or
@@ -389,6 +408,19 @@ All **143 prior top-level JS/CSS assets** were independently rebuilt in memory u
 pre-Form HEAD build recipe and compared byte-for-byte with current output; all matched.
 Earlier component records retain their historical measurement counts. No prior optional
 budget was relaxed.
+
+### Default-style follow-up
+
+**2026-09-11:** the [Form default-style audit](../style-audit/components/form.md)
+source-reviewed pinned label/feedback constants and corrected only Form-owned CSS.
+The existing Form fixture now has five stylesheet-contract checks; all **58 Form tests**
+pass individually. Current source CSS is **4,656 raw / 1,199 gzip bytes** against the
+unchanged **1,250-byte** ceiling. Form JavaScript, native label/fieldset behavior, Input
+ownership, the demo, shared files and generated assets are unchanged. An isolated Chromium
+152 computed-style fixture confirmed a 26px/14px medium label, stable 84px item height
+before/after feedback, independently sized 28px small Input, dark roles, forced-color text
+and light print scheme. The earlier table above remains the historical initial Form
+acceptance measurement.
 
 Inventory audit: **93 original identities exactly preserved in order + 18 explicit source
 supplements = 111 Form rows (68 adapted, 43 omitted)**. All **96** reference documents now

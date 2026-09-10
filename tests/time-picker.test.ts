@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createTimePicker, isTimePickerSupported } from "../src/components/time-picker/index.js"
 import { isDatePickerTypeSupported, createDatePicker } from "../src/components/date-picker/index.js"
@@ -16,6 +19,34 @@ function fixture() {
   return { root, form, helper, control: helper.control, output: root.querySelector<HTMLElement>("[data-time-output]")!, clear: root.querySelector<HTMLButtonElement>("[data-time-clear]")! }
 }
 afterEach(() => { helpers.splice(0).reverse().forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
+
+describe("Time Picker default styles", () => {
+  const css = readFileSync(resolve("src", "components", "time-picker", "time-picker.css"), "utf8")
+
+  it("uses the reference Input size scale within budget", () => {
+    expect(css).toContain("--_mui-time-picker-height: 28px")
+    expect(css).toContain("--_mui-time-picker-height: 34px")
+    expect(css).toContain("--_mui-time-picker-height: 40px")
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+  })
+
+  it("uses reference field density and light-dark roles", () => {
+    expect(css).toContain("padding-inline: 12px")
+    expect(css).toContain("border-radius: 3px")
+    expect(css).toContain("light-dark(#333639, rgba(255, 255, 255, .82))")
+  })
+
+  it("keeps labelled native clear actions at the control height", () => {
+    expect(css).toMatch(/\.mui-time-picker button \{[\s\S]*block-size: var\(--_mui-time-picker-height\)/)
+    expect(css).not.toMatch(/text-indent:\s*-\d|font-size:\s*0/)
+  })
+
+  it("supports forced colors and print without replacing the native picker", () => {
+    expect(css).toContain("@media (forced-colors: active)")
+    expect(css).toContain("@media print")
+    expect(css).toContain("[data-time-clear]")
+  })
+})
 
 describe("time-only native grammar, not a date or instant model", () => {
   it("reuses native capability probing without adding fields or broadening Date Picker", () => {

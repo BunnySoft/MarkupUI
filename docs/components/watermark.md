@@ -5,6 +5,10 @@ native image produces one bounded PNG. External CSS repeats it on one authored e
 overlay. Content is never re-rendered. No watermark dependency, global service/storage,
 anti-tamper machinery, selection blocker, access control, DRM or screenshot prevention.
 
+**2026-09-11 default-style audit:** overlay placement/repetition matches the source while
+application-owned positioning, native selection, readable tile spacing and media safety
+remain deliberate differences. See the [measured audit](../style-audit/components/watermark.md).
+
 ## Loading and anatomy
 
 | Asset | Contract |

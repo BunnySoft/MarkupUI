@@ -147,6 +147,22 @@ width remained unchanged; legacy columns="1fr 2fr" resolved to two proportional
 tracks and mui-row remained flex. That aggregate's automatic style installation
 is not the no-JS/strict-CSP path. No core/plugin/legacy source was modified.
 
+## Default-style audit
+
+The [2026-09-11 default-style audit](../style-audit/components/legacy-grid.md)
+rendered actual Naive UI 2.45.3 Row/Col beside the existing native replacement.
+At a 480px stage, the default 24 tracks, 25th-item wrap, 8/16 spans, nested
+8/16 then 12/12 spans, and the visible content boxes for a 12px/8px gutter
+matched in light/dark and LTR/RTL.
+
+No Legacy Grid source or stylesheet exists to correct, and the already audited
+Grid/Flex/Space defaults remain unchanged. This does not restore source topology:
+Naive still expands a guttered Row to 492×32px at (-6,-4) and pads generated Col
+wrappers, while the native root stays 480×24px and uses actual gap. The matched
+visible content boxes were 152/316px at x=0/164px; wrapper/outer box identity is
+intentionally different. Relative offset/push/pull, generated containing blocks,
+provider injection and coercion remain omitted.
+
 ## Evidence and accounting
 
 The [tracker](../naive-ui/components/legacy-grid.md) retains all five original
@@ -155,8 +171,13 @@ Row/Col identities and adds three grouped type/export plus seven source suppleme
 All four replacement-resolution tasks are accepted, without deprecated constructor/
 syntax, relative displacement, provider or responsive-parser compatibility.
 
-`pnpm test -- tests\legacy-grid.test.ts tests\grid.test.ts tests\native.test.ts`:
-**51 tests passed** (12 replacement, 12 unchanged modern Grid, 27 native/legacy).
+The historical migration run
+`pnpm test -- tests\legacy-grid.test.ts tests\grid.test.ts tests\native.test.ts`
+passed **51 tests** (12 replacement, 12 unchanged modern Grid, 27 native/legacy).
+After the default-style audit,
+`node node_modules\vitest\vitest.mjs run tests\legacy-grid.test.ts`
+passes **14 Legacy Grid tests**, including pinned-default/author-token and reused
+asset-budget regressions.
 `pnpm build` passed declarations and every existing ceiling. All **1,316 existing
 distribution files byte-matched**. Modern Grid's source/reference/acceptance and
 P0 foundation rows are unchanged.

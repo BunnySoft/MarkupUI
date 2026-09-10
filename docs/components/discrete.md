@@ -12,6 +12,11 @@ The [local demo](../../demo/components/discrete.html) has separate HTML/CSS/JS a
 only existing selected JavaScript entries. Its exported `mountExample` function is local
 demo application code, exposed for integration tests—not a public MarkupUI API.
 
+The [2026-09-11 default-style review](../style-audit/components/discrete.md) is
+**not applicable** to an aggregate skin. Each explicitly selected Message,
+Notification, Loading Bar, Dialog or Modal owner retains its own stylesheet and audit;
+Discrete adds no host, wrapper, placement layer or CSS.
+
 ## Select only the services you need
 
 ```js

@@ -13,6 +13,11 @@ or new byte budget. The separate [HTML](../../demo/components/config-provider.ht
 demo files are application examples. `mountExample(root)` is local demo wiring for its
 three existing Loading Bar owners and controls, **not a public MarkupUI API**.
 
+The [2026-09-11 default-style review](../style-audit/components/config-provider.md)
+is **not applicable** as a component skin: there is no Config Provider element or
+stylesheet to compare. It verifies that scoped application CSS, native `lang`/`dir`
+and actual DOM ancestry remain the documented visual mechanism.
+
 ## HTML and CSS own scope
 
 ```html

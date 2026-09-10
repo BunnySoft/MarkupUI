@@ -5,6 +5,12 @@ row/template/action/focus/lifetime implementation**. It adds draft policy and ex
 commit coordination, not another collection renderer. No Tag/Input runtime, checkable Tag,
 VNode, provider, hidden reactive array, clipboard parser, gesture engine or dependency.
 
+**2026-09-11 default-style audit:** the native anatomy now follows the source's
+22/28/34px Tag scale, 2px corners, 14px medium type and 4px × 8px wrapping rhythm.
+Readonly fields size to their content and semantic types have explicit light/dark tints.
+Visible labelled remove/Add buttons remain intentionally wider than generated source icons.
+See the [measured audit](../style-audit/components/dynamic-tags.md).
+
 ## Canonical value ownership
 
 Each committed tag is a **visible readonly named text input**, with a separate sibling

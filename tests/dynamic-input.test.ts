@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createDynamicInput } from "../src/components/dynamic-input/index.js"
 import type { DynamicInputOptions } from "../src/components/dynamic-input/index.js"
@@ -355,6 +358,33 @@ describe("native focus, reorder, actions and no-JS restoration", () => {
     const next = createDynamicInput(document.querySelector("#collection")!); helpers.push(next)
     add.hidden = true; add.disabled = true; await flush(); next.disconnect()
     expect(add.hidden).toBe(true); expect(add.disabled).toBe(true)
+  })
+})
+
+describe("Dynamic Input default styles", () => {
+  const css = readFileSync(resolve("src", "components", "dynamic-input", "dynamic-input.css"), "utf8")
+
+  it("keeps the Dynamic Input stylesheet within its unchanged ceiling", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+  })
+
+  it("matches retained row and action alignment defaults", () => {
+    expect(css).toContain("gap: 10px")
+    expect(css).toContain("align-items: end")
+    expect(css).toContain("gap: 20px")
+    expect(css).toContain("min-block-size: 34px")
+  })
+
+  it("does not override Input-owned composed controls", () => {
+    expect(css).toContain(":not([data-input-control])")
+    expect(css).not.toContain(":is(input, select, textarea) {")
+  })
+
+  it("keeps native labels, responsive stacking and media behavior", () => {
+    expect(css).not.toContain("font-size: 0")
+    expect(css).toContain("@media (max-width: 30rem)")
+    expect(css).toContain("@media (forced-colors: active)")
+    expect(css).toContain("@media print")
   })
 })
 

@@ -8,6 +8,7 @@ opaque text are accepted alternatives, not QR symbols or scan verification.
 
 The unchanged [registry](../../../src/components/elements.ts) has no QR encoder.
 The [canonical contract/evidence](../../components/qr-code.md),
+[default-style audit](../../style-audit/components/qr-code.md),
 [local HTML](../../../demo/components/qr-code.html), [local CSS](../../../demo/components/qr-code.css)
 and [tests](../../../tests/qr-code.test.ts) preserve a fixed native destination and
 original multiline text, without JS or a new runtime/export/bundle.

@@ -166,6 +166,30 @@ NLegacyTransfer. It coexists without changing the native selects/options or wire
 membership here. Modern Transfer source/reference/acceptance and all legacy
 core/plugin code are unchanged.
 
+## Default-style audit
+
+The [dedicated style audit](../style-audit/components/legacy-transfer.md) compares
+this native migration with pinned Naive UI 2.45.3 Legacy Transfer source and live
+CSS roles. The local application stylesheet now stops its page-level heading,
+button and focus defaults from overriding the shipped Transfer skin.
+
+For the medium-size presentation, pane headings use the legacy **38px** header
+role, **14px** title type and `rgb(250, 250, 252)` light header surface. The filter
+region uses the same surface and the existing public Transfer border token.
+Dark mode uses the pinned `rgba(255, 255, 255, .06)` header role; print returns to
+the light scheme. Native count paragraph margins are reset, while the diagnostic
+buttons retain their separate 44px application target.
+
+These rules do not assign any public `--mui-transfer-*` token. Authored title,
+border, surface, text and size tokens continue to win. The two real multiple
+selects, their unnamed/unrequired staging semantics, original option nodes,
+fieldset/FormData behavior and helper algorithms are unchanged.
+
+The source's fixed **440×240px** renderer, checkbox rows, two icon buttons,
+virtual scrollbar, transition choreography and header-integrated select-all/count
+layout are intentionally not recreated. Visible native labels, four explicit text
+actions, fieldset legend, platform listboxes and responsive stacking remain.
+
 ## Acceptance and catalog boundary
 
 The [tracker](../naive-ui/components/legacy-transfer.md) preserves all 16 original
@@ -173,8 +197,10 @@ identities and adds three grouped types/exports, seven source behaviors/aliases 
 three inherited themes: **29 rows = 15 verified native replacements + 14 omissions**.
 Four resolution tasks close, not deprecated API/renderer/virtualization compatibility.
 
-**80 tests passed**: 12 migration wiring + 41 unchanged modern Transfer + 27 native/
-legacy, via `pnpm test -- tests\legacy-transfer.test.ts tests\transfer.test.ts tests\native.test.ts`.
+The original migration acceptance recorded **80 tests passed**: 12 migration wiring
++ 41 unchanged modern Transfer + 27 native/legacy. The default-style audit adds one
+scoped regression and separately ran the smallest fixture:
+`pnpm exec vitest run tests\legacy-transfer.test.ts` — **13/13 passed**.
 `pnpm build` passed declarations and all existing ceilings; **1,316 distribution
 files byte-matched**. No source/package/build/P0 foundation row changed.
 
@@ -203,9 +229,12 @@ Dedicated Chromium evidence:
 No all-browser/AT, numeric legacy-key ABI, controlled model, callback-array or full
 virtualized renderer parity is claimed.
 
-Reused helper ESM/classic/CSS: **5,986 / 6,125 / 493 gzip** under unchanged
+Current reused helper ESM/classic/CSS: **5,986 / 6,125 / 1,215 gzip** under unchanged
 **8,000 / 8,000 / 1,250** ceilings. Local HTML/CSS/JS add **1,843 / 498 / 1,613 gzip**
-(**3,954** total); complete ESM example **10,433 gzip bytes**. No new library asset.
+in the original acceptance. After the scoped style correction, local HTML/CSS/JS are
+**5,645 / 2,416 / 4,715 raw** and **1,843 / 767 / 1,613 gzip** (**12,776 raw /
+4,223 gzip** total); the complete current ESM example is **11,424 gzip bytes**.
+No new library asset or relaxed ceiling was introduced.
 
 This closes the last catalog route: **96 scopes resolved / 384 component-resolution
 tasks accepted**, with implemented/adapted/excluded distinctions preserved. It does

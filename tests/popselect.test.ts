@@ -1,9 +1,57 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { readFileSync } from "node:fs"
+import { gzipSync } from "node:zlib"
 import { createPopselect } from "../src/components/popselect/index.js"
 import type { PopselectController, PopselectOptions } from "../src/components/popselect/index.js"
 import { createSelect } from "../src/components/select/index.js"
 import { createPopover } from "../src/components/popover/index.js"
 import { createForm } from "../src/components/form/index.js"
+
+describe("audited Popselect context styles", () => {
+  const css = readFileSync("src/components/popselect/popselect.css", "utf8")
+
+  it("inherits the shared region surface instead of copying a popup palette", () => {
+    expect(css).toContain("[data-popselect-panel] .mui-select")
+    expect(css).toContain("color: var(--mui-select-color, inherit)")
+    expect(css).toContain("background-color: var(--mui-select-background, transparent)")
+    expect(css).toContain("[data-select-control]:not(:disabled)")
+    expect(css).not.toContain("box-shadow:")
+    expect(css).not.toContain("data-mui-theme")
+  })
+
+  it("uses native-field typography and private size defaults behind author overrides", () => {
+    expect(css).toContain("font-family: var(--mui-font-family, inherit)")
+    expect(css).toContain("font-size: var(--mui-select-font, var(--_ps-font, var(--_select-font, 14px)))")
+    expect(css).toContain("line-height: 1.5")
+    expect(css).toContain("--_ps-font: 15px")
+    expect(css).toContain("var(--mui-select-pad, var(--_ps-pad, .5rem))")
+    expect(css).not.toMatch(/(?:^|[;{])\s*--mui-select-(?:font|pad)\s*:/m)
+  })
+
+  it("does not style or replace platform option/group/selection rendering", () => {
+    expect(css).not.toMatch(/(?:^|[},])\s*(?:option|optgroup)\b/m)
+    expect(css).not.toContain("[selected]")
+    expect(css).not.toContain("combobox")
+    expect(css).not.toContain("menuitem")
+  })
+
+  it("retains inline-width, native focus, forced-color and print safeguards", () => {
+    expect(css).toContain("[data-popselect-panel]:not([popover]) { width: 100%; max-width: 100%; }")
+    expect(css).not.toContain("outline-color:")
+    expect(css).toContain("@media (forced-colors: active), print")
+    expect(css).toContain("background-color: Canvas")
+    expect(css).toContain("@media print")
+  })
+
+  it("keeps the composed Popover, Select and Popselect stylesheet within its ceiling", () => {
+    const composed = [
+      readFileSync("src/components/popover/popover.css", "utf8"),
+      readFileSync("src/components/select/select.css", "utf8"),
+      css,
+    ].join("\n")
+    expect(gzipSync(composed, { level: 9 }).length).toBeLessThanOrEqual(2500)
+  })
+})
 
 const helpers: PopselectController[] = []
 const matches = HTMLElement.prototype.matches

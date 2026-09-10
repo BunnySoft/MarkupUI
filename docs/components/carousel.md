@@ -16,6 +16,18 @@ custom-element registration or automatic stylesheet installation.
 | [Local demo](../../demo/components/carousel.html) | Separate local HTML/CSS/JS; forms, nested/hidden slides, resize, RTL and zoom |
 | [Complete reference](../naive-ui/components/carousel.md) | Original 41 identities plus nine explicit source additions; all dispositions |
 
+## Default-style audit — 2026-09-11
+
+The [isolated rendered audit](../style-audit/components/carousel.md) keeps the native
+one-slide scroll-snap viewport and adapts the reference's **28px** controls to labelled
+native buttons. Previous/next/toggle actions retain readable text; numeric indicators
+are 28px controls rather than inaccessible 8px custom dots.
+
+Light/dark control surfaces, primary current state, disabled treatment, hover, forced
+colors and print are explicit. Print expands all authored slides and hides both
+enhancement controls and their current-slide readout. No transform track, cloned loop
+slides, icon-only controls, custom drag engine or hidden inactive slides were added.
+
 ```html
 <section class="mui-carousel" data-carousel aria-label="Project examples">
   <div data-carousel-viewport id="examples" tabindex="0" aria-label="Example slides">
@@ -222,9 +234,12 @@ native implementation. Native and legacy owners coexist on separate roots.
    omissions, ESM/classic/legacy/no-JS acceptance and independent build budgets.
 
 Targeted automated gate: `pnpm test -- tests\carousel.test.ts tests\native.test.ts`:
-**73 passing tests (46 Carousel + 27 native/legacy)**. Declarations and independent gzip
-budgets: `pnpm build`. Final level-nine gzip bytes: **5,367 ESM / 5,509 classic / 656 CSS**;
-combined **6,023 / 6,165** JS+CSS. Core/advanced/widgets remain **14,611 / 2,181 / 2,779**.
+**77 passing tests (50 Carousel + 27 native/legacy)**. The original declarations and
+independent build remain unchanged. The 2026-09-11 style pass changes Carousel CSS
+to **3,672 raw / 1,045 gzip bytes** under its unchanged **1,500-byte ceiling**;
+full integration build validation remains pending. Original level-nine JavaScript
+bytes were **5,367 ESM / 5,509 classic**. Core/advanced/widgets remain
+**14,611 / 2,181 / 2,779**.
 The [current catalog acceptance](../naive-ui/index.md#carousel-and-carouselitem-accepted)
 records raw sizes, ceilings and exact inventory totals.
 

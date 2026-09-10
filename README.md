@@ -147,6 +147,11 @@ store.set("customer.name", "Grace");
 dispose();
 ```
 
+For collection binding and customizable item content, see the
+[data binding and template investigation](docs/data-binding-and-templates.md).
+It compares native templates, declarative bindings and XAML patterns, and distinguishes
+existing support from proposed APIs.
+
 ## Form validation
 
 ```html

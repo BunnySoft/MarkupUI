@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { createMessageOwner } from "../src/components/message/index.js"
 import type { MessageOwner, MessageOwnerOptions, MessageType } from "../src/components/message/index.js"
@@ -8,6 +9,10 @@ import { showMessage, clearOverlays } from "../src/overlay/index.js"
 
 const owners: MessageOwner[] = []
 const flush = async () => { await Promise.resolve(); await Promise.resolve(); await Promise.resolve() }
+const messageCSS = () => readFileSync(resolve("src", "components", "message", "message.css"), "utf8")
+  .replace(/\s+/g, " ").replace(/\s*([{};,])\s*/g, "$1").replace(/:\s+/g, ":")
+  .replace(/\[([\w-]+)="([\w-]+)"\]/g, "[$1=$2]").replace(/;}/g, "}")
+  .replace(/@media\s+\(/g, "@media(").trim()
 async function advance(ms: number) { vi.advanceTimersByTime(ms); await flush() }
 function fixture() {
   const root = document.createElement("div")
@@ -415,5 +420,57 @@ describe("Templates, semantics and legacy compatibility", () => {
     expect(message).toContain("forced-colors")
     expect(message).toContain("prefers-reduced-motion")
     expect(css + message).not.toContain("@keyframes")
+  })
+  it("retains visible kind/content rows while applying measured intrinsic toast geometry", () => {
+    const css = messageCSS()
+    expect(css).toContain("inline-size:max-content")
+    expect(css).toContain("max-inline-size:min(var(--mui-feedback-width,720px),100%)")
+    expect(css).toContain("padding:10px 20px;border:0;border-radius:3px")
+    expect(css).toContain("[data-message-kind]{grid-column:2;grid-row:1}")
+    expect(css).toContain("[data-message-content]{grid-column:2;grid-row:2;min-inline-size:0}")
+    expect(css).toContain("inline-size:20px;block-size:20px;margin-inline-end:10px")
+    expect(css).toContain("grid-template-columns:auto minmax(0,1fr) auto")
+    expect(css).toMatch(/\.mui-message-host\s*>\s*\.mui-feedback-list\{grid-template-columns:minmax\(0,1fr\)\}/)
+  })
+  it("uses semantic icon roles and correct light/dark surfaces without assigning public overrides", () => {
+    const css = messageCSS()
+    expect(css).toContain("light-dark(#fff,#48484e)")
+    expect(css).toContain("light-dark(#333639,#ffffffd1)")
+    for (const name of ["info", "success", "warning", "error", "primary"]) expect(css).toContain(`--mui-color-${name},`)
+    expect(css).toContain("var(--mui-message-accent,var(--_message-accent))")
+    expect(css).not.toMatch(/--mui-message-(?:accent|color|background):/)
+    expect(css).not.toMatch(/--mui-(?:text-primary|text-secondary|bg-surface|border),/)
+  })
+  it("scopes fixed placement overrides to Message and preserves scrolling, pointer and print policies", () => {
+    const css = messageCSS()
+    expect(css).toContain(".mui-message-host.mui-feedback-host--fixed{top:max(12px,env(safe-area-inset-top))")
+    expect(css).toContain("width:min(var(--mui-feedback-width,720px),calc(100% - 2rem))")
+    expect(css).toContain("max-height:min(calc(100% - 2rem),calc(100% - max(12px,env(safe-area-inset-top)) - max(12px,env(safe-area-inset-bottom))))")
+    expect(css).toContain("z-index:var(--mui-feedback-z-index,6000)")
+    expect(css).toContain("justify-items:left")
+    expect(css).toContain("justify-items:right")
+    expect(css).not.toMatch(/(?:^|})\.mui-feedback-(?:host|list)[{:.]/)
+    expect(css).toContain(".mui-message-host.mui-feedback-host--fixed{position:static;width:auto;max-height:none;margin:0;overflow:visible}")
+  })
+  it("preserves native close targets, actions/error feedback and accessible media policies", () => {
+    const css = messageCSS()
+    expect(css).toContain("min-inline-size:2.5rem;min-block-size:2.5rem")
+    expect(css).toContain("[data-message-close]:enabled:hover")
+    expect(css).toContain("[data-message-close]:disabled{opacity:.5;cursor:not-allowed}")
+    expect(css).toContain("[data-message-actions]{grid-column:1 / -1;display:flex;flex-wrap:wrap")
+    expect(css).toContain("border-inline-start:.25rem solid var(--mui-message-accent,var(--_message-accent))")
+    expect(css).toContain("outline-offset:-2px")
+    expect(css).toContain("@media(prefers-reduced-motion:reduce){.mui-message{animation:none;transition:none}}")
+    expect(css).toContain("border:1px solid CanvasText;box-shadow:none")
+    expect(css).toContain("[data-message-error]{border-color:CanvasText}")
+    expect(css).toContain("box-shadow:none;break-inside:avoid")
+    expect(css).toContain("@media(max-width:24rem){.mui-message{padding-inline:12px}")
+    expect(css).toContain("[data-message-content]{grid-column:1 / -1}")
+    expect(css).toContain("[data-message-close]{grid-row:3;margin-inline-start:6px}")
+  })
+  it("keeps the unchanged exact composed CSS gzip ceiling without altering shared feedback", () => {
+    const base = readFileSync(resolve("src", "components", "feedback", "feedback.css"), "utf8")
+    const css = readFileSync(resolve("src", "components", "message", "message.css"), "utf8")
+    expect(gzipSync(`${base}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(1750)
   })
 })

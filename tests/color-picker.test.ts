@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createColorPicker } from "../src/components/color-picker/index.js"
 import { createInput } from "../src/components/input/index.js"
@@ -273,5 +276,32 @@ describe("native reset, form boundaries and teardown", () => {
     edit(hex, "#112233"); apply.click()
     const outside = document.querySelector<HTMLButtonElement>("#outside")!; outside.focus(); root.remove(); await flush()
     expect(helper.connected).toBe(false); expect(control.value).toBe("#336699"); expect(document.activeElement).toBe(outside)
+  })
+})
+
+describe("Color Picker default styles", () => {
+  const css = readFileSync(resolve("src", "components", "color-picker", "color-picker.css"), "utf8")
+
+  it("keeps the Color Picker stylesheet within its unchanged ceiling", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+  })
+
+  it("matches the retained reference trigger heights and type sizes", () => {
+    expect(css).toContain("--_mui-color-picker-height: 34px")
+    expect(css).toContain("--_mui-color-picker-height: 28px")
+    expect(css).toContain("--_mui-color-picker-height: 40px")
+    expect(css).toContain("--_mui-color-picker-font: 15px")
+  })
+
+  it("does not restyle an Input-owned composed draft field", () => {
+    expect(css).toContain(".mui-color-picker__hex:not([data-input-control])")
+    expect(css).not.toContain(".mui-color-picker__hex {")
+  })
+
+  it("keeps native chooser, disabled, forced-color and print ownership explicit", () => {
+    expect(css).toContain(".mui-color-picker__control:disabled")
+    expect(css).toContain("@media (forced-colors: active)")
+    expect(css).toContain("@media print")
+    expect(css).not.toContain("appearance:")
   })
 })

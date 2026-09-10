@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { createTime, formatTime } from "../src/components/time/index.js"
 import type { TimeBindingOptions, TimeController, TimeFormatOptions, TimeInput } from "../src/components/time/index.js"
@@ -20,6 +23,25 @@ function selection(text: Text) {
   document.getSelection()!.removeAllRanges(); document.getSelection()!.addRange(range)
   document.dispatchEvent(new Event("selectionchange"))
 }
+
+describe("Time default styles", () => {
+  const css = readFileSync(resolve("src", "components", "time", "time.css"), "utf8")
+
+  it("keeps the optional stylesheet within its unchanged ceiling", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(500)
+  })
+
+  it("adds only numeric readability, wrapping and focus presentation", () => {
+    expect(css).toContain("font-variant-numeric: tabular-nums")
+    expect(css).toContain("overflow-wrap: anywhere")
+    expect(css).toContain(":focus-visible")
+  })
+
+  it("inherits application typography and paint like the unstyled reference output", () => {
+    expect(css).not.toMatch(/(?:^|[;{])\s*(?:color|background|font-size|font-family|font-weight)\s*:/)
+    expect(css).not.toMatch(/(?:^|[;{])\s*(?:animation|transition)(?:-[\w-]+)?\s*:/)
+  })
+})
 function clearSelection() { document.getSelection()!.removeAllRanges(); document.dispatchEvent(new Event("selectionchange")) }
 beforeEach(() => {
   vi.useFakeTimers(); vi.setSystemTime(0); hidden = false

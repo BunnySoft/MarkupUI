@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createDynamicTags } from "../src/components/dynamic-tags/index.js"
 import type { DynamicTagsOptions } from "../src/components/dynamic-tags/index.js"
@@ -22,6 +25,35 @@ function fixture(options: DynamicTagsOptions = {}, values = ["alpha", "beta"]) {
   return { root, form, editor, add, entry, status, template, helper }
 }
 afterEach(() => { helpers.splice(0).reverse().forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
+
+describe("default styles", () => {
+  const css = readFileSync(resolve("src", "components", "dynamic-tags", "dynamic-tags.css"), "utf8")
+
+  it("uses the reference tag size scale and wrapping rhythm within budget", () => {
+    expect(css).toContain("--_mui-tags-height: 28px")
+    expect(css).toContain("--_mui-tags-height: 22px")
+    expect(css).toContain("--_mui-tags-height: 34px")
+    expect(css).toContain("gap: 4px 8px")
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
+  })
+
+  it("keeps native tag values compact without hiding labelled actions", () => {
+    expect(css).toContain("field-sizing: content")
+    expect(css).toContain("block-size: calc(var(--_mui-tags-height) - 6px)")
+    expect(css).not.toMatch(/text-indent:\s*-\d|font-size:\s*0/)
+  })
+
+  it("provides semantic light-dark palettes and forced-color controls", () => {
+    expect(css).toContain("--mui-tags-background: light-dark(rgba(32, 128, 240, .1), rgba(112, 192, 232, .16))")
+    expect(css).toContain("@media (forced-colors: active)")
+    expect(css).toContain("background: ButtonFace")
+  })
+
+  it("prints committed native values without enhancement controls", () => {
+    expect(css).toContain("@media print")
+    expect(css).toMatch(/\.mui-dynamic-tags__entry,\s*\n\s*\.mui-dynamic-tags__tag button,\s*\n\s*\.mui-dynamic-tags__status/)
+  })
+})
 
 describe("real native tag values and inherited collection ownership", () => {
   it("keeps original tags/readonly fields/listeners/defaults and submits exactly one native value per tag", () => {

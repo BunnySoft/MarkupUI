@@ -6,6 +6,50 @@ browser Notification API, request interceptor or renderer. It imports only small
 expiry/removal helpers—no Modal, Dialog, Popover, animation or runtime dependency.
 Legacy `mui.message.show/clear`, elements, output and overlay cleanup are unchanged.
 
+## Default-style audit — 2026-09-11
+
+The [rendered audit](../style-audit/components/message.md) compares pinned Naive UI
+2.45.3/Vue 3.5.30 while preserving native announcements, visible kind words, controls,
+actions and all lifetime policies. No shared feedback or Notification file was changed.
+
+Message items now use intrinsic width, a **720px** maximum, **10px 20px** desktop
+padding, **3px** radius, no outer border, **14px/1.6** text, and measured light/dark
+shadows. Light foreground/surface are **#333639 / white**; dark is **white .82 /
+#48484e**, not a legacy neutral or modal surface. Semantic icon colors reuse existing
+info/success/warning/error/primary roles. Icons occupy a 20px region with 10px spacing.
+When also loading core CSS, load its matching theme preset so shared semantic roles
+follow the selected light/dark scope.
+The default native bullet and static Loading decoration remain original adaptations;
+source `create()` has no default icon.
+
+**Required kind words remain visible on their own row.** For “Changes saved”, an info
+message measures **167.29×64.79px**, versus source **167.29×42.40px**: the extra row is
+intentional, not hidden to claim parity. Close retains its **40×40px minimum** instead
+of the source's 16px icon box/20px hover area. Close glyph and hover/pressed colors match
+the reference, but its larger native target and paint area remain deliberate.
+
+Fixed Message hosts use **12px visible insets**, centered or physical left/right
+alignment, an 8px stack gap, and default z-index 6000. Safe-area offsets and bounded
+scrolling remain; they are not the source's zero-height, overflow-visible container.
+At narrow viewports, the kind/icon header stays visible, content spans the item width,
+and close moves below content. An explicit shrinkable list track prevents intrinsic
+items from overflowing their constrained host. No event or timer policy changes.
+
+Inherited `--mui-message-accent/color/background` overrides now win even after type
+updates. Existing `--mui-feedback-width` and z-index overrides remain usable. Flow hosts
+stay in normal flow; fixed CSS still cannot cross native top layers. Reduced motion,
+forced-color feedback, print flow, visible error text and native action forms remain.
+Native physical left/right placement is preserved under RTL rather than adopting the
+reference container's inherited-direction alignment reversal.
+
+**64 targeted tests pass.** Browser checks cover twelve type/theme comparisons,
+48 placement/direction/theme/load-order cases, and 24 narrow/zoomed cases with working
+close/actions. Own CSS is **5,862 raw / 1,505 gzip bytes**; actual composed CSS is
+**7,313 raw / 1,728 gzip bytes** under the 1,750 ceiling. Unchanged ESM/classic are
+**4,739/4,860 gzip bytes**, each below 6,000. No shared dependency, runtime, builder,
+provider, template or binding change was needed. Historical migration acceptance below
+predates this audit.
+
 ## Loading and authored baseline
 
 | Entry | Contract |

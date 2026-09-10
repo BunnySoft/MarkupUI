@@ -8,6 +8,8 @@
 configuration through native ancestors, external CSS tokens/media queries, `lang`/`dir`
 and explicit existing helper options. [Legacy theme API](../../../src/theme/index.ts)
 remains unchanged; [Discrete](../../components/discrete.md) is the no-new-runtime precedent.
+The [2026-09-11 style review](../../style-audit/components/config-provider.md) records
+why a component-default comparison is not applicable.
 
 - **HTML:** real ancestors and authored children, language hints, native direction and modal hosts.
 - **JS:** explicit per-helper options/lifetime; no config-root helper, injection or reactive bridge.

@@ -22,7 +22,7 @@ export interface HeatmapSettings {
   firstDayOfWeek?: number
   fillCalendarLeading?: boolean
   locale?: string
-  colorTheme?: "green" | "blue" | "orange" | "purple" | "red"
+  colorTheme?: "green" | "blue" | "orange" | "purple" | "red" | null
   activeColors?: readonly string[] | null
   minimumColor?: string | null
   showColorIndicator?: boolean
@@ -49,7 +49,7 @@ export interface HeatmapModel {
 }
 export const heatmapDefaults: HeatmapConfig = {
   data: [], range: null, domain: null, thresholds: [.2, .4, .6, .8], firstDayOfWeek: 0,
-  fillCalendarLeading: false, locale: "en-US", colorTheme: "green", activeColors: null, minimumColor: null,
+  fillCalendarLeading: false, locale: "en-US", colorTheme: null, activeColors: null, minimumColor: null,
   showColorIndicator: true, showMonthLabels: true, showWeekLabels: true, size: "medium", loading: false, describe: null,
 }
 export function numberText(value: number) { return Object.is(value, -0) ? "-0" : String(value) }
@@ -93,7 +93,7 @@ export function heatmapConfig(input: HeatmapSettings, previous: HeatmapConfig = 
   for (const flag of [next.fillCalendarLeading, next.showColorIndicator, next.showMonthLabels, next.showWeekLabels, next.loading]) if (typeof flag !== "boolean") throw new TypeError("Heatmap flags must be boolean.")
   if (!Number.isInteger(next.firstDayOfWeek) || next.firstDayOfWeek < 0 || next.firstDayOfWeek > 6
     || typeof next.locale !== "string" || !next.locale || next.locale.length > 128
-    || !["green", "blue", "orange", "purple", "red"].includes(next.colorTheme)
+    || next.colorTheme !== null && !["green", "blue", "orange", "purple", "red"].includes(next.colorTheme)
     || !["small", "medium", "large"].includes(next.size)
     || next.describe !== null && typeof next.describe !== "function") throw new TypeError("Use weekday 0 Monday..6 Sunday, native locale, supported theme/size and a synchronous description.")
   const color = (value: unknown) => typeof value === "string" && /^#[\da-f]{6}$/i.test(value)

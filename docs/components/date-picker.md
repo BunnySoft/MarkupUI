@@ -41,6 +41,27 @@ native/text fallback and validate in application/server code. Unsupported-mode d
 and their custom actions are not activated. A text fallback is not equivalent calendar
 validation merely because an HTML type attribute was authored.
 
+## Default presentation
+
+The external stylesheet aligns the retained native trigger with the pinned Naive Input
+defaults used by Date Picker: small/medium/large controls are **28 / 34 / 40px**, use
+**14 / 14 / 15px** type, **10 / 12 / 14px** inline padding and 3px corners.
+Light roles are `#333639`, white and `#e0e0e6`; dark roles use the source white-opacity
+text/surfaces and transparent border. Disabled fields remain opaque with the corresponding
+source text/surface roles.
+
+Component hooks include `--mui-date-picker-font-family`, `-font-size`, `-line-height`,
+`-height`, `-padding`, `-gap`, `-radius`, `-color`, `-background`, `-border-color`,
+`-focus-color`, `-disabled-color` and `-disabled-background`. They are fallback-based:
+authored values and the shared font/primary-hover hooks win over private defaults.
+
+Forced colors restores system Canvas/CanvasText/GrayText paint. Printing selects the light
+native scheme while preserving authored public colors. The browser still owns segmented
+date/month/week/local-datetime editing, its picker indicator and popup. MarkupUI does not
+replace them with source icons, calendars, focus glow or formatted placeholders. The
+labelled clear button and readable output retain their authored/native presentation.
+See the [default-style audit](../style-audit/components/date-picker.md).
+
 ## Original native anatomy
 
 ```html
@@ -291,6 +312,7 @@ writes. Two Date regressions and real Chromium probes preserve blur-handler hidd
 overrides and teardown state. Date's four-mode public gate remains unchanged.
 
 Date ESM/classic increased from **3,882/3,953** to **3,967/4,038 gzip bytes**, still within
-the unchanged **4,500-byte** ceilings; CSS is unchanged. The shared follow-up passed
+the unchanged **4,500-byte** ceilings; CSS was unchanged in that historical follow-up.
+The later default-style audit above supersedes that CSS snapshot. The shared follow-up passed
 **245 targeted Time/Date/Form/Input tests** and **all 889 P4 tests**. Original Date sign-off
 counts above remain historical; final retained P4 reconciliation is in the master plan.

@@ -4,6 +4,10 @@
 Vue/JSX/VDOM, generic data renderer, global store, provider, custom scrollbar or fetcher.
 This is the first main P5 collection foundation, **not completion of P5**.
 
+**2026-09-11 default-style audit:** [matched component-neutral geometry](../style-audit/components/virtual-list.md).
+The stylesheet owns only fixed window/row layout and focus visibility; row paint,
+typography and the native scrollbar remain outside component styling.
+
 ## Loading and authored anatomy
 
 | Asset | Contract |

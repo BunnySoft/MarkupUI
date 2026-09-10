@@ -7,7 +7,8 @@ combobox, menu or listbox-shaped panel**. Values change immediately; Done/dismis
 not commit or roll back a second selection model.
 
 [Canonical anatomy/API/evidence](../../components/popselect.md) ·
-[Popover contract](../../components/popover.md) · [Select contract](../../components/select.md).
+[Popover contract](../../components/popover.md) · [Select contract](../../components/select.md) ·
+[default-style audit](../../style-audit/components/popselect.md).
 
 **Delivery phase:** P5. **Task state:** 🟢 Verified retained scope.
 **Next:** Split. P5 remains incomplete.
@@ -66,7 +67,7 @@ the stated native adaptation, not framework/renderer/controlled-prop compatibili
 | `render-label` · Popselect:L24 | Prop | No VNode label callback; literal native labels are tracked separately. | ⏭️ Intentionally omitted |
 | `scrollable` · Popselect:L25 | Prop | Native list scrolling and bounded Popover overflow; no custom scrollbar. | 🟢 Verified |
 | `scrollbar-props` · Popselect:L26 | Prop | No ScrollbarProps forwarding. | ⏭️ Intentionally omitted |
-| `size` · Popselect:L27 | Prop | External small/medium/large native Select presentation. | 🟢 Verified |
+| `size` · Popselect:L27 | Prop | Popselect-local 14/14/15px field typography and 4/8/12px frame padding for small/medium/large; native option rows remain platform-owned. | 🟢 Verified |
 | `value` · Popselect:L28 | Prop | Native string/null or DOM-order strings[]; no numeric coercion/model callback. | 🟢 Verified |
 | `virtual-scroll` · Popselect:L29 | Prop | At most 2,000 native options; no virtual window. | ⏭️ Intentionally omitted |
 | `on-update:value` · Popselect:L30 | Callback | Original native input/change, plus Select's explicit user-clear notifications; setters silent. | 🟢 Verified |

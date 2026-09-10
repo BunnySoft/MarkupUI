@@ -8,11 +8,18 @@ as a zero-JS authoring recipe, not as a renamed parser or Equation component.
 
 The unchanged [registry](../../../src/components/elements.ts) has no Equation or
 KaTeX integration. The [canonical contract/evidence](../../components/equation.md),
+[default-style audit](../../style-audit/components/equation.md),
 [separate native HTML](../../../demo/components/equation.html),
 [local CSS](../../../demo/components/equation.css) and
 [tests](../../../tests/equation.test.ts) demonstrate inline powers, block fractions,
 subscript/square root and a two-by-two matrix with plain explanations.
 There is no new source directory, helper/export, runtime/distribution, font or dependency.
+
+The style audit is **not applicable** as component-skin parity. The pinned Equation
+source defines no CSS or theme values; it preserves the wrapper tag/class returned by
+the supplied KaTeX renderer, so external KaTeX CSS and fonts own its inline/display,
+typography and paint. MarkupUI's authored MathML alternative has no package stylesheet
+or `--mui-equation-*` defaults to align.
 
 Reviewed the pinned [public API](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/equation/demos/enUS/index.demo-entry.md#L40-L48),
 [implementation](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/equation/src/Equation.tsx#L7-L43),
@@ -96,10 +103,11 @@ to inventory every external KaTeX option.
 
 ## Acceptance and remaining work
 
-**39 tests passed** (12 Equation recipe + 27 native/legacy), declarations/build and
-existing budgets. **1,316 existing distribution files byte-matched**; no source/
-package/build/P0 foundation change. The complete local HTML+CSS example is **2,277**
-gzip bytes; there is no new library bundle.
+The original native-alternative acceptance passed **39 tests** (12 Equation recipe +
+27 native/legacy), declarations/build and existing budgets, with **1,316 existing
+distribution files byte-matched**. The default-style audit's individual Equation run
+passes **13 tests**. There is still no source/package/build/P0 foundation change and no
+library bundle; the complete local HTML+CSS example is **2,277 gzip bytes**.
 
 Chromium verified native MathML namespace, stacked fractions/superscripts/root/matrix,
 MathML AX roles/names, original selection/order/forms, native disclosure/reset/scroll,

@@ -1,4 +1,6 @@
 import { readFileSync } from "node:fs"
+import { join } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createForm } from "../src/components/form/index.js"
 import type { FormController, FormItemOptions, FormValidator, FormValidatorResult } from "../src/components/form/index.js"
@@ -33,6 +35,45 @@ function deferred() {
   return { promise, resolve, reject }
 }
 afterEach(() => { helpers.splice(0).reverse().forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
+
+describe("Form stylesheet contract", () => {
+  const css = readFileSync(join("src", "components", "form", "form.css"), "utf8")
+  it("keeps inherited public geometry and color tokens authoritative", () => {
+    expect(css).not.toMatch(/--mui-form-[\w-]+\s*:/)
+    expect(css).toContain("var(--mui-form-label-align")
+    expect(css).toContain("var(--mui-form-feedback-color")
+    expect(css).not.toContain("var(--mui-text-primary")
+    expect(css).toMatch(/data-mui-theme="?dark"?/)
+    expect(css).toMatch(/@media\s+print\s*\{[^}]*color-scheme:\s*light/)
+  })
+  it("uses reference label weight and explicit size inheritance without sizing controls", () => {
+    expect(css).toMatch(/font-weight:\s*400/)
+    for (const height of [24, 26, 28]) expect(css).toMatch(new RegExp(`--_f-lh:\\s*${height}px`))
+    expect(css).toMatch(/:is\(\.mui-form,\s*\.mui-form-item\)\[data-size="?medium"?\]/)
+    expect(css).toMatch(/\.mui-form-item__content:not\(\.mui-input\)\s*\{[^}]*min-block-size:/)
+    expect(css).not.toMatch(/\.mui-input\s*\{[^}]*min-block-size:/)
+    expect(css).not.toMatch(/\.mui-form[^,{]*(?:\s|>|\+|~)(?:input|select|textarea)(?:[\s[.:#,{])/)
+  })
+  it("reserves hidden feedback space without exposing or generating feedback", () => {
+    expect(css).toMatch(/\.mui-form-item:not\(fieldset\):has\(>\s*\.mui-form-item__feedback\[hidden\]\)\s*\{[^}]*padding-block-end:/)
+    expect(css).toMatch(/\.mui-form-item__feedback:not\(:empty\)\s*\{[^}]*padding-block-start:\s*4px/)
+    expect(css).toMatch(/\[hidden\][^{]*\{[^}]*display:\s*none\s*!important/)
+    expect(css).not.toMatch(/::before|::after/)
+  })
+  it("preserves authored content flow, fieldsets and border-box item sizing", () => {
+    const content = css.match(/\.mui-form-item__content\s*\{([^}]*)\}/)?.[1] ?? ""
+    expect(content).not.toMatch(/display:/)
+    expect(css).toMatch(/\.mui-form-item\s*\{[^}]*box-sizing:\s*border-box/)
+    expect(css).toMatch(/data-label-placement="?left"?[^\n]*:not\(fieldset\)/)
+  })
+  it("retains pending, forced-color and motion-free presentation", () => {
+    expect(css).toMatch(/data-form-status="?pending"?[^{]*\{[^}]*dotted currentColor/)
+    expect(css).toMatch(/@media\s*\(forced-colors:\s*active\)/)
+    expect(css).toContain("color: CanvasText")
+    expect(css).not.toMatch(/(?:animation|transition)(?:-[a-z]+)?\s*:/)
+    expect(gzipSync(css, { level: 9 }).byteLength).toBeLessThanOrEqual(1250)
+  })
+})
 
 describe("Form native identity and explicit item ownership", () => {
   it("retains literal/repeated names, external associations, defaults, listeners, selection and FormData", async () => {

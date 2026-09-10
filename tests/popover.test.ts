@@ -6,7 +6,7 @@ import type { PopoverController, PopoverOptions } from "../src/components/popove
 
 describe("audited standalone Popover styles", () => {
   const css = readFileSync("src/components/popover/popover.css", "utf8")
-  const surface = css.match(/(\.mui-popover:where\(:not\(\.mui-tooltip,\.mui-popselect \*\)\))\{([^}]+)\}/)!
+  const surface = css.match(/(\.mui-popover:where\(:not\(\.mui-tooltip\)\))\{([^}]+)\}/)!
   const standalone = surface[2]!
 
   it("scopes corrected density and palette away from distinct composed skins", () => {
@@ -18,7 +18,7 @@ describe("audited standalone Popover styles", () => {
     expect(css).toContain("border:1px solid var(--mui-popover-border,#8b929e)")
   })
 
-  it("shares verified surfaces with Popconfirm and Dropdown while retaining other skin boundaries", () => {
+  it("shares verified popup surfaces while retaining the distinct Tooltip skin", () => {
     const panel = document.createElement("div")
     for (const skin of ["mui-popconfirm", "mui-dropdown"]) {
       panel.className = `mui-popover ${skin}`
@@ -30,6 +30,8 @@ describe("audited standalone Popover styles", () => {
     select.className = "mui-popselect"
     panel.className = "mui-popover"
     select.append(panel)
+    expect(panel.matches(surface[1]!)).toBe(true)
+    panel.classList.add("mui-tooltip")
     expect(panel.matches(surface[1]!)).toBe(false)
   })
 

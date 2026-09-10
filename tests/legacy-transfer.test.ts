@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { connectExample } from "../demo/components/legacy-transfer.js"
 
 const html = readFileSync(resolve("demo", "components", "legacy-transfer.html"), "utf8")
+const css = readFileSync(resolve("demo", "components", "legacy-transfer.css"), "utf8")
 const connections: ReturnType<typeof connectExample>[] = []
 const wait = () => new Promise(resolve => setTimeout(resolve, 25))
 function fixture(bind = true) {
@@ -45,6 +46,20 @@ describe("Legacy Transfer explicit replacement using the shipped helper", () => 
     expect(existsSync(resolve("src", "components", "legacy-transfer"))).toBe(false)
     expect(Object.keys(manifest.bundles).some(name => name.includes("legacy-transfer"))).toBe(false)
     expect(script).not.toMatch(/innerHTML|createElement|fetch\(|localStorage|setInterval|requestAnimationFrame/)
+  })
+  it("keeps legacy presentation defaults scoped without replacing native controls or public Transfer tokens", () => {
+    expect(css).toContain("--_mui-legacy-transfer-header: rgb(250, 250, 252)")
+    expect(css).toContain("--_mui-legacy-transfer-header: rgba(255, 255, 255, .06)")
+    expect(css).toContain("min-block-size: 38px")
+    expect(css).toContain("font-size: var(--mui-transfer-title-size, var(--mui-transfer-font-size")
+    expect(css).toContain("[data-transfer-pane] > label:has([data-transfer-filter])")
+    expect(css).toContain("[data-transfer-count] { margin: 0; }")
+    expect(css).toContain(":focus-visible:not(.mui-transfer *)")
+    expect(css).toMatch(/@media print[\s\S]*color-scheme: light/)
+    expect(css).not.toMatch(/(?:^|[;{\s])--mui-transfer-[\w-]+\s*:/m)
+    expect(css).not.toMatch(/appearance\s*:|select\s*\{[^}]*height\s*:/)
+    expect(html).toContain("<select id=\"source-list\" data-transfer-source multiple")
+    expect(html).toContain("<select id=\"target-list\" data-transfer-target multiple")
   })
   it("keeps an honest static no-JS anatomy with no named staging or visible dead controls", () => {
     const { root, form } = fixture(false)

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
+import { gzipSync } from "node:zlib"
 import { createMarquee } from "../src/components/marquee/index.js"
 import type { MarqueeController, MarqueeOptions } from "../src/components/marquee/index.js"
 
@@ -216,6 +217,64 @@ describe("Marquee ownership, failure and finish", () => {
     const { helper } = fixture({ active: true }), current = animations[0]!
     expect(() => helper.set(options as MarqueeOptions)).toThrow()
     expect(current.cancel).not.toHaveBeenCalled(); expect(helper.state.phase).toBe("running")
+  })
+
+  describe("Marquee audited default presentation", () => {
+    it("fills short tracks without constraining the original max-content overflow track", () => {
+      const { content } = fixture()
+      const css = getComputedStyle(content)
+      expect(css.inlineSize).toBe("max-content")
+      expect(css.minInlineSize).toBe("100%")
+      expect(css.maxInlineSize).toBe("none")
+      expect(css.whiteSpace).toBe("normal")
+      expect(css.margin).toBe("0px")
+      expect(css.padding).toBe("0px")
+    })
+
+    it("has no default edge fade, content gap or image-alignment reset", () => {
+      const css = sheet.textContent!
+      expect(css).not.toMatch(/mask(?:-image)?\s*:|linear-gradient|::before|::after/)
+      expect(css).not.toContain("[data-marquee-content] img")
+      expect(css).not.toContain("vertical-align:")
+      expect(css).toContain("outline: 3px solid var(--mui-marquee-focus, #175cd3)")
+      expect(css).not.toMatch(/--mui-marquee-focus\s*:/)
+      const { viewport, content } = fixture()
+      expect(getComputedStyle(viewport).borderTopWidth).toBe("0px")
+      expect(getComputedStyle(content).borderTopWidth).toBe("0px")
+    })
+
+    it("preserves original images and explicit typography/alignment styles through playback and disposal", () => {
+      const setup = fixture({}, false), image = document.createElement("img")
+      image.alt = "Authored image"
+      image.style.verticalAlign = "middle"
+      setup.content.append(image)
+      setup.root.style.cssText = "font-size:18px;line-height:1.5;color:rgb(120,40,80)"
+      setup.content.style.whiteSpace = "pre"
+      const rootStyle = setup.root.getAttribute("style"), trackStyle = setup.content.getAttribute("style")
+      const helper = createMarquee(setup.root); helpers.push(helper)
+      helper.play(); helper.pause(); helper.disconnect()
+      expect(setup.content.lastChild).toBe(image)
+      expect(getComputedStyle(image).verticalAlign).toBe("middle")
+      expect(setup.root.getAttribute("style")).toBe(rootStyle)
+      expect(setup.content.getAttribute("style")).toBe(trackStyle)
+      expect(setup.content.querySelectorAll("img")).toHaveLength(1)
+    })
+
+    it("retains static wrapping for reduced motion/forced colors and adds only a local light print surface", () => {
+      const css = sheet.textContent!, media = css.slice(css.indexOf("@media"))
+      expect(media).toContain("(prefers-reduced-motion: reduce), (forced-colors: active), print")
+      expect(media).toContain("transform: none !important")
+      expect(media).toContain("overflow: visible !important")
+      expect(media).toContain("overflow-wrap: anywhere")
+      expect(css.slice(css.lastIndexOf("@media print"))).toContain(".mui-marquee { color-scheme: light; color: CanvasText; background: Canvas; }")
+      expect(css).toContain('[data-marquee-controls] { display: none; }')
+      expect(css).not.toContain("forced-color-adjust")
+    })
+
+    it("keeps the independent stylesheet under its existing 1000-byte gzip ceiling", () => {
+      expect(gzipSync(sheet.textContent!, { level: 9 }).length).toBeLessThanOrEqual(1000)
+      expect(sheet.textContent).not.toContain("@import")
+    })
   })
   it("rejects interactive/oversized content before exposing enhancement", () => {
     const setup = fixture({}, false); setup.content.append(document.createElement("button"))

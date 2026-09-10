@@ -17,6 +17,7 @@ used by Time/Countdown, without importing their date/duration formatters or chan
 their existing assets.
 
 See [canonical loading/semantics/acceptance](../../components/number-animation.md),
+[default-style audit](../../style-audit/components/number-animation.md),
 [tests](../../../tests/number-animation.test.ts) and [local demo](../../../demo/components/number-animation.html).
 Pinned [props/defaults](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/number-animation/src/NumberAnimation.tsx#L8-L28),
 [format/play/watch behavior](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/number-animation/src/NumberAnimation.tsx#L43-L119)

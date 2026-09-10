@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createVirtualList, virtualWindow } from "../src/components/virtual-list/index.js"
 import type { VirtualListController, VirtualListOptions } from "../src/components/virtual-list/index.js"
@@ -6,6 +9,28 @@ interface Item { id: number; text: string }
 const helpers: VirtualListController<Item>[] = []
 const data = (length = 100_000) => Array.from({ length }, (_, id) => ({ id, text: `Row ${id + 1}` }))
 const render = (item: Item) => { const li = document.createElement("li"); li.textContent = item.text; return li }
+
+describe("Virtual List default styles", () => {
+  const css = readFileSync(resolve("src", "components", "virtual-list", "virtual-list.css"), "utf8")
+
+  it("keeps fixed-window geometry within its unchanged ceiling", () => {
+    expect(css).toContain("height: var(--mui-virtual-list-height)")
+    expect(css).toContain("height: var(--mui-virtual-row-size)")
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+  })
+
+  it("uses the native scrollbar without component-owned paint or typography", () => {
+    expect(css).toContain("overflow-y: auto")
+    expect(css).not.toMatch(/(?:^|[;{])\s*(?:color|background|font-size|font-family|font-weight|border)\s*:/)
+  })
+
+  it("adds no scrolling motion and retains focus/forced-color visibility", () => {
+    expect(css).toContain("scroll-behavior: auto")
+    expect(css).not.toMatch(/(?:^|[;{])\s*(?:animation|transition)(?:-[\w-]+)?\s*:/)
+    expect(css).toContain("@media (forced-colors: active)")
+  })
+})
+
 function fixture(options: Partial<VirtualListOptions<Item>> = {}, height = 320) {
   const root = document.createElement("div")
   root.className = "mui-virtual-list"

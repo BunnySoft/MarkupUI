@@ -1,41 +1,66 @@
+:where([data-mui-theme="light"]) { --_mui-heatmap-scheme: light; }
+:where([data-mui-theme="dark"]) { --_mui-heatmap-scheme: dark; }
 .mui-heatmap {
-  --mui-heatmap-level-0: #e3f3e6;
-  --mui-heatmap-level-1: #a7d9af;
-  --mui-heatmap-level-2: #63b974;
-  --mui-heatmap-level-3: #2d8843;
-  --mui-heatmap-level-4: #14532d;
+  --_mui-heatmap-level-0: var(--mui-heatmap-level-0, light-dark(rgba(46,51,56,.09), rgba(255,255,255,.1)));
+  --_mui-heatmap-level-1: var(--mui-heatmap-level-1, light-dark(#9be9a8, #0d4429));
+  --_mui-heatmap-level-2: var(--mui-heatmap-level-2, light-dark(#40c463, #006d32));
+  --_mui-heatmap-level-3: var(--mui-heatmap-level-3, light-dark(#30a14e, #26a641));
+  --_mui-heatmap-level-4: var(--mui-heatmap-level-4, light-dark(#216e39, #39d353));
+  --_mui-heatmap-font-size: 12px;
+  --_mui-heatmap-swatch-size: 11px;
+  --_mui-heatmap-cell-size: 3rem;
+  --_mui-heatmap-x-gap: 3px;
+  --_mui-heatmap-y-gap: 3px;
+  display: flex;
+  flex-direction: column;
+  inline-size: fit-content;
+  max-inline-size: 100%;
   min-inline-size: 0;
+  color-scheme: var(--_mui-heatmap-scheme, light);
+  color: var(--mui-heatmap-color, light-dark(#333639, rgba(255,255,255,.82)));
+  font-size: var(--mui-heatmap-font-size, var(--_mui-heatmap-font-size));
+  font-weight: 400;
+  line-height: 1.6;
 }
-.mui-heatmap[data-heatmap-theme="blue"] { --mui-heatmap-level-0: #e3efff; --mui-heatmap-level-1: #a9ccf7; --mui-heatmap-level-2: #639fe8; --mui-heatmap-level-3: #326ec1; --mui-heatmap-level-4: #173e7e; }
-.mui-heatmap[data-heatmap-theme="orange"] { --mui-heatmap-level-0: #fff0da; --mui-heatmap-level-1: #f5ce8b; --mui-heatmap-level-2: #e7a446; --mui-heatmap-level-3: #b96915; --mui-heatmap-level-4: #75400c; }
-.mui-heatmap[data-heatmap-theme="purple"] { --mui-heatmap-level-0: #f3e8ff; --mui-heatmap-level-1: #d2b4ee; --mui-heatmap-level-2: #aa7bd2; --mui-heatmap-level-3: #7b49a4; --mui-heatmap-level-4: #4d276d; }
-.mui-heatmap[data-heatmap-theme="red"] { --mui-heatmap-level-0: #ffe8e7; --mui-heatmap-level-1: #f3b6b1; --mui-heatmap-level-2: #df7d75; --mui-heatmap-level-3: #b3443c; --mui-heatmap-level-4: #762a25; }
+.mui-heatmap[data-heatmap-theme="green"] { --_mui-heatmap-level-1: var(--mui-heatmap-level-1, #c6e48b); --_mui-heatmap-level-2: var(--mui-heatmap-level-2, #7bc96f); --_mui-heatmap-level-3: var(--mui-heatmap-level-3, #239a3b); --_mui-heatmap-level-4: var(--mui-heatmap-level-4, #196127); }
+.mui-heatmap[data-heatmap-theme="blue"] { --_mui-heatmap-level-1: var(--mui-heatmap-level-1, #c0e7ff); --_mui-heatmap-level-2: var(--mui-heatmap-level-2, #73b3ff); --_mui-heatmap-level-3: var(--mui-heatmap-level-3, #0969da); --_mui-heatmap-level-4: var(--mui-heatmap-level-4, #0550ae); }
+.mui-heatmap[data-heatmap-theme="orange"] { --_mui-heatmap-level-1: var(--mui-heatmap-level-1, #fed7aa); --_mui-heatmap-level-2: var(--mui-heatmap-level-2, #fb923c); --_mui-heatmap-level-3: var(--mui-heatmap-level-3, #ea580c); --_mui-heatmap-level-4: var(--mui-heatmap-level-4, #c2410c); }
+.mui-heatmap[data-heatmap-theme="purple"] { --_mui-heatmap-level-1: var(--mui-heatmap-level-1, #e9d5ff); --_mui-heatmap-level-2: var(--mui-heatmap-level-2, #c084fc); --_mui-heatmap-level-3: var(--mui-heatmap-level-3, #9333ea); --_mui-heatmap-level-4: var(--mui-heatmap-level-4, #7c3aed); }
+.mui-heatmap[data-heatmap-theme="red"] { --_mui-heatmap-level-1: var(--mui-heatmap-level-1, #fecaca); --_mui-heatmap-level-2: var(--mui-heatmap-level-2, #f87171); --_mui-heatmap-level-3: var(--mui-heatmap-level-3, #dc2626); --_mui-heatmap-level-4: var(--mui-heatmap-level-4, #b91c1c); }
 .mui-heatmap [hidden] { display: none !important; }
 .mui-heatmap [data-heatmap-scroll] { overflow: auto; }
-.mui-heatmap [data-heatmap-table] { border-collapse: separate; border-spacing: var(--mui-heatmap-x-gap, .25rem) var(--mui-heatmap-y-gap, .25rem); }
-.mui-heatmap caption { text-align: start; font-weight: 650; padding-block: .5rem; }
-.mui-heatmap th { font-weight: 600; }
-.mui-heatmap th[scope="row"] { text-align: start; }
-.mui-heatmap [data-heatmap-day] { min-inline-size: var(--mui-heatmap-cell-size, 3rem); min-block-size: 4.5rem; padding: .25rem; font: inherit; color: inherit; background: transparent; border: 1px solid var(--mui-heatmap-border, #a7b6c8); cursor: pointer; }
-.mui-heatmap[data-heatmap-size="small"] { --mui-heatmap-cell-size: 2.75rem; }
-.mui-heatmap[data-heatmap-size="large"] { --mui-heatmap-cell-size: 3.5rem; }
+.mui-heatmap [data-heatmap-table] { border-collapse: separate; border-spacing: var(--mui-heatmap-x-gap, var(--_mui-heatmap-x-gap)) var(--mui-heatmap-y-gap, var(--_mui-heatmap-y-gap)); font-size: inherit; }
+.mui-heatmap caption { padding: 0 2px 8px; color: inherit; text-align: start; font-weight: 500; }
+.mui-heatmap :is(th, td) { padding: 0; border: 0; }
+.mui-heatmap th { color: inherit; font-size: inherit; font-weight: 400; }
+.mui-heatmap th[scope="colgroup"] { block-size: 15px; padding: 0 2px 8px; line-height: 15px; text-align: start; vertical-align: bottom; }
+.mui-heatmap th[scope="row"] { inline-size: 27px; padding-inline-end: 4px; line-height: var(--mui-heatmap-swatch-size, var(--_mui-heatmap-swatch-size)); text-align: end; vertical-align: middle; white-space: nowrap; }
+.mui-heatmap [data-heatmap-day] { display: flex; flex-direction: column; min-inline-size: var(--mui-heatmap-cell-size, var(--_mui-heatmap-cell-size)); min-block-size: var(--mui-heatmap-cell-size, var(--_mui-heatmap-cell-size)); box-sizing: border-box; padding: 4px; font: inherit; color: inherit; background: transparent; border: 1px solid var(--mui-heatmap-border, transparent); border-radius: var(--mui-heatmap-radius, 2px); cursor: pointer; }
+.mui-heatmap[data-heatmap-size="small"] { --_mui-heatmap-font-size: 12px; --_mui-heatmap-swatch-size: 10px; --_mui-heatmap-cell-size: 2.75rem; --_mui-heatmap-x-gap: 2px; --_mui-heatmap-y-gap: 2px; }
+.mui-heatmap[data-heatmap-size="large"] { --_mui-heatmap-font-size: 14px; --_mui-heatmap-swatch-size: 12px; --_mui-heatmap-cell-size: 3.5rem; }
 .mui-heatmap [data-heatmap-date], .mui-heatmap [data-heatmap-value], .mui-heatmap [data-heatmap-code] { display: block; }
 .mui-heatmap [data-heatmap-date], .mui-heatmap [data-heatmap-code] { font-size: .75em; }
 .mui-heatmap [data-heatmap-value] { overflow-wrap: anywhere; max-inline-size: 8rem; font-variant-numeric: tabular-nums; }
-.mui-heatmap [data-heatmap-level="0"] { --mui-heatmap-cell-color: var(--mui-heatmap-level-0); }
-.mui-heatmap [data-heatmap-level="1"] { --mui-heatmap-cell-color: var(--mui-heatmap-level-1); }
-.mui-heatmap [data-heatmap-level="2"] { --mui-heatmap-cell-color: var(--mui-heatmap-level-2); }
-.mui-heatmap [data-heatmap-level="3"] { --mui-heatmap-cell-color: var(--mui-heatmap-level-3); }
-.mui-heatmap [data-heatmap-level="4"] { --mui-heatmap-cell-color: var(--mui-heatmap-level-4); }
-.mui-heatmap [data-heatmap-swatch] { display: block; block-size: .85rem; min-inline-size: 1.5rem; background: var(--mui-heatmap-cell-color, #dce1e8); border: 1px solid currentColor; border-radius: .15rem; }
-.mui-heatmap [data-heatmap-missing] [data-heatmap-swatch] { background: repeating-linear-gradient(135deg, #ffffff 0 3px, #c6ccd5 3px 6px); }
+.mui-heatmap [data-heatmap-level="0"] { --_mui-heatmap-cell-color: var(--_mui-heatmap-level-0); }
+.mui-heatmap [data-heatmap-level="1"] { --_mui-heatmap-cell-color: var(--_mui-heatmap-level-1); }
+.mui-heatmap [data-heatmap-level="2"] { --_mui-heatmap-cell-color: var(--_mui-heatmap-level-2); }
+.mui-heatmap [data-heatmap-level="3"] { --_mui-heatmap-cell-color: var(--_mui-heatmap-level-3); }
+.mui-heatmap [data-heatmap-level="4"] { --_mui-heatmap-cell-color: var(--_mui-heatmap-level-4); }
+.mui-heatmap [data-heatmap-swatch] { display: block; inline-size: var(--mui-heatmap-swatch-size, var(--_mui-heatmap-swatch-size)); block-size: var(--mui-heatmap-swatch-size, var(--_mui-heatmap-swatch-size)); flex: 0 0 auto; background: var(--mui-heatmap-cell-color, var(--_mui-heatmap-cell-color, transparent)); border-radius: var(--mui-heatmap-radius, 2px); transition: background-color .3s cubic-bezier(.4, 0, .2, 1); }
+.mui-heatmap [data-heatmap-missing] [data-heatmap-swatch] { background: repeating-linear-gradient(135deg, transparent 0 3px, currentColor 3px 4px); outline: 1px solid currentColor; outline-offset: -1px; }
 .mui-heatmap [data-heatmap-current] [data-heatmap-day] { outline: 2px solid currentColor; outline-offset: -2px; }
-.mui-heatmap [data-heatmap-bands] { display: flex; flex-wrap: wrap; gap: .75rem; list-style: none; padding: 0; }
-.mui-heatmap [data-heatmap-bands] li { max-inline-size: 15rem; }
+.mui-heatmap [data-heatmap-legend] { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 4px; margin-block-start: 8px; }
+.mui-heatmap [data-heatmap-bands] { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--mui-heatmap-x-gap, var(--_mui-heatmap-x-gap)); margin: 0; padding: 0; list-style: none; }
+.mui-heatmap [data-heatmap-bands] li { display: inline-flex; align-items: center; gap: 4px; max-inline-size: 15rem; }
 .mui-heatmap .mui-heatmap-visually-hidden { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .mui-heatmap :focus-visible { outline: 3px solid var(--mui-heatmap-focus, #175cd3); outline-offset: 2px; }
-@media (forced-colors: active) { .mui-heatmap [data-heatmap-swatch], .mui-heatmap [data-heatmap-missing] [data-heatmap-swatch] { background: Canvas; border-color: CanvasText; } }
+@media (prefers-reduced-motion: reduce) { .mui-heatmap [data-heatmap-swatch] { transition: none; } }
+@media (forced-colors: active) {
+  .mui-heatmap [data-heatmap-swatch], .mui-heatmap [data-heatmap-missing] [data-heatmap-swatch] { background: Canvas; outline: 1px solid CanvasText; outline-offset: -1px; }
+  .mui-heatmap [data-heatmap-current] [data-heatmap-day], .mui-heatmap :focus-visible { outline-color: Highlight; }
+}
 @media print {
+  .mui-heatmap { color-scheme: light; color: black; background: white; }
   .mui-heatmap [data-heatmap-scroll] { overflow: visible; }
   .mui-heatmap [data-heatmap-day] { border-color: currentColor; }
   .mui-heatmap time[data-heatmap-date] { font-size: 0; }

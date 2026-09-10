@@ -6,6 +6,7 @@ decimal pixel sizes remain distinct; desired/default values survive responsive c
 No layout provider, drag package, generic panel renderer or body interaction override.
 
 [Canonical anatomy/API/acceptance](../../components/split.md).
+[Default-style audit](../../style-audit/components/split.md).
 **Delivery phase:** P5. **Task state:** 🟢 Verified retained scope.
 The [master phase audit](../migration-plan.md) covers all ten P5-assigned inventories.
 No next component is implemented here.

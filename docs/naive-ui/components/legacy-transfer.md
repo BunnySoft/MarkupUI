@@ -23,6 +23,32 @@ and [public exports](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed4
 The root exposes no public slots; internal icon slots/provider renderEmpty do not
 become public native APIs. Native option nodes replace data/rendering machinery.
 
+## Default-style audit
+
+**Integrated locally; shared Transfer remains unchanged.** The
+[style report](../../style-audit/components/legacy-transfer.md) compares the pinned
+Legacy Transfer renderer and light/dark themes with the native migration fixture.
+The local CSS now supplies the controllable legacy header/filter roles without
+replacing native listboxes or assigning public Transfer tokens:
+
+- medium headings: **38px** block, **14px/14px** type, weight 400;
+- light header/filter surface: `rgb(250, 250, 252)`;
+- dark header/filter surface: `rgba(255, 255, 255, .06)`;
+- count paragraph UA margins removed;
+- migration-only 44px buttons and focus treatment no longer leak into Transfer actions.
+
+Print resets the local color scheme/header role to light. Existing Transfer forced-color,
+disabled, responsive and public-token behavior remains in force. The fixture retains
+real unnamed multiple selects, visible labels, four text actions, fieldset/FormData
+semantics and original option nodes. The source's fixed 440×240 renderer, checkbox rows,
+two icon buttons, virtual scrollbar and item motion remain explicit differences.
+
+`pnpm exec vitest run tests\legacy-transfer.test.ts` passed **13/13**. Local
+HTML/CSS/JS are **5,645 / 2,416 / 4,715 raw** and **1,843 / 767 / 1,613 gzip**.
+Reused Transfer ESM/classic/CSS remain **5,986 / 6,125 / 1,215 gzip** under the
+unchanged **8,000 / 8,000 / 1,250** ceilings. No distribution or shared status file
+was edited.
+
 ## Migration steps
 
 **Delivery lane:** deferred/exclusions — deprecated Transfer API.
@@ -127,10 +153,11 @@ adds these three inherited identities.
 
 ## Evidence and final catalog boundary
 
-**80 tests passed** (12 migration wiring + 41 modern Transfer + 27 native/legacy),
-declarations/build and all ceilings; **1,316 distributions byte-matched**. Complete
-local ESM example **10,433 gzip bytes**, including unchanged Transfer ESM/CSS;
-demo-only HTML/CSS/JS **3,954**. No source/package/build/P0 edits.
+The original migration acceptance recorded **80 tests passed** (12 migration wiring
++ 41 modern Transfer + 27 native/legacy), declarations/build and all ceilings, with
+**1,316 distributions byte-matched**. The later style-only fixture passed **13/13**.
+The complete current local ESM example is **11,424 gzip bytes**, including unchanged
+Transfer ESM/CSS; demo-only HTML/CSS/JS are **4,223 gzip**. No package/build/P0 edit.
 
 Chromium verified real keyboard staging, one user move, exact target ordering,
 locked/filtered/unhighlighted membership in native FormData, disabled suppression,

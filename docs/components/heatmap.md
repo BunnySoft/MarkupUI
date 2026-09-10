@@ -148,7 +148,7 @@ becomes black, NaN, zero or an accepted partial dataset.
 
 | Option | Default / contract |
 | --- | --- |
-| colorTheme | green; green/blue/orange/purple/red external CSS palettes |
+| colorTheme | null built-in light/dark palette; optional green/blue/orange/purple/red external CSS palettes |
 | activeColors | null, or exactly five #RRGGBB colors for numeric L0..L4 |
 | minimumColor | null, or #RRGGBB override for numeric L0 after activeColors |
 | showColorIndicator | true; hides/shows owned band list, not author legend prefix/suffix/controls |
@@ -160,7 +160,11 @@ becomes black, NaN, zero or an accepted partial dataset.
 | describe | null or synchronous literal annotation callback, <=512 characters per visible date |
 
 Numeric colors are five CSS levels, not source's arbitrary active-array length plus
-minimum color. Custom colors override the theme; minimumColor overrides only L0.
+minimum color. The null default now preserves the pinned built-in palettes: light
+minimum `rgba(46,51,56,.09)` plus `#9be9a8/#40c463/#30a14e/#216e39`, and dark
+minimum white `.1` plus `#0d4429/#006d32/#26a641/#39d353`. Named themes replace
+the four active colors, as upstream does, while retaining the scheme minimum.
+Custom colors override the built-in/named palette; minimumColor overrides only L0.
 Missing has a separate native CSS hatch and explicit “Missing/No value” text.
 Color is applied to a swatch, not as unreadable text over arbitrary dark backgrounds.
 Actual value, date and L0..L4/`*` text remain visible outside the swatch. The legend uses
@@ -168,7 +172,9 @@ the same levels. Native title-only hover is not substituted for accessible detai
 
 Only validated hex color custom properties are written by JS. No arbitrary CSS colors,
 URLs, variables, style strings or injected rules are forwarded. External CSS owns
-geometry, palette, focus and responsiveness, including --mui-heatmap-x-gap/y-gap.
+geometry, palette, focus and responsiveness. Public `--mui-heatmap-*` overrides remain
+authoritative, including levels 0..4, color/font/swatch/radius, cell size, border,
+x/y gaps and focus.
 Native targets are deliberately larger than source tiny rectangles; full-year views
 can scroll horizontally rather than shrink to inaccessible hit areas.
 
@@ -246,25 +252,26 @@ retain actual values/date labels/level codes; background graphics and fitting a 
 year onto paper are not guaranteed. Use application print layout/export policy when
 needed. No universal AT/browser/Tooltip/theme promise is made.
 
-## Acceptance — 2026-09-10
+## Acceptance — 2026-09-11
 
 1. Actual calendar date/value model, missing/duplicate/range/domain/threshold rules verified.
 2. Native table/legend/value text, external safe palette and non-color meaning verified.
 3. Roving native inspection, persistent details, callbacks/focus/identity/forms/lifetime verified.
 4. Source dispositions, actual native browser data/color/scale/media/fallback and build budgets recorded.
 
-Targeted gate: `pnpm test -- tests\heatmap.test.ts tests\calendar.test.ts tests\native.test.ts`.
-**133 tests pass (52 Heatmap, 54 shared Calendar, 27 native/legacy).**
-Build/declarations/budgets: `pnpm build`. Level-nine gzip: **7,822 ESM / 7,956 classic /
-1,126 CSS**, combined **8,948 / 9,082**, under **8,000 / 8,000 / 2,000** ceilings.
-Core/advanced/widgets stay **14,611 / 2,181 / 2,779**. Full raw/catalog details are in the
-[current index acceptance](../naive-ui/index.md#heatmap-accepted).
+Latest isolated gate: `pnpm exec vitest run tests\heatmap.test.ts --reporter=dot`:
+**57 Heatmap tests pass**. `pnpm exec tsc --noEmit -p tsconfig.json` also passes.
+An in-memory build matching `scripts/build.mjs` measured **20,413 raw / 7,824 gzip ESM**,
+**20,698 / 7,956 classic** and **7,423 / 1,680 CSS**, under the unchanged
+**8,000 / 8,000 / 2,000 gzip** ceilings. Generated `dist` and shared acceptance files
+were not changed. See the [default-style audit](../style-audit/components/heatmap.md).
 
 Observed Chromium: the local signed dataset produced domain [-4,20], four numeric/
 35 missing date cells. Actual 0 remained numeric L0 while Missing had no level and a
-distinct hatch; -4 used rgb(227,243,230) and 20 used rgb(20,83,45). Explicit colors
-plus minimumColor produced rgb(255,236,179) for L0 and rgb(30,58,138) for L4. All-zero
-data had domain [0,0] and levels [2,2,2]. Missing-only data had no numeric domain.
+distinct hatch. The style re-audit measured the built-in light L0/L4 as
+`rgba(46,51,56,.09)` / `#216e39`, dark L0/L4 as white `.1` / `#39d353`,
+and confirmed an authored `--mui-heatmap-level-4:#123456` remained authoritative.
+All-zero data had domain [0,0] and levels [2,2,2]. Missing-only data had no numeric domain.
 
 ArrowRight moved one week, Ctrl+End reached the last date, Enter emitted one inspection
 and Tab left to the original footer action. Native AX showed a table, caption, row/

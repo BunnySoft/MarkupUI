@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createCalendar } from "../src/components/calendar/index.js"
 import type { CalendarController, CalendarOptions } from "../src/components/calendar/index.js"
@@ -326,5 +329,37 @@ describe("Calendar atomic callbacks and lifetime", () => {
     day("2024-02-15").click(); expect(helper.value).toBeNull()
     expect([...new FormData(form)]).toEqual([["title", "kept"]])
     fieldset.disabled = false; expect(helper.select("2024-02-15")).toBe(true)
+  })
+})
+
+describe("Calendar default styles", () => {
+  const css = readFileSync(resolve("src", "components", "calendar", "calendar.css"), "utf8")
+
+  it("keeps the Calendar stylesheet within its unchanged budget", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
+  })
+
+  it("defines the measured light and dark Calendar surfaces without a runtime dependency", () => {
+    expect(css).toContain("light-dark(#18a058, #63e2b7)")
+    expect(css).toContain("light-dark(#fff, #18181c)")
+    expect(css).toContain("light-dark(#efeff5, #2d2d30)")
+    expect(css).toContain("light-dark(#333639, rgba(255,255,255,.82))")
+    expect(css).not.toContain("@import")
+  })
+
+  it("retains native table and button ownership while matching the measured metrics", () => {
+    expect(css).toContain("font-size: var(--mui-calendar-font-size, 14px)")
+    expect(css).toContain("font-size: var(--mui-calendar-title-size, 22px)")
+    expect(css).toContain("padding: var(--mui-calendar-padding, 10px)")
+    expect(css).toContain("min-block-size: 28px")
+    expect(css).toContain("inline-size: 1.8em")
+    expect(css).not.toContain("[role=")
+  })
+
+  it("keeps hidden, forced-color and print behavior explicit", () => {
+    expect(css).toContain(".mui-calendar [hidden] { display: none !important; }")
+    expect(css).toContain("@media (forced-colors: active)")
+    expect(css).toContain("@media print")
+    expect(css).toContain("[data-calendar-controls], .mui-calendar [data-calendar-status] { display: none; }")
   })
 })

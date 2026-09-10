@@ -1,10 +1,102 @@
-.mui-time-picker { display: grid; gap: .5rem; min-inline-size: 0; }
-.mui-time-picker label { display: grid; gap: .25rem; min-inline-size: 0; }
-.mui-time-picker input { box-sizing: border-box; max-inline-size: 100%; min-inline-size: 0; padding: .5rem; font: inherit; color: FieldText; background: Field; border: 1px solid GrayText; border-radius: .25rem; }
-.mui-time-picker button { font: inherit; padding: .5rem; }
-.mui-time-picker__output { margin: 0; overflow-wrap: anywhere; font-size: .875em; }
-.mui-time-picker :focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
-.mui-time-picker[data-size="small"] { font-size: .875rem; }
-.mui-time-picker[data-size="large"] { font-size: 1.125rem; }
-.mui-time-picker [hidden] { display: none !important; }
-@media (forced-colors: active) { .mui-time-picker input { border-color: ButtonText; } }
+.mui-time-picker {
+  --_mui-time-picker-height: 34px;
+  --_mui-time-picker-font-size: 14px;
+  display: grid;
+  gap: 8px;
+  min-inline-size: 0;
+}
+
+.mui-time-picker label {
+  display: grid;
+  gap: 4px;
+  min-inline-size: 0;
+}
+
+.mui-time-picker input {
+  box-sizing: border-box;
+  block-size: var(--_mui-time-picker-height);
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  padding-inline: 12px;
+  border: 1px solid var(--mui-time-picker-border, light-dark(#e0e0e6, rgba(255, 255, 255, .24)));
+  border-radius: 3px;
+  color: var(--mui-time-picker-text, light-dark(#333639, rgba(255, 255, 255, .82)));
+  background: var(--mui-time-picker-background, light-dark(#fff, rgba(255, 255, 255, .1)));
+  font-size: var(--_mui-time-picker-font-size);
+  line-height: 1.5;
+}
+
+.mui-time-picker input:hover {
+  border-color: var(--mui-time-picker-hover, light-dark(#36ad6a, #7fe7c4));
+}
+
+.mui-time-picker button {
+  box-sizing: border-box;
+  block-size: var(--_mui-time-picker-height);
+  inline-size: max-content;
+  max-inline-size: 100%;
+  padding-block: 0;
+  padding-inline: 12px;
+  border: 1px solid var(--mui-time-picker-border, light-dark(#e0e0e6, rgba(255, 255, 255, .24)));
+  border-radius: 3px;
+  color: var(--mui-time-picker-text, light-dark(#333639, rgba(255, 255, 255, .82)));
+  background: var(--mui-time-picker-background, light-dark(#fff, rgba(255, 255, 255, .1)));
+  font-size: var(--_mui-time-picker-font-size);
+}
+
+.mui-time-picker button:not(:disabled):hover {
+  border-color: var(--mui-time-picker-hover, light-dark(#36ad6a, #7fe7c4));
+  color: var(--mui-time-picker-hover, light-dark(#36ad6a, #7fe7c4));
+}
+
+.mui-time-picker__output {
+  margin: 0;
+  color: var(--mui-time-picker-muted, light-dark(#767c82, rgba(255, 255, 255, .52)));
+  font-size: .875em;
+  overflow-wrap: anywhere;
+}
+
+.mui-time-picker :focus-visible {
+  outline: 2px solid Highlight;
+  outline-offset: 2px;
+}
+
+.mui-time-picker :disabled {
+  color: GrayText;
+  cursor: not-allowed;
+}
+
+.mui-time-picker[data-size="small"] {
+  --_mui-time-picker-height: 28px;
+  --_mui-time-picker-font-size: 14px;
+}
+
+.mui-time-picker[data-size="large"] {
+  --_mui-time-picker-height: 40px;
+  --_mui-time-picker-font-size: 15px;
+}
+
+.mui-time-picker [hidden] {
+  display: none !important;
+}
+
+@media (forced-colors: active) {
+  .mui-time-picker input,
+  .mui-time-picker button {
+    border-color: ButtonText;
+    color: ButtonText;
+    background: ButtonFace;
+  }
+}
+
+@media print {
+  .mui-time-picker [data-time-clear] {
+    display: none;
+  }
+
+  .mui-time-picker input {
+    border-color: currentColor;
+    color: #000;
+    background: transparent;
+  }
+}

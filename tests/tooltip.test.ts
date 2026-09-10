@@ -33,7 +33,7 @@ describe("audited Tooltip presentation", () => {
     }
     expect(css).not.toContain("data-mui-theme")
     expect(css).not.toContain("@import")
-    expect(base).toContain(":not(.mui-tooltip,")
+    expect(base).toContain(":where(:not(.mui-tooltip))")
   })
 
   it("keeps clipping and higher-specificity print overrides independent of base load order", () => {

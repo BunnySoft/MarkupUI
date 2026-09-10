@@ -1,5 +1,8 @@
+:where([data-mui-theme="light"]) { --_mui-carousel-scheme: light; }
+:where([data-mui-theme="dark"]) { --_mui-carousel-scheme: dark; }
 .mui-carousel {
   min-inline-size: 0;
+  color-scheme: var(--_mui-carousel-scheme, light);
 }
 .mui-carousel [hidden] { display: none !important; }
 .mui-carousel > [data-carousel-viewport] {
@@ -47,20 +50,31 @@
 .mui-carousel [data-carousel-next],
 .mui-carousel [data-carousel-to],
 .mui-carousel [data-carousel-toggle] {
-  min-inline-size: 2.75rem;
-  min-block-size: 2.75rem;
+  min-block-size: 28px;
+  padding: 0 10px;
   font: inherit;
-  color: inherit;
+  color: var(--mui-carousel-control-color, light-dark(#333639, rgba(255,255,255,.82)));
+  background: var(--mui-carousel-control-background, light-dark(#fff, rgba(255,255,255,.1)));
+  border: 1px solid var(--mui-carousel-control-border, light-dark(#e0e0e6, rgba(255,255,255,.24)));
+  border-radius: var(--mui-carousel-control-radius, 3px);
   cursor: pointer;
 }
-.mui-carousel [aria-current="true"] { outline: 2px solid currentColor; outline-offset: 2px; }
-.mui-carousel [aria-disabled="true"] { opacity: .55; cursor: default; }
+.mui-carousel [data-carousel-to] { min-inline-size: 28px; padding-inline: 0; }
+.mui-carousel :is([data-carousel-prev], [data-carousel-next], [data-carousel-to], [data-carousel-toggle]):enabled:not([aria-disabled="true"]):hover { color: var(--mui-carousel-primary, var(--mui-color-primary-hover, light-dark(#36ad6a, #7fe7c4))); border-color: currentColor; }
+.mui-carousel [aria-current="true"] { color: var(--mui-carousel-current-color, light-dark(#fff, #000)); background: var(--mui-carousel-primary, var(--mui-color-primary, light-dark(#18a058, #63e2b7))); border-color: transparent; }
+.mui-carousel :is(button:disabled, [aria-disabled="true"]) { color: var(--mui-carousel-disabled, light-dark(#c2c2c2, rgba(255,255,255,.38))); cursor: not-allowed; opacity: 1; }
 .mui-carousel :focus-visible { outline: 3px solid var(--mui-carousel-focus, #175cd3); outline-offset: -3px; }
 @media (prefers-reduced-motion: reduce) {
   .mui-carousel > [data-carousel-viewport] { scroll-behavior: auto; }
 }
+@media (forced-colors: active) {
+  .mui-carousel :is([data-carousel-prev], [data-carousel-next], [data-carousel-to], [data-carousel-toggle]) { color: ButtonText; background: ButtonFace; border-color: ButtonText; }
+  .mui-carousel [aria-current="true"] { color: HighlightText; background: Highlight; }
+  .mui-carousel :is(button:disabled, [aria-disabled="true"]) { color: GrayText; border-color: GrayText; }
+  .mui-carousel :focus-visible { outline-color: Highlight; }
+}
 @media print {
   .mui-carousel > [data-carousel-viewport] { display: block; block-size: auto; overflow: visible; }
   .mui-carousel > [data-carousel-viewport] > [data-carousel-item] { block-size: auto; overflow: visible; break-inside: avoid; }
-  .mui-carousel > [data-carousel-controls] { display: none; }
+  .mui-carousel > [data-carousel-controls], .mui-carousel > [data-carousel-readout] { display: none; }
 }

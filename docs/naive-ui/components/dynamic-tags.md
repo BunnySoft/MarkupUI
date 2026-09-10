@@ -3,6 +3,7 @@
 **Plan: 🟢 Verified retained native string-tag/editor scope.**
 
 [Canonical anatomy, value/intent/ownership contracts and evidence](../../components/dynamic-tags.md).
+[Default-style audit](../../style-audit/components/dynamic-tags.md).
 Dynamic Input is reused for bounded row/template/removal/focus/lifetime behavior. Tags are
 visible readonly named fields, with one unnamed native draft editor. No Tag/Input runtime,
 VNode/object renderer, hidden proxy value, controlled array store or implicit blur commit.

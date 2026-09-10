@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { createCountdown, formatCountdown } from "../src/components/countdown/index.js"
 import type { CountdownController, CountdownOptions } from "../src/components/countdown/index.js"
@@ -317,5 +320,26 @@ describe("Countdown failure, completion reentrancy and teardown", () => {
     clearSelection()
     const second = fixture({ duration: 1000 }); second.text.data = "Author override"; second.helper.disconnect()
     expect(second.text.data).toBe("Author override"); expect(second.element.dateTime).toBe("PT1S")
+  })
+})
+
+describe("Countdown default styles", () => {
+  const css = readFileSync(resolve("src", "components", "countdown", "countdown.css"), "utf8")
+
+  it("keeps the Countdown stylesheet within its unchanged ceiling", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(750)
+  })
+
+  it("adds only numeric readability, unit flow and focus presentation", () => {
+    expect(css).toContain("font-variant-numeric: tabular-nums")
+    expect(css).toContain("display: inline-flex")
+    expect(css).toContain("overflow-wrap: anywhere")
+    expect(css).toContain(":focus-visible")
+  })
+
+  it("inherits application typography and paint like the unstyled reference output", () => {
+    expect(css).not.toMatch(/(?:^|[;{])\s*(?:color|background|font-size|font-family)\s*:/)
+    expect(css).not.toContain("animation")
+    expect(css).not.toContain("transition")
   })
 })

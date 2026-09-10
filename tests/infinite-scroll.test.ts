@@ -1,6 +1,34 @@
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createInfiniteScroll } from "../src/components/infinite-scroll/index.js"
 import type { InfiniteScrollContext, InfiniteScrollController, InfiniteScrollOptions, InfiniteScrollResult } from "../src/components/infinite-scroll/index.js"
+
+describe("Infinite Scroll default styles", () => {
+  const css = readFileSync(resolve("src", "components", "infinite-scroll", "infinite-scroll.css"), "utf8")
+
+  it("keeps native scrolling and sentinel geometry within the unchanged ceiling", () => {
+    expect(css).toContain("overflow: auto")
+    expect(css).toContain("max-block-size: var(--mui-infinite-scroll-height, none)")
+    expect(css).toContain("block-size: 1px")
+    expect(css).toContain("inline-size: 100%")
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+  })
+
+  it("does not impose component paint, spacing, viewport height or status styling", () => {
+    expect(css).not.toMatch(/(?:^|[;{])\s*(?:color|background(?:-[\w-]+)?|font(?:-[\w-]+)?|padding(?:-[\w-]+)?|margin(?:-[\w-]+)?|border(?:-[\w-]+)?|cursor)\s*:/m)
+    expect(css).not.toContain("20rem")
+    expect(css).not.toContain("[data-infinite-message")
+  })
+
+  it("retains visible focus and static reduced-motion and print behavior", () => {
+    expect(css).toContain(":focus-visible")
+    expect(css).toContain("@media (prefers-reduced-motion: reduce)")
+    expect(css).toContain("@media print")
+    expect(css).not.toMatch(/(?:^|[;{])\s*(?:animation|transition)(?:-[\w-]+)?\s*:/m)
+  })
+})
 
 class Observer {
   static instances: Observer[] = []

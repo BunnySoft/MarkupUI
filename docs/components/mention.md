@@ -5,6 +5,11 @@ adjacent named region of **native choice buttons**. No rich text/contenteditable
 mirror, fake textarea combobox/listbox, active-descendant keyboard engine, floating
 dependency, VNode renderer, provider, HTTP client or text logging/storage.
 
+**2026-09-11 default-style audit:** standalone controls and native options now follow the
+source's 28/34/40px density, 3px corners and semantic light/dark palette. Composed
+`data-input-control` fields remain Input-owned, and the demo explicitly loads Input CSS.
+See the [measured audit](../style-audit/components/mention.md).
+
 The panel is in **ordinary document flow below/beside its field**, wherever the author
 places it. It is not caret-anchored, portalled or a claimed equivalent of source popup
 geometry. There is a complete usable selection route: native Tab to a candidate button,

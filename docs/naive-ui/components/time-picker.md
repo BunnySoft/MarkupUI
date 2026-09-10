@@ -3,6 +3,7 @@
 **Plan: 🟢 Verified retained native single-time scope.**
 
 [Canonical time/precision/ownership contracts and evidence](../../components/time-picker.md).
+[Default-style audit](../../style-audit/components/time-picker.md).
 The original native time input owns its string/defaults/constraints/FormData. Shared
 temporal probing and focus primitives avoid date anchoring and preserve native clear/reset.
 No range API, timezone/formatter/column renderer, hidden proxy or dependency.

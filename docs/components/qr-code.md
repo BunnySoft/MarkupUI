@@ -6,6 +6,10 @@ remain intentionally omitted. A browser can display an already generated image;
 it does **not** provide a general native QR encoder. BarcodeDetector, where supported,
 is a decoder, not an encoder, and is not used by this recipe.
 
+**2026-09-11 default-style audit:** [not applicable](../style-audit/components/qr-code.md).
+There is no MarkupUI QR symbol or component stylesheet; the readable native handoff
+retains application-owned presentation.
+
 There is **no QR helper, Custom Element, package export, source module, dependency,
 font, scanner, distribution asset or new budget**. The local
 [HTML](../../demo/components/qr-code.html), [CSS](../../demo/components/qr-code.css)

@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { createCarousel } from "../src/components/carousel/index.js"
 import type { CarouselController, CarouselOptions } from "../src/components/carousel/index.js"
@@ -369,5 +372,36 @@ describe("Carousel refresh, reentrancy and ownership", () => {
     defer(); helper.to(2); Resize.instances.at(-1)!.emit()
     expect(helper.getCurrentIndex()).toBe(2); expect(changed).toHaveBeenCalledOnce()
     expect(changed.mock.calls[0]![0].detail.reason).toBe("api")
+  })
+})
+
+describe("Carousel default styles", () => {
+  const css = readFileSync(resolve("src", "components", "carousel", "carousel.css"), "utf8")
+
+  it("keeps the Carousel stylesheet within its unchanged ceiling", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
+  })
+
+  it("retains native one-slide scroll-snap geometry", () => {
+    expect(css).toContain("scroll-snap-type: x mandatory")
+    expect(css).toContain("flex: 0 0 100%")
+    expect(css).toContain("scroll-snap-align: start")
+    expect(css).toContain("overflow: auto")
+    expect(css).not.toContain("transform:")
+  })
+
+  it("uses measured 28px controls without hiding their native labels", () => {
+    expect(css).toContain("min-block-size: 28px")
+    expect(css).toContain("min-inline-size: 28px")
+    expect(css).toContain("padding: 0 10px")
+    expect(css).not.toContain("font-size: 0")
+    expect(css).not.toContain("text-indent")
+  })
+
+  it("keeps current, disabled, forced-color and print states explicit", () => {
+    expect(css).toContain('[aria-current="true"]')
+    expect(css).toContain("button:disabled")
+    expect(css).toContain("@media (forced-colors: active)")
+    expect(css).toContain("[data-carousel-readout] { display: none; }")
   })
 })

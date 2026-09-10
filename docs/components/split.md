@@ -4,6 +4,10 @@
 pointer/keyboard separator, explicit ratio/pixel values and safe lifecycle. No drag/layout
 framework, hidden application layout store, global cursor/selection override or renderer.
 
+**2026-09-11 default-style audit:** the separator now uses the source's neutral/primary
+light-dark roles and 0.3s easing while retaining MarkupUI's accessible 12px keyboard/
+pointer track and native grid topology. See the [measured audit](../style-audit/components/split.md).
+
 ## Loading and native anatomy
 
 | Asset | Contract |

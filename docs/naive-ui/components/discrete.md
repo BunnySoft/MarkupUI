@@ -12,6 +12,8 @@ There is no new src runtime, package export, distribution or budget for this rou
   any framework/setup. Their roots, templates, typed options and disposal remain authoritative.
 - No provider tree, app, singleton, reactive config bridge, generic plugin graph or eager
   service bundle is introduced. The demo startup helper is application code, not a library API.
+- [2026-09-11 style review](../../style-audit/components/discrete.md): no aggregate
+  visual component exists; selected services keep independent style ownership.
 
 Pinned review inspected [selection](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/discrete/src/discrete.ts), [types](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/discrete/src/interface.ts), [hidden app creation](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/discrete/src/discreteApp.ts)
 and [injection extraction](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/discrete/src/InjectionExtractor.tsx). The live official route returned HTTP 404 to the

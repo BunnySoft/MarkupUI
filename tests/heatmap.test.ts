@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { buildHeatmap, createHeatmap, heatmapLevel } from "../src/components/heatmap/index.js"
 import type { HeatmapController, HeatmapOptions } from "../src/components/heatmap/index.js"
@@ -202,6 +205,14 @@ describe("Heatmap native table, legend, exploration and identity", () => {
     helper.set({ activeColors: null, minimumColor: null })
     expect(root.style.getPropertyValue("--mui-heatmap-level-0")).toBe("")
   })
+  it("uses the built-in palette by default and writes named themes only when requested", () => {
+    const plain = fixture()
+    expect(plain.root.hasAttribute("data-heatmap-theme")).toBe(false)
+    plain.helper.set({ colorTheme: "green" })
+    expect(plain.root.getAttribute("data-heatmap-theme")).toBe("green")
+    plain.helper.set({ colorTheme: null })
+    expect(plain.root.hasAttribute("data-heatmap-theme")).toBe(false)
+  })
 })
 
 describe("Heatmap atomic validation and lifetime", () => {
@@ -270,5 +281,38 @@ describe("Heatmap atomic validation and lifetime", () => {
     expect(helper.state.cells).toBe(0); expect(body.rows).toHaveLength(1)
     expect(root.querySelector("[data-heatmap-caption]")!.textContent).toBe("No calendar data")
     expect(detail.textContent).toContain("No date")
+  })
+})
+
+describe("Heatmap default styles", () => {
+  const css = readFileSync(resolve("src", "components", "heatmap", "heatmap.css"), "utf8")
+
+  it("keeps the Heatmap stylesheet within its unchanged distribution budget", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(2000)
+  })
+
+  it("defines the pinned built-in and named palettes without replacing public overrides", () => {
+    expect(css).toContain("light-dark(#9be9a8, #0d4429)")
+    expect(css).toContain("light-dark(#216e39, #39d353)")
+    expect(css).toContain("var(--mui-heatmap-level-1, #c6e48b)")
+    expect(css).toContain("var(--mui-heatmap-level-4, #196127)")
+    expect(css).toContain("var(--mui-heatmap-level-0, light-dark(rgba(46,51,56,.09), rgba(255,255,255,.1)))")
+  })
+
+  it("matches pinned type, gap, swatch and radius defaults while retaining native targets", () => {
+    expect(css).toContain("--_mui-heatmap-font-size: 12px")
+    expect(css).toContain("--_mui-heatmap-swatch-size: 11px")
+    expect(css).toContain("--_mui-heatmap-x-gap: 3px")
+    expect(css).toContain("border-radius: var(--mui-heatmap-radius, 2px)")
+    expect(css).toContain("min-inline-size: var(--mui-heatmap-cell-size, var(--_mui-heatmap-cell-size))")
+  })
+
+  it("keeps theme, hidden, reduced-motion, forced-color and print behavior explicit", () => {
+    expect(css).toContain(':where([data-mui-theme="dark"])')
+    expect(css).toContain(".mui-heatmap [hidden] { display: none !important; }")
+    expect(css).toContain("@media (prefers-reduced-motion: reduce)")
+    expect(css).toContain("@media (forced-colors: active)")
+    expect(css).toContain("@media print")
+    expect(css).not.toContain("@import")
   })
 })

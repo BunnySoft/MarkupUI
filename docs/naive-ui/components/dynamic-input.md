@@ -3,6 +3,8 @@
 **Plan: 🟢 Verified retained bounded native-row scope; renderer/model contracts omitted.**
 
 [Canonical anatomy, API, hook/error/focus contracts and evidence](../../components/dynamic-input.md).
+The [2026-09-11 isolated style audit](../../style-audit/components/dynamic-input.md)
+records row/action spacing, Input composition ownership and retained native labels.
 An explicit helper clones an authored native template, preserves original rows, and moves
 actual nodes. Native controls/names/defaults/FormData remain authoritative. No VNode preset
 renderer, object-path model, drag framework, hidden Form registration or dependency.

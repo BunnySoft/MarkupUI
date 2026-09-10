@@ -6,6 +6,8 @@
 
 [Canonical contract and acceptance](../../components/element.md) resolves this scope
 through actual native tags/children and explicit CSS-variable consumption.
+[Default-style audit](../../style-audit/components/element.md) classifies the visual
+comparison as not applicable because no MarkupUI Element component or stylesheet exists.
 The unchanged [MuiElement base](../../../src/core/element.ts) and
 [registry](../../../src/components/elements.ts) are existing controller infrastructure,
 **not** a new NElement/NEl wrapper or automatic theme-variable producer.

@@ -17,6 +17,18 @@ Legacy Input/Form/aggregate code is unchanged.
 | [Demo](../../demo/components/dynamic-input.html) | Separate HTML/CSS/JS, native pair fields, bounds/actions/failure/reset and explicit Input/Form composition |
 | [Reference](../naive-ui/components/dynamic-input.md) | All original owner/source/kind identities and explicit supplements |
 
+## Default-style audit — 2026-09-11
+
+The [isolated rendered audit](../style-audit/components/dynamic-input.md) aligns the
+reference's **10px row spacing**, **20px action separation** and **34px** medium
+fields/actions while preserving labelled native controls. Rows align actions with the
+field bottoms, not label tops.
+
+Dynamic Input styles only standalone native fields. Controls marked
+`data-input-control` remain Input-owned; the demo now explicitly loads Input CSS instead
+of relying on accidental Dynamic Input padding. Light/dark, hover, disabled, forced-
+color and print behavior are component-scoped.
+
 ```html
 <fieldset class="mui-dynamic-input" data-dynamic-input>
   <legend>Labels</legend>
@@ -284,16 +296,16 @@ Pinned Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`:
 The source uses controlled arrays, preset/VNode rendering, object/index key derivation and
 injected paths/themes. Those are not ported; native adaptations are not source signature parity.
 
-## Four-step acceptance
+## Original four-step acceptance
 
 1. [x] Native template/row/action anatomy and stable identity contract implemented.
 2. [x] Bounded insertion/removal/reorder and lifecycle failure cleanup verified.
 3. [x] Native names/values/defaults/FormData and explicit Form/resource integration retained.
 4. [x] Targeted tests/build/review and Chromium focus/editing/fallback acceptance recorded.
 
-### Evidence and limitations
+### Original evidence and limitations
 
-- **156 tests passed**: Dynamic Input **51**, Input 52, Form 53.
+- At original delivery, **156 tests passed**: Dynamic Input **51**, Input 52, Form 53.
   `pnpm exec vitest run tests\dynamic-input.test.ts tests\input.test.ts tests\form.test.ts --reporter=dot`
   and `pnpm build` passed. No prior native/helper source or dependencies changed.
 - Review found fallback-move blur reentrancy, root-level checked-radio validation,

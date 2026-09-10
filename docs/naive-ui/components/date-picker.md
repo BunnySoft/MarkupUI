@@ -7,6 +7,9 @@ Native calendar strings are not timestamp models. One or two original same-mode 
 current/default values, constraints, labels, names and FormData. Detached native probes
 validate setter grammar before real mutation. No timezone conversion, linked bounds,
 calendar grid, formatter library, popup/provider or hidden tuple fields.
+The retained native trigger now follows the pinned Input density and light/dark roles;
+the [default-style audit](../../style-audit/components/date-picker.md) records measurements,
+media behavior, public hooks and intentionally retained platform differences.
 
 ## Migration steps
 
@@ -26,6 +29,12 @@ Supported native fields remain usable without JS. Unsupported type/grammar capab
 leave explicitly labelled native/text fallback, not a calendar or validation polyfill.
 Readout/clear start hidden. Range ordering is an observation/manual Form policy; application
 validation does not disable days inside a native popup.
+
+The external CSS keeps the source small/medium/large trigger scale (**28 / 34 / 40px**,
+**14 / 14 / 15px** type and **10 / 12 / 14px** inline padding), 3px radius, Input palette,
+disabled roles and primary-hover border. Dark, forced-color and print defaults are explicit.
+Native segments, indicator, popup, labelled clear action and readout topology remain
+deliberately different from Naive UI's generated Input and calendar panel.
 
 <!-- BEGIN PINNED API INVENTORY -->
 

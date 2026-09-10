@@ -17,6 +17,7 @@ Its existing behavior remains unchanged; the new helper is separately opt-in.
   placement, repetition, pointer transparency and media policy. The application must
   already position a local wrapper; no existing containing block is silently changed.
 - **Evidence:** [canonical contract/acceptance](../../components/watermark.md),
+  [default-style audit](../../style-audit/components/watermark.md),
   [tests](../../../tests/watermark.test.ts), [local demo](../../../demo/components/watermark.html).
 
 The pinned [props and defaults](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/watermark/src/Watermark.tsx#L27-L112),

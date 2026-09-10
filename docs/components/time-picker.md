@@ -5,6 +5,10 @@ strings, native bounds/step/defaults/forms, optional clear and plain readout. No
 instant/epoch/timezone conversion, format library, custom hour/minute columns, popup
 renderer, provider, hidden proxy or dependency.
 
+**2026-09-11 default-style audit:** native triggers and labelled clear actions now use
+the source's 28/34/40px Input scale, 3px corners and semantic light/dark roles while the
+platform time picker remains untouched. See the [measured audit](../style-audit/components/time-picker.md).
+
 **Midnight is `00:00`, not empty/null.** A clock string has no date, offset or DST semantics.
 Native `valueAsNumber` can describe its within-day coordinate, not an actual instant.
 The source's timestamp/time-zone/formatter models are deliberately not emulated.

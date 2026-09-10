@@ -26,6 +26,15 @@ describe("Equation resolved exclusion and native authored alternative", () => {
     expect(html).not.toMatch(/<script\b|<style\b|\sstyle=|<mui-|<iframe\b|<object\b|<img\b/)
     expect(css).not.toMatch(/@import|@font-face|url\(|animation|transition/)
   })
+  it("keeps default styling outside the library build and public custom-property surface", () => {
+    const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
+    const buildScript = readFileSync(resolve("scripts", "build.mjs"), "utf8")
+    expect(Object.keys(pkg.exports).filter(path => path.includes("equation"))).toEqual([])
+    expect(buildScript).not.toMatch(/["'`]markup-ui-equation(?:[."'`-])/)
+    expect(buildScript).not.toMatch(/["'`]equation["'`]/)
+    expect(css).toContain("Local recipe presentation, not a published Equation stylesheet.")
+    expect(css).not.toMatch(/--mui-equation|(?:^|\n)\s*(?:math|\.katex(?:-display)?)\s*[{,]/)
+  })
   it("parses all authored mathematical descendants in the native MathML namespace", () => {
     const root = fixture(), expressions = [...root.querySelectorAll("math")]
     expect(expressions).toHaveLength(4)

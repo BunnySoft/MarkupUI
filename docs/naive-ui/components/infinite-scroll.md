@@ -10,6 +10,11 @@ custom scrollbar, hidden data model or mandatory virtualization.
 The existing advanced Virtual List remains independent. This helper never generates,
 reorders or serializes application items.
 
+**Default-style status:** **Matched** for the component-neutral surface. The pinned
+Infinite Scroll imports no component stylesheet or theme; MarkupUI keeps only optional
+native scrolling/sentinel/focus/media behavior and leaves sizing, spacing and paint to
+the application. See the [default-style audit](../../style-audit/components/infinite-scroll.md).
+
 **Delivery phase:** P5. **Task state:** 🟢 Verified retained native scope.
 **Next:** Popselect, then Split. P5 remains incomplete.
 
@@ -33,6 +38,7 @@ No-JS hides enhancement buttons and retains items plus a real static-sample rout
 ## Pinned evidence and behavior differences
 
 - [Pinned API][api], [implementation and types][source], [exports][exports].
+- [Default-style audit](../../style-audit/components/infinite-scroll.md).
 - [Official route](https://www.naiveui.com/en-US/os-theme/components/infinite-scroll)
   redirected to `/lander` during the 2026-09-10 acceptance attempt. The unrelated landing
   tab was closed; no live-reference UI parity is claimed. Pinned GitHub source is authoritative.
@@ -42,6 +48,9 @@ Revision **42a52e6436b38bed456fee19eb0b89cdcd00fcc2**, Naive UI 2.45.3.
 Source uses NxScrollbar, checks native bottom distance on scroll/downward wheel, sets a
 private loading flag, awaits onLoad returning void/Promise<void>, and catches rejected loads
 without surfacing them. It has no public hasMore, disabled, reset or commit contract.
+The component directory contains no style module, and `InfiniteScroll.tsx` imports no
+component CSS or theme. Rendered custom scrollbar chrome belongs to the delegated
+`NxScrollbar` implementation rather than an Infinite Scroll-owned visual default.
 
 The target deliberately differs: IntersectionObserver entry plus explicit manual activation;
 validated `{added,hasMore,commit?}` completion; visible error/cancelling/finished states;

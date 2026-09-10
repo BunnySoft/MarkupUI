@@ -12,6 +12,13 @@ and [tests](../../tests/equation.test.ts) are a native authoring recipe. It need
 JavaScript. The [reference tracker](../naive-ui/components/equation.md) records all
 three original identities and five explicit source/type supplements as omissions.
 
+**2026-09-11 default-style audit:** [not applicable](../style-audit/components/equation.md).
+The pinned component has no Equation-owned stylesheet or theme tokens: it recreates the
+outer wrapper returned by an application-supplied KaTeX renderer, while KaTeX's external
+CSS/fonts own the visible result. MarkupUI has no corresponding rendered component.
+The local MathML recipe remains application presentation and is not promoted into a
+package skin or a new `--mui-equation-*` override contract.
+
 ## Author mathematical structure, not source strings
 
 ```html
@@ -159,10 +166,11 @@ Acceptance in the dedicated Chromium demo tab:
   'none' and style-src 'self' still rendered all four expressions, with native disclosure/
   reset and no CSP errors. Only the local HTML and CSS were requested.
 
-`pnpm test -- tests\equation.test.ts tests\native.test.ts`: **39 tests passed**
-(12 Equation recipe + 27 native/legacy). `pnpm build` passed declarations and all
-existing ceilings. All **1,316 pre-existing distribution files byte-matched** before/
-after; no source, package, build script, export, runtime dependency or budget changed.
+The original acceptance ran **39 tests** (12 Equation recipe + 27 native/legacy) and
+`pnpm build`; all **1,316 pre-existing distribution files byte-matched** before/after.
+The later default-style audit runs `pnpm exec vitest run tests\equation.test.ts`
+individually: **13 Equation tests pass**, including the package-style boundary regression.
+No source, package, build script, export, runtime dependency or budget changed.
 The complete local example adds **4,642 raw / 1,729 gzip HTML** and
 **1,361 raw / 548 gzip CSS**: **2,277 gzip bytes total**, not a library bundle.
 

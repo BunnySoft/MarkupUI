@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createMention } from "../src/components/mention/index.js"
 import type { MentionOption, MentionOptions } from "../src/components/mention/index.js"
@@ -26,6 +29,34 @@ function deferred() {
   return { promise, resolve, reject }
 }
 afterEach(() => { helpers.splice(0).reverse().forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
+
+describe("default styles", () => {
+  const css = readFileSync(resolve("src", "components", "mention", "mention.css"), "utf8")
+
+  it("uses the reference control scale and option density within budget", () => {
+    expect(css).toContain("--_mui-mention-height: 28px")
+    expect(css).toContain("--_mui-mention-height: 34px")
+    expect(css).toContain("--_mui-mention-height: 40px")
+    expect(css).toContain("block-size: var(--_mui-mention-height)")
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
+  })
+
+  it("leaves composed Input controls to their owning stylesheet", () => {
+    expect(css).toContain(".mui-mention__editor:not([data-input-control])")
+    expect(css).not.toMatch(/\.mui-mention__editor\s*\{/)
+  })
+
+  it("uses explicit light-dark popup states and forced-color roles", () => {
+    expect(css).toContain("light-dark(#f3f3f5, rgba(255, 255, 255, .09))")
+    expect(css).toContain("@media (forced-colors: active)")
+    expect(css).toContain("background: Highlight")
+  })
+
+  it("removes transient suggestions from print", () => {
+    expect(css).toContain("@media print")
+    expect(css).toMatch(/@media print \{\s*\.mui-mention__panel \{\s*display: none/)
+  })
+})
 
 describe("bounded prefix/caret contexts", () => {
   it.each([

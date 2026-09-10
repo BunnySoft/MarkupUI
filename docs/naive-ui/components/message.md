@@ -6,6 +6,7 @@ global singleton, OS Notification API or upstream pixel/transition parity is cla
 ## Retained implementation and evidence
 
 - [Canonical loading/API/ownership/acceptance](../../components/message.md)
+- [Default-style audit](../../style-audit/components/message.md)
 - [Optional Message service](../../../src/components/message/) · [feedback primitives](../../../src/components/feedback/)
 - [Targeted tests](../../../tests/message.test.ts) · [separate local demo](../../../demo/components/message.html)
 - Legacy [overlay output](../../../src/overlay/index.ts) and [mui.message API](../../../src/core/api.ts) remain unchanged.

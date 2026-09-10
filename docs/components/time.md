@@ -5,6 +5,10 @@ time/Text-node binding. Intl.DateTimeFormat and Intl.RelativeTimeFormat supply a
 display behavior, not a token/date package, reactive provider, clock framework or
 custom element registered merely for styling.
 
+**2026-09-11 default-style audit:** [matched inherited text](../style-audit/components/time.md).
+The optional stylesheet adds only tabular numerals, overflow safety and keyboard focus;
+typography, paint and CSS motion remain application-owned.
+
 ## Loading and native anatomy
 
 | Asset | Contract |

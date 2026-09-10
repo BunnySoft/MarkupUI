@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
 const html = readFileSync(resolve("demo", "components", "legacy-grid.html"), "utf8")
@@ -134,5 +135,41 @@ describe("Legacy Grid resolved through shipped native layout CSS", () => {
       expect(root.querySelector(link.getAttribute("href")!)).not.toBeNull()
     }
     expect(css).not.toMatch(/@import|@font-face|url\(|@keyframes/)
+  })
+  it("retains pinned zero-gutter 24-way defaults and public author tokens", () => {
+    document.body.innerHTML = '<div class="mui-grid" id="default-row"><div class="mui-grid-item" id="default-col">Original</div></div>'
+    sheet = document.createElement("style")
+    sheet.textContent = readFileSync(resolve("src", "components", "grid", "grid.css"), "utf8")
+    document.head.append(sheet)
+    const root = document.querySelector<HTMLElement>("#default-row")!
+    const child = document.querySelector<HTMLElement>("#default-col")!
+    expect(getComputedStyle(root).display).toBe("grid")
+    expect(getComputedStyle(root).getPropertyValue("--mui-grid-cols").trim()).toBe("24")
+    expect(getComputedStyle(root).getPropertyValue("--mui-grid-x-gap").trim()).toBe("0px")
+    expect(getComputedStyle(root).getPropertyValue("--mui-grid-y-gap").trim()).toBe("0px")
+    expect(getComputedStyle(root).getPropertyValue("--mui-grid-align").trim()).toBe("normal")
+    expect(getComputedStyle(root).getPropertyValue("--mui-grid-justify").trim()).toBe("normal")
+    expect(getComputedStyle(child).getPropertyValue("--mui-grid-span").trim()).toBe("1")
+    expect(getComputedStyle(child).getPropertyValue("--mui-grid-start").trim()).toBe("auto")
+    root.style.cssText = "--mui-grid-cols:3;--mui-grid-tracks:80px minmax(0,1fr);--mui-grid-x-gap:7px;--mui-grid-y-gap:5px;--mui-grid-align:center;--mui-grid-justify:end"
+    child.style.cssText = "--mui-grid-span:2;--mui-grid-start:2"
+    expect(getComputedStyle(root).getPropertyValue("--mui-grid-cols").trim()).toBe("3")
+    expect(getComputedStyle(root).getPropertyValue("--mui-grid-tracks").trim()).toBe("80px minmax(0,1fr)")
+    expect(getComputedStyle(root).getPropertyValue("--mui-grid-x-gap").trim()).toBe("7px")
+    expect(getComputedStyle(root).getPropertyValue("--mui-grid-y-gap").trim()).toBe("5px")
+    expect(getComputedStyle(root).getPropertyValue("--mui-grid-align").trim()).toBe("center")
+    expect(getComputedStyle(root).getPropertyValue("--mui-grid-justify").trim()).toBe("end")
+    expect(getComputedStyle(child).getPropertyValue("--mui-grid-span").trim()).toBe("2")
+    expect(getComputedStyle(child).getPropertyValue("--mui-grid-start").trim()).toBe("2")
+  })
+  it("keeps reused layout CSS within the existing build ceilings without a Legacy Grid asset", () => {
+    const ceilings = { grid: 1500, flex: 1000, space: 1000 }
+    const build = readFileSync(resolve("scripts", "build.mjs"), "utf8")
+    for (const [name, ceiling] of Object.entries(ceilings)) {
+      const source = readFileSync(resolve("src", "components", name, `${name}.css`))
+      expect(gzipSync(source, { level: 9 }).length).toBeLessThanOrEqual(ceiling)
+      expect(build).toContain(`"markup-ui-${name}.css": ${ceiling.toLocaleString("en-US").replace(",", "_")}`)
+    }
+    expect(build).not.toContain("markup-ui-legacy-grid")
   })
 })

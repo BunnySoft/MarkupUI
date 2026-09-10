@@ -60,8 +60,8 @@ unchanged. Four source-style regressions were added to the existing Popover test
 ## Isolation, author overrides and payload constraints
 
 The shared surface uses a low-specificity `:where(:not(...))` guard. It excludes
-`.mui-tooltip` and Popover descendants of `.mui-popselect`. Popselect
-keeps its panel in that component boundary, including in the top layer. Popconfirm was
+`.mui-tooltip`. Popselect panels remain in their authored boundary, including in the
+top layer, and now share the verified surface too. Popconfirm was
 also excluded in the initial audit below; its later comparison verified that it uses
 the same Popover theme, so it now shares the corrected surface instead of duplicating it.
 Dropdown subsequently verified the same normal surface roles and opted into this base

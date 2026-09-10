@@ -16,6 +16,19 @@ field, polling, midnight timer or timestamp/formatter-token compatibility layer.
 | [Local demo](../../demo/components/calendar.html) | Separate HTML/CSS/JS, actual leap-month fallback and visible native date field |
 | [Full reference](../naive-ui/components/calendar.md) | Every original identity and explicit source/inline/inherited addition |
 
+## Default-style audit — 2026-09-11
+
+The [isolated style audit](../style-audit/components/calendar.md) aligns Calendar's
+14px/1.6 body type, 22px/500 title, 10px cells, 28px controls, 3px control radius,
+light/dark surfaces and borders, muted adjacent/unavailable dates, 1.8em Today disc,
+3px selected bar and hover palette with the pinned reference defaults.
+
+Calendar retains its native captioned table, explicit weekday header, six bounded
+rows and labelled native buttons. It does not copy the reference div-grid, repeated
+weekday text, icon-only navigation, animation or CSS-in-JS/provider machinery.
+Horizontal overflow remains the narrow-layout fallback. Forced colors and print
+use explicit native-safe rules.
+
 ```html
 <section class="mui-calendar" data-calendar data-calendar-month="2024-02"
          tabindex="-1" aria-labelledby="schedule-heading">
@@ -274,9 +287,11 @@ guarantee is shipped. Broader P0 compatibility exceptions remain independent.
    native activation/table AX/RTL/narrow/zoom/media/no-JS/legacy acceptance recorded.
 
 Targeted gate: `pnpm test -- tests\calendar.test.ts tests\date-picker.test.ts tests\native.test.ts`.
-**157 tests pass (54 Calendar, 76 shared Date Picker, 27 native/legacy).**
-Build/declarations/budgets: `pnpm build`. Level-nine gzip: **7,438 ESM / 7,570 classic /
-640 CSS**, combined **8,078 / 8,210**; ceilings **8,000 / 8,000 / 1,250**.
+**161 tests pass (58 Calendar, 76 shared Date Picker, 27 native/legacy).**
+Original build/declarations/budgets: `pnpm build`. Level-nine gzip was **7,438 ESM /
+7,570 classic / 640 CSS**, combined **8,078 / 8,210**. The 2026-09-11 style pass
+changes Calendar CSS to **4,645 raw / 1,241 gzip bytes** under the unchanged
+**1,250-byte ceiling**; a full integration build remains pending.
 Core/advanced/widgets remain **14,611 / 2,181 / 2,779**. Final raw/count details are recorded in
 the [current catalog acceptance](../naive-ui/index.md#calendar-accepted).
 

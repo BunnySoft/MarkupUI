@@ -14,6 +14,7 @@ formatter. [Pure formatting](../../../src/components/time/format.ts) and the
 No custom element or default-entry registration/style installation is added.
 
 See the [canonical contract/acceptance](../../components/time.md),
+[default-style audit](../../style-audit/components/time.md),
 [deterministic tests](../../../tests/time.test.ts) and [separate local demo](../../../demo/components/time.html).
 Pinned [props/defaults](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time/src/Time.ts#L9-L26),
 [now/locale/format precedence](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/time/src/Time.ts#L34-L99)

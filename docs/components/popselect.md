@@ -4,6 +4,10 @@
 [Select](select.md) helpers around original native controls. This is a named nonmodal
 region containing a native list select, **not an ARIA combobox/menu or an option renderer**.
 
+**Default-style audit: 🟢 region/chrome and field typography corrected / 🟡 platform
+option-rendering differences retained.** See the [rendered report](../style-audit/components/popselect.md)
+for the frozen Select baseline, shared surface release and native form/focus evidence.
+
 ## Loading and anatomy
 
 | Asset | Contract |
@@ -241,9 +245,28 @@ These are a narrow immutable snapshot delegated to existing Popover; no hover/fo
 delay/duration, portal, coordinate, arrow-wrapper or z-index API is forwarded.
 
 All surfaces/fonts/sizes/native overflow/RTL/focus/forced-colors/print are external CSS.
-data-size=small/medium/large maps existing native Select presentation; source huge is
-explicitly omitted. The native platform controls option/checkmark rendering. Existing raw
+data-size=small/medium/large supplies Popselect-local field typography **14/14/15px** and
+frame padding **4/8/12px**, behind public Select overrides; source huge is explicitly omitted.
+These sizes do not replace native option row layout or the authored HTML `size` count.
+The native platform controls option/checkmark rendering. Existing raw
 and opt-in animated Popover classes retain their declared contracts; no leave scheduler.
+
+The parent-coordinated Popover guard release supplies the normal region's light/dark
+surface, radius and shadow. Popselect does not duplicate that palette. Its scoped Select
+context inherits region text/font family and uses a transparent native-control background
+by default, avoiding dark-on-dark labels and a permanently white control inside dark chrome.
+The actual label, listbox, Clear and Done controls remain visible and owned by the native
+model; they are not hidden to resemble a rendered option menu.
+
+`--mui-select-color`, `--mui-select-background`, `--mui-select-font`, `--mui-select-pad`
+and `--mui-select-focus` remain author overrides. Size variants set private fallbacks rather
+than masking inherited public font/padding tokens; an explicitly sized inner Select is
+also respected when the Popselect root has no size override. Native focus and validation
+colors come from the released Select stylesheet without a local outline-color override.
+Disabled control paint remains Select-owned. Forced colors and print restore Canvas
+backgrounds. No option/optgroup/selected-row renderer or
+combobox/menu semantics are added. Trigger and Done retain their existing native button
+presentation and stable labels.
 
 Only the existing Popover's isolated CSSOM geometry writes are used. No duplicate
 positioner or CSS-in-JS surface engine is added. Native top-layer panels retain their DOM

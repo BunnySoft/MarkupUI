@@ -13,6 +13,7 @@ The [native owner](../../../src/components/heatmap/heatmap.ts) and
 [Calendar date-only arithmetic/validation](../../../src/components/calendar/date.ts).
 [External CSS](../../../src/components/heatmap/heatmap.css) owns geometry/palette/focus/media.
 See [canonical contract/acceptance](../../components/heatmap.md),
+[default-style audit](../../style-audit/components/heatmap.md),
 [tests](../../../tests/heatmap.test.ts) and [local fixtures/demo](../../../demo/components/heatmap.html).
 
 Pinned [props and normalization](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/heatmap/src/Heatmap.tsx#L44-L225),
@@ -72,7 +73,7 @@ loading/Tooltip/VNode/theme or all-browser/AT/chart parity.
 | Upstream item · source | Kind | Native mapping / explicit boundary | Status |
 | --- | --- | --- | --- |
 | [`active-colors`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/heatmap/demos/enUS/index.demo-entry.md#L36) | Prop | Exactly five #RRGGBB numeric-band colors overriding external theme colors. No arbitrary CSS/string-array renderer; includes numeric L0. | 🟢 Verified |
-| [`color-theme`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/heatmap/demos/enUS/index.demo-entry.md#L37) | Prop | Five explicit external green/blue/orange/purple/red CSS palettes. No injected theme graph. | 🟢 Verified |
+| [`color-theme`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/heatmap/demos/enUS/index.demo-entry.md#L37) | Prop | Null default uses the pinned built-in light/dark palette; five explicit green/blue/orange/purple/red palettes replace the four active colors while retaining the scheme minimum. | 🟢 Verified |
 | [`data`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/heatmap/demos/enUS/index.demo-entry.md#L38) | Prop | Bounded readonly date/value records; canonical Gregorian date strings replace ambiguous day timestamps. Duplicate dates reject. | 🟢 Verified |
 | [`first-day-of-week`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/heatmap/demos/enUS/index.demo-entry.md#L39) | Prop | Source-compatible 0 Monday..6 Sunday; explicitly converted to Calendar's Sunday-based weekday arithmetic. | 🟢 Verified |
 | [`fill-calendar-leading`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/heatmap/demos/enUS/index.demo-entry.md#L40) | Prop | Shows supported leading calendar dates as Missing, never fabricated zero. Trailing padding stays blank. | 🟢 Verified |
@@ -143,7 +144,7 @@ adds three inherited source rows.
 | Upstream item · source | Kind | Native mapping / explicit boundary | Status |
 | --- | --- | --- | --- |
 | [`theme`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts#L170) | Inherited source prop | No provider/theme graph or chart stylesheet installer. | ⏭️ Intentionally omitted |
-| [`themeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts#L171) | Inherited source prop | No CSS-in-JS object merge; explicit CSS/palette subset only. | ⏭️ Intentionally omitted |
+| [`themeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts#L171) | Inherited source prop | No CSS-in-JS object merge; explicit public `--mui-heatmap-*` overrides remain authoritative over built-in and named defaults. | ⏭️ Intentionally omitted |
 | [`builtinThemeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts#L172) | Inherited source prop | No internal override precedence; broad P0/legacy exceptions stay independent. | ⏭️ Intentionally omitted |
 
 <!-- END PINNED API INVENTORY -->

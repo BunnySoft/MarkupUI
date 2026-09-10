@@ -5,6 +5,19 @@ forms and browser-owned suggestions; an optional small controller coordinates ty
 application-supplied loaders. No custom combobox, popup renderer, property polling, provider,
 HTTP client or runtime dependency. Legacy `mui-autocomplete`/`forms.ts` remain unchanged.
 
+## Default-style audit — 2026-09-11
+
+The [isolated rendered audit](../style-audit/components/auto-complete.md) corrects
+standalone field height, font, padding, affix alignment, light/dark/disabled paint,
+placeholder and focus treatment. **24 standalone case/theme comparisons matched**
+the checked reference fields; focus border/background/shadow also matched.
+Native input/datalist and loader implementations are unchanged.
+
+**134 targeted tests pass**: 68 Auto Complete, seven CSS, 56 Input and three
+separately scoped Input print tests. Auto Complete CSS is **3,526 raw / 997 gzip
+bytes** under the unchanged **1,000-byte ceiling**. Full integration build remains
+pending. Input-composed fields still delegate their skin to Input.
+
 ## Native anatomy and loading
 
 ```html
@@ -53,6 +66,55 @@ const suggestions = MarkupUIAutoComplete.createAutoComplete(city, {
 The filter above is application code, not a library matching algorithm. Browser popup
 matching may filter supplied results again and differs between browsers. No automatic query
 runs at construction or focus: authored fallback remains until input or explicit `query()`.
+
+## Standalone field styling and Input composition
+
+For `.mui-auto-complete__field` without `.mui-input`, the authored field wrapper
+owns a 3px-radius border/background/focus ring around the input and any prefix/
+suffix content. The input retains native text/datalist behavior with no extra
+input border or padding. Affix spacing is 4px.
+
+| `data-size` on `.mui-auto-complete` | Height | Font | Inline padding |
+| --- | ---: | ---: | ---: |
+| small | 28px | 14px | 10px |
+| medium / absent | 34px | 14px | 12px |
+| large | 40px | 15px | 14px |
+
+An isolated field without the outer root also gets medium defaults. Native hidden
+roots/field wrappers are not revealed by grid/flex styling. Tiny size, custom option
+rows and automatic property forwarding are not added.
+
+Select `data-mui-theme="light|dark"` on an ancestor. The field uses a matching native
+color scheme and CSS `light-dark()` values: normal text `#333639` / white `.82`,
+background white / white `.1`, disabled text `#c2c2c2` / white `.38`, disabled
+background `#fafafc` / white `.06`, and default border `#e0e0e6` / transparent.
+Focus matches the reference light halo/dark glow, not a suggestion-open state.
+
+Public standalone tokens use the `--mui-auto-complete-` prefix: `height`, `font`,
+`pad`, `color`, `background`, `border`, `focus`, `disabled` and `placeholder`.
+Family may use shared `--mui-font-family`. Data-size rules set private defaults,
+not public override values. Normal labels/status text still follow application
+typography; loader error text is not input validation state.
+
+When the field also has `.mui-input`, Auto Complete deliberately excludes it from
+standalone paint, font, padding and focus rules. **Input owns that field's styling**
+in either stylesheet order. Load Input CSS and set Input's own size/tokens on its
+actual root; Auto Complete does not forward a parent size or add a dependency.
+
+The standalone enhanced skin requires modern `:has()` and `light-dark()` support.
+Native datalist popup matching, selection, rows and platform artwork remain outside
+this stylesheet. No all-browser popup or older-engine skin parity is claimed.
+
+Standalone focused fields retain a **2px solid Highlight outline** in forced colors,
+where browsers suppress box shadows. The outline is guarded to standalone fields;
+normal screen focus and `.mui-input` ownership are unchanged.
+
+Standalone fields print with light native UI/system colors. The parent approved
+the previously reported Input dependency as a **separate Input print-only patch**:
+Input roots/groups/group labels now choose the light scheme for print, preserving
+their public color tokens. Both stylesheet orders were verified. See the
+[Input print follow-up](../style-audit/components/input.md#scoped-print-follow-up--2026-09-11);
+the two patches remain separately integrable.
 
 ## Controller and bounded result contracts
 
@@ -225,7 +287,7 @@ appears in public Markdown but not the reviewed slot-prop interface/render injec
 source callback intersections also differ from implementation signatures. These identities
 are retained and explicitly omitted rather than represented as equivalent native APIs.
 
-## Four-step acceptance
+## Original four-step acceptance (historical)
 
 1. [x] Original input/datalist association, options and free-text/native defaults retained.
 2. [x] Native events and IME-safe bounded query/result lifecycle verified.
@@ -271,8 +333,9 @@ are retained and explicitly omitted rather than represented as equivalent native
 | Advanced | 6,554 | 2,181 | 3,000 unchanged |
 | Widgets | 10,858 | 2,779 | 4,000 unchanged |
 
-All **146 prior top-level JS/CSS outputs** were independently built in memory using the
-pre-Auto Complete HEAD recipe and byte-compared with current output; all match. No previous
+At original delivery, all **146 prior top-level JS/CSS outputs** were independently built in memory using the
+pre-Auto Complete HEAD recipe and byte-compared with that output; all matched. These are
+historical measurements, not a newly run integrated build. No previous
 optional budget was relaxed. Reference audit preserved **46 original section/source/kind
 identities in exact order + ten explicit source supplements = 56 rows: 27 adapted, 29 omitted**.
 Catalog: **3,582 rows, 252/384 accepted tasks across 63 pages**, 132 unchecked. P4 has

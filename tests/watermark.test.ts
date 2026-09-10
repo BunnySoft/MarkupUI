@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { createWatermark } from "../src/components/watermark/index.js"
 import type { WatermarkController, WatermarkSettings } from "../src/components/watermark/index.js"
@@ -15,6 +18,32 @@ function context() {
       actualBoundingBoxRight: text.trim() ? text.length * 8 : 0, actualBoundingBoxAscent: text.trim() ? 10 : 0,
       actualBoundingBoxDescent: text.trim() ? 3 : 0 })),
   }
+
+  describe("Watermark default styles", () => {
+    const css = readFileSync(resolve("src", "components", "watermark", "watermark.css"), "utf8")
+
+    it("keeps the overlay stylesheet within its unchanged ceiling", () => {
+      expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
+    })
+
+    it("matches the reference absolute repeat and pointer-transparent overlay", () => {
+      expect(css).toContain("position: absolute")
+      expect(css).toContain("inset: 0")
+      expect(css).toContain("pointer-events: none !important")
+      expect(css).toContain("background-repeat: repeat")
+    })
+
+    it("preserves native selection and application-owned container positioning", () => {
+      expect(css).not.toContain("user-select")
+      expect(css).not.toMatch(/\.mui-watermark\s*\{[\s\S]*position:/)
+    })
+
+    it("hides decorative pixels in forced colors and print", () => {
+      expect(css).toContain("@media (forced-colors: active)")
+      expect(css).toContain("@media print")
+      expect(css.match(/display: none/g)).toHaveLength(3)
+    })
+  })
 }
 function image(width = 100, height = 60, complete = true) {
   const node = document.createElement("img"); node.src = "http://localhost/local-mark.png"

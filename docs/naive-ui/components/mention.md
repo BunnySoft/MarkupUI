@@ -3,6 +3,7 @@
 **Plan: 🟢 Verified retained native editor/adjacent-choice scope.**
 
 [Canonical token/API/focus/ownership contracts and evidence](../../components/mention.md).
+[Default-style audit](../../style-audit/components/mention.md).
 One original input/textarea, bounded contextual suggestions and explicit native button
 activation replace only the prefix-to-caret fragment. No caret mirror, rich text, fake
 combobox/listbox, portal/follower engine, VNode renderer or dependency.

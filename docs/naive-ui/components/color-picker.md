@@ -3,6 +3,9 @@
 **Plan: 🟢 Verified retained classic native RGB scope; advanced P6 color editing omitted.**
 
 [Canonical anatomy, value/draft/ownership contracts and evidence](../../components/color-picker.md).
+The [2026-09-11 isolated style audit](../../style-audit/components/color-picker.md)
+records reference trigger sizes/themes, standalone draft styling and Input-owned
+composition boundaries.
 The real color input owns choosing/preview/defaults/FormData. A small optional helper
 validates RGB hex setters and synchronizes a plain readout/optional native hex draft.
 Black is a color, not clear/null. No color parser, HSV/alpha plane, popup framework or

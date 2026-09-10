@@ -16,6 +16,16 @@ Completion never causes library-owned sound, navigation, network, clipboard or f
 | [Local demo](../../demo/components/countdown.html) | Separate HTML/CSS/JS; native controls, text/units, hidden display and application-owned completion notice |
 | [Complete reference](../naive-ui/components/countdown.md) | Ten original identities plus four explicit source additions |
 
+## Default-style audit — 2026-09-11
+
+The [style review](../style-audit/components/countdown.md) is **Matched**. Pinned
+Countdown renders plain inherited text and defines no component stylesheet/theme
+defaults. MarkupUI likewise leaves color, size, family, weight and line height to the
+application; its optional 208-byte gzip stylesheet only adds tabular numerals, unit
+wrapping, overflow safety and an authored-focus outline.
+
+No countdown palette, card, animation, transition or renderer styling was added.
+
 ```html
 <time class="mui-countdown" data-countdown datetime="PT10S"
       role="timer" aria-live="off" tabindex="0">
@@ -227,7 +237,7 @@ share concrete proven behavior, but this scope creates no generic application cl
 4. All original/source-added rows, independent ESM/classic/CSS budgets and real Chromium acceptance recorded.
 
 Targeted gate: `pnpm test -- tests\countdown.test.ts tests\native.test.ts`.
-**92 tests pass (65 Countdown + 27 native/legacy).** Build/declarations/budgets:
+**95 tests pass (68 Countdown + 27 native/legacy).** Build/declarations/budgets:
 `pnpm build`. Level-nine gzip: **4,588 ESM / 4,717 classic / 208 CSS**; combined
 **4,796 / 4,925**, under **6,000 / 6,000 / 750** ceilings. Core/advanced/widgets stay
 **14,611 / 2,181 / 2,779**. Full counts/raw bytes are recorded in the

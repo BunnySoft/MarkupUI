@@ -107,8 +107,12 @@ These seven identities were absent from the original table inventory.
 
 ## Acceptance and next route
 
-**51 tests passed** (12 replacement + 12 unchanged modern Grid + 27 native/legacy),
-declarations/build and all budgets. **1,316 distribution files byte-matched**.
+The historical migration run passed **51 tests** (12 replacement + 12 unchanged
+modern Grid + 27 native/legacy), declarations/build and all budgets; **1,316
+distribution files byte-matched**. The subsequent
+[default-style audit](../../style-audit/components/legacy-grid.md) passes the
+Legacy Grid fixture individually with **14 tests**, including pinned defaults,
+public author-token retention and all three reused CSS ceilings.
 No core/plugin/build/package/P0 foundation edits or new distribution.
 
 Chromium measured real spans/gaps, 767/768px viewport and 479/480px container
@@ -117,6 +121,12 @@ native forms/reset/hidden FormData, 360px/200% zoom, media/no-JS/strict CSP and 
 wrapper coexistence. Full local HTML/CSS plus existing Grid/Flex/Space CSS costs
 **4,583 gzip bytes**; new demo-only portion **3,243**. No framework/breakpoint-parser
 or all-browser/AT parity is claimed.
+
+The style audit additionally rendered pinned Naive Row/Col at 480px in light/dark
+and LTR/RTL. Default 24-way placement, the 25th-item wrap, 8/16 spans, nested
+12/12 spans and simple 12px/8px-gutter content boxes matched. Native gap deliberately
+retains a 480×24px root instead of the source's generated/padded Col topology and
+expanded 492×32px Row at (-6,-4). No component-owned correction was required.
 
 **Legacy Transfer is next**, not started here. Modern Grid remains accepted;
 main P6 retained scopes remain complete and broader P0 foundations stay parent-owned.

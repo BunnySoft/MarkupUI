@@ -6,6 +6,7 @@ browser OS Notification API, global singleton or framework/pixel/animation parit
 ## Retained implementation and evidence
 
 - [Canonical loading/API/ownership/acceptance](../../components/notification.md)
+- [Default-style audit](../../style-audit/components/notification.md)
 - [Optional consumer](../../../src/components/notification/) · [shared feedback primitives](../../../src/components/feedback/)
 - [Targeted tests](../../../tests/notification.test.ts) · [local native demo](../../../demo/components/notification.html)
 - Legacy [notification output](../../../src/overlay/index.ts) remains unchanged, as do Message behavior and existing budgets.

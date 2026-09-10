@@ -9,6 +9,10 @@ No schema engine, reactive model, VNode rendering, provider or automatic submiss
 Custom callback errors invalidate the explicit result, **not native custom validity**:
 the helper never calls `setCustomValidity` or disables native validation.
 
+The [2026-09-11 default-style audit](../../style-audit/components/form.md) aligns the
+Form-owned label/feedback geometry and light/dark validation paint with the pinned source.
+Native fields, labels/legends, Input composition and public author tokens remain owners.
+
 ## Migration steps
 
 **Delivery phase:** P4 — forms. **Task state:** 🟢 Verified retained scope.
@@ -55,7 +59,7 @@ Schema/provider/measurement algorithms are deliberately not ported.
 | [`disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L37) | Prop | Native fieldset disabled, not form disabled. | 🟢 Verified | ADAPTED; eligibility/first-legend tests. |
 | [`inline`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L38) | Prop | `.mui-form[data-inline]` wrapping flex. | 🟢 Verified | External CSS; native order. |
 | [`label-width`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L39) | Prop | `--mui-form-label-width` native CSS width. | 🟢 Verified | ADAPTED; global auto measurement omitted. |
-| [`label-align`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L40) | Prop | `--mui-form-label-align`, logical start/end/center. | 🟢 Verified | External CSS, RTL native order. |
+| [`label-align`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L40) | Prop | Top labels default logical start, left labels logical end; `--mui-form-label-align` overrides either. | 🟢 Verified | External CSS, RTL native order. |
 | [`label-placement`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L41) | Prop | Stacked default; data-label-placement=left above 40rem. | 🟢 Verified | ADAPTED responsive layout, not provider inheritance. |
 | [`model`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L42) | Prop | No object model; native properties/FormData/snapshots. | ⏭️ Intentionally omitted | No deep-path mutation or second store. |
 | [`rules`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L43) | Prop | No nested rule maps; native constraints and explicit callback. | ⏭️ Intentionally omitted | Schema API excluded. |
@@ -63,7 +67,7 @@ Schema/provider/measurement algorithms are deliberately not ported.
 | [`show-label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L45) | Prop | Authored label and external visibility CSS; preserve name. | 🟢 Verified | Native naming, no label renderer. |
 | [`show-require-mark`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L46) | Prop | Optional decorative aria-hidden mark. | 🟢 Verified | Native required is independent. |
 | [`require-mark-placement`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L47) | Prop | Authored mark order/external logical CSS. | 🟢 Verified | ADAPTED, no placement enum engine. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L48) | Prop | data-size small/large; medium default. | 🟢 Verified | Gap/text CSS, not control provider sizing. |
+| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L48) | Prop | `data-size="small|medium|large"` selects pinned label/blank/feedback metrics; missing/unknown is medium. | 🟢 Verified | Form CSS only; never sizes native or Input-owned controls. |
 | [`validate-messages`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L49) | Prop | Native validationMessage and plain callback messages. | ⏭️ Intentionally omitted | No async-validator message schema. |
 
 ### FormItemRule Type
@@ -104,7 +108,7 @@ Schema/provider/measurement algorithms are deliberately not ported.
 | [`show-label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L96) | Prop | Authored visible/visually-hidden label, preserving name. | 🟢 Verified | No generated label hiding. |
 | [`show-require-mark`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L97) | Prop | Optional authored aria-hidden mark. | 🟢 Verified | Does not change required. |
 | [`require-mark-placement`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L98) | Prop | Native mark order/external CSS. | 🟢 Verified | No source placement parser. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L99) | Prop | External item CSS/inherited form sizing. | 🟢 Verified | Original controls size themselves. |
+| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L99) | Prop | Item-level small/medium/large label/blank/feedback metrics, otherwise inherited from Form. | 🟢 Verified | Original controls and composed Input size themselves. |
 | [`validation-status`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/form/demos/enUS/index.demo-entry.md#L100) | Prop | Leased data-form-status error/warning/success/pending. | 🟢 Verified | Presentation only; external values conditionally restored. |
 
 ### Form Methods

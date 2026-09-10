@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { createNotificationOwner } from "../src/components/notification/index.js"
 import type { NotificationOwner, NotificationOwnerOptions } from "../src/components/notification/index.js"
@@ -23,6 +24,41 @@ function fixture(policy: "polite" | "assertive" | "off" = "polite") {
   document.body.append(root)
   return root
 }
+
+describe("Notification default styles", () => {
+  const ownCss = readFileSync(resolve("src", "components", "notification", "notification.css"), "utf8")
+  const feedbackCss = readFileSync(resolve("src", "components", "feedback", "feedback.css"), "utf8")
+  const builtCss = `${feedbackCss}\n${ownCss}`
+
+  it("uses the measured reference card metrics within the composed budget", () => {
+    expect(ownCss).toContain("--mui-feedback-width: 365px")
+    expect(ownCss).toContain("padding: 16px")
+    expect(ownCss).toContain("border-radius: 3px")
+    expect(ownCss).toContain("font-size: 14px")
+    expect(ownCss).toContain("line-height: 1.6")
+    expect(gzipSync(builtCss, { level: 9 }).length).toBeLessThanOrEqual(2000)
+  })
+
+  it("uses the source shadow and semantic light-dark roles", () => {
+    expect(ownCss).toContain("0 3px 6px -4px rgba(0, 0, 0, .12)")
+    expect(ownCss).toContain("light-dark(#2080f0, #70c0e8)")
+    expect(ownCss).toContain("light-dark(#18a058, #63e2b7)")
+    expect(ownCss).toContain("light-dark(#d03050, #e88080)")
+  })
+
+  it("retains visible type words and a labelled native close action", () => {
+    expect(ownCss).toContain("[data-notification-kind]")
+    expect(ownCss).toContain("min-block-size: 34px")
+    expect(ownCss).not.toMatch(/text-indent:\s*-\d|font-size:\s*0/)
+  })
+
+  it("supports forced colors and print without transition animation", () => {
+    expect(ownCss).toContain("@media (forced-colors: active)")
+    expect(ownCss).toContain("@media print")
+    expect(ownCss).not.toContain("@keyframes")
+    expect(ownCss).not.toMatch(/(?:^|[;{])\s*(?:animation|transition)(?:-[\w-]+)?\s*:/)
+  })
+})
 function owner(options: NotificationOwnerOptions = {}, root = fixture()) {
   const o = createNotificationOwner(root, options); owners.push(o); return o
 }
@@ -377,7 +413,7 @@ describe("Guarded Notification close decisions", () => {
     expect(css).toContain("data-notification-avatar")
     expect(css).toContain("white-space: pre-wrap")
     expect(css).toContain("forced-colors")
-    expect(css).toContain("prefers-reduced-motion")
+    expect(css).not.toMatch(/(?:^|[;{])\s*(?:animation|transition)(?:-[\w-]+)?\s*:/)
     expect(css).not.toContain("@keyframes")
   })
 })

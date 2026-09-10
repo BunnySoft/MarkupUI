@@ -131,6 +131,20 @@ Horizontal writing mode only. Avoid transformed/out-of-flow descendants and unus
 containing blocks; this is not universal visual anchoring or a transform-composition
 engine. Author transforms on the track/viewport reject rather than being overwritten.
 
+The track now has a **100% minimum inline size**, matching the reference's full-width
+short-content box. Longer content still uses max-content width. Measured contentWidth
+includes that minimum; fitting content remains static rather than gaining a loop.
+Whitespace uses the normal inherited text flow inside the max-content box: ordinary
+long text still overflows horizontally, while authored `br` elements retain line breaks.
+No default gap, padding, border, background or edge fade is added.
+
+Images now retain native baseline alignment, as the pinned reference does. Authors can
+still set `vertical-align: middle` or another alignment explicitly. Inherited font,
+line-height and colors remain application-owned; no fixed Marquee palette is imposed.
+The existing public `--mui-marquee-focus` token remains the focus-outline authority and
+is never assigned by the component. Use ordinary CSS for other presentation, without
+changing the geometry constraints above.
+
 Each metric/translation is bounded to **100,000 layout CSS pixels**. Duration is
 overflow/speed×1000, at most 100,000,000ms per pass. Native integer layout metrics
 introduce subpixel rounding; no subpixel-perfect speed promise. Overflow ≤1px is
@@ -154,6 +168,10 @@ No per-frame layout polling, forced-reflow iteration reset or custom scheduler e
 Reduced motion, forced colors and print cancel motion and **wrap full content** using
 external CSS; print hides controls. Large authored images must themselves have
 appropriate responsive dimensions. This is not an all-content print-fitting system.
+Print also supplies a local light Canvas/CanvasText surface, so default text remains
+readable under a dark theme. Explicit authored colors/backgrounds still win through
+the normal cascade; authors remain responsible for their contrast and print overrides.
+Forced colors retain browser color substitution, without opting out of it.
 Hidden-document motion is cancelled, not elapsed in the background; reveal restarts
 only if still requested, without a catch-up burst or detached animation loop.
 
@@ -183,6 +201,13 @@ binding may be overwritten on reconciliation; use separate nodes for application
 text. Explicit rebinding is required after reconnection.
 
 ## Acceptance and payload
+
+The following is historical migration acceptance. The
+[rendered default-style audit](../style-audit/components/marquee.md) supersedes its CSS
+payload and image/short-track presentation figures. That follow-up changes CSS only:
+full-width short tracks, native image baseline, normal whitespace and readable dark
+print. Opt-in motion, native controls, single-track traversal and all pause/lifecycle
+policies are unchanged.
 
 `pnpm test -- tests\marquee.test.ts tests\native.test.ts`: **69 tests passed**
 (42 Marquee, 27 native/legacy). `pnpm build` passed declarations and every independent

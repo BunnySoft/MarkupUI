@@ -6,6 +6,7 @@ The explicit [native controller and acceptance record](../../components/virtual-
 uses a constrained native div/section viewport, authored ul/ol spacer, safe native li
 factories, stable unique data keys and a bounded window. No Vue, vueuc, VDOM, row schema,
 provider, custom scrollbar, network source or automatic child-component registration.
+[Default-style audit](../../style-audit/components/virtual-list.md).
 
 The [legacy advanced plugin](../../../src/plugins/advanced.ts) is unchanged. Its basic
 `MuiVirtualList`/`mui-virtual-list` remains available through the old plugin; importing

@@ -5,6 +5,10 @@ capabilities are already supplied by HTML and CSS: choose the correct tag, keep 
 children, and consume explicitly available inherited custom properties. A synthetic
 tag factory or custom element would obscure semantics and add code without a capability.
 
+**2026-09-11 default-style audit:** [not applicable](../style-audit/components/element.md).
+There is no Element-owned rendered surface or stylesheet; native tags and application CSS
+retain visual ownership.
+
 There is **no** `NElement`/`NEl` equivalent constructor, `mui-element` registration,
 `@dataengine/markup-ui/element` export, Element JS/CSS distribution, or new budget.
 The separate [HTML](../../demo/components/element.html),

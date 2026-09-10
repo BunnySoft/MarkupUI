@@ -21,6 +21,15 @@ Even auto-fill=false renders a mirror in source; that is deliberately not reprod
 Native pause/direction/pass/delay/media/lifetime options are explicit local additions,
 not undocumented source public props.
 
+**Default-style follow-up:** [rendered pinned comparison](../../style-audit/components/marquee.md).
+Short tracks now fill the viewport; normal whitespace and native image baseline match
+the source, with no invented edge fade or panel style. A local light print surface
+keeps default dark-theme text readable, while the existing public
+`--mui-marquee-focus` token stays authoritative. The first 250/500/1000ms of a
+supported 48px/s pass match source translations, but the native pass covers only
+overflow and never adds source mirror groups. Automatic infinite motion, seamless
+repetition and source scheduling remain intentionally different.
+
 ## Migration steps
 
 **Delivery phase:** P6 — optional motion. **Task state:** 🟢 Verified retained scope.
@@ -104,6 +113,8 @@ adds three inherited theme identities.
 <!-- END PINNED API INVENTORY -->
 
 ## Acceptance and limits
+
+The following numbers describe the historical migration, before the linked style pass.
 
 **69 targeted tests** (42 Marquee + 27 native/legacy), declarations/build and unchanged
 prior budgets pass. Chromium verified actual linear movement, finite finish once,

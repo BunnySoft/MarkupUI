@@ -13,6 +13,9 @@ and [private Gregorian arithmetic](../../../src/components/calendar/date.ts) reu
 only Date Picker's [canonical native date validator](../../../src/components/date-picker/native.ts).
 No Date Picker UI/controller dependency or existing source refactor is introduced.
 [External CSS](../../../src/components/calendar/calendar.css) owns layout/focus/media.
+The [2026-09-11 isolated style audit](../../style-audit/components/calendar.md)
+records measured default typography, palette, state treatment and retained native
+table/control differences.
 
 See the [canonical loading/options/ownership/acceptance](../../components/calendar.md),
 [tests](../../../tests/calendar.test.ts) and [local demo](../../../demo/components/calendar.html).

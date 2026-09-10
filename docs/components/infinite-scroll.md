@@ -11,7 +11,7 @@ data key and form field. No data-fetch/renderer/virtualization framework is intr
 | `@dataengine/markup-ui/infinite-scroll` | createInfiniteScroll, settings/context/result/outcome/state/controller types |
 | `dist/markup-ui-infinite-scroll.js` | Independent optional ESM; no registration |
 | `dist/markup-ui-infinite-scroll.global.js` | Classic MarkupUIInfiniteScroll; rejects namespace replacement |
-| `@dataengine/markup-ui/infinite-scroll/style.css` | External native viewport/status/sentinel/media presentation |
+| `@dataengine/markup-ui/infinite-scroll/style.css` | Optional native overflow/sentinel/focus/media behavior; no component skin |
 | [Local demo](../../demo/components/infinite-scroll.html) | Separate HTML/CSS/JS with real fields, manual retry, footer and static fallback |
 | [Controlled local fixture](../../demo/components/infinite-scroll.fixture.js) | Growth/no-growth/error/end/abort-ignoring scenarios; no HTTP |
 | [Complete reference](../naive-ui/components/infinite-scroll.md) | Original identities and explicit source supplements |
@@ -265,15 +265,22 @@ no shared helper source changed.
 
 ## CSS, native fallback and optional composition
 
-CSS owns native overflow, max-block-size, padding/borders, 1px sentinel, focus/error/media
-presentation. Tokens: --mui-infinite-scroll-height (20rem), --mui-infinite-scroll-padding,
---mui-infinite-scroll-border and --mui-infinite-scroll-error. No JavaScript style writes,
-global reset or CSS-in-JS presentation engine is used.
+CSS owns only native overflow, min-content safety, 1px sentinel geometry, current-color
+focus visibility and static reduced-motion/print behavior. It sets no default viewport
+height, border, padding, message margin/color, disabled cursor, font, background, animation
+or transition. Applications size and skin the authored viewport and status content through
+their normal cascade; the existing `--mui-infinite-scroll-height` hook remains opt-in and
+falls back to no maximum. No JavaScript style writes, global reset or CSS-in-JS
+presentation engine is used.
 
 Native hidden/templates remain hidden/inert. RTL preserves DOM/item order and vertical
-bottom semantics. Print expands the native viewport and hides enhancement/sentinel/status
-controls; reduced-motion uses native auto scrolling. No programmatic scrolling animation
-is initiated by the helper. Forced colors do not rely on the default red error color.
+bottom semantics. Print exposes overflow and removes only the observer sentinel; authored
+manual/status content remains available. Reduced-motion uses native auto scrolling. No
+programmatic scrolling animation is initiated by the helper.
+
+The [default-style audit](../style-audit/components/infinite-scroll.md) records why the
+pinned source has no Infinite Scroll-owned skin and why custom scrollbar chrome remains
+a separate architectural difference.
 
 [Virtual List](virtual-list.md) may be composed explicitly by the application, for example
 with automatic=false and application end-of-window intent calling load(), whose commit
@@ -360,6 +367,9 @@ gzip figures use build compression level 9.
 | Existing widgets | 10,858 | 2,779 | 4,000 |
 
 Combined ESM + CSS: **5,089 gzip bytes**; classic + CSS: **5,223**.
+Those are the original 2026-09-10 acceptance artifacts. The 2026-09-11
+[default-style audit](../style-audit/components/infinite-scroll.md) narrows the maintained
+source CSS to **706 raw / 305 level-9 gzip bytes** without regenerating `dist`.
 All **193 previous top-level JS/CSS assets byte-match**; sorted filename + NUL + content
 SHA-256: `49ff4f9caf9007af011ccf97f6471e69bc2a37f4700a511b9c51acd6801b016a`.
 No prior component/helper source or ceiling changed; generated dist follows existing ignore policy.

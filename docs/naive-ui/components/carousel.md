@@ -16,6 +16,9 @@ wraparound. Its legacy behavior is not silently replaced.
   current/target/default indices, native alignment, controls and autoplay lifetime.
 - **CSS:** [external style](../../../src/components/carousel/carousel.css) owns one-slide
   layout, overflow, start snap, focus and print. No runtime style installation.
+- **Default-style audit:** [2026-09-11 rendered comparison](../../style-audit/components/carousel.md)
+  records 28px labelled controls, theme/current/disabled treatment and retained
+  native scroll-snap/control topology.
 - **Contract and observed evidence:** [canonical Carousel](../../components/carousel.md),
   [tests](../../../tests/carousel.test.ts), [local demo](../../../demo/components/carousel.html).
 

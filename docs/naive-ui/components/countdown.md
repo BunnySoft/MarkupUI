@@ -13,6 +13,8 @@ The optional [controller](../../../src/components/countdown/countdown.ts) and
 performance/timer/text primitives and existing owned-attribute restoration, not Time's
 instant parser or a speculative shared clock. [External CSS](../../../src/components/countdown/countdown.css)
 owns numeric/unit presentation.
+The [2026-09-11 style review](../../style-audit/components/countdown.md) confirms
+that inherited text remains aligned with the reference's unstyled output.
 
 See the [canonical contract and acceptance](../../components/countdown.md),
 [tests](../../../tests/countdown.test.ts) and [local demo](../../../demo/components/countdown.html).

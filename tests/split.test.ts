@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { createSplit } from "../src/components/split/index.js"
 import { splitMeasure, splitBounds } from "../src/components/split/model.js"
 import type { SplitController, SplitOptions } from "../src/components/split/index.js"
@@ -75,6 +76,32 @@ afterEach(() => {
   delete (HTMLElement.prototype as Partial<HTMLElement>).hasPointerCapture
   delete (HTMLElement.prototype as Partial<HTMLElement>).releasePointerCapture
   Resize.instances = []; vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.useRealTimers()
+})
+
+describe("Split default styles", () => {
+  const css = readFileSync(resolve("src", "components", "split", "split.css"), "utf8")
+
+  it("keeps the stylesheet within its existing ceiling", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
+  })
+
+  it("uses the reference neutral and primary handle roles", () => {
+    expect(css).toContain("light-dark(#e0e0e6, rgba(255, 255, 255, .24))")
+    expect(css).toContain("light-dark(#36ad6a, #7fe7c4)")
+    expect(css).toContain("background-color .3s cubic-bezier(.4, 0, .2, 1)")
+  })
+
+  it("retains the accessible 12px track and public handle overrides", () => {
+    expect(css).toContain("var(--mui-split-handle-size, 12px)")
+    expect(css).toContain("var(--mui-split-handle-border, transparent)")
+    expect(css).toContain("var(--mui-split-handle-active")
+  })
+
+  it("supports forced colors, reduced motion and print", () => {
+    expect(css).toContain("@media (forced-colors: active)")
+    expect(css).toContain("@media (prefers-reduced-motion: reduce)")
+    expect(css).toContain("@media print")
+  })
 })
 
 describe("explicit Split sizes and native geometry", () => {

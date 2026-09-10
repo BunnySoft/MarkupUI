@@ -21,6 +21,19 @@ separately; this module refuses to flatten them into RGB.
 | [Demo](../../demo/components/color-picker.html) | Separate native HTML/CSS/JS, optional Form/local inspection and literal datalist palette |
 | [Reference](../naive-ui/components/color-picker.md) | Original properties/slots/inline identities and explicit source supplements |
 
+## Default-style audit — 2026-09-11
+
+The [isolated rendered audit](../style-audit/components/color-picker.md) aligns the
+native trigger to reference **28/34/40px** heights and **14/14/15px** type, with 3px
+radius, light/dark borders and surfaces, focus/disabled treatment and print/forced
+colors. Compact native swatch widths remain **40/52/64px** instead of stretching a
+custom framework trigger across its container.
+
+Standalone hex drafts follow the same field defaults. A draft enhanced by
+[Input](input.md) is explicitly excluded from Color Picker field sizing/paint so Input
+keeps ownership in either stylesheet order. Native chooser artwork, dialog geometry,
+datalist presentation and OS behavior remain browser-owned.
+
 ```html
 <fieldset class="mui-color-picker" data-color-picker>
   <legend>Accent</legend>
@@ -228,16 +241,16 @@ Legacy `mui-color-picker` in `src/plugins/widgets.ts` remains unchanged. It crea
 color input and has a looser raw string setter; the new optional module does not silently
 upgrade that widget. Browser coexistence used explicit `mui.use(widgetsPlugin)`.
 
-## Four-step acceptance
+## Original four-step acceptance
 
 1. [x] Original labelled native picker/field/default/reset contract retained.
 2. [x] Plain readout and optional validatable dirty hex draft synchronization implemented.
 3. [x] Advanced formats/nullability/popup/toolbar contracts explicitly reduced rather than imported.
 4. [x] Targeted tests/build/review and Chromium native value/form/focus/media/fallback evidence recorded.
 
-### Evidence and limitations
+### Original evidence and limitations
 
-- **153 tests passed:** Color Picker **48**, Input 52, Form 53.
+- At original delivery, **153 tests passed:** Color Picker **48**, Input 52, Form 53.
   `pnpm exec vitest run tests\color-picker.test.ts tests\input.test.ts tests\form.test.ts --reporter=dot`
   and `pnpm build` passed. No previous helper/core/plugin source or dependency changed.
 - Read-only review found native reset-click timing, irrelevant-mutation Apply cancellation,
@@ -273,6 +286,10 @@ upgrade that widget. Browser coexistence used explicit `mui.use(widgetsPlugin)`.
 | Core | 62,558 | 14,611 | 15,000 unchanged |
 | Advanced | 6,554 | 2,181 | 3,000 unchanged |
 | Widgets | 10,858 | 2,779 | 4,000 unchanged |
+
+The 2026-09-11 style fixture now has **52 Color Picker tests**. Current Color Picker
+CSS is **3,335 raw / 911 gzip bytes** under the unchanged **1,000-byte ceiling**.
+Full cross-component and distribution validation remains pending.
 
 All **161 prior top-level JS/CSS assets** were built in memory with the pre-component HEAD
 recipe and byte-compared with current output; all match. No earlier optional budget was

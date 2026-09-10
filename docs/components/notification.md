@@ -6,6 +6,11 @@ It reuses the accepted feedback expiry/root/CSS primitives, with a small pending
 ledger. It does not import Message's consumer logic, a modal/Popover, provider, renderer,
 animation framework or browser OS Notification API. Legacy `mui.notification` is unchanged.
 
+**2026-09-11 default-style audit:** cards now follow the source's 365px width, 14px/1.6
+type, 16px padding, 3px corners, shadow and semantic light/dark roles. Visible type words,
+the accent edge and labelled native close action remain intentional differences. See the
+[measured audit](../style-audit/components/notification.md).
+
 ## Loading and native baseline
 
 | Entry | Contract |

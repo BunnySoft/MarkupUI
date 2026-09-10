@@ -5,6 +5,10 @@ one requestAnimationFrame, cached Intl.NumberFormat and existing text/data owner
 No countup/animation/formatting dependency, global scheduler/provider, arbitrary child
 renderer, financial-decimal model or completion sound/network/navigation/focus effect.
 
+**2026-09-11 default-style audit:** [matched inherited text](../style-audit/components/number-animation.md).
+The optional stylesheet adds only tabular numerals, overflow safety and keyboard focus;
+typography, paint and CSS motion remain application-owned.
+
 ## Loading and native text
 
 | Asset | Contract |
