@@ -78,7 +78,7 @@ Precedence is explicit and independent for each region:
    with **“No Data”** when absent.
 2. **Icon:** an authored HTML/SVG/image icon region wins over all generated icons.
    Otherwise, a legacy `icon` text attribute supplies a simple glyph when present.
-   With no glyph override, a small original two-path tray SVG is generated.
+   With no glyph override, a small original two-path inbox/unavailable SVG is generated.
 3. **Extra:** present only when authored. It does not suppress the missing description or
    default icon, and the library never invents a recovery button, link or callback.
 
@@ -93,8 +93,10 @@ application-owned destructive operation: discarded authored nodes are not resurr
 
 ### Original illustration and legacy glyph
 
-The default tray is original minimal geometry, not a copied vendor asset. Its SVG and paths
-are created with `document.createElementNS` in the SVG namespace. It is decorative,
+The default inbox with an unavailable badge is original minimal geometry, not copied
+upstream icon-path data. Its SVG and paths are created with `document.createElementNS`
+in the SVG namespace. The rounded inbox outline and filled badge with a transparent cross
+cutout communicate the same visual category without claiming identical artwork. It is decorative,
 `aria-hidden="true"`, and nonfocusable; the readable description carries the meaning.
 All sizing/color is external CSS, with native SVG presentation attributes for the geometry.
 
@@ -196,10 +198,30 @@ defaults. `icon` is the documented legacy extension above, not a new upstream in
 `--mui-empty-line-height`, `--mui-empty-color`, `--mui-empty-description-color`,
 `--mui-empty-extra-color`, `--mui-empty-gap`, `--mui-empty-extra-gap`,
 `--mui-empty-extra-margin`, `--mui-empty-min-height`, `--mui-empty-padding` and
-`--mui-empty-background` customize native layout. Defaults retain a legacy-compatible
-140px minimum height and 24px padding; set the tokens for a compact presentation.
+`--mui-empty-background` customize native layout. Defaults now follow the rendered reference:
+zero minimum height/padding, a centered 28/34/40/46/52px icon, 8px between a visible icon
+and description, and 12px before authored extra content, including when extra is the only
+visible region. `--mui-empty-gap` controls the icon-to-description margin;
+`--mui-empty-extra-margin` independently controls the complete extra margin (it no longer
+adds to a host flex gap). Hiding the icon removes the description gap.
+
+Description line height and text alignment inherit from the surrounding page, as upstream;
+the fixture's usual 1.6 line height is not forcibly applied to a differently styled parent.
+Wrapped descriptions are start-aligned unless the author supplies another alignment.
+Extra content remains centered. The old 140px minimum and 24px padding are available by
+setting the existing tokens; add `justify-content: center` when vertical centering is desired.
+
+Set `data-mui-theme="dark"` on the host or an ancestor for explicit dark defaults; a nested
+`data-mui-theme="light"` scope resets them. Light icon/description use `#c2c2c2`, dark
+icon/description use white at `.38`, and extra text uses `#333639` / white at `.82`.
+These are upstream's subdued visual defaults, not an accessible-contrast certification;
+override description/icon colors when your application requires stronger contrast.
+Legacy global secondary-text colors are not substituted for these different roles.
 Private size defaults reset for nested Empty instances; explicit theme tokens may inherit.
 No animation or transition is generated, so there is no motion engine to disable.
+
+See the [rendered Empty visual audit](../style-audit/components/empty.md) for geometry,
+palette, screenshot evidence, author-token checks and remaining limitations.
 
 ## Lifecycle and limits
 
@@ -226,7 +248,7 @@ loading system or application announcement policy.
 8. [x] Review and verify namespace/layout, native actions/focus and loading order in Chromium.
 9. [x] Reconcile reference rows/four tasks, index totals and master next-component status.
 
-### Acceptance evidence — 2026-09-08
+### Initial migration acceptance — 2026-09-08 (historical appearance)
 
 - `pnpm test -- tests\empty.test.ts`: **23 focused tests passed**.
 - `pnpm build && pnpm test`: declarations and all budgets succeeded; **190 tests passed**
@@ -257,7 +279,21 @@ loading system or application announcement policy.
   Empty ESM/classic/CSS are **1,596 / 1,805 / 759 gzip bytes**, under separate
   **2,500 / 2,500 / 1,500** ceilings; exact figures are in `dist/manifest.json`.
 
+### Visual-default audit — 2026-09-10
+
+- `pnpm test -- tests\empty.test.ts`: **24 tests passed**, including the original
+  two-path illustration's fill/cutout treatment and stable SVG identity during updates.
+- Twelve rendered cases in each light/dark theme matched reference host, icon, description
+  and extra geometry/typography/colors. Default height changed **140→70.391px**;
+  default with extra **150→104.781px**; wrapped description **159→92.781px**.
+- RTL and inherited `line-height: 2` measurements also matched. Legacy CSS loaded afterward,
+  nested theme/size defaults, native visibility/inert templates, CSS-only display, native
+  keyboard recovery actions and author overrides were checked.
+- Isolated production-named ESM/classic/CSS outputs measured **1,712 / 1,922 / 850 gzip
+  bytes**, below the unchanged **2,500 / 2,500 / 1,500** ceilings. The coordinated
+  full build passed with those same manifest sizes; all 24 Empty tests passed.
+
 Verification is retained native scope, not all-browser/screen-reader or pixel certification.
 Browser acceptance here is Chromium; Safari/Firefox, touch behavior, custom theme contrast
-and application-specific announcement/focus policies need downstream checks. Skeleton is
-next only through coordinator selection; it is not started by this change.
+and application-specific announcement/focus policies need downstream checks. No next
+component is implied by this audit.

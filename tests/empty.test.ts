@@ -27,8 +27,30 @@ describe("standalone Empty", () => {
     expect(svg.getAttribute("focusable")).toBe("false")
     expect(svg.querySelectorAll("path")).toHaveLength(2)
     expect([...svg.querySelectorAll("path")].every((path) => path.namespaceURI === svg.namespaceURI)).toBe(true)
+    expect(svg.getAttribute("stroke")).toBe("currentColor")
+    const badge = svg.querySelectorAll("path")[1]!
+    expect(badge.getAttribute("fill")).toBe("currentColor")
+    expect(badge.getAttribute("fill-rule")).toBe("evenodd")
+    expect(badge.getAttribute("stroke")).toBe("none")
     expect(element.querySelector("button,a")).toBeNull()
     expect(element.hasAttribute("role") || element.hasAttribute("tabindex") || element.hasAttribute("aria-live")).toBe(false)
+  })
+
+  it("keeps the generated illustration stable through visual size and description updates", async () => {
+    const element = empty()
+    const svg = element.querySelector("svg")
+    const paths = [...svg!.children]
+    element.description = "Nothing to display"
+    element.size = "huge"
+    element.showDescription = false
+    element.showIcon = false
+    await Promise.resolve()
+    element.showDescription = true
+    element.showIcon = true
+    expect(element.querySelector("svg")).toBe(svg)
+    expect([...svg!.children]).toEqual(paths)
+    expect(description(element).textContent).toBe("Nothing to display")
+    expect(element.querySelectorAll("svg")).toHaveLength(1)
   })
 
   it("localizes through safe text attributes and distinguishes absent from explicit empty text", () => {

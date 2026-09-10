@@ -1,18 +1,26 @@
+:where([data-mui-theme="light"]) {
+  --_mui-empty-muted: #c2c2c2;
+  --_mui-empty-extra: #333639;
+}
+:where([data-mui-theme="dark"]) {
+  --_mui-empty-muted: rgba(255, 255, 255, .38);
+  --_mui-empty-extra: rgba(255, 255, 255, .82);
+}
 mui-empty[data-mui-empty][data-mui-empty], .mui-empty {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: var(--mui-empty-gap, 8px);
+  justify-content: flex-start;
+  gap: 0;
   min-width: 0;
-  min-height: var(--mui-empty-min-height, 140px);
-  padding: var(--mui-empty-padding, 24px);
-  color: var(--mui-empty-color, var(--mui-text-secondary, #636366));
+  min-height: var(--mui-empty-min-height, 0px);
+  padding: var(--mui-empty-padding, 0px);
+  color: var(--mui-empty-color, var(--_mui-empty-muted, #c2c2c2));
   background: var(--mui-empty-background, transparent);
   font-size: var(--mui-empty-font-size, var(--_mui-empty-font-size));
-  line-height: var(--mui-empty-line-height, 1.5);
-  text-align: center;
+  line-height: var(--mui-empty-line-height, inherit);
+  text-align: inherit;
   overflow-wrap: anywhere;
 }
 mui-empty[data-mui-empty], .mui-empty { --_mui-empty-icon-size: 40px; --_mui-empty-font-size: 14px; }
@@ -27,9 +35,9 @@ mui-empty[data-mui-empty][size="huge"], .mui-empty[data-size="huge"] { --_mui-em
   flex: none;
   inline-size: var(--mui-empty-icon-size, var(--_mui-empty-icon-size));
   block-size: var(--mui-empty-icon-size, var(--_mui-empty-icon-size));
-  color: var(--mui-empty-icon-color, #a4a4ad);
+  color: var(--mui-empty-icon-color, var(--_mui-empty-muted, #c2c2c2));
   font-size: var(--mui-empty-icon-size, var(--_mui-empty-icon-size));
-  line-height: 1;
+  line-height: var(--mui-empty-icon-size, var(--_mui-empty-icon-size));
   object-fit: contain;
 }
 :is(mui-empty[data-mui-empty], .mui-empty) > [data-mui-empty-icon] > :is(svg, img) {
@@ -45,6 +53,7 @@ mui-empty[data-mui-empty][size="huge"], .mui-empty[data-size="huge"] { --_mui-em
   margin: 0;
   color: var(--mui-empty-description-color, inherit);
 }
+:is(mui-empty[data-mui-empty], .mui-empty):not([show-icon="false"]) > [data-mui-empty-icon]:not(template, script, style, [hidden]) ~ [data-mui-empty-description] { margin-block-start: var(--mui-empty-gap, 8px); }
 :is(mui-empty[data-mui-empty], .mui-empty) > [data-mui-empty-description] > :is(h1, h2, h3, h4, h5, h6, p) { margin-block: 0 8px; }
 :is(mui-empty[data-mui-empty], .mui-empty) > [data-mui-empty-description] > :last-child { margin-block-end: 0; }
 :is(mui-empty[data-mui-empty], .mui-empty) > [data-mui-empty-extra] {
@@ -54,8 +63,9 @@ mui-empty[data-mui-empty][size="huge"], .mui-empty[data-size="huge"] { --_mui-em
   justify-content: center;
   gap: var(--mui-empty-extra-gap, 8px);
   max-inline-size: 100%;
-  margin-block-start: var(--mui-empty-extra-margin, 4px);
-  color: var(--mui-empty-extra-color, var(--mui-text-primary, #333639));
+  margin-block-start: var(--mui-empty-extra-margin, 12px);
+  color: var(--mui-empty-extra-color, var(--_mui-empty-extra, #333639));
+  text-align: center;
 }
 mui-empty[data-mui-empty][data-mui-empty][hidden], .mui-empty[hidden],
 :is(mui-empty[data-mui-empty], .mui-empty)[show-icon="false"] > [data-mui-empty-icon],

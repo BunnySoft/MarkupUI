@@ -8,11 +8,19 @@ function illustration(document: Document): SVGSVGElement {
   svg.setAttribute("focusable", "false")
   svg.setAttribute("fill", "none")
   svg.setAttribute("stroke", "currentColor")
-  svg.setAttribute("stroke-width", "2")
+  svg.setAttribute("stroke-width", "3")
   svg.setAttribute("stroke-linejoin", "round")
-  for (const d of ["M8 20l7-10h18l7 10v18H8Z", "M8 22h9l3 5h8l3-5h9"]) {
+  for (const [index, d] of [
+    "M23 10H10a4 4 0 0 0-4 4v26a4 4 0 0 0 4 4h25a4 4 0 0 0 4-4V25M6 28h11a6 6 0 0 0 12 0h10",
+    "M34 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-3 5.5 3 3 3-3 1.5 1.5-3 3 3 3-1.5 1.5-3-3-3 3-1.5-1.5 3-3-3-3Z",
+  ].entries()) {
     const path = document.createElementNS(namespace, "path")
     path.setAttribute("d", d)
+    if (index === 1) {
+      path.setAttribute("fill", "currentColor")
+      path.setAttribute("fill-rule", "evenodd")
+      path.setAttribute("stroke", "none")
+    }
     svg.append(path)
   }
   return svg
