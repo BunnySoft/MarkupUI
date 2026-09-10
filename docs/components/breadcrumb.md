@@ -4,6 +4,20 @@
 Breadcrumb is a named native navigation landmark with a real list and real destination
 links. It ships only CSS; the demo also has no JavaScript.
 
+## Default-style audit — 2026-09-10
+
+The [isolated rendered audit](../style-audit/components/breadcrumb.md) corrects
+14px/1.25 typography, 4px padding, 3px corners, normal current-item weight,
+light/dark text colors and genuine-link hover/pressed fills. Horizontal spacing
+now belongs to actual separators, so suppressing one leaves no phantom item gap.
+
+**17 focused tests pass.** Twenty authored-text-separator case/theme/direction
+comparisons matched the checked reference properties; hover/pressed colors also
+matched. The non-text default slash, explicit current-page ownership and passive
+disabled semantics retain documented differences. CSS is **5,146 raw / 1,120 gzip
+bytes** under the unchanged **1,500-byte ceiling**. The coordinator's isolated
+release build and all **17 Breadcrumb tests** pass; no shared source changed.
+
 ## Loading and authority
 
 | Asset | Purpose |
@@ -100,7 +114,8 @@ with the application; no runtime renderer or sanitizer is implied by this CSS-on
 ## Current page and non-clickable items
 
 Author `aria-current="page"` on the current label, either a passive span or a genuine current
-page anchor. The stylesheet emphasizes **that attribute**, not the last child's position.
+page anchor. The stylesheet applies current color to **that attribute**, not the last
+child's position; its default weight is **400**, matching the reference.
 An anchor with `aria-current` remains navigable and focusable. A passive current-page span
 is not a keyboard stop. Choose one current item for each path; if application navigation
 changes the path, update its markup/state explicitly.
@@ -128,6 +143,12 @@ use real buttons rather than pseudo-links, preferably outside the breadcrumb des
 path. Breadcrumb introduces no form/value/control abstraction; the demo contains only
 ordinary destination navigation. Native keyboard activation and fragment focus behavior
 are not overridden.
+
+Genuine non-current destination anchors receive the reference hover/pressed text
+and background colors. Current-page anchors remain native links but receive no
+default hover/pressed fill. Passive unavailable spans never gain those interactive
+styles. Naive still changes foreground on a hovered `clickable=false` span; that
+visual behavior is deliberately not copied to an unavailable native item.
 
 ## Separators, hidden items and wrapping
 
@@ -159,14 +180,56 @@ The nested demo is a scoping check, not a requirement to nest breadcrumb landmar
 Focus outlines remain visible while links are focused. Native navigation may move focus
 to a fragment target; the stylesheet does not restore it or announce route changes.
 
-Tokens are `--mui-breadcrumb-gap` (default `.5rem`, reset on each `nav`),
+The gap is now applied as a margin on each visible separator, not a permanent gap
+between list items. A suppressed or hidden separator therefore leaves adjacent
+link boxes directly adjoining, as in the reference. Wrapped rows retain the same
+configured row gap.
+
+The default non-text slash reserves **.5em (7px at 14px)**. In the audited font,
+Naive's textual `/` occupied **5.46875px**; two default shape separators therefore
+shifted the final label by **3.0625px**. Author `/` inside the existing decorative
+separator spans when matching text-glyph spacing is desired. The asset does not
+generate separator text or pretend that a border shape has font-glyph parity.
+
+## Appearance, themes and public overrides
+
+Set `data-mui-theme="light|dark"` on an ancestor or the breadcrumb itself. No marker
+means light. Theme boundaries set only private defaults; explicit public color
+overrides still inherit normally. The application owns its background and
+`color-scheme`, and no body/theme watcher is added.
+
+| Role | Light | Dark |
+| --- | --- | --- |
+| Idle, passive disabled, separator | `#767c82` | white `.52` |
+| Current, hover, pressed foreground | `#333639` | white `.82` |
+| Hover fill | `rgb(46 51 56 / .09)` | white `.12` |
+| Pressed fill | `rgb(46 51 56 / .13)` | white `.08` |
+
+Links are no longer blue/underlined by default; they use the reference presentation
+while retaining real href/keyboard semantics and the explicit focus-visible outline.
+Authors can restore underlining with ordinary CSS.
+
+Existing tokens are `--mui-breadcrumb-gap` (default **8px**, reset on each `nav`),
 `--mui-breadcrumb-color`, `--mui-breadcrumb-link-color`, `--mui-breadcrumb-current-color`,
-`--mui-breadcrumb-disabled-color` and `--mui-breadcrumb-separator-color`. Apply valid CSS
-values using external author styles. There is no runtime theme merging or measurement.
+`--mui-breadcrumb-disabled-color` and `--mui-breadcrumb-separator-color`.
+Additional typography/state tokens are:
+
+- `--mui-breadcrumb-font-size` (shared `--mui-font-size`, then 14px);
+- `--mui-breadcrumb-line-height` (1.25), `--mui-breadcrumb-radius` (3px),
+  `--mui-breadcrumb-current-weight` (400);
+- `--mui-breadcrumb-hover-color`, `--mui-breadcrumb-pressed-color`;
+- `--mui-breadcrumb-hover-background`, `--mui-breadcrumb-pressed-background`.
+
+Explicit hover/pressed foreground overrides win first; otherwise an authored
+`--mui-breadcrumb-link-color` remains effective in those states before reference
+fallbacks. Shared legacy primary/secondary text colors are not equivalent to these
+roles and are no longer substituted. Family remains inherited; no font is loaded.
+
+Apply valid CSS values using external author styles. There is no runtime theme merging or measurement.
 Print preserves wrapping and requests unbroken items where possible; forced colors use
 native link/current/disabled/separator colors. There is no animation.
 
-## Migration steps and acceptance
+## Original migration steps and acceptance (historical)
 
 1. [x] Preserve native destination/target/rel behavior without router interception.
 2. [x] Define authored default/separator regions and non-duplicated decorative icons.
@@ -198,9 +261,10 @@ On 2026-09-08, `pnpm --dir D:\repos\MarkupUI check` passed build/budget gates an
   skipped passive items and navigated by keyboard to the real `#projects` destination.
   The normal demo itself loads zero scripts.
 
-Library CSS is **3,827 bytes / 928 gzip bytes**, below its new **1,500-byte** ceiling.
+At original delivery, library CSS was **3,827 bytes / 928 gzip bytes**, below its **1,500-byte** ceiling.
 Component and demo JavaScript are **0 bytes**. Demo-only CSS is **542 / 304 gzip bytes**.
 Core remains **62,558 / 14,611 gzip bytes** under **15,000**; widgets remains
 **10,858 / 2,779 gzip bytes** under **4,000**. Existing outputs/ceilings and zero runtime
-dependencies are unchanged. This does not certify all browsers, browser-UI zoom, screen-reader
+dependencies were unchanged. These are historical delivery figures, not a newly run
+integrated build. This does not certify all browsers, browser-UI zoom, screen-reader
 speech or framework/pixel parity.

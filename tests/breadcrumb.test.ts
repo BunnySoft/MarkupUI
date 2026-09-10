@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it } from "vitest"
 
 const css = readFileSync(resolve("src", "components", "breadcrumb", "breadcrumb.css"), "utf8")
@@ -73,7 +74,7 @@ describe("CSS-only Breadcrumb and BreadcrumbItem", () => {
     expect(current.getAttribute("aria-current")).toBe("page")
     current.removeAttribute("aria-current")
     middle.setAttribute("aria-current", "page")
-    expect(getComputedStyle(middle).fontWeight).toBe("600")
+    expect(css).toContain("font-weight: var(--mui-breadcrumb-current-weight, 400)")
     expect(current.hasAttribute("aria-current")).toBe(false)
     expect(document.querySelector("#current-page-link")!.getAttribute("href")).toBe("#current-project")
     expect(css).not.toContain(":last-child")
@@ -155,7 +156,7 @@ describe("CSS-only Breadcrumb and BreadcrumbItem", () => {
     const parent = document.querySelector<HTMLElement>("#parent-breadcrumb")!
     parent.style.setProperty("--mui-breadcrumb-gap", "3rem")
     const nested = document.querySelector("#nested-breadcrumb")!
-    expect(getComputedStyle(nested).getPropertyValue("--mui-breadcrumb-gap")).toBe(".5rem")
+    expect(getComputedStyle(nested).getPropertyValue("--mui-breadcrumb-gap")).toBe("8px")
     expect(nested.getAttribute("aria-label")).toBe("Nested reference breadcrumb")
     expect(nested.querySelectorAll('[aria-current="page"]')).toHaveLength(1)
     expect(document.querySelector("#nested-last-separator")!.closest("nav")).toBe(nested)
@@ -191,5 +192,66 @@ describe("CSS-only Breadcrumb and BreadcrumbItem", () => {
     expect(css).not.toContain("nowrap")
     expect(css).not.toContain("overflow: hidden")
     expect(css).not.toMatch(/(?:^|[;{])\s*order\s*:/m)
+  })
+
+  it("keeps the strict source CSS budget without introducing runtime dependencies", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
+  })
+
+  it("uses reference typography and private depth/state colors rather than shared legacy roles", () => {
+    install()
+    const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
+    for (const rule of rules.filter(rule => rule.selectorText?.includes("data-mui-theme"))) {
+      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_mui-breadcrumb-/)
+    }
+    expect(css).toContain("var(--mui-breadcrumb-font-size, var(--mui-font-size, 14px))")
+    expect(css).toContain("var(--mui-breadcrumb-line-height, 1.25)")
+    expect(css).toContain("padding: 4px")
+    expect(css).toContain("var(--mui-breadcrumb-radius, 3px)")
+    expect(css).toContain("--_mui-breadcrumb-text: #767c82")
+    expect(css).toContain("--_mui-breadcrumb-text: rgb(255 255 255 / .52)")
+    expect(css).toContain("--_mui-breadcrumb-active: rgb(255 255 255 / .82)")
+    expect(css).not.toContain("--mui-text-primary")
+    expect(css).not.toContain("--mui-text-secondary")
+  })
+
+  it("applies hover/pressed fills only to genuine non-current destination anchors", () => {
+    install()
+    const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
+    const interactive = rules.filter(rule => rule.selectorText?.includes(":hover") || rule.selectorText?.includes(":active"))
+    expect(interactive).toHaveLength(2)
+    for (const rule of interactive) {
+      expect(rule.selectorText).toContain('a.mui-breadcrumb-link[href]:not([aria-current="page"])')
+      expect(rule.style.getPropertyValue("background-color")).not.toBe("")
+    }
+    expect(css).toContain("--_mui-breadcrumb-hover: rgb(46 51 56 / .09)")
+    expect(css).toContain("--_mui-breadcrumb-pressed: rgb(46 51 56 / .13)")
+    expect(css).toContain("--_mui-breadcrumb-hover: rgb(255 255 255 / .12)")
+    expect(css).toContain("--_mui-breadcrumb-pressed: rgb(255 255 255 / .08)")
+    expect(css).toContain("var(--mui-breadcrumb-hover-color, var(--mui-breadcrumb-link-color,")
+    expect(css).toContain("var(--mui-breadcrumb-pressed-color, var(--mui-breadcrumb-link-color,")
+  })
+
+  it("places horizontal spacing on the actual separator so suppression leaves no phantom gap", () => {
+    install()
+    const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
+    const list = rules.find(rule => rule.selectorText === ":where(nav.mui-breadcrumb > .mui-breadcrumb-list)")!
+    const separator = rules.find(rule => rule.selectorText === ":where(.mui-breadcrumb-row > .mui-breadcrumb-separator)")!
+    expect(list.style.getPropertyValue("column-gap")).toBe("0")
+    expect(list.style.getPropertyValue("row-gap")).toBe("var(--mui-breadcrumb-gap)")
+    expect(separator.style.getPropertyValue("margin-inline")).toBe("var(--mui-breadcrumb-gap)")
+    expect(css).not.toContain(":last-child")
+  })
+
+  it("preserves direct author styling and current-link navigation", () => {
+    document.body.innerHTML = '<nav class="mui-breadcrumb" aria-label="Author"><ol class="mui-breadcrumb-list"><li class="mui-breadcrumb-item"><span class="mui-breadcrumb-row"><a class="mui-breadcrumb-link" href="#author" aria-current="page" style="color:purple;font-weight:700;text-decoration:underline">Author</a></span></li></ol></nav>'
+    const link = document.querySelector("a")!
+    const before = link.outerHTML
+    install()
+    expect(link.outerHTML).toBe(before)
+    expect(getComputedStyle(link).color).toBe("rgb(128, 0, 128)")
+    expect(getComputedStyle(link).fontWeight).toBe("700")
+    expect(link.getAttribute("href")).toBe("#author")
+    expect(link.hasAttribute("tabindex")).toBe(false)
   })
 })

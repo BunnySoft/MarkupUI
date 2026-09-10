@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 23/96 scopes.** The other **73** are not yet accepted in this
+**Reviewed and integrated: 24/96 scopes.** The other **72** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -61,7 +61,7 @@ a separate follow-up; its work-in-progress is not included in published componen
 | [Avatar](../naive-ui/components/avatar.md) | 🟢 Fixed | [Defaults including text fit; architectural boundaries](components/avatar.md) |
 | [Back Top](../naive-ui/components/back-top.md) | ⚪ Pending | — |
 | [Badge](../naive-ui/components/badge.md) | 🟢 Fixed / 🟡 Remaining | [Numeric cells, palette, wave and legacy limits](components/badge.md) |
-| [Breadcrumb](../naive-ui/components/breadcrumb.md) | 🟠 Reviewing | — |
+| [Breadcrumb](../naive-ui/components/breadcrumb.md) | 🟢 Fixed / 🟡 Remaining | [Text states, separator spacing and native current-page limits](components/breadcrumb.md) |
 | [Button](../naive-ui/components/button.md) | 🟢 Fixed / 🟡 Remaining | [Defaults, state endpoints and remaining motion](components/button.md) |
 | [Calendar](../naive-ui/components/calendar.md) | ⚪ Pending | — |
 | [Card](../naive-ui/components/card.md) | 🟢 Fixed / 🟡 Remaining | [Native regions, theme scope and legacy boundary](components/card.md) |
@@ -135,14 +135,14 @@ a separate follow-up; its work-in-progress is not included in published componen
 | [Statistic](../naive-ui/components/statistic.md) | 🟢 Fixed / 🟡 Remaining | [Inline value geometry, text roles and native limits](components/statistic.md) |
 | [Steps](../naive-ui/components/steps.md) | ⚪ Pending | — |
 | [Switch](../naive-ui/components/switch.md) | ⚪ Pending | — |
-| [Table](../naive-ui/components/table.md) | ⚪ Pending | — |
+| [Table](../naive-ui/components/table.md) | 🟠 Reviewing | — |
 | [Tabs](../naive-ui/components/tabs.md) | ⚪ Pending | — |
 | [Tag](../naive-ui/components/tag.md) | 🟢 Fixed / 🟡 Remaining | [Sizing, palettes, close states and native limits](components/tag.md) |
 | [Thing](../naive-ui/components/thing.md) | 🟢 Fixed / 🟡 Remaining | [Typography, indentation and authored composition limits](components/thing.md) |
 | [Time Picker](../naive-ui/components/time-picker.md) | ⚪ Pending | — |
 | [Time](../naive-ui/components/time.md) | ⚪ Pending | — |
 | [Timeline](../naive-ui/components/timeline.md) | ⚪ Pending | — |
-| [Tooltip](../naive-ui/components/tooltip.md) | ⚪ Pending | — |
+| [Tooltip](../naive-ui/components/tooltip.md) | 🟠 Reviewing | — |
 | [Transfer](../naive-ui/components/transfer.md) | ⚪ Pending | — |
 | [Tree Select](../naive-ui/components/tree-select.md) | ⚪ Pending | — |
 | [Tree](../naive-ui/components/tree.md) | ⚪ Pending | — |
