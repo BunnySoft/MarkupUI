@@ -169,13 +169,68 @@ is not deleted on disposal. Call disconnect before removing/transferring the nav
 listeners, scoped observer, timers and generated nodes. Refresh re-adopts authored replacements;
 disconnect before handing nodes between documents or independent helper copies.
 
-## CSS and acceptance — 2026-09-09
+## Default styling and native-control limits
 
 External CSS supplies current/borders/disabled/focus, small/medium/large sizes, native wrapping,
 logical spacing and readable print/forced-color state. No measured geometry, injected styles,
 portal, motion engine or transition requiring reduced-motion suppression. RTL keeps native
 reading and Tab order; authors use suitable directional labels/icons. No mandatory Select,
 InputNumber, Dropdown, Icon or provider/theme dependency.
+
+Default small/medium/large controls now use **22/28/34px minimum page sizes** and
+**12/14/14px text**, with 8px gaps, 3px radii and 0/4px page padding. Previous/next controls
+are outlined and use no inner padding. Ordinary numbered/gap pages have transparent
+borders/surfaces; the current page has primary-colored text/border, transparent fill and
+normal inherited weight rather than a bold filled badge.
+
+Light text/borders use `#333639` / `#e0e0e6`; dark uses white .82 / .24. Dark current-page
+borders use primary color at .52 alpha, matching the pinned theme. Passive enabled pages
+use primary hover/pressed text colors; current, boundary-navigation and disabled styling
+are not overwritten by that passive hover rule. Disabled text uses `#c2c2c2` / white .38,
+with appropriate active/navigation/control surfaces instead of fading every control's opacity.
+Use the existing themes stylesheet for semantic primary colors and `data-mui-theme` scopes
+for local neutral defaults.
+
+Native size selects and quick-jump number inputs use the same size presets, 3px corners and
+theme-aware closed-face borders/backgrounds. Jump width is 60px. Their native appearance,
+number spinners, option popup and input behavior remain browser-owned; no peer-component
+renderer is added. Simple mode retains the authored labels, Go button, count and control
+order—it does not recreate the source's compact text-input-only arrangement.
+
+Public tokens include `--mui-pagination-size`, `--mui-pagination-font-size`,
+`--mui-pagination-gap`, `--mui-pagination-radius`, `--mui-pagination-color`,
+`--mui-pagination-border`, `--mui-pagination-background`, `--mui-pagination-current`,
+`--mui-pagination-active-border`, `--mui-pagination-hover`, `--mui-pagination-focus`,
+`--mui-pagination-disabled-color`, `--mui-pagination-disabled-background`,
+`--mui-pagination-control-background` and `--mui-pagination-jump-width`.
+Private size presets no longer overwrite authored public size/font tokens.
+
+Arrow and gap artwork remains authored native content. The stylesheet does not generate
+icons, flip glyphs in RTL, create hover menus or change the existing bounded page-window
+algorithm. See the [rendered Pagination audit](../style-audit/components/pagination.md)
+for actual state/control measurements and the native select/artwork boundaries.
+
+## Default-style acceptance — 2026-09-10–11
+
+- Fifteen reference/native variants in light/dark covered pages/current/disabled states,
+  sizes, gaps, simple, picker/jumper, disabled auxiliary controls and author overrides.
+  All **28 corresponding current-page boxes** matched dimensions, font/weight, color,
+  background, radius and opacity; active border alpha matched after color normalization.
+- Native jump inputs matched 60px width and 22/28/34px heights. Select closed-face heights
+  and palettes matched; intrinsic widths and popup artwork remain native/browser-specific.
+  Settled target measurements were unchanged with later legacy CSS/aggregate loading.
+- Real native keyboard/request counts, focus after window shrink, canceled size selection,
+  invalid/Enter jumps, unrelated form submission, simple state, trillion-page bounds,
+  empty state, author tokens and narrow RTL wrapping passed. Print/forced-color and
+  JavaScript-disabled fallback links were checked.
+- `pnpm test -- tests\pagination.test.ts tests\pagination.styles.test.ts`:
+  **57 tests passed**. The state model/controller/templates are unchanged.
+- Exact isolated level-9 ESM/classic/CSS: **5,011 / 5,080 / 1,220 bytes**, within unchanged
+  **5,500 / 5,500 / 1,250** ceilings. Parent owns integrated release validation.
+
+## Historical acceptance — 2026-09-09
+
+The original control sizes, filled current styling and byte counts below predate correction.
 
 - **80 targeted tests:** 53 Pagination + 27 native/legacy; build/declarations/package exports
   and all budgets pass.
