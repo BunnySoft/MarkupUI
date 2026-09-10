@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 54/96 scopes.** The other **42** are not yet accepted in this
+**Reviewed and integrated: 55/96 scopes.** The other **41** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -74,7 +74,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Color Picker](../naive-ui/components/color-picker.md) | ⚪ Pending | — |
 | [Config Provider](../naive-ui/components/config-provider.md) | ⚪ Pending | — |
 | [Countdown](../naive-ui/components/countdown.md) | ⚪ Pending | — |
-| [Data Table](../naive-ui/components/data-table.md) | 🟠 Reviewing | — |
+| [Data Table](../naive-ui/components/data-table.md) | 🟢 Fixed / 🟡 Remaining | [Native density/sort/selection paint and explicit renderer/width limits](components/data-table.md) |
 | [Date Picker](../naive-ui/components/date-picker.md) | ⚪ Pending | — |
 | [Descriptions](../naive-ui/components/descriptions.md) | 🟢 Fixed / 🟡 Remaining | [Density, text roles and retained grid/table differences](components/descriptions.md) |
 | [Dialog](../naive-ui/components/dialog.md) | 🟢 Fixed / 🟡 Remaining | [Surface/action styling with protected modality, load order and native limits](components/dialog.md) |
@@ -123,12 +123,12 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Progress](../naive-ui/components/progress.md) | 🟢 Fixed / 🟡 Remaining | [Native rails, ring geometry, motion and indicator limits](components/progress.md) |
 | [QR Code](../naive-ui/components/qr-code.md) | ⚪ Pending | — |
 | [Radio](../naive-ui/components/radio.md) | 🟢 Fixed / 🟡 Remaining | [Circle/button metrics, high-contrast protection and native skin limits](components/radio.md) |
-| [Rate](../naive-ui/components/rate.md) | ⚪ Pending | — |
+| [Rate](../naive-ui/components/rate.md) | 🟠 Reviewing | — |
 | [Result](../naive-ui/components/result.md) | 🟢 Fixed / 🟡 Remaining | [Region spacing, title roles and authored artwork limits](components/result.md) |
 | [Scrollbar](../naive-ui/components/scrollbar.md) | 🟢 Fixed / 🟡 Remaining | [Opt-in native thumb palette and OS/browser geometry limits](components/scrollbar.md) |
 | [Select](../naive-ui/components/select.md) | 🟠 Reviewing | — |
 | [Skeleton](../naive-ui/components/skeleton.md) | 🟢 Fixed / 🟡 Remaining | [Animated endpoints and retained shape/repeat limits](components/skeleton.md) |
-| [Slider](../naive-ui/components/slider.md) | ⚪ Pending | — |
+| [Slider](../naive-ui/components/slider.md) | 🟠 Reviewing | — |
 | [Space](../naive-ui/components/space.md) | 🟢 Matched / 🟡 Remaining | [Default layout matches; intrinsic nowrap limits](components/space.md) |
 | [Spin](../naive-ui/components/spin.md) | 🟢 Fixed / 🟡 Remaining | [SVG motion, theme dimming and native interaction limits](components/spin.md) |
 | [Split](../naive-ui/components/split.md) | ⚪ Pending | — |

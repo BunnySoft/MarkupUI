@@ -1,10 +1,15 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
+import { readFileSync } from "node:fs"
+import { join } from "node:path"
+import { gzipSync } from "node:zlib"
 import { createDataTable } from "../src/components/data-table/index.js"
 import type { DataTableController, DataTableOptions } from "../src/components/data-table/index.js"
 import { createForm } from "../src/components/form/index.js"
 import { createCheckboxGroup } from "../src/components/checkbox/index.js"
 
 const controllers: DataTableController[] = []
+const baseCss = readFileSync(join("src", "components", "table", "table.css"), "utf8")
+const componentCss = readFileSync(join("src", "components", "data-table", "data-table.css"), "utf8")
 const settle = () => new Promise(resolve => setTimeout(resolve, 0))
 const numeric = (row: HTMLTableRowElement) => row.querySelector<HTMLInputElement>('[type="number"]')!.valueAsNumber
 const dataRow = (key: string, score: number, extra = "") => `<tr data-data-key="${key}"><td><label><input type="checkbox" data-data-check name="keys" value="${key}" ${extra}>Select ${key}</label></td><th scope="row" id="row-${key}">${key}</th><td headers="row-${key} score"><label>Score ${key}<input type="number" name="score-${key}" value="${score}" required></label><button type="button">Cell action</button></td></tr>`
@@ -44,6 +49,74 @@ function fixture(options: Partial<DataTableOptions> = {}, transform?: (root: HTM
 afterEach(() => { controllers.splice(0).forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
 
 describe("native table operations", () => {
+  it("keeps Data Table-specific defaults within the composed CSS budget without changing Table policy", () => {
+    expect(baseCss).toContain("border-collapse: collapse")
+    expect(baseCss).toContain("--_mui-table-padding: 6px")
+    expect(componentCss).toContain('.mui-table[data-size="small"] { --_mui-table-padding: 8px; }')
+    expect(componentCss).toContain("var(--mui-data-table-scroll-padding, 0)")
+    expect(componentCss).toContain("font-variant-numeric: normal")
+    expect(componentCss).toContain("font-weight: var(--mui-table-header-weight, 400)")
+    expect(componentCss).toContain("#f7f7fa")
+    expect(componentCss).toContain("#f3f3f7")
+    expect(componentCss).toContain("#26262a")
+    expect(componentCss).toContain("#333337")
+    expect(componentCss).toContain("var(--mui-data-table-selected-background, transparent)")
+    expect(componentCss).not.toContain("#e7f2ff")
+    expect(componentCss).not.toContain("border-style: dashed")
+    expect(componentCss).not.toContain("pointer-events: none")
+    expect(componentCss).toContain("[data-data-sort]:disabled { cursor: default; opacity: .5; }")
+    expect(gzipSync(`${baseCss}\n${componentCss}`, { level: 9 }).length).toBeLessThanOrEqual(2000)
+  })
+  it("retains original rows, fields and author styles while presentation states change", () => {
+    const { helper, root, row, check } = fixture()
+    const a = row("a"), field = a.querySelector<HTMLInputElement>('[type="number"]')!
+    root.style.cssText = "--mui-data-table-hover-background:rgb(1,2,3);--mui-data-table-selected-background:rgb(4,5,6);--mui-data-table-color:rgb(7,8,9)"
+    const authored = root.getAttribute("style")
+    const style = document.createElement("style")
+    style.textContent = `${baseCss}\n${componentCss}`
+    document.head.append(style)
+    try {
+      field.value = "8"
+      helper.set({ loading: true, sort: { key: "score", order: "ascending" } })
+      expect(row("a")).toBe(a)
+      expect(field.value).toBe("8")
+      expect(field.disabled).toBe(false)
+      expect(check("d").disabled && check("d").checked).toBe(true)
+      expect(root.getAttribute("style")).toBe(authored)
+      expect(helper.table.getAttribute("role")).toBeNull()
+      expect(helper.table.getAttribute("aria-busy")).toBe("true")
+      expect(root.querySelector("[data-data-loading]")?.textContent).toBe("Loading")
+    } finally { style.remove() }
+  })
+  it("does not treat aria-sort none as a sorted header and preserves system disabled paint", () => {
+    document.body.innerHTML = '<div class="mui-data-table"><div class="mui-data-table-scroll"><table class="mui-table"><thead><tr><th>Score</th></tr></thead></table></div></div>'
+    const style = document.createElement("style")
+    style.textContent = componentCss
+    document.head.append(style)
+    try {
+      const rules = [...style.sheet!.cssRules]
+      const isStyle = (rule: CSSRule): rule is CSSStyleRule => rule.type === CSSRule.STYLE_RULE
+      const isMedia = (rule: CSSRule): rule is CSSMediaRule => rule.type === CSSRule.MEDIA_RULE
+      const sorted = rules.filter(isStyle).find(rule => rule.style.getPropertyValue("background").includes("--mui-data-table-sort-background"))!
+      // jsdom cannot match this combined :is/:has selector; Chromium covers its full live behavior.
+      const stateSelector = sorted.selectorText.replace(/,\s*:has\(>\s*\[data-data-sort\]:not\(\[hidden\],\s*:disabled\)\):hover/, "")
+      expect(stateSelector).not.toContain(":has")
+      expect(sorted.selectorText).not.toContain("[aria-sort]")
+      const header = document.querySelector("th")!
+      for (const value of ["none", "other"]) {
+        header.setAttribute("aria-sort", value)
+        expect(header.matches(stateSelector)).toBe(false)
+      }
+      for (const value of ["ascending", "descending"]) {
+        header.setAttribute("aria-sort", value)
+        expect(header.matches(stateSelector)).toBe(true)
+      }
+      const forced = rules.filter(isMedia).find(rule => rule.conditionText === "(forced-colors: active)")!
+      const disabled = [...forced.cssRules].filter(isStyle).find(rule => rule.selectorText.endsWith("[data-data-sort]:disabled"))!
+      expect(disabled.style.getPropertyValue("opacity")).toBe("1")
+      expect(disabled.style.getPropertyValue("color")).toBe("GrayText")
+    } finally { style.remove() }
+  })
   it("preserves table, caption, scoped headers, footer spans and associations", () => {
     const { helper, row } = fixture()
     expect(helper.table.getAttribute("role")).toBeNull()

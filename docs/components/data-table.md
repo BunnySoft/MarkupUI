@@ -4,6 +4,12 @@
 column renderer, virtual grid, treegrid, data-fetch engine or replacement for CSS-only
 [Table](table.md). All table/row/cell nodes and business fields remain authored light DOM.
 
+**Style audit (2026-09-10–11):** scoped Data Table CSS now corrects small density, sort-button
+chrome, body row-header typography, hover/sorted-header colors and default selection paint.
+See the [rendered report](../style-audit/components/data-table.md) for measured results and
+the remaining collapsed-border, width, native-control, loading/empty and renderer limits.
+No data binding, row/template renderer or state algorithm was added or changed.
+
 ## Loading and anatomy
 
 | Asset | Contract |
@@ -242,17 +248,43 @@ explicit reveal step; no Form provider/runtime is forced.
 
 ## Native presentation and summary ownership
 
-Data Table CSS composes [Table's exact border, size, stripe, hidden and native overflow
+Data Table CSS composes [Table's native collapsed-border, stripe, hidden and overflow
 contracts](table.md), without changing Table's standalone asset. It styles only opted-in
 tables/direct cells; ordinary nested tables do not gain parent cell padding/borders.
 Selection paint targets direct cell checkboxes or a direct native label wrapper; other
 author checkbox nesting still works but needs explicit author CSS.
 
 Table tokens/data-bordered/data-bottom-bordered/data-single-line/data-single-column/
-data-striped/data-size remain unchanged. Additional tokens are
---mui-data-table-max-height, --mui-data-table-min-height, --mui-data-table-color and
---mui-data-table-selected-background. Native wrapping is the default. No global reset,
-inline style engine, mandatory spinner, layout polling or motion is installed.
+data-striped/data-size remain available. Data Table uses **8px small cell padding**,
+while standalone Table intentionally retains 6px; medium/large retain 12px and the shared
+14px/15px type defaults. Public `--mui-table-cell-padding` overrides that scoped preset.
+Data cells use normal numeric typography; semantic body `th[scope=row]` retains its role
+but defaults to ordinary data-cell color/400 weight. Explicit Table header color/weight
+tokens remain authoritative when authors intentionally style those headers.
+
+Additional tokens:
+
+- `--mui-data-table-max-height`, `--mui-data-table-min-height`: native scrollport bounds.
+- `--mui-data-table-scroll-padding`: zero by default; authors can restore a focus/layout gutter.
+- `--mui-data-table-color`: data-table text, including body cells, with Table color as fallback.
+- `--mui-data-table-hover-background`: hovered body-cell fill; default `#f7f7fa` in light
+  and `#26262a` in dark.
+- `--mui-data-table-sort-background`: sortable-hover/current sorted header fill;
+  default `#f3f3f7` / `#333337`.
+- `--mui-data-table-sort-icon-color`: active native CSS arrow color; shared primary
+  color or pinned light/dark primary fallback by default.
+- `--mui-data-table-selected-background`: **optional** selected-cell tint. There is no
+  default blue row fill, matching the reference's unchanged checked-row background.
+  The optional tint is a clipped inset paint overlay, preserving underlying stripes/
+  hover colors when unset. Native checkbox skins and labels are not replaced.
+
+Sort buttons remain real labelled buttons; their extra browser padding/border/background
+are reset without hiding authored text. Disabled sort buttons keep a non-action cursor
+and reduced emphasis. Only the button activates sorting, not the whole
+header. Native text arrows are not the source's generated dual-SVG sorter, and no runtime
+column-index styling was added to tint every sorted-column body cell.
+Native wrapping remains the default. No global reset, inline style engine, mandatory
+spinner, layout polling or runtime animation is installed.
 
 data-data-sticky-header is optional CSS. Sticky columns are deliberate **author CSS** with
 explicit widths/logical offsets; the demo pins only its first column. There is no dynamic
@@ -261,6 +293,8 @@ that arbitrary sticky/span combinations work.
 
 Optional plain-text data-data-empty/data-data-loading regions live outside the table.
 Loading is informative aria-busy, not a hidden data-fetch lock; native fields remain usable.
+The busy table keeps its normal solid border; it is not automatically dimmed or pointer-locked.
+This deliberately differs from the source's faded wrapper and overlaid spinner.
 Author the loading text. Counts/summaries are not automatically aria-live, avoiding
 per-sort/per-field announcement spam.
 

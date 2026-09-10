@@ -1,4 +1,6 @@
 /* The build composes the independent native Table stylesheet before these rules. */
+:where([data-mui-theme="light"]) { --_mui-data-table-hover: initial; --_mui-data-table-sort: initial; --_mui-data-table-primary: initial; }
+:where([data-mui-theme="dark"]) { --_mui-data-table-hover: #26262a; --_mui-data-table-sort: #333337; --_mui-data-table-primary: #63e2b7; }
 :where(.mui-data-table) {
   min-inline-size: 0;
   color: var(--mui-data-table-color, inherit);
@@ -7,7 +9,16 @@
   overflow: auto;
   max-block-size: var(--mui-data-table-max-height, none);
   min-block-size: var(--mui-data-table-min-height, 0);
-  padding: .25rem;
+  padding: var(--mui-data-table-scroll-padding, 0);
+}
+:where(.mui-data-table) > .mui-data-table-scroll > .mui-table {
+  color: var(--mui-data-table-color, var(--mui-table-color, var(--_mui-table-color, #333639)));
+  font-variant-numeric: normal;
+}
+:where(.mui-data-table) > .mui-data-table-scroll > .mui-table[data-size="small"] { --_mui-table-padding: 8px; }
+:where(.mui-data-table) > .mui-data-table-scroll > .mui-table > tbody > tr > th {
+  color: var(--mui-table-header-color, inherit);
+  font-weight: var(--mui-table-header-weight, 400);
 }
 :where(.mui-data-table) > .mui-data-table-controls:not([hidden]) {
   display: flex;
@@ -21,19 +32,29 @@
   color: inherit;
   cursor: pointer;
   margin-inline-start: .25rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
+:where(.mui-data-table) > .mui-data-table-scroll > .mui-table > thead > tr > th > [data-data-sort]:disabled { cursor: default; opacity: .5; }
 :where(.mui-data-table) > .mui-data-table-scroll > .mui-table > thead > tr > th[aria-sort="ascending"] > [data-data-sort]::after { content: " ↑"; }
 :where(.mui-data-table) > .mui-data-table-scroll > .mui-table > thead > tr > th[aria-sort="descending"] > [data-data-sort]::after { content: " ↓"; }
+:where(.mui-data-table) > .mui-data-table-scroll > .mui-table > thead > tr > th:is([aria-sort="ascending"], [aria-sort="descending"]) > [data-data-sort]::after {
+  color: var(--mui-data-table-sort-icon-color, var(--mui-color-primary, var(--_mui-data-table-primary, #18a058)));
+}
 :where(.mui-data-table) > .mui-data-table-scroll > .mui-table > tbody > tr:has(> :is(th, td) > [data-data-check]:checked, > :is(th, td) > label > [data-data-check]:checked) > :is(th, td) {
-  background-color: var(--mui-data-table-selected-background, #e7f2ff);
+  box-shadow: inset 0 0 0 9999px var(--mui-data-table-selected-background, transparent);
+}
+:where(.mui-data-table) > .mui-data-table-scroll > .mui-table > tbody > tr:hover > :is(th, td) {
+  background: var(--mui-data-table-hover-background, var(--_mui-data-table-hover, #f7f7fa));
+}
+:where(.mui-data-table) > .mui-data-table-scroll > .mui-table > thead > tr > th:is([aria-sort="ascending"], [aria-sort="descending"], :has(> [data-data-sort]:not([hidden], :disabled)):hover) {
+  background: var(--mui-data-table-sort-background, var(--_mui-data-table-sort, #f3f3f7));
 }
 :where(.mui-data-table) > .mui-data-table-scroll > .mui-table[data-data-sticky-header] > thead > tr > th {
   position: sticky;
   inset-block-start: 0;
   z-index: 1;
-}
-:where(.mui-data-table) > .mui-data-table-scroll > .mui-table[aria-busy="true"] {
-  border-style: dashed;
 }
 :where(.mui-data-table) > :is([data-data-empty], [data-data-loading]) { padding-block: .5rem; }
 @media print {
@@ -43,6 +64,10 @@
   :where(.mui-data-table) > .mui-data-table-scroll > .mui-table[data-data-sticky-header] > thead > tr > th { position: static; }
 }
 @media (forced-colors: active) {
+  :where(.mui-data-table) > .mui-data-table-scroll > .mui-table > thead > tr > th > [data-data-sort]:disabled {
+    opacity: 1;
+    color: GrayText;
+  }
   :where(.mui-data-table) > .mui-data-table-scroll > .mui-table > tbody > tr:has(> :is(th, td) > [data-data-check]:checked, > :is(th, td) > label > [data-data-check]:checked) > :is(th, td) {
     outline: 1px solid Highlight;
     outline-offset: -1px;
