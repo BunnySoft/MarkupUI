@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 63/96 scopes.** The other **33** are not yet accepted in this
+**Reviewed and integrated: 64/96 scopes.** The other **32** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -66,7 +66,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Calendar](../naive-ui/components/calendar.md) | ⚪ Pending | — |
 | [Card](../naive-ui/components/card.md) | 🟢 Fixed / 🟡 Remaining | [Native regions, theme scope and legacy boundary](components/card.md) |
 | [Carousel](../naive-ui/components/carousel.md) | ⚪ Pending | — |
-| [Cascader](../naive-ui/components/cascader.md) | 🟠 Reviewing | — |
+| [Cascader](../naive-ui/components/cascader.md) | 🟢 Fixed / 🟡 Remaining | [Native trigger density/theme roles with preserved paths/forms and popup-renderer limits](components/cascader.md) |
 | [Checkbox](../naive-ui/components/checkbox.md) | 🟢 Fixed / 🟡 Remaining | [Box/label metrics, theme accents and retained native skin](components/checkbox.md) |
 | [Code](../naive-ui/components/code.md) | 🟢 Fixed / 🟡 Remaining | [Plain typography, gutters and authored token limits](components/code.md) |
 | [Collapse Transition](../naive-ui/components/collapse-transition.md) | 🟢 Fixed / 🟡 Remaining | [Height/fade curves and native scheduling/geometry limits](components/collapse-transition.md) |
@@ -100,7 +100,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Image](../naive-ui/components/image.md) | 🟢 Fixed / 🟡 Remaining | [Preview fitting, chrome and native toolbar limits](components/image.md) |
 | [Infinite Scroll](../naive-ui/components/infinite-scroll.md) | ⚪ Pending | — |
 | [Input Number](../naive-ui/components/input-number.md) | 🟢 Fixed / 🟡 Remaining | [Field/stepper styling, bounded sizing and native numeric limits](components/input-number.md) |
-| [Input OTP](../naive-ui/components/input-otp.md) | ⚪ Pending | — |
+| [Input OTP](../naive-ui/components/input-otp.md) | 🟠 Reviewing | — |
 | [Input](../naive-ui/components/input.md) | 🟢 Fixed / 🟡 Remaining | [Native field geometry, theme states and textarea/icon limits](components/input.md) |
 | [Layout](../naive-ui/components/layout.md) | 🟢 Fixed / 🟡 Remaining | [Region palettes, author tokens and native scrolling limits](components/layout.md) |
 | [Legacy Grid](../naive-ui/components/legacy-grid.md) | ⚪ Pending | — |

@@ -299,6 +299,45 @@ fallback fields. No helper continues validating after disconnect.
 CSS alone owns columns, gaps, native sizes, text wrapping, RTL and focus/media presentation.
 No inline presentation/geometry styles, popup runtime or scrollbar dependency are added.
 
+### Default-style audit
+
+The [pinned rendered style audit](../style-audit/components/cascader.md) corrects the
+existing native controls, not their interaction model. Small/medium/large controls use
+**28/34/40px minimum heights**, **14/14/15px type**, 3px corners and 12px inline padding.
+Normal and disabled light/dark trigger text, surfaces and borders follow the actual
+reference InternalSelection roles. Dark's default border is **transparent**, not the
+generic dark border token. Labels stack above their original selects; columns still
+wrap, and native fieldset/legend/disclosure chrome remains.
+
+`data-mui-theme="light|dark"` selects the native control scheme. Print uses light role
+defaults and system-disabled text; forced colors retains Canvas/CanvasText/GrayText and
+native focus. This uses CSS `light-dark()`, as the native Select stylesheet does.
+There is no added animation, spinner, checkbox skin or operating-system option renderer.
+The empty first option remains ordinary native option text, not a synthetic placeholder.
+
+Author tokens inherit without being overwritten by component size/theme defaults:
+`--mui-cascader-gap`, `--mui-cascader-font-family`, `--mui-cascader-font-size`,
+`--mui-cascader-line-height`, `--mui-cascader-height`, `--mui-cascader-padding`,
+`--mui-cascader-radius`, `--mui-cascader-color`, `--mui-cascader-background`,
+`--mui-cascader-border-color`, `--mui-cascader-focus-color`,
+`--mui-cascader-disabled-color`, and `--mui-cascader-disabled-background`.
+Local font/hover tokens take precedence over shared `--mui-font-family`,
+`--mui-font-size-small|medium|large` and `--mui-color-primary-hover` fallbacks.
+Explicit colors also survive print; forced colors deliberately delegates to system paint.
+
+The source still has a single combined-path trigger and floating 180px columns with
+34px rows, checkboxes/arrows and a remote-loading icon. Native retains one real select
+per level, a separate plain path/status, an authored Clear button and the passive source
+outline. Neither those layouts nor native menu skins are pixel-equivalent.
+No shared Popover/Select/Tree stylesheet or controller change is required.
+
+Style handoff: **53 focused cases** (47 existing controller + 6 style regressions);
+56 measured trigger-role comparisons match in private Chromium. Isolated CSS is
+**3,293 bytes / 934 gzip** against the unchanged **1,250** ceiling; ESM/classic remain
+**8,832/8,970 gzip** against **10,000** each. These supersede only the historical
+Cascader CSS/combined-payload figures below: current combined ESM/classic + CSS are
+**9,766/9,904 gzip**. Full build and integration remain parent-owned.
+
 ## Four accepted steps and next reuse
 
 1. [x] Pinned API/controller/option/interface/utilities/public exports and live reference

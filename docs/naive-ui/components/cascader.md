@@ -45,6 +45,23 @@ selection renderer and virtualized submenus. Its option component loads by mutat
 The native target instead returns validated DOM batches, captures default paths independently
 of currently mounted option families, and gates incomplete native forms.
 
+### Rendered default-style follow-up
+
+The [component style report](../../style-audit/components/cascader.md) compares the pinned
+runtime's collapsed trigger, selected path, open branch columns, checks, disabled and
+remote-loading states in both themes against meaningful native dependent selects.
+Native trigger density, type, radius, normal/disabled paint and dark control scheme are
+corrected without changing the original controls, names, options, value/path or lifecycle.
+Author token precedence, dark print, forced colors and optional Select CSS order are
+covered separately from source renderer fidelity.
+
+**Bounded style result, not full visual equivalence:** the native first empty option,
+platform popup/arrow, in-flow labelled columns, source disclosure, separate readout/status
+and Clear button remain. Source floating panels, option/check/loading renderers and
+single combined-path trigger are not introduced. No shared CSS or runtime change is
+needed. This follow-up does not alter any inventory identity, order, count or adaptation
+below; full release integration remains parent-coordinated.
+
 **54 original API table rows + 15 original inline fields + 26 explicit source supplements
 = 95 tracker rows.** All **69 original section/member/kind/API-line identities** remain
 in their original order. `API:Lnn` is the precise pinned `[api]` URL below with `#Lnn`.
