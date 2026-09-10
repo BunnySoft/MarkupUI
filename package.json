@@ -10,6 +10,10 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./style.css": "./dist/markup-ui.css",
+    "./themes.css": "./dist/markup-ui-themes.css",
+    "./advanced/style.css": "./dist/markup-ui-advanced.css",
+    "./widgets/style.css": "./dist/markup-ui-widgets.css",
     "./marquee": {
       "types": "./dist/components/marquee/index.d.ts",
       "import": "./dist/markup-ui-marquee.js"

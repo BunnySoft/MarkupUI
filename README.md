@@ -368,6 +368,11 @@ pnpm test
 pnpm demo
 ```
 
+Legacy CSS and built-in palettes are maintained in CSS/JSON sources. `pnpm build`
+regenerates their checked-in compatibility adapters; do not hand-edit those generated files.
+See the [foundation and loading guide](docs/naive-ui/foundations.md) for source locations,
+external CSS/theme exports, native helper loading and retained legacy behavior.
+
 Open `http://localhost:4173`. The dependency-free documentation app provides searchable component
 navigation, live examples, source toggles, copy actions, an on-page outline, and complete coverage
 of every built-in and optional component.
@@ -376,11 +381,13 @@ of every built-in and optional component.
 
 The [migration plan](docs/naive-ui/migration-plan.md) organizes phases, tasks and status.
 The [Naive UI component index](docs/naive-ui/index.md) tracks component and property-level
-planning. Its [architecture proposal](docs/naive-ui/architecture.md) keeps
+planning. Its [architecture](docs/naive-ui/architecture.md) keeps
 MarkupUI dependency-free with separate HTML, JavaScript, and CSS. Proposed APIs in these
 documents are not implemented APIs or a claim of full Naive UI compatibility.
 
-Completed standalone components have separate usage and retained-scope records:
+All 96 catalog scopes have an explicit native implementation, composition or exclusion
+resolution; this is not full Naive UI API parity. The [component index](docs/naive-ui/index.md)
+links every property-level record. Example standalone usage records:
 [Avatar and Avatar Group](docs/components/avatar.md),
 [Button and Button Group](docs/components/button.md), and [Card](docs/components/card.md).
 

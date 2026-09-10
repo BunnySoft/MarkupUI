@@ -1,0 +1,18 @@
+
+mui-data-column{display:none}
+mui-data-grid{display:block;overflow:auto;border:1px solid var(--mui-border);border-radius:var(--mui-radius-md)}
+mui-data-grid table{width:100%;border-collapse:collapse;background:var(--mui-bg-surface);color:var(--mui-text-primary)}
+mui-data-grid th,mui-data-grid td{padding:9px 12px;border-bottom:1px solid var(--mui-border);text-align:left;white-space:nowrap}
+mui-data-grid th{background:var(--mui-bg-muted);font-size:.875em;font-weight:700}
+mui-data-grid th[sortable]{cursor:pointer;transition:color var(--mui-motion-fast) var(--mui-ease),background-color var(--mui-motion-fast) var(--mui-ease)}
+mui-data-grid th[sortable]:hover{background:var(--mui-bg-hover);color:var(--mui-color-primary)}
+mui-data-grid tbody tr{transition:background-color var(--mui-motion-fast) var(--mui-ease)}
+mui-data-grid tbody tr:hover{background:var(--mui-bg-muted)}
+mui-data-grid tbody tr:last-child td{border-bottom:0}
+mui-date-picker,mui-time-picker,mui-upload{display:inline-flex}
+mui-date-picker>input,mui-time-picker>input,mui-upload>input{min-height:var(--mui-control-height);padding:0 10px;border:1px solid var(--mui-border);border-radius:6px;background:var(--mui-bg-surface);color:var(--mui-text-primary);font:inherit;transition:border-color var(--mui-motion-fast) var(--mui-ease),box-shadow var(--mui-motion-fast) var(--mui-ease)}
+mui-date-picker>input:focus,mui-time-picker>input:focus,mui-upload>input:focus{outline:0;border-color:var(--mui-color-primary);box-shadow:0 0 0 3px var(--mui-focus-ring)}
+mui-virtual-list{display:block;overflow:auto;border:1px solid var(--mui-border);border-radius:var(--mui-radius-md)}
+mui-virtual-list>[data-mui-virtual-space]{position:relative;width:100%}
+mui-virtual-list [data-mui-virtual-item]{position:absolute;right:0;left:0;display:flex;align-items:center;padding:0 12px;border-bottom:1px solid var(--mui-border);background:var(--mui-bg-surface);transition:background-color var(--mui-motion-fast) var(--mui-ease)}
+mui-virtual-list [data-mui-virtual-item]:hover{background:var(--mui-bg-muted)}

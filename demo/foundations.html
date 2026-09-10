@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI stylesheet foundations</title>
+  <link rel="stylesheet" href="../dist/markup-ui.css">
+  <link rel="stylesheet" href="../dist/markup-ui-themes.css">
+  <link rel="stylesheet" href="./foundations.css">
+  <script defer src="./foundations.js"></script>
+</head>
+<body>
+  <main>
+    <h1>External CSS and compatible legacy behavior</h1>
+    <p>The two regions below use external preset CSS. No helper or legacy runtime is needed to apply their themes.</p>
+    <p>
+      <button type="button" id="theme-toggle">Toggle page theme</button>
+      <button type="button" id="load-legacy">Load legacy convenience entry</button>
+    </p>
+    <p id="status" role="status">Legacy entry not loaded.</p>
+    <div class="examples">
+      <section class="surface" data-mui-theme="light" id="light-scope">
+        <h2>Light scope</h2>
+        <label>Name <input value="Native input"></label>
+        <mui-card><mui-text>Styled card before registration</mui-text></mui-card>
+      </section>
+      <section class="surface" data-mui-theme="dark" id="dark-scope">
+        <h2>Dark scope</h2>
+        <label>Name <input value="Native input"></label>
+        <mui-card><mui-text>External CSS with inherited tokens</mui-text></mui-card>
+        <section class="surface nested" data-mui-theme="light" id="nested-scope">
+          <h3>Explicit nested light scope</h3>
+          <p>Only this subtree changes its token values.</p>
+        </section>
+      </section>
+    </div>
+    <p>Ordinary HTML remains usable without JavaScript. Custom-tag behavior starts only when its JavaScript is loaded.</p>
+  </main>
+</body>
+</html>

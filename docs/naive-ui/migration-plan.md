@@ -1,6 +1,12 @@
 # MarkupUI migration plan
 
-**Plan state: 🟠 In progress overall — P1 pilots, P2, P3, P4 and P5 are Verified for declared retained
+**Plan state: 🟢 Complete for the declared native migration scope.**
+The [foundation record](foundations.md) supersedes historical P0 pending statements below.
+Legacy CSS and preset sources are separated, generated adapters preserve compatibility,
+and actual loading/ownership/form/payload/capability contracts are recorded and verified.
+All 96 catalog scopes, 384 component tasks and P0-01 through P0-09 have accepted outcomes.
+
+**Catalog acceptance summary:** P1 pilots, P2, P3, P4 and P5 are Verified for declared retained
 native scopes and explicit omissions. All 31 P2-assigned pages and all 22 P3-assigned pages
 have closed property dispositions and four accepted tasks. P3 includes Discrete API's
 verified no-new-runtime composition resolution. P4 retained native scopes are now reconciled
@@ -35,8 +41,8 @@ Space CSS: 15 rows, six native replacements/nine omissions, four resolution task
 Legacy Transfer also resolves through the existing native helper: 29 rows, 15 native
 replacements/14 omissions and four accepted tasks. All 96 catalog scopes now have
 accepted resolutions and 384/384 component tasks are accepted, not all Naive UI
-features implemented or all project work done. Broader P0 foundations and full
-framework/viewer parity remain incomplete.** Existing MarkupUI features are a partial baseline,
+features implemented. Full framework/viewer parity is deliberately outside retained scope.
+Foundation sign-off is recorded separately below. Existing MarkupUI features are a partial baseline,
 not automatically completed migration tasks. This roadmap targets useful Naive UI behaviors with a native,
 dependency-free design; it does not promise framework API compatibility.
 
@@ -62,7 +68,7 @@ coverage, implementation status, and upstream feature parity separate.
 
 | Phase | Status | Goal | Prerequisite | Exit gate |
 | --- | --- | --- | --- | --- |
-| P0 — Architecture and contracts | 🟠 In progress; all three P0 catalog routes Verified | Establish separated sources, compatible loading, lifecycle, events and native-control conventions. | None | Config Provider/Element/Global Style: 148 rows and 12/12 tasks resolved; broader P0-01–P0-09 architecture/legacy gates remain open. Related Discrete stays P3. |
+| P0 — Architecture and contracts | 🟢 Verified retained scope | Separated CSS/preset sources and actual loading, ownership, native forms and capability contracts. | None | [Foundation record](foundations.md); exact CSS/palette compatibility, 3,372 passing tests, browser/source review and full catalog/export/link audit. |
 | P1 — Pilot components | 🟢 Verified | Avatar, Button and Card retained pilot scopes completed. | Relevant P0 contracts | Individual records plus combined ESM/legacy composition evidence below. |
 | P2 — Primitives and layout | 🟢 Verified retained scope | All 31 P2-assigned pages reconciled; native Image/fallback/dialog scope accepted with advanced P6 exclusions. | P1 pattern | Full 96-route and P2 reference audit found no retained unresolved P2 rows. This is not global P3/P6 or framework parity. |
 | P3 — Interaction foundations | 🟢 Verified retained scope | All 22 P3-assigned pages, 1,086 API rows and 88 page tasks reconciled; Discrete resolves through existing native owners without a new runtime. | Relevant native ownership/focus contracts; P1 controls | Final audit found zero Planned P3 routes and zero unresolved retained rows; no framework parity or P0/P4+ completion implied. |
@@ -79,15 +85,15 @@ enhanced version is approved.
 
 | Task | Status | Action | Deliverable |
 | --- | --- | --- | --- |
-| P0-01 | 🔵 Planned | Extract authored styles from core and plugin TypeScript into CSS files. | One maintained CSS source per component and shared token layer. |
-| P0-02 | 🔵 Planned | Design external-CSS classic-script and ES-module entries; preserve the current auto-registering, style-installing entry. | Explicit export/loading map and compatibility example; no speculative path presented as already available. |
-| P0-03 | 🔵 Planned | Define adoption of authored native children and generated fallback anatomy. | Rules for child ownership, late children, pre-upgrade properties, reconnection and listener disposal. |
-| P0-04 | 🔵 Planned | Specify attribute parsing/reflection, current/default values and event payloads. | Native-style silent property assignment and documented user-change events without duplicate native/custom handling. |
-| P0-05 | 🔵 Planned | Define native form integration and validation boundaries. | Named controls, labels, fieldset disabling, reset and validity; no duplicate submission. |
-| P0-06 | 🟠 In progress; native configuration/body CSS accepted | Separate external theme CSS from optional programmatic token updates. | [Config Provider](../components/config-provider.md) and [Global Style](../components/global-style.md) verify scoped/document CSS and preserve legacy inline calls; not wholesale palette extraction or all-component theme parity. |
-| P0-07 | 🔵 Planned | Record bundle boundaries and combined JS+CSS accounting. | Existing ceilings preserved; new optional entry budgets proposed separately. |
-| P0-08 | 🔵 Planned | Reconcile each component's retained, simplified, deferred and omitted API items. | A named disposition for every inventoried public API item, including companion and inherited surfaces. |
-| P0-09 | 🔵 Planned | Select native browser primitives and document support/fallback decisions before writing equivalent custom code. | Per-component choices for Custom Elements, templates, native controls, dialog/popover, CSS and observers; no generic template engine or polyfill dependencies. |
+| P0-01 | 🟢 Verified | Canonical core/plugin CSS and generated compatibility adapters. | Exact legacy runtime stylesheet hashes retained; [source map](foundations.md#authoring-sources-and-generated-compatibility-adapters). |
+| P0-02 | 🟢 Verified | Actual external-CSS helper/element entries and preserved legacy convenience entry. | [Loading contracts](foundations.md#choose-a-loading-mode-deliberately); no fictitious CSP-safe aggregate. |
+| P0-03 | 🟢 Verified | Native adoption, templates and lifetime contracts per retained component. | Component records and demos; original legacy wrapper behavior explicitly retained. |
+| P0-04 | 🟢 Verified | Per-component parsing, current/default and event contracts. | Native setters and platform events distinguished; no invented universal payload. |
+| P0-05 | 🟢 Verified | Native form/fieldset/reset/validity and explicit custom validation/serialization boundaries. | [Data and form contract](foundations.md#native-data-forms-and-ownership) and component evidence. |
+| P0-06 | 🟢 Verified | Canonical built-in palette data generates external presets and legacy adapters. | Identical 31-token light/dark maps; [native stylesheet themes](foundations.md#native-stylesheet-themes). |
+| P0-07 | 🟢 Verified | Per-asset budgets and actual component JS+CSS payload totals. | `manifest.componentPayloads`; no runtime records for CSS-only/recipe-only scopes; old ceilings unchanged. |
+| P0-08 | 🟢 Verified | All retained/omitted API dispositions reconciled. | 96 scopes, 384 tasks, 4,058 rows: 2,111 native mappings and 1,947 omissions. |
+| P0-09 | 🟢 Verified | Native capability/fallback/ownership choices and measured evidence per component. | Chromium evidence and explicit unverified-platform limits; no runtime polyfill stack. |
 
 Do not build a new framework during P0. Introduce shared helpers only with a concrete pilot
 consumer. P0-08 can continue alongside later phases; unresolved optional scope must not be
@@ -205,17 +211,17 @@ excluded from delivery scope but never counted as implemented.
 
 ## Task completion checklist
 
-- [ ] Retained API items have unambiguous names, shapes, defaults and live-update rules.
-- [ ] HTML, JS and CSS responsibilities are separately implemented and documented.
-- [ ] Native browser features replace custom machinery where practical; templates are used
+- [x] Retained API items have unambiguous names, shapes, defaults and live-update rules.
+- [x] HTML, JS and CSS responsibilities are separately implemented and documented.
+- [x] Native browser features replace custom machinery where practical; templates are used
   where useful without introducing a renderer or reactive framework.
-- [ ] Existing supported behavior has a compatibility path.
-- [ ] Native semantics, content ownership and lifecycle behavior are preserved.
-- [ ] Relevant asynchronous, keyboard, focus, form and failure cases have evidence.
-- [ ] Runtime dependencies remain zero, including optional modules.
-- [ ] Default imports remain isolated from optional features.
-- [ ] Combined JS+CSS sizes and existing bundle ceilings are respected.
-- [ ] Component, property and phase records agree on actual progress.
+- [x] Existing supported behavior has a compatibility path.
+- [x] Native semantics, content ownership and lifecycle behavior are preserved.
+- [x] Relevant asynchronous, keyboard, focus, form and failure cases have evidence.
+- [x] Runtime dependencies remain zero, including optional modules.
+- [x] Default imports remain isolated from optional features.
+- [x] Combined JS+CSS sizes and existing bundle ceilings are respected.
+- [x] Component, property and phase records agree on actual progress.
 
 ## Current migration position
 
@@ -227,8 +233,9 @@ Equation, QR Code, Legacy Grid and Legacy Transfer add sixteen accepted native-
 alternative/replacement tasks without new library runtimes or typesetter/encoder/
 deprecated-constructor parity. **96 scopes resolved / 384 component-resolution tasks
 accepted; zero unchecked catalog tasks.** No catalog component remains to start.
-Broad P0 follow-through is parent-owned and remains pending/partial. P0 component-route acceptance
-does not close broader foundation tasks or imply full upstream/framework compatibility.
+Broad P0 follow-through now has concrete source changes and a verified
+[acceptance record](foundations.md); code, test, browser and inventory reviews are complete.
+Neither catalog nor foundation acceptance implies full upstream/framework compatibility.
 
 The following component records form a historical execution sequence. Earlier “next” or
 phase-incomplete checkpoint statements are superseded by the current dashboard and latest
@@ -2002,7 +2009,10 @@ native acceptance, not injected locale/theme/provider or rendering compatibility
 All **550 scoped documentation file links** and **125 four-route canonical/reference
 file links** resolve; the three previously accepted reference inventories are unchanged.
 
-### Outstanding foundation task IDs and compatibility exceptions
+### Historical foundation checkpoint and compatibility exceptions
+
+This table records the earlier Global Style checkpoint. Its pending items are now
+superseded by the verified P0 task table and [foundation follow-through](foundations.md).
 
 The P0 task table above remains authoritative and **none of its broad task IDs is
 promoted to Verified by this component audit**:
@@ -2700,15 +2710,15 @@ advanced parity or the whole task completed.** Explicit omissions remain omissio
 native recipes that reuse existing capabilities do not create new compatibility APIs.
 Earlier component acceptance counts/next-route recommendations remain historical snapshots.
 
-### Unresolved parent-owned foundation work
+### Foundation follow-through superseding the catalog checkpoint
 
-P0-01–P0-09 and the broader shared task checklist are **not** part of the 384 component
-tasks. Their existing rows remain untouched: P0-01–05/P0-07–09 Planned, P0-06 In progress.
-The component evidence does not automatically promote them. Remaining follow-through
-includes legacy authored CSS extraction, aggregate external-CSS/auto-install compatibility,
-inline-theme exceptions, cross-component ownership/value/event/form contracts and
-packaging/inventory/native-capability policy reconciliation.
+P0-01–P0-09 are separate from the 384 component tasks. They now have their own concrete
+[source/loading/data/payload acceptance record](foundations.md), rather than being promoted
+automatically from component completion. The code extracts legacy authored CSS and built-in
+palette data, generates compatibility adapters and external stylesheets, and accounts for
+combined native component payloads. Final validation and source review are recorded there.
 
-The three P0 catalog routes and related P3 Discrete resolution remain accepted only
-for their declared scopes. No foundation source or task is edited, no further catalog
-component is started, and the parent retains prioritization/sign-off of that remaining work.
+Legacy auto-registration/style installation and inline theme APIs are deliberately retained
+compatibility modes, not unresolved promises to silently break old consumers. Their
+strict-CSP alternatives and limitations are explicit. Historical pending/next-component
+statements above are commit-time snapshots, superseded by the current phase table.

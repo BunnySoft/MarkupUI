@@ -4,11 +4,13 @@ import { copyFile, readFile, rm, writeFile } from "node:fs/promises"
 import { resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { build } from "esbuild"
+import { emitLegacyStylesheets, generateLegacyStyleModules } from "./legacy-styles.mjs"
 
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)))
 const dist = resolve(root, "dist")
 const tsc = resolve(root, "node_modules", "typescript", "bin", "tsc")
 
+await generateLegacyStyleModules(root)
 await rm(dist, { force: true, recursive: true })
 execFileSync(process.execPath, [tsc, "-p", resolve(root, "tsconfig.json")], {
   cwd: root,
@@ -160,8 +162,14 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
   } else await copyFile(source, output)
 }))
 
+await emitLegacyStylesheets(root, dist)
+
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui.css": 6_000,
+  "markup-ui-advanced.css": 1_000,
+  "markup-ui-widgets.css": 1_500,
+  "markup-ui-themes.css": 1_500,
   "markup-ui-marquee.js": 6_000,
   "markup-ui-marquee.global.js": 6_000,
   "markup-ui-marquee.css": 1_000,
@@ -400,11 +408,29 @@ for (const [name, budget] of Object.entries(bundleBudgets)) {
   }
 }
 
+const componentPayloads = {}
+for (const name of [...components, ...styleOnlyComponents]) {
+  const css = `markup-ui-${name}.css`
+  const payload = { css, cssGzipBytes: bundles[css].gzipBytes }
+  if (components.includes(name)) {
+    for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
+      const file = `markup-ui-${name}${suffix}`
+      payload[mode] = {
+        file,
+        gzipBytes: bundles[file].gzipBytes,
+        totalGzipBytes: bundles[file].gzipBytes + bundles[css].gzipBytes,
+      }
+    }
+  }
+  componentPayloads[name] = payload
+}
+
 await writeFile(
   resolve(dist, "manifest.json"),
   `${JSON.stringify({
     name: packageJson.name,
     version: packageJson.version,
     bundles,
+    componentPayloads,
   }, null, 2)}\n`,
 )

@@ -3,8 +3,14 @@
 This is a **native-scope migration inventory, not a shipped compatibility layer**.
 **96 catalog scopes now have accepted resolutions; 384/384 component-resolution
 tasks are accepted.** Native adaptations and explicit exclusions remain distinct.
-This is not all Naive UI features implemented or the whole repository task completed:
-broad P0-01–P0-09 foundations remain pending/partial.
+This is not all Naive UI features implemented. The separate
+[foundation follow-through](foundations.md) now provides canonical CSS/preset sources,
+generated compatibility adapters and actual loading/data/payload contracts.
+Its final source, test, browser and inventory audits are complete.
+
+**Reading the historical evidence:** component acceptance narratives below preserve the
+state at their original commits. Earlier “next”, size or P0-pending statements are historical;
+the current phase table, final inventory snapshot and foundation record take precedence.
 Explicitly Verified retained targets, currently Avatar/Avatar Group in `9afc818`,
 Button/ButtonGroup in `43dd57f`, Card in `cebc6d7`, Tag in `6605d29`, Badge in
 `69c9480`, Alert in `2a1eb42`, Empty in `27a435b`, Skeleton in `05c6546`, Spin in `6c7f35b`, Progress in `8d7757c`, Statistic in `1ed3a98`, Typography in `53d3974`, Icon in `829970d`, Gradient Text in `38dcf6f`, Ellipsis in `5fabe7f`, Page Header in `5f9faf3`, Divider in `2e1a6c0`, Flex in `720a92c`, Space in `d495a12`, and Grid's, Layout's, List's, Descriptions', Timeline's, Breadcrumb's, Thing's, Table's, Highlight's, Affix's, Result's, Code's, Scrollbar's, Float Button's and Image's linked retained records have implementation and acceptance evidence; the remaining
@@ -3047,7 +3053,7 @@ such rows or adopting exact callback return/default semantics.
 | Supplementary named declarations | 1,536: 370 inline fields, 200 type/helper/exclusion entries (including five Table public helper groups, Virtual List/Tree named ScrollTo types, UploadInst/UploadSettledFileInfo, CountdownTimeInfo/CountdownInst, NumberAnimationInst, four Heatmap public type groups, two Equation type/export groups, one QR Code type/export group and three each Legacy Grid/Legacy Transfer type/export groups) and 966 explicit component/grouped Typography/Icon/Gradient Text/Ellipsis/Page Header/Divider/Flex/Space/Grid/List/Descriptions/Timeline/Breadcrumb/Thing/Table/Affix/Result/Code/Scrollbar/Float Button/Image/Popover/Tooltip/Popconfirm/Dropdown/Menu/Tabs/Collapse/Anchor/Back Top/Pagination/Steps/Loading Bar/Dialog/Modal/Drawer/Message/Notification/Collapse Transition/Discrete/Input/Checkbox/Radio/Switch/Select/Input Number/Slider/Rate/Form/Auto Complete/Input OTP/Dynamic Input/Dynamic Tags/Mention/Color Picker/Date Picker/Time Picker/Virtual List/Tree/Cascader/Tree Select/Transfer/Data Table/Log/Infinite Scroll/Popselect/Split/Config Provider/Element/Global Style/Carousel/Watermark/Upload/Calendar/Time/Countdown/Number Animation/Heatmap/Marquee/Equation/QR Code/Legacy Grid/Legacy Transfer source supplements |
 | Explicit inherited tracker rows | 302, including six source-inherited DialogReactive options, three ModalReactive fields, two NotificationReactive fields and three each Element/Carousel/Watermark/Upload/Calendar/Heatmap/Marquee/QR Code/Legacy Transfer theme props |
 | Total tracker rows | 4,058; a resolved inventory denominator, **not** a count of implemented features |
-| Component execution checklists | All 96 four-task checklists accepted: 384/384 (368 retained-scope tasks plus sixteen alternative/replacement tasks); zero unchecked catalog tasks. P0 foundations remain separately pending/partial |
+| Component execution checklists | All 96 four-task checklists accepted: 384/384 (368 retained-scope tasks plus sixteen alternative/replacement tasks); zero unchecked catalog tasks. P0-01–P0-09 have a separate verified foundation record |
 | Native implementation recipes | 96 explicit native paths, each with a small-enhancement boundary and usable fallback/scope reduction |
 | Phase consistency | Every index assignment matches its component's P0–P6 or deferred/exclusion delivery scope |
 | Status presentation | All 4,058 rows retain canonical text with emoji color: 2,111 Verified native capabilities and 1,947 intentional omissions; no Not reviewed or Planned row remains. Legacy Transfer maps 15 replacements/14 omissions without deprecated constructor/renderer parity; modern Transfer and other retained scopes stay unchanged |

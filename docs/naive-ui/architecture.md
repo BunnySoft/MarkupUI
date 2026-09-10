@@ -1,6 +1,8 @@
 # MarkupUI component migration architecture
 
-**Status: proposal, not an implemented API.** This plan uses Naive UI as a feature and
+**Status: retained native architecture delivered; illustrative layouts remain proposals.**
+The [foundation acceptance record](foundations.md) identifies actual source files, exports
+and retained legacy compatibility boundaries. This architecture uses Naive UI as a feature and
 interaction reference, not as a framework, dependency, source-code transplant, or promise of
 one-to-one compatibility. Start with the [component index](index.md) for individual trackers.
 
@@ -10,10 +12,10 @@ MarkupUI baseline: commit `5dcb190`, package version 0.11.0. Research date: 2026
 Upstream documentation and implementation observations are separate evidence; undocumented
 internals are not public contracts.
 
-The [master migration plan](migration-plan.md) records later implementations and commits.
-Avatar, Button and Card now have standalone external-CSS entries; their accepted component
-records take precedence over prospective examples here. The baseline table below describes
-the unchanged legacy aggregate, not the complete current set of optional components.
+The [master migration plan](migration-plan.md) records implementations and commits for all
+96 catalog resolutions. Their accepted component records take precedence over prospective
+examples here. Legacy runtime behavior remains compatible; its CSS and built-in palette
+authoring sources are now separated as recorded below.
 
 ## 1. Non-negotiable constraints
 
@@ -60,24 +62,27 @@ capabilities and choose a small, usable fallback or reduce the feature scope. Do
 polyfill dependencies to imitate every browser feature. Native support can remove code, but
 does not by itself prove complete accessibility or upstream feature parity.
 
-## 2. What exists and what must change
+## 2. Delivered sources and compatibility boundaries
 
-The source already uses native custom elements and has no runtime package dependencies. That
-is a useful base, not evidence of complete separation or Naive UI parity.
+There are no runtime package dependencies. Native helpers, native Custom Elements and
+CSS-only compositions have distinct documented loading and ownership contracts; component
+registration alone is not evidence of feature parity.
 
 | Current evidence | Consequence for the plan |
 | --- | --- |
 | [Element registry](../../src/components/elements.ts) contains native controllers alongside styling-only element classes. | Classify each feature individually; registration is not implementation completeness. |
-| [Core styles](../../src/components/styles.ts) and both [advanced](../../src/plugins/advanced.ts) and [widgets](../../src/plugins/widgets.ts) modules contain CSS in TypeScript. | Extract authored CSS into separate source files before substantial catalog expansion. |
-| [Default entry](../../src/index.ts) automatically installs styles and registers all core elements. | Keep this convenience entry compatible; design separate explicit-registration and external-CSS entries rather than silently changing it. |
-| [Form controls](../../src/components/forms.ts) often generate or replace native children on connection. | Add an authored-native-child enhancement path; do not destroy author markup, labels, event listeners, or pre-upgrade values. |
+| [Core CSS](../../src/components/styles.css), [advanced CSS](../../src/plugins/advanced.css) and [widgets CSS](../../src/plugins/widgets.css) are maintained separately. | Generated TypeScript adapters preserve the old installers with byte-identical runtime CSS; they are not handwritten CSS sources. |
+| [Default entry](../../src/index.ts) still installs styles and registers core elements. | Deliberately retained compatibility mode; native optional entries and stylesheet exports provide the separated path. |
+| [Legacy form controls](../../src/components/forms.ts) retain their original behavior. | [Native Input](../components/input.md) and other optional control helpers adopt authored fields explicitly; legacy wrappers are not silently upgraded. |
 | [Content components](../../src/components/content.ts) include minimal avatar, progress, and button behavior. | Record supported slices rather than treating matching component names as parity. |
 | [Overlay controllers](../../src/components/overlays.ts) already use native dialog and a local floating-position helper. | Reuse and harden these concepts; test lifecycle, nesting, focus, scroll, and clipping before sharing them across more controls. |
-| [Theme API](../../src/theme/index.ts) stores global registrations and writes CSS properties inline. | Keep existing calls compatible, but provide stylesheet-based themes and explicit per-root configuration for the separated path. |
+| [Theme API](../../src/theme/index.ts) retains its inline/persistence behavior; [preset data](../../src/theme/presets.json) generates both its adapter and external theme CSS. | Use the attribute-scoped external presets and native configuration path when inline writes or persistence are unwanted. |
 | [Build script](../../scripts/build.mjs) enforces compressed JavaScript budgets. | Do not relax limits merely to fit more components; account separately for extracted CSS and total loaded assets. |
 | [Native tests](../../tests/native.test.ts) cover representative behaviors. | A passing existing test does not verify all properties, keyboard paths, or browser interactions of a component. |
 
-This documentation change does not perform these refactors.
+The [foundation record](foundations.md) documents the source-generation step, exact
+compatibility hashes, loading modes and native browser evidence. Historical per-component
+byte figures remain snapshots from their original commits.
 
 ## 3. HTML, CSS, and JavaScript responsibilities
 
