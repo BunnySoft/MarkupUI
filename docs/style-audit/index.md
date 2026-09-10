@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 14/96 scopes.** The other **82** are not yet accepted in this
+**Reviewed and integrated: 16/96 scopes.** The other **80** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -85,7 +85,7 @@ rendered evidence and acceptance report.
 | [Ellipsis](../naive-ui/components/ellipsis.md) | ⚪ Pending | — |
 | [Empty](../naive-ui/components/empty.md) | 🟢 Fixed / 🟡 Remaining | [Content spacing, muted roles and original illustration](components/empty.md) |
 | [Equation](../naive-ui/components/equation.md) | ⚪ Pending | — |
-| [Flex](../naive-ui/components/flex.md) | 🟠 Reviewing | — |
+| [Flex](../naive-ui/components/flex.md) | 🟢 Matched / 🟡 Remaining | [Default layout matches; intrinsic sizing and RTL boundaries](components/flex.md) |
 | [Float Button](../naive-ui/components/float-button.md) | ⚪ Pending | — |
 | [Form](../naive-ui/components/form.md) | ⚪ Pending | — |
 | [Global Style](../naive-ui/components/global-style.md) | 🟢 Fixed / 🟡 Remaining | [Body defaults and opt-in shared-preset boundaries](components/global-style.md) |
@@ -117,11 +117,11 @@ rendered evidence and acceptance report.
 | [Popconfirm](../naive-ui/components/popconfirm.md) | ⚪ Pending | — |
 | [Popover](../naive-ui/components/popover.md) | ⚪ Pending | — |
 | [Popselect](../naive-ui/components/popselect.md) | ⚪ Pending | — |
-| [Progress](../naive-ui/components/progress.md) | ⚪ Pending | — |
+| [Progress](../naive-ui/components/progress.md) | 🟠 Reviewing | — |
 | [QR Code](../naive-ui/components/qr-code.md) | ⚪ Pending | — |
 | [Radio](../naive-ui/components/radio.md) | ⚪ Pending | — |
 | [Rate](../naive-ui/components/rate.md) | ⚪ Pending | — |
-| [Result](../naive-ui/components/result.md) | 🟠 Reviewing | — |
+| [Result](../naive-ui/components/result.md) | 🟢 Fixed / 🟡 Remaining | [Region spacing, title roles and authored artwork limits](components/result.md) |
 | [Scrollbar](../naive-ui/components/scrollbar.md) | ⚪ Pending | — |
 | [Select](../naive-ui/components/select.md) | ⚪ Pending | — |
 | [Skeleton](../naive-ui/components/skeleton.md) | 🟢 Fixed / 🟡 Remaining | [Animated endpoints and retained shape/repeat limits](components/skeleton.md) |
@@ -135,7 +135,7 @@ rendered evidence and acceptance report.
 | [Table](../naive-ui/components/table.md) | ⚪ Pending | — |
 | [Tabs](../naive-ui/components/tabs.md) | ⚪ Pending | — |
 | [Tag](../naive-ui/components/tag.md) | 🟢 Fixed / 🟡 Remaining | [Sizing, palettes, close states and native limits](components/tag.md) |
-| [Thing](../naive-ui/components/thing.md) | ⚪ Pending | — |
+| [Thing](../naive-ui/components/thing.md) | 🟠 Reviewing | — |
 | [Time Picker](../naive-ui/components/time-picker.md) | ⚪ Pending | — |
 | [Time](../naive-ui/components/time.md) | ⚪ Pending | — |
 | [Timeline](../naive-ui/components/timeline.md) | ⚪ Pending | — |
