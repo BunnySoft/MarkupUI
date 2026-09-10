@@ -18,6 +18,18 @@ It is copied unchanged by the existing build, not maintained in a second CSS str
 This stylesheet is **not imported by the core, plugins or any component**. Existing
 loading defaults and compatibility entrypoints are unchanged.
 
+## Default-style audit — 2026-09-10
+
+The [isolated light/dark audit](../style-audit/components/global-style.md) now matches
+Naive's body foreground/background without shared tokens: `#333639`/`#fff` in light,
+`rgb(255 255 255 / .82)`/`#101014` in dark. Typography was already corrected by Avatar
+and is unchanged here. Shared preset colors remain compatible, not silently migrated.
+Two body-only override tokens allow reference body colors alongside those presets.
+Source CSS is **899 raw / 435 gzip bytes**, below the unchanged **500-byte ceiling**.
+The coordinated build and all **15 Global Style tests** pass, including distribution
+byte identity and the manifest budget. The older delivery and catalog acceptance below
+is historical evidence.
+
 ## Exactly what the stylesheet does
 
 Every selector is zero-specificity **`:where(html)` or `:where(body)`**:
@@ -29,13 +41,14 @@ Every selector is zero-specificity **`:where(html)` or `:where(body)`**:
 | body font family | `--mui-font-family`, falling back to the Naive UI `v-sans`, system/UI and emoji family stack (no font download) |
 | body font size | `var(--mui-font-size, 14px)` |
 | body line height | `var(--mui-line-height, 1.6)` |
-| body text | `var(--mui-text-primary, CanvasText)` |
-| body background | `var(--mui-bg-page, Canvas)` |
+| body text | `--mui-global-style-color`, then `--mui-text-primary`, then `light-dark(#333639, rgb(255 255 255 / .82))` |
+| body background | `--mui-global-style-background-color`, then `--mui-bg-page`, then `light-dark(#fff, #101014)` |
 | forced colors | body uses native `CanvasText`/`Canvas` |
 | print | html permits light colors; body uses native `CanvasText`/`Canvas` |
 
 No custom property is defined by this asset. It consumes existing supported `--mui-*`
-tokens and otherwise uses reference typography and browser/system colors: **no second full theme palette**,
+typography/shared color tokens and two optional body-only color overrides. Otherwise it
+uses reference typography/colors, with system colors for forced colors/print: **no second full theme palette**,
 font download or external runtime dependency.
 
 The [Avatar default-style audit](../style-audit/components/avatar.md) verifies the 14px/1.6
@@ -65,10 +78,28 @@ states and local presentation.
 
 Authors can use the native `color-scheme` property on html to choose `light`, `dark`,
 `normal`, or their own policy. With no author override, the linked asset permits
-light/dark system selection. Its native fallbacks followed Chromium's light white/black
-and dark dark-canvas/white choices. Supplying fixed color tokens does **not** make those
+light/dark system selection. Reference color fallbacks use CSS `light-dark()` and require
+browser support for that function; `normal` chooses its light branch. Supplying fixed color tokens does **not** make those
 tokens automatically respond to OS preference; choose readable combinations explicitly.
 `lang` remains a language hint, not translation or OS picker localization.
+
+For reference body colors while retaining existing shared presets:
+
+```css
+html {
+  /* Or author light/dark explicitly to follow the application's theme selection. */
+  color-scheme: light dark;
+  --mui-global-style-color: light-dark(#333639, rgb(255 255 255 / .82));
+  --mui-global-style-background-color: light-dark(#fff, #101014);
+}
+```
+
+These two overrides are consumed only by this stylesheet's body rule. They do not
+redefine `--mui-text-primary` or `--mui-bg-page` for components. Normal descendants still
+inherit body text color, as expected. Existing shared color tokens retain precedence
+over the fallback when no body-specific override is supplied. Naive chooses light
+unless a dark provider is explicitly selected; this CSS deliberately retains its
+existing native system-scheme policy instead of adding a provider/theme watcher.
 
 ### Cascade, disable/removal and author ownership
 
@@ -132,7 +163,7 @@ adds **16 explicitly source-derived effect/lifecycle/export rows**, not invented
 
 | Source behavior | Retained / omitted resolution |
 | --- | --- |
-| body fontFamily/fontSize/lineHeight/color/backgroundColor/margin | 🟢 External CSS defaults and explicit supported tokens; not the upstream common-theme object values |
+| body fontFamily/fontSize/lineHeight/color/backgroundColor/margin | 🟢 External CSS defaults and explicit supported tokens; reference values without shared color overrides, no runtime theme object |
 | onUnmounted cleanup intent | 🟢 Native link disable/removal restores the cascade; no callback or inline restoration manager |
 | body padding reset | ⏭️ No padding reset; author it if needed |
 | text-size adjustment/tap-highlight suppression | ⏭️ Preserve browser behavior |
@@ -146,7 +177,7 @@ wrote. This implementation deliberately uses native stylesheet lifetime instead 
 copying that inline ownership contract. Its SSR test establishes non-throwing framework
 rendering, not a native CSS API or complete SSR style output; neither is inferred here.
 
-## Four tasks and acceptance — 2026-09-10
+## Original delivery acceptance — 2026-09-10 (historical)
 
 1. [x] Create one maintained, bounded opt-in document stylesheet; keep component CSS and legacy extraction separate.
 2. [x] Add CSS-only package/build delivery and measured budget without altering old entrypoints.
@@ -183,13 +214,14 @@ rendering, not a native CSS API or complete SSR style output; neither is inferre
   while local Card tokens remained independent. Legacy inline writes were not used
   in the strict-CSP run.
 
-### Asset accounting
+### Original delivery asset accounting (historical)
 
-Published CSS: **661 raw / 310 gzip bytes**, with a **500 gzip-byte ceiling**.
+At original delivery, published CSS was **661 raw / 310 gzip bytes**, with a **500 gzip-byte ceiling**.
 There is no JS/global/registration bundle or JS budget for Global Style.
-Core/advanced/widgets stay **14,611/2,181/2,779 gzip bytes** under
+The original core/advanced/widgets measured **14,611/2,181/2,779 gzip bytes** under
 **15,000/3,000/4,000**. All previous helper assets, exports and budgets are unchanged;
-the package adds only the explicit stylesheet export.
+the package added only the explicit stylesheet export. These are not current integrated
+build measurements; see the new audit above for current source-only accounting.
 
 The full example is accounted separately from the published component:
 

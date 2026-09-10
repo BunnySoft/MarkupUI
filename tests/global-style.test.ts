@@ -75,8 +75,10 @@ describe("Explicit external Global Style", () => {
     expect(new Set(selectors)).toEqual(new Set([":where(html)", ":where(body)"]))
     expect(source).not.toMatch(/!important|@import|url\(|box-sizing|appearance|overflow|padding|text-size-adjust|tap-highlight|outline|transition|animation/)
   })
-  it("uses existing tokens and system-color fallbacks without defining another palette", () => {
+  it("uses body-only overrides, existing tokens and reference fallback colors without defining a palette", () => {
     for (const token of ["--mui-font-family", "--mui-font-size", "--mui-line-height", "--mui-text-primary", "--mui-bg-page"]) expect(source).toContain(`var(${token},`)
+    expect(source).toContain("color: var(--mui-global-style-color, var(--mui-text-primary, light-dark(#333639, rgb(255 255 255 / .82))))")
+    expect(source).toContain("background-color: var(--mui-global-style-background-color, var(--mui-bg-page, light-dark(#fff, #101014)))")
     expect(source).not.toMatch(/--mui-[\w-]+\s*:/)
     expect(source).toContain("color-scheme: light dark")
     expect(source).toContain("@media (forced-colors: active)")
@@ -84,6 +86,21 @@ describe("Explicit external Global Style", () => {
     expect(source).toContain("color-scheme: light")
     expect(source).toContain("color: CanvasText")
     expect(source).toContain("background-color: Canvas")
+  })
+  it("keeps source CSS within its strict budget before integrated distribution rebuild", () => {
+    expect(gzipSync(source, { level: 9 }).length).toBeLessThanOrEqual(500)
+  })
+  it("reserves native system colors for forced colors and print, after theme defaults", () => {
+    const style = install()
+    const rules = [...style.sheet!.cssRules]
+    for (const condition of ["(forced-colors: active)", "print"]) {
+      const media = rules.find(rule => "conditionText" in rule && rule.conditionText === condition) as CSSMediaRule
+      expect(media).toBeDefined()
+      const body = [...media.cssRules].find(rule => "selectorText" in rule && rule.selectorText === ":where(body)") as CSSStyleRule
+      expect(body.style.color).toBe("CanvasText")
+      expect(body.style.getPropertyValue("background-color")).toBe("Canvas")
+      expect(rules.indexOf(media)).toBeGreaterThan(rules.findIndex(rule => "selectorText" in rule && rule.selectorText === ":where(body)"))
+    }
   })
   it("uses the verified reference typography without changing native control or author ownership", () => {
     const legacy = readFileSync(resolve("src", "components", "styles.css"), "utf8")
