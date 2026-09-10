@@ -4,6 +4,12 @@
 Descriptions uses a real `dl`, with author-owned `dt`/`dd` pairs grouped in `div` elements.
 External CSS arranges these groups. No runtime, registration, provider or renderer exists.
 
+**Default-style audit (2026-09-10):** corrected unbordered spacing, size-specific
+typography/padding, label weights, inline left labels and light/dark colors. Seven
+controlled unbordered cases match the pinned reference pixel-for-pixel in both themes.
+The [rendered audit](../style-audit/components/descriptions.md) also records the remaining
+native grid/per-group-border differences; this does not introduce a table-layout engine.
+
 ## Distribution and authority
 
 | Asset | Purpose |
@@ -84,12 +90,12 @@ outside the component retain their normal browser presentation.
 
 | Upstream surface | Native mapping and disposition |
 | --- | --- |
-| Descriptions `bordered` | Presence `data-bordered` adds independent group borders and term/value separators; absent is false. These are not collapsed table borders. |
+| Descriptions `bordered` | Presence `data-bordered` adds independent group borders and term/value separators; absent is false. Default gap is zero, but touching outlines are not collapsed table borders. |
 | Descriptions `column` | `--mui-descriptions-columns` on the actual `dl`; default `3`, positive integer. No attribute/string parser. |
 | DescriptionItem `span` | `--mui-description-span` on its actual group; default `1`, positive integer no greater than the active column count. |
 | Descriptions `label-placement` | Default/`"top"`/unknown values stack the term above its definition. `data-label-placement="left"` puts the term at **logical inline-start**, including on the right in RTL. |
-| Descriptions `label-align` | `data-label-align="left"` / `"center"` / `"right"` preserve those physical text-alignment values. Missing/unknown values use logical `start`, deliberately different from the upstream left default. |
-| Descriptions `size` | `data-size="small"` / `"medium"` / `"large"`; missing/unknown values use medium. Padding is adapted, not a theme-provider lookup. |
+| Descriptions `label-align` | `data-label-align="left"` / `"center"` / `"right"` preserve physical alignment; missing/unknown uses `left`. An explicit local alignment token wins. Inline unbordered left labels follow native inline flow. |
+| Descriptions `size` | `data-size="small"` / `"medium"` / `"large"`; missing/unknown uses medium. Fonts, bordered padding and unbordered row spacing use pinned CSS defaults, not runtime theme lookup. |
 | Descriptions `separator` | An authored `.mui-descriptions-separator` text span directly in `dt`, normally `:`. CSS shows it only for unbordered `"left"` placement. Nothing is generated. |
 | Descriptions `title`, `header` slot | One authored real heading/header region outside `dl`; no title-versus-slot precedence engine or native `title` tooltip mapping. |
 | Descriptions `default` slot | Authored native `dl` groups, not VNodes or a child renderer. |
@@ -128,22 +134,41 @@ automatic clamping, responsive string parser or provider breakpoint configuratio
 For an explicit full-width group, application CSS can use `grid-column: 1 / -1`, as in the
 demo. The library never silently stretches the last item.
 
-Bordered groups have independent outlines with the normal grid gap. No table-border
-collapse or automatic matching of term heights across columns is attempted. The default
-top layout keeps each term/value pair together; horizontal layout uses a local 1:2 track
-ratio, with a logical term/value border. Author constraints can override the term track.
-No overflow clipping, fixed row height or truncation is imposed.
+Bordered groups have independent outlines with a zero default gap. Touching group outlines
+can produce double seams and each group retains its own corner radius; there is no
+collapsed table frame or automatic matching of term heights across columns.
+The default top layout keeps each term/value pair together. Unbordered `"left"` uses
+an inline term/separator followed by an inline-block definition, not a fixed label track.
+Bordered `"left"` retains the native local 1:2 track ratio and logical term/value border;
+`--mui-descriptions-label-width` can override that track. No overflow clipping, fixed
+row height or truncation is imposed.
 
 | CSS token | Default / responsibility |
 | --- | --- |
 | `--mui-descriptions-columns`, `--mui-description-span` | `3` on each list / `1` on each direct group; assign directly to the corresponding node. |
-| `--mui-descriptions-gap` | `1rem`; reset on each description list. |
-| `--mui-descriptions-label-align`, `--mui-descriptions-content-align` | `start` on each list; external CSS may choose valid `text-align` values. |
-| `--mui-descriptions-label-width` | In horizontal mode, one flexible track against two content tracks; use a valid CSS track value. Fixed widths need author narrow-layout constraints. |
-| `--mui-descriptions-padding-block`, `--mui-descriptions-padding-inline` | Override size presets: small `.5rem/.75rem`, medium `.75rem/1rem`, large `1rem/1.25rem`. |
-| `--mui-descriptions-color`, `--mui-descriptions-label-color` | List text / optional term-specific text color. |
-| `--mui-descriptions-background`, `--mui-descriptions-label-background` | Group surface / bordered term background. |
-| `--mui-descriptions-border-color`, `--mui-descriptions-border-radius` | Border color / `.25rem` group corner radius. |
+| `--mui-descriptions-gap` | Unbordered: 8/12/16px row gap for small/medium/large, zero column gap; bordered: zero gap. An explicit CSS gap value overrides both defaults. |
+| `--mui-descriptions-label-align`, `--mui-descriptions-content-align` | Local alignment overrides; top/bordered terms default to physical `left`, values to `start`. Unbordered inline left terms inherit alignment unless explicitly overridden. |
+| `--mui-descriptions-label-width` | Bordered horizontal mode only: one flexible track against two content tracks. Fixed widths need author narrow-layout constraints. |
+| `--mui-descriptions-padding-block`, `--mui-descriptions-padding-inline` | Unbordered cells default to zero. Bordered presets: small 8px/12px, medium 12px/16px, large 16px/24px. Explicit tokens override either mode. |
+| `--mui-descriptions-font-size` | Shared small/medium/large font-size role, then 14/14/15px; a local value overrides the active size. |
+| `--mui-descriptions-font-family`, `--mui-descriptions-line-height` | Local overrides over shared `--mui-font-family` / `--mui-line-height`; fallback family is inherited and leading is 1.6. |
+| `--mui-descriptions-label-weight` | Unbordered top: shared strong weight, then 500; bordered: 400; unbordered inline left: inherited body weight. A local value wins in all modes. |
+| `--mui-descriptions-color`, `--mui-descriptions-label-color` | Value/body defaults `#333639` / white-.82; top/bordered labels `#1f2225` / white-.9. Inline unbordered labels inherit body color unless explicitly overridden. |
+| `--mui-descriptions-background`, `--mui-descriptions-label-background` | Unbordered groups default transparent; bordered surface is white / `#18181c`, term fill `#fafafc` / `#26262a`. |
+| `--mui-descriptions-border-color`, `--mui-descriptions-border-radius` | `#efeff5` / `#2d2d30` border by theme; 3px group corner radius. |
+
+An ancestor or list `data-mui-theme="dark"` selects the dark fallback roles; explicit
+nested `"light"` restores light. Legacy surface/text/border tokens do not describe these
+same roles and are not silently reused. Public local paint/type overrides remain
+authoritative over theme defaults and state presets. Size roles are
+`--mui-font-size-small`, `--mui-font-size-medium` and `--mui-font-size-large`;
+document `--mui-font-size` alone does not replace these component size roles.
+
+Unbordered row gaps replace the upstream non-final-row cell bottom padding, avoiding
+any last-row parser. This yields the same default text positions while retaining native
+group boxes. Inline-mode group whitespace is suppressed between the authored `dt` and
+`dd`; text inside those nodes remains unchanged. The authored separator uses 2px/8px
+inline margins, matching the live pinned rendering.
 
 Private `--_mui-descriptions-*` preset values are not public API. Native CSS validation,
 cascade and ordinary token inheritance apply; state presets reset at nested lists.
@@ -156,7 +181,9 @@ not separately certified. Use whole-group `hidden` for filtering to retain paire
 Native controls keep their focus outlines, validation, form types, disabled/fieldset rules,
 submission and reset. Application actions require application listeners, but links and GET
 forms remain functional with JavaScript disabled. Print requests unbroken groups where
-pagination permits; forced colors preserve text/background/border distinctions. No animation.
+pagination permits; forced colors preserve text/background/border distinctions.
+Cells have 0.3s color/background/border transitions, disabled for reduced motion;
+there is no value animation or runtime.
 
 ## Migration steps and acceptance
 

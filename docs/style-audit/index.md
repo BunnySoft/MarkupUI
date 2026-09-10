@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 25/96 scopes.** The other **71** are not yet accepted in this
+**Reviewed and integrated: 26/96 scopes.** The other **70** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -76,7 +76,7 @@ a separate follow-up; its work-in-progress is not included in published componen
 | [Countdown](../naive-ui/components/countdown.md) | ⚪ Pending | — |
 | [Data Table](../naive-ui/components/data-table.md) | ⚪ Pending | — |
 | [Date Picker](../naive-ui/components/date-picker.md) | ⚪ Pending | — |
-| [Descriptions](../naive-ui/components/descriptions.md) | 🟠 Reviewing | — |
+| [Descriptions](../naive-ui/components/descriptions.md) | 🟢 Fixed / 🟡 Remaining | [Density, text roles and retained grid/table differences](components/descriptions.md) |
 | [Dialog](../naive-ui/components/dialog.md) | ⚪ Pending | — |
 | [Discrete API](../naive-ui/components/discrete.md) | ⚪ Pending | — |
 | [Divider](../naive-ui/components/divider.md) | 🟢 Fixed / 🟡 Remaining | [Rule geometry, colors and native orientation limits](components/divider.md) |
@@ -92,7 +92,7 @@ a separate follow-up; its work-in-progress is not included in published componen
 | [Float Button](../naive-ui/components/float-button.md) | ⚪ Pending | — |
 | [Form](../naive-ui/components/form.md) | ⚪ Pending | — |
 | [Global Style](../naive-ui/components/global-style.md) | 🟢 Fixed / 🟡 Remaining | [Body defaults and opt-in shared-preset boundaries](components/global-style.md) |
-| [Gradient Text](../naive-ui/components/gradient-text.md) | ⚪ Pending | — |
+| [Gradient Text](../naive-ui/components/gradient-text.md) | 🟠 Reviewing | — |
 | [Grid](../naive-ui/components/grid.md) | 🟢 Matched / 🟡 Remaining | [Retained tracks match; responsive/offset algorithm limits](components/grid.md) |
 | [Heatmap](../naive-ui/components/heatmap.md) | ⚪ Pending | — |
 | [Highlight](../naive-ui/components/highlight.md) | ⚪ Pending | — |

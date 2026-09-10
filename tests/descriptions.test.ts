@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it } from "vitest"
 
 const css = readFileSync(resolve("src", "components", "descriptions", "descriptions.css"), "utf8")
@@ -102,6 +103,9 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
     const item = document.querySelector("#owner-item")!
     expect(getComputedStyle(item).gridTemplateColumns).toBe("minmax(0, 1fr)")
     root.dataset.labelPlacement = "left"
+    expect(getComputedStyle(item).display).toBe("block")
+    root.dataset.bordered = ""
+    expect(getComputedStyle(item).display).toBe("grid")
     expect(getComputedStyle(item).gridTemplateColumns).toContain("--mui-descriptions-label-width")
     expect([...item.children].map(node => node.tagName)).toEqual(["DT", "DD"])
     expect(css).toContain("border-inline-end")
@@ -112,15 +116,15 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
     fixture()
     install()
     const root = document.querySelector<HTMLElement>("#project-details")!
-    expect(getComputedStyle(root).getPropertyValue("--_mui-descriptions-padding-block")).toBe(".75rem")
+    expect(getComputedStyle(root).getPropertyValue("--_mui-descriptions-padding-block")).toBe("12px")
     root.dataset.size = "small"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-descriptions-padding-block")).toBe(".5rem")
+    expect(getComputedStyle(root).getPropertyValue("--_mui-descriptions-padding-block")).toBe("8px")
     root.dataset.size = "large"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-descriptions-padding-block")).toBe("1rem")
+    expect(getComputedStyle(root).getPropertyValue("--_mui-descriptions-padding-block")).toBe("16px")
     root.dataset.size = "unknown"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-descriptions-padding-block")).toBe(".75rem")
+    expect(getComputedStyle(root).getPropertyValue("--_mui-descriptions-padding-block")).toBe("12px")
     root.dataset.labelAlign = "right"
-    expect(getComputedStyle(root).getPropertyValue("--mui-descriptions-label-align")).toBe("right")
+    expect(getComputedStyle(root).getPropertyValue("--_mui-descriptions-label-align")).toBe("right")
     expect(appCss).toContain("--mui-descriptions-content-align: center")
   })
 
@@ -195,7 +199,7 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
     parent.dataset.labelAlign = "right"
     const nested = document.querySelector("#nested-details")!
     expect(getComputedStyle(nested).getPropertyValue("--mui-descriptions-columns")).toBe("3")
-    expect(getComputedStyle(nested).getPropertyValue("--mui-descriptions-label-align")).toBe("start")
+    expect(getComputedStyle(nested).getPropertyValue("--_mui-descriptions-label-align")).toBe("left")
     expect(getComputedStyle(nested.firstElementChild!).gridTemplateColumns).toBe("minmax(0, 1fr)")
     expect(getComputedStyle(outside).margin).toBe(margin)
   })
@@ -209,6 +213,54 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
     expect(css).toContain("break-inside: avoid")
     expect(css).toContain("@media (forced-colors: active)")
     expect(css).toContain("color: CanvasText")
-    expect(css).not.toContain("transition:")
+    expect(css).toContain("transition: color .3s cubic-bezier(.4,0,.2,1)")
+    expect(css).toContain("@media (prefers-reduced-motion: reduce)")
+    expect(css).toContain("transition: none")
+  })
+
+  it("keeps audited density, typography and palette roles within the existing CSS ceiling", () => {
+    expect(css).toContain("var(--mui-font-size-small, 14px)")
+    expect(css).toContain("var(--mui-font-size-medium, 14px)")
+    expect(css).toContain("var(--mui-font-size-large, 15px)")
+    expect(css).toContain("--_mui-descriptions-padding-inline: 24px")
+    expect(css).toContain("var(--mui-font-weight-strong, 500)")
+    expect(css).toContain("--_mui-descriptions-weight: 400")
+    expect(css).toContain("font-weight: var(--mui-descriptions-label-weight, inherit)")
+    expect(css).toContain("var(--mui-descriptions-line-height, var(--mui-line-height, 1.6))")
+    expect(css).toContain("var(--mui-descriptions-label-color, var(--_mui-descriptions-label, #1f2225))")
+    expect(css).toContain("var(--mui-descriptions-color, var(--_mui-descriptions-text, #333639))")
+    expect(css).toContain("var(--mui-descriptions-border-radius, 3px)")
+    expect(css).toContain("#efeff5")
+    expect(css).toContain("#fafafc")
+    expect(css).toContain("#26262a")
+    expect(css).toContain("#2d2d30")
+    expect(css).not.toContain("--mui-text-primary")
+    expect(css).not.toContain("--mui-bg-surface")
+    expect(css).toContain("margin-inline: 2px 8px")
+    expect(css).toContain("background: var(--mui-descriptions-background, transparent)")
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
+    install()
+    const media = [...style!.sheet!.cssRules]
+      .filter(rule => rule.type === CSSRule.MEDIA_RULE)
+      .map(rule => (rule as CSSMediaRule).media.mediaText)
+    expect(media).toContain("(prefers-reduced-motion: reduce)")
+  })
+
+  it("preserves local author tokens while size, border and placement presets change", () => {
+    fixture()
+    const root = document.querySelector<HTMLElement>("#project-details")!
+    root.style.cssText = "--mui-descriptions-font-size:20px;--mui-descriptions-line-height:1.5;--mui-descriptions-padding-block:4px;--mui-descriptions-label-align:center;--mui-descriptions-color:rgb(1,2,3)"
+    const authored = root.getAttribute("style")
+    const item = root.querySelector(".mui-description-item")!
+    const nodes = [...item.children]
+    install()
+    root.dataset.size = "large"
+    root.dataset.bordered = ""
+    root.dataset.labelPlacement = "left"
+    root.dataset.labelAlign = "right"
+    expect(root.getAttribute("style")).toBe(authored)
+    expect(getComputedStyle(root).getPropertyValue("--mui-descriptions-label-align")).toBe("center")
+    expect([...item.children]).toEqual(nodes)
+    expect(item.querySelector("[style],script")).toBeNull()
   })
 })
