@@ -4,6 +4,12 @@
 nodes, native staging highlights and small stable-key membership operations. No renderer,
 provider, drag framework, Select/Virtual List runtime or synthetic form controls.
 
+**Style audit (2026-09-11):** corrected controllable pane, heading, count, filter and
+disabled colors/typography while retaining native multi-selects and original options.
+The [rendered audit](../style-audit/components/transfer.md) documents substantial remaining
+native-list/layout differences from the modern reference. No data binding, templates,
+row renderer or membership/state algorithm was added or changed.
+
 **Every option physically in Target is a member.** `selectedOptions`/option.selected
 only describes highlighted **staging**, never all target membership.
 
@@ -236,6 +242,55 @@ disconnect. The app may read target.options for subsequent serialization, but mu
 new lifetime explicitly. The demo hides submission/move enhancement controls after handoff.
 Without JS it exposes static native lists/highlights only and does not claim transfer or
 membership submission.
+
+## External native presentation
+
+The root keeps its fieldset/legend semantics without adding a second default fieldset
+border around the pane frames. Panes have a 1px border and 3px corners; their surface is
+white in light mode and `rgba(255,255,255,.1)` in explicit dark mode. The pinned dark
+Transfer uses this translucent surface, **not** the generic opaque Card surface.
+An ancestor/root `data-mui-theme="dark"` also selects a native dark color scheme;
+explicit nested `"light"` restores light.
+
+Direct authored pane headings (`h1`–`h6`) retain their chosen semantic level. Default
+title type is 16px/400, small 14px, large 16px, with 1.5 leading and 44px/50px minimum
+header space. No heading is generated. Header paint remains transparent over the pane;
+the source's declared header-color theme value is not treated as a painted background.
+
+| Public CSS token | Meaning / fallback |
+| --- | --- |
+| `--mui-transfer-font-size`, `--mui-transfer-font-family`, `--mui-transfer-line-height` | Local overrides over shared size-role/family/leading defaults; body sizes 14/14/15px, leading 1.6 |
+| `--mui-transfer-color`, `--mui-transfer-title-color`, `--mui-transfer-count-color` | Item/body, title and count roles; light `#333639` / `#1f2225` / `#767c82`, dark white-.82 / .9 / .52 |
+| `--mui-transfer-disabled-color` | Light `#c2c2c2`, dark white-.38; actual disabled controls/options and their pane heading/count |
+| `--mui-transfer-background`, `--mui-transfer-border-color`, `--mui-transfer-radius` | Pane surface/frame; light `#fff` / `#e0e0e6`, dark white-.1 / transparent, 3px corners |
+| `--mui-transfer-title-size`, `--mui-transfer-title-weight`, `--mui-transfer-header-height` | Authored heading presentation overrides |
+| `--mui-transfer-count-size` | 12px small/medium, 14px large |
+| `--mui-transfer-gap` | Native pane/action grid gap, default 16px |
+| `--mui-transfer-list-padding` | Native listbox padding override; retained small/medium/large defaults .15rem/.35rem/.6rem |
+| `--mui-transfer-filter-height` | 28px minimum native filter height |
+| `--mui-transfer-control-background`, `--mui-transfer-control-border` | Native filter/action surfaces; light white / `#e0e0e6`, dark white-.1 / white-.24 |
+
+Local tokens win over private presets. `data-transfer-size` selects native small/medium/large
+type/spacing without parsing data or replacing options. Native action buttons retain
+visible labels, explicit types and disabled behavior; they are not the source's compact
+header buttons or per-item remove icons.
+
+List height and option layout remain controlled by native `select[multiple][size]`,
+the platform and author CSS. There is no forced 300px viewport or simulated 34px/40px
+option-row renderer. Selected-option highlights remain **native staging**, with no CSS
+attempt to turn them into membership checkboxes. Native selected/disabled/scrollbar skins
+can differ by browser even when controllable colors match.
+
+Forced colors use unfaded `GrayText` for disabled actions, controls and affected pane
+headings/counts. Print switches only private palette defaults to a light scheme with
+readable text and white pane/control surfaces; disabled actions also lose the opacity
+fade. Explicit public color/background/border tokens still win in print. These media
+rules do not change option selection, membership, names or native disabled state.
+
+The native layout keeps separate panels, a middle action column, visible control labels,
+counts below the lists and optional status text. The source has adjoining panels,
+header counters/actions, custom filters/checkboxes and immediate membership changes.
+These differences are intentional; no pixel-parity claim is made for the whole widget.
 
 ## Four accepted steps
 

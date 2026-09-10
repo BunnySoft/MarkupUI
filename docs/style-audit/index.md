@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 61/96 scopes.** The other **35** are not yet accepted in this
+**Reviewed and integrated: 62/96 scopes.** The other **34** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -107,7 +107,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Legacy Transfer](../naive-ui/components/legacy-transfer.md) | ⚪ Pending | — |
 | [List](../naive-ui/components/list.md) | 🟢 Fixed / 🟡 Remaining | [Presentation only; marker and density adaptations](components/list.md) |
 | [Loading Bar](../naive-ui/components/loading-bar.md) | 🟢 Fixed / 🟡 Remaining | [Thin rail, readable fixed status and retained native progress/timing policies](components/loading-bar.md) |
-| [Log](../naive-ui/components/log.md) | ⚪ Pending | — |
+| [Log](../naive-ui/components/log.md) | 🟠 Reviewing | — |
 | [Marquee](../naive-ui/components/marquee.md) | ⚪ Pending | — |
 | [Mention](../naive-ui/components/mention.md) | ⚪ Pending | — |
 | [Menu](../naive-ui/components/menu.md) | 🟢 Fixed / 🟡 Remaining | [Row density, inert-state paint and native branch/collapse limits](components/menu.md) |
@@ -143,7 +143,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Time](../naive-ui/components/time.md) | ⚪ Pending | — |
 | [Timeline](../naive-ui/components/timeline.md) | 🟢 Fixed / 🟡 Remaining | [Node/rail alignment, supplementary colors and native RTL/dash limits](components/timeline.md) |
 | [Tooltip](../naive-ui/components/tooltip.md) | 🟢 Fixed / 🟡 Remaining | [Shared dark surface, typography and native tooltip limits](components/tooltip.md) |
-| [Transfer](../naive-ui/components/transfer.md) | 🟠 Reviewing | — |
+| [Transfer](../naive-ui/components/transfer.md) | 🟢 Fixed / 🟡 Remaining | [Pane/control roles, protected media contrast and native list/membership limits](components/transfer.md) |
 | [Tree Select](../naive-ui/components/tree-select.md) | 🟠 Reviewing | — |
 | [Tree](../naive-ui/components/tree.md) | 🟢 Fixed / 🟡 Remaining | [Native row styling, high-contrast checks and disclosure/marker limits](components/tree.md) |
 | [Typography](../naive-ui/components/typography.md) | 🟢 Fixed / 🟡 Remaining | [Text, headings, code and native presentation limits](components/typography.md) |

@@ -1,4 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
+import { readFileSync } from "node:fs"
+import { join } from "node:path"
+import { gzipSync } from "node:zlib"
 import { createTransfer } from "../src/components/transfer/index.js"
 import type { TransferController, TransferOptions } from "../src/components/transfer/index.js"
 import { createSelect } from "../src/components/select/index.js"
@@ -27,6 +30,76 @@ function fixture(options: TransferOptions = {}, config: { target?: string; sourc
 afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
 describe("native membership versus staging", () => {
+  it("keeps controlled typography/palette corrections within budget without replacing native option skins", () => {
+    const css = readFileSync(join("src", "components", "transfer", "transfer.css"), "utf8")
+    expect(css).toContain("var(--mui-font-size-medium,14px)")
+    expect(css).toContain("var(--mui-font-size-large,15px)")
+    expect(css).toContain("--_mui-transfer-title-size: 16px")
+    expect(css).toContain("--_mui-transfer-title-size: 14px")
+    expect(css).toContain("--_mui-transfer-extra-size: 14px")
+    expect(css).toContain("var(--mui-transfer-list-padding,var(--_mui-transfer-list-padding))")
+    expect(css).toContain("rgba(255,255,255,.1)")
+    expect(css).toContain("--_mui-transfer-border: transparent")
+    expect(css).toContain("var(--mui-transfer-filter-height,28px)")
+    expect(css).toContain("var(--mui-transfer-title-weight,400)")
+    expect(css).toContain(":has(>select:disabled,>label>select:disabled)")
+    expect(css).toContain("color-scheme:var(--_mui-transfer-scheme,light)")
+    expect(css).not.toContain("option:checked")
+    expect(css).not.toMatch(/appearance:\s*none/)
+    expect(css).not.toMatch(/height:\s*300px/)
+    expect(css).not.toContain("content:")
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
+  })
+  it("resets media defaults without overwriting public author tokens or fading forced-color disabled content", () => {
+    const css = readFileSync(join("src", "components", "transfer", "transfer.css"), "utf8")
+    const element = document.createElement("style")
+    element.textContent = css
+    document.head.append(element)
+    try {
+      const media = [...element.sheet!.cssRules]
+        .filter(rule => rule.type === CSSRule.MEDIA_RULE) as CSSMediaRule[]
+      const print = media.find(rule => rule.media.mediaText === "print")!
+      const defaults = [...print.cssRules].find(rule => (rule as CSSStyleRule).selectorText === ".mui-transfer") as CSSStyleRule
+      expect(defaults.style.getPropertyValue("--_mui-transfer-scheme").trim()).toBe("light")
+      for (const role of ["color", "title", "extra", "panel", "border", "control", "control-border"]) {
+        expect(defaults.style.getPropertyValue(`--_mui-transfer-${role}`).trim()).toBe("initial")
+      }
+      expect(defaults.style.getPropertyValue("--_mui-transfer-disabled").trim()).toBe("GrayText")
+      expect(Array.from({ length: defaults.style.length }, (_, i) => defaults.style[i])
+        .every(name => name.startsWith("--_mui-transfer-"))).toBe(true)
+      const forced = media.find(rule => rule.media.mediaText.replace(/\s/g, "") === "(forced-colors:active)")!
+      const disabled = [...forced.cssRules].find(rule => (rule as CSSStyleRule).style.color === "GrayText") as CSSStyleRule
+      expect(disabled.selectorText).toContain("[data-transfer-action]")
+      expect(disabled.selectorText).toContain("[data-transfer-count]")
+      expect(disabled.selectorText).toContain(":has(>select:disabled")
+      const combined = media.find(rule => rule.media.mediaText.replace(/\s/g, "") === "print,(forced-colors:active)")!
+      expect((combined.cssRules[0] as CSSStyleRule).style.opacity).toBe("1")
+    } finally { element.remove() }
+  })
+  it("preserves authored styles, native options and staged flags through styled moves and filters", () => {
+    const { root, helper, item, source, target } = fixture()
+    const css = readFileSync(join("src", "components", "transfer", "transfer.css"), "utf8")
+    const style = document.createElement("style")
+    style.textContent = css
+    document.head.append(style)
+    try {
+      root.style.cssText = "--mui-transfer-font-size:17px;--mui-transfer-title-size:20px;--mui-transfer-background:rgb(1,2,3);--mui-transfer-list-padding:7px"
+      const authored = root.getAttribute("style"), a = item("a"), fixed = item("fixed")
+      a.selected = true
+      root.dataset.transferSize = "large"
+      helper.move(["a"], "target")
+      helper.setFilter("target", "Item a")
+      expect(item("a")).toBe(a)
+      expect(a.parentElement).toBe(target)
+      expect(a.selected).toBe(true)
+      expect(item("fixed")).toBe(fixed)
+      expect(fixed.disabled).toBe(true)
+      expect(helper.value).toEqual(["fixed", "z", "a"])
+      expect(source.name).toBe("")
+      expect(target.name).toBe("")
+      expect(root.getAttribute("style")).toBe(authored)
+    } finally { style.remove() }
+  })
   it("reads membership from target location, not selectedOptions or staged highlights", () => {
     const { helper, source, target, item } = fixture()
     item("a").selected = true; item("fixed").selected = true
