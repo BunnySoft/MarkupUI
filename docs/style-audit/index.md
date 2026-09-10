@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 56/96 scopes.** The other **40** are not yet accepted in this
+**Reviewed and integrated: 57/96 scopes.** The other **39** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -145,7 +145,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Tooltip](../naive-ui/components/tooltip.md) | 🟢 Fixed / 🟡 Remaining | [Shared dark surface, typography and native tooltip limits](components/tooltip.md) |
 | [Transfer](../naive-ui/components/transfer.md) | 🟠 Reviewing | — |
 | [Tree Select](../naive-ui/components/tree-select.md) | ⚪ Pending | — |
-| [Tree](../naive-ui/components/tree.md) | ⚪ Pending | — |
+| [Tree](../naive-ui/components/tree.md) | 🟢 Fixed / 🟡 Remaining | [Native row styling, high-contrast checks and disclosure/marker limits](components/tree.md) |
 | [Typography](../naive-ui/components/typography.md) | 🟢 Fixed / 🟡 Remaining | [Text, headings, code and native presentation limits](components/typography.md) |
 | [Upload](../naive-ui/components/upload.md) | ⚪ Pending | — |
 | [Virtual List](../naive-ui/components/virtual-list.md) | ⚪ Pending | — |

@@ -1,9 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
+import { gzipSync } from "node:zlib"
 import { createTree, readTreeHierarchy } from "../src/components/tree/index.js"
 import type { TreeController, TreeLoadResult, TreeOptions } from "../src/components/tree/index.js"
 import { createCheckboxGroup } from "../src/components/checkbox/index.js"
 
 const helpers: TreeController[] = []
+const treeCss = readFileSync(resolve("src", "components", "tree", "tree.css"), "utf8")
 const wait = () => new Promise(resolve => setTimeout(resolve, 20))
 function markup(key: string, children = "", extra = "", lazy = false) {
   return `<li data-tree-key="${key}" ${extra}><div data-tree-row><button type="button" data-tree-label data-tree-select>${key}</button><label><input type="checkbox" data-tree-check name="checked" value="${key}">Include ${key}</label><a href="#destination">Help ${key}</a></div>${children || lazy ? `<details data-tree-branch ${lazy ? "data-tree-lazy" : ""}><summary>Contents ${key}</summary><ul data-tree-list>${children}</ul></details>` : ""}</li>`
@@ -24,6 +28,38 @@ const press = (element: HTMLElement, key: string, extra: KeyboardEventInit = {})
   const event = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true, ...extra }); element.dispatchEvent(event); return event
 }
 afterEach(() => { helpers.splice(0).forEach(helper => { try { helper.disconnect() } catch { /* Error tests assert their own failure. */ } }); document.body.replaceChildren(); vi.restoreAllMocks() })
+
+describe("native Tree visual defaults", () => {
+  it("keeps reference row metrics within the unchanged CSS budget", () => {
+    expect(gzipSync(treeCss, { level: 9 }).length).toBeLessThanOrEqual(1250)
+    expect(treeCss).toContain("--mui-tree-label-height, 24px")
+    expect(treeCss).toContain("--mui-tree-row-padding, 3px")
+    expect(treeCss).toContain("--mui-tree-indent, 24px")
+    expect(treeCss).toContain("--mui-tree-line-height, 1.5")
+    expect(treeCss).toContain("--_mui-tree-pressed: rgba(255,255,255,.05)")
+    expect(treeCss).not.toContain("font-weight: bold")
+    expect(treeCss).toContain(".mui-tree :focus-visible")
+  })
+  it("styles disabled labels/checks without multiplying container opacity or crossing node barriers", () => {
+    expect(treeCss).toContain(":is([data-tree-label],summary):is(:disabled,[aria-disabled=true],[inert],[inert] *)")
+    expect(treeCss).toContain("[data-tree-check]:is(:disabled,[aria-disabled=true],[inert],[inert] *)")
+    expect(treeCss.match(/opacity:/g)).toHaveLength(2)
+    const forced = treeCss.slice(treeCss.indexOf("@media (forced-colors: active)"))
+    expect(forced).toContain("[data-tree-check] { accent-color: auto; }")
+    expect(forced).toContain("[data-tree-check]:is(:disabled,[aria-disabled=true],[inert],[inert] *) { opacity: 1; }")
+    expect(forced).toContain(":is([data-tree-label],summary):is(:disabled,[aria-disabled=true],[inert],[inert] *) { color: GrayText; }")
+    expect(treeCss).not.toContain("[data-tree-disabled]")
+    expect(treeCss).not.toContain(".mui-tree [aria-disabled=true] {")
+  })
+  it("retains native checkbox, disclosure and source-order presentation", () => {
+    expect(treeCss).toContain("inline-size: 16px")
+    expect(treeCss).toContain("accent-color:")
+    expect(treeCss).not.toContain("appearance:")
+    expect(treeCss).not.toMatch(/(?:^|[;{])\s*order:/m)
+    expect(treeCss).not.toContain("::marker")
+    expect(treeCss).toContain("[data-tree-branch][aria-busy=true] > summary::after")
+  })
+})
 
 describe("native hierarchy, keys and defaults", () => {
   it("indexes authored nodes iteratively without rebuilding controls/listeners", () => {
