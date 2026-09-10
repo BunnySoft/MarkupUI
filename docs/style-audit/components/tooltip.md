@@ -146,3 +146,7 @@ foreground/background tokens, not a fabricated inversion flag.
 The coordinator's isolated release `pnpm build` and all **103 Tooltip/Popover tests**
 passed. Final composed CSS remains **1,210/1,250 gzip bytes**, with unchanged
 ESM/classic budgets. Unfinished unrelated work is excluded; integration is complete.
+
+The subsequent shared Popconfirm guard change reduces composed Tooltip CSS to **1,202
+gzip bytes**. Its skin is still excluded from ordinary Popover surface defaults; all
+46 Tooltip tests passed within the **233-test** popup-family integration batch.

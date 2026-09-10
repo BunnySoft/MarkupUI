@@ -3,7 +3,7 @@
 **Status: in progress.** This is a new visual-default pass after the native migration,
 not a claim that the earlier functional acceptance established Naive UI visual parity.
 
-**Reviewed and integrated: 34/96 scopes.** The other **62** are not yet accepted in this
+**Reviewed and integrated: 35/96 scopes.** The other **61** are not yet accepted in this
 pass. Reviewed includes explicitly documented remaining native, legacy and motion
 differences; reviewed scopes do not imply complete pixel/API parity.
 
@@ -69,7 +69,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Cascader](../naive-ui/components/cascader.md) | ⚪ Pending | — |
 | [Checkbox](../naive-ui/components/checkbox.md) | ⚪ Pending | — |
 | [Code](../naive-ui/components/code.md) | 🟢 Fixed / 🟡 Remaining | [Plain typography, gutters and authored token limits](components/code.md) |
-| [Collapse Transition](../naive-ui/components/collapse-transition.md) | ⚪ Pending | — |
+| [Collapse Transition](../naive-ui/components/collapse-transition.md) | 🟠 Reviewing | — |
 | [Collapse](../naive-ui/components/collapse.md) | ⚪ Pending | — |
 | [Color Picker](../naive-ui/components/color-picker.md) | ⚪ Pending | — |
 | [Config Provider](../naive-ui/components/config-provider.md) | ⚪ Pending | — |
@@ -117,7 +117,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Number Animation](../naive-ui/components/number-animation.md) | ⚪ Pending | — |
 | [Page Header](../naive-ui/components/page-header.md) | 🟠 Reviewing | — |
 | [Pagination](../naive-ui/components/pagination.md) | ⚪ Pending | — |
-| [Popconfirm](../naive-ui/components/popconfirm.md) | 🟠 Reviewing | — |
+| [Popconfirm](../naive-ui/components/popconfirm.md) | 🟢 Fixed / 🟡 Remaining | [Shared surface, local layout and native action-paint limits](components/popconfirm.md) |
 | [Popover](../naive-ui/components/popover.md) | 🟢 Fixed / 🟡 Remaining | [Standalone surface, protected consumers and native popup limits](components/popover.md) |
 | [Popselect](../naive-ui/components/popselect.md) | ⚪ Pending | — |
 | [Progress](../naive-ui/components/progress.md) | 🟢 Fixed / 🟡 Remaining | [Native rails, ring geometry, motion and indicator limits](components/progress.md) |

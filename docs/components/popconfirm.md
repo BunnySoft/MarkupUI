@@ -6,6 +6,10 @@ activation, top-layer visibility, dismissal and positioning; this optional adapt
 confirmation admission, callback results, pending/error UI and per-opening/action identity.
 No confirmation feature was added to the shared Popover or Tooltip bundles.
 
+**Default-style audit: 🟢 surface and native layout fixed / 🟡 authored artwork, titles
+and native button paint retained.** See the [2026-09-10 rendered report](../style-audit/components/popconfirm.md)
+for the coordinated Popover surface reuse and local geometry/state checks.
+
 ## Loading and native anatomy
 
 | Export / asset | Contract |
@@ -59,6 +63,23 @@ preserved, not interpreted as a renderer. Labels, icons and action wrappers are 
 there is no VNode/Button dependency, default locale service or injected warning artwork.
 An optional `[data-popconfirm-icon]` can carry a decorative author glyph/image with explicit
 aria-hidden; omit/hide it using ordinary HTML/CSS. No null-text button-removal API is exposed.
+
+For an aligned icon/description row, replace the description paragraph above with an
+optional passive body wrapper:
+
+```html
+<div data-popconfirm-body>
+  <span data-popconfirm-icon aria-hidden="true">!</span>
+  <p id="confirmation-content" data-popconfirm-content>
+    The original preference remains until you confirm.
+  </p>
+</div>
+```
+
+The wrapper is authored HTML, not a renderer or required controller node. Keeping the
+description in its own element preserves ordinary inline text/strong/link flow. The helper
+does not create this wrapper or move an existing icon into it. Existing inline icons remain
+valid authored flow, but do not have the same baseline geometry as the aligned row.
 
 Use a native `button` trigger with effective `type="button"`. The panel is a native div,
 section, article, aside or span with both classes, unique immutable ID, `popover="auto"`
@@ -219,6 +240,31 @@ no hand-maintained duplicate base stylesheet. Popconfirm JS/CSS alone works. If 
 Popover JS, this complete CSS already includes its styles; a second Popover CSS request is
 unnecessary. Standalone JS bundles include their shared code independently; combined costs
 below count that duplication honestly.
+
+### Audited default presentation
+
+Popconfirm now reuses the accepted **Popover surface directly**: 8px 14px padding, 3px
+radius, no layout border and matching light/dark overlay text, fill and shadow. The parent
+coordinated the narrow base-guard change; this component does not copy that palette.
+
+Local CSS supplies a centered optional body row, zero description margins, 22px icon type,
+8px icon spacing and an 8px body-to-action gap. Hidden body/icon/action wrappers remain
+hidden. Actions retain end alignment and wrapping. Native buttons use **28px minimum
+height** and 8px horizontal padding; inherited leading and the minimum allow longer labels
+to wrap and grow.
+Their browser-native borders, colors, focus and disabled appearance remain—not Naive's
+Button primary skin or loading animation. No Button dependency is introduced.
+
+Icon and error colors consume shared `--mui-color-warning` / `--mui-color-error`, behind
+`--mui-popconfirm-icon-color` / `--mui-popconfirm-error-color` overrides. Link the existing
+`themes.css` export or apply a registered theme for dark semantic colors; light fallbacks
+remain usable without it. Public Popover surface tokens and ancestor max-width overrides
+are honored. The 26rem default cap remains, with a higher-specificity print reset.
+
+Titles remain authored. The pinned Popconfirm has no title prop; the existing compact
+native Popover `h2` styling is retained rather than synthesizing another title API.
+Authors can explicitly style headings and button appearance. Pair custom foreground and
+background colors and verify contrast for the chosen theme.
 
 No custom element is registered and legacy/core loading order has no replacement conflict.
 The classic namespace refuses to overwrite unrelated APIs. Use one controller kind/copy per

@@ -188,9 +188,9 @@ radius, border, color/background tokens and ordinary width declarations provide 
 The audited standalone panel defaults to **8px 14px padding, 3px radius and no visible
 border**. Light foreground/surface are **#333639 / #fff**; an explicit dark theme uses
 **white .82 / #48484e**, with the corresponding three-layer Popover shadow.
-These defaults are local to ordinary Popover panels, excluding Tooltip, Popconfirm,
-Dropdown and panels within Popselect. Their existing composed skins are preserved for
-their own audits. No shared preset, controller or positioning helper was changed.
+These defaults apply to ordinary Popover and Popconfirm panels: the pinned Popconfirm
+uses the same Popover surface theme. Tooltip, Dropdown and panels within Popselect
+retain their distinct skins. No shared preset, controller or positioning helper changed.
 
 Public padding/radius/color/background tokens still take precedence over private defaults,
 including inherited ancestor overrides. `--mui-popover-border` still controls border color,

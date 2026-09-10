@@ -3,6 +3,43 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { createPopconfirm } from "../src/components/popconfirm/index.js"
 import type { PopconfirmController, PopconfirmOptions } from "../src/components/popconfirm/index.js"
 
+describe("audited Popconfirm presentation", () => {
+  const css = readFileSync("src/components/popconfirm/popconfirm.css", "utf8")
+
+  it("uses the approved Popover surface and shared semantic colors without duplicating a palette", () => {
+    expect(css).not.toMatch(/(?:^|[;{])\s*(?:background|box-shadow|border-radius)\s*:/)
+    expect(css).not.toContain("data-mui-theme")
+    expect(css).toMatch(/var\(--mui-popconfirm-icon-color,\s*var\(--mui-color-warning,\s*#f0a020\)\)/)
+    expect(css).toMatch(/var\(--mui-popconfirm-error-color,\s*var\(--mui-color-error,\s*#d03050\)\)/)
+    expect(css).not.toMatch(/(?:^|[;{])\s*--mui-popover-[\w-]+\s*:/)
+  })
+
+  it("offers an optional aligned body without turning rich description text into flex items", () => {
+    expect(css).toMatch(/\[data-popconfirm-body\]:not\(\[hidden\]\)\s*\{[^}]*display:\s*flex/)
+    expect(css).toMatch(/\[data-popconfirm-content\]\s*\{\s*margin:\s*0/)
+    expect(css).toMatch(/\[data-popconfirm-icon\]:not\(\[hidden\]\)\s*\{[^}]*display:\s*inline-flex/)
+    expect(css).toContain("font-size:22px")
+  })
+
+  it("keeps hidden actions hidden and allows longer native button labels to grow", () => {
+    expect(css).toMatch(/\[data-popconfirm-actions\]:not\(\[hidden\]\)\s*\{[^}]*flex-wrap:\s*wrap/)
+    expect(css).toContain("gap:8px;margin-block-start:8px")
+    const button = css.match(/\[data-popconfirm-actions\]\s+button\s*\{([^}]+)\}/)![1]!
+    expect(button).toContain("min-height:28px")
+    expect(button).not.toMatch(/(?:^|;)\s*height:/)
+    expect(button).toContain("font:inherit")
+    expect(button).not.toContain("line-height:")
+  })
+
+  it("preserves author width overrides, pending feedback and print/forced-color safety", () => {
+    expect(css).toMatch(/var\(--mui-popover-max-width,\s*26rem\)/)
+    expect(css).toContain("--mui-popover-available-width")
+    expect(css).toContain("button:disabled{cursor:wait}")
+    expect(css).toContain("color:CanvasText")
+    expect(css).toContain("@media print{.mui-popover.mui-popconfirm{max-width:none}}")
+  })
+})
+
 const controllers: PopconfirmController[] = []
 const matches = HTMLElement.prototype.matches
 let opened: WeakSet<HTMLElement>
@@ -64,6 +101,33 @@ function deferred() {
   const promise = new Promise((yes, no) => { resolve = yes; reject = no })
   return { promise, resolve, reject }
 }
+
+describe("authored Popconfirm body layout", () => {
+  it("preserves optional wrapper, icon and rich-description nodes without rendering anatomy", () => {
+    const pair = nodes()
+    const content = pair.panel.querySelector<HTMLElement>("[data-popconfirm-content]")!
+    const original = [...content.childNodes]
+    const body = document.createElement("div")
+    body.setAttribute("data-popconfirm-body", "")
+    const icon = document.createElement("span")
+    icon.setAttribute("data-popconfirm-icon", "")
+    icon.setAttribute("aria-hidden", "true")
+    icon.textContent = "!"
+    content.before(body)
+    body.append(icon, content)
+    const controller = createPopconfirm(pair.trigger, pair.panel)
+    controllers.push(controller)
+    controller.open()
+    expect([...content.childNodes]).toEqual(original)
+    expect(body.children).toHaveLength(2)
+    expect(body.firstElementChild).toBe(icon)
+    expect(content.textContent).toBe("Authored question.")
+    controller.close()
+    controller.disconnect()
+    expect(content.parentElement).toBe(body)
+    expect(icon.textContent).toBe("!")
+  })
+})
 async function flush() {
   await new Promise(resolve => setTimeout(resolve, 0))
   for (let index = 0; index < 8; index++) await Promise.resolve()
