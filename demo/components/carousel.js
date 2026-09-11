@@ -1,47 +1,80 @@
 import { createCarousel } from "../../dist/markup-ui-carousel.js"
 
-const root = document.querySelector("#main-carousel")
-const carousel = createCarousel(root, { interval: 2000 })
-const nested = createCarousel(document.querySelector("#nested-carousel"), { loop: false })
-const hidden = createCarousel(document.querySelector("#hidden-carousel"), { defaultIndex: 1 })
-const feedback = document.querySelector("#feedback")
-const show = () => { feedback.textContent = JSON.stringify(carousel.state, null, 2) }
-window.carouselDemo = { carousel, nested, hidden }
-document.querySelectorAll("[data-enhancement]").forEach(node => { node.hidden = false })
-root.addEventListener("mui:carousel-change", event => {
-  if (event.target === root) show()
-})
-document.querySelector("#direction").addEventListener("change", event => { carousel.set({ direction: event.target.value }); show() })
-document.querySelector("#rtl").addEventListener("change", event => { root.dir = event.target.checked ? "rtl" : "ltr"; carousel.refresh(); show() })
-for (const [id, option] of [["loop", "loop"], ["autoplay", "autoplay"], ["disable", "disabled"]]) {
-  document.querySelector(`#${id}`).addEventListener("change", event => { carousel.set({ [option]: event.target.checked }); show() })
+const controllers = new Map()
+
+for (const root of document.querySelectorAll("[data-demo-carousel]")) {
+  const controller = createCarousel(root, {
+    autoplay: root.hasAttribute("data-autoplay"),
+    interval: 3000,
+    direction: root.dataset.direction ?? "horizontal",
+    keyboard: root.hasAttribute("data-keyboard") || !root.hasAttribute("data-keyboard-disabled"),
+  })
+  controllers.set(root, controller)
+
+  if (root.hasAttribute("data-hover-dots")) {
+    for (const indicator of root.querySelectorAll("[data-carousel-to]")) {
+      const show = () => controller.to(Number(indicator.dataset.carouselTo))
+      indicator.addEventListener("pointerenter", show)
+      indicator.addEventListener("focus", show)
+    }
+  }
+
+  if (root.hasAttribute("data-custom-readout")) {
+    const count = root.querySelector("[data-custom-count]")
+    const update = () => { count.textContent = `${controller.getCurrentIndex() + 1} / ${controller.slides.length}` }
+    root.addEventListener("mui:carousel-change", update)
+    update()
+  }
 }
-document.querySelector("#narrow").addEventListener("change", event => { root.classList.toggle("narrow", event.target.checked) })
-document.querySelector("#zoom").addEventListener("change", event => { root.classList.toggle("zoomed", event.target.checked); carousel.refresh() })
-document.querySelector("#reorder").addEventListener("click", () => {
-  const slide = carousel.slides[carousel.getCurrentIndex()]
-  if (slide) carousel.viewport.prepend(slide)
-  carousel.refresh(); show()
+
+function selectButton(group, selected) {
+  for (const button of group.querySelectorAll("mui-button")) {
+    button.setAttribute("type", button === selected ? "primary" : "default")
+  }
+}
+
+const dotsRoot = document.querySelector(".dots-demo")
+const dotsController = controllers.get(dotsRoot)
+const dotsOptions = document.querySelector("[data-dots-options]")
+
+dotsOptions.addEventListener("click", event => {
+  const button = event.target.closest("mui-button")
+  if (!button) return
+  if (button.hasAttribute("data-dot-type")) {
+    dotsRoot.dataset.dotType = button.dataset.dotType
+    selectButton(button.closest("mui-button-group"), button)
+  } else if (button.hasAttribute("data-dot-placement")) {
+    dotsRoot.dataset.dotPlacement = button.dataset.dotPlacement
+    selectButton(button.closest("mui-button-group"), button)
+  } else if (button.hasAttribute("data-dot-direction")) {
+    const direction = button.dataset.dotDirection
+    dotsController.set({ direction })
+    selectButton(button.closest("mui-button-group"), button)
+  } else if (button.hasAttribute("data-toggle-arrows")) {
+    dotsRoot.toggleAttribute("data-show-arrows")
+    button.querySelector("[data-toggle-label]").textContent = dotsRoot.hasAttribute("data-show-arrows")
+      ? "Hide arrow"
+      : "Show arrow"
+  }
 })
-document.querySelector("#remove").addEventListener("click", () => {
-  carousel.slides[carousel.getCurrentIndex()]?.remove(); carousel.refresh(); show()
-})
-document.querySelector("#add").addEventListener("click", () => {
-  carousel.viewport.append(document.querySelector("#new-slide").content.cloneNode(true)); carousel.refresh(); show()
-})
-document.querySelector("#hide").addEventListener("click", () => {
-  root.hidden = !root.hidden
-  if (!root.hidden) carousel.refresh()
-  show()
-})
-document.querySelector("#disconnect").addEventListener("click", () => {
-  carousel.disconnect(); nested.disconnect(); hidden.disconnect()
-  document.querySelector(".demo-controls").hidden = true
-  feedback.textContent = "Disconnected: native slide scrolling and controls inside slides remain. Reload to rebind."
-})
-let clicks = 0
-document.querySelector("#counter").addEventListener("click", event => { event.target.textContent = `Local click count: ${++clicks}` })
-document.querySelector("#fields").addEventListener("submit", event => {
-  event.preventDefault(); feedback.textContent = JSON.stringify([...new FormData(event.currentTarget)], null, 2)
-})
-show()
+
+const effectStatus = document.querySelector("[data-effect-status]")
+for (const button of document.querySelectorAll("[data-effect]")) {
+  button.addEventListener("click", () => {
+    selectButton(button.closest("mui-button-group"), button)
+    effectStatus.textContent = button.dataset.effect === "slide"
+      ? "Slide uses native scroll-snap."
+      : `${button.textContent.trim()} remains an intentionally omitted transform/transition effect.`
+  })
+}
+
+const keyboardRoot = document.querySelector(".keyboard-carousel")
+const keyboardController = controllers.get(keyboardRoot)
+for (const button of document.querySelectorAll("[data-keyboard-direction]")) {
+  button.addEventListener("click", () => {
+    keyboardController.set({ direction: button.dataset.keyboardDirection })
+    selectButton(button.closest("mui-button-group"), button)
+  })
+}
+
+window.carouselParity = { controllers }

@@ -1,21 +1,35 @@
-const { createCollapse } = window.MarkupUICollapse
-const node = id => document.getElementById(id)
-const controllers = {
-  primary: createCollapse(node("primary-group"), { accordion: true }),
-  nested: createCollapse(node("nested-group"), { accordion: true }),
-  separate: createCollapse(node("separate-group"), { accordion: true }),
+const depth = root => {
+  let value = 0
+  for (let parent = root.parentElement?.closest("[data-collapse]"); parent; parent = parent.parentElement?.closest("[data-collapse]")) value++
+  return value
 }
-for (const root of [node("primary-group"), node("nested-group"), node("separate-group")]) {
-  root.addEventListener("mui:collapse-header-click", event => {
-    node("event-log").value = `${root.id}: ${event.detail.name}, expanded ${event.detail.expanded}`
+const roots = [...document.querySelectorAll("[data-collapse]")]
+  .sort((a, b) => depth(b) - depth(a))
+const controllers = new Map()
+
+for (const root of roots) {
+  controllers.set(root, MarkupUICollapse.createCollapse(root, {
+    accordion: root.hasAttribute("data-accordion"),
+  }))
+}
+
+const eventRoot = document.querySelector("[data-event-collapse]")
+eventRoot.addEventListener("mui:collapse-header-click", event => {
+  document.querySelector("[data-header-status]").textContent =
+    `Name: ${event.detail.name}, Expanded: ${event.detail.expanded}`
+})
+
+const triggerRoot = document.querySelector("[data-trigger-collapse]")
+triggerRoot.addEventListener("mui:collapse-header-click", event => {
+  document.querySelector("[data-trigger-status]").textContent =
+    `Main/arrow summary: ${event.detail.name}, expanded ${event.detail.expanded}`
+})
+
+for (const extra of document.querySelectorAll("[data-extra-name]")) {
+  extra.addEventListener("click", () => {
+    document.querySelector("[data-trigger-status]").textContent =
+      `Extra ${extra.dataset.extraName} acted without toggling disclosure.`
   })
 }
-node("extra-action").addEventListener("click", () => { node("event-log").value = "Extra action ran once; no disclosure was toggled." })
-node("toggle-accordion").addEventListener("click", () => { controllers.primary.accordion = !controllers.primary.accordion })
-node("toggle-disabled").addEventListener("click", () => controllers.primary.setDisabled("disabled", !node("disabled-item").hasAttribute("data-collapse-disabled")))
-node("open-disabled").addEventListener("click", () => { controllers.primary.expandedNames = "disabled" })
-node("demo-form").addEventListener("submit", event => {
-  event.preventDefault()
-  node("event-log").value = `Ordinary form: ${new FormData(event.currentTarget).get("note")}`
-})
-window.collapseDemo = controllers
+
+window.collapseParity = { controllers }

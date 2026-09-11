@@ -24,7 +24,7 @@ Inventory pinned to Naive UI commit `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`:
 | `dist/markup-ui-card.global.js` | Classic script; registers and exposes `MarkupUICard`. |
 | `dist/markup-ui-card.css` | Required external CSS. No injected styles or runtime style objects. |
 | `dist/components/card/index.d.ts` | Type declarations, including `CardCloseDetail`. |
-| `demo/components/card.html`, `.css`, `.js` | Separate HTML, external CSS and plain JavaScript demo. |
+| `demo/components/card.html`, `.css`, `.js` | Runnable comparison page mirroring all thirteen pinned Naive UI 2.45.3 Card demos, with one highlighted code control per case. |
 
 ```html
 <link rel="stylesheet" href="./vendor/markup-ui-card.css">

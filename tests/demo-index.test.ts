@@ -7,7 +7,13 @@ import { createExampleCodeViewers } from "../demo/example-code.js"
 
 const html = readFileSync(resolve("demo", "index.html"), "utf8")
 const css = readFileSync(resolve("demo", "app.css"), "utf8")
+const exampleCodeCss = readFileSync(resolve("demo", "example-code.css"), "utf8")
 const avatarHtml = readFileSync(resolve("demo", "components", "avatar.html"), "utf8")
+const buttonHtml = readFileSync(resolve("demo", "components", "button.html"), "utf8")
+const cardHtml = readFileSync(resolve("demo", "components", "card.html"), "utf8")
+const carouselHtml = readFileSync(resolve("demo", "components", "carousel.html"), "utf8")
+const collapseHtml = readFileSync(resolve("demo", "components", "collapse.html"), "utf8")
+const dividerHtml = readFileSync(resolve("demo", "components", "divider.html"), "utf8")
 let browser: ReturnType<typeof createComponentBrowser> | undefined
 let media: MediaQueryList
 let mediaListener: (() => void) | undefined
@@ -75,17 +81,42 @@ describe("component-by-component demo browser", () => {
     ])
     expect(document.querySelectorAll("[data-demo-code-toggle]")).toHaveLength(10)
     const toggle = examples[0]!.querySelector<HTMLElement>("[data-demo-code-toggle]")!
-    const panel = examples[0]!.querySelector<HTMLElement>(".demo-example-code")!
+    const container = examples[0]!.querySelector<HTMLElement>(".demo-example-code-container")!
+    const panel = container.querySelector<HTMLElement>(".demo-example-code")!
     const source = panel.querySelector<HTMLElement>("code")!
     toggle.click()
     await vi.waitFor(() => expect(source.dataset.loaded).toBe("true"))
     expect(toggle.getAttribute("aria-expanded")).toBe("true")
+    expect(toggle.querySelector("svg")?.getAttribute("viewBox")).toBe("0 0 512 512")
+    expect(toggle.querySelectorAll("svg path")).toHaveLength(2)
     expect(source.textContent).toContain('<mui-avatar size="small"')
+    expect(source.querySelector('[data-code-token="tag"]')?.textContent).toBe("mui-avatar")
+    expect(source.querySelector('[data-code-token="attribute"]')?.textContent).toBe("size")
+    expect(source.querySelector('[data-code-token="string"]')?.textContent).toBe('"small"')
+    const sourceLines = source.textContent!.split("\n")
+    expect(sourceLines[0]).toMatch(/^<mui-avatar/)
+    expect(sourceLines[1]).toMatch(/^<mui-avatar/)
     expect(panel.querySelector("mui-avatar")).toBeNull()
     expect(fetch).toHaveBeenCalledTimes(1)
     toggle.click()
-    expect(panel.hidden).toBe(true)
+    expect(container.hidden).toBe(true)
     expect(toggle.getAttribute("aria-expanded")).toBe("false")
+    viewers.disconnect()
+  })
+
+  it.each([
+    ["Avatar", avatarHtml, ["size", "shape", "color", "badge", "icon", "content-size", "fallback", "group", "lazy", "show-debug"]],
+    ["Button", buttonHtml, ["basic", "secondary", "tertiary", "quaternary", "dashed", "size", "text", "tag", "disabled", "icon", "events", "shape", "ghost", "loading", "color", "group", "icon-button", "popover"]],
+    ["Card", cardHtml, ["basic", "size", "cover", "hoverable", "slots", "border", "segment", "closable", "no-title", "content-scrollable", "loading", "custom-style", "embedded"]],
+    ["Carousel", carouselHtml, ["basic", "arrow", "autoplay", "dots", "vertical", "space-between", "slides-per-view", "slides-per-view-auto", "centered", "effect", "transition-name", "hover", "keyboard", "mousewheel", "simulate-drag", "custom-arrow-and-dots", "custom-card", "custom-dots"]],
+    ["Collapse", collapseHtml, ["basic", "arrow-placement", "accordion", "nested", "display-directive", "item-header-click", "customize-icon", "default-expanded", "header-extra", "disabled", "trigger-areas"]],
+    ["Divider", dividerHtml, ["basic", "content", "vertical"]],
+  ])("mirrors the pinned %s demo inventory with per-example code controls", (_name, sourceHtml, expected) => {
+    document.body.innerHTML = sourceHtml.slice(sourceHtml.indexOf("<body>") + 6, sourceHtml.indexOf("</body>"))
+    const viewers = createExampleCodeViewers()
+    expect([...document.querySelectorAll<HTMLElement>("[data-demo-example]")]
+      .map(example => example.dataset.demoExample)).toEqual(expected)
+    expect(document.querySelectorAll("[data-demo-code-toggle]")).toHaveLength(expected.length)
     viewers.disconnect()
   })
 
@@ -184,6 +215,8 @@ describe("component-by-component demo browser", () => {
     expect(html).toContain('../dist/markup-ui-button.global.js')
     expect(css).toContain("min-block-size: 42px")
     expect(css).toContain('.component-link[aria-current="page"]')
+    expect(exampleCodeCss).toContain("grid-template-columns: minmax(0, 1fr)")
+    expect(exampleCodeCss).not.toContain("repeat(2")
     expect(avatarHtml).toContain('markup-ui-button.css')
     expect(avatarHtml).toContain('markup-ui-input.css')
     expect(avatarHtml).toContain('markup-ui-slider.css')

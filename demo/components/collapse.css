@@ -1,9 +1,18 @@
-body { margin: 2rem; font: 1rem/1.5 system-ui, sans-serif; color: #18202c; background: #f6f8fc; }
-main { max-width: 65rem; }
-section, form { margin-block: 2rem; }
-button, input { font: inherit; }
-button { margin: .3rem; padding: .4rem .7rem; }
-label { display: block; margin-block: .7rem; }
-output { display: block; min-height: 1.5em; }
-#outside { position: fixed; top: 8px; right: 8px; }
-@media (max-width: 30rem) { body { margin: 1rem; } .mui-collapse-row { grid-template-columns: minmax(0, 1fr); } }
+body { color: #333639; background: #f5f5f7; }
+main { max-inline-size: 60rem; margin-inline: auto; padding: 2rem; }
+main > p { color: #767c82; }
+section[data-demo-example] { padding: 20px; border: 1px solid #e0e0e6; border-radius: 6px; background: #fff; }
+.demo-preview { min-inline-size: 0; margin-block-start: 16px; }
+.demo-preview.vertical { display: flex; align-items: stretch; flex-direction: column; gap: 12px; }
+.mui-collapse { min-inline-size: 0; }
+.mui-collapse [data-collapse-content] { overflow-wrap: anywhere; }
+.demo-status { min-block-size: 1.6em; margin: 0; color: #2080f0; }
+.cash-arrow { inline-size: 18px; block-size: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.trigger-summary { display: flex; flex-wrap: wrap; gap: 8px; }
+[data-collapse-extra] > button { min-block-size: 28px; padding-inline: 10px; border: 1px solid #e0e0e6; border-radius: 3px; color: #333639; background: #fff; font: inherit; cursor: pointer; }
+[data-collapse-extra] > button:hover { border-color: #36ad6a; color: #36ad6a; }
+@media (max-width: 36rem) {
+  main { padding: 1rem; }
+  section[data-demo-example] { padding: 16px; }
+  .mui-collapse-row { grid-template-columns: minmax(0, 1fr); }
+}

@@ -6,7 +6,9 @@ The runnable Avatar page now mirrors the ten pinned Naive UI 2.45.3 demo identit
 source order: Size, Shape, Color, Badge, Icon, Content size, Fallback, Avatar Group,
 Lazy load and v-show debug. Each example owns a MarkupUI Show code control that extracts
 only its authored preview markup from the raw page; the whole document is not presented
-as one snippet. Local deterministic SVGs replace remote portraits.
+as one snippet. The icon uses the reference 512-viewBox code chevrons, and a safe
+demo-only tokenizer highlights HTML tags, attributes, strings, punctuation and comments
+using MarkupUI Code tokens. Local deterministic SVGs replace remote portraits.
 
 Chromium reconfirmed exact Avatar boxes, radii and paint for Size, Shape, Color, Icon,
 Content size and Fallback. The comparison also makes the retained Group and Lazy-loading

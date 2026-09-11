@@ -1,5 +1,30 @@
 # Button / ButtonGroup default-style audit
 
+## Pinned demo parity page — 2026-09-11
+
+The runnable Button page now mirrors all eighteen pinned Naive UI 2.45.3 demos in source
+order: Basic, Secondary, Tertiary, Quaternary, Dashed, Size, Text, Tag, Disabled, Icon,
+Events, Shape, Ghost, Loading, Custom color, Button group, Icon button and disabled-state
+Popover. Each case has an icon-only MarkupUI code control and highlighted authored HTML.
+
+The page keeps the closest honest native equivalents where APIs differ:
+
+- authored `data-mui-button-icon` content replaces `render-icon`;
+- a native anchor child replaces arbitrary `tag` rendering;
+- public Button CSS properties replace the runtime `color` prop;
+- a native status paragraph replaces `useMessage`;
+- a focusable native wrapper exposes the disabled-button description because a genuinely
+  disabled button cannot be the Popover trigger.
+
+These are demo-visible design boundaries, not missing default-style fixes. Arbitrary tag
+rendering and render callbacks should remain omitted. A future general binding/template
+engine may improve data-driven composition but is not required for these Button cases.
+
+Chromium 152 confirmed the Basic case's seven controls match the rendered reference for
+34px height, 14px type, 3px corners and every default/tertiary/semantic foreground and
+background color. The page uses the same two-column case layout at the tested desktop
+width, and event/loading examples remain functional with zero console errors.
+
 **2026-09-10 — defaults and state endpoints corrected; remaining motion and legacy
 boundaries are explicit below.** This is the new visual pass, not a replacement of the
 historical native-migration acceptance record. Card has not been reviewed here.

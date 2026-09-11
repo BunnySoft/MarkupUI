@@ -13,7 +13,7 @@ custom-element registration or automatic stylesheet installation.
 | `dist/markup-ui-carousel.js` | Optional ESM |
 | `dist/markup-ui-carousel.global.js` | `MarkupUICarousel`; refuses to overwrite an existing namespace |
 | `@dataengine/markup-ui/carousel/style.css` | Required external native layout, snap, controls, focus and media CSS |
-| [Local demo](../../demo/components/carousel.html) | Separate local HTML/CSS/JS; forms, nested/hidden slides, resize, RTL and zoom |
+| [Local demo](../../demo/components/carousel.html) | Comparison page mirroring all eighteen pinned Naive UI 2.45.3 demos with local assets, one highlighted code control per case, functional retained cases and explicit unsupported comparisons |
 | [Complete reference](../naive-ui/components/carousel.md) | Original 41 identities plus nine explicit source additions; all dispositions |
 
 ## Default-style audit — 2026-09-11

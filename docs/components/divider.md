@@ -5,6 +5,10 @@
 owns meaning; external borders/flex layout supply presentation. There is no new Custom
 Element, runtime, observer, theme renderer or focus/keyboard handler.
 
+The [local demo](../../demo/components/divider.html) mirrors the three pinned Naive UI
+2.45.3 cases—Basic, Title and Vertical—in source order, with one highlighted code
+control per example.
+
 ## Default-style audit — 2026-09-10
 
 The [isolated light/dark audit](../style-audit/components/divider.md) corrects rule/

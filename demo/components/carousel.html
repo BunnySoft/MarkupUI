@@ -1,92 +1,400 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-mui-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Native Carousel · MarkupUI</title>
+  <title>MarkupUI Carousel parity demos</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-carousel.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="./carousel.css">
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script type="module" src="./carousel.js"></script>
+  <script type="module" src="../example-code.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Carousel: native scrolling, original slide nodes</h1>
-    <p>Touch, trackpad and wheel remain browser scrolling. Focus the slide viewport for
-      Left/Right (Up/Down vertically), Home or End. Field editing keys remain native.
-      Commands wrap, but swiping stops at the native ends—there are no duplicate slides.</p>
-    <div class="demo-controls" data-enhancement hidden>
-      <label>Direction <select id="direction"><option value="horizontal">Horizontal</option><option value="vertical">Vertical</option></select></label>
-      <label><input id="rtl" type="checkbox">RTL</label>
-      <label><input id="loop" type="checkbox" checked>Wrap commands</label>
-      <label><input id="autoplay" type="checkbox">Enable autoplay (2 seconds)</label>
-      <label><input id="disable" type="checkbox">Disable enhancement</label>
-      <label><input id="narrow" type="checkbox">Narrow containing block</label>
-      <label><input id="zoom" type="checkbox">CSS zoom 200%</label>
-      <button type="button" id="reorder">Move current node to first</button>
-      <button type="button" id="remove">Remove current node</button>
-      <button type="button" id="add">Append a native template slide</button>
-      <button type="button" id="hide">Hide/show main carousel</button>
-      <button type="button" id="disconnect">Disconnect to plain scrolling</button>
-    </div>
-    <form id="fields">
-      <section class="mui-carousel" data-carousel id="main-carousel" aria-labelledby="carousel-title">
-        <h2 id="carousel-title">Local interactive examples</h2>
-        <div data-carousel-viewport tabindex="0" aria-label="Example slides" id="main-viewport">
-          <article data-carousel-item>
-            <div class="slide-content"><h3>1. Keep your draft</h3><p>These controls never get cloned, hidden or made inert.</p>
-              <label>Title <input id="draft-title" name="title" required value="My original draft"></label>
-              <label>Notes <textarea name="notes">Edits survive every move.</textarea></label>
-              <a href="#after">Native link to the page footer</a>
-            </div>
-          </article>
-          <article data-carousel-item>
-            <div class="slide-content"><h3>2. Native choices</h3>
-              <label>Colour <select name="colour"><option>Blue</option><option>Green</option></select></label>
-              <label><input name="approved" type="checkbox" value="yes" checked>Approved</label>
-              <p>All named controls still participate in validation and FormData, even offscreen.</p>
-              <button type="button" id="counter" data-enhancement hidden>Local click count: 0</button>
-            </div>
-          </article>
-          <article data-carousel-item>
-            <div class="slide-content"><h3>3. Independent nested carousel</h3>
-              <section class="mui-carousel nested" data-carousel id="nested-carousel" aria-label="Nested cards">
-                <div data-carousel-viewport tabindex="0" aria-label="Nested slides" id="nested-viewport">
-                  <article data-carousel-item><div class="slide-content"><p>Nested one</p><label>Detail <input name="detail" value="Still native"></label></div></article>
-                  <article data-carousel-item><div class="slide-content"><p>Nested two</p><a href="#after">Footer link</a></div></article>
-                </div>
-                <div data-carousel-controls hidden><button type="button" data-carousel-prev>Previous nested slide</button><button type="button" data-carousel-next>Next nested slide</button></div>
-                <p data-carousel-readout>Scroll both nested cards.</p>
-              </section>
-            </div>
-          </article>
+  <main data-demo-page>
+    <h1>Carousel</h1>
+    <p>MarkupUI equivalents of the eighteen Carousel demos from pinned Naive UI 2.45.3,
+      in the same order. Unsupported multi-view/effect/drag cases remain visible as
+      explicit native comparisons.</p>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header><div><h2 id="basic-heading">Basic</h2></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <section class="mui-carousel parity-carousel" data-carousel data-demo-carousel aria-label="Basic carousel">
+          <div data-carousel-viewport id="basic-viewport" tabindex="0" aria-label="Basic slides">
+            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
+            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
+            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
+            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
+          </div>
+          <div class="carousel-dots" data-carousel-controls hidden>
+            <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
+            <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
+            <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
+            <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
+          </div>
+          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
+        </section>
+      </div>
+    </section>
+
+    <section data-demo-example="arrow" aria-labelledby="arrow-heading">
+      <header data-demo-header><div><h2 id="arrow-heading">Arrow</h2><p>Show previous and next controls.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <section class="mui-carousel parity-carousel" data-carousel data-demo-carousel aria-label="Arrow carousel">
+          <div data-carousel-viewport id="arrow-viewport" tabindex="0" aria-label="Arrow slides">
+            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
+            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
+            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
+            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
+          </div>
+          <div class="carousel-combined-controls" data-carousel-controls hidden>
+            <button class="carousel-arrow carousel-arrow-prev" type="button" data-carousel-prev aria-label="Previous slide">‹</button>
+            <button class="carousel-arrow carousel-arrow-next" type="button" data-carousel-next aria-label="Next slide">›</button>
+            <span class="carousel-dot-set">
+              <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
+              <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
+              <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
+              <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
+            </span>
+          </div>
+          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
+        </section>
+      </div>
+    </section>
+
+    <section data-demo-example="autoplay" aria-labelledby="autoplay-heading">
+      <header data-demo-header><div><h2 id="autoplay-heading">Autoplay</h2><p>Autoplay uses an explicit accessible pause/play control.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <section class="mui-carousel parity-carousel" data-carousel data-demo-carousel data-autoplay aria-label="Autoplay carousel">
+          <div data-carousel-viewport id="autoplay-viewport" tabindex="0" aria-label="Autoplay slides">
+            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
+            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
+            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
+            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
+          </div>
+          <div class="carousel-dots" data-carousel-controls hidden>
+            <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
+            <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
+            <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
+            <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
+            <button class="rotation-control" type="button" data-carousel-toggle>Pause / play</button>
+          </div>
+          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
+        </section>
+      </div>
+    </section>
+
+    <section data-demo-example="dots" aria-labelledby="dots-heading">
+      <header data-demo-header><div><h2 id="dots-heading">Dots</h2><p>External controls adapt indicator type, placement, direction and arrows.</p></div></header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <div class="option-groups" data-dots-options>
+          <mui-button-group size="tiny" aria-label="Dot type">
+            <mui-button type="primary" data-dot-type="dot">Dot</mui-button>
+            <mui-button data-dot-type="line">Line</mui-button>
+          </mui-button-group>
+          <mui-button-group size="tiny" aria-label="Dot placement">
+            <mui-button data-dot-placement="top">Top</mui-button>
+            <mui-button type="primary" data-dot-placement="bottom">Bottom</mui-button>
+            <mui-button data-dot-placement="left">Left</mui-button>
+            <mui-button data-dot-placement="right">Right</mui-button>
+          </mui-button-group>
+          <mui-button-group size="tiny" aria-label="Direction">
+            <mui-button type="primary" data-dot-direction="horizontal">Horizontal</mui-button>
+            <mui-button data-dot-direction="vertical">Vertical</mui-button>
+          </mui-button-group>
+          <mui-button size="tiny" secondary data-toggle-arrows><span data-toggle-label>Show arrow</span></mui-button>
         </div>
-        <div data-carousel-controls hidden>
-          <button type="button" data-carousel-prev>Previous slide</button>
-          <button type="button" data-carousel-next>Next slide</button>
-          <button type="button" data-carousel-to="0" aria-label="Go to slide 1">1</button>
-          <button type="button" data-carousel-to="1" aria-label="Go to slide 2">2</button>
-          <button type="button" data-carousel-to="2" aria-label="Go to slide 3">3</button>
-          <button type="button" data-carousel-toggle>Pause / play rotation</button>
+        <section class="mui-carousel parity-carousel dots-demo" data-carousel data-demo-carousel aria-label="Configurable dots carousel">
+          <div data-carousel-viewport id="dots-viewport" tabindex="0" aria-label="Configurable dot slides">
+            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
+            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
+            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
+            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
+          </div>
+          <div class="carousel-combined-controls configurable-controls" data-carousel-controls hidden>
+            <button class="carousel-arrow carousel-arrow-prev" type="button" data-carousel-prev aria-label="Previous slide">‹</button>
+            <button class="carousel-arrow carousel-arrow-next" type="button" data-carousel-next aria-label="Next slide">›</button>
+            <span class="carousel-dot-set">
+              <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
+              <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
+              <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
+              <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
+            </span>
+          </div>
+          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
+        </section>
+      </div>
+    </section>
+
+    <section data-demo-example="vertical" aria-labelledby="vertical-heading">
+      <header data-demo-header><div><h2 id="vertical-heading">Vertical</h2></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <section class="mui-carousel parity-carousel vertical-carousel" data-carousel data-demo-carousel data-direction="vertical" aria-label="Vertical carousel">
+          <div data-carousel-viewport id="vertical-viewport" tabindex="0" aria-label="Vertical slides">
+            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
+            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
+            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
+            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
+          </div>
+          <div class="carousel-dots carousel-dots-right" data-carousel-controls hidden>
+            <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
+            <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
+            <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
+            <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
+          </div>
+          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
+        </section>
+      </div>
+    </section>
+
+    <section data-demo-example="space-between" aria-labelledby="space-heading">
+      <header data-demo-header><div><h2 id="space-heading">Space between</h2><p>Native multi-card strip; the retained Carousel controller remains one slide per view.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <div class="native-carousel-strip equal-slides" aria-label="Slides with 20 pixel spacing" tabindex="0">
+          <img src="./carousel-1.svg" alt="Blue landscape, slide 1">
+          <img src="./carousel-2.svg" alt="Green landscape, slide 2">
+          <img src="./carousel-3.svg" alt="Gold landscape, slide 3">
+          <img src="./carousel-4.svg" alt="Red landscape, slide 4">
         </div>
-        <p data-carousel-readout>Scroll all three examples.</p>
-      </section>
-      <p><button type="submit" data-enhancement hidden>Validate and inspect local FormData</button>
-        <button type="reset">Reset native fields</button></p>
-    </form>
-    <details id="hidden-case"><summary>Initially hidden carousel (open to measure)</summary>
-      <section class="mui-carousel" data-carousel id="hidden-carousel" aria-label="Initially hidden examples">
-        <div data-carousel-viewport tabindex="0" aria-label="Hidden example slides" id="hidden-viewport">
-          <article data-carousel-item><div class="slide-content"><p>Hidden first</p><a href="#after">Native footer link</a></div></article>
-          <article data-carousel-item><div class="slide-content"><p>Hidden second (initial index)</p><input aria-label="Hidden case draft" value="Kept"></div></article>
+      </div>
+    </section>
+
+    <section data-demo-example="slides-per-view" aria-labelledby="per-view-heading">
+      <header data-demo-header><div><h2 id="per-view-heading">Slides per view</h2><p>Three visible native cards with 20px spacing; no loop or controller claim.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <div class="native-carousel-strip three-slides" aria-label="Three slides per view" tabindex="0">
+          <img src="./carousel-1.svg" alt="Blue landscape, slide 1">
+          <img src="./carousel-2.svg" alt="Green landscape, slide 2">
+          <img src="./carousel-3.svg" alt="Gold landscape, slide 3">
+          <img src="./carousel-4.svg" alt="Red landscape, slide 4">
         </div>
-        <div data-carousel-controls hidden><button type="button" data-carousel-prev>Previous hidden example</button><button type="button" data-carousel-next>Next hidden example</button></div>
-        <p data-carousel-readout>Open and scroll both examples.</p>
-      </section>
-    </details>
-    <template id="new-slide"><article data-carousel-item><div class="slide-content"><h3>New authored template slide</h3><label>Extra draft <input name="extra" value="New native field"></label></div></article></template>
-    <pre id="feedback" aria-label="Local interaction result">No JavaScript: plain scrolling, original native fields and links. Enhancement buttons remain hidden.</pre>
-    <footer id="after"><label>Outside focus target <input id="outside" value="No automatic focus movement"></label>
-      <p>Single slide per view. No fade, 3D/card effect, mouse drag engine, virtualized content or seamless loop.</p></footer>
+      </div>
+    </section>
+
+    <section data-demo-example="slides-per-view-auto" aria-labelledby="auto-view-heading">
+      <header data-demo-header><div><h2 id="auto-view-heading">Auto slides per view</h2><p>Authored variable-width native strip.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <div class="native-carousel-strip variable-slides" aria-label="Variable width slides" tabindex="0">
+          <img style="--slide-width:60%" src="./carousel-1.svg" alt="Blue landscape, slide 1">
+          <img style="--slide-width:20%" src="./carousel-2.svg" alt="Green landscape, slide 2">
+          <img style="--slide-width:40%" src="./carousel-3.svg" alt="Gold landscape, slide 3">
+          <img style="--slide-width:10%" src="./carousel-4.svg" alt="Red landscape, slide 4">
+        </div>
+      </div>
+    </section>
+
+    <section data-demo-example="centered" aria-labelledby="centered-heading">
+      <header data-demo-header><div><h2 id="centered-heading">Centered</h2><p>Centered variable-width native comparison; not a Carousel controller mode.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <div class="native-carousel-strip variable-slides centered-strip" aria-label="Centered variable slides" tabindex="0">
+          <img style="--slide-width:30%" src="./carousel-1.svg" alt="Blue landscape, slide 1">
+          <img style="--slide-width:20%" src="./carousel-2.svg" alt="Green landscape, slide 2">
+          <img style="--slide-width:30%" src="./carousel-3.svg" alt="Gold landscape, slide 3">
+          <img style="--slide-width:40%" src="./carousel-4.svg" alt="Red landscape, slide 4">
+        </div>
+      </div>
+    </section>
+
+    <section data-demo-example="effect" aria-labelledby="effect-heading">
+      <header data-demo-header><div><h2 id="effect-heading">Effect</h2><p>Slide is supported; fade and card remain explicit omitted effects.</p></div></header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <mui-button-group size="tiny" aria-label="Requested effect">
+          <mui-button type="primary" data-effect="slide">Slide</mui-button>
+          <mui-button data-effect="fade">Fade</mui-button>
+          <mui-button data-effect="card">Card</mui-button>
+        </mui-button-group>
+        <p class="comparison-status" data-effect-status>Slide uses native scroll-snap.</p>
+        <section class="mui-carousel parity-carousel" data-carousel data-demo-carousel aria-label="Effect comparison carousel">
+          <div data-carousel-viewport id="effect-viewport" tabindex="0" aria-label="Effect comparison slides">
+            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
+            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
+            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
+            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
+          </div>
+          <div class="carousel-dots" data-carousel-controls hidden>
+            <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
+            <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
+            <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
+            <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
+          </div>
+          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
+        </section>
+      </div>
+    </section>
+
+    <section data-demo-example="transition-name" aria-labelledby="transition-heading">
+      <header data-demo-header><div><h2 id="transition-heading">Customizing transition</h2><p>Custom Vue transition props are not a native scroll-snap feature.</p></div></header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <p class="comparison-status">MarkupUI keeps the standard native scroll transition.</p>
+        <section class="mui-carousel parity-carousel" data-carousel data-demo-carousel aria-label="Custom transition comparison">
+          <div data-carousel-viewport id="transition-viewport" tabindex="0" aria-label="Transition comparison slides">
+            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
+            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
+            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
+            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
+          </div>
+          <div class="carousel-overlay-controls" data-carousel-controls hidden>
+            <button type="button" data-carousel-prev aria-label="Previous slide">‹</button>
+            <span class="carousel-control-spacer"></span>
+            <button type="button" data-carousel-next aria-label="Next slide">›</button>
+          </div>
+          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
+        </section>
+      </div>
+    </section>
+
+    <section data-demo-example="hover" aria-labelledby="hover-heading">
+      <header data-demo-header><div><h2 id="hover-heading">Hover</h2><p>Hover or focus an indicator to request its slide.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <section class="mui-carousel parity-carousel" data-carousel data-demo-carousel data-hover-dots aria-label="Hover indicator carousel">
+          <div data-carousel-viewport id="hover-viewport" tabindex="0" aria-label="Hover slides">
+            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
+            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
+            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
+            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
+          </div>
+          <div class="carousel-dots" data-carousel-controls hidden>
+            <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
+            <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
+            <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
+            <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
+          </div>
+          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
+        </section>
+      </div>
+    </section>
+
+    <section data-demo-example="keyboard" aria-labelledby="keyboard-heading">
+      <header data-demo-header><div><h2 id="keyboard-heading">Keyboard</h2><p>MarkupUI uses the focused viewport rather than dots as the keyboard owner.</p></div></header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <mui-button-group size="tiny" aria-label="Keyboard direction">
+          <mui-button type="primary" data-keyboard-direction="horizontal">Horizontal</mui-button>
+          <mui-button data-keyboard-direction="vertical">Vertical</mui-button>
+        </mui-button-group>
+        <section class="mui-carousel parity-carousel keyboard-carousel" data-carousel data-demo-carousel data-keyboard aria-label="Keyboard carousel">
+          <div data-carousel-viewport id="keyboard-viewport" tabindex="0" aria-label="Keyboard slides">
+            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
+            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
+            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
+            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
+          </div>
+          <div class="carousel-dots" data-carousel-controls hidden>
+            <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
+            <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
+            <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
+            <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
+          </div>
+          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
+        </section>
+      </div>
+    </section>
+
+    <section data-demo-example="mousewheel" aria-labelledby="mousewheel-heading">
+      <header data-demo-header><div><h2 id="mousewheel-heading">Mousewheel</h2><p>Vertical wheel movement remains native scrolling rather than discrete wheel interception.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <section class="mui-carousel parity-carousel vertical-carousel" data-carousel data-demo-carousel data-direction="vertical" aria-label="Mousewheel carousel">
+          <div data-carousel-viewport id="mousewheel-viewport" tabindex="0" aria-label="Mousewheel slides">
+            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
+            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
+            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
+            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
+          </div>
+          <div class="carousel-dots carousel-dots-right" data-carousel-controls hidden>
+            <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
+            <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
+            <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
+            <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
+          </div>
+          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
+        </section>
+      </div>
+    </section>
+
+    <section data-demo-example="simulate-drag" aria-labelledby="drag-heading">
+      <header data-demo-header><div><h2 id="drag-heading">Simulate drag</h2><p>Touch, trackpad and native scrolling work; a custom mouse-drag engine remains omitted.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <section class="mui-carousel parity-carousel" data-carousel data-demo-carousel aria-label="Native drag comparison">
+          <div data-carousel-viewport id="drag-viewport" tabindex="0" aria-label="Native scrolling slides">
+            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
+            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
+            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
+            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
+          </div>
+          <div class="carousel-dots" data-carousel-controls hidden>
+            <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
+            <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
+            <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
+            <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
+          </div>
+          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
+        </section>
+      </div>
+    </section>
+
+    <section data-demo-example="custom-arrow-and-dots" aria-labelledby="custom-controls-heading">
+      <header data-demo-header><div><h2 id="custom-controls-heading">Customzing arrow and dots</h2><p>Authored native controls replace renderer slots.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <section class="mui-carousel parity-carousel custom-controls-carousel" data-carousel data-demo-carousel data-autoplay aria-label="Custom controls carousel">
+          <div data-carousel-viewport id="custom-controls-viewport" tabindex="0" aria-label="Custom control slides">
+            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
+            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
+            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
+            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
+          </div>
+          <div class="custom-combined-controls" data-carousel-controls hidden>
+            <span class="custom-arrows">
+              <button type="button" data-carousel-prev aria-label="Previous slide">←</button>
+              <button type="button" data-carousel-next aria-label="Next slide">→</button>
+              <button class="rotation-control" type="button" data-carousel-toggle>Pause / play</button>
+            </span>
+            <span class="custom-lines">
+              <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
+              <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
+              <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
+              <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
+            </span>
+          </div>
+          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
+        </section>
+      </div>
+    </section>
+
+    <section data-demo-example="custom-card" aria-labelledby="custom-card-heading">
+      <header data-demo-header><div><h2 id="custom-card-heading">Customize card</h2><p>Static native card-strip comparison; 3D card transforms remain omitted.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <div class="native-card-carousel" aria-label="Card effect comparison">
+          <img src="./carousel-4.svg" alt="Red landscape, previous card">
+          <img class="current-card" src="./carousel-1.svg" alt="Blue landscape, current card">
+          <img src="./carousel-2.svg" alt="Green landscape, next card">
+        </div>
+      </div>
+    </section>
+
+    <section data-demo-example="custom-dots" aria-labelledby="custom-dots-heading">
+      <header data-demo-header><div><h2 id="custom-dots-heading">Custom Dots</h2><p>A plain current/total readout replaces the dots slot.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <section class="mui-carousel parity-carousel" data-carousel data-demo-carousel data-autoplay data-custom-readout aria-label="Custom readout carousel">
+          <div data-carousel-viewport id="custom-dots-viewport" tabindex="0" aria-label="Custom readout slides">
+            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
+            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
+            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
+            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
+          </div>
+          <div class="custom-readout-controls" data-carousel-controls hidden>
+            <span data-custom-count>1 / 4</span>
+            <button class="rotation-control" type="button" data-carousel-toggle>Pause / play</button>
+          </div>
+          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
+        </section>
+      </div>
+    </section>
   </main>
 </body>
 </html>

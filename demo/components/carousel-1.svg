@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480">
+  <defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="#2080f0"/><stop offset="1" stop-color="#70c0e8"/></linearGradient></defs>
+  <rect width="800" height="480" fill="url(#g)"/>
+  <circle cx="620" cy="120" r="150" fill="#fff" opacity=".18"/>
+  <path d="M0 390 190 220l130 120 120-90 230 230H0Z" fill="#fff" opacity=".35"/>
+  <text x="54" y="82" fill="#fff" font-family="system-ui,sans-serif" font-size="42">Slide 1</text>
+</svg>

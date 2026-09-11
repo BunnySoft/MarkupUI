@@ -1,5 +1,31 @@
 # Card default-style audit
 
+## Pinned demo parity page — 2026-09-11
+
+The runnable Card page now mirrors all thirteen pinned Naive UI 2.45.3 demos in source
+order: Basic, Size, Cover, Hoverable, Slots, Border, Segmented, Closable, No title,
+Content Scroll, Loading, Custom and Embedded. Each case has an icon-only MarkupUI code
+control and highlighted authored HTML.
+
+The page exposes the retained native replacements directly:
+
+- Vue Card slots/render props become authored light-DOM Card regions;
+- the remote cover is a deterministic local SVG;
+- loading uses local CSS skeletons rather than an `NSkeleton` renderer;
+- Switch, Tabs and Button are independent MarkupUI/native compositions;
+- style-object props become external CSS classes;
+- content scrolling remains native overflow;
+- close intent updates an inline native status instead of invoking an overlay service.
+
+The proposed documentation direction is to prefer concise passive `mui-card-*` light-DOM
+parts while retaining semantic native marked regions. Shadow DOM is not needed for Card
+slot-like syntax; scoped data templates remain a separate proposed binding feature.
+
+Chromium 152 confirmed the Basic Card matches the rendered reference at **300×112.19px**
+with 3px corners, `#333639` text and a white surface. The page uses the same two-column
+case layout at the tested desktop width; close, loading/content replacement, Tabs and
+native content scrolling work with zero console errors.
+
 **2026-09-10 — native defaults fixed; legacy and rendering boundaries remain explicit.**
 This visual pass does not replace the historical native-migration acceptance record.
 

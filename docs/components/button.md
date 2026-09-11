@@ -19,7 +19,7 @@ Inventory pinned to Naive UI commit `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`:
 | `dist/markup-ui-button.js` | ESM; exports `MuiButton`, `MuiButtonGroup`, `registerButton()`; registers on browser import. |
 | `dist/markup-ui-button.global.js` | Classic script; registers and exposes `MarkupUIButton`. |
 | `dist/markup-ui-button.css` | Required external CSS; no stylesheet injection. Insertion briefly leases a private inline geometry token, restored afterward. |
-| `demo/components/button.html`, `.css`, `.js` | Separate runnable HTML, CSS and plain JavaScript demo. |
+| `demo/components/button.html`, `.css`, `.js` | Runnable comparison page mirroring all eighteen pinned Naive UI 2.45.3 Button demos, with one highlighted code control per case. |
 | `dist/components/button/index.d.ts` | TypeScript declarations, also selected by the package export. |
 
 ```html

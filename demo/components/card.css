@@ -1,13 +1,104 @@
-:root { font-family: system-ui, sans-serif; color: #242424; background: #fafafa; }
-body { margin: 0; }
-main { max-width: 1040px; margin: auto; padding: 32px; }
-main > section { margin-block: 24px; }
-h1 { font-size: 1.75rem; }
-h2 { font-size: 1.2rem; }
-p { margin-block: 0 12px; }
-.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-block: 16px; }
-.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-block: 16px; }
-button, input, select { font: inherit; }
-button, input, select { padding: 5px 8px; }
-.scroll-card { --mui-card-height: 320px; }
-[data-mui-card-content]:focus-visible { outline: 3px solid #2080f080; outline-offset: -3px; }
+body {
+  color: #333639;
+  background: #f5f5f7;
+}
+main {
+  max-inline-size: 60rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+main > p {
+  color: #767c82;
+}
+section[data-demo-example] {
+  margin-block: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid #e0e0e6;
+  border-radius: 6px;
+  background: #fff;
+}
+.demo-preview {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-block-start: 1rem;
+}
+.demo-preview.vertical {
+  align-items: stretch;
+  flex-direction: column;
+}
+.demo-preview > mui-card:not(.narrow-card) {
+  inline-size: 100%;
+}
+.narrow-card {
+  inline-size: min(100%, 300px);
+}
+.interaction-message {
+  min-block-size: 1.6em;
+  margin: 0;
+  color: #2080f0;
+}
+.task-card {
+  inline-size: 100%;
+  --mui-card-height: 280px;
+}
+.task-card [data-mui-card-content]:focus-visible {
+  outline: 3px solid #2080f080;
+  outline-offset: -3px;
+}
+.task-card [data-mui-card-content] p {
+  margin: 0 0 8px;
+}
+.task-card [data-mui-card-content] p:last-child {
+  margin-block-end: 0;
+}
+#loading-switch {
+  align-self: flex-start;
+}
+.skeleton {
+  display: block;
+  block-size: 1em;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #f2f2f5 25%, #e7e7eb 37%, #f2f2f5 63%);
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.4s ease infinite;
+}
+.skeleton-heading {
+  inline-size: 60%;
+}
+.skeleton-lines {
+  display: grid;
+  gap: 10px;
+}
+.skeleton-lines .skeleton:last-child {
+  inline-size: 72%;
+}
+.custom-card > [data-mui-card-content] {
+  padding: 0;
+}
+.custom-tabs [data-tabs-list] {
+  padding-inline: 20px;
+}
+.custom-tabs [data-tabs-tab] {
+  min-block-size: 46px;
+  font-size: 16px;
+}
+.custom-tabs [data-tabs-pane] {
+  padding: 20px;
+}
+@keyframes skeleton-loading {
+  from { background-position: 100% 50%; }
+  to { background-position: 0 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; }
+}
+@media (max-width: 36rem) {
+  main {
+    padding: 1rem;
+  }
+  section[data-demo-example] {
+    padding: 1rem;
+  }
+}

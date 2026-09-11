@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"
+  role="img" aria-labelledby="title desc">
+  <title id="title">Abstract portrait illustration</title>
+  <desc id="desc">A geometric blue and green figure against a warm background.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4d9a7"/>
+      <stop offset="1" stop-color="#efbfa2"/>
+    </linearGradient>
+    <linearGradient id="shirt" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#18a058"/>
+      <stop offset="1" stop-color="#2080f0"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" fill="url(#background)"/>
+  <circle cx="90" cy="85" r="54" fill="#f2c97d" opacity=".75"/>
+  <circle cx="520" cy="310" r="92" fill="#63e2b7" opacity=".42"/>
+  <path d="M170 400c18-103 77-154 153-154s139 51 157 154z" fill="url(#shirt)"/>
+  <ellipse cx="323" cy="179" rx="83" ry="96" fill="#d9956e"/>
+  <path d="M239 171c0-88 44-130 103-130 55 0 96 43 96 109-35-23-74-41-123-36-24 2-49 21-76 57z" fill="#263a5a"/>
+  <path d="M247 192c17-6 30-20 40-39 37 21 76 26 126 14-4 64-37 108-90 108-47 0-76-31-76-83z" fill="#e5a47c"/>
+  <circle cx="292" cy="190" r="6" fill="#263a5a"/>
+  <circle cx="362" cy="190" r="6" fill="#263a5a"/>
+  <path d="M307 229c13 9 31 9 44 0" fill="none" stroke="#914f48" stroke-width="6" stroke-linecap="round"/>
+  <path d="M126 281l68-59M452 95l63-45" stroke="#2080f0" stroke-width="14" stroke-linecap="round" opacity=".55"/>
+</svg>

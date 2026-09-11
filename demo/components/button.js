@@ -1,27 +1,19 @@
-const editor = document.querySelector("#editor")
-const status = document.querySelector("#form-status")
-let submissions = 0
-editor.addEventListener("submit", (event) => {
-  event.preventDefault()
-  submissions++
-  const values = new FormData(editor, event.submitter)
-  status.textContent = `${submissions} submissions; action=${values.get("action")}; title=${values.get("title")}.`
-})
-editor.addEventListener("reset", () => {
-  status.textContent = "Native form reset to initial values."
+const eventMessage = document.getElementById("event-message")
+document.getElementById("event-button").addEventListener("click", () => {
+  eventMessage.textContent = "Button Clicked"
 })
 
-const action = document.querySelector("#count-action")
-let clicks = 0
-action.querySelector(":scope > button").addEventListener("click", () => {
-  document.querySelector("#click-status").textContent = `${++clicks} activations.`
-})
-document.querySelector("#toggle-loading").addEventListener("click", () => {
-  action.loading = !action.loading
-})
-document.querySelector("#toggle-disabled").addEventListener("click", () => {
-  action.disabled = !action.disabled
-})
-document.querySelector("#button-theme").addEventListener("change", (event) => {
-  document.documentElement.dataset.muiTheme = event.target.value
-})
+const loadingButtons = [...document.querySelectorAll("[data-loading-button]")]
+let loadingTimer
+
+function startLoading() {
+  clearTimeout(loadingTimer)
+  for (const button of loadingButtons) button.loading = true
+  loadingTimer = setTimeout(() => {
+    for (const button of loadingButtons) button.loading = false
+  }, 2000)
+}
+
+for (const button of loadingButtons) {
+  button.addEventListener("click", startLoading)
+}

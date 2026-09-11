@@ -1,3 +1,16 @@
+[data-demo-page] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+}
+[data-demo-page] > :is(h1, p) {
+  grid-column: 1 / -1;
+}
+[data-demo-page] > [data-demo-example] {
+  --demo-example-padding: 20px;
+  align-self: start;
+  margin: 0;
+}
 [data-demo-header] {
   display: flex;
   align-items: flex-start;
@@ -8,16 +21,48 @@
 [data-demo-header] h2 { margin-block-start: 0; }
 [data-demo-header] p { margin-block-end: 0; }
 [data-demo-code-toggle] { flex: 0 0 auto; }
-.demo-example-code {
-  max-block-size: 24rem;
-  margin-block-start: 1rem;
-  padding: 1rem;
-  border: 1px solid #e0e0e6;
-  border-radius: 3px;
-  color: #333639;
+[data-demo-code-toggle] svg {
+  display: block;
+  inline-size: 1em;
+  block-size: 1em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 32;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.demo-example-code-container {
+  box-sizing: border-box;
+  margin: 16px calc(var(--demo-example-padding) * -1)
+    calc(var(--demo-example-padding) * -1);
+  padding: 16px var(--demo-example-padding) var(--demo-example-padding);
+  border-block-start: 1px solid #e0e0e6;
+  border-radius: 0 0 5px 5px;
   background: #fafafc;
 }
-.demo-example-code[data-state="error"] { color: #d03050; }
+.demo-example-code {
+  max-block-size: 24rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: #333639;
+  background: transparent;
+}
+.demo-example-code .mui-code-token[data-code-token="tag"] {
+  color: light-dark(#e45649, #e06c75);
+}
+.demo-example-code .mui-code-token[data-code-token="attribute"] {
+  color: light-dark(#986801, #d19a66);
+}
+.demo-example-code .mui-code-token[data-code-token="string"] {
+  color: light-dark(#50a14f, #98c379);
+}
+.demo-example-code .mui-code-token[data-code-token="punctuation"] {
+  color: light-dark(#383a42, #abb2bf);
+}
+.demo-example-code-container[data-state="error"] { color: #d03050; }
 @media (max-width: 36rem) {
+  [data-demo-page] > [data-demo-example] { --demo-example-padding: 16px; }
   [data-demo-header] { align-items: stretch; flex-direction: column; }
 }

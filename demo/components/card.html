@@ -1,98 +1,298 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-mui-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Card</title>
+  <title>MarkupUI Card parity demos</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-card.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-switch.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-tabs.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="./card.css">
   <script defer src="../../dist/markup-ui-card.global.js"></script>
+  <script defer src="../../dist/markup-ui-switch.global.js"></script>
+  <script defer src="../../dist/markup-ui-tabs.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="./card.js"></script>
+  <script type="module" src="../example-code.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Card: authored native regions and an optional close control</h1>
-    <p>Only Card is loaded. Passive regions have no controllers, and closing emits intent without removing content.</p>
+  <main data-demo-page>
+    <h1>Card</h1>
+    <p>MarkupUI equivalents of the thirteen Card demos from pinned Naive UI 2.45.3,
+      in the same order and with equivalent labels, data and interactions.</p>
 
-    <section aria-labelledby="anatomy-heading">
-      <h2 id="anatomy-heading">Complete native anatomy</h2>
-      <form id="card-form">
-        <mui-card id="anatomy-card" closable segmented role="region" aria-labelledby="report-heading" close-label="Close quarterly report">
-          <div data-mui-card-cover>
-            <img alt="Abstract blue cover" width="960" height="140"
-              src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='960' height='140'%3E%3Crect width='960' height='140' fill='%23d9ecff'/%3E%3Ccircle cx='820' cy='65' r='110' fill='%232080f0'/%3E%3C/svg%3E">
-          </div>
-          <header data-mui-card-header>
-            <h3 id="report-heading">Quarterly report</h3>
-            <div data-mui-card-header-extra><button type="button" id="extra-action">Star report</button></div>
-          </header>
-          <section data-mui-card-content>
-            <p>Authored nodes and event listeners survive title, state and reconnect updates.</p>
-            <label>Report note <input id="report-note" name="note" value="Draft"></label>
-          </section>
-          <footer data-mui-card-footer>Prepared by the project team</footer>
-          <div data-mui-card-action><button type="submit">Save note</button></div>
-        </mui-card>
-      </form>
-      <p id="close-status" role="status">0 close requests; the card remains visible.</p>
-      <p id="star-status" role="status">0 stars.</p>
-      <p id="form-status" role="status">0 submissions.</p>
-      <div class="controls">
-        <button type="button" id="toggle-close">Toggle closable</button>
-        <button type="button" id="reconnect-card">Reconnect card</button>
-        <label>Content divider
-          <select id="content-divider"><option value="true">Full</option><option value="soft">Inset</option><option value="false">None</option></select>
-        </label>
-        <label>Card size
-          <select id="card-size"><option>small</option><option selected>medium</option><option>large</option><option>huge</option></select>
-        </label>
-      </div>
-    </section>
-
-    <section aria-labelledby="sizes-heading">
-      <h2 id="sizes-heading">Sizes and appearance</h2>
-      <div class="grid" id="sizes">
-        <mui-card size="small" title="Small">16px region padding</mui-card>
-        <mui-card size="medium" title="Medium">24px region padding</mui-card>
-        <mui-card size="large" title="Large">32px region padding</mui-card>
-        <mui-card size="huge" title="Huge">40px region padding</mui-card>
-      </div>
-      <div class="grid">
-        <mui-card id="hover-card" hoverable title="Hoverable">Pointer hover changes the border and shadow, not behavior.</mui-card>
-        <mui-card id="embedded-card" embedded title="Embedded">A muted surface controlled by external CSS tokens.</mui-card>
-        <mui-card id="borderless-card" bordered="false" title="Borderless">Transparent border preserves layout geometry.</mui-card>
-      </div>
-    </section>
-
-    <section aria-labelledby="legacy-heading">
-      <h2 id="legacy-heading">Free-form and existing compound markup</h2>
-      <div class="grid">
-        <mui-card id="freeform-card"><h3>Free-form content</h3><p>These original nodes move into a native content wrapper without cloning.</p></mui-card>
-        <mui-card id="compound-card" segmented-footer="soft">
-          <mui-card-header><h3>Existing compound tags</h3></mui-card-header>
-          <mui-card-content>Passive tags remain supported alongside native data-marked regions.</mui-card-content>
-          <mui-card-footer><a href="#anatomy-heading">Back to anatomy</a></mui-card-footer>
-        </mui-card>
-      </div>
-    </section>
-
-    <section aria-labelledby="scroll-heading">
-      <h2 id="scroll-heading">Native content-only scrolling</h2>
-      <mui-card id="scroll-card" class="scroll-card" content-scrollable segmented>
-        <header data-mui-card-header><h3>Stationary header and footer</h3></header>
-        <div data-mui-card-content tabindex="0" role="region" aria-label="Scrollable report">
-          <p>Focus this native region and press Page Down or Arrow Down.</p>
-          <p>Item 1 — Content scrolling uses browser-native overflow.</p>
-          <p>Item 2 — No custom scrollbar runtime is required.</p>
-          <p>Item 3 — Header and footer remain in the card's flex layout.</p>
-          <p>Item 4 — Explicit height is supplied through the external stylesheet.</p>
-          <p>Item 5 — Authored focus and region labels are not overwritten.</p>
-          <p>Item 6 — Native keyboard scrolling remains available.</p>
-          <p>Item 7 — The content's layout does not need measurement JavaScript.</p>
-          <p>Item 8 — End of report.</p>
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="basic-heading">Basic</h2>
+          <p>A basic card.</p>
         </div>
-        <footer data-mui-card-footer>End of report</footer>
-      </mui-card>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-card class="narrow-card" title="Card">Card Content</mui-card>
+      </div>
+    </section>
+
+    <section data-demo-example="size" aria-labelledby="size-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="size-heading">Size</h2>
+          <p>Card has <code class="mui-code">small</code>, <code class="mui-code">medium</code>,
+            <code class="mui-code">large</code>, <code class="mui-code">huge</code> sizes.</p>
+        </div>
+      </header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <mui-card title="Small Card" size="small">Card Content</mui-card>
+        <mui-card title="Medium Card" size="medium">Card Content</mui-card>
+        <mui-card title="Large Card" size="large">Card Content</mui-card>
+        <mui-card title="Huge Card" size="huge">Card Content</mui-card>
+      </div>
+    </section>
+
+    <section data-demo-example="cover" aria-labelledby="cover-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="cover-heading">Cover</h2>
+          <p>Card can have a cover.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-card class="narrow-card" title="Card with Cover">
+          <div data-mui-card-cover>
+            <img src="./card-cover.svg" alt="Abstract blue and green portrait illustration" width="600" height="400">
+          </div>
+          <div data-mui-card-content>Card Content</div>
+        </mui-card>
+      </div>
+    </section>
+
+    <section data-demo-example="hoverable" aria-labelledby="hoverable-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="hoverable-heading">Hoverable</h2>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-card class="narrow-card" title="Card" hoverable>Card Content</mui-card>
+      </div>
+    </section>
+
+    <section data-demo-example="slots" aria-labelledby="slots-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="slots-heading">Slots</h2>
+          <p>MarkupUI maps the Card slots to authored light-DOM parts.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-card>
+          <header data-mui-card-header>
+            <h3>Card Slots Demo</h3>
+            <span data-mui-card-header-extra>#header-extra</span>
+          </header>
+          <div data-mui-card-content>Card Content</div>
+          <footer data-mui-card-footer>#footer</footer>
+          <div data-mui-card-action>#action</div>
+        </mui-card>
+      </div>
+    </section>
+
+    <section data-demo-example="border" aria-labelledby="border-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="border-heading">Border</h2>
+          <p>Card can be used without border.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-card bordered="false" title="Borderless Card">Card Content</mui-card>
+      </div>
+    </section>
+
+    <section data-demo-example="segment" aria-labelledby="segment-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="segment-heading">Segmented</h2>
+          <p><code class="mui-code">content</code>, <code class="mui-code">footer</code> can be segmented
+            or <code class="mui-code">soft</code> segmented. <code class="mui-code">action</code> can be
+            segmented. Segment border will appear at the top of segmented parts.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-card segmented-content segmented-footer="soft">
+          <header data-mui-card-header>
+            <h3>Card Segmented Demo</h3>
+            <span data-mui-card-header-extra>#header-extra</span>
+          </header>
+          <div data-mui-card-content>Card Content</div>
+          <footer data-mui-card-footer>#footer</footer>
+          <div data-mui-card-action>#action</div>
+        </mui-card>
+      </div>
+    </section>
+
+    <section data-demo-example="closable" aria-labelledby="closable-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="closable-heading">Closable</h2>
+          <p>You may need this when using it in a modal.</p>
+        </div>
+      </header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <mui-card id="closable-card" class="narrow-card" title="Card" closable
+          close-focusable="false" close-label="Close card">
+          Card Content
+        </mui-card>
+        <p id="close-message" class="interaction-message" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section data-demo-example="no-title" aria-labelledby="no-title-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="no-title-heading">No title</h2>
+          <p>Nobody said a card must have a title.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-card>No title</mui-card>
+      </div>
+    </section>
+
+    <section data-demo-example="content-scrollable" aria-labelledby="content-scrollable-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="content-scrollable-heading">Content Scroll</h2>
+          <p>Enable <code class="mui-code">content-scrollable</code> to keep scrolling inside the content
+            area only. Header and footer stay fixed. It is usually used with a fixed card height.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-card class="task-card" content-scrollable segmented>
+          <header data-mui-card-header><h3>Task List</h3></header>
+          <div data-mui-card-content tabindex="0" role="region" aria-label="Scrollable task list">
+            <p>Task 1: only content area scrolls.</p>
+            <p>Task 2: only content area scrolls.</p>
+            <p>Task 3: only content area scrolls.</p>
+            <p>Task 4: only content area scrolls.</p>
+            <p>Task 5: only content area scrolls.</p>
+            <p>Task 6: only content area scrolls.</p>
+            <p>Task 7: only content area scrolls.</p>
+            <p>Task 8: only content area scrolls.</p>
+            <p>Task 9: only content area scrolls.</p>
+            <p>Task 10: only content area scrolls.</p>
+            <p>Task 11: only content area scrolls.</p>
+            <p>Task 12: only content area scrolls.</p>
+            <p>Task 13: only content area scrolls.</p>
+            <p>Task 14: only content area scrolls.</p>
+            <p>Task 15: only content area scrolls.</p>
+            <p>Task 16: only content area scrolls.</p>
+            <p>Task 17: only content area scrolls.</p>
+            <p>Task 18: only content area scrolls.</p>
+            <p>Task 19: only content area scrolls.</p>
+            <p>Task 20: only content area scrolls.</p>
+          </div>
+          <footer data-mui-card-footer>Footer actions stay fixed</footer>
+        </mui-card>
+      </div>
+    </section>
+
+    <section data-demo-example="loading" aria-labelledby="loading-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="loading-heading">Loading</h2>
+          <p>Use a skeleton to simulate loading effect.</p>
+        </div>
+      </header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <label class="mui-switch" data-switch id="loading-switch">
+          <input data-switch-control id="loading-control" type="checkbox" role="switch" checked
+            aria-labelledby="loading-label">
+          <span class="mui-switch__label" id="loading-label">Loading</span>
+        </label>
+        <mui-card id="loading-card" aria-busy="true">
+          <header data-mui-card-header>
+            <span class="skeleton skeleton-heading" data-loading-content aria-label="Loading card title"></span>
+            <span data-loaded-content hidden>Lorem Ipsum</span>
+          </header>
+          <div data-mui-card-content>
+            <div class="skeleton-lines" data-loading-content aria-label="Loading card content">
+              <span class="skeleton"></span>
+              <span class="skeleton"></span>
+              <span class="skeleton"></span>
+              <span class="skeleton"></span>
+              <span class="skeleton"></span>
+              <span class="skeleton"></span>
+            </div>
+            <div data-loaded-content hidden>
+              Lorem ipsum dolor sit amet,<br>
+              consectetur adipiscing elit,<br>
+              sed do eiusmod tempor incididunt<br>
+              ut labore et dolore magna aliqua.<br>
+              Ut enim ad minim veniam,<br>
+              quis nostrud exercitation ullamco
+            </div>
+          </div>
+        </mui-card>
+      </div>
+    </section>
+
+    <section data-demo-example="custom-style" aria-labelledby="custom-style-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="custom-style-heading">Custom</h2>
+          <p>Card provides native part styling hooks to help you customize style. For example,
+            you may want a card with no content padding to put whatever you want.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-card class="custom-card">
+          <div data-mui-card-content>
+            <div class="mui-tabs custom-tabs" data-tabs data-tabs-type="line" id="custom-tabs">
+              <div data-tabs-bar>
+                <div data-tabs-list aria-label="Lifestyle">
+                  <button type="button" id="parklife-tab" data-tabs-tab data-tabs-key="parklife"
+                    data-tabs-target="parklife-pane">PARKLIFE</button>
+                  <button type="button" id="rocklife-tab" data-tabs-tab data-tabs-key="rocklife"
+                    data-tabs-target="rocklife-pane">ROCKLIFE</button>
+                </div>
+              </div>
+              <div data-tabs-panels>
+                <section data-tabs-pane id="parklife-pane">PARKLIFE</section>
+                <section data-tabs-pane id="rocklife-pane">ROCKLIFE</section>
+              </div>
+              <div data-tabs-messages>
+                <p data-tabs-empty hidden>No lifestyle tab is available.</p>
+                <p data-tabs-status role="status" hidden>Changing tab.</p>
+                <p data-tabs-error role="alert" hidden>Unable to change tab.</p>
+              </div>
+            </div>
+          </div>
+        </mui-card>
+      </div>
+    </section>
+
+    <section data-demo-example="embedded" aria-labelledby="embedded-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="embedded-heading">Embedded effect</h2>
+          <p>In light mode, sometimes you may need to make background a bit darker to distinguish
+            card from white background.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-card class="narrow-card" title="🎸 Rock N' Roll Star" embedded bordered="false">
+          Tonight I'm a rock 'n' roll star
+          <br>
+          Tonight I'm a rock 'n' roll star
+        </mui-card>
+      </div>
     </section>
   </main>
 </body>

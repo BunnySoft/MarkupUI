@@ -1,7 +1,123 @@
-main { max-width: 1000px; margin: auto; padding: 32px; }
-section { padding-block: 16px; border-bottom: 1px solid #ddd; }
-h1 { font-size: 1.75rem; }
-h2 { font-size: 1.2rem; }
-.examples { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-block: 16px; }
-input, select { font: inherit; padding: 6px; }
-.brand { --mui-button-color: #7040a0; --mui-button-hover-color: #8555b5; --mui-button-pressed-color: #502080; }
+body {
+  color: #333639;
+  background: #f5f5f7;
+}
+main {
+  max-inline-size: 60rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+main > p {
+  color: #767c82;
+}
+section {
+  margin-block: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid #e0e0e6;
+  border-radius: 6px;
+  background: #fff;
+}
+.icon-sprite {
+  position: absolute;
+  inline-size: 0;
+  block-size: 0;
+  overflow: hidden;
+}
+.button-icon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.demo-preview {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-block-start: 1rem;
+}
+.demo-preview.align-baseline {
+  align-items: baseline;
+}
+.demo-preview.vertical {
+  align-items: flex-start;
+  flex-direction: column;
+}
+.groups-preview {
+  align-items: flex-start;
+}
+.ghost-preview {
+  padding: 1rem;
+  border-radius: 4px;
+  background: #f2f2f5;
+}
+.demo-message {
+  min-block-size: 1.5em;
+  margin: 0;
+  color: #2080f0;
+}
+.custom-purple {
+  --mui-button-color: #8a2be2;
+  --mui-button-hover-color: #9d50ef;
+  --mui-button-pressed-color: #7020bc;
+}
+.custom-pink {
+  --mui-button-color: #ff69b4;
+  --mui-button-hover-color: #ff83c1;
+  --mui-button-pressed-color: #db4e98;
+}
+.custom-color {
+  --mui-button-background: var(--mui-button-color);
+  --mui-button-background-hover: var(--mui-button-hover-color);
+  --mui-button-background-pressed: var(--mui-button-pressed-color);
+  --mui-button-border-color: var(--mui-button-color);
+  --mui-button-label-color: #fff;
+}
+.large-icon-button {
+  --mui-button-icon-size: 24px;
+}
+.disabled-tooltip-trigger {
+  position: relative;
+  display: inline-flex;
+  border-radius: 3px;
+  outline: none;
+}
+.disabled-tooltip-trigger:focus-visible {
+  outline: 3px solid rgb(24 160 88 / .2);
+  outline-offset: 2px;
+}
+.demo-tooltip {
+  position: absolute;
+  z-index: 1;
+  inset-block-end: calc(100% + 8px);
+  inset-inline-start: 50%;
+  padding: 6px 10px;
+  border-radius: 3px;
+  color: #fff;
+  background: #333639;
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(4px);
+  transition: opacity .15s ease, transform .15s ease;
+}
+.disabled-tooltip-trigger:is(:hover, :focus-visible) .demo-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .demo-tooltip {
+    transition: none;
+  }
+}
+@media (max-width: 36rem) {
+  main {
+    padding: 1rem;
+  }
+  section {
+    padding: 1rem;
+  }
+}

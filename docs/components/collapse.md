@@ -5,6 +5,12 @@ CSS-only authored disclosures are the baseline. An optional small helper adds st
 aggregation, root-scoped exclusive groups, disabled activation and explicit native-event
 notifications. It does not render, measure heights or replace native disclosure semantics.
 
+The [local demo](../../demo/components/collapse.html) mirrors all eleven pinned Naive UI
+2.45.3 cases in source order, with one highlighted code control per example. Native
+details/summary handles Basic, arrow placement, accordion, nesting, header events, custom
+arrows, authored defaults, header extras and disabled items. Display-directive and
+trigger-area differences remain explicit.
+
 ## Loading and native markup
 
 | Asset / export | Purpose |

@@ -6,9 +6,43 @@ import { afterEach, describe, expect, it } from "vitest"
 const css = readFileSync(resolve("src", "components", "divider", "divider.css"), "utf8")
 const demo = readFileSync(resolve("demo", "components", "divider.html"), "utf8")
 const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
+const fixtureHtml = `
+  <hr class="mui-divider" id="thematic">
+  <hr class="mui-divider" data-dashed aria-label="End of introduction" id="dashed">
+  <span class="mui-divider custom-rule" aria-hidden="true" id="decorative"></span>
+  <div class="mui-divider mui-divider-captioned" role="separator" aria-labelledby="settings-label" id="named">
+    <span class="mui-divider-label" id="settings-label" aria-hidden="true">Settings</span>
+  </div>
+  <div class="mui-divider mui-divider-captioned" data-placement="left" role="separator" aria-labelledby="left-label" id="left">
+    <span class="mui-divider-label" id="left-label" aria-hidden="true">Left label</span>
+  </div>
+  <div class="mui-divider mui-divider-captioned" data-placement="right" data-dashed role="separator" aria-labelledby="right-label" id="right">
+    <span class="mui-divider-label" id="right-label" aria-hidden="true">Right label</span>
+  </div>
+  <div class="mui-divider mui-divider-captioned narrow" role="separator" aria-labelledby="long-label" id="long">
+    <span class="mui-divider-label" id="long-label" aria-hidden="true">AnOriginalLongUnbrokenCaptionThatWrapsWithoutClippingOrReplacingAnyOfItsText</span>
+  </div>
+  <div class="mui-divider mui-divider-captioned" data-placement="start" id="heading-decoration">
+    <h2 class="mui-divider-label" id="real-heading">A real native heading with decorative rules</h2>
+  </div>
+  <div class="actions">
+    <a href="#destination" id="first-action">First action</a>
+    <span class="mui-divider" role="separator" aria-orientation="vertical" aria-label="Action groups" id="vertical"></span>
+    <a href="#destination" id="second-action">Second action</a>
+    <span class="mui-divider tall" data-dashed data-orientation="vertical" aria-hidden="true" id="vertical-decorative"></span>
+  </div>
+  <section dir="rtl">
+    <div class="mui-divider mui-divider-captioned" data-placement="start" role="separator" aria-labelledby="rtl-start-label">
+      <span class="mui-divider-label" id="rtl-start-label" aria-hidden="true">Start</span>
+    </div>
+    <div class="mui-divider mui-divider-captioned" data-placement="left" role="separator" aria-labelledby="rtl-left-label">
+      <span class="mui-divider-label" id="rtl-left-label" aria-hidden="true">Left</span>
+    </div>
+  </section>
+  <hr id="outside">`
 let style: HTMLStyleElement | undefined
 function install(): void { style = document.createElement("style"); style.textContent = css; document.head.append(style) }
-function fixture(): void { document.body.innerHTML = demo.slice(demo.indexOf("<body>") + 6, demo.indexOf("</body>")) }
+function fixture(): void { document.body.innerHTML = fixtureHtml }
 afterEach(() => { style?.remove(); style = undefined; document.body.replaceChildren() })
 
 describe("CSS-only native Divider", () => {
@@ -16,7 +50,8 @@ describe("CSS-only native Divider", () => {
     expect(pkg.exports["./divider/style.css"]).toBe("./dist/markup-ui-divider.css")
     expect(pkg.exports["./divider"]).toBeUndefined()
     expect(readdirSync(resolve("src", "components", "divider"))).toEqual(["divider.css"])
-    expect(demo).not.toContain("<script")
+    expect(demo).not.toContain("markup-ui-divider.js")
+    expect(demo).toContain('src="../example-code.js"')
     expect(customElements.get("mui-divider")).toBeUndefined()
   })
 

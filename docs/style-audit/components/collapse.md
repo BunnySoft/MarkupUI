@@ -1,5 +1,28 @@
 # Collapse / CollapseItem native-disclosure style audit
 
+## Pinned demo parity page — 2026-09-11
+
+The runnable page now mirrors all eleven pinned cases: Basic, Arrow placement, Accordion,
+Nested, Display directive, Click on item header, Customize icon, Default expanded,
+Extra info in header, Disabled and Trigger areas. Every case has an icon-only highlighted
+code view.
+
+Chromium 152 confirmed 14 independently owned native groups with zero console errors.
+Accordion opening closes the previous item, header activation reports actual key/state,
+disabled summary activation is blocked, and extra controls act without changing disclosure.
+
+Two gaps remain visible:
+
+- native details retains content like source `display-directive="show"`; `if` requires the
+  proposed conditional template/lifecycle engine;
+- native summary owns main/arrow activation while extra siblings are independent;
+  arbitrary main/arrow/extra trigger arrays would require a non-native activation layer.
+
+Proposal: keep the native default. Add `data-if` template composition for conditional DOM
+only after the shared binder is approved. Do not add trigger-area interception unless a
+real application requires partial summary activation and its keyboard/semantics contract
+is designed separately.
+
 **Status:** integrated CSS correction; Chromium comparison,
 2026-09-10. The existing details/summary helper, naming, focus and ownership code is
 unchanged. No CollapseTransition import, height renderer or animation dependency was added.

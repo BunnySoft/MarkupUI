@@ -1,5 +1,35 @@
 # Carousel default-style audit
 
+## Pinned demo parity page — 2026-09-11
+
+The runnable Carousel page now mirrors all eighteen pinned Naive UI 2.45.3 demo identities
+in source order: Basic, Arrow, Autoplay, Dots, Vertical, Space between, Slides per view,
+Auto slides per view, Centered, Effect, Customizing transition, Hover, Keyboard,
+Mousewheel, Simulate drag, Customizing arrow and dots, Customize card and Custom Dots.
+Every case has a Naive-shaped icon-only code control and highlighted authored HTML.
+
+Functional retained cases use the actual Carousel controller: single-view scroll-snap,
+arrows, autoplay with an explicit pause/play action, horizontal/vertical direction,
+viewport keyboard navigation, hover/focus indicators, native wheel scrolling, authored
+custom controls and current/total readout. Chromium confirmed 13 independently owned
+controllers, Basic indicator navigation, dynamic direction/arrows, hover navigation and
+zero page console errors. Basic source/reference height is **240px**.
+
+Five source capability groups remain visible as honest native/static comparisons:
+
+- space-between with multi-view cards;
+- fixed and automatic slides-per-view;
+- centered variable-width slides;
+- fade/card/custom transition effects and per-neighbor transforms;
+- a component-owned mouse-drag/physics engine.
+
+The proposals remain separate decisions: multi-view/centered requires a widened layout
+and measurement contract; fade/card/custom transitions require a different visibility/
+transform lifecycle; mouse drag and discrete wheel switching require owned gesture input;
+dot placement/type can remain authored controls or become narrow presentation attributes;
+arrow/dot renderer slots should wait for the proposed native template engine. None is
+implemented by misleading demo-only Carousel behavior.
+
 **2026-09-11 — native controls aligned; transform/dot topology retained as different.**
 Changed only Carousel CSS, its existing test fixture and canonical/audit documentation.
 Carousel JavaScript, demos, shared styles, generated files and dependencies are

@@ -1,5 +1,16 @@
 # Divider default-style audit
 
+## Pinned demo parity page — 2026-09-11
+
+The runnable page mirrors Basic, Title and Vertical in source order. Basic uses a native
+thematic `hr`; titled dividers use one labelled separator owner with left/right/dashed
+variants; vertical rules remain decorative between inline text. Every example has an
+icon-only highlighted code view.
+
+Chromium 152 confirmed all three cases, two vertical rules, the Left/Right/Dashed labels
+and zero console errors. No new component gap was found: MarkupUI’s explicit labelled
+separator anatomy is the accepted accessible replacement for a framework default slot.
+
 **2026-09-10 — integrated defaults fixed; native differences documented.** Only Divider CSS, Divider
 tests and its two documentation files changed. No dependency installation, shared
 source, generated files, full build or commit. Global Style/Typography remained frozen.
