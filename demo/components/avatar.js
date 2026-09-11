@@ -1,18 +1,34 @@
-const avatar = document.getElementById("dynamic-avatar")
-const status = document.getElementById("image-status")
-const portrait = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Crect width='48' height='48' fill='%2318a058'/%3E%3C/svg%3E"
+const contentName = document.getElementById("content-name")
+const debugName = document.getElementById("debug-name")
+const debugShow = document.getElementById("debug-show")
+const debugAnchor = document.getElementById("debug-if-anchor")
+const debugTemplate = document.getElementById("debug-if-template")
+let debugVisible = false
+let debugConditional
 
-avatar.addEventListener("mui:load", () => { status.textContent = "Image loaded." })
-avatar.addEventListener("mui:error", () => { status.textContent = "Image unavailable; the fallback template is shown." })
-document.getElementById("load-image").addEventListener("click", () => { avatar.src = portrait })
-document.getElementById("fail-image").addEventListener("click", () => { avatar.src = "data:image/png;base64,invalid" })
-document.getElementById("clear-image").addEventListener("click", () => {
-  avatar.removeAttribute("src")
-  status.textContent = "Text content restored."
+function updateContent(selector, value) {
+  for (const node of document.querySelectorAll(selector)) {
+    node.textContent = value
+  }
+}
+
+contentName.addEventListener("input", () => {
+  updateContent("[data-content-name]", contentName.value)
 })
-document.getElementById("text-fit-name").addEventListener("input", (event) => {
-  document.getElementById("text-fit-content").textContent = event.target.value
+
+debugName.addEventListener("input", () => {
+  updateContent("[data-debug-name]", debugName.value)
 })
-document.getElementById("text-fit-size").addEventListener("input", (event) => {
-  document.getElementById("text-fit-avatar").size = Number(event.target.value)
+
+document.getElementById("debug-toggle").addEventListener("click", () => {
+  debugVisible = !debugVisible
+  debugShow.hidden = !debugVisible
+  if (debugVisible) {
+    debugConditional = document.importNode(debugTemplate.content.firstElementChild, true)
+    debugConditional.querySelector("[data-debug-name]").textContent = debugName.value
+    debugAnchor.after(debugConditional)
+  } else {
+    debugConditional?.remove()
+    debugConditional = undefined
+  }
 })

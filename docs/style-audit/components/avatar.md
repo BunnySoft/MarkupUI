@@ -1,5 +1,20 @@
 # Avatar / AvatarGroup default-style audit
 
+## Pinned demo parity page — 2026-09-11
+
+The runnable Avatar page now mirrors the ten pinned Naive UI 2.45.3 demo identities in
+source order: Size, Shape, Color, Badge, Icon, Content size, Fallback, Avatar Group,
+Lazy load and v-show debug. Each example owns a MarkupUI Show code control that extracts
+only its authored preview markup from the raw page; the whole document is not presented
+as one snippet. Local deterministic SVGs replace remote portraits.
+
+Chromium reconfirmed exact Avatar boxes, radii and paint for Size, Shape, Color, Icon,
+Content size and Fallback. The comparison also makes the retained Group and Lazy-loading
+differences directly observable: source `max=3` renders two people plus a `+3` rest Avatar
+in a 108×44px group, while the current native group renders three people plus `+2` in
+140×44px; source custom-root lazy loading uses its observer path while MarkupUI retains
+native `loading=lazy`.
+
 **2026-09-10 — corrected and rendered-verified for the scope below; not full pixel/API parity.**
 This new default-style pass supersedes the earlier decision to preserve the legacy circular
 default. No Button work is included. No runtime dependency or budget was added.

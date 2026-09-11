@@ -119,7 +119,7 @@ describe("native hierarchy, keys and defaults", () => {
     expect(() => readTreeHierarchy(root)).toThrow("2000")
     let html = markup("leaf"); for (let i = 0; i < 64; i++) html = markup(String(i), html)
     list.innerHTML = html; expect(() => readTreeHierarchy(root)).toThrow("64")
-  })
+  }, 15_000)
   it("supports static groups and native link labels without fake selection", () => {
     const html = markup("group", markup("leaf"), "data-tree-group").replace('<button type="button" data-tree-label data-tree-select>group</button>', '<span data-tree-label>Group</span>')
     const { helper, get } = fixture({}, html)

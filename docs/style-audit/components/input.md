@@ -1,5 +1,21 @@
 # Input default-style audit
 
+## Shared wrapper media follow-up — 2026-09-11
+
+The completed Input-owner follow-up resets a disabled wrapper's pseudo-border to
+`GrayText` in forced colors. In print, a focused status wrapper now uses black text,
+a transparent surface, a current-color border and no focus glow. This closes the two
+shared wrapper gaps discovered by the Input OTP audit without adding OTP-owned selectors.
+
+Chromium 152 confirmed that the disabled boundary equals a native `GrayText` probe and
+that a dark-scheme focused error wrapper prints with black wrapper/affix text, transparent
+background, black boundary and no shadow. Input **56**, Input print **5**, Input OTP
+style **8** and Input OTP behavior **73** tests pass individually.
+
+The two protected media selectors bring checked-out Input CSS to **7,485 raw / 1,795
+gzip bytes**. The explicit CSS ceiling increases by 50 bytes, from **1,750 to 1,800**;
+Input JavaScript and runtime dependencies are unchanged.
+
 ## Scope and provenance
 
 Audited **2026-09-10**, starting from MarkupUI `468401e`. Only optional Input CSS,
@@ -85,8 +101,10 @@ Only disabled native fields suppress hover/focus paint; composition-disabled act
   the native field focused and the green focus border while its clear action was disabled.
   Clear, changed-default reset/FormData, selection **[2,6]** across reveal and Escape
   masking passed. No helper/API changes.
-- Forced colors retained a solid focus outline; print hid actions. At 360px viewport
-  and 200% CSS zoom the responsive fixture had equal **345px scroll/client width**.
+- Forced colors retained a solid focus outline; print hid actions. The coordinated
+  follow-up also protects disabled wrapper boundaries and removes focused status paint
+  from print. At 360px viewport and 200% CSS zoom the responsive fixture had equal
+  **345px scroll/client width**.
   This is CSS zoom, not a browser-chrome zoom certification.
 - Native textarea edit width is **336px**, versus reference **332px**: Naive retains
   a suffix wrapper gap. We do not introduce that empty wrapper or custom scrollbar.
@@ -107,26 +125,24 @@ Only disabled native fields suppress hover/focus paint; composition-disabled act
   limiter, binding or template API was added. No OS IME, password-manager, screen-reader
   or cross-engine certification is claimed.
 
-## Isolated budgets
+## Initial isolated budgets
 
 Exact existing esbuild recipe: bundled/minified ES2022, no legal comments, source maps
 enabled, ESM `index.ts` and IIFE `global.ts`; CSS copied verbatim. Gzip uses level 9.
 
-| Asset | Raw bytes | Gzip bytes | Unchanged ceiling |
+| Asset | Raw bytes | Gzip bytes | Initial ceiling |
 | --- | ---: | ---: | ---: |
 | `markup-ui-input.js` | 7,704 | 3,110 | 4,000 |
 | `markup-ui-input.global.js` | 7,861 | 3,180 | 4,000 |
 | `markup-ui-input.css` | 7,053 | 1,737 | 1,750 |
 
 Source CSS was equivalently whitespace-compacted using the already installed esbuild
-formatter (`minifyWhitespace: true`, `minifySyntax: false`). No ceilings or shared build
-recipes changed. CSS headroom is **13 gzip bytes**. ESM+CSS is **4,847**, classic+CSS
-**4,917 gzip bytes**. This was an isolated asset check, not a full release build.
-Release integration, generated files, commits and pushes remain parent-owned.
+formatter (`minifyWhitespace: true`, `minifySyntax: false`). This initial pass had
+**13 gzip bytes** of headroom before the later protected-media follow-up. ESM+CSS was
+**4,847**, classic+CSS **4,917 gzip bytes**. This was an isolated asset check.
 
 ## Coordinated release integration
 
-The coordinator's isolated release `pnpm build` and all **56 Input tests** passed.
-The checked-out release CSS is **7,054 raw / 1,740 gzip bytes** (line-ending difference
-from the isolated source above), below the unchanged 1,750-byte ceiling. Unfinished
-unrelated work is excluded. Native helper JavaScript is unchanged.
+The coordinator's release build and all **61 Input/Input print tests** pass. The
+checked-out release CSS is now **7,485 raw / 1,795 gzip bytes**, below the adjusted
+**1,800-byte** ceiling. Native helper JavaScript is unchanged.

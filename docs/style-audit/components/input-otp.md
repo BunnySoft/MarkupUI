@@ -1,9 +1,8 @@
 # Input OTP single-field style audit
 
-**Status:** standalone corrections integrated; shared Input wrapper media
-follow-up is assigned separately and remains pending. The retained OTP is one original native
-text/password input, not a six-cell renderer. No runtime, binding, template, dependency
-or code-value model was changed.
+**Status:** standalone corrections and the shared Input wrapper media follow-up are
+integrated. The retained OTP is one original native text/password input, not a six-cell
+renderer. No runtime, binding, template, dependency or code-value model was changed.
 
 ## Reference and reproducible evidence
 
@@ -126,21 +125,20 @@ The old gap-independent width could clip a fully entered code at a larger author
 
 ## Shared Input boundary and proposal to the parent
 
-**No shared Input CSS or dependency was edited.** A composed OTP is
-`[data-input-control]`; Input owns its wrapper face, font, border and sizing.
-OTP deliberately excludes that marker from its added focus/disabled surfaces,
-avoiding duplicate dark alpha backgrounds or two theme glows. Actual focused error
-composition retained a transparent, shadowless native child under one Input wrapper.
+**No shared Input CSS or dependency was edited.** OTP keeps its own single native control
+and does not duplicate Input's wrapper face, font, border, sizing or focus/disabled
+surfaces.
 
-The parent-owned wrapper still has two observable media differences:
+The parent-owned Input follow-up is now **complete**:
 
-| Shared surface | Actual emitted observation | Proposed shared Input follow-up |
+| Shared surface | Current state | Status |
 | --- | --- | --- |
-| Forced-color disabled wrapper | Native child uses GrayText/opacity 1; wrapper pseudo-border remains ordinary black Button/Canvas text rather than GrayText | Reset disabled wrapper/pseudo-border to system GrayText without opacity fading |
-| Focused error wrapper in dark print | Native child/count are black/white, but wrapper retains white-.82 text, error-.1 background, `#e98b8b` border and error-.3 8px glow | Reset wrapper/affix text and pseudo-border plus focused/status background/shadow in print |
+| Print color-scheme on composed Input | Input print now sets `color-scheme: light` on `.mui-input`, `.mui-input-group` and `.mui-input-group-label` | **Completed** |
+| Forced-color disabled wrapper | Wrapper pseudo-border now resolves to the same system `GrayText` as a native probe | **Completed** |
+| Focused error wrapper in dark print | Wrapper/affix text is black, the surface is transparent, the boundary is black and the glow is removed | **Completed** |
 
-These are proposals for the shared owner, not fixes smuggled into OTP CSS.
-The standalone OTP corrections do not require a shared dependency change.
+All three corrections live in Input's media rules and regression fixture; OTP CSS remains
+free of shared-wrapper selectors.
 
 ## Source validation and integration gate
 
@@ -153,9 +151,9 @@ The standalone OTP corrections do not require a shared dependency change.
   formatting was used to retain all local safety/media rules within the CSS budget.
 - Changes are confined to OTP CSS, focused style tests, canonical/reference docs
   and this report. Controller code and the pinned API inventory remain unchanged.
-- Full integrated build, final manifest, shared Input proposal and publication are
-  the parent's responsibility. No full build, commit, push or shared/index/generated
-  source edit occurred in this pass.
+- The standalone OTP pass did not edit shared Input or generated output. The later
+  coordinated Input-owner media follow-up and full integration validation are recorded
+  in the Input audit and repository-level closeout.
 
 ## Integration
 
@@ -163,6 +161,5 @@ The isolated release build and **81 OTP tests** passed. Actual emitted CSS is
 **3341 raw / 997 gzip bytes**, below the unchanged **1000-byte ceiling**.
 ESM/classic remain **2280/2352 gzip bytes**, each below 3000.
 
-The shared Input wrapper observations above were routed to its coordinated media
-follow-up. This release does not claim those wrapper issues are fixed; it contains
-only the reviewed OTP-local changes and preserves the single native input/controller.
+The shared Input wrapper observations above are fixed by the coordinated Input-owner
+follow-up. OTP retains only its reviewed local changes and single native input/controller.

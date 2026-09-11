@@ -189,8 +189,10 @@ support, rows/manual resize remain usable; there is no JS fallback, hidden measu
 mirror, per-frame polling or promise of upstream pixel/row parity.
 
 Logical sizing/padding supports RTL and narrow wrapping. Forced colors retains native
-boundaries; print hides action buttons. There are no animations to disable for reduced
-motion. Native `:has()` adds disabled/focus presentation and textarea count layout, not behavior.
+boundaries, including a GrayText disabled wrapper edge. Print hides action buttons and
+resets focused status wrapper text, surface, boundary and glow for readable output.
+There are no animations to disable for reduced motion. Native `:has()` adds
+disabled/focus presentation and textarea count layout, not behavior.
 Only the native field's `:disabled` state dims the root; temporarily disabled enhancement
 buttons during IME composition do not remove the field's focus indication.
 
@@ -297,7 +299,7 @@ arbitrary renderers, synthetic grapheme constraints or universal browser/AT pari
 
 ### Default-style audit, 2026-09-10
 
-**56 Input-only tests passed**, including all 52 original native-contract cases.
+**61 Input/Input print tests passed**, including all 52 original native-contract cases.
 Isolated Chromium comparison covered four sizes, ordinary/password/textarea, placeholder,
 clear, prefix/suffix, count, disabled, hover/focus, error/warning, round and borderless
 fields in both schemes. Native keyboard replacement, CDP composition, clear, reset/
@@ -305,9 +307,7 @@ FormData, selection-preserving reveal, Escape masking, forced colors, print and 
 200% CSS zoom checks also passed. See the linked audit for exact measurements and
 limitations; this is not OS IME, password-manager or all-engine certification.
 
-Current isolated assets (existing esbuild recipe, gzip level 9): ESM **7,704 raw /
-3,110 gzip**, classic **7,861 / 3,180**, CSS **7,053 / 1,737** bytes. Unchanged gzip
-ceilings are **4,000 / 4,000 / 1,750**. One helper plus CSS is **4,847 ESM / 4,917
-classic gzip bytes**. Source CSS is whitespace-compacted equivalently to remain within
-its existing ceiling; no build-script or budget changes. JavaScript is unchanged.
-No full release build, generated-asset updates, commit or push were performed here.
+Current assets (gzip level 9): ESM **7,704 raw / 3,110 gzip**, classic **7,861 /
+3,180**, CSS **7,485 / 1,795** bytes. Ceilings are **4,000 / 4,000 / 1,800**; the CSS
+ceiling increased by 50 bytes for the shared forced-color/print wrapper correction.
+JavaScript and runtime dependencies are unchanged.

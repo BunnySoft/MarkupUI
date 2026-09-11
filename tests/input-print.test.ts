@@ -14,8 +14,8 @@ function install() {
 afterEach(() => { sheet?.remove(); sheet = undefined; document.body.replaceChildren() })
 
 describe("Input scoped print defaults", () => {
-  it("retains the fixed 1750-byte stylesheet ceiling", () => {
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1750)
+  it("retains the adjusted 1800-byte stylesheet ceiling", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1800)
   })
 
   it("uses light print colors for roots, groups and labels without replacing author tokens", () => {
@@ -25,6 +25,27 @@ describe("Input scoped print defaults", () => {
     expect(rule.style.getPropertyValue("color-scheme")).toBe("light")
     expect(rule.style.getPropertyPriority("color-scheme")).toBe("")
     expect(rule.style.length).toBe(1)
+  })
+
+  it("uses GrayText for a disabled wrapper boundary in forced colors", () => {
+    const forced = install().filter(rule => "conditionText" in rule
+      && rule.conditionText.replace(/\s/g, "") === "(forced-colors:active)") as CSSMediaRule[]
+    const boundary = forced.flatMap(rule => [...rule.cssRules]).find(rule => rule instanceof CSSStyleRule
+      && rule.selectorText === ".mui-input:has([data-input-control]:disabled)::before") as CSSStyleRule
+    expect(boundary.style.getPropertyValue("border-color")).toBe("GrayText")
+  })
+
+  it("resets status wrapper paint and focus glow for print", () => {
+    const print = install().filter(rule => "conditionText" in rule
+      && rule.conditionText === "print") as CSSMediaRule[]
+    const status = print.flatMap(rule => [...rule.cssRules]).find(rule => rule instanceof CSSStyleRule
+      && rule.selectorText === ".mui-input[data-status]:not(:has([data-input-control]:disabled)):focus-within") as CSSStyleRule
+    const boundary = print.flatMap(rule => [...rule.cssRules]).find(rule => rule instanceof CSSStyleRule
+      && rule.selectorText === ".mui-input[data-status]:not(:has([data-input-control]:disabled)):focus-within::before") as CSSStyleRule
+    expect(status.style.getPropertyValue("color")).toBe("#000")
+    expect(status.style.getPropertyValue("background")).toBe("transparent")
+    expect(boundary.style.getPropertyValue("border-color")).toBe("currentColor")
+    expect(boundary.style.getPropertyValue("box-shadow")).toBe("none")
   })
 
   it("keeps the existing value, disabled and count color roles and native form nodes", () => {

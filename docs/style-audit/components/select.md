@@ -133,8 +133,8 @@ Popover or shared-base edit is proposed as necessary for this correction.
 compaction adds no builder/runtime step. Controller/entry sources are unchanged.
 The coordinator's isolated release build and all **81 Select/Popselect tests** passed.
 Final Select CSS is **982/1,000 gzip bytes**; the released-base Popselect composition
-is **1,991/2,500 bytes**. This excludes the concurrent unfinished Popselect-local audit
-and its pending shared guard change, rather than treating drafts as released dependencies.
+is **1,991/2,500 bytes**. Popselect is now complete and integrated against the released
+Select baseline, so there is no pending shared guard dependency.
 
 ## Scope boundary
 

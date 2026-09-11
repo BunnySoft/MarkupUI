@@ -1,11 +1,12 @@
 # Default theme and style audit
 
-**Status: in progress.** This is a new visual-default pass after the native migration,
-not a claim that the earlier functional acceptance established Naive UI visual parity.
+**Status: complete for all 96 catalog scopes.** This visual-default pass follows the
+native migration; completion does not claim full Naive UI pixel or API parity.
 
-**Reviewed and integrated: 67/96 scopes.** The other **29** are not yet accepted in this
-pass. Reviewed includes explicitly documented remaining native, legacy and motion
-differences; reviewed scopes do not imply complete pixel/API parity.
+**Reviewed and integrated: 96/96 scopes.** Final classifications are 2 Fixed, 6 Matched,
+3 Matched with remaining differences, 79 Fixed with remaining differences, 1 Remaining
+and 5 Not applicable. Remaining native, legacy, renderer and motion differences are
+documented in the component reports rather than counted as unfinished audits.
 
 The comparison starts with Naive UI's **default light theme**, default component props
 and only the content/values needed to render a useful example. The reference version,
@@ -43,14 +44,29 @@ claiming a match or silently skipping the component.
 
 ## Queue
 
-Component links lead to the existing scope inventory. A style-report link is added when
-that component's review is available. Avatar and Button were reviewed first. The remaining
-audit now uses parallel component-owned work, with shared theme changes, builds and commits
-coordinated centrally. Reviewing does not mean matched; each component still needs its own
-rendered evidence and acceptance report.
+Component links lead to the existing scope inventory and completed style report. Every
+catalog scope has rendered/source evidence or an explicit not-applicable classification.
+Shared theme changes, builds and the final integration commit were coordinated centrally.
 
-Release builds isolate ready changes from unfinished agent work. Button's wave and
-insertion are integrated; its icon swap/exit transition remains an explicit budget blocker.
+Yellow statuses describe accepted, concrete differences rather than incomplete review.
+They form an optional follow-up backlog only after separating deliberate native
+architecture boundaries from actionable parity work. Button's icon swap/exit transition
+remains an accepted payload-boundary difference until a separate scope and budget are
+approved.
+
+## Remaining-difference triage
+
+**2026-09-11 — all 83 yellow scopes reviewed.** Eighty-two contain only accepted native,
+platform, renderer, provider, accessibility or payload boundaries. One actionable
+shared-owner follow-up was identified and completed:
+
+| Priority | Owner | Completed follow-up |
+| --- | --- | --- |
+| Medium | Input | Forced-color disabled wrapper borders now use GrayText. Printed focused status wrappers reset text, surface, boundary and glow. Shared Input regression coverage verifies both states. |
+
+No actionable parity follow-up remains from this triage. The former Select note about a
+pending Popselect guard was also stale: Popselect is complete against the released Select
+baseline with no remaining shared dependency.
 
 | Component | Status | Style report |
 | --- | --- | --- |
@@ -100,7 +116,7 @@ insertion are integrated; its icon swap/exit transition remains an explicit budg
 | [Image](../naive-ui/components/image.md) | 🟢 Fixed / 🟡 Remaining | [Preview fitting, chrome and native toolbar limits](components/image.md) |
 | [Infinite Scroll](../naive-ui/components/infinite-scroll.md) | 🟢 Matched | [Unpainted native scrolling surface with opt-in geometry and sentinel behavior](components/infinite-scroll.md) |
 | [Input Number](../naive-ui/components/input-number.md) | 🟢 Fixed / 🟡 Remaining | [Field/stepper styling, bounded sizing and native numeric limits](components/input-number.md) |
-| [Input OTP](../naive-ui/components/input-otp.md) | 🟢 Fixed / 🟡 Remaining | [Single-field sizing/palette, native cell limits and pending shared Input media follow-up](components/input-otp.md) |
+| [Input OTP](../naive-ui/components/input-otp.md) | 🟢 Fixed / 🟡 Remaining | [Single-field sizing/palette, completed shared Input media follow-up and native cell limits](components/input-otp.md) |
 | [Input](../naive-ui/components/input.md) | 🟢 Fixed / 🟡 Remaining | [Native field geometry, theme states and textarea/icon limits](components/input.md) |
 | [Layout](../naive-ui/components/layout.md) | 🟢 Fixed / 🟡 Remaining | [Region palettes, author tokens and native scrolling limits](components/layout.md) |
 | [Legacy Grid](../naive-ui/components/legacy-grid.md) | 🟢 Matched | [Selected grid/flex/space geometry with native topology differences](components/legacy-grid.md) |

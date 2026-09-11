@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.12.0
+
+- Completed the declared dependency-free native migration across all 96 catalog scopes,
+  with explicit retained behavior and intentional omission records.
+- Added native form, selection, feedback, collection, temporal, motion, data-display, and
+  specialized helpers while preserving existing `mui-*` compatibility.
+- Completed the Naive UI 2.45.3 default-theme audit for all 96 scopes, aligning feasible
+  geometry, typography, palettes, states, media behavior, and component-owned defaults.
+- Added per-component audit reports, standalone demos, API/source trackers, and regression
+  coverage; the integrated suite now contains 3,773 passing tests.
+- Fixed shared Input forced-color and print wrapper states and raised only its CSS gzip
+  ceiling from 1,750 to 1,800 bytes.
+
 ## 0.11.0
 
 - Redesigned `mui-button` around Naive UI's button metrics and interaction model.

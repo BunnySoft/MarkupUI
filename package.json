@@ -1,6 +1,6 @@
 {
   "name": "@dataengine/markup-ui",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Dependency-free browser-native MarkupUI Web Components",
   "type": "module",
   "main": "./dist/markup-ui.js",

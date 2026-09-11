@@ -3,9 +3,11 @@ import { resolve } from "node:path"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { components, componentGroups } from "../demo/catalog.js"
 import { createComponentBrowser } from "../demo/app.js"
+import { createExampleCodeViewers } from "../demo/example-code.js"
 
 const html = readFileSync(resolve("demo", "index.html"), "utf8")
 const css = readFileSync(resolve("demo", "app.css"), "utf8")
+const avatarHtml = readFileSync(resolve("demo", "components", "avatar.html"), "utf8")
 let browser: ReturnType<typeof createComponentBrowser> | undefined
 let media: MediaQueryList
 let mediaListener: (() => void) | undefined
@@ -56,6 +58,35 @@ describe("component-by-component demo browser", () => {
     expect(frame.src).toContain("/demo/components/avatar.html")
     expect(frame.title).toBe("Avatar examples")
     expect(document.querySelectorAll('[aria-current="page"]')).toHaveLength(1)
+  })
+
+  it("adds one literal code viewer to each pinned Avatar example", async () => {
+    const fetch = vi.fn(async () => ({
+      ok: true,
+      status: 200,
+      text: async () => avatarHtml,
+    }))
+    vi.stubGlobal("fetch", fetch)
+    document.body.innerHTML = avatarHtml.slice(avatarHtml.indexOf("<body>") + 6, avatarHtml.indexOf("</body>"))
+    const viewers = createExampleCodeViewers()
+    const examples = [...document.querySelectorAll<HTMLElement>("[data-demo-example]")]
+    expect(examples.map(example => example.dataset.demoExample)).toEqual([
+      "size", "shape", "color", "badge", "icon", "content-size", "fallback", "group", "lazy", "show-debug",
+    ])
+    expect(document.querySelectorAll("[data-demo-code-toggle]")).toHaveLength(10)
+    const toggle = examples[0]!.querySelector<HTMLElement>("[data-demo-code-toggle]")!
+    const panel = examples[0]!.querySelector<HTMLElement>(".demo-example-code")!
+    const source = panel.querySelector<HTMLElement>("code")!
+    toggle.click()
+    await vi.waitFor(() => expect(source.dataset.loaded).toBe("true"))
+    expect(toggle.getAttribute("aria-expanded")).toBe("true")
+    expect(source.textContent).toContain('<mui-avatar size="small"')
+    expect(panel.querySelector("mui-avatar")).toBeNull()
+    expect(fetch).toHaveBeenCalledTimes(1)
+    toggle.click()
+    expect(panel.hidden).toBe(true)
+    expect(toggle.getAttribute("aria-expanded")).toBe("false")
+    viewers.disconnect()
   })
 
   it("loads a deep link directly and preserves the standalone page link", () => {
@@ -132,7 +163,7 @@ describe("component-by-component demo browser", () => {
     document.querySelector<HTMLInputElement>("#component-search")!.focus()
     sidebar.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }))
     expect(sidebar.hidden).toBe(true)
-    expect(document.activeElement).toBe(toggle)
+    expect(document.activeElement).toBe(toggle.querySelector("button"))
     Object.defineProperty(media, "matches", { value: false, configurable: true })
     mediaListener?.()
     expect(sidebar.hidden).toBe(false)
@@ -145,13 +176,22 @@ describe("component-by-component demo browser", () => {
     expect(document.querySelector("#component-note")?.textContent).toContain("exclusion")
   })
 
-  it("loads shell CSS/JS directly and keeps legacy styles before showcase overrides", () => {
+  it("loads MarkupUI shell controls and keeps legacy styles before showcase overrides", () => {
     expect(html).toContain('href="./app.css"')
     expect(html).toContain('src="./app.js"')
-    expect(html).not.toContain("../dist/")
+    expect(html).toContain('../dist/markup-ui-button.css')
+    expect(html).toContain('../dist/markup-ui-input.css')
+    expect(html).toContain('../dist/markup-ui-button.global.js')
     expect(css).toContain("min-block-size: 42px")
     expect(css).toContain('.component-link[aria-current="page"]')
-    expect(css).not.toContain("mui-button")
+    expect(avatarHtml).toContain('markup-ui-button.css')
+    expect(avatarHtml).toContain('markup-ui-input.css')
+    expect(avatarHtml).toContain('markup-ui-slider.css')
+    expect(avatarHtml).toContain('markup-ui-badge.css')
+    expect(avatarHtml).toContain('markup-ui-icon.css')
+    expect(avatarHtml).toContain('markup-ui-code.css')
+    expect(avatarHtml).toContain('src="../example-code.js"')
+    expect(avatarHtml.match(/data-demo-example=/g)).toHaveLength(10)
     const legacy = readFileSync(resolve("demo", "legacy.html"), "utf8")
     expect(legacy.indexOf('id="mui-styles"')).toBeLessThan(legacy.indexOf('href="./legacy.css"'))
     expect(legacy).toContain('src="./legacy.js"')

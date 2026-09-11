@@ -9,7 +9,7 @@ Avatar embedded in the legacy aggregate unless it is registered first.
 | `dist/markup-ui-avatar.js` | ES module; exports the element classes and `registerAvatar()`, and registers on browser import. |
 | `dist/markup-ui-avatar.global.js` | Classic script; registers elements and exposes `MarkupUIAvatar`. |
 | `dist/markup-ui-avatar.css` | External component stylesheet; no style injection. |
-| `demo/components/avatar.html` | Runnable classic HTML/CSS/JavaScript example. |
+| `demo/components/avatar.html` | Runnable comparison page mirroring the ten pinned Naive UI 2.45.3 Avatar cases. Every case has an adjacent MarkupUI Show code control and literal authored snippet. |
 
 ## Loading
 

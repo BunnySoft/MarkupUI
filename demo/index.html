@@ -6,14 +6,20 @@
   <meta name="description" content="Browse the current MarkupUI examples, one component per page.">
   <title>Components - MarkupUI</title>
   <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../dist/markup-ui-input.css">
   <link rel="stylesheet" href="./app.css">
+  <script defer src="../dist/markup-ui-button.global.js"></script>
   <script type="module" src="./app.js"></script>
 </head>
 <body>
   <div id="component-app">
     <header class="site-header">
-      <button type="button" id="navigation-toggle" class="navigation-toggle"
-        aria-controls="component-sidebar" aria-expanded="false" hidden>Components</button>
+      <mui-button id="navigation-toggle" class="navigation-toggle" size="small" secondary
+        aria-controls="component-sidebar" aria-expanded="false" hidden>
+        <button type="button" aria-controls="component-sidebar"
+          aria-expanded="false">Components</button>
+      </mui-button>
       <a class="brand" href="./"><span class="brand-icon" aria-hidden="true">M</span>MarkupUI</a>
       <span class="header-caption">Components</span>
       <a class="repository-link" href="https://github.com/BunnySoft/MarkupUI"
@@ -23,8 +29,11 @@
       <aside id="component-sidebar" class="component-sidebar">
         <div class="search-box">
           <label class="visually-hidden" for="component-search">Search components</label>
-          <input type="search" id="component-search" placeholder="Search components"
-            autocomplete="off" aria-controls="component-navigation">
+          <div class="mui-input" data-size="small">
+            <input data-input-control type="search" id="component-search"
+              placeholder="Search components" autocomplete="off"
+              aria-controls="component-navigation">
+          </div>
         </div>
         <nav id="component-navigation" aria-label="Components"></nav>
         <p id="no-results" class="no-results" hidden>No matching components.</p>
@@ -36,8 +45,10 @@
             <p id="component-category" class="component-category">Components</p>
             <h1 id="component-title" tabindex="-1">Choose a component</h1>
           </div>
-          <a id="standalone-link" class="standalone-link" target="_blank"
-            rel="noopener noreferrer" hidden>Open standalone ↗</a>
+          <div class="toolbar-actions">
+            <a id="standalone-link" class="standalone-link" target="_blank"
+              rel="noopener noreferrer" hidden>Open standalone ↗</a>
+          </div>
         </header>
         <p id="component-note" class="component-note">
           Each page loads only its own examples and assets.

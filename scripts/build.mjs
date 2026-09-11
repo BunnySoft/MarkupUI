@@ -287,7 +287,7 @@ const bundleBudgets = {
   "markup-ui-checkbox.css": 1_000,
   "markup-ui-input.js": 4_000,
   "markup-ui-input.global.js": 4_000,
-  "markup-ui-input.css": 1_750,
+  "markup-ui-input.css": 1_800,
   "markup-ui-collapse-transition.js": 4_500,
   "markup-ui-collapse-transition.global.js": 4_500,
   "markup-ui-collapse-transition.css": 750,

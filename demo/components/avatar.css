@@ -1,7 +1,74 @@
-body { background: #fafafa; color: #18181b; }
-main { max-inline-size: 60rem; margin-inline: auto; padding: 2rem; }
-section { margin-block: 2rem; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; background: white; }
-.examples { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; }
-.brand { --mui-avatar-background: #e7f5ee; --mui-avatar-color: #087443; }
-button { padding: .5rem 1rem; font: inherit; cursor: pointer; }
-button:focus-visible { outline: 2px solid #087443; outline-offset: 2px; }
+body {
+  color: #333639;
+  background: #f5f5f7;
+}
+main {
+  max-inline-size: 60rem;
+  margin-inline: auto;
+  padding: 2rem;
+}
+main > p {
+  color: #767c82;
+}
+section {
+  margin-block: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid #e0e0e6;
+  border-radius: 6px;
+  background: #fff;
+}
+.demo-preview {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-block-start: 1rem;
+}
+.demo-preview.align-end {
+  align-items: flex-end;
+}
+.demo-preview.vertical {
+  align-items: stretch;
+  flex-direction: column;
+}
+.demo-preview.vertical > .demo-preview {
+  margin-block-start: 0;
+}
+.demo-preview label {
+  font-size: 13px;
+}
+.demo-preview .mui-input {
+  inline-size: min(100%, 20rem);
+}
+.cash-icon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.lazy-scroll {
+  block-size: 100px;
+  inline-size: min(100%, 16rem);
+  padding: 8px;
+  overflow: auto;
+  border: 1px solid #e0e0e6;
+  border-radius: 3px;
+}
+.lazy-stack {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 8px;
+}
+#debug-if-anchor:empty {
+  display: none;
+}
+@media (max-width: 36rem) {
+  main {
+    padding: 1rem;
+  }
+  section {
+    padding: 1rem;
+  }
+}

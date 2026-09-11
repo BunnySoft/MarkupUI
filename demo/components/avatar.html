@@ -1,75 +1,205 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-mui-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Avatar</title>
+  <title>MarkupUI Avatar parity demos</title>
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-avatar.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-badge.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-input.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-slider.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-icon.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="./avatar.css">
   <script defer src="../../dist/markup-ui-avatar.global.js"></script>
+  <script defer src="../../dist/markup-ui-badge.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="./avatar.js"></script>
+  <script type="module" src="../example-code.js"></script>
 </head>
 <body>
   <main>
-    <h1>Avatar: native HTML, external CSS and plain JavaScript</h1>
-    <p>This page loads only the Avatar component and opt-in document CSS. No framework or remote
-      assets are required; native geometry supplies the component's text-fit scale.</p>
+    <h1>Avatar</h1>
+    <p>MarkupUI equivalents of the ten Avatar demos from pinned Naive UI 2.45.3,
+      in the same order and with equivalent case data.</p>
 
-    <section aria-labelledby="basic-heading">
-      <h2 id="basic-heading">Authored content and sizes</h2>
-      <div class="examples">
-        <mui-avatar size="tiny" alt="Tiny">T</mui-avatar>
-        <mui-avatar size="small" alt="Ada">A</mui-avatar>
-        <mui-avatar alt="Grace">G</mui-avatar>
-        <mui-avatar size="large" alt="Linus">L</mui-avatar>
-        <mui-avatar size="huge" alt="Huge">H</mui-avatar>
-        <mui-avatar round alt="Round">R</mui-avatar>
-        <mui-avatar square bordered alt="Team" class="brand">UI</mui-avatar>
-        <mui-avatar alt="Blue portrait" lazy>
-          <img alt="Blue portrait" width="34" height="34"
-            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Crect width='36' height='36' fill='%232080f0'/%3E%3C/svg%3E">
+    <section data-demo-example="size" aria-labelledby="size-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="size-heading">Size</h2>
+          <p>Avatar has small, medium and large sizes. A custom pixel size is also supported.</p>
+        </div>
+      </header>
+      <div class="demo-preview align-end" data-demo-preview>
+        <mui-avatar size="small" src="./avatar.svg" alt="Small profile"></mui-avatar>
+        <mui-avatar size="medium" src="./avatar.svg" alt="Medium profile"></mui-avatar>
+        <mui-avatar size="large" src="./avatar.svg" alt="Large profile"></mui-avatar>
+        <mui-avatar size="48" src="./avatar.svg" alt="48 pixel profile"></mui-avatar>
+      </div>
+    </section>
+
+    <section data-demo-example="shape" aria-labelledby="shape-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="shape-heading">Shape</h2>
+          <p>Avatar can be round.</p>
+        </div>
+      </header>
+      <div class="demo-preview align-end" data-demo-preview>
+        <mui-avatar round size="small" src="./avatar.svg" alt="Small round profile"></mui-avatar>
+        <mui-avatar round size="medium" src="./avatar.svg" alt="Medium round profile"></mui-avatar>
+        <mui-avatar round size="large" src="./avatar.svg" alt="Large round profile"></mui-avatar>
+        <mui-avatar round size="48" src="./avatar.svg" alt="48 pixel round profile"></mui-avatar>
+      </div>
+    </section>
+
+    <section data-demo-example="color" aria-labelledby="color-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="color-heading">Color</h2>
+          <p>Set the Avatar foreground and background colors.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-avatar style="--mui-avatar-color:yellow;--mui-avatar-background:red">M</mui-avatar>
+      </div>
+    </section>
+
+    <section data-demo-example="badge" aria-labelledby="badge-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="badge-heading">Badge</h2>
+          <p>Compose Avatar with Badge for a visible count.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-badge value="999+" decorative>
+          <mui-avatar>App</mui-avatar>
+        </mui-badge>
+      </div>
+    </section>
+
+    <section data-demo-example="icon" aria-labelledby="icon-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="icon-heading">Icon</h2>
+          <p>Use an authored icon inside an Avatar.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-avatar aria-label="Cash">
+          <svg class="mui-icon cash-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M15 8.5h-4.2a2.3 2.3 0 0 0 0 4.6h2.4a2.3 2.3 0 0 1 0 4.6H9M12 6v12"></path>
+          </svg>
         </mui-avatar>
       </div>
-      <p>Default: 34px, 3px corners, white normal text. Sizes: 22 / 28 / 34 / 40 / 46px.
-        A border adds 4px. Images default to fill; use object-fit="cover" to crop.</p>
     </section>
 
-    <section aria-labelledby="fit-heading">
-      <h2 id="fit-heading">Automatic text fitting</h2>
-      <div class="examples">
-        <mui-avatar id="text-fit-avatar"><span id="text-fit-content">Alexandria</span></mui-avatar>
-        <label>Name <input id="text-fit-name" value="Alexandria"></label>
-        <label>Size <input id="text-fit-size" type="range" min="22" max="72" value="34"></label>
+    <section data-demo-example="content-size" aria-labelledby="content-size-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="content-size-heading">Content size</h2>
+          <p>Text is resized to fit the Avatar.</p>
+        </div>
+      </header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <div class="demo-preview">
+          <mui-avatar><span data-content-name>Oasis</span></mui-avatar>
+          <mui-avatar round><span data-content-name>Oasis</span></mui-avatar>
+        </div>
+        <label for="content-name">Content</label>
+        <div class="mui-input">
+          <input data-input-control id="content-name" value="Oasis">
+        </div>
       </div>
-      <p>Long text scales down instead of being replaced by an ellipsis. Editing the name or
-        size preserves the original content nodes and full accessible label.</p>
     </section>
 
-    <section aria-labelledby="fallback-heading">
-      <h2 id="fallback-heading">Image lifecycle and authored templates</h2>
-      <mui-avatar id="dynamic-avatar" alt="Dynamic profile" size="large">
-        DP
-        <template data-mui-avatar-placeholder><span>...</span></template>
-        <template data-mui-avatar-fallback><span>?</span></template>
-      </mui-avatar>
-      <p>
-        <button type="button" id="load-image">Load image</button>
-        <button type="button" id="fail-image">Show fallback</button>
-        <button type="button" id="clear-image">Restore text</button>
-      </p>
-      <p id="image-status" role="status">Text content is shown initially.</p>
+    <section data-demo-example="fallback" aria-labelledby="fallback-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="fallback-heading">Fallback</h2>
+          <p>Show the fallback source when the primary image fails.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-avatar round size="small" src="data:image/png;base64,invalid"
+          fallback-src="./avatar-alt.svg" alt="Fallback profile"></mui-avatar>
+      </div>
     </section>
 
-    <section aria-labelledby="group-heading">
-      <h2 id="group-heading">Group with native disclosure</h2>
-      <p>Tab to the overflow summary and use Enter or Space to disclose the remaining avatars.</p>
-      <mui-avatar-group max="2" label="Project team">
-        <mui-avatar alt="Ada">A</mui-avatar>
-        <mui-avatar alt="Grace">G</mui-avatar>
-        <mui-avatar alt="Linus">L</mui-avatar>
-        <mui-avatar alt="Margaret">M</mui-avatar>
-      </mui-avatar-group>
+    <section data-demo-example="group" aria-labelledby="group-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="group-heading">Avatar Group</h2>
+          <p>Five named people with size 40 and max 3, matching the source case data.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-avatar-group max="3" label="People" style="--mui-avatar-size:40px">
+          <mui-avatar src="./avatar-alt.svg" alt="Leonardo DiCaprio" title="Leonardo DiCaprio"></mui-avatar>
+          <mui-avatar src="./avatar.svg" alt="Jennifer Lawrence" title="Jennifer Lawrence"></mui-avatar>
+          <mui-avatar src="./avatar-alt.svg" alt="Audrey Hepburn" title="Audrey Hepburn"></mui-avatar>
+          <mui-avatar src="./avatar.svg" alt="Anne Hathaway" title="Anne Hathaway"></mui-avatar>
+          <mui-avatar src="./avatar-alt.svg" alt="Taylor Swift" title="Taylor Swift"></mui-avatar>
+        </mui-avatar-group>
+      </div>
+    </section>
+
+    <section data-demo-example="lazy" aria-labelledby="lazy-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="lazy-heading">Lazy load</h2>
+          <p>Use native image lazy loading directly and inside a 100px scrolling container.</p>
+        </div>
+      </header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <p>Use <code class="mui-code">lazy</code> alone</p>
+        <mui-avatar lazy src="./avatar.svg" alt="Lazy profile"></mui-avatar>
+        <p>Use <code class="mui-code">lazy</code> in a scrolling container</p>
+        <div id="image-scroll-container" class="lazy-scroll">
+          <div class="lazy-stack">
+            <mui-avatar size="small" lazy src="./avatar.svg?1" alt="Lazy profile 1"></mui-avatar>
+            <mui-avatar size="small" lazy src="./avatar-alt.svg?2" alt="Lazy profile 2"></mui-avatar>
+            <mui-avatar size="small" lazy src="./avatar.svg?3" alt="Lazy profile 3"></mui-avatar>
+            <mui-avatar size="small" lazy src="./avatar-alt.svg?4" alt="Lazy profile 4"></mui-avatar>
+            <mui-avatar size="small" lazy src="./avatar.svg?5" alt="Lazy profile 5"></mui-avatar>
+            <mui-avatar size="small" lazy src="./avatar-alt.svg?7" alt="Lazy profile 7"></mui-avatar>
+            <mui-avatar size="small" lazy src="./avatar.svg?8" alt="Lazy profile 8"></mui-avatar>
+            <mui-avatar size="small" lazy src="./avatar-alt.svg?9" alt="Lazy profile 9"></mui-avatar>
+            <mui-avatar size="small" lazy src="./avatar.svg?10" alt="Lazy profile 10"></mui-avatar>
+            <mui-avatar size="small" lazy src="data:image/png;base64,invalid"
+              fallback-src="./avatar-alt.svg" alt="Lazy fallback profile"></mui-avatar>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section data-demo-example="show-debug" aria-labelledby="show-debug-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="show-debug-heading">v-show debug</h2>
+          <p>Compare retained hidden content with conditionally inserted round content.</p>
+        </div>
+      </header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <div class="demo-preview">
+          <mui-button id="debug-toggle" type="primary">Toggle</mui-button>
+          <mui-avatar id="debug-show" hidden><span data-debug-name>Oasis111</span></mui-avatar>
+          <span id="debug-if-anchor"></span>
+          <template id="debug-if-template">
+            <mui-avatar round><span data-debug-name>Oasis111</span></mui-avatar>
+          </template>
+        </div>
+        <label for="debug-name">Content</label>
+        <div class="mui-input">
+          <input data-input-control id="debug-name" value="Oasis111">
+        </div>
+      </div>
     </section>
   </main>
 </body>

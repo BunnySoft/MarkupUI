@@ -1,0 +1,23 @@
+[data-demo-header] {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+[data-demo-header] > div { min-inline-size: 0; }
+[data-demo-header] h2 { margin-block-start: 0; }
+[data-demo-header] p { margin-block-end: 0; }
+[data-demo-code-toggle] { flex: 0 0 auto; }
+.demo-example-code {
+  max-block-size: 24rem;
+  margin-block-start: 1rem;
+  padding: 1rem;
+  border: 1px solid #e0e0e6;
+  border-radius: 3px;
+  color: #333639;
+  background: #fafafc;
+}
+.demo-example-code[data-state="error"] { color: #d03050; }
+@media (max-width: 36rem) {
+  [data-demo-header] { align-items: stretch; flex-direction: column; }
+}

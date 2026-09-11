@@ -13,7 +13,8 @@ export function createComponentBrowser(document = globalThis.document, view = gl
   const note = document.getElementById("component-note")
   const status = document.getElementById("page-status")
   let frame = document.getElementById("component-frame")
-  if ([navigation, sidebar, toggle, search, empty, count, title, category, standalone, note, status, frame].some(node => !node)) {
+  if ([navigation, sidebar, toggle, search, empty, count, title, category, standalone,
+    note, status, frame].some(node => !node)) {
     throw new Error("Component browser markup is incomplete.")
   }
 
@@ -25,6 +26,12 @@ export function createComponentBrowser(document = globalThis.document, view = gl
   let menuOpen = false
   let current = null
   const fragment = document.createDocumentFragment()
+
+  function focusControl(element) {
+    const control = element.querySelector("[data-mui-button-control], button, a")
+    if (control) control.focus()
+    else element.focus()
+  }
 
   for (const [index, group] of componentGroups.entries()) {
     const section = document.createElement("section")
@@ -60,7 +67,7 @@ export function createComponentBrowser(document = globalThis.document, view = gl
 
   function updateNavigation() {
     const hidden = media.matches && !menuOpen
-    if (hidden && sidebar.contains(document.activeElement)) toggle.focus()
+    if (hidden && sidebar.contains(document.activeElement)) focusControl(toggle)
     sidebar.hidden = hidden
     toggle.hidden = !media.matches
     toggle.setAttribute("aria-expanded", String(!hidden))
@@ -163,7 +170,7 @@ export function createComponentBrowser(document = globalThis.document, view = gl
     if (event.key === "Escape" && media.matches && menuOpen) {
       menuOpen = false
       updateNavigation()
-      toggle.focus()
+      focusControl(toggle)
     }
   }
   function onLoad() {

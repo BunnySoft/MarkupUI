@@ -148,9 +148,10 @@ dispose();
 ```
 
 For collection binding and customizable item content, see the
-[data binding and template investigation](docs/data-binding-and-templates.md).
-It compares native templates, declarative bindings and XAML patterns, and distinguishes
-existing support from proposed APIs.
+[ordered data binding and templates guide](docs/data-binding/README.md). It covers the
+web-platform primitives, proposed directive grammar, scopes, keyed native templates,
+component composition and implementation plan. The guide does not describe an implemented
+collection API.
 
 ## Form validation
 
