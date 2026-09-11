@@ -17,7 +17,7 @@ The page exposes the retained native replacements directly:
 - content scrolling remains native overflow;
 - close intent updates an inline native status instead of invoking an overlay service.
 
-The proposed documentation direction is to prefer concise passive `mui-card-*` light-DOM
+The proposed documentation direction is to prefer concise passive `m-card-*` light-DOM
 parts while retaining semantic native marked regions. Shadow DOM is not needed for Card
 slot-like syntax; scoped data templates remain a separate proposed binding feature.
 
@@ -96,8 +96,8 @@ the isolated reference and remain unchanged by default.
 ## Shared theme versus component ownership
 
 The equivalent shared roles are **font size**, **line height**, **focus ring**, and
-**primary color for fragment targeting**. The existing `--mui-font-size`,
-`--mui-line-height`, `--mui-focus-ring`, and `--mui-color-primary` tokens are consumed
+**primary color for fragment targeting**. The existing `--m-font-size`,
+`--m-line-height`, `--m-focus-ring`, and `--m-color-primary` tokens are consumed
 behind public Card overrides. Font family inherits. Geometry and easing are local.
 
 The legacy generic palette is not a matching Card palette. Reusing its names merely
@@ -107,15 +107,15 @@ defaults private and attribute-scoped; it adds **no global color role or preset*
 Canonical `src/theme/presets.json`, generated `presets.ts`, canonical aggregate CSS,
 and generated `styles.ts` are unchanged. No baseline hashes were updated.
 
-Card CSS never writes a public `--mui-card-*` value. Authored Card tokens inherit
+Card CSS never writes a public `--m-card-*` value. Authored Card tokens inherit
 through theme boundaries and win over defaults. The old implicit generic color
 aliases are deliberately removed; applications wanting them can author, for example,
-`--mui-card-background: var(--mui-bg-surface)` and
-`--mui-card-color: var(--mui-text-primary)` on their theme scope. This is an explicit
+`--m-card-background: var(--m-bg-surface)` and
+`--m-card-color: var(--m-text-primary)` on their theme scope. This is an explicit
 application palette decision, not a silent component override of shared colors.
 
 Browser checks confirmed `theme.apply("dark", section)` retains its generic
-`--mui-bg-surface: #1c1c1f`, while default Card paints #18181c. Nested explicit light
+`--m-bg-surface: #1c1c1f`, while default Card paints #18181c. Nested explicit light
 Card resets to white/#333639. An inherited authored foreground `rgb(4,5,6)` and
 per-card background `rgb(7,8,9)` win; radius 11px, padding 10px, Card font 15px over
 shared font 17px, and shared line-height 2 produce **15px / 30px**. Authors can

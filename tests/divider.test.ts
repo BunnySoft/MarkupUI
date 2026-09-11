@@ -7,36 +7,36 @@ const css = readFileSync(resolve("src", "components", "divider", "divider.css"),
 const demo = readFileSync(resolve("demo", "components", "divider.html"), "utf8")
 const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
 const fixtureHtml = `
-  <hr class="mui-divider" id="thematic">
-  <hr class="mui-divider" data-dashed aria-label="End of introduction" id="dashed">
-  <span class="mui-divider custom-rule" aria-hidden="true" id="decorative"></span>
-  <div class="mui-divider mui-divider-captioned" role="separator" aria-labelledby="settings-label" id="named">
-    <span class="mui-divider-label" id="settings-label" aria-hidden="true">Settings</span>
+  <hr class="m-divider" id="thematic">
+  <hr class="m-divider" data-dashed aria-label="End of introduction" id="dashed">
+  <span class="m-divider custom-rule" aria-hidden="true" id="decorative"></span>
+  <div class="m-divider m-divider-captioned" role="separator" aria-labelledby="settings-label" id="named">
+    <span class="m-divider-label" id="settings-label" aria-hidden="true">Settings</span>
   </div>
-  <div class="mui-divider mui-divider-captioned" data-placement="left" role="separator" aria-labelledby="left-label" id="left">
-    <span class="mui-divider-label" id="left-label" aria-hidden="true">Left label</span>
+  <div class="m-divider m-divider-captioned" data-placement="left" role="separator" aria-labelledby="left-label" id="left">
+    <span class="m-divider-label" id="left-label" aria-hidden="true">Left label</span>
   </div>
-  <div class="mui-divider mui-divider-captioned" data-placement="right" data-dashed role="separator" aria-labelledby="right-label" id="right">
-    <span class="mui-divider-label" id="right-label" aria-hidden="true">Right label</span>
+  <div class="m-divider m-divider-captioned" data-placement="right" data-dashed role="separator" aria-labelledby="right-label" id="right">
+    <span class="m-divider-label" id="right-label" aria-hidden="true">Right label</span>
   </div>
-  <div class="mui-divider mui-divider-captioned narrow" role="separator" aria-labelledby="long-label" id="long">
-    <span class="mui-divider-label" id="long-label" aria-hidden="true">AnOriginalLongUnbrokenCaptionThatWrapsWithoutClippingOrReplacingAnyOfItsText</span>
+  <div class="m-divider m-divider-captioned narrow" role="separator" aria-labelledby="long-label" id="long">
+    <span class="m-divider-label" id="long-label" aria-hidden="true">AnOriginalLongUnbrokenCaptionThatWrapsWithoutClippingOrReplacingAnyOfItsText</span>
   </div>
-  <div class="mui-divider mui-divider-captioned" data-placement="start" id="heading-decoration">
-    <h2 class="mui-divider-label" id="real-heading">A real native heading with decorative rules</h2>
+  <div class="m-divider m-divider-captioned" data-placement="start" id="heading-decoration">
+    <h2 class="m-divider-label" id="real-heading">A real native heading with decorative rules</h2>
   </div>
   <div class="actions">
     <a href="#destination" id="first-action">First action</a>
-    <span class="mui-divider" role="separator" aria-orientation="vertical" aria-label="Action groups" id="vertical"></span>
+    <span class="m-divider" role="separator" aria-orientation="vertical" aria-label="Action groups" id="vertical"></span>
     <a href="#destination" id="second-action">Second action</a>
-    <span class="mui-divider tall" data-dashed data-orientation="vertical" aria-hidden="true" id="vertical-decorative"></span>
+    <span class="m-divider tall" data-dashed data-orientation="vertical" aria-hidden="true" id="vertical-decorative"></span>
   </div>
   <section dir="rtl">
-    <div class="mui-divider mui-divider-captioned" data-placement="start" role="separator" aria-labelledby="rtl-start-label">
-      <span class="mui-divider-label" id="rtl-start-label" aria-hidden="true">Start</span>
+    <div class="m-divider m-divider-captioned" data-placement="start" role="separator" aria-labelledby="rtl-start-label">
+      <span class="m-divider-label" id="rtl-start-label" aria-hidden="true">Start</span>
     </div>
-    <div class="mui-divider mui-divider-captioned" data-placement="left" role="separator" aria-labelledby="rtl-left-label">
-      <span class="mui-divider-label" id="rtl-left-label" aria-hidden="true">Left</span>
+    <div class="m-divider m-divider-captioned" data-placement="left" role="separator" aria-labelledby="rtl-left-label">
+      <span class="m-divider-label" id="rtl-left-label" aria-hidden="true">Left</span>
     </div>
   </section>
   <hr id="outside">`
@@ -52,7 +52,7 @@ describe("CSS-only native Divider", () => {
     expect(readdirSync(resolve("src", "components", "divider"))).toEqual(["divider.css"])
     expect(demo).not.toContain("markup-ui-divider.js")
     expect(demo).toContain('src="../example-code.js"')
-    expect(customElements.get("mui-divider")).toBeUndefined()
+    expect(customElements.get("m-divider")).toBeUndefined()
   })
 
   it("keeps native thematic hr semantics and never nests captions in a void element", () => {
@@ -76,7 +76,7 @@ describe("CSS-only native Divider", () => {
     expect(separator.getAttribute("aria-labelledby")).toBe(caption.id)
     expect(caption.getAttribute("aria-hidden")).toBe("true")
     expect(caption.textContent).toBe("Settings")
-    expect(separator.querySelectorAll(".mui-divider-label")).toHaveLength(1)
+    expect(separator.querySelectorAll(".m-divider-label")).toHaveLength(1)
     expect(separator.hasAttribute("aria-label")).toBe(false)
     expect(caption.getAttribute("hidden")).toBeNull()
   })
@@ -103,9 +103,9 @@ describe("CSS-only native Divider", () => {
     expect(semantic.getAttribute("role")).toBe("separator")
     expect(decorative.getAttribute("data-orientation")).toBe("vertical")
     expect(decorative.getAttribute("aria-hidden")).toBe("true")
-    expect(css).toContain('.mui-divider:is([aria-orientation="vertical"]')
+    expect(css).toContain('.m-divider:is([aria-orientation="vertical"]')
     expect(css).toContain('[aria-hidden="true"][data-orientation="vertical"]:not([aria-orientation])')
-    expect(css).not.toContain('.mui-divider[vertical]')
+    expect(css).not.toContain('.m-divider[vertical]')
   })
 
   it("preserves authored decorative visibility, native actions and tab order", () => {
@@ -119,8 +119,8 @@ describe("CSS-only native Divider", () => {
     expect(clicks).toBe(1)
     expect(document.querySelector(".actions")!.outerHTML).toBe(before)
     expect(document.querySelector("#decorative")?.getAttribute("aria-hidden")).toBe("true")
-    expect(document.querySelectorAll(".mui-divider[tabindex]")).toHaveLength(0)
-    expect(document.querySelectorAll(".mui-divider button,.mui-divider a")).toHaveLength(0)
+    expect(document.querySelectorAll(".m-divider[tabindex]")).toHaveLength(0)
+    expect(document.querySelectorAll(".m-divider button,.m-divider a")).toHaveLength(0)
   })
 
   it("keeps original caption nodes, listeners and later content without a lifecycle", () => {
@@ -140,7 +140,7 @@ describe("CSS-only native Divider", () => {
   })
 
   it("keeps hidden dividers and native templates inert despite flex/block styles", () => {
-    document.body.innerHTML = '<hr class="mui-divider" hidden><div class="mui-divider mui-divider-captioned" hidden><span class="mui-divider-label">Hidden</span></div><template class="mui-divider"><span>Inert</span></template>'
+    document.body.innerHTML = '<hr class="m-divider" hidden><div class="m-divider m-divider-captioned" hidden><span class="m-divider-label">Hidden</span></div><template class="m-divider"><span>Inert</span></template>'
     install()
     for (const node of document.querySelectorAll("[hidden],template")) expect(getComputedStyle(node).display).toBe("none")
     expect(document.querySelector("template")?.content.textContent).toBe("Inert")
@@ -166,7 +166,7 @@ describe("CSS-only native Divider", () => {
     expect(css).toContain("border-block-start:")
     expect(css).toContain("border-inline-start:")
     expect(css).toContain("@media (forced-colors: active)")
-    expect(css).toContain("--mui-divider-color: CanvasText")
+    expect(css).toContain("--m-divider-color: CanvasText")
     expect(css).not.toContain("background:")
     expect(css).not.toContain("forced-color-adjust: none")
     expect(css).not.toContain("@keyframes")
@@ -176,8 +176,8 @@ describe("CSS-only native Divider", () => {
   })
 
   it("keeps vertical orientation authoritative without hiding an authored caption", () => {
-    document.body.innerHTML = '<div class="mui-divider mui-divider-captioned" role="separator" aria-orientation="vertical" aria-labelledby="caption"><span class="mui-divider-label" id="caption" aria-hidden="true">Original caption</span></div>'
-    const separator = document.querySelector(".mui-divider")!
+    document.body.innerHTML = '<div class="m-divider m-divider-captioned" role="separator" aria-orientation="vertical" aria-labelledby="caption"><span class="m-divider-label" id="caption" aria-hidden="true">Original caption</span></div>'
+    const separator = document.querySelector(".m-divider")!
     const caption = separator.firstElementChild
     install()
     expect(getComputedStyle(separator).display).toBe("inline-flex")
@@ -195,40 +195,40 @@ describe("CSS-only native Divider", () => {
     install()
     const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
     for (const theme of ["light", "dark"]) {
-      const rule = rules.find(rule => rule.selectorText === `:where([data-mui-theme="${theme}"])`)!
+      const rule = rules.find(rule => rule.selectorText === `:where([data-m-theme="${theme}"])`)!
       expect(rule).toBeDefined()
-      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_mui-divider-/)
+      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_m-divider-/)
     }
-    expect(css).toContain("var(--mui-divider-color, var(--_mui-divider-color, #efeff5))")
-    expect(css).toContain("var(--mui-divider-text-color, var(--_mui-divider-text-color, #1f2225))")
-    expect(css).toContain("--_mui-divider-color: rgb(255 255 255 / .09)")
-    expect(css).toContain("--_mui-divider-text-color: rgb(255 255 255 / .9)")
-    expect(css).not.toContain("--mui-border")
-    expect(css).not.toContain("--mui-text-primary")
+    expect(css).toContain("var(--m-divider-color, var(--_m-divider-color, #efeff5))")
+    expect(css).toContain("var(--m-divider-text-color, var(--_m-divider-text-color, #1f2225))")
+    expect(css).toContain("--_m-divider-color: rgb(255 255 255 / .09)")
+    expect(css).toContain("--_m-divider-text-color: rgb(255 255 255 / .9)")
+    expect(css).not.toContain("--m-border")
+    expect(css).not.toContain("--m-text-primary")
   })
 
   it("uses reference 16px divider sizing, 500 caption weight and root-independent spacing", () => {
     expect(css).toContain("font-size: 16px")
-    expect(css).toContain("var(--mui-divider-label-size, 16px)")
-    expect(css).toContain("var(--mui-divider-label-weight, 500)")
-    expect(css).toContain("var(--mui-divider-space, 24px)")
-    expect(css).toContain("var(--mui-divider-inline-space, 8px)")
-    expect(css).toContain("var(--mui-divider-label-gap, 12px)")
-    expect(css).toContain("var(--mui-font-family, inherit)")
+    expect(css).toContain("var(--m-divider-label-size, 16px)")
+    expect(css).toContain("var(--m-divider-label-weight, 500)")
+    expect(css).toContain("var(--m-divider-space, 24px)")
+    expect(css).toContain("var(--m-divider-inline-space, 8px)")
+    expect(css).toContain("var(--m-divider-label-gap, 12px)")
+    expect(css).toContain("var(--m-font-family, inherit)")
   })
 
   it("lets edge rules shrink like the reference while bounding a wrappable caption", () => {
     expect(css).toContain("flex: 1 1 100%")
-    expect(css).toContain("flex: 0 1 var(--mui-divider-edge, 28px)")
+    expect(css).toContain("flex: 0 1 var(--m-divider-edge, 28px)")
     expect(css).toContain("flex: 0 0 auto")
-    expect(css).toContain("max(0px, calc(100% - 2 * (var(--mui-divider-label-gap, 12px) + var(--mui-divider-rule-min, 1rem))))")
-    expect(css).toContain("--_mui-divider-label-max: 100%")
+    expect(css).toContain("max(0px, calc(100% - 2 * (var(--m-divider-label-gap, 12px) + var(--m-divider-rule-min, 1rem))))")
+    expect(css).toContain("--_m-divider-label-max: 100%")
     expect(css).toContain("overflow-wrap: anywhere")
   })
 
   it("does not overwrite authored divider or caption declarations", () => {
-    document.body.innerHTML = '<div class="mui-divider mui-divider-captioned" style="color:purple;margin-block:31px"><span class="mui-divider-label" style="font-size:21px;font-weight:800">Author</span></div>'
-    const divider = document.querySelector(".mui-divider")!
+    document.body.innerHTML = '<div class="m-divider m-divider-captioned" style="color:purple;margin-block:31px"><span class="m-divider-label" style="font-size:21px;font-weight:800">Author</span></div>'
+    const divider = document.querySelector(".m-divider")!
     const caption = divider.firstElementChild!
     const before = divider.outerHTML
     install()

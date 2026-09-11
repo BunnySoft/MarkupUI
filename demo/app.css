@@ -34,7 +34,7 @@ a { color: inherit; }
 .browser-layout { display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); min-block-size: 0; }
 .component-sidebar { min-inline-size: 0; overflow: auto; overscroll-behavior: contain; border-inline-end: 1px solid var(--border-color); padding-block-end: 24px; }
 .search-box { position: sticky; inset-block-start: 0; z-index: 1; padding: 18px 20px 12px; background: #fff; }
-.search-box .mui-input { inline-size: 100%; }
+.search-box .m-input { inline-size: 100%; }
 .nav-group { margin-block-start: 12px; }
 .nav-group h2 { margin: 0; padding: 12px 24px 6px 32px; color: var(--muted-color); font-size: 13px; font-weight: 400; line-height: 1.6; }
 .nav-group ul { margin: 0; padding: 0; list-style: none; }

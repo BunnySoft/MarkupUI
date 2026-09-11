@@ -68,7 +68,7 @@ There is no upstream defaultCurrent prop; that optional target-only seed is docu
 | [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L27) | Prop | External small/medium CSS. | 🟢 Verified | Native text wrapping and marker scaling, no measured geometry. |
 | [`status`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L28) | Prop | Current item's default process/wait/finish/error state. | 🟢 Verified | Explicit per-item status wins; noncurrent defaults wait. Literal readable labels. |
 | [`vertical`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L29) | Prop | External vertical class, logical connectors. | 🟢 Verified | Responsive stacking is presentation, not a controlled callback. |
-| [`on-update:current`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L30) | Callback | mui:steps-request with ordinal, previous position and actual li/button. | 🟢 Verified | Intent only; application explicitly accepts/declines. No synthesized programmatic events. |
+| [`on-update:current`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/steps/demos/enUS/index.demo-entry.md#L30) | Callback | m:steps-request with ordinal, previous position and actual li/button. | 🟢 Verified | Intent only; application explicitly accepts/declines. No synthesized programmatic events. |
 
 ### Step Props
 

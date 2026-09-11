@@ -53,7 +53,7 @@ const interactive = "a, area, button, input, select, textarea, label, details, s
 export function createTabs(root: HTMLElement, options: TabsOptions = {}): TabsController {
   const document = root?.ownerDocument
   const view = document?.defaultView
-  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".mui-tabs[data-tabs]")) throw new TypeError("Tabs requires an authored .mui-tabs[data-tabs] root.")
+  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".m-tabs[data-tabs]")) throw new TypeError("Tabs requires an authored .m-tabs[data-tabs] root.")
   const allowed = ["value", "defaultValue", "activation", "placement", "centerActiveTab", "beforeLeave"]
   for (const key of Object.keys(options)) if (!allowed.includes(key)) throw new TypeError(`Unsupported Tabs option: ${key}.`)
   let placement = options.placement ?? root.getAttribute("data-tabs-placement") ?? "top"
@@ -190,7 +190,7 @@ export function createTabs(root: HTMLElement, options: TabsOptions = {}): TabsCo
     }
     if (user && event && connected && lifetime === generation && value === next && next !== null && next !== previous) {
       const pair = pairs.find(pair => pair.key === next)!
-      root.dispatchEvent(new view!.CustomEvent<TabsChange>("mui:tabs-change", { detail: { value: next, previous, tab: pair.tab, panel: pair.panel, event } }))
+      root.dispatchEvent(new view!.CustomEvent<TabsChange>("m:tabs-change", { detail: { value: next, previous, tab: pair.tab, panel: pair.panel, event } }))
     }
   }
   function request(key: string, user: boolean, event?: Event): Promise<boolean> {
@@ -229,7 +229,7 @@ export function createTabs(root: HTMLElement, options: TabsOptions = {}): TabsCo
         if (!stale) failure = { error }
         paintTransient()
       }
-      root.dispatchEvent(new view!.CustomEvent("mui:tabs-error", { detail: { error, value: key, previous: operation.previous, stale } }))
+      root.dispatchEvent(new view!.CustomEvent("m:tabs-error", { detail: { error, value: key, previous: operation.previous, stale } }))
     })
     paintTransient()
     if (current(operation)) {
@@ -244,7 +244,7 @@ export function createTabs(root: HTMLElement, options: TabsOptions = {}): TabsCo
       || query("[data-tabs-close]").some(button => button.getAttribute("data-tabs-close") === pair.key)
   }
   function closeIntent(pair: Pair, event: Event) {
-    if (connected && same(pair) && closable(pair)) root.dispatchEvent(new view!.CustomEvent("mui:tabs-close", { detail: { value: pair.key, tab: pair.tab, panel: pair.panel, event } }))
+    if (connected && same(pair) && closable(pair)) root.dispatchEvent(new view!.CustomEvent("m:tabs-close", { detail: { value: pair.key, tab: pair.tab, panel: pair.panel, event } }))
   }
   function click(event: MouseEvent) {
     if (event.button !== 0 || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey || !(event.target instanceof view!.Element)) return
@@ -258,7 +258,7 @@ export function createTabs(root: HTMLElement, options: TabsOptions = {}): TabsCo
     queue(() => {
       if (event.defaultPrevented || !button.isConnected || button.matches(":disabled") || button.closest("[hidden], [inert]")) return
       if (pair && same(pair)) { if (sequence === requestId) void request(pair.key, true, event); return }
-      if (add && button.hasAttribute("data-tabs-add")) root.dispatchEvent(new view!.CustomEvent("mui:tabs-add", { detail: { event } }))
+      if (add && button.hasAttribute("data-tabs-add")) root.dispatchEvent(new view!.CustomEvent("m:tabs-add", { detail: { event } }))
       else if (closing && button.getAttribute("data-tabs-close") === closeKey && same(closing)) closeIntent(closing, event)
     })
   }
@@ -293,7 +293,7 @@ export function createTabs(root: HTMLElement, options: TabsOptions = {}): TabsCo
     if (connected && lifetime === generation && requestId === sequence && activation === "automatic" && same(next)) void request(next.key, true, event)
   }
   function parse() {
-    if (!root.isConnected || root.getRootNode() !== document || root.closest("mui-tabs")) throw new TypeError("Tabs needs connected light-DOM anatomy outside legacy mui-tabs.")
+    if (!root.isConnected || root.getRootNode() !== document || root.closest("m-tabs")) throw new TypeError("Tabs needs connected light-DOM anatomy outside legacy m-tabs.")
     list = one("[data-tabs-list]")
     const bar = one("[data-tabs-bar]")
     wrapper = one("[data-tabs-panels]")
@@ -359,7 +359,7 @@ export function createTabs(root: HTMLElement, options: TabsOptions = {}): TabsCo
     })
     if (!relevant) return
     try { controller.refresh() } catch (error) {
-      root.dispatchEvent(new view!.CustomEvent("mui:tabs-error", { detail: { error, value, previous: value, stale: false } }))
+      root.dispatchEvent(new view!.CustomEvent("m:tabs-error", { detail: { error, value, previous: value, stale: false } }))
     }
   })
   function unbind(permanent: boolean) {

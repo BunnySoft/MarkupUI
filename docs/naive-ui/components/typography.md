@@ -40,7 +40,7 @@ owners stay grouped, while A/Li/Hr and deprecated/theme source surfaces are iden
 
 - **Native path:** actual headings, paragraphs, lists/items, blockquotes, emphasis, code,
   anchors and thematic breaks are the implementation. A stylesheet never changes their tags.
-- **Small enhancement:** `.mui-typography` container or individual native opt-in classes,
+- **Small enhancement:** `.m-typography` container or individual native opt-in classes,
   low-specificity CSS variables and logical properties only. Native HTML remains readable
   without CSS/JS; no fake ESM/classic bundle, lifecycle or framework-prop adapter is supplied.
 
@@ -113,9 +113,9 @@ Verification means native/CSS adaptation, not source tag/theme/router API or pix
 
 | Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / scope |
 | --- | --- | --- | --- | --- |
-| [`A`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/typography/src/a.tsx) | Source owner | ADAPTED native a / a.mui-a. | 🟢 Verified | Native href/target/rel/download/SVG/selection/focus preserved; no router interception. |
-| [`Li`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/typography/src/li.tsx) | Source owner | ADAPTED native li / li.mui-li. | 🟢 Verified | Native list item and value/marker semantics; source has no custom props. |
-| [`Hr`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/typography/src/hr.tsx) | Source owner | ADAPTED native hr / hr.mui-hr. | 🟢 Verified | Native thematic break, not a generated role or content slot. |
+| [`A`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/typography/src/a.tsx) | Source owner | ADAPTED native a / a.m-a. | 🟢 Verified | Native href/target/rel/download/SVG/selection/focus preserved; no router interception. |
+| [`Li`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/typography/src/li.tsx) | Source owner | ADAPTED native li / li.m-li. | 🟢 Verified | Native list item and value/marker semantics; source has no custom props. |
+| [`Hr`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/typography/src/hr.tsx) | Source owner | ADAPTED native hr / hr.m-hr. | 🟢 Verified | Native thematic break, not a generated role or content slot. |
 | [`Text.as`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/typography/src/text.tsx) | Deprecated source prop | Choose native HTML directly. | ⏭️ Intentionally omitted | No deprecated tag renderer/compatibility/warning layer. |
 
 ### Explicit grouped source theme supplements

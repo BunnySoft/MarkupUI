@@ -10,9 +10,9 @@ function show() {
   feedback.textContent = JSON.stringify({ main: state(main), short: state(short), hidden: state(hidden) }, null, 2)
 }
 for (const helper of helpers) {
-  helper.element.addEventListener("mui:marquee-change", show)
-  helper.element.addEventListener("mui:marquee-finish", () => { completion.textContent = "A finite traversal completed. The original content is now static and fully reachable."; show() })
-  helper.element.addEventListener("mui:marquee-error", event => { feedback.textContent = `${String(event.detail.error)}\nContent remains reachable in static view.` })
+  helper.element.addEventListener("m:marquee-change", show)
+  helper.element.addEventListener("m:marquee-finish", () => { completion.textContent = "A finite traversal completed. The original content is now static and fully reachable."; show() })
+  helper.element.addEventListener("m:marquee-error", event => { feedback.textContent = `${String(event.detail.error)}\nContent remains reachable in static view.` })
 }
 document.querySelectorAll("[data-enhancement]").forEach(node => { node.hidden = false })
 document.querySelector("#apply").addEventListener("click", () => {

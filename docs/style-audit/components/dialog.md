@@ -4,8 +4,8 @@
 
 **INTEGRATED — modality, composed-order and safety-policy corrections retained.**
 Parent review found that the initial blanket `position:relative` changed native modal
-positioning. That rule is removed. On screen only, non-dialog `.mui-dialog` content and
-`dialog.mui-native-dialog.mui-dialog[open]:not(:modal)` are positioned relatively; modal positioning is
+positioning. That rule is removed. On screen only, non-dialog `.m-dialog` content and
+`dialog.m-native-dialog.m-dialog[open]:not(:modal)` are positioned relatively; modal positioning is
 left to the browser. The original explicit reduced-motion, error-border and pending
 weight policies are restored, not traded away to fit the payload ceiling.
 
@@ -48,7 +48,7 @@ Neither nested-selector experiments nor any semantic removal entered the solutio
 
 A further parent review identified ties between the compact Dialog selectors and
 later shared base copies prepended to Modal/Drawer CSS. Native Dialog paint now uses
-`dialog.mui-native-dialog.mui-dialog`; open nonmodal positioning uses that same
+`dialog.m-native-dialog.m-dialog`; open nonmodal positioning uses that same
 two-class guard plus `[open]:not(:modal)`. Each outranks the corresponding shared
 base selector regardless of source order. Modal positioning remains browser-owned,
 and public color/background/accent variables remain author overrides.
@@ -82,7 +82,7 @@ only **one additional gzip byte**; no shared declaration or safety policy was re
   `_internal/close/src/styles/index.cssr.ts`. Installed reference versions and source
   commit were checked, not inferred from a latest documentation page.
 - Rendered actual NDialog under NConfigProvider, with its default theme, versus
-  authored `.mui-dialog` content. Both used **Arial**, **14px** document text,
+  authored `.m-dialog` content. Both used **Arial**, **14px** document text,
   **1200×1000 CSS-pixel** viewport, **446px** containing blocks, and the same strings:
   “Review change”, “Review the local change before confirming.”, “Not now”, “Confirm”.
   The container width is a fixture constraint, not an inline NDialog default.
@@ -107,10 +107,10 @@ Its Modal/provider wrapper supplies the **446px** width and modal lifetime. The 
 native stylesheet applied a 32rem content width, rounded elevated surface and generic
 native controls even to a section.
 
-`.mui-dialog` now uses automatic inline sizing and border-box geometry. Only the real
-`dialog.mui-dialog` gets the wrapper-aligned 446px default. This is explicitly a native
+`.m-dialog` now uses automatic inline sizing and border-box geometry. Only the real
+`dialog.m-dialog` gets the wrapper-aligned 446px default. This is explicitly a native
 surface adaptation, not a claim that inline NDialog is modal. Both accept the existing
-`--mui-dialog-width` override.
+`--m-dialog-width` override.
 
 `native.ts` remains untouched; `native.css` has only coordinator-owned, approved
 whitespace formatting. The shared backdrop stays
@@ -165,7 +165,7 @@ bold colored text. They now use source-aligned normal-weight filled actions.
 | warning | #f0a020 | #f2c97d | #fcb040 / #f5d599 |
 | error | #d03050 | #e88080 | #de576d / #e98b8b |
 
-These use existing `--mui-color-{primary,info,success,warning,error}` and hover roles
+These use existing `--m-color-{primary,info,success,warning,error}` and hover roles
 with matching standalone fallbacks. The generic legacy text/surface/border roles are
 not the NDialog palette and are not reused for those defaults.
 
@@ -218,7 +218,7 @@ Real Chromium verification retained:
   policy, not a custom layout engine.
 
 Runtime/lifecycle, form interception policy, close/cancel semantics, template ownership
-and focus restoration code did not change. Legacy `<mui-dialog>` remains outside this
+and focus restoration code did not change. Legacy `<m-dialog>` remains outside this
 CSS-only retained native audit. No missing binding/template/service APIs were added.
 
 ## Targeted validation and budgets

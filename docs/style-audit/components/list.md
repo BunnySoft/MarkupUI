@@ -178,7 +178,7 @@ included; this completes presentation-only integration.
   children inside `ul`. No invalid list children or `display:contents` workaround.
 - Native small/large density, wrapping safeguards, hover-device gating, passive item
   semantics and explicit row-action controls remain intentional adaptations.
-- Legacy `mui-list` / `mui-list-item`, framework injection, automatic modal/popover
+- Legacy `m-list` / `m-list-item`, framework injection, automatic modal/popover
   theming, arbitrary rich slot sizing, narrow overflow and all-browser/AT behavior
   are not claimed by the bounded screenshot comparisons.
 - Divider filtering uses modern sibling `:has()` selectors and native `hidden`;

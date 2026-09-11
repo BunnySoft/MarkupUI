@@ -1,6 +1,6 @@
-import { MuiElement } from "../../core/element.js"
+import { MElement } from "../../core/element.js"
 
-export class MuiAvatarGroup extends MuiElement {
+export class MAvatarGroup extends MElement {
   public static get observedAttributes(): string[] { return ["max", "label", "rest-label"] }
   private observer: MutationObserver | undefined
   private overflow: HTMLDetailsElement | undefined
@@ -38,7 +38,7 @@ export class MuiAvatarGroup extends MuiElement {
     this.setAttribute("role", "group")
     if (this.hasAttribute("label")) this.setAttribute("aria-label", this.getAttribute("label") ?? "")
     const items = [...this.querySelectorAll<HTMLElement>(
-      ":scope > mui-avatar, :scope > [data-mui-avatar-overflow] > [data-mui-avatar-rest] > mui-avatar",
+      ":scope > m-avatar, :scope > [data-m-avatar-overflow] > [data-m-avatar-rest] > m-avatar",
     )]
     const visible = items.slice(0, this.max)
     const remaining = items.slice(this.max)
@@ -46,15 +46,15 @@ export class MuiAvatarGroup extends MuiElement {
     if (remaining.length) {
       if (!this.overflow) {
         this.overflow = this.ownerDocument.createElement("details")
-        this.overflow.dataset.muiAvatarOverflow = ""
+        this.overflow.dataset.mAvatarOverflow = ""
         const summary = this.ownerDocument.createElement("summary")
         const rest = this.ownerDocument.createElement("span")
-        rest.dataset.muiAvatarRest = ""
+        rest.dataset.mAvatarRest = ""
         this.overflow.append(summary, rest)
         this.append(this.overflow)
       }
       const summary = this.overflow.querySelector("summary")
-      const rest = this.overflow.querySelector("[data-mui-avatar-rest]")
+      const rest = this.overflow.querySelector("[data-m-avatar-rest]")
       if (summary) {
         summary.textContent = `+${remaining.length}`
         summary.setAttribute("aria-label", this.getAttribute("rest-label") ?? `${remaining.length} more avatars`)

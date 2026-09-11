@@ -21,7 +21,7 @@ typography, paint and CSS motion remain application-owned.
 | [Complete reference](../naive-ui/components/time.md) | Six original identities and three explicit source additions |
 
 ```html
-<time class="mui-time" data-time datetime="2024-03-10T07:30:00.000Z">
+<time class="m-time" data-time datetime="2024-03-10T07:30:00.000Z">
   <!-- Use an explicit target when preserving surrounding markup. -->
   <strong>Recorded: </strong><span data-time-text>March 10, 2024 at 07:30 UTC</span>
 </time>
@@ -182,7 +182,7 @@ later suspends it instead of producing repeated announcements.
 Leaving a pause computes **one** current result and next boundary, never replays
 missed ticks. A live-to-static update captures a reference at that operation. Updating
 options/disconnect cancels stale timers with generation guards. Clock failure on an
-automatic refresh keeps the last valid pair, reports mui:time-error and stops retries
+automatic refresh keeps the last valid pair, reports m:time-error and stops retries
 until explicit/environment refresh; it is not a success-shaped relative label.
 
 ## Owned text, selection, state and lifecycle
@@ -204,7 +204,7 @@ attributes are not rewritten, preserving original Text identity and avoiding nee
 selection invalidation. No innerHTML/textContent renderer destroys the author prefix
 or sibling controls/listeners/ARIA.
 
-Actual paired changes emit mui:time-change with the frozen FormattedTime; metadata-only
+Actual paired changes emit m:time-change with the frozen FormattedTime; metadata-only
 refreshes do not. No role/live region is added. Reentrant change handlers may set/
 disconnect; the older scheduled work is cancelled. Mutations from clock evaluation
 are rejected; disconnect is allowed and prevents stale writes.

@@ -32,7 +32,7 @@ function transport() {
 }
 function fixture(options: UploadOptions = {}, bind = true) {
   const form = document.createElement("form")
-  form.innerHTML = `<fieldset><legend>Native upload fields</legend><section class="mui-upload" data-upload tabindex="-1" aria-label="Local files">
+  form.innerHTML = `<fieldset><legend>Native upload fields</legend><section class="m-upload" data-upload tabindex="-1" aria-label="Local files">
     <label>Files<input type="file" name="attachments" multiple data-upload-input></label>
     <div data-upload-actions hidden><button type="button" data-upload-action="start">Start all</button><button type="button" data-upload-action="cancel">Cancel all</button><button type="button" data-upload-action="clear">Clear all</button></div>
     <div data-upload-drop hidden>Drop Files or use the chooser.</div>
@@ -375,7 +375,7 @@ describe("Upload disposal, callback guards and native fallback", () => {
     helper.add([file()]); expect(helper.files).toHaveLength(1); expect((helper.state.lastError as Error).message).toContain("reenter")
     const fake = transport(), second = fixture({ transport: fake.send })
     second.helper.add([file()])
-    second.root.addEventListener("mui:upload-change", event => {
+    second.root.addEventListener("m:upload-change", event => {
       if ((event as CustomEvent).detail.reason === "start") second.helper.disconnect()
     })
     second.helper.start(); expect(fake.send).not.toHaveBeenCalled(); expect(second.helper.state.active).toBe(0)

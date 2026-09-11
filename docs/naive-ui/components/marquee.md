@@ -25,7 +25,7 @@ not undocumented source public props.
 Short tracks now fill the viewport; normal whitespace and native image baseline match
 the source, with no invented edge fade or panel style. A local light print surface
 keeps default dark-theme text readable, while the existing public
-`--mui-marquee-focus` token stays authoritative. The first 250/500/1000ms of a
+`--m-marquee-focus` token stays authoritative. The first 250/500/1000ms of a
 supported 48px/s pass match source translations, but the native pass covers only
 overflow and never adds source mirror groups. Automatic infinite motion, seamless
 repetition and source scheduling remain intentionally different.

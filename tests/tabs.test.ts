@@ -8,7 +8,7 @@ let sequence = 0
 function nodes() {
   const id = `tabs-${sequence++}`
   const root = document.createElement("div")
-  root.className = "mui-tabs"
+  root.className = "m-tabs"
   root.setAttribute("data-tabs", "")
   root.innerHTML = `
     <div data-tabs-bar><span data-tabs-prefix>Prefix</span><div data-tabs-list aria-label="Local views">
@@ -131,7 +131,7 @@ describe("authored Tabs, Tab and TabPane contracts", () => {
     const beforeLeave = vi.fn(() => true)
     const { root, controller } = bind({ beforeLeave })
     const change = vi.fn()
-    root.addEventListener("mui:tabs-change", change)
+    root.addEventListener("m:tabs-change", change)
     controller.value = "two"
     await flush()
     expect(beforeLeave).not.toHaveBeenCalled()
@@ -271,7 +271,7 @@ describe("before-leave guards and stale requests", () => {
     const hook = vi.fn(() => false)
     const { root, tab, pane, controller } = bind({ beforeLeave: hook })
     const changes = vi.fn()
-    root.addEventListener("mui:tabs-change", changes)
+    root.addEventListener("m:tabs-change", changes)
     tab("two").click()
     await flush()
     expect(hook).toHaveBeenCalledWith("two", "one")
@@ -281,7 +281,7 @@ describe("before-leave guards and stale requests", () => {
     expect(changes).not.toHaveBeenCalled()
     const other = bind({ beforeLeave: () => true })
     const silent = vi.fn()
-    other.root.addEventListener("mui:tabs-change", silent)
+    other.root.addEventListener("m:tabs-change", silent)
     expect(await other.controller.select("two")).toBe(true)
     expect(silent).not.toHaveBeenCalled()
   })
@@ -310,7 +310,7 @@ describe("before-leave guards and stale requests", () => {
     const guard = () => { if (mode === "throw") throw error; return mode === "reject" ? Promise.reject(error) : "yes" as unknown as boolean }
     const { root, tab, error: region, controller } = bind({ beforeLeave: guard })
     const failures: unknown[] = []
-    root.addEventListener("mui:tabs-error", event => failures.push((event as CustomEvent).detail))
+    root.addEventListener("m:tabs-error", event => failures.push((event as CustomEvent).detail))
     tab("two").click()
     await flush()
     await expect(controller.lastRequest).rejects.toThrow()
@@ -341,7 +341,7 @@ describe("before-leave guards and stale requests", () => {
     const pending = deferred()
     const { tab, controller, root } = bind({ beforeLeave: () => pending.promise })
     const change = vi.fn()
-    root.addEventListener("mui:tabs-change", change)
+    root.addEventListener("m:tabs-change", change)
     tab("two").click()
     await flush()
     controller.value = "three"
@@ -354,7 +354,7 @@ describe("before-leave guards and stale requests", () => {
     const old = deferred()
     const { tab, root, error, controller } = bind({ beforeLeave: next => next === "two" ? old.promise : true })
     const failures: unknown[] = []
-    root.addEventListener("mui:tabs-error", event => failures.push((event as CustomEvent).detail))
+    root.addEventListener("m:tabs-error", event => failures.push((event as CustomEvent).detail))
     tab("two").click()
     await flush()
     const promise = controller.lastRequest
@@ -464,8 +464,8 @@ describe("add/close, refresh and distribution", () => {
   it("emits add/close intent only, never creates or destroys application DOM", async () => {
     const { root, tab } = bind()
     const add = vi.fn(), close = vi.fn()
-    root.addEventListener("mui:tabs-add", add)
-    root.addEventListener("mui:tabs-close", close)
+    root.addEventListener("m:tabs-add", add)
+    root.addEventListener("m:tabs-close", close)
     const count = root.querySelectorAll("[data-tabs-tab]").length
     ;(root.querySelector("[data-tabs-add]") as HTMLButtonElement).click()
     ;(root.querySelector("[data-tabs-close]") as HTMLButtonElement).click()
@@ -479,7 +479,7 @@ describe("add/close, refresh and distribution", () => {
   })
   it("recovers selection/focus when the application removes a closable active pair", async () => {
     const { root, tab, pane, controller } = bind()
-    root.addEventListener("mui:tabs-close", () => {
+    root.addEventListener("m:tabs-close", () => {
       tab("one").remove()
       pane("one").remove()
       root.querySelector("[data-tabs-close]")!.remove()
@@ -511,7 +511,7 @@ describe("add/close, refresh and distribution", () => {
   it("detects invalid dynamic associations, disconnects and restores readable panes", async () => {
     const { root, tab, pane, controller } = bind()
     const errors = vi.fn()
-    root.addEventListener("mui:tabs-error", errors)
+    root.addEventListener("m:tabs-error", errors)
     tab("two").setAttribute("data-tabs-target", "missing")
     await flush()
     expect(controller.connected).toBe(false)
@@ -522,7 +522,7 @@ describe("add/close, refresh and distribution", () => {
     const { root, controller } = bind()
     const close = root.querySelector<HTMLButtonElement>("[data-tabs-close]")!
     const intents = vi.fn()
-    root.addEventListener("mui:tabs-close", intents)
+    root.addEventListener("m:tabs-close", intents)
     close.addEventListener("click", () => {
       close.setAttribute("data-tabs-close", "two")
       controller.refresh()

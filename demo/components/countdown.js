@@ -29,8 +29,8 @@ function perform(action) {
   try { action(); show() } catch (error) { feedback.textContent = `${error.name}: ${error.message}\nThe previous valid run/view remains unless an actual runtime error was reported.` }
 }
 for (const helper of helpers) {
-  helper.element.addEventListener("mui:countdown-finish", () => queueMicrotask(show))
-  helper.element.addEventListener("mui:countdown-error", event => { feedback.textContent = `${event.detail.phase} error in run ${event.detail.runId}: ${String(event.detail.error)}` })
+  helper.element.addEventListener("m:countdown-finish", () => queueMicrotask(show))
+  helper.element.addEventListener("m:countdown-error", event => { feedback.textContent = `${event.detail.phase} error in run ${event.detail.runId}: ${String(event.detail.error)}` })
 }
 document.querySelectorAll("[data-enhancement]").forEach(node => { node.hidden = false })
 function number(id) {

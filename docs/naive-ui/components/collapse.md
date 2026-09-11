@@ -79,8 +79,8 @@ Omissions receive no implementation credit.
 | [`display-directive`][a30] | Prop | No if/show renderer. | ⏭️ Intentionally omitted | Native details preserves content and form state. |
 | [`expanded-names`][a31] | Prop | ADAPTED validated native open requests and array getter. | 🟢 Verified | No continuous controlled lock; numeric names omitted. |
 | [`trigger-areas`][a32] | Prop | No configurable main/arrow/extra trigger array. | ⏭️ Intentionally omitted | Native summary toggles; external sibling extra actions remain independent. |
-| [`on-item-header-click`][a33] | Callback | ADAPTED mui:collapse-header-click after accepted native click. | 🟢 Verified | Final defaultPrevented/disabled checks and actual deferred state. |
-| [`on-update:expanded-names`][a34] | Callback | ADAPTED mui:collapse-change reflecting native toggle. | 🟢 Verified | Async/coalesced; includes programmatic changes, not a fake user-only update. |
+| [`on-item-header-click`][a33] | Callback | ADAPTED m:collapse-header-click after accepted native click. | 🟢 Verified | Final defaultPrevented/disabled checks and actual deferred state. |
+| [`on-update:expanded-names`][a34] | Callback | ADAPTED m:collapse-change reflecting native toggle. | 🟢 Verified | Async/coalesced; includes programmatic changes, not a fake user-only update. |
 
 ### CollapseItem Props
 

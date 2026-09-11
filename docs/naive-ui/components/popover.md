@@ -10,7 +10,7 @@ Historical [B1: overlays.ts](../../../src/components/overlays.ts) and
 [B2: position.ts](../../../src/core/position.ts) remain unchanged. They supply only the old
 core controller, not this enhanced scope.
 
-- **HTML:** authored native button/link/control and `.mui-popover[popover]`, explicit content
+- **HTML:** authored native button/link/control and `.m-popover[popover]`, explicit content
   semantics, native close actions and optional header/footer.
 - **JS:** optional [createPopover](../../../src/components/popover/popover.ts) with native
   visibility, local hover/focus delays, immutable ID ownership, cleanup and
@@ -25,7 +25,7 @@ application. Hover includes native focus, retains interactive panel content and 
 gap with a departure delay. Manual trigger and native manual popover are distinct.
 Nested panels remain inside their parent in the DOM; portalled nesting is rejected.
 No nodes are created/replaced, no registration occurs, and legacy/helper loading order has
-no tag conflict. Binding the same anatomy inside legacy mui-popover is rejected.
+no tag conflict. Binding the same anatomy inside legacy m-popover is rejected.
 
 ## Upstream implementation evidence
 
@@ -84,7 +84,7 @@ not style-object passthrough. Omitted rows receive no implementation credit.
 
 | Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`animated`][api29] | Prop | ADAPTED opt-in `.mui-popover--animated`. | 🟢 Verified | External opacity entrance; reduced motion; no leave scheduler or upstream default parity. |
+| [`animated`][api29] | Prop | ADAPTED opt-in `.m-popover--animated`. | 🟢 Verified | External opacity entrance; reduced motion; no leave scheduler or upstream default parity. |
 | [`arrow-point-to-center`][api30] | Prop | No exact trigger-center arrow tether. | ⏭️ Intentionally omitted | Decorative side indicator only; no offset/pointing solver. |
 | [`arrow-class`][api31] | Prop | ADAPTED author panel class styling `::before`. | 🟢 Verified | No generated arrow node; CSS selector rather than prop forwarding. |
 | [`arrow-style`][api32] | Prop | ADAPTED external indicator CSS. | 🟢 Verified | No string/object style passthrough; noninteractive inset presentation. |
@@ -104,9 +104,9 @@ not style-object passthrough. Omitted rows receive no implementation credit.
 | [`keep-alive-on-hover`][api46] | Prop | ADAPTED always retain interactive panel hover/focus. | 🟢 Verified | Retained true behavior only; false/early-dismiss option not exposed. |
 | [`overlap`][api47] | Prop | No overlapping-trigger placement mode. | ⏭️ Intentionally omitted | Nonnegative gap, bounded viewport positioning instead. |
 | [`placement`][api48] | Prop | ADAPTED twelve positions, bottom default. | 🟢 Verified | RTL horizontal start/end, native anchors or explicit fallback; vertical writing excluded. |
-| [`raw`][api49] | Prop | ADAPTED `.mui-popover--raw`. | 🟢 Verified | Removes default surface decoration, not placement/overflow safety. |
+| [`raw`][api49] | Prop | ADAPTED `.m-popover--raw`. | 🟢 Verified | Removes default surface decoration, not placement/overflow safety. |
 | [`scrollable`][api50] | Prop | ADAPTED native outer-panel overflow with maximum available height. | 🟢 Verified | Author inner scroller for independently fixed header/footer; no scrollbar runtime. |
-| [`show-arrow`][api51] | Prop | ADAPTED opt-in `.mui-popover--arrow`. | 🟢 Verified | Decorative inset indicator, hidden after collision shifting; no default/tether parity. |
+| [`show-arrow`][api51] | Prop | ADAPTED opt-in `.m-popover--arrow`. | 🟢 Verified | Decorative inset indicator, hidden after collision shifting; no default/tether parity. |
 | [`show`][api52] | Prop | ADAPTED actual controller.show plus explicit open/close/setShow. | 🟢 Verified | Native cancel/toggle/coalescing; not a controlled Vue prop. |
 | [`to`][api53] | Prop | No teleport/portal target. | ⏭️ Intentionally omitted | Nodes remain authored; native top layer escapes overflow without reparenting. |
 | [`trigger`][api54] | Prop | ADAPTED click/hover/focus/manual setup option. | 🟢 Verified | Native button click commands, focusable native links/controls; no double activation or fake spans. |

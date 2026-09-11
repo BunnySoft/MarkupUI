@@ -12,7 +12,7 @@ button, input { font: inherit; }
 button, input, fieldset { max-inline-size: 100%; box-sizing: border-box; }
 button { white-space: normal; overflow-wrap: anywhere; }
 fieldset { min-inline-size: 0; margin: 0; }
-.mui-list-content > :last-child { margin-block-end: 0; }
+.m-list-content > :last-child { margin-block-end: 0; }
 #action-status, #form-status { min-block-size: 1.5em; margin-block-start: .5rem; }
 @media print {
   body { max-inline-size: none; margin: 0; background: transparent; }

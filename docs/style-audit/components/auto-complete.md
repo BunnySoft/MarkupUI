@@ -66,7 +66,7 @@ No suggestion-open state is inferred from focus.
 
 ## Input composition and dependency proposal
 
-Standalone selectors exclude `.mui-input`. This is intentional ownership, not a
+Standalone selectors exclude `.m-input`. This is intentional ownership, not a
 copy of the full Input stylesheet. Generic field layout agrees on the 4px gap,
 while Input keeps its own border, control metrics, actions and state styles.
 
@@ -78,7 +78,7 @@ Parent Auto Complete size tokens are not forwarded into Input's independently
 owned root.
 
 **Separate Input-owner follow-up, now implemented:** during print, the composed
-`.mui-input` remained `color-scheme:dark` with input color **white/.82**. Disabling
+`.m-input` remained `color-scheme:dark` with input color **white/.82**. Disabling
 Auto Complete CSS gave the **same result**, confirming the issue belongs to the
 Input stylesheet. The approved patch adds only `color-scheme:light` to Input roots,
 groups and group labels inside Input's print rule. Existing public value/disabled

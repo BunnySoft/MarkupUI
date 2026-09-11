@@ -1,33 +1,33 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { MuiStatistic, registerStatistic } from "../src/components/statistic/index.js"
+import { MStatistic, registerStatistic } from "../src/components/statistic/index.js"
 import { registerElements } from "../src/components/elements.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
-function statistic(markup = "<mui-statistic></mui-statistic>"): MuiStatistic {
+function statistic(markup = "<m-statistic></m-statistic>"): MStatistic {
   document.body.innerHTML = markup
-  const element = document.querySelector("mui-statistic")
-  if (!(element instanceof MuiStatistic)) throw new Error("Statistic was not upgraded")
+  const element = document.querySelector("m-statistic")
+  if (!(element instanceof MStatistic)) throw new Error("Statistic was not upgraded")
   return element
 }
-function region(element: MuiStatistic, name: string): HTMLElement {
+function region(element: MStatistic, name: string): HTMLElement {
   return element.querySelector<HTMLElement>(name === "label"
-    ? ":scope > [data-mui-statistic-label]"
-    : `:scope > [data-mui-statistic-display] > [data-mui-statistic-${name}]`)!
+    ? ":scope > [data-m-statistic-label]"
+    : `:scope > [data-m-statistic-display] > [data-m-statistic-${name}]`)!
 }
-function text(element: MuiStatistic, name: string): HTMLElement {
-  return region(element, name).querySelector<HTMLElement>(":scope > [data-mui-statistic-text]")!
+function text(element: MStatistic, name: string): HTMLElement {
+  return region(element, name).querySelector<HTMLElement>(":scope > [data-m-statistic-text]")!
 }
-function slot(element: MuiStatistic, name: string): HTMLElement {
-  return region(element, name).querySelector<HTMLElement>(":scope > [data-mui-statistic-slot]")!
+function slot(element: MStatistic, name: string): HTMLElement {
+  return region(element, name).querySelector<HTMLElement>(":scope > [data-m-statistic-slot]")!
 }
 
 describe("standalone Statistic", () => {
   it("retains the passive display container and its spacing when values are absent", () => {
     const element = statistic()
-    const display = element.querySelector<HTMLElement>("[data-mui-statistic-display]")!
+    const display = element.querySelector<HTMLElement>("[data-m-statistic-display]")!
     expect(display.hidden).toBe(false)
     expect(region(element, "value").hidden).toBe(true)
     element.label = "Revenue"
@@ -35,12 +35,12 @@ describe("standalone Statistic", () => {
     element.value = null
     element.label = null
     expect(display.hidden).toBe(false)
-    expect(element.querySelector("[data-mui-statistic-display]")).toBe(display)
+    expect(element.querySelector("[data-m-statistic-display]")).toBe(display)
     expect(element.querySelector("output,[role],[aria-live]")).toBeNull()
   })
 
   it("preserves authored shared and local tokens through updates and reconnection", () => {
-    const element = statistic('<div style="--mui-font-size:18px;--mui-font-family:monospace;--mui-line-height:2;--mui-font-weight:600"><mui-statistic label="Revenue" value="123" style="--mui-statistic-label-size:16px;--mui-statistic-value-size:32px;--mui-statistic-line-height:1.5;--mui-statistic-value-color:rgb(1,2,3);--mui-statistic-prefix-color:rgb(4,5,6);--mui-statistic-gap:8px"></mui-statistic></div>')
+    const element = statistic('<div style="--m-font-size:18px;--m-font-family:monospace;--m-line-height:2;--m-font-weight:600"><m-statistic label="Revenue" value="123" style="--m-statistic-label-size:16px;--m-statistic-value-size:32px;--m-statistic-line-height:1.5;--m-statistic-value-color:rgb(1,2,3);--m-statistic-prefix-color:rgb(4,5,6);--m-statistic-gap:8px"></m-statistic></div>')
     const parent = element.parentElement!
     const shared = parent.getAttribute("style")
     const local = element.getAttribute("style")
@@ -58,22 +58,22 @@ describe("standalone Statistic", () => {
 
   it("keeps audited inline geometry, independent color roles and typography in CSS", () => {
     const css = readFileSync(resolve("src", "components", "statistic", "statistic.css"), "utf8")
-    expect(css).toContain("var(--mui-statistic-value-size, 24px)")
-    expect(css).toContain("var(--mui-statistic-label-size, var(--mui-font-size, 14px))")
-    expect(css).toContain("var(--mui-statistic-value-weight, var(--mui-font-weight, 400))")
-    expect(css).toContain("var(--mui-statistic-line-height, var(--mui-line-height, 1.6))")
-    expect(css).toContain("var(--mui-statistic-font-family, var(--mui-font-family, inherit))")
-    expect(css).toContain("margin: var(--mui-statistic-gap, 4px) 0 0")
-    expect(css).toContain("margin-inline-end: var(--mui-statistic-unit-gap, 4px)")
-    expect(css).toContain("margin-inline-start: var(--mui-statistic-unit-gap, 4px)")
+    expect(css).toContain("var(--m-statistic-value-size, 24px)")
+    expect(css).toContain("var(--m-statistic-label-size, var(--m-font-size, 14px))")
+    expect(css).toContain("var(--m-statistic-value-weight, var(--m-font-weight, 400))")
+    expect(css).toContain("var(--m-statistic-line-height, var(--m-line-height, 1.6))")
+    expect(css).toContain("var(--m-statistic-font-family, var(--m-font-family, inherit))")
+    expect(css).toContain("margin: var(--m-statistic-gap, 4px) 0 0")
+    expect(css).toContain("margin-inline-end: var(--m-statistic-unit-gap, 4px)")
+    expect(css).toContain("margin-inline-start: var(--m-statistic-unit-gap, 4px)")
     expect(css).toContain("display: inline")
-    expect(css).toContain("[data-mui-statistic-slot]:not([hidden])")
-    expect(css).toContain("var(--mui-statistic-label-color, var(--_mui-statistic-label-color, #767c82))")
+    expect(css).toContain("[data-m-statistic-slot]:not([hidden])")
+    expect(css).toContain("var(--m-statistic-label-color, var(--_m-statistic-label-color, #767c82))")
     for (const role of ["value", "prefix", "suffix"]) {
-      expect(css).toContain(`var(--mui-statistic-${role}-color, var(--_mui-statistic-value-color, #333639))`)
+      expect(css).toContain(`var(--m-statistic-${role}-color, var(--_m-statistic-value-color, #333639))`)
     }
-    expect(css).not.toContain("--mui-text-primary")
-    expect(css).not.toContain("--mui-text-secondary")
+    expect(css).not.toContain("--m-text-primary")
+    expect(css).not.toContain("--m-text-secondary")
     expect(css).toContain('rgba(255, 255, 255, .52)')
     expect(css).toContain('rgba(255, 255, 255, .82)')
     expect(css).toContain("@media (prefers-reduced-motion: reduce)")
@@ -92,12 +92,12 @@ describe("standalone Statistic", () => {
   })
 
   it("retains legacy label/value/prefix/suffix attributes as separate native regions", () => {
-    const element = statistic('<mui-statistic label="Revenue" value="123" prefix="$" suffix="USD"></mui-statistic>')
+    const element = statistic('<m-statistic label="Revenue" value="123" prefix="$" suffix="USD"></m-statistic>')
     expect(text(element, "label").textContent).toBe("Revenue")
     expect(text(element, "prefix").textContent).toBe("$")
     expect(text(element, "value").textContent).toBe("123")
     expect(text(element, "suffix").textContent).toBe("USD")
-    expect(element.querySelectorAll("[data-mui-statistic-display]")).toHaveLength(1)
+    expect(element.querySelectorAll("[data-m-statistic-display]")).toHaveLength(1)
   })
 
   it("preserves zero, blank and arbitrary string meanings without numeric coercion", () => {
@@ -114,7 +114,7 @@ describe("standalone Statistic", () => {
   })
 
   it("rejects nonfinite numeric assignments before changing the current value", () => {
-    const element = statistic('<mui-statistic value="12"></mui-statistic>')
+    const element = statistic('<m-statistic value="12"></m-statistic>')
     for (const value of [NaN, Infinity, -Infinity]) {
       expect(() => { element.value = value }).toThrow(RangeError)
       expect(element.value).toBe("12")
@@ -139,9 +139,9 @@ describe("standalone Statistic", () => {
   })
 
   it("preserves authored headings/value nodes and listeners", () => {
-    const element = document.createElement("mui-statistic") as MuiStatistic
+    const element = document.createElement("m-statistic") as MStatistic
     const heading = document.createElement("h3")
-    heading.dataset.muiStatisticLabel = ""
+    heading.dataset.mStatisticLabel = ""
     heading.id = "heading"
     heading.textContent = "Users"
     const value = document.createElement("strong")
@@ -159,7 +159,7 @@ describe("standalone Statistic", () => {
   })
 
   it("gives nonempty label props precedence and restores authored label nodes on removal or empty label", () => {
-    const element = statistic('<mui-statistic label="Override"><h2 data-mui-statistic-label>Authored</h2></mui-statistic>')
+    const element = statistic('<m-statistic label="Override"><h2 data-m-statistic-label>Authored</h2></m-statistic>')
     const heading = element.querySelector("h2")!
     expect(slot(element, "label").hidden).toBe(true)
     expect(heading.hidden).toBe(false)
@@ -172,7 +172,7 @@ describe("standalone Statistic", () => {
   })
 
   it("treats an explicit empty value as an override while missing value restores the authored default", () => {
-    const element = statistic('<mui-statistic value=""><span data-mui-statistic-value>Authored</span></mui-statistic>')
+    const element = statistic('<m-statistic value=""><span data-m-statistic-value>Authored</span></m-statistic>')
     const authored = slot(element, "value").firstChild
     expect(slot(element, "value").hidden).toBe(true)
     expect(text(element, "value").textContent).toBe("")
@@ -183,7 +183,7 @@ describe("standalone Statistic", () => {
   })
 
   it("gives native prefix/suffix regions precedence over legacy text fallbacks", () => {
-    const element = statistic('<mui-statistic prefix="$" suffix="USD" value="12"><svg data-mui-statistic-prefix aria-hidden="true" viewBox="0 0 20 20"><circle r="8" cx="10" cy="10"></circle></svg><a data-mui-statistic-suffix href="#details">details</a></mui-statistic>')
+    const element = statistic('<m-statistic prefix="$" suffix="USD" value="12"><svg data-m-statistic-prefix aria-hidden="true" viewBox="0 0 20 20"><circle r="8" cx="10" cy="10"></circle></svg><a data-m-statistic-suffix href="#details">details</a></m-statistic>')
     const icon = element.querySelector("svg")!
     const link = element.querySelector("a")!
     element.valuePrefix = "Ignored"
@@ -197,7 +197,7 @@ describe("standalone Statistic", () => {
   })
 
   it("supports native actions and form types in authored regions without interception", () => {
-    const element = statistic('<form><mui-statistic value="12"><span data-mui-statistic-suffix><button type="submit">Submit</button><button type="button">Details</button></span></mui-statistic></form>')
+    const element = statistic('<form><m-statistic value="12"><span data-m-statistic-suffix><button type="submit">Submit</button><button type="button">Details</button></span></m-statistic></form>')
     const submit = vi.fn((event: Event) => event.preventDefault())
     document.querySelector("form")!.addEventListener("submit", submit)
     const normal = element.querySelector<HTMLButtonElement>('[type="button"]')!
@@ -211,7 +211,7 @@ describe("standalone Statistic", () => {
   })
 
   it("preserves author ARIA and native hidden state rather than inferring group or output semantics", () => {
-    const element = statistic('<mui-statistic role="group" aria-labelledby="metric-label" aria-live="off"><h3 data-mui-statistic-label id="metric-label">Users</h3><span data-mui-statistic-value hidden>Private display</span></mui-statistic>')
+    const element = statistic('<m-statistic role="group" aria-labelledby="metric-label" aria-live="off"><h3 data-m-statistic-label id="metric-label">Users</h3><span data-m-statistic-value hidden>Private display</span></m-statistic>')
     const hidden = slot(element, "value").firstElementChild!
     element.tabularNums = true
     element.value = 0
@@ -238,16 +238,16 @@ describe("standalone Statistic", () => {
     element.append(value)
     await Promise.resolve()
     expect(slot(element, "value").firstChild).toBe(value)
-    value.setAttribute("data-mui-statistic-prefix", "")
+    value.setAttribute("data-m-statistic-prefix", "")
     await Promise.resolve()
     expect(slot(element, "prefix").firstChild).toBe(value)
-    value.removeAttribute("data-mui-statistic-prefix")
+    value.removeAttribute("data-m-statistic-prefix")
     await Promise.resolve()
     expect(slot(element, "value").firstChild).toBe(value)
   })
 
   it("keeps original authored nodes through property overrides and reconnect", async () => {
-    const element = statistic('<mui-statistic value="Override"><strong>Authored</strong><span data-mui-statistic-suffix><button type="button">Details</button></span></mui-statistic>')
+    const element = statistic('<m-statistic value="Override"><strong>Authored</strong><span data-m-statistic-suffix><button type="button">Details</button></span></m-statistic>')
     const value = element.querySelector("strong")!
     const button = element.querySelector("button")!
     const click = vi.fn()
@@ -265,7 +265,7 @@ describe("standalone Statistic", () => {
   })
 
   it("does not rewrite unchanged visibility or ARIA during a value update", async () => {
-    const element = statistic('<mui-statistic role="status" label="Users" value="12" prefix="~"></mui-statistic>')
+    const element = statistic('<m-statistic role="status" label="Users" value="12" prefix="~"></m-statistic>')
     const records: MutationRecord[] = []
     const observer = new MutationObserver((items) => records.push(...items))
     observer.observe(element, { subtree: true, attributes: true, childList: true })
@@ -278,7 +278,7 @@ describe("standalone Statistic", () => {
   })
 
   it("keeps templates inert and never treats marked templates as actual regions", () => {
-    const element = statistic('<mui-statistic value="12"><template data-mui-statistic-label><h2>Inert</h2></template><template data-mui-statistic-value><button>Inert</button></template></mui-statistic>')
+    const element = statistic('<m-statistic value="12"><template data-m-statistic-label><h2>Inert</h2></template><template data-m-statistic-value><button>Inert</button></template></m-statistic>')
     expect(element.querySelectorAll(":scope > template")).toHaveLength(2)
     expect(element.querySelector("h2,button")).toBeNull()
     expect(text(element, "value").textContent).toBe("12")
@@ -286,17 +286,17 @@ describe("standalone Statistic", () => {
   })
 
   it("does not resurrect discarded author nodes on whole-subtree replacement", async () => {
-    const element = statistic("<mui-statistic><strong>Old</strong></mui-statistic>")
+    const element = statistic("<m-statistic><strong>Old</strong></m-statistic>")
     const old = element.querySelector("strong")!
     element.innerHTML = "<em>New</em>"
     await Promise.resolve()
     expect(element.contains(old)).toBe(false)
     expect(slot(element, "value").textContent).toBe("New")
-    expect(element.querySelectorAll(":scope > [data-mui-statistic-display]")).toHaveLength(1)
+    expect(element.querySelectorAll(":scope > [data-m-statistic-display]")).toHaveLength(1)
   })
 
   it("preserves surviving author content when a generated part needs rebuilding", async () => {
-    const element = statistic('<mui-statistic value="12"><a data-mui-statistic-prefix href="#currency">$</a></mui-statistic>')
+    const element = statistic('<m-statistic value="12"><a data-m-statistic-prefix href="#currency">$</a></m-statistic>')
     const prefix = element.querySelector("a")!
     region(element, "value").remove()
     await Promise.resolve()
@@ -306,12 +306,12 @@ describe("standalone Statistic", () => {
 
   it("upgrades pre-definition props silently and writes no inline styles", () => {
     document.body.innerHTML = "<test-late-statistic><strong>Fallback</strong></test-late-statistic>"
-    const element = document.querySelector("test-late-statistic") as MuiStatistic
+    const element = document.querySelector("test-late-statistic") as MStatistic
     const fallback = element.querySelector("strong")
     const event = vi.fn()
-    for (const name of ["change", "input", "mui:change"]) element.addEventListener(name, event)
+    for (const name of ["change", "input", "m:change"]) element.addEventListener(name, event)
     Object.assign(element, { label: "Users", value: 0, valuePrefix: "~", valueSuffix: "people", tabularNums: true })
-    customElements.define("test-late-statistic", class extends MuiStatistic {})
+    customElements.define("test-late-statistic", class extends MStatistic {})
     expect(text(element, "value").textContent).toBe("0")
     expect(element.tabularNums).toBe(true)
     expect(element.contains(fallback)).toBe(true)
@@ -327,7 +327,7 @@ describe("standalone Statistic", () => {
     expect(() => registerStatistic({ get: () => class extends HTMLElement {}, define })).toThrow("before the legacy MarkupUI bundle")
     expect(define).not.toHaveBeenCalled()
     registerElements(customElements)
-    expect(customElements.get("mui-statistic")).toBe(MuiStatistic)
-    expect(text(statistic('<mui-statistic value="0"></mui-statistic>'), "value").textContent).toBe("0")
+    expect(customElements.get("m-statistic")).toBe(MStatistic)
+    expect(text(statistic('<m-statistic value="0"></m-statistic>'), "value").textContent).toBe("0")
   })
 })

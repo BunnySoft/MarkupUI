@@ -1,7 +1,7 @@
-import { MuiElement } from "../core/element.js"
+import { MElement } from "../core/element.js"
 import { positionFloating, type FloatingPlacement } from "../core/position.js"
 
-export abstract class MuiModal extends MuiElement {
+export abstract class MModal extends MElement {
   protected dialog?: HTMLDialogElement
   private readonly onNativeClose = (): void => this.emit("close")
   public connectedCallback(): void {
@@ -29,7 +29,7 @@ export abstract class MuiModal extends MuiElement {
   }
 }
 
-export class MuiTooltip extends MuiElement {
+export class MTooltip extends MElement {
   private trigger: Element | undefined
   private tooltip: HTMLElement | undefined
   private readonly show = (): void => {
@@ -50,8 +50,8 @@ export class MuiTooltip extends MuiElement {
     const text = this.getAttribute("text")
     if (this.trigger === undefined || !text) return
     this.tooltip = this.ownerDocument.createElement("span")
-    this.tooltip.dataset.muiTooltip = ""
-    this.tooltip.id = `mui-tooltip-${Math.random().toString(36).slice(2)}`
+    this.tooltip.dataset.mTooltip = ""
+    this.tooltip.id = `m-tooltip-${Math.random().toString(36).slice(2)}`
     this.tooltip.setAttribute("role", "tooltip")
     this.tooltip.textContent = text
     this.tooltip.hidden = true
@@ -70,7 +70,7 @@ export class MuiTooltip extends MuiElement {
   }
 }
 
-export class MuiPopover extends MuiElement {
+export class MPopover extends MElement {
   private trigger: HTMLElement | undefined
   private content: HTMLElement | undefined
   private readonly onClick = (): void => {
@@ -84,8 +84,8 @@ export class MuiPopover extends MuiElement {
     if (event.key === "Escape") this.close()
   }
   public connectedCallback(): void {
-    this.trigger = this.querySelector<HTMLElement>(":scope > mui-popover-trigger") ?? undefined
-    this.content = this.querySelector<HTMLElement>(":scope > mui-popover-content") ?? undefined
+    this.trigger = this.querySelector<HTMLElement>(":scope > m-popover-trigger") ?? undefined
+    this.content = this.querySelector<HTMLElement>(":scope > m-popover-content") ?? undefined
     if (this.trigger === undefined || this.content === undefined) return
     this.content.hidden = true
     this.trigger.setAttribute("aria-expanded", "false")
@@ -117,5 +117,5 @@ export class MuiPopover extends MuiElement {
   }
 }
 
-export class MuiDialog extends MuiModal {}
-export class MuiDrawer extends MuiModal {}
+export class MDialog extends MModal {}
+export class MDrawer extends MModal {}

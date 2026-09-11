@@ -41,8 +41,8 @@ export function themeModule(themes) {
 export function themeStylesheet(themes) {
   validateThemes(themes)
   return ["light", "dark"].map(name => {
-    const tokens = Object.entries(themes[name]).map(([key, value]) => `  --mui-${key}: ${value};`)
-    return `[data-mui-theme="${name}"],\n:root[data-mui-theme="${name}"] {\n  color-scheme: ${name};\n${tokens.join("\n")}\n}\n`
+    const tokens = Object.entries(themes[name]).map(([key, value]) => `  --m-${key}: ${value};`)
+    return `[data-m-theme="${name}"],\n:root[data-m-theme="${name}"] {\n  color-scheme: ${name};\n${tokens.join("\n")}\n}\n`
   }).join("\n")
 }
 

@@ -57,15 +57,15 @@ or script is needed to consume it.
 
 The stylesheet can load before or after the legacy aggregate. No registration collision or
 enhanced-before-legacy rule applies because it defines no custom elements. Existing
-`mui-heading`, `mui-text`, `mui-strong`, `mui-code`, `mui-link` and other legacy aliases
+`m-heading`, `m-text`, `m-strong`, `m-code`, `m-link` and other legacy aliases
 retain their original registration/controller/style behavior and unchanged core output.
 
 ## Native scope and opt-in classes
 
-Apply `.mui-typography` to a prose container:
+Apply `.m-typography` to a prose container:
 
 ```html
-<article class="mui-typography" lang="en">
+<article class="m-typography" lang="en">
   <h1>Document title</h1>
   <p>Native text with <strong>importance</strong>, <em>emphasis</em>,
     <code>inlineCode()</code> and an <a href="./guide.html">ordinary link</a>.</p>
@@ -78,13 +78,13 @@ For individual elements outside a prose container, opt in with appropriate class
 
 | Source/native owner | Individual native class |
 | --- | --- |
-| Text / span, strong, em, u, del, code | `.mui-text` on the chosen real element |
-| P / paragraph | `p.mui-p` |
-| H1–H6 / matching native heading | `h1.mui-h` through `h6.mui-h` |
-| A / anchor | `a.mui-a` |
-| Ul / Ol / Li | `ul.mui-ul`, `ol.mui-ol`, `li.mui-li` |
-| Blockquote | `blockquote.mui-blockquote` |
-| Hr | `hr.mui-hr` |
+| Text / span, strong, em, u, del, code | `.m-text` on the chosen real element |
+| P / paragraph | `p.m-p` |
+| H1–H6 / matching native heading | `h1.m-h` through `h6.m-h` |
+| A / anchor | `a.m-a` |
+| Ul / Ol / Li | `ul.m-ul`, `ol.m-ol`, `li.m-li` |
+| Blockquote | `blockquote.m-blockquote` |
+| Hr | `hr.m-hr` |
 
 Rules are scoped to these opt-ins, use low-specificity selectors and do not globally restyle
 unrelated text. A prose container intentionally supplies inherited typography to its content;
@@ -112,7 +112,7 @@ normal cascade; there are no “upgrade”, reconnect or synchronization APIs to
   warning|error"` takes precedence over depth; default leaves the normal color. Inline
   code uses its code-color token rather than semantic/depth color, matching the reference.
 - Heading `data-type` colors its decorative bar, **not its heading text**, matching the
-  pinned source. Use `--mui-typography-heading-color` to recolor the text. This corrects
+  pinned source. Use `--m-typography-heading-color` to recolor the text. This corrects
   the earlier local adaptation that colored both.
 
 Data attributes are presentation choices, not JS component properties. Unsupported values
@@ -159,53 +159,53 @@ No animations/transitions are supplied, so no reduced-motion runtime or timer is
 ## Explicit light/dark themes and shared-token ownership
 
 ```html
-<article class="mui-typography" data-mui-theme="dark">
+<article class="m-typography" data-m-theme="dark">
   <h2>Dark heading</h2>
   <p>Dark prose on an application-owned dark background.</p>
-  <section class="mui-typography" data-mui-theme="light">
+  <section class="m-typography" data-m-theme="light">
     <p>Light prose on an application-owned light background.</p>
   </section>
 </article>
 ```
 
-The nearest `data-mui-theme="light|dark"` boundary supplies **private Typography
+The nearest `data-m-theme="light|dark"` boundary supplies **private Typography
 fallbacks only**. No boundary means light, as in Naive without a dark provider.
 There is no OS watcher, body/background styling, `color-scheme` override or theme
 runtime. Authors must supply matching backgrounds. Theme attributes alone do not
 paint the sections in the example.
 
-Existing public `--mui-typography-*` tokens remain the first override. Semantic
-colors then consume shared **normal** `--mui-color-info/success/warning/error`
-tokens; links and untyped bars use `--mui-color-primary`. These are not the
+Existing public `--m-typography-*` tokens remain the first override. Semantic
+colors then consume shared **normal** `--m-color-info/success/warning/error`
+tokens; links and untyped bars use `--m-color-primary`. These are not the
 supplementary colors used by some other components. Private fallback colors follow
 when no shared token is present. A nested theme does not erase inherited public
 author/shared overrides; scope those explicitly when different values are intended.
 
-Prose typography consumes shared `--mui-font-family`, `--mui-font-size` and
-`--mui-line-height` after its local tokens. Family otherwise inherits the application;
+Prose typography consumes shared `--m-font-family`, `--m-font-size` and
+`--m-line-height` after its local tokens. Family otherwise inherits the application;
 no font is loaded. Individual text/anchor elements retain ambient font sizing, while
 paragraphs, lists and quotes supply the reference 14px size. Shared legacy
-`--mui-text-primary`, `--mui-border` and surface colors are deliberately not substituted
+`--m-text-primary`, `--m-border` and surface colors are deliberately not substituted
 for Naive's distinct text-depth, quote-border, code and rule roles.
 
 ## CSS tokens and defaults
 
-`--mui-typography-font-family`, `--mui-typography-font-size`, `--mui-typography-line-height`,
-`--mui-typography-color`, `--mui-typography-paragraph-margin`,
-`--mui-typography-heading-margin`, `--mui-typography-heading-weight`,
-`--mui-typography-heading-line-height`, `--mui-typography-heading-color`,
-`--mui-typography-h1-size` through `--mui-typography-h6-size`,
-`--mui-typography-depth-1` through `--mui-typography-depth-3`,
-`--mui-typography-success`, `--mui-typography-info`, `--mui-typography-warning`,
-`--mui-typography-error`, `--mui-typography-strong-weight`,
-`--mui-typography-mono-font`, `--mui-typography-code-border`,
-`--mui-typography-code-radius`, `--mui-typography-code-background`,
-`--mui-typography-code-color`, `--mui-typography-prefix-space`,
-`--mui-typography-bar-width`, `--mui-typography-bar-color`,
-`--mui-typography-list-indent`, `--mui-typography-quote-padding`,
-`--mui-typography-quote-border-width`, `--mui-typography-quote-border-color`,
-`--mui-typography-link-color`, `--mui-typography-link-hover-color`,
-`--mui-typography-focus-color` and `--mui-typography-rule-color` provide external customization.
+`--m-typography-font-family`, `--m-typography-font-size`, `--m-typography-line-height`,
+`--m-typography-color`, `--m-typography-paragraph-margin`,
+`--m-typography-heading-margin`, `--m-typography-heading-weight`,
+`--m-typography-heading-line-height`, `--m-typography-heading-color`,
+`--m-typography-h1-size` through `--m-typography-h6-size`,
+`--m-typography-depth-1` through `--m-typography-depth-3`,
+`--m-typography-success`, `--m-typography-info`, `--m-typography-warning`,
+`--m-typography-error`, `--m-typography-strong-weight`,
+`--m-typography-mono-font`, `--m-typography-code-border`,
+`--m-typography-code-radius`, `--m-typography-code-background`,
+`--m-typography-code-color`, `--m-typography-prefix-space`,
+`--m-typography-bar-width`, `--m-typography-bar-color`,
+`--m-typography-list-indent`, `--m-typography-quote-padding`,
+`--m-typography-quote-border-width`, `--m-typography-quote-border-color`,
+`--m-typography-link-color`, `--m-typography-link-hover-color`,
+`--m-typography-focus-color` and `--m-typography-rule-color` provide external customization.
 
 Defaults use the measured reference values, not a runtime theme object:
 
@@ -235,7 +235,7 @@ preformatted; provide an appropriate overflow container for long block code.
 
 | Documented owner/item | Native equivalent | Status / scope |
 | --- | --- | --- |
-| Text `type` | `data-type` on scoped text or `.mui-text`. | 🟢 Semantic CSS colors, no status inference. |
+| Text `type` | `data-type` on scoped text or `.m-text`. | 🟢 Semantic CSS colors, no status inference. |
 | Text `strong` | Native strong or presentation-only `data-strong`. | 🟢 No semantic tag rewriting. |
 | Text `italic` | Native em/i or presentation-only `data-italic`. | 🟢 Native text retained. |
 | Text `underline` | Native u / `data-underline`. | 🟢 Native decoration, including combined del/underline. |
@@ -294,8 +294,8 @@ claim of complete API or pixel parity even where the measured defaults now match
 - Logical heading/list/blockquote alignment, RTL start-edge bars/borders and unbroken-link
   wrapping passed. At 200% CSS zoom, paragraph geometry scaled and wrapping remained usable.
 - After awaiting stylesheet load, CSS-before/after-legacy checks preserved original native
-  node/attribute identity, outside styles, late native styling and existing mui-heading roles.
-  No `mui-typography` registration or runtime global appeared. Unrelated browser tabs were untouched.
+  node/attribute identity, outside styles, late native styling and existing m-heading roles.
+  No `m-typography` registration or runtime global appeared. Unrelated browser tabs were untouched.
 - Reference validation preserved all 15 grouped public rows plus 25 explicit source
   supplements: **96 pages, 3,097 rows, 384 tasks (48 accepted), 701 valid relative file links**.
   Package/dist checks confirmed no Typography JS export or ESM/classic JS files.

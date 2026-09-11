@@ -1,6 +1,6 @@
 const closableCard = document.getElementById("closable-card")
 const closeMessage = document.getElementById("close-message")
-closableCard.addEventListener("mui:close", event => {
+closableCard.addEventListener("m:close", event => {
   if (event.target !== closableCard) return
   closeMessage.textContent = "Card Close"
 })

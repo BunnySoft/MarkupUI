@@ -3,7 +3,7 @@
 **🟢 Verified for the retained native Input/textarea/InputGroup/InputGroupLabel scope.**
 This is the first P4 control contract, not Form validation or Vue API parity.
 The optional helper never creates, replaces, proxies or registers a control.
-Legacy `MuiInput`/`MuiTextarea` in `src/components/forms.ts` are unchanged.
+Legacy `MInput`/`MTextarea` in `src/components/forms.ts` are unchanged.
 
 ## Loading and anatomy
 
@@ -20,8 +20,8 @@ Load **one helper format**, its external stylesheet, then an external setup scri
 
 ```html
 <label for="subject">Subject</label>
-<div class="mui-input" data-input id="subject-field">
-  <span class="mui-input__affix" aria-hidden="true">✎</span>
+<div class="m-input" data-input id="subject-field">
+  <span class="m-input__affix" aria-hidden="true">✎</span>
   <input data-input-control id="subject" name="subject" value="Draft"
     required maxlength="80" aria-describedby="subject-count">
   <button type="button" data-input-clear hidden>Clear subject</button>
@@ -41,11 +41,11 @@ field.control.defaultValue = "Next reset"
 ```
 
 ESM consumers import `createInput` from the optional export instead. There is **no**
-`mui-*` registration-order requirement: native helpers coexist with either legacy loading
+`m-*` registration-order requirement: native helpers coexist with either legacy loading
 order. A root/control ownership symbol rejects duplicate owners, including ESM/classic
 copies; it is not a global form registry. No mandatory bootstrap or automatic scanning.
 
-`createInput` requires one connected light-DOM `.mui-input[data-input]` without a role or
+`createInput` requires one connected light-DOM `.m-input[data-input]` without a role or
 tabindex, containing exactly one authored `[data-input-control]`. The native field needs a
 real label or a nonempty `aria-label`/resolved `aria-labelledby`; labels should remain
 visible where practical. The helper accepts **textarea or input text/password/search/email/
@@ -89,11 +89,11 @@ autofill behavior is not certified. Programmatic writes remain allowed for disab
 readonly native fields. `setValue` throws during tracked composition rather than clobbering
 an IME draft. User clear/reveal is disabled during composition.
 
-Native user input/change/focus/blur are left alone: there is no duplicate `mui:input`,
-`mui:change`, form model or synthetic event on every keystroke.
+Native user input/change/focus/blur are left alone: there is no duplicate `m:input`,
+`m:change`, form model or synthetic event on every keystroke.
 
 - A successful **clear** sends one synthetic bubbling/composed native `input`, then one
-  bubbling native `change`, then bubbling `mui:input-clear` on the control with
+  bubbling native `change`, then bubbling `m:input-clear` on the control with
   `{ previous: string }`. These notifications are not trusted/cancelable browser editing.
   The default reset value stays unchanged. A no-op sends nothing.
 - `setValue(value, { emit: true })` sends `input` then `change` only if the native resulting
@@ -126,8 +126,8 @@ Escape, pointer cancellation, readonly/disabled/hidden/inert state, reset, remov
 disconnect masks a helper-exposed value. Queued stale reveal clicks cannot re-expose it
 after blur/disposal. A newer explicit author `type` write is not reversed.
 
-Authored decorative children may use `.mui-input__password-invisible` and
-`.mui-input__password-visible`; CSS switches them using pressed state. Decorative icons
+Authored decorative children may use `.m-input__password-invisible` and
+`.m-input__password-visible`; CSS switches them using pressed state. Decorative icons
 should be `aria-hidden`, with a separate stable accessible button name. Clear icon
 children and all affixes are author-owned, never arbitrary HTML returned by a callback.
 
@@ -141,7 +141,7 @@ count in an automatic live region; `aria-describedby` is optional author semanti
 
 ## CSS, textarea, groups and pair fields
 
-`.mui-input` supplies border, padding, focus, wrapped affixes/actions and native
+`.m-input` supplies border, padding, focus, wrapped affixes/actions and native
 control sizing. Only descendants marked `data-input-control` are styled. No global input
 reset, inline styles, animation, theme provider or CSS-in-JS. Native `:disabled` drives
 disabled color and helper availability, including fieldset inheritance.
@@ -152,14 +152,14 @@ disabled color and helper availability, including fieldset inheritance.
 | `data-round` | Optional round shape, intended for single-line fields |
 | `data-borderless` | Transparent resting border; visible focus boundary remains |
 | `data-status="success|warning|error"` | Border presentation only, never automatic validity/ARIA/live announcements |
-| `.mui-input__affix` | Authored prefix/suffix; meaningful text should be associated appropriately |
-| `.mui-input-group` | Wrapping flex composition, no invented group role or tuple renderer |
-| `.mui-input-group-label` | Authored addon/label styling; explicit size/borderless also supported |
-| CSS tokens | `--mui-input-color`, `-background`, `-border`, `-focus`, `-placeholder`, `-disabled`, `-disabled-background`, `-active`, `-addon-background`, `-pad`, `-font`, `-radius`, `-height` (all share `--mui-input` prefix) |
+| `.m-input__affix` | Authored prefix/suffix; meaningful text should be associated appropriately |
+| `.m-input-group` | Wrapping flex composition, no invented group role or tuple renderer |
+| `.m-input-group-label` | Authored addon/label styling; explicit size/borderless also supported |
+| CSS tokens | `--m-input-color`, `-background`, `-border`, `-focus`, `-placeholder`, `-disabled`, `-disabled-background`, `-active`, `-addon-background`, `-pad`, `-font`, `-radius`, `-height` (all share `--m-input` prefix) |
 
 The [default-style audit](../style-audit/components/input.md) aligns the retained
 field geometry and light/dark paint with the pinned Naive reference. An ancestor
-`data-mui-theme="light|dark"` selects the scheme; standalone fields default to light.
+`data-m-theme="light|dark"` selects the scheme; standalone fields default to light.
 Defaults use private variables: inherited public tokens still win over size, status
 and theme defaults. `-pad` now controls horizontal padding, while `-height` and
 `-font` determine vertical alignment. Use explicit lengths for these sizing tokens.
@@ -180,9 +180,9 @@ native label, or an intentional description association. Do not nest the action 
 inside that label. Group companions add no JS API, array value or submit semantics.
 
 Textareas use `rows` (native default if absent), manual vertical resizing and scrollbars.
-`.mui-input__fixed` disables manual resizing. `.mui-input__autosize` opts into
-`@supports (field-sizing: content)` with line-height bounds: `--mui-input-min-rows: 2`
-and `--mui-input-max-rows: 8` by default. Set sensible positive bounds with max ≥ min in
+`.m-input__fixed` disables manual resizing. `.m-input__autosize` opts into
+`@supports (field-sizing: content)` with line-height bounds: `--m-input-min-rows: 2`
+and `--m-input-max-rows: 8` by default. Set sensible positive bounds with max ≥ min in
 external CSS; they are not JS-parsed upstream row props. The demo uses 2–6 lines. With
 field-sizing support, content and CSS bounds determine height, **not `rows`**. Without
 support, rows/manual resize remain usable; there is no JS fallback, hidden measuring

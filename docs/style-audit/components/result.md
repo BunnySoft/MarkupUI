@@ -95,12 +95,12 @@ the independently authored semantic SVGs and text-code alternatives to HTTP artw
 This demonstrates corrected surrounding layout/text/palette, **not default-icon or
 full screenshot identity**.
 
-Native Result remains passive CSS: a bare `.mui-result` does not generate the default
+Native Result remains passive CSS: a bare `.m-result` does not generate the default
 upstream info icon, title, description or actions. Artwork must be authored. Native
 icon regions also retain their tint for custom `currentColor` graphics, whereas upstream
 custom icon slots do not automatically acquire the built-in icon tint. The fixed-fill
 custom SVG remained visually unchanged; its unused computed `color` can differ.
-Explicit artwork colors or `--mui-result-icon-color` control that distinction.
+Explicit artwork colors or `--m-result-icon-color` control that distinction.
 
 ## Author and native-behavior checks
 
@@ -121,9 +121,9 @@ Explicit artwork colors or `--mui-result-icon-color` control that distinction.
 - Existing print, forced-color, hidden/inert-template and wrapping protections remain.
   Application form validity, routes/retries and announcement policy are not replaced.
 
-`--mui-result-gap` now overrides title/content/footer margins together; default fallbacks
+`--m-result-gap` now overrides title/content/footer margins together; default fallbacks
 are intentionally 16px/24px. Description margin remains 4px and can be authored through
-ordinary CSS. `--mui-result-line-height` is newly documented. See
+ordinary CSS. `--m-result-line-height` is newly documented. See
 [Result](../../components/result.md) for the full native author contract.
 
 ## Validation, budget and limits

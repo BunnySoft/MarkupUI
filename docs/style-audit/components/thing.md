@@ -80,13 +80,13 @@ compensation is clamped so a row gap below the header gap cannot become negative
 Root/title now have matching **0.3s cubic-bezier(.4,0,.2,1)** color transitions;
 reduced motion disables them. The description's optional local color token remains.
 
-Body and title are independent roles. `--mui-thing-color` does not implicitly recolor
+Body and title are independent roles. `--m-thing-color` does not implicitly recolor
 the title; its own token remains authoritative. Explicit nested light resets the
 dark fallback roles without installing a runtime provider.
 
 **Shared sources were not changed.** Shared font-size/family/line-height and optional
 font-weight-strong overrides are reused where their meanings match. The legacy
-`--mui-text-primary` palette is not Naive textColor2/textColor1 and is no longer
+`--m-text-primary` palette is not Naive textColor2/textColor1 and is no longer
 silently used for both roles. Future shared-palette consolidation would need those
 accurate body/title roles; it is not required for the local correction.
 
@@ -128,7 +128,7 @@ This is a bounded fixture/browser/font result, not unrestricted Vue or pixel par
   Tests intentionally reflect inherited-author-token precedence rather than the removed
   public-token reset behavior.
 - **JavaScript-disabled Chromium:** authored page script did not execute, no
-  `mui-thing` constructor existed, and the Thing still rendered as a grid. Hiding the
+  `m-thing` constructor existed, and the Thing still rendered as a grid. Hiding the
   real avatar moved indented content x=46→0 despite an inert avatar-class template.
   Restoring it retained every original node and focused Save button.
 - Native required validation blocked the empty submission. An external form-associated

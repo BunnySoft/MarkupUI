@@ -13,8 +13,8 @@ button, input, fieldset { box-sizing: border-box; min-inline-size: 0; max-inline
 button { white-space: normal; overflow-wrap: anywhere; }
 fieldset { margin: .5rem 0 0; }
 .demo-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-block-start: .5rem; }
-.custom-event-color { --mui-timeline-item-color: #7c3aed; }
-.custom-icon-size { --mui-timeline-icon-size: 1.5rem; }
+.custom-event-color { --m-timeline-item-color: #7c3aed; }
+.custom-icon-size { --m-timeline-icon-size: 1.5rem; }
 .nested-timeline { margin-block: 1rem; }
 #milestone-scroll { max-inline-size: 34rem; border: 1px solid #a1a1aa; }
 #action-status, #form-status { min-block-size: 1.5em; margin-block-start: .5rem; }

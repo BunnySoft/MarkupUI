@@ -43,7 +43,7 @@ parent-owned and are neither changed nor completed here.
 
 ### Native primitives and fallback
 
-Semantic authored containers and children use .mui-grid/.mui-flex/.mui-space CSS.
+Semantic authored containers and children use .m-grid/.m-flex/.m-space CSS.
 No extra wrapper is generated; no grid role or keyboard model is implied by visual
 layout. Compact defaults are valid without query support. Media/container rules are
 application CSS, with an actual separate query ancestor. Original forms/labels/order
@@ -76,7 +76,7 @@ Verified means the documented target capability, not unchanged legacy API syntax
 
 | Upstream item · source | Kind | Explicit native replacement / omission | Status |
 | --- | --- | --- | --- |
-| [`span`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-grid/demos/enUS/index.demo-entry.md#L32) | Prop | --mui-grid-span on the real direct item, valid for the authored track count. Measured 8/16-of-24 and compact one-span layouts; no span prop/attribute facade. | 🟢 Verified |
+| [`span`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-grid/demos/enUS/index.demo-entry.md#L32) | Prop | --m-grid-span on the real direct item, valid for the authored track count. Measured 8/16-of-24 and compact one-span layouts; no span prop/attribute facade. | 🟢 Verified |
 | [`offset`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-grid/demos/enUS/index.demo-entry.md#L33) | Prop | Relative margin/wrapping contract omitted. Known empty spacers or explicit placement are bounded compositions; grid-column-start is absolute, not offset. | ⏭️ Intentionally omitted |
 | [`push`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-grid/demos/enUS/index.demo-entry.md#L34) | Prop | No physical relative shift or visual reorder over unchanged reading/tab order. Author meaningful DOM order. | ⏭️ Intentionally omitted |
 | [`pull`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-grid/demos/enUS/index.demo-entry.md#L35) | Prop | No inverse shift/overlap engine; native inline direction does not implement push/pull. | ⏭️ Intentionally omitted |
@@ -95,8 +95,8 @@ These seven identities were absent from the original table inventory.
 
 | Upstream item · source | Kind | Explicit native replacement / omission | Status |
 | --- | --- | --- | --- |
-| [`Row.alignItems`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-grid/src/Row.tsx#L25) | Source prop | --mui-flex-align on the actual flex container; no runtime prop forwarding. | 🟢 Verified |
-| [`Row.justifyContent`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-grid/src/Row.tsx#L26) | Source prop | --mui-flex-justify for main-axis distribution, not Grid justify-items. | 🟢 Verified |
+| [`Row.alignItems`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-grid/src/Row.tsx#L25) | Source prop | --m-flex-align on the actual flex container; no runtime prop forwarding. | 🟢 Verified |
+| [`Row.justifyContent`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-grid/src/Row.tsx#L26) | Source prop | --m-flex-justify for main-axis distribution, not Grid justify-items. | 🟢 Verified |
 | [`Row.default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-grid/src/Row.tsx#L88) | Source slot | Original semantic native child nodes, form/label/order/identity retained; no slot callback. | 🟢 Verified |
 | [`Col.default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-grid/src/Col.tsx#L75) | Source slot | Original native content; author needed grouping explicitly instead of source's gutter-dependent inner div. | 🟢 Verified |
 | [`half-gutter margins / expanded width / item padding`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-grid/src/Row.tsx#L40-L71) | Source behavior | No compensation/coercion algorithm. Native gaps have their own box geometry, measured and documented. | ⏭️ Intentionally omitted |

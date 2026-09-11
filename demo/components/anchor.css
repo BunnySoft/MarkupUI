@@ -1,4 +1,4 @@
-html { --mui-anchor-offset: 16px; }
+html { --m-anchor-offset: 16px; }
 body { margin: 2rem; color: #18202c; background: #f6f8fc; font: 1rem/1.5 system-ui, sans-serif; }
 header { margin-block-end: 2rem; }
 .page-layout { display: grid; grid-template-columns: 14rem minmax(0, 1fr); gap: 2rem; }
@@ -6,7 +6,7 @@ header { margin-block-end: 2rem; }
 .page-last { padding: 1rem; border: 1px solid #aab4c2; background: #fff; }
 .page-long { min-block-size: 50rem; }
 .reader-layout { display: grid; grid-template-columns: 10rem minmax(0, 1fr); gap: 1rem; }
-.reader { overflow: auto; block-size: 20rem; border: 3px solid #7d8da3; --mui-anchor-offset: 8px; }
+.reader { overflow: auto; block-size: 20rem; border: 3px solid #7d8da3; --m-anchor-offset: 8px; }
 .reader-section { min-block-size: 14rem; padding: 1rem; background: #edf2f9; }
 .reader-section h3 { margin-block-start: 0; }
 .reader-gap { block-size: 8rem; }

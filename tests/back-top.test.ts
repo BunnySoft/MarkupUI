@@ -20,7 +20,7 @@ function nodes(link = false) {
     root.dispatchEvent(new Event("scroll"))
   })
   const action = document.createElement(link ? "a" : "button")
-  action.className = "mui-back-top"
+  action.className = "m-back-top"
   action.textContent = "Return to top"
   if (action instanceof HTMLButtonElement) action.type = "button"
   else {
@@ -51,7 +51,7 @@ describe("Back Top visibility and native focus", () => {
   it("uses inclusive 180px default threshold and no initial callback", () => {
     const { action, root } = nodes()
     const change = vi.fn()
-    action.addEventListener("mui:back-top-update-show", change)
+    action.addEventListener("m:back-top-update-show", change)
     const controller = createBackTop(action, { root })
     controllers.push(controller)
     expect(change).not.toHaveBeenCalled()
@@ -77,7 +77,7 @@ describe("Back Top visibility and native focus", () => {
   it("keeps forced visibility separate from threshold notifications and silent assignments", () => {
     const { action, controller, root } = bind({ show: true })
     const change = vi.fn()
-    action.addEventListener("mui:back-top-update-show", change)
+    action.addEventListener("m:back-top-update-show", change)
     controller.show = false
     expect(controller.visible).toBe(false)
     expect(change).not.toHaveBeenCalled()
@@ -321,7 +321,7 @@ describe("validation, ownership and cleanup", () => {
   it("surfaces automatic invalid-root errors and throws explicit invalid requests", async () => {
     const { action, root, controller } = bind()
     const error = vi.fn()
-    action.addEventListener("mui:back-top-error", error)
+    action.addEventListener("m:back-top-error", error)
     root.style.overflow = "clip"
     root.dispatchEvent(new Event("scroll"))
     await flush()
@@ -333,7 +333,7 @@ describe("validation, ownership and cleanup", () => {
   it("invalidates delayed clicks if authored button type becomes unsafe", async () => {
     const { action, root, controller } = bind({ visibilityHeight: 0 })
     const error = vi.fn()
-    action.addEventListener("mui:back-top-error", error)
+    action.addEventListener("m:back-top-error", error)
     action.click()
     action.setAttribute("type", "submit")
     await flush()
@@ -343,7 +343,7 @@ describe("validation, ownership and cleanup", () => {
   })
   it("allows reentrant threshold listeners to dispose without later writes", () => {
     const { action, root, controller } = bind()
-    action.addEventListener("mui:back-top-update-show", () => controller.disconnect())
+    action.addEventListener("m:back-top-update-show", () => controller.disconnect())
     root.scrollTop = 300
     controller.update()
     expect(controller.connected).toBe(false)
@@ -367,12 +367,12 @@ describe("validation, ownership and cleanup", () => {
   })
   it("keeps audited geometry, author-owned SVG styling and motion inside the CSS ceiling", () => {
     const css = readFileSync(join("src", "components", "back-top", "back-top.css"), "utf8")
-    expect(css).toContain("--_mui-back-top-size:44px")
-    expect(css).toContain("font-size:var(--mui-back-top-icon-size,26px)")
-    expect(css).toContain(".mui-back-top-icon>svg{")
-    expect(css).not.toContain(".mui-back-top-icon svg{")
-    expect(css).toContain("var(--mui-back-top-inline-end,40px)")
-    expect(css).toContain("var(--mui-back-top-block-end,40px)")
+    expect(css).toContain("--_m-back-top-size:44px")
+    expect(css).toContain("font-size:var(--m-back-top-icon-size,26px)")
+    expect(css).toContain(".m-back-top-icon>svg{")
+    expect(css).not.toContain(".m-back-top-icon svg{")
+    expect(css).toContain("var(--m-back-top-inline-end,40px)")
+    expect(css).toContain("var(--m-back-top-block-end,40px)")
     expect(css).toContain("padding:0")
     expect(css).toContain("border:0 solid")
     expect(css).toContain("#333639")
@@ -380,11 +380,11 @@ describe("validation, ownership and cleanup", () => {
     expect(css).toContain("rgba(255,255,255,.82)")
     expect(css).toContain("0 2px 8px rgba(0,0,0,.12)")
     expect(css).toContain("0 2px 12px rgba(0,0,0,.18)")
-    expect(css).toContain("var(--mui-color-primary-hover")
-    expect(css).toContain("var(--mui-color-primary-pressed")
+    expect(css).toContain("var(--m-color-primary-hover")
+    expect(css).toContain("var(--m-color-primary-pressed")
     expect(css).toContain(":not(:disabled,[aria-disabled=true])")
-    expect(css).not.toContain("--mui-back-top-size:")
-    expect(css).not.toContain("--mui-back-top-radius:")
+    expect(css).not.toContain("--m-back-top-size:")
+    expect(css).not.toContain("--m-back-top-radius:")
     expect(css).not.toMatch(/url\(|(?:^|[;{])\s*content\s*:/m)
     const style = document.createElement("style")
     style.textContent = css
@@ -400,8 +400,8 @@ describe("validation, ownership and cleanup", () => {
   it("preserves authored icon nodes and local style tokens through visibility and focus changes", () => {
     const { action, root } = nodes()
     action.setAttribute("aria-label", "Back to top")
-    action.style.cssText = "--mui-back-top-size:60px;--mui-back-top-radius:8px;--mui-back-top-icon-size:30px;--mui-back-top-icon-color:rgb(1,2,3)"
-    action.innerHTML = '<span class="mui-back-top-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v16"/></svg></span>'
+    action.style.cssText = "--m-back-top-size:60px;--m-back-top-radius:8px;--m-back-top-icon-size:30px;--m-back-top-icon-color:rgb(1,2,3)"
+    action.innerHTML = '<span class="m-back-top-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v16"/></svg></span>'
     const icon = action.querySelector("svg")
     const markup = action.innerHTML, style = action.getAttribute("style")
     const controller = createBackTop(action, { root })

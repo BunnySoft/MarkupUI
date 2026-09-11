@@ -10,7 +10,7 @@ const data = [{ date: "2024-02-01", value: -5 }, { date: "2024-02-10", value: 0 
 function fixture(options: HeatmapOptions = {}, bind = true) {
   const form = document.createElement("form")
   form.innerHTML = `<h2 id="heatmap-title">Original <em>activity</em> heading</h2>
-    <section class="mui-heatmap" data-heatmap tabindex="-1" aria-labelledby="heatmap-title">
+    <section class="m-heatmap" data-heatmap tabindex="-1" aria-labelledby="heatmap-title">
       <div data-heatmap-scroll><table data-heatmap-table><caption>Daily data: <span data-heatmap-caption>Authored February</span></caption>
       <thead data-heatmap-head><tr><th scope="col">Date</th><th scope="col">Value</th></tr></thead>
       <tbody data-heatmap-body><tr><td>2024-02-01</td><td>-5</td></tr><tr><td>2024-02-10</td><td>0</td></tr></tbody></table></div>
@@ -140,8 +140,8 @@ describe("Heatmap native table, legend, exploration and identity", () => {
     const { helper, root } = fixture()
     helper.set({ showWeekLabels: false, showMonthLabels: false, showColorIndicator: false })
     const th = root.querySelector('th[scope="row"]')!
-    expect(th.classList.contains("mui-heatmap-visually-hidden")).toBe(false)
-    expect(th.firstElementChild!.classList.contains("mui-heatmap-visually-hidden")).toBe(true)
+    expect(th.classList.contains("m-heatmap-visually-hidden")).toBe(false)
+    expect(th.firstElementChild!.classList.contains("m-heatmap-visually-hidden")).toBe(true)
     expect(root.querySelector("[data-heatmap-bands]")!.hasAttribute("hidden")).toBe(true)
     expect(root.querySelector("[data-heatmap-legend]")!.hasAttribute("hidden")).toBe(false)
     expect(root.querySelectorAll("th[scope=colgroup]")).toHaveLength(0)
@@ -155,7 +155,7 @@ describe("Heatmap native table, legend, exploration and identity", () => {
   })
   it("implements scoped arrows/Home/End/Ctrl edges and native activation without a Tab trap", () => {
     const { helper, root, day, key, detail } = fixture(), activate = vi.fn()
-    root.addEventListener("mui:heatmap-explore", activate)
+    root.addEventListener("m:heatmap-explore", activate)
     day("2024-02-08").focus(); key("2024-02-08", "ArrowDown")
     expect(helper.state.currentDate).toBe("2024-02-09"); expect(detail.textContent).toContain("Missing")
     key("2024-02-09", "ArrowRight"); expect(helper.state.currentDate).toBe("2024-02-16")
@@ -200,10 +200,10 @@ describe("Heatmap native table, legend, exploration and identity", () => {
   it("uses theme/custom/minimum color precedence through validated CSS properties only", () => {
     const colors = ["#111111", "#222222", "#333333", "#444444", "#555555"]
     const { helper, root } = fixture({ colorTheme: "red", activeColors: colors, minimumColor: "#abcdef" })
-    expect(root.style.getPropertyValue("--mui-heatmap-level-0")).toBe("#abcdef")
-    expect(root.style.getPropertyValue("--mui-heatmap-level-4")).toBe("#555555")
+    expect(root.style.getPropertyValue("--m-heatmap-level-0")).toBe("#abcdef")
+    expect(root.style.getPropertyValue("--m-heatmap-level-4")).toBe("#555555")
     helper.set({ activeColors: null, minimumColor: null })
-    expect(root.style.getPropertyValue("--mui-heatmap-level-0")).toBe("")
+    expect(root.style.getPropertyValue("--m-heatmap-level-0")).toBe("")
   })
   it("uses the built-in palette by default and writes named themes only when requested", () => {
     const plain = fixture()
@@ -240,10 +240,10 @@ describe("Heatmap atomic validation and lifetime", () => {
   it("restores original fallback/legend nodes and only still-owned attributes/styles", () => {
     const { helper, root, body, original } = fixture({ activeColors: ["#111111", "#222222", "#333333", "#444444", "#555555"] })
     const callback = vi.fn(); original[0]!.addEventListener("probe", callback)
-    root.style.setProperty("--mui-heatmap-level-0", "#ffffff")
+    root.style.setProperty("--m-heatmap-level-0", "#ffffff")
     helper.disconnect()
     expect([...body.childNodes]).toEqual(original); original[0]!.dispatchEvent(new Event("probe")); expect(callback).toHaveBeenCalledOnce()
-    expect(root.style.getPropertyValue("--mui-heatmap-level-0")).toBe("#ffffff")
+    expect(root.style.getPropertyValue("--m-heatmap-level-0")).toBe("#ffffff")
     expect(root.querySelector("[data-heatmap-bands]")!.textContent).toBe("Authored value legend")
   })
   it("does not overwrite foreign replacement rows, including an empty generated header", () => {
@@ -267,7 +267,7 @@ describe("Heatmap atomic validation and lifetime", () => {
     const { helper, day, root } = fixture(), changed = vi.fn()
     const button = day("2024-02-10"); button.focus()
     button.addEventListener("focus", () => root.remove(), { once: true })
-    root.addEventListener("mui:heatmap-change", changed)
+    root.addEventListener("m:heatmap-change", changed)
     helper.set({ firstDayOfWeek: 6 })
     expect(helper.connected).toBe(false); expect(changed).not.toHaveBeenCalled()
   })
@@ -294,22 +294,22 @@ describe("Heatmap default styles", () => {
   it("defines the pinned built-in and named palettes without replacing public overrides", () => {
     expect(css).toContain("light-dark(#9be9a8, #0d4429)")
     expect(css).toContain("light-dark(#216e39, #39d353)")
-    expect(css).toContain("var(--mui-heatmap-level-1, #c6e48b)")
-    expect(css).toContain("var(--mui-heatmap-level-4, #196127)")
-    expect(css).toContain("var(--mui-heatmap-level-0, light-dark(rgba(46,51,56,.09), rgba(255,255,255,.1)))")
+    expect(css).toContain("var(--m-heatmap-level-1, #c6e48b)")
+    expect(css).toContain("var(--m-heatmap-level-4, #196127)")
+    expect(css).toContain("var(--m-heatmap-level-0, light-dark(rgba(46,51,56,.09), rgba(255,255,255,.1)))")
   })
 
   it("matches pinned type, gap, swatch and radius defaults while retaining native targets", () => {
-    expect(css).toContain("--_mui-heatmap-font-size: 12px")
-    expect(css).toContain("--_mui-heatmap-swatch-size: 11px")
-    expect(css).toContain("--_mui-heatmap-x-gap: 3px")
-    expect(css).toContain("border-radius: var(--mui-heatmap-radius, 2px)")
-    expect(css).toContain("min-inline-size: var(--mui-heatmap-cell-size, var(--_mui-heatmap-cell-size))")
+    expect(css).toContain("--_m-heatmap-font-size: 12px")
+    expect(css).toContain("--_m-heatmap-swatch-size: 11px")
+    expect(css).toContain("--_m-heatmap-x-gap: 3px")
+    expect(css).toContain("border-radius: var(--m-heatmap-radius, 2px)")
+    expect(css).toContain("min-inline-size: var(--m-heatmap-cell-size, var(--_m-heatmap-cell-size))")
   })
 
   it("keeps theme, hidden, reduced-motion, forced-color and print behavior explicit", () => {
-    expect(css).toContain(':where([data-mui-theme="dark"])')
-    expect(css).toContain(".mui-heatmap [hidden] { display: none !important; }")
+    expect(css).toContain(':where([data-m-theme="dark"])')
+    expect(css).toContain(".m-heatmap [hidden] { display: none !important; }")
     expect(css).toContain("@media (prefers-reduced-motion: reduce)")
     expect(css).toContain("@media (forced-colors: active)")
     expect(css).toContain("@media print")

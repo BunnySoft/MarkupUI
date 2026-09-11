@@ -8,10 +8,10 @@ describe("audited Popconfirm presentation", () => {
 
   it("uses the approved Popover surface and shared semantic colors without duplicating a palette", () => {
     expect(css).not.toMatch(/(?:^|[;{])\s*(?:background|box-shadow|border-radius)\s*:/)
-    expect(css).not.toContain("data-mui-theme")
-    expect(css).toMatch(/var\(--mui-popconfirm-icon-color,\s*var\(--mui-color-warning,\s*#f0a020\)\)/)
-    expect(css).toMatch(/var\(--mui-popconfirm-error-color,\s*var\(--mui-color-error,\s*#d03050\)\)/)
-    expect(css).not.toMatch(/(?:^|[;{])\s*--mui-popover-[\w-]+\s*:/)
+    expect(css).not.toContain("data-m-theme")
+    expect(css).toMatch(/var\(--m-popconfirm-icon-color,\s*var\(--m-color-warning,\s*#f0a020\)\)/)
+    expect(css).toMatch(/var\(--m-popconfirm-error-color,\s*var\(--m-color-error,\s*#d03050\)\)/)
+    expect(css).not.toMatch(/(?:^|[;{])\s*--m-popover-[\w-]+\s*:/)
   })
 
   it("offers an optional aligned body without turning rich description text into flex items", () => {
@@ -32,11 +32,11 @@ describe("audited Popconfirm presentation", () => {
   })
 
   it("preserves author width overrides, pending feedback and print/forced-color safety", () => {
-    expect(css).toMatch(/var\(--mui-popover-max-width,\s*26rem\)/)
-    expect(css).toContain("--mui-popover-available-width")
+    expect(css).toMatch(/var\(--m-popover-max-width,\s*26rem\)/)
+    expect(css).toContain("--m-popover-available-width")
     expect(css).toContain("button:disabled{cursor:wait}")
     expect(css).toContain("color:CanvasText")
-    expect(css).toContain("@media print{.mui-popover.mui-popconfirm{max-width:none}}")
+    expect(css).toContain("@media print{.m-popover.m-popconfirm{max-width:none}}")
   })
 })
 
@@ -64,7 +64,7 @@ function nodes() {
   trigger.setAttribute("popovertarget", id)
   const panel = document.createElement("div")
   panel.id = id
-  panel.className = "mui-popover mui-popconfirm"
+  panel.className = "m-popover m-popconfirm"
   panel.setAttribute("role", "dialog")
   panel.setAttribute("aria-label", "Confirm local choice")
   panel.setAttribute("aria-describedby", `${id}-description`)
@@ -319,7 +319,7 @@ describe("callback outcomes, pending locks and explicit failures", () => {
     const hook = () => { if (mode === "throw") throw failure; return Promise.reject(failure) }
     const { panel, positive, error, controller } = bind({ onPositive: hook })
     const events: unknown[] = []
-    panel.addEventListener("mui:popconfirm-error", event => events.push((event as CustomEvent).detail))
+    panel.addEventListener("m:popconfirm-error", event => events.push((event as CustomEvent).detail))
     controller.open()
     positive.click()
     await flush()
@@ -423,7 +423,7 @@ describe("per-opening and per-action races", () => {
     const task = deferred()
     const { positive, panel, error, controller } = bind({ onPositive: () => task.promise })
     const failures: unknown[] = []
-    panel.addEventListener("mui:popconfirm-error", event => failures.push((event as CustomEvent).detail))
+    panel.addEventListener("m:popconfirm-error", event => failures.push((event as CustomEvent).detail))
     controller.open()
     positive.click()
     await flush()
@@ -517,7 +517,7 @@ describe("per-opening and per-action races", () => {
   it("rejects live action replacement/type changes and invalid native opening before taking actions", async () => {
     const { positive, controller, panel } = bind()
     const failures = vi.fn()
-    panel.addEventListener("mui:popconfirm-error", failures)
+    panel.addEventListener("m:popconfirm-error", failures)
     controller.open()
     positive.type = "submit"
     await flush()

@@ -24,18 +24,18 @@ afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); docu
 describe("Input stylesheet contract", () => {
   const css = readFileSync(join("src", "components", "input", "input.css"), "utf8")
   it("keeps size, status and theme defaults private so inherited author tokens win", () => {
-    expect(css).not.toMatch(/--mui-input-[\w-]+\s*:/)
-    for (const height of [22, 28, 34, 40]) expect(css).toMatch(new RegExp(`--_mui-input-height:\\s*${height}px`))
-    expect(css).toMatch(/data-mui-theme="?dark"?/)
-    expect(css).not.toContain("var(--mui-text-primary")
+    expect(css).not.toMatch(/--m-input-[\w-]+\s*:/)
+    for (const height of [22, 28, 34, 40]) expect(css).toMatch(new RegExp(`--_m-input-height:\\s*${height}px`))
+    expect(css).toMatch(/data-m-theme="?dark"?/)
+    expect(css).not.toContain("var(--m-text-primary")
   })
   it("does not confuse disabled action buttons during IME with a disabled field", () => {
     expect(css).not.toContain(":has(:disabled)")
     expect(css).toContain(":has([data-input-control]:disabled)")
   })
   it("paints the boundary without taking space from native rows and field height", () => {
-    expect(css).toMatch(/\.mui-input::before\s*\{[^}]*pointer-events:\s*none/)
-    expect(css).toMatch(/input\[data-input-control\]\s*\{[^}]*block-size:\s*var\(--mui-input-height/)
+    expect(css).toMatch(/\.m-input::before\s*\{[^}]*pointer-events:\s*none/)
+    expect(css).toMatch(/input\[data-input-control\]\s*\{[^}]*block-size:\s*var\(--m-input-height/)
     expect(css).toMatch(/textarea\[data-input-control\]\s*\{[^}]*line-height:\s*1\.6/)
   })
   it("retains hidden, forced-color and print action safeguards", () => {
@@ -71,9 +71,9 @@ describe("authored Input ownership", () => {
     helpers.push(createInput(root))
   })
   it("does not register or upgrade legacy elements", () => {
-    const before = customElements.get("mui-input")
+    const before = customElements.get("m-input")
     fixture()
-    expect(customElements.get("mui-input")).toBe(before)
+    expect(customElements.get("m-input")).toBe(before)
   })
   it("guards root ownership across separately loaded module copies", async () => {
     const { root, helper } = fixture()
@@ -158,7 +158,7 @@ describe("native value, count and notification contract", () => {
   it("emits only requested input/change, once each, on an actual programmatic change", () => {
     const { helper, control } = fixture()
     const events: string[] = []
-    for (const type of ["input", "change", "mui:input-clear"]) control.addEventListener(type, () => events.push(type))
+    for (const type of ["input", "change", "m:input-clear"]) control.addEventListener(type, () => events.push(type))
     helper.setValue("New", { emit: true })
     helper.setValue("New", { emit: true })
     expect(events).toEqual(["input", "change"])
@@ -166,7 +166,7 @@ describe("native value, count and notification contract", () => {
   it("clear preserves focus/default/name and sends input, change, then clear once", async () => {
     const { helper, control, clear, count } = fixture()
     const events: string[] = []
-    for (const type of ["input", "change", "mui:input-clear"]) control.addEventListener(type, () => events.push(type))
+    for (const type of ["input", "change", "m:input-clear"]) control.addEventListener(type, () => events.push(type))
     clear.focus(); clear.click(); await flush()
     expect(control.value).toBe("")
     expect(control.defaultValue).toBe("Native draft")
@@ -174,7 +174,7 @@ describe("native value, count and notification contract", () => {
     expect(count.textContent).toBe("0 / 24")
     expect(clear.hidden).toBe(true)
     expect(document.activeElement).toBe(control)
-    expect(events).toEqual(["input", "change", "mui:input-clear"])
+    expect(events).toEqual(["input", "change", "m:input-clear"])
     expect(helper.clear()).toBe(false)
     expect(control.validity.valueMissing).toBe(true)
   })

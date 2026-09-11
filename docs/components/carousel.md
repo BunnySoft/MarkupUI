@@ -29,7 +29,7 @@ enhancement controls and their current-slide readout. No transform track, cloned
 slides, icon-only controls, custom drag engine or hidden inactive slides were added.
 
 ```html
-<section class="mui-carousel" data-carousel aria-label="Project examples">
+<section class="m-carousel" data-carousel aria-label="Project examples">
   <div data-carousel-viewport id="examples" tabindex="0" aria-label="Example slides">
     <article data-carousel-item><div class="slide-content">
       <h2>Draft</h2><label>Title <input name="title" required value="Original"></label>
@@ -64,10 +64,10 @@ carousel.next()
 The connected root is a named native div/section. Its **direct** viewport is a named
 div/section with a unique author-owned ID and `tabindex="0"`. Every element child of
 the viewport is a native article/section/div with `data-carousel-item`. These are the
-**CarouselItem** companion: no separate runtime, `mui-carousel-item`, provider,
+**CarouselItem** companion: no separate runtime, `m-carousel-item`, provider,
 role=option, template renderer or vnode slot. Whitespace/comments are not slides.
 Keep slide outer boxes undecorated; put padding, borders and scrollable content inside.
-Nested `.mui-carousel[data-carousel]` roots have independent controllers.
+Nested `.m-carousel[data-carousel]` roots have independent controllers.
 
 At most one direct `data-carousel-controls` container is authored **hidden**. All its
 enhancement actions are distinct labelled `type=button` controls: previous, next, rotation
@@ -120,7 +120,7 @@ an older mismatching completion is ignored until fresh scroll events or the boun
 command can commit a different slide. No per-frame layout polling or physics occurs.
 Instant/API settings and resize alignment settle synchronously when measurable.
 
-`mui:carousel-change` bubbles once per settled index **or current node identity**
+`m:carousel-change` bubbles once per settled index **or current node identity**
 change with `{index, previousIndex, slide, previousSlide, reason}`. Reasons are
 api/control/autoplay/scroll/refresh. Initialization, `set` and reset are silent.
 Resizing an already settled slide is silent; resize/reveal completing a pending command
@@ -133,7 +133,7 @@ the older callback. A callback may issue a new command or disconnect.
 
 The external CSS defines **one full slide per viewport**, horizontal-tb writing mode,
 zero outer slide/viewport margin/padding/border/gap, a positioned viewport containing
-block and start-aligned mandatory snap. `--mui-carousel-height` defaults to 20rem;
+block and start-aligned mandatory snap. `--m-carousel-height` defaults to 20rem;
 vertical carousels require a definite block size. Use external classes for root width,
 inner decoration and responsive height. No JS style strings or geometry styles are written.
 
@@ -218,7 +218,7 @@ Readout text and documented owned ARIA/data/action-disabled attributes are reser
 while bound. Refresh rereads authored disabled buttons; disposal does not overwrite
 later differing author attributes. No complete style or attribute object is restored.
 
-Legacy `widgetsPlugin` keeps its existing `mui-carousel`/`mui-carousel-item`,
+Legacy `widgetsPlugin` keeps its existing `m-carousel`/`m-carousel-item`,
 `next/previous/select` and hidden-slide behavior unchanged. It is **not** this opt-in
 native implementation. Native and legacy owners coexist on separate roots.
 

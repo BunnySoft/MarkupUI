@@ -28,7 +28,7 @@ afterEach(() => { controllers.splice(0).forEach(c => c.disconnect()); document.b
 describe("truthful Loading Bar lifecycle", () => {
   it("connects idle without an event, then starts native indeterminate progress", () => {
     const { root, progress } = fixture(), change = vi.fn()
-    root.addEventListener("mui:loading-bar-change", change)
+    root.addEventListener("m:loading-bar-change", change)
     const c = createLoadingBar(root); controllers.push(c)
     expect(c.state).toBe("idle"); expect(change).not.toHaveBeenCalled()
     c.start()
@@ -112,7 +112,7 @@ describe("truthful Loading Bar lifecycle", () => {
   it("handles zero-delay and reentrant state listeners without hiding restarted work", () => {
     vi.useFakeTimers()
     const { root, controller } = bind({ finishDelay: 0 })
-    root.addEventListener("mui:loading-bar-change", event => {
+    root.addEventListener("m:loading-bar-change", event => {
       if ((event as CustomEvent).detail.state === "success") controller.start()
     })
     controller.finish(); vi.runAllTimers()
@@ -121,7 +121,7 @@ describe("truthful Loading Bar lifecycle", () => {
   })
   it("does not invent user events for measurement updates or repeated starts", () => {
     const { root, controller } = bind(), change = vi.fn()
-    root.addEventListener("mui:loading-bar-change", change)
+    root.addEventListener("m:loading-bar-change", change)
     controller.start(); controller.start(); controller.setProgress(25)
     expect(change).toHaveBeenCalledTimes(1)
     expect(change.mock.calls[0]![0].bubbles).toBe(false)
@@ -208,7 +208,7 @@ describe("root ownership, native semantics and cleanup", () => {
   it("reports live anatomy faults instead of mutating replacement progress nodes", async () => {
     vi.useFakeTimers()
     const { root, progress, controller } = bind(), fault = vi.fn()
-    root.addEventListener("mui:loading-bar-fault", fault)
+    root.addEventListener("m:loading-bar-fault", fault)
     controller.finish()
     const replacement = progress.cloneNode(true) as HTMLProgressElement
     progress.replaceWith(replacement)
@@ -219,7 +219,7 @@ describe("root ownership, native semantics and cleanup", () => {
   })
   it("disconnects when the status marker moves, preserving the newly designated author node", async () => {
     const { root, status, controller } = bind(), fault = vi.fn()
-    root.addEventListener("mui:loading-bar-fault", fault)
+    root.addEventListener("m:loading-bar-fault", fault)
     controller.start()
     status.removeAttribute("data-loading-bar-status")
     const replacement = document.createElement("span")
@@ -240,7 +240,7 @@ describe("root ownership, native semantics and cleanup", () => {
   it("can disconnect during notification without leaving a stale timer", () => {
     vi.useFakeTimers()
     const { root, controller } = bind()
-    root.addEventListener("mui:loading-bar-change", () => controller.disconnect(), { once: true })
+    root.addEventListener("m:loading-bar-change", () => controller.disconnect(), { once: true })
     controller.finish()
     expect(controller.connected).toBe(false); expect(vi.getTimerCount()).toBe(0)
   })
@@ -276,27 +276,27 @@ describe("validated passive anatomy and packaging", () => {
     const css = readFileSync(join("src", "components", "loading-bar", "loading-bar.css"), "utf8")
 
     it("uses the pinned thin square rail and transparent surfaces", () => {
-      expect(css).toContain("block-size: var(--mui-loading-bar-height, 2px)")
+      expect(css).toContain("block-size: var(--m-loading-bar-height, 2px)")
       expect(css).toContain("border-radius: 0")
-      expect(css).toContain("var(--mui-loading-bar-track, transparent)")
-      expect(css).toContain("var(--mui-loading-bar-background, transparent)")
+      expect(css).toContain("var(--m-loading-bar-track, transparent)")
+      expect(css).toContain("var(--m-loading-bar-background, transparent)")
       expect(css).not.toContain("#dbe4ef")
       expect(css).not.toContain(".5rem")
     })
 
     it("uses reference loading/success and exact light/dark error colors without overriding authors", () => {
-      expect(css).toContain("var(--mui-loading-bar-color, var(--mui-color-primary, light-dark(#18a058, #63e2b7)))")
-      expect(css).toContain("var(--mui-loading-bar-error, light-dark(#d03050, #f00))")
+      expect(css).toContain("var(--m-loading-bar-color, var(--m-color-primary, light-dark(#18a058, #63e2b7)))")
+      expect(css).toContain("var(--m-loading-bar-error, light-dark(#d03050, #f00))")
       expect(css).not.toContain("#2472bf")
       expect(css).not.toContain("#176243")
       expect(css).not.toContain('#a1272f')
-      expect(css).not.toMatch(/\[data-loading-bar-state="success"\]\s*\{\s*--mui-loading-bar-color/)
+      expect(css).not.toMatch(/\[data-loading-bar-state="success"\]\s*\{\s*--m-loading-bar-color/)
     })
 
     it("matches fixed positioning while preserving explicit placement and safe-area overrides", () => {
-      expect(css).toContain("z-index: var(--mui-loading-bar-z-index, 5999)")
-      expect(css).toContain("var(--mui-loading-bar-top, 0px)")
-      expect(css).toContain("var(--mui-loading-bar-inset, 0px)")
+      expect(css).toContain("z-index: var(--m-loading-bar-z-index, 5999)")
+      expect(css).toContain("var(--m-loading-bar-top, 0px)")
+      expect(css).toContain("var(--m-loading-bar-inset, 0px)")
       expect(css).toContain("env(safe-area-inset-left")
       expect(css).toContain(":dir(rtl)")
       expect(css).toContain("pointer-events: none")
@@ -304,9 +304,9 @@ describe("validated passive anatomy and packaging", () => {
 
     it("animates only terminal completion width while leaving measured updates truthful", () => {
       expect(css).toContain('[data-loading-bar-state="success"] progress::-webkit-progress-value { transition: width .2s linear, background .2s linear; }')
-      expect(css).toContain('progress::-webkit-progress-value { background: var(--_mui-loading-bar-color); transition: background .2s linear; }')
+      expect(css).toContain('progress::-webkit-progress-value { background: var(--_m-loading-bar-color); transition: background .2s linear; }')
       expect(css).toContain("transition: border-color .2s linear")
-      expect(css).toContain("mui-loading-bar-enter .3s cubic-bezier(.4, 0, .2, 1)")
+      expect(css).toContain("m-loading-bar-enter .3s cubic-bezier(.4, 0, .2, 1)")
       const { controller, progress } = bind({ finishDelay: null })
       controller.start()
       expect(progress.hasAttribute("value")).toBe(false)
@@ -334,21 +334,21 @@ describe("validated passive anatomy and packaging", () => {
     })
 
     it("backs all fixed-mode words while preserving rail, foreground and author overrides", () => {
-      expect(css).toContain(".mui-loading-bar--fixed :is(label, [data-loading-bar-status])")
+      expect(css).toContain(".m-loading-bar--fixed :is(label, [data-loading-bar-status])")
       expect(css).toContain("justify-self: start; max-inline-size: 100%; overflow-wrap: anywhere")
-      expect(css).toContain("background: var(--mui-loading-bar-background, Canvas)")
-      expect(css).toContain("background: var(--mui-loading-bar-status-background, transparent)")
-      expect(css).toContain(".mui-loading-bar--fixed[data-loading-bar-state=\"loading\"] { animation: none; }")
-      expect(css).toContain(".mui-loading-bar--fixed[data-loading-bar-state=\"loading\"] progress { animation: mui-loading-bar-enter")
-      expect(css.slice(css.indexOf("@media print"))).toContain(".mui-loading-bar--fixed :is(label, [data-loading-bar-status]) { background: transparent; }")
-      expect(css.slice(css.indexOf("@media print"))).toContain(".mui-loading-bar--fixed { background: transparent; }")
-      expect(css.slice(css.indexOf("@media print"))).toContain(".mui-loading-bar, .mui-loading-bar[data-loading-bar-state] { color-scheme: light; position: static; color: black;")
+      expect(css).toContain("background: var(--m-loading-bar-background, Canvas)")
+      expect(css).toContain("background: var(--m-loading-bar-status-background, transparent)")
+      expect(css).toContain(".m-loading-bar--fixed[data-loading-bar-state=\"loading\"] { animation: none; }")
+      expect(css).toContain(".m-loading-bar--fixed[data-loading-bar-state=\"loading\"] progress { animation: m-loading-bar-enter")
+      expect(css.slice(css.indexOf("@media print"))).toContain(".m-loading-bar--fixed :is(label, [data-loading-bar-status]) { background: transparent; }")
+      expect(css.slice(css.indexOf("@media print"))).toContain(".m-loading-bar--fixed { background: transparent; }")
+      expect(css.slice(css.indexOf("@media print"))).toContain(".m-loading-bar, .m-loading-bar[data-loading-bar-state] { color-scheme: light; position: static; color: black;")
       expect(css).toContain("progress { border: 1px solid CanvasText; animation: none !important; }")
       const { root, progress, status, controller } = bind()
-      root.classList.add("mui-loading-bar--fixed")
-      root.style.setProperty("--mui-loading-bar-background", "navy")
-      root.style.setProperty("--mui-loading-bar-text", "white")
-      root.style.setProperty("--mui-loading-bar-error", "orange")
+      root.classList.add("m-loading-bar--fixed")
+      root.style.setProperty("--m-loading-bar-background", "navy")
+      root.style.setProperty("--m-loading-bar-text", "white")
+      root.style.setProperty("--m-loading-bar-error", "orange")
       const before = root.getAttribute("style")
       controller.start()
       controller.setProgress(20)

@@ -1,12 +1,12 @@
 const regions = ["cover", "header", "header-extra", "content", "footer", "action"] as const
-const selector = (name: string): string => `mui-card-${name},[data-mui-card-${name}]`
+const selector = (name: string): string => `m-card-${name},[data-m-card-${name}]`
 const regionSelector = regions.map(selector).join(",")
 
 export interface CardCloseDetail {
   originalEvent: MouseEvent
 }
 
-export class MuiCard extends HTMLElement {
+export class MCard extends HTMLElement {
   public static get observedAttributes(): string[] { return ["title", "closable", "close-label", "close-focusable"] }
 
   private generatedHeader: HTMLElement | undefined
@@ -27,7 +27,7 @@ export class MuiCard extends HTMLElement {
         }
       }
     }
-    this.dataset.muiCard = ""
+    this.dataset.mCard = ""
     this.observer ??= new MutationObserver(() => this.synchronize())
     this.synchronize()
   }
@@ -74,7 +74,7 @@ export class MuiCard extends HTMLElement {
     const extra = this.region("header-extra")
     if (!header && (this.title || this.closable || extra)) {
       header = this.ownerDocument.createElement("div")
-      header.dataset.muiCardHeader = ""
+      header.dataset.mCardHeader = ""
       this.generatedHeader = header
       const cover = this.region("cover")
       if (cover) cover.after(header)
@@ -89,7 +89,7 @@ export class MuiCard extends HTMLElement {
     if (header && header === this.generatedHeader && this.title) {
       if (!this.generatedTitle) {
         this.generatedTitle = this.ownerDocument.createElement("span")
-        this.generatedTitle.dataset.muiCardTitle = ""
+        this.generatedTitle.dataset.mCardTitle = ""
       }
       if (this.generatedTitle.textContent !== this.title) this.generatedTitle.textContent = this.title
       if (this.generatedTitle.parentNode !== header) header.prepend(this.generatedTitle)
@@ -104,7 +104,7 @@ export class MuiCard extends HTMLElement {
       if (!this.closeButton) {
         this.closeButton = this.ownerDocument.createElement("button")
         this.closeButton.type = "button"
-        this.closeButton.dataset.muiCardClose = ""
+        this.closeButton.dataset.mCardClose = ""
         const icon = this.ownerDocument.createElement("span")
         icon.setAttribute("aria-hidden", "true")
         this.closeButton.append(icon)
@@ -136,7 +136,7 @@ export class MuiCard extends HTMLElement {
     if (loose.length) {
       if (!content) {
         content = this.ownerDocument.createElement("div")
-        content.dataset.muiCardContent = ""
+        content.dataset.mCardContent = ""
         this.generatedContent = content
         this.insertBefore(content, this.region("footer") ?? this.region("action") ?? null)
       }
@@ -150,14 +150,14 @@ export class MuiCard extends HTMLElement {
     if (this.isConnected) {
       this.observer?.observe(this, {
         childList: true, subtree: true, characterData: true, attributes: true,
-        attributeFilter: regions.map((name) => `data-mui-card-${name}`),
+        attributeFilter: regions.map((name) => `data-m-card-${name}`),
       })
     }
   }
 
   private readonly onClose = (event: MouseEvent): void => {
     if (!this.closable || !this.isConnected || this.closeButton?.matches(":disabled")) return
-    this.dispatchEvent(new CustomEvent<CardCloseDetail>("mui:close", {
+    this.dispatchEvent(new CustomEvent<CardCloseDetail>("m:close", {
       bubbles: true,
       cancelable: true,
       detail: { originalEvent: event },

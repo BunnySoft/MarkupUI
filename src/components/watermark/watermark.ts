@@ -82,8 +82,8 @@ const defaults: Required<WatermarkSettings> = {
 export function createWatermark(element: HTMLElement, options: WatermarkOptions = {}): WatermarkController {
   const document = element?.ownerDocument, view = document?.defaultView
   if (!view || !(element instanceof view.HTMLElement) || !["div", "section", "article"].includes(element.localName)
-    || !element.matches(".mui-watermark[data-watermark]") || !element.isConnected
-    || element.getRootNode() !== document || (element as Owned)[owner]) throw new TypeError("Use an unowned connected native .mui-watermark[data-watermark] wrapper.")
+    || !element.matches(".m-watermark[data-watermark]") || !element.isConnected
+    || element.getRootNode() !== document || (element as Owned)[owner]) throw new TypeError("Use an unowned connected native .m-watermark[data-watermark] wrapper.")
   const win = view, doc = document!, token = {}, writes = ownedWrites()
   const layers = [...element.querySelectorAll<HTMLElement>("[data-watermark-overlay]")].filter(node => node.closest("[data-watermark]") === element)
   const candidate = layers[0]
@@ -157,7 +157,7 @@ export function createWatermark(element: HTMLElement, options: WatermarkOptions 
       && (rgb[1]!.toLowerCase() === "rgb" ? rgb[5] === undefined : rgb[5] !== undefined && Number(rgb[5]) <= 1)
   }
   function state(): WatermarkState { return Object.freeze({ phase, generation, hasTile: url !== null, error, rendered }) }
-  function emit() { element.dispatchEvent(new win.CustomEvent("mui:watermark-state", { bubbles: true, detail: state() })) }
+  function emit() { element.dispatchEvent(new win.CustomEvent("m:watermark-state", { bubbles: true, detail: state() })) }
   function current(job: Job) { return connected && active === job && generation === job.generation && !job.abort.signal.aborted && element.isConnected && overlay.parentElement === element }
   function release(job: Job) { if (job.canvas) { job.canvas.width = job.canvas.height = 0; job.canvas = null } }
   function abort(job: Job, why: string) {
@@ -286,11 +286,11 @@ export function createWatermark(element: HTMLElement, options: WatermarkOptions 
       win.URL.revokeObjectURL(nextUrl); throw new Error("Native object URL contained unsupported URL characters.")
     }
     const next = job.settings, previous = url
-    writes.style(overlay, "--mui-watermark-image", nextUrl ? `url("${nextUrl}")` : "none")
-    writes.style(overlay, "--mui-watermark-width", `${next.width + next.xGap}px`)
-    writes.style(overlay, "--mui-watermark-height", `${next.height + next.yGap}px`)
-    writes.style(overlay, "--mui-watermark-x", `${next.xOffset}px`); writes.style(overlay, "--mui-watermark-y", `${next.yOffset}px`)
-    writes.style(overlay, "--mui-watermark-opacity", String(next.opacity)); writes.style(overlay, "--mui-watermark-z-index", String(next.zIndex))
+    writes.style(overlay, "--m-watermark-image", nextUrl ? `url("${nextUrl}")` : "none")
+    writes.style(overlay, "--m-watermark-width", `${next.width + next.xGap}px`)
+    writes.style(overlay, "--m-watermark-height", `${next.height + next.yGap}px`)
+    writes.style(overlay, "--m-watermark-x", `${next.xOffset}px`); writes.style(overlay, "--m-watermark-y", `${next.yOffset}px`)
+    writes.style(overlay, "--m-watermark-opacity", String(next.opacity)); writes.style(overlay, "--m-watermark-z-index", String(next.zIndex))
     writes.attr(overlay, "data-watermark-fullscreen", next.fullscreen ? "" : null)
     writes.attr(overlay, "hidden", nextUrl ? null : "")
     url = nextUrl; rendered = result; active = null; phase = result ? "ready" : "empty"; error = null

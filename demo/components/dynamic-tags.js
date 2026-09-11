@@ -12,11 +12,11 @@ const validation = MarkupUIForm.createForm(form, { items: [{
   validator: () => tags.values.length ? null : { message: "Add at least one tag before this local inspection." },
 }] })
 let changes = 0, intent = 0
-root.addEventListener("mui:dynamic-tags-change", event => {
+root.addEventListener("m:dynamic-tags-change", event => {
   validation.refresh()
   events.textContent = `Changes: ${++changes}; ${event.detail.type}; current stable keys: ${tags.tags.map(tag => tag.key).join(", ")}.`
 })
-root.addEventListener("mui:dynamic-tags-error", event => {
+root.addEventListener("m:dynamic-tags-error", event => {
   events.textContent = `Creation/resource error: ${event.detail.error instanceof Error ? event.detail.error.message : String(event.detail.error)}`
 })
 async function inspect(event) {

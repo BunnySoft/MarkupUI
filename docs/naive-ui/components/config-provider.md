@@ -549,7 +549,7 @@ remain untouched. There is no additional public SSR/hydration prop inferred from
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
 | [`name`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/interface.ts#L10) | Source type field | No GlobalTheme identity/hash contract; author classes or unchanged legacy theme names instead. | ⏭️ Intentionally omitted | CSS capability does not imply type compatibility. |
-| [`common?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/interface.ts#L11) | Source type field | No ThemeCommonVars graph; supported --mui-* CSS properties are a different contract. | ⏭️ Intentionally omitted | Only actual demo consumers verified. |
+| [`common?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/config-provider/src/interface.ts#L11) | Source type field | No ThemeCommonVars graph; supported --m-* CSS properties are a different contract. | ⏭️ Intentionally omitted | Only actual demo consumers verified. |
 
 ### GlobalThemeOverrides — source fields
 

@@ -77,7 +77,7 @@ Evidence **C1** = [targeted tests](../../../tests/checkbox.test.ts);
 | `options` · [API] L47 | Prop | Authored controls instead of options rendering | ⏭️ Intentionally omitted | No object renderer, label fallback or slot precedence. |
 | `value` · [API] L48 | Prop | state.values / silent setValues(existing strings) | 🟢 Verified | C1/C2 DOM order, strict keys, disabled selected members included. |
 | `value-field` · [API] L49 | Prop | Explicit native value | ⏭️ Intentionally omitted | No configurable object field mapping. |
-| `on-update:value` · [API] L50 | Callback | mui:checkbox-group-change on group root | 🟢 Verified | C1/C2 one accepted user snapshot; no synthetic setter/reset events. |
+| `on-update:value` · [API] L50 | Callback | m:checkbox-group-change on group root | 🟢 Verified | C1/C2 one accepted user snapshot; no synthetic setter/reset events. |
 
 ### Checkbox Slots
 

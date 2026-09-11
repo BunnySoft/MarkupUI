@@ -116,7 +116,7 @@ parents. Authors own any deliberate maximum-size override and overflow/scroll po
 
 ## Author and scope regressions
 
-- Ancestor `--mui-grid-cols:7`, gap 19px and span 3 did not configure a descendant
+- Ancestor `--m-grid-cols:7`, gap 19px and span 3 did not configure a descendant
   grid/item: root reset to **24/0px** and its direct item reset to **span 1/auto**.
 - More-specific author CSS before a later package sheet retained **3 columns,
   7px x / 5px y gaps, center/end alignment**, and item **span 2/start 2**.

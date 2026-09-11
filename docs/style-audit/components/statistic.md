@@ -73,13 +73,13 @@ Tabular typography is still opt-in and performs no numeric conversion.
 | Label | `#636366` in both | `#767c82` | `rgba(255,255,255,.52)` |
 | Value / prefix / suffix | `#333639` in both | `#333639` | `rgba(255,255,255,.82)` |
 
-These are Naive `textColor3` and `textColor2`. The legacy `--mui-text-primary` /
-`--mui-text-secondary` roles do **not** carry those defaults, so blindly reusing them
+These are Naive `textColor3` and `textColor2`. The legacy `--m-text-primary` /
+`--m-text-secondary` roles do **not** carry those defaults, so blindly reusing them
 made even light styling drift when aggregate themes were loaded.
 
 The correction keeps theme-boundary fallbacks local and reuses shared typography where
-semantically correct: `--mui-font-family`, `--mui-font-size`, `--mui-line-height`, and
-an optional `--mui-font-weight` override. Local Statistic tokens take precedence.
+semantically correct: `--m-font-family`, `--m-font-size`, `--m-line-height`, and
+an optional `--m-font-weight` override. Local Statistic tokens take precedence.
 Each color role is independent: changing value color no longer implicitly recolors affixes.
 
 **Shared work needed:** none to make this component correct. Future palette consolidation
@@ -117,7 +117,7 @@ all-content, all-browser or API-parity certification.
   In the both-affixes case, prefix starts at x=0, `12,345.60` at x=22 and suffix at x=156.
 - Authored local/shared styles survive value, affix, tabular and reconnect updates;
   the controller writes no inline styles or runtime theme objects.
-- In dark, explicit `--mui-statistic-value-color:rgb(1,2,3)` changes only the value.
+- In dark, explicit `--m-statistic-value-color:rgb(1,2,3)` changes only the value.
   Prefix/suffix stay white/.82 and label white/.52, even when legacy shared primary/
   secondary colors are deliberately set to magenta/cyan.
 - Nested explicit light restores label `rgb(118,124,130)` and value `rgb(51,54,57)`.

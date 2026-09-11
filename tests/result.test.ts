@@ -28,7 +28,7 @@ describe("CSS-only native Result", () => {
     expect(pkg.exports["./result"]).toBeUndefined()
     expect(readdirSync(resolve("src", "components", "result"))).toEqual(["result.css"])
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("mui-result")).toBeUndefined()
+    expect(customElements.get("m-result")).toBeUndefined()
     expect(css).not.toContain("@import")
     expect(demo).not.toContain("markup-ui-empty")
     expect(demo).not.toContain("markup-ui-button")
@@ -43,10 +43,10 @@ describe("CSS-only native Result", () => {
     expect(document.querySelector("#retry-title")!.tagName).toBe("H2")
     expect(document.querySelector("#nested-result")!.tagName).toBe("DIV")
     for (const id of ["info-result", "success-result", "warning-result", "error-result", "not-found-result", "forbidden-result", "server-result", "teapot-result"]) {
-      expect(document.querySelector(`#${id} .mui-result-title`)!.textContent).toMatch(/Information|Success|Warning|Error|404|403|500|418/)
+      expect(document.querySelector(`#${id} .m-result-title`)!.textContent).toMatch(/Information|Success|Warning|Error|404|403|500|418/)
     }
     expect(document.querySelectorAll("main")).toHaveLength(1)
-    expect(document.querySelectorAll(".mui-result[role], .mui-result[aria-live], .mui-result[tabindex]")).toHaveLength(0)
+    expect(document.querySelectorAll(".m-result[role], .m-result[aria-live], .m-result[tabindex]")).toHaveLength(0)
   })
 
   it("retains original regions, nodes, listeners and order on live presentation changes", () => {
@@ -74,18 +74,18 @@ describe("CSS-only native Result", () => {
     install()
     const root = document.querySelector<HTMLElement>("#recovery-result")!
     const cases = {
-      info: "var(--_mui-result-info,var(--mui-color-info,#2080f0))",
-      success: "var(--_mui-result-success,var(--mui-color-success,#18a058))",
-      warning: "var(--_mui-result-warning,var(--mui-color-warning,#f0a020))",
-      error: "var(--_mui-result-error,var(--mui-color-error,#d03050))",
+      info: "var(--_m-result-info,var(--m-color-info,#2080f0))",
+      success: "var(--_m-result-success,var(--m-color-success,#18a058))",
+      warning: "var(--_m-result-warning,var(--m-color-warning,#f0a020))",
+      error: "var(--_m-result-error,var(--m-color-error,#d03050))",
       "403": "currentColor", "404": "currentColor", "500": "currentColor", "418": "currentColor",
     }
     for (const [status, color] of Object.entries(cases)) {
       root.dataset.status = status
-      expect(getComputedStyle(root).getPropertyValue("--_mui-result-accent")).toBe(color)
+      expect(getComputedStyle(root).getPropertyValue("--_m-result-accent")).toBe(color)
     }
     root.dataset.status = "unknown"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-result-accent")).toBe(cases.info)
+    expect(getComputedStyle(root).getPropertyValue("--_m-result-accent")).toBe(cases.info)
     expect(app).not.toContain("fetch(")
     expect(app).not.toContain("history.")
     expect(app).not.toContain("location.")
@@ -96,16 +96,16 @@ describe("CSS-only native Result", () => {
     fixture()
     install()
     const root = document.querySelector<HTMLElement>("#recovery-result")!
-    root.dataset.muiTheme = "dark"
+    root.dataset.mTheme = "dark"
     const dark = getComputedStyle(root)
-    expect(dark.getPropertyValue("--_mui-result-text")).toBe("rgba(255,255,255,.82)")
-    expect(dark.getPropertyValue("--_mui-result-title")).toBe("rgba(255,255,255,.9)")
+    expect(dark.getPropertyValue("--_m-result-text")).toBe("rgba(255,255,255,.82)")
+    expect(dark.getPropertyValue("--_m-result-title")).toBe("rgba(255,255,255,.9)")
     for (const [type, color] of [["info", "#70c0e8"], ["success", "#63e2b7"], ["warning", "#f2c97d"], ["error", "#e88080"]]) {
-      expect(dark.getPropertyValue(`--_mui-result-${type}`)).toBe(color)
+      expect(dark.getPropertyValue(`--_m-result-${type}`)).toBe(color)
     }
-    root.dataset.muiTheme = "light"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-result-text")).toBe("#333639")
-    expect(getComputedStyle(root).getPropertyValue("--_mui-result-title")).toBe("#1f2225")
+    root.dataset.mTheme = "light"
+    expect(getComputedStyle(root).getPropertyValue("--_m-result-text")).toBe("#333639")
+    expect(getComputedStyle(root).getPropertyValue("--_m-result-title")).toBe("#1f2225")
     expect(css).not.toContain("color-scheme")
   })
 
@@ -115,11 +115,11 @@ describe("CSS-only native Result", () => {
     const root = document.querySelector<HTMLElement>("#recovery-result")!
     for (const [size, icon, title] of [["small", "64px", "26px"], ["medium", "80px", "32px"], ["large", "100px", "40px"], ["huge", "125px", "48px"]]) {
       root.dataset.size = size
-      expect(getComputedStyle(root).getPropertyValue("--_mui-result-icon-size")).toBe(icon)
-      expect(getComputedStyle(root).getPropertyValue("--_mui-result-title-size")).toBe(title)
+      expect(getComputedStyle(root).getPropertyValue("--_m-result-icon-size")).toBe(icon)
+      expect(getComputedStyle(root).getPropertyValue("--_m-result-title-size")).toBe(title)
     }
     root.dataset.size = "tiny"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-result-icon-size")).toBe("80px")
+    expect(getComputedStyle(root).getPropertyValue("--_m-result-icon-size")).toBe("80px")
   })
 
   it("keeps decorative SVGs hidden and preserves named custom SVG/image attributes", () => {
@@ -181,8 +181,8 @@ describe("CSS-only native Result", () => {
   it("does not generate missing icons/messages/actions and keeps empty roots empty", () => {
     fixture()
     install()
-    expect(document.querySelector("#text-result .mui-result-icon")).toBeNull()
-    expect(document.querySelector("#text-result .mui-result-footer")).toBeNull()
+    expect(document.querySelector("#text-result .m-result-icon")).toBeNull()
+    expect(document.querySelector("#text-result .m-result-footer")).toBeNull()
     const empty = document.querySelector<HTMLElement>("#empty-result")!
     empty.dataset.status = "404"
     expect(empty.childNodes).toHaveLength(0)
@@ -204,11 +204,11 @@ describe("CSS-only native Result", () => {
     install()
     const outer = document.querySelector<HTMLElement>("#custom-result")!
     outer.dataset.size = "huge"
-    outer.style.setProperty("--mui-result-align", "end")
+    outer.style.setProperty("--m-result-align", "end")
     const nested = document.querySelector("#nested-result")!
-    expect(getComputedStyle(nested).getPropertyValue("--_mui-result-icon-size")).toBe("80px")
-    expect(getComputedStyle(nested).getPropertyValue("--_mui-result-accent")).toBe("var(--_mui-result-info,var(--mui-color-info,#2080f0))")
-    expect(getComputedStyle(nested).getPropertyValue("--mui-result-align")).toBe("center")
+    expect(getComputedStyle(nested).getPropertyValue("--_m-result-icon-size")).toBe("80px")
+    expect(getComputedStyle(nested).getPropertyValue("--_m-result-accent")).toBe("var(--_m-result-info,var(--m-color-info,#2080f0))")
+    expect(getComputedStyle(nested).getPropertyValue("--m-result-align")).toBe("center")
     const description = document.querySelector("#retry-description")!
     description.textContent = "<img src=x> stays literal"
     expect(description.querySelector("img")).toBeNull()

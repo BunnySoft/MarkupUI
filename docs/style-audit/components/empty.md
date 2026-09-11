@@ -1,6 +1,6 @@
 # Empty visual-default audit
 
-Date: 2026-09-10. Scope: optional enhanced Empty and controller-free `.mui-empty`
+Date: 2026-09-10. Scope: optional enhanced Empty and controller-free `.m-empty`
 appearance. Alert files remain frozen; no shared source, binding/template work,
 root demo, aggregate rebuild or registration changes belong to this audit.
 
@@ -119,8 +119,8 @@ icon roles (`#c2c2c2` or white `.38`) and ordinary extra text (`#333639` or whit
 not the legacy secondary-text role. The coordinator may consolidate equivalent shared
 roles later without changing public component-token precedence.
 
-`--mui-empty-gap` now controls only the visible icon-to-description margin.
-`--mui-empty-extra-margin` specifies the complete extra margin, not an addition to a
+`--m-empty-gap` now controls only the visible icon-to-description margin.
+`--m-empty-extra-margin` specifies the complete extra margin, not an addition to a
 host flex gap. To retain the older roomy presentation, explicitly set the existing
 140px minimum/24px padding tokens and author `justify-content: center` if desired.
 See [Empty](../../components/empty.md) for all supported appearance tokens.

@@ -21,7 +21,7 @@ typography, paint and CSS motion remain application-owned.
 | [Complete reference](../naive-ui/components/number-animation.md) | Nine original identities and three explicit source additions |
 
 ```html
-<data class="mui-number-animation" data-number-animation value="2500.5" tabindex="0">
+<data class="m-number-animation" data-number-animation value="2500.5" tabindex="0">
   <strong>Total: </strong><span data-number-text>2,500.50</span>
 </data>
 ```
@@ -177,8 +177,8 @@ Reading focus/selection preserves the whole Text/data pair. Requested updates ca
 pending while the last visible value remains; release presents the current/final value.
 The helper never focuses a node or modifies other controls/form fields.
 
-`mui:number-animation-update` reports actual visible pair changes. Finish is emitted
-once for a current successful run as `mui:number-animation-finish`, followed by
+`m:number-animation-update` reports actual visible pair changes. Finish is emitted
+once for a current successful run as `m:number-animation-finish`, followed by
 onFinish if the owner/run remains current. The detail includes runId/from/to/exact value.
 Same endpoints/zero/reduced-motion paths also finish once when active.
 
@@ -189,7 +189,7 @@ may replace/reset/dispose, suppressing older following hooks. If a finish hook s
 a new run and then throws, the old error is reported with stale=true without poisoning
 the new run.
 
-`mui:number-animation-error` supplies phase/error/runId, also reflected in state for
+`m:number-animation-error` supplies phase/error/runId, also reflected in state for
 current errors. Callback promise returns are not awaited as a renderer/effect pipeline.
 Unknown output is never accepted as successful NaN/Infinity/blank markup. Completion
 performs no sound, network, navigation, storage, clipboard or focus action.
@@ -236,4 +236,4 @@ RTL/2x zoom/print/forced-colors preserved native text/form values. No-JS retaine
 author's “2,500.50” final fallback. A 375px strict script/style CSP with connect-src:none
 and reduced motion completed once without page errors. Classic mode, Time instant
 formatting, Countdown duration formatting and unchanged native Time Picker behavior
-coexisted; no mui-number-animation registration or implicit side effect was added.
+coexisted; no m-number-animation registration or implicit side effect was added.

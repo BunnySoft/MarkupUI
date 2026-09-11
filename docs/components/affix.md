@@ -21,14 +21,14 @@ Matching inherited colors or an unclamped box is not presented as fixed-controll
 
 ```html
 <link rel="stylesheet" href="./vendor/markup-ui-affix.css">
-<div class="mui-affix document-tools">
+<div class="m-affix document-tools">
   <a href="#notes">Notes</a>
   <button type="button">Project action</button>
 </div>
 ```
 
 ```css
-.document-tools { --mui-affix-block-start: 8px; }
+.document-tools { --m-affix-block-start: 8px; }
 ```
 
 There is no `./affix` JS export, custom-element definition, controller, observer, placeholder,
@@ -78,8 +78,8 @@ These are intentional model differences, not missing paint tokens to be patched.
 
 | Upstream item | Retained mapping / omission |
 | --- | --- |
-| `top` | `--mui-affix-block-start` on the actual element; default `auto`. A logical sticky constraint, not a post-trigger fixed coordinate. |
-| `bottom` | `--mui-affix-block-end`; default `auto`, with the bottom-flow preconditions below. |
+| `top` | `--m-affix-block-start` on the actual element; default `auto`. A logical sticky constraint, not a post-trigger fixed coordinate. |
+| `bottom` | `--m-affix-block-end`; default `auto`, with the bottom-flow preconditions below. |
 | `listen-to` | ⏭️ Selector/element/document/window/function target API omitted. Native scroll ancestry controls sticking. |
 | `trigger-top`, `trigger-bottom` | ⏭️ Independent activation thresholds and stored scroll-position state omitted. A CSS inset is not an equivalent trigger callback/model. |
 | `position` | ⏭️ Upstream fixed/absolute modes omitted. Native sticky is the only retained positioning mode. |
@@ -87,8 +87,8 @@ These are intentional model differences, not missing paint tokens to be patched.
 | Source `target` | ⏭️ Deprecated function-based scroll-target alias omitted. |
 | Source default slot | Original authored content remains in normal DOM order. No slot projection or runtime renderer. |
 
-The three native tokens are `--mui-affix-block-start`, `--mui-affix-block-end` and
-`--mui-affix-z-index` (defaults `auto`, `auto`, `1`). Set them **on the element** using
+The three native tokens are `--m-affix-block-start`, `--m-affix-block-end` and
+`--m-affix-z-index` (defaults `auto`, `auto`, `1`). Set them **on the element** using
 external CSS; nested Affix elements reset their defaults. Supply valid CSS lengths/`auto`
 and native z-index values, not unitless-number or selector props. CSS validation/cascade
 apply; there is no numeric parser, style-object adapter or theme/provider dependency.
@@ -185,7 +185,7 @@ On 2026-09-08, `pnpm --dir D:\repos\MarkupUI check` passed build/budget gates an
   reset and disabled exclusion. No affix-specific event or focus trap was added.
 - 280px/320px widths, RTL, 200% CSS zoom and visible anchor targets; print restored all visible
   affixes to static flow and forced colors retained readable toolbar content.
-- Aggregate/widgets/advanced coexistence with unchanged nodes and no mui-affix definition.
+- Aggregate/widgets/advanced coexistence with unchanged nodes and no m-affix definition.
 - JavaScript-disabled sticking, native anchor navigation and reset/GET form submission.
 
 CSS is **618 bytes / 270 gzip bytes**, below the new **500-byte** ceiling. Component JS is

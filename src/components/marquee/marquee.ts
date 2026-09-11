@@ -45,8 +45,8 @@ const contentTags = new Set(["span", "strong", "em", "b", "i", "u", "s", "small"
 export function createMarquee(element: HTMLElement, options: MarqueeOptions = {}): MarqueeController {
   const document = element?.ownerDocument, view = document?.defaultView
   if (!view || !(element instanceof view.HTMLElement) || !["div", "section"].includes(element.localName)
-    || !element.matches(".mui-marquee[data-marquee]") || !element.isConnected || element.getRootNode() !== document
-    || element.hasAttribute("data-marquee-running") || (element as Owned)[owner]) throw new TypeError("Use an unowned static native .mui-marquee[data-marquee] scope, never the obsolete marquee element.")
+    || !element.matches(".m-marquee[data-marquee]") || !element.isConnected || element.getRootNode() !== document
+    || element.hasAttribute("data-marquee-running") || (element as Owned)[owner]) throw new TypeError("Use an unowned static native .m-marquee[data-marquee] scope, never the obsolete marquee element.")
   const win = view, doc = document!, token = {}, writes = ownedWrites()
   const own = (node: Element) => node.closest("[data-marquee]") === element
   function one(selector: string) {
@@ -177,10 +177,10 @@ export function createMarquee(element: HTMLElement, options: MarqueeOptions = {}
     if (status.textContent !== message) status.textContent = message
     lastStatus = message
   }
-  function notify(name = "mui:marquee-change") {
+  function notify(name = "m:marquee-change") {
     if (!connected || !intact()) return
     const detail = state(), key = JSON.stringify(detail)
-    if (name === "mui:marquee-change" && key === lastNotice) return
+    if (name === "m:marquee-change" && key === lastNotice) return
     lastNotice = key
     element.dispatchEvent(new win.CustomEvent(name, { bubbles: true, detail }))
   }
@@ -238,7 +238,7 @@ export function createMarquee(element: HTMLElement, options: MarqueeOptions = {}
         if (!connected || animation !== current || generation !== stamp) return
         if (!intact()) { disconnect(); return }
         stop(); settings.active = false; finished = true; pauseReasons = []; renderStatus()
-        notify("mui:marquee-finish")
+        notify("m:marquee-finish")
       }
       current.oncancel = () => {
         if (!connected || animation !== current || generation !== stamp) return
@@ -251,7 +251,7 @@ export function createMarquee(element: HTMLElement, options: MarqueeOptions = {}
       stop(); error = caught; failed = true; pauseReasons = ["error"]; renderStatus(); failure = caught; didFail = true
     } finally {
       applying = false
-      if (didFail) element.dispatchEvent(new win.CustomEvent("mui:marquee-error", { bubbles: true, detail: Object.freeze({ error: failure, reason }) }))
+      if (didFail) element.dispatchEvent(new win.CustomEvent("m:marquee-error", { bubbles: true, detail: Object.freeze({ error: failure, reason }) }))
       else if (changed) notify()
     }
     if (didFail) throw failure

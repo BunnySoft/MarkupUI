@@ -30,10 +30,10 @@ of relying on accidental Dynamic Input padding. Light/dark, hover, disabled, for
 color and print behavior are component-scoped.
 
 ```html
-<fieldset class="mui-dynamic-input" data-dynamic-input>
+<fieldset class="m-dynamic-input" data-dynamic-input>
   <legend>Labels</legend>
-  <div class="mui-dynamic-input__rows" data-dynamic-rows>
-    <div class="mui-dynamic-input__row" data-dynamic-row data-dynamic-key="initial">
+  <div class="m-dynamic-input__rows" data-dynamic-rows>
+    <div class="m-dynamic-input__row" data-dynamic-row data-dynamic-key="initial">
       <label>Label <input name="labels[]" value="Original" required></label>
       <button type="button" data-dynamic-action="remove" hidden>Remove label</button>
       <button type="button" data-dynamic-action="up" hidden>Move up</button>
@@ -41,7 +41,7 @@ color and print behavior are component-scoped.
     </div>
   </div>
   <template data-dynamic-template>
-    <div class="mui-dynamic-input__row" data-dynamic-row>
+    <div class="m-dynamic-input__row" data-dynamic-row>
       <label>Label <input name="labels[]" required></label>
       <button type="button" data-dynamic-action="remove" hidden>Remove label</button>
       <button type="button" data-dynamic-action="up" hidden>Move up</button>
@@ -199,12 +199,12 @@ Failure semantics are explicit:
   fails; failures are aggregated and thrown. Unsupported asynchronous hooks fail immediately;
   unexpected late rejection also reports explicitly, never as successful data.
 
-Nonbubbling `mui:dynamic-input-change` on the root reports committed **structure**:
+Nonbubbling `m:dynamic-input-change` on the root reports committed **structure**:
 `{ type: "add"|"remove"|"move", row, index, previousIndex, rows }`.
 Row descriptors/arrays are frozen; original elements remain live. Field editing is still
 native input/change, not an extra aggregate value event. Listen on this explicit root.
 
-`mui:dynamic-input-error` reports `{ error, operation, committed }`; event-driven actions
+`m:dynamic-input-error` reports `{ error, operation, committed }`; event-driven actions
 consume already-reported failures, while direct methods throw. A committed cleanup failure
 is not presented as a rollback. Applications handling native change/focus events remain
 responsible for their own handler exceptions and side effects.
@@ -245,7 +245,7 @@ and a native-only [Form](form.md) coordinator:
 
 ```js
 const validation = MarkupUIForm.createForm(form, { items: [] })
-root.addEventListener("mui:dynamic-input-change", () => validation.refresh())
+root.addEventListener("m:dynamic-input-change", () => validation.refresh())
 ```
 
 Unmapped native fields participate in whole-form validity. If using custom fixed Form item
@@ -261,7 +261,7 @@ and remain hidden rather than pretending to work.
 
 ## External CSS and retained property summary
 
-`.mui-dynamic-input`, `__rows`, `__row`, `__fields`, `__actions` provide wrapping native layout.
+`.m-dynamic-input`, `__rows`, `__row`, `__fields`, `__actions` provide wrapping native layout.
 Fields use two minmax tracks for pairs, `data-single` for one track, and stack below 30rem.
 Author classes, field types, placeholder text, label content and decorative button icons
 directly; no inline style-object forwarding, measurement/provider graph or drag renderer.

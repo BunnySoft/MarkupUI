@@ -26,7 +26,7 @@ class Resize {
 const wait = () => vi.advanceTimersByTimeAsync(40)
 function fixture(options: SplitOptions = {}, geometry = { width: 400, height: 240, x: 1, y: 1 }) {
   const id = ++sequence, form = document.createElement("form")
-  form.innerHTML = `<section class="mui-split" data-split style="width:400px;padding:10px;border:2px solid;column-gap:4px;row-gap:4px;direction:ltr">
+  form.innerHTML = `<section class="m-split" data-split style="width:400px;padding:10px;border:2px solid;column-gap:4px;row-gap:4px;direction:ltr">
     <section data-split-pane="1" id="pane-one-${id}" aria-label="Primary pane"><div><label>First field<input name="first" value="kept" required></label><span>Selectable text</span></div></section>
     <div data-split-handle hidden aria-label="Resize primary pane"></div>
     <section data-split-pane="2" id="pane-two-${id}" aria-label="Secondary pane"><div><label>Second field<input name="second" value="also kept"></label><template><p>Inert</p></template></div></section>
@@ -44,8 +44,8 @@ function fixture(options: SplitOptions = {}, geometry = { width: 400, height: 24
   root.getBoundingClientRect = () => new DOMRect(100, 100, dimensions.width * dimensions.x, dimensions.height * dimensions.y)
   handle.getBoundingClientRect = () => {
     const horizontal = root.getAttribute("data-split-direction") !== "vertical", rtl = getComputedStyle(root).direction === "rtl"
-    const size = Number.parseFloat(root.style.getPropertyValue("--mui-split-first")) || 0
-    const bar = Number.parseFloat(root.style.getPropertyValue("--mui-split-handle-size")) || 12
+    const size = Number.parseFloat(root.style.getPropertyValue("--m-split-first")) || 0
+    const bar = Number.parseFloat(root.style.getPropertyValue("--m-split-handle-size")) || 12
     if (horizontal) return new DOMRect(100 + (rtl ? dimensions.width - 12 - size - 4 - bar : 12 + size + 4) * dimensions.x, 100 + 12 * dimensions.y, bar * dimensions.x, (dimensions.height - 24) * dimensions.y)
     return new DOMRect(100 + 12 * dimensions.x, 100 + (12 + size + 4) * dimensions.y, (dimensions.width - 24) * dimensions.x, bar * dimensions.y)
   }
@@ -92,9 +92,9 @@ describe("Split default styles", () => {
   })
 
   it("retains the accessible 12px track and public handle overrides", () => {
-    expect(css).toContain("var(--mui-split-handle-size, 12px)")
-    expect(css).toContain("var(--mui-split-handle-border, transparent)")
-    expect(css).toContain("var(--mui-split-handle-active")
+    expect(css).toContain("var(--m-split-handle-size, 12px)")
+    expect(css).toContain("var(--m-split-handle-border, transparent)")
+    expect(css).toContain("var(--m-split-handle-active")
   })
 
   it("supports forced colors, reduced motion and print", () => {
@@ -120,7 +120,7 @@ describe("explicit Split sizes and native geometry", () => {
   })
   it("uses separate current/default sizes and a silent explicit reset", () => {
     const { helper, root } = fixture({ defaultSize: .25, size: "100px" }), changed = vi.fn()
-    root.addEventListener("mui:split-change", changed)
+    root.addEventListener("m:split-change", changed)
     helper.setDefaultSize("80px"); expect(helper.size).toBe("100px"); helper.reset(); expect(helper.size).toBe("80px")
     expect(helper.state.defaultSize).toBe("80px"); expect(changed).not.toHaveBeenCalled()
   })
@@ -212,7 +212,7 @@ describe("keyboard parity, bounds and collapse safety", () => {
   })
   it("disabling retains geometry and named form fields without keyboard changes", () => {
     const { helper, handle, key, form } = fixture({ size: "100px" }), change = vi.fn()
-    helper.element.addEventListener("mui:split-change", change); helper.set({ disabled: true }); key("End")
+    helper.element.addEventListener("m:split-change", change); helper.set({ disabled: true }); key("End")
     expect(helper.state.pixels).toBe(100); expect(handle.hidden).toBe(false); expect(handle.getAttribute("aria-disabled")).toBe("true")
     expect(new FormData(form).get("first")).toBe("kept"); expect(change).not.toHaveBeenCalled()
   })
@@ -239,8 +239,8 @@ describe("scoped pointer capture and final samples", () => {
   })
   it("uses the final pointerup position even when the last move frame has not run", () => {
     const { helper, pointer, root } = fixture({ size: "100px" }), events: string[] = []
-    root.addEventListener("mui:split-change", () => events.push(`change:${helper.size}`))
-    root.addEventListener("mui:split-drag-end", () => events.push(`end:${helper.size}`))
+    root.addEventListener("m:split-change", () => events.push(`change:${helper.size}`))
+    root.addEventListener("m:split-drag-end", () => events.push(`end:${helper.size}`))
     const down = pointer("pointerdown")
     pointer("pointermove", 0, { clientX: down.clientX + 20, clientY: down.clientY })
     pointer("pointerup", 0, { clientX: down.clientX + 60, clientY: down.clientY })
@@ -264,7 +264,7 @@ describe("scoped pointer capture and final samples", () => {
   })
   it.each(["pointercancel", "lostpointercapture", "Escape"] as const)("rolls back on %s with capture and end cleanup", async reason => {
     const { helper, handle, pointer, key, root } = fixture({ size: "100px" }), ended = vi.fn()
-    root.addEventListener("mui:split-drag-end", ended)
+    root.addEventListener("m:split-drag-end", ended)
     const down = pointer("pointerdown"); pointer("pointermove", 0, { clientX: down.clientX + 40, clientY: down.clientY }); await wait()
     expect(helper.size).toBe("140px")
     if (reason === "Escape") key("Escape")
@@ -295,15 +295,15 @@ describe("lifecycle, reentrancy and native ownership", () => {
   })
   it("allows a start listener to disable safely without stale capture or movement", () => {
     const { helper, root, handle, pointer } = fixture(), ended = vi.fn()
-    root.addEventListener("mui:split-drag-start", () => helper.set({ disabled: true }))
-    root.addEventListener("mui:split-drag-end", ended)
+    root.addEventListener("m:split-drag-start", () => helper.set({ disabled: true }))
+    root.addEventListener("m:split-drag-end", ended)
     pointer("pointerdown"); pointer("pointerup", 100)
     expect(helper.state.dragging).toBe(false); expect(handle.hasPointerCapture(1)).toBe(false); expect(helper.size).toBe(.5); expect(ended).toHaveBeenCalledOnce()
   })
   it("does not apply stale pointerup/end after a change listener replaces the size", () => {
     const { helper, root, pointer } = fixture({ size: "100px" }), ended = vi.fn()
-    root.addEventListener("mui:split-change", () => helper.set({ size: "80px" }), { once: true })
-    root.addEventListener("mui:split-drag-end", ended)
+    root.addEventListener("m:split-change", () => helper.set({ size: "80px" }), { once: true })
+    root.addEventListener("m:split-drag-end", ended)
     const down = pointer("pointerdown"); pointer("pointerup", 0, { clientX: down.clientX + 50, clientY: down.clientY })
     expect(helper.size).toBe("80px"); expect(ended).toHaveBeenCalledOnce()
   })
@@ -314,7 +314,7 @@ describe("lifecycle, reentrancy and native ownership", () => {
   })
   it("cleans up a failed native capture without announcing a successful drag", () => {
     const { helper, handle, pointer, root } = fixture(), start = vi.fn(), errors = vi.fn()
-    root.addEventListener("mui:split-drag-start", start); root.addEventListener("mui:split-error", errors)
+    root.addEventListener("m:split-drag-start", start); root.addEventListener("m:split-error", errors)
     Object.defineProperty(handle, "setPointerCapture", { configurable: true, value: () => { throw new DOMException("Capture failed", "NotFoundError") } })
     pointer("pointerdown")
     expect(helper.connected).toBe(false); expect(handle.hidden).toBe(true)
@@ -322,9 +322,9 @@ describe("lifecycle, reentrancy and native ownership", () => {
   })
   it("lets an explicit update during cancellation win without a stale second end event", async () => {
     const { helper, pointer, root } = fixture({ size: "100px" }), ended = vi.fn()
-    root.addEventListener("mui:split-drag-end", ended)
+    root.addEventListener("m:split-drag-end", ended)
     const down = pointer("pointerdown"); pointer("pointermove", 0, { clientX: down.clientX + 30, clientY: down.clientY }); await wait()
-    root.addEventListener("mui:split-change", event => { if ((event as CustomEvent).detail.source === "cancel") helper.set({ size: "80px" }) })
+    root.addEventListener("m:split-change", event => { if ((event as CustomEvent).detail.source === "cancel") helper.set({ size: "80px" }) })
     pointer("pointercancel")
     expect(helper.size).toBe("80px"); expect(ended).toHaveBeenCalledOnce()
   })
@@ -356,8 +356,8 @@ describe("lifecycle, reentrancy and native ownership", () => {
   it("restores only owned attributes/styles and retains original data on disposal", async () => {
     const { helper, root, pane1, handle, pointer } = fixture({ size: "100px" }), nodes = [...pane1.childNodes]
     const down = pointer("pointerdown"); pointer("pointermove", 0, { clientX: down.clientX + 50, clientY: down.clientY })
-    root.style.setProperty("--mui-split-first", "77px"); helper.disconnect(); await wait()
-    expect(root.style.getPropertyValue("--mui-split-first")).toBe("77px"); expect(handle.hidden).toBe(true)
+    root.style.setProperty("--m-split-first", "77px"); helper.disconnect(); await wait()
+    expect(root.style.getPropertyValue("--m-split-first")).toBe("77px"); expect(handle.hidden).toBe(true)
     expect(pane1.hidden).toBe(false); expect(pane1.hasAttribute("inert")).toBe(false); expect([...pane1.childNodes]).toEqual(nodes)
     expect(handle.hasAttribute("role")).toBe(false); expect(helper.state.status).toBe("disconnected")
   })

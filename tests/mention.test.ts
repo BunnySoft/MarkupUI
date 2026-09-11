@@ -10,7 +10,7 @@ import { createForm } from "../src/components/form/index.js"
 const helpers: { disconnect(): void }[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 20))
 function fixture(options: Partial<MentionOptions> = {}, type = "textarea") {
-  document.body.innerHTML = `<form id="form"><div class="mui-input" data-input id="root"><label for="editor">Message</label>
+  document.body.innerHTML = `<form id="form"><div class="m-input" data-input id="root"><label for="editor">Message</label>
     ${type === "textarea" ? '<textarea id="editor" data-input-control name="text.body" maxlength="100" aria-describedby="help count">Hello </textarea>' : '<input id="editor" data-input-control type="text" name="text.body" value="Hello " maxlength="100" aria-describedby="help count">'}
     <span id="count" data-input-count></span></div><p id="help">Help</p><p id="feedback" hidden></p>
     <section id="panel" aria-label="Mention choices" hidden><ul data-mention-options></ul><p data-mention-status>Original status</p></section>
@@ -34,16 +34,16 @@ describe("default styles", () => {
   const css = readFileSync(resolve("src", "components", "mention", "mention.css"), "utf8")
 
   it("uses the reference control scale and option density within budget", () => {
-    expect(css).toContain("--_mui-mention-height: 28px")
-    expect(css).toContain("--_mui-mention-height: 34px")
-    expect(css).toContain("--_mui-mention-height: 40px")
-    expect(css).toContain("block-size: var(--_mui-mention-height)")
+    expect(css).toContain("--_m-mention-height: 28px")
+    expect(css).toContain("--_m-mention-height: 34px")
+    expect(css).toContain("--_m-mention-height: 40px")
+    expect(css).toContain("block-size: var(--_m-mention-height)")
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
   })
 
   it("leaves composed Input controls to their owning stylesheet", () => {
-    expect(css).toContain(".mui-mention__editor:not([data-input-control])")
-    expect(css).not.toMatch(/\.mui-mention__editor\s*\{/)
+    expect(css).toContain(".m-mention__editor:not([data-input-control])")
+    expect(css).not.toMatch(/\.m-mention__editor\s*\{/)
   })
 
   it("uses explicit light-dark popup states and forced-color roles", () => {
@@ -54,7 +54,7 @@ describe("default styles", () => {
 
   it("removes transient suggestions from print", () => {
     expect(css).toContain("@media print")
-    expect(css).toMatch(/@media print \{\s*\.mui-mention__panel \{\s*display: none/)
+    expect(css).toMatch(/@media print \{\s*\.m-mention__panel \{\s*display: none/)
   })
 })
 
@@ -237,7 +237,7 @@ describe("async context generations, composition and resets", () => {
   })
   it("latest request wins and late unexpected rejection remains explicit", async () => {
     const first = deferred(), second = deferred(), load = vi.fn().mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise)
-    const { control, helper, list } = fixture({ options: undefined, load }), errors = vi.fn(); control.addEventListener("mui:mention-error", errors)
+    const { control, helper, list } = fixture({ options: undefined, load }), errors = vi.fn(); control.addEventListener("m:mention-error", errors)
     caret(control, "@al"); const old = helper.query(); await Promise.resolve()
     caret(control, "@bo"); const fresh = helper.query(); await Promise.resolve()
     expect((await old).status).toBe("aborted"); second.resolve([{ value: "bob" }]); expect((await fresh).status).toBe("updated")
@@ -246,7 +246,7 @@ describe("async context generations, composition and resets", () => {
   })
   it("expected abort is not success/error, while uncancelled rejection rejects explicitly", async () => {
     const { control, helper } = fixture({ options: undefined, load: ({ signal }) => new Promise((_, reject) => signal.addEventListener("abort", () => reject(new DOMException("Cancelled", "AbortError")))) })
-    const errors = vi.fn(); control.addEventListener("mui:mention-error", errors)
+    const errors = vi.fn(); control.addEventListener("m:mention-error", errors)
     caret(control, "@al"); const result = helper.query(); await Promise.resolve(); helper.close()
     expect((await result).status).toBe("aborted"); await flush(); expect(errors).not.toHaveBeenCalled()
   })

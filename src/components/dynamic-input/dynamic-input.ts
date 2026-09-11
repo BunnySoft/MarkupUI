@@ -213,7 +213,7 @@ export function createDynamicInput(root: HTMLElement, options: DynamicInputOptio
   }
   function report(reason: unknown, operation: string, committed: boolean) {
     error = reason
-    root.dispatchEvent(new view!.CustomEvent("mui:dynamic-input-error", { detail: { error: reason, operation, committed } }))
+    root.dispatchEvent(new view!.CustomEvent("m:dynamic-input-error", { detail: { error: reason, operation, committed } }))
   }
   function synchronous(result: unknown, operation: string, committed = false) {
     if (result === undefined) return
@@ -276,7 +276,7 @@ export function createDynamicInput(root: HTMLElement, options: DynamicInputOptio
     pause(); busy = true
     try { syncActions(skipFocus) } finally { busy = false; observe() }
     error = null
-    root.dispatchEvent(new view!.CustomEvent("mui:dynamic-input-change", { detail: Object.freeze({
+    root.dispatchEvent(new view!.CustomEvent("m:dynamic-input-change", { detail: Object.freeze({
       type, row: row.public, index, previousIndex, rows: Object.freeze(records.map(record => record.public)),
     }) }))
     return version

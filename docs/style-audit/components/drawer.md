@@ -92,7 +92,7 @@ extents; body keeps its **3rem** minimum. At normal heights the body scrolls ind
 At viewports no taller than **20rem**, the whole panel scrolls so large fixed regions
 cannot hide controls. These are retained native policies, not complete Scrollbar props.
 
-The strong `.mui-native-dialog.mui-drawer` root and backdrop selectors survive later
+The strong `.m-native-dialog.m-drawer` root and backdrop selectors survive later
 shared base copies from other overlay stylesheets. Root styling never uses generic
 legacy text/surface roles. Focus uses the existing semantic primary role with correct
 standalone light/dark fallbacks.

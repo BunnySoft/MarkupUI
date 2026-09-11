@@ -2,7 +2,7 @@
 
 **🟢 Verified for the retained local state/native control scope.**
 Named native navigation, keyed button templates, native select/number inputs and external CSS
-replace neither application data nor routes. The legacy `mui-pagination` and its page-count
+replace neither application data nor routes. The legacy `m-pagination` and its page-count
 `count` attribute are unchanged; this optional helper does not register that tag.
 
 ## Loading and authored structure
@@ -16,7 +16,7 @@ replace neither application data nor routes. The legacy `mui-pagination` and its
 | [Native demo](../../demo/components/pagination.html) | Separate HTML/CSS/JS, local state and native fragment fallback only |
 
 ```html
-<nav class="mui-pagination" data-pagination aria-label="Result pages" id="pager">
+<nav class="m-pagination" data-pagination aria-label="Result pages" id="pager">
   <div data-pagination-fallback>
     <a href="?page=1" aria-current="page">Page 1</a>
     <a href="?page=2">Page 2</a>
@@ -26,8 +26,8 @@ replace neither application data nor routes. The legacy `mui-pagination` and its
     <div data-pagination-pages></div>
     <button type="button" data-pagination-next>Next</button>
   </div>
-  <template data-pagination-page><button type="button"><span class="mui-pagination__visually-hidden">Page </span><span data-pagination-number></span></button></template>
-  <template data-pagination-gap><button type="button"><span aria-hidden="true">…</span><span class="mui-pagination__visually-hidden">Jump to page <span data-pagination-number></span></span></button></template>
+  <template data-pagination-page><button type="button"><span class="m-pagination__visually-hidden">Page </span><span data-pagination-number></span></button></template>
+  <template data-pagination-gap><button type="button"><span aria-hidden="true">…</span><span class="m-pagination__visually-hidden">Jump to page <span data-pagination-number></span></span></button></template>
 </nav>
 ```
 
@@ -111,9 +111,9 @@ their number text safely. Only the explicit page region is generated/owned.
 Two nonbubbling DOM events use `{ state, previous, source }` snapshots, where source is
 page/previous/next/gap/size/jump:
 
-- **`mui:pagination-request`** is cancelable, before an actual changed user request is accepted.
+- **`m:pagination-request`** is cancelable, before an actual changed user request is accepted.
   `preventDefault()` leaves accepted state unchanged.
-- **`mui:pagination-change`** reports the combined accepted page/page-size result once. Size
+- **`m:pagination-change`** reports the combined accepted page/page-size result once. Size
   clamp is one event, not a misleading independent user page click.
 
 Initialization, setters, total shrink, refresh and reconnect emit neither event. A no-op
@@ -125,7 +125,7 @@ Native page/previous/next/gap/go click work runs in a later task so final synchr
 defaultPrevented is respected. Buttons keep native Enter/Space activation exactly once.
 Modified clicks are not paging requests. Native size change captures its draft and restores
 accepted selection after a canceled request. Set/refresh/disconnect invalidate pending work.
-Automatic invalid-anatomy failures disconnect and emit `mui:pagination-error` with `{ error }`;
+Automatic invalid-anatomy failures disconnect and emit `m:pagination-error` with `{ error }`;
 explicit invalid API calls throw.
 
 Quick jump commits only through Go or plain Enter, not blur or partial input. Native number
@@ -188,7 +188,7 @@ borders use primary color at .52 alpha, matching the pinned theme. Passive enabl
 use primary hover/pressed text colors; current, boundary-navigation and disabled styling
 are not overwritten by that passive hover rule. Disabled text uses `#c2c2c2` / white .38,
 with appropriate active/navigation/control surfaces instead of fading every control's opacity.
-Use the existing themes stylesheet for semantic primary colors and `data-mui-theme` scopes
+Use the existing themes stylesheet for semantic primary colors and `data-m-theme` scopes
 for local neutral defaults.
 
 Native size selects and quick-jump number inputs use the same size presets, 3px corners and
@@ -197,12 +197,12 @@ number spinners, option popup and input behavior remain browser-owned; no peer-c
 renderer is added. Simple mode retains the authored labels, Go button, count and control
 order—it does not recreate the source's compact text-input-only arrangement.
 
-Public tokens include `--mui-pagination-size`, `--mui-pagination-font-size`,
-`--mui-pagination-gap`, `--mui-pagination-radius`, `--mui-pagination-color`,
-`--mui-pagination-border`, `--mui-pagination-background`, `--mui-pagination-current`,
-`--mui-pagination-active-border`, `--mui-pagination-hover`, `--mui-pagination-focus`,
-`--mui-pagination-disabled-color`, `--mui-pagination-disabled-background`,
-`--mui-pagination-control-background` and `--mui-pagination-jump-width`.
+Public tokens include `--m-pagination-size`, `--m-pagination-font-size`,
+`--m-pagination-gap`, `--m-pagination-radius`, `--m-pagination-color`,
+`--m-pagination-border`, `--m-pagination-background`, `--m-pagination-current`,
+`--m-pagination-active-border`, `--m-pagination-hover`, `--m-pagination-focus`,
+`--m-pagination-disabled-color`, `--m-pagination-disabled-background`,
+`--m-pagination-control-background` and `--m-pagination-jump-width`.
 Private size presets no longer overwrite authored public size/font tokens.
 
 Arrow and gap artwork remains authored native content. The stylesheet does not generate

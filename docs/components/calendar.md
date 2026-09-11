@@ -30,7 +30,7 @@ Horizontal overflow remains the narrow-layout fallback. Forced colors and print
 use explicit native-safe rules.
 
 ```html
-<section class="mui-calendar" data-calendar data-calendar-month="2024-02"
+<section class="m-calendar" data-calendar data-calendar-month="2024-02"
          tabindex="-1" aria-labelledby="schedule-heading">
   <h2 id="schedule-heading">Team schedule</h2>
   <div data-calendar-controls hidden>
@@ -227,13 +227,13 @@ receive every supported visible date, including adjacent/unavailable dates. Part
 are frozen `{year, month, date}` with 1-based month/day.
 
 Thrown/invalid/async callback results keep the previous complete view. Synchronous
-API calls throw; native action errors also populate error and emit mui:calendar-error.
+API calls throw; native action errors also populate error and emit m:calendar-error.
 Promises are not awaited as a veto/rendering pipeline. Callback-driven mutations during
 preparation/commit reject; disconnect is allowed and prevents stale writes.
 Mutating captured policy data requires refresh; there is no automatic data watcher.
 
-`mui:calendar-panel-change` supplies panel/previousPanel/year/month/reason.
-`mui:calendar-change` supplies value/previousValue/year/month/date/reason, with null
+`m:calendar-panel-change` supplies panel/previousPanel/year/month/reason.
+`m:calendar-change` supplies value/previousValue/year/month/date/reason, with null
 parts on clear. Panel notification precedes selection when both change. Reentrant
 event handlers may set/disconnect; a newer transaction suppresses the old following
 value notification. set/reset/refresh are silent; selection or panel no-ops do not

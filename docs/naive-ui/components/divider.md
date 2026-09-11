@@ -8,7 +8,7 @@ The legacy tag remains unchanged; the new native composition has no runtime or a
 [A1: retained contract and acceptance](../../components/divider.md) and
 [S1: native Divider CSS](../../../src/components/divider/divider.css) implement the new slice.
 [B1: registry](../../../src/components/elements.ts) still assigns legacy separator role and initial orientation;
-[B2: styles.ts](../../../src/components/styles.ts) still styles `mui-divider`, unchanged.
+[B2: styles.ts](../../../src/components/styles.ts) still styles `m-divider`, unchanged.
 
 - **HTML:** native `hr` for thematic breaks; decorative separators remain hidden from accessibility APIs.
 - **JS:** none for basic separation.

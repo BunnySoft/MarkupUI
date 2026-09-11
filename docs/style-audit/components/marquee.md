@@ -56,7 +56,7 @@ are actual private-browser probes, not JSDOM geometry or source-token estimates.
 | Font/line/weight | Inherited sans stack, 14px, 22.4px line-height, weight 400 | Same | **Matched**, no fixed Marquee font reset introduced |
 | Content spacing/panel | Zero padding, margin and border; transparent background; no component gap | Same | **Matched**, no added spacer or repeated-content gap |
 | Edge fade | None: mask-image none, no before/after content or gradient | None | **Matched**, no fade invented |
-| Public focus token | No Marquee paint token | `--mui-marquee-focus` controls the existing native focus outline | **Retained local contract**: consumed with fallback and never assigned by component CSS |
+| Public focus token | No Marquee paint token | `--m-marquee-focus` controls the existing native focus outline | **Retained local contract**: consumed with fallback and never assigned by component CSS |
 | Active viewport | 320x22.390625px, overflow hidden | Native active viewport has the same dimensions | **Matched** during explicitly requested supported motion |
 | Initial/stopped viewport | Source automatically clips/moves mirrored tracks | Native inactive; long content has a 15px OS scrollbar, giving 37.390625px viewport height | **Retained native difference**: readable native scrolling, not a permanently clipped source default |
 | Track count/scroll extent | Two items even with auto-fill false; long sample scrollWidth 2740px | One original item, scrollWidth 1370px | **Retained native difference**: no duplicate content or mirror/auto-fill renderer |

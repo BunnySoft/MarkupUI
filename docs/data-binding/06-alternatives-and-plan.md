@@ -10,15 +10,15 @@ undecided. The refined design resolves those open questions.
 
 | Concern | Earlier proposal | Refined design | Comment |
 | --- | --- | --- | --- |
-| State | Existing explicit `MuiStore`. | Same. | Keep explicit updates; no Proxy required. |
+| State | Existing explicit `MStore`. | Same. | Keep explicit updates; no Proxy required. |
 | Collection declaration | `data-bind="users"` on a future list. | `data-bind-items="people"` or structural `data-each="people"`. | Separates property binding from repetition. |
-| Item property | `mui-bind` plus `mui-bind-property`. | `data-bind-src="item.src"`. | Direction and destination are visible together. |
-| Two-way | Existing `mui-bind`. | `data-model-value` / `data-model-checked`. | Removes ambiguity. |
-| Text | `mui-text`. | `data-bind-text`. | Consistent one-way family. |
+| Item property | `m-bind` plus `m-bind-property`. | `data-bind-src="item.src"`. | Direction and destination are visible together. |
+| Two-way | Existing `m-bind`. | `data-model-value` / `data-model-checked`. | Removes ambiguity. |
+| Text | `m-text`. | `data-bind-text`. | Consistent one-way family. |
 | Scope | `item`, `index` suggested. | `item`, `index`, `key`, `parent`, plus component contexts. | Makes nesting/rest templates explicit. |
 | Identity | `item-key`, keyed native DOM. | Same, with validation/order/focus/cleanup rules. | Core runtime requirement. |
 | Template reuse | Inline, ID or object. | Same; reject multiple simultaneous sources initially. | Avoid precedence complexity. |
-| Component architecture | Future generic `mui-list` centered example. | Generic structural templates plus thin component adapters. | Do not require List for all binding. |
+| Component architecture | Future generic `m-list` centered example. | Generic structural templates plus thin component adapters. | Do not require List for all binding. |
 | Events | Open question. | Native input/change plus declared component model metadata. | Required before two-way claims. |
 | Property/attribute | Open question. | Separate property and attribute channels. | Supports objects and ARIA safely. |
 
@@ -47,7 +47,7 @@ the earlier keyed native-template engine.
 | --- | --- |
 | `data-bind-src="profile.src"` | Selected canonical one-way property form. |
 | `data-model-value="profile.name"` | Selected canonical two-way property form. |
-| `mui-bind-src` | Avoid for new grammar; `data-*` is the standard extension channel. |
+| `m-bind-src` | Avoid for new grammar; `data-*` is the standard extension channel. |
 | `:src="profile.src"` | Avoid as canonical standalone syntax due to tooling/XML ambiguity. |
 | `src="{Binding profile.src}"` | Reject; browser/custom element may act on the literal value before binding. |
 | `src="{{profile.src}}"` | Reject; same premature literal value and expression-language pressure. |
@@ -125,7 +125,7 @@ the earlier keyed native-template engine.
 5. Legacy binding alias lifetime/deprecation.
 6. Binder package/entry name and gzip ceiling.
 7. Exact template-ID lookup scope.
-8. Whether passive `mui-card-*` child tags become the preferred Card documentation form.
+8. Whether passive `m-card-*` child tags become the preferred Card documentation form.
 
 ## References
 

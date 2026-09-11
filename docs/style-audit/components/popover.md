@@ -60,7 +60,7 @@ unchanged. Four source-style regressions were added to the existing Popover test
 ## Isolation, author overrides and payload constraints
 
 The shared surface uses a low-specificity `:where(:not(...))` guard. It excludes
-`.mui-tooltip`. Popselect panels remain in their authored boundary, including in the
+`.m-tooltip`. Popselect panels remain in their authored boundary, including in the
 top layer, and now share the verified surface too. Popconfirm was
 also excluded in the initial audit below; its later comparison verified that it uses
 the same Popover theme, so it now shares the corrected surface instead of duplicating it.
@@ -74,8 +74,8 @@ and color remained unchanged in the protected Tooltip skin.
 
 The generic shared palette is not a matching Popover palette. No shared role or preset was
 added. Private defaults reset at explicit light boundaries and apply the dark palette only
-on screen. Public `--mui-popover-padding`, `--mui-popover-radius`, `--mui-popover-color`,
-`--mui-popover-background`, border color and max-width remain author-owned. Inline or
+on screen. Public `--m-popover-padding`, `--m-popover-radius`, `--m-popover-color`,
+`--m-popover-background`, border color and max-width remain author-owned. Inline or
 ordinary author CSS can still customize shadows and typography. No public override
 variable is assigned a default on the component.
 

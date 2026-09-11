@@ -4,7 +4,7 @@
 native Constraint Validation, small abortable custom checks and external item/grid CSS.
 No custom element, provider, model store, schema language, network request or implicit submit
 handler. Legacy `src/components/forms.ts`, aggregate registration and its synchronous API
-remain unchanged; this module does not silently upgrade `mui-form`.
+remain unchanged; this module does not silently upgrade `m-form`.
 
 ## Loading and native anatomy
 
@@ -18,15 +18,15 @@ remain unchanged; this module does not silently upgrade `mui-form`.
 | [Reference dispositions](../naive-ui/components/form.md) | Original Form, item, inherited, slot, method and inline identities plus explicit source supplements |
 
 ```html
-<form class="mui-form" id="account" action="/account" method="post">
-  <div class="mui-form-item" id="email-item">
-    <label class="mui-form-item__label" for="email">Email (required)</label>
-    <div class="mui-form-item__content">
+<form class="m-form" id="account" action="/account" method="post">
+  <div class="m-form-item" id="email-item">
+    <label class="m-form-item__label" for="email">Email (required)</label>
+    <div class="m-form-item__content">
       <input id="email" name="contact[email]" type="email" required
              aria-describedby="email-help">
     </div>
     <p id="email-help">Use your contact address.</p>
-    <p class="mui-form-item__feedback" id="email-error" hidden></p>
+    <p class="m-form-item__feedback" id="email-error" hidden></p>
   </div>
   <button name="intent" value="save">Save</button>
   <button type="reset">Reset</button>
@@ -46,7 +46,7 @@ const coordinator = MarkupUIForm.createForm(document.querySelector("#account"), 
 
 Keep native `label/for`, meaningful fieldset legends, required attributes, input types,
 names, values and author-selected headings. A required mark is optional decorative
-`<span class="mui-form-item__required" aria-hidden="true">*</span>` beside real label text;
+`<span class="m-form-item__required" aria-hidden="true">*</span>` beside real label text;
 it never installs a constraint. Native `fieldset disabled`, including the first-legend
 exception, is the form-wide disabling primitive. A `disabled` attribute on `form` does
 nothing. Barred/disabled/readonly controls remain browser-owned.
@@ -94,7 +94,7 @@ Calling validation/reporting after disconnection rejects/throws. Unknown options
 mappings and unknown keys produce explicit errors; no successful fallback is fabricated.
 `validateOnBlur` defaults to false; when true, leaving an item validates that item, but
 moving between its mapped controls does not. Input/change and captured nonbubbling
-`mui:rate-clear` invalidate **all** items, including cross-field errors, without validating
+`m:rate-clear` invalidate **all** items, including cross-field errors, without validating
 or announcing on every keystroke. Silent Input/Select/Radio/Rate setters require
 `coordinator.refresh()` too; Form does not patch their setters or synthesize events.
 
@@ -171,7 +171,7 @@ hold the public validation promise pending forever **after cancellation**. There
 timeout for an otherwise pending callback; applications can impose one inside their callback.
 Expected aborted `DOMException("…", "AbortError")` is not success. Unexpected throws,
 rejections (including uncancelled AbortError) and malformed results reject the public
-validation promise and dispatch nonbubbling `mui:form-error` with `{ key, error }`. Unexpected
+validation promise and dispatch nonbubbling `m:form-error` with `{ key, error }`. Unexpected
 late rejections after abort/disposal still emit that error event; they cannot update feedback.
 Listen on the original form and handle the public rejection. Blur-triggered validation has
 no caller promise, so its already-reported callback failure is consumed by the event path.
@@ -255,19 +255,19 @@ reset task. Form never calls `reset()` itself.
 
 ## FormItem and FormItemGi presentation
 
-FormItem is authored `.mui-form-item` markup plus an optional item mapping, not a provider
+FormItem is authored `.m-form-item` markup plus an optional item mapping, not a provider
 consumer or mandatory controller. Use `validateField(key)` for item-level checks and
 `restoreValidation()` for shared invalidation. Item-specific restore, measured-label
 invalidation and deprecated positional method overloads are omitted.
 
-`.mui-form` defaults to stacked grid layout with no invented gap between items.
+`.m-form` defaults to stacked grid layout with no invented gap between items.
 `data-inline` uses wrapping flex with the pinned 18px item separation.
 `data-size="small|medium|large"` selects Form-owned label, blank and feedback metrics;
 missing or unknown values use medium. It does not resize native fields or composed controls.
 `data-label-placement="left"` enables native two-column label/content layout at 40rem and
 above for non-fieldset items; below that it stacks. The default width is 10rem. Top labels
 align to logical start, while left labels align to logical end like the pinned source.
-`--mui-form-label-width`, `--mui-form-label-align` and `--mui-form-gap` remain inherited,
+`--m-form-label-width`, `--m-form-label-align` and `--m-form-gap` remain inherited,
 author-owned overrides; the package never assigns them. External CSS may choose native
 lengths/max-content, alignment, mark placement or visually hidden labels with a preserved
 accessible name. There is no global width measurement, automatic source
@@ -278,20 +278,20 @@ Pinned label heights are 24/26/28px for small/medium/large, with top-label type
 24/24/26px for a mapped hidden surface on non-fieldset items, then uses the same total
 height when populated. Native fieldset feedback expands naturally rather than adding
 package padding to the fieldset. Label, neutral feedback, required/error and warning paint
-uses the pinned light/dark roles. Public `--mui-form-label-color`,
-`--mui-form-feedback-color`, `--mui-form-feedback-height`, `--mui-form-required-color`,
-`--mui-form-error-color` and `--mui-form-warning-color` remain authoritative.
+uses the pinned light/dark roles. Public `--m-form-label-color`,
+`--m-form-feedback-color`, `--m-form-feedback-height`, `--m-form-required-color`,
+`--m-form-error-color` and `--m-form-warning-color` remain authoritative.
 
-`.mui-form-item__content` preserves authored flow. Its blank-height default excludes a
-composed `.mui-input`, so Form cannot enlarge an independently sized Input root; Form also
+`.m-form-item__content` preserves authored flow. Its blank-height default excludes a
+composed `.m-input`, so Form cannot enlarge an independently sized Input root; Form also
 never styles descendant input/select/textarea controls. Hidden content stays hidden,
 forced colors use CanvasText and print selects the light color scheme. There is no
 animation or transition.
 
-FormItemGi is explicit grid composition: `.mui-form-grid` has two minmax tracks and stacks
-below 40rem; `.mui-form-item-gi` accepts native `--mui-form-span` or
+FormItemGi is explicit grid composition: `.m-form-grid` has two minmax tracks and stacks
+below 40rem; `.m-form-item-gi` accepts native `--m-form-span` or
 `data-form-span="full"`. The existing [Grid](grid.md) classes/tokens can instead be composed
-with `.mui-form-item` and their separate CSS. Native span is retained; relative offset
+with `.m-form-item` and their separate CSS. Native span is retained; relative offset
 packing and overflow-aware suffix behavior are omitted. No mandatory Grid renderer,
 hidden-provider inheritance or form-item measurement observer is added. Label/control DOM
 order is never reversed in RTL. CSS has no motion engine, and forced colors retain text.
@@ -383,7 +383,7 @@ are labelled supplements, not newly invented public table rows.
   disabled fieldset eligibility respected the first-legend exception. External custom
   messages changed while disabled survived re-enable/disconnect untouched.
 - Unexpected Promise rejection rejected the caller and emitted exactly one local
-  `mui:form-error`; completion did not steal outside input focus or focus inside an open
+  `m:form-error`; completion did not steal outside input focus or focus inside an open
   native modal dialog. Unit tests cover expected abort, late rejection and teardown order.
 - At **1280px and 375px**, LTR/RTL layouts had no horizontal overflow; grid columns changed
   from two 456px tracks to one 328px track. **200% CSS zoom** had no page overflow. Forced

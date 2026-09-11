@@ -5,7 +5,7 @@ const controllers = {
   horizontal: createMenu(node("horizontal-menu")),
 }
 for (const root of [node("vertical-menu"), node("horizontal-menu")]) {
-  root.addEventListener("mui:menu-select", event => {
+  root.addEventListener("m:menu-select", event => {
     node("event-log").value = `Selected ${event.detail.path.join(" > ")}; native href/action remains authored.`
   })
 }

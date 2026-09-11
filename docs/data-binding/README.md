@@ -2,10 +2,11 @@
 
 **Status: proposed architecture, not implemented.**
 
-This guide defines the proposed standalone MarkupUI data-binding and native-template
-system. Current MarkupUI still ships only the smaller scalar `MuiStore` binder documented
-in the main README. Nothing in these pages makes collection binding, scoped templates,
-`data-bind-*`, `data-model-*`, `data-if` or `data-each` available at runtime.
+This guide defines the proposed platform-neutral MarkupUI binding/template runtime and its
+Web authoring adapter. Current MarkupUI still ships only the smaller scalar `MStore`
+binder documented in the main README. Nothing in these pages makes collection binding,
+scoped templates, `data-bind-*`, `data-model-*`, `data-if` or `data-each` available at
+runtime.
 
 The design remains dependency-free, HTML-first and based on real DOM nodes:
 
@@ -36,7 +37,7 @@ explicit store
 
 | Concern | Decision |
 | --- | --- |
-| State | Explicit `MuiStore`; no automatic Proxy observation. |
+| State | Explicit `MStore`; no automatic Proxy observation. |
 | One-way property | `data-bind-<property>="path"` |
 | One-way attribute | `data-bind-attr-<attribute>="path"` |
 | One-way text | `data-bind-text="path"` |
@@ -48,7 +49,8 @@ explicit store
 | Data context | Parent-linked internal scopes; no JSON in DOM attributes. |
 | DOM updates | Keyed native-node reuse; no virtual DOM. |
 | Component customization | Named native templates that reuse the same binder. |
-| Public content | Prefer light DOM. |
+| Canonical target | Logical component properties/regions, not DOM nodes. |
+| Web public content | Prefer light DOM. |
 | Private invariant internals | Shadow DOM only when it has a concrete benefit. |
 | Expressions | Paths only; no runtime JavaScript expression language. |
 | HTML insertion | Not supported; text uses `textContent`. |
@@ -65,7 +67,8 @@ explicit store
 
 ## First proving consumer
 
-AvatarGroup is the recommended first collection consumer:
+AvatarGroup remains the recommended first collection consumer after the first
+[platform-architecture batch](../platform-architecture/03-first-batch.md):
 
 - bind an actual array to `items`;
 - align `size` and `max`;
@@ -77,3 +80,6 @@ AvatarGroup is the recommended first collection consumer:
 The binder must remain optional so components and applications that do not use data
 binding do not pay its runtime or payload cost.
 
+Keyed templates may improve collection updates by preserving existing nodes, but the
+binding runtime adds startup and memory cost. Direct `m-*` Web usage must not load or
+instantiate the binder unless binding/template features are used.

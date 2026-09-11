@@ -1,5 +1,11 @@
 # MarkupUI component migration architecture
 
+> **Superseded target direction — 2026-09-11:** the retained native architecture below is
+> now the accepted Web-renderer baseline. The canonical next architecture is the
+> [platform-neutral model and renderer design](../platform-architecture/README.md), using
+> `m-*` as the primary Web prefix while preserving `m-*` compatibility. Historical
+> acceptance evidence below remains valid for the Web renderer.
+
 **Status: retained native architecture delivered; illustrative layouts remain proposals.**
 The [foundation acceptance record](foundations.md) identifies actual source files, exports
 and retained legacy compatibility boundaries. This architecture uses Naive UI as a feature and
@@ -27,7 +33,7 @@ authoring sources are now separated as recorded below.
 | Behavior | Small custom-element controllers and explicit APIs. No expression evaluator, reactive rendering framework, or mandatory application store. |
 | Presentation | External CSS, CSS custom properties, and state attributes. No handwritten CSS strings embedded in component JavaScript. |
 | Loading | A small default distribution and explicitly chosen optional components. Browsing the catalog must not imply importing the whole catalog. |
-| Compatibility | Preserve existing `mui-*` names and supported behaviors. Any incompatible API or distribution change requires an explicit migration path and appropriate release version. |
+| Compatibility | Preserve existing `m-*` names and supported behaviors. Any incompatible API or distribution change requires an explicit migration path and appropriate release version. |
 | Safety | Untrusted text stays text. No executable HTML attributes, arbitrary string evaluation, or unsanitized rich-content insertion. |
 | Reference use | Summarize upstream behaviors independently and cite their provenance. No requirement to reproduce every Naive UI prop or framework-specific abstraction. |
 
@@ -115,7 +121,7 @@ small adapter and assess their Content Security Policy implications. A strict-CS
 cannot assume inline theme tokens or style injection are allowed.
 
 Named light/dark themes should work with a root selector and external CSS. Existing
-`mui.theme.register` remains an optional programmatic convenience, not the required styling
+`m.theme.register` remains an optional programmatic convenience, not the required styling
 path. Use inherited `dir` and CSS logical properties; do not promise complete RTL coverage
 without component-specific interaction checks.
 
@@ -190,7 +196,7 @@ separation and CSP-sensitive applications.
 | Framework router prop | Native `href`, links, and events. Application router integration remains application code. |
 | Third-party renderer integration | Omit from the dependency-free component contract, or accept already-authored content. No implicit import of KaTeX, a syntax highlighter, or an icon library. |
 
-Retain current `mui:input` and `mui:change` conventions and existing detail shapes where
+Retain current `m:input` and `m:change` conventions and existing detail shapes where
 supported. Do not introduce a new generic event shape globally without migration planning.
 Specify whether native child events also bubble; adapters must not process both a native
 event and its custom equivalent as two user changes.
@@ -270,7 +276,7 @@ inventory with a disposition so their disappearance cannot be mistaken for migra
 
 Component-level status summarizes accepted scope, not just the highest-completed row.
 Avoid percentage completion until the denominator and exclusions are fixed. In particular,
-an existing `mui-avatar` does not mean every Avatar or AvatarGroup property is implemented.
+an existing `m-avatar` does not mean every Avatar or AvatarGroup property is implemented.
 Update the component page and index in the same implementation change.
 
 ## 9. Acceptance checklist for retained features

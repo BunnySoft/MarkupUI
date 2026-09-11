@@ -12,7 +12,7 @@ performed by this component task.
   `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; Vue **3.5.30**.
   Inspected Popconfirm, PopconfirmPanel, theme variables and body/icon/action CSS.
 - Source Popconfirm passes its **unchanged Popover peer theme** to NPopover. A private
-  candidate removing only `.mui-popconfirm` from the accepted surface exclusion passed
+  candidate removing only `.m-popconfirm` from the accepted surface exclusion passed
   **12 exact light/dark checks** for padding, border width, radius, text, fill and shadow.
   That proposal was reported before any base edit.
 - The **parent** then applied the base selector, guard tests and Popover documentation
@@ -79,11 +79,11 @@ aligned-row height. The canonical documentation shows the optional wrapper expli
 Only `src/components/popconfirm/popconfirm.css` changes component implementation.
 The palette is **not duplicated**: surface geometry/text/background/shadow come from the
 parent-approved base rule. The local file declares no surface fill, shadow or radius.
-Icon/error roles use existing `--mui-color-warning` and `--mui-color-error`, with existing
+Icon/error roles use existing `--m-color-warning` and `--m-color-error`, with existing
 component overrides taking precedence. Full dark semantic values require the shared
 theme stylesheet or theme application, not merely an unthemed local color guess.
 
-The old per-panel `--mui-popover-max-width:26rem` default masked ancestor values.
+The old per-panel `--m-popover-max-width:26rem` default masked ancestor values.
 The local skin now consumes that public token with a 26rem fallback and the existing
 available-width constraint. Print resets the higher-specificity max width.
 

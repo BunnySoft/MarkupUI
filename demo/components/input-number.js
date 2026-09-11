@@ -9,8 +9,8 @@ function render() {
 }
 function perform(action) { try { action(); render() } catch (error) { document.getElementById("step-error").textContent = `${error.name}: ${error.message}` } }
 render()
-for (const type of ["input", "change", "mui:input-number-clear"]) quantity.control.addEventListener(type, () => {
-  counts[type === "mui:input-number-clear" ? "clear" : type]++
+for (const type of ["input", "change", "m:input-number-clear"]) quantity.control.addEventListener(type, () => {
+  counts[type === "m:input-number-clear" ? "clear" : type]++
   document.getElementById("events").textContent = `Quantity events: input ${counts.input}, change ${counts.change}, clear ${counts.clear}`
   render()
 })

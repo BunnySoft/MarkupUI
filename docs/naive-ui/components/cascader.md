@@ -115,7 +115,7 @@ All rows are resolved: **40 adapted native capabilities and 55 intentional omiss
 | `on-focus` · API:L66 | Callback | Native field focus/focusin events. | 🟢 Verified |
 | `on-load` · API:L67 | Callback | load(node,{signal}) returns safe native source rows; identity/generation/native-value guards. | 🟢 Verified |
 | `on-update:show` · API:L68 | Callback | No popup open/close event. | ⏭️ Intentionally omitted |
-| `on-update:value` · API:L69 | Callback | One mui:cascader-change per native selection/clear; detail includes precise value/path/complete/pending/default state. | 🟢 Verified |
+| `on-update:value` · API:L69 | Callback | One m:cascader-change per native selection/clear; detail includes precise value/path/complete/pending/default state. | 🟢 Verified |
 
 ### CascaderOption Properties
 
@@ -203,7 +203,7 @@ All rows are resolved: **40 adapted native capabilities and 55 intentional omiss
 | `CascaderSpinProps` · [public][public] | Type supplement | Opaque SharedSpinProps alias excluded. | ⏭️ Intentionally omitted |
 | `bordered` · [controller][controller] | Prop supplement | No inherited/provider border toggle; native borders remain author CSS. | ⏭️ Intentionally omitted |
 | `leafOnly` · [controller][controller] | Deprecated prop supplement | Explicit selection=leaf; no deprecated alias registration. | 🟢 Verified |
-| `onChange` · [controller][controller] | Deprecated callback supplement | Same single mui:cascader-change adaptation; no duplicate alias emission. | 🟢 Verified |
+| `onChange` · [controller][controller] | Deprecated callback supplement | Same single m:cascader-change adaptation; no duplicate alias emission. | 🟢 Verified |
 | `onUpdateValue` · [controller][controller] | Callback alias supplement | Same native change notification as the colon spelling. | 🟢 Verified |
 | `onUpdateShow` · [controller][controller] | Callback alias supplement | No popup state or notification. | ⏭️ Intentionally omitted |
 | `ValueAtom` · [interface][interface] | Type supplement | Strict native strings; numeric atoms are intentionally excluded. | 🟢 Verified |

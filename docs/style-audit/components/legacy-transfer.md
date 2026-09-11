@@ -36,7 +36,7 @@ Only local Legacy Transfer rules that overrode or supplemented those defaults we
 | Transfer actions | Page-wide button rule forced **44px** minimum | Shared native action default restored: **31.729px** measured |
 | Migration actions | Same 44px rule mixed application and component controls | 44px minimum is now scoped only to `#migration-tools` |
 | Focus | Page-wide 3px outline replaced component focus defaults | 3px remains for local application controls; Transfer keeps its shipped 2px rule |
-| Scheme/print | No explicit local light/dark scheme boundary | Light by default, dark under `data-mui-theme=dark`, light again for print |
+| Scheme/print | No explicit local light/dark scheme boundary | Light by default, dark under `data-m-theme=dark`, light again for print |
 
 At 900px, the source pane changed from **385.719px** to **339.708px** high. The
 heading correction removes 10.406px and resetting the two 14px paragraph margins removes
@@ -53,10 +53,10 @@ listbox remain responsible for the rest of the height.
   role and hides only the local migration tool strip. Native lists and data remain visible.
 - Existing Transfer forced-color rules remain authoritative; no color, opacity or
   appearance replacement was added for native options or controls.
-- A rendered author check set `--mui-transfer-title-size: 19px` and
-  `--mui-transfer-border-color: rgb(1, 2, 3)`. The heading resolved to **19px** and
+- A rendered author check set `--m-transfer-title-size: 19px` and
+  `--m-transfer-border-color: rgb(1, 2, 3)`. The heading resolved to **19px** and
   pane/filter borders to the authored color.
-- The local stylesheet assigns no public `--mui-transfer-*` property. It uses one
+- The local stylesheet assigns no public `--m-transfer-*` property. It uses one
   private Legacy header fallback and consumes existing public tokens where applicable.
 
 No `appearance:none`, fixed native select height, hidden option, synthetic checkbox,

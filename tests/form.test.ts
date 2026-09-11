@@ -10,7 +10,7 @@ import { createRate } from "../src/components/rate/index.js"
 const helpers: { disconnect(): void }[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 15))
 function fixture(validator?: FormValidator, blur = false) {
-  document.body.innerHTML = `<form id="test"><div class="mui-form-item" id="item">
+  document.body.innerHTML = `<form id="test"><div class="m-form-item" id="item">
     <label for="first">First</label><input id="first" name="a.b[0]" value="seed" aria-describedby="help">
     <span id="help">Help</span><p id="feedback" hidden>Authored feedback</p></div>
     <label for="second">Second</label><input id="second" name="a.b[0]" value="other">
@@ -39,31 +39,31 @@ afterEach(() => { helpers.splice(0).reverse().forEach(helper => helper.disconnec
 describe("Form stylesheet contract", () => {
   const css = readFileSync(join("src", "components", "form", "form.css"), "utf8")
   it("keeps inherited public geometry and color tokens authoritative", () => {
-    expect(css).not.toMatch(/--mui-form-[\w-]+\s*:/)
-    expect(css).toContain("var(--mui-form-label-align")
-    expect(css).toContain("var(--mui-form-feedback-color")
-    expect(css).not.toContain("var(--mui-text-primary")
-    expect(css).toMatch(/data-mui-theme="?dark"?/)
+    expect(css).not.toMatch(/--m-form-[\w-]+\s*:/)
+    expect(css).toContain("var(--m-form-label-align")
+    expect(css).toContain("var(--m-form-feedback-color")
+    expect(css).not.toContain("var(--m-text-primary")
+    expect(css).toMatch(/data-m-theme="?dark"?/)
     expect(css).toMatch(/@media\s+print\s*\{[^}]*color-scheme:\s*light/)
   })
   it("uses reference label weight and explicit size inheritance without sizing controls", () => {
     expect(css).toMatch(/font-weight:\s*400/)
     for (const height of [24, 26, 28]) expect(css).toMatch(new RegExp(`--_f-lh:\\s*${height}px`))
-    expect(css).toMatch(/:is\(\.mui-form,\s*\.mui-form-item\)\[data-size="?medium"?\]/)
-    expect(css).toMatch(/\.mui-form-item__content:not\(\.mui-input\)\s*\{[^}]*min-block-size:/)
-    expect(css).not.toMatch(/\.mui-input\s*\{[^}]*min-block-size:/)
-    expect(css).not.toMatch(/\.mui-form[^,{]*(?:\s|>|\+|~)(?:input|select|textarea)(?:[\s[.:#,{])/)
+    expect(css).toMatch(/:is\(\.m-form,\s*\.m-form-item\)\[data-size="?medium"?\]/)
+    expect(css).toMatch(/\.m-form-item__content:not\(\.m-input\)\s*\{[^}]*min-block-size:/)
+    expect(css).not.toMatch(/\.m-input\s*\{[^}]*min-block-size:/)
+    expect(css).not.toMatch(/\.m-form[^,{]*(?:\s|>|\+|~)(?:input|select|textarea)(?:[\s[.:#,{])/)
   })
   it("reserves hidden feedback space without exposing or generating feedback", () => {
-    expect(css).toMatch(/\.mui-form-item:not\(fieldset\):has\(>\s*\.mui-form-item__feedback\[hidden\]\)\s*\{[^}]*padding-block-end:/)
-    expect(css).toMatch(/\.mui-form-item__feedback:not\(:empty\)\s*\{[^}]*padding-block-start:\s*4px/)
+    expect(css).toMatch(/\.m-form-item:not\(fieldset\):has\(>\s*\.m-form-item__feedback\[hidden\]\)\s*\{[^}]*padding-block-end:/)
+    expect(css).toMatch(/\.m-form-item__feedback:not\(:empty\)\s*\{[^}]*padding-block-start:\s*4px/)
     expect(css).toMatch(/\[hidden\][^{]*\{[^}]*display:\s*none\s*!important/)
     expect(css).not.toMatch(/::before|::after/)
   })
   it("preserves authored content flow, fieldsets and border-box item sizing", () => {
-    const content = css.match(/\.mui-form-item__content\s*\{([^}]*)\}/)?.[1] ?? ""
+    const content = css.match(/\.m-form-item__content\s*\{([^}]*)\}/)?.[1] ?? ""
     expect(content).not.toMatch(/display:/)
-    expect(css).toMatch(/\.mui-form-item\s*\{[^}]*box-sizing:\s*border-box/)
+    expect(css).toMatch(/\.m-form-item\s*\{[^}]*box-sizing:\s*border-box/)
     expect(css).toMatch(/data-label-placement="?left"?[^\n]*:not\(fieldset\)/)
   })
   it("retains pending, forced-color and motion-free presentation", () => {
@@ -270,13 +270,13 @@ describe("small validators, lifetime and cross-field snapshots", () => {
   })
   it.each([undefined, false, "", {}, { message: "" }, { message: "bad", level: "info" }])("rejects malformed validator result %j explicitly", async value => {
     const { helper, form } = fixture((() => value) as FormValidator), error = vi.fn()
-    form.addEventListener("mui:form-error", error)
+    form.addEventListener("m:form-error", error)
     await expect(helper.validate()).rejects.toThrow("Validator must")
     expect(error).toHaveBeenCalledOnce()
   })
   it("rejects unexpected throws/promises and reports late unexpected failures even after cancellation", async () => {
     const pending = deferred(), { helper, form, first } = fixture(() => pending.promise), error = vi.fn()
-    form.addEventListener("mui:form-error", error)
+    form.addEventListener("m:form-error", error)
     const validation = helper.validate(); await Promise.resolve()
     first.dispatchEvent(new Event("change", { bubbles: true }))
     expect((await validation).status).toBe("aborted")
@@ -286,18 +286,18 @@ describe("small validators, lifetime and cross-field snapshots", () => {
   })
   it("does not treat an uncancelled AbortError as valid success", async () => {
     const { helper, form } = fixture(() => Promise.reject(new DOMException("unexpected", "AbortError")))
-    const error = vi.fn(); form.addEventListener("mui:form-error", error)
+    const error = vi.fn(); form.addEventListener("m:form-error", error)
     await expect(helper.validate()).rejects.toThrow("unexpected"); expect(error).toHaveBeenCalledOnce()
   })
   it("expected signal abort is an aborted result, not a validation success or an error event", async () => {
     const { helper, form } = fixture(({ signal }) => new Promise((_, reject) => signal.addEventListener("abort", () => reject(new DOMException("stop", "AbortError")))))
-    const error = vi.fn(); form.addEventListener("mui:form-error", error)
+    const error = vi.fn(); form.addEventListener("m:form-error", error)
     const validation = helper.validate(); await Promise.resolve(); helper.disconnect()
     expect((await validation).status).toBe("aborted"); await flush(); expect(error).not.toHaveBeenCalled()
   })
   it("surfaces synchronous exceptions and clears pending presentation", async () => {
     const { helper, element, form } = fixture(() => { throw new Error("bug") }), error = vi.fn()
-    form.addEventListener("mui:form-error", error)
+    form.addEventListener("m:form-error", error)
     await expect(helper.validate()).rejects.toThrow("bug"); expect(error).toHaveBeenCalledOnce()
     expect(element.hasAttribute("data-form-status")).toBe(false)
   })
@@ -324,7 +324,7 @@ describe("feedback ownership, blur, reset and companion composition", () => {
   it.each(["form-first", "input-first"])("coexists with Input count/help in %s teardown order", async order => {
     const { helper, form, first, feedback } = fixture(); helper.disconnect()
     const root = document.querySelector<HTMLElement>("#item")!
-    root.classList.add("mui-input"); root.setAttribute("data-input", ""); first.setAttribute("data-input-control", "")
+    root.classList.add("m-input"); root.setAttribute("data-input", ""); first.setAttribute("data-input-control", "")
     const count = document.createElement("span"); count.id = "count"; count.setAttribute("data-input-count", ""); root.append(count)
     first.setAttribute("aria-describedby", "help count")
     const input = createInput(root), coordinator = createForm(form, { items: [{ key: "x", controls: [first], feedback, validator: () => ({ message: "error" }) }] })
@@ -387,7 +387,7 @@ describe("feedback ownership, blur, reset and companion composition", () => {
   it.each([false, true])("aborts on unmapped Rate clear without a readout, external=%s", async external => {
     const pending = deferred(), { helper, form, feedback } = fixture(() => pending.promise)
     const root = document.createElement("fieldset")
-    root.className = "mui-rate mui-radio-group"; root.setAttribute("data-rate", ""); root.setAttribute("data-radio-group", "")
+    root.className = "m-rate m-radio-group"; root.setAttribute("data-rate", ""); root.setAttribute("data-radio-group", "")
     root.innerHTML = `<legend>Unmapped rating</legend><label><input data-radio type="radio" name="rating" value="1" checked ${external ? 'form="test"' : ""}>One</label><label><input data-radio type="radio" name="rating" value="2" ${external ? 'form="test"' : ""}>Two</label>`
     ;(external ? document.body : form).append(root)
     const rate = createRate(root, { count: 2 }); helpers.push(rate)

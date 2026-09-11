@@ -32,8 +32,8 @@ type Owned = HTMLElement & { [owner]?: object }
 /** A native disclosure containing a native list select, not a combobox or menu. */
 export function createPopselect(root: HTMLElement, options: PopselectOptions = {}): PopselectController {
   const document = root?.ownerDocument, view = document?.defaultView
-  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".mui-popselect[data-popselect]")
-    || !["div", "section"].includes(root.localName) || (root as Owned)[owner]) throw new TypeError("Use an unowned native div/section.mui-popselect[data-popselect].")
+  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".m-popselect[data-popselect]")
+    || !["div", "section"].includes(root.localName) || (root as Owned)[owner]) throw new TypeError("Use an unowned native div/section.m-popselect[data-popselect].")
   if (!options || typeof options !== "object" || Array.isArray(options)
     || Object.keys(options).some(key => !["placement", "gap", "margin", "flip", "positioning", "emptyText"].includes(key))) throw new TypeError("Unsupported Popselect options; use native markup and click disclosure.")
   const emptyText = options.emptyText === undefined ? "None selected" : options.emptyText
@@ -83,7 +83,7 @@ export function createPopselect(root: HTMLElement, options: PopselectOptions = {
   }
   function validate() {
     checkZoom()
-    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".mui-popselect[data-popselect]") || root.hasAttribute("role")
+    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".m-popselect[data-popselect]") || root.hasAttribute("role")
       || nodes.some(node => node !== root && (!root.contains(node) || !own(node)))
       || nodes.some(node => (node as Owned)[owner] && (node as Owned)[owner] !== token)
       || one("[data-popselect-trigger]") !== trigger || one("[data-popselect-panel]") !== panel
@@ -92,7 +92,7 @@ export function createPopselect(root: HTMLElement, options: PopselectOptions = {
       || !button(trigger) || !button(done) || trigger.hasAttribute("aria-haspopup")
       || trigger.getAttribute("popovertarget") !== panelId || !["", "toggle"].includes(trigger.getAttribute("popovertargetaction") ?? "")
       || done.getAttribute("popovertarget") !== panelId || done.getAttribute("popovertargetaction") !== "hide"
-      || panel.id !== panelId || !panel.classList.contains("mui-popover") || panel.getAttribute("role") !== "region" || !named(panel)
+      || panel.id !== panelId || !panel.classList.contains("m-popover") || panel.getAttribute("role") !== "region" || !named(panel)
       || panel.hasAttribute("hidden") || !panel.contains(fieldRoot) || !fieldRoot.contains(control) || !panel.contains(done) || panel.contains(trigger)
       || initialized && (panel.getAttribute("popover") !== (popup!.supported ? "auto" : null) || !popup!.connected || !field!.connected)
       || control.multiple !== multiple || control.size < 2 || control.size > 20
@@ -139,7 +139,7 @@ export function createPopselect(root: HTMLElement, options: PopselectOptions = {
   }
   function fail(cause: unknown) {
     error = cause; disconnect()
-    root.dispatchEvent(new view!.CustomEvent("mui:popselect-error", { bubbles: true, detail: { error: cause } }))
+    root.dispatchEvent(new view!.CustomEvent("m:popselect-error", { bubbles: true, detail: { error: cause } }))
   }
   function observe() {
     observer!.observe(root, {
@@ -216,8 +216,8 @@ export function createPopselect(root: HTMLElement, options: PopselectOptions = {
     listen(panel, "focusin", () => { focusedWithin = true })
     listen(panel, "focusout", focusOut)
     listen(control, "input", changed); listen(control, "change", changed)
-    listen(fieldRoot, "mui:select-error", event => fail(new Error((event as CustomEvent<{ message: string }>).detail.message)))
-    listen(panel, "mui:popover-error", event => fail((event as CustomEvent<{ error: unknown }>).detail.error))
+    listen(fieldRoot, "m:select-error", event => fail(new Error((event as CustomEvent<{ message: string }>).detail.message)))
+    listen(panel, "m:popover-error", event => fail((event as CustomEvent<{ error: unknown }>).detail.error))
     listen(document, "reset", event => {
       if (event.target !== control.form) return
       const stamp = generation

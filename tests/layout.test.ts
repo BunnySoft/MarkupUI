@@ -31,7 +31,7 @@ describe("CSS-only native Layout", () => {
     expect(readdirSync(resolve("src", "components", "layout"))).toEqual(["layout.css"])
     expect(css).not.toContain("@import")
     expect(demo).not.toContain("markup-ui-layout.js")
-    expect(customElements.get("mui-layout")).toBeUndefined()
+    expect(customElements.get("m-layout")).toBeUndefined()
   })
 
   it("preserves authored landmarks, content and native element identity", () => {
@@ -69,8 +69,8 @@ describe("CSS-only native Layout", () => {
     expect(sidebar.open).toBe(false)
     sidebar.open = true
     expect(sidebar.querySelector("#navigation-link")).toBe(link)
-    expect(css).toContain("details.mui-layout-sider:not([open])")
-    expect(css).toContain("--mui-layout-sider-collapsed-width, 48px")
+    expect(css).toContain("details.m-layout-sider:not([open])")
+    expect(css).toContain("--m-layout-sider-collapsed-width, 48px")
     expect(css).not.toContain("transform:")
     expect(css).not.toContain("transition:")
   })
@@ -86,7 +86,7 @@ describe("CSS-only native Layout", () => {
     expect(document.querySelector("#shell")?.hasAttribute("tabindex")).toBe(false)
     expect(app).toContain("activity.scrollTo(")
     expect(app).toContain('prefers-reduced-motion: reduce')
-    expect(app).not.toContain("mui:scroll")
+    expect(app).not.toContain("m:scroll")
   })
 
   it("keeps native forms, disabled controls and reset behavior intact", () => {
@@ -176,33 +176,33 @@ describe("CSS-only native Layout", () => {
   it("defines only private theme and inverted defaults rather than overwriting author tokens", () => {
     install()
     const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
-    const defaults = rules.filter(rule => rule.selectorText?.includes("data-mui-theme") || rule.selectorText?.includes("data-inverted"))
+    const defaults = rules.filter(rule => rule.selectorText?.includes("data-m-theme") || rule.selectorText?.includes("data-inverted"))
     expect(defaults).toHaveLength(3)
     for (const rule of defaults) {
-      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_mui-layout-/)
+      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_m-layout-/)
     }
-    expect(css).toContain("color: var(--mui-layout-color, var(--_mui-layout-color))")
-    expect(css).toContain("background: var(--mui-layout-background, var(--_mui-layout-background))")
-    expect(css).toContain("var(--mui-layout-border-color, var(--_mui-layout-border))")
+    expect(css).toContain("color: var(--m-layout-color, var(--_m-layout-color))")
+    expect(css).toContain("background: var(--m-layout-background, var(--_m-layout-background))")
+    expect(css).toContain("var(--m-layout-border-color, var(--_m-layout-border))")
   })
 
   it("preserves distinct body, surface, footer, embedded and inverted reference roles", () => {
-    expect(css).toContain("--_mui-layout-body: #101014")
-    expect(css).toContain("--_mui-layout-surface: #18181c")
-    expect(css).toContain("--_mui-layout-footer: #fafafc")
-    expect(css).toContain("--_mui-layout-embedded: #fafafc")
-    expect(css).toContain("--_mui-layout-text: rgb(255 255 255 / .82)")
-    expect(css).toContain("--_mui-layout-divider: rgb(255 255 255 / .09)")
-    expect(css).toContain("--_mui-layout-inverted: #001428")
-    expect(css).toContain("--_mui-layout-inverted: #18181c")
-    expect(css).toContain("--_mui-layout-background: var(--_mui-layout-body, #fff)")
-    expect(css).toContain("--_mui-layout-background: var(--_mui-layout-surface, #fff)")
-    expect(css).toContain("--_mui-layout-background: var(--_mui-layout-footer, #fafafc)")
-    expect(css).toContain("var(--mui-layout-embedded-background, var(--mui-layout-background, var(--_mui-layout-embedded, #fafafc)))")
+    expect(css).toContain("--_m-layout-body: #101014")
+    expect(css).toContain("--_m-layout-surface: #18181c")
+    expect(css).toContain("--_m-layout-footer: #fafafc")
+    expect(css).toContain("--_m-layout-embedded: #fafafc")
+    expect(css).toContain("--_m-layout-text: rgb(255 255 255 / .82)")
+    expect(css).toContain("--_m-layout-divider: rgb(255 255 255 / .09)")
+    expect(css).toContain("--_m-layout-inverted: #001428")
+    expect(css).toContain("--_m-layout-inverted: #18181c")
+    expect(css).toContain("--_m-layout-background: var(--_m-layout-body, #fff)")
+    expect(css).toContain("--_m-layout-background: var(--_m-layout-surface, #fff)")
+    expect(css).toContain("--_m-layout-background: var(--_m-layout-footer, #fafafc)")
+    expect(css).toContain("var(--m-layout-embedded-background, var(--m-layout-background, var(--_m-layout-embedded, #fafafc)))")
   })
 
   it("does not substitute unrelated shared legacy palette roles for Layout's theme values", () => {
-    for (const token of ["--mui-text-primary", "--mui-bg-surface", "--mui-bg-muted", "--mui-border"]) {
+    for (const token of ["--m-text-primary", "--m-bg-surface", "--m-bg-muted", "--m-border"]) {
       expect(css).not.toContain(token)
     }
     expect(css).not.toContain("color-scheme")
@@ -211,13 +211,13 @@ describe("CSS-only native Layout", () => {
   })
 
   it("preserves direct authored geometry and palette on inverted regions", () => {
-    document.body.innerHTML = '<header class="mui-layout-header" data-inverted data-bordered style="color:purple;background:ivory;border-color:teal;--mui-layout-background:ivory;--mui-layout-color:purple;--mui-layout-border-color:teal">Author</header>'
+    document.body.innerHTML = '<header class="m-layout-header" data-inverted data-bordered style="color:purple;background:ivory;border-color:teal;--m-layout-background:ivory;--m-layout-color:purple;--m-layout-border-color:teal">Author</header>'
     const header = document.querySelector("header")!
     const before = header.outerHTML
     install()
     expect(header.outerHTML).toBe(before)
     expect(getComputedStyle(header).color).toBe("rgb(128, 0, 128)")
     expect(getComputedStyle(header).backgroundColor).toBe("rgb(255, 255, 240)")
-    expect(getComputedStyle(header).getPropertyValue("--mui-layout-background")).toBe("ivory")
+    expect(getComputedStyle(header).getPropertyValue("--m-layout-background")).toBe("ivory")
   })
 })

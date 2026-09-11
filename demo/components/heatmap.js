@@ -11,8 +11,8 @@ function apply(input) {
   try { heatmap.set(input); show() }
   catch (error) { feedback.textContent = `${error.name}: ${error.message}\nThe previous complete data view remains.` }
 }
-root.addEventListener("mui:heatmap-change", show)
-root.addEventListener("mui:heatmap-explore", event => { feedback.textContent = JSON.stringify(event.detail, null, 2) })
+root.addEventListener("m:heatmap-change", show)
+root.addEventListener("m:heatmap-explore", event => { feedback.textContent = JSON.stringify(event.detail, null, 2) })
 document.querySelector("#normal").addEventListener("click", () => apply({ data: normal, range: null, domain: null }))
 document.querySelector("#zero").addEventListener("click", () => apply({ data: [
   { date: "2024-02-01", value: 0 }, { date: "2024-02-02", value: 0 }, { date: "2024-02-03", value: 0 },

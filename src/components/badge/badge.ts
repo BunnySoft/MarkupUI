@@ -4,7 +4,7 @@ function numeric(value: string | null): number | undefined {
   return Number.isFinite(result) ? result : undefined
 }
 
-export class MuiBadge extends HTMLElement {
+export class MBadge extends HTMLElement {
   public static get observedAttributes(): string[] { return ["value", "max", "dot", "show", "show-zero", "decorative"] }
 
   private badge: HTMLSpanElement | undefined
@@ -24,7 +24,7 @@ export class MuiBadge extends HTMLElement {
         }
       }
     }
-    this.dataset.muiBadge = ""
+    this.dataset.mBadge = ""
     this.observer ??= new MutationObserver(() => this.synchronize())
     this.synchronize()
   }
@@ -65,11 +65,11 @@ export class MuiBadge extends HTMLElement {
     this.observer?.disconnect()
     if (this.badge?.parentNode !== this) {
       this.badge = this.ownerDocument.createElement("span")
-      this.badge.dataset.muiBadgeIndicator = ""
+      this.badge.dataset.mBadgeIndicator = ""
       this.numberContent = this.ownerDocument.createElement("span")
-      this.numberContent.dataset.muiBadgeNumber = ""
+      this.numberContent.dataset.mBadgeNumber = ""
       this.customContent = this.ownerDocument.createElement("span")
-      this.customContent.dataset.muiBadgeCustom = ""
+      this.customContent.dataset.mBadgeCustom = ""
       this.badge.append(this.numberContent, this.customContent)
       this.append(this.badge)
     }
@@ -77,17 +77,17 @@ export class MuiBadge extends HTMLElement {
     const number = this.numberContent!
     const custom = this.customContent!
     for (const element of [...custom.children]) {
-      if (!element.hasAttribute("data-mui-badge-value")) this.insertBefore(element, badge)
+      if (!element.hasAttribute("data-m-badge-value")) this.insertBefore(element, badge)
     }
     for (const element of [...this.children]) {
-      if (element !== badge && element.hasAttribute("data-mui-badge-value") && !element.matches("template,script,style")) custom.append(element)
+      if (element !== badge && element.hasAttribute("data-m-badge-value") && !element.matches("template,script,style")) custom.append(element)
     }
     const attached = [...this.childNodes].some((node) => {
       if (node === badge) return false
       if (node.nodeType === Node.TEXT_NODE) return Boolean(node.textContent?.trim())
       return node instanceof Element && !node.matches("template,script,style")
     })
-    this.dataset.muiBadgeMode = attached ? "attached" : "standalone"
+    this.dataset.mBadgeMode = attached ? "attached" : "standalone"
 
     const value = this.value
     const count = numeric(value ?? null)
@@ -98,7 +98,7 @@ export class MuiBadge extends HTMLElement {
       if (useDigitCells) {
         number.replaceChildren(...[...text].map((character) => {
           const digit = this.ownerDocument.createElement("span")
-          digit.dataset.muiBadgeDigit = ""
+          digit.dataset.mBadgeDigit = ""
           digit.textContent = character
           return digit
         }))
@@ -110,13 +110,13 @@ export class MuiBadge extends HTMLElement {
     const hasValue = value !== undefined && Boolean(value.trim())
       && (count === undefined || count > 0 || this.showZero)
     badge.hidden = !this.show || !(this.dot || authoredValue || hasValue)
-    this.dataset.muiBadgeState = badge.hidden ? "hidden" : this.dot ? "dot" : "value"
+    this.dataset.mBadgeState = badge.hidden ? "hidden" : this.dot ? "dot" : "value"
     if (this.decorative) badge.setAttribute("aria-hidden", "true")
     else badge.removeAttribute("aria-hidden")
 
     if (this.isConnected) this.observer?.observe(this, {
       childList: true, subtree: true, characterData: true, attributes: true,
-      attributeFilter: ["data-mui-badge-value"],
+      attributeFilter: ["data-m-badge-value"],
     })
   }
 }

@@ -20,8 +20,8 @@ node("demo-form").addEventListener("submit", event => {
   event.preventDefault()
   node("result-log").value = `Ordinary form submitted: ${new FormData(event.currentTarget).get("draft")}`
 })
-for (const panel of document.querySelectorAll(".mui-popconfirm")) {
-  panel.addEventListener("mui:popconfirm-error", event => {
+for (const panel of document.querySelectorAll(".m-popconfirm")) {
+  panel.addEventListener("m:popconfirm-error", event => {
     node("result-log").value = `Local ${event.detail.action ?? "anatomy"} error${event.detail.stale ? " (stale UI session)" : ""}`
   })
   panel.addEventListener("toggle", event => {

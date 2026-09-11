@@ -20,11 +20,11 @@ treeitem/grid/listbox roles or selection/checking on the same fabricated control
 | [Demo](../../demo/components/tree.html) | Separate local HTML/CSS/JS, native forms and cancellable local loading |
 | [Reference](../naive-ui/components/tree.md) | 119 preserved original identities plus explicit supplements/dispositions |
 
-No custom element is registered. Legacy `MuiTree`/`MuiTreeNode` and aggregate/plugin
+No custom element is registered. Legacy `MTree`/`MTreeNode` and aggregate/plugin
 behavior are untouched. There is no fake native-helper registration order.
 
 ```html
-<section class="mui-tree" data-tree aria-label="Files">
+<section class="m-tree" data-tree aria-label="Files">
   <ul data-tree-list role="list">
     <li data-tree-key="project">
       <div data-tree-row>
@@ -221,10 +221,10 @@ Independent branches may load concurrently; successful insertion does not cancel
 Explicit refresh conservatively cancels all pending loads for that root. Nested instances
 have separate owners and signals; parent disposal must explicitly dispose nested helpers.
 
-Invalid results/rejections report `mui:tree-error`, reject the load promise, clear busy
+Invalid results/rejections report `m:tree-error`, reject the load promise, clear busy
 state, and leave the existing healthy outline intact. Repeated activation may retry.
 An empty successful batch is a known empty branch, not perpetual loading. A successful
-batch emits mui:tree-load once. Source false/void result conventions are not emulated.
+batch emits m:tree-load once. Source false/void result conventions are not emulated.
 
 Mutation APIs cannot be reentered from loader/cleanup/abort hooks; disconnect can interrupt.
 Generation/lifetime checks stop old work, including abort listeners that disconnect.
@@ -252,11 +252,11 @@ tasks are cancelled on refresh/disconnect. Setter-induced native toggle events a
 as user notifications. Cancelled selection clicks do not select; cancelled checkbox clicks
 use native checked/mixed rollback. Derived descendants do not emit counterfeit input/change.
 
-User notifications: `mui:tree-select` includes selectedKeys/key/node/event;
-`mui:tree-check` includes keys/nodes/indeterminateKeys/key/node/event;
-`mui:tree-expand` includes expandedKeys/key/node/event. Each source action emits one
+User notifications: `m:tree-select` includes selectedKeys/key/node/event;
+`m:tree-check` includes keys/nodes/indeterminateKeys/key/node/event;
+`m:tree-expand` includes expandedKeys/key/node/event. Each source action emits one
 notification, not one per callback alias or derived descendant. Callback errors and invalid
-asynchronous results use `mui:tree-error` with `{error}`.
+asynchronous results use `m:tree-error` with `{error}`.
 
 Invalid external anatomy fails closed: abort work, release owned loaded rows/resources,
 restore leased attributes/mixed state, and report/throw rather than retain stale indexes.
@@ -286,7 +286,7 @@ green `.1` light / `.15` dark background instead of a bold Canvas box with a per
 outline. Actual focus still has its separate native 2px Highlight outline. Disabled text
 uses `#c2c2c2` / white `.38`; normal text uses `#333639` / white `.82`.
 Hover/pressed backgrounds are `#f3f3f5` / `#ededef` in light and white `.09` / `.05` in dark.
-Use `data-mui-theme="dark"` on a root or ancestor; a nested light scope resets defaults.
+Use `data-m-theme="dark"` on a root or ancestor; a nested light scope resets defaults.
 
 Native checkboxes are 16px and use the matching green accent. Their browser-owned checked,
 mixed, disabled, focus and form behavior is not replaced by Naive UI's custom checkbox
@@ -294,13 +294,13 @@ artwork. Checkbox naming text and DOM order stay authored. Disabled/inert stylin
 labels, summaries and checkbox fields, not whole containers; a node-disabled barrier
 does not visually disable its independently enabled descendants.
 
-Useful CSS tokens are `--mui-tree-indent` (24px), `--mui-tree-font-size` (shared font size,
-then 14px), `--mui-tree-line-height` (1.5), `--mui-tree-row-gap` (8px),
-`--mui-tree-row-padding` (3px), `--mui-tree-label-height` (24px),
-`--mui-tree-label-padding` (`0 6px 0 4px`), `--mui-tree-radius` (2px),
-`--mui-tree-color`, `--mui-tree-disabled-color`, `--mui-tree-hover`,
-`--mui-tree-pressed`, `--mui-tree-selected`, `--mui-tree-check-color`,
-`--mui-tree-toggle-color`, and `--mui-tree-line-color`.
+Useful CSS tokens are `--m-tree-indent` (24px), `--m-tree-font-size` (shared font size,
+then 14px), `--m-tree-line-height` (1.5), `--m-tree-row-gap` (8px),
+`--m-tree-row-padding` (3px), `--m-tree-label-height` (24px),
+`--m-tree-label-padding` (`0 6px 0 4px`), `--m-tree-radius` (2px),
+`--m-tree-color`, `--m-tree-disabled-color`, `--m-tree-hover`,
+`--m-tree-pressed`, `--m-tree-selected`, `--m-tree-check-color`,
+`--m-tree-toggle-color`, and `--m-tree-line-color`.
 The indent token now inherits instead of being overwritten on every root.
 
 Native branch summaries remain **separate rows below the selection/check row**; they are

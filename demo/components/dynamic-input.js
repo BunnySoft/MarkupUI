@@ -17,12 +17,12 @@ const coordinator = MarkupUIForm.createForm(form, { items: [] })
 function summary() {
   state.textContent = `Rows: ${collection.rows.map(row => row.key).join(", ")}. Bounds: ${collection.min}–${collection.max}. Active Input resources: ${resources}.`
 }
-root.addEventListener("mui:dynamic-input-change", event => {
+root.addEventListener("m:dynamic-input-change", event => {
   coordinator.refresh()
   summary()
   outcome.textContent = `Committed ${event.detail.type}; native controls and literal names retained.`
 })
-root.addEventListener("mui:dynamic-input-error", event => {
+root.addEventListener("m:dynamic-input-error", event => {
   summary()
   outcome.textContent = `${event.detail.committed ? "Committed action with cleanup failure" : "Action failed"}: ${event.detail.error instanceof Error ? event.detail.error.message : String(event.detail.error)}`
 })

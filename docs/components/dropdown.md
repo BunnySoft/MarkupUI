@@ -26,7 +26,7 @@ for the coordinated base reuse, light/dark/inverted comparisons and keyboard che
 <script defer src="./dropdown-setup.js"></script>
 
 <button type="button" id="actions" popovertarget="action-menu">Actions</button>
-<ul class="mui-popover mui-dropdown" data-dropdown-menu id="action-menu"
+<ul class="m-popover m-dropdown" data-dropdown-menu id="action-menu"
   popover="auto" aria-label="Document actions">
   <li><button type="button" data-dropdown-item data-dropdown-key="edit">Edit</button></li>
   <li><button type="button" data-dropdown-item data-dropdown-key="locked" disabled>Unavailable</button></li>
@@ -36,7 +36,7 @@ for the coordinated base reuse, light/dark/inverted comparisons and keyboard che
     <button type="button" data-dropdown-item data-dropdown-key="more" popovertarget="more-menu">
       More <span data-dropdown-suffix aria-hidden="true">›</span>
     </button>
-    <ul class="mui-popover mui-dropdown" data-dropdown-menu id="more-menu"
+    <ul class="m-popover m-dropdown" data-dropdown-menu id="more-menu"
       popover="auto" aria-label="More actions">
       <li><button type="button" data-dropdown-item data-dropdown-key="rename">Rename</button></li>
     </ul>
@@ -51,7 +51,7 @@ const dropdown = window.MarkupUIDropdown.createDropdown(
   document.querySelector("#action-menu"),
   { value: "edit" }
 )
-document.querySelector("#action-menu").addEventListener("mui:dropdown-select", event => {
+document.querySelector("#action-menu").addEventListener("m:dropdown-select", event => {
   console.log(event.detail.key, event.detail.item, event.detail.path)
 })
 // During application teardown, including while closed:
@@ -166,7 +166,7 @@ aria-checked or a checkable command. Branch keys are not values. Hidden-but-exis
 remain valid; removing a selected leaf or changing it into a branch clears value silently
 during refresh. No event is fabricated for property assignment or reconciliation.
 
-Accepted unmodified primary leaf clicks notify `mui:dropdown-select` on the root menu,
+Accepted unmodified primary leaf clicks notify `m:dropdown-select` on the root menu,
 with `{ key: string, item: HTMLElement, path: readonly string[], event: MouseEvent }`.
 Path includes submenu invoker keys. This is not upstream's numeric-key/raw-option callback
 shape or callback-array alias. Notification is noncancelable and occurs in a later task after
@@ -192,8 +192,8 @@ Refresh does not automatically reopen. Removed menu focus returns to a safe root
 an unrelated focused control, including one chosen by a closing listener, is preserved.
 
 Invalid explicit refresh throws after cleanup; invalid automatic refresh emits
-`mui:dropdown-error` with `{ error }`. Existing shared Popover ownership errors retain
-`mui:popover-error`. There are no successful-looking empty defaults for invalid structure.
+`m:dropdown-error` with `{ error }`. Existing shared Popover ownership errors retain
+`m:popover-error`. There are no successful-looking empty defaults for invalid structure.
 Shared removal of any owned open panel/trigger disconnects the whole bound tree. Closed
 application roots still need explicit disconnect. One Dropdown owns a complete submenu
 hierarchy; do not independently bind a second controller to the same child pair.
@@ -229,7 +229,7 @@ clip polygons, portals, global z-index and automatic outside-click reason callba
 
 The complete external CSS includes shared surface/arrow/animation/scroll/print/motion rules,
 plus menu items/groups/dividers/focus/selected/disabled styling. Four sizes use
-`.mui-dropdown--small`, default medium, `--large`, `--huge`; `.mui-dropdown--inverted`
+`.m-dropdown--small`, default medium, `--large`, `--huge`; `.m-dropdown--inverted`
 styles the root and inherited submenu appearance. Item-padding/font/hover/selected custom properties cascade
 into submenus. Icons and directional suffix artwork remain authored. Raw is not a Dropdown API.
 

@@ -26,10 +26,10 @@ afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); docu
 describe("Slider stylesheet contract", () => {
   const css = readFileSync(join("src", "components", "slider", "slider.css"), "utf8")
   it("keeps author tokens authoritative and uses the supplementary dark accent", () => {
-    expect(css).not.toMatch(/--mui-slider-[\w-]+\s*:/)
-    expect(css).toMatch(/data-mui-theme="?dark"?/)
+    expect(css).not.toMatch(/--m-slider-[\w-]+\s*:/)
+    expect(css).toMatch(/data-m-theme="?dark"?/)
     expect(css).toContain("#2a947d")
-    expect(css).not.toContain("var(--mui-text-primary")
+    expect(css).not.toContain("var(--m-text-primary")
   })
   it("retains native rail/thumb painting and room for intrinsic datalist ticks", () => {
     expect(css).not.toMatch(/appearance\s*:|slider-thumb|slider-runnable-track|range-thumb|range-track|position:\s*absolute/)
@@ -37,7 +37,7 @@ describe("Slider stylesheet contract", () => {
     expect(css).not.toMatch(/(?:^|[;{])\s*block-size:\s*18px/)
   })
   it("includes pair padding in authored widths without a global reset", () => {
-    expect(css).toMatch(/\.mui-slider,\s*\.mui-slider-pair\s*\{[^}]*box-sizing:\s*border-box/)
+    expect(css).toMatch(/\.m-slider,\s*\.m-slider-pair\s*\{[^}]*box-sizing:\s*border-box/)
     expect(css).toMatch(/\[data-slider-control\]\s*\{[^}]*box-sizing:\s*border-box/)
   })
   it("keeps native contrast and focus visible in forced colors and print", () => {
@@ -50,7 +50,7 @@ describe("Slider stylesheet contract", () => {
   })
   it("preserves vertical length, hidden readouts and instant motion policy", () => {
     expect(css).toMatch(/writing-mode:\s*vertical-lr/)
-    expect(css).toMatch(/inline-size:\s*var\(--mui-slider-length,\s*12rem\)/)
+    expect(css).toMatch(/inline-size:\s*var\(--m-slider-length,\s*12rem\)/)
     expect(css).toMatch(/\[hidden\][^{]*\{[^}]*display:\s*none\s*!important/)
     expect(css).not.toMatch(/(?:animation|transition)(?:-[a-z]+)?\s*:/)
   })
@@ -80,9 +80,9 @@ describe("native slider ownership", () => {
     expect(event).toHaveBeenCalledTimes(1)
   })
   it("does not register or upgrade the legacy slider", () => {
-    const before = customElements.get("mui-slider")
+    const before = customElements.get("m-slider")
     single()
-    expect(customElements.get("mui-slider")).toBe(before)
+    expect(customElements.get("m-slider")).toBe(before)
   })
   it("rejects duplicate and cross-module owners and permits explicit recreation", async () => {
     const { root, helper } = single()
@@ -202,7 +202,7 @@ describe("two-track pair contract", () => {
   it("uses one aggregate notification per native committed change, never setter/reset events", async () => {
     const { root, helper, start, form } = pair()
     const changes: SliderPairChange[] = [], native = vi.fn()
-    root.addEventListener("mui:slider-pair-change", event => changes.push((event as CustomEvent).detail))
+    root.addEventListener("m:slider-pair-change", event => changes.push((event as CustomEvent).detail))
     start.addEventListener("input", native); start.addEventListener("change", native)
     helper.setValue([65, 75]); form.reset(); await flush()
     expect(changes).toEqual([])
@@ -215,7 +215,7 @@ describe("two-track pair contract", () => {
   })
   it("requires explicit rebinding if the endpoint order changes", () => {
     const { root, helper, end } = pair()
-    root.querySelector(".mui-slider-pair__fields")!.prepend(end.parentElement!)
+    root.querySelector(".m-slider-pair__fields")!.prepend(end.parentElement!)
     expect(() => helper.refresh()).toThrow("order changed")
   })
 })
@@ -302,7 +302,7 @@ describe("native forms and lifetime", () => {
   })
   it("disconnects removed roots and cancels pending aggregate notifications", async () => {
     const { root, helper, start } = pair()
-    const change = vi.fn(); root.addEventListener("mui:slider-pair-change", change)
+    const change = vi.fn(); root.addEventListener("m:slider-pair-change", change)
     start.valueAsNumber = 40
     start.dispatchEvent(new Event("change", { bubbles: true }))
     root.remove(); await flush()

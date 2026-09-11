@@ -66,7 +66,7 @@ documented imperative method table; CSS tokens and this helper's method are nati
 | [`show`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/back-top/demos/enUS/index.demo-entry.md#L27) | Prop | Boolean/null helper override; focused action retained until blur. | 🟢 Verified | Silent assignments; author hidden/CSS remains authoritative. |
 | [`to`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/back-top/demos/enUS/index.demo-entry.md#L28) | Prop | Author the node in a suitable containing block. | ⏭️ Intentionally omitted | No teleport/provider/portal or automatic DOM relocation. |
 | [`visibility-height`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/back-top/demos/enUS/index.demo-entry.md#L29) | Prop | Finite nonnegative `visibilityHeight`, inclusive >=, default 180. | 🟢 Verified | Zero/fractions, root scroll/resize/update tests. |
-| [`on-update:show`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/back-top/demos/enUS/index.demo-entry.md#L30) | Callback | `mui:back-top-update-show` with `{ show }` for measured threshold changes after initialization. | 🟢 Verified | Independent of show override/focus; not user-only or animation completion. |
+| [`on-update:show`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/back-top/demos/enUS/index.demo-entry.md#L30) | Callback | `m:back-top-update-show` with `{ show }` for measured threshold changes after initialization. | 🟢 Verified | Independent of show override/focus; not user-only or animation completion. |
 
 ### BackTop explicit source-only supplements
 

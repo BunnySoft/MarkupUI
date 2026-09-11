@@ -4,7 +4,7 @@
 
 ## Baseline and target
 
-[B1: styles.ts](../../../src/components/styles.ts) retains legacy mui-code styling.
+[B1: styles.ts](../../../src/components/styles.ts) retains legacy m-code styling.
 The native stylesheet is separate, reuses the optional Typography mono-font convention,
 and does not import a parser or either component's runtime/styles.
 
@@ -75,7 +75,7 @@ or public size presets. Private Log/URI/theme behavior is not silently reproduce
 | Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
 | [`uri`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/code/src/Code.tsx) | Source-only prop | No automatic URI decoding. | ⏭️ Intentionally omitted | Encoded text remains literal; application decoding/error policy is explicit. |
-| [`internalFontSize`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/code/src/Code.tsx) | Source-only internal numeric prop | External --mui-code-font-size CSS length, not a numeric JS setter. | 🟢 Verified ADAPTED target | Native 15px override and optional Typography mono token checked; no invented size presets. |
+| [`internalFontSize`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/code/src/Code.tsx) | Source-only internal numeric prop | External --m-code-font-size CSS length, not a numeric JS setter. | 🟢 Verified ADAPTED target | Native 15px override and optional Typography mono token checked; no invented size presets. |
 | [`internalNoHighlight`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/code/src/Code.tsx) | Source-only internal mode | No private Log/style-mount integration switch. | ⏭️ Intentionally omitted | This entry always provides plain/native display, not another framework execution mode. |
 | [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/code/src/Code.tsx) | Source-only slot | Safely authored code/line/token nodes. | 🟢 Verified ADAPTED target | Source slot bypasses setCode; native nodes/listeners remain untouched by CSS. Application token markup is not generated from untrusted HTML. |
 | [`theme`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts) | Source-only mixed-in Code prop | External CSS instead of a theme/provider object. | ⏭️ Intentionally omitted | No theme evaluator or generated CSS-in-JS. |

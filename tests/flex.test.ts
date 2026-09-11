@@ -16,12 +16,12 @@ describe("CSS-only native Flex", () => {
     expect(pkg.exports["./flex/style.css"]).toBe("./dist/markup-ui-flex.css")
     expect(pkg.exports["./flex"]).toBeUndefined()
     expect(readdirSync(resolve("src", "components", "flex"))).toEqual(["flex.css"])
-    expect(customElements.get("mui-flex")).toBeUndefined()
+    expect(customElements.get("m-flex")).toBeUndefined()
     expect(demo).not.toContain("<script")
   })
 
   it("preserves exact original children, text, native attributes and order", () => {
-    document.body.innerHTML = '<section class="mui-flex" aria-labelledby="heading"><h2 id="heading">Original heading</h2> Original text <p><em>Native emphasis</em></p><!-- authored comment --></section>'
+    document.body.innerHTML = '<section class="m-flex" aria-labelledby="heading"><h2 id="heading">Original heading</h2> Original text <p><em>Native emphasis</em></p><!-- authored comment --></section>'
     const root = document.querySelector("section")!
     const nodes = [...root.childNodes]
     const before = root.outerHTML
@@ -36,7 +36,7 @@ describe("CSS-only native Flex", () => {
     install()
     const gap = (id: string) => {
       const s = getComputedStyle(document.getElementById(id)!)
-      return [s.getPropertyValue("--_mui-flex-row-gap").trim(), s.getPropertyValue("--_mui-flex-column-gap").trim()]
+      return [s.getPropertyValue("--_m-flex-row-gap").trim(), s.getPropertyValue("--_m-flex-column-gap").trim()]
     }
     expect(gap("small")).toEqual(["4px", "8px"])
     expect(gap("medium")).toEqual(["8px", "12px"])
@@ -46,8 +46,8 @@ describe("CSS-only native Flex", () => {
   })
 
   it("uses explicit CSS row and column gaps instead of swapping a tuple in vertical mode", () => {
-    expect(css).toContain("row-gap: var(--mui-flex-row-gap")
-    expect(css).toContain("column-gap: var(--mui-flex-column-gap")
+    expect(css).toContain("row-gap: var(--m-flex-row-gap")
+    expect(css).toContain("column-gap: var(--m-flex-column-gap")
     expect(css).not.toContain("margin:")
     expect(css).not.toContain("padding:")
     expect(css).not.toContain("attr(")
@@ -111,7 +111,7 @@ describe("CSS-only native Flex", () => {
   })
 
   it("does not remove empty containers, late children or original listeners on reconnect", () => {
-    document.body.innerHTML = '<div class="mui-flex" id="empty"></div>'
+    document.body.innerHTML = '<div class="m-flex" id="empty"></div>'
     const root = document.querySelector("#empty")!
     install()
     expect(root.isConnected).toBe(true)
@@ -147,7 +147,7 @@ describe("CSS-only native Flex", () => {
     const before = { display: getComputedStyle(outside).display, wrap: getComputedStyle(outside).overflowWrap }
     install()
     expect({ display: getComputedStyle(outside).display, wrap: getComputedStyle(outside).overflowWrap }).toEqual(before)
-    expect(css).toContain(".mui-flex > * { min-inline-size: 0; }")
+    expect(css).toContain(".m-flex > * { min-inline-size: 0; }")
     expect(css).toContain("overflow-wrap: anywhere")
     expect(css).not.toContain("font")
     expect(css).not.toContain("overflow: hidden")
@@ -158,28 +158,28 @@ describe("CSS-only native Flex", () => {
 
   it("keeps the strict source-only budget and remains theme-neutral", () => {
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
-    expect(css).not.toContain("data-mui-theme")
-    expect(css).not.toContain("--mui-color")
-    expect(css).not.toContain("--mui-font")
-    expect(css).not.toContain("--mui-text")
+    expect(css).not.toContain("data-m-theme")
+    expect(css).not.toContain("--m-color")
+    expect(css).not.toContain("--m-font")
+    expect(css).not.toContain("--m-text")
   })
 
   it("matches Naive's native start default and lets author tokens outrank every preset", () => {
     install()
     const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
-    const root = rules.find(rule => rule.selectorText === ".mui-flex")!
-    expect(root.style.getPropertyValue("justify-content")).toBe("var(--mui-flex-justify, start)")
-    expect(root.style.getPropertyValue("align-items")).toBe("var(--mui-flex-align, normal)")
-    expect(root.style.getPropertyValue("row-gap")).toBe("var(--mui-flex-row-gap, var(--_mui-flex-row-gap))")
-    expect(root.style.getPropertyValue("column-gap")).toBe("var(--mui-flex-column-gap, var(--_mui-flex-column-gap))")
+    const root = rules.find(rule => rule.selectorText === ".m-flex")!
+    expect(root.style.getPropertyValue("justify-content")).toBe("var(--m-flex-justify, start)")
+    expect(root.style.getPropertyValue("align-items")).toBe("var(--m-flex-align, normal)")
+    expect(root.style.getPropertyValue("row-gap")).toBe("var(--m-flex-row-gap, var(--_m-flex-row-gap))")
+    expect(root.style.getPropertyValue("column-gap")).toBe("var(--m-flex-column-gap, var(--_m-flex-column-gap))")
     for (const rule of rules.filter(rule => rule.selectorText?.includes("data-size"))) {
-      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_mui-flex-/)
+      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_m-flex-/)
     }
   })
 
   it("preserves authored intrinsic minima and native layout declarations", () => {
-    document.body.innerHTML = '<div class="mui-flex" data-wrap="false" style="gap:5px 7px;align-items:center;justify-content:space-evenly"><section style="min-inline-size:auto">Intrinsic native group</section></div>'
-    const root = document.querySelector(".mui-flex")!
+    document.body.innerHTML = '<div class="m-flex" data-wrap="false" style="gap:5px 7px;align-items:center;justify-content:space-evenly"><section style="min-inline-size:auto">Intrinsic native group</section></div>'
+    const root = document.querySelector(".m-flex")!
     const item = root.firstElementChild!
     const before = root.outerHTML
     install()
@@ -193,7 +193,7 @@ describe("CSS-only native Flex", () => {
   it("retains bounded direct-child sizing without adding wrappers or coercing direction", () => {
     install()
     const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
-    const child = rules.find(rule => rule.selectorText === ".mui-flex > *")!
+    const child = rules.find(rule => rule.selectorText === ".m-flex > *")!
     expect(child.style.getPropertyValue("min-inline-size")).toBe("0")
     expect(child.style.getPropertyValue("display")).toBe("")
     expect(child.style.getPropertyValue("box-sizing")).toBe("")

@@ -64,7 +64,7 @@ let anchorSequence = 0
 export function createPopoverPositioner(trigger: HTMLElement, panel: HTMLElement, options: PlacementOptions) {
   const view = trigger.ownerDocument.defaultView!
   const writes = ownedWrites()
-  const anchorName = `--mui-popover-${++anchorSequence}-${Math.random().toString(36).slice(2)}`
+  const anchorName = `--m-popover-${++anchorSequence}-${Math.random().toString(36).slice(2)}`
   const css = view.CSS
   const anchors = options.positioning === "auto"
     && !!css?.supports("anchor-name", anchorName)
@@ -100,8 +100,8 @@ export function createPopoverPositioner(trigger: HTMLElement, panel: HTMLElement
       }
       if (a.right <= clipLeft || a.left >= clipRight || a.bottom <= clipTop || a.top >= clipBottom) return false
       const margin = Math.min(options.margin, width / 2, height / 2)
-      writes.style(panel, "--mui-popover-available-width", `${Math.max(1, width - margin * 2)}px`)
-      writes.style(panel, "--mui-popover-available-height", `${Math.max(1, height - margin * 2)}px`)
+      writes.style(panel, "--m-popover-available-width", `${Math.max(1, width - margin * 2)}px`)
+      writes.style(panel, "--m-popover-available-height", `${Math.max(1, height - margin * 2)}px`)
       const p = panel.getBoundingClientRect()
       if (![p.width, p.height].every(Number.isFinite) || p.width <= 0 || p.height <= 0) return false
       const [requested = "bottom", alignment] = options.placement.split("-")

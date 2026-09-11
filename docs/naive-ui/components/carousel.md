@@ -7,7 +7,7 @@ autoplay. This is not a Swiper/gesture/animation engine or framework compatibili
 ## Baseline, target and review
 
 The unchanged [widgets baseline](../../../src/plugins/widgets.ts) adopts legacy
-`mui-carousel-item` nodes and implements `next`, `previous`, `select` with hidden-slide
+`m-carousel-item` nodes and implements `next`, `previous`, `select` with hidden-slide
 wraparound. Its legacy behavior is not silently replaced.
 
 - **HTML:** named native region/viewport, authored article/section/div CarouselItems,
@@ -104,7 +104,7 @@ Verified means the declared target, never all upstream effects/props or all-brow
 | [`transition-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/carousel/demos/enUS/index.demo-entry.md#L54) | Prop | No inline transition or custom animation pipeline. | ⏭️ Intentionally omitted | Browser decides native smooth timing; reduced motion uses instant commands. |
 | [`transition-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/carousel/demos/enUS/index.demo-entry.md#L55) | Prop | No Vue TransitionProps forwarding/hooks. | ⏭️ Intentionally omitted | No VDOM/transition framework. |
 | [`trigger`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/carousel/demos/enUS/index.demo-entry.md#L56) | Prop | Native button click/keyboard activation only. | 🟢 Verified | Hover-to-switch deliberately excluded; hover instead pauses autoplay. |
-| [`on-update:current-index`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/carousel/demos/enUS/index.demo-entry.md#L57) | Callback | mui:carousel-change and onUpdateCurrentIndex option. | 🟢 Verified | Settled index/identity, previous index/node and reason; stale reentrant callbacks suppressed. |
+| [`on-update:current-index`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/carousel/demos/enUS/index.demo-entry.md#L57) | Callback | m:carousel-change and onUpdateCurrentIndex option. | 🟢 Verified | Settled index/identity, previous index/node and reason; stale reentrant callbacks suppressed. |
 
 ### Carousel Slots
 

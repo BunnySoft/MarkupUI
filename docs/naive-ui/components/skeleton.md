@@ -38,7 +38,7 @@ Invalid attributes are diagnosed and suppress the group; invalid setters throw b
 
 ### Native primitives and fallback
 
-- **Native path:** an ordinary `.mui-skeleton` span with authored `aria-hidden`/`inert` and
+- **Native path:** an ordinary `.m-skeleton` span with authored `aria-hidden`/`inert` and
   external CSS needs no controller. Real loading status remains outside decorative bars.
 - **Small enhancement:** the Custom Element repeats only its own native spans and forwards
   validated dimensions; CSS handles geometry and motion. No animation runtime, Houdini

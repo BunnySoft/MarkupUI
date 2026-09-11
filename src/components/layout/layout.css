@@ -1,137 +1,137 @@
-:where([data-mui-theme="light"]) {
-  --_mui-layout-body: #fff;
-  --_mui-layout-surface: #fff;
-  --_mui-layout-footer: #fafafc;
-  --_mui-layout-embedded: #fafafc;
-  --_mui-layout-text: #333639;
-  --_mui-layout-divider: #efeff5;
-  --_mui-layout-inverted: #001428;
-  --_mui-layout-inverted-text: #fff;
-  --_mui-layout-inverted-divider: #001428;
+:where([data-m-theme="light"]) {
+  --_m-layout-body: #fff;
+  --_m-layout-surface: #fff;
+  --_m-layout-footer: #fafafc;
+  --_m-layout-embedded: #fafafc;
+  --_m-layout-text: #333639;
+  --_m-layout-divider: #efeff5;
+  --_m-layout-inverted: #001428;
+  --_m-layout-inverted-text: #fff;
+  --_m-layout-inverted-divider: #001428;
 }
-:where([data-mui-theme="dark"]) {
-  --_mui-layout-body: #101014;
-  --_mui-layout-surface: #18181c;
-  --_mui-layout-footer: #18181c;
-  --_mui-layout-embedded: #101014;
-  --_mui-layout-text: rgb(255 255 255 / .82);
-  --_mui-layout-divider: rgb(255 255 255 / .09);
-  --_mui-layout-inverted: #18181c;
-  --_mui-layout-inverted-text: rgb(255 255 255 / .82);
-  --_mui-layout-inverted-divider: rgb(255 255 255 / .09);
+:where([data-m-theme="dark"]) {
+  --_m-layout-body: #101014;
+  --_m-layout-surface: #18181c;
+  --_m-layout-footer: #18181c;
+  --_m-layout-embedded: #101014;
+  --_m-layout-text: rgb(255 255 255 / .82);
+  --_m-layout-divider: rgb(255 255 255 / .09);
+  --_m-layout-inverted: #18181c;
+  --_m-layout-inverted-text: rgb(255 255 255 / .82);
+  --_m-layout-inverted-divider: rgb(255 255 255 / .09);
 }
-:where(.mui-layout, .mui-layout-content, .mui-layout-header, .mui-layout-footer, .mui-layout-sider) {
-  --_mui-layout-background: var(--_mui-layout-body, #fff);
-  --_mui-layout-color: var(--_mui-layout-text, #333639);
-  --_mui-layout-border: var(--_mui-layout-divider, #efeff5);
+:where(.m-layout, .m-layout-content, .m-layout-header, .m-layout-footer, .m-layout-sider) {
+  --_m-layout-background: var(--_m-layout-body, #fff);
+  --_m-layout-color: var(--_m-layout-text, #333639);
+  --_m-layout-border: var(--_m-layout-divider, #efeff5);
   box-sizing: border-box;
   min-inline-size: 0;
   min-block-size: 0;
-  color: var(--mui-layout-color, var(--_mui-layout-color));
-  background: var(--mui-layout-background, var(--_mui-layout-background));
+  color: var(--m-layout-color, var(--_m-layout-color));
+  background: var(--m-layout-background, var(--_m-layout-background));
   overflow-wrap: anywhere;
 }
-:where(.mui-layout) {
+:where(.m-layout) {
   display: flex;
   flex-direction: column;
 }
-:where(.mui-layout[data-has-sider]) {
+:where(.m-layout[data-has-sider]) {
   flex-direction: row;
   align-items: stretch;
 }
-:where(.mui-layout-content) { flex: 1 1 auto; }
-:where(.mui-layout[data-has-sider]) > :where(.mui-layout, .mui-layout-content) {
+:where(.m-layout-content) { flex: 1 1 auto; }
+:where(.m-layout[data-has-sider]) > :where(.m-layout, .m-layout-content) {
   flex: 1 1 0%;
 }
-:where(.mui-layout-header, .mui-layout-footer) { flex: 0 0 auto; }
-:where(.mui-layout-header, .mui-layout-sider) {
-  --_mui-layout-background: var(--_mui-layout-surface, #fff);
+:where(.m-layout-header, .m-layout-footer) { flex: 0 0 auto; }
+:where(.m-layout-header, .m-layout-sider) {
+  --_m-layout-background: var(--_m-layout-surface, #fff);
 }
-:where(.mui-layout-footer) {
-  --_mui-layout-background: var(--_mui-layout-footer, #fafafc);
+:where(.m-layout-footer) {
+  --_m-layout-background: var(--_m-layout-footer, #fafafc);
 }
-:where(.mui-layout-sider) {
+:where(.m-layout-sider) {
   flex: 0 0 auto;
-  inline-size: var(--mui-layout-sider-width, 272px);
+  inline-size: var(--m-layout-sider-width, 272px);
   max-inline-size: 100%;
 }
-:where(details.mui-layout-sider:not([open])) {
-  inline-size: var(--mui-layout-sider-collapsed-width, 48px);
+:where(details.m-layout-sider:not([open])) {
+  inline-size: var(--m-layout-sider-collapsed-width, 48px);
 }
-:where(details.mui-layout-sider > summary) {
-  padding: var(--mui-layout-trigger-padding, .5rem);
+:where(details.m-layout-sider > summary) {
+  padding: var(--m-layout-trigger-padding, .5rem);
   cursor: pointer;
   overflow-wrap: anywhere;
 }
-:where(details.mui-layout-sider > summary):focus-visible {
+:where(details.m-layout-sider > summary):focus-visible {
   outline: 2px solid currentColor;
   outline-offset: -2px;
 }
-:where(.mui-layout-scroll) {
+:where(.m-layout-scroll) {
   min-inline-size: 0;
   min-block-size: 0;
   overflow: auto;
 }
-:where(.mui-layout-scroll):focus-visible {
+:where(.m-layout-scroll):focus-visible {
   outline: 2px solid currentColor;
   outline-offset: -2px;
 }
-:where(.mui-layout, .mui-layout-content)[data-embedded] {
-  background: var(--mui-layout-embedded-background, var(--mui-layout-background, var(--_mui-layout-embedded, #fafafc)));
+:where(.m-layout, .m-layout-content)[data-embedded] {
+  background: var(--m-layout-embedded-background, var(--m-layout-background, var(--_m-layout-embedded, #fafafc)));
 }
-:where(.mui-layout-header, .mui-layout-footer, .mui-layout-sider)[data-inverted] {
-  --_mui-layout-background: var(--_mui-layout-inverted, #001428);
-  --_mui-layout-color: var(--_mui-layout-inverted-text, #fff);
-  --_mui-layout-border: var(--_mui-layout-inverted-divider, #001428);
+:where(.m-layout-header, .m-layout-footer, .m-layout-sider)[data-inverted] {
+  --_m-layout-background: var(--_m-layout-inverted, #001428);
+  --_m-layout-color: var(--_m-layout-inverted-text, #fff);
+  --_m-layout-border: var(--_m-layout-inverted-divider, #001428);
 }
-:where(.mui-layout-header)[data-bordered] {
-  border-block-end: 1px solid var(--mui-layout-border-color, var(--_mui-layout-border));
+:where(.m-layout-header)[data-bordered] {
+  border-block-end: 1px solid var(--m-layout-border-color, var(--_m-layout-border));
 }
-:where(.mui-layout-footer)[data-bordered] {
-  border-block-start: 1px solid var(--mui-layout-border-color, var(--_mui-layout-border));
+:where(.m-layout-footer)[data-bordered] {
+  border-block-start: 1px solid var(--m-layout-border-color, var(--_m-layout-border));
 }
-:where(.mui-layout-sider)[data-bordered] {
-  border-inline-end: 1px solid var(--mui-layout-border-color, var(--_mui-layout-border));
+:where(.m-layout-sider)[data-bordered] {
+  border-inline-end: 1px solid var(--m-layout-border-color, var(--_m-layout-border));
 }
-:where(.mui-layout-sider)[data-bordered][data-side="end"] {
+:where(.m-layout-sider)[data-bordered][data-side="end"] {
   border-inline-end: 0;
-  border-inline-start: 1px solid var(--mui-layout-border-color, var(--_mui-layout-border));
+  border-inline-start: 1px solid var(--m-layout-border-color, var(--_m-layout-border));
 }
-:where(.mui-layout, .mui-layout-content)[data-position="absolute"] {
+:where(.m-layout, .m-layout-content)[data-position="absolute"] {
   position: absolute;
   inset: 0;
 }
-:where(.mui-layout-header)[data-position="absolute"] {
+:where(.m-layout-header)[data-position="absolute"] {
   position: absolute;
   inset-inline: 0;
   inset-block-start: 0;
 }
-:where(.mui-layout-footer)[data-position="absolute"] {
+:where(.m-layout-footer)[data-position="absolute"] {
   position: absolute;
   inset-inline: 0;
   inset-block-end: 0;
 }
-:where(.mui-layout-sider)[data-position="absolute"] {
+:where(.m-layout-sider)[data-position="absolute"] {
   position: absolute;
   inset-block: 0;
   inset-inline-start: 0;
 }
-:where(.mui-layout-sider)[data-position="absolute"][data-side="end"] {
+:where(.m-layout-sider)[data-position="absolute"][data-side="end"] {
   inset-inline-start: auto;
   inset-inline-end: 0;
 }
-:where(.mui-layout, .mui-layout-content, .mui-layout-header, .mui-layout-footer, .mui-layout-sider, .mui-layout-scroll)[hidden]:not([hidden="until-found"]),
-template.mui-layout,
-.mui-layout > template { display: none !important; }
+:where(.m-layout, .m-layout-content, .m-layout-header, .m-layout-footer, .m-layout-sider, .m-layout-scroll)[hidden]:not([hidden="until-found"]),
+template.m-layout,
+.m-layout > template { display: none !important; }
 @media (forced-colors: active) {
-  :where(.mui-layout, .mui-layout-content, .mui-layout-header, .mui-layout-footer, .mui-layout-sider) {
+  :where(.m-layout, .m-layout-content, .m-layout-header, .m-layout-footer, .m-layout-sider) {
     color: CanvasText;
     background: Canvas;
     border-color: CanvasText;
   }
 }
 @media print {
-  :where(.mui-layout-scroll) {
+  :where(.m-layout-scroll) {
     overflow: visible !important;
     block-size: auto !important;
     max-block-size: none !important;

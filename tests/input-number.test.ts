@@ -22,10 +22,10 @@ afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); docu
 describe("Input Number stylesheet contract", () => {
   const css = readFileSync(join("src", "components", "input-number", "input-number.css"), "utf8")
   it("keeps size, round and status defaults private for author tokens", () => {
-    expect(css).not.toMatch(/--mui-number-[\w-]+\s*:/)
+    expect(css).not.toMatch(/--m-number-[\w-]+\s*:/)
     for (const height of [22, 28, 34, 40]) expect(css).toMatch(new RegExp(`--_n-h:\\s*${height}px`))
-    expect(css).toMatch(/data-mui-theme="?dark"?/)
-    expect(css).not.toContain("var(--mui-text-primary")
+    expect(css).toMatch(/data-m-theme="?dark"?/)
+    expect(css).not.toContain("var(--m-text-primary")
   })
   it("does not suppress native spinners, reorder actions or hide the number control", () => {
     expect(css).not.toMatch(/appearance\s*:|spin-button|[;{]\s*order\s*:|position:\s*absolute|pointer-events:\s*none/)
@@ -43,7 +43,7 @@ describe("Input Number stylesheet contract", () => {
     expect(css).toMatch(/button:focus-visible\s*\{[^}]*outline:/)
   })
   it("includes frame padding in authored widths and bounds the original native field", () => {
-    expect(css).toMatch(/\.mui-input-number\s*\{[^}]*box-sizing:\s*border-box/)
+    expect(css).toMatch(/\.m-input-number\s*\{[^}]*box-sizing:\s*border-box/)
     expect(css).toMatch(/\[data-number-control\]\s*\{[^}]*max-inline-size:\s*100%/)
   })
 })
@@ -70,9 +70,9 @@ describe("authored native number ownership", () => {
     expect(listener).toHaveBeenCalledTimes(1)
   })
   it("does not register or replace the legacy widget", () => {
-    const before = customElements.get("mui-input-number")
+    const before = customElements.get("m-input-number")
     fixture()
-    expect(customElements.get("mui-input-number")).toBe(before)
+    expect(customElements.get("m-input-number")).toBe(before)
   })
   it("rejects duplicate/cross-module ownership and allows explicit recreation", async () => {
     const { root, helper } = fixture()
@@ -226,7 +226,7 @@ describe("native decimal/grid stepping", () => {
   it("emits one input/change for a real custom step and preserves defaults", async () => {
     const { up, control } = fixture()
     const events: string[] = []
-    for (const type of ["input", "change", "mui:change"]) control.addEventListener(type, () => events.push(type))
+    for (const type of ["input", "change", "m:change"]) control.addEventListener(type, () => events.push(type))
     up.click(); await flush()
     expect(events).toEqual(["input", "change"])
     expect(control.value).toBe("0.2")
@@ -279,12 +279,12 @@ describe("native readonly/disabled, clear and lifecycle", () => {
   it("clear sends input/change/clear once and focuses before hiding its button", async () => {
     const { helper, clear, control } = fixture()
     const events: string[] = []
-    for (const type of ["input", "change", "mui:input-number-clear"]) control.addEventListener(type, () => events.push(type))
+    for (const type of ["input", "change", "m:input-number-clear"]) control.addEventListener(type, () => events.push(type))
     clear.focus(); clear.click(); await flush()
     expect(helper.state.value).toBeNull()
     expect(clear.hidden).toBe(true)
     expect(document.activeElement).toBe(control)
-    expect(events).toEqual(["input", "change", "mui:input-number-clear"])
+    expect(events).toEqual(["input", "change", "m:input-number-clear"])
     expect(helper.clear()).toBe(false)
   })
   it("refreshes changed defaults and cancelled native resets without user notifications", async () => {

@@ -8,5 +8,5 @@ h2 { font-size: 1.2rem; }
 .controls { display: flex; flex-wrap: wrap; gap: 12px; margin-block: 16px; }
 button, input { font: inherit; }
 button, input { padding: 5px 8px; }
-mui-empty, .mui-empty { border: 1px solid #ddd; border-radius: 6px; }
-.compact { --mui-empty-min-height: 0px; --mui-empty-padding: 16px; }
+m-empty, .m-empty { border: 1px solid #ddd; border-radius: 6px; }
+.compact { --m-empty-min-height: 0px; --m-empty-padding: 16px; }

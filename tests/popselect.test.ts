@@ -11,21 +11,21 @@ describe("audited Popselect context styles", () => {
   const css = readFileSync("src/components/popselect/popselect.css", "utf8")
 
   it("inherits the shared region surface instead of copying a popup palette", () => {
-    expect(css).toContain("[data-popselect-panel] .mui-select")
-    expect(css).toContain("color: var(--mui-select-color, inherit)")
-    expect(css).toContain("background-color: var(--mui-select-background, transparent)")
+    expect(css).toContain("[data-popselect-panel] .m-select")
+    expect(css).toContain("color: var(--m-select-color, inherit)")
+    expect(css).toContain("background-color: var(--m-select-background, transparent)")
     expect(css).toContain("[data-select-control]:not(:disabled)")
     expect(css).not.toContain("box-shadow:")
-    expect(css).not.toContain("data-mui-theme")
+    expect(css).not.toContain("data-m-theme")
   })
 
   it("uses native-field typography and private size defaults behind author overrides", () => {
-    expect(css).toContain("font-family: var(--mui-font-family, inherit)")
-    expect(css).toContain("font-size: var(--mui-select-font, var(--_ps-font, var(--_select-font, 14px)))")
+    expect(css).toContain("font-family: var(--m-font-family, inherit)")
+    expect(css).toContain("font-size: var(--m-select-font, var(--_ps-font, var(--_select-font, 14px)))")
     expect(css).toContain("line-height: 1.5")
     expect(css).toContain("--_ps-font: 15px")
-    expect(css).toContain("var(--mui-select-pad, var(--_ps-pad, .5rem))")
-    expect(css).not.toMatch(/(?:^|[;{])\s*--mui-select-(?:font|pad)\s*:/m)
+    expect(css).toContain("var(--m-select-pad, var(--_ps-pad, .5rem))")
+    expect(css).not.toMatch(/(?:^|[;{])\s*--m-select-(?:font|pad)\s*:/m)
   })
 
   it("does not style or replace platform option/group/selection rendering", () => {
@@ -65,9 +65,9 @@ function toggle(panel: HTMLElement, show: boolean) {
 }
 function markup(multiple = false) {
   const id = ++sequence
-  return `<section class="mui-popselect" data-popselect><button type="button" data-popselect-trigger popovertarget="panel-${id}" hidden>Choose values</button>
-    <span data-popselect-value>Fallback readout</span><div id="panel-${id}" class="mui-popover" data-popselect-panel role="region" aria-label="Choices ${id}">
-    <header><h2>Native choices</h2></header><div class="mui-select" data-select>
+  return `<section class="m-popselect" data-popselect><button type="button" data-popselect-trigger popovertarget="panel-${id}" hidden>Choose values</button>
+    <span data-popselect-value>Fallback readout</span><div id="panel-${id}" class="m-popover" data-popselect-panel role="region" aria-label="Choices ${id}">
+    <header><h2>Native choices</h2></header><div class="m-select" data-select>
     <label for="choices-${id}">Values ${id}</label><select id="choices-${id}" data-select-control name="values-${id}" size="5" ${multiple ? "multiple" : ""} required>
     <option value="">Empty string</option><option value="a" selected>Alpha</option><optgroup label="Group"><option value="b">Beta</option><option value="c" disabled ${multiple ? "selected" : ""}>Locked Charlie</option></optgroup>
     <optgroup label="Disabled group" disabled><option value="d">Delta</option></optgroup></select>
@@ -139,9 +139,9 @@ describe("native composition and immediate selection", () => {
   })
   it("reuses Select clear-button input/change/clear notifications without closing", async () => {
     const { helper, clear, control } = fixture(), events: string[] = []
-    for (const type of ["input", "change", "mui:select-clear"]) control.addEventListener(type, () => events.push(type))
+    for (const type of ["input", "change", "m:select-clear"]) control.addEventListener(type, () => events.push(type))
     helper.open(); clear.focus(); clear.click(); await turn()
-    expect(events).toEqual(["input", "change", "mui:select-clear"]); expect(helper.value).toBeNull()
+    expect(events).toEqual(["input", "change", "m:select-clear"]); expect(helper.value).toBeNull()
     expect(helper.show).toBe(true); expect(document.activeElement).toBe(control)
   })
   it("does not close on native change, pointer selection, arrows/typeahead or Enter", () => {

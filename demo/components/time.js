@@ -14,8 +14,8 @@ function show() {
     live: live.state, hidden: hidden.state }, null, 2)
 }
 for (const helper of helpers) {
-  if (!helper.state.live) helper.element.addEventListener("mui:time-change", show)
-  helper.element.addEventListener("mui:time-error", event => { feedback.textContent = String(event.detail.error) })
+  if (!helper.state.live) helper.element.addEventListener("m:time-change", show)
+  helper.element.addEventListener("m:time-error", event => { feedback.textContent = String(event.detail.error) })
 }
 function apply(extra = {}) {
   try {

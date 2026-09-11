@@ -10,7 +10,7 @@ describe("Infinite Scroll default styles", () => {
 
   it("keeps native scrolling and sentinel geometry within the unchanged ceiling", () => {
     expect(css).toContain("overflow: auto")
-    expect(css).toContain("max-block-size: var(--mui-infinite-scroll-height, none)")
+    expect(css).toContain("max-block-size: var(--m-infinite-scroll-height, none)")
     expect(css).toContain("block-size: 1px")
     expect(css).toContain("inline-size: 100%")
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
@@ -63,7 +63,7 @@ function deferred<T>() {
 function fixture(input: Partial<InfiniteScrollOptions> = {}, setup?: (root: HTMLElement) => void) {
   if (!Object.prototype.hasOwnProperty.call(window, "IntersectionObserver")) vi.stubGlobal("IntersectionObserver", Observer)
   const form = document.createElement("form")
-  form.innerHTML = `<section class="mui-infinite-scroll" data-infinite-scroll><h2 id="title">Feed</h2>
+  form.innerHTML = `<section class="m-infinite-scroll" data-infinite-scroll><h2 id="title">Feed</h2>
     <div data-viewport role="region" tabindex="0" aria-labelledby="title" style="overflow-y:auto;height:80px">
       <ul data-infinite-content><li><label>Existing note<input name="note" value="draft"></label><button type="button" data-item-action>Item action</button></li><template><li>Inert template</li></template></ul><div data-infinite-sentinel aria-hidden="true"></div>
     </div><button type="button" data-infinite-load hidden>Load more or retry</button>
@@ -228,7 +228,7 @@ describe("completion, failures and guarded application commit", () => {
   it("surfaces rejection once, halts auto retries and supports a deliberate manual retry", async () => {
     const error = new Error("local failure"), load = vi.fn().mockRejectedValueOnce(error).mockResolvedValue({ added: 1, hasMore: true, commit: () => {} })
     const { helper, root, io, button } = fixture({ load }), listener = vi.fn()
-    root.addEventListener("mui:infinite-error", listener)
+    root.addEventListener("m:infinite-error", listener)
     const outcome = await helper.load(); expect(outcome).toEqual({ status: "error", error }); expect(helper.error).toBe(error)
     io().enter(); await turn(); expect(load).toHaveBeenCalledOnce(); expect(listener).toHaveBeenCalledOnce()
     button.click(); await turn(); expect(load).toHaveBeenCalledTimes(2); expect(helper.error).toBeNull()
@@ -264,8 +264,8 @@ describe("completion, failures and guarded application commit", () => {
   })
   it("does not emit an old error after a state listener resets the failed generation", async () => {
     const { helper, root } = fixture({ load: () => { throw new Error("old") } }), errors = vi.fn()
-    root.addEventListener("mui:infinite-error", errors)
-    root.addEventListener("mui:infinite-state", event => { if ((event as CustomEvent).detail.phase === "error") helper.reset() })
+    root.addEventListener("m:infinite-error", errors)
+    root.addEventListener("m:infinite-state", event => { if ((event as CustomEvent).detail.phase === "error") helper.reset() })
     expect((await helper.load()).status).toBe("error")
     expect(helper.error).toBeNull(); expect(errors).not.toHaveBeenCalled()
   })
@@ -287,7 +287,7 @@ describe("cancellation, native constraints and ownership races", () => {
   it("ignores stale rejection for new state while returning an explicit aborted cause", async () => {
     const task = deferred<InfiniteScrollResult>(), error = new Error("old request")
     const { helper, root } = fixture({ load: () => task.promise }), errors = vi.fn()
-    root.addEventListener("mui:infinite-error", errors)
+    root.addEventListener("m:infinite-error", errors)
     const promise = helper.load(); await turn(); helper.reset({ hasMore: false }); task.reject(error)
     const outcome = await promise
     expect(outcome.status).toBe("aborted"); expect(outcome).toHaveProperty("cause", error)
@@ -320,7 +320,7 @@ describe("cancellation, native constraints and ownership races", () => {
   })
   it("can cancel before the queued loader starts through a loading-state listener", async () => {
     const { helper, root, load } = fixture()
-    root.addEventListener("mui:infinite-state", event => { if ((event as CustomEvent).detail.phase === "loading") helper.set({ disabled: true }) })
+    root.addEventListener("m:infinite-state", event => { if ((event as CustomEvent).detail.phase === "loading") helper.set({ disabled: true }) })
     expect((await helper.load()).status).toBe("aborted"); expect(load).not.toHaveBeenCalled()
   })
   it.each(["disabled", "hidden", "inert"])("honors native %s cancellation without changing native fields", async attribute => {
@@ -376,7 +376,7 @@ describe("cancellation, native constraints and ownership races", () => {
   })
   it("fails changed helper anatomy explicitly instead of adopting a replacement sentinel", async () => {
     const { helper, sentinel, root, load } = fixture(), errors = vi.fn()
-    root.addEventListener("mui:infinite-error", errors)
+    root.addEventListener("m:infinite-error", errors)
     sentinel.replaceWith(sentinel.cloneNode())
     await turn(); expect(helper.state.phase).toBe("error"); expect(errors).toHaveBeenCalled()
     await expect(helper.load()).rejects.toThrow(); expect(load).not.toHaveBeenCalled()

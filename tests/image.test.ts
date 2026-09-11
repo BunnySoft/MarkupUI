@@ -65,8 +65,8 @@ describe("native Image/group preview helper", () => {
     expect(pkg.exports["./image"].import).toBe("./dist/markup-ui-image.js")
     expect(pkg.exports["./image/style.css"]).toBe("./dist/markup-ui-image.css")
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("mui-image")).toBeUndefined()
-    expect(customElements.get("mui-image-group")).toBeUndefined()
+    expect(customElements.get("m-image")).toBeUndefined()
+    expect(customElements.get("m-image-group")).toBeUndefined()
     expect(css).not.toContain("@import")
   })
 
@@ -161,7 +161,7 @@ describe("native Image/group preview helper", () => {
   it("wraps group navigation in authored eligible order with explicit event notifications", () => {
     const root = fixture()
     const events: string[] = []
-    for (const name of ["mui:image-open", "mui:image-change", "mui:image-next", "mui:image-prev", "mui:image-close"]) {
+    for (const name of ["m:image-open", "m:image-change", "m:image-next", "m:image-prev", "m:image-close"]) {
       root.addEventListener(name, () => events.push(name))
     }
     const controller = enhance(root)
@@ -173,9 +173,9 @@ describe("native Image/group preview helper", () => {
     expect(controller.prev()).toBe(true)
     expect(controller.current).toBe(1)
     controller.close()
-    expect(events).toContain("mui:image-next")
-    expect(events).toContain("mui:image-prev")
-    expect(events).toContain("mui:image-close")
+    expect(events).toContain("m:image-next")
+    expect(events).toContain("m:image-prev")
+    expect(events).toContain("m:image-close")
   })
 
   it("supports validated imperative current/show updates without a framework prop bridge", () => {
@@ -320,7 +320,7 @@ describe("native Image/group preview helper", () => {
     controller.disconnect()
     expect(clickWithoutNavigation(first)).toBe(false)
     expect(first.href).toBe("https://example.test/first.svg")
-    expect(customElements.get("mui-image-group")).toBeUndefined()
+    expect(customElements.get("m-image-group")).toBeUndefined()
   })
 
   it("preserves authored hidden toolbar defaults and closes an externally hidden dialog", async () => {
@@ -426,9 +426,9 @@ describe("bounded native thumbnail fallback", () => {
 
   describe("audited Image presentation", () => {
     it("retains responsive native thumbnails and inherits authored thumbnail rounding", () => {
-      expect(css).toContain(":where(img.mui-image)")
+      expect(css).toContain(":where(img.m-image)")
       expect(css).toContain("max-inline-size: 100%")
-      expect(css).toContain("object-fit: var(--mui-image-fit, fill)")
+      expect(css).toContain("object-fit: var(--m-image-fit, fill)")
       expect(css).toContain("border-radius: inherit")
       expect(css).not.toContain("cursor: zoom-in")
     })
@@ -440,17 +440,17 @@ describe("bounded native thumbnail fallback", () => {
       expect(css).toContain("max-block-size: min(100%, calc(100vh - 32px))")
       expect(css).toContain("margin: auto")
       expect(css).toContain("[data-image-stage] { position: fixed; inset: 0;")
-      expect(css).toContain("background: var(--mui-image-preview-background, transparent)")
-      expect(css).toContain("background: var(--mui-image-backdrop, #0000004d)")
+      expect(css).toContain("background: var(--m-image-preview-background, transparent)")
+      expect(css).toContain("background: var(--m-image-backdrop, #0000004d)")
       expect(css).not.toContain("65vh")
     })
 
     it("uses scoped light/dark chrome without assigning public theme overrides", () => {
-      expect(css).toContain(':where([data-mui-theme="dark"]) { --_mui-image-color: #ffffffd1; }')
-      expect(css).toContain(':where([data-mui-theme="light"]) { --_mui-image-color: initial; }')
-      expect(css).toContain("var(--mui-image-preview-color, var(--_mui-image-color, #ffffffe6))")
-      expect(css).toContain("var(--mui-image-toolbar-background, #00000059)")
-      expect(css).not.toMatch(/(?:^|[;{])\s*--mui-image-[\w-]+\s*:/m)
+      expect(css).toContain(':where([data-m-theme="dark"]) { --_m-image-color: #ffffffd1; }')
+      expect(css).toContain(':where([data-m-theme="light"]) { --_m-image-color: initial; }')
+      expect(css).toContain("var(--m-image-preview-color, var(--_m-image-color, #ffffffe6))")
+      expect(css).toContain("var(--m-image-toolbar-background, #00000059)")
+      expect(css).not.toMatch(/(?:^|[;{])\s*--m-image-[\w-]+\s*:/m)
     })
 
     it("matches toolbar surface geometry while retaining wrap, native focus and disabled controls", () => {

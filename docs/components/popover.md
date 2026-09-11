@@ -28,7 +28,7 @@ records measured light/dark density, shadows, placements and composed-consumer i
 <button type="button" id="information-trigger" popovertarget="information">
   Information
 </button>
-<div class="mui-popover mui-popover--arrow" id="information" popover="auto"
+<div class="m-popover m-popover--arrow" id="information" popover="auto"
   aria-labelledby="information-heading">
   <header><h2 id="information-heading">Authored information</h2></header>
   <p>Ordinary text, links and native controls stay in the document.</p>
@@ -50,14 +50,14 @@ controller.disconnect()
 ```
 
 There is **no custom-element registration** and no fake enhanced-before-core rule.
-The optional helper and legacy aggregate may load in either order. Legacy `mui-popover`
+The optional helper and legacy aggregate may load in either order. Legacy `m-popover`
 retains its old behavior unchanged; do not bind this helper inside that legacy anatomy.
 Setup rejects this conflict. Other optional registered components retain their own
 registration-order rules. Use one helper entry per application rather than independently
 binding the same nodes through duplicate ESM/classic module copies.
 
 The panel must be a connected light-DOM HTMLElement in the trigger's document, with
-`.mui-popover`, one unique whitespace-free ID, `popover="auto"` or `"manual"`, and no
+`.m-popover`, one unique whitespace-free ID, `popover="auto"` or `"manual"`, and no
 `hidden` attribute. Connect while closed, then request opening explicitly. No default-show
 configuration is applied. Missing/invalid nodes, duplicate active ownership, a fake
 focusable span, competing trigger commands, and already-open setup throw.
@@ -141,7 +141,7 @@ Choose content semantics and accessible names explicitly.
 While connected, the helper appends the panel ID to `aria-controls` if needed and manages
 `aria-expanded`. Disconnect restores prior values only if still component-owned; author
 tokens and unrelated changes survive. If the ID/target/anatomy becomes invalid while
-pending/open, it disconnects and emits `mui:popover-error` on the panel with `{ error }`.
+pending/open, it disconnects and emits `m:popover-error` on the panel with `{ error }`.
 The ID cannot be changed even alongside a matching new popovertarget. Rebind instead.
 Closed roots require explicit teardown; this is not an application mount observer.
 
@@ -183,7 +183,7 @@ with active geometry using author `!important` insets, fixed dimensions exceedin
 available box, transforms/zoom on the panel, CSS anchor names borrowed from helper output,
 or a different positioning scheme.
 
-CSS is external: panel/content/header/footer classes, `--mui-popover-max-width`, padding,
+CSS is external: panel/content/header/footer classes, `--m-popover-max-width`, padding,
 radius, border, color/background tokens and ordinary width declarations provide presentation.
 The audited standalone panel defaults to **8px 14px padding, 3px radius and no visible
 border**. Light foreground/surface are **#333639 / #fff**; an explicit dark theme uses
@@ -194,27 +194,27 @@ own density/state skin; Tooltip's distinct light surface remains excluded.
 No shared preset, controller or positioning helper changed.
 
 Public padding/radius/color/background tokens still take precedence over private defaults,
-including inherited ancestor overrides. `--mui-popover-border` still controls border color,
+including inherited ancestor overrides. `--m-popover-border` still controls border color,
 but a standalone author must set a nonzero CSS `border-width` to display a custom border.
 Font family/size/leading continue to inherit from the document; the comparison uses the
 documented opt-in Global Style's 14px/1.6 baseline, not a new typography reset.
 Private dark defaults apply on screen only; nested explicit light scopes reset them, and
 print falls back to dark text on a light surface. Author-supplied colors remain author-owned.
 
-`mui-popover--raw` removes the standard padding/border/shadow, not geometry or overflow safety.
+`m-popover--raw` removes the standard padding/border/shadow, not geometry or overflow safety.
 It retains the native surface fill; it is intentionally not Naive's raw presentation.
 Authored header/footer content also retains ordinary native flow rather than introducing
 upstream slot wrappers or automatic full-width separators.
 The outer panel is natively scrollable within its available height; use an authored inner
 scroll region when a fixed header/footer is needed. Trigger-width matching is not automated.
-`mui-popover--animated` opts into a short opacity entrance; reduced motion disables it.
+`m-popover--animated` opts into a short opacity entrance; reduced motion disables it.
 There is no leave-animation scheduler. Forced colors use system colors; print exposes
 closed content in normal flow.
 An already-open top-layer popover can still compute as absolutely positioned during print,
 despite CSS requesting static positioning; close it before printing when normal-flow
 placement is required. The helper does not add a shared print lifecycle handler.
 
-`mui-popover--arrow` opts into a small **inset decorative side indicator**, not an
+`m-popover--arrow` opts into a small **inset decorative side indicator**, not an
 interactive node or an exact center tether. It is suppressed after collision shifting;
 it cannot claim arrow-point-to-center/overlap parity. Style it with the author's panel class
 and `::before`, not a generated arrow/wrapper API.

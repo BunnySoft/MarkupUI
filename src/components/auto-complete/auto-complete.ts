@@ -169,7 +169,7 @@ export function createAutoComplete(input: HTMLInputElement, options: AutoComplet
     replace(values)
   }
   function report(reason: unknown, query: string) {
-    input.dispatchEvent(new view!.CustomEvent("mui:auto-complete-error", { detail: { error: reason, query } }))
+    input.dispatchEvent(new view!.CustomEvent("m:auto-complete-error", { detail: { error: reason, query } }))
   }
   async function query(): Promise<AutoCompleteQueryResult> {
     sync()
@@ -207,7 +207,7 @@ export function createAutoComplete(input: HTMLInputElement, options: AutoComplet
       }
       replace(values); resultList = listSnapshot(); pending = null
       const completed = result("updated", values.length)
-      input.dispatchEvent(new view!.CustomEvent("mui:auto-complete-results", { detail: { query, suggestions: values, result: completed } }))
+      input.dispatchEvent(new view!.CustomEvent("m:auto-complete-results", { detail: { query, suggestions: values, result: completed } }))
       return completed
     } catch (reason) {
       if (current()) { pending = null; error = reason; show("error", "Suggestions could not be loaded; free text is still allowed.") }

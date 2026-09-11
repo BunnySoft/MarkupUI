@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-mui-theme="light">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,7 +26,7 @@
     <section data-demo-example="basic" aria-labelledby="basic-heading">
       <header data-demo-header><div><h2 id="basic-heading">Basic</h2></div></header>
       <div class="demo-preview" data-demo-preview>
-        <div class="mui-collapse" data-collapse aria-label="Basic collapse">
+        <div class="m-collapse" data-collapse aria-label="Basic collapse">
           <details data-collapse-item data-collapse-key="1"><summary>right</summary><div data-collapse-content>good</div></details>
           <details data-collapse-item data-collapse-key="2"><summary>right</summary><div data-collapse-content>nice</div></details>
           <details data-collapse-item data-collapse-key="3"><summary>right</summary><div data-collapse-content>very good</div></details>
@@ -37,10 +37,10 @@
     <section data-demo-example="arrow-placement" aria-labelledby="arrow-heading">
       <header data-demo-header><div><h2 id="arrow-heading">Arrow placement</h2><p>Place the authored arrow on the right.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <div class="mui-collapse mui-collapse--arrow-motion" data-collapse data-collapse-arrow-placement="right" aria-label="Right arrow collapse">
-          <details data-collapse-item data-collapse-key="1" data-collapse-custom-arrow><summary><span data-collapse-title>right</span><span class="mui-collapse-arrow-rotate" data-collapse-arrow aria-hidden="true">›</span></summary><div data-collapse-content>good</div></details>
-          <details data-collapse-item data-collapse-key="2" data-collapse-custom-arrow><summary><span data-collapse-title>right</span><span class="mui-collapse-arrow-rotate" data-collapse-arrow aria-hidden="true">›</span></summary><div data-collapse-content>nice</div></details>
-          <details data-collapse-item data-collapse-key="3" data-collapse-custom-arrow><summary><span data-collapse-title>right</span><span class="mui-collapse-arrow-rotate" data-collapse-arrow aria-hidden="true">›</span></summary><div data-collapse-content>very good</div></details>
+        <div class="m-collapse m-collapse--arrow-motion" data-collapse data-collapse-arrow-placement="right" aria-label="Right arrow collapse">
+          <details data-collapse-item data-collapse-key="1" data-collapse-custom-arrow><summary><span data-collapse-title>right</span><span class="m-collapse-arrow-rotate" data-collapse-arrow aria-hidden="true">›</span></summary><div data-collapse-content>good</div></details>
+          <details data-collapse-item data-collapse-key="2" data-collapse-custom-arrow><summary><span data-collapse-title>right</span><span class="m-collapse-arrow-rotate" data-collapse-arrow aria-hidden="true">›</span></summary><div data-collapse-content>nice</div></details>
+          <details data-collapse-item data-collapse-key="3" data-collapse-custom-arrow><summary><span data-collapse-title>right</span><span class="m-collapse-arrow-rotate" data-collapse-arrow aria-hidden="true">›</span></summary><div data-collapse-content>very good</div></details>
         </div>
       </div>
     </section>
@@ -48,7 +48,7 @@
     <section data-demo-example="accordion" aria-labelledby="accordion-heading">
       <header data-demo-header><div><h2 id="accordion-heading">Accordion</h2><p>Only one panel remains open.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <div class="mui-collapse" data-collapse data-accordion aria-label="Accordion collapse">
+        <div class="m-collapse" data-collapse data-accordion aria-label="Accordion collapse">
           <details data-collapse-item data-collapse-key="1" open><summary>right</summary><div data-collapse-content>good</div></details>
           <details data-collapse-item data-collapse-key="2"><summary>right</summary><div data-collapse-content>good</div></details>
         </div>
@@ -58,10 +58,10 @@
     <section data-demo-example="nested" aria-labelledby="nested-heading">
       <header data-demo-header><div><h2 id="nested-heading">Nested</h2><p>Collapse groups can be nested with independent ownership.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <div class="mui-collapse" data-collapse aria-label="Outer collapse">
+        <div class="m-collapse" data-collapse aria-label="Outer collapse">
           <details data-collapse-item data-collapse-key="1"><summary>right</summary>
             <div data-collapse-content>
-              <div class="mui-collapse" data-collapse aria-label="Inner collapse">
+              <div class="m-collapse" data-collapse aria-label="Inner collapse">
                 <details data-collapse-item data-collapse-key="1"><summary>right</summary><div data-collapse-content>good</div></details>
                 <details data-collapse-item data-collapse-key="2"><summary>right</summary><div data-collapse-content>good</div></details>
               </div>
@@ -73,12 +73,12 @@
     </section>
 
     <section data-demo-example="display-directive" aria-labelledby="display-heading">
-      <header data-demo-header><div><h2 id="display-heading">Display directive</h2><p>Native details retains its content like <code class="mui-code">show</code>; conditional removal remains application template work.</p></div></header>
+      <header data-demo-header><div><h2 id="display-heading">Display directive</h2><p>Native details retains its content like <code class="m-code">show</code>; conditional removal remains application template work.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <div class="mui-collapse" data-collapse aria-label="Retained DOM collapse">
+        <div class="m-collapse" data-collapse aria-label="Retained DOM collapse">
           <details data-collapse-item data-collapse-key="1"><summary>right</summary>
             <div data-collapse-content>
-              <div class="mui-collapse" data-collapse aria-label="Retained nested collapse">
+              <div class="m-collapse" data-collapse aria-label="Retained nested collapse">
                 <details data-collapse-item data-collapse-key="1"><summary>right</summary><div data-collapse-content>good</div></details>
                 <details data-collapse-item data-collapse-key="2"><summary>right</summary><div data-collapse-content>good</div></details>
               </div>
@@ -92,7 +92,7 @@
     <section data-demo-example="item-header-click" aria-labelledby="click-heading">
       <header data-demo-header><div><h2 id="click-heading">Click on item header</h2><p>Header events update a native status region.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
-        <div class="mui-collapse" data-collapse data-event-collapse aria-label="Medal collapse">
+        <div class="m-collapse" data-collapse data-event-collapse aria-label="Medal collapse">
           <details data-collapse-item data-collapse-key="1"><summary>Bronze</summary><div data-collapse-content>Okay</div></details>
           <details data-collapse-item data-collapse-key="2"><summary>Silver</summary><div data-collapse-content>Good</div></details>
           <details data-collapse-item data-collapse-key="3"><summary>Gold</summary><div data-collapse-content>Excellent</div></details>
@@ -104,21 +104,21 @@
     <section data-demo-example="customize-icon" aria-labelledby="icon-heading">
       <header data-demo-header><div><h2 id="icon-heading">Customize icon</h2><p>An authored decorative cash icon replaces the arrow slot.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <div class="mui-collapse mui-collapse--arrow-motion" data-collapse aria-label="Custom icon collapse">
-          <details data-collapse-item data-collapse-key="1" data-collapse-custom-arrow><summary><svg class="cash-arrow mui-collapse-arrow-rotate" data-collapse-arrow viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M15 8.5h-4.2a2.3 2.3 0 0 0 0 4.6h2.4a2.3 2.3 0 0 1 0 4.6H9M12 6v12"></path></svg><span data-collapse-title>Bronze</span></summary><div data-collapse-content>good</div></details>
-          <details data-collapse-item data-collapse-key="2" data-collapse-custom-arrow><summary><svg class="cash-arrow mui-collapse-arrow-rotate" data-collapse-arrow viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M15 8.5h-4.2a2.3 2.3 0 0 0 0 4.6h2.4a2.3 2.3 0 0 1 0 4.6H9M12 6v12"></path></svg><span data-collapse-title>Silver</span></summary><div data-collapse-content>nice</div></details>
-          <details data-collapse-item data-collapse-key="3" data-collapse-custom-arrow><summary><svg class="cash-arrow mui-collapse-arrow-rotate" data-collapse-arrow viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M15 8.5h-4.2a2.3 2.3 0 0 0 0 4.6h2.4a2.3 2.3 0 0 1 0 4.6H9M12 6v12"></path></svg><span data-collapse-title>Gold</span></summary><div data-collapse-content>very good</div></details>
+        <div class="m-collapse m-collapse--arrow-motion" data-collapse aria-label="Custom icon collapse">
+          <details data-collapse-item data-collapse-key="1" data-collapse-custom-arrow><summary><svg class="cash-arrow m-collapse-arrow-rotate" data-collapse-arrow viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M15 8.5h-4.2a2.3 2.3 0 0 0 0 4.6h2.4a2.3 2.3 0 0 1 0 4.6H9M12 6v12"></path></svg><span data-collapse-title>Bronze</span></summary><div data-collapse-content>good</div></details>
+          <details data-collapse-item data-collapse-key="2" data-collapse-custom-arrow><summary><svg class="cash-arrow m-collapse-arrow-rotate" data-collapse-arrow viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M15 8.5h-4.2a2.3 2.3 0 0 0 0 4.6h2.4a2.3 2.3 0 0 1 0 4.6H9M12 6v12"></path></svg><span data-collapse-title>Silver</span></summary><div data-collapse-content>nice</div></details>
+          <details data-collapse-item data-collapse-key="3" data-collapse-custom-arrow><summary><svg class="cash-arrow m-collapse-arrow-rotate" data-collapse-arrow viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M15 8.5h-4.2a2.3 2.3 0 0 0 0 4.6h2.4a2.3 2.3 0 0 1 0 4.6H9M12 6v12"></path></svg><span data-collapse-title>Gold</span></summary><div data-collapse-content>very good</div></details>
         </div>
       </div>
     </section>
 
     <section data-demo-example="default-expanded" aria-labelledby="default-heading">
-      <header data-demo-header><div><h2 id="default-heading">Default expanded</h2><p>Authored native <code class="mui-code">open</code> attributes supply defaults.</p></div></header>
+      <header data-demo-header><div><h2 id="default-heading">Default expanded</h2><p>Authored native <code class="m-code">open</code> attributes supply defaults.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <div class="mui-collapse" data-collapse aria-label="Traffic light collapse">
+        <div class="m-collapse" data-collapse aria-label="Traffic light collapse">
           <details data-collapse-item data-collapse-key="1"><summary>green light</summary>
             <div data-collapse-content>
-              <div class="mui-collapse" data-collapse aria-label="Green light states">
+              <div class="m-collapse" data-collapse aria-label="Green light states">
                 <details data-collapse-item data-collapse-key="1"><summary>on</summary><div data-collapse-content>pass</div></details>
                 <details data-collapse-item data-collapse-key="2" open><summary>flashing</summary><div data-collapse-content>pass fastly</div></details>
               </div>
@@ -133,10 +133,10 @@
     <section data-demo-example="header-extra" aria-labelledby="extra-heading">
       <header data-demo-header><div><h2 id="extra-heading">Extra info in header</h2><p>Extra content is a sibling action/info region, never nested interaction inside summary.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <div class="mui-collapse" data-collapse aria-label="Header extra collapse">
-          <div class="mui-collapse-row"><details data-collapse-item data-collapse-key="1"><summary>right</summary><div data-collapse-content>good</div></details><div data-collapse-extra>good</div></div>
-          <div class="mui-collapse-row"><details data-collapse-item data-collapse-key="2"><summary>right</summary><div data-collapse-content>nice</div></details><div data-collapse-extra>nice</div></div>
-          <div class="mui-collapse-row"><details data-collapse-item data-collapse-key="3"><summary>right</summary><div data-collapse-content>very good</div></details><div data-collapse-extra>very good</div></div>
+        <div class="m-collapse" data-collapse aria-label="Header extra collapse">
+          <div class="m-collapse-row"><details data-collapse-item data-collapse-key="1"><summary>right</summary><div data-collapse-content>good</div></details><div data-collapse-extra>good</div></div>
+          <div class="m-collapse-row"><details data-collapse-item data-collapse-key="2"><summary>right</summary><div data-collapse-content>nice</div></details><div data-collapse-extra>nice</div></div>
+          <div class="m-collapse-row"><details data-collapse-item data-collapse-key="3"><summary>right</summary><div data-collapse-content>very good</div></details><div data-collapse-extra>very good</div></div>
         </div>
       </div>
     </section>
@@ -144,7 +144,7 @@
     <section data-demo-example="disabled" aria-labelledby="disabled-heading">
       <header data-demo-header><div><h2 id="disabled-heading">Disabled</h2></div></header>
       <div class="demo-preview" data-demo-preview>
-        <div class="mui-collapse" data-collapse aria-label="Disabled collapse">
+        <div class="m-collapse" data-collapse aria-label="Disabled collapse">
           <details data-collapse-item data-collapse-key="1"><summary>right</summary><div data-collapse-content>good</div></details>
           <details data-collapse-item data-collapse-key="2" data-collapse-disabled><summary>right</summary><div data-collapse-content>nice</div></details>
           <details data-collapse-item data-collapse-key="3"><summary>right</summary><div data-collapse-content>very good</div></details>
@@ -156,14 +156,14 @@
       <header data-demo-header><div><h2 id="trigger-heading">Trigger areas</h2><p>Native summary owns main/arrow activation; extra siblings remain independent.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
         <div class="trigger-summary">
-          <mui-button size="tiny" type="primary">Main: native summary</mui-button>
-          <mui-button size="tiny" type="primary">Arrow: part of summary</mui-button>
-          <mui-button size="tiny" secondary>Extra: independent</mui-button>
+          <-button size="tiny" type="primary">Main: native summary<-button>
+          <-button size="tiny" type="primary">Arrow: part of summary<-button>
+          <-button size="tiny" secondary>Extra: independent<-button>
         </div>
-        <div class="mui-collapse mui-collapse--arrow-motion" data-collapse data-trigger-collapse aria-label="Trigger area comparison">
-          <div class="mui-collapse-row"><details data-collapse-item data-collapse-key="1" data-collapse-custom-arrow><summary><span class="mui-collapse-arrow-rotate" data-collapse-arrow aria-hidden="true">›</span><span data-collapse-title>right</span></summary><div data-collapse-content>good</div></details><div data-collapse-extra><button type="button" data-extra-name="1">Extra</button></div></div>
-          <div class="mui-collapse-row"><details data-collapse-item data-collapse-key="2" data-collapse-custom-arrow><summary><span class="mui-collapse-arrow-rotate" data-collapse-arrow aria-hidden="true">›</span><span data-collapse-title>right</span></summary><div data-collapse-content>nice</div></details><div data-collapse-extra><button type="button" data-extra-name="2">Extra</button></div></div>
-          <div class="mui-collapse-row"><details data-collapse-item data-collapse-key="3" data-collapse-custom-arrow><summary><span class="mui-collapse-arrow-rotate" data-collapse-arrow aria-hidden="true">›</span><span data-collapse-title>right</span></summary><div data-collapse-content>very good</div></details><div data-collapse-extra><button type="button" data-extra-name="3">Extra</button></div></div>
+        <div class="m-collapse m-collapse--arrow-motion" data-collapse data-trigger-collapse aria-label="Trigger area comparison">
+          <div class="m-collapse-row"><details data-collapse-item data-collapse-key="1" data-collapse-custom-arrow><summary><span class="m-collapse-arrow-rotate" data-collapse-arrow aria-hidden="true">›</span><span data-collapse-title>right</span></summary><div data-collapse-content>good</div></details><div data-collapse-extra><button type="button" data-extra-name="1">Extra</button></div></div>
+          <div class="m-collapse-row"><details data-collapse-item data-collapse-key="2" data-collapse-custom-arrow><summary><span class="m-collapse-arrow-rotate" data-collapse-arrow aria-hidden="true">›</span><span data-collapse-title>right</span></summary><div data-collapse-content>nice</div></details><div data-collapse-extra><button type="button" data-extra-name="2">Extra</button></div></div>
+          <div class="m-collapse-row"><details data-collapse-item data-collapse-key="3" data-collapse-custom-arrow><summary><span class="m-collapse-arrow-rotate" data-collapse-arrow aria-hidden="true">›</span><span data-collapse-title>right</span></summary><div data-collapse-content>very good</div></details><div data-collapse-extra><button type="button" data-extra-name="3">Extra</button></div></div>
         </div>
         <p class="demo-status" data-trigger-status role="status">No trigger interaction.</p>
       </div>

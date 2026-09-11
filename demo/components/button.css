@@ -58,24 +58,24 @@ section {
   color: #2080f0;
 }
 .custom-purple {
-  --mui-button-color: #8a2be2;
-  --mui-button-hover-color: #9d50ef;
-  --mui-button-pressed-color: #7020bc;
+  --m-button-color: #8a2be2;
+  --m-button-hover-color: #9d50ef;
+  --m-button-pressed-color: #7020bc;
 }
 .custom-pink {
-  --mui-button-color: #ff69b4;
-  --mui-button-hover-color: #ff83c1;
-  --mui-button-pressed-color: #db4e98;
+  --m-button-color: #ff69b4;
+  --m-button-hover-color: #ff83c1;
+  --m-button-pressed-color: #db4e98;
 }
 .custom-color {
-  --mui-button-background: var(--mui-button-color);
-  --mui-button-background-hover: var(--mui-button-hover-color);
-  --mui-button-background-pressed: var(--mui-button-pressed-color);
-  --mui-button-border-color: var(--mui-button-color);
-  --mui-button-label-color: #fff;
+  --m-button-background: var(--m-button-color);
+  --m-button-background-hover: var(--m-button-hover-color);
+  --m-button-background-pressed: var(--m-button-pressed-color);
+  --m-button-border-color: var(--m-button-color);
+  --m-button-label-color: #fff;
 }
 .large-icon-button {
-  --mui-button-icon-size: 24px;
+  --m-button-icon-size: 24px;
 }
 .disabled-tooltip-trigger {
   position: relative;

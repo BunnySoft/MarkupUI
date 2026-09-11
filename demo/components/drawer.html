@@ -24,8 +24,8 @@
     </div>
     <p id="events" role="status">Inline content and native forms work without scripts.</p>
     <section id="inline"><h2>Inline information</h2><p>When native modality is unavailable, ordinary content and links remain useful.</p><label>Background reference <input id="background-input"></label></section>
-    <dialog id="baseline" class="mui-native-dialog mui-drawer" open aria-labelledby="baseline-title">
-      <form class="mui-drawer-content" method="dialog">
+    <dialog id="baseline" class="m-native-dialog m-drawer" open aria-labelledby="baseline-title">
+      <form class="m-drawer-content" method="dialog">
         <header data-drawer-header><h2 id="baseline-title" data-drawer-title>Native baseline</h2></header>
         <div data-drawer-body><div data-drawer-body-content><label>Required note <input required name="note"></label></div></div>
         <footer data-drawer-footer><button value="baseline-saved">Save native form</button><button formnovalidate value="baseline-cancel">Cancel</button></footer>
@@ -33,8 +33,8 @@
     </dialog>
     <p class="page-tail">The library never locks body scrolling or installs a provider/focus manager.</p>
   </main>
-  <dialog id="drawer" class="mui-native-dialog mui-drawer" aria-labelledby="drawer-title" aria-describedby="drawer-description">
-    <div class="mui-drawer-content">
+  <dialog id="drawer" class="m-native-dialog m-drawer" aria-labelledby="drawer-title" aria-describedby="drawer-description">
+    <div class="m-drawer-content">
       <header data-drawer-header>
         <h2 id="drawer-title" data-drawer-title tabindex="-1" autofocus>Project side panel</h2>
         <form method="dialog"><button id="close" value="closed" aria-label="Close side panel">×</button></form>
@@ -63,15 +63,15 @@
       </footer>
     </div>
   </dialog>
-  <dialog id="nested" class="mui-native-dialog mui-modal" aria-labelledby="nested-title">
+  <dialog id="nested" class="m-native-dialog m-modal" aria-labelledby="nested-title">
     <h2 id="nested-title" data-modal-title>Nested modal</h2>
     <p data-modal-content>Closing returns to the still-open drawer.</p>
     <form method="dialog"><button id="nested-close" value="nested-done" autofocus>Return to drawer</button></form>
   </dialog>
   <div id="owner-root"></div>
   <template id="drawer-template">
-    <dialog class="mui-native-dialog mui-drawer" data-drawer-placement="left" aria-label="Owned side panel">
-      <form class="mui-drawer-content" method="dialog">
+    <dialog class="m-native-dialog m-drawer" data-drawer-placement="left" aria-label="Owned side panel">
+      <form class="m-drawer-content" method="dialog">
         <header data-drawer-header><h2 data-drawer-title>Authored template title</h2></header>
         <div data-drawer-body><div data-drawer-body-content><p>Owned native template content, not a render callback.</p></div></div>
         <footer data-drawer-footer><button value="template-done" autofocus>Close template</button></footer>

@@ -21,7 +21,7 @@ not counted as upstream lifecycle parity.
 
 | Asset | Purpose |
 | --- | --- |
-| `dist/markup-ui-alert.js` | ESM; exports `MuiAlert`, `registerAlert()`; registers on browser import. |
+| `dist/markup-ui-alert.js` | ESM; exports `MAlert`, `registerAlert()`; registers on browser import. |
 | `dist/markup-ui-alert.global.js` | Classic script; registers and exposes `MarkupUIAlert`. |
 | `dist/markup-ui-alert.css` | External component and native static-notice CSS. |
 | `dist/components/alert/index.d.ts` | Declarations including `AlertCloseDetail`. |
@@ -32,10 +32,10 @@ not counted as upstream lifecycle parity.
 <script defer src="./vendor/markup-ui-alert.global.js"></script>
 <script defer src="./app.js"></script>
 
-<mui-alert type="warning" closable close-label="Dismiss session warning">
-  <h2 data-mui-alert-header>Warning: session ending</h2>
-  <p data-mui-alert-content>Save your work before leaving.</p>
-</mui-alert>
+<m-alert type="warning" closable close-label="Dismiss session warning">
+  <h2 data-m-alert-header>Warning: session ending</h2>
+  <p data-m-alert-content>Save your work before leaving.</p>
+</m-alert>
 ```
 
 Application ESM: `import "@dataengine/markup-ui/alert";`. Serve/link the
@@ -51,23 +51,23 @@ remain unchanged. External Alert CSS isolates enhanced hosts from later legacy s
 
 ## Native anatomy and preserved content
 
-Public authored regions are `data-mui-alert-header`, `data-mui-alert-content` and
-`data-mui-alert-icon`. They can be direct children; an optional native
-`div[data-mui-alert-body]` may already contain the header/content. The controller generates
+Public authored regions are `data-m-alert-header`, `data-m-alert-content` and
+`data-m-alert-icon`. They can be direct children; an optional native
+`div[data-m-alert-body]` may already contain the header/content. The controller generates
 a body/content wrapper only when needed and preserves the original nodes and listeners.
 Use one body/header/content/icon region each.
 
 ```html
-<mui-alert type="info">
-  <svg data-mui-alert-icon aria-hidden="true" focusable="false" viewBox="0 0 20 20">
+<m-alert type="info">
+  <svg data-m-alert-icon aria-hidden="true" focusable="false" viewBox="0 0 20 20">
     <circle cx="10" cy="10" r="8" fill="currentColor"></circle>
   </svg>
-  <header data-mui-alert-header><h3>Information</h3></header>
-  <div data-mui-alert-content>
+  <header data-m-alert-header><h3>Information</h3></header>
+  <div data-m-alert-content>
     <p>Review the original report before retrying.</p>
-    <div data-mui-alert-actions><button type="button">View report</button></div>
+    <div data-m-alert-actions><button type="button">View report</button></div>
   </div>
-</mui-alert>
+</m-alert>
 ```
 
 - Ordinary text/element children become default content without cloning. An authored
@@ -85,7 +85,7 @@ Use one body/header/content/icon region each.
 - `show-icon="false"` hides authored icons through CSS rather than discarding them.
   Generated SVGs are library-owned; custom icon nodes remain available when enabled again.
   Mark duplicate decorative icons `aria-hidden="true"` and keep icons noninteractive.
-- Actions are ordinary native controls in default content. `data-mui-alert-actions` is a
+- Actions are ordinary native controls in default content. `data-m-alert-actions` is a
   CSS layout convenience, **not a new upstream slot or action controller**. Native button
   type, labels, focus, form submission and application listeners are preserved.
 - Templates remain inert, even when they carry region markers. No renderer, template
@@ -96,11 +96,11 @@ Use one body/header/content/icon region each.
 Link the same CSS and use native HTML when no controller is needed:
 
 ```html
-<section class="mui-alert" data-type="info">
-  <span data-mui-alert-icon aria-hidden="true">ⓘ</span>
-  <div data-mui-alert-body>
-    <h2 data-mui-alert-header>Information</h2>
-    <p data-mui-alert-content>This notice needs no Custom Element or JavaScript.</p>
+<section class="m-alert" data-type="info">
+  <span data-m-alert-icon aria-hidden="true">ⓘ</span>
+  <div data-m-alert-body>
+    <h2 data-m-alert-header>Information</h2>
+    <p data-m-alert-content>This notice needs no Custom Element or JavaScript.</p>
   </div>
 </section>
 ```
@@ -139,13 +139,13 @@ logical end. It is named by `close-label` / `.closeLabel`, default **“Close al
 when a blank value is supplied). It has a decorative glyph and a focus-visible outline.
 It does not submit the enclosing form or require the Button module.
 
-Native Enter/Space/pointer activation emits one bubbling, cancellable **`mui:close`** event
+Native Enter/Space/pointer activation emits one bubbling, cancellable **`m:close`** event
 with `detail.originalEvent`. A native click cancelled before the close handler is respected.
 The original click otherwise follows normal DOM bubbling; no second host click is synthesized.
 
 ```js
 const notice = document.querySelector("#notice");
-notice.addEventListener("mui:close", (event) => {
+notice.addEventListener("m:close", (event) => {
   if (event.target !== notice) return; // Nested notices can bubble their own intents.
   event.preventDefault();
   // Application policy: save/confirm, then hide or remove and restore focus if appropriate.
@@ -157,7 +157,7 @@ values and promises from DOM listeners are not interpreted as upstream `onClose`
 Applications may await their own confirmation and then set native `.hidden`, remove the
 node, and choose a focus destination themselves.
 
-There is consequently no `mui:after-leave`, after-hide hook, transition lifecycle,
+There is consequently no `m:after-leave`, after-hide hook, transition lifecycle,
 Escape/Delete shortcut, focus trap or automatic post-removal focus restoration.
 `on-after-leave` and deprecated `onAfterHide` are intentionally omitted, rather than faked
 for a disappearance the library does not perform.
@@ -180,10 +180,10 @@ itself has no `disabled` API, and the host is not an interactive control.
 | `title` | Native string attribute/property fallback, or authored header. | 🟢 Safe text, authored header wins; native tooltip and explicit heading-level differences noted above. |
 | `type` | Attribute / `.type`: default, info, success, warning, error. | 🟢 External semantic appearance/SVGs; does not set urgency/live semantics. |
 | `on-after-leave` | Application owns completion of its own hiding/removal. | ⏭️ No automatic leave or complex transition engine, so no misleading after-leave event. |
-| `on-close` | Cancellable bubbling `mui:close`, `detail.originalEvent`. | 🟡 Verified native intent, not Boolean/promise callback-result parity. Default removal intentionally absent. |
-| Default slot | Authored default content, optionally `data-mui-alert-content`. | 🟢 Native nodes/actions preserved without cloning or VNodes. |
-| Header slot | Authored `data-mui-alert-header`. | 🟢 Native headings/labels and listeners preserved; no inferred heading level. |
-| Icon slot | Authored HTML/SVG `data-mui-alert-icon`. | 🟢 Preserved nodes/ARIA; caller marks decorative content explicitly. |
+| `on-close` | Cancellable bubbling `m:close`, `detail.originalEvent`. | 🟡 Verified native intent, not Boolean/promise callback-result parity. Default removal intentionally absent. |
+| Default slot | Authored default content, optionally `data-m-alert-content`. | 🟢 Native nodes/actions preserved without cloning or VNodes. |
+| Header slot | Authored `data-m-alert-header`. | 🟢 Native headings/labels and listeners preserved; no inferred heading level. |
+| Icon slot | Authored HTML/SVG `data-m-alert-icon`. | 🟢 Preserved nodes/ARIA; caller marks decorative content explicitly. |
 | `onAfterHide` (deprecated source callback) | Application-owned removal policy. | ⏭️ Deprecated after-hide alias/warning machinery omitted. |
 | `theme`, `themeOverrides`, `builtinThemeOverrides` | External scoped CSS and custom properties. | ⏭️ Framework theme objects/provider injection and runtime style adapters omitted. |
 
@@ -193,16 +193,16 @@ are true. No action slot, visibility prop or automatic announcer is invented as 
 
 ### External styling
 
-Tokens include `--mui-alert-padding`, `--mui-alert-radius`, `--mui-alert-background`,
-`--mui-alert-accent`, `--mui-alert-border-color`, `--mui-alert-color`,
-`--mui-alert-font-size`, `--mui-alert-line-height`, `--mui-alert-title-size`,
-`--mui-alert-title-weight`, `--mui-alert-title-color`, `--mui-alert-title-line-height`, `--mui-alert-content-gap`,
-`--mui-alert-gap`, `--mui-alert-icon-size`, `--mui-alert-icon-color`,
-`--mui-alert-action-gap`, `--mui-alert-action-margin`, `--mui-alert-close-size`,
-`--mui-alert-close-radius`, `--mui-alert-close-color`, `--mui-alert-close-hover-background`,
-`--mui-alert-close-pressed-background`, `--mui-alert-focus-color`,
-`--mui-alert-icon-offset`, `--mui-alert-icon-top`, `--mui-alert-close-offset`,
-`--mui-alert-close-top` and `--mui-alert-close-icon-size`.
+Tokens include `--m-alert-padding`, `--m-alert-radius`, `--m-alert-background`,
+`--m-alert-accent`, `--m-alert-border-color`, `--m-alert-color`,
+`--m-alert-font-size`, `--m-alert-line-height`, `--m-alert-title-size`,
+`--m-alert-title-weight`, `--m-alert-title-color`, `--m-alert-title-line-height`, `--m-alert-content-gap`,
+`--m-alert-gap`, `--m-alert-icon-size`, `--m-alert-icon-color`,
+`--m-alert-action-gap`, `--m-alert-action-margin`, `--m-alert-close-size`,
+`--m-alert-close-radius`, `--m-alert-close-color`, `--m-alert-close-hover-background`,
+`--m-alert-close-pressed-background`, `--m-alert-focus-color`,
+`--m-alert-icon-offset`, `--m-alert-icon-top`, `--m-alert-close-offset`,
+`--m-alert-close-top` and `--m-alert-close-icon-size`.
 
 Defaults now follow the rendered pinned reference: 13px padding, 3px radius, a uniform
 1px border overlay, 16px/19px/500 title, 9px content gap, 24px semantic icons and a
@@ -211,8 +211,8 @@ The close control overlays the title row; body-only notices reserve its trailing
 CSS positioning/logical properties perform layout without JS geometry writes. RTL reverses
 the visual icon/close edge. Reduced motion removes appearance transitions.
 
-Set `data-mui-theme="dark"` on the host or an ancestor for the explicit dark palette;
-nested `data-mui-theme="light"` resets the defaults. No automatic OS-theme choice is made.
+Set `data-m-theme="dark"` on the host or an ancestor for the explicit dark palette;
+nested `data-m-theme="light"` resets the defaults. No automatic OS-theme choice is made.
 Component color tokens remain author overrides. Shared font-size/line-height and light
 semantic colors are reused; legacy global text/surface/divider roles are not silently
 substituted for Alert's different upstream roles. Dark semantic icons use supplemental

@@ -24,12 +24,12 @@ only describes highlighted **staging**, never all target membership.
 | [Demo](../../demo/components/transfer.html) | Separate local HTML/CSS/JS and actual membership FormData |
 | [Reference](../naive-ui/components/transfer.md) | Every original identity and explicit source supplements |
 
-The helper registers no custom element. Existing widgets-plugin MuiTransfer and all
+The helper registers no custom element. Existing widgets-plugin MTransfer and all
 other bundles remain unchanged. This does not reproduce Naive UI's deprecated Legacy Transfer.
 
 ```html
 <form>
-  <fieldset class="mui-transfer" data-transfer
+  <fieldset class="m-transfer" data-transfer
             data-transfer-name="members[]" data-transfer-required>
     <legend>Membership</legend>
     <div data-transfer-columns>
@@ -216,8 +216,8 @@ can satisfy required membership because it is still a real member, even with zer
 | disconnect() | Cancel work, release serialization/ownership and retain current DOM membership |
 
 User actions are deferred until click dispatch settles so cancellation is honored.
-One mui:transfer-change reports `{value,moved,to,event}` after real membership movement.
-Native staging change emits a separate mui:transfer-stage; it is not membership change.
+One m:transfer-change reports `{value,moved,to,event}` after real membership movement.
+Native staging change emits a separate m:transfer-stage; it is not membership change.
 Programmatic methods/filter/default/reset/refresh do not emit user movement.
 
 After a user move, focus goes to the logical destination list before the initiating action
@@ -249,7 +249,7 @@ The root keeps its fieldset/legend semantics without adding a second default fie
 border around the pane frames. Panes have a 1px border and 3px corners; their surface is
 white in light mode and `rgba(255,255,255,.1)` in explicit dark mode. The pinned dark
 Transfer uses this translucent surface, **not** the generic opaque Card surface.
-An ancestor/root `data-mui-theme="dark"` also selects a native dark color scheme;
+An ancestor/root `data-m-theme="dark"` also selects a native dark color scheme;
 explicit nested `"light"` restores light.
 
 Direct authored pane headings (`h1`–`h6`) retain their chosen semantic level. Default
@@ -259,16 +259,16 @@ the source's declared header-color theme value is not treated as a painted backg
 
 | Public CSS token | Meaning / fallback |
 | --- | --- |
-| `--mui-transfer-font-size`, `--mui-transfer-font-family`, `--mui-transfer-line-height` | Local overrides over shared size-role/family/leading defaults; body sizes 14/14/15px, leading 1.6 |
-| `--mui-transfer-color`, `--mui-transfer-title-color`, `--mui-transfer-count-color` | Item/body, title and count roles; light `#333639` / `#1f2225` / `#767c82`, dark white-.82 / .9 / .52 |
-| `--mui-transfer-disabled-color` | Light `#c2c2c2`, dark white-.38; actual disabled controls/options and their pane heading/count |
-| `--mui-transfer-background`, `--mui-transfer-border-color`, `--mui-transfer-radius` | Pane surface/frame; light `#fff` / `#e0e0e6`, dark white-.1 / transparent, 3px corners |
-| `--mui-transfer-title-size`, `--mui-transfer-title-weight`, `--mui-transfer-header-height` | Authored heading presentation overrides |
-| `--mui-transfer-count-size` | 12px small/medium, 14px large |
-| `--mui-transfer-gap` | Native pane/action grid gap, default 16px |
-| `--mui-transfer-list-padding` | Native listbox padding override; retained small/medium/large defaults .15rem/.35rem/.6rem |
-| `--mui-transfer-filter-height` | 28px minimum native filter height |
-| `--mui-transfer-control-background`, `--mui-transfer-control-border` | Native filter/action surfaces; light white / `#e0e0e6`, dark white-.1 / white-.24 |
+| `--m-transfer-font-size`, `--m-transfer-font-family`, `--m-transfer-line-height` | Local overrides over shared size-role/family/leading defaults; body sizes 14/14/15px, leading 1.6 |
+| `--m-transfer-color`, `--m-transfer-title-color`, `--m-transfer-count-color` | Item/body, title and count roles; light `#333639` / `#1f2225` / `#767c82`, dark white-.82 / .9 / .52 |
+| `--m-transfer-disabled-color` | Light `#c2c2c2`, dark white-.38; actual disabled controls/options and their pane heading/count |
+| `--m-transfer-background`, `--m-transfer-border-color`, `--m-transfer-radius` | Pane surface/frame; light `#fff` / `#e0e0e6`, dark white-.1 / transparent, 3px corners |
+| `--m-transfer-title-size`, `--m-transfer-title-weight`, `--m-transfer-header-height` | Authored heading presentation overrides |
+| `--m-transfer-count-size` | 12px small/medium, 14px large |
+| `--m-transfer-gap` | Native pane/action grid gap, default 16px |
+| `--m-transfer-list-padding` | Native listbox padding override; retained small/medium/large defaults .15rem/.35rem/.6rem |
+| `--m-transfer-filter-height` | 28px minimum native filter height |
+| `--m-transfer-control-background`, `--m-transfer-control-border` | Native filter/action surfaces; light white / `#e0e0e6`, dark white-.1 / white-.24 |
 
 Local tokens win over private presets. `data-transfer-size` selects native small/medium/large
 type/spacing without parsing data or replacing options. Native action buttons retain

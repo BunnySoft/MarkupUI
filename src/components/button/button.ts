@@ -12,7 +12,7 @@ const properties = [
 ]
 
 /** A light-DOM wrapper; the child button or anchor owns interaction and semantics. */
-export class MuiButton extends HTMLElement {
+export class MButton extends HTMLElement {
   public static get observedAttributes(): string[] {
     return ["disabled", "loading", "attr-type", "focusable", ...forwarded]
   }
@@ -41,7 +41,7 @@ export class MuiButton extends HTMLElement {
         }
       }
     }
-    this.dataset.muiButton = ""
+    this.dataset.mButton = ""
     this.addEventListener("click", this.onActivation, true)
     this.addEventListener("auxclick", this.onActivation, true)
     this.addEventListener("click", this.onWave)
@@ -131,12 +131,12 @@ export class MuiButton extends HTMLElement {
       || !event.composedPath().includes(control) || this.text || this.type === "text"
       || this.secondary || this.tertiary || this.quaternary
       || this.ownerDocument.defaultView?.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return
-    control.toggleAttribute("data-mui-button-wave", true)
+    control.toggleAttribute("data-m-button-wave", true)
     const wave = control.getAnimations?.({ subtree: true }).find(animation =>
-      "animationName" in animation && animation.animationName === "mui-button-wave"
+      "animationName" in animation && animation.animationName === "m-button-wave"
       && (animation.effect as KeyframeEffect | null)?.target === control)
     if (!wave) {
-      control.removeAttribute("data-mui-button-wave")
+      control.removeAttribute("data-m-button-wave")
       return
     }
     this.wave = wave
@@ -151,17 +151,17 @@ export class MuiButton extends HTMLElement {
     const wave = this.wave
     this.wave = undefined
     wave?.cancel()
-    this.nativeControl?.removeAttribute("data-mui-button-wave")
+    this.nativeControl?.removeAttribute("data-m-button-wave")
   }
 
   private synchronize(): void {
     this.observer?.disconnect()
-    let control = this.querySelector<Control>(":scope > button:not([data-mui-button-generated]), :scope > a")
+    let control = this.querySelector<Control>(":scope > button:not([data-m-button-generated]), :scope > a")
       ?? this.querySelector<Control>(":scope > button")
     if (!control) {
       control = this.ownerDocument.createElement("button")
       control.type = "button"
-      control.dataset.muiButtonGenerated = ""
+      control.dataset.mButtonGenerated = ""
       this.generatedControl = control
       this.append(control)
     }
@@ -173,7 +173,7 @@ export class MuiButton extends HTMLElement {
         this.generatedControl = null
       }
       this.nativeControl = control
-      control.dataset.muiButtonControl = ""
+      control.dataset.mButtonControl = ""
     }
     // Move, never clone, authored nodes; this also handles children arriving during HTML parsing.
     for (const node of [...this.childNodes]) {
@@ -206,7 +206,7 @@ export class MuiButton extends HTMLElement {
     if (this.loading) {
       if (!this.spinner) {
         this.spinner = this.ownerDocument.createElement("span")
-        this.spinner.dataset.muiButtonSpinner = ""
+        this.spinner.dataset.mButtonSpinner = ""
         this.spinner.setAttribute("aria-hidden", "true")
         const svg = this.ownerDocument.createElementNS("http://www.w3.org/2000/svg", "svg")
         svg.setAttribute("width", "100%")
@@ -247,9 +247,9 @@ export class MuiButton extends HTMLElement {
     }
     const hasContent = [...control.childNodes].some(node => node.nodeType === Node.TEXT_NODE
       ? Boolean(node.textContent?.trim())
-      : node instanceof Element && !node.matches("[data-mui-button-icon], [data-mui-button-spinner]"))
-    control.toggleAttribute("data-mui-button-icon-only", !hasContent)
-    const icons = [...control.querySelectorAll<IconElement>(":scope > [data-mui-button-icon]")]
+      : node instanceof Element && !node.matches("[data-m-button-icon], [data-m-button-spinner]"))
+    control.toggleAttribute("data-m-button-icon-only", !hasContent)
+    const icons = [...control.querySelectorAll<IconElement>(":scope > [data-m-button-icon]")]
     for (const icon of this.icons) if (!icons.includes(icon)) this.finishEntry(icon)
     if (this.ready) {
       for (const icon of icons) if (!this.icons.has(icon) && !this.loading) this.enterIcon(icon)
@@ -275,14 +275,14 @@ export class MuiButton extends HTMLElement {
       || !style.width.endsWith("px") || !Number.isFinite(width) || width <= 0) return
     const record = {
       animations: [] as Animation[], hadStyle: element.hasAttribute("style"), width: style.width,
-      original: element.style.getPropertyValue("--_mui-button-enter-width"),
-      priority: element.style.getPropertyPriority("--_mui-button-enter-width"),
+      original: element.style.getPropertyValue("--_m-button-enter-width"),
+      priority: element.style.getPropertyPriority("--_m-button-enter-width"),
     }
     this.entering.set(element, record)
-    element.style.setProperty("--_mui-button-enter-width", record.width)
-    element.toggleAttribute("data-mui-button-enter", true)
+    element.style.setProperty("--_m-button-enter-width", record.width)
+    element.toggleAttribute("data-m-button-enter", true)
     const animations = element.getAnimations?.().filter(animation =>
-      "animationName" in animation && String(animation.animationName).startsWith("mui-button-enter-")) ?? []
+      "animationName" in animation && String(animation.animationName).startsWith("m-button-enter-")) ?? []
     if (!animations.length) {
       this.finishEntry(element)
       return
@@ -298,9 +298,9 @@ export class MuiButton extends HTMLElement {
     const record = this.entering.get(element)
     this.entering.delete(element)
     record?.animations.forEach(animation => animation.cancel())
-    element.removeAttribute("data-mui-button-enter")
-    if (record && element.style.getPropertyValue("--_mui-button-enter-width") === record.width) {
-      element.style.setProperty("--_mui-button-enter-width", record.original, record.priority)
+    element.removeAttribute("data-m-button-enter")
+    if (record && element.style.getPropertyValue("--_m-button-enter-width") === record.width) {
+      element.style.setProperty("--_m-button-enter-width", record.original, record.priority)
       if (!record.hadStyle && !element.getAttribute("style")) element.removeAttribute("style")
     }
   }
@@ -356,8 +356,8 @@ export class MuiButton extends HTMLElement {
     this.stopMotion()
     if (this.nativeControl) {
       for (const name of this.overrides.keys()) this.manage(name, undefined)
-      this.nativeControl.removeAttribute("data-mui-button-control")
-      this.nativeControl.removeAttribute("data-mui-button-icon-only")
+      this.nativeControl.removeAttribute("data-m-button-control")
+      this.nativeControl.removeAttribute("data-m-button-icon-only")
     }
     this.spinner?.remove()
     this.spinner = null

@@ -17,11 +17,11 @@ and opt-in conditional follow. No terminal, syntax engine, transport or virtuali
 | [Complete reference inventory](../naive-ui/components/log.md) | All original identities and explicit source supplements |
 
 ```html
-<section class="mui-log" data-log>
+<section class="m-log" data-log>
   <h2 id="log-title">Application log</h2>
-  <pre class="mui-code-block" data-log-viewport
+  <pre class="m-code-block" data-log-viewport
        tabindex="0" role="region" aria-labelledby="log-title"><code
-       class="mui-code" data-log-output>Ready.
+       class="m-code" data-log-output>Ready.
 Waiting for a local update.</code></pre>
   <p data-log-loading hidden>Application reports loading.</p>
 </section>
@@ -50,14 +50,14 @@ An explicit initial text or lines option may replace the fallback; specifying bo
 Absent both, the existing code text is adopted. HTML parsing itself may already normalize
 file newlines; the helper's additional normalization is described below.
 
-Binding converts that text into actual .mui-code-line spans, each with an empty decorative
-.mui-code-number and a Text node. Original pre/code/root nodes, labels and outside
+Binding converts that text into actual .m-code-line spans, each with an empty decorative
+.m-code-number and a Text node. Original pre/code/root nodes, labels and outside
 controls/listeners remain. Generated rows/markers are exclusively owned passive text:
 do not insert markup, controls, role/tabindex/editing overrides or change their keys/text.
 Application listeners on unchanged native line nodes survive incremental append.
 
 No core/plugins/Form/Virtual List runtime is required. [Code](code.md) supplies native
-typography/whitespace/line-number/media presentation. Existing legacy mui-code, other
+typography/whitespace/line-number/media presentation. Existing legacy m-code, other
 optional helpers and default bundle loading remain unchanged.
 
 ## Exact text, line-ending and append contract
@@ -191,7 +191,7 @@ Optional silent suppresses owned edge notifications at the resulting native targ
 It does not prevent native scroll events globally or mute a different subsequent user
 position. Internal follow, anchor restoration and replacement scrolls are silent.
 
-One passive viewport scroll listener reports mui:log-edge `{position,event}` on observed
+One passive viewport scroll listener reports m:log-edge `{position,event}` on observed
 top/bottom **transitions**, not every scroll at an edge. Top uses 1px rounding tolerance;
 bottom uses nearBottom. No repeated wheel-at-boundary retry, request-more callback,
 transport/backpressure protocol or data fetch is installed. Short fully visible content
@@ -210,15 +210,15 @@ are not a keep-alive guarantee.
 
 There is no per-frame layout polling, animation-frame scheduler, timer/interval, wheel
 handler or global mutation observer. `refresh()` updates geometry/ownership, not log data.
-Synchronous method failures throw and populate error; observed failures emit mui:log-error
+Synchronous method failures throw and populate error; observed failures emit m:log-error
 with `{error}`. Neither event includes retained log contents.
 
 ## Native presentation, loading and forms
 
 The stylesheet composes [Code's native presentation](code.md), with log-scoped tokens:
---mui-log-font-size (14px), --mui-log-line-height (1.25),
---mui-log-rows (15), --mui-log-height (optional explicit CSS override),
---mui-log-padding (0px), and --mui-log-gutter (Code's automatic digit-count width).
+--m-log-font-size (14px), --m-log-line-height (1.25),
+--m-log-rows (15), --m-log-height (optional explicit CSS override),
+--m-log-padding (0px), and --m-log-gutter (Code's automatic digit-count width).
 
 Default height is **263px**: fifteen 17.5px line heights rounded to the nearest CSS pixel,
 matching pinned NLog. An authored padding length adds twice that inset; there is no default
@@ -228,8 +228,8 @@ number-to-style bridge. Code font-family, tab-size/color/background/border token
 available. JS writes no geometry or presentation styles.
 
 Long lines now **wrap by default**, preserving whitespace and breaking an overlong word
-when needed, as NLog does. Set `--mui-log-white-space: pre` and
-`--mui-log-word-break: normal` to restore horizontal scrolling on screen.
+when needed, as NLog does. Set `--m-log-white-space: pre` and
+`--m-log-word-break: normal` to restore horizontal scrolling on screen.
 Presence `data-word-wrap` explicitly selects Code's stronger anywhere/break-all wrapping
 and suppresses numbering; it takes precedence over those two Log tokens. Default soft
 wrapping can retain optional numbers, which label logical records, not visual sublines.
@@ -402,7 +402,7 @@ local; no real clipboard, download or external log persistence was exercised.
 | Hidden/media | Hidden viewport had zero client height while keeping 10,000 bounded records; print expanded/wrapped all retained records and hid numbers; forced-colors/reduced-motion matched |
 | Reading after print | An off-tail reader at 70,000px remained at 70,000px, not pulled to the bottom |
 | Handoff | Current nodes, selected “literal”, normalized text remained; loading/busy attributes restored; no stale scroll work |
-| Coexistence | All log nodes survived later core/advanced/widgets loading; legacy mui-code remained literal; no mui-log registration |
+| Coexistence | All log nodes survived later core/advanced/widgets loading; legacy m-code remained literal; no m-log registration |
 | Classic/ESM ownership | Classic factory exported; overlapping owner and namespace replacement rejected without replacing the existing API |
 
 Review fixes/regressions cover stale edge batches after append/clear/disconnect, passive

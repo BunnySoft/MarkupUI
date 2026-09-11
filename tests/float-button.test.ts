@@ -29,7 +29,7 @@ describe("native FloatButton and FloatButtonGroup", () => {
     expect(pkg.exports["./float-button"]).toBeUndefined()
     expect(readdirSync(resolve("src", "components", "float-button"))).toEqual(["float-button.css"])
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("mui-float-button")).toBeUndefined()
+    expect(customElements.get("m-float-button")).toBeUndefined()
     expect(css).not.toContain("@import")
     expect(demo).not.toContain("markup-ui-button")
     expect(demo).not.toContain("markup-ui-tooltip")
@@ -43,12 +43,12 @@ describe("native FloatButton and FloatButtonGroup", () => {
     expect(document.querySelector("#single-action")!.getAttribute("aria-label")).toBe("Record an action")
     expect(document.querySelector("#quick-trigger")!.getAttribute("aria-label")).toBe("Quick actions")
     expect(document.querySelector("#badge-action")!.getAttribute("aria-label")).toBe("Notifications, 3 unread")
-    for (const action of document.querySelectorAll(".mui-float-button")) {
+    for (const action of document.querySelectorAll(".m-float-button")) {
       if (action.tagName === "TEMPLATE") continue
       expect(["BUTTON", "A"]).toContain(action.tagName)
       expect(action.querySelector("button, a, input, select")).toBeNull()
     }
-    expect(document.querySelectorAll('[role="menu"], [role="menuitem"], .mui-float-group[role="button"]')).toHaveLength(0)
+    expect(document.querySelectorAll('[role="menu"], [role="menuitem"], .m-float-group[role="button"]')).toHaveLength(0)
   })
 
   it("preserves source nodes/listeners/ARIA while presentation attributes change", () => {
@@ -76,8 +76,8 @@ describe("native FloatButton and FloatButtonGroup", () => {
     expect(getComputedStyle(document.querySelector("#single-action")!).position).toBe("relative")
     expect(getComputedStyle(document.querySelector("#absolute-group")!).position).toBe("absolute")
     expect(getComputedStyle(document.querySelector("#quick-trigger")!).position).toBe("fixed")
-    expect(css).toContain("min-block-size: var(--mui-float-height, 40px)")
-    expect(css).toContain("inline-size: var(--mui-float-width, 40px)")
+    expect(css).toContain("min-block-size: var(--m-float-height, 40px)")
+    expect(css).toContain("inline-size: var(--m-float-width, 40px)")
     expect(css).toContain("inset-inline-end")
     expect(css).not.toContain("anchor(")
   })
@@ -104,13 +104,13 @@ describe("native FloatButton and FloatButtonGroup", () => {
     expect(document.querySelector("#quick-trigger")!.hasAttribute("aria-expanded")).toBe(false)
     expect(app).toContain('panel.addEventListener("toggle"')
     expect(app).not.toContain('addEventListener("keydown"')
-    expect(app).not.toContain("mui:change")
+    expect(app).not.toContain("m:change")
   })
 
   it("has a guarded static fallback without unconditional closed-popover display overrides", () => {
     expect(css).toContain("@supports selector(:popover-open)")
-    expect(css).toMatch(/button\.mui-float-trigger,\s*button\.mui-float-popover-command\s*\{\s*display: none;\s*\}/)
-    expect(css).not.toMatch(/\.mui-float-panel\[popover\]\s*\{[^}]*display:\s*(?:block|flex|grid)/s)
+    expect(css).toMatch(/button\.m-float-trigger,\s*button\.m-float-popover-command\s*\{\s*display: none;\s*\}/)
+    expect(css).not.toMatch(/\.m-float-panel\[popover\]\s*\{[^}]*display:\s*(?:block|flex|grid)/s)
     expect(app).toContain('"showPopover" in HTMLElement.prototype')
     expect(app).not.toContain("showPopover(")
     expect(app).not.toContain("togglePopover(")
@@ -146,7 +146,7 @@ describe("native FloatButton and FloatButtonGroup", () => {
     install()
     expect(document.querySelector("#badge-action .demo-badge")!.getAttribute("aria-hidden")).toBe("true")
     expect(document.querySelector("#badge-action")!.getAttribute("aria-describedby")).toBe("badge-help")
-    expect(document.querySelector("#home-action .mui-float-description")!.textContent).toBe("Home")
+    expect(document.querySelector("#home-action .m-float-description")!.textContent).toBe("Home")
     expect(document.querySelector("#single-action svg")!.namespaceURI).toBe("http://www.w3.org/2000/svg")
     expect(document.querySelector("#single-action svg")!.getAttribute("focusable")).toBe("false")
     expect(css).not.toContain("badge")
@@ -160,7 +160,7 @@ describe("native FloatButton and FloatButtonGroup", () => {
     expect(getComputedStyle(document.querySelector("#hidden-group-action")!).display).toBe("none")
     expect(getComputedStyle(document.querySelector("#native-template")!).display).toBe("none")
     expect(document.querySelector<HTMLTemplateElement>("#native-template")!.content.textContent).toBe("Inert authored template")
-    expect(css).toContain(':where(button, a[href]).mui-float-button:not([hidden]) ~')
+    expect(css).toContain(':where(button, a[href]).m-float-button:not([hidden]) ~')
   })
 
   it("documents geometry through author safe-area/gutter CSS rather than measurements", () => {
@@ -168,8 +168,8 @@ describe("native FloatButton and FloatButtonGroup", () => {
     expect(appCss).toContain("safe-area-inset-left")
     expect(appCss).toContain("padding-inline: 1rem 6rem")
     expect(appCss).toContain("position: relative")
-    expect(css).toContain("var(--mui-float-trigger-size, 40px)")
-    expect(css).toContain("var(--mui-float-opposite-clearance, 1rem)")
+    expect(css).toContain("var(--m-float-trigger-size, 40px)")
+    expect(css).toContain("var(--m-float-opposite-clearance, 1rem)")
     expect(css).toContain("safe-area-inset-top")
     expect(app).not.toContain("getBoundingClientRect")
     expect(app).not.toContain("ResizeObserver")
@@ -190,12 +190,12 @@ describe("native FloatButton and FloatButtonGroup", () => {
   it("matches source-sized icons, descriptions and borderless native actions", () => {
     install()
     const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
-    const root = rules.find(rule => rule.selectorText === ":where(button, a[href]).mui-float-button")!
+    const root = rules.find(rule => rule.selectorText === ":where(button, a[href]).m-float-button")!
     expect(root.style.getPropertyValue("padding")).toBe("2px 4px")
     expect(root.style.getPropertyValue("border")).toBe("0")
     expect(root.style.getPropertyValue("font-size")).toBe("18px")
     expect(root.style.getPropertyValue("border-radius")).toBe("4096px")
-    const description = rules.find(rule => rule.selectorText === ".mui-float-description")!
+    const description = rules.find(rule => rule.selectorText === ".m-float-description")!
     expect(description.style.getPropertyValue("font-size")).toBe("12px")
     expect(description.style.getPropertyValue("line-height")).toBe("14px")
   })
@@ -203,21 +203,21 @@ describe("native FloatButton and FloatButtonGroup", () => {
   it("keeps authored colors above the primary palette and scopes dark contrast/shadows", () => {
     install()
     const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
-    const primary = rules.find(rule => rule.selectorText === '.mui-float-button[data-type="primary"]')!
-    expect(primary.style.getPropertyValue("--mui-float-background")).toBe("")
-    expect(primary.style.getPropertyValue("--mui-float-color")).toBe("")
-    expect(primary.style.getPropertyValue("--_mui-float-bg")).toContain("--mui-color-primary")
-    const dark = rules.find(rule => rule.selectorText === ':where([data-mui-theme="dark"])')!
-    expect(dark.style.getPropertyValue("--_mui-float-bg")).toBe("#48484e")
-    expect(dark.style.getPropertyValue("--_mui-float-contrast")).toBe("#000")
-    expect(dark.style.getPropertyValue("--_mui-float-alpha")).toBe(".12")
-    expect(dark.style.getPropertyValue("--_mui-float-hover-alpha")).toBe(".18")
+    const primary = rules.find(rule => rule.selectorText === '.m-float-button[data-type="primary"]')!
+    expect(primary.style.getPropertyValue("--m-float-background")).toBe("")
+    expect(primary.style.getPropertyValue("--m-float-color")).toBe("")
+    expect(primary.style.getPropertyValue("--_m-float-bg")).toContain("--m-color-primary")
+    const dark = rules.find(rule => rule.selectorText === ':where([data-m-theme="dark"])')!
+    expect(dark.style.getPropertyValue("--_m-float-bg")).toBe("#48484e")
+    expect(dark.style.getPropertyValue("--_m-float-contrast")).toBe("#000")
+    expect(dark.style.getPropertyValue("--_m-float-alpha")).toBe(".12")
+    expect(dark.style.getPropertyValue("--_m-float-hover-alpha")).toBe(".18")
   })
 
   it("counts a visible square-group separator without shrinking the native action minimum", () => {
-    expect(css).toContain("min-block-size: calc(var(--mui-float-height, 40px) + 1px)")
-    expect(css).toContain("gap: var(--mui-float-group-gap, 16px)")
-    expect(css).toContain("var(--mui-float-square-radius, 3px)")
-    expect(css).toContain("outline: 2px solid var(--mui-color-info, #2080f0)")
+    expect(css).toContain("min-block-size: calc(var(--m-float-height, 40px) + 1px)")
+    expect(css).toContain("gap: var(--m-float-group-gap, 16px)")
+    expect(css).toContain("var(--m-float-square-radius, 3px)")
+    expect(css).toContain("outline: 2px solid var(--m-color-info, #2080f0)")
   })
 })

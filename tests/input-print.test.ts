@@ -21,7 +21,7 @@ describe("Input scoped print defaults", () => {
   it("uses light print colors for roots, groups and labels without replacing author tokens", () => {
     const print = install().find(rule => "conditionText" in rule && rule.conditionText === "print") as CSSMediaRule
     const rule = print.cssRules[0] as CSSStyleRule
-    expect(rule.selectorText.replace(/\s/g, "")).toBe(".mui-input,.mui-input-group,.mui-input-group-label")
+    expect(rule.selectorText.replace(/\s/g, "")).toBe(".m-input,.m-input-group,.m-input-group-label")
     expect(rule.style.getPropertyValue("color-scheme")).toBe("light")
     expect(rule.style.getPropertyPriority("color-scheme")).toBe("")
     expect(rule.style.length).toBe(1)
@@ -31,7 +31,7 @@ describe("Input scoped print defaults", () => {
     const forced = install().filter(rule => "conditionText" in rule
       && rule.conditionText.replace(/\s/g, "") === "(forced-colors:active)") as CSSMediaRule[]
     const boundary = forced.flatMap(rule => [...rule.cssRules]).find(rule => rule instanceof CSSStyleRule
-      && rule.selectorText === ".mui-input:has([data-input-control]:disabled)::before") as CSSStyleRule
+      && rule.selectorText === ".m-input:has([data-input-control]:disabled)::before") as CSSStyleRule
     expect(boundary.style.getPropertyValue("border-color")).toBe("GrayText")
   })
 
@@ -39,9 +39,9 @@ describe("Input scoped print defaults", () => {
     const print = install().filter(rule => "conditionText" in rule
       && rule.conditionText === "print") as CSSMediaRule[]
     const status = print.flatMap(rule => [...rule.cssRules]).find(rule => rule instanceof CSSStyleRule
-      && rule.selectorText === ".mui-input[data-status]:not(:has([data-input-control]:disabled)):focus-within") as CSSStyleRule
+      && rule.selectorText === ".m-input[data-status]:not(:has([data-input-control]:disabled)):focus-within") as CSSStyleRule
     const boundary = print.flatMap(rule => [...rule.cssRules]).find(rule => rule instanceof CSSStyleRule
-      && rule.selectorText === ".mui-input[data-status]:not(:has([data-input-control]:disabled)):focus-within::before") as CSSStyleRule
+      && rule.selectorText === ".m-input[data-status]:not(:has([data-input-control]:disabled)):focus-within::before") as CSSStyleRule
     expect(status.style.getPropertyValue("color")).toBe("#000")
     expect(status.style.getPropertyValue("background")).toBe("transparent")
     expect(boundary.style.getPropertyValue("border-color")).toBe("currentColor")
@@ -49,12 +49,12 @@ describe("Input scoped print defaults", () => {
   })
 
   it("keeps the existing value, disabled and count color roles and native form nodes", () => {
-    document.body.innerHTML = '<div class="mui-input" style="--mui-input-color:maroon;--mui-input-disabled:purple"><input data-input-control value="Original" disabled><span data-input-count>8 / 20</span></div>'
+    document.body.innerHTML = '<div class="m-input" style="--m-input-color:maroon;--m-input-disabled:purple"><input data-input-control value="Original" disabled><span data-input-count>8 / 20</span></div>'
     const before = document.body.innerHTML
     const rules = install() as CSSStyleRule[]
-    const disabled = rules.find(rule => rule.selectorText === ".mui-input:has([data-input-control]:disabled)")!
-    expect(disabled.style.getPropertyValue("color")).toContain("var(--mui-input-disabled, light-dark(#c2c2c2")
-    const count = rules.find(rule => rule.selectorText === ".mui-input [data-input-count]")!
+    const disabled = rules.find(rule => rule.selectorText === ".m-input:has([data-input-control]:disabled)")!
+    expect(disabled.style.getPropertyValue("color")).toContain("var(--m-input-disabled, light-dark(#c2c2c2")
+    const count = rules.find(rule => rule.selectorText === ".m-input [data-input-count]")!
     expect(count.style.getPropertyValue("color")).toContain("light-dark(#767c82")
     expect(document.body.innerHTML).toBe(before)
     expect(document.querySelector("input")!.value).toBe("Original")

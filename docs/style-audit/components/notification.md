@@ -29,7 +29,7 @@ Notification now uses:
 - the source three-layer popup shadow.
 
 The previous 28rem card, 9.6px corners, heavy title and blue-gray painted surface are
-removed. Public `--mui-notification-*` overrides remain available.
+removed. Public `--m-notification-*` overrides remain available.
 
 ## Native retained differences
 

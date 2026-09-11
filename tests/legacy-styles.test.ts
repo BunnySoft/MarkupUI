@@ -31,11 +31,11 @@ describe("canonical legacy CSS and theme sources", () => {
 
   it("preserves the approved runtime CSS baselines exactly", () => {
     // Core includes the reviewed Avatar and Button corrections; see docs/style-audit/components/.
-    // Advanced and widget baselines remain byte-identical to source extraction.
+    // All three canonical sources now use the approved breaking m-* prefix.
     expect(runtimeStyles.map(hash)).toEqual([
-      "6eb63c78564b604d6193af7fdbda6c69e7206b5b2f6ad07c5551e95aa4f0ee91",
-      "191b9b19d5ab85393ddfa50a537b911133685fb87304c71b6c0eb478c1b9c1e7",
-      "2eef3afb63382e8a64c34740c6d9afec38b552640239d2e9e19fac7b6d33c24d",
+      "6ce74f5f8ae15b48e9501d9bbde45e8b7e080b44db0d787f9a0d93bfcd453d4b",
+      "6fd15d4f89081eaad05bc6391936ead49357aa4bd990202327146d93811957fd",
+      "cea995255d1cee151797540cea2970790ab58bffc20056be1917d71a4b4bb575",
     ])
   })
 
@@ -53,7 +53,7 @@ describe("canonical legacy CSS and theme sources", () => {
       theme.apply(name, root)
       expect(theme.current(root)).toBe(name)
       for (const [key, value] of Object.entries(builtInThemeTokens[name])) {
-        expect(root.style.getPropertyValue(`--mui-${key}`)).toBe(value)
+        expect(root.style.getPropertyValue(`--m-${key}`)).toBe(value)
       }
     }
     expect(document.querySelector('style[data-legacy-generated]')).toBeNull()
@@ -73,10 +73,10 @@ describe("canonical legacy CSS and theme sources", () => {
 
   it("provides attribute-scoped presets with native color schemes and no global auto-theme", () => {
     const css = themeStylesheet(builtInThemeTokens)
-    expect(css).toContain(':root[data-mui-theme="dark"]')
-    expect(css).toContain('[data-mui-theme="light"]')
+    expect(css).toContain(':root[data-m-theme="dark"]')
+    expect(css).toContain('[data-m-theme="light"]')
     expect(css).toContain("color-scheme: dark")
-    expect(css).toContain("--mui-bg-surface: #1c1c1f")
+    expect(css).toContain("--m-bg-surface: #1c1c1f")
     expect(css).not.toContain("@import")
     expect(css).not.toMatch(/(?:^|\n)body\s*\{/)
     expect(css).not.toContain("localStorage")

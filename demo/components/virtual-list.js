@@ -53,7 +53,7 @@ action("disconnect", () => {
 document.querySelector("#editor-form").addEventListener("submit", event => {
   event.preventDefault(); document.querySelector("#submission").textContent = JSON.stringify([...new FormData(event.currentTarget)], null, 2)
 })
-for (const root of [large, editors]) root.addEventListener("mui:virtual-list-error", event => { document.querySelector("#events").textContent = `Virtual List stopped: ${event.detail.error.message}` })
+for (const root of [large, editors]) root.addEventListener("m:virtual-list-error", event => { document.querySelector("#events").textContent = `Virtual List stopped: ${event.detail.error.message}` })
 document.querySelector("#tools").hidden = false; document.querySelector("#editor-tools").hidden = false
 metrics()
 window.virtualListDemo = { list, editable, items, get editorItems() { return editorItems }, metrics }

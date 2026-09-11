@@ -92,7 +92,7 @@ Evidence **E1** = [tests](../../../tests/select.test.ts); **E2** =
 | `value-field` · [API] L79 | Prop | Explicit native value strings | ⏭️ Intentionally omitted | No option-model field mapping. |
 | `virtual-scroll` · [API] L80 | Prop | Native options stay in DOM | ⏭️ Intentionally omitted | P5 virtualization excluded. |
 | `on-blur` · [API] L81 | Callback | Native select blur | 🟢 Verified | No duplicate custom blur. |
-| `on-clear` · [API] L82 | Callback | mui:select-clear after input/change | 🟢 Verified | E1/E2 previous value snapshot; no-op clear silent. |
+| `on-clear` · [API] L82 | Callback | m:select-clear after input/change | 🟢 Verified | E1/E2 previous value snapshot; no-op clear silent. |
 | `on-create` · [API] L83 | Callback | No created options | ⏭️ Intentionally omitted | Unknown values never invoke a factory. |
 | `on-focus` · [API] L84 | Callback | Native select focus | 🟢 Verified | E1/E2 focused clear recovery. |
 | `on-scroll` · [API] L85 | Callback | No custom popup scroll channel | ⏭️ Intentionally omitted | Native element events may be observed by applications, not menu parity. |

@@ -39,28 +39,28 @@ runtime; native layout/headings and href navigation work without it.
 ## Native anatomy and all content regions
 
 ```html
-<header class="mui-page-header">
-  <nav class="mui-page-header-header" aria-label="Breadcrumb">
+<header class="m-page-header">
+  <nav class="m-page-header-header" aria-label="Breadcrumb">
     <a href="./projects.html">Projects</a>
     <span aria-current="page">Example project</span>
   </nav>
-  <div class="mui-page-header-main">
-    <div class="mui-page-header-lead">
-      <a class="mui-page-header-back" href="./projects.html">Back to projects</a>
-      <span class="mui-page-header-avatar">
+  <div class="m-page-header-main">
+    <div class="m-page-header-lead">
+      <a class="m-page-header-back" href="./projects.html">Back to projects</a>
+      <span class="m-page-header-avatar">
         <img src="./project.png" width="40" height="40" alt="">
       </span>
-      <div class="mui-page-header-titles">
-        <h1 class="mui-page-header-title">Example project</h1>
-        <p class="mui-page-header-subtitle">Original subtitle</p>
+      <div class="m-page-header-titles">
+        <h1 class="m-page-header-title">Example project</h1>
+        <p class="m-page-header-subtitle">Original subtitle</p>
       </div>
     </div>
-    <div class="mui-page-header-extra">
+    <div class="m-page-header-extra">
       <a href="./project-edit.html">Edit project</a>
     </div>
   </div>
-  <div class="mui-page-header-content">Main descriptive content.</div>
-  <div class="mui-page-header-footer">Additional footer information.</div>
+  <div class="m-page-header-content">Main descriptive content.</div>
+  <div class="m-page-header-footer">Additional footer information.</div>
 </header>
 ```
 
@@ -68,14 +68,14 @@ Keep these relationships for the scoped layout selectors:
 
 | Upstream region | Native authored region |
 | --- | --- |
-| `header` | Root's direct `.mui-page-header-header`; optional native nav, breadcrumb or other introductory content. |
-| `avatar` | Lead's direct `.mui-page-header-avatar`; authored image/SVG/glyph, with native sizing and meaning. |
-| `title` | Titles group's direct `.mui-page-header-title`; choose the appropriate real heading level or another justified native element. |
-| `subtitle` | Titles group's direct `.mui-page-header-subtitle`; typically a native paragraph. |
-| `back` | Lead's direct native a[href]/button `.mui-page-header-back`, containing an authored name and optional decorative icon. |
-| `extra` | Main row's direct `.mui-page-header-extra`; native text, links or actual controls. |
-| default | Root's direct `.mui-page-header-content`; ordinary authored content. |
-| `footer` | Root's direct `.mui-page-header-footer`; ordinary content, not automatically a footer/contentinfo landmark. |
+| `header` | Root's direct `.m-page-header-header`; optional native nav, breadcrumb or other introductory content. |
+| `avatar` | Lead's direct `.m-page-header-avatar`; authored image/SVG/glyph, with native sizing and meaning. |
+| `title` | Titles group's direct `.m-page-header-title`; choose the appropriate real heading level or another justified native element. |
+| `subtitle` | Titles group's direct `.m-page-header-subtitle`; typically a native paragraph. |
+| `back` | Lead's direct native a[href]/button `.m-page-header-back`, containing an authored name and optional decorative icon. |
+| `extra` | Main row's direct `.m-page-header-extra`; native text, links or actual controls. |
+| default | Root's direct `.m-page-header-content`; ordinary authored content. |
+| `footer` | Root's direct `.m-page-header-footer`; ordinary content, not automatically a footer/contentinfo landmark. |
 
 The main/lead/titles wrappers only arrange content. They introduce no semantics. Regions
 are optional: omit them or use native `hidden` explicitly. An authored empty/whitespace-only
@@ -121,7 +121,7 @@ navigation. Do not replace a destination with an unconditional `history.back()` 
 For application behavior use an explicitly named native button:
 
 ```html
-<button class="mui-page-header-back" type="button" id="return-to-list">
+<button class="m-page-header-back" type="button" id="return-to-list">
   Back to list
 </button>
 ```
@@ -131,7 +131,7 @@ const back = document.getElementById("return-to-list")
 back.addEventListener("click", applicationReturnToList)
 ```
 
-This is an ordinary native click, **not** `mui:back`, an onBack property setter or an event
+This is an ordinary native click, **not** `m:back`, an onBack property setter or an event
 raised by a wrapper. Supply the application handler and its lifetime/cleanup policy.
 The source only renders its back icon when onBack is supplied; the native target renders
 exactly the control the author includes. With no handler, a type=button control has no
@@ -169,21 +169,21 @@ gap when header directly precedes content. A header-only composition retains its
 
 | CSS token | Default |
 | --- | --- |
-| `--mui-page-header-gap` | `20px` region margins |
-| `--mui-page-header-main-gap` | `16px 0px` wrapping-row/column gap; extra remains at logical end |
-| `--mui-page-header-lead-gap` | When absent: back end margin `16px`, avatar end margin and wrapping-row gap `12px`; one authored length overrides all three |
-| `--mui-page-header-title-gap` | `6px 16px` wrapping-row/title-subtitle gap |
-| `--mui-page-header-extra-gap` | `8px` between authored extra controls |
-| `--mui-page-header-font-size` | Root/header inherits; main/content/footer use shared font-size or `14px` |
-| `--mui-page-header-line-height` | `1.5` on the main row; other regions inherit surrounding line height |
-| `--mui-page-header-title-size`, `--mui-page-header-title-weight` | `18px`, `500` |
-| `--mui-page-header-title-color` | `#1f2225` light; white `.9` dark |
-| `--mui-page-header-subtitle-size`, `--mui-page-header-subtitle-color` | `14px`; `#767c82` light / white `.52` dark |
-| `--mui-page-header-back-size` | `22px` font size; authored `1em` artwork follows it |
-| `--mui-page-header-back-padding`, `--mui-page-header-back-radius` | `0px`, `0px` |
-| `--mui-page-header-back-color` | `#333639` light / white `.82` dark |
-| `--mui-page-header-back-hover-color`, `--mui-page-header-back-pressed-color` | `#36ad6a` / `#0c7a43` light; `#7fe7c4` / `#5acea7` dark |
-| `--mui-page-header-focus-color` | `currentColor` |
+| `--m-page-header-gap` | `20px` region margins |
+| `--m-page-header-main-gap` | `16px 0px` wrapping-row/column gap; extra remains at logical end |
+| `--m-page-header-lead-gap` | When absent: back end margin `16px`, avatar end margin and wrapping-row gap `12px`; one authored length overrides all three |
+| `--m-page-header-title-gap` | `6px 16px` wrapping-row/title-subtitle gap |
+| `--m-page-header-extra-gap` | `8px` between authored extra controls |
+| `--m-page-header-font-size` | Root/header inherits; main/content/footer use shared font-size or `14px` |
+| `--m-page-header-line-height` | `1.5` on the main row; other regions inherit surrounding line height |
+| `--m-page-header-title-size`, `--m-page-header-title-weight` | `18px`, `500` |
+| `--m-page-header-title-color` | `#1f2225` light; white `.9` dark |
+| `--m-page-header-subtitle-size`, `--m-page-header-subtitle-color` | `14px`; `#767c82` light / white `.52` dark |
+| `--m-page-header-back-size` | `22px` font size; authored `1em` artwork follows it |
+| `--m-page-header-back-padding`, `--m-page-header-back-radius` | `0px`, `0px` |
+| `--m-page-header-back-color` | `#333639` light / white `.82` dark |
+| `--m-page-header-back-hover-color`, `--m-page-header-back-pressed-color` | `#36ad6a` / `#0c7a43` light; `#7fe7c4` / `#5acea7` dark |
+| `--m-page-header-focus-color` | `currentColor` |
 
 These are ordinary external CSS values, not public Vue style props or a theme-object parser.
 Set tokens/classes in your stylesheet; native CSS grammar/cascade controls invalid values.
@@ -196,10 +196,10 @@ responsive rather than expecting Page Header to repair a fixed-width widget.
 The back control is now unframed and unpadded by default, matching the reference's visible
 back area while retaining an actual named link/button. No icon is generated. Fixed-size
 artwork stays fixed; author `width="1em" height="1em"` when it should follow the back font
-size. Visible text back labels can use a smaller `--mui-page-header-back-size` if desired.
+size. Visible text back labels can use a smaller `--m-page-header-back-size` if desired.
 Native disabled buttons remain disabled and have a not-allowed cursor.
 
-Set `data-mui-theme="dark"` on a host/ancestor for dark title/subtitle/back defaults;
+Set `data-m-theme="dark"` on a host/ancestor for dark title/subtitle/back defaults;
 nested light scopes reset them. Correct shared font-size and light primary hover/pressed
 roles are reused. Legacy global text roles are not substituted for these specific roles.
 Header/breadcrumb/default/footer and extra text otherwise inherit the application's color.

@@ -4,7 +4,7 @@
 labelled radio choices. Stars/SVG/text are decoration, never hidden hit zones or role-radio
 proxies. The optional helper **reuses the existing Radio implementation** for names,
 form/tree boundaries, exclusivity, silent native setters and aggregate commits.
-Legacy `mui-rating` in `src/plugins/widgets.ts` remains unchanged.
+Legacy `m-rating` in `src/plugins/widgets.ts` remains unchanged.
 
 ## Loading and authored structure
 
@@ -18,23 +18,23 @@ Legacy `mui-rating` in `src/plugins/widgets.ts` remains unchanged.
 | [Reference dispositions](../naive-ui/components/rate.md) | All original owner/prop/slot/inline identities and explicit supplements |
 
 ```html
-<fieldset class="mui-rate mui-radio-group" data-rate data-radio-group id="quality">
+<fieldset class="m-rate m-radio-group" data-rate data-radio-group id="quality">
   <legend>Quality</legend>
-  <div class="mui-rate__choices">
-    <label class="mui-rate__choice">
+  <div class="m-rate__choices">
+    <label class="m-rate__choice">
       <input data-radio type="radio" name="quality" value="1">
-      <span class="mui-rate__glyph" aria-hidden="true">★</span>
-      <span class="mui-rate__score">1 of 3</span>
+      <span class="m-rate__glyph" aria-hidden="true">★</span>
+      <span class="m-rate__score">1 of 3</span>
     </label>
-    <label class="mui-rate__choice">
+    <label class="m-rate__choice">
       <input data-radio type="radio" name="quality" value="2" checked>
-      <span class="mui-rate__glyph" aria-hidden="true">★</span>
-      <span class="mui-rate__score">2 of 3</span>
+      <span class="m-rate__glyph" aria-hidden="true">★</span>
+      <span class="m-rate__score">2 of 3</span>
     </label>
-    <label class="mui-rate__choice">
+    <label class="m-rate__choice">
       <input data-radio type="radio" name="quality" value="3">
-      <span class="mui-rate__glyph" aria-hidden="true">★</span>
-      <span class="mui-rate__score">3 of 3</span>
+      <span class="m-rate__glyph" aria-hidden="true">★</span>
+      <span class="m-rate__score">3 of 3</span>
     </label>
   </div>
   <span data-rate-output hidden>Not rated</span>
@@ -50,7 +50,7 @@ quality.setValue(2)    // Silent, keeps defaultChecked.
 quality.setValue(null) // Silent no selection, not a hidden zero.
 ```
 
-There is no custom-element registration or `mui-rating` load-order rule. Radio's root/
+There is no custom-element registration or `m-rating` load-order rule. Radio's root/
 member symbols reject duplicate Rate/Radio binding, including ESM/classic copies.
 Do not independently bind the same fieldset with both helpers.
 
@@ -91,12 +91,12 @@ chips, **not two invisible hit zones per star**. A half glyph is optional clippe
 content; the focusable input is never clipped, hidden or overlaid by an unlabelled target.
 
 ```html
-<label class="mui-rate__choice">
+<label class="m-rate__choice">
   <input data-radio type="radio" name="detail" value="1.5">
-  <span class="mui-rate__glyph" data-half aria-hidden="true">
-    ★<span class="mui-rate__half-fill">★</span>
+  <span class="m-rate__glyph" data-half aria-hidden="true">
+    ★<span class="m-rate__half-fill">★</span>
   </span>
-  <span class="mui-rate__score">1.5 of 3</span>
+  <span class="m-rate__score">1.5 of 3</span>
 </label>
 ```
 
@@ -137,13 +137,13 @@ selectors, and no synthetic click. Re-clicking/Space on the already selected sta
 not toggle it off** or generate another native change.
 
 Selection uses original native input/change and Radio's existing one nonbubbling
-`mui:radio-group-change` per committed native change (`detail.value` remains a string).
-Rate adds **no duplicate `mui:rate-change`**. Read numeric `controller.value` when needed.
+`m:radio-group-change` per committed native change (`detail.value` remains a string).
+Rate adds **no duplicate `m:rate-change`**. Read numeric `controller.value` when needed.
 Native unchecking of the former peer does not emit a fabricated false change.
 
 Clear is an authored named `type=button` outside labels. A later click preventDefault
 cancels its next-task action. It clears through Radio's silent native setter, then emits
-one nonbubbling `mui:rate-clear` on the root with `{ previous, value: null }`. It deliberately
+one nonbubbling `m:rate-clear` on the root with `{ previous, value: null }`. It deliberately
 does **not** synthesize native radio input/change or a second Radio aggregate because no
 radio became selected. Observe native change and explicit clear for the adapted update
 contract. Programmatic setters, refresh and reset emit neither.
@@ -164,15 +164,15 @@ the no-JS alternative; it is not identical to the helper's null clear.
 
 CSS owns size, color, current/hover/partial-fill/focus/RTL/forced-color/print presentation.
 `data-size="small|medium|large"` now supplies the pinned **16/20/24px** glyph font sizes,
-with 20px default; external `--mui-rate-size` overrides those private presets.
-Tokens: `--mui-rate-text`, `--mui-rate-active`, `--mui-rate-muted`, `--mui-rate-size`,
-`--mui-rate-gap`, `--mui-rate-border`, `--mui-rate-focus`. Choice gap defaults to 6px.
+with 20px default; external `--m-rate-size` overrides those private presets.
+Tokens: `--m-rate-text`, `--m-rate-active`, `--m-rate-muted`, `--m-rate-size`,
+`--m-rate-gap`, `--m-rate-border`, `--m-rate-focus`. Choice gap defaults to 6px.
 This is spacing between native choice chips, not a promise that visible radios/labels
 collapse into the source's compact star strip.
 
 Default active color is `#ffcc33` in light and `#ccaa33` in dark; inactive decoration is
 `#dbdbdf` / white .2. Native labels use `#333639` / white .82. Local
-`data-mui-theme="light|dark"` scopes select these defaults; public color tokens remain
+`data-m-theme="light|dark"` scopes select these defaults; public color tokens remain
 author overrides. No provider or color parser is added.
 
 `data-rate-cumulative` on an **integer** group optionally colors preceding choices via
@@ -199,8 +199,8 @@ overflow-clipped; only the decorative half glyph is clipped.
 Radio owns native-group lifetime and peer validation. Rate adds only readout/clear
 attributes and text ownership; later author mutations are preserved on disposal when
 still distinguishable from helper writes. No-op removal of an absent attribute is not
-an observable transfer of ownership. Underlying scope errors use mui:radio-group-error;
-rating-choice/format errors also expose `error`/mui:rate-error. Fix invalid markup and
+an observable transfer of ownership. Underlying scope errors use m:radio-group-error;
+rating-choice/format errors also expose `error`/m:rate-error. Fix invalid markup and
 refresh; no missing choice or hidden value is generated. Native controls are retained
 through value updates; recreate for changed bounded choice contracts.
 
@@ -209,7 +209,7 @@ through value updates; recreate for changed bounded choice contracts.
 | Upstream item | Retained adaptation or explicit omission |
 | --- | --- |
 | allow-half | Explicit labelled half-step native choices, not pointer half-hit zones |
-| clearable, on-clear | Separate native button and mui:rate-clear; selected-star reactivation clearing omitted |
+| clearable, on-clear | Separate native button and m:rate-clear; selected-star reactivation clearing omitted |
 | color | External CSS color variable; no JS color prop/style injection |
 | count | Bounded max score 1–10 with a complete authored choice set, no renderer |
 | default-value, value | Native defaultChecked and numeric/native-string selection/null; zero is explicit |
@@ -230,7 +230,7 @@ name/form/tree exclusivity; Select uses option.defaultSelected and strict scalar
 Slider pairs retain independent bounds/defaults. Read native validity on native controls,
 refresh optional presentation **after native reset**, respect cancellation/disabled
 fieldsets, and do not fabricate user events on validation or programmatic writes.
-For user-triggered Rate unrating, observe `mui:rate-clear` in capture phase or validate
+For user-triggered Rate unrating, observe `m:rate-clear` in capture phase or validate
 explicitly; it intentionally does not fabricate a native radio change.
 Form should add native validation before remaining Auto Complete/OTP/dynamic/picker work,
 not replace these controls with a schema/provider/wizard.
@@ -282,7 +282,7 @@ pointer/hover renderer, all-browser/AT or native-theme pixel parity.
 - JS-disabled Chromium retained native integer/half keys, defaults and real local GET
   submission; clear/readout enhancements stayed hidden. ESM/classic/native Radio
   duplicate guards passed. Both core/widgets loading orders and an actual legacy
-  mui-rating changing 2 → 3 coexisted with the new native group.
+  m-rating changing 2 → 3 coexisted with the new native group.
 
 `pnpm build` passed TypeScript and every existing/new ceiling. Rate imports/reuses the
 existing Radio implementation but does not modify its source or output. No dependency was

@@ -84,7 +84,7 @@ keys/raw option objects, defaults or callbacks. Omitted rows receive no implemen
 | Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
 | [`animated`][d28] | Prop | ADAPTED optional shared appearance class. | 🟢 Verified | External CSS/reduced motion, not a transition engine/default prop. |
-| [`inverted`][d29] | Prop | ADAPTED `.mui-dropdown--inverted` and inherited CSS tokens. | 🟢 Verified | No provider/theme injection. |
+| [`inverted`][d29] | Prop | ADAPTED `.m-dropdown--inverted` and inherited CSS tokens. | 🟢 Verified | No provider/theme injection. |
 | [`children-field`][d30] | Prop | No object-field alias. | ⏭️ Intentionally omitted | Authored nested lists define hierarchy. |
 | [`keyboard`][d31] | Prop | ADAPTED complete retained menu keyboard, always enabled with menu roles. | 🟢 Verified | keyboard=false rejected; ordinary list fallback has no fake menu semantics. |
 | [`key-field`][d32] | Prop | No object-field alias. | ⏭️ Intentionally omitted | Explicit string data-dropdown-key. |
@@ -97,7 +97,7 @@ keys/raw option objects, defaults or callbacks. Omitted rows receive no implemen
 | [`render-option`][d39] | Prop | No whole-option VNode renderer. | ⏭️ Intentionally omitted | One native action per menuitem; arbitrary widgets rejected. |
 | [`size`][d40] | Prop | ADAPTED small/default medium/large/huge CSS classes. | 🟢 Verified | Tokens cascade to submenus; no JS prop/style forwarding. |
 | [`on-clickoutside`][d41] | Callback | No outside-reason callback. | ⏭️ Intentionally omitted | Native dismissal, not a duplicated global click engine. |
-| [`on-select`][d42] | Callback | ADAPTED mui:dropdown-select DOM notification. | 🟢 Verified | String key, DOM item/path/native event after accepted leaf activation; not raw option/numeric callback parity. |
+| [`on-select`][d42] | Callback | ADAPTED m:dropdown-select DOM notification. | 🟢 Verified | String key, DOM item/path/native event after accepted leaf activation; not raw option/numeric callback parity. |
 
 ### DropdownOption Type
 

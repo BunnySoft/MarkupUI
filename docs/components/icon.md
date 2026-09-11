@@ -40,16 +40,16 @@ on the application's behalf.
 
 The [default-style audit](../style-audit/components/icon.md) records the later rendered
 Naive 2.45.3 comparison. Link the opt-in Global Style CSS for documented document typography.
-Explicit `data-mui-theme="light|dark"` selects Icon's local depth/contrast defaults; existing
+Explicit `data-m-theme="light|dark"` selects Icon's local depth/contrast defaults; existing
 application primary-color tokens and author Icon tokens still take precedence. The general
 document palette is not claimed to match Naive.
 
 ## Native graphic sizing and color
 
-Use `.mui-icon` on a neutral native span/i or directly on an authored SVG/image:
+Use `.m-icon` on a neutral native span/i or directly on an authored SVG/image:
 
 ```html
-<span class="mui-icon action-graphic" aria-hidden="true">
+<span class="m-icon action-graphic" aria-hidden="true">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
     <path d="M4 12h15M13 6l6 6-6 6"></path>
   </svg>
@@ -58,12 +58,12 @@ Use `.mui-icon` on a neutral native span/i or directly on an authored SVG/image:
 
 ```css
 .action-graphic {
-  --mui-icon-size: 24px;
-  --mui-icon-color: #175fbb;
+  --m-icon-size: 24px;
+  --m-icon-color: #175fbb;
 }
 ```
 
-Size is one em by default, inheriting the current font size. `--mui-icon-size` takes ordinary
+Size is one em by default, inheriting the current font size. `--m-icon-size` takes ordinary
 CSS lengths such as `24px`, `1.5rem` or a valid CSS expression. Numeric upstream values map
 to explicit CSS units; no JavaScript interprets a `size` attribute or coerces bare data values.
 The icon box is inline-block, relatively positioned, center-aligned and baseline-aligned;
@@ -71,20 +71,20 @@ the previous negative vertical offset is removed. An authored `i` keeps native i
 matching the reference's `i` root; a span/SVG keeps its own inherited font style.
 
 There are no semantic `type`, `rotate` or `rotation` props in the pinned Icon API. Use author
-CSS `color`/`--mui-icon-color` and `transform` for those effects. Rotation declarations and
+CSS `color`/`--m-icon-color` and `transform` for those effects. Rotation declarations and
 SVG transform attributes are not rewritten. Native button `type` remains a form action,
 not an Icon style flag.
 
 For predictable wrapper sizing, put a single SVG/image directly inside the neutral
-`.mui-icon` span/i. Direct asset sizing is **not** a recursive SVG selector: nested SVG
-viewports and shape dimensions are not reset. Direct SVG/image `.mui-icon` also works;
+`.m-icon` span/i. Direct asset sizing is **not** a recursive SVG selector: nested SVG
+viewports and shape dimensions are not reset. Direct SVG/image `.m-icon` also works;
 its descendant SVG viewports are untouched.
 
 ### Paint and aspect-ratio rules
 
 - The stylesheet never assigns `fill`, `stroke`, stroke width or individual path styles.
   Multicolor and stroke-only assets retain their original paint instructions.
-- `--mui-icon-color` controls inherited CSS `color`; an asset opts into recoloring by
+- `--m-icon-color` controls inherited CSS `color`; an asset opts into recoloring by
   explicitly authoring `fill="currentColor"` or `stroke="currentColor"`. A fixed fill/stroke
   remains fixed. Direct SVG `color` attributes and author inline color styles are preserved.
 - Unlike upstream's broad `fill:currentColor`/descendant SVG rules, no blanket paint reset
@@ -103,11 +103,11 @@ copied vendor assets. Consumers provide any other appropriately licensed assets 
 
 ## Depth and IconWrapper
 
-`data-depth="1|2|3|4|5"` on `.mui-icon` selects the verified graphic opacity:
+`data-depth="1|2|3|4|5"` on `.m-icon` selects the verified graphic opacity:
 **.82 / .72 / .38 / .24 / .18** in light and **.9 / .82 / .52 / .38 / .28** in dark.
 Depth supplies black/white inherited `color`, unless an Icon color override or direct SVG
-`color` attribute is authored. It never assigns fill/stroke. Tokens `--mui-icon-depth-1`
-through `--mui-icon-depth-5` remain overrides.
+`color` attribute is authored. It never assigns fill/stroke. Tokens `--m-icon-depth-1`
+through `--m-icon-depth-5` remain overrides.
 
 Absence does not reset an authored SVG opacity. The retained native adaptation affects the
 whole SVG/image/glyph graphic, whereas upstream attenuates SVG descendants only. Thus native
@@ -120,28 +120,28 @@ opacity for essential icon-only controls; verify contrast in the actual context.
 Forced-colors mode restores depth opacity to one and gives wrappers a system-color edge,
 without disabling the browser's forced-color adjustment or rewriting SVG paints.
 
-IconWrapper is an ordinary `.mui-icon-wrapper` element:
+IconWrapper is an ordinary `.m-icon-wrapper` element:
 
 ```html
-<span class="mui-icon-wrapper badge-graphic" aria-hidden="true">
-  <span class="mui-icon">✓</span>
+<span class="m-icon-wrapper badge-graphic" aria-hidden="true">
+  <span class="m-icon">✓</span>
 </span>
 ```
 
 ```css
 .badge-graphic {
-  --mui-icon-wrapper-size: 40px;
-  --mui-icon-wrapper-radius: 50%;
-  --mui-icon-wrapper-background: #edf0fa;
-  --mui-icon-wrapper-color: #7040a0;
-  --mui-icon-size: 24px;
+  --m-icon-wrapper-size: 40px;
+  --m-icon-wrapper-radius: 50%;
+  --m-icon-wrapper-background: #edf0fa;
+  --m-icon-wrapper-color: #7040a0;
+  --m-icon-size: 24px;
 }
 ```
 
 Wrapper defaults are **24px** square, **6px** radius, primary-colored background and white
 icon color in light / black in dark. The default border is zero, and the inline wrapper uses
-its native baseline rather than a middle offset. Its tokens are `--mui-icon-wrapper-size`,
-`--mui-icon-wrapper-radius`, `--mui-icon-wrapper-background` and `--mui-icon-wrapper-color`.
+its native baseline rather than a middle offset. Its tokens are `--m-icon-wrapper-size`,
+`--m-icon-wrapper-radius`, `--m-icon-wrapper-background` and `--m-icon-wrapper-color`.
 Icon size and wrapper size are independent, as in the source composition. A wrapper does
 not recolor fixed-paint artwork.
 
@@ -154,7 +154,7 @@ Unlike source Icon's automatic `role="img"`, meaningful/decorative semantics are
 
 ```html
 <button type="button" aria-label="Save">
-  <span class="mui-icon" aria-hidden="true">
+  <span class="m-icon" aria-hidden="true">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
       <path d="m5 13 4 4L20 5"></path>
     </svg>
@@ -169,7 +169,7 @@ Use explicit `type="button"` for a nonsubmitting action; the library never rewri
 **Meaningful standalone SVG: let the SVG own its name/description.**
 
 ```html
-<svg class="mui-icon" role="img" aria-labelledby="icon-title" aria-describedby="icon-description"
+<svg class="m-icon" role="img" aria-labelledby="icon-title" aria-describedby="icon-description"
      viewBox="0 0 24 24">
   <title id="icon-title">Two circles</title>
   <desc id="icon-description">Original overlapping colored shapes.</desc>
@@ -182,9 +182,9 @@ Use unique IDs in repeated application-owned artwork. Native images use alt text
 text glyph may use one explicit native image role/name where needed. Do not duplicate that
 name on both wrapper and asset.
 
-Native button/link focus and activation remain native. When `.mui-icon-wrapper` is deliberately
+Native button/link focus and activation remain native. When `.m-icon-wrapper` is deliberately
 applied to a native button or href-bearing anchor, CSS supplies a visible focus outline with
-`--mui-icon-focus-color`; it still supplies no interaction. The default 24px wrapper is a
+`--m-icon-focus-color`; it still supplies no interaction. The default 24px wrapper is a
 graphic size, not a recommended touch target—use an adequately sized native action around it.
 No hover-only affordance, disabled emulation, focus trap or router integration is included.
 
@@ -206,14 +206,14 @@ animations remain the author's separate choice.
 
 | Upstream item | Native equivalent | Status / limits |
 | --- | --- | --- |
-| Icon `color` | External `--mui-icon-color` / inherited currentColor. | 🟢 No fill/stroke reset; explicit native paints remain authoritative. |
-| Icon `depth` | `.mui-icon[data-depth="1..5"]` and opacity tokens. | 🟢 Entire-graphic opacity adaptation, with forced-colors visibility fallback. |
-| Icon `size` | External CSS length in `--mui-icon-size`; default inherited 1em. | 🟢 No JS number/unit parser or runtime attribute interface. |
+| Icon `color` | External `--m-icon-color` / inherited currentColor. | 🟢 No fill/stroke reset; explicit native paints remain authoritative. |
+| Icon `depth` | `.m-icon[data-depth="1..5"]` and opacity tokens. | 🟢 Entire-graphic opacity adaptation, with forced-colors visibility fallback. |
+| Icon `size` | External CSS length in `--m-icon-size`; default inherited 1em. | 🟢 No JS number/unit parser or runtime attribute interface. |
 | Icon `component` | Author native SVG/image/glyph content. | ⏭️ Component-constructor/render adapter and icon-package import omitted. |
-| IconWrapper `border-radius` | `--mui-icon-wrapper-radius`, default 6px. | 🟢 Native wrapper shape. |
-| IconWrapper `color` | `--mui-icon-wrapper-background`. | 🟢 Native wrapper background. |
-| IconWrapper `icon-color` | `--mui-icon-wrapper-color`. | 🟢 Inherited color only, not overriding fixed SVG paint. |
-| IconWrapper `size` | `--mui-icon-wrapper-size`, default 24px. | 🟢 Wrapper dimension independent of asset size. |
+| IconWrapper `border-radius` | `--m-icon-wrapper-radius`, default 6px. | 🟢 Native wrapper shape. |
+| IconWrapper `color` | `--m-icon-wrapper-background`. | 🟢 Native wrapper background. |
+| IconWrapper `icon-color` | `--m-icon-wrapper-color`. | 🟢 Inherited color only, not overriding fixed SVG paint. |
+| IconWrapper `size` | `--m-icon-wrapper-size`, default 24px. | 🟢 Wrapper dimension independent of asset size. |
 | Icon default slot | Original native asset/text child. | 🟢 No cloning or slot/render runtime. |
 | Icon `Depth` source alias | CSS data values 1–5 naturally represented as strings. | 🟢 Source-only type clarified; no fictional JS type/runtime export. |
 | IconWrapper default source slot | Original native wrapper children. | 🟢 Companion content supported by normal HTML. |

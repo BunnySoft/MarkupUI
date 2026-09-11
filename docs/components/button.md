@@ -1,7 +1,28 @@
 # Button and Button Group
 
-**Migration status: 🟢 Complete and verified for the retained native scope below.**
-This is an optional, dependency-free component, not the basic Button in the legacy aggregate.
+## Platform architecture — 2026-09-11
+
+`m-button` and `m-button-group` are the Web renderer names for the platform-neutral
+Button and ButtonGroup definitions.
+
+```html
+<m-button type="primary">Save</m-button>
+<m-button-group size="small">
+  <m-button>Previous</m-button>
+  <m-button>Next</m-button>
+</m-button-group>
+```
+
+The optional entry exports `MButton`, `MButtonGroup` and readonly platform definitions.
+Direct Web authoring does not create a second serialized model tree.
+
+Current first-batch payloads are ESM **3,717/4,000**, classic **3,927/4,000** and CSS
+**2,476/2,500 gzip bytes**. Registration remains Button-local rather than importing a
+shared runtime helper; extract a shared helper only when the next concrete consumer proves
+it can fit without raising budgets.
+
+**Migration status: 🟢 Complete and verified for the retained Web scope below.**
+This is an optional, dependency-free component.
 All upstream public properties, the source-only click callback and slots are accounted for;
 intentional native replacements and omissions are not claims of Vue API or pixel parity.
 
@@ -16,7 +37,7 @@ Inventory pinned to Naive UI commit `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`:
 
 | Asset | Purpose |
 | --- | --- |
-| `dist/markup-ui-button.js` | ESM; exports `MuiButton`, `MuiButtonGroup`, `registerButton()`; registers on browser import. |
+| `dist/markup-ui-button.js` | ESM; exports `MButton`, `MButtonGroup`, `registerButton()`; registers on browser import. |
 | `dist/markup-ui-button.global.js` | Classic script; registers and exposes `MarkupUIButton`. |
 | `dist/markup-ui-button.css` | Required external CSS; no stylesheet injection. Insertion briefly leases a private inline geometry token, restored afterward. |
 | `demo/components/button.html`, `.css`, `.js` | Runnable comparison page mirroring all eighteen pinned Naive UI 2.45.3 Button demos, with one highlighted code control per case. |
@@ -27,9 +48,9 @@ Inventory pinned to Naive UI commit `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`:
 <script defer src="./vendor/markup-ui-button.global.js"></script>
 <script defer src="./app.js"></script>
 
-<mui-button type="primary">
+<m-button type="primary">
   <button type="submit" name="action" value="save">Save</button>
-</mui-button>
+</m-button>
 ```
 
 Application ESM: `import "@dataengine/markup-ui/button";`. Serve/link the
@@ -48,7 +69,7 @@ current size claims. All existing budget ceilings remain unchanged.
 
 For the documented defaults, also link `@dataengine/markup-ui/global-style/style.css`.
 For explicit light/dark themes, link `@dataengine/markup-ui/themes.css` and set
-`data-mui-theme="light"` or `"dark"` on the document or containing scope. No theme runtime
+`data-m-theme="light"` or `"dark"` on the document or containing scope. No theme runtime
 is required. Button consumes Button-specific text/border tokens; the surrounding document
 palette is not claimed to match Naive UI.
 
@@ -63,7 +84,7 @@ edits update this distinction without inserting a content wrapper.
 ## Native markup contract
 
 Author **one direct `<button>` or `<a>`**, with phrasing content inside it. This native child
-is the only interactive/accessible root. The `mui-button` wrapper does not acquire
+is the only interactive/accessible root. The `m-button` wrapper does not acquire
 `role="button"` or a tab stop. Give IDs referenced by native labels, native `tabindex`,
 `autofocus`, `accesskey`, `title`, additional ARIA, popover attributes and other native
 attributes to the **child**, not the host. Do not add a host `role` or `tabindex`: these
@@ -72,20 +93,20 @@ are not forwarded, and can create duplicate semantics/tab stops.
 ```html
 <form id="editor">
   <label>Title <input name="title" required></label>
-  <mui-button type="primary">
+  <m-button type="primary">
     <button type="submit" name="action" value="save">
-      <span data-mui-button-icon aria-hidden="true">✓</span>Save
+      <span data-m-button-icon aria-hidden="true">✓</span>Save
     </button>
-  </mui-button>
-  <mui-button><button type="reset">Reset</button></mui-button>
+  </m-button>
+  <m-button><button type="reset">Reset</button></m-button>
 </form>
 
-<mui-button circle>
+<m-button circle>
   <button type="button" aria-label="Add item">
-    <span data-mui-button-icon aria-hidden="true">+</span>
+    <span data-m-button-icon aria-hidden="true">+</span>
   </button>
-</mui-button>
-<mui-button text><a href="/help" rel="help">Help</a></mui-button>
+</m-button>
+<m-button text><a href="/help" rel="help">Help</a></m-button>
 ```
 
 Without an authored direct control, the component creates a real `<button type="button">`
@@ -94,7 +115,7 @@ submit a form. An authored `<button>` with no `type` retains the browser's **sub
 default. Host `type` is always visual; use host `attr-type` to override the child's native
 type, or author its `type` directly. Invalid `attr-type` falls back to `button`.
 Do not put multiple controls, nested buttons/links, inputs, or other interactive descendants
-inside one Button. Group multiple actions with `mui-button-group`.
+inside one Button. Group multiple actions with `m-button-group`.
 
 Host form conveniences are `attr-type`, `name`, `value`, `form`, `formaction`, `formmethod`,
 `formenctype`, `formtarget` and Boolean `formnovalidate`. These target a native **button**
@@ -108,15 +129,15 @@ Host `href`/`tag` are not supported; author an `<a>` for navigation.
 
 - Visible native child text names the control. Icon-only controls require a native
   `aria-label` or `aria-labelledby`. Mark decorative direct icons with
-  `data-mui-button-icon aria-hidden="true"`; no icon library or renderer is included.
+  `data-m-button-icon aria-hidden="true"`; no icon library or renderer is included.
 - Host `aria-label`, `aria-labelledby`, `aria-describedby`, `aria-controls`, `aria-expanded`
   and `aria-pressed` are explicit conveniences forwarded to the native child. Removing an
   override restores the authored value. Other ARIA attributes belong on the native child.
   There is no `label` property that silently replaces visible authored content.
 - `element.control` is the native button/anchor (or `null` before connection).
   `element.click()`, `.focus(options)` and `.blur()` delegate to it. Listen for ordinary
-  bubbling `click` on either native child or host; delegated `mui-action` works when the
-  aggregate is also loaded. There is no duplicate `mui:click`, synthesized keyboard click
+  bubbling `click` on either native child or host; delegated `m-action` works when the
+  aggregate is also loaded. There is no duplicate `m:click`, synthesized keyboard click
   or automatic application loading state. `dispatchEvent()` does not imitate native
   activation; use `.click()` when submission/activation is intended.
 - Buttons activate with native Enter/Space behavior; anchors with Enter, not Space.
@@ -153,7 +174,7 @@ scope · ⏭️ Intentionally omitted framework API.
 | `block` | Boolean `block` / `.block`. | 🟢 Full-width host and native control. |
 | `bordered` | `bordered="false"` / `.bordered = false`; default true. | 🟢 Omits the border overlay without changing control geometry. |
 | `circle` | Boolean `circle` / `.circle`. | 🟢 Equal preset width/height unless `text` is also set; keep content short/icon-only. |
-| `color` | `--mui-button-color`, `--mui-button-hover-color`, `--mui-button-pressed-color`. | 🟡 External CSS tokens; no color-string JS parser or auto-generated hover colors. |
+| `color` | `--m-button-color`, `--m-button-hover-color`, `--m-button-pressed-color`. | 🟡 External CSS tokens; no color-string JS parser or auto-generated hover colors. |
 | `dashed` | Boolean `dashed` / `.dashed`. | 🟢 Dashed border overlay. |
 | `disabled` | Boolean `disabled` / `.disabled`, or authored native disabled. | 🟢 Actual button disabling; explicit link navigation suppression and ARIA. |
 | `focusable` | `focusable="false"` / `.focusable = false`. | 🟡 Excludes sequential Tab focus via native `tabindex=-1`; pointer/programmatic focus remains native, not forcibly prevented. |
@@ -163,21 +184,21 @@ scope · ⏭️ Intentionally omitted framework API.
 | `keyboard` | Always retain native keyboard defaults. | 🟡 No API to suppress accessible Enter/Space activation and no custom keydown click synthesis. |
 | `quaternary` | Boolean `quaternary` / `.quaternary`. | 🟢 Transparent resting surface, subtle hover/pressed fill. |
 | `loading` | Boolean `loading` / `.loading`. | 🟢 Busy state, decorative spinner, suppressed activation, native disabling. No automatic promise tracking. |
-| `spin-props` | `--mui-button-spinner-size`, `--mui-button-spinner-width`, `--mui-button-spinner-color`. | 🟡 Native SVG size/stroke/color controls; default stroke is 10% of its viewport. Author CSS lengths remain supported; no framework object prop. Reduced motion pauses the native arc. |
-| `render-icon` | Authored direct `[data-mui-button-icon]` child. | ⏭️ VNode render callback omitted; native content equivalent implemented. |
+| `spin-props` | `--m-button-spinner-size`, `--m-button-spinner-width`, `--m-button-spinner-color`. | 🟡 Native SVG size/stroke/color controls; default stroke is 10% of its viewport. Author CSS lengths remain supported; no framework object prop. Reduced motion pauses the native arc. |
+| `render-icon` | Authored direct `[data-m-button-icon]` child. | ⏭️ VNode render callback omitted; native content equivalent implemented. |
 | `round` | Boolean `round` / `.round`. | 🟢 Pill corners; `circle` wins when both are present. |
 | `secondary` | Boolean `secondary` / `.secondary`. | 🟢 Low-opacity semantic fill. |
 | `size` | `size="tiny\|small\|medium\|large"` / `.size`. | 🟢 Fixed 22/28/34/40px heights; medium default. CSS can customize dimensions. |
 | `strong` | Boolean `strong` / `.strong`. | 🟢 Font weight 500. |
 | `tertiary` | Boolean `tertiary` / `.tertiary`. | 🟢 Muted surface and hover/pressed state. |
 | `text` | Boolean `text` / `.text`; legacy `type="text"` also accepted. | 🟢 Compact, borderless appearance; not a link unless the authored control is an anchor. |
-| `text-color` | `--mui-button-label-color`. | 🟡 External CSS override; not an inline style/object prop. |
+| `text-color` | `--m-button-label-color`. | 🟡 External CSS override; not an inline style/object prop. |
 | `type` | `type` / `.type`: default, primary, info, success, warning, error, tertiary; legacy `variant` / `.variant` aliases semantic colors. | 🟢 `type=tertiary` now uses muted text with the ordinary transparent surface/border; the Boolean `tertiary` treatment instead uses a soft fill. Do not combine conflicting `type` and `variant` values. |
 | `tag` | Author one native `<button>` or `<a>`. | ⏭️ Arbitrary tag rendering is omitted; no clickable div/span impersonation. |
 | `onClick` (source prop) / DOM events demo | `addEventListener("click", handler)` on the native child or host. | 🟢 Ordinary cancellable event and bubbling; no function/array prop adapter. |
 | `theme`, `themeOverrides`, `builtinThemeOverrides` (inherited theme plumbing) | External component CSS and custom properties. | ⏭️ Vue theme injection, CSS-in-JS and framework theme objects omitted. |
 | Default slot | Authored child phrasing content. | 🟢 Preserved nodes and listeners; no VNode renderer or shadow slot projection. |
-| Icon slot | Authored direct `[data-mui-button-icon]` inside native control, or host content before generation. | 🟢 Preserved nodes; author decorative semantics and icon-only names explicitly. |
+| Icon slot | Authored direct `[data-m-button-icon]` inside native control, or host content before generation. | 🟢 Preserved nodes; author decorative semantics and icon-only names explicitly. |
 
 Boolean presence attributes such as `disabled="false"` are still **true** under native
 HTML conventions; remove them or assign the corresponding property `false`. Only
@@ -185,15 +206,15 @@ HTML conventions; remove them or assign the corresponding property `false`. Only
 Choose one main treatment; combinations that upstream rejects (ghost/dashed/text with
 secondary/tertiary/quaternary) are not a supported precedence contract.
 
-Additional CSS tokens include `--mui-button-height`, `--mui-button-padding`,
-`--mui-button-font-size`, `--mui-button-radius`, `--mui-button-icon-size`, `--mui-button-icon-gap`,
-`--mui-button-border-color`, `--mui-button-background` (default surface),
-`--mui-button-contrast`, `--mui-button-focus-color` and `--mui-button-disabled-opacity`.
+Additional CSS tokens include `--m-button-height`, `--m-button-padding`,
+`--m-button-font-size`, `--m-button-radius`, `--m-button-icon-size`, `--m-button-icon-gap`,
+`--m-button-border-color`, `--m-button-background` (default surface),
+`--m-button-contrast`, `--m-button-focus-color` and `--m-button-disabled-opacity`.
 Use external stylesheets, not runtime style objects. Application colors remain responsible
 for contrast in their actual theme; this is not blanket accessibility certification.
-`--mui-button-background-hover` and `--mui-button-background-pressed` customize those states.
+`--m-button-background-hover` and `--m-button-background-pressed` customize those states.
 Ordinary focus uses the verified theme focus border/text colors, without a default outer
-halo. An explicit `--mui-button-focus-color` still requests the authored 3px focus-visible
+halo. An explicit `--m-button-focus-color` still requests the authored 3px focus-visible
 ring; forced-colors mode uses a 2px system Highlight outline. Reduced motion disables
 control/border transitions and the decorative spinner animation.
 
@@ -219,18 +240,18 @@ remain blocked by that ceiling, not claimed as implemented. See the
 ## ButtonGroup
 
 ```html
-<mui-button-group size="small" aria-label="Edit actions">
-  <mui-button>Cut</mui-button>
-  <mui-button>Copy</mui-button>
-  <mui-button>Paste</mui-button>
-</mui-button-group>
+<m-button-group size="small" aria-label="Edit actions">
+  <m-button>Cut</m-button>
+  <m-button>Copy</m-button>
+  <m-button>Paste</m-button>
+</m-button-group>
 ```
 
 | Upstream item | Mapping | Status and limits |
 | --- | --- | --- |
 | `size` | `size` / `.size`; inherited CSS dimensions. | 🟢 Shared tiny/small/medium/large presets; explicit child size wins. This matches pinned Button implementation, although its API table claims group precedence. |
 | `vertical` | Boolean `vertical` / `.vertical`. | 🟢 CSS column layout, joined borders/corners; horizontal is default. |
-| Default slot | Authored direct `mui-button` children. | 🟢 Order/identity preserved, no renderer. |
+| Default slot | Authored direct `m-button` children. | 🟢 Order/identity preserved, no renderer. |
 | Group semantics | Default `role="group"`; author `aria-label` or `aria-labelledby`. | 🟢 Individual native controls retain Tab stops. No roving tab index, arrow-key toolbar behavior or selection state is invented. |
 
 Logical margins/corners support RTL. Only internal corners are removed: rounded outer ends

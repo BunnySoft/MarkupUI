@@ -67,17 +67,17 @@ Detailed mappings, defaults, omissions and actual evidence are in the canonical 
 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/list/demos/enUS/index.demo-entry.md#L30) | Slot | Native `.mui-list-items` list with direct authored `li` items. | 🟢 Verified ADAPTED target | Real lists/listitems, nested/empty/template cases, stable nodes and no-JS GET forms. |
-| [`footer`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/list/demos/enUS/index.demo-entry.md#L31) | Slot | `.mui-list-footer` outside `ul`/`ol`, after the list. | 🟢 Verified ADAPTED target | Author-owned content; not an illegal list child or synthetic listitem. |
-| [`header`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/list/demos/enUS/index.demo-entry.md#L32) | Slot | `.mui-list-header` outside `ul`/`ol`, before the list. | 🟢 Verified ADAPTED target | Native heading/name in Chromium; no generated landmark or heading. |
+| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/list/demos/enUS/index.demo-entry.md#L30) | Slot | Native `.m-list-items` list with direct authored `li` items. | 🟢 Verified ADAPTED target | Real lists/listitems, nested/empty/template cases, stable nodes and no-JS GET forms. |
+| [`footer`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/list/demos/enUS/index.demo-entry.md#L31) | Slot | `.m-list-footer` outside `ul`/`ol`, after the list. | 🟢 Verified ADAPTED target | Author-owned content; not an illegal list child or synthetic listitem. |
+| [`header`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/list/demos/enUS/index.demo-entry.md#L32) | Slot | `.m-list-header` outside `ul`/`ol`, before the list. | 🟢 Verified ADAPTED target | Native heading/name in Chromium; no generated landmark or heading. |
 
 ### ListItem Slots
 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/list/demos/enUS/index.demo-entry.md#L38) | Slot | Ordinary item content or `.mui-list-content` inside `.mui-list-row`. | 🟢 Verified ADAPTED target | Text/nodes/listeners/forms preserved; long content wraps at 280px and 200% CSS zoom. |
-| [`prefix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/list/demos/enUS/index.demo-entry.md#L39) | Slot | Optional authored `.mui-list-prefix` before content. | 🟢 Verified ADAPTED target | DOM reading order, logical RTL position; author owns media/icon alternatives. |
-| [`suffix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/list/demos/enUS/index.demo-entry.md#L40) | Slot | Optional authored `.mui-list-suffix` after content. | 🟢 Verified ADAPTED target | Native independent actions and wrapping; no automatic overflow, action or extra slot. |
+| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/list/demos/enUS/index.demo-entry.md#L38) | Slot | Ordinary item content or `.m-list-content` inside `.m-list-row`. | 🟢 Verified ADAPTED target | Text/nodes/listeners/forms preserved; long content wraps at 280px and 200% CSS zoom. |
+| [`prefix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/list/demos/enUS/index.demo-entry.md#L39) | Slot | Optional authored `.m-list-prefix` before content. | 🟢 Verified ADAPTED target | DOM reading order, logical RTL position; author owns media/icon alternatives. |
+| [`suffix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/list/demos/enUS/index.demo-entry.md#L40) | Slot | Optional authored `.m-list-suffix` after content. | 🟢 Verified ADAPTED target | Native independent actions and wrapping; no automatic overflow, action or extra slot. |
 
 ### Explicit source-only supplements
 

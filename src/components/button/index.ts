@@ -1,21 +1,28 @@
-export { MuiButton } from "./button.js"
-export { MuiButtonGroup } from "./group.js"
+export { MButton } from "./button.js"
+export { MButtonGroup } from "./group.js"
+export { buttonDefinition, buttonGroupDefinition } from "./model.js"
 
-import { MuiButton } from "./button.js"
-import { MuiButtonGroup } from "./group.js"
+import { MButton } from "./button.js"
+import { MButtonGroup } from "./group.js"
+import { buttonDefinition, buttonGroupDefinition } from "./model.js"
 
 export function registerButton(registry: Pick<CustomElementRegistry, "get" | "define"> = customElements): void {
-  for (const [name, constructor] of [
-    ["mui-button", MuiButton],
-    ["mui-button-group", MuiButtonGroup],
-  ] as const) {
+  const registrations = [
+    ["m-button", MButton, buttonDefinition.type],
+    ["m-button-group", MButtonGroup, buttonGroupDefinition.type],
+  ] as const
+  for (const [name, constructor, type] of registrations) {
     const existing = registry.get(name)
     if (existing && existing !== constructor) {
-      throw new Error(`'${name}' is already defined. Load the Button component before the legacy MarkupUI bundle.`)
+      throw new Error(
+        `'${name}' is already defined with a different ${type} renderer. `
+        + `Load the primary ${type} component before the legacy MarkupUI bundle.`,
+      )
     }
   }
-  if (!registry.get("mui-button")) registry.define("mui-button", MuiButton)
-  if (!registry.get("mui-button-group")) registry.define("mui-button-group", MuiButtonGroup)
+  for (const [name, constructor] of registrations) {
+    if (!registry.get(name)) registry.define(name, constructor)
+  }
 }
 
 if (typeof customElements !== "undefined") registerButton()

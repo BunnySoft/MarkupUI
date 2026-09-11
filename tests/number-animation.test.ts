@@ -15,7 +15,7 @@ function frame(at: number) {
 }
 function fixture(options: NumberAnimationOptions = {}, bind = true) {
   const form = document.createElement("form")
-  form.innerHTML = '<data class="mui-number-animation" data-number-animation value="100" tabindex="0"><strong>Total: </strong><span data-number-text>100</span></data><label>Other field<input name="other" value="kept"></label><button type="button" data-outside>Outside</button>'
+  form.innerHTML = '<data class="m-number-animation" data-number-animation value="100" tabindex="0"><strong>Total: </strong><span data-number-text>100</span></data><label>Other field<input name="other" value="kept"></label><button type="button" data-outside>Outside</button>'
   document.body.append(form)
   const element = form.querySelector<HTMLDataElement>("data")!, target = element.querySelector<HTMLElement>("[data-number-text]")!, text = target.firstChild as Text
   const helper = bind ? createNumberAnimation(element, { from: 0, to: 100, duration: 1000, easing: "linear", ...options }) : null
@@ -297,7 +297,7 @@ describe("Number Animation failures, reentrancy and lifetime", () => {
   })
   it("supports reentrant finish replay and suppresses stale finish hooks after reset", () => {
     const hook = vi.fn(), { helper, element } = fixture({ onFinish: hook })
-    element.addEventListener("mui:number-animation-finish", () => helper.reset(), { once: true })
+    element.addEventListener("m:number-animation-finish", () => helper.reset(), { once: true })
     frame(1000)
     expect(helper.state.runId).toBe(2); expect(hook).not.toHaveBeenCalled(); expect(frames.size).toBe(1)
     frame(2000); expect(hook).toHaveBeenCalledOnce()
@@ -305,14 +305,14 @@ describe("Number Animation failures, reentrancy and lifetime", () => {
   it("reports finish-hook errors after retarget without poisoning the new run", () => {
     let helper!: NumberAnimationController
     const setup = fixture({ onFinish: () => { helper.retarget(200); throw new Error("old hook failed") } }); helper = setup.helper
-    const errors = vi.fn(); setup.element.addEventListener("mui:number-animation-error", errors)
+    const errors = vi.fn(); setup.element.addEventListener("m:number-animation-error", errors)
     frame(1000)
     expect(helper.state.status).toBe("playing"); expect(helper.state.to).toBe(200); expect(helper.state.error).toBeNull()
     expect(errors.mock.calls[0]![0].detail).toMatchObject({ runId: 1, phase: "finish", stale: true })
   })
   it("does not deliver finish after an update listener removes the root", () => {
     const finish = vi.fn(), { helper, element } = fixture({ onFinish: finish })
-    element.addEventListener("mui:number-animation-update", () => { if (helper.state.progress === 1) element.remove() })
+    element.addEventListener("m:number-animation-update", () => { if (helper.state.progress === 1) element.remove() })
     frame(1000); expect(finish).not.toHaveBeenCalled(); expect(helper.connected).toBe(false)
   })
   it("cancels RAF id zero and ignores stale callbacks after retarget/disconnect", () => {

@@ -20,7 +20,7 @@ inherited theme contracts are recorded separately as omissions.
 
 | Asset | Purpose |
 | --- | --- |
-| `dist/markup-ui-spin.js` | ESM; exports `MuiSpin`, `registerSpin()`; registers on browser import. |
+| `dist/markup-ui-spin.js` | ESM; exports `MSpin`, `registerSpin()`; registers on browser import. |
 | `dist/markup-ui-spin.global.js` | Classic script; registers and exposes `MarkupUISpin`. |
 | `dist/markup-ui-spin.css` | External component and native static-spinner CSS. |
 | `dist/components/spin/index.d.ts` | Declarations including validation-field names. |
@@ -31,7 +31,7 @@ inherited theme contracts are recorded separately as omissions.
 <script defer src="./vendor/markup-ui-spin.global.js"></script>
 <script defer src="./app.js"></script>
 
-<mui-spin description="Loading reports"></mui-spin>
+<m-spin description="Loading reports"></m-spin>
 ```
 
 Application ESM: `import "@dataengine/markup-ui/spin";`. Serve/link the
@@ -50,19 +50,19 @@ Legacy code/styles, earlier bundle sizes and the 15,000-byte core ceiling remain
   `show` and `delay` do not control it, matching the documented standalone distinction.
   Use native `hidden`, conditional insertion or removal to hide a standalone spinner.
 - **Wrapped:** ordinary default children, or one explicit
-  `div[data-mui-spin-content]`, are the target. The indicator is centered over this content,
+  `div[data-m-spin-content]`, are the target. The indicator is centered over this content,
   and `show`/`delay` control its visual presence.
 - Explicit empty content regions still establish wrapped mode. Removing a generated empty
   content wrapper returns to standalone mode. Adding content starts a fresh wrapped display
   episode rather than inheriting an old timer.
 
 ```html
-<mui-spin show="false" delay="200" description="Refreshing reports">
-  <div data-mui-spin-content class="report-panel" aria-busy="false">
+<m-spin show="false" delay="200" description="Refreshing reports">
+  <div data-m-spin-content class="report-panel" aria-busy="false">
     <label>Report title <input name="title"></label>
     <button type="button">Refresh</button>
   </div>
-</mui-spin>
+</m-spin>
 ```
 
 Authored native targets, classes, IDs, listeners, input values, button types and form behavior
@@ -78,7 +78,7 @@ Wrapped content stays operable while the indicator is visible. This deliberately
 from upstream's pointer-blocking CSS.
 
 The overlay ignores pointer hit-testing. Visible wrapped content is dimmed by external CSS
-(`--mui-spin-content-opacity`, default `.5` in light and `.38` in dark); hiding/disconnecting removes that private
+(`--m-spin-content-opacity`, default `.5` in light and `.38` in dark); hiding/disconnecting removes that private
 visual state so the author's original CSS applies again. No author opacity attribute/style
 is overwritten.
 
@@ -95,12 +95,12 @@ blocking. No default Spin behavior creates such a hidden-but-focusable content s
 ## Description, naming and native icons
 
 ```html
-<mui-spin rotate="false">
-  <svg data-mui-spin-icon aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+<m-spin rotate="false">
+  <svg data-m-spin-icon aria-hidden="true" focusable="false" viewBox="0 0 24 24">
     <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor"></circle>
   </svg>
-  <span data-mui-spin-description>Reading the report</span>
-</mui-spin>
+  <span data-m-spin-description>Reading the report</span>
+</m-spin>
 ```
 
 Icon and description regions are explicit authored-child conventions, not Shadow DOM slots.
@@ -111,7 +111,7 @@ default content, not in the pointer-transparent indicator.
 Description precedence follows the useful source contract:
 
 1. A nonblank `description` attribute/property supplies safe visible text.
-2. Otherwise, authored `data-mui-spin-description` region(s) supply content.
+2. Otherwise, authored `data-m-spin-description` region(s) supply content.
 3. Otherwise, a visually hidden readable fallback uses legacy `label` / `.label`, default
    **“Loading”**. If the host already has an explicit ARIA name, this fallback is suppressed
    to avoid a competing generic label.
@@ -137,7 +137,7 @@ description/accessible fallback carries the meaning, not rotation or color.
 
 - `size` / `.size` accepts small/medium/large or a finite nonnegative number of pixels.
   Presets are **28 / 34 / 40px**, with medium default. Numeric strings are accepted in HTML;
-  arbitrary CSS size strings are not this API—use `--mui-spin-size` externally instead.
+  arbitrary CSS size strings are not this API—use `--m-spin-size` externally instead.
 - Default stroke widths are **20 / 18 / 16** for small/medium/large, and 18 for numeric size,
   in the default graphic's relative coordinate system.
 - `stroke-width` / `.strokeWidth` is finite and nonnegative. `radius` / `.radius` defaults
@@ -168,18 +168,18 @@ JavaScript animation controller is introduced.
 Descriptions inherit surrounding typography and, in standalone mode, surrounding text color.
 Wrapped descriptions use the primary theme color by default. This matches the actual pinned
 rendering, including its mode-dependent description color. Public description/font tokens
-override these defaults. Use the existing themes stylesheet with `data-mui-theme="dark"` for
+override these defaults. Use the existing themes stylesheet with `data-m-theme="dark"` for
 the shared primary palette; content dimming is scoped locally by the Spin stylesheet.
-Nested `data-mui-theme="light"` scopes restore its light dimming value.
+Nested `data-m-theme="light"` scopes restore its light dimming value.
 
-Numeric size uses one isolated private custom-property write, `--_mui-spin-size`; this is
+Numeric size uses one isolated private custom-property write, `--_m-spin-size`; this is
 an explicit style-attribute/CSP boundary, not a runtime stylesheet or prop-object adapter.
-Use presets or external `--mui-spin-size` when avoiding inline sizing. SVG geometry uses
+Use presets or external `--m-spin-size` when avoiding inline sizing. SVG geometry uses
 validated native numeric attributes, not a CSS/animation renderer.
 
 Invalid scalar property assignments throw `RangeError` before changing that attribute.
 Invalid declarative values or cross-field geometry produce `validationErrors`,
-`valid === false` and `data-mui-spin-invalid`, cancel pending display and hide the indicator.
+`valid === false` and `data-m-spin-invalid`, cancel pending display and hide the indicator.
 They do not change actual content/busy state or silently choose a successful-looking fallback.
 Cross-field constraints are evaluated together: configure stroke width/radius in a compatible
 sequence, or correct the flagged attributes. Validation is not a data-loading or form-validity API.
@@ -228,9 +228,9 @@ No change/input/ready event is fabricated for property assignment.
 | `scale` | Positive numeric attribute/property, default 1. | 🟢 Native viewBox scaling; finite derived geometry required, zoom/cropping documented. |
 | `stroke` | Validated color attribute/property or external color token. | 🟢 Native SVG paint; no dynamic CSS style object. |
 | `delay` | Bounded integer milliseconds attribute/property. | 🟢 Real wrapped display delay, cancellation and stale-generation guard. |
-| Default slot | Authored targets or `data-mui-spin-content`. | 🟢 Original controls/listeners/state preserved; interaction stays usable instead of upstream pointer blocking. |
-| Description slot | Authored `data-mui-spin-description`. | 🟢 Native nodes/ARIA retained while property overrides are temporary. |
-| Icon slot | Authored HTML/SVG `data-mui-spin-icon`. | 🟢 Native node identity/ARIA and custom rotation; no icon dependency. |
+| Default slot | Authored targets or `data-m-spin-content`. | 🟢 Original controls/listeners/state preserved; interaction stays usable instead of upstream pointer blocking. |
+| Description slot | Authored `data-m-spin-description`. | 🟢 Native nodes/ARIA retained while property overrides are temporary. |
+| Icon slot | Authored HTML/SVG `data-m-spin-icon`. | 🟢 Native node identity/ARIA and custom rotation; no icon dependency. |
 | `spinning` (deprecated source prop) | Use `show`. | ⏭️ Deprecated compatibility/warning layer omitted. |
 | `theme`, `themeOverrides`, `builtinThemeOverrides` | External CSS/custom properties. | ⏭️ Framework provider/theme objects and runtime adapters omitted. |
 
@@ -240,23 +240,23 @@ not invented upstream inventory rows.
 
 ## CSS-only/native and lifecycle boundaries
 
-The demo includes a native `.mui-spin` wrapper with an authored decorative SVG, explicit
+The demo includes a native `.m-spin` wrapper with an authored decorative SVG, explicit
 description and the same external CSS. It needs no controller when delayed wrapping is
 unnecessary. An existing arbitrary static SVG may retain only whole-graphic rotation.
 For the complete default arc motion, the equivalent 34px native markup is:
 
 ```html
-<span class="mui-spin">
-  <span data-mui-spin-indicator>
-    <span data-mui-spin-icon-box>
-      <svg data-mui-spin-default aria-hidden="true" focusable="false"
+<span class="m-spin">
+  <span data-m-spin-indicator>
+    <span data-m-spin-icon-box>
+      <svg data-m-spin-default aria-hidden="true" focusable="false"
            viewBox="0 0 200 200" fill="none" stroke="currentColor">
-        <circle data-mui-spin-arc cx="100" cy="100" r="91" stroke-width="18"
+        <circle data-m-spin-arc cx="100" cy="100" r="91" stroke-width="18"
                 stroke-linecap="round" pathLength="571.7698629533425"
                 stroke-dasharray="567" stroke-dashoffset="142"></circle>
       </svg>
     </span>
-    <span data-mui-spin-description-area data-mui-spin-visible-description>Loading</span>
+    <span data-m-spin-description-area data-m-spin-visible-description>Loading</span>
   </span>
 </span>
 ```
@@ -265,9 +265,9 @@ The normalized `pathLength` above is specific to radius 100 / stroke width 18. P
 that geometry or recalculate it when authoring a different static ring; the enhanced
 controller does so automatically. Templates stay inert and are never cloned or rendered.
 
-Public CSS tokens: `--mui-spin-size`, `--mui-spin-color`, `--mui-spin-font-size`,
-`--mui-spin-description-color`, `--mui-spin-description-gap`, `--mui-spin-content-opacity`,
-`--mui-spin-z-index`. Scoped icon selectors prevent a parent's custom rotation from affecting
+Public CSS tokens: `--m-spin-size`, `--m-spin-color`, `--m-spin-font-size`,
+`--m-spin-description-color`, `--m-spin-description-gap`, `--m-spin-content-opacity`,
+`--m-spin-z-index`. Scoped icon selectors prevent a parent's custom rotation from affecting
 nested spinners. Native hidden icons remain hidden. Motion is CSS-only and reduced-motion-aware.
 
 Live attributes/pre-upgrade properties update native DOM without replacing target nodes.

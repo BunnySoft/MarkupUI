@@ -3,7 +3,7 @@ const labels = ["aria-label", "aria-labelledby", "aria-describedby"] as const
 
 export interface TagCloseDetail { originalEvent: MouseEvent }
 
-export class MuiTag extends HTMLElement {
+export class MTag extends HTMLElement {
   public static get observedAttributes(): string[] {
     return ["checkable", "checked", "closable", "disabled", "close-label", ...labels]
   }
@@ -27,7 +27,7 @@ export class MuiTag extends HTMLElement {
         }
       }
     }
-    this.dataset.muiTag = ""
+    this.dataset.mTag = ""
     this.addEventListener("click", this.guardActivation, true)
     this.addEventListener("auxclick", this.guardActivation, true)
     this.observer ??= new MutationObserver(() => this.synchronize())
@@ -102,7 +102,7 @@ export class MuiTag extends HTMLElement {
     if (toggle !== this.toggleButton) {
       this.toggleButton?.removeEventListener("click", this.onToggle)
       for (const name of this.overrides.keys()) this.manage(name, undefined)
-      this.toggleButton?.removeAttribute("data-mui-tag-toggle")
+      this.toggleButton?.removeAttribute("data-m-tag-toggle")
       const old = this.toggleButton
       if (old && old !== authored && old.parentNode === this) {
         for (const node of [...old.childNodes]) this.insertBefore(node, old)
@@ -119,8 +119,8 @@ export class MuiTag extends HTMLElement {
 
     const root = toggle ?? authored ?? this
     if (!this.content || !this.contains(this.content)) {
-      this.content = root.querySelector<HTMLSpanElement>(":scope > span[data-mui-tag-content]") ?? this.ownerDocument.createElement("span")
-      this.content.dataset.muiTagContent = ""
+      this.content = root.querySelector<HTMLSpanElement>(":scope > span[data-m-tag-content]") ?? this.ownerDocument.createElement("span")
+      this.content.dataset.mTagContent = ""
     }
     if (this.content.parentNode !== root) root.prepend(this.content)
     const parents = root === this ? [this] : [this, root]
@@ -132,7 +132,7 @@ export class MuiTag extends HTMLElement {
       }
     }
     if (toggle) {
-      toggle.toggleAttribute("data-mui-tag-toggle", this.checkable)
+      toggle.toggleAttribute("data-m-tag-toggle", this.checkable)
       this.manage("type", this.checkable ? "button" : undefined)
       this.manage("aria-pressed", this.checkable ? String(this.checked) : undefined)
       this.manage("disabled", this.disabled ? "" : undefined)
@@ -145,8 +145,8 @@ export class MuiTag extends HTMLElement {
       if (!this.closeButton) {
         this.closeButton = this.ownerDocument.createElement("button")
         this.closeButton.type = "button"
-        this.closeButton.dataset.muiTagClose = ""
-        this.closeButton.dataset.muiClose = ""
+        this.closeButton.dataset.mTagClose = ""
+        this.closeButton.dataset.mClose = ""
         const icon = this.ownerDocument.createElementNS("http://www.w3.org/2000/svg", "svg")
         icon.setAttribute("aria-hidden", "true")
         icon.setAttribute("viewBox", "0 0 12 12")
@@ -181,13 +181,13 @@ export class MuiTag extends HTMLElement {
   private readonly onToggle = (event: MouseEvent): void => {
     if (!this.checkable || this.disabled || event.defaultPrevented || this.toggleButton?.matches(":disabled")) return
     this.checked = !this.checked
-    this.dispatchEvent(new CustomEvent<boolean>("mui:change", { bubbles: true, detail: this.checked }))
+    this.dispatchEvent(new CustomEvent<boolean>("m:change", { bubbles: true, detail: this.checked }))
   }
 
   private readonly onClose = (event: MouseEvent): void => {
     if (!this.triggerClickOnClose) event.stopPropagation()
     if (this.disabled || this.closeButton?.matches(":disabled")) return
-    this.dispatchEvent(new CustomEvent<TagCloseDetail>("mui:close", {
+    this.dispatchEvent(new CustomEvent<TagCloseDetail>("m:close", {
       bubbles: true, cancelable: true, detail: { originalEvent: event },
     }))
   }

@@ -17,7 +17,7 @@ document.querySelector("#browse").addEventListener("click", () => {
 document.querySelector("#toggle-description").addEventListener("click", () => { authored.showDescription = !authored.showDescription })
 document.querySelector("#toggle-icon").addEventListener("click", () => { authored.showIcon = !authored.showIcon })
 document.querySelector("#toggle-extra").addEventListener("click", () => {
-  const extra = authored.querySelector("[data-mui-empty-extra]")
+  const extra = authored.querySelector("[data-m-empty-extra]")
   extra.hidden = !extra.hidden
 })
 document.querySelector("#reconnect").addEventListener("click", () => {

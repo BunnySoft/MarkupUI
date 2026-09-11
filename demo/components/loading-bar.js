@@ -7,8 +7,8 @@ document.querySelector("#controls").hidden = false
 document.querySelector("#fixed-controls").hidden = false
 const events = document.querySelector("#events")
 for (const root of [inlineRoot, fixedRoot]) {
-  root.addEventListener("mui:loading-bar-change", event => { events.textContent = `${root.id}: ${event.detail.previous} → ${event.detail.state}` })
-  root.addEventListener("mui:loading-bar-fault", event => { events.textContent = event.detail.error.message })
+  root.addEventListener("m:loading-bar-change", event => { events.textContent = `${root.id}: ${event.detail.previous} → ${event.detail.state}` })
+  root.addEventListener("m:loading-bar-fault", event => { events.textContent = event.detail.error.message })
 }
 document.querySelector("#start").addEventListener("click", () => inline.start())
 document.querySelector("#measure").addEventListener("click", () => { if (inline.state !== "loading") inline.start(); inline.setProgress(40) })

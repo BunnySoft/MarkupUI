@@ -9,6 +9,6 @@ h2 { font-size: 1.2rem; }
 button, input { font: inherit; }
 button { padding: 6px 12px; }
 #message-form { padding-block: 16px; }
-.brand { --mui-badge-background: #7040a0; }
-.offset { --mui-badge-offset-x: -6px; --mui-badge-offset-y: 6px; }
-.large { --mui-badge-size: 28px; --mui-badge-font-size: 18px; }
+.brand { --m-badge-background: #7040a0; }
+.offset { --m-badge-offset-x: -6px; --m-badge-offset-y: 6px; }
+.large { --m-badge-size: 28px; --m-badge-font-size: 18px; }

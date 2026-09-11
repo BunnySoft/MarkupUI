@@ -38,7 +38,7 @@ limits. Shared surface and local style corrections are integrated by the coordin
 - Naive UI **2.45.3**, source commit
   `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`; Vue **3.5.30**.
   Inspected Dropdown, DropdownMenu/Option/GroupHeader, common/light/dark themes and CSS.
-- A private candidate removing only `.mui-dropdown` from the Popover surface exclusion
+- A private candidate removing only `.m-dropdown` from the Popover surface exclusion
   passed **10 light/dark checks** for menu fill, border, radius, shadow and option text.
   The proposal was reported before any shared edit. The **parent** applied the base guard,
   tests and Popover prose changes. This task leaves those four files untouched.
@@ -109,8 +109,8 @@ narrower than Naive's full-width option bodies, matching Naive's inset state-pai
 This preserves native activation and avoids a new interactive paint wrapper.
 
 Labels use normal block/inline text flow, not flex-split anonymous label fragments.
-Minimum heights allow wrapping. Public `--mui-dropdown-item-padding`,
-`--mui-dropdown-font-size`, `--mui-dropdown-hover`, `--mui-dropdown-selected`, and
+Minimum heights allow wrapping. Public `--m-dropdown-item-padding`,
+`--m-dropdown-font-size`, `--m-dropdown-hover`, `--m-dropdown-selected`, and
 Popover palette/corner/border overrides continue to work from ancestors. Size/inversion
 defaults are private and do not mask public variables.
 

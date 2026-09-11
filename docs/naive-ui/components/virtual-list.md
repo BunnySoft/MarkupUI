@@ -9,7 +9,7 @@ provider, custom scrollbar, network source or automatic child-component registra
 [Default-style audit](../../style-audit/components/virtual-list.md).
 
 The [legacy advanced plugin](../../../src/plugins/advanced.ts) is unchanged. Its basic
-`MuiVirtualList`/`mui-virtual-list` remains available through the old plugin; importing
+`MVirtualList`/`m-virtual-list` remains available through the old plugin; importing
 the new helper does not redefine or register that element.
 
 ## Four completed steps

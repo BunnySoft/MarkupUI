@@ -16,27 +16,27 @@
     <section aria-labelledby="standalone-heading">
       <h2 id="standalone-heading">Standalone sizes, descriptions and custom native icons</h2>
       <div class="examples" id="sizes">
-        <mui-spin size="small"></mui-spin>
-        <mui-spin size="medium" description="Loading"></mui-spin>
-        <mui-spin size="large"></mui-spin>
-        <mui-spin size="48" stroke="purple" stroke-width="12" description="Numeric size"></mui-spin>
+        <m-spin size="small"></m-spin>
+        <m-spin size="medium" description="Loading"></m-spin>
+        <m-spin size="large"></m-spin>
+        <m-spin size="48" stroke="purple" stroke-width="12" description="Numeric size"></m-spin>
       </div>
       <div class="examples">
-        <mui-spin id="custom" rotate="false"><svg data-mui-spin-icon aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2 22 12 12 22 2 12Z" fill="none" stroke="currentColor" stroke-width="2"></path></svg><span data-mui-spin-description>Custom, not rotating</span></mui-spin>
-        <mui-spin id="named" role="status" aria-label="Uploading files"></mui-spin>
-        <mui-spin id="standalone-hidden-show" show="false" delay="1000" label="Standalone remains visible"></mui-spin>
+        <m-spin id="custom" rotate="false"><svg data-m-spin-icon aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2 22 12 12 22 2 12Z" fill="none" stroke="currentColor" stroke-width="2"></path></svg><span data-m-spin-description>Custom, not rotating</span></m-spin>
+        <m-spin id="named" role="status" aria-label="Uploading files"></m-spin>
+        <m-spin id="standalone-hidden-show" show="false" delay="1000" label="Standalone remains visible"></m-spin>
       </div>
     </section>
     <section aria-labelledby="wrapped-heading">
       <h2 id="wrapped-heading">Native wrapped controls and cancellable delay</h2>
       <form id="editor-form">
-        <mui-spin id="wrapped" show="false" delay="300" description="Refreshing the report">
-          <div data-mui-spin-content class="panel" id="editor" aria-busy="false">
+        <m-spin id="wrapped" show="false" delay="300" description="Refreshing the report">
+          <div data-m-spin-content class="panel" id="editor" aria-busy="false">
             <label>Report title <input id="report-title" name="title" value="Draft"></label>
             <button type="submit" id="save-report">Save report</button>
             <button type="reset" id="reset-report">Reset</button>
           </div>
-        </mui-spin>
+        </m-spin>
       </form>
       <p id="request-status" role="status">No request active.</p>
       <p id="submit-status" role="status">0 native submissions.</p>
@@ -52,11 +52,11 @@
     <section aria-labelledby="geometry-heading">
       <h2 id="geometry-heading">Native SVG geometry and CSS-only fallback</h2>
       <div class="examples">
-        <mui-spin id="geometry" size="56" radius="80" scale="0.8" stroke-width="10" stroke="teal" description="Radius and scale"></mui-spin>
-        <span class="mui-spin">
-          <span data-mui-spin-indicator>
-            <span data-mui-spin-icon-box><svg data-mui-spin-default aria-hidden="true" focusable="false" viewBox="0 0 100 100" fill="none" stroke="currentColor"><circle cx="50" cy="50" r="44" stroke-width="8" pathLength="100" stroke-dasharray="72 28"></circle></svg></span>
-            <span data-mui-spin-description-area data-mui-spin-visible-description>CSS-only loading text</span>
+        <m-spin id="geometry" size="56" radius="80" scale="0.8" stroke-width="10" stroke="teal" description="Radius and scale"></m-spin>
+        <span class="m-spin">
+          <span data-m-spin-indicator>
+            <span data-m-spin-icon-box><svg data-m-spin-default aria-hidden="true" focusable="false" viewBox="0 0 100 100" fill="none" stroke="currentColor"><circle cx="50" cy="50" r="44" stroke-width="8" pathLength="100" stroke-dasharray="72 28"></circle></svg></span>
+            <span data-m-spin-description-area data-m-spin-visible-description>CSS-only loading text</span>
           </span>
         </span>
       </div>

@@ -3,7 +3,7 @@ let requests = 0
 let submissions = 0
 let actions = 0
 let updates = 0
-notice.addEventListener("mui:close", (event) => {
+notice.addEventListener("m:close", (event) => {
   if (event.target !== notice) return
   event.preventDefault()
   document.querySelector("#close-status").textContent = `${++requests} close requests; the notice remains visible.`

@@ -51,14 +51,14 @@ export function createCollapse(root: HTMLElement, options: CollapseOptions = {})
   const document = root?.ownerDocument
   const view = document?.defaultView
   if (!view || !(root instanceof view.HTMLElement) || !["div", "section"].includes(root.localName)
-    || !root.matches(".mui-collapse[data-collapse]")) throw new TypeError("Collapse requires an authored div/section.mui-collapse[data-collapse].")
+    || !root.matches(".m-collapse[data-collapse]")) throw new TypeError("Collapse requires an authored div/section.m-collapse[data-collapse].")
   for (const key of Object.keys(options)) {
     if (!["accordion", "expandedNames", "defaultExpandedNames"].includes(key)) throw new TypeError(`Unsupported Collapse option: ${key}.`)
   }
   let accordion = options.accordion ?? false
   if (typeof accordion !== "boolean") throw new TypeError("Collapse accordion must be boolean.")
   const nativeExclusive = "name" in view.HTMLDetailsElement.prototype
-  const name = `mui-collapse-${++sequence}-${Math.random().toString(36).slice(2)}`
+  const name = `m-collapse-${++sequence}-${Math.random().toString(36).slice(2)}`
   let connected = false
   let initialized = false
   let generation = 0
@@ -168,7 +168,7 @@ export function createCollapse(root: HTMLElement, options: CollapseOptions = {})
     queue(() => {
       const current = find(item)
       if (!current || event.defaultPrevented || disabled(current) || !current.details.isConnected) return
-      root.dispatchEvent(new view!.CustomEvent<CollapseHeaderClick>("mui:collapse-header-click", {
+      root.dispatchEvent(new view!.CustomEvent<CollapseHeaderClick>("m:collapse-header-click", {
         detail: { name: current.name, expanded: current.details.open, item: current.details, event },
       }))
     })
@@ -178,13 +178,13 @@ export function createCollapse(root: HTMLElement, options: CollapseOptions = {})
     if (!connected || !current || event.target !== current.details) return
     if (!current.details.open && lastFocused && current.content.contains(lastFocused)
       && (document!.activeElement === lastFocused || document!.activeElement === document!.body)) focus(current.summary)
-    if (connected && find(current)) root.dispatchEvent(new view!.CustomEvent<CollapseChange>("mui:collapse-change", {
+    if (connected && find(current)) root.dispatchEvent(new view!.CustomEvent<CollapseChange>("m:collapse-change", {
       detail: { expandedNames: items.filter(item => item.details.open).map(item => item.name),
         name: current.name, expanded: current.details.open, item: current.details, event },
     }))
   }
   function parse() {
-    if (!root.isConnected || root.getRootNode() !== document || root.closest("mui-accordion-item")) throw new TypeError("Collapse needs connected light-DOM native anatomy, not legacy accordion ownership.")
+    if (!root.isConnected || root.getRootNode() !== document || root.closest("m-accordion-item")) throw new TypeError("Collapse needs connected light-DOM native anatomy, not legacy accordion ownership.")
     const seen = new Set<string>()
     items = query("[data-collapse-item]").map(node => {
       const key = node.getAttribute("data-collapse-key")
@@ -231,7 +231,7 @@ export function createCollapse(root: HTMLElement, options: CollapseOptions = {})
       if (item) exclusive(item)
     }
     if (!relevant.some(record => record.type === "childList" || record.attributeName !== "open")) return
-    try { controller.refresh() } catch (error) { root.dispatchEvent(new view!.CustomEvent("mui:collapse-error", { detail: { error } })) }
+    try { controller.refresh() } catch (error) { root.dispatchEvent(new view!.CustomEvent("m:collapse-error", { detail: { error } })) }
   })
   function teardown(preserveTasks = false) {
     connected = false

@@ -26,7 +26,7 @@ forced-colors or print rule.
 ## MarkupUI classification
 
 MarkupUI intentionally has no Equation runtime, source directory, stylesheet, export,
-manifest bundle or `--mui-equation-*` public custom properties. Its accepted alternative
+manifest bundle or `--m-equation-*` public custom properties. Its accepted alternative
 is application-authored native MathML plus visible prose. The demo's scoped
 `equation.css` is local recipe presentation, not a distributed component default.
 

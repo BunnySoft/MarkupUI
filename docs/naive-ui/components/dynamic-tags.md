@@ -67,7 +67,7 @@ Native labels for controls are distinct from the omitted DynamicTagsOption.label
 | [`type`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L36) | Prop | data-type default/primary/info/success/warning/error styling. | 🟢 Verified | No validity/checkable state implied by color. |
 | [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L37) | Prop | Native readonly field values; fresh values getter. | 🟢 Verified | ADAPTED string ownership, no controlled array setter/store. |
 | [`on-create`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L38) | Callback | Optional synchronous string-to-string create callback. | 🟢 Verified | Explicit derivation only; object branch/async results rejected. |
-| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L39) | Callback | Committed mui:dynamic-tags-change string snapshot. | 🟢 Verified | Native setters/refresh/reset remain silent; no model-provider emitter. |
+| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L39) | Callback | Committed m:dynamic-tags-change string snapshot. | 🟢 Verified | Native setters/refresh/reset remain silent; no model-provider emitter. |
 
 ### DynamicTags Slots
 
@@ -87,9 +87,9 @@ Native labels for controls are distinct from the omitted DynamicTagsOption.label
 
 | Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`color.color?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L24) | Inline record field | --mui-tags-background external CSS. | 🟢 Verified | No color-object parser. |
-| [`color.borderColor?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L24) | Inline record field | --mui-tags-border external CSS. | 🟢 Verified | Native focus outline remains visible. |
-| [`color.textColor?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L24) | Inline record field | --mui-tags-text external CSS. | 🟢 Verified | No selected/checked color semantics. |
+| [`color.color?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L24) | Inline record field | --m-tags-background external CSS. | 🟢 Verified | No color-object parser. |
+| [`color.borderColor?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L24) | Inline record field | --m-tags-border external CSS. | 🟢 Verified | Native focus outline remains visible. |
+| [`color.textColor?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dynamic-tags/demos/enUS/index.demo-entry.md#L24) | Inline record field | --m-tags-text external CSS. | 🟢 Verified | No selected/checked color semantics. |
 
 ### DynamicTags Props: render-tag inline fields
 

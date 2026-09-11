@@ -74,7 +74,7 @@ Source changes shadow and **icon** color, not default surface or text color, on 
 press. Corrected CSS follows that distinction. Native disabled/aria-disabled controls
 retain their disabled appearance and do not receive hover/pressed emphasis.
 
-`mui-back-top-icon` only sizes/tints an authored SVG wrapper. No icon DOM, path, accessible
+`m-back-top-icon` only sizes/tints an authored SVG wrapper. No icon DOM, path, accessible
 name or renderer is supplied by the helper. The canonical guide gives an authored
 illustration; arbitrary arrows/text/images are not claimed to share the stock glyph's shape.
 
@@ -93,8 +93,8 @@ illustration; arbitrary arrows/text/images are not claimed to share the stock gl
 - `viewport-and-before.json` verifies unchanged dark results with canonical CSS/themes
   in either order. It also records the deliberate RTL difference: source physical-right
   x=640.666687 versus native logical-inline-end **x=40** in this viewport.
-- Native shared `--mui-color-primary-hover:rgb(11,22,33)` was rendered as that icon
-  color; local `--mui-back-top-icon-hover-color:rgb(44,55,66)` then won.
+- Native shared `--m-color-primary-hover:rgb(11,22,33)` was rendered as that icon
+  color; local `--m-back-top-icon-hover-color:rgb(44,55,66)` then won.
   The pressed role uses the corresponding shared primary-pressed token.
 - Text/popover surface defaults use local fallbacks because generic legacy palette
   roles are not equivalent. **No shared-token edits are required.**

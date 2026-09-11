@@ -89,7 +89,7 @@ all-browser/pixel parity. Return-value/render overloads and defaults may differ 
 | [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/card/demos/enUS/index.demo-entry.md#L49) | Prop | Small/medium/large/huge attribute / `.size` and external CSS. | 🟢 Verified | A1 records 16/24/32/40px padding; medium default. |
 | [`tag`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/card/demos/enUS/index.demo-entry.md#L50) | Prop | Author native semantic regions or a wrapper. | ⏭️ Intentionally omitted | Custom Element host is not replaced by an arbitrary tag. |
 | [`title`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/card/demos/enUS/index.demo-entry.md#L51) | Prop | Plain-text native title fallback; authored header wins. | 🟢 Verified | Render-function overload omitted; native tooltip semantics retained. |
-| [`on-close`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/card/demos/enUS/index.demo-entry.md#L52) | Callback | Bubbling cancellable `mui:close` with `detail.originalEvent`. | 🟢 Verified | One intent per activation; no function/array callback adapter or removal. |
+| [`on-close`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/card/demos/enUS/index.demo-entry.md#L52) | Callback | Bubbling cancellable `m:close` with `detail.originalEvent`. | 🟢 Verified | One intent per activation; no function/array callback adapter or removal. |
 
 ### Card Slots
 

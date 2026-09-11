@@ -1,6 +1,6 @@
-import { MuiElement } from "../core/element.js"
+import { MElement } from "../core/element.js"
 
-export class MuiInput extends MuiElement {
+export class MInput extends MElement {
   private control?: HTMLInputElement
   public connectedCallback(): void {
     if (this.control !== undefined) return
@@ -17,7 +17,7 @@ export class MuiInput extends MuiElement {
   public set value(value: string) { if (this.control !== undefined) this.control.value = value }
 }
 
-export class MuiTextarea extends MuiElement {
+export class MTextarea extends MElement {
   private control?: HTMLTextAreaElement
   public connectedCallback(): void {
     if (this.control !== undefined) return
@@ -32,11 +32,11 @@ export class MuiTextarea extends MuiElement {
   public set value(value: string) { if (this.control !== undefined) this.control.value = value }
 }
 
-export class MuiSelect extends MuiElement {
+export class MSelect extends MElement {
   private control?: HTMLSelectElement
   public connectedCallback(): void {
     if (this.control !== undefined) return
-    const options = [...this.querySelectorAll(":scope > option,:scope > mui-option")].map((source) => {
+    const options = [...this.querySelectorAll(":scope > option,:scope > m-option")].map((source) => {
       if (source instanceof HTMLOptionElement) return source.cloneNode(true)
       const option = this.ownerDocument.createElement("option")
       option.textContent = source.textContent
@@ -58,13 +58,13 @@ export class MuiSelect extends MuiElement {
   public set value(value: string) { if (this.control !== undefined) this.control.value = value }
 }
 
-export class MuiAutocomplete extends MuiElement {
+export class MAutocomplete extends MElement {
   private control?: HTMLInputElement
   public connectedCallback(): void {
     if (this.control !== undefined) return
-    const options = [...this.querySelectorAll(":scope > mui-option")]
+    const options = [...this.querySelectorAll(":scope > m-option")]
     const list = this.ownerDocument.createElement("datalist")
-    list.id = `mui-autocomplete-${Math.random().toString(36).slice(2)}`
+    list.id = `m-autocomplete-${Math.random().toString(36).slice(2)}`
     options.forEach((source) => {
       const option = this.ownerDocument.createElement("option")
       option.value = source.getAttribute("value") ?? source.textContent?.trim() ?? ""
@@ -85,7 +85,7 @@ export class MuiAutocomplete extends MuiElement {
   public set value(value: string) { if (this.control !== undefined) this.control.value = value }
 }
 
-export class MuiSlider extends MuiElement {
+export class MSlider extends MElement {
   private control?: HTMLInputElement
   public connectedCallback(): void {
     if (this.control !== undefined) return
@@ -103,7 +103,7 @@ export class MuiSlider extends MuiElement {
   public set value(value: number) { if (this.control !== undefined) this.control.valueAsNumber = Number(value) }
 }
 
-export class MuiCheckbox extends MuiElement {
+export class MCheckbox extends MElement {
   private control?: HTMLInputElement
   public connectedCallback(): void {
     if (this.control !== undefined) return
@@ -120,7 +120,7 @@ export class MuiCheckbox extends MuiElement {
   public set checked(value: boolean) { if (this.control !== undefined) this.control.checked = value }
 }
 
-export class MuiRadio extends MuiElement {
+export class MRadio extends MElement {
   private control?: HTMLInputElement
   public connectedCallback(): void {
     if (this.control !== undefined) return
@@ -139,77 +139,77 @@ export class MuiRadio extends MuiElement {
   public set checked(value: boolean) { if (this.control !== undefined) this.control.checked = value }
 }
 
-export class MuiRadioGroup extends MuiElement {
+export class MRadioGroup extends MElement {
   private readonly onChange = (event: Event): void => {
-    if (!(event.target instanceof MuiRadio) || !(event as CustomEvent).detail) return
+    if (!(event.target instanceof MRadio) || !(event as CustomEvent).detail) return
     this.value = event.target.value
     this.emit("change", this.value)
   }
   public connectedCallback(): void {
     this.setAttribute("role", "radiogroup")
-    this.addEventListener("mui:change", this.onChange)
+    this.addEventListener("m:change", this.onChange)
     queueMicrotask(() => {
       const value = this.getAttribute("value")
       if (this.isConnected && value !== null) this.value = value
     })
   }
   public disconnectedCallback(): void {
-    this.removeEventListener("mui:change", this.onChange)
+    this.removeEventListener("m:change", this.onChange)
   }
   public get value(): string {
-    return [...this.querySelectorAll<MuiRadio>(":scope > mui-radio")]
+    return [...this.querySelectorAll<MRadio>(":scope > m-radio")]
       .find((radio) => radio.checked)?.value ?? ""
   }
   public set value(value: string) {
-    this.querySelectorAll<MuiRadio>(":scope > mui-radio").forEach((radio) => {
+    this.querySelectorAll<MRadio>(":scope > m-radio").forEach((radio) => {
       radio.checked = radio.value === value
     })
   }
 }
 
-export class MuiSwitch extends MuiCheckbox {
+export class MSwitch extends MCheckbox {
   public override connectedCallback(): void {
     super.connectedCallback()
     this.setAttribute("role", "switch")
   }
 }
 
-export class MuiFormItem extends MuiElement {
+export class MFormItem extends MElement {
   private error: HTMLElement | undefined
   public connectedCallback(): void {
     const labelText = this.getAttribute("label")
-    if (this.querySelector(":scope > [data-mui-label]") === null) {
+    if (this.querySelector(":scope > [data-m-label]") === null) {
       if (labelText) {
         const label = this.ownerDocument.createElement("span")
-        label.dataset.muiLabel = ""
+        label.dataset.mLabel = ""
         label.textContent = labelText
         this.prepend(label)
       }
     }
-    this.error = this.querySelector<HTMLElement>(":scope > [data-mui-error]") ?? undefined
+    this.error = this.querySelector<HTMLElement>(":scope > [data-m-error]") ?? undefined
     if (this.error === undefined) {
       this.error = this.ownerDocument.createElement("span")
-      this.error.dataset.muiError = ""
+      this.error.dataset.mError = ""
       this.error.hidden = true
       this.append(this.error)
     }
     const control = this.querySelector<HTMLElement>(
-      "mui-input,mui-textarea,mui-select,mui-autocomplete,mui-slider,mui-radio-group,mui-checkbox,mui-switch",
+      "m-input,m-textarea,m-select,m-autocomplete,m-slider,m-radio-group,m-checkbox,m-switch",
     )
     if (control !== null && labelText && !control.hasAttribute("aria-label")) {
       control.setAttribute("aria-label", labelText)
     }
     if (control !== null && this.error !== undefined) {
-      this.error.id ||= `mui-error-${Math.random().toString(36).slice(2)}`
+      this.error.id ||= `m-error-${Math.random().toString(36).slice(2)}`
       control.setAttribute("aria-describedby", this.error.id)
     }
   }
   public validate(): boolean {
     const control = this.querySelector<HTMLElement>(
-      "mui-input,mui-textarea,mui-select,mui-autocomplete,mui-slider,mui-radio-group,mui-checkbox,mui-switch",
+      "m-input,m-textarea,m-select,m-autocomplete,m-slider,m-radio-group,m-checkbox,m-switch",
     )
     if (control === null) return true
-    const property = control.matches("mui-checkbox,mui-switch") ? "checked" : "value"
+    const property = control.matches("m-checkbox,m-switch") ? "checked" : "value"
     const value = Reflect.get(control, property) as unknown
     const text = value === null || value === undefined ? "" : String(value)
     let message = ""
@@ -235,12 +235,12 @@ export class MuiFormItem extends MuiElement {
   }
 }
 
-export class MuiForm extends MuiElement {
+export class MForm extends MElement {
   public connectedCallback(): void {
     this.setAttribute("role", "form")
   }
   public validate(): boolean {
-    const valid = [...this.querySelectorAll<MuiFormItem>("mui-form-item")]
+    const valid = [...this.querySelectorAll<MFormItem>("m-form-item")]
       .map((item) => item.validate())
       .every(Boolean)
     this.emit(valid ? "valid" : "invalid")

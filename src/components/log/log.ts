@@ -63,8 +63,8 @@ type Owned = Node & { [owner]?: object }
 /** Bounded, fully mounted native text records. No parser, virtual window or transport. */
 export function createLog(root: HTMLElement, options: LogOptions = {}): LogController {
   const document = root?.ownerDocument, view = document?.defaultView
-  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".mui-log[data-log]")
-    || !["div", "section"].includes(root.localName) || (root as Owned)[owner]) throw new TypeError("Log needs an unowned native div/section.mui-log[data-log].")
+  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".m-log[data-log]")
+    || !["div", "section"].includes(root.localName) || (root as Owned)[owner]) throw new TypeError("Log needs an unowned native div/section.m-log[data-log].")
   function object(value: unknown, allowed: readonly string[]) {
     if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).some(key => !allowed.includes(key))) throw new TypeError("Unsupported Log configuration.")
   }
@@ -102,10 +102,10 @@ export function createLog(root: HTMLElement, options: LogOptions = {}): LogContr
     return !!(node.getAttribute("aria-label")?.trim() || node.getAttribute("aria-labelledby")?.trim().split(/\s+/).every(id => document!.getElementById(id)?.textContent?.trim()))
   }
   function anatomy() {
-    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".mui-log[data-log]")
+    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".m-log[data-log]")
       || one("[data-log-viewport]", true) !== viewport || one("[data-log-output]", true) !== output || one("[data-log-loading]") !== status
       || viewport.parentElement !== root || output.parentElement !== viewport || viewport.childNodes.length !== 1
-      || !viewport.classList.contains("mui-code-block") || !output.classList.contains("mui-code")
+      || !viewport.classList.contains("m-code-block") || !output.classList.contains("m-code")
       || !named(viewport) || viewport.getAttribute("tabindex") !== "0" || viewport.getAttribute("role") !== "region"
       || [root, viewport, output].some(node => node.hasAttribute("contenteditable") || node.hasAttribute("is")
         || node.getAttribute("aria-live") !== null && node.getAttribute("aria-live") !== "off"
@@ -118,8 +118,8 @@ export function createLog(root: HTMLElement, options: LogOptions = {}): LogContr
       rows.forEach((row, index) => {
         if (output.childNodes[index] !== row.element || row.element.childNodes.length !== 2
           || row.element.firstChild !== row.number || row.element.lastChild !== row.node
-          || row.number.childNodes.length || row.number.getAttribute("aria-hidden") !== "true" || !row.number.classList.contains("mui-code-number")
-          || !row.element.classList.contains("mui-code-line") || row.element.hasAttribute("hidden")
+          || row.number.childNodes.length || row.number.getAttribute("aria-hidden") !== "true" || !row.number.classList.contains("m-code-number")
+          || !row.element.classList.contains("m-code-line") || row.element.hasAttribute("hidden")
           || [row.element, row.number].some(node => node.hasAttribute("tabindex") || node.hasAttribute("contenteditable") || node.hasAttribute("role"))
           || (row.element as Owned)[owner] !== token
           || row.element.getAttribute("data-log-key") !== String(row.key)
@@ -225,8 +225,8 @@ export function createLog(root: HTMLElement, options: LogOptions = {}): LogContr
       const current = existing.get(line.key)
       if (current) return current.text === line.text ? current : { ...current, text: line.text }
       const element = document!.createElement("span"), number = document!.createElement("span")
-      element.className = "mui-code-line"; element.setAttribute("data-log-key", String(line.key))
-      number.className = "mui-code-number"; number.setAttribute("aria-hidden", "true")
+      element.className = "m-code-line"; element.setAttribute("data-log-key", String(line.key))
+      number.className = "m-code-number"; number.setAttribute("aria-hidden", "true")
       const node = document!.createTextNode(rendered(line, index, next.length, displayTrim))
       element.append(number, node)
       return { ...line, element, number, node }
@@ -275,7 +275,7 @@ export function createLog(root: HTMLElement, options: LogOptions = {}): LogContr
   function attempt(action: () => void) {
     try { action() } catch (cause) {
       error = cause
-      root.dispatchEvent(new view!.CustomEvent("mui:log-error", { bubbles: true, detail: { error: cause } }))
+      root.dispatchEvent(new view!.CustomEvent("m:log-error", { bubbles: true, detail: { error: cause } }))
     }
   }
   function scroll(event: Event) {
@@ -290,7 +290,7 @@ export function createLog(root: HTMLElement, options: LogOptions = {}): LogContr
       const stamp = revision
       for (const position of positions) {
         if (!connected || revision !== stamp) break
-        root.dispatchEvent(new view!.CustomEvent("mui:log-edge", { bubbles: true, detail: { position, event } }))
+        root.dispatchEvent(new view!.CustomEvent("m:log-edge", { bubbles: true, detail: { position, event } }))
       }
     })
   }

@@ -17,7 +17,7 @@ inert and Web Animations are used without a transition framework or per-frame la
 
 ```html
 <button type="button" id="toggle" aria-controls="content" aria-expanded="true">Toggle</button>
-<div id="content" class="mui-collapse-transition">
+<div id="content" class="m-collapse-transition">
   <div data-collapse-transition-content class="authored-panel">
     <h2>Authored heading</h2>
     <label>Reference <input name="reference" required></label>
@@ -36,7 +36,7 @@ toggle.addEventListener("click", async () => {
 })
 ```
 
-Use one connected light-DOM `div.mui-collapse-transition` with exactly one direct native
+Use one connected light-DOM `div.m-collapse-transition` with exactly one direct native
 `div[data-collapse-transition-content]`. Keep that pair stable; the inner div can contain
 ordinary authored content, native controls and listeners. No synthetic role, generated
 heading, aria-level, tabindex, aria-expanded or trigger discovery is performed.
@@ -169,7 +169,7 @@ Animation.finished errors—including a plain Error merely named AbortError—ar
 Unexpected failures cancel owned motion, release inert/clipping and leave the current
 native visibility safely exposed; they do not fabricate successful after hooks.
 
-The cancelable nonbubbling `mui:collapse-transition-error` carries
+The cancelable nonbubbling `m:collapse-transition-error` carries
 `{ error, phase: "animation" | "hook" | "ownership", stale }`. Failures are also reported to
 console unless a listener acknowledges them with preventDefault. The latest Promise and
 lastError remain inspectable. Stale failures may be diagnostic but do not change a newer

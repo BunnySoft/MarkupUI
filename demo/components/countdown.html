@@ -37,19 +37,19 @@
     <section id="examples" aria-label="Elapsed countdown examples">
       <article>
         <h2>Main text display</h2>
-        <time class="mui-countdown" id="main-countdown" data-countdown role="timer" aria-live="off" tabindex="0" datetime="PT10S"><strong>Remaining: </strong><span data-countdown-text>00:00:10</span></time>
+        <time class="m-countdown" id="main-countdown" data-countdown role="timer" aria-live="off" tabindex="0" datetime="PT10S"><strong>Remaining: </strong><span data-countdown-text>00:00:10</span></time>
         <p>The timer role and live=off are explicitly authored, not injected. Focus or
           select the text while running: its display holds but the elapsed run continues.</p>
       </article>
       <article>
         <h2>Authored native unit markup</h2>
-        <time class="mui-countdown" id="unit-countdown" data-countdown role="timer" aria-live="off" tabindex="0" datetime="PT10S"><span data-countdown-units><span><span data-countdown-hours>00</span><abbr title="hours">h</abbr></span><span><span data-countdown-minutes>00</span><abbr title="minutes">m</abbr></span><span><span data-countdown-seconds>10</span><span data-countdown-fraction>.000</span><abbr title="seconds">s</abbr></span></span></time>
+        <time class="m-countdown" id="unit-countdown" data-countdown role="timer" aria-live="off" tabindex="0" datetime="PT10S"><span data-countdown-units><span><span data-countdown-hours>00</span><abbr title="hours">h</abbr></span><span><span data-countdown-minutes>00</span><abbr title="minutes">m</abbr></span><span><span data-countdown-seconds>10</span><span data-countdown-fraction>.000</span><abbr title="seconds">s</abbr></span></span></time>
         <p>Four existing Text nodes update; unit labels and other authored nodes/listeners remain.</p>
       </article>
     </section>
     <details id="hidden-example">
       <summary>Initially hidden countdown (starts with the other examples)</summary>
-      <time class="mui-countdown" id="hidden-countdown" data-countdown role="timer" aria-live="off" datetime="PT10S">00:00:10</time>
+      <time class="m-countdown" id="hidden-countdown" data-countdown role="timer" aria-live="off" datetime="PT10S">00:00:10</time>
       <p>Opening this section shows the current elapsed result, not a replay of hidden ticks.</p>
     </details>
     <p id="completion" aria-live="polite" aria-atomic="true">Completion announcements are application-owned and separate from each display.</p>

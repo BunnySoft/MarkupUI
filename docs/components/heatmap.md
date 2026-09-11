@@ -17,7 +17,7 @@ generator, generic matrix renderer or mandatory Tooltip.
 | [Complete reference](../naive-ui/components/heatmap.md) | All 27 original identities plus explicit type/source/inherited additions |
 
 ```html
-<section class="mui-heatmap" data-heatmap tabindex="-1" aria-labelledby="activity-title">
+<section class="m-heatmap" data-heatmap tabindex="-1" aria-labelledby="activity-title">
   <h2 id="activity-title">Daily measurements</h2>
   <div data-heatmap-scroll>
     <table data-heatmap-table>
@@ -172,7 +172,7 @@ the same levels. Native title-only hover is not substituted for accessible detai
 
 Only validated hex color custom properties are written by JS. No arbitrary CSS colors,
 URLs, variables, style strings or injected rules are forwarded. External CSS owns
-geometry, palette, focus and responsiveness. Public `--mui-heatmap-*` overrides remain
+geometry, palette, focus and responsiveness. Public `--m-heatmap-*` overrides remain
 authoritative, including levels 0..4, color/font/swatch/radius, cell size, border,
 x/y gaps and focus.
 Native targets are deliberately larger than source tiny rectangles; full-year views
@@ -197,7 +197,7 @@ cell semantics remain; no grid/gridcell/tab roles or fake grid keyboard parity.
 - Enter/Space use native button click exactly once. No duplicate keyboard activation.
 
 Focus updates the persistent detail/readout and current marker without a selection/form
-value. Click or explicit `explore(date)` emits one mui:heatmap-explore record, even if
+value. Click or explicit `explore(date)` emits one m:heatmap-explore record, even if
 already current; merely moving focus does not emit an activation. Detail is nonlive
 because the focused button already has the full date/value/level label. It is usable
 by touch and reading users, not an inaccessible hover-only Tooltip.
@@ -228,8 +228,8 @@ All dates/data/bounds/thresholds/colors and every describe result are prepared b
 committing. describe receives a frozen cell record and must return a synchronous string,
 not Promise/HTML/DOM/VNode. Throwing/invalid callbacks leave the previous complete view.
 Reentrant set/refresh/explore during prepare/commit rejects; disconnect is allowed and
-prevents stale writes. Native action failures emit mui:heatmap-error; explicit invalid
-API changes throw. Valid set/refresh emits mui:heatmap-change after commit.
+prevents stale writes. Native action failures emit m:heatmap-error; explicit invalid
+API changes throw. Valid set/refresh emits m:heatmap-change after commit.
 
 Original native head/body/legend nodes are parked and restored by identity on teardown.
 Owned generated rows/cell values replace only declared regions, not root headings,
@@ -270,7 +270,7 @@ Observed Chromium: the local signed dataset produced domain [-4,20], four numeri
 35 missing date cells. Actual 0 remained numeric L0 while Missing had no level and a
 distinct hatch. The style re-audit measured the built-in light L0/L4 as
 `rgba(46,51,56,.09)` / `#216e39`, dark L0/L4 as white `.1` / `#39d353`,
-and confirmed an authored `--mui-heatmap-level-4:#123456` remained authoritative.
+and confirmed an authored `--m-heatmap-level-4:#123456` remained authoritative.
 All-zero data had domain [0,0] and levels [2,2,2]. Missing-only data had no numeric domain.
 
 ArrowRight moved one week, Ctrl+End reached the last date, Enter emitted one inspection
@@ -288,4 +288,4 @@ authored date/value rows and no dead day buttons. At 375px, strict self-hosted C
 connect-src:none kept the real dark-green max swatch and literal `<b>` detail text,
 using a 318px native scrollport for 418px content. Teardown restored original rows/
 legend/heading and focused the named scope. Classic Heatmap, native Date Picker year
-0001 and unchanged legacy date behavior coexisted without mui-heatmap registration.
+0001 and unchanged legacy date behavior coexisted without m-heatmap registration.

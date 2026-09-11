@@ -18,7 +18,7 @@ hidden membership fields.
 | [Complete reference](../naive-ui/components/upload.md) | All 95 original identities plus six explicit source additions |
 
 ```html
-<section class="mui-upload" data-upload tabindex="-1" aria-label="Attachments">
+<section class="m-upload" data-upload tabindex="-1" aria-label="Attachments">
   <label>Files <input data-upload-input type="file" name="attachments" multiple></label>
   <div data-upload-actions hidden>
     <button type="button" data-upload-action="start">Start pending files</button>
@@ -92,7 +92,7 @@ An empty named native file input may still contribute the browser's empty-filena
 zero-byte File placeholder to FormData; that is not a removed file or a helper proxy.
 
 An unexpected runtime synchronization failure clears the native file selection,
-disconnects enhancement and emits mui:upload-error with phase=synchronization and
+disconnects enhancement and emits m:upload-error with phase=synchronization and
 cleared=true, then throws. It does not leave allegedly removed files to be submitted.
 The application should surface that failure and let the user choose again. Original
 native controls remain usable; rebinding waits for any old actual transports to drain.
@@ -220,10 +220,10 @@ false/Promise callback values do not gate requests or file membership.
 
 ## Notifications, reset, native disabled state and focus
 
-`mui:upload-change` bubbles with reason, nullable file, complete files, state and nullable
+`m:upload-change` bubbles with reason, nullable file, complete files, state and nullable
 selection result. Batch selection/clear/settled events can have file=null; selection.added
-contains the new entries. Progress has a separate mui:upload-progress record and does
-not drive repeated live readout changes. mui:upload-error supplies phase/error/nullable
+contains the new entries. Progress has a separate m:upload-progress record and does
+not drive repeated live readout changes. m:upload-error supplies phase/error/nullable
 file; errors are also observable through state.lastError and per-file error status.
 
 The optional onChange runs after the DOM event as a synchronous notification. Its
@@ -308,17 +308,17 @@ transitions are not reproduced.
 
 | Public CSS token | Default / purpose |
 | --- | --- |
-| `--mui-upload-font-size`, `--mui-upload-color` | 14px; light/dark text |
-| `--mui-upload-button-size`, `--mui-upload-radius` | 34px minimum; 3px corners |
-| `--mui-upload-border`, `--mui-upload-action-color` | Theme border; primary enabled action/drop hover |
-| `--mui-upload-drop-padding`, `--mui-upload-drop-background` | 24px; light/dark action surface |
-| `--mui-upload-hover`, `--mui-upload-error` | Row hover surface; error filename color |
-| `--mui-upload-progress`, `--mui-upload-rail` | Info fill; neutral progress rail |
-| `--mui-upload-focus` | Visible keyboard/drag outline |
+| `--m-upload-font-size`, `--m-upload-color` | 14px; light/dark text |
+| `--m-upload-button-size`, `--m-upload-radius` | 34px minimum; 3px corners |
+| `--m-upload-border`, `--m-upload-action-color` | Theme border; primary enabled action/drop hover |
+| `--m-upload-drop-padding`, `--m-upload-drop-background` | 24px; light/dark action surface |
+| `--m-upload-hover`, `--m-upload-error` | Row hover surface; error filename color |
+| `--m-upload-progress`, `--m-upload-rail` | Info fill; neutral progress rail |
+| `--m-upload-focus` | Visible keyboard/drag outline |
 
 Local theme defaults use private tokens so public author tokens remain effective,
 including within nested light/dark scopes. An authored error color does not implicitly
-recalculate the hover surface; set `--mui-upload-hover` when changing that surface.
+recalculate the hover surface; set `--m-upload-hover` when changing that surface.
 Native disabled inputs/actions are dimmed, but status text stays readable. The
 deliberately focus-retained `aria-disabled` action cannot gain enabled hover styling.
 
@@ -380,5 +380,5 @@ controls hidden; native reset cleared the fallback FileList.
 
 Classic-only generation inside a native dialog blocked work while closed and used the
 author's external form association after opening. Opaque javascript-like response data
-created no anchor/image. ESM/classic did not register mui-upload; loading the unchanged
+created no anchor/image. ESM/classic did not register m-upload; loading the unchanged
 advanced plugin afterwards preserved its real File[] selection event exactly once.

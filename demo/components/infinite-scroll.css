@@ -6,8 +6,8 @@ button { padding: .3rem .5rem; }
 fieldset { min-inline-size: 0; border: 1px solid #afbecf; }
 .demo-controls:not([hidden]) { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
 .demo-controls label { max-inline-size: 100%; }
-.mui-infinite-scroll { --mui-infinite-scroll-height: 12rem; }
-.mui-infinite-scroll[data-scroll-mode="page"] > .mui-infinite-scroll__viewport { max-block-size: none; overflow: visible; }
+.m-infinite-scroll { --m-infinite-scroll-height: 12rem; }
+.m-infinite-scroll[data-scroll-mode="page"] > .m-infinite-scroll__viewport { max-block-size: none; overflow: visible; }
 [data-infinite-content] { padding-inline-start: 1.5rem; margin-block: 0; }
 [data-infinite-content] > li { padding-block: .5rem; border-block-end: 1px solid #d4dbe5; }
 [data-infinite-content] > li > label { display: inline-block; max-inline-size: 100%; margin-inline-end: .5rem; }

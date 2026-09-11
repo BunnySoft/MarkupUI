@@ -1,4 +1,4 @@
-import { mui } from "./index.js"
+import { m } from "./index.js"
 
-Reflect.set(window, "mui", mui)
-Reflect.set(window, "MarkupUI", mui)
+Reflect.set(window, "m", m)
+Reflect.set(window, "MarkupUI", m)

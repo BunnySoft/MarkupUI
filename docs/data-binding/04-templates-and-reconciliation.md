@@ -32,10 +32,10 @@ True creates and binds one instance. False disposes and removes it. Use
 <ul>
   <template data-each="people" data-each-key="id">
     <li>
-      <mui-avatar
+      <m-avatar
         data-bind-src="item.src"
         data-bind-alt="item.name">
-      </mui-avatar>
+      </m-avatar>
       <span data-bind-text="item.name"></span>
     </li>
   </template>
@@ -84,16 +84,16 @@ node movement without restarting an internal resource.
 Inline:
 
 ```html
-<mui-avatar-group>
+<m-avatar-group>
   <template data-avatar-template>...</template>
-</mui-avatar-group>
+</m-avatar-group>
 ```
 
 Referenced:
 
 ```html
 <template id="person-avatar">...</template>
-<mui-avatar-group item-template="person-avatar"></mui-avatar-group>
+<m-avatar-group item-template="person-avatar"></m-avatar-group>
 ```
 
 Property:

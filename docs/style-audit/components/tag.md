@@ -1,7 +1,7 @@
 # Tag default-style audit
 
 **Status:** corrected and rendered against the reference in Chromium, 2026-09-10.
-This covers optional `mui-tag`, not legacy Tag, bindings/templates or complete Vue parity.
+This covers optional `m-tag`, not legacy Tag, bindings/templates or complete Vue parity.
 
 ## Reference and method
 
@@ -58,7 +58,7 @@ height/4 for the plain closable right edge, and height/2 left padding with negat
 icon/avatar offsets; adorned round right padding returns to height/3. Icon sizing and
 avatar's additional 2px spacing match the reference.
 
-Semantic colors retain shared `--mui-color-*` hues while correcting opacity:
+Semantic colors retain shared `--m-color-*` hues while correcting opacity:
 
 | Light passive type | Bordered fill | Borderless fill | Border |
 | --- | --- | --- | --- |
@@ -134,6 +134,6 @@ Firefox/Safari, RTL, platform font differences and custom theme contrast are not
 
 **Shared follow-up, not changed here:** core/themes neutral tokens remain different
 from Naive's Tag defaults. Tag isolates its neutral defaults locally and retains public
-`--mui-tag-*` overrides; semantic dark colors still come from the existing themes CSS.
+`--m-tag-*` overrides; semantic dark colors still come from the existing themes CSS.
 A shared neutral-token migration would affect other components and must be coordinated
 separately. No shared theme/core/generated adapter or style-audit index was edited.

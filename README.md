@@ -1,10 +1,14 @@
 # `@dataengine/markup-ui`
 
-Dependency-free, HTML-first Web Components for modern browsers.
+Platform-neutral UI components with a dependency-free Web renderer for modern browsers.
 
-MarkupUI combines normal `mui-*` HTML, native browser behavior, optional state and actions, CSS
-themes, safe dynamic HTML, and a small jQuery-inspired API organization. It has no runtime package
-dependencies, virtual DOM, JSX, or required consumer framework.
+The current package is the delivered Web renderer. The approved
+[platform architecture](docs/platform-architecture/README.md) introduces `m-*` as the
+public Web prefix. The canonical
+future model contains components, regions, bindings, templates, actions, capabilities and
+fallbacks rather than raw HTML.
+
+The former longer public prefix has been removed; package and asset filenames are unchanged.
 
 ## Install
 
@@ -14,18 +18,18 @@ pnpm add @dataengine/markup-ui
 
 ```html
 <script type="module">
-  import { mui } from "@dataengine/markup-ui";
+  import { m } from "@dataengine/markup-ui";
 
-  mui.theme.set("light");
+  m.theme.set("light");
 </script>
 
-<mui-card>
-  <mui-heading level="2">Customer editor</mui-heading>
-  <mui-field label="Name">
-    <mui-input mui-bind="customer.name"></mui-input>
-  </mui-field>
-  <mui-button type="primary" mui-action="customer.save">Save</mui-button>
-</mui-card>
+<m-card>
+  <m-heading level="2">Customer editor</m-heading>
+  <m-field label="Name">
+    <m-input m-bind="customer.name"></m-input>
+  </m-field>
+  <m-button type="primary" m-action="customer.save">Save</m-button>
+</m-card>
 ```
 
 ## Direct browser usage
@@ -34,7 +38,7 @@ ES module:
 
 ```html
 <script type="module">
-  import { mui } from "./dist/markup-ui.js";
+  import { m } from "./dist/markup-ui.js";
 </script>
 ```
 
@@ -43,7 +47,7 @@ Classic script:
 ```html
 <script src="./dist/markup-ui.global.js"></script>
 <script>
-  mui.theme.set("dark");
+  m.theme.set("dark");
 </script>
 ```
 
@@ -51,65 +55,68 @@ Both builds automatically install the core stylesheet and register the built-in 
 
 ## API
 
-The callable `mui` entry point organizes public services:
+The callable `m` entry point organizes public services:
 
 ```js
-mui.actions.register("customer.save", saveCustomer);
-mui.state.create({ customer: {} });
-mui.theme.set("dark");
-mui.html.set(target, untrustedHtml);
-mui.elements.register("mui-chart", ChartElement);
-mui.use(chartPlugin);
+m.actions.register("customer.save", saveCustomer);
+m.state.create({ customer: {} });
+m.theme.set("dark");
+m.html.set(target, untrustedHtml);
+m.elements.register("m-chart", ChartElement);
+m.use(chartPlugin);
 ```
 
 The chainable query helper is optional:
 
 ```js
-mui(".customer-card")
+m(".customer-card")
   .addClass("selected")
   .on("click", selectCustomer);
 ```
 
-Web Components, state, actions, themes, security, and plugins do not depend on `MuiQuery`.
+Web Components, state, actions, themes, security, and plugins do not depend on `MQuery`.
 
 ## Components
 
-- Structure: `mui-app`, `mui-header`, `mui-main`, `mui-section`
-- Layout: `mui-stack`, `mui-row`, `mui-wrap`, `mui-center`, `mui-spacer`, `mui-grid`
-- Content: `mui-heading`, `mui-text`, `mui-strong`, `mui-code`, `mui-link`
-- Surfaces: `mui-card`, `mui-card-header`, `mui-card-content`, `mui-card-footer`
-- Feedback: `mui-alert`, `mui-badge`, `mui-tag`, `mui-progress`, `mui-skeleton`, `mui-spin`, `mui-empty`
-- Media and grouping: `mui-avatar`, `mui-divider`, `mui-button-group`
-- Forms: `mui-form`, `mui-form-item`, `mui-field`, `mui-input`, `mui-textarea`
-- Selection: `mui-select`, `mui-option`, `mui-autocomplete`, `mui-radio-group`, `mui-radio`
-- Value controls: `mui-slider`, `mui-checkbox`, `mui-switch`
-- Actions: `mui-button`
-- Navigation: `mui-tabs`, `mui-tab`, `mui-accordion`, `mui-accordion-item`
-- Selection navigation: `mui-menu`, `mui-menu-item`, `mui-pagination`, `mui-steps`, `mui-step`
-- Data display: `mui-list`, `mui-list-item`, `mui-descriptions`, `mui-description-item`, `mui-statistic`
-- Hierarchy: `mui-tree`, `mui-tree-node`
-- Overlay: `mui-dialog`, `mui-dialog-header`, `mui-dialog-content`, `mui-dialog-footer`
-- Drawer: `mui-drawer`, `mui-drawer-header`, `mui-drawer-content`, `mui-drawer-footer`
-- Floating content: `mui-tooltip`, `mui-popover`, `mui-popover-trigger`, `mui-popover-content`
-- Managed feedback: `mui-message`, `mui-notification`
-- Themes and loading: `mui-theme`, `mui-include`
+The component list below describes the current `m-*` Web surface. The first
+new-architecture batch migrates Button through Dropdown sequentially to `m-*`.
+
+- Structure: `m-app`, `m-header`, `m-main`, `m-section`
+- Layout: `m-stack`, `m-row`, `m-wrap`, `m-center`, `m-spacer`, `m-grid`
+- Content: `m-heading`, `m-text`, `m-strong`, `m-code`, `m-link`
+- Surfaces: `m-card`, `m-card-header`, `m-card-content`, `m-card-footer`
+- Feedback: `m-alert`, `m-badge`, `m-tag`, `m-progress`, `m-skeleton`, `m-spin`, `m-empty`
+- Media and grouping: `m-avatar`, `m-divider`, `m-button-group`
+- Forms: `m-form`, `m-form-item`, `m-field`, `m-input`, `m-textarea`
+- Selection: `m-select`, `m-option`, `m-autocomplete`, `m-radio-group`, `m-radio`
+- Value controls: `m-slider`, `m-checkbox`, `m-switch`
+- Actions: `m-button`
+- Navigation: `m-tabs`, `m-tab`, `m-accordion`, `m-accordion-item`
+- Selection navigation: `m-menu`, `m-menu-item`, `m-pagination`, `m-steps`, `m-step`
+- Data display: `m-list`, `m-list-item`, `m-descriptions`, `m-description-item`, `m-statistic`
+- Hierarchy: `m-tree`, `m-tree-node`
+- Overlay: `m-dialog`, `m-dialog-header`, `m-dialog-content`, `m-dialog-footer`
+- Drawer: `m-drawer`, `m-drawer-header`, `m-drawer-content`, `m-drawer-footer`
+- Floating content: `m-tooltip`, `m-popover`, `m-popover-trigger`, `m-popover-content`
+- Managed feedback: `m-message`, `m-notification`
+- Themes and loading: `m-theme`, `m-include`
 
 ## Buttons
 
 ```html
-<mui-button>Default</mui-button>
-<mui-button type="primary">Primary</mui-button>
-<mui-button type="info">Info</mui-button>
-<mui-button type="success">Success</mui-button>
-<mui-button type="warning">Warning</mui-button>
-<mui-button type="error">Error</mui-button>
+<m-button>Default</m-button>
+<m-button type="primary">Primary</m-button>
+<m-button type="info">Info</m-button>
+<m-button type="success">Success</m-button>
+<m-button type="warning">Warning</m-button>
+<m-button type="error">Error</m-button>
 
-<mui-button secondary>Secondary</mui-button>
-<mui-button tertiary>Tertiary</mui-button>
-<mui-button quaternary>Quaternary</mui-button>
-<mui-button dashed>Dashed</mui-button>
-<mui-button type="primary" ghost>Ghost</mui-button>
-<mui-button type="text">Text</mui-button>
+<m-button secondary>Secondary</m-button>
+<m-button tertiary>Tertiary</m-button>
+<m-button quaternary>Quaternary</m-button>
+<m-button dashed>Dashed</m-button>
+<m-button type="primary" ghost>Ghost</m-button>
+<m-button type="text">Text</m-button>
 ```
 
 Sizes are `tiny`, `small`, medium by default, and `large`. Shape/state attributes include `round`,
@@ -119,29 +126,29 @@ supported.
 ## State and binding
 
 ```html
-<mui-app>
-  <script type="application/json" data-mui-state>
+<m-app>
+  <script type="application/json" data-m-state>
     {"customer":{"name":"Ada"},"form":{"busy":false}}
   </script>
 
-  <mui-input mui-bind="customer.name"></mui-input>
-  <mui-text mui-text="customer.name"></mui-text>
-  <mui-button mui-disabled="form.busy">Save</mui-button>
-</mui-app>
+  <m-input m-bind="customer.name"></m-input>
+  <m-text m-text="customer.name"></m-text>
+  <m-button m-disabled="form.busy">Save</m-button>
+</m-app>
 ```
 
 Bindings:
 
-- `mui-bind` — two-way `value` or `checked` binding
-- `mui-text` — one-way text binding
-- `mui-visible` — one-way visibility binding
-- `mui-disabled` — one-way disabled-state binding
+- `m-bind` — two-way `value` or `checked` binding
+- `m-text` — one-way text binding
+- `m-visible` — one-way visibility binding
+- `m-disabled` — one-way disabled-state binding
 
 The store uses explicit path updates and observer subscriptions rather than `Proxy`:
 
 ```js
-const store = mui.state.create({ customer: { name: "Ada" } });
-const dispose = mui.state.bind(document.body, store);
+const store = m.state.create({ customer: { name: "Ada" } });
+const dispose = m.state.bind(document.body, store);
 
 store.set("customer.name", "Grace");
 dispose();
@@ -156,30 +163,30 @@ collection API.
 ## Form validation
 
 ```html
-<mui-form>
-  <mui-form-item label="Name" required minlength="3">
-    <mui-input mui-bind="customer.name"></mui-input>
-  </mui-form-item>
-  <mui-button mui-action="validate">Validate</mui-button>
-</mui-form>
+<m-form>
+  <m-form-item label="Name" required minlength="3">
+    <m-input m-bind="customer.name"></m-input>
+  </m-form-item>
+  <m-button m-action="validate">Validate</m-button>
+</m-form>
 ```
 
-`mui-form-item` supports `required`, `minlength`, and `pattern` rules with accessible error state.
-`mui-form.validate()` emits `mui:valid` or `mui:invalid`.
+`m-form-item` supports `required`, `minlength`, and `pattern` rules with accessible error state.
+`m-form.validate()` emits `m:valid` or `m:invalid`.
 
 ## Named actions
 
 ```html
-<mui-button
-  mui-action="customer.save"
-  mui-param-mode="draft"
+<m-button
+  m-action="customer.save"
+  m-param-mode="draft"
 >
   Save
-</mui-button>
+</m-button>
 ```
 
 ```js
-mui.actions.register("customer.save", async ({ store, parameters }) => {
+m.actions.register("customer.save", async ({ store, parameters }) => {
   store?.set("form.busy", true);
   await saveCustomer(parameters.mode);
   store?.set("form.busy", false);
@@ -193,37 +200,37 @@ Markup names registered actions but cannot execute arbitrary JavaScript.
 Structured components own their standard layout:
 
 ```html
-<mui-dialog id="editor">
-  <mui-dialog-header>
-    <mui-heading level="2">Editor</mui-heading>
-    <mui-button mui-action="close">Close</mui-button>
-  </mui-dialog-header>
-  <mui-dialog-content>...</mui-dialog-content>
-  <mui-dialog-footer>
-    <mui-button variant="primary">Save</mui-button>
-  </mui-dialog-footer>
-</mui-dialog>
+<m-dialog id="editor">
+  <m-dialog-header>
+    <m-heading level="2">Editor</m-heading>
+    <m-button m-action="close">Close</m-button>
+  </m-dialog-header>
+  <m-dialog-content>...</m-dialog-content>
+  <m-dialog-footer>
+    <m-button variant="primary">Save</m-button>
+  </m-dialog-footer>
+</m-dialog>
 ```
 
 Free-form card and dialog children remain supported. The built-in `close` action targets the
-closest `mui-dialog` or `mui-drawer` when no explicit target is supplied.
+closest `m-dialog` or `m-drawer` when no explicit target is supplied.
 
 ## Overlays and feedback
 
 ```html
-<mui-tooltip text="Helpful information">
-  <mui-button>Hover or focus</mui-button>
-</mui-tooltip>
+<m-tooltip text="Helpful information">
+  <m-button>Hover or focus</m-button>
+</m-tooltip>
 
-<mui-popover>
-  <mui-popover-trigger><mui-button>Open</mui-button></mui-popover-trigger>
-  <mui-popover-content>Popover body</mui-popover-content>
-</mui-popover>
+<m-popover>
+  <m-popover-trigger><m-button>Open</m-button></m-popover-trigger>
+  <m-popover-content>Popover body</m-popover-content>
+</m-popover>
 ```
 
 ```js
-mui.message.show("Saved", { type: "success" });
-mui.notification.show({
+m.message.show("Saved", { type: "success" });
+m.notification.show({
   title: "Build complete",
   content: "All browser distributions were generated.",
 });
@@ -232,37 +239,37 @@ mui.notification.show({
 ## Themes
 
 ```js
-mui.theme.register("brand", {
+m.theme.register("brand", {
   "color-primary": "#2563eb",
   "color-primary-hover": "#1d4ed8",
   "bg-surface": "#ffffff",
 });
 
-mui.theme.set("brand");
+m.theme.set("brand");
 ```
 
 ```html
-<mui-theme name="dark">
-  <mui-card>Scoped dark content</mui-card>
-</mui-theme>
+<m-theme name="dark">
+  <m-card>Scoped dark content</m-card>
+</m-theme>
 ```
 
 The visual system includes semantic tokens for typography, density, surfaces, interaction states,
 focus rings, elevation, and motion. Components share consistent hover, active, focus-visible,
 disabled, and reduced-motion behavior.
 
-MarkupUI respects `prefers-reduced-motion` by default. Add `motion="full"` to `mui-app` only when
+MarkupUI respects `prefers-reduced-motion` by default. Add `motion="full"` to `m-app` only when
 the application deliberately needs full transitions despite that operating-system preference.
 
 ## Dynamic and safe HTML
 
 ```html
-<mui-include src="/views/orders.html"></mui-include>
+<m-include src="/views/orders.html"></m-include>
 ```
 
 ```js
-await mui("#workspace").load("/views/orders.html");
-mui.html.set(target, untrustedHtml);
+await m("#workspace").load("/views/orders.html");
+m.html.set(target, untrustedHtml);
 ```
 
 Dynamic HTML is same-origin by default and sanitized before insertion. Scripts, embedded documents,
@@ -271,10 +278,10 @@ inline event handlers, unsafe styles, and unsafe URLs are removed.
 ## Plugins
 
 ```js
-mui.use({
+m.use({
   name: "chart",
   install(api) {
-    api.elements.register("mui-chart", ChartElement);
+    api.elements.register("m-chart", ChartElement);
     api.actions.register("chart.refresh", refreshChart);
   },
 });
@@ -285,27 +292,27 @@ Plugins install once by name and interact only through public APIs.
 ## Optional advanced plugin
 
 ```js
-import { mui } from "@dataengine/markup-ui";
+import { m } from "@dataengine/markup-ui";
 import { advancedPlugin } from "@dataengine/markup-ui/advanced";
 
-mui.use(advancedPlugin);
+m.use(advancedPlugin);
 ```
 
 The advanced plugin provides:
 
-- `mui-data-grid` and `mui-data-column`
-- `mui-date-picker` and `mui-time-picker`
-- `mui-upload`
-- `mui-virtual-list`
+- `m-data-grid` and `m-data-column`
+- `m-date-picker` and `m-time-picker`
+- `m-upload`
+- `m-virtual-list`
 
 ```js
-const grid = document.querySelector("mui-data-grid");
+const grid = document.querySelector("m-data-grid");
 grid.rows = [
   { name: "Ada", score: 98 },
   { name: "Grace", score: 94 },
 ];
 
-document.querySelector("mui-virtual-list").items =
+document.querySelector("m-virtual-list").items =
   Array.from({ length: 10000 }, (_, index) => `Row ${index + 1}`);
 ```
 
@@ -314,10 +321,10 @@ The plugin is distributed separately and does not increase the core browser bund
 ## Optional widgets plugin
 
 ```js
-import { mui } from "@dataengine/markup-ui";
+import { m } from "@dataengine/markup-ui";
 import { widgetsPlugin } from "@dataengine/markup-ui/widgets";
 
-mui.use(widgetsPlugin);
+m.use(widgetsPlugin);
 ```
 
 The widgets plugin provides:
@@ -347,7 +354,7 @@ Large components remain optional so normal pages do not download the entire cata
 
 - `dist/markup-ui.js` — bundled ES module
 - `dist/markup-ui.min.js` — minified ES module
-- `dist/markup-ui.global.js` — classic script exposing `window.mui`
+- `dist/markup-ui.global.js` — classic script exposing `window.m`
 - `dist/markup-ui-advanced.js` — optional advanced component plugin
 - `dist/markup-ui-widgets.js` — optional application widgets plugin
 - Modular JavaScript and TypeScript declarations
@@ -357,9 +364,9 @@ The build enforces gzip budgets of 15 KB for core, 3 KB for advanced, and 4 KB f
 
 ## Compatibility
 
-- Existing `mui-*` markup remains supported across minor releases.
-- Named exports and the namespaced `mui` API follow semantic versioning.
-- `builtInElementNames`, `mui.elements.names`, and `advancedElementNames` expose stable manifests.
+- Existing `m-*` markup remains supported across minor releases.
+- Named exports and the namespaced `m` API follow semantic versioning.
+- `builtInElementNames`, `m.elements.names`, and `advancedElementNames` expose stable manifests.
 - Breaking attribute, property, event, or element changes require a major release.
 - See [CHANGELOG.md](CHANGELOG.md) for release history.
 

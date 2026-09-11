@@ -5,10 +5,10 @@ main { padding: 24px; }
 .breadcrumb { display: flex; flex-wrap: wrap; gap: .5rem; }
 .back-graphic { inline-size: 1em; block-size: 1em; flex: none; }
 .back-graphic:dir(rtl) { transform: scaleX(-1); }
-.mui-page-header-extra > a, .mui-page-header-extra > button { max-inline-size: 100%; overflow-wrap: anywhere; white-space: normal; }
-.mui-page-header-content > p, .mui-page-header-footer > p { margin-block: 0; }
-.mui-page-header-content > input { box-sizing: border-box; max-inline-size: 100%; }
-.mui-page-header-footer > output { display: block; margin-block-start: .5rem; }
+.m-page-header-extra > a, .m-page-header-extra > button { max-inline-size: 100%; overflow-wrap: anywhere; white-space: normal; }
+.m-page-header-content > p, .m-page-header-footer > p { margin-block: 0; }
+.m-page-header-content > input { box-sizing: border-box; max-inline-size: 100%; }
+.m-page-header-footer > output { display: block; margin-block-start: .5rem; }
 a { color: #175fbb; }
 a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 button, input { font: inherit; }

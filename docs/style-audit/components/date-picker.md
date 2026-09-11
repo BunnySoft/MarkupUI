@@ -33,7 +33,7 @@ and forced-colors media. No native picker was opened and no browser artifact was
 
 The root now owns the source font/line-height scale and native color scheme. Pair spacing
 uses a public fallback rather than overwriting an inherited value. Local
-`--mui-date-picker-*` hooks cover font family/size/line-height, height, padding, gap,
+`--m-date-picker-*` hooks cover font family/size/line-height, height, padding, gap,
 radius, normal/focus/disabled text, surfaces and border. Shared font and primary-hover
 hooks remain usable. Public tokens are never assigned as defaults.
 

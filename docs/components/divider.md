@@ -49,7 +49,7 @@ The four public rows are preserved, with three explicit source theme supplements
 
 Copy/serve the stylesheet normally. There is no `./divider` JS export, ESM/classic runtime,
 `MarkupUIDivider` global or fake JS budget. CSS can load before or after the legacy aggregate.
-It does not register or upgrade the existing `mui-divider` custom element.
+It does not register or upgrade the existing `m-divider` custom element.
 
 The unchanged legacy registry still sets separator role and initial orientation from its
 `vertical` attribute; legacy styles still use their existing border-top/border-left rules.
@@ -62,8 +62,8 @@ not promoted to complete dynamic/native parity by this migration.
 **Horizontal thematic break: use native hr.**
 
 ```html
-<hr class="mui-divider">
-<hr class="mui-divider" data-dashed aria-label="End of introduction">
+<hr class="m-divider">
+<hr class="m-divider" data-dashed aria-label="End of introduction">
 ```
 
 Native hr supplies separator semantics without a generated role. An optional explicit name
@@ -73,7 +73,7 @@ children inside it. CSS does not repair invalid HTML or manufacture a heading fr
 **Purely decorative rule: use a hidden-from-AX native span/div.**
 
 ```html
-<span class="mui-divider" aria-hidden="true"></span>
+<span class="m-divider" aria-hidden="true"></span>
 ```
 
 This hides decoration from accessibility APIs, not from sight. CSS itself never adds
@@ -89,7 +89,7 @@ links/buttons outside separator descendants; their tab order and activation rema
 **Semantic vertical separator: the authored ARIA orientation drives the geometry.**
 
 ```html
-<span class="mui-divider" role="separator" aria-orientation="vertical"
+<span class="m-divider" role="separator" aria-orientation="vertical"
       aria-label="Action groups"></span>
 ```
 
@@ -102,7 +102,7 @@ aligned to the middle in inline text. It is not automatically stretched to arbit
 **Decorative vertical separator:**
 
 ```html
-<span class="mui-divider" data-orientation="vertical" aria-hidden="true"></span>
+<span class="m-divider" data-orientation="vertical" aria-hidden="true"></span>
 ```
 
 The data-orientation form only applies when aria-hidden is explicitly true and no
@@ -119,9 +119,9 @@ orientation policy; no writing-mode reset or automatic physical-axis measurement
 ### One named separator with one original visible caption
 
 ```html
-<div class="mui-divider mui-divider-captioned" role="separator"
+<div class="m-divider m-divider-captioned" role="separator"
      aria-labelledby="settings-caption">
-  <span class="mui-divider-label" id="settings-caption" aria-hidden="true">Settings</span>
+  <span class="m-divider-label" id="settings-caption" aria-hidden="true">Settings</span>
 </div>
 ```
 
@@ -139,8 +139,8 @@ inside an aria-hidden caption. Give repeated captions unique IDs when authored/c
 ### A real heading with decorative rules
 
 ```html
-<div class="mui-divider mui-divider-captioned" data-placement="start">
-  <h2 class="mui-divider-label">A real section heading</h2>
+<div class="m-divider m-divider-captioned" data-placement="start">
+  <h2 class="m-divider-label">A real section heading</h2>
 </div>
 ```
 
@@ -190,16 +190,16 @@ this target intentionally retains physical left/right and explicit logical start
 
 | CSS token | Default / purpose |
 | --- | --- |
-| `--mui-divider-color` | `#efeff5` light / white `.09` dark, rule color |
-| `--mui-divider-text-color` | `#1f2225` light / white `.9` dark, native caption color |
-| `--mui-divider-thickness` | `1px`, positive native border width |
-| `--mui-divider-space` | `24px`, horizontal block spacing |
-| `--mui-divider-inline-space` | `8px`, vertical inline spacing |
-| `--mui-divider-length` | `1em`, vertical length; minimum for captioned vertical composition |
-| `--mui-divider-label-gap` | `12px`, label/rule gap |
-| `--mui-divider-label-size`, `--mui-divider-label-weight` | `16px`, `500`; presentation only, not a heading role |
-| `--mui-divider-edge` | `28px`, shrinkable short-rule flex basis at an edge placement |
-| `--mui-divider-rule-min` | `1rem`, minimum horizontal caption rule length |
+| `--m-divider-color` | `#efeff5` light / white `.09` dark, rule color |
+| `--m-divider-text-color` | `#1f2225` light / white `.9` dark, native caption color |
+| `--m-divider-thickness` | `1px`, positive native border width |
+| `--m-divider-space` | `24px`, horizontal block spacing |
+| `--m-divider-inline-space` | `8px`, vertical inline spacing |
+| `--m-divider-length` | `1em`, vertical length; minimum for captioned vertical composition |
+| `--m-divider-label-gap` | `12px`, label/rule gap |
+| `--m-divider-label-size`, `--m-divider-label-weight` | `16px`, `500`; presentation only, not a heading role |
+| `--m-divider-edge` | `28px`, shrinkable short-rule flex basis at an edge placement |
+| `--m-divider-rule-min` | `1rem`, minimum horizontal caption rule length |
 
 Use valid native CSS values and sensible positive geometry. Invalid/zero widths or colors
 can remove a visible rule; the library does not silently coerce them into a valid separator.
@@ -210,24 +210,24 @@ The demo's grid separator explicitly spans both native grid columns; no Grid mod
 
 ### Theme and author ownership
 
-Set `data-mui-theme="light|dark"` on a document or scoped ancestor, or directly on a
+Set `data-m-theme="light|dark"` on a document or scoped ancestor, or directly on a
 divider. The closest explicit theme boundary supplies private Divider defaults; no
 boundary means light. Nested light scopes reset those private defaults under dark.
-The existing public `--mui-divider-color` and `--mui-divider-text-color` tokens
+The existing public `--m-divider-color` and `--m-divider-text-color` tokens
 still win, including inherited author overrides across a nested theme boundary.
 
 ```html
-<section data-mui-theme="dark">
-  <hr class="mui-divider">
+<section data-m-theme="dark">
+  <hr class="m-divider">
 </section>
 ```
 
 The application owns background and `color-scheme`; this stylesheet sets neither and
-does not observe system preference. It consumes shared `--mui-font-family` when
+does not observe system preference. It consumes shared `--m-font-family` when
 present and otherwise inherits family. Divider's own font size is 16px; native CSS
 can override it. Line height remains inherited. Local caption sizing remains separate.
 
-Shared legacy `--mui-border` and `--mui-text-primary` are not equivalent to Naive's
+Shared legacy `--m-border` and `--m-text-primary` are not equivalent to Naive's
 divider-color/textColor1 roles and are deliberately not consumed. No global palette
 migration is needed to obtain the reference fallback colors. For a custom theme,
 author the two Divider tokens rather than recoloring unrelated shared-token components.
@@ -293,7 +293,7 @@ All four original public rows plus three explicit source supplements remain:
   in-memory A4 PDF generation without backgrounds returned a valid 50,056-byte PDF.
   No PDF file was written; physical printer/all-AT certification is not claimed.
 - Isolated CSS-before/after-legacy checks preserved exact native markup/nodes and outside hr
-  styling. Legacy mui-divider still received its original initial horizontal/vertical role/
+  styling. Legacy m-divider still received its original initial horizontal/vertical role/
   orientation and border rules. No new Divider runtime/global was introduced; only the task
   browser tab was used.
 - **CSS: 2,923 raw / 765 gzip bytes, under its 1,500-byte ceiling.**

@@ -30,19 +30,19 @@ afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); docu
 describe("Radio stylesheet contract", () => {
   const css = readFileSync(join("src", "components", "radio", "radio.css"), "utf8")
   it("keeps theme, size and status defaults private for inherited author tokens", () => {
-    expect(css).not.toMatch(/--mui-radio-[\w-]+\s*:/)
-    for (const size of [14, 16, 18]) expect(css).toMatch(new RegExp(`--_mui-radio-size:\\s*${size}px`))
-    expect(css).toMatch(/data-mui-theme="?dark"?/)
-    expect(css).not.toContain("var(--mui-text-primary")
+    expect(css).not.toMatch(/--m-radio-[\w-]+\s*:/)
+    for (const size of [14, 16, 18]) expect(css).toMatch(new RegExp(`--_m-radio-size:\\s*${size}px`))
+    expect(css).toMatch(/data-m-theme="?dark"?/)
+    expect(css).not.toContain("var(--m-text-primary")
   })
   it("retains visible native circles, including the button variant", () => {
     expect(css).toContain("accent-color:")
     expect(css).not.toMatch(/appearance\s*:|::before|::after|position:\s*absolute|pointer-events:\s*none|opacity:\s*0[;}]/)
   })
   it("uses the reference button heights without synthetic checked-text decorations", () => {
-    for (const height of [28, 34, 40]) expect(css).toMatch(new RegExp(`--_mui-radio-height:\\s*${height}px`))
+    for (const height of [28, 34, 40]) expect(css).toMatch(new RegExp(`--_m-radio-height:\\s*${height}px`))
     expect(css).not.toMatch(/text-decoration:\s*underline|font-weight:\s*650/)
-    expect(css).toMatch(/input:checked\s*\+\s*span\s*\{[^}]*var\(--_mui-radio-tone\)/)
+    expect(css).toMatch(/input:checked\s*\+\s*span\s*\{[^}]*var\(--_m-radio-tone\)/)
     expect(css).toMatch(/vertical-align:\s*top/)
   })
   it("retains forced-color focus and authored hidden-state safeguards", () => {
@@ -52,8 +52,8 @@ describe("Radio stylesheet contract", () => {
   })
   it("does not compound system disabled paint with RadioButton opacity in forced colors", () => {
     const forcedColors = css.split(/@media\s*\(forced-colors:\s*active\)/)[1]?.split("@media print")[0] ?? ""
-    expect(forcedColors).toMatch(/\.mui-radio-button:has\(\s*>\s*input:disabled\)\s*\{\s*opacity:\s*1\s*;?\s*\}/)
-    expect(css).toMatch(/opacity:\s*var\(--_mui-radio-opacity,\s*\.5\)/)
+    expect(forcedColors).toMatch(/\.m-radio-button:has\(\s*>\s*input:disabled\)\s*\{\s*opacity:\s*1\s*;?\s*\}/)
+    expect(css).toMatch(/opacity:\s*var\(--_m-radio-opacity,\s*\.5\)/)
   })
 })
 
@@ -80,9 +80,9 @@ describe("authored Radio/RadioButton ownership", () => {
     expect(root.hasAttribute("tabindex")).toBe(false)
   })
   it("does not register or upgrade legacy radio tags", () => {
-    const before = [customElements.get("mui-radio"), customElements.get("mui-radio-group")]
+    const before = [customElements.get("m-radio"), customElements.get("m-radio-group")]
     fixture()
-    expect([customElements.get("mui-radio"), customElements.get("mui-radio-group")]).toEqual(before)
+    expect([customElements.get("m-radio"), customElements.get("m-radio-group")]).toEqual(before)
   })
   it("uses native radios rather than buttons for RadioButton", () => {
     const { root, field } = fixture("layouts")
@@ -175,7 +175,7 @@ describe("complete native group boundaries", () => {
   })
   it("reports dynamic outside conflicts while preserving actual native peer behavior", async () => {
     const { root, helper, field, form } = fixture()
-    const errors = vi.fn(); root.addEventListener("mui:radio-group-error", errors)
+    const errors = vi.fn(); root.addEventListener("m:radio-group-error", errors)
     const peer = addPeer(form)
     await flush()
     expect(errors).toHaveBeenCalledTimes(1)
@@ -193,7 +193,7 @@ describe("complete native group boundaries", () => {
     const { root, helper, form } = fixture()
     const peer = addPeer(form); peer.name = "separate"
     helper.refresh()
-    const errors = vi.fn(); root.addEventListener("mui:radio-group-error", errors)
+    const errors = vi.fn(); root.addEventListener("m:radio-group-error", errors)
     peer.name = "plan"; await flush()
     expect(errors).toHaveBeenCalledTimes(1)
     expect(() => helper.refresh()).toThrow("out-of-scope")
@@ -221,7 +221,7 @@ describe("native selection, current/default state and events", () => {
     field("pro").addEventListener("input", () => events.push("input"))
     field("pro").addEventListener("change", () => events.push("change"))
     const oldChanged = vi.fn(); field("basic").addEventListener("change", oldChanged)
-    root.addEventListener("mui:radio-group-change", event => { events.push("group"); details.push((event as CustomEvent).detail) })
+    root.addEventListener("m:radio-group-change", event => { events.push("group"); details.push((event as CustomEvent).detail) })
     field("pro").labels![0]!.click(); await flush()
     field("pro").click(); await flush()
     expect(helper.state.value).toBe("pro")
@@ -233,7 +233,7 @@ describe("native selection, current/default state and events", () => {
   it("keeps silent setters/clear/defaults separate and does not move focus", () => {
     const { root, helper, field } = fixture()
     const events = vi.fn()
-    for (const type of ["input", "change", "mui:radio-group-change"]) root.addEventListener(type, events)
+    for (const type of ["input", "change", "m:radio-group-change"]) root.addEventListener(type, events)
     field("basic").focus()
     helper.setValue("pro")
     expect(document.activeElement).toBe(field("basic"))
@@ -254,7 +254,7 @@ describe("native selection, current/default state and events", () => {
   })
   it("reads native checked property writes immediately, without dispatching events", async () => {
     const { root, helper, field } = fixture()
-    const change = vi.fn(); root.addEventListener("mui:radio-group-change", change)
+    const change = vi.fn(); root.addEventListener("m:radio-group-change", change)
     field("pro").checked = true
     expect(helper.state.value).toBe("pro")
     await flush()
@@ -269,7 +269,7 @@ describe("native selection, current/default state and events", () => {
     const baseline = [...root.querySelectorAll<HTMLInputElement>("#plan-items input")].find(node => node.checked)?.value ?? null
     form.reset()
     const enhanced = createRadioGroup(root); helpers.push(enhanced)
-    const change = vi.fn(); root.addEventListener("mui:radio-group-change", change)
+    const change = vi.fn(); root.addEventListener("m:radio-group-change", change)
     root.addEventListener("click", event => event.preventDefault(), { once: true })
     field("pro").click(); await flush()
     expect(field("pro").checked).toBe(false)
@@ -313,7 +313,7 @@ describe("reset, dynamic ownership and lifecycle", () => {
     helper.setValue("basic")
     field("basic").defaultChecked = false
     expect(field("basic").checked).toBe(true)
-    const change = vi.fn(); root.addEventListener("mui:radio-group-change", change)
+    const change = vi.fn(); root.addEventListener("m:radio-group-change", change)
     form.reset(); await flush()
     expect(helper.state.value).toBe("pro")
     expect(change).not.toHaveBeenCalled()
@@ -321,7 +321,7 @@ describe("reset, dynamic ownership and lifecycle", () => {
   it("retains a cancelled reset without custom events", async () => {
     const { root, helper, form } = fixture()
     helper.setValue("pro")
-    const change = vi.fn(); root.addEventListener("mui:radio-group-change", change)
+    const change = vi.fn(); root.addEventListener("m:radio-group-change", change)
     form.addEventListener("reset", event => event.preventDefault(), { once: true })
     form.reset(); await flush()
     expect(helper.state.value).toBe("pro")
@@ -375,7 +375,7 @@ describe("reset, dynamic ownership and lifecycle", () => {
   })
   it("reports invalid immediate changes and recovers after a valid refresh", () => {
     const { root, helper, field } = fixture()
-    const errors = vi.fn(); root.addEventListener("mui:radio-group-error", errors)
+    const errors = vi.fn(); root.addEventListener("m:radio-group-error", errors)
     field("pro").value = "basic"; field("pro").checked = true
     field("pro").dispatchEvent(new Event("change", { bubbles: true }))
     expect(errors).toHaveBeenCalledTimes(1)
@@ -385,7 +385,7 @@ describe("reset, dynamic ownership and lifecycle", () => {
   })
   it("disposes observers/listeners/tasks without restoring native values or author attributes", async () => {
     const { root, helper, field } = fixture()
-    const events = vi.fn(); root.addEventListener("mui:radio-group-change", events)
+    const events = vi.fn(); root.addEventListener("m:radio-group-change", events)
     field("pro").click()
     field("pro").setAttribute("aria-describedby", "plan-help")
     helper.disconnect(); await flush()
@@ -399,7 +399,7 @@ describe("reset, dynamic ownership and lifecycle", () => {
   })
   it("disconnects a removed root and cancels queued notifications", async () => {
     const { root, helper, field } = fixture()
-    const event = vi.fn(); root.addEventListener("mui:radio-group-change", event)
+    const event = vi.fn(); root.addEventListener("m:radio-group-change", event)
     field("pro").click(); root.remove(); await flush()
     expect(helper.connected).toBe(false)
     expect(event).not.toHaveBeenCalled()

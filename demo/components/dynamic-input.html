@@ -17,15 +17,15 @@
   <h1>Dynamic Input: authored rows, original native fields</h1>
   <p>This local example edits non-sensitive display settings. Keys identify rows; input names stay literal and repeated. Native reset resets fields in the current rows, never a saved row array.</p>
   <form id="settings" action="dynamic-input.html" method="get">
-    <fieldset class="mui-dynamic-input" data-dynamic-input id="properties">
+    <fieldset class="m-dynamic-input" data-dynamic-input id="properties">
       <legend>Display properties (one to four rows)</legend>
-      <div class="mui-dynamic-input__rows" data-dynamic-rows>
-        <div class="mui-dynamic-input__row" data-dynamic-row data-dynamic-key="initial">
-          <div class="mui-dynamic-input__fields">
-            <label>Property name <span class="mui-input" data-input><input data-input-control name="property.name[]" value="accent" placeholder="Property" required></span></label>
-            <label>Property value <span class="mui-input" data-input><input data-input-control name="property.value[]" value="blue" placeholder="Value" required></span></label>
+      <div class="m-dynamic-input__rows" data-dynamic-rows>
+        <div class="m-dynamic-input__row" data-dynamic-row data-dynamic-key="initial">
+          <div class="m-dynamic-input__fields">
+            <label>Property name <span class="m-input" data-input><input data-input-control name="property.name[]" value="accent" placeholder="Property" required></span></label>
+            <label>Property value <span class="m-input" data-input><input data-input-control name="property.value[]" value="blue" placeholder="Value" required></span></label>
           </div>
-          <div class="mui-dynamic-input__actions">
+          <div class="m-dynamic-input__actions">
             <button type="button" data-dynamic-action="up" hidden>Move up</button>
             <button type="button" data-dynamic-action="down" hidden>Move down</button>
             <button type="button" data-dynamic-action="add" hidden>Add after</button>
@@ -34,12 +34,12 @@
         </div>
       </div>
       <template data-dynamic-template>
-        <div class="mui-dynamic-input__row" data-dynamic-row>
-          <div class="mui-dynamic-input__fields">
-            <label>Property name <span class="mui-input" data-input><input data-input-control name="property.name[]" placeholder="Property" required></span></label>
-            <label>Property value <span class="mui-input" data-input><input data-input-control name="property.value[]" placeholder="Value" required></span></label>
+        <div class="m-dynamic-input__row" data-dynamic-row>
+          <div class="m-dynamic-input__fields">
+            <label>Property name <span class="m-input" data-input><input data-input-control name="property.name[]" placeholder="Property" required></span></label>
+            <label>Property value <span class="m-input" data-input><input data-input-control name="property.value[]" placeholder="Value" required></span></label>
           </div>
-          <div class="mui-dynamic-input__actions">
+          <div class="m-dynamic-input__actions">
             <button type="button" data-dynamic-action="up" hidden>Move up</button>
             <button type="button" data-dynamic-action="down" hidden>Move down</button>
             <button type="button" data-dynamic-action="add" hidden>Add after</button>

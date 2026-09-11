@@ -19,9 +19,9 @@ function change(options) {
   try { calendar.set(options); dateInput.value = calendar.value ?? ""; show() }
   catch (error) { feedback.textContent = `${error.name}: ${error.message}\nThe previous calendar view remains.` }
 }
-root.addEventListener("mui:calendar-change", event => { dateInput.value = event.detail.value ?? ""; show() })
-root.addEventListener("mui:calendar-panel-change", show)
-root.addEventListener("mui:calendar-error", event => { feedback.textContent = String(event.detail.error) })
+root.addEventListener("m:calendar-change", event => { dateInput.value = event.detail.value ?? ""; show() })
+root.addEventListener("m:calendar-panel-change", show)
+root.addEventListener("m:calendar-error", event => { feedback.textContent = String(event.detail.error) })
 dateInput.addEventListener("change", () => { if (calendar.connected) change({ value: dateInput.value || null }) })
 document.querySelector("#week-start").addEventListener("change", event => change({ firstDayOfWeek: Number(event.target.value) }))
 document.querySelector("#locale").addEventListener("change", event => change({ locale: event.target.value }))

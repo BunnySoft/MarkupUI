@@ -20,8 +20,8 @@ const table = createDataTable(root, {
   summaries: [{ key: "page", scope: "page", value: total }, { key: "filtered", scope: "filtered", value: total }],
 })
 document.querySelectorAll("[data-enhancement]").forEach(node => { node.hidden = false })
-root.addEventListener("mui:data-table-change", event => { feedback.textContent = JSON.stringify({ source: event.detail.source, ...event.detail.state }, null, 2) })
-root.addEventListener("mui:data-table-error", event => { feedback.textContent = event.detail.error.message })
+root.addEventListener("m:data-table-change", event => { feedback.textContent = JSON.stringify({ source: event.detail.source, ...event.detail.state }, null, 2) })
+root.addEventListener("m:data-table-error", event => { feedback.textContent = event.detail.error.message })
 const actions = {
   "select-filtered": () => table.select("filtered", true),
   "clear-all": () => table.select("all", false),

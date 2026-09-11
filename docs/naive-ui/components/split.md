@@ -71,10 +71,10 @@ omissions, zero unresolved**. Verified is the stated native subset, not framewor
 | `resize-trigger-size` · API:L33 | Prop | resizeTriggerSize 1..64 CSS pixels, default 12 rather than source 3; isolated numeric geometry token. | 🟢 Verified |
 | `size` · API:L34 | Prop | Silent current requested ratio/px value, separately reported effective pixel/ratio state. | 🟢 Verified |
 | `watch-props` · API:L35 | Prop | No reactive prop watcher; future defaults change only through explicit setDefaultSize/reset. | ⏭️ Intentionally omitted |
-| `on-drag-start` · API:L36 | Callback | mui:split-drag-start after successful owned capture, with pointer ID/state/event. | 🟢 Verified |
-| `on-drag-move` · API:L37 | Callback | mui:split-drag-move per processed/coalesced sample, not every physical event. | 🟢 Verified |
-| `on-drag-end` · API:L38 | Callback | mui:split-drag-end with actual terminal event/cancel reason and final state. | 🟢 Verified |
-| `on-update:size` · API:L39 | Callback | mui:split-change for user pointer/keyboard/cancel updates; programmatic size setters silent. | 🟢 Verified |
+| `on-drag-start` · API:L36 | Callback | m:split-drag-start after successful owned capture, with pointer ID/state/event. | 🟢 Verified |
+| `on-drag-move` · API:L37 | Callback | m:split-drag-move per processed/coalesced sample, not every physical event. | 🟢 Verified |
+| `on-drag-end` · API:L38 | Callback | m:split-drag-end with actual terminal event/cancel reason and final state. | 🟢 Verified |
+| `on-update:size` · API:L39 | Callback | m:split-change for user pointer/keyboard/cancel updates; programmatic size setters silent. | 🟢 Verified |
 
 ### Split Slots
 

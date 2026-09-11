@@ -1,5 +1,12 @@
 # Button / ButtonGroup default-style audit
 
+## `m-*` Web renderer migration — 2026-09-11
+
+Button is the first platform-architecture component. `m-button`/`m-button-group` are the
+only Web names. They use the existing native controller and stylesheet, preserving all
+measured geometry, colors, motion, form/link behavior and payload ceilings. The Button
+entry exports platform definitions without constructing a duplicate runtime tree.
+
 ## Pinned demo parity page — 2026-09-11
 
 The runnable Button page now mirrors all eighteen pinned Naive UI 2.45.3 demos in source
@@ -9,7 +16,7 @@ Popover. Each case has an icon-only MarkupUI code control and highlighted author
 
 The page keeps the closest honest native equivalents where APIs differ:
 
-- authored `data-mui-button-icon` content replaces `render-icon`;
+- authored `data-m-button-icon` content replaces `render-icon`;
 - a native anchor child replaces arbitrary `tag` rendering;
 - public Button CSS properties replace the runtime `color` prop;
 - a native status paragraph replaces `useMessage`;
@@ -100,7 +107,7 @@ Generated `styles.ts` and `presets.ts` were produced only by `pnpm build`.
 | Native group shape/seams | Retain outside rounded ends/single member; collapse only appropriate same-type default/ghost boundaries | Generic joins affected all adjacent types, and rounded ends were reset | N uses exact conditional joins and logical corners. Default, primary, ghost, mixed, vertical, small, round and single groups measured against source; RTL offsets 115.671875/62.78125/0 | Fixed native |
 | Block legacy geometry | 300px within a 300px fixture parent | Legacy 328px due content-box padding | L reuses border-box rule; actual width 300px | Fixed |
 | Default transition | .3s cubic-bezier(.4,0,.2,1), including color/background/opacity and painted border | Native .2s default ease, no opacity transition | N matches measured transitions; L keeps equivalent .3s painted-border transition on its overlay | Fixed |
-| Focus-visible | Ordinary theme focus color/border, no default halo | Native unconditional 3px blue/global ring | N matches ordinary focus colors. Explicit `--mui-button-focus-color` still produces an authored 3px ring; forced colors use a 2px Highlight outline | Fixed with explicit accessibility adaptation |
+| Focus-visible | Ordinary theme focus color/border, no default halo | Native unconditional 3px blue/global ring | N matches ordinary focus colors. Explicit `--m-button-focus-color` still produces an authored 3px ring; forced colors use a 2px Highlight outline | Fixed with explicit accessibility adaptation |
 | Dark theme | Text white/.82, border white/.24, colored button text black; secondary alpha .16/.20/.12; neutral .08/.12/.08 | Native default text rgb(250,250,250), colored text white, incorrect neutral/tone fills and .5 disabled opacity; legacy contrast near-black #0b0b0c | N/L exact Button colors, black contrast and .38 opacity; CSS-only themes path and demo switch verified | Fixed, without changing global palette |
 | CSS load-order ownership | Rich host has no extra paint or padding | New stronger legacy secondary rules would otherwise tie the old isolation selector and tint the host | N strengthens host isolation. Computed native host backgrounds remain transparent with core before/after optional CSS, preventing doubled translucent fills | Fixed coupled cascade defect |
 | Explicit default alias | `variant=default` with secondary stays neutral | A broad candidate `[variant]` selector could incorrectly apply colored secondary alpha | N/L limit colored branches to supported semantic aliases; rendered default-alias case matches | Fixed coupled selector defect |
@@ -150,7 +157,7 @@ does not wrap authored native-control contents, and is cleaned from replaced con
   policy; it is not the new SVG indicator. Mixed-type seam policy is exact in standalone,
   not certified for every legacy combination.
 - **Legacy focus/motion:** its existing 3px keyboard-focus ring remains. Its existing
-  reduced-motion policy under `mui-app:not([motion="full"])` remains; the standalone entry
+  reduced-motion policy under `m-app:not([motion="full"])` remains; the standalone entry
   has document-independent reduced-motion and forced-color handling. A non-painted legacy
   host-border transition was not added merely to match a computed declaration list; the
   visible overlay still transitions correctly.

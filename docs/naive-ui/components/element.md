@@ -8,7 +8,7 @@
 through actual native tags/children and explicit CSS-variable consumption.
 [Default-style audit](../../style-audit/components/element.md) classifies the visual
 comparison as not applicable because no MarkupUI Element component or stylesheet exists.
-The unchanged [MuiElement base](../../../src/core/element.ts) and
+The unchanged [MElement base](../../../src/core/element.ts) and
 [registry](../../../src/components/elements.ts) are existing controller infrastructure,
 **not** a new NElement/NEl wrapper or automatic theme-variable producer.
 
@@ -33,7 +33,7 @@ Reviewed pinned English API, Element.ts, public index, light/dark/style type sou
 basic.demo.vue and the explicitly spread useTheme.props. Source uses Vue's tag renderer,
 reads provider/theme configuration, derives unprefixed kebab-case variables from common
 theme keys, and writes inline variables or render-time theme classes. It does not establish
-MarkupUI `--mui-*` names. None of that machinery is transplanted; the retained capability
+MarkupUI `--m-*` names. None of that machinery is transplanted; the retained capability
 is native CSS consumption under actual author-controlled DOM ancestry.
 
 ## Migration steps
@@ -96,12 +96,12 @@ declaration is at [use-theme.ts lines 19–23](https://github.com/tusen-ai/naive
 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
-| [`ElementProps`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/element/src/Element.ts#L18) | Source type alias | No ExtractPublicPropTypes wrapper/type export; native HTML attributes belong to their elements. | ⏭️ Intentionally omitted | Existing MuiElement base is not this contract. |
+| [`ElementProps`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/element/src/Element.ts#L18) | Source type alias | No ExtractPublicPropTypes wrapper/type export; native HTML attributes belong to their elements. | ⏭️ Intentionally omitted | Existing MElement base is not this contract. |
 | [`NEl`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/element/index.ts#L2) | Source export alias | No NEl/NElement factory or wrapper export; author native tags. | ⏭️ Intentionally omitted | No Element package entry or registered tag. |
 | [`El`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/element/src/Element.ts#L22) | Source component alias | No Vue component alias/registry; native elements require no upgrade. | ⏭️ Intentionally omitted | No new custom-element runtime. |
 | [`role`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/element/src/Element.ts#L61) | Source renderer attribute | Do not assign role none/presentation universally; preserve the chosen native semantics. | ⏭️ Intentionally omitted | Real browser heading/link/button/group behavior, not fake roles. |
 | [`class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/element/src/Element.ts#L62) | Source generated attribute | No merged class-prefix/theme-class generation; author ordinary classes directly. | ⏭️ Intentionally omitted | Native class cascade and per-element overrides remain author-owned. |
-| [`cssVars`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/element/src/Element.ts#L34-L42) | Source CSS-variable capability | ADAPTED: consume explicit supported --mui-* custom properties in external CSS; omit automatic common-theme/kebab-case alias generation and inline style-object writes. | 🟢 Verified | Actual heading/button/surface appearances, nested/outside scopes, media and overrides accepted. |
+| [`cssVars`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/element/src/Element.ts#L34-L42) | Source CSS-variable capability | ADAPTED: consume explicit supported --m-* custom properties in external CSS; omit automatic common-theme/kebab-case alias generation and inline style-object writes. | 🟢 Verified | Actual heading/button/surface appearances, nested/outside scopes, media and overrides accepted. |
 | [`themeClass / onRender`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/element/src/Element.ts#L43-L52) | Source theme-handle boundary | No render-time theme-class/style mounting or inlineThemeDisabled bridge. | ⏭️ Intentionally omitted | Strict external-CSS path adds no style nodes or inline attributes. |
 
 ### Element style types — explicit source supplements

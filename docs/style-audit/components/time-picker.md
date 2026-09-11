@@ -24,7 +24,7 @@ uses those same component-owned metrics for its native field and labelled clear 
 
 Light mode uses `#333639`, white and `#e0e0e6`; dark mode uses the corresponding
 white-opacity roles. Hover uses primary-hover colors, disabled controls use native
-GrayText, and public `--mui-time-picker-*` field overrides remain available.
+GrayText, and public `--m-time-picker-*` field overrides remain available.
 
 The clear action remains content-width and visibly labelled instead of becoming the
 source's icon inside the trigger. Native locale-specific time segments and picker

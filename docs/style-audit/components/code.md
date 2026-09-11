@@ -48,7 +48,7 @@ the existing border-color token paints an inset frame without shifting content. 
 does not paint the frame twice.
 
 The default stack now matches `v-mono, SFMono-Regular, Menlo, Consolas, Courier, monospace`.
-Only correct font roles are reused: `--mui-typography-mono-font` and `--mui-font-size`,
+Only correct font roles are reused: `--m-typography-mono-font` and `--m-font-size`,
 behind Code-specific overrides. No generic text-color role is substituted for plain
 inheritance. A custom parent color `rgb(12,34,56)` was inherited by both implementations.
 
@@ -70,7 +70,7 @@ Number colors match `#767c82` in light and white `.52` in dark.
 CSS structural selectors choose 1/2/3/4ch from the count of authored physical-line
 elements, plus a fixed 12px separation. Thresholds 9/10/99/100/999/1000 were rendered.
 There is no string inspection, wrapper generation or JS measurement. An explicit
-`--mui-code-gutter` overrides the automatic choice. Files above 9,999 lines need a
+`--m-code-gutter` overrides the automatic choice. Files above 9,999 lines need a
 sufficient authored width; engines without the selector support retain a 3ch fallback.
 
 Intentional boundaries:
@@ -102,7 +102,7 @@ roles, not a migrated highlighter API or complete syntax theme. Class boundaries
 escaping remain application-owned. Token contrast, especially comments, is not an
 accessibility certification; author colors can supply stronger contrast when needed.
 
-`data-mui-theme="dark"` changes only token/number defaults. Nested light resets them,
+`data-m-theme="dark"` changes only token/number defaults. Nested light resets them,
 but plain text still inherits its surrounding page color, as upstream plain Code does.
 No automatic panel, page foreground/background or native-control color scheme is added.
 
@@ -126,7 +126,7 @@ Full-matrix images intentionally still show that and the numbering/terminal-line
 
 ## Author and native behavior checks
 
-- Later Typography and core CSS, including inside `.mui-typography`, left all measured
+- Later Typography and core CSS, including inside `.m-typography`, left all measured
   fields unchanged in both themes. Explicit inline display prevents a generic typography
   chip rule from turning Code into an inline-block.
 - Author overrides produced an 18px Courier New font, 36px lines, 2-space tabs, 12px

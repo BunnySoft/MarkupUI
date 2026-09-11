@@ -27,13 +27,13 @@
       <p>If native modality is unavailable, this ordinary section remains readable. No modeless surface is falsely called modal.</p>
       <form id="background-form"><label>Background note <input name="note"></label><button>Save local note</button></form>
     </section>
-    <dialog open class="mui-native-dialog mui-modal" aria-labelledby="baseline-title" id="baseline">
+    <dialog open class="m-native-dialog m-modal" aria-labelledby="baseline-title" id="baseline">
       <h2 id="baseline-title" data-modal-title>Unenhanced native form</h2>
       <form method="dialog"><label>Required note <input name="note" required></label><button value="baseline-saved">Save native note</button><button formnovalidate value="baseline-cancelled">Cancel native note</button></form>
     </dialog>
     <p class="page-tail">The helper does not change body/document overflow or lock scrolling. Modal background focus blocking belongs to the browser.</p>
   </main>
-  <dialog id="surface" class="mui-native-dialog mui-modal" data-modal-segmented aria-labelledby="surface-title" aria-describedby="surface-description">
+  <dialog id="surface" class="m-native-dialog m-modal" data-modal-segmented aria-labelledby="surface-title" aria-describedby="surface-description">
     <header data-modal-header>
       <h2 data-modal-title id="surface-title" tabindex="-1" autofocus>Project information</h2>
       <form method="dialog"><button id="close" value="dismissed" aria-label="Close project information">×</button></form>
@@ -60,19 +60,19 @@
     </div>
     <footer data-modal-footer><p>Closing this surface never submits an unrelated form.</p></footer>
   </dialog>
-  <dialog id="nested" class="mui-native-dialog mui-modal" data-modal-placement="start" aria-labelledby="nested-title">
+  <dialog id="nested" class="m-native-dialog m-modal" data-modal-placement="start" aria-labelledby="nested-title">
     <h2 data-modal-title id="nested-title">Nested top layer</h2>
     <p data-modal-content>Escape is disabled here; use the authored native button. The parent stays modal.</p>
     <form method="dialog"><button id="nested-close" value="nested-done" autofocus>Return to parent</button></form>
   </dialog>
-  <dialog id="composition" class="mui-native-dialog mui-modal mui-dialog" data-dialog-type="warning" aria-labelledby="composition-title">
+  <dialog id="composition" class="m-native-dialog m-modal m-dialog" data-dialog-type="warning" aria-labelledby="composition-title">
     <header data-dialog-header><span data-dialog-icon aria-hidden="true">!</span><h2 data-dialog-title id="composition-title">Authored Dialog presentation</h2></header>
     <p data-dialog-content>This uses Dialog CSS only. There are no implicit positive/negative callbacks.</p>
     <form method="dialog" data-dialog-actions><button value="not-now">Not now</button><button value="proceed">Proceed</button></form>
   </dialog>
   <div id="owner-root"></div>
   <template id="modal-template">
-    <dialog class="mui-native-dialog mui-modal" aria-label="Owned project information">
+    <dialog class="m-native-dialog m-modal" aria-label="Owned project information">
       <h2 data-modal-title>Template title</h2>
       <p data-modal-content>Template text</p>
       <form method="dialog"><button value="template-done" autofocus>Close native template</button></form>

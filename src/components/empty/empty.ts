@@ -26,7 +26,7 @@ function illustration(document: Document): SVGSVGElement {
   return svg
 }
 
-export class MuiEmpty extends HTMLElement {
+export class MEmpty extends HTMLElement {
   public static get observedAttributes(): string[] { return ["description", "show-icon", "icon"] }
 
   private generatedDescription: HTMLElement | undefined
@@ -47,7 +47,7 @@ export class MuiEmpty extends HTMLElement {
         }
       }
     }
-    this.dataset.muiEmpty = ""
+    this.dataset.mEmpty = ""
     this.observer ??= new MutationObserver(() => this.synchronize())
     this.synchronize()
   }
@@ -73,7 +73,7 @@ export class MuiEmpty extends HTMLElement {
 
   private region(name: string, except?: Element): Element | undefined {
     return [...this.children].find((node) =>
-      node !== except && node.hasAttribute(`data-mui-empty-${name}`) && !node.matches(inert))
+      node !== except && node.hasAttribute(`data-m-empty-${name}`) && !node.matches(inert))
   }
 
   private synchronize(): void {
@@ -96,7 +96,7 @@ export class MuiEmpty extends HTMLElement {
     } else if (this.showIcon || this.generatedIcon) {
       if (!this.generatedIcon) {
         this.generatedIcon = this.ownerDocument.createElement("span")
-        this.generatedIcon.dataset.muiEmptyIcon = ""
+        this.generatedIcon.dataset.mEmptyIcon = ""
         this.generatedIcon.setAttribute("aria-hidden", "true")
         this.prepend(this.generatedIcon)
       }
@@ -124,7 +124,7 @@ export class MuiEmpty extends HTMLElement {
     })
     if (!description) {
       this.generatedDescription = this.ownerDocument.createElement("div")
-      this.generatedDescription.dataset.muiEmptyDescription = ""
+      this.generatedDescription.dataset.mEmptyDescription = ""
       description = this.generatedDescription
       this.insertBefore(description, extra ?? null)
     }
@@ -148,7 +148,7 @@ export class MuiEmpty extends HTMLElement {
     if (icon && icon.compareDocumentPosition(description) & Node.DOCUMENT_POSITION_PRECEDING) this.insertBefore(icon, description)
     if (this.isConnected) this.observer?.observe(this, {
       childList: true, subtree: true, characterData: true, attributes: true,
-      attributeFilter: ["data-mui-empty-description", "data-mui-empty-icon", "data-mui-empty-extra"],
+      attributeFilter: ["data-m-empty-description", "data-m-empty-icon", "data-m-empty-extra"],
     })
   }
 }

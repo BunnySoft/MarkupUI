@@ -15,7 +15,7 @@ standalone implementation is now committed as `9afc818`.
 | [S1: Avatar controller](../../../src/components/avatar/avatar.ts) | Authored image/content preservation, live source/default handling, bounded fallback, template content and lifecycle cleanup. |
 | [S2: group controller](../../../src/components/avatar/group.ts) | Authored Avatar children, maximum visible count and native details/summary overflow; identities/order preserved. |
 | [S3: external stylesheet](../../../src/components/avatar/avatar.css) | Size/shape/fit, image state, group overlap, logical layout and overflow summary presentation. |
-| [S4: standalone registration](../../../src/components/avatar/index.ts) | `MuiAvatar`, `MuiAvatarGroup` and `registerAvatar`; conflicting pre-existing definitions throw. |
+| [S4: standalone registration](../../../src/components/avatar/index.ts) | `MAvatar`, `MAvatarGroup` and `registerAvatar`; conflicting pre-existing definitions throw. |
 | [D1: classic demonstration](../../../demo/components/avatar.html) | Separate [JavaScript](../../../demo/components/avatar.js) and [CSS](../../../demo/components/avatar.css). |
 
 - **HTML:** native image/text content and optional authored fallback/placeholder templates;
@@ -69,7 +69,7 @@ build manifest for exact standalone output sizes; these ceilings are not actual 
 **Next task:** proceed to Button, then Card; reopen omitted Avatar scope only through a separate reviewed decision.
 
 1. [x] **Reconcile image ownership.** S1 and A1 establish authored image/content identity, live source changes, pre-upgrade values and preserved listeners.
-2. [x] **Resolve loading/failure APIs.** Native lazy loading, one fallback attempt per primary source and `mui:error`/`mui:load` notifications are documented and accepted.
+2. [x] **Resolve loading/failure APIs.** Native lazy loading, one fallback attempt per primary source and `m:error`/`m:load` notifications are documented and accepted.
 3. [x] **Separate group scope.** S2/A1 establish authored-member ordering, CSS inheritance, visible-member limits and keyboard-operable native overflow.
 4. [x] **Close the retained rows.** A1 records build/43-test and Chromium evidence, standalone loading, registration conflicts and payload ceilings.
 
@@ -115,18 +115,18 @@ all-browser behavior. Textual statuses and explicit omission reasons are authori
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
 | [`bordered`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L26) | Prop | Boolean `bordered` attribute; external border styling/token. | 🟢 Verified | A1/S3: retained CSS appearance. |
-| [`color`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L27) | Prop | Author CSS sets `--mui-avatar-background` and `--mui-avatar-color`; no inline color prop. | 🟢 Verified | A1/S3: adapted CSS-token contract. |
+| [`color`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L27) | Prop | Author CSS sets `--m-avatar-background` and `--m-avatar-color`; no inline color prop. | 🟢 Verified | A1/S3: adapted CSS-token contract. |
 | [`fallback-src`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L28) | Prop | `fallback-src` / `.fallbackSrc`; one alternate attempt per primary source; set before changing primary source. | 🟢 Verified | A1/S1: bounded failure and fallback tests. |
 | [`img-props`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L29) | Prop | Author native image attributes directly, including alt/decoding/referrer policy; object forwarding is not supported. | 🟢 Verified | A1/S1: native-HTML replacement, not prop-bag compatibility. |
 | [`intersection-observer-options`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L30) | Prop | Native image lazy loading replaces configurable intersection observation. | ⏭️ Intentionally omitted | A1: no redundant observer API. |
 | [`lazy`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L31) | Prop | Boolean `lazy` / `.lazy`; native image loading; removing the override restores authored loading behavior. | 🟢 Verified | A1/S1: native lazy-loading and restoration evidence. |
-| [`object-fit`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L32) | Prop | Native fit keywords through `object-fit` or CSS `--mui-avatar-object-fit`; default fill. | 🟢 Verified | A1/S1/S3; convenience attribute mutates an isolated CSS property and restores authored tokens. |
+| [`object-fit`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L32) | Prop | Native fit keywords through `object-fit` or CSS `--m-avatar-object-fit`; default fill. | 🟢 Verified | A1/S1/S3; convenience attribute mutates an isolated CSS property and restores authored tokens. |
 | [`render-fallback`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L33) | Prop | No render callback/VNode API; use the accepted authored fallback template/span below. | ⏭️ Intentionally omitted | A1: framework rendering excluded; native content alternative verified separately. |
 | [`render-placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L34) | Prop | No render callback/VNode API; use the accepted authored placeholder template/span below. | ⏭️ Intentionally omitted | A1: framework rendering excluded; native content alternative verified separately. |
 | [`round`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L35) | Prop | Default 3px-radius square; `round` opts into a circle and wins over explicit `square`. Groups default round. | 🟢 Verified | A1/S3 and rendered default-style audit; supersedes the old intentional difference. |
 | [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L36) | Prop | `size` / `.size`: tiny 22px, small 28px, medium/default 34px, large 40px, huge 46px or positive numeric pixels; borders add 4px. | 🟢 Verified | A1/S1/S3: numeric convenience and text fitting use CSSOM writes; see A1's CSP note. |
 | [`src`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L37) | Prop | `src` / `.src` or authored direct image; source changes restart loading while preserving nodes. | 🟢 Verified | A1/S1: source, authored-image and reconnect tests. |
-| [`on-error`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L38) | Callback | Bubbling `mui:error` detail contains `src`, `fallback`, `state`; handler return values do not control fallback. | 🟢 Verified | A1/S1: explicit notification adaptation. |
+| [`on-error`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L38) | Callback | Bubbling `m:error` detail contains `src`, `fallback`, `state`; handler return values do not control fallback. | 🟢 Verified | A1/S1: explicit notification adaptation. |
 
 ### AvatarGroup Props
 
@@ -144,14 +144,14 @@ all-browser behavior. Textual statuses and explicit omission reasons are authori
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
 | [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L65) | Slot | Authored text/image/icon nodes retained in light DOM; ordinary content moves without cloning. | 🟢 Verified | A1/S1: node/listener preservation; no native slot projection. |
-| [`fallback`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L66) | Slot | Authored `template[data-mui-avatar-fallback]` or matching span; template content imported once. | 🟢 Verified | A1/S1: native content alternative, not callback or slot projection. |
-| [`placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L67) | Slot | Authored `template[data-mui-avatar-placeholder]` or matching span shown while loading. | 🟢 Verified | A1/S1/S3: image retains layout box for native lazy loading. |
+| [`fallback`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L66) | Slot | Authored `template[data-m-avatar-fallback]` or matching span; template content imported once. | 🟢 Verified | A1/S1: native content alternative, not callback or slot projection. |
+| [`placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L67) | Slot | Authored `template[data-m-avatar-placeholder]` or matching span shown while loading. | 🟢 Verified | A1/S1/S3: image retains layout box for native lazy loading. |
 
 ### AvatarGroup Slots
 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
-| [`avatar`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L73) | Slot | Author native child `mui-avatar` elements; no scoped renderer callback. | 🟢 Verified | A1/S2: retained child anatomy, not payload compatibility. |
+| [`avatar`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L73) | Slot | Author native child `m-avatar` elements; no scoped renderer callback. | 🟢 Verified | A1/S2: retained child anatomy, not payload compatibility. |
 | [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L74) | Slot | Native child avatars preserve identity/order while moving into and out of overflow. | 🟢 Verified | A1/S2: replacement/order and keyboard overflow evidence. |
 | [`rest`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/avatar/demos/enUS/index.demo-entry.md#L75) | Slot | Fixed native summary supports `rest-label` and CSS; arbitrary rest rendering is excluded. | ⏭️ Intentionally omitted | A1/S2: semantic disclosure exists, but no rest callback contract. |
 

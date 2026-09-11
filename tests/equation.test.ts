@@ -23,7 +23,7 @@ describe("Equation resolved exclusion and native authored alternative", () => {
     expect(existsSync(resolve("src", "components", "equation"))).toBe(false)
     expect(existsSync(resolve("demo", "components", "equation.js"))).toBe(false)
     expect(Object.keys(manifest.bundles).some(name => /markup-ui-equation[.]/.test(name))).toBe(false)
-    expect(html).not.toMatch(/<script\b|<style\b|\sstyle=|<mui-|<iframe\b|<object\b|<img\b/)
+    expect(html).not.toMatch(/<script\b|<style\b|\sstyle=|<m-|<iframe\b|<object\b|<img\b/)
     expect(css).not.toMatch(/@import|@font-face|url\(|animation|transition/)
   })
   it("keeps default styling outside the library build and public custom-property surface", () => {
@@ -33,7 +33,7 @@ describe("Equation resolved exclusion and native authored alternative", () => {
     expect(buildScript).not.toMatch(/["'`]markup-ui-equation(?:[."'`-])/)
     expect(buildScript).not.toMatch(/["'`]equation["'`]/)
     expect(css).toContain("Local recipe presentation, not a published Equation stylesheet.")
-    expect(css).not.toMatch(/--mui-equation|(?:^|\n)\s*(?:math|\.katex(?:-display)?)\s*[{,]/)
+    expect(css).not.toMatch(/--m-equation|(?:^|\n)\s*(?:math|\.katex(?:-display)?)\s*[{,]/)
   })
   it("parses all authored mathematical descendants in the native MathML namespace", () => {
     const root = fixture(), expressions = [...root.querySelectorAll("math")]

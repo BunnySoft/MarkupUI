@@ -24,9 +24,9 @@ describe("Time Picker default styles", () => {
   const css = readFileSync(resolve("src", "components", "time-picker", "time-picker.css"), "utf8")
 
   it("uses the reference Input size scale within budget", () => {
-    expect(css).toContain("--_mui-time-picker-height: 28px")
-    expect(css).toContain("--_mui-time-picker-height: 34px")
-    expect(css).toContain("--_mui-time-picker-height: 40px")
+    expect(css).toContain("--_m-time-picker-height: 28px")
+    expect(css).toContain("--_m-time-picker-height: 34px")
+    expect(css).toContain("--_m-time-picker-height: 40px")
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
   })
 
@@ -37,7 +37,7 @@ describe("Time Picker default styles", () => {
   })
 
   it("keeps labelled native clear actions at the control height", () => {
-    expect(css).toMatch(/\.mui-time-picker button \{[\s\S]*block-size: var\(--_mui-time-picker-height\)/)
+    expect(css).toMatch(/\.m-time-picker button \{[\s\S]*block-size: var\(--_m-time-picker-height\)/)
     expect(css).not.toMatch(/text-indent:\s*-\d|font-size:\s*0/)
   })
 
@@ -155,7 +155,7 @@ describe("native current/default/form identity and clear semantics", () => {
   it("emits exactly one native input/change pair and clear event for explicit user clear", () => {
     const { helper, control, root } = fixture(), events: string[] = []
     control.addEventListener("input", () => events.push("input")); control.addEventListener("change", () => events.push("change"))
-    root.addEventListener("mui:time-picker-clear", () => events.push("clear"))
+    root.addEventListener("m:time-picker-clear", () => events.push("clear"))
     expect(helper.clear()).toBe(true); expect(events).toEqual(["input", "change", "clear"])
     expect(helper.clear()).toBe(false); expect(control.value).toBe("")
   })

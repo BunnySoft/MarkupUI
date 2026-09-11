@@ -45,7 +45,7 @@ and CSS, not invented upstream props.
 
 - **Native path:** authored SVG/img/text in neutral spans or actual native actions, with one
   accessible owner. Templates/asset fallback remain application-owned.
-- **Small enhancement:** opt-in `.mui-icon` / `.mui-icon-wrapper` CSS only. It preserves
+- **Small enhancement:** opt-in `.m-icon` / `.m-icon-wrapper` CSS only. It preserves
   native paints/viewBoxes/attributes and introduces no roles, event handlers, Shadow DOM,
   lifecycle, asset lookup, ESM/classic entry or registration-order rule.
 
@@ -71,19 +71,19 @@ replace source automatic i/div/img-role defaults without a renderer.
 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
-| [`color`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L20) | Prop | ADAPTED external `--mui-icon-color` / inherited currentColor. | 🟢 Verified | No forced fill/stroke; explicit native paints remain authoritative. |
+| [`color`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L20) | Prop | ADAPTED external `--m-icon-color` / inherited currentColor. | 🟢 Verified | No forced fill/stroke; explicit native paints remain authoritative. |
 | [`depth`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L21) | Prop | ADAPTED data-depth 1–5 and CSS opacity tokens; pinned light/dark levels and inherited base color. | 🟢 Verified | Whole-graphic de-emphasis retained; no fill/stroke rewrite. Source's SVG-only depth model is not implied. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L22) | Prop | ADAPTED CSS length in `--mui-icon-size`, inherited 1em default. | 🟢 Verified | No JS number/unit parser, attribute mutation or nested viewport reset. |
+| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L22) | Prop | ADAPTED CSS length in `--m-icon-size`, inherited 1em default. | 🟢 Verified | No JS number/unit parser, attribute mutation or nested viewport reset. |
 | [`component`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L23) | Prop | Author native SVG/img/glyph content. | ⏭️ Intentionally omitted | No framework constructor/render adapter or icon-library dependency. |
 
 ### IconWrapper Props
 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
-| [`border-radius`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L29) | Prop | ADAPTED `--mui-icon-wrapper-radius`, default 6px. | 🟢 Verified | Native CSS shape, no inline style object. |
-| [`color`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L30) | Prop | ADAPTED `--mui-icon-wrapper-background`. | 🟢 Verified | Native background with primary default and forced-color accommodation. |
-| [`icon-color`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L31) | Prop | ADAPTED `--mui-icon-wrapper-color`. | 🟢 Verified | Inherited color, not rewriting fixed multicolor/stroke assets. |
-| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L32) | Prop | ADAPTED `--mui-icon-wrapper-size`, default 24px. | 🟢 Verified | Wrapper and icon dimensions independent; not an automatic touch-target contract. |
+| [`border-radius`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L29) | Prop | ADAPTED `--m-icon-wrapper-radius`, default 6px. | 🟢 Verified | Native CSS shape, no inline style object. |
+| [`color`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L30) | Prop | ADAPTED `--m-icon-wrapper-background`. | 🟢 Verified | Native background with primary default and forced-color accommodation. |
+| [`icon-color`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L31) | Prop | ADAPTED `--m-icon-wrapper-color`. | 🟢 Verified | Inherited color, not rewriting fixed multicolor/stroke assets. |
+| [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/icon/demos/enUS/index.demo-entry.md#L32) | Prop | ADAPTED `--m-icon-wrapper-size`, default 24px. | 🟢 Verified | Wrapper and icon dimensions independent; not an automatic touch-target contract. |
 
 ### Icon Slots
 

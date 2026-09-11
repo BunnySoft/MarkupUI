@@ -27,7 +27,7 @@ for light/dark, alternate-surface, typography and composed-order evidence.
 <p id="save-help">Save submits this form. Important help stays visible.</p>
 <button type="submit" id="save" aria-describedby="save-help">Save draft</button>
 <span id="save-description" role="tooltip" popover="manual"
-  class="mui-popover mui-tooltip mui-popover--arrow">
+  class="m-popover m-tooltip m-popover--arrow">
   Only the current <strong>draft</strong> is saved.
 </span>
 ```
@@ -52,8 +52,8 @@ cleans up description/Escape bindings during shared automatic disconnection.
 It is not a public generic overlay/provider API.
 
 There is no custom-element registration or enhanced-before-core rule. Standalone Tooltip
-and legacy core may load in either order. Legacy mui-tooltip retains its old behavior:
-do not bind this helper inside its ancestry, or inside legacy mui-popover anatomy.
+and legacy core may load in either order. Legacy m-tooltip retains its old behavior:
+do not bind this helper inside its ancestry, or inside legacy m-popover anatomy.
 No successful no-op upgrade is claimed. Bind one controller kind to each trigger/panel pair,
 using one copy of that helper entry rather than duplicate ESM/classic copies.
 
@@ -67,7 +67,7 @@ do not pretend that duplication disappears without a different application build
 ## Description and content ownership
 
 Supply connected same-document light-DOM native HTML nodes. The panel requires both
-`.mui-popover` and `.mui-tooltip`, a unique whitespace-free authored ID, exactly
+`.m-popover` and `.m-tooltip`, a unique whitespace-free authored ID, exactly
 `role="tooltip"` and **`popover="manual"`**, with no hidden attribute. It must be outside
 its trigger, initially closed, nonempty and noninteractive. No automatic ID, tooltip name,
 hidden duplicate text, cloned wrapper or trigger label is generated.
@@ -155,7 +155,7 @@ Native beforetoggle opening remains cancelable; toggle is async/coalesced, not a
 controlled/default show callback. Programmatic requests still produce native events.
 No outside-click reason callback, silent update alias or callback-array forwarding is added.
 
-Use `mui:tooltip-error` on the panel for detected invalid live anatomy/content; detail is
+Use `m:tooltip-error` on the panel for detected invalid live anatomy/content; detail is
 `{ error }`. Pending/open mutations are validated by the shared lifecycle; direct native
 opening is also checked before native autofocus could run. Detected live invalid content
 disconnects and releases description/listener ownership. Public opening of invalid authored
@@ -186,9 +186,9 @@ retained scope; text must fit the available viewport at the application's suppor
 sizes/zoom. Use visible wrapping help, details or Popover for long instructions rather than
 depending on clipped visual text. There is no “show all” or exact arrow-center solver.
 
-External CSS supplies size/color/background/padding tokens, `.mui-popover--raw`,
-opt-in `.mui-popover--arrow` inset decorative side indicator, and optional
-`.mui-popover--animated`. Indicators disappear after collision shifting. Reduced motion,
+External CSS supplies size/color/background/padding tokens, `.m-popover--raw`,
+opt-in `.m-popover--arrow` inset decorative side indicator, and optional
+`.m-popover--animated`. Indicators disappear after collision shifting. Reduced motion,
 forced colors and print rules are included in the single compiled stylesheet.
 There is no automatic trigger-width matching or separate arrow-wrapper/header/footer API.
 
@@ -204,12 +204,12 @@ composed Popover base; it does not edit or duplicate that palette. These private
 are internal composition details, not application APIs. The complete Tooltip stylesheet
 is still required; its source-only skin is not a substitute for the composed distribution.
 
-Public `--mui-popover-max-width`, `--mui-popover-padding`, `--mui-popover-radius`,
-`--mui-popover-color` and `--mui-popover-background` now work from **ancestors as well as
+Public `--m-popover-max-width`, `--m-popover-padding`, `--m-popover-radius`,
+`--m-popover-color` and `--m-popover-background` now work from **ancestors as well as
 the panel itself**. Earlier Tooltip CSS assigned defaults to these public variables on
 every panel, accidentally masking inherited author choices. The audited skin only consumes
-them. A visible custom border can use `--mui-popover-border` plus authored CSS `border-width`.
-Shared `--mui-font-size` and `--mui-line-height` are used for equivalent typography roles;
+them. A visible custom border can use `--m-popover-border` plus authored CSS `border-width`.
+Shared `--m-font-size` and `--m-line-height` are used for equivalent typography roles;
 font family still inherits. Ordinary author CSS can override other presentation.
 
 The selectors outrank the generic Popover base, so loading a separate base stylesheet
@@ -222,7 +222,7 @@ CSS alone cannot remove it from the native top layer.
 
 The pinned Tooltip API has **no `inverted` prop**. Its light-theme default is already
 dark. For an alternate light surface, author paired foreground/background values, for
-example `--mui-popover-background: #fff; --mui-popover-color: #333639`; do not infer an
+example `--m-popover-background: #fff; --m-popover-color: #333639`; do not infer an
 unimplemented inversion option. Ensure custom color pairs retain adequate contrast.
 
 If native show/hide is missing, shared fallback temporarily removes popover so the original

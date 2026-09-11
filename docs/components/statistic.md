@@ -24,7 +24,7 @@ implemented by this migration.
 
 | Asset | Purpose |
 | --- | --- |
-| `dist/markup-ui-statistic.js` | ESM; exports `MuiStatistic`, `registerStatistic()`; registers on browser import. |
+| `dist/markup-ui-statistic.js` | ESM; exports `MStatistic`, `registerStatistic()`; registers on browser import. |
 | `dist/markup-ui-statistic.global.js` | Classic script; registers and exposes `MarkupUIStatistic`. |
 | `dist/markup-ui-statistic.css` | External component and native static-statistic CSS. |
 | `dist/components/statistic/index.d.ts` | Type declarations. |
@@ -35,7 +35,7 @@ implemented by this migration.
 <script defer src="./vendor/markup-ui-statistic.global.js"></script>
 <script defer src="./app.js"></script>
 
-<mui-statistic label="Revenue" value="12345.60" prefix="$" suffix="USD" tabular-nums></mui-statistic>
+<m-statistic label="Revenue" value="12345.60" prefix="$" suffix="USD" tabular-nums></m-statistic>
 ```
 
 Application ESM: `import "@dataengine/markup-ui/statistic";`. Serve/link the
@@ -72,16 +72,16 @@ Property assignment is silent: no change/input or artificial “value updated”
 ## Authored regions and precedence
 
 ```html
-<mui-statistic role="group" aria-labelledby="metric-label" tabular-nums>
-  <h3 data-mui-statistic-label id="metric-label">Active users</h3>
-  <span data-mui-statistic-prefix aria-hidden="true">≈</span>
-  <strong data-mui-statistic-value>128</strong>
-  <span data-mui-statistic-suffix><a href="./users.html">people</a></span>
-</mui-statistic>
+<m-statistic role="group" aria-labelledby="metric-label" tabular-nums>
+  <h3 data-m-statistic-label id="metric-label">Active users</h3>
+  <span data-m-statistic-prefix aria-hidden="true">≈</span>
+  <strong data-m-statistic-value>128</strong>
+  <span data-m-statistic-suffix><a href="./users.html">people</a></span>
+</m-statistic>
 ```
 
-Direct `data-mui-statistic-label`, `data-mui-statistic-value`,
-`data-mui-statistic-prefix` and `data-mui-statistic-suffix` regions become native content
+Direct `data-m-statistic-label`, `data-m-statistic-value`,
+`data-m-statistic-prefix` and `data-m-statistic-suffix` regions become native content
 in fixed label/prefix/value/suffix areas. Unmarked ordinary child nodes are default value
 content. Native headings, links, SVGs and listeners are moved, not cloned or serialized.
 Use direct regions; nested authored structure stays ordinary HTML, not a recursive renderer.
@@ -134,30 +134,30 @@ Statistic displays the resulting `12.345,60` without changing punctuation, units
 If formatting already includes a currency/unit, do not duplicate it through prefix/suffix.
 No locale, currency, precision, animation or formatting callback API is invented here.
 
-CSS tokens include `--mui-statistic-gap`, `--mui-statistic-unit-gap`,
-`--mui-statistic-label-color`, `--mui-statistic-label-size`,
-`--mui-statistic-label-weight`, `--mui-statistic-value-color`,
-`--mui-statistic-value-size`, `--mui-statistic-value-weight`,
-`--mui-statistic-line-height`, `--mui-statistic-font-family`,
-`--mui-statistic-prefix-color` and `--mui-statistic-suffix-color`.
+CSS tokens include `--m-statistic-gap`, `--m-statistic-unit-gap`,
+`--m-statistic-label-color`, `--m-statistic-label-size`,
+`--m-statistic-label-weight`, `--m-statistic-value-color`,
+`--m-statistic-value-size`, `--m-statistic-value-weight`,
+`--m-statistic-line-height`, `--m-statistic-font-family`,
+`--m-statistic-prefix-color` and `--m-statistic-suffix-color`.
 
-- Label size defaults to shared `--mui-font-size`, then 14px; the value and affixes
-  default to 24px. Both weights default to shared `--mui-font-weight`, then 400.
+- Label size defaults to shared `--m-font-size`, then 14px; the value and affixes
+  default to 24px. Both weights default to shared `--m-font-weight`, then 400.
   Explicit local size/weight tokens win. There is no upstream `size` enum.
-- Family uses local `--mui-statistic-font-family`, then shared `--mui-font-family`,
-  then inherited native typography. Leading uses local `--mui-statistic-line-height`,
-  then shared `--mui-line-height`, then 1.6. With normal document defaults this is
+- Family uses local `--m-statistic-font-family`, then shared `--m-font-family`,
+  then inherited native typography. Leading uses local `--m-statistic-line-height`,
+  then shared `--m-line-height`, then 1.6. With normal document defaults this is
   22.4px for the label and 38.4px for the inline value/affixes.
-- `--mui-statistic-gap` defaults to a **4px margin above the value container**,
+- `--m-statistic-gap` defaults to a **4px margin above the value container**,
   including value-only, label-only and empty cases. The passive empty container is
   retained for this spacing; it does not manufacture a value or accessible announcement.
-- `--mui-statistic-unit-gap` supplies a 4px end margin on the prefix and a 4px start
+- `--m-statistic-unit-gap` supplies a 4px end margin on the prefix and a 4px start
   margin on the suffix. Without a value, both margins still apply. Value/affixes use
   ordinary inline layout, not a wrapping flex row.
-- Explicit `data-mui-theme="dark"` on an ancestor or host selects white/.52 label
+- Explicit `data-m-theme="dark"` on an ancestor or host selects white/.52 label
   and white/.82 value/affix roles; nested `"light"` restores `#767c82` / `#333639`.
   These local defaults work without core CSS and deliberately do not reuse the legacy
-  `--mui-text-primary` / `--mui-text-secondary` palette, whose meanings/values differ.
+  `--m-text-primary` / `--m-text-secondary` palette, whose meanings/values differ.
   Each local color token overrides its own role; setting value color does not implicitly
   recolor the prefix/suffix.
 - SVG/image affixes remain CSS-sized to 1em with native baseline alignment. Color changes
@@ -193,9 +193,9 @@ technology behavior.
 ## CSS-only native example and templates
 
 ```html
-<dl class="mui-statistic" tabular-nums>
-  <dt data-mui-statistic-label>Archived reports</dt>
-  <dd data-mui-statistic-display><span data-mui-statistic-value>42</span><span data-mui-statistic-suffix>reports</span></dd>
+<dl class="m-statistic" tabular-nums>
+  <dt data-m-statistic-label>Archived reports</dt>
+  <dd data-m-statistic-display><span data-m-statistic-value>42</span><span data-m-statistic-suffix>reports</span></dd>
 </dl>
 ```
 
@@ -216,10 +216,10 @@ applications can use ordinary native template cloning themselves when needed.
 | `label` | Native string attribute/property or authored label region. | 🟢 Source-style nonempty-prop precedence; nodes restored when override removed. |
 | `tabular-nums` | Boolean attribute / `.tabularNums` and external CSS. | 🟢 Numeric typography only; no parser/formatter. |
 | `value` | String or finite number property/attribute; authored default fallback. | 🟢 Zero/blank/missing/text/nonfinite behavior explicit; no semantic numeric coercion. |
-| Default slot | Authored ordinary nodes or `data-mui-statistic-value`. | 🟢 Native content/listeners retained under temporary property overrides. |
-| Label slot | Native `data-mui-statistic-label`, including authored headings. | 🟢 Heading/ARIA ownership preserved, no inferred level. |
-| Prefix slot | Native `data-mui-statistic-prefix`. | 🟢 Native SVG/text/control content, preferred over legacy glyph/text fallback. |
-| Suffix slot | Native `data-mui-statistic-suffix`. | 🟢 Native units/links/actions remain real DOM. |
+| Default slot | Authored ordinary nodes or `data-m-statistic-value`. | 🟢 Native content/listeners retained under temporary property overrides. |
+| Label slot | Native `data-m-statistic-label`, including authored headings. | 🟢 Heading/ARIA ownership preserved, no inferred level. |
+| Prefix slot | Native `data-m-statistic-prefix`. | 🟢 Native SVG/text/control content, preferred over legacy glyph/text fallback. |
+| Suffix slot | Native `data-m-statistic-suffix`. | 🟢 Native units/links/actions remain real DOM. |
 | `theme`, `themeOverrides`, `builtinThemeOverrides` | External CSS/custom properties. | ⏭️ Provider/theme objects and runtime style adapters omitted. |
 
 ## Lifecycle and acceptance

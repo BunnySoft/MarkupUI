@@ -87,7 +87,7 @@ accepted; the generic source link is not blanket prop forwarding.
 
 | Upstream item · source | Kind | Native mapping / boundary | Status |
 | --- | --- | --- | --- |
-| `animated` · Popover:L29 | Prop | Existing opt-in mui-popover--animated CSS; reduced-motion respected, no leave scheduler. | 🟢 Verified |
+| `animated` · Popover:L29 | Prop | Existing opt-in m-popover--animated CSS; reduced-motion respected, no leave scheduler. | 🟢 Verified |
 | `arrow-point-to-center` · Popover:L30 | Prop | No exact arrow tether. | ⏭️ Intentionally omitted |
 | `arrow-class` · Popover:L31 | Prop | No generated arrow element. | ⏭️ Intentionally omitted |
 | `arrow-style` · Popover:L32 | Prop | No arrow style-object API. | ⏭️ Intentionally omitted |
@@ -107,7 +107,7 @@ accepted; the generic source link is not blanket prop forwarding.
 | `keep-alive-on-hover` · Popover:L46 | Prop | No hover selection mode. | ⏭️ Intentionally omitted |
 | `overlap` · Popover:L47 | Prop | No overlap geometry mode. | ⏭️ Intentionally omitted |
 | `placement` · Popover:L48 | Prop | Existing twelve Popover placements; bottom-start target default. | 🟢 Verified |
-| `raw` · Popover:L49 | Prop | Existing authored mui-popover--raw surface class. | 🟢 Verified |
+| `raw` · Popover:L49 | Prop | Existing authored m-popover--raw surface class. | 🟢 Verified |
 | `scrollable` · Popover:L50 | Prop | Existing native outer panel overflow, independent of native select scroll. | 🟢 Verified |
 | `show-arrow` · Popover:L51 | Prop | Source Popselect explicitly excludes showArrow/arrow; no target arrow feature claim. | ⏭️ Intentionally omitted |
 | `show` · Popover:L52 | Prop | Actual native show/open/close/setShow, not a parallel controlled desired state. | 🟢 Verified |

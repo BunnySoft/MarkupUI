@@ -30,21 +30,21 @@ describe("CSS-only Breadcrumb and BreadcrumbItem", () => {
     expect(pkg.dependencies).toEqual({})
     expect(css).not.toContain("@import")
     expect(demo).not.toContain("<script")
-    expect(customElements.get("mui-breadcrumb")).toBeUndefined()
+    expect(customElements.get("m-breadcrumb")).toBeUndefined()
   })
 
   it("preserves named nav landmarks and legal native list/item structure", () => {
     fixture()
     install()
-    for (const nav of document.querySelectorAll(".mui-breadcrumb")) {
+    for (const nav of document.querySelectorAll(".m-breadcrumb")) {
       expect(nav.tagName).toBe("NAV")
       expect(nav.getAttribute("aria-label")).toBeTruthy()
-      const list = nav.querySelector(":scope > .mui-breadcrumb-list")!
+      const list = nav.querySelector(":scope > .m-breadcrumb-list")!
       expect(["OL", "UL"]).toContain(list.tagName)
       expect([...list.children].every(item => ["LI", "TEMPLATE"].includes(item.tagName))).toBe(true)
     }
     expect(getComputedStyle(document.querySelector("#home-item")!).display).toBe("list-item")
-    expect(document.querySelectorAll(".mui-breadcrumb h1, .mui-breadcrumb h2, .mui-breadcrumb [aria-live]")).toHaveLength(0)
+    expect(document.querySelectorAll(".m-breadcrumb h1, .m-breadcrumb h2, .m-breadcrumb [aria-live]")).toHaveLength(0)
     expect(css).not.toContain("display: contents")
   })
 
@@ -74,7 +74,7 @@ describe("CSS-only Breadcrumb and BreadcrumbItem", () => {
     expect(current.getAttribute("aria-current")).toBe("page")
     current.removeAttribute("aria-current")
     middle.setAttribute("aria-current", "page")
-    expect(css).toContain("font-weight: var(--mui-breadcrumb-current-weight, 400)")
+    expect(css).toContain("font-weight: var(--m-breadcrumb-current-weight, 400)")
     expect(current.hasAttribute("aria-current")).toBe(false)
     expect(document.querySelector("#current-page-link")!.getAttribute("href")).toBe("#current-project")
     expect(css).not.toContain(":last-child")
@@ -112,8 +112,8 @@ describe("CSS-only Breadcrumb and BreadcrumbItem", () => {
   it("keeps separator nodes inside list items and hides decorative text and SVG from accessibility", () => {
     fixture()
     install()
-    for (const separator of document.querySelectorAll(".mui-breadcrumb-separator")) {
-      expect(separator.parentElement?.classList.contains("mui-breadcrumb-row")).toBe(true)
+    for (const separator of document.querySelectorAll(".m-breadcrumb-separator")) {
+      expect(separator.parentElement?.classList.contains("m-breadcrumb-row")).toBe(true)
       expect(separator.parentElement?.parentElement?.tagName).toBe("LI")
       expect(separator.getAttribute("aria-hidden")).toBe("true")
     }
@@ -133,7 +133,7 @@ describe("CSS-only Breadcrumb and BreadcrumbItem", () => {
     expect(document.querySelector("#no-separator-item")!.getAttribute("data-show-separator")).toBe("false")
     expect(getComputedStyle(document.querySelector("#suppressed-separator")!).display).toBe("none")
     expect(css).toContain("@supports selector(:has(*))")
-    expect(css).toContain("li.mui-breadcrumb-item:not([hidden]):has(~ li.mui-breadcrumb-item:not([hidden]))")
+    expect(css).toContain("li.m-breadcrumb-item:not([hidden]):has(~ li.m-breadcrumb-item:not([hidden]))")
   })
 
   it("preserves hidden first/middle/last items, hidden navigation and inert templates", () => {
@@ -143,7 +143,7 @@ describe("CSS-only Breadcrumb and BreadcrumbItem", () => {
       expect(getComputedStyle(document.getElementById(id)!).display).toBe("none")
     }
     const template = document.createElement("template")
-    template.className = "mui-breadcrumb-row"
+    template.className = "m-breadcrumb-row"
     document.body.append(template)
     expect(getComputedStyle(template).display).toBe("none")
     expect(document.querySelector<HTMLTemplateElement>("#native-template")!.content.textContent).toBe("Inert breadcrumb template")
@@ -154,9 +154,9 @@ describe("CSS-only Breadcrumb and BreadcrumbItem", () => {
     fixture()
     install()
     const parent = document.querySelector<HTMLElement>("#parent-breadcrumb")!
-    parent.style.setProperty("--mui-breadcrumb-gap", "3rem")
+    parent.style.setProperty("--m-breadcrumb-gap", "3rem")
     const nested = document.querySelector("#nested-breadcrumb")!
-    expect(getComputedStyle(nested).getPropertyValue("--mui-breadcrumb-gap")).toBe("8px")
+    expect(getComputedStyle(nested).getPropertyValue("--m-breadcrumb-gap")).toBe("8px")
     expect(nested.getAttribute("aria-label")).toBe("Nested reference breadcrumb")
     expect(nested.querySelectorAll('[aria-current="page"]')).toHaveLength(1)
     expect(document.querySelector("#nested-last-separator")!.closest("nav")).toBe(nested)
@@ -170,7 +170,7 @@ describe("CSS-only Breadcrumb and BreadcrumbItem", () => {
     link.textContent = "<b>Literal project text</b>"
     expect(link.querySelector("b")).toBeNull()
     const late = document.createElement("li")
-    late.className = "mui-breadcrumb-item"
+    late.className = "m-breadcrumb-item"
     late.textContent = "Authored later context"
     list.append(late)
     expect(list.lastElementChild).toBe(late)
@@ -201,18 +201,18 @@ describe("CSS-only Breadcrumb and BreadcrumbItem", () => {
   it("uses reference typography and private depth/state colors rather than shared legacy roles", () => {
     install()
     const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
-    for (const rule of rules.filter(rule => rule.selectorText?.includes("data-mui-theme"))) {
-      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_mui-breadcrumb-/)
+    for (const rule of rules.filter(rule => rule.selectorText?.includes("data-m-theme"))) {
+      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_m-breadcrumb-/)
     }
-    expect(css).toContain("var(--mui-breadcrumb-font-size, var(--mui-font-size, 14px))")
-    expect(css).toContain("var(--mui-breadcrumb-line-height, 1.25)")
+    expect(css).toContain("var(--m-breadcrumb-font-size, var(--m-font-size, 14px))")
+    expect(css).toContain("var(--m-breadcrumb-line-height, 1.25)")
     expect(css).toContain("padding: 4px")
-    expect(css).toContain("var(--mui-breadcrumb-radius, 3px)")
-    expect(css).toContain("--_mui-breadcrumb-text: #767c82")
-    expect(css).toContain("--_mui-breadcrumb-text: rgb(255 255 255 / .52)")
-    expect(css).toContain("--_mui-breadcrumb-active: rgb(255 255 255 / .82)")
-    expect(css).not.toContain("--mui-text-primary")
-    expect(css).not.toContain("--mui-text-secondary")
+    expect(css).toContain("var(--m-breadcrumb-radius, 3px)")
+    expect(css).toContain("--_m-breadcrumb-text: #767c82")
+    expect(css).toContain("--_m-breadcrumb-text: rgb(255 255 255 / .52)")
+    expect(css).toContain("--_m-breadcrumb-active: rgb(255 255 255 / .82)")
+    expect(css).not.toContain("--m-text-primary")
+    expect(css).not.toContain("--m-text-secondary")
   })
 
   it("applies hover/pressed fills only to genuine non-current destination anchors", () => {
@@ -221,30 +221,30 @@ describe("CSS-only Breadcrumb and BreadcrumbItem", () => {
     const interactive = rules.filter(rule => rule.selectorText?.includes(":hover") || rule.selectorText?.includes(":active"))
     expect(interactive).toHaveLength(2)
     for (const rule of interactive) {
-      expect(rule.selectorText).toContain('a.mui-breadcrumb-link[href]:not([aria-current="page"])')
+      expect(rule.selectorText).toContain('a.m-breadcrumb-link[href]:not([aria-current="page"])')
       expect(rule.style.getPropertyValue("background-color")).not.toBe("")
     }
-    expect(css).toContain("--_mui-breadcrumb-hover: rgb(46 51 56 / .09)")
-    expect(css).toContain("--_mui-breadcrumb-pressed: rgb(46 51 56 / .13)")
-    expect(css).toContain("--_mui-breadcrumb-hover: rgb(255 255 255 / .12)")
-    expect(css).toContain("--_mui-breadcrumb-pressed: rgb(255 255 255 / .08)")
-    expect(css).toContain("var(--mui-breadcrumb-hover-color, var(--mui-breadcrumb-link-color,")
-    expect(css).toContain("var(--mui-breadcrumb-pressed-color, var(--mui-breadcrumb-link-color,")
+    expect(css).toContain("--_m-breadcrumb-hover: rgb(46 51 56 / .09)")
+    expect(css).toContain("--_m-breadcrumb-pressed: rgb(46 51 56 / .13)")
+    expect(css).toContain("--_m-breadcrumb-hover: rgb(255 255 255 / .12)")
+    expect(css).toContain("--_m-breadcrumb-pressed: rgb(255 255 255 / .08)")
+    expect(css).toContain("var(--m-breadcrumb-hover-color, var(--m-breadcrumb-link-color,")
+    expect(css).toContain("var(--m-breadcrumb-pressed-color, var(--m-breadcrumb-link-color,")
   })
 
   it("places horizontal spacing on the actual separator so suppression leaves no phantom gap", () => {
     install()
     const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
-    const list = rules.find(rule => rule.selectorText === ":where(nav.mui-breadcrumb > .mui-breadcrumb-list)")!
-    const separator = rules.find(rule => rule.selectorText === ":where(.mui-breadcrumb-row > .mui-breadcrumb-separator)")!
+    const list = rules.find(rule => rule.selectorText === ":where(nav.m-breadcrumb > .m-breadcrumb-list)")!
+    const separator = rules.find(rule => rule.selectorText === ":where(.m-breadcrumb-row > .m-breadcrumb-separator)")!
     expect(list.style.getPropertyValue("column-gap")).toBe("0")
-    expect(list.style.getPropertyValue("row-gap")).toBe("var(--mui-breadcrumb-gap)")
-    expect(separator.style.getPropertyValue("margin-inline")).toBe("var(--mui-breadcrumb-gap)")
+    expect(list.style.getPropertyValue("row-gap")).toBe("var(--m-breadcrumb-gap)")
+    expect(separator.style.getPropertyValue("margin-inline")).toBe("var(--m-breadcrumb-gap)")
     expect(css).not.toContain(":last-child")
   })
 
   it("preserves direct author styling and current-link navigation", () => {
-    document.body.innerHTML = '<nav class="mui-breadcrumb" aria-label="Author"><ol class="mui-breadcrumb-list"><li class="mui-breadcrumb-item"><span class="mui-breadcrumb-row"><a class="mui-breadcrumb-link" href="#author" aria-current="page" style="color:purple;font-weight:700;text-decoration:underline">Author</a></span></li></ol></nav>'
+    document.body.innerHTML = '<nav class="m-breadcrumb" aria-label="Author"><ol class="m-breadcrumb-list"><li class="m-breadcrumb-item"><span class="m-breadcrumb-row"><a class="m-breadcrumb-link" href="#author" aria-current="page" style="color:purple;font-weight:700;text-decoration:underline">Author</a></span></li></ol></nav>'
     const link = document.querySelector("a")!
     const before = link.outerHTML
     install()

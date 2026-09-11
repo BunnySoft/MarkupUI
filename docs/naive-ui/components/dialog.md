@@ -1,8 +1,8 @@
 # Dialog
 
 **Plan: 🟢 Verified retained native scope.** Green means an adapted native target, not
-framework/provider or pixel parity. Legacy [MuiDialog](../../../src/components/overlays.ts)
-is unchanged; the optional helper owns real native dialogs, not new mui-* tags.
+framework/provider or pixel parity. Legacy [MDialog](../../../src/components/overlays.ts)
+is unchanged; the optional helper owns real native dialogs, not new m-* tags.
 
 ## Retained architecture and evidence
 
@@ -110,7 +110,7 @@ Referenced public component types (composition, not automatic API inheritance): 
 | [`onClose`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dialog/demos/enUS/index.demo-entry.md#L99) | Callback | createDialog onClose() guards the close BUTTON only; native Escape/forms/programmatic close are separate. | 🟢 Verified | ADAPTED native target; [native acceptance](../../components/dialog.md), tests/dialog.test.ts and pinned Dialog/Environment/Provider source. |
 | [`onNegativeClick`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dialog/demos/enUS/index.demo-entry.md#L100) | Callback | createDialog onNegativeClick(event): false/Promise/throw/rejection policy with owned pending state. | 🟢 Verified | ADAPTED native target; [native acceptance](../../components/dialog.md), tests/dialog.test.ts and pinned Dialog/Environment/Provider source. |
 | [`onPositiveClick`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dialog/demos/enUS/index.demo-entry.md#L101) | Callback | createDialog onPositiveClick(event): false/Promise/throw/rejection policy with owned pending state. | 🟢 Verified | ADAPTED native target; [native acceptance](../../components/dialog.md), tests/dialog.test.ts and pinned Dialog/Environment/Provider source. |
-| [`onMaskClick`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dialog/demos/enUS/index.demo-entry.md#L102) | Callback | Opt-in mui:native-dialog-backdrop event, cancelable and pointer-qualified; not every mask click. | 🟢 Verified | ADAPTED native target; [native acceptance](../../components/dialog.md), tests/dialog.test.ts and pinned Dialog/Environment/Provider source. |
+| [`onMaskClick`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dialog/demos/enUS/index.demo-entry.md#L102) | Callback | Opt-in m:native-dialog-backdrop event, cancelable and pointer-qualified; not every mask click. | 🟢 Verified | ADAPTED native target; [native acceptance](../../components/dialog.md), tests/dialog.test.ts and pinned Dialog/Environment/Provider source. |
 
 ### DialogReactive Properties
 
@@ -261,6 +261,6 @@ extends DialogOptions; the six members absent from its local property table are 
 | [`blockScroll`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dialog/src/DialogProvider.ts) | Explicit inherited option | No document scroll locking. | ⏭️ Intentionally omitted | Explicit source review; [native acceptance](../../components/dialog.md), tests/dialog.test.ts and pinned Dialog/Environment/Provider source. |
 | [`draggable`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dialog/src/DialogProvider.ts) | Explicit inherited option | No draggable geometry/bounds machinery. | ⏭️ Intentionally omitted | Explicit source review; [native acceptance](../../components/dialog.md), tests/dialog.test.ts and pinned Dialog/Environment/Provider source. |
 | [`zIndex`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dialog/src/DialogProvider.ts) | Explicit inherited option | No arbitrary top-layer z-index override. | ⏭️ Intentionally omitted | Explicit source review; [native acceptance](../../components/dialog.md), tests/dialog.test.ts and pinned Dialog/Environment/Provider source. |
-| [`onMaskClick`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dialog/src/DialogProvider.ts) | Explicit inherited option | Opt-in mui:native-dialog-backdrop event, cancelable and pointer-qualified; not every mask click. | 🟢 Verified | Explicit source review; [native acceptance](../../components/dialog.md), tests/dialog.test.ts and pinned Dialog/Environment/Provider source. |
+| [`onMaskClick`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/dialog/src/DialogProvider.ts) | Explicit inherited option | Opt-in m:native-dialog-backdrop event, cancelable and pointer-qualified; not every mask click. | 🟢 Verified | Explicit source review; [native acceptance](../../components/dialog.md), tests/dialog.test.ts and pinned Dialog/Environment/Provider source. |
 
 <!-- END PINNED API INVENTORY -->

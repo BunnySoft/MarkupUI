@@ -22,14 +22,14 @@ No data binding, row/template renderer or state algorithm was added or changed.
 | [Complete reference inventory](../naive-ui/components/data-table.md) | Every original owner/member/type/inline identity and explicit source supplement |
 
 No core, advanced, widgets, Checkbox, Form, Pagination or Virtual List JavaScript is
-automatically loaded. Existing advanced MuiDataGrid remains a separate unchanged legacy
+automatically loaded. Existing advanced MDataGrid remains a separate unchanged legacy
 renderer. Never place an author-owned table inside a legacy renderer's owned output region.
 
 ```html
-<section class="mui-data-table" data-data-table aria-label="Project scores">
-  <div class="mui-data-table-scroll" tabindex="0" role="region"
+<section class="m-data-table" data-data-table aria-label="Project scores">
+  <div class="m-data-table-scroll" tabindex="0" role="region"
        aria-labelledby="scores-caption">
-    <table class="mui-table" data-data-table-table>
+    <table class="m-table" data-data-table-table>
       <caption id="scores-caption">Project scores</caption>
       <thead><tr>
         <th scope="col" data-data-column="project">Project</th>
@@ -257,23 +257,23 @@ author checkbox nesting still works but needs explicit author CSS.
 Table tokens/data-bordered/data-bottom-bordered/data-single-line/data-single-column/
 data-striped/data-size remain available. Data Table uses **8px small cell padding**,
 while standalone Table intentionally retains 6px; medium/large retain 12px and the shared
-14px/15px type defaults. Public `--mui-table-cell-padding` overrides that scoped preset.
+14px/15px type defaults. Public `--m-table-cell-padding` overrides that scoped preset.
 Data cells use normal numeric typography; semantic body `th[scope=row]` retains its role
 but defaults to ordinary data-cell color/400 weight. Explicit Table header color/weight
 tokens remain authoritative when authors intentionally style those headers.
 
 Additional tokens:
 
-- `--mui-data-table-max-height`, `--mui-data-table-min-height`: native scrollport bounds.
-- `--mui-data-table-scroll-padding`: zero by default; authors can restore a focus/layout gutter.
-- `--mui-data-table-color`: data-table text, including body cells, with Table color as fallback.
-- `--mui-data-table-hover-background`: hovered body-cell fill; default `#f7f7fa` in light
+- `--m-data-table-max-height`, `--m-data-table-min-height`: native scrollport bounds.
+- `--m-data-table-scroll-padding`: zero by default; authors can restore a focus/layout gutter.
+- `--m-data-table-color`: data-table text, including body cells, with Table color as fallback.
+- `--m-data-table-hover-background`: hovered body-cell fill; default `#f7f7fa` in light
   and `#26262a` in dark.
-- `--mui-data-table-sort-background`: sortable-hover/current sorted header fill;
+- `--m-data-table-sort-background`: sortable-hover/current sorted header fill;
   default `#f3f3f7` / `#333337`.
-- `--mui-data-table-sort-icon-color`: active native CSS arrow color; shared primary
+- `--m-data-table-sort-icon-color`: active native CSS arrow color; shared primary
   color or pinned light/dark primary fallback by default.
-- `--mui-data-table-selected-background`: **optional** selected-cell tint. There is no
+- `--m-data-table-selected-background`: **optional** selected-cell tint. There is no
   default blue row fill, matching the reference's unchanged checked-row background.
   The optional tint is a clipped inset paint overlay, preserving underlying stripes/
   hover colors when unset. Native checkbox skins and labels are not replaced.
@@ -323,13 +323,13 @@ outlines; no custom animation engine is present.
 | `revealAll()` | Clear sort/filters/paging for native whole-table validation/printing |
 | `disconnect()` | Release listeners/owned attributes/ownership without recreating or resetting data |
 
-One mui:data-table-change describes each accepted native operation:
+One m:data-table-change describes each accepted native operation:
 `{source,state,event}` with source sort/filter/page/page-size/selection. Accepted sort/page
 clicks settle after dispatch so preventDefault is honored. Native checkbox cancellation/
 default rollback stays browser-owned. Programmatic setters/refresh/reset emit no user
 notification. Native cell input/change events are not renamed into row-data updates.
 
-Handled UI failures emit mui:data-table-error with `{error}` and no success event.
+Handled UI failures emit m:data-table-error with `{error}` and no success event.
 A rejected native filter/size value remains an **uncommitted draft**; the prior view/state
 remains committed. Correct/reapply or explicitly clear it. Refresh recalculates committed
 filters, not a rejected draft. Application event-listener exceptions retain browser

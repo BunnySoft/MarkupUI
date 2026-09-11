@@ -35,7 +35,7 @@ function context() {
 
     it("preserves native selection and application-owned container positioning", () => {
       expect(css).not.toContain("user-select")
-      expect(css).not.toMatch(/\.mui-watermark\s*\{[\s\S]*position:/)
+      expect(css).not.toMatch(/\.m-watermark\s*\{[\s\S]*position:/)
     })
 
     it("hides decorative pixels in forced colors and print", () => {
@@ -56,7 +56,7 @@ function image(width = 100, height = 60, complete = true) {
 }
 function fixture(options: WatermarkSettings = { content: "LOCAL DRAFT" }, bind = true) {
   const root = document.createElement("section")
-  root.className = "mui-watermark"; root.dataset.watermark = ""; root.style.position = "relative"
+  root.className = "m-watermark"; root.dataset.watermark = ""; root.style.position = "relative"
   root.innerHTML = `<h2>Original content</h2><form><label>Draft<input name="draft" value="kept" required></label><button type="button">Native action</button></form>
     <p data-text>Original selectable text with <strong>markup</strong>.</p><div data-watermark-overlay hidden aria-hidden="true"></div>`
   document.body.append(root)
@@ -110,8 +110,8 @@ describe("Watermark native tile and decorative ownership", () => {
     expect(ctx.font).toBe("italic small-caps 600 20px monospace"); expect(ctx.fontStretch).toBe("condensed")
     expect(ctx.fillText.mock.calls.some(call => call[0] === "<tag>")).toBe(true)
     expect(ctx.rotate).toHaveBeenCalledWith(-Math.PI / 6)
-    expect(overlay.style.getPropertyValue("--mui-watermark-x")).toBe("-15px")
-    expect(overlay.style.getPropertyValue("--mui-watermark-opacity")).toBe("0.5")
+    expect(overlay.style.getPropertyValue("--m-watermark-x")).toBe("-15px")
+    expect(overlay.style.getPropertyValue("--m-watermark-opacity")).toBe("0.5")
   })
   it("draws bounded cross stamps and debug grid in the same single tile", async () => {
     const { helper, overlay } = fixture({ content: "DRAFT", cross: true, debug: true })
@@ -194,15 +194,15 @@ describe("Watermark validation and failure contract", () => {
   })
   it("reports rotated clipping rather than encoding cropped/blank text", async () => {
     const { helper, overlay } = fixture(); await helper.ready
-    const before = overlay.style.getPropertyValue("--mui-watermark-image")
+    const before = overlay.style.getPropertyValue("--m-watermark-image")
     const result = await helper.update({ width: 50, height: 20, rotate: 45 })
     expect(result.status).toBe("error"); expect(helper.state.phase).toBe("error")
-    expect(overlay.style.getPropertyValue("--mui-watermark-image")).toBe(before)
+    expect(overlay.style.getPropertyValue("--m-watermark-image")).toBe(before)
     expect(helper.state.hasTile).toBe(true); expect(urls.size).toBe(1)
   })
   it("surfaces Canvas unavailable, null PNG and native security errors", async () => {
     const { helper, overlay } = fixture(); await helper.ready
-    const before = overlay.style.getPropertyValue("--mui-watermark-image")
+    const before = overlay.style.getPropertyValue("--m-watermark-image")
     vi.mocked(HTMLCanvasElement.prototype.getContext).mockReturnValueOnce(null)
     expect((await helper.refresh()).status).toBe("error")
     vi.mocked(HTMLCanvasElement.prototype.toBlob).mockImplementationOnce(callback => callback(null))
@@ -210,15 +210,15 @@ describe("Watermark validation and failure contract", () => {
     encodeError = new DOMException("Tainted canvas", "SecurityError")
     const result = await helper.refresh()
     expect(result).toMatchObject({ status: "error", error: encodeError })
-    expect(overlay.style.getPropertyValue("--mui-watermark-image")).toBe(before); expect(urls.size).toBe(1)
+    expect(overlay.style.getPropertyValue("--m-watermark-image")).toBe(before); expect(urls.size).toBe(1)
   })
   it("keeps the old valid tile through loading/error and replaces it only on success", async () => {
     const { helper, overlay } = fixture(); await helper.ready
-    const before = overlay.style.getPropertyValue("--mui-watermark-image")
+    const before = overlay.style.getPropertyValue("--m-watermark-image")
     deferBlob = true; const pending = helper.update({ content: "Second" }); await flush()
-    expect(helper.state.phase).toBe("loading"); expect(overlay.style.getPropertyValue("--mui-watermark-image")).toBe(before)
+    expect(helper.state.phase).toBe("loading"); expect(overlay.style.getPropertyValue("--m-watermark-image")).toBe(before)
     blobs.shift()!(new Blob(["new"], { type: "image/png" })); expect((await pending).status).toBe("ready")
-    expect(overlay.style.getPropertyValue("--mui-watermark-image")).not.toBe(before); expect(urls.size).toBe(1)
+    expect(overlay.style.getPropertyValue("--m-watermark-image")).not.toBe(before); expect(urls.size).toBe(1)
     expect(revoke).toHaveBeenCalledOnce()
   })
 })
@@ -273,7 +273,7 @@ describe("Watermark caller-owned images and generation races", () => {
     const second = helper.update({ loadImage: null, content: "Overtaken" })
     expect((await first).status).toBe("aborted"); expect((await second).status).toBe("aborted")
     await helper.ready; expect(helper.settings.content).toBe("Reentrant")
-    root.addEventListener("mui:watermark-state", () => helper.disconnect(), { once: true })
+    root.addEventListener("m:watermark-state", () => helper.disconnect(), { once: true })
     expect((await helper.update({ content: "Never committed" })).status).toBe("aborted")
     expect(urls.size).toBe(0)
   })
@@ -311,10 +311,10 @@ describe("Watermark lifetime, native resize and restoration", () => {
   })
   it("restores only still-owned properties and supports explicit rebinding", async () => {
     const { helper, root, overlay } = fixture(); await helper.ready
-    overlay.style.setProperty("--mui-watermark-opacity", ".7"); root.setAttribute("aria-label", "Kept")
+    overlay.style.setProperty("--m-watermark-opacity", ".7"); root.setAttribute("aria-label", "Kept")
     helper.disconnect()
-    expect(overlay.style.getPropertyValue("--mui-watermark-opacity")).toBe(".7")
-    expect(overlay.style.getPropertyValue("--mui-watermark-image")).toBe("")
+    expect(overlay.style.getPropertyValue("--m-watermark-opacity")).toBe(".7")
+    expect(overlay.style.getPropertyValue("--m-watermark-image")).toBe("")
     expect(root.getAttribute("aria-label")).toBe("Kept")
     const second = createWatermark(root, { content: "New owner" }); controllers.push(second)
     expect((await second.ready).status).toBe("ready")

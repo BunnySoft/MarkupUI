@@ -111,7 +111,7 @@ No blanket pixel-parity claim is made.
 - **Collapse:** upstream retains icon rows with 24px collapsed icons and hidden labels;
   native collapse closes the real list and leaves one named summary (54px overall in
   this fixture). It is not an icon rail, tooltip or collapsed-popup renderer.
-- **Inverted:** `.mui-menu--inverted` is now an explicit dark-palette native skin on
+- **Inverted:** `.m-menu--inverted` is now an explicit dark-palette native skin on
   `#202630`, not Naive UI's distinct inverted text/solid-selection palette.
 - **Hit areas:** normal native rows begin 8px inside the root; upstream's decorative
   inset belongs to a full-width clickable row.

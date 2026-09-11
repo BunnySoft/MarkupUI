@@ -20,7 +20,7 @@ QR symbol exists whose module geometry, quiet zone, colors or dimensions can be 
 
 ## Preserved boundary
 
-- No `@dataengine/markup-ui/qr-code` export or `mui-qr-code` registration exists.
+- No `@dataengine/markup-ui/qr-code` export or `m-qr-code` registration exists.
 - No encoder, scanner, canvas/SVG renderer, generated image or QR CSS bundle exists.
 - No visual approximation, fake module grid or unverified asset is introduced.
 - Readable text/link presentation remains application-owned and is not promoted as QR

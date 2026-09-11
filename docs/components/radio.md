@@ -4,7 +4,7 @@
 Individual Radio and button-like RadioButton are CSS-only labelled native radios.
 An optional group helper validates the **actual native group**, provides silent string
 selection operations and observes accepted native changes. It is not a second selection
-engine. Legacy `MuiRadio`/`MuiRadioGroup` in `src/components/forms.ts` remain unchanged.
+engine. Legacy `MRadio`/`MRadioGroup` in `src/components/forms.ts` remain unchanged.
 
 ## Loading and anatomy
 
@@ -18,14 +18,14 @@ engine. Legacy `MuiRadio`/`MuiRadioGroup` in `src/components/forms.ts` remain un
 | [Pinned dispositions](../naive-ui/components/radio.md) | Every original grouped owner/property/inline identity, plus explicit source supplements |
 
 ```html
-<fieldset class="mui-radio-group" data-radio-group id="shipping">
+<fieldset class="m-radio-group" data-radio-group id="shipping">
   <legend>Shipping</legend>
-  <div class="mui-radio-group__items">
-    <label class="mui-radio">
+  <div class="m-radio-group__items">
+    <label class="m-radio">
       <input data-radio type="radio" name="shipping" value="standard" checked required>
       <span>Standard</span>
     </label>
-    <label class="mui-radio">
+    <label class="m-radio">
       <input data-radio type="radio" name="shipping" value="express">
       <span>Express</span>
     </label>
@@ -44,11 +44,11 @@ shipping.refresh()          // Explicit member/key/scope reconciliation.
 
 ESM callers import `createRadioGroup`. It accepts only the authored root, not a framework
 props/options object. There is no `createRadio`, `createRadioButton` or registration
-function. No `mui-*` registration-order rule applies. One nonenumerable owner symbol on
+function. No `m-*` registration-order rule applies. One nonenumerable owner symbol on
 the root and each member guards duplicate owners across ESM/classic copies.
 
 An enhanced group is a connected light-DOM
-`fieldset.mui-radio-group[data-radio-group]` with a nonempty **first direct legend**,
+`fieldset.m-radio-group[data-radio-group]` with a nonempty **first direct legend**,
 no replacement role and no wrapper tabindex. Members are original
 `input[type=radio][data-radio]` controls with real native labels, one common nonempty
 native `name`, one actual form owner, and explicit nonempty unique string `value`s.
@@ -85,7 +85,7 @@ Each validation inspects native inputs in that tree; this is not a virtualized l
 renderer. Changes in unrelated shadow trees are outside that tree boundary.
 
 Explicit `refresh`, state reads and setters reject invalid keys/anatomy/scope. Automatic
-errors populate `error` and emit a nonbubbling `mui:radio-group-error` with `{ message }`
+errors populate `error` and emit a nonbubbling `m:radio-group-error` with `{ message }`
 when the message changes. The last valid ownership is held until reconciliation/disposal;
 fixing the DOM and refreshing clears the error.
 
@@ -137,7 +137,7 @@ synthetic clicks, hidden proxy values or duplicate aria-checked in the helper.
   second selection notification. Unchecking the former peer through exclusivity does
   **not** emit a fabricated `change(false)` on that former radio.
 - A real accepted selected member's bubbling native `change` yields one next-task,
-  **nonbubbling** `mui:radio-group-change` on its root, with `{ value: string }` captured
+  **nonbubbling** `m:radio-group-change` on its root, with `{ value: string }` captured
   at that change. Original input/change events remain untouched. Author cancellation
   and native rollback happen entirely in the browser, without custom restoration.
 - A manually dispatched bubbling change on a checked member is an explicit notification
@@ -158,15 +158,15 @@ The helper does not turn authored aria-disabled into a new interaction engine.
 
 ## RadioButton and CSS
 
-Use the **same native radio** inside `.mui-radio-button` rather than an HTML button:
+Use the **same native radio** inside `.m-radio-button` rather than an HTML button:
 
 ```html
-<div class="mui-radio-group__buttons">
-  <label class="mui-radio-button">
+<div class="m-radio-group__buttons">
+  <label class="m-radio-button">
     <input data-radio type="radio" name="layout" value="grid" checked>
     <span>Grid</span>
   </label>
-  <label class="mui-radio-button">
+  <label class="m-radio-button">
     <input data-radio type="radio" name="layout" value="list">
     <span>List</span>
   </label>
@@ -195,7 +195,7 @@ aligns to the first label line. Top inline alignment avoids extra native baselin
 RadioButton minimum heights are **28/34/40px**, with 14px horizontal padding and an
 always-visible native circle. Long labels and authored padding can grow those minimums.
 
-An ancestor `data-mui-theme="light|dark"` selects the scheme; standalone controls
+An ancestor `data-m-theme="light|dark"` selects the scheme; standalone controls
 default to light. Local reference-matched neutral fallbacks avoid the legacy shared
 neutral-role mismatch, while semantic accents reuse the shared primary role.
 Size/status/theme defaults are private: inherited public tokens still win.
@@ -211,8 +211,8 @@ buttons wider than Naive's hidden-input variant. Buttons remain separately round
 wrapping choices with 4px gaps, not generated connected splitters. Native groups retain
 their labelled fieldset boundary and 12px padding rather than a bare group `div`.
 
-Tokens: `--mui-radio-color`, `-font`, `-size`, `-accent`, `-focus`, `-disabled`, `-border`,
-`-background`, `-active`, `-pad` (all share the `--mui-radio` prefix).
+Tokens: `--m-radio-color`, `-font`, `-size`, `-accent`, `-focus`, `-disabled`, `-border`,
+`-background`, `-active`, `-pad` (all share the `--m-radio` prefix).
 There is no global control reset, theme provider, injected style or CSS-in-JS.
 
 ## Complete upstream disposition

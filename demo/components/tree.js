@@ -38,7 +38,7 @@ function inspect() {
     expanded: tree.expandedKeys, loading: tree.loadingKeys, nodes: tree.nodes.length, loads, disposals,
   }, null, 2)
 }
-for (const type of ["select", "check", "expand", "load", "error"]) root.addEventListener(`mui:tree-${type}`, event => {
+for (const type of ["select", "check", "expand", "load", "error"]) root.addEventListener(`m:tree-${type}`, event => {
   events.textContent = type === "error" ? `Tree error: ${event.detail.error?.message}` : `Native tree ${type} notification.`
   inspect()
 })

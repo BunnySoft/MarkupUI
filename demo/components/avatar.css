@@ -37,7 +37,7 @@ section {
 .demo-preview label {
   font-size: 13px;
 }
-.demo-preview .mui-input {
+.demo-preview .m-input {
   inline-size: min(100%, 20rem);
 }
 .cash-icon {

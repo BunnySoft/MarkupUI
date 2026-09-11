@@ -33,18 +33,18 @@ callback timing are additional declared exclusions within the adapted disclosure
 
 ```html
 <link rel="stylesheet" href="./vendor/markup-ui-float-button.css">
-<button type="button" class="mui-float-button" data-position="relative"
+<button type="button" class="m-float-button" data-position="relative"
   aria-label="Create project">
   <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
     <path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2"></path>
   </svg>
 </button>
-<div class="mui-float-group" data-position="relative" data-shape="square"
+<div class="m-float-group" data-position="relative" data-shape="square"
   role="group" aria-label="Project actions">
-  <button type="submit" form="project-form" class="mui-float-button"
-    data-type="primary"><span class="mui-float-description">Save</span></button>
-  <button type="reset" form="project-form" class="mui-float-button">
-    <span class="mui-float-description">Reset</span>
+  <button type="submit" form="project-form" class="m-float-button"
+    data-type="primary"><span class="m-float-description">Save</span></button>
+  <button type="reset" form="project-form" class="m-float-button">
+    <span class="m-float-description">Reset</span>
   </button>
 </div>
 ```
@@ -66,15 +66,15 @@ This adapts, rather than pixel-reproduces, the source's injected shape and joine
 
 | Upstream surface | Native mapping / limits |
 | --- | --- |
-| Both owners' `top`, `bottom`, `left`, `right` | `--mui-float-block-start`, `--mui-float-block-end`, `--mui-float-inline-start`, `--mui-float-inline-end` CSS lengths/auto. Left/right adapt to logical start/end in RTL. |
+| Both owners' `top`, `bottom`, `left`, `right` | `--m-float-block-start`, `--m-float-block-end`, `--m-float-inline-start`, `--m-float-inline-end` CSS lengths/auto. Left/right adapt to logical start/end in RTL. |
 | Both owners' `position` | Default fixed; `data-position="relative"` / `"absolute"` select native CSS modes. Unknown values use fixed. No sticky preset is invented. |
-| FloatButton `width`, `height` | `--mui-float-width` / `--mui-float-height`, defaults 40px. Height is a **minimum**, so descriptions can grow without clipping. |
+| FloatButton `width`, `height` | `--m-float-width` / `--m-float-height`, defaults 40px. Height is a **minimum**, so descriptions can grow without clipping. |
 | Both owners' `shape` | Circle default or `data-shape="square"`; group shape owns direct children. |
 | FloatButton `type` | Default appearance or `data-type="primary"`; never the native form type attribute. |
 | FloatButton `menu-trigger` | Native click/keyboard `popovertarget` command. No hover-only open mode or trigger-attribute parser. |
 | FloatButton `show-menu` | Native popover methods/state, not a controlled/uncontrolled framework prop bridge. Default native popover is closed. |
 | `on-update:show-menu` | Native `toggle` on the **panel**, with oldState/newState and native timing, not a synchronous boolean callback. |
-| FloatButton `description` slot | Authored `.mui-float-description` phrasing content within the native action. |
+| FloatButton `description` slot | Authored `.m-float-description` phrasing content within the native action. |
 | FloatButton `menu` slot | Separate authored popover/static action group, not content nested inside the trigger button. |
 | Source FloatButton/Group default slots | Native action/icon/group children. No VNode projection or automatic icon/close-button generation. |
 | Source callback aliases/arrays and both owners' theme props | ⏭️ Framework alias-array dispatch and theme/provider objects omitted. |
@@ -100,10 +100,10 @@ instead of generating the source's body wrapper. Public width/height/icon/radius
 still override these defaults; use relative units explicitly for root-font-relative sizing.
 
 Light defaults use white / `#333639`; dark uses `#48484e` / white .82. Primary uses the
-shared `--mui-color-primary` palette, with white text in light and black in dark. Load the
+shared `--m-color-primary` palette, with white text in light and black in dark. Load the
 existing themes stylesheet for semantic dark colors; the component's neutral colors,
-contrast and shadows follow `data-mui-theme="light|dark"` scopes. Public
-`--mui-float-background`, `--mui-float-color` and `--mui-float-shadow` now remain above
+contrast and shadows follow `data-m-theme="light|dark"` scopes. Public
+`--m-float-background`, `--m-float-color` and `--m-float-shadow` now remain above
 the primary fallback rather than being reassigned by the primary selector.
 
 Standalone shadows are 0 2px 8px at black .16/.12 in light/dark, and 0 2px 12px at
@@ -120,7 +120,7 @@ inset fill layer. These group details remain explicit adaptations.
 
 Native focus uses a 2px info-color outline, rather than inheriting black primary text in
 dark mode. Forced colors suppress the group brightness filter. Action borders are now
-absent by default; `--mui-float-border-color` continues to style separators/panels, and
+absent by default; `--m-float-border-color` continues to style separators/panels, and
 ordinary authored CSS can add an action border when desired.
 
 See the [rendered FloatButton audit](../style-audit/components/float-button.md) for actual
@@ -130,13 +130,13 @@ geometry/palette comparisons, RTL, native interaction evidence and remaining dif
 
 ```html
 <div class="quick-dock">
-  <button type="button" class="mui-float-button mui-float-trigger"
+  <button type="button" class="m-float-button m-float-trigger"
     popovertarget="quick-actions" aria-label="Quick actions">+</button>
-  <div class="mui-float-panel" id="quick-actions" popover="auto"
+  <div class="m-float-panel" id="quick-actions" popover="auto"
     role="group" aria-label="Quick action controls">
-    <div class="mui-float-group" data-position="relative" data-shape="square">
-      <button type="button" class="mui-float-button">Application action</button>
-      <button type="button" class="mui-float-button mui-float-popover-command"
+    <div class="m-float-group" data-position="relative" data-shape="square">
+      <button type="button" class="m-float-button">Application action</button>
+      <button type="button" class="m-float-button m-float-popover-command"
         popovertarget="quick-actions" popovertargetaction="hide">Close</button>
     </div>
   </div>
@@ -166,20 +166,20 @@ separately when that disclosure model is preferred.
 
 The provided popover presentation is specifically an **authored fixed-corner dock**, not a
 general trigger-positioning engine. Trigger and panel share concrete end/bottom offsets;
-the icon-only trigger has an explicit `--mui-float-trigger-size` (default 40px), and the
+the icon-only trigger has an explicit `--m-float-trigger-size` (default 40px), and the
 panel is placed .75rem above it. CSS Anchor Positioning is **not used or required**. No
 unconditional anchor rules or JS measurements are injected.
 
 ```css
 .quick-dock {
-  --mui-float-inline-end: max(1rem, env(safe-area-inset-right, 0px));
-  --mui-float-opposite-clearance: max(1rem, env(safe-area-inset-left, 0px));
-  --mui-float-block-end: max(1rem, env(safe-area-inset-bottom, 0px));
-  --mui-float-trigger-size: 2.5rem;
+  --m-float-inline-end: max(1rem, env(safe-area-inset-right, 0px));
+  --m-float-opposite-clearance: max(1rem, env(safe-area-inset-left, 0px));
+  --m-float-block-end: max(1rem, env(safe-area-inset-bottom, 0px));
+  --m-float-trigger-size: 2.5rem;
 }
 .quick-dock:dir(rtl) {
-  --mui-float-inline-end: max(1rem, env(safe-area-inset-left, 0px));
-  --mui-float-opposite-clearance: max(1rem, env(safe-area-inset-right, 0px));
+  --m-float-inline-end: max(1rem, env(safe-area-inset-left, 0px));
+  --m-float-opposite-clearance: max(1rem, env(safe-area-inset-right, 0px));
 }
 ```
 
@@ -200,7 +200,7 @@ Reserve real content space for fixed controls. The demo uses an inline-end gutte
 padding, then verifies form controls stay clear at narrow widths and zoom. A top-layer panel
 temporarily covers content by design and remains dismissible. Applications must check
 actual responsive text, overlays, safe areas and software-keyboard geometry; there is no
-giant global layer escalation. `--mui-float-z-index` defaults to 10 for ordinary placement;
+giant global layer escalation. `--m-float-z-index` defaults to 10 for ordinary placement;
 native popovers use the browser top layer.
 
 Additional CSS tokens include action width/min-height, icon size, square radius, group gap,

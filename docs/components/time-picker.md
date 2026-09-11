@@ -16,13 +16,13 @@ The source's timestamp/time-zone/formatter models are deliberately not emulated.
 ## Native anatomy and loading
 
 ```html
-<fieldset class="mui-time-picker" data-time-picker>
+<fieldset class="m-time-picker" data-time-picker>
   <legend>Night slot</legend>
   <label for="night">Time of day
     <input data-time-control id="night" type="time" name="night"
            value="23:00" min="22:00" max="02:00" step="900">
   </label>
-  <p class="mui-time-picker__output" data-time-output hidden></p>
+  <p class="m-time-picker__output" data-time-output hidden></p>
   <button type="button" data-time-clear hidden>Clear night slot</button>
 </fieldset>
 ```
@@ -126,7 +126,7 @@ Programmatic setters may explicitly update readonly/disabled controls, as native
 can. User clear requires an enabled, visible, non-inert, non-readonly field.
 Clear sets native empty before dispatching one input/change pair. Only exact helper-generated
 events are ignored internally; distinct reentrant input is synchronized and can supersede
-the rest of the clear sequence. `mui:time-picker-clear` reports `{ value: "" }` only if not
+the rest of the clear sequence. `m:time-picker-clear` reports `{ value: "" }` only if not
 superseded. There is no synthetic native change for ordinary setters/reset/refresh.
 
 Native reset resets the current field to its native default, not a timestamp model.
@@ -146,7 +146,7 @@ visibility, action disabled state and plain readout text use conditional ownersh
 overrides survive teardown. The readout is noninteractive/nonlive, not a mutable label or
 automatic announcement. No invisible proxy values or duplicated successful fields.
 
-Unexpected unsupported anatomy/serialization reports `mui:time-picker-error`; direct
+Unexpected unsupported anatomy/serialization reports `m:time-picker-error`; direct
 invalid APIs throw. One owner per root/field/readout/action is enforced across module copies.
 The Date Picker public gate still accepts only its original four native date modes:
 **Time support was not added to Date Picker**, and no time-range API was invented.
@@ -169,7 +169,7 @@ clock.setValue(time)
 
 It deliberately uses local clock parts, not ISO UTC slicing or a hidden date anchor in the
 library. A scheduling application must choose its date/timezone/overnight policy separately.
-Legacy advanced `mui-time-picker` remains unchanged and is not silently upgraded.
+Legacy advanced `m-time-picker` remains unchanged and is not silently upgraded.
 
 [Form](form.md) can validate the actual native field. No hidden provider registration or
 external custom-error clearing occurs. The demo's application submit listener only inspects

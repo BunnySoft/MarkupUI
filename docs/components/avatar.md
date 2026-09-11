@@ -20,7 +20,7 @@ Classic HTML:
 <script defer src="./vendor/markup-ui-avatar.global.js"></script>
 <script defer src="./app.js"></script>
 
-<mui-avatar alt="Ada" size="large">A</mui-avatar>
+<m-avatar alt="Ada" size="large">A</m-avatar>
 ```
 
 ES-module application JavaScript:
@@ -49,12 +49,12 @@ of the same component in one document.
 ## Authored HTML and templates
 
 ```html
-<mui-avatar alt="Ada" lazy>
+<m-avatar alt="Ada" lazy>
   <img src="./ada.png" alt="Ada" width="34" height="34">
   A
-  <template data-mui-avatar-placeholder><span>...</span></template>
-  <template data-mui-avatar-fallback><span>?</span></template>
-</mui-avatar>
+  <template data-m-avatar-placeholder><span>...</span></template>
+  <template data-m-avatar-fallback><span>?</span></template>
+</m-avatar>
 ```
 
 The original image and content nodes are preserved. Ordinary fallback content is wrapped
@@ -77,35 +77,35 @@ over generated host semantics.
 | `size` | `size="tiny\|small\|medium\|large\|huge"` or a positive numeric pixel value; `.size` accepts a string or number. | 🟢 Verified; 22/28/34/40/46px content boxes, default 34px. Borders add 4px to the outer dimensions. |
 | `round` | Default is a 3px-radius square; `round` requests a circle and `square` explicitly requests the default shape. | 🟢 Verified against the default reference; `round` wins when both are present. |
 | `bordered` | Boolean `bordered` attribute and external CSS. | 🟢 Verified. |
-| `color` | `--mui-avatar-background` and `--mui-avatar-color` in author CSS. | 🟢 Verified as CSS tokens, not an inline style prop. |
-| `object-fit` | `object-fit` attribute or `--mui-avatar-object-fit`; accepts native object-fit keywords. | 🟢 Verified; default fill, matching upstream's unset native image fit; use cover to crop. |
+| `color` | `--m-avatar-background` and `--m-avatar-color` in author CSS. | 🟢 Verified as CSS tokens, not an inline style prop. |
+| `object-fit` | `object-fit` attribute or `--m-avatar-object-fit`; accepts native object-fit keywords. | 🟢 Verified; default fill, matching upstream's unset native image fit; use cover to crop. |
 | `img-props` | Author native image attributes directly, including alt, decoding and referrer policy. | 🟢 Verified as native HTML, not an object passthrough API. |
 | `lazy` | Boolean `lazy` / `.lazy`, using native image loading. | 🟢 Verified; authored loading behavior is restored when the override is removed. |
 | `intersection-observer-options` | Native image lazy loading. | ⏭️ Intentionally omitted; no redundant observer configuration. |
-| `on-error` | Bubbling `mui:error`; detail contains `src`, `fallback` and `state`. | 🟢 Verified as notification; the fallback policy is explicit, not controlled by an event handler return value. |
+| `on-error` | Bubbling `m:error`; detail contains `src`, `fallback` and `state`. | 🟢 Verified as notification; the fallback policy is explicit, not controlled by an event handler return value. |
 | Default content | Authored text/image/icon nodes. | 🟢 Verified without a VNode renderer. |
-| Fallback slot | `template[data-mui-avatar-fallback]` or authored `span[data-mui-avatar-fallback]`. | 🟢 Verified as light-DOM content, not native slot projection. |
-| Placeholder slot | `template[data-mui-avatar-placeholder]` or authored `span[data-mui-avatar-placeholder]`. | 🟢 Verified as light-DOM content. |
+| Fallback slot | `template[data-m-avatar-fallback]` or authored `span[data-m-avatar-fallback]`. | 🟢 Verified as light-DOM content, not native slot projection. |
+| Placeholder slot | `template[data-m-avatar-placeholder]` or authored `span[data-m-avatar-placeholder]`. | 🟢 Verified as light-DOM content. |
 | Automatic text fitting | Natural-width text scaled by `min(0.9 × hostWidth / textWidth, 0.9 × hostHeight / textHeight, 1)`. | 🟢 Verified against rendered Naive short/long text; scoped native ResizeObserver updates fit without replacing content or truncating labels. |
 | Theme/render framework plumbing | External CSS, native children and DOM events. | ⏭️ Framework-specific API compatibility is intentionally omitted. |
 
-`mui:load` is an additional bubbling notification with `{ src }`. State is exposed through
-`data-mui-avatar-state="empty|loading|loaded|error"`. Property assignment does not fabricate
+`m:load` is an additional bubbling notification with `{ src }`. State is exposed through
+`data-m-avatar-state="empty|loading|loaded|error"`. Property assignment does not fabricate
 user input/change events. Numeric `size` and the `object-fit` convenience attribute write
 isolated CSS custom properties. Automatic text fitting also writes its private
-`--mui-avatar-text-scale` value on the content wrapper; account for these inline CSSOM writes
+`--m-avatar-text-scale` value on the content wrapper; account for these inline CSSOM writes
 in your CSP. The component does not inject stylesheets or change authored font-size/transform
 declarations.
 
 Default text is white, 14px, inherited normal weight; its line-height is 1.25. Light
-background is `#ccc`; explicit `data-mui-theme="dark"` uses `#424245` and `#18181c`
-border (light border is white). `--mui-avatar-size`, `--mui-avatar-font-size`,
-`--mui-avatar-radius`, `--mui-avatar-background`, `--mui-avatar-color`,
-`--mui-avatar-border-color` and `--mui-avatar-object-fit` remain author overrides.
+background is `#ccc`; explicit `data-m-theme="dark"` uses `#424245` and `#18181c`
+border (light border is white). `--m-avatar-size`, `--m-avatar-font-size`,
+`--m-avatar-radius`, `--m-avatar-background`, `--m-avatar-color`,
+`--m-avatar-border-color` and `--m-avatar-object-fit` remain author overrides.
 Numeric size/fit attributes temporarily override authored inline tokens and restore them
 when removed; source/text updates and reconnection do not erase later author changes,
 even while the corresponding convenience attribute remains present.
-Named child sizes override inherited group sizing; an authored inline `--mui-avatar-size`
+Named child sizes override inherited group sizing; an authored inline `--m-avatar-size`
 can override a named preset. Ordinary CSS specificity/cascade governs stylesheet overrides.
 
 Text is measured with untransformed integer `offsetWidth`/`offsetHeight`, including the
@@ -120,11 +120,11 @@ polyfill or a certification of older browsers.
 ## Group
 
 ```html
-<mui-avatar-group max="2" label="Project team">
-  <mui-avatar alt="Ada">A</mui-avatar>
-  <mui-avatar alt="Grace">G</mui-avatar>
-  <mui-avatar alt="Linus">L</mui-avatar>
-</mui-avatar-group>
+<m-avatar-group max="2" label="Project team">
+  <m-avatar alt="Ada">A</m-avatar>
+  <m-avatar alt="Grace">G</m-avatar>
+  <m-avatar alt="Linus">L</m-avatar>
+</m-avatar-group>
 ```
 
 | Upstream item / target feature | MarkupUI equivalent | Status / scope |
@@ -134,7 +134,7 @@ polyfill or a certification of older browsers.
 | `size` / appearance shared across options | CSS custom properties on the group, or attributes on each child. | 🟢 Verified through inheritance; no second group prop model. |
 | `options` | Authored child avatars; application code may clone an authored template for data-driven groups. | ⏭️ A library-owned options renderer is intentionally omitted. |
 | `expand-on-hover` | Native `details`/`summary` disclosure usable by keyboard, touch and pointer. | ⏭️ Hover-only expansion is intentionally omitted. |
-| Avatar/default slot | Native child `mui-avatar` elements. | 🟢 Verified, preserving identity and document order. |
+| Avatar/default slot | Native child `m-avatar` elements. | 🟢 Verified, preserving identity and document order. |
 | Rest slot | Generated native summary; customize `rest-label` and CSS. | ⏭️ Arbitrary render callbacks are omitted; the fixed semantic disclosure is implemented. |
 
 Overflow avatars move into the native disclosure rather than being recreated. Group updates

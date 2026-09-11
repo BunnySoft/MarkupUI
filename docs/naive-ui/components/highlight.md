@@ -26,7 +26,7 @@ The [new default-style audit](../../style-audit/components/highlight.md) verifie
 pinned Highlight has no injected component stylesheet/theme. Native mark colors and zero
 radius now replace the old pale-yellow/inherited-color/rounded defaults. Typography and
 padding already matched. A bare helper target retains default whitespace; the optional
-`mui-highlight` class still explicitly opts into preserved whitespace and long-text wrapping.
+`m-highlight` class still explicitly opts into preserved whitespace and long-text wrapping.
 No matching, parsing, validation, DOM ownership or API scope was expanded.
 
 ## Migration steps
@@ -69,7 +69,7 @@ declarations. Local helper APIs/limits are documented separately, not invented u
 | --- | --- | --- | --- | --- |
 | [`auto-escape`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L22) | Prop | Always-literal safe-default behavior; no autoEscape switch. Raw-regexp false mode is intentionally excluded. | 🟢 Verified ADAPTED literal path | Metacharacters/HTML/regex-looking strings stay literal; unknown autoEscape option throws before DOM mutation. Bounded native matching, no user regex program. |
 | [`case-sensitive`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L23) | Prop | caseSensitive boolean option; default false, explicit helper update. | 🟢 Verified ADAPTED target | Unicode simple folding with original UTF-16 offsets; never lowercase the whole text. No locale/full-fold/normalization promise. |
-| [`highlight-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L24) | Prop | highlightClass string option on native marks plus fixed mui-highlight-mark class. | 🟢 Verified ADAPTED target | Native class property, multiple classes, 256-unit bound and attribute-injection checks; no inline styles. |
+| [`highlight-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L24) | Prop | highlightClass string option on native marks plus fixed m-highlight-mark class. | 🟢 Verified ADAPTED target | Native class property, multiple classes, 256-unit bound and attribute-injection checks; no inline styles. |
 | [`highlight-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L25) | Prop | External classes/color tokens instead of object/string forwarding. | ⏭️ Intentionally omitted | No style-object bridge or CSS-in-JS; unsupported helper option rejected. |
 | [`highlight-tag`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L26) | Prop | Rendering always uses native mark; arbitrary tags/components are not accepted. | ⏭️ Intentionally omitted | No interactive/raw-text tag constructor or render callback; unsupported option rejected atomically. |
 | [`patterns`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/highlight/demos/enUS/index.demo-entry.md#L27) | Prop | Explicit readonly string array, default empty (also the source runtime default). | 🟢 Verified ADAPTED target | Empty entries ignored, exact duplicates removed, earliest/input-order/non-overlap rules; 64-pattern, length/work/output bounds. No mutation or attribute parser. |

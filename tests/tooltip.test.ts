@@ -9,21 +9,21 @@ describe("audited Tooltip presentation", () => {
   const base = readFileSync("src/components/popover/popover.css", "utf8")
 
   it("corrects the ordinary skin without overriding the retained raw geometry", () => {
-    expect(css).toContain(".mui-tooltip:not(.mui-popover--raw)")
-    expect(css).toContain("padding: var(--mui-popover-padding, 8px 14px)")
-    expect(css).toContain("border-radius: var(--mui-popover-radius, 3px)")
+    expect(css).toContain(".m-tooltip:not(.m-popover--raw)")
+    expect(css).toContain("padding: var(--m-popover-padding, 8px 14px)")
+    expect(css).toContain("border-radius: var(--m-popover-radius, 3px)")
     expect(css).toContain("border-width: 0")
-    const common = css.match(/\.mui-popover\.mui-tooltip \{([^}]+)\}/)![1]!
+    const common = css.match(/\.m-popover\.m-tooltip \{([^}]+)\}/)![1]!
     expect(common).not.toMatch(/(?:padding|border-radius|box-shadow):/)
   })
 
   it("consumes inherited author tokens instead of assigning defaults that shadow them", () => {
-    expect(css).not.toMatch(/(?:^|[;{])\s*--mui-popover-[\w-]+\s*:/m)
-    expect(css).toContain("var(--mui-popover-max-width, 20rem)")
-    expect(css).toContain("var(--mui-popover-color, var(--_pop-c, #fff))")
-    expect(css).toContain("var(--mui-popover-background, var(--_pop-b, #262626))")
-    expect(css).toContain("font-size: var(--mui-font-size, 14px)")
-    expect(css).toContain("line-height: var(--mui-line-height, 1.6)")
+    expect(css).not.toMatch(/(?:^|[;{])\s*--m-popover-[\w-]+\s*:/m)
+    expect(css).toContain("var(--m-popover-max-width, 20rem)")
+    expect(css).toContain("var(--m-popover-color, var(--_pop-c, #fff))")
+    expect(css).toContain("var(--m-popover-background, var(--_pop-b, #262626))")
+    expect(css).toContain("font-size: var(--m-font-size, 14px)")
+    expect(css).toContain("line-height: var(--m-line-height, 1.6)")
   })
 
   it("reuses the composed base's matching dark overlay palette without duplicating theme state", () => {
@@ -31,13 +31,13 @@ describe("audited Tooltip presentation", () => {
       expect(base).toContain(`${name}:`)
       expect(css).toContain(`var(${name},`)
     }
-    expect(css).not.toContain("data-mui-theme")
+    expect(css).not.toContain("data-m-theme")
     expect(css).not.toContain("@import")
-    expect(base).toContain(":where(:not(.mui-tooltip))")
+    expect(base).toContain(":where(:not(.m-tooltip))")
   })
 
   it("keeps clipping and higher-specificity print overrides independent of base load order", () => {
-    expect(css).toContain(".mui-popover.mui-tooltip")
+    expect(css).toContain(".m-popover.m-tooltip")
     expect(css).toContain("overflow: clip")
     expect(css).toContain("@media (forced-colors: active)")
     expect(css).toContain("outline: 1px solid")
@@ -68,8 +68,8 @@ function nodes() {
   trigger.type = "button"
   trigger.textContent = "A meaningful action"
   const panel = document.createElement("span")
-  panel.id = `tip-${document.querySelectorAll(".mui-tooltip").length}`
-  panel.className = "mui-popover mui-tooltip"
+  panel.id = `tip-${document.querySelectorAll(".m-tooltip").length}`
+  panel.className = "m-popover m-tooltip"
   panel.setAttribute("role", "tooltip")
   panel.setAttribute("popover", "manual")
   panel.innerHTML = "Authored <strong>description</strong>."
@@ -259,7 +259,7 @@ describe("Tooltip description semantics over shared native Popover", () => {
     span.tabIndex = 0
     document.body.append(span)
     expect(() => createTooltip(span, panel)).toThrow("native focusable")
-    const legacy = document.createElement("mui-tooltip")
+    const legacy = document.createElement("m-tooltip")
     document.body.append(legacy)
     legacy.append(trigger)
     expect(() => createTooltip(trigger, panel)).toThrow("legacy")
@@ -406,7 +406,7 @@ describe("Tooltip lifecycle, validation and shared placement", () => {
   it("disconnects an open panel when interactive children or attributes appear", async () => {
     const first = bind()
     const error = vi.fn()
-    first.panel.addEventListener("mui:tooltip-error", error)
+    first.panel.addEventListener("m:tooltip-error", error)
     first.controller.open()
     const button = document.createElement("button")
     first.panel.append(button)
@@ -426,7 +426,7 @@ describe("Tooltip lifecycle, validation and shared placement", () => {
     button.autofocus = true
     panel.append(button)
     const error = vi.fn()
-    panel.addEventListener("mui:tooltip-error", error)
+    panel.addEventListener("m:tooltip-error", error)
     panel.showPopover()
     expect(controller.show).toBe(false)
     expect(controller.connected).toBe(false)
@@ -479,7 +479,7 @@ describe("Tooltip lifecycle, validation and shared placement", () => {
     outerTrigger.getBoundingClientRect = () => rect(100, 100, 100, 30)
     const outer = document.createElement("div")
     outer.id = "outer"
-    outer.className = "mui-popover"
+    outer.className = "m-popover"
     outer.setAttribute("popover", "auto")
     outer.getBoundingClientRect = () => rect(0, 0, 300, 200)
     outer.append(trigger, panel)

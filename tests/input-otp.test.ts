@@ -8,13 +8,13 @@ const helpers: { disconnect(): void }[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 15))
 function fixture(options: InputOtpOptions = {}, initial = "") {
   const length = options.length ?? 6, characters = options.characters ?? "digits"
-  document.body.innerHTML = `<form id="codes"><label for="code">Code</label><div class="mui-input" data-input id="root">
-    <input class="mui-input-otp" data-input-control id="code" name="code[0].text" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="${length}" pattern="${characters === "digits" ? "[0-9]" : "[A-Za-z0-9]"}{${length}}" required aria-describedby="help"></div>
+  document.body.innerHTML = `<form id="codes"><label for="code">Code</label><div class="m-input" data-input id="root">
+    <input class="m-input-otp" data-input-control id="code" name="code[0].text" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="${length}" pattern="${characters === "digits" ? "[0-9]" : "[A-Za-z0-9]"}{${length}}" required aria-describedby="help"></div>
     <button name="intent" value="local">Continue</button></form><p id="help">Help</p><p id="status">Original status</p><p id="feedback" hidden></p><button id="outside" type="button">Outside</button>`
   const input = document.querySelector<HTMLInputElement>("#code")!, status = document.querySelector<HTMLElement>("#status")!
   input.defaultValue = initial
   const helper = createInputOtp(input, { ...options, status }); helpers.push(helper)
-  const completed = vi.fn(); input.addEventListener("mui:input-otp-complete", completed)
+  const completed = vi.fn(); input.addEventListener("m:input-otp-complete", completed)
   return { helper, input, status, completed, form: document.querySelector("form")! }
 }
 function edit(input: HTMLInputElement, value: string) {

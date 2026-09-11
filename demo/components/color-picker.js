@@ -5,7 +5,7 @@ const events = document.querySelector("#events"), output = document.querySelecto
 let inputs = 0, changes = 0
 helper.control.addEventListener("input", () => { inputs++; events.textContent = `Color input events: ${inputs}; change events: ${changes}. Not framework confirm/complete callbacks.` })
 helper.control.addEventListener("change", () => { changes++; events.textContent = `Color input events: ${inputs}; change events: ${changes}. Not framework confirm/complete callbacks.` })
-root.addEventListener("mui:color-picker-error", () => { events.textContent = "Unsupported native anatomy/value; enhancement withdrawn without flattening data." })
+root.addEventListener("m:color-picker-error", () => { events.textContent = "Unsupported native anatomy/value; enhancement withdrawn without flattening data." })
 document.querySelector("#capability").textContent = `Native showPicker method present: ${typeof helper.control.showPicker === "function"}. No automatic invocation, open-state inference, screen picker or clipboard access.`
 function inspect(event) {
   event.preventDefault()

@@ -20,7 +20,7 @@ the native icon slot supplies the useful content equivalent.
 
 | Asset | Purpose |
 | --- | --- |
-| `dist/markup-ui-empty.js` | ESM; exports `MuiEmpty`, `registerEmpty()`; registers on browser import. |
+| `dist/markup-ui-empty.js` | ESM; exports `MEmpty`, `registerEmpty()`; registers on browser import. |
 | `dist/markup-ui-empty.global.js` | Classic script; registers and exposes `MarkupUIEmpty`. |
 | `dist/markup-ui-empty.css` | External component and CSS-only native display styling. |
 | `dist/components/empty/index.d.ts` | Type declarations. |
@@ -31,9 +31,9 @@ the native icon slot supplies the useful content equivalent.
 <script defer src="./vendor/markup-ui-empty.global.js"></script>
 <script defer src="./app.js"></script>
 
-<mui-empty description="No reports yet">
-  <div data-mui-empty-extra><button type="button">Create report</button></div>
-</mui-empty>
+<m-empty description="No reports yet">
+  <div data-m-empty-extra><button type="button">Create report</button></div>
+</m-empty>
 ```
 
 Application ESM: `import "@dataengine/markup-ui/empty";`. Serve/link the
@@ -50,23 +50,23 @@ ceiling remain unchanged; external Empty CSS isolates the enhanced layout from l
 ## Native regions and fallback precedence
 
 ```html
-<mui-empty role="region" aria-labelledby="empty-heading">
-  <svg data-mui-empty-icon aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+<m-empty role="region" aria-labelledby="empty-heading">
+  <svg data-m-empty-icon aria-hidden="true" focusable="false" viewBox="0 0 24 24">
     <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor"></circle>
   </svg>
-  <div data-mui-empty-description>
+  <div data-m-empty-description>
     <h2 id="empty-heading">No reports yet</h2>
     <p>Create a report or browse the examples.</p>
   </div>
-  <div data-mui-empty-extra>
+  <div data-m-empty-extra>
     <button type="button">Create report</button>
     <a href="./examples.html">Browse examples</a>
   </div>
-</mui-empty>
+</m-empty>
 ```
 
-Use one direct `data-mui-empty-icon`, `data-mui-empty-description` and
-`data-mui-empty-extra` region each. Ordinary unmarked text/element children supply the
+Use one direct `data-m-empty-icon`, `data-m-empty-description` and
+`data-m-empty-extra` region each. Ordinary unmarked text/element children supply the
 default description. Native heading/content nodes move into a description wrapper without
 cloning; extra controls remain authored native controls.
 
@@ -163,9 +163,9 @@ before insertion; the demo exercises this path without a renderer.
 For fully static content, link only the CSS:
 
 ```html
-<section class="mui-empty" data-size="small">
-  <h2 data-mui-empty-description>No archived reports</h2>
-  <div data-mui-empty-extra><a href="./create.html">Create your first report</a></div>
+<section class="m-empty" data-size="small">
+  <h2 data-m-empty-description>No archived reports</h2>
+  <div data-m-empty-extra><a href="./create.html">Create your first report</a></div>
 </section>
 ```
 
@@ -183,9 +183,9 @@ usable without JavaScript; a description attribute alone is not a visible no-JS 
 | `show-description` | `show-description="false"` / `.showDescription`, true default. | 🟢 CSS visibility only; authored nodes and extra actions retained. |
 | `show-icon` | `show-icon="false"` / `.showIcon`, true default. | 🟢 Independent generated/custom icon visibility; preserves authored icon identity/ARIA. |
 | `size` | Attribute / `.size`: tiny/small/medium/large/huge. | 🟢 Pinned icon-size ladder; medium default, CSS-only geometry. |
-| Default slot | Native unmarked children or `data-mui-empty-description`. | 🟢 Authored headings/text replace fallback without a VNode renderer or Shadow DOM slot. |
-| Extra slot | Native `data-mui-empty-extra` region and controls. | 🟢 Original actions, form semantics and listeners preserved; no mandatory Button module. |
-| Icon slot | Native HTML/SVG/image `data-mui-empty-icon`. | 🟢 Original nodes/attributes preserved; no icon-library dependency. |
+| Default slot | Native unmarked children or `data-m-empty-description`. | 🟢 Authored headings/text replace fallback without a VNode renderer or Shadow DOM slot. |
+| Extra slot | Native `data-m-empty-extra` region and controls. | 🟢 Original actions, form semantics and listeners preserved; no mandatory Button module. |
+| Icon slot | Native HTML/SVG/image `data-m-empty-icon`. | 🟢 Original nodes/attributes preserved; no icon-library dependency. |
 | `renderIcon` (source-declared prop) | Author native icon nodes instead. | ⏭️ VNode/provider render hook omitted; the source-only declaration is not transplanted as a callback contract. |
 | `theme`, `themeOverrides`, `builtinThemeOverrides` | External CSS/custom properties. | ⏭️ Framework theme objects, provider injection and runtime style adapters omitted. |
 
@@ -194,15 +194,15 @@ defaults. `icon` is the documented legacy extension above, not a new upstream in
 
 ### External CSS tokens
 
-`--mui-empty-icon-size`, `--mui-empty-icon-color`, `--mui-empty-font-size`,
-`--mui-empty-line-height`, `--mui-empty-color`, `--mui-empty-description-color`,
-`--mui-empty-extra-color`, `--mui-empty-gap`, `--mui-empty-extra-gap`,
-`--mui-empty-extra-margin`, `--mui-empty-min-height`, `--mui-empty-padding` and
-`--mui-empty-background` customize native layout. Defaults now follow the rendered reference:
+`--m-empty-icon-size`, `--m-empty-icon-color`, `--m-empty-font-size`,
+`--m-empty-line-height`, `--m-empty-color`, `--m-empty-description-color`,
+`--m-empty-extra-color`, `--m-empty-gap`, `--m-empty-extra-gap`,
+`--m-empty-extra-margin`, `--m-empty-min-height`, `--m-empty-padding` and
+`--m-empty-background` customize native layout. Defaults now follow the rendered reference:
 zero minimum height/padding, a centered 28/34/40/46/52px icon, 8px between a visible icon
 and description, and 12px before authored extra content, including when extra is the only
-visible region. `--mui-empty-gap` controls the icon-to-description margin;
-`--mui-empty-extra-margin` independently controls the complete extra margin (it no longer
+visible region. `--m-empty-gap` controls the icon-to-description margin;
+`--m-empty-extra-margin` independently controls the complete extra margin (it no longer
 adds to a host flex gap). Hiding the icon removes the description gap.
 
 Description line height and text alignment inherit from the surrounding page, as upstream;
@@ -211,8 +211,8 @@ Wrapped descriptions are start-aligned unless the author supplies another alignm
 Extra content remains centered. The old 140px minimum and 24px padding are available by
 setting the existing tokens; add `justify-content: center` when vertical centering is desired.
 
-Set `data-mui-theme="dark"` on the host or an ancestor for explicit dark defaults; a nested
-`data-mui-theme="light"` scope resets them. Light icon/description use `#c2c2c2`, dark
+Set `data-m-theme="dark"` on the host or an ancestor for explicit dark defaults; a nested
+`data-m-theme="light"` scope resets them. Light icon/description use `#c2c2c2`, dark
 icon/description use white at `.38`, and extra text uses `#333639` / white at `.82`.
 These are upstream's subdued visual defaults, not an accessible-contrast certification;
 override description/icon colors when your application requires stronger contrast.

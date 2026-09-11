@@ -26,7 +26,7 @@ export function createBackTop(action: HTMLButtonElement | HTMLAnchorElement, opt
   const document = action?.ownerDocument
   const view = document?.defaultView
   if (!view || !(action instanceof view.HTMLButtonElement || action instanceof view.HTMLAnchorElement)
-    || !action.classList.contains("mui-back-top")) throw new TypeError("Back Top requires an authored button or fragment link with class mui-back-top.")
+    || !action.classList.contains("m-back-top")) throw new TypeError("Back Top requires an authored button or fragment link with class m-back-top.")
   if (!options || typeof options !== "object" || Array.isArray(options)) throw new TypeError("Back Top options must be an object.")
   for (const key of Object.keys(options)) if (!["root", "visibilityHeight", "show", "behavior"].includes(key)) throw new TypeError(`Unsupported Back Top option: ${key}.`)
   const height = options.visibilityHeight === undefined ? 180 : options.visibilityHeight
@@ -52,7 +52,7 @@ export function createBackTop(action: HTMLButtonElement | HTMLAnchorElement, opt
   const removers: (() => void)[] = []
   function validate() {
     if (action.ownerDocument !== document || action.getRootNode() !== document
-      || !action.classList.contains("mui-back-top") || action.hasAttribute("role")
+      || !action.classList.contains("m-back-top") || action.hasAttribute("role")
       || action.parentElement?.closest("a[href], button, summary, label")
       || action.hasAttribute("tabindex") || action.querySelector("a, button, input, select, textarea, summary, [tabindex], [contenteditable], [role]")) {
       throw new TypeError("Keep Back Top a connected native action without nested controls, custom roles or tabindex.")
@@ -78,7 +78,7 @@ export function createBackTop(action: HTMLButtonElement | HTMLAnchorElement, opt
   }
   function fail(error: unknown) {
     controller.disconnect()
-    action.dispatchEvent(new view!.CustomEvent("mui:back-top-error", { detail: { error } }))
+    action.dispatchEvent(new view!.CustomEvent("m:back-top-error", { detail: { error } }))
   }
   function schedule() {
     if (connected && !frame) frame = view!.requestAnimationFrame(() => {
@@ -133,7 +133,7 @@ export function createBackTop(action: HTMLButtonElement | HTMLAnchorElement, opt
       const changed = threshold !== null && threshold !== next
       threshold = next
       paint()
-      if (changed) action.dispatchEvent(new view!.CustomEvent("mui:back-top-update-show", { detail: { show: next } }))
+      if (changed) action.dispatchEvent(new view!.CustomEvent("m:back-top-update-show", { detail: { show: next } }))
     },
     refresh() {
       if (!connected) throw new Error("Connect Back Top before refreshing.")

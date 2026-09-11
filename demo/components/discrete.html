@@ -38,22 +38,22 @@
       </div>
     </div>
     <p data-example-status role="status">No JavaScript is needed to read this ordinary composition example.</p>
-    <div class="mui-loading-bar" data-loading-bar data-example-loading-bar>
+    <div class="m-loading-bar" data-loading-bar data-example-loading-bar>
       <progress max="100" value="25" aria-label="Local example work">25%</progress>
       <span data-loading-bar-status>Authored baseline: 25 of 100.</span>
     </div>
-    <div data-example-message class="mui-feedback-host mui-message-host">
-      <ol class="mui-feedback-list" data-message-items aria-label="Page messages"></ol>
-      <p class="mui-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p>
+    <div data-example-message class="m-feedback-host m-message-host">
+      <ol class="m-feedback-list" data-message-items aria-label="Page messages"></ol>
+      <p class="m-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p>
     </div>
-    <div data-example-notification class="mui-feedback-host mui-notification-host">
-      <div class="mui-feedback-list" data-notification-items></div>
-      <p class="mui-feedback-announcer" data-notification-announcer role="status" aria-atomic="true"></p>
+    <div data-example-notification class="m-feedback-host m-notification-host">
+      <div class="m-feedback-list" data-notification-items></div>
+      <p class="m-feedback-announcer" data-notification-announcer role="status" aria-atomic="true"></p>
     </div>
     <div data-example-dialog-owner></div><div data-example-modal-owner></div>
     <section id="inline-alternative"><h2>Native inline alternative</h2><p>When modality is unavailable, use this ordinary document content and native controls instead of a fake focus trap or portal.</p><label>Unrelated native input <input id="unrelated-input"></label></section>
     <template data-example-dialog-template>
-      <dialog class="mui-native-dialog mui-dialog" aria-label="Local confirmation">
+      <dialog class="m-native-dialog m-dialog" aria-label="Local confirmation">
         <header data-dialog-header><h2 data-dialog-title>Confirm local action</h2><button type="button" data-dialog-action="close">Close</button></header>
         <p data-dialog-content>Confirm starts a local pending decision. The unmarked native button resolves it.</p>
         <button type="button" data-resolve-decision>Complete local decisions</button>
@@ -63,7 +63,7 @@
       </dialog>
     </template>
     <template data-example-modal-template>
-      <dialog class="mui-native-dialog mui-modal" aria-label="Native workspace">
+      <dialog class="m-native-dialog m-modal" aria-label="Native workspace">
         <h2 data-modal-title tabindex="-1" autofocus>Native workspace</h2>
         <p>Feedback roots are inside this modal, not projected above it by z-index.</p>
         <div class="buttons">
@@ -73,8 +73,8 @@
           <button type="button" data-dispose-scope>Dispose this whole example scope</button>
         </div>
         <p data-inside-error role="status"></p>
-        <div data-inside-message class="mui-feedback-host mui-message-host"><ol class="mui-feedback-list" data-message-items aria-label="Workspace messages"></ol><p class="mui-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p></div>
-        <div data-inside-notification class="mui-feedback-host mui-notification-host"><div class="mui-feedback-list" data-notification-items></div><p class="mui-feedback-announcer" data-notification-announcer role="status" aria-atomic="true"></p></div>
+        <div data-inside-message class="m-feedback-host m-message-host"><ol class="m-feedback-list" data-message-items aria-label="Workspace messages"></ol><p class="m-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p></div>
+        <div data-inside-notification class="m-feedback-host m-notification-host"><div class="m-feedback-list" data-notification-items></div><p class="m-feedback-announcer" data-notification-announcer role="status" aria-atomic="true"></p></div>
         <form method="dialog"><button value="workspace-closed">Close workspace</button></form>
       </dialog>
     </template>

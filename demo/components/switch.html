@@ -15,12 +15,12 @@
     <p>The native input itself paints the rail and thumb. On/off text is decorative; the accessible setting name stays fixed. Loading cancels native activation without disabling submission or moving focus.</p>
     <form id="settings" method="get" action="switch.html">
       <p>
-        <label class="mui-switch" data-switch id="alerts-switch">
+        <label class="m-switch" data-switch id="alerts-switch">
           <input data-switch-control id="alerts" type="checkbox" role="switch" name="alerts" value="enabled" checked aria-labelledby="alerts-label" aria-describedby="alerts-help">
-          <span class="mui-switch__label" id="alerts-label">Email alerts</span>
-          <span class="mui-switch__state" aria-hidden="true">
-            <span class="mui-switch__checked-icon">✓</span><span class="mui-switch__on">On</span>
-            <span class="mui-switch__unchecked-icon">×</span><span class="mui-switch__off">Off</span>
+          <span class="m-switch__label" id="alerts-label">Email alerts</span>
+          <span class="m-switch__state" aria-hidden="true">
+            <span class="m-switch__checked-icon">✓</span><span class="m-switch__on">On</span>
+            <span class="m-switch__unchecked-icon">×</span><span class="m-switch__off">Off</span>
           </span>
           <span data-switch-loading hidden aria-hidden="true">Working…</span>
         </label>
@@ -28,30 +28,30 @@
       <p id="alerts-help">Checked submits the string “enabled”. Off submits nothing. No hidden unchecked value. Loading is an explicit local flag, not a network request.</p>
       <fieldset id="preferences">
         <legend>Native fieldset</legend>
-        <label class="mui-switch" data-switch id="digest-switch" data-size="small" data-square>
+        <label class="m-switch" data-switch id="digest-switch" data-size="small" data-square>
           <input data-switch-control id="digest" type="checkbox" role="switch" name="digest" value="daily" aria-labelledby="digest-label">
-          <span class="mui-switch__label" id="digest-label">Daily digest with a longer wrapping setting name</span>
-          <span class="mui-switch__state" aria-hidden="true"><span class="mui-switch__icon">✉</span></span>
+          <span class="m-switch__label" id="digest-label">Daily digest with a longer wrapping setting name</span>
+          <span class="m-switch__state" aria-hidden="true"><span class="m-switch__icon">✉</span></span>
           <span data-switch-loading hidden aria-hidden="true">Busy</span>
         </label>
       </fieldset>
       <p>
-        <label class="mui-switch" data-switch id="external-switch" data-size="large">
+        <label class="m-switch" data-switch id="external-switch" data-size="large">
           <input data-switch-control id="external-setting" type="checkbox" role="switch" name="external" form="other-settings" value="external-on" checked aria-labelledby="external-label">
-          <span class="mui-switch__label" id="external-label">Externally associated setting</span>
-          <span class="mui-switch__state" aria-hidden="true"><span class="mui-switch__on">Enabled</span><span class="mui-switch__off">Disabled</span></span>
+          <span class="m-switch__label" id="external-label">Externally associated setting</span>
+          <span class="m-switch__state" aria-hidden="true"><span class="m-switch__on">Enabled</span><span class="m-switch__off">Disabled</span></span>
         </label>
       </p>
       <p>
-        <label class="mui-switch" data-switch id="required-switch" data-status="warning">
+        <label class="m-switch" data-switch id="required-switch" data-status="warning">
           <input data-switch-control id="required-setting" type="checkbox" role="switch" name="consent" value="yes" required aria-labelledby="required-label">
-          <span class="mui-switch__label" id="required-label">Required local consent (native constraint)</span>
+          <span class="m-switch__label" id="required-label">Required local consent (native constraint)</span>
         </label>
       </p>
       <p>
-        <label class="mui-switch">
+        <label class="m-switch">
           <input id="author-disabled" type="checkbox" role="switch" name="disabled-example" value="omitted" disabled checked aria-labelledby="disabled-label">
-          <span class="mui-switch__label" id="disabled-label">Author-disabled CSS-only switch</span>
+          <span class="m-switch__label" id="disabled-label">Author-disabled CSS-only switch</span>
         </label>
       </p>
       <input type="hidden" name="local" value="only">

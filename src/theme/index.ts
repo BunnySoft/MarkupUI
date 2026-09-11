@@ -9,11 +9,11 @@ const appliedKeys = new WeakMap<HTMLElement, Set<string>>()
 function applyTokens(name: string, root: HTMLElement): void {
   const tokens = themes.get(name)
   if (tokens === undefined) throw new Error(`Unknown MarkupUI theme '${name}'.`)
-  root.dataset.muiTheme = name
-  appliedKeys.get(root)?.forEach((key) => root.style.removeProperty(`--mui-${key}`))
+  root.dataset.mTheme = name
+  appliedKeys.get(root)?.forEach((key) => root.style.removeProperty(`--m-${key}`))
   const keys = new Set<string>()
   for (const [key, value] of Object.entries(tokens)) {
-    root.style.setProperty(`--mui-${key}`, value)
+    root.style.setProperty(`--m-${key}`, value)
     keys.add(key)
   }
   appliedKeys.set(root, keys)
@@ -25,15 +25,15 @@ export const theme = {
   },
   set(name: string, root: HTMLElement = document.documentElement): void {
     applyTokens(name, root)
-    localStorage.setItem("mui-theme", name)
+    localStorage.setItem("m-theme", name)
     subscribers.forEach((subscriber) => subscriber(name))
-    root.dispatchEvent(new CustomEvent("mui:themechange", { detail: { name } }))
+    root.dispatchEvent(new CustomEvent("m:themechange", { detail: { name } }))
   },
   apply(name: string, root: HTMLElement): void {
     applyTokens(name, root)
   },
   current(root: HTMLElement = document.documentElement): string {
-    return root.dataset.muiTheme ?? ""
+    return root.dataset.mTheme ?? ""
   },
   subscribe(subscriber: (name: string) => void): () => void {
     subscribers.add(subscriber)

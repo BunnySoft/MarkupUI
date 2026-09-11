@@ -8,14 +8,14 @@ MarkupUI currently provides:
 
 | Current surface | Behavior | Gap |
 | --- | --- | --- |
-| `mui.state.create` | Explicit `get`, `set`, `subscribe`. | No collection operations/transactions. |
-| `mui.state.bind` | Scans the current subtree once. | Does not bind later template instances. |
-| `mui-bind` | Two-way `value`, or selected `checked` controls. | Name is ambiguous. |
-| `mui-bind-property` | Selects the `mui-bind` property. | Verbose and separate from the path. |
-| `mui-text` | One-way `textContent`. | Different naming pattern. |
-| `mui-visible` | Inverse `hidden`. | Semantic inversion rather than a property binding. |
-| `mui-disabled` | One-way disabled state. | Special case for an ordinary property. |
-| Model events | `mui:input`, `mui:change`. | Native input/change are not consumed. |
+| `m.state.create` | Explicit `get`, `set`, `subscribe`. | No collection operations/transactions. |
+| `m.state.bind` | Scans the current subtree once. | Does not bind later template instances. |
+| `m-bind` | Two-way `value`, or selected `checked` controls. | Name is ambiguous. |
+| `m-bind-property` | Selects the `m-bind` property. | Verbose and separate from the path. |
+| `m-text` | One-way `textContent`. | Different naming pattern. |
+| `m-visible` | Inverse `hidden`. | Semantic inversion rather than a property binding. |
+| `m-disabled` | One-way disabled state. | Special case for an ordinary property. |
+| Model events | `m:input`, `m:change`. | Native input/change are not consumed. |
 
 The proposed language replaces those inconsistencies while preserving compatibility
 aliases initially.
@@ -48,11 +48,11 @@ Values are paths, not JavaScript expressions.
 ## Property binding
 
 ```html
-<mui-avatar
+<m-avatar
   data-bind-src="profile.src"
   data-bind-size="profile.avatarSize"
   data-bind-alt="profile.name">
-</mui-avatar>
+</m-avatar>
 ```
 
 Property names are derived from the suffix. Kebab case maps to camel case:
@@ -62,19 +62,19 @@ This channel supports actual strings, numbers, booleans, arrays, records, elemen
 functions. Arrays/records are not serialized into attributes.
 
 ```html
-<mui-avatar-group data-bind-items="people"></mui-avatar-group>
-<mui-button data-bind-disabled="form.busy">Save</mui-button>
+<m-avatar-group data-bind-items="people"></m-avatar-group>
+<m-button data-bind-disabled="form.busy">Save</m-button>
 <section data-bind-hidden="panel.hidden">Details</section>
 ```
 
 ## Attribute binding
 
 ```html
-<mui-avatar
+<m-avatar
   data-bind-src="profile.src"
   data-bind-attr-aria-label="profile.name"
   data-bind-attr-data-profile-id="profile.id">
-</mui-avatar>
+</m-avatar>
 ```
 
 Null/undefined removes the attribute. Boolean attributes use presence/removal. Other
@@ -94,7 +94,7 @@ property actually named `text` may use an explicit escape such as `data-bind-pro
 ```html
 <input data-model-value="profile.name">
 <input type="checkbox" data-model-checked="settings.enabled">
-<mui-select data-model-value="form.country"></mui-select>
+<m-select data-model-value="form.country"></m-select>
 ```
 
 `bind` is always one-way; `model` is always two-way. No direction is inferred from the
@@ -116,9 +116,9 @@ invalid.
 Rejected canonical forms:
 
 ```html
-<mui-avatar src="{Binding profile.src}"></mui-avatar>
-<mui-avatar src="{{profile.src}}"></mui-avatar>
-<mui-avatar :src="profile.src"></mui-avatar>
+<m-avatar src="{Binding profile.src}"></m-avatar>
+<m-avatar src="{{profile.src}}"></m-avatar>
+<m-avatar :src="profile.src"></m-avatar>
 ```
 
 The first two give the browser/custom element a literal invalid `src` before binding and
@@ -128,10 +128,10 @@ XML, JSX, validators and CSS selectors.
 Explicit metadata permits a valid fallback:
 
 ```html
-<mui-avatar
+<m-avatar
   src="./fallback.png"
   data-bind-src="profile.src">
-</mui-avatar>
+</m-avatar>
 ```
 
 Boolean interpolation is particularly incorrect because attribute presence means true:
@@ -175,8 +175,8 @@ OneTime and OneWayToSource are not required initially.
 Bindings are processed only under a root explicitly passed to the binder:
 
 ```js
-const store = mui.state.create(initialState)
-const dispose = mui.state.bind(document.querySelector("#app"), store)
+const store = m.state.create(initialState)
+const dispose = m.state.bind(document.querySelector("#app"), store)
 ```
 
 No global document scan or automatic `data-*` activation occurs.
@@ -185,11 +185,11 @@ No global document scan or automatic `data-*` activation occurs.
 
 | Existing | Preferred |
 | --- | --- |
-| `mui-bind="profile.name"` | `data-model-value="profile.name"` |
-| `mui-bind` + `mui-bind-property="checked"` | `data-model-checked="..."` |
-| `mui-text="profile.name"` | `data-bind-text="profile.name"` |
-| `mui-disabled="form.busy"` | `data-bind-disabled="form.busy"` |
-| `mui-visible="panel.open"` | Prefer a real `data-bind-hidden` state |
+| `m-bind="profile.name"` | `data-model-value="profile.name"` |
+| `m-bind` + `m-bind-property="checked"` | `data-model-checked="..."` |
+| `m-text="profile.name"` | `data-bind-text="profile.name"` |
+| `m-disabled="form.busy"` | `data-bind-disabled="form.busy"` |
+| `m-visible="panel.open"` | Prefer a real `data-bind-hidden` state |
 
 Legacy aliases may reuse the new engine. Removing them requires an explicit compatibility
 decision.

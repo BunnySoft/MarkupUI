@@ -40,7 +40,7 @@ No tag prop or callback is invented. Source reverse ordering is intentionally om
 
 ```html
 <link rel="stylesheet" href="./vendor/markup-ui-flex.css">
-<div class="mui-flex">
+<div class="m-flex">
   <a href="./first.html">First</a>
   <button type="button">Second native action</button>
 </div>
@@ -48,7 +48,7 @@ No tag prop or callback is invented. Source reverse ordering is intentionally om
 
 Serve/copy the stylesheet normally. There is no `./flex` JavaScript export, ESM/classic
 runtime/global, registration order rule or fake JS budget. CSS may load before or after the
-unchanged legacy aggregate. Existing mui-row/mui-stack/mui-wrap wrappers keep their own
+unchanged legacy aggregate. Existing m-row/m-stack/m-wrap wrappers keep their own
 direction/wrap/gap behavior; this is not an automatic upgrade or alias/attribute adapter.
 
 ## Native children and order
@@ -81,13 +81,13 @@ clicks or submissions. The demo submits a normal GET form to its own static exam
 
 | Native input | Retained contract |
 | --- | --- |
-| `.mui-flex` | display:flex, row direction, wrap enabled, justify-content:start, align-items:normal. |
+| `.m-flex` | display:flex, row direction, wrap enabled, justify-content:start, align-items:normal. |
 | `data-inline` | Presence selects inline-flex; absent is block-level flex. |
 | `data-vertical` | Presence selects column and forces nowrap, matching the source. |
 | `data-wrap="false"` | Turns off row wrapping. Other values/absence keep the base wrap behavior, unless vertical. |
 | `data-size="small|medium|large"` | Chooses the pinned spacing preset; absence/medium use medium. |
-| `--mui-flex-align` | Native align-items CSS value; default normal, which normally stretches flex items. |
-| `--mui-flex-justify` | Native justify-content CSS value; default start. |
+| `--m-flex-align` | Native align-items CSS value; default normal, which normally stretches flex items. |
+| `--m-flex-justify` | Native justify-content CSS value; default start. |
 
 The inline/vertical data flags are presence-only CSS switches: `data-vertical="false"` is
 still present. Remove the flag to turn it off. Wrap is an explicit string opt-out exception.
@@ -99,8 +99,8 @@ and start/end/space-between/space-around/space-evenly where the browser supports
 
 ```css
 .toolbar {
-  --mui-flex-align: center;
-  --mui-flex-justify: space-between;
+  --m-flex-align: center;
+  --m-flex-justify: space-between;
 }
 ```
 
@@ -127,8 +127,8 @@ number or JSON string.
   gap: 10px; /* Native scalar size equivalent: both gaps. */
 }
 .tuple {
-  --mui-flex-column-gap: 20px;
-  --mui-flex-row-gap: 6px;
+  --m-flex-column-gap: 20px;
+  --m-flex-row-gap: 6px;
 }
 ```
 
@@ -138,7 +138,7 @@ Do not copy tuple order directly into a CSS gap shorthand. The tokens do not swa
 vertical is present: column layout uses row-gap between successive items, so the main gap
 in this example remains 6px.
 
-`--mui-flex-row-gap` and `--mui-flex-column-gap` accept native nonnegative CSS lengths/
+`--m-flex-row-gap` and `--m-flex-column-gap` accept native nonnegative CSS lengths/
 percentages or normal. Write CSS units (or valid zero), not arbitrary unitless size numbers.
 Relative lengths/percentages obey native sizing rules; percentage gaps on indefinite axes
 may resolve differently than expected. No JS normalizes them into pixels.
@@ -149,7 +149,7 @@ in flex), rather than silently becoming a valid preset. Zero intentionally remov
 The browser handles invalid alignment/justification values likewise; no exception-catching
 parser or false validation success is provided.
 
-Each `.mui-flex` sets its own internal preset defaults, so a large outer preset does not
+Each `.m-flex` sets its own internal preset defaults, so a large outer preset does not
 silently turn a nested unspecified container into large. Public custom properties still
 inherit normally: explicitly override them, or set them to `initial` to use a nested preset,
 when an inherited custom gap/alignment is not desired. Native gap shorthands and application
@@ -159,9 +159,9 @@ selectors participate in the ordinary CSS cascade.
 
 Pinned Flex light/dark themes return the same three gap constants and consume no
 common font/color roles. Flex neither needs nor defines a palette or theme marker.
-Shared font/color tokens and `data-mui-theme` are not interpreted by this stylesheet;
+Shared font/color tokens and `data-m-theme` are not interpreted by this stylesheet;
 ordinary application-authored typography/color still inherit normally. Use the four
-`--mui-flex-*` layout tokens or native CSS, not a shared palette migration.
+`--m-flex-*` layout tokens or native CSS, not a shared palette migration.
 
 ## Narrow containers, hidden state and fallbacks
 
@@ -218,9 +218,9 @@ dimensions and print styles are application-owned, not all-browser layout certif
 
 | Upstream item | Native target | Status / limits |
 | --- | --- | --- |
-| align | --mui-flex-align / native align-items. | 🟢 Browser CSS vocabulary, no JS string adapter. |
+| align | --m-flex-align / native align-items. | 🟢 Browser CSS vocabulary, no JS string adapter. |
 | inline | Presence of data-inline. | 🟢 Native inline-flex, no semantic change. |
-| justify | --mui-flex-justify / native justify-content. | 🟢 Default start; native distribution/axes. |
+| justify | --m-flex-justify / native justify-content. | 🟢 Default start; native distribution/axes. |
 | size | Pinned presets or explicit native row/column gaps. | 🟢 Correct [horizontal, vertical] mapping, no numeric/tuple parser. |
 | vertical | Presence of data-vertical. | 🟢 Column with nowrap, including when wrap=true is authored. |
 | wrap | data-wrap=false opt-out for a row. | 🟢 No reverse-wrap or measurement/controller. |

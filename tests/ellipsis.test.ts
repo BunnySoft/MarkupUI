@@ -14,12 +14,12 @@ describe("CSS-only Ellipsis and native disclosure", () => {
     expect(pkg.exports["./ellipsis/style.css"]).toBe("./dist/markup-ui-ellipsis.css")
     expect(pkg.exports["./ellipsis"]).toBeUndefined()
     expect(readdirSync(resolve("src", "components", "ellipsis"))).toEqual(["ellipsis.css"])
-    expect(customElements.get("mui-ellipsis")).toBeUndefined()
+    expect(customElements.get("m-ellipsis")).toBeUndefined()
     expect(demo).not.toContain("<script")
   })
 
   it("retains complete original text, native emphasis and authored ARIA", () => {
-    document.body.innerHTML = '<p class="mui-ellipsis" data-multiline lang="en" aria-describedby="description">Original <strong>complete</strong> text</p><span id="description">Description</span>'
+    document.body.innerHTML = '<p class="m-ellipsis" data-multiline lang="en" aria-describedby="description">Original <strong>complete</strong> text</p><span id="description">Description</span>'
     const text = document.querySelector("p")!
     const strong = text.querySelector("strong")
     const before = text.outerHTML
@@ -31,10 +31,10 @@ describe("CSS-only Ellipsis and native disclosure", () => {
   })
 
   it("expands the same text via native summary activation without a duplicate full label", () => {
-    document.body.innerHTML = '<details class="mui-ellipsis-disclosure"><summary><span class="mui-ellipsis">Complete original content</span><span class="mui-ellipsis-hint">Expand or collapse text</span></summary></details>'
+    document.body.innerHTML = '<details class="m-ellipsis-disclosure"><summary><span class="m-ellipsis">Complete original content</span><span class="m-ellipsis-hint">Expand or collapse text</span></summary></details>'
     const details = document.querySelector("details")!
     const summary = document.querySelector("summary")!
-    const text = summary.querySelector(".mui-ellipsis")!
+    const text = summary.querySelector(".m-ellipsis")!
     const child = text.firstChild
     let clicks = 0
     summary.addEventListener("click", () => clicks++)
@@ -46,13 +46,13 @@ describe("CSS-only Ellipsis and native disclosure", () => {
     expect(clicks).toBe(2)
     expect(text.firstChild).toBe(child)
     expect(text.textContent).toBe("Complete original content")
-    expect(document.querySelectorAll(".mui-ellipsis")).toHaveLength(1)
+    expect(document.querySelectorAll(".m-ellipsis")).toHaveLength(1)
   })
 
   it("preserves authored open state, native toggle events and reconnect identity", async () => {
-    document.body.innerHTML = '<details class="mui-ellipsis-disclosure" open><summary><span class="mui-ellipsis">Original</span><span class="mui-ellipsis-hint">Full text</span></summary></details>'
+    document.body.innerHTML = '<details class="m-ellipsis-disclosure" open><summary><span class="m-ellipsis">Original</span><span class="m-ellipsis-hint">Full text</span></summary></details>'
     const details = document.querySelector("details")!
-    const text = details.querySelector(".mui-ellipsis")
+    const text = details.querySelector(".m-ellipsis")
     install()
     expect(details.open).toBe(true)
     const toggle = new Promise<void>((resolve) => details.addEventListener("toggle", () => resolve(), { once: true }))
@@ -61,13 +61,13 @@ describe("CSS-only Ellipsis and native disclosure", () => {
     details.remove()
     document.body.append(details)
     expect(details.open).toBe(false)
-    expect(details.querySelector(".mui-ellipsis")).toBe(text)
+    expect(details.querySelector(".m-ellipsis")).toBe(text)
   })
 
   it("keeps normal multiline text as the unsupported-clamp fallback", () => {
     expect(css).toContain("@supports selector(:has(*))")
     expect(css).toContain("@supports (-webkit-line-clamp: 2) or (line-clamp: 2)")
-    expect(css).toContain("--mui-ellipsis-lines, 2")
+    expect(css).toContain("--m-ellipsis-lines, 2")
     expect(css).toContain("overflow-wrap: anywhere")
     expect(css).toContain("min-inline-size: 0")
     expect(css).not.toContain("max-height")
@@ -79,15 +79,15 @@ describe("CSS-only Ellipsis and native disclosure", () => {
     expect(css).toContain("vertical-align: bottom")
     expect(css).toContain("display: -webkit-inline-box")
     expect(css).toContain("vertical-align: baseline")
-    expect(css).toContain(":where(details.mui-ellipsis-disclosure > summary) > .mui-ellipsis { display: block; }")
-    expect(css).toContain(":where(details.mui-ellipsis-disclosure > summary) > .mui-ellipsis[data-multiline]")
+    expect(css).toContain(":where(details.m-ellipsis-disclosure > summary) > .m-ellipsis { display: block; }")
+    expect(css).toContain(":where(details.m-ellipsis-disclosure > summary) > .m-ellipsis[data-multiline]")
     expect(css).not.toContain("list-style: none")
     expect(css).not.toContain("::marker")
   })
 
   it("has fail-open guards for native actions/editable or focusable text instead of clipping controls", () => {
-    expect(css).toContain(".mui-ellipsis:has(:is(a, button")
-    expect(css).toContain(":is(a, button, [tabindex], [contenteditable]) .mui-ellipsis")
+    expect(css).toContain(".m-ellipsis:has(:is(a, button")
+    expect(css).toContain(":is(a, button, [tabindex], [contenteditable]) .m-ellipsis")
     expect(css).toContain("iframe, object, embed, audio, video, [tabindex], [contenteditable]")
     expect(css).not.toContain("pointer-events")
     expect(css).not.toContain("visibility: hidden")
@@ -95,7 +95,7 @@ describe("CSS-only Ellipsis and native disclosure", () => {
   })
 
   it("preserves native adjacent and accidentally nested action attributes/listeners", () => {
-    document.body.innerHTML = '<p class="mui-ellipsis">Original <button type="button">Action</button></p><a href="#full" target="_self" rel="help">Full text</a>'
+    document.body.innerHTML = '<p class="m-ellipsis">Original <button type="button">Action</button></p><a href="#full" target="_self" rel="help">Full text</a>'
     const button = document.querySelector("button")!
     const link = document.querySelector("a")!
     const before = document.body.innerHTML
@@ -110,7 +110,7 @@ describe("CSS-only Ellipsis and native disclosure", () => {
   })
 
   it("keeps late authored text, templates and hidden content application-owned", () => {
-    document.body.innerHTML = '<p class="mui-ellipsis">Original</p><template class="mui-ellipsis"><button type="button">Inert template action</button></template><span class="mui-ellipsis" hidden>Hidden</span>'
+    document.body.innerHTML = '<p class="m-ellipsis">Original</p><template class="m-ellipsis"><button type="button">Inert template action</button></template><span class="m-ellipsis" hidden>Hidden</span>'
     const text = document.querySelector("p")!
     const template = document.querySelector("template")!
     install()
@@ -125,7 +125,7 @@ describe("CSS-only Ellipsis and native disclosure", () => {
   })
 
   it("preserves direction, language and out-of-scope typography", () => {
-    document.body.innerHTML = '<section dir="rtl" lang="ar"><p class="mui-ellipsis">نص أصلي</p></section><p id="outside">Outside</p>'
+    document.body.innerHTML = '<section dir="rtl" lang="ar"><p class="m-ellipsis">نص أصلي</p></section><p id="outside">Outside</p>'
     const outside = document.querySelector("#outside")!
     const before = { display: getComputedStyle(outside).display, overflow: getComputedStyle(outside).overflow, whiteSpace: getComputedStyle(outside).whiteSpace }
     install()
@@ -137,7 +137,7 @@ describe("CSS-only Ellipsis and native disclosure", () => {
   })
 
   it("does not reveal hidden or template previews when a disclosure is open", () => {
-    document.body.innerHTML = '<details class="mui-ellipsis-disclosure" open><summary><span class="mui-ellipsis" data-multiline hidden>Still hidden</span><template class="mui-ellipsis">Still inert</template><span class="mui-ellipsis-hint">Native disclosure</span></summary></details>'
+    document.body.innerHTML = '<details class="m-ellipsis-disclosure" open><summary><span class="m-ellipsis" data-multiline hidden>Still hidden</span><template class="m-ellipsis">Still inert</template><span class="m-ellipsis-hint">Native disclosure</span></summary></details>'
     install()
     expect(getComputedStyle(document.querySelector("[hidden]")!).display).toBe("none")
     expect(getComputedStyle(document.querySelector("template")!).display).toBe("none")
@@ -149,7 +149,7 @@ describe("CSS-only Ellipsis and native disclosure", () => {
     expect(print).toContain("white-space: normal")
     expect(print).toContain("-webkit-line-clamp: unset")
     expect(print).toContain("overflow: visible")
-    expect(print).toContain(".mui-ellipsis-hint { display: none; }")
+    expect(print).toContain(".m-ellipsis-hint { display: none; }")
     expect(css).not.toContain("@keyframes")
     expect(css).not.toContain("transition:")
     expect(css).not.toContain("content:")

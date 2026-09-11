@@ -42,6 +42,6 @@ for (const [id, apply] of Object.entries(controls)) document.getElementById(id).
   try { apply(event.target); show({ action: id }) }
   catch (error) { feedback.textContent = error.message }
 })
-root.addEventListener("mui:log-edge", event => show({ edge: event.detail.position }))
-root.addEventListener("mui:log-error", event => { feedback.textContent = event.detail.error.message })
+root.addEventListener("m:log-edge", event => show({ edge: event.detail.position }))
+root.addEventListener("m:log-error", event => { feedback.textContent = event.detail.error.message })
 globalThis.logDemo = log

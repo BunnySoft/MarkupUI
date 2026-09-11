@@ -121,9 +121,9 @@ const labels: Record<UploadStatus, string> = {
 export function createUpload(element: HTMLElement, options: UploadOptions = {}): UploadController {
   const document = element?.ownerDocument, view = document?.defaultView
   if (!view || !(element instanceof view.HTMLElement) || !["div", "section"].includes(element.localName)
-    || !element.matches(".mui-upload[data-upload]") || !element.isConnected || element.getRootNode() !== document
-    || (element as Owned)[owner] || element.closest("mui-upload") || element.getAttribute("tabindex") !== "-1") {
-    throw new TypeError("Use an unowned connected native .mui-upload[data-upload][tabindex='-1'] scope.")
+    || !element.matches(".m-upload[data-upload]") || !element.isConnected || element.getRootNode() !== document
+    || (element as Owned)[owner] || element.closest("m-upload") || element.getAttribute("tabindex") !== "-1") {
+    throw new TypeError("Use an unowned connected native .m-upload[data-upload][tabindex='-1'] scope.")
   }
   const win = view, doc = document!, token = {}, writes = ownedWrites()
   function named(node: HTMLElement) {
@@ -268,7 +268,7 @@ export function createUpload(element: HTMLElement, options: UploadOptions = {}):
     else if (phase === "transport") notice = "Transport failed; review the file status."
     render()
     const previous = notifying; notifying = true
-    try { element.dispatchEvent(new win.CustomEvent("mui:upload-error", { bubbles: true, detail: Object.freeze({ error, phase, file: entry ? snapshot(entry) : null }) })) }
+    try { element.dispatchEvent(new win.CustomEvent("m:upload-error", { bubbles: true, detail: Object.freeze({ error, phase, file: entry ? snapshot(entry) : null }) })) }
     finally { notifying = previous }
   }
   function emit(reason: string, entry: Entry | null = null, selection: UploadSelection | null = null) {
@@ -281,7 +281,7 @@ export function createUpload(element: HTMLElement, options: UploadOptions = {}):
     const detail: UploadChange = Object.freeze({ reason, file: entry ? snapshot(entry) : null, files: files(), state: state(), selection })
     const stamp = version, previous = notifying; notifying = true
     try {
-      element.dispatchEvent(new win.CustomEvent("mui:upload-change", { bubbles: true, detail }))
+      element.dispatchEvent(new win.CustomEvent("m:upload-change", { bubbles: true, detail }))
       if (connected && element.isConnected && version === stamp) {
         try {
           const result: unknown = settings.onChange?.(detail)
@@ -336,7 +336,7 @@ export function createUpload(element: HTMLElement, options: UploadOptions = {}):
     } catch (error) {
       // Fail closed rather than leave removed/rejected queue entries in native FormData.
       input.value = ""; lastError = error; disconnect()
-      element.dispatchEvent(new win.CustomEvent("mui:upload-error", { bubbles: true, detail: Object.freeze({ error, phase: "synchronization", cleared: true }) }))
+      element.dispatchEvent(new win.CustomEvent("m:upload-error", { bubbles: true, detail: Object.freeze({ error, phase: "synchronization", cleared: true }) }))
       throw error
     }
   }
@@ -407,7 +407,7 @@ export function createUpload(element: HTMLElement, options: UploadOptions = {}):
     }
     job.entry.loaded = loaded; job.entry.total = total; render(true)
     const previous = notifying; notifying = true
-    try { element.dispatchEvent(new win.CustomEvent("mui:upload-progress", { bubbles: true, detail: snapshot(job.entry) })) }
+    try { element.dispatchEvent(new win.CustomEvent("m:upload-progress", { bubbles: true, detail: snapshot(job.entry) })) }
     finally { notifying = previous }
     return true
   }

@@ -3,7 +3,7 @@ export {
   invokeAction,
   registerAction,
   type ActionContext,
-  type MuiAction,
+  type MAction,
 } from "./actions/index.js"
 export {
   builtInElementNames,
@@ -11,20 +11,20 @@ export {
   registerElement,
   registerElements,
 } from "./components/elements.js"
-export { mui, type MarkupUIApi } from "./core/api.js"
-export { MuiElement } from "./core/element.js"
+export { m, type MarkupUIApi } from "./core/api.js"
+export { MElement } from "./core/element.js"
 export { positionFloating, type FloatingPlacement } from "./core/position.js"
 export {
   installPlugin,
   isPluginInstalled,
-  type MuiPlugin,
+  type MPlugin,
 } from "./core/plugin.js"
 export {
   extendQuery,
-  MuiQuery,
+  MQuery,
   query,
   setHtml,
-  type MuiQueryMethod,
+  type MQueryMethod,
 } from "./query/index.js"
 export {
   clearOverlays,
@@ -42,7 +42,7 @@ export {
 export {
   bind,
   createStore,
-  MuiStore,
+  MStore,
   type StateSubscriber,
   type StateValue,
 } from "./state/index.js"

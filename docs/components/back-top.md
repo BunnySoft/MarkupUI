@@ -28,7 +28,7 @@ no icon, portal or transition renderer was added.
 
 <header id="page-top"><h1>Page title</h1></header>
 <!-- Authored long content -->
-<a class="mui-back-top mui-back-top--fixed" href="#page-top" id="return-top">
+<a class="m-back-top m-back-top--fixed" href="#page-top" id="return-top">
   <span aria-hidden="true">↑</span> Top
 </a>
 ```
@@ -42,7 +42,7 @@ top.disconnect() // Link remains usable without enhancement.
 ```
 
 Use an authored native anchor with an existing same-document fragment destination, or an
-explicit `button[type=button]`, with class `mui-back-top`. Name it using visible text,
+explicit `button[type=button]`, with class `m-back-top`. Name it using visible text,
 aria-label or resolvable aria-labelledby. Icons are decorative authored children, not an
 automatic label. Original IDs, labels, aria-controls, nodes, listeners and templates stay intact.
 Do not supply roles/tabindex, nested controls, interactive ancestors, or other native button
@@ -76,7 +76,7 @@ validated through the same utility as Anchor. Page-root metrics use the visual v
 element metrics account for borders and axis-aligned scaling. Rotated/3D transforms, vertical
 writing and cross-document roots are outside this retained scope.
 
-`mui:back-top-update-show` is a nonbubbling notification with `{ show: boolean }` when the
+`m:back-top-update-show` is a nonbubbling notification with `{ show: boolean }` when the
 measured threshold changes **after initialization**. It reports the automatic threshold even
 when a show override or held focus keeps actual helper visibility different. It is not a user
 event or a promise that pixels changed. Assigning show paints silently from the latest
@@ -103,7 +103,7 @@ The browser clamps its scroll range. No scroll completion, fixed duration, scrol
 or focus relocation is promised. Missing element scrollTo falls back to writable scrollTop;
 readonly window scroll fields are never overridden. A disconnected/removed or zero-height
 root returns false; invalid explicit requests throw. Automatic failures disconnect and emit
-`mui:back-top-error` with `{ error }` rather than silently succeeding.
+`m:back-top-error` with `{ error }` rather than silently succeeding.
 
 ## Focus, ownership and cleanup
 
@@ -139,31 +139,31 @@ large remain native 36px/52px presets; public size/radius overrides win over tho
 The minimum-size behavior can expand for authored content, unlike the reference's fixed
 44px height. Square is an explicit native shape convenience, not an upstream prop.
 
-The optional `mui-back-top--fixed` class uses logical inline/block-end offsets (**40px**
+The optional `m-back-top--fixed` class uses logical inline/block-end offsets (**40px**
 defaults), safe-area minimums and an explicit z-index token (default 10).
 Pixel defaults no longer drift when the document root font size changes.
-Author `--mui-back-top-size`, `--mui-back-top-radius`, `--mui-back-top-inline-end`,
-`--mui-back-top-block-end`, color/background/focus tokens or ordinary external CSS.
-The retained `--mui-back-top-border` color token applies when an author explicitly sets
+Author `--m-back-top-size`, `--m-back-top-radius`, `--m-back-top-inline-end`,
+`--m-back-top-block-end`, color/background/focus tokens or ordinary external CSS.
+The retained `--m-back-top-border` color token applies when an author explicitly sets
 `border-width`; there is no normal-state border by default.
 
 The default surface/text are white / `#333639` in light and `#48484e` / white-.82 under
-an ancestor `data-mui-theme="dark"`. Nested explicit `"light"` restores light fallbacks.
+an ancestor `data-m-theme="dark"`. Nested explicit `"light"` restores light fallbacks.
 The rest shadow is `0 2px 8px rgba(0,0,0,.12)`; hover and pressed use
 `0 2px 12px rgba(0,0,0,.18)` without recoloring the surface.
-`--mui-back-top-shadow`, `--mui-back-top-hover-shadow`, `--mui-back-top-pressed-shadow`
-override them independently. The existing `--mui-back-top-hover` remains an explicit
+`--m-back-top-shadow`, `--m-back-top-hover-shadow`, `--m-back-top-pressed-shadow`
+override them independently. The existing `--m-back-top-hover` remains an explicit
 native hover-background override.
 
 ### Authored icons, not an icon renderer
 
 Existing arrow text, SVGs and custom content are never replaced. To size/tint a decorative
-SVG, explicitly author a `.mui-back-top-icon` wrapper; it defaults to a 26px square.
+SVG, explicitly author a `.m-back-top-icon` wrapper; it defaults to a 26px square.
 For example, this is an application-owned arrow illustration, not a bundled stock glyph:
 
 ```html
-<button type="button" class="mui-back-top mui-back-top--fixed" aria-label="Back to top" hidden>
-  <span class="mui-back-top-icon" aria-hidden="true">
+<button type="button" class="m-back-top m-back-top--fixed" aria-label="Back to top" hidden>
+  <span class="m-back-top-icon" aria-hidden="true">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
       stroke-linecap="round" stroke-linejoin="round">
       <path d="M5 5h14M12 9v12M7 14l5-5 5 5"/>
@@ -174,8 +174,8 @@ For example, this is an application-owned arrow illustration, not a bundled stoc
 
 The native button still needs explicit application binding and the JS-only hidden/fallback
 policy described above. The class itself only styles authored content.
-`--mui-back-top-icon-size`, `--mui-back-top-icon-color`,
-`--mui-back-top-icon-hover-color` and `--mui-back-top-icon-pressed-color` are local tokens.
+`--m-back-top-icon-size`, `--m-back-top-icon-color`,
+`--m-back-top-icon-hover-color` and `--m-back-top-icon-pressed-color` are local tokens.
 Normal icon color inherits the action; hover/pressed reuse shared primary-hover/pressed
 roles when supplied, otherwise pinned light/dark fallbacks. Local icon tokens win.
 SVG pointer hit-testing is disabled only within this opted-in decorative icon wrapper.

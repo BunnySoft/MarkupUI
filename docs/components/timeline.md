@@ -32,7 +32,7 @@ no shared source or generated adapter changed.
 
 There is no `./timeline` JavaScript export, global, controller, registration requirement
 or mandatory widgets/Icon/date library. The unchanged optional widgets plugin still
-registers legacy `mui-timeline`/`mui-timeline-item` elements and their old styles; the
+registers legacy `m-timeline`/`m-timeline-item` elements and their old styles; the
 native classes do not redefine them. Timeline CSS can coexist with the aggregate and
 widgets plugin without any Timeline-specific loading-order restriction.
 
@@ -52,15 +52,15 @@ visual, animation or screen-reader certification.
 ```html
 <section aria-labelledby="history-title">
   <h2 id="history-title">Project history</h2>
-  <ol class="mui-timeline" data-markerless role="list"
+  <ol class="m-timeline" data-markerless role="list"
     aria-labelledby="history-title">
-    <li class="mui-timeline-item" data-type="success">
-      <span class="mui-timeline-marker" aria-hidden="true"></span>
-      <div class="mui-timeline-body">
-        <h3 class="mui-timeline-title">Review approved — Success</h3>
+    <li class="m-timeline-item" data-type="success">
+      <span class="m-timeline-marker" aria-hidden="true"></span>
+      <div class="m-timeline-body">
+        <h3 class="m-timeline-title">Review approved — Success</h3>
         <p>Authored event details and <a href="./review.html">review notes</a>.</p>
-        <div class="mui-timeline-footer">
-          <time class="mui-timeline-time" datetime="2026-09-03">3 September 2026</time>
+        <div class="m-timeline-footer">
+          <time class="m-timeline-time" datetime="2026-09-03">3 September 2026</time>
         </div>
       </div>
     </li>
@@ -69,7 +69,7 @@ visual, animation or screen-reader certification.
 ```
 
 Use `ol` for an intentionally ordered history, or `ul` when sequence is not meaningful.
-Actual `li.mui-timeline-item` nodes remain direct list children and retain list-item
+Actual `li.m-timeline-item` nodes remain direct list children and retain list-item
 display. Each item may contain a decorative marker and an authored body. Do not wrap
 `li` in invalid list child `div` elements or use `display: contents` to hide structure.
 There is no invented timeline role, generated heading level, selection state or live region.
@@ -88,7 +88,7 @@ The newest-first demo authors the later event first with normal list numbering.
 
 Author valid `time[datetime]` values and human-readable text where a real date/time is known.
 For unknown, relative or arbitrary metadata, use ordinary text such as
-`span.mui-timeline-time`. The source also permits a number for `time`, although the public
+`span.m-timeline-time`. The source also permits a number for `time`, although the public
 table lists strings: render that value as explicit text, for example `textContent =
 String(value)`, without inferring epoch units, a timezone or a valid `datetime`.
 No parsing, date formatting, inference, automatic announcements or live sorting occurs.
@@ -98,16 +98,16 @@ No parsing, date formatting, inference, automatic announcements or live sorting 
 | Upstream surface | Native target and default |
 | --- | --- |
 | Timeline `horizontal` | Presence `data-horizontal` creates a single non-wrapping lane; default is vertical. Use the explicit scrolling composition below when needed. |
-| Timeline `icon-size` | `--mui-timeline-icon-size` on the real list, default `14px` in both sizes; supply a positive CSS length, not a unitless number/attribute. |
+| Timeline `icon-size` | `--m-timeline-icon-size` on the real list, default `14px` in both sizes; supply a positive CSS length, not a unitless number/attribute. |
 | Timeline `item-placement` | Default/`"left"`/unknown values put the rail at logical start. `data-item-placement="right"` puts it at logical end and end-aligns the body. Ignored in horizontal mode. |
 | Timeline `size` | Default/`"medium"`/unknown values use 14px titles; `data-size="large"` uses 16px titles with the source -2px top margin. Event spacing and icon size do not increase. No small preset. |
 | TimelineItem `type` | `data-type="default"` / `"success"` / `"info"` / `"warning"` / `"error"`; missing/unknown values use neutral default marker color. |
-| TimelineItem `color` | `--mui-timeline-item-color` on the actual item overrides its marker border/icon color, not status text or chronology. |
+| TimelineItem `color` | `--m-timeline-item-color` on the actual item overrides its marker border/icon color, not status text or chronology. |
 | TimelineItem `line-type` | Default/`"default"`/unknown values use a solid connector; `data-line-type="dashed"` uses a native dashed border. |
-| TimelineItem `title`, `header` slot | One authored `.mui-timeline-title` heading or header region inside the body; no tooltip/title attribute or slot/prop precedence engine. |
+| TimelineItem `title`, `header` slot | One authored `.m-timeline-title` heading or header region inside the body; no tooltip/title attribute or slot/prop precedence engine. |
 | TimelineItem `content`, `default` slot | Native body children: text, paragraphs, media, nested lists and real actions. No string renderer or VNode/slot projection. |
-| TimelineItem `time`, `footer` slot | Author `.mui-timeline-footer` and `time` or ordinary metadata text. Rich footer content is allowed; no generated date or slot/prop precedence. |
-| TimelineItem `icon` slot | Authored `.mui-timeline-marker[data-icon]` with SVG/image/glyph content; no icon component, vendor asset or callback is loaded. |
+| TimelineItem `time`, `footer` slot | Author `.m-timeline-footer` and `time` or ordinary metadata text. Rich footer content is allowed; no generated date or slot/prop precedence. |
+| TimelineItem `icon` slot | Authored `.m-timeline-marker[data-icon]` with SVG/image/glyph content; no icon component, vendor asset or callback is loaded. |
 | Timeline `default` slot | Actual `ol`/`ul` and direct authored items/templates. |
 | Source `theme`, `themeOverrides`, `builtinThemeOverrides` | ⏭️ Framework theme/provider objects and override merging omitted; external CSS tokens are the alternative. |
 
@@ -153,9 +153,9 @@ The last-visible body loses that end margin through the same guarded sibling rul
 An explicit empty footer can retain source content-only spacing without inventing a date:
 
 ```html
-<div class="mui-timeline-body">
+<div class="m-timeline-body">
   <div>Oops</div>
-  <div class="mui-timeline-footer"></div>
+  <div class="m-timeline-footer"></div>
 </div>
 ```
 
@@ -167,9 +167,9 @@ large icons may extend above an item, so clipping ancestors remain application-o
 
 ```html
 <p id="lane-help">Scroll horizontally or Tab to each event action.</p>
-<div class="mui-timeline-scroll" tabindex="0" role="region"
+<div class="m-timeline-scroll" tabindex="0" role="region"
   aria-label="Scrollable milestones" aria-describedby="lane-help">
-  <ol class="mui-timeline" data-horizontal data-markerless role="list">
+  <ol class="m-timeline" data-horizontal data-markerless role="list">
     <!-- Direct authored li items with native controls -->
   </ol>
 </div>
@@ -184,7 +184,7 @@ geometry agree. The horizontal lane does not automatically wrap into ambiguous c
 rows or trigger a JavaScript breakpoint. Use the vertical composition when horizontal
 navigation is unnecessary.
 
-Set `--mui-timeline-item-width:16rem` or another length when fixed-width items are
+Set `--m-timeline-item-width:16rem` or another length when fixed-width items are
 desired. This remains a native flex-basis choice, not an upstream width prop or
 JavaScript item-sizing algorithm.
 
@@ -203,21 +203,21 @@ status words remain the primary information. Long body content wraps without tru
 
 | Token | Default / scope |
 | --- | --- |
-| `--mui-timeline-icon-size` | `14px` in medium/large; inherited by items and reset at nested lists. |
-| `--mui-timeline-item-gap` | Vertical `20px`, horizontal `40px`, independent of size; reset on each list. |
-| `--mui-timeline-title-size` | Medium `14px`, large `16px`. |
-| `--mui-timeline-item-width` | Horizontal item basis `auto`; set a length for fixed-width items. |
-| `--mui-timeline-item-color` | Per-item marker override; resets on each item rather than leaking to nested items. |
-| `--mui-timeline-line-color` | Neutral connector color, independent of marker type. |
-| `--mui-timeline-text-color`, `--mui-timeline-time-color` | Body and secondary metadata text colors. |
+| `--m-timeline-icon-size` | `14px` in medium/large; inherited by items and reset at nested lists. |
+| `--m-timeline-item-gap` | Vertical `20px`, horizontal `40px`, independent of size; reset on each list. |
+| `--m-timeline-title-size` | Medium `14px`, large `16px`. |
+| `--m-timeline-item-width` | Horizontal item basis `auto`; set a length for fixed-width items. |
+| `--m-timeline-item-color` | Per-item marker override; resets on each item rather than leaking to nested items. |
+| `--m-timeline-line-color` | Neutral connector color, independent of marker type. |
+| `--m-timeline-text-color`, `--m-timeline-time-color` | Body and secondary metadata text colors. |
 
-Use external CSS classes or stylesheets on the actual nodes. Private `--_mui-timeline-*`
+Use external CSS classes or stylesheets on the actual nodes. Private `--_m-timeline-*`
 values are not API. Native CSS validation/cascade applies; there is no numeric length
 parser, theme-object bridge or automatic media-query configuration.
 
 ### Light/dark role colors
 
-Use `data-mui-theme="light|dark"` on an ancestor or the list. No marker means light.
+Use `data-m-theme="light|dark"` on an ancestor or the list. No marker means light.
 Private dark defaults reset at nested light boundaries; public per-item/color/size
 overrides remain authoritative.
 
@@ -235,11 +235,11 @@ overrides remain authoritative.
 Dark statuses use **supplementary**, not normal dark semantic colors. Legacy
 primary/secondary text and general border tokens are not equivalent roles.
 Defaults stay local; applications may explicitly map a correctly chosen shared
-color through `--mui-timeline-item-color` on the actual item.
+color through `--m-timeline-item-color` on the actual item.
 
-Shared `--mui-font-size` supplies body sizing, falling back to 14px; title presets
+Shared `--m-font-size` supplies body sizing, falling back to 14px; title presets
 and 12px metadata remain independent. Family, backdrop and `color-scheme` stay
-application-owned. `--mui-timeline-text-color` overrides title/body; ordinary title
+application-owned. `--m-timeline-text-color` overrides title/body; ordinary title
 CSS can supply a separately authored title color.
 
 ## Original migration steps and acceptance (historical)

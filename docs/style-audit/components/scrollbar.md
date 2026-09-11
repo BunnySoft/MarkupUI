@@ -39,8 +39,8 @@ Only the opted-in standards color defaults change:
 | Unflagged color/width | Native auto | **Native auto, unchanged** |
 
 `data-colored` still gates the supported `scrollbar-color` rule. A local light/dark scope
-chooses the fallback thumb value, and authored `--mui-scrollbar-thumb-color` /
-`--mui-scrollbar-track-color` retain precedence. No theme object, CSS-in-JS or shared theme
+chooses the fallback thumb value, and authored `--m-scrollbar-thumb-color` /
+`--m-scrollbar-track-color` retain precedence. No theme object, CSS-in-JS or shared theme
 edit is needed. Standard color inheritance remains native, not forcibly reset on every child.
 
 The measured corrected tuples were black .25 / transparent in light and white .2 /

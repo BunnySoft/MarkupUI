@@ -10,11 +10,11 @@ function inspect() {
   }, null, 2)
 }
 for (const root of [singleRoot, multipleRoot]) {
-  root.addEventListener("mui:tree-select-change", event => {
+  root.addEventListener("m:tree-select-change", event => {
     document.querySelector("#events").textContent = `${root.id}: ${event.detail.action}, ${JSON.stringify(event.detail.value)}`
     inspect()
   })
-  root.addEventListener("mui:tree-select-error", event => { document.querySelector("#events").textContent = event.detail.error.message; inspect() })
+  root.addEventListener("m:tree-select-error", event => { document.querySelector("#events").textContent = event.detail.error.message; inspect() })
 }
 function action(id, callback) {
   document.getElementById(id).addEventListener("click", () => {

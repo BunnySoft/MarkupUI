@@ -44,7 +44,7 @@ type Owned = Element & { [owner]?: object; [treeOwner]?: object }
 export function createTreeSelect(root: HTMLElement, options: TreeSelectOptions = {}): TreeSelectController {
   const document = root?.ownerDocument, view = document?.defaultView
   if (!view || !(root instanceof view.HTMLElement) || !["div", "section", "fieldset"].includes(root.localName)
-    || !root.matches(".mui-tree-select[data-tree-select]") || (root as Owned)[owner]) throw new TypeError("Use an unowned native .mui-tree-select[data-tree-select] root.")
+    || !root.matches(".m-tree-select[data-tree-select]") || (root as Owned)[owner]) throw new TypeError("Use an unowned native .m-tree-select[data-tree-select] root.")
   if (!options || typeof options !== "object" || Array.isArray(options)
     || Object.keys(options).some(key => !["selection", "value", "defaultValue", "showPath", "separator"].includes(key))
     || options.showPath !== undefined && typeof options.showPath !== "boolean") throw new TypeError("Unsupported Tree Select options.")
@@ -99,7 +99,7 @@ export function createTreeSelect(root: HTMLElement, options: TreeSelectOptions =
     return Object.freeze(keys)
   }
   function plan() {
-    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".mui-tree-select[data-tree-select]")
+    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".m-tree-select[data-tree-select]")
       || root.hasAttribute("role") || one("[data-tree-select-source]", true) !== source || one("[data-tree-select-field]", true) !== field
       || !field.contains(control) || !own(control) || control.multiple !== multiple || control.form !== form
       || [readout, status, clearButton].some(node => node && (!root.contains(node) || !own(node)))
@@ -207,7 +207,7 @@ export function createTreeSelect(root: HTMLElement, options: TreeSelectOptions =
   function report(cause: unknown) {
     error = cause; fault = true
     if (connected) { gate(); text(status, cause instanceof Error ? cause.message : "Tree Select source is invalid.") }
-    root.dispatchEvent(new view!.CustomEvent("mui:tree-select-error", { detail: { error: cause } }))
+    root.dispatchEvent(new view!.CustomEvent("m:tree-select-error", { detail: { error: cause } }))
   }
   function guard() {
     live(); if (busy) throw new Error("Tree Select operations may not reenter.")
@@ -269,7 +269,7 @@ export function createTreeSelect(root: HTMLElement, options: TreeSelectOptions =
     run(() => { generation++; defaults = keys; defaultsChanged = false; apply(projection, nativeKeys()) })
   }
   function notify(action: "select" | "clear", event?: Event) {
-    if (connected) root.dispatchEvent(new view!.CustomEvent("mui:tree-select-change", { detail: { ...state(), action, event } }))
+    if (connected) root.dispatchEvent(new view!.CustomEvent("m:tree-select-change", { detail: { ...state(), action, event } }))
   }
   function change(event: Event) {
     try { refresh(); notify("select", event) } catch { /* refresh reports a guarded source failure. */ }
@@ -313,7 +313,7 @@ export function createTreeSelect(root: HTMLElement, options: TreeSelectOptions =
     tasks.forEach(id => view!.clearTimeout(id)); tasks.clear()
     control.removeEventListener("change", change); clearButton?.removeEventListener("click", clearClick)
     document!.removeEventListener("reset", reset, true); document!.removeEventListener("submit", submit, true)
-    field.removeEventListener("mui:select-error", delegateError)
+    field.removeEventListener("m:select-error", delegateError)
     helper?.disconnect()
     if (failed) {
       for (const [key, record] of records) if (key) record.element.remove()
@@ -350,7 +350,7 @@ export function createTreeSelect(root: HTMLElement, options: TreeSelectOptions =
     run(() => apply(next.choices, current)); initialized = true
     control.addEventListener("change", change); clearButton?.addEventListener("click", clearClick)
     document.addEventListener("reset", reset, true); document.addEventListener("submit", submit, true)
-    field.addEventListener("mui:select-error", delegateError); observe()
+    field.addEventListener("m:select-error", delegateError); observe()
   } catch (cause) {
     if (!helper) { connected = false; throw cause }
     try { disconnect() } finally {

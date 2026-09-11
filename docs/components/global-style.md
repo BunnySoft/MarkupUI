@@ -10,7 +10,7 @@ document defaults **only when the application links/enables it**.
 
 Package consumers may resolve **`@dataengine/markup-ui/global-style/style.css`** to the
 same asset. A classic HTML application needs no compiler or JavaScript to use the link.
-There is no `@dataengine/markup-ui/global-style` JS entry, `NGlobalStyle`/`mui-global-style`
+There is no `@dataengine/markup-ui/global-style` JS entry, `NGlobalStyle`/`m-global-style`
 runtime, global registration, theme watcher, injected style node or JS byte budget.
 The source is [global-style.css](../../src/components/global-style/global-style.css).
 It is copied unchanged by the existing build, not maintained in a second CSS string.
@@ -38,15 +38,15 @@ Every selector is zero-specificity **`:where(html)` or `:where(body)`**:
 | --- | --- |
 | html | `color-scheme: light dark`; native system preference is permitted |
 | body | `margin: 0` — deliberate document-edge default, not a universal spacing reset |
-| body font family | `--mui-font-family`, falling back to the Naive UI `v-sans`, system/UI and emoji family stack (no font download) |
-| body font size | `var(--mui-font-size, 14px)` |
-| body line height | `var(--mui-line-height, 1.6)` |
-| body text | `--mui-global-style-color`, then `--mui-text-primary`, then `light-dark(#333639, rgb(255 255 255 / .82))` |
-| body background | `--mui-global-style-background-color`, then `--mui-bg-page`, then `light-dark(#fff, #101014)` |
+| body font family | `--m-font-family`, falling back to the Naive UI `v-sans`, system/UI and emoji family stack (no font download) |
+| body font size | `var(--m-font-size, 14px)` |
+| body line height | `var(--m-line-height, 1.6)` |
+| body text | `--m-global-style-color`, then `--m-text-primary`, then `light-dark(#333639, rgb(255 255 255 / .82))` |
+| body background | `--m-global-style-background-color`, then `--m-bg-page`, then `light-dark(#fff, #101014)` |
 | forced colors | body uses native `CanvasText`/`Canvas` |
 | print | html permits light colors; body uses native `CanvasText`/`Canvas` |
 
-No custom property is defined by this asset. It consumes existing supported `--mui-*`
+No custom property is defined by this asset. It consumes existing supported `--m-*`
 typography/shared color tokens and two optional body-only color overrides. Otherwise it
 uses reference typography/colors, with system colors for forced colors/print: **no second full theme palette**,
 font download or external runtime dependency.
@@ -89,13 +89,13 @@ For reference body colors while retaining existing shared presets:
 html {
   /* Or author light/dark explicitly to follow the application's theme selection. */
   color-scheme: light dark;
-  --mui-global-style-color: light-dark(#333639, rgb(255 255 255 / .82));
-  --mui-global-style-background-color: light-dark(#fff, #101014);
+  --m-global-style-color: light-dark(#333639, rgb(255 255 255 / .82));
+  --m-global-style-background-color: light-dark(#fff, #101014);
 }
 ```
 
 These two overrides are consumed only by this stylesheet's body rule. They do not
-redefine `--mui-text-primary` or `--mui-bg-page` for components. Normal descendants still
+redefine `--m-text-primary` or `--m-bg-page` for components. Normal descendants still
 inherit body text color, as expected. Existing shared color tokens retain precedence
 over the fallback when no body-specific override is supplied. Naive chooses light
 unless a dark provider is explicitly selected; this CSS deliberately retains its

@@ -18,9 +18,9 @@ interface Attribute { node: Element; name: string; before: string | null; base: 
 /** Enhances one authored native field; never creates or replaces a form control. */
 export function createInput(root: HTMLElement, options: InputOptions = {}): InputController {
   const document = root?.ownerDocument, view = document?.defaultView
-  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".mui-input[data-input]")
+  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".m-input[data-input]")
     || !root.isConnected || root.getRootNode() !== document || root.hasAttribute("role") || root.hasAttribute("tabindex")) {
-    throw new TypeError("Input needs a connected light-DOM .mui-input[data-input] without role or tabindex.")
+    throw new TypeError("Input needs a connected light-DOM .m-input[data-input] without role or tabindex.")
   }
   if (!options || typeof options !== "object" || Object.keys(options).some(key => key !== "formatCount")
     || options.formatCount !== undefined && typeof options.formatCount !== "function") throw new TypeError("Unsupported Input options.")
@@ -49,7 +49,7 @@ export function createInput(root: HTMLElement, options: InputOptions = {}): Inpu
           && child.getAttribute("aria-hidden") !== "true" && child.textContent?.trim()))
   }
   function valid(): boolean {
-    return root.isConnected && root.getRootNode() === document && root.matches(".mui-input[data-input]")
+    return root.isConnected && root.getRootNode() === document && root.matches(".m-input[data-input]")
       && !root.hasAttribute("role") && !root.hasAttribute("tabindex")
       && [control, clearButton, revealButton, count].every(node => !node || root.contains(node) && own(node))
       && [clearButton, revealButton].every(button => !button || button.localName === "button"
@@ -197,7 +197,7 @@ export function createInput(root: HTMLElement, options: InputOptions = {}): Inpu
     if (!editable()) return false
     setValue("")
     notify()
-    control.dispatchEvent(new view!.CustomEvent("mui:input-clear", { bubbles: true, detail: { previous } }))
+    control.dispatchEvent(new view!.CustomEvent("m:input-clear", { bubbles: true, detail: { previous } }))
     return true
   }
   function listen(node: EventTarget, type: string, handler: EventListener, capture = false) {

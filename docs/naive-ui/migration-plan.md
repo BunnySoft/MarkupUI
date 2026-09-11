@@ -1,5 +1,11 @@
 # MarkupUI migration plan
 
+> **Next architecture phase — 2026-09-11:** the completed migration below remains the
+> Web-renderer baseline. New work follows the
+> [platform architecture](../platform-architecture/README.md): platform-neutral component
+> model/runtime, `m-*` primary Web syntax and `m-*` compatibility. The first sequential
+> batch is Button, Card, Carousel, Collapse, Divider and Dropdown.
+
 **Plan state: 🟢 Complete for the declared native migration scope.**
 The [foundation record](foundations.md) supersedes historical P0 pending statements below.
 Legacy CSS and preset sources are separated, generated adapters preserve compatibility,
@@ -700,7 +706,7 @@ only for retained scopes; P0/P4+ and full framework parity remain separate.
 lifetime, authored content and optional false/Promise decision controls. Unmarked
 method=dialog forms retain native validation and returnValue. Explicit owners clone
 trusted templates; no injection/reactive services, global scroll/focus manager or native
-top-layer imitation is included. Legacy MuiDialog and prior optional assets are unchanged.
+top-layer imitation is included. Legacy MDialog and prior optional assets are unchanged.
 
 The tracker preserves **105 original identities**, adds **10 source-only supplements and
 six inherited options**, and reconciles **121 rows: 80 adapted targets, 41 omissions**.
@@ -1061,7 +1067,7 @@ Continue one component/documentation/build/acceptance/commit at a time.
 The Form handoff required actual controls/labels/names/form association and native validity, preserving
 default/reset semantics and cancelled resets, respecting disabled fieldsets and silent
 programmatic updates, and never synthesizing hidden model fields. Rate's explicit
-mui:rate-clear can be observed in capture for validation refresh; it intentionally emits no
+m:rate-clear can be observed in capture for validation refresh; it intentionally emits no
 fake native radio change. See [Rate's Form prerequisites](../components/rate.md#native-prerequisites-handed-to-form).
 
 ### Form/FormItem/FormItemGi acceptance and historical Auto Complete handoff
@@ -1432,7 +1438,7 @@ synchronous cleanup. Native scroll/resize, start/center/end/nearest navigation, 
 pin, removal focus and fail-closed lifecycle are implemented without a renderer, provider,
 scrollbar package, automatic child helpers or data fetch.
 
-The basic advanced-plugin `MuiVirtualList` remains unchanged. The new helper registers
+The basic advanced-plugin `MVirtualList` remains unchanged. The new helper registers
 no custom element, so there is no silent redefinition or artificial loading-order rule.
 ESM/classic namespace/legacy coexistence were measured. Dynamic heights, horizontal/tree/
 grid modes, source framework types and smooth/debounce behavior are explicit omissions.
@@ -1912,14 +1918,14 @@ has four outstanding tasks. Broader architectural P0 gates are not automatically
 tag factory, custom-element wrapper, provider or new runtime. Real HTML owns semantics,
 children, attributes and native actions/forms; author CSS consumes explicit supported
 tokens. The demo reuses Config Provider's unchanged application palette stylesheet instead
-of copying a second palette. Existing MuiElement is an abstract controller base, not a
+of copying a second palette. Existing MElement is an abstract controller base, not a
 new wrapper/theme-vars equivalent.
 
 **Two original identities + ten explicit source supplements + three source-inherited
 theme props = 15 rows: three adapted, twelve omitted, zero unresolved; four tasks accepted.**
 Source automatic role none, generated class prefixes/theme mounting, renderer aliases,
 theme object props and common-theme interfaces/variable generation are omitted. There
-is no automatic upstream --primary-color/--n-* to --mui-* aliasing or theme parity.
+is no automatic upstream --primary-color/--n-* to --m-* aliasing or theme parity.
 
 **51 tests passed** (12 Element, 12 Config Provider and 27 native/legacy). Declarations,
 build and all budgets pass; **all 1,142 existing distribution files byte-match**.

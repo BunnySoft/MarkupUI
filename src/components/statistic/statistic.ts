@@ -4,7 +4,7 @@ type Region = { area: HTMLDivElement; text: HTMLSpanElement; content: HTMLDivEle
 const inert = "template,script,style"
 function hide(element: HTMLElement, hidden: boolean): void { if (element.hidden !== hidden) element.hidden = hidden }
 
-export class MuiStatistic extends HTMLElement {
+export class MStatistic extends HTMLElement {
   public static get observedAttributes(): string[] { return ["label", "value", "prefix", "suffix"] }
 
   private regions = new Map<RegionName, Region>()
@@ -24,7 +24,7 @@ export class MuiStatistic extends HTMLElement {
         }
       }
     }
-    this.dataset.muiStatistic = ""
+    this.dataset.mStatistic = ""
     this.observer ??= new MutationObserver(() => this.synchronize())
     this.ready = true
     this.synchronize()
@@ -55,17 +55,17 @@ export class MuiStatistic extends HTMLElement {
 
   private createRegion(name: RegionName): Region {
     const area = this.ownerDocument.createElement("div")
-    area.setAttribute(`data-mui-statistic-${name}`, "")
+    area.setAttribute(`data-m-statistic-${name}`, "")
     const text = this.ownerDocument.createElement("span")
-    text.dataset.muiStatisticText = ""
+    text.dataset.mStatisticText = ""
     const content = this.ownerDocument.createElement("div")
-    content.setAttribute("data-mui-statistic-slot", name)
+    content.setAttribute("data-m-statistic-slot", name)
     area.append(text, content)
     return { area, text, content }
   }
 
   private destination(node: Element): RegionName | undefined {
-    return names.find((name) => node.hasAttribute(`data-mui-statistic-${name}`))
+    return names.find((name) => node.hasAttribute(`data-m-statistic-${name}`))
   }
 
   private synchronize(): void {
@@ -79,7 +79,7 @@ export class MuiStatistic extends HTMLElement {
       this.display?.remove()
       this.regions.clear()
       this.display = this.ownerDocument.createElement("div")
-      this.display.dataset.muiStatisticDisplay = ""
+      this.display.dataset.mStatisticDisplay = ""
       for (const name of names) this.regions.set(name, this.createRegion(name))
       this.prepend(this.regions.get("label")!.area, this.display)
       this.display.append(...(["prefix", "value", "suffix"] as const).map((name) => this.regions.get(name)!.area))
@@ -109,7 +109,7 @@ export class MuiStatistic extends HTMLElement {
     }
     if (this.isConnected) this.observer?.observe(this, {
       childList: true, subtree: true, characterData: true, attributes: true,
-      attributeFilter: names.map((name) => `data-mui-statistic-${name}`),
+      attributeFilter: names.map((name) => `data-m-statistic-${name}`),
     })
   }
 }

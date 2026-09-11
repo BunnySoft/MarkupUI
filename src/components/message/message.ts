@@ -84,8 +84,8 @@ export function createMessageOwner(root: HTMLElement, options: MessageOwnerOptio
   const document = root?.ownerDocument
   const view = document?.defaultView
   if (!view || !(root instanceof view.HTMLElement) || !["div", "section", "aside"].includes(root.localName)
-    || root.getRootNode() !== document || !root.classList.contains("mui-message-host")) {
-    throw new TypeError("Use a connected light-DOM native .mui-message-host.")
+    || root.getRootNode() !== document || !root.classList.contains("m-message-host")) {
+    throw new TypeError("Use a connected light-DOM native .m-message-host.")
   }
   const items = root.querySelector<HTMLOListElement>(":scope > ol[data-message-items]")
   const announcer = root.querySelector<HTMLElement>(":scope > [data-message-announcer]")
@@ -129,7 +129,7 @@ export function createMessageOwner(root: HTMLElement, options: MessageOwnerOptio
   let stopObserving = () => {}
   function emit(name: string, detail: unknown) { root.dispatchEvent(new view!.CustomEvent(name, { detail })) }
   function report(detail: MessageError, visible = false) {
-    const event = new view!.CustomEvent("mui:message-error", { detail, cancelable: true })
+    const event = new view!.CustomEvent("m:message-error", { detail, cancelable: true })
     if (root.dispatchEvent(event) && !visible) view!.console.error("MarkupUI Message:", detail.error)
   }
   function scan() {
@@ -173,7 +173,7 @@ export function createMessageOwner(root: HTMLElement, options: MessageOwnerOptio
   }
   function defaultElement(): HTMLLIElement {
     const item = document.createElement("li")
-    item.className = "mui-message"
+    item.className = "m-message"
     const icon = document.createElement("span"); icon.dataset.messageIcon = ""; icon.setAttribute("aria-hidden", "true")
     const kind = document.createElement("strong"); kind.dataset.messageKind = ""
     const content = document.createElement("span"); content.dataset.messageContent = ""
@@ -193,7 +193,7 @@ export function createMessageOwner(root: HTMLElement, options: MessageOwnerOptio
     let reserved = true
     try {
       const element = template ? document.importNode(template.content.firstElementChild!, true) as HTMLLIElement : defaultElement()
-      if (!(element instanceof view!.HTMLLIElement) || !element.classList.contains("mui-message")
+      if (!(element instanceof view!.HTMLLIElement) || !element.classList.contains("m-message")
         || element.hidden || element.hasAttribute("inert") || ![null, "listitem"].includes(element.getAttribute("role"))
         || element.matches(`${liveSelector}, [autofocus], [contenteditable]:not([contenteditable="false"])`)
         || element.querySelector(`${liveSelector}, script, style, iframe, object, embed, dialog, [autofocus], [contenteditable]:not([contenteditable="false"])`)) {
@@ -259,7 +259,7 @@ export function createMessageOwner(root: HTMLElement, options: MessageOwnerOptio
         if (element.parentElement === items) element.remove()
         if (focused && reason !== "expired" && reason !== "detached" && fallback && available(fallback)
           && document.activeElement === document.body) fallback.focus({ preventScroll: true })
-        emit("mui:message-remove", { handle, reason })
+        emit("m:message-remove", { handle, reason })
       }
       function failure(error: unknown, token: number) {
         lastError = error
@@ -308,7 +308,7 @@ export function createMessageOwner(root: HTMLElement, options: MessageOwnerOptio
           paint(patch)
           clock.restart(state.duration, state.keepAliveOnHover)
           announce(`${labels[state.type]}: ${state.content}`)
-          emit("mui:message-update", { handle })
+          emit("m:message-update", { handle })
         },
         destroy: () => remove("destroy"),
       }
@@ -325,7 +325,7 @@ export function createMessageOwner(root: HTMLElement, options: MessageOwnerOptio
         if (!active() || clearing || ownerEpoch !== creationEpoch) throw new Error("Message creation was interrupted.")
         clock.restart(state.duration, state.keepAliveOnHover)
         announce(`${labels[state.type]}: ${state.content}`)
-        emit("mui:message-create", { handle })
+        emit("m:message-create", { handle })
         return handle
       } catch (error) { remove("detached"); throw error }
     } finally { if (reserved) creating-- }

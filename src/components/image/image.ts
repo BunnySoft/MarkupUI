@@ -115,7 +115,7 @@ export function createImagePreview(root: HTMLElement): ImagePreviewController {
       const destination = opener && available(opener) ? opener : entries()[0]
       destination?.focus({ preventScroll: true })
     }
-    emit("mui:image-close")
+    emit("m:image-close")
     opener = null
   }
   function close(): void {
@@ -154,7 +154,7 @@ export function createImagePreview(root: HTMLElement): ImagePreviewController {
     toolbarInitiallyHidden = toolbar?.hidden ?? false
     imagePrototype = image.cloneNode(false) as HTMLImageElement
     image.remove()
-    clone.classList.add("mui-image-preview")
+    clone.classList.add("m-image-preview")
     clone.addEventListener("click", onDialogClick)
     clone.addEventListener("close", onDialogClose)
     root.append(clone)
@@ -205,7 +205,7 @@ export function createImagePreview(root: HTMLElement): ImagePreviewController {
     const stage = dialog.querySelector<HTMLElement>("[data-image-stage]") ?? dialog
     stage.append(image)
     image.src = src
-    if (changed) emit("mui:image-change")
+    if (changed) emit("m:image-change")
   }
   function open(target: number | HTMLAnchorElement = active ?? 0, returnTo?: HTMLElement): boolean {
     if (!connected || !available(root)) return false
@@ -228,7 +228,7 @@ export function createImagePreview(root: HTMLElement): ImagePreviewController {
       modalObserver.observe(root.ownerDocument.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden", "inert"] })
       render(true)
       closeButton!.focus({ preventScroll: true })
-      emit("mui:image-open")
+      emit("m:image-open")
     } else render(true)
     return true
   }
@@ -240,7 +240,7 @@ export function createImagePreview(root: HTMLElement): ImagePreviewController {
     if (index < 0) { close(); return false }
     active = items[(index + step + items.length) % items.length]!
     render(true)
-    emit(step === 1 ? "mui:image-next" : "mui:image-prev")
+    emit(step === 1 ? "m:image-next" : "m:image-prev")
     return true
   }
   function onClick(event: MouseEvent): void {

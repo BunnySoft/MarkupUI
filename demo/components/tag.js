@@ -1,7 +1,7 @@
 const topic = document.querySelector("#topic")
 let changes = 0
 let submissions = 0
-topic.addEventListener("mui:change", (event) => {
+topic.addEventListener("m:change", (event) => {
   document.querySelector("#change-status").textContent = `${++changes} changes; Design is ${event.detail ? "checked" : "unchecked"}.`
 })
 document.querySelector("#tag-form").addEventListener("submit", (event) => {
@@ -18,7 +18,7 @@ document.querySelector("#reconnect-topic").addEventListener("click", () => {
 const closable = document.querySelector("#closable-tag")
 let requests = 0
 let clicks = 0
-closable.addEventListener("mui:close", (event) => {
+closable.addEventListener("m:close", (event) => {
   event.preventDefault()
   document.querySelector("#close-status").textContent = `${++requests} close requests; Project remains visible.`
 })

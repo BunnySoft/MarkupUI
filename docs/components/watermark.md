@@ -22,7 +22,7 @@ remain deliberate differences. See the [measured audit](../style-audit/component
 
 ```html
 <p>This example is classified LOCAL DRAFT.</p>
-<section class="mui-watermark document-wrapper" data-watermark>
+<section class="m-watermark document-wrapper" data-watermark>
   <h2>Original document</h2>
   <label>Title <input name="title" value="Keep native state"></label>
   <div data-watermark-overlay hidden aria-hidden="true"></div>
@@ -184,7 +184,7 @@ atomically writes the new safe URL/geometry, then revokes the previous owned URL
 Empty/whitespace text with no image/loader explicitly clears and revokes the tile.
 An error never clears useful content or erases the previous successful decoration.
 
-`mui:watermark-state` bubbles with a frozen state snapshot at loading/completion/error/
+`m:watermark-state` bubbles with a frozen state snapshot at loading/completion/error/
 disconnect. No repeated text/image payload, automatic live region or focus move is added.
 Promises settle before completion notification. A reentrant update/disconnect from
 loading or abort callbacks cannot apply an older result. Abort resolves the old outcome
@@ -277,5 +277,5 @@ Print/forced-colors computed display:none; strict self-hosted script/style CSP w
 img-src self blob worked at DPR2 without page errors. JavaScript-disabled context kept
 the original SVG and editable/resettable native fields, with enhancement controls and
 overlay hidden. Classic-only generation succeeded; loading unchanged core/widgets
-preserved the native Watermark and legacy Carousel behavior, without mui-watermark
+preserved the native Watermark and legacy Carousel behavior, without m-watermark
 registration. These are observed Chromium results, not all-browser/AT/font/CSP/print parity.

@@ -16,7 +16,7 @@ const controllers = {
   manual: createTabs(node("manual-tabs"), { activation: "manual" }),
 }
 let sequence = 0
-node("main-tabs").addEventListener("mui:tabs-add", () => {
+node("main-tabs").addEventListener("m:tabs-add", () => {
   const fragment = node("pair-template").content.cloneNode(true)
   const tab = fragment.querySelector("[data-tabs-tab]")
   const pane = fragment.querySelector("[data-tabs-pane]")
@@ -33,7 +33,7 @@ node("main-tabs").addEventListener("mui:tabs-add", () => {
   controllers.main.value = key
   tab.focus()
 })
-node("main-tabs").addEventListener("mui:tabs-close", event => {
+node("main-tabs").addEventListener("m:tabs-close", event => {
   const { value, tab, panel } = event.detail
   tab.remove()
   panel.remove()
@@ -43,8 +43,8 @@ node("main-tabs").addEventListener("mui:tabs-close", event => {
   controllers.main.refresh()
 })
 for (const root of [node("main-tabs"), node("nested-tabs"), node("manual-tabs")]) {
-  root.addEventListener("mui:tabs-change", event => { node("event-log").value = `${root.id}: ${event.detail.value}` })
-  root.addEventListener("mui:tabs-error", event => { node("event-log").value = `Guard error${event.detail.stale ? " (stale request)" : ""}` })
+  root.addEventListener("m:tabs-change", event => { node("event-log").value = `${root.id}: ${event.detail.value}` })
+  root.addEventListener("m:tabs-error", event => { node("event-log").value = `Guard error${event.detail.stale ? " (stale request)" : ""}` })
 }
 node("demo-form").addEventListener("submit", event => {
   event.preventDefault()

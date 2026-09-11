@@ -189,7 +189,7 @@ export function createMention(control: MentionControl, settings: MentionOptions)
     if (recover && focused instanceof view!.HTMLElement && focusedPanel && available(control)
       && (document!.activeElement === focused || document!.activeElement === document!.body)) control.focus({ preventScroll: true })
     previous?.abort()
-    if (notify && connected && generation === version && wasShown && panel.hidden) control.dispatchEvent(new view!.CustomEvent("mui:mention-visibility", { detail: { shown: false } }))
+    if (notify && connected && generation === version && wasShown && panel.hidden) control.dispatchEvent(new view!.CustomEvent("m:mention-visibility", { detail: { shown: false } }))
     return version
   }
   function settleReset() {
@@ -203,7 +203,7 @@ export function createMention(control: MentionControl, settings: MentionOptions)
   }
   function report(reason: unknown, ctx: MentionContext | null) {
     error = reason
-    control.dispatchEvent(new view!.CustomEvent("mui:mention-error", { detail: { error: reason, context: ctx } }))
+    control.dispatchEvent(new view!.CustomEvent("m:mention-error", { detail: { error: reason, context: ctx } }))
   }
   function sync() {
     if (!connected) return
@@ -229,9 +229,9 @@ export function createMention(control: MentionControl, settings: MentionOptions)
     pending = controller; activeSnapshot = before; error = null
     message("Loading mention choices…")
     const show = visibility(true)
-    if (show) control.dispatchEvent(new view!.CustomEvent("mui:mention-visibility", { detail: { shown: true } }))
+    if (show) control.dispatchEvent(new view!.CustomEvent("m:mention-visibility", { detail: { shown: true } }))
     if (!current()) { if (connected && generation === version) invalidate(true); return result("aborted") }
-    control.dispatchEvent(new view!.CustomEvent("mui:mention-search", { detail: ctx }))
+    control.dispatchEvent(new view!.CustomEvent("m:mention-search", { detail: ctx }))
     let remove = () => {}
     const cancelled = new Promise<null>(resolve => {
       const abort = () => resolve(null)
@@ -263,14 +263,14 @@ export function createMention(control: MentionControl, settings: MentionOptions)
       const rows = values.map(option => {
         const row = document!.createElement(list.localName === "div" ? "div" : "li"), button = document!.createElement("button")
         button.type = "button"; button.textContent = option.label ?? option.value; button.disabled = option.disabled ?? false
-        button.className = `mui-mention__choice${option.class ? ` ${option.class}` : ""}`
+        button.className = `m-mention__choice${option.class ? ` ${option.class}` : ""}`
         choices.set(button, option); row.append(button); return row
       })
       list.replaceChildren(...rows); rendered = listState()
       published = { snapshot: before, context: ctx, options: values, version }; pending = null
       message(values.length ? `${values.length} mention choices. Tab to a button; Enter or Space inserts. Escape closes.` : "No mention choices. Ordinary editing remains available.")
       const completed = result("updated", values.length)
-      control.dispatchEvent(new view!.CustomEvent("mui:mention-results", { detail: { context: ctx, options: values, result: completed } }))
+      control.dispatchEvent(new view!.CustomEvent("m:mention-results", { detail: { context: ctx, options: values, result: completed } }))
       return completed
     } catch (reason) {
       if (current()) { pending = null; message("Mention search failed. Ordinary editing remains available.") }
@@ -289,7 +289,7 @@ export function createMention(control: MentionControl, settings: MentionOptions)
     const insertion = candidate.value + (separated ? "" : separator)
     if (control.maxLength >= 0 && session.snapshot.text.length - (end - from) + insertion.length > control.maxLength) {
       message("That mention would exceed maxlength. Text was not changed.")
-      control.dispatchEvent(new view!.CustomEvent("mui:mention-reject", { detail: { reason: "maxlength", option: candidate, prefix } }))
+      control.dispatchEvent(new view!.CustomEvent("m:mention-reject", { detail: { reason: "maxlength", option: candidate, prefix } }))
       return false
     }
     const active = document!.activeElement, expected = generation + 1
@@ -305,7 +305,7 @@ export function createMention(control: MentionControl, settings: MentionOptions)
       control.setSelectionRange(caret, caret)
       control.dispatchEvent(new view!.InputEvent("input", { bubbles: true, composed: true, inputType: "insertReplacementText", data: insertion }))
     } finally { inserting = false }
-    control.dispatchEvent(new view!.CustomEvent("mui:mention-select", { detail: { option: candidate, prefix } }))
+    control.dispatchEvent(new view!.CustomEvent("m:mention-select", { detail: { option: candidate, prefix } }))
     return true
   }
   function schedule() {

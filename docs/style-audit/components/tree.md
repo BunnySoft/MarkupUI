@@ -95,7 +95,7 @@ the control level; checkbox opacity is not placed on row/branch containers.
 ## Real interaction and author checks
 
 - Native Enter selected Alpha once, exposing the existing `aria-pressed` state and one
-  `mui:tree-select`; focus retained its 2px outline.
+  `m:tree-select`; focus retained its 2px outline.
 - Right entered Child, Down/Right reached Deep, Left returned to Branch. Programmatically
   collapsing ancestors recovered focused Deep to Parent.
 - Native Tab from a selection label reached its checkbox. Space changed checkedness while

@@ -127,7 +127,7 @@ border. The native error still retained **value 40**, kept progress hidden, and 
 4. **Repeated starts/early terminal calls:** repeated loading state does not force an entry
    fade restart. A terminal transition can end that fade immediately; it does not reproduce
    the source provider's mount/enter/leave sequencing.
-5. **Placement is opted in:** inline flow remains the native default. `.mui-loading-bar--fixed`
+5. **Placement is opted in:** inline flow remains the native default. `.m-loading-bar--fixed`
    is the fixed counterpart; there is no provider/teleport, universal viewport escape from
    transformed ancestors, global request counting or missing binding/template layer.
 6. **Native progress engines:** terminal width animation was measured on Chromium's actual

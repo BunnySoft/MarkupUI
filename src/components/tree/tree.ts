@@ -70,7 +70,7 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
   }
   function report(cause: unknown) {
     error = cause
-    root.dispatchEvent(new view!.CustomEvent("mui:tree-error", { detail: { error: cause } }))
+    root.dispatchEvent(new view!.CustomEvent("m:tree-error", { detail: { error: cause } }))
   }
   function attr(element: HTMLElement, name: string, value: string | null) {
     let lease = leases.find(item => item.element === element && item.name === name)
@@ -301,7 +301,7 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
     const current = generation, id = view!.setTimeout(() => { timers.delete(id); if (connected && generation === current) action() }, 0)
     timers.add(id)
   }
-  function notify(type: string, detail: object) { if (connected) root.dispatchEvent(new view!.CustomEvent(`mui:tree-${type}`, { detail })) }
+  function notify(type: string, detail: object) { if (connected) root.dispatchEvent(new view!.CustomEvent(`m:tree-${type}`, { detail })) }
   function setExpanded(keys: readonly string[]) {
     const targets = new Set(keyNodes(keys, node => !!node.branch))
     run(() => {

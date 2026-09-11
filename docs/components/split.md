@@ -22,7 +22,7 @@ pointer track and native grid topology. See the [measured audit](../style-audit/
 ```html
 <p id="split-help">Arrows resize; Shift uses coarse steps; Home/End choose bounds.
   Escape cancels an active drag.</p>
-<section class="mui-split" data-split>
+<section class="m-split" data-split>
   <section id="editor" data-split-pane="1" aria-labelledby="editor-heading">
     <div class="pane-content"><h2 id="editor-heading">Editor</h2>
       <label>Title <input name="title" required></label>
@@ -94,7 +94,7 @@ padding/borders and resolved nonnegative pixel gaps are supported.
 Keep outer pane/handle boxes borderless, unpadded, zero-margin and untransformed; put pane
 decoration in original inner content. Handle border appearance uses non-geometric inset
 paint. Do not override owned grid tracks/data attributes or geometry tokens. Use a
-definite externally sized root (default --mui-split-height:20rem), not an auto-height
+definite externally sized root (default --m-split-height:20rem), not an auto-height
 feedback layout for vertical splitting.
 
 ## Bounds and suspended layouts
@@ -111,7 +111,7 @@ tracks. Restored feasible geometry reapplies the retained preference.
 
 Only root/owned-node/ancestor changes and native resize events schedule geometry work.
 There is no layout polling loop. State reason distinguishes hidden, space, bounds and print.
-`mui:split-layout` reports observed layout synchronization; it is not a user size update.
+`m:split-layout` reports observed layout synchronization; it is not a user size update.
 
 ## Arrangement, separator orientation and keyboard
 
@@ -161,10 +161,10 @@ native interaction, and pointer capture does not create a modal interaction boun
 
 | Event | Contract |
 | --- | --- |
-| mui:split-drag-start | After successful capture; pointer ID, current state and original event |
-| mui:split-drag-move | Each processed/coalesced sample, including clamped movement |
-| mui:split-change | User pointer/keyboard size change, or user cancellation rollback; source and actual state included |
-| mui:split-drag-end | Final state, cancelled flag/reason and terminal event (or null for programmatic/layout teardown) |
+| m:split-drag-start | After successful capture; pointer ID, current state and original event |
+| m:split-drag-move | Each processed/coalesced sample, including clamped movement |
+| m:split-change | User pointer/keyboard size change, or user cancellation rollback; source and actual state included |
+| m:split-drag-end | Final state, cancelled flag/reason and terminal event (or null for programmatic/layout teardown) |
 
 Programmatic set/default/reset/reveal do not fabricate user size-change events. They can
 end an active gesture with an explicit cancelled lifecycle event. Automatic geometry
@@ -222,7 +222,7 @@ Subpixel/native offset rounding is possible; no sub-device-pixel accuracy guaran
 Rotations, skew, negative/reflected scale, perspective, 3D transforms and vertical writing
 modes are explicitly rejected. Native DOMMatrixReadOnly validates transforms where needed;
 without it use untransformed layout. Do not transform the owned pane/handle outer boxes;
-transform inner application content instead. Unsupported geometry reports mui:split-error
+transform inner application content instead. Unsupported geometry reports m:split-error
 and releases to native static layout rather than pretending ratio math remains valid.
 
 Native print layout is a supported temporary suspension, not a malformed-grid error.
@@ -235,7 +235,7 @@ events. Without ResizeObserver, call refresh after sizing. Separate owners remai
 parent pane resizing naturally updates an observed nested root. No global layout model,
 renderer, animation dependency or focus trap is introduced.
 
-The only JS style writes are --mui-split-first and --mui-split-handle-size numeric geometry
+The only JS style writes are --m-split-first and --m-split-handle-size numeric geometry
 tokens, through the existing owned-write utility. External CSS owns tracks, outer boxes,
 inner pane overflow, handle paint/focus, direction, hidden safety, forced colors and print.
 Source theme/style-object/provider machinery is omitted.
@@ -310,7 +310,7 @@ Chromium **151.0.7922.174**, dedicated local Split tab, with original other tabs
 | Keyboard-only fallback | Missing capture API: pointerSupported=false, normal cursor, ArrowRight still moved 10px |
 | No JavaScript | Both panes/fields visible, handles hidden with no role/tabindex; native FormData and field reset worked; 305px document |
 | Handoff | Original pane/input/value remained; hidden/inert/range/geometry tokens released; no removed data restored |
-| Coexistence | Original native nodes survived later core/advanced/widgets; legacy code remained usable; no mui-split registration; classic ownership/namespace replacement rejected |
+| Coexistence | Original native nodes survived later core/advanced/widgets; legacy code remained usable; no m-split registration; classic ownership/namespace replacement rejected |
 
 The final pointerup/coalesced sample, invalid settings, reentrant cancellation, failed
 capture, observer removal, IDs and canceled queued work also have deterministic regressions.

@@ -10,7 +10,7 @@ const helpers: CalendarController[] = []
 function fixture(options: CalendarOptions = {}, bind = true) {
   const form = document.createElement("form")
   form.innerHTML = `<h2 id="calendar-heading">Original <em>calendar heading</em></h2>
-    <section class="mui-calendar" data-calendar data-calendar-month="2024-02" tabindex="-1" aria-labelledby="calendar-heading">
+    <section class="m-calendar" data-calendar data-calendar-month="2024-02" tabindex="-1" aria-labelledby="calendar-heading">
       <div data-calendar-controls hidden>
         <button type="button" data-calendar-action="prev-year">Previous year</button>
         <button type="button" data-calendar-action="prev-month">Previous month</button>
@@ -114,7 +114,7 @@ describe("Calendar native table and explicit date-only state", () => {
   })
   it("shows adjacent months and changes panel once when an adjacent available date is selected", () => {
     const { helper, root, day } = fixture(), panels = vi.fn(), changes = vi.fn()
-    root.addEventListener("mui:calendar-panel-change", panels); root.addEventListener("mui:calendar-change", changes)
+    root.addEventListener("m:calendar-panel-change", panels); root.addEventListener("m:calendar-change", changes)
     expect(day("2024-01-29").closest("td")!.hasAttribute("data-calendar-adjacent")).toBe(true)
     day("2024-03-01").click()
     expect(helper.state.panel).toBe("2024-03"); expect(helper.value).toBe("2024-03-01")
@@ -135,7 +135,7 @@ describe("Calendar native table and explicit date-only state", () => {
   })
   it("accepts unavailable programmatic state without allowing unavailable user selection", () => {
     const { helper, root, day } = fixture({ min: "2024-02-10", max: "2024-02-20" }), changed = vi.fn()
-    root.addEventListener("mui:calendar-change", changed)
+    root.addEventListener("m:calendar-change", changed)
     day("2024-02-09").click(); expect(helper.value).toBeNull()
     expect(helper.select("2024-02-21")).toBe(false)
     helper.set({ value: "2024-02-21" }); expect(helper.value).toBe("2024-02-21"); expect(helper.state.selectionAvailable).toBe(false)
@@ -164,7 +164,7 @@ describe("Calendar native table and explicit date-only state", () => {
 describe("Calendar keyboard, bounds, locale and focus", () => {
   it("moves roving focus with arrows/Home/End without selecting or rebuilding the current rows", () => {
     const { helper, root, body, day, key } = fixture(), rows = [...body.rows], changed = vi.fn()
-    root.addEventListener("mui:calendar-change", changed)
+    root.addEventListener("m:calendar-change", changed)
     day("2024-02-28").focus(); key(day("2024-02-28"), "ArrowRight")
     expect(helper.state.focusedDate).toBe("2024-02-29"); expect(document.activeElement).toBe(day("2024-02-29"))
     key(day("2024-02-29"), "Home"); expect(helper.state.focusedDate).toBe("2024-02-26")
@@ -263,7 +263,7 @@ describe("Calendar atomic callbacks and lifetime", () => {
     expect(() => helper.set({ isDateDisabled: (() => Promise.reject(new Error("not synchronous"))) as never })).toThrow(/synchronous/)
     await Promise.resolve(); expect(body.innerHTML).toBe(before)
     let fail = false; helper.set({ isDateDisabled: () => { if (fail) throw new Error("policy changed"); return false } })
-    const error = vi.fn(); root.addEventListener("mui:calendar-error", error); fail = true
+    const error = vi.fn(); root.addEventListener("m:calendar-error", error); fail = true
     action("next-month").click(); expect(helper.state.panel).toBe("2024-02"); expect(error).toHaveBeenCalledOnce()
   })
   it("guards mutations during callbacks and honors callback-driven disconnect", () => {
@@ -276,8 +276,8 @@ describe("Calendar atomic callbacks and lifetime", () => {
   })
   it("suppresses stale value notification after a reentrant panel event changes the state", () => {
     const { helper, root } = fixture(), change = vi.fn()
-    root.addEventListener("mui:calendar-change", change)
-    root.addEventListener("mui:calendar-panel-change", () => helper.set({ value: "2024-04-10" }), { once: true })
+    root.addEventListener("m:calendar-change", change)
+    root.addEventListener("m:calendar-panel-change", () => helper.set({ value: "2024-04-10" }), { once: true })
     helper.select("2024-03-01")
     expect(helper.value).toBe("2024-04-10"); expect(change).not.toHaveBeenCalled()
   })
@@ -348,18 +348,18 @@ describe("Calendar default styles", () => {
   })
 
   it("retains native table and button ownership while matching the measured metrics", () => {
-    expect(css).toContain("font-size: var(--mui-calendar-font-size, 14px)")
-    expect(css).toContain("font-size: var(--mui-calendar-title-size, 22px)")
-    expect(css).toContain("padding: var(--mui-calendar-padding, 10px)")
+    expect(css).toContain("font-size: var(--m-calendar-font-size, 14px)")
+    expect(css).toContain("font-size: var(--m-calendar-title-size, 22px)")
+    expect(css).toContain("padding: var(--m-calendar-padding, 10px)")
     expect(css).toContain("min-block-size: 28px")
     expect(css).toContain("inline-size: 1.8em")
     expect(css).not.toContain("[role=")
   })
 
   it("keeps hidden, forced-color and print behavior explicit", () => {
-    expect(css).toContain(".mui-calendar [hidden] { display: none !important; }")
+    expect(css).toContain(".m-calendar [hidden] { display: none !important; }")
     expect(css).toContain("@media (forced-colors: active)")
     expect(css).toContain("@media print")
-    expect(css).toContain("[data-calendar-controls], .mui-calendar [data-calendar-status] { display: none; }")
+    expect(css).toContain("[data-calendar-controls], .m-calendar [data-calendar-status] { display: none; }")
   })
 })

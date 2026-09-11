@@ -69,9 +69,9 @@ layout/item styling through native markup, not the source's historical compatibi
 ## Authored item and wrapper contract
 
 ```html
-<div class="mui-space">
-  <span class="mui-space-item card-item">One text item</span>
-  <div class="mui-space-item card-item">
+<div class="m-space">
+  <span class="m-space-item card-item">One text item</span>
+  <div class="m-space-item card-item">
     <strong>One grouped item</strong>
     <p>Inline and block content stay in this same native group.</p>
     <a href="./details.html">Details</a>
@@ -79,7 +79,7 @@ layout/item styling through native markup, not the source's historical compatibi
 </div>
 ```
 
-Only direct `.mui-space-item` children receive item-box styling: border-box sizing,
+Only direct `.m-space-item` children receive item-box styling: border-box sizing,
 max-inline-size:100% and the shared direct-child min-inline-size:0. The item is not given
 a display mode, role, padding, color or interaction. Its interior remains ordinary native
 flow unless the application chooses its own layout class.
@@ -102,7 +102,7 @@ flow unless the application chooses its own layout class.
 ```
 
 Wrapping is a markup/semantic decision, not just a layout flag. An ol/ul still requires
-direct li children; use `.mui-space-item` on the li instead of inserting anonymous divs.
+direct li children; use `.m-space-item` on the li instead of inserting anonymous divs.
 Forms retain actual labels, inputs, buttons and their relationships. No automatic
 `role="none"` is copied from the source onto the container or items.
 
@@ -122,10 +122,10 @@ application; repeated IDs and listener binding remain application responsibiliti
 An independently authored separator is an ordinary flex item:
 
 ```html
-<div class="mui-space">
-  <span class="mui-space-item">First</span>
+<div class="m-space">
+  <span class="m-space-item">First</span>
   <span aria-hidden="true">/</span>
-  <span class="mui-space-item">Second</span>
+  <span class="m-space-item">Second</span>
 </div>
 ```
 
@@ -136,14 +136,14 @@ to the content; do not hide a group that contains live links/buttons.
 To keep related actions and their separator in one outer item, author that group:
 
 ```html
-<span class="mui-space-item paired-item">
+<span class="m-space-item paired-item">
   <a href="./terms.html">Terms</a>
   <span aria-hidden="true">/</span>
   <a href="./privacy.html">Privacy</a>
 </span>
 ```
 
-Put this group directly in a `.mui-space` container and give `.paired-item` an application
+Put this group directly in a `.m-space` container and give `.paired-item` an application
 layout if needed. The root gap now separates groups, not the inner links. Internal wrapping
 is still the group's native CSS policy; no line-aware separator-hiding algorithm is claimed.
 A real semantic separator can also be authored deliberately, without requiring Divider.
@@ -154,14 +154,14 @@ Space uses the same explicit flag conventions as Flex:
 
 | Native input | Contract |
 | --- | --- |
-| `.mui-space` | Native flex row, wrap enabled, align-items:normal, justify-content:flex-start. |
+| `.m-space` | Native flex row, wrap enabled, align-items:normal, justify-content:flex-start. |
 | `data-inline` | Presence selects inline-flex. |
 | `data-vertical` | Presence selects column and forces nowrap, even when data-wrap=true. |
 | `data-wrap="false"` | Disables wrapping for a row. |
 | `data-size="small|medium|large"` | Selects the pinned gap preset; absent/medium uses medium. |
-| `--mui-space-align` | Native align-items value, including the source flex-start/flex-end aliases. |
-| `--mui-space-justify` | Native justify-content value. |
-| `--mui-space-row-gap`, `--mui-space-column-gap` | Explicit native CSS gap values. |
+| `--m-space-align` | Native align-items value, including the source flex-start/flex-end aliases. |
+| `--m-space-justify` | Native justify-content value. |
+| `--m-space-row-gap`, `--m-space-column-gap` | Explicit native CSS gap values. |
 
 Inline/vertical are presence flags, not parsed Booleans: remove them rather than writing
 data-vertical=false. Wrap is a string opt-out exception. Vertical nowrap matches the source.
@@ -181,8 +181,8 @@ The source tuple **[horizontalGap, verticalGap] = [20,6]** maps to:
 
 ```css
 .tuple {
-  --mui-space-column-gap: 20px;
-  --mui-space-row-gap: 6px;
+  --m-space-column-gap: 20px;
+  --m-space-row-gap: 6px;
 }
 .uniform { gap: 10px; }
 ```
@@ -206,10 +206,10 @@ or use `initial` when a nested container should return to its own preset/default
 
 Pinned Space light/dark themes contain the same three gap presets and no color or
 font roles. The native stylesheet likewise paints nothing and changes no typography.
-`data-mui-theme` and shared palette/font tokens are not interpreted by Space;
+`data-m-theme` and shared palette/font tokens are not interpreted by Space;
 application-authored font/color rules still inherit normally. No theme marker,
 palette override or global token change is needed for Space default-layout parity.
-Use the four supported `--mui-space-*` layout tokens or ordinary native CSS.
+Use the four supported `--m-space-*` layout tokens or ordinary native CSS.
 
 ## Order, responsiveness and scope
 
@@ -239,7 +239,7 @@ and scrolling overflow are desired, opt in using application CSS:
 
 ```css
 /* Application class on the existing Space root; not a package API. */
-.intrinsic-space > .mui-space-item {
+.intrinsic-space > .m-space-item {
   min-inline-size: auto;
 }
 ```
@@ -270,12 +270,12 @@ connected/disconnected hooks, observer cleanup or rendering/disposal API is nece
 
 | Upstream item | Native target | Status / limits |
 | --- | --- | --- |
-| align | --mui-space-align / native align-items. | 🟢 Browser CSS grammar; no enum/string runtime adapter. |
+| align | --m-space-align / native align-items. | 🟢 Browser CSS grammar; no enum/string runtime adapter. |
 | inline | Presence of data-inline. | 🟢 Native inline-flex. |
 | wrap-item | Explicit authored group or direct native children. | 🟢 Markup adaptation; automatic Boolean wrapper generation/toggling omitted. |
 | item-class | Actual class on the author-owned item. | 🟢 No root-string propagation. |
 | item-style | External CSS on the actual item class. | 🟢 No string/object adapter or runtime style merging. |
-| justify | --mui-space-justify / native justify-content. | 🟢 Default flex-start; native distribution. |
+| justify | --m-space-justify / native justify-content. | 🟢 Default flex-start; native distribution. |
 | reverse | Meaningful native DOM order. | ⏭️ Visual reversal helpers omitted. |
 | size | Pinned presets or native row/column gap declarations. | 🟢 Correct [H,V] mapping and native scalar/invalid behavior; no parser. |
 | vertical | Presence of data-vertical. | 🟢 Column with source-compatible nowrap. |

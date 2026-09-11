@@ -20,7 +20,7 @@ export function createGraphic(document: Document): { svg: SVGSVGElement; defs: S
 
 export function createRing(document: Document, id: string): Ring {
   const group = document.createElementNS(namespace, "g")
-  group.setAttribute("data-mui-progress-ring", "")
+  group.setAttribute("data-m-progress-ring", "")
   const rail = document.createElementNS(namespace, "circle")
   const fill = document.createElementNS(namespace, "circle")
   for (const node of [rail, fill]) {
@@ -29,8 +29,8 @@ export function createRing(document: Document, id: string): Ring {
     node.setAttribute("stroke-linecap", "round")
     node.setAttribute("stroke", "currentColor")
   }
-  rail.setAttribute("data-mui-progress-rail", "")
-  fill.setAttribute("data-mui-progress-fill", "")
+  rail.setAttribute("data-m-progress-rail", "")
+  fill.setAttribute("data-m-progress-fill", "")
   group.append(rail, fill)
   const gradient = document.createElementNS(namespace, "linearGradient")
   gradient.id = id
@@ -65,7 +65,7 @@ export function updateRing(ring: Ring, options: {
   ring.fill.setAttribute("stroke-dasharray", `${arc * (value === null ? .25 : value / 100)} 100`)
   ring.rail.setAttribute("visibility", arc === 0 ? "hidden" : "visible")
   ring.fill.setAttribute("visibility", value === 0 || arc === 0 ? "hidden" : "visible")
-  ring.fill.toggleAttribute("data-mui-progress-indeterminate-fill", value === null)
+  ring.fill.toggleAttribute("data-m-progress-indeterminate-fill", value === null)
   if (railColor) ring.rail.setAttribute("color", railColor)
   else ring.rail.removeAttribute("color")
   if (color && typeof color === "object") {

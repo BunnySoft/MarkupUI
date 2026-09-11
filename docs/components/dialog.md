@@ -5,7 +5,7 @@ Naive's `NDialog` is presentational content: its action handlers notify; it does
 itself own modal visibility. Its `DialogEnvironment`/provider adds modal lifetime and
 false/Promise decisions. MarkupUI keeps these responsibilities separate:
 
-- CSS-only `.mui-dialog` content works in a native section/article or dialog.
+- CSS-only `.m-dialog` content works in a native section/article or dialog.
 - `createNativeDialog(dialog, options)` owns only a real `HTMLDialogElement` lifetime.
 - `createDialog(dialog, options)` adds explicit optional positive/negative/close decisions.
 - `createDialogOwner(root)` owns a collection of authored template clones, not injection.
@@ -27,21 +27,21 @@ The isolated release build and **192 Dialog/Modal/Drawer/Radio tests** pass. Act
 release Dialog CSS is **5,219 raw / 1,496 gzip bytes**; the shared stylesheet changed
 only formatting. Composed stylesheet order and scrolled modal positioning remain protected.
 
-Inline `.mui-dialog` now fills its authored container without a fixed default width,
-border or shadow, matching inline NDialog. A native `dialog.mui-dialog` instead uses
+Inline `.m-dialog` now fills its authored container without a fixed default width,
+border or shadow, matching inline NDialog. A native `dialog.m-dialog` instead uses
 the source **wrapper's** 446px width, still constrained by the existing native viewport
-bounds. `--mui-dialog-width` overrides either target. Padding is **16px 28px 20px**,
+bounds. `--m-dialog-width` overrides either target. Padding is **16px 28px 20px**,
 radius **3px**, title **18px/500**, body **14px/1.6**, action spacing **12px**, marked
 action height **28px**, and close size **22px**. Top-icon layout centers its content.
 No action region means no trailing content margin; a hidden/omitted close control
 does not reserve title space.
 
-Use `data-mui-theme="light|dark"` on a surrounding region or the surface. When also
+Use `data-m-theme="light|dark"` on a surrounding region or the surface. When also
 loading the core stylesheet, load the theme stylesheet/preset to supply its matching
 shared semantic roles. Neutral surface/title/body defaults are Dialog-specific,
 not the incompatible legacy surface/text palette. Inherited/per-element
-`--mui-dialog-color`, `--mui-dialog-background`, `--mui-dialog-accent`,
-`--mui-dialog-border` and `--mui-dialog-width` remain author-owned. Accent overrides
+`--m-dialog-color`, `--m-dialog-background`, `--m-dialog-accent`,
+`--m-dialog-border` and `--m-dialog-width` remain author-owned. Accent overrides
 win even on semantic types and hover. Ordinary external CSS can override typography,
 spacing, title color and other presentation.
 
@@ -59,11 +59,11 @@ restores `animation:none`, `transition:none` and `scroll-behavior:auto` on the s
 and backdrop, including overrides of earlier same-specificity authored motion.
 
 The native backdrop, opt-in dismissal, form validation/return values, focus, cancellation,
-async decisions and lifecycle are unchanged. Legacy `<mui-dialog>` is not restyled by
+async decisions and lifecycle are unchanged. Legacy `<m-dialog>` is not restyled by
 this audit. Modal positioning remains browser-owned/fixed; relative positioning is
 limited to inline sections and open nonmodal/fallback dialogs on screen, anchoring
 their close controls without changing print rules. Native Dialog paint and nonmodal
-positioning selectors include **both** `.mui-native-dialog` and `.mui-dialog`, so later
+positioning selectors include **both** `.m-native-dialog` and `.m-dialog`, so later
 Modal/Drawer stylesheets cannot override them with their repeated shared base rules.
 **66 targeted Dialog tests pass.** Outputs are
 **4,319 ESM / 4,442 classic / 1,496 composed CSS gzip bytes** against
@@ -89,7 +89,7 @@ The historical migration measurements below predate these presentation changes.
 | [Local demo](../../demo/components/dialog.html) | Separate HTML/CSS/JS and local simulated decisions |
 
 ```html
-<dialog class="mui-native-dialog mui-dialog" id="review"
+<dialog class="m-native-dialog m-dialog" id="review"
   aria-labelledby="review-title" aria-describedby="review-description">
   <header data-dialog-header>
     <span data-dialog-icon aria-hidden="true">!</span>
@@ -172,7 +172,7 @@ popover-command attributes; ordinary native controls stay unmarked.
 Backdrop dismissal requires the **same primary pointer** to start and end outside the
 dialog's border rectangle. Padding clicks, inside-to-outside drags, cancelled pointers,
 secondary buttons and later preventDefault do not dismiss. A nonbubbling cancelable
-`mui:native-dialog-backdrop` event has `{ event: PointerEvent }`; prevent it to veto
+`m:native-dialog-backdrop` event has `{ event: PointerEvent }`; prevent it to veto
 that request. It is emitted only for the opt-in eligible backdrop path. This is not a
 general mask-click callback or a touch-gesture/animation library.
 
@@ -203,7 +203,7 @@ is fabricated.
   `lastAction` **rejects on failure**. An internal rejection observer prevents an
   accidental unhandled-rejection while separately surfacing failure; consumers may
   still await/catch the Promise.
-- `mui:dialog-error` is nonbubbling `{ action, error, stale }`. `action=null` denotes an
+- `m:dialog-error` is nonbubbling `{ action, error, stale }`. `action=null` denotes an
   anatomy fault. Stale failures are still reported but never repaint a new/disposed UI.
 
 Clicks start on a following task, so later bubbling preventDefault is respected.
@@ -258,8 +258,8 @@ snapshot of owned handles, including closed clones, not a reactive show list. No
 info/success/warning/error shorthand methods, provider injection or global singleton.
 
 The per-native-node Symbol.for ownership guard also rejects double adoption across
-separately evaluated ESM/classic/companion bundles. No mui-* tags are registered and the
-legacy MuiDialog is unchanged. Each native observer watches open and child lists on its
+separately evaluated ESM/classic/companion bundles. No m-* tags are registered and the
+legacy MDialog is unchanged. Each native observer watches open and child lists on its
 actual ancestor chain, not the document subtree. Reparenting refreshes that chain.
 Root/ancestor removal disposes on observer delivery; action anatomy is locally observed.
 Prefer `dispose()` **before intentional removal or cross-document transfer**; never reuse
@@ -313,7 +313,7 @@ CSP; no unsafe-inline or runtime styles are required by the helper.
   Escape/cancel, nested top layers and parent/opener restoration.
 - False/rejection, disabled/busy duplicate prevention, Escape/reopen stale completion,
   ancestor removal, independent template clones, scoped destroyAll, ESM/classic per-node
-  ownership and unchanged legacy MuiDialog coexistence were exercised.
+  ownership and unchanged legacy MDialog coexistence were exercised.
 - Real pointer padding and inside-to-outside drags stayed open; outside-to-outside
   activation dismissed through native requestClose. Runtime capability reduction verified
   the inline cancel/close fallback. Script-blocked reload verified visible inline/native

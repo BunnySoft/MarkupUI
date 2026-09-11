@@ -26,7 +26,7 @@ function graphic(document: Document, path: string, close = false): SVGSVGElement
 
 export interface AlertCloseDetail { originalEvent: MouseEvent }
 
-export class MuiAlert extends HTMLElement {
+export class MAlert extends HTMLElement {
   public static get observedAttributes(): string[] { return ["title", "type", "show-icon", "closable", "close-label"] }
 
   private body: HTMLElement | undefined
@@ -49,7 +49,7 @@ export class MuiAlert extends HTMLElement {
         }
       }
     }
-    this.dataset.muiAlert = ""
+    this.dataset.mAlert = ""
     this.observer ??= new MutationObserver(() => this.synchronize())
     this.synchronize()
   }
@@ -73,7 +73,7 @@ export class MuiAlert extends HTMLElement {
 
   private direct(parent: Element, name: string, except?: Element): Element | undefined {
     return [...parent.children].find((node) =>
-      node !== except && node.hasAttribute(`data-mui-alert-${name}`) && !node.matches(inert))
+      node !== except && node.hasAttribute(`data-m-alert-${name}`) && !node.matches(inert))
   }
 
   private region(name: string, except?: Element): Element | undefined {
@@ -94,7 +94,7 @@ export class MuiAlert extends HTMLElement {
     }
     if (this.body?.parentNode !== this) {
       this.body = this.ownerDocument.createElement("div")
-      this.body.dataset.muiAlertBody = ""
+      this.body.dataset.mAlertBody = ""
       this.generatedBody = this.body
       this.append(this.body)
     }
@@ -110,7 +110,7 @@ export class MuiAlert extends HTMLElement {
     } else if (this.showIcon && Object.hasOwn(icons, this.type)) {
       if (!this.generatedIcon) {
         this.generatedIcon = this.ownerDocument.createElement("span")
-        this.generatedIcon.dataset.muiAlertIcon = ""
+        this.generatedIcon.dataset.mAlertIcon = ""
         this.generatedIcon.setAttribute("aria-hidden", "true")
       }
       icon = this.generatedIcon
@@ -131,7 +131,7 @@ export class MuiAlert extends HTMLElement {
     } else if (this.title) {
       if (!this.generatedHeader) {
         this.generatedHeader = this.ownerDocument.createElement("span")
-        this.generatedHeader.dataset.muiAlertHeader = ""
+        this.generatedHeader.dataset.mAlertHeader = ""
         body.prepend(this.generatedHeader)
       }
       header = this.generatedHeader
@@ -156,7 +156,7 @@ export class MuiAlert extends HTMLElement {
     if (loose.length) {
       if (!content) {
         this.generatedContent = this.ownerDocument.createElement("div")
-        this.generatedContent.dataset.muiAlertContent = ""
+        this.generatedContent.dataset.mAlertContent = ""
         content = this.generatedContent
         body.append(content)
       }
@@ -171,7 +171,7 @@ export class MuiAlert extends HTMLElement {
       if (!this.closeButton) {
         this.closeButton = this.ownerDocument.createElement("button")
         this.closeButton.type = "button"
-        this.closeButton.dataset.muiAlertClose = ""
+        this.closeButton.dataset.mAlertClose = ""
         this.closeButton.append(graphic(this.ownerDocument, "M2.5 2.5l7 7m0-7-7 7", true))
       }
       if (this.closeButton.getAttribute("aria-label") !== this.closeLabel) this.closeButton.setAttribute("aria-label", this.closeLabel)
@@ -184,13 +184,13 @@ export class MuiAlert extends HTMLElement {
     }
     if (this.isConnected) this.observer?.observe(this, {
       childList: true, subtree: true, characterData: true, attributes: true,
-      attributeFilter: ["data-mui-alert-body", "data-mui-alert-header", "data-mui-alert-content", "data-mui-alert-icon"],
+      attributeFilter: ["data-m-alert-body", "data-m-alert-header", "data-m-alert-content", "data-m-alert-icon"],
     })
   }
 
   private readonly onClose = (event: MouseEvent): void => {
     if (!this.closable || !this.isConnected || event.defaultPrevented || this.closeButton?.matches(":disabled")) return
-    this.dispatchEvent(new CustomEvent<AlertCloseDetail>("mui:close", {
+    this.dispatchEvent(new CustomEvent<AlertCloseDetail>("m:close", {
       bubbles: true, cancelable: true, detail: { originalEvent: event },
     }))
   }

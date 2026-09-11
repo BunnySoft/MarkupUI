@@ -46,7 +46,7 @@ export function createInputNumber(root: HTMLElement): InputNumberController {
   const clearButton = one("[data-number-clear]") as HTMLButtonElement | null
   if ((control as Owned)[owner]) throw new Error("Native number input already has an owner.")
   function validate() {
-    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".mui-input-number[data-input-number]")
+    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".m-input-number[data-input-number]")
       || root.hasAttribute("role") || root.hasAttribute("tabindex") || root.closest("label, button, a[href], summary")
       || [control, decrement, increment, clearButton].some(node => node && (!root.contains(node) || !own(node)))
       || !control.hasAttribute("data-number-control") || [...root.querySelectorAll("[data-number-control]")].filter(own).length !== 1
@@ -156,7 +156,7 @@ export function createInputNumber(root: HTMLElement): InputNumberController {
   }
   function report(reason: unknown, previous: string | null) {
     error = reason instanceof Error ? `${reason.name}: ${reason.message}` : String(reason)
-    if (previous !== error) root.dispatchEvent(new view!.CustomEvent("mui:input-number-error", { detail: { message: error } }))
+    if (previous !== error) root.dispatchEvent(new view!.CustomEvent("m:input-number-error", { detail: { message: error } }))
   }
   function attemptRefresh() { const previous = error; try { refresh() } catch (reason) { report(reason, previous) } }
   function notify() {
@@ -196,7 +196,7 @@ export function createInputNumber(root: HTMLElement): InputNumberController {
     control.value = ""; refresh()
     if (connected) {
       notify()
-      control.dispatchEvent(new view!.CustomEvent("mui:input-number-clear", { bubbles: true, detail: { previous } }))
+      control.dispatchEvent(new view!.CustomEvent("m:input-number-clear", { bubbles: true, detail: { previous } }))
     }
     return true
   }

@@ -2,8 +2,8 @@ const form = document.querySelector("#schedule"), events = document.querySelecto
 const supported = MarkupUITimePicker.isTimePickerSupported(document), pickers = new Map()
 if (supported) for (const root of document.querySelectorAll("[data-time-picker]")) {
   const helper = MarkupUITimePicker.createTimePicker(root); pickers.set(root.id, helper)
-  root.addEventListener("mui:time-picker-clear", () => { events.textContent = "Native time cleared; empty is not a hidden null or midnight value." })
-  root.addEventListener("mui:time-picker-error", () => { events.textContent = "Unsupported native time anatomy/value; fields were not silently normalized." })
+  root.addEventListener("m:time-picker-clear", () => { events.textContent = "Native time cleared; empty is not a hidden null or midnight value." })
+  root.addEventListener("m:time-picker-error", () => { events.textContent = "Unsupported native time anatomy/value; fields were not silently normalized." })
 }
 const validation = MarkupUIForm.createForm(form, { items: [] })
 const meeting = pickers.get("meeting")

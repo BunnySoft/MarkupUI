@@ -55,7 +55,7 @@ not exact source callback/renderer/pointer parity.
 | `readonly` · [API] L29 | Prop | Static labelled score, no form controls | 🟢 Verified | T1/T2 distinct from disabled interactive radios; no hidden submission. |
 | `size` · [API] L30 | Prop | CSS small/medium/large or explicit length token | 🟢 Verified | No renderer/numeric inline-style forwarding. |
 | `value` · [API] L31 | Prop | Native selected numeric score/null; strict setter | 🟢 Verified | T1/T2 zero is an explicit `"0"` choice, null has no submitted field. |
-| `on-clear` · [API] L32 | Callback | One root mui:rate-clear event | 🟢 Verified | No fake native radio input/change when clearing. |
+| `on-clear` · [API] L32 | Callback | One root m:rate-clear event | 🟢 Verified | No fake native radio input/change when clearing. |
 | `on-update:hover-value` · [API] L33 | Callback | CSS hover emphasis only | ⏭️ Intentionally omitted | No numeric hover-preview callback or pointer geometry state. |
 | `on-update:value` · [API] L34 | Callback | Native change/Radio commit and explicit clear | 🟢 Verified | No duplicate Rate change event or callback-prop model. |
 

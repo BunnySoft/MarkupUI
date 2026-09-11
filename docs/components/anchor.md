@@ -27,7 +27,7 @@ utilities, native URL/history/focus and explicit-root ownership are unchanged.
 <script defer src="./vendor/markup-ui-anchor.global.js"></script>
 <script defer src="./toc-setup.js"></script>
 
-<nav class="mui-anchor mui-anchor--sticky" data-anchor id="contents" aria-label="Contents">
+<nav class="m-anchor m-anchor--sticky" data-anchor id="contents" aria-label="Contents">
   <ul>
     <li><a href="#overview">Overview</a></li>
     <li><a href="#details">Details</a>
@@ -35,9 +35,9 @@ utilities, native URL/history/focus and explicit-root ownership are unchanged.
     </li>
   </ul>
 </nav>
-<section id="overview" class="mui-anchor-target"><h2>Overview</h2>...</section>
-<section id="details" class="mui-anchor-target"><h2>Details</h2>...</section>
-<section id="雪 /#[]%" class="mui-anchor-target"><h2>Special identifier</h2>...</section>
+<section id="overview" class="m-anchor-target"><h2>Overview</h2>...</section>
+<section id="details" class="m-anchor-target"><h2>Details</h2>...</section>
+<section id="雪 /#[]%" class="m-anchor-target"><h2>Special identifier</h2>...</section>
 ```
 
 ```js
@@ -50,7 +50,7 @@ anchor.scrollTo("#details", { behavior: "smooth" }) // No hash/history/focus rew
 anchor.disconnect()
 ```
 
-The root is connected same-document light-DOM `nav.mui-anchor[data-anchor]` with an explicit
+The root is connected same-document light-DOM `nav.m-anchor[data-anchor]` with an explicit
 nonempty accessible name. No menu/tab roles, tabindex, generated links, title labels, hidden
 copies or renderer are introduced. Original nodes/listeners/templates remain authored.
 Nested `[data-anchor]` roots are independent boundaries, including when introduced dynamically.
@@ -105,7 +105,7 @@ Options:
   effective detection/scroll offsets are constrained to the current viewport height.
 
 Native fragment clicks use **author CSS scroll-margin/scroll-padding**, not the JS offset.
-The opt-in `.mui-anchor-target` class maps `--mui-anchor-offset` to logical scroll margin.
+The opt-in `.m-anchor-target` class maps `--m-anchor-offset` to logical scroll margin.
 Configure matching CSS and helper offsets if desired; explicit scrollTo uses the numeric
 offset and does not add CSS margins again. No document style is installed implicitly.
 
@@ -147,9 +147,9 @@ was issued, not that an animation completed or every requested offset was physic
 The browser clamps to the root's scroll range. Optional smooth/auto scrolling is forced to
 instant under reduced motion; no tween or animation dependency exists.
 
-`mui:anchor-change` reports `{ href, link, target }` when actual location identity changes,
+`m:anchor-change` reports `{ href, link, target }` when actual location identity changes,
 including initial/refresh/programmatic-scroll effects. It is explicitly **not a user click
-event**. Scroll/update does not focus anything. `mui:anchor-error` reports automatic update
+event**. Scroll/update does not focus anything. `m:anchor-error` reports automatic update
 failures with `{ error }`; explicit invalid calls throw. Diagnostic arrays make missing/ignored
 target boundaries inspectable without overriding native navigation.
 
@@ -183,16 +183,16 @@ parent's block/no-rail mode accidentally.
 
 | Token / presentation | Default and responsibility |
 | --- | --- |
-| `--mui-anchor-font-size` | 13px on links; leading is 1.5. Ordinary authored font-family is inherited. |
-| `--mui-anchor-link-padding` | Rail: `0 16px`; block: `2px 8px`; no-rail rail mode retains a 4px leading inset. |
-| `--mui-anchor-indent` | 16px per native nested list. |
-| `--mui-anchor-rail-width`, `--mui-anchor-rail` | 4px; `#dbdbdf` in light, white/.2 in dark. |
-| `--mui-anchor-color` | `#333639` in light, white/.82 in dark. |
-| `--mui-anchor-active-color` | Shared primary color when supplied, otherwise `#18a058` / `#63e2b7`; also colors the link-owned active border. |
-| `--mui-anchor-hover-color`, `--mui-anchor-pressed-color` | Local overrides over shared primary hover/pressed roles, then pinned light/dark fallbacks. |
-| `--mui-anchor-active-background` | Primary color at 15% alpha via native CSS color mixing; a local value overrides the tint unless a no-background/no-rail mode suppresses it. |
+| `--m-anchor-font-size` | 13px on links; leading is 1.5. Ordinary authored font-family is inherited. |
+| `--m-anchor-link-padding` | Rail: `0 16px`; block: `2px 8px`; no-rail rail mode retains a 4px leading inset. |
+| `--m-anchor-indent` | 16px per native nested list. |
+| `--m-anchor-rail-width`, `--m-anchor-rail` | 4px; `#dbdbdf` in light, white/.2 in dark. |
+| `--m-anchor-color` | `#333639` in light, white/.82 in dark. |
+| `--m-anchor-active-color` | Shared primary color when supplied, otherwise `#18a058` / `#63e2b7`; also colors the link-owned active border. |
+| `--m-anchor-hover-color`, `--m-anchor-pressed-color` | Local overrides over shared primary hover/pressed roles, then pinned light/dark fallbacks. |
+| `--m-anchor-active-background` | Primary color at 15% alpha via native CSS color mixing; a local value overrides the tint unless a no-background/no-rail mode suppresses it. |
 
-An ancestor/root `data-mui-theme="dark"` selects dark fallback roles; nested explicit
+An ancestor/root `data-m-theme="dark"` selects dark fallback roles; nested explicit
 `"light"` restores light. Shared primary-color tokens are reused, but mismatched legacy
 generic text/rail colors are not. Link hover/focus changes color rather than introducing
 an underline; the native focus-visible outline remains an accessibility adaptation.
@@ -206,12 +206,12 @@ upstream ellipsis/automatic `title` tooltip.
 No-rail removes the rail/marker and default rail-mode background; no-background explicitly
 removes the native active fill, including when combined with block mode.
 
-`.mui-anchor--sticky` is optional native CSS sticky: the nearest scroll/containing block
+`.m-anchor--sticky` is optional native CSS sticky: the nearest scroll/containing block
 constrains it, as in the [Affix retained scope](affix.md). No Affix or Scrollbar asset is a
 dependency and no fixed-position/placeholder/controller is smuggled into this option.
 Native root overflow follows the [Scrollbar conventions](scrollbar.md).
 
-`.mui-anchor-scroll` is an explicit opt-in smooth-scroll class; its media rules respect
+`.m-anchor-scroll` is an explicit opt-in smooth-scroll class; its media rules respect
 reduced motion. Print makes sticky navigation static and uses ink-friendly colors.
 Forced colors preserve visible location/focus cues. Color/border/background transitions
 last 0.3s and are disabled under reduced motion; there is no measured indicator-motion

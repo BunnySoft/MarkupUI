@@ -3,7 +3,7 @@
 **🟢 Verified for the retained native Checkbox/CheckboxGroup scope, not framework parity.**
 Individual checkboxes are **CSS-only native inputs and labels**. Only useful group limits,
 selected-string operations and aggregate notifications have an optional helper.
-Legacy `MuiCheckbox` in `src/components/forms.ts` stays unchanged. No Custom Element
+Legacy `MCheckbox` in `src/components/forms.ts` stays unchanged. No Custom Element
 registration, replacement controls, hidden submission proxies or global form model.
 
 ## Loading and authored anatomy
@@ -18,21 +18,21 @@ registration, replacement controls, hidden submission proxies or global form mod
 | [Pinned dispositions](../naive-ui/components/checkbox.md) | All 29 original identities plus 13 explicit source supplements |
 
 ```html
-<label class="mui-checkbox">
+<label class="m-checkbox">
   <input type="checkbox" id="consent" name="consent" value="yes" required>
   <span>Accept the terms</span>
 </label>
 
-<fieldset class="mui-checkbox-group" data-checkbox-group id="topics"
+<fieldset class="m-checkbox-group" data-checkbox-group id="topics"
   aria-describedby="topic-rules">
   <legend>Topics</legend>
   <p id="topic-rules">With enhancement, choose between one and two topics.</p>
-  <div class="mui-checkbox-group__items">
-    <label class="mui-checkbox"><input data-checkbox type="checkbox"
+  <div class="m-checkbox-group__items">
+    <label class="m-checkbox"><input data-checkbox type="checkbox"
       name="topics" value="alpha" checked><span>Alpha</span></label>
-    <label class="mui-checkbox"><input data-checkbox type="checkbox"
+    <label class="m-checkbox"><input data-checkbox type="checkbox"
       name="topics" value="beta"><span>Beta</span></label>
-    <label class="mui-checkbox"><input data-checkbox type="checkbox"
+    <label class="m-checkbox"><input data-checkbox type="checkbox"
       name="topics" value="gamma"><span>Gamma</span></label>
   </div>
 </fieldset>
@@ -58,7 +58,7 @@ registration-order requirement. Root/member ownership uses a nonenumerable per-e
 symbol and rejects duplicate binding across ESM/classic copies, without a document registry.
 
 An enhanced group must be a connected light-DOM
-`fieldset.mui-checkbox-group[data-checkbox-group]` with a nonempty first direct native `legend`,
+`fieldset.m-checkbox-group[data-checkbox-group]` with a nonempty first direct native `legend`,
 no replacement role and no wrapper tabindex. Each **marked** member is a real
 `input[type=checkbox][data-checkbox]`, with a real native label and an explicit nonempty
 unique native string `value`. No role-checkbox, generated hidden value or options renderer.
@@ -147,7 +147,7 @@ restriction while bound, but still does not change native submission; prefer nat
 disabled for durable authored disabling.
 
 One accepted native change produces a next-task, **nonbubbling**
-`mui:checkbox-group-change` on that group root. Its snapshot is
+`m:checkbox-group-change` on that group root. Its snapshot is
 `{ values: string[], value: string, actionType: "check" | "uncheck" }`, taken when the
 member's native change reaches the group. The original native input/change are neither
 stopped nor replaced. A forbidden/cancelled toggle emits neither native edit events nor
@@ -173,7 +173,7 @@ to reconnect. Same-document moves can retain the existing owner.
 
 Invalid late keys/anatomy are not silently accepted: explicit refresh/state/setters throw.
 Automatic refresh/activation errors set `error` and dispatch nonbubbling
-`mui:checkbox-group-error` with `{ message }` when the error changes. Invalid group input
+`m:checkbox-group-error` with `{ message }` when the error changes. Invalid group input
 activation is cancelled until the DOM is fixed; valid refresh clears `error`.
 The last valid member ownership remains until a successful reconciliation or disconnect.
 Native form submission itself is never turned into a validation framework.
@@ -188,8 +188,8 @@ but no shared runtime or Input source modification was needed.
 ## CSS and all upstream mappings
 
 Native checkbox rendering and `accent-color` remain intact; no appearance:none, custom
-checkmark SVG, role substitution or global input reset. `.mui-checkbox` styles the label
-layout; `.mui-checkbox-group__items` wraps children. `data-size="small|medium|large"`
+checkmark SVG, role substitution or global input reset. `.m-checkbox` styles the label
+layout; `.m-checkbox-group__items` wraps children. `data-size="small|medium|large"`
 on an individual label or group sets explicit inherited CSS sizes (medium default).
 The native boxes are **14/16/18px** and the label fonts **14/14/15px**, respectively.
 Labels use 1.6 line-height, an 8px text gap and 8px trailing space; boxes align with
@@ -201,9 +201,9 @@ text where useful, never infer schema validity. Logical spacing, focus-visible r
 hidden safety, forced colors, print and wrapping are external CSS. No animation is added,
 so reduced motion requires no runtime. Native checked/mixed visuals follow browser/platform.
 
-Tokens: `--mui-checkbox-color`, `-font`, `-size`, `-accent`, `-focus`, `-disabled`, `-border`
-(all share the `--mui-checkbox` prefix). No provider/theme-object/CSS-in-JS translation.
-An ancestor `data-mui-theme="light|dark"` selects the native color scheme; standalone
+Tokens: `--m-checkbox-color`, `-font`, `-size`, `-accent`, `-focus`, `-disabled`, `-border`
+(all share the `--m-checkbox` prefix). No provider/theme-object/CSS-in-JS translation.
+An ancestor `data-m-theme="light|dark"` selects the native color scheme; standalone
 controls default to light. Size/status/theme defaults use private variables and never
 overwrite public tokens. Neutral label colors use local reference-matched fallbacks,
 not legacy shared neutral roles; the default accent reuses the shared primary role.

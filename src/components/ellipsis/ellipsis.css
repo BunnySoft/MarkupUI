@@ -1,39 +1,39 @@
-.mui-ellipsis {
+.m-ellipsis {
   display: block;
   min-inline-size: 0;
   max-inline-size: 100%;
   overflow-wrap: anywhere;
 }
 @supports selector(:has(*)) {
-  .mui-ellipsis {
+  .m-ellipsis {
     display: inline-block;
     vertical-align: bottom;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-  .mui-ellipsis[data-multiline] {
+  .m-ellipsis[data-multiline] {
     vertical-align: baseline;
     overflow: visible;
     white-space: normal;
     text-overflow: clip;
   }
   @supports (-webkit-line-clamp: 2) or (line-clamp: 2) {
-    .mui-ellipsis[data-multiline] {
+    .m-ellipsis[data-multiline] {
       display: -webkit-inline-box;
       -webkit-box-orient: vertical;
-      -webkit-line-clamp: var(--mui-ellipsis-lines, 2);
-      line-clamp: var(--mui-ellipsis-lines, 2);
+      -webkit-line-clamp: var(--m-ellipsis-lines, 2);
+      line-clamp: var(--m-ellipsis-lines, 2);
       overflow: hidden;
     }
-    :where(details.mui-ellipsis-disclosure > summary) > .mui-ellipsis[data-multiline] {
+    :where(details.m-ellipsis-disclosure > summary) > .m-ellipsis[data-multiline] {
       display: -webkit-box;
     }
   }
 }
-.mui-ellipsis:is(a, button, input, select, textarea, summary, details, area, [usemap], iframe, object, embed, audio, video, [tabindex], [contenteditable]),
-.mui-ellipsis:has(:is(a, button, input, select, textarea, summary, details, area, [usemap], iframe, object, embed, audio, video, [tabindex], [contenteditable])),
-:is(a, button, [tabindex], [contenteditable]) .mui-ellipsis {
+.m-ellipsis:is(a, button, input, select, textarea, summary, details, area, [usemap], iframe, object, embed, audio, video, [tabindex], [contenteditable]),
+.m-ellipsis:has(:is(a, button, input, select, textarea, summary, details, area, [usemap], iframe, object, embed, audio, video, [tabindex], [contenteditable])),
+:is(a, button, [tabindex], [contenteditable]) .m-ellipsis {
   display: revert;
   overflow: visible;
   white-space: normal;
@@ -41,28 +41,28 @@
   -webkit-line-clamp: unset;
   line-clamp: none;
 }
-details.mui-ellipsis-disclosure {
+details.m-ellipsis-disclosure {
   min-inline-size: 0;
   max-inline-size: 100%;
 }
-details.mui-ellipsis-disclosure > summary {
+details.m-ellipsis-disclosure > summary {
   cursor: pointer;
   overflow-wrap: anywhere;
 }
 /* Native previews stay block-level; safety and print selectors can still override them. */
-:where(details.mui-ellipsis-disclosure > summary) > .mui-ellipsis { display: block; }
-details.mui-ellipsis-disclosure > summary:focus-visible {
-  outline: 2px solid var(--mui-ellipsis-focus-color, currentColor);
+:where(details.m-ellipsis-disclosure > summary) > .m-ellipsis { display: block; }
+details.m-ellipsis-disclosure > summary:focus-visible {
+  outline: 2px solid var(--m-ellipsis-focus-color, currentColor);
   outline-offset: 3px;
 }
-details.mui-ellipsis-disclosure > summary > .mui-ellipsis-hint {
+details.m-ellipsis-disclosure > summary > .m-ellipsis-hint {
   display: block;
   margin-block-start: .25em;
   font-size: .875em;
   text-decoration: underline;
   text-underline-offset: .15em;
 }
-details.mui-ellipsis-disclosure[open] > summary > .mui-ellipsis {
+details.m-ellipsis-disclosure[open] > summary > .m-ellipsis {
   display: block;
   overflow: visible;
   white-space: normal;
@@ -70,12 +70,12 @@ details.mui-ellipsis-disclosure[open] > summary > .mui-ellipsis {
   -webkit-line-clamp: unset;
   line-clamp: none;
 }
-.mui-ellipsis[hidden],
-.mui-ellipsis-hint[hidden],
-details.mui-ellipsis-disclosure[hidden],
-template.mui-ellipsis { display: none !important; }
+.m-ellipsis[hidden],
+.m-ellipsis-hint[hidden],
+details.m-ellipsis-disclosure[hidden],
+template.m-ellipsis { display: none !important; }
 @media print {
-  .mui-ellipsis, .mui-ellipsis[data-multiline] {
+  .m-ellipsis, .m-ellipsis[data-multiline] {
     display: block;
     overflow: visible;
     white-space: normal;
@@ -83,6 +83,6 @@ template.mui-ellipsis { display: none !important; }
     -webkit-line-clamp: unset;
     line-clamp: none;
   }
-  details.mui-ellipsis-disclosure > summary { cursor: auto; }
-  details.mui-ellipsis-disclosure > summary > .mui-ellipsis-hint { display: none; }
+  details.m-ellipsis-disclosure > summary { cursor: auto; }
+  details.m-ellipsis-disclosure > summary > .m-ellipsis-hint { display: none; }
 }

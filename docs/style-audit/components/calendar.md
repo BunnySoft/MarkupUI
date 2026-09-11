@@ -37,7 +37,7 @@ dark mode. Hover uses `#f3f3f5` / `#2d2d30`.
 
 The inherited draft initially left cells transparent. On the existing white demo,
 dark mode therefore showed dark text roles over a white surface. Calendar now owns
-the reference default surface through `--mui-calendar-background`: white in light
+the reference default surface through `--m-calendar-background`: white in light
 mode and `#18181c` in dark mode. Application authors can still override it.
 
 Public Calendar tokens remain authoritative for primary, font size, text, background,

@@ -1,25 +1,25 @@
-:where(span.mui-highlight) {
+:where(span.m-highlight) {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-:where(mark.mui-highlight-mark) {
-  color: var(--mui-highlight-color, MarkText);
-  background: var(--mui-highlight-background, Mark);
+:where(mark.m-highlight-mark) {
+  color: var(--m-highlight-color, MarkText);
+  background: var(--m-highlight-background, Mark);
   padding: 0;
   border-radius: 0;
 }
-:where(span.mui-highlight, mark.mui-highlight-mark)[hidden]:not([hidden="until-found"]),
-template.mui-highlight { display: none !important; }
+:where(span.m-highlight, mark.m-highlight-mark)[hidden]:not([hidden="until-found"]),
+template.m-highlight { display: none !important; }
 @media (forced-colors: active) {
-  :where(mark.mui-highlight-mark) {
+  :where(mark.m-highlight-mark) {
     forced-color-adjust: none;
     color: HighlightText;
     background: Highlight;
   }
 }
 @media print {
-  :where(mark.mui-highlight-mark) {
-    color: var(--mui-highlight-color, MarkText);
+  :where(mark.m-highlight-mark) {
+    color: var(--m-highlight-color, MarkText);
     background: transparent;
     text-decoration: underline;
   }

@@ -38,7 +38,7 @@ are not part of the pinned API and are not silently added.
 ### Native primitives and fallback
 
 - **Native path:** a labelled native text/dl pair with explicit prefix/suffix content.
-  Static `.mui-statistic` CSS needs no Custom Element. Native output/live semantics are
+  Static `.m-statistic` CSS needs no Custom Element. Native output/live semantics are
   author choices, not generated just to display a number.
 - **Small enhancement:** the controller adopts four native regions and changes only safe
   text/owned visibility. It never parses formatted strings, clones templates, generates
@@ -75,9 +75,9 @@ events, methods or companion APIs to invent as upstream rows.
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
 | [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L25) | Slot | ADAPTED default/value-region native content. | 🟢 Verified | Present value prop overrides reversibly, including explicit empty; nodes/listeners are not discarded. |
-| [`label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L26) | Slot | ADAPTED `data-mui-statistic-label` native region. | 🟢 Verified | Authored headings/IDs/ARIA preserved under defined prop precedence. |
-| [`prefix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L27) | Slot | ADAPTED native `data-mui-statistic-prefix`. | 🟢 Verified | Native SVG/text/actions retained, preferred over legacy text fallback; no renderer. |
-| [`suffix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L28) | Slot | ADAPTED native `data-mui-statistic-suffix`. | 🟢 Verified | Units/links/buttons stay native with preserved form types/listeners. |
+| [`label`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L26) | Slot | ADAPTED `data-m-statistic-label` native region. | 🟢 Verified | Authored headings/IDs/ARIA preserved under defined prop precedence. |
+| [`prefix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L27) | Slot | ADAPTED native `data-m-statistic-prefix`. | 🟢 Verified | Native SVG/text/actions retained, preferred over legacy text fallback; no renderer. |
+| [`suffix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/statistic/demos/enUS/index.demo-entry.md#L28) | Slot | ADAPTED native `data-m-statistic-suffix`. | 🟢 Verified | Units/links/buttons stay native with preserved form types/listeners. |
 
 ### Explicit source-only supplements
 

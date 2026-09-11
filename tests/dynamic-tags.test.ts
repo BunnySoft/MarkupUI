@@ -30,28 +30,28 @@ describe("default styles", () => {
   const css = readFileSync(resolve("src", "components", "dynamic-tags", "dynamic-tags.css"), "utf8")
 
   it("uses the reference tag size scale and wrapping rhythm within budget", () => {
-    expect(css).toContain("--_mui-tags-height: 28px")
-    expect(css).toContain("--_mui-tags-height: 22px")
-    expect(css).toContain("--_mui-tags-height: 34px")
+    expect(css).toContain("--_m-tags-height: 28px")
+    expect(css).toContain("--_m-tags-height: 22px")
+    expect(css).toContain("--_m-tags-height: 34px")
     expect(css).toContain("gap: 4px 8px")
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
   })
 
   it("keeps native tag values compact without hiding labelled actions", () => {
     expect(css).toContain("field-sizing: content")
-    expect(css).toContain("block-size: calc(var(--_mui-tags-height) - 6px)")
+    expect(css).toContain("block-size: calc(var(--_m-tags-height) - 6px)")
     expect(css).not.toMatch(/text-indent:\s*-\d|font-size:\s*0/)
   })
 
   it("provides semantic light-dark palettes and forced-color controls", () => {
-    expect(css).toContain("--mui-tags-background: light-dark(rgba(32, 128, 240, .1), rgba(112, 192, 232, .16))")
+    expect(css).toContain("--m-tags-background: light-dark(rgba(32, 128, 240, .1), rgba(112, 192, 232, .16))")
     expect(css).toContain("@media (forced-colors: active)")
     expect(css).toContain("background: ButtonFace")
   })
 
   it("prints committed native values without enhancement controls", () => {
     expect(css).toContain("@media print")
-    expect(css).toMatch(/\.mui-dynamic-tags__entry,\s*\n\s*\.mui-dynamic-tags__tag button,\s*\n\s*\.mui-dynamic-tags__status/)
+    expect(css).toMatch(/\.m-dynamic-tags__entry,\s*\n\s*\.m-dynamic-tags__tag button,\s*\n\s*\.m-dynamic-tags__status/)
   })
 })
 
@@ -106,8 +106,8 @@ describe("real native tag values and inherited collection ownership", () => {
     helper.disconnect(); helpers.push(other.createDynamicTags(root))
   })
   it("never creates a Tag custom-element registration or checkable/selected ARIA state", () => {
-    const before = customElements.get("mui-tag"), { root } = fixture()
-    expect(customElements.get("mui-tag")).toBe(before)
+    const before = customElements.get("m-tag"), { root } = fixture()
+    expect(customElements.get("m-tag")).toBe(before)
     expect(root.querySelectorAll("[aria-checked],[aria-pressed],[role=button]")).toHaveLength(0)
   })
   it.each([{ max: 0 }, { max: 101 }, { max: null }, { duplicates: null }, { create: 1 }, { connect: true }, { value: [] }])("rejects unsupported configuration %j", options => {
@@ -157,7 +157,7 @@ describe("commit policy, callbacks and draft safety", () => {
   })
   it("propagates synchronous and asynchronous creator errors without clearing drafts", async () => {
     const { helper, editor, root } = fixture({ create: (() => Promise.reject(new Error("Late callback failure"))) as never })
-    const errors = vi.fn(); root.addEventListener("mui:dynamic-tags-error", errors)
+    const errors = vi.fn(); root.addEventListener("m:dynamic-tags-error", errors)
     editor.value = "draft"; expect(() => helper.commit()).toThrow("strings"); await flush()
     expect(editor.value).toBe("draft"); expect(helper.tags).toHaveLength(2)
     expect(errors.mock.calls.some(call => (call[0] as CustomEvent).detail.error.message === "Late callback failure")).toBe(true)
@@ -187,7 +187,7 @@ describe("commit policy, callbacks and draft safety", () => {
   })
   it("preserves removed tag descriptors even when cleanup detaches value/action children", () => {
     const { helper, root } = fixture({ connect: (row, context) => context.onCleanup(() => { row.replaceChildren() }) })
-    const changed = vi.fn(); root.addEventListener("mui:dynamic-tags-change", changed)
+    const changed = vi.fn(); root.addEventListener("m:dynamic-tags-change", changed)
     const first = helper.tags[0]!
     helper.remove(first.key)
     expect(changed).toHaveBeenCalledOnce(); expect((changed.mock.calls[0]![0] as CustomEvent).detail.tag.control).toBe(first.control)
@@ -216,7 +216,7 @@ describe("commit policy, callbacks and draft safety", () => {
 describe("native editor keys, composition and focus", () => {
   it("commits once through the native button while suppressing the reused raw add handler", async () => {
     const { helper, editor, add, root } = fixture()
-    const changed = vi.fn(); root.addEventListener("mui:dynamic-tags-change", changed)
+    const changed = vi.fn(); root.addEventListener("m:dynamic-tags-change", changed)
     editor.value = "gamma"; add.focus(); add.click(); await flush()
     expect(helper.values).toEqual(["alpha", "beta", "gamma"]); expect(changed).toHaveBeenCalledOnce()
     expect(editor.value).toBe(""); expect(document.activeElement).toBe(editor)
@@ -274,7 +274,7 @@ describe("native editor keys, composition and focus", () => {
 
 describe("native forms, refresh, reset and lifecycle", () => {
   it("keeps direct native assignments/defaults and refresh silent, without replacing existing tag nodes", async () => {
-    const { helper, editor, root } = fixture(), changed = vi.fn(); root.addEventListener("mui:dynamic-tags-change", changed)
+    const { helper, editor, root } = fixture(), changed = vi.fn(); root.addEventListener("m:dynamic-tags-change", changed)
     const tag = helper.tags[0]!
     tag.control.value = "renamed"; editor.value = "draft"; helper.refresh(); await flush()
     expect(helper.tags[0]).toBe(tag); expect(helper.values[0]).toBe("renamed"); expect(tag.control.defaultValue).toBe("alpha")
@@ -292,7 +292,7 @@ describe("native forms, refresh, reset and lifecycle", () => {
   it("never clears an intervening reset-restored draft during collection change notification", async () => {
     const { helper, editor, root, form } = fixture()
     editor.defaultValue = "draft"; editor.value = "draft"
-    root.addEventListener("mui:dynamic-input-change", () => form.reset(), { once: true })
+    root.addEventListener("m:dynamic-input-change", () => form.reset(), { once: true })
     expect(helper.commit().status).toBe("added"); await flush()
     expect(helper.values).toEqual(["alpha", "beta", "draft"]); expect(editor.value).toBe("draft")
   })

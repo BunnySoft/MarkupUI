@@ -4,7 +4,7 @@
 editing, exposed string/numeric value, defaults, constraints, keyboard/wheel and forms.
 The optional helper supplies labelled custom step/clear actions and derived availability,
 not a numeric parser, decimal library or second spinbutton engine. The legacy widgets
-plugin's `MuiInputNumber` and its bundle are unchanged.
+plugin's `MInputNumber` and its bundle are unchanged.
 
 ## Loading and native anatomy
 
@@ -19,7 +19,7 @@ plugin's `MuiInputNumber` and its bundle are unchanged.
 
 ```html
 <label for="quantity">Quantity</label>
-<div class="mui-input-number" data-input-number id="quantity-field">
+<div class="m-input-number" data-input-number id="quantity-field">
   <input data-number-control id="quantity" type="number" name="quantity"
     value="0.1" min="0" max="1" step="0.1" required>
   <button data-number-decrement type="button" hidden aria-label="Decrease quantity">−</button>
@@ -38,12 +38,12 @@ quantity.setValue(null) // Silent true empty, not zero.
 quantity.control.defaultValue = "0.4" // Independent next reset default.
 ```
 
-There is no registration/load-order rule for `mui-input-number`: this helper operates the
+There is no registration/load-order rule for `m-input-number`: this helper operates the
 authored native control and does not upgrade legacy elements. No mandatory Input/Button,
 provider or external runtime dependency. Nonenumerable root/control owner symbols reject
 duplicate ownership across ESM/classic copies.
 
-The root is a connected light-DOM `.mui-input-number[data-input-number]`, without a role
+The root is a connected light-DOM `.m-input-number[data-input-number]`, without a role
 or tabindex and outside labels, buttons, links and summaries. It has one original labelled
 `input[data-number-control][type=number]`, with no replacement spinbutton role.
 Optional decrement/increment/clear buttons are named `type=button`, without nested
@@ -146,7 +146,7 @@ input, then one bubbling native change, only when the numeric value actually cha
 At a no-op boundary it emits nothing; native stepping errors are not successful changes.
 Ordinary native input/change is neither replaced nor duplicated.
 
-A successful clear emits input, change, then bubbling `mui:input-number-clear` with
+A successful clear emits input, change, then bubbling `m:input-number-clear` with
 `{ previous: { value, text, badInput } }`. Clearing badInput is an actual editing-state
 change even if its exposed `.value` was already empty. Native change from leaving the
 previously edited field may occur **before** the separate clear/step sequence; that
@@ -169,7 +169,7 @@ temporary. Outside mutations are consumed before helper writes; disposal restore
 still-owned attributes, not whole author attribute sets, field values, constraints or
 ARIA. No-op removal of an already absent attribute cannot signal an ownership transfer.
 Root/control removal disconnects; recreate to reconnect. Invalid anatomy is rejected by
-explicit operations and reported by nonbubbling `mui:input-number-error` for automatic/
+explicit operations and reported by nonbubbling `m:input-number-error` for automatic/
 action failures. Native step errors can also be inspected through state.stepError.
 
 ## CSS and complete upstream mapping
@@ -187,7 +187,7 @@ custom buttons, retaining native steppers.
 data-status="success|warning|error" are external presentation. Status is not native
 validity or a live announcement. Logical dimensions preserve RTL/wrapping. Forced colors
 retain native controls; print hides custom actions. No animations need motion overrides.
-Tokens share `--mui-number`: `-color`, `-font`, `-pad`, `-border`, `-radius`, `-background`,
+Tokens share `--m-number`: `-color`, `-font`, `-pad`, `-border`, `-radius`, `-background`,
 `-focus`, `-disabled`. No Input/Button/theme-provider/CSS-in-JS dependency.
 
 The [default-style audit](../style-audit/components/input-number.md) records measured
@@ -195,7 +195,7 @@ geometry, paint and retained differences. Field heights are **22/28/34/40px**, f
 **12/14/14/15px**, and leading insets **8/10/12/14px**, with an 8px trailing inset.
 `-pad` controls the leading field inset; background, border and radius tokens now paint
 the combined field rather than separate boxes around the input and every action.
-An ancestor `data-mui-theme="light|dark"` selects the local preset; standalone fields
+An ancestor `data-m-theme="light|dark"` selects the local preset; standalone fields
 default to light. Private size/status defaults never overwrite public author tokens.
 Neutral defaults do not use the legacy shared text roles.
 
@@ -269,7 +269,7 @@ is claimed. The dimensions and asset bytes below describe that original revision
 - JS-disabled Chromium used native ArrowUp, reset and real local GET submission with no
   probe/external duplicate field. Standalone ESM/cross-format ownership passed. Both
   helper-before-core/widgets and core/widgets-before-helper worked, including an actual
-  legacy mui-input-number changing 2 → 3 without affecting the new native field.
+  legacy m-input-number changing 2 → 3 without affecting the new native field.
 
 `pnpm build` passed TypeScript and all existing/new budgets. No dependencies, prior control
 helpers, core/plugin source or legacy widget behavior were modified.

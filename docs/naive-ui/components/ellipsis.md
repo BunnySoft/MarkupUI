@@ -65,7 +65,7 @@ TooltipProps is explicitly not transplanted; native disclosure is not a Tooltip-
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
 | [`expand-trigger`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/ellipsis/demos/enUS/index.demo-entry.md#L25) | Prop | ADAPTED explicit native details/summary; native open/toggle. | 🟢 Verified | Visible keyboard/pointer control with one complete text owner; no arbitrary click interceptor or overflow-only affordance. |
-| [`line-clamp`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/ellipsis/demos/enUS/index.demo-entry.md#L26) | Prop | ADAPTED data-multiline and --mui-ellipsis-lines CSS integer. | 🟢 Verified | Native one-line default, multiline default 2; invalid/unsupported values show full text without JS coercion. |
+| [`line-clamp`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/ellipsis/demos/enUS/index.demo-entry.md#L26) | Prop | ADAPTED data-multiline and --m-ellipsis-lines CSS integer. | 🟢 Verified | Native one-line default, multiline default 2; invalid/unsupported values show full text without JS coercion. |
 | [`tooltip`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/ellipsis/demos/enUS/index.demo-entry.md#L27) | Prop | Use an explicit visible native full-content route instead. | ⏭️ Intentionally omitted | No Boolean/TooltipProps overlay, default-on tooltip or automatic overflow measurement; title is not parity. |
 
 ### Ellipsis Slots

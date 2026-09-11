@@ -33,7 +33,7 @@ Native candidate button labels remain visible and may determine a wider panel.
 
 ## Input composition ownership
 
-The previous `.mui-mention__editor` selector restyled controls marked
+The previous `.m-mention__editor` selector restyled controls marked
 `data-input-control`, competing with the composed Input stylesheet. Mention now excludes
 those controls from standalone field paint and sizing. The demo explicitly links
 `markup-ui-input.css` because it loads and uses the Input component; it no longer relies

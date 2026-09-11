@@ -36,7 +36,7 @@ preview.open(0, document.querySelector("#open-gallery"));
 preview.disconnect();
 ```
 
-There is no mui-image/mui-image-group definition, registry/provider or pre-upgrade property
+There is no m-image/m-image-group definition, registry/provider or pre-upgrade property
 bridge. An explicit helper fits native author roots without requiring a virtual constructor.
 Call setup after insertion; `connect()` is idempotent, and reattachment after disconnect
 requires an explicit connect. Core-first/helper-first ordering has no registration conflict.
@@ -46,11 +46,11 @@ Other enhanced components keep their own registration restrictions.
 
 ```html
 <div id="gallery" data-image-group>
-  <figure class="mui-image-frame" data-image-frame>
+  <figure class="m-image-frame" data-image-frame>
     <a data-image-preview href="./full-photo.svg">
       <picture>
         <source media="(min-width: 40rem)" srcset="./large-thumb.svg">
-        <img class="mui-image" src="./thumb.svg" width="200" height="125"
+        <img class="m-image" src="./thumb.svg" width="200" height="125"
           loading="lazy" decoding="async" alt="Amber mountains beneath a sun">
       </picture>
     </a>
@@ -76,7 +76,7 @@ Other enhanced components keep their own registration restrictions.
 
 The helper adopts the root; it never replaces thumbnail/picture/link/caption nodes or their
 listeners. Native srcset/sizes, source selection, loading/decoding, width/height, alt,
-referrerpolicy and crossorigin attributes remain intact. `--mui-image-fit` accepts ordinary
+referrerpolicy and crossorigin attributes remain intact. `--m-image-fit` accepts ordinary
 CSS object-fit values (fill default). No image is hidden or given zero dimensions to implement
 lazy loading; author dimensions reserve its box and the browser owns lazy thresholds.
 
@@ -117,8 +117,8 @@ copied into the full-image request or suppressed.
 | `dialog` | Current owned native dialog or null; useful for explicit native cancel/close listeners. Do not replace helper-owned internals. |
 | `connected`, `connect()`, `disconnect()` | Explicit lifecycle. Duplicate active ownership is rejected. Disconnect releases root/image/dialog observers/listeners/probes and removes the clone; native images/links and the last successful fallback src remain. |
 
-Root events are `mui:image-open`, `mui:image-close`, `mui:image-change`, `mui:image-next`
-and `mui:image-prev`, with `{ current, src }` detail. These are actual helper notifications,
+Root events are `m:image-open`, `m:image-close`, `m:image-change`, `m:image-next`
+and `m:image-prev`, with `{ current, src }` detail. These are actual helper notifications,
 not Vue callback-array aliases or controlled/uncontrolled state parity. Group/standalone
 source callbacks map to these documented events; default-current/default-show configuration
 and src-list-only rendering are omitted. Set current or call open deliberately in application
@@ -157,7 +157,7 @@ fallback, not a promise that JS-controlled error messaging also updates without 
 For a **plain single-src img**, opt into bounded fallback:
 
 ```html
-<img class="mui-image" src="./primary.svg" data-image-fallback="./fallback.svg"
+<img class="m-image" src="./primary.svg" data-image-fallback="./fallback.svg"
   width="200" height="125" alt="Authored alternative text">
 ```
 
@@ -212,18 +212,18 @@ rounding from their immediate parent.
 
 Public CSS tokens:
 
-- `--mui-image-fit`: thumbnail object-fit.
-- `--mui-image-preview-color`: foreground for overlay chrome; white .9 by default and
+- `--m-image-fit`: thumbnail object-fit.
+- `--m-image-preview-color`: foreground for overlay chrome; white .9 by default and
   white .82 under an explicit dark theme.
-- `--mui-image-preview-background`: dialog surface; transparent by default.
-- `--mui-image-backdrop`: native modal backdrop; black .3 by default.
-- `--mui-image-toolbar-background`: toolbar and authored chrome fill; black .35.
-- `--mui-image-border-color`, `--mui-image-border-width`: optional authored dialog border;
+- `--m-image-preview-background`: dialog surface; transparent by default.
+- `--m-image-backdrop`: native modal backdrop; black .3 by default.
+- `--m-image-toolbar-background`: toolbar and authored chrome fill; black .35.
+- `--m-image-border-color`, `--m-image-border-width`: optional authored dialog border;
   the new default is zero width. A formerly customized frame color needs a nonzero border
   width to remain visible.
 
 Tokens inherit from the author root and are never assigned public defaults by Image CSS.
-`data-mui-theme="dark"` changes only a private Image foreground default; a nested explicit
+`data-m-theme="dark"` changes only a private Image foreground default; a nested explicit
 light boundary resets it. No aggregate stylesheet or shared palette is required. Typography
 continues to inherit from the document; chrome opacity, geometry and Image theme roles stay
 component-local. Authors can override presentation with ordinary CSS without changing the

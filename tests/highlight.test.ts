@@ -10,7 +10,7 @@ const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
 
 function surface(text = "Previous content"): HTMLSpanElement {
   const element = document.createElement("span")
-  element.className = "mui-highlight"
+  element.className = "m-highlight"
   element.textContent = text
   document.body.append(element)
   return element
@@ -128,8 +128,8 @@ describe("native owned Highlight surface", () => {
 
   describe("audited native mark presentation", () => {
     it("uses native mark colors and zero-radius geometry without resetting inherited typography", () => {
-      expect(css).toContain("color: var(--mui-highlight-color, MarkText)")
-      expect(css).toContain("background: var(--mui-highlight-background, Mark)")
+      expect(css).toContain("color: var(--m-highlight-color, MarkText)")
+      expect(css).toContain("background: var(--m-highlight-background, Mark)")
       expect(css).toContain("padding: 0")
       expect(css).toContain("border-radius: 0")
       expect(css).not.toContain("#fef08a")
@@ -153,7 +153,7 @@ describe("native owned Highlight surface", () => {
         expect(getComputedStyle(mark).fontWeight).toBe("700")
         expect(mark.getAttribute("style")).toBe(original)
         expect(mark.classList.contains("custom")).toBe(true)
-        expect(css).toContain(":where(mark.mui-highlight-mark)")
+        expect(css).toContain(":where(mark.m-highlight-mark)")
       } finally { library.remove() }
     })
 
@@ -163,7 +163,7 @@ describe("native owned Highlight surface", () => {
       highlightText(target, "A  needle\nneedle", ["needle"])
       expect(target.hasAttribute("class")).toBe(false)
       expect(target.textContent).toBe("A  needle\nneedle")
-      expect(css).toContain(":where(span.mui-highlight)")
+      expect(css).toContain(":where(span.m-highlight)")
       expect(css).toContain("white-space: pre-wrap")
       expect(css).toContain("overflow-wrap: anywhere")
     })
@@ -173,7 +173,7 @@ describe("native owned Highlight surface", () => {
       expect(css).toContain("background: Highlight")
       expect(css).toContain("text-decoration: underline")
       expect(css.slice(css.indexOf("@media print"))).not.toContain("color: inherit")
-      expect(css.slice(css.indexOf("@media print"))).toContain("color: var(--mui-highlight-color, MarkText)")
+      expect(css.slice(css.indexOf("@media print"))).toContain("color: var(--m-highlight-color, MarkText)")
       expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(750)
     })
   })
@@ -192,7 +192,7 @@ describe("native owned Highlight surface", () => {
     const target = surface()
     highlightText(target, "Atlas", ["Atlas"], { highlightClass: 'custom accent " onclick="bad' })
     const mark = target.querySelector("mark")!
-    expect(mark.classList.contains("mui-highlight-mark")).toBe(true)
+    expect(mark.classList.contains("m-highlight-mark")).toBe(true)
     expect(mark.classList.contains("custom")).toBe(true)
     expect(mark.classList.contains("accent")).toBe(true)
     expect(mark.hasAttribute("onclick")).toBe(false)
@@ -316,7 +316,7 @@ describe("native owned Highlight surface", () => {
     expect(pkg.exports["./highlight"].types).toBe("./dist/components/highlight/index.d.ts")
     expect(pkg.exports["./highlight/style.css"]).toBe("./dist/markup-ui-highlight.css")
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("mui-highlight")).toBeUndefined()
+    expect(customElements.get("m-highlight")).toBeUndefined()
     expect(css).toContain("@media (forced-colors: active)")
     expect(css).toContain("@media print")
     expect(css).not.toContain("@import")

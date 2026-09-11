@@ -51,7 +51,7 @@ declare the theme-prop mixin used by other components.
 ```
 
 Serve/copy the stylesheet normally. There is no `./grid` JS export, ESM/classic runtime/global,
-GridItem constructor or registration-order rule. The old mui-grid custom element still
+GridItem constructor or registration-order rule. The old m-grid custom element still
 copies its authored `columns` string into native grid-template-columns at connection,
 with existing legacy layout styles. It is unchanged, not transparently upgraded.
 The new CSS class can load before/after the legacy aggregate without importing it.
@@ -59,41 +59,41 @@ The new CSS class can load before/after the legacy aggregate without importing i
 ## Native tracks, items and gaps
 
 ```html
-<div class="mui-grid product-grid">
-  <article class="mui-grid-item">First original item</article>
-  <article class="mui-grid-item featured">Second original item</article>
+<div class="m-grid product-grid">
+  <article class="m-grid-item">First original item</article>
+  <article class="m-grid-item featured">Second original item</article>
   <p>Any valid direct native child is a grid item; it is not filtered out.</p>
 </div>
 ```
 
 ```css
 .product-grid {
-  --mui-grid-cols: 4;
-  --mui-grid-x-gap: 12px;
-  --mui-grid-y-gap: 8px;
+  --m-grid-cols: 4;
+  --m-grid-x-gap: 12px;
+  --m-grid-y-gap: 8px;
 }
-.featured { --mui-grid-span: 2; }
+.featured { --m-grid-span: 2; }
 ```
 
 Defaults match the useful fixed source geometry: **24 equal minmax(0,1fr) tracks, zero
 x/y gaps and one-column items**. Every native direct element participates without a
-GridItem marker/constructor. `.mui-grid-item` is an optional item-box hook adding border-box
+GridItem marker/constructor. `.m-grid-item` is an optional item-box hook adding border-box
 max sizing; normal direct children also receive the span/start defaults and min-inline-size:0.
 The library creates no wrappers or native slot mechanism and never strips directives/attributes.
 
 | Native CSS token | Contract |
 | --- | --- |
-| `--mui-grid-cols` | Positive CSS integer, default 24. |
-| `--mui-grid-tracks` | Complete native grid-template-columns value; overrides the equal-column recipe. |
-| `--mui-grid-x-gap`, `--mui-grid-y-gap` | Column/row gaps, default 0px. Use native nonnegative lengths/percentages. |
-| `--mui-grid-align`, `--mui-grid-justify` | Native align-items/justify-items; default normal. These are target CSS capabilities, not invented upstream props. |
-| Item `--mui-grid-span` | Positive CSS integer, default 1. |
-| Item `--mui-grid-start` | Native absolute column line or auto, default auto. **Not a relative offset.** |
+| `--m-grid-cols` | Positive CSS integer, default 24. |
+| `--m-grid-tracks` | Complete native grid-template-columns value; overrides the equal-column recipe. |
+| `--m-grid-x-gap`, `--m-grid-y-gap` | Column/row gaps, default 0px. Use native nonnegative lengths/percentages. |
+| `--m-grid-align`, `--m-grid-justify` | Native align-items/justify-items; default normal. These are target CSS capabilities, not invented upstream props. |
+| Item `--m-grid-span` | Positive CSS integer, default 1. |
+| Item `--m-grid-start` | Native absolute column line or auto, default auto. **Not a relative offset.** |
 
 For authored track lists, use a normal CSS value:
 
 ```css
-.sidebar-grid { --mui-grid-tracks: 5rem minmax(0, 1fr); }
+.sidebar-grid { --m-grid-tracks: 5rem minmax(0, 1fr); }
 ```
 
 This also provides a clear native translation for the legacy columns-string use case.
@@ -108,7 +108,7 @@ outer columns does not make each inner item span two columns or inherit an outer
 Application selectors can override these defaults regardless of library-link order.
 
 Set tokens on the actual grid/item, not merely an ancestor wrapper. In particular, a query
-wrapper's --mui-grid-cols value is not a configuration provider: the descendant grid has its
+wrapper's --m-grid-cols value is not a configuration provider: the descendant grid has its
 own defaults. Custom track overrides also reset between independent grids.
 
 Keep spans and explicit start lines valid for the active track count. Unlike the source,
@@ -117,7 +117,7 @@ tracks. Responsive rules must update spans when the number of columns decreases.
 Zero/negative/fractional column counts or spans are invalid native grammar, not a parsed
 source value with a fallback success result.
 
-**Upstream span=0 translates to native hidden, not --mui-grid-span:0.** An invalid zero span
+**Upstream span=0 translates to native hidden, not --m-grid-span:0.** An invalid zero span
 token resets native placement to auto; it does not hide the item. Author `hidden` or a
 responsive display:none rule to remove the whole item's layout/focus footprint.
 Invalid gaps become native initial normal rather than magically returning to a configured
@@ -129,21 +129,21 @@ A container query cannot select its **own query container** to change that conta
 column count. Use a real authored wrapper and query a descendant grid:
 
 ```html
-<div class="mui-grid-container gallery-size">
-  <div class="mui-grid gallery">
-    <article class="mui-grid-item gallery-feature">Original content</article>
-    <article class="mui-grid-item">Original content</article>
+<div class="m-grid-container gallery-size">
+  <div class="m-grid gallery">
+    <article class="m-grid-item gallery-feature">Original content</article>
+    <article class="m-grid-item">Original content</article>
   </div>
 </div>
 ```
 
 ```css
 .gallery-size { container-name: gallery; }
-.gallery { --mui-grid-cols: 1; }
-.gallery > .gallery-feature { --mui-grid-span: 1; }
+.gallery { --m-grid-cols: 1; }
+.gallery > .gallery-feature { --m-grid-span: 1; }
 @container gallery (min-width: 30rem) {
-  .gallery { --mui-grid-cols: 3; }
-  .gallery > .gallery-feature { --mui-grid-span: 2; }
+  .gallery { --m-grid-cols: 3; }
+  .gallery > .gallery-feature { --m-grid-span: 2; }
 }
 ```
 
@@ -160,9 +160,9 @@ Any deliberate overflow/max-size override and its scrolling policy are applicati
 For screen mode, use a viewport media query on the actual grid/items:
 
 ```css
-.screen-grid { --mui-grid-cols: 2; }
+.screen-grid { --m-grid-cols: 2; }
 @media (min-width: 48rem) {
-  .screen-grid { --mui-grid-cols: 4; }
+  .screen-grid { --m-grid-cols: 4; }
 }
 ```
 
@@ -192,10 +192,10 @@ not a three-column gap. Line numbering follows native inline direction, includin
 An authored aria-hidden spacer item can reserve known empty tracks:
 
 ```html
-<div class="mui-grid product-grid">
-  <div class="mui-grid-item featured">Two columns first</div>
-  <span class="mui-grid-item" aria-hidden="true"></span>
-  <div class="mui-grid-item">Then an explicit empty track and this item</div>
+<div class="m-grid product-grid">
+  <div class="m-grid-item featured">Two columns first</div>
+  <span class="m-grid-item" aria-hidden="true"></span>
+  <div class="m-grid-item">Then an explicit empty track and this item</div>
 </div>
 ```
 
@@ -226,10 +226,10 @@ The retained collapse alternative is an application-selected preview grid follow
 native details/summary containing a separate extra grid:
 
 ```html
-<div class="mui-grid product-grid">Author-selected preview items</div>
-<details class="mui-grid-disclosure">
+<div class="m-grid product-grid">Author-selected preview items</div>
+<details class="m-grid-disclosure">
   <summary>Show or hide remaining results</summary>
-  <div class="mui-grid product-grid">Original additional items and native controls</div>
+  <div class="m-grid product-grid">Original additional items and native controls</div>
 </details>
 ```
 
@@ -272,7 +272,7 @@ There is no truncation, animation or forced-color opt-out. Print preserves nativ
 and hidden states, not an automatic expansion of every closed section.
 
 Grid declares no theme-prop mixin or default font/color palette. Shared font/color
-tokens and `data-mui-theme` are not interpreted by this stylesheet; application
+tokens and `data-m-theme` are not interpreted by this stylesheet; application
 typography still inherits normally. Light/dark do not need separate Grid rules.
 Root/item configuration must remain on the actual owner because the explicit local
 defaults reset inherited grid tokens, unlike a framework configuration provider.

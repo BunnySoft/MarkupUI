@@ -16,13 +16,13 @@
     A partial or loading leaf path cannot pass native form validation. There is no hidden
     terminal-value field, popup renderer or network request.</p>
   <form id="location-form">
-    <fieldset class="mui-cascader" data-cascader id="location" disabled>
+    <fieldset class="m-cascader" data-cascader id="location" disabled>
       <legend>Required leaf destination</legend>
       <details class="source-description">
         <summary>Authored hierarchy and no-JS fallback</summary>
         <p>Without JavaScript this outline remains readable/disclosable. Dependent selects
           stay disabled, rather than pretending static options can follow parent changes.</p>
-        <section class="mui-tree" data-tree data-cascader-source aria-label="Destination hierarchy">
+        <section class="m-tree" data-tree data-cascader-source aria-label="Destination hierarchy">
           <ul data-tree-list>
             <li data-tree-key="eu"><div data-tree-row><span data-tree-label>Europe</span></div><details data-tree-branch><summary>Europe choices</summary><ul data-tree-list>
               <li data-tree-key="fr"><div data-tree-row><span data-tree-label>France</span></div><details data-tree-branch><summary>France choices</summary><ul data-tree-list>
@@ -68,9 +68,9 @@
   <p id="events" role="status"></p>
   <pre id="submission"></pre>
   <form id="branch-form">
-    <fieldset class="mui-cascader" data-cascader id="branch" disabled>
+    <fieldset class="m-cascader" data-cascader id="branch" disabled>
       <legend>Any-node policy, optional path</legend>
-      <section class="mui-tree" data-tree data-cascader-source aria-label="Branch policy hierarchy">
+      <section class="m-tree" data-tree data-cascader-source aria-label="Branch policy hierarchy">
         <ul data-tree-list><li data-tree-key="category"><div data-tree-row><span data-tree-label>Category</span></div><details data-tree-branch><summary>Category choices</summary><ul data-tree-list>
           <li data-tree-key="entry"><div data-tree-row><span data-tree-label>Entry</span></div></li>
         </ul></details></li></ul>

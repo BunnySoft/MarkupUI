@@ -51,7 +51,7 @@ export function createVirtualList<T>(viewport: HTMLElement, options: VirtualList
   if (!view || !(viewport instanceof view.HTMLElement) || !viewport.isConnected
     || viewport.getRootNode() !== document
     || !["div", "section"].includes(viewport.localName)
-    || !viewport.classList.contains("mui-virtual-list")) throw new TypeError("Use a connected native div/section.mui-virtual-list viewport.")
+    || !viewport.classList.contains("m-virtual-list")) throw new TypeError("Use a connected native div/section.m-virtual-list viewport.")
   if (!options || typeof options !== "object" || Array.isArray(options)
     || Object.keys(options).some(key => !["items", "rowSize", "overscan", "key", "render", "update", "dispose"].includes(key))
     || typeof options.key !== "function" || typeof options.render !== "function" || typeof options.update !== "function"
@@ -62,10 +62,10 @@ export function createVirtualList<T>(viewport: HTMLElement, options: VirtualList
   const children = [...viewport.children]
   const listNode = children[0]
   if (children.length !== 1 || !(listNode instanceof view.HTMLUListElement || listNode instanceof view.HTMLOListElement)
-    || !listNode.classList.contains("mui-virtual-list__items") || listNode.childNodes.length && listNode.textContent?.trim()
+    || !listNode.classList.contains("m-virtual-list__items") || listNode.childNodes.length && listNode.textContent?.trim()
     || listNode.children.length || listNode.hasAttribute("role") && listNode.getAttribute("role") !== "list"
     || viewport.hasAttribute("role")) {
-    throw new TypeError("Author one empty native ul/ol.mui-virtual-list__items; keep fallback content outside the viewport.")
+    throw new TypeError("Author one empty native ul/ol.m-virtual-list__items; keep fallback content outside the viewport.")
   }
   const list = listNode
   const rowSize = options.rowSize, overscan = options.overscan === undefined ? 3 : options.overscan
@@ -78,7 +78,7 @@ export function createVirtualList<T>(viewport: HTMLElement, options: VirtualList
   const owned = new Set<Row<T>>()
   let state: VirtualListState = Object.freeze({ count: 0, start: 0, end: 0, mounted: 0, pinnedKey: null })
   const originalHeight = list.style.getPropertyValue("height"), heightPriority = list.style.getPropertyPriority("height")
-  const originalSize = viewport.style.getPropertyValue("--mui-virtual-row-size"), sizePriority = viewport.style.getPropertyPriority("--mui-virtual-row-size")
+  const originalSize = viewport.style.getPropertyValue("--m-virtual-row-size"), sizePriority = viewport.style.getPropertyPriority("--m-virtual-row-size")
   const originalTabindex = viewport.getAttribute("tabindex")
   let lastHeight: string | null = null, lastSize: string | null = null, leasedTabindex = false
   let observer: ResizeObserver | undefined
@@ -108,16 +108,16 @@ export function createVirtualList<T>(viewport: HTMLElement, options: VirtualList
   }
   function geometry() {
     if (!viewport.isConnected || viewport.getRootNode() !== document
-      || !viewport.classList.contains("mui-virtual-list") || !list.classList.contains("mui-virtual-list__items")
+      || !viewport.classList.contains("m-virtual-list") || !list.classList.contains("m-virtual-list__items")
       || list.parentElement !== viewport || viewport.children.length !== 1
       || [...list.children].some(element => ![...owned].some(row => row.element === element))
       || [...rows.values()].some(row => row.element.parentElement !== list)) throw new Error("Keep the connected, exclusively owned list anatomy.")
     const style = view!.getComputedStyle(viewport)
-    const size = style.getPropertyValue("--mui-virtual-list-height").trim()
+    const size = style.getPropertyValue("--m-virtual-list-height").trim()
     if (!/^(?:\d+(?:\.\d+)?|\.\d+)px$/.test(size) || Number.parseFloat(size) <= 0
       || Number.parseFloat(size) > MAX_VIEWPORT_HEIGHT || !["auto", "scroll"].includes(style.overflowY)
       || [style.paddingTop, style.paddingBottom].some(value => Number.parseFloat(value || "0") !== 0)) {
-      throw new Error("Load the stylesheet and set --mui-virtual-list-height to a positive CSS-pixel length up to 16384px.")
+      throw new Error("Load the stylesheet and set --m-virtual-list-height to a positive CSS-pixel length up to 16384px.")
     }
     return virtualWindow(items.length, rowSize, viewport.clientHeight, viewport.scrollTop, overscan)
   }
@@ -133,7 +133,7 @@ export function createVirtualList<T>(viewport: HTMLElement, options: VirtualList
       row.element.remove()
       if (row.original.top) row.element.style.setProperty("top", row.original.top, row.original.priority)
       else row.element.style.removeProperty("top")
-      if (!row.original.classed) row.element.classList.remove("mui-virtual-list__row")
+      if (!row.original.classed) row.element.classList.remove("m-virtual-list__row")
       for (const [name, value] of [["aria-posinset", row.original.position], ["aria-setsize", row.original.size]]) {
         if (value === null) row.element.removeAttribute(name!)
         else row.element.setAttribute(name!, value!)
@@ -154,9 +154,9 @@ export function createVirtualList<T>(viewport: HTMLElement, options: VirtualList
         if (originalHeight) list.style.setProperty("height", originalHeight, heightPriority)
         else list.style.removeProperty("height")
       }
-      if (lastSize !== null && viewport.style.getPropertyValue("--mui-virtual-row-size") === lastSize) {
-        if (originalSize) viewport.style.setProperty("--mui-virtual-row-size", originalSize, sizePriority)
-        else viewport.style.removeProperty("--mui-virtual-row-size")
+      if (lastSize !== null && viewport.style.getPropertyValue("--m-virtual-row-size") === lastSize) {
+        if (originalSize) viewport.style.setProperty("--m-virtual-row-size", originalSize, sizePriority)
+        else viewport.style.removeProperty("--m-virtual-row-size")
       }
       if (leasedTabindex && viewport.getAttribute("tabindex") === "0") {
         if (originalTabindex === null) viewport.removeAttribute("tabindex")
@@ -170,7 +170,7 @@ export function createVirtualList<T>(viewport: HTMLElement, options: VirtualList
     for (const row of owned) release(row, errors)
     if (errors.length) {
       error = errors.length === 1 ? errors[0] : new AggregateError(errors, "Virtual List operation/cleanup failed.")
-      viewport.dispatchEvent(new view!.CustomEvent("mui:virtual-list-error", { detail: { error } }))
+      viewport.dispatchEvent(new view!.CustomEvent("m:virtual-list-error", { detail: { error } }))
       throw error
     }
   }
@@ -215,7 +215,7 @@ export function createVirtualList<T>(viewport: HTMLElement, options: VirtualList
         eligible(element)
         row = { element, item, context, original: {
           top: element.style.getPropertyValue("top"), priority: element.style.getPropertyPriority("top"),
-          classed: element.classList.contains("mui-virtual-list__row"),
+          classed: element.classList.contains("m-virtual-list__row"),
           position: element.getAttribute("aria-posinset"), size: element.getAttribute("aria-setsize"),
         } }
         owned.add(row); (element as Owned)[owner] = token
@@ -229,13 +229,13 @@ export function createVirtualList<T>(viewport: HTMLElement, options: VirtualList
     }
     list.style.setProperty("height", `${window.total}px`)
     lastHeight = list.style.getPropertyValue("height")
-    viewport.style.setProperty("--mui-virtual-row-size", `${rowSize}px`)
-    lastSize = viewport.style.getPropertyValue("--mui-virtual-row-size")
+    viewport.style.setProperty("--m-virtual-row-size", `${rowSize}px`)
+    lastSize = viewport.style.getPropertyValue("--m-virtual-row-size")
     const errors: unknown[] = []
     for (const [key, row] of rows) if (!next.has(key)) { release(row, errors); check() }
     if (errors.length) throw new AggregateError(errors, "Virtual List disposal failed.")
     const elements = [...next.values()].map(row => {
-      row.element.classList.add("mui-virtual-list__row")
+      row.element.classList.add("m-virtual-list__row")
       row.element.style.top = `${row.context.index * rowSize}px`
       row.element.setAttribute("aria-posinset", String(row.context.index + 1))
       row.element.setAttribute("aria-setsize", String(items.length))

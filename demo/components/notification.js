@@ -32,11 +32,11 @@ document.querySelector("#clear").addEventListener("click", () => fixed.destroyAl
 document.querySelector("#inline-create").addEventListener("click", () => run(() => inline.info({ title: "Silent inline card", content: "This host deliberately has announcements off." })))
 document.querySelector("#open-modal").addEventListener("click", event => modal.showModal(event.currentTarget))
 document.querySelector("#inside-create").addEventListener("click", () => run(() => inside.success({ title: "Inside the native modal", content: "No portal or z-index promise is needed." }), document.querySelector("#inside-error")))
-for (const root of document.querySelectorAll(".mui-notification-host")) {
-  root.addEventListener("mui:notification-create", event => {
+for (const root of document.querySelectorAll(".m-notification-host")) {
+  root.addEventListener("m:notification-create", event => {
     event.detail.handle.element.querySelector("form")?.addEventListener("submit", e => { e.preventDefault(); events.textContent = "Native form validated; local action only." })
   })
-  root.addEventListener("mui:notification-remove", event => { events.textContent = `${root.id}: ${event.detail.reason}` })
-  root.addEventListener("mui:notification-error", event => { event.preventDefault(); events.textContent = `${root.id}: ${event.detail.stale ? "stale " : ""}${event.detail.error.message}` })
+  root.addEventListener("m:notification-remove", event => { events.textContent = `${root.id}: ${event.detail.reason}` })
+  root.addEventListener("m:notification-error", event => { event.preventDefault(); events.textContent = `${root.id}: ${event.detail.stale ? "stale " : ""}${event.detail.error.message}` })
 }
 window.notificationDemo = { fixed, inline, inside, modal, get last() { return last }, get calls() { return calls } }

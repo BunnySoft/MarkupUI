@@ -87,7 +87,7 @@ All rows are resolved: **60 adapted native capabilities and 87 intentional omiss
 | `ellipsis` · API:L58 | Prop | External data-tree-ellipsis CSS; accessible label remains complete. | 🟢 Verified |
 | `filter` · API:L59 | Prop | Search/filter algorithms deferred; caller may author hidden state and refresh. | ⏭️ Intentionally omitted |
 | `get-children` · API:L60 | Prop | Native index node.children references actual children; no callback data getter. | 🟢 Verified |
-| `indent` · API:L61 | Prop | External --mui-tree-indent logical CSS length. | 🟢 Verified |
+| `indent` · API:L61 | Prop | External --m-tree-indent logical CSS length. | 🟢 Verified |
 | `indeterminate-keys` · API:L62 | Prop | Real checkbox.indeterminate; derived in cascade mode, authored in independent mode. | 🟢 Verified |
 | `keyboard` · API:L63 | Prop | Optional enhancement supplies outline shortcuts; native Tab/Enter/Space retained, no ARIA-tree mode. | 🟢 Verified |
 | `key-field` · API:L64 | Prop | Required stable data-tree-key strings; numbers are not coerced. | 🟢 Verified |
@@ -115,10 +115,10 @@ All rows are resolved: **60 adapted native capabilities and 87 intentional omiss
 | `on-dragleave` · API:L86 | Callback | No managed drag state/notifications. | ⏭️ Intentionally omitted |
 | `on-dragstart` · API:L87 | Callback | No managed drag state/notifications. | ⏭️ Intentionally omitted |
 | `on-drop` · API:L88 | Callback | No managed reparenting/drop notifications. | ⏭️ Intentionally omitted |
-| `on-update:checked-keys` · API:L89 | Callback | One mui:tree-check after real native change; includes keys/nodes and source node. | 🟢 Verified |
+| `on-update:checked-keys` · API:L89 | Callback | One m:tree-check after real native change; includes keys/nodes and source node. | 🟢 Verified |
 | `on-update:indeterminate-keys` · API:L90 | Callback | Same single check notification includes indeterminateKeys; no duplicate event. | 🟢 Verified |
-| `on-update:expanded-keys` · API:L91 | Callback | One mui:tree-expand for native/keyboard user expansion, not programmatic setters. | 🟢 Verified |
-| `on-update:selected-keys` · API:L92 | Callback | One mui:tree-select after uncancelled selection-button activation. | 🟢 Verified |
+| `on-update:expanded-keys` · API:L91 | Callback | One m:tree-expand for native/keyboard user expansion, not programmatic setters. | 🟢 Verified |
+| `on-update:selected-keys` · API:L92 | Callback | One m:tree-select after uncancelled selection-button activation. | 🟢 Verified |
 
 ### TreeOption Properties
 
@@ -310,10 +310,10 @@ All rows are resolved: **60 adapted native capabilities and 87 intentional omiss
 | `disabled` · [tree][tree] | Prop supplement | Root data-tree-disabled blocks tree interaction; native fieldset disabled owns form omission. | 🟢 Verified |
 | `leafOnly` · [tree][tree] | Deprecated prop supplement | Source alias excluded; use explicit child report when appropriate. | ⏭️ Intentionally omitted |
 | `onDragover` · [tree][tree] | Callback supplement | No managed dragover prevention/payload. | ⏭️ Intentionally omitted |
-| `onUpdateCheckedKeys` · [tree][tree] | Callback alias supplement | Same single native mui:tree-check adaptation as colon spelling. | 🟢 Verified |
+| `onUpdateCheckedKeys` · [tree][tree] | Callback alias supplement | Same single native m:tree-check adaptation as colon spelling. | 🟢 Verified |
 | `onUpdateIndeterminateKeys` · [tree][tree] | Callback alias supplement | Same check event carries indeterminateKeys; no duplicate alias emission. | 🟢 Verified |
-| `onUpdateExpandedKeys` · [tree][tree] | Callback alias supplement | Same mui:tree-expand adaptation. | 🟢 Verified |
-| `onUpdateSelectedKeys` · [tree][tree] | Callback alias supplement | Same mui:tree-select adaptation. | 🟢 Verified |
+| `onUpdateExpandedKeys` · [tree][tree] | Callback alias supplement | Same m:tree-expand adaptation. | 🟢 Verified |
+| `onUpdateSelectedKeys` · [tree][tree] | Callback alias supplement | Same m:tree-select adaptation. | 🟢 Verified |
 | `treeSharedProps` · [tree][tree] | Source export supplement | No shared reactive prop schema/provider. | ⏭️ Intentionally omitted |
 | `Key` · [interface][interface] | Type supplement | Strict native strings; source numeric-key alternative deliberately excluded. | 🟢 Verified |
 | `OnLoad` · [interface][interface] | Type supplement | Explicit native load result, AbortSignal and lifetime guards, not Promise<unknown> mutation. | 🟢 Verified |

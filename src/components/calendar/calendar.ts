@@ -104,8 +104,8 @@ const defaultLabels: CalendarLabels = { today: "Today", selected: "Selected", un
 export function createCalendar(element: HTMLElement, options: CalendarOptions = {}): CalendarController {
   const document = element?.ownerDocument, view = document?.defaultView
   if (!view || !(element instanceof view.HTMLElement) || !["div", "section"].includes(element.localName)
-    || !element.matches(".mui-calendar[data-calendar]") || !element.isConnected || element.getRootNode() !== document
-    || element.getAttribute("tabindex") !== "-1" || (element as Owned)[owner]) throw new TypeError("Use an unowned connected native .mui-calendar[data-calendar][tabindex='-1'] scope.")
+    || !element.matches(".m-calendar[data-calendar]") || !element.isConnected || element.getRootNode() !== document
+    || element.getAttribute("tabindex") !== "-1" || (element as Owned)[owner]) throw new TypeError("Use an unowned connected native .m-calendar[data-calendar][tabindex='-1'] scope.")
   const doc = document!, win = view, token = {}, writes = ownedWrites()
   const own = (node: Element) => node.closest("[data-calendar]") === element
   if (!(element.getAttribute("aria-label")?.trim() || element.getAttribute("aria-labelledby")?.trim().split(/\s+/).every(id => doc.getElementById(id)?.textContent?.trim()))) throw new TypeError("Give the native Calendar scope an accessible name.")
@@ -294,7 +294,7 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
     const node = sourceCell!.cloneNode(true) as HTMLTableCellElement
     const cell: Cell = { node, button: part(node, "[data-calendar-day]"), number: part(node, "[data-calendar-number]"), marks: part(node, "[data-calendar-marks]"), note: part(node, "[data-calendar-note]") }
     cell.button.dataset.calendarDate = value
-    cell.note.id = `mui-calendar-${prefix}-${value}`
+    cell.note.id = `m-calendar-${prefix}-${value}`
     return cell
   }
   function commit(next: Prepared, reason: string, notify: boolean, focusTarget = false) {
@@ -357,12 +357,12 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
     const stamp = version
     if (previousPanel !== settings.panel) {
       const detail: CalendarPanelChange = Object.freeze({ panel: settings.panel, previousPanel, year: next.panel.year, month: next.panel.month, reason })
-      element.dispatchEvent(new win.CustomEvent("mui:calendar-panel-change", { bubbles: true, detail }))
+      element.dispatchEvent(new win.CustomEvent("m:calendar-panel-change", { bubbles: true, detail }))
     }
     if (connected && version === stamp && previousValue !== settings.value) {
       const parts = settings.value === null ? null : parseDate(doc, settings.value)
       const detail: CalendarChange = Object.freeze({ value: settings.value, previousValue, year: parts?.year ?? null, month: parts?.month ?? null, date: parts?.date ?? null, reason })
-      element.dispatchEvent(new win.CustomEvent("mui:calendar-change", { bubbles: true, detail }))
+      element.dispatchEvent(new win.CustomEvent("m:calendar-change", { bubbles: true, detail }))
     }
   }
   function apply(input: CalendarSettings, reason: string, notify: boolean, desired?: string, focusTarget = false) {
@@ -426,7 +426,7 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
     error = failure
     if (!connected || !element.isConnected) return
     writeText(status, settings.labels.failed)
-    element.dispatchEvent(new win.CustomEvent("mui:calendar-error", { bubbles: true, detail: Object.freeze({ error: failure }) }))
+    element.dispatchEvent(new win.CustomEvent("m:calendar-error", { bubbles: true, detail: Object.freeze({ error: failure }) }))
   }
   function listen(node: EventTarget, type: string, callback: EventListener) {
     node.addEventListener(type, callback); removers.push(() => node.removeEventListener(type, callback))

@@ -17,7 +17,7 @@ VNode renderer, animation dependency or seamless-ticker claim.
 | [Complete pinned mapping](../naive-ui/components/marquee.md) | Three original identities plus eight explicitly sourced additions |
 
 ```html
-<section class="mui-marquee" data-marquee aria-labelledby="announcement">
+<section class="m-marquee" data-marquee aria-labelledby="announcement">
   <h2 id="announcement">Announcement</h2>
   <div data-marquee-viewport tabindex="0" aria-label="Scrollable announcement">
     <div data-marquee-content><strong>Original text.</strong> Author the full readable content here.</div>
@@ -141,7 +141,7 @@ No default gap, padding, border, background or edge fade is added.
 Images now retain native baseline alignment, as the pinned reference does. Authors can
 still set `vertical-align: middle` or another alignment explicitly. Inherited font,
 line-height and colors remain application-owned; no fixed Marquee palette is imposed.
-The existing public `--mui-marquee-focus` token remains the focus-outline authority and
+The existing public `--m-marquee-focus` token remains the focus-outline authority and
 is never assigned by the component. Use ordinary CSS for other presentation, without
 changing the geometry constraints above.
 
@@ -181,9 +181,9 @@ The controller exposes element/viewport/content, connected and frozen state:
 active, phase, pauseReasons, supported, generation, measured widths/distance/duration,
 direction, iterations and error. Phases are static/running/finished/error/disconnected.
 
-- `mui:marquee-change`: deduplicated state notifications after reconciliation.
-- `mui:marquee-finish`: one state notification for the current finite native run.
-- `mui:marquee-error`: error/reason after a runtime content/layout/native failure;
+- `m:marquee-change`: deduplicated state notifications after reconciliation.
+- `m:marquee-finish`: one state notification for the current finite native run.
+- `m:marquee-error`: error/reason after a runtime content/layout/native failure;
   the original content remains static. Explicit API calls also throw that failure.
 
 Old finish/cancel callbacks compare animation identity and generation. Native external

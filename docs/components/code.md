@@ -15,13 +15,13 @@ There is no syntax engine, URI parser, code execution, renderer or clipboard fea
 
 ```html
 <link rel="stylesheet" href="./vendor/markup-ui-code.css">
-<pre class="mui-code-block"><code class="mui-code">const value = "&lt;b&gt;literal&lt;/b&gt;";</code></pre>
-<p>Inline <code class="mui-code">a  &lt; b</code> stays in the paragraph.</p>
+<pre class="m-code-block"><code class="m-code">const value = "&lt;b&gt;literal&lt;/b&gt;";</code></pre>
+<p>Inline <code class="m-code">a  &lt; b</code> stays in the paragraph.</p>
 ```
 
-No `./code` JS entry or new `mui-code` definition exists. Legacy `mui-code` remains unchanged.
-The font fallbacks reuse Typography's optional `--mui-typography-mono-font` and the common
-`--mui-font-size` roles, but no Typography stylesheet/runtime import is required.
+No `./code` JS entry or new `m-code` definition exists. Legacy `m-code` remains unchanged.
+The font fallbacks reuse Typography's optional `--m-typography-mono-font` and the common
+`--m-font-size` roles, but no Typography stylesheet/runtime import is required.
 The mono stack is `v-mono, SFMono-Regular, Menlo, Consolas, Courier, monospace`.
 Explicit Code classes retain their
 font/whitespace rules when composed with that generic typography stylesheet.
@@ -63,14 +63,14 @@ clipboard newline conversion remain browser behavior, not a byte-copy service.
 | Upstream surface | Native target / exclusion |
 | --- | --- |
 | `code` | Actual authored code text, or an explicit native textContent assignment. No code-string attribute renderer. |
-| `inline` | Choose `code.mui-code` in inline content, or `pre.mui-code-block > code.mui-code` for a block. No inline attribute parser. |
+| `inline` | Choose `code.m-code` in inline content, or `pre.m-code-block > code.m-code` for a block. No inline attribute parser. |
 | `word-wrap` | Presence `data-word-wrap` on the pre selects pre-wrap/break-all wrapping, matching the rendered reference. Absent keeps preformatted horizontal scrolling. |
 | `show-line-numbers` | Presence `data-line-numbers` on an unwrapped pre enables decorative counters for **authored physical-line markup**, described below. Suppressed when word-wrap is present; unavailable for inline code. |
 | `trim` | ⏭️ Automatic trimming omitted. Plain text stays verbatim; applications can intentionally transform their source before authoring it. |
 | `hljs` | ⏭️ External syntax-engine object/configuration omitted. No highlight.js/Prism/parser dependency or adapter. |
 | `language` | ⏭️ Runtime grammar selection/detection omitted. Optional author metadata such as data-language is inert and does not prove highlighting. |
 | Source `uri` | ⏭️ Automatic decodeURIComponent mode omitted; encoded strings remain literal unless the application explicitly decodes them and handles errors. |
-| Source `internalFontSize` | Valid external CSS `--mui-code-font-size`, e.g. `15px`; not a JS number-to-style bridge. |
+| Source `internalFontSize` | Valid external CSS `--m-code-font-size`, e.g. `15px`; not a JS number-to-style bridge. |
 | Source `internalNoHighlight` | ⏭️ Private Log/style-mount switch omitted; this module is always plain display and has no Log integration mode. |
 | Source default slot | Authored code/line/token nodes; no VNode projection or markup injection. |
 | Source theme props | ⏭️ `theme`, `themeOverrides`, `builtinThemeOverrides` object/provider contracts omitted. |
@@ -84,10 +84,10 @@ The source has no Copy API/button or named public size presets, so neither is in
 ## Authored physical-line numbers
 
 The `data-line-numbers` switch **does not split a string or generate line wrappers**.
-Authors or a server may supply one `.mui-code-line` per physical source line:
+Authors or a server may supply one `.m-code-line` per physical source line:
 
 ```html
-<pre class="mui-code-block" data-line-numbers><code class="mui-code"><span class="mui-code-line"><span class="mui-code-number" aria-hidden="true"></span>const value = 1;&#10;</span><span class="mui-code-line"><span class="mui-code-number" aria-hidden="true"></span></span></code></pre>
+<pre class="m-code-block" data-line-numbers><code class="m-code"><span class="m-code-line"><span class="m-code-number" aria-hidden="true"></span>const value = 1;&#10;</span><span class="m-code-line"><span class="m-code-number" aria-hidden="true"></span></span></code></pre>
 ```
 
 Important rules:
@@ -106,7 +106,7 @@ Important rules:
    Selection text, without touching the real clipboard.
 5. Modern CSS sizes the gutter from the authored line count: `1ch` for 1–9 lines,
    `2ch` for 10–99, `3ch` for 100–999 and `4ch` for 1,000–9,999, followed by a fixed
-   12px gap. No text splitting or JS measurement occurs. Set `--mui-code-gutter`
+   12px gap. No text splitting or JS measurement occurs. Set `--m-code-gutter`
    explicitly for larger files or custom font requirements. Engines lacking the
    structural-selector support retain a `3ch` fallback; author a sufficient width there.
 6. Inline and word-wrapped code do not show numbers, matching the documented restriction.
@@ -125,14 +125,14 @@ not disabled merely to reproduce that fallback behavior.
 
 ## Typography, authored tokens and native interaction
 
-Tokens: `--mui-code-font-family`, `--mui-code-font-size` (shared font-size fallback, then
-`14px`), `--mui-code-line-height` (unitless multiplier override; otherwise inherited),
-`--mui-code-tab-size` (default `8`), `--mui-code-padding`, `--mui-code-gutter`, `--mui-code-color`,
-`--mui-code-background`, `--mui-code-border-color` and `--mui-code-number-color`.
+Tokens: `--m-code-font-family`, `--m-code-font-size` (shared font-size fallback, then
+`14px`), `--m-code-line-height` (unitless multiplier override; otherwise inherited),
+`--m-code-tab-size` (default `8`), `--m-code-padding`, `--m-code-gutter`, `--m-code-color`,
+`--m-code-background`, `--m-code-border-color` and `--m-code-number-color`.
 Use external CSS with valid values. No numeric/preset prop parser is provided.
 
 Defaults no longer add an inline chip or block panel: padding/radius/border width are zero,
-and the background is transparent. `--mui-code-padding` still provides optional block
+and the background is transparent. `--m-code-padding` still provides optional block
 padding; background and border-color tokens remain opt-in decoration. Border color now
 paints a 1px inset frame without consuming content space. Author ordinary CSS for custom
 radius/inline padding. The nested code does not paint a duplicate background/frame.
@@ -143,12 +143,12 @@ page foreground/background appropriately, or use the explicit Code color tokens.
 Line height also inherits; modern `1lh` keeps blank physical lines as tall as actual text.
 Older engines retain the previous unitless-token/1.6 minimum-height fallback.
 
-Optional `.mui-code-token[data-code-token="keyword|string|number|comment"]` conventions
+Optional `.m-code-token[data-code-token="keyword|string|number|comment"]` conventions
 are a small **author-markup palette**, not a grammar or highlighter interface.
 Token boundaries are supplied by the application. Their colors can use
-`--mui-code-keyword-color`, `--mui-code-string-color`, `--mui-code-number-token-color`,
-and `--mui-code-comment-color`. These four roles now match the rendered pinned token colors.
-Set `data-mui-theme="dark"` on a host or ancestor for dark token/number colors; nested light
+`--m-code-keyword-color`, `--m-code-string-color`, `--m-code-number-token-color`,
+and `--m-code-comment-color`. These four roles now match the rendered pinned token colors.
+Set `data-m-theme="dark"` on a host or ancestor for dark token/number colors; nested light
 scopes reset them. Ordinary source text still inherits the page color. No other syntax
 classes, language metadata, engine methods or grammar are interpreted. The demo remains
 static safe author markup rather than a tokenizer.
@@ -193,7 +193,7 @@ On 2026-09-08, `pnpm --dir D:\repos\MarkupUI check` passed build/budget gates an
 - Named focusable scrolling, ArrowRight, native navigation, 280px/320px widths, logical RTL
   gutter placement and explicit LTR source, 200% CSS zoom, print and forced colors.
 - Later Typography/core/widgets/advanced loading preserved code nodes, font and whitespace;
-  legacy mui-code retained inline styling. No grammar or language detection ran.
+  legacy m-code retained inline styling. No grammar or language detection ran.
 - JavaScript-disabled numbered selection/CRLF fidelity and native navigation; the demo loads
   no scripts. Browser/OS clipboard newline conversion and screen-reader speech are not certified.
 

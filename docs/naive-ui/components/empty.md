@@ -38,7 +38,7 @@ explicitly application-owned. No renderer, provider, mandatory Button or icon de
 
 ### Native primitives and fallback
 
-- **Native path:** `.mui-empty` on a native section with authored description/extra regions
+- **Native path:** `.m-empty` on a native section with authored description/extra regions
   needs no controller. Heading levels, action types and any live-region policy stay native.
 - **Small enhancement:** the controller supplies only missing fallbacks and adopts explicit
   regions. Templates remain inert and outside layout; the app may clone them with native
@@ -76,9 +76,9 @@ Verification is retained native scope, not provider/default/pixel or all-browser
 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/empty/demos/enUS/index.demo-entry.md#L28) | Slot | ADAPTED default nodes or `data-mui-empty-description`. | 🟢 Verified | Original headings/text/listeners win over fallback; no VNode renderer or inferred heading role. |
-| [`extra`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/empty/demos/enUS/index.demo-entry.md#L29) | Slot | ADAPTED native `data-mui-empty-extra` region. | 🟢 Verified | Native buttons/links and form types remain author-owned; no action generation or mandatory Button module. |
-| [`icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/empty/demos/enUS/index.demo-entry.md#L30) | Slot | ADAPTED HTML/SVG/image `data-mui-empty-icon`. | 🟢 Verified | Native nodes/ARIA preserved; original decorative fallback SVG is not a vendor asset. |
+| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/empty/demos/enUS/index.demo-entry.md#L28) | Slot | ADAPTED default nodes or `data-m-empty-description`. | 🟢 Verified | Original headings/text/listeners win over fallback; no VNode renderer or inferred heading role. |
+| [`extra`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/empty/demos/enUS/index.demo-entry.md#L29) | Slot | ADAPTED native `data-m-empty-extra` region. | 🟢 Verified | Native buttons/links and form types remain author-owned; no action generation or mandatory Button module. |
+| [`icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/empty/demos/enUS/index.demo-entry.md#L30) | Slot | ADAPTED HTML/SVG/image `data-m-empty-icon`. | 🟢 Verified | Native nodes/ARIA preserved; original decorative fallback SVG is not a vendor asset. |
 
 ### Explicit source-only supplements
 

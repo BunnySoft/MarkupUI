@@ -39,8 +39,8 @@ or emits redundant keyboard/change events. Applications own accessible count des
 
 ### Native primitives and fallback
 
-- **Native path:** `.mui-badge-value` on a native span is the controller-free static path.
-  Authored targets and `data-mui-badge-value` regions preserve content and native semantics.
+- **Native path:** `.m-badge-value` on a native span is the controller-free static path.
+  Authored targets and `data-m-badge-value` regions preserve content and native semantics.
 - **Small enhancement:** the controller changes only derived indicator text/state and adopts
   value regions without cloning. CSS owns placement, offsets and motion. Native targets and
   explicitly authored static text remain usable without scripting; no template/reactive
@@ -68,10 +68,10 @@ inventory rows. Verification covers A1's retained behavior, not all-browser/pixe
 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
-| [`color`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/badge/demos/enUS/index.demo-entry.md#L26) | Prop | ADAPTED `--mui-badge-background` in external CSS. | 🟢 Verified | A1/S2; arbitrary CSS colors without runtime color prop/style adapter. |
+| [`color`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/badge/demos/enUS/index.demo-entry.md#L26) | Prop | ADAPTED `--m-badge-background` in external CSS. | 🟢 Verified | A1/S2; arbitrary CSS colors without runtime color prop/style adapter. |
 | [`dot`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/badge/demos/enUS/index.demo-entry.md#L27) | Prop | ADAPTED Boolean attribute/property, circular indicator. | 🟢 Verified | A1/S1 preserve hidden numeric/custom children; dot is visual, not an implicit label. |
 | [`max`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/badge/demos/enUS/index.demo-entry.md#L28) | Prop | ADAPTED optional finite nonnegative cap, `max+` display. | 🟢 Verified | Source value stays unchanged; numeric strings also participate, unlike upstream string rendering. |
-| [`offset`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/badge/demos/enUS/index.demo-entry.md#L29) | Prop | ADAPTED `--mui-badge-offset-x` and `--mui-badge-offset-y`. | 🟢 Verified | External CSS lengths for attached badges; no JS tuple/inline transform API. Positive X right, Y down. |
+| [`offset`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/badge/demos/enUS/index.demo-entry.md#L29) | Prop | ADAPTED `--m-badge-offset-x` and `--m-badge-offset-y`. | 🟢 Verified | External CSS lengths for attached badges; no JS tuple/inline transform API. Positive X right, Y down. |
 | [`processing`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/badge/demos/enUS/index.demo-entry.md#L30) | Prop | ADAPTED Boolean attribute/property and CSS pulse. | 🟢 Verified | Reduced-motion alternative; no forced visibility, timer, busy role or announcer. |
 | [`show-zero`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/badge/demos/enUS/index.demo-entry.md#L31) | Prop | ADAPTED Boolean attribute / `.showZero`. | 🟢 Verified | Allows zero and negatives; signed text preserved rather than integer-animation normalization. |
 | [`show`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/badge/demos/enUS/index.demo-entry.md#L32) | Prop | ADAPTED `.show` / `show="false"`, true default. | 🟢 Verified | Hides only indicator, not native target; silent assignment. |
@@ -90,7 +90,7 @@ These additions are from the pinned implementation review, not the public Markdo
 
 | Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / scope |
 | --- | --- | --- | --- | --- |
-| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/badge/src/Badge.tsx) | Source-only slot | ADAPTED authored `data-mui-badge-value` region(s). | 🟢 Verified | A1/S1 preserve content/IDs/ARIA and prioritize custom content over generated counts; dot hides all content explicitly. |
+| [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/badge/src/Badge.tsx) | Source-only slot | ADAPTED authored `data-m-badge-value` region(s). | 🟢 Verified | A1/S1 preserve content/IDs/ARIA and prioritize custom content over generated counts; dot hides all content explicitly. |
 | [`theme`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/badge/src/Badge.tsx) | Inherited source prop | External CSS/custom properties. | ⏭️ Intentionally omitted | No framework theme object or provider injection. |
 | [`themeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/badge/src/Badge.tsx) | Inherited source prop | External scoped CSS. | ⏭️ Intentionally omitted | No runtime object-shape compatibility. |
 | [`builtinThemeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/badge/src/Badge.tsx) | Inherited source prop | External CSS source of truth. | ⏭️ Intentionally omitted | No framework-internal override machinery. |

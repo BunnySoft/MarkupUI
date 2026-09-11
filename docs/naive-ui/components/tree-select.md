@@ -106,7 +106,7 @@ All rows are resolved: **39 adapted native capabilities and 81 intentional omiss
 | `on-load` · API:L75 | Callback | Application updates source atomically and refreshes; no built-in lazy loader. | ⏭️ Intentionally omitted |
 | `on-update:expanded-keys` · API:L76 | Callback | No expansion state event. | ⏭️ Intentionally omitted |
 | `on-update:indeterminate-keys` · API:L77 | Callback | No mixed-state event. | ⏭️ Intentionally omitted |
-| `on-update:value` · API:L78 | Callback | One mui:tree-select-change with explicit native value/keys/paths/action/event. | 🟢 Verified |
+| `on-update:value` · API:L78 | Callback | One m:tree-select-change with explicit native value/keys/paths/action/event. | 🟢 Verified |
 
 ### TreeSelectOption Properties
 

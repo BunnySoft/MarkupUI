@@ -39,7 +39,7 @@ are explicit application policy, not inferred from delayed indicator visibility.
 ### Native primitives and fallback
 
 - **Native path:** readable description/fallback text and decorative SVG; native roles/live
-  regions/busy attributes belong to the application. Static `.mui-spin` markup can use CSS alone.
+  regions/busy attributes belong to the application. Static `.m-spin` markup can use CSS alone.
 - **Small enhancement:** one scoped display-delay timer and native region adoption, not an
   application loading store. CSS handles motion/centering. No automatic content blocking,
   focus trapping, announcing provider, VDOM or SVG animation runtime is introduced.
@@ -82,9 +82,9 @@ validation accessors and the legacy label convenience are target extensions, not
 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/spin/demos/enUS/index.demo-entry.md#L37) | Slot | ADAPTED native targets / `data-mui-spin-content`. | 🟢 Verified | Nodes/listeners/forms/ARIA preserved; intentionally usable rather than pointer-blocked content. |
-| [`description`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/spin/demos/enUS/index.demo-entry.md#L38) | Slot | ADAPTED authored `data-mui-spin-description`. | 🟢 Verified | Original content/ARIA survives temporary property precedence and show/hide. |
-| [`icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/spin/demos/enUS/index.demo-entry.md#L39) | Slot | ADAPTED authored HTML/SVG `data-mui-spin-icon`. | 🟢 Verified | Native identity/hidden/ARIA retained, scoped custom rotation, no dependency or VNode renderer. |
+| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/spin/demos/enUS/index.demo-entry.md#L37) | Slot | ADAPTED native targets / `data-m-spin-content`. | 🟢 Verified | Nodes/listeners/forms/ARIA preserved; intentionally usable rather than pointer-blocked content. |
+| [`description`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/spin/demos/enUS/index.demo-entry.md#L38) | Slot | ADAPTED authored `data-m-spin-description`. | 🟢 Verified | Original content/ARIA survives temporary property precedence and show/hide. |
+| [`icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/spin/demos/enUS/index.demo-entry.md#L39) | Slot | ADAPTED authored HTML/SVG `data-m-spin-icon`. | 🟢 Verified | Native identity/hidden/ARIA retained, scoped custom rotation, no dependency or VNode renderer. |
 
 ### Explicit source-only supplements
 

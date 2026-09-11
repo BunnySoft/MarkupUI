@@ -37,9 +37,9 @@ scrollBy through its instance interface. This is not custom-chrome or framework 
 ```html
 <h2 id="activity-heading">Activity</h2>
 <p id="activity-help">Focus the region to scroll with the keyboard, or Tab to its controls.</p>
-<div class="mui-scrollbar activity-region" tabindex="0" role="region"
+<div class="m-scrollbar activity-region" tabindex="0" role="region"
   aria-labelledby="activity-heading" aria-describedby="activity-help">
-  <div class="mui-scrollbar-content activity-content">
+  <div class="m-scrollbar-content activity-content">
     <!-- Original content, links and native controls -->
   </div>
 </div>
@@ -62,7 +62,7 @@ wrapper behavior. An x-scrollable target is composed with native overflow and ex
 width; there is no no-op `x-scrollable` attribute parser or automatic width generator.
 
 The component adds only `.25rem` default padding to provide focus-outline room, configurable
-with `--mui-scrollbar-padding`. Keep additional padding/scroll-padding appropriate for your
+with `--m-scrollbar-padding`. Keep additional padding/scroll-padding appropriate for your
 controls. Nested scroll regions remain separate native elements. Normal scroll chaining
 is preserved; application CSS can explicitly choose `overscroll-behavior:contain`, as the
 demo's checkbox does. The library sets no containment, wheel handler, touch-action restriction,
@@ -88,7 +88,7 @@ These are existing **Element methods/properties**, not methods installed by a co
   instead zero-fills missing coordinates before calling its container. No zero-fill adapter
   is added. `scrollBy` applies native deltas.
 - `scrollTop`, `scrollLeft`, dimensions, clamping, fractional values and event timing remain
-  browser-owned. `scroll` is not a bubbling custom `mui:scroll` event.
+  browser-owned. `scroll` is not a bubbling custom `m:scroll` event.
 - RTL horizontal coordinates can be negative, with zero at logical start/right. The
   internal source normalizes a cached scrollLeft for its rail calculations; this target
   exposes the original native value without sign normalization.
@@ -144,14 +144,14 @@ The demo changes a height class directly; it installs no resize observer or poll
 The following are **local CSS presentation conventions**, not new upstream props:
 
 - `data-thin`: guarded `scrollbar-width:thin`.
-- `data-colored`: guarded `scrollbar-color`, using `--mui-scrollbar-thumb-color` /
-  `--mui-scrollbar-track-color`. Defaults now match the pinned custom renderer's base
+- `data-colored`: guarded `scrollbar-color`, using `--m-scrollbar-thumb-color` /
+  `--m-scrollbar-track-color`. Defaults now match the pinned custom renderer's base
   palette: black .25 in light / white .2 in dark, with a transparent track.
 - `data-stable-gutter`: guarded `scrollbar-gutter:stable`.
 
 They are presence flags, including when their value is the string `"false"`; remove them
 to opt out. Without the supported standards or flags, native appearance/cascade remains.
-Set `data-mui-theme="light|dark"` on the native context to choose the opt-in default thumb
+Set `data-m-theme="light|dark"` on the native context to choose the opt-in default thumb
 color. A colored scroller in a nested light scope restores black .25. No shared theme
 stylesheet or provider is needed for these color defaults; public color tokens still win.
 `scrollbar-color` inherits normally: explicitly set it to `auto` on a nested region if
@@ -230,7 +230,7 @@ On 2026-09-08, `pnpm --dir D:\repos\MarkupUI check` passed build/budget gates an
 - Required native form validation, one submission, reset, disabled exclusion and visible focus.
 - Standards thin/color/gutter computed styles, no generated rails, 280px/320px widths,
   200% CSS zoom, forced-color auto fallbacks and print content expansion.
-- Aggregate/widgets/advanced coexistence with no mui-scrollbar definition or node changes.
+- Aggregate/widgets/advanced coexistence with no m-scrollbar definition or node changes.
 - JavaScript-disabled keyboard scrolling and native reset/GET submission.
 
 CSS is **1,378 bytes / 468 gzip bytes**, below the new **750-byte** ceiling; component JS

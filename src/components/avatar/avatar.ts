@@ -1,6 +1,6 @@
-import { MuiElement } from "../../core/element.js"
+import { MElement } from "../../core/element.js"
 
-export class MuiAvatar extends MuiElement {
+export class MAvatar extends MElement {
   public static get observedAttributes(): string[] {
     return ["src", "fallback-src", "alt", "lazy", "size", "object-fit"]
   }
@@ -121,36 +121,36 @@ export class MuiAvatar extends MuiElement {
     if (Number.isFinite(numericSize) && numericSize > 0) {
       const value = `${numericSize}px`
       if (this.sizeOverride !== value) {
-        if (this.style.getPropertyValue("--mui-avatar-size") !== this.sizeOverride
-          || this.style.getPropertyPriority("--mui-avatar-size")) {
-          this.authoredSize = this.style.getPropertyValue("--mui-avatar-size")
-          this.authoredSizePriority = this.style.getPropertyPriority("--mui-avatar-size")
+        if (this.style.getPropertyValue("--m-avatar-size") !== this.sizeOverride
+          || this.style.getPropertyPriority("--m-avatar-size")) {
+          this.authoredSize = this.style.getPropertyValue("--m-avatar-size")
+          this.authoredSizePriority = this.style.getPropertyPriority("--m-avatar-size")
         }
-        this.style.setProperty("--mui-avatar-size", value)
+        this.style.setProperty("--m-avatar-size", value)
         this.sizeOverride = value
       }
     } else if (this.sizeOverride !== undefined) {
-      if (this.style.getPropertyValue("--mui-avatar-size") === this.sizeOverride
-        && !this.style.getPropertyPriority("--mui-avatar-size")) {
-        this.style.setProperty("--mui-avatar-size", this.authoredSize, this.authoredSizePriority)
+      if (this.style.getPropertyValue("--m-avatar-size") === this.sizeOverride
+        && !this.style.getPropertyPriority("--m-avatar-size")) {
+        this.style.setProperty("--m-avatar-size", this.authoredSize, this.authoredSizePriority)
       }
       this.sizeOverride = undefined
     }
     const fit = this.getAttribute("object-fit")
     if (fit && ["fill", "contain", "cover", "none", "scale-down"].includes(fit)) {
       if (this.fitOverride !== fit) {
-        if (this.style.getPropertyValue("--mui-avatar-object-fit") !== this.fitOverride
-          || this.style.getPropertyPriority("--mui-avatar-object-fit")) {
-          this.authoredFit = this.style.getPropertyValue("--mui-avatar-object-fit")
-          this.authoredFitPriority = this.style.getPropertyPriority("--mui-avatar-object-fit")
+        if (this.style.getPropertyValue("--m-avatar-object-fit") !== this.fitOverride
+          || this.style.getPropertyPriority("--m-avatar-object-fit")) {
+          this.authoredFit = this.style.getPropertyValue("--m-avatar-object-fit")
+          this.authoredFitPriority = this.style.getPropertyPriority("--m-avatar-object-fit")
         }
-        this.style.setProperty("--mui-avatar-object-fit", fit)
+        this.style.setProperty("--m-avatar-object-fit", fit)
         this.fitOverride = fit
       }
     } else if (this.fitOverride !== undefined) {
-      if (this.style.getPropertyValue("--mui-avatar-object-fit") === this.fitOverride
-        && !this.style.getPropertyPriority("--mui-avatar-object-fit")) {
-        this.style.setProperty("--mui-avatar-object-fit", this.authoredFit, this.authoredFitPriority)
+      if (this.style.getPropertyValue("--m-avatar-object-fit") === this.fitOverride
+        && !this.style.getPropertyPriority("--m-avatar-object-fit")) {
+        this.style.setProperty("--m-avatar-object-fit", this.authoredFit, this.authoredFitPriority)
       }
       this.fitOverride = undefined
     }
@@ -159,11 +159,11 @@ export class MuiAvatar extends MuiElement {
 
   private prepareContent(): void {
     for (const name of ["fallback", "placeholder"]) {
-      const selector = `[data-mui-avatar-${name}]`
+      const selector = `[data-m-avatar-${name}]`
       const template = this.querySelector<HTMLTemplateElement>(`:scope > template${selector}`)
       if (template && !this.querySelector(`:scope > span${selector}`)) {
         const content = this.ownerDocument.createElement("span")
-        content.setAttribute(`data-mui-avatar-${name}`, "")
+        content.setAttribute(`data-m-avatar-${name}`, "")
         content.append(this.ownerDocument.importNode(template.content, true))
         this.append(content)
       }
@@ -171,14 +171,14 @@ export class MuiAvatar extends MuiElement {
     const nodes = [...this.childNodes].filter((node) => {
       if (node.nodeType === Node.TEXT_NODE) return Boolean(node.textContent?.trim())
       return node instanceof Element && !node.matches(
-        "img,template,[data-mui-avatar-content],[data-mui-avatar-fallback],[data-mui-avatar-placeholder]",
+        "img,template,[data-m-avatar-content],[data-m-avatar-fallback],[data-m-avatar-placeholder]",
       )
     })
     if (nodes.length) {
-      let content = this.querySelector<HTMLElement>(":scope > [data-mui-avatar-content]")
+      let content = this.querySelector<HTMLElement>(":scope > [data-m-avatar-content]")
       if (!content) {
         content = this.ownerDocument.createElement("span")
-        content.dataset.muiAvatarContent = ""
+        content.dataset.mAvatarContent = ""
         this.append(content)
       }
       content.append(...nodes)
@@ -186,11 +186,11 @@ export class MuiAvatar extends MuiElement {
   }
 
   private update(): void {
-    this.dataset.muiAvatarState = this.state
+    this.dataset.mAvatarState = this.state
     if (this.image) this.image.hidden = this.state === "empty" || this.state === "error"
-    const fallback = this.querySelector<HTMLElement>(":scope > span[data-mui-avatar-fallback]")
-    const placeholder = this.querySelector<HTMLElement>(":scope > span[data-mui-avatar-placeholder]")
-    const content = this.querySelector<HTMLElement>(":scope > [data-mui-avatar-content]")
+    const fallback = this.querySelector<HTMLElement>(":scope > span[data-m-avatar-fallback]")
+    const placeholder = this.querySelector<HTMLElement>(":scope > span[data-m-avatar-placeholder]")
+    const content = this.querySelector<HTMLElement>(":scope > [data-m-avatar-content]")
     if (fallback) fallback.hidden = this.state !== "error"
     if (placeholder) placeholder.hidden = this.state !== "loading"
     if (content) content.hidden = this.state === "loaded"
@@ -233,8 +233,8 @@ export class MuiAvatar extends MuiElement {
       const textWidth = element.offsetWidth, textHeight = element.offsetHeight
       if (element.hidden || !textWidth || !textHeight) continue
       const scale = String(Math.min(width / textWidth * .9, height / textHeight * .9, 1))
-      if (element.style.getPropertyValue("--mui-avatar-text-scale") !== scale) {
-        element.style.setProperty("--mui-avatar-text-scale", scale)
+      if (element.style.getPropertyValue("--m-avatar-text-scale") !== scale) {
+        element.style.setProperty("--m-avatar-text-scale", scale)
       }
     }
   }

@@ -4,7 +4,7 @@
 movement, bounds, step, current/default value, labels and forms. Optional helpers update
 non-live readouts/accessibility text and expose strict scalar/pair setters. There is no
 hidden input, synthetic slider-role handle, drag geometry engine or tooltip dependency.
-Legacy `MuiSlider` in `src/components/forms.ts` is unchanged.
+Legacy `MSlider` in `src/components/forms.ts` is unchanged.
 
 ## Loading and anatomy
 
@@ -19,7 +19,7 @@ Legacy `MuiSlider` in `src/components/forms.ts` is unchanged.
 
 ```html
 <label for="volume">Volume</label>
-<div class="mui-slider" data-slider id="volume-field">
+<div class="m-slider" data-slider id="volume-field">
   <input data-slider-control id="volume" type="range" name="volume"
     min="0" max="100" step="5" list="volume-ticks">
   <output data-slider-output for="volume" aria-live="off" hidden>50</output>
@@ -44,9 +44,9 @@ No Custom Element is registered, so no legacy registration-order rule applies. R
 owner symbols reject duplicate bindings across ESM/classic copies without a global store.
 No mandatory InputNumber, Input, Tooltip, Popover or gesture dependency is imported.
 
-Single roots are connected light-DOM `.mui-slider[data-slider]` elements with exactly one
+Single roots are connected light-DOM `.m-slider[data-slider]` elements with exactly one
 original labelled `input[type=range][data-slider-control]`. Pair roots are
-`fieldset.mui-slider-pair[data-slider-pair]` with a nonempty first legend and exactly two
+`fieldset.m-slider-pair[data-slider-pair]` with a nonempty first legend and exactly two
 such controls. Roots have no replacement role/tabindex and are outside labels, buttons,
 links and summaries. Labels may use `for`; avoid placing changing readout text in the
 control's accessible name. Native name/form/labels/ARIA/hidden/default attributes and
@@ -98,16 +98,16 @@ changes and reset emit no fabricated user changes.
 ## Pair policy: two independent tracks, crossing allowed
 
 ```html
-<fieldset class="mui-slider-pair" data-slider-pair id="window">
+<fieldset class="m-slider-pair" data-slider-pair id="window">
   <legend>Window endpoints</legend>
-  <div class="mui-slider-pair__fields">
-    <div class="mui-slider">
+  <div class="m-slider-pair__fields">
+    <div class="m-slider">
       <label for="start">Start</label>
       <input data-slider-control id="start" type="range" name="start"
         min="0" max="100" value="20">
       <output data-slider-output for="start" aria-live="off" hidden>20</output>
     </div>
-    <div class="mui-slider">
+    <div class="m-slider">
       <label for="end">End</label>
       <input data-slider-control id="end" type="range" name="end"
         min="0" max="100" value="80">
@@ -137,7 +137,7 @@ form owners reset/submit their respective endpoint only.
 Native pointer, Arrow keys, Home/End, Tab and key repeat control each range. The helper
 has no pointer/drag/key/wheel listeners and never hijacks browser zoom.
 Single input/change events are untouched. A pair emits one deferred, **nonbubbling**
-`mui:slider-pair-change` on its fieldset for each member's native committed change:
+`m:slider-pair-change` on its fieldset for each member's native committed change:
 `{ value: [first, second], ordered: boolean, index: 0|1 }`. Continuous native input can be
 observed directly for live previews; it is not duplicated into a second aggregate stream.
 Setters/reset do not emit pair commits. Disconnect cancels pending custom notifications.
@@ -168,7 +168,7 @@ Outside mutations to owned annotation/hidden attributes are tracked before helpe
 disposal restores only still-owned values and preserves later author changes and input
 defaults/values. No-op removal of an absent attribute is not an observable ownership
 transfer. Invalid anatomy/formatting throws on explicit operations and emits nonbubbling
-`mui:slider-error` for changed automatic error messages. Native controls are not replaced
+`m:slider-error` for changed automatic error messages. Native controls are not replaced
 or forced into old values to repair an application error.
 
 ## Marks, direction, vertical layout and CSS
@@ -179,8 +179,8 @@ scale text. Datalist ticks **do not implement source step="mark"**, custom mark 
 or a restricted selectable-value set. Native numeric step is independent.
 
 CSS keeps native range rendering and accent-color, full inline sizing, focus outlines,
-wrapping, disabled behavior and hidden safety. Tokens are `--mui-slider-color`,
-`--mui-slider-accent`, `--mui-slider-focus`, `--mui-slider-border`, `--mui-slider-length`.
+wrapping, disabled behavior and hidden safety. Tokens are `--m-slider-color`,
+`--m-slider-accent`, `--m-slider-focus`, `--m-slider-border`, `--m-slider-length`.
 No custom track/thumb painting, CSS-in-JS or body-wide form reset.
 
 The [default-style audit](../style-audit/components/slider.md) aligns the ordinary
@@ -190,7 +190,7 @@ replacement thumb: a datalist range may keep its larger intrinsic footprint (22p
 the tested Chromium). Pair padding remains included in authored widths by border-box
 sizing; there is no dependency on a global `*` reset.
 
-An ancestor `data-mui-theme="light|dark"` selects the scheme. Standalone sliders default
+An ancestor `data-m-theme="light|dark"` selects the scheme. Standalone sliders default
 to light. The default accent is light primary **#18a058** and dark supplementary primary
 **#2a947d**; the dark value is not ordinary primary #63e2b7. Public tokens win over
 these defaults. Local neutral text/border fallbacks avoid legacy shared-role mismatches.
@@ -205,7 +205,7 @@ hover/focus tooltip popups.
 
 For reverse direction, author `dir` on the actual input; choose ltr/rtl deliberately
 relative to page direction. There is no boolean reverse algorithm. For vertical layout,
-`.mui-slider[data-vertical]` uses native writing-mode:vertical-lr; the demo's input dir=rtl
+`.m-slider[data-vertical]` uses native writing-mode:vertical-lr; the demo's input dir=rtl
 places the high end at the top. The @supports test checks the CSS property, not every
 engine's native range orientation. Use horizontal presentation where native vertical
 range support is unavailable; no geometry/orientation polyfill is supplied.
@@ -268,7 +268,7 @@ The geometry and asset sizes below describe that original revision.
   JS-disabled Chromium retained native keys, independent crossing, defaults and real
   local GET submission without readout/tuple/external duplicate values.
 - Standalone ESM, cross-format duplicate ownership, both legacy load orders and an actual
-  legacy mui-slider alongside the new native control passed. Disposal restored owned
+  legacy m-slider alongside the new native control passed. Disposal restored owned
   output/annotation state and left native keyboard operation intact.
 
 `pnpm build` passed TypeScript and all existing/new budgets. No dependencies or prior

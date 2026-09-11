@@ -1,11 +1,11 @@
-import { mui } from "../dist/markup-ui.js?v=11.1"
+import { m } from "../dist/markup-ui.js?v=11.1"
 import { advancedPlugin } from "../dist/markup-ui-advanced.js?v=11.1"
 import { widgetsPlugin } from "../dist/markup-ui-widgets.js?v=11.1"
 
-mui.use(advancedPlugin)
-mui.use(widgetsPlugin)
+m.use(advancedPlugin)
+m.use(widgetsPlugin)
 
-mui.theme.register("ocean", {
+m.theme.register("ocean", {
   "color-primary": "#0284c7",
   "color-primary-hover": "#0369a1",
   "bg-page": "#f0f9ff",
@@ -16,8 +16,8 @@ mui.theme.register("ocean", {
   "border": "#bae6fd",
 })
 
-const savedTheme = localStorage.getItem("mui-theme")
-mui.theme.set(["light", "dark", "ocean"].includes(savedTheme) ? savedTheme : "light")
+const savedTheme = localStorage.getItem("m-theme")
+m.theme.set(["light", "dark", "ocean"].includes(savedTheme) ? savedTheme : "light")
 
 const app = document.querySelector("#demo-app")
 const store = app?.store
@@ -100,7 +100,7 @@ function selectPanel(name, scroll = false) {
   }
   panelNames.forEach((panel) => store?.set(`panels.${panel}`, panel === name))
   document.querySelectorAll(".sidebar-item").forEach((item) => {
-    const active = item.getAttribute("mui-param-panel") === name
+    const active = item.getAttribute("m-param-panel") === name
     item.classList.toggle("active", active)
     if (active) item.setAttribute("aria-current", "page")
     else item.removeAttribute("aria-current")
@@ -120,26 +120,26 @@ function record(message) {
   store?.set("events.latest", message)
 }
 
-mui.actions.register("demo.theme", ({ parameters }) => {
+m.actions.register("demo.theme", ({ parameters }) => {
   const name = parameters.name ?? "light"
-  mui.theme.set(name)
+  m.theme.set(name)
   record(`theme changed to ${name}`)
 })
 
-mui.actions.register("demo.panel", ({ event, parameters }) => {
+m.actions.register("demo.panel", ({ event, parameters }) => {
   event.preventDefault()
   const name = parameters.panel ?? "layout"
   selectPanel(name, true)
   record(`showing ${name} panel`)
 })
 
-mui.actions.register("demo.increment", ({ store: actionStore }) => {
+m.actions.register("demo.increment", ({ store: actionStore }) => {
   const current = Number(actionStore?.get("metrics.clicks") ?? 0)
   actionStore?.set("metrics.clicks", current + 1)
   record("demo.increment action")
 })
 
-mui.actions.register("demo.progress", () => {
+m.actions.register("demo.progress", () => {
   const progress = document.querySelector("#demo-progress")
   if (!progress) return
   const current = Number(progress.getAttribute("value") ?? 0)
@@ -147,16 +147,16 @@ mui.actions.register("demo.progress", () => {
   record("progress value updated")
 })
 
-mui.actions.register("demo.message", () => {
-  mui.message.show("Profile saved successfully.", {
+m.actions.register("demo.message", () => {
+  m.message.show("Profile saved successfully.", {
     duration: 2500,
     type: "success",
   })
   record("message service invoked")
 })
 
-mui.actions.register("demo.notification", () => {
-  mui.notification.show({
+m.actions.register("demo.notification", () => {
+  m.notification.show({
     title: "Build complete",
     content: "MarkupUI generated all browser distributions.",
     duration: 4000,
@@ -165,14 +165,14 @@ mui.actions.register("demo.notification", () => {
   record("notification service invoked")
 })
 
-mui.actions.register("demo.next-step", () => {
+m.actions.register("demo.next-step", () => {
   const steps = document.querySelector("#demo-steps")
   if (!steps) return
   steps.current = steps.current >= 3 ? 1 : steps.current + 1
   record(`advanced to step ${steps.current}`)
 })
 
-mui.actions.register("demo.outline", ({ event, parameters }) => {
+m.actions.register("demo.outline", ({ event, parameters }) => {
   event.preventDefault()
   const target = parameters.target
   if (!target) return
@@ -182,7 +182,7 @@ mui.actions.register("demo.outline", ({ event, parameters }) => {
   })
 })
 
-mui.actions.register("demo.toggle-source", ({ element, parameters }) => {
+m.actions.register("demo.toggle-source", ({ element, parameters }) => {
   const target = parameters.target
   if (!target) return
   const source = document.querySelector(target)
@@ -191,16 +191,16 @@ mui.actions.register("demo.toggle-source", ({ element, parameters }) => {
   element.textContent = source.hidden ? "View code" : "Hide code"
 })
 
-mui.actions.register("demo.copy-source", async ({ parameters }) => {
+m.actions.register("demo.copy-source", async ({ parameters }) => {
   const target = parameters.target
   if (!target) return
   const source = document.querySelector(target)
   if (!source) return
   await navigator.clipboard.writeText(source.textContent ?? "")
-  mui.message.show("Example copied.", { duration: 1800, type: "success" })
+  m.message.show("Example copied.", { duration: 1800, type: "success" })
 })
 
-mui.actions.register("demo.save", async ({ store: actionStore }) => {
+m.actions.register("demo.save", async ({ store: actionStore }) => {
   const form = document.querySelector("#profile-form")
   if (typeof form?.validate === "function" && !form.validate()) return
   actionStore?.set("form.busy", true)
@@ -212,7 +212,7 @@ mui.actions.register("demo.save", async ({ store: actionStore }) => {
   record("profile saved")
 })
 
-mui.actions.register("demo.reset", ({ store: actionStore }) => {
+m.actions.register("demo.reset", ({ store: actionStore }) => {
   actionStore?.set("form.name", "Ada")
   actionStore?.set("form.role", "developer")
   actionStore?.set("form.city", "London")
@@ -232,7 +232,7 @@ mui.actions.register("demo.reset", ({ store: actionStore }) => {
   record("state reset")
 })
 
-mui.actions.register("demo.reload", async () => {
+m.actions.register("demo.reload", async () => {
   const include = document.querySelector("#activity")
   if (typeof include?.load === "function") {
     record("reloading dynamic fragment")
@@ -240,21 +240,21 @@ mui.actions.register("demo.reload", async () => {
   }
 })
 
-mui.actions.register("demo.sanitize", () => {
+m.actions.register("demo.sanitize", () => {
   const target = document.querySelector("#sanitized-output")
   if (!target) return
-  mui.html.set(
+  m.html.set(
     target,
-    `<mui-alert onclick="alert('blocked')">
+    `<m-alert onclick="alert('blocked')">
       Unsafe handler and script removed.
       <script>window.demoUnsafe = true</script>
-      <mui-link href="javascript:alert('blocked')">Unsafe URL removed</mui-link>
-    </mui-alert>`,
+      <m-link href="javascript:alert('blocked')">Unsafe URL removed</m-link>
+    </m-alert>`,
   )
   record("unsafe HTML sanitized")
 })
 
-mui.use({
+m.use({
   name: "demo.highlight",
   install(api) {
     api.queryExtensions.register("highlight", function () {
@@ -263,53 +263,53 @@ mui.use({
   },
 })
 
-mui.actions.register("demo.plugin", () => {
-  const target = mui("#plugin-target")
+m.actions.register("demo.plugin", () => {
+  const target = m("#plugin-target")
   target.highlight()
   record("plugin query extension executed")
   setTimeout(() => target.removeClass("plugin-highlight"), 900)
 })
 
 const profileForm = document.querySelector("#profile-form")
-profileForm?.addEventListener("mui:valid", () => {
+profileForm?.addEventListener("m:valid", () => {
   store?.set("form.valid", true)
   store?.set("form.invalid", false)
   record("form validation passed")
 })
-profileForm?.addEventListener("mui:invalid", () => {
+profileForm?.addEventListener("m:invalid", () => {
   store?.set("form.valid", false)
   store?.set("form.invalid", true)
   record("form validation failed")
 })
 
-document.querySelector("#demo-tag")?.addEventListener("mui:close", (event) => {
+document.querySelector("#demo-tag")?.addEventListener("m:close", (event) => {
   event.currentTarget?.remove()
-  record("closable tag emitted mui:close")
+  record("closable tag emitted m:close")
 })
 
-document.querySelector("#demo-menu")?.addEventListener("mui:change", (event) => {
+document.querySelector("#demo-menu")?.addEventListener("m:change", (event) => {
   store?.set("navigation.selection", event.detail)
 })
 
-document.querySelector("#demo-pagination")?.addEventListener("mui:change", (event) => {
+document.querySelector("#demo-pagination")?.addEventListener("m:change", (event) => {
   store?.set("navigation.selection", `page ${event.detail}`)
 })
 
-document.querySelector("#demo-tree")?.addEventListener("mui:change", (event) => {
+document.querySelector("#demo-tree")?.addEventListener("m:change", (event) => {
   store?.set("navigation.selection", event.detail)
 })
 
-widgetTransfer?.addEventListener("mui:change", (event) => {
+widgetTransfer?.addEventListener("m:change", (event) => {
   const target = document.querySelector("#transfer-value")
   if (target) target.textContent = event.detail.join(", ") || "None"
 })
 
-widgetCascader?.addEventListener("mui:change", (event) => {
+widgetCascader?.addEventListener("m:change", (event) => {
   const target = document.querySelector("#cascader-value")
   if (target) target.textContent = event.detail.join(" / ")
 })
 
-document.querySelector("#component-search")?.addEventListener("mui:input", (event) => {
+document.querySelector("#component-search")?.addEventListener("m:input", (event) => {
   const query = String(event.detail ?? "").trim().toLowerCase()
   const items = [...document.querySelectorAll(".sidebar-item")]
   let visible = 0
@@ -326,14 +326,14 @@ function updateOutline() {
   const panel = document.querySelector(".showcase-section:not([hidden])")
   const outline = document.querySelector("#page-outline")
   if (!panel || !outline) return
-  const headings = [...panel.querySelectorAll("mui-heading[level='2'],mui-heading[level='3']")]
+  const headings = [...panel.querySelectorAll("m-heading[level='2'],m-heading[level='3']")]
   const items = headings.map((heading, index) => {
     heading.id ||= `outline-${panel.id}-${index + 1}`
-    const item = document.createElement("mui-button")
+    const item = document.createElement("m-button")
     item.className = "outline-item"
     item.setAttribute("quaternary", "")
-    item.setAttribute("mui-action", "demo.outline")
-    item.setAttribute("mui-param-target", `#${heading.id}`)
+    item.setAttribute("m-action", "demo.outline")
+    item.setAttribute("m-param-target", `#${heading.id}`)
     item.dataset.level = heading.getAttribute("level") ?? "3"
     item.textContent = heading.textContent
     return item
@@ -342,8 +342,8 @@ function updateOutline() {
 }
 
 function topLevelCards(root) {
-  return [...root.querySelectorAll("mui-card")]
-    .filter((card) => card.parentElement?.closest("mui-card") === null)
+  return [...root.querySelectorAll("m-card")]
+    .filter((card) => card.parentElement?.closest("m-card") === null)
 }
 
 async function installDemoCards() {
@@ -359,27 +359,27 @@ async function installDemoCards() {
     liveCards.forEach((card, index) => {
       if (card.querySelector(":scope > .demo-card-tools")) return
       card.classList.add("demo-card")
-      const source = document.createElement("mui-code")
+      const source = document.createElement("m-code")
       source.id = `demo-source-${panelName}-${index + 1}`
       source.className = "demo-source"
       source.hidden = true
       source.textContent = sourceCards[index]?.outerHTML.trim() ?? card.outerHTML.trim()
-      const tools = document.createElement("mui-row")
+      const tools = document.createElement("m-row")
       tools.className = "demo-card-tools"
       tools.setAttribute("align", "center")
       tools.setAttribute("gap", "xs")
-      const spacer = document.createElement("mui-spacer")
-      const toggle = document.createElement("mui-button")
+      const spacer = document.createElement("m-spacer")
+      const toggle = document.createElement("m-button")
       toggle.setAttribute("quaternary", "")
       toggle.setAttribute("size", "small")
-      toggle.setAttribute("mui-action", "demo.toggle-source")
-      toggle.setAttribute("mui-param-target", `#${source.id}`)
+      toggle.setAttribute("m-action", "demo.toggle-source")
+      toggle.setAttribute("m-param-target", `#${source.id}`)
       toggle.textContent = "View code"
-      const copy = document.createElement("mui-button")
+      const copy = document.createElement("m-button")
       copy.setAttribute("quaternary", "")
       copy.setAttribute("size", "small")
-      copy.setAttribute("mui-action", "demo.copy-source")
-      copy.setAttribute("mui-param-target", `#${source.id}`)
+      copy.setAttribute("m-action", "demo.copy-source")
+      copy.setAttribute("m-param-target", `#${source.id}`)
       copy.textContent = "Copy"
       tools.append(spacer, toggle, copy)
       card.append(tools, source)
@@ -390,26 +390,26 @@ async function installDemoCards() {
 
 void installDemoCards().catch((error) => {
   console.error("Unable to install demo documentation tools.", error)
-  mui.message.show("Demo source tools failed to load.", { type: "error" })
+  m.message.show("Demo source tools failed to load.", { type: "error" })
 })
 
-app?.addEventListener("mui:input", (event) => {
-  record(`${event.target.localName} emitted mui:input`)
+app?.addEventListener("m:input", (event) => {
+  record(`${event.target.localName} emitted m:input`)
 })
 
-app?.addEventListener("mui:change", (event) => {
-  record(`${event.target.localName} emitted mui:change`)
+app?.addEventListener("m:change", (event) => {
+  record(`${event.target.localName} emitted m:change`)
 })
 
 const include = document.querySelector("#activity")
 const includeStatus = document.querySelector("#include-status")
 
-include?.addEventListener("mui:load", () => {
+include?.addEventListener("m:load", () => {
   if (includeStatus) includeStatus.textContent = "Loaded"
   record("dynamic fragment loaded")
 })
 
-include?.addEventListener("mui:error", (event) => {
+include?.addEventListener("m:error", (event) => {
   if (includeStatus) includeStatus.textContent = "Failed"
   console.error("Dynamic content failed to load.", event.detail)
 })

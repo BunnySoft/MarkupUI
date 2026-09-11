@@ -8,8 +8,8 @@ const helpers: LogController[] = []
 const sample = (count = 10) => Array.from({ length: count }, (_, index) => `Line ${index}`).join("\n")
 function fixture(options: LogOptions = {}, text = "one\ntwo\nthree") {
   const root = document.createElement("section")
-  root.className = "mui-log"; root.dataset.log = ""
-  root.innerHTML = '<label>Unrelated<input name="outside" value="native"></label><pre class="mui-code-block" data-log-viewport role="region" tabindex="0" aria-label="Local log"><code class="mui-code" data-log-output></code></pre><p data-log-loading hidden>Loading locally</p><button type="button">Outside action</button>'
+  root.className = "m-log"; root.dataset.log = ""
+  root.innerHTML = '<label>Unrelated<input name="outside" value="native"></label><pre class="m-code-block" data-log-viewport role="region" tabindex="0" aria-label="Local log"><code class="m-code" data-log-output></code></pre><p data-log-loading hidden>Loading locally</p><button type="button">Outside action</button>'
   const pre = root.querySelector("pre")!, code = root.querySelector("code")!
   code.textContent = text
   document.body.append(root)
@@ -21,9 +21,9 @@ function fixture(options: LogOptions = {}, text = "one\ntwo\nthree") {
     scrollTop: { configurable: true, get: () => scroll, set: (value: number) => { scroll = Math.max(0, Math.min(value, Math.max(0, pre.scrollHeight - height))) } },
   })
   vi.spyOn(HTMLElement.prototype, "offsetTop", "get").mockImplementation(function (this: HTMLElement) {
-    return this.classList.contains("mui-code-line") ? [...this.parentElement!.children].indexOf(this) * 20 : 0
+    return this.classList.contains("m-code-line") ? [...this.parentElement!.children].indexOf(this) * 20 : 0
   })
-  vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockImplementation(function (this: HTMLElement) { return this.classList.contains("mui-code-line") ? 20 : 60 })
+  vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockImplementation(function (this: HTMLElement) { return this.classList.contains("m-code-line") ? 20 : 60 })
   const helper = createLog(root, options); helpers.push(helper)
   function resize(nextHeight: number, nextWidth = width) { height = nextHeight; width = nextWidth; helper.refresh() }
   function select(index: number, start = 0, end = 3) {
@@ -100,7 +100,7 @@ describe("literal Log records", () => {
   })
   it("keeps decorative number markers empty and source selection free of digits", () => {
     const { helper, code } = fixture()
-    for (const node of code.querySelectorAll(".mui-code-number")) { expect(node.textContent).toBe(""); expect(node.getAttribute("aria-hidden")).toBe("true") }
+    for (const node of code.querySelectorAll(".m-code-number")) { expect(node.textContent).toBe(""); expect(node.getAttribute("aria-hidden")).toBe("true") }
     const range = document.createRange(); range.selectNodeContents(code)
     expect(range.toString()).toBe(helper.text)
   })
@@ -250,7 +250,7 @@ describe("selection and scroll context", () => {
 describe("edge notifications and lifecycle", () => {
   it("reports edge transitions only, without wheel interception or repeated scroll spam", () => {
     const { root, pre } = fixture({ text: sample() }), edges: string[] = []
-    root.addEventListener("mui:log-edge", event => edges.push((event as CustomEvent).detail.position))
+    root.addEventListener("m:log-edge", event => edges.push((event as CustomEvent).detail.position))
     pre.scrollTop = 40; pre.dispatchEvent(new Event("scroll"))
     pre.scrollTop = 140; pre.dispatchEvent(new Event("scroll")); pre.dispatchEvent(new Event("scroll"))
     pre.dispatchEvent(new WheelEvent("wheel", { deltaY: 1 }))
@@ -259,7 +259,7 @@ describe("edge notifications and lifecycle", () => {
   })
   it("supports silent helper scrolling and suppresses follow-generated edge events", () => {
     const { helper, pre, root } = fixture({ text: sample(), follow: true }), listener = vi.fn()
-    root.addEventListener("mui:log-edge", listener)
+    root.addEventListener("m:log-edge", listener)
     helper.scrollTo({ position: "bottom", silent: true }); pre.dispatchEvent(new Event("scroll"))
     helper.append("\nnew"); pre.dispatchEvent(new Event("scroll"))
     expect(listener).not.toHaveBeenCalled()
@@ -268,7 +268,7 @@ describe("edge notifications and lifecycle", () => {
   })
   it("does not suppress a different native scroll position behind a pending silent target", () => {
     const { helper, pre, root } = fixture({ text: sample() }), listener = vi.fn()
-    root.addEventListener("mui:log-edge", listener)
+    root.addEventListener("m:log-edge", listener)
     helper.scrollTo({ position: "bottom", silent: true }); pre.scrollTop = 0; pre.dispatchEvent(new Event("scroll"))
     expect(listener).toHaveBeenCalledOnce()
   })
@@ -277,7 +277,7 @@ describe("edge notifications and lifecycle", () => {
     pre.scrollTop = 40; pre.dispatchEvent(new Event("scroll"))
     Object.defineProperty(pre, "clientHeight", { configurable: true, get: () => 300 })
     Object.defineProperty(pre, "scrollHeight", { configurable: true, get: () => 300 })
-    root.addEventListener("mui:log-edge", event => {
+    root.addEventListener("m:log-edge", event => {
       positions.push((event as CustomEvent).detail.position)
       if (action === "append") helper.append("\nupdated")
       else helper[action]()
@@ -354,7 +354,7 @@ describe("edge notifications and lifecycle", () => {
       disconnect = disconnect
     })
     const { helper, root, code } = fixture(), errors = vi.fn()
-    root.addEventListener("mui:log-error", errors)
+    root.addEventListener("m:log-error", errors)
     code.append(document.createTextNode("foreign")); callback!([], {} as ResizeObserver)
     expect(errors).toHaveBeenCalledOnce(); expect(helper.error).toBeInstanceOf(Error)
     helper.disconnect(); expect(disconnect).toHaveBeenCalledOnce()
@@ -365,7 +365,7 @@ describe("edge notifications and lifecycle", () => {
     const source = readFileSync(resolve("src", "components", "log", "log.ts"), "utf8")
     const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
     expect(pkg.exports["./log/style.css"]).toBe("./dist/markup-ui-log.css"); expect(pkg.dependencies).toEqual({})
-    expect(css).toContain("overflow-anchor: none"); expect(css).toContain("--mui-log-rows")
+    expect(css).toContain("overflow-anchor: none"); expect(css).toContain("--m-log-rows")
     expect(source).not.toContain("requestAnimationFrame"); expect(source).not.toContain("setInterval"); expect(source).not.toContain("innerHTML")
     expect(source).not.toContain("virtual-list")
   })

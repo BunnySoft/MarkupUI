@@ -1,3 +1,3 @@
-import { MuiProgress, registerProgress } from "./index.js"
+import { MProgress, registerProgress } from "./index.js"
 
-Object.assign(globalThis, { MarkupUIProgress: { MuiProgress, registerProgress } })
+Object.assign(globalThis, { MarkupUIProgress: { MProgress, registerProgress } })

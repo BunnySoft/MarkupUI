@@ -27,7 +27,7 @@ not invented upstream API rows.
 
 | Asset | Purpose |
 | --- | --- |
-| `dist/markup-ui-badge.js` | ESM; exports `MuiBadge`, `registerBadge()`; registers on browser import. |
+| `dist/markup-ui-badge.js` | ESM; exports `MBadge`, `registerBadge()`; registers on browser import. |
 | `dist/markup-ui-badge.global.js` | Classic script; registers and exposes `MarkupUIBadge`. |
 | `dist/markup-ui-badge.css` | External component and CSS-only static badge styling. |
 | `dist/components/badge/index.d.ts` | TypeScript declarations. |
@@ -38,9 +38,9 @@ not invented upstream API rows.
 <script defer src="./vendor/markup-ui-badge.global.js"></script>
 <script defer src="./app.js"></script>
 
-<mui-badge value="12" max="99" decorative>
+<m-badge value="12" max="99" decorative>
   <button type="button" aria-label="Inbox, 12 unread messages">Inbox</button>
-</mui-badge>
+</m-badge>
 ```
 
 Application ESM: `import "@dataengine/markup-ui/badge";`. Serve/link the
@@ -58,17 +58,17 @@ output sizes and 15,000-byte core ceiling remain unchanged.
 CSS-only static badge, requiring no controller:
 
 ```html
-<span>Release status: <span class="mui-badge-value">New</span></span>
+<span>Release status: <span class="m-badge-value">New</span></span>
 ```
 
 Dynamic standalone badge and authored value content:
 
 ```html
-<span>Unread messages: <mui-badge value="5"></mui-badge></span>
-<mui-badge>
+<span>Unread messages: <m-badge value="5"></m-badge></span>
+<m-badge>
   <button type="button" aria-describedby="new-status">Notifications</button>
-  <span data-mui-badge-value id="new-status">New</span>
-</mui-badge>
+  <span data-m-badge-value id="new-status">New</span>
+</m-badge>
 ```
 
 - Ordinary default children are the **target**, left in their original position and never
@@ -78,7 +78,7 @@ Dynamic standalone badge and authored value content:
 - With no target, the indicator participates in normal inline flow. With a target it is
   positioned at the target wrapper's logical top-end corner by default. `show="false"` hides
   only the indicator; native `hidden` on the host hides the entire composition.
-- Direct non-inert elements marked `data-mui-badge-value` provide custom value content.
+- Direct non-inert elements marked `data-m-badge-value` provide custom value content.
   They move into the indicator without cloning, preserving IDs, listeners and native ARIA.
   Custom content wins over `value`, `max` and zero suppression. Use noninteractive phrasing
   content, not actions or focusable controls, in this passive indicator.
@@ -86,7 +86,7 @@ Dynamic standalone badge and authored value content:
   authored nodes and their own hidden/ARIA attributes. Removing dot mode restores content.
   Inert templates, scripts and styles are never interpreted as value content.
 - Default target text alone does not manufacture a second count. Enhanced
-  `<mui-badge>New</mui-badge>` keeps “New” readable as target text, but does not reproduce the
+  `<m-badge>New</m-badge>` keeps “New” readable as target text, but does not reproduce the
   legacy colored-pill treatment. Use `value="New"`, a marked value region, or the static CSS
   span for a standalone pill. The basic aggregate's old markup remains unchanged.
 - Templates remain inert and application-owned. There is no template/VNode renderer.
@@ -150,7 +150,7 @@ label. Badge also never adds `aria-live`, `role="status"` or `aria-busy` automat
 
 `element.indicator` exposes the native generated span (or `null` before connection) for
 explicit native attributes when needed. Structural children/markers of that generated span
-are library-owned; author count content with `data-mui-badge-value` rather than replacing
+are library-owned; author count content with `data-m-badge-value` rather than replacing
 its internals. To retain description IDs across application-driven whole-host replacement,
 preserve the authored value region itself.
 
@@ -161,17 +161,17 @@ preserve the authored value region itself.
 
 | Upstream item | Mapping | Status / limits |
 | --- | --- | --- |
-| `color` | `--mui-badge-background` in external CSS. | 🟡 Full CSS color support; no JS color prop or inline-style adapter. |
+| `color` | `--m-badge-background` in external CSS. | 🟡 Full CSS color support; no JS color prop or inline-style adapter. |
 | `dot` | Boolean attribute / `.dot`. | 🟢 Passive circular indicator; authored/native content retained while hidden. |
 | `max` | Numeric attribute / `.max`. | 🟢 Optional finite nonnegative cap; numeric strings participate; source value unchanged. |
-| `offset` | `--mui-badge-offset-x`, `--mui-badge-offset-y`. | 🟡 External CSS lengths replace the tuple/JS transform API. Applies to attached indicators; positive X is right, positive Y down. |
+| `offset` | `--m-badge-offset-x`, `--m-badge-offset-y`. | 🟡 External CSS lengths replace the tuple/JS transform API. Applies to attached indicators; positive X is right, positive Y down. |
 | `processing` | Boolean attribute / `.processing`. | 🟢 CSS pulse only; reduced-motion mode removes it. Does not force show or announcements. |
 | `show-zero` | Boolean attribute / `.showZero`. | 🟢 Allows zero and negative counts; custom value content and dots are independent. |
 | `show` | `show="false"` / `.show`; default true. | 🟢 Hides indicator, not the authored target. |
 | `type` | Attribute / `.type`: default, success, error, warning, info. | 🟢 External semantic palettes; default uses the error/red palette, as upstream does. |
 | `value` | Attribute / `.value`; finite number or text input. | 🟢 Safe text and count formatting, no animation renderer; silent assignment. |
 | Default slot | Authored native target children. | 🟢 Original nodes/listeners/semantics preserved; not a Shadow DOM slot. |
-| `value` slot (source-only) | Authored `data-mui-badge-value` region(s). | 🟢 Preserved native content; takes precedence over generated counts. |
+| `value` slot (source-only) | Authored `data-m-badge-value` region(s). | 🟢 Preserved native content; takes precedence over generated counts. |
 | `theme`, `themeOverrides`, `builtinThemeOverrides` | External CSS and inherited custom properties. | ⏭️ Vue theme objects, provider injection and runtime theme adapters omitted. |
 
 Presence booleans such as `dot="false"` remain true; remove them or assign the property false.
@@ -183,22 +183,22 @@ Only `show` uses the explicit string `"false"` to opt out of its true default.
 Top-end is default; unsupported values fall back to it. Logical anchors work in RTL;
 offset X/Y remain physical directions. This convenience is not an upstream Badge prop.
 
-Size is CSS-only: `--mui-badge-size` (18px height/leading; an explicit value also sets a
-minimum width), `--mui-badge-dot-size` (8px), `--mui-badge-font-size` (12px),
-`--mui-badge-font-family` (shared `--mui-font-family`, then the reference system stack),
-`--mui-badge-font-weight` (inherited), `--mui-badge-padding` (6px horizontally),
-`--mui-badge-radius` (9px), `--mui-badge-background`, `--mui-badge-color` (white), and
-`--mui-badge-z-index` (2) are available.
+Size is CSS-only: `--m-badge-size` (18px height/leading; an explicit value also sets a
+minimum width), `--m-badge-dot-size` (8px), `--m-badge-font-size` (12px),
+`--m-badge-font-family` (shared `--m-font-family`, then the reference system stack),
+`--m-badge-font-weight` (inherited), `--m-badge-padding` (6px horizontally),
+`--m-badge-radius` (9px), `--m-badge-background`, `--m-badge-color` (white), and
+`--m-badge-z-index` (2) are available.
 There is no invented upstream size enum. Standalone/static badges remain in ordinary flow;
 use normal native CSS if they need additional positioning.
 
-An ancestor or host `data-mui-theme="dark"` selects Naive's supplementary dark Badge fills;
+An ancestor or host `data-m-theme="dark"` selects Naive's supplementary dark Badge fills;
 explicit nested `"light"` restores the light roles. This works without aggregate CSS.
-Light roles reuse `--mui-color-error`, `--mui-color-success`, `--mui-color-warning`,
-and `--mui-color-info`. Dark roles use the corresponding `--mui-color-*-suppl` token when
+Light roles reuse `--m-color-error`, `--m-color-success`, `--m-color-warning`,
+and `--m-color-info`. Dark roles use the corresponding `--m-color-*-suppl` token when
 provided, otherwise local pinned fallbacks; ordinary dark semantic text colors are **not**
 interchangeable with these badge fills. Set shared roles at the theme boundary; set
-`--mui-badge-background` for a per-badge override. No shared theme adapter is installed.
+`--m-badge-background` for a per-badge override. No shared theme adapter is installed.
 The processing wave uses a 2s box-shadow spread with a 1s delay; reduced motion removes it
 and the 0.3s color transitions.
 

@@ -74,7 +74,7 @@ not source framework behavior.
 | `size` · [API] L41 | Prop | Explicit inherited CSS size | 🟢 Verified | No provider/Form size injection. |
 | `value` · [API] L42 | Prop | state.value and silent setValue(string/null) | 🟢 Verified | R1/R2 strict keys, native exclusivity, no auto-selection on removal/empty groups. |
 | `value-field` · [API] L43 | Prop | Explicit native value attribute | ⏭️ Intentionally omitted | No arbitrary object-field mapping. |
-| `on-update:value` · [API] L44 | Callback | Root mui:radio-group-change snapshot | 🟢 Verified | R1/R2 one accepted native change; reset/setters remain silent. |
+| `on-update:value` · [API] L44 | Callback | Root m:radio-group-change snapshot | 🟢 Verified | R1/R2 one accepted native change; reset/setters remain silent. |
 
 ### RadioGroup Props: options inline fields
 

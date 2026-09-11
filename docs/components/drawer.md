@@ -16,7 +16,7 @@ are now **251px**, not 24rem. The outer border is removed, exposed-edge corners 
 padding is **16px 24px**, the header is **18px/500 with 18px leading**, and body leading
 is **1.6**. Header/footer dividers use the reference divider colors.
 
-Light/dark scopes use `data-mui-theme="light|dark"`. Surface/body/title colors are
+Light/dark scopes use `data-m-theme="light|dark"`. Surface/body/title colors are
 **white / #333639 / #1f2225** and **#2c2c32 / white .82 / white .9**, not the legacy
 neutral palette. Drawer-only mask paint is **black at .3 alpha**—different from Modal's
 .4. Mask painting does not change native modality, cancellation or opt-in dismissal.
@@ -58,9 +58,9 @@ migration acceptance below predates this visual audit.
 | [Local demo](../../demo/components/drawer.html) | Separate HTML/CSS/JS; local simulated check, no remote business operations |
 
 ```html
-<dialog class="mui-native-dialog mui-drawer" id="details"
+<dialog class="m-native-dialog m-drawer" id="details"
   data-drawer-placement="right" aria-labelledby="details-title">
-  <div class="mui-drawer-content">
+  <div class="m-drawer-content">
     <header data-drawer-header>
       <h2 id="details-title" data-drawer-title tabindex="-1" autofocus>Details</h2>
       <form method="dialog"><button value="closed" aria-label="Close details">×</button></form>
@@ -89,7 +89,7 @@ if (drawer.supportsModal) drawer.showModal(openButton)
 ```
 
 The root is a connected, named light-DOM HTMLDialogElement with both classes. It contains
-exactly one direct `.mui-drawer-content`, one direct `[data-drawer-body]` inside that
+exactly one direct `.m-drawer-content`, one direct `[data-drawer-body]` inside that
 wrapper, and optional single direct header/footer regions. The wrapper may itself be a
 valid native form when form associations/default submitter ordering permit it.
 `data-drawer-body-content` is an optional authored padding region, not a generated wrapper.
@@ -131,7 +131,7 @@ observation releases owners without polling or changing another surface's state.
 The eligible backdrop path requires the same primary pointer to start/end outside the
 border rectangle. Padding, inside-to-outside drags, secondary/cancelled pointers and later
 pointer-event preventDefault do not dismiss. The cancelable nonbubbling
-`mui:native-dialog-backdrop` event contains `{ event: PointerEvent }`; native cancel may
+`m:native-dialog-backdrop` event contains `{ event: PointerEvent }`; native cancel may
 also veto requestClose. Do not combine helper dismissal with closedby=any, which is rejected.
 closedby=none remains authored. Platform Escape and controller requestClose are distinct;
 explicit requests remain available with closeOnEsc=false.
@@ -158,9 +158,9 @@ Physical left/right **do not flip in RTL**. Logical aliases are intended for hor
 writing modes; vertical-writing behavior is not claimed. Placement is an authored
 attribute, not a JS option or an automatic direction conversion.
 
-- `--mui-drawer-width`: left/right and logical side extent; default **251px**.
-- `--mui-drawer-height`: top/bottom extent; default **251px**.
-- `--mui-drawer-padding/border/radius/color/background/focus`: external appearance tokens.
+- `--m-drawer-width`: left/right and logical side extent; default **251px**.
+- `--m-drawer-height`: top/bottom extent; default **251px**.
+- `--m-drawer-padding/border/radius/color/background/focus`: external appearance tokens.
 - Sizes are CSS lengths capped to **100% of the native fixed containing viewport**.
   Percentage bounds accommodate viewport changes and CSS zoom without multiplying dvh by
   the page zoom. This is layout-viewport sizing, not a visualViewport/soft-keyboard polyfill.
@@ -231,8 +231,8 @@ teardown. Direct native openings are tracked by beforetoggle where emitted; on o
 engines prefer controller opening methods for unattended bulk teardown.
 
 Native per-node Symbol.for ownership rejects double adoption by Drawer/Modal/Dialog and
-separately evaluated bundles. No mui-drawer or mui-drawer-content tags are registered;
-legacy MuiDrawer remains unchanged. Prefer dispose before intentional removal or
+separately evaluated bundles. No m-drawer or m-drawer-content tags are registered;
+legacy MDrawer remains unchanged. Prefer dispose before intentional removal or
 cross-document transfer. Removed roots/clones are also released on observer delivery;
 disposed handles cannot reconnect. Author attributes/classes/styles are not restored or
 overwritten by Drawer because it never owns them; only the shared native inline-fallback
@@ -281,7 +281,7 @@ Drawer/DrawerContent prop/slot identity and explicitly cites added source contra
   Nested Modal and the **actual Image preview helper** restored focus into the
   still-open Drawer. Reversed/direct-native owner reopening retained the page focus chain.
 - ESM/classic/Modal ownership and namespace collision checks preserved existing APIs;
-  legacy MuiDrawer still operated independently. Removal during the demo's local check,
+  legacy MDrawer still operated independently. Removal during the demo's local check,
   close/reopen before completion, body-style/cursor noninterference and explicit inline
   fallback were exercised. The page remained scrollable: this is **not scroll-lock support**.
 - At **320×640, RTL and 2x CSS zoom**, all physical edges filled the **305×625 available

@@ -47,18 +47,18 @@ other unsupported option keys. No missing API, binding or template feature was a
 
 ## Corrected retained presentation
 
-- Raw `.mui-modal` now has zero padding/border/radius and transparent background.
+- Raw `.m-modal` now has zero padding/border/radius and transparent background.
   Native fixed insets would make `width:auto` stretch, so its default inline size is
   **fit-content**. This produces the same natural width without changing modality.
 - Existing **direct** `data-modal-header` or `data-modal-title` children select the
   authored Card-like frame. A local `:has()` recognizes existing layout anatomy only;
   it does not inspect body/html, lock scrolling or discover nested dialogs' titles.
-  The `.mui-dialog` composition is explicitly excluded from this rule.
+  The `.m-dialog` composition is explicitly excluded from this rule.
 - Card frame padding is **19px 24px 20px**, radius **3px**, title **18px/500**, and body
   **14px/1.6**. Footer text now starts at the content edge. Content spacing is 20px;
   a terminal content region does not double the bottom padding. The existing segmented
   footer border and 1rem spacing remain a native convention, not complete Card props.
-- `.mui-modal.mui-dialog` keeps the accepted Dialog geometry independently of stylesheet
+- `.m-modal.m-dialog` keeps the accepted Dialog geometry independently of stylesheet
   order. Modal width/padding/radius/border overrides remain usable; its width falls back
   to the Dialog override and then 446px.
 - Modal-only backdrop paint now matches **rgba(0,0,0,.4)**, with sufficient specificity
@@ -87,7 +87,7 @@ Measured shadows, matching source endpoint colors and geometry:
 
 The generic legacy neutral palette is not used as a Modal theme. Existing semantic
 primary roles supply the focus color. Shared native foreground/background override
-names remain `--mui-dialog-color` / `--mui-dialog-background`; no public override is
+names remain `--m-dialog-color` / `--m-dialog-background`; no public override is
 assigned a component default.
 
 ## Deliberate native differences

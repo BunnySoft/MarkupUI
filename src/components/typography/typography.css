@@ -1,148 +1,148 @@
-:where([data-mui-theme="light"]) {
-  --_mui-typography-color: #333639;
-  --_mui-typography-heading: #1f2225;
-  --_mui-typography-muted: #767c82;
-  --_mui-typography-primary: #18a058;
-  --_mui-typography-info: #2080f0;
-  --_mui-typography-success: #18a058;
-  --_mui-typography-warning: #f0a020;
-  --_mui-typography-error: #d03050;
-  --_mui-typography-code: #f4f4f8;
-  --_mui-typography-border: #e0e0e6;
-  --_mui-typography-divider: #efeff5;
+:where([data-m-theme="light"]) {
+  --_m-typography-color: #333639;
+  --_m-typography-heading: #1f2225;
+  --_m-typography-muted: #767c82;
+  --_m-typography-primary: #18a058;
+  --_m-typography-info: #2080f0;
+  --_m-typography-success: #18a058;
+  --_m-typography-warning: #f0a020;
+  --_m-typography-error: #d03050;
+  --_m-typography-code: #f4f4f8;
+  --_m-typography-border: #e0e0e6;
+  --_m-typography-divider: #efeff5;
 }
-:where([data-mui-theme="dark"]) {
-  --_mui-typography-color: rgb(255 255 255 / .82);
-  --_mui-typography-heading: rgb(255 255 255 / .9);
-  --_mui-typography-muted: rgb(255 255 255 / .52);
-  --_mui-typography-primary: #63e2b7;
-  --_mui-typography-info: #70c0e8;
-  --_mui-typography-success: #63e2b7;
-  --_mui-typography-warning: #f2c97d;
-  --_mui-typography-error: #e88080;
-  --_mui-typography-code: rgb(255 255 255 / .12);
-  --_mui-typography-border: rgb(255 255 255 / .24);
-  --_mui-typography-divider: rgb(255 255 255 / .09);
+:where([data-m-theme="dark"]) {
+  --_m-typography-color: rgb(255 255 255 / .82);
+  --_m-typography-heading: rgb(255 255 255 / .9);
+  --_m-typography-muted: rgb(255 255 255 / .52);
+  --_m-typography-primary: #63e2b7;
+  --_m-typography-info: #70c0e8;
+  --_m-typography-success: #63e2b7;
+  --_m-typography-warning: #f2c97d;
+  --_m-typography-error: #e88080;
+  --_m-typography-code: rgb(255 255 255 / .12);
+  --_m-typography-border: rgb(255 255 255 / .24);
+  --_m-typography-divider: rgb(255 255 255 / .09);
 }
-:where(.mui-typography) {
-  font-family: var(--mui-typography-font-family, var(--mui-font-family, inherit));
-  font-size: var(--mui-typography-font-size, var(--mui-font-size, 14px));
-  line-height: var(--mui-typography-line-height, var(--mui-line-height, 1.6));
-  color: var(--mui-typography-color, var(--_mui-typography-color, #333639));
+:where(.m-typography) {
+  font-family: var(--m-typography-font-family, var(--m-font-family, inherit));
+  font-size: var(--m-typography-font-size, var(--m-font-size, 14px));
+  line-height: var(--m-typography-line-height, var(--m-line-height, 1.6));
+  color: var(--m-typography-color, var(--_m-typography-color, #333639));
   overflow-wrap: anywhere;
 }
-:where(.mui-text, .mui-p, .mui-h, .mui-blockquote, .mui-ul, .mui-ol, .mui-li) {
-  color: var(--mui-typography-color, var(--_mui-typography-color, #333639));
+:where(.m-text, .m-p, .m-h, .m-blockquote, .m-ul, .m-ol, .m-li) {
+  color: var(--m-typography-color, var(--_m-typography-color, #333639));
   overflow-wrap: anywhere;
 }
-:where(.mui-typography) :where(p), :where(p.mui-p) {
+:where(.m-typography) :where(p), :where(p.m-p) {
   box-sizing: border-box;
-  margin-block: var(--mui-typography-paragraph-margin, 16px);
-  font-size: var(--mui-typography-font-size, var(--mui-font-size, 14px));
-  line-height: var(--mui-typography-line-height, var(--mui-line-height, 1.6));
-  color: var(--mui-typography-color, var(--_mui-typography-color, #333639));
+  margin-block: var(--m-typography-paragraph-margin, 16px);
+  font-size: var(--m-typography-font-size, var(--m-font-size, 14px));
+  line-height: var(--m-typography-line-height, var(--m-line-height, 1.6));
+  color: var(--m-typography-color, var(--_m-typography-color, #333639));
 }
-:where(.mui-typography) :where(h1, h2, h3, h4, h5, h6),
-:where(h1.mui-h, h2.mui-h, h3.mui-h, h4.mui-h, h5.mui-h, h6.mui-h) {
-  margin-block: var(--mui-typography-heading-margin, 28px var(--_mui-typography-heading-end, 18px));
-  font-weight: var(--mui-typography-heading-weight, 500);
-  line-height: var(--mui-typography-heading-line-height, var(--mui-typography-line-height, var(--mui-line-height, 1.6)));
-  color: var(--mui-typography-heading-color, var(--mui-typography-color, var(--_mui-typography-heading, #1f2225)));
+:where(.m-typography) :where(h1, h2, h3, h4, h5, h6),
+:where(h1.m-h, h2.m-h, h3.m-h, h4.m-h, h5.m-h, h6.m-h) {
+  margin-block: var(--m-typography-heading-margin, 28px var(--_m-typography-heading-end, 18px));
+  font-weight: var(--m-typography-heading-weight, 500);
+  line-height: var(--m-typography-heading-line-height, var(--m-typography-line-height, var(--m-line-height, 1.6)));
+  color: var(--m-typography-heading-color, var(--m-typography-color, var(--_m-typography-heading, #1f2225)));
 }
-:where(.mui-typography) :where(h1, h2), :where(h1.mui-h, h2.mui-h) { --_mui-typography-prefix: 16px; --_mui-typography-bar: 4px; }
-:where(.mui-typography) :where(h1, h2, h3), :where(h1.mui-h, h2.mui-h, h3.mui-h) { --_mui-typography-heading-end: 20px; }
-:where(.mui-typography) :where(h1), :where(h1.mui-h) { font-size: var(--mui-typography-h1-size, 30px); }
-:where(.mui-typography) :where(h2), :where(h2.mui-h) { font-size: var(--mui-typography-h2-size, 22px); }
-:where(.mui-typography) :where(h3), :where(h3.mui-h) { font-size: var(--mui-typography-h3-size, 18px); }
-:where(.mui-typography) :where(h4), :where(h4.mui-h) { font-size: var(--mui-typography-h4-size, 16px); }
-:where(.mui-typography) :where(h5), :where(h5.mui-h) { font-size: var(--mui-typography-h5-size, 16px); }
-:where(.mui-typography) :where(h6), :where(h6.mui-h) { font-size: var(--mui-typography-h6-size, 16px); }
-:where(.mui-typography) :where(span, p, strong, em, u, del, code)[data-depth="1"],
-:where(.mui-text, .mui-p)[data-depth="1"] { color: var(--mui-typography-depth-1, var(--_mui-typography-heading, #1f2225)); }
-:where(.mui-typography) :where(span, p, strong, em, u, del, code)[data-depth="2"],
-:where(.mui-text, .mui-p)[data-depth="2"] { color: var(--mui-typography-depth-2, var(--_mui-typography-color, #333639)); }
-:where(.mui-typography) :where(span, p, strong, em, u, del, code)[data-depth="3"],
-:where(.mui-text, .mui-p)[data-depth="3"] { color: var(--mui-typography-depth-3, var(--_mui-typography-muted, #767c82)); }
-:where(.mui-typography) :where(span, p, strong, em, u, del, code, h1, h2, h3, h4, h5, h6)[data-type="success"],
-:where(.mui-text, .mui-p, .mui-h)[data-type="success"] { --_mui-typography-accent: var(--mui-typography-success, var(--mui-color-success, var(--_mui-typography-success, #18a058))); }
-:where(.mui-typography) :where(span, p, strong, em, u, del, code, h1, h2, h3, h4, h5, h6)[data-type="info"],
-:where(.mui-text, .mui-p, .mui-h)[data-type="info"] { --_mui-typography-accent: var(--mui-typography-info, var(--mui-color-info, var(--_mui-typography-info, #2080f0))); }
-:where(.mui-typography) :where(span, p, strong, em, u, del, code, h1, h2, h3, h4, h5, h6)[data-type="warning"],
-:where(.mui-text, .mui-p, .mui-h)[data-type="warning"] { --_mui-typography-accent: var(--mui-typography-warning, var(--mui-color-warning, var(--_mui-typography-warning, #f0a020))); }
-:where(.mui-typography) :where(span, p, strong, em, u, del, code, h1, h2, h3, h4, h5, h6)[data-type="error"],
-:where(.mui-text, .mui-p, .mui-h)[data-type="error"] { --_mui-typography-accent: var(--mui-typography-error, var(--mui-color-error, var(--_mui-typography-error, #d03050))); }
-:where(.mui-typography) :where(span, p, strong, em, u, del):is([data-type="info"], [data-type="success"], [data-type="warning"], [data-type="error"]),
-:where(.mui-text, .mui-p):not(:where(code)):is([data-type="info"], [data-type="success"], [data-type="warning"], [data-type="error"]) { color: var(--_mui-typography-accent); }
-:where(.mui-typography) :where(strong, [data-strong]), :where(strong.mui-text, .mui-text[data-strong]) { font-weight: var(--mui-typography-strong-weight, 500); }
-:where(.mui-typography) :where(em, i, [data-italic]), :where(em.mui-text, i.mui-text, .mui-text[data-italic]) { font-style: italic; }
-:where(.mui-typography) :where(u, [data-underline]), :where(u.mui-text, .mui-text[data-underline]) { text-decoration-line: underline; text-underline-offset: .12em; }
-:where(.mui-typography) :where(del), :where(del.mui-text) { text-decoration-line: line-through; }
-:where(.mui-typography) :where(del[data-underline]), :where(del.mui-text[data-underline]) { text-decoration-line: underline line-through; }
-:where(.mui-typography) :where(code):not(:where(pre code)), :where(code.mui-text),
-:where(.mui-typography) :where(code):not(:where(pre code))[data-depth], :where(code.mui-text)[data-depth] {
+:where(.m-typography) :where(h1, h2), :where(h1.m-h, h2.m-h) { --_m-typography-prefix: 16px; --_m-typography-bar: 4px; }
+:where(.m-typography) :where(h1, h2, h3), :where(h1.m-h, h2.m-h, h3.m-h) { --_m-typography-heading-end: 20px; }
+:where(.m-typography) :where(h1), :where(h1.m-h) { font-size: var(--m-typography-h1-size, 30px); }
+:where(.m-typography) :where(h2), :where(h2.m-h) { font-size: var(--m-typography-h2-size, 22px); }
+:where(.m-typography) :where(h3), :where(h3.m-h) { font-size: var(--m-typography-h3-size, 18px); }
+:where(.m-typography) :where(h4), :where(h4.m-h) { font-size: var(--m-typography-h4-size, 16px); }
+:where(.m-typography) :where(h5), :where(h5.m-h) { font-size: var(--m-typography-h5-size, 16px); }
+:where(.m-typography) :where(h6), :where(h6.m-h) { font-size: var(--m-typography-h6-size, 16px); }
+:where(.m-typography) :where(span, p, strong, em, u, del, code)[data-depth="1"],
+:where(.m-text, .m-p)[data-depth="1"] { color: var(--m-typography-depth-1, var(--_m-typography-heading, #1f2225)); }
+:where(.m-typography) :where(span, p, strong, em, u, del, code)[data-depth="2"],
+:where(.m-text, .m-p)[data-depth="2"] { color: var(--m-typography-depth-2, var(--_m-typography-color, #333639)); }
+:where(.m-typography) :where(span, p, strong, em, u, del, code)[data-depth="3"],
+:where(.m-text, .m-p)[data-depth="3"] { color: var(--m-typography-depth-3, var(--_m-typography-muted, #767c82)); }
+:where(.m-typography) :where(span, p, strong, em, u, del, code, h1, h2, h3, h4, h5, h6)[data-type="success"],
+:where(.m-text, .m-p, .m-h)[data-type="success"] { --_m-typography-accent: var(--m-typography-success, var(--m-color-success, var(--_m-typography-success, #18a058))); }
+:where(.m-typography) :where(span, p, strong, em, u, del, code, h1, h2, h3, h4, h5, h6)[data-type="info"],
+:where(.m-text, .m-p, .m-h)[data-type="info"] { --_m-typography-accent: var(--m-typography-info, var(--m-color-info, var(--_m-typography-info, #2080f0))); }
+:where(.m-typography) :where(span, p, strong, em, u, del, code, h1, h2, h3, h4, h5, h6)[data-type="warning"],
+:where(.m-text, .m-p, .m-h)[data-type="warning"] { --_m-typography-accent: var(--m-typography-warning, var(--m-color-warning, var(--_m-typography-warning, #f0a020))); }
+:where(.m-typography) :where(span, p, strong, em, u, del, code, h1, h2, h3, h4, h5, h6)[data-type="error"],
+:where(.m-text, .m-p, .m-h)[data-type="error"] { --_m-typography-accent: var(--m-typography-error, var(--m-color-error, var(--_m-typography-error, #d03050))); }
+:where(.m-typography) :where(span, p, strong, em, u, del):is([data-type="info"], [data-type="success"], [data-type="warning"], [data-type="error"]),
+:where(.m-text, .m-p):not(:where(code)):is([data-type="info"], [data-type="success"], [data-type="warning"], [data-type="error"]) { color: var(--_m-typography-accent); }
+:where(.m-typography) :where(strong, [data-strong]), :where(strong.m-text, .m-text[data-strong]) { font-weight: var(--m-typography-strong-weight, 500); }
+:where(.m-typography) :where(em, i, [data-italic]), :where(em.m-text, i.m-text, .m-text[data-italic]) { font-style: italic; }
+:where(.m-typography) :where(u, [data-underline]), :where(u.m-text, .m-text[data-underline]) { text-decoration-line: underline; text-underline-offset: .12em; }
+:where(.m-typography) :where(del), :where(del.m-text) { text-decoration-line: line-through; }
+:where(.m-typography) :where(del[data-underline]), :where(del.m-text[data-underline]) { text-decoration-line: underline line-through; }
+:where(.m-typography) :where(code):not(:where(pre code)), :where(code.m-text),
+:where(.m-typography) :where(code):not(:where(pre code))[data-depth], :where(code.m-text)[data-depth] {
   box-sizing: border-box;
   line-height: 1.4;
-  font-family: var(--mui-typography-mono-font, v-mono, SFMono-Regular, Menlo, Consolas, Courier, monospace);
+  font-family: var(--m-typography-mono-font, v-mono, SFMono-Regular, Menlo, Consolas, Courier, monospace);
   font-size: .9em;
   padding: .05em .35em 0;
-  border: 1px solid var(--mui-typography-code-border, transparent);
-  border-radius: var(--mui-typography-code-radius, 2px);
-  background: var(--mui-typography-code-background, var(--_mui-typography-code, #f4f4f8));
-  color: var(--mui-typography-code-color, var(--mui-typography-color, var(--_mui-typography-color, #333639)));
+  border: 1px solid var(--m-typography-code-border, transparent);
+  border-radius: var(--m-typography-code-radius, 2px);
+  background: var(--m-typography-code-background, var(--_m-typography-code, #f4f4f8));
+  color: var(--m-typography-code-color, var(--m-typography-color, var(--_m-typography-color, #333639)));
 }
-:where(.mui-typography) :where(code:not([hidden])):not(:where(pre code)), :where(code.mui-text:not([hidden])) { display: inline-block; }
-:where(.mui-typography) :where(h1, h2, h3, h4, h5, h6)[data-prefix="bar"],
-:where(h1.mui-h, h2.mui-h, h3.mui-h, h4.mui-h, h5.mui-h, h6.mui-h)[data-prefix="bar"] {
+:where(.m-typography) :where(code:not([hidden])):not(:where(pre code)), :where(code.m-text:not([hidden])) { display: inline-block; }
+:where(.m-typography) :where(h1, h2, h3, h4, h5, h6)[data-prefix="bar"],
+:where(h1.m-h, h2.m-h, h3.m-h, h4.m-h, h5.m-h, h6.m-h)[data-prefix="bar"] {
   position: relative;
-  padding-inline-start: var(--mui-typography-prefix-space, var(--_mui-typography-prefix, 12px));
+  padding-inline-start: var(--m-typography-prefix-space, var(--_m-typography-prefix, 12px));
 }
-:where(.mui-typography) :where(h1, h2, h3, h4, h5, h6)[data-prefix="bar"]::before,
-:where(h1.mui-h, h2.mui-h, h3.mui-h, h4.mui-h, h5.mui-h, h6.mui-h)[data-prefix="bar"]::before {
+:where(.m-typography) :where(h1, h2, h3, h4, h5, h6)[data-prefix="bar"]::before,
+:where(h1.m-h, h2.m-h, h3.m-h, h4.m-h, h5.m-h, h6.m-h)[data-prefix="bar"]::before {
   position: absolute;
   inset-block: 0;
   inset-inline-start: 0;
-  width: var(--mui-typography-bar-width, var(--_mui-typography-bar, 3px));
-  border-radius: calc(var(--mui-typography-bar-width, var(--_mui-typography-bar, 3px)) / 2);
-  background: var(--mui-typography-bar-color, var(--_mui-typography-accent, var(--mui-color-primary, var(--_mui-typography-primary, #18a058))));
+  width: var(--m-typography-bar-width, var(--_m-typography-bar, 3px));
+  border-radius: calc(var(--m-typography-bar-width, var(--_m-typography-bar, 3px)) / 2);
+  background: var(--m-typography-bar-color, var(--_m-typography-accent, var(--m-color-primary, var(--_m-typography-primary, #18a058))));
   content: "";
 }
-:where(.mui-typography) :where(h1, h2, h3, h4, h5, h6)[data-prefix="bar"][data-align-text],
-:where(h1.mui-h, h2.mui-h, h3.mui-h, h4.mui-h, h5.mui-h, h6.mui-h)[data-prefix="bar"][data-align-text] { padding-inline-start: 0; }
-:where(.mui-typography) :where(h1, h2, h3, h4, h5, h6)[data-prefix="bar"][data-align-text]::before,
-:where(h1.mui-h, h2.mui-h, h3.mui-h, h4.mui-h, h5.mui-h, h6.mui-h)[data-prefix="bar"][data-align-text]::before { inset-inline-start: calc(-1 * var(--mui-typography-prefix-space, var(--_mui-typography-prefix, 12px))); }
-:where(.mui-typography) :where(ul, ol), :where(ul.mui-ul, ol.mui-ol) {
+:where(.m-typography) :where(h1, h2, h3, h4, h5, h6)[data-prefix="bar"][data-align-text],
+:where(h1.m-h, h2.m-h, h3.m-h, h4.m-h, h5.m-h, h6.m-h)[data-prefix="bar"][data-align-text] { padding-inline-start: 0; }
+:where(.m-typography) :where(h1, h2, h3, h4, h5, h6)[data-prefix="bar"][data-align-text]::before,
+:where(h1.m-h, h2.m-h, h3.m-h, h4.m-h, h5.m-h, h6.m-h)[data-prefix="bar"][data-align-text]::before { inset-inline-start: calc(-1 * var(--m-typography-prefix-space, var(--_m-typography-prefix, 12px))); }
+:where(.m-typography) :where(ul, ol), :where(ul.m-ul, ol.m-ol) {
   margin-block: 1em;
-  padding-inline-start: var(--mui-typography-list-indent, 2em);
-  font-size: var(--mui-typography-font-size, var(--mui-font-size, 14px));
-  line-height: var(--mui-typography-line-height, var(--mui-line-height, 1.6));
+  padding-inline-start: var(--m-typography-list-indent, 2em);
+  font-size: var(--m-typography-font-size, var(--m-font-size, 14px));
+  line-height: var(--m-typography-line-height, var(--m-line-height, 1.6));
 }
-:where(.mui-typography) :where(ul, ol)[data-align-text], :where(ul.mui-ul, ol.mui-ol)[data-align-text] { padding-inline-start: 0; }
-:where(.mui-typography) :where(li), :where(ul.mui-ul, ol.mui-ol) :where(li), :where(li.mui-li) {
+:where(.m-typography) :where(ul, ol)[data-align-text], :where(ul.m-ul, ol.m-ol)[data-align-text] { padding-inline-start: 0; }
+:where(.m-typography) :where(li), :where(ul.m-ul, ol.m-ol) :where(li), :where(li.m-li) {
   margin-block: .25em 0;
-  line-height: var(--mui-typography-line-height, var(--mui-line-height, 1.6));
-  color: var(--mui-typography-color, var(--_mui-typography-color, #333639));
+  line-height: var(--m-typography-line-height, var(--m-line-height, 1.6));
+  color: var(--m-typography-color, var(--_m-typography-color, #333639));
 }
-:where(.mui-typography) :where(blockquote), :where(blockquote.mui-blockquote) {
+:where(.m-typography) :where(blockquote), :where(blockquote.m-blockquote) {
   box-sizing: border-box;
   margin-block: 12px;
   margin-inline: 0;
-  padding-inline-start: var(--mui-typography-quote-padding, 12px);
-  border-inline-start: var(--mui-typography-quote-border-width, 4px) solid var(--mui-typography-quote-border-color, var(--_mui-typography-border, #e0e0e6));
-  font-size: var(--mui-typography-font-size, var(--mui-font-size, 14px));
-  line-height: var(--mui-typography-line-height, var(--mui-line-height, 1.6));
-  color: var(--mui-typography-color, var(--_mui-typography-color, #333639));
+  padding-inline-start: var(--m-typography-quote-padding, 12px);
+  border-inline-start: var(--m-typography-quote-border-width, 4px) solid var(--m-typography-quote-border-color, var(--_m-typography-border, #e0e0e6));
+  font-size: var(--m-typography-font-size, var(--m-font-size, 14px));
+  line-height: var(--m-typography-line-height, var(--m-line-height, 1.6));
+  color: var(--m-typography-color, var(--_m-typography-color, #333639));
 }
-:where(.mui-typography) :where(blockquote)[data-align-text], :where(blockquote.mui-blockquote)[data-align-text] { margin-inline-start: calc(-1 * (var(--mui-typography-quote-padding, 12px) + var(--mui-typography-quote-border-width, 4px))); }
-:where(.mui-typography) :where(a[href]), :where(a.mui-a[href]) {
-  color: var(--mui-typography-link-color, var(--mui-color-primary, var(--_mui-typography-primary, #18a058)));
+:where(.m-typography) :where(blockquote)[data-align-text], :where(blockquote.m-blockquote)[data-align-text] { margin-inline-start: calc(-1 * (var(--m-typography-quote-padding, 12px) + var(--m-typography-quote-border-width, 4px))); }
+:where(.m-typography) :where(a[href]), :where(a.m-a[href]) {
+  color: var(--m-typography-link-color, var(--m-color-primary, var(--_m-typography-primary, #18a058)));
   text-decoration-line: underline;
   text-decoration-color: currentColor;
   text-underline-offset: .12em;
 }
-:where(.mui-typography) :where(a[href]):hover, :where(a.mui-a[href]):hover { color: var(--mui-typography-link-hover-color, var(--mui-typography-link-color, var(--mui-color-primary, var(--_mui-typography-primary, #18a058)))); }
-:where(.mui-typography) :where(a[href]):focus-visible, :where(a.mui-a[href]):focus-visible { outline: 2px solid var(--mui-typography-focus-color, #2080f080); outline-offset: 2px; }
-:where(.mui-typography) :where(hr), :where(hr.mui-hr) { margin-block: 12px; margin-inline: 0; border: 0; border-block-start: 1px solid var(--mui-typography-rule-color, var(--_mui-typography-divider, #efeff5)); }
-:where(.mui-typography) :where(h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote):where(:first-child),
-:where(.mui-h, .mui-p, .mui-ul, .mui-ol, .mui-blockquote):where(:first-child) { margin-block-start: 0; }
-:where(.mui-typography) :where(p, ul, ol, blockquote):where(:last-child),
-:where(.mui-p, .mui-ul, .mui-ol, .mui-blockquote):where(:last-child) { margin-block-end: 0; }
+:where(.m-typography) :where(a[href]):hover, :where(a.m-a[href]):hover { color: var(--m-typography-link-hover-color, var(--m-typography-link-color, var(--m-color-primary, var(--_m-typography-primary, #18a058)))); }
+:where(.m-typography) :where(a[href]):focus-visible, :where(a.m-a[href]):focus-visible { outline: 2px solid var(--m-typography-focus-color, #2080f080); outline-offset: 2px; }
+:where(.m-typography) :where(hr), :where(hr.m-hr) { margin-block: 12px; margin-inline: 0; border: 0; border-block-start: 1px solid var(--m-typography-rule-color, var(--_m-typography-divider, #efeff5)); }
+:where(.m-typography) :where(h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote):where(:first-child),
+:where(.m-h, .m-p, .m-ul, .m-ol, .m-blockquote):where(:first-child) { margin-block-start: 0; }
+:where(.m-typography) :where(p, ul, ol, blockquote):where(:last-child),
+:where(.m-p, .m-ul, .m-ol, .m-blockquote):where(:last-child) { margin-block-end: 0; }

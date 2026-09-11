@@ -17,7 +17,7 @@ function geometry(element: HTMLElement, get: () => DOMRect) {
 function nodes() {
   const suffix = sequence++
   const nav = document.createElement("nav")
-  nav.className = "mui-anchor"
+  nav.className = "m-anchor"
   nav.setAttribute("data-anchor", "")
   nav.setAttribute("aria-label", "Contents")
   const root = document.createElement("div")
@@ -298,7 +298,7 @@ describe("location ownership, observers and cleanup", () => {
   it("notifies actual location changes, never user click or focus events", () => {
     const { nav, root, links, controller } = bind()
     const change = vi.fn(), click = vi.fn()
-    nav.addEventListener("mui:anchor-change", change)
+    nav.addEventListener("m:anchor-change", change)
     nav.addEventListener("click", click)
     links[0]!.focus()
     root.scrollTop = 200
@@ -370,7 +370,7 @@ describe("location ownership, observers and cleanup", () => {
   it("reconciles a newly introduced nested navigation boundary before stale parent writes", async () => {
     const parent = bind()
     const nested = document.createElement("nav")
-    nested.className = "mui-anchor"
+    nested.className = "m-anchor"
     nested.setAttribute("aria-label", "Nested")
     geometry(nested, () => rect(0, 60))
     parent.nav.append(nested)
@@ -451,22 +451,22 @@ describe("location ownership, observers and cleanup", () => {
   })
   it("keeps audited typography, rail, interaction colors and reduced motion within budget", () => {
     const css = readFileSync(join("src", "components", "anchor", "anchor.css"), "utf8")
-    expect(css).toContain("var(--mui-anchor-font-size,13px)")
+    expect(css).toContain("var(--m-anchor-font-size,13px)")
     expect(css).toContain("line-height:1.5")
-    expect(css).toContain("var(--mui-anchor-rail-width,4px)")
-    expect(css).toContain("var(--mui-anchor-indent,16px)")
-    expect(css).toContain("--_mui-anchor-padding:2px 8px")
-    expect(css).toContain("--_mui-anchor-radius:3px")
+    expect(css).toContain("var(--m-anchor-rail-width,4px)")
+    expect(css).toContain("var(--m-anchor-indent,16px)")
+    expect(css).toContain("--_m-anchor-padding:2px 8px")
+    expect(css).toContain("--_m-anchor-radius:3px")
     expect(css).toContain("#333639")
     expect(css).toContain("#dbdbdf")
     expect(css).toContain("rgba(255,255,255,.82)")
     expect(css).toContain("rgba(255,255,255,.2)")
-    expect(css).toContain("var(--mui-color-primary,")
-    expect(css).toContain("var(--mui-color-primary-hover,")
-    expect(css).toContain("var(--mui-color-primary-pressed,")
-    expect(css).toContain("color-mix(in srgb,var(--_mui-anchor-accent) 15%,transparent)")
+    expect(css).toContain("var(--m-color-primary,")
+    expect(css).toContain("var(--m-color-primary-hover,")
+    expect(css).toContain("var(--m-color-primary-pressed,")
+    expect(css).toContain("color-mix(in srgb,var(--_m-anchor-accent) 15%,transparent)")
     expect(css).not.toContain("text-decoration:underline")
-    expect(css).toContain(".mui-anchor a[href]{color:#000;background:transparent}")
+    expect(css).toContain(".m-anchor a[href]{color:#000;background:transparent}")
     const style = document.createElement("style")
     style.textContent = css
     document.head.append(style)
@@ -479,7 +479,7 @@ describe("location ownership, observers and cleanup", () => {
   })
   it("preserves authored styles, hrefs and native focus during current-marker updates", () => {
     const { nav, root, links, controller } = bind()
-    nav.style.cssText = "--mui-anchor-font-size:16px;--mui-anchor-active-color:rgb(1,2,3);--mui-anchor-rail-width:6px"
+    nav.style.cssText = "--m-anchor-font-size:16px;--m-anchor-active-color:rgb(1,2,3);--m-anchor-rail-width:6px"
     const style = nav.getAttribute("style"), hrefs = links.map(link => link.getAttribute("href")), url = document.URL
     links[0]!.focus()
     root.scrollTop = 150

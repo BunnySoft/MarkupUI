@@ -12,7 +12,7 @@ function render() {
 }
 render()
 for (const control of [volume.control, ...pair.controls]) control.addEventListener("input", render)
-document.getElementById("window-pair").addEventListener("mui:slider-pair-change", () => {
+document.getElementById("window-pair").addEventListener("m:slider-pair-change", () => {
   document.getElementById("events").textContent = `Pair commits: ${++commits}`; render()
 })
 form.addEventListener("reset", () => setTimeout(render, 0))

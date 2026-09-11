@@ -1,46 +1,46 @@
-:where([data-mui-theme="light"]) { --_mui-slider-scheme: light; }
-:where([data-mui-theme="dark"]) { --_mui-slider-scheme: dark; }
-.mui-slider, .mui-slider-pair {
+:where([data-m-theme="light"]) { --_m-slider-scheme: light; }
+:where([data-m-theme="dark"]) { --_m-slider-scheme: dark; }
+.m-slider, .m-slider-pair {
   box-sizing: border-box;
   min-inline-size: 0;
-  color-scheme: var(--_mui-slider-scheme, light);
-  color: var(--mui-slider-color, light-dark(#333639, rgb(255 255 255 / .82)));
+  color-scheme: var(--_m-slider-scheme, light);
+  color: var(--m-slider-color, light-dark(#333639, rgb(255 255 255 / .82)));
   font: 14px/1.5 system-ui, sans-serif;
 }
-.mui-slider { display: grid; gap: .5rem; }
-:is(.mui-slider, .mui-slider-pair) [data-slider-control] {
+.m-slider { display: grid; gap: .5rem; }
+:is(.m-slider, .m-slider-pair) [data-slider-control] {
   box-sizing: border-box;
   inline-size: 100%;
   min-inline-size: 0;
   min-block-size: 18px;
   margin: 0;
-  accent-color: var(--mui-slider-accent, light-dark(var(--mui-color-primary, #18a058), #2a947d));
+  accent-color: var(--m-slider-accent, light-dark(var(--m-color-primary, #18a058), #2a947d));
   cursor: pointer;
 }
-:is(.mui-slider, .mui-slider-pair) [data-slider-control]:focus-visible {
-  outline: 2px solid var(--mui-slider-focus, var(--mui-color-primary, light-dark(#18a058, #63e2b7)));
+:is(.m-slider, .m-slider-pair) [data-slider-control]:focus-visible {
+  outline: 2px solid var(--m-slider-focus, var(--m-color-primary, light-dark(#18a058, #63e2b7)));
   outline-offset: 3px;
 }
-:is(.mui-slider, .mui-slider-pair) [data-slider-control]:disabled { cursor: not-allowed; }
-:is(.mui-slider, .mui-slider-pair) [data-slider-output] { font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-.mui-slider-pair { margin: 0; padding: 12px; border: 1px solid var(--mui-slider-border, light-dark(#e0e0e6, rgb(255 255 255 / .24))); border-radius: 3px; }
-.mui-slider-pair > legend { max-inline-size: 100%; padding-inline: .375rem; overflow-wrap: anywhere; }
-.mui-slider-pair__fields { display: grid; gap: 1rem; }
-.mui-slider__marks { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; font-size: inherit; }
+:is(.m-slider, .m-slider-pair) [data-slider-control]:disabled { cursor: not-allowed; }
+:is(.m-slider, .m-slider-pair) [data-slider-output] { font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.m-slider-pair { margin: 0; padding: 12px; border: 1px solid var(--m-slider-border, light-dark(#e0e0e6, rgb(255 255 255 / .24))); border-radius: 3px; }
+.m-slider-pair > legend { max-inline-size: 100%; padding-inline: .375rem; overflow-wrap: anywhere; }
+.m-slider-pair__fields { display: grid; gap: 1rem; }
+.m-slider__marks { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; font-size: inherit; }
 @supports (writing-mode: vertical-lr) {
-  .mui-slider[data-vertical] { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
-  .mui-slider[data-vertical] [data-slider-control] {
+  .m-slider[data-vertical] { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+  .m-slider[data-vertical] [data-slider-control] {
     writing-mode: vertical-lr;
-    inline-size: var(--mui-slider-length, 12rem);
+    inline-size: var(--m-slider-length, 12rem);
     block-size: 2rem;
   }
 }
-.mui-slider[hidden], .mui-slider [hidden],
-.mui-slider-pair[hidden], .mui-slider-pair [hidden] { display: none !important; }
+.m-slider[hidden], .m-slider [hidden],
+.m-slider-pair[hidden], .m-slider-pair [hidden] { display: none !important; }
 @media (forced-colors: active), print {
-  :is(.mui-slider, .mui-slider-pair) [data-slider-control] { accent-color: auto; opacity: 1; }
-  :is(.mui-slider, .mui-slider-pair) [data-slider-control]:focus-visible { outline-color: Highlight; }
-  .mui-slider, .mui-slider-pair { color: CanvasText; background: Canvas; }
-  .mui-slider-pair { border-color: CanvasText; }
+  :is(.m-slider, .m-slider-pair) [data-slider-control] { accent-color: auto; opacity: 1; }
+  :is(.m-slider, .m-slider-pair) [data-slider-control]:focus-visible { outline-color: Highlight; }
+  .m-slider, .m-slider-pair { color: CanvasText; background: Canvas; }
+  .m-slider-pair { border-color: CanvasText; }
 }
-@media print { .mui-slider, .mui-slider-pair { color-scheme: light; break-inside: avoid; } }
+@media print { .m-slider, .m-slider-pair { color-scheme: light; break-inside: avoid; } }

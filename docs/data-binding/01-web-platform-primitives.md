@@ -8,8 +8,8 @@ concepts are independent: a Custom Element may use light DOM, Shadow DOM, both o
 A Custom Element supplies a named element type and lifecycle:
 
 ```html
-<mui-avatar></mui-avatar>
-<mui-card></mui-card>
+<m-avatar></m-avatar>
+<m-card></m-card>
 ```
 
 Registration does not imply Shadow DOM. A class may coordinate existing children without
@@ -24,15 +24,15 @@ real registration benefit is required.
 Light DOM is the ordinary child tree authored under an element:
 
 ```html
-<mui-card>
-  <header data-mui-card-header>
+<m-card>
+  <header data-m-card-header>
     <h2>Profile</h2>
   </header>
-  <section data-mui-card-content>Content</section>
-</mui-card>
+  <section data-m-card-content>Content</section>
+</m-card>
 ```
 
-The header and section remain direct children of `mui-card`. They are available to normal
+The header and section remain direct children of `m-card`. They are available to normal
 CSS, selectors, forms, labels, ARIA relationships, application listeners and developer
 tools.
 
@@ -101,7 +101,7 @@ assigned-node projection behavior. A data template may still create elements car
 ```html
 <template id="person-row">
   <li>
-    <mui-avatar></mui-avatar>
+    <m-avatar></m-avatar>
     <span></span>
   </li>
 </template>
@@ -134,9 +134,9 @@ Possible implementations:
 
 | Form | Example | Typical use |
 | --- | --- | --- |
-| Native light-DOM parts | `header[data-mui-card-header]` | Semantic authored regions |
-| Passive custom-tag parts | `mui-card-header` | Concise component vocabulary |
-| Independent custom child | `mui-avatar` in `mui-avatar-group` | Child with its own API/lifecycle |
+| Native light-DOM parts | `header[data-m-card-header]` | Semantic authored regions |
+| Passive custom-tag parts | `m-card-header` | Concise component vocabulary |
+| Independent custom child | `m-avatar` in `m-avatar-group` | Child with its own API/lifecycle |
 | Shadow DOM plus slots | `slot[name=header]` | Encapsulated invariant layout |
 | Generated Shadow internals | private spinner/track | Author should not manipulate it |
 

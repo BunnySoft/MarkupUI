@@ -15,7 +15,7 @@
   <main>
     <h1>Message: explicit roots, native controls</h1>
     <p>Messages never become modal or move focus on creation. Loading is persistent by default.</p>
-    <ul class="mui-feedback-list baseline"><li class="mui-message"><strong data-message-kind>Information</strong><span data-message-content>Authored native message text remains readable without JavaScript.</span></li></ul>
+    <ul class="m-feedback-list baseline"><li class="m-message"><strong data-message-kind>Information</strong><span data-message-content>Authored native message text remains readable without JavaScript.</span></li></ul>
     <div id="controls" hidden>
       <label>Lifetime <select id="duration"><option value="3000">3 seconds</option><option value="1000">1 second</option><option value="0">Persistent</option></select></label>
       <label>Placement <select id="placement"><option>top</option><option>top-left</option><option>top-right</option><option>bottom</option><option>bottom-left</option><option>bottom-right</option></select></label>
@@ -39,28 +39,28 @@
     <p id="events">Local lifecycle events appear here without duplicating message announcements.</p>
     <label>Unrelated native field <input id="outside-field"></label>
     <h2>Independent local template owner</h2>
-    <div id="inline-host" class="mui-feedback-host mui-message-host">
-      <ol class="mui-feedback-list" data-message-items aria-label="Local messages"></ol>
-      <p class="mui-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p>
+    <div id="inline-host" class="m-feedback-host m-message-host">
+      <ol class="m-feedback-list" data-message-items aria-label="Local messages"></ol>
+      <p class="m-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p>
     </div>
     <p class="page-tail">Fixed CSS does not cross native top layers. Use an owner inside the active modal instead.</p>
   </main>
-  <div id="fixed-host" class="mui-feedback-host mui-feedback-host--fixed mui-message-host" data-feedback-placement="top">
-    <ol class="mui-feedback-list" data-message-items aria-label="Messages"></ol>
-    <p class="mui-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p>
+  <div id="fixed-host" class="m-feedback-host m-feedback-host--fixed m-message-host" data-feedback-placement="top">
+    <ol class="m-feedback-list" data-message-items aria-label="Messages"></ol>
+    <p class="m-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p>
   </div>
-  <dialog id="local-modal" class="mui-native-dialog mui-modal" aria-labelledby="modal-title">
+  <dialog id="local-modal" class="m-native-dialog m-modal" aria-labelledby="modal-title">
     <h2 id="modal-title" data-modal-title>Modal-local messages</h2>
     <button type="button" id="inside-create" autofocus>Create inside message</button>
     <p id="inside-error" role="status"></p>
-    <div id="inside-host" class="mui-feedback-host mui-message-host">
-      <ol class="mui-feedback-list" data-message-items aria-label="Messages inside this modal"></ol>
-      <p class="mui-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p>
+    <div id="inside-host" class="m-feedback-host m-message-host">
+      <ol class="m-feedback-list" data-message-items aria-label="Messages inside this modal"></ol>
+      <p class="m-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p>
     </div>
     <form method="dialog"><button value="closed">Close modal</button></form>
   </dialog>
   <template id="message-template">
-    <li class="mui-message">
+    <li class="m-message">
       <span data-message-icon aria-hidden="true">◆</span><strong data-message-kind></strong>
       <span data-message-content></span><button type="button" data-message-close aria-label="Dismiss local message">×</button>
       <p data-message-error hidden>The local close callback failed. Try again.</p>

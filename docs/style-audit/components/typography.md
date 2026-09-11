@@ -20,7 +20,7 @@ styles. Reference transitions were allowed to settle for 400ms.
 
 Candidate comparison used the same 14px/1.6 application body font and matching
 background, but **only Typography source CSS**, not demo or shared component CSS.
-The `.mui-typography` scope and the individual native-class path were measured
+The `.m-typography` scope and the individual native-class path were measured
 separately. This controls the ambient document font without falsely claiming that
 Typography installs a global font. Private fixture files/server were cleaned up.
 
@@ -71,9 +71,9 @@ foreground even with depth/type attributes; native hidden code remains hidden.
 
 ## Theme integration without a shared palette migration
 
-`data-mui-theme="light|dark"` defines only private `--_mui-typography-*` defaults.
-Public `--mui-typography-*` author overrides remain first. Semantic colors and
-links next consume existing **normal** `--mui-color-*` tokens, then local reference
+`data-m-theme="light|dark"` defines only private `--_m-typography-*` defaults.
+Public `--m-typography-*` author overrides remain first. Semantic colors and
+links next consume existing **normal** `--m-color-*` tokens, then local reference
 fallbacks. Typography does **not** use the supplementary semantic colors required
 by some other components.
 
@@ -89,9 +89,9 @@ change `color-scheme` or watch system preference.
 - Nested dark → light scope: text white/.82 → `#333639`; links `#63e2b7` → `#18a058`.
 - Public typography font tokens: Georgia **18px**, line height **31.5px**; headings
   keep their level-specific sizes unless their corresponding size token is changed.
-- An unrelated `--mui-text-primary: red` did not recolor Typography body text.
-  Shared `--mui-color-info: purple` did recolor semantic text; local
-  `--mui-typography-info: teal` then won over that shared override.
+- An unrelated `--m-text-primary: red` did not recolor Typography body text.
+  Shared `--m-color-info: purple` did recolor semantic text; local
+  `--m-typography-info: teal` then won over that shared override.
 - Body/heading/code/bar overrides produced maroon/navy/green/orange respectively;
   code background became ivory, H1 **41px/800**, paragraph margins **23px**.
   Explicit bar color won even on a typed heading.

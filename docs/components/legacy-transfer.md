@@ -57,7 +57,7 @@ coercion, duplicate-last-wins map or missing-option renderer is supplied here.
 | size | Existing root data-transfer-size=small/medium/large CSS. Native select.size is a separate visible-row setting, not the old widget size. |
 | source/target titles | Authored h2/labels/legend; no locale provider or empty-string fallback to provider text. |
 | source/target filter placeholders | Native placeholder attributes on the actual labelled inputs. |
-| on-update:value | Listen on the native Transfer root for mui:transfer-change; payload and trigger policy differ explicitly below. |
+| on-update:value | Listen on the native Transfer root for m:transfer-change; payload and trigger policy differ explicitly below. |
 | virtual-scroll | Omitted. All bounded native options stay mounted; no VirtualList/Scrollbar renderer. |
 
 The pinned Legacy Transfer exposes **no public slots** in its Markdown or root
@@ -106,10 +106,10 @@ not a recreated legacy watcher. The local demo uses one cancelable post-reset ta
 only to refresh its diagnostic snapshot; there is no polling/application scheduler.
 
 Listen **directly on the data-transfer root**: the helper's custom events do not
-bubble. A user move emits one mui:transfer-change with `{value,moved,to,event}` after
-click dispatch settles. Native staging emits mui:transfer-stage; it is not a
+bubble. A user move emits one m:transfer-change with `{value,moved,to,event}` after
+click dispatch settles. Native staging emits m:transfer-stage; it is not a
 membership update. Programmatic setValue/move/filter/default/reset/refresh operations
-do not emit a user-move event. mui:transfer-error surfaces helper errors.
+do not emit a user-move event. m:transfer-error surfaces helper errors.
 
 This is not the legacy value-only callback array, onUpdateValue/onChange aliases,
 FormItem trigger sequence or provider propagation. The demo attaches no duplicate
@@ -161,7 +161,7 @@ Call the demo's disconnect before removing/reusing its application scope.
 Subsequent serialization of retained native membership is an application-owned
 lifetime decision, not selectedOptions automatically becoming a membership field.
 
-Existing widgets-plugin MuiTransfer is a different legacy MarkupUI control, not
+Existing widgets-plugin MTransfer is a different legacy MarkupUI control, not
 NLegacyTransfer. It coexists without changing the native selects/options or wire
 membership here. Modern Transfer source/reference/acceptance and all legacy
 core/plugin code are unchanged.
@@ -180,7 +180,7 @@ Dark mode uses the pinned `rgba(255, 255, 255, .06)` header role; print returns 
 the light scheme. Native count paragraph margins are reset, while the diagnostic
 buttons retain their separate 44px application target.
 
-These rules do not assign any public `--mui-transfer-*` token. Authored title,
+These rules do not assign any public `--m-transfer-*` token. Authored title,
 border, surface, text and size tokens continue to win. The two real multiple
 selects, their unnamed/unrequired staging semantics, original option nodes,
 fieldset/FormData behavior and helper algorithms are unchanged.

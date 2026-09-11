@@ -27,13 +27,13 @@ Enter/Space or pointer click to insert, Escape to close.
 | [Reference dispositions](../naive-ui/components/mention.md) | All original owner/source/kind identities plus explicit source supplements |
 
 ```html
-<div class="mui-mention">
+<div class="m-mention">
   <label for="message">Message</label>
-  <textarea class="mui-mention__editor" id="message" name="message"
+  <textarea class="m-mention__editor" id="message" name="message"
             rows="4" maxlength="256" aria-describedby="mention-help"></textarea>
   <p id="mention-help">Type @ followed by a query. Tab to a choice, then Enter/Space.</p>
-  <section class="mui-mention__panel" id="choices" aria-label="Mention choices" hidden>
-    <ul class="mui-mention__options" data-mention-options></ul>
+  <section class="m-mention__panel" id="choices" aria-label="Mention choices" hidden>
+    <ul class="m-mention__options" data-mention-options></ul>
     <p data-mention-status>No search yet.</p>
   </section>
 </div>
@@ -167,7 +167,7 @@ by an older reset.
 
 Expected cancelled DOMException AbortError is consumed as aborted. Unexpected throws,
 Promise rejections (including late rejection after cancellation), invalid results and
-nonboolean filters reject the query and emit `mui:mention-error`. Event-driven queries
+nonboolean filters reject the query and emit `m:mention-error`. Event-driven queries
 consume their already-reported failure. No loader timeout is imposed; applications can
 implement one in their loader. There is no built-in HTTP client or business submission.
 
@@ -198,12 +198,12 @@ Nonbubbling events on the original editor:
 
 | Event | Detail |
 | --- | --- |
-| `mui:mention-search` | Original prefix/query/start/end context, not full text |
-| `mui:mention-results` | `{ context, options, result }` after safe publication |
-| `mui:mention-visibility` | `{ shown }` for the actual adjacent panel, not source caret popup state |
-| `mui:mention-select` | `{ option, prefix }` after actual explicit insertion |
-| `mui:mention-reject` | `{ reason: "maxlength", option, prefix }`, text unchanged |
-| `mui:mention-error` | `{ error, context }`, unexpected failure rather than empty successful results |
+| `m:mention-search` | Original prefix/query/start/end context, not full text |
+| `m:mention-results` | `{ context, options, result }` after safe publication |
+| `m:mention-visibility` | `{ shown }` for the actual adjacent panel, not source caret popup state |
+| `m:mention-select` | `{ option, prefix }` after actual explicit insertion |
+| `m:mention-reject` | `{ reason: "maxlength", option, prefix }`, text unchanged |
+| `m:mention-error` | `{ error, context }`, unexpected failure rather than empty successful results |
 
 ## Ownership, native Form/Input reuse and fallback
 

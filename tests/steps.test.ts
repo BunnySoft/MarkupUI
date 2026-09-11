@@ -32,7 +32,7 @@ describe("Steps current and independent status", () => {
   })
   it("uses explicit current over default and authored state without events", () => {
     const { list, items } = fixture()
-    const event = vi.fn(); list.addEventListener("mui:steps-request", event)
+    const event = vi.fn(); list.addEventListener("m:steps-request", event)
     const controller = createSteps(list, { current: 4, defaultCurrent: 1 })
     controllers.push(controller)
     expect(controller.currentStep).toBe(items[3])
@@ -84,7 +84,7 @@ describe("Steps current and independent status", () => {
 describe("native selection intents, not a wizard", () => {
   it("emits a captured native button intent without automatically selecting", async () => {
     const { list, actions, controller, items } = bind()
-    const request = vi.fn(); list.addEventListener("mui:steps-request", request)
+    const request = vi.fn(); list.addEventListener("m:steps-request", request)
     actions[3]!.click(); await flush()
     expect(controller.current).toBe(2)
     expect(request).toHaveBeenCalledTimes(1)
@@ -93,9 +93,9 @@ describe("native selection intents, not a wizard", () => {
   })
   it("lets the application decline or explicitly accept a request with silent current assignment", async () => {
     const { list, actions, controller } = bind()
-    const request = vi.fn(); list.addEventListener("mui:steps-request", request)
+    const request = vi.fn(); list.addEventListener("m:steps-request", request)
     actions[0]!.click(); await flush(); expect(controller.current).toBe(2)
-    list.addEventListener("mui:steps-request", event => { controller.current = (event as CustomEvent).detail.current }, { once: true })
+    list.addEventListener("m:steps-request", event => { controller.current = (event as CustomEvent).detail.current }, { once: true })
     actions[3]!.click(); await flush(); expect(controller.current).toBe(4)
     expect(request).toHaveBeenCalledTimes(2)
     controller.current = 1
@@ -105,7 +105,7 @@ describe("native selection intents, not a wizard", () => {
   })
   it("honors late synchronous cancellation and native disabled/fieldset state", async () => {
     const { list, actions } = bind()
-    const request = vi.fn(); list.addEventListener("mui:steps-request", request)
+    const request = vi.fn(); list.addEventListener("m:steps-request", request)
     list.addEventListener("click", event => event.preventDefault(), { once: true })
     actions[0]!.click(); actions[2]!.click(); await flush()
     expect(request).not.toHaveBeenCalled()
@@ -118,7 +118,7 @@ describe("native selection intents, not a wizard", () => {
     const { list, actions } = bind(), form = document.createElement("form")
     document.body.append(form); form.append(list)
     const request = vi.fn(), submit = vi.fn(event => event.preventDefault())
-    list.addEventListener("mui:steps-request", request); form.addEventListener("submit", submit)
+    list.addEventListener("m:steps-request", request); form.addEventListener("submit", submit)
     actions[0]!.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }))
     actions[0]!.dispatchEvent(new KeyboardEvent("keydown", { key: " ", bubbles: true }))
     await flush(); expect(request).not.toHaveBeenCalled()
@@ -127,7 +127,7 @@ describe("native selection intents, not a wizard", () => {
   })
   it("leaves native link href/target/modifiers and authored cancellation untouched", async () => {
     const { list, controller } = bind(), link = list.querySelector<HTMLAnchorElement>("#native-link")!
-    const request = vi.fn(); list.addEventListener("mui:steps-request", request)
+    const request = vi.fn(); list.addEventListener("m:steps-request", request)
     link.target = "_blank"
     const event = new MouseEvent("click", { ctrlKey: true, bubbles: true, cancelable: true })
     link.addEventListener("click", event => { expect(event.defaultPrevented).toBe(false); event.preventDefault() })
@@ -138,13 +138,13 @@ describe("native selection intents, not a wizard", () => {
   })
   it.each([{ ctrlKey: true }, { metaKey: true }, { shiftKey: true }, { altKey: true }, { button: 1 }])("does not turn modified activation into selection %j", modifiers => {
     const { list, actions } = bind(), request = vi.fn()
-    list.addEventListener("mui:steps-request", request)
+    list.addEventListener("m:steps-request", request)
     actions[0]!.dispatchEvent(new MouseEvent("click", { bubbles: true, ...modifiers }))
     expect(request).not.toHaveBeenCalled()
   })
   it("invalidates queued work on setter/refresh/disconnect", async () => {
     const { list, actions, controller } = bind(), request = vi.fn()
-    list.addEventListener("mui:steps-request", request)
+    list.addEventListener("m:steps-request", request)
     actions[0]!.click(); controller.current = 3; await flush()
     actions[0]!.click(); controller.refresh(); await flush()
     actions[0]!.click(); controller.disconnect(); await flush()
@@ -152,7 +152,7 @@ describe("native selection intents, not a wizard", () => {
   })
   it("reports stale unrefreshed anatomy rather than dispatching a wrong index", async () => {
     const { list, items, actions, controller } = bind(), error = vi.fn(), request = vi.fn()
-    list.addEventListener("mui:steps-error", error); list.addEventListener("mui:steps-request", request)
+    list.addEventListener("m:steps-error", error); list.addEventListener("m:steps-request", request)
     actions[3]!.click(); list.insertBefore(items[3]!, items[0]!)
     await flush()
     expect(error).toHaveBeenCalledTimes(1); expect(request).not.toHaveBeenCalled()
@@ -232,7 +232,7 @@ describe("native identity, hidden items and ownership", () => {
   })
   it("does not adopt a transferred helper marker as a new list's authored default", () => {
     const { items } = bind({ current: 4 })
-    const list = document.createElement("ol"); list.className = "mui-steps"; list.setAttribute("data-steps", "")
+    const list = document.createElement("ol"); list.className = "m-steps"; list.setAttribute("data-steps", "")
     document.body.append(list); list.append(items[3]!)
     const controller = createSteps(list); controllers.push(controller)
     expect(controller.current).toBeNull()
@@ -272,7 +272,7 @@ describe("native identity, hidden items and ownership", () => {
   })
   it("cleans up and reconnects without duplicate intent handlers", async () => {
     const { list, controller, actions } = bind(), request = vi.fn()
-    list.addEventListener("mui:steps-request", request)
+    list.addEventListener("m:steps-request", request)
     controller.disconnect(); controller.connect(); controller.connect()
     actions[0]!.click(); await flush()
     expect(request).toHaveBeenCalledTimes(1)

@@ -31,9 +31,9 @@ function query(media: string) {
 }
 function fixture(hidden = false) {
   const host = document.createElement("div")
-  host.innerHTML = `<button type="button" data-trigger>Toggle</button><div class="mui-collapse-transition"${hidden ? " hidden" : ""}><div data-collapse-transition-content><h3>Preserved heading</h3><form><label>Reference<input required name="reference"></label><button>Submit</button></form><a href="#target">Link</a></div></div>`
+  host.innerHTML = `<button type="button" data-trigger>Toggle</button><div class="m-collapse-transition"${hidden ? " hidden" : ""}><div data-collapse-transition-content><h3>Preserved heading</h3><form><label>Reference<input required name="reference"></label><button>Submit</button></form><a href="#target">Link</a></div></div>`
   document.body.append(host)
-  const root = host.querySelector<HTMLDivElement>(".mui-collapse-transition")!
+  const root = host.querySelector<HTMLDivElement>(".m-collapse-transition")!
   Object.defineProperty(root, "offsetHeight", { configurable: true, get: () => root.hidden ? 0 : 100 })
   Object.defineProperty(root.firstElementChild, "offsetHeight", { configurable: true, value: 100 })
   return root
@@ -70,7 +70,7 @@ describe("Native Collapse Transition", () => {
     expect(pkg.exports["./collapse-transition"].import).toBe("./dist/markup-ui-collapse-transition.js")
     expect(pkg.exports["./collapse-transition/style.css"]).toBe("./dist/markup-ui-collapse-transition.css")
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("mui-collapse-transition")).toBeUndefined()
+    expect(customElements.get("m-collapse-transition")).toBeUndefined()
     expect(readFileSync(resolve("src", "components", "collapse", "collapse.ts"), "utf8")).not.toContain("collapse-transition")
   })
   it("honors authored initial hidden/open state without hooks or remounting", () => {
@@ -257,7 +257,7 @@ describe("Interruption, hooks and focus ownership", () => {
     expect(calls).toEqual(["leave", "after"]); expect(animations).toHaveLength(0)
   })
   it("releases motion if the clipping marker is removed while animating", async () => {
-    const root = fixture(); root.addEventListener("mui:collapse-transition-error", e => e.preventDefault())
+    const root = fixture(); root.addEventListener("m:collapse-transition-error", e => e.preventDefault())
     const c = enhance({}, root); const done = c.setShow(false)
     root.removeAttribute("data-collapse-transition-active")
     await expect(done).rejects.toThrow(/clipping/)
@@ -265,7 +265,7 @@ describe("Interruption, hooks and focus ownership", () => {
     expect(root.hasAttribute("data-collapse-transition-active")).toBe(false)
   })
   it("revalidates clipping after a synchronous start hook", async () => {
-    const root = fixture(); root.addEventListener("mui:collapse-transition-error", e => e.preventDefault())
+    const root = fixture(); root.addEventListener("m:collapse-transition-error", e => e.preventDefault())
     const c = enhance({ onLeave: () => root.removeAttribute("data-collapse-transition-active") }, root)
     await expect(c.setShow(false)).rejects.toThrow(/clipping/)
     expect(animations).toHaveLength(0); expect(root.hasAttribute("inert")).toBe(false)
@@ -276,7 +276,7 @@ describe("Interruption, hooks and focus ownership", () => {
     expect(c.state).toBe("closed"); expect(c.lastError).toBeNull()
   })
   it("surfaces unexpected animation rejection and leaves visible content unclipped", async () => {
-    const root = fixture(); root.addEventListener("mui:collapse-transition-error", event => event.preventDefault())
+    const root = fixture(); root.addEventListener("m:collapse-transition-error", event => event.preventDefault())
     const c = enhance({}, root); const done = c.setShow(false); const failure = new Error("Unexpected")
     animations[0]!.reject(failure)
     await expect(done).rejects.toBe(failure)
@@ -284,7 +284,7 @@ describe("Interruption, hooks and focus ownership", () => {
     expect(root.hasAttribute("data-collapse-transition-active")).toBe(false)
   })
   it("does not swallow a plain error merely named AbortError", async () => {
-    const root = fixture(); root.addEventListener("mui:collapse-transition-error", e => e.preventDefault())
+    const root = fixture(); root.addEventListener("m:collapse-transition-error", e => e.preventDefault())
     const c = enhance({}, root); const done = c.setShow(false); const error = new Error("Not a native cancellation"); error.name = "AbortError"
     animations[0]!.reject(error); await expect(done).rejects.toBe(error)
     expect(c.lastError).toBe(error)
@@ -301,7 +301,7 @@ describe("Interruption, hooks and focus ownership", () => {
   })
   it("surfaces synchronous/async hook errors without corrupting newer state", async () => {
     const root = fixture(); const errors: CustomEvent[] = []
-    root.addEventListener("mui:collapse-transition-error", e => { e.preventDefault(); errors.push(e as CustomEvent) })
+    root.addEventListener("m:collapse-transition-error", e => { e.preventDefault(); errors.push(e as CustomEvent) })
     const c = enhance({ onLeave: () => { throw new Error("Hook failed") } }, root)
     await expect(c.setShow(false)).rejects.toThrow("Hook failed"); expect(c.state).toBe("open")
     c.dispose()
@@ -310,7 +310,7 @@ describe("Interruption, hooks and focus ownership", () => {
     expect(root.hidden).toBe(false); expect(errors.some(event => event.detail.error.message === "Late hook")).toBe(true)
   })
   it("refuses to hide focused content without an explicit working target", async () => {
-    const root = fixture(); root.addEventListener("mui:collapse-transition-error", e => e.preventDefault())
+    const root = fixture(); root.addEventListener("m:collapse-transition-error", e => e.preventDefault())
     root.querySelector("input")!.focus(); const c = enhance({}, root)
     await expect(c.setShow(false)).rejects.toThrow(/focus/)
     expect(root.hidden).toBe(false); expect(root.contains(document.activeElement)).toBe(true)

@@ -86,8 +86,8 @@ const keys = ["size", "min", "max", "direction", "disabled", "resizeTriggerSize"
 /** Two original native panes; only separator semantics and numeric grid geometry are owned. */
 export function createSplit(element: HTMLElement, options: SplitOptions = {}): SplitController {
   const document = element?.ownerDocument, view = document?.defaultView
-  if (!view || !(element instanceof view.HTMLElement) || !element.matches(".mui-split[data-split]")
-    || !["div", "section"].includes(element.localName) || (element as Owned)[owner]) throw new TypeError("Use an unowned native div/section.mui-split[data-split].")
+  if (!view || !(element instanceof view.HTMLElement) || !element.matches(".m-split[data-split]")
+    || !["div", "section"].includes(element.localName) || (element as Owned)[owner]) throw new TypeError("Use an unowned native div/section.m-split[data-split].")
   function object(value: unknown, allowed: readonly string[]) {
     if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).some(key => !allowed.includes(key))) throw new TypeError("Unsupported Split configuration.")
   }
@@ -118,7 +118,7 @@ export function createSplit(element: HTMLElement, options: SplitOptions = {}): S
     return result
   }
   function validate() {
-    if (!element.isConnected || element.getRootNode() !== document || !element.matches(".mui-split[data-split]") || element.hasAttribute("role")
+    if (!element.isConnected || element.getRootNode() !== document || !element.matches(".m-split[data-split]") || element.hasAttribute("role")
       || element.children.length !== 3 || element.children[0] !== pane1 || element.children[1] !== handle || element.children[2] !== pane2
       || pane1.getAttribute("data-split-pane") !== "1" || pane2.getAttribute("data-split-pane") !== "2" || !handle.hasAttribute("data-split-handle")
       || !["div", "section"].includes(handle.localName) || !named(handle) || handle.hasAttribute("contenteditable")
@@ -233,8 +233,8 @@ export function createSplit(element: HTMLElement, options: SplitOptions = {}): S
       attr(element, "data-split-layout", value.status)
       attr(element, "data-split-pointer", pointerSupported ? "" : null)
       attr(element, "data-split-disabled", value.disabled ? "" : null)
-      style("--mui-split-handle-size", `${values.resizeTriggerSize}px`)
-      if (value.status === "ready") { style("--mui-split-first", `${next.pixels}px`); attr(handle, "hidden", null) }
+      style("--m-split-handle-size", `${values.resizeTriggerSize}px`)
+      if (value.status === "ready") { style("--m-split-first", `${next.pixels}px`); attr(handle, "hidden", null) }
       const losingPane = value.collapsed === 1 ? pane1 : value.collapsed === 2 ? pane2 : null
       if (active instanceof view!.HTMLElement && (losingPane?.contains(active) || value.status !== "ready" && active === handle)) {
         if (value.status === "ready") handle.focus({ preventScroll: true })
@@ -257,7 +257,7 @@ export function createSplit(element: HTMLElement, options: SplitOptions = {}): S
   function emit(name: string, detail: SplitChange | SplitDrag | SplitState) {
     element.dispatchEvent(new view!.CustomEvent(name, { bubbles: true, detail }))
   }
-  function change(source: SplitChange["source"], event: Event) { emit("mui:split-change", { size: values.size, state: state(), source, event }) }
+  function change(source: SplitChange["source"], event: Event) { emit("m:split-change", { size: values.size, state: state(), source, event }) }
   function dragEvent(name: string, job: Drag, cancelled: boolean, reason: string, event: Event | null) {
     if (job.started) emit(name, { pointerId: job.id, cancelled, reason, state: state(), event })
   }
@@ -279,11 +279,11 @@ export function createSplit(element: HTMLElement, options: SplitOptions = {}): S
     if (notify && previous !== values.size && event) change("cancel", event)
     if (drag !== job) return
     detach()
-    if (notify) dragEvent("mui:split-drag-end", job, true, reason, event)
+    if (notify) dragEvent("m:split-drag-end", job, true, reason, event)
   }
   function fail(cause: unknown) {
     error = cause; disconnect()
-    element.dispatchEvent(new view!.CustomEvent("mui:split-error", { bubbles: true, detail: { error: cause } }))
+    element.dispatchEvent(new view!.CustomEvent("m:split-error", { bubbles: true, detail: { error: cause } }))
   }
   function safe(action: () => void) { try { action() } catch (cause) { fail(cause) } }
   function sameGeometry(a: Geometry, b: Geometry) {
@@ -295,7 +295,7 @@ export function createSplit(element: HTMLElement, options: SplitOptions = {}): S
     const next = measure()
     if (drag && !sameGeometry(drag.geometry, next)) cancel(reason, null)
     apply(measure())
-    if (notify && connected) emit("mui:split-layout", state())
+    if (notify && connected) emit("m:split-layout", state())
   }
   function scheduleGeometry() {
     if (!connected || geometryFrame) return
@@ -320,7 +320,7 @@ export function createSplit(element: HTMLElement, options: SplitOptions = {}): S
     if (!Number.isFinite(coordinate)) throw new TypeError("Pointer coordinates must be finite.")
     const pixels = (next.rtl ? next.start - coordinate : coordinate - next.start) / next.scale - next.gap - job.offset
     userSize(pixels, "pointer", event)
-    if (drag === job && connected) dragEvent("mui:split-drag-move", job, false, "pointer", event)
+    if (drag === job && connected) dragEvent("m:split-drag-move", job, false, "pointer", event)
   }
   function pointerDown(event: PointerEvent) {
     if (!pointerSupported || drag || event.button !== 0 || !event.isPrimary || event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return
@@ -338,7 +338,7 @@ export function createSplit(element: HTMLElement, options: SplitOptions = {}): S
       if (!connected || drag !== job) return
       attr(element, "data-split-dragging", "")
       job.started = true
-      dragEvent("mui:split-drag-start", job, false, "pointer", event)
+      dragEvent("m:split-drag-start", job, false, "pointer", event)
     })
   }
   function pointerMove(event: PointerEvent) {
@@ -360,7 +360,7 @@ export function createSplit(element: HTMLElement, options: SplitOptions = {}): S
       if (frame) view!.cancelAnimationFrame(frame); frame = 0; pending = null
       point(event)
       if (drag !== job) return
-      detach(); dragEvent("mui:split-drag-end", job, false, "pointerup", event)
+      detach(); dragEvent("m:split-drag-end", job, false, "pointerup", event)
     })
   }
   function keydown(event: KeyboardEvent) {
@@ -390,7 +390,7 @@ export function createSplit(element: HTMLElement, options: SplitOptions = {}): S
       attr(element, "data-split-direction", values.direction)
       if (!printMedia?.matches) apply(measure())
     } catch (cause) { fail(cause); throw cause }
-    if (job) dragEvent("mui:split-drag-end", job, true, reason, null)
+    if (job) dragEvent("m:split-drag-end", job, true, reason, null)
   }
   function listen(name: string, listener: EventListener) {
     handle.addEventListener(name, listener); removers.push(() => handle.removeEventListener(name, listener))
@@ -399,9 +399,9 @@ export function createSplit(element: HTMLElement, options: SplitOptions = {}): S
     const job = detach()
     if (job) {
       values = { ...values, size: job.size }; version++
-      dragEvent("mui:split-drag-end", job, true, "print", null)
+      dragEvent("m:split-drag-end", job, true, "print", null)
     }
-    if (notify && connected) emit("mui:split-layout", state())
+    if (notify && connected) emit("m:split-layout", state())
   }
   function printChanged() { if (!connected) return; if (printMedia?.matches) pausePrint(); else scheduleGeometry() }
   function disconnect() {
@@ -415,7 +415,7 @@ export function createSplit(element: HTMLElement, options: SplitOptions = {}): S
     removers.splice(0).forEach(remove => remove())
     detach(); writes.restore()
     for (const node of nodes) if ((node as Owned)[owner] === token) delete (node as Owned)[owner]
-    if (job) dragEvent("mui:split-drag-end", job, true, "disconnect", null)
+    if (job) dragEvent("m:split-drag-end", job, true, "disconnect", null)
   }
   try {
     const { defaultSize: ignored, ...initial } = options

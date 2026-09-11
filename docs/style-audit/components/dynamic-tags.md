@@ -35,7 +35,7 @@ source's icon-only 14px close control by design; text is not hidden to manufactu
 
 Default controls use Naive's light `#333639`, white and `#e0e0e6` roles and dark
 white-opacity roles. Primary, info, success, warning and error tags use semantic
-light/dark border and tint pairs. Public `--mui-tags-*` author overrides remain intact.
+light/dark border and tint pairs. Public `--m-tags-*` author overrides remain intact.
 
 Forced colors use Canvas/Button system roles. Print keeps committed native values while
 hiding the editor, remove controls and transient status. Dynamic Tags still owns only

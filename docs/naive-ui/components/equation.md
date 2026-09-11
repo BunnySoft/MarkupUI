@@ -19,7 +19,7 @@ The style audit is **not applicable** as component-skin parity. The pinned Equat
 source defines no CSS or theme values; it preserves the wrapper tag/class returned by
 the supplied KaTeX renderer, so external KaTeX CSS and fonts own its inline/display,
 typography and paint. MarkupUI's authored MathML alternative has no package stylesheet
-or `--mui-equation-*` defaults to align.
+or `--m-equation-*` defaults to align.
 
 Reviewed the pinned [public API](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/equation/demos/enUS/index.demo-entry.md#L40-L48),
 [implementation](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/equation/src/Equation.tsx#L7-L43),

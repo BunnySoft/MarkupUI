@@ -6,1131 +6,1131 @@
     <meta name="description" content="MarkupUI components, examples, source code, and API documentation">
     <title>Legacy showcase - MarkupUI</title>
     <link rel="icon" href="data:,">
-    <link id="mui-styles" rel="stylesheet" href="../dist/markup-ui.css">
-    <link id="mui-advanced-styles" rel="stylesheet" href="../dist/markup-ui-advanced.css">
-    <link id="mui-widgets-styles" rel="stylesheet" href="../dist/markup-ui-widgets.css">
+    <link id="m-styles" rel="stylesheet" href="../dist/markup-ui.css">
+    <link id="m-advanced-styles" rel="stylesheet" href="../dist/markup-ui-advanced.css">
+    <link id="m-widgets-styles" rel="stylesheet" href="../dist/markup-ui-widgets.css">
     <link rel="stylesheet" href="./legacy.css">
     <script type="module" src="./legacy.js"></script>
   </head>
   <body>
-    <mui-app id="demo-app" motion="full">
-      <mui-header class="app-header">
-        <mui-row align="center" gap="md">
-          <mui-center class="brand-mark" aria-hidden="true">M</mui-center>
-          <mui-stack>
-            <mui-strong>MarkupUI</mui-strong>
-            <mui-text class="subtitle">Browser-native component documentation</mui-text>
-          </mui-stack>
-          <mui-spacer></mui-spacer>
-          <mui-wrap class="header-actions" gap="xs" aria-label="Theme">
-            <mui-button mui-action="demo.theme" mui-param-name="light">Light</mui-button>
-            <mui-button mui-action="demo.theme" mui-param-name="dark">Dark</mui-button>
-            <mui-button mui-action="demo.theme" mui-param-name="ocean">Ocean</mui-button>
-          </mui-wrap>
-        </mui-row>
-      </mui-header>
+    <m-app id="demo-app" motion="full">
+      <m-header class="app-header">
+        <m-row align="center" gap="md">
+          <m-center class="brand-mark" aria-hidden="true">M</m-center>
+          <m-stack>
+            <m-strong>MarkupUI</m-strong>
+            <m-text class="subtitle">Browser-native component documentation</m-text>
+          </m-stack>
+          <m-spacer></m-spacer>
+          <m-wrap class="header-actions" gap="xs" aria-label="Theme">
+            <m-button m-action="demo.theme" m-param-name="light">Light</m-button>
+            <m-button m-action="demo.theme" m-param-name="dark">Dark</m-button>
+            <m-button m-action="demo.theme" m-param-name="ocean">Ocean</m-button>
+          </m-wrap>
+        </m-row>
+      </m-header>
 
-      <mui-main class="app-shell">
-        <mui-stack gap="lg">
-          <mui-section class="hero" aria-label="Introduction">
-            <mui-badge>Zero runtime dependencies</mui-badge>
-            <mui-heading level="1">Everything in MarkupUI, on one page.</mui-heading>
-            <mui-text>
+      <m-main class="app-shell">
+        <m-stack gap="lg">
+          <m-section class="hero" aria-label="Introduction">
+            <m-badge>Zero runtime dependencies</m-badge>
+            <m-heading level="1">Everything in MarkupUI, on one page.</m-heading>
+            <m-text>
               Components, layout, state, two-way binding, actions, events, themes, plugins,
               safe dynamic HTML, and the optional query helper—all built on browser standards.
-            </mui-text>
-            <mui-wrap gap="sm">
-              <mui-button variant="primary" mui-action="open" mui-param-target="#about-dialog">
+            </m-text>
+            <m-wrap gap="sm">
+              <m-button variant="primary" m-action="open" m-param-target="#about-dialog">
                 How it works
-              </mui-button>
-              <mui-link
+              </m-button>
+              <m-link
                 class="text-link"
                 href="#forms"
-                mui-action="demo.panel"
-                mui-param-panel="forms"
+                m-action="demo.panel"
+                m-param-panel="forms"
               >
                 Try the form
-              </mui-link>
-              <mui-link
+              </m-link>
+              <m-link
                 class="text-link"
                 href="#runtime"
-                mui-action="demo.panel"
-                mui-param-panel="runtime"
+                m-action="demo.panel"
+                m-param-panel="runtime"
               >
                 Explore runtime features
-              </mui-link>
-            </mui-wrap>
-          </mui-section>
+              </m-link>
+            </m-wrap>
+          </m-section>
 
-          <mui-grid class="summary-grid" columns="repeat(4, minmax(0, 1fr))" gap="md">
-            <mui-card class="summary-card">
-              <mui-strong>92+</mui-strong>
-              <mui-text>built-in elements</mui-text>
-            </mui-card>
-            <mui-card class="summary-card">
-              <mui-strong>0</mui-strong>
-              <mui-text>runtime packages</mui-text>
-            </mui-card>
-            <mui-card class="summary-card">
-              <mui-strong>3</mui-strong>
-              <mui-text>browser distributions</mui-text>
-            </mui-card>
-            <mui-card class="summary-card">
-              <mui-strong>HTML</mui-strong>
-              <mui-text>primary authoring format</mui-text>
-            </mui-card>
-          </mui-grid>
+          <m-grid class="summary-grid" columns="repeat(4, minmax(0, 1fr))" gap="md">
+            <m-card class="summary-card">
+              <m-strong>92+</m-strong>
+              <m-text>built-in elements</m-text>
+            </m-card>
+            <m-card class="summary-card">
+              <m-strong>0</m-strong>
+              <m-text>runtime packages</m-text>
+            </m-card>
+            <m-card class="summary-card">
+              <m-strong>3</m-strong>
+              <m-text>browser distributions</m-text>
+            </m-card>
+            <m-card class="summary-card">
+              <m-strong>HTML</m-strong>
+              <m-text>primary authoring format</m-text>
+            </m-card>
+          </m-grid>
 
-          <mui-grid class="showcase-workspace" columns="240px minmax(0, 1fr) 180px" gap="lg">
-            <mui-card class="showcase-sidebar">
-              <mui-stack class="sidebar-list" gap="xs" role="navigation" aria-label="Demo sections">
-                <mui-text class="sidebar-title">Components</mui-text>
-                <mui-input
+          <m-grid class="showcase-workspace" columns="240px minmax(0, 1fr) 180px" gap="lg">
+            <m-card class="showcase-sidebar">
+              <m-stack class="sidebar-list" gap="xs" role="navigation" aria-label="Demo sections">
+                <m-text class="sidebar-title">Components</m-text>
+                <m-input
                   id="component-search"
                   aria-label="Search components"
                   placeholder="Search components"
-                ></mui-input>
-                <mui-button
+                ></m-input>
+                <m-button
                   class="sidebar-item active"
-                  mui-action="demo.panel"
-                  mui-param-panel="layout"
+                  m-action="demo.panel"
+                  m-param-panel="layout"
                 >
                   Layout
-                </mui-button>
-                <mui-button class="sidebar-item" mui-action="demo.panel" mui-param-panel="content">
+                </m-button>
+                <m-button class="sidebar-item" m-action="demo.panel" m-param-panel="content">
                   Common components
-                </mui-button>
-                <mui-button class="sidebar-item" mui-action="demo.panel" mui-param-panel="forms">
+                </m-button>
+                <m-button class="sidebar-item" m-action="demo.panel" m-param-panel="forms">
                   Forms and binding
-                </mui-button>
-                <mui-button
+                </m-button>
+                <m-button
                   class="sidebar-item"
-                  mui-action="demo.panel"
-                  mui-param-panel="navigation"
+                  m-action="demo.panel"
+                  m-param-panel="navigation"
                 >
                   Navigation
-                </mui-button>
-                <mui-button class="sidebar-item" mui-action="demo.panel" mui-param-panel="advanced">
+                </m-button>
+                <m-button class="sidebar-item" m-action="demo.panel" m-param-panel="advanced">
                   Advanced plugin
-                </mui-button>
-                <mui-button class="sidebar-item" mui-action="demo.panel" mui-param-panel="widgets">
+                </m-button>
+                <m-button class="sidebar-item" m-action="demo.panel" m-param-panel="widgets">
                   Widgets plugin
-                </mui-button>
-                <mui-button class="sidebar-item" mui-action="demo.panel" mui-param-panel="themes">
+                </m-button>
+                <m-button class="sidebar-item" m-action="demo.panel" m-param-panel="themes">
                   Themes
-                </mui-button>
-                <mui-button class="sidebar-item" mui-action="demo.panel" mui-param-panel="overlays">
+                </m-button>
+                <m-button class="sidebar-item" m-action="demo.panel" m-param-panel="overlays">
                   Overlays
-                </mui-button>
-                <mui-button class="sidebar-item" mui-action="demo.panel" mui-param-panel="runtime">
+                </m-button>
+                <m-button class="sidebar-item" m-action="demo.panel" m-param-panel="runtime">
                   Runtime features
-                </mui-button>
-                <mui-button
+                </m-button>
+                <m-button
                   class="sidebar-item"
-                  mui-action="demo.panel"
-                  mui-param-panel="distribution"
+                  m-action="demo.panel"
+                  m-param-panel="distribution"
                 >
                   Distribution
-                </mui-button>
-                <mui-text id="search-empty" class="sidebar-empty" hidden>No components found</mui-text>
-              </mui-stack>
-            </mui-card>
+                </m-button>
+                <m-text id="search-empty" class="sidebar-empty" hidden>No components found</m-text>
+              </m-stack>
+            </m-card>
 
-            <mui-stack class="panel-host">
-          <mui-section
+            <m-stack class="panel-host">
+          <m-section
             id="layout"
             class="showcase-section"
             aria-label="Layout components"
-            mui-visible="panels.layout"
+            m-visible="panels.layout"
           >
-            <mui-stack gap="md">
-              <mui-stack class="section-heading">
-                <mui-badge>Layout</mui-badge>
-                <mui-heading level="2">Flexbox-first composition</mui-heading>
-                <mui-text class="muted">
+            <m-stack gap="md">
+              <m-stack class="section-heading">
+                <m-badge>Layout</m-badge>
+                <m-heading level="2">Flexbox-first composition</m-heading>
+                <m-text class="muted">
                   Stack, row, wrap, center, spacer, and grid cover normal application layouts.
-                </mui-text>
-              </mui-stack>
+                </m-text>
+              </m-stack>
 
-              <mui-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Stack and row</mui-heading>
-                    <mui-stack class="demo-surface" gap="sm">
-                      <mui-alert>Vertical stack item</mui-alert>
-                      <mui-row gap="sm">
-                        <mui-badge>Row A</mui-badge>
-                        <mui-badge>Row B</mui-badge>
-                        <mui-spacer></mui-spacer>
-                        <mui-badge>Spacer</mui-badge>
-                      </mui-row>
-                    </mui-stack>
-                    <mui-code class="code-block">
-                      &lt;mui-stack gap="sm"&gt;...&lt;/mui-stack&gt;
-                    </mui-code>
-                  </mui-stack>
-                </mui-card>
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Stack and row</m-heading>
+                    <m-stack class="demo-surface" gap="sm">
+                      <m-alert>Vertical stack item</m-alert>
+                      <m-row gap="sm">
+                        <m-badge>Row A</m-badge>
+                        <m-badge>Row B</m-badge>
+                        <m-spacer></m-spacer>
+                        <m-badge>Spacer</m-badge>
+                      </m-row>
+                    </m-stack>
+                    <m-code class="code-block">
+                      &lt;m-stack gap="sm"&gt;...&lt;/m-stack&gt;
+                    </m-code>
+                  </m-stack>
+                </m-card>
 
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Wrap and center</mui-heading>
-                    <mui-center class="demo-surface center-demo">
-                      <mui-wrap justify="center" gap="sm">
-                        <mui-badge>Responsive</mui-badge>
-                        <mui-badge>Wrapping</mui-badge>
-                        <mui-badge>Centered</mui-badge>
-                        <mui-badge>Content</mui-badge>
-                      </mui-wrap>
-                    </mui-center>
-                    <mui-code class="code-block">
-                      &lt;mui-center&gt;&lt;mui-wrap gap="sm"&gt;...&lt;/mui-wrap&gt;&lt;/mui-center&gt;
-                    </mui-code>
-                  </mui-stack>
-                </mui-card>
-              </mui-grid>
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Wrap and center</m-heading>
+                    <m-center class="demo-surface center-demo">
+                      <m-wrap justify="center" gap="sm">
+                        <m-badge>Responsive</m-badge>
+                        <m-badge>Wrapping</m-badge>
+                        <m-badge>Centered</m-badge>
+                        <m-badge>Content</m-badge>
+                      </m-wrap>
+                    </m-center>
+                    <m-code class="code-block">
+                      &lt;m-center&gt;&lt;m-wrap gap="sm"&gt;...&lt;/m-wrap&gt;&lt;/m-center&gt;
+                    </m-code>
+                  </m-stack>
+                </m-card>
+              </m-grid>
 
-              <mui-card>
-                <mui-stack gap="md">
-                  <mui-heading level="3">CSS Grid</mui-heading>
-                  <mui-grid class="mini-grid" columns="repeat(3, minmax(0, 1fr))" gap="sm">
-                    <mui-center>One</mui-center>
-                    <mui-center>Two</mui-center>
-                    <mui-center>Three</mui-center>
-                    <mui-center>Four</mui-center>
-                    <mui-center>Five</mui-center>
-                    <mui-center>Six</mui-center>
-                  </mui-grid>
-                </mui-stack>
-              </mui-card>
-            </mui-stack>
-          </mui-section>
+              <m-card>
+                <m-stack gap="md">
+                  <m-heading level="3">CSS Grid</m-heading>
+                  <m-grid class="mini-grid" columns="repeat(3, minmax(0, 1fr))" gap="sm">
+                    <m-center>One</m-center>
+                    <m-center>Two</m-center>
+                    <m-center>Three</m-center>
+                    <m-center>Four</m-center>
+                    <m-center>Five</m-center>
+                    <m-center>Six</m-center>
+                  </m-grid>
+                </m-stack>
+              </m-card>
+            </m-stack>
+          </m-section>
 
-          <mui-section
+          <m-section
             id="content"
             class="showcase-section"
             aria-label="Common components"
-            mui-visible="panels.content"
+            m-visible="panels.content"
           >
-            <mui-stack gap="md">
-              <mui-stack class="section-heading">
-                <mui-badge>Common</mui-badge>
-                <mui-heading level="2">Common components</mui-heading>
-                <mui-text class="muted">
+            <m-stack gap="md">
+              <m-stack class="section-heading">
+                <m-badge>Common</m-badge>
+                <m-heading level="2">Common components</m-heading>
+                <m-text class="muted">
                   Typography, buttons, links, status, surfaces, separators, and feedback used by
                   normal application pages.
-                </mui-text>
-              </mui-stack>
+                </m-text>
+              </m-stack>
 
-              <mui-card>
-                <mui-stack gap="lg">
-                  <mui-stack gap="sm">
-                    <mui-heading level="3">Button types</mui-heading>
-                    <mui-wrap gap="sm">
-                      <mui-button>Default button</mui-button>
-                      <mui-button type="primary">Primary</mui-button>
-                      <mui-button type="info">Info</mui-button>
-                      <mui-button type="success">Success</mui-button>
-                      <mui-button type="warning">Warning</mui-button>
-                      <mui-button type="error">Error</mui-button>
-                    </mui-wrap>
-                  </mui-stack>
-                  <mui-stack gap="sm">
-                    <mui-heading level="3">Hierarchy and borders</mui-heading>
-                    <mui-wrap gap="sm">
-                      <mui-button secondary>Secondary</mui-button>
-                      <mui-button type="primary" secondary>Primary secondary</mui-button>
-                      <mui-button tertiary>Tertiary</mui-button>
-                      <mui-button quaternary>Quaternary</mui-button>
-                      <mui-button dashed>Dashed</mui-button>
-                      <mui-button type="primary" ghost>Ghost</mui-button>
-                      <mui-button type="text">Text button</mui-button>
-                    </mui-wrap>
-                  </mui-stack>
-                  <mui-stack gap="sm">
-                    <mui-heading level="3">Sizes, shapes, and states</mui-heading>
-                    <mui-wrap gap="sm" align="center">
-                      <mui-button size="tiny">Tiny</mui-button>
-                      <mui-button size="small">Small</mui-button>
-                      <mui-button>Medium</mui-button>
-                      <mui-button size="large">Large</mui-button>
-                      <mui-button round>Round</mui-button>
-                      <mui-button circle aria-label="Add">+</mui-button>
-                      <mui-button type="primary" loading>Loading</mui-button>
-                      <mui-button disabled>Disabled</mui-button>
-                      <mui-button-group aria-label="Grouped actions">
-                        <mui-button>Previous</mui-button>
-                        <mui-button>Current</mui-button>
-                        <mui-button>Next</mui-button>
-                      </mui-button-group>
-                    </mui-wrap>
-                    <mui-button block>Block button</mui-button>
-                  </mui-stack>
-                  <mui-divider></mui-divider>
-                  <mui-row align="center" gap="md" wrap>
-                    <mui-link class="text-link" href="#forms">Normal link</mui-link>
-                    <mui-badge>Status badge</mui-badge>
-                    <mui-tag>Standard tag</mui-tag>
-                    <mui-avatar alt="MarkupUI">M</mui-avatar>
-                    <mui-text class="muted">Secondary supporting text</mui-text>
-                  </mui-row>
-                </mui-stack>
-              </mui-card>
+              <m-card>
+                <m-stack gap="lg">
+                  <m-stack gap="sm">
+                    <m-heading level="3">Button types</m-heading>
+                    <m-wrap gap="sm">
+                      <m-button>Default button</m-button>
+                      <m-button type="primary">Primary</m-button>
+                      <m-button type="info">Info</m-button>
+                      <m-button type="success">Success</m-button>
+                      <m-button type="warning">Warning</m-button>
+                      <m-button type="error">Error</m-button>
+                    </m-wrap>
+                  </m-stack>
+                  <m-stack gap="sm">
+                    <m-heading level="3">Hierarchy and borders</m-heading>
+                    <m-wrap gap="sm">
+                      <m-button secondary>Secondary</m-button>
+                      <m-button type="primary" secondary>Primary secondary</m-button>
+                      <m-button tertiary>Tertiary</m-button>
+                      <m-button quaternary>Quaternary</m-button>
+                      <m-button dashed>Dashed</m-button>
+                      <m-button type="primary" ghost>Ghost</m-button>
+                      <m-button type="text">Text button</m-button>
+                    </m-wrap>
+                  </m-stack>
+                  <m-stack gap="sm">
+                    <m-heading level="3">Sizes, shapes, and states</m-heading>
+                    <m-wrap gap="sm" align="center">
+                      <m-button size="tiny">Tiny</m-button>
+                      <m-button size="small">Small</m-button>
+                      <m-button>Medium</m-button>
+                      <m-button size="large">Large</m-button>
+                      <m-button round>Round</m-button>
+                      <m-button circle aria-label="Add">+</m-button>
+                      <m-button type="primary" loading>Loading</m-button>
+                      <m-button disabled>Disabled</m-button>
+                      <m-button-group aria-label="Grouped actions">
+                        <m-button>Previous</m-button>
+                        <m-button>Current</m-button>
+                        <m-button>Next</m-button>
+                      </m-button-group>
+                    </m-wrap>
+                    <m-button block>Block button</m-button>
+                  </m-stack>
+                  <m-divider></m-divider>
+                  <m-row align="center" gap="md" wrap>
+                    <m-link class="text-link" href="#forms">Normal link</m-link>
+                    <m-badge>Status badge</m-badge>
+                    <m-tag>Standard tag</m-tag>
+                    <m-avatar alt="MarkupUI">M</m-avatar>
+                    <m-text class="muted">Secondary supporting text</m-text>
+                  </m-row>
+                </m-stack>
+              </m-card>
 
-              <mui-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
-                <mui-card>
-                  <mui-stack gap="sm">
-                    <mui-heading level="3">Typography</mui-heading>
-                    <mui-heading level="1" class="sample-h1">Headline one</mui-heading>
-                    <mui-heading level="2">Headline two</mui-heading>
-                    <mui-heading level="3">Headline three</mui-heading>
-                    <mui-text>
-                      Normal text supports <mui-strong>strong emphasis</mui-strong>,
-                      <mui-code>inline code</mui-code>, and
-                      <mui-link class="text-link" href="#runtime">links</mui-link>.
-                    </mui-text>
-                  </mui-stack>
-                </mui-card>
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+                <m-card>
+                  <m-stack gap="sm">
+                    <m-heading level="3">Typography</m-heading>
+                    <m-heading level="1" class="sample-h1">Headline one</m-heading>
+                    <m-heading level="2">Headline two</m-heading>
+                    <m-heading level="3">Headline three</m-heading>
+                    <m-text>
+                      Normal text supports <m-strong>strong emphasis</m-strong>,
+                      <m-code>inline code</m-code>, and
+                      <m-link class="text-link" href="#runtime">links</m-link>.
+                    </m-text>
+                  </m-stack>
+                </m-card>
 
-                <mui-card>
-                  <mui-stack gap="sm">
-                    <mui-alert>Default informational alert</mui-alert>
-                    <mui-row gap="sm" wrap>
-                      <mui-badge>Badge</mui-badge>
-                      <mui-badge>Native DOM</mui-badge>
-                      <mui-badge>Light DOM</mui-badge>
-                    </mui-row>
-                    <mui-text class="muted">
+                <m-card>
+                  <m-stack gap="sm">
+                    <m-alert>Default informational alert</m-alert>
+                    <m-row gap="sm" wrap>
+                      <m-badge>Badge</m-badge>
+                      <m-badge>Native DOM</m-badge>
+                      <m-badge>Light DOM</m-badge>
+                    </m-row>
+                    <m-text class="muted">
                       Cards, alerts, and badges inherit active theme tokens.
-                    </mui-text>
-                  </mui-stack>
-                </mui-card>
-              </mui-grid>
+                    </m-text>
+                  </m-stack>
+                </m-card>
+              </m-grid>
 
-              <mui-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
-                <mui-card>
-                  <mui-card-header>
-                    <mui-heading level="3">Compound card anatomy</mui-heading>
-                    <mui-tag>Structured</mui-tag>
-                  </mui-card-header>
-                  <mui-card-content>
-                    <mui-stack gap="md">
-                      <mui-row align="center" gap="sm">
-                        <mui-avatar alt="Ada Lovelace">AL</mui-avatar>
-                        <mui-stack>
-                          <mui-strong>Ada Lovelace</mui-strong>
-                          <mui-text class="muted">Browser platform engineer</mui-text>
-                        </mui-stack>
-                      </mui-row>
-                      <mui-divider></mui-divider>
-                      <mui-text>
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+                <m-card>
+                  <m-card-header>
+                    <m-heading level="3">Compound card anatomy</m-heading>
+                    <m-tag>Structured</m-tag>
+                  </m-card-header>
+                  <m-card-content>
+                    <m-stack gap="md">
+                      <m-row align="center" gap="sm">
+                        <m-avatar alt="Ada Lovelace">AL</m-avatar>
+                        <m-stack>
+                          <m-strong>Ada Lovelace</m-strong>
+                          <m-text class="muted">Browser platform engineer</m-text>
+                        </m-stack>
+                      </m-row>
+                      <m-divider></m-divider>
+                      <m-text>
                         Header, content, and footer own the standard card layout.
-                      </mui-text>
-                    </mui-stack>
-                  </mui-card-content>
-                  <mui-card-footer>
-                    <mui-button-group aria-label="Profile actions">
-                      <mui-button>Cancel</mui-button>
-                      <mui-button variant="primary">Open profile</mui-button>
-                    </mui-button-group>
-                  </mui-card-footer>
-                </mui-card>
+                      </m-text>
+                    </m-stack>
+                  </m-card-content>
+                  <m-card-footer>
+                    <m-button-group aria-label="Profile actions">
+                      <m-button>Cancel</m-button>
+                      <m-button variant="primary">Open profile</m-button>
+                    </m-button-group>
+                  </m-card-footer>
+                </m-card>
 
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Feedback and status</mui-heading>
-                    <mui-row align="center" gap="sm">
-                      <mui-tag id="demo-tag" closable>Closable tag</mui-tag>
-                      <mui-badge>Progress</mui-badge>
-                    </mui-row>
-                    <mui-progress id="demo-progress" value="42" max="100"></mui-progress>
-                    <mui-button mui-action="demo.progress">Advance progress</mui-button>
-                    <mui-divider></mui-divider>
-                    <mui-skeleton width="100%" height="16px"></mui-skeleton>
-                    <mui-skeleton width="70%" height="16px"></mui-skeleton>
-                    <mui-empty description="No additional results"></mui-empty>
-                  </mui-stack>
-                </mui-card>
-              </mui-grid>
-            </mui-stack>
-          </mui-section>
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Feedback and status</m-heading>
+                    <m-row align="center" gap="sm">
+                      <m-tag id="demo-tag" closable>Closable tag</m-tag>
+                      <m-badge>Progress</m-badge>
+                    </m-row>
+                    <m-progress id="demo-progress" value="42" max="100"></m-progress>
+                    <m-button m-action="demo.progress">Advance progress</m-button>
+                    <m-divider></m-divider>
+                    <m-skeleton width="100%" height="16px"></m-skeleton>
+                    <m-skeleton width="70%" height="16px"></m-skeleton>
+                    <m-empty description="No additional results"></m-empty>
+                  </m-stack>
+                </m-card>
+              </m-grid>
+            </m-stack>
+          </m-section>
 
-          <mui-section
+          <m-section
             id="forms"
             class="showcase-section"
             aria-label="Form components"
-            mui-visible="panels.forms"
+            m-visible="panels.forms"
           >
-            <mui-stack gap="md">
-              <mui-stack class="section-heading">
-                <mui-badge>Forms and binding</mui-badge>
-                <mui-heading level="2">Native controls with optional state</mui-heading>
-                <mui-text class="muted">
+            <m-stack gap="md">
+              <m-stack class="section-heading">
+                <m-badge>Forms and binding</m-badge>
+                <m-heading level="2">Native controls with optional state</m-heading>
+                <m-text class="muted">
                   Value and checked controls use two-way binding with optional form validation.
-                </mui-text>
-              </mui-stack>
+                </m-text>
+              </m-stack>
 
-              <mui-grid class="form-grid" columns="minmax(0, 1.2fr) minmax(280px, .8fr)" gap="md">
-                <mui-card>
-                  <mui-form id="profile-form">
-                    <mui-stack gap="md">
-                      <mui-form-item
+              <m-grid class="form-grid" columns="minmax(0, 1.2fr) minmax(280px, .8fr)" gap="md">
+                <m-card>
+                  <m-form id="profile-form">
+                    <m-stack gap="md">
+                      <m-form-item
                         label="Display name"
                         required
                         minlength="3"
                         required-message="Enter a display name."
                       >
-                        <mui-input
+                        <m-input
                           name="name"
-                          mui-bind="form.name"
+                          m-bind="form.name"
                           placeholder="Enter your name"
-                        ></mui-input>
-                      </mui-form-item>
+                        ></m-input>
+                      </m-form-item>
 
-                      <mui-form-item label="Role" required>
-                        <mui-select name="role" mui-bind="form.role" value="developer">
-                          <mui-option value="developer">Developer</mui-option>
-                          <mui-option value="designer">Designer</mui-option>
-                          <mui-option value="analyst">Analyst</mui-option>
-                        </mui-select>
-                      </mui-form-item>
+                      <m-form-item label="Role" required>
+                        <m-select name="role" m-bind="form.role" value="developer">
+                          <m-option value="developer">Developer</m-option>
+                          <m-option value="designer">Designer</m-option>
+                          <m-option value="analyst">Analyst</m-option>
+                        </m-select>
+                      </m-form-item>
 
-                      <mui-form-item label="City">
-                        <mui-autocomplete
+                      <m-form-item label="City">
+                        <m-autocomplete
                           name="city"
-                          mui-bind="form.city"
+                          m-bind="form.city"
                           placeholder="Start typing"
                         >
-                          <mui-option value="London">London</mui-option>
-                          <mui-option value="New York">New York</mui-option>
-                          <mui-option value="Singapore">Singapore</mui-option>
-                        </mui-autocomplete>
-                      </mui-form-item>
+                          <m-option value="London">London</m-option>
+                          <m-option value="New York">New York</m-option>
+                          <m-option value="Singapore">Singapore</m-option>
+                        </m-autocomplete>
+                      </m-form-item>
 
-                      <mui-form-item label="Plan" required>
-                        <mui-radio-group mui-bind="form.plan">
-                          <mui-radio value="starter">Starter</mui-radio>
-                          <mui-radio value="professional">Professional</mui-radio>
-                          <mui-radio value="enterprise">Enterprise</mui-radio>
-                        </mui-radio-group>
-                      </mui-form-item>
+                      <m-form-item label="Plan" required>
+                        <m-radio-group m-bind="form.plan">
+                          <m-radio value="starter">Starter</m-radio>
+                          <m-radio value="professional">Professional</m-radio>
+                          <m-radio value="enterprise">Enterprise</m-radio>
+                        </m-radio-group>
+                      </m-form-item>
 
-                      <mui-form-item label="Confidence">
-                        <mui-slider
-                          mui-bind="form.confidence"
+                      <m-form-item label="Confidence">
+                        <m-slider
+                          m-bind="form.confidence"
                           min="0"
                           max="100"
                           step="5"
-                        ></mui-slider>
-                      </mui-form-item>
+                        ></m-slider>
+                      </m-form-item>
 
-                      <mui-form-item label="Notes">
-                        <mui-textarea
+                      <m-form-item label="Notes">
+                        <m-textarea
                           name="notes"
-                          mui-bind="form.notes"
+                          m-bind="form.notes"
                           placeholder="What are you building?"
-                        ></mui-textarea>
-                      </mui-form-item>
+                        ></m-textarea>
+                      </m-form-item>
 
-                      <mui-wrap gap="lg">
-                        <mui-checkbox id="newsletter" checked mui-bind="form.newsletter">
+                      <m-wrap gap="lg">
+                        <m-checkbox id="newsletter" checked m-bind="form.newsletter">
                           Receive release notes
-                        </mui-checkbox>
-                        <mui-switch id="notifications" mui-bind="form.notifications">
+                        </m-checkbox>
+                        <m-switch id="notifications" m-bind="form.notifications">
                           Enable notifications
-                        </mui-switch>
-                      </mui-wrap>
+                        </m-switch>
+                      </m-wrap>
 
-                      <mui-row gap="sm" align="center">
-                        <mui-button mui-action="validate">Validate</mui-button>
-                        <mui-button
+                      <m-row gap="sm" align="center">
+                        <m-button m-action="validate">Validate</m-button>
+                        <m-button
                           variant="primary"
-                          mui-action="demo.save"
-                          mui-disabled="form.busy"
+                          m-action="demo.save"
+                          m-disabled="form.busy"
                         >
                           Save profile
-                        </mui-button>
-                        <mui-button mui-action="demo.reset">Reset</mui-button>
-                        <mui-spacer></mui-spacer>
-                        <mui-badge mui-visible="form.busy">Saving</mui-badge>
-                      </mui-row>
+                        </m-button>
+                        <m-button m-action="demo.reset">Reset</m-button>
+                        <m-spacer></m-spacer>
+                        <m-badge m-visible="form.busy">Saving</m-badge>
+                      </m-row>
 
-                      <mui-alert mui-visible="form.valid">
+                      <m-alert m-visible="form.valid">
                         Form validation passed.
-                      </mui-alert>
-                      <mui-alert mui-visible="form.invalid">
+                      </m-alert>
+                      <m-alert m-visible="form.invalid">
                         Correct the highlighted fields.
-                      </mui-alert>
-                      <mui-alert mui-visible="form.saved">
+                      </m-alert>
+                      <m-alert m-visible="form.saved">
                         Profile saved through a named asynchronous action.
-                      </mui-alert>
-                    </mui-stack>
-                  </mui-form>
-                </mui-card>
+                      </m-alert>
+                    </m-stack>
+                  </m-form>
+                </m-card>
 
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Live state</mui-heading>
-                    <mui-stack class="state-view" gap="sm">
-                      <mui-row>
-                        <mui-text>Name</mui-text>
-                        <mui-spacer></mui-spacer>
-                        <mui-strong mui-text="form.name"></mui-strong>
-                      </mui-row>
-                      <mui-row>
-                        <mui-text>Role</mui-text>
-                        <mui-spacer></mui-spacer>
-                        <mui-strong mui-text="form.role"></mui-strong>
-                      </mui-row>
-                      <mui-row>
-                        <mui-text>City</mui-text>
-                        <mui-spacer></mui-spacer>
-                        <mui-strong mui-text="form.city"></mui-strong>
-                      </mui-row>
-                      <mui-row>
-                        <mui-text>Plan</mui-text>
-                        <mui-spacer></mui-spacer>
-                        <mui-strong mui-text="form.plan"></mui-strong>
-                      </mui-row>
-                      <mui-row>
-                        <mui-text>Confidence</mui-text>
-                        <mui-spacer></mui-spacer>
-                        <mui-strong mui-text="form.confidence"></mui-strong>
-                      </mui-row>
-                      <mui-row>
-                        <mui-text>Newsletter</mui-text>
-                        <mui-spacer></mui-spacer>
-                        <mui-strong mui-text="form.newsletter"></mui-strong>
-                      </mui-row>
-                      <mui-row>
-                        <mui-text>Notifications</mui-text>
-                        <mui-spacer></mui-spacer>
-                        <mui-strong mui-text="form.notifications"></mui-strong>
-                      </mui-row>
-                    </mui-stack>
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Live state</m-heading>
+                    <m-stack class="state-view" gap="sm">
+                      <m-row>
+                        <m-text>Name</m-text>
+                        <m-spacer></m-spacer>
+                        <m-strong m-text="form.name"></m-strong>
+                      </m-row>
+                      <m-row>
+                        <m-text>Role</m-text>
+                        <m-spacer></m-spacer>
+                        <m-strong m-text="form.role"></m-strong>
+                      </m-row>
+                      <m-row>
+                        <m-text>City</m-text>
+                        <m-spacer></m-spacer>
+                        <m-strong m-text="form.city"></m-strong>
+                      </m-row>
+                      <m-row>
+                        <m-text>Plan</m-text>
+                        <m-spacer></m-spacer>
+                        <m-strong m-text="form.plan"></m-strong>
+                      </m-row>
+                      <m-row>
+                        <m-text>Confidence</m-text>
+                        <m-spacer></m-spacer>
+                        <m-strong m-text="form.confidence"></m-strong>
+                      </m-row>
+                      <m-row>
+                        <m-text>Newsletter</m-text>
+                        <m-spacer></m-spacer>
+                        <m-strong m-text="form.newsletter"></m-strong>
+                      </m-row>
+                      <m-row>
+                        <m-text>Notifications</m-text>
+                        <m-spacer></m-spacer>
+                        <m-strong m-text="form.notifications"></m-strong>
+                      </m-row>
+                    </m-stack>
 
-                    <mui-alert>
+                    <m-alert>
                       Latest event:
-                      <mui-strong mui-text="events.latest"></mui-strong>
-                    </mui-alert>
+                      <m-strong m-text="events.latest"></m-strong>
+                    </m-alert>
 
-                    <mui-field label="Lightweight field without validation">
-                      <mui-input placeholder="mui-field remains available"></mui-input>
-                    </mui-field>
+                    <m-field label="Lightweight field without validation">
+                      <m-input placeholder="m-field remains available"></m-input>
+                    </m-field>
 
-                    <mui-code class="code-block">
-                      &lt;mui-radio-group mui-bind="form.plan"&gt;...&lt;/mui-radio-group&gt;
-                    </mui-code>
-                  </mui-stack>
-                </mui-card>
-              </mui-grid>
-            </mui-stack>
-          </mui-section>
+                    <m-code class="code-block">
+                      &lt;m-radio-group m-bind="form.plan"&gt;...&lt;/m-radio-group&gt;
+                    </m-code>
+                  </m-stack>
+                </m-card>
+              </m-grid>
+            </m-stack>
+          </m-section>
 
-          <mui-section
+          <m-section
             id="navigation"
             class="showcase-section"
             aria-label="Navigation components"
-            mui-visible="panels.navigation"
+            m-visible="panels.navigation"
           >
-            <mui-stack gap="md">
-              <mui-stack class="section-heading">
-                <mui-badge>Stage 4</mui-badge>
-                <mui-heading level="2">Navigation and data display</mui-heading>
-                <mui-text class="muted">
+            <m-stack gap="md">
+              <m-stack class="section-heading">
+                <m-badge>Stage 4</m-badge>
+                <m-heading level="2">Navigation and data display</m-heading>
+                <m-text class="muted">
                   Selection, progress, hierarchy, structured lists, descriptions, and statistics.
-                </mui-text>
-              </mui-stack>
+                </m-text>
+              </m-stack>
 
-              <mui-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
-                <mui-card>
-                  <mui-tabs>
-                    <mui-tab title="Overview" selected>
-                      <mui-stack gap="sm">
-                        <mui-heading level="3">Tab one</mui-heading>
-                        <mui-text>Only the selected panel remains visible.</mui-text>
-                      </mui-stack>
-                    </mui-tab>
-                    <mui-tab title="API">
-                      <mui-stack gap="sm">
-                        <mui-heading level="3">Tab two</mui-heading>
-                        <mui-code>tabs.select(1)</mui-code>
-                      </mui-stack>
-                    </mui-tab>
-                    <mui-tab title="Events">
-                      <mui-stack gap="sm">
-                        <mui-heading level="3">Tab three</mui-heading>
-                        <mui-code>mui:change</mui-code>
-                      </mui-stack>
-                    </mui-tab>
-                  </mui-tabs>
-                </mui-card>
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+                <m-card>
+                  <m-tabs>
+                    <m-tab title="Overview" selected>
+                      <m-stack gap="sm">
+                        <m-heading level="3">Tab one</m-heading>
+                        <m-text>Only the selected panel remains visible.</m-text>
+                      </m-stack>
+                    </m-tab>
+                    <m-tab title="API">
+                      <m-stack gap="sm">
+                        <m-heading level="3">Tab two</m-heading>
+                        <m-code>tabs.select(1)</m-code>
+                      </m-stack>
+                    </m-tab>
+                    <m-tab title="Events">
+                      <m-stack gap="sm">
+                        <m-heading level="3">Tab three</m-heading>
+                        <m-code>m:change</m-code>
+                      </m-stack>
+                    </m-tab>
+                  </m-tabs>
+                </m-card>
 
-                <mui-card>
-                  <mui-accordion>
-                    <mui-accordion-item title="What is MarkupUI?" open>
+                <m-card>
+                  <m-accordion>
+                    <m-accordion-item title="What is MarkupUI?" open>
                       A small HTML-first Web Components toolkit.
-                    </mui-accordion-item>
-                    <mui-accordion-item title="Does it require a framework?">
+                    </m-accordion-item>
+                    <m-accordion-item title="Does it require a framework?">
                       No. It runs directly in modern browsers.
-                    </mui-accordion-item>
-                    <mui-accordion-item title="Can content load dynamically?">
+                    </m-accordion-item>
+                    <m-accordion-item title="Can content load dynamically?">
                       Yes. Same-origin fragments are fetched and sanitized.
-                    </mui-accordion-item>
-                  </mui-accordion>
-                </mui-card>
-              </mui-grid>
+                    </m-accordion-item>
+                  </m-accordion>
+                </m-card>
+              </m-grid>
 
-              <mui-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Menu and pagination</mui-heading>
-                    <mui-menu id="demo-menu" value="reports" horizontal>
-                      <mui-menu-item value="home">Home</mui-menu-item>
-                      <mui-menu-item value="reports">Reports</mui-menu-item>
-                      <mui-menu-item value="settings">Settings</mui-menu-item>
-                    </mui-menu>
-                    <mui-pagination id="demo-pagination" page="2" count="5"></mui-pagination>
-                    <mui-alert>
-                      Selection: <mui-strong mui-text="navigation.selection"></mui-strong>
-                    </mui-alert>
-                  </mui-stack>
-                </mui-card>
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Menu and pagination</m-heading>
+                    <m-menu id="demo-menu" value="reports" horizontal>
+                      <m-menu-item value="home">Home</m-menu-item>
+                      <m-menu-item value="reports">Reports</m-menu-item>
+                      <m-menu-item value="settings">Settings</m-menu-item>
+                    </m-menu>
+                    <m-pagination id="demo-pagination" page="2" count="5"></m-pagination>
+                    <m-alert>
+                      Selection: <m-strong m-text="navigation.selection"></m-strong>
+                    </m-alert>
+                  </m-stack>
+                </m-card>
 
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Steps</mui-heading>
-                    <mui-steps id="demo-steps" current="2">
-                      <mui-step>Configure</mui-step>
-                      <mui-step>Review</mui-step>
-                      <mui-step>Publish</mui-step>
-                    </mui-steps>
-                    <mui-button mui-action="demo.next-step">Advance step</mui-button>
-                  </mui-stack>
-                </mui-card>
-              </mui-grid>
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Steps</m-heading>
+                    <m-steps id="demo-steps" current="2">
+                      <m-step>Configure</m-step>
+                      <m-step>Review</m-step>
+                      <m-step>Publish</m-step>
+                    </m-steps>
+                    <m-button m-action="demo.next-step">Advance step</m-button>
+                  </m-stack>
+                </m-card>
+              </m-grid>
 
-              <mui-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Tree</mui-heading>
-                    <mui-tree id="demo-tree">
-                      <mui-tree-node label="Analytics" value="analytics" expanded>
-                        <mui-tree-node label="Reports" value="reports">
-                          <mui-tree-node label="Sales dashboard" value="sales"></mui-tree-node>
-                          <mui-tree-node label="Operations" value="operations"></mui-tree-node>
-                        </mui-tree-node>
-                        <mui-tree-node label="Metrics" value="metrics"></mui-tree-node>
-                      </mui-tree-node>
-                    </mui-tree>
-                  </mui-stack>
-                </mui-card>
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Tree</m-heading>
+                    <m-tree id="demo-tree">
+                      <m-tree-node label="Analytics" value="analytics" expanded>
+                        <m-tree-node label="Reports" value="reports">
+                          <m-tree-node label="Sales dashboard" value="sales"></m-tree-node>
+                          <m-tree-node label="Operations" value="operations"></m-tree-node>
+                        </m-tree-node>
+                        <m-tree-node label="Metrics" value="metrics"></m-tree-node>
+                      </m-tree-node>
+                    </m-tree>
+                  </m-stack>
+                </m-card>
 
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">List</mui-heading>
-                    <mui-list>
-                      <mui-list-item>
-                        <mui-avatar alt="Ada">A</mui-avatar>
-                        <mui-stack>
-                          <mui-strong>Ada</mui-strong>
-                          <mui-text class="muted">Owner</mui-text>
-                        </mui-stack>
-                      </mui-list-item>
-                      <mui-list-item>
-                        <mui-avatar alt="Grace">G</mui-avatar>
-                        <mui-stack>
-                          <mui-strong>Grace</mui-strong>
-                          <mui-text class="muted">Reviewer</mui-text>
-                        </mui-stack>
-                      </mui-list-item>
-                    </mui-list>
-                  </mui-stack>
-                </mui-card>
-              </mui-grid>
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">List</m-heading>
+                    <m-list>
+                      <m-list-item>
+                        <m-avatar alt="Ada">A</m-avatar>
+                        <m-stack>
+                          <m-strong>Ada</m-strong>
+                          <m-text class="muted">Owner</m-text>
+                        </m-stack>
+                      </m-list-item>
+                      <m-list-item>
+                        <m-avatar alt="Grace">G</m-avatar>
+                        <m-stack>
+                          <m-strong>Grace</m-strong>
+                          <m-text class="muted">Reviewer</m-text>
+                        </m-stack>
+                      </m-list-item>
+                    </m-list>
+                  </m-stack>
+                </m-card>
+              </m-grid>
 
-              <mui-card>
-                <mui-stack gap="md">
-                  <mui-heading level="3">Descriptions and statistics</mui-heading>
-                  <mui-grid class="two-column-grid" columns="1.4fr .6fr" gap="md">
-                    <mui-descriptions columns="2">
-                      <mui-description-item label="Package">MarkupUI</mui-description-item>
-                      <mui-description-item label="Version">0.11.0</mui-description-item>
-                      <mui-description-item label="Runtime">Browser native</mui-description-item>
-                      <mui-description-item label="Dependencies">Zero</mui-description-item>
-                    </mui-descriptions>
-                    <mui-grid columns="repeat(2,minmax(0,1fr))" gap="md">
-                      <mui-statistic label="Components" value="75" suffix="+"></mui-statistic>
-                      <mui-statistic label="Runtime deps" value="0"></mui-statistic>
-                    </mui-grid>
-                  </mui-grid>
-                </mui-stack>
-              </mui-card>
-            </mui-stack>
-          </mui-section>
+              <m-card>
+                <m-stack gap="md">
+                  <m-heading level="3">Descriptions and statistics</m-heading>
+                  <m-grid class="two-column-grid" columns="1.4fr .6fr" gap="md">
+                    <m-descriptions columns="2">
+                      <m-description-item label="Package">MarkupUI</m-description-item>
+                      <m-description-item label="Version">0.11.0</m-description-item>
+                      <m-description-item label="Runtime">Browser native</m-description-item>
+                      <m-description-item label="Dependencies">Zero</m-description-item>
+                    </m-descriptions>
+                    <m-grid columns="repeat(2,minmax(0,1fr))" gap="md">
+                      <m-statistic label="Components" value="75" suffix="+"></m-statistic>
+                      <m-statistic label="Runtime deps" value="0"></m-statistic>
+                    </m-grid>
+                  </m-grid>
+                </m-stack>
+              </m-card>
+            </m-stack>
+          </m-section>
 
-          <mui-section
+          <m-section
             id="advanced"
             class="showcase-section"
             aria-label="Advanced plugin components"
-            mui-visible="panels.advanced"
+            m-visible="panels.advanced"
           >
-            <mui-stack gap="md">
-              <mui-stack class="section-heading">
-                <mui-badge>Optional Stage 5</mui-badge>
-                <mui-heading level="2">Advanced components without core weight</mui-heading>
-                <mui-text class="muted">
+            <m-stack gap="md">
+              <m-stack class="section-heading">
+                <m-badge>Optional Stage 5</m-badge>
+                <m-heading level="2">Advanced components without core weight</m-heading>
+                <m-text class="muted">
                   This panel imports a separate plugin bundle. Applications that do not use these
                   components never download it.
-                </mui-text>
-              </mui-stack>
+                </m-text>
+              </m-stack>
 
-              <mui-card>
-                <mui-stack gap="md">
-                  <mui-heading level="3">Sortable data grid</mui-heading>
-                  <mui-data-grid id="advanced-grid">
-                    <mui-data-column key="name" label="Name" sortable></mui-data-column>
-                    <mui-data-column key="role" label="Role" sortable></mui-data-column>
-                    <mui-data-column key="score" label="Score" sortable></mui-data-column>
-                  </mui-data-grid>
-                </mui-stack>
-              </mui-card>
+              <m-card>
+                <m-stack gap="md">
+                  <m-heading level="3">Sortable data grid</m-heading>
+                  <m-data-grid id="advanced-grid">
+                    <m-data-column key="name" label="Name" sortable></m-data-column>
+                    <m-data-column key="role" label="Role" sortable></m-data-column>
+                    <m-data-column key="score" label="Score" sortable></m-data-column>
+                  </m-data-grid>
+                </m-stack>
+              </m-card>
 
-              <mui-grid class="two-column-grid" columns="repeat(2,minmax(0,1fr))" gap="md">
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Date and time</mui-heading>
-                    <mui-form-item label="Date">
-                      <mui-date-picker value="2026-08-26"></mui-date-picker>
-                    </mui-form-item>
-                    <mui-form-item label="Time">
-                      <mui-time-picker value="18:30"></mui-time-picker>
-                    </mui-form-item>
-                    <mui-form-item label="Upload CSV">
-                      <mui-upload accept=".csv" multiple></mui-upload>
-                    </mui-form-item>
-                  </mui-stack>
-                </mui-card>
+              <m-grid class="two-column-grid" columns="repeat(2,minmax(0,1fr))" gap="md">
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Date and time</m-heading>
+                    <m-form-item label="Date">
+                      <m-date-picker value="2026-08-26"></m-date-picker>
+                    </m-form-item>
+                    <m-form-item label="Time">
+                      <m-time-picker value="18:30"></m-time-picker>
+                    </m-form-item>
+                    <m-form-item label="Upload CSV">
+                      <m-upload accept=".csv" multiple></m-upload>
+                    </m-form-item>
+                  </m-stack>
+                </m-card>
 
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Virtual list</mui-heading>
-                    <mui-text class="muted">
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Virtual list</m-heading>
+                    <m-text class="muted">
                       Only visible rows are rendered even when the item collection is large.
-                    </mui-text>
-                    <mui-virtual-list
+                    </m-text>
+                    <m-virtual-list
                       id="advanced-virtual-list"
                       height="260px"
                       item-height="36"
-                    ></mui-virtual-list>
-                  </mui-stack>
-                </mui-card>
-              </mui-grid>
+                    ></m-virtual-list>
+                  </m-stack>
+                </m-card>
+              </m-grid>
 
-              <mui-alert>
+              <m-alert>
                 Load with
-                <mui-code>import { advancedPlugin } from "@dataengine/markup-ui/advanced"</mui-code>
-                and <mui-code>mui.use(advancedPlugin)</mui-code>.
-              </mui-alert>
-            </mui-stack>
-          </mui-section>
+                <m-code>import { advancedPlugin } from "@dataengine/markup-ui/advanced"</m-code>
+                and <m-code>m.use(advancedPlugin)</m-code>.
+              </m-alert>
+            </m-stack>
+          </m-section>
 
-          <mui-section
+          <m-section
             id="widgets"
             class="showcase-section"
             aria-label="Optional widgets plugin"
-            mui-visible="panels.widgets"
+            m-visible="panels.widgets"
           >
-            <mui-stack gap="md">
-              <mui-stack class="section-heading">
-                <mui-badge>Optional Stage 7</mui-badge>
-                <mui-heading level="2">Additional application widgets</mui-heading>
-                <mui-text class="muted">
+            <m-stack gap="md">
+              <m-stack class="section-heading">
+                <m-badge>Optional Stage 7</m-badge>
+                <m-heading level="2">Additional application widgets</m-heading>
+                <m-text class="muted">
                   Common but non-essential widgets ship separately to preserve the core budget.
-                </mui-text>
-              </mui-stack>
+                </m-text>
+              </m-stack>
 
-              <mui-grid class="two-column-grid" columns="repeat(2,minmax(0,1fr))" gap="md">
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Breadcrumb and timeline</mui-heading>
-                    <mui-breadcrumb>
-                      <mui-breadcrumb-item>Home</mui-breadcrumb-item>
-                      <mui-breadcrumb-item>Analytics</mui-breadcrumb-item>
-                      <mui-breadcrumb-item>Workbook</mui-breadcrumb-item>
-                    </mui-breadcrumb>
-                    <mui-timeline>
-                      <mui-timeline-item>Workbook created</mui-timeline-item>
-                      <mui-timeline-item>Review completed</mui-timeline-item>
-                      <mui-timeline-item>Published to production</mui-timeline-item>
-                    </mui-timeline>
-                  </mui-stack>
-                </mui-card>
+              <m-grid class="two-column-grid" columns="repeat(2,minmax(0,1fr))" gap="md">
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Breadcrumb and timeline</m-heading>
+                    <m-breadcrumb>
+                      <m-breadcrumb-item>Home</m-breadcrumb-item>
+                      <m-breadcrumb-item>Analytics</m-breadcrumb-item>
+                      <m-breadcrumb-item>Workbook</m-breadcrumb-item>
+                    </m-breadcrumb>
+                    <m-timeline>
+                      <m-timeline-item>Workbook created</m-timeline-item>
+                      <m-timeline-item>Review completed</m-timeline-item>
+                      <m-timeline-item>Published to production</m-timeline-item>
+                    </m-timeline>
+                  </m-stack>
+                </m-card>
 
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Number, color, and rating</mui-heading>
-                    <mui-form-item label="Quantity">
-                      <mui-input-number id="widget-number" value="2" min="0" max="10"></mui-input-number>
-                    </mui-form-item>
-                    <mui-form-item label="Accent">
-                      <mui-color-picker id="widget-color" value="#10b981"></mui-color-picker>
-                    </mui-form-item>
-                    <mui-form-item label="Rating">
-                      <mui-rating id="widget-rating" value="4"></mui-rating>
-                    </mui-form-item>
-                  </mui-stack>
-                </mui-card>
-              </mui-grid>
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Number, color, and rating</m-heading>
+                    <m-form-item label="Quantity">
+                      <m-input-number id="widget-number" value="2" min="0" max="10"></m-input-number>
+                    </m-form-item>
+                    <m-form-item label="Accent">
+                      <m-color-picker id="widget-color" value="#10b981"></m-color-picker>
+                    </m-form-item>
+                    <m-form-item label="Rating">
+                      <m-rating id="widget-rating" value="4"></m-rating>
+                    </m-form-item>
+                  </m-stack>
+                </m-card>
+              </m-grid>
 
-              <mui-grid class="two-column-grid" columns="repeat(2,minmax(0,1fr))" gap="md">
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Carousel</mui-heading>
-                    <mui-carousel id="widget-carousel">
-                      <mui-carousel-item>
-                        <mui-heading level="3">Native components</mui-heading>
-                      </mui-carousel-item>
-                      <mui-carousel-item>
-                        <mui-heading level="3">Optional plugins</mui-heading>
-                      </mui-carousel-item>
-                      <mui-carousel-item>
-                        <mui-heading level="3">Zero runtime dependencies</mui-heading>
-                      </mui-carousel-item>
-                    </mui-carousel>
-                  </mui-stack>
-                </mui-card>
+              <m-grid class="two-column-grid" columns="repeat(2,minmax(0,1fr))" gap="md">
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Carousel</m-heading>
+                    <m-carousel id="widget-carousel">
+                      <m-carousel-item>
+                        <m-heading level="3">Native components</m-heading>
+                      </m-carousel-item>
+                      <m-carousel-item>
+                        <m-heading level="3">Optional plugins</m-heading>
+                      </m-carousel-item>
+                      <m-carousel-item>
+                        <m-heading level="3">Zero runtime dependencies</m-heading>
+                      </m-carousel-item>
+                    </m-carousel>
+                  </m-stack>
+                </m-card>
 
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Cascader</mui-heading>
-                    <mui-cascader id="widget-cascader"></mui-cascader>
-                    <mui-alert>
-                      Path: <mui-strong id="cascader-value">analytics / reports</mui-strong>
-                    </mui-alert>
-                  </mui-stack>
-                </mui-card>
-              </mui-grid>
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Cascader</m-heading>
+                    <m-cascader id="widget-cascader"></m-cascader>
+                    <m-alert>
+                      Path: <m-strong id="cascader-value">analytics / reports</m-strong>
+                    </m-alert>
+                  </m-stack>
+                </m-card>
+              </m-grid>
 
-              <mui-card>
-                <mui-stack gap="md">
-                  <mui-heading level="3">Transfer</mui-heading>
-                  <mui-transfer id="widget-transfer"></mui-transfer>
-                  <mui-alert>
-                    Selected: <mui-strong id="transfer-value">reports</mui-strong>
-                  </mui-alert>
-                </mui-stack>
-              </mui-card>
+              <m-card>
+                <m-stack gap="md">
+                  <m-heading level="3">Transfer</m-heading>
+                  <m-transfer id="widget-transfer"></m-transfer>
+                  <m-alert>
+                    Selected: <m-strong id="transfer-value">reports</m-strong>
+                  </m-alert>
+                </m-stack>
+              </m-card>
 
-              <mui-alert>
+              <m-alert>
                 Load with
-                <mui-code>import { widgetsPlugin } from "@dataengine/markup-ui/widgets"</mui-code>
-                and <mui-code>mui.use(widgetsPlugin)</mui-code>.
-              </mui-alert>
-            </mui-stack>
-          </mui-section>
+                <m-code>import { widgetsPlugin } from "@dataengine/markup-ui/widgets"</m-code>
+                and <m-code>m.use(widgetsPlugin)</m-code>.
+              </m-alert>
+            </m-stack>
+          </m-section>
 
-          <mui-section
+          <m-section
             id="themes"
             class="showcase-section"
             aria-label="Theme components"
-            mui-visible="panels.themes"
+            m-visible="panels.themes"
           >
-            <mui-stack gap="md">
-              <mui-stack class="section-heading">
-                <mui-badge>Themes</mui-badge>
-                <mui-heading level="2">Global and scoped CSS tokens</mui-heading>
-              </mui-stack>
+            <m-stack gap="md">
+              <m-stack class="section-heading">
+                <m-badge>Themes</m-badge>
+                <m-heading level="2">Global and scoped CSS tokens</m-heading>
+              </m-stack>
 
-              <mui-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Global theme</mui-heading>
-                    <mui-text class="muted">Use the header buttons or the API.</mui-text>
-                    <mui-wrap gap="sm">
-                      <mui-button mui-action="demo.theme" mui-param-name="light">Light</mui-button>
-                      <mui-button mui-action="demo.theme" mui-param-name="dark">Dark</mui-button>
-                      <mui-button variant="primary" mui-action="demo.theme" mui-param-name="ocean">
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Global theme</m-heading>
+                    <m-text class="muted">Use the header buttons or the API.</m-text>
+                    <m-wrap gap="sm">
+                      <m-button m-action="demo.theme" m-param-name="light">Light</m-button>
+                      <m-button m-action="demo.theme" m-param-name="dark">Dark</m-button>
+                      <m-button variant="primary" m-action="demo.theme" m-param-name="ocean">
                         Ocean
-                      </mui-button>
-                    </mui-wrap>
-                    <mui-code class="code-block">mui.theme.set("ocean")</mui-code>
-                  </mui-stack>
-                </mui-card>
+                      </m-button>
+                    </m-wrap>
+                    <m-code class="code-block">m.theme.set("ocean")</m-code>
+                  </m-stack>
+                </m-card>
 
-                <mui-theme name="dark">
-                  <mui-card class="scoped-theme-card">
-                    <mui-stack gap="sm">
-                      <mui-badge>Scoped dark theme</mui-badge>
-                      <mui-heading level="3">Only this subtree is dark</mui-heading>
-                      <mui-text>
+                <m-theme name="dark">
+                  <m-card class="scoped-theme-card">
+                    <m-stack gap="sm">
+                      <m-badge>Scoped dark theme</m-badge>
+                      <m-heading level="3">Only this subtree is dark</m-heading>
+                      <m-text>
                         Theme tokens cascade without rerendering components.
-                      </mui-text>
-                      <mui-button variant="primary">Scoped button</mui-button>
-                    </mui-stack>
-                  </mui-card>
-                </mui-theme>
-              </mui-grid>
-            </mui-stack>
-          </mui-section>
+                      </m-text>
+                      <m-button variant="primary">Scoped button</m-button>
+                    </m-stack>
+                  </m-card>
+                </m-theme>
+              </m-grid>
+            </m-stack>
+          </m-section>
 
-          <mui-section
+          <m-section
             id="overlays"
             class="showcase-section"
             aria-label="Overlay and feedback components"
-            mui-visible="panels.overlays"
+            m-visible="panels.overlays"
           >
-            <mui-stack gap="md">
-              <mui-stack class="section-heading">
-                <mui-badge>Stage 2</mui-badge>
-                <mui-heading level="2">Overlays and feedback services</mui-heading>
-                <mui-text class="muted">
+            <m-stack gap="md">
+              <m-stack class="section-heading">
+                <m-badge>Stage 2</m-badge>
+                <m-heading level="2">Overlays and feedback services</m-heading>
+                <m-text class="muted">
                   Native modal surfaces, floating content, loading feedback, messages, and
                   notifications share browser-native positioning and lifecycle behavior.
-                </mui-text>
-              </mui-stack>
+                </m-text>
+              </m-stack>
 
-              <mui-grid class="runtime-grid" columns="repeat(3, minmax(0, 1fr))" gap="md">
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Drawer</mui-heading>
-                    <mui-text class="muted">
+              <m-grid class="runtime-grid" columns="repeat(3, minmax(0, 1fr))" gap="md">
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Drawer</m-heading>
+                    <m-text class="muted">
                       A native modal surface with left, right, top, or bottom placement.
-                    </mui-text>
-                    <mui-button
+                    </m-text>
+                    <m-button
                       variant="primary"
-                      mui-action="open"
-                      mui-param-target="#feature-drawer"
+                      m-action="open"
+                      m-param-target="#feature-drawer"
                     >
                       Open drawer
-                    </mui-button>
-                  </mui-stack>
-                </mui-card>
+                    </m-button>
+                  </m-stack>
+                </m-card>
 
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Tooltip and popover</mui-heading>
-                    <mui-row gap="sm" wrap>
-                      <mui-tooltip text="Keyboard and pointer accessible" placement="top">
-                        <mui-button>Hover or focus</mui-button>
-                      </mui-tooltip>
-                      <mui-popover placement="bottom">
-                        <mui-popover-trigger>
-                          <mui-button>Toggle popover</mui-button>
-                        </mui-popover-trigger>
-                        <mui-popover-content>
-                          <mui-stack gap="sm">
-                            <mui-strong>Popover content</mui-strong>
-                            <mui-text>Click outside or press Escape to close.</mui-text>
-                          </mui-stack>
-                        </mui-popover-content>
-                      </mui-popover>
-                    </mui-row>
-                  </mui-stack>
-                </mui-card>
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Tooltip and popover</m-heading>
+                    <m-row gap="sm" wrap>
+                      <m-tooltip text="Keyboard and pointer accessible" placement="top">
+                        <m-button>Hover or focus</m-button>
+                      </m-tooltip>
+                      <m-popover placement="bottom">
+                        <m-popover-trigger>
+                          <m-button>Toggle popover</m-button>
+                        </m-popover-trigger>
+                        <m-popover-content>
+                          <m-stack gap="sm">
+                            <m-strong>Popover content</m-strong>
+                            <m-text>Click outside or press Escape to close.</m-text>
+                          </m-stack>
+                        </m-popover-content>
+                      </m-popover>
+                    </m-row>
+                  </m-stack>
+                </m-card>
 
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Loading</mui-heading>
-                    <mui-row align="center" gap="md">
-                      <mui-spin label="Loading example"></mui-spin>
-                      <mui-text>Loading data</mui-text>
-                    </mui-row>
-                    <mui-skeleton width="100%" height="16px"></mui-skeleton>
-                    <mui-skeleton width="65%" height="16px"></mui-skeleton>
-                  </mui-stack>
-                </mui-card>
-              </mui-grid>
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Loading</m-heading>
+                    <m-row align="center" gap="md">
+                      <m-spin label="Loading example"></m-spin>
+                      <m-text>Loading data</m-text>
+                    </m-row>
+                    <m-skeleton width="100%" height="16px"></m-skeleton>
+                    <m-skeleton width="65%" height="16px"></m-skeleton>
+                  </m-stack>
+                </m-card>
+              </m-grid>
 
-              <mui-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Message service</mui-heading>
-                    <mui-message type="success">Static success message</mui-message>
-                    <mui-button mui-action="demo.message">Show managed message</mui-button>
-                    <mui-code class="code-block">mui.message.show("Saved", { type: "success" })</mui-code>
-                  </mui-stack>
-                </mui-card>
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Message service</m-heading>
+                    <m-message type="success">Static success message</m-message>
+                    <m-button m-action="demo.message">Show managed message</m-button>
+                    <m-code class="code-block">m.message.show("Saved", { type: "success" })</m-code>
+                  </m-stack>
+                </m-card>
 
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Notification service</mui-heading>
-                    <mui-notification type="default">
-                      <mui-strong>Static notification</mui-strong>
-                      <mui-text>Notifications support a title and body.</mui-text>
-                    </mui-notification>
-                    <mui-button mui-action="demo.notification">Show notification</mui-button>
-                    <mui-code class="code-block">mui.notification.show({ title, content })</mui-code>
-                  </mui-stack>
-                </mui-card>
-              </mui-grid>
-            </mui-stack>
-          </mui-section>
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Notification service</m-heading>
+                    <m-notification type="default">
+                      <m-strong>Static notification</m-strong>
+                      <m-text>Notifications support a title and body.</m-text>
+                    </m-notification>
+                    <m-button m-action="demo.notification">Show notification</m-button>
+                    <m-code class="code-block">m.notification.show({ title, content })</m-code>
+                  </m-stack>
+                </m-card>
+              </m-grid>
+            </m-stack>
+          </m-section>
 
-          <mui-section
+          <m-section
             id="runtime"
             class="showcase-section"
             aria-label="Runtime features"
-            mui-visible="panels.runtime"
+            m-visible="panels.runtime"
           >
-            <mui-stack gap="md">
-              <mui-stack class="section-heading">
-                <mui-badge>Runtime features</mui-badge>
-                <mui-heading level="2">Actions, plugins, query, security, and includes</mui-heading>
-              </mui-stack>
+            <m-stack gap="md">
+              <m-stack class="section-heading">
+                <m-badge>Runtime features</m-badge>
+                <m-heading level="2">Actions, plugins, query, security, and includes</m-heading>
+              </m-stack>
 
-              <mui-grid class="runtime-grid" columns="repeat(3, minmax(0, 1fr))" gap="md">
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Named actions</mui-heading>
-                    <mui-text class="muted">
+              <m-grid class="runtime-grid" columns="repeat(3, minmax(0, 1fr))" gap="md">
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Named actions</m-heading>
+                    <m-text class="muted">
                       Markup references registered names instead of executing JavaScript strings.
-                    </mui-text>
-                    <mui-row align="center" gap="sm">
-                      <mui-button variant="primary" mui-action="demo.increment">Increment</mui-button>
-                      <mui-badge>Count: <mui-strong mui-text="metrics.clicks"></mui-strong></mui-badge>
-                    </mui-row>
-                    <mui-code class="code-block">mui.actions.register("demo.increment", handler)</mui-code>
-                  </mui-stack>
-                </mui-card>
+                    </m-text>
+                    <m-row align="center" gap="sm">
+                      <m-button variant="primary" m-action="demo.increment">Increment</m-button>
+                      <m-badge>Count: <m-strong m-text="metrics.clicks"></m-strong></m-badge>
+                    </m-row>
+                    <m-code class="code-block">m.actions.register("demo.increment", handler)</m-code>
+                  </m-stack>
+                </m-card>
 
-                <mui-card id="plugin-target">
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Plugin and query API</mui-heading>
-                    <mui-text class="muted">
+                <m-card id="plugin-target">
+                  <m-stack gap="md">
+                    <m-heading level="3">Plugin and query API</m-heading>
+                    <m-text class="muted">
                       The demo plugin adds a chainable query extension.
-                    </mui-text>
-                    <mui-button mui-action="demo.plugin">Run plugin extension</mui-button>
-                    <mui-code class="code-block">mui("#plugin-target").highlight()</mui-code>
-                  </mui-stack>
-                </mui-card>
+                    </m-text>
+                    <m-button m-action="demo.plugin">Run plugin extension</m-button>
+                    <m-code class="code-block">m("#plugin-target").highlight()</m-code>
+                  </m-stack>
+                </m-card>
 
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">Dialog overlay</mui-heading>
-                    <mui-text class="muted">
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">Dialog overlay</m-heading>
+                    <m-text class="muted">
                       The component wraps the native dialog API.
-                    </mui-text>
-                    <mui-button mui-action="open" mui-param-target="#feature-dialog">
+                    </m-text>
+                    <m-button m-action="open" m-param-target="#feature-dialog">
                       Open dialog
-                    </mui-button>
-                    <mui-code class="code-block">dialog.open()</mui-code>
-                  </mui-stack>
-                </mui-card>
-              </mui-grid>
+                    </m-button>
+                    <m-code class="code-block">dialog.open()</m-code>
+                  </m-stack>
+                </m-card>
+              </m-grid>
 
-              <mui-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-row align="center">
-                      <mui-stack>
-                        <mui-heading level="3">Safe dynamic include</mui-heading>
-                        <mui-text class="muted">Fetched with AbortController and sanitized.</mui-text>
-                      </mui-stack>
-                      <mui-spacer></mui-spacer>
-                      <mui-badge id="include-status">Loading</mui-badge>
-                    </mui-row>
-                    <mui-include id="activity" src="./activity.html"></mui-include>
-                    <mui-button mui-action="demo.reload">Reload fragment</mui-button>
-                  </mui-stack>
-                </mui-card>
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+                <m-card>
+                  <m-stack gap="md">
+                    <m-row align="center">
+                      <m-stack>
+                        <m-heading level="3">Safe dynamic include</m-heading>
+                        <m-text class="muted">Fetched with AbortController and sanitized.</m-text>
+                      </m-stack>
+                      <m-spacer></m-spacer>
+                      <m-badge id="include-status">Loading</m-badge>
+                    </m-row>
+                    <m-include id="activity" src="./activity.html"></m-include>
+                    <m-button m-action="demo.reload">Reload fragment</m-button>
+                  </m-stack>
+                </m-card>
 
-                <mui-card>
-                  <mui-stack gap="md">
-                    <mui-heading level="3">HTML sanitization</mui-heading>
-                    <mui-text class="muted">
+                <m-card>
+                  <m-stack gap="md">
+                    <m-heading level="3">HTML sanitization</m-heading>
+                    <m-text class="muted">
                       Scripts, inline handlers, embedded documents, and unsafe URLs are removed.
-                    </mui-text>
-                    <mui-button mui-action="demo.sanitize">Insert unsafe sample safely</mui-button>
-                    <mui-stack id="sanitized-output" class="demo-surface" gap="sm">
-                      <mui-text>Run the sanitizer to populate this area.</mui-text>
-                    </mui-stack>
-                    <mui-code class="code-block">mui.html.set(target, untrustedHtml)</mui-code>
-                  </mui-stack>
-                </mui-card>
-              </mui-grid>
-            </mui-stack>
-          </mui-section>
+                    </m-text>
+                    <m-button m-action="demo.sanitize">Insert unsafe sample safely</m-button>
+                    <m-stack id="sanitized-output" class="demo-surface" gap="sm">
+                      <m-text>Run the sanitizer to populate this area.</m-text>
+                    </m-stack>
+                    <m-code class="code-block">m.html.set(target, untrustedHtml)</m-code>
+                  </m-stack>
+                </m-card>
+              </m-grid>
+            </m-stack>
+          </m-section>
 
-          <mui-section
+          <m-section
             id="distribution"
             class="showcase-section"
             aria-label="Distribution"
-            mui-visible="panels.distribution"
+            m-visible="panels.distribution"
           >
-            <mui-card>
-              <mui-grid class="distribution-grid" columns="1fr 1fr" gap="lg">
-                <mui-stack gap="sm">
-                  <mui-badge>ES module</mui-badge>
-                  <mui-heading level="3">Modern browser loading</mui-heading>
-                  <mui-code class="code-block">
-                    import { mui } from "./markup-ui.js";
-                  </mui-code>
-                </mui-stack>
-                <mui-stack gap="sm">
-                  <mui-badge>Global script</mui-badge>
-                  <mui-heading level="3">Classic script loading</mui-heading>
-                  <mui-code class="code-block">
+            <m-card>
+              <m-grid class="distribution-grid" columns="1fr 1fr" gap="lg">
+                <m-stack gap="sm">
+                  <m-badge>ES module</m-badge>
+                  <m-heading level="3">Modern browser loading</m-heading>
+                  <m-code class="code-block">
+                    import { m } from "./markup-ui.js";
+                  </m-code>
+                </m-stack>
+                <m-stack gap="sm">
+                  <m-badge>Global script</m-badge>
+                  <m-heading level="3">Classic script loading</m-heading>
+                  <m-code class="code-block">
                     &lt;script src="./markup-ui.global.js"&gt;&lt;/script&gt;
-                  </mui-code>
-                </mui-stack>
-              </mui-grid>
-            </mui-card>
-          </mui-section>
-            </mui-stack>
+                  </m-code>
+                </m-stack>
+              </m-grid>
+            </m-card>
+          </m-section>
+            </m-stack>
 
-            <mui-stack class="showcase-outline" gap="xs" aria-label="On this page">
-              <mui-text class="outline-title">On this page</mui-text>
-              <mui-stack id="page-outline" gap="xs"></mui-stack>
-            </mui-stack>
-          </mui-grid>
-        </mui-stack>
-      </mui-main>
+            <m-stack class="showcase-outline" gap="xs" aria-label="On this page">
+              <m-text class="outline-title">On this page</m-text>
+              <m-stack id="page-outline" gap="xs"></m-stack>
+            </m-stack>
+          </m-grid>
+        </m-stack>
+      </m-main>
 
-      <mui-dialog id="about-dialog">
-        <mui-dialog-header>
-          <mui-heading level="2">HTML-first architecture</mui-heading>
-          <mui-button mui-action="close">Close</mui-button>
-        </mui-dialog-header>
-        <mui-dialog-content>
-          <mui-text>
-            Browser HTML is parsed into the DOM, mui-* elements upgrade automatically, and optional
+      <m-dialog id="about-dialog">
+        <m-dialog-header>
+          <m-heading level="2">HTML-first architecture</m-heading>
+          <m-button m-action="close">Close</m-button>
+        </m-dialog-header>
+        <m-dialog-content>
+          <m-text>
+            Browser HTML is parsed into the DOM, m-* elements upgrade automatically, and optional
             state or actions attach through native events. There is no virtual DOM or framework
             lifecycle.
-          </mui-text>
-        </mui-dialog-content>
-      </mui-dialog>
+          </m-text>
+        </m-dialog-content>
+      </m-dialog>
 
-      <mui-dialog id="feature-dialog">
-        <mui-dialog-header>
-          <mui-heading level="2">Native dialog component</mui-heading>
-          <mui-button mui-action="close">Close</mui-button>
-        </mui-dialog-header>
-        <mui-dialog-content>
-          <mui-alert>This overlay was opened by the built-in <mui-code>open</mui-code> action.</mui-alert>
-        </mui-dialog-content>
-        <mui-dialog-footer>
-          <mui-button variant="primary" mui-action="close">Done</mui-button>
-        </mui-dialog-footer>
-      </mui-dialog>
+      <m-dialog id="feature-dialog">
+        <m-dialog-header>
+          <m-heading level="2">Native dialog component</m-heading>
+          <m-button m-action="close">Close</m-button>
+        </m-dialog-header>
+        <m-dialog-content>
+          <m-alert>This overlay was opened by the built-in <m-code>open</m-code> action.</m-alert>
+        </m-dialog-content>
+        <m-dialog-footer>
+          <m-button variant="primary" m-action="close">Done</m-button>
+        </m-dialog-footer>
+      </m-dialog>
 
-      <mui-drawer id="feature-drawer" placement="right">
-        <mui-drawer-header>
-          <mui-heading level="2">Drawer panel</mui-heading>
-          <mui-button mui-action="close">Close</mui-button>
-        </mui-drawer-header>
-        <mui-drawer-content>
-          <mui-stack gap="md">
-            <mui-text>
+      <m-drawer id="feature-drawer" placement="right">
+        <m-drawer-header>
+          <m-heading level="2">Drawer panel</m-heading>
+          <m-button m-action="close">Close</m-button>
+        </m-drawer-header>
+        <m-drawer-content>
+          <m-stack gap="md">
+            <m-text>
               Drawer anatomy owns its header, content, and footer layout.
-            </mui-text>
-            <mui-alert>The native dialog element provides modal focus behavior.</mui-alert>
-          </mui-stack>
-        </mui-drawer-content>
-        <mui-drawer-footer>
-          <mui-button mui-action="close">Cancel</mui-button>
-          <mui-button variant="primary" mui-action="close">Done</mui-button>
-        </mui-drawer-footer>
-      </mui-drawer>
-    </mui-app>
+            </m-text>
+            <m-alert>The native dialog element provides modal focus behavior.</m-alert>
+          </m-stack>
+        </m-drawer-content>
+        <m-drawer-footer>
+          <m-button m-action="close">Cancel</m-button>
+          <m-button variant="primary" m-action="close">Done</m-button>
+        </m-drawer-footer>
+      </m-drawer>
+    </m-app>
   </body>
 </html>

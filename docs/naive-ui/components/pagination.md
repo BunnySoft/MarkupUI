@@ -88,7 +88,7 @@ types are not inherited runtime contracts.
 | [`suffix`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/pagination/demos/enUS/index.demo-entry.md#L50) | Prop | Authored suffix and state snapshot. | 🟢 Verified | No generated content or renderer. |
 | [`show-size-picker`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/pagination/demos/enUS/index.demo-entry.md#L51) | Prop | Include/hide native labelled select. | 🟢 Verified | Single select anatomy, validated current size. |
 | [`to`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/pagination/demos/enUS/index.demo-entry.md#L52) | Prop | Keep controls in authored hierarchy. | ⏭️ Intentionally omitted | No popup teleport/portal. |
-| [`on-update:page`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/pagination/demos/enUS/index.demo-entry.md#L53) | Callback | Cancelable request then combined mui:pagination-change snapshot. | 🟢 Verified | User-only changed requests; silent programmatic updates. |
+| [`on-update:page`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/pagination/demos/enUS/index.demo-entry.md#L53) | Callback | Cancelable request then combined m:pagination-change snapshot. | 🟢 Verified | User-only changed requests; silent programmatic updates. |
 | [`on-update:page-size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/pagination/demos/enUS/index.demo-entry.md#L54) | Callback | Same combined event with source=size and previous/current state. | 🟢 Verified | No fabricated separate page click during size clamp. |
 
 ### Pagination Slots

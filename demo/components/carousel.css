@@ -4,7 +4,7 @@ main > p { color: #767c82; }
 section[data-demo-example] { padding: 20px; border: 1px solid #e0e0e6; border-radius: 6px; background: #fff; }
 .demo-preview { min-inline-size: 0; margin-block-start: 16px; }
 .demo-preview.vertical { display: flex; align-items: stretch; flex-direction: column; gap: 12px; }
-.parity-carousel { position: relative; --mui-carousel-height: 240px; overflow: hidden; border-radius: 3px; }
+.parity-carousel { position: relative; --m-carousel-height: 240px; overflow: hidden; border-radius: 3px; }
 .parity-carousel > [data-carousel-viewport] { scrollbar-width: none; }
 .parity-carousel > [data-carousel-viewport]::-webkit-scrollbar { display: none; }
 .parity-carousel [data-carousel-item] > img { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; }

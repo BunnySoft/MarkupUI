@@ -20,11 +20,11 @@ afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); docu
 describe("Switch stylesheet contract", () => {
   const css = readFileSync(join("src", "components", "switch", "switch.css"), "utf8")
   it("keeps size, square and status defaults private for author overrides", () => {
-    expect(css).not.toMatch(/--mui-switch-[\w-]+\s*:/)
+    expect(css).not.toMatch(/--m-switch-[\w-]+\s*:/)
     for (const width of [32, 40, 48]) expect(css).toMatch(new RegExp(`--_sw-width:\\s*${width}px`))
-    expect(css).toMatch(/data-mui-theme="?dark"?/)
+    expect(css).toMatch(/data-m-theme="?dark"?/)
     expect(css).toContain("#2a947d")
-    expect(css).not.toContain("var(--mui-text-primary")
+    expect(css).not.toContain("var(--m-text-primary")
   })
   it("paints the original binary input with a border-box-aligned thumb", () => {
     expect(css).toMatch(/:not\(:indeterminate\)\s*\{[^}]*appearance:\s*none/)
@@ -53,13 +53,13 @@ describe("native Switch anatomy and binary state", () => {
   it("preserves the actual input, name, content, listeners, checked/default and ARIA", () => {
     const { root, helper, control } = fixture()
     helper.disconnect()
-    const content = root.querySelector(".mui-switch__state")
+    const content = root.querySelector(".m-switch__state")
     control.checked = false
     const before = control.outerHTML, listener = vi.fn()
     control.addEventListener("change", listener)
     const enhanced = createSwitch(root); helpers.push(enhanced)
     expect(enhanced.control).toBe(control)
-    expect(root.querySelector(".mui-switch__state")).toBe(content)
+    expect(root.querySelector(".m-switch__state")).toBe(content)
     expect(control.outerHTML).toBe(before)
     expect(control.defaultChecked).toBe(true)
     expect(control.checked).toBe(false)
@@ -70,9 +70,9 @@ describe("native Switch anatomy and binary state", () => {
     expect(root.querySelectorAll("input")).toHaveLength(1)
   })
   it("leaves the legacy switch registry unchanged", () => {
-    const before = customElements.get("mui-switch")
+    const before = customElements.get("m-switch")
     fixture()
-    expect(customElements.get("mui-switch")).toBe(before)
+    expect(customElements.get("m-switch")).toBe(before)
   })
   it("rejects duplicate and cross-module owners; disposal permits recreation", async () => {
     const { root, helper } = fixture()
@@ -103,14 +103,14 @@ describe("native Switch anatomy and binary state", () => {
     helper.disconnect()
     control.removeAttribute("aria-labelledby")
     expect(() => createSwitch(root)).toThrow("stable")
-    const dynamic = root.querySelector(".mui-switch__on")!
+    const dynamic = root.querySelector(".m-switch__on")!
     dynamic.id = "unstable-name"; control.setAttribute("aria-labelledby", dynamic.id)
     expect(() => createSwitch(root)).toThrow("stable")
   })
   it("rejects exposed or interactive visual decorations", () => {
     const { root, helper } = fixture()
     helper.disconnect()
-    const state = root.querySelector(".mui-switch__state")!
+    const state = root.querySelector(".m-switch__state")!
     state.removeAttribute("aria-hidden")
     expect(() => createSwitch(root)).toThrow("aria-hidden")
     state.setAttribute("aria-hidden", "true")
@@ -173,7 +173,7 @@ describe("loading uses native pre-activation rollback", () => {
   it("emits only the native input/change once after an accepted activation", async () => {
     const { root, helper, control } = fixture()
     const events: string[] = []
-    for (const type of ["input", "change", "mui:change", "mui:switch-change"]) root.addEventListener(type, () => events.push(type))
+    for (const type of ["input", "change", "m:change", "m:switch-change"]) root.addEventListener(type, () => events.push(type))
     helper.setLoading(true); control.click()
     helper.setLoading(false); control.click(); await flush()
     expect(control.checked).toBe(false)
@@ -328,7 +328,7 @@ describe("reset, external ownership and reversible busy state", () => {
   })
   it("reports late invalid anatomy, then recovers after author correction", async () => {
     const { root, helper, control } = fixture()
-    const errors = vi.fn(); root.addEventListener("mui:switch-error", errors)
+    const errors = vi.fn(); root.addEventListener("m:switch-error", errors)
     control.readOnly = true; await flush()
     expect(errors).toHaveBeenCalledTimes(1)
     expect(helper.error).toMatch("readonly")

@@ -58,7 +58,7 @@ export function createCollapseTransition(element: HTMLElement, options: Collapse
   const document = element?.ownerDocument
   const view = document?.defaultView
   if (!view || !(element instanceof view.HTMLDivElement) || element.getRootNode() !== document
-    || !element.classList.contains("mui-collapse-transition")) throw new TypeError("Use a connected light-DOM div.mui-collapse-transition.")
+    || !element.classList.contains("m-collapse-transition")) throw new TypeError("Use a connected light-DOM div.m-collapse-transition.")
   if (!options || typeof options !== "object" || Object.keys(options).some(key => !["show", "appear", "duration", "focusTarget", "onEnter", "onLeave", "onAfterEnter", "onAfterLeave", "onCancel"].includes(key))) {
     throw new TypeError("Unsupported transition options; no renderer, directive or style-object forwarding.")
   }
@@ -122,7 +122,7 @@ export function createCollapseTransition(element: HTMLElement, options: Collapse
   function current(operation: Operation) { return connected && active === operation && generation === operation.token }
   function error(error: unknown, phase: CollapseTransitionError["phase"], stale: boolean) {
     lastError = error
-    const event = new view!.CustomEvent<CollapseTransitionError>("mui:collapse-transition-error", { detail: { error, phase, stale }, cancelable: true })
+    const event = new view!.CustomEvent<CollapseTransitionError>("m:collapse-transition-error", { detail: { error, phase, stale }, cancelable: true })
     if (element.dispatchEvent(event)) view!.console.error("MarkupUI Collapse Transition:", error)
   }
   function hook(name: keyof typeof hooks, operation: Operation) {

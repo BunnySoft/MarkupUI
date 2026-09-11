@@ -1,6 +1,6 @@
-import { MuiElement } from "../core/element.js"
+import { MElement } from "../core/element.js"
 
-export class MuiLayout extends MuiElement {
+export class MLayout extends MElement {
   public connectedCallback(): void {
     const basis = this.getAttribute("basis")
     const overflow = this.getAttribute("overflow")
@@ -9,7 +9,7 @@ export class MuiLayout extends MuiElement {
   }
 }
 
-export class MuiButton extends MuiElement {
+export class MButton extends MElement {
   public static get observedAttributes(): string[] { return ["disabled", "loading"] }
   public connectedCallback(): void {
     this.setAttribute("role", "button")
@@ -42,10 +42,10 @@ export class MuiButton extends MuiElement {
     this.tabIndex = disabled ? -1 : 0
     this.setAttribute("aria-disabled", String(disabled))
     this.setAttribute("aria-busy", String(loading))
-    const spinner = this.querySelector(":scope > [data-mui-button-spinner]")
+    const spinner = this.querySelector(":scope > [data-m-button-spinner]")
     if (loading && spinner === null) {
       const element = this.ownerDocument.createElement("span")
-      element.dataset.muiButtonSpinner = ""
+      element.dataset.mButtonSpinner = ""
       element.setAttribute("aria-hidden", "true")
       this.prepend(element)
     } else if (!loading) {
@@ -54,24 +54,24 @@ export class MuiButton extends MuiElement {
   }
 }
 
-export class MuiCard extends MuiLayout {
+export class MCard extends MLayout {
   public override connectedCallback(): void {
     super.connectedCallback()
     this.toggleAttribute(
       "structured",
-      this.querySelector(":scope > mui-card-header,:scope > mui-card-content,:scope > mui-card-footer") !== null,
+      this.querySelector(":scope > m-card-header,:scope > m-card-content,:scope > m-card-footer") !== null,
     )
   }
 }
 
-export class MuiProgress extends MuiElement {
+export class MProgress extends MElement {
   public static get observedAttributes(): string[] { return ["value", "max"] }
   private bar?: HTMLElement
 
   public connectedCallback(): void {
     if (this.bar === undefined) {
       this.bar = this.ownerDocument.createElement("span")
-      this.bar.dataset.muiBar = ""
+      this.bar.dataset.mBar = ""
       this.replaceChildren(this.bar)
     }
     this.update()
@@ -92,7 +92,7 @@ export class MuiProgress extends MuiElement {
   }
 }
 
-export class MuiSkeleton extends MuiElement {
+export class MSkeleton extends MElement {
   public connectedCallback(): void {
     this.setAttribute("aria-hidden", "true")
     const width = this.getAttribute("width")
@@ -102,7 +102,7 @@ export class MuiSkeleton extends MuiElement {
   }
 }
 
-export class MuiAvatar extends MuiElement {
+export class MAvatar extends MElement {
   public connectedCallback(): void {
     if (this.querySelector(":scope > img") !== null) return
     const src = this.getAttribute("src")
@@ -117,11 +117,11 @@ export class MuiAvatar extends MuiElement {
   }
 }
 
-export class MuiEmpty extends MuiElement {
+export class MEmpty extends MElement {
   public connectedCallback(): void {
     if (this.childElementCount > 0) return
     const icon = this.ownerDocument.createElement("span")
-    icon.dataset.muiEmptyIcon = ""
+    icon.dataset.mEmptyIcon = ""
     icon.setAttribute("aria-hidden", "true")
     icon.textContent = this.getAttribute("icon") ?? "◇"
     const text = this.ownerDocument.createElement("span")
@@ -130,12 +130,12 @@ export class MuiEmpty extends MuiElement {
   }
 }
 
-export class MuiTag extends MuiElement {
+export class MTag extends MElement {
   public connectedCallback(): void {
-    if (!this.hasAttribute("closable") || this.querySelector(":scope > [data-mui-close]") !== null) return
+    if (!this.hasAttribute("closable") || this.querySelector(":scope > [data-m-close]") !== null) return
     const button = this.ownerDocument.createElement("button")
     button.type = "button"
-    button.dataset.muiClose = ""
+    button.dataset.mClose = ""
     button.setAttribute("aria-label", this.getAttribute("close-label") ?? "Remove")
     button.textContent = "×"
     button.addEventListener("click", (event) => {

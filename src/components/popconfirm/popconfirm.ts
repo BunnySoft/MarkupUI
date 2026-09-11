@@ -36,7 +36,7 @@ export function createPopconfirm(trigger: HTMLElement, panel: HTMLElement, optio
   }
   const callbacks = { positive: options.onPositive, negative: options.onNegative }
   function owned(selector: string) {
-    return [...panel.querySelectorAll<HTMLElement>(selector)].filter(node => node.closest(".mui-popconfirm") === panel)
+    return [...panel.querySelectorAll<HTMLElement>(selector)].filter(node => node.closest(".m-popconfirm") === panel)
   }
   function one(selector: string) {
     const nodes = owned(selector)
@@ -74,12 +74,12 @@ export function createPopconfirm(trigger: HTMLElement, panel: HTMLElement, optio
     return ids !== null ? textReference(ids) : !!(node.getAttribute("aria-label")?.trim() || node.textContent?.trim())
   }
   function validate() {
-    if (panel.id !== panelId || !panel.classList.contains("mui-popconfirm") || panel.getAttribute("role") !== "dialog"
+    if (panel.id !== panelId || !panel.classList.contains("m-popconfirm") || panel.getAttribute("role") !== "dialog"
       || ![null, "false"].includes(panel.getAttribute("aria-modal")) || !named(panel)
       || !(panel.getAttribute("aria-label")?.trim() || textReference(panel.getAttribute("aria-labelledby")))
       || trigger.contains(panel)
       || (!core || core.supported) && panel.getAttribute("popover") !== "auto") {
-      throw new TypeError("Popconfirm needs a separate named, nonmodal .mui-popconfirm[role=dialog][popover=auto].")
+      throw new TypeError("Popconfirm needs a separate named, nonmodal .m-popconfirm[role=dialog][popover=auto].")
     }
     for (const [selector, node] of [
       ["[data-popconfirm-positive]", positive], ["[data-popconfirm-negative]", negative],
@@ -102,7 +102,7 @@ export function createPopconfirm(trigger: HTMLElement, panel: HTMLElement, optio
       || completeRegion.getAttribute("role") !== "status") throw new TypeError("Author nonempty error alert and pending/completion status regions.")
   }
   function emit(detail: PopconfirmError) {
-    panel.dispatchEvent(new view!.CustomEvent<PopconfirmError>("mui:popconfirm-error", { detail }))
+    panel.dispatchEvent(new view!.CustomEvent<PopconfirmError>("m:popconfirm-error", { detail }))
   }
   function invalidate() {
     epoch++

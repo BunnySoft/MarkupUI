@@ -1,16 +1,16 @@
-:where([data-mui-theme="light"]) { --_mui-carousel-scheme: light; }
-:where([data-mui-theme="dark"]) { --_mui-carousel-scheme: dark; }
-.mui-carousel {
+:where([data-m-theme="light"]) { --_m-carousel-scheme: light; }
+:where([data-m-theme="dark"]) { --_m-carousel-scheme: dark; }
+.m-carousel {
   min-inline-size: 0;
-  color-scheme: var(--_mui-carousel-scheme, light);
+  color-scheme: var(--_m-carousel-scheme, light);
 }
-.mui-carousel [hidden] { display: none !important; }
-.mui-carousel > [data-carousel-viewport] {
+.m-carousel [hidden] { display: none !important; }
+.m-carousel > [data-carousel-viewport] {
   display: flex;
   position: relative;
   box-sizing: border-box;
   inline-size: 100%;
-  block-size: var(--mui-carousel-height, 20rem);
+  block-size: var(--m-carousel-height, 20rem);
   margin: 0;
   padding: 0;
   border: 0;
@@ -21,11 +21,11 @@
   scroll-behavior: auto;
   writing-mode: horizontal-tb;
 }
-.mui-carousel[data-carousel-direction="vertical"] > [data-carousel-viewport] {
+.m-carousel[data-carousel-direction="vertical"] > [data-carousel-viewport] {
   flex-direction: column;
   scroll-snap-type: y mandatory;
 }
-.mui-carousel > [data-carousel-viewport] > [data-carousel-item] {
+.m-carousel > [data-carousel-viewport] > [data-carousel-item] {
   flex: 0 0 100%;
   box-sizing: border-box;
   min-inline-size: 0;
@@ -39,42 +39,42 @@
   scroll-snap-align: start;
   scroll-margin: 0;
 }
-.mui-carousel > [data-carousel-controls] {
+.m-carousel > [data-carousel-controls] {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: .5rem;
   margin-block: .5rem;
 }
-.mui-carousel [data-carousel-prev],
-.mui-carousel [data-carousel-next],
-.mui-carousel [data-carousel-to],
-.mui-carousel [data-carousel-toggle] {
+.m-carousel [data-carousel-prev],
+.m-carousel [data-carousel-next],
+.m-carousel [data-carousel-to],
+.m-carousel [data-carousel-toggle] {
   min-block-size: 28px;
   padding: 0 10px;
   font: inherit;
-  color: var(--mui-carousel-control-color, light-dark(#333639, rgba(255,255,255,.82)));
-  background: var(--mui-carousel-control-background, light-dark(#fff, rgba(255,255,255,.1)));
-  border: 1px solid var(--mui-carousel-control-border, light-dark(#e0e0e6, rgba(255,255,255,.24)));
-  border-radius: var(--mui-carousel-control-radius, 3px);
+  color: var(--m-carousel-control-color, light-dark(#333639, rgba(255,255,255,.82)));
+  background: var(--m-carousel-control-background, light-dark(#fff, rgba(255,255,255,.1)));
+  border: 1px solid var(--m-carousel-control-border, light-dark(#e0e0e6, rgba(255,255,255,.24)));
+  border-radius: var(--m-carousel-control-radius, 3px);
   cursor: pointer;
 }
-.mui-carousel [data-carousel-to] { min-inline-size: 28px; padding-inline: 0; }
-.mui-carousel :is([data-carousel-prev], [data-carousel-next], [data-carousel-to], [data-carousel-toggle]):enabled:not([aria-disabled="true"]):hover { color: var(--mui-carousel-primary, var(--mui-color-primary-hover, light-dark(#36ad6a, #7fe7c4))); border-color: currentColor; }
-.mui-carousel [aria-current="true"] { color: var(--mui-carousel-current-color, light-dark(#fff, #000)); background: var(--mui-carousel-primary, var(--mui-color-primary, light-dark(#18a058, #63e2b7))); border-color: transparent; }
-.mui-carousel :is(button:disabled, [aria-disabled="true"]) { color: var(--mui-carousel-disabled, light-dark(#c2c2c2, rgba(255,255,255,.38))); cursor: not-allowed; opacity: 1; }
-.mui-carousel :focus-visible { outline: 3px solid var(--mui-carousel-focus, #175cd3); outline-offset: -3px; }
+.m-carousel [data-carousel-to] { min-inline-size: 28px; padding-inline: 0; }
+.m-carousel :is([data-carousel-prev], [data-carousel-next], [data-carousel-to], [data-carousel-toggle]):enabled:not([aria-disabled="true"]):hover { color: var(--m-carousel-primary, var(--m-color-primary-hover, light-dark(#36ad6a, #7fe7c4))); border-color: currentColor; }
+.m-carousel [aria-current="true"] { color: var(--m-carousel-current-color, light-dark(#fff, #000)); background: var(--m-carousel-primary, var(--m-color-primary, light-dark(#18a058, #63e2b7))); border-color: transparent; }
+.m-carousel :is(button:disabled, [aria-disabled="true"]) { color: var(--m-carousel-disabled, light-dark(#c2c2c2, rgba(255,255,255,.38))); cursor: not-allowed; opacity: 1; }
+.m-carousel :focus-visible { outline: 3px solid var(--m-carousel-focus, #175cd3); outline-offset: -3px; }
 @media (prefers-reduced-motion: reduce) {
-  .mui-carousel > [data-carousel-viewport] { scroll-behavior: auto; }
+  .m-carousel > [data-carousel-viewport] { scroll-behavior: auto; }
 }
 @media (forced-colors: active) {
-  .mui-carousel :is([data-carousel-prev], [data-carousel-next], [data-carousel-to], [data-carousel-toggle]) { color: ButtonText; background: ButtonFace; border-color: ButtonText; }
-  .mui-carousel [aria-current="true"] { color: HighlightText; background: Highlight; }
-  .mui-carousel :is(button:disabled, [aria-disabled="true"]) { color: GrayText; border-color: GrayText; }
-  .mui-carousel :focus-visible { outline-color: Highlight; }
+  .m-carousel :is([data-carousel-prev], [data-carousel-next], [data-carousel-to], [data-carousel-toggle]) { color: ButtonText; background: ButtonFace; border-color: ButtonText; }
+  .m-carousel [aria-current="true"] { color: HighlightText; background: Highlight; }
+  .m-carousel :is(button:disabled, [aria-disabled="true"]) { color: GrayText; border-color: GrayText; }
+  .m-carousel :focus-visible { outline-color: Highlight; }
 }
 @media print {
-  .mui-carousel > [data-carousel-viewport] { display: block; block-size: auto; overflow: visible; }
-  .mui-carousel > [data-carousel-viewport] > [data-carousel-item] { block-size: auto; overflow: visible; break-inside: avoid; }
-  .mui-carousel > [data-carousel-controls], .mui-carousel > [data-carousel-readout] { display: none; }
+  .m-carousel > [data-carousel-viewport] { display: block; block-size: auto; overflow: visible; }
+  .m-carousel > [data-carousel-viewport] > [data-carousel-item] { block-size: auto; overflow: visible; break-inside: avoid; }
+  .m-carousel > [data-carousel-controls], .m-carousel > [data-carousel-readout] { display: none; }
 }

@@ -26,8 +26,8 @@ trigger-area differences remain explicit.
 <script defer src="./vendor/markup-ui-collapse.global.js"></script>
 <script defer src="./collapse-setup.js"></script>
 
-<div class="mui-collapse" data-collapse id="sections">
-  <div class="mui-collapse-row">
+<div class="m-collapse" data-collapse id="sections">
+  <div class="m-collapse-row">
     <details data-collapse-item data-collapse-key="overview" open>
       <summary>Overview</summary>
       <div data-collapse-content><p>Original content and native controls remain.</p></div>
@@ -51,14 +51,14 @@ collapse.setDisabled("advanced", false)
 collapse.disconnect()
 ```
 
-The optional helper requires a connected light-DOM div/section.mui-collapse[data-collapse].
+The optional helper requires a connected light-DOM div/section.m-collapse[data-collapse].
 Each owned item is a native details[data-collapse-item] with a unique nonempty **string**
 data-collapse-key, first meaningful noninteractive summary, and one distinct direct
 data-collapse-content region. Keys are not the native `name` attribute and are never generated
 or numerically coerced. A nested group has its own data-collapse root; bare nested items in
 the same group are rejected to prevent parent/child exclusive-name collisions.
 
-No custom element is registered. Existing legacy mui-accordion-item remains unchanged and
+No custom element is registered. Existing legacy m-accordion-item remains unchanged and
 must not share this anatomy. Core/helper loading order has no fake enhanced-before-legacy
 rule. Use one helper entry/copy per group rather than binding duplicate ESM/classic instances.
 
@@ -133,16 +133,16 @@ aria-disabled alone to block keyboard activation.
 
 Notifications are explicit adaptations:
 
-- `mui:collapse-header-click`: after an accepted primary summary click completes native
+- `m:collapse-header-click`: after an accepted primary summary click completes native
   dispatch, detail `{ name: string, expanded: boolean, item, event: MouseEvent }`.
   Later target/delegated preventDefault is honored. Disabled headers do not notify.
   Expanded is actual state when the queued notification runs; rapid clicks can share a final
   state. It is not a synchronous Vue requested-state callback.
-- `mui:collapse-change`: mirrors each owned native toggle with
+- `m:collapse-change`: mirrors each owned native toggle with
   `{ expandedNames: string[], name, expanded, item, event }`. Native toggle is asynchronous/
   coalesced and also fires for programmatic open changes. Exclusive transitions may produce
   more than one native notification with the same final group snapshot.
-- `mui:collapse-error`: `{ error }` for failed automatic revalidation. Explicit invalid
+- `m:collapse-error`: `{ error }` for failed automatic revalidation. Explicit invalid
   refresh throws after cleanup. No successful empty value masks invalid anatomy.
 
 No custom event pretends to be user-only when it reflects native programmatic toggling.
@@ -150,7 +150,7 @@ Property assignment does not fabricate a header-click event. No callback arrays,
 state merge, random source names or renderer-prop objects are forwarded.
 
 Header-extra content lives in a **sibling outside details/summary**, normally a second grid
-column of `.mui-collapse-row`. This trades full-row content width for safe, nonoverlapping
+column of `.m-collapse-row`. This trades full-row content width for safe, nonoverlapping
 native anatomy. Extra actions never toggle a header through this helper. A direct extra
 button or descendant button needs an explicit button/submit/reset type; intentional form
 submission remains native. Buttons inside summary labels are rejected, not event-stopped
@@ -189,20 +189,20 @@ Default presentation now follows the pinned source's borderless group, 14px text
 400-weight headers. The first header has no padding; later items have a 16px preceding
 gap, divider and 16px header top padding. Content has 16px top padding without the former
 horizontal/bottom inset or first-child margin reset. Authored child margins remain authored.
-Mixed direct details and `.mui-collapse-row` siblings receive consistent separators;
+Mixed direct details and `.m-collapse-row` siblings receive consistent separators;
 nested groups use a 32px logical-start indent.
 
 Light body/header/disabled colors are `#333639` / `#1f2225` / `#c2c2c2`, with `#efeff5`
 dividers. Dark scopes use white at .82 / .9 / .38 and .09 divider alpha. Set
-`data-mui-theme="light|dark"` on the native context. These neutral defaults are local CSS,
+`data-m-theme="light|dark"` on the native context. These neutral defaults are local CSS,
 not a theme provider. Disabled colors still require the helper's real `aria-disabled`
 activation contract; a CSS-only disabled marker does not falsely acquire disabled styling.
 
-Presentation tokens include `--mui-collapse-color`, `--mui-collapse-header-color`,
-`--mui-collapse-disabled-color`, `--mui-collapse-border`, `--mui-collapse-font-size`,
-`--mui-collapse-header-weight`, `--mui-collapse-header-padding`,
-`--mui-collapse-content-padding`, `--mui-collapse-item-gap`, `--mui-collapse-extra-padding`
-and `--mui-collapse-arrow-size`. Author tokens override defaults, including first-header
+Presentation tokens include `--m-collapse-color`, `--m-collapse-header-color`,
+`--m-collapse-disabled-color`, `--m-collapse-border`, `--m-collapse-font-size`,
+`--m-collapse-header-weight`, `--m-collapse-header-padding`,
+`--m-collapse-content-padding`, `--m-collapse-item-gap`, `--m-collapse-extra-padding`
+and `--m-collapse-arrow-size`. Author tokens override defaults, including first-header
 padding. Extra controls retain their own native font rather than receiving a button reset.
 
 The default keeps the native summary marker. For an authored custom arrow, use
@@ -211,7 +211,7 @@ data-collapse-title. Custom graphics default to 18px with a 4px title gap. Group
 data-collapse-arrow-placement left/right retains its **physical** custom-arrow ordering
 in RTL; the source RTL provider uses logical-side ordering and a different rotation
 direction. Native marker shape/spacing/positioning otherwise remains browser-owned.
-`.mui-collapse-arrow-rotate` and `.mui-collapse--arrow-motion` opt into a 150ms
+`.m-collapse-arrow-rotate` and `.m-collapse--arrow-motion` opt into a 150ms
 `cubic-bezier(.4,0,.2,1)` arrow rotation, not panel-height animation. Reduced motion and
 print disable it; forced colors use system colors. Focus uses an independent info-color
 outline so the focusable disabled summary does not get a faint disabled-color outline.

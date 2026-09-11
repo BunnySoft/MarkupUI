@@ -4,7 +4,7 @@
 `createNotificationOwner(root, options)` owns a bounded collection of native articles.
 It reuses the accepted feedback expiry/root/CSS primitives, with a small pending-attribute
 ledger. It does not import Message's consumer logic, a modal/Popover, provider, renderer,
-animation framework or browser OS Notification API. Legacy `mui.notification` is unchanged.
+animation framework or browser OS Notification API. Legacy `m.notification` is unchanged.
 
 **2026-09-11 default-style audit:** cards now follow the source's 365px width, 14px/1.6
 type, 16px padding, 3px corners, shadow and semantic light/dark roles. Visible type words,
@@ -22,9 +22,9 @@ the accent edge and labelled native close action remain intentional differences.
 | [Local demo](../../demo/components/notification.html) | Separate native HTML/CSS/JS and local simulated decisions only |
 
 ```html
-<div id="notifications" class="mui-feedback-host mui-notification-host">
-  <div class="mui-feedback-list" data-notification-items></div>
-  <p class="mui-feedback-announcer" data-notification-announcer
+<div id="notifications" class="m-feedback-host m-notification-host">
+  <div class="m-feedback-list" data-notification-items></div>
+  <p class="m-feedback-announcer" data-notification-announcer
     role="status" aria-atomic="true"></p>
 </div>
 ```
@@ -61,7 +61,7 @@ supply real h1–h6 headings, article aria-label/aria-labelledby, native avatar/
 links, buttons and forms. Template article labels and heading levels are not rewritten.
 Referenced headings cannot be cleared if that would leave the article unnamed.
 
-Required marked regions in one `article.mui-notification`:
+Required marked regions in one `article.m-notification`:
 
 - `data-notification-kind`: visible stock type words.
 - `data-notification-title/description/content/meta`: separate text-only regions.
@@ -171,10 +171,10 @@ use the author's available **focusFallback outside the collection**, only when f
 body after removal. Auto expiry/automatic teardown never use that fallback. No guessed
 global focus destination, and no custom focus trap.
 
-Nonbubbling `mui:notification-create/update` have `{ handle }`.
-`mui:notification-remove` has `{ handle, reason }` (close/destroy/expired/dispose/detached).
+Nonbubbling `m:notification-create/update` have `{ handle }`.
+`m:notification-remove` has `{ handle, reason }` (close/destroy/expired/dispose/detached).
 These native lifecycle events are not Vue enter/leave transition hooks.
-The cancelable `mui:notification-error` has typed
+The cancelable `m:notification-error` has typed
 `{ handle, error, phase: "close" | "anatomy", stale }`; handle is null for owner faults.
 Current close failures have visible text. Errors without a current surface also report
 to console unless a listener calls preventDefault to acknowledge handling. Cancelling
@@ -201,7 +201,7 @@ new author's location. New author announcer content is preserved. Prefer explici
 before intentional DOM removal/cross-document handoff. Bulk teardown blocks reentrant
 creation/updates; disposed owners/handles cannot reconnect.
 
-Flow is baseline. `.mui-feedback-host--fixed` selects fixed stacking, with
+Flow is baseline. `.m-feedback-host--fixed` selects fixed stacking, with
 data-feedback-placement top/top-right/top-left/bottom/bottom-left/bottom-right. Notification's
 absent-attribute fixed default is **top-right**. Left/right are physical in RTL. Shared
 viewport-percentage bounds and native overflow keep every placement scrollable, unlike the
@@ -255,7 +255,7 @@ owner/name/source identity and explicitly added source/inherited contracts.
   h3, native form/link/close controls and one owner status—not inferred headings or repeated
   item alerts. No universal speech delivery/timing or AT certification is claimed.
 - Modal-local notifications stayed inside the native top layer; body-fixed cards did not
-  cross it. ESM/classic duplicate-owner/namespace guards and legacy mui.notification
+  cross it. ESM/classic duplicate-owner/namespace guards and legacy m.notification
   output/clear coexistence passed, with no OS permissions or notification side effects.
 - Default top-right and all six physical placements passed in LTR/RTL. At 1000×800, fixed
   hosts measured **448px** wide with **16px** edge insets. At **320px and 2x CSS zoom**,

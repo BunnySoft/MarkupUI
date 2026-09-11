@@ -73,10 +73,10 @@ an explicit 120px height wins; the measured author case keeps rgb(120,40,80) tex
 rgb(250,240,220) background and a monospace font. Code's border-color token remains an
 inset shadow rather than consuming layout space. The controller never writes style
 attributes and does not overwrite authored styles on disconnect. An authored root
-`--mui-code-gutter: 4ch` still produces a 42.7891px inset; the automatic fallback does
+`--m-code-gutter: 4ch` still produces a 42.7891px inset; the automatic fallback does
 not shadow this existing Code override.
 
-`--mui-log-white-space: pre` plus `--mui-log-word-break: normal` restores horizontal
+`--m-log-white-space: pre` plus `--m-log-word-break: normal` restores horizontal
 scrolling (1886px sample extent after removal of the default inset). Explicit
 `data-word-wrap` retains Code's stronger break-all/anywhere behavior and hidden number
 markers. Normal Log wrapping can show optional logical-record numbers, including on

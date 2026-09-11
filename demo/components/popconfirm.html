@@ -22,7 +22,7 @@
         <button type="button" id="main-trigger" popovertarget="main-panel">Review local preview</button>
         <button type="submit" id="submit-form">Submit ordinary form</button>
         <button type="reset" id="reset-form">Reset form</button>
-        <div class="mui-popover mui-popconfirm mui-popover--arrow mui-popover--animated" id="main-panel" popover="auto" role="dialog" aria-labelledby="main-heading" aria-describedby="main-description">
+        <div class="m-popover m-popconfirm m-popover--arrow m-popover--animated" id="main-panel" popover="auto" role="dialog" aria-labelledby="main-heading" aria-describedby="main-description">
           <h2 id="main-heading"><span data-popconfirm-icon aria-hidden="true">?</span>Update this local preview?</h2>
           <p id="main-description" data-popconfirm-content>The draft itself is not sent anywhere. This original <strong id="preserved-text">description</strong> stays authored.</p>
           <label>Simulated positive result
@@ -43,10 +43,10 @@
     <section>
       <h2>Nested confirmation with custom native action markup</h2>
       <button type="button" id="parent-trigger" popovertarget="parent-panel">Open rich parent</button>
-      <div class="mui-popover" id="parent-panel" popover="auto" aria-label="Local parent panel">
+      <div class="m-popover" id="parent-panel" popover="auto" aria-label="Local parent panel">
         <p>This parent is a regular Popover.</p>
         <button type="button" id="nested-trigger" popovertarget="nested-panel">Review nested choice</button>
-        <div class="mui-popover mui-popconfirm" id="nested-panel" popover="auto" role="dialog" aria-label="Nested local choice" aria-describedby="nested-description">
+        <div class="m-popover m-popconfirm" id="nested-panel" popover="auto" role="dialog" aria-label="Nested local choice" aria-describedby="nested-description">
           <p id="nested-description" data-popconfirm-content>Apply this local display preference?</p>
           <footer data-popconfirm-actions><span><button type="button" data-popconfirm-negative>Leave unchanged</button></span><strong><button type="button" data-popconfirm-positive>Apply locally</button></strong></footer>
           <p data-popconfirm-pending role="status" hidden>Checking the local choice.</p>
@@ -60,7 +60,7 @@
       <h2>RTL scroll boundary</h2>
       <div id="scroll-box" class="scroll-box" dir="rtl"><div class="scroll-content">
         <button type="button" id="edge-trigger" popovertarget="edge-panel">RTL local choice</button>
-        <div class="mui-popover mui-popconfirm" id="edge-panel" popover="auto" role="dialog" aria-label="RTL local choice" aria-describedby="edge-description">
+        <div class="m-popover m-popconfirm" id="edge-panel" popover="auto" role="dialog" aria-label="RTL local choice" aria-describedby="edge-description">
           <p id="edge-description" data-popconfirm-content>Keep this native alignment?</p>
           <div data-popconfirm-actions><button type="button" data-popconfirm-negative>Cancel</button><button type="button" data-popconfirm-positive>Keep alignment</button></div>
           <p data-popconfirm-pending role="status" hidden>Checking locally.</p>
@@ -70,7 +70,7 @@
       </div></div>
     </section>
     <button type="button" id="bottom-trigger" popovertarget="bottom-panel">Bottom edge confirmation</button>
-    <div class="mui-popover mui-popconfirm" id="bottom-panel" popover="auto" role="dialog" aria-label="Edge local choice" aria-describedby="bottom-description">
+    <div class="m-popover m-popconfirm" id="bottom-panel" popover="auto" role="dialog" aria-label="Edge local choice" aria-describedby="bottom-description">
       <p id="bottom-description" data-popconfirm-content>Apply the edge example?</p>
       <div data-popconfirm-actions><button type="button" data-popconfirm-negative>No</button><button type="button" data-popconfirm-positive>Yes, locally</button></div>
       <p data-popconfirm-pending role="status" hidden>Checking locally.</p>

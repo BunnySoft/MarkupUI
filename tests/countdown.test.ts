@@ -10,7 +10,7 @@ const helpers: CountdownController[] = []
 let hidden = false
 function fixture(options: CountdownOptions = { duration: 5000 }, units = false, bind = true) {
   const host = document.createElement("div")
-  host.innerHTML = `<time class="mui-countdown" data-countdown datetime="PT5S" tabindex="0">${units
+  host.innerHTML = `<time class="m-countdown" data-countdown datetime="PT5S" tabindex="0">${units
     ? '<strong>Remaining: </strong><span data-countdown-units><span data-countdown-hours>00</span><abbr>h</abbr><span data-countdown-minutes>00</span><abbr>m</abbr><span data-countdown-seconds>05</span><abbr>s</abbr><span data-countdown-fraction>.000</span></span>'
     : '<strong>Remaining: </strong><span data-countdown-text>00:00:05</span>'}</time><button type="button" data-action>Native action</button><input name="outside" value="kept" aria-label="Outside">`
   document.body.append(host)
@@ -261,7 +261,7 @@ describe("Countdown failure, completion reentrancy and teardown", () => {
   })
   it("suppresses an old finish callback after an event listener replaces the run", () => {
     const hook = vi.fn(), { helper, element } = fixture({ duration: 1000, onFinish: hook })
-    element.addEventListener("mui:countdown-finish", () => helper.set({ value: 5000 }), { once: true })
+    element.addEventListener("m:countdown-finish", () => helper.set({ value: 5000 }), { once: true })
     vi.advanceTimersByTime(1000)
     expect(hook).not.toHaveBeenCalled(); expect(helper.state.runId).toBe(2); expect(helper.value).toBe(5000)
   })
@@ -269,19 +269,19 @@ describe("Countdown failure, completion reentrancy and teardown", () => {
     let helper!: CountdownController
     const errors = vi.fn()
     const setup = fixture({ duration: 1000, onFinish: () => { helper.reset(); throw new Error("old hook failed") } }); helper = setup.helper
-    setup.element.addEventListener("mui:countdown-error", errors); vi.advanceTimersByTime(1000)
+    setup.element.addEventListener("m:countdown-error", errors); vi.advanceTimersByTime(1000)
     expect(helper.state.runId).toBe(2); expect(helper.state.status).toBe("running"); expect(helper.state.error).toBeNull()
     expect(errors).toHaveBeenCalledOnce(); expect(errors.mock.calls[0]![0].detail).toMatchObject({ runId: 1, phase: "finish", stale: true })
     expect(vi.getTimerCount()).toBe(1)
   })
   it("does not deliver completion or hooks after a notification removes the root", () => {
     const hook = vi.fn(), first = fixture({ duration: 1000, onFinish: hook }), event = vi.fn()
-    first.element.addEventListener("mui:countdown-update", () => { if (first.helper.state.value === 0) first.element.remove() })
-    first.element.addEventListener("mui:countdown-finish", event)
+    first.element.addEventListener("m:countdown-update", () => { if (first.helper.state.value === 0) first.element.remove() })
+    first.element.addEventListener("m:countdown-finish", event)
     vi.advanceTimersByTime(1000)
     expect(hook).not.toHaveBeenCalled(); expect(event).not.toHaveBeenCalled(); expect(first.helper.connected).toBe(false)
     const second = fixture({ duration: 1000, onFinish: hook })
-    second.element.addEventListener("mui:countdown-finish", () => second.element.remove())
+    second.element.addEventListener("m:countdown-finish", () => second.element.remove())
     vi.advanceTimersByTime(1000); expect(hook).not.toHaveBeenCalled(); expect(second.helper.connected).toBe(false)
   })
   it("guards reentrant clocks/formatters but permits disconnect without stale writes", () => {

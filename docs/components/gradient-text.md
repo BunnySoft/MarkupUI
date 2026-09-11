@@ -29,8 +29,8 @@ presentation value, mapped here to ordinary CSS.
 
 ```html
 <link rel="stylesheet" href="./vendor/markup-ui-gradient-text.css">
-<h1><span class="mui-gradient-text">Original native heading text</span></h1>
-<p><span class="mui-gradient-text" data-type="info">Original native text</span></p>
+<h1><span class="m-gradient-text">Original native heading text</span></h1>
+<p><span class="m-gradient-text" data-type="info">Original native text</span></p>
 ```
 
 Serve/copy the stylesheet through your normal asset mechanism. There is no `./gradient-text`
@@ -39,8 +39,8 @@ legacy aggregate; there is no custom-element registration or conflict rule for t
 
 ## Presentation contract
 
-Apply `.mui-gradient-text` to the actual native text element. `data-type` and existing
-`data-mui-theme` scopes select CSS presets; native `font-size` sets size, including responsive
+Apply `.m-gradient-text` to the actual native text element. `data-type` and existing
+`data-m-theme` scopes select CSS presets; native `font-size` sets size, including responsive
 CSS expressions. Enhanced clipping now establishes an inline-block paint box, matching the
 reference's text/gradient bounds. No default size, heading level, line height, document
 language or direction is assigned. Native margins remain authored; use a span inside a
@@ -50,27 +50,27 @@ Upstream numeric sizes require explicit CSS units here; no JS converts numbers i
 | Input | Retained CSS contract |
 | --- | --- |
 | `data-type` | `primary`/absence, `info`, `success`, `warning`, `error`; source `danger` aliases error. Unknown values leave the base primary palette. |
-| `--mui-gradient-text-from` | Native CSS color for the first endpoint; defaults to the selected palette. |
-| `--mui-gradient-text-to` | Native CSS color for the last endpoint; defaults to the selected palette. |
-| `--mui-gradient-text-angle` | Native CSS angle, default `252deg`; use units, including `0deg`. |
-| `--mui-gradient-text-image` | Complete native CSS background-image, such as a multi-stop linear gradient; overrides endpoint construction. |
-| `--mui-gradient-text-surface` | Opaque canvas color for the default light fade, default `#fff`; see compositing below. Does not rewrite custom images/endpoints. |
-| `--mui-gradient-text-fallback` | Solid foreground color; darker selected-palette color in light, readable normal severity color in dark. |
-| `--mui-gradient-text-weight` | Native font weight, default `500`. |
+| `--m-gradient-text-from` | Native CSS color for the first endpoint; defaults to the selected palette. |
+| `--m-gradient-text-to` | Native CSS color for the last endpoint; defaults to the selected palette. |
+| `--m-gradient-text-angle` | Native CSS angle, default `252deg`; use units, including `0deg`. |
+| `--m-gradient-text-image` | Complete native CSS background-image, such as a multi-stop linear gradient; overrides endpoint construction. |
+| `--m-gradient-text-surface` | Opaque canvas color for the default light fade, default `#fff`; see compositing below. Does not rewrite custom images/endpoints. |
+| `--m-gradient-text-fallback` | Solid foreground color; darker selected-palette color in light, readable normal severity color in dark. |
+| `--m-gradient-text-weight` | Native font weight, default `500`. |
 | Author `font-size` / `color` | Normal CSS cascade; no runtime `size`, `fontSize` or `color` property adapter. |
 
 ```html
-<span class="mui-gradient-text campaign-text">Selectable campaign text</span>
+<span class="m-gradient-text campaign-text">Selectable campaign text</span>
 ```
 
 ```css
 .campaign-text {
   font-size: clamp(1.25rem, 3vw, 2rem);
-  --mui-gradient-text-weight: 600;
-  --mui-gradient-text-from: #2458a8;
-  --mui-gradient-text-to: #8f276a;
-  --mui-gradient-text-angle: 90deg;
-  --mui-gradient-text-fallback: #243f76;
+  --m-gradient-text-weight: 600;
+  --m-gradient-text-from: #2458a8;
+  --m-gradient-text-to: #8f276a;
+  --m-gradient-text-angle: 90deg;
+  --m-gradient-text-fallback: #243f76;
 }
 ```
 
@@ -98,18 +98,18 @@ run from normal severity color to supplemental severity color:
 | warning | `#f0a020` | `#f2c97d` → `#f08a00` |
 | error / danger | `#d03050` | `#e88080` → `#d03a52` |
 
-Use `data-mui-theme="dark"` on the text or an ancestor; nested light scopes reset defaults.
+Use `data-m-theme="dark"` on the text or an ancestor; nested light scopes reset defaults.
 Correct shared light semantic colors are reused, but no shared theme file is required.
 
 Upstream's light start is genuinely translucent. This native stylesheet deliberately
-precomposites that default start with `--mui-gradient-text-surface` using `color-mix`,
+precomposites that default start with `--m-gradient-text-surface` using `color-mix`,
 and interpolates in sRGB. This preserves the solid safety underpaint below without
 darkening the intended light fade. On a nonwhite **opaque** canvas, supply its color:
 
 ```css
 .warm-canvas {
   background-color: #ead8c4;
-  --mui-gradient-text-surface: #ead8c4;
+  --m-gradient-text-surface: #ead8c4;
 }
 ```
 
@@ -132,7 +132,7 @@ The base rule always supplies ordinary nontransparent `color` and
 fill becomes transparent; ordinary `color` never does.
 
 Enhanced text has a **solid `background-color:currentColor` underpaint** beneath its gradient.
-A missing/invalid gradient image or explicit `--mui-gradient-text-image:none` therefore leaves
+A missing/invalid gradient image or explicit `--m-gradient-text-image:none` therefore leaves
 solid clipped text instead of empty transparent glyphs. This does not repair an author-selected
 transparent/low-contrast foreground, deliberate background override or malformed custom CSS.
 Use native gradients rather than remote image assets; the library has no asset URLs or loader.
@@ -145,7 +145,7 @@ Use native gradients rather than remote image assets; the library has no asset U
 - **Selection:** use system Highlight/HighlightText rather than transparent selection glyphs.
 - **Nested content:** nongradient descendants restore their own currentColor text fill.
   Native links/code/strong/em text therefore stays solid, not invisibly dependent on an
-  ancestor's clipped painting context. Opt a child into `.mui-gradient-text` when it should
+  ancestor's clipped painting context. Opt a child into `.m-gradient-text` when it should
   own a separate gradient. Replaced content such as inline SVG keeps its own native paints;
   there is no shape/fill/stroke reset.
 
@@ -190,9 +190,9 @@ measurements, the light compositing tradeoff, author checks and remaining differ
 | `size` | Author `font-size` with native CSS units/expressions. | 🟢 Native heading size remains intact when absent. |
 | `type` | `data-type` palette vocabulary. | 🟢 CSS only; contrast remains author-verified. |
 | default slot | Original native text/inline nodes. | 🟢 No rendering, copying or semantic mutation. |
-| `gradient.from` | `--mui-gradient-text-from`. | 🟢 Native CSS color. |
-| `gradient.to` | `--mui-gradient-text-to`. | 🟢 Native CSS color. |
-| `gradient.deg` | `--mui-gradient-text-angle`. | 🟢 Explicit angle units; object-default translation uses `0deg`. |
+| `gradient.from` | `--m-gradient-text-from`. | 🟢 Native CSS color. |
+| `gradient.to` | `--m-gradient-text-to`. | 🟢 Native CSS color. |
+| `gradient.deg` | `--m-gradient-text-angle`. | 🟢 Explicit angle units; object-default translation uses `0deg`. |
 | Source `fontSize` | Same native `font-size` declaration. | 🟢 Presentation adaptation, not alias prop/precedence implementation. |
 | Source `color` | Same native gradient-image/tokens. | 🟢 Presentation adaptation, not source alias or normal CSS color semantics. |
 | Source `type: danger` | `data-type="danger"` aliases error palette. | 🟢 Compatibility value, not another prop. |

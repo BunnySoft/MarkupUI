@@ -9,7 +9,7 @@ global singleton, OS Notification API or upstream pixel/transition parity is cla
 - [Default-style audit](../../style-audit/components/message.md)
 - [Optional Message service](../../../src/components/message/) · [feedback primitives](../../../src/components/feedback/)
 - [Targeted tests](../../../tests/message.test.ts) · [separate local demo](../../../demo/components/message.html)
-- Legacy [overlay output](../../../src/overlay/index.ts) and [mui.message API](../../../src/core/api.ts) remain unchanged.
+- Legacy [overlay output](../../../src/overlay/index.ts) and [m.message API](../../../src/core/api.ts) remain unchanged.
 - One polite owner announcer, non-live native list items with visible kind words, safe
   string/default DOM or trusted templates, bounded admission and focus-protected expiry.
 

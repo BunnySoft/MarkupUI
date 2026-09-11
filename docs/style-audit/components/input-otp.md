@@ -133,7 +133,7 @@ The parent-owned Input follow-up is now **complete**:
 
 | Shared surface | Current state | Status |
 | --- | --- | --- |
-| Print color-scheme on composed Input | Input print now sets `color-scheme: light` on `.mui-input`, `.mui-input-group` and `.mui-input-group-label` | **Completed** |
+| Print color-scheme on composed Input | Input print now sets `color-scheme: light` on `.m-input`, `.m-input-group` and `.m-input-group-label` | **Completed** |
 | Forced-color disabled wrapper | Wrapper pseudo-border now resolves to the same system `GrayText` as a native probe | **Completed** |
 | Focused error wrapper in dark print | Wrapper/affix text is black, the surface is transparent, the boundary is black and the glow is removed | **Completed** |
 

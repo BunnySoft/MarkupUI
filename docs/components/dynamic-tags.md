@@ -26,27 +26,27 @@ natively. `values` includes all logical tags, even disabled ones; it is not Form
 successful-control filtering.
 
 ```html
-<fieldset class="mui-dynamic-tags" data-dynamic-tags data-dynamic-input>
+<fieldset class="m-dynamic-tags" data-dynamic-tags data-dynamic-input>
   <legend>Topics</legend>
-  <ul class="mui-dynamic-tags__list" data-dynamic-rows>
-    <li class="mui-dynamic-tags__tag" data-dynamic-row data-dynamic-key="initial">
-      <input class="mui-dynamic-tags__value" data-tags-value type="text"
+  <ul class="m-dynamic-tags__list" data-dynamic-rows>
+    <li class="m-dynamic-tags__tag" data-dynamic-row data-dynamic-key="initial">
+      <input class="m-dynamic-tags__value" data-tags-value type="text"
              readonly name="tags[]" value="native" aria-label="Committed tag">
       <button type="button" data-dynamic-action="remove" hidden>Remove tag</button>
     </li>
   </ul>
   <template data-dynamic-template>
-    <li class="mui-dynamic-tags__tag" data-dynamic-row>
-      <input class="mui-dynamic-tags__value" data-tags-value type="text"
+    <li class="m-dynamic-tags__tag" data-dynamic-row>
+      <input class="m-dynamic-tags__value" data-tags-value type="text"
              readonly name="tags[]" aria-label="Committed tag">
       <button type="button" data-dynamic-action="remove" hidden>Remove tag</button>
     </li>
   </template>
-  <div class="mui-dynamic-tags__entry" data-tags-entry hidden>
+  <div class="m-dynamic-tags__entry" data-tags-entry hidden>
     <label>New tag <input data-tags-editor type="text" maxlength="64"></label>
     <button type="button" data-dynamic-add hidden>Add tag</button>
   </div>
-  <p class="mui-dynamic-tags__status" data-tags-status>Authored tags.</p>
+  <p class="m-dynamic-tags__status" data-tags-status>Authored tags.</p>
 </fieldset>
 ```
 
@@ -166,13 +166,13 @@ Nonbubbling events are dispatched on the explicit Tags root:
 
 | Event | Detail / meaning |
 | --- | --- |
-| `mui:dynamic-tags-change` | `{ type: "add"|"remove", tag, tags, values }`, after committed tag state and conditional draft clear |
-| `mui:dynamic-tags-reject` | `{ reason, message }`, expected nonmutating rejection with a preserved draft |
-| `mui:dynamic-tags-error` | `{ error, committed }`, unexpected creation/resource error, not successful fallback |
+| `m:dynamic-tags-change` | `{ type: "add"|"remove", tag, tags, values }`, after committed tag state and conditional draft clear |
+| `m:dynamic-tags-reject` | `{ reason, message }`, expected nonmutating rejection with a preserved draft |
+| `m:dynamic-tags-error` | `{ error, committed }`, unexpected creation/resource error, not successful fallback |
 
 Arrays/descriptors are frozen snapshots/references, not a reactive store. Native property
 writes plus refresh/reset do not emit change. Commit/remove are commands, **not silent value
-setters**. The reused `mui:dynamic-input-*` structural events remain visible as lower-level
+setters**. The reused `m:dynamic-input-*` structural events remain visible as lower-level
 events; subscribe to Tags events for its finished editor/value contract, not both as two
 business updates. Raw collection insertion or per-row add/up/down controls are not exposed
 through Tags. Its template allows only optional remove actions.
@@ -213,7 +213,7 @@ The [demo](../../demo/components/dynamic-tags.html) explicitly uses [Form](form.
 eligible unnamed editor as a custom-validation anchor:
 
 ```js
-root.addEventListener("mui:dynamic-tags-change", () => validation.refresh())
+root.addEventListener("m:dynamic-tags-change", () => validation.refresh())
 // Form configuration may check tags.values.length in a small manual validator.
 ```
 
@@ -247,7 +247,7 @@ The Tags stylesheet independently styles `__list`, `__tag`, `__value`, `__entry`
 `__status`. Readonly values have a visible native text field width and can be selected/
 scrolled normally; they are not duplicated into a rendered label. `data-round`, small/
 medium/large sizing and default/primary/info/success/warning/error `data-type` are
-presentation only. `--mui-tags-background`, `--mui-tags-border`, `--mui-tags-text` are
+presentation only. `--m-tags-background`, `--m-tags-border`, `--m-tags-text` are
 external CSS colors; no color/style object or checkable/selected state is installed.
 
 | Source surface | Retained native adaptation / explicit omission |

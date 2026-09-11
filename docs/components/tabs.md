@@ -37,7 +37,7 @@ no shared source or generated adapter changed.
 <script defer src="./vendor/markup-ui-tabs.global.js"></script>
 <script defer src="./tabs-setup.js"></script>
 
-<div class="mui-tabs" data-tabs data-tabs-type="line" data-tabs-placement="top" id="views">
+<div class="m-tabs" data-tabs data-tabs-type="line" data-tabs-placement="top" id="views">
   <div data-tabs-bar>
     <span data-tabs-prefix>Local views</span>
     <div data-tabs-list aria-label="Document views">
@@ -93,7 +93,7 @@ No JSX/VDOM/template evaluator or hidden duplicate pane is created.
 
 The documented Tab/TabPane companions map to the **paired tab button and pane**. A label-only
 Tab widget without a corresponding pane, lazy render/unmount directives and VNode tab-props
-forwarding are excluded. No custom element is registered; legacy mui-tabs/mui-tab stay
+forwarding are excluded. No custom element is registered; legacy m-tabs/m-tab stay
 unchanged, and binding inside that legacy anatomy is rejected. There is no fictitious
 enhanced-before-core rule.
 
@@ -148,7 +148,7 @@ on refresh/reconnect. Direct hidden/type/disabled changes to tabs are observed.
 | `scrollToCurrentTab()` | Native nearest/optional axis-centered scrollIntoView, boolean availability result |
 | `refresh()`, `connect()`, `disconnect()` | Explicit validated lifecycle over existing nodes |
 
-User activation emits `mui:tabs-change` with `{ value, previous, tab, panel, event }` only
+User activation emits `m:tabs-change` with `{ value, previous, tab, panel, event }` only
 after the same live request commits a different value. Native button clicks are admitted
 in a later task, honoring synchronous target/delegated defaultPrevented and modified-click
 policy. A newer explicit value/selection supersedes an earlier queued click.
@@ -222,16 +222,16 @@ Start/end swap under RTL; physical left/right do not. Vertical card padding is
 There is no extra root grid gap or forced first-child margin reset. Pane content
 keeps its application typography/margins; size classes no longer scale all pane text.
 
-Select `data-mui-theme="light|dark"` on the root or an ancestor. Private defaults
+Select `data-m-theme="light|dark"` on the root or an ancestor. Private defaults
 use title-role tab text, body-role pane text, divider-role borders and correct
-card/segment surfaces. Shared `--mui-color-primary` is consumed only for its
+card/segment surfaces. Shared `--m-color-primary` is consumed only for its
 correct active/hover brand role; it does not recolor Segment's neutral selection.
 The application still owns document background and `color-scheme`.
 
 Existing public padding/color/background/indicator tokens remain authoritative.
-`--mui-tabs-hover` and `--mui-tabs-disabled` additionally customize those states.
+`--m-tabs-hover` and `--m-tabs-disabled` additionally customize those states.
 Small/large/type defaults are private rather than writes to the public padding token.
-Public `--mui-tabs-pane-padding` and `--mui-tabs-tab-padding` override every
+Public `--m-tabs-pane-padding` and `--m-tabs-tab-padding` override every
 placement/size recipe. A just-disabled selected tab can exist until the controller's
 observer refresh; disabled foreground wins immediately, and the controller then
 selects an available pair. Direct assignment of a disabled selection is rejected.
@@ -271,7 +271,7 @@ Harmless label refresh may preserve a valid request. A stale true result resolve
 without selecting or focusing; a stale rejection remains an explicit diagnostic but never
 reveals error UI in a new session.
 
-Failures emit `mui:tabs-error` with `{ error, value, previous, stale }` and leave lastRequest
+Failures emit `m:tabs-error` with `{ error, value, previous, stale }` and leave lastRequest
 rejected. Current failures reveal the authored alert; pending requests expose authored status
 and aria-busy without disabling all tabs, allowing newer requests. Diagnostic error events
 may arrive on the original root after disposal; applications should inspect stale before
@@ -284,9 +284,9 @@ Post-focus/commit identity checks prevent disposed/superseded bindings from noti
 
 ## Add/close intents and refresh
 
-An authored named type=button[data-tabs-add] outside the tablist emits mui:tabs-add with the
+An authored named type=button[data-tabs-add] outside the tablist emits m:tabs-add with the
 native event. A separately labelled type=button[data-tabs-close="key"] outside the tablist,
-or Delete on an available closable tab, emits mui:tabs-close with its captured key/tab/pane/
+or Delete on an available closable tab, emits m:tabs-close with its captured key/tab/pane/
 event. Mark a tab or its pane data-tabs-closable to enable Delete; an associated external
 close control also establishes closability. Disabled tabs do not issue close intent.
 

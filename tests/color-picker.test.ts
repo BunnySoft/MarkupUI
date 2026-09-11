@@ -12,7 +12,7 @@ function fixture(withEditor = true) {
   document.body.innerHTML = `<form id="form"><fieldset data-color-picker id="root"><legend>Color</legend>
     <label for="color">Color</label><input data-color-control id="color" type="color" name="theme.color" value="#336699" list="palette">
     <span data-color-output hidden>Original readout</span><datalist id="palette"><option value="#336699"></option><option value="#008844"></option></datalist>
-    ${withEditor ? '<div data-color-entry hidden><label for="hex">Hex draft</label><span class="mui-input" data-input id="input-root"><input data-color-hex data-input-control id="hex" type="text" value="#336699" required pattern="#[0-9a-fA-F]{6}" maxlength="7" disabled aria-describedby="help"><span data-input-count id="count"></span></span><button type="button" data-color-apply hidden>Apply</button><button type="button" data-color-revert hidden>Revert</button></div>' : ""}
+    ${withEditor ? '<div data-color-entry hidden><label for="hex">Hex draft</label><span class="m-input" data-input id="input-root"><input data-color-hex data-input-control id="hex" type="text" value="#336699" required pattern="#[0-9a-fA-F]{6}" maxlength="7" disabled aria-describedby="help"><span data-input-count id="count"></span></span><button type="button" data-color-apply hidden>Apply</button><button type="button" data-color-revert hidden>Revert</button></div>' : ""}
     </fieldset><button name="intent" value="save">Submit</button></form><p id="help">Help</p><p id="feedback" hidden></p><button type="button" id="outside">Outside</button>`
   const root = document.querySelector<HTMLFieldSetElement>("#root")!, control = document.querySelector<HTMLInputElement>("#color")!
   const helper = createColorPicker(root); helpers.push(helper)
@@ -287,19 +287,19 @@ describe("Color Picker default styles", () => {
   })
 
   it("matches the retained reference trigger heights and type sizes", () => {
-    expect(css).toContain("--_mui-color-picker-height: 34px")
-    expect(css).toContain("--_mui-color-picker-height: 28px")
-    expect(css).toContain("--_mui-color-picker-height: 40px")
-    expect(css).toContain("--_mui-color-picker-font: 15px")
+    expect(css).toContain("--_m-color-picker-height: 34px")
+    expect(css).toContain("--_m-color-picker-height: 28px")
+    expect(css).toContain("--_m-color-picker-height: 40px")
+    expect(css).toContain("--_m-color-picker-font: 15px")
   })
 
   it("does not restyle an Input-owned composed draft field", () => {
-    expect(css).toContain(".mui-color-picker__hex:not([data-input-control])")
-    expect(css).not.toContain(".mui-color-picker__hex {")
+    expect(css).toContain(".m-color-picker__hex:not([data-input-control])")
+    expect(css).not.toContain(".m-color-picker__hex {")
   })
 
   it("keeps native chooser, disabled, forced-color and print ownership explicit", () => {
-    expect(css).toContain(".mui-color-picker__control:disabled")
+    expect(css).toContain(".m-color-picker__control:disabled")
     expect(css).toContain("@media (forced-colors: active)")
     expect(css).toContain("@media print")
     expect(css).not.toContain("appearance:")

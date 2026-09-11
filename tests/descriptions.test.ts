@@ -29,7 +29,7 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
     expect(pkg.exports["./descriptions"]).toBeUndefined()
     expect(readdirSync(resolve("src", "components", "descriptions"))).toEqual(["descriptions.css"])
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("mui-descriptions")).toBeUndefined()
+    expect(customElements.get("m-descriptions")).toBeUndefined()
     expect(css).not.toContain("@import")
     expect(demo).not.toContain("markup-ui-descriptions.js")
   })
@@ -37,7 +37,7 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
   it("uses legal dl groups with term/definition pairs and headings outside the list", () => {
     fixture()
     install()
-    for (const list of document.querySelectorAll(".mui-descriptions")) {
+    for (const list of document.querySelectorAll(".m-descriptions")) {
       expect(list.tagName).toBe("DL")
       for (const group of list.children) {
         if (group.tagName === "TEMPLATE") continue
@@ -47,7 +47,7 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
     }
     expect(document.querySelector("#project-heading")!.closest("dl")).toBeNull()
     expect(document.querySelector("#project-details")!.getAttribute("aria-labelledby")).toBe("project-heading")
-    expect(document.querySelectorAll(".mui-descriptions [role], .mui-descriptions [tabindex]")).toHaveLength(0)
+    expect(document.querySelectorAll(".m-descriptions [role], .m-descriptions [tabindex]")).toHaveLength(0)
     expect(css).not.toContain("display: contents")
   })
 
@@ -67,7 +67,7 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
     action.click()
     expect(clicks).toBe(1)
     const group = document.createElement("div")
-    group.className = "mui-description-item"
+    group.className = "m-description-item"
     const term = document.createElement("dt")
     const value = document.createElement("dd")
     term.textContent = "Late term"
@@ -84,12 +84,12 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
     const root = document.querySelector<HTMLElement>("#project-details")!
     const item = document.querySelector<HTMLElement>("#summary-item")!
     expect(getComputedStyle(root).display).toBe("grid")
-    expect(getComputedStyle(root).getPropertyValue("--mui-descriptions-columns")).toBe("3")
-    expect(getComputedStyle(item).getPropertyValue("--mui-description-span")).toBe("1")
-    root.style.setProperty("--mui-descriptions-columns", "2")
-    item.style.setProperty("--mui-description-span", "2")
-    expect(getComputedStyle(root).getPropertyValue("--mui-descriptions-columns")).toBe("2")
-    expect(getComputedStyle(item).getPropertyValue("--mui-description-span")).toBe("2")
+    expect(getComputedStyle(root).getPropertyValue("--m-descriptions-columns")).toBe("3")
+    expect(getComputedStyle(item).getPropertyValue("--m-description-span")).toBe("1")
+    root.style.setProperty("--m-descriptions-columns", "2")
+    item.style.setProperty("--m-description-span", "2")
+    expect(getComputedStyle(root).getPropertyValue("--m-descriptions-columns")).toBe("2")
+    expect(getComputedStyle(item).getPropertyValue("--m-description-span")).toBe("2")
     expect(css).toContain("grid-auto-flow: row")
     expect(css).not.toContain("dense")
     expect(css).not.toMatch(/(?:^|[;{])\s*order\s*:/m)
@@ -106,7 +106,7 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
     expect(getComputedStyle(item).display).toBe("block")
     root.dataset.bordered = ""
     expect(getComputedStyle(item).display).toBe("grid")
-    expect(getComputedStyle(item).gridTemplateColumns).toContain("--mui-descriptions-label-width")
+    expect(getComputedStyle(item).gridTemplateColumns).toContain("--m-descriptions-label-width")
     expect([...item.children].map(node => node.tagName)).toEqual(["DT", "DD"])
     expect(css).toContain("border-inline-end")
     expect(css).not.toContain("row-reverse")
@@ -116,16 +116,16 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
     fixture()
     install()
     const root = document.querySelector<HTMLElement>("#project-details")!
-    expect(getComputedStyle(root).getPropertyValue("--_mui-descriptions-padding-block")).toBe("12px")
+    expect(getComputedStyle(root).getPropertyValue("--_m-descriptions-padding-block")).toBe("12px")
     root.dataset.size = "small"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-descriptions-padding-block")).toBe("8px")
+    expect(getComputedStyle(root).getPropertyValue("--_m-descriptions-padding-block")).toBe("8px")
     root.dataset.size = "large"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-descriptions-padding-block")).toBe("16px")
+    expect(getComputedStyle(root).getPropertyValue("--_m-descriptions-padding-block")).toBe("16px")
     root.dataset.size = "unknown"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-descriptions-padding-block")).toBe("12px")
+    expect(getComputedStyle(root).getPropertyValue("--_m-descriptions-padding-block")).toBe("12px")
     root.dataset.labelAlign = "right"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-descriptions-label-align")).toBe("right")
-    expect(appCss).toContain("--mui-descriptions-content-align: center")
+    expect(getComputedStyle(root).getPropertyValue("--_m-descriptions-label-align")).toBe("right")
+    expect(appCss).toContain("--m-descriptions-content-align: center")
   })
 
   it("renders separators only from authored text in unbordered horizontal terms", () => {
@@ -135,9 +135,9 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
     expect(separator.textContent).toBe(":")
     expect(separator.getAttribute("aria-hidden")).toBe("true")
     expect(document.querySelector("#custom-separator")!.textContent).toBe("—")
-    const selector = 'dl.mui-descriptions[data-label-placement="left"]:not([data-bordered]) > div.mui-description-item > dt > .mui-descriptions-separator'
+    const selector = 'dl.m-descriptions[data-label-placement="left"]:not([data-bordered]) > div.m-description-item > dt > .m-descriptions-separator'
     expect(separator.matches(selector)).toBe(true)
-    expect(document.querySelector("#rtl-term .mui-descriptions-separator")!.matches(selector)).toBe(false)
+    expect(document.querySelector("#rtl-term .m-descriptions-separator")!.matches(selector)).toBe(false)
     expect(css).toContain(selector)
     expect(css).not.toContain("content:")
   })
@@ -185,7 +185,7 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
     expect(document.querySelector("#empty-term-item dt")!.textContent).toBe("")
     expect(document.querySelector("#empty-descriptions")!.children).toHaveLength(0)
     expect(document.querySelectorAll("#project-heading")).toHaveLength(1)
-    expect(document.querySelectorAll(".mui-descriptions [aria-live], .mui-descriptions [aria-selected]")).toHaveLength(0)
+    expect(document.querySelectorAll(".m-descriptions [aria-live], .m-descriptions [aria-selected]")).toHaveLength(0)
   })
 
   it("isolates nested description settings and leaves ordinary dt/dd presentation alone", () => {
@@ -194,19 +194,19 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
     const margin = getComputedStyle(outside).margin
     install()
     const parent = document.querySelector<HTMLElement>("#project-details")!
-    parent.style.setProperty("--mui-descriptions-columns", "6")
+    parent.style.setProperty("--m-descriptions-columns", "6")
     parent.dataset.labelPlacement = "left"
     parent.dataset.labelAlign = "right"
     const nested = document.querySelector("#nested-details")!
-    expect(getComputedStyle(nested).getPropertyValue("--mui-descriptions-columns")).toBe("3")
-    expect(getComputedStyle(nested).getPropertyValue("--_mui-descriptions-label-align")).toBe("left")
+    expect(getComputedStyle(nested).getPropertyValue("--m-descriptions-columns")).toBe("3")
+    expect(getComputedStyle(nested).getPropertyValue("--_m-descriptions-label-align")).toBe("left")
     expect(getComputedStyle(nested.firstElementChild!).gridTemplateColumns).toBe("minmax(0, 1fr)")
     expect(getComputedStyle(outside).margin).toBe(margin)
   })
 
   it("provides author-controlled responsive span resets plus print and forced-color fallbacks", () => {
     expect(appCss).toContain("@media (max-width: 40rem)")
-    expect(appCss).toContain(".responsive-descriptions > .mui-description-item { --mui-description-span: 1; }")
+    expect(appCss).toContain(".responsive-descriptions > .m-description-item { --m-description-span: 1; }")
     expect(appCss).toContain(".span-all { grid-column: 1 / -1; }")
     expect(css).toContain("overflow-wrap: anywhere")
     expect(css).toContain("@media print")
@@ -219,25 +219,25 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
   })
 
   it("keeps audited density, typography and palette roles within the existing CSS ceiling", () => {
-    expect(css).toContain("var(--mui-font-size-small, 14px)")
-    expect(css).toContain("var(--mui-font-size-medium, 14px)")
-    expect(css).toContain("var(--mui-font-size-large, 15px)")
-    expect(css).toContain("--_mui-descriptions-padding-inline: 24px")
-    expect(css).toContain("var(--mui-font-weight-strong, 500)")
-    expect(css).toContain("--_mui-descriptions-weight: 400")
-    expect(css).toContain("font-weight: var(--mui-descriptions-label-weight, inherit)")
-    expect(css).toContain("var(--mui-descriptions-line-height, var(--mui-line-height, 1.6))")
-    expect(css).toContain("var(--mui-descriptions-label-color, var(--_mui-descriptions-label, #1f2225))")
-    expect(css).toContain("var(--mui-descriptions-color, var(--_mui-descriptions-text, #333639))")
-    expect(css).toContain("var(--mui-descriptions-border-radius, 3px)")
+    expect(css).toContain("var(--m-font-size-small, 14px)")
+    expect(css).toContain("var(--m-font-size-medium, 14px)")
+    expect(css).toContain("var(--m-font-size-large, 15px)")
+    expect(css).toContain("--_m-descriptions-padding-inline: 24px")
+    expect(css).toContain("var(--m-font-weight-strong, 500)")
+    expect(css).toContain("--_m-descriptions-weight: 400")
+    expect(css).toContain("font-weight: var(--m-descriptions-label-weight, inherit)")
+    expect(css).toContain("var(--m-descriptions-line-height, var(--m-line-height, 1.6))")
+    expect(css).toContain("var(--m-descriptions-label-color, var(--_m-descriptions-label, #1f2225))")
+    expect(css).toContain("var(--m-descriptions-color, var(--_m-descriptions-text, #333639))")
+    expect(css).toContain("var(--m-descriptions-border-radius, 3px)")
     expect(css).toContain("#efeff5")
     expect(css).toContain("#fafafc")
     expect(css).toContain("#26262a")
     expect(css).toContain("#2d2d30")
-    expect(css).not.toContain("--mui-text-primary")
-    expect(css).not.toContain("--mui-bg-surface")
+    expect(css).not.toContain("--m-text-primary")
+    expect(css).not.toContain("--m-bg-surface")
     expect(css).toContain("margin-inline: 2px 8px")
-    expect(css).toContain("background: var(--mui-descriptions-background, transparent)")
+    expect(css).toContain("background: var(--m-descriptions-background, transparent)")
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
     install()
     const media = [...style!.sheet!.cssRules]
@@ -249,9 +249,9 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
   it("preserves local author tokens while size, border and placement presets change", () => {
     fixture()
     const root = document.querySelector<HTMLElement>("#project-details")!
-    root.style.cssText = "--mui-descriptions-font-size:20px;--mui-descriptions-line-height:1.5;--mui-descriptions-padding-block:4px;--mui-descriptions-label-align:center;--mui-descriptions-color:rgb(1,2,3)"
+    root.style.cssText = "--m-descriptions-font-size:20px;--m-descriptions-line-height:1.5;--m-descriptions-padding-block:4px;--m-descriptions-label-align:center;--m-descriptions-color:rgb(1,2,3)"
     const authored = root.getAttribute("style")
-    const item = root.querySelector(".mui-description-item")!
+    const item = root.querySelector(".m-description-item")!
     const nodes = [...item.children]
     install()
     root.dataset.size = "large"
@@ -259,7 +259,7 @@ describe("CSS-only Descriptions and DescriptionItem", () => {
     root.dataset.labelPlacement = "left"
     root.dataset.labelAlign = "right"
     expect(root.getAttribute("style")).toBe(authored)
-    expect(getComputedStyle(root).getPropertyValue("--mui-descriptions-label-align")).toBe("center")
+    expect(getComputedStyle(root).getPropertyValue("--m-descriptions-label-align")).toBe("center")
     expect([...item.children]).toEqual(nodes)
     expect(item.querySelector("[style],script")).toBeNull()
   })

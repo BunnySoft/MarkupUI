@@ -5,7 +5,7 @@ const coordinator = MarkupUIForm.createForm(form, { items: [{
   key: "code", controls: [field], element: document.querySelector("#otp-item"), feedback: document.querySelector("#otp-error"),
 }] })
 let completions = 0
-field.addEventListener("mui:input-otp-complete", () => {
+field.addEventListener("m:input-otp-complete", () => {
   document.querySelector("#completion").textContent = `Completion signals: ${++completions}. Format only; no authentication or submission.`
 })
 function inspect(event) {

@@ -45,7 +45,7 @@ const statuses: StepStatus[] = ["wait", "process", "finish", "error"]
 
 export function createSteps(list: HTMLOListElement, options: StepsOptions = {}): StepsController {
   const document = list?.ownerDocument, view = document?.defaultView
-  if (!view || !(list instanceof view.HTMLOListElement) || !list.matches(".mui-steps[data-steps]")) throw new TypeError("Steps needs an authored ol.mui-steps[data-steps].")
+  if (!view || !(list instanceof view.HTMLOListElement) || !list.matches(".m-steps[data-steps]")) throw new TypeError("Steps needs an authored ol.m-steps[data-steps].")
   if (!options || typeof options !== "object" || Array.isArray(options)) throw new TypeError("Steps options must be an object.")
   for (const key of Object.keys(options)) if (!["current", "defaultCurrent", "status", "labels"].includes(key)) throw new TypeError(`Unsupported Steps option: ${key}.`)
   function checkCurrent(value: unknown): asserts value is number | null {
@@ -80,11 +80,11 @@ export function createSteps(list: HTMLOListElement, options: StepsOptions = {}):
     return true
   }
   function read(): Item[] {
-    if (list.getRootNode() !== document || !list.matches(".mui-steps[data-steps]") || list.hasAttribute("start")
+    if (list.getRootNode() !== document || !list.matches(".m-steps[data-steps]") || list.hasAttribute("start")
       || list.reversed || ![null, "list"].includes(list.getAttribute("role"))) throw new TypeError("Keep connected native Steps with ordinary one-based list numbering.")
     return [...list.children].filter(node => node.localName !== "template").map(node => {
-      if (!(node instanceof view!.HTMLLIElement) || !node.matches(".mui-step[data-step]") || node.hasAttribute("value")
-        || ![null, "listitem"].includes(node.getAttribute("role")) || ![null, "false", "step"].includes(node.getAttribute("aria-current"))) throw new TypeError("Steps children must be authored li.mui-step[data-step] or inert templates with step-current semantics.")
+      if (!(node instanceof view!.HTMLLIElement) || !node.matches(".m-step[data-step]") || node.hasAttribute("value")
+        || ![null, "listitem"].includes(node.getAttribute("role")) || ![null, "false", "step"].includes(node.getAttribute("aria-current"))) throw new TypeError("Steps children must be authored li.m-step[data-step] or inert templates with step-current semantics.")
       const inside = (selector: string) => [...node.querySelectorAll<HTMLElement>(selector)].filter(child => own(child) && child.closest("[data-step]") === node)
       const titles = inside("[data-step-title]"), texts = inside("[data-step-status-text]"), actions = inside("[data-step-action]")
       if (titles.length !== 1 || !titles[0]!.textContent?.trim() || texts.length !== 1 || actions.length > 1) throw new TypeError("Each Step needs a title, text status and at most one native intent button.")
@@ -165,7 +165,7 @@ export function createSteps(list: HTMLOListElement, options: StepsOptions = {}):
     }
   }
   function clear() { generation++; for (const task of tasks) view!.clearTimeout(task); tasks.clear() }
-  function fail(error: unknown) { controller.disconnect(); list.dispatchEvent(new view!.CustomEvent("mui:steps-error", { detail: { error } })) }
+  function fail(error: unknown) { controller.disconnect(); list.dispatchEvent(new view!.CustomEvent("m:steps-error", { detail: { error } })) }
   function update(preserve: boolean) {
     if (!connected) return
     try { reconcile(preserve); recoverFocus() } catch (error) { controller.disconnect(); throw error }
@@ -185,7 +185,7 @@ export function createSteps(list: HTMLOListElement, options: StepsOptions = {}):
         if (live.length !== states.length || !live.every((item, index) => item.element === states[index]!.element)
           || !live.some(value => value.element === item.element && value.action === action)) throw new Error("Step anatomy/order changed; call refresh before activation.")
         const index = live.findIndex(value => value.element === item.element) + 1
-        list.dispatchEvent(new view!.CustomEvent<StepsRequest>("mui:steps-request", { detail: { current: index, previous: current, step: item.element, action } }))
+        list.dispatchEvent(new view!.CustomEvent<StepsRequest>("m:steps-request", { detail: { current: index, previous: current, step: item.element, action } }))
       } catch (error) { fail(error) }
     }, 0)
     tasks.add(task)

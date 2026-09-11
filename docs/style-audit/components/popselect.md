@@ -82,12 +82,12 @@ and transparent enabled-control background. Released Select owns focus/status an
 paint. It contains no copied
 Popup shadow or light/dark palette table.
 
-Public `--mui-select-color`, background, font, pad and focus tokens remain first in their
+Public `--m-select-color`, background, font, pad and focus tokens remain first in their
 fallback chains. A small-size root with ancestor overrides rendered **20px font, 3px
 padding, rgb(1,2,3) text and rgb(220,230,240) background**. Private size defaults do not mask
 those author values.
 An explicitly large inner Select yields 15px when the Popselect root has no size override;
-an explicit small Popselect yields 14px, and public `--mui-select-font:20px` wins over both.
+an explicit small Popselect yields 14px, and public `--m-select-font:20px` wins over both.
 The consumer's 4/8/12px frame-padding choices are retained deliberately rather than
 mistaking native listbox density for the reference's rendered option heights.
 

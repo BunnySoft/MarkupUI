@@ -16,7 +16,7 @@ node("demo-form").addEventListener("submit", event => {
   event.preventDefault()
   node("event-log").value = `Submitted ${new FormData(event.currentTarget).get("note")}`
 })
-for (const panel of document.querySelectorAll(".mui-popover")) {
+for (const panel of document.querySelectorAll(".m-popover")) {
   panel.addEventListener("toggle", event => {
     if (event.target === panel) node("event-log").value = `${panel.id}: ${panel.matches(":popover-open") ? "open" : "closed"}`
   })

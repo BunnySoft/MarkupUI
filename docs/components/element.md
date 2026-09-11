@@ -9,7 +9,7 @@ tag factory or custom element would obscure semantics and add code without a cap
 There is no Element-owned rendered surface or stylesheet; native tags and application CSS
 retain visual ownership.
 
-There is **no** `NElement`/`NEl` equivalent constructor, `mui-element` registration,
+There is **no** `NElement`/`NEl` equivalent constructor, `m-element` registration,
 `@dataengine/markup-ui/element` export, Element JS/CSS distribution, or new budget.
 The separate [HTML](../../demo/components/element.html),
 [CSS](../../demo/components/element.css), [JS](../../demo/components/element.js) and
@@ -49,13 +49,13 @@ this resolution offers no runtime tag-swapping API or arbitrary prop forwarding.
 ```css
 /* Application CSS, not a library Element utility. */
 .workspace-title {
-  color: var(--mui-color-primary, CanvasText);
+  color: var(--m-color-primary, CanvasText);
 }
 ```
 
-Use supported shared `--mui-*` properties from an actual ancestor, or author your own
-local CSS. The demo consumes `--mui-bg-surface`, `--mui-text-primary`, `--mui-border`,
-`--mui-color-primary` and `--mui-button-contrast`; native system colors are its honest
+Use supported shared `--m-*` properties from an actual ancestor, or author your own
+local CSS. The demo consumes `--m-bg-surface`, `--m-text-primary`, `--m-border`,
+`--m-color-primary` and `--m-button-contrast`; native system colors are its honest
 fallbacks outside a configured scope. No provider is created by styling a native element.
 
 The demo links the **unchanged application stylesheet** from the accepted
@@ -112,16 +112,16 @@ hidden state, palette choices and author overrides intact. Repeated disconnect i
 Native-only styling/content needs no lifecycle API; call disconnect before removing this
 demo's application root when using its optional listeners.
 
-## Existing MuiElement is a different API
+## Existing MElement is a different API
 
-The unchanged [abstract MuiElement base](../../src/core/element.ts) provides protected
+The unchanged [abstract MElement base](../../src/core/element.ts) provides protected
 custom-event emission and finite numeric-attribute parsing to existing controllers.
 It is **not** a general wrapper, automatic theme-variable producer, native tag renderer
 or an alias for Naive UI's NElement/NEl/El. Nothing here changes its existing subclasses,
 registration conventions or event contracts.
 
 A separate legacy aggregate compatibility check preserved the native input/text-node
-identities and real heading semantics; no `mui-element` became registered.
+identities and real heading semantics; no `m-element` became registered.
 Legacy `theme.register/apply` still writes inline tokens with normal cascade behavior.
 That aggregate's style installation and inline token writes are **not** the strict-CSP
 path; the normal demo loads only external application CSS/JS.

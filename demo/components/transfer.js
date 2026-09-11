@@ -11,9 +11,9 @@ if (transfer) {
       serialization: "Automatic formdata ownership has been released.",
     }, null, 2)
   }
-  root.addEventListener("mui:transfer-change", event => { output.textContent = `Moved ${event.detail.moved.join(", ")} to ${event.detail.to}. Membership: ${event.detail.value.join(", ")}.`; inspect() })
-  root.addEventListener("mui:transfer-stage", () => { output.textContent = "Native highlights changed. Membership did not."; inspect() })
-  root.addEventListener("mui:transfer-error", event => { output.textContent = event.detail.error.message; inspect() })
+  root.addEventListener("m:transfer-change", event => { output.textContent = `Moved ${event.detail.moved.join(", ")} to ${event.detail.to}. Membership: ${event.detail.value.join(", ")}.`; inspect() })
+  root.addEventListener("m:transfer-stage", () => { output.textContent = "Native highlights changed. Membership did not."; inspect() })
+  root.addEventListener("m:transfer-error", event => { output.textContent = event.detail.error.message; inspect() })
   function action(id, callback) { document.getElementById(id).addEventListener("click", () => { try { callback(); inspect() } catch (error) { output.textContent = error.message } }) }
   action("program", () => transfer.setValue(["core", "bravo"]))
   action("defaults", () => transfer.setDefaultValue(["core", "charlie"]))

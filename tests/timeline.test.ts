@@ -32,25 +32,25 @@ describe("CSS-only Timeline and TimelineItem", () => {
     expect(css).not.toContain("@import")
     expect(demo).not.toContain("markup-ui-widgets")
     expect(demo).not.toContain("markup-ui-timeline.js")
-    expect(customElements.get("mui-timeline")).toBeUndefined()
+    expect(customElements.get("m-timeline")).toBeUndefined()
   })
 
   it("preserves real lists, listitems, headings and authored date semantics", () => {
     fixture()
     install()
-    for (const list of document.querySelectorAll(".mui-timeline")) {
+    for (const list of document.querySelectorAll(".m-timeline")) {
       expect(["OL", "UL"]).toContain(list.tagName)
       expect([...list.children].every(child => ["LI", "TEMPLATE"].includes(child.tagName))).toBe(true)
     }
     expect(getComputedStyle(document.querySelector("#created-event")!).display).toBe("list-item")
     expect(document.querySelector("#created-event h3")!.textContent).toContain("Recorded")
     expect(document.querySelector<HTMLTimeElement>("#created-time")!.dateTime).toBe("2026-09-01")
-    const unknownTime = document.querySelector("#end-first .mui-timeline-time")!
+    const unknownTime = document.querySelector("#end-first .m-timeline-time")!
     expect(unknownTime.tagName).toBe("SPAN")
     unknownTime.textContent = String(42)
     expect(unknownTime.textContent).toBe("42")
     expect(unknownTime.hasAttribute("datetime")).toBe(false)
-    expect(document.querySelectorAll('.mui-timeline [role="timeline"], .mui-timeline [aria-live], .mui-timeline [aria-selected]')).toHaveLength(0)
+    expect(document.querySelectorAll('.m-timeline [role="timeline"], .m-timeline [aria-live], .m-timeline [aria-selected]')).toHaveLength(0)
     expect(css).not.toContain("display: contents")
   })
 
@@ -70,7 +70,7 @@ describe("CSS-only Timeline and TimelineItem", () => {
     link.click()
     expect(clicks).toBe(1)
     const late = document.createElement("li")
-    late.className = "mui-timeline-item"
+    late.className = "m-timeline-item"
     late.textContent = "<b>Unparsed event content</b>"
     root.append(late)
     expect(root.lastElementChild).toBe(late)
@@ -95,46 +95,46 @@ describe("CSS-only Timeline and TimelineItem", () => {
     const cases = [["created-event", "#767c82"], ["review-event", "#2080f0"], ["approved-event", "#18a058"], ["delayed-event", "#f0a020"], ["failed-event", "#d03050"]]
     for (const [id, color] of cases) {
       const item = document.getElementById(id)!
-      expect(getComputedStyle(item).getPropertyValue("--_mui-timeline-accent")).toContain(color)
+      expect(getComputedStyle(item).getPropertyValue("--_m-timeline-accent")).toContain(color)
       expect(item.querySelector("h3")!.textContent).toMatch(/Recorded|Information|Success|Warning|Error/)
     }
     const item = document.querySelector<HTMLElement>("#created-event")!
     item.dataset.type = "unknown"
-    expect(getComputedStyle(item).getPropertyValue("--_mui-timeline-accent")).toContain("#767c82")
-    expect(appCss).toContain("--mui-timeline-item-color: #7c3aed")
+    expect(getComputedStyle(item).getPropertyValue("--_m-timeline-accent")).toContain("#767c82")
+    expect(appCss).toContain("--m-timeline-item-color: #7c3aed")
   })
 
   it("keeps icon content decorative and uses explicit CSS lengths and supported sizes", () => {
     fixture()
     install()
     const root = document.querySelector<HTMLElement>("#history")!
-    expect(getComputedStyle(root).getPropertyValue("--mui-timeline-icon-size")).toBe("14px")
+    expect(getComputedStyle(root).getPropertyValue("--m-timeline-icon-size")).toBe("14px")
     root.dataset.size = "large"
-    expect(getComputedStyle(root).getPropertyValue("--mui-timeline-title-size")).toBe("16px")
+    expect(getComputedStyle(root).getPropertyValue("--m-timeline-title-size")).toBe("16px")
     root.dataset.size = "small"
-    expect(getComputedStyle(root).getPropertyValue("--mui-timeline-title-size")).toBe("14px")
+    expect(getComputedStyle(root).getPropertyValue("--m-timeline-title-size")).toBe("14px")
     const icon = document.querySelector("#authored-icon")!
     expect(icon.getAttribute("aria-hidden")).toBe("true")
     expect(icon.querySelector("svg")!.getAttribute("focusable")).toBe("false")
     expect(icon.querySelector("path")!.getAttribute("stroke")).toBe("currentColor")
     expect(icon.querySelector("button, a")).toBeNull()
-    expect(appCss).toContain("--mui-timeline-icon-size: 1.5rem")
+    expect(appCss).toContain("--m-timeline-icon-size: 1.5rem")
   })
 
   it("connects only items with a later visible native item, ignoring hidden items and templates", () => {
     fixture()
     install()
-    const selector = ".mui-timeline > li.mui-timeline-item:not([hidden]):has(~ li.mui-timeline-item:not([hidden]))"
+    const selector = ".m-timeline > li.m-timeline-item:not([hidden]):has(~ li.m-timeline-item:not([hidden]))"
     // Chromium covers :has() and pseudo-element output; jsdom mis-matches hidden siblings.
-    const visible = [...document.querySelectorAll("#history > li.mui-timeline-item:not([hidden])")]
+    const visible = [...document.querySelectorAll("#history > li.m-timeline-item:not([hidden])")]
     expect(visible[0]?.id).toBe("created-event")
     expect(visible.at(-1)?.id).toBe("completed-event")
     expect(document.querySelector("#nested-last")!.nextElementSibling).toBeNull()
     expect(document.querySelector("#native-template")!.tagName).toBe("TEMPLATE")
     expect(css).toContain("@supports selector(:has(*))")
     expect(css).toContain(selector)
-    expect(getComputedStyle(document.querySelector("#delayed-event")!).getPropertyValue("--_mui-timeline-line-style")).toBe("dashed")
-    expect(getComputedStyle(document.querySelector("#created-event")!).getPropertyValue("--_mui-timeline-line-style")).toBe("solid")
+    expect(getComputedStyle(document.querySelector("#delayed-event")!).getPropertyValue("--_m-timeline-line-style")).toBe("dashed")
+    expect(getComputedStyle(document.querySelector("#created-event")!).getPropertyValue("--_m-timeline-line-style")).toBe("solid")
   })
 
   it("keeps nested timelines independent from parent placement, orientation and size", () => {
@@ -144,11 +144,11 @@ describe("CSS-only Timeline and TimelineItem", () => {
     root.dataset.horizontal = ""
     root.dataset.itemPlacement = "right"
     root.dataset.size = "large"
-    root.style.setProperty("--mui-timeline-icon-size", "30px")
+    root.style.setProperty("--m-timeline-icon-size", "30px")
     const nested = document.querySelector("#nested-timeline")!
     expect(getComputedStyle(nested).flexDirection).toBe("column")
-    expect(getComputedStyle(nested).getPropertyValue("--mui-timeline-icon-size")).toBe("14px")
-    expect(getComputedStyle(nested).getPropertyValue("--mui-timeline-title-size")).toBe("14px")
+    expect(getComputedStyle(nested).getPropertyValue("--m-timeline-icon-size")).toBe("14px")
+    expect(getComputedStyle(nested).getPropertyValue("--m-timeline-title-size")).toBe("14px")
     expect(getComputedStyle(nested).textAlign).toBe("start")
     expect(nested.hasAttribute("data-item-placement")).toBe(false)
   })
@@ -198,7 +198,7 @@ describe("CSS-only Timeline and TimelineItem", () => {
       expect(getComputedStyle(document.getElementById(id)!).display).toBe("none")
     }
     const template = document.createElement("template")
-    template.className = "mui-timeline-marker"
+    template.className = "m-timeline-marker"
     document.body.append(template)
     expect(getComputedStyle(template).display).toBe("none")
     expect(document.querySelector<HTMLTemplateElement>("#native-template")!.content.textContent).toBe("Inert event template")
@@ -229,42 +229,42 @@ describe("CSS-only Timeline and TimelineItem", () => {
   it("uses private dark supplementary status colors and resets them at nested light boundaries", () => {
     install()
     const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
-    const light = rules.find(rule => rule.selectorText === ':where([data-mui-theme="light"])')!
-    const dark = rules.find(rule => rule.selectorText === ':where([data-mui-theme="dark"])')!
+    const light = rules.find(rule => rule.selectorText === ':where([data-m-theme="light"])')!
+    const dark = rules.find(rule => rule.selectorText === ':where([data-m-theme="dark"])')!
     for (let i = 0; i < light.style.length; i++) {
-      expect(light.style[i]).toMatch(/^--_mui-timeline-/)
+      expect(light.style[i]).toMatch(/^--_m-timeline-/)
       expect(light.style.getPropertyValue(light.style[i])).toBe("initial")
     }
     for (const [role, value] of [["info", "#3889c5"], ["success", "#2a947d"], ["warning", "#f08a00"], ["error", "#d03a52"]]) {
-      expect(dark.style.getPropertyValue(`--_mui-timeline-${role}`)).toBe(value)
+      expect(dark.style.getPropertyValue(`--_m-timeline-${role}`)).toBe(value)
     }
-    expect(css).toContain("--_mui-timeline-rail: rgb(255 255 255 / .2)")
-    expect(css).not.toContain("--mui-text-primary")
-    expect(css).not.toContain("--mui-text-secondary")
-    expect(css).not.toContain("--mui-border")
+    expect(css).toContain("--_m-timeline-rail: rgb(255 255 255 / .2)")
+    expect(css).not.toContain("--m-text-primary")
+    expect(css).not.toContain("--m-text-secondary")
+    expect(css).not.toContain("--m-border")
   })
 
   it("matches reference typography, marker alignment and intrinsic horizontal sizing", () => {
-    expect(css).toContain("font-size: var(--mui-font-size, 14px)")
+    expect(css).toContain("font-size: var(--m-font-size, 14px)")
     expect(css).toContain("line-height: 1.25")
     expect(css).toContain("font-weight: 500")
     expect(css).toContain("font-size: 12px")
-    expect(css).toContain("--_mui-timeline-title-top: -2px")
-    expect(css).toContain("var(--mui-timeline-title-size) * .625 - var(--mui-timeline-icon-size) / 2")
-    expect(css).toContain("--mui-timeline-item-gap: 20px")
-    expect(css).toContain("--mui-timeline-item-gap: 40px")
-    expect(css).toContain("flex: 0 0 var(--mui-timeline-item-width, auto)")
+    expect(css).toContain("--_m-timeline-title-top: -2px")
+    expect(css).toContain("var(--m-timeline-title-size) * .625 - var(--m-timeline-icon-size) / 2")
+    expect(css).toContain("--m-timeline-item-gap: 20px")
+    expect(css).toContain("--m-timeline-item-gap: 40px")
+    expect(css).toContain("flex: 0 0 var(--m-timeline-item-width, auto)")
     expect(css).not.toContain("16rem")
   })
 
   it("keeps author gap, marker and body overrides without introducing generated metadata", () => {
-    document.body.innerHTML = '<ol class="mui-timeline" style="--mui-timeline-icon-size:24px;--mui-timeline-item-gap:30px"><li class="mui-timeline-item" style="--mui-timeline-item-color:purple"><span class="mui-timeline-marker" aria-hidden="true"></span><div class="mui-timeline-body" style="color:teal"><h3 class="mui-timeline-title">Author</h3></div></li></ol>'
+    document.body.innerHTML = '<ol class="m-timeline" style="--m-timeline-icon-size:24px;--m-timeline-item-gap:30px"><li class="m-timeline-item" style="--m-timeline-item-color:purple"><span class="m-timeline-marker" aria-hidden="true"></span><div class="m-timeline-body" style="color:teal"><h3 class="m-timeline-title">Author</h3></div></li></ol>'
     const before = document.body.innerHTML
     install()
     expect(document.body.innerHTML).toBe(before)
-    expect(document.querySelector(".mui-timeline-footer")).toBeNull()
-    expect(getComputedStyle(document.querySelector("li")!).getPropertyValue("--mui-timeline-item-color")).toBe("purple")
-    expect(getComputedStyle(document.querySelector("ol")!).getPropertyValue("--mui-timeline-icon-size")).toBe("24px")
-    expect(getComputedStyle(document.querySelector(".mui-timeline-body")!).color).toBe("rgb(0, 128, 128)")
+    expect(document.querySelector(".m-timeline-footer")).toBeNull()
+    expect(getComputedStyle(document.querySelector("li")!).getPropertyValue("--m-timeline-item-color")).toBe("purple")
+    expect(getComputedStyle(document.querySelector("ol")!).getPropertyValue("--m-timeline-icon-size")).toBe("24px")
+    expect(getComputedStyle(document.querySelector(".m-timeline-body")!).color).toBe("rgb(0, 128, 128)")
   })
 })

@@ -101,10 +101,10 @@ callback arrays or renderer behavior. Omitted rows receive no implementation cre
 | [`trigger`][a55] | Prop | ADAPTED native click and automatic/manual keyboard policy. | 🟢 Verified | Hover activation excluded; no doubled Enter/Space or focus-click guards. |
 | [`type`][a56] | Prop | ADAPTED bar/line/card/segment data/CSS presentation. | 🟢 Verified | No constructor/render-mode switch. |
 | [`value`][a57] | Prop | ADAPTED validated string selection/current getter. | 🟢 Verified | Direct setter silent/guard-bypassing; null only when no tab available. |
-| [`on-add`][a58] | Callback | ADAPTED mui:tabs-add native intent. | 🟢 Verified | Application owns data/DOM creation. |
+| [`on-add`][a58] | Callback | ADAPTED m:tabs-add native intent. | 🟢 Verified | Application owns data/DOM creation. |
 | [`on-before-leave`][a59] | Callback | ADAPTED boolean/Promise guard. | 🟢 Verified | False/error preserve old pane; explicit error and stale/reentrant request protection. |
-| [`on-close`][a60] | Callback | ADAPTED captured mui:tabs-close intent. | 🟢 Verified | Retargeted controls cannot close another pane; app owns removal. |
-| [`on-update:value`][a61] | Callback | ADAPTED mui:tabs-change after valid user commit. | 🟢 Verified | No user event for property/default/recovery changes or stale requests. |
+| [`on-close`][a60] | Callback | ADAPTED captured m:tabs-close intent. | 🟢 Verified | Retargeted controls cannot close another pane; app owns removal. |
+| [`on-update:value`][a61] | Callback | ADAPTED m:tabs-change after valid user commit. | 🟢 Verified | No user event for property/default/recovery changes or stale requests. |
 
 ### TabPane Props
 

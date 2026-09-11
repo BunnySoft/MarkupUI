@@ -4,8 +4,8 @@ for (const root of document.querySelectorAll("[data-date-picker]")) {
   const mode = root.querySelector("[data-date-control]").getAttribute("type")
   if (!MarkupUIDatePicker.isDatePickerTypeSupported(document, mode)) { unsupported.push(mode); continue }
   const helper = MarkupUIDatePicker.createDatePicker(root); pickers.set(root.id, helper)
-  root.addEventListener("mui:date-picker-clear", () => { events.textContent = "Editable native field(s) cleared. Empty fields remain native values, not hidden null models." })
-  root.addEventListener("mui:date-picker-error", () => { events.textContent = "Unsupported date anatomy/value; native fields were not normalized or replaced." })
+  root.addEventListener("m:date-picker-clear", () => { events.textContent = "Editable native field(s) cleared. Empty fields remain native values, not hidden null models." })
+  root.addEventListener("m:date-picker-error", () => { events.textContent = "Unsupported date anatomy/value; native fields were not normalized or replaced." })
 }
 document.querySelector("#capabilities").textContent = unsupported.length
   ? `Unsupported native modes: ${[...new Set(unsupported)].join(", ")}. Those fields remain native/text fallback; no equivalent calendar validation is claimed.`

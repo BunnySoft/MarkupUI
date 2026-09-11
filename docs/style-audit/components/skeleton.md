@@ -79,7 +79,7 @@ Opacity remained 1 at every reference/corrected sample. Previously, the backgrou
   worked and authored opacity .6 remained .6 at both endpoints.
 - Nested light scope inside dark restored `#eee` for both enhanced and static placeholders.
 - A fresh page loading **only Skeleton CSS**, without shared themes or registered
-  `mui-skeleton`, rendered a native static small/round bar at 28px, radius 4096px,
+  `m-skeleton`, rendered a native static small/round bar at 28px, radius 4096px,
   dark .12/.18 endpoints, with authored `aria-hidden` and native inertness.
 - Adjacent-text test: both upstream and enhanced text Skeleton rendered at y=3.75 with
   height 14px, next to the same text at y=1; computed alignment was -1.75px.
@@ -98,7 +98,7 @@ Opacity remained 1 at every reference/corrected sample. Previously, the backgrou
    versus the native 70×70 square. Native `aspect-ratio` is intentionally retained.
 3. **Repeat zero:** upstream still renders one bar; native Skeleton renders none.
 4. **Repeated-row layout:** upstream's three 16px Fragment rows occupy 48px without gaps;
-   native grid rows occupy 64px with two default 8px gaps. Public `--mui-skeleton-gap: 0px`
+   native grid rows occupy 64px with two default 8px gaps. Public `--m-skeleton-gap: 0px`
    can remove the gaps, but no upstream Fragment renderer is introduced.
 5. **Reduced motion:** pinned upstream continued `skeleton-loading` under the emulated
    preference. Native Skeleton intentionally stops it, preserving its existing policy.

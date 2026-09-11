@@ -35,25 +35,25 @@ deliberately replaced by authored icon content, not claimed as asset/pixel parit
 ## Native anatomy and meaning
 
 ```html
-<section class="mui-result" data-status="success" aria-labelledby="saved-title">
-  <div class="mui-result-icon" aria-hidden="true">
+<section class="m-result" data-status="success" aria-labelledby="saved-title">
+  <div class="m-result-icon" aria-hidden="true">
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path d="m4 12 5 5 11-12" fill="none" stroke="currentColor" stroke-width="2"></path>
     </svg>
   </div>
-  <div class="mui-result-header">
-    <h2 class="mui-result-title" id="saved-title">Success — settings saved</h2>
-    <p class="mui-result-description">Your changes are ready.</p>
+  <div class="m-result-header">
+    <h2 class="m-result-title" id="saved-title">Success — settings saved</h2>
+    <p class="m-result-description">Your changes are ready.</p>
   </div>
-  <div class="mui-result-content">Optional authored details.</div>
-  <div class="mui-result-footer">
+  <div class="m-result-content">Optional authored details.</div>
+  <div class="m-result-footer">
     <a href="./home.html">Return home</a>
     <button type="button">Review changes</button>
   </div>
 </section>
 ```
 
-Choose a native section/article only when its semantics fit; generic `div.mui-result`
+Choose a native section/article only when its semantics fit; generic `div.m-result`
 works equally well. Authors choose actual heading levels and any contextual landmark name.
 The stylesheet adds no roles, ARIA labels, live regions or generated heading. Use clear
 visible status words and a useful message: color or an illustration must not carry the
@@ -74,13 +74,13 @@ assets or a status-illustration package.
 
 | Upstream surface | Native target and boundary |
 | --- | --- |
-| `description` | Authored `.mui-result-description` text/nodes. No description attribute renderer. |
-| `title` | Authored `.mui-result-title` heading/text. No tooltip mapping or inferred heading level. |
+| `description` | Authored `.m-result-description` text/nodes. No description attribute renderer. |
+| `title` | Authored `.m-result-title` heading/text. No tooltip mapping or inferred heading level. |
 | `status` | `data-status` selects info/success/warning/error icon colors. 404/403/500/418 inherit the neutral text color for authored artwork/code symbols. Absent/unknown values use the native info palette. |
 | `size` | `data-size` small/medium/large/huge; absent/unknown values use medium. |
-| Default slot | Actual `.mui-result-content` children, including rich text, nested results or native forms. |
-| Footer slot | Actual `.mui-result-footer` children; no generated retry/home actions or route/history policy. |
-| Icon slot | Authored `.mui-result-icon` SVG/image/symbol content. No automatic icon selection or component callback. |
+| Default slot | Actual `.m-result-content` children, including rich text, nested results or native forms. |
+| Footer slot | Actual `.m-result-footer` children; no generated retry/home actions or route/history policy. |
+| Icon slot | Authored `.m-result-icon` SVG/image/symbol content. No automatic icon selection or component callback. |
 | Source `ResultSize` | ⏭️ Exported framework TypeScript alias omitted; CSS size vocabulary is covered by `size`. |
 | Source `theme`, `themeOverrides`, `builtinThemeOverrides` | ⏭️ Runtime/provider theme object contracts omitted; external CSS tokens instead. |
 
@@ -121,18 +121,18 @@ defaults to weight 500 and Result text to line-height 1.6. Header text, icon and
 content are centered by default, including wrapped footer text; main content uses logical start alignment.
 Native CSS—not an invented `align` prop—can select start/end alignment.
 
-Tokens: `--mui-result-gap`, `--mui-result-align`, `--mui-result-footer-justify`,
-`--mui-result-action-gap`, `--mui-result-icon-size`, `--mui-result-icon-color`,
-`--mui-result-title-size`, `--mui-result-title-weight`, `--mui-result-title-color`,
-`--mui-result-font-size`, `--mui-result-line-height` and `--mui-result-color`.
-`--mui-result-gap` overrides title/content/footer margins together; without it, the
+Tokens: `--m-result-gap`, `--m-result-align`, `--m-result-footer-justify`,
+`--m-result-action-gap`, `--m-result-icon-size`, `--m-result-icon-color`,
+`--m-result-title-size`, `--m-result-title-weight`, `--m-result-title-color`,
+`--m-result-font-size`, `--m-result-line-height` and `--m-result-color`.
+`--m-result-gap` overrides title/content/footer margins together; without it, the
 16px/24px defaults differ intentionally. Description margin remains 4px and can be
 customized through ordinary authored CSS. Supply valid external CSS values.
-Private `--_mui-result-*` presets are not API. Nested Results reset status/size/alignment
+Private `--_m-result-*` presets are not API. Nested Results reset status/size/alignment
 presets; intentional public color/gap overrides and native direction may inherit.
 
-Set `data-mui-theme="dark"` on the root or an ancestor for explicit dark defaults;
-nested `data-mui-theme="light"` resets them. Light body/title colors are `#333639` /
+Set `data-m-theme="dark"` on the root or an ancestor for explicit dark defaults;
+nested `data-m-theme="light"` resets them. Light body/title colors are `#333639` /
 `#1f2225`; dark colors are white at `.82` / `.9`. Semantic icons use normal severity
 colors (light `#2080f0/#18a058/#f0a020/#d03050`, dark
 `#70c0e8/#63e2b7/#f2c97d/#e88080`), not Alert's dark supplemental colors.
@@ -140,13 +140,13 @@ Legacy global text roles are not substituted for these different Result roles.
 This stylesheet does not change native form controls' `color-scheme`.
 
 Direct icon media scale into the icon box with contained fitting; authored src/alt/namespace/
-width attributes and nodes are not rewritten. `.mui-result-symbol` is a local helper for
+width attributes and nodes are not rewritten. `.m-result-symbol` is a local helper for
 authored code/glyph text, not a generated status label. Long text and footer controls wrap
 in DOM order with logical RTL behavior; no overflow menu or clipping controller is added.
 The stylesheet adds no panel borders/backgrounds; demo panel decoration is application CSS.
 Authored icon content is still required. Result's icon-region color can tint a custom
 `currentColor` SVG; upstream's custom icon slot does not automatically receive its built-in
-icon tint. Use `--mui-result-icon-color` or explicit artwork colors for your desired result.
+icon tint. Use `--m-result-icon-color` or explicit artwork colors for your desired result.
 
 See the [rendered Result visual audit](../style-audit/components/result.md) for the
 measured geometry, palette, authored-artwork boundary, budget and remaining limitations.

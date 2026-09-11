@@ -16,7 +16,7 @@ CSS. It is **not Code syntax highlighting**, an arbitrary-regexp engine, or a ri
 
 ```html
 <link rel="stylesheet" href="./vendor/markup-ui-highlight.css">
-<span id="result" class="mui-highlight">Atlas project</span>
+<span id="result" class="m-highlight">Atlas project</span>
 <script src="./vendor/markup-ui-highlight.global.js"></script>
 <script>
   MarkupUIHighlight.highlightText(
@@ -43,7 +43,7 @@ surfaces work through their owner document; reattachment requires no setup. No l
 timers, observers or pending work exist to dispose. No CSS Custom Highlight registry/range
 ownership framework is introduced.
 
-Core-first and helper-first loading both work; no `mui-highlight` definition exists.
+Core-first and helper-first loading both work; no `m-highlight` definition exists.
 Other enhanced components retain their own registration-order restrictions. This helper
 does not add functionality or bytes to the aggregate, widgets or advanced bundles.
 
@@ -67,7 +67,7 @@ theme props. Native helper names/types below are local APIs, not invented upstre
 | `case-sensitive` | `caseSensitive` boolean option, default false. |
 | `patterns` | Explicit readonly string array argument, default empty; no attribute/JSON/regexp parser. |
 | `text` | Explicit string argument, default empty, rendered only as text. |
-| `highlight-class` | `highlightClass` string option on generated marks, alongside the fixed `mui-highlight-mark` class. |
+| `highlight-class` | `highlightClass` string option on generated marks, alongside the fixed `m-highlight-mark` class. |
 | `highlight-style` | ⏭️ Runtime object/string style forwarding omitted; external classes/tokens instead. |
 | `highlight-tag` | ⏭️ Arbitrary tags/components omitted; rendering always creates native `mark`. No interactive/raw-text tag constructor. |
 
@@ -151,10 +151,10 @@ and rethrows unexpected failures.
 Authored baseline:
 
 ```html
-<p>A <mark class="mui-highlight-mark">native mark</mark> works without JavaScript.</p>
+<p>A <mark class="m-highlight-mark">native mark</mark> works without JavaScript.</p>
 ```
 
-`--mui-highlight-background` and `--mui-highlight-color` customize external presentation.
+`--m-highlight-background` and `--m-highlight-color` customize external presentation.
 Default colors now use native `Mark`/`MarkText` (yellow/black in the verified light and dark
 Chromium reference), with zero padding and zero radius. Naive Highlight does not inject a
 component theme/stylesheet: its default is an ordinary native mark. Fonts, weight, style and
@@ -163,7 +163,7 @@ The [default-style audit](../style-audit/components/highlight.md) records the me
 
 The helper never writes inline styles or adds a class to the target span. A bare target has
 normal inherited whitespace, matching the default reference. **Opting into**
-`span.mui-highlight` preserves whitespace and wraps long text; this remains an explicit
+`span.m-highlight` preserves whitespace and wraps long text; this remains an explicit
 native convenience, not a claim that Naive does so by default. Forced colors use
 system highlight/text colors, and print uses an underline when backgrounds are not printed.
 Print retains the native mark foreground (or explicit color token), avoiding white inherited
@@ -196,7 +196,7 @@ Chromium acceptance exercised:
 - Clear/update/error behavior, hidden targets, non-interactive mark accessibility structure,
   surrounding link identity/listener preservation and real keyboard navigation.
 - Detached helper rendering, equivalent ESM/classic results, helper-first and core-first
-  loading, plus coexistence with aggregate/widgets/advanced without any mui-highlight definition.
+  loading, plus coexistence with aggregate/widgets/advanced without any m-highlight definition.
 - 280px/320px long-text wrapping, RTL Arabic match order, 200% CSS zoom, forced-color contrast
   and print underline rules.
 - A JavaScript-disabled context with seven authored marks, identical visible source text and

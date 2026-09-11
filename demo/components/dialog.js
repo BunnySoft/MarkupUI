@@ -20,5 +20,5 @@ document.querySelector("#spawn").addEventListener("click", () => owner.create(do
 document.querySelector("#destroy").addEventListener("click", () => owner.destroyAll())
 surface.addEventListener("close", () => { events.textContent = `Native close: ${surface.returnValue || "(empty)"}. Callback calls: ${calls}.` })
 surface.addEventListener("cancel", () => { events.textContent = "Native cancel request observed." })
-surface.addEventListener("mui:dialog-error", event => { events.textContent = `${event.detail.stale ? "Stale" : "Current"} local failure: ${event.detail.error.message}` })
+surface.addEventListener("m:dialog-error", event => { events.textContent = `${event.detail.stale ? "Stale" : "Current"} local failure: ${event.detail.error.message}` })
 window.dialogDemo = { decision, inner, owner, get calls() { return calls } }

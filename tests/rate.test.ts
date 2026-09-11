@@ -23,7 +23,7 @@ describe("native bounded rating choices", () => {
   it("preserves original controls, labels, stars, defaults and listeners", () => {
     const { root, helper, input } = fixture()
     helper.disconnect()
-    const three = input("3"), label = three.labels![0], star = label!.querySelector(".mui-rate__glyph")
+    const three = input("3"), label = three.labels![0], star = label!.querySelector(".m-rate__glyph")
     three.checked = false; input("4").checked = true
     const before = root.querySelectorAll("input").length, changed = vi.fn()
     input("2").addEventListener("change", changed)
@@ -31,7 +31,7 @@ describe("native bounded rating choices", () => {
     expect(enhanced.value).toBe(4)
     expect(input("3")).toBe(three)
     expect(three.labels![0]).toBe(label)
-    expect(label!.querySelector(".mui-rate__glyph")).toBe(star)
+    expect(label!.querySelector(".m-rate__glyph")).toBe(star)
     expect(three.defaultChecked).toBe(true)
     expect(root.querySelectorAll("input")).toHaveLength(before)
     input("2").click()
@@ -49,10 +49,10 @@ describe("native bounded rating choices", () => {
     helper.disconnect()
     helpers.push(other.createRate(root))
   })
-  it("does not register the legacy mui-rating name", () => {
-    const before = customElements.get("mui-rating")
+  it("does not register the legacy m-rating name", () => {
+    const before = customElements.get("m-rating")
     fixture()
-    expect(customElements.get("mui-rating")).toBe(before)
+    expect(customElements.get("m-rating")).toBe(before)
   })
   it.each([0, 11, -1, 2.5, Infinity, NaN])("rejects unbounded/invalid count %j without rendering choices", count => {
     const { root, helper } = fixture()
@@ -80,7 +80,7 @@ describe("native bounded rating choices", () => {
   it("requires hidden decorative glyphs, not interactive or naming content", () => {
     const { root, helper } = fixture()
     helper.disconnect()
-    root.querySelector(".mui-rate__glyph")!.removeAttribute("aria-hidden")
+    root.querySelector(".m-rate__glyph")!.removeAttribute("aria-hidden")
     expect(() => createRate(root)).toThrow("aria-hidden")
   })
 })
@@ -125,8 +125,8 @@ describe("half values, zero/null and native events", () => {
     const { root, helper, input } = fixture()
     const native = vi.fn(), aggregate = vi.fn(), duplicate = vi.fn()
     input("4").addEventListener("change", native)
-    root.addEventListener("mui:radio-group-change", aggregate)
-    root.addEventListener("mui:rate-change", duplicate)
+    root.addEventListener("m:radio-group-change", aggregate)
+    root.addEventListener("m:rate-change", duplicate)
     input("4").labels![0]!.click(); await flush()
     input("4").click(); await flush()
     expect(helper.value).toBe(4)
@@ -137,7 +137,7 @@ describe("half values, zero/null and native events", () => {
   it("keeps programmatic updates/refresh and numeric readout formatting silent and safe", () => {
     const { root, helper, output, input } = fixture("quality", { formatValue: value => `<${value ?? "none"}>` })
     const changed = vi.fn()
-    root.addEventListener("change", changed); root.addEventListener("mui:radio-group-change", changed)
+    root.addEventListener("change", changed); root.addEventListener("m:radio-group-change", changed)
     helper.setValue(4); helper.refresh()
     expect(output.textContent).toBe("<4>")
     expect(output.children).toHaveLength(0)
@@ -152,8 +152,8 @@ describe("clear and readonly/disabled policy", () => {
     const { root, helper, clear, input, form } = fixture()
     const native = vi.fn(), group = vi.fn(), cleared = vi.fn()
     root.addEventListener("input", native); root.addEventListener("change", native)
-    root.addEventListener("mui:radio-group-change", group)
-    root.addEventListener("mui:rate-clear", cleared)
+    root.addEventListener("m:radio-group-change", group)
+    root.addEventListener("m:rate-clear", cleared)
     clear.focus(); clear.click(); await flush()
     expect(helper.value).toBeNull()
     expect(document.activeElement).toBe(input("3"))
@@ -215,7 +215,7 @@ describe("Radio boundary/reset/lifetime reuse", () => {
   })
   it("preserves native checked defaults and cancellation without user change events", async () => {
     const { root, helper, form, input } = fixture()
-    const changed = vi.fn(); root.addEventListener("mui:radio-group-change", changed)
+    const changed = vi.fn(); root.addEventListener("m:radio-group-change", changed)
     helper.setValue(4)
     form.reset(); await flush()
     expect(helper.value).toBe(3)
@@ -243,7 +243,7 @@ describe("Radio boundary/reset/lifetime reuse", () => {
   })
   it("reports late invalid numeric keys without creating missing controls", async () => {
     const { root, helper, input } = fixture()
-    const errors = vi.fn(); root.addEventListener("mui:rate-error", errors)
+    const errors = vi.fn(); root.addEventListener("m:rate-error", errors)
     input("2").value = "9"; await flush()
     expect(errors).toHaveBeenCalledTimes(1)
     expect(() => helper.refresh()).toThrow("ascending")
@@ -265,7 +265,7 @@ describe("Radio boundary/reset/lifetime reuse", () => {
   })
   it("disposes removed roots and cancels pending radio notifications", async () => {
     const { root, helper, input } = fixture()
-    const changed = vi.fn(); root.addEventListener("mui:radio-group-change", changed)
+    const changed = vi.fn(); root.addEventListener("m:radio-group-change", changed)
     input("4").click(); root.remove(); await flush()
     expect(helper.connected).toBe(false)
     expect(changed).not.toHaveBeenCalled()

@@ -181,7 +181,7 @@ Unfinished unrelated work is excluded; integration is complete.
 
 ## Remaining scope limits
 
-- Legacy `mui-descriptions` / `mui-description-item` remain unchanged.
+- Legacy `m-descriptions` / `m-description-item` remain unchanged.
 - No automatic final-span expansion, table intrinsic-width distribution, shared
   border frame, synchronized header rows, column/span parser or renderer.
 - Top/left/alignment/size are native CSS switches. Unknown size/placement values retain

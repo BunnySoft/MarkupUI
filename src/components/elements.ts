@@ -1,88 +1,88 @@
-import { MuiElement } from "../core/element.js"
-import { MuiApp, MuiField, MuiGrid, MuiHeading, MuiLink, MuiSemantic, MuiTheme } from "./foundation.js"
-import { MuiAutocomplete, MuiCheckbox, MuiForm, MuiFormItem, MuiInput, MuiRadio, MuiRadioGroup, MuiSelect, MuiSlider, MuiSwitch, MuiTextarea } from "./forms.js"
-import { MuiAccordionItem, MuiInclude } from "./dynamic.js"
-import { MuiDialog, MuiDrawer, MuiPopover, MuiTooltip } from "./overlays.js"
-import { MuiMenu, MuiMenuItem, MuiPagination, MuiSteps, MuiTabs, MuiTab, MuiDescriptions, MuiDescriptionItem, MuiStatistic, MuiTree, MuiTreeNode } from "./navigation.js"
-import { MuiAvatar, MuiButton, MuiCard, MuiEmpty, MuiLayout, MuiProgress, MuiSkeleton, MuiTag } from "./content.js"
+import { MElement } from "../core/element.js"
+import { MApp, MField, MGrid, MHeading, MLink, MSemantic, MTheme } from "./foundation.js"
+import { MAutocomplete, MCheckbox, MForm, MFormItem, MInput, MRadio, MRadioGroup, MSelect, MSlider, MSwitch, MTextarea } from "./forms.js"
+import { MAccordionItem, MInclude } from "./dynamic.js"
+import { MDialog, MDrawer, MPopover, MTooltip } from "./overlays.js"
+import { MMenu, MMenuItem, MPagination, MSteps, MTabs, MTab, MDescriptions, MDescriptionItem, MStatistic, MTree, MTreeNode } from "./navigation.js"
+import { MAvatar, MButton, MCard, MEmpty, MLayout, MProgress, MSkeleton, MTag } from "./content.js"
 import { builtInStyles } from "./styles.js"
 
 const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = [
-  ["mui-app", MuiApp],
-  ["mui-theme", MuiTheme],
-  ["mui-header", class extends MuiSemantic { public override connectedCallback(): void { this.setAttribute("data-role", "banner"); super.connectedCallback() } }],
-  ["mui-main", class extends MuiSemantic { public override connectedCallback(): void { this.setAttribute("data-role", "main"); super.connectedCallback() } }],
-  ["mui-section", class extends MuiSemantic {}],
-  ["mui-heading", MuiHeading],
-  ["mui-text", class extends MuiElement {}],
-  ["mui-strong", class extends MuiElement {}],
-  ["mui-code", class extends MuiElement {}],
-  ["mui-link", MuiLink],
-  ["mui-field", MuiField],
-  ["mui-stack", class extends MuiLayout {}],
-  ["mui-row", class extends MuiLayout {}],
-  ["mui-wrap", class extends MuiLayout {}],
-  ["mui-center", class extends MuiLayout {}],
-  ["mui-spacer", class extends MuiLayout { public override connectedCallback(): void { super.connectedCallback(); this.style.flex = "1" } }],
-  ["mui-card", MuiCard],
-  ["mui-card-header", class extends MuiElement {}],
-  ["mui-card-content", class extends MuiElement {}],
-  ["mui-card-footer", class extends MuiElement {}],
-  ["mui-alert", class extends MuiElement {}],
-  ["mui-badge", class extends MuiElement {}],
-  ["mui-tag", MuiTag],
-  ["mui-divider", class extends MuiElement { public connectedCallback(): void { this.setAttribute("role", "separator"); this.setAttribute("aria-orientation", this.hasAttribute("vertical") ? "vertical" : "horizontal") } }],
-  ["mui-progress", MuiProgress],
-  ["mui-skeleton", MuiSkeleton],
-  ["mui-avatar", MuiAvatar],
-  ["mui-empty", MuiEmpty],
-  ["mui-spin", class extends MuiElement { public connectedCallback(): void { this.setAttribute("role", "status"); this.setAttribute("aria-label", this.getAttribute("label") ?? "Loading") } }],
-  ["mui-button", MuiButton],
-  ["mui-button-group", class extends MuiElement { public connectedCallback(): void { this.setAttribute("role", "group") } }],
-  ["mui-input", MuiInput],
-  ["mui-textarea", MuiTextarea],
-  ["mui-option", class extends MuiElement {}],
-  ["mui-select", MuiSelect],
-  ["mui-autocomplete", MuiAutocomplete],
-  ["mui-slider", MuiSlider],
-  ["mui-checkbox", MuiCheckbox],
-  ["mui-radio", MuiRadio],
-  ["mui-radio-group", MuiRadioGroup],
-  ["mui-switch", MuiSwitch],
-  ["mui-form-item", MuiFormItem],
-  ["mui-form", MuiForm],
-  ["mui-grid", MuiGrid],
-  ["mui-tabs", MuiTabs],
-  ["mui-tab", MuiTab],
-  ["mui-accordion", class extends MuiElement {}],
-  ["mui-accordion-item", MuiAccordionItem],
-  ["mui-menu", MuiMenu],
-  ["mui-menu-item", MuiMenuItem],
-  ["mui-pagination", MuiPagination],
-  ["mui-steps", MuiSteps],
-  ["mui-step", class extends MuiElement {}],
-  ["mui-list", class extends MuiElement { public connectedCallback(): void { this.setAttribute("role", "list") } }],
-  ["mui-list-item", class extends MuiElement { public connectedCallback(): void { this.setAttribute("role", "listitem") } }],
-  ["mui-descriptions", MuiDescriptions],
-  ["mui-description-item", MuiDescriptionItem],
-  ["mui-statistic", MuiStatistic],
-  ["mui-tree", MuiTree],
-  ["mui-tree-node", MuiTreeNode],
-  ["mui-dialog", MuiDialog],
-  ["mui-dialog-header", class extends MuiElement {}],
-  ["mui-dialog-content", class extends MuiElement {}],
-  ["mui-dialog-footer", class extends MuiElement {}],
-  ["mui-drawer", MuiDrawer],
-  ["mui-drawer-header", class extends MuiElement {}],
-  ["mui-drawer-content", class extends MuiElement {}],
-  ["mui-drawer-footer", class extends MuiElement {}],
-  ["mui-tooltip", MuiTooltip],
-  ["mui-popover", MuiPopover],
-  ["mui-popover-trigger", class extends MuiElement {}],
-  ["mui-popover-content", class extends MuiElement {}],
-  ["mui-message", class extends MuiElement {}],
-  ["mui-notification", class extends MuiElement {}],
-  ["mui-include", MuiInclude],
+  ["m-app", MApp],
+  ["m-theme", MTheme],
+  ["m-header", class extends MSemantic { public override connectedCallback(): void { this.setAttribute("data-role", "banner"); super.connectedCallback() } }],
+  ["m-main", class extends MSemantic { public override connectedCallback(): void { this.setAttribute("data-role", "main"); super.connectedCallback() } }],
+  ["m-section", class extends MSemantic {}],
+  ["m-heading", MHeading],
+  ["m-text", class extends MElement {}],
+  ["m-strong", class extends MElement {}],
+  ["m-code", class extends MElement {}],
+  ["m-link", MLink],
+  ["m-field", MField],
+  ["m-stack", class extends MLayout {}],
+  ["m-row", class extends MLayout {}],
+  ["m-wrap", class extends MLayout {}],
+  ["m-center", class extends MLayout {}],
+  ["m-spacer", class extends MLayout { public override connectedCallback(): void { super.connectedCallback(); this.style.flex = "1" } }],
+  ["m-card", MCard],
+  ["m-card-header", class extends MElement {}],
+  ["m-card-content", class extends MElement {}],
+  ["m-card-footer", class extends MElement {}],
+  ["m-alert", class extends MElement {}],
+  ["m-badge", class extends MElement {}],
+  ["m-tag", MTag],
+  ["m-divider", class extends MElement { public connectedCallback(): void { this.setAttribute("role", "separator"); this.setAttribute("aria-orientation", this.hasAttribute("vertical") ? "vertical" : "horizontal") } }],
+  ["m-progress", MProgress],
+  ["m-skeleton", MSkeleton],
+  ["m-avatar", MAvatar],
+  ["m-empty", MEmpty],
+  ["m-spin", class extends MElement { public connectedCallback(): void { this.setAttribute("role", "status"); this.setAttribute("aria-label", this.getAttribute("label") ?? "Loading") } }],
+  ["m-button", MButton],
+  ["m-button-group", class extends MElement { public connectedCallback(): void { this.setAttribute("role", "group") } }],
+  ["m-input", MInput],
+  ["m-textarea", MTextarea],
+  ["m-option", class extends MElement {}],
+  ["m-select", MSelect],
+  ["m-autocomplete", MAutocomplete],
+  ["m-slider", MSlider],
+  ["m-checkbox", MCheckbox],
+  ["m-radio", MRadio],
+  ["m-radio-group", MRadioGroup],
+  ["m-switch", MSwitch],
+  ["m-form-item", MFormItem],
+  ["m-form", MForm],
+  ["m-grid", MGrid],
+  ["m-tabs", MTabs],
+  ["m-tab", MTab],
+  ["m-accordion", class extends MElement {}],
+  ["m-accordion-item", MAccordionItem],
+  ["m-menu", MMenu],
+  ["m-menu-item", MMenuItem],
+  ["m-pagination", MPagination],
+  ["m-steps", MSteps],
+  ["m-step", class extends MElement {}],
+  ["m-list", class extends MElement { public connectedCallback(): void { this.setAttribute("role", "list") } }],
+  ["m-list-item", class extends MElement { public connectedCallback(): void { this.setAttribute("role", "listitem") } }],
+  ["m-descriptions", MDescriptions],
+  ["m-description-item", MDescriptionItem],
+  ["m-statistic", MStatistic],
+  ["m-tree", MTree],
+  ["m-tree-node", MTreeNode],
+  ["m-dialog", MDialog],
+  ["m-dialog-header", class extends MElement {}],
+  ["m-dialog-content", class extends MElement {}],
+  ["m-dialog-footer", class extends MElement {}],
+  ["m-drawer", MDrawer],
+  ["m-drawer-header", class extends MElement {}],
+  ["m-drawer-content", class extends MElement {}],
+  ["m-drawer-footer", class extends MElement {}],
+  ["m-tooltip", MTooltip],
+  ["m-popover", MPopover],
+  ["m-popover-trigger", class extends MElement {}],
+  ["m-popover-content", class extends MElement {}],
+  ["m-message", class extends MElement {}],
+  ["m-notification", class extends MElement {}],
+  ["m-include", MInclude],
 ]
 
 export const builtInElementNames: readonly string[] = definitions.map(([name]) => name)
@@ -98,16 +98,16 @@ export function registerElement(
   constructor: CustomElementConstructor,
   registry: CustomElementRegistry = customElements,
 ): void {
-  if (!name.startsWith("mui-")) {
-    throw new Error("Use a 'mui-' element name.")
+  if (!name.startsWith("m-")) {
+    throw new Error("Use a 'm-' element name.")
   }
   if (!registry.get(name)) registry.define(name, constructor)
 }
 
 export function installStyles(document: Document = globalThis.document): void {
-  if (document.getElementById("mui-styles")) return
+  if (document.getElementById("m-styles")) return
   const style = document.createElement("style")
-  style.id = "mui-styles"
+  style.id = "m-styles"
   style.textContent = builtInStyles
   document.head.append(style)
 }

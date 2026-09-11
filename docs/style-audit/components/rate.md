@@ -73,7 +73,7 @@ score readable without pretending that hovering can change it.
 
 - ArrowRight moved score 3→4; subsequent Space on that selected radio caused no second
   commit. One Radio aggregate change occurred and native FormData contained `"4"`.
-- Clear produced null, one `mui:rate-clear`, no extra Radio change, no submitted rating,
+- Clear produced null, one `m:rate-clear`, no extra Radio change, no submitted rating,
   and focus returned to a real radio before the clear button hid.
 - Native reset restored score 3 and its unchanged defaultChecked baseline.
 - A 2.5 half score submitted native `"2.5"` with all six half-step inputs retained.

@@ -30,7 +30,7 @@ release build and all **16 Layout tests** pass; no other component or shared sou
 
 Link the stylesheet normally. There is no `./layout` JS export, ESM/classic runtime/global,
 or registration-order restriction. The stylesheet can coexist with the unchanged legacy
-aggregate; its structural `mui-*` elements are not silently redefined.
+aggregate; its structural `m-*` elements are not silently redefined.
 
 Pinned Naive UI reference: `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`.
 The [public API](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/layout/demos/enUS/index.demo-entry.md)
@@ -44,21 +44,21 @@ The [reference tracker](../naive-ui/components/layout.md) preserves every origin
 
 ```html
 <link rel="stylesheet" href="./vendor/markup-ui-layout.css">
-<div class="mui-layout">
-  <header class="mui-layout-header" data-bordered>Application header</header>
-  <div class="mui-layout" data-has-sider>
-    <details class="mui-layout-sider" open data-bordered>
+<div class="m-layout">
+  <header class="m-layout-header" data-bordered>Application header</header>
+  <div class="m-layout" data-has-sider>
+    <details class="m-layout-sider" open data-bordered>
       <summary>Menu</summary>
       <nav aria-label="Project navigation">
         <a href="./overview.html">Overview</a>
       </nav>
     </details>
-    <main class="mui-layout-content">
+    <main class="m-layout-content">
       <h1>Overview</h1>
       <p>Native application content.</p>
     </main>
   </div>
-  <footer class="mui-layout-footer" data-bordered>Application footer</footer>
+  <footer class="m-layout-footer" data-bordered>Application footer</footer>
 </div>
 ```
 
@@ -76,9 +76,9 @@ explicitly.
 
 ## Disclosure, scrolling and positioning
 
-An optional `details.mui-layout-sider` supplies a real focusable `summary` and native
+An optional `details.m-layout-sider` supplies a real focusable `summary` and native
 open/closed behavior. Include `open` for the upstream-like initially expanded state;
-omit it for initially collapsed content. A plain `aside.mui-layout-sider` has no disclosure
+omit it for initially collapsed content. A plain `aside.m-layout-sider` has no disclosure
 or generated trigger.
 
 ```js
@@ -97,16 +97,16 @@ hooks are intentionally not reproduced. Native summary activation preserves focu
 trigger. When application code closes a panel containing current focus, move focus to the
 summary first; the CSS-only library does not execute application focus policy.
 
-`--mui-layout-sider-width` defaults to `272px` and
-`--mui-layout-sider-collapsed-width` to `48px`. Supply CSS lengths, not a JavaScript number
+`--m-layout-sider-width` defaults to `272px` and
+`--m-layout-sider-collapsed-width` to `48px`. Supply CSS lengths, not a JavaScript number
 or a unitless attribute. Ordinary CSS validation/inheritance applies; there is no parser.
 The closed width affects only native details, not a plain aside.
 
-Apply `mui-layout-scroll` only to a region intended to scroll, and give it an appropriate
+Apply `m-layout-scroll` only to a region intended to scroll, and give it an appropriate
 height/max-height in application CSS. Name and focus a standalone scroll region when needed:
 
 ```html
-<section class="mui-layout-scroll activity" tabindex="0"
+<section class="m-layout-scroll activity" tabindex="0"
   aria-labelledby="activity-title">
   <h2 id="activity-title">Activity</h2>
   <!-- Authored activity -->
@@ -114,7 +114,7 @@ height/max-height in application CSS. Name and focus a standalone scroll region 
 ```
 
 Its native `scroll` event and `Element.scrollTo(x, y)` /
-`Element.scrollTo({ left, top, behavior })` are the API; no `mui:scroll` or wrapper method
+`Element.scrollTo({ left, top, behavior })` are the API; no `m:scroll` or wrapper method
 is added. Native scrollbars are always used. For explicit smooth scrolling, application
 code should honor `prefers-reduced-motion`. Printed scroll regions expand to show content.
 Absolute application layouts may need their own print overrides, as demonstrated.
@@ -130,7 +130,7 @@ invent a breakpoint event or implement a controlled-collapse model.
 
 ## Appearance and shared-token ownership
 
-Select `data-mui-theme="light|dark"` on an ancestor or the actual layout. No marker
+Select `data-m-theme="light|dark"` on an ancestor or the actual layout. No marker
 means light. Only private Layout defaults are defined at that boundary; this is
 not a theme watcher, body stylesheet or provider. Nested light boundaries reset
 the private defaults under dark.
@@ -150,15 +150,15 @@ Each actual region resets its own private role selection. For example, normal
 Content nested inside an inverted Header keeps body defaults rather than inheriting
 the Header's internal inverted color choice.
 
-Public `--mui-layout-background`, `--mui-layout-color` and
-`--mui-layout-border-color` remain first-priority overrides, including when inherited
-into inverted regions. `--mui-layout-embedded-background` takes precedence over the
+Public `--m-layout-background`, `--m-layout-color` and
+`--m-layout-border-color` remain first-priority overrides, including when inherited
+into inverted regions. `--m-layout-embedded-background` takes precedence over the
 generic background token on embedded regions; otherwise the generic token can
 override that background too. Public author overrides intentionally inherit until
 the application scopes them differently.
 
-The former implicit fallbacks to `--mui-text-primary`, `--mui-bg-surface`,
-`--mui-bg-muted` and `--mui-border` are removed: they do not represent all of these
+The former implicit fallbacks to `--m-text-primary`, `--m-bg-surface`,
+`--m-bg-muted` and `--m-border` are removed: they do not represent all of these
 Naive roles. Applications deliberately using those colors should choose their
 mapping through local Layout tokens, not assume a global palette migration. No
 shared preset is rewritten merely to recolor this shell.
@@ -197,9 +197,9 @@ omitted contracts**. Shared property names remain separately accounted for by ow
 | Default slots | Native authored region children. | 🟢 Verified; not Shadow DOM projection. |
 | `scrollTo` and left/top/behavior fields | Existing `Element.scrollTo` APIs. | 🟢 Verified; no shim or hidden scrollbar object. |
 
-External tokens include `--mui-layout-background`, `--mui-layout-color`,
-`--mui-layout-embedded-background`, `--mui-layout-border-color`, Sider widths and
-`--mui-layout-trigger-padding`. Header/Footer/Sider inverted presentation has native
+External tokens include `--m-layout-background`, `--m-layout-color`,
+`--m-layout-embedded-background`, `--m-layout-border-color`, Sider widths and
+`--m-layout-trigger-padding`. Header/Footer/Sider inverted presentation has native
 forced-colors fallbacks. Explicit author styles can override the low-specificity defaults.
 No animation engine, automatic ARIA naming, synthetic runtime or runtime dependency exists.
 

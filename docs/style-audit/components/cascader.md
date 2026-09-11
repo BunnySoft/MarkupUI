@@ -81,7 +81,7 @@ not a whole-widget pixel-parity result.
 
 ## Author, media and native ownership
 
-Local public `--mui-cascader-*` tokens now use fallbacks, never public default assignments.
+Local public `--m-cascader-*` tokens now use fallbacks, never public default assignments.
 Font family and hover color reuse the applicable shared roles; size-specific shared
 font hooks retain their 14/14/15px fallbacks. Generic shared text/surface/border/line-height
 roles are not substituted for different measured trigger roles.
@@ -98,7 +98,7 @@ Private browser assertions cover:
   controls/options/Clear. Measured against a live system-color probe, not assumed RGB.
   A real disabled fieldset's first-legend select stays enabled; its following select
   receives the system-disabled role. No `aria-disabled` substitute or pointer blocking.
-- Optional `.mui-select` wrappers and `data-select-control` attributes work with current
+- Optional `.m-select` wrappers and `data-select-control` attributes work with current
   unchanged Select CSS loaded before or after Cascader CSS, including large type/height
   and print colors. No second Select controller is bound.
 - Native ArrowDown changed Europe to the incomplete US prefix, then chose New York in

@@ -10,10 +10,10 @@ const explicitPage = createBackTop(pageButton)
 readerAction.hidden = false
 pageButton.hidden = false
 for (const action of [pageAction, readerAction, pageButton]) {
-  action.addEventListener("mui:back-top-update-show", event => {
+  action.addEventListener("m:back-top-update-show", event => {
     state.textContent = `${action.id}: threshold ${event.detail.show ? "reached" : "not reached"}`
   })
-  action.addEventListener("mui:back-top-error", event => { state.textContent = event.detail.error.message })
+  action.addEventListener("m:back-top-error", event => { state.textContent = event.detail.error.message })
 }
 document.querySelector("#reader-end").addEventListener("click", () => {
   reader.scrollTo({ top: reader.scrollHeight, left: 120, behavior: "instant" })

@@ -17,10 +17,10 @@
 <main>
   <h1>Auto Complete: native suggestions, always free text</h1>
   <p>The browser owns suggestion matching, popup presentation and keyboard behavior. Selecting a native suggestion cannot reliably be distinguished from typing that same value. This page does not fabricate a select event.</p>
-  <form id="places" class="mui-form" action="auto-complete.html" method="get">
-    <div class="mui-auto-complete mui-form-item" id="city-item">
+  <form id="places" class="m-form" action="auto-complete.html" method="get">
+    <div class="m-auto-complete m-form-item" id="city-item">
       <label for="city">City (required, not restricted to suggestions)</label>
-      <div class="mui-auto-complete__field mui-input" data-input id="city-input">
+      <div class="m-auto-complete__field m-input" data-input id="city-input">
         <span aria-hidden="true">⌕</span>
         <input id="city" name="address.city" list="cities" value="London" required autocomplete="off" maxlength="80" data-input-control aria-describedby="city-help city-count">
         <span id="city-count" data-input-count>6 / 80</span>
@@ -32,14 +32,14 @@
         <option value="Tokyo" label="Japan"></option>
       </datalist>
       <p id="city-help">Authored suggestions work without JavaScript. Enhanced local queries wait 120ms and simulate a 200ms load. Try “error” for a local failure, “slow” for a delayed result, or “none” for an empty result.</p>
-      <p id="suggestion-status" class="mui-auto-complete__status">Authored suggestions; no loader has run.</p>
-      <p id="city-error" class="mui-form-item__feedback" hidden></p>
+      <p id="suggestion-status" class="m-auto-complete__status">Authored suggestions; no loader has run.</p>
+      <p id="city-error" class="m-form-item__feedback" hidden></p>
     </div>
-    <div class="mui-auto-complete">
+    <div class="m-auto-complete">
       <label for="shared-one">Static shared suggestion list</label>
-      <div class="mui-auto-complete__field"><input id="shared-one" name="shared[]" list="shared-list"></div>
+      <div class="m-auto-complete__field"><input id="shared-one" name="shared[]" list="shared-list"></div>
       <label for="shared-two">Second native consumer of the same static list</label>
-      <div class="mui-auto-complete__field"><input id="shared-two" name="shared[]" list="shared-list"></div>
+      <div class="m-auto-complete__field"><input id="shared-two" name="shared[]" list="shared-list"></div>
       <datalist id="shared-list"><option value="HTML"></option><option value="CSS"></option></datalist>
       <p>Shared static datalists need no helper; an asynchronous writer requires exclusive ownership.</p>
     </div>

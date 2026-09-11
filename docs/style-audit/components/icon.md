@@ -72,8 +72,8 @@ animates its retained whole-graphic opacity, so the ordinary single-asset visual
 - A direct SVG `color="#a04080"` remained `rgb(160,64,128)` and its exact outerHTML was
   unchanged. Fixed artwork remained `rgb(232,93,74)`; no fill, stroke or stroke-width rule
   was introduced.
-- Overrides rendered correctly: `--mui-icon-size:31.25px`, explicit `--mui-icon-color`
-  `rgb(1,2,3)`, and `--mui-icon-depth-3:.37`. Nested explicit light inside dark produced
+- Overrides rendered correctly: `--m-icon-size:31.25px`, explicit `--m-icon-color`
+  `rgb(1,2,3)`, and `--m-icon-depth-3:.37`. Nested explicit light inside dark produced
   black/.38 rather than retaining the outer dark defaults.
 - Native viewBox, preserveAspectRatio, title/description, IDs, transforms and node/listener
   identity remain untouched. An unclassified SVG stayed **70×30px**.

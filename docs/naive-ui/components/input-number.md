@@ -74,7 +74,7 @@ owner/prop/slot/method/inline identities remain. Green is native adaptation, not
 | `validator` · [API] L55 | Prop | Native validity/application custom validity | ⏭️ Intentionally omitted | No callback validator. |
 | `value` · [API] L56 | Prop | Native finite number/null state plus badInput/validity | 🟢 Verified | N1/N2 empty and invalid are not zero; setters silent. |
 | `on-blur` · [API] L57 | Callback | Native blur event | 🟢 Verified | No clamp/round-on-blur. |
-| `on-clear` · [API] L58 | Callback | mui:input-number-clear after input/change | 🟢 Verified | N1/N2 previous number/text/badInput snapshot. |
+| `on-clear` · [API] L58 | Callback | m:input-number-clear after input/change | 🟢 Verified | N1/N2 previous number/text/badInput snapshot. |
 | `on-focus` · [API] L59 | Callback | Native focus event | 🟢 Verified | N1/N2 boundary/clear focus recovery. |
 | `on-update:value` · [API] L60 | Callback | Native events, state.value and native flags | 🟢 Verified | No duplicate numeric callback/model event. |
 

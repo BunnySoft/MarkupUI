@@ -26,9 +26,9 @@ and actual DOM ancestry remain the documented visual mechanism.
   <h2>Project workspace</h2>
   <section>
     <!-- No local palette: inherits the actual ancestor's tokens. -->
-    <mui-card data-mui-card>
-      <div data-mui-card-content>Authored native content</div>
-    </mui-card>
+    <m-card data-m-card>
+      <div data-m-card-content>Authored native content</div>
+    </m-card>
   </section>
 </section>
 ```
@@ -37,10 +37,10 @@ and actual DOM ancestry remain the documented visual mechanism.
 /* Application stylesheet, loaded after the chosen component styles. */
 .project-night {
   color-scheme: dark;
-  --mui-bg-surface: #172b35;
-  --mui-text-primary: #eef5f4;
-  --mui-border: #88aaa9;
-  --mui-color-primary: #91d8c2;
+  --m-bg-surface: #172b35;
+  --m-text-primary: #eef5f4;
+  --m-border: #88aaa9;
+  --m-color-primary: #91d8c2;
 }
 ```
 
@@ -65,8 +65,8 @@ The demo's `data-example-palette` is an **application-only selector**, with thes
 This original five-token subset is **not** another copy of the legacy full light/dark
 palettes. It verifies only the consumers used here:
 
-- Card consumes shared `--mui-bg-surface`, `--mui-text-primary` and `--mui-border`.
-- Primary Button consumes `--mui-color-primary` and its `--mui-button-contrast` hook.
+- Card consumes shared `--m-bg-surface`, `--m-text-primary` and `--m-border`.
+- Primary Button consumes `--m-color-primary` and its `--m-button-contrast` hook.
 - Loading Bar has its own supported tokens. The demo explicitly bridges its background,
   text, track and progress color **on each Loading Bar consumer**, so references resolve
   against that consumer's inherited tokens. No library-wide token adapter is implied.
@@ -184,7 +184,7 @@ server-authored HTML and linked CSS need no provider or hydration runtime.
 
 The unchanged [legacy theme API](../../src/theme/index.ts) still supports
 `theme.register(name, tokens)` and `theme.apply(name, root)`. `apply` writes inline
-`--mui-*` tokens and `data-mui-theme`, does not persist, and does not broadcast the
+`--m-*` tokens and `data-m-theme`, does not persist, and does not broadcast the
 `set` subscription event. `theme.set` retains its existing localStorage/global-subscriber
 behavior; this demo never calls it. Neither API now recognizes the demo palette selectors.
 Their legacy ownership/replacement behavior is unchanged, not a new restoration promise.

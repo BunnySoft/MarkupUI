@@ -34,7 +34,7 @@ export function createCheckboxGroup(root: HTMLFieldSetElement, options: Checkbox
   }
   ;({ min, max } = limits(options))
   function rootValid() {
-    return root.isConnected && root.getRootNode() === document && root.matches(".mui-checkbox-group[data-checkbox-group]")
+    return root.isConnected && root.getRootNode() === document && root.matches(".m-checkbox-group[data-checkbox-group]")
       && !root.hasAttribute("role") && !root.hasAttribute("tabindex")
   }
   function collect(): HTMLInputElement[] {
@@ -123,7 +123,7 @@ export function createCheckboxGroup(root: HTMLFieldSetElement, options: Checkbox
     const message = reason instanceof Error ? reason.message : String(reason)
     const changed = error !== message
     error = message
-    if (changed) root.dispatchEvent(new view!.CustomEvent("mui:checkbox-group-error", { detail: { message } }))
+    if (changed) root.dispatchEvent(new view!.CustomEvent("m:checkbox-group-error", { detail: { message } }))
   }
   function attemptRefresh() {
     const previous = error
@@ -161,7 +161,7 @@ export function createCheckboxGroup(root: HTMLFieldSetElement, options: Checkbox
     try {
       refresh()
       const detail: CheckboxGroupChange = { values: values(), value: control.value, actionType: control.checked ? "check" : "uncheck" }
-      later(() => root.dispatchEvent(new view!.CustomEvent("mui:checkbox-group-change", { detail })))
+      later(() => root.dispatchEvent(new view!.CustomEvent("m:checkbox-group-change", { detail })))
     } catch (reason) { error = previous; report(reason) }
   }
   function setValues(next: readonly string[]) {

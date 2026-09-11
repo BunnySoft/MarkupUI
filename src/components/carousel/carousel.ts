@@ -57,10 +57,10 @@ const keys = ["currentIndex", "defaultIndex", "direction", "loop", "autoplay", "
 /** Enhances authored, single-slide-per-view native scrolling without a slide renderer. */
 export function createCarousel(element: HTMLElement, options: CarouselOptions = {}): CarouselController {
   const document = element?.ownerDocument, view = document?.defaultView
-  if (!view || !(element instanceof view.HTMLElement) || !element.matches(".mui-carousel[data-carousel]")
+  if (!view || !(element instanceof view.HTMLElement) || !element.matches(".m-carousel[data-carousel]")
     || !["div", "section"].includes(element.localName) || (element as Owned)[owner]
-    || !element.isConnected || element.getRootNode() !== document || element.closest("mui-carousel")) {
-    throw new TypeError("Use an unowned connected native div/section.mui-carousel[data-carousel].")
+    || !element.isConnected || element.getRootNode() !== document || element.closest("m-carousel")) {
+    throw new TypeError("Use an unowned connected native div/section.m-carousel[data-carousel].")
   }
   const win = view, doc = document!, token = {}, writes = ownedWrites(), itemWrites = ownedWrites()
   const own = (node: Element) => node.closest("[data-carousel]") === element
@@ -241,7 +241,7 @@ export function createCarousel(element: HTMLElement, options: CarouselOptions = 
     if (quiet || previousIndex === index && previousSlide === current) return
     const detail: CarouselChange = Object.freeze({ index, previousIndex, slide: current, previousSlide, reason: why })
     const version = generation
-    element.dispatchEvent(new win.CustomEvent("mui:carousel-change", { bubbles: true, detail }))
+    element.dispatchEvent(new win.CustomEvent("m:carousel-change", { bubbles: true, detail }))
     if (connected && element.isConnected && version === generation) options.onUpdateCurrentIndex?.(index, previousIndex, detail)
   }
   function stopTimers() {

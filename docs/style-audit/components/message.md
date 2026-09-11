@@ -100,8 +100,8 @@ extra live region, focus trap, promise decision, timer policy or service API was
 
 ## Placement, repeated base sheets and native containment
 
-All changes to fixed placement are guarded by both `.mui-message-host` and
-`.mui-feedback-host--fixed`. Shared placement CSS and Notification are untouched.
+All changes to fixed placement are guarded by both `.m-message-host` and
+`.m-feedback-host--fixed`. Shared placement CSS and Notification are untouched.
 Explicit left/right selectors outrank later repeated shared base selectors.
 
 **48 cases passed:** two Message/Notification stylesheet orders × light/dark × LTR/

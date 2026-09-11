@@ -15,19 +15,19 @@
     <p>Empty is not zero. Invalid drafts stay browser-owned. Custom actions use native stepUp/stepDown, not arithmetic or a parser. Native arrows remain available without JS.</p>
     <form id="numbers" action="input-number.html" method="get">
       <label for="quantity">Quantity (required, 0 to 1, step 0.1)</label>
-      <div class="mui-input-number" data-input-number id="quantity-root">
-        <span class="mui-input-number__affix" aria-hidden="true">±</span>
+      <div class="m-input-number" data-input-number id="quantity-root">
+        <span class="m-input-number__affix" aria-hidden="true">±</span>
         <input data-number-control id="quantity" type="number" name="quantity" value="0.1" min="0" max="1" step="0.1" required aria-describedby="quantity-help">
         <button data-number-decrement type="button" hidden aria-label="Decrease quantity">−</button>
         <button data-number-increment type="button" hidden aria-label="Increase quantity">+</button>
         <button data-number-clear type="button" hidden>Clear quantity</button>
-        <span class="mui-input-number__affix">units</span>
+        <span class="m-input-number__affix">units</span>
       </div>
       <p id="quantity-help">Typed out-of-range and off-grid numbers remain invalid, not silently clamped. A temporarily invalid native draft can expose empty .value with badInput=true.</p>
       <fieldset id="grid-fieldset">
         <legend>Native value-attribute grid base; authored buttons on both sides</legend>
         <label for="grid-number">Grid (default 0.15, step 0.2, no min)</label>
-        <div class="mui-input-number" data-input-number id="grid-root" data-size="small">
+        <div class="m-input-number" data-input-number id="grid-root" data-size="small">
           <button data-number-decrement type="button" hidden>Decrease grid</button>
           <input data-number-control id="grid-number" type="number" name="grid" value="0.15" step="0.2">
           <button data-number-increment type="button" hidden>Increase grid</button>
@@ -35,20 +35,20 @@
         </div>
       </fieldset>
       <label for="any-number">Any-step number (custom stepping unavailable)</label>
-      <div class="mui-input-number" data-input-number id="any-root" data-round data-status="warning">
+      <div class="m-input-number" data-input-number id="any-root" data-round data-status="warning">
         <input data-number-control id="any-number" type="number" name="any" value="2.5" step="any">
         <button data-number-decrement type="button" hidden>Decrease any-step</button>
         <button data-number-increment type="button" hidden>Increase any-step</button>
         <button data-number-clear type="button" hidden>Clear any-step</button>
       </div>
       <label for="external-number">External form owner</label>
-      <div class="mui-input-number" data-input-number id="external-root" data-size="large">
+      <div class="m-input-number" data-input-number id="external-root" data-size="large">
         <input data-number-control id="external-number" type="number" name="external" form="other-numbers" value="10" min="4" max="20" step="2">
         <button data-number-decrement type="button" hidden>Decrease external</button>
         <button data-number-increment type="button" hidden>Increase external</button>
       </div>
       <label for="plain-number">CSS-only native field</label>
-      <div class="mui-input-number">
+      <div class="m-input-number">
         <input data-number-control id="plain-number" type="number" name="plain" value="3" min="0" step="1">
       </div>
       <input type="hidden" name="local" value="only">

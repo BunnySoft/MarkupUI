@@ -13,20 +13,20 @@ function inspect(run: (rules: CSSRule[]) => void) {
 
 describe("Cascader retained native styles", () => {
   it("keeps corrected trigger density and paint inside the existing CSS budget", () => {
-    expect(css).toContain("--_mui-cascader-height: 28px")
-    expect(css).toContain("--_mui-cascader-height: 34px")
-    expect(css).toContain("--_mui-cascader-height: 40px")
-    expect(css).toContain("var(--mui-font-size-large,15px)")
+    expect(css).toContain("--_m-cascader-height: 28px")
+    expect(css).toContain("--_m-cascader-height: 34px")
+    expect(css).toContain("--_m-cascader-height: 40px")
+    expect(css).toContain("var(--m-font-size-large,15px)")
     expect(css).toContain("light-dark(#333639,rgba(255,255,255,.82))")
     expect(css).toContain("light-dark(#e0e0e6,transparent)")
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
   })
   it("uses fallbacks rather than overwriting inherited public author tokens", () => {
-    expect(css).not.toMatch(/(?:^|[;{])\s*--mui-cascader-[\w-]+\s*:/)
+    expect(css).not.toMatch(/(?:^|[;{])\s*--m-cascader-[\w-]+\s*:/)
     for (const token of ["gap", "font-size", "font-family", "line-height", "height", "padding", "radius", "color", "background", "border-color", "focus-color", "disabled-color", "disabled-background"]) {
-      expect(css).toContain(`var(--mui-cascader-${token},`)
+      expect(css).toContain(`var(--m-cascader-${token},`)
     }
-    expect(css).toContain("var(--mui-color-primary-hover,")
+    expect(css).toContain("var(--m-color-primary-hover,")
   })
   it("leaves native option, disclosure, focus and loading renderers intact", () => {
     expect(css).not.toMatch(/appearance\s*:|content\s*:|position\s*:\s*(?:absolute|fixed)|option:checked|animation\s*:/)
@@ -48,12 +48,12 @@ describe("Cascader retained native styles", () => {
       const print = rules.find(rule => rule.type === CSSRule.MEDIA_RULE && (rule as CSSMediaRule).conditionText === "print") as CSSMediaRule
       expect(print).toBeDefined()
       const rule = print.cssRules[0] as CSSStyleRule
-      expect(rule.selectorText).toBe(".mui-cascader")
+      expect(rule.selectorText).toBe(".m-cascader")
       expect(rule.style.length).toBe(2)
-      expect(rule.style.getPropertyValue("--_mui-cascader-scheme")).toBe("light")
-      expect(rule.style.getPropertyValue("--_mui-cascader-disabled")).toBe("GrayText")
+      expect(rule.style.getPropertyValue("--_m-cascader-scheme")).toBe("light")
+      expect(rule.style.getPropertyValue("--_m-cascader-disabled")).toBe("GrayText")
       const clear = print.cssRules[1] as CSSStyleRule
-      expect(clear.style.color).toBe("var(--mui-cascader-disabled-color,GrayText)")
+      expect(clear.style.color).toBe("var(--m-cascader-disabled-color,GrayText)")
       expect(clear.style.opacity).toBe("1")
     })
   })

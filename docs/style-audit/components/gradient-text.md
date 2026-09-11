@@ -70,7 +70,7 @@ or invalid custom image cannot erase the words. Simply placing upstream's transl
 start over that dark underpaint would produce the wrong fade.
 
 The native light default therefore uses an **opaque precomposite**:
-60% selected semantic color + 40% `--mui-gradient-text-surface`, default white, followed
+60% selected semantic color + 40% `--m-gradient-text-surface`, default white, followed
 by the full semantic end color. Explicit sRGB interpolation keeps the color space stable
 when `color-mix` supplies the start. The underpaint remains intact behind valid images.
 
@@ -88,9 +88,9 @@ interchangeable on every background:
 For an explicit true-alpha option, ordinary author CSS was tested:
 
 ```css
-.true-alpha.mui-gradient-text {
-  --mui-gradient-text-from: rgba(24, 160, 88, .6);
-  --mui-gradient-text-to: #18a058;
+.true-alpha.m-gradient-text {
+  --m-gradient-text-from: rgba(24, 160, 88, .6);
+  --m-gradient-text-to: #18a058;
   background-color: transparent;
 }
 ```

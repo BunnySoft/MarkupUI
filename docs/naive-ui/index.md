@@ -352,7 +352,7 @@ intent, preserved authored nodes, silent checked assignment and external CSS. Th
 [accepted contract](../components/tag.md) records **118 passing tests**, Chromium
 keyboard/focus/form-safety/lifecycle and load-order evidence, and explicit framework/native
 scope differences. Checkable suppresses closable, close never removes content, and Boolean
-`mui:change` is emitted only for activation, not programmatic assignment.
+`m:change` is emitted only for activation, not programmatic assignment.
 
 The reference page preserves **19 original rows** and adds **12 explicitly source-declared
 supplements**: **31 rows, 24 Verified ADAPTED native targets and 7 Intentionally omitted**.
@@ -402,7 +402,7 @@ scope in `27a435b`: optional ESM/classic and external CSS, safe localizable
 description fallback, original decorative SVG, native description/icon/extra content and
 five CSS sizes. Authored content wins without losing native headings, action listeners,
 input state, form types or explicit ARIA. Templates remain inert; applications may clone
-them with native DOM APIs. Static `.mui-empty` sections require no controller.
+them with native DOM APIs. Static `.m-empty` sections require no controller.
 
 The reference retains all **seven pinned rows** and adds **four explicit source render/theme
 supplements**: **11 rows, 7 Verified ADAPTED native targets and 4 Intentionally omitted**.
@@ -611,7 +611,7 @@ Vertical caption preservation/dashed borders are deliberate native composition d
 
 Four tasks are accepted against **351 passing tests**, build/export gates and Chromium
 rule/caption/grid geometry, semantic naming, narrow/RTL/zoom/forced-colors/print and legacy
-coexistence. The legacy mui-divider registry/styles remain unchanged.
+coexistence. The legacy m-divider registry/styles remain unchanged.
 Core stays 14,611/15,000 gzip bytes; Divider adds **765 gzip bytes of CSS / 1,500 ceiling**.
 Flex's subsequent native layout acceptance is recorded below. P2-04 and P2 overall remain incomplete.
 
@@ -1287,7 +1287,7 @@ All prior optional/core/plugin sources, outputs and ceilings remain unchanged.
 native dialog lifetime and optional false/Promise decisions. Native modal/modeless modes,
 Escape/cancel/returnValue, validated method=dialog forms, guarded pending/error outcomes
 and explicit template ownership replace framework injection, not browser top-layer behavior.
-Legacy MuiDialog remains unchanged. Modal can reuse the isolated native lifetime/CSS.
+Legacy MDialog remains unchanged. Modal can reuse the isolated native lifetime/CSS.
 
 The [tracker](components/dialog.md) preserves **105 original owner/name/source identities**,
 adds **10 source-only supplements and six explicit inherited options**, and closes
@@ -2224,13 +2224,13 @@ automatically complete. **Next: Element, then Global Style, before P6**, each se
 real authored children/attributes/listeners, labelled controls, native link/button/form
 behavior and explicit inherited/local CSS custom properties. No tag factory, wrapper,
 provider, global reset, new runtime/export/asset budget or second palette is added.
-The existing MuiElement controller base is **not** represented as an NElement equivalent.
+The existing MElement controller base is **not** represented as an NElement equivalent.
 
 **Two original identities + ten source supplements + three source-inherited theme props
 = 15 rows: three adapted native capabilities + twelve omissions, zero unresolved**.
 All four tasks are accepted. Source automatic role none, generated prefixes/theme classes,
 renderer aliases, inherited theme objects and common-theme variable/type graphs remain
-omitted. The source's unprefixed kebab-case variables are not silently promised as --mui-*
+omitted. The source's unprefixed kebab-case variables are not silently promised as --m-*
 or --n-* aliases.
 
 **51 tests passed** (12 Element, 12 Config Provider, 27 native/legacy), declarations/build

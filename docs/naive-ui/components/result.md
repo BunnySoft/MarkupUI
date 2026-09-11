@@ -60,18 +60,18 @@ message defaults, alignment prop, action/header/description slot or component ev
 
 | Upstream item · source | Kind | Retained MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`description`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/result/demos/enUS/index.demo-entry.md#L28) | Prop | Authored .mui-result-description text/nodes. | 🟢 Verified ADAPTED target | No generated message or attribute renderer; safe native text, hidden/long content and ownership preserved. |
+| [`description`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/result/demos/enUS/index.demo-entry.md#L28) | Prop | Authored .m-result-description text/nodes. | 🟢 Verified ADAPTED target | No generated message or attribute renderer; safe native text, hidden/long content and ownership preserved. |
 | [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/result/demos/enUS/index.demo-entry.md#L29) | Prop | data-size small/medium/large/huge, default/unknown medium. | 🟢 Verified ADAPTED target | 64/80/100/125px icon and 26/32/40/48px title presets at a 16px root, with native rem scaling and wrapping. |
 | [`status`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/result/demos/enUS/index.demo-entry.md#L30) | Prop | data-status info/success/warning/error/404/403/500/418 icon-region palette; missing/unknown info. | 🟢 Verified ADAPTED target | Explicit visible status text and authored icons/code symbols. No HTTP handling, auto message/action or vendor illustration selection. |
-| [`title`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/result/demos/enUS/index.demo-entry.md#L31) | Prop | Actual .mui-result-title heading/text chosen by the author. | 🟢 Verified ADAPTED target | Native heading/name, no tooltip mapping, generated heading level or status-derived text default. |
+| [`title`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/result/demos/enUS/index.demo-entry.md#L31) | Prop | Actual .m-result-title heading/text chosen by the author. | 🟢 Verified ADAPTED target | Native heading/name, no tooltip mapping, generated heading level or status-derived text default. |
 
 ### Result Slots
 
 | Upstream item · source | Kind | Retained MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/result/demos/enUS/index.demo-entry.md#L37) | Slot | Native .mui-result-content children. | 🟢 Verified ADAPTED target | Rich form/nested content and original nodes/listeners/order remain; no VNode/schema renderer. |
-| [`footer`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/result/demos/enUS/index.demo-entry.md#L38) | Slot | Authored .mui-result-footer information and independent native controls. | 🟢 Verified ADAPTED target | Form association, validity/reset/disabled/focus, home navigation and no-JS GET behavior verified; no generated action/router policy. |
-| [`icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/result/demos/enUS/index.demo-entry.md#L39) | Slot | Authored .mui-result-icon SVG/image/symbol content, or omit the region. | 🟢 Verified ADAPTED target | Native namespaces/alt/names and replacements preserved; original simple demo artwork, no vendor assets or fallback icon generator. |
+| [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/result/demos/enUS/index.demo-entry.md#L37) | Slot | Native .m-result-content children. | 🟢 Verified ADAPTED target | Rich form/nested content and original nodes/listeners/order remain; no VNode/schema renderer. |
+| [`footer`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/result/demos/enUS/index.demo-entry.md#L38) | Slot | Authored .m-result-footer information and independent native controls. | 🟢 Verified ADAPTED target | Form association, validity/reset/disabled/focus, home navigation and no-JS GET behavior verified; no generated action/router policy. |
+| [`icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/result/demos/enUS/index.demo-entry.md#L39) | Slot | Authored .m-result-icon SVG/image/symbol content, or omit the region. | 🟢 Verified ADAPTED target | Native namespaces/alt/names and replacements preserved; original simple demo artwork, no vendor assets or fallback icon generator. |
 
 ### Explicit source-only supplements
 

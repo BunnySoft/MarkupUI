@@ -20,7 +20,7 @@ is imported.
 
 | Asset | Purpose |
 | --- | --- |
-| `dist/markup-ui-skeleton.js` | ESM; exports `MuiSkeleton`, `registerSkeleton()`; registers on browser import. |
+| `dist/markup-ui-skeleton.js` | ESM; exports `MSkeleton`, `registerSkeleton()`; registers on browser import. |
 | `dist/markup-ui-skeleton.global.js` | Classic script; registers and exposes `MarkupUISkeleton`. |
 | `dist/markup-ui-skeleton.css` | External component and native static-placeholder CSS. |
 | `dist/components/skeleton/index.d.ts` | Declarations, including validation-field names. |
@@ -31,7 +31,7 @@ is imported.
 <script defer src="./vendor/markup-ui-skeleton.global.js"></script>
 <script defer src="./app.js"></script>
 
-<mui-skeleton width="160px" height="20px" repeat="3"></mui-skeleton>
+<m-skeleton width="160px" height="20px" repeat="3"></m-skeleton>
 ```
 
 Application ESM: `import "@dataengine/markup-ui/skeleton";`. Serve/link the
@@ -59,7 +59,7 @@ Keep real content outside Skeleton whenever practical:
 
 ```html
 <section id="results" aria-busy="true">
-  <mui-skeleton class="result-placeholder" repeat="3"></mui-skeleton>
+  <m-skeleton class="result-placeholder" repeat="3"></m-skeleton>
   <p role="status">Loading results.</p>
   <div id="real-results" hidden>Application-owned content</div>
 </section>
@@ -99,7 +99,7 @@ attribute. Declarative invalid attributes remain visible for diagnosis and suppr
 generated group:
 
 ```js
-const placeholder = document.querySelector("mui-skeleton");
+const placeholder = document.querySelector("m-skeleton");
 placeholder.width = 160; // Validated pixel geometry.
 placeholder.setAttribute("repeat", "500");
 console.log(placeholder.valid); // false
@@ -107,7 +107,7 @@ console.log(placeholder.validationErrors); // ["repeat"]
 ```
 
 `valid` and `validationErrors` are readonly target conveniences, not upstream or native
-form-validity APIs. Invalid fields are also listed in `data-mui-skeleton-invalid`.
+form-validity APIs. Invalid fields are also listed in `data-m-skeleton-invalid`.
 No guessed valid-looking geometry/count is silently substituted, and no error/live event
 is synthesized. Correcting the attributes restores rendering.
 
@@ -122,16 +122,16 @@ Prefer external tokens/presets:
 
 ```css
 .result-placeholder {
-  --mui-skeleton-width: 100%;
-  --mui-skeleton-height: 18px;
-  --mui-skeleton-gap: 8px;
+  --m-skeleton-width: 100%;
+  --m-skeleton-height: 18px;
+  --m-skeleton-gap: 8px;
 }
 ```
 
 To preserve existing attribute-driven geometry, the controller writes **only validated
-values to isolated private custom properties** `--_mui-skeleton-width` and
-`--_mui-skeleton-height`. Relative-height attributes additionally write a bounded numeric
-`--_mui-skeleton-repeat` for CSS track calculations. No `style.cssText`, stylesheet strings,
+values to isolated private custom properties** `--_m-skeleton-width` and
+`--_m-skeleton-height`. Relative-height attributes additionally write a bounded numeric
+`--_m-skeleton-repeat` for CSS track calculations. No `style.cssText`, stylesheet strings,
 style injection, JS measurements or animation frames are used.
 
 These native style-property writes are an explicit CSP trade-off: avoid dimension attributes
@@ -145,7 +145,7 @@ width do not accidentally apply twice. Height attributes containing percentages 
 environment expressions use native CSS total-height/row calculations. Percentage height
 requires a **definite containing height**, just as ordinary native CSS does.
 For a percentage supplied through an external height token on the enhanced component,
-use an explicit `height="var(--mui-skeleton-height)"` bridge, or an appropriate native/static
+use an explicit `height="var(--m-skeleton-height)"` bridge, or an appropriate native/static
 CSS layout; an auto-height row group alone does not establish a percentage basis.
 
 Explicit relative height constrains the placeholder envelope. Authored root content is
@@ -185,12 +185,12 @@ pinned upstream default. There is no animation runtime, Houdini registration or 
 For a static placeholder, load only the CSS:
 
 ```html
-<span class="mui-skeleton avatar-placeholder" aria-hidden="true" inert data-circle
+<span class="m-skeleton avatar-placeholder" aria-hidden="true" inert data-circle
       data-animated="false"></span>
 ```
 
 ```css
-.avatar-placeholder { --mui-skeleton-width: 48px; }
+.avatar-placeholder { --m-skeleton-width: 48px; }
 ```
 
 Static classes use `data-text`, `data-round`, `data-circle`, `data-sharp="false"`,
@@ -198,8 +198,8 @@ Static classes use `data-text`, `data-round`, `data-circle`, `data-sharp="false"
 semantics; CSS cannot supply accessibility attributes. An application may build repeated
 static native spans when a controller is unnecessary.
 
-Public tokens: `--mui-skeleton-width`, `--mui-skeleton-height`, `--mui-skeleton-gap`,
-`--mui-skeleton-radius`, `--mui-skeleton-color` and `--mui-skeleton-color-end`.
+Public tokens: `--m-skeleton-width`, `--m-skeleton-height`, `--m-skeleton-gap`,
+`--m-skeleton-radius`, `--m-skeleton-color` and `--m-skeleton-color-end`.
 The color token supplies the static/start color; the end token supplies the animated peak.
 Override both colors when customizing the complete pulse, or disable animation for one
 constant custom color. Radius overrides apply to soft and round shapes; circle retains 50%.
@@ -211,8 +211,8 @@ not a percentage or intrinsic keyword, when relying on relative-height track cal
 ### Default colors and theme scope
 
 Defaults now follow the pinned Naive UI theme: light `#eee` to `#ddd`, and dark white at
-.12 to .18 alpha. Set `data-mui-theme="dark"` on an ancestor or the native/static placeholder;
-nested `data-mui-theme="light"` scopes restore the light endpoints. These neutral defaults
+.12 to .18 alpha. Set `data-m-theme="dark"` on an ancestor or the native/static placeholder;
+nested `data-m-theme="light"` scopes restore the light endpoints. These neutral defaults
 are local to the Skeleton stylesheet, so even the CSS-only path needs no shared theme
 stylesheet or JavaScript controller. Explicit public color tokens still take precedence.
 

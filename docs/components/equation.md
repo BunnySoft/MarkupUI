@@ -17,7 +17,7 @@ The pinned component has no Equation-owned stylesheet or theme tokens: it recrea
 outer wrapper returned by an application-supplied KaTeX renderer, while KaTeX's external
 CSS/fonts own the visible result. MarkupUI has no corresponding rendered component.
 The local MathML recipe remains application presentation and is not promoted into a
-package skin or a new `--mui-equation-*` override contract.
+package skin or a new `--m-equation-*` override contract.
 
 ## Author mathematical structure, not source strings
 

@@ -25,7 +25,7 @@ const valueKeys = ["page", "pageSize", "pageCount", "itemCount", "pageSlot", "di
 
 export function createPagination(nav: HTMLElement, options: PaginationOptions = {}): PaginationController {
   const document = nav?.ownerDocument, view = document?.defaultView
-  if (!view || !(nav instanceof view.HTMLElement) || !nav.matches("nav.mui-pagination[data-pagination]")) throw new TypeError("Pagination needs an authored nav.mui-pagination[data-pagination].")
+  if (!view || !(nav instanceof view.HTMLElement) || !nav.matches("nav.m-pagination[data-pagination]")) throw new TypeError("Pagination needs an authored nav.m-pagination[data-pagination].")
   function check(values: PaginationOptions, defaults = false) {
     if (!values || typeof values !== "object" || Array.isArray(values)) throw new TypeError("Pagination values must be an object.")
     for (const [key, value] of Object.entries(values)) {
@@ -105,7 +105,7 @@ export function createPagination(nav: HTMLElement, options: PaginationOptions = 
       && !control.closest("[hidden], [inert]") && control.getAttribute("aria-disabled") !== "true"
   }
   function validate() {
-    if (!nav.isConnected || nav.getRootNode() !== document || !nav.matches("nav.mui-pagination[data-pagination]")
+    if (!nav.isConnected || nav.getRootNode() !== document || !nav.matches("nav.m-pagination[data-pagination]")
       || ![null, "navigation"].includes(nav.getAttribute("role")) || !(nav.getAttribute("aria-label")?.trim()
         || nav.hasAttribute("aria-labelledby") && named(nav))) throw new TypeError("Keep Pagination connected and named with native navigation semantics.")
     for (const element of [region, pageTemplate, gapTemplate, previous, next, size, jump, go, count, fallback]) {
@@ -181,18 +181,18 @@ export function createPagination(nav: HTMLElement, options: PaginationOptions = 
     focusLost(focused)
   }
   function clearTasks() { generation++; for (const task of tasks) view!.clearTimeout(task); tasks.clear() }
-  function error(cause: unknown) { controller.disconnect(); nav.dispatchEvent(new view!.CustomEvent("mui:pagination-error", { detail: { error: cause } })) }
+  function error(cause: unknown) { controller.disconnect(); nav.dispatchEvent(new view!.CustomEvent("m:pagination-error", { detail: { error: cause } })) }
   function request(patch: PaginationValues, source: PaginationSource) {
     if (state.disabled || !connected) return false
     const proposed = paginationState({ ...config, ...patch }), before = { ...state }, version = generation
     if (proposed.page === state.page && proposed.pageSize === state.pageSize) return true
-    const event = new view!.CustomEvent<PaginationChange>("mui:pagination-request", { cancelable: true,
+    const event = new view!.CustomEvent<PaginationChange>("m:pagination-request", { cancelable: true,
       detail: { state: { ...proposed }, previous: before, source } })
     const allowed = nav.dispatchEvent(event)
     if (!connected || generation !== version) return false
     if (!allowed) return true
     controller.set(patch)
-    if (connected && generation === version + 1) nav.dispatchEvent(new view!.CustomEvent<PaginationChange>("mui:pagination-change", { detail: { state: { ...state }, previous: before, source } }))
+    if (connected && generation === version + 1) nav.dispatchEvent(new view!.CustomEvent<PaginationChange>("m:pagination-change", { detail: { state: { ...state }, previous: before, source } }))
     return connected && generation === version + 1
   }
   function defer(event: Event, control: HTMLElement, callback: () => void, enter = false) {

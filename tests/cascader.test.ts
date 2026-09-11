@@ -20,7 +20,7 @@ function fresh(key: string) {
 function fixture(options: CascaderOptions = {}, config: { native?: boolean; required?: boolean; source?: string } = {}) {
   const form = document.createElement("form")
   const initial = [["eu", "us", "island", "lazy"], ["fr", "nyc"], ["paris", "lyon"]]
-  form.innerHTML = `<section class="mui-cascader" data-cascader><section class="mui-tree" data-tree data-cascader-source aria-label="Places"><ul data-tree-list>${config.source ?? sourceHTML()}</ul></section><div data-cascader-columns>${initial.map((keys, i) => `<div class="mui-select" data-select data-cascader-column><label>Level ${i + 1}<select data-select-control data-cascader-control name="path[]" ${!i && config.required !== false ? "required" : ""}><option value="" ${config.native ? "" : "selected"}>Choose ${i + 1}</option>${config.native ? keys.map((key, index) => `<option value="${key}" ${!index ? "selected" : ""}>${key}</option>`).join("") : ""}</select></label></div>`).join("")}</div><p data-cascader-path></p><p data-cascader-status></p><button type="button" data-cascader-clear hidden>Clear path</button></section><button id="outside" type="button">Outside</button>`
+  form.innerHTML = `<section class="m-cascader" data-cascader><section class="m-tree" data-tree data-cascader-source aria-label="Places"><ul data-tree-list>${config.source ?? sourceHTML()}</ul></section><div data-cascader-columns>${initial.map((keys, i) => `<div class="m-select" data-select data-cascader-column><label>Level ${i + 1}<select data-select-control data-cascader-control name="path[]" ${!i && config.required !== false ? "required" : ""}><option value="" ${config.native ? "" : "selected"}>Choose ${i + 1}</option>${config.native ? keys.map((key, index) => `<option value="${key}" ${!index ? "selected" : ""}>${key}</option>`).join("") : ""}</select></label></div>`).join("")}</div><p data-cascader-path></p><p data-cascader-status></p><button type="button" data-cascader-clear hidden>Clear path</button></section><button id="outside" type="button">Outside</button>`
   document.body.append(form)
   const root = form.querySelector<HTMLElement>("[data-cascader]")!, source = root.querySelector<HTMLElement>("[data-cascader-source]")!
   const controls = [...root.querySelectorAll<HTMLSelectElement>("[data-cascader-control]")]
@@ -233,7 +233,7 @@ describe("native forms, validity and notification ownership", () => {
   })
   it("emits one user selection, keeps setters/refresh/reset silent and respects cancelled clear", async () => {
     const { helper, root, change, clear, form } = fixture({ defaultValue: "paris" }), event = vi.fn()
-    root.addEventListener("mui:cascader-change", event)
+    root.addEventListener("m:cascader-change", event)
     helper.setValue("nyc"); helper.refresh(); form.reset(); await wait(); expect(event).not.toHaveBeenCalled()
     change(0, "us"); expect(event).toHaveBeenCalledOnce()
     form.addEventListener("click", event => event.preventDefault(), { once: true }); clear.click(); await wait()
@@ -265,7 +265,7 @@ describe("safe async hierarchy insertion and lifetime", () => {
   }
   it("inserts safe source nodes, offers a blank child choice, and emits no second selection", async () => {
     const pending = deferred(), { helper, change, controls, root } = fixture({ load: pending.load }), selected = vi.fn(), loaded = vi.fn()
-    root.addEventListener("mui:cascader-change", selected); root.addEventListener("mui:cascader-load", loaded)
+    root.addEventListener("m:cascader-change", selected); root.addEventListener("m:cascader-load", loaded)
     change(0, "lazy"); expect(helper.state.pending).toBe(true)
     pending.finish({ nodes: [fresh("child")] }); await wait()
     expect(helper.state.path).toEqual(["lazy"]); expect(helper.state.value).toBeNull(); expect(controls[1]!.value).toBe("")

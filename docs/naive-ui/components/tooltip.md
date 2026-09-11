@@ -13,7 +13,7 @@ uses [Popover's side-effect-free controller](../../../src/components/popover/pop
 and [positioning](../../../src/components/popover/position.ts), not copied floating machinery.
 
 - **HTML:** a meaningful keyboard-reachable native trigger and short authored
-  `.mui-popover.mui-tooltip[role=tooltip][popover=manual]` content with a unique ID.
+  `.m-popover.m-tooltip[role=tooltip][popover=manual]` content with a unique ID.
 - **JS:** description token ownership, hover **and** focus, Escape suppression/reentry,
   validation rejecting interactive content, and shared delays/placement/lifecycle.
 - **CSS:** external Tooltip presentation composed with maintained Popover CSS at build time;
@@ -86,7 +86,7 @@ on noninteractive Tooltip semantics, not copied from Popover's accepted status.
 
 | Upstream item · source | Kind | MarkupUI disposition | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| [`animated`][api29] | Prop | ADAPTED opt-in `.mui-popover--animated`. | 🟢 Verified | Included external animation; reduced motion; no leave scheduler/default parity. |
+| [`animated`][api29] | Prop | ADAPTED opt-in `.m-popover--animated`. | 🟢 Verified | Included external animation; reduced motion; no leave scheduler/default parity. |
 | [`arrow-point-to-center`][api30] | Prop | No exact trigger-center tether. | ⏭️ Intentionally omitted | Decorative inset side indicator only. |
 | [`arrow-class`][api31] | Prop | ADAPTED authored class styling the shared indicator pseudo-element. | 🟢 Verified | No generated arrow node or class prop forwarding. |
 | [`arrow-style`][api32] | Prop | ADAPTED external indicator CSS. | 🟢 Verified | No runtime string/object style API. |
@@ -106,7 +106,7 @@ on noninteractive Tooltip semantics, not copied from Popover's accepted status.
 | [`keep-alive-on-hover`][api46] | Prop | ADAPTED always retain pointer/focus engagement. | 🟢 Verified | Pointer can travel onto the description; false/early-dismiss option excluded. |
 | [`overlap`][api47] | Prop | No trigger-overlap positioning mode. | ⏭️ Intentionally omitted | Nonnegative gap and shared clamp instead. |
 | [`placement`][api48] | Prop | ADAPTED twelve placements, top default. | 🟢 Verified | Shared RTL, scroll/resize, native anchors and finite fallback. |
-| [`raw`][api49] | Prop | ADAPTED `.mui-popover--raw`. | 🟢 Verified | Shared external decoration reduction, not interactive/raw-renderer content. |
+| [`raw`][api49] | Prop | ADAPTED `.m-popover--raw`. | 🟢 Verified | Shared external decoration reduction, not interactive/raw-renderer content. |
 | [`scrollable`][api50] | Prop | No focusable/scrollable Tooltip surface. | ⏭️ Intentionally omitted | Short fitting text only; CSS clips overflow. Long content belongs inline/details/Popover. |
 | [`show-arrow`][api51] | Prop | ADAPTED opt-in shared indicator class. | 🟢 Verified | Noninteractive inset indicator, suppressed after collision shifting. |
 | [`show`][api52] | Prop | ADAPTED actual show getter and imperative open/close/setShow. | 🟢 Verified | Native cancel/coalesced toggle, not controlled/default-show state. |

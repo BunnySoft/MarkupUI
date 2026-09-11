@@ -50,7 +50,7 @@ Light roles are `#333639`, white and `#e0e0e6`; dark roles use the source white-
 text/surfaces and transparent border. Disabled fields remain opaque with the corresponding
 source text/surface roles.
 
-Component hooks include `--mui-date-picker-font-family`, `-font-size`, `-line-height`,
+Component hooks include `--m-date-picker-font-family`, `-font-size`, `-line-height`,
 `-height`, `-padding`, `-gap`, `-radius`, `-color`, `-background`, `-border-color`,
 `-focus-color`, `-disabled-color` and `-disabled-background`. They are fallback-based:
 authored values and the shared font/primary-hover hooks win over private defaults.
@@ -65,16 +65,16 @@ See the [default-style audit](../style-audit/components/date-picker.md).
 ## Original native anatomy
 
 ```html
-<fieldset class="mui-date-picker" data-date-picker>
+<fieldset class="m-date-picker" data-date-picker>
   <legend>Trip dates</legend>
-  <div class="mui-date-picker__fields">
+  <div class="m-date-picker__fields">
     <label>Start <input data-date-control type="date" name="trip.start"
                        value="2024-03-01" min="2024-01-01" max="2024-12-31" required></label>
     <span aria-hidden="true">→</span>
     <label>End <input data-date-control type="date" name="trip.end"
                      value="2024-03-10" min="2024-01-01" max="2024-12-31" required></label>
   </div>
-  <p class="mui-date-picker__output" data-date-output hidden></p>
+  <p class="m-date-picker__output" data-date-output hidden></p>
   <button type="button" data-date-clear hidden>Clear both endpoints</button>
 </fieldset>
 ```
@@ -184,7 +184,7 @@ can still explicitly update disabled/readonly controls.
 
 Both endpoints become empty **before** any notification. Each field whose value/badInput
 was cleared receives one bubbling/composed input followed by one change. No hidden tuple
-event substitutes for the actual fields. `mui:date-picker-clear` then reports `{ value }`
+event substitutes for the actual fields. `m:date-picker-clear` then reports `{ value }`
 on the root if the action was not superseded. Exact helper-generated events are ignored
 by its internal synchronizer, while distinct reentrant native events remain observable.
 
@@ -204,7 +204,7 @@ primitive moves focus **before** hiding/disabling the action while observation i
 preserving application hidden/disabled overrides made by native blur/focus handlers.
 No synthetic selection/keyboard engine is added to date segments.
 
-`mui:date-picker-error` reports unsupported runtime anatomy/values; direct API errors throw.
+`m:date-picker-error` reports unsupported runtime anatomy/values; direct API errors throw.
 Control identities/order/type/form-owner changes require explicit recreation. Owned action
 hidden/disabled and readout text are restored conditionally, preserving external overrides.
 The helper never changes labels, names, ARIA descriptions, native custom-error messages,
@@ -236,7 +236,7 @@ they do not mark omitted year/quarter modes complete.
 The tiny `src/components/temporal/native.ts` capability probe is real shared infrastructure
 for the implemented modes and can support a future native Time Picker without a generic
 date engine. Input's text-only editing machinery is not imported for temporal segments.
-Legacy `mui-date-picker`/`MuiDateTimeInput` in `src/plugins/advanced.ts` remain unchanged.
+Legacy `m-date-picker`/`MDateTimeInput` in `src/plugins/advanced.ts` remain unchanged.
 
 Pinned Naive UI **2.45.3**, `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`:
 [API](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/date-picker/demos/enUS/index.demo-entry.md),

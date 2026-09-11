@@ -18,7 +18,7 @@ function color(document: Document, value: string | null): string | null | undefi
   return probe.color || null
 }
 
-export class MuiSpin extends HTMLElement {
+export class MSpin extends HTMLElement {
   public static get observedAttributes(): string[] {
     return ["show", "delay", "size", "stroke-width", "radius", "scale", "stroke", "description", "label", "hidden", "aria-label", "aria-labelledby"]
   }
@@ -55,7 +55,7 @@ export class MuiSpin extends HTMLElement {
         }
       }
     }
-    this.dataset.muiSpin = ""
+    this.dataset.mSpin = ""
     this.observer ??= new MutationObserver(() => this.synchronize())
     this.ready = true
     this.synchronize()
@@ -155,12 +155,12 @@ export class MuiSpin extends HTMLElement {
     this.observer?.disconnect()
     const config = this.configuration()
     this.invalid = config.errors.length > 0
-    if (this.invalid) this.setAttribute("data-mui-spin-invalid", config.errors.join(" "))
-    else this.removeAttribute("data-mui-spin-invalid")
+    if (this.invalid) this.setAttribute("data-m-spin-invalid", config.errors.join(" "))
+    else this.removeAttribute("data-m-spin-invalid")
     if (typeof config.size === "number") {
-      if (this.style.getPropertyValue("--_mui-spin-size") !== `${config.size}px`) this.style.setProperty("--_mui-spin-size", `${config.size}px`)
+      if (this.style.getPropertyValue("--_m-spin-size") !== `${config.size}px`) this.style.setProperty("--_m-spin-size", `${config.size}px`)
     } else {
-      this.style.removeProperty("--_mui-spin-size")
+      this.style.removeProperty("--_m-spin-size")
     }
     this.prepareContent()
     this.updateDescription()
@@ -179,14 +179,14 @@ export class MuiSpin extends HTMLElement {
     } else if (this.hasCustomIcon()) {
       this.svg?.remove()
     }
-    this.toggleAttribute("data-mui-spin-custom-icon", this.hasCustomIcon())
+    this.toggleAttribute("data-m-spin-custom-icon", this.hasCustomIcon())
     const wrapped = this.content !== undefined
     const changedMode = wrapped !== this.wrapped
     const requested = !this.hidden && !this.invalid && (!wrapped || this.show)
     const previousRequest = this.requested
     this.wrapped = wrapped
     this.requested = requested
-    this.dataset.muiSpinMode = wrapped ? "wrapped" : "standalone"
+    this.dataset.mSpinMode = wrapped ? "wrapped" : "standalone"
     if (!requested) {
       this.cancelTimer()
       this.shown = false
@@ -209,29 +209,29 @@ export class MuiSpin extends HTMLElement {
     this.renderState()
     this.observer?.observe(this, {
       childList: true, subtree: true, characterData: true, attributes: true,
-      attributeFilter: ["data-mui-spin-content", "data-mui-spin-icon", "data-mui-spin-description"],
+      attributeFilter: ["data-m-spin-content", "data-m-spin-icon", "data-m-spin-description"],
     })
   }
 
   private prepareContent(): void {
     if (this.indicator?.parentNode !== this) {
       this.indicator = this.ownerDocument.createElement("span")
-      this.indicator.dataset.muiSpinIndicator = ""
+      this.indicator.dataset.mSpinIndicator = ""
       this.iconBox = this.ownerDocument.createElement("span")
-      this.iconBox.dataset.muiSpinIconBox = ""
+      this.iconBox.dataset.mSpinIconBox = ""
       this.descriptionBox = this.ownerDocument.createElement("span")
-      this.descriptionBox.dataset.muiSpinDescriptionArea = ""
+      this.descriptionBox.dataset.mSpinDescriptionArea = ""
       this.textNode = this.ownerDocument.createElement("span")
-      this.textNode.dataset.muiSpinText = ""
+      this.textNode.dataset.mSpinText = ""
       this.descriptionSlot = this.ownerDocument.createElement("span")
-      this.descriptionSlot.dataset.muiSpinDescriptionSlot = ""
+      this.descriptionSlot.dataset.mSpinDescriptionSlot = ""
       this.descriptionBox.append(this.textNode, this.descriptionSlot)
       this.indicator.append(this.iconBox, this.descriptionBox)
       this.svg = undefined
       this.circleNode = undefined
       this.append(this.indicator)
     }
-    for (const [box, attribute] of [[this.iconBox!, "data-mui-spin-icon"], [this.descriptionSlot!, "data-mui-spin-description"]] as const) {
+    for (const [box, attribute] of [[this.iconBox!, "data-m-spin-icon"], [this.descriptionSlot!, "data-m-spin-description"]] as const) {
       for (const child of [...box.children]) {
         if (child !== this.svg && !child.hasAttribute(attribute)) this.insertBefore(child, this.indicator)
       }
@@ -241,7 +241,7 @@ export class MuiSpin extends HTMLElement {
     }
     if (this.generatedContent?.parentNode !== this) this.generatedContent = undefined
     let content = [...this.children].find((node): node is HTMLElement =>
-      node instanceof HTMLElement && node !== this.generatedContent && node.hasAttribute("data-mui-spin-content") && !node.matches(inertElements))
+      node instanceof HTMLElement && node !== this.generatedContent && node.hasAttribute("data-m-spin-content") && !node.matches(inertElements))
       ?? this.generatedContent
     if (content && this.generatedContent && content !== this.generatedContent) {
       content.prepend(...this.generatedContent.childNodes)
@@ -256,7 +256,7 @@ export class MuiSpin extends HTMLElement {
     if (loose.length) {
       if (!content) {
         this.generatedContent = this.ownerDocument.createElement("div")
-        this.generatedContent.dataset.muiSpinContent = ""
+        this.generatedContent.dataset.mSpinContent = ""
         content = this.generatedContent
         this.insertBefore(content, this.indicator)
       }
@@ -270,19 +270,19 @@ export class MuiSpin extends HTMLElement {
     this.content = content
   }
 
-  private hasCustomIcon(): boolean { return Boolean(this.iconBox?.querySelector(":scope > [data-mui-spin-icon]")) }
+  private hasCustomIcon(): boolean { return Boolean(this.iconBox?.querySelector(":scope > [data-m-spin-icon]")) }
 
   private ensureGraphic(): void {
     if (!this.svg) {
       const namespace = "http://www.w3.org/2000/svg"
       this.svg = this.ownerDocument.createElementNS(namespace, "svg")
-      this.svg.setAttribute("data-mui-spin-default", "")
+      this.svg.setAttribute("data-m-spin-default", "")
       this.svg.setAttribute("aria-hidden", "true")
       this.svg.setAttribute("focusable", "false")
       this.svg.setAttribute("fill", "none")
       this.svg.setAttribute("stroke", "currentColor")
       this.circleNode = this.ownerDocument.createElementNS(namespace, "circle")
-      this.circleNode.setAttribute("data-mui-spin-arc", "")
+      this.circleNode.setAttribute("data-m-spin-arc", "")
       this.circleNode.setAttribute("stroke-dasharray", "567")
       this.circleNode.setAttribute("stroke-dashoffset", "142")
       this.circleNode.setAttribute("stroke-linecap", "round")
@@ -299,9 +299,9 @@ export class MuiSpin extends HTMLElement {
     const text = description || (fallback ? this.label : "")
     if (this.textNode!.textContent !== text) this.textNode!.textContent = text
     this.textNode!.hidden = !description && !fallback
-    this.textNode!.toggleAttribute("data-mui-spin-fallback", fallback)
+    this.textNode!.toggleAttribute("data-m-spin-fallback", fallback)
     this.descriptionSlot!.hidden = Boolean(description)
-    this.descriptionBox!.toggleAttribute("data-mui-spin-visible-description", Boolean(description) || custom)
+    this.descriptionBox!.toggleAttribute("data-m-spin-visible-description", Boolean(description) || custom)
   }
 
   private cancelTimer(): void {
@@ -313,7 +313,7 @@ export class MuiSpin extends HTMLElement {
 
   private renderState(): void {
     if (this.indicator) this.indicator.hidden = !this.shown
-    this.toggleAttribute("data-mui-spin-active", this.shown && this.wrapped)
-    this.dataset.muiSpinState = this.invalid ? "invalid" : this.shown ? "visible" : this.timer !== undefined ? "waiting" : "hidden"
+    this.toggleAttribute("data-m-spin-active", this.shown && this.wrapped)
+    this.dataset.mSpinState = this.invalid ? "invalid" : this.shown ? "visible" : this.timer !== undefined ? "waiting" : "hidden"
   }
 }

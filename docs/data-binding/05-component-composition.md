@@ -5,42 +5,42 @@ properties, named template roles, context values and placement/lifecycle rules.
 
 ## Card: light-DOM compound parts
 
-Current Card supports both native marked regions and passive `mui-card-*` spellings.
+Current Card supports both native marked regions and passive `m-card-*` spellings.
 The proposed preferred concise form is:
 
 ```html
-<mui-card>
-  <mui-card-cover>...</mui-card-cover>
-  <mui-card-header>
+<m-card>
+  <m-card-cover>...</m-card-cover>
+  <m-card-header>
     <h2>Profile</h2>
-    <mui-card-header-extra>...</mui-card-header-extra>
-  </mui-card-header>
-  <mui-card-content>...</mui-card-content>
-  <mui-card-footer>...</mui-card-footer>
-  <mui-card-action>...</mui-card-action>
-</mui-card>
+    <m-card-header-extra>...</m-card-header-extra>
+  </m-card-header>
+  <m-card-content>...</m-card-content>
+  <m-card-footer>...</m-card-footer>
+  <m-card-action>...</m-card-action>
+</m-card>
 ```
 
 Recommended ownership:
 
 ```text
-mui-card                         active owner
-├── mui-card-cover               passive light-DOM part
-├── mui-card-header              passive light-DOM part
-│   └── mui-card-header-extra    passive light-DOM part
-├── mui-card-content             passive light-DOM part
-├── mui-card-footer              passive light-DOM part
-└── mui-card-action              passive light-DOM part
+m-card                         active owner
+├── m-card-cover               passive light-DOM part
+├── m-card-header              passive light-DOM part
+│   └── m-card-header-extra    passive light-DOM part
+├── m-card-content             passive light-DOM part
+├── m-card-footer              passive light-DOM part
+└── m-card-action              passive light-DOM part
 ```
 
 These parts do not need Shadow Roots. Native semantic alternatives remain supported:
 
 ```html
-<mui-card>
-  <header data-mui-card-header>...</header>
-  <section data-mui-card-content>...</section>
-  <footer data-mui-card-footer>...</footer>
-</mui-card>
+<m-card>
+  <header data-m-card-header>...</header>
+  <section data-m-card-content>...</section>
+  <footer data-m-card-footer>...</footer>
+</m-card>
 ```
 
 Register a child tag only when it gains an independent API/lifecycle. Passive tags may
@@ -56,10 +56,10 @@ in light DOM.
 ## AvatarGroup: independent custom children
 
 Avatar is independently useful and has loading/fallback/size/accessibility behavior, so
-`mui-avatar` is an appropriate custom child of `mui-avatar-group`.
+`m-avatar` is an appropriate custom child of `m-avatar-group`.
 
 ```html
-<mui-avatar-group
+<m-avatar-group
   data-bind-items="people"
   item-key="id"
   size="40"
@@ -67,19 +67,19 @@ Avatar is independently useful and has loading/fallback/size/accessibility behav
 
   <template data-avatar-template>
     <div class="person-avatar">
-      <mui-avatar
+      <m-avatar
         data-bind-src="item.src"
         data-bind-alt="item.name">
-      </mui-avatar>
+      </m-avatar>
     </div>
   </template>
 
   <template data-rest-template>
     <div class="remaining-people">
       <button type="button" class="rest-trigger">
-        <mui-avatar>
+        <m-avatar>
           +<span data-bind-text="count"></span>
-        </mui-avatar>
+        </m-avatar>
       </button>
 
       <ul>
@@ -89,7 +89,7 @@ Avatar is independently useful and has loading/fallback/size/accessibility behav
       </ul>
     </div>
   </template>
-</mui-avatar-group>
+</m-avatar-group>
 ```
 
 AvatarGroup owns:
@@ -138,7 +138,7 @@ A data template may instantiate a nested Shadow DOM component and provide its sl
 <template data-each="people" data-each-key="id">
   <profile-card>
     <h2 slot="title" data-bind-text="item.name"></h2>
-    <mui-avatar data-bind-src="item.src"></mui-avatar>
+    <m-avatar data-bind-src="item.src"></m-avatar>
   </profile-card>
 </template>
 ```

@@ -2,7 +2,7 @@
 
 **🟢 Verified for the retained P4 native Select scope. Rich P5 combobox surfaces are
 explicitly omitted, not implemented by native typeahead.** The authored select, options
-and optgroups remain the only selection controls and submitted values. Legacy `MuiSelect`
+and optgroups remain the only selection controls and submitted values. Legacy `MSelect`
 in `src/components/forms.ts` is unchanged.
 
 ## Default-style audit — 2026-09-11
@@ -32,7 +32,7 @@ Popselect tests** pass; actual composed Popselect CSS is **1,991/2,500 gzip byte
 
 ```html
 <label for="language">Language</label>
-<div class="mui-select" data-select id="language-field">
+<div class="m-select" data-select id="language-field">
   <select data-select-control id="language" name="language" required>
     <option data-select-placeholder value="" disabled selected>Choose a language</option>
     <optgroup label="Languages">
@@ -52,11 +52,11 @@ field.setValue("rust") // Silent; no defaultSelected changes.
 field.setValue(null)   // Single mode: genuine no-selection, selectedIndex === -1.
 ```
 
-There is no custom-element registration, hidden form proxy, renderer or `mui-*` load-order
+There is no custom-element registration, hidden form proxy, renderer or `m-*` load-order
 rule. Per-root/control/filter symbols reject duplicate owners, including ESM/classic copies.
 No mandatory Input, Dropdown, Tag, Popover or Scrollbar dependency is added.
 
-The connected light-DOM `.mui-select[data-select]` root has no role/tabindex and is outside
+The connected light-DOM `.m-select[data-select]` root has no role/tabindex and is outside
 labels, buttons, links and summaries. It contains one original labelled native
 `select[data-select-control]`, optionally a named `button[type=button][data-select-clear]`,
 an external search region and authored `[data-select-empty]` message. Controls are fixed
@@ -123,11 +123,11 @@ not a renderer/rebind of existing option nodes.
 ## Clear, native notifications and readonly policy
 
 The original browser input/change events remain unchanged for keyboard/typeahead/menu/list
-selection. There is no duplicated `mui:change` or framework model event. Programmatic
+selection. There is no duplicated `m:change` or framework model event. Programmatic
 setters, direct property assignments, refresh and native reset are silent.
 
 A successful clear sends one synthetic bubbling/composed native `input`, then one bubbling
-native `change`, then bubbling `mui:select-clear` on the select with `{ previous }` (string,
+native `change`, then bubbling `m:select-clear` on the select with `{ previous }` (string,
 null or an array snapshot). These are notification events, not trusted native editing.
 The focused clear button returns focus to the real select **before hiding**. A no-op sends
 nothing and does not steal focus. The button never submits a form. Its action runs in the
@@ -152,7 +152,7 @@ async validator, global form model or automatic aria-live validity announcement.
 Filtering requires a native **list**: multiple or single size ≥ 2.
 
 ```html
-<div class="mui-select" data-select id="tools-field">
+<div class="m-select" data-select id="tools-field">
   <div data-select-search hidden>
     <label for="tools-filter">Filter tools</label>
     <input data-select-filter id="tools-filter" type="search" aria-controls="tools">
@@ -199,7 +199,7 @@ mutations win, including originally hidden groups/options. A no-op removal of an
 absent attribute is not an observable ownership transfer.
 
 Removing the root/control disconnects. Malformed keys/anatomy reject explicit operations
-and set `error`; automatic failures emit nonbubbling `mui:select-error` with `{ message }`
+and set `error`; automatic failures emit nonbubbling `m:select-error` with `{ message }`
 when the error changes. Fix the markup and refresh, or rebind after mode/control changes.
 Disposal of a focused hidden-on-disconnect query/clear action focuses the select if it is
 still usable; otherwise the application's containing surface owns focus recovery.
@@ -213,11 +213,11 @@ from a valid user gesture. Browser permission/state/security errors must be hand
 propagated, not swallowed. The demo reports errors in text. There is no hidePicker API;
 native selection, Escape and platform UI own closing.
 
-CSS retains native arrow/checkmark/typeahead/menu/list interaction. `.mui-select__affix`
+CSS retains native arrow/checkmark/typeahead/menu/list interaction. `.m-select__affix`
 is authored surrounding content. `data-size="tiny|small|medium|large"`, data-borderless,
 and data-status="success|warning|error" affect external control presentation only.
-Tokens: `--mui-select-color`, `-font`, `-pad`, `-border`, `-background`, `-disabled`, `-focus`
-(all use the `--mui-select` prefix). Logical dimensions/wrapping, focus, hidden safety,
+Tokens: `--m-select-color`, `-font`, `-pad`, `-border`, `-background`, `-disabled`, `-focus`
+(all use the `--m-select` prefix). Logical dimensions/wrapping, focus, hidden safety,
 forced colors and print are external. No animation or CSS-in-JS is introduced.
 
 ### Field defaults and native theme policy
@@ -234,7 +234,7 @@ a fixed block size: native `multiple` and size≥2 lists retain their own row-dr
 height. Size/status/borderless recipes now set private defaults, so public font,
 padding and border tokens remain first-priority author overrides.
 
-`data-mui-theme="light|dark"` chooses the native component's color scheme.
+`data-m-theme="light|dark"` chooses the native component's color scheme.
 CSS `light-dark()` supplies reference text/background/border colors and keeps the
 native popup/list theme coherent. This requires a browser supporting `light-dark()`;
 it is not a runtime theme watcher or native-popup renderer.
@@ -253,8 +253,8 @@ existing native-only appearance choice. Borderless controls do not acquire a col
 border on hover/focus, but retain the native helper's visible focus outline.
 The 2px solid outline is deliberately not Naive's light halo/dark blur shadow.
 
-Shared font family can be supplied through `--mui-font-family`; existing
-`--mui-select-font` still participates in the font shorthand. Options/optgroups
+Shared font family can be supplied through `--m-font-family`; existing
+`--m-select-font` still participates in the font shorthand. Options/optgroups
 are not restyled, wrapped or converted to chips. Print selects light native UI
 and system text/background/disabled colors, keeping dark-theme fields readable.
 

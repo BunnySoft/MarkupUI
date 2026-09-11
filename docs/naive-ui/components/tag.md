@@ -33,7 +33,7 @@ belong to the application. No keyboard deletion shortcut or form-field associati
 **Next task:** continue with Badge; expand omitted Tag contracts only through a separate scope decision.
 
 1. [x] **Adopt content and close control.** S1 retains text/icon/avatar nodes and a named native close button; templates remain inert.
-2. [x] **Define optional checking.** Native `aria-pressed` toggle, silent assignment and Boolean `mui:change` are verified independently of removal.
+2. [x] **Define optional checking.** Native `aria-pressed` toggle, silent assignment and Boolean `m:change` are verified independently of removal.
 3. [x] **Extract visual variants.** S2 owns colors, sizes, shape, disabled/focus and prefix styling; no prop-object or inline-style adapter.
 4. [x] **Verify event boundaries.** A1 records native Enter/Space, close bubbling policy, lifecycle and form safety. Keyboard deletion and post-removal focus policy are explicitly application-owned, not untested claimed features.
 
@@ -79,24 +79,24 @@ Verification is limited to the retained contract and A1's evidence, not all-brow
 | [`strong`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L34) | Prop | ADAPTED presence attribute/property, font weight 600. | 🟢 Verified | S2; authored native formatting remains intact. |
 | [`trigger-click-on-close`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L35) | Prop | ADAPTED `.triggerClickOnClose` / presence attribute. | 🟢 Verified | Original close click bubbles only by opt-in; never a synthesized second click. |
 | [`type`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L36) | Prop | ADAPTED default/primary/info/success/warning/error. | 🟢 Verified | S2 passive palettes; ignored by checkable palette. |
-| [`on-close`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L37) | Callback | ADAPTED cancellable bubbling `mui:close`, `detail.originalEvent`. | 🟢 Verified | A1/S1; callback-array adapter omitted; no default removal. |
-| [`on-update:checked`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L38) | Callback | ADAPTED `mui:change` with Boolean `detail`. | 🟢 Verified | Emitted once after native activation/reflection, never by programmatic assignment. |
+| [`on-close`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L37) | Callback | ADAPTED cancellable bubbling `m:close`, `detail.originalEvent`. | 🟢 Verified | A1/S1; callback-array adapter omitted; no default removal. |
+| [`on-update:checked`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L38) | Callback | ADAPTED `m:change` with Boolean `detail`. | 🟢 Verified | Emitted once after native activation/reflection, never by programmatic assignment. |
 
 ### Tag Slots
 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
-| [`avatar`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L44) | Slot | ADAPTED authored `[data-mui-tag-avatar]` native content. | 🟢 Verified | S1/S2 preserve image/children; no implicit Avatar import; icon takes precedence. |
+| [`avatar`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L44) | Slot | ADAPTED authored `[data-m-tag-avatar]` native content. | 🟢 Verified | S1/S2 preserve image/children; no implicit Avatar import; icon takes precedence. |
 | [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L45) | Slot | ADAPTED native phrasing nodes/content span. | 🟢 Verified | Preserved listeners; no VNode renderer or Shadow DOM slot projection. |
-| [`icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L46) | Slot | ADAPTED authored `[data-mui-tag-icon]`. | 🟢 Verified | Native nodes, explicit decorative semantics and icon-only names; A1. |
+| [`icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L46) | Slot | ADAPTED authored `[data-m-tag-icon]`. | 🟢 Verified | Native nodes, explicit decorative semantics and icon-only names; A1. |
 
 ### Tag Props: color inline fields
 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
-| [`color.color?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L30) | Inline record field | ADAPTED `--mui-tag-background` in external CSS. | 🟢 Verified | Appearance equivalent only; no color record passed at runtime. |
-| [`color.borderColor?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L30) | Inline record field | ADAPTED `--mui-tag-border-color`. | 🟢 Verified | External CSS replaces the object field. |
-| [`color.textColor?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L30) | Inline record field | ADAPTED `--mui-tag-color`. | 🟢 Verified | Passive text-color token; separate checkable tokens documented in A1. |
+| [`color.color?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L30) | Inline record field | ADAPTED `--m-tag-background` in external CSS. | 🟢 Verified | Appearance equivalent only; no color record passed at runtime. |
+| [`color.borderColor?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L30) | Inline record field | ADAPTED `--m-tag-border-color`. | 🟢 Verified | External CSS replaces the object field. |
+| [`color.textColor?`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/demos/enUS/index.demo-entry.md#L30) | Inline record field | ADAPTED `--m-tag-color`. | 🟢 Verified | Passive text-color token; separate checkable tokens documented in A1. |
 
 ### Explicit source-only supplements
 
@@ -107,10 +107,10 @@ Markdown table. Private/deprecated/framework surfaces remain visible without par
 | --- | --- | --- | --- | --- |
 | [`onMouseenter`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/src/Tag.tsx) | Source callback | ADAPTED native `mouseenter` listener. | 🟢 Verified | Ordinary DOM event; no callback prop adapter. |
 | [`onMouseleave`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/src/Tag.tsx) | Source callback | ADAPTED native `mouseleave` listener. | 🟢 Verified | Ordinary DOM event; no callback prop adapter. |
-| [`onUpdateChecked`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/src/Tag.tsx) | Source callback alias | ADAPTED Boolean `mui:change`. | 🟢 Verified | Same notification as the public checked-update row, not an extra event. |
-| [`onUpdate:checked`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/src/Tag.tsx) | Source callback alias | ADAPTED Boolean `mui:change`. | 🟢 Verified | Native silent programmatic assignment; A1/S1. |
+| [`onUpdateChecked`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/src/Tag.tsx) | Source callback alias | ADAPTED Boolean `m:change`. | 🟢 Verified | Same notification as the public checked-update row, not an extra event. |
+| [`onUpdate:checked`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/src/Tag.tsx) | Source callback alias | ADAPTED Boolean `m:change`. | 🟢 Verified | Native silent programmatic assignment; A1/S1. |
 | [`setTextContent`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/src/Tag.tsx) | Source public method | ADAPTED native `textContent` on an authored label node. | 🟢 Verified | Explicit destructive native operation; replacing `contentElement` text also removes prefix nodes. No library method clone. |
-| [`onCheckedChange`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/src/Tag.tsx) | Deprecated callback | Use `mui:change`. | ⏭️ Intentionally omitted | Deprecated adapter/warning machinery not reproduced. |
+| [`onCheckedChange`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/src/Tag.tsx) | Deprecated callback | Use `m:change`. | ⏭️ Intentionally omitted | Deprecated adapter/warning machinery not reproduced. |
 | [`internalCloseFocusable`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/src/Tag.tsx) | Private source prop | Native close is keyboard-focusable when enabled. | ⏭️ Intentionally omitted | Private focus switch omitted. |
 | [`internalCloseIsButtonTag`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/src/Tag.tsx) | Private source prop | Close is always a native button. | ⏭️ Intentionally omitted | No non-native close impersonation. |
 | [`$el`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/tag/src/Tag.tsx) | Framework ref field | Query the actual Custom Element. | ⏭️ Intentionally omitted | No framework ref wrapper. |

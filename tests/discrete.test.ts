@@ -157,8 +157,8 @@ describe("Discrete capability as native application composition", () => {
     document.body.append(unowned)
     const other = createNativeDialog(unowned); otherOwners.push(other); other.showModal()
     const order: string[] = []
-    dialog.dialog.addEventListener("mui:native-dialog-dispose", () => order.push("dialog"))
-    modal.dialog.addEventListener("mui:native-dialog-dispose", () => order.push("modal"))
+    dialog.dialog.addEventListener("m:native-dialog-dispose", () => order.push("dialog"))
+    modal.dialog.addEventListener("m:native-dialog-dispose", () => order.push("modal"))
     scope.dispose()
     expect(order).toEqual(["dialog", "modal"])
     expect(unowned.open).toBe(true)
@@ -191,7 +191,7 @@ describe("Discrete capability as native application composition", () => {
   })
   it("cleans a failed modal-local feedback composition rather than leaving a stray top layer", async () => {
     const root = fixture()
-    root.querySelector<HTMLTemplateElement>("[data-example-modal-template]")!.content.querySelector("[data-inside-notification]")!.classList.remove("mui-notification-host")
+    root.querySelector<HTMLTemplateElement>("[data-example-modal-template]")!.content.querySelector("[data-inside-notification]")!.classList.remove("m-notification-host")
     const scope = await mount(root, ["modal", "message", "notification"])
     expect(() => scope.openModal()).toThrow(AggregateError)
     expect(root.querySelector("dialog")).toBeNull()

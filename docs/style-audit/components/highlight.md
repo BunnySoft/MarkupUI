@@ -60,11 +60,11 @@ The author class expanded its mark to 49.84375px, identically in both implementa
 
 - Native marks intentionally inherit font family/size/weight/style/line-height, but **not**
   their default foreground color. No font declarations were added to the stylesheet.
-- `--mui-highlight-color` and `--mui-highlight-background` remain functional: parent tokens
+- `--m-highlight-color` and `--m-highlight-background` remain functional: parent tokens
   resolved to `rgb(4,5,6)` / `rgb(7,8,9)`. Author class rules and inline declarations retain
   precedence over the zero-specificity component selectors.
-- A bare helper target is not assigned `mui-highlight`; it retains normal inherited
-  whitespace, matching the source default. The **explicit optional** `span.mui-highlight`
+- A bare helper target is not assigned `m-highlight`; it retains normal inherited
+  whitespace, matching the source default. The **explicit optional** `span.m-highlight`
   class retains pre-wrap/anywhere behavior. That opt-in case was compared against the same
   explicit author whitespace styling on the reference—not mislabeled as a default prop.
 - `highlightText` still creates only text and native marks. Literal

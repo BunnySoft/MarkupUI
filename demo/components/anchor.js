@@ -5,7 +5,7 @@ const controllers = {
   reader: createAnchor(node("reader-toc"), { root: node("reader"), offset: 8 }),
 }
 for (const nav of [node("page-toc"), node("reader-toc")]) {
-  nav.addEventListener("mui:anchor-change", event => {
+  nav.addEventListener("m:anchor-change", event => {
     node("location-log").value = `${nav.id}: ${event.detail.href ?? "between sections"}`
   })
 }

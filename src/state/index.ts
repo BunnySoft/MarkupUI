@@ -5,7 +5,7 @@ function pathParts(path: string): string[] {
   return path.split(".").map((part) => part.trim()).filter(Boolean)
 }
 
-export class MuiStore {
+export class MStore {
   private readonly subscribers = new Map<string, Set<StateSubscriber>>()
 
   public constructor(public readonly state: Record<string, StateValue> = {}) {}
@@ -58,8 +58,8 @@ export class MuiStore {
   }
 }
 
-export function createStore(state: Record<string, StateValue> = {}): MuiStore {
-  return new MuiStore(state)
+export function createStore(state: Record<string, StateValue> = {}): MStore {
+  return new MStore(state)
 }
 
 function assignValue(element: Element, property: string, value: StateValue): void {
@@ -79,7 +79,7 @@ function assignValue(element: Element, property: string, value: StateValue): voi
   Reflect.set(element, property, value)
 }
 
-export function bind(root: ParentNode, store: MuiStore): () => void {
+export function bind(root: ParentNode, store: MStore): () => void {
   const disposers: Array<() => void> = []
   const elements = [
     ...(root instanceof Element ? [root] : []),
@@ -87,12 +87,12 @@ export function bind(root: ParentNode, store: MuiStore): () => void {
   ]
   for (const element of elements) {
     const bindings: Array<readonly [string, string]> = []
-    const twoWayPath = element.getAttribute("mui-bind")
-    const twoWayProperty = element.getAttribute("mui-bind-property")
-      ?? (element.matches("mui-checkbox,mui-switch,mui-radio") ? "checked" : "value")
+    const twoWayPath = element.getAttribute("m-bind")
+    const twoWayProperty = element.getAttribute("m-bind-property")
+      ?? (element.matches("m-checkbox,m-switch,m-radio") ? "checked" : "value")
     if (twoWayPath) bindings.push([twoWayProperty, twoWayPath])
     for (const property of ["text", "visible", "disabled"]) {
-      const path = element.getAttribute(`mui-${property}`)
+      const path = element.getAttribute(`m-${property}`)
       if (path) bindings.push([property, path])
     }
     for (const [property, path] of bindings) {
@@ -107,11 +107,11 @@ export function bind(root: ParentNode, store: MuiStore): () => void {
         const value = detail !== undefined ? detail : Reflect.get(element, twoWayProperty)
         store.set(twoWayPath, value)
       }
-      element.addEventListener("mui:input", listener)
-      element.addEventListener("mui:change", listener)
+      element.addEventListener("m:input", listener)
+      element.addEventListener("m:change", listener)
       disposers.push(() => {
-        element.removeEventListener("mui:input", listener)
-        element.removeEventListener("mui:change", listener)
+        element.removeEventListener("m:input", listener)
+        element.removeEventListener("m:change", listener)
       })
     }
   }

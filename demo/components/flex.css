@@ -5,9 +5,9 @@ h1 { font-size: 2rem; }
 h2 { font-size: 1.2rem; }
 .measurement { margin-block: 12px; }
 .measurement > span { box-sizing: border-box; inline-size: 64px; block-size: 32px; flex: none; border: 1px solid #96969d; text-align: center; }
-.tuple { --mui-flex-column-gap: 20px; --mui-flex-row-gap: 6px; inline-size: 10rem; }
+.tuple { --m-flex-column-gap: 20px; --m-flex-row-gap: 6px; inline-size: 10rem; }
 .no-wrap { inline-size: 10rem; overflow-x: auto; }
-.aligned { --mui-flex-align: center; --mui-flex-justify: space-between; inline-size: 24rem; block-size: 96px; border: 1px solid #96969d; box-sizing: border-box; }
+.aligned { --m-flex-align: center; --m-flex-justify: space-between; inline-size: 24rem; block-size: 96px; border: 1px solid #96969d; box-sizing: border-box; }
 .native-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 6rem); gap: 12px; }
 .long-copy { margin: 0; }
 form { margin-block: 16px; }

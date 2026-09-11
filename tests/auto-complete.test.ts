@@ -7,7 +7,7 @@ import { createForm } from "../src/components/form/index.js"
 const helpers: { disconnect(): void }[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 15))
 function fixture(options: AutoCompleteOptions = {}) {
-  document.body.innerHTML = `<form id="form"><label for="city">City</label><div class="mui-input" data-input id="root">
+  document.body.innerHTML = `<form id="form"><label for="city">City</label><div class="m-input" data-input id="root">
     <input id="city" data-input-control name="a.b[0]" list="cities" value="Paris" required maxlength="80" aria-describedby="help count">
     <span id="count" data-input-count></span><button type="button" data-input-clear hidden>Clear</button></div>
     <button name="intent" value="save">Save</button></form><datalist id="cities"><option value="Paris" label="France"></option><option value="Tokyo"></option><template><span>Fallback template</span></template></datalist>
@@ -149,7 +149,7 @@ describe("composition, debouncing and honest native events", () => {
   })
   it("leaves Enter/modified keys, focus/blur and typed matching values completely native", async () => {
     const { input, helper } = fixture({ load: () => ["Paris"] }), select = vi.fn(), results = vi.fn()
-    input.addEventListener("mui:select", select); input.addEventListener("mui:auto-complete-results", results)
+    input.addEventListener("m:select", select); input.addEventListener("m:auto-complete-results", results)
     for (const ctrlKey of [false, true]) {
       const event = new KeyboardEvent("keydown", { key: "Enter", ctrlKey, bubbles: true, cancelable: true })
       input.dispatchEvent(event); expect(event.defaultPrevented).toBe(false)
@@ -161,7 +161,7 @@ describe("composition, debouncing and honest native events", () => {
   })
   it("silently sets suggestions without synthetic field events, value changes or selection notification", () => {
     const { helper, input } = fixture(), listener = vi.fn()
-    for (const type of ["input", "change", "mui:auto-complete-results", "mui:select"]) input.addEventListener(type, listener)
+    for (const type of ["input", "change", "m:auto-complete-results", "m:select"]) input.addEventListener(type, listener)
     helper.setSuggestions(["New"]); expect(listener).not.toHaveBeenCalled(); expect(input.value).toBe("Paris")
   })
 })
@@ -228,20 +228,20 @@ describe("async freshness, explicit failure and availability", () => {
       if (mode === "unexpected-abort") return Promise.reject(new DOMException("Unexpected", "AbortError"))
       return false as never
     }
-    const { helper, input, list } = fixture({ load }), errors = vi.fn(); input.addEventListener("mui:auto-complete-error", errors)
+    const { helper, input, list } = fixture({ load }), errors = vi.fn(); input.addEventListener("m:auto-complete-error", errors)
     await expect(helper.query()).rejects.toThrow()
     expect(errors).toHaveBeenCalledOnce(); expect(helper.state).toBe("error"); expect(list.options[0]!.value).toBe("Paris")
   })
   it("consumes expected abort but surfaces unexpected late rejection after disposal", async () => {
     const pending = deferred(), { helper, input } = fixture({ load: () => pending.promise }), errors = vi.fn()
-    input.addEventListener("mui:auto-complete-error", errors)
+    input.addEventListener("m:auto-complete-error", errors)
     const query = helper.query(); await Promise.resolve(); helper.disconnect()
     expect((await query).status).toBe("aborted")
     pending.reject(new Error("Late unexpected error")); await flush(); expect(errors).toHaveBeenCalledOnce()
   })
   it("expected AbortSignal rejection returns aborted without an error event", async () => {
     const { helper, input } = fixture({ load: (_, { signal }) => new Promise((_, reject) => signal.addEventListener("abort", () => reject(new DOMException("Cancelled", "AbortError")))) })
-    const errors = vi.fn(); input.addEventListener("mui:auto-complete-error", errors)
+    const errors = vi.fn(); input.addEventListener("m:auto-complete-error", errors)
     const query = helper.query(); await Promise.resolve(); helper.refresh()
     expect((await query).status).toBe("aborted"); await flush(); expect(errors).not.toHaveBeenCalled()
   })

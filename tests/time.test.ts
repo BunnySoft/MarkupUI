@@ -10,7 +10,7 @@ const helpers: TimeController[] = []
 let hidden = false
 function fixture(options: TimeBindingOptions = { time: 0 }, bind = true, rich = false) {
   const host = document.createElement("div")
-  host.innerHTML = `<time class="mui-time" data-time datetime="1970-01-01T00:00:00.000Z">${rich ? '<strong>Updated: </strong><span data-time-text>Authored epoch</span>' : "Authored epoch"}</time><input name="other" value="kept" aria-label="Outside">`
+  host.innerHTML = `<time class="m-time" data-time datetime="1970-01-01T00:00:00.000Z">${rich ? '<strong>Updated: </strong><span data-time-text>Authored epoch</span>' : "Authored epoch"}</time><input name="other" value="kept" aria-label="Outside">`
   document.body.append(host)
   const element = host.querySelector("time")!, target = element.querySelector<HTMLElement>("[data-time-text]") ?? element
   const text = target.firstChild as Text
@@ -234,7 +234,7 @@ describe("Time meaningful live refresh and cleanup", () => {
   })
   it("pauses for document invisibility and catches up once on return", () => {
     const { helper, text } = fixture({ time: 0, type: "relative", live: true }), change = vi.fn()
-    helper.element.addEventListener("mui:time-change", change)
+    helper.element.addEventListener("m:time-change", change)
     hidden = true; document.dispatchEvent(new Event("visibilitychange"))
     expect(vi.getTimerCount()).toBe(0)
     vi.advanceTimersByTime(120000); expect(text.data).toBe("in 0 seconds")
@@ -274,7 +274,7 @@ describe("Time meaningful live refresh and cleanup", () => {
   it("keeps the previous pair on automatic clock failure and stops retry polling", () => {
     let broken = false
     const clock = vi.fn(() => broken ? NaN : Date.now()), { helper, text, element } = fixture({ time: 0, type: "relative", live: true, clock }), error = vi.fn()
-    element.addEventListener("mui:time-error", error); const before = text.data
+    element.addEventListener("m:time-error", error); const before = text.data
     broken = true; vi.advanceTimersByTime(1000)
     expect(error).toHaveBeenCalledOnce(); expect(text.data).toBe(before); expect(helper.state.error).toBeInstanceOf(Error)
     expect(vi.getTimerCount()).toBe(0)
@@ -286,7 +286,7 @@ describe("Time meaningful live refresh and cleanup", () => {
     const { helper, element } = fixture({ time: 0, type: "relative", live: true, clock: () => { action(); return Date.now() } })
     action = () => helper.set({ time: 1000 })
     expect(() => helper.refresh()).toThrow(/reenter/)
-    action = () => {}; element.addEventListener("mui:time-change", () => helper.set({ time: 10000, type: "datetime", live: false }), { once: true })
+    action = () => {}; element.addEventListener("m:time-change", () => helper.set({ time: 10000, type: "datetime", live: false }), { once: true })
     vi.advanceTimersByTime(1000); expect(helper.state.time).toBe(10000); expect(vi.getTimerCount()).toBe(0)
     helper.set({ type: "relative", live: true }); action = () => helper.disconnect()
     helper.refresh(); expect(helper.connected).toBe(false); expect(vi.getTimerCount()).toBe(0)

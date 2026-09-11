@@ -38,26 +38,26 @@
       <h2 id="examples-heading">Actual native time elements</h2>
       <article>
         <h3>Static instant, explicit zone</h3>
-        <time id="absolute-time" class="mui-time" data-time datetime="2024-03-10T07:30:00.000Z"><strong>Recorded: </strong><span data-time-text>March 10, 2024 at 07:30 UTC</span></time>
+        <time id="absolute-time" class="m-time" data-time datetime="2024-03-10T07:30:00.000Z"><strong>Recorded: </strong><span data-time-text>March 10, 2024 at 07:30 UTC</span></time>
         <p>Only the marked Text node and datetime pair are bound; the original strong
           prefix and its listener remain. Date/time display subsets are still instants.</p>
       </article>
       <article>
         <h3>Static relative reference</h3>
-        <time id="static-relative" class="mui-time" data-time datetime="1970-01-01T00:00:00.000Z">January 1, 1970 at 00:00 UTC</time>
+        <time id="static-relative" class="m-time" data-time datetime="1970-01-01T00:00:00.000Z">January 1, 1970 at 00:00 UTC</time>
         <p>Compared with the fixed instant 60 seconds after the epoch. No timer. This
           remains one minute ago relative to that reference, not relative to today.</p>
       </article>
       <article>
         <h3>Opt-in live relative reference</h3>
-        <time id="live-relative" class="mui-time" data-time tabindex="0" datetime="2024-01-01T00:00:00.000Z">January 1, 2024 at 00:00 UTC (static fallback)</time>
+        <time id="live-relative" class="m-time" data-time tabindex="0" datetime="2024-01-01T00:00:00.000Z">January 1, 2024 at 00:00 UTC (static fallback)</time>
         <p>The application supplies an instant two seconds before binding. Focus or select
           this text to pause. Leaving resumes once at the current clock, without a catch-up
           loop. No ARIA live region is added and no constant time announcement is requested.</p>
       </article>
       <details id="hidden-example">
         <summary>Initially hidden relative text</summary>
-        <time id="hidden-time" class="mui-time" data-time datetime="2024-01-01T00:00:00.000Z">January 1, 2024 at 00:00 UTC (static fallback)</time>
+        <time id="hidden-time" class="m-time" data-time datetime="2024-01-01T00:00:00.000Z">January 1, 2024 at 00:00 UTC (static fallback)</time>
       </details>
     </section>
     <form id="native-form">

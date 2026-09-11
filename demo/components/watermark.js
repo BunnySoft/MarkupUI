@@ -9,7 +9,7 @@ function show() {
   const state = watermark.state
   feedback.textContent = JSON.stringify({ ...state, error: state.error ? { name: state.error.name, message: state.error.message } : null }, null, 2)
 }
-root.addEventListener("mui:watermark-state", show)
+root.addEventListener("m:watermark-state", show)
 document.querySelectorAll("[data-enhancement]").forEach(node => { node.hidden = false })
 async function apply(input) {
   try { await watermark.update(input); show() }

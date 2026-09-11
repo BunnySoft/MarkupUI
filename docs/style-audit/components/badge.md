@@ -77,9 +77,9 @@ Text is white in every default badge. The default and explicit error type share 
 | Warning | `#f0a020` | `#f0a020` | `#f0a020` | `#f08a00` |
 
 Dark uses Naive's **supplementary** semantic fills, not its brighter primary semantic
-text colors. Badge-local theme-boundary defaults consume shared `--mui-color-*-suppl`
+text colors. Badge-local theme-boundary defaults consume shared `--m-color-*-suppl`
 when present, otherwise the pinned dark fallbacks above. Light reuses existing
-`--mui-color-error/success/info/warning`. A nested explicit light boundary resets both
+`--m-color-error/success/info/warning`. A nested explicit light boundary resets both
 enhanced and CSS-only static Badge to `rgb(208,48,80)`, measured inside dark.
 
 **Shared changes requested:** none required for correctness. A future shared-theme
@@ -119,7 +119,7 @@ in both implementations. The reference uses a wave element; native uses `::after
   Positive custom X/Y offsets remain physical right/down.
 - Reduced-motion emulation reports animation `none`, pseudo-content `none`,
   transition duration `0s`. This is an intentional accessibility adaptation.
-- Static `.mui-badge-value` shares type, pill geometry and default light/dark roles;
+- Static `.m-badge-value` shares type, pill geometry and default light/dark roles;
   it remains ordinary authored text, not an integer-formatting controller.
 - Native targets, listeners, focus, form semantics, custom value nodes, inert templates,
   decorative ARIA and hidden/show rules remain owned/preserved as documented in the

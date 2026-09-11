@@ -46,8 +46,8 @@ controller = createInfiniteScroll(element, {
   },
 })
 document.querySelectorAll("[data-enhancement],[data-js-only]").forEach(node => { node.hidden = false })
-element.addEventListener("mui:infinite-state", () => show())
-element.addEventListener("mui:infinite-error", event => show({ error: String(event.detail.error) }))
+element.addEventListener("m:infinite-state", () => show())
+element.addEventListener("m:infinite-error", event => show({ error: String(event.detail.error) }))
 content.addEventListener("click", event => {
   if (event.target instanceof HTMLButtonElement && event.target.matches("[data-item-action]")) {
     event.target.closest("li").querySelector("input").value = "Reviewed without replacing this item"

@@ -79,7 +79,7 @@ matched the reference fills. Selection remains actual native checkedness:
 
 - Checked Beta stays white normally or striped when applicable; it is not given a
   fabricated selected-row background.
-- `--mui-data-table-selected-background` is still available as an **explicit author
+- `--m-data-table-selected-background` is still available as an **explicit author
   overlay**. Unset, its transparent inset paint leaves stripe and hover colors intact.
   It does not stage selection or replace checkbox appearance.
 - Native sorting is still activated only by the labelled button, not a fake clickable

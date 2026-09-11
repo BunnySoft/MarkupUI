@@ -21,12 +21,12 @@
       <button id="destroy" type="button">Dispose owned clones</button>
     </div>
     <p id="events" role="status">Native inline content and forms work without enhancement.</p>
-    <section id="inline-example" class="mui-dialog" data-dialog-bordered aria-labelledby="inline-title">
+    <section id="inline-example" class="m-dialog" data-dialog-bordered aria-labelledby="inline-title">
       <header data-dialog-header><span data-dialog-icon aria-hidden="true">i</span><h2 id="inline-title" data-dialog-title>Inline review</h2></header>
       <p data-dialog-content>This is presentational content, not a modal. Native links remain useful without scripting.</p>
       <footer data-dialog-actions><a href="#native-form-example">Continue to the native form example</a></footer>
     </section>
-    <dialog id="native-form-example" class="mui-native-dialog mui-dialog" open aria-labelledby="native-title">
+    <dialog id="native-form-example" class="m-native-dialog m-dialog" open aria-labelledby="native-title">
       <h2 id="native-title" data-dialog-title>Native form baseline</h2>
       <form method="dialog">
         <label>Required reference <input name="reference" required></label>
@@ -36,7 +36,7 @@
     </dialog>
     <p class="page-tail">Background page content remains ordinary document content. Modal top-layer blocking belongs to the browser; this helper does not lock document scrolling.</p>
   </main>
-  <dialog id="decision" class="mui-native-dialog mui-dialog" data-dialog-bordered data-dialog-type="warning" aria-labelledby="decision-title" aria-describedby="decision-description">
+  <dialog id="decision" class="m-native-dialog m-dialog" data-dialog-bordered data-dialog-type="warning" aria-labelledby="decision-title" aria-describedby="decision-description">
     <header data-dialog-header>
       <span data-dialog-icon aria-hidden="true">!</span>
       <h2 data-dialog-title id="decision-title" tabindex="-1" autofocus>Review this local change</h2>
@@ -76,14 +76,14 @@
       <button type="button" data-dialog-action="positive">Confirm change</button>
     </footer>
   </dialog>
-  <dialog id="inner" class="mui-native-dialog mui-dialog" aria-labelledby="inner-title">
+  <dialog id="inner" class="m-native-dialog m-dialog" aria-labelledby="inner-title">
     <h2 id="inner-title" data-dialog-title>Nested native surface</h2>
     <p data-dialog-content>Closing this surface returns focus inside the still-open parent.</p>
     <form method="dialog"><button id="inner-close" value="inner-done" autofocus>Return to parent</button></form>
   </dialog>
   <div id="owned-dialogs"></div>
   <template id="dialog-template">
-    <dialog class="mui-native-dialog mui-dialog" data-dialog-type="info" aria-label="Template information">
+    <dialog class="m-native-dialog m-dialog" data-dialog-type="info" aria-label="Template information">
       <header data-dialog-header><span data-dialog-icon aria-hidden="true">i</span><h2 data-dialog-title>Template title</h2><button type="button" data-dialog-action="close">Close</button></header>
       <p data-dialog-content>Template content</p>
       <p role="alert" data-dialog-error hidden>Local action failed.</p>

@@ -29,7 +29,7 @@ core remains 14,611/15,000. Arbitrary asset/control sizing and semantic ownershi
 **Next task:** coordinator selection of Divider, then the documented layout/content sequence; P2 remains incomplete.
 
 1. [x] **Resolve content regions.** A1/S1 cover all eight slots as original native regions; string/title-attribute ambiguity and source/doc extra precedence differences are explicit.
-2. [x] **Separate back navigation.** Native href or named type=button/application click; no mui:back, history guess, implicit router or generated back icon.
+2. [x] **Separate back navigation.** Native href or named type=button/application click; no m:back, history guess, implicit router or generated back icon.
 3. [x] **Implement responsive CSS.** Grid/flex/logical spacing and wrapped title groups preserve source order; 280px long-back-label regression fixed and verified.
 4. [x] **Review heading/navigation semantics.** A1 verifies contextual landmarks, h1/h2, named actions/nav, native forms/focus, empty/hidden/templates, RTL/zoom and CSS-only coexistence.
 
@@ -63,7 +63,7 @@ Breadcrumb content maps to the documented header region, not an invented extra A
 | [`extra`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/page-header/demos/enUS/index.demo-entry.md#L19) | Prop | ADAPTED authored extra-region text/content. | 🟢 Verified | One DOM source; no ambiguous prop/slot precedence adapter. |
 | [`subtitle`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/page-header/demos/enUS/index.demo-entry.md#L20) | Prop | ADAPTED authored native subtitle. | 🟢 Verified | No attribute coercion or generated fallback. |
 | [`title`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/page-header/demos/enUS/index.demo-entry.md#L21) | Prop | ADAPTED author-chosen heading/text node. | 🟢 Verified | Native title attribute remains advisory; no synthesized heading level. |
-| [`on-back`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/page-header/demos/enUS/index.demo-entry.md#L22) | Callback | ADAPTED ordinary native click/application handler, or href navigation. | 🟢 Verified | No mui:back event, automatic history/router or callback-generated control; native form type remains authored. |
+| [`on-back`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/page-header/demos/enUS/index.demo-entry.md#L22) | Callback | ADAPTED ordinary native click/application handler, or href navigation. | 🟢 Verified | No m:back event, automatic history/router or callback-generated control; native form type remains authored. |
 
 ### PageHeader Slots
 

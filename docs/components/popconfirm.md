@@ -26,7 +26,7 @@ for the coordinated Popover surface reuse and local geometry/state checks.
 <script defer src="./confirmation-setup.js"></script>
 
 <button type="button" id="review" popovertarget="confirmation">Review local choice</button>
-<div class="mui-popover mui-popconfirm" id="confirmation" popover="auto"
+<div class="m-popover m-popconfirm" id="confirmation" popover="auto"
   role="dialog" aria-labelledby="confirmation-heading" aria-describedby="confirmation-content">
   <h2 id="confirmation-heading">Apply this local preference?</h2>
   <p id="confirmation-content" data-popconfirm-content>The original preference remains until you confirm.</p>
@@ -98,9 +98,9 @@ Custom wrappers and additional author actions are allowed; only the two marked d
 invoke these hooks. Native attributes/classes on those buttons remain author-owned except
 the narrowly tracked temporary pending disabled state.
 
-Each `.mui-popconfirm` is an ownership boundary. Nested confirmations remain inside their
+Each `.m-popconfirm` is an ownership boundary. Nested confirmations remain inside their
 native parent in the DOM, matching Popover's no-portal rule. Out-of-tree nested panels,
-Shadow DOM, cross-document pairs and legacy mui-popover ancestry are rejected.
+Shadow DOM, cross-document pairs and legacy m-popover ancestry are rejected.
 Each document uses its own window/observers/native state; no provider or shared app store
 arbitrates confirmations.
 
@@ -168,13 +168,13 @@ was closed. A stale fulfilled true still resolves true but cannot alter a new UI
 Capture the promise if you need to await that particular attempt. It is set when the
 admitted hook is invoked, not at native click dispatch.
 
-Failures emit `mui:popconfirm-error` on the original panel with
+Failures emit `m:popconfirm-error` on the original panel with
 `{ action: "positive" | "negative" | null, error, stale }`. Current hook failures also reveal
 the required error region without copying arbitrary Error.message/HTML into the document.
 The original error remains observable by awaiting lastAction; the internal rejection handler
 reports explicitly rather than leaving unhandled/rejected work silently ignored.
 Action null identifies a confirmation anatomy failure. Shared Popover ownership failures can
-also emit its existing `mui:popover-error`; its contract is not replaced.
+also emit its existing `m:popover-error`; its contract is not replaced.
 
 **Stale rejections remain diagnostic:** an error event can arrive on the original, even
 detached, panel after dismissal/disconnect, with stale=true. The helper performs no stale UI
@@ -255,8 +255,8 @@ to wrap and grow.
 Their browser-native borders, colors, focus and disabled appearance remain—not Naive's
 Button primary skin or loading animation. No Button dependency is introduced.
 
-Icon and error colors consume shared `--mui-color-warning` / `--mui-color-error`, behind
-`--mui-popconfirm-icon-color` / `--mui-popconfirm-error-color` overrides. Link the existing
+Icon and error colors consume shared `--m-color-warning` / `--m-color-error`, behind
+`--m-popconfirm-icon-color` / `--m-popconfirm-error-color` overrides. Link the existing
 `themes.css` export or apply a registered theme for dark semantic colors; light fallbacks
 remain usable without it. Public Popover surface tokens and ancestor max-width overrides
 are honored. The 26rem default cap remains, with a higher-specificity print reset.

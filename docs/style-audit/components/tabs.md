@@ -151,7 +151,7 @@ panel renderer is added. Existing paired native-button semantics remain authorit
   panes. The existing forced-color CSS remains present.
 
 Private defaults prevent type/size recipes from overwriting public padding.
-Shared `--mui-color-primary` is used only for the correct brand role. Segment
+Shared `--m-color-primary` is used only for the correct brand role. Segment
 selection stays neutral. No generic shared surface/text palette is substituted
 for distinct card, Segment, pane or disabled roles.
 

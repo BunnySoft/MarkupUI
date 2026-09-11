@@ -15,8 +15,8 @@
     <p>Single dropdown and multiple/native lists, not a replacement combobox. The optional literal filter is outside the list. Selected choices stay visible even when they do not match.</p>
     <form id="selection-form" action="select.html" method="get">
       <label for="language">Language (native required)</label>
-      <div class="mui-select" data-select id="language-root">
-        <span class="mui-select__affix" aria-hidden="true">⌘</span>
+      <div class="m-select" data-select id="language-root">
+        <span class="m-select__affix" aria-hidden="true">⌘</span>
         <select data-select-control id="language" name="language" required>
           <option data-select-placeholder value="" disabled selected>Choose a language</option>
           <optgroup label="Languages">
@@ -29,7 +29,7 @@
       </div>
       <fieldset id="tool-fieldset">
         <legend>Native multiple list and independent filter</legend>
-        <div class="mui-select" data-select id="tools-root" data-size="small">
+        <div class="m-select" data-select id="tools-root" data-size="small">
           <div data-select-search hidden>
             <label for="tool-filter">Filter option/group text</label>
             <input data-select-filter id="tool-filter" type="search" aria-controls="tools" autocomplete="off">
@@ -56,7 +56,7 @@
         <p id="filter-help">Filtering hides only unselected nonmatches. Disabled selected options/groups remain selected but are not successful form values.</p>
       </fieldset>
       <label for="external-select">Associated with the other form (no placeholder)</label>
-      <div class="mui-select" data-select id="external-root" data-size="large">
+      <div class="m-select" data-select id="external-root" data-size="large">
         <select data-select-control id="external-select" name="external" form="other-form">
           <option value="a" selected>External A</option>
           <option value="b">External B</option>

@@ -15,10 +15,10 @@ function perform(action) {
   try { action(); renderState() }
   catch (error) { document.getElementById("state").textContent = error.message }
 }
-document.getElementById("plans").addEventListener("mui:radio-group-change", () => {
+document.getElementById("plans").addEventListener("m:radio-group-change", () => {
   document.getElementById("events").textContent = `Accepted plan changes: ${++changes}`; renderState()
 })
-document.getElementById("plans").addEventListener("mui:radio-group-error", renderState)
+document.getElementById("plans").addEventListener("m:radio-group-error", renderState)
 form.addEventListener("submit", event => {
   event.preventDefault()
   document.getElementById("submission").textContent = JSON.stringify([...new FormData(form)], null, 2)

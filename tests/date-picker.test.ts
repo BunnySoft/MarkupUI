@@ -141,7 +141,7 @@ describe("clear, native events, focus and lifetime", () => {
     for (const [index, input] of [first, second].entries()) for (const type of ["input", "change"]) input.addEventListener(type, () => {
       events.push(`${index}:${type}`); expect(first.value).toBe(""); expect(second.value).toBe("")
     })
-    document.querySelector("#root")!.addEventListener("mui:date-picker-clear", clear)
+    document.querySelector("#root")!.addEventListener("m:date-picker-clear", clear)
     expect(helper.clear()).toBe(true); expect(events).toEqual(["0:input", "0:change", "1:input", "1:change"])
     expect(clear).toHaveBeenCalledOnce(); expect(new FormData(form).getAll("when[]")).toEqual(["", ""])
     expect(helper.clear()).toBe(false)

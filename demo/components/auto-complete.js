@@ -22,10 +22,10 @@ const suggestions = MarkupUIAutoComplete.createAutoComplete(city, {
   }),
 })
 let count = 0
-city.addEventListener("mui:auto-complete-results", event => {
+city.addEventListener("m:auto-complete-results", event => {
   events.textContent = `Result ${++count}: ${event.detail.suggestions.length} suggestions supplied for “${event.detail.query}”. This is not a selection event.`
 })
-city.addEventListener("mui:auto-complete-error", event => {
+city.addEventListener("m:auto-complete-error", event => {
   events.textContent = `Loader error: ${event.detail.error instanceof Error ? event.detail.error.message : String(event.detail.error)}`
 })
 document.querySelector("#query").addEventListener("click", async () => {

@@ -25,7 +25,7 @@ The separator now uses:
 - the source's 0.3s `cubic-bezier(.4, 0, .2, 1)` background transition;
 - primary light/dark focus color with an inset visible outline.
 
-The existing public `--mui-split-handle-*` and focus overrides remain available.
+The existing public `--m-split-handle-*` and focus overrides remain available.
 Reduced motion removes transition duration, forced colors use Canvas/CanvasText/Highlight,
 and print hides the nonfunctional separator while placing panes in normal flow.
 

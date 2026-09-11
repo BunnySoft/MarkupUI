@@ -30,7 +30,7 @@ describe("CSS-native sticky Affix", () => {
     expect(pkg.exports["./affix"]).toBeUndefined()
     expect(readdirSync(resolve("src", "components", "affix"))).toEqual(["affix.css"])
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("mui-affix")).toBeUndefined()
+    expect(customElements.get("m-affix")).toBeUndefined()
     expect(css).not.toContain("@import")
     expect(css).not.toContain("position: fixed")
     expect(css).not.toContain("position: absolute")
@@ -41,8 +41,8 @@ describe("CSS-native sticky Affix", () => {
     install()
     const element = document.querySelector("#no-inset")!
     expect(getComputedStyle(element).position).toBe("sticky")
-    expect(getComputedStyle(element).getPropertyValue("--mui-affix-block-start")).toBe("auto")
-    expect(getComputedStyle(element).getPropertyValue("--mui-affix-block-end")).toBe("auto")
+    expect(getComputedStyle(element).getPropertyValue("--m-affix-block-start")).toBe("auto")
+    expect(getComputedStyle(element).getPropertyValue("--m-affix-block-end")).toBe("auto")
     expect(css).not.toContain("inline-size: 100%")
     expect(css).not.toMatch(/display:\s*(?:block|flex|grid|contents)/)
   })
@@ -56,7 +56,7 @@ describe("CSS-native sticky Affix", () => {
     let clicks = 0
     link.addEventListener("click", event => { event.preventDefault(); clicks++ })
     install()
-    toolbar.style.setProperty("--mui-affix-block-start", "24px")
+    toolbar.style.setProperty("--m-affix-block-start", "24px")
     toolbar.remove()
     document.body.append(toolbar)
     link.click()
@@ -86,7 +86,7 @@ describe("CSS-native sticky Affix", () => {
     install()
     expect(document.querySelector("#bottom-content")!.lastElementChild?.id).toBe("bottom-toolbar")
     expect(document.querySelector("#early-bottom-scroll .scroll-content")!.firstElementChild?.id).toBe("early-bottom")
-    expect(appCss).toContain("--mui-affix-block-end: 10px")
+    expect(appCss).toContain("--m-affix-block-end: 10px")
     expect(appCss).toContain("scroll-padding-block-end: 6rem")
     expect(css).not.toContain("order:")
   })
@@ -162,18 +162,18 @@ describe("CSS-native sticky Affix", () => {
   })
 
   it("honors element-local inset/layer tokens without leaking offsets into nested affixes", () => {
-    document.body.innerHTML = '<div class="mui-affix" id="outer" style="--mui-affix-block-start:24px;--mui-affix-block-end:12px;--mui-affix-z-index:7"><div class="mui-affix" id="inner">Authored content</div></div>'
+    document.body.innerHTML = '<div class="m-affix" id="outer" style="--m-affix-block-start:24px;--m-affix-block-end:12px;--m-affix-z-index:7"><div class="m-affix" id="inner">Authored content</div></div>'
     const outer = document.querySelector<HTMLElement>("#outer")!
     const inner = document.querySelector<HTMLElement>("#inner")!
     const authored = outer.getAttribute("style")
     install()
     const parentStyle = getComputedStyle(outer), childStyle = getComputedStyle(inner)
-    expect(parentStyle.getPropertyValue("--mui-affix-block-start")).toBe("24px")
-    expect(parentStyle.getPropertyValue("--mui-affix-block-end")).toBe("12px")
-    expect(parentStyle.getPropertyValue("--mui-affix-z-index")).toBe("7")
-    expect(childStyle.getPropertyValue("--mui-affix-block-start")).toBe("auto")
-    expect(childStyle.getPropertyValue("--mui-affix-block-end")).toBe("auto")
-    expect(childStyle.getPropertyValue("--mui-affix-z-index")).toBe("1")
+    expect(parentStyle.getPropertyValue("--m-affix-block-start")).toBe("24px")
+    expect(parentStyle.getPropertyValue("--m-affix-block-end")).toBe("12px")
+    expect(parentStyle.getPropertyValue("--m-affix-z-index")).toBe("7")
+    expect(childStyle.getPropertyValue("--m-affix-block-start")).toBe("auto")
+    expect(childStyle.getPropertyValue("--m-affix-block-end")).toBe("auto")
+    expect(childStyle.getPropertyValue("--m-affix-z-index")).toBe("1")
     expect(outer.getAttribute("style")).toBe(authored)
     expect(outer.firstElementChild).toBe(inner)
     expect(inner.textContent).toBe("Authored content")

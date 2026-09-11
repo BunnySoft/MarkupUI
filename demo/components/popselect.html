@@ -17,12 +17,12 @@
       Enter in a select retains native form behavior. These are named regions containing
       listboxes, not combobox/menu widgets.</p>
     <form id="preferences-form" novalidate>
-      <section class="mui-popselect" data-popselect id="work-mode">
+      <section class="m-popselect" data-popselect id="work-mode">
         <p><button type="button" data-popselect-trigger popovertarget="work-panel" aria-describedby="work-value policy" hidden>Choose work mode</button>
           <span id="work-value" data-popselect-value hidden>Office</span></p>
-        <div id="work-panel" class="mui-popover" data-popselect-panel role="region" aria-labelledby="work-heading">
+        <div id="work-panel" class="m-popover" data-popselect-panel role="region" aria-labelledby="work-heading">
           <header><h2 id="work-heading">Work mode choices</h2><p>Single native listbox; use Tab to reach Done.</p></header>
-          <div class="mui-select" data-select>
+          <div class="m-select" data-select>
             <label for="work-select">Work mode (required)</label>
             <select id="work-select" data-select-control name="workMode" size="5" required>
               <option value="office" selected>Office</option>
@@ -40,12 +40,12 @@
       </section>
       <fieldset id="native-channels">
         <legend>Native multiple selection <label data-js-only hidden><input type="checkbox" data-native-disabled>Disable this fieldset (legend remains usable)</label></legend>
-        <section class="mui-popselect" data-popselect id="channels">
+        <section class="m-popselect" data-popselect id="channels">
           <p><button type="button" data-popselect-trigger popovertarget="channels-panel" aria-describedby="channels-value policy" hidden>Choose channels</button>
             <span id="channels-value" data-popselect-value hidden>Email, Locked archive</span></p>
-          <div id="channels-panel" class="mui-popover" data-popselect-panel role="region" aria-labelledby="channels-heading">
+          <div id="channels-panel" class="m-popover" data-popselect-panel role="region" aria-labelledby="channels-heading">
             <header><h2 id="channels-heading">Channel choices</h2><p>Native Ctrl/Shift selection remains browser-owned.</p></header>
-            <div class="mui-select" data-select>
+            <div class="m-select" data-select>
               <label for="channels-select">Channels (required)</label>
               <select id="channels-select" data-select-control name="channels" multiple size="6" required>
                 <optgroup label="Current"><option value="email" selected>Email</option><option value="chat">Chat</option><option value="sms">SMS</option></optgroup>
@@ -56,12 +56,12 @@
             </div>
             <footer>
               <button type="button" data-popselect-done popovertarget="channels-panel" popovertargetaction="hide" hidden>Done (close channels)</button>
-              <section class="mui-popselect" data-popselect id="nested">
+              <section class="m-popselect" data-popselect id="nested">
                 <p><button type="button" data-popselect-trigger popovertarget="nested-panel" hidden>Choose nested detail</button>
                   <span data-popselect-value hidden>Normal</span></p>
-                <div id="nested-panel" class="mui-popover" data-popselect-panel role="region" aria-labelledby="nested-heading">
+                <div id="nested-panel" class="m-popover" data-popselect-panel role="region" aria-labelledby="nested-heading">
                   <header><h2 id="nested-heading">Nested detail choices</h2></header>
-                  <div class="mui-select" data-select>
+                  <div class="m-select" data-select>
                     <label for="nested-select">Detail level</label>
                     <select id="nested-select" data-select-control name="detail" size="3"><option value="normal" selected>Normal</option><option value="verbose">Verbose</option><option value="">Empty string</option></select>
                   </div>

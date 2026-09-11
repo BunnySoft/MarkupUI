@@ -13,7 +13,7 @@ Use the unchanged [native helper](../../../src/components/transfer/transfer.ts) 
 [local HTML](../../../demo/components/legacy-transfer.html),
 [CSS](../../../demo/components/legacy-transfer.css), [application JS](../../../demo/components/legacy-transfer.js)
 and [tests](../../../tests/legacy-transfer.test.ts) add no library runtime/export.
-Existing widgets-plugin MuiTransfer remains separate from the deprecated source API.
+Existing widgets-plugin MTransfer remains separate from the deprecated source API.
 
 Reviewed pinned [props/model/callbacks](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-transfer/src/Transfer.tsx#L26-L220),
 [rendering](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-transfer/src/Transfer.tsx#L299-L407),
@@ -107,7 +107,7 @@ These are explicit target capabilities, not deprecated prop/callback/data-shape 
 | [`target-filter-placeholder`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-transfer/demos/enUS/index.demo-entry.md#L36) | Prop | Authored placeholder on the labelled native target search input. | 🟢 Verified |
 | [`target-title`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-transfer/demos/enUS/index.demo-entry.md#L37) | Prop | Original target heading/label; no renderer or source empty-string fallback. | 🟢 Verified |
 | [`value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-transfer/demos/enUS/index.demo-entry.md#L38) | Prop | All target keys in DOM order, not highlights. setValue sets exact validated order silently; no controlled Vue model or implicit numeric coercion. | 🟢 Verified |
-| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-transfer/demos/enUS/index.demo-entry.md#L39) | Callback | Root-local non-bubbling mui:transfer-change after a user move, with value/moved/to/event detail; programmatic/reset operations are silent. Not the legacy callback-array ABI. | 🟢 Verified |
+| [`on-update:value`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-transfer/demos/enUS/index.demo-entry.md#L39) | Callback | Root-local non-bubbling m:transfer-change after a user move, with value/moved/to/event detail; programmatic/reset operations are silent. Not the legacy callback-array ABI. | 🟢 Verified |
 | [`virtual-scroll`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/legacy-transfer/demos/enUS/index.demo-entry.md#L40) | Prop | No virtualized item/Scrollbar renderer; all at-most-2,000 native options remain mounted. | ⏭️ Intentionally omitted |
 
 ### TransferOption Type

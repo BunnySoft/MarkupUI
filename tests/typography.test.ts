@@ -19,11 +19,11 @@ describe("CSS-only Typography", () => {
     expect(packageJson.exports["./typography/style.css"]).toBe("./dist/markup-ui-typography.css")
     expect(packageJson.exports["./typography"]).toBeUndefined()
     expect(readdirSync(resolve("src", "components", "typography"))).toEqual(["typography.css"])
-    expect(customElements.get("mui-typography")).toBeUndefined()
+    expect(customElements.get("m-typography")).toBeUndefined()
   })
 
   it("keeps native heading levels, paragraph/list/quote/code structure and contents", () => {
-    document.body.innerHTML = '<article class="mui-typography"><h1>One</h1><h2>Two</h2><h3>Three</h3><h4>Four</h4><h5>Five</h5><h6>Six</h6><p><strong>Strong</strong> <em>Emphasis</em> <del>Deleted</del> <code>Code</code></p><ul><li>Item</li></ul><blockquote cite="#source">Quote</blockquote><hr></article>'
+    document.body.innerHTML = '<article class="m-typography"><h1>One</h1><h2>Two</h2><h3>Three</h3><h4>Four</h4><h5>Five</h5><h6>Six</h6><p><strong>Strong</strong> <em>Emphasis</em> <del>Deleted</del> <code>Code</code></p><ul><li>Item</li></ul><blockquote cite="#source">Quote</blockquote><hr></article>'
     const before = [...document.querySelectorAll("*")].filter((node) => document.body.contains(node))
     install()
     expect([...document.querySelectorAll("*")].filter((node) => document.body.contains(node))).toEqual(before)
@@ -33,7 +33,7 @@ describe("CSS-only Typography", () => {
   })
 
   it("leaves out-of-scope native text and data attributes unstyled", () => {
-    document.body.innerHTML = '<p id="outside"><span data-strong data-type="error">Outside</span></p><article class="mui-typography"><p>Inside</p></article>'
+    document.body.innerHTML = '<p id="outside"><span data-strong data-type="error">Outside</span></p><article class="m-typography"><p>Inside</p></article>'
     const outside = document.querySelector("#outside span")!
     const before = { color: getComputedStyle(outside).color, weight: getComputedStyle(outside).fontWeight }
     install()
@@ -42,7 +42,7 @@ describe("CSS-only Typography", () => {
   })
 
   it("preserves native anchor href/target/rel/download and authored SVG content", () => {
-    document.body.innerHTML = '<article class="mui-typography"><a href="#destination" target="_blank" rel="noopener noreferrer" download="file" hreflang="en"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M0 0h10"></path></svg>Link</a></article>'
+    document.body.innerHTML = '<article class="m-typography"><a href="#destination" target="_blank" rel="noopener noreferrer" download="file" hreflang="en"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M0 0h10"></path></svg>Link</a></article>'
     const anchor = document.querySelector("a")!
     const svg = anchor.querySelector("svg")
     const before = anchor.outerHTML
@@ -56,7 +56,7 @@ describe("CSS-only Typography", () => {
   })
 
   it("does not convert placeholder anchors into interactive controls", () => {
-    document.body.innerHTML = '<article class="mui-typography"><a>Placeholder</a></article>'
+    document.body.innerHTML = '<article class="m-typography"><a>Placeholder</a></article>'
     install()
     const anchor = document.querySelector("a")!
     expect(anchor.hasAttribute("href") || anchor.hasAttribute("role") || anchor.hasAttribute("tabindex")).toBe(false)
@@ -64,7 +64,7 @@ describe("CSS-only Typography", () => {
   })
 
   it("keeps native ordered-list numbering attributes and marker semantics", () => {
-    document.body.innerHTML = '<ol class="mui-ol" type="A" start="3" reversed><li value="7">Item</li></ol>'
+    document.body.innerHTML = '<ol class="m-ol" type="A" start="3" reversed><li value="7">Item</li></ol>'
     install()
     const list = document.querySelector("ol")!
     expect(list.type).toBe("A")
@@ -75,7 +75,7 @@ describe("CSS-only Typography", () => {
   })
 
   it("preserves document language/direction and native hidden state", () => {
-    document.body.innerHTML = '<section class="mui-typography" lang="ar" dir="rtl"><h2 data-prefix="bar" data-align-text hidden>عنوان</h2><p>نص</p></section>'
+    document.body.innerHTML = '<section class="m-typography" lang="ar" dir="rtl"><h2 data-prefix="bar" data-align-text hidden>عنوان</h2><p>نص</p></section>'
     install()
     expect(document.querySelector("section")?.lang).toBe("ar")
     expect(document.querySelector("section")?.dir).toBe("rtl")
@@ -84,7 +84,7 @@ describe("CSS-only Typography", () => {
   })
 
   it("uses native code/deletion/emphasis instead of replacing tags from data flags", () => {
-    document.body.innerHTML = '<article class="mui-typography"><span id="styled" data-strong data-italic data-underline>Style only</span><code><del>Old</del></code><em>Emphasis</em></article>'
+    document.body.innerHTML = '<article class="m-typography"><span id="styled" data-strong data-italic data-underline>Style only</span><code><del>Old</del></code><em>Emphasis</em></article>'
     install()
     expect(document.querySelector("#styled")?.tagName).toBe("SPAN")
     expect(getComputedStyle(document.querySelector("#styled")!).fontStyle).toBe("italic")
@@ -94,7 +94,7 @@ describe("CSS-only Typography", () => {
   })
 
   it("keeps native event listeners/selection targets and owns no animation or routing", () => {
-    document.body.innerHTML = '<article class="mui-typography"><span id="text">Selectable</span><a href="#target">Native</a></article>'
+    document.body.innerHTML = '<article class="m-typography"><span id="text">Selectable</span><a href="#target">Native</a></article>'
     const text = document.querySelector("#text")!
     let events = 0
     text.addEventListener("click", () => events++)
@@ -108,7 +108,7 @@ describe("CSS-only Typography", () => {
   })
 
   it("keeps block-code markup outside the inline-code presentation contract", () => {
-    document.body.innerHTML = '<article class="mui-typography"><pre><code id="block">const value = 1</code></pre><code id="inline">value</code></article>'
+    document.body.innerHTML = '<article class="m-typography"><pre><code id="block">const value = 1</code></pre><code id="inline">value</code></article>'
     install()
     expect(document.querySelector("#block")?.parentElement?.tagName).toBe("PRE")
     expect(document.querySelector("#block")?.textContent).toBe("const value = 1")
@@ -121,49 +121,49 @@ describe("CSS-only Typography", () => {
 
   it("uses measured reference heading sizes, weights, paragraph and list spacing", () => {
     for (const [level, size] of [[1, 30], [2, 22], [3, 18], [4, 16], [5, 16], [6, 16]]) {
-      expect(css).toContain(`var(--mui-typography-h${level}-size, ${size}px)`)
+      expect(css).toContain(`var(--m-typography-h${level}-size, ${size}px)`)
     }
-    expect(css).toContain("var(--mui-typography-heading-weight, 500)")
-    expect(css).toContain("var(--mui-typography-strong-weight, 500)")
-    expect(css).toContain("var(--mui-typography-paragraph-margin, 16px)")
-    expect(css).toContain("var(--mui-typography-list-indent, 2em)")
+    expect(css).toContain("var(--m-typography-heading-weight, 500)")
+    expect(css).toContain("var(--m-typography-strong-weight, 500)")
+    expect(css).toContain("var(--m-typography-paragraph-margin, 16px)")
+    expect(css).toContain("var(--m-typography-list-indent, 2em)")
     expect(css).toContain("margin-block: .25em 0")
-    expect(css).toContain("var(--mui-typography-font-size, var(--mui-font-size, 14px))")
+    expect(css).toContain("var(--m-typography-font-size, var(--m-font-size, 14px))")
   })
 
   it("sets only private defaults at light/dark theme boundaries and retains public override precedence", () => {
     install()
     const rules = [...stylesheet!.sheet!.cssRules] as CSSStyleRule[]
     for (const theme of ["light", "dark"]) {
-      const rule = rules.find(rule => rule.selectorText === `:where([data-mui-theme="${theme}"])`)!
+      const rule = rules.find(rule => rule.selectorText === `:where([data-m-theme="${theme}"])`)!
       expect(rule).toBeDefined()
-      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_mui-typography-/)
+      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_m-typography-/)
     }
-    expect(css).toContain("var(--mui-typography-color, var(--_mui-typography-color, #333639))")
-    expect(css).toContain("var(--mui-typography-info, var(--mui-color-info, var(--_mui-typography-info, #2080f0)))")
-    expect(css).toContain("--_mui-typography-color: rgb(255 255 255 / .82)")
-    expect(css).toContain("--_mui-typography-heading: rgb(255 255 255 / .9)")
-    expect(css).toContain("--_mui-typography-muted: rgb(255 255 255 / .52)")
-    expect(css).not.toContain("--mui-text-primary")
+    expect(css).toContain("var(--m-typography-color, var(--_m-typography-color, #333639))")
+    expect(css).toContain("var(--m-typography-info, var(--m-color-info, var(--_m-typography-info, #2080f0)))")
+    expect(css).toContain("--_m-typography-color: rgb(255 255 255 / .82)")
+    expect(css).toContain("--_m-typography-heading: rgb(255 255 255 / .9)")
+    expect(css).toContain("--_m-typography-muted: rgb(255 255 255 / .52)")
+    expect(css).not.toContain("--m-text-primary")
     expect(css).not.toContain("-suppl")
   })
 
   it("colors a typed heading's bar, not its text, and preserves the explicit bar override", () => {
     install()
     const rules = [...stylesheet!.sheet!.cssRules] as CSSStyleRule[]
-    const types = rules.filter(rule => rule.selectorText?.includes('.mui-h)[data-type='))
+    const types = rules.filter(rule => rule.selectorText?.includes('.m-h)[data-type='))
     expect(types).toHaveLength(4)
     for (const rule of types) {
       expect(rule.style.getPropertyValue("color")).toBe("")
-      expect(rule.style.getPropertyValue("--_mui-typography-accent")).not.toBe("")
+      expect(rule.style.getPropertyValue("--_m-typography-accent")).not.toBe("")
     }
-    expect(css).toContain("background: var(--mui-typography-bar-color, var(--_mui-typography-accent,")
-    expect(css).toContain("--_mui-typography-prefix: 16px; --_mui-typography-bar: 4px")
+    expect(css).toContain("background: var(--m-typography-bar-color, var(--_m-typography-accent,")
+    expect(css).toContain("--_m-typography-prefix: 16px; --_m-typography-bar: 4px")
     expect(css).toContain("inset-block: 0")
   })
 
   it("matches inline-code metrics without revealing hidden code or changing block code", () => {
-    document.body.innerHTML = '<article class="mui-typography"><code id="hidden" hidden>Hidden</code><code id="inline">Visible</code><pre><code id="block">Block</code></pre></article>'
+    document.body.innerHTML = '<article class="m-typography"><code id="hidden" hidden>Hidden</code><code id="inline">Visible</code><pre><code id="block">Block</code></pre></article>'
     install()
     expect(getComputedStyle(document.querySelector("#hidden")!).display).toBe("none")
     expect(getComputedStyle(document.querySelector("#inline")!).display).toBe("inline-block")
@@ -171,8 +171,8 @@ describe("CSS-only Typography", () => {
     expect(css).toContain("v-mono, SFMono-Regular, Menlo, Consolas, Courier, monospace")
     expect(css).toContain("line-height: 1.4")
     expect(css).toContain("padding: .05em .35em 0")
-    expect(css).toContain("var(--mui-typography-code-border, transparent)")
-    expect(css).toContain("var(--mui-typography-code-radius, 2px)")
+    expect(css).toContain("var(--m-typography-code-border, transparent)")
+    expect(css).toContain("var(--m-typography-code-radius, 2px)")
   })
 
   it("keeps first/last block spacing rules scoped, last in the cascade and overridable", () => {
@@ -182,7 +182,7 @@ describe("CSS-only Typography", () => {
     expect(rules.at(-1)!.selectorText).toContain(":where(:last-child)")
     expect(rules.at(-2)!.style.getPropertyValue("margin-block-start")).toBe("0")
     expect(rules.at(-1)!.style.getPropertyValue("margin-block-end")).toBe("0")
-    document.body.innerHTML = '<article class="mui-typography"><h1 style="font-size:41px;color:purple;margin-block-start:11px">Title</h1></article>'
+    document.body.innerHTML = '<article class="m-typography"><h1 style="font-size:41px;color:purple;margin-block-start:11px">Title</h1></article>'
     expect(getComputedStyle(document.querySelector("h1")!).fontSize).toBe("41px")
     expect(getComputedStyle(document.querySelector("h1")!).color).toBe("rgb(128, 0, 128)")
   })

@@ -14,28 +14,28 @@
     <h1>Checkbox: native checkedness and submission</h1>
     <p>Native controls and labels work without JavaScript. Group interaction limits require the optional helper; they are not form validation.</p>
     <form id="choices-form" method="get" action="checkbox.html">
-      <p><label class="mui-checkbox" data-size="large"><input id="terms" type="checkbox" name="terms" value="yes" required><span>Accept this local example (native required)</span></label></p>
-      <p><label class="mui-checkbox"><input id="mixed" type="checkbox" name="mixed" value="checked-mixed" checked><span>Mixed presentation (JS sets indeterminate, checked still submits)</span></label></p>
-      <fieldset class="mui-checkbox-group" data-checkbox-group id="topics" aria-describedby="topic-rule">
+      <p><label class="m-checkbox" data-size="large"><input id="terms" type="checkbox" name="terms" value="yes" required><span>Accept this local example (native required)</span></label></p>
+      <p><label class="m-checkbox"><input id="mixed" type="checkbox" name="mixed" value="checked-mixed" checked><span>Mixed presentation (JS sets indeterminate, checked still submits)</span></label></p>
+      <fieldset class="m-checkbox-group" data-checkbox-group id="topics" aria-describedby="topic-rule">
         <legend>Topics</legend>
         <p id="topic-rule">With enhancement, retain at least one and at most two selections. A disabled selected topic counts but is not submitted. Limits never disable checked fields for submission.</p>
-        <div class="mui-checkbox-group__items" id="topic-items">
-          <label class="mui-checkbox"><input data-checkbox id="alpha" type="checkbox" name="topics" value="alpha" checked><span>Alpha</span></label>
-          <label class="mui-checkbox"><input data-checkbox id="beta" type="checkbox" name="topics" value="beta"><span>Beta</span></label>
-          <label class="mui-checkbox"><input data-checkbox id="gamma" type="checkbox" name="topics" value="gamma"><span>Gamma with a long wrapping native label</span></label>
-          <label class="mui-checkbox"><input data-checkbox id="locked" type="checkbox" name="topics" value="locked" disabled><span>Author-disabled topic</span></label>
+        <div class="m-checkbox-group__items" id="topic-items">
+          <label class="m-checkbox"><input data-checkbox id="alpha" type="checkbox" name="topics" value="alpha" checked><span>Alpha</span></label>
+          <label class="m-checkbox"><input data-checkbox id="beta" type="checkbox" name="topics" value="beta"><span>Beta</span></label>
+          <label class="m-checkbox"><input data-checkbox id="gamma" type="checkbox" name="topics" value="gamma"><span>Gamma with a long wrapping native label</span></label>
+          <label class="m-checkbox"><input data-checkbox id="locked" type="checkbox" name="topics" value="locked" disabled><span>Author-disabled topic</span></label>
         </div>
-        <template id="topic-template"><label class="mui-checkbox"><input data-checkbox type="checkbox" name="topics" value="delta"><span>Delta (authored template)</span></label></template>
+        <template id="topic-template"><label class="m-checkbox"><input data-checkbox type="checkbox" name="topics" value="delta"><span>Delta (authored template)</span></label></template>
       </fieldset>
-      <fieldset class="mui-checkbox-group" data-checkbox-group id="delivery" data-size="small">
+      <fieldset class="m-checkbox-group" data-checkbox-group id="delivery" data-size="small">
         <legend>Delivery and nested independent group</legend>
-        <div class="mui-checkbox-group__items">
-          <label class="mui-checkbox"><input data-checkbox id="mail" type="checkbox" name="delivery" value="mail" checked><span>Mail</span></label>
-          <label class="mui-checkbox"><input data-checkbox id="external-choice" type="checkbox" name="external" form="other-form" value="external" checked><span>Associated with the other form</span></label>
+        <div class="m-checkbox-group__items">
+          <label class="m-checkbox"><input data-checkbox id="mail" type="checkbox" name="delivery" value="mail" checked><span>Mail</span></label>
+          <label class="m-checkbox"><input data-checkbox id="external-choice" type="checkbox" name="external" form="other-form" value="external" checked><span>Associated with the other form</span></label>
         </div>
-        <fieldset class="mui-checkbox-group" data-checkbox-group id="nested">
+        <fieldset class="m-checkbox-group" data-checkbox-group id="nested">
           <legend>Independent nested choices</legend>
-          <label class="mui-checkbox"><input data-checkbox id="nested-mail" type="checkbox" name="nested" value="mail"><span>Same key allowed in another group</span></label>
+          <label class="m-checkbox"><input data-checkbox id="nested-mail" type="checkbox" name="nested" value="mail"><span>Same key allowed in another group</span></label>
         </fieldset>
       </fieldset>
       <input type="hidden" name="local" value="only">
@@ -56,9 +56,9 @@
     <p id="state">No JS: no group limits or custom events.</p>
     <p id="event-count">Accepted group changes: 0</p>
     <pre id="submission">No submission yet.</pre>
-    <fieldset class="mui-checkbox-group" disabled>
-      <legend><label class="mui-checkbox"><input id="legend-choice" type="checkbox" name="legend" value="allowed"><span>Native first-legend exception</span></label></legend>
-      <label class="mui-checkbox"><input id="disabled-field" type="checkbox" name="disabled" value="blocked"><span>Disabled fieldset member</span></label>
+    <fieldset class="m-checkbox-group" disabled>
+      <legend><label class="m-checkbox"><input id="legend-choice" type="checkbox" name="legend" value="allowed"><span>Native first-legend exception</span></label></legend>
+      <label class="m-checkbox"><input id="disabled-field" type="checkbox" name="disabled" value="blocked"><span>Disabled fieldset member</span></label>
     </fieldset>
   </main>
 </body>

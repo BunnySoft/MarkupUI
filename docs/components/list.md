@@ -25,7 +25,7 @@ repeater implementation is part of this change.
 ```
 
 There is no `./list` JavaScript export, ESM/classic runtime, global or registration order.
-The unchanged aggregate's `mui-list` and `mui-list-item` remain available as legacy
+The unchanged aggregate's `m-list` and `m-list-item` remain available as legacy
 elements; these native classes neither redefine them nor silently upgrade their markup.
 Other enhanced custom elements still have their own legacy-registration restrictions.
 
@@ -43,33 +43,33 @@ Green means the documented native target, not Vue compatibility or pixel parity.
 
 ```html
 <section aria-labelledby="reports-heading">
-  <div class="mui-list" data-bordered data-hoverable>
-    <div class="mui-list-header">
+  <div class="m-list" data-bordered data-hoverable>
+    <div class="m-list-header">
       <h2 id="reports-heading">Reports</h2>
     </div>
-    <ul class="mui-list-items" data-markerless role="list"
+    <ul class="m-list-items" data-markerless role="list"
       aria-labelledby="reports-heading">
-      <li class="mui-list-item">
-        <div class="mui-list-row">
-          <span class="mui-list-prefix" aria-hidden="true">◈</span>
-          <div class="mui-list-content">
+      <li class="m-list-item">
+        <div class="m-list-row">
+          <span class="m-list-prefix" aria-hidden="true">◈</span>
+          <div class="m-list-content">
             <h3><a href="./report.html">Quarterly report</a></h3>
             <p>Authored description, media or nested lists.</p>
           </div>
-          <div class="mui-list-suffix mui-list-actions">
+          <div class="m-list-suffix m-list-actions">
             <button type="button">Archive report</button>
             <a href="./report.html">Report details</a>
           </div>
         </div>
       </li>
     </ul>
-    <div class="mui-list-footer">One report</div>
+    <div class="m-list-footer">One report</div>
   </div>
 </section>
 ```
 
-The `.mui-list` shell can be a `div` or an appropriately named native section. Its direct
-`.mui-list-items` child is a real `ul` or `ol`. Actual `li.mui-list-item` nodes stay
+The `.m-list` shell can be a `div` or an appropriately named native section. Its direct
+`.m-list-items` child is a real `ul` or `ol`. Actual `li.m-list-item` nodes stay
 direct children; no illegal `div` list children, item wrappers outside `li`, or
 `display: contents` semantics workaround is used. Header/footer are siblings **outside**
 the list, unlike the upstream implementation's header/footer `div` children inside `ul`.
@@ -101,9 +101,9 @@ Empty lists/regions do not cause generated placeholders or announcements.
 | `show-divider` | Item dividers are on by default. Exact `data-show-divider="false"` removes them, including the final item/footer boundary. The header separator is independent. |
 | `size` (source-only) | `data-size="small"` / `"medium"` / `"large"` density presets; missing or unknown values use medium. |
 | List `default` | Authored `ul`/`ol` and direct `li` children. |
-| List `header`, `footer` | `.mui-list-header` / `.mui-list-footer` siblings outside the list, omitted by leaving out the node. |
-| ListItem `default` | `.mui-list-content` inside an optional `.mui-list-row`, or ordinary item content for a simple list. |
-| ListItem `prefix`, `suffix` | Optional `.mui-list-prefix` / `.mui-list-suffix` in meaningful reading order. |
+| List `header`, `footer` | `.m-list-header` / `.m-list-footer` siblings outside the list, omitted by leaving out the node. |
+| ListItem `default` | `.m-list-content` inside an optional `.m-list-row`, or ordinary item content for a simple list. |
+| ListItem `prefix`, `suffix` | Optional `.m-list-prefix` / `.m-list-suffix` in meaningful reading order. |
 | `theme`, `themeOverrides`, `builtinThemeOverrides` (source-only) | ⏭️ Provider/runtime object contracts omitted; external CSS tokens are the native alternative. |
 
 Presence switches (`data-bordered`, `data-hoverable`, `data-clickable`, `data-markerless`)
@@ -124,30 +124,30 @@ but never consumes it in render/style, so those small/large effects remain an
 **explicit adaptation**, not an upstream visual-effect claim. Unknown sizes use medium.
 Public padding tokens override all presets; use them for rem-based application density.
 
-Public tokens: `--mui-list-color`, `--mui-list-background`, `--mui-list-border-color`,
-`--mui-list-border-radius`, `--mui-list-hover-background`, `--mui-list-padding-block`,
-`--mui-list-padding-inline`, `--mui-list-font-size`, `--mui-list-font-family`,
-`--mui-list-line-height` and `--mui-list-gap`.
+Public tokens: `--m-list-color`, `--m-list-background`, `--m-list-border-color`,
+`--m-list-border-radius`, `--m-list-hover-background`, `--m-list-padding-block`,
+`--m-list-padding-inline`, `--m-list-font-size`, `--m-list-font-family`,
+`--m-list-line-height` and `--m-list-gap`.
 
-- Font size/family/leading use local tokens, then shared `--mui-font-size`,
-  `--mui-font-family`, `--mui-line-height`; fallbacks are 14px, inherited family and 1.6.
+- Font size/family/leading use local tokens, then shared `--m-font-size`,
+  `--m-font-family`, `--m-line-height`; fallbacks are 14px, inherited family and 1.6.
 - Body text defaults to `#333639` / white-.82; surface to white / `#18181c`;
   border to `#efeff5` / white-.09; hover to `#f3f3f5` / white-.09. The dark alpha
   paints composite over the list surface. Border/hover corners default to 3px.
-- `data-mui-theme="dark"` on an ancestor or shell selects dark fallback roles;
+- `data-m-theme="dark"` on an ancestor or shell selects dark fallback roles;
   nested explicit `"light"` restores light. Generic legacy text/surface/border
   tokens are not equivalent and are not silently reused.
 - Prefix end and suffix start margins each default to **20px**. Both still apply when
-  main content is absent, giving 40px between affixes. `--mui-list-gap` overrides each.
-  The optional `.mui-list-actions` helper retains its separate 12px default gap;
+  main content is absent, giving 40px between affixes. `--m-list-gap` overrides each.
+  The optional `.m-list-actions` helper retains its separate 12px default gap;
   the same explicit gap token overrides it.
 
-Supply valid CSS values in external application styles. The private `--_mui-list-*`
+Supply valid CSS values in external application styles. The private `--_m-list-*`
 preset variables are not API. Nested shells reset state presets; public token inheritance
 follows ordinary CSS and local overrides remain authoritative.
 
 Neither pinned List nor ListItem declares an `extra`, `action` or `content` slot or a
-component event/method API. `.mui-list-content` and `.mui-list-actions` are **local anatomy
+component event/method API. `.m-list-content` and `.m-list-actions` are **local anatomy
 helpers**, not invented upstream slots. Extra content/actions are authored in default/
 suffix regions. ListItem has no separate props in the reviewed source. Framework slot
 functions, injection requirements, automatic modal/popover theming and style-object
@@ -158,18 +158,18 @@ adapters are not reproduced.
 For one action occupying the content row, use a real root control:
 
 ```html
-<li class="mui-list-item">
-  <button type="button" class="mui-list-row mui-list-action">
-    <span class="mui-list-prefix" aria-hidden="true">↗</span>
-    <span class="mui-list-content">Open report</span>
+<li class="m-list-item">
+  <button type="button" class="m-list-row m-list-action">
+    <span class="m-list-prefix" aria-hidden="true">↗</span>
+    <span class="m-list-content">Open report</span>
   </button>
 </li>
 ```
 
-For navigation, use `a.mui-list-row.mui-list-action[href]`. Keep links visibly underlined.
+For navigation, use `a.m-list-row.m-list-action[href]`. Keep links visibly underlined.
 Use valid button phrasing content, a useful accessible name, and no nested buttons,
 links or form controls inside a row action. The padded `li` outside the native control's
-box is **not** an activation target. Multi-action rows use a passive `.mui-list-row` with
+box is **not** an activation target. Multi-action rows use a passive `.m-list-row` with
 independent links/buttons, as in the first example. Do not add a click listener, `tabindex`
 or a button role to an entire passive item to imitate row selection.
 

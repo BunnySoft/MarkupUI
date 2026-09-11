@@ -4,7 +4,7 @@
 `createMessageOwner(root, options)` is an explicit service, not a global singleton,
 browser Notification API, request interceptor or renderer. It imports only small feedback
 expiry/removal helpers—no Modal, Dialog, Popover, animation or runtime dependency.
-Legacy `mui.message.show/clear`, elements, output and overlay cleanup are unchanged.
+Legacy `m.message.show/clear`, elements, output and overlay cleanup are unchanged.
 
 ## Default-style audit — 2026-09-11
 
@@ -35,8 +35,8 @@ At narrow viewports, the kind/icon header stays visible, content spans the item 
 and close moves below content. An explicit shrinkable list track prevents intrinsic
 items from overflowing their constrained host. No event or timer policy changes.
 
-Inherited `--mui-message-accent/color/background` overrides now win even after type
-updates. Existing `--mui-feedback-width` and z-index overrides remain usable. Flow hosts
+Inherited `--m-message-accent/color/background` overrides now win even after type
+updates. Existing `--m-feedback-width` and z-index overrides remain usable. Flow hosts
 stay in normal flow; fixed CSS still cannot cross native top layers. Reduced motion,
 forced-color feedback, print flow, visible error text and native action forms remain.
 Native physical left/right placement is preserved under RTL rather than adopting the
@@ -61,9 +61,9 @@ predates this audit.
 | [Local demo](../../demo/components/message.html) | Separate HTML/CSS/JS; local actions and modal-local owner example |
 
 ```html
-<div id="messages" class="mui-feedback-host mui-message-host">
-  <ol class="mui-feedback-list" data-message-items aria-label="Messages"></ol>
-  <p class="mui-feedback-announcer" data-message-announcer role="status"
+<div id="messages" class="m-feedback-host m-message-host">
+  <ol class="m-feedback-list" data-message-items aria-label="Messages"></ol>
+  <p class="m-feedback-announcer" data-message-announcer role="status"
     aria-atomic="true"></p>
 </div>
 ```
@@ -79,7 +79,7 @@ work.update({ type: "success", content: "Local results ready", duration: 3000 })
 // work.destroy(); messages.destroyAll(); messages.dispose()
 ```
 
-Use a connected light-DOM native div/section/aside `.mui-message-host`, with one direct
+Use a connected light-DOM native div/section/aside `.m-message-host`, with one direct
 native ol and one direct atomic polite status announcer. They start empty (formatting
 whitespace is preserved); keep authored/no-JS message baselines outside these dedicated
 regions. A safe native li fallback is built with createElement/textContent if no template
@@ -182,11 +182,11 @@ The source callback is a **void notification**, not a confirmation:
 - An update/destroy inside the callback supersedes that old close attempt. A later failure
   cannot mutate detached error content or a replacement message.
 
-`mui:message-create`, `mui:message-update` and `mui:message-remove` are nonbubbling native
+`m:message-create`, `m:message-update` and `m:message-remove` are nonbubbling native
 notifications; create/update have `{ handle }`, remove has `{ handle, reason }` where reason
 is close/destroy/expired/dispose/detached. These are not enter/leave animation hooks.
 
-The cancelable nonbubbling `mui:message-error` has typed
+The cancelable nonbubbling `m:message-error` has typed
 `{ handle, error, phase: "close" | "anatomy", stale }`; a null handle indicates an owner
 anatomy fault. Current close failures have visible error text. Failures with no current
 surface are also reported to console unless an error listener calls preventDefault to
@@ -199,7 +199,7 @@ No global application state, network work or OS notification operation is create
 
 ## Trusted templates and ownership
 
-The optional constructor `template` contains one native `li.mui-message` with exactly one
+The optional constructor `template` contains one native `li.m-message` with exactly one
 data-message-kind, data-message-content, data-message-close and data-message-error.
 Kind/content/error are separate plain text-only regions; error begins hidden and nonempty.
 The close control is a named type=button without command/popover-command attributes.
@@ -231,7 +231,7 @@ or subsequent owner. Disposed handles/owners cannot reconnect.
 
 ## External CSS and property dispositions
 
-Flow is the baseline. Add `.mui-feedback-host--fixed` and authored
+Flow is the baseline. Add `.m-feedback-host--fixed` and authored
 `data-feedback-placement=top/top-left/top-right/bottom/bottom-left/bottom-right` for fixed
 placement; top is the CSS default. **Left/right are physical**, including RTL. Width,
 z-index and theme colors are external tokens/classes, not constructor style/placement
@@ -277,7 +277,7 @@ provider/method/handle/render-type/inline-field identity and source-only additio
   old timers. Announcer replacement preserved author text without an automatic fallback
   focus jump. Synchronous close failure stayed visible; non-veto async failure was reported.
 - Independent fixed/local/modal-local owners, local overflow errors, native modal focus,
-  duplicate owner/namespace guards and legacy `mui.message` output/clear coexistence passed.
+  duplicate owner/namespace guards and legacy `m.message` output/clear coexistence passed.
   A body-fixed message did not cross the native modal top layer.
 - The final accessibility tree contained a native named list/listitem with visible Error
   words and close button, plus **one status announcer**, not item alerts or duplicate

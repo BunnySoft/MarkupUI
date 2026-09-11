@@ -54,7 +54,7 @@ the retained native default gap remains 8px.
 | Dark shadow | **0 3px 6px -4px black .24; 0 6px 12px black .16; 0 9px 18px 8px black .10** | Same single light shadow | Reuse base dark shadow |
 | Authored white surface | **#fff fill / #333639 text**, 12px 18px padding, 7px radius; **129.296875×46.390625px** | Inherited overrides ignored; old default 119.296875×39px | Remove public-variable default assignments from Tooltip |
 | Strong text | **124.609375×38.390625px** | Ordinary skin metrics differed | Preserve authored strong markup and corrected surrounding skin |
-| Shared typography override | **18px / 36px**, **147.953125×52px** | Tooltip fixed its rem size and 1.5 leading | Consume `--mui-font-size` and `--mui-line-height`; matches common reference theme overrides |
+| Shared typography override | **18px / 36px**, **147.953125×52px** | Tooltip fixed its rem size and 1.5 leading | Consume `--m-font-size` and `--m-line-height`; matches common reference theme overrides |
 
 Only `src/components/tooltip/tooltip.css` changes implementation. The Tooltip controller,
 Popover base/guard, shared positioning/semantics helpers and other consumer sources are
@@ -62,7 +62,7 @@ unchanged. Four focused style regressions were added to the Tooltip test file.
 
 ## Theme ownership and composed ordering
 
-The accepted Popover guard intentionally excludes `.mui-tooltip`; the new Tooltip skin
+The accepted Popover guard intentionally excludes `.m-tooltip`; the new Tooltip skin
 does not depend on ordinary Popover's corrected surface rule applying to it. Instead it
 consumes public family overrides first, then the composed base's matching private dark
 overlay variables, then Tooltip's light defaults.
@@ -72,12 +72,12 @@ This is a genuine role match: the pinned Tooltip dark theme uses `popoverColor`,
 base. No shared preset, base declaration or duplicate dark-theme state was introduced.
 The internal variables are not exported as new author APIs.
 
-The old assignments of `--mui-popover-padding`, color/background/radius/max-width on
+The old assignments of `--m-popover-padding`, color/background/radius/max-width on
 every Tooltip panel masked ancestor values. Removing those assignments fixes an actual
 rendered cascade defect: the private fixture's paired white-surface overrides now work in
 both themes and every stylesheet order. Inline panel values also win and survive teardown.
 
-`.mui-popover.mui-tooltip` and the non-raw geometry selector outrank the generic base.
+`.m-popover.m-tooltip` and the non-raw geometry selector outrank the generic base.
 Print overrides use matching specificity, so a later separate base stylesheet cannot
 restore clipping, limited width or a dark shadow during print. Raw panels are deliberately
 excluded from ordinary padding, radius and shadow declarations.

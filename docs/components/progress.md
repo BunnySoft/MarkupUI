@@ -22,7 +22,7 @@ components.
 
 | Asset | Purpose |
 | --- | --- |
-| `dist/markup-ui-progress.js` | ESM; exports `MuiProgress`, `registerProgress()`; registers on browser import. |
+| `dist/markup-ui-progress.js` | ESM; exports `MProgress`, `registerProgress()`; registers on browser import. |
 | `dist/markup-ui-progress.global.js` | Classic script; registers and exposes `MarkupUIProgress`. |
 | `dist/markup-ui-progress.css` | External native-track/SVG/indicator/motion CSS. |
 | `dist/components/progress/index.d.ts` | Declarations including bounded color/gradient data types. |
@@ -33,8 +33,8 @@ components.
 <script defer src="./vendor/markup-ui-progress.global.js"></script>
 <script defer src="./app.js"></script>
 
-<mui-progress percentage="40" label="Upload"></mui-progress>
-<mui-progress value="25" max="50" label="Processed files"></mui-progress>
+<m-progress percentage="40" label="Upload"></m-progress>
+<m-progress value="25" max="50" label="Processed files"></m-progress>
 ```
 
 Application ESM: `import "@dataengine/markup-ui/progress";`. Serve/link the
@@ -62,27 +62,27 @@ Exactly one native `<progress>` owns each measure's range and accessible name:
 4. Without an explicit source or authored native measure, the default is determinate 0%.
 
 ```html
-<mui-progress>
-  <label data-mui-progress-label for="file-progress">Processed files</label>
+<m-progress>
+  <label data-m-progress-label for="file-progress">Processed files</label>
   <progress id="file-progress" value="2" max="4"></progress>
-</mui-progress>
+</m-progress>
 ```
 
 Native controls move into a managed native group without cloning. Their IDs, labels,
 fallback children and listeners are preserved. A native HTML label can be external, or use
-`data-mui-progress-label` inside the host to stay outside the custom indicator and occupy its
+`data-m-progress-label` inside the host to stay outside the custom indicator and occupy its
 own row. Ordinary other child content replaces the default visual indicator.
 
 ### Bounds, invalid values and indeterminate state
 
 - Percentage and value inputs must be finite numbers. Finite out-of-range values are
-  **explicitly clamped** to 0–100 or 0–max, with `data-mui-progress-clamped` marking the
+  **explicitly clamped** to 0–100 or 0–max, with `data-m-progress-clamped` marking the
   normalization. Raw host input remains unchanged; status is never inferred as success.
 - `max` must be positive and finite. A legacy max of zero is an error, not a silent
   native-max-one fallback or a claim of completed progress. Inactive value/max aliases
   are ignored when an explicit percentage source is supplied.
 - Invalid scalar property assignments throw `RangeError` before changing the attribute.
-  Invalid declarative/configuration inputs set `data-mui-progress-invalid`, appear in
+  Invalid declarative/configuration inputs set `data-m-progress-invalid`, appear in
   readonly `validationErrors`, make `valid` false and hide generated range/graphic output.
   Custom authored indicator content is preserved; no error announcer is invented.
 - `indeterminate` / `.indeterminate` is an explicit native target extension: it removes
@@ -110,11 +110,11 @@ task name. Multiple generated owners append their 1-based measure number. For re
 names, author native controls with distinct labels:
 
 ```html
-<mui-progress type="multiple-circle" percentage="[25,65,90]">
+<m-progress type="multiple-circle" percentage="[25,65,90]">
   <progress max="100" value="25" aria-label="Files"></progress>
   <progress max="100" value="65" aria-label="Network"></progress>
   <progress max="100" value="90" aria-label="Index"></progress>
-</mui-progress>
+</m-progress>
 ```
 
 Native `aria-label`, `aria-labelledby` and HTML label associations take precedence over host
@@ -229,7 +229,7 @@ Default progress fill is the info palette (`#2080f0` light / `#70c0e8` with dark
 not the legacy primary green. Status colors continue to use their shared semantic tokens.
 Local neutral defaults are `#ebebeb` rails / `#333639` text in light, and white at .12 /
 .82 alpha in dark. Use the existing themes stylesheet for the semantic palette and
-`data-mui-theme="light|dark"` scopes; nested light scopes reset Progress's local neutrals.
+`data-m-theme="light|dark"` scopes; nested light scopes reset Progress's local neutrals.
 
 Outside line indicators reserve 44px, matching upstream; custom outside indicators use a
 14px gap. Rail radius defaults to 5px (10px inside), or half an explicit height, while
@@ -244,12 +244,12 @@ empty grid-column gap.
 
 ## Styling, CSP and lifecycle
 
-Public CSS tokens include `--mui-progress-color`, `--mui-progress-rail-color`,
-`--mui-progress-height`, `--mui-progress-size` (120px circle/dashboard; 200px multiple-circle),
-`--mui-progress-border-radius`, `--mui-progress-fill-border-radius`,
-`--mui-progress-text-color`, `--mui-progress-font-size`, `--mui-progress-circle-font-size`,
-`--mui-progress-icon-color`, `--mui-progress-gap` and
-`--mui-progress-indicator-background`.
+Public CSS tokens include `--m-progress-color`, `--m-progress-rail-color`,
+`--m-progress-height`, `--m-progress-size` (120px circle/dashboard; 200px multiple-circle),
+`--m-progress-border-radius`, `--m-progress-fill-border-radius`,
+`--m-progress-text-color`, `--m-progress-font-size`, `--m-progress-circle-font-size`,
+`--m-progress-icon-color`, `--m-progress-gap` and
+`--m-progress-indicator-background`.
 
 For retained attribute/data APIs, validated dimensions/radii/colors and numeric processing
 widths are written only to isolated private custom properties; SVG geometry/paints use

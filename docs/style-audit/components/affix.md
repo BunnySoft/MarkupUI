@@ -121,7 +121,7 @@ be gratuitous: the correct behavior is to preserve the application's content sty
 
 ## JavaScript-disabled native checks and validation
 
-- Page scripts did not execute and no `mui-affix` constructor existed, yet native RTL
+- Page scripts did not execute and no `m-affix` constructor existed, yet native RTL
   nested scrolling held the actual 8px inset. Changing the element's CSS token to 20px
   produced **20px**, with width **485px** and layer **7**.
 - Following-content flow coordinate stayed **166.390625**. Original nodes, input value

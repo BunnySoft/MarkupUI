@@ -46,8 +46,8 @@ not a new MarkupUI padding reset.
 
 Only two CSS declarations changed. Body colors resolve in this order:
 
-1. `--mui-global-style-color` / `--mui-global-style-background-color`;
-2. existing `--mui-text-primary` / `--mui-bg-page`;
+1. `--m-global-style-color` / `--m-global-style-background-color`;
+2. existing `--m-text-primary` / `--m-bg-page`;
 3. reference colors selected by `light-dark()`.
 
 No token definitions, JS, registrations, transitions or automatic theme writes were

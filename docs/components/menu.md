@@ -22,7 +22,7 @@ For a popup command menu with menuitem roles/roving Tab, use [Dropdown](dropdown
 <script defer src="./vendor/markup-ui-menu.global.js"></script>
 <script defer src="./menu-setup.js"></script>
 
-<nav class="mui-menu" data-menu data-menu-mode="vertical" id="documentation"
+<nav class="m-menu" data-menu data-menu-mode="vertical" id="documentation"
   aria-label="Documentation">
   <details data-menu-collapse open>
     <summary>Browse documentation</summary>
@@ -54,12 +54,12 @@ menu.showOption("install") // Reveal native ancestors; no router or target focus
 menu.disconnect()
 ```
 
-The helper registers no tags and has no enhanced-before-core requirement. Legacy mui-menu
-retains its old flat behavior unchanged; binding this native helper inside legacy mui-menu
+The helper registers no tags and has no enhanced-before-core requirement. Legacy m-menu
+retains its old flat behavior unchanged; binding this native helper inside legacy m-menu
 is rejected. Other registered components keep their own registration rules.
 Classic and ESM are alternative entries, not two controllers for the same root.
 
-The root must be connected same-document light-DOM `nav.mui-menu[data-menu]`, with an explicit
+The root must be connected same-document light-DOM `nav.m-menu[data-menu]`, with an explicit
 nonempty aria-label or valid aria-labelledby. Menu/menubar/widget roles are rejected: the
 helper does **not** invent menuitem, aria-selected, checked state, a trap or reduced Tab order.
 A nested independent nav[data-menu] is an explicit ownership boundary.
@@ -131,7 +131,7 @@ not a claim that each native state change is a component-owned attribute to rest
 
 ## Native notifications and activation
 
-`mui:menu-select` is a noncancelable notification on the root after an accepted unmodified
+`m:menu-select` is a noncancelable notification on the root after an accepted unmodified
 primary leaf click. Detail is `{ key: string, item: HTMLElement, path: readonly string[],
 event: MouseEvent }`; path contains ancestor branch keys. It is not the upstream raw option
 object/numeric callback shape. Programmatic value/expansion changes never fabricate this event.
@@ -213,7 +213,7 @@ call disconnect. Nested independent nav roots remain isolated; an external surro
 disclosure/application owns its own visibility/focus policy.
 
 Invalid explicit refresh throws after cleanup. Invalid automatic refresh emits
-`mui:menu-error` with `{ error }`. Duplicate active root ownership is rejected; disposing an
+`m:menu-error` with `{ error }`. Duplicate active root ownership is rejected; disposing an
 old controller cannot release a replacement owner's claim. Failed/disposed bindings do not
 later deliver queued selection or rewrite detached nodes.
 
@@ -222,8 +222,8 @@ names. It never changes author aria-current, href/target, roles, native tabindex
 templates or listeners. Native open persists as documented; no pre-upgrade/renderer bridge exists.
 
 External CSS supplies logical root/branch indentation, item/icon/extra sizing, selected/current
-styling, inverted/compact presentation and wrapping. Tokens include --mui-menu-indent,
---mui-menu-root-indent, --mui-menu-icon-size, --mui-menu-collapsed-width, item padding and
+styling, inverted/compact presentation and wrapping. Tokens include --m-menu-indent,
+--m-menu-root-indent, --m-menu-icon-size, --m-menu-collapsed-width, item padding and
 surface/hover/selected colors. Hidden and inert states retain native behavior; supplied
 display rules do not override hidden. Reduced motion/forced-colors/print are included.
 Print keeps browser-owned disclosure state and uses ink-friendly styling; no JS print hook
@@ -244,13 +244,13 @@ using a row-height line box; they are not replaced by end-aligned framework chev
 | Selection | `#18a058` / `#63e2b7` text; approximately `.1` / `.15` matching-color fill |
 | Vertical hover | `#f3f3f5` light / white `.09` dark; selected hover keeps selection |
 | Horizontal hover | `#36ad6a` / `#7fe7c4` text/icon; no row fill |
-| `--mui-menu-padding` | `0 8px 6px` vertical; `0` horizontal |
-| `--mui-menu-root-indent`, `--mui-menu-indent` | `32px`, `32px` |
-| `--mui-menu-item-height` | `42px` minimum; native wrapping can grow a row |
-| `--mui-menu-item-padding` | `0 10px` vertical, with managed start indentation; `0 20px` horizontal |
-| `--mui-menu-icon-size` | Default visible glyph `20px` in a `24px` box; an explicit override sizes both |
+| `--m-menu-padding` | `0 8px 6px` vertical; `0` horizontal |
+| `--m-menu-root-indent`, `--m-menu-indent` | `32px`, `32px` |
+| `--m-menu-item-height` | `42px` minimum; native wrapping can grow a row |
+| `--m-menu-item-padding` | `0 10px` vertical, with managed start indentation; `0 20px` horizontal |
+| `--m-menu-icon-size` | Default visible glyph `20px` in a `24px` box; an explicit override sizes both |
 | Group label / extra font | `.93em`; group row `36px` |
-| `--mui-menu-collapsed-width` | `12rem` for the native overall disclosure, not a rail |
+| `--m-menu-collapsed-width` | `12rem` for the native overall disclosure, not a rail |
 
 The default 8px navigation inset supplies the highlight inset. Consequently native hit/focus
 boxes are inset, unlike upstream's full-width item plus decorative inset background.
@@ -259,18 +259,18 @@ at 48px, and icon labels add a 24px box plus 8px gap. Structural CSS variables h
 including half-step group indentation, without controller geometry/style writes.
 
 Changing root padding changes that coordinate system: text start is the authored inline
-padding plus `--mui-menu-root-indent - 8px`. Adjust both when designing a custom frame.
-`--mui-menu-border` now colors dividers rather than forcing a navigation border. Author
+padding plus `--m-menu-root-indent - 8px`. Adjust both when designing a custom frame.
+`--m-menu-border` now colors dividers rather than forcing a navigation border. Author
 ordinary root border/box-sizing CSS if a framed, explicitly sized navigation is required.
 Existing color/background/hover/selected tokens remain available; use ordinary scoped CSS
 for foreground/typography overrides not represented by a token.
 
-`data-mui-theme="dark"` on the root/ancestor selects a local navigation color scheme.
+`data-m-theme="dark"` on the root/ancestor selects a local navigation color scheme.
 Nested light scopes reset it. This palette uses modern CSS nesting and `light-dark()`;
 there is no runtime theme adapter. Native nav/links/details remain the fallback when
 these visual features are unavailable, but old-engine visual parity is not claimed.
-`.mui-menu--compact` uses a 34px row and 24px root/branch indent.
-`.mui-menu--inverted` is explicitly a **native dark-palette skin** on `#202630`, not the
+`.m-menu--compact` uses a 34px row and 24px root/branch indent.
+`.m-menu--inverted` is explicitly a **native dark-palette skin** on `#202630`, not the
 different upstream `inverted` palette/option contract.
 
 The controller still marks only the selected leaf. It does not infer upstream active-path

@@ -6,7 +6,7 @@ Real authored rows, explicit string keys, typed synchronous comparator/predicate
 single-column stable sort, AND-combined string filters, local hide-only paging, native
 checkbox selection, footer text summaries and explicit reveal-before-validation.
 No renderer, virtual tbody, data loader, hidden form proxy or cell keyboard grid is introduced.
-The [legacy advanced MuiDataGrid](../../../src/plugins/advanced.ts) remains unchanged.
+The [legacy advanced MDataGrid](../../../src/plugins/advanced.ts) remains unchanged.
 
 **Delivery phase:** P5. **Task state:** 🟢 Verified retained scope.
 **Next:** Log, then Infinite Scroll, Popselect and Split; P5 is still incomplete.
@@ -80,8 +80,8 @@ No opaque renderer/provider/column-family type is claimed compatible.
 | `height-for-row` · API:L89 | Prop | No virtual row measurement. | ⏭️ Intentionally omitted |
 | `indent` · API:L90 | Prop | No tree data. | ⏭️ Intentionally omitted |
 | `loading` · API:L91 | Prop | Informative aria-busy and authored loading text; fields stay usable. | 🟢 Verified |
-| `max-height` · API:L92 | Prop | External --mui-data-table-max-height scroll-region token. | 🟢 Verified |
-| `min-height` · API:L93 | Prop | External --mui-data-table-min-height token. | 🟢 Verified |
+| `max-height` · API:L92 | Prop | External --m-data-table-max-height scroll-region token. | 🟢 Verified |
+| `min-height` · API:L93 | Prop | External --m-data-table-min-height token. | 🟢 Verified |
 | `min-row-height` · API:L94 | Prop | No virtual geometry contract. | ⏭️ Intentionally omitted |
 | `paginate-single-page` · API:L95 | Prop | Two authored pager buttons remain present, disabled at bounds; no flag. | ⏭️ Intentionally omitted |
 | `pagination` · API:L96 | Prop | Local page/pageSize and optional native previous/next/size controls. | 🟢 Verified |
@@ -108,7 +108,7 @@ No opaque renderer/provider/column-family type is claimed compatible.
 | `virtual-scroll-x` · API:L117 | Prop | No virtual columns. | ⏭️ Intentionally omitted |
 | `on-load` · API:L118 | Callback | No loader/fetch/async expansion. | ⏭️ Intentionally omitted |
 | `on-scroll` · API:L119 | Callback | Native scroll event on authored region, not a custom alias. | 🟢 Verified |
-| `on-update:checked-row-keys` · API:L120 | Callback | mui:data-table-change source=selection, state.checkedKeys and native event. | 🟢 Verified |
+| `on-update:checked-row-keys` · API:L120 | Callback | m:data-table-change source=selection, state.checkedKeys and native event. | 🟢 Verified |
 | `on-update:expanded-row-keys` · API:L121 | Callback | Native details toggle is application-owned, not row expansion keys. | ⏭️ Intentionally omitted |
 | `on-update:filters` · API:L122 | Callback | Native change -> source=filter; setters silent. | 🟢 Verified |
 | `on-update:page` · API:L123 | Callback | Settled native pager click -> source=page. | 🟢 Verified |

@@ -13,36 +13,36 @@
   <header id="intro"><h1>Steps: a progress summary, not a wizard</h1><p>Explicit status is separate from current position. Local buttons request a selection; no form validation, routing or automatic advancement is built in.</p></header>
   <main>
     <form id="native-form">
-      <ol class="mui-steps" data-steps id="steps" aria-label="Example progress">
-        <li class="mui-step" data-step id="details" data-step-status="finish">
-          <div class="mui-step__layout"><span class="mui-step__icon" aria-hidden="true">✓</span><div class="mui-step__body">
+      <ol class="m-steps" data-steps id="steps" aria-label="Example progress">
+        <li class="m-step" data-step id="details" data-step-status="finish">
+          <div class="m-step__layout"><span class="m-step__icon" aria-hidden="true">✓</span><div class="m-step__body">
             <h2 data-step-title>Details</h2><span data-step-status-text>Completed</span><p>Explicitly completed by the application, not inferred from order.</p>
             <button type="button" data-step-action hidden>Select details</button>
           </div></div>
         </li>
-        <li class="mui-step" data-step id="review" aria-current="step">
-          <div class="mui-step__layout"><span class="mui-step__icon" aria-hidden="true">○</span><div class="mui-step__body">
+        <li class="m-step" data-step id="review" aria-current="step">
+          <div class="m-step__layout"><span class="m-step__icon" aria-hidden="true">○</span><div class="m-step__body">
             <h2 data-step-title>Review</h2><span data-step-status-text>In progress</span><p>Changing current does not imply earlier work succeeded.</p>
             <button type="button" data-step-action hidden>Select review</button>
           </div></div>
         </li>
-        <li class="mui-step" data-step id="approval" data-step-status="error">
-          <div class="mui-step__layout"><span class="mui-step__icon" aria-hidden="true">!</span><div class="mui-step__body">
+        <li class="m-step" data-step id="approval" data-step-status="error">
+          <div class="m-step__layout"><span class="m-step__icon" aria-hidden="true">!</span><div class="m-step__body">
             <h2 data-step-title>Approval</h2><span data-step-status-text>Error</span><p>Explicit error state overrides positional/current styling. Selection is blocked natively.</p>
             <button type="button" data-step-action disabled hidden>Select approval</button>
-            <ol class="mui-steps mui-steps--vertical mui-steps--small" data-steps id="nested" aria-label="Independent approval details">
-              <li class="mui-step" data-step><div class="mui-step__layout"><div class="mui-step__body"><h3 data-step-title>Policy review</h3><span data-step-status-text>Waiting</span></div></div></li>
-              <li class="mui-step" data-step data-step-status="finish"><div class="mui-step__layout"><div class="mui-step__body"><h3 data-step-title>Identity check</h3><span data-step-status-text>Completed</span></div></div></li>
+            <ol class="m-steps m-steps--vertical m-steps--small" data-steps id="nested" aria-label="Independent approval details">
+              <li class="m-step" data-step><div class="m-step__layout"><div class="m-step__body"><h3 data-step-title>Policy review</h3><span data-step-status-text>Waiting</span></div></div></li>
+              <li class="m-step" data-step data-step-status="finish"><div class="m-step__layout"><div class="m-step__body"><h3 data-step-title>Identity check</h3><span data-step-status-text>Completed</span></div></div></li>
             </ol>
           </div></div>
         </li>
-        <li class="mui-step" data-step id="publish">
-          <div class="mui-step__layout"><span class="mui-step__icon" aria-hidden="true">○</span><div class="mui-step__body">
+        <li class="m-step" data-step id="publish">
+          <div class="m-step__layout"><span class="m-step__icon" aria-hidden="true">○</span><div class="m-step__body">
             <h2 data-step-title>Publish</h2><span data-step-status-text>Waiting</span><p><a href="#native-note" id="native-link">Read the native destination</a></p>
             <button type="button" data-step-action hidden>Select publish</button>
           </div></div>
         </li>
-        <template id="extra-step"><li class="mui-step" data-step><div class="mui-step__layout"><div class="mui-step__body"><h2 data-step-title>Additional authored step</h2><span data-step-status-text>Waiting</span><button type="button" data-step-action>Select additional step</button></div></div></li></template>
+        <template id="extra-step"><li class="m-step" data-step><div class="m-step__layout"><div class="m-step__body"><h2 data-step-title>Additional authored step</h2><span data-step-status-text>Waiting</span><button type="button" data-step-action>Select additional step</button></div></div></li></template>
       </ol>
       <label>Unrelated native form value <input id="outside-input" value="Preserved"></label>
       <button type="submit" id="save">Save unrelated form</button>

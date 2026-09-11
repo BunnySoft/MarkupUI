@@ -80,22 +80,22 @@ No fictitious CSP-safe version of the legacy aggregate is advertised.
 
 ## Native stylesheet themes
 
-Link `markup-ui-themes.css` and use `data-mui-theme="light"` or `"dark"` on the root
+Link `markup-ui-themes.css` and use `data-m-theme="light"` or `"dark"` on the root
 or a scoped ancestor. Tokens inherit through real DOM ancestry. The stylesheet supplies
 native `color-scheme` and the same palette data used by the legacy API. Root selectors
 take precedence over the legacy aggregate's later default `:root` rules.
 
 ```html
 <link rel="stylesheet" href="./vendor/markup-ui-themes.css">
-<section data-mui-theme="dark" class="surface">...</section>
+<section data-m-theme="dark" class="surface">...</section>
 ```
 
 In application CSS:
 
 ```css
 .surface {
-  color: var(--mui-text-primary);
-  background: var(--mui-bg-surface);
+  color: var(--m-text-primary);
+  background: var(--m-bg-surface);
 }
 ```
 

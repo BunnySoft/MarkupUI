@@ -5,12 +5,12 @@ button, input, select, textarea { font: inherit; }
 button { padding: .3rem .7rem; }
 .tools { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 1rem; }
 [hidden] { display: none !important; }
-.mui-virtual-list { --mui-virtual-list-height: 320px; border: 1px solid #607080; background: white; }
-.mui-virtual-list.short { --mui-virtual-list-height: 160px; }
-.mui-virtual-list__row { padding-inline: .5rem; border-bottom: 1px solid #dde3eb; white-space: nowrap; }
-#large .mui-virtual-list__row { line-height: 31px; }
-#editors { --mui-virtual-list-height: 192px; }
-#editors .mui-virtual-list__row { display: flex; align-items: center; gap: .5rem; }
+.m-virtual-list { --m-virtual-list-height: 320px; border: 1px solid #607080; background: white; }
+.m-virtual-list.short { --m-virtual-list-height: 160px; }
+.m-virtual-list__row { padding-inline: .5rem; border-bottom: 1px solid #dde3eb; white-space: nowrap; }
+#large .m-virtual-list__row { line-height: 31px; }
+#editors { --m-virtual-list-height: 192px; }
+#editors .m-virtual-list__row { display: flex; align-items: center; gap: .5rem; }
 #editors label { display: flex; align-items: center; gap: .25rem; min-width: 0; }
 #editors input, #editors textarea { min-width: 0; width: 8rem; }
 #editors textarea { height: 1.6rem; resize: none; }

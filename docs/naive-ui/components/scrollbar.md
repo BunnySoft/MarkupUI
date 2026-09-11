@@ -64,7 +64,7 @@ scrollTo/scrollBy. No source field is falsely mapped to a CSS notification or no
 | [`x-scrollable`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/scrollbar/demos/enUS/index.demo-entry.md#L26) | Prop | Native horizontal overflow eligibility and author content width; both axes auto by default. | 🟢 Verified ADAPTED target | No false-default clipping or automatic fit-content wrapper; native horizontal/focus/RTL verified. |
 | [`x-placement`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/scrollbar/demos/enUS/index.demo-entry.md#L27) | Prop | No custom horizontal rail placement. | ⏭️ Intentionally omitted | Native platform placement; no top-rail emulation. |
 | [`y-placement`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/scrollbar/demos/enUS/index.demo-entry.md#L28) | Prop | No custom vertical rail placement. | ⏭️ Intentionally omitted | Native direction/preferences, not a layout/sign hack. |
-| [`on-scroll`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/scrollbar/demos/enUS/index.demo-entry.md#L29) | Callback | Native scroll listener on the actual region. | 🟢 Verified ADAPTED target | Original Event/target/timing; no mui:scroll alias or cached state. |
+| [`on-scroll`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/scrollbar/demos/enUS/index.demo-entry.md#L29) | Callback | Native scroll listener on the actual region. | 🟢 Verified ADAPTED target | Original Event/target/timing; no m:scroll alias or cached state. |
 
 ### Scrollbar Slots
 

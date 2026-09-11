@@ -24,7 +24,7 @@ class Resize {
 }
 function fixture(options: MarqueeOptions = {}, bind = true) {
   const form = document.createElement("form")
-  form.innerHTML = `<section class="mui-marquee" data-marquee aria-label="Local announcement">
+  form.innerHTML = `<section class="m-marquee" data-marquee aria-label="Local announcement">
     <div data-marquee-viewport tabindex="0" aria-label="Scrollable announcement">
       <div data-marquee-content><strong>Original announcement.</strong> All of this text remains one original readable sequence.</div>
     </div>
@@ -236,8 +236,8 @@ describe("Marquee ownership, failure and finish", () => {
       expect(css).not.toMatch(/mask(?:-image)?\s*:|linear-gradient|::before|::after/)
       expect(css).not.toContain("[data-marquee-content] img")
       expect(css).not.toContain("vertical-align:")
-      expect(css).toContain("outline: 3px solid var(--mui-marquee-focus, #175cd3)")
-      expect(css).not.toMatch(/--mui-marquee-focus\s*:/)
+      expect(css).toContain("outline: 3px solid var(--m-marquee-focus, #175cd3)")
+      expect(css).not.toMatch(/--m-marquee-focus\s*:/)
       const { viewport, content } = fixture()
       expect(getComputedStyle(viewport).borderTopWidth).toBe("0px")
       expect(getComputedStyle(content).borderTopWidth).toBe("0px")
@@ -266,7 +266,7 @@ describe("Marquee ownership, failure and finish", () => {
       expect(media).toContain("transform: none !important")
       expect(media).toContain("overflow: visible !important")
       expect(media).toContain("overflow-wrap: anywhere")
-      expect(css.slice(css.lastIndexOf("@media print"))).toContain(".mui-marquee { color-scheme: light; color: CanvasText; background: Canvas; }")
+      expect(css.slice(css.lastIndexOf("@media print"))).toContain(".m-marquee { color-scheme: light; color: CanvasText; background: Canvas; }")
       expect(css).toContain('[data-marquee-controls] { display: none; }')
       expect(css).not.toContain("forced-color-adjust")
     })
@@ -298,7 +298,7 @@ describe("Marquee ownership, failure and finish", () => {
   })
   it("finishes once, restores static full content and allows explicit replay", () => {
     const { helper, root } = fixture({ active: true }), finished = vi.fn()
-    root.addEventListener("mui:marquee-finish", finished)
+    root.addEventListener("m:marquee-finish", finished)
     const original = animations[0]!, callback = original.onfinish!
     original.finish(); callback()
     expect(finished).toHaveBeenCalledOnce(); expect(helper.state.phase).toBe("finished"); expect(helper.state.active).toBe(false)
@@ -307,14 +307,14 @@ describe("Marquee ownership, failure and finish", () => {
   })
   it("reports falsy native animation errors and safely reenters from a finish listener", () => {
     const { helper, content, root } = fixture(), error = vi.fn(), original = content.animate
-    root.addEventListener("mui:marquee-error", error)
+    root.addEventListener("m:marquee-error", error)
     content.animate = () => { throw 0 }
     let caught: unknown
     try { helper.play() } catch (value) { caught = value }
     expect(caught).toBe(0); expect(error).toHaveBeenCalledOnce(); expect(helper.state.phase).toBe("error")
     content.animate = original; helper.play()
     const stale = animations.at(-1)!.onfinish!
-    root.addEventListener("mui:marquee-finish", () => helper.play(), { once: true })
+    root.addEventListener("m:marquee-finish", () => helper.play(), { once: true })
     stale(); expect(helper.state.phase).toBe("running")
     const latest = animations.at(-1)!
     stale(); expect(latest.cancel).not.toHaveBeenCalled()

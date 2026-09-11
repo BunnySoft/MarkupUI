@@ -25,7 +25,7 @@ for (const choice of choices) {
     changes++
     show({ nativeChanges: changes, trusted: event.isTrusted, workMode: value(single), channels: value(multiple), detail: value(nested) })
   })
-  choice.trigger.closest("[data-popselect]").addEventListener("mui:popselect-error", event => handoff({
+  choice.trigger.closest("[data-popselect]").addEventListener("m:popselect-error", event => handoff({
     error: String(event.detail.error), fallback: "Current native choices remain inline. Reload after repairing the unsupported context."
   }))
 }

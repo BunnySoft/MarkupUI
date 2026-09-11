@@ -21,11 +21,11 @@ afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); docu
 describe("Checkbox stylesheet contract", () => {
   const css = readFileSync(join("src", "components", "checkbox", "checkbox.css"), "utf8")
   it("keeps size, status and scheme defaults private for inherited author tokens", () => {
-    expect(css).not.toMatch(/--mui-checkbox-[\w-]+\s*:/)
-    for (const size of [14, 16, 18]) expect(css).toMatch(new RegExp(`--_mui-checkbox-size:\\s*${size}px`))
-    expect(css).toMatch(/data-mui-theme="?dark"?/)
+    expect(css).not.toMatch(/--m-checkbox-[\w-]+\s*:/)
+    for (const size of [14, 16, 18]) expect(css).toMatch(new RegExp(`--_m-checkbox-size:\\s*${size}px`))
+    expect(css).toMatch(/data-m-theme="?dark"?/)
     expect(css).toMatch(/vertical-align:\s*top/)
-    expect(css).not.toContain("var(--mui-text-primary")
+    expect(css).not.toContain("var(--m-text-primary")
   })
   it("retains the native checkbox skin instead of drawing replacement checks", () => {
     expect(css).toContain("accent-color:")
@@ -62,9 +62,9 @@ describe("native Checkbox and group ownership", () => {
     expect(alpha.hasAttribute("aria-checked")).toBe(false)
   })
   it("does not register legacy checkbox tags", () => {
-    const before = customElements.get("mui-checkbox")
+    const before = customElements.get("m-checkbox")
     fixture()
-    expect(customElements.get("mui-checkbox")).toBe(before)
+    expect(customElements.get("m-checkbox")).toBe(before)
   })
   it("guards duplicate root owners and supports recreation", () => {
     const { root, helper } = fixture()
@@ -121,7 +121,7 @@ describe("native Checkbox and group ownership", () => {
 describe("silent state and explicit native defaults", () => {
   it("setValues and refresh are silent and do not change defaults or mixed state", () => {
     const { root, helper, field } = fixture()
-    const change = vi.fn(); root.addEventListener("change", change); root.addEventListener("mui:checkbox-group-change", change)
+    const change = vi.fn(); root.addEventListener("change", change); root.addEventListener("m:checkbox-group-change", change)
     field("beta").indeterminate = true
     helper.setValues(["beta"])
     expect(field("alpha").defaultChecked).toBe(true)
@@ -184,7 +184,7 @@ describe("native activation and limits", () => {
   it("cancels forbidden min toggles using browser rollback, retaining mixed state", async () => {
     const { helper, field, root } = fixture()
     const alpha = field("alpha"); alpha.indeterminate = true
-    const events = vi.fn(); root.addEventListener("input", events); root.addEventListener("change", events); root.addEventListener("mui:checkbox-group-change", events)
+    const events = vi.fn(); root.addEventListener("input", events); root.addEventListener("change", events); root.addEventListener("m:checkbox-group-change", events)
     alpha.click(); await flush()
     expect([alpha.checked, alpha.indeterminate]).toEqual([true, true])
     expect(helper.state.values).toEqual(["alpha"])
@@ -195,7 +195,7 @@ describe("native activation and limits", () => {
     const events: string[] = [], details: CheckboxGroupChange[] = []
     field("beta").addEventListener("input", () => events.push("input"))
     field("beta").addEventListener("change", () => events.push("change"))
-    root.addEventListener("mui:checkbox-group-change", event => { events.push("group"); details.push((event as CustomEvent).detail) })
+    root.addEventListener("m:checkbox-group-change", event => { events.push("group"); details.push((event as CustomEvent).detail) })
     field("beta").labels![0]!.click(); await flush()
     expect(events).toEqual(["input", "change", "group"])
     expect(details).toEqual([{ values: ["alpha", "beta"], value: "beta", actionType: "check" }])
@@ -219,7 +219,7 @@ describe("native activation and limits", () => {
   })
   it("respects a later author's click cancellation without dirty state or events", async () => {
     const { root, field } = fixture()
-    const event = vi.fn(); root.addEventListener("mui:checkbox-group-change", event)
+    const event = vi.fn(); root.addEventListener("m:checkbox-group-change", event)
     field("beta").indeterminate = true
     root.addEventListener("click", e => e.preventDefault(), { once: true })
     field("beta").click(); await flush()
@@ -260,7 +260,7 @@ describe("form reset, refresh and disposal", () => {
     helper.setValues(["beta"])
     field("alpha").defaultChecked = false; field("gamma").defaultChecked = true
     field("alpha").indeterminate = true
-    const events = vi.fn(); root.addEventListener("mui:checkbox-group-change", events)
+    const events = vi.fn(); root.addEventListener("m:checkbox-group-change", events)
     form.reset(); await flush()
     expect(helper.state.values).toEqual(["gamma"])
     expect(field("gamma").getAttribute("aria-disabled")).toBe("true")
@@ -308,7 +308,7 @@ describe("form reset, refresh and disposal", () => {
   })
   it("reports invalid late members, rejects explicit refresh/actions, then recovers", async () => {
     const { helper, root, field } = fixture()
-    const error = vi.fn(); root.addEventListener("mui:checkbox-group-error", error)
+    const error = vi.fn(); root.addEventListener("m:checkbox-group-error", error)
     field("beta").value = "alpha"; await flush()
     expect(error).toHaveBeenCalledTimes(1)
     expect(helper.error).toMatch("unique")
@@ -320,7 +320,7 @@ describe("form reset, refresh and disposal", () => {
   })
   it("reports an invalid native change before the mutation observer runs", () => {
     const { root, field } = fixture()
-    const error = vi.fn(); root.addEventListener("mui:checkbox-group-error", error)
+    const error = vi.fn(); root.addEventListener("m:checkbox-group-error", error)
     field("beta").value = "alpha"
     field("beta").dispatchEvent(new Event("change", { bubbles: true }))
     expect(error).toHaveBeenCalledTimes(1)
@@ -347,7 +347,7 @@ describe("form reset, refresh and disposal", () => {
   })
   it("disconnects removed roots and cancels queued group events", async () => {
     const { helper, root, field } = fixture()
-    const changed = vi.fn(); root.addEventListener("mui:checkbox-group-change", changed)
+    const changed = vi.fn(); root.addEventListener("m:checkbox-group-change", changed)
     field("beta").click(); root.remove()
     await flush()
     expect(helper.connected).toBe(false)

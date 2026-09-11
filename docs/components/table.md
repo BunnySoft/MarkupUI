@@ -36,7 +36,7 @@ adapted targets and 4 Intentionally omitted contracts**. No framework/pixel pari
 ## Native anatomy and associations
 
 ```html
-<table class="mui-table">
+<table class="m-table">
   <caption>Project hours</caption>
   <colgroup><col><col></colgroup>
   <thead>
@@ -143,8 +143,8 @@ desired.
 Plain-table colors are local to this stylesheet. Light defaults are body `#fff` /
 `#333639`, header `#fafafc` / `#1f2225`, border `#efeff5`, and stripe `#fafafc`.
 Dark defaults are body `#18181c` / white .82, header `#26262a` / white .9, border
-`#2d2d30`, and stripe `#242427`. Set `data-mui-theme="dark"` on the native context;
-nested `data-mui-theme="light"` scopes restore light colors without a shared theme
+`#2d2d30`, and stripe `#242427`. Set `data-m-theme="dark"` on the native context;
+nested `data-m-theme="light"` scopes restore light colors without a shared theme
 stylesheet. Public Table tokens remain author overrides.
 
 **The border/radius model is intentionally unchanged:** native collapsed borders retain
@@ -153,11 +153,11 @@ This preserves spanning-cell perimeter conflict resolution and unclipped cell co
 The [rendered Table audit](../style-audit/components/table.md) distinguishes the matching
 typography/palette from this retained geometry boundary.
 
-Tokens: `--mui-table-cell-padding`, `--mui-table-font-size`, `--mui-table-color`,
-`--mui-table-background`, `--mui-table-header-background`, `--mui-table-header-weight`,
-`--mui-table-header-color`, `--mui-table-line-height`, `--mui-table-border-color` and
-`--mui-table-striped-background`. Private
-`--_mui-table-*` presets are not API. Use valid values in external CSS; native CSS
+Tokens: `--m-table-cell-padding`, `--m-table-font-size`, `--m-table-color`,
+`--m-table-background`, `--m-table-header-background`, `--m-table-header-weight`,
+`--m-table-header-color`, `--m-table-line-height`, `--m-table-border-color` and
+`--m-table-striped-background`. Private
+`--_m-table-*` presets are not API. Use valid values in external CSS; native CSS
 validation applies. Source `theme`, `themeOverrides`, `builtinThemeOverrides` and the
 exported TypeScript `TableSize` alias are intentionally not implemented. The native size
 vocabulary is already covered by the size mapping.
@@ -171,9 +171,9 @@ Those belong to separate Data Table/application work, not this component.
 
 ```html
 <p id="table-help">Scroll horizontally or Tab to the cell actions.</p>
-<div class="mui-table-scroll" tabindex="0" role="region"
+<div class="m-table-scroll" tabindex="0" role="region"
   aria-labelledby="report-caption" aria-describedby="table-help">
-  <table class="mui-table">
+  <table class="m-table">
     <caption id="report-caption">Project report</caption>
     <!-- Authored native rowgroups and cells -->
   </table>
@@ -247,7 +247,7 @@ On 2026-09-08, `pnpm --dir D:\repos\MarkupUI check` passed build/budget gates an
   wrapper overflow. Native ArrowRight scrolling and Tab revealed the input in LTR and RTL.
 - Print wrapper expansion/native header-group display and forced-color text/borders.
 - Later core/widgets/advanced loading preserved native nodes/table rendering; a separate
-  legacy data-grid still generated its own header/row, and no mui-table definition appeared.
+  legacy data-grid still generated its own header/row, and no m-table definition appeared.
 - JavaScript-disabled native reset/GET submission to `?note=NoJS`, with caption and both
   visible body rows retained.
 

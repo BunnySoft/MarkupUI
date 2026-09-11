@@ -10,7 +10,7 @@ function renderState() {
     ? JSON.stringify(topics.state) : "Group helpers disconnected; native controls still work."
 }
 renderState()
-document.getElementById("topics").addEventListener("mui:checkbox-group-change", () => {
+document.getElementById("topics").addEventListener("m:checkbox-group-change", () => {
   document.getElementById("event-count").textContent = `Accepted group changes: ${++changes}`
   renderState()
 })

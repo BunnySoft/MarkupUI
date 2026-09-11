@@ -11,8 +11,8 @@ The [rendered audit](../style-audit/components/modal.md) compares actual pinned 
 2.45.3/Vue 3.5.30 **raw, Card and Dialog** Modal presentations, without adding a
 `preset` option or changing native lifetime.
 
-- **Raw authored content:** `.mui-modal` without direct Modal header/title regions or
-  `.mui-dialog` is a transparent, borderless, zero-padding, square-cornered surface.
+- **Raw authored content:** `.m-modal` without direct Modal header/title regions or
+  `.m-dialog` is a transparent, borderless, zero-padding, square-cornered surface.
   Its native fixed-position box uses `fit-content` to reproduce the reference raw
   child's shrink-to-content width; an automatic width would stretch between native
   fixed insets. There is no longer an arbitrary 40rem default.
@@ -22,7 +22,7 @@ The [rendered audit](../style-audit/components/modal.md) compares actual pinned 
   Width defaults to 100%, still constrained by native viewport bounds. The local
   `:has()` only recognizes these direct authored regions; a nested dialog's title
   does not change its parent's skin. It never selects or locks the document.
-- **Authored Dialog intent:** `.mui-modal.mui-dialog` uses the separately loaded
+- **Authored Dialog intent:** `.m-modal.m-dialog` uses the separately loaded
   Dialog stylesheet, its 446px default width and 16px/28px/20px padding. Modal adds
   the measured wrapper shadow without overwriting Dialog typography or anatomy.
   No Dialog decision runtime is imported.
@@ -33,13 +33,13 @@ smaller, theme-dependent shadow; raw/Dialog use the reference Modal shadow. Defa
 mask paint is now **black at .4 alpha** in both themes, scoped to Modal only. This
 changes neither opt-in dismissal nor the native meaning of a transparent backdrop.
 
-Light/dark defaults follow `data-mui-theme` boundaries. Foreground/surface roles are
+Light/dark defaults follow `data-m-theme` boundaries. Foreground/surface roles are
 **#333639 / white** and **white .82 / #2c2c32** for Card/Dialog; raw remains transparent.
 They do not reuse the incompatible legacy neutral palette. With core CSS, load the
 matching theme preset for shared semantic roles such as the focus color.
-Existing `--mui-modal-width`, padding, radius, border and focus variables remain
-author-owned; foreground/background retain `--mui-dialog-color` and
-`--mui-dialog-background` from the shared native contract. Modal width takes precedence
+Existing `--m-modal-width`, padding, radius, border and focus variables remain
+author-owned; foreground/background retain `--m-dialog-color` and
+`--m-dialog-background` from the shared native contract. Modal width takes precedence
 over Dialog width in composed presentation. The border variable sets its color;
 the new unbordered default requires an authored border width to show a border.
 
@@ -73,7 +73,7 @@ or builder changed. The historical migration acceptance below predates this audi
 ```html
 <a id="open-project" href="#project-inline">Open project information</a>
 <section id="project-inline"><h2>Project information</h2><p>Usable inline alternative.</p></section>
-<dialog id="project" class="mui-native-dialog mui-modal"
+<dialog id="project" class="m-native-dialog m-modal"
   aria-labelledby="project-title" aria-describedby="project-description">
   <header data-modal-header>
     <h2 id="project-title" data-modal-title tabindex="-1" autofocus>Project information</h2>
@@ -104,7 +104,7 @@ aria-labelledby references. Preserve authored headings, description references, 
 labels and form controls. No generated IDs, duplicate wrappers or role overrides.
 An authored valid role=dialog/alertdialog is retained; native semantics ordinarily suffice.
 **Do not author aria-modal** because the same element can intentionally open modelessly.
-No mui-* registration, provider app, portal renderer, runtime CSS or global state store.
+No m-* registration, provider app, portal renderer, runtime CSS or global state store.
 
 ## Strict native visibility and focus
 
@@ -152,7 +152,7 @@ changing their own content. Do not treat generation as cancellation of external 
 Opt-in dismissal requires the same primary pointer to start and end **outside the border
 rectangle**. Padding clicks, inside-to-outside drags, secondary/mismatched/cancelled
 pointers and later pointer-event preventDefault do not dismiss. The nonbubbling
-`mui:native-dialog-backdrop` event is cancelable and contains `{ event: PointerEvent }`.
+`m:native-dialog-backdrop` event is cancelable and contains `{ event: PointerEvent }`.
 It is emitted only for an eligible opt-in request, not for every click on a framework mask.
 The resulting requestClose still respects native cancel listeners.
 
@@ -307,7 +307,7 @@ The same dispositions apply to original camelCase Options/Reactive repetitions.
 - Actual pointer tests retained padding/inside-to-outside drags and dismissed eligible
   backdrop requests. Transparent backdrop remained modal. Direct native and controller
   reopen paths, independent clone disposal/removal and shared ESM/classic/Dialog ownership
-  were checked. Classic namespace collision preserved the original API; legacy MuiDialog
+  were checked. Classic namespace collision preserved the original API; legacy MDialog
   still opened and closed independently.
 - Read-only review found bulk destruction using obsolete creation order after handles
   reopened in the opposite order. Unit and Chromium regressions now preserve the original

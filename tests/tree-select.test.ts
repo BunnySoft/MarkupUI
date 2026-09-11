@@ -18,7 +18,7 @@ const sourceHTML = () => row("docs", "Documents", row("readme", "README") + row(
   + row("archive", "Archive", row("archived", "Old file"), "data-tree-disabled") + row("standalone", "Standalone")
 function fixture(options: TreeSelectOptions = {}, config: { multiple?: boolean; filter?: boolean; initial?: string; required?: boolean; source?: string } = {}) {
   const form = document.createElement("form")
-  form.innerHTML = `<section class="mui-tree-select" data-tree-select><section class="mui-tree" data-tree data-tree-select-source aria-label="Files"><ul data-tree-list>${config.source ?? sourceHTML()}</ul></section><div class="mui-select" data-select data-tree-select-field><label>Files<select data-select-control name="files" ${config.multiple ? "multiple" : ""} ${config.filter || config.multiple ? 'size="5"' : ""} ${config.required !== false ? "required" : ""}>${!config.multiple ? `<option value="" ${config.filter ? "" : "data-select-placeholder"}>Choose file</option>` : ""}<option value="readme" ${config.initial === "readme" ? "selected" : ""}>Documents / README</option><option value="notes" ${config.initial === "notes" ? "selected" : ""}>Documents / Notes</option><option value="standalone" ${config.initial === "standalone" ? "selected" : ""}>Standalone</option></select></label>${config.filter ? '<div data-select-search hidden><label>Filter<input type="search" data-select-filter></label><p data-select-empty hidden>No matches. Selected items remain visible.</p></div>' : ""}</div><p data-tree-select-value></p><p data-tree-select-status></p><button type="button" data-tree-select-clear hidden>Clear files</button></section><button type="button" id="outside">Outside</button>`
+  form.innerHTML = `<section class="m-tree-select" data-tree-select><section class="m-tree" data-tree data-tree-select-source aria-label="Files"><ul data-tree-list>${config.source ?? sourceHTML()}</ul></section><div class="m-select" data-select data-tree-select-field><label>Files<select data-select-control name="files" ${config.multiple ? "multiple" : ""} ${config.filter || config.multiple ? 'size="5"' : ""} ${config.required !== false ? "required" : ""}>${!config.multiple ? `<option value="" ${config.filter ? "" : "data-select-placeholder"}>Choose file</option>` : ""}<option value="readme" ${config.initial === "readme" ? "selected" : ""}>Documents / README</option><option value="notes" ${config.initial === "notes" ? "selected" : ""}>Documents / Notes</option><option value="standalone" ${config.initial === "standalone" ? "selected" : ""}>Standalone</option></select></label>${config.filter ? '<div data-select-search hidden><label>Filter<input type="search" data-select-filter></label><p data-select-empty hidden>No matches. Selected items remain visible.</p></div>' : ""}</div><p data-tree-select-value></p><p data-tree-select-status></p><button type="button" data-tree-select-clear hidden>Clear files</button></section><button type="button" id="outside">Outside</button>`
   document.body.append(form)
   const root = form.querySelector<HTMLElement>("[data-tree-select]")!, source = root.querySelector<HTMLElement>("[data-tree-select-source]")!
   const control = root.querySelector<HTMLSelectElement>("select")!, original = [...control.options], label = control.labels![0]!
@@ -36,13 +36,13 @@ describe("native Tree Select visual defaults", () => {
   it("keeps four trigger size defaults and native listbox sizing within budget", () => {
     expect(gzipSync(pickerCss, { level: 9 }).length).toBeLessThanOrEqual(1250)
     for (const height of [22, 28, 34, 40]) expect(pickerCss).toContain(`--_tree-select-height: ${height}px`)
-    expect(pickerCss).toContain("min-block-size: var(--mui-tree-select-height")
+    expect(pickerCss).toContain("min-block-size: var(--m-tree-select-height")
     expect(pickerCss).not.toMatch(/(?:^|[;{])\s*(?:height|block-size):/m)
     expect(pickerCss).not.toContain("appearance:")
     expect(pickerCss).not.toContain("input[type=checkbox]")
   })
   it("supports standalone palette defaults and the existing Select author tokens", () => {
-    for (const token of ["--mui-select-border", "--mui-select-background", "--mui-select-color", "--mui-select-focus", "--mui-select-pad"]) {
+    for (const token of ["--m-select-border", "--m-select-background", "--m-select-color", "--m-select-focus", "--m-select-pad"]) {
       expect(pickerCss).toContain(token)
     }
     expect(pickerCss).toContain("light-dark(#e0e0e6, transparent)")
@@ -51,7 +51,7 @@ describe("native Tree Select visual defaults", () => {
     expect(pickerCss).toContain("border-color: CanvasText !important")
   })
   it("keeps passive source indentation and native visibility rather than adding a popup", () => {
-    expect(pickerCss).toContain("--mui-tree-select-indent, 24px")
+    expect(pickerCss).toContain("--m-tree-select-indent, 24px")
     expect(pickerCss).toContain("[data-tree-select-source] > [data-tree-list] { padding-inline-start: 0; }")
     expect(pickerCss).toContain("[hidden] { display: none !important; }")
     expect(pickerCss).not.toContain("position: fixed")
@@ -197,7 +197,7 @@ describe("native filtering and forms", () => {
 describe("native defaults, refresh and notifications", () => {
   it("keeps current/default values separate and resets silently", async () => {
     const { helper, form, root } = fixture({ defaultValue: "readme", value: "notes" }), change = vi.fn()
-    root.addEventListener("mui:tree-select-change", change)
+    root.addEventListener("m:tree-select-change", change)
     form.reset(); await wait(); expect(helper.value).toBe("readme")
     helper.setValue("standalone"); helper.refresh(); expect(change).not.toHaveBeenCalled()
   })
@@ -234,7 +234,7 @@ describe("native defaults, refresh and notifications", () => {
   })
   it("emits once for native change/clear and never for filtering or setters", async () => {
     const { helper, control, root, clear } = fixture({}, { filter: true }), change = vi.fn()
-    root.addEventListener("mui:tree-select-change", change)
+    root.addEventListener("m:tree-select-change", change)
     helper.setValue("readme"); helper.setFilter("README"); expect(change).not.toHaveBeenCalled()
     control.value = "notes"; control.dispatchEvent(new Event("change", { bubbles: true }))
     expect(change).toHaveBeenCalledOnce()

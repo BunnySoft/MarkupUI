@@ -33,7 +33,7 @@ After the pass:
 The model default is now `colorTheme: null`, so the built-in scheme palette is used.
 Explicit green/blue/orange/purple/red themes use the pinned four active colors and keep
 the scheme-specific minimum, matching upstream precedence. Validated `activeColors`,
-`minimumColor` and authored public `--mui-heatmap-*` values still win. A Chromium probe
+`minimumColor` and authored public `--m-heatmap-*` values still win. A Chromium probe
 confirmed the light/dark L0 and L4 colors and an authored `#123456` L4 override.
 
 ## Retained native differences

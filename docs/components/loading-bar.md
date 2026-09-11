@@ -15,7 +15,7 @@ cancellation is included. Each bar belongs to an explicitly supplied native root
 | [Local demo](../../demo/components/loading-bar.html) | Separate HTML/CSS/JS; explicit local operations only |
 
 ```html
-<div class="mui-loading-bar" data-loading-bar id="report-bar">
+<div class="m-loading-bar" data-loading-bar id="report-bar">
   <progress max="100" value="25" aria-label="Report preparation"
     aria-describedby="report-status">25%</progress>
   <span data-loading-bar-status id="report-status">25 of 100, supplied by the author.</span>
@@ -83,7 +83,7 @@ rail independently of those timing policies. The default rail is now **2px**, sq
 primary-colored in both loading and success, with a transparent track. Inline roots remain
 transparent; fixed roots use the configurable readability backing described below.
 Explicit light/dark scopes use the pinned loading colors and error colors: light `#d03050`,
-dark red `#f00`. Existing `--mui-loading-bar-*` overrides and application primary tokens remain.
+dark red `#f00`. Existing `--m-loading-bar-*` overrides and application primary tokens remain.
 The optional fixed surface uses z-index **5999** and retains logical safe-area/inset controls.
 
 New loading presentation fades in over 300ms with the reference easing. In fixed mode only
@@ -124,11 +124,11 @@ provider's 800ms terminal fade-out or automatic 0→80% simulation. Repeated `st
 the same loading phase does not force a CSS fade restart. Status words remain visible
 native content, not hidden merely to make the entire surface two pixels high.
 
-`mui:loading-bar-change` is a nonbubbling `{ state, previous }` notification for actual phase
+`m:loading-bar-change` is a nonbubbling `{ state, previous }` notification for actual phase
 changes, including programmatic calls and automatic hiding. It is **not a user event** or a
 network/animation completion promise. Repeated starts and measured updates in the same
 loading phase do not fabricate another phase notification. Connect/disconnect are silent.
-`mui:loading-bar-fault` reports automatic validation failures with `{ error }` after cleanup.
+`m:loading-bar-fault` reports automatic validation failures with `{ error }` after cleanup.
 It is separate from the application's ordinary error() outcome. Explicit invalid calls throw.
 
 **UI generations protect internal callbacks only.** If operation A finishes after operation B
@@ -171,17 +171,17 @@ does not block page actions. Native fixed-position containing blocks/transforms 
 there is no portal or universal viewport-following promise.
 
 Fixed mode uses an opaque native `Canvas` root backing by default, configurable through
-`--mui-loading-bar-background`. This protects all visible words, including arbitrary spans
+`--m-loading-bar-background`. This protects all visible words, including arbitrary spans
 referenced by `aria-labelledby`, not only native labels and the status marker. The rail
 remains 2px with a transparent unfilled track; the larger backed native status surface is
 an explicit difference from the source provider's two-pixel-only UI. Inline behavior is unchanged.
 
 Labels/status markers remain content-sized and wrap long words. Their optional
-`--mui-loading-bar-status-background` defaults to transparent over the root backing, avoiding
+`--m-loading-bar-status-background` defaults to transparent over the root backing, avoiding
 duplicated translucent layers. Foreground/text/error overrides are unchanged.
 
 This protects the status words, not the header content behind them. Applications must still
-choose clearance/placement with `--mui-loading-bar-top`, insets or normal flow when header
+choose clearance/placement with `--m-loading-bar-top`, insets or normal flow when header
 content must remain unobscured. Explicit transparent root backing or root opacity can reintroduce
 overlap; those choices require author-managed clearance/contrast. There is no collision or
 header-layout engine. Print removes default root/word backings and uses a light scheme with

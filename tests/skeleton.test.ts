@@ -1,20 +1,20 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { MuiSkeleton, registerSkeleton } from "../src/components/skeleton/index.js"
+import { MSkeleton, registerSkeleton } from "../src/components/skeleton/index.js"
 import { registerElements } from "../src/components/elements.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
-function skeleton(markup = "<mui-skeleton></mui-skeleton>"): MuiSkeleton {
+function skeleton(markup = "<m-skeleton></m-skeleton>"): MSkeleton {
   document.body.innerHTML = markup
-  const element = document.querySelector("mui-skeleton")
-  if (!(element instanceof MuiSkeleton)) throw new Error("Skeleton was not upgraded")
+  const element = document.querySelector("m-skeleton")
+  if (!(element instanceof MSkeleton)) throw new Error("Skeleton was not upgraded")
   return element
 }
-function group(element: MuiSkeleton): HTMLElement {
-  return element.querySelector(":scope > [data-mui-skeleton-group]")!
+function group(element: MSkeleton): HTMLElement {
+  return element.querySelector(":scope > [data-m-skeleton-group]")!
 }
-function bars(element: MuiSkeleton): Element[] {
-  return [...group(element).querySelectorAll(":scope > [data-mui-skeleton-item]")]
+function bars(element: MSkeleton): Element[] {
+  return [...group(element).querySelectorAll(":scope > [data-m-skeleton-item]")]
 }
 
 describe("standalone Skeleton", () => {
@@ -31,16 +31,16 @@ describe("standalone Skeleton", () => {
   })
 
   it("normalizes bare finite dimensions to pixels and retains unit-bearing geometry", () => {
-    const element = skeleton('<mui-skeleton width="120" height="20px"></mui-skeleton>')
+    const element = skeleton('<m-skeleton width="120" height="20px"></m-skeleton>')
     expect(element.width).toBe("120")
-    expect(element.style.getPropertyValue("--_mui-skeleton-width")).toBe("120px")
-    expect(element.style.getPropertyValue("--_mui-skeleton-height")).toBe("20px")
+    expect(element.style.getPropertyValue("--_m-skeleton-width")).toBe("120px")
+    expect(element.style.getPropertyValue("--_m-skeleton-height")).toBe("20px")
     element.width = "50%"
     element.height = 0
-    expect(element.style.getPropertyValue("--_mui-skeleton-width")).toBe("50%")
-    expect(element.style.getPropertyValue("--_mui-skeleton-height")).toBe("0px")
+    expect(element.style.getPropertyValue("--_m-skeleton-width")).toBe("50%")
+    expect(element.style.getPropertyValue("--_m-skeleton-height")).toBe("0px")
     element.width = "2e2"
-    expect(element.style.getPropertyValue("--_mui-skeleton-width")).toBe("200px")
+    expect(element.style.getPropertyValue("--_m-skeleton-width")).toBe("200px")
   })
 
   it("accepts native CSS lengths, calculations, variables and auto without a stylesheet renderer", () => {
@@ -48,13 +48,13 @@ describe("standalone Skeleton", () => {
     for (const width of ["2rem", "10vw", "calc(100% - 8px)", "var(--example-width)", "auto"]) {
       element.width = width
       expect(element.valid).toBe(true)
-      expect(element.style.getPropertyValue("--_mui-skeleton-width")).not.toBe("")
+      expect(element.style.getPropertyValue("--_m-skeleton-width")).not.toBe("")
     }
     expect(document.querySelector("style")).toBeNull()
   })
 
   it("rejects invalid dimensions before mutating a valid property assignment", () => {
-    const element = skeleton('<mui-skeleton width="80px" height="20px"></mui-skeleton>')
+    const element = skeleton('<m-skeleton width="80px" height="20px"></m-skeleton>')
     for (const width of [-1, NaN, Infinity, "", "-4px", "bogus", "10px; color:red", "inherit", "unset"]) {
       expect(() => { element.width = width }).toThrow(RangeError)
       expect(element.width).toBe("80px")
@@ -65,10 +65,10 @@ describe("standalone Skeleton", () => {
   })
 
   it("exposes invalid HTML attributes and hides placeholders rather than silently guessing", () => {
-    const element = skeleton('<mui-skeleton width="wrong" height="-10px" repeat="200" size="tiny">Owned content</mui-skeleton>')
+    const element = skeleton('<m-skeleton width="wrong" height="-10px" repeat="200" size="tiny">Owned content</m-skeleton>')
     expect(element.valid).toBe(false)
     expect(element.validationErrors).toEqual(["width", "height", "repeat", "size"])
-    expect(element.dataset.muiSkeletonInvalid).toBe("width height repeat size")
+    expect(element.dataset.mSkeletonInvalid).toBe("width height repeat size")
     expect(group(element).hidden).toBe(true)
     expect(bars(element)).toHaveLength(0)
     expect(element.textContent).toContain("Owned content")
@@ -77,26 +77,26 @@ describe("standalone Skeleton", () => {
   })
 
   it("prepares relative height sizing with a bounded count and clears it for zero or invalid input", () => {
-    const element = skeleton('<mui-skeleton height="50%" repeat="3"></mui-skeleton>')
-    expect(element.hasAttribute("data-mui-skeleton-relative-height")).toBe(true)
-    expect(element.style.getPropertyValue("--_mui-skeleton-repeat")).toBe("3")
+    const element = skeleton('<m-skeleton height="50%" repeat="3"></m-skeleton>')
+    expect(element.hasAttribute("data-m-skeleton-relative-height")).toBe(true)
+    expect(element.style.getPropertyValue("--_m-skeleton-repeat")).toBe("3")
     element.width = 80
-    expect(element.style.getPropertyValue("--_mui-skeleton-repeat")).toBe("3")
+    expect(element.style.getPropertyValue("--_m-skeleton-repeat")).toBe("3")
     element.repeat = 0
-    expect(element.hasAttribute("data-mui-skeleton-relative-height")).toBe(false)
-    expect(element.style.getPropertyValue("--_mui-skeleton-repeat")).toBe("")
+    expect(element.hasAttribute("data-m-skeleton-relative-height")).toBe(false)
+    expect(element.style.getPropertyValue("--_m-skeleton-repeat")).toBe("")
     element.repeat = 2
     element.setAttribute("height", "bad")
-    expect(element.hasAttribute("data-mui-skeleton-relative-height")).toBe(false)
+    expect(element.hasAttribute("data-m-skeleton-relative-height")).toBe(false)
     expect(group(element).hidden).toBe(true)
   })
 
   it("recovers from declarative errors without changing application loading state", () => {
-    const element = skeleton('<section aria-busy="true"><mui-skeleton width="bad" repeat="101"></mui-skeleton><p>Loading results</p></section>')
+    const element = skeleton('<section aria-busy="true"><m-skeleton width="bad" repeat="101"></m-skeleton><p>Loading results</p></section>')
     element.width = 80
     element.repeat = 2
     expect(element.valid).toBe(true)
-    expect(element.hasAttribute("data-mui-skeleton-invalid")).toBe(false)
+    expect(element.hasAttribute("data-m-skeleton-invalid")).toBe(false)
     expect(group(element).hidden).toBe(false)
     expect(bars(element)).toHaveLength(2)
     expect(document.querySelector("section")?.getAttribute("aria-busy")).toBe("true")
@@ -118,7 +118,7 @@ describe("standalone Skeleton", () => {
   })
 
   it("makes zero repeat explicit and resets to one only when the attribute is removed", () => {
-    const element = skeleton('<mui-skeleton repeat="3"></mui-skeleton>')
+    const element = skeleton('<m-skeleton repeat="3"></m-skeleton>')
     element.repeat = 0
     expect(element.valid).toBe(true)
     expect(bars(element)).toHaveLength(0)
@@ -130,7 +130,7 @@ describe("standalone Skeleton", () => {
   })
 
   it("preserves generated bar identity while growing and shrinking valid repetition", () => {
-    const element = skeleton('<mui-skeleton repeat="2"></mui-skeleton>')
+    const element = skeleton('<m-skeleton repeat="2"></m-skeleton>')
     const first = bars(element)[0]
     const second = bars(element)[1]
     element.repeat = 4
@@ -141,7 +141,7 @@ describe("standalone Skeleton", () => {
   })
 
   it("keeps author nodes and listeners outside the decorative group", () => {
-    const element = document.createElement("mui-skeleton") as MuiSkeleton
+    const element = document.createElement("m-skeleton") as MSkeleton
     const button = document.createElement("button")
     button.type = "button"
     button.textContent = "Application control"
@@ -161,7 +161,7 @@ describe("standalone Skeleton", () => {
   })
 
   it("preserves explicit host ARIA without inventing busy state or a live announcer", () => {
-    const element = skeleton('<mui-skeleton role="status" aria-label="Chart placeholder" aria-hidden="false" aria-live="off"></mui-skeleton>')
+    const element = skeleton('<m-skeleton role="status" aria-label="Chart placeholder" aria-hidden="false" aria-live="off"></m-skeleton>')
     element.width = 50
     element.animated = false
     expect(element.getAttribute("role")).toBe("status")
@@ -186,7 +186,7 @@ describe("standalone Skeleton", () => {
   })
 
   it("leaves native templates inert and does not clone their controls", async () => {
-    const element = skeleton('<mui-skeleton repeat="3"><template data-mui-skeleton-item><button>Inert</button></template></mui-skeleton>')
+    const element = skeleton('<m-skeleton repeat="3"><template data-m-skeleton-item><button>Inert</button></template></m-skeleton>')
     const template = element.querySelector("template")
     expect(template?.parentElement).toBe(element)
     expect(element.querySelector("button")).toBeNull()
@@ -198,18 +198,18 @@ describe("standalone Skeleton", () => {
   })
 
   it("preserves unrelated author styles and releases only private dimension overrides", () => {
-    const element = skeleton('<mui-skeleton width="60px" height="20px" style="color: red; --mui-skeleton-width: 75%; --mui-skeleton-height: 2em"></mui-skeleton>')
+    const element = skeleton('<m-skeleton width="60px" height="20px" style="color: red; --m-skeleton-width: 75%; --m-skeleton-height: 2em"></m-skeleton>')
     element.width = null
     element.height = undefined
-    expect(element.style.getPropertyValue("--_mui-skeleton-width")).toBe("")
-    expect(element.style.getPropertyValue("--_mui-skeleton-height")).toBe("")
-    expect(element.style.getPropertyValue("--mui-skeleton-width")).toBe("75%")
-    expect(element.style.getPropertyValue("--mui-skeleton-height")).toBe("2em")
+    expect(element.style.getPropertyValue("--_m-skeleton-width")).toBe("")
+    expect(element.style.getPropertyValue("--_m-skeleton-height")).toBe("")
+    expect(element.style.getPropertyValue("--m-skeleton-width")).toBe("75%")
+    expect(element.style.getPropertyValue("--m-skeleton-height")).toBe("2em")
     expect(element.style.color).toBe("red")
   })
 
   it("needs no inline styles when dimensions are supplied only by external CSS or presets", () => {
-    const element = skeleton('<mui-skeleton size="small" repeat="2"></mui-skeleton>')
+    const element = skeleton('<m-skeleton size="small" repeat="2"></m-skeleton>')
     expect(element.hasAttribute("style")).toBe(false)
     expect(element.querySelector("[style]")).toBeNull()
     expect(element.shadowRoot).toBeNull()
@@ -241,7 +241,7 @@ describe("standalone Skeleton", () => {
   it("keeps assignment silent and does not attach keyboard or click behavior", () => {
     const element = skeleton()
     const events = vi.fn()
-    for (const name of ["click", "change", "input", "mui:change"]) element.addEventListener(name, events)
+    for (const name of ["click", "change", "input", "m:change"]) element.addEventListener(name, events)
     element.repeat = 2
     element.width = 40
     const event = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true })
@@ -251,18 +251,18 @@ describe("standalone Skeleton", () => {
   })
 
   it("cleans up observation on disconnect and reuses bars on reconnect", async () => {
-    const element = skeleton('<mui-skeleton repeat="2" width="40px"></mui-skeleton>')
+    const element = skeleton('<m-skeleton repeat="2" width="40px"></m-skeleton>')
     const previous = bars(element)
     element.remove()
     element.repeat = 3
     element.width = 50
     await Promise.resolve()
     expect(bars(element)).toEqual(previous)
-    expect(element.style.getPropertyValue("--_mui-skeleton-width")).toBe("40px")
+    expect(element.style.getPropertyValue("--_m-skeleton-width")).toBe("40px")
     document.body.append(element)
     expect(bars(element)[0]).toBe(previous[0])
     expect(bars(element)).toHaveLength(3)
-    expect(element.style.getPropertyValue("--_mui-skeleton-width")).toBe("50px")
+    expect(element.style.getPropertyValue("--_m-skeleton-width")).toBe("50px")
   })
 
   it("adopts late author content and regenerates only its own removed group", async () => {
@@ -282,7 +282,7 @@ describe("standalone Skeleton", () => {
   })
 
   it("reconciles removed generated bars without recreating surviving rows", async () => {
-    const element = skeleton('<mui-skeleton repeat="2"></mui-skeleton>')
+    const element = skeleton('<m-skeleton repeat="2"></m-skeleton>')
     const first = bars(element)[0]
     bars(element)[1]!.remove()
     await Promise.resolve()
@@ -292,14 +292,14 @@ describe("standalone Skeleton", () => {
 
   it("handles pre-definition properties with bounded geometry and no replacement of author nodes", () => {
     document.body.innerHTML = "<test-late-skeleton><span>Caption</span></test-late-skeleton>"
-    const element = document.querySelector("test-late-skeleton") as MuiSkeleton
+    const element = document.querySelector("test-late-skeleton") as MSkeleton
     const caption = element.querySelector("span")
     Object.assign(element, { width: 80, height: "2em", repeat: "3", size: "small", text: true, round: true, circle: false, animated: false, sharp: false })
-    customElements.define("test-late-skeleton", class extends MuiSkeleton {})
+    customElements.define("test-late-skeleton", class extends MSkeleton {})
     expect(element.valid).toBe(true)
     expect(bars(element)).toHaveLength(3)
-    expect(element.style.getPropertyValue("--_mui-skeleton-width")).toBe("80px")
-    expect(element.style.getPropertyValue("--_mui-skeleton-height")).toBe("2em")
+    expect(element.style.getPropertyValue("--_m-skeleton-width")).toBe("80px")
+    expect(element.style.getPropertyValue("--_m-skeleton-height")).toBe("2em")
     expect(element.text && element.round).toBe(true)
     expect(element.animated || element.sharp).toBe(false)
     expect(element.contains(caption)).toBe(true)
@@ -311,7 +311,7 @@ describe("standalone Skeleton", () => {
     expect(() => registerSkeleton({ get: () => class extends HTMLElement {}, define })).toThrow("before the legacy MarkupUI bundle")
     expect(define).not.toHaveBeenCalled()
     registerElements(customElements)
-    expect(customElements.get("mui-skeleton")).toBe(MuiSkeleton)
+    expect(customElements.get("m-skeleton")).toBe(MSkeleton)
     expect(bars(skeleton())).toHaveLength(1)
   })
 })

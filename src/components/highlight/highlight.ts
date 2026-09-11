@@ -109,8 +109,8 @@ export function highlightText(
   const document = target.ownerDocument
   const fragment = document.createDocumentFragment()
   const className = options.highlightClass
-    ? `mui-highlight-mark ${options.highlightClass}`
-    : "mui-highlight-mark"
+    ? `m-highlight-mark ${options.highlightClass}`
+    : "m-highlight-mark"
   let cursor = 0
   for (const { start, end } of ranges) {
     if (start > cursor) fragment.append(document.createTextNode(text.slice(cursor, start)))

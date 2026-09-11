@@ -13,13 +13,13 @@
   <header><h1>Native Pagination, local state only</h1><p>No network fetch, URL rewrite or client router. The server-style fallback links target local examples.</p></header>
   <main>
     <form id="native-form">
-      <nav class="mui-pagination" data-pagination id="pager" aria-label="Example result pages">
+      <nav class="m-pagination" data-pagination id="pager" aria-label="Example result pages">
         <span id="prefix">Local results:</span>
         <div data-pagination-fallback>
           <a href="#local-one" aria-current="page" id="server-one">Page 1</a>
           <a href="#local-two" id="server-two">Page 2</a>
         </div>
-        <div class="mui-pagination__controls" data-pagination-enhancement hidden>
+        <div class="m-pagination__controls" data-pagination-enhancement hidden>
           <button type="button" data-pagination-previous>Previous</button>
           <div data-pagination-pages></div>
           <button type="button" data-pagination-next>Next</button>
@@ -29,8 +29,8 @@
           <span>of <span data-pagination-count>0</span> pages</span>
         </div>
         <span id="suffix">No automatic data loading</span>
-        <template data-pagination-page><button type="button"><span class="mui-pagination__visually-hidden">Page </span><span data-pagination-number></span></button></template>
-        <template data-pagination-gap><button type="button"><span aria-hidden="true">…</span><span class="mui-pagination__visually-hidden">Jump to page <span data-pagination-number></span></span></button></template>
+        <template data-pagination-page><button type="button"><span class="m-pagination__visually-hidden">Page </span><span data-pagination-number></span></button></template>
+        <template data-pagination-gap><button type="button"><span aria-hidden="true">…</span><span class="m-pagination__visually-hidden">Jump to page <span data-pagination-number></span></span></button></template>
       </nav>
       <p><label>Unrelated form input <input id="outside-input" name="notes" value="Preserved"></label></p>
     </form>

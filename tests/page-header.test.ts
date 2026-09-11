@@ -18,10 +18,10 @@ describe("CSS-only Page Header", () => {
     expect(pkg.exports["./page-header/style.css"]).toBe("./dist/markup-ui-page-header.css")
     expect(pkg.exports["./page-header"]).toBeUndefined()
     expect(readdirSync(resolve("src", "components", "page-header"))).toEqual(["page-header.css"])
-    expect(customElements.get("mui-page-header")).toBeUndefined()
+    expect(customElements.get("m-page-header")).toBeUndefined()
     expect(app).not.toContain("import ")
     expect(app).not.toContain("history.")
-    expect(app).not.toContain("mui:back")
+    expect(app).not.toContain("m:back")
   })
 
   it("preserves author-selected heading levels, region nodes and attributes", () => {
@@ -42,21 +42,21 @@ describe("CSS-only Page Header", () => {
     fixture()
     install()
     for (const region of ["header", "avatar", "title", "subtitle", "extra", "content", "footer", "back"]) {
-      expect(document.querySelector(`#page-banner .mui-page-header-${region}`)).not.toBeNull()
+      expect(document.querySelector(`#page-banner .m-page-header-${region}`)).not.toBeNull()
     }
     expect(document.querySelector("nav")?.getAttribute("aria-label")).toBe("Breadcrumb")
     expect(document.querySelector("[aria-current]")?.getAttribute("aria-current")).toBe("page")
-    expect(document.querySelector("#page-banner .mui-page-header-extra")?.textContent).toContain("Draft")
+    expect(document.querySelector("#page-banner .m-page-header-extra")?.textContent).toContain("Draft")
   })
 
   it("leaves absent/empty regions and native title attributes unambiguous", () => {
-    document.body.innerHTML = '<header class="mui-page-header" title="Native advisory title"><div class="mui-page-header-main"><div class="mui-page-header-lead"><div class="mui-page-header-titles"><h2 class="mui-page-header-title"></h2></div></div></div></header>'
+    document.body.innerHTML = '<header class="m-page-header" title="Native advisory title"><div class="m-page-header-main"><div class="m-page-header-lead"><div class="m-page-header-titles"><h2 class="m-page-header-title"></h2></div></div></div></header>'
     const before = document.body.innerHTML
     install()
     expect(document.body.innerHTML).toBe(before)
-    expect(document.querySelector(".mui-page-header-title")?.textContent).toBe("")
-    expect(document.querySelector(".mui-page-header-back")).toBeNull()
-    expect(document.querySelector(".mui-page-header-subtitle")).toBeNull()
+    expect(document.querySelector(".m-page-header-title")?.textContent).toBe("")
+    expect(document.querySelector(".m-page-header-back")).toBeNull()
+    expect(document.querySelector(".m-page-header-subtitle")).toBeNull()
   })
 
   it("preserves native back-link destinations and keyboard-related attributes", () => {
@@ -102,9 +102,9 @@ describe("CSS-only Page Header", () => {
     const input = document.querySelector<HTMLInputElement>("#record-name")!
     const form = document.querySelector("form")!
     const untyped = document.createElement("button")
-    untyped.className = "mui-page-header-back"
+    untyped.className = "m-page-header-back"
     untyped.textContent = "Authored default submit"
-    document.querySelector("#record-header .mui-page-header-lead")!.append(untyped)
+    document.querySelector("#record-header .m-page-header-lead")!.append(untyped)
     let submits = 0
     form.addEventListener("submit", (event) => { event.preventDefault(); submits++ })
     install()
@@ -118,7 +118,7 @@ describe("CSS-only Page Header", () => {
 
   it("preserves native avatar/back SVG paints, titles and accessibility ownership", () => {
     fixture()
-    const avatar = document.querySelector("#page-banner .mui-page-header-avatar")!
+    const avatar = document.querySelector("#page-banner .m-page-header-avatar")!
     const before = avatar.outerHTML
     install()
     expect(avatar.outerHTML).toBe(before)
@@ -131,7 +131,7 @@ describe("CSS-only Page Header", () => {
   })
 
   it("preserves hidden regions and inert templates despite layout display rules", () => {
-    document.body.innerHTML = '<header class="mui-page-header"><div class="mui-page-header-main" hidden>Hidden row</div><div class="mui-page-header-footer" hidden>Hidden footer</div><template class="mui-page-header"><button>Inert action</button></template></header><header class="mui-page-header" hidden>Hidden header</header>'
+    document.body.innerHTML = '<header class="m-page-header"><div class="m-page-header-main" hidden>Hidden row</div><div class="m-page-header-footer" hidden>Hidden footer</div><template class="m-page-header"><button>Inert action</button></template></header><header class="m-page-header" hidden>Hidden header</header>'
     install()
     for (const node of document.querySelectorAll("[hidden],template")) expect(getComputedStyle(node).display).toBe("none")
     expect(document.querySelector("button")).toBeNull()
@@ -142,7 +142,7 @@ describe("CSS-only Page Header", () => {
     fixture()
     const header = document.querySelector("#page-banner")!
     const title = document.querySelector("#project-title")!
-    const extra = document.querySelector("#page-banner .mui-page-header-extra")!
+    const extra = document.querySelector("#page-banner .m-page-header-extra")!
     const action = document.createElement("button")
     action.type = "button"
     action.textContent = "Late action"
@@ -192,36 +192,36 @@ describe("CSS-only Page Header", () => {
     const back = document.querySelector("#destination-back")!
     expect(getComputedStyle(root).display).toBe("block")
     expect(getComputedStyle(back).borderTopWidth).toBe("0px")
-    expect(css).toContain("--mui-page-header-title-size, 18px")
-    expect(css).toContain("--mui-page-header-title-weight, 500")
-    expect(css).toContain("--mui-page-header-back-size, 22px")
-    expect(css).toContain("--mui-page-header-line-height, 1.5")
-    expect(css).toContain("--mui-page-header-gap, 20px")
-    expect(css).toContain("--mui-page-header-main-gap, 16px 0px")
-    expect(getComputedStyle(root.querySelector(".mui-page-header-lead")!).flexBasis).toBe("12rem")
+    expect(css).toContain("--m-page-header-title-size, 18px")
+    expect(css).toContain("--m-page-header-title-weight, 500")
+    expect(css).toContain("--m-page-header-back-size, 22px")
+    expect(css).toContain("--m-page-header-line-height, 1.5")
+    expect(css).toContain("--m-page-header-gap, 20px")
+    expect(css).toContain("--m-page-header-main-gap, 16px 0px")
+    expect(getComputedStyle(root.querySelector(".m-page-header-lead")!).flexBasis).toBe("12rem")
   })
 
   it("provides explicit dark role defaults without substituting legacy text colors", () => {
     fixture()
     const root = document.querySelector<HTMLElement>("#page-banner")!
-    root.dataset.muiTheme = "dark"
+    root.dataset.mTheme = "dark"
     install()
     const theme = getComputedStyle(root)
-    expect(theme.getPropertyValue("--_mui-page-header-title")).toBe("rgba(255,255,255,.9)")
-    expect(theme.getPropertyValue("--_mui-page-header-subtitle")).toBe("rgba(255,255,255,.52)")
-    expect(theme.getPropertyValue("--_mui-page-header-back")).toBe("rgba(255,255,255,.82)")
-    expect(theme.getPropertyValue("--_mui-page-header-hover")).toBe("#7fe7c4")
-    expect(theme.getPropertyValue("--_mui-page-header-pressed")).toBe("#5acea7")
-    expect(css).not.toContain("--mui-text-primary")
-    expect(css).not.toContain("--mui-text-secondary")
+    expect(theme.getPropertyValue("--_m-page-header-title")).toBe("rgba(255,255,255,.9)")
+    expect(theme.getPropertyValue("--_m-page-header-subtitle")).toBe("rgba(255,255,255,.52)")
+    expect(theme.getPropertyValue("--_m-page-header-back")).toBe("rgba(255,255,255,.82)")
+    expect(theme.getPropertyValue("--_m-page-header-hover")).toBe("#7fe7c4")
+    expect(theme.getPropertyValue("--_m-page-header-pressed")).toBe("#5acea7")
+    expect(css).not.toContain("--m-text-primary")
+    expect(css).not.toContain("--m-text-secondary")
     expect(css).not.toContain("color-scheme")
   })
 
   it("allows the heading group to wrap rather than collapse beside a long back label", () => {
     fixture()
     install()
-    const lead = document.querySelector("#record-header .mui-page-header-lead")!
-    const titles = lead.querySelector(".mui-page-header-titles")!
+    const lead = document.querySelector("#record-header .m-page-header-lead")!
+    const titles = lead.querySelector(".m-page-header-titles")!
     expect(getComputedStyle(lead).flexWrap).toBe("wrap")
     expect(getComputedStyle(titles).flexBasis).toBe("12rem")
     expect(getComputedStyle(titles).minInlineSize).toBe("0")

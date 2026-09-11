@@ -17,8 +17,8 @@
       reportValidity. Disabled selection is a lock; disabled checkbox values do not submit.
       Row keys are not a substitute for the other field values.</p>
     <form id="scores-form" novalidate>
-      <section class="mui-data-table" data-data-table aria-label="Editable project scores" aria-describedby="policy">
-        <div class="mui-data-table-controls" data-enhancement hidden>
+      <section class="m-data-table" data-data-table aria-label="Editable project scores" aria-describedby="policy">
+        <div class="m-data-table-controls" data-enhancement hidden>
           <label>Project filter <input type="search" data-data-filter="project" placeholder="Literal project text"></label>
           <label>Category <select data-data-filter="category"><option value="">All categories</option><option>Engineering</option><option>Design</option></select></label>
           <label>Rows per page <select data-data-page-size><option value="2" selected>2</option><option value="5">5</option><option value="all">All (reveal for validation)</option></select></label>
@@ -29,8 +29,8 @@
         <p id="sort-help">Use the header Sort buttons: ascending, descending, then original order.
           Scroll this region horizontally or Tab to cell controls. Apply a text filter with Enter
           or by leaving its field. Native reset restores checkbox and input defaults.</p>
-        <div class="mui-data-table-scroll" tabindex="0" role="region" aria-labelledby="scores-caption" aria-describedby="sort-help">
-          <table class="mui-table" data-data-table-table data-data-sticky-header data-striped data-size="small">
+        <div class="m-data-table-scroll" tabindex="0" role="region" aria-labelledby="scores-caption" aria-describedby="sort-help">
+          <table class="m-table" data-data-table-table data-data-sticky-header data-striped data-size="small">
             <caption id="scores-caption">Local project scores</caption>
             <colgroup><col class="selection-column"><col class="project-column"><col class="category-column"><col class="score-column"><col class="notes-column"></colgroup>
             <thead><tr>
@@ -56,7 +56,7 @@
         </div>
         <p data-data-empty hidden>No projects match these filters.</p>
         <p data-data-loading hidden>Application reports loading; native fields remain usable.</p>
-        <div class="mui-data-table-controls" data-enhancement hidden>
+        <div class="m-data-table-controls" data-enhancement hidden>
           <button type="button" data-select-filtered>Check all filtered</button>
           <button type="button" data-clear-all>Uncheck all enabled data</button>
           <button type="button" data-reveal>Reveal Charlie</button>
@@ -74,7 +74,7 @@
     </form>
     <pre id="feedback" aria-label="Last application action">No user table operations yet.</pre>
     <h2 id="static-table">Static no-JavaScript table</h2>
-    <table class="mui-table"><caption>Grouped headings and spans stay in CSS-only Table</caption>
+    <table class="m-table"><caption>Grouped headings and spans stay in CSS-only Table</caption>
       <thead><tr><th scope="col" rowspan="2">Team</th><th scope="colgroup" colspan="2">Weeks</th></tr><tr><th scope="col">One</th><th scope="col">Two</th></tr></thead>
       <tbody><tr><th scope="row">Native authors</th><td>4</td><td>5</td></tr></tbody>
     </table>

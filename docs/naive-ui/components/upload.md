@@ -8,7 +8,7 @@ provider, hidden membership fields, remote-file renderer, previews or downloads.
 ## Baseline and implementation evidence
 
 The unchanged [advanced plugin](../../../src/plugins/advanced.ts) provides legacy
-mui-upload file selection/accept/multiple and a selected File[] event, not transport.
+m-upload file selection/accept/multiple and a selected File[] event, not transport.
 The [new helper](../../../src/components/upload/upload.ts) is separate opt-in native
 DOM ownership; no custom element is registered. [External CSS](../../../src/components/upload/upload.css)
 owns native list/actions/progress/drop/media. See the [canonical contract and acceptance](../../components/upload.md),
@@ -110,8 +110,8 @@ transport protocols or all-browser/server parity.
 | [`trigger-class`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L64) | Prop | Author native label/input classes and ::file-selector-button CSS. | 🟢 Verified |
 | [`trigger-style`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L65) | Prop | No inline object/string trigger styles. | ⏭️ Intentionally omitted |
 | [`with-credentials`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L66) | Prop | No credential/cookie defaults or forwarding; caller transport owns policy. | ⏭️ Intentionally omitted |
-| [`on-change`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L67) | Callback | mui:upload-change plus optional synchronous onChange notification. Exceptions surface; no veto/rollback. | 🟢 Verified |
-| [`on-error`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L68) | Callback | Error status/change and mui:upload-error diagnostics; no return-value FileInfo rewrite. | 🟢 Verified |
+| [`on-change`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L67) | Callback | m:upload-change plus optional synchronous onChange notification. Exceptions surface; no veto/rollback. | 🟢 Verified |
+| [`on-error`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L68) | Callback | Error status/change and m:upload-error diagnostics; no return-value FileInfo rewrite. | 🟢 Verified |
 | [`on-finish`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L69) | Callback | Finished change only after typed result settlement; no mutating finish callback or File nulling. | 🟢 Verified |
 | [`on-before-upload`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L70) | Callback | No asynchronous validator/pre-upload veto pipeline. Validate in caller transport or before explicit add/start. | ⏭️ Intentionally omitted |
 | [`on-download`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/upload/demos/enUS/index.demo-entry.md#L71) | Callback | No download hook/effect; source callback is also labelled currently unused in props. | ⏭️ Intentionally omitted |

@@ -49,7 +49,7 @@ default. No Button work is included. No runtime dependency or budget was added.
   the actual `darkTheme`. There are no website demonstration overrides or copied assets:
   the two-color 80×40 SVG is fixture-authored.
 - Markup page uses the opt-in published Global Style CSS, plus Avatar CSS/ESM. `?dark`
-  sets explicit `data-mui-theme="dark"`; `?core` adds canonical CSS/themes and imports core
+  sets explicit `data-m-theme="dark"`; `?core` adds canonical CSS/themes and imports core
   **after** Avatar registration. `?core&reverse` reverses external CSS order.
   `?core&legacy` loads only the legacy Avatar definition/CSS; groups there are intentionally
   unregistered, illustrating the documented entrypoint boundary.
@@ -92,7 +92,7 @@ Unless separately stated, “after” applies to both. Sources of fixes:
 | Vertical group | 38×90; y offsets 0/26/52 | 36×92; y offsets 0/28/56 | A: 38×90; offsets 0/26/52 | Fixed |
 | Native overflow badge appearance | Reference rest avatar uses normal round/bordered Avatar styling | Native summary 36px, no border, inherited body font | A: summary 38×38 outer, 14px/17.5px white text, 2px border; native focus/disclosure retained | Fixed appearance; native semantics below |
 | Color/border transition | 0.3s cubic-bezier(.4,0,.2,1) for border/background/text | None on either Avatar | A/L: actual computed transition matches; prefers-reduced-motion disables it | Fixed with accessibility adaptation |
-| Authored inline size token | Explicit 60px override renders 60px | Native controller erased `--mui-avatar-size` on upgrade/source updates; result 36px. Legacy ignored Avatar tokens | B preserves/restores owned convenience overrides; A/L consume tokens. 60px/9px-radius, 18px monospace/600, rgb(1,2,3) fill and rgb(4,5,6) text all render as authored | Fixed coupled ownership defect |
+| Authored inline size token | Explicit 60px override renders 60px | Native controller erased `--m-avatar-size` on upgrade/source updates; result 36px. Legacy ignored Avatar tokens | B preserves/restores owned convenience overrides; A/L consume tokens. 60px/9px-radius, 18px monospace/600, rgb(1,2,3) fill and rgb(4,5,6) text all render as authored | Fixed coupled ownership defect |
 | Shared document font family | `v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"` | Standalone global fallback system-ui/sans-serif; core began Inter/ui-sans-serif and lacked emoji fallbacks | G/L exact common stack; computed family identical on native/core/legacy. No font assets added | Fixed verified shared default |
 | Shared body size / leading | 14px / 22.4px (1.6) | Global fallback 16px / 24px (1.5); core 14px / 21px | G/L: 14px / 22.4px | Fixed verified shared default |
 | Long-text fitting | Alexandria scale 0.470769, visual bounds 30.526428×8.238464px at default size | At first-pass `ac6b260`, standalone remained 34×17.5px, scale 1, with ellipsis | Follow-up A/B: natural text is 65×18 integer layout pixels; native scale 0.47076923076923083, visual bounds exactly 30.526428×8.238464px | Fixed; no ellipsis/shrink proxy |
@@ -174,7 +174,7 @@ and Enter-operated native group disclosure.
 - **Legacy entrypoint scope:** default, all named sizes, round/square/bordered, image fit,
   typography, dark colors and CSS token overrides now match the same presentation.
   The legacy controller still does **not** interpret numeric `size="52"` (34px unless given
-  `--mui-avatar-size:52px`) or register AvatarGroup. Enhanced entry remains required for
+  `--m-avatar-size:52px`) or register AvatarGroup. Enhanced entry remains required for
   numeric properties, grouping, lazy/fallback/lifecycle features. No unrelated core
   controller migration was introduced.
 - **Host computed anatomy:** legacy raw text uses host line-height 17.5px; enhanced and
@@ -217,7 +217,7 @@ and Enter-operated native group disclosure.
   custom properties; its targeted test checks the native CSSStyleDeclaration API passthrough.
   Classic loading rendered the same 34px/3px/white default, and enhanced loading after the
   legacy definition produced the expected explicit registration-conflict message.
-- Group `--mui-avatar-size:60px` produces 64px bordered members; explicit child `size=small`
+- Group `--m-avatar-size:60px` produces 64px bordered members; explicit child `size=small`
   remains 32px outer, and authored inline 52px overrides that to 56px outer. No size-inheritance
   behavior was dropped.
 - Native form validation, disabled-fieldset exclusion from FormData, successful controls

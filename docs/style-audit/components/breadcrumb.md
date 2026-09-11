@@ -18,7 +18,7 @@ closed without touching shared pages. Fixture files/server were cleaned up.
 
 Final light/dark comparisons used the **same application font and body backgrounds
 on both sides**: white light / `#101014` dark. Reference 300ms transitions settled
-before measurements. Native theme selection used `data-mui-theme`; RTL used native
+before measurements. Native theme selection used `data-m-theme`; RTL used native
 document direction on both sides.
 
 ## Measured corrected defaults
@@ -106,7 +106,7 @@ Existing public link/current/disabled/separator/general color and gap overrides
 remain available. New font/line-height/radius/current-weight and hover/pressed
 foreground/background tokens expose the corrected defaults. Explicit state colors
 win; otherwise an existing authored link-color token persists in hover/pressed
-states. Font size can reuse shared `--mui-font-size`; family stays inherited.
+states. Font size can reuse shared `--m-font-size`; family stays inherited.
 
 No body background, color-scheme, font download, theme watcher, provider, routing
 or registration behavior is added. The application must supply a readable backdrop

@@ -20,21 +20,21 @@ typography and the native scrollbar remain outside component styling.
 | [Reference tracker](../naive-ui/components/virtual-list.md) | Every original identity plus explicit type/source supplements |
 
 The optional helper registers **no custom elements**. It neither depends on nor replaces
-the basic `MuiVirtualList` in the legacy advanced plugin. No fake registration order is
+the basic `MVirtualList` in the legacy advanced plugin. No fake registration order is
 needed for native markup; one owner per viewport/list is checked across module copies.
 
 ```html
 <h2 id="items-title">Items</h2>
 <p>Static example or application pagination remains available without JavaScript.</p>
 <ul><li>First sample item</li><li>Second sample item</li></ul>
-<div class="mui-virtual-list" id="items" aria-labelledby="items-title" hidden>
-  <ol class="mui-virtual-list__items" aria-labelledby="items-title" role="list"></ol>
+<div class="m-virtual-list" id="items" aria-labelledby="items-title" hidden>
+  <ol class="m-virtual-list__items" aria-labelledby="items-title" role="list"></ol>
 </div>
 <template id="item-template"><li><span></span></li></template>
 ```
 
 ```css
-#items { --mui-virtual-list-height: 320px; }
+#items { --m-virtual-list-height: 320px; }
 ```
 
 ```js
@@ -72,7 +72,7 @@ unstyled-list semantics. No listbox/grid/selection keyboard behavior is invented
 
 ## Exact fixed-size and scale contract
 
-- Required authored `--mui-virtual-list-height`: a **positive px length <= 16,384px**.
+- Required authored `--m-virtual-list-height`: a **positive px length <= 16,384px**.
   Use external CSS/media rules to change it. Percent, auto, calc and unconstrained heights
   are not accepted by this first implementation. `clientHeight` is the actual metric.
 - `rowSize`: finite **1..65,536 CSS pixels**, exact border-box size, not a minimum or estimate.
@@ -182,7 +182,7 @@ is still released if its factory disconnected the old owner. Separate roots rema
 Factory/update/DOM/geometry/disposal failures during an operation **fail closed**:
 disconnect, cancel/observe no further work, attempt every owned row's disposal once,
 remove all helper-owned rows, release ownership, restore geometry/attributes, set `error`,
-emit `mui:virtual-list-error` with `{error}`, and throw from direct APIs. Scheduled failures
+emit `m:virtual-list-error` with `{error}`, and throw from direct APIs. Scheduled failures
 emit the same error instead of manufacturing success. Multiple failures use AggregateError.
 Factories that throw before returning must clean up their own unreturned allocations.
 Arbitrary hook side effects on application data, unrelated DOM, global resources or other

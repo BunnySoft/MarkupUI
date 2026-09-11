@@ -38,12 +38,12 @@ Col wrapper. Native CSS Grid is not an ARIA data grid.
 
 | Source surface | Explicit target / boundary |
 | --- | --- |
-| Row.gutter | Author --mui-grid-x-gap / --mui-grid-y-gap, or native Flex/Space column/row gaps. Source tuple order is horizontal, vertical. No number/string/tuple parser. |
-| Col.span | Author --mui-grid-span with a positive CSS integer valid for the active track count. Use --mui-grid-cols:24 only when that actual layout is wanted. No span attribute/JS prop adapter. |
+| Row.gutter | Author --m-grid-x-gap / --m-grid-y-gap, or native Flex/Space column/row gaps. Source tuple order is horizontal, vertical. No number/string/tuple parser. |
+| Col.span | Author --m-grid-span with a positive CSS integer valid for the active track count. Use --m-grid-cols:24 only when that actual layout is wanted. No span attribute/JS prop adapter. |
 | Col.offset | Omit the automatic relative offset. A known empty spacer or carefully authored native placement can serve a specific composition, not the old wrapping algorithm. |
 | Col.push / Col.pull | Omit physical visual displacement. Author the meaningful DOM order; do not visually swap focusable/meaningful content while retaining an incompatible tab/reading order. |
-| Source Row.alignItems | For the row-flex use case, use --mui-flex-align with native align-items values. Grid's own cross-item alignment is separately documented. |
-| Source Row.justifyContent | Use --mui-flex-justify for native flex main-axis distribution. It is not Grid's justify-items token. |
+| Source Row.alignItems | For the row-flex use case, use --m-flex-align with native align-items values. Grid's own cross-item alignment is separately documented. |
+| Source Row.justifyContent | Use --m-flex-justify for native flex main-axis distribution. It is not Grid's justify-items token. |
 | Row/Col default slots | Actual original child nodes; author a semantic wrapper only when needed. No callback/VNode evaluation or gutter-dependent wrapper insertion. |
 
 Gutters are deliberately **native gaps**, not the source's expanded row width,
@@ -65,7 +65,7 @@ source outer/inner box geometry merely because visible content looks similar.
 ## Offset, absolute start and wrapping are different
 
 After a two-track item in a four-track grid, **absolute start line 3 is adjacent**.
-It is not a three-track relative gap. --mui-grid-start is a native absolute grid line,
+It is not a three-track relative gap. --m-grid-start is a native absolute grid line,
 not a renamed offset property.
 
 The demo separately authors a known empty aria-hidden span: first item uses two
@@ -97,7 +97,7 @@ separate ResponsiveDescription reference is not inherited by Legacy Row/Col.
 The old type excludes zero while offset/push/pull have runtime zero defaults;
 this recipe does not recreate that type/API discrepancy. There is no supported
 legacy span=0 hiding contract inferred here. Use native hidden or deliberate
-responsive display:none, not invalid --mui-grid-span:0. Excessive/invalid native
+responsive display:none, not invalid --m-grid-span:0. Excessive/invalid native
 spans are not clamped and can create implicit tracks or invalid CSS.
 
 The demo's **48rem viewport** and **30rem container** thresholds are application
@@ -105,7 +105,7 @@ choices. The media rule updates the grid count and affected spans/starts togethe
 Compact defaults return children to one-span/auto-start and remove the spacer.
 
 Container queries target descendant grids through independent
-.mui-grid-container wrappers named migration; a container cannot query itself to
+.m-grid-container wrappers named migration; a container cannot query itself to
 set its own column count. At 30rem, the descendant uses three tracks and a 2/1 split.
 The compact wrapper is capped at 20rem, so it stays single-column on a wide screen.
 The query is guarded with @supports; without container-query support the usable
@@ -136,15 +136,15 @@ arbitrary explicit placement and target-browser/AT behavior still need applicati
 
 ## Existing wrappers are not the deprecated source API
 
-The old MarkupUI mui-grid still interprets its existing columns string through
-native grid-template-columns; mui-row still has its existing flex behavior. They
+The old MarkupUI m-grid still interprets its existing columns string through
+native grid-template-columns; m-row still has its existing flex behavior. They
 are not Naive UI NRow/NCol implementations and are not automatically converted by
-loading .mui-grid/.mui-flex/.mui-space CSS.
+loading .m-grid/.m-flex/.m-space CSS.
 
 A separate browser coexistence check imported the unchanged legacy aggregate and
 created existing wrappers. The native form/input identity and 992px native grid
 width remained unchanged; legacy columns="1fr 2fr" resolved to two proportional
-tracks and mui-row remained flex. That aggregate's automatic style installation
+tracks and m-row remained flex. That aggregate's automatic style installation
 is not the no-JS/strict-CSP path. No core/plugin/legacy source was modified.
 
 ## Default-style audit

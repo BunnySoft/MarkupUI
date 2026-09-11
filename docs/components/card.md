@@ -20,7 +20,7 @@ Inventory pinned to Naive UI commit `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`:
 
 | Asset | Purpose |
 | --- | --- |
-| `dist/markup-ui-card.js` | ESM; exports `MuiCard` and `registerCard()` and registers on browser import. |
+| `dist/markup-ui-card.js` | ESM; exports `MCard` and `registerCard()` and registers on browser import. |
 | `dist/markup-ui-card.global.js` | Classic script; registers and exposes `MarkupUICard`. |
 | `dist/markup-ui-card.css` | Required external CSS. No injected styles or runtime style objects. |
 | `dist/components/card/index.d.ts` | Type declarations, including `CardCloseDetail`. |
@@ -31,7 +31,7 @@ Inventory pinned to Naive UI commit `42a52e6436b38bed456fee19eb0b89cdcd00fcc2`:
 <script defer src="./vendor/markup-ui-card.global.js"></script>
 <script defer src="./app.js"></script>
 
-<mui-card title="Overview">Authored card content.</mui-card>
+<m-card title="Overview">Authored card content.</m-card>
 ```
 
 Application ESM: `import "@dataengine/markup-ui/card";`. Serve/link the
@@ -40,14 +40,14 @@ import the served `markup-ui-card.js` URL rather than the npm package specifier.
 No compiler or runtime dependency is required by consumers.
 
 **Load Card before the legacy aggregate**, using ordered `defer` classic scripts or ordered
-ESM imports. Legacy registration preserves the rich `mui-card` definition. Loading Card
+ESM imports. Legacy registration preserves the rich `m-card` definition. Loading Card
 after an existing legacy/different Card definition throws an explicit conflict. Do not
 load both Card distributions in one document. External Card CSS takes precedence over
 legacy Card host/compound styles even when that aggregate installs its stylesheet later.
 The original aggregate implementation, output sizes and 15,000-byte core ceiling are unchanged.
 
-Only `mui-card` is registered by this entry. Passive regions do not need Custom Element
-classes or controllers. Existing `mui-card-header`, `mui-card-content` and `mui-card-footer`
+Only `m-card` is registered by this entry. Passive regions do not need Custom Element
+classes or controllers. Existing `m-card-header`, `m-card-content` and `m-card-footer`
 tags still work; the legacy aggregate may register their passive classes later without
 replacing their nodes or interfering with rich Card behavior.
 
@@ -56,27 +56,27 @@ replacing their nodes or interfering with rich Card behavior.
 Prefer native elements marked with explicit region attributes:
 
 ```html
-<mui-card closable segmented role="region" aria-labelledby="report-heading"
+<m-card closable segmented role="region" aria-labelledby="report-heading"
           close-label="Close quarterly report">
-  <div data-mui-card-cover><img src="./cover.png" alt="Report cover"></div>
-  <header data-mui-card-header>
+  <div data-m-card-cover><img src="./cover.png" alt="Report cover"></div>
+  <header data-m-card-header>
     <h2 id="report-heading">Quarterly report</h2>
-    <div data-mui-card-header-extra><button type="button">Star report</button></div>
+    <div data-m-card-header-extra><button type="button">Star report</button></div>
   </header>
-  <section data-mui-card-content><p>Authored report content.</p></section>
-  <footer data-mui-card-footer>Prepared by the project team</footer>
-  <div data-mui-card-action><button type="button">Export</button></div>
-</mui-card>
+  <section data-m-card-content><p>Authored report content.</p></section>
+  <footer data-m-card-footer>Prepared by the project team</footer>
+  <div data-m-card-action><button type="button">Export</button></div>
+</m-card>
 ```
 
 | Region | Native marker | Passive compound spelling | Placement |
 | --- | --- | --- | --- |
-| Cover | `data-mui-card-cover` | `mui-card-cover` | Direct card child, normally first. |
-| Header | `data-mui-card-header` | `mui-card-header` | Direct card child. Author native headings at the appropriate level. |
-| Header extra | `data-mui-card-header-extra` | `mui-card-header-extra` | Inside header; a direct card child is moved into the header. |
-| Content | `data-mui-card-content` | `mui-card-content` | Direct card child. |
-| Footer | `data-mui-card-footer` | `mui-card-footer` | Direct card child. |
-| Action | `data-mui-card-action` | `mui-card-action` | Direct card child, normally last. |
+| Cover | `data-m-card-cover` | `m-card-cover` | Direct card child, normally first. |
+| Header | `data-m-card-header` | `m-card-header` | Direct card child. Author native headings at the appropriate level. |
+| Header extra | `data-m-card-header-extra` | `m-card-header-extra` | Inside header; a direct card child is moved into the header. |
+| Content | `data-m-card-content` | `m-card-content` | Direct card child. |
+| Footer | `data-m-card-footer` | `m-card-footer` | Direct card child. |
+| Action | `data-m-card-action` | `m-card-action` | Direct card child, normally last. |
 
 Use at most one of each region, and do not mark the same element as multiple regions.
 Authored regions keep their order; this is explicit DOM anatomy, not a slot renderer that
@@ -105,13 +105,13 @@ content and extra. It has a localized `close-label` (default **“Close card”*
 the supplied value is blank), a decorative close glyph and a visible keyboard focus ring.
 It does not depend on the optional Button module or submit an enclosing form.
 
-The native control emits one bubbling, cancellable **`mui:close`** event per native
+The native control emits one bubbling, cancellable **`m:close`** event per native
 activation, with `detail.originalEvent`. No card is hidden, removed or otherwise closed by
 the component, whether or not the event is cancelled:
 
 ```js
 const card = document.querySelector("#report");
-card.addEventListener("mui:close", (event) => {
+card.addEventListener("m:close", (event) => {
   if (event.target !== card) return; // Nested cards can bubble their own intents.
   event.preventDefault();
   // Application policy: confirm, save, hide/remove, and restore focus if appropriate.
@@ -125,7 +125,7 @@ focus trap or application lifecycle is added. Unlike upstream's false default,
 pointer/programmatic focus remains browser-native. When an application actually removes
 a card, the application must choose a sensible focus destination.
 
-The generated close button and `data-mui-card-close` / `data-mui-card-title` markers are
+The generated close button and `data-m-card-close` / `data-m-card-title` markers are
 library-owned output, not alternate authoring slots. Customize their appearance through
 external CSS tokens rather than moving them or changing their native type. The native
 control respects disabled fieldsets; Card itself has no `disabled` property.
@@ -158,9 +158,9 @@ difference · ⏭️ Framework-specific API intentionally omitted.
 | `hoverable` | Boolean `hoverable` / `.hoverable`. | 🟢 CSS hover shadow/border only; it does not make Card interactive. |
 | `segmented` | Boolean `segmented` / `.segmented`; `segmented-content`, `segmented-footer`, `segmented-action` for individual regions. | 🟢 Full/inset/off separators implemented. The upstream object form is replaced by explicit attributes, described below. |
 | `size` | `size="small\|medium\|large\|huge"` / `.size`. | 🟢 16/24/32/40px region padding; medium default. Header font size also varies. No JS measurements. |
-| `tag` | Author native region elements and/or a native semantic wrapper around Card. | ⏭️ Arbitrary host-tag replacement omitted; `mui-card` stays a Custom Element. |
+| `tag` | Author native region elements and/or a native semantic wrapper around Card. | ⏭️ Arbitrary host-tag replacement omitted; `m-card` stays a Custom Element. |
 | `title` | Plain-text `title` attribute / native `.title`, or authored heading in header. | 🟡 String fallback implemented; authored header wins, render-function overload omitted, heading semantics remain explicit. |
-| `on-close` / source `onClose` | Bubbling cancellable `mui:close` with `CardCloseDetail`. | 🟢 Intent notification; no function/array callback prop adapter and no default removal. |
+| `on-close` / source `onClose` | Bubbling cancellable `m:close` with `CardCloseDetail`. | 🟢 Intent notification; no function/array callback prop adapter and no default removal. |
 | `role` (source-only prop) | Native host `role` attribute, with author-chosen ARIA name. | 🟢 Preserved, never inferred or overwritten. |
 | `theme`, `themeOverrides`, `builtinThemeOverrides` (inherited theme plumbing) | External CSS and inherited custom properties. | ⏭️ Vue theme objects, provider injection and runtime theme adapters omitted. |
 
@@ -198,30 +198,30 @@ For content-only scrolling, constrain the Card through external CSS and author a
 target/name on the content region when appropriate:
 
 ```html
-<mui-card class="report-card" content-scrollable>
-  <header data-mui-card-header><h2>Report</h2></header>
-  <div data-mui-card-content tabindex="0" role="region" aria-label="Scrollable report">...</div>
-  <footer data-mui-card-footer>Report footer</footer>
-</mui-card>
+<m-card class="report-card" content-scrollable>
+  <header data-m-card-header><h2>Report</h2></header>
+  <div data-m-card-content tabindex="0" role="region" aria-label="Scrollable report">...</div>
+  <footer data-m-card-footer>Report footer</footer>
+</m-card>
 ```
 
 ```css
-.report-card { --mui-card-height: 320px; }
+.report-card { --m-card-height: 320px; }
 ```
 
 Native scrollbars and keyboard scrolling replace the upstream custom scrollbar component.
 Headers, covers, footers and actions do not shrink; exceptionally large fixed regions can
 consume the available height, so applications remain responsible for a usable layout.
 
-Public CSS tokens: `--mui-card-padding`, `--mui-card-height`, `--mui-card-max-height`,
-`--mui-card-radius`, `--mui-card-background`, `--mui-card-color`, `--mui-card-border-color`,
-`--mui-card-embedded-background`, `--mui-card-action-background`, `--mui-card-font-size`,
-`--mui-card-line-height`, `--mui-card-title-size`, `--mui-card-title-weight`,
-`--mui-card-title-color`, `--mui-card-header-gap`, `--mui-card-action-gap`,
-`--mui-card-hover-border-color`, `--mui-card-hover-shadow`, `--mui-card-close-size`,
-`--mui-card-close-radius`, `--mui-card-close-color`, `--mui-card-close-hover-background`,
-`--mui-card-close-pressed-background`, `--mui-card-focus-color`, `--mui-card-target-color`
-and `--mui-card-ease`.
+Public CSS tokens: `--m-card-padding`, `--m-card-height`, `--m-card-max-height`,
+`--m-card-radius`, `--m-card-background`, `--m-card-color`, `--m-card-border-color`,
+`--m-card-embedded-background`, `--m-card-action-background`, `--m-card-font-size`,
+`--m-card-line-height`, `--m-card-title-size`, `--m-card-title-weight`,
+`--m-card-title-color`, `--m-card-header-gap`, `--m-card-action-gap`,
+`--m-card-hover-border-color`, `--m-card-hover-shadow`, `--m-card-close-size`,
+`--m-card-close-radius`, `--m-card-close-color`, `--m-card-close-hover-background`,
+`--m-card-close-pressed-background`, `--m-card-focus-color`, `--m-card-target-color`
+and `--m-card-ease`.
 Private size defaults reset on nested cards; explicit theme tokens can still inherit.
 Logical margins/corners support RTL and reduced motion removes transitions.
 
@@ -237,17 +237,17 @@ Logical margins/corners support RTL and reduced motion removes transitions.
 Unsegmented content and footer have no top padding after a visible preceding region.
 First visible content/footer and segmented regions use the bottom-padding value at
 the top too. Actions always have that vertical padding. Footer/action are ordinary
-start-aligned block flow; authors can opt into flex/grid and use `--mui-card-action-gap`
-with that layout. `--mui-card-padding` overrides the positive padding values as one
+start-aligned block flow; authors can opt into flex/grid and use `--m-card-action-gap`
+with that layout. `--m-card-padding` overrides the positive padding values as one
 length, but does not introduce an unsegmented top gap. Radius is 3px; borderless cards
 have no layout-consuming border. Close has an 18px layout box and a 22px state surface.
 
-Shared tokens are reused only for equivalent roles: `--mui-font-size`,
-`--mui-line-height`, `--mui-focus-ring`, and the fragment-target `--mui-color-primary`.
-An explicit `--mui-card-*` override takes precedence. Font family inherits normally.
+Shared tokens are reused only for equivalent roles: `--m-font-size`,
+`--m-line-height`, `--m-focus-ring`, and the fragment-target `--m-color-primary`.
+An explicit `--m-card-*` override takes precedence. Font family inherits normally.
 Geometry, title scale, state easing and Card palette defaults stay in Card CSS.
-Explicit `data-mui-theme="dark"` selects the audited dark palette; nested
-`data-mui-theme="light"` resets it. This works with Card CSS alone, the external theme
+Explicit `data-m-theme="dark"` selects the audited dark palette; nested
+`data-m-theme="light"` resets it. This works with Card CSS alone, the external theme
 stylesheet, or `theme.apply()`, without requiring aggregate CSS.
 
 The existing generic surface, muted, text and border palette is **not** equivalent
@@ -255,8 +255,8 @@ to these Card roles (for example, the light Card divider is `#efeff5`, not the g
 `#e4e4e7`). This pass neither recolors unaudited components nor creates a second
 global palette. Card no longer implicitly aliases those unequal generic color
 tokens. Applications that intentionally relied on that alias should set public Card
-tokens explicitly, for example `--mui-card-color: var(--mui-text-primary)` and
-`--mui-card-background: var(--mui-bg-surface)`. Shared custom palettes can set those
+tokens explicitly, for example `--m-card-color: var(--m-text-primary)` and
+`--m-card-background: var(--m-bg-surface)`. Shared custom palettes can set those
 aliases on an ancestor or register Card tokens through `theme.register()`.
 Card CSS never assigns public override tokens; inherited and per-card values remain
 author-owned. The canonical preset JSON and generated theme/core adapters are unchanged.

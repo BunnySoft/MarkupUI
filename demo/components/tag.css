@@ -6,4 +6,4 @@ h1 { font-size: 1.75rem; }
 h2 { font-size: 1.2rem; }
 .examples, .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-block: 16px; }
 button, input { font: inherit; }
-.brand { --mui-tag-background: #f0e5fa; --mui-tag-color: #64328c; --mui-tag-border-color: #ac7dcb; }
+.brand { --m-tag-background: #f0e5fa; --m-tag-color: #64328c; --m-tag-border-color: #ac7dcb; }

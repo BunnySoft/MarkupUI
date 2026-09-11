@@ -31,7 +31,7 @@ function announce(result) {
     : result.status === "invalid" ? `Validation failed: ${result.issues.filter(issue => issue.source !== "warning").length} issue(s). Review the field feedback.`
       : "Validation passed. No data sent."
 }
-form.addEventListener("mui:form-error", event => {
+form.addEventListener("m:form-error", event => {
   status.textContent = `Local validator failed unexpectedly: ${event.detail.error instanceof Error ? event.detail.error.message : String(event.detail.error)}`
 })
 function inspect(submitter) {
@@ -50,11 +50,11 @@ async function onSubmit(event) {
     if (ticket !== intent) return
     announce(result)
     if (result.status === "valid" && result.current && (!submitter || submitter.isConnected && submitter.form === form && !submitter.matches(":disabled"))) inspect(submitter)
-  } catch { /* mui:form-error above reports unexpected validator failures; never submit on failure. */ }
+  } catch { /* m:form-error above reports unexpected validator failures; never submit on failure. */ }
 }
 form.addEventListener("submit", onSubmit)
 field("validate").addEventListener("click", async () => {
-  try { announce(await helper.validate()) } catch { /* Reported by mui:form-error. */ }
+  try { announce(await helper.validate()) } catch { /* Reported by m:form-error. */ }
 })
 field("report").addEventListener("click", () => helper.reportValidity())
 field("restore").addEventListener("click", () => { ++intent; helper.restoreValidation(); status.textContent = "Owned feedback restored; values and external custom validity unchanged." })

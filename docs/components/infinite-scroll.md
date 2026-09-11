@@ -17,9 +17,9 @@ data key and form field. No data-fetch/renderer/virtualization framework is intr
 | [Complete reference](../naive-ui/components/infinite-scroll.md) | Original identities and explicit source supplements |
 
 ```html
-<section class="mui-infinite-scroll" data-infinite-scroll>
+<section class="m-infinite-scroll" data-infinite-scroll>
   <h2 id="feed-heading">Local feed</h2>
-  <div class="mui-infinite-scroll__viewport" id="feed-viewport"
+  <div class="m-infinite-scroll__viewport" id="feed-viewport"
        tabindex="0" role="region" aria-labelledby="feed-heading">
     <ul data-infinite-content><li>Existing native item</li></ul>
     <div data-infinite-sentinel aria-hidden="true"></div>
@@ -242,7 +242,7 @@ Phases: idle/loading/cancelling/error/finished/disabled/paused/disconnected. pen
 true for unacknowledged cancellation. pauseReason describes the automatic gate separately
 from phase, so it can still be limit while finished.
 
-mui:infinite-state emits changed frozen state snapshots. mui:infinite-error exposes current
+m:infinite-state emits changed frozen state snapshots. m:infinite-error exposes current
 errors; generic authored messages do not automatically print backend error text. These are
 permission/diagnostic events, not item-data serialization or a fabricated user-change event.
 Do not synchronously reset on every state event; application-created loops are not a
@@ -269,7 +269,7 @@ CSS owns only native overflow, min-content safety, 1px sentinel geometry, curren
 focus visibility and static reduced-motion/print behavior. It sets no default viewport
 height, border, padding, message margin/color, disabled cursor, font, background, animation
 or transition. Applications size and skin the authored viewport and status content through
-their normal cascade; the existing `--mui-infinite-scroll-height` hook remains opt-in and
+their normal cascade; the existing `--m-infinite-scroll-height` hook remains opt-in and
 falls back to no maximum. No JavaScript style writes, global reset or CSS-in-JS
 presentation engine is used.
 
@@ -345,7 +345,7 @@ were not altered; the newly opened unrelated official landing tab was closed.
 | Print/forced colors/reduced motion | Native overflow visible/max-height none; sentinel/manual hidden for print; reduced scroll behavior auto |
 | No IntersectionObserver | No polyfill; one real manual load grew two -> five items, supported=false |
 | No JavaScript | Two existing editable items and real FormData retained; all JS controls hidden; static link reached the complete twelve-item sample |
-| ESM/classic/core/plugins | Native item identity survived later core/advanced/widgets; legacy code remained literal; no mui-infinite-scroll registration; ownership/namespace replacement rejected |
+| ESM/classic/core/plugins | Native item identity survived later core/advanced/widgets; legacy code remained literal; no m-infinite-scroll registration; ownership/namespace replacement rejected |
 
 Local loader delays (150/600ms) are controlled fixtures, not transport or throughput
 benchmarks. No virtual-DOM/window size, production network latency, full framework,

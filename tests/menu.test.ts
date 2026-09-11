@@ -9,7 +9,7 @@ const controllers: MenuController[] = []
 let sequence = 0
 function nodes() {
   const root = document.createElement("nav")
-  root.className = "mui-menu"
+  root.className = "m-menu"
   root.setAttribute("data-menu", "")
   root.setAttribute("aria-label", "Local navigation")
   root.innerHTML = `
@@ -107,8 +107,8 @@ describe("native navigation, defaults and state", () => {
   it("defines live/default precedence without generating selection or synthetic expansion callbacks", async () => {
     const { root, controller } = bind({ value: "preview", defaultValue: "home", expandedKeys: ["settings"], defaultExpandedKeys: ["guide"] })
     const selected = vi.fn(), expanded = vi.fn()
-    root.addEventListener("mui:menu-select", selected)
-    root.addEventListener("mui:change:expanded-keys", expanded)
+    root.addEventListener("m:menu-select", selected)
+    root.addEventListener("m:change:expanded-keys", expanded)
     expect(controller.value).toBe("preview")
     expect(controller.expandedKeys).toEqual(["settings"])
     controller.value = "home"
@@ -209,7 +209,7 @@ describe("shared keyboard shortcuts without roving navigation Tab stops", () => 
   it("excludes self-inert links/summaries and nested inert branches without disabling unrelated rows", async () => {
     const { root, node, summary, branch, controller } = bind({ defaultExpandedKeys: ["guide", "advanced"] })
     const selected = vi.fn()
-    root.addEventListener("mui:menu-select", selected)
+    root.addEventListener("m:menu-select", selected)
     node("home").setAttribute("inert", "")
     summary("guide").setAttribute("inert", "")
     branch("advanced").setAttribute("inert", "")
@@ -358,7 +358,7 @@ describe("native selection, refresh and cleanup", () => {
   it("notifies only accepted unmodified native leaf actions with string/DOM/path detail", async () => {
     const { root, controller, node } = bind()
     const selections: unknown[] = []
-    root.addEventListener("mui:menu-select", event => selections.push((event as CustomEvent).detail))
+    root.addEventListener("m:menu-select", event => selections.push((event as CustomEvent).detail))
     controller.showOption("performance")
     node("performance").click()
     await flush()
@@ -370,7 +370,7 @@ describe("native selection, refresh and cleanup", () => {
   it("honors delegated defaultPrevented and modifier/target links without routing or fake selection", async () => {
     const { root, node, controller } = bind()
     const selected = vi.fn()
-    root.addEventListener("mui:menu-select", selected)
+    root.addEventListener("m:menu-select", selected)
     root.addEventListener("click", event => event.preventDefault())
     node("preview").click()
     node("home").dispatchEvent(new MouseEvent("click", { bubbles: true, ctrlKey: true, cancelable: true }))
@@ -418,7 +418,7 @@ describe("native selection, refresh and cleanup", () => {
   it("preserves an accepted leaf click across routine refresh but revalidates key and node identity", async () => {
     const { root, node, controller } = bind()
     const events: unknown[] = []
-    root.addEventListener("mui:menu-select", event => events.push((event as CustomEvent).detail))
+    root.addEventListener("m:menu-select", event => events.push((event as CustomEvent).detail))
     node("preview").addEventListener("click", () => { node("preview").textContent = "Updated by action" })
     node("preview").click()
     await flush()
@@ -478,7 +478,7 @@ describe("native selection, refresh and cleanup", () => {
   it("releases removed roots and pending selection tasks without modifying detached UI later", async () => {
     const { root, controller, node } = bind()
     const selected = vi.fn()
-    root.addEventListener("mui:menu-select", selected)
+    root.addEventListener("m:menu-select", selected)
     node("preview").click()
     root.remove()
     await flush()
@@ -490,7 +490,7 @@ describe("native selection, refresh and cleanup", () => {
     const { root, controller, node } = bind()
     expect(() => createMenu(root)).toThrow("active controller")
     const errors = vi.fn()
-    root.addEventListener("mui:menu-error", errors)
+    root.addEventListener("m:menu-error", errors)
     ;(node("preview") as HTMLButtonElement).type = "submit"
     await flush()
     expect(controller.connected).toBe(false)
@@ -534,12 +534,12 @@ describe("native selection, refresh and cleanup", () => {
   it("keeps the corrected native visual defaults inside the unchanged stylesheet ceiling", () => {
     const css = readFileSync("src/components/menu/menu.css", "utf8")
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
-    expect(css).toContain("--mui-menu-item-height,42px")
+    expect(css).toContain("--m-menu-item-height,42px")
     expect(css).toContain("font-size:14px")
     expect(css).toContain("line-height:1.75")
     expect(css).toContain("margin-top:6px")
-    expect(css).toContain("--mui-menu-root-indent,32px")
-    expect(css).toContain("--mui-menu-icon-size,20px")
+    expect(css).toContain("--m-menu-root-indent,32px")
+    expect(css).toContain("--m-menu-icon-size,20px")
     expect(css).not.toContain("font-weight:700")
   })
   it("preserves native disclosure, disabled and current-route representations in CSS", () => {
@@ -550,7 +550,7 @@ describe("native selection, refresh and cleanup", () => {
     expect(css.match(/opacity:/g)).toHaveLength(1)
     expect(css).toContain("opacity:.45")
     expect(css).toContain("[aria-current=page]")
-    expect(css).toContain("--mui-menu-collapsed-width,12rem")
+    expect(css).toContain("--m-menu-collapsed-width,12rem")
     expect(css).not.toMatch(/(?:^|[;{])\s*content:/)
     expect(css).not.toContain("overflow:hidden")
   })

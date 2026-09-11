@@ -7,9 +7,9 @@ window.inputDemo = { helpers }
 const title = document.getElementById("title")
 const entry = document.getElementById("entry")
 const counts = { input: 0, change: 0, clear: 0 }
-for (const type of ["input", "change", "mui:input-clear"]) {
+for (const type of ["input", "change", "m:input-clear"]) {
   title.addEventListener(type, () => {
-    counts[type === "mui:input-clear" ? "clear" : type]++
+    counts[type === "m:input-clear" ? "clear" : type]++
     document.getElementById("events").textContent = `Title events: input ${counts.input}, change ${counts.change}, clear ${counts.clear}`
   })
 }

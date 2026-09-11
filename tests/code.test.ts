@@ -28,7 +28,7 @@ describe("CSS-only native plain Code", () => {
     expect(pkg.exports["./code"]).toBeUndefined()
     expect(readdirSync(resolve("src", "components", "code"))).toEqual(["code.css"])
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("mui-code")).toBeUndefined()
+    expect(customElements.get("m-code")).toBeUndefined()
     expect(demo).not.toContain("<script")
     expect(demo).not.toContain("navigator.clipboard")
     expect(css).not.toContain("@import")
@@ -43,7 +43,7 @@ describe("CSS-only native plain Code", () => {
     expect(document.querySelector("#plain-code")!.parentElement?.id).toBe("plain-block")
     expect(document.querySelector("#inline-code")!.closest("pre")).toBeNull()
     expect(document.querySelector("#plain-block")!.getAttribute("aria-labelledby")).toBe("plain-heading")
-    expect(document.querySelectorAll(".mui-code[role], .mui-code[aria-live]")).toHaveLength(0)
+    expect(document.querySelectorAll(".m-code[role], .m-code[aria-live]")).toHaveLength(0)
   })
 
   it("preserves literal HTML, whitespace, tabs, leading and trailing newlines", () => {
@@ -61,17 +61,17 @@ describe("CSS-only native plain Code", () => {
     fixture()
     install()
     const code = document.querySelector("#numbered-code")!
-    const lines = [...code.querySelectorAll(".mui-code-line")]
+    const lines = [...code.querySelectorAll(".m-code-line")]
     expect(lines).toHaveLength(5)
     expect(lines.at(-1)?.textContent).toBe("")
-    for (const number of code.querySelectorAll(".mui-code-number")) {
+    for (const number of code.querySelectorAll(".m-code-number")) {
       expect(number.textContent).toBe("")
       expect(number.getAttribute("aria-hidden")).toBe("true")
     }
-    expect(css).toContain("counter-increment: mui-code-line")
-    expect(css).toContain("content: counter(mui-code-line)")
+    expect(css).toContain("counter-increment: m-code-line")
+    expect(css).toContain("content: counter(m-code-line)")
     expect(css).not.toContain("user-select: none;")
-    expect(css).toContain("min-block-size: calc(var(--mui-code-line-height, 1.6) * 1em)")
+    expect(css).toContain("min-block-size: calc(var(--m-code-line-height, 1.6) * 1em)")
     expect(css).toContain("min-block-size: 1lh")
   })
 
@@ -91,11 +91,11 @@ describe("CSS-only native plain Code", () => {
   it("enables numbering only on unwrapped block code, not inline or soft-wrapped content", () => {
     fixture()
     install()
-    const selector = 'pre.mui-code-block[data-line-numbers]:not([data-word-wrap]) > code.mui-code > .mui-code-line > .mui-code-number'
-    expect(document.querySelector("#numbered-code .mui-code-number")!.matches(selector)).toBe(true)
-    expect(document.querySelector("#wrapped-code .mui-code-number")!.matches(selector)).toBe(false)
-    expect(getComputedStyle(document.querySelector("#wrapped-code .mui-code-number")!).display).toBe("none")
-    expect(document.querySelectorAll("#wrapped-code > .mui-code-line")).toHaveLength(3)
+    const selector = 'pre.m-code-block[data-line-numbers]:not([data-word-wrap]) > code.m-code > .m-code-line > .m-code-number'
+    expect(document.querySelector("#numbered-code .m-code-number")!.matches(selector)).toBe(true)
+    expect(document.querySelector("#wrapped-code .m-code-number")!.matches(selector)).toBe(false)
+    expect(getComputedStyle(document.querySelector("#wrapped-code .m-code-number")!).display).toBe("none")
+    expect(document.querySelectorAll("#wrapped-code > .m-code-line")).toHaveLength(3)
     expect(css).toContain(selector)
   })
 
@@ -105,7 +105,7 @@ describe("CSS-only native plain Code", () => {
     const nodes = [...code.childNodes]
     install()
     expect([...code.childNodes]).toEqual(nodes)
-    expect(code.querySelectorAll(".mui-code-token")).toHaveLength(4)
+    expect(code.querySelectorAll(".m-code-token")).toHaveLength(4)
     expect(code.querySelector("img")).toBeNull()
     expect(code.textContent).toContain('"<img src=x onerror=example>"')
     expect(document.querySelector("#token-block")!.getAttribute("data-language")).toBe("javascript")
@@ -144,12 +144,12 @@ describe("CSS-only native plain Code", () => {
     fixture()
     install()
     const block = document.querySelector<HTMLElement>("#plain-block")!
-    block.style.setProperty("--mui-code-font-size", "15px")
-    block.style.setProperty("--mui-code-tab-size", "2")
-    expect(getComputedStyle(block).getPropertyValue("--mui-code-font-size")).toBe("15px")
-    expect(getComputedStyle(block).getPropertyValue("--mui-code-tab-size")).toBe("2")
-    expect(css).toContain("--mui-typography-mono-font")
-    expect(css).toContain("--mui-font-size")
+    block.style.setProperty("--m-code-font-size", "15px")
+    block.style.setProperty("--m-code-tab-size", "2")
+    expect(getComputedStyle(block).getPropertyValue("--m-code-font-size")).toBe("15px")
+    expect(getComputedStyle(block).getPropertyValue("--m-code-tab-size")).toBe("2")
+    expect(css).toContain("--m-typography-mono-font")
+    expect(css).toContain("--m-font-size")
     expect(css).toContain("v-mono, SFMono-Regular, Menlo, Consolas, Courier, monospace")
     expect(css).not.toContain("[data-size")
   })
@@ -159,12 +159,12 @@ describe("CSS-only native plain Code", () => {
     install()
     expect(getComputedStyle(document.querySelector("#plain-block")!).borderTopWidth).toBe("0px")
     expect(getComputedStyle(document.querySelector("#inline-code")!).padding).toBe("0px")
-    expect(css).toContain("--_mui-code-gutter: 1ch")
-    expect(css).toContain("@supports selector(:has(> .mui-code-line:nth-child(10 of .mui-code-line)))")
+    expect(css).toContain("--_m-code-gutter: 1ch")
+    expect(css).toContain("@supports selector(:has(> .m-code-line:nth-child(10 of .m-code-line)))")
     for (const [threshold, width] of [[10, 2], [100, 3], [1000, 4]]) {
-      expect(css).toContain(`nth-child(${threshold} of .mui-code-line)) { --_mui-code-gutter: ${width}ch; }`)
+      expect(css).toContain(`nth-child(${threshold} of .m-code-line)) { --_m-code-gutter: ${width}ch; }`)
     }
-    expect(css).toContain("var(--_mui-code-gutter)) + 12px")
+    expect(css).toContain("var(--_m-code-gutter)) + 12px")
     expect(css).toContain("word-break: break-all")
   })
 
@@ -172,13 +172,13 @@ describe("CSS-only native plain Code", () => {
     fixture()
     install()
     const block = document.querySelector<HTMLElement>("#token-block")!
-    block.dataset.muiTheme = "dark"
+    block.dataset.mTheme = "dark"
     const theme = getComputedStyle(block)
     for (const [name, value] of [["keyword", "#c678dd"], ["string", "#98c379"], ["number-token", "#d19a66"], ["comment", "#5c6370"]]) {
-      expect(theme.getPropertyValue(`--_mui-code-${name}`)).toBe(value)
+      expect(theme.getPropertyValue(`--_m-code-${name}`)).toBe(value)
     }
-    expect(theme.getPropertyValue("--_mui-code-number")).toBe("rgba(255,255,255,.52)")
-    expect(css).toContain("color: var(--mui-code-color, inherit)")
+    expect(theme.getPropertyValue("--_m-code-number")).toBe("rgba(255,255,255,.52)")
+    expect(css).toContain("color: var(--m-code-color, inherit)")
     expect(css).not.toContain("color-scheme")
   })
 

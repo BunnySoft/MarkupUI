@@ -19,7 +19,7 @@ function option(key: string, extra = "") { return `<option value="${key}" ${extr
 function fixture(options: TransferOptions = {}, config: { target?: string; source?: string } = {}) {
   const form = document.createElement("form")
   const buttons = ["add", "remove", "add-all", "remove-all", "select-source", "select-target", "clear-source", "clear-target"]
-  form.innerHTML = `<fieldset class="mui-transfer" data-transfer><legend>Members</legend><div data-transfer-columns><div data-transfer-pane><label>Source filter<input type="search" data-transfer-filter="source"></label><label>Source<select data-transfer-source multiple size="6">${config.source ?? option("a") + option("b") + option("c")}</select></label><p data-transfer-count="source"></p></div><div data-transfer-actions>${buttons.map(name => `<button type="button" data-transfer-action="${name}" hidden>${name}</button>`).join("")}</div><div data-transfer-pane><label>Target filter<input type="search" data-transfer-filter="target"></label><label>Target<select data-transfer-target multiple size="6">${config.target ?? option("fixed", "disabled") + option("z")}</select></label><p data-transfer-count="target"></p></div></div><p data-transfer-status></p></fieldset><button type="button" id="outside">Outside</button>`
+  form.innerHTML = `<fieldset class="m-transfer" data-transfer><legend>Members</legend><div data-transfer-columns><div data-transfer-pane><label>Source filter<input type="search" data-transfer-filter="source"></label><label>Source<select data-transfer-source multiple size="6">${config.source ?? option("a") + option("b") + option("c")}</select></label><p data-transfer-count="source"></p></div><div data-transfer-actions>${buttons.map(name => `<button type="button" data-transfer-action="${name}" hidden>${name}</button>`).join("")}</div><div data-transfer-pane><label>Target filter<input type="search" data-transfer-filter="target"></label><label>Target<select data-transfer-target multiple size="6">${config.target ?? option("fixed", "disabled") + option("z")}</select></label><p data-transfer-count="target"></p></div></div><p data-transfer-status></p></fieldset><button type="button" id="outside">Outside</button>`
   document.body.append(form)
   const root = form.querySelector<HTMLFieldSetElement>("[data-transfer]")!, source = root.querySelector<HTMLSelectElement>("[data-transfer-source]")!, target = root.querySelector<HTMLSelectElement>("[data-transfer-target]")!
   const helper = createTransfer(root, options); helpers.push(helper)
@@ -32,18 +32,18 @@ afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); docu
 describe("native membership versus staging", () => {
   it("keeps controlled typography/palette corrections within budget without replacing native option skins", () => {
     const css = readFileSync(join("src", "components", "transfer", "transfer.css"), "utf8")
-    expect(css).toContain("var(--mui-font-size-medium,14px)")
-    expect(css).toContain("var(--mui-font-size-large,15px)")
-    expect(css).toContain("--_mui-transfer-title-size: 16px")
-    expect(css).toContain("--_mui-transfer-title-size: 14px")
-    expect(css).toContain("--_mui-transfer-extra-size: 14px")
-    expect(css).toContain("var(--mui-transfer-list-padding,var(--_mui-transfer-list-padding))")
+    expect(css).toContain("var(--m-font-size-medium,14px)")
+    expect(css).toContain("var(--m-font-size-large,15px)")
+    expect(css).toContain("--_m-transfer-title-size: 16px")
+    expect(css).toContain("--_m-transfer-title-size: 14px")
+    expect(css).toContain("--_m-transfer-extra-size: 14px")
+    expect(css).toContain("var(--m-transfer-list-padding,var(--_m-transfer-list-padding))")
     expect(css).toContain("rgba(255,255,255,.1)")
-    expect(css).toContain("--_mui-transfer-border: transparent")
-    expect(css).toContain("var(--mui-transfer-filter-height,28px)")
-    expect(css).toContain("var(--mui-transfer-title-weight,400)")
+    expect(css).toContain("--_m-transfer-border: transparent")
+    expect(css).toContain("var(--m-transfer-filter-height,28px)")
+    expect(css).toContain("var(--m-transfer-title-weight,400)")
     expect(css).toContain(":has(>select:disabled,>label>select:disabled)")
-    expect(css).toContain("color-scheme:var(--_mui-transfer-scheme,light)")
+    expect(css).toContain("color-scheme:var(--_m-transfer-scheme,light)")
     expect(css).not.toContain("option:checked")
     expect(css).not.toMatch(/appearance:\s*none/)
     expect(css).not.toMatch(/height:\s*300px/)
@@ -59,14 +59,14 @@ describe("native membership versus staging", () => {
       const media = [...element.sheet!.cssRules]
         .filter(rule => rule.type === CSSRule.MEDIA_RULE) as CSSMediaRule[]
       const print = media.find(rule => rule.media.mediaText === "print")!
-      const defaults = [...print.cssRules].find(rule => (rule as CSSStyleRule).selectorText === ".mui-transfer") as CSSStyleRule
-      expect(defaults.style.getPropertyValue("--_mui-transfer-scheme").trim()).toBe("light")
+      const defaults = [...print.cssRules].find(rule => (rule as CSSStyleRule).selectorText === ".m-transfer") as CSSStyleRule
+      expect(defaults.style.getPropertyValue("--_m-transfer-scheme").trim()).toBe("light")
       for (const role of ["color", "title", "extra", "panel", "border", "control", "control-border"]) {
-        expect(defaults.style.getPropertyValue(`--_mui-transfer-${role}`).trim()).toBe("initial")
+        expect(defaults.style.getPropertyValue(`--_m-transfer-${role}`).trim()).toBe("initial")
       }
-      expect(defaults.style.getPropertyValue("--_mui-transfer-disabled").trim()).toBe("GrayText")
+      expect(defaults.style.getPropertyValue("--_m-transfer-disabled").trim()).toBe("GrayText")
       expect(Array.from({ length: defaults.style.length }, (_, i) => defaults.style[i])
-        .every(name => name.startsWith("--_mui-transfer-"))).toBe(true)
+        .every(name => name.startsWith("--_m-transfer-"))).toBe(true)
       const forced = media.find(rule => rule.media.mediaText.replace(/\s/g, "") === "(forced-colors:active)")!
       const disabled = [...forced.cssRules].find(rule => (rule as CSSStyleRule).style.color === "GrayText") as CSSStyleRule
       expect(disabled.selectorText).toContain("[data-transfer-action]")
@@ -83,7 +83,7 @@ describe("native membership versus staging", () => {
     style.textContent = css
     document.head.append(style)
     try {
-      root.style.cssText = "--mui-transfer-font-size:17px;--mui-transfer-title-size:20px;--mui-transfer-background:rgb(1,2,3);--mui-transfer-list-padding:7px"
+      root.style.cssText = "--m-transfer-font-size:17px;--m-transfer-title-size:20px;--m-transfer-background:rgb(1,2,3);--m-transfer-list-padding:7px"
       const authored = root.getAttribute("style"), a = item("a"), fixed = item("fixed")
       a.selected = true
       root.dataset.transferSize = "large"
@@ -304,7 +304,7 @@ describe("defaults, focus and notifications", () => {
   })
   it("emits membership once for user transfer, staging separately, and no setter/filter/reset change", async () => {
     const { helper, root, item, source, action, form } = fixture(), changed = vi.fn(), staged = vi.fn()
-    root.addEventListener("mui:transfer-change", changed); root.addEventListener("mui:transfer-stage", staged)
+    root.addEventListener("m:transfer-change", changed); root.addEventListener("m:transfer-stage", staged)
     helper.setValue(["fixed", "a"]); helper.setFilter("source", ""); form.reset(); await wait()
     expect(changed).not.toHaveBeenCalled()
     item("a").selected = true; source.dispatchEvent(new Event("change", { bubbles: true }))
@@ -334,7 +334,7 @@ describe("ownership, teardown and failure", () => {
     const { helper, root, source } = fixture()
     vi.resetModules(); const other = await import("../src/components/transfer/index.js")
     expect(() => other.createTransfer(root)).toThrow("unowned")
-    const pane = source.parentElement!.parentElement!; pane.classList.add("mui-select"); pane.setAttribute("data-select", ""); source.setAttribute("data-select-control", "")
+    const pane = source.parentElement!.parentElement!; pane.classList.add("m-select"); pane.setAttribute("data-select", ""); source.setAttribute("data-select-control", "")
     expect(() => createSelect(pane)).toThrow("owner")
     helper.disconnect()
   })

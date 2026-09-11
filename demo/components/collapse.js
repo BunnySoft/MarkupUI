@@ -14,13 +14,13 @@ for (const root of roots) {
 }
 
 const eventRoot = document.querySelector("[data-event-collapse]")
-eventRoot.addEventListener("mui:collapse-header-click", event => {
+eventRoot.addEventListener("m:collapse-header-click", event => {
   document.querySelector("[data-header-status]").textContent =
     `Name: ${event.detail.name}, Expanded: ${event.detail.expanded}`
 })
 
 const triggerRoot = document.querySelector("[data-trigger-collapse]")
-triggerRoot.addEventListener("mui:collapse-header-click", event => {
+triggerRoot.addEventListener("m:collapse-header-click", event => {
   document.querySelector("[data-trigger-status]").textContent =
     `Main/arrow summary: ${event.detail.name}, expanded ${event.detail.expanded}`
 })

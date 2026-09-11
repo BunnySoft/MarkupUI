@@ -6,4 +6,4 @@ h1 { font-size: 1.75rem; }
 h2 { font-size: 1.2rem; }
 .examples, .controls { display: flex; align-items: start; flex-wrap: wrap; gap: 24px; margin-block: 20px; }
 button { font: inherit; padding: 5px 8px; }
-#authored [data-mui-statistic-suffix] button { font-size: 14px; margin-inline-start: 8px; }
+#authored [data-m-statistic-suffix] button { font-size: 14px; margin-inline-start: 8px; }

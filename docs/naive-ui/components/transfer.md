@@ -75,7 +75,7 @@ All rows are resolved: **28 adapted native capabilities and 24 intentional omiss
 | `target-filter-placeholder` · API:L39 | Prop | Native target input placeholder, independent of source. | 🟢 Verified |
 | `target-title` · API:L40 | Prop | Authored native target heading/label. | 🟢 Verified |
 | `value` · API:L41 | Prop | Every target option key in DOM order; not selectedOptions. | 🟢 Verified |
-| `on-update:value` · API:L42 | Callback | One mui:transfer-change for user membership movement; staging has a separate event. | 🟢 Verified |
+| `on-update:value` · API:L42 | Callback | One m:transfer-change for user membership movement; staging has a separate event. | 🟢 Verified |
 | `virtual-scroll` · API:L43 | Prop | Bounded full native lists, no Virtual List/scrollbar runtime. | ⏭️ Intentionally omitted |
 
 ### TransferOption Type

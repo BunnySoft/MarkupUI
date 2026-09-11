@@ -38,7 +38,7 @@ No leave/hide event is fabricated. Actual spoken announcement timing is not cert
 
 ### Native primitives and fallback
 
-- **Native path:** an ordinary `.mui-alert` section with authored header/body/icon is styled
+- **Native path:** an ordinary `.m-alert` section with authored header/body/icon is styled
   without a controller. Live-region semantics are opt-in native attributes, not severity inference.
 - **Small enhancement:** the Custom Element adopts regions and creates one named native close
   button when requested. CSS grid/logical properties provide layout without measurements.
@@ -73,15 +73,15 @@ callback/default behavior, pixel parity or all-browser/assistive-technology cert
 | [`title`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/alert/demos/enUS/index.demo-entry.md#L25) | Prop | ADAPTED native string title fallback or authored header. | 🟢 Verified | Safe text; authored header wins; native tooltip retained and heading level not inferred. |
 | [`type`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/alert/demos/enUS/index.demo-entry.md#L26) | Prop | ADAPTED default/info/success/warning/error CSS and glyphs. | 🟢 Verified | Appearance does not infer an assertive role or rewrite authored severity text. |
 | [`on-after-leave`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/alert/demos/enUS/index.demo-entry.md#L27) | Callback | Application owns completion of its own hiding/removal. | ⏭️ Intentionally omitted | No auto-hide or transition lifecycle exists; no fabricated after-leave event. |
-| [`on-close`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/alert/demos/enUS/index.demo-entry.md#L28) | Callback | ADAPTED cancellable bubbling `mui:close`, `detail.originalEvent`. | 🟢 Verified | Intent only. Boolean/promise callback results and upstream default auto-hide are explicitly not implemented. |
+| [`on-close`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/alert/demos/enUS/index.demo-entry.md#L28) | Callback | ADAPTED cancellable bubbling `m:close`, `detail.originalEvent`. | 🟢 Verified | Intent only. Boolean/promise callback results and upstream default auto-hide are explicitly not implemented. |
 
 ### Alert Slots
 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
 | [`default`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/alert/demos/enUS/index.demo-entry.md#L34) | Slot | ADAPTED native default/content-region nodes and actions. | 🟢 Verified | Original nodes/listeners/native form behavior retained; no VNode renderer or invented action slot. |
-| [`header`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/alert/demos/enUS/index.demo-entry.md#L35) | Slot | ADAPTED `data-mui-alert-header` with native headings. | 🟢 Verified | Authored hierarchy preserved; no duplicate heading/landmark/live semantics. |
-| [`icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/alert/demos/enUS/index.demo-entry.md#L36) | Slot | ADAPTED HTML/SVG `data-mui-alert-icon`. | 🟢 Verified | Nodes, listeners and authored ARIA retained; CSS controls visibility and size. |
+| [`header`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/alert/demos/enUS/index.demo-entry.md#L35) | Slot | ADAPTED `data-m-alert-header` with native headings. | 🟢 Verified | Authored hierarchy preserved; no duplicate heading/landmark/live semantics. |
+| [`icon`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/alert/demos/enUS/index.demo-entry.md#L36) | Slot | ADAPTED HTML/SVG `data-m-alert-icon`. | 🟢 Verified | Nodes, listeners and authored ARIA retained; CSS controls visibility and size. |
 
 ### Explicit source-only supplements
 

@@ -16,7 +16,7 @@ class Resize {
 }
 function fixture(options: CarouselOptions = {}, count = 3, bind = true) {
   const form = document.createElement("form"), id = ++sequence
-  form.innerHTML = `<section class="mui-carousel" data-carousel aria-label="Examples">
+  form.innerHTML = `<section class="m-carousel" data-carousel aria-label="Examples">
     <div data-carousel-viewport id="viewport-${id}" tabindex="0" aria-label="Slides">
       ${Array.from({ length: count }, (_, i) => `<article data-carousel-item><h2>Slide ${i}</h2><label>Field ${i}<input name="field-${i}" value="value-${i}" required></label><button type="button">Inner action</button><template><p>Kept</p></template></article>`).join("")}
     </div><div data-carousel-controls hidden><button type="button" data-carousel-prev>Previous</button><button type="button" data-carousel-next>Next</button>
@@ -115,7 +115,7 @@ describe("Carousel current/default/native command contract", () => {
   })
   it("settles real native scrolling and emits one change", () => {
     const { helper, root, finish, readout } = fixture(), changed = vi.fn()
-    root.addEventListener("mui:carousel-change", changed)
+    root.addEventListener("m:carousel-change", changed)
     finish(2)
     expect(helper.getCurrentIndex()).toBe(2); expect(readout.textContent).toBe("3 / 3")
     expect(changed).toHaveBeenCalledTimes(1)
@@ -144,7 +144,7 @@ describe("Carousel current/default/native command contract", () => {
   })
   it("keeps the current identity through resize without a second notification", () => {
     const { helper, resize, root, viewport } = fixture({ smooth: false }), change = vi.fn()
-    helper.to(2); root.addEventListener("mui:carousel-change", change); resize(600)
+    helper.to(2); root.addEventListener("m:carousel-change", change); resize(600)
     expect(viewport.scrollLeft).toBe(1200); expect(helper.getCurrentIndex()).toBe(2)
     expect(change).not.toHaveBeenCalled()
   })
@@ -190,7 +190,7 @@ describe("Carousel native focus, form and keyboard", () => {
   })
   it("clicks indicators once without tab roles, implicit form submit or automatic focus", () => {
     const { root, helper, form } = fixture({ smooth: false }), changed = vi.fn(), submit = vi.fn()
-    root.addEventListener("mui:carousel-change", changed); form.addEventListener("submit", submit)
+    root.addEventListener("m:carousel-change", changed); form.addEventListener("submit", submit)
     const button = root.querySelector<HTMLButtonElement>('[data-carousel-to="2"]')!
     button.focus(); button.click()
     expect(helper.getCurrentIndex()).toBe(2); expect(document.activeElement).toBe(button)
@@ -263,7 +263,7 @@ describe("Carousel refresh, reentrancy and ownership", () => {
   it("retains current identity through reorder and chooses a clamped neighbor after removal", () => {
     const { helper, viewport, root } = fixture({ smooth: false }), changes = vi.fn()
     helper.to(1); const current = helper.slides[1]!
-    root.addEventListener("mui:carousel-change", changes)
+    root.addEventListener("m:carousel-change", changes)
     viewport.prepend(current); helper.refresh()
     expect(helper.getCurrentIndex()).toBe(0); expect(helper.slides[0]).toBe(current)
     expect(changes).toHaveBeenCalledOnce()
@@ -280,11 +280,11 @@ describe("Carousel refresh, reentrancy and ownership", () => {
   })
   it("suppresses stale callbacks after reentrant disconnect or a new command", () => {
     const callback = vi.fn(), { helper, root } = fixture({ smooth: false, onUpdateCurrentIndex: callback })
-    root.addEventListener("mui:carousel-change", () => helper.to(2), { once: true })
+    root.addEventListener("m:carousel-change", () => helper.to(2), { once: true })
     helper.to(1)
     expect(helper.getCurrentIndex()).toBe(2); expect(callback).toHaveBeenCalledOnce()
     expect(callback.mock.calls[0]![0]).toBe(2)
-    root.addEventListener("mui:carousel-change", () => helper.disconnect(), { once: true })
+    root.addEventListener("m:carousel-change", () => helper.disconnect(), { once: true })
     helper.to(0); expect(callback).toHaveBeenCalledOnce()
   })
   it("restores only owned values on disconnect and supports clean rebinding", () => {
@@ -356,7 +356,7 @@ describe("Carousel refresh, reentrancy and ownership", () => {
   })
   it("does not call an options callback after a change listener removes the root", async () => {
     const callback = vi.fn(), { helper, root } = fixture({ smooth: false, onUpdateCurrentIndex: callback })
-    root.addEventListener("mui:carousel-change", () => root.remove())
+    root.addEventListener("m:carousel-change", () => root.remove())
     helper.next(); expect(callback).not.toHaveBeenCalled()
     await Promise.resolve(); expect(helper.connected).toBe(false)
   })
@@ -368,7 +368,7 @@ describe("Carousel refresh, reentrancy and ownership", () => {
   })
   it("retains a pending command notification when a current resize completes it", () => {
     const { helper, root, defer } = fixture(), changed = vi.fn()
-    root.addEventListener("mui:carousel-change", changed)
+    root.addEventListener("m:carousel-change", changed)
     defer(); helper.to(2); Resize.instances.at(-1)!.emit()
     expect(helper.getCurrentIndex()).toBe(2); expect(changed).toHaveBeenCalledOnce()
     expect(changed.mock.calls[0]![0].detail.reason).toBe("api")

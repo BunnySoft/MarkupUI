@@ -31,7 +31,7 @@ const branch = createCascader(document.querySelector("#branch"), { selection: "a
 function inspect() {
   document.querySelector("#state").textContent = JSON.stringify({ ...cascader.state, nativeFields: [...new FormData(form)], loads, disposals }, null, 2)
 }
-for (const type of ["change", "load", "error"]) root.addEventListener(`mui:cascader-${type}`, event => {
+for (const type of ["change", "load", "error"]) root.addEventListener(`m:cascader-${type}`, event => {
   events.textContent = type === "error" ? `Cascader error: ${event.detail.error?.message}` : `Cascader ${type}: ${event.detail.value ?? "no terminal value"}`
   inspect()
 })

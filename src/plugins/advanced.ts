@@ -1,6 +1,6 @@
 import { advancedStyles as styles } from "./advanced.styles.js"
 import type { MarkupUIApi } from "../core/api.js"
-import type { MuiPlugin } from "../core/plugin.js"
+import type { MPlugin } from "../core/plugin.js"
 
 
 
@@ -11,22 +11,22 @@ interface DataColumn {
 }
 
 export const advancedElementNames = [
-  "mui-data-column",
-  "mui-data-grid",
-  "mui-date-picker",
-  "mui-time-picker",
-  "mui-upload",
-  "mui-virtual-list",
+  "m-data-column",
+  "m-data-grid",
+  "m-date-picker",
+  "m-time-picker",
+  "m-upload",
+  "m-virtual-list",
 ] as const
 
-export const advancedPlugin: MuiPlugin<MarkupUIApi> = {
+export const advancedPlugin: MPlugin<MarkupUIApi> = {
   name: "advanced",
   install(api) {
     const Base = api.elements.Base
 
-    class MuiDataColumn extends Base {}
+    class MDataColumn extends Base {}
 
-    class MuiDataGrid extends Base {
+    class MDataGrid extends Base {
       private table: HTMLTableElement | undefined
       private data: ReadonlyArray<Record<string, unknown>> = []
       private sortKey = ""
@@ -46,7 +46,7 @@ export const advancedPlugin: MuiPlugin<MarkupUIApi> = {
       }
 
       private columns(): DataColumn[] {
-        return [...this.querySelectorAll<HTMLElement>(":scope > mui-data-column")].map((column) => ({
+        return [...this.querySelectorAll<HTMLElement>(":scope > m-data-column")].map((column) => ({
           key: column.getAttribute("key") ?? "",
           label: column.getAttribute("label") ?? column.getAttribute("key") ?? "",
           sortable: column.hasAttribute("sortable"),
@@ -70,7 +70,7 @@ export const advancedPlugin: MuiPlugin<MarkupUIApi> = {
           : "asc"
         this.sortKey = column.key
         this.render()
-        this.dispatchEvent(new CustomEvent("mui:sort", {
+        this.dispatchEvent(new CustomEvent("m:sort", {
           bubbles: true,
           detail: { key: this.sortKey, direction: this.sortDirection },
         }))
@@ -111,7 +111,7 @@ export const advancedPlugin: MuiPlugin<MarkupUIApi> = {
       }
     }
 
-    abstract class MuiDateTimeInput extends Base {
+    abstract class MDateTimeInput extends Base {
       protected control: HTMLInputElement | undefined
       protected abstract readonly inputType: "date" | "time"
       public connectedCallback(): void {
@@ -129,22 +129,22 @@ export const advancedPlugin: MuiPlugin<MarkupUIApi> = {
       public get value(): string { return this.control?.value ?? "" }
       public set value(value: string) { if (this.control !== undefined) this.control.value = value }
       private emitValue(name: string): void {
-        this.dispatchEvent(new CustomEvent(`mui:${name}`, {
+        this.dispatchEvent(new CustomEvent(`m:${name}`, {
           bubbles: true,
           detail: this.value,
         }))
       }
     }
 
-    class MuiDatePicker extends MuiDateTimeInput {
+    class MDatePicker extends MDateTimeInput {
       protected readonly inputType = "date"
     }
 
-    class MuiTimePicker extends MuiDateTimeInput {
+    class MTimePicker extends MDateTimeInput {
       protected readonly inputType = "time"
     }
 
-    class MuiUpload extends Base {
+    class MUpload extends Base {
       private control: HTMLInputElement | undefined
       public connectedCallback(): void {
         if (this.control !== undefined) return
@@ -154,7 +154,7 @@ export const advancedPlugin: MuiPlugin<MarkupUIApi> = {
         if (accept !== null) this.control.accept = accept
         this.control.multiple = this.hasAttribute("multiple")
         this.control.addEventListener("change", () => {
-          this.dispatchEvent(new CustomEvent("mui:change", {
+          this.dispatchEvent(new CustomEvent("m:change", {
             bubbles: true,
             detail: [...(this.control?.files ?? [])],
           }))
@@ -166,7 +166,7 @@ export const advancedPlugin: MuiPlugin<MarkupUIApi> = {
       }
     }
 
-    class MuiVirtualList extends Base {
+    class MVirtualList extends Base {
       private data: readonly unknown[] = []
       private spacer: HTMLElement | undefined
       private readonly onScroll = (): void => this.renderWindow()
@@ -174,7 +174,7 @@ export const advancedPlugin: MuiPlugin<MarkupUIApi> = {
       public connectedCallback(): void {
         this.style.height = this.getAttribute("height") ?? "240px"
         this.spacer = this.ownerDocument.createElement("div")
-        this.spacer.dataset.muiVirtualSpace = ""
+        this.spacer.dataset.mVirtualSpace = ""
         this.replaceChildren(this.spacer)
         this.addEventListener("scroll", this.onScroll)
         this.renderWindow()
@@ -200,14 +200,14 @@ export const advancedPlugin: MuiPlugin<MarkupUIApi> = {
         this.spacer.style.height = `${this.data.length * itemHeight}px`
         const elements = this.data.slice(start, end).map((item, index) => {
           const element = this.ownerDocument.createElement("div")
-          element.dataset.muiVirtualItem = ""
+          element.dataset.mVirtualItem = ""
           element.style.top = `${(start + index) * itemHeight}px`
           element.style.height = `${itemHeight}px`
           element.textContent = String(item)
           return element
         })
         this.spacer.replaceChildren(...elements)
-        this.dispatchEvent(new CustomEvent("mui:rangechange", {
+        this.dispatchEvent(new CustomEvent("m:rangechange", {
           bubbles: true,
           detail: { start, end },
         }))
@@ -215,17 +215,17 @@ export const advancedPlugin: MuiPlugin<MarkupUIApi> = {
     }
 
     const style = document.createElement("style")
-    style.id = "mui-advanced-styles"
+    style.id = "m-advanced-styles"
     style.textContent = styles
     if (document.getElementById(style.id) === null) document.head.append(style)
 
     const constructors = [
-      MuiDataColumn,
-      MuiDataGrid,
-      MuiDatePicker,
-      MuiTimePicker,
-      MuiUpload,
-      MuiVirtualList,
+      MDataColumn,
+      MDataGrid,
+      MDatePicker,
+      MTimePicker,
+      MUpload,
+      MVirtualList,
     ] as const
     advancedElementNames.forEach((name, index) => {
       const constructor = constructors[index]

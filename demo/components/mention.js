@@ -19,8 +19,8 @@ const mention = MarkupUIMention.createMention(editor, {
 const subject = MarkupUIMention.createMention(document.querySelector("#subject"), { panel: document.querySelector("#subject-panel"), prefix: "#", options: topics })
 let selections = 0, inputs = 0
 editor.addEventListener("input", () => { inputs++ })
-editor.addEventListener("mui:mention-select", () => { document.querySelector("#events").textContent = `Explicit mention choices: ${++selections}; message input notifications: ${inputs}. No text logged.` })
-editor.addEventListener("mui:mention-error", () => { document.querySelector("#events").textContent = "Local search failed; text and selection were not replaced." })
+editor.addEventListener("m:mention-select", () => { document.querySelector("#events").textContent = `Explicit mention choices: ${++selections}; message input notifications: ${inputs}. No text logged.` })
+editor.addEventListener("m:mention-error", () => { document.querySelector("#events").textContent = "Local search failed; text and selection were not replaced." })
 function inspect(event) {
   event.preventDefault()
   const data = new FormData(form, event.submitter)

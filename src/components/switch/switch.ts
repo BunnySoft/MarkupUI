@@ -32,7 +32,7 @@ export function createSwitch(root: HTMLElement, options: SwitchOptions = {}): Sw
   const control = field, indicator = one("[data-switch-loading]")
   if ((control as Owned)[owner]) throw new Error("Native switch already has an owner.")
   function validate() {
-    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".mui-switch[data-switch]")
+    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".m-switch[data-switch]")
       || root.hasAttribute("role") || root.hasAttribute("tabindex") || control.parentElement !== root
       || !own(control) || !control.hasAttribute("data-switch-control")
       || [...root.querySelectorAll("[data-switch-control]")].filter(own).length !== 1
@@ -47,12 +47,12 @@ export function createSwitch(root: HTMLElement, options: SwitchOptions = {}): Sw
     const ids = control.getAttribute("aria-labelledby")?.trim().split(/\s+/)
     const stableName = ids?.length ? ids.every(id => {
       const label = document!.getElementById(id)
-      return label?.textContent?.trim() && !label.closest(".mui-switch__state, [data-switch-loading]")
+      return label?.textContent?.trim() && !label.closest(".m-switch__state, [data-switch-loading]")
     }) : !!control.getAttribute("aria-label")?.trim()
     if (!stableName || ![...control.labels ?? []].some(label => label.textContent?.trim())) {
       throw new TypeError("Switch needs a real native label and stable aria-label or aria-labelledby, separate from visual on/off text.")
     }
-    for (const decoration of [...root.querySelectorAll<HTMLElement>(".mui-switch__state"), ...(indicator ? [indicator] : [])]) {
+    for (const decoration of [...root.querySelectorAll<HTMLElement>(".m-switch__state"), ...(indicator ? [indicator] : [])]) {
       if (!own(decoration) || decoration.parentElement !== root || decoration.getAttribute("aria-hidden") !== "true"
         || decoration === indicator && !indicator.hasAttribute("data-switch-loading")
         || decoration.hasAttribute("tabindex") || decoration.hasAttribute("role")
@@ -115,7 +115,7 @@ export function createSwitch(root: HTMLElement, options: SwitchOptions = {}): Sw
   }
   function report(reason: unknown, previous: string | null) {
     error = reason instanceof Error ? reason.message : String(reason)
-    if (error !== previous) root.dispatchEvent(new view!.CustomEvent("mui:switch-error", { detail: { message: error } }))
+    if (error !== previous) root.dispatchEvent(new view!.CustomEvent("m:switch-error", { detail: { message: error } }))
   }
   function attemptRefresh() {
     const previous = error

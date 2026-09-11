@@ -8,7 +8,7 @@ describe("audited Dropdown styles", () => {
   const css = readFileSync("src/components/dropdown/dropdown.css", "utf8")
 
   it("uses measured menu density without forcing fixed-height or flex-split labels", () => {
-    expect(css).toMatch(/padding:var\(--mui-popover-padding,\s*4px 0\)/)
+    expect(css).toMatch(/padding:var\(--m-popover-padding,\s*4px 0\)/)
     expect(css).toContain("min-height:var(--_dd-h, 34px)")
     expect(css).toContain("--_dd-h: 28px")
     expect(css).toContain("--_dd-h: 40px")
@@ -24,15 +24,15 @@ describe("audited Dropdown styles", () => {
     expect(css).toContain("--_dd-alpha: 15%")
     expect(css).toContain("--_dd-opacity: .38")
     expect(css).toContain("[data-dropdown-selected]:not(:disabled)")
-    expect(css).toContain("var(--mui-color-primary-suppl, #2a947d)")
+    expect(css).toContain("var(--m-color-primary-suppl, #2a947d)")
     expect(css).not.toContain("--_dd-line")
   })
 
   it("preserves inherited public overrides and logical label placement", () => {
-    expect(css).not.toMatch(/(?:^|[;{])\s*--mui-(?:dropdown|popover)-[\w-]+\s*:/m)
-    expect(css).toContain("var(--mui-dropdown-item-padding,")
-    expect(css).toContain("var(--mui-dropdown-hover,")
-    expect(css).toContain("var(--mui-dropdown-selected,")
+    expect(css).not.toMatch(/(?:^|[;{])\s*--m-(?:dropdown|popover)-[\w-]+\s*:/m)
+    expect(css).toContain("var(--m-dropdown-item-padding,")
+    expect(css).toContain("var(--m-dropdown-hover,")
+    expect(css).toContain("var(--m-dropdown-selected,")
     expect(css).toContain("[data-dropdown-item]:dir(rtl)")
     expect(css).toContain("padding-inline:calc(")
     expect(css).toContain("float:inline-end")
@@ -71,7 +71,7 @@ function nodes() {
   trigger.setAttribute("popovertarget", id)
   const menu = document.createElement("ul")
   menu.id = id
-  menu.className = "mui-popover mui-dropdown"
+  menu.className = "m-popover m-dropdown"
   menu.setAttribute("data-dropdown-menu", "")
   menu.setAttribute("popover", "auto")
   menu.setAttribute("aria-label", "Local actions")
@@ -85,7 +85,7 @@ function nodes() {
       <li><button type="button" data-dropdown-item data-dropdown-key="profile">Profile</button></li>
     </ul></li>
     <li><button type="button" data-dropdown-item data-dropdown-key="more" popovertarget="${id}-child">More</button>
-      <ul class="mui-popover mui-dropdown" data-dropdown-menu id="${id}-child" popover="auto" aria-label="More actions">
+      <ul class="m-popover m-dropdown" data-dropdown-menu id="${id}-child" popover="auto" aria-label="More actions">
         <li><button type="button" data-dropdown-item data-dropdown-key="rename">Rename</button></li>
         <li><a href="#destination" data-dropdown-item data-dropdown-key="separate" target="_blank">Separate</a></li>
       </ul>
@@ -179,7 +179,7 @@ describe("authored menu semantics and validation", () => {
   it("uses string leaf values silently and never creates aria-selected/checked on command menuitems", () => {
     const { menu, edit, controller } = bind({ value: "preview" })
     const selected = vi.fn()
-    menu.addEventListener("mui:dropdown-select", selected)
+    menu.addEventListener("m:dropdown-select", selected)
     expect(controller.value).toBe("preview")
     controller.value = "edit"
     expect(edit.hasAttribute("data-dropdown-selected")).toBe(true)
@@ -308,7 +308,7 @@ describe("complete retained scoped menu keyboard behavior", () => {
     const selections = vi.fn()
     edit.addEventListener("click", editClick)
     preview.addEventListener("click", linkClick)
-    menu.addEventListener("mui:dropdown-select", selections)
+    menu.addEventListener("m:dropdown-select", selections)
     controller.open()
     key(edit, "Enter")
     key(edit, " ")
@@ -419,7 +419,7 @@ describe("native selection, submenu intent and lifetime", () => {
   it("notifies only accepted leaf actions with string key, DOM item and owned key path", async () => {
     const { more, item, menu, controller } = bind()
     const selections: unknown[] = []
-    menu.addEventListener("mui:dropdown-select", event => selections.push((event as CustomEvent).detail))
+    menu.addEventListener("m:dropdown-select", event => selections.push((event as CustomEvent).detail))
     controller.open()
     more.focus()
     key(more, "ArrowRight")
@@ -433,7 +433,7 @@ describe("native selection, submenu intent and lifetime", () => {
   it("honors late defaultPrevented and ignores modified/download/external-target selection without blocking navigation", async () => {
     const { edit, preview, item, menu, controller } = bind()
     const select = vi.fn()
-    menu.addEventListener("mui:dropdown-select", select)
+    menu.addEventListener("m:dropdown-select", select)
     controller.open()
     edit.addEventListener("click", event => event.preventDefault())
     edit.click()
@@ -484,7 +484,7 @@ describe("native selection, submenu intent and lifetime", () => {
     const pair = nodes()
     const li = document.createElement("li")
     li.innerHTML = `<button type="button" data-dropdown-item data-dropdown-key="peer" popovertarget="${pair.menu.id}-peer">Peer</button>
-      <ul class="mui-popover mui-dropdown" data-dropdown-menu popover="auto" aria-label="Peer menu" id="${pair.menu.id}-peer">
+      <ul class="m-popover m-dropdown" data-dropdown-menu popover="auto" aria-label="Peer menu" id="${pair.menu.id}-peer">
         <li><button type="button" data-dropdown-item data-dropdown-key="peer-leaf">Peer leaf</button></li></ul>`
     pair.menu.append(li)
     for (const element of li.querySelectorAll<HTMLElement>("*")) element.getBoundingClientRect = () => rect(300, 250, 100, 60)
@@ -502,7 +502,7 @@ describe("native selection, submenu intent and lifetime", () => {
   it("cancels pending pointer openings, selection tasks and typeahead on hide/disconnect/rebind", async () => {
     const { more, child, edit, menu, controller } = bind({ submenuDelay: 20 })
     const select = vi.fn()
-    menu.addEventListener("mui:dropdown-select", select)
+    menu.addEventListener("m:dropdown-select", select)
     controller.open()
     pointer(more, "pointerenter")
     edit.click()
@@ -561,7 +561,7 @@ describe("native selection, submenu intent and lifetime", () => {
   it("rejects invalid dynamic items with an explicit error and no partial active tree", async () => {
     const { menu, edit, controller } = bind()
     const errors = vi.fn()
-    menu.addEventListener("mui:dropdown-error", errors)
+    menu.addEventListener("m:dropdown-error", errors)
     controller.open()
     edit.type = "submit"
     await flush()
@@ -599,7 +599,7 @@ describe("native selection, submenu intent and lifetime", () => {
   it("does not notify selection after a closing callback disconnects the binding", async () => {
     const { menu, edit, controller } = bind()
     const selected = vi.fn()
-    menu.addEventListener("mui:dropdown-select", selected)
+    menu.addEventListener("m:dropdown-select", selected)
     menu.addEventListener("beforetoggle", event => {
       if ((event as ToggleEvent).newState === "closed") controller.disconnect()
     })

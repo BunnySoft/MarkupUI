@@ -49,7 +49,7 @@ foreground color. Header/body/default stripe colors match the plain-table theme;
 retained row-header and hidden-row stripe cases are listed below.
 
 The target uses the measured precomposed dark colors rather than layering translucent
-header/stripe colors twice. Scoped `data-mui-theme` values are private to Table styling,
+header/stripe colors twice. Scoped `data-m-theme` values are private to Table styling,
 so neither shared theme CSS nor a JavaScript provider is required for these neutral colors.
 Public Table tokens still win over the local defaults.
 
@@ -91,7 +91,7 @@ perimeter contract with last-cell logic, structural parsing or a clipping wrappe
   columnheaders, rowheaders and cells. No table/grid role was synthesized.
 - Authored `headers="alpha hours"` and `rowspan=2` were preserved; the rowheader measured
   94.78125px across two 47.390625px rows. Explicit scrolling remained native.
-- No `mui-table` custom-element definition or runtime was present.
+- No `m-table` custom-element definition or runtime was present.
 - With JavaScript disabled, native required validation blocked an empty submission,
   reset restored “Original”, the disabled button remained disabled, and a normal GET
   submission reached `/markup?note=NoJS`; the returned target document had zero scripts.

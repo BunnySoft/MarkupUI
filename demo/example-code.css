@@ -49,16 +49,16 @@
   color: #333639;
   background: transparent;
 }
-.demo-example-code .mui-code-token[data-code-token="tag"] {
+.demo-example-code .m-code-token[data-code-token="tag"] {
   color: light-dark(#e45649, #e06c75);
 }
-.demo-example-code .mui-code-token[data-code-token="attribute"] {
+.demo-example-code .m-code-token[data-code-token="attribute"] {
   color: light-dark(#986801, #d19a66);
 }
-.demo-example-code .mui-code-token[data-code-token="string"] {
+.demo-example-code .m-code-token[data-code-token="string"] {
   color: light-dark(#50a14f, #98c379);
 }
-.demo-example-code .mui-code-token[data-code-token="punctuation"] {
+.demo-example-code .m-code-token[data-code-token="punctuation"] {
   color: light-dark(#383a42, #abb2bf);
 }
 .demo-example-code-container[data-state="error"] { color: #d03050; }

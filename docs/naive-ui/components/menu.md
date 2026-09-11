@@ -7,7 +7,7 @@ supplements make **56 tracker rows: 36 Verified adapted targets, 20 intentional 
 ## Baseline and delivered boundary
 
 Historical [navigation.ts](../../../src/components/navigation.ts) remains the legacy flat
-mui-menu/mui-menu-item controller, including its old role/selection behavior. The new
+m-menu/m-menu-item controller, including its old role/selection behavior. The new
 [Menu helper](../../../src/components/menu/menu.ts) instead adopts a named native nav,
 lists, href links, typed buttons and details/summary branches.
 
@@ -109,7 +109,7 @@ Referenced [Dropdown](dropdown.md) props remain a composition reference, not inh
 | [`value`][a57] | Prop | ADAPTED string/null visual leaf value. | 🟢 Verified | Silent setter; no aria-selected/checked or route/aria-current rewrite. |
 | [`watch-props`][a58] | Prop | No framework default watching. | ⏭️ Intentionally omitted | Defaults consumed once; native state and explicit setters thereafter. |
 | [`on-update:expanded-keys`][a59] | Callback | ADAPTED native disclosure toggle observation. | 🟢 Verified | Read actual expandedKeys; native events also occur for programmatic changes, not fabricated user callbacks. |
-| [`on-update:value`][a60] | Callback | ADAPTED mui:menu-select native leaf notification. | 🟢 Verified | String/DOM/path detail after cancellation checks; no raw option callback array. |
+| [`on-update:value`][a60] | Callback | ADAPTED m:menu-select native leaf notification. | 🟢 Verified | String/DOM/path detail after cancellation checks; no raw option callback array. |
 
 ### MenuOption Properties
 

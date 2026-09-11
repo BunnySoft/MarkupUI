@@ -3,7 +3,7 @@
 **🟢 Verified for the retained ordered-list, current/status and native-intent scope.**
 This is not a wizard, tablist, validation pipeline or workflow engine. Authored content remains
 visible; the helper does not create panels, fetch data, navigate or advance business state.
-The legacy `mui-steps`/`mui-step` classes and registration remain unchanged.
+The legacy `m-steps`/`m-step` classes and registration remain unchanged.
 
 ## Default-style audit — 2026-09-10
 
@@ -31,18 +31,18 @@ Controller/shared code is unchanged. The coordinator's isolated release build an
 | [Demo](../../demo/components/steps.html) | Separate local HTML/CSS/JS with explicit application acceptance |
 
 ```html
-<ol class="mui-steps" data-steps id="progress" aria-label="Application progress">
-  <li class="mui-step" data-step data-step-status="finish">
-    <div class="mui-step__layout"><span class="mui-step__icon" aria-hidden="true">✓</span>
-      <div class="mui-step__body">
+<ol class="m-steps" data-steps id="progress" aria-label="Application progress">
+  <li class="m-step" data-step data-step-status="finish">
+    <div class="m-step__layout"><span class="m-step__icon" aria-hidden="true">✓</span>
+      <div class="m-step__body">
         <h2 data-step-title>Details</h2>
         <span data-step-status-text>Completed</span>
         <p>Explicitly completed by the application.</p>
       </div>
     </div>
   </li>
-  <li class="mui-step" data-step aria-current="step">
-    <div class="mui-step__layout"><div class="mui-step__body">
+  <li class="m-step" data-step aria-current="step">
+    <div class="m-step__layout"><div class="m-step__body">
       <h2 data-step-title>Review</h2>
       <span data-step-status-text>In progress</span>
       <p>Authored description and ordinary links remain native.</p>
@@ -57,7 +57,7 @@ Controller/shared code is unchanged. The coordinator's isolated release build an
 const list = document.querySelector("#progress")
 const steps = MarkupUISteps.createSteps(list)
 document.querySelector("#review-action").hidden = false
-list.addEventListener("mui:steps-request", event => {
+list.addEventListener("m:steps-request", event => {
   // This example explicitly accepts a local presentation request.
   // An application may decline, validate or await work instead.
   steps.current = event.detail.current
@@ -65,7 +65,7 @@ list.addEventListener("mui:steps-request", event => {
 steps.current = 0 // Silent before-first position.
 ```
 
-Use connected same-document light-DOM `ol.mui-steps[data-steps]`, with direct `li.mui-step[data-step]` children and
+Use connected same-document light-DOM `ol.m-steps[data-steps]`, with direct `li.m-step[data-step]` children and
 optional inert templates. The helper neither flattens arbitrary wrappers nor clones templates.
 Native list numbering stays one-based: custom start/reversed/li[value] configurations are
 rejected for enhancement. A list label is optional; an authored heading can provide context.
@@ -128,7 +128,7 @@ completion behavior or controlled Vue prop mechanics.
 
 ## Selection intents and native events
 
-`mui:steps-request` is a **nonbubbling, noncancelable intent notification**, with
+`m:steps-request` is a **nonbubbling, noncancelable intent notification**, with
 `{ current, previous, step, action }`. The number is the visible one-based ordinal; nodes are
 the actual authored li/button. A request does **not** update current/status or imply success.
 Applications accept by assigning current, or decline simply by not doing so. There is no
@@ -143,7 +143,7 @@ targets, modified/middle clicks, browser history/hash, focus and author cancella
 
 Setters, refresh and connection never fabricate user requests. They invalidate queued work.
 An unrefreshed reordered/replaced action is not silently reported with the wrong ordinal:
-the queued action fails clearly, disconnects and emits `mui:steps-error` with `{ error }`.
+the queued action fails clearly, disconnects and emits `m:steps-error` with `{ error }`.
 Explicit invalid API/anatomy changes throw; automatic activation failures use the error event.
 Application async work is application-owned; disconnect does not cancel external operations.
 
@@ -179,15 +179,15 @@ Call disconnect before removing a whole list; there is no automatic document rem
 
 Medium/small titles and native ordinal markers use **16/14px**, with title weight
 **500** and line height **1**. Optional authored glyphs use **18/14px**. Body sizing
-uses shared `--mui-font-size`, falling back to 14px; family and ordinary body line
+uses shared `--m-font-size`, falling back to 14px; family and ordinary body line
 height remain inherited. Descriptions use a 12px top margin, or 8px for explicit
 vertical composition. Required status words and real action buttons remain readable
 body content, not disabled-looking description text.
 
-Use `data-mui-theme="light|dark"` on an ancestor or list; absent means light.
+Use `data-m-theme="light|dark"` on an ancestor or list; absent means light.
 Only private role defaults change. Root/list and item rules reset their own
-defaults for nested steps. Public `--mui-steps-marker`, `--mui-steps-color`,
-`--mui-steps-line`, `--mui-steps-current`, `--mui-steps-focus` and gap overrides
+defaults for nested steps. Public `--m-steps-marker`, `--m-steps-color`,
+`--m-steps-line`, `--m-steps-current`, `--m-steps-focus` and gap overrides
 remain available on the actual owner.
 
 | Status / role | Light | Dark |
@@ -201,7 +201,7 @@ remain available on the actual owner.
 | Other connectors | `#c2c2c2` | white `.38` |
 
 Steps uses normal primary/error roles, **not supplementary** semantic colors.
-Shared `--mui-color-primary` and `--mui-color-error` can supply those correct roles;
+Shared `--m-color-primary` and `--m-color-error` can supply those correct roles;
 local marker/color/line overrides win. Status rules no longer overwrite the public
 marker property on each finish/error item.
 

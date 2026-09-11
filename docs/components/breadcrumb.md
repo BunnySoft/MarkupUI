@@ -33,7 +33,7 @@ release build and all **17 Breadcrumb tests** pass; no shared source changed.
 
 There is no `./breadcrumb` JavaScript export, controller, global or registration-order
 requirement. No widgets/Icon/Menu/Dropdown/router module is required. The unchanged
-optional widgets plugin still provides its legacy `mui-breadcrumb`/`mui-breadcrumb-item`
+optional widgets plugin still provides its legacy `m-breadcrumb`/`m-breadcrumb-item`
 elements; the new native classes do not replace or redefine them.
 
 References: [official page](https://www.naiveui.com/en-US/os-theme/components/breadcrumb),
@@ -50,18 +50,18 @@ This is native-scope acceptance, not Vue, pixel or screen-reader speech parity.
 ## Valid native anatomy
 
 ```html
-<nav class="mui-breadcrumb" aria-label="Project breadcrumb">
-  <ol class="mui-breadcrumb-list" role="list">
-    <li class="mui-breadcrumb-item">
-      <span class="mui-breadcrumb-row">
-        <a class="mui-breadcrumb-link" href="./projects.html">Projects</a>
-        <span class="mui-breadcrumb-separator" aria-hidden="true"></span>
+<nav class="m-breadcrumb" aria-label="Project breadcrumb">
+  <ol class="m-breadcrumb-list" role="list">
+    <li class="m-breadcrumb-item">
+      <span class="m-breadcrumb-row">
+        <a class="m-breadcrumb-link" href="./projects.html">Projects</a>
+        <span class="m-breadcrumb-separator" aria-hidden="true"></span>
       </span>
     </li>
-    <li class="mui-breadcrumb-item">
-      <span class="mui-breadcrumb-row">
-        <span class="mui-breadcrumb-link" aria-current="page">Current project</span>
-        <span class="mui-breadcrumb-separator" aria-hidden="true"></span>
+    <li class="m-breadcrumb-item">
+      <span class="m-breadcrumb-row">
+        <span class="m-breadcrumb-link" aria-current="page">Current project</span>
+        <span class="m-breadcrumb-separator" aria-hidden="true"></span>
       </span>
     </li>
   </ol>
@@ -128,7 +128,7 @@ only to the extent that the author/application keeps it correct.
 For an unavailable ancestor, use passive markup such as:
 
 ```html
-<span class="mui-breadcrumb-link" aria-disabled="true">Archive (unavailable)</span>
+<span class="m-breadcrumb-link" aria-disabled="true">Archive (unavailable)</span>
 ```
 
 `aria-disabled` communicates state but does **not** disable an `a[href]`, a click listener,
@@ -193,7 +193,7 @@ generate separator text or pretend that a border shape has font-glyph parity.
 
 ## Appearance, themes and public overrides
 
-Set `data-mui-theme="light|dark"` on an ancestor or the breadcrumb itself. No marker
+Set `data-m-theme="light|dark"` on an ancestor or the breadcrumb itself. No marker
 means light. Theme boundaries set only private defaults; explicit public color
 overrides still inherit normally. The application owns its background and
 `color-scheme`, and no body/theme watcher is added.
@@ -209,19 +209,19 @@ Links are no longer blue/underlined by default; they use the reference presentat
 while retaining real href/keyboard semantics and the explicit focus-visible outline.
 Authors can restore underlining with ordinary CSS.
 
-Existing tokens are `--mui-breadcrumb-gap` (default **8px**, reset on each `nav`),
-`--mui-breadcrumb-color`, `--mui-breadcrumb-link-color`, `--mui-breadcrumb-current-color`,
-`--mui-breadcrumb-disabled-color` and `--mui-breadcrumb-separator-color`.
+Existing tokens are `--m-breadcrumb-gap` (default **8px**, reset on each `nav`),
+`--m-breadcrumb-color`, `--m-breadcrumb-link-color`, `--m-breadcrumb-current-color`,
+`--m-breadcrumb-disabled-color` and `--m-breadcrumb-separator-color`.
 Additional typography/state tokens are:
 
-- `--mui-breadcrumb-font-size` (shared `--mui-font-size`, then 14px);
-- `--mui-breadcrumb-line-height` (1.25), `--mui-breadcrumb-radius` (3px),
-  `--mui-breadcrumb-current-weight` (400);
-- `--mui-breadcrumb-hover-color`, `--mui-breadcrumb-pressed-color`;
-- `--mui-breadcrumb-hover-background`, `--mui-breadcrumb-pressed-background`.
+- `--m-breadcrumb-font-size` (shared `--m-font-size`, then 14px);
+- `--m-breadcrumb-line-height` (1.25), `--m-breadcrumb-radius` (3px),
+  `--m-breadcrumb-current-weight` (400);
+- `--m-breadcrumb-hover-color`, `--m-breadcrumb-pressed-color`;
+- `--m-breadcrumb-hover-background`, `--m-breadcrumb-pressed-background`.
 
 Explicit hover/pressed foreground overrides win first; otherwise an authored
-`--mui-breadcrumb-link-color` remains effective in those states before reference
+`--m-breadcrumb-link-color` remains effective in those states before reference
 fallbacks. Shared legacy primary/secondary text colors are not equivalent to these
 roles and are no longer substituted. Family remains inherited; no font is loaded.
 

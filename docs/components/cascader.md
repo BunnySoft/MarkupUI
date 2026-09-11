@@ -16,15 +16,15 @@ Native controls own keyboard, focus, validation and successful-control behavior.
 | [Demo](../../demo/components/cascader.html) | Separate local HTML/CSS/JS, leaf/any policies and reset/loading cases |
 | [Reference inventory](../naive-ui/components/cascader.md) | Every original identity and explicit source supplements |
 
-The optional helper registers **no custom element**. Legacy widgets-plugin MuiCascader
+The optional helper registers **no custom element**. Legacy widgets-plugin MCascader
 keeps its original path-array/automatic-first-child contract. Neither Tree nor Select is
 automatically initialized on the source or projected fields.
 
 ```html
 <form>
-  <fieldset class="mui-cascader" data-cascader>
+  <fieldset class="m-cascader" data-cascader>
     <legend>Destination</legend>
-    <section class="mui-tree" data-tree data-cascader-source aria-label="Available places">
+    <section class="m-tree" data-tree data-cascader-source aria-label="Available places">
       <ul data-tree-list>
         <li data-tree-key="eu">
           <div data-tree-row><span data-tree-label>Europe</span></div>
@@ -266,9 +266,9 @@ is not a general HTML sanitizer.
 | `load()` | Explicit selected-branch load; invalid binding/arguments may throw synchronously |
 | `refresh()` | Revalidate source/native values/default changes and resynchronize silently |
 | `disconnect()` | Cancel work, release ownership and restore author fallback |
-| `mui:cascader-change` | One native selection/clear notification, with state + action/event |
-| `mui:cascader-load` | Accepted batch with current state/node/nodes, not a second user selection |
-| `mui:cascader-error` | `{error}`; direct failures also throw/reject |
+| `m:cascader-change` | One native selection/clear notification, with state + action/event |
+| `m:cascader-load` | Accepted batch with current state/node/nodes, not a second user selection |
+| `m:cascader-error` | `{error}`; direct failures also throw/reject |
 
 Native real change events stay native; derived columns get no counterfeit input/change.
 Clear honors cancellation of its button click. No wheel, arrow-key, hover, drag or popup
@@ -309,20 +309,20 @@ reference InternalSelection roles. Dark's default border is **transparent**, not
 generic dark border token. Labels stack above their original selects; columns still
 wrap, and native fieldset/legend/disclosure chrome remains.
 
-`data-mui-theme="light|dark"` selects the native control scheme. Print uses light role
+`data-m-theme="light|dark"` selects the native control scheme. Print uses light role
 defaults and system-disabled text; forced colors retains Canvas/CanvasText/GrayText and
 native focus. This uses CSS `light-dark()`, as the native Select stylesheet does.
 There is no added animation, spinner, checkbox skin or operating-system option renderer.
 The empty first option remains ordinary native option text, not a synthetic placeholder.
 
 Author tokens inherit without being overwritten by component size/theme defaults:
-`--mui-cascader-gap`, `--mui-cascader-font-family`, `--mui-cascader-font-size`,
-`--mui-cascader-line-height`, `--mui-cascader-height`, `--mui-cascader-padding`,
-`--mui-cascader-radius`, `--mui-cascader-color`, `--mui-cascader-background`,
-`--mui-cascader-border-color`, `--mui-cascader-focus-color`,
-`--mui-cascader-disabled-color`, and `--mui-cascader-disabled-background`.
-Local font/hover tokens take precedence over shared `--mui-font-family`,
-`--mui-font-size-small|medium|large` and `--mui-color-primary-hover` fallbacks.
+`--m-cascader-gap`, `--m-cascader-font-family`, `--m-cascader-font-size`,
+`--m-cascader-line-height`, `--m-cascader-height`, `--m-cascader-padding`,
+`--m-cascader-radius`, `--m-cascader-color`, `--m-cascader-background`,
+`--m-cascader-border-color`, `--m-cascader-focus-color`,
+`--m-cascader-disabled-color`, and `--m-cascader-disabled-background`.
+Local font/hover tokens take precedence over shared `--m-font-family`,
+`--m-font-size-small|medium|large` and `--m-color-primary-hover` fallbacks.
 Explicit colors also survive print; forced colors deliberately delegates to system paint.
 
 The source still has a single combined-path trigger and floating 180px columns with

@@ -5,9 +5,9 @@ input, select, button { font: inherit; max-inline-size: 100%; }
 button { padding: .4rem .7rem; }
 .demo-controls { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; margin-block: 1rem; }
 fieldset { border: 1px solid #aab9ca; border-radius: .5rem; background: white; }
-.mui-upload { padding: .5rem; }
-.mui-upload.narrow { max-inline-size: 27rem; }
-.mui-upload.zoomed { zoom: 2; }
+.m-upload { padding: .5rem; }
+.m-upload.narrow { max-inline-size: 27rem; }
+.m-upload.zoomed { zoom: 2; }
 [data-upload-drop] { margin-block-start: 1rem; }
 .file-description { display: grid; gap: .25rem; }
 [data-upload-name] { font-weight: 650; }

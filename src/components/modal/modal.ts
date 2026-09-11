@@ -128,13 +128,13 @@ export function createModalOwner(root: HTMLElement): ModalOwner {
           if (!handles.delete(owned)) return
           openingOrder.delete(owned)
           dialog.removeEventListener("beforetoggle", beforeToggle)
-          dialog.removeEventListener("mui:native-dialog-dispose", owned.dispose)
+          dialog.removeEventListener("m:native-dialog-dispose", owned.dispose)
           dispose()
           dialog.remove()
         }
         handles.add(owned)
         dialog.addEventListener("beforetoggle", beforeToggle)
-        dialog.addEventListener("mui:native-dialog-dispose", owned.dispose)
+        dialog.addEventListener("m:native-dialog-dispose", owned.dispose)
         if (options.mode === "modeless") owned.show()
         else owned.showModal()
         if (disposed || !owned.connected) throw new Error("Modal creation was interrupted.")

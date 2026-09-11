@@ -16,59 +16,59 @@
   <h1>Date Picker: native calendar and wall-clock strings</h1>
   <p>No timestamps are inferred. Date/month/week values are calendar identifiers; datetime-local is a local wall-clock string without a timezone. Native UI localization is not a format-token API.</p>
   <form id="planning" action="date-picker.html" method="get">
-    <fieldset class="mui-date-picker" data-date-picker id="day">
+    <fieldset class="m-date-picker" data-date-picker id="day">
       <legend>Date</legend>
       <label for="day-field">Planning day <input data-date-control id="day-field" type="date" name="day" value="2024-02-29" min="2020-01-01" max="2030-12-31" required></label>
-      <p class="mui-date-picker__output" data-date-output hidden></p>
+      <p class="m-date-picker__output" data-date-output hidden></p>
       <button type="button" data-date-clear hidden>Clear date</button>
     </fieldset>
-    <fieldset class="mui-date-picker" data-date-picker id="month">
+    <fieldset class="m-date-picker" data-date-picker id="month">
       <legend>Month</legend>
       <label for="month-field">Planning month <input data-date-control id="month-field" type="month" name="month" value="2024-02" min="2020-01" max="2030-12" step="1"></label>
-      <p class="mui-date-picker__output" data-date-output hidden></p>
+      <p class="m-date-picker__output" data-date-output hidden></p>
       <button type="button" data-date-clear hidden>Clear month</button>
     </fieldset>
-    <fieldset class="mui-date-picker" data-date-picker id="week">
+    <fieldset class="m-date-picker" data-date-picker id="week">
       <legend>ISO week</legend>
       <label for="week-field">Planning week <input data-date-control id="week-field" type="week" name="week" value="2020-W53" min="2020-W01" max="2030-W52"></label>
-      <p class="mui-date-picker__output" data-date-output hidden></p>
+      <p class="m-date-picker__output" data-date-output hidden></p>
       <button type="button" data-date-clear hidden>Clear week</button>
     </fieldset>
-    <fieldset class="mui-date-picker" data-date-picker id="wall">
+    <fieldset class="m-date-picker" data-date-picker id="wall">
       <legend>Local wall-clock date and time</legend>
       <label for="wall-field">Appointment (no timezone) <input data-date-control id="wall-field" type="datetime-local" name="appointment" value="2024-03-10T02:30" step="1"></label>
       <p>This string is accepted independently of whether a particular timezone has a DST gap at this wall time.</p>
-      <p class="mui-date-picker__output" data-date-output hidden></p>
+      <p class="m-date-picker__output" data-date-output hidden></p>
       <button type="button" data-date-clear hidden>Clear appointment</button>
     </fieldset>
-    <fieldset class="mui-date-picker" data-date-picker id="trip">
+    <fieldset class="m-date-picker" data-date-picker id="trip">
       <legend>Two native date endpoints</legend>
-      <div class="mui-date-picker__fields">
+      <div class="m-date-picker__fields">
         <label for="trip-start">Start <input data-date-control id="trip-start" type="date" name="trip.start" value="2024-03-01" min="2024-01-01" max="2024-12-31" required></label>
         <span aria-hidden="true">→</span>
         <label for="trip-end">End <input data-date-control id="trip-end" type="date" name="trip.end" value="2024-03-10" min="2024-01-01" max="2024-12-31" required></label>
       </div>
       <p>Bounds never cross-link. Reversed/partial state is preserved; the explicit application validator can reject it without disabling calendar cells.</p>
-      <p class="mui-date-picker__output" data-date-output hidden></p>
-      <p class="mui-form-item__feedback" id="trip-error" hidden></p>
+      <p class="m-date-picker__output" data-date-output hidden></p>
+      <p class="m-form-item__feedback" id="trip-error" hidden></p>
       <button type="button" data-date-clear hidden>Clear both date endpoints</button>
     </fieldset>
-    <fieldset class="mui-date-picker" data-date-picker id="wall-range">
+    <fieldset class="m-date-picker" data-date-picker id="wall-range">
       <legend>Two wall-clock endpoints</legend>
-      <div class="mui-date-picker__fields">
+      <div class="m-date-picker__fields">
         <label>Start <input data-date-control type="datetime-local" name="wall[]" value="2024-11-03T01:15" step="60"></label>
         <label>End <input data-date-control type="datetime-local" name="wall[]" value="2024-11-03T01:45" step="60"></label>
       </div>
-      <p class="mui-date-picker__output" data-date-output hidden></p>
+      <p class="m-date-picker__output" data-date-output hidden></p>
       <button type="button" data-date-clear hidden>Clear both wall-clock endpoints</button>
     </fieldset>
-    <fieldset class="mui-date-picker" data-date-picker id="month-range">
+    <fieldset class="m-date-picker" data-date-picker id="month-range">
       <legend>Two month endpoints</legend>
-      <div class="mui-date-picker__fields">
+      <div class="m-date-picker__fields">
         <label>Start month <input data-date-control type="month" name="months[]" value="2024-01"></label>
         <label>End month <input data-date-control type="month" name="months[]" value="2024-03"></label>
       </div>
-      <p class="mui-date-picker__output" data-date-output hidden></p>
+      <p class="m-date-picker__output" data-date-output hidden></p>
       <button type="button" data-date-clear hidden>Clear both months</button>
     </fieldset>
     <div class="tools">

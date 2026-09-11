@@ -125,7 +125,7 @@ export function createPopoverController(
       else {
         try { validate() } catch (error) {
           controller.disconnect()
-          panel.dispatchEvent(new view!.CustomEvent(semantics?.errorEvent ?? "mui:popover-error", { detail: { error } }))
+          panel.dispatchEvent(new view!.CustomEvent(semantics?.errorEvent ?? "m:popover-error", { detail: { error } }))
           return
         }
         if (isOpen()) schedulePosition()
@@ -216,9 +216,9 @@ export function createPopoverController(
     if (!trigger.isConnected || !panel.isConnected || trigger.getRootNode() !== document || panel.getRootNode() !== document
       || !panel.id || panel.id !== panelId || /\s/.test(panel.id) || document!.getElementById(panel.id) !== panel
       || [...document!.querySelectorAll("[id]")].filter(node => node.id === panel.id).length !== 1
-      || !panel.classList.contains("mui-popover") || !["auto", "manual"].includes(panel.getAttribute("popover") ?? "")
-      || panel.hasAttribute("hidden")) throw new TypeError("Popover needs connected light-DOM, a unique ID, .mui-popover and popover=auto|manual; no hidden.")
-    if (trigger.closest("mui-popover") || panel.closest("mui-popover")) throw new TypeError("Do not bind native Popover inside legacy mui-popover anatomy.")
+      || !panel.classList.contains("m-popover") || !["auto", "manual"].includes(panel.getAttribute("popover") ?? "")
+      || panel.hasAttribute("hidden")) throw new TypeError("Popover needs connected light-DOM, a unique ID, .m-popover and popover=auto|manual; no hidden.")
+    if (trigger.closest("m-popover") || panel.closest("m-popover")) throw new TypeError("Do not bind native Popover inside legacy m-popover anatomy.")
     const parentPopover = trigger.parentElement?.closest("[popover]")
     if (parentPopover && !parentPopover.contains(panel)) throw new TypeError("Keep nested panels inside their parent; portalled nesting is unsupported.")
     if (mode === "click") {

@@ -14,7 +14,7 @@ for (const trigger of document.querySelectorAll("[data-dropdown-trigger]")) {
 }
 
 for (const menu of document.querySelectorAll("[data-dropdown-menu]")) {
-  menu.addEventListener("mui:dropdown-select", event => {
+  menu.addEventListener("m:dropdown-select", event => {
     const status = menu.closest("[data-demo-example]")?.querySelector("[data-dropdown-status]")
     if (status) status.textContent = `Selected ${event.detail.path.join(" > ")}`
   })

@@ -55,9 +55,9 @@ feedback kept the complete item at **84px** before and after; the feedback itsel
 ## Ownership and retained differences
 
 - Form never styles descendant input/select/textarea elements. Blank-height presentation
-  excludes a composed `.mui-input`, so an independently sized Input root stays authoritative.
+  excludes a composed `.m-input`, so an independently sized Input root stays authoritative.
   The composed small Input measured **28px** inside a medium Form item.
-- Public `--mui-form-*` geometry and color tokens are only consumed, never assigned by
+- Public `--m-form-*` geometry and color tokens are only consumed, never assigned by
   package size, status or theme selectors. Inherited author overrides therefore win.
 - Actual label/for, fieldset/legend, DOM order, accessible names, native constraints and
   feedback text ownership are unchanged. CSS generates no marks, labels or messages.

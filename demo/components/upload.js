@@ -33,8 +33,8 @@ try {
 if (upload) {
 window.uploadDemo = { upload, calls }
 const summarize = () => { feedback.textContent = JSON.stringify({ state: upload.state, files: upload.files.map(({ id, name, size, status, attempt, loaded, total }) => ({ id, name, size, status, attempt, loaded, total })), calls }, null, 2) }
-root.addEventListener("mui:upload-change", summarize)
-root.addEventListener("mui:upload-error", event => { feedback.textContent = `${event.detail.phase}: ${String(event.detail.error)}` })
+root.addEventListener("m:upload-change", summarize)
+root.addEventListener("m:upload-error", event => { feedback.textContent = `${event.detail.phase}: ${String(event.detail.error)}` })
 document.querySelectorAll("[data-enhancement]").forEach(node => { node.hidden = false })
 document.querySelector("#fixtures").addEventListener("click", () => {
   try { upload.add([new File(["Local draft text."], "draft.txt", { type: "text/plain" }),

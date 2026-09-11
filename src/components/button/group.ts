@@ -1,4 +1,4 @@
-export class MuiButtonGroup extends HTMLElement {
+export class MButtonGroup extends HTMLElement {
   private upgraded = false
 
   public connectedCallback(): void {
@@ -12,7 +12,7 @@ export class MuiButtonGroup extends HTMLElement {
         }
       }
     }
-    this.dataset.muiButtonGroup = ""
+    this.dataset.mButtonGroup = ""
     if (!this.hasAttribute("role")) this.setAttribute("role", "group")
   }
 

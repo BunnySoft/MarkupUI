@@ -70,8 +70,8 @@ theme props are added. A1/S1 establish native scope, not renderer/packing or Vue
 | [`layout-shift-disabled`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/grid/demos/enUS/index.demo-entry.md#L32) | Prop | Fixed native CSS when desired. | ⏭️ Intentionally omitted | No framework SSR/observer mode flag or promise of zero native layout shift. |
 | [`responsive`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/grid/demos/enUS/index.demo-entry.md#L33) | Prop | ADAPTED separate self-query wrapper or screen media queries. | 🟢 Verified | Query targets descendant grid, never its own container; no mode/string/Boolean parser or provider breakpoints. |
 | [`item-responsive`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/grid/demos/enUS/index.demo-entry.md#L34) | Prop | ADAPTED item span/visibility CSS within matching queries. | 🟢 Verified | Explicit compact spans/real display:none, no per-item string grammar. |
-| [`x-gap`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/grid/demos/enUS/index.demo-entry.md#L35) | Prop | ADAPTED --mui-grid-x-gap / native column-gap. | 🟢 Verified | Default zero; native CSS values/queries, no conversion runtime. |
-| [`y-gap`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/grid/demos/enUS/index.demo-entry.md#L36) | Prop | ADAPTED --mui-grid-y-gap / native row-gap. | 🟢 Verified | Default zero; independent nested roots and native invalid-value behavior. |
+| [`x-gap`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/grid/demos/enUS/index.demo-entry.md#L35) | Prop | ADAPTED --m-grid-x-gap / native column-gap. | 🟢 Verified | Default zero; native CSS values/queries, no conversion runtime. |
+| [`y-gap`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/grid/demos/enUS/index.demo-entry.md#L36) | Prop | ADAPTED --m-grid-y-gap / native row-gap. | 🟢 Verified | Default zero; independent nested roots and native invalid-value behavior. |
 
 ### GridItem Props
 

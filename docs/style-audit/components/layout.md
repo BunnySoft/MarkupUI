@@ -62,12 +62,12 @@ the inverted background, as in the reference; no invented contrast border is add
 
 ## Implementation and author ownership
 
-Theme boundaries define only private `--_mui-layout-*` values. Every region resets
+Theme boundaries define only private `--_m-layout-*` values. Every region resets
 its private body/text/border selection, then Header/Sider, Footer and inverted
 variants select their correct role. Public local tokens remain the first override.
 
 This also fixes a directly coupled author-ownership problem: the old inverted
-rule **defined public** `--mui-layout-background/color/border-color` on the element,
+rule **defined public** `--m-layout-background/color/border-color` on the element,
 masking the application's inherited values. With ivory/purple/teal on an ancestor:
 
 | Inverted bordered Header | Background | Text | Border |
@@ -79,8 +79,8 @@ Inverted defaults are now private, not author-token writes. A dedicated embedded
 background remains ahead of the generic background override; the generic token
 now also applies when no embedded-specific override exists.
 
-Incorrect shared fallbacks (`--mui-text-primary`, `--mui-bg-surface`,
-`--mui-bg-muted`, `--mui-border`) are removed rather than globally changed. Their
+Incorrect shared fallbacks (`--m-text-primary`, `--m-bg-surface`,
+`--m-bg-muted`, `--m-border`) are removed rather than globally changed. Their
 meanings cannot simultaneously represent body/card/action/inverted surfaces or
 textColor2/dividerColor. Existing applications wanting a custom shared palette can
 map it deliberately to public Layout tokens. No core/preset migration is needed.
@@ -92,7 +92,7 @@ map it deliberately to public Layout tokens. No core/preset migration is needed.
 - Plain sample regions were **24px** high; bordered Header/Footer **25px**.
 - Custom width tokens produced a **210px** Sider, **430px** Content and **64px**
   closed native details. These author dimensions remained effective.
-- The reference native scroll container and explicit native `.mui-layout-scroll`
+- The reference native scroll container and explicit native `.m-layout-scroll`
   both had **120px client height / 500px scroll height**, and accepted scrollTop 80.
   Native `scrollTo` to 90 emitted a real scroll event.
 - Source uses an internal `overflow-x:hidden; overflow-y:auto` scroll container
@@ -130,7 +130,7 @@ map it deliberately to public Layout tokens. No core/preset migration is needed.
 `node node_modules\vitest\vitest.mjs run tests\layout.test.ts`
 → **16 passed** (11 existing plus five palette/author/budget regressions).
 The old `order:` substring guard was narrowed to the actual CSS property so
-private `--_mui-layout-border:` declarations cannot trigger a false ordering failure.
+private `--_m-layout-border:` declarations cannot trigger a false ordering failure.
 
 | CSS source | Raw bytes | gzip level 9 |
 | --- | ---: | ---: |

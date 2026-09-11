@@ -11,7 +11,7 @@ const helpers: { disconnect(): void }[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 20))
 const actions = `<div><button type="button" data-dynamic-action="up" hidden>Up</button><button type="button" data-dynamic-action="down" hidden>Down</button><button type="button" data-dynamic-action="add" hidden>Add after</button><button type="button" data-dynamic-action="remove" hidden>Remove</button></div>`
 function row(key?: string, value = "") {
-  return `<div data-dynamic-row ${key ? `data-dynamic-key="${key}"` : ""}><label>Entry <span class="mui-input" data-input><input data-input-control name="items[]" value="${value}" aria-describedby="shared-help"></span></label>${actions}</div>`
+  return `<div data-dynamic-row ${key ? `data-dynamic-key="${key}"` : ""}><label>Entry <span class="m-input" data-input><input data-input-control name="items[]" value="${value}" aria-describedby="shared-help"></span></label>${actions}</div>`
 }
 function fixture(options: DynamicInputOptions = {}, count = 2) {
   document.body.innerHTML = `<form id="form"><fieldset data-dynamic-input id="collection"><legend>Entries</legend><div data-dynamic-rows>${Array.from({ length: count }, (_, i) => row(`seed-${i}`, `value-${i}`)).join("")}</div><template data-dynamic-template>${row()}</template><button type="button" data-dynamic-add hidden>Add entry</button></fieldset><button name="intent" value="save">Submit</button></form><p id="shared-help">Shared help</p><button type="button" id="outside">Outside</button>`
@@ -216,7 +216,7 @@ describe("hooks, explicit cleanup ownership and error boundaries", () => {
     const cleanup = vi.fn(), options: DynamicInputOptions = {}
     options[hook as "initialize" | "connect"] = (_, context) => { context.onCleanup(cleanup); throw new Error("Expected hook failure") }
     const { helper, root, container } = fixture(options, 0), changed = vi.fn(), errors = vi.fn()
-    root.addEventListener("mui:dynamic-input-change", changed); root.addEventListener("mui:dynamic-input-error", errors)
+    root.addEventListener("m:dynamic-input-change", changed); root.addEventListener("m:dynamic-input-error", errors)
     expect(() => helper.add()).toThrow("Expected hook failure")
     expect(helper.rows).toHaveLength(0); expect(container.children).toHaveLength(0); expect(cleanup).toHaveBeenCalledOnce()
     expect(changed).not.toHaveBeenCalled(); expect((errors.mock.calls[0]![0] as CustomEvent).detail.committed).toBe(false)
@@ -244,7 +244,7 @@ describe("hooks, explicit cleanup ownership and error boundaries", () => {
     const cleaned = vi.fn(), { helper, root } = fixture({ connect: (_, { onCleanup }) => {
       onCleanup(cleaned); onCleanup(() => { throw new Error("Cleanup failed") })
     } }, 1), changed = vi.fn(), errors = vi.fn()
-    root.addEventListener("mui:dynamic-input-change", changed); root.addEventListener("mui:dynamic-input-error", errors)
+    root.addEventListener("m:dynamic-input-change", changed); root.addEventListener("m:dynamic-input-error", errors)
     expect(() => helper.remove(helper.rows[0]!.key)).toThrow("Row removed")
     expect(helper.rows).toHaveLength(0); expect(cleaned).toHaveBeenCalledOnce(); expect(changed).toHaveBeenCalledOnce()
     expect((errors.mock.calls[0]![0] as CustomEvent).detail.committed).toBe(true)
@@ -259,7 +259,7 @@ describe("hooks, explicit cleanup ownership and error boundaries", () => {
   })
   it("surfaces unexpected asynchronous hook returns/rejections without success-shaped DOM", async () => {
     const { helper, root } = fixture({ initialize: (() => Promise.reject(new Error("Late hook failure"))) as never }, 0)
-    const errors = vi.fn(); root.addEventListener("mui:dynamic-input-error", errors)
+    const errors = vi.fn(); root.addEventListener("m:dynamic-input-error", errors)
     expect(() => helper.add()).toThrow("synchronous"); await flush()
     expect(helper.rows).toHaveLength(0); expect(errors.mock.calls.some(call => (call[0] as CustomEvent).detail.error.message === "Late hook failure")).toBe(true)
   })
@@ -301,7 +301,7 @@ describe("native focus, reorder, actions and no-JS restoration", () => {
   it("withdraws ownership rather than publishing stale rows after direct external mutation during a move", () => {
     const { helper, container, root } = fixture()
     const first = helper.rows[0]!, second = helper.rows[1]!, changed = vi.fn()
-    root.addEventListener("mui:dynamic-input-change", changed)
+    root.addEventListener("m:dynamic-input-change", changed)
     Object.defineProperty(container, "moveBefore", { value: (node: Node, before: Node | null) => {
       second.element.remove(); container.insertBefore(node, before)
     }, configurable: true })
@@ -416,7 +416,7 @@ describe("reset, nested scopes and explicit Form/Input resources", () => {
       onCleanup(() => { entry.disconnect(); resources-- })
     } })
     const coordinator = createForm(form, { items: [] }); helpers.push(coordinator)
-    root.addEventListener("mui:dynamic-input-change", () => coordinator.refresh())
+    root.addEventListener("m:dynamic-input-change", () => coordinator.refresh())
     const added = helper.add()!, input = control(added.element); input.required = true
     expect((await coordinator.validate()).status).toBe("invalid")
     input.value = "valid"; expect((await coordinator.validate()).status).toBe("valid")

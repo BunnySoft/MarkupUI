@@ -14,11 +14,11 @@ button, input, fieldset { box-sizing: border-box; min-inline-size: 0; max-inline
 button { white-space: normal; overflow-wrap: anywhere; }
 fieldset { margin: .5rem 0 0; }
 .demo-panel { margin-block-end: 1rem; padding: 1rem; border: 1px solid #d4d4d8; background: #fff; }
-.aligned-thing { --mui-thing-header-align: start; --mui-thing-action-justify: end; --mui-thing-row-gap: 1rem; }
-.compact-thing { --mui-thing-font-size: .875rem; --mui-thing-column-gap: .5rem; }
+.aligned-thing { --m-thing-header-align: start; --m-thing-action-justify: end; --m-thing-row-gap: 1rem; }
+.compact-thing { --m-thing-font-size: .875rem; --m-thing-column-gap: .5rem; }
 .demo-initials { display: inline-block; padding: .25rem; border: 1px solid currentColor; }
 .nested-thing { padding: .5rem; border: 1px dashed #71717a; }
-.mui-thing-content > :last-child { margin-block-end: 0; }
+.m-thing-content > :last-child { margin-block-end: 0; }
 #form-status, #follow-status { min-block-size: 1.5em; }
 @media print {
   body { max-inline-size: none; margin: 0; background: transparent; }

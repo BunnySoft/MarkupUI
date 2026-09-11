@@ -65,7 +65,7 @@ is omitted. This is not gesture, download, fullscreen, framework callback or pix
 | [`lazy`][p33] | Prop | Native loading="lazy". | 🟢 Verified ADAPTED target | Browser threshold, original visible reserved box; no custom observer loading mode. |
 | [`intersection-observer-options`][p34] | Prop | Custom lazy observer configuration excluded. | ⏭️ Intentionally omitted | Native loading instead; no selector/root observer adapter. |
 | [`keep-drag-offset`][p35] | Prop | No preview drag/pinch state. | ⏭️ Intentionally omitted | Native page gestures are not intercepted. |
-| [`object-fit`][p36] | Prop | Native CSS object-fit / --mui-image-fit, fill default. | 🟢 Verified ADAPTED target | Standard fill/contain/cover/none/scale-down values; no parser/measurement. |
+| [`object-fit`][p36] | Prop | Native CSS object-fit / --m-image-fit, fill default. | 🟢 Verified ADAPTED target | Standard fill/contain/cover/none/scale-down values; no parser/measurement. |
 | [`preview-src`][p37] | Prop | Explicit original/full-image anchor href. | 🟢 Verified ADAPTED target | Supported image URL schemes, native navigation fallback; no hidden source generator. |
 | [`preview-disabled`][p38] | Prop | data-preview-disabled on the anchor excludes dialog interception. | 🟢 Verified ADAPTED target | Link still works natively; excluded from group navigation. |
 | [`previewed-img-props`][p39] | Prop | Authored owned-template img attributes. | 🟢 Verified ADAPTED target | Helper controls src/alt; prototype src/srcset is rejected. Other template attributes retained; no object/style forwarding. |
@@ -90,10 +90,10 @@ is omitted. This is not gesture, download, fullscreen, framework callback or pix
 | [`show-toolbar`][p58] | Prop | Native toolbar hidden state from group data-show-toolbar. | 🟢 Verified ADAPTED target | Close remains visible; focus moved out before optional controls hide. |
 | [`show-toolbar-tooltip`][p59] | Prop | Tooltip generation excluded. | ⏭️ Intentionally omitted | Explicit native action names. |
 | [`src-list`][p60] | Prop | Array-only/invisible-gallery renderer excluded. | ⏭️ Intentionally omitted | Authored linked members are the source of truth; nested boundaries explicit. |
-| [`on-preview-next`][p61] | Callback | mui:image-next helper event. | 🟢 Verified ADAPTED target | Circular eligible navigation; disabled/no-op single-image navigation returns false. |
-| [`on-preview-prev`][p62] | Callback | mui:image-prev helper event. | 🟢 Verified ADAPTED target | Current DOM order, no global arrow-key handler. |
-| [`on-update:current`][p63] | Callback | mui:image-change with current/src detail. | 🟢 Verified ADAPTED target | Actual helper display changes, not Vue boolean/index callback timing parity. |
-| [`on-update:show`][p64] | Callback | mui:image-open / mui:image-close. | 🟢 Verified ADAPTED target | Native modal lifecycle and queued close/reopen race handled; no alias-array dispatch. |
+| [`on-preview-next`][p61] | Callback | m:image-next helper event. | 🟢 Verified ADAPTED target | Circular eligible navigation; disabled/no-op single-image navigation returns false. |
+| [`on-preview-prev`][p62] | Callback | m:image-prev helper event. | 🟢 Verified ADAPTED target | Current DOM order, no global arrow-key handler. |
+| [`on-update:current`][p63] | Callback | m:image-change with current/src detail. | 🟢 Verified ADAPTED target | Actual helper display changes, not Vue boolean/index callback timing parity. |
+| [`on-update:show`][p64] | Callback | m:image-open / m:image-close. | 🟢 Verified ADAPTED target | Native modal lifecycle and queued close/reopen race handled; no alias-array dispatch. |
 
 ### ImagePreview Props
 
@@ -106,7 +106,7 @@ is omitted. This is not gesture, download, fullscreen, framework callback or pix
 | [`show-toolbar`][p74] | Prop | Optional owned toolbar hidden state. | 🟢 Verified ADAPTED target | Close is always a separate required native button. |
 | [`show-toolbar-tooltip`][p75] | Prop | Tooltip runtime/locale wrapper excluded. | ⏭️ Intentionally omitted | Visible authored labels remain accessible. |
 | [`src`][p76] | Prop | Full-image URL from selected native anchor href. | 🟢 Verified ADAPTED target | Live changes cancel old owned image; loading/error state and original link remain explicit. |
-| [`on-close`][p77] | Callback | Native dialog close plus mui:image-close lifecycle notification. | 🟢 Verified ADAPTED target | Native cancel prevention respected; safe focus return and nested-modal ownership. |
+| [`on-close`][p77] | Callback | Native dialog close plus m:image-close lifecycle notification. | 🟢 Verified ADAPTED target | Native cancel prevention respected; safe focus return and nested-modal ownership. |
 | [`on-update:show`][p78] | Callback | Helper open/close events, not controlled callback aliases. | 🟢 Verified ADAPTED target | No fake success or synchronous framework timing guarantee. |
 
 ### Image Slots

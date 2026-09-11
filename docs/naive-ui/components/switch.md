@@ -66,11 +66,11 @@ not framework or arbitrary-value parity.
 
 | Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| `checked` · [API] L42 | Slot | Authored aria-hidden .mui-switch__on | 🟢 Verified | S1/S2 native checked CSS, separate stable accessible label. |
-| `checked-icon` · [API] L43 | Slot | Authored aria-hidden .mui-switch__checked-icon | 🟢 Verified | Adjacent decorative content, not inserted into the void input/thumb. |
-| `icon` · [API] L44 | Slot | Authored aria-hidden .mui-switch__icon | 🟢 Verified | Common static icon; no source slot fallback renderer. |
-| `unchecked` · [API] L45 | Slot | Authored aria-hidden .mui-switch__off | 🟢 Verified | S1/S2 no renaming from On to Off. |
-| `unchecked-icon` · [API] L46 | Slot | Authored aria-hidden .mui-switch__unchecked-icon | 🟢 Verified | Native state visibility; no Icon/transition dependency. |
+| `checked` · [API] L42 | Slot | Authored aria-hidden .m-switch__on | 🟢 Verified | S1/S2 native checked CSS, separate stable accessible label. |
+| `checked-icon` · [API] L43 | Slot | Authored aria-hidden .m-switch__checked-icon | 🟢 Verified | Adjacent decorative content, not inserted into the void input/thumb. |
+| `icon` · [API] L44 | Slot | Authored aria-hidden .m-switch__icon | 🟢 Verified | Common static icon; no source slot fallback renderer. |
+| `unchecked` · [API] L45 | Slot | Authored aria-hidden .m-switch__off | 🟢 Verified | S1/S2 no renaming from On to Off. |
+| `unchecked-icon` · [API] L46 | Slot | Authored aria-hidden .m-switch__unchecked-icon | 🟢 Verified | Native state visibility; no Icon/transition dependency. |
 
 ### Switch Props: rail-style inline fields
 

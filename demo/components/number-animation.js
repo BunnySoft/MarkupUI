@@ -22,8 +22,8 @@ function perform(action) {
   try { action(); show() } catch (error) { feedback.textContent = `${error.name}: ${error.message}\nThe last valid view/run remains.` }
 }
 for (const helper of [animation, hidden]) {
-  helper.element.addEventListener("mui:number-animation-finish", () => queueMicrotask(show))
-  helper.element.addEventListener("mui:number-animation-error", event => { feedback.textContent = `${event.detail.phase}: ${String(event.detail.error)}` })
+  helper.element.addEventListener("m:number-animation-finish", () => queueMicrotask(show))
+  helper.element.addEventListener("m:number-animation-error", event => { feedback.textContent = `${event.detail.phase}: ${String(event.detail.error)}` })
 }
 document.querySelectorAll("[data-enhancement]").forEach(node => { node.hidden = false })
 function number(id) {

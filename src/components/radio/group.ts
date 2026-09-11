@@ -20,7 +20,7 @@ export function createRadioGroup(root: HTMLFieldSetElement): RadioGroupControlle
   let members: HTMLInputElement[] = []
   const removers: (() => void)[] = [], tasks = new Set<number>()
   function collect(): HTMLInputElement[] {
-    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".mui-radio-group[data-radio-group]")
+    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".m-radio-group[data-radio-group]")
       || root.hasAttribute("role") || root.hasAttribute("tabindex")
       || ![...root.children].find(node => node.localName === "legend")?.textContent?.trim()) {
       throw new TypeError("Keep RadioGroup a connected light-DOM fieldset with a named first legend, no role or tabindex.")
@@ -73,7 +73,7 @@ export function createRadioGroup(root: HTMLFieldSetElement): RadioGroupControlle
   function report(reason: unknown, previous: string | null) {
     const message = reason instanceof Error ? reason.message : String(reason)
     error = message
-    if (message !== previous) root.dispatchEvent(new view!.CustomEvent("mui:radio-group-error", { detail: { message } }))
+    if (message !== previous) root.dispatchEvent(new view!.CustomEvent("m:radio-group-error", { detail: { message } }))
   }
   function attemptRefresh() {
     const previous = error
@@ -95,7 +95,7 @@ export function createRadioGroup(root: HTMLFieldSetElement): RadioGroupControlle
     try {
       refresh()
       const detail: RadioGroupChange = { value: control.value }
-      later(() => root.dispatchEvent(new view!.CustomEvent("mui:radio-group-change", { detail })))
+      later(() => root.dispatchEvent(new view!.CustomEvent("m:radio-group-change", { detail })))
     } catch (reason) { report(reason, previous) }
   }
   function setValue(value: string | null) {

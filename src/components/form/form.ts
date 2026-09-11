@@ -230,7 +230,7 @@ export function createForm(form: HTMLFormElement, options: FormOptions): FormCon
       .map(control => ({ key, control, message: control.validationMessage, source: "native" }))
   }
   function report(error: unknown, key: string) {
-    form.dispatchEvent(new view!.CustomEvent("mui:form-error", { detail: { key, error } }))
+    form.dispatchEvent(new view!.CustomEvent("m:form-error", { detail: { key, error } }))
   }
   async function custom(item: Item, context: FormValidatorContext, signal: AbortSignal) {
     let remove = () => {}
@@ -327,7 +327,7 @@ export function createForm(form: HTMLFormElement, options: FormOptions): FormCon
     },
   }
   for (const node of nodes) Object.defineProperty(node, owner, { value: api, configurable: true })
-  for (const type of ["input", "change", "mui:rate-clear"]) listen(document!, type, event => {
+  for (const type of ["input", "change", "m:rate-clear"]) listen(document!, type, event => {
     const target = event.target
     if (isControl(target) && target.form === form
       || target instanceof view!.Element && nativeControls().some(control => target.contains(control))) restoreValidation()

@@ -40,7 +40,7 @@ export function createSelect(root: HTMLElement): SelectController {
     return [...node.labels ?? []].some(item => item.textContent?.trim())
   }
   function validate() {
-    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".mui-select[data-select]")
+    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".m-select[data-select]")
       || root.hasAttribute("role") || root.hasAttribute("tabindex") || root.closest("label, button, a[href], summary")
       || [control, clearButton, filter, search, empty].some(node => node && (!root.contains(node) || !own(node)))) {
       throw new TypeError("Keep Select in its connected light-DOM root, outside labels/interactive wrappers, with no wrapper role/tabindex.")
@@ -176,7 +176,7 @@ export function createSelect(root: HTMLElement): SelectController {
   }
   function report(reason: unknown, previous: string | null) {
     error = reason instanceof Error ? reason.message : String(reason)
-    if (previous !== error) root.dispatchEvent(new view!.CustomEvent("mui:select-error", { detail: { message: error } }))
+    if (previous !== error) root.dispatchEvent(new view!.CustomEvent("m:select-error", { detail: { message: error } }))
   }
   function attemptRefresh() { const previous = error; try { refresh() } catch (reason) { report(reason, previous) } }
   function setValue(value: string | null | readonly string[]) {
@@ -208,7 +208,7 @@ export function createSelect(root: HTMLElement): SelectController {
     setValue(multiple ? [] : placeholder ? "" : null)
     control.dispatchEvent(new view!.Event("input", { bubbles: true, composed: true }))
     control.dispatchEvent(new view!.Event("change", { bubbles: true }))
-    control.dispatchEvent(new view!.CustomEvent("mui:select-clear", { bubbles: true, detail: { previous } }))
+    control.dispatchEvent(new view!.CustomEvent("m:select-clear", { bubbles: true, detail: { previous } }))
     return true
   }
   function later(callback: () => void) {

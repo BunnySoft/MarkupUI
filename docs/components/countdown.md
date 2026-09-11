@@ -27,7 +27,7 @@ wrapping, overflow safety and an authored-focus outline.
 No countdown palette, card, animation, transition or renderer styling was added.
 
 ```html
-<time class="mui-countdown" data-countdown datetime="PT10S"
+<time class="m-countdown" data-countdown datetime="PT10S"
       role="timer" aria-live="off" tabindex="0">
   <strong>Remaining: </strong><span data-countdown-text>00:00:10</span>
 </time>
@@ -184,14 +184,14 @@ form values and selection survive; there is no hidden submission proxy or auto-s
 
 ## Completion, errors and reentrancy
 
-Only a **successfully formatted current run** can commit completion. `mui:countdown-update`
-fires for actual display changes. `mui:countdown-finish` then reports runId/initialValue/
+Only a **successfully formatted current run** can commit completion. `m:countdown-update`
+fires for actual display changes. `m:countdown-finish` then reports runId/initialValue/
 value=0, followed by optional onFinish if the run/owner is still current. Completed is
 marked before callbacks so reentrant reset/start cannot duplicate an old finish.
 Newer reset/value/dispose invalidates older following callbacks and timers.
 
 A formatter/clock failure sets status=error, keeps the previous display, emits
-mui:countdown-error with phase/runId and stops timed retries. It is not fake finished
+m:countdown-error with phase/runId and stops timed retries. It is not fake finished
 state. Elapsed time has not been frozen by a formatter failure; recovery with a valid
 set/refresh samples the actual elapsed remainder and can then complete once.
 
@@ -264,4 +264,4 @@ connect-src:none completed one 300ms run without page errors. Classic mode obser
 controlled monotonic jump from 0 to 5000ms against a 2000ms run and finished once, not
 by replaying ticks. A finish hook reset produced exactly runs 1 and 2. The existing
 Time instant helper and unchanged legacy Time Picker retained their distinct values;
-no mui-countdown custom element was registered.
+no m-countdown custom element was registered.

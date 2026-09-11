@@ -77,7 +77,7 @@ export function createDropdown(trigger: HTMLElement, menu: HTMLElement, options:
   const observer = new view.MutationObserver(() => {
     if (!connected) return
     try { controller.refresh() } catch (error) {
-      menu.dispatchEvent(new view!.CustomEvent("mui:dropdown-error", { detail: { error } }))
+      menu.dispatchEvent(new view!.CustomEvent("m:dropdown-error", { detail: { error } }))
     }
   })
   function label(node: HTMLElement): string {
@@ -209,7 +209,7 @@ export function createDropdown(trigger: HTMLElement, menu: HTMLElement, options:
       controller.close()
       if (!connected || pendingRefresh || !states.includes(state)) return
       if (focused && (document!.activeElement === document!.body || menu.contains(document!.activeElement))) focusSafe(trigger)
-      menu.dispatchEvent(new view!.CustomEvent<DropdownSelection>("mui:dropdown-select", {
+      menu.dispatchEvent(new view!.CustomEvent<DropdownSelection>("m:dropdown-select", {
         detail: { key: item.key, item: item.element, path, event },
       }))
     }, state)
@@ -311,12 +311,12 @@ export function createDropdown(trigger: HTMLElement, menu: HTMLElement, options:
     const keys = new Set<string>()
     const records: { menu: HTMLElement; trigger: HTMLButtonElement; elements: HTMLElement[]; labels: string[] }[] = []
     for (const current of menus) {
-      if (!["ul", "ol"].includes(current.localName) || !current.classList.contains("mui-dropdown")
-        || !current.classList.contains("mui-popover") || current.getAttribute("popover") !== "auto"
+      if (!["ul", "ol"].includes(current.localName) || !current.classList.contains("m-dropdown")
+        || !current.classList.contains("m-popover") || current.getAttribute("popover") !== "auto"
         || ![null, "menu"].includes(current.getAttribute("role")) || current.getAttribute("aria-hidden") === "true"
         || current.hasAttribute("aria-modal") || current.isContentEditable
         || current.hasAttribute("contenteditable") && current.getAttribute("contenteditable")?.toLowerCase() !== "false") {
-        throw new TypeError("Dropdown needs .mui-popover.mui-dropdown lists with popover=auto.")
+        throw new TypeError("Dropdown needs .m-popover.m-dropdown lists with popover=auto.")
       }
       named(current)
       const parent = current.parentElement?.closest<HTMLElement>("[data-dropdown-menu]")
@@ -478,7 +478,7 @@ export function createDropdown(trigger: HTMLElement, menu: HTMLElement, options:
           refreshTimer = 0
           if (!connected) return
           try { controller.refresh() } catch (error) {
-            menu.dispatchEvent(new view!.CustomEvent("mui:dropdown-error", { detail: { error } }))
+            menu.dispatchEvent(new view!.CustomEvent("m:dropdown-error", { detail: { error } }))
           }
         }, 0)
         return

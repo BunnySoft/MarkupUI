@@ -35,12 +35,12 @@ keeps ownership in either stylesheet order. Native chooser artwork, dialog geome
 datalist presentation and OS behavior remain browser-owned.
 
 ```html
-<fieldset class="mui-color-picker" data-color-picker>
+<fieldset class="m-color-picker" data-color-picker>
   <legend>Accent</legend>
   <label for="accent">Choose color</label>
-  <input class="mui-color-picker__control" data-color-control id="accent"
+  <input class="m-color-picker__control" data-color-control id="accent"
          type="color" name="accent" value="#336699">
-  <span class="mui-color-picker__output" data-color-output hidden></span>
+  <span class="m-color-picker__output" data-color-output hidden></span>
 </fieldset>
 ```
 
@@ -102,9 +102,9 @@ explicitly disabled inside a hidden entry region so it cannot block or duplicate
 form submission:
 
 ```html
-<div class="mui-color-picker__entry" data-color-entry hidden>
+<div class="m-color-picker__entry" data-color-entry hidden>
   <label for="hex">Hex draft — Apply before submitting
-    <input class="mui-color-picker__hex" data-color-hex id="hex" type="text"
+    <input class="m-color-picker__hex" data-color-hex id="hex" type="text"
            value="#336699" required pattern="#[0-9a-fA-F]{6}"
            maxlength="7" autocomplete="off" disabled>
   </label>
@@ -173,7 +173,7 @@ Apply. Semantic edits, explicit setters/discard, native input and reset boundari
 tracked separately. There is no input-event loop, text caret churn from identical writes,
 global value polling or style injection.
 
-`mui:color-picker-error` on the root reports unexpected unsupported anatomy/value changes.
+`m:color-picker-error` on the root reports unexpected unsupported anatomy/value changes.
 Direct invalid setters throw immediately; invalid user drafts use native validity/false
 commit results. Changing to unsupported advanced attributes withdraws enhancement without
 flattening current native data. To reconfigure, disconnect and author the new supported
@@ -237,9 +237,9 @@ Source HSV/alpha/palette conversion and toolbar/history machinery is not ported.
 The source public callback intersection `string & null` differs from its implementation's
 string/null union; those identities are recorded, not claimed as native event ABI.
 
-Legacy `mui-color-picker` in `src/plugins/widgets.ts` remains unchanged. It creates its own
+Legacy `m-color-picker` in `src/plugins/widgets.ts` remains unchanged. It creates its own
 color input and has a looser raw string setter; the new optional module does not silently
-upgrade that widget. Browser coexistence used explicit `mui.use(widgetsPlugin)`.
+upgrade that widget. Browser coexistence used explicit `m.use(widgetsPlugin)`.
 
 ## Original four-step acceptance
 

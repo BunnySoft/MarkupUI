@@ -20,16 +20,16 @@ for the frozen Select baseline, shared surface release and native form/focus evi
 | [Complete reference](../naive-ui/components/popselect.md) | Every original/local/inherited identity plus explicit source supplements |
 
 ```html
-<section class="mui-popselect" data-popselect>
+<section class="m-popselect" data-popselect>
   <p>
     <button type="button" data-popselect-trigger popovertarget="choices-panel"
             aria-describedby="chosen-values" hidden>Choose values</button>
     <span id="chosen-values" data-popselect-value hidden>Alpha</span>
   </p>
-  <div class="mui-popover" id="choices-panel" data-popselect-panel
+  <div class="m-popover" id="choices-panel" data-popselect-panel
        role="region" aria-labelledby="choices-heading">
     <header><h2 id="choices-heading">Available values</h2></header>
-    <div class="mui-select" data-select>
+    <div class="m-select" data-select>
       <label for="choices">Values</label>
       <select data-select-control id="choices" name="choices" size="5">
         <option value="alpha" selected>Alpha</option>
@@ -58,8 +58,8 @@ misleading stale summary. Binding adds the native auto-popover attribute and rev
 enhancement controls only when supported. No-JS/unsupported paths retain usable inline
 native lists, not a hidden select behind a fake control.
 
-The host is a connected light-DOM div/section with .mui-popselect/data-popselect. It contains
-one original trigger, one named region panel, one .mui-select[data-select] root/control and
+The host is a connected light-DOM div/section with .m-popselect/data-popselect. It contains
+one original trigger, one named region panel, one .m-select[data-select] root/control and
 one Done button. Panel IDs/targets are fixed and uniquely validated by Popover. Field roots
 remain outside labels/buttons/links, with no replacement role/tabindex. Every select has a
 real native label. Nested Popselect roots have separate ownership; their panels stay inside
@@ -102,12 +102,12 @@ authored; the existing data-select-empty mechanism indicates zero available opti
 | setValue(string/null) | Single mode; known native string or genuine no selection |
 | setValue(strings[]) | Multiple mode; known unique strings only; null/scalars/numbers reject |
 | clear() | Silent programmatic no-selection (`null` or `[]`), including disabled selected options |
-| Native Clear button | Existing Select user-like clear: input, change, mui:select-clear; no duplicate Popselect change event |
+| Native Clear button | Existing Select user-like clear: input, change, m:select-clear; no duplicate Popselect change event |
 | Defaults/reset | Native option.defaultSelected/selected attributes, not a parallel defaultValue model |
 
 Programmatic setters, clear(), refresh and native reset emit **no value-change notification**.
 The authored Select clear button follows its established contract: one synthetic input,
-one change and mui:select-clear after a real clear; canceled/no-op actions do nothing.
+one change and m:select-clear after a real clear; canceled/no-op actions do nothing.
 It focuses the actual select before hiding a focused clear button. Those synthetic events
 are not trusted browser typing. Real native editing keeps its original input/change events.
 
@@ -223,7 +223,7 @@ events update immediately. A scoped observer and short reset/focus-settlement ta
 cleaned up on disconnect. Existing Popover owns all active visibility/positioning work;
 Select owns its own native selection/clear/default handling.
 
-Malformed external anatomy/options/mode changes emit mui:popselect-error and release
+Malformed external anatomy/options/mode changes emit m:popselect-error and release
 enhancement to static native choices without repairing/resurrecting data. Invalid
 setValue arguments reject without erasing a healthy selection or disconnecting that owner.
 Fix invalid data/context and rebind explicitly.
@@ -258,8 +258,8 @@ by default, avoiding dark-on-dark labels and a permanently white control inside 
 The actual label, listbox, Clear and Done controls remain visible and owned by the native
 model; they are not hidden to resemble a rendered option menu.
 
-`--mui-select-color`, `--mui-select-background`, `--mui-select-font`, `--mui-select-pad`
-and `--mui-select-focus` remain author overrides. Size variants set private fallbacks rather
+`--m-select-color`, `--m-select-background`, `--m-select-font`, `--m-select-pad`
+and `--m-select-focus` remain author overrides. Size variants set private fallbacks rather
 than masking inherited public font/padding tokens; an explicitly sized inner Select is
 also respected when the Popselect root has no size override. Native focus and validation
 colors come from the released Select stylesheet without a local outline-color override.
@@ -357,7 +357,7 @@ altered. The pinned GitHub APIs/source/types are the reference authority.
 | Partial Popover APIs | supported=false, inline choices usable, trigger hidden; Hybrid value/readout updated |
 | No JavaScript | All three panels inline; trigger/Done/dynamic readouts hidden; Hybrid serialized; native reset restored Office; 305px document |
 | Handoff | Current Remote value/defaults/option identity retained; added popover attribute removed and dynamic readout returned to hidden fallback |
-| Coexistence | Original options survived later core/advanced/widgets; no mui-popselect registration; classic/ESM ownership and namespace replacement rejected |
+| Coexistence | Original options survived later core/advanced/widgets; no m-popselect registration; classic/ESM ownership and namespace replacement rejected |
 
 Review fixed native reset task timing, direct native selected-flag readout, nested close
 focus fixup and safe CSS-zoom/inline-width boundaries. JSDOM's disabled-option FormData and

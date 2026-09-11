@@ -13,14 +13,14 @@ export interface DrawerOwner {
 }
 
 function validate(dialog: Element | null | undefined) {
-  if (dialog?.localName !== "dialog" || !dialog.classList.contains("mui-native-dialog") || !dialog.classList.contains("mui-drawer")) {
-    throw new TypeError("Drawer requires an authored native .mui-native-dialog.mui-drawer.")
+  if (dialog?.localName !== "dialog" || !dialog.classList.contains("m-native-dialog") || !dialog.classList.contains("m-drawer")) {
+    throw new TypeError("Drawer requires an authored native .m-native-dialog.m-drawer.")
   }
   const placement = dialog.getAttribute("data-drawer-placement") ?? "right"
   if (!["left", "right", "top", "bottom", "inline-start", "inline-end"].includes(placement)) {
     throw new TypeError("Unknown Drawer placement; physical edges and explicit inline-start/end are supported.")
   }
-  const content = dialog.querySelector(":scope > .mui-drawer-content")
+  const content = dialog.querySelector(":scope > .m-drawer-content")
   if (!content || dialog.children.length !== 1 || content.querySelectorAll(":scope > [data-drawer-body]").length !== 1
     || content.querySelectorAll(":scope > [data-drawer-header]").length > 1
     || content.querySelectorAll(":scope > [data-drawer-footer]").length > 1) {

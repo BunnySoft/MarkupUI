@@ -85,8 +85,8 @@ loading/Tooltip/VNode/theme or all-browser/AT/chart parity.
 | [`show-week-labels`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/heatmap/demos/enUS/index.demo-entry.md#L46) | Prop | Visual weekday text toggle, never removal of native row-header semantics/alignment. | 🟢 Verified |
 | [`size`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/heatmap/demos/enUS/index.demo-entry.md#L47) | Prop | small/medium/large external control sizing, deliberately larger native targets than source tiny rectangles. | 🟢 Verified |
 | [`tooltip`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/heatmap/demos/enUS/index.demo-entry.md#L48) | Prop | No TooltipProps forwarding, hover-only title or required popup. Use the persistent native inspector. | ⏭️ Intentionally omitted |
-| [`x-gap`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/heatmap/demos/enUS/index.demo-entry.md#L49) | Prop | Author external --mui-heatmap-x-gap; no arbitrary inline geometry string API. | 🟢 Verified |
-| [`y-gap`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/heatmap/demos/enUS/index.demo-entry.md#L50) | Prop | Author external --mui-heatmap-y-gap; native table spacing, not JS layout calculations. | 🟢 Verified |
+| [`x-gap`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/heatmap/demos/enUS/index.demo-entry.md#L49) | Prop | Author external --m-heatmap-x-gap; no arbitrary inline geometry string API. | 🟢 Verified |
+| [`y-gap`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/heatmap/demos/enUS/index.demo-entry.md#L50) | Prop | Author external --m-heatmap-y-gap; native table spacing, not JS layout calculations. | 🟢 Verified |
 
 ### Heatmap Slots
 
@@ -144,7 +144,7 @@ adds three inherited source rows.
 | Upstream item · source | Kind | Native mapping / explicit boundary | Status |
 | --- | --- | --- | --- |
 | [`theme`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts#L170) | Inherited source prop | No provider/theme graph or chart stylesheet installer. | ⏭️ Intentionally omitted |
-| [`themeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts#L171) | Inherited source prop | No CSS-in-JS object merge; explicit public `--mui-heatmap-*` overrides remain authoritative over built-in and named defaults. | ⏭️ Intentionally omitted |
+| [`themeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts#L171) | Inherited source prop | No CSS-in-JS object merge; explicit public `--m-heatmap-*` overrides remain authoritative over built-in and named defaults. | ⏭️ Intentionally omitted |
 | [`builtinThemeOverrides`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/_mixins/use-theme.ts#L172) | Inherited source prop | No internal override precedence; broad P0/legacy exceptions stay independent. | ⏭️ Intentionally omitted |
 
 <!-- END PINNED API INVENTORY -->

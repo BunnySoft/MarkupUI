@@ -6,10 +6,10 @@ import type { CollapseController, CollapseOptions } from "../src/components/coll
 const controllers: CollapseController[] = []
 function nodes() {
   const root = document.createElement("div")
-  root.className = "mui-collapse"
+  root.className = "m-collapse"
   root.setAttribute("data-collapse", "")
   root.innerHTML = `
-    <div class="mui-collapse-row"><details data-collapse-item data-collapse-key="one"><summary>First section</summary><div data-collapse-content><p>Original content</p><input value="Original"><a href="#destination">Destination</a></div></details><div data-collapse-extra><button type="button">Extra action</button></div></div>
+    <div class="m-collapse-row"><details data-collapse-item data-collapse-key="one"><summary>First section</summary><div data-collapse-content><p>Original content</p><input value="Original"><a href="#destination">Destination</a></div></details><div data-collapse-extra><button type="button">Extra action</button></div></div>
     <details data-collapse-item data-collapse-key="two"><summary>Second section</summary><div data-collapse-content>Second content</div></details>
     <details data-collapse-item data-collapse-key="disabled" data-collapse-disabled><summary>Disabled toggle</summary><div data-collapse-content>Readable disabled content</div></details>`
   document.body.append(root)
@@ -127,7 +127,7 @@ describe("disabled activation and honest native event policy", () => {
   it("actually blocks disabled summary activation while preserving its readable, focusable label", async () => {
     const { summary, item, root } = bind()
     const headers = vi.fn()
-    root.addEventListener("mui:collapse-header-click", headers)
+    root.addEventListener("m:collapse-header-click", headers)
     summary("disabled").focus()
     const click = new MouseEvent("click", { bubbles: true, cancelable: true })
     summary("disabled").dispatchEvent(click)
@@ -157,7 +157,7 @@ describe("disabled activation and honest native event policy", () => {
   it("preserves late defaultPrevented on header clicks and reports actual state after native dispatch", async () => {
     const { root, summary, controller } = bind()
     const events: unknown[] = []
-    root.addEventListener("mui:collapse-header-click", event => events.push((event as CustomEvent).detail))
+    root.addEventListener("m:collapse-header-click", event => events.push((event as CustomEvent).detail))
     const cancel = (event: Event) => event.preventDefault()
     summary("one").addEventListener("click", cancel)
     summary("one").click()
@@ -174,8 +174,8 @@ describe("disabled activation and honest native event policy", () => {
     const { root, controller } = bind()
     const changed: unknown[] = []
     const headers = vi.fn()
-    root.addEventListener("mui:collapse-change", event => changed.push((event as CustomEvent).detail))
-    root.addEventListener("mui:collapse-header-click", headers)
+    root.addEventListener("m:collapse-change", event => changed.push((event as CustomEvent).detail))
+    root.addEventListener("m:collapse-header-click", headers)
     controller.expandedNames = "one"
     await flush()
     expect(changed.at(-1)).toMatchObject({ expandedNames: ["one"], name: "one", expanded: true })
@@ -330,7 +330,7 @@ describe("focus, refresh and cleanup", () => {
     const { root, item, summary, controller } = bind()
     const content = item("one").querySelector("p")
     const headers = vi.fn()
-    root.addEventListener("mui:collapse-header-click", headers)
+    root.addEventListener("m:collapse-header-click", headers)
     summary("one").addEventListener("click", () => { summary("one").textContent = "Renamed title" })
     summary("one").click()
     await flush()
@@ -343,7 +343,7 @@ describe("focus, refresh and cleanup", () => {
   it("releases removed roots, queued notifications and owned attributes", async () => {
     const { root, summary, controller } = bind()
     const header = vi.fn()
-    root.addEventListener("mui:collapse-header-click", header)
+    root.addEventListener("m:collapse-header-click", header)
     summary("one").click()
     root.remove()
     await flush()
@@ -366,7 +366,7 @@ describe("focus, refresh and cleanup", () => {
     controller.disconnect()
     expect(() => createCollapse(root)).toThrow("active controller")
     const errors = vi.fn()
-    root.addEventListener("mui:collapse-error", errors)
+    root.addEventListener("m:collapse-error", errors)
     summary("one").innerHTML = "<button type='button'>Invalid nested action</button>"
     await flush()
     expect(replacement.connected).toBe(false)
@@ -398,27 +398,27 @@ describe("Collapse default styling", () => {
   }
   it("uses borderless source typography and distinct dark header/content/disabled colors", () => {
     withRules(rules => {
-      const root = rules.find(rule => rule.selectorText === ".mui-collapse")!
-      expect(root.style.getPropertyValue("font-size")).toBe("var(--mui-collapse-font-size,14px)")
+      const root = rules.find(rule => rule.selectorText === ".m-collapse")!
+      expect(root.style.getPropertyValue("font-size")).toBe("var(--m-collapse-font-size,14px)")
       expect(root.style.getPropertyValue("border")).toBe("")
       const header = rules.find(rule => rule.style?.getPropertyValue("font-weight"))!
-      expect(header.style.getPropertyValue("font-weight")).toBe("var(--mui-collapse-header-weight,400)")
-      const dark = rules.find(rule => rule.selectorText === ':where([data-mui-theme="dark"])')!
-      expect(dark.style.getPropertyValue("--_mui-collapse-title")).toBe("rgba(255,255,255,.9)")
-      expect(dark.style.getPropertyValue("--_mui-collapse-text")).toBe("rgba(255,255,255,.82)")
-      expect(dark.style.getPropertyValue("--_mui-collapse-disabled")).toBe("rgba(255,255,255,.38)")
+      expect(header.style.getPropertyValue("font-weight")).toBe("var(--m-collapse-header-weight,400)")
+      const dark = rules.find(rule => rule.selectorText === ':where([data-m-theme="dark"])')!
+      expect(dark.style.getPropertyValue("--_m-collapse-title")).toBe("rgba(255,255,255,.9)")
+      expect(dark.style.getPropertyValue("--_m-collapse-text")).toBe("rgba(255,255,255,.82)")
+      expect(dark.style.getPropertyValue("--_m-collapse-disabled")).toBe("rgba(255,255,255,.38)")
     })
   })
   it("spaces mixed native rows/items and keeps custom arrows at the source size and gap", () => {
     withRules(rules => {
       const sibling = rules.find(rule => rule.selectorText?.includes(" ~ "))!
-      expect(sibling.selectorText).toContain(":is(.mui-collapse-row,[data-collapse-item])")
-      expect(sibling.style.getPropertyValue("--_mui-collapse-padding")).toBe("16px 0 0")
-      expect(sibling.style.getPropertyValue("margin-block-start")).toBe("var(--mui-collapse-item-gap,16px)")
+      expect(sibling.selectorText).toContain(":is(.m-collapse-row,[data-collapse-item])")
+      expect(sibling.style.getPropertyValue("--_m-collapse-padding")).toBe("16px 0 0")
+      expect(sibling.style.getPropertyValue("margin-block-start")).toBe("var(--m-collapse-item-gap,16px)")
       const custom = rules.find(rule => rule.style?.getPropertyValue("list-style") === "none")!
       expect(custom.style.getPropertyValue("gap")).toBe("4px")
       const arrow = rules.find(rule => rule.style?.getPropertyValue("inline-size") === "1em")!
-      expect(arrow.style.getPropertyValue("font-size")).toBe("var(--mui-collapse-arrow-size,18px)")
+      expect(arrow.style.getPropertyValue("font-size")).toBe("var(--m-collapse-arrow-size,18px)")
     })
   })
   it("limits motion to the opt-in arrow with source timing and reduced/print protection", () => {
@@ -429,7 +429,7 @@ describe("Collapse default styling", () => {
     expect(css).not.toContain("max-height")
   })
   it("does not leave a leading divider or gap after hidden rows and items", () => {
-    document.body.innerHTML = '<div class="mui-collapse"><details data-collapse-item hidden><summary>Hidden</summary></details><div class="mui-collapse-row" id="first"><details data-collapse-item><summary>First</summary></details></div><div class="mui-collapse-row" hidden></div><details data-collapse-item id="last"><summary>Last</summary></details></div>'
+    document.body.innerHTML = '<div class="m-collapse"><details data-collapse-item hidden><summary>Hidden</summary></details><div class="m-collapse-row" id="first"><details data-collapse-item><summary>First</summary></details></div><div class="m-collapse-row" hidden></div><details data-collapse-item id="last"><summary>Last</summary></details></div>'
     withRules(rules => {
       const selector = rules.find(rule => rule.selectorText?.includes(" ~ "))!.selectorText
       const first = document.querySelector<HTMLElement>("#first")!

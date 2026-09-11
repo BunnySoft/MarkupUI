@@ -12,7 +12,7 @@ applies `role="none"` and derives common-theme CSS variables.
 
 MarkupUI intentionally has no corresponding visual component. Authors choose the actual
 semantic HTML element and style it through ordinary application CSS and explicitly
-available inherited custom properties. The existing abstract `MuiElement` controller
+available inherited custom properties. The existing abstract `MElement` controller
 base is unrelated infrastructure, not an Element renderer or style owner.
 
 The default-style result is therefore **⏭️ Not applicable**, not Matched: there is no
@@ -20,7 +20,7 @@ Element-owned surface whose pixels can be compared or whose stylesheet can be al
 
 ## Preserved boundary
 
-- No `mui-element` registration or `@dataengine/markup-ui/element` export exists.
+- No `m-element` registration or `@dataengine/markup-ui/element` export exists.
 - No Element CSS bundle, theme object, provider merge or automatic variable aliasing exists.
 - Native heading, link, button, form and grouping semantics remain author-owned.
 - The source's universal presentation role is not copied over real semantic elements.

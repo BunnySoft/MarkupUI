@@ -39,13 +39,13 @@ for both upstream owners, not a separate PerformantEllipsis framework wrapper.
 
 ## Single-line and multiline text
 
-Use `.mui-ellipsis` on a native text container containing **noninteractive phrasing content**:
+Use `.m-ellipsis` on a native text container containing **noninteractive phrasing content**:
 text, span, strong, em or code without interactive/focusable descendants. It becomes a
 single-line inline-block with native overflow ellipsis when the safety-selector enhancement is
 supported. The original full text remains in the DOM; no abbreviation is substituted.
 
 ```html
-<span class="mui-ellipsis result-summary">Original complete descriptive text…</span>
+<span class="m-ellipsis result-summary">Original complete descriptive text…</span>
 <a href="./complete-result.html">Read complete result</a>
 ```
 
@@ -61,17 +61,17 @@ must fit on that same row. Native/authored margins are not reset.
 present; remove the attribute to return to one line. Multiline defaults to two lines:
 
 ```html
-<span class="mui-ellipsis three-lines" data-multiline>Original long description…</span>
+<span class="m-ellipsis three-lines" data-multiline>Original long description…</span>
 ```
 
 ```css
 .three-lines {
-  --mui-ellipsis-lines: 3;
+  --m-ellipsis-lines: 3;
   max-inline-size: 32rem;
 }
 ```
 
-`--mui-ellipsis-lines` takes a native positive CSS integer; use modest whole numbers.
+`--m-ellipsis-lines` takes a native positive CSS integer; use modest whole numbers.
 It is not a numeric-string/number property adapter, measurement result or automatically
 bounded application input. Zero, negative, fractional or malformed values are invalid for
 native line-clamp; they remove clamping rather than being silently changed to a valid count.
@@ -99,12 +99,12 @@ demo does, so its decorations do not exceed the available inline space.
 ## Native expansion: one copy of the text
 
 ```html
-<details class="mui-ellipsis-disclosure">
+<details class="m-ellipsis-disclosure">
   <summary>
-    <span class="mui-ellipsis" data-multiline>
+    <span class="m-ellipsis" data-multiline>
       The complete original content, including native emphasis if needed.
     </span>
-    <span class="mui-ellipsis-hint">Expand or collapse full text</span>
+    <span class="m-ellipsis-hint">Expand or collapse full text</span>
   </summary>
 </details>
 ```
@@ -156,7 +156,7 @@ shadow roots, author-made role widgets without native focus attributes or extern
 Those are outside the supported noninteractive-content contract.
 
 An ordinary native summary ancestor is the deliberate exception for the supported disclosure above;
-do not put `.mui-ellipsis` directly on summary or truncate the hint. Author `hidden` content
+do not put `.m-ellipsis` directly on summary or truncate the hint. Author `hidden` content
 and native templates stay hidden/inert, including in open disclosures and print.
 Scoped hidden/template display preservation uses `!important` to defeat the open-state selector;
 it does not remove attributes or claim to control arbitrary descendant content.
@@ -171,7 +171,7 @@ it does not remove attributes or claim to control arbitrary descendant content.
 - **RTL:** native direction/language and ellipsis placement remain browser-owned; logical
   sizing and normal wrapping avoid an LTR-only layout.
 - **Motion/forced colors:** no animations or transitions exist. Focus uses currentColor by
-  default (`--mui-ellipsis-focus-color` can override it) and does not disable system colors.
+  default (`--m-ellipsis-focus-color` can override it) and does not disable system colors.
 
 CSS does not parse/evaluate HTML, duplicate strings or intercept clicks. Original nodes,
 listeners, attributes, late authored content and templates remain application-owned.
@@ -192,7 +192,7 @@ fixed-origin screenshots and explicit retained differences.
 | Upstream item | Native target | Status / limits |
 | --- | --- | --- |
 | Both owners: `expand-trigger` | Explicit native details/summary; native open/toggle. | 🟢 Keyboard/pointer disclosure, not click interception on arbitrary text or overflow-only triggering. |
-| Both owners: `line-clamp` | data-multiline and --mui-ellipsis-lines; native single-line default. | 🟢 CSS integer grammar and full-text unsupported/invalid fallback; no runtime parser. |
+| Both owners: `line-clamp` | data-multiline and --m-ellipsis-lines; native single-line default. | 🟢 CSS integer grammar and full-text unsupported/invalid fallback; no runtime parser. |
 | Both owners: `tooltip` | No automatic tooltip. Use a visible native full-content route. | ⏭️ Boolean/TooltipProps overlay, hover measurement and default-on tooltip omitted. |
 | Ellipsis default slot | Original native noninteractive phrasing content. | 🟢 Stable nodes/selection/name with explicit content boundary. |
 | Ellipsis tooltip slot | Application-owned distinct content/overlay if separately implemented. | ⏭️ No tooltip slot/renderer or title-as-tooltip parity claim. |

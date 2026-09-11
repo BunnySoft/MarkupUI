@@ -24,11 +24,11 @@ incomplete/invalid value rearms it. Native input/change still report every norma
 
 ```html
 <label for="code">Six-digit code (required)</label>
-<input class="mui-input-otp" id="code" name="code" type="password"
+<input class="m-input-otp" id="code" name="code" type="password"
        autocomplete="one-time-code" inputmode="numeric"
        maxlength="6" pattern="[0-9]{6}" required aria-describedby="code-help">
 <p id="code-help">Leading zeroes count. Do not share your code.</p>
-<p class="mui-input-otp-status" id="code-count">Enter six ASCII digits.</p>
+<p class="m-input-otp-status" id="code-count">Enter six ASCII digits.</p>
 ```
 
 ```js
@@ -88,7 +88,7 @@ No custom role, expanded state or per-digit accessible names are added.
 
 ## Completion, deduplication and sensitive data
 
-Listen on the original input for nonbubbling `mui:input-otp-complete`.
+Listen on the original input for nonbubbling `m:input-otp-complete`.
 Its frozen detail is **only** `{ length, characters }`: no code, per-character array,
 changed substring, index or clipboard contents. If an explicitly authorized application
 action needs the code, read the original input at that action boundary; do not log it.
@@ -179,11 +179,11 @@ fallback. This is a local test recipe, not an authentication transport implement
 
 The [rendered style audit](../style-audit/components/input-otp.md) compares the pinned
 six-cell renderer against this deliberately single-field adaptation.
-`.mui-input-otp` styles the real field using a monospace font, visible native selection and
+`.m-input-otp` styles the real field using a monospace font, visible native selection and
 focus outline, character spacing and logical sizing. It is **not six hidden/native cells**.
-`--mui-input-otp-length` defaults to 6 for width geometry only; author a matching CSS override
+`--m-input-otp-length` defaults to 6 for width geometry only; author a matching CSS override
 for another length. It does not set maxlength or validation policy.
-`--mui-input-otp-gap` defaults to **8px** and controls letter spacing, not inter-input
+`--m-input-otp-gap` defaults to **8px** and controls letter spacing, not inter-input
 navigation. Width now includes that authored spacing instead of assuming a fixed .5ch
 gap, so a larger gap does not silently clip a full code at the default content width.
 Tokens are read on the field; no JS style/measurement writes or provider inheritance.
@@ -202,12 +202,12 @@ as authentication success.
 
 | Public CSS tokens | Purpose / default |
 | --- | --- |
-| `--mui-input-otp-length`, `--mui-input-otp-gap` | Width length 6; character spacing 8px |
-| `--mui-input-otp-height`, `--mui-input-otp-font-size` | Override the private size presets |
-| `--mui-input-otp-padding`, `--mui-input-otp-radius` | Whole-field horizontal padding 12px; radius 3px |
-| `--mui-input-otp-color`, `--mui-input-otp-background`, `--mui-input-otp-border` | Standalone field paint |
-| `--mui-input-otp-focus`, `--mui-input-otp-placeholder` | Focus/caret paint; placeholder paint |
-| `--mui-input-otp-disabled-color`, `--mui-input-otp-disabled-background` | Native disabled field paint |
+| `--m-input-otp-length`, `--m-input-otp-gap` | Width length 6; character spacing 8px |
+| `--m-input-otp-height`, `--m-input-otp-font-size` | Override the private size presets |
+| `--m-input-otp-padding`, `--m-input-otp-radius` | Whole-field horizontal padding 12px; radius 3px |
+| `--m-input-otp-color`, `--m-input-otp-background`, `--m-input-otp-border` | Standalone field paint |
+| `--m-input-otp-focus`, `--m-input-otp-placeholder` | Focus/caret paint; placeholder paint |
+| `--m-input-otp-disabled-color`, `--m-input-otp-disabled-background` | Native disabled field paint |
 
 Author tokens survive small/large presets. Font family can be changed with ordinary CSS;
 the default remains monospace rather than replacing the existing native glyph policy.

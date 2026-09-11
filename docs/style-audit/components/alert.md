@@ -1,6 +1,6 @@
 # Alert visual-default audit
 
-Date: 2026-09-10. Scope: optional enhanced Alert and its controller-free `.mui-alert`
+Date: 2026-09-10. Scope: optional enhanced Alert and its controller-free `.m-alert`
 stylesheet. No binding/template work, legacy controller rewrite or lifecycle expansion.
 
 ## Reference and method
@@ -119,17 +119,17 @@ font, device scale and case matrix are essential to interpreting these counts.
 
 ## Shared theme and author contract
 
-Reuse is limited to genuinely matching roles: `--mui-font-size`, `--mui-line-height`,
-light `--mui-color-{info,success,warning,error}`, and the existing focus-ring fallback.
+Reuse is limited to genuinely matching roles: `--m-font-size`, `--m-line-height`,
+light `--m-color-{info,success,warning,error}`, and the existing focus-ring fallback.
 Local explicit light/dark defaults avoid incorrectly mapping legacy global text,
 surface or border roles onto upstream Alert roles. Dark Alert uses supplemental
 semantic colors, not the brighter normal dark Button colors.
 
 All existing component appearance tokens remain author overrides, including
-`--mui-alert-accent` (semantic fill/border/icon), background/border/content/title
+`--m-alert-accent` (semantic fill/border/icon), background/border/content/title
 colors, padding/radius/type size, content/icon/action gaps, and close colors.
 Additional geometry tokens are documented in [Alert](../../components/alert.md).
-`--mui-alert-padding` controls the host padding; icon and close offsets remain
+`--m-alert-padding` controls the host padding; icon and close offsets remain
 independently tunable, as upstream has separate icon/close margins.
 Use `show-icon="false"` when the default-type empty icon space is unwanted.
 

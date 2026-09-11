@@ -29,19 +29,19 @@ Actual arrays and records remain object references; they are not copied into `da
 ## Root scope
 
 ```js
-const store = mui.state.create({
+const store = m.state.create({
   profile: { name: "Ada", src: "./ada.png" }
 })
 
-mui.state.bind(document.querySelector("#app"), store)
+m.state.bind(document.querySelector("#app"), store)
 ```
 
 ```html
 <section id="app">
-  <mui-avatar
+  <m-avatar
     data-bind-src="profile.src"
     data-bind-alt="profile.name">
-  </mui-avatar>
+  </m-avatar>
 </section>
 ```
 
@@ -52,10 +52,10 @@ Root paths resolve against the store.
 ```html
 <template data-each="people" data-each-key="id">
   <article>
-    <mui-avatar
+    <m-avatar
       data-bind-src="item.src"
       data-bind-alt="item.name">
-    </mui-avatar>
+    </m-avatar>
     <span data-bind-text="item.name"></span>
   </article>
 </template>
@@ -103,10 +103,10 @@ path parsing.
 Data enters a child through an explicit property:
 
 ```html
-<mui-avatar-group
+<m-avatar-group
   data-bind-items="item.people"
   item-key="id">
-</mui-avatar-group>
+</m-avatar-group>
 ```
 
 The outer scope assigns the actual array to `avatarGroup.items`. AvatarGroup then creates
@@ -140,7 +140,7 @@ component documents those names. The generic binder must not invent component co
 ## One-way data
 
 ```html
-<mui-avatar data-bind-src="item.src"></mui-avatar>
+<m-avatar data-bind-src="item.src"></m-avatar>
 ```
 
 Direction:

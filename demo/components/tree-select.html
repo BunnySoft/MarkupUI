@@ -16,10 +16,10 @@
     are independent—not cascade checks, indeterminate parents or an expandable popup.
     Without JavaScript, the authored flat options and native forms still work.</p>
   <form id="files-form">
-    <fieldset class="mui-tree-select" data-tree-select id="single">
+    <fieldset class="m-tree-select" data-tree-select id="single">
       <legend>Single key, branches allowed</legend>
       <details><summary>Passive hierarchy</summary>
-        <section class="mui-tree" data-tree data-tree-select-source aria-label="Single file hierarchy">
+        <section class="m-tree" data-tree data-tree-select-source aria-label="Single file hierarchy">
           <ul data-tree-list>
             <li data-tree-key="docs"><div data-tree-row><span data-tree-label>Documents</span></div><details data-tree-branch><summary>Documents</summary><ul data-tree-list>
               <li data-tree-key="docs-guide"><div data-tree-row><span data-tree-label>Guide</span></div></li>
@@ -34,7 +34,7 @@
           </ul>
         </section>
       </details>
-      <div class="mui-select" data-select data-tree-select-field>
+      <div class="m-select" data-select data-tree-select-field>
         <label>File<select data-select-control name="file" required>
           <option value="" data-select-placeholder>Choose file</option>
           <option value="docs">Documents</option><option value="docs-guide" selected>Documents / Guide</option>
@@ -46,10 +46,10 @@
       <p data-tree-select-value></p><p data-tree-select-status role="status"></p>
       <button type="button" data-tree-select-clear hidden>Clear single file</button>
     </fieldset>
-    <fieldset class="mui-tree-select" data-tree-select id="multiple">
+    <fieldset class="m-tree-select" data-tree-select id="multiple">
       <legend>Independent leaf keys, native multiple selection</legend>
       <details><summary>Passive hierarchy</summary>
-        <section class="mui-tree" data-tree data-tree-select-source aria-label="Multiple file hierarchy">
+        <section class="m-tree" data-tree data-tree-select-source aria-label="Multiple file hierarchy">
           <ul data-tree-list>
             <li data-tree-key="docs"><div data-tree-row><span data-tree-label>Documents</span></div><details data-tree-branch><summary>Documents</summary><ul data-tree-list>
               <li data-tree-key="docs-guide"><div data-tree-row><span data-tree-label>Guide</span></div></li>
@@ -64,7 +64,7 @@
           </ul>
         </section>
       </details>
-      <div class="mui-select" data-select data-tree-select-field>
+      <div class="m-select" data-select data-tree-select-field>
         <div data-select-search hidden>
           <label>Filter full paths<input type="search" data-select-filter></label>
           <p data-select-empty hidden>No matches. Selected choices remain visible.</p>

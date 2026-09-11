@@ -17,39 +17,39 @@ describe("Auto Complete native field styles", () => {
   it("keeps the strict 1000-byte CSS budget with no Input stylesheet dependency", () => {
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
     expect(css).not.toContain("@import")
-    expect(css).not.toContain("--mui-input-")
+    expect(css).not.toContain("--m-input-")
     expect(css).not.toContain("animation")
     expect(css).not.toContain("transition")
   })
 
   it("matches retained size defaults without writing public author tokens", () => {
     const rules = install()
-    const root = rules.find(rule => rule.selectorText?.startsWith(".mui-auto-complete:where"))!
+    const root = rules.find(rule => rule.selectorText?.startsWith(".m-auto-complete:where"))!
     expect(root.style.getPropertyValue("--_ac-h")).toBe("34px")
     expect(root.style.getPropertyValue("--_ac-f")).toBe("14px")
-    const small = rules.find(rule => rule.selectorText === ".mui-auto-complete[data-size=small]")!
-    const large = rules.find(rule => rule.selectorText === ".mui-auto-complete[data-size=large]")!
+    const small = rules.find(rule => rule.selectorText === ".m-auto-complete[data-size=small]")!
+    const large = rules.find(rule => rule.selectorText === ".m-auto-complete[data-size=large]")!
     expect(small.style.getPropertyValue("--_ac-h")).toBe("28px")
     expect(large.style.getPropertyValue("--_ac-h")).toBe("40px")
     expect(large.style.getPropertyValue("--_ac-f")).toBe("15px")
-    for (const rule of [root, small, large]) expect(rule.style.getPropertyValue("--mui-auto-complete-height")).toBe("")
+    for (const rule of [root, small, large]) expect(rule.style.getPropertyValue("--m-auto-complete-height")).toBe("")
   })
 
   it("leaves Input-owned field paint and control sizing to Input in either load order", () => {
     const rules = install()
     const owned = ["padding-inline", "background", "color", "font", "block-size", "border", "outline", "box-shadow", "color-scheme"]
-    for (const rule of rules.filter(rule => rule.selectorText?.includes("mui-auto-complete__field"))) {
+    for (const rule of rules.filter(rule => rule.selectorText?.includes("m-auto-complete__field"))) {
       if (owned.some(property => rule.style.getPropertyValue(property))) {
-        expect(rule.selectorText).toContain(":not(.mui-input)")
+        expect(rule.selectorText).toContain(":not(.m-input)")
       }
     }
-    const input = rules.find(rule => rule.selectorText === ".mui-auto-complete__field:not(.mui-input)>input")!
+    const input = rules.find(rule => rule.selectorText === ".m-auto-complete__field:not(.m-input)>input")!
     expect(input.style.getPropertyValue("font")).toBe("inherit")
-    expect(input.style.getPropertyValue("block-size").replace(/\s/g, "")).toBe("var(--mui-auto-complete-height,var(--_ac-h,34px))")
+    expect(input.style.getPropertyValue("block-size").replace(/\s/g, "")).toBe("var(--m-auto-complete-height,var(--_ac-h,34px))")
   })
 
   it("preserves native value, suggestions and author styles without popup semantics", () => {
-    document.body.innerHTML = '<label for="entry">Entry</label><div class="mui-auto-complete__field" style="--mui-auto-complete-height:42px"><input id="entry" list="choices" value="Unlisted"></div><datalist id="choices"><option value="First" label="Label"></option></datalist>'
+    document.body.innerHTML = '<label for="entry">Entry</label><div class="m-auto-complete__field" style="--m-auto-complete-height:42px"><input id="entry" list="choices" value="Unlisted"></div><datalist id="choices"><option value="First" label="Label"></option></datalist>'
     const input = document.querySelector("input")!
     const option = document.querySelector("option")!
     const before = document.body.innerHTML
@@ -62,7 +62,7 @@ describe("Auto Complete native field styles", () => {
   })
 
   it("does not reveal native hidden roots or field wrappers", () => {
-    document.body.innerHTML = '<div class="mui-auto-complete" hidden>Hidden root</div><div class="mui-auto-complete__field" hidden><input></div>'
+    document.body.innerHTML = '<div class="m-auto-complete" hidden>Hidden root</div><div class="m-auto-complete__field" hidden><input></div>'
     install()
     for (const node of document.querySelectorAll("[hidden]")) expect(getComputedStyle(node).display).toBe("none")
   })
@@ -84,7 +84,7 @@ describe("Auto Complete native field styles", () => {
     const focus = [...media.cssRules].find(rule =>
       "selectorText" in rule && String(rule.selectorText).includes(":focus-within::before")
     ) as CSSStyleRule
-    expect(focus.selectorText).toContain(":not(.mui-input)")
+    expect(focus.selectorText).toContain(":not(.m-input)")
     expect(focus.style.getPropertyValue("outline")).toBe("2px solid Highlight")
     expect(css).toContain(":not(:has(>input:disabled))")
     expect(css).toContain(":where(:not([hidden]))")

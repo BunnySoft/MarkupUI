@@ -38,9 +38,9 @@ describe("authored native Select ownership", () => {
     expect(root.hasAttribute("role")).toBe(false)
   })
   it("has no legacy registration or defaultValue proxy", () => {
-    const before = customElements.get("mui-select")
+    const before = customElements.get("m-select")
     const { control } = fixture()
-    expect(customElements.get("mui-select")).toBe(before)
+    expect(customElements.get("m-select")).toBe(before)
     expect("defaultValue" in control).toBe(false)
   })
   it("rejects duplicate and cross-module owners and permits recreation", async () => {
@@ -235,12 +235,12 @@ describe("clear, form reset, dynamic mode and disposal", () => {
     const { helper, clear, control } = fixture()
     helper.setValue("rust")
     const events: string[] = []
-    for (const type of ["input", "change", "mui:select-clear"]) control.addEventListener(type, () => events.push(type))
+    for (const type of ["input", "change", "m:select-clear"]) control.addEventListener(type, () => events.push(type))
     clear.focus(); clear.click(); await flush()
     expect(helper.value).toBe("")
     expect(document.activeElement).toBe(control)
     expect(clear.hidden).toBe(true)
-    expect(events).toEqual(["input", "change", "mui:select-clear"])
+    expect(events).toEqual(["input", "change", "m:select-clear"])
     expect(helper.clear()).toBe(false)
   })
   it("honors disabled, fieldset and advisory readonly-like clear guards", async () => {
@@ -310,7 +310,7 @@ describe("clear, form reset, dynamic mode and disposal", () => {
   })
   it("reports invalid late keys and recovers after a valid refresh", async () => {
     const { root, helper, option } = fixture()
-    const errors = vi.fn(); root.addEventListener("mui:select-error", errors)
+    const errors = vi.fn(); root.addEventListener("m:select-error", errors)
     option("rust").value = "typescript"; await flush()
     expect(errors).toHaveBeenCalledTimes(1)
     expect(() => helper.refresh()).toThrow("unique")

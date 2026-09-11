@@ -21,7 +21,7 @@ controller = api.createCollapseTransition(root, {
   onCancel: event => record("cancel", event),
 })
 const appearance = api.createCollapseTransition(document.querySelector("#appearance"), { show: true, appear: true, duration: 700 })
-root.addEventListener("mui:collapse-transition-error", event => { event.preventDefault(); status.textContent = event.detail.error.message })
+root.addEventListener("m:collapse-transition-error", event => { event.preventDefault(); status.textContent = event.detail.error.message })
 function set(show) {
   try {
     const done = controller.setShow(show)

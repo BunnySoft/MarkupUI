@@ -27,7 +27,7 @@ surface.addEventListener("close", () => { events.textContent = `Native close ret
 let operation = 0
 let timer
 const status = document.querySelector("#check-status")
-surface.addEventListener("mui:native-dialog-session", () => {
+surface.addEventListener("m:native-dialog-session", () => {
   operation++
   clearTimeout(timer)
   if (surface.isConnected && status.isConnected) status.textContent = "No local check pending."

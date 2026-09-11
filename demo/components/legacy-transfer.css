@@ -1,6 +1,6 @@
 /* Local application presentation; the existing Transfer asset owns the dual lists. */
 #legacy-transfer-example {
-  --_mui-legacy-transfer-header: rgb(250, 250, 252);
+  --_m-legacy-transfer-header: rgb(250, 250, 252);
   color-scheme: light;
   box-sizing: border-box;
   max-inline-size: 68rem;
@@ -11,12 +11,12 @@
   background: Canvas;
   overflow-wrap: anywhere;
 }
-:where([data-mui-theme=light]) #legacy-transfer-example {
-  --_mui-legacy-transfer-header: rgb(250, 250, 252);
+:where([data-m-theme=light]) #legacy-transfer-example {
+  --_m-legacy-transfer-header: rgb(250, 250, 252);
   color-scheme: light;
 }
-:where([data-mui-theme=dark]) #legacy-transfer-example {
-  --_mui-legacy-transfer-header: rgba(255, 255, 255, .06);
+:where([data-m-theme=dark]) #legacy-transfer-example {
+  --_m-legacy-transfer-header: rgba(255, 255, 255, .06);
   color-scheme: dark;
 }
 #legacy-transfer-example [hidden] { display: none !important; }
@@ -24,27 +24,27 @@
 #legacy-transfer-example .native-fields { display: flex; flex-wrap: wrap; gap: 1rem; }
 #legacy-transfer-example .native-fields label { min-inline-size: 0; }
 #legacy-transfer-example .native-fields input { box-sizing: border-box; max-inline-size: 100%; font: inherit; }
-#legacy-transfer-example .mui-transfer [data-transfer-pane] > h2 {
+#legacy-transfer-example .m-transfer [data-transfer-pane] > h2 {
   min-block-size: 38px;
   padding-block: 8px 6px;
   display: flex;
   align-items: center;
-  font-size: var(--mui-transfer-title-size, var(--mui-transfer-font-size, var(--mui-font-size-medium, 14px)));
+  font-size: var(--m-transfer-title-size, var(--m-transfer-font-size, var(--m-font-size-medium, 14px)));
   line-height: 1;
-  background: var(--_mui-legacy-transfer-header);
+  background: var(--_m-legacy-transfer-header);
 }
-#legacy-transfer-example .mui-transfer [data-transfer-pane] > label:has([data-transfer-filter]) {
-  border-block-end: 1px solid var(--mui-transfer-border-color, var(--_mui-transfer-border, #e0e0e6));
-  background: var(--_mui-legacy-transfer-header);
+#legacy-transfer-example .m-transfer [data-transfer-pane] > label:has([data-transfer-filter]) {
+  border-block-end: 1px solid var(--m-transfer-border-color, var(--_m-transfer-border, #e0e0e6));
+  background: var(--_m-legacy-transfer-header);
 }
-#legacy-transfer-example .mui-transfer [data-transfer-count] { margin: 0; }
+#legacy-transfer-example .m-transfer [data-transfer-count] { margin: 0; }
 #legacy-transfer-example #migration-tools { display: flex; flex-wrap: wrap; gap: .5rem; }
 #legacy-transfer-example #migration-tools button { min-block-size: 2.75rem; font: inherit; }
 #legacy-transfer-example pre { white-space: pre-wrap; overflow-wrap: anywhere; }
-#legacy-transfer-example :focus-visible:not(.mui-transfer *) { outline: 3px solid Highlight; outline-offset: 2px; }
+#legacy-transfer-example :focus-visible:not(.m-transfer *) { outline: 3px solid Highlight; outline-offset: 2px; }
 @media print {
   #legacy-transfer-example {
-    --_mui-legacy-transfer-header: rgb(250, 250, 252);
+    --_m-legacy-transfer-header: rgb(250, 250, 252);
     color-scheme: light;
     max-inline-size: none;
     padding: 0;

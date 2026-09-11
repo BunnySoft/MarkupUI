@@ -16,9 +16,9 @@ describe("CSS-only native Space", () => {
     expect(pkg.exports["./space/style.css"]).toBe("./dist/markup-ui-space.css")
     expect(pkg.exports["./space"]).toBeUndefined()
     expect(readdirSync(resolve("src", "components", "space"))).toEqual(["space.css"])
-    expect(customElements.get("mui-space")).toBeUndefined()
+    expect(customElements.get("m-space")).toBeUndefined()
     expect(css).not.toContain("@import")
-    expect(css).not.toContain(".mui-flex")
+    expect(css).not.toContain(".m-flex")
     expect(demo).not.toContain("<script")
   })
 
@@ -35,20 +35,20 @@ describe("CSS-only native Space", () => {
     expect([...group.querySelectorAll("*")]).toEqual(nodes)
     expect([...raw.childNodes]).toEqual(rawNodes)
     expect(raw.textContent).toContain("Bare native text")
-    expect(raw.querySelector(".mui-space-item")).toBeNull()
-    expect(document.querySelector(".mui-space[role]")).toBeNull()
+    expect(raw.querySelector(".m-space-item")).toBeNull()
+    expect(document.querySelector(".m-space[role]")).toBeNull()
   })
 
   it("makes item styling an actual authored box/class without parsing item-style or wrap-item", () => {
-    document.body.innerHTML = '<div class="mui-space" wrap-item="false" item-class="ignored" item-style="ignored"><span class="mui-space-item authored" style="color: red">Actual item</span><button type="button">Direct action</button></div>'
-    const root = document.querySelector(".mui-space")!
+    document.body.innerHTML = '<div class="m-space" wrap-item="false" item-class="ignored" item-style="ignored"><span class="m-space-item authored" style="color: red">Actual item</span><button type="button">Direct action</button></div>'
+    const root = document.querySelector(".m-space")!
     const item = root.firstElementChild!
     const before = root.outerHTML
     install()
     expect(root.outerHTML).toBe(before)
     expect(getComputedStyle(item).boxSizing).toBe("border-box")
     expect(getComputedStyle(item).maxInlineSize).toBe("100%")
-    expect(item.className).toBe("mui-space-item authored")
+    expect(item.className).toBe("m-space-item authored")
     expect(item.getAttribute("style")).toBe("color: red")
     expect(root.querySelector(".ignored")).toBeNull()
   })
@@ -58,15 +58,15 @@ describe("CSS-only native Space", () => {
     install()
     const gap = (id: string) => {
       const s = getComputedStyle(document.getElementById(id)!)
-      return [s.getPropertyValue("--_mui-space-row-gap").trim(), s.getPropertyValue("--_mui-space-column-gap").trim()]
+      return [s.getPropertyValue("--_m-space-row-gap").trim(), s.getPropertyValue("--_m-space-column-gap").trim()]
     }
     expect(gap("small")).toEqual(["4px", "8px"])
     expect(gap("medium")).toEqual(["8px", "12px"])
     expect(gap("large")).toEqual(["12px", "16px"])
     expect(gap("nested-small")).toEqual(["4px", "8px"])
     expect(gap("nested-medium")).toEqual(["8px", "12px"])
-    expect(css).toContain("row-gap: var(--mui-space-row-gap")
-    expect(css).toContain("column-gap: var(--mui-space-column-gap")
+    expect(css).toContain("row-gap: var(--m-space-row-gap")
+    expect(css).toContain("column-gap: var(--m-space-column-gap")
   })
 
   it("uses native inline/row/column wrapping with source-compatible vertical nowrap", () => {
@@ -150,9 +150,9 @@ describe("CSS-only native Space", () => {
     const template = document.querySelector("template")!
     install()
     expect(getComputedStyle(template).display).toBe("none")
-    expect(template.content.firstElementChild?.className).toBe("mui-space-item")
+    expect(template.content.firstElementChild?.className).toBe("m-space-item")
     const item = document.createElement("span")
-    item.className = "mui-space-item"
+    item.className = "m-space-item"
     const button = document.createElement("button")
     button.type = "button"
     item.append(button)
@@ -186,30 +186,30 @@ describe("CSS-only native Space", () => {
 
   it("retains its unchanged strict source CSS budget without theme or runtime bytes", () => {
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
-    expect(css).not.toContain("data-mui-theme")
-    expect(css).not.toContain("--mui-color")
-    expect(css).not.toContain("--mui-font")
-    expect(css).not.toContain("--mui-text")
+    expect(css).not.toContain("data-m-theme")
+    expect(css).not.toContain("--m-color")
+    expect(css).not.toContain("--m-font")
+    expect(css).not.toContain("--m-text")
   })
 
   it("matches the rendered default flex alignment and gives local tokens priority over presets", () => {
     install()
     const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
-    const root = rules.find(rule => rule.selectorText === ".mui-space")!
-    expect(root.style.getPropertyValue("align-items")).toBe("var(--mui-space-align, normal)")
-    expect(root.style.getPropertyValue("justify-content")).toBe("var(--mui-space-justify, flex-start)")
-    expect(root.style.getPropertyValue("row-gap")).toBe("var(--mui-space-row-gap, var(--_mui-space-row-gap))")
-    expect(root.style.getPropertyValue("column-gap")).toBe("var(--mui-space-column-gap, var(--_mui-space-column-gap))")
+    const root = rules.find(rule => rule.selectorText === ".m-space")!
+    expect(root.style.getPropertyValue("align-items")).toBe("var(--m-space-align, normal)")
+    expect(root.style.getPropertyValue("justify-content")).toBe("var(--m-space-justify, flex-start)")
+    expect(root.style.getPropertyValue("row-gap")).toBe("var(--m-space-row-gap, var(--_m-space-row-gap))")
+    expect(root.style.getPropertyValue("column-gap")).toBe("var(--m-space-column-gap, var(--_m-space-column-gap))")
     for (const rule of rules.filter(rule => rule.selectorText?.includes("data-size"))) {
       expect(rule.style.getPropertyValue("row-gap")).toBe("")
       expect(rule.style.getPropertyValue("column-gap")).toBe("")
-      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_mui-space-/)
+      for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_m-space-/)
     }
   })
 
   it("preserves explicit author layout and intrinsic-nowrap item ownership", () => {
-    document.body.innerHTML = '<div class="mui-space" data-wrap="false" style="gap:5px 7px;align-items:center;justify-content:space-between"><div class="mui-space-item" style="flex:none;min-inline-size:auto">Fixed authored item</div></div>'
-    const root = document.querySelector(".mui-space")!
+    document.body.innerHTML = '<div class="m-space" data-wrap="false" style="gap:5px 7px;align-items:center;justify-content:space-between"><div class="m-space-item" style="flex:none;min-inline-size:auto">Fixed authored item</div></div>'
+    const root = document.querySelector(".m-space")!
     const item = root.firstElementChild!
     const before = root.outerHTML
     install()
@@ -224,8 +224,8 @@ describe("CSS-only native Space", () => {
   it("keeps narrow-item safety an explicit native adaptation rather than generated wrapper parity", () => {
     install()
     const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
-    const children = rules.find(rule => rule.selectorText === ".mui-space > *")!
-    const item = rules.find(rule => rule.selectorText === ".mui-space > .mui-space-item")!
+    const children = rules.find(rule => rule.selectorText === ".m-space > *")!
+    const item = rules.find(rule => rule.selectorText === ".m-space > .m-space-item")!
     expect(children.style.getPropertyValue("min-inline-size")).toBe("0")
     expect(item.style.getPropertyValue("box-sizing")).toBe("border-box")
     expect(item.style.getPropertyValue("max-inline-size")).toBe("100%")

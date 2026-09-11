@@ -30,8 +30,8 @@ document.querySelector("#interactive").addEventListener("click", () => run(() =>
 }))
 document.querySelector("#open-modal").addEventListener("click", event => modal.showModal(event.currentTarget))
 document.querySelector("#inside-create").addEventListener("click", () => run(() => inside.success("This owner lives inside the native modal."), document.querySelector("#inside-error")))
-for (const root of document.querySelectorAll(".mui-message-host")) {
-  root.addEventListener("mui:message-remove", event => { events.textContent = `${root.id}: ${event.detail.reason}` })
-  root.addEventListener("mui:message-error", event => { event.preventDefault(); events.textContent = `${root.id}: ${event.detail.stale ? "stale " : ""}${event.detail.error.message}` })
+for (const root of document.querySelectorAll(".m-message-host")) {
+  root.addEventListener("m:message-remove", event => { events.textContent = `${root.id}: ${event.detail.reason}` })
+  root.addEventListener("m:message-error", event => { event.preventDefault(); events.textContent = `${root.id}: ${event.detail.stale ? "stale " : ""}${event.detail.error.message}` })
 }
 window.messageDemo = { fixed, inline, inside, modal, get last() { return last } }

@@ -14,7 +14,7 @@ function markup(key: string, children = "", extra = "", lazy = false) {
 }
 function node(key: string) { const template = document.createElement("template"); template.innerHTML = markup(key); return document.importNode(template.content.firstElementChild!, true) as HTMLLIElement }
 function fixture(options: TreeOptions = {}, html = markup("a", markup("b") + markup("c")) + markup("d")) {
-  const form = document.createElement("form"); form.innerHTML = `<section class="mui-tree" data-tree aria-label="Files"><ul data-tree-list>${html}</ul></section><button type="button" id="outside">Outside</button>`
+  const form = document.createElement("form"); form.innerHTML = `<section class="m-tree" data-tree aria-label="Files"><ul data-tree-list>${html}</ul></section><button type="button" id="outside">Outside</button>`
   document.body.append(form)
   const root = form.querySelector<HTMLElement>("[data-tree]")!, helper = createTree(root, options); helpers.push(helper)
   const references = new Map(helper.nodes.map(node => [node.key, node]))
@@ -32,13 +32,13 @@ afterEach(() => { helpers.splice(0).forEach(helper => { try { helper.disconnect(
 describe("native Tree visual defaults", () => {
   it("keeps reference row metrics within the unchanged CSS budget", () => {
     expect(gzipSync(treeCss, { level: 9 }).length).toBeLessThanOrEqual(1250)
-    expect(treeCss).toContain("--mui-tree-label-height, 24px")
-    expect(treeCss).toContain("--mui-tree-row-padding, 3px")
-    expect(treeCss).toContain("--mui-tree-indent, 24px")
-    expect(treeCss).toContain("--mui-tree-line-height, 1.5")
-    expect(treeCss).toContain("--_mui-tree-pressed: rgba(255,255,255,.05)")
+    expect(treeCss).toContain("--m-tree-label-height, 24px")
+    expect(treeCss).toContain("--m-tree-row-padding, 3px")
+    expect(treeCss).toContain("--m-tree-indent, 24px")
+    expect(treeCss).toContain("--m-tree-line-height, 1.5")
+    expect(treeCss).toContain("--_m-tree-pressed: rgba(255,255,255,.05)")
     expect(treeCss).not.toContain("font-weight: bold")
-    expect(treeCss).toContain(".mui-tree :focus-visible")
+    expect(treeCss).toContain(".m-tree :focus-visible")
   })
   it("styles disabled labels/checks without multiplying container opacity or crossing node barriers", () => {
     expect(treeCss).toContain(":is([data-tree-label],summary):is(:disabled,[aria-disabled=true],[inert],[inert] *)")
@@ -49,7 +49,7 @@ describe("native Tree visual defaults", () => {
     expect(forced).toContain("[data-tree-check]:is(:disabled,[aria-disabled=true],[inert],[inert] *) { opacity: 1; }")
     expect(forced).toContain(":is([data-tree-label],summary):is(:disabled,[aria-disabled=true],[inert],[inert] *) { color: GrayText; }")
     expect(treeCss).not.toContain("[data-tree-disabled]")
-    expect(treeCss).not.toContain(".mui-tree [aria-disabled=true] {")
+    expect(treeCss).not.toContain(".m-tree [aria-disabled=true] {")
   })
   it("retains native checkbox, disclosure and source-order presentation", () => {
     expect(treeCss).toContain("inline-size: 16px")
@@ -130,7 +130,7 @@ describe("native hierarchy, keys and defaults", () => {
 
 describe("selection, cascade, mixed and disabled boundaries", () => {
   it("emits one user selection and no setter/refresh notifications", async () => {
-    const { helper, root, get } = fixture(), event = vi.fn(); root.addEventListener("mui:tree-select", event)
+    const { helper, root, get } = fixture(), event = vi.fn(); root.addEventListener("m:tree-select", event)
     helper.setSelectedKeys(["a"]); helper.refresh(); expect(event).not.toHaveBeenCalled()
     get("d").label.click(); await wait(); expect(helper.selectedKeys).toEqual(["d"]); expect(event).toHaveBeenCalledOnce()
     get("d").label.click(); await wait(); expect(helper.selectedKeys).toEqual([])
@@ -151,7 +151,7 @@ describe("selection, cascade, mixed and disabled boundaries", () => {
   })
   it("cascades real checkedness and derives a real mixed parent with one notification", () => {
     const { helper, get, root, form } = fixture({ cascade: true }), change = vi.fn()
-    root.addEventListener("mui:tree-check", change)
+    root.addEventListener("m:tree-check", change)
     get("a").checkbox!.click()
     expect(helper.getCheckedData().keys).toEqual(["a", "b", "c"]); expect(change).toHaveBeenCalledOnce()
     expect(new FormData(form).getAll("checked")).toEqual(["a", "b", "c"])
@@ -242,7 +242,7 @@ describe("native outline keyboard and focus", () => {
     get("a").summary!.click(); await wait(); expect(get("a").branch!.open).toBe(true)
   })
   it("notifies native expand once and leaves programmatic refresh/setters silent", async () => {
-    const { helper, get, root } = fixture(), event = vi.fn(); root.addEventListener("mui:tree-expand", event)
+    const { helper, get, root } = fixture(), event = vi.fn(); root.addEventListener("m:tree-expand", event)
     helper.setExpandedKeys(["a"]); await wait(); expect(event).not.toHaveBeenCalled()
     get("a").summary!.click(); await wait(); expect(event).toHaveBeenCalledOnce()
     get("a").branch!.open = true; helper.refresh(); await wait(); expect(event).toHaveBeenCalledOnce()
@@ -281,7 +281,7 @@ describe("lazy DOM ownership and async races", () => {
   })
   it("rejects duplicate-key results atomically without disconnecting the healthy outline", async () => {
     const dispose = vi.fn(), { helper, get, root } = fixture({ load: () => ({ nodes: [node("d")], dispose }) }, markup("lazy", "", "", true) + markup("d"))
-    const error = vi.fn(); root.addEventListener("mui:tree-error", error)
+    const error = vi.fn(); root.addEventListener("m:tree-error", error)
     await expect(helper.expand("lazy")).rejects.toThrow("unique")
     expect(get("lazy").list!.children).toHaveLength(0); expect(helper.connected).toBe(true); expect(dispose).toHaveBeenCalledOnce(); expect(error).toHaveBeenCalledOnce()
   })
@@ -346,7 +346,7 @@ describe("refresh, cleanup and independent ownership", () => {
     const { helper, root, get } = fixture()
     vi.resetModules()
     await expect(import("../src/components/tree/index.js").then(api => api.createTree(root))).rejects.toThrow("owner")
-    const fieldset = document.createElement("fieldset"); fieldset.className = "mui-checkbox-group"; fieldset.setAttribute("data-checkbox-group", "")
+    const fieldset = document.createElement("fieldset"); fieldset.className = "m-checkbox-group"; fieldset.setAttribute("data-checkbox-group", "")
     fieldset.innerHTML = "<legend>Shared controls</legend>"; root.parentElement!.append(fieldset); fieldset.append(root)
     get("b").checkbox!.setAttribute("data-checkbox", "")
     expect(() => createCheckboxGroup(fieldset)).toThrow("owner")

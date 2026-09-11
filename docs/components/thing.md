@@ -26,7 +26,7 @@ There is still **zero component JavaScript**.
 There is no `./thing` JavaScript export, global, registration or load-order requirement.
 Card/List/PageHeader informed the composition conventions, but none of their stylesheets
 or runtimes is imported. The unchanged aggregate and widgets plugin do not acquire a
-`mui-thing` definition.
+`m-thing` definition.
 
 Authority: [official page](https://www.naiveui.com/en-US/os-theme/components/thing),
 [pinned public API](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/thing/demos/enUS/index.demo-entry.md),
@@ -41,22 +41,22 @@ Vue, style-object, theme or pixel parity.
 ## Native anatomy
 
 ```html
-<article class="mui-thing" aria-labelledby="project-title">
-  <div class="mui-thing-avatar">
+<article class="m-thing" aria-labelledby="project-title">
+  <div class="m-thing-avatar">
     <img src="./project-emblem.png" width="48" height="48" alt="Project emblem">
   </div>
-  <div class="mui-thing-lead">
-    <header class="mui-thing-header">
-      <h2 class="mui-thing-title" id="project-title">
+  <div class="m-thing-lead">
+    <header class="m-thing-header">
+      <h2 class="m-thing-title" id="project-title">
         <a href="./project.html">Atlas project</a>
       </h2>
-      <div class="mui-thing-header-extra">Private</div>
+      <div class="m-thing-header-extra">Private</div>
     </header>
-    <p class="mui-thing-description">A short project description.</p>
+    <p class="m-thing-description">A short project description.</p>
   </div>
-  <div class="mui-thing-content">Authored project content.</div>
-  <footer class="mui-thing-footer">Updated today.</footer>
-  <div class="mui-thing-action">
+  <div class="m-thing-content">Authored project content.</div>
+  <footer class="m-thing-footer">Updated today.</footer>
+  <div class="m-thing-action">
     <button type="button">Follow project</button>
     <a href="./project.html">Project details</a>
   </div>
@@ -65,7 +65,7 @@ Vue, style-object, theme or pixel parity.
 
 Use `article` only when the content is an independently meaningful article. A `div` or
 appropriate native section is equally valid. Choose actual heading levels and names
-yourself; `.mui-thing-title` does not assign them. For list composition, place the Thing
+yourself; `.m-thing-title` does not assign them. For list composition, place the Thing
 **inside** a real `li` so the surrounding native list keeps its markers/list-item display.
 Thing itself is not a List, Card surface or PageHeader landmark.
 
@@ -77,7 +77,7 @@ region rather than relying on a renderer to wrap anonymous root text.
 
 Use meaningful image `alt` or explicitly decorative media, and name meaningful SVGs.
 The avatar region accepts authored media/glyphs, not an Avatar/Icon component instance.
-An optional `--mui-thing-avatar-width` bounds direct avatar images/SVGs proportionally;
+An optional `--m-thing-avatar-width` bounds direct avatar images/SVGs proportionally;
 there is no default 48px cap. Media keeps its authored size, as an upstream avatar slot does.
 Large media, content images and unusual media need their own author constraints.
 Nodes, source attributes, alternative text, classes, labels,
@@ -88,15 +88,15 @@ listeners, links, native controls and content order remain unchanged.
 | Upstream surface | Native target and boundary |
 | --- | --- |
 | `content-indented` | Presence `data-content-indented` changes content/footer/action to the lead column when a visible authored avatar exists. Default absent is unindented. |
-| `title`, `header` slot | Authored `.mui-thing-title` heading/header content in `.mui-thing-header`. No native title-tooltip mapping, generated heading or prop/slot precedence. |
-| `title-extra`, `header-extra` slot | Authored `.mui-thing-header-extra` alongside the title; text or real controls remain native. |
-| `description`, `description` slot | `.mui-thing-description` below the header, inside lead; a header is not required. |
-| `content`, `default` slot | Rich native `.mui-thing-content` children. For dynamic plain strings, assign `textContent`, not parsed HTML. |
+| `title`, `header` slot | Authored `.m-thing-title` heading/header content in `.m-thing-header`. No native title-tooltip mapping, generated heading or prop/slot precedence. |
+| `title-extra`, `header-extra` slot | Authored `.m-thing-header-extra` alongside the title; text or real controls remain native. |
+| `description`, `description` slot | `.m-thing-description` below the header, inside lead; a header is not required. |
+| `content`, `default` slot | Rich native `.m-thing-content` children. For dynamic plain strings, assign `textContent`, not parsed HTML. |
 | `description-class`, `content-class` | Native classes/classList on the actual description/content nodes; no host-to-child forwarding. |
 | `description-style`, `content-style` | ⏭️ Runtime string/object forwarding omitted; use external CSS on the actual nodes. |
-| `avatar` slot | An authored `.mui-thing-avatar` before lead; images, SVG and text remain author-owned. |
-| `footer` slot | An optional `.mui-thing-footer` region; use a native footer only if that semantic fits. |
-| `action` slot | `.mui-thing-action` with independent native buttons/links; no whole-host action or nested interactive root. |
+| `avatar` slot | An authored `.m-thing-avatar` before lead; images, SVG and text remain author-owned. |
+| `footer` slot | An optional `.m-thing-footer` region; use a native footer only if that semantic fits. |
+| `action` slot | `.m-thing-action` with independent native buttons/links; no whole-host action or nested interactive root. |
 | Source `theme`, `themeOverrides`, `builtinThemeOverrides` | ⏭️ Framework/provider objects and override merging omitted; external CSS tokens instead. |
 
 Neither public API nor reviewed source declares `size`, `align`, `prefix`, a render callback,
@@ -117,7 +117,7 @@ at logical inline-start. The avatar remains in the same DOM position and only na
 grid placement changes. Footer/actions follow the same indentation intentionally.
 
 ```html
-<div class="mui-thing" data-content-indented>
+<div class="m-thing" data-content-indented>
   <!-- Same authored region order as the first example -->
 </div>
 ```
@@ -157,20 +157,20 @@ its own listener. No lifecycle/cleanup machinery is necessary for CSS-only prese
 
 | CSS token | Default / responsibility |
 | --- | --- |
-| `--mui-thing-column-gap`, `--mui-thing-row-gap` | `12px`; avatar-column spacing and margins before subsequent content/footer/action regions. Use nonnegative lengths. |
-| `--mui-thing-avatar-width` | No default cap; optional maximum avatar-region width. Media retains authored dimensions unless constrained. |
-| `--mui-thing-title-size`, `--mui-thing-title-weight` | `16px` / shared `--mui-font-weight-strong`, then `500`; heading levels remain author-selected. |
-| `--mui-thing-lead-gap` | `4px` margin below the header, including header-only content. Use a nonnegative length. |
-| `--mui-thing-header-align` | `center`; valid native flex `align-items` values. |
-| `--mui-thing-action-gap`, `--mui-thing-action-justify` | `0` / `start`; explicit native wrapping-flex spacing/justification conveniences. |
-| `--mui-thing-font-size` | Shared `--mui-font-size`, then `14px`. |
-| `--mui-thing-font-family`, `--mui-thing-line-height` | Shared `--mui-font-family`, then inherited family; shared `--mui-line-height`, then `1.6`. |
-| `--mui-thing-color` | `#333639` in light; white/.82 in explicit dark. |
-| `--mui-thing-title-color`, `--mui-thing-description-color` | Title defaults to `#1f2225` / white/.9; description inherits body color unless locally overridden. |
+| `--m-thing-column-gap`, `--m-thing-row-gap` | `12px`; avatar-column spacing and margins before subsequent content/footer/action regions. Use nonnegative lengths. |
+| `--m-thing-avatar-width` | No default cap; optional maximum avatar-region width. Media retains authored dimensions unless constrained. |
+| `--m-thing-title-size`, `--m-thing-title-weight` | `16px` / shared `--m-font-weight-strong`, then `500`; heading levels remain author-selected. |
+| `--m-thing-lead-gap` | `4px` margin below the header, including header-only content. Use a nonnegative length. |
+| `--m-thing-header-align` | `center`; valid native flex `align-items` values. |
+| `--m-thing-action-gap`, `--m-thing-action-justify` | `0` / `start`; explicit native wrapping-flex spacing/justification conveniences. |
+| `--m-thing-font-size` | Shared `--m-font-size`, then `14px`. |
+| `--m-thing-font-family`, `--m-thing-line-height` | Shared `--m-font-family`, then inherited family; shared `--m-line-height`, then `1.6`. |
+| `--m-thing-color` | `#333639` in light; white/.82 in explicit dark. |
+| `--m-thing-title-color`, `--m-thing-description-color` | Title defaults to `#1f2225` / white/.9; description inherits body color unless locally overridden. |
 
 Local tokens win over shared typography/defaults, including when inherited from an ancestor.
-`data-mui-theme="dark"` on a host or ancestor selects dark role fallbacks; nested explicit
-`"light"` resets them. Legacy `--mui-text-primary` does not represent Naive's body/title
+`data-m-theme="dark"` on a host or ancestor selects dark role fallbacks; nested explicit
+`"light"` resets them. Legacy `--m-text-primary` does not represent Naive's body/title
 roles and is deliberately not reused. Changing body color does not implicitly recolor
 the title; both roles have independent local overrides.
 

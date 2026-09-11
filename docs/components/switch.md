@@ -4,7 +4,7 @@
 The actual `input[type=checkbox][role=switch]` owns checkedness, focus, labels and forms.
 External CSS paints its rail/thumb. The optional helper adds only focus-safe loading,
 strict boolean convenience setters and reversible enhancement state.
-Legacy `MuiSwitch`/`MuiCheckbox` in `src/components/forms.ts` remain unchanged.
+Legacy `MSwitch`/`MCheckbox` in `src/components/forms.ts` remain unchanged.
 
 ## Loading and authored anatomy
 
@@ -18,13 +18,13 @@ Legacy `MuiSwitch`/`MuiCheckbox` in `src/components/forms.ts` remain unchanged.
 | [Pinned dispositions](../naive-ui/components/switch.md) | All 23 original identities plus eight explicit source supplements |
 
 ```html
-<label class="mui-switch" data-switch id="alerts-switch">
+<label class="m-switch" data-switch id="alerts-switch">
   <input data-switch-control type="checkbox" role="switch"
     name="alerts" value="enabled" checked aria-labelledby="alerts-label">
-  <span class="mui-switch__label" id="alerts-label">Email alerts</span>
-  <span class="mui-switch__state" aria-hidden="true">
-    <span class="mui-switch__on">On</span>
-    <span class="mui-switch__off">Off</span>
+  <span class="m-switch__label" id="alerts-label">Email alerts</span>
+  <span class="m-switch__state" aria-hidden="true">
+    <span class="m-switch__on">On</span>
+    <span class="m-switch__off">Off</span>
   </span>
   <span data-switch-loading hidden aria-hidden="true">Working…</span>
 </label>
@@ -40,17 +40,17 @@ alerts.setLoading(false)
 ```
 
 ESM consumers import `createSwitch`. There is no custom-element registration or
-`mui-*` loading-order rule. Root/input symbols prevent duplicate ownership across
+`m-*` loading-order rule. Root/input symbols prevent duplicate ownership across
 classic/ESM copies; no global form registry is created.
 
-An enhanced root is a connected light-DOM `.mui-switch[data-switch]`, without wrapper
+An enhanced root is a connected light-DOM `.m-switch[data-switch]`, without wrapper
 role or tabindex. It contains exactly one **direct** authored `input[data-switch-control]`
 of type checkbox with role switch. The input has a real native label (wrapping or `for`)
 and a **stable `aria-label` or resolved `aria-labelledby`** separate from visual state
 content. Do not add `aria-checked`: the native checked property supplies that state.
 Do not nest the component in another label, button, link or summary.
 
-Optional direct `.mui-switch__state` and `[data-switch-loading]` children must be
+Optional direct `.m-switch__state` and `[data-switch-loading]` children must be
 `aria-hidden="true"` and noninteractive, without roles/tabstops/nested controls.
 Visual on/off labels and icons must not rename the setting or duplicate its accessible
 checked state. The helper never changes the authored accessible name or decoration text.
@@ -117,7 +117,7 @@ Noncancelable synthetic clicks are not a supported user interaction mechanism.
 
 Successful user activation emits the original native `input` and `change` once, with the
 native boolean on `event.target.checked`. Blocked/cancelled toggles emit neither. There is
-no additional `mui:change`/`mui:switch-change` notification. Setters, refresh, reset and
+no additional `m:change`/`m:switch-change` notification. Setters, refresh, reset and
 loading transitions fabricate no user changes. Loading is a boolean policy, **not** async
 networking, request cancellation, promise handling or a Spin dependency.
 
@@ -136,7 +136,7 @@ transfer of ownership. Disconnect before taking full ownership of a managed deco
 Fixed anatomy means disconnect/recreate for replacements. Root/control removal disconnects
 automatically. Invalid role, mixed/readonly state, naming or decoration contracts throw on
 explicit refresh/setters; automatic validation errors set `error` and emit nonbubbling
-`mui:switch-error` with `{ message }` when the message changes. Correct the native state
+`m:switch-error` with `{ message }` when the message changes. Correct the native state
 and refresh to recover. No automatic live announcement or schema validation is added.
 
 ## Reset and direct properties
@@ -169,7 +169,7 @@ authored switch semantics.
 - `:checked`, `:focus`, `:focus-visible` and inherited `:dir(rtl)` own state/focus/direction.
   The thumb moves to the logical checked side. Loading adds a dashed border plus the
   authored indicator; native disabled remains separate.
-- `.mui-switch__on` / `__off` and `__checked-icon` / `__unchecked-icon` inside the
+- `.m-switch__on` / `__off` and `__checked-icon` / `__unchecked-icon` inside the
   aria-hidden state region switch through native checked selectors. `__icon` is common
   static decorative content. Icons are adjacent decorations, not inserted inside a void
   HTML input/thumb; author either common or state-specific content. No upstream slot
@@ -178,13 +178,13 @@ authored switch semantics.
 - Rubber-band pressing, drag/gesture handling and icon/Spin transition engines are omitted.
   No animation is introduced, so reduced motion needs no JS or animation override.
 
-Tokens (all share `--mui-switch`): `-color`, `-font`, `-width`, `-height`, `-thumb-size`,
+Tokens (all share `--m-switch`): `-color`, `-font`, `-width`, `-height`, `-thumb-size`,
 `-thumb`, `-thumb-image`, `-rail`, `-active`, `-border`, `-radius`, `-focus`, `-disabled`.
 Use external selectors/tokens instead of rail-style callbacks, inline style objects or
 CSS-in-JS. There is no global control reset or provider/theme dependency.
 
 The [default-style audit](../style-audit/components/switch.md) records actual geometry,
-paint, thumb pixels and native-policy checks. An ancestor `data-mui-theme="light|dark"`
+paint, thumb pixels and native-policy checks. An ancestor `data-m-theme="light|dark"`
 selects the scheme; standalone controls default to light. Size/square/status defaults
 use private variables, so public author tokens remain authoritative. The thumb image
 uses the border box as its origin, keeping the default 2px edge inset independent of
@@ -192,7 +192,7 @@ the transparent border retained for authored status/loading boundaries.
 
 The light active rail follows the shared primary role; the dark default is the pinned
 Switch supplementary primary **#2a947d**, not the ordinary dark primary **#63e2b7**.
-Use `--mui-switch-active` to override it. Unchecked rails use black 14% / white 20%.
+Use `--m-switch-active` to override it. Unchecked rails use black 14% / white 20%.
 Normal disabled **input** opacity is .5 in both schemes, matching the rendered reference;
 loading alone does not dim or natively disable it. Forced colors and print restore native
 appearance, background/box-shadow removal and opacity 1, with a system focus outline.

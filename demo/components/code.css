@@ -9,8 +9,8 @@ body {
 }
 main > section { margin-block: 2rem; }
 h2, p { margin-block: 0 .75rem; }
-.mui-code-block { margin-block: 1rem; }
-.custom-font { --mui-code-font-size: 15px; --mui-code-tab-size: 2; }
+.m-code-block { margin-block: 1rem; }
+.custom-font { --m-code-font-size: 15px; --m-code-tab-size: 2; }
 @media print {
   body { max-inline-size: none; margin: 0; background: transparent; }
 }

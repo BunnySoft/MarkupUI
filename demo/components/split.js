@@ -8,14 +8,14 @@ const title = document.querySelector("#title-field")
 const counts = { change: 0, start: 0, move: 0, end: 0 }
 function show(extra = {}) { feedback.textContent = JSON.stringify({ ...extra, ...counts, outer: outer.state, inner: inner.state }, null, 2) }
 for (const owner of owners) {
-  for (const [event, key] of [["mui:split-change", "change"], ["mui:split-drag-start", "start"], ["mui:split-drag-move", "move"], ["mui:split-drag-end", "end"]]) {
+  for (const [event, key] of [["m:split-change", "change"], ["m:split-drag-start", "start"], ["m:split-drag-move", "move"], ["m:split-drag-end", "end"]]) {
     owner.element.addEventListener(event, e => {
       if (e.target !== owner.element) return
       counts[key]++; show({ event, source: e.detail.source, reason: e.detail.reason, cancelled: e.detail.cancelled })
     })
   }
-  owner.element.addEventListener("mui:split-layout", event => { if (event.target === owner.element) show({ layout: true }) })
-  owner.element.addEventListener("mui:split-error", event => {
+  owner.element.addEventListener("m:split-layout", event => { if (event.target === owner.element) show({ layout: true }) })
+  owner.element.addEventListener("m:split-error", event => {
     if (event.target !== owner.element) return
     owners.slice().reverse().forEach(split => split.disconnect())
     document.querySelectorAll("[data-enhancement]").forEach(node => { node.hidden = true })

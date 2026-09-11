@@ -30,7 +30,7 @@
       <button type="button" id="hidden-play">Request motion in hidden example</button>
       <button type="button" id="disconnect">Disconnect all enhancements</button>
     </div>
-    <section class="mui-marquee stage" data-marquee id="main-marquee" aria-labelledby="main-heading">
+    <section class="m-marquee stage" data-marquee id="main-marquee" aria-labelledby="main-heading">
       <h2 id="main-heading">Original native announcement</h2>
       <div data-marquee-viewport tabindex="0" aria-label="Scrollable original announcement">
         <div data-marquee-content><strong id="original">Original content:</strong> <img src="./marquee.svg" width="56" height="32" alt="Local MarkupUI marker"> This entire sentence remains one original DOM sequence. Native text selection, readable labels, images and listeners stay intact. <em>No duplicate visual track, hidden mirror, obsolete marquee tag or seamless-loop claim.</em></div>
@@ -38,14 +38,14 @@
       <div data-marquee-controls hidden><button type="button" data-marquee-toggle><span data-marquee-label>Play motion</span></button></div>
       <p data-marquee-status>Static announcement: focus the viewport or use its scrollbar to read all text.</p>
     </section>
-    <section class="mui-marquee stage" data-marquee id="short-marquee" aria-label="Short fitting text example">
+    <section class="m-marquee stage" data-marquee id="short-marquee" aria-label="Short fitting text example">
       <div data-marquee-viewport tabindex="0" aria-label="Short static text"><div data-marquee-content>This text fits and needs no motion.</div></div>
       <div data-marquee-controls hidden><button type="button" data-marquee-toggle><span data-marquee-label>Play motion</span></button></div>
       <p data-marquee-status>Short readable static content.</p>
     </section>
     <details id="hidden-example">
       <summary>Initially hidden original content</summary>
-      <section class="mui-marquee stage" data-marquee id="hidden-marquee" aria-label="Hidden measurement example">
+      <section class="m-marquee stage" data-marquee id="hidden-marquee" aria-label="Hidden measurement example">
         <div data-marquee-viewport tabindex="0" aria-label="Hidden example static scroll"><div data-marquee-content>Hidden containers do not guess geometry. On reveal, a ResizeObserver can measure this original long text and start a requested traversal, without adding duplicate content or a per-frame layout loop.</div></div>
         <div data-marquee-controls hidden><button type="button" data-marquee-toggle><span data-marquee-label>Play motion</span></button></div>
         <p data-marquee-status>Open and read this native static text.</p>

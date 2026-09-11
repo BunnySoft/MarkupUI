@@ -19,17 +19,17 @@
   <dialog id="example" aria-labelledby="example-title" open>
     <h2 id="example-title">Local code-entry example</h2>
     <p>This nonmodal example uses a native method=dialog form. Without JavaScript, valid submission only closes this dialog: no code enters a URL or network request.</p>
-    <form id="verification" class="mui-form" method="dialog">
-      <div class="mui-form-item" id="otp-item">
+    <form id="verification" class="m-form" method="dialog">
+      <div class="m-form-item" id="otp-item">
         <label for="otp">Six-digit code (required)</label>
-        <div class="mui-input" data-input id="otp-input">
-          <input id="otp" class="mui-input-otp" data-input-control name="code" type="password"
+        <div class="m-input" data-input id="otp-input">
+          <input id="otp" class="m-input-otp" data-input-control name="code" type="password"
                  autocomplete="one-time-code" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" required
                  aria-describedby="otp-help">
         </div>
         <p id="otp-help">Leading zeroes count. Numeric inputmode is only a keyboard hint. Password masking is presentation, not encryption. SMS autofill depends on your browser and operating system.</p>
-        <p class="mui-input-otp-status" id="otp-status">Enter six ASCII digits in the original field.</p>
-        <p id="otp-error" class="mui-form-item__feedback" hidden></p>
+        <p class="m-input-otp-status" id="otp-status">Enter six ASCII digits in the original field.</p>
+        <p id="otp-error" class="m-form-item__feedback" hidden></p>
       </div>
       <div class="actions">
         <button type="submit" name="intent" value="local-demo">Finish local example</button>

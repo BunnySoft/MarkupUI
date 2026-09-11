@@ -72,7 +72,7 @@ The original outer width/height and border-origin displacement are fixed.
 The dark active Switch rail uses upstream **supplementary primary**, not ordinary
 primary `#63e2b7`. The light active rail and focus roles reuse the correct shared primary;
 the dark supplementary value is local because the shared palette has no matching role.
-`--mui-switch-active` remains the public override. Local neutral text fallbacks avoid
+`--m-switch-active` remains the public override. Local neutral text fallbacks avoid
 legacy shared-role mismatches; the original `system-ui,sans-serif` font stack is retained.
 
 Actual dark screenshot samples confirm:

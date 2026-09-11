@@ -10,8 +10,8 @@ function render() {
 }
 function perform(action) { try { action(); render() } catch (error) { document.getElementById("state").textContent = error.message } }
 render()
-for (const type of ["input", "change", "mui:select-clear"]) language.control.addEventListener(type, () => {
-  counts[type === "mui:select-clear" ? "clear" : type]++
+for (const type of ["input", "change", "m:select-clear"]) language.control.addEventListener(type, () => {
+  counts[type === "m:select-clear" ? "clear" : type]++
   document.getElementById("events").textContent = `Language events: input ${counts.input}, change ${counts.change}, clear ${counts.clear}`
   render()
 })

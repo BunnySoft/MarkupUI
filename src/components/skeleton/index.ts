@@ -1,13 +1,13 @@
-export { MuiSkeleton } from "./skeleton.js"
+export { MSkeleton } from "./skeleton.js"
 export type { SkeletonValidationError } from "./skeleton.js"
-import { MuiSkeleton } from "./skeleton.js"
+import { MSkeleton } from "./skeleton.js"
 
 export function registerSkeleton(registry: Pick<CustomElementRegistry, "get" | "define"> = customElements): void {
-  const existing = registry.get("mui-skeleton")
-  if (existing && existing !== MuiSkeleton) {
-    throw new Error("'mui-skeleton' is already defined. Load the Skeleton component before the legacy MarkupUI bundle.")
+  const existing = registry.get("m-skeleton")
+  if (existing && existing !== MSkeleton) {
+    throw new Error("'m-skeleton' is already defined. Load the Skeleton component before the legacy MarkupUI bundle.")
   }
-  if (!existing) registry.define("mui-skeleton", MuiSkeleton)
+  if (!existing) registry.define("m-skeleton", MSkeleton)
 }
 
 if (typeof customElements !== "undefined") registerSkeleton()

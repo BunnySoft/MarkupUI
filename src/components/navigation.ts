@@ -1,15 +1,15 @@
-import { MuiElement } from "../core/element.js"
+import { MElement } from "../core/element.js"
 
-export class MuiTab extends MuiElement {
+export class MTab extends MElement {
   public connectedCallback(): void {
     this.setAttribute("role", "tabpanel")
   }
 }
 
-export class MuiTabs extends MuiElement {
+export class MTabs extends MElement {
   private selected = 0
   public connectedCallback(): void {
-    const tabs = [...this.querySelectorAll(":scope > mui-tab")] as MuiTab[]
+    const tabs = [...this.querySelectorAll(":scope > m-tab")] as MTab[]
     if (tabs.length === 0 || this.querySelector(":scope > [role=tablist]") !== null) return
     const list = this.ownerDocument.createElement("div")
     list.setAttribute("role", "tablist")
@@ -37,7 +37,7 @@ export class MuiTabs extends MuiElement {
     this.select(this.selected)
   }
   public select(index: number): void {
-    const tabs = [...this.querySelectorAll(":scope > mui-tab")] as MuiTab[]
+    const tabs = [...this.querySelectorAll(":scope > m-tab")] as MTab[]
     const buttons = [...this.querySelectorAll(":scope > [role=tablist] > [role=tab]")]
     this.selected = Math.max(0, Math.min(index, tabs.length - 1))
     tabs.forEach((tab, itemIndex) => { tab.hidden = itemIndex !== this.selected })
@@ -48,7 +48,7 @@ export class MuiTabs extends MuiElement {
   }
 }
 
-export class MuiMenuItem extends MuiElement {
+export class MMenuItem extends MElement {
     public connectedCallback(): void {
       this.setAttribute("role", "menuitem")
       this.tabIndex = this.hasAttribute("disabled") ? -1 : 0
@@ -72,35 +72,35 @@ export class MuiMenuItem extends MuiElement {
     }
   }
 
-export class MuiMenu extends MuiElement {
+export class MMenu extends MElement {
     private readonly onSelect = (event: Event): void => {
-      if (!(event.target instanceof MuiMenuItem)) return
+      if (!(event.target instanceof MMenuItem)) return
       this.value = String((event as CustomEvent).detail ?? "")
       this.emit("change", this.value)
     }
     public connectedCallback(): void {
       this.setAttribute("role", "menu")
-      this.addEventListener("mui:select", this.onSelect)
+      this.addEventListener("m:select", this.onSelect)
       this.addEventListener("keydown", this.onKeyDown)
       const value = this.getAttribute("value")
       if (value !== null) this.value = value
     }
     public disconnectedCallback(): void {
-      this.removeEventListener("mui:select", this.onSelect)
+      this.removeEventListener("m:select", this.onSelect)
       this.removeEventListener("keydown", this.onKeyDown)
     }
     public get value(): string {
-      return this.querySelector<MuiMenuItem>(":scope > mui-menu-item[selected]")
+      return this.querySelector<MMenuItem>(":scope > m-menu-item[selected]")
         ?.getAttribute("value") ?? ""
     }
     public set value(value: string) {
-      this.querySelectorAll<MuiMenuItem>(":scope > mui-menu-item").forEach((item) => {
+      this.querySelectorAll<MMenuItem>(":scope > m-menu-item").forEach((item) => {
         item.toggleAttribute("selected", item.getAttribute("value") === value)
       })
     }
     private readonly onKeyDown = (event: KeyboardEvent): void => {
-      if (!(event.target instanceof MuiMenuItem)) return
-      const items = [...this.querySelectorAll<MuiMenuItem>(":scope > mui-menu-item:not([disabled])")]
+      if (!(event.target instanceof MMenuItem)) return
+      const items = [...this.querySelectorAll<MMenuItem>(":scope > m-menu-item:not([disabled])")]
       const index = items.indexOf(event.target)
       let target = index
       if (event.key === "ArrowDown" || event.key === "ArrowRight") {
@@ -115,7 +115,7 @@ export class MuiMenu extends MuiElement {
     }
   }
 
-export class MuiPagination extends MuiElement {
+export class MPagination extends MElement {
     public static get observedAttributes(): string[] { return ["page", "count"] }
     public connectedCallback(): void { this.render() }
     public attributeChangedCallback(): void { if (this.isConnected) this.render() }
@@ -153,7 +153,7 @@ export class MuiPagination extends MuiElement {
     }
   }
 
-export class MuiSteps extends MuiElement {
+export class MSteps extends MElement {
     public static get observedAttributes(): string[] { return ["current"] }
     public connectedCallback(): void {
       this.setAttribute("role", "list")
@@ -167,7 +167,7 @@ export class MuiSteps extends MuiElement {
     }
     private update(): void {
       const current = this.current
-      this.querySelectorAll<HTMLElement>(":scope > mui-step").forEach((step, index) => {
+      this.querySelectorAll<HTMLElement>(":scope > m-step").forEach((step, index) => {
         const number = index + 1
         step.dataset.index = String(number)
         step.setAttribute("role", "listitem")
@@ -179,21 +179,21 @@ export class MuiSteps extends MuiElement {
     }
   }
 
-export class MuiDescriptionItem extends MuiElement {
+export class MDescriptionItem extends MElement {
     public connectedCallback(): void {
-      if (this.querySelector(":scope > [data-mui-label]") !== null) return
+      if (this.querySelector(":scope > [data-m-label]") !== null) return
       const valueNodes = [...this.childNodes]
       const label = this.ownerDocument.createElement("span")
-      label.dataset.muiLabel = ""
+      label.dataset.mLabel = ""
       label.textContent = this.getAttribute("label") ?? ""
       const value = this.ownerDocument.createElement("span")
-      value.dataset.muiValue = ""
+      value.dataset.mValue = ""
       value.append(...valueNodes)
       this.append(label, value)
     }
   }
 
-export class MuiDescriptions extends MuiElement {
+export class MDescriptions extends MElement {
     public static get observedAttributes(): string[] { return ["columns"] }
     public connectedCallback(): void {
       this.updateColumns()
@@ -207,27 +207,27 @@ export class MuiDescriptions extends MuiElement {
     }
   }
 
-export class MuiStatistic extends MuiElement {
+export class MStatistic extends MElement {
     public connectedCallback(): void {
-      if (this.querySelector(":scope > [data-mui-statistic-value]") !== null) return
+      if (this.querySelector(":scope > [data-m-statistic-value]") !== null) return
       const label = this.ownerDocument.createElement("span")
-      label.dataset.muiStatisticLabel = ""
+      label.dataset.mStatisticLabel = ""
       label.textContent = this.getAttribute("label") ?? ""
       const value = this.ownerDocument.createElement("span")
-      value.dataset.muiStatisticValue = ""
+      value.dataset.mStatisticValue = ""
       value.textContent = `${this.getAttribute("prefix") ?? ""}${this.getAttribute("value") ?? this.textContent?.trim() ?? ""}${this.getAttribute("suffix") ?? ""}`
       this.replaceChildren(label, value)
     }
   }
 
-export class MuiTreeNode extends MuiElement {
+export class MTreeNode extends MElement {
     private row: HTMLElement | undefined
     private group: HTMLElement | undefined
     public connectedCallback(): void {
       if (this.row !== undefined) return
-      const children = [...this.querySelectorAll(":scope > mui-tree-node")]
+      const children = [...this.querySelectorAll(":scope > m-tree-node")]
       this.row = this.ownerDocument.createElement("span")
-      this.row.dataset.muiTreeRow = ""
+      this.row.dataset.mTreeRow = ""
       this.row.tabIndex = 0
       this.row.textContent = this.getAttribute("label") ?? ""
       this.row.addEventListener("click", this.select)
@@ -270,24 +270,24 @@ export class MuiTreeNode extends MuiElement {
     }
   }
 
-export class MuiTree extends MuiElement {
+export class MTree extends MElement {
     private readonly onSelect = (event: Event): void => {
-      if (!(event.target instanceof MuiTreeNode)) return
+      if (!(event.target instanceof MTreeNode)) return
       this.value = String((event as CustomEvent).detail ?? "")
       this.emit("change", this.value)
     }
     public connectedCallback(): void {
       this.setAttribute("role", "tree")
-      this.addEventListener("mui:select", this.onSelect)
+      this.addEventListener("m:select", this.onSelect)
     }
     public disconnectedCallback(): void {
-      this.removeEventListener("mui:select", this.onSelect)
+      this.removeEventListener("m:select", this.onSelect)
     }
     public get value(): string {
-      return this.querySelector<MuiTreeNode>("mui-tree-node[selected]")?.value ?? ""
+      return this.querySelector<MTreeNode>("m-tree-node[selected]")?.value ?? ""
     }
     public set value(value: string) {
-      this.querySelectorAll<MuiTreeNode>("mui-tree-node").forEach((node) => {
+      this.querySelectorAll<MTreeNode>("m-tree-node").forEach((node) => {
         node.toggleAttribute("selected", node.value === value)
         node.setAttribute("aria-selected", String(node.value === value))
       })

@@ -69,7 +69,7 @@ The oversized-group probe put fixed inner boxes inside three original native gro
 nodes in a 150px nowrap root. Naive's automatic child minima kept group widths
 **60/80/50px**, LTR starts **0/72/164px**, and overflowed by 64px.
 
-Native `.mui-flex > * { min-inline-size:0 }` allowed group widths
+Native `.m-flex > * { min-inline-size:0 }` allowed group widths
 **39.796875/53.046875/33.15625px**, starts **0/51.796875/116.84375px**. Fixed inner
 boxes were not automatically resized and can overlap. Ordinary ungrouped nowrap
 sample items matched; this difference depends on intrinsic content, not gap math.

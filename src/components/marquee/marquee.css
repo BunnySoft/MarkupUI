@@ -1,6 +1,6 @@
-.mui-marquee { min-inline-size: 0; }
-.mui-marquee [hidden] { display: none !important; }
-.mui-marquee > [data-marquee-viewport] {
+.m-marquee { min-inline-size: 0; }
+.m-marquee [hidden] { display: none !important; }
+.m-marquee > [data-marquee-viewport] {
   position: relative;
   box-sizing: border-box;
   padding: 0;
@@ -9,7 +9,7 @@
   overflow-y: hidden;
   writing-mode: horizontal-tb;
 }
-.mui-marquee > [data-marquee-viewport] > [data-marquee-content] {
+.m-marquee > [data-marquee-viewport] > [data-marquee-content] {
   display: block;
   position: static;
   box-sizing: border-box;
@@ -22,13 +22,13 @@
   white-space: normal;
   writing-mode: horizontal-tb;
 }
-.mui-marquee[data-marquee-running] > [data-marquee-viewport] { overflow-x: hidden; }
-.mui-marquee [data-marquee-controls] { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-block: .5rem; }
-.mui-marquee [data-marquee-toggle] { min-block-size: 2.75rem; font: inherit; }
-.mui-marquee :focus-visible { outline: 3px solid var(--mui-marquee-focus, #175cd3); outline-offset: -3px; }
+.m-marquee[data-marquee-running] > [data-marquee-viewport] { overflow-x: hidden; }
+.m-marquee [data-marquee-controls] { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin-block: .5rem; }
+.m-marquee [data-marquee-toggle] { min-block-size: 2.75rem; font: inherit; }
+.m-marquee :focus-visible { outline: 3px solid var(--m-marquee-focus, #175cd3); outline-offset: -3px; }
 @media (prefers-reduced-motion: reduce), (forced-colors: active), print {
-  .mui-marquee > [data-marquee-viewport] { overflow: visible !important; }
-  .mui-marquee > [data-marquee-viewport] > [data-marquee-content] {
+  .m-marquee > [data-marquee-viewport] { overflow: visible !important; }
+  .m-marquee > [data-marquee-viewport] > [data-marquee-content] {
     transform: none !important;
     inline-size: auto;
     max-inline-size: 100%;
@@ -37,6 +37,6 @@
   }
 }
 @media print {
-  .mui-marquee { color-scheme: light; color: CanvasText; background: Canvas; }
-  .mui-marquee [data-marquee-controls] { display: none; }
+  .m-marquee { color-scheme: light; color: CanvasText; background: Canvas; }
+  .m-marquee [data-marquee-controls] { display: none; }
 }

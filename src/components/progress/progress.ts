@@ -12,7 +12,7 @@ type Measure = { value: number | null; max: number; percentage: number | null }
 let nextId = 0
 function invalid(name: string): never { throw new RangeError(`Invalid Progress ${name}.`) }
 
-export class MuiProgress extends HTMLElement {
+export class MProgress extends HTMLElement {
   public static get observedAttributes(): string[] {
     return ["percentage", "value", "max", "indeterminate", "type", "status", "unit", "show-indicator",
       "color", "rail-color", "height", "border-radius", "fill-border-radius", "indicator-text-color",
@@ -20,7 +20,7 @@ export class MuiProgress extends HTMLElement {
       "offset-degress", "indicator-placement", "indicator-position", "label", "role", ...semanticNames]
   }
 
-  private readonly idPrefix = `mui-progress-gradient-${++nextId}`
+  private readonly idPrefix = `m-progress-gradient-${++nextId}`
   private records: Control[] = []
   private nativeGroup: HTMLSpanElement | undefined
   private graphic: HTMLSpanElement | undefined
@@ -49,7 +49,7 @@ export class MuiProgress extends HTMLElement {
         }
       }
     }
-    this.dataset.muiProgress = ""
+    this.dataset.mProgress = ""
     this.observer ??= new MutationObserver(() => this.synchronize())
     this.ready = true
     this.synchronize()
@@ -167,7 +167,7 @@ export class MuiProgress extends HTMLElement {
   }
   private restore(record: Control): void {
     for (const name of record.overrides.keys()) this.manage(record, name, undefined)
-    for (const property of ["--_mui-progress-fill-start", "--_mui-progress-fill-end", "--_mui-progress-rail"]) record.node.style.removeProperty(property)
+    for (const property of ["--_m-progress-fill-start", "--_m-progress-fill-end", "--_m-progress-rail"]) record.node.style.removeProperty(property)
   }
 
   private configuration() {
@@ -249,9 +249,9 @@ export class MuiProgress extends HTMLElement {
       this.graphic?.remove()
       this.indicator?.remove()
       this.nativeGroup = this.ownerDocument.createElement("span")
-      this.nativeGroup.dataset.muiProgressNativeGroup = ""
+      this.nativeGroup.dataset.mProgressNativeGroup = ""
       this.graphic = this.ownerDocument.createElement("span")
-      this.graphic.dataset.muiProgressGraphic = ""
+      this.graphic.dataset.mProgressGraphic = ""
       this.graphic.setAttribute("aria-hidden", "true")
       this.graphic.setAttribute("inert", "")
       const { svg, defs } = createGraphic(this.ownerDocument)
@@ -260,12 +260,12 @@ export class MuiProgress extends HTMLElement {
       this.rings = []
       this.graphic.append(svg)
       this.indicator = this.ownerDocument.createElement("span")
-      this.indicator.dataset.muiProgressIndicator = ""
+      this.indicator.dataset.mProgressIndicator = ""
       this.text = this.ownerDocument.createElement("span")
-      this.text.dataset.muiProgressText = ""
+      this.text.dataset.mProgressText = ""
       this.text.setAttribute("aria-hidden", "true")
       this.indicatorSlot = this.ownerDocument.createElement("span")
-      this.indicatorSlot.dataset.muiProgressSlot = ""
+      this.indicatorSlot.dataset.mProgressSlot = ""
       this.indicator.append(this.text, this.indicatorSlot)
       this.prepend(this.nativeGroup, this.graphic)
       this.append(this.indicator)
@@ -278,7 +278,7 @@ export class MuiProgress extends HTMLElement {
     const loose = [...this.childNodes].filter((node) => {
       if (node === this.nativeGroup || node === this.graphic || node === this.indicator) return false
       if (node.nodeType === Node.TEXT_NODE) return Boolean(node.textContent?.trim())
-      return node instanceof Element && !node.matches("template,script,style,[data-mui-progress-label]")
+      return node instanceof Element && !node.matches("template,script,style,[data-m-progress-label]")
     })
     this.indicatorSlot!.append(...loose)
   }
@@ -294,17 +294,17 @@ export class MuiProgress extends HTMLElement {
     this.observer?.disconnect()
     this.prepare()
     const config = this.configuration()
-    if (config.errors.length) this.setAttribute("data-mui-progress-invalid", config.errors.join(" "))
-    else this.removeAttribute("data-mui-progress-invalid")
-    this.toggleAttribute("data-mui-progress-clamped", config.clamped)
-    this.dataset.muiProgressType = this.type
-    this.dataset.muiProgressPlacement = this.indicatorPlacement
-    this.toggleAttribute("data-mui-progress-has-label", this.querySelector(":scope > [data-mui-progress-label]") !== null)
-    this.toggleAttribute("data-mui-progress-indeterminate", config.measures.some((measure) => measure.percentage === null))
-    this.css(this, "--_mui-progress-height", config.height === undefined ? undefined : `${config.height}px`)
-    this.css(this, "--_mui-progress-radius", config.borderRadius)
-    this.css(this, "--_mui-progress-fill-radius", config.fillBorderRadius)
-    this.css(this, "--_mui-progress-text-color", config.textColor)
+    if (config.errors.length) this.setAttribute("data-m-progress-invalid", config.errors.join(" "))
+    else this.removeAttribute("data-m-progress-invalid")
+    this.toggleAttribute("data-m-progress-clamped", config.clamped)
+    this.dataset.mProgressType = this.type
+    this.dataset.mProgressPlacement = this.indicatorPlacement
+    this.toggleAttribute("data-m-progress-has-label", this.querySelector(":scope > [data-m-progress-label]") !== null)
+    this.toggleAttribute("data-m-progress-indeterminate", config.measures.some((measure) => measure.percentage === null))
+    this.css(this, "--_m-progress-height", config.height === undefined ? undefined : `${config.height}px`)
+    this.css(this, "--_m-progress-radius", config.borderRadius)
+    this.css(this, "--_m-progress-fill-radius", config.fillBorderRadius)
+    this.css(this, "--_m-progress-text-color", config.textColor)
     this.nativeGroup!.hidden = config.errors.length > 0 || !config.measures.length
     this.graphic!.hidden = config.errors.length > 0 || !config.radial || !config.measures.length
     if (!config.errors.length) {
@@ -333,11 +333,11 @@ export class MuiProgress extends HTMLElement {
         }
         const paint = config.color?.[this.getAttribute("color")?.trim().startsWith("[") ? index : 0]
         const rail = config.railColor?.[this.getAttribute("rail-color")?.trim().startsWith("[") ? index : 0]
-        this.css(record.node, "--_mui-progress-fill-start", typeof paint === "string" ? paint : paint?.stops[0])
-        this.css(record.node, "--_mui-progress-fill-end", typeof paint === "string" ? paint : paint?.stops[1])
-        this.css(record.node, "--_mui-progress-rail", typeof rail === "string" ? rail : undefined)
+        this.css(record.node, "--_m-progress-fill-start", typeof paint === "string" ? paint : paint?.stops[0])
+        this.css(record.node, "--_m-progress-fill-end", typeof paint === "string" ? paint : paint?.stops[1])
+        this.css(record.node, "--_m-progress-rail", typeof rail === "string" ? rail : undefined)
       }
-      this.css(this.nativeGroup!, "--_mui-progress-percent", `${config.measures[0]?.percentage ?? 0}%`)
+      this.css(this.nativeGroup!, "--_m-progress-percent", `${config.measures[0]?.percentage ?? 0}%`)
       if (config.radial) this.renderRings(config)
     }
     const custom = this.indicatorSlot!.hasChildNodes()
@@ -346,11 +346,11 @@ export class MuiProgress extends HTMLElement {
     if (this.text!.textContent !== text) this.text!.textContent = text
     this.indicator!.hidden = !this.showIndicator
     this.observer?.observe(this, { childList: true, subtree: true, attributes: true,
-      attributeFilter: ["value", "max", "aria-label", "aria-labelledby", "aria-describedby", "aria-valuetext", "tabindex", "data-mui-progress-label"] })
+      attributeFilter: ["value", "max", "aria-label", "aria-labelledby", "aria-describedby", "aria-valuetext", "tabindex", "data-m-progress-label"] })
     this.syncing = false
   }
 
-  private renderRings(config: ReturnType<MuiProgress["configuration"]>): void {
+  private renderRings(config: ReturnType<MProgress["configuration"]>): void {
     const width = config.viewBoxWidth!
     // Keep native viewBox coordinates while matching the source's stroke-expanded circle.
     const stroke = config.strokeWidth! / (config.multiple ? 1 : 1 + config.strokeWidth! / width)

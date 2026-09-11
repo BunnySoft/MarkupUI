@@ -72,7 +72,7 @@ implementation details.
 | Dark focused background | White | Primary at 10% |
 
 These are local preset roles, not aliases for unmigrated shared neutrals. Public
-`--mui-number-*` tokens remain the customization boundary; no mandatory Input or
+`--m-number-*` tokens remain the customization boundary; no mandatory Input or
 theme-provider dependency was added.
 
 The field boundary is an **inset box-shadow**, not the reference's separate border

@@ -70,19 +70,19 @@ Verified means the stated native adaptation, never framework/highlighter parity.
 
 | Upstream item · source | Kind | Native mapping / boundary | Status |
 | --- | --- | --- | --- |
-| `font-size` · API:L60 | Prop | External --mui-log-font-size, default 14px; authored CSS units remain supported, no numeric prop bridge. | 🟢 Verified |
+| `font-size` · API:L60 | Prop | External --m-log-font-size, default 14px; authored CSS units remain supported, no numeric prop bridge. | 🟢 Verified |
 | `hljs` · API:L61 | Prop | No external syntax engine, adapter, grammar or engine-object promise. | ⏭️ Intentionally omitted |
 | `language` · API:L62 | Prop | Always literal text; no language detection or unsafe fallback renderer. | ⏭️ Intentionally omitted |
-| `line-height` · API:L63 | Prop | External --mui-log-line-height, default 1.25; actual native block metrics. | 🟢 Verified |
+| `line-height` · API:L63 | Prop | External --m-log-line-height, default 1.25; actual native block metrics. | 🟢 Verified |
 | `lines` · API:L64 | Prop | Initial lines/setLines, explicit strings without CR/LF; replacement creates a new generation. | 🟢 Verified |
 | `loading` · API:L65 | Prop | Owned aria-busy plus optional authored loading text; readable content remains. | 🟢 Verified |
 | `log` · API:L66 | Prop | Authored literal code text or initial text/setText/append, with explicit normalization/retention. | 🟢 Verified |
-| `rows` · API:L67 | Prop | External --mui-log-rows (15 default, rounded 263px viewport) or --mui-log-height; no hidden virtual row count. | 🟢 Verified |
+| `rows` · API:L67 | Prop | External --m-log-rows (15 default, rounded 263px viewport) or --m-log-height; no hidden virtual row count. | 🟢 Verified |
 | `spin-props` · API:L68 | Prop | Native loading text; no spinner/theme/prop forwarding. | ⏭️ Intentionally omitted |
 | `trim` · API:L69 | Prop | Display-only String.trim per LF record; raw normalized retained text remains accessible. | 🟢 Verified |
 | `on-require-more` · API:L70 | Callback | No loading/retry/backpressure protocol or repeated wheel-at-edge trigger; application owns production. | ⏭️ Intentionally omitted |
-| `on-reach-top` · API:L71 | Callback | mui:log-edge position=top, observed native transition with 1px rounding tolerance. | 🟢 Verified |
-| `on-reach-bottom` · API:L72 | Callback | mui:log-edge position=bottom, native transition within nearBottom tolerance. | 🟢 Verified |
+| `on-reach-top` · API:L71 | Callback | m:log-edge position=top, observed native transition with 1px rounding tolerance. | 🟢 Verified |
+| `on-reach-bottom` · API:L72 | Callback | m:log-edge position=bottom, native transition within nearBottom tolerance. | 🟢 Verified |
 
 ### Log Methods
 

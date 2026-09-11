@@ -1,6 +1,6 @@
 document.getElementById("theme-toggle").addEventListener("click", () => {
   const root = document.documentElement
-  root.dataset.muiTheme = root.dataset.muiTheme === "dark" ? "light" : "dark"
+  root.dataset.mTheme = root.dataset.mTheme === "dark" ? "light" : "dark"
 })
 document.getElementById("load-legacy").addEventListener("click", async (event) => {
   const button = event.currentTarget

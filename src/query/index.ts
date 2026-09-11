@@ -1,6 +1,6 @@
 import { isSafeUri, sanitizeHtml, type HtmlPolicy } from "../security/index.js"
 
-export class MuiQuery {
+export class MQuery {
   public constructor(private readonly elements: readonly Element[]) {}
 
   public each(callback: (element: Element, index: number) => void): this {
@@ -49,8 +49,8 @@ export class MuiQuery {
   }
 }
 
-export function query(target: string | Element | Iterable<Element>): MuiQuery {
-  return new MuiQuery(
+export function query(target: string | Element | Iterable<Element>): MQuery {
+  return new MQuery(
     typeof target === "string"
       ? [...document.querySelectorAll(target)]
       : target instanceof Element
@@ -59,14 +59,14 @@ export function query(target: string | Element | Iterable<Element>): MuiQuery {
   )
 }
 
-export type MuiQueryMethod = (this: MuiQuery, ...args: unknown[]) => unknown
+export type MQueryMethod = (this: MQuery, ...args: unknown[]) => unknown
 
-export function extendQuery(name: string, method: MuiQueryMethod): void {
+export function extendQuery(name: string, method: MQueryMethod): void {
   if (!name.trim()) throw new Error("Query extension name is required.")
-  if (name in MuiQuery.prototype) {
-    throw new Error(`MuiQuery method '${name}' is already registered.`)
+  if (name in MQuery.prototype) {
+    throw new Error(`MQuery method '${name}' is already registered.`)
   }
-  Object.defineProperty(MuiQuery.prototype, name, {
+  Object.defineProperty(MQuery.prototype, name, {
     configurable: false,
     enumerable: false,
     value: method,

@@ -25,9 +25,9 @@ sources remain separate ownership boundaries. No popup dependency is needed by t
 | [Reference](../naive-ui/components/tree-select.md) | Original identities and explicit source supplements/dispositions |
 
 ```html
-<fieldset class="mui-tree-select" data-tree-select>
+<fieldset class="m-tree-select" data-tree-select>
   <legend>File</legend>
-  <section class="mui-tree" data-tree data-tree-select-source aria-label="File hierarchy">
+  <section class="m-tree" data-tree data-tree-select-source aria-label="File hierarchy">
     <ul data-tree-list>
       <li data-tree-key="docs">
         <div data-tree-row><span data-tree-label>Documents</span></div>
@@ -42,7 +42,7 @@ sources remain separate ownership boundaries. No popup dependency is needed by t
       </li>
     </ul>
   </section>
-  <div class="mui-select" data-select data-tree-select-field>
+  <div class="m-select" data-select data-tree-select-field>
     <label>File
       <select data-select-control name="file" required>
         <option value="" data-select-placeholder>Choose file</option>
@@ -190,10 +190,10 @@ in light and white `.38`/`.06` in dark. An explicit theme marker on a root/ances
 a local field color scheme. Focus remains a visible native outline rather than a copied
 framework focus-shadow renderer.
 
-Author tokens include `--mui-tree-select-height`, `--mui-tree-select-font-size`,
-`--mui-tree-select-padding`, `--mui-tree-select-radius`, `--mui-tree-select-border`,
-`--mui-tree-select-background`, `--mui-tree-select-color`, `--mui-tree-select-disabled-color`,
-`--mui-tree-select-focus-color`, and `--mui-tree-select-indent`. Matching `--mui-select-*`
+Author tokens include `--m-tree-select-height`, `--m-tree-select-font-size`,
+`--m-tree-select-padding`, `--m-tree-select-radius`, `--m-tree-select-border`,
+`--m-tree-select-background`, `--m-tree-select-color`, `--m-tree-select-disabled-color`,
+`--m-tree-select-focus-color`, and `--m-tree-select-indent`. Matching `--m-select-*`
 color/border/padding/font/focus tokens are supported as fallbacks, without requiring that
 stylesheet. The field-qualified rules retain their defaults/overrides when Select CSS loads
 afterward. Use Tree Select's outer size marker for this composition.
@@ -257,11 +257,11 @@ browser properties or keeping a second selection model.
 | `refresh()` | Revalidate source/options, prune invalid keys and synchronize silently |
 | `disconnect()` | Reconcile, release enhancement ownership and hand off current native options |
 
-One `mui:tree-select-change` is emitted for a native select change or explicit clear.
+One `m:tree-select-change` is emitted for a native select change or explicit clear.
 Detail includes state, `action: "select" | "clear"` and the originating event when present.
 Programmatic value/default/filter updates, source refresh and native reset are silent.
 Clear is an explicit component action; it does not counterfeit a second native change.
-`mui:tree-select-error` carries `{error}`; direct failures also throw.
+`m:tree-select-error` carries `{error}`; direct failures also throw.
 
 Corrupt/duplicate/unsupported source state applies a real custom-validity gate and blocks
 ordinary active-field submission until repaired. Unknown setter keys reject before changing

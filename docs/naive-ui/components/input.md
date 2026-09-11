@@ -89,7 +89,7 @@ Acceptance evidence **I1** = [Input tests](../../../tests/input.test.ts);
 | `value` · [API] L59 | Prop | Original native current value; silent setValue/refresh | 🟢 Verified | I1/I2; defaults remain independent, no model/tuple binding. |
 | `on-blur` · [API] L60 | Callback | Native blur listener | 🟢 Verified | I1/I2 native focus departure; no duplicate custom blur. |
 | `on-change` · [API] L61 | Callback | Native change listener | 🟢 Verified | I1/I2 user edit commit and one documented clear change. |
-| `on-clear` · [API] L62 | Callback | mui:input-clear detail.previous | 🟢 Verified | I1/I2 after input/change, successful clears only. |
+| `on-clear` · [API] L62 | Callback | m:input-clear detail.previous | 🟢 Verified | I1/I2 after input/change, successful clears only. |
 | `on-focus` · [API] L63 | Callback | Native focus listener | 🟢 Verified | I1/I2; wrapper never receives an extra tabstop. |
 | `on-input` · [API] L64 | Callback | Native input listener, read control.value | 🟢 Verified | I1/I2 no per-keystroke rewrite or duplicate event. |
 | `on-update:value` · [API] L65 | Callback | Observe native input, not a separate binding event | 🟢 Verified | I1/I2 silent setters; no reactive model protocol. |
@@ -100,9 +100,9 @@ Acceptance evidence **I1** = [Input tests](../../../tests/input.test.ts);
 | --- | --- | --- | --- | --- |
 | `clear-icon` · [API] L71 | Slot | Authored named clear button children | 🟢 Verified | I1/I2 original children/listeners remain. |
 | `count` · [API] L72 | Slot | Text-only span, plain-string formatter | 🟢 Verified | I1/I2 safe textContent, no renderer. |
-| `password-invisible-icon` · [API] L73 | Slot | Authored .mui-input__password-invisible child | 🟢 Verified | CSS pressed-state selector; retain stable button name. |
-| `password-visible-icon` · [API] L74 | Slot | Authored .mui-input__password-visible child | 🟢 Verified | CSS pressed-state selector; no icon package. |
-| `prefix` · [API] L75 | Slot | Authored .mui-input__affix before field | 🟢 Verified | I2; does not substitute for a label. |
+| `password-invisible-icon` · [API] L73 | Slot | Authored .m-input__password-invisible child | 🟢 Verified | CSS pressed-state selector; retain stable button name. |
+| `password-visible-icon` · [API] L74 | Slot | Authored .m-input__password-visible child | 🟢 Verified | CSS pressed-state selector; no icon package. |
+| `prefix` · [API] L75 | Slot | Authored .m-input__affix before field | 🟢 Verified | I2; does not substitute for a label. |
 | `separator` · [API] L76 | Slot | Authored pair separator | 🟢 Verified | I2 independent field names/labels. |
 | `suffix` · [API] L77 | Slot | Authored suffix/independent actions | 🟢 Verified | I1/I2 no interactive decoration inside labels. |
 
@@ -110,13 +110,13 @@ Acceptance evidence **I1** = [Input tests](../../../tests/input.test.ts);
 
 | Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| `default` · [API] L83 | Slot | Authored .mui-input-group children | 🟢 Verified | I2 flex wrapping/RTL/pair submission; no role/tuple renderer. |
+| `default` · [API] L83 | Slot | Authored .m-input-group children | 🟢 Verified | I2 flex wrapping/RTL/pair submission; no role/tuple renderer. |
 
 ### InputGroupLabel Slots
 
 | Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| `default` · [API] L89 | Slot | Authored .mui-input-group-label content | 🟢 Verified | I2; only an actual label[for] or explicit association labels a field. |
+| `default` · [API] L89 | Slot | Authored .m-input-group-label content | 🟢 Verified | I2; only an actual label[for] or explicit association labels a field. |
 
 ### Input Methods
 
@@ -132,8 +132,8 @@ Acceptance evidence **I1** = [Input tests](../../../tests/input.test.ts);
 
 | Upstream item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
-| `autosize.minRows?` · [API] L37 | Inline record field | --mui-input-min-rows CSS token | 🟢 Verified | I2 minimum height; positive author value, no JS row parser. |
-| `autosize.maxRows?` · [API] L37 | Inline record field | --mui-input-max-rows CSS token | 🟢 Verified | I2 bounded growth/scroll; max must be at least min. |
+| `autosize.minRows?` · [API] L37 | Inline record field | --m-input-min-rows CSS token | 🟢 Verified | I2 minimum height; positive author value, no JS row parser. |
+| `autosize.maxRows?` · [API] L37 | Inline record field | --m-input-max-rows CSS token | 🟢 Verified | I2 bounded growth/scroll; max must be at least min. |
 
 ### Input Props: render-count inline fields
 
@@ -160,7 +160,7 @@ Acceptance evidence **I1** = [Input tests](../../../tests/input.test.ts);
 | Upstream owner/item · source | Kind | MarkupUI mapping | Status | Evidence / boundary |
 | --- | --- | --- | --- | --- |
 | Input `bordered` · [Input source] | Source prop | data-borderless CSS | 🟢 Verified | External border/focus styling, not a provider default. |
-| Input `resizable` · [Input source] | Source prop | Native vertical resize / .mui-input__fixed | 🟢 Verified | CSS only, no resize observer/mirror. |
+| Input `resizable` · [Input source] | Source prop | Native vertical resize / .m-input__fixed | 🟢 Verified | CSS only, no resize observer/mirror. |
 | Input `stateful` · [Input source] | Source prop | Native editing state only | ⏭️ Intentionally omitted | No framework controlled/uncontrolled activation mode. |
 | Input `onMousedown` · [Input source] | Source callback | Native mousedown listener | 🟢 Verified | Author listeners preserved; not hold reveal. |
 | Input `onKeydown` · [Input source] | Source callback | Native keydown listener | 🟢 Verified | Native keyboard editing remains. |

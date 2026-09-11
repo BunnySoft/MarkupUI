@@ -28,7 +28,7 @@ describe("CSS-only native Table", () => {
     expect(pkg.exports["./table"]).toBeUndefined()
     expect(readdirSync(resolve("src", "components", "table"))).toEqual(["table.css"])
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("mui-table")).toBeUndefined()
+    expect(customElements.get("m-table")).toBeUndefined()
     expect(css).not.toContain("@import")
     expect(demo).not.toContain("markup-ui-advanced")
     expect(demo).not.toContain("markup-ui-table.js")
@@ -44,7 +44,7 @@ describe("CSS-only native Table", () => {
     expect(getComputedStyle(document.querySelector("#alpha-row")!).display).toBe("table-row")
     expect(getComputedStyle(document.querySelector("#alpha-header")!).display).toBe("table-cell")
     expect([...table.children].every(child => ["CAPTION", "COLGROUP", "THEAD", "TBODY", "TFOOT"].includes(child.tagName))).toBe(true)
-    expect(document.querySelectorAll(".mui-table[role], .mui-table [aria-sort], .mui-table tr[tabindex]")).toHaveLength(0)
+    expect(document.querySelectorAll(".m-table[role], .m-table [aria-sort], .m-table tr[tabindex]")).toHaveLength(0)
     expect(css).not.toContain("display: grid")
     expect(css).not.toContain("display: block")
   })
@@ -62,15 +62,15 @@ describe("CSS-only native Table", () => {
     expect(document.querySelector<HTMLTableCellElement>("#hours-header")!.colSpan).toBe(2)
     expect(document.querySelector<HTMLTableCellElement>("#team-a")!.rowSpan).toBe(2)
     expect(document.querySelector<HTMLTableColElement>("#hours-colgroup")!.span).toBe(2)
-    for (const cell of document.querySelectorAll<HTMLTableCellElement>(".mui-table [headers]")) {
+    for (const cell of document.querySelectorAll<HTMLTableCellElement>(".m-table [headers]")) {
       for (const id of cell.headers.split(" ")) expect(document.getElementById(id)?.tagName).toBe("TH")
     }
   })
 
   it("keeps border axes distinct: single-line means columns, not nowrap", () => {
-    expect(css).toContain('table.mui-table[data-single-line="false"]')
+    expect(css).toContain('table.m-table[data-single-line="false"]')
     expect(css).toContain("border-inline-end-width: 1px")
-    expect(css).toContain("table.mui-table[data-single-column] > :is(tbody, tfoot)")
+    expect(css).toContain("table.m-table[data-single-column] > :is(tbody, tfoot)")
     expect(css).toContain("border-block-end-width: 0")
     expect(css).not.toContain("nowrap")
     expect(css).not.toContain(":hover")
@@ -81,7 +81,7 @@ describe("CSS-only native Table", () => {
     fixture()
     install()
     const root = document.querySelector<HTMLElement>("#attribute-table")!
-    const bottomRule = 'table.mui-table[data-bordered="false"]:not([data-bottom-bordered="false"])'
+    const bottomRule = 'table.m-table[data-bordered="false"]:not([data-bottom-bordered="false"])'
     root.dataset.bottomBordered = "false"
     expect(root.matches(bottomRule)).toBe(false)
     expect(root.hasAttribute("data-bordered")).toBe(false)
@@ -98,7 +98,7 @@ describe("CSS-only native Table", () => {
     install()
     expect(document.querySelector<HTMLTableElement>("#attribute-table")!.width).toBe("360")
     expect(document.querySelector("#aligned-cell")!.getAttribute("align")).toBe("right")
-    expect(css).toContain("table.mui-table:not([width])")
+    expect(css).toContain("table.m-table:not([width])")
     expect(css).toContain(":is(th, td):not([align])")
     expect(appCss).toContain(".numeric { text-align: end; }")
     expect(document.querySelector("#alpha-planned")!.classList.contains("numeric")).toBe(true)
@@ -108,35 +108,35 @@ describe("CSS-only native Table", () => {
     fixture()
     install()
     const root = document.querySelector<HTMLElement>("#attribute-table")!
-    expect(getComputedStyle(root).getPropertyValue("--_mui-table-padding")).toBe("12px")
+    expect(getComputedStyle(root).getPropertyValue("--_m-table-padding")).toBe("12px")
     root.dataset.size = "small"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-table-padding")).toBe("6px")
+    expect(getComputedStyle(root).getPropertyValue("--_m-table-padding")).toBe("6px")
     root.dataset.size = "large"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-table-padding")).toBe("12px")
-    expect(getComputedStyle(root).getPropertyValue("--_mui-table-font-size")).toBe("15px")
+    expect(getComputedStyle(root).getPropertyValue("--_m-table-padding")).toBe("12px")
+    expect(getComputedStyle(root).getPropertyValue("--_m-table-font-size")).toBe("15px")
     root.dataset.size = "unknown"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-table-font-size")).toBe("14px")
+    expect(getComputedStyle(root).getPropertyValue("--_m-table-font-size")).toBe("14px")
   })
 
   it("uses scoped light/dark Table colors rather than unrelated legacy surface tokens", () => {
     install()
     const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
-    const light = rules.find(rule => rule.selectorText === ':where([data-mui-theme="light"])')!
-    const dark = rules.find(rule => rule.selectorText === ':where([data-mui-theme="dark"])')!
-    expect(light.style.getPropertyValue("--_mui-table-color")).toBe("#333639")
-    expect(light.style.getPropertyValue("--_mui-table-header-background")).toBe("#fafafc")
-    expect(light.style.getPropertyValue("--_mui-table-border-color")).toBe("#efeff5")
-    expect(dark.style.getPropertyValue("--_mui-table-background")).toBe("#18181c")
-    expect(dark.style.getPropertyValue("--_mui-table-header-background")).toBe("#26262a")
-    expect(dark.style.getPropertyValue("--_mui-table-striped-background")).toBe("#242427")
-    expect(css).not.toContain("--mui-bg-")
-    expect(css).not.toContain("--mui-text-primary")
+    const light = rules.find(rule => rule.selectorText === ':where([data-m-theme="light"])')!
+    const dark = rules.find(rule => rule.selectorText === ':where([data-m-theme="dark"])')!
+    expect(light.style.getPropertyValue("--_m-table-color")).toBe("#333639")
+    expect(light.style.getPropertyValue("--_m-table-header-background")).toBe("#fafafc")
+    expect(light.style.getPropertyValue("--_m-table-border-color")).toBe("#efeff5")
+    expect(dark.style.getPropertyValue("--_m-table-background")).toBe("#18181c")
+    expect(dark.style.getPropertyValue("--_m-table-header-background")).toBe("#26262a")
+    expect(dark.style.getPropertyValue("--_m-table-striped-background")).toBe("#242427")
+    expect(css).not.toContain("--m-bg-")
+    expect(css).not.toContain("--m-text-primary")
   })
 
   it("retains independent header color/weight and line-height author overrides", () => {
-    expect(css).toContain("var(--mui-table-header-weight, 500)")
-    expect(css).toContain("var(--mui-table-header-color, var(--mui-table-color,")
-    expect(css).toContain("line-height: var(--mui-table-line-height, 1.6)")
+    expect(css).toContain("var(--m-table-header-weight, 500)")
+    expect(css).toContain("var(--m-table-header-color, var(--m-table-color,")
+    expect(css).toContain("line-height: var(--m-table-line-height, 1.6)")
     expect(css).toContain("font-variant-numeric: tabular-nums")
   })
 
@@ -151,7 +151,7 @@ describe("CSS-only native Table", () => {
   it("confines striping to body cells and supports visible-row filtering without a controller", () => {
     fixture()
     install()
-    expect(css).toContain("table.mui-table[data-striped] > tbody > tr:nth-of-type(even)")
+    expect(css).toContain("table.m-table[data-striped] > tbody > tr:nth-of-type(even)")
     expect(css).toContain("@supports selector(:nth-child(2 of tr:not([hidden])))")
     expect(css).toContain("tr:nth-child(even of tr:not([hidden]))")
     const visible = [...document.querySelectorAll("#report-body > tr:not([hidden])")]

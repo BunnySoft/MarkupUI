@@ -74,9 +74,9 @@ from the pinned public inventory; weight is theme presentation, not an invented 
 
 | Upstream item · source | Kind | Proposed MarkupUI mapping | Status | Existing evidence / remaining work |
 | --- | --- | --- | --- | --- |
-| [`gradient.from`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/gradient-text/demos/enUS/index.demo-entry.md#L19) | Inline record field | ADAPTED --mui-gradient-text-from native CSS color. | 🟢 Verified | Native declaration, not runtime record evaluation. |
-| [`gradient.to`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/gradient-text/demos/enUS/index.demo-entry.md#L19) | Inline record field | ADAPTED --mui-gradient-text-to native CSS color. | 🟢 Verified | Native declaration with solid foreground underpaint. |
-| [`gradient.deg`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/gradient-text/demos/enUS/index.demo-entry.md#L19) | Inline record field | ADAPTED --mui-gradient-text-angle with CSS angle units. | 🟢 Verified | Theme default 252deg; explicitly use 0deg for upstream object-default translation. |
+| [`gradient.from`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/gradient-text/demos/enUS/index.demo-entry.md#L19) | Inline record field | ADAPTED --m-gradient-text-from native CSS color. | 🟢 Verified | Native declaration, not runtime record evaluation. |
+| [`gradient.to`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/gradient-text/demos/enUS/index.demo-entry.md#L19) | Inline record field | ADAPTED --m-gradient-text-to native CSS color. | 🟢 Verified | Native declaration with solid foreground underpaint. |
+| [`gradient.deg`](https://github.com/tusen-ai/naive-ui/blob/42a52e6436b38bed456fee19eb0b89cdcd00fcc2/src/gradient-text/demos/enUS/index.demo-entry.md#L19) | Inline record field | ADAPTED --m-gradient-text-angle with CSS angle units. | 🟢 Verified | Theme default 252deg; explicitly use 0deg for upstream object-default translation. |
 
 ### Explicit source-only supplements
 

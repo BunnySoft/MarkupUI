@@ -30,7 +30,7 @@ border/background are white `.24` / `#48484e`, matching the source trigger roles
 Hover/focus use `#36ad6a` / `#7fe7c4`; focus adds the established light halo/dark
 glow. Disabled controls use `#fafafc` / white `.06` without opacity loss.
 
-Public `--mui-color-picker-` tokens own width, height, font size, color, border,
+Public `--m-color-picker-` tokens own width, height, font size, color, border,
 radius, background, focus/ring and disabled paint. Size selectors set private
 defaults, so authored public values remain authoritative.
 

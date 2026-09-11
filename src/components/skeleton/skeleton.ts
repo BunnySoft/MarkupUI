@@ -24,7 +24,7 @@ function dimension(document: Document, name: "width" | "height", value: string |
   return probe.getPropertyValue(name) || null
 }
 
-export class MuiSkeleton extends HTMLElement {
+export class MSkeleton extends HTMLElement {
   public static get observedAttributes(): string[] { return ["width", "height", "repeat", "size"] }
 
   private group: HTMLSpanElement | undefined
@@ -43,7 +43,7 @@ export class MuiSkeleton extends HTMLElement {
         }
       }
     }
-    this.dataset.muiSkeleton = ""
+    this.dataset.mSkeleton = ""
     this.observer ??= new MutationObserver(() => this.synchronize())
     this.synchronize()
   }
@@ -106,22 +106,22 @@ export class MuiSkeleton extends HTMLElement {
     this.observer?.disconnect()
     const { width, height, count, errors } = this.configuration()
     for (const [name, value] of [["width", width], ["height", height]] as const) {
-      const property = `--_mui-skeleton-${name}`
+      const property = `--_m-skeleton-${name}`
       if (value == null) this.style.removeProperty(property)
       else if (this.style.getPropertyValue(property) !== value) this.style.setProperty(property, value)
     }
-    if (errors.length) this.setAttribute("data-mui-skeleton-invalid", errors.join(" "))
-    else this.removeAttribute("data-mui-skeleton-invalid")
+    if (errors.length) this.setAttribute("data-m-skeleton-invalid", errors.join(" "))
+    else this.removeAttribute("data-m-skeleton-invalid")
     const relativeHeight = !errors.length && Boolean(count) && typeof height === "string" && /%|(?:var|env)\(/i.test(height)
-    this.toggleAttribute("data-mui-skeleton-relative-height", relativeHeight)
+    this.toggleAttribute("data-m-skeleton-relative-height", relativeHeight)
     if (relativeHeight) {
-      if (this.style.getPropertyValue("--_mui-skeleton-repeat") !== String(count)) this.style.setProperty("--_mui-skeleton-repeat", String(count))
+      if (this.style.getPropertyValue("--_m-skeleton-repeat") !== String(count)) this.style.setProperty("--_m-skeleton-repeat", String(count))
     } else {
-      this.style.removeProperty("--_mui-skeleton-repeat")
+      this.style.removeProperty("--_m-skeleton-repeat")
     }
     if (this.group?.parentNode !== this) {
       this.group = this.ownerDocument.createElement("span")
-      this.group.dataset.muiSkeletonGroup = ""
+      this.group.dataset.mSkeletonGroup = ""
       this.bars = []
       this.prepend(this.group)
     }
@@ -134,7 +134,7 @@ export class MuiSkeleton extends HTMLElement {
       while (this.bars.length > count) this.bars.pop()!.remove()
       while (this.bars.length < count) {
         const bar = this.ownerDocument.createElement("span")
-        bar.dataset.muiSkeletonItem = ""
+        bar.dataset.mSkeletonItem = ""
         group.append(bar)
         this.bars.push(bar)
       }

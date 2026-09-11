@@ -1,11 +1,11 @@
-export interface MuiPlugin<TApi> {
+export interface MPlugin<TApi> {
   readonly name: string
   readonly install: (api: TApi) => void
 }
 
 const installedPlugins = new Set<string>()
 
-export function installPlugin<TApi>(plugin: MuiPlugin<TApi>, api: TApi): boolean {
+export function installPlugin<TApi>(plugin: MPlugin<TApi>, api: TApi): boolean {
   const name = plugin.name.trim()
   if (!name) throw new Error("Plugin name is required.")
   if (installedPlugins.has(name)) return false

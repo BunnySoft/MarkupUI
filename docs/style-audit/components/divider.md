@@ -70,11 +70,11 @@ width up to a bounded maximum so normal titles do not shrink prematurely.
 
 ## Author, scope and native regression evidence
 
-- Theme boundaries set only private `--_mui-divider-*` defaults. Nested dark/light
+- Theme boundaries set only private `--_m-divider-*` defaults. Nested dark/light
   rules measured white/.09 and `#efeff5`; inherited public Divider color overrides
   still took precedence over those defaults.
-- Shared `--mui-font-family: Georgia, serif` was consumed. Setting unrelated
-  `--mui-border: red` and `--mui-text-primary: red` did **not** corrupt Divider's
+- Shared `--m-font-family: Georgia, serif` was consumed. Setting unrelated
+  `--m-border: red` and `--m-text-primary: red` did **not** corrupt Divider's
   distinct rule/heading-text roles. No shared-source palette additions are needed.
 - Public color tokens produced purple rules / teal text in dark scopes. Thickness,
   length and inline spacing produced **3×32px** vertical rules with **11px** margins.
