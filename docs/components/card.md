@@ -46,10 +46,10 @@ load both Card distributions in one document. External Card CSS takes precedence
 legacy Card host/compound styles even when that aggregate installs its stylesheet later.
 The original aggregate implementation, output sizes and 15,000-byte core ceiling are unchanged.
 
-Only `m-card` is registered by this entry. Passive regions do not need Custom Element
-classes or controllers. Existing `m-card-header`, `m-card-content` and `m-card-footer`
-tags still work; the legacy aggregate may register their passive classes later without
-replacing their nodes or interfering with rich Card behavior.
+This entry atomically registers `m-card` and all six passive region Custom Elements.
+Region elements keep authored content in light DOM and add no controller or Shadow DOM.
+Load this entry before the legacy aggregate so the rich Card controller remains the
+registered `m-card` implementation.
 
 ## Authored anatomy and ownership
 
@@ -58,25 +58,25 @@ Prefer native elements marked with explicit region attributes:
 ```html
 <m-card closable segmented role="region" aria-labelledby="report-heading"
           close-label="Close quarterly report">
-  <div data-m-card-cover><img src="./cover.png" alt="Report cover"></div>
-  <header data-m-card-header>
+  <m-card-cover><img src="./cover.png" alt="Report cover"></m-card-cover>
+  <m-card-header>
     <h2 id="report-heading">Quarterly report</h2>
-    <div data-m-card-header-extra><button type="button">Star report</button></div>
-  </header>
-  <section data-m-card-content><p>Authored report content.</p></section>
-  <footer data-m-card-footer>Prepared by the project team</footer>
-  <div data-m-card-action><button type="button">Export</button></div>
+    <m-card-header-extra><button type="button">Star report</button></m-card-header-extra>
+  </m-card-header>
+  <m-card-content><p>Authored report content.</p></m-card-content>
+  <m-card-footer>Prepared by the project team</m-card-footer>
+  <m-card-action><button type="button">Export</button></m-card-action>
 </m-card>
 ```
 
-| Region | Native marker | Passive compound spelling | Placement |
+| Region | Primary Custom Element | Native marker alternative | Placement |
 | --- | --- | --- | --- |
-| Cover | `data-m-card-cover` | `m-card-cover` | Direct card child, normally first. |
-| Header | `data-m-card-header` | `m-card-header` | Direct card child. Author native headings at the appropriate level. |
-| Header extra | `data-m-card-header-extra` | `m-card-header-extra` | Inside header; a direct card child is moved into the header. |
-| Content | `data-m-card-content` | `m-card-content` | Direct card child. |
-| Footer | `data-m-card-footer` | `m-card-footer` | Direct card child. |
-| Action | `data-m-card-action` | `m-card-action` | Direct card child, normally last. |
+| Cover | `m-card-cover` | `data-m-card-cover` | Direct card child, normally first. |
+| Header | `m-card-header` | `data-m-card-header` | Direct card child. Author native headings at the appropriate level. |
+| Header extra | `m-card-header-extra` | `data-m-card-header-extra` | Inside header; a direct card child is moved into the header. |
+| Content | `m-card-content` | `data-m-card-content` | Direct card child. |
+| Footer | `m-card-footer` | `data-m-card-footer` | Direct card child. |
+| Action | `m-card-action` | `data-m-card-action` | Direct card child, normally last. |
 
 Use at most one of each region, and do not mark the same element as multiple regions.
 Authored regions keep their order; this is explicit DOM anatomy, not a slot renderer that
@@ -199,9 +199,9 @@ target/name on the content region when appropriate:
 
 ```html
 <m-card class="report-card" content-scrollable>
-  <header data-m-card-header><h2>Report</h2></header>
-  <div data-m-card-content tabindex="0" role="region" aria-label="Scrollable report">...</div>
-  <footer data-m-card-footer>Report footer</footer>
+  <m-card-header><h2>Report</h2></m-card-header>
+  <m-card-content tabindex="0" role="region" aria-label="Scrollable report">...</m-card-content>
+  <m-card-footer>Report footer</m-card-footer>
 </m-card>
 ```
 

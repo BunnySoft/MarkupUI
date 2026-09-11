@@ -26,7 +26,7 @@ Primary syntax: `m-button`, `m-button-group`.
 shared native behavior, shared CSS ownership, demo syntax and payload gates
 are complete. Direct Web mode creates no duplicate model tree. Registration remains
 Button-local until another migrated component proves a smaller shared helper. Payloads:
-ESM 3,717/4,000, classic 3,927/4,000 and CSS 2,476/2,500 gzip bytes. Card is next.
+ESM 3,717/4,000, classic 3,927/4,000 and CSS 2,476/2,500 gzip bytes.
 
 Prove:
 
@@ -52,12 +52,25 @@ m-card
 Prove logical named regions and passive light-DOM Web parts. Keep semantic native marked
 regions as a Web-specific alternative.
 
+**Status: implemented and validated.** Card and all six named regions have platform
+definitions and are atomically registered by the Card entry. Passive region elements keep
+authored content in light DOM without controllers or Shadow DOM. Existing native marked
+regions remain supported as Web-specific alternatives. Payloads: ESM 2,077/3,000, classic
+2,292/3,000 and CSS 2,141/2,500 gzip bytes.
+
 ## Carousel
 
-Primary syntax: `m-carousel`, `m-carousel-item`, named control/template regions.
+Primary syntax: `m-carousel`, `m-carousel-viewport`, `m-carousel-item`,
+`m-carousel-controls`, `m-carousel-readout`.
 
 Prove logical item identity, current index, actions and renderer capabilities. Existing
 single-view scroll-snap remains the Web baseline; unsupported effects declare fallbacks.
+
+**Status: implemented and validated.** The canonical Custom Element owns the retained
+native scroll-snap controller without creating a second slide tree. Viewport, item,
+controls and readout are registered light-DOM elements; native marked anatomy remains a
+Web-specific adapter. External CSS supports canonical tags before upgrade. Payloads:
+ESM 6,505/7,000, classic 6,641/7,000 and CSS 1,075/1,500 gzip bytes. Collapse is next.
 
 ## Collapse
 

@@ -1,15 +1,16 @@
 # Carousel and CarouselItem: native scroll-snap slides
 
-**🟢 Verified retained single-slide-per-view scope.** An optional plain-JavaScript
-controller enhances authored light DOM. Native scrolling owns touch, trackpad and wheel;
-there is no slide renderer, mouse-drag/physics engine, cloned loop track, dependency,
-custom-element registration or automatic stylesheet installation.
+**🟢 Verified retained single-slide-per-view scope.** The canonical Custom Element owns
+the existing native scroll-snap controller while keeping every authored slide in light
+DOM. Native scrolling owns touch, trackpad and wheel; there is no duplicate model tree,
+slide renderer, mouse-drag/physics engine, cloned loop track, dependency or automatic
+stylesheet installation. The plain-JavaScript native adapter remains available.
 
 ## Loading and native anatomy
 
 | Asset | Contract |
 | --- | --- |
-| `@dataengine/markup-ui/carousel` | `createCarousel`, options/settings/state/change/controller types |
+| `@dataengine/markup-ui/carousel` | `MCarousel`, region classes, platform definitions, `registerCarousel`, `createCarousel`, and controller types |
 | `dist/markup-ui-carousel.js` | Optional ESM |
 | `dist/markup-ui-carousel.global.js` | `MarkupUICarousel`; refuses to overwrite an existing namespace |
 | `@dataengine/markup-ui/carousel/style.css` | Required external native layout, snap, controls, focus and media CSS |
@@ -29,60 +30,57 @@ enhancement controls and their current-slide readout. No transform track, cloned
 slides, icon-only controls, custom drag engine or hidden inactive slides were added.
 
 ```html
-<section class="m-carousel" data-carousel aria-label="Project examples">
-  <div data-carousel-viewport id="examples" tabindex="0" aria-label="Example slides">
-    <article data-carousel-item><div class="slide-content">
+<m-carousel aria-label="Project examples">
+  <m-carousel-viewport id="examples" tabindex="0" aria-label="Example slides">
+    <m-carousel-item><div class="slide-content">
       <h2>Draft</h2><label>Title <input name="title" required value="Original"></label>
-    </div></article>
-    <article data-carousel-item><div class="slide-content">
+    </div></m-carousel-item>
+    <m-carousel-item><div class="slide-content">
       <h2>Review</h2><a href="#review">Open the review section</a>
-    </div></article>
-  </div>
-  <div data-carousel-controls hidden>
+    </div></m-carousel-item>
+  </m-carousel-viewport>
+  <m-carousel-controls hidden>
     <button type="button" data-carousel-prev>Previous slide</button>
     <button type="button" data-carousel-next>Next slide</button>
     <button type="button" data-carousel-to="0">Go to slide 1</button>
     <button type="button" data-carousel-to="1">Go to slide 2</button>
     <button type="button" data-carousel-toggle>Pause / play rotation</button>
-  </div>
-  <p data-carousel-readout>Scroll both examples.</p>
-</section>
+  </m-carousel-controls>
+  <m-carousel-readout>Scroll both examples.</m-carousel-readout>
+</m-carousel>
 ```
 
 ```js
-import { createCarousel } from "@dataengine/markup-ui/carousel"
-const carousel = createCarousel(document.querySelector("[data-carousel]"), {
-  defaultIndex: 0,
-  loop: true,
-  autoplay: false
-})
+import "@dataengine/markup-ui/carousel"
+const carousel = document.querySelector("m-carousel")
+carousel.defaultIndex = 0
+carousel.loop = true
 carousel.next()
-// Before leaving the owner scope:
-// carousel.disconnect()
 ```
 
-The connected root is a named native div/section. Its **direct** viewport is a named
-div/section with a unique author-owned ID and `tabindex="0"`. Every element child of
-the viewport is a native article/section/div with `data-carousel-item`. These are the
-**CarouselItem** companion: no separate runtime, `m-carousel-item`, provider,
-role=option, template renderer or vnode slot. Whitespace/comments are not slides.
-Keep slide outer boxes undecorated; put padding, borders and scrollable content inside.
-Nested `.m-carousel[data-carousel]` roots have independent controllers.
+The connected root is a named `m-carousel`. Its direct `m-carousel-viewport` has a
+unique author-owned ID, accessible name and `tabindex="0"`. Every element child of the
+viewport is an `m-carousel-item`; item identity and authored form/listener state are
+preserved. Whitespace/comments are not slides. Keep slide outer boxes undecorated; put
+padding, borders and scrollable content inside. Nested carousels have independent
+controllers. Native `div`/`section`/`article` elements with the corresponding
+`data-carousel-*` markers remain supported as a Web-specific alternative.
 
-At most one direct `data-carousel-controls` container is authored **hidden**. All its
+At most one direct `m-carousel-controls` container is authored **hidden**. All its
 enhancement actions are distinct labelled `type=button` controls: previous, next, rotation
 and zero-based decimal `data-carousel-to` indicators. Each kind is optional; rotation
 is mandatory when enabling autoplay. Indicators beyond the current count are disabled;
 refresh does not generate/remove them. Controls may contain decorative spans, not
 interactive descendants, implicit submit types, command/popover actions or fake tab roles.
-One separate plain-text p/span/div `data-carousel-readout` is required (not an output
-element with an implicit competing live role). Author no competing live region around
-the carousel. All region/viewport/slide names must be unique and meaningful in context.
+One separate plain-text `m-carousel-readout` is required. Author no competing live region
+around the carousel. All region, viewport and slide names must be unique and meaningful
+in context.
 
-No-JS leaves the native scrolling viewport, all slide contents, native fields and links
-available; hidden enhancement controls stay absent. Creating a controller validates
-before exposing controls. Missing `Element.scrollTo` leaves this fallback unenhanced.
-Load the external CSS explicitly: helper JS alone is not a carousel layout.
+Before upgrade, external CSS leaves the scrolling viewport, all slide contents, native
+fields and links available while hidden enhancement controls stay absent. The Custom
+Element validates before exposing controls and surfaces invalid anatomy explicitly.
+Missing `Element.scrollTo` leaves the authored scrolling fallback unenhanced. Load the
+external CSS explicitly: component JavaScript alone is not a carousel layout.
 
 ## Settings, indices and commands
 
@@ -233,13 +231,12 @@ native implementation. Native and legacy owners coexist on separate roots.
 4. **Bound scope and integration:** all reference identities retained with explicit
    omissions, ESM/classic/legacy/no-JS acceptance and independent build budgets.
 
-Targeted automated gate: `pnpm test -- tests\carousel.test.ts tests\native.test.ts`:
-**77 passing tests (50 Carousel + 27 native/legacy)**. The original declarations and
-independent build remain unchanged. The 2026-09-11 style pass changes Carousel CSS
-to **3,672 raw / 1,045 gzip bytes** under its unchanged **1,500-byte ceiling**;
-full integration build validation remains pending. Original level-nine JavaScript
-bytes were **5,367 ESM / 5,509 classic**. Core/advanced/widgets remain
-**14,611 / 2,181 / 2,779**.
+The current Carousel test file contains **53 passing tests**, including canonical Custom
+Element registration, atomic conflict handling and controller ownership in addition to
+the retained native adapter contract. The integration build passes with level-nine
+payloads of **6,505/7,000 ESM**, **6,641/7,000 classic** and **1,075/1,500 CSS**
+gzip bytes. The architecture adds no cloned slide tree and does not change the aggregate
+core, advanced or widgets bundles.
 The [current catalog acceptance](../naive-ui/index.md#carousel-and-carouselitem-accepted)
 records raw sizes, ceilings and exact inventory totals.
 

@@ -1,9 +1,10 @@
-import { createCarousel } from "../../dist/markup-ui-carousel.js"
+import "../../dist/markup-ui-carousel.js"
 
 const controllers = new Map()
 
 for (const root of document.querySelectorAll("[data-demo-carousel]")) {
-  const controller = createCarousel(root, {
+  const controller = root.controller
+  controller.set({
     autoplay: root.hasAttribute("data-autoplay"),
     interval: 3000,
     direction: root.dataset.direction ?? "horizontal",

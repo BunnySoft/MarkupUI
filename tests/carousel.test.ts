@@ -2,7 +2,20 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createCarousel } from "../src/components/carousel/index.js"
+import {
+  MCarousel,
+  MCarouselControls,
+  MCarouselItem,
+  MCarouselReadout,
+  MCarouselViewport,
+  carouselControlsDefinition,
+  carouselDefinition,
+  carouselItemDefinition,
+  carouselReadoutDefinition,
+  carouselViewportDefinition,
+  createCarousel,
+  registerCarousel,
+} from "../src/components/carousel/index.js"
 import type { CarouselController, CarouselOptions } from "../src/components/carousel/index.js"
 
 let controllers: CarouselController[] = [], sequence = 0
@@ -74,6 +87,77 @@ afterEach(() => {
 })
 
 describe("Carousel current/default/native command contract", () => {
+  it("registers the canonical Carousel element and light-DOM regions", () => {
+    expect(customElements.get("m-carousel")).toBe(MCarousel)
+    expect(customElements.get("m-carousel-viewport")).toBe(MCarouselViewport)
+    expect(customElements.get("m-carousel-item")).toBe(MCarouselItem)
+    expect(customElements.get("m-carousel-controls")).toBe(MCarouselControls)
+    expect(customElements.get("m-carousel-readout")).toBe(MCarouselReadout)
+    expect([
+      carouselDefinition,
+      carouselViewportDefinition,
+      carouselItemDefinition,
+      carouselControlsDefinition,
+      carouselReadoutDefinition,
+    ].map((definition) => definition.web.primary)).toEqual([
+      "m-carousel",
+      "m-carousel-viewport",
+      "m-carousel-item",
+      "m-carousel-controls",
+      "m-carousel-readout",
+    ])
+  })
+
+  it("validates all Carousel registrations before defining missing elements", () => {
+    const constructors = new Map<string, CustomElementConstructor>([
+      ["m-carousel-item", class extends HTMLElement {}],
+    ])
+    const define = vi.fn()
+    expect(() => registerCarousel({
+      get: (name) => constructors.get(name),
+      define,
+    })).toThrow("'m-carousel-item' is already defined")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("owns the native controller from canonical Custom Element anatomy", () => {
+    const element = document.createElement("m-carousel") as MCarousel
+    element.setAttribute("aria-label", "Examples")
+    element.smooth = false
+    element.innerHTML = `<m-carousel-viewport id="custom-viewport" tabindex="0" aria-label="Slides">
+      <m-carousel-item>First</m-carousel-item>
+      <m-carousel-item>Second</m-carousel-item>
+    </m-carousel-viewport>
+    <m-carousel-controls hidden>
+      <button type="button" data-carousel-prev>Previous</button>
+      <button type="button" data-carousel-next>Next</button>
+    </m-carousel-controls>
+    <m-carousel-readout>Scroll through slides.</m-carousel-readout>`
+    const viewport = element.querySelector<MCarouselViewport>("m-carousel-viewport")!
+    Object.defineProperties(viewport, {
+      clientWidth: { get: () => 400 },
+      clientHeight: { get: () => 240 },
+    })
+    for (const [index, slide] of [...viewport.children].entries()) {
+      Object.defineProperties(slide, {
+        offsetWidth: { get: () => 400 },
+        offsetHeight: { get: () => 240 },
+        offsetLeft: { get: () => index * 400 },
+        offsetTop: { get: () => 0 },
+      })
+    }
+    viewport.scrollTo = vi.fn()
+    document.body.append(element)
+    controllers.push(element.controller)
+
+    expect(element.shadowRoot).toBeNull()
+    expect(element.slides).toEqual([...viewport.children])
+    expect(element.state.total).toBe(2)
+    expect(element.querySelector("m-carousel-readout")?.textContent).toBe("1 / 2")
+    element.disabled = true
+    expect(element.state.disabled).toBe(true)
+  })
+
   it("uses stable authored CarouselItem nodes, controls and a single readout", () => {
     const { helper, root, viewport, readout } = fixture()
     expect(helper.getCurrentIndex()).toBe(0); expect(helper.state.total).toBe(3)
@@ -402,6 +486,6 @@ describe("Carousel default styles", () => {
     expect(css).toContain('[aria-current="true"]')
     expect(css).toContain("button:disabled")
     expect(css).toContain("@media (forced-colors: active)")
-    expect(css).toContain("[data-carousel-readout] { display: none; }")
+    expect(css).toContain("m-carousel-readout, [data-carousel-readout]")
   })
 })

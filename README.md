@@ -84,7 +84,8 @@ new-architecture batch migrates Button through Dropdown sequentially to `m-*`.
 - Structure: `m-app`, `m-header`, `m-main`, `m-section`
 - Layout: `m-stack`, `m-row`, `m-wrap`, `m-center`, `m-spacer`, `m-grid`
 - Content: `m-heading`, `m-text`, `m-strong`, `m-code`, `m-link`
-- Surfaces: `m-card`, `m-card-header`, `m-card-content`, `m-card-footer`
+- Surfaces: `m-card`, `m-card-cover`, `m-card-header`, `m-card-header-extra`, `m-card-content`, `m-card-footer`, `m-card-action`
+- Carousel: `m-carousel`, `m-carousel-viewport`, `m-carousel-item`, `m-carousel-controls`, `m-carousel-readout`
 - Feedback: `m-alert`, `m-badge`, `m-tag`, `m-progress`, `m-skeleton`, `m-spin`, `m-empty`
 - Media and grouping: `m-avatar`, `m-divider`, `m-button-group`
 - Forms: `m-form`, `m-form-item`, `m-field`, `m-input`, `m-textarea`

@@ -53,31 +53,34 @@ export interface CarouselController {
 const owner = Symbol.for("markup-ui.carousel.owner")
 type Owned = HTMLElement & { [owner]?: object }
 const keys = ["currentIndex", "defaultIndex", "direction", "loop", "autoplay", "interval", "keyboard", "smooth", "disabled"]
+const rootSelector = "m-carousel,.m-carousel[data-carousel]"
 
 /** Enhances authored, single-slide-per-view native scrolling without a slide renderer. */
 export function createCarousel(element: HTMLElement, options: CarouselOptions = {}): CarouselController {
   const document = element?.ownerDocument, view = document?.defaultView
-  if (!view || !(element instanceof view.HTMLElement) || !element.matches(".m-carousel[data-carousel]")
-    || !["div", "section"].includes(element.localName) || (element as Owned)[owner]
-    || !element.isConnected || element.getRootNode() !== document || element.closest("m-carousel")) {
-    throw new TypeError("Use an unowned connected native div/section.m-carousel[data-carousel].")
+  if (!view || !(element instanceof view.HTMLElement) || !element.matches(rootSelector)
+    || !["div", "section", "m-carousel"].includes(element.localName) || (element as Owned)[owner]
+    || !element.isConnected || element.getRootNode() !== document || element.parentElement?.closest(rootSelector)) {
+    throw new TypeError("Use an unowned connected m-carousel or native div/section.m-carousel[data-carousel].")
   }
   const win = view, doc = document!, token = {}, writes = ownedWrites(), itemWrites = ownedWrites()
-  const own = (node: Element) => node.closest("[data-carousel]") === element
+  const own = (node: Element) => node.closest(rootSelector) === element
   const find = (selector: string) => [...element.querySelectorAll<HTMLElement>(selector)].filter(own)
   function named(node: HTMLElement) {
     return !!(node.getAttribute("aria-label")?.trim() || node.getAttribute("aria-labelledby")?.trim().split(/\s+/).every(id => doc.getElementById(id)?.textContent?.trim()))
   }
-  const viewports = find("[data-carousel-viewport]"), controls = find("[data-carousel-controls]"), readouts = find("[data-carousel-readout]")
+  const viewports = find("m-carousel-viewport,[data-carousel-viewport]")
+  const controls = find("m-carousel-controls,[data-carousel-controls]")
+  const readouts = find("m-carousel-readout,[data-carousel-readout]")
   if (!named(element) || element.hasAttribute("role") && element.getAttribute("role") !== "region"
     || viewports.length !== 1 || controls.length > 1 || readouts.length !== 1) throw new TypeError("Author a named region, one viewport/readout and at most one controls container.")
   const viewport = viewports[0]!, readout = readouts[0]!, control = controls[0]
-  if (viewport.parentElement !== element || !["div", "section"].includes(viewport.localName) || !named(viewport)
+  if (viewport.parentElement !== element || !["div", "section", "m-carousel-viewport"].includes(viewport.localName) || !named(viewport)
     || viewport.getAttribute("tabindex") !== "0" || !viewport.id
     || viewport.hasAttribute("role") && viewport.getAttribute("role") !== "group"
     || control && (control.parentElement !== element || !control.hidden)
     || readout.childElementCount || viewport.contains(readout) || readout.closest("button,output")
-    || !["p", "span", "div"].includes(readout.localName)) throw new TypeError("Use a direct named tabindex=0 viewport with ID, hidden controls, and separate plain-text readout.")
+    || !["p", "span", "div", "m-carousel-readout"].includes(readout.localName)) throw new TypeError("Use a direct named tabindex=0 viewport with ID, hidden controls, and separate plain-text readout.")
   const originalText = readout.textContent
   let lastText: string | null = null
   let settings: Required<CarouselSettings> = {
@@ -109,8 +112,8 @@ export function createCarousel(element: HTMLElement, options: CarouselOptions = 
     if (!element.isConnected || viewport.parentElement !== element || !element.contains(readout)
       || control && control.parentElement !== element) throw new Error("Carousel anatomy was detached; disconnect and rebind replacement anatomy.")
     const items = [...viewport.children]
-    if (items.some(node => !(node instanceof win.HTMLElement) || !["div", "section", "article"].includes(node.localName)
-      || !node.hasAttribute("data-carousel-item") || !own(node) || node.hasAttribute("hidden") || node.hasAttribute("inert")
+    if (items.some(node => !(node instanceof win.HTMLElement) || !["div", "section", "article", "m-carousel-item"].includes(node.localName)
+      || node.localName !== "m-carousel-item" && !node.hasAttribute("data-carousel-item") || !own(node) || node.hasAttribute("hidden") || node.hasAttribute("inert")
       || node.hasAttribute("aria-hidden") || node.hasAttribute("role") && node.getAttribute("role") !== "group")) {
       throw new TypeError("Viewport children must be visible native CarouselItem div/section/article nodes, not hidden or cloned options.")
     }

@@ -1,6 +1,22 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
-import { MCard, registerCard } from "../src/components/card/index.js"
+import {
+  MCard,
+  MCardAction,
+  MCardContent,
+  MCardCover,
+  MCardFooter,
+  MCardHeader,
+  MCardHeaderExtra,
+  cardActionDefinition,
+  cardContentDefinition,
+  cardCoverDefinition,
+  cardDefinition,
+  cardFooterDefinition,
+  cardHeaderDefinition,
+  cardHeaderExtraDefinition,
+  registerCard,
+} from "../src/components/card/index.js"
 import type { CardCloseDetail } from "../src/components/card/index.js"
 import { registerElements } from "../src/components/elements.js"
 
@@ -40,16 +56,40 @@ describe("standalone Card", () => {
     expect(element.hasAttribute("tabindex")).toBe(false)
   })
 
-  it("preserves legacy compound regions without registering passive controllers", () => {
+  it("registers and preserves all compound region elements", () => {
     const element = card("<m-card><m-card-header><h2>Heading</h2></m-card-header><m-card-content>Content</m-card-content><m-card-footer>Footer</m-card-footer></m-card>")
     const children = [...element.children]
     expect(children.map((child) => child.localName)).toEqual(["m-card-header", "m-card-content", "m-card-footer"])
-    expect(customElements.get("m-card-header")).toBeUndefined()
-    expect(customElements.get("m-card-content")).toBeUndefined()
+    expect(customElements.get("m-card-cover")).toBe(MCardCover)
+    expect(customElements.get("m-card-header")).toBe(MCardHeader)
+    expect(customElements.get("m-card-header-extra")).toBe(MCardHeaderExtra)
+    expect(customElements.get("m-card-content")).toBe(MCardContent)
+    expect(customElements.get("m-card-footer")).toBe(MCardFooter)
+    expect(customElements.get("m-card-action")).toBe(MCardAction)
     expect(element.hasAttribute("structured")).toBe(true)
     element.remove()
     document.body.append(element)
     expect([...element.children]).toEqual(children)
+  })
+
+  it("exports platform definitions for Card and its named regions", () => {
+    expect([
+      cardDefinition,
+      cardCoverDefinition,
+      cardHeaderDefinition,
+      cardHeaderExtraDefinition,
+      cardContentDefinition,
+      cardFooterDefinition,
+      cardActionDefinition,
+    ].map((definition) => definition.web.primary)).toEqual([
+      "m-card",
+      "m-card-cover",
+      "m-card-header",
+      "m-card-header-extra",
+      "m-card-content",
+      "m-card-footer",
+      "m-card-action",
+    ])
   })
 
   it("supports all six native anatomy regions and moves a direct extra into the header", () => {
@@ -417,6 +457,18 @@ describe("standalone Card", () => {
     expect(() => registerCard()).not.toThrow()
     const define = vi.fn()
     expect(() => registerCard({ get: () => class extends HTMLElement {}, define })).toThrow("before the legacy MarkupUI bundle")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("validates every Card registration before defining any missing element", () => {
+    const constructors = new Map<string, CustomElementConstructor>([
+      ["m-card-header-extra", class extends HTMLElement {}],
+    ])
+    const define = vi.fn()
+    expect(() => registerCard({
+      get: (name) => constructors.get(name),
+      define,
+    })).toThrow("'m-card-header-extra' is already defined")
     expect(define).not.toHaveBeenCalled()
   })
 

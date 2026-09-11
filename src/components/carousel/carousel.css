@@ -1,11 +1,11 @@
 :where([data-m-theme="light"]) { --_m-carousel-scheme: light; }
 :where([data-m-theme="dark"]) { --_m-carousel-scheme: dark; }
-.m-carousel {
+:is(.m-carousel, m-carousel) {
   min-inline-size: 0;
   color-scheme: var(--_m-carousel-scheme, light);
 }
-.m-carousel [hidden] { display: none !important; }
-.m-carousel > [data-carousel-viewport] {
+:is(.m-carousel, m-carousel) [hidden] { display: none !important; }
+:is(.m-carousel, m-carousel) > :is(m-carousel-viewport, [data-carousel-viewport]) {
   display: flex;
   position: relative;
   box-sizing: border-box;
@@ -21,11 +21,11 @@
   scroll-behavior: auto;
   writing-mode: horizontal-tb;
 }
-.m-carousel[data-carousel-direction="vertical"] > [data-carousel-viewport] {
+:is(.m-carousel, m-carousel)[data-carousel-direction="vertical"] > :is(m-carousel-viewport, [data-carousel-viewport]) {
   flex-direction: column;
   scroll-snap-type: y mandatory;
 }
-.m-carousel > [data-carousel-viewport] > [data-carousel-item] {
+:is(.m-carousel, m-carousel) > :is(m-carousel-viewport, [data-carousel-viewport]) > :is(m-carousel-item, [data-carousel-item]) {
   flex: 0 0 100%;
   box-sizing: border-box;
   min-inline-size: 0;
@@ -39,17 +39,17 @@
   scroll-snap-align: start;
   scroll-margin: 0;
 }
-.m-carousel > [data-carousel-controls] {
+:is(.m-carousel, m-carousel) > :is(m-carousel-controls, [data-carousel-controls]) {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: .5rem;
   margin-block: .5rem;
 }
-.m-carousel [data-carousel-prev],
-.m-carousel [data-carousel-next],
-.m-carousel [data-carousel-to],
-.m-carousel [data-carousel-toggle] {
+:is(.m-carousel, m-carousel) [data-carousel-prev],
+:is(.m-carousel, m-carousel) [data-carousel-next],
+:is(.m-carousel, m-carousel) [data-carousel-to],
+:is(.m-carousel, m-carousel) [data-carousel-toggle] {
   min-block-size: 28px;
   padding: 0 10px;
   font: inherit;
@@ -59,22 +59,22 @@
   border-radius: var(--m-carousel-control-radius, 3px);
   cursor: pointer;
 }
-.m-carousel [data-carousel-to] { min-inline-size: 28px; padding-inline: 0; }
-.m-carousel :is([data-carousel-prev], [data-carousel-next], [data-carousel-to], [data-carousel-toggle]):enabled:not([aria-disabled="true"]):hover { color: var(--m-carousel-primary, var(--m-color-primary-hover, light-dark(#36ad6a, #7fe7c4))); border-color: currentColor; }
-.m-carousel [aria-current="true"] { color: var(--m-carousel-current-color, light-dark(#fff, #000)); background: var(--m-carousel-primary, var(--m-color-primary, light-dark(#18a058, #63e2b7))); border-color: transparent; }
-.m-carousel :is(button:disabled, [aria-disabled="true"]) { color: var(--m-carousel-disabled, light-dark(#c2c2c2, rgba(255,255,255,.38))); cursor: not-allowed; opacity: 1; }
-.m-carousel :focus-visible { outline: 3px solid var(--m-carousel-focus, #175cd3); outline-offset: -3px; }
+:is(.m-carousel, m-carousel) [data-carousel-to] { min-inline-size: 28px; padding-inline: 0; }
+:is(.m-carousel, m-carousel) :is([data-carousel-prev], [data-carousel-next], [data-carousel-to], [data-carousel-toggle]):enabled:not([aria-disabled="true"]):hover { color: var(--m-carousel-primary, var(--m-color-primary-hover, light-dark(#36ad6a, #7fe7c4))); border-color: currentColor; }
+:is(.m-carousel, m-carousel) [aria-current="true"] { color: var(--m-carousel-current-color, light-dark(#fff, #000)); background: var(--m-carousel-primary, var(--m-color-primary, light-dark(#18a058, #63e2b7))); border-color: transparent; }
+:is(.m-carousel, m-carousel) :is(button:disabled, [aria-disabled="true"]) { color: var(--m-carousel-disabled, light-dark(#c2c2c2, rgba(255,255,255,.38))); cursor: not-allowed; opacity: 1; }
+:is(.m-carousel, m-carousel) :focus-visible { outline: 3px solid var(--m-carousel-focus, #175cd3); outline-offset: -3px; }
 @media (prefers-reduced-motion: reduce) {
-  .m-carousel > [data-carousel-viewport] { scroll-behavior: auto; }
+  :is(.m-carousel, m-carousel) > :is(m-carousel-viewport, [data-carousel-viewport]) { scroll-behavior: auto; }
 }
 @media (forced-colors: active) {
-  .m-carousel :is([data-carousel-prev], [data-carousel-next], [data-carousel-to], [data-carousel-toggle]) { color: ButtonText; background: ButtonFace; border-color: ButtonText; }
-  .m-carousel [aria-current="true"] { color: HighlightText; background: Highlight; }
-  .m-carousel :is(button:disabled, [aria-disabled="true"]) { color: GrayText; border-color: GrayText; }
-  .m-carousel :focus-visible { outline-color: Highlight; }
+  :is(.m-carousel, m-carousel) :is([data-carousel-prev], [data-carousel-next], [data-carousel-to], [data-carousel-toggle]) { color: ButtonText; background: ButtonFace; border-color: ButtonText; }
+  :is(.m-carousel, m-carousel) [aria-current="true"] { color: HighlightText; background: Highlight; }
+  :is(.m-carousel, m-carousel) :is(button:disabled, [aria-disabled="true"]) { color: GrayText; border-color: GrayText; }
+  :is(.m-carousel, m-carousel) :focus-visible { outline-color: Highlight; }
 }
 @media print {
-  .m-carousel > [data-carousel-viewport] { display: block; block-size: auto; overflow: visible; }
-  .m-carousel > [data-carousel-viewport] > [data-carousel-item] { block-size: auto; overflow: visible; break-inside: avoid; }
-  .m-carousel > [data-carousel-controls], .m-carousel > [data-carousel-readout] { display: none; }
+  :is(.m-carousel, m-carousel) > :is(m-carousel-viewport, [data-carousel-viewport]) { display: block; block-size: auto; overflow: visible; }
+  :is(.m-carousel, m-carousel) > :is(m-carousel-viewport, [data-carousel-viewport]) > :is(m-carousel-item, [data-carousel-item]) { block-size: auto; overflow: visible; break-inside: avoid; }
+  :is(.m-carousel, m-carousel) > :is(m-carousel-controls, [data-carousel-controls]), :is(.m-carousel, m-carousel) > :is(m-carousel-readout, [data-carousel-readout]) { display: none; }
 }

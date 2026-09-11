@@ -64,10 +64,10 @@
       </header>
       <div class="demo-preview" data-demo-preview>
         <m-card class="narrow-card" title="Card with Cover">
-          <div data-m-card-cover>
+          <m-card-cover>
             <img src="./card-cover.svg" alt="Abstract blue and green portrait illustration" width="600" height="400">
-          </div>
-          <div data-m-card-content>Card Content</div>
+          </m-card-cover>
+          <m-card-content>Card Content</m-card-content>
         </m-card>
       </div>
     </section>
@@ -92,13 +92,13 @@
       </header>
       <div class="demo-preview" data-demo-preview>
         <m-card>
-          <header data-m-card-header>
+          <m-card-header>
             <h3>Card Slots Demo</h3>
-            <span data-m-card-header-extra>#header-extra</span>
-          </header>
-          <div data-m-card-content>Card Content</div>
-          <footer data-m-card-footer>#footer</footer>
-          <div data-m-card-action>#action</div>
+            <m-card-header-extra>#header-extra</m-card-header-extra>
+          </m-card-header>
+          <m-card-content>Card Content</m-card-content>
+          <m-card-footer>#footer</m-card-footer>
+          <m-card-action>#action</m-card-action>
         </m-card>
       </div>
     </section>
@@ -126,13 +126,13 @@
       </header>
       <div class="demo-preview" data-demo-preview>
         <m-card segmented-content segmented-footer="soft">
-          <header data-m-card-header>
+          <m-card-header>
             <h3>Card Segmented Demo</h3>
-            <span data-m-card-header-extra>#header-extra</span>
-          </header>
-          <div data-m-card-content>Card Content</div>
-          <footer data-m-card-footer>#footer</footer>
-          <div data-m-card-action>#action</div>
+            <m-card-header-extra>#header-extra</m-card-header-extra>
+          </m-card-header>
+          <m-card-content>Card Content</m-card-content>
+          <m-card-footer>#footer</m-card-footer>
+          <m-card-action>#action</m-card-action>
         </m-card>
       </div>
     </section>
@@ -175,8 +175,8 @@
       </header>
       <div class="demo-preview" data-demo-preview>
         <m-card class="task-card" content-scrollable segmented>
-          <header data-m-card-header><h3>Task List</h3></header>
-          <div data-m-card-content tabindex="0" role="region" aria-label="Scrollable task list">
+          <m-card-header><h3>Task List</h3></m-card-header>
+          <m-card-content tabindex="0" role="region" aria-label="Scrollable task list">
             <p>Task 1: only content area scrolls.</p>
             <p>Task 2: only content area scrolls.</p>
             <p>Task 3: only content area scrolls.</p>
@@ -197,8 +197,8 @@
             <p>Task 18: only content area scrolls.</p>
             <p>Task 19: only content area scrolls.</p>
             <p>Task 20: only content area scrolls.</p>
-          </div>
-          <footer data-m-card-footer>Footer actions stay fixed</footer>
+          </m-card-content>
+          <m-card-footer>Footer actions stay fixed</m-card-footer>
         </m-card>
       </div>
     </section>
@@ -217,11 +217,11 @@
           <span class="m-switch__label" id="loading-label">Loading</span>
         </label>
         <m-card id="loading-card" aria-busy="true">
-          <header data-m-card-header>
+          <m-card-header>
             <span class="skeleton skeleton-heading" data-loading-content aria-label="Loading card title"></span>
             <span data-loaded-content hidden>Lorem Ipsum</span>
-          </header>
-          <div data-m-card-content>
+          </m-card-header>
+          <m-card-content>
             <div class="skeleton-lines" data-loading-content aria-label="Loading card content">
               <span class="skeleton"></span>
               <span class="skeleton"></span>
@@ -229,7 +229,7 @@
               <span class="skeleton"></span>
               <span class="skeleton"></span>
               <span class="skeleton"></span>
-            </div>
+            </m-card-content>
             <div data-loaded-content hidden>
               Lorem ipsum dolor sit amet,<br>
               consectetur adipiscing elit,<br>
@@ -253,7 +253,7 @@
       </header>
       <div class="demo-preview" data-demo-preview>
         <m-card class="custom-card">
-          <div data-m-card-content>
+          <m-card-content>
             <div class="m-tabs custom-tabs" data-tabs data-tabs-type="line" id="custom-tabs">
               <div data-tabs-bar>
                 <div data-tabs-list aria-label="Lifestyle">
@@ -261,7 +261,7 @@
                     data-tabs-target="parklife-pane">PARKLIFE</button>
                   <button type="button" id="rocklife-tab" data-tabs-tab data-tabs-key="rocklife"
                     data-tabs-target="rocklife-pane">ROCKLIFE</button>
-                </div>
+                </m-card-content>
               </div>
               <div data-tabs-panels>
                 <section data-tabs-pane id="parklife-pane">PARKLIFE</section>

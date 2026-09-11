@@ -26,35 +26,35 @@
     <section data-demo-example="basic" aria-labelledby="basic-heading">
       <header data-demo-header><div><h2 id="basic-heading">Basic</h2></div></header>
       <div class="demo-preview" data-demo-preview>
-        <section class="m-carousel parity-carousel" data-carousel data-demo-carousel aria-label="Basic carousel">
-          <div data-carousel-viewport id="basic-viewport" tabindex="0" aria-label="Basic slides">
-            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
-            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
-            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
-            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
-          </div>
-          <div class="carousel-dots" data-carousel-controls hidden>
+        <m-carousel class="m-carousel parity-carousel" data-demo-carousel aria-label="Basic carousel">
+          <m-carousel-viewport id="basic-viewport" tabindex="0" aria-label="Basic slides">
+            <m-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></m-carousel-item>
+          </m-carousel-viewport>
+          <m-carousel-controls class="carousel-dots" hidden>
             <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
             <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
             <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
             <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
-          </div>
-          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
-        </section>
+          </m-carousel-controls>
+          <m-carousel-readout class="visually-hidden">Slide 1 of 4</m-carousel-readout>
+        </m-carousel>
       </div>
     </section>
 
     <section data-demo-example="arrow" aria-labelledby="arrow-heading">
       <header data-demo-header><div><h2 id="arrow-heading">Arrow</h2><p>Show previous and next controls.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <section class="m-carousel parity-carousel" data-carousel data-demo-carousel aria-label="Arrow carousel">
-          <div data-carousel-viewport id="arrow-viewport" tabindex="0" aria-label="Arrow slides">
-            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
-            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
-            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
-            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
-          </div>
-          <div class="carousel-combined-controls" data-carousel-controls hidden>
+        <m-carousel class="m-carousel parity-carousel" data-demo-carousel aria-label="Arrow carousel">
+          <m-carousel-viewport id="arrow-viewport" tabindex="0" aria-label="Arrow slides">
+            <m-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></m-carousel-item>
+          </m-carousel-viewport>
+          <m-carousel-controls class="carousel-combined-controls" hidden>
             <button class="carousel-arrow carousel-arrow-prev" type="button" data-carousel-prev aria-label="Previous slide">‹</button>
             <button class="carousel-arrow carousel-arrow-next" type="button" data-carousel-next aria-label="Next slide">›</button>
             <span class="carousel-dot-set">
@@ -63,31 +63,31 @@
               <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
               <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
             </span>
-          </div>
-          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
-        </section>
+          </m-carousel-controls>
+          <m-carousel-readout class="visually-hidden">Slide 1 of 4</m-carousel-readout>
+        </m-carousel>
       </div>
     </section>
 
     <section data-demo-example="autoplay" aria-labelledby="autoplay-heading">
       <header data-demo-header><div><h2 id="autoplay-heading">Autoplay</h2><p>Autoplay uses an explicit accessible pause/play control.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <section class="m-carousel parity-carousel" data-carousel data-demo-carousel data-autoplay aria-label="Autoplay carousel">
-          <div data-carousel-viewport id="autoplay-viewport" tabindex="0" aria-label="Autoplay slides">
-            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
-            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
-            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
-            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
-          </div>
-          <div class="carousel-dots" data-carousel-controls hidden>
+        <m-carousel class="m-carousel parity-carousel" data-demo-carousel data-autoplay aria-label="Autoplay carousel">
+          <m-carousel-viewport id="autoplay-viewport" tabindex="0" aria-label="Autoplay slides">
+            <m-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></m-carousel-item>
+          </m-carousel-viewport>
+          <m-carousel-controls class="carousel-dots" hidden>
             <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
             <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
             <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
             <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
             <button class="rotation-control" type="button" data-carousel-toggle>Pause / play</button>
-          </div>
-          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
-        </section>
+          </m-carousel-controls>
+          <m-carousel-readout class="visually-hidden">Slide 1 of 4</m-carousel-readout>
+        </m-carousel>
       </div>
     </section>
 
@@ -95,30 +95,30 @@
       <header data-demo-header><div><h2 id="dots-heading">Dots</h2><p>External controls adapt indicator type, placement, direction and arrows.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
         <div class="option-groups" data-dots-options>
-          <-button-group size="tiny" aria-label="Dot type">
-            <-button type="primary" data-dot-type="dot">Dot<-button>
-            <-button data-dot-type="line">Line<-button>
-          <-button-group>
-          <-button-group size="tiny" aria-label="Dot placement">
-            <-button data-dot-placement="top">Top<-button>
-            <-button type="primary" data-dot-placement="bottom">Bottom<-button>
-            <-button data-dot-placement="left">Left<-button>
-            <-button data-dot-placement="right">Right<-button>
-          <-button-group>
-          <-button-group size="tiny" aria-label="Direction">
-            <-button type="primary" data-dot-direction="horizontal">Horizontal<-button>
-            <-button data-dot-direction="vertical">Vertical<-button>
-          <-button-group>
-          <-button size="tiny" secondary data-toggle-arrows><span data-toggle-label>Show arrow</span><-button>
+          <m-button-group size="tiny" aria-label="Dot type">
+            <m-button type="primary" data-dot-type="dot">Dot</m-button>
+            <m-button data-dot-type="line">Line</m-button>
+          </m-button-group>
+          <m-button-group size="tiny" aria-label="Dot placement">
+            <m-button data-dot-placement="top">Top</m-button>
+            <m-button type="primary" data-dot-placement="bottom">Bottom</m-button>
+            <m-button data-dot-placement="left">Left</m-button>
+            <m-button data-dot-placement="right">Right</m-button>
+          </m-button-group>
+          <m-button-group size="tiny" aria-label="Direction">
+            <m-button type="primary" data-dot-direction="horizontal">Horizontal</m-button>
+            <m-button data-dot-direction="vertical">Vertical</m-button>
+          </m-button-group>
+          <m-button size="tiny" secondary data-toggle-arrows><span data-toggle-label>Show arrow</span></m-button>
         </div>
-        <section class="m-carousel parity-carousel dots-demo" data-carousel data-demo-carousel aria-label="Configurable dots carousel">
-          <div data-carousel-viewport id="dots-viewport" tabindex="0" aria-label="Configurable dot slides">
-            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
-            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
-            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
-            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
-          </div>
-          <div class="carousel-combined-controls configurable-controls" data-carousel-controls hidden>
+        <m-carousel class="m-carousel parity-carousel dots-demo" data-demo-carousel aria-label="Configurable dots carousel">
+          <m-carousel-viewport id="dots-viewport" tabindex="0" aria-label="Configurable dot slides">
+            <m-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></m-carousel-item>
+          </m-carousel-viewport>
+          <m-carousel-controls class="carousel-combined-controls configurable-controls" hidden>
             <button class="carousel-arrow carousel-arrow-prev" type="button" data-carousel-prev aria-label="Previous slide">‹</button>
             <button class="carousel-arrow carousel-arrow-next" type="button" data-carousel-next aria-label="Next slide">›</button>
             <span class="carousel-dot-set">
@@ -127,30 +127,30 @@
               <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
               <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
             </span>
-          </div>
-          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
-        </section>
+          </m-carousel-controls>
+          <m-carousel-readout class="visually-hidden">Slide 1 of 4</m-carousel-readout>
+        </m-carousel>
       </div>
     </section>
 
     <section data-demo-example="vertical" aria-labelledby="vertical-heading">
       <header data-demo-header><div><h2 id="vertical-heading">Vertical</h2></div></header>
       <div class="demo-preview" data-demo-preview>
-        <section class="m-carousel parity-carousel vertical-carousel" data-carousel data-demo-carousel data-direction="vertical" aria-label="Vertical carousel">
-          <div data-carousel-viewport id="vertical-viewport" tabindex="0" aria-label="Vertical slides">
-            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
-            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
-            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
-            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
-          </div>
-          <div class="carousel-dots carousel-dots-right" data-carousel-controls hidden>
+        <m-carousel class="m-carousel parity-carousel vertical-carousel" data-demo-carousel data-direction="vertical" aria-label="Vertical carousel">
+          <m-carousel-viewport id="vertical-viewport" tabindex="0" aria-label="Vertical slides">
+            <m-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></m-carousel-item>
+          </m-carousel-viewport>
+          <m-carousel-controls class="carousel-dots carousel-dots-right" hidden>
             <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
             <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
             <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
             <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
-          </div>
-          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
-        </section>
+          </m-carousel-controls>
+          <m-carousel-readout class="visually-hidden">Slide 1 of 4</m-carousel-readout>
+        </m-carousel>
       </div>
     </section>
 
@@ -205,27 +205,27 @@
     <section data-demo-example="effect" aria-labelledby="effect-heading">
       <header data-demo-header><div><h2 id="effect-heading">Effect</h2><p>Slide is supported; fade and card remain explicit omitted effects.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
-        <-button-group size="tiny" aria-label="Requested effect">
-          <-button type="primary" data-effect="slide">Slide<-button>
-          <-button data-effect="fade">Fade<-button>
-          <-button data-effect="card">Card<-button>
-        <-button-group>
+        <m-button-group size="tiny" aria-label="Requested effect">
+          <m-button type="primary" data-effect="slide">Slide</m-button>
+          <m-button data-effect="fade">Fade</m-button>
+          <m-button data-effect="card">Card</m-button>
+        </m-button-group>
         <p class="comparison-status" data-effect-status>Slide uses native scroll-snap.</p>
-        <section class="m-carousel parity-carousel" data-carousel data-demo-carousel aria-label="Effect comparison carousel">
-          <div data-carousel-viewport id="effect-viewport" tabindex="0" aria-label="Effect comparison slides">
-            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
-            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
-            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
-            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
-          </div>
-          <div class="carousel-dots" data-carousel-controls hidden>
+        <m-carousel class="m-carousel parity-carousel" data-demo-carousel aria-label="Effect comparison carousel">
+          <m-carousel-viewport id="effect-viewport" tabindex="0" aria-label="Effect comparison slides">
+            <m-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></m-carousel-item>
+          </m-carousel-viewport>
+          <m-carousel-controls class="carousel-dots" hidden>
             <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
             <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
             <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
             <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
-          </div>
-          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
-        </section>
+          </m-carousel-controls>
+          <m-carousel-readout class="visually-hidden">Slide 1 of 4</m-carousel-readout>
+        </m-carousel>
       </div>
     </section>
 
@@ -233,122 +233,122 @@
       <header data-demo-header><div><h2 id="transition-heading">Customizing transition</h2><p>Custom Vue transition props are not a native scroll-snap feature.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
         <p class="comparison-status">MarkupUI keeps the standard native scroll transition.</p>
-        <section class="m-carousel parity-carousel" data-carousel data-demo-carousel aria-label="Custom transition comparison">
-          <div data-carousel-viewport id="transition-viewport" tabindex="0" aria-label="Transition comparison slides">
-            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
-            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
-            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
-            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
-          </div>
-          <div class="carousel-overlay-controls" data-carousel-controls hidden>
+        <m-carousel class="m-carousel parity-carousel" data-demo-carousel aria-label="Custom transition comparison">
+          <m-carousel-viewport id="transition-viewport" tabindex="0" aria-label="Transition comparison slides">
+            <m-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></m-carousel-item>
+          </m-carousel-viewport>
+          <m-carousel-controls class="carousel-overlay-controls" hidden>
             <button type="button" data-carousel-prev aria-label="Previous slide">‹</button>
             <span class="carousel-control-spacer"></span>
             <button type="button" data-carousel-next aria-label="Next slide">›</button>
-          </div>
-          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
-        </section>
+          </m-carousel-controls>
+          <m-carousel-readout class="visually-hidden">Slide 1 of 4</m-carousel-readout>
+        </m-carousel>
       </div>
     </section>
 
     <section data-demo-example="hover" aria-labelledby="hover-heading">
       <header data-demo-header><div><h2 id="hover-heading">Hover</h2><p>Hover or focus an indicator to request its slide.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <section class="m-carousel parity-carousel" data-carousel data-demo-carousel data-hover-dots aria-label="Hover indicator carousel">
-          <div data-carousel-viewport id="hover-viewport" tabindex="0" aria-label="Hover slides">
-            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
-            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
-            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
-            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
-          </div>
-          <div class="carousel-dots" data-carousel-controls hidden>
+        <m-carousel class="m-carousel parity-carousel" data-demo-carousel data-hover-dots aria-label="Hover indicator carousel">
+          <m-carousel-viewport id="hover-viewport" tabindex="0" aria-label="Hover slides">
+            <m-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></m-carousel-item>
+          </m-carousel-viewport>
+          <m-carousel-controls class="carousel-dots" hidden>
             <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
             <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
             <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
             <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
-          </div>
-          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
-        </section>
+          </m-carousel-controls>
+          <m-carousel-readout class="visually-hidden">Slide 1 of 4</m-carousel-readout>
+        </m-carousel>
       </div>
     </section>
 
     <section data-demo-example="keyboard" aria-labelledby="keyboard-heading">
       <header data-demo-header><div><h2 id="keyboard-heading">Keyboard</h2><p>MarkupUI uses the focused viewport rather than dots as the keyboard owner.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
-        <-button-group size="tiny" aria-label="Keyboard direction">
-          <-button type="primary" data-keyboard-direction="horizontal">Horizontal<-button>
-          <-button data-keyboard-direction="vertical">Vertical<-button>
-        <-button-group>
-        <section class="m-carousel parity-carousel keyboard-carousel" data-carousel data-demo-carousel data-keyboard aria-label="Keyboard carousel">
-          <div data-carousel-viewport id="keyboard-viewport" tabindex="0" aria-label="Keyboard slides">
-            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
-            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
-            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
-            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
-          </div>
-          <div class="carousel-dots" data-carousel-controls hidden>
+        <m-button-group size="tiny" aria-label="Keyboard direction">
+          <m-button type="primary" data-keyboard-direction="horizontal">Horizontal</m-button>
+          <m-button data-keyboard-direction="vertical">Vertical</m-button>
+        </m-button-group>
+        <m-carousel class="m-carousel parity-carousel keyboard-carousel" data-demo-carousel data-keyboard aria-label="Keyboard carousel">
+          <m-carousel-viewport id="keyboard-viewport" tabindex="0" aria-label="Keyboard slides">
+            <m-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></m-carousel-item>
+          </m-carousel-viewport>
+          <m-carousel-controls class="carousel-dots" hidden>
             <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
             <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
             <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
             <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
-          </div>
-          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
-        </section>
+          </m-carousel-controls>
+          <m-carousel-readout class="visually-hidden">Slide 1 of 4</m-carousel-readout>
+        </m-carousel>
       </div>
     </section>
 
     <section data-demo-example="mousewheel" aria-labelledby="mousewheel-heading">
       <header data-demo-header><div><h2 id="mousewheel-heading">Mousewheel</h2><p>Vertical wheel movement remains native scrolling rather than discrete wheel interception.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <section class="m-carousel parity-carousel vertical-carousel" data-carousel data-demo-carousel data-direction="vertical" aria-label="Mousewheel carousel">
-          <div data-carousel-viewport id="mousewheel-viewport" tabindex="0" aria-label="Mousewheel slides">
-            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
-            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
-            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
-            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
-          </div>
-          <div class="carousel-dots carousel-dots-right" data-carousel-controls hidden>
+        <m-carousel class="m-carousel parity-carousel vertical-carousel" data-demo-carousel data-direction="vertical" aria-label="Mousewheel carousel">
+          <m-carousel-viewport id="mousewheel-viewport" tabindex="0" aria-label="Mousewheel slides">
+            <m-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></m-carousel-item>
+          </m-carousel-viewport>
+          <m-carousel-controls class="carousel-dots carousel-dots-right" hidden>
             <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
             <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
             <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
             <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
-          </div>
-          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
-        </section>
+          </m-carousel-controls>
+          <m-carousel-readout class="visually-hidden">Slide 1 of 4</m-carousel-readout>
+        </m-carousel>
       </div>
     </section>
 
     <section data-demo-example="simulate-drag" aria-labelledby="drag-heading">
       <header data-demo-header><div><h2 id="drag-heading">Simulate drag</h2><p>Touch, trackpad and native scrolling work; a custom mouse-drag engine remains omitted.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <section class="m-carousel parity-carousel" data-carousel data-demo-carousel aria-label="Native drag comparison">
-          <div data-carousel-viewport id="drag-viewport" tabindex="0" aria-label="Native scrolling slides">
-            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
-            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
-            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
-            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
-          </div>
-          <div class="carousel-dots" data-carousel-controls hidden>
+        <m-carousel class="m-carousel parity-carousel" data-demo-carousel aria-label="Native drag comparison">
+          <m-carousel-viewport id="drag-viewport" tabindex="0" aria-label="Native scrolling slides">
+            <m-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></m-carousel-item>
+          </m-carousel-viewport>
+          <m-carousel-controls class="carousel-dots" hidden>
             <button type="button" data-carousel-to="0" aria-label="Go to slide 1"></button>
             <button type="button" data-carousel-to="1" aria-label="Go to slide 2"></button>
             <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
             <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
-          </div>
-          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
-        </section>
+          </m-carousel-controls>
+          <m-carousel-readout class="visually-hidden">Slide 1 of 4</m-carousel-readout>
+        </m-carousel>
       </div>
     </section>
 
     <section data-demo-example="custom-arrow-and-dots" aria-labelledby="custom-controls-heading">
       <header data-demo-header><div><h2 id="custom-controls-heading">Customzing arrow and dots</h2><p>Authored native controls replace renderer slots.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <section class="m-carousel parity-carousel custom-controls-carousel" data-carousel data-demo-carousel data-autoplay aria-label="Custom controls carousel">
-          <div data-carousel-viewport id="custom-controls-viewport" tabindex="0" aria-label="Custom control slides">
-            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
-            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
-            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
-            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
-          </div>
-          <div class="custom-combined-controls" data-carousel-controls hidden>
+        <m-carousel class="m-carousel parity-carousel custom-controls-carousel" data-demo-carousel data-autoplay aria-label="Custom controls carousel">
+          <m-carousel-viewport id="custom-controls-viewport" tabindex="0" aria-label="Custom control slides">
+            <m-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></m-carousel-item>
+          </m-carousel-viewport>
+          <m-carousel-controls class="custom-combined-controls" hidden>
             <span class="custom-arrows">
               <button type="button" data-carousel-prev aria-label="Previous slide">←</button>
               <button type="button" data-carousel-next aria-label="Next slide">→</button>
@@ -360,9 +360,9 @@
               <button type="button" data-carousel-to="2" aria-label="Go to slide 3"></button>
               <button type="button" data-carousel-to="3" aria-label="Go to slide 4"></button>
             </span>
-          </div>
-          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
-        </section>
+          </m-carousel-controls>
+          <m-carousel-readout class="visually-hidden">Slide 1 of 4</m-carousel-readout>
+        </m-carousel>
       </div>
     </section>
 
@@ -380,19 +380,19 @@
     <section data-demo-example="custom-dots" aria-labelledby="custom-dots-heading">
       <header data-demo-header><div><h2 id="custom-dots-heading">Custom Dots</h2><p>A plain current/total readout replaces the dots slot.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <section class="m-carousel parity-carousel" data-carousel data-demo-carousel data-autoplay data-custom-readout aria-label="Custom readout carousel">
-          <div data-carousel-viewport id="custom-dots-viewport" tabindex="0" aria-label="Custom readout slides">
-            <article data-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></article>
-            <article data-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></article>
-            <article data-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></article>
-            <article data-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></article>
-          </div>
-          <div class="custom-readout-controls" data-carousel-controls hidden>
+        <m-carousel class="m-carousel parity-carousel" data-demo-carousel data-autoplay data-custom-readout aria-label="Custom readout carousel">
+          <m-carousel-viewport id="custom-dots-viewport" tabindex="0" aria-label="Custom readout slides">
+            <m-carousel-item><img src="./carousel-1.svg" alt="Blue landscape, slide 1"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-2.svg" alt="Green landscape, slide 2"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-3.svg" alt="Gold landscape, slide 3"></m-carousel-item>
+            <m-carousel-item><img src="./carousel-4.svg" alt="Red landscape, slide 4"></m-carousel-item>
+          </m-carousel-viewport>
+          <m-carousel-controls class="custom-readout-controls" hidden>
             <span data-custom-count>1 / 4</span>
             <button class="rotation-control" type="button" data-carousel-toggle>Pause / play</button>
-          </div>
-          <p class="visually-hidden" data-carousel-readout>Slide 1 of 4</p>
-        </section>
+          </m-carousel-controls>
+          <m-carousel-readout class="visually-hidden">Slide 1 of 4</m-carousel-readout>
+        </m-carousel>
       </div>
     </section>
   </main>
