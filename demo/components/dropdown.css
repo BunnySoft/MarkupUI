@@ -1,12 +1,19 @@
-body { margin: 2rem; font: 1rem/1.5 system-ui, sans-serif; background: #f6f8fc; color: #172030; }
-main { max-width: 65rem; }
-section { margin-block: 2rem; }
-button, input { font: inherit; }
-button:not([data-dropdown-item]) { padding: .4rem .7rem; margin: .3rem; }
-label { display: block; margin-block: .5rem; }
-output { display: block; min-height: 1.5em; }
-.scroll-box { overflow: auto; width: min(29rem, 85vw); height: 10rem; border: 2px solid #8390a2; }
-.scroll-content { padding: 1rem; height: 26rem; }
-#bottom-trigger { position: fixed; bottom: 8px; right: 8px; }
-#outside { position: fixed; top: 8px; right: 8px; }
-@media (max-width: 30rem) { body { margin: 1rem; } }
+body { color: #333639; background: #f5f5f7; }
+main { max-inline-size: 60rem; margin-inline: auto; padding: 2rem; }
+main > p { color: #767c82; }
+section[data-demo-example] { padding: 20px; border: 1px solid #e0e0e6; border-radius: 6px; background: #fff; }
+.demo-preview { position: relative; min-inline-size: 0; margin-block-start: 16px; }
+.trigger-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.demo-status { min-block-size: 1.6em; margin: 12px 0 0; color: #2080f0; }
+.icon-menu [data-dropdown-item] > span:first-child { display: inline-block; inline-size: 18px; margin-inline-end: 6px; text-align: center; }
+.manual-preview { min-block-size: 220px; }
+.manual-area { display: grid; place-items: center; inline-size: 200px; block-size: 200px; color: #fff; background: rgb(0 128 0 / .5); user-select: none; }
+.manual-anchor { position: fixed; z-index: -1; inline-size: 2px; block-size: 2px; padding: 0; border: 0; opacity: .01; }
+.profile-header { display: flex !important; align-items: center; gap: 12px; padding: 8px 12px !important; line-height: 1.4 !important; }
+.profile-avatar { inline-size: 34px; block-size: 34px; border-radius: 50%; object-fit: cover; }
+.profile-header > span { display: grid; gap: 2px; }
+.profile-header small { max-inline-size: 20rem; color: #767c82; font-size: 12px; }
+@media (max-width: 36rem) {
+  main { padding: 1rem; }
+  section[data-demo-example] { padding: 16px; }
+}

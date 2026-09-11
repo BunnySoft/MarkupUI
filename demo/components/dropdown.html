@@ -1,77 +1,180 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-mui-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Dropdown command menu</title>
+  <title>MarkupUI Dropdown parity demos</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-dropdown.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="./dropdown.css">
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-dropdown.global.js"></script>
   <script defer src="./dropdown.js"></script>
+  <script type="module" src="../example-code.js"></script>
 </head>
 <body>
-  <h1>Authored Dropdown command menus</h1>
-  <p>Arrow keys, Home/End and typeahead move among enabled items. Links keep native navigation; no action sends data to a backend.</p>
-  <noscript><p>Without enhancement these remain native disclosure/action lists. Links and ordinary Tab navigation work; custom command callbacks require JavaScript.</p></noscript>
-  <main>
-    <section>
-      <h2>Native actions, links and nested submenus</h2>
-      <form id="demo-form">
-        <label>Local title <input id="title" name="title" value="Local draft" required></label>
-        <button type="button" id="main-trigger" popovertarget="main-menu">Draft actions</button>
-        <ul class="mui-popover mui-dropdown mui-popover--animated" data-dropdown-menu id="main-menu" popover="auto" aria-label="Draft actions">
-          <li><button type="button" data-dropdown-item data-dropdown-key="edit" data-dropdown-label="Edit draft" id="edit"><span aria-hidden="true">✎</span> <span id="preserved-label">Edit draft</span></button></li>
-          <li><button type="button" data-dropdown-item data-dropdown-key="export" disabled id="disabled-item">Export unavailable</button></li>
-          <li><a data-dropdown-item data-dropdown-key="preview" href="#destination" id="preview">Preview destination</a></li>
+  <main data-demo-page>
+    <h1>Dropdown</h1>
+    <p>MarkupUI equivalents of the twelve Dropdown demos from pinned Naive UI 2.45.3,
+      in the same order. Authored native menus replace option and render objects.</p>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header><div><h2 id="basic-heading">Basic</h2><p>A basic dropdown. Hover/focus opening is an application adapter.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-button><button type="button" data-dropdown-trigger data-hover-trigger popovertarget="basic-menu">Go For a Trip</button></mui-button>
+        <ul class="mui-popover mui-dropdown" data-dropdown-menu id="basic-menu" popover="auto" aria-label="Trip destinations">
+          <li><button type="button" data-dropdown-item data-dropdown-key="marina bay sands" disabled>Marina Bay Sands</button></li>
+          <li><button type="button" data-dropdown-item data-dropdown-key="brown's hotel, london">Brown's Hotel, London</button></li>
+          <li><button type="button" data-dropdown-item data-dropdown-key="atlantis nahamas, nassau">Atlantis Bahamas, Nassau</button></li>
+          <li><button type="button" data-dropdown-item data-dropdown-key="the beverly hills hotel, los angeles">The Beverly Hills Hotel, Los Angeles</button></li>
+        </ul>
+        <p class="demo-status" data-dropdown-status>No selection.</p>
+      </div>
+    </section>
+
+    <section data-demo-example="icon" aria-labelledby="icon-heading">
+      <header data-demo-header><div><h2 id="icon-heading">Icon</h2><p>Dropdown options can have authored icons.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-button><button type="button" data-dropdown-trigger popovertarget="icon-menu">User Profile</button></mui-button>
+        <ul class="mui-popover mui-dropdown icon-menu" data-dropdown-menu id="icon-menu" popover="auto" aria-label="Profile actions">
+          <li><button type="button" data-dropdown-item data-dropdown-key="profile"><span aria-hidden="true">◉</span> User Profile</button></li>
+          <li><button type="button" data-dropdown-item data-dropdown-key="editProfile"><span aria-hidden="true">✎</span> Edit Profile</button></li>
+          <li><button type="button" data-dropdown-item data-dropdown-key="logout"><span aria-hidden="true">↪</span> Logout</button></li>
+        </ul>
+        <p class="demo-status" data-dropdown-status>No selection.</p>
+      </div>
+    </section>
+
+    <section data-demo-example="trigger" aria-labelledby="trigger-heading">
+      <header data-demo-header><div><h2 id="trigger-heading">Trigger</h2><p>Hover, click and explicit controller requests.</p></div></header>
+      <div class="demo-preview trigger-row" data-demo-preview>
+        <mui-button><button type="button" data-dropdown-trigger data-hover-trigger popovertarget="trigger-hover-menu">Hover!</button></mui-button>
+        <ul class="mui-popover mui-dropdown" data-dropdown-menu id="trigger-hover-menu" popover="auto" aria-label="Hover destinations"><li><button type="button" data-dropdown-item data-dropdown-key="brown">Brown's Hotel, London</button></li><li><button type="button" data-dropdown-item data-dropdown-key="atlantis">Atlantis Bahamas, Nassau</button></li></ul>
+        <mui-button><button type="button" data-dropdown-trigger popovertarget="trigger-click-menu">Click!</button></mui-button>
+        <ul class="mui-popover mui-dropdown" data-dropdown-menu id="trigger-click-menu" popover="auto" aria-label="Click destinations"><li><button type="button" data-dropdown-item data-dropdown-key="brown">Brown's Hotel, London</button></li><li><button type="button" data-dropdown-item data-dropdown-key="atlantis">Atlantis Bahamas, Nassau</button></li></ul>
+        <mui-button><button type="button" data-dropdown-trigger data-manual-toggle popovertarget="trigger-manual-menu">Oh! I'll Handle it Manually!</button></mui-button>
+        <ul class="mui-popover mui-dropdown" data-dropdown-menu id="trigger-manual-menu" popover="auto" aria-label="Manual destinations"><li><button type="button" data-dropdown-item data-dropdown-key="brown">Brown's Hotel, London</button></li><li><button type="button" data-dropdown-item data-dropdown-key="atlantis">Atlantis Bahamas, Nassau</button></li></ul>
+        <p class="demo-status" data-dropdown-status>No selection.</p>
+      </div>
+    </section>
+
+    <section data-demo-example="cascade" aria-labelledby="cascade-heading">
+      <header data-demo-header><div><h2 id="cascade-heading">Cascade</h2><p>Dropdown menus can contain authored submenus.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-button><button type="button" data-dropdown-trigger popovertarget="cascade-menu">People &amp; Food</button></mui-button>
+        <ul class="mui-popover mui-dropdown" data-dropdown-menu id="cascade-menu" popover="auto" aria-label="People and food">
+          <li><button type="button" data-dropdown-item data-dropdown-key="jay gatsby">Jay Gatsby</button></li>
+          <li><button type="button" data-dropdown-item data-dropdown-key="daisy buchanan"><span aria-hidden="true">$</span> Daisy Buchanan</button></li>
           <li data-dropdown-divider></li>
-          <li><span data-dropdown-group-label id="group-name">Local display</span>
-            <ul data-dropdown-group aria-labelledby="group-name">
-              <li><button type="button" data-dropdown-item data-dropdown-key="print" id="print" data-dropdown-label="Print locally"><span aria-hidden="true">▣</span> Print locally</button></li>
-              <li><button type="button" data-dropdown-item data-dropdown-key="profile" id="profile">Profile view</button></li>
-            </ul>
-          </li>
-          <li>
-            <button type="button" data-dropdown-item data-dropdown-key="more" popovertarget="more-menu" id="more-trigger">More actions <span data-dropdown-suffix aria-hidden="true">›</span></button>
-            <ul class="mui-popover mui-dropdown" data-dropdown-menu id="more-menu" popover="auto" aria-label="More actions">
-              <li><button type="button" data-dropdown-item data-dropdown-key="rename" id="rename">Rename locally</button></li>
-              <li>
-                <button type="button" data-dropdown-item data-dropdown-key="share" popovertarget="share-menu" id="share-trigger">Share choices <span data-dropdown-suffix aria-hidden="true">›</span></button>
-                <ul class="mui-popover mui-dropdown" data-dropdown-menu id="share-menu" popover="auto" aria-label="Share choices">
-                  <li><button type="button" data-dropdown-item data-dropdown-key="copy" id="copy">Copy local label</button></li>
-                  <li><a data-dropdown-item data-dropdown-key="separate" href="#destination" target="_blank" id="separate">Open destination separately</a></li>
-                </ul>
-              </li>
-              <li><button type="button" data-dropdown-item data-dropdown-key="archive" id="archive">Archive preview</button></li>
-            </ul>
+          <li><button type="button" data-dropdown-item data-dropdown-key="nick carraway">Nick Carraway</button></li>
+          <li><button type="button" data-dropdown-item data-dropdown-key="others1" popovertarget="cascade-others">Others <span data-dropdown-suffix aria-hidden="true">›</span></button>
+            <ul class="mui-popover mui-dropdown" data-dropdown-menu id="cascade-others" popover="auto" aria-label="Other people"><li><button type="button" data-dropdown-item data-dropdown-key="jordan baker">Jordan Baker</button></li><li><button type="button" data-dropdown-item data-dropdown-key="tom buchanan">Tom Buchanan</button></li><li><button type="button" data-dropdown-item data-dropdown-key="others2" disabled>Others <span data-dropdown-suffix aria-hidden="true">›</span></button></li></ul>
           </li>
         </ul>
-        <button type="submit" id="submit-form">Ordinary form submit</button>
-        <button type="reset" id="reset-form">Reset</button>
-      </form>
-      <button type="button" id="outside">Outside focus target</button>
-      <button type="button" id="toggle-profile">Toggle Profile item visibility</button>
-      <output id="selection-log" aria-live="polite">No menu selection.</output>
+        <p class="demo-status" data-dropdown-status>No selection.</p>
+      </div>
     </section>
-    <section>
-      <h2>RTL and scroll clipping</h2>
-      <div class="scroll-box" id="scroll-box" dir="rtl"><div class="scroll-content">
-        <button type="button" id="rtl-trigger" popovertarget="rtl-menu">RTL actions</button>
-        <ul class="mui-popover mui-dropdown mui-dropdown--inverted" data-dropdown-menu id="rtl-menu" popover="auto" aria-label="RTL actions">
-          <li><button type="button" data-dropdown-item data-dropdown-key="rtl-first" id="rtl-first">First RTL action</button></li>
-          <li><button type="button" data-dropdown-item data-dropdown-key="rtl-more" popovertarget="rtl-child" id="rtl-more">Nested RTL actions</button>
-            <ul class="mui-popover mui-dropdown mui-dropdown--inverted" data-dropdown-menu id="rtl-child" popover="auto" aria-label="Nested RTL actions">
-              <li><button type="button" data-dropdown-item data-dropdown-key="rtl-leaf" id="rtl-leaf">Local RTL choice</button></li>
-            </ul>
-          </li>
+
+    <section data-demo-example="arrow" aria-labelledby="arrow-heading">
+      <header data-demo-header><div><h2 id="arrow-heading">Arrow</h2><p>Show the shared Popover arrow.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-button><button type="button" data-dropdown-trigger popovertarget="arrow-menu">Go For a Trip</button></mui-button>
+        <ul class="mui-popover mui-popover--arrow mui-dropdown" data-dropdown-menu id="arrow-menu" popover="auto" aria-label="Arrow destinations"><li><button type="button" data-dropdown-item data-dropdown-key="brown">Brown's Hotel, London</button></li><li><button type="button" data-dropdown-item data-dropdown-key="atlantis">Atlantis Bahamas, Nassau</button></li></ul>
+        <p class="demo-status" data-dropdown-status>No selection.</p>
+      </div>
+    </section>
+
+    <section data-demo-example="placement" aria-labelledby="placement-heading">
+      <header data-demo-header><div><h2 id="placement-heading">Placement</h2><p>Preferred bottom-start placement with normal flip/clamp.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-button><button type="button" data-dropdown-trigger data-hover-trigger data-placement="bottom-start" popovertarget="placement-menu">Go For a Trip</button></mui-button>
+        <ul class="mui-popover mui-dropdown" data-dropdown-menu id="placement-menu" popover="auto" aria-label="Placed destinations"><li><button type="button" data-dropdown-item data-dropdown-key="marina">Marina Bay Sands</button></li><li><button type="button" data-dropdown-item data-dropdown-key="brown">Brown's Hotel, London</button></li><li><button type="button" data-dropdown-item data-dropdown-key="atlantis">Atlantis Bahamas, Nassau</button></li></ul>
+        <p class="demo-status" data-dropdown-status>No selection.</p>
+      </div>
+    </section>
+
+    <section data-demo-example="size" aria-labelledby="size-heading">
+      <header data-demo-header><div><h2 id="size-heading">Size</h2><p>Small, medium, large and huge authored menu classes.</p></div></header>
+      <div class="demo-preview trigger-row" data-demo-preview>
+        <mui-button size="small"><button type="button" data-dropdown-trigger popovertarget="small-menu">Small</button></mui-button>
+        <ul class="mui-popover mui-dropdown mui-dropdown--small" data-dropdown-menu id="small-menu" popover="auto" aria-label="Small actions"><li><button type="button" data-dropdown-item data-dropdown-key="jay">Jay Gatsby</button></li><li><button type="button" data-dropdown-item data-dropdown-key="daisy">Daisy Buchanan</button></li></ul>
+        <mui-button><button type="button" data-dropdown-trigger popovertarget="medium-menu">Medium</button></mui-button>
+        <ul class="mui-popover mui-dropdown" data-dropdown-menu id="medium-menu" popover="auto" aria-label="Medium actions"><li><button type="button" data-dropdown-item data-dropdown-key="jay">Jay Gatsby</button></li><li><button type="button" data-dropdown-item data-dropdown-key="daisy">Daisy Buchanan</button></li></ul>
+        <mui-button size="large"><button type="button" data-dropdown-trigger popovertarget="large-menu">Large</button></mui-button>
+        <ul class="mui-popover mui-dropdown mui-dropdown--large" data-dropdown-menu id="large-menu" popover="auto" aria-label="Large actions"><li><button type="button" data-dropdown-item data-dropdown-key="jay">Jay Gatsby</button></li><li><button type="button" data-dropdown-item data-dropdown-key="daisy">Daisy Buchanan</button></li></ul>
+        <mui-button size="large"><button type="button" data-dropdown-trigger popovertarget="huge-menu">Huge</button></mui-button>
+        <ul class="mui-popover mui-dropdown mui-dropdown--huge" data-dropdown-menu id="huge-menu" popover="auto" aria-label="Huge actions"><li><button type="button" data-dropdown-item data-dropdown-key="jay">Jay Gatsby</button></li><li><button type="button" data-dropdown-item data-dropdown-key="daisy">Daisy Buchanan</button></li></ul>
+        <p class="demo-status" data-dropdown-status>No selection.</p>
+      </div>
+    </section>
+
+    <section data-demo-example="batch-render" aria-labelledby="batch-heading">
+      <header data-demo-header><div><h2 id="batch-heading">Batch Render</h2><p>Authored group labels, links and icons replace batch render callbacks.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-button><button type="button" data-dropdown-trigger popovertarget="batch-menu">Batch Rendered</button></mui-button>
+        <ul class="mui-popover mui-dropdown icon-menu" data-dropdown-menu id="batch-menu" popover="auto" aria-label="People and food links">
+          <li><span data-dropdown-group-label id="batch-group"><span aria-hidden="true">$</span> People &amp; Food</span><ul data-dropdown-group aria-labelledby="batch-group">
+            <li><a href="#batch-result" data-dropdown-item data-dropdown-key="jay"><span aria-hidden="true">$</span> Jay Gatsby</a></li>
+            <li><a href="#batch-result" data-dropdown-item data-dropdown-key="daisy"><span aria-hidden="true">$</span> Daisy Buchanan</a></li>
+            <li><a href="#batch-result" data-dropdown-item data-dropdown-key="nick"><span aria-hidden="true">$</span> Nick Carraway</a></li>
+          </ul></li>
         </ul>
-      </div></div>
+        <p class="demo-status" id="batch-result" data-dropdown-status>No selection.</p>
+      </div>
     </section>
-    <p id="destination">Native destination. Navigating here did not need a router.</p>
-    <button type="button" id="bottom-trigger" popovertarget="bottom-menu">Bottom edge actions</button>
-    <ul class="mui-popover mui-dropdown mui-dropdown--large" data-dropdown-menu id="bottom-menu" popover="auto" aria-label="Bottom edge actions">
-      <li><button type="button" data-dropdown-item data-dropdown-key="bottom-first" id="bottom-first">First bottom action</button></li>
-      <li><a data-dropdown-item data-dropdown-key="bottom-link" href="#destination">Bottom destination</a></li>
-    </ul>
+
+    <section data-demo-example="manual-position" aria-labelledby="manual-heading">
+      <header data-demo-header><div><h2 id="manual-heading">Manual Position</h2><p>A real movable native anchor replaces virtual x/y coordinates.</p></div></header>
+      <div class="demo-preview manual-preview" data-demo-preview>
+        <div class="manual-area" data-manual-area>Right Click</div>
+        <button class="manual-anchor" type="button" data-dropdown-trigger popovertarget="manual-position-menu" aria-label="Manual dropdown anchor"></button>
+        <ul class="mui-popover mui-dropdown" data-dropdown-menu id="manual-position-menu" popover="auto" aria-label="Manual position actions"><li><button type="button" data-dropdown-item data-dropdown-key="jay">Jay Gatsby</button></li><li><button type="button" data-dropdown-item data-dropdown-key="daisy">Daisy Buchanan</button></li><li data-dropdown-divider></li><li><button type="button" data-dropdown-item data-dropdown-key="nick">Nick Carraway</button></li></ul>
+        <p class="demo-status" data-dropdown-status>Right-click the green area.</p>
+      </div>
+    </section>
+
+    <section data-demo-example="render" aria-labelledby="render-heading">
+      <header data-demo-header><div><h2 id="render-heading">Pure Render Content</h2><p>An authored native group header replaces a render option.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-button><button type="button" data-dropdown-trigger data-hover-trigger popovertarget="render-menu">2021 Week 36</button></mui-button>
+        <ul class="mui-popover mui-dropdown rich-menu" data-dropdown-menu id="render-menu" popover="auto" aria-label="Office worker statistics">
+          <li><span class="profile-header" data-dropdown-group-label id="office-worker"><img class="profile-avatar" src="./avatar.svg" alt=""><span><strong>Office Worker</strong><small>No doubt, you are the brightest star in the office</small></span></span><ul data-dropdown-group aria-labelledby="office-worker"><li><button type="button" data-dropdown-item data-dropdown-key="stmt1">Processed 342 group messages</button></li><li><button type="button" data-dropdown-item data-dropdown-key="stmt2">Mentioned 58 times</button></li><li><button type="button" data-dropdown-item data-dropdown-key="stmt3">Joined 17 groups</button></li></ul></li>
+        </ul>
+        <p class="demo-status" data-dropdown-status>No selection.</p>
+      </div>
+    </section>
+
+    <section data-demo-example="option-props" aria-labelledby="props-heading">
+      <header data-demo-header><div><h2 id="props-heading">Custom Option Props</h2><p>Native item listeners replace option-props callbacks.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-button><button type="button" data-dropdown-trigger data-hover-trigger popovertarget="props-menu">Go For a Trip</button></mui-button>
+        <ul class="mui-popover mui-dropdown" data-dropdown-menu id="props-menu" popover="auto" aria-label="Custom property destinations">
+          <li><button type="button" data-dropdown-item data-dropdown-key="marina" data-option-message="Good!">Marina Bay Sands</button></li>
+          <li><button type="button" data-dropdown-item data-dropdown-key="brown" popovertarget="props-child">Brown's Hotel, London <span data-dropdown-suffix aria-hidden="true">›</span></button><ul class="mui-popover mui-dropdown" data-dropdown-menu id="props-child" popover="auto" aria-label="Food choices"><li><button type="button" data-dropdown-item data-dropdown-key="chicken" disabled data-option-message="Okay">Chicken</button></li><li><button type="button" data-dropdown-item data-dropdown-key="beef">Beef</button></li></ul></li>
+          <li><button type="button" data-dropdown-item data-dropdown-key="atlantis" data-option-pointer-message="Key down">Atlantis Bahamas, Nassau</button></li>
+        </ul>
+        <p class="demo-status" data-dropdown-status>No option-specific event.</p>
+      </div>
+    </section>
+
+    <section data-demo-example="render-option" aria-labelledby="render-option-heading">
+      <header data-demo-header><div><h2 id="render-option-heading">Add Tooltip for Option</h2><p>Native title/description metadata replaces a VNode wrapper around every option.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <mui-button><button type="button" data-dropdown-trigger data-hover-trigger popovertarget="tooltip-option-menu">Go For a Trip</button></mui-button>
+        <ul class="mui-popover mui-dropdown" data-dropdown-menu id="tooltip-option-menu" popover="auto" aria-label="Described destinations">
+          <li><button type="button" data-dropdown-item data-dropdown-key="marina" disabled title="marina bay sands">Marina Bay Sands</button></li>
+          <li><button type="button" data-dropdown-item data-dropdown-key="brown" title="brown's hotel, london">Brown's Hotel, London</button></li>
+          <li><button type="button" data-dropdown-item data-dropdown-key="atlantis" title="atlantis nahamas, nassau">Atlantis Bahamas, Nassau</button></li>
+          <li><button type="button" data-dropdown-item data-dropdown-key="beverly" title="the beverly hills hotel, los angeles">The Beverly Hills Hotel, Los Angeles</button></li>
+        </ul>
+        <p class="demo-status" data-dropdown-status>No selection.</p>
+      </div>
+    </section>
   </main>
 </body>
 </html>

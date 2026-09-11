@@ -14,6 +14,7 @@ const cardHtml = readFileSync(resolve("demo", "components", "card.html"), "utf8"
 const carouselHtml = readFileSync(resolve("demo", "components", "carousel.html"), "utf8")
 const collapseHtml = readFileSync(resolve("demo", "components", "collapse.html"), "utf8")
 const dividerHtml = readFileSync(resolve("demo", "components", "divider.html"), "utf8")
+const dropdownHtml = readFileSync(resolve("demo", "components", "dropdown.html"), "utf8")
 let browser: ReturnType<typeof createComponentBrowser> | undefined
 let media: MediaQueryList
 let mediaListener: (() => void) | undefined
@@ -111,6 +112,7 @@ describe("component-by-component demo browser", () => {
     ["Carousel", carouselHtml, ["basic", "arrow", "autoplay", "dots", "vertical", "space-between", "slides-per-view", "slides-per-view-auto", "centered", "effect", "transition-name", "hover", "keyboard", "mousewheel", "simulate-drag", "custom-arrow-and-dots", "custom-card", "custom-dots"]],
     ["Collapse", collapseHtml, ["basic", "arrow-placement", "accordion", "nested", "display-directive", "item-header-click", "customize-icon", "default-expanded", "header-extra", "disabled", "trigger-areas"]],
     ["Divider", dividerHtml, ["basic", "content", "vertical"]],
+    ["Dropdown", dropdownHtml, ["basic", "icon", "trigger", "cascade", "arrow", "placement", "size", "batch-render", "manual-position", "render", "option-props", "render-option"]],
   ])("mirrors the pinned %s demo inventory with per-example code controls", (_name, sourceHtml, expected) => {
     document.body.innerHTML = sourceHtml.slice(sourceHtml.indexOf("<body>") + 6, sourceHtml.indexOf("</body>"))
     const viewers = createExampleCodeViewers()

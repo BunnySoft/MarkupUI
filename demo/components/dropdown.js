@@ -1,20 +1,54 @@
-const { createDropdown } = window.MarkupUIDropdown
-const node = id => document.getElementById(id)
-const controllers = {
-  main: createDropdown(node("main-trigger"), node("main-menu"), { value: "edit" }),
-  rtl: createDropdown(node("rtl-trigger"), node("rtl-menu"), { positioning: "fallback", placement: "bottom-start" }),
-  bottom: createDropdown(node("bottom-trigger"), node("bottom-menu"), { placement: "bottom" }),
+const controllers = new Map()
+
+for (const trigger of document.querySelectorAll("[data-dropdown-trigger]")) {
+  const menu = document.getElementById(trigger.getAttribute("popovertarget"))
+  const controller = MarkupUIDropdown.createDropdown(trigger, menu, {
+    placement: trigger.dataset.placement ?? "bottom",
+  })
+  controllers.set(trigger, controller)
+
+  if (trigger.hasAttribute("data-hover-trigger")) {
+    trigger.addEventListener("pointerenter", () => controller.open())
+    trigger.addEventListener("focus", () => controller.open())
+  }
 }
-for (const menu of [node("main-menu"), node("rtl-menu"), node("bottom-menu")]) {
+
+for (const menu of document.querySelectorAll("[data-dropdown-menu]")) {
   menu.addEventListener("mui:dropdown-select", event => {
-    node("selection-log").value = `Selected ${event.detail.path.join(" > ")}`
+    const status = menu.closest("[data-demo-example]")?.querySelector("[data-dropdown-status]")
+    if (status) status.textContent = `Selected ${event.detail.path.join(" > ")}`
   })
 }
-node("toggle-profile").addEventListener("click", () => {
-  node("profile").closest("li").hidden = !node("profile").closest("li").hidden
-})
-node("demo-form").addEventListener("submit", event => {
+
+for (const trigger of document.querySelectorAll("[data-manual-toggle]")) {
+  trigger.addEventListener("click", event => {
+    event.preventDefault()
+    const controller = controllers.get(trigger)
+    controller.setShow(!controller.show)
+  })
+}
+
+const manualArea = document.querySelector("[data-manual-area]")
+const manualAnchor = document.querySelector(".manual-anchor")
+manualArea.addEventListener("contextmenu", event => {
   event.preventDefault()
-  node("selection-log").value = `Ordinary form: ${new FormData(event.currentTarget).get("title")}`
+  manualAnchor.style.left = `${event.clientX}px`
+  manualAnchor.style.top = `${event.clientY}px`
+  controllers.get(manualAnchor).open()
 })
-window.dropdownDemo = controllers
+
+for (const item of document.querySelectorAll("[data-option-message]")) {
+  item.addEventListener("click", () => {
+    item.closest("[data-demo-example]").querySelector("[data-dropdown-status]").textContent =
+      item.dataset.optionMessage
+  })
+}
+
+for (const item of document.querySelectorAll("[data-option-pointer-message]")) {
+  item.addEventListener("pointerdown", () => {
+    item.closest("[data-demo-example]").querySelector("[data-dropdown-status]").textContent =
+      item.dataset.optionPointerMessage
+  })
+}
+
+window.dropdownParity = { controllers }

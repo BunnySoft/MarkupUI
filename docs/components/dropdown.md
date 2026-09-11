@@ -18,7 +18,7 @@ for the coordinated base reuse, light/dark/inverted comparisons and keyboard che
 | `dist/markup-ui-dropdown.global.js` | Classic `window.MarkupUIDropdown.createDropdown`; refuses namespace replacement |
 | `@dataengine/markup-ui/dropdown/style.css` | Complete `dist/markup-ui-dropdown.css`, build-composed with maintained Popover CSS |
 | `src/components/dropdown/keyboard.ts` | Internal scoped roving/typeahead primitive, prepared for the next real Menu consumer; no roles, activation or positioning engine |
-| `demo/components/dropdown.*` | Separate authored HTML, application JS and external CSS |
+| `demo/components/dropdown.*` | Comparison page mirroring all twelve pinned Naive UI 2.45.3 demos with authored native menus, one highlighted code control per case, and explicit option/render/virtual-position differences |
 
 ```html
 <link rel="stylesheet" href="./vendor/markup-ui-dropdown.css">

@@ -1,5 +1,33 @@
 # Dropdown default-style audit
 
+## Pinned demo parity page — 2026-09-11
+
+The runnable page now mirrors all twelve pinned demos in source order: Basic, Icon,
+Trigger, Cascade, Arrow, Placement, Size, Batch Render, Manual Position, Pure Render
+Content, Custom Option Props and Add Tooltip for Option. Each case has an icon-only
+highlighted code view.
+
+Authored native lists cover icons, disabled items, groups, dividers, cascaded submenus,
+arrow presentation, placement, four sizes, links and item-specific listeners. Basic,
+Placement and other hover examples use a small application adapter that calls the
+existing controller; click and explicit open/close remain native/controller behavior.
+The Basic live check exposed a four-item accessible menu and preserved the disabled item.
+
+Retained differences remain visible:
+
+- source option arrays and field aliases become authored keyed native menu items;
+- render-icon/render-label/render-option callbacks become authored markup;
+- manual x/y positioning uses a real movable native anchor, not a virtual coordinate;
+- pure render content becomes an authored group header;
+- option props are ordinary native listeners/attributes;
+- per-option Tooltip wrapping is represented by native descriptions because Dropdown
+  intentionally rejects nested widget roots inside menu items.
+
+Proposal: the future keyed binding/template engine can generate these authored items and
+group/rest contexts from data without changing Dropdown’s native menu contract. Virtual
+anchors and nested Tooltip wrappers should remain separate Popover/Tooltip design
+decisions rather than being added as option-object exceptions.
+
 **2026-09-11 — normal surfaces, density and retained state colors corrected.**
 Renderer-specific icon/suffix columns, native focus outlines and artwork remain explicit
 limits. Shared surface and local style corrections are integrated by the coordinator.
