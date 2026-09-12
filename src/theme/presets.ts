@@ -1,4 +1,4 @@
-// Generated from src/theme/presets.json by scripts/legacy-styles.mjs. Edit the JSON source.
+// Generated from src/theme/presets.json by scripts/styles.mjs. Edit the JSON source.
 export const builtInThemeTokens = {
   "light": {
     "color-primary": "#18a058",

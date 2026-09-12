@@ -9,51 +9,6 @@ export class MLayout extends MElement {
   }
 }
 
-export class MButton extends MElement {
-  public static get observedAttributes(): string[] { return ["disabled", "loading"] }
-  public connectedCallback(): void {
-    this.setAttribute("role", "button")
-    this.syncDisabled()
-    this.addEventListener("keydown", this.onKeyDown)
-    this.addEventListener("click", this.onClick)
-  }
-  public attributeChangedCallback(): void {
-    if (this.isConnected) this.syncDisabled()
-  }
-  public disconnectedCallback(): void {
-    this.removeEventListener("keydown", this.onKeyDown)
-    this.removeEventListener("click", this.onClick)
-  }
-  private readonly onClick = (event: Event): void => {
-    if (this.hasAttribute("disabled") || this.hasAttribute("loading")) {
-      event.preventDefault()
-      event.stopImmediatePropagation()
-    }
-  }
-  private readonly onKeyDown = (event: KeyboardEvent): void => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault()
-      this.click()
-    }
-  }
-  private syncDisabled(): void {
-    const loading = this.hasAttribute("loading")
-    const disabled = this.hasAttribute("disabled") || loading
-    this.tabIndex = disabled ? -1 : 0
-    this.setAttribute("aria-disabled", String(disabled))
-    this.setAttribute("aria-busy", String(loading))
-    const spinner = this.querySelector(":scope > [data-m-button-spinner]")
-    if (loading && spinner === null) {
-      const element = this.ownerDocument.createElement("span")
-      element.dataset.mButtonSpinner = ""
-      element.setAttribute("aria-hidden", "true")
-      this.prepend(element)
-    } else if (!loading) {
-      spinner?.remove()
-    }
-  }
-}
-
 export class MCard extends MLayout {
   public override connectedCallback(): void {
     super.connectedCallback()
@@ -99,21 +54,6 @@ export class MSkeleton extends MElement {
     const height = this.getAttribute("height")
     if (width) this.style.width = width
     if (height) this.style.height = height
-  }
-}
-
-export class MAvatar extends MElement {
-  public connectedCallback(): void {
-    if (this.querySelector(":scope > img") !== null) return
-    const src = this.getAttribute("src")
-    const alt = this.getAttribute("alt") ?? this.textContent?.trim() ?? ""
-    this.setAttribute("role", "img")
-    this.setAttribute("aria-label", alt)
-    if (!src) return
-    const image = this.ownerDocument.createElement("img")
-    image.src = src
-    image.alt = alt
-    this.replaceChildren(image)
   }
 }
 

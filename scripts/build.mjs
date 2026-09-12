@@ -4,13 +4,14 @@ import { copyFile, readFile, rm, writeFile } from "node:fs/promises"
 import { resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { build, transform } from "esbuild"
-import { emitLegacyStylesheets, generateLegacyStyleModules } from "./legacy-styles.mjs"
+import { emitStylesheets, generateStyleModules } from "./styles.mjs"
+import { generateComponentApi } from "./component-api.mjs"
 
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)))
 const dist = resolve(root, "dist")
 const tsc = resolve(root, "node_modules", "typescript", "bin", "tsc")
 
-await generateLegacyStyleModules(root)
+await generateStyleModules(root)
 await rm(dist, { force: true, recursive: true })
 execFileSync(process.execPath, [tsc, "-p", resolve(root, "tsconfig.json")], {
   cwd: root,
@@ -27,6 +28,32 @@ const shared = {
 const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image", "popover", "tooltip", "popconfirm", "dropdown", "menu", "tabs", "collapse", "anchor", "back-top", "pagination", "steps", "loading-bar", "dialog", "modal", "drawer", "message", "notification", "collapse-transition", "input", "checkbox", "radio", "switch", "select", "input-number", "slider", "rate", "form"]
 const classicEntries = { progress: "global.ts", popover: "global.ts", tooltip: "global.ts", popconfirm: "global.ts", dropdown: "global.ts", menu: "global.ts", tabs: "global.ts", collapse: "global.ts", anchor: "global.ts", "back-top": "global.ts", pagination: "global.ts", steps: "global.ts", "loading-bar": "global.ts", dialog: "global.ts", modal: "global.ts", drawer: "global.ts", message: "global.ts", notification: "global.ts", "collapse-transition": "global.ts", input: "global.ts", checkbox: "global.ts", radio: "global.ts", switch: "global.ts", select: "global.ts", "input-number": "global.ts", slider: "global.ts", rate: "global.ts" }
 const styleOnlyComponents = ["typography", "icon", "gradient-text", "ellipsis", "page-header", "divider", "flex", "space", "grid", "layout", "list", "descriptions", "timeline", "breadcrumb", "thing", "table", "affix", "result", "code", "scrollbar", "float-button", "global-style"]
+classicEntries.avatar = "global.ts"
+classicEntries.button = "global.ts"
+const viewComponents = new Map([["avatar", 8_500], ["button", 9_500]])
+await generateComponentApi(root, [...viewComponents.keys()])
+
+function corePlugin(format) {
+  return {
+    name: "shared-element-core",
+    setup(builder) {
+      builder.onResolve({ filter: /core\/(?:view-element|index)\.js$/ }, () =>
+        format === "esm" ? { path: "./markup-ui-core.js", external: true }
+          : { path: "core", namespace: "markupui-core" })
+      builder.onLoad({ filter: /.*/, namespace: "markupui-core" }, () => ({
+        loader: "js",
+        contents: `
+          const core = globalThis.MarkupUICore;
+          if (!core || typeof core.ViewElement !== "function") {
+            throw new Error("Load compatible markup-ui-core.global.js before component scripts.");
+          }
+          export const { ViewElement } = core;
+        `,
+      }))
+    },
+  }
+}
+
 classicEntries.form = "global.ts"
 components.push("auto-complete")
 classicEntries["auto-complete"] = "global.ts"
@@ -86,6 +113,20 @@ classicEntries.marquee = "global.ts"
 await Promise.all([
   build({
     ...shared,
+    entryPoints: [resolve(root, "src", "core", "index.ts")],
+    format: "esm",
+    minify: true,
+    outfile: resolve(dist, "markup-ui-core.js"),
+  }),
+  build({
+    ...shared,
+    entryPoints: [resolve(root, "src", "core", "global.ts")],
+    format: "iife",
+    minify: true,
+    outfile: resolve(dist, "markup-ui-core.global.js"),
+  }),
+  build({
+    ...shared,
     entryPoints: [resolve(root, "src", "index.ts")],
     format: "esm",
     outfile: resolve(dist, "markup-ui.js"),
@@ -123,6 +164,7 @@ await Promise.all([
       ...shared,
       entryPoints: [resolve(root, "src", "components", name, "index.ts")],
       format: "esm",
+      plugins: viewComponents.has(name) ? [corePlugin("esm")] : [],
       minify: true,
       outfile: resolve(dist, `markup-ui-${name}.js`),
     }),
@@ -130,6 +172,7 @@ await Promise.all([
       ...shared,
       entryPoints: [resolve(root, "src", "components", name, classicEntries[name] ?? "index.ts")],
       format: "iife",
+      plugins: viewComponents.has(name) ? [corePlugin("iife")] : [],
       globalName: classicEntries[name] ? undefined : `MarkupUI${name[0].toUpperCase()}${name.slice(1)}`,
       minify: true,
       outfile: resolve(dist, `markup-ui-${name}.global.js`),
@@ -171,10 +214,12 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
   } else await copyFile(source, output)
 }))
 
-await emitLegacyStylesheets(root, dist)
+await emitStylesheets(root, dist)
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-core.js": 4_000,
+  "markup-ui-core.global.js": 4_000,
   "markup-ui.css": 6_000,
   "markup-ui-advanced.css": 1_000,
   "markup-ui-widgets.css": 1_500,
@@ -309,11 +354,11 @@ const bundleBudgets = {
   "markup-ui.min.js": 15_000,
   "markup-ui-advanced.js": 3_000,
   "markup-ui-widgets.js": 4_000,
-  "markup-ui-avatar.js": 4_000,
-  "markup-ui-avatar.global.js": 4_000,
+  "markup-ui-avatar.js": 8_000,
+  "markup-ui-avatar.global.js": 8_000,
   "markup-ui-avatar.css": 1_500,
-  "markup-ui-button.js": 4_000,
-  "markup-ui-button.global.js": 4_000,
+  "markup-ui-button.js": 6_000,
+  "markup-ui-button.global.js": 6_000,
   "markup-ui-button.css": 2_500,
   "markup-ui-card.js": 3_000,
   "markup-ui-card.global.js": 3_000,
@@ -424,10 +469,20 @@ for (const name of [...components, ...styleOnlyComponents]) {
   if (components.includes(name)) {
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       const file = `markup-ui-${name}${suffix}`
+      const dependencies = viewComponents.has(name) ? [`markup-ui-core${suffix}`] : []
+      const runtimeBudget = viewComponents.get(name)
+      const runtimeGzipBytes = bundles[file].gzipBytes
+        + dependencies.reduce((total, dependency) => total + bundles[dependency].gzipBytes, 0)
       payload[mode] = {
         file,
         gzipBytes: bundles[file].gzipBytes,
-        totalGzipBytes: bundles[file].gzipBytes + bundles[css].gzipBytes,
+        dependencies,
+        runtimeGzipBytes,
+        ...(runtimeBudget === undefined ? {} : { runtimeBudget }),
+        totalGzipBytes: runtimeGzipBytes + bundles[css].gzipBytes,
+      }
+      if (dependencies.length && (runtimeBudget === undefined || runtimeGzipBytes > runtimeBudget)) {
+        throw new Error(`${file} plus shared dependencies is ${runtimeGzipBytes} gzip bytes; budget is ${runtimeBudget}.`)
       }
     }
   }

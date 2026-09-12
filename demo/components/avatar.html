@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Avatar parity demos</title>
+  <title>Avatar - MarkupUI</title>
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-avatar.css">
@@ -14,18 +14,48 @@
   <link rel="stylesheet" href="../../dist/markup-ui-icon.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./avatar.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-avatar.global.js"></script>
   <script defer src="../../dist/markup-ui-badge.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
-  <script defer src="./avatar.js"></script>
+  <script type="module" src="./avatar.js"></script>
   <script type="module" src="../example-code.js"></script>
 </head>
 <body>
-  <main data-demo-page>
+  <main data-demo-page class="component-docs">
     <h1>Avatar</h1>
-    <p>MarkupUI equivalents of the ten Avatar demos from pinned Naive UI 2.45.3,
-      in the same order and with equivalent case data.</p>
+    <p>Image, text and icon avatars with explicit loading, fallback and accessible naming.
+      This page is the usage and API reference for Avatar and AvatarGroup.</p>
+    <nav class="component-docs-nav" aria-label="Avatar documentation">
+      <a href="#loading">Required files</a>
+      <a href="#size-heading">Examples</a>
+      <a href="#api-heading">API</a>
+      <a href="#behavior">Behavior and accessibility</a>
+    </nav>
+    <section id="loading" aria-labelledby="loading-heading">
+      <h2 id="loading-heading">Load only what you need</h2>
+      <p>Avatar requires the shared core and its own CSS. It does not require jQuery,
+        the query helper, binding, or the full library.</p>
+      <h3>Classic scripts</h3>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-avatar.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-avatar.global.js"&gt;&lt;/script&gt;
+&lt;m-avatar src="./ada.png" label="Ada" shape="circle"&gt;A&lt;/m-avatar&gt;</code></pre>
+      <h3>ES modules</h3>
+      <pre><code>import { Avatar } from "@dataengine/markup-ui/avatar"
+import { ViewElement } from "@dataengine/markup-ui/core"</code></pre>
+      <p>Avatar imports core automatically. For served browser modules, keep
+        <code>markup-ui-avatar.js</code> and <code>markup-ui-core.js</code> together.
+        Link <code>@dataengine/markup-ui/avatar/style.css</code> through your asset pipeline.
+        Choose one core format/version per page.</p>
+      <p>Classic globals are <code>MarkupUICore</code> and <code>MarkupUIAvatar</code>.
+        <code>registerAvatar(registry?)</code> registers Avatar, AvatarGroup, AvatarPlaceholder
+        and AvatarFallback; browser imports register them automatically.</p>
+      <p>This demonstration also loads Badge and Button for composition and example controls.
+        They are not dependencies of Avatar.</p>
+    </section>
 
     <section data-demo-example="size" aria-labelledby="size-heading">
       <header data-demo-header>
@@ -35,10 +65,10 @@
         </div>
       </header>
       <div class="demo-preview align-end" data-demo-preview>
-        <m-avatar size="small" src="./avatar.svg" alt="Small profile"></m-avatar>
-        <m-avatar size="medium" src="./avatar.svg" alt="Medium profile"></m-avatar>
-        <m-avatar size="large" src="./avatar.svg" alt="Large profile"></m-avatar>
-        <m-avatar size="48" src="./avatar.svg" alt="48 pixel profile"></m-avatar>
+        <m-avatar size="small" src="./avatar.svg" label="Small profile"></m-avatar>
+        <m-avatar size="medium" src="./avatar.svg" label="Medium profile"></m-avatar>
+        <m-avatar size="large" src="./avatar.svg" label="Large profile"></m-avatar>
+        <m-avatar size="48" src="./avatar.svg" label="48 pixel profile"></m-avatar>
       </div>
     </section>
 
@@ -46,14 +76,14 @@
       <header data-demo-header>
         <div>
           <h2 id="shape-heading">Shape</h2>
-          <p>Avatar can be round.</p>
+          <p>Choose rounded, circle or square clipping.</p>
         </div>
       </header>
       <div class="demo-preview align-end" data-demo-preview>
-        <m-avatar round size="small" src="./avatar.svg" alt="Small round profile"></m-avatar>
-        <m-avatar round size="medium" src="./avatar.svg" alt="Medium round profile"></m-avatar>
-        <m-avatar round size="large" src="./avatar.svg" alt="Large round profile"></m-avatar>
-        <m-avatar round size="48" src="./avatar.svg" alt="48 pixel round profile"></m-avatar>
+        <m-avatar shape="circle" size="small" src="./avatar.svg" label="Small round profile"></m-avatar>
+        <m-avatar shape="rounded" size="medium" src="./avatar.svg" label="Medium rounded profile"></m-avatar>
+        <m-avatar shape="square" size="large" src="./avatar.svg" label="Large square profile"></m-avatar>
+        <m-avatar shape="circle" size="48" src="./avatar.svg" label="48 pixel round profile"></m-avatar>
       </div>
     </section>
 
@@ -110,7 +140,7 @@
       <div class="demo-preview vertical" data-demo-preview>
         <div class="demo-preview">
           <m-avatar><span data-content-name>Oasis</span></m-avatar>
-          <m-avatar round><span data-content-name>Oasis</span></m-avatar>
+          <m-avatar shape="circle"><span data-content-name>Oasis</span></m-avatar>
         </div>
         <label for="content-name">Content</label>
         <div class="m-input">
@@ -127,8 +157,13 @@
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <m-avatar round size="small" src="data:image/png;base64,invalid"
-          fallback-src="./avatar-alt.svg" alt="Fallback profile"></m-avatar>
+        <m-avatar shape="circle" size="small" src="data:image/png;base64,invalid"
+          fallback-src="./avatar-alt.svg" label="Fallback profile"></m-avatar>
+        <m-avatar src="data:image/png;base64,invalid" label="Unavailable profile">
+          A
+          <m-avatar-placeholder><template>...</template></m-avatar-placeholder>
+          <m-avatar-fallback>?</m-avatar-fallback>
+        </m-avatar>
       </div>
     </section>
 
@@ -136,16 +171,16 @@
       <header data-demo-header>
         <div>
           <h2 id="group-heading">Avatar Group</h2>
-          <p>Five named people with size 40 and max 3, matching the source case data.</p>
+          <p>Five named people with a shared size and three directly visible avatars.</p>
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
         <m-avatar-group max="3" label="People" style="--m-avatar-size:40px">
-          <m-avatar src="./avatar-alt.svg" alt="Leonardo DiCaprio" title="Leonardo DiCaprio"></m-avatar>
-          <m-avatar src="./avatar.svg" alt="Jennifer Lawrence" title="Jennifer Lawrence"></m-avatar>
-          <m-avatar src="./avatar-alt.svg" alt="Audrey Hepburn" title="Audrey Hepburn"></m-avatar>
-          <m-avatar src="./avatar.svg" alt="Anne Hathaway" title="Anne Hathaway"></m-avatar>
-          <m-avatar src="./avatar-alt.svg" alt="Taylor Swift" title="Taylor Swift"></m-avatar>
+          <m-avatar src="./avatar-alt.svg" label="Leonardo DiCaprio" title="Leonardo DiCaprio"></m-avatar>
+          <m-avatar src="./avatar.svg" label="Jennifer Lawrence" title="Jennifer Lawrence"></m-avatar>
+          <m-avatar src="./avatar-alt.svg" label="Audrey Hepburn" title="Audrey Hepburn"></m-avatar>
+          <m-avatar src="./avatar.svg" label="Anne Hathaway" title="Anne Hathaway"></m-avatar>
+          <m-avatar src="./avatar-alt.svg" label="Taylor Swift" title="Taylor Swift"></m-avatar>
         </m-avatar-group>
       </div>
     </section>
@@ -158,22 +193,22 @@
         </div>
       </header>
       <div class="demo-preview vertical" data-demo-preview>
-        <p>Use <code class="m-code">lazy</code> alone</p>
-        <m-avatar lazy src="./avatar.svg" alt="Lazy profile"></m-avatar>
-        <p>Use <code class="m-code">lazy</code> in a scrolling container</p>
+        <p>Use <code class="m-code">loading="lazy"</code> alone</p>
+        <m-avatar loading="lazy" src="./avatar.svg" label="Lazy profile"></m-avatar>
+        <p>Use <code class="m-code">loading="lazy"</code> in a scrolling container</p>
         <div id="image-scroll-container" class="lazy-scroll">
           <div class="lazy-stack">
-            <m-avatar size="small" lazy src="./avatar.svg?1" alt="Lazy profile 1"></m-avatar>
-            <m-avatar size="small" lazy src="./avatar-alt.svg?2" alt="Lazy profile 2"></m-avatar>
-            <m-avatar size="small" lazy src="./avatar.svg?3" alt="Lazy profile 3"></m-avatar>
-            <m-avatar size="small" lazy src="./avatar-alt.svg?4" alt="Lazy profile 4"></m-avatar>
-            <m-avatar size="small" lazy src="./avatar.svg?5" alt="Lazy profile 5"></m-avatar>
-            <m-avatar size="small" lazy src="./avatar-alt.svg?7" alt="Lazy profile 7"></m-avatar>
-            <m-avatar size="small" lazy src="./avatar.svg?8" alt="Lazy profile 8"></m-avatar>
-            <m-avatar size="small" lazy src="./avatar-alt.svg?9" alt="Lazy profile 9"></m-avatar>
-            <m-avatar size="small" lazy src="./avatar.svg?10" alt="Lazy profile 10"></m-avatar>
-            <m-avatar size="small" lazy src="data:image/png;base64,invalid"
-              fallback-src="./avatar-alt.svg" alt="Lazy fallback profile"></m-avatar>
+            <m-avatar size="small" loading="lazy" src="./avatar.svg?1" label="Lazy profile 1"></m-avatar>
+            <m-avatar size="small" loading="lazy" src="./avatar-alt.svg?2" label="Lazy profile 2"></m-avatar>
+            <m-avatar size="small" loading="lazy" src="./avatar.svg?3" label="Lazy profile 3"></m-avatar>
+            <m-avatar size="small" loading="lazy" src="./avatar-alt.svg?4" label="Lazy profile 4"></m-avatar>
+            <m-avatar size="small" loading="lazy" src="./avatar.svg?5" label="Lazy profile 5"></m-avatar>
+            <m-avatar size="small" loading="lazy" src="./avatar-alt.svg?7" label="Lazy profile 7"></m-avatar>
+            <m-avatar size="small" loading="lazy" src="./avatar.svg?8" label="Lazy profile 8"></m-avatar>
+            <m-avatar size="small" loading="lazy" src="./avatar-alt.svg?9" label="Lazy profile 9"></m-avatar>
+            <m-avatar size="small" loading="lazy" src="./avatar.svg?10" label="Lazy profile 10"></m-avatar>
+            <m-avatar size="small" loading="lazy" src="data:image/png;base64,invalid"
+              fallback-src="./avatar-alt.svg" label="Lazy fallback profile"></m-avatar>
           </div>
         </div>
       </div>
@@ -182,17 +217,17 @@
     <section data-demo-example="show-debug" aria-labelledby="show-debug-heading">
       <header data-demo-header>
         <div>
-          <h2 id="show-debug-heading">v-show debug</h2>
+          <h2 id="show-debug-heading">Visibility and lifecycle</h2>
           <p>Compare retained hidden content with conditionally inserted round content.</p>
         </div>
       </header>
       <div class="demo-preview vertical" data-demo-preview>
         <div class="demo-preview">
-          <-button id="debug-toggle" type="primary">Toggle<-button>
+          <m-button id="debug-toggle" type="primary">Toggle</m-button>
           <m-avatar id="debug-show" hidden><span data-debug-name>Oasis111</span></m-avatar>
           <span id="debug-if-anchor"></span>
           <template id="debug-if-template">
-            <m-avatar round><span data-debug-name>Oasis111</span></m-avatar>
+            <m-avatar shape="circle"><span data-debug-name>Oasis111</span></m-avatar>
           </template>
         </div>
         <label for="debug-name">Content</label>
@@ -200,6 +235,42 @@
           <input data-input-control id="debug-name" value="Oasis111">
         </div>
       </div>
+    </section>
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API from TypeScript source</h2>
+      <p>These tables load build-generated documentation from <code>demo/api/avatar.json</code>.
+        Component properties and methods run directly; this documentation data is not included in the library.</p>
+      <div id="avatar-api"><p>Loading source-generated API documentation.</p></div>
+      <noscript><p>Enable JavaScript to inspect reflected API tables. The usage and behavior notes remain readable.</p></noscript>
+    </section>
+    <section id="behavior" aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Behavior and accessibility</h2>
+      <h3>Resources and events</h3>
+      <p>A new source starts loading; an unchanged source does not retry. Clear or change it
+        to restart. Primary failure attempts one distinct fallback URL. Changing fallback alone
+        does not restart a settled request. Removing a host source clears it.</p>
+      <p><code>m:load</code> carries <code>{ src }</code> after success.
+        <code>m:error</code> carries <code>{ src, fallback, state }</code> per failed attempt;
+        the primary failure may report <code>loading</code> while the fallback starts.
+        Property assignment does not fabricate input/change events.</p>
+      <h3>Content and names</h3>
+      <p>Use <code>m-avatar-placeholder</code> while loading and <code>m-avatar-fallback</code>
+        after failure. Each region accepts static content or one template instantiated once
+        per region lifetime. Update rendered content or replace the region; template edits are
+        not reactive. Interactive descendants and duplicate regions/source images are invalid.</p>
+      <p>Explicit host ARIA takes precedence. An empty <code>label</code> makes the avatar
+        decorative; null releases the override. Otherwise authored image alt or ordinary text
+        supplies the name. Generated images have empty alt text so the host owns the name.</p>
+      <h3>Sizing and groups</h3>
+      <p>Named sizes are 22/28/34/40/46 CSS pixels; numeric sizes must be finite and positive.
+        Borders add four pixels to outer dimensions. Text is fitted without changing its full
+        accessible label. Colors, radius, font and border paint use <code>--m-avatar-*</code> tokens.</p>
+      <p>AvatarGroup preserves member identity and uses native details/summary for keyboard-accessible
+        overflow. <code>max = null</code> is unlimited and zero puts every member in overflow.
+        Negative, fractional and nonfinite counts are rejected. Collection binding and arbitrary
+        item/rest template APIs are not included.</p>
+      <p><code>data-part</code> and <code>data-state</code> are renderer-owned markers, not an
+        alternative authoring API.</p>
     </section>
   </main>
 </body>

@@ -9,7 +9,11 @@
     <link id="m-styles" rel="stylesheet" href="../dist/markup-ui.css">
     <link id="m-advanced-styles" rel="stylesheet" href="../dist/markup-ui-advanced.css">
     <link id="m-widgets-styles" rel="stylesheet" href="../dist/markup-ui-widgets.css">
+    <link rel="stylesheet" href="../dist/markup-ui-avatar.css">
     <link rel="stylesheet" href="./legacy.css">
+    <script type="module" src="../dist/markup-ui-avatar.js"></script>
+    <link rel="stylesheet" href="../dist/markup-ui-button.css">
+    <script type="module" src="../dist/markup-ui-button.js"></script>
     <script type="module" src="./legacy.js"></script>
   </head>
   <body>
@@ -40,7 +44,7 @@
               safe dynamic HTML, and the optional query helper—all built on browser standards.
             </m-text>
             <m-wrap gap="sm">
-              <m-button variant="primary" m-action="open" m-param-target="#about-dialog">
+              <m-button type="primary" m-action="open" m-param-target="#about-dialog">
                 How it works
               </m-button>
               <m-link
@@ -237,13 +241,13 @@
                   <m-stack gap="sm">
                     <m-heading level="3">Hierarchy and borders</m-heading>
                     <m-wrap gap="sm">
-                      <m-button secondary>Secondary</m-button>
-                      <m-button type="primary" secondary>Primary secondary</m-button>
-                      <m-button tertiary>Tertiary</m-button>
-                      <m-button quaternary>Quaternary</m-button>
-                      <m-button dashed>Dashed</m-button>
-                      <m-button type="primary" ghost>Ghost</m-button>
-                      <m-button type="text">Text button</m-button>
+                      <m-button appearance="secondary">Secondary</m-button>
+                      <m-button type="primary" appearance="secondary">Primary secondary</m-button>
+                      <m-button appearance="tertiary">Tertiary</m-button>
+                      <m-button appearance="quaternary">Quaternary</m-button>
+                      <m-button appearance="dashed">Dashed</m-button>
+                      <m-button type="primary" appearance="ghost">Ghost</m-button>
+                      <m-button appearance="text">Text button</m-button>
                     </m-wrap>
                   </m-stack>
                   <m-stack gap="sm">
@@ -253,8 +257,8 @@
                       <m-button size="small">Small</m-button>
                       <m-button>Medium</m-button>
                       <m-button size="large">Large</m-button>
-                      <m-button round>Round</m-button>
-                      <m-button circle aria-label="Add">+</m-button>
+                      <m-button shape="round">Round</m-button>
+                      <m-button shape="circle" aria-label="Add">+</m-button>
                       <m-button type="primary" loading>Loading</m-button>
                       <m-button disabled>Disabled</m-button>
                       <m-button-group aria-label="Grouped actions">
@@ -270,7 +274,7 @@
                     <m-link class="text-link" href="#forms">Normal link</m-link>
                     <m-badge>Status badge</m-badge>
                     <m-tag>Standard tag</m-tag>
-                    <m-avatar alt="MarkupUI">M</m-avatar>
+                    <m-avatar label="MarkupUI">M</m-avatar>
                     <m-text class="muted">Secondary supporting text</m-text>
                   </m-row>
                 </m-stack>
@@ -315,7 +319,7 @@
                   <m-card-content>
                     <m-stack gap="md">
                       <m-row align="center" gap="sm">
-                        <m-avatar alt="Ada Lovelace">AL</m-avatar>
+                        <m-avatar label="Ada Lovelace">AL</m-avatar>
                         <m-stack>
                           <m-strong>Ada Lovelace</m-strong>
                           <m-text class="muted">Browser platform engineer</m-text>
@@ -330,7 +334,7 @@
                   <m-card-footer>
                     <m-button-group aria-label="Profile actions">
                       <m-button>Cancel</m-button>
-                      <m-button variant="primary">Open profile</m-button>
+                      <m-button type="primary">Open profile</m-button>
                     </m-button-group>
                   </m-card-footer>
                 </m-card>
@@ -443,7 +447,7 @@
                       <m-row gap="sm" align="center">
                         <m-button m-action="validate">Validate</m-button>
                         <m-button
-                          variant="primary"
+                          type="primary"
                           m-action="demo.save"
                           m-disabled="form.busy"
                         >
@@ -630,14 +634,14 @@
                     <m-heading level="3">List</m-heading>
                     <m-list>
                       <m-list-item>
-                        <m-avatar alt="Ada">A</m-avatar>
+                        <m-avatar label="Ada">A</m-avatar>
                         <m-stack>
                           <m-strong>Ada</m-strong>
                           <m-text class="muted">Owner</m-text>
                         </m-stack>
                       </m-list-item>
                       <m-list-item>
-                        <m-avatar alt="Grace">G</m-avatar>
+                        <m-avatar label="Grace">G</m-avatar>
                         <m-stack>
                           <m-strong>Grace</m-strong>
                           <m-text class="muted">Reviewer</m-text>
@@ -849,7 +853,7 @@
                     <m-wrap gap="sm">
                       <m-button m-action="demo.theme" m-param-name="light">Light</m-button>
                       <m-button m-action="demo.theme" m-param-name="dark">Dark</m-button>
-                      <m-button variant="primary" m-action="demo.theme" m-param-name="ocean">
+                      <m-button type="primary" m-action="demo.theme" m-param-name="ocean">
                         Ocean
                       </m-button>
                     </m-wrap>
@@ -865,7 +869,7 @@
                       <m-text>
                         Theme tokens cascade without rerendering components.
                       </m-text>
-                      <m-button variant="primary">Scoped button</m-button>
+                      <m-button type="primary">Scoped button</m-button>
                     </m-stack>
                   </m-card>
                 </m-theme>
@@ -897,7 +901,7 @@
                       A native modal surface with left, right, top, or bottom placement.
                     </m-text>
                     <m-button
-                      variant="primary"
+                      type="primary"
                       m-action="open"
                       m-param-target="#feature-drawer"
                     >
@@ -986,7 +990,7 @@
                       Markup references registered names instead of executing JavaScript strings.
                     </m-text>
                     <m-row align="center" gap="sm">
-                      <m-button variant="primary" m-action="demo.increment">Increment</m-button>
+                      <m-button type="primary" m-action="demo.increment">Increment</m-button>
                       <m-badge>Count: <m-strong m-text="metrics.clicks"></m-strong></m-badge>
                     </m-row>
                     <m-code class="code-block">m.actions.register("demo.increment", handler)</m-code>
@@ -1109,7 +1113,7 @@
           <m-alert>This overlay was opened by the built-in <m-code>open</m-code> action.</m-alert>
         </m-dialog-content>
         <m-dialog-footer>
-          <m-button variant="primary" m-action="close">Done</m-button>
+          <m-button type="primary" m-action="close">Done</m-button>
         </m-dialog-footer>
       </m-dialog>
 
@@ -1128,7 +1132,7 @@
         </m-drawer-content>
         <m-drawer-footer>
           <m-button m-action="close">Cancel</m-button>
-          <m-button variant="primary" m-action="close">Done</m-button>
+          <m-button type="primary" m-action="close">Done</m-button>
         </m-drawer-footer>
       </m-drawer>
     </m-app>

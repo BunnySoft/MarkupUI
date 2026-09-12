@@ -40,7 +40,7 @@
         <m-card data-m-card id="outer-card">
           <div data-m-card-content>
             <p lang="en">Card uses shared surface, text and border tokens.</p>
-            <m-button data-m-button type="primary" lang="en"><button type="button" data-m-button-control>Native button</button></m-button>
+            <m-button data-part="button" type="primary" lang="en"><button type="button" data-part="control">Native button</button></m-button>
             <label lang="en">Native date <input type="date" value="2026-09-09"></label>
           </div>
         </m-card>
@@ -52,8 +52,8 @@
           <h3 lang="en">Nested scope: inherits unless explicitly chosen</h3>
           <m-card data-m-card id="nested-card"><div data-m-card-content>
             <p lang="en">No theme attribute means no light reset.</p>
-            <m-button data-m-button type="primary" lang="en"><button type="button" data-m-button-control>Inherited accent</button></m-button>
-            <m-button data-m-button type="primary" class="example-author-accent" lang="en"><button type="button" data-m-button-control>Author override</button></m-button>
+            <m-button data-part="button" type="primary" lang="en"><button type="button" data-part="control">Inherited accent</button></m-button>
+            <m-button data-part="button" type="primary" class="example-author-accent" lang="en"><button type="button" data-part="control">Author override</button></m-button>
           </div></m-card>
         </section>
         <button type="button" data-open-modal hidden lang="en">Open native modal inside this scope</button>
@@ -71,7 +71,7 @@
         <h2>Independent light sibling</h2>
         <m-card data-m-card id="sibling-card"><div data-m-card-content>
           <p>No inherited settings from the adjacent dark scope.</p>
-          <m-button data-m-button type="primary"><button type="button" data-m-button-control>Sibling accent</button></m-button>
+          <m-button data-part="button" type="primary"><button type="button" data-part="control">Sibling accent</button></m-button>
         </div></m-card>
         <div class="m-loading-bar" data-loading-bar data-sibling-loading>
           <progress max="100" value="60" aria-label="Sibling local work">60%</progress>

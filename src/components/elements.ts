@@ -4,7 +4,7 @@ import { MAutocomplete, MCheckbox, MForm, MFormItem, MInput, MRadio, MRadioGroup
 import { MAccordionItem, MInclude } from "./dynamic.js"
 import { MDialog, MDrawer, MPopover, MTooltip } from "./overlays.js"
 import { MMenu, MMenuItem, MPagination, MSteps, MTabs, MTab, MDescriptions, MDescriptionItem, MStatistic, MTree, MTreeNode } from "./navigation.js"
-import { MAvatar, MButton, MCard, MEmpty, MLayout, MProgress, MSkeleton, MTag } from "./content.js"
+import { MCard, MEmpty, MLayout, MProgress, MSkeleton, MTag } from "./content.js"
 import { builtInStyles } from "./styles.js"
 
 const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = [
@@ -34,11 +34,8 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-divider", class extends MElement { public connectedCallback(): void { this.setAttribute("role", "separator"); this.setAttribute("aria-orientation", this.hasAttribute("vertical") ? "vertical" : "horizontal") } }],
   ["m-progress", MProgress],
   ["m-skeleton", MSkeleton],
-  ["m-avatar", MAvatar],
   ["m-empty", MEmpty],
   ["m-spin", class extends MElement { public connectedCallback(): void { this.setAttribute("role", "status"); this.setAttribute("aria-label", this.getAttribute("label") ?? "Loading") } }],
-  ["m-button", MButton],
-  ["m-button-group", class extends MElement { public connectedCallback(): void { this.setAttribute("role", "group") } }],
   ["m-input", MInput],
   ["m-textarea", MTextarea],
   ["m-option", class extends MElement {}],

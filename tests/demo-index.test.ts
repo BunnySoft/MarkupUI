@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { components, componentGroups } from "../demo/catalog.js"
 import { createComponentBrowser } from "../demo/app.js"
 import { createExampleCodeViewers } from "../demo/example-code.js"
+import { renderComponentApi, loadComponentApi } from "../demo/component-api.js"
 
 const html = readFileSync(resolve("demo", "index.html"), "utf8")
 const css = readFileSync(resolve("demo", "app.css"), "utf8")
@@ -40,6 +41,50 @@ afterEach(() => {
   mediaListener = undefined
   document.body.replaceChildren()
   vi.unstubAllGlobals()
+})
+
+describe("metadata-based component documentation", () => {
+  it("loads documentation separately and surfaces request errors", async () => {
+    const target = document.createElement("div")
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 404 })))
+    await expect(loadComponentApi(target, "/demo/api/missing.json")).rejects.toThrow("404")
+    expect(target.textContent).toContain("unavailable")
+  })
+
+  it("uses source-generated defaults without a component metadata API", () => {
+    const docs = JSON.parse(readFileSync(resolve("demo", "api", "avatar.json"), "utf8"))
+    const avatar = docs.elements.find((element: { type: string }) => element.type === "Avatar")
+    expect(avatar.properties.shape.default).toBe("rounded")
+    expect(avatar.properties.shape.values).toEqual(["rounded", "circle", "square"])
+    expect(avatar.properties.size.type).toBe("size")
+    expect(avatar.properties.size.min).toBe(0)
+    expect(avatar.properties.state.writable).toBe(false)
+    expect(avatar.properties.state).not.toHaveProperty("default")
+    expect(avatar.events.find((event: { web: string }) => event.web === "m:error").detail).toHaveProperty("src", "string")
+    expect(docs.generatedFrom).toContain("documentation only")
+  })
+
+  it("renders API data without constructing components or inserting executable markup", () => {
+    const target = document.createElement("div")
+    const meta = {
+      type: "Example", web: { primary: "m-example" },
+      properties: { label: {
+        name: "label", type: "string", nullable: true, default: "<img src=x onerror=alert(1)>",
+        writable: true, attribute: "label", values: [], min: null, max: null, integer: false, encoding: null,
+      } },
+      regions: [{ name: "content", accepts: ["text"], min: 0, max: 1 }],
+      events: [{ name: "Change", web: "m:change", bubbles: true, cancelable: false, composed: false }],
+      actions: [], states: ["ready"], capabilities: [],
+    }
+    renderComponentApi(target, [meta])
+    expect(target.querySelector("img")).toBeNull()
+    expect(target.textContent).toContain("<img src=x onerror=alert(1)>")
+    expect(target.textContent).toContain("Example properties")
+    expect(target.textContent).toContain("m:change")
+    expect(target.querySelectorAll("table")).toHaveLength(3)
+    renderComponentApi(target, [meta])
+    expect(target.querySelectorAll("[data-api-type]")).toHaveLength(1)
+  })
 })
 
 describe("component-by-component demo browser", () => {
@@ -215,6 +260,9 @@ describe("component-by-component demo browser", () => {
     expect(html).toContain('../dist/markup-ui-button.css')
     expect(html).toContain('../dist/markup-ui-input.css')
     expect(html).toContain('../dist/markup-ui-button.global.js')
+    expect(html.indexOf('markup-ui-core.global.js')).toBeLessThan(html.indexOf('markup-ui-button.global.js'))
+    expect(buttonHtml.indexOf('markup-ui-core.global.js')).toBeLessThan(buttonHtml.indexOf('markup-ui-button.global.js'))
+    expect(buttonHtml).toContain('id="button-api"')
     expect(css).toContain("min-block-size: 42px")
     expect(css).toContain('.component-link[aria-current="page"]')
     expect(exampleCodeCss).toContain("grid-template-columns: minmax(0, 1fr)")

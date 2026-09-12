@@ -3,14 +3,22 @@ import { readFileSync } from "node:fs"
 import { gzipSync } from "node:zlib"
 import { execFileSync } from "node:child_process"
 import {
-  MButton,
-  MButtonGroup,
-  buttonDefinition,
-  buttonGroupDefinition,
+  Button,
+  ButtonGroup,
   registerButton,
 } from "../src/components/button/index.js"
-import { registerElements } from "../src/components/elements.js"
+import { ViewElement } from "../src/core/index.js"
+import { registerElements, builtInElementNames } from "../src/components/elements.js"
 import { installActions, registerAction } from "../src/actions/index.js"
+
+type ApiProperty = { name: string; type: string; default?: unknown; attribute: string | null; nullable: boolean; writable: boolean; values: string[] }
+type ApiElement = { type: string; web: { primary: string }; properties: Record<string, ApiProperty>; events: unknown[]; actions: string[]; regions: unknown[] }
+const api = JSON.parse(readFileSync("demo/api/button.json", "utf8")) as { elements: ApiElement[] }
+function apiFor(name: string): ApiElement {
+  const element = api.elements.find(element => element.type === name)
+  if (!element) throw new Error(`Missing generated API for ${name}.`)
+  return element
+}
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -38,12 +46,12 @@ describe("audited Button styles", () => {
 
   it("uses overlay borders instead of adding border width to native button geometry", () => {
     containsCSS("border: 0;")
-    containsCSS('[data-m-button-control]::after {')
+    containsCSS('[data-part=control]::after {')
     containsCSS("border: 1px solid var(--_m-button-current-border")
     containsCSS("height: var(--m-button-height, 34px)")
     containsCSS("line-height: 1;")
     containsCSS("font-weight: 400;")
-    containsCSS('[strong] > [data-m-button-control] { font-weight: 500; }')
+    containsCSS('[strong] > [data-part=control] { font-weight: 500; }')
     containsCSS('height: auto; padding: 0; border-radius: 0; }')
   })
 
@@ -56,8 +64,8 @@ describe("audited Button styles", () => {
     }
     containsCSS("calc(var(--m-button-padding, 14px) + 4px)")
     containsCSS("var(--m-button-icon-gap, 6px)")
-    containsCSS('[data-m-button-spinner] > svg')
-    for (const type of ["primary", "text", "tertiary", "error"]) {
+    containsCSS('[data-part=spinner] > svg')
+    for (const type of ["primary", "default", "tertiary", "error"]) {
       const element = button(`<m-button type="${type}"><button type="reset">Action</button></m-button>`)
       expect((element.control as HTMLButtonElement).type).toBe("reset")
     }
@@ -105,7 +113,7 @@ describe("audited Button styles", () => {
       expect(click).toHaveBeenCalledOnce()
       expect(wave.currentTime).toBe(0)
       expect(wave.play).toHaveBeenCalledOnce()
-      expect(control.hasAttribute("data-m-button-wave")).toBe(true)
+      expect(control.matches("[data-state~=wave]")).toBe(true)
       wave.currentTime = 300
       element.click()
       expect(wave.currentTime).toBe(0)
@@ -113,12 +121,12 @@ describe("audited Button styles", () => {
       expect(author.cancel).not.toHaveBeenCalled()
       wave.playState = "finished"
       wave.onfinish?.()
-      expect(control.hasAttribute("data-m-button-wave")).toBe(false)
+      expect(control.matches("[data-state~=wave]")).toBe(false)
       expect(wave.cancel).toHaveBeenCalledOnce()
     })
 
     it("suppresses waves for disabled, loading, text, soft and reduced-motion controls", () => {
-      for (const attrs of ["disabled", "loading", "text", 'type="text"', "secondary", "tertiary", "quaternary"]) {
+      for (const attrs of ["disabled", "loading", 'appearance="text"', 'appearance="secondary"', 'appearance="tertiary"', 'appearance="quaternary"']) {
         const element = button(`<m-button ${attrs}>Save</m-button>`)
         const wave = animation("m-button-wave", element.control!).value
         Object.defineProperty(element.control!, "getAnimations", { value: () => [wave] })
@@ -141,7 +149,7 @@ describe("audited Button styles", () => {
       element.click()
       const oldFinish = wave.onfinish
       element.remove()
-      expect(control.hasAttribute("data-m-button-wave")).toBe(false)
+      expect(control.matches("[data-state~=wave]")).toBe(false)
       expect(wave.cancel).toHaveBeenCalledOnce()
       oldFinish?.()
       expect(wave.cancel).toHaveBeenCalledOnce()
@@ -152,7 +160,7 @@ describe("audited Button styles", () => {
       element.replaceChildren(next)
       await Promise.resolve()
       expect(element.control).toBe(next)
-      expect(control.hasAttribute("data-m-button-wave")).toBe(false)
+      expect(control.matches("[data-state~=wave]")).toBe(false)
       expect(wave.cancel).toHaveBeenCalledTimes(2)
     })
 
@@ -163,14 +171,14 @@ describe("audited Button styles", () => {
       const icon = svg
         ? document.createElementNS("http://www.w3.org/2000/svg", "svg")
         : document.createElement("span")
-      icon.dataset.mButtonIcon = ""
+      icon.dataset.part = "icon"
       icon.textContent = "+"
       if (withStyle) icon.style.cssText = "color: purple; transform: rotate(10deg)"
       Object.defineProperty(icon, "getClientRects", { configurable: true, value: () => [{}] })
       const width = animation("m-button-enter-width", icon)
       const alpha = animation("m-button-enter-alpha", icon)
       Object.defineProperty(icon, "getAnimations", {
-        value: () => icon.hasAttribute("data-m-button-enter") ? [width.value, alpha.value] : [],
+        value: () => icon.matches("[data-state~=enter]") ? [width.value, alpha.value] : [],
       })
       return { element, icon, width, alpha, computed }
     }
@@ -189,7 +197,7 @@ describe("audited Button styles", () => {
       alpha.resolve()
       await Promise.resolve()
       await Promise.resolve()
-      expect(icon.hasAttribute("data-m-button-enter")).toBe(false)
+      expect(icon.matches("[data-state~=enter]")).toBe(false)
       expect(icon.getAttribute("style")).toBe(style)
       icon.click()
       expect(click).toHaveBeenCalledOnce()
@@ -199,15 +207,15 @@ describe("audited Button styles", () => {
       const { element, icon, width, alpha } = insertionFixture()
       element.control!.append(icon)
       await Promise.resolve()
-      expect(icon.hasAttribute("data-m-button-enter")).toBe(true)
+      expect(icon.matches("[data-state~=enter]")).toBe(true)
       element.remove()
       expect(width.value.cancel).toHaveBeenCalledOnce()
       expect(alpha.value.cancel).toHaveBeenCalledOnce()
       expect(icon.hasAttribute("style")).toBe(false)
-      expect(icon.hasAttribute("data-m-button-enter")).toBe(false)
+      expect(icon.matches("[data-state~=enter]")).toBe(false)
       document.body.append(element)
       expect(icon.parentNode).toBe(element.control)
-      expect(icon.hasAttribute("data-m-button-enter")).toBe(false)
+      expect(icon.matches("[data-state~=enter]")).toBe(false)
     })
 
     it.each([false, true])("uses fractional untransformed CSS width for SVG=%s and restores author sizing", async svg => {
@@ -220,14 +228,14 @@ describe("audited Button styles", () => {
       element.control!.append(icon)
       await Promise.resolve()
       expect(icon.style.getPropertyValue("--_m-button-enter-width")).toBe("18.375px")
-      expect(icon.hasAttribute("data-m-button-enter")).toBe(true)
+      expect(icon.matches("[data-state~=enter]")).toBe(true)
       expect(icon.parentNode).toBe(element.control)
       width.resolve()
       alpha.resolve()
       await Promise.resolve()
       await Promise.resolve()
       expect(icon.getAttribute("style")).toBe(original)
-      expect(icon.hasAttribute("data-m-button-enter")).toBe(false)
+      expect(icon.matches("[data-state~=enter]")).toBe(false)
     })
 
     it.each(["hidden", "no-box", "auto", "zero"])("does not measure an unavailable icon layout: %s", async mode => {
@@ -238,19 +246,19 @@ describe("audited Button styles", () => {
       if (mode === "zero") computed.width = "0px"
       element.control!.append(icon)
       await Promise.resolve()
-      expect(icon.hasAttribute("data-m-button-enter")).toBe(false)
+      expect(icon.matches("[data-state~=enter]")).toBe(false)
       expect(icon.hasAttribute("style")).toBe(false)
     })
 
     it("does not replace an author's animation with an insertion effect", async () => {
       const element = button()
       const icon = document.createElement("span")
-      icon.dataset.mButtonIcon = ""
+      icon.dataset.part = "icon"
       const author = animation("author-pulse", icon).value
       Object.defineProperty(icon, "getAnimations", { value: () => [author] })
       element.control!.append(icon)
       await Promise.resolve()
-      expect(icon.hasAttribute("data-m-button-enter")).toBe(false)
+      expect(icon.matches("[data-state~=enter]")).toBe(false)
       expect(icon.hasAttribute("style")).toBe(false)
       expect(author.cancel).not.toHaveBeenCalled()
     })
@@ -258,7 +266,7 @@ describe("audited Button styles", () => {
 
   it("keeps disabled colors static and loading appearance independent from native disabled ownership", () => {
     containsCSS(':is(:not(:disabled, [aria-disabled="true"]), [aria-busy="true"])')
-    containsCSS('[loading]:not([disabled]) > [data-m-button-control] { opacity: 1; cursor: wait;')
+    containsCSS('[loading]:not([disabled]) > [data-part=control] { opacity: 1; cursor: wait;')
     containsCSS("var(--_m-button-bg-disabled)")
     containsCSS("var(--_m-button-label-disabled)")
     containsCSS("border-color .3s cubic-bezier(.4, 0, .2, 1)")
@@ -268,41 +276,158 @@ describe("audited Button styles", () => {
   })
 
   it("isolates native hosts from later legacy soft-state declarations and joins only compatible borders", () => {
-    containsCSS(`m-button${"[data-m-button]".repeat(4)} {`)
+    containsCSS(`m-button${"[data-part=button]".repeat(4)} {`)
     containsCSS("all: unset")
     expect(normalizeCSS(css)).not.toContain("margin-inline-start:-1px")
     containsCSS("var(--_m-button-joined-width, 1px)")
     containsCSS("var(--_m-button-joined-offset, 0px)")
     for (const type of ["primary", "info", "success", "warning", "error"]) {
-      containsCSS(`m-button[ghost]:is([type="${type}"], [variant="${type}"]) + :is([type="${type}"], [variant="${type}"])`)
+      containsCSS(`m-button[appearance="ghost"]:is([type="${type}"]) + :is([type="${type}"])`)
     }
-    containsCSS('m-button:is(:not([type], [variant]), [type="default"], [variant="default"]) + :is(:not([type], [variant]), [type="default"], [variant="default"])')
+    containsCSS('m-button:is(:not([type]), [type="default"]) + :is(:not([type]), [type="default"])')
   })
 })
 
-function button(markup = "<m-button>Action</m-button>"): MButton {
+function button(markup = "<m-button>Action</m-button>"): Button {
   document.body.innerHTML = markup
   const element = document.querySelector("m-button")
-  if (!(element instanceof MButton)) throw new Error("Button was not upgraded")
+  if (!(element instanceof Button)) throw new Error("Button was not upgraded")
   return element
 }
 
 describe("standalone Button", () => {
-  it("publishes platform definitions and registers primary names", () => {
-    expect(buttonDefinition).toEqual({
+  it("matches source-generated documentation and validates inputs before writing", () => {
+    for (const constructor of [Button, ButtonGroup]) {
+      const element = new constructor()
+      for (const meta of Object.values(apiFor(constructor.name).properties).filter(property => property.writable)) {
+        expect(Reflect.get(element, meta.name)).toBe(meta.default)
+        expect(meta.attribute).not.toBeNull()
+        expect(constructor.observedAttributes).toContain(meta.attribute)
+        const before = element.getAttribute(meta.attribute!)
+        expect(() => Reflect.set(element, meta.name, {})).toThrow(RangeError)
+        expect(element.getAttribute(meta.attribute!)).toBe(before)
+        if (meta.type === "enum") {
+          expect(() => Reflect.set(element, meta.name, "")).toThrow(RangeError)
+          element.setAttribute(meta.attribute!, "unsupported")
+          expect(() => Reflect.get(element, meta.name)).toThrow(RangeError)
+          element.removeAttribute(meta.attribute!)
+        }
+        if (meta.nullable) {
+          Reflect.set(element, meta.name, meta.values[0] ?? "authored")
+          Reflect.set(element, meta.name, null)
+          expect(Reflect.get(element, meta.name)).toBeNull()
+          expect(element.hasAttribute(meta.attribute!)).toBe(false)
+        }
+      }
+    }
+  })
+
+  it("distinguishes presence booleans from explicit default-true booleans", () => {
+    const element = new Button()
+    element.setAttribute("disabled", "false")
+    expect(element.disabled).toBe(true)
+    element.disabled = false
+    expect(element.hasAttribute("disabled")).toBe(false)
+    for (const name of ["focusable", "bordered"] as const) {
+      element[name] = false
+      expect(element.getAttribute(name)).toBe("false")
+      expect(element[name]).toBe(false)
+      element.removeAttribute(name)
+      expect(element[name]).toBe(true)
+      element.setAttribute(name, "sometimes")
+      expect(() => element[name]).toThrow(RangeError)
+      element.removeAttribute(name)
+    }
+  })
+
+  it("restores labels and permits programmatic focus with sequential focus excluded", () => {
+    const element = button('<m-button label="Logical" aria-label="Host" focusable="false"><button aria-label="Native" type="button">Action</button></m-button>')
+    const control = element.control!
+    expect(control.getAttribute("aria-label")).toBe("Logical")
+    expect(control.tabIndex).toBe(-1)
+    element.focus()
+    expect(document.activeElement).toBe(control)
+    element.label = null
+    expect(control.getAttribute("aria-label")).toBe("Host")
+    element.removeAttribute("aria-label")
+    expect(control.getAttribute("aria-label")).toBe("Native")
+    element.blur()
+    element.loading = true
+    element.focus()
+    expect(document.activeElement).not.toBe(control)
+  })
+
+  it("preserves native click cancellation and the disabled-fieldset first-legend exception", () => {
+    const element = button('<form><fieldset disabled><legend><m-button><button>Save</button></m-button></legend></fieldset></form>')
+    const form = document.querySelector("form")!
+    const submit = vi.fn((event: Event) => event.preventDefault())
+    form.addEventListener("submit", submit)
+    const cancel = (event: Event) => event.preventDefault()
+    element.addEventListener("click", cancel)
+    element.click()
+    expect(submit).not.toHaveBeenCalled()
+    element.removeEventListener("click", cancel)
+    element.click()
+    expect(submit).toHaveBeenCalledOnce()
+  })
+
+  it("tracks dynamic icon parts while retaining authored control markers and state tokens", async () => {
+    const element = button('<m-button><button type="button" data-part="authored" data-state="application"><span>+</span></button></m-button>')
+    const control = element.control!
+    const icon = control.firstElementChild!
+    expect(control.dataset.state).toBe("application")
+    icon.setAttribute("data-part", "icon")
+    await Promise.resolve()
+    expect(control.matches("[data-state~=icon-only]")).toBe(true)
+    expect(control.matches("[data-state~=application]")).toBe(true)
+    const replacement = document.createElement("button")
+    replacement.type = "button"
+    element.replaceChildren(replacement)
+    await Promise.resolve()
+    expect(control.getAttribute("data-part")).toBe("authored")
+    expect(control.getAttribute("data-state")).toBe("application")
+  })
+
+  it("lets the aggregate register first without reserving either Button tag", () => {
+    const entries = new Map<string, CustomElementConstructor>()
+    const registry = {
+      get: (name: string) => entries.get(name),
+      define: (name: string, constructor: CustomElementConstructor) => { entries.set(name, constructor) },
+    }
+    registerElements(registry as CustomElementRegistry)
+    expect(entries.has("m-button")).toBe(false)
+    expect(entries.has("m-button-group")).toBe(false)
+    registerButton(registry)
+    registerElements(registry as CustomElementRegistry)
+    expect(entries.get("m-button")).toBe(Button)
+    expect(entries.get("m-button-group")).toBe(ButtonGroup)
+  })
+
+  it("registers primary names without a public metadata runtime", () => {
+    expect(Button.prototype).toBeInstanceOf(ViewElement)
+    expect(ButtonGroup.prototype).toBeInstanceOf(ViewElement)
+    expect(apiFor("Button")).toMatchObject({
       type: "Button",
       web: { primary: "m-button" },
-      capabilities: ["button.activation", "button.form", "button.link", "button.loading", "button.icon"],
     })
-    expect(buttonGroupDefinition.web).toEqual({ primary: "m-button-group" })
+    expect(ButtonGroup.tag).toBe("m-button-group")
+    expect("meta" in Button).toBe(false)
+    expect("meta" in ButtonGroup).toBe(false)
+    expect(apiFor("Button").events).toEqual([])
+    expect(apiFor("Button").actions).toEqual(["click", "focus", "blur"])
+    expect(apiFor("ButtonGroup").regions).toEqual([
+      { name: "items", accepts: ["Button"], min: 0, max: null, element: "m-button" },
+    ])
+    expect("definition" in Button).toBe(false)
+    expect("variant" in Button.prototype).toBe(false)
     const definitions = new Map<string, CustomElementConstructor>()
     const registry = {
       get: (name: string) => definitions.get(name),
       define: (name: string, constructor: CustomElementConstructor) => { definitions.set(name, constructor) },
     }
     registerButton(registry)
-    expect(definitions.get("m-button")).toBe(MButton)
-    expect(definitions.get("m-button-group")).toBe(MButtonGroup)
+    expect(definitions.get("m-button")).toBe(Button)
+    expect(definitions.get("m-button-group")).toBe(ButtonGroup)
   })
 
   it("uses the primary Button renderer without a compatibility alias", () => {
@@ -312,7 +437,7 @@ describe("standalone Button", () => {
   })
 
   it("adopts native buttons and preserves child identities and listeners", () => {
-    const element = document.createElement("m-button") as MButton
+    const element = document.createElement("m-button") as Button
     const native = document.createElement("button")
     native.type = "button"
     const label = document.createElement("strong")
@@ -331,7 +456,7 @@ describe("standalone Button", () => {
   })
 
   it("generates a type=button control without cloning authored content", () => {
-    const element = document.createElement("m-button") as MButton
+    const element = document.createElement("m-button") as Button
     const label = document.createTextNode("Save")
     element.append(label)
     document.body.append(element)
@@ -398,8 +523,8 @@ describe("standalone Button", () => {
     element.removeAttribute("attr-type")
     element.click()
     expect(input.value).toBe("initial")
-    element.attrType = "invalid"
-    expect((element.control as HTMLButtonElement).type).toBe("button")
+    expect(() => Reflect.set(element, "attrType", "invalid")).toThrow(RangeError)
+    expect((element.control as HTMLButtonElement).type).toBe("reset")
   })
 
   it("does not synthesize keyboard activation or cancel native key defaults", () => {
@@ -439,17 +564,17 @@ describe("standalone Button", () => {
   it("preserves authored disabled and ARIA states through loading and reconnect", () => {
     const element = button('<m-button loading><button disabled aria-busy="false" aria-disabled="true" tabindex="2">Save</button></m-button>')
     const native = element.control as HTMLButtonElement
-    const spinner = native.querySelector("[data-m-button-spinner]")
+    const spinner = native.querySelector("[data-part=spinner]")
     expect(spinner?.getAttribute("aria-hidden")).toBe("true")
     expect(native.getAttribute("aria-busy")).toBe("true")
     element.remove()
     document.body.append(element)
-    expect(native.querySelectorAll("[data-m-button-spinner]")).toHaveLength(1)
+    expect(native.querySelectorAll("[data-part=spinner]")).toHaveLength(1)
     element.loading = false
     expect(native.disabled).toBe(true)
     expect(native.getAttribute("aria-busy")).toBe("false")
     expect(native.getAttribute("aria-disabled")).toBe("true")
-    expect(native.querySelector("[data-m-button-spinner]")).toBeNull()
+    expect(native.querySelector("[data-part=spinner]")).toBeNull()
   })
 
   it("restores authored labels and focus order when overrides are removed", () => {
@@ -557,16 +682,16 @@ describe("standalone Button", () => {
   })
 
   it("preserves icon and text nodes and labels during repeated loading", () => {
-    const element = button('<m-button icon-placement="right" aria-label="Add"><button type="button"><span data-m-button-icon aria-hidden="true">+</span><strong>Add</strong></button></m-button>')
-    const icon = element.querySelector("[data-m-button-icon]")!
+    const element = button('<m-button icon-placement="right" aria-label="Add"><button type="button"><span data-part="icon" aria-hidden="true">+</span><strong>Add</strong></button></m-button>')
+    const icon = element.querySelector("[data-part=icon]")!
     const label = element.querySelector("strong")!
     for (let i = 0; i < 3; i++) {
       element.loading = true
-      expect(element.querySelectorAll("[data-m-button-spinner]")).toHaveLength(1)
+      expect(element.querySelectorAll("[data-part=spinner]")).toHaveLength(1)
       expect(element.control!.getAttribute("aria-busy")).toBe("true")
       element.loading = false
     }
-    expect(element.querySelector("[data-m-button-icon]")).toBe(icon)
+    expect(element.querySelector("[data-part=icon]")).toBe(icon)
     expect(element.querySelector("strong")).toBe(label)
     expect(element.control!.getAttribute("aria-label")).toBe("Add")
     expect(element.control!.hasAttribute("aria-busy")).toBe(false)
@@ -574,7 +699,7 @@ describe("standalone Button", () => {
 
   it("uses an owned native SVG for the measured loading arc without changing the accessible name", () => {
     const element = button("<m-button loading>Save</m-button>")
-    const spinner = element.querySelector("[data-m-button-spinner]")!
+    const spinner = element.querySelector("[data-part=spinner]")!
     const svg = spinner.querySelector("svg")!
     expect(spinner.getAttribute("aria-hidden")).toBe("true")
     expect(svg.getAttribute("focusable")).toBe("false")
@@ -584,31 +709,31 @@ describe("standalone Button", () => {
     expect(svg.querySelector("animate")?.getAttribute("dur")).toBe("1.6s")
     expect(element.control?.textContent).toBe("Save")
     element.setAttribute("aria-label", "Save document")
-    expect(element.querySelectorAll("[data-m-button-spinner]")).toHaveLength(1)
-    expect(element.querySelector("[data-m-button-spinner] svg")).toBe(svg)
+    expect(element.querySelectorAll("[data-part=spinner]")).toHaveLength(1)
+    expect(element.querySelector("[data-part=spinner] svg")).toBe(svg)
   })
 
   it("derives icon-only spacing from live content without wrapping or replacing authored nodes", async () => {
-    const element = button('<m-button circle icon-placement="right" aria-label="Add"><span data-m-button-icon>+</span></m-button>')
+    const element = button('<m-button shape="circle" icon-placement="right" aria-label="Add"><span data-part="icon">+</span></m-button>')
     const control = element.control!
     const icon = control.firstChild
-    expect(control.hasAttribute("data-m-button-icon-only")).toBe(true)
+    expect(control.matches("[data-state~=icon-only]")).toBe(true)
     const label = document.createTextNode("Save")
     control.append(label)
     await Promise.resolve()
-    expect(control.hasAttribute("data-m-button-icon-only")).toBe(false)
+    expect(control.matches("[data-state~=icon-only]")).toBe(false)
     label.nodeValue = ""
     await Promise.resolve()
-    expect(control.hasAttribute("data-m-button-icon-only")).toBe(true)
+    expect(control.matches("[data-state~=icon-only]")).toBe(true)
     expect(control.firstChild).toBe(icon)
     expect(control.lastChild).toBe(label)
     element.loading = true
-    expect(control.hasAttribute("data-m-button-icon-only")).toBe(true)
+    expect(control.matches("[data-state~=icon-only]")).toBe(true)
     const replacement = document.createElement("button")
     replacement.textContent = "New"
     element.replaceChildren(replacement)
     await Promise.resolve()
-    expect(control.hasAttribute("data-m-button-icon-only")).toBe(false)
+    expect(control.matches("[data-state~=icon-only]")).toBe(false)
   })
 
   it("pauses native loading motion for reduced motion and releases its listener on detach or completion", () => {
@@ -672,49 +797,57 @@ describe("standalone Button", () => {
     expect(element.control).toBe(next)
     expect(old.disabled).toBe(false)
     expect(old.getAttribute("aria-label")).toBe("Original")
-    expect(old.querySelector("[data-m-button-spinner]")).toBeNull()
-    expect(old.hasAttribute("data-m-button-control")).toBe(false)
+    expect(old.querySelector("[data-part=spinner]")).toBeNull()
+    expect(old.matches("[data-part=control]")).toBe(false)
     expect(next.disabled).toBe(true)
     expect(next.getAttribute("aria-label")).toBe("Override")
   })
 
   it("upgrades pre-definition properties for Button and ButtonGroup", () => {
     document.body.innerHTML = '<test-late-button>Late</test-late-button><test-late-button-group></test-late-button-group>'
-    const element = document.querySelector("test-late-button") as MButton
-    Object.assign(element, { loading: true, attrType: "submit", type: "info", size: "large", iconPlacement: "right", focusable: false, bordered: false, round: true, secondary: true })
-    const group = document.querySelector("test-late-button-group") as MButtonGroup
+    const element = document.querySelector("test-late-button") as Button
+    Object.assign(element, { loading: true, attrType: "submit", type: "info", size: "large", iconPlacement: "right", focusable: false, bordered: false, shape: "round", appearance: "secondary", form: "editor", formMethod: "post", label: "Send" })
+    const group = document.querySelector("test-late-button-group") as ButtonGroup
     Object.assign(group, { size: "small", vertical: true })
-    customElements.define("test-late-button", class extends MButton {})
-    customElements.define("test-late-button-group", class extends MButtonGroup {})
+    customElements.define("test-late-button", class extends Button {})
+    customElements.define("test-late-button-group", class extends ButtonGroup {})
     expect(element.loading).toBe(true)
     expect(element.control?.getAttribute("type")).toBe("submit")
     expect(element.control?.getAttribute("tabindex")).toBe("-1")
     for (const [name, value] of [["type", "info"], ["size", "large"], ["icon-placement", "right"], ["bordered", "false"]]) {
       expect(element.getAttribute(name!)).toBe(value)
     }
-    expect(element.round).toBe(true)
-    expect(element.secondary).toBe(true)
+    expect(element.shape).toBe("round")
+    expect(element.appearance).toBe("secondary")
+    expect(element.formMethod).toBe("post")
+    expect(element.control?.getAttribute("aria-label")).toBe("Send")
     expect(group.size).toBe("small")
     expect(group.vertical).toBe(true)
   })
 
   it("reflects retained visual properties without injecting styles or shadow DOM", () => {
     const element = button()
-    for (const name of ["block", "circle", "round", "strong", "secondary", "tertiary", "quaternary", "ghost", "dashed", "text"] as const) {
+    for (const name of ["block", "strong"] as const) {
       element[name] = true
       expect(element.hasAttribute(name)).toBe(true)
       element[name] = false
       expect(element.hasAttribute(name)).toBe(false)
     }
-    element.variant = "primary"
-    expect(element.getAttribute("variant")).toBe("primary")
+    for (const appearance of apiFor("Button").properties.appearance!.values) {
+      Reflect.set(element, "appearance", appearance)
+      expect(element.getAttribute("appearance")).toBe(appearance)
+    }
+    for (const shape of apiFor("Button").properties.shape!.values) {
+      Reflect.set(element, "shape", shape)
+      expect(element.getAttribute("shape")).toBe(shape)
+    }
     expect(element.shadowRoot).toBeNull()
     expect(document.querySelector("style")).toBeNull()
   })
 
   it("preserves group content and native individual tab stops", () => {
     button('<m-button-group size="small" vertical aria-label="Actions"><m-button>One</m-button><m-button size="large">Two</m-button></m-button-group>')
-    const group = document.querySelector("m-button-group") as MButtonGroup
+    const group = document.querySelector("m-button-group") as ButtonGroup
     const children = [...group.children]
     expect(group.getAttribute("role")).toBe("group")
     expect(group.getAttribute("aria-label")).toBe("Actions")
@@ -723,7 +856,7 @@ describe("standalone Button", () => {
     group.remove()
     document.body.append(group)
     expect([...group.children]).toEqual(children)
-    expect((children[0] as MButton).control?.tabIndex).toBe(0)
+    expect((children[0] as Button).control?.tabIndex).toBe(0)
     expect(group.hasAttribute("tabindex")).toBe(false)
   })
 
@@ -734,15 +867,17 @@ describe("standalone Button", () => {
       expect(() => registerButton({
         get: (name) => name === conflict ? class extends HTMLElement {} : undefined,
         define,
-      })).toThrow("before the legacy MarkupUI bundle")
+      })).toThrow("different implementation")
       expect(define).not.toHaveBeenCalled()
     }
   })
 
   it("retains rich definitions when registering the aggregate and invokes delegated actions once", async () => {
     registerElements(customElements)
-    expect(customElements.get("m-button")).toBe(MButton)
-    expect(customElements.get("m-button-group")).toBe(MButtonGroup)
+    expect(builtInElementNames).not.toContain("m-button")
+    expect(builtInElementNames).not.toContain("m-button-group")
+    expect(customElements.get("m-button")).toBe(Button)
+    expect(customElements.get("m-button-group")).toBe(ButtonGroup)
     const element = button('<m-button m-action="button.save">Save</m-button>')
     const action = vi.fn()
     registerAction("button.save", action)

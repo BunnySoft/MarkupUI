@@ -58,7 +58,7 @@ m-skeleton{display:block;min-height:1em;border-radius:var(--m-radius-md);backgro
 :where([data-m-theme="dark"]){--m-avatar-default-background:#424245;--m-avatar-default-border:#18181c}
 m-avatar{box-sizing:content-box;display:inline-grid;overflow:hidden;width:var(--m-avatar-size,34px);height:var(--m-avatar-size,34px);border-radius:var(--m-avatar-radius,3px);background:var(--m-avatar-background,var(--m-avatar-default-background,#ccc));color:var(--m-avatar-color,#fff);font-size:var(--m-avatar-font-size,14px);font-family:var(--m-font-family);font-weight:inherit;line-height:1.25;place-items:center;transition:border-color .3s cubic-bezier(.4,0,.2,1),background-color .3s cubic-bezier(.4,0,.2,1),color .3s cubic-bezier(.4,0,.2,1)}
 m-avatar[size="tiny"]{--m-avatar-size:22px}m-avatar[size="small"]{--m-avatar-size:28px}m-avatar[size="medium"]{--m-avatar-size:34px}m-avatar[size="large"]{--m-avatar-size:40px}m-avatar[size="huge"]{--m-avatar-size:46px}
-m-avatar[square]{border-radius:var(--m-avatar-radius,3px)}m-avatar[round]{border-radius:50%}m-avatar[bordered]{border:2px solid var(--m-avatar-border-color,var(--m-avatar-default-border,#fff))}
+m-avatar[shape="rounded"]{border-radius:var(--m-avatar-radius,3px)}m-avatar[shape="square"]{border-radius:0}m-avatar[shape="circle"]{border-radius:50%}m-avatar[bordered]{border:2px solid var(--m-avatar-border-color,var(--m-avatar-default-border,#fff))}
 m-avatar>img{width:100%;height:100%;object-fit:var(--m-avatar-object-fit,fill)}
 @media(prefers-reduced-motion:reduce){m-avatar{transition:none}}
 m-empty{display:grid;min-height:140px;padding:var(--m-space-lg);color:var(--m-text-secondary);text-align:center;place-items:center;align-content:center;gap:var(--m-space-sm)}

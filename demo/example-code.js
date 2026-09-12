@@ -119,7 +119,7 @@ export function createExampleCodeViewers(
     const panelId = `demo-code-${key}`
     const toggle = document.createElement("m-button")
     toggle.setAttribute("size", "tiny")
-    toggle.setAttribute("text", "")
+    toggle.setAttribute("appearance", "text")
     toggle.dataset.demoCodeToggle = ""
     toggle.setAttribute("aria-controls", panelId)
     toggle.setAttribute("aria-expanded", "false")
@@ -132,7 +132,7 @@ export function createExampleCodeViewers(
     control.setAttribute("aria-label", "Show code")
     control.title = "Show code"
     const icon = document.createElement("span")
-    icon.dataset.mButtonIcon = ""
+    icon.dataset.part = "icon"
     icon.setAttribute("aria-hidden", "true")
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
     svg.setAttribute("viewBox", "0 0 512 512")

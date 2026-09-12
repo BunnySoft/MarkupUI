@@ -14,6 +14,8 @@ import {
 } from "../src/index.js"
 import { advancedElementNames, advancedPlugin } from "../src/plugins/advanced.js"
 import { widgetElementNames, widgetsPlugin } from "../src/plugins/widgets.js"
+import "../src/components/avatar/index.js"
+import { Button } from "../src/components/button/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -92,7 +94,7 @@ describe("native elements", () => {
 
   it("provides common display and feedback elements", () => {
     document.body.innerHTML = `
-      <m-avatar alt="Ada">A</m-avatar>
+      <m-avatar label="Ada">A</m-avatar>
       <m-divider></m-divider>
       <m-progress value="25" max="50"></m-progress>
       <m-skeleton width="100px" height="20px"></m-skeleton>
@@ -111,27 +113,25 @@ describe("native elements", () => {
     expect(document.querySelector("m-button-group")?.getAttribute("role")).toBe("group")
   })
 
-  it("supports Naive-style button variants, sizes, shapes and loading", () => {
+  it("composes the standalone Button family with the aggregate", () => {
     document.body.innerHTML = `
-      <m-button type="primary" secondary size="large" round>Action</m-button>
-      <m-button type="info" ghost>Info</m-button>
-      <m-button dashed>Dashed</m-button>
-      <m-button type="text">Text</m-button>
+      <m-button type="primary" appearance="secondary" size="large" shape="round">Action</m-button>
+      <m-button type="info" appearance="ghost">Info</m-button>
+      <m-button appearance="dashed">Dashed</m-button>
+      <m-button appearance="text">Text</m-button>
       <m-button loading>Loading</m-button>
-      <m-button circle aria-label="Add">+</m-button>`
-    const loading = document.querySelector("m-button[loading]") as HTMLElement
-    expect(loading.getAttribute("aria-busy")).toBe("true")
-    expect(loading.getAttribute("aria-disabled")).toBe("true")
+      <m-button shape="circle" aria-label="Add">+</m-button>`
+    const loading = document.querySelector("m-button[loading]") as Button
+    expect(loading.control?.getAttribute("aria-busy")).toBe("true")
+    expect(loading.control?.getAttribute("aria-disabled")).toBe("true")
     expect(loading.tabIndex).toBe(-1)
-    expect(loading.querySelector("[data-m-button-spinner]")).not.toBeNull()
+    expect(loading.querySelector("[data-part=spinner]")).not.toBeNull()
     loading.removeAttribute("loading")
-    expect(loading.getAttribute("aria-busy")).toBe("false")
-    expect(loading.querySelector("[data-m-button-spinner]")).toBeNull()
-    const styles = document.getElementById("m-styles")?.textContent ?? ""
-    expect(styles).toContain('m-button[type=warning]')
-    expect(styles).toContain('m-button[secondary]')
-    expect(styles).toContain('m-button[size=large]')
-    expect(styles).toContain('m-button[circle]')
+    expect(loading.control?.hasAttribute("aria-busy")).toBe(false)
+    expect(loading.querySelector("[data-part=spinner]")).toBeNull()
+    expect(customElements.get("m-button")).toBe(Button)
+    expect(builtInElementNames).not.toContain("m-button")
+    expect(builtInElementNames).not.toContain("m-button-group")
   })
 
   it("supports drawer, tooltip and popover overlays", async () => {
@@ -259,12 +259,13 @@ describe("native elements", () => {
         <m-menu-item value="a">A</m-menu-item>
         <m-menu-item value="b">B</m-menu-item>
       </m-menu>`
-    const button = document.querySelector("m-button") as HTMLElement
+    const button = document.querySelector("m-button") as Button
     button.toggleAttribute("disabled", true)
     expect(button.tabIndex).toBe(-1)
-    expect(button.getAttribute("aria-disabled")).toBe("true")
+    expect(button.control?.getAttribute("aria-disabled")).toBe("true")
     button.toggleAttribute("disabled", false)
-    expect(button.tabIndex).toBe(0)
+    expect(button.control?.tabIndex).toBe(0)
+    expect(button.tabIndex).toBe(-1)
 
     const scopedTheme = document.querySelector("m-theme") as HTMLElement
     scopedTheme.setAttribute("name", "reflection-dark")

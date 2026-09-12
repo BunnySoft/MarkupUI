@@ -28,7 +28,7 @@ export function createComponentBrowser(document = globalThis.document, view = gl
   const fragment = document.createDocumentFragment()
 
   function focusControl(element) {
-    const control = element.querySelector("[data-m-button-control], button, a")
+    const control = element.querySelector("[data-part=control], button, a")
     if (control) control.focus()
     else element.focus()
   }

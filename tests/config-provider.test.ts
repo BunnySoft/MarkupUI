@@ -101,7 +101,7 @@ describe("ConfigProvider resolution through native composition", () => {
   it("leaves author settings, controls, listeners and DOM identities intact", () => {
     const root = mount()
     const input = root.querySelector("input")!
-    const button = root.querySelector<HTMLButtonElement>("[data-m-button-control]")!
+    const button = root.querySelector<HTMLButtonElement>("[data-part=control]")!
     const listener = vi.fn()
     button.addEventListener("click", listener)
     input.value = "2027-01-02"

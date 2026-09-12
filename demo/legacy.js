@@ -331,7 +331,7 @@ function updateOutline() {
     heading.id ||= `outline-${panel.id}-${index + 1}`
     const item = document.createElement("m-button")
     item.className = "outline-item"
-    item.setAttribute("quaternary", "")
+    item.setAttribute("appearance", "quaternary")
     item.setAttribute("m-action", "demo.outline")
     item.setAttribute("m-param-target", `#${heading.id}`)
     item.dataset.level = heading.getAttribute("level") ?? "3"
@@ -370,13 +370,13 @@ async function installDemoCards() {
       tools.setAttribute("gap", "xs")
       const spacer = document.createElement("m-spacer")
       const toggle = document.createElement("m-button")
-      toggle.setAttribute("quaternary", "")
+      toggle.setAttribute("appearance", "quaternary")
       toggle.setAttribute("size", "small")
       toggle.setAttribute("m-action", "demo.toggle-source")
       toggle.setAttribute("m-param-target", `#${source.id}`)
       toggle.textContent = "View code"
       const copy = document.createElement("m-button")
-      copy.setAttribute("quaternary", "")
+      copy.setAttribute("appearance", "quaternary")
       copy.setAttribute("size", "small")
       copy.setAttribute("m-action", "demo.copy-source")
       copy.setAttribute("m-param-target", `#${source.id}`)

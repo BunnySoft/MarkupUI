@@ -1,0 +1,14 @@
+.component-docs-nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-block: 1rem; }
+.component-docs pre { overflow: auto; padding: 1rem; background: #f4f5f7; border-radius: 4px; }
+.component-docs code { font-family: ui-monospace, Consolas, monospace; }
+.component-api article + article { margin-block-start: 2rem; }
+.component-api-scroll { max-inline-size: 100%; overflow: auto; margin-block: 1rem; }
+.component-api table { inline-size: 100%; border-collapse: collapse; font-size: .875rem; }
+.component-api caption { text-align: start; font-weight: 600; padding-block: .5rem; }
+.component-api :is(th, td) { text-align: start; vertical-align: top; padding: .6rem; border: 1px solid var(--m-border, #e0e0e6); }
+.component-api th { background: var(--m-bg-muted, #f4f5f7); }
+.component-api td:first-child { font-family: ui-monospace, Consolas, monospace; white-space: nowrap; }
+@media print {
+  .component-api-scroll, .component-docs pre { overflow: visible; }
+  .component-api table { font-size: 9pt; }
+}
