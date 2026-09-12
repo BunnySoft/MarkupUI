@@ -4,7 +4,7 @@ import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { createTree, readTreeHierarchy } from "../src/components/tree/index.js"
 import type { TreeController, TreeLoadResult, TreeOptions } from "../src/components/tree/index.js"
-import { createCheckboxGroup } from "../src/components/checkbox/index.js"
+import { CheckboxGroup } from "../src/components/checkbox/index.js"
 
 const helpers: TreeController[] = []
 const treeCss = readFileSync(resolve("src", "components", "tree", "tree.css"), "utf8")
@@ -346,10 +346,10 @@ describe("refresh, cleanup and independent ownership", () => {
     const { helper, root, get } = fixture()
     vi.resetModules()
     await expect(import("../src/components/tree/index.js").then(api => api.createTree(root))).rejects.toThrow("owner")
-    const fieldset = document.createElement("fieldset"); fieldset.className = "m-checkbox-group"; fieldset.setAttribute("data-checkbox-group", "")
+    const fieldset = new CheckboxGroup()
     fieldset.innerHTML = "<legend>Shared controls</legend>"; root.parentElement!.append(fieldset); fieldset.append(root)
     get("b").checkbox!.setAttribute("data-checkbox", "")
-    expect(() => createCheckboxGroup(fieldset)).toThrow("owner")
+    expect(() => fieldset.refresh()).toThrow("owner")
     helper.disconnect()
   })
   it("keeps separate and nested roots independent", () => {

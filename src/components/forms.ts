@@ -71,9 +71,10 @@ export class MSlider extends MElement {
   public set value(value: number) { if (this.control !== undefined) this.control.valueAsNumber = Number(value) }
 }
 
-export class MCheckbox extends MElement {
+export class MSwitch extends MElement {
   private control?: HTMLInputElement
   public connectedCallback(): void {
+    this.setAttribute("role", "switch")
     if (this.control !== undefined) return
     const label = this.textContent ?? ""
     this.control = this.ownerDocument.createElement("input")
@@ -132,13 +133,6 @@ export class MRadioGroup extends MElement {
     this.querySelectorAll<MRadio>(":scope > m-radio").forEach((radio) => {
       radio.checked = radio.value === value
     })
-  }
-}
-
-export class MSwitch extends MCheckbox {
-  public override connectedCallback(): void {
-    super.connectedCallback()
-    this.setAttribute("role", "switch")
   }
 }
 

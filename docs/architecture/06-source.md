@@ -54,6 +54,12 @@ Input's source-declared native-field base shares real editing mechanics and dire
 The documentation extractor follows that source inheritance up to (but not through)
 `ViewElement`, so each concrete class documents its complete API without runtime reflection.
 
+Checkbox's direct native checkbox API lives in `src/components/checkbox/checkbox.ts`;
+`group.ts` owns the native fieldset's computed selection, constraints and lifecycle.
+The former public group helper is replaced, not wrapped or duplicated. Its native ownership
+symbol remains a concrete boundary with DataTable and Tree selection. Checkbox does not import the
+text-specific `native-input.ts` engine; no hypothetical Radio/Switch sharing chunk is emitted.
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed

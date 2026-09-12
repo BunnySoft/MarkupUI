@@ -82,8 +82,8 @@ export async function generateComponentApi(root, families) {
           : parts.some(part => part.flags & ts.TypeFlags.StringLike) ? "string" : "object"
     const writable = members.some(member => ts.isSetAccessorDeclaration(member) && member.name.getText() === getter.name.getText() && visible(member))
     const invocation = calls(getter)
-    const helper = ["choiceAttribute", "booleanAttribute", "numberAttribute", "hasAttribute", "getAttribute"]
-      .map(name => invocation.find(call => call.expression.name.text === name)).find(Boolean)
+    const helper = kind === "object" ? undefined : ["choiceAttribute", "booleanAttribute", "numberAttribute", "hasAttribute", "getAttribute"]
+      .map(name => invocation.find(call => call.expression.name.text === name && ts.isStringLiteral(call.arguments[0]))).find(Boolean)
     const result = {
       name, type: kind, typeName: checker.typeToString(type), readable: true, writable, nullable,
       attribute: helper ? literal(helper.arguments[0]) : null,
@@ -139,7 +139,7 @@ export async function generateComponentApi(root, families) {
         const properties = members.filter(member => ts.isGetAccessorDeclaration(member) && visible(member))
           .map(member => property(member, members))
         const events = new Map()
-        for (const call of calls(node)) {
+        for (const call of members.flatMap(calls)) {
           if (call.expression.name.text !== "emit" || !ts.isStringLiteral(call.arguments[0])) continue
           const web = call.arguments[0].text
           const event = { name: web.replace(/^m:/, "").replace(/(^|-)([a-z])/g, (_, __, letter) => letter.toUpperCase()),
@@ -159,6 +159,12 @@ export async function generateComponentApi(root, families) {
             ]))
           }
           events.set(web, event)
+        }
+        for (const declaration of tags(node, "event")) {
+          const event = JSON.parse(declaration)
+          if (typeof event.name !== "string" || !["input", "change", "invalid"].includes(event.web)
+            || ["bubbles", "cancelable", "composed"].some(flag => typeof event[flag] !== "boolean")) throw new Error(`Invalid native @event on ${node.name.text}.`)
+          events.set(event.web, event)
         }
         const regions = tags(node, "region").map(value => {
           const region = JSON.parse(value)

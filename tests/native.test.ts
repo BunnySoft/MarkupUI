@@ -23,6 +23,7 @@ import { Divider } from "../src/components/divider/index.js"
 import { Dropdown } from "../src/components/dropdown/index.js"
 import { Heading, Link } from "../src/components/typography/index.js"
 import { Input } from "../src/components/input/index.js"
+import { Checkbox, CheckboxGroup } from "../src/components/checkbox/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -49,6 +50,9 @@ describe("native elements", () => {
     expect(builtInElementNames.some(name => name === "m-dropdown" || name.startsWith("m-dropdown-"))).toBe(false)
     expect(customElements.get("m-dropdown")).toBe(Dropdown)
     expect(customElements.get("m-input")).toBe(Input)
+    expect(customElements.get("m-checkbox")).toBe(Checkbox)
+    expect(customElements.get("m-checkbox-group")).toBe(CheckboxGroup)
+    expect(builtInElementNames).not.toContain("m-checkbox")
     for (const tag of ["m-input", "m-textarea", "m-input-group", "m-input-group-label"]) expect(builtInElementNames).not.toContain(tag)
     const styles = document.getElementById("m-styles")?.textContent ?? ""
     expect(styles).toContain("--m-control-height")
@@ -631,5 +635,55 @@ describe("optional state and actions", () => {
     const firstRadio = document.querySelector("m-radio")
     firstRadio?.querySelector("input")?.click()
     expect(app.store.get("choice")).toBe("a")
+  })
+  it("keeps legacy Checkbox boolean binding separate from native submission strings", async () => {
+    document.body.innerHTML = '<form><m-checkbox m-bind="enabled" name="terms" value="yes" checked>Terms</m-checkbox></form>'
+    await Promise.resolve()
+    const box = document.querySelector<Checkbox>("m-checkbox")!, store = createStore({ enabled: false })
+    const dispose = bind(document.body, store), changes = vi.fn()
+    store.subscribe("enabled", changes)
+    expect([box.checked, box.defaultChecked, box.value]).toEqual([false, true, "yes"])
+    box.click()
+    expect(store.get("enabled")).toBe(true)
+    expect(changes).toHaveBeenCalledOnce()
+    expect(new FormData(document.querySelector("form")!).get("terms")).toBe("yes")
+    store.set("enabled", false)
+    expect(box.checked).toBe(false); expect(box.defaultChecked).toBe(true)
+    box.dispatchEvent(new CustomEvent("m:change", { detail: "not boolean" }))
+    expect(store.get("enabled")).toBe(false)
+    dispose(); box.click(); expect(store.get("enabled")).toBe(false)
+  })
+  it("keeps legacy FormItem validation on checked and forwards native error descriptions", async () => {
+    document.body.innerHTML = '<m-form><m-form-item label="Consent" required><m-checkbox value="yes">Consent</m-checkbox></m-form-item></m-form>'
+    await Promise.resolve()
+    const form = document.querySelector("m-form") as HTMLElement & { validate(): boolean }
+    const box = document.querySelector<Checkbox>("m-checkbox")!
+    expect(form.validate()).toBe(false)
+    expect(box.native.getAttribute("aria-invalid")).toBe("true")
+    expect(box.native.getAttribute("aria-describedby")).toBe(document.querySelector("[data-m-error]")!.id)
+    expect(box.value).toBe("yes")
+    box.checked = true
+    expect(form.validate()).toBe(true)
+    expect(box.native.getAttribute("aria-invalid")).toBe("false")
+  })
+  it("binds explicit Checkbox submission value and computed group selection without child leakage", async () => {
+    document.body.innerHTML = `<m-checkbox m-bind="submission" m-bind-property="value" checked>String</m-checkbox>
+      <m-checkbox-group m-bind="selection"><legend>Choices</legend>
+        <m-checkbox value="a" checked>A</m-checkbox><m-checkbox value="b">B</m-checkbox>
+        <m-checkbox-group><legend>Nested</legend><m-checkbox value="n">Nested</m-checkbox></m-checkbox-group>
+      </m-checkbox-group>`
+    await new Promise(resolve => setTimeout(resolve, 10))
+    const store = createStore({ submission: "yes", selection: ["b"] })
+    const dispose = bind(document.body, store)
+    const box = document.querySelector<Checkbox>("m-checkbox")!, group = document.querySelector<CheckboxGroup>("m-checkbox-group")!
+    expect(box.value).toBe("yes")
+    expect(group.value).toEqual(["b"])
+    group.querySelector<Checkbox>("m-checkbox[value=a]")!.click()
+    await new Promise(resolve => setTimeout(resolve, 10))
+    expect(store.get("selection")).toEqual(["a", "b"])
+    group.querySelector<Checkbox>("m-checkbox[value=n]")!.click()
+    await new Promise(resolve => setTimeout(resolve, 10))
+    expect(store.get("selection")).toEqual(["a", "b"])
+    dispose()
   })
 })

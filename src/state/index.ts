@@ -102,12 +102,14 @@ export function bind(root: ParentNode, store: MStore): () => void {
       disposers.push(store.subscribe(path, update))
     }
     if (twoWayPath) {
-      const nativeField = element.matches("m-input,m-textarea") && twoWayProperty === "value"
-      const events = nativeField ? ["input", "change"] : ["m:input", "m:change"]
+      const nativeCheckbox = element.matches("m-checkbox")
+      const nativeField = nativeCheckbox || element.matches("m-input,m-textarea") && twoWayProperty === "value"
+      const checkboxGroup = element.matches("m-checkbox-group") && twoWayProperty === "value"
+      const events = nativeCheckbox ? ["change"] : nativeField ? ["input", "change"] : checkboxGroup ? ["m:checkbox-group-change"] : ["m:input", "m:change"]
       const listener = (event: Event) => {
-        if (event.target !== (nativeField ? element.querySelector("[data-input-control]") : element)) return
+        if (event.target !== (nativeField ? element.querySelector(nativeCheckbox ? "[data-checkbox]" : "[data-input-control]") : element)) return
         const detail = (event as CustomEvent).detail
-        const value = !nativeField && detail !== undefined ? detail : Reflect.get(element, twoWayProperty)
+        const value = !nativeField && !checkboxGroup && detail !== undefined ? detail : Reflect.get(element, twoWayProperty)
         store.set(twoWayPath, value)
       }
       events.forEach(name => element.addEventListener(name, listener))

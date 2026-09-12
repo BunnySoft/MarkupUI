@@ -1,6 +1,9 @@
 # Checkbox and CheckboxGroup: native checkedness
 
 > **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
+> **Current replacement:** [Checkbox family demo and source-generated API](../../../demo/components/checkbox.html).
+> Public `createCheckboxGroup`/controller exports and the competing `MCheckbox` constructor
+> have been removed. Native CSS hooks and the DataTable/Tree ownership boundary remain internal mechanics.
 
 **🟢 Verified for the retained native Checkbox/CheckboxGroup scope, not framework parity.**
 Individual checkboxes are **CSS-only native inputs and labels**. Only useful group limits,

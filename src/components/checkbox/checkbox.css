@@ -1,5 +1,7 @@
 :where([data-m-theme="light"]) { --_m-checkbox-scheme: light; }
 :where([data-m-theme="dark"]) { --_m-checkbox-scheme: dark; }
+m-checkbox { display: inline-block; vertical-align: top; }
+m-checkbox-group { display: block; }
 .m-checkbox, .m-checkbox-group {
   box-sizing: border-box;
   color-scheme: var(--_m-checkbox-scheme, light);
@@ -41,12 +43,12 @@
 }
 .m-checkbox-group > legend { padding-inline: 8px; overflow-wrap: anywhere; max-inline-size: 100%; }
 .m-checkbox-group__items { display: flex; flex-wrap: wrap; }
-:is(.m-checkbox, .m-checkbox-group)[data-size="small"] { --_m-checkbox-font: 14px; --_m-checkbox-size: 14px; }
-:is(.m-checkbox, .m-checkbox-group)[data-size="medium"] { --_m-checkbox-font: 14px; --_m-checkbox-size: 16px; }
-:is(.m-checkbox, .m-checkbox-group)[data-size="large"] { --_m-checkbox-font: 15px; --_m-checkbox-size: 18px; }
-.m-checkbox-group[data-status="error"] { --_m-checkbox-border: var(--m-color-error, light-dark(#d03050, #e88080)); }
-.m-checkbox-group[data-status="warning"] { --_m-checkbox-border: var(--m-color-warning, light-dark(#f0a020, #f2c97d)); }
-.m-checkbox[hidden], .m-checkbox [hidden],
+:is(.m-checkbox, .m-checkbox-group, m-checkbox, m-checkbox-group):is([data-size="small"], [size="small"]) { --_m-checkbox-font: 14px; --_m-checkbox-size: 14px; }
+:is(.m-checkbox, .m-checkbox-group, m-checkbox, m-checkbox-group):is([data-size="medium"], [size="medium"]) { --_m-checkbox-font: 14px; --_m-checkbox-size: 16px; }
+:is(.m-checkbox, .m-checkbox-group, m-checkbox, m-checkbox-group):is([data-size="large"], [size="large"]) { --_m-checkbox-font: 15px; --_m-checkbox-size: 18px; }
+.m-checkbox-group[data-status="error"], m-checkbox-group[status="error"] { --_m-checkbox-border: var(--m-color-error, light-dark(#d03050, #e88080)); }
+.m-checkbox-group[data-status="warning"], m-checkbox-group[status="warning"] { --_m-checkbox-border: var(--m-color-warning, light-dark(#f0a020, #f2c97d)); }
+m-checkbox[hidden], m-checkbox-group[hidden], .m-checkbox[hidden], .m-checkbox [hidden],
 .m-checkbox-group[hidden], .m-checkbox-group [hidden] { display: none !important; }
 @media (forced-colors: active) {
   .m-checkbox { color: CanvasText; }

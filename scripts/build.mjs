@@ -37,7 +37,7 @@ classicEntries.icon = "global.ts"
 classicEntries.typography = "global.ts"
 classicEntries.space = "global.ts"
 classicEntries.flex = "global.ts"
-const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500]])
+const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750]])
 await generateComponentApi(root, [...viewComponents.keys()])
 
 function corePlugin(format) {
@@ -207,8 +207,8 @@ await Promise.all([
 await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
   const source = resolve(root, "src", "components", name, `${name}.css`)
   const output = resolve(dist, `markup-ui-${name}.css`)
-  if (name === "button") {
-    // Keep authored motion CSS readable without increasing its distributed payload ceiling.
+  if (name === "button" || name === "checkbox") {
+    // Preserve authored CSS syntax while trimming distribution whitespace.
     const { code } = await transform(await readFile(source, "utf8"), {
       loader: "css",
       minifyWhitespace: true,

@@ -34,7 +34,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Auto Complete | `AutoComplete` | Contract pending |
 | Cascader | `Cascader` | Contract pending |
 | Color Picker | `ColorPicker` | Contract pending |
-| Checkbox | `Checkbox`, `CheckboxGroup` | Contract pending |
+| Checkbox | `Checkbox`, `CheckboxGroup`; native checkedness, labels, forms and computed selection | [Demo and API](../../demo/components/checkbox.html) |
 | Date Picker | `DatePicker` | Contract pending |
 | Dynamic Input | `DynamicInput` | Contract pending |
 | Dynamic Tags | `DynamicTags` | Contract pending |

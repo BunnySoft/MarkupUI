@@ -6,6 +6,7 @@ import { createForm } from "../src/components/form/index.js"
 import type { FormController, FormItemOptions, FormValidator, FormValidatorResult } from "../src/components/form/index.js"
 import { createInput } from "../src/components/native-input.js"
 import { createRate } from "../src/components/rate/index.js"
+import { Checkbox } from "../src/components/checkbox/index.js"
 
 const helpers: { disconnect(): void }[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 15))
@@ -35,6 +36,23 @@ function deferred() {
   return { promise, resolve, reject }
 }
 afterEach(() => { helpers.splice(0).reverse().forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
+
+describe("canonical Checkbox composition", () => {
+  it("uses the original native owner for form validation, strings and reset", async () => {
+    document.body.innerHTML = '<form><div id="item"><m-checkbox name="consent" value="yes" checked required>Consent</m-checkbox><p id="feedback" hidden></p></div></form>'
+    await flush()
+    const form = document.querySelector("form")!, box = document.querySelector<Checkbox>("m-checkbox")!, native = box.native
+    const helper = createForm(form, { items: [{ key: "consent", controls: [native], feedback: document.getElementById("feedback")!, element: document.getElementById("item")! }] })
+    helpers.push(helper)
+    expect((await helper.validate()).status).toBe("valid")
+    box.checked = false
+    expect((await helper.validate()).status).toBe("invalid")
+    form.reset(); await flush()
+    expect((await helper.validate()).status).toBe("valid")
+    expect(box.native).toBe(native)
+    expect(new FormData(form).get("consent")).toBe("yes")
+  })
+})
 
 describe("Form stylesheet contract", () => {
   const css = readFileSync(join("src", "components", "form", "form.css"), "utf8")

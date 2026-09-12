@@ -218,6 +218,7 @@ describe("Tooltip description semantics over shared native Popover", () => {
     "<span role='button'>Fake button</span>", "<video controls></video>",
     "<iframe></iframe>", "<x-widget></x-widget>", "<script>void 0</script>",
     "<label for='external-submit'>Forwarded action</label>",
+    "<m-checkbox>Interactive checkbox</m-checkbox>",
   ])("rejects interactive/custom content %s without modifying it", markup => {
     const { trigger, panel } = nodes()
     panel.innerHTML = `Description ${markup}`

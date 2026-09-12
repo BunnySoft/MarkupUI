@@ -1,6 +1,6 @@
 # 7. Small core and selectable components
 
-**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex and Input, with explicit payload ceilings.
+**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex, Input and Checkbox, with explicit payload ceilings.
 The rollout continues component-by-component.**
 Follow the useful jQuery/plugin pattern: load one small core, then only the features the
 application needs. This is a packaging and extension pattern, not a dependency on jQuery.
@@ -62,7 +62,7 @@ Keep approved budgets unless a measured change is explicitly accepted.
 The implemented entries are `@dataengine/markup-ui/core`, `@dataengine/markup-ui/avatar`,
 `@dataengine/markup-ui/button`, `@dataengine/markup-ui/card`, `@dataengine/markup-ui/carousel`,
 `@dataengine/markup-ui/collapse`, `@dataengine/markup-ui/divider`, `@dataengine/markup-ui/dropdown`,
-`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography`, `@dataengine/markup-ui/space`, `@dataengine/markup-ui/flex` and `@dataengine/markup-ui/input`.
+`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography`, `@dataengine/markup-ui/space`, `@dataengine/markup-ui/flex`, `@dataengine/markup-ui/input` and `@dataengine/markup-ui/checkbox`.
 ESM uses `markup-ui-core.js`; classic scripts load `markup-ui-core.global.js` before
 `markup-ui-avatar.global.js`, `markup-ui-button.global.js`, `markup-ui-card.global.js`,
 `markup-ui-carousel.global.js`, `markup-ui-collapse.global.js`, `markup-ui-divider.global.js`,
@@ -79,6 +79,14 @@ the Input ESM/classic ceilings remain 4,000 gzip bytes each, shared native mecha
 The retained `.m-input` CSS skin is also used by unmigrated native controls; do not import
 Input registration just to access their internal helper. The aggregate no longer registers
 legacy `m-input`/`m-textarea` or styles their native fields.
+
+Checkbox imports only core. Classic loading is `markup-ui-core.global.js` then
+`markup-ui-checkbox.global.js`, plus `markup-ui-checkbox.css`. The two own-tag classes
+share one family entry and the existing native checkbox CSS hooks; there is no additional
+native-control chunk, text-input engine or helper registration. Each JS ceiling remains
+3,500 gzip bytes and CSS remains 1,000; combined core-plus-family runtime has a 4,750-byte
+ceiling in either format. CSS distribution trims whitespace only. The manifest counts both
+runtime files plus CSS. Radio/Switch are not migrated or selected by this entry.
 
 ## References
 

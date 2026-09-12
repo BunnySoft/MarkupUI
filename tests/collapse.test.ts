@@ -301,6 +301,13 @@ describe("direct Collapse family", () => {
     expect(Object.hasOwn(root, "expandedKeys")).toBe(false)
     expect(Object.hasOwn(item("one"), "disabled")).toBe(false)
   })
+  it("rejects Checkbox as interactive passive-header content", () => {
+    const { root, item } = canonical({}, false)
+    item("one").querySelector("m-collapse-header")!.innerHTML = "<m-checkbox>Checkbox</m-checkbox>"
+    document.body.append(root)
+    expect(root.state).toBe("invalid")
+    expect(item("one").querySelector("summary")).toBeNull()
+  })
 })
 
 describe("native Collapse and CollapseItem anatomy", () => {

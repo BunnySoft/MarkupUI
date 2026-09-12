@@ -16,6 +16,7 @@ in the target inventory.
 11. [Space demo and API](../../demo/components/space.html): typed spacing, alignment and wrapping of author-owned native content.
 12. [Flex demo and API](../../demo/components/flex.html): native flex alignment, visual reversal and typed gaps without generated items.
 13. [Input demo and API](../../demo/components/input.html): Input, Textarea, InputGroup and InputGroupLabel; native editing/defaults/forms, clear/reveal/count and lifecycle.
+14. [Checkbox demo and API](../../demo/components/checkbox.html): Checkbox and CheckboxGroup; native checked/default/mixed state, labels, form ownership and live selection constraints.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
@@ -37,6 +38,7 @@ maintain a second Markdown copy of their API tables or usage examples.
 | Use Space | `@dataengine/markup-ui/space` and its CSS; ESM imports core automatically. |
 | Use Flex | `@dataengine/markup-ui/flex` and its CSS; ESM imports core automatically. |
 | Use Input/Textarea and groups | `@dataengine/markup-ui/input` and its CSS; ESM imports core and internal native-field mechanics automatically. Public exports are the four classes, `registerInput`, `InputType`, `InputSize`, `InputStatus` and `InputCount`. |
+| Use Checkbox/CheckboxGroup | `@dataengine/markup-ui/checkbox` and its CSS; ESM imports only core. Public exports are the two classes, `registerCheckbox`, `CheckboxSize`, `CheckboxStatus`, `CheckboxGroupOptions` and `CheckboxGroupChange`. |
 | Use classic scripts | Core first, then the selected component scripts and CSS. |
 
 No jQuery dependency, query wrapper, state/binding runtime or all-components bundle is
@@ -49,6 +51,13 @@ Input classic scripts require `markup-ui-core.global.js`, then
 internal shared mechanics, not the former public `createInput` helper. The manifest includes
 all runtime dependencies and CSS; selecting Input does not select Button, Icon, Typography,
 the aggregate or a form/binding engine.
+
+Checkbox classic loading is `markup-ui-core.global.js` then `markup-ui-checkbox.global.js`.
+There is no native-input dependency or public `createCheckboxGroup` controller. The aggregate
+no longer competes for `m-checkbox`; select the canonical Checkbox family explicitly.
+The optional state bridge keeps Checkbox's existing boolean `m-bind` on `checked`;
+`value` is now explicitly the native submission string. CheckboxGroup's `value` is a live
+DOM-order selection, including prechecked and disabled members, rather than a stored default.
 
 ## References
 

@@ -5,7 +5,7 @@ import { gzipSync } from "node:zlib"
 import { createDataTable } from "../src/components/data-table/index.js"
 import type { DataTableController, DataTableOptions } from "../src/components/data-table/index.js"
 import { createForm } from "../src/components/form/index.js"
-import { createCheckboxGroup } from "../src/components/checkbox/index.js"
+import { CheckboxGroup } from "../src/components/checkbox/index.js"
 
 const controllers: DataTableController[] = []
 const baseCss = readFileSync(join("src", "components", "table", "table.css"), "utf8")
@@ -273,20 +273,20 @@ describe("identity, structure and refresh", () => {
   it("protects ownership across repeated binding and CheckboxGroup overlap", () => {
     const { root } = fixture()
     expect(() => createDataTable(root, { columns: [] })).toThrow("unowned")
-    const fieldset = document.createElement("fieldset"); fieldset.className = "m-checkbox-group"; fieldset.dataset.checkboxGroup = ""
+    const fieldset = new CheckboxGroup()
     fieldset.innerHTML = '<legend>Native group</legend><label><input type="checkbox" data-checkbox value="a">A</label>'
-    document.body.append(fieldset); const group = createCheckboxGroup(fieldset)
+    document.body.append(fieldset); fieldset.refresh()
     expect(() => fixture({}, root => { const check = root.querySelector("[data-data-check]")!; const owned = fieldset.querySelector("input")!; owned.dataset.dataCheck = ""; check.replaceWith(owned) })).toThrow("CheckboxGroup")
-    group.disconnect()
+    fieldset.remove()
   })
   it("also prevents a later CheckboxGroup from stealing a Data Table checkbox", () => {
     const { helper, root, check } = fixture()
-    const fieldset = document.createElement("fieldset"); fieldset.className = "m-checkbox-group"; fieldset.dataset.checkboxGroup = ""
+    const fieldset = new CheckboxGroup()
     fieldset.innerHTML = "<legend>Outer checkbox owner</legend>"
     root.before(fieldset); fieldset.append(root); check("a").dataset.checkbox = ""
-    expect(() => createCheckboxGroup(fieldset)).toThrow("owner")
+    expect(() => fieldset.refresh()).toThrow("owner")
     helper.disconnect()
-    const group = createCheckboxGroup(fieldset); group.disconnect()
+    fieldset.refresh(); fieldset.remove()
   })
   it("keeps nested Data Table owners independent", () => {
     const parent = fixture(), outerSource = parent.helper.state.sourceKeys

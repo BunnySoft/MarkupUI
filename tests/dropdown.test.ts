@@ -615,6 +615,7 @@ describe("authored menu semantics and validation", () => {
     "<input>", "<label for='outside'>Forward action</label>", "<button type='button'>Nested action</button>",
     "<span role='button'>Fake action</span>", "<span tabindex='0'>Focus target</span>",
     "<span contenteditable>Editor</span>", "<x-widget></x-widget>", "<svg><a href='#'>SVG link</a></svg>",
+    "<m-checkbox>Interactive checkbox</m-checkbox>",
   ])("rejects interactive/custom menuitem descendants %s", markup => {
     const { trigger, menu, edit } = nodes()
     edit.innerHTML = `Edit ${markup}`

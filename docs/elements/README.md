@@ -24,8 +24,10 @@ Separate a defined or approved contract from implemented and validated code.
 All seven initial families use the thin shared core and source-generated demo API data.
 Avatar, Button, Card, Carousel, Collapse, Divider and Dropdown are implemented with
 approved payload ceilings.
-Icon/IconWrapper, Typography, Space, Flex and Input also follow this pattern; the inventory links to their current demo/API pages.
+Icon/IconWrapper, Typography, Space, Flex, Input and Checkbox also follow this pattern; the inventory links to their current demo/API pages.
 Input retains one actual native input/textarea as the editing, validation, focus and form owner.
+Checkbox retains native checkbox/label and fieldset/legend owners; CheckboxGroup value is
+computed live selection, not configured state with an empty-array default.
 The initial batch establishes the pattern; the remaining inventory requires its own
 contracts and dependency-aware implementation sequence.
 
