@@ -24,12 +24,14 @@ Separate a defined or approved contract from implemented and validated code.
 All seven initial families use the thin shared core and source-generated demo API data.
 Avatar, Button, Card, Carousel, Collapse, Divider and Dropdown are implemented with
 approved payload ceilings.
-Icon/IconWrapper, Typography, Space, Flex, Input, Checkbox and Radio also follow this pattern; the inventory links to their current demo/API pages.
+Icon/IconWrapper, Typography, Space, Flex, Input, Checkbox, Radio and Switch also follow this pattern; the inventory links to their current demo/API pages.
 Input retains one actual native input/textarea as the editing, validation, focus and form owner.
 Checkbox retains native checkbox/label and fieldset/legend owners; CheckboxGroup value is
 computed live selection, not configured state with an empty-array default.
 Radio/RadioButton retain actual radio/label owners; RadioGroup validates one complete native
 name/form group and computes current string/null selection without an exclusivity or keyboard engine.
+Switch retains one binary native checkbox with the sole switch role, silent programmatic writes,
+native defaults/forms and reversible loading; no async checked-update or readonly API is invented.
 The initial batch establishes the pattern; the remaining inventory requires its own
 contracts and dependency-aware implementation sequence.
 

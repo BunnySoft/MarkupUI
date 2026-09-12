@@ -102,14 +102,14 @@ export function bind(root: ParentNode, store: MStore): () => void {
       disposers.push(store.subscribe(path, update))
     }
     if (twoWayPath) {
-      const nativeCheckbox = element.matches("m-checkbox")
+      const nativeCheckbox = element.matches("m-checkbox,m-switch")
       const nativeRadio = element.matches("m-radio,m-radio-button")
       const nativeField = nativeCheckbox || nativeRadio || element.matches("m-input,m-textarea") && twoWayProperty === "value"
       const checkboxGroup = element.matches("m-checkbox-group") && twoWayProperty === "value"
       const radioGroup = element.matches("m-radio-group") && twoWayProperty === "value"
       const events = nativeCheckbox || nativeRadio ? ["change"] : nativeField ? ["input", "change"] : checkboxGroup ? ["m:checkbox-group-change"] : radioGroup ? ["m:radio-group-change"] : ["m:input", "m:change"]
       const listener = (event: Event) => {
-        if (event.target !== (nativeField ? element.querySelector(nativeCheckbox ? "[data-checkbox]" : nativeRadio ? "[data-radio]" : "[data-input-control]") : element)) return
+        if (event.target !== (nativeField ? element.querySelector(nativeCheckbox ? element.matches("m-switch") ? "[data-switch-control]" : "[data-checkbox]" : nativeRadio ? "[data-radio]" : "[data-input-control]") : element)) return
         const detail = (event as CustomEvent).detail
         const value = !nativeField && !checkboxGroup && !radioGroup && detail !== undefined ? detail : Reflect.get(element, twoWayProperty)
         store.set(twoWayPath, value)

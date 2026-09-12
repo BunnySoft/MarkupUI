@@ -12,8 +12,7 @@ function initialize() {
   })
 
   const loadingCard = document.getElementById("loading-card")
-  const loadingControl = document.getElementById("loading-control")
-  globalThis.MarkupUISwitch.createSwitch(document.getElementById("loading-switch"))
+  const loadingControl = document.getElementById("loading-switch")
 
   function renderLoading() {
     const loading = loadingControl.checked

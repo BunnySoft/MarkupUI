@@ -1,6 +1,6 @@
 import { MElement } from "../core/element.js"
 import { MApp, MField, MGrid, MSemantic, MTheme } from "./foundation.js"
-import { MAutocomplete, MForm, MFormItem, MSelect, MSlider, MSwitch } from "./forms.js"
+import { MAutocomplete, MForm, MFormItem, MSelect, MSlider } from "./forms.js"
 import { MAccordionItem, MInclude } from "./dynamic.js"
 import { MDialog, MDrawer, MPopover, MTooltip } from "./overlays.js"
 import { MMenu, MMenuItem, MPagination, MSteps, MTabs, MTab, MDescriptions, MDescriptionItem, MStatistic, MTree, MTreeNode } from "./navigation.js"
@@ -30,7 +30,6 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-select", MSelect],
   ["m-autocomplete", MAutocomplete],
   ["m-slider", MSlider],
-  ["m-switch", MSwitch],
   ["m-form-item", MFormItem],
   ["m-form", MForm],
   ["m-grid", MGrid],

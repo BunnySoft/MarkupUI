@@ -6,6 +6,8 @@
   <title>MarkupUI native Form and FormItem</title>
   <link rel="stylesheet" href="../../dist/markup-ui-form.css">
   <link rel="stylesheet" href="../../dist/markup-ui-input.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-switch.css">
+  <script type="module" src="../../dist/markup-ui-switch.js"></script>
   <link rel="stylesheet" href="./form.css">
   <script defer src="../../dist/markup-ui-form.global.js"></script>
   <script type="module" src="./form.js"></script>
@@ -23,6 +25,10 @@
       </div>
       <p id="name-help">Try “reserved” for a local asynchronous error. Editing any form field cancels outstanding checks.</p>
       <p class="m-form-item__feedback" id="name-error" hidden></p>
+    </div>
+    <div class="m-form-item" id="consent-item">
+      <m-switch id="consent-switch" name="consent" value="yes" checked required>Required native Switch consent</m-switch>
+      <p class="m-form-item__feedback" id="consent-error" hidden></p>
     </div>
     <div class="m-form-grid">
       <div class="m-form-item m-form-item-gi" id="email-item">

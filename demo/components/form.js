@@ -1,4 +1,5 @@
 import { createInput } from "../../dist/markup-ui-native-input.js"
+import "../../dist/markup-ui-switch.js"
 
 const form = document.querySelector("#profile")
 const field = id => document.getElementById(id)
@@ -9,6 +10,7 @@ const item = (key, controls, validator) => ({
   ...(validator ? { validator } : {}),
 })
 const helper = MarkupUIForm.createForm(form, { items: [
+  item("consent", [field("consent-switch").native]),
   item("name", [field("name")], ({ fields, signal }) => new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
       signal.removeEventListener("abort", abort)

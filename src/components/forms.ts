@@ -71,24 +71,6 @@ export class MSlider extends MElement {
   public set value(value: number) { if (this.control !== undefined) this.control.valueAsNumber = Number(value) }
 }
 
-export class MSwitch extends MElement {
-  private control?: HTMLInputElement
-  public connectedCallback(): void {
-    this.setAttribute("role", "switch")
-    if (this.control !== undefined) return
-    const label = this.textContent ?? ""
-    this.control = this.ownerDocument.createElement("input")
-    this.control.type = "checkbox"
-    this.control.checked = this.hasAttribute("checked")
-    const text = this.ownerDocument.createElement("span")
-    text.textContent = label
-    this.control.addEventListener("change", () => this.emit("change", this.control?.checked))
-    this.replaceChildren(this.control, text)
-  }
-  public get checked(): boolean { return this.control?.checked ?? false }
-  public set checked(value: boolean) { if (this.control !== undefined) this.control.checked = value }
-}
-
 export class MFormItem extends MElement {
   private error: HTMLElement | undefined
   public connectedCallback(): void {

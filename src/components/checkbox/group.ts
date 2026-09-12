@@ -116,7 +116,7 @@ export class CheckboxGroup extends ViewElement {
       || ![...field.children].find(node => node.localName === "legend")?.textContent?.trim()) throw new TypeError("Keep a native fieldset with a nonempty first legend and no role/tabindex.")
     const boxes = [...field.querySelectorAll<Checkbox>("m-checkbox")].filter(box => box.closest("m-checkbox-group") === this)
     boxes.forEach(box => box.refresh())
-    const nodes = [...field.querySelectorAll<Owned>("[data-checkbox]")].filter(control => control.closest("m-checkbox-group") === this)
+    const nodes = [...field.querySelectorAll<Owned>("[data-checkbox]")].filter(control => control.closest("m-checkbox-group") === this && !control.closest("m-switch"))
     const keys = new Set<string>()
     for (const control of nodes) {
       if (!(control instanceof HTMLInputElement) || control.type !== "checkbox" || control.hasAttribute("role")
@@ -195,7 +195,7 @@ export class CheckboxGroup extends ViewElement {
   }
   private target(event: Event): Owned | null {
     const control = event.target
-    return control instanceof HTMLInputElement && control.hasAttribute("data-checkbox") && control.closest("m-checkbox-group") === this ? control : null
+    return control instanceof HTMLInputElement && control.hasAttribute("data-checkbox") && control.closest("m-checkbox-group") === this && !control.closest("m-switch") ? control : null
   }
   private onClick = (event: Event): void => {
     const control = this.target(event)

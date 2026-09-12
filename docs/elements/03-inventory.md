@@ -47,7 +47,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Rate | `Rate` | Contract pending |
 | Select | `Select` | Contract pending |
 | Slider | `Slider` | Contract pending |
-| Switch | `Switch` | Contract pending |
+| Switch | `Switch`; binary native checked/default state, loading, labels and forms | [Demo and API](../../demo/components/switch.html) |
 | Time Picker | `TimePicker` | Contract pending |
 | Transfer | `Transfer` | Contract pending |
 | Tree Select | `TreeSelect` | Contract pending |

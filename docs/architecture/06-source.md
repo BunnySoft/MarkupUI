@@ -66,6 +66,11 @@ Radio and RadioButton's direct native accessors live in `src/components/radio/ra
 by unmigrated Rate. It has no registration constructors, text-input code or public helper
 package export. Selected Radio and Rate entries share this dependency explicitly.
 
+Switch's direct native accessors and existing reversible loading mechanics live together in
+`src/components/switch/switch.ts`. Its native checkbox owns the sole switch role and form/
+focus behavior; authored controls and content survive lifecycle changes. There is no
+separate helper facade, async request engine or speculative shared native-control bundle.
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed

@@ -25,6 +25,7 @@ import { Heading, Link } from "../src/components/typography/index.js"
 import { Input } from "../src/components/input/index.js"
 import { Checkbox, CheckboxGroup } from "../src/components/checkbox/index.js"
 import { Radio, RadioGroup, RadioButton } from "../src/components/radio/index.js"
+import { Switch } from "../src/components/switch/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -54,6 +55,8 @@ describe("native elements", () => {
     expect(customElements.get("m-checkbox")).toBe(Checkbox)
     expect(customElements.get("m-checkbox-group")).toBe(CheckboxGroup)
     expect(builtInElementNames).not.toContain("m-checkbox")
+    expect(builtInElementNames).not.toContain("m-switch")
+    expect(customElements.get("m-switch")).toBe(Switch)
     for (const Type of [Radio, RadioGroup, RadioButton]) {
       expect(customElements.get(Type.tag)).toBe(Type)
       expect(builtInElementNames).not.toContain(Type.tag)

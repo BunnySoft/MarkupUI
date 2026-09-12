@@ -18,6 +18,7 @@ in the target inventory.
 13. [Input demo and API](../../demo/components/input.html): Input, Textarea, InputGroup and InputGroupLabel; native editing/defaults/forms, clear/reveal/count and lifecycle.
 14. [Checkbox demo and API](../../demo/components/checkbox.html): Checkbox and CheckboxGroup; native checked/default/mixed state, labels, form ownership and live selection constraints.
 15. [Radio demo and API](../../demo/components/radio.html): Radio, RadioGroup and RadioButton; native exclusivity, checked/default state, forms and computed group selection.
+16. [Switch demo and API](../../demo/components/switch.html): one binary native owner, checked/default state, focus-safe loading, forms, labels and lifecycle.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
@@ -41,6 +42,7 @@ maintain a second Markdown copy of their API tables or usage examples.
 | Use Input/Textarea and groups | `@dataengine/markup-ui/input` and its CSS; ESM imports core and internal native-field mechanics automatically. Public exports are the four classes, `registerInput`, `InputType`, `InputSize`, `InputStatus` and `InputCount`. |
 | Use Checkbox/CheckboxGroup | `@dataengine/markup-ui/checkbox` and its CSS; ESM imports only core. Public exports are the two classes, `registerCheckbox`, `CheckboxSize`, `CheckboxStatus`, `CheckboxGroupOptions` and `CheckboxGroupChange`. |
 | Use Radio/RadioGroup/RadioButton | `@dataengine/markup-ui/radio` and its CSS; ESM imports core and internal native-radio mechanics. Public exports are the three classes, `registerRadio`, `RadioSize`, `RadioStatus` and `RadioGroupChange`. |
+| Use Switch | `@dataengine/markup-ui/switch` and its CSS; ESM imports only core. Public exports are `Switch`, `registerSwitch`, `SwitchSize` and `SwitchStatus`. |
 | Use classic scripts | Core first, then the selected component scripts and CSS. |
 
 No jQuery dependency, query wrapper, state/binding runtime or all-components bundle is
@@ -68,6 +70,12 @@ public `createRadioGroup` helper or text-input dependency. The aggregate no long
 registers legacy `m-radio`/`m-radio-group`; select the canonical family explicitly.
 The optional bridge keeps Radio/RadioButton boolean `m-bind` on `checked`, explicit
 submission-string binding on `value`, and RadioGroup's computed string/null selection.
+
+Switch classic loading is `markup-ui-core.global.js`, then `markup-ui-switch.global.js`.
+There is no public `createSwitch` helper, competing aggregate registration or native-input/
+native-radio dependency. Select the canonical family explicitly. The optional state bridge
+keeps boolean `m-bind` on `checked`, with explicit `m-bind-property="value"` for the native
+submission string. Loading is an explicit flag, not a promise or checked-update guard.
 
 ## References
 

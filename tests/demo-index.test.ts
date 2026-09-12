@@ -9,7 +9,7 @@ import { createComponentOutline } from "../demo/component-outline.js"
 import { generateComponentApi } from "../scripts/component-api.mjs"
 import * as cardRuntime from "../src/components/card/index.js"
 import * as typographyRuntime from "../src/components/typography/index.js"
-import { createSwitch } from "../src/components/switch/index.js"
+import { Switch } from "../src/components/switch/index.js"
 import { createTabs } from "../src/components/tabs/index.js"
 
 const html = readFileSync(resolve("demo", "index.html"), "utf8")
@@ -617,32 +617,25 @@ describe("Card documentation and composition", () => {
     expect(cardHtml).not.toContain("data-m-card")
   })
 
-  it("initializes after DOMContentLoaded with existing Switch/Tabs controllers and generated API", async () => {
+  it("initializes after DOMContentLoaded with canonical Switch, Tabs and generated API", async () => {
     const parsed = new DOMParser().parseFromString(cardHtml, "text/html")
     document.body.replaceChildren(document.importNode(parsed.querySelector("main")!, true))
     const docs = JSON.parse(readFileSync(resolve("demo", "api", "card.json"), "utf8"))
     const owners: Array<{ disconnect(): void }> = []
-    const switchFactory = vi.fn((root: HTMLElement) => {
-      const owner = createSwitch(root)
-      owners.push(owner)
-      return owner
-    })
     const tabsFactory = vi.fn((root: HTMLElement) => {
       const owner = createTabs(root)
       owners.push(owner)
       return owner
     })
     vi.stubGlobal("MarkupUICard", cardRuntime)
-    vi.stubGlobal("MarkupUISwitch", { createSwitch: switchFactory })
     vi.stubGlobal("MarkupUITabs", { createTabs: tabsFactory })
     vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, json: async () => docs })))
     const ready = vi.spyOn(document, "readyState", "get").mockReturnValue("loading")
     try {
       await import("../demo/components/card.js")
-      expect(switchFactory).not.toHaveBeenCalled()
       document.dispatchEvent(new Event("DOMContentLoaded"))
       await vi.waitFor(() => expect(document.querySelectorAll("#card-api [data-api-type]")).toHaveLength(7))
-      expect(switchFactory).toHaveBeenCalledOnce()
+      expect(document.getElementById("loading-switch")).toBeInstanceOf(Switch)
       expect(tabsFactory).toHaveBeenCalledOnce()
       const card = document.querySelector("#closable-card")!
       card.querySelector<HTMLButtonElement>("[data-part=close]")!.click()

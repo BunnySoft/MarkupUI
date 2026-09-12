@@ -7,6 +7,7 @@ import type { FormController, FormItemOptions, FormValidator, FormValidatorResul
 import { createInput } from "../src/components/native-input.js"
 import { createRate } from "../src/components/rate/index.js"
 import { Checkbox } from "../src/components/checkbox/index.js"
+import { Switch } from "../src/components/switch/index.js"
 
 const helpers: { disconnect(): void }[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 15))
@@ -51,6 +52,22 @@ describe("canonical Checkbox composition", () => {
     expect((await helper.validate()).status).toBe("valid")
     expect(box.native).toBe(native)
     expect(new FormData(form).get("consent")).toBe("yes")
+  })
+
+  describe("canonical Switch composition", () => {
+    it("uses the original Switch native owner for validation, loading, strings and reset", async () => {
+      document.body.innerHTML = '<form><div id="item"><m-switch name="consent" value="yes" checked required>Consent</m-switch><p id="feedback" hidden></p></div></form>'
+      await flush()
+      const form = document.querySelector("form")!, toggle = document.querySelector<Switch>("m-switch")!, native = toggle.native
+      const helper = createForm(form, { items: [{ key: "consent", controls: [native], feedback: document.getElementById("feedback")!, element: document.getElementById("item")! }] })
+      helpers.push(helper)
+      expect((await helper.validate()).status).toBe("valid")
+      toggle.loading = true; expect(new FormData(form).get("consent")).toBe("yes")
+      toggle.checked = false; expect((await helper.validate()).status).toBe("invalid")
+      form.reset(); await flush()
+      expect((await helper.validate()).status).toBe("valid")
+      expect(toggle.native).toBe(native); expect(toggle.loading).toBe(true)
+    })
   })
 })
 

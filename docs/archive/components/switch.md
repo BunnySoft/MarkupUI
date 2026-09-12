@@ -2,6 +2,9 @@
 
 > **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
 
+Current implementation: [canonical Switch demo and source-generated API](../../../demo/components/switch.html).
+The factory/controller and legacy MSwitch described below have been removed.
+
 **🟢 Verified for the retained native Switch scope, with explicit omissions.**
 The actual `input[type=checkbox][role=switch]` owns checkedness, focus, labels and forms.
 External CSS paints its rail/thumb. The optional helper adds only focus-safe loading,

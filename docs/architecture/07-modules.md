@@ -1,6 +1,6 @@
 # 7. Small core and selectable components
 
-**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex, Input, Checkbox and Radio, with explicit payload ceilings.
+**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex, Input, Checkbox, Radio and Switch, with explicit payload ceilings.
 The rollout continues component-by-component.**
 Follow the useful jQuery/plugin pattern: load one small core, then only the features the
 application needs. This is a packaging and extension pattern, not a dependency on jQuery.
@@ -62,7 +62,7 @@ Keep approved budgets unless a measured change is explicitly accepted.
 The implemented entries are `@dataengine/markup-ui/core`, `@dataengine/markup-ui/avatar`,
 `@dataengine/markup-ui/button`, `@dataengine/markup-ui/card`, `@dataengine/markup-ui/carousel`,
 `@dataengine/markup-ui/collapse`, `@dataengine/markup-ui/divider`, `@dataengine/markup-ui/dropdown`,
-`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography`, `@dataengine/markup-ui/space`, `@dataengine/markup-ui/flex`, `@dataengine/markup-ui/input`, `@dataengine/markup-ui/checkbox` and `@dataengine/markup-ui/radio`.
+`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography`, `@dataengine/markup-ui/space`, `@dataengine/markup-ui/flex`, `@dataengine/markup-ui/input`, `@dataengine/markup-ui/checkbox`, `@dataengine/markup-ui/radio` and `@dataengine/markup-ui/switch`.
 ESM uses `markup-ui-core.js`; classic scripts load `markup-ui-core.global.js` before
 `markup-ui-avatar.global.js`, `markup-ui-button.global.js`, `markup-ui-card.global.js`,
 `markup-ui-carousel.global.js`, `markup-ui-collapse.global.js`, `markup-ui-divider.global.js`,
@@ -101,7 +101,15 @@ plus Radio runtime has a 5,500-byte ceiling in either format. Rate retains its 4
 per-file ceilings and has a new 5,000-byte dependency-inclusive ceiling. The manifest
 counts every required runtime file and CSS. Radio CSS whitespace is trimmed; canonical
 size/status attributes replace archived data-size/data-status configuration without changing
-the native colors, dimensions or four-pixel button seams. Switch remains unmigrated.
+the native colors, dimensions or four-pixel button seams.
+
+Switch imports only core. Classic loading is core then `markup-ui-switch.global.js`, with
+Switch CSS. The entry registers only Switch, reusing its native loading mechanics rather
+than importing Input/Radio or a second controller. Existing per-file gzip ceilings stay
+3,500 bytes for each JS format and 1,250 for CSS. The manifest counts core plus Switch
+runtime and CSS; combined runtime has a 4,500-byte ceiling in either format. CheckboxGroup
+excludes Switch-owned native controls, and the aggregate no longer registers or styles the
+legacy MSwitch. Select Switch explicitly in applications that previously used that entry.
 
 ## References
 

@@ -35,10 +35,9 @@ m-card[structured]{padding:0;overflow:hidden}
 m-card-header,m-dialog-header,m-drawer-header{display:flex;align-items:center;justify-content:space-between;gap:var(--m-space-md);padding:var(--m-space-md);border-bottom:1px solid var(--m-border)}
 m-card-content,m-dialog-content,m-drawer-content{display:block;padding:var(--m-space-md)}
 m-card-footer,m-dialog-footer,m-drawer-footer{display:flex;align-items:center;justify-content:flex-end;gap:var(--m-space-sm);padding:var(--m-space-md);border-top:1px solid var(--m-border)}
-m-select,m-autocomplete,m-slider,m-switch{display:inline-flex}
+m-select,m-autocomplete,m-slider{display:inline-flex}
 m-option{display:none}
 m-select>select,m-autocomplete>input{width:100%;min-height:32px;padding:0 10px;border:1px solid var(--m-border);border-radius:var(--m-radius-md);background:var(--m-bg-surface);color:var(--m-text-primary);font:inherit}
-m-switch{align-items:center;gap:var(--m-space-sm)}
 m-slider{align-items:center;width:100%}m-slider>input{width:100%;accent-color:var(--m-color-primary)}
 m-alert{display:block;padding:var(--m-space-sm) var(--m-space-md);border-left:3px solid var(--m-color-primary);background:var(--m-bg-muted);color:var(--m-text-primary)}
 m-badge{display:inline-flex;align-items:center;min-height:20px;padding:0 6px;border-radius:999px;background:var(--m-bg-muted);color:var(--m-text-secondary);font-size:12px}
@@ -160,7 +159,7 @@ m-button:focus-visible,m-menu-item:focus-visible,m-tabs>[role="tablist"]>button:
 m-select>select,m-autocomplete>input{min-height:var(--m-control-height);border-radius:6px}
 m-select>select:hover,m-autocomplete>input:hover{border-color:var(--m-border-hover)}
 m-select>select:focus,m-autocomplete>input:focus{outline:0;border-color:var(--m-color-primary);box-shadow:0 0 0 3px var(--m-focus-ring)}
-m-switch>input,m-slider>input{accent-color:var(--m-color-primary)}
+m-slider>input{accent-color:var(--m-color-primary)}
 m-alert{border:1px solid color-mix(in srgb,var(--m-color-primary) 24%,var(--m-border));border-left:3px solid var(--m-color-primary);border-radius:6px;background:var(--m-color-primary-soft)}
 m-badge,m-tag{font-weight:500}m-badge{background:var(--m-color-primary-soft);color:var(--m-color-primary-pressed)}
 m-tag:hover{border-color:var(--m-border-hover)}
