@@ -1,4 +1,5 @@
 import { createPopover } from "../popover/popover.js"
+import { isIconElement } from "../icon/model.js"
 import type { PopoverController, PopoverOptions } from "../popover/popover.js"
 import { ownedWrites } from "../popover/position.js"
 import { createMenuKeyboard, menuEntryAvailable } from "./keyboard.js"
@@ -370,7 +371,7 @@ export function createDropdown(trigger: HTMLElement, menu: HTMLElement, options:
           ? ["group"] : node.localName === "li" || node.matches(dividerSelector) ? ["none", "presentation", "separator"] : ["none", "presentation", "img"]
         if (node.matches(interactive) && !elements.includes(node)
           || role !== null && !allowedRole.includes(role)
-          || node.localName.includes("-") && !(canonical && ["m-dropdown-item", "m-dropdown-group", "m-dropdown-divider"].includes(node.localName))
+          || node.localName.includes("-") && !isIconElement(node) && !(canonical && ["m-dropdown-item", "m-dropdown-group", "m-dropdown-divider"].includes(node.localName))
           || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)) {
           throw new TypeError("Dropdown content cannot contain arbitrary interactive controls or custom widgets.")
         }

@@ -20,7 +20,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Dropdown | `Dropdown`, `DropdownTrigger`, `DropdownMenu`, `DropdownItem`, `DropdownGroup`, `DropdownDivider` | [Demo and API](../../demo/components/dropdown.html) |
 | Ellipsis | `Ellipsis` | Contract pending |
 | Gradient Text | `GradientText` | Contract pending |
-| Icon | `Icon`, `IconWrapper` | Contract pending |
+| Icon | `Icon`, `IconWrapper` | [Demo and API](../../demo/components/icon.html) |
 | Page Header | `PageHeader` and named regions | Contract pending |
 | Tag | `Tag` | Contract pending |
 | Typography | Text, paragraph, heading, list, quote and code elements | Contract pending |

@@ -2,6 +2,8 @@
 
 > **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
 
+The current direct ViewElement implementation is documented in the [Icon demo and API](../../../demo/components/icon.html).
+
 **Migration status: 🟢 Verified retained native HTML/CSS scope.**
 **Architecture: CSS-only.** Icon composition needs no Custom Element, JavaScript entry,
 component-constructor adapter, asset loader, observer or runtime icon dependency.

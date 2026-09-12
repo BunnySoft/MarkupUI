@@ -1,69 +1,109 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Icon — CSS only</title>
+  <title>Icon - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-icon.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./icon.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-icon.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script type="module" src="./icon.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Icon and IconWrapper use authored native assets</h1>
-    <p>No JavaScript, icon package, remote asset loader or synthetic role is needed.</p>
-    <section aria-labelledby="paint-heading">
-      <h2 id="paint-heading">Current color, fixed multicolor and stroke-only artwork</h2>
-      <div class="examples">
-        <span class="m-icon blue" id="current-color" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></span>
-        <svg class="m-icon large" id="multicolor" role="img" aria-labelledby="multi-title" aria-describedby="multi-description" viewBox="0 0 32 24">
-          <title id="multi-title">Two colored circles</title>
-          <desc id="multi-description">Original simple overlapping shapes.</desc>
-          <circle cx="11" cy="12" r="8" fill="#e85d4a"></circle>
-          <circle cx="21" cy="12" r="8" fill="#3388cc" opacity=".8"></circle>
-        </svg>
-        <svg class="m-icon large" id="stroke-only" aria-hidden="true" color="#a04080" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 13 4 4L20 5"></path></svg>
-        <span class="m-icon large" id="glyph" aria-hidden="true">◇</span>
+  <main data-demo-page class="component-docs">
+    <h1>Icon</h1>
+    <p>Passive icon frames for authored SVG, images and glyphs, with typed sizing and theme depth.</p>
+    <nav class="component-docs-nav" aria-label="Icon documentation">
+      <a href="#paint-heading">Examples</a><a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a><a href="#behavior">Behavior and accessibility</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-icon.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-icon.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+    <section data-demo-example="paint" aria-labelledby="paint-heading">
+      <header data-demo-header><div><h2 id="paint-heading">Authored artwork</h2><p>Current color, fixed fills and stroke-only artwork stay under author control.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-icon size="32" aria-hidden="true" style="--m-icon-color:#175fbb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></m-icon>
+        <m-icon size="40"><svg id="multicolor" role="img" aria-labelledby="multi-title" aria-describedby="multi-description" viewBox="0 0 32 24">
+          <title id="multi-title">Two colored circles</title><desc id="multi-description">Original overlapping shapes.</desc>
+          <circle cx="11" cy="12" r="8" fill="#e85d4a"></circle><circle cx="21" cy="12" r="8" fill="#3388cc" opacity=".8"></circle>
+        </svg></m-icon>
+        <m-icon size="40" aria-hidden="true"><svg color="#a04080" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 13 4 4L20 5"></path></svg></m-icon>
+        <m-icon size="40" aria-hidden="true">◇</m-icon>
       </div>
-      <p>These are original minimal SVG/text examples, not imported vendor assets. Fixed fills and strokes are never rewritten by the stylesheet.</p>
     </section>
-    <section aria-labelledby="size-heading">
-      <h2 id="size-heading">Sizing, intrinsic aspect ratio and nested viewports</h2>
-      <div class="examples">
-        <span class="m-icon rectangular" id="aspect" aria-hidden="true"><svg viewBox="0 0 40 20" preserveAspectRatio="xMidYMid meet"><rect x="2" y="2" width="36" height="16" rx="2" fill="#3388cc"></rect></svg></span>
-        <svg class="m-icon large" id="outer-svg" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" fill="#eee"></rect><svg id="nested-svg" x="10" y="12" width="20" height="10" viewBox="0 0 20 10"><rect width="20" height="10" fill="#e85d4a"></rect></svg></svg>
-        <img class="m-icon large" id="native-image" width="40" height="20" alt="Original blue rectangle" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='20'%3E%3Crect width='40' height='20' fill='%233388cc'/%3E%3C/svg%3E">
+    <section data-demo-example="size" aria-labelledby="size-heading">
+      <header data-demo-header><div><h2 id="size-heading">Size and native viewports</h2><p>Size is a positive number in logical units, mapped to CSS pixels on Web. SVG viewBox and nested dimensions are preserved.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-icon size="48" aria-hidden="true"><svg viewBox="0 0 40 20" preserveAspectRatio="xMidYMid meet"><rect x="2" y="2" width="36" height="16" rx="2" fill="#3388cc"></rect></svg></m-icon>
+        <m-icon size="40" aria-hidden="true"><svg viewBox="0 0 40 40"><rect width="40" height="40" fill="#eee"></rect><svg id="nested-svg" x="10" y="12" width="20" height="10" viewBox="0 0 20 10"><rect width="20" height="10" fill="#e85d4a"></rect></svg></svg></m-icon>
+        <m-icon size="40"><img id="native-image" width="40" height="20" alt="Original blue rectangle" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='20'%3E%3Crect width='40' height='20' fill='%233388cc'/%3E%3C/svg%3E"></m-icon>
       </div>
-      <p>Supply a viewBox for scalable inline SVG. The native preserveAspectRatio choice remains yours; nested SVG viewport dimensions are not reset.</p>
     </section>
-    <section aria-labelledby="depth-heading">
-      <h2 id="depth-heading">Five explicit CSS depths</h2>
-      <div class="examples" id="depths">
-        <span class="m-icon large" data-depth="1" aria-hidden="true">◆</span>
-        <span class="m-icon large" data-depth="2" aria-hidden="true">◆</span>
-        <span class="m-icon large" data-depth="3" aria-hidden="true">◆</span>
-        <span class="m-icon large" data-depth="4" aria-hidden="true">◆</span>
-        <span class="m-icon large" data-depth="5" aria-hidden="true">◆</span>
+    <section data-demo-example="depth" aria-labelledby="depth-heading">
+      <header data-demo-header><div><h2 id="depth-heading">Theme depth</h2><p>Five opacity levels change presentation, not meaning or interactivity. Forced colors restore full opacity.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-icon size="40" depth="1" aria-hidden="true">◆</m-icon>
+        <m-icon size="40" depth="2" aria-hidden="true">◆</m-icon>
+        <m-icon size="40" depth="3" aria-hidden="true">◆</m-icon>
+        <m-icon size="40" depth="4" aria-hidden="true">◆</m-icon>
+        <m-icon size="40" depth="5" aria-hidden="true">◆</m-icon>
       </div>
-      <p>Depth changes graphic opacity, not meaning or interactivity. Forced-colors mode restores full opacity.</p>
     </section>
-    <section aria-labelledby="wrapper-heading">
-      <h2 id="wrapper-heading">Native wrapper shapes and accessible actions</h2>
-      <div class="examples">
-        <span class="m-icon-wrapper" id="default-wrapper" aria-hidden="true"><span class="m-icon">+</span></span>
-        <span class="m-icon-wrapper custom-wrapper" id="custom-wrapper" aria-hidden="true"><span class="m-icon">✓</span></span>
-        <button type="button" class="icon-action" id="save-button" aria-label="Save"><span class="m-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 13 4 4L20 5"></path></svg></span></button>
-        <a class="m-icon-wrapper action-wrapper" id="native-link" href="#destination" aria-label="Next section"><span class="m-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h15M13 6l6 6-6 6"></path></svg></span></a>
+    <section data-demo-example="wrapper" aria-labelledby="wrapper-heading">
+      <header data-demo-header><div><h2 id="wrapper-heading">Wrapper and native actions</h2><p>The wrapper is passive. A surrounding button or link owns activation, focus and its accessible name.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-icon-wrapper aria-hidden="true"><m-icon>+</m-icon></m-icon-wrapper>
+        <m-icon-wrapper size="40" aria-hidden="true" style="--m-icon-wrapper-radius:50%;--m-icon-wrapper-background:#edf0fa;--m-icon-wrapper-color:#7040a0"><m-icon size="24">✓</m-icon></m-icon-wrapper>
+        <button type="button" aria-label="Save"><m-icon size="24" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 13 4 4L20 5"></path></svg></m-icon></button>
+        <a href="#behavior-heading" aria-label="Icon behavior"><m-icon-wrapper size="40" aria-hidden="true"><m-icon size="24">→</m-icon></m-icon-wrapper></a>
       </div>
-      <p>Name the button/link once, and hide its decorative graphic. For a meaningful standalone SVG, use its own title/description/name instead of a second wrapper name.</p>
-      <p id="destination" tabindex="-1">Native link destination.</p>
     </section>
-    <section dir="rtl" lang="ar" aria-labelledby="rtl-heading">
-      <h2 id="rtl-heading">رمز ونص</h2>
-      <p><span class="m-icon blue" aria-hidden="true">◆</span> نص عربي</p>
+    <section data-demo-example="live" aria-labelledby="live-heading">
+      <header data-demo-header><div><h2 id="live-heading">Direct properties and reconnect</h2><p>Updates preserve the original SVG and its listeners. Null size returns control to inherited or authored styles.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-icon id="live-icon" size="32" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"></circle><path d="M12 6v12M6 12h12"></path></svg></m-icon>
+        <button type="button" id="change-size">Toggle size</button>
+        <button type="button" id="reset-size">Reset size</button>
+        <button type="button" id="reconnect-icon">Reconnect</button>
+        <span id="icon-status" role="status">Size: 32</span>
+      </div>
     </section>
-    <section aria-labelledby="outside-heading">
-      <h2 id="outside-heading">Unrelated SVG stays outside the opt-in</h2>
-      <svg id="outside-svg" width="70" height="30" viewBox="0 0 70 30" aria-hidden="true"><rect width="70" height="30" fill="#556677"></rect></svg>
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="icon-api"><p>Loading API documentation.</p></div>
+    </section>
+    <section id="behavior" aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Behavior and accessibility</h2>
+      <p>Icon and IconWrapper extend the shared ViewElement. Neither fetches assets, rewrites SVG paint,
+        generates a role, adds a tab stop or emulates a button. SVG titles/descriptions, image alt text,
+        authored ARIA and native action semantics remain unchanged. Hide decorative graphics with
+        aria-hidden on their frame; name a meaningful SVG or image through its native accessible name.</p>
+      <p>Size accepts positive finite numbers or null. Null preserves style resources: Icon defaults to
+        an inherited 1em box, and IconWrapper to 24px. Depth is null or an integer from 1 to 5; its Web
+        attribute uses the exact values 1, 2, 3, 4 and 5. Invalid properties throw before changing attributes.</p>
+      <p>Color, wrapper background/radius, depth opacity and authored transforms are style resources.
+        Web CSS customization is not a cross-platform class API. Do not use Icon as a replacement for
+        a native button/link or place interactive controls inside an icon in a passive-content region.</p>
+      <p>Updates never clone or replace content. Pre-upgrade properties are replayed, and disconnect
+        restores only owned sizing styles without erasing later application edits. Late native content
+        requires no refresh. Depth and color transitions honor reduced motion and forced colors.
+        Without JavaScript, authored content remains visible; typed property updates require the runtime.</p>
     </section>
   </main>
 </body>

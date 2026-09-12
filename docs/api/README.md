@@ -11,6 +11,7 @@ in the target inventory.
 6. [Collapse demo and API](../../demo/components/collapse.html): accepted keyed native disclosures and named regions.
 7. [Divider demo and API](../../demo/components/divider.html): independent title content, native rule semantics and selected-file loading.
 8. [Dropdown demo and API](../../demo/components/dropdown.html): native command/navigation hierarchy and canonical regions.
+9. [Icon demo and API](../../demo/components/icon.html): passive authored graphics, typed sizing, theme depth and IconWrapper.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
@@ -27,10 +28,11 @@ maintain a second Markdown copy of their API tables or usage examples.
 | Use Collapse and its regions/items | `@dataengine/markup-ui/collapse` and its CSS; ESM imports core automatically. |
 | Use Divider | `@dataengine/markup-ui/divider` and its CSS; ESM imports core automatically. |
 | Use Dropdown and its regions | `@dataengine/markup-ui/dropdown` and its composed CSS; ESM imports core automatically. |
+| Use Icon/IconWrapper | `@dataengine/markup-ui/icon` and its CSS; ESM imports core automatically. |
 | Use classic scripts | Core first, then the selected component scripts and CSS. |
 
 No jQuery dependency, query wrapper, state/binding runtime or all-components bundle is
-required for the seven initial component families. The new binding/template runtime remains a separate planned feature.
+required for the direct ViewElement component families. The new binding/template runtime remains a separate planned feature.
 Choose one core format/version for the application; do not mix independently loaded ESM
 and classic cores.
 

@@ -318,6 +318,10 @@
     "./page-header/style.css": "./dist/markup-ui-page-header.css",
     "./ellipsis/style.css": "./dist/markup-ui-ellipsis.css",
     "./gradient-text/style.css": "./dist/markup-ui-gradient-text.css",
+    "./icon": {
+      "types": "./dist/components/icon/index.d.ts",
+      "import": "./dist/markup-ui-icon.js"
+    },
     "./icon/style.css": "./dist/markup-ui-icon.css",
     "./typography/style.css": "./dist/markup-ui-typography.css",
     "./statistic": {

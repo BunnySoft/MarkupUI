@@ -21,6 +21,7 @@ const carouselHtml = readFileSync(resolve("demo", "components", "carousel.html")
 const collapseHtml = readFileSync(resolve("demo", "components", "collapse.html"), "utf8")
 const dividerHtml = readFileSync(resolve("demo", "components", "divider.html"), "utf8")
 const dropdownHtml = readFileSync(resolve("demo", "components", "dropdown.html"), "utf8")
+const iconHtml = readFileSync(resolve("demo", "components", "icon.html"), "utf8")
 let browser: ReturnType<typeof createComponentBrowser> | undefined
 let media: MediaQueryList
 let mediaListener: (() => void) | undefined
@@ -702,6 +703,7 @@ describe("component-by-component demo browser", () => {
     ["Collapse", collapseHtml, ["basic", "arrow-placement", "accordion", "nested", "display-directive", "item-header-click", "customize-icon", "default-expanded", "header-extra", "disabled", "trigger-areas"]],
     ["Divider", dividerHtml, ["basic", "content", "vertical"]],
     ["Dropdown", dropdownHtml, ["basic", "icon", "trigger", "cascade", "arrow", "placement", "size", "batch-render", "manual-position", "render", "option-props", "render-option"]],
+    ["Icon", iconHtml, ["paint", "size", "depth", "wrapper", "live"]],
   ])("keeps the supported %s demo inventory with per-example code controls", (_name, sourceHtml, expected) => {
     document.body.innerHTML = sourceHtml.slice(sourceHtml.indexOf("<body>") + 6, sourceHtml.indexOf("</body>"))
     const setup = document.querySelector<HTMLDetailsElement>(".component-setup")!

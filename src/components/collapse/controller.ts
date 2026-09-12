@@ -1,4 +1,5 @@
 import { ownedWrites } from "../popover/position.js"
+import { isIconElement } from "../icon/model.js"
 
 export type CollapseNames = string | readonly string[] | null
 export interface CollapseOptions {
@@ -54,7 +55,7 @@ export function validateHeader(header: HTMLElement): void {
   if (header.matches(interactive) || header.querySelector(interactive)) throw new TypeError("Collapse header must be noninteractive.")
   for (const child of [header, ...header.querySelectorAll<HTMLElement>("*")]) {
     const role = child.getAttribute("role")
-    if (child !== header && child.localName.includes("-") || child.shadowRoot
+    if (child !== header && child.localName.includes("-") && !isIconElement(child) || child.shadowRoot
       || ["script", "style", "slot"].includes(child.localName)
       || role !== null && !["none", "presentation", "img"].includes(role)) throw new TypeError("Collapse header must contain passive native markup.")
   }
@@ -224,7 +225,7 @@ export function createCollapse(root: HTMLElement, options: CollapseOptions = {})
         || summary.hasAttribute("aria-disabled") && !managedDisabled) throw new TypeError("Native summary owns expanded semantics; use the disabled item marker, not authored aria-disabled.")
       for (const child of summary.querySelectorAll<HTMLElement>("*")) {
         const role = child.getAttribute("role")
-        if (child.localName.includes("-") && !(canonical && child.localName === "m-collapse-header" && child.parentElement === summary)
+        if (child.localName.includes("-") && !isIconElement(child) && !(canonical && child.localName === "m-collapse-header" && child.parentElement === summary)
           || child.shadowRoot || ["script", "style", "slot"].includes(child.localName)
           || role !== null && !["none", "presentation", "img"].includes(role)) throw new TypeError("Collapse summary content must be noninteractive native markup.")
       }
