@@ -1,9 +1,8 @@
-body { margin: 0; font-family: system-ui, sans-serif; background: #fafafa; }
-main { max-width: 960px; margin-inline: auto; padding: 32px; }
-#outside { border: 1px dashed #aaa; padding: 12px; }
-.status-row { display: flex; flex-wrap: wrap; gap: 16px; }
-.alignment-examples, .rtl-example { padding-inline: 24px; }
-.narrow { max-width: 24ch; }
-.rtl-example { margin-block: 32px; }
+[data-demo-preview] { display: block; }
+[data-demo-example="alignment"] [data-demo-preview],
+[data-demo-example="rtl"] [data-demo-preview] { padding-inline: 40px; }
+[data-demo-example="scope"] #wrapping { max-width: 24ch; }
+#outside { border: 1px dashed #aaa; padding: 12px; margin-block-start: 24px; }
 #native-link svg { vertical-align: -.125em; }
-pre { overflow: auto; }
+[data-live-controls] { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-block-start: 20px; }
+[data-demo-preview] pre { overflow: auto; }

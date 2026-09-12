@@ -1,5 +1,6 @@
 import { ViewElement } from "../../core/index.js"
 import { isIconElement } from "../icon/model.js"
+import { isTypographyInline } from "../typography/model.js"
 import { ownedWrites } from "../popover/position.js"
 import { createDropdown } from "./controller.js"
 import type { DropdownController } from "./controller.js"
@@ -215,7 +216,7 @@ export class Dropdown extends ViewElement {
       const trigger = region.firstElementChild
       if (!(trigger.textContent?.trim() || trigger.getAttribute("aria-label")?.trim() || trigger.getAttribute("aria-labelledby")?.trim())
         || trigger.querySelector("button,a,input,select,textarea,label,[tabindex],[contenteditable],m-button")) throw new TypeError("Dropdown trigger needs a noninteractive native label.")
-      if ([...trigger.querySelectorAll("*")].some(node => node.localName.includes("-") && !isIconElement(node) || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)
+      if ([...trigger.querySelectorAll("*")].some(node => node.localName.includes("-") && !isIconElement(node) && !isTypographyInline(node) || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)
         || node.hasAttribute("role") && !["none", "presentation", "img"].includes(node.getAttribute("role")!))) throw new TypeError("Dropdown trigger content must be passive native markup.")
       const prepareMenu = (panel: DropdownMenu, invoker: HTMLButtonElement): boolean => {
         prepareMenuSurface(panel)

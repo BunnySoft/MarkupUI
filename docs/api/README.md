@@ -12,6 +12,7 @@ in the target inventory.
 7. [Divider demo and API](../../demo/components/divider.html): independent title content, native rule semantics and selected-file loading.
 8. [Dropdown demo and API](../../demo/components/dropdown.html): native command/navigation hierarchy and canonical regions.
 9. [Icon demo and API](../../demo/components/icon.html): passive authored graphics, typed sizing, theme depth and IconWrapper.
+10. [Typography demo and API](../../demo/components/typography.html): typed text presentation, rich documents and native heading/paragraph/link/list/quote owners.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
@@ -29,6 +30,7 @@ maintain a second Markdown copy of their API tables or usage examples.
 | Use Divider | `@dataengine/markup-ui/divider` and its CSS; ESM imports core automatically. |
 | Use Dropdown and its regions | `@dataengine/markup-ui/dropdown` and its composed CSS; ESM imports core automatically. |
 | Use Icon/IconWrapper | `@dataengine/markup-ui/icon` and its CSS; ESM imports core automatically. |
+| Use Typography and its seven companions | `@dataengine/markup-ui/typography` and its CSS; ESM imports core automatically. Import `Text as TypographyText` when native DOM Text is also needed. |
 | Use classic scripts | Core first, then the selected component scripts and CSS. |
 
 No jQuery dependency, query wrapper, state/binding runtime or all-components bundle is

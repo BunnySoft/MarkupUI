@@ -323,6 +323,10 @@
       "import": "./dist/markup-ui-icon.js"
     },
     "./icon/style.css": "./dist/markup-ui-icon.css",
+    "./typography": {
+      "types": "./dist/components/typography/index.d.ts",
+      "import": "./dist/markup-ui-typography.js"
+    },
     "./typography/style.css": "./dist/markup-ui-typography.css",
     "./statistic": {
       "types": "./dist/components/statistic/index.d.ts",

@@ -1,5 +1,6 @@
 import { createPopoverController } from "../popover/popover.js"
 import { isIconElement } from "../icon/model.js"
+import { isTypographyInline } from "../typography/model.js"
 import type { PopoverController, PopoverOptions } from "../popover/popover.js"
 
 export type TooltipOptions = Omit<PopoverOptions, "trigger">
@@ -28,8 +29,8 @@ export function createTooltip(trigger: HTMLElement, panel: HTMLElement, options:
     for (const node of [panel, ...panel.querySelectorAll("*")]) {
       const role = node === panel ? null : node.getAttribute("role")
       if (node.matches(interactive) || (role && !["img", "none", "presentation"].includes(role))
-        || node.localName.includes("-") && !isIconElement(node) || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)) {
-        throw new TypeError("Tooltip content must be noninteractive; use Popover for actions or custom widgets.")
+        || node.localName.includes("-") && !isIconElement(node) && !isTypographyInline(node) || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)) {
+        throw new TypeError("Tooltip content must be noninteractive; use Popover for actions.")
       }
     }
     if (trigger.closest("m-tooltip")) throw new TypeError("Do not bind Tooltip inside legacy m-tooltip.")

@@ -23,7 +23,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Icon | `Icon`, `IconWrapper` | [Demo and API](../../demo/components/icon.html) |
 | Page Header | `PageHeader` and named regions | Contract pending |
 | Tag | `Tag` | Contract pending |
-| Typography | Text, paragraph, heading, list, quote and code elements | Contract pending |
+| Typography | `Typography`, `Text`, `Paragraph`, `Heading`, `Link`, `Blockquote`, `UnorderedList`, `OrderedList`; native importance/deletion/code and list items | [Demo and API](../../demo/components/typography.html) |
 | Watermark | `Watermark` | Contract pending |
 | Float Button | `FloatButton`, `FloatButtonGroup` | Contract pending |
 

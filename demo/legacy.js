@@ -326,7 +326,7 @@ function updateOutline() {
   const panel = document.querySelector(".showcase-section:not([hidden])")
   const outline = document.querySelector("#page-outline")
   if (!panel || !outline) return
-  const headings = [...panel.querySelectorAll("m-heading[level='2'],m-heading[level='3']")]
+  const headings = [...panel.querySelectorAll("m-heading > h2,m-heading > h3")]
   const items = headings.map((heading, index) => {
     heading.id ||= `outline-${panel.id}-${index + 1}`
     const item = document.createElement("m-button")
@@ -334,7 +334,7 @@ function updateOutline() {
     item.setAttribute("appearance", "quaternary")
     item.setAttribute("m-action", "demo.outline")
     item.setAttribute("m-param-target", `#${heading.id}`)
-    item.dataset.level = heading.getAttribute("level") ?? "3"
+    item.dataset.level = heading.localName.slice(1)
     item.textContent = heading.textContent
     return item
   })
@@ -359,11 +359,13 @@ async function installDemoCards() {
     liveCards.forEach((card, index) => {
       if (card.querySelector(".demo-card-tools")) return
       card.classList.add("demo-card")
-      const source = document.createElement("m-code")
+      const source = document.createElement("pre")
       source.id = `demo-source-${panelName}-${index + 1}`
       source.className = "demo-source"
       source.hidden = true
-      source.textContent = sourceCards[index]?.outerHTML.trim() ?? card.outerHTML.trim()
+      const code = document.createElement("code")
+      code.textContent = sourceCards[index]?.outerHTML.trim() ?? card.outerHTML.trim()
+      source.append(code)
       const tools = document.createElement("m-row")
       tools.className = "demo-card-tools"
       tools.setAttribute("align", "center")

@@ -1,5 +1,5 @@
 import { MElement } from "../core/element.js"
-import { MApp, MField, MGrid, MHeading, MLink, MSemantic, MTheme } from "./foundation.js"
+import { MApp, MField, MGrid, MSemantic, MTheme } from "./foundation.js"
 import { MAutocomplete, MCheckbox, MForm, MFormItem, MInput, MRadio, MRadioGroup, MSelect, MSlider, MSwitch, MTextarea } from "./forms.js"
 import { MAccordionItem, MInclude } from "./dynamic.js"
 import { MDialog, MDrawer, MPopover, MTooltip } from "./overlays.js"
@@ -13,11 +13,6 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-header", class extends MSemantic { public override connectedCallback(): void { this.setAttribute("data-role", "banner"); super.connectedCallback() } }],
   ["m-main", class extends MSemantic { public override connectedCallback(): void { this.setAttribute("data-role", "main"); super.connectedCallback() } }],
   ["m-section", class extends MSemantic {}],
-  ["m-heading", MHeading],
-  ["m-text", class extends MElement {}],
-  ["m-strong", class extends MElement {}],
-  ["m-code", class extends MElement {}],
-  ["m-link", MLink],
   ["m-field", MField],
   ["m-stack", class extends MLayout {}],
   ["m-row", class extends MLayout {}],

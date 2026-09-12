@@ -30,10 +30,10 @@ describe("CSS and theme sources", () => {
   })
 
   it("preserves the approved runtime CSS baselines exactly", () => {
-    // Core includes Avatar/Button corrections and no longer styles the replaced basic Divider.
+    // Core includes Avatar/Button corrections; migrated Divider/Icon/Typography styles are family-owned.
     // Widgets no longer includes the competing Carousel; its styles ship with the canonical family.
     expect(runtimeStyles.map(hash)).toEqual([
-      "dbf63d6438202ce3149a3bc0d44fbbca2ac74afdd97590a80c12454cc2fa4fc4",
+      "8fd96467518c5f92b655043915003f06f223439ccb565c67372614934eea216f",
       "6fd15d4f89081eaad05bc6391936ead49357aa4bd990202327146d93811957fd",
       "56589c4fe8c5e7eac2d32b092a054cfaee8448a00995d19432991488331c15c4",
     ])
@@ -92,8 +92,13 @@ describe("CSS and theme sources", () => {
     expect(input.classic.totalGzipBytes).toBe(
       manifest.bundles["markup-ui-input.global.js"].gzipBytes + manifest.bundles["markup-ui-input.css"].gzipBytes,
     )
-    expect(manifest.componentPayloads.typography.esm).toBeUndefined()
-    expect(manifest.componentPayloads.typography.classic).toBeUndefined()
+    expect(manifest.componentPayloads.typography.esm.dependencies).toEqual(["markup-ui-core.js"])
+    expect(manifest.componentPayloads.typography.classic.dependencies).toEqual(["markup-ui-core.global.js"])
+    expect(manifest.componentPayloads.typography.esm.runtimeGzipBytes).toBe(
+      manifest.bundles["markup-ui-typography.js"].gzipBytes + manifest.bundles["markup-ui-core.js"].gzipBytes,
+    )
+    expect(manifest.componentPayloads.code.esm).toBeUndefined()
+    expect(manifest.componentPayloads.list.classic).toBeUndefined()
     expect(manifest.componentPayloads.equation).toBeUndefined()
   })
 

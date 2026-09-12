@@ -21,6 +21,7 @@ import { Carousel } from "../src/components/carousel/index.js"
 import { Collapse } from "../src/components/collapse/index.js"
 import { Divider } from "../src/components/divider/index.js"
 import { Dropdown } from "../src/components/dropdown/index.js"
+import { Heading, Link } from "../src/components/typography/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -62,7 +63,11 @@ describe("native elements", () => {
         <m-field label="Name"><m-input></m-input></m-field>
       </m-main>`
     expect(document.querySelector("m-main")?.getAttribute("role")).toBe("main")
-    expect(document.querySelector("m-heading")?.getAttribute("aria-level")).toBe("1")
+    expect(document.querySelector("m-heading > h1")?.textContent).toBe("Title")
+    expect(document.querySelector("m-heading")?.hasAttribute("role")).toBe(false)
+    expect(customElements.get("m-heading")).toBe(Heading)
+    expect(customElements.get("m-link")).toBe(Link)
+    for (const tag of ["m-heading", "m-text", "m-link", "m-strong", "m-code"]) expect(builtInElementNames).not.toContain(tag)
     expect(document.querySelector("m-link > a")?.getAttribute("href")).toBe("#more")
     expect(document.querySelector("m-field > [data-m-label]")?.textContent).toBe("Name")
     expect(document.querySelector("m-input input")?.getAttribute("aria-label")).toBe("Name")

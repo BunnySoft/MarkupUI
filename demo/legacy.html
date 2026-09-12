@@ -16,6 +16,8 @@
     <script type="module" src="../dist/markup-ui-carousel.js"></script>
     <link rel="stylesheet" href="../dist/markup-ui-divider.css">
     <script type="module" src="../dist/markup-ui-divider.js"></script>
+    <link rel="stylesheet" href="../dist/markup-ui-typography.css">
+    <script type="module" src="../dist/markup-ui-typography.js"></script>
     <link rel="stylesheet" href="./legacy.css">
     <script type="module" src="../dist/markup-ui-avatar.js"></script>
     <link rel="stylesheet" href="../dist/markup-ui-button.css">
@@ -28,7 +30,7 @@
         <m-row align="center" gap="md">
           <m-center class="brand-mark" aria-hidden="true">M</m-center>
           <m-stack>
-            <m-strong>MarkupUI</m-strong>
+            <strong>MarkupUI</strong>
             <m-text class="subtitle">Browser-native component documentation</m-text>
           </m-stack>
           <m-spacer></m-spacer>
@@ -74,19 +76,19 @@
 
           <m-grid class="summary-grid" columns="repeat(4, minmax(0, 1fr))" gap="md">
             <m-card class="summary-card">
-              <m-strong>92+</m-strong>
+              <strong>92+</strong>
               <m-text>built-in elements</m-text>
             </m-card>
             <m-card class="summary-card">
-              <m-strong>0</m-strong>
+              <strong>0</strong>
               <m-text>runtime packages</m-text>
             </m-card>
             <m-card class="summary-card">
-              <m-strong>3</m-strong>
+              <strong>3</strong>
               <m-text>browser distributions</m-text>
             </m-card>
             <m-card class="summary-card">
-              <m-strong>HTML</m-strong>
+              <strong>HTML</strong>
               <m-text>primary authoring format</m-text>
             </m-card>
           </m-grid>
@@ -175,9 +177,9 @@
                         <m-badge>Spacer</m-badge>
                       </m-row>
                     </m-stack>
-                    <m-code class="code-block">
+                    <code class="code-block">
                       &lt;m-stack gap="sm"&gt;...&lt;/m-stack&gt;
-                    </m-code>
+                    </code>
                   </m-stack>
                 </m-card>
 
@@ -192,9 +194,9 @@
                         <m-badge>Content</m-badge>
                       </m-wrap>
                     </m-center>
-                    <m-code class="code-block">
+                    <code class="code-block">
                       &lt;m-center&gt;&lt;m-wrap gap="sm"&gt;...&lt;/m-wrap&gt;&lt;/m-center&gt;
-                    </m-code>
+                    </code>
                   </m-stack>
                 </m-card>
               </m-grid>
@@ -294,8 +296,8 @@
                     <m-heading level="2">Headline two</m-heading>
                     <m-heading level="3">Headline three</m-heading>
                     <m-text>
-                      Normal text supports <m-strong>strong emphasis</m-strong>,
-                      <m-code>inline code</m-code>, and
+                      Normal text supports <strong>strong emphasis</strong>,
+                      <code>inline code</code>, and
                       <m-link class="text-link" href="#runtime">links</m-link>.
                     </m-text>
                   </m-stack>
@@ -327,7 +329,7 @@
                       <m-row align="center" gap="sm">
                         <m-avatar label="Ada Lovelace">AL</m-avatar>
                         <m-stack>
-                          <m-strong>Ada Lovelace</m-strong>
+                          <strong>Ada Lovelace</strong>
                           <m-text class="muted">Browser platform engineer</m-text>
                         </m-stack>
                       </m-row>
@@ -484,52 +486,52 @@
                       <m-row>
                         <m-text>Name</m-text>
                         <m-spacer></m-spacer>
-                        <m-strong m-text="form.name"></m-strong>
+                        <strong m-text="form.name"></strong>
                       </m-row>
                       <m-row>
                         <m-text>Role</m-text>
                         <m-spacer></m-spacer>
-                        <m-strong m-text="form.role"></m-strong>
+                        <strong m-text="form.role"></strong>
                       </m-row>
                       <m-row>
                         <m-text>City</m-text>
                         <m-spacer></m-spacer>
-                        <m-strong m-text="form.city"></m-strong>
+                        <strong m-text="form.city"></strong>
                       </m-row>
                       <m-row>
                         <m-text>Plan</m-text>
                         <m-spacer></m-spacer>
-                        <m-strong m-text="form.plan"></m-strong>
+                        <strong m-text="form.plan"></strong>
                       </m-row>
                       <m-row>
                         <m-text>Confidence</m-text>
                         <m-spacer></m-spacer>
-                        <m-strong m-text="form.confidence"></m-strong>
+                        <strong m-text="form.confidence"></strong>
                       </m-row>
                       <m-row>
                         <m-text>Newsletter</m-text>
                         <m-spacer></m-spacer>
-                        <m-strong m-text="form.newsletter"></m-strong>
+                        <strong m-text="form.newsletter"></strong>
                       </m-row>
                       <m-row>
                         <m-text>Notifications</m-text>
                         <m-spacer></m-spacer>
-                        <m-strong m-text="form.notifications"></m-strong>
+                        <strong m-text="form.notifications"></strong>
                       </m-row>
                     </m-stack>
 
                     <m-alert>
                       Latest event:
-                      <m-strong m-text="events.latest"></m-strong>
+                      <strong m-text="events.latest"></strong>
                     </m-alert>
 
                     <m-field label="Lightweight field without validation">
                       <m-input placeholder="m-field remains available"></m-input>
                     </m-field>
 
-                    <m-code class="code-block">
+                    <code class="code-block">
                       &lt;m-radio-group m-bind="form.plan"&gt;...&lt;/m-radio-group&gt;
-                    </m-code>
+                    </code>
                   </m-stack>
                 </m-card>
               </m-grid>
@@ -563,13 +565,13 @@
                     <m-tab title="API">
                       <m-stack gap="sm">
                         <m-heading level="3">Tab two</m-heading>
-                        <m-code>tabs.select(1)</m-code>
+                        <code>tabs.select(1)</code>
                       </m-stack>
                     </m-tab>
                     <m-tab title="Events">
                       <m-stack gap="sm">
                         <m-heading level="3">Tab three</m-heading>
-                        <m-code>m:change</m-code>
+                        <code>m:change</code>
                       </m-stack>
                     </m-tab>
                   </m-tabs>
@@ -601,7 +603,7 @@
                     </m-menu>
                     <m-pagination id="demo-pagination" page="2" count="5"></m-pagination>
                     <m-alert>
-                      Selection: <m-strong m-text="navigation.selection"></m-strong>
+                      Selection: <strong m-text="navigation.selection"></strong>
                     </m-alert>
                   </m-stack>
                 </m-card>
@@ -642,14 +644,14 @@
                       <m-list-item>
                         <m-avatar label="Ada">A</m-avatar>
                         <m-stack>
-                          <m-strong>Ada</m-strong>
+                          <strong>Ada</strong>
                           <m-text class="muted">Owner</m-text>
                         </m-stack>
                       </m-list-item>
                       <m-list-item>
                         <m-avatar label="Grace">G</m-avatar>
                         <m-stack>
-                          <m-strong>Grace</m-strong>
+                          <strong>Grace</strong>
                           <m-text class="muted">Reviewer</m-text>
                         </m-stack>
                       </m-list-item>
@@ -738,8 +740,8 @@
 
               <m-alert>
                 Load with
-                <m-code>import { advancedPlugin } from "@dataengine/markup-ui/advanced"</m-code>
-                and <m-code>m.use(advancedPlugin)</m-code>.
+                <code>import { advancedPlugin } from "@dataengine/markup-ui/advanced"</code>
+                and <code>m.use(advancedPlugin)</code>.
               </m-alert>
             </m-stack>
           </m-section>
@@ -824,7 +826,7 @@
                     <m-heading level="3">Cascader</m-heading>
                     <m-cascader id="widget-cascader"></m-cascader>
                     <m-alert>
-                      Path: <m-strong id="cascader-value">analytics / reports</m-strong>
+                      Path: <strong id="cascader-value">analytics / reports</strong>
                     </m-alert>
                   </m-stack>
                 </m-card>
@@ -835,15 +837,15 @@
                   <m-heading level="3">Transfer</m-heading>
                   <m-transfer id="widget-transfer"></m-transfer>
                   <m-alert>
-                    Selected: <m-strong id="transfer-value">reports</m-strong>
+                    Selected: <strong id="transfer-value">reports</strong>
                   </m-alert>
                 </m-stack>
               </m-card>
 
               <m-alert>
                 Load with
-                <m-code>import { widgetsPlugin } from "@dataengine/markup-ui/widgets"</m-code>
-                and <m-code>m.use(widgetsPlugin)</m-code>.
+                <code>import { widgetsPlugin } from "@dataengine/markup-ui/widgets"</code>
+                and <code>m.use(widgetsPlugin)</code>.
               </m-alert>
             </m-stack>
           </m-section>
@@ -872,7 +874,7 @@
                         Ocean
                       </m-button>
                     </m-wrap>
-                    <m-code class="code-block">m.theme.set("ocean")</m-code>
+                    <code class="code-block">m.theme.set("ocean")</code>
                   </m-stack>
                 </m-card>
 
@@ -938,7 +940,7 @@
                         </m-popover-trigger>
                         <m-popover-content>
                           <m-stack gap="sm">
-                            <m-strong>Popover content</m-strong>
+                            <strong>Popover content</strong>
                             <m-text>Click outside or press Escape to close.</m-text>
                           </m-stack>
                         </m-popover-content>
@@ -966,7 +968,7 @@
                     <m-heading level="3">Message service</m-heading>
                     <m-message type="success">Static success message</m-message>
                     <m-button m-action="demo.message">Show managed message</m-button>
-                    <m-code class="code-block">m.message.show("Saved", { type: "success" })</m-code>
+                    <code class="code-block">m.message.show("Saved", { type: "success" })</code>
                   </m-stack>
                 </m-card>
 
@@ -974,11 +976,11 @@
                   <m-stack gap="md">
                     <m-heading level="3">Notification service</m-heading>
                     <m-notification type="default">
-                      <m-strong>Static notification</m-strong>
+                      <strong>Static notification</strong>
                       <m-text>Notifications support a title and body.</m-text>
                     </m-notification>
                     <m-button m-action="demo.notification">Show notification</m-button>
-                    <m-code class="code-block">m.notification.show({ title, content })</m-code>
+                    <code class="code-block">m.notification.show({ title, content })</code>
                   </m-stack>
                 </m-card>
               </m-grid>
@@ -1006,9 +1008,9 @@
                     </m-text>
                     <m-row align="center" gap="sm">
                       <m-button type="primary" m-action="demo.increment">Increment</m-button>
-                      <m-badge>Count: <m-strong m-text="metrics.clicks"></m-strong></m-badge>
+                      <m-badge>Count: <strong m-text="metrics.clicks"></strong></m-badge>
                     </m-row>
-                    <m-code class="code-block">m.actions.register("demo.increment", handler)</m-code>
+                    <code class="code-block">m.actions.register("demo.increment", handler)</code>
                   </m-stack>
                 </m-card>
 
@@ -1019,7 +1021,7 @@
                       The demo plugin adds a chainable query extension.
                     </m-text>
                     <m-button m-action="demo.plugin">Run plugin extension</m-button>
-                    <m-code class="code-block">m("#plugin-target").highlight()</m-code>
+                    <code class="code-block">m("#plugin-target").highlight()</code>
                   </m-stack>
                 </m-card>
 
@@ -1032,7 +1034,7 @@
                     <m-button m-action="open" m-param-target="#feature-dialog">
                       Open dialog
                     </m-button>
-                    <m-code class="code-block">dialog.open()</m-code>
+                    <code class="code-block">dialog.open()</code>
                   </m-stack>
                 </m-card>
               </m-grid>
@@ -1063,7 +1065,7 @@
                     <m-stack id="sanitized-output" class="demo-surface" gap="sm">
                       <m-text>Run the sanitizer to populate this area.</m-text>
                     </m-stack>
-                    <m-code class="code-block">m.html.set(target, untrustedHtml)</m-code>
+                    <code class="code-block">m.html.set(target, untrustedHtml)</code>
                   </m-stack>
                 </m-card>
               </m-grid>
@@ -1081,16 +1083,16 @@
                 <m-stack gap="sm">
                   <m-badge>ES module</m-badge>
                   <m-heading level="3">Modern browser loading</m-heading>
-                  <m-code class="code-block">
+                  <code class="code-block">
                     import { m } from "./markup-ui.js";
-                  </m-code>
+                  </code>
                 </m-stack>
                 <m-stack gap="sm">
                   <m-badge>Global script</m-badge>
                   <m-heading level="3">Classic script loading</m-heading>
-                  <m-code class="code-block">
+                  <code class="code-block">
                     &lt;script src="./markup-ui.global.js"&gt;&lt;/script&gt;
-                  </m-code>
+                  </code>
                 </m-stack>
               </m-grid>
             </m-card>
@@ -1125,7 +1127,7 @@
           <m-button m-action="close">Close</m-button>
         </m-dialog-header>
         <m-dialog-content>
-          <m-alert>This overlay was opened by the built-in <m-code>open</m-code> action.</m-alert>
+          <m-alert>This overlay was opened by the built-in <code>open</code> action.</m-alert>
         </m-dialog-content>
         <m-dialog-footer>
           <m-button type="primary" m-action="close">Done</m-button>

@@ -1,7 +1,13 @@
-import { readFileSync, readdirSync } from "node:fs"
+import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
-import { afterEach, describe, expect, it } from "vitest"
+import { createContext, runInContext } from "node:vm"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import { Typography, Text as TypographyText, Paragraph, Heading, Link, Blockquote, UnorderedList, OrderedList, registerTypography } from "../src/components/typography/index.js"
+import { ViewElement } from "../src/core/index.js"
+import { validateHeader } from "../src/components/collapse/controller.js"
+import { createTooltip } from "../src/components/tooltip/index.js"
+import { Dropdown } from "../src/components/dropdown/index.js"
 
 const css = readFileSync(resolve("src", "components", "typography", "typography.css"), "utf8")
 const packageJson = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
@@ -14,12 +20,281 @@ function install(): void {
 }
 afterEach(() => { stylesheet?.remove(); stylesheet = undefined; document.body.replaceChildren() })
 
-describe("CSS-only Typography", () => {
-  it("ships only a stylesheet export, without a fake runtime or custom-element source", () => {
+describe("native-owner Typography", () => {
+  it("ships its own canonical family and shared-core runtime", () => {
     expect(packageJson.exports["./typography/style.css"]).toBe("./dist/markup-ui-typography.css")
-    expect(packageJson.exports["./typography"]).toBeUndefined()
-    expect(readdirSync(resolve("src", "components", "typography"))).toEqual(["typography.css"])
-    expect(customElements.get("m-typography")).toBeUndefined()
+    expect(packageJson.exports["./typography"].import).toBe("./dist/markup-ui-typography.js")
+    for (const type of [Typography, TypographyText, Paragraph, Heading, Link, Blockquote, UnorderedList, OrderedList]) {
+      expect(Object.hasOwn(type, "tag")).toBe(true)
+      expect(type.prototype instanceof ViewElement).toBe(true)
+      expect(customElements.get(type.tag)).toBe(type)
+    }
+    expect(customElements.get("m-strong")).toBeUndefined()
+    expect(customElements.get("m-code")).toBeUndefined()
+    expect(new globalThis.Text("native").nodeType).toBe(3)
+    const define = vi.fn()
+    expect(() => registerTypography({ get: name => name === "m-ol" ? class extends HTMLElement {} : undefined, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("validates direct properties before mutation and replays pre-upgrade assignments", () => {
+    const text = new TypographyText()
+    const heading = new Heading()
+    const paragraph = new Paragraph()
+    const list = new OrderedList()
+    expect(text.type).toBe("default")
+    expect(text.depth).toBeNull()
+    expect([text.strong, text.italic, text.underline]).toEqual([false, false, false])
+    expect(heading.level).toBe(2)
+    expect(heading.prefix).toBeNull()
+    expect(list.start).toBeNull()
+    expect(list.type).toBeNull()
+    for (const value of [0, 7, 1.5, NaN, Infinity, "2", null]) expect(() => Reflect.set(heading, "level", value)).toThrow()
+    for (const value of [0, 4, 1.5, NaN, "2", true]) {
+      expect(() => Reflect.set(text, "depth", value)).toThrow()
+      expect(() => Reflect.set(paragraph, "depth", value)).toThrow()
+    }
+    for (const value of [1.5, NaN, Infinity, 2147483648, "2", true]) expect(() => Reflect.set(list, "start", value)).toThrow()
+    expect(() => Reflect.set(text, "strong", "true")).toThrow()
+    expect(() => Reflect.set(text, "type", "primary")).toThrow()
+    expect(() => Reflect.set(heading, "prefix", "line")).toThrow()
+    expect(() => Reflect.set(list, "type", "decimal")).toThrow()
+    expect(heading.hasAttribute("level")).toBe(false)
+    Object.defineProperty(heading, "level", { value: 4, configurable: true })
+    Object.defineProperty(text, "depth", { value: 3, configurable: true })
+    document.body.append(heading, text, paragraph, list)
+    expect(heading.native?.localName).toBe("h4")
+    expect(text.depth).toBe(3)
+    expect(Object.hasOwn(heading, "level")).toBe(false)
+    paragraph.type = "warning"
+    paragraph.depth = 2
+    expect(paragraph.native?.dataset).toMatchObject({ type: "warning", depth: "2" })
+    heading.prefix = "bar"
+    heading.alignText = true
+    heading.type = "info"
+    expect(heading.native?.dataset).toMatchObject({ prefix: "bar", alignText: "", type: "info" })
+    const detached = new Heading()
+    detached.setAttribute("level", "oops")
+    expect(() => detached.level).toThrow()
+  })
+
+  it("adopts native owners and preserves native attributes, content, form state and listeners", async () => {
+    const paragraph = new Paragraph()
+    paragraph.innerHTML = '<p id="original"><label>Name <input value="Ada"></label><strong>Important</strong><em>Emphasis</em><del cite="#revision">Old</del><code>value</code></p>'
+    const native = paragraph.firstElementChild!
+    const input = native.querySelector("input")!
+    const callback = vi.fn()
+    input.addEventListener("example", callback)
+    document.body.append(paragraph)
+    input.value = "Edited"
+    input.focus()
+    input.setSelectionRange(1, 3)
+    paragraph.depth = 3
+    paragraph.type = "success"
+    expect(paragraph.native).toBe(native)
+    expect(document.activeElement).toBe(input)
+    expect([input.selectionStart, input.selectionEnd]).toEqual([1, 3])
+    const extra = document.createElement("span")
+    extra.textContent = "Late"
+    paragraph.append(extra)
+    await Promise.resolve()
+    expect(extra.parentElement).toBe(native)
+    paragraph.remove()
+    document.body.append(paragraph)
+    expect(paragraph.native).toBe(native)
+    expect(input.value).toBe("Edited")
+    input.dispatchEvent(new Event("example"))
+    expect(callback).toHaveBeenCalledOnce()
+    expect(native.querySelectorAll("strong,em,del,code")).toHaveLength(4)
+    expect(paragraph.hasAttribute("role")).toBe(false)
+  })
+
+  it("replaces only the heading shell at level changes and preserves selection and descendants", () => {
+    const heading = new Heading()
+    heading.innerHTML = '<h2 id="native-title" lang="en"><span>Selectable title</span><input value="edit"></h2>'
+    const span = heading.querySelector("span")!
+    const input = heading.querySelector("input")!
+    const click = vi.fn()
+    span.addEventListener("click", click)
+    document.body.append(heading)
+    const original = heading.native
+    const selection = document.getSelection()!
+    selection.setBaseAndExtent(span.firstChild!, 1, span.firstChild!, 5)
+    heading.prefix = "bar"
+    expect(heading.native).toBe(original)
+    heading.level = 5
+    expect(heading.native).not.toBe(original)
+    expect(heading.native?.localName).toBe("h5")
+    expect(heading.native?.id).toBe("native-title")
+    expect(heading.native?.querySelector("span")).toBe(span)
+    expect(selection.anchorNode).toBe(span.firstChild)
+    expect(selection.toString()).toBe("elec")
+    input.focus()
+    heading.level = 3
+    expect(document.activeElement).toBe(input)
+    span.click()
+    expect(click).toHaveBeenCalledOnce()
+    expect(heading.hasAttribute("role") || heading.hasAttribute("aria-level")).toBe(false)
+    expect(heading.native?.hasAttribute("role")).toBe(false)
+  })
+
+  it("adopts a native owner arriving after an empty generated fallback and releases detached observers", async () => {
+    for (const [type, tag] of [[Paragraph, "p"], [Heading, "h2"], [Link, "a"], [Blockquote, "blockquote"], [UnorderedList, "ul"], [OrderedList, "ol"]] as const) {
+      const host = new type()
+      document.body.append(host)
+      const fallback = host.native
+      const owner = document.createElement(tag)
+      if (tag === "ul" || tag === "ol") owner.append(document.createElement("li"))
+      else owner.textContent = "Late authored owner"
+      host.append(owner)
+      await Promise.resolve()
+      expect(host.native).toBe(owner)
+      expect(fallback?.isConnected).toBe(false)
+      host.remove()
+      const text = document.createTextNode("Detached content")
+      if (tag !== "ul" && tag !== "ol") host.append(text)
+      await Promise.resolve()
+      if (tag !== "ul" && tag !== "ol") expect(text.parentNode).toBe(host)
+      document.body.append(host)
+      expect(host.native).toBe(owner)
+      if (tag !== "ul" && tag !== "ol") expect(text.parentNode).toBe(owner)
+      host.remove()
+    }
+  })
+
+  it("keeps list counters native, including implicit reversed start and li value", () => {
+    const list = new OrderedList()
+    list.innerHTML = '<ol type="A" reversed><li value="7">Seven</li><li>Six</li></ol>'
+    const native = list.firstElementChild as HTMLOListElement
+    const items = [...native.children]
+    document.body.append(list)
+    expect(list.native).toBe(native)
+    expect(list.start).toBeNull()
+    expect(list.reversed).toBe(true)
+    expect(list.type).toBe("A")
+    list.start = 3
+    list.reversed = false
+    list.type = "i"
+    list.alignText = true
+    expect([native.start, native.reversed, native.type]).toEqual([3, false, "i"])
+    list.start = null
+    list.type = null
+    list.reversed = true
+    expect(native.hasAttribute("start") || native.hasAttribute("type")).toBe(false)
+    expect(native.children[0]).toBe(items[0])
+    expect((native.children[0] as HTMLLIElement).value).toBe(7)
+    const unordered = new UnorderedList()
+    unordered.innerHTML = '<li>One</li><li>Two<ol><li>Nested</li></ol></li>'
+    unordered.connectedCallback()
+    expect(unordered.native?.children).toHaveLength(2)
+    expect([...unordered.native!.children].every(node => node.localName === "li")).toBe(true)
+    const invalid = new UnorderedList()
+    invalid.innerHTML = "<m-text>Not an li</m-text>"
+    expect(() => invalid.connectedCallback()).toThrow("native li")
+    expect(invalid.firstElementChild?.localName).toBe("m-text")
+    unordered.disconnectedCallback()
+    invalid.disconnectedCallback()
+  })
+
+  it("adopts anchors without discarding their native behavior, names or navigation attributes", () => {
+    const link = new Link()
+    link.innerHTML = '<a href="#target" target="_blank" rel="noopener noreferrer" download="file" hreflang="en" aria-label="Download">Link</a>'
+    const anchor = link.firstElementChild as HTMLAnchorElement
+    const listener = vi.fn((event: Event) => event.preventDefault())
+    anchor.addEventListener("click", listener)
+    document.body.append(link)
+    expect(link.native).toBe(anchor)
+    expect([link.href, link.target, link.rel, link.download, link.hreflang]).toEqual(["#target", "_blank", "noopener noreferrer", "file", "en"])
+    link.focus()
+    expect(document.activeElement).toBe(anchor)
+    link.href = "#other"
+    link.download = ""
+    link.hreflang = "fr"
+    expect(anchor.getAttribute("aria-label")).toBe("Download")
+    expect(anchor.getAttribute("href")).toBe("#other")
+    anchor.click()
+    expect(listener).toHaveBeenCalledOnce()
+    link.remove()
+    document.body.append(link)
+    expect(link.native).toBe(anchor)
+    link.href = null
+    link.target = null
+    link.rel = null
+    link.download = null
+    expect(anchor.hasAttribute("href") || anchor.hasAttribute("target") || anchor.hasAttribute("rel") || anchor.hasAttribute("download")).toBe(false)
+    expect(link.tabIndex).toBe(-1)
+    expect(link.hasAttribute("role")).toBe(false)
+    expect(() => Reflect.set(link, "href", 123)).toThrow()
+    const nested = new Link()
+    nested.innerHTML = '<span><a href="#nested">Nested</a></span>'
+    expect(() => nested.connectedCallback()).toThrow("nested anchors")
+    nested.disconnectedCallback()
+  })
+
+  it("preserves native quotation citation and scoped rich-document nodes", () => {
+    const quote = new Blockquote()
+    quote.innerHTML = '<blockquote cite="#original"><p>Quoted</p><cite><a href="#source">Source</a></cite></blockquote>'
+    const native = quote.firstElementChild!
+    document.body.append(quote)
+    expect(quote.native).toBe(native)
+    expect(quote.cite).toBe("#original")
+    quote.cite = "#new"
+    quote.alignText = true
+    expect(native.getAttribute("cite")).toBe("#new")
+    expect(native.hasAttribute("data-align-text")).toBe(true)
+    quote.cite = null
+    expect(native.hasAttribute("cite")).toBe(false)
+    const scope = new Typography()
+    scope.innerHTML = "<h1>Native</h1><pre><code>Block</code></pre>"
+    const children = [...scope.childNodes]
+    document.body.append(scope)
+    scope.remove()
+    document.body.append(scope)
+    expect([...scope.childNodes]).toEqual(children)
+  })
+
+  it("accepts passive inline Text in validators without accepting interactive or arbitrary descendants", () => {
+    const header = document.createElement("div")
+    header.innerHTML = '<m-text strong>Label <em>native</em></m-text>'
+    expect(() => validateHeader(header)).not.toThrow()
+    for (const markup of ['<button>Action</button>', '<a href="#x">Link</a>', '<m-link>Placeholder</m-link>', '<m-widget>Widget</m-widget>', '<span tabindex="0">Focus</span>']) {
+      header.innerHTML = `<m-text>${markup}</m-text>`
+      expect(() => validateHeader(header)).toThrow()
+    }
+    document.body.innerHTML = '<button id="trigger">Help</button><div id="tip" class="m-popover m-tooltip" role="tooltip" popover="manual"><m-text>Tooltip text</m-text></div>'
+    const tooltip = createTooltip(document.getElementById("trigger")!, document.getElementById("tip")!)
+    expect(() => tooltip.connect()).not.toThrow()
+    tooltip.disconnect()
+    document.querySelector("#tip m-text")!.append(document.createElement("input"))
+    expect(() => createTooltip(document.getElementById("trigger")!, document.getElementById("tip")!)).toThrow("noninteractive")
+    const dropdown = new Dropdown()
+    dropdown.innerHTML = '<m-dropdown-trigger><button type="button"><m-text>Commands</m-text></button></m-dropdown-trigger><m-dropdown-menu label="Commands"><m-dropdown-item key="one"><button type="button"><m-text>One</m-text></button></m-dropdown-item></m-dropdown-menu>'
+    document.body.append(dropdown)
+    expect(dropdown.items).toHaveLength(1)
+    dropdown.querySelector("m-dropdown-item m-text")!.append(document.createElement("input"))
+    expect(() => dropdown.refresh()).toThrow()
+    dropdown.remove()
+  })
+
+  it("delivers standalone ESM/classic registration with measured unchanged CSS and explicit runtime caps", () => {
+    const esm = readFileSync(resolve("dist", "markup-ui-typography.js"), "utf8")
+    expect(esm).toContain("./markup-ui-core.js")
+    expect(esm).not.toContain("registerMarkupUI")
+    const classic = readFileSync(resolve("dist", "markup-ui-typography.global.js"), "utf8")
+    expect(() => runInContext(classic, createContext({ HTMLElement, MutationObserver, customElements }))).toThrow("core")
+    const entries = new Map()
+    const context = createContext({ HTMLElement, MutationObserver, customElements: { get: (tag: string) => entries.get(tag), define: (tag: string, type: unknown) => entries.set(tag, type) } })
+    runInContext(readFileSync(resolve("dist", "markup-ui-core.global.js"), "utf8"), context)
+    runInContext(classic, context)
+    expect(entries.size).toBe(8)
+    expect(context.MarkupUITypography.Heading.prototype instanceof context.MarkupUICore.ViewElement).toBe(true)
+    expect(() => runInContext(classic, context)).toThrow()
+    for (const format of [".js", ".global.js"]) {
+      const component = gzipSync(readFileSync(resolve("dist", `markup-ui-typography${format}`)), { level: 9 }).length
+      const core = gzipSync(readFileSync(resolve("dist", `markup-ui-core${format}`)), { level: 9 }).length
+      expect(component).toBeLessThanOrEqual(6000)
+      expect(component + core).toBeLessThanOrEqual(8000)
+    }
   })
 
   it("keeps native heading levels, paragraph/list/quote/code structure and contents", () => {

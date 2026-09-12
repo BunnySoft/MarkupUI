@@ -8,6 +8,7 @@ import { renderComponentApi, loadComponentApi } from "../demo/component-api.js"
 import { createComponentOutline } from "../demo/component-outline.js"
 import { generateComponentApi } from "../scripts/component-api.mjs"
 import * as cardRuntime from "../src/components/card/index.js"
+import * as typographyRuntime from "../src/components/typography/index.js"
 import { createSwitch } from "../src/components/switch/index.js"
 import { createTabs } from "../src/components/tabs/index.js"
 
@@ -22,6 +23,7 @@ const collapseHtml = readFileSync(resolve("demo", "components", "collapse.html")
 const dividerHtml = readFileSync(resolve("demo", "components", "divider.html"), "utf8")
 const dropdownHtml = readFileSync(resolve("demo", "components", "dropdown.html"), "utf8")
 const iconHtml = readFileSync(resolve("demo", "components", "icon.html"), "utf8")
+const typographyHtml = readFileSync(resolve("demo", "components", "typography.html"), "utf8")
 let browser: ReturnType<typeof createComponentBrowser> | undefined
 let media: MediaQueryList
 let mediaListener: (() => void) | undefined
@@ -116,6 +118,85 @@ describe("metadata-based component documentation", () => {
     expect(target.querySelectorAll("table")).toHaveLength(3)
     renderComponentApi(target, [meta])
     expect(target.querySelectorAll("[data-api-type]")).toHaveLength(1)
+  })
+})
+
+describe("Typography documentation and composition", () => {
+  it("extracts eight concrete elements, direct defaults and native properties without adding a schema", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["typography"])
+    expect(docs.elements.map((element: { type: string }) => element.type)).toEqual([
+      "Typography", "Text", "Paragraph", "Heading", "Link", "Blockquote", "UnorderedList", "OrderedList",
+    ])
+    const text = docs.elements.find((element: { type: string }) => element.type === "Text")
+    const heading = docs.elements.find((element: { type: string }) => element.type === "Heading")
+    const link = docs.elements.find((element: { type: string }) => element.type === "Link")
+    const list = docs.elements.find((element: { type: string }) => element.type === "OrderedList")
+    expect(text.properties.type).toMatchObject({ attribute: "type", default: "default" })
+    expect(text.properties.depth).toMatchObject({ default: null, min: 1, max: 3, integer: true })
+    expect(text.properties.strong).toMatchObject({ default: false, encoding: "presence" })
+    expect(heading.properties.level).toMatchObject({ default: 2, min: 1, max: 6, integer: true })
+    expect(heading.properties.prefix).toMatchObject({ attribute: "prefix", default: null, values: ["bar"] })
+    expect(link.properties.href).toMatchObject({ attribute: "href", default: null, writable: true })
+    expect(link.properties.native).toMatchObject({ attribute: null, writable: false })
+    expect(link.actions).toEqual(["focus", "blur"])
+    expect(list.properties.start).toMatchObject({ default: null, min: -2147483648, max: 2147483647, integer: true })
+    expect(list.properties.reversed).toMatchObject({ default: false, encoding: "presence" })
+    expect(docs.elements.every((element: { events: unknown[] }) => element.events.length === 0)).toBe(true)
+    expect(typographyRuntime).not.toHaveProperty("meta")
+  })
+
+  it("uses native owners and canonical implementations in every example with explicit shared-core loading", () => {
+    const parsed = new DOMParser().parseFromString(typographyHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-typography.global.js"))
+    expect(parsed.querySelector("main[data-demo-page].component-docs #typography-api")).not.toBeNull()
+    expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("m-strong,m-code,m-li")).toBeNull()
+    for (const example of parsed.querySelectorAll("[data-demo-example]")) {
+      expect(example.querySelector("[data-demo-header] h2[id]")).not.toBeNull()
+      expect(example.querySelector("[data-demo-preview] m-typography")).not.toBeNull()
+    }
+    expect(parsed.querySelector("m-typography[class],m-heading[class],m-text[class],m-p[class]")).toBeNull()
+    expect(parsed.body.textContent?.replace(/\s+/g, " ")).toContain("listeners attached to the replaced shell")
+    expect(readFileSync(resolve("demo", "components", "typography.js"), "utf8")).toContain('new URL("../api/typography.json", import.meta.url)')
+    const legacy = readFileSync(resolve("demo", "legacy.html"), "utf8")
+    const legacyScript = readFileSync(resolve("demo", "legacy.js"), "utf8")
+    expect(legacy).toContain('src="../dist/markup-ui-typography.js"')
+    expect(legacy).not.toMatch(/<\/?m-(strong|code)(?:\s|>)/)
+    expect(legacyScript).toContain('querySelectorAll("m-heading > h2,m-heading > h3")')
+    expect(legacyScript).not.toContain('createElement("m-code")')
+  })
+
+  it("loads the API after readiness and exercises properties and reconnect on real elements", async () => {
+    const parsed = new DOMParser().parseFromString(typographyHtml, "text/html")
+    document.body.replaceChildren(document.importNode(parsed.querySelector("main")!, true))
+    const heading = document.getElementById("live-title") as typographyRuntime.Heading
+    const paragraph = document.getElementById("live-paragraph") as typographyRuntime.Paragraph
+    const span = document.getElementById("live-content")
+    const nativeParagraph = paragraph.native
+    const fetch = vi.fn(async () => ({ ok: true, json: async () => JSON.parse(readFileSync(resolve("demo", "api", "typography.json"), "utf8")) }))
+    vi.stubGlobal("MarkupUITypography", typographyRuntime)
+    vi.stubGlobal("fetch", fetch)
+    const ready = vi.spyOn(document, "readyState", "get").mockReturnValue("loading")
+    try {
+      await import("../demo/components/typography.js")
+      expect(fetch).not.toHaveBeenCalled()
+      document.dispatchEvent(new Event("DOMContentLoaded"))
+      await Promise.resolve()
+      await Promise.resolve()
+      expect(fetch).toHaveBeenCalledOnce()
+      document.getElementById("change-level")!.click()
+      expect(heading.level).toBe(3)
+      expect(heading.native?.localName).toBe("h3")
+      document.getElementById("change-tone")!.click()
+      expect(paragraph.type).toBe("success")
+      document.getElementById("reconnect-typography")!.click()
+      expect(heading.native?.querySelector("#live-content")).toBe(span)
+      expect(paragraph.native).toBe(nativeParagraph)
+      expect(document.getElementById("typography-status")?.textContent).toBe("Level: 3; tone: success")
+    } finally { ready.mockRestore() }
   })
 })
 
@@ -704,6 +785,7 @@ describe("component-by-component demo browser", () => {
     ["Divider", dividerHtml, ["basic", "content", "vertical"]],
     ["Dropdown", dropdownHtml, ["basic", "icon", "trigger", "cascade", "arrow", "placement", "size", "batch-render", "manual-position", "render", "option-props", "render-option"]],
     ["Icon", iconHtml, ["paint", "size", "depth", "wrapper", "live"]],
+    ["Typography", typographyHtml, ["levels", "text", "alignment", "lists", "links", "rtl", "scope", "live"]],
   ])("keeps the supported %s demo inventory with per-example code controls", (_name, sourceHtml, expected) => {
     document.body.innerHTML = sourceHtml.slice(sourceHtml.indexOf("<body>") + 6, sourceHtml.indexOf("</body>"))
     const setup = document.querySelector<HTMLDetailsElement>(".component-setup")!

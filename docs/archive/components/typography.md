@@ -1,6 +1,7 @@
 # Typography
 
 > **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
+> The implemented ViewElement family now lives in the [Typography demo and generated API](../../../demo/components/typography.html). The native style audit below remains a geometry/theme baseline, not the current runtime contract.
 
 **Migration status: 🟢 Verified retained native HTML/CSS scope.**
 **Architecture: CSS-only.** Typography has no Custom Element, JavaScript entry, registration

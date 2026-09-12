@@ -33,27 +33,6 @@ export class MSemantic extends MElement {
   }
 }
 
-export class MHeading extends MElement {
-  public connectedCallback(): void {
-    const level = Math.max(1, Math.min(6, Number(this.getAttribute("level")) || 2))
-    this.setAttribute("role", "heading")
-    this.setAttribute("aria-level", String(level))
-  }
-}
-
-export class MLink extends MElement {
-  public connectedCallback(): void {
-    if (this.querySelector(":scope > a") !== null) return
-    const anchor = this.ownerDocument.createElement("a")
-    for (const name of ["href", "target", "rel", "aria-label"]) {
-      const value = this.getAttribute(name)
-      if (value !== null) anchor.setAttribute(name, value)
-    }
-    while (this.firstChild !== null) anchor.append(this.firstChild)
-    this.append(anchor)
-  }
-}
-
 export class MField extends MElement {
   public connectedCallback(): void {
     if (this.querySelector(":scope > [data-m-label]") !== null) return

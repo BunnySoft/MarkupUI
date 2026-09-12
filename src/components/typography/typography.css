@@ -24,62 +24,74 @@
   --_m-typography-border: rgb(255 255 255 / .24);
   --_m-typography-divider: rgb(255 255 255 / .09);
 }
-:where(.m-typography) {
+:where(m-typography) { display: block; }
+:where(m-p, m-heading, m-link, m-blockquote, m-ul, m-ol):not([hidden]) { display: contents; }
+:where(m-typography, m-text, m-p, m-heading, m-link, m-blockquote, m-ul, m-ol)[hidden] { display: none; }
+:where(m-typography, .m-typography) {
   font-family: var(--m-typography-font-family, var(--m-font-family, inherit));
   font-size: var(--m-typography-font-size, var(--m-font-size, 14px));
   line-height: var(--m-typography-line-height, var(--m-line-height, 1.6));
   color: var(--m-typography-color, var(--_m-typography-color, #333639));
   overflow-wrap: anywhere;
 }
-:where(.m-text, .m-p, .m-h, .m-blockquote, .m-ul, .m-ol, .m-li) {
+:where(m-text, .m-text, .m-p, .m-h, .m-blockquote, .m-ul, .m-ol, .m-li) {
   color: var(--m-typography-color, var(--_m-typography-color, #333639));
   overflow-wrap: anywhere;
 }
-:where(.m-typography) :where(p), :where(p.m-p) {
+:where(m-typography, .m-typography) :where(p), :where(m-p) > p, :where(p.m-p) {
   box-sizing: border-box;
   margin-block: var(--m-typography-paragraph-margin, 16px);
   font-size: var(--m-typography-font-size, var(--m-font-size, 14px));
   line-height: var(--m-typography-line-height, var(--m-line-height, 1.6));
   color: var(--m-typography-color, var(--_m-typography-color, #333639));
 }
-:where(.m-typography) :where(h1, h2, h3, h4, h5, h6),
+:where(m-typography, .m-typography) :where(h1, h2, h3, h4, h5, h6), :where(m-heading) > :where(h1, h2, h3, h4, h5, h6),
 :where(h1.m-h, h2.m-h, h3.m-h, h4.m-h, h5.m-h, h6.m-h) {
   margin-block: var(--m-typography-heading-margin, 28px var(--_m-typography-heading-end, 18px));
   font-weight: var(--m-typography-heading-weight, 500);
   line-height: var(--m-typography-heading-line-height, var(--m-typography-line-height, var(--m-line-height, 1.6)));
   color: var(--m-typography-heading-color, var(--m-typography-color, var(--_m-typography-heading, #1f2225)));
 }
-:where(.m-typography) :where(h1, h2), :where(h1.m-h, h2.m-h) { --_m-typography-prefix: 16px; --_m-typography-bar: 4px; }
-:where(.m-typography) :where(h1, h2, h3), :where(h1.m-h, h2.m-h, h3.m-h) { --_m-typography-heading-end: 20px; }
-:where(.m-typography) :where(h1), :where(h1.m-h) { font-size: var(--m-typography-h1-size, 30px); }
-:where(.m-typography) :where(h2), :where(h2.m-h) { font-size: var(--m-typography-h2-size, 22px); }
-:where(.m-typography) :where(h3), :where(h3.m-h) { font-size: var(--m-typography-h3-size, 18px); }
-:where(.m-typography) :where(h4), :where(h4.m-h) { font-size: var(--m-typography-h4-size, 16px); }
-:where(.m-typography) :where(h5), :where(h5.m-h) { font-size: var(--m-typography-h5-size, 16px); }
-:where(.m-typography) :where(h6), :where(h6.m-h) { font-size: var(--m-typography-h6-size, 16px); }
-:where(.m-typography) :where(span, p, strong, em, u, del, code)[data-depth="1"],
+:where(m-typography, .m-typography, m-heading) :where(h1, h2), :where(h1.m-h, h2.m-h) { --_m-typography-prefix: 16px; --_m-typography-bar: 4px; }
+:where(m-typography, .m-typography, m-heading) :where(h1, h2, h3), :where(h1.m-h, h2.m-h, h3.m-h) { --_m-typography-heading-end: 20px; }
+:where(m-typography, .m-typography, m-heading) :where(h1), :where(h1.m-h) { font-size: var(--m-typography-h1-size, 30px); }
+:where(m-typography, .m-typography, m-heading) :where(h2), :where(h2.m-h) { font-size: var(--m-typography-h2-size, 22px); }
+:where(m-typography, .m-typography, m-heading) :where(h3), :where(h3.m-h) { font-size: var(--m-typography-h3-size, 18px); }
+:where(m-typography, .m-typography, m-heading) :where(h4), :where(h4.m-h) { font-size: var(--m-typography-h4-size, 16px); }
+:where(m-typography, .m-typography, m-heading) :where(h5), :where(h5.m-h) { font-size: var(--m-typography-h5-size, 16px); }
+:where(m-typography, .m-typography, m-heading) :where(h6), :where(h6.m-h) { font-size: var(--m-typography-h6-size, 16px); }
+:where(m-text)[depth="1"], :where(m-p) > p[data-depth="1"],
+:where(m-typography, .m-typography) :where(span, p, strong, em, u, del, code)[data-depth="1"],
 :where(.m-text, .m-p)[data-depth="1"] { color: var(--m-typography-depth-1, var(--_m-typography-heading, #1f2225)); }
-:where(.m-typography) :where(span, p, strong, em, u, del, code)[data-depth="2"],
+:where(m-text)[depth="2"], :where(m-p) > p[data-depth="2"],
+:where(m-typography, .m-typography) :where(span, p, strong, em, u, del, code)[data-depth="2"],
 :where(.m-text, .m-p)[data-depth="2"] { color: var(--m-typography-depth-2, var(--_m-typography-color, #333639)); }
-:where(.m-typography) :where(span, p, strong, em, u, del, code)[data-depth="3"],
+:where(m-text)[depth="3"], :where(m-p) > p[data-depth="3"],
+:where(m-typography, .m-typography) :where(span, p, strong, em, u, del, code)[data-depth="3"],
 :where(.m-text, .m-p)[data-depth="3"] { color: var(--m-typography-depth-3, var(--_m-typography-muted, #767c82)); }
-:where(.m-typography) :where(span, p, strong, em, u, del, code, h1, h2, h3, h4, h5, h6)[data-type="success"],
+:where(m-text)[type="success"], :where(m-p, m-heading) > [data-type="success"],
+:where(m-typography, .m-typography) :where(span, p, strong, em, u, del, code, h1, h2, h3, h4, h5, h6)[data-type="success"],
 :where(.m-text, .m-p, .m-h)[data-type="success"] { --_m-typography-accent: var(--m-typography-success, var(--m-color-success, var(--_m-typography-success, #18a058))); }
-:where(.m-typography) :where(span, p, strong, em, u, del, code, h1, h2, h3, h4, h5, h6)[data-type="info"],
+:where(m-text)[type="info"], :where(m-p, m-heading) > [data-type="info"],
+:where(m-typography, .m-typography) :where(span, p, strong, em, u, del, code, h1, h2, h3, h4, h5, h6)[data-type="info"],
 :where(.m-text, .m-p, .m-h)[data-type="info"] { --_m-typography-accent: var(--m-typography-info, var(--m-color-info, var(--_m-typography-info, #2080f0))); }
-:where(.m-typography) :where(span, p, strong, em, u, del, code, h1, h2, h3, h4, h5, h6)[data-type="warning"],
+:where(m-text)[type="warning"], :where(m-p, m-heading) > [data-type="warning"],
+:where(m-typography, .m-typography) :where(span, p, strong, em, u, del, code, h1, h2, h3, h4, h5, h6)[data-type="warning"],
 :where(.m-text, .m-p, .m-h)[data-type="warning"] { --_m-typography-accent: var(--m-typography-warning, var(--m-color-warning, var(--_m-typography-warning, #f0a020))); }
-:where(.m-typography) :where(span, p, strong, em, u, del, code, h1, h2, h3, h4, h5, h6)[data-type="error"],
+:where(m-text)[type="error"], :where(m-p, m-heading) > [data-type="error"],
+:where(m-typography, .m-typography) :where(span, p, strong, em, u, del, code, h1, h2, h3, h4, h5, h6)[data-type="error"],
 :where(.m-text, .m-p, .m-h)[data-type="error"] { --_m-typography-accent: var(--m-typography-error, var(--m-color-error, var(--_m-typography-error, #d03050))); }
-:where(.m-typography) :where(span, p, strong, em, u, del):is([data-type="info"], [data-type="success"], [data-type="warning"], [data-type="error"]),
+:where(m-text):is([type="info"], [type="success"], [type="warning"], [type="error"]),
+:where(m-p) > p:is([data-type="info"], [data-type="success"], [data-type="warning"], [data-type="error"]),
+:where(m-typography, .m-typography) :where(span, p, strong, em, u, del):is([data-type="info"], [data-type="success"], [data-type="warning"], [data-type="error"]),
 :where(.m-text, .m-p):not(:where(code)):is([data-type="info"], [data-type="success"], [data-type="warning"], [data-type="error"]) { color: var(--_m-typography-accent); }
-:where(.m-typography) :where(strong, [data-strong]), :where(strong.m-text, .m-text[data-strong]) { font-weight: var(--m-typography-strong-weight, 500); }
-:where(.m-typography) :where(em, i, [data-italic]), :where(em.m-text, i.m-text, .m-text[data-italic]) { font-style: italic; }
-:where(.m-typography) :where(u, [data-underline]), :where(u.m-text, .m-text[data-underline]) { text-decoration-line: underline; text-underline-offset: .12em; }
-:where(.m-typography) :where(del), :where(del.m-text) { text-decoration-line: line-through; }
-:where(.m-typography) :where(del[data-underline]), :where(del.m-text[data-underline]) { text-decoration-line: underline line-through; }
-:where(.m-typography) :where(code):not(:where(pre code)), :where(code.m-text),
-:where(.m-typography) :where(code):not(:where(pre code))[data-depth], :where(code.m-text)[data-depth] {
+:where(m-text[strong]), :where(m-typography, .m-typography, m-text, m-p) :where(strong, [data-strong]), :where(strong.m-text, .m-text[data-strong]) { font-weight: var(--m-typography-strong-weight, 500); }
+:where(m-text[italic]), :where(m-typography, .m-typography, m-text, m-p) :where(em, i, [data-italic]), :where(em.m-text, i.m-text, .m-text[data-italic]) { font-style: italic; }
+:where(m-text[underline]), :where(m-typography, .m-typography, m-text, m-p) :where(u, [data-underline]), :where(u.m-text, .m-text[data-underline]) { text-decoration-line: underline; text-underline-offset: .12em; }
+:where(m-typography, .m-typography, m-text, m-p) :where(del), :where(del.m-text) { text-decoration-line: line-through; }
+:where(m-typography, .m-typography, m-text, m-p) :where(del[data-underline]), :where(del.m-text[data-underline]) { text-decoration-line: underline line-through; }
+:where(m-typography, .m-typography, m-text, m-p) :where(code):not(:where(pre code)), :where(code.m-text),
+:where(m-typography, .m-typography, m-text, m-p) :where(code):not(:where(pre code))[data-depth], :where(code.m-text)[data-depth] {
   box-sizing: border-box;
   line-height: 1.4;
   font-family: var(--m-typography-mono-font, v-mono, SFMono-Regular, Menlo, Consolas, Courier, monospace);
@@ -90,13 +102,13 @@
   background: var(--m-typography-code-background, var(--_m-typography-code, #f4f4f8));
   color: var(--m-typography-code-color, var(--m-typography-color, var(--_m-typography-color, #333639)));
 }
-:where(.m-typography) :where(code:not([hidden])):not(:where(pre code)), :where(code.m-text:not([hidden])) { display: inline-block; }
-:where(.m-typography) :where(h1, h2, h3, h4, h5, h6)[data-prefix="bar"],
+:where(m-typography, .m-typography, m-text, m-p) :where(code:not([hidden])):not(:where(pre code)), :where(code.m-text:not([hidden])) { display: inline-block; }
+:where(m-typography, .m-typography, m-heading) :where(h1, h2, h3, h4, h5, h6)[data-prefix="bar"],
 :where(h1.m-h, h2.m-h, h3.m-h, h4.m-h, h5.m-h, h6.m-h)[data-prefix="bar"] {
   position: relative;
   padding-inline-start: var(--m-typography-prefix-space, var(--_m-typography-prefix, 12px));
 }
-:where(.m-typography) :where(h1, h2, h3, h4, h5, h6)[data-prefix="bar"]::before,
+:where(m-typography, .m-typography, m-heading) :where(h1, h2, h3, h4, h5, h6)[data-prefix="bar"]::before,
 :where(h1.m-h, h2.m-h, h3.m-h, h4.m-h, h5.m-h, h6.m-h)[data-prefix="bar"]::before {
   position: absolute;
   inset-block: 0;
@@ -106,23 +118,23 @@
   background: var(--m-typography-bar-color, var(--_m-typography-accent, var(--m-color-primary, var(--_m-typography-primary, #18a058))));
   content: "";
 }
-:where(.m-typography) :where(h1, h2, h3, h4, h5, h6)[data-prefix="bar"][data-align-text],
+:where(m-typography, .m-typography, m-heading) :where(h1, h2, h3, h4, h5, h6)[data-prefix="bar"][data-align-text],
 :where(h1.m-h, h2.m-h, h3.m-h, h4.m-h, h5.m-h, h6.m-h)[data-prefix="bar"][data-align-text] { padding-inline-start: 0; }
-:where(.m-typography) :where(h1, h2, h3, h4, h5, h6)[data-prefix="bar"][data-align-text]::before,
+:where(m-typography, .m-typography, m-heading) :where(h1, h2, h3, h4, h5, h6)[data-prefix="bar"][data-align-text]::before,
 :where(h1.m-h, h2.m-h, h3.m-h, h4.m-h, h5.m-h, h6.m-h)[data-prefix="bar"][data-align-text]::before { inset-inline-start: calc(-1 * var(--m-typography-prefix-space, var(--_m-typography-prefix, 12px))); }
-:where(.m-typography) :where(ul, ol), :where(ul.m-ul, ol.m-ol) {
+:where(m-typography, .m-typography) :where(ul, ol), :where(m-ul) > ul, :where(m-ol) > ol, :where(ul.m-ul, ol.m-ol) {
   margin-block: 1em;
   padding-inline-start: var(--m-typography-list-indent, 2em);
   font-size: var(--m-typography-font-size, var(--m-font-size, 14px));
   line-height: var(--m-typography-line-height, var(--m-line-height, 1.6));
 }
-:where(.m-typography) :where(ul, ol)[data-align-text], :where(ul.m-ul, ol.m-ol)[data-align-text] { padding-inline-start: 0; }
-:where(.m-typography) :where(li), :where(ul.m-ul, ol.m-ol) :where(li), :where(li.m-li) {
+:where(m-typography, .m-typography, m-ul, m-ol) :where(ul, ol)[data-align-text], :where(ul.m-ul, ol.m-ol)[data-align-text] { padding-inline-start: 0; }
+:where(m-typography, .m-typography, m-ul, m-ol) :where(li), :where(ul.m-ul, ol.m-ol) :where(li), :where(li.m-li) {
   margin-block: .25em 0;
   line-height: var(--m-typography-line-height, var(--m-line-height, 1.6));
   color: var(--m-typography-color, var(--_m-typography-color, #333639));
 }
-:where(.m-typography) :where(blockquote), :where(blockquote.m-blockquote) {
+:where(m-typography, .m-typography) :where(blockquote), :where(m-blockquote) > blockquote, :where(blockquote.m-blockquote) {
   box-sizing: border-box;
   margin-block: 12px;
   margin-inline: 0;
@@ -132,17 +144,19 @@
   line-height: var(--m-typography-line-height, var(--m-line-height, 1.6));
   color: var(--m-typography-color, var(--_m-typography-color, #333639));
 }
-:where(.m-typography) :where(blockquote)[data-align-text], :where(blockquote.m-blockquote)[data-align-text] { margin-inline-start: calc(-1 * (var(--m-typography-quote-padding, 12px) + var(--m-typography-quote-border-width, 4px))); }
-:where(.m-typography) :where(a[href]), :where(a.m-a[href]) {
+:where(m-typography, .m-typography, m-blockquote) :where(blockquote)[data-align-text], :where(blockquote.m-blockquote)[data-align-text] { margin-inline-start: calc(-1 * (var(--m-typography-quote-padding, 12px) + var(--m-typography-quote-border-width, 4px))); }
+:where(m-typography, .m-typography) :where(a[href]), :where(m-link) > a[href], :where(a.m-a[href]) {
   color: var(--m-typography-link-color, var(--m-color-primary, var(--_m-typography-primary, #18a058)));
   text-decoration-line: underline;
   text-decoration-color: currentColor;
   text-underline-offset: .12em;
 }
-:where(.m-typography) :where(a[href]):hover, :where(a.m-a[href]):hover { color: var(--m-typography-link-hover-color, var(--m-typography-link-color, var(--m-color-primary, var(--_m-typography-primary, #18a058)))); }
-:where(.m-typography) :where(a[href]):focus-visible, :where(a.m-a[href]):focus-visible { outline: 2px solid var(--m-typography-focus-color, #2080f080); outline-offset: 2px; }
-:where(.m-typography) :where(hr), :where(hr.m-hr) { margin-block: 12px; margin-inline: 0; border: 0; border-block-start: 1px solid var(--m-typography-rule-color, var(--_m-typography-divider, #efeff5)); }
-:where(.m-typography) :where(h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote):where(:first-child),
-:where(.m-h, .m-p, .m-ul, .m-ol, .m-blockquote):where(:first-child) { margin-block-start: 0; }
-:where(.m-typography) :where(p, ul, ol, blockquote):where(:last-child),
-:where(.m-p, .m-ul, .m-ol, .m-blockquote):where(:last-child) { margin-block-end: 0; }
+:where(m-typography, .m-typography, m-link) :where(a[href]):hover, :where(a.m-a[href]):hover { color: var(--m-typography-link-hover-color, var(--m-typography-link-color, var(--m-color-primary, var(--_m-typography-primary, #18a058)))); }
+:where(m-typography, .m-typography, m-link) :where(a[href]):focus-visible, :where(a.m-a[href]):focus-visible { outline: 2px solid var(--m-typography-focus-color, #2080f080); outline-offset: 2px; }
+:where(m-typography, .m-typography) :where(hr), :where(hr.m-hr) { margin-block: 12px; margin-inline: 0; border: 0; border-block-start: 1px solid var(--m-typography-rule-color, var(--_m-typography-divider, #efeff5)); }
+:where(m-heading, m-p, m-ul, m-ol, m-blockquote):where(:first-child) > :where([data-part]),
+:where(m-typography, .m-typography) :where(h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote):not(:where(m-heading, m-p, m-ul, m-ol, m-blockquote) > *):where(:first-child),
+:where(.m-h, .m-p, .m-ul, .m-ol, .m-blockquote):not(:where(m-heading, m-p, m-ul, m-ol, m-blockquote) > *):where(:first-child) { margin-block-start: 0; }
+:where(m-p, m-ul, m-ol, m-blockquote):where(:last-child) > :where([data-part]),
+:where(m-typography, .m-typography) :where(p, ul, ol, blockquote):not(:where(m-p, m-ul, m-ol, m-blockquote) > *):where(:last-child),
+:where(.m-p, .m-ul, .m-ol, .m-blockquote):not(:where(m-p, m-ul, m-ol, m-blockquote) > *):where(:last-child) { margin-block-end: 0; }
