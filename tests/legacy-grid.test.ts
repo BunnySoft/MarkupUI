@@ -3,6 +3,7 @@ import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import "../src/components/space/index.js"
+import "../src/components/flex/index.js"
 
 const html = readFileSync(resolve("demo", "components", "legacy-grid.html"), "utf8")
 const css = readFileSync(resolve("demo", "components", "legacy-grid.css"), "utf8")
@@ -19,7 +20,7 @@ function fixture() {
 afterEach(() => { sheet?.remove(); sheet = undefined; document.body.replaceChildren(); vi.restoreAllMocks() })
 
 describe("Legacy Grid resolved through shipped native layout CSS", () => {
-  it("loads native Grid/Flex CSS and canonical Space without a legacy-grid runtime or export", () => {
+  it("loads native Grid CSS and canonical Flex/Space without a legacy-grid runtime or export", () => {
     const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
     const manifest = JSON.parse(readFileSync(resolve("dist", "manifest.json"), "utf8"))
     const parsed = new DOMParser().parseFromString(html, "text/html")
@@ -36,9 +37,9 @@ describe("Legacy Grid resolved through shipped native layout CSS", () => {
     expect(existsSync(resolve("src", "components", "legacy-grid"))).toBe(false)
     expect(Object.keys(manifest.bundles).some(name => name.includes("legacy-grid"))).toBe(false)
     expect([...parsed.querySelectorAll("script")].map(node => node.getAttribute("src"))).toEqual([
-      "../../dist/markup-ui-core.global.js", "../../dist/markup-ui-space.global.js",
+      "../../dist/markup-ui-core.global.js", "../../dist/markup-ui-flex.global.js", "../../dist/markup-ui-space.global.js",
     ])
-    expect(html).not.toMatch(/<style|\sstyle=|<m-(?!space)|<n-row|<n-col/)
+    expect(html).not.toMatch(/<style|\sstyle=|<m-(?!space|flex)|<n-row|<n-col/)
   })
   it("uses original semantic native containers, direct items and real form labels", () => {
     const root = fixture()
@@ -98,7 +99,7 @@ describe("Legacy Grid resolved through shipped native layout CSS", () => {
   })
   it("uses actual Flex/Space rules for native navigation and form actions", () => {
     const root = fixture()
-    expect(getComputedStyle(root.querySelector("nav")!).display).toBe("flex")
+    expect(getComputedStyle(root.querySelector("nav > m-flex")!).display).toBe("flex")
     expect(getComputedStyle(root.querySelector("#form-actions")!).display).toBe("flex")
     expect(root.querySelector("#reset-notes")!.parentElement!.children).toHaveLength(2)
     expect(getComputedStyle(root.querySelector("#form-actions")!).getPropertyValue("--_m-space-column-gap").trim()).toBe("8px")

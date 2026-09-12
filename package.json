@@ -313,6 +313,10 @@
       "import": "./dist/markup-ui-space.js"
     },
     "./space/style.css": "./dist/markup-ui-space.css",
+    "./flex": {
+      "types": "./dist/components/flex/index.d.ts",
+      "import": "./dist/markup-ui-flex.js"
+    },
     "./flex/style.css": "./dist/markup-ui-flex.css",
     "./divider": {
       "types": "./dist/components/divider/index.d.ts",

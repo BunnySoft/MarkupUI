@@ -1,29 +1,56 @@
-.m-flex {
+m-flex {
   --_m-flex-row-gap: 8px;
   --_m-flex-column-gap: 12px;
+  --_m-flex-align: normal;
+  --_m-flex-justify: start;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  align-items: var(--m-flex-align, normal);
-  justify-content: var(--m-flex-justify, start);
+  align-items: var(--m-flex-align, var(--_m-flex-align));
+  justify-content: var(--m-flex-justify, var(--_m-flex-justify));
   row-gap: var(--m-flex-row-gap, var(--_m-flex-row-gap));
   column-gap: var(--m-flex-column-gap, var(--_m-flex-column-gap));
   min-inline-size: 0;
   max-inline-size: 100%;
   overflow-wrap: anywhere;
+  /* The HTML align presentation hint must not change descendant text alignment. */
+  text-align: inherit;
 }
-.m-flex > * { min-inline-size: 0; }
-.m-flex[data-size="small"] {
+m-flex > * { min-inline-size: 0; }
+m-flex[size="small"] {
   --_m-flex-row-gap: 4px;
   --_m-flex-column-gap: 8px;
 }
-.m-flex[data-size="large"] {
+m-flex[size="large"] {
   --_m-flex-row-gap: 12px;
   --_m-flex-column-gap: 16px;
 }
-.m-flex[data-inline] { display: inline-flex; }
-.m-flex[data-vertical] { flex-direction: column; }
-.m-flex:is([data-vertical], [data-wrap="false"]) { flex-wrap: nowrap; }
-:where(.m-flex, .m-flex > *)[hidden]:not([hidden="until-found"]),
-template.m-flex,
-.m-flex > template { display: none !important; }
+m-flex[inline] { display: inline-flex; }
+m-flex[reverse] { flex-direction: row-reverse; }
+m-flex[vertical] { flex-direction: column; }
+m-flex[vertical][reverse] { flex-direction: column-reverse; }
+m-flex:is([vertical], [wrap="false"]) { flex-wrap: nowrap; }
+m-flex[align="start"] { --_m-flex-align: start; }
+m-flex[align="end"] { --_m-flex-align: end; }
+m-flex[align="flex-start"] { --_m-flex-align: flex-start; }
+m-flex[align="flex-end"] { --_m-flex-align: flex-end; }
+m-flex[align="self-start"] { --_m-flex-align: self-start; }
+m-flex[align="self-end"] { --_m-flex-align: self-end; }
+m-flex[align="center"] { --_m-flex-align: center; }
+m-flex[align="baseline"] { --_m-flex-align: baseline; }
+m-flex[align="first baseline"] { --_m-flex-align: first baseline; }
+m-flex[align="last baseline"] { --_m-flex-align: last baseline; }
+m-flex[align="stretch"] { --_m-flex-align: stretch; }
+m-flex[justify="normal"] { --_m-flex-justify: normal; }
+m-flex[justify="end"] { --_m-flex-justify: end; }
+m-flex[justify="flex-start"] { --_m-flex-justify: flex-start; }
+m-flex[justify="flex-end"] { --_m-flex-justify: flex-end; }
+m-flex[justify="center"] { --_m-flex-justify: center; }
+m-flex[justify="left"] { --_m-flex-justify: left; }
+m-flex[justify="right"] { --_m-flex-justify: right; }
+m-flex[justify="stretch"] { --_m-flex-justify: stretch; }
+m-flex[justify="space-between"] { --_m-flex-justify: space-between; }
+m-flex[justify="space-around"] { --_m-flex-justify: space-around; }
+m-flex[justify="space-evenly"] { --_m-flex-justify: space-evenly; }
+:where(m-flex, m-flex > *)[hidden]:not([hidden="until-found"]),
+m-flex > template { display: none !important; }

@@ -1,18 +1,24 @@
-body { margin: 0; font-family: system-ui, sans-serif; line-height: 1.5; color: #242426; background: #fafafa; }
-main { box-sizing: border-box; max-inline-size: 960px; margin-inline: auto; padding: 24px; }
-section { margin-block: 24px; }
-h1 { font-size: 2rem; }
-h2 { font-size: 1.2rem; }
-.measurement { margin-block: 12px; }
-.measurement > span { box-sizing: border-box; inline-size: 64px; block-size: 32px; flex: none; border: 1px solid #96969d; text-align: center; }
-.tuple { --m-flex-column-gap: 20px; --m-flex-row-gap: 6px; inline-size: 10rem; }
-.no-wrap { inline-size: 10rem; overflow-x: auto; }
-.aligned { --m-flex-align: center; --m-flex-justify: space-between; inline-size: 24rem; block-size: 96px; border: 1px solid #96969d; box-sizing: border-box; }
+[data-demo-preview] > m-flex + m-flex { margin-block-start: 12px; }
+[data-demo-example="presets"] m-flex > span,
+[data-demo-example="axes"] m-flex > span,
+:is(#aligned, #reverse-row, #reverse-column, #nested-small, #nested-medium, #hidden-items, #rtl, #writing, #reverse-wrap) > span {
+  box-sizing: border-box; inline-size: 64px; block-size: 32px; flex: none; border: 1px solid #96969d; text-align: center;
+}
+#tuple, #no-wrap, #reverse-wrap { inline-size: 160px; }
+#no-wrap { overflow-x: auto; }
+#aligned { inline-size: 384px; block-size: 96px; border: 1px solid #96969d; box-sizing: border-box; }
+#aligned > span:nth-child(2) { block-size: 48px; font-size: 1.2rem; }
+#reverse-row { inline-size: 280px; }
+#reverse-column { block-size: 144px; }
 .native-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 6rem); gap: 12px; }
-.long-copy { margin: 0; }
-form { margin-block: 16px; }
-input, button { font: inherit; }
-a { color: #175fbb; }
-a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
-@media (max-width: 400px) { main { padding: 12px; } }
-@media print { .no-wrap { inline-size: auto; overflow: visible; } }
+#nested-grid-flex > p { margin: 0; }
+[data-demo-preview] form { margin-block: 16px; }
+[data-demo-preview] :is(input, button, select) { font: inherit; }
+[data-demo-preview] input { box-sizing: border-box; max-inline-size: 100%; min-inline-size: 0; }
+[data-demo-preview] :is(a, button, input, select):focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.vertical-writing { writing-mode: vertical-rl; inline-size: 160px; block-size: 96px; }
+.custom-flex { --m-flex-column-gap: 2rem; --m-flex-row-gap: .5rem; --m-flex-align: safe center; border-inline-start: 3px solid #175fbb; padding: .5rem; }
+.custom-flex > span { padding: .5rem; border: 1px solid currentColor; }
+.reverse-wrap { flex-wrap: wrap-reverse; }
+@media (max-width: 400px) { .custom-flex { --m-flex-column-gap: .5rem; } }
+@media print { #no-wrap { inline-size: auto; overflow: visible; } }

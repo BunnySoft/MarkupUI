@@ -14,6 +14,7 @@ in the target inventory.
 9. [Icon demo and API](../../demo/components/icon.html): passive authored graphics, typed sizing, theme depth and IconWrapper.
 10. [Typography demo and API](../../demo/components/typography.html): typed text presentation, rich documents and native heading/paragraph/link/list/quote owners.
 11. [Space demo and API](../../demo/components/space.html): typed spacing, alignment and wrapping of author-owned native content.
+12. [Flex demo and API](../../demo/components/flex.html): native flex alignment, visual reversal and typed gaps without generated items.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
@@ -33,6 +34,7 @@ maintain a second Markdown copy of their API tables or usage examples.
 | Use Icon/IconWrapper | `@dataengine/markup-ui/icon` and its CSS; ESM imports core automatically. |
 | Use Typography and its seven companions | `@dataengine/markup-ui/typography` and its CSS; ESM imports core automatically. Import `Text as TypographyText` when native DOM Text is also needed. |
 | Use Space | `@dataengine/markup-ui/space` and its CSS; ESM imports core automatically. |
+| Use Flex | `@dataengine/markup-ui/flex` and its CSS; ESM imports core automatically. |
 | Use classic scripts | Core first, then the selected component scripts and CSS. |
 
 No jQuery dependency, query wrapper, state/binding runtime or all-components bundle is

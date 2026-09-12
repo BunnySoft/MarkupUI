@@ -2,6 +2,7 @@ import { createPopoverController } from "../popover/popover.js"
 import { isIconElement } from "../icon/model.js"
 import { isTypographyInline } from "../typography/model.js"
 import { isSpaceElement } from "../space/model.js"
+import { isFlexElement } from "../flex/model.js"
 import type { PopoverController, PopoverOptions } from "../popover/popover.js"
 
 export type TooltipOptions = Omit<PopoverOptions, "trigger">
@@ -14,13 +15,13 @@ export function createTooltip(trigger: HTMLElement, panel: HTMLElement, options:
   const document = trigger?.ownerDocument
   const view = document?.defaultView
   if (!view || !(trigger instanceof view.HTMLElement) || !(panel instanceof view.HTMLElement)
-    || trigger.ownerDocument !== panel.ownerDocument) throw new TypeError("Tooltip needs native nodes in one document.")
-  if ("trigger" in options) throw new TypeError("Tooltip always supports hover/focus; use open/close manually.")
+    || trigger.ownerDocument !== panel.ownerDocument) throw new TypeError("Tooltip needs native nodes sharing a document.")
+  if ("trigger" in options) throw new TypeError("Tooltip always supports hover/focus.")
   let suppressed = false
   let core: PopoverController
   function validate() {
     if (trigger.matches(":disabled") || trigger.tabIndex < 0) {
-      throw new TypeError("Tooltip needs a keyboard-reachable trigger; disabled controls need a native alternative.")
+      throw new TypeError("Tooltip needs a keyboard-reachable trigger; disabled needs a native alternative.")
     }
     if (!panel.classList.contains("m-tooltip") || panel.getAttribute("role") !== "tooltip"
       || panel.getAttribute("popover") !== "manual" || panel.getAttribute("aria-hidden") === "true"
@@ -30,11 +31,11 @@ export function createTooltip(trigger: HTMLElement, panel: HTMLElement, options:
     for (const node of [panel, ...panel.querySelectorAll("*")]) {
       const role = node === panel ? null : node.getAttribute("role")
       if (node.matches(interactive) || (role && !["img", "none", "presentation"].includes(role))
-        || node.localName.includes("-") && !isIconElement(node) && !isTypographyInline(node) && !isSpaceElement(node) || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)) {
+        || node.localName.includes("-") && !isIconElement(node) && !isTypographyInline(node) && !isSpaceElement(node) && !isFlexElement(node) || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)) {
         throw new TypeError("Tooltip content must be noninteractive; use Popover.")
       }
     }
-    if (trigger.closest("m-tooltip")) throw new TypeError("Do not bind Tooltip inside legacy m-tooltip.")
+    if (trigger.closest("m-tooltip")) throw new TypeError("No Tooltip inside legacy m-tooltip.")
   }
   function connect() {
     suppressed = false

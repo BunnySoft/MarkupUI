@@ -116,7 +116,7 @@ families establish the pattern; the remaining contracts must be defined before i
 
 | Family | Elements / scope | Contract |
 | --- | --- | --- |
-| Flex | `Flex` | Contract pending |
+| Flex | `Flex` | [Demo and API](../../demo/components/flex.html) |
 | Layout | Layout, header, main, section and sider elements | Contract pending |
 | Grid | `Grid`, `GridItem` | Contract pending |
 | Space | `Space` | [Demo and API](../../demo/components/space.html) |

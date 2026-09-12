@@ -2,6 +2,9 @@
 
 > **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
 
+> **Superseded:** [Current Flex demo and generated API](../../../demo/components/flex.html).
+> The canonical `m-flex` ViewElement now replaces the CSS-only adapter described below.
+
 **Migration status: 🟢 Verified retained native CSS scope.**
 **Architecture: CSS-only.** A normal native container owns its children/semantics; external
 flexbox/gap rules own layout. There is no Custom Element, child traversal/wrapping, observer,
@@ -284,4 +287,4 @@ Grid and Layout; P2-04/P2 and remaining content/cross-phase work are not complet
 
 ## Current documentation
 
-[Read the current design](../../elements/03-inventory.md).
+[Read the current Flex demo and API](../../../demo/components/flex.html).
