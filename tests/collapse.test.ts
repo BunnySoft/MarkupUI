@@ -301,9 +301,9 @@ describe("direct Collapse family", () => {
     expect(Object.hasOwn(root, "expandedKeys")).toBe(false)
     expect(Object.hasOwn(item("one"), "disabled")).toBe(false)
   })
-  it("rejects Checkbox as interactive passive-header content", () => {
+  it.each(["m-checkbox", "m-radio", "m-radio-button", "m-radio-group"])("rejects %s as interactive passive-header content", tag => {
     const { root, item } = canonical({}, false)
-    item("one").querySelector("m-collapse-header")!.innerHTML = "<m-checkbox>Checkbox</m-checkbox>"
+    item("one").querySelector("m-collapse-header")!.innerHTML = `<${tag}>Control</${tag}>`
     document.body.append(root)
     expect(root.state).toBe("invalid")
     expect(item("one").querySelector("summary")).toBeNull()

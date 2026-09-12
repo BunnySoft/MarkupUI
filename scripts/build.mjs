@@ -37,7 +37,7 @@ classicEntries.icon = "global.ts"
 classicEntries.typography = "global.ts"
 classicEntries.space = "global.ts"
 classicEntries.flex = "global.ts"
-const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750]])
+const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500]])
 await generateComponentApi(root, [...viewComponents.keys()])
 
 function corePlugin(format) {
@@ -66,6 +66,17 @@ function corePlugin(format) {
           const native = globalThis[Symbol.for("markup-ui.native-input")];
           if (!native || typeof native.createInput !== "function") throw new Error("Load markup-ui-native-input.global.js before Input.");
           export const { createInput } = native;
+        `,
+      }))
+      builder.onResolve({ filter: /native-radio\.js$/ }, () =>
+        format === "esm" ? { path: "./markup-ui-native-radio.js", external: true }
+          : { path: "native-radio", namespace: "markupui-native-radio" })
+      builder.onLoad({ filter: /.*/, namespace: "markupui-native-radio" }, () => ({
+        loader: "js",
+        contents: `
+          const native = globalThis[Symbol.for("markup-ui.native-radio")];
+          if (!native || typeof native.createRadioGroup !== "function") throw new Error("Load markup-ui-native-radio.global.js before Radio or Rate.");
+          export const { createRadioGroup, radioMembers, setRadioValue } = native;
         `,
       }))
     },
@@ -131,6 +142,12 @@ classicEntries.marquee = "global.ts"
 await Promise.all([
   ...["esm", "iife"].map(format => build({
     ...shared,
+    entryPoints: [resolve(root, "src", "components", format === "esm" ? "native-radio.ts" : "native-radio.global.ts")],
+    format, minify: true,
+    outfile: resolve(dist, `markup-ui-native-radio${format === "esm" ? ".js" : ".global.js"}`),
+  })),
+  ...["esm", "iife"].map(format => build({
+    ...shared,
     entryPoints: [resolve(root, "src", "components", format === "esm" ? "native-input.ts" : "native-input.global.ts")],
     format, minify: true,
     outfile: resolve(dist, `markup-ui-native-input${format === "esm" ? ".js" : ".global.js"}`),
@@ -188,7 +205,7 @@ await Promise.all([
       ...shared,
       entryPoints: [resolve(root, "src", "components", name, "index.ts")],
       format: "esm",
-      plugins: viewComponents.has(name) ? [corePlugin("esm")] : [],
+      plugins: viewComponents.has(name) || name === "rate" ? [corePlugin("esm")] : [],
       minify: true,
       outfile: resolve(dist, `markup-ui-${name}.js`),
     }),
@@ -196,7 +213,7 @@ await Promise.all([
       ...shared,
       entryPoints: [resolve(root, "src", "components", name, classicEntries[name] ?? "index.ts")],
       format: "iife",
-      plugins: viewComponents.has(name) ? [corePlugin("iife")] : [],
+      plugins: viewComponents.has(name) || name === "rate" ? [corePlugin("iife")] : [],
       globalName: classicEntries[name] ? undefined : `MarkupUI${name[0].toUpperCase()}${name.slice(1)}`,
       minify: true,
       outfile: resolve(dist, `markup-ui-${name}.global.js`),
@@ -207,7 +224,7 @@ await Promise.all([
 await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
   const source = resolve(root, "src", "components", name, `${name}.css`)
   const output = resolve(dist, `markup-ui-${name}.css`)
-  if (name === "button" || name === "checkbox") {
+  if (name === "button" || name === "checkbox" || name === "radio") {
     // Preserve authored CSS syntax while trimming distribution whitespace.
     const { code } = await transform(await readFile(source, "utf8"), {
       loader: "css",
@@ -492,6 +509,8 @@ const bundles = {}
 // Shared native mechanics retain the previous Input helper's per-file ceilings.
 bundleBudgets["markup-ui-native-input.js"] = 4_000
 bundleBudgets["markup-ui-native-input.global.js"] = 4_000
+bundleBudgets["markup-ui-native-radio.js"] = 2_000
+bundleBudgets["markup-ui-native-radio.global.js"] = 2_000
 
 for (const [name, budget] of Object.entries(bundleBudgets)) {
   const content = await readFile(resolve(dist, name))
@@ -511,7 +530,8 @@ for (const name of [...components, ...styleOnlyComponents]) {
       const file = `markup-ui-${name}${suffix}`
       const dependencies = viewComponents.has(name) ? [`markup-ui-core${suffix}`] : []
       if (name === "input") dependencies.push(`markup-ui-native-input${suffix}`)
-      const runtimeBudget = viewComponents.get(name)
+      if (name === "radio" || name === "rate") dependencies.push(`markup-ui-native-radio${suffix}`)
+      const runtimeBudget = viewComponents.get(name) ?? (name === "rate" ? 5_000 : undefined)
       const runtimeGzipBytes = bundles[file].gzipBytes
         + dependencies.reduce((total, dependency) => total + bundles[dependency].gzipBytes, 0)
       payload[mode] = {

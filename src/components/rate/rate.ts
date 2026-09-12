@@ -1,4 +1,4 @@
-import { createRadioGroup } from "../radio/index.js"
+import { createRadioGroup } from "../native-radio.js"
 
 export interface RateOptions {
   count?: number

@@ -24,6 +24,7 @@ import { Dropdown } from "../src/components/dropdown/index.js"
 import { Heading, Link } from "../src/components/typography/index.js"
 import { Input } from "../src/components/input/index.js"
 import { Checkbox, CheckboxGroup } from "../src/components/checkbox/index.js"
+import { Radio, RadioGroup, RadioButton } from "../src/components/radio/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -53,6 +54,10 @@ describe("native elements", () => {
     expect(customElements.get("m-checkbox")).toBe(Checkbox)
     expect(customElements.get("m-checkbox-group")).toBe(CheckboxGroup)
     expect(builtInElementNames).not.toContain("m-checkbox")
+    for (const Type of [Radio, RadioGroup, RadioButton]) {
+      expect(customElements.get(Type.tag)).toBe(Type)
+      expect(builtInElementNames).not.toContain(Type.tag)
+    }
     for (const tag of ["m-input", "m-textarea", "m-input-group", "m-input-group-label"]) expect(builtInElementNames).not.toContain(tag)
     const styles = document.getElementById("m-styles")?.textContent ?? ""
     expect(styles).toContain("--m-control-height")
@@ -216,8 +221,9 @@ describe("native elements", () => {
         </m-form-item>
       </m-form>
       <m-radio-group value="b">
-        <m-radio value="a">A</m-radio>
-        <m-radio value="b">B</m-radio>
+        <legend>Selection</legend>
+        <m-radio name="selection" value="a">A</m-radio>
+        <m-radio name="selection" value="b">B</m-radio>
       </m-radio-group>
       <m-slider value="25" min="0" max="100"></m-slider>
       <m-autocomplete value="Ada">
@@ -620,8 +626,9 @@ describe("optional state and actions", () => {
         </script>
         <m-switch m-bind="enabled">Enabled</m-switch>
         <m-radio-group m-bind="choice">
-          <m-radio value="a">A</m-radio>
-          <m-radio value="b">B</m-radio>
+          <legend>Bound selection</legend>
+          <m-radio name="bound" value="a">A</m-radio>
+          <m-radio name="bound" value="b">B</m-radio>
         </m-radio-group>
       </m-app>`
     await Promise.resolve()
@@ -634,7 +641,49 @@ describe("optional state and actions", () => {
     expect(app.store.get("enabled")).toBe(false)
     const firstRadio = document.querySelector("m-radio")
     firstRadio?.querySelector("input")?.click()
+    await new Promise(resolve => setTimeout(resolve, 15))
     expect(app.store.get("choice")).toBe("a")
+  })
+  it("keeps Radio boolean binding and explicit RadioButton submission value native", async () => {
+    document.body.innerHTML = '<form><m-radio m-bind="checked" name="consent" value="yes" checked>Consent</m-radio><m-radio-button m-bind="key" m-bind-property="value" name="layout" checked>Layout</m-radio-button></form>'
+    const radio = document.querySelector<Radio>("m-radio")!, button = document.querySelector<RadioButton>("m-radio-button")!
+    const store = createStore({ checked: false, key: "grid" }), dispose = bind(document.body, store)
+    await Promise.resolve()
+    expect(radio.checked).toBe(false); expect(radio.value).toBe("yes")
+    expect(button.value).toBe("grid"); expect(button.checked).toBe(true)
+    const changes = vi.fn(); radio.addEventListener("change", changes)
+    store.set("checked", true); expect(radio.checked).toBe(true); expect(changes).not.toHaveBeenCalled()
+    radio.checked = false; radio.click(); expect(store.get("checked")).toBe(true)
+    button.value = "list"; button.checked = false; button.click(); expect(store.get("key")).toBe("list")
+    expect([...new FormData(document.querySelector("form")!)]).toEqual([["consent", "yes"], ["layout", "list"]])
+    radio.dispatchEvent(new CustomEvent("m:change", { detail: false })); expect(store.get("checked")).toBe(true)
+    dispose(); radio.checked = false; radio.click(); expect(changes).toHaveBeenCalledTimes(2)
+  })
+  it("validates canonical RadioGroup selection through the retained form-item bridge", async () => {
+    document.body.innerHTML = '<m-form><m-form-item label="Plan" required><m-radio-group><legend>Plan</legend><m-radio name="plan" value="basic">Basic</m-radio></m-radio-group></m-form-item></m-form>'
+    await Promise.resolve()
+    const form = document.querySelector("m-form") as HTMLElement & { validate(): boolean }
+    const group = document.querySelector<RadioGroup>("m-radio-group")!
+    expect(form.validate()).toBe(false); expect(group.native.getAttribute("aria-invalid")).toBe("true")
+    expect(group.native.getAttribute("aria-describedby")).toBeTruthy()
+    group.value = "basic"
+    expect(form.validate()).toBe(true); expect(group.native.getAttribute("aria-invalid")).toBe("false")
+  })
+  it("binds only the owning RadioGroup and reads native value rather than event detail", async () => {
+    document.body.innerHTML = `<m-radio-group m-bind="outer"><legend>Outer</legend>
+      <m-radio name="outer" value="a" checked>A</m-radio><m-radio-button name="outer" value="b">B</m-radio-button>
+      <m-radio-group m-bind="inner"><legend>Inner</legend><m-radio name="inner" value="x" checked>X</m-radio><m-radio name="inner" value="y">Y</m-radio></m-radio-group>
+      </m-radio-group>`
+    const group = document.querySelector<RadioGroup>("m-radio-group")!, inner = group.querySelector<RadioGroup>("m-radio-group")!
+    const store = createStore({ outer: "a", inner: "x" }), dispose = bind(document.body, store)
+    group.refresh(); inner.refresh()
+    inner.querySelector<Radio>("m-radio[value=y]")!.click(); await new Promise(resolve => setTimeout(resolve, 15))
+    expect(store.get("inner")).toBe("y"); expect(store.get("outer")).toBe("a")
+    group.value = "b"; group.dispatchEvent(new CustomEvent("m:radio-group-change", { detail: { value: "stale" } }))
+    expect(store.get("outer")).toBe("b")
+    store.set("outer", null); expect(group.value).toBeNull()
+    dispose(); group.querySelector<Radio>("m-radio[value=a]")!.click(); await new Promise(resolve => setTimeout(resolve, 15))
+    expect(store.get("outer")).toBeNull()
   })
   it("keeps legacy Checkbox boolean binding separate from native submission strings", async () => {
     document.body.innerHTML = '<form><m-checkbox m-bind="enabled" name="terms" value="yes" checked>Terms</m-checkbox></form>'

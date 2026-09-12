@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createRate } from "../src/components/rate/index.js"
-import { createRadioGroup } from "../src/components/radio/index.js"
+import { createRadioGroup } from "../src/components/native-radio.js"
 import type { RateController, RateOptions } from "../src/components/rate/index.js"
 
 const helpers: RateController[] = []

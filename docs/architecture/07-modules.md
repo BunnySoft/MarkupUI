@@ -1,6 +1,6 @@
 # 7. Small core and selectable components
 
-**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex, Input and Checkbox, with explicit payload ceilings.
+**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex, Input, Checkbox and Radio, with explicit payload ceilings.
 The rollout continues component-by-component.**
 Follow the useful jQuery/plugin pattern: load one small core, then only the features the
 application needs. This is a packaging and extension pattern, not a dependency on jQuery.
@@ -62,7 +62,7 @@ Keep approved budgets unless a measured change is explicitly accepted.
 The implemented entries are `@dataengine/markup-ui/core`, `@dataengine/markup-ui/avatar`,
 `@dataengine/markup-ui/button`, `@dataengine/markup-ui/card`, `@dataengine/markup-ui/carousel`,
 `@dataengine/markup-ui/collapse`, `@dataengine/markup-ui/divider`, `@dataengine/markup-ui/dropdown`,
-`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography`, `@dataengine/markup-ui/space`, `@dataengine/markup-ui/flex`, `@dataengine/markup-ui/input` and `@dataengine/markup-ui/checkbox`.
+`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography`, `@dataengine/markup-ui/space`, `@dataengine/markup-ui/flex`, `@dataengine/markup-ui/input`, `@dataengine/markup-ui/checkbox` and `@dataengine/markup-ui/radio`.
 ESM uses `markup-ui-core.js`; classic scripts load `markup-ui-core.global.js` before
 `markup-ui-avatar.global.js`, `markup-ui-button.global.js`, `markup-ui-card.global.js`,
 `markup-ui-carousel.global.js`, `markup-ui-collapse.global.js`, `markup-ui-divider.global.js`,
@@ -86,7 +86,22 @@ share one family entry and the existing native checkbox CSS hooks; there is no a
 native-control chunk, text-input engine or helper registration. Each JS ceiling remains
 3,500 gzip bytes and CSS remains 1,000; combined core-plus-family runtime has a 4,750-byte
 ceiling in either format. CSS distribution trims whitespace only. The manifest counts both
-runtime files plus CSS. Radio/Switch are not migrated or selected by this entry.
+runtime files plus CSS. Radio/Switch are not selected by this entry.
+
+Radio imports core and the internal `markup-ui-native-radio.js`. Classic loading is core,
+`markup-ui-native-radio.global.js`, then `markup-ui-radio.global.js`, with Radio CSS.
+Radio, RadioGroup and RadioButton are the only registered constructors. The existing native
+group validator/controller is shared with unmigrated Rate; it registers nothing and the
+former public group-helper API is removed. Rate imports only this internal dependency,
+not Radio registration or core. Its classic demo loads native-radio before Rate.
+
+Radio retains the 3,000-byte gzip ceiling for each JS file and the 1,250-byte CSS ceiling.
+The shared native-radio files have measured 2,000-byte ceilings; combined core-plus-native
+plus Radio runtime has a 5,500-byte ceiling in either format. Rate retains its 4,000-byte
+per-file ceilings and has a new 5,000-byte dependency-inclusive ceiling. The manifest
+counts every required runtime file and CSS. Radio CSS whitespace is trimmed; canonical
+size/status attributes replace archived data-size/data-status configuration without changing
+the native colors, dimensions or four-pixel button seams. Switch remains unmigrated.
 
 ## References
 

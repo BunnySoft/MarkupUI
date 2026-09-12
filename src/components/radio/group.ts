@@ -1,148 +1,115 @@
-export interface RadioGroupState { value: string | null; name: string | null; form: HTMLFormElement | null }
-export interface RadioGroupChange { value: string }
-export interface RadioGroupController {
-  readonly connected: boolean
-  readonly error: string | null
-  readonly state: RadioGroupState
-  setValue(value: string | null): void
-  refresh(): void
-  disconnect(): void
-}
-const owner = Symbol.for("markup-ui.radio-group.owner")
-type Owned = Element & { [owner]?: RadioGroupController }
+import { ViewElement } from "../../core/index.js"
+import { createRadioGroup, radioMembers, setRadioValue } from "../native-radio.js"
+import type { RadioGroupController } from "../native-radio.js"
+import type { RadioGroupChange } from "../native-radio.js"
+import { sizes } from "./radio.js"
+import type { Radio, RadioSize } from "./radio.js"
 
-/** Validates one complete native radio group, without owning its keyboard or exclusivity engine. */
-export function createRadioGroup(root: HTMLFieldSetElement): RadioGroupController {
-  const document = root?.ownerDocument, view = document?.defaultView
-  if (!view || !(root instanceof view.HTMLFieldSetElement)) throw new TypeError("RadioGroup needs a native fieldset.")
-  if ((root as Owned)[owner]) throw new Error("RadioGroup already has an owner.")
-  let connected = true, error: string | null = null
-  let members: HTMLInputElement[] = []
-  const removers: (() => void)[] = [], tasks = new Set<number>()
-  function collect(): HTMLInputElement[] {
-    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".m-radio-group[data-radio-group]")
-      || root.hasAttribute("role") || root.hasAttribute("tabindex")
-      || ![...root.children].find(node => node.localName === "legend")?.textContent?.trim()) {
-      throw new TypeError("Keep RadioGroup a connected light-DOM fieldset with a named first legend, no role or tabindex.")
-    }
-    const nodes = [...root.querySelectorAll("[data-radio]")].filter(node => node.closest("[data-radio-group]") === root)
-    const keys = new Set<string>()
-    let name: string | undefined, form: HTMLFormElement | null | undefined
-    for (const node of nodes) {
-      if (!(node instanceof view!.HTMLInputElement) || node.type !== "radio" || node.hasAttribute("role")
-        || ![...node.labels ?? []].some(label => label.textContent?.trim())) {
-        throw new TypeError("Each data-radio member needs an original input[type=radio] with a native label.")
-      }
-      if (!node.name || name !== undefined && node.name !== name) throw new TypeError("RadioGroup members need one common nonempty native name.")
-      if (node.hasAttribute("form") && !node.form || form !== undefined && node.form !== form) {
-        throw new TypeError("RadioGroup members need one actual form owner; explicit form targets must resolve.")
-      }
-      if (!node.hasAttribute("value") || !node.value || keys.has(node.value)) {
-        throw new TypeError("RadioGroup values must be explicit, nonempty, unique native strings.")
-      }
-      if ((node as Owned)[owner] && (node as Owned)[owner] !== controller) throw new Error("Radio already has a group owner.")
-      name = node.name; form = node.form
-      keys.add(node.value)
-    }
-    // Native grouping is document/tree + actual form owner + name, not the fieldset boundary.
-    if (name !== undefined) for (const peer of document!.querySelectorAll<HTMLInputElement>("input")) {
-      if (peer.type === "radio" && peer.name === name && peer.form === form && !nodes.includes(peer)) {
-        throw new TypeError("RadioGroup has an out-of-scope native peer with the same name and form owner.")
-      }
-    }
-    const inputs = nodes as HTMLInputElement[]
-    if (inputs.filter(node => node.checked).length > 1) throw new TypeError("A native radio group must have at most one checked member.")
-    return inputs
+export type RadioStatus = "error" | "warning"
+export type { RadioGroupChange } from "../native-radio.js"
+const statuses = ["error", "warning"] as const
+
+/**
+ * One complete native name/form group. Never renames members or synthesizes keyboard input.
+ * @region {"name":"content","accepts":["native fieldset with first nonempty legend","Radio","RadioButton","nested RadioGroup"],"min":0,"max":null}
+ */
+export class RadioGroup extends ViewElement {
+  public static readonly tag = "m-radio-group"
+  public static readonly observedAttributes = ["value", "disabled", "size", "status", "aria-label", "aria-labelledby", "aria-describedby", "aria-invalid"]
+  private field?: HTMLFieldSetElement
+  private generated = false
+  private initialized = false
+  private initialValue = true
+  private controller: RadioGroupController | undefined
+  private observer?: MutationObserver
+  private failure: string | null = null
+
+  public connectedCallback(): void {
+    if (!this.initialized) { this.upgradeProperties(); this.initialized = true }
+    queueMicrotask(() => { if (this.isConnected) this.attemptRefresh() })
   }
-  function snapshot(nodes: HTMLInputElement[]): RadioGroupState {
-    return { value: nodes.find(node => node.checked)?.value ?? null, name: nodes[0]?.name ?? null, form: nodes[0]?.form ?? null }
+  public disconnectedCallback(): void { this.observer?.disconnect(); this.release() }
+  private release(): void {
+    this.controller?.disconnect(); this.controller = undefined
+    for (const type of ["m:radio-group-change", "m:radio-group-error"]) this.field?.removeEventListener(type, this.forward)
   }
-  function release(control: HTMLInputElement) {
-    if ((control as Owned)[owner] === controller) delete (control as Owned)[owner]
+  public attributeChangedCallback(name: string): void {
+    if (this.field && (name === "disabled" || name.startsWith("aria-"))) {
+      const value = this.getAttribute(name)
+      if (value === null) this.field.removeAttribute(name)
+      else this.field.setAttribute(name, value)
+    }
+    if (name === "value") this.initialValue = true
+    if (this.initialized && this.isConnected) this.attemptRefresh()
   }
-  function refresh() {
-    if (!connected) return
+  /** Original or generated fieldset. Its first direct legend must be nonempty. */
+  public get native(): HTMLFieldSetElement {
+    const fields = [...this.children].filter(node => node.localName === "fieldset") as HTMLFieldSetElement[]
+    if (fields.length > 1) throw new TypeError("Expected one native fieldset.")
+    if (this.field && this.contains(this.field)) {
+      if (this.generated) {
+        const nodes = [...this.childNodes], index = nodes.indexOf(this.field)
+        this.field.prepend(...nodes.slice(0, index)); this.field.append(...nodes.slice(index + 1))
+      }
+      return this.field
+    }
+    this.release()
+    const field = fields[0] ?? this.ownerDocument.createElement("fieldset")
+    this.generated = !fields.length
+    if (this.generated) { field.append(...this.childNodes); this.append(field) }
+    this.field = field; field.classList.add("m-radio-group"); field.setAttribute("data-radio-group", "")
+    for (const name of RadioGroup.observedAttributes) if ((name === "disabled" || name.startsWith("aria-")) && this.hasAttribute(name)) field.setAttribute(name, this.getAttribute(name)!)
+    return field
+  }
+  /** Computed current native selection; null when empty. The value attribute requests selection once when applied, not on reconnect. */
+  public get value(): string | null { return radioMembers(this.prepare()).find(node => node.checked)?.value ?? null }
+  public set value(value: string | null) { setRadioValue(this.prepare(), value); this.initialValue = false }
+  /** Common native name, null for an empty group. Set names on members, never on a visual group. */
+  public get name(): string | null { return radioMembers(this.prepare())[0]?.name ?? null }
+  public get form(): HTMLFormElement | null { return radioMembers(this.prepare())[0]?.form ?? null }
+  public get disabled(): boolean { return this.native.disabled }
+  public set disabled(value: boolean) { this.setBooleanAttribute("disabled", value); this.native.disabled = value }
+  public get size(): RadioSize { return this.choiceAttribute("size", sizes, "medium") }
+  public set size(value: RadioSize) { this.setChoiceAttribute("size", value, sizes) }
+  public get status(): RadioStatus | null { return this.choiceAttribute("status", statuses, null) }
+  public set status(value: RadioStatus | null) { this.setNullableChoiceAttribute("status", value, statuses) }
+  public get error(): string | null { return this.failure ?? this.controller?.error ?? null }
+  private prepare(): HTMLFieldSetElement {
+    void this.size; void this.status
+    if (this.hasAttribute("role") || this.hasAttribute("tabindex")) throw new TypeError("Native fieldsets own group semantics.")
+    const field = this.native
+    for (const radio of field.querySelectorAll<Radio>("m-radio,m-radio-button")) radio.refresh()
+    return field
+  }
+  /** Validate anatomy/scope, reconcile late members, and clear explicit errors without changing selection. */
+  public refresh(): void {
+    this.observer?.disconnect()
     try {
-      const nodes = collect()
-      for (const control of members) if (!nodes.includes(control)) release(control)
-      for (const control of nodes) if (!members.includes(control)) Object.defineProperty(control, owner, { value: controller, configurable: true })
-      members = nodes
-      error = null
-    } catch (reason) { error = reason instanceof Error ? reason.message : String(reason); throw reason }
-  }
-  function report(reason: unknown, previous: string | null) {
-    const message = reason instanceof Error ? reason.message : String(reason)
-    error = message
-    if (message !== previous) root.dispatchEvent(new view!.CustomEvent("m:radio-group-error", { detail: { message } }))
-  }
-  function attemptRefresh() {
-    const previous = error
-    try { refresh() } catch (reason) { report(reason, previous) }
-  }
-  function later(callback: () => void) {
-    const id = view!.setTimeout(() => { tasks.delete(id); if (connected) callback() }, 0)
-    tasks.add(id)
-  }
-  function listen(node: EventTarget, type: string, callback: EventListener, capture = false) {
-    node.addEventListener(type, callback, capture)
-    removers.push(() => node.removeEventListener(type, callback, capture))
-  }
-  function onChange(event: Event) {
-    const control = event.target
-    if (!(control instanceof view!.HTMLInputElement) || !control.hasAttribute("data-radio")
-      || control.closest("[data-radio-group]") !== root || !control.checked) return
-    const previous = error
-    try {
-      refresh()
-      const detail: RadioGroupChange = { value: control.value }
-      later(() => root.dispatchEvent(new view!.CustomEvent("m:radio-group-change", { detail })))
-    } catch (reason) { report(reason, previous) }
-  }
-  function setValue(value: string | null) {
-    if (!connected) throw new Error("RadioGroup is disconnected.")
-    refresh()
-    if (value !== null && (typeof value !== "string" || !members.some(node => node.value === value))) {
-      throw new TypeError("setValue needs an existing native string key or null; unknown/numeric/boolean keys are not ignored.")
+      const field = this.prepare()
+      if (this.initialValue && this.hasAttribute("value")) setRadioValue(field, this.getAttribute("value"))
+      radioMembers(field); this.initialValue = false
+      if (this.isConnected) {
+        if (!this.controller?.connected) {
+          this.controller = createRadioGroup(field)
+          for (const type of ["m:radio-group-change", "m:radio-group-error"]) field.addEventListener(type, this.forward)
+        } else this.controller.refresh()
+      }
+      this.failure = null
+    } catch (reason) { this.failure = reason instanceof Error ? reason.message : String(reason); throw reason }
+    finally {
+      this.observer ??= new MutationObserver(() => this.attemptRefresh())
+      if (this.isConnected) this.observer.observe(this, { childList: true, subtree: true })
     }
-    if (value === null) {
-      for (const node of members) if (node.checked) node.checked = false
-    } else {
-      const node = members.find(node => node.value === value)!
-      if (!node.checked) node.checked = true
+  }
+  private forward = (event: Event): void => {
+    if (event.target !== this.field || !this.isConnected) return
+    if (event.type === "m:radio-group-change") this.emit<RadioGroupChange>("m:radio-group-change", (event as CustomEvent).detail, { bubbles: false })
+    else this.emit<{ message: string }>("m:radio-group-error", (event as CustomEvent).detail, { bubbles: false })
+  }
+  private attemptRefresh(): void {
+    const previous = this.error
+    try { this.refresh() } catch {
+      if (this.error !== previous) this.emit<{ message: string }>("m:radio-group-error", { message: this.error! }, { bubbles: false })
     }
-    refresh()
   }
-  const observer = new view.MutationObserver(() => {
-    if (!root.isConnected || root.getRootNode() !== document) { disconnect(); return }
-    attemptRefresh()
-  })
-  function disconnect() {
-    if (!connected) return
-    connected = false; observer.disconnect()
-    removers.splice(0).forEach(remove => remove())
-    tasks.forEach(id => view!.clearTimeout(id)); tasks.clear()
-    members.forEach(release); members = []
-    if ((root as Owned)[owner] === controller) delete (root as Owned)[owner]
-  }
-  const controller: RadioGroupController = {
-    get connected() { return connected }, get error() { return error },
-    get state() {
-      if (!connected) throw new Error("RadioGroup is disconnected.")
-      return snapshot(collect())
-    },
-    setValue, refresh, disconnect,
-  }
-  collect()
-  Object.defineProperty(root, owner, { value: controller, configurable: true })
-  listen(root, "change", onChange)
-  listen(document!, "reset", event => {
-    if (members.some(node => node.form === event.target)) later(attemptRefresh)
-  }, true)
-  // Outside peers and form IDs can change anywhere in this native tree; observe structure,
-  // not checked property writes. No attributes or controls are rendered by this observer.
-  observer.observe(document!, { subtree: true, childList: true, attributes: true, attributeFilter: ["name", "form", "type", "id"] })
-  observer.observe(root, { subtree: true, attributes: true,
-    attributeFilter: ["checked", "value", "disabled", "data-radio", "data-radio-group", "role", "class"] })
-  try { refresh() } catch (reason) { disconnect(); throw reason }
-  return controller
 }

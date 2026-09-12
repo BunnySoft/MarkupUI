@@ -43,7 +43,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Input Number | `InputNumber` | Contract pending |
 | Input OTP | `InputOtp` | Contract pending |
 | Mention | `Mention` | Contract pending |
-| Radio | `Radio`, `RadioGroup`, `RadioButton` | Contract pending |
+| Radio | `Radio`, `RadioGroup`, `RadioButton`; native exclusivity, labels, forms and computed selection | [Demo and API](../../demo/components/radio.html) |
 | Rate | `Rate` | Contract pending |
 | Select | `Select` | Contract pending |
 | Slider | `Slider` | Contract pending |

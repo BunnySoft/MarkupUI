@@ -1,59 +1,54 @@
-const helpers = new Map()
-for (const root of document.querySelectorAll("[data-radio-group]")) helpers.set(root.id, MarkupUIRadio.createRadioGroup(root))
-window.radioDemo = { helpers }
-const plans = helpers.get("plans")
+import "../../dist/markup-ui-radio.js"
+import { loadComponentApi } from "../component-api.js"
+
+await Promise.all(["m-radio", "m-radio-group", "m-radio-button"].map(tag => customElements.whenDefined(tag)))
+const plans = document.getElementById("plans"), layouts = document.getElementById("layouts")
 const form = document.getElementById("subscription")
+window.radioDemo = { plans, layouts, external: document.getElementById("external"), billing: document.getElementById("billing") }
 let changes = 0
 function renderState() {
-  try {
-    const state = plans.state
-    document.getElementById("state").textContent = JSON.stringify({ value: state.value, name: state.name, form: state.form?.id ?? null })
-  } catch (error) { document.getElementById("state").textContent = error.message }
-}
-renderState()
-function perform(action) {
-  try { action(); renderState() }
+  try { document.getElementById("state").textContent = JSON.stringify({ value: plans.value, name: plans.name, form: plans.form?.id ?? null }) }
   catch (error) { document.getElementById("state").textContent = error.message }
 }
-document.getElementById("plans").addEventListener("m:radio-group-change", () => {
+function action(id, callback) {
+  document.getElementById(id).addEventListener("click", event => {
+    try { callback(event); renderState() }
+    catch (error) { document.getElementById("state").textContent = error.message }
+  })
+}
+renderState()
+plans.addEventListener("m:radio-group-change", () => {
   document.getElementById("events").textContent = `Accepted plan changes: ${++changes}`; renderState()
 })
-document.getElementById("plans").addEventListener("m:radio-group-error", renderState)
+plans.addEventListener("m:radio-group-error", renderState)
 form.addEventListener("submit", event => {
-  event.preventDefault()
-  document.getElementById("submission").textContent = JSON.stringify([...new FormData(form)], null, 2)
+  event.preventDefault(); document.getElementById("submission").textContent = JSON.stringify([...new FormData(form)], null, 2)
 })
 form.addEventListener("reset", () => setTimeout(renderState, 0))
-document.getElementById("silent").addEventListener("click", () => perform(() => plans.setValue("pro")))
-document.getElementById("clear").addEventListener("click", () => perform(() => plans.setValue(null)))
-document.getElementById("default").addEventListener("click", () => perform(() => {
-  const basic = document.getElementById("basic"), pro = document.getElementById("pro")
-  if (!pro) throw new Error("Pro was removed; reload to restore that option.")
-  if (basic) basic.defaultChecked = false
-  pro.defaultChecked = true
-  plans.refresh()
-}))
-document.getElementById("add").addEventListener("click", event => {
+action("silent", () => { plans.value = "pro" })
+action("clear", () => { plans.value = null })
+action("default", () => { document.getElementById("pro-root").defaultChecked = true })
+action("add", event => {
   document.getElementById("plan-items").append(document.getElementById("plan-template").content.cloneNode(true))
-  event.currentTarget.disabled = true; perform(() => plans.refresh())
+  plans.refresh(); event.currentTarget.disabled = true
 })
-document.getElementById("remove").addEventListener("click", () => {
-  document.querySelector("#plan-items input:checked")?.closest("label").remove()
-  perform(() => plans.refresh())
-})
-document.getElementById("disabled").addEventListener("click", () => {
-  const root = document.getElementById("plans"); root.disabled = !root.disabled
-})
-document.getElementById("peer").addEventListener("click", () => {
+action("remove", () => { plans.native.querySelector("#plan-items input:checked")?.closest("m-radio").remove(); plans.refresh() })
+action("disabled", () => { plans.disabled = !plans.disabled })
+action("peer", () => {
   const region = document.getElementById("peer-region")
-  if (region.childElementCount) region.replaceChildren()
+  if (region.children.length) region.replaceChildren()
   else region.append(document.getElementById("peer-template").content.cloneNode(true))
-  try { plans.refresh() } catch { /* The demo reports invalid scope without rewriting native grouping. */ }
-  renderState()
+  plans.refresh()
 })
-document.getElementById("cancel").addEventListener("click", () => form.addEventListener("reset", event => event.preventDefault(), { once: true }))
-document.getElementById("rtl").addEventListener("click", () => { document.documentElement.dir = document.documentElement.dir === "rtl" ? "ltr" : "rtl" })
-document.getElementById("disconnect").addEventListener("click", () => {
-  helpers.forEach(helper => helper.disconnect()); renderState()
-  for (const id of ["silent", "clear", "default", "add", "remove", "peer", "disconnect"]) document.getElementById(id).disabled = true
+action("cancel", () => form.addEventListener("reset", event => event.preventDefault(), { once: true }))
+action("rtl", () => { layouts.dir = layouts.dir === "rtl" ? "ltr" : "rtl" })
+action("theme", () => {
+  const preview = document.getElementById("button-preview")
+  preview.dataset.mTheme = preview.dataset.mTheme === "dark" ? "light" : "dark"
 })
+action("reconnect", () => {
+  const parent = plans.parentNode, next = plans.nextSibling
+  plans.remove(); parent.insertBefore(plans, next); plans.refresh()
+})
+document.getElementById("size").addEventListener("change", event => { layouts.size = event.target.value })
+await loadComponentApi(document.getElementById("radio-api"), new URL("../api/radio.json", import.meta.url))

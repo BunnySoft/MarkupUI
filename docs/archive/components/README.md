@@ -74,7 +74,7 @@ that the ViewElement rewrite is complete.
 - [Popselect: a native selection disclosure](./popselect.md)
 - [Progress](./progress.md)
 - [QR Code: resolved exclusion, native destination handoff](./qr-code.md)
-- [Radio, RadioGroup and RadioButton: native exclusivity](./radio.md)
+- [Radio, RadioGroup and RadioButton: historical native contract](./radio.md) — [current demo/API](../../../demo/components/radio.html)
 - [Rate: bounded native radio scores](./rate.md)
 - [Result](./result.md)
 - [Scrollbar: native-only scope](./scrollbar.md)

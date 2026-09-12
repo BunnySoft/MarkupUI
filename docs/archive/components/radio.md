@@ -1,6 +1,8 @@
 # Radio, RadioGroup and RadioButton: native exclusivity
 
 > **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
+> **Current implementation:** [Radio demo and source-generated API](../../../demo/components/radio.html).
+> The canonical ViewElement family replaces the public helper and legacy MRadio/MRadioGroup below.
 
 **🟢 Verified for the retained native scope, not Vue API parity.**
 Individual Radio and button-like RadioButton are CSS-only labelled native radios.

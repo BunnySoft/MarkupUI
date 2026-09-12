@@ -90,7 +90,7 @@ export function bind(root: ParentNode, store: MStore): () => void {
     const bindings: Array<readonly [string, string]> = []
     const twoWayPath = element.getAttribute("m-bind")
     const twoWayProperty = element.getAttribute("m-bind-property")
-      ?? (element.matches("m-checkbox,m-switch,m-radio") ? "checked" : "value")
+      ?? (element.matches("m-checkbox,m-switch,m-radio,m-radio-button") ? "checked" : "value")
     if (twoWayPath) bindings.push([twoWayProperty, twoWayPath])
     for (const property of ["text", "visible", "disabled"]) {
       const path = element.getAttribute(`m-${property}`)
@@ -103,13 +103,15 @@ export function bind(root: ParentNode, store: MStore): () => void {
     }
     if (twoWayPath) {
       const nativeCheckbox = element.matches("m-checkbox")
-      const nativeField = nativeCheckbox || element.matches("m-input,m-textarea") && twoWayProperty === "value"
+      const nativeRadio = element.matches("m-radio,m-radio-button")
+      const nativeField = nativeCheckbox || nativeRadio || element.matches("m-input,m-textarea") && twoWayProperty === "value"
       const checkboxGroup = element.matches("m-checkbox-group") && twoWayProperty === "value"
-      const events = nativeCheckbox ? ["change"] : nativeField ? ["input", "change"] : checkboxGroup ? ["m:checkbox-group-change"] : ["m:input", "m:change"]
+      const radioGroup = element.matches("m-radio-group") && twoWayProperty === "value"
+      const events = nativeCheckbox || nativeRadio ? ["change"] : nativeField ? ["input", "change"] : checkboxGroup ? ["m:checkbox-group-change"] : radioGroup ? ["m:radio-group-change"] : ["m:input", "m:change"]
       const listener = (event: Event) => {
-        if (event.target !== (nativeField ? element.querySelector(nativeCheckbox ? "[data-checkbox]" : "[data-input-control]") : element)) return
+        if (event.target !== (nativeField ? element.querySelector(nativeCheckbox ? "[data-checkbox]" : nativeRadio ? "[data-radio]" : "[data-input-control]") : element)) return
         const detail = (event as CustomEvent).detail
-        const value = !nativeField && !checkboxGroup && detail !== undefined ? detail : Reflect.get(element, twoWayProperty)
+        const value = !nativeField && !checkboxGroup && !radioGroup && detail !== undefined ? detail : Reflect.get(element, twoWayProperty)
         store.set(twoWayPath, value)
       }
       events.forEach(name => element.addEventListener(name, listener))

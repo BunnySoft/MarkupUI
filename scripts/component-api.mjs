@@ -39,6 +39,18 @@ export async function generateComponentApi(root, families) {
       .map(tag => typeof tag.comment === "string" ? tag.comment : "")
   }
 
+  function inheritedEvents(node) {
+    const result = tags(node, "event")
+    const base = node.heritageClauses?.find(clause => clause.token === ts.SyntaxKind.ExtendsKeyword)?.types[0]
+    if (base && base.expression.getText() !== "ViewElement") {
+      let symbol = checker.getSymbolAtLocation(base.expression)
+      if (symbol?.flags & ts.SymbolFlags.Alias) symbol = checker.getAliasedSymbol(symbol)
+      const declaration = symbol?.valueDeclaration
+      if (declaration && ts.isClassDeclaration(declaration)) result.unshift(...inheritedEvents(declaration))
+    }
+    return result
+  }
+
   function calls(node) {
     const result = []
     function visit(current) {
@@ -160,7 +172,7 @@ export async function generateComponentApi(root, families) {
           }
           events.set(web, event)
         }
-        for (const declaration of tags(node, "event")) {
+        for (const declaration of inheritedEvents(node)) {
           const event = JSON.parse(declaration)
           if (typeof event.name !== "string" || !["input", "change", "invalid"].includes(event.web)
             || ["bubbles", "cancelable", "composed"].some(flag => typeof event[flag] !== "boolean")) throw new Error(`Invalid native @event on ${node.name.text}.`)

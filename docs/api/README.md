@@ -17,6 +17,7 @@ in the target inventory.
 12. [Flex demo and API](../../demo/components/flex.html): native flex alignment, visual reversal and typed gaps without generated items.
 13. [Input demo and API](../../demo/components/input.html): Input, Textarea, InputGroup and InputGroupLabel; native editing/defaults/forms, clear/reveal/count and lifecycle.
 14. [Checkbox demo and API](../../demo/components/checkbox.html): Checkbox and CheckboxGroup; native checked/default/mixed state, labels, form ownership and live selection constraints.
+15. [Radio demo and API](../../demo/components/radio.html): Radio, RadioGroup and RadioButton; native exclusivity, checked/default state, forms and computed group selection.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
@@ -39,6 +40,7 @@ maintain a second Markdown copy of their API tables or usage examples.
 | Use Flex | `@dataengine/markup-ui/flex` and its CSS; ESM imports core automatically. |
 | Use Input/Textarea and groups | `@dataengine/markup-ui/input` and its CSS; ESM imports core and internal native-field mechanics automatically. Public exports are the four classes, `registerInput`, `InputType`, `InputSize`, `InputStatus` and `InputCount`. |
 | Use Checkbox/CheckboxGroup | `@dataengine/markup-ui/checkbox` and its CSS; ESM imports only core. Public exports are the two classes, `registerCheckbox`, `CheckboxSize`, `CheckboxStatus`, `CheckboxGroupOptions` and `CheckboxGroupChange`. |
+| Use Radio/RadioGroup/RadioButton | `@dataengine/markup-ui/radio` and its CSS; ESM imports core and internal native-radio mechanics. Public exports are the three classes, `registerRadio`, `RadioSize`, `RadioStatus` and `RadioGroupChange`. |
 | Use classic scripts | Core first, then the selected component scripts and CSS. |
 
 No jQuery dependency, query wrapper, state/binding runtime or all-components bundle is
@@ -58,6 +60,14 @@ no longer competes for `m-checkbox`; select the canonical Checkbox family explic
 The optional state bridge keeps Checkbox's existing boolean `m-bind` on `checked`;
 `value` is now explicitly the native submission string. CheckboxGroup's `value` is a live
 DOM-order selection, including prechecked and disabled members, rather than a stored default.
+
+Radio classic loading is `markup-ui-core.global.js`, `markup-ui-native-radio.global.js`,
+then `markup-ui-radio.global.js`. The native-radio dependency is private, registers no
+elements, and is also used by unmigrated Rate (which does not require core). There is no
+public `createRadioGroup` helper or text-input dependency. The aggregate no longer
+registers legacy `m-radio`/`m-radio-group`; select the canonical family explicitly.
+The optional bridge keeps Radio/RadioButton boolean `m-bind` on `checked`, explicit
+submission-string binding on `value`, and RadioGroup's computed string/null selection.
 
 ## References
 

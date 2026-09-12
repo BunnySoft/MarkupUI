@@ -89,53 +89,6 @@ export class MSwitch extends MElement {
   public set checked(value: boolean) { if (this.control !== undefined) this.control.checked = value }
 }
 
-export class MRadio extends MElement {
-  private control?: HTMLInputElement
-  public connectedCallback(): void {
-    if (this.control !== undefined) return
-    const label = this.textContent ?? ""
-    this.control = this.ownerDocument.createElement("input")
-    this.control.type = "radio"
-    this.control.value = this.getAttribute("value") ?? ""
-    this.control.checked = this.hasAttribute("checked")
-    const text = this.ownerDocument.createElement("span")
-    text.textContent = label
-    this.control.addEventListener("change", () => this.emit("change", this.control?.checked))
-    this.replaceChildren(this.control, text)
-  }
-  public get value(): string { return this.getAttribute("value") ?? "" }
-  public get checked(): boolean { return this.control?.checked ?? false }
-  public set checked(value: boolean) { if (this.control !== undefined) this.control.checked = value }
-}
-
-export class MRadioGroup extends MElement {
-  private readonly onChange = (event: Event): void => {
-    if (!(event.target instanceof MRadio) || !(event as CustomEvent).detail) return
-    this.value = event.target.value
-    this.emit("change", this.value)
-  }
-  public connectedCallback(): void {
-    this.setAttribute("role", "radiogroup")
-    this.addEventListener("m:change", this.onChange)
-    queueMicrotask(() => {
-      const value = this.getAttribute("value")
-      if (this.isConnected && value !== null) this.value = value
-    })
-  }
-  public disconnectedCallback(): void {
-    this.removeEventListener("m:change", this.onChange)
-  }
-  public get value(): string {
-    return [...this.querySelectorAll<MRadio>(":scope > m-radio")]
-      .find((radio) => radio.checked)?.value ?? ""
-  }
-  public set value(value: string) {
-    this.querySelectorAll<MRadio>(":scope > m-radio").forEach((radio) => {
-      radio.checked = radio.value === value
-    })
-  }
-}
-
 export class MFormItem extends MElement {
   private error: HTMLElement | undefined
   public connectedCallback(): void {

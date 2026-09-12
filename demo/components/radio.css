@@ -1,8 +1,5 @@
-body { margin: 0; padding: 1rem; color: #17212b; background: #f6f8fa; font: 1rem/1.5 system-ui, sans-serif; }
-main { max-inline-size: 54rem; margin-inline: auto; }
-.m-radio-group { margin-block: 1rem; }
-.demo-tools { display: flex; flex-wrap: wrap; gap: .5rem; }
-button { font: inherit; }
-h1, p, pre { overflow-wrap: anywhere; }
-pre { white-space: pre-wrap; padding: .5rem; background: white; }
-@media print { .demo-tools { display: none; } }
+[data-demo-preview] > m-radio-group { margin-block-end: 12px; }
+[data-demo-preview] .demo-tools { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 12px; }
+[data-demo-preview] #billing { margin-block-start: 16px; }
+[data-demo-preview] pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+[data-demo-preview][data-m-theme="dark"] { background: #18181c; color: rgb(255 255 255 / .82); color-scheme: dark; }

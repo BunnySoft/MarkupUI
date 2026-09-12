@@ -1,78 +1,141 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Radio, RadioGroup and RadioButton</title>
+  <title>Radio - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-radio.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./radio.css">
-  <script defer src="../../dist/markup-ui-radio.global.js"></script>
-  <script defer src="./radio.js"></script>
+  <script type="module" src="../../dist/markup-ui-radio.js"></script>
+  <script type="module" src="./radio.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Radio: the browser owns exclusive selection</h1>
-    <p>All controls, including button-like choices, are visible native radios. The optional group helper adds strict scope checks, silent setters and aggregate change notifications, not keyboard handling.</p>
+  <main data-demo-page class="component-docs">
+    <h1>Radio</h1>
+    <p>Radio, RadioGroup and RadioButton are ViewElements. One native radio and label own activation, exclusivity, focus, validity and submission. RadioButton changes the presentation, never the control or keyboard engine.</p>
+    <details class="component-setup" id="required-files">
+      <summary>Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-radio.css"&gt;
+&lt;script type="module" src="./dist/markup-ui-radio.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
     <form id="subscription" action="radio.html" method="get">
-      <fieldset class="m-radio-group">
-        <legend>CSS-only individual radios, no helper</legend>
-        <label class="m-radio"><input id="news-on" type="radio" name="news" value="on" checked><span>News on</span></label>
-        <label class="m-radio"><input id="news-off" type="radio" name="news" value="off"><span>News off</span></label>
-      </fieldset>
-      <fieldset class="m-radio-group" data-radio-group id="plans" aria-describedby="plan-help">
-        <legend>Required plan</legend>
-        <p id="plan-help">One shared native name and actual form owner. Required on Basic requires one selection in this native group, not every radio.</p>
-        <div class="m-radio-group__items" id="plan-items">
-          <label class="m-radio"><input data-radio id="basic" type="radio" name="plan" value="basic" required checked><span>Basic</span></label>
-          <label class="m-radio"><input data-radio id="pro" type="radio" name="plan" value="pro"><span>Professional with a longer wrapping label</span></label>
-          <label class="m-radio"><input data-radio id="locked" type="radio" name="plan" value="locked" disabled><span>Author-disabled plan</span></label>
-          <label class="m-radio" hidden><input data-radio id="hidden-plan" type="radio" name="plan" value="hidden"><span>Authored hidden option (not a proxy)</span></label>
+      <section data-demo-example="standalone" aria-labelledby="standalone-title">
+        <header data-demo-header><div><h2 id="standalone-title">Standalone native peers</h2><p>A group element is optional. Radios with the same native name and form owner are exclusive without a component selection engine.</p></div></header>
+        <div data-demo-preview>
+          <m-radio><label class="m-radio"><input id="news-on" type="radio" name="news" value="on" checked><span>News on</span></label></m-radio>
+          <m-radio><label class="m-radio"><input id="news-off" type="radio" name="news" value="off"><span>News off</span></label></m-radio>
         </div>
-        <template id="plan-template"><label class="m-radio"><input data-radio type="radio" name="plan" value="team"><span>Team, cloned by the application</span></label></template>
-        <fieldset class="m-radio-group" data-radio-group id="billing" data-size="small">
-          <legend>Nested group with a different native name</legend>
-          <label class="m-radio"><input data-radio id="bill-monthly" type="radio" name="billing" value="monthly" checked><span>Monthly billing</span></label>
-          <label class="m-radio"><input data-radio id="bill-yearly" type="radio" name="billing" value="yearly"><span>Yearly billing</span></label>
-        </fieldset>
-      </fieldset>
-      <fieldset class="m-radio-group" data-radio-group id="layouts" data-size="large">
-        <legend>RadioButton: native segmented choices</legend>
-        <div class="m-radio-group__buttons">
-          <label class="m-radio-button"><input data-radio id="layout-grid" type="radio" name="layout" value="grid" checked><span>Grid</span></label>
-          <label class="m-radio-button"><input data-radio id="layout-list" type="radio" name="layout" value="list"><span>List</span></label>
-          <label class="m-radio-button"><input data-radio id="layout-compact" type="radio" name="layout" value="compact" disabled><span>Compact (disabled)</span></label>
+      </section>
+      <section data-demo-example="group" aria-labelledby="group-title">
+        <header data-demo-header><div><h2 id="group-title">Required group and live selection</h2><p>Tab enters the selected radio; arrows move and select, and Space activates the focused radio. These are browser behaviors, not host key handlers. Required on Basic requires one selection in this native group.</p></div></header>
+        <div data-demo-preview>
+          <m-radio-group id="plans">
+            <fieldset class="m-radio-group" aria-describedby="plan-help">
+              <legend>Required plan</legend>
+              <p id="plan-help">One shared native name and actual form owner. The group value reads current checkedness, not its original attributes.</p>
+              <div class="m-radio-group__items" id="plan-items">
+                <m-radio id="basic-root"><label class="m-radio"><input data-radio id="basic" type="radio" name="plan" value="basic" required checked><span>Basic</span></label></m-radio>
+                <m-radio id="pro-root"><label class="m-radio"><input data-radio id="pro" type="radio" name="plan" value="pro"><span>Professional with a longer wrapping label</span></label></m-radio>
+                <m-radio><label class="m-radio"><input data-radio id="locked" type="radio" name="plan" value="locked" disabled><span>Author-disabled plan</span></label></m-radio>
+                <m-radio hidden><label class="m-radio"><input data-radio id="hidden-plan" type="radio" name="plan" value="hidden"><span>Authored hidden option (not a proxy)</span></label></m-radio>
+              </div>
+              <template id="plan-template"><m-radio><label class="m-radio"><input data-radio type="radio" name="plan" value="team"><span>Team, cloned by the application</span></label></m-radio></template>
+              <m-radio-group id="billing" size="small">
+                <fieldset class="m-radio-group">
+                  <legend>Nested group with a different native name</legend>
+                  <m-radio><label class="m-radio"><input data-radio id="bill-monthly" type="radio" name="billing" value="monthly" checked><span>Monthly billing</span></label></m-radio>
+                  <m-radio><label class="m-radio"><input data-radio id="bill-yearly" type="radio" name="billing" value="yearly"><span>Yearly billing</span></label></m-radio>
+                </fieldset>
+              </m-radio-group>
+            </fieldset>
+          </m-radio-group>
+          <div class="demo-tools">
+            <button type="button" id="silent">Silent value = "pro"</button>
+            <button type="button" id="clear">Silent clear selection</button>
+            <button type="button" id="default">Make Pro the next reset default</button>
+            <button type="button" id="add">Clone Team and refresh</button>
+            <button type="button" id="remove">Remove selected plan and refresh</button>
+            <button type="button" id="disabled">Toggle Plans disabled</button>
+            <button type="button" id="reconnect">Disconnect and reconnect Plans</button>
+          </div>
+          <p id="state">Native selection works before JavaScript; the live group API initializes after loading.</p>
+          <p id="events">Accepted plan changes: 0</p>
         </div>
-      </fieldset>
-      <fieldset class="m-radio-group" data-radio-group id="external">
-        <legend>Same plan name, different actual form owner</legend>
-        <label class="m-radio"><input data-radio id="external-monthly" type="radio" name="plan" value="monthly" form="alternate" checked><span>External monthly</span></label>
-        <label class="m-radio"><input data-radio id="external-yearly" type="radio" name="plan" value="yearly" form="alternate"><span>External yearly</span></label>
-      </fieldset>
-      <div id="peer-region"></div>
-      <template id="peer-template"><label class="m-radio"><input type="radio" name="plan" value="outside"><span>Conflicting outside native peer: still browser-owned</span></label></template>
-      <input type="hidden" name="local" value="only">
-      <p><button type="submit">Inspect native submission / local GET fallback</button> <button type="reset">Native reset</button></p>
+      </section>
+      <section data-demo-example="buttons" aria-labelledby="buttons-title">
+        <header data-demo-header><div><h2 id="buttons-title">RadioButton sizes, focus and RTL</h2><p>Visible native circles stay inside their labels. The group retains its four-pixel button spacing, wrapping and native disabled states. Choose a size, direction or dark preview without replacing controls.</p></div></header>
+        <div data-demo-preview id="button-preview">
+          <m-radio-group id="layouts" size="large">
+            <fieldset class="m-radio-group">
+              <legend>Layout</legend>
+              <div class="m-radio-group__buttons">
+                <m-radio-button><label class="m-radio-button"><input data-radio id="layout-grid" type="radio" name="layout" value="grid" checked><span>Grid</span></label></m-radio-button>
+                <m-radio-button><label class="m-radio-button"><input data-radio id="layout-list" type="radio" name="layout" value="list"><span>List</span></label></m-radio-button>
+                <m-radio-button><label class="m-radio-button"><input data-radio id="layout-compact" type="radio" name="layout" value="compact" disabled><span>Compact (disabled)</span></label></m-radio-button>
+              </div>
+            </fieldset>
+          </m-radio-group>
+          <label>Button size <select id="size"><option>small</option><option>medium</option><option selected>large</option></select></label>
+          <button type="button" id="rtl">Toggle RTL</button>
+          <button type="button" id="theme">Toggle dark preview</button>
+        </div>
+      </section>
+      <section data-demo-example="external" aria-labelledby="external-title">
+        <header data-demo-header><div><h2 id="external-title">Native form ownership and conflicts</h2><p>The same name belongs to a different group when the actual form owner differs. A same-name peer in this form instead conflicts with Plans: it still unchecks native peers, and group operations report the invalid scope rather than silently renaming anything.</p></div></header>
+        <div data-demo-preview>
+          <m-radio-group id="external">
+            <fieldset class="m-radio-group">
+              <legend>Same plan name, different actual form owner</legend>
+              <m-radio><label class="m-radio"><input data-radio id="external-monthly" type="radio" name="plan" value="monthly" form="alternate" checked><span>External monthly</span></label></m-radio>
+              <m-radio><label class="m-radio"><input data-radio id="external-yearly" type="radio" name="plan" value="yearly" form="alternate"><span>External yearly</span></label></m-radio>
+            </fieldset>
+          </m-radio-group>
+          <div id="peer-region"></div>
+          <template id="peer-template"><label class="m-radio"><input type="radio" name="plan" value="outside"><span>Conflicting outside native peer: still browser-owned</span></label></template>
+          <button type="button" id="peer">Toggle conflicting outside peer</button>
+        </div>
+      </section>
+      <section data-demo-example="forms" aria-labelledby="forms-title">
+        <header data-demo-header><div><h2 id="forms-title">Native FormData, validation and reset</h2><p>Programmatic checked/group value writes emit no user changes. defaultChecked changes reset defaults; native dirty-state rules determine whether it also changes current checkedness. Multiple defaults and DOM reordering follow native reset order. Nothing is sent to a service.</p></div></header>
+        <div data-demo-preview>
+          <input type="hidden" name="local" value="only">
+          <button type="submit">Inspect native FormData</button>
+          <button type="reset">Native reset</button>
+          <button type="button" id="cancel">Cancel next reset</button>
+          <pre id="submission">No submission yet.</pre>
+        </div>
+      </section>
     </form>
     <form id="alternate"><button type="reset">Reset external plan only</button></form>
-    <div class="demo-tools">
-      <button type="button" id="silent">Silent setValue(pro)</button>
-      <button type="button" id="clear">Silent clear selection</button>
-      <button type="button" id="default">Make Pro the next reset default</button>
-      <button type="button" id="add">Clone Team and refresh</button>
-      <button type="button" id="remove">Remove selected plan and refresh</button>
-      <button type="button" id="disabled">Toggle disabled Plans fieldset</button>
-      <button type="button" id="peer">Toggle conflicting outside peer</button>
-      <button type="button" id="cancel">Cancel next reset</button>
-      <button type="button" id="rtl">Toggle RTL</button>
-      <button type="button" id="disconnect">Disconnect helpers</button>
-    </div>
-    <p id="state">Without JS, native radio selection and submission work unchanged.</p>
-    <p id="events">Accepted plan changes: 0</p>
-    <pre id="submission">No submission yet.</pre>
-    <fieldset class="m-radio-group" disabled>
-      <legend><label class="m-radio"><input id="legend-radio" type="radio" name="legend-radio" value="allowed"><span>Native first-legend exception</span></label></legend>
-      <label class="m-radio"><input id="disabled-radio" type="radio" name="legend-radio" value="blocked"><span>Disabled fieldset member</span></label>
-    </fieldset>
+    <section data-demo-example="fieldset" aria-labelledby="fieldset-title">
+      <header data-demo-header><div><h2 id="fieldset-title">Disabled fieldset and first legend</h2><p>Native effective disabledness includes enclosing fieldsets. The first legend's radio remains operable. The Radio disabled property reports only its own flag.</p></div></header>
+      <div data-demo-preview>
+        <fieldset class="m-radio-group" disabled>
+          <legend><m-radio><label class="m-radio"><input id="legend-radio" type="radio" name="legend-radio" value="allowed"><span>Native first-legend exception</span></label></m-radio></legend>
+          <m-radio><label class="m-radio"><input id="disabled-radio" type="radio" name="legend-radio" value="blocked"><span>Disabled fieldset member</span></label></m-radio>
+        </fieldset>
+      </div>
+    </section>
+    <section aria-labelledby="behavior-title">
+      <h2 id="behavior-title">Behavior, dependencies and styling</h2>
+      <p>Radio and RadioButton default to native unchecked, disabled=false, required=false, value="on" and name="". Size is medium. The checked attribute sets defaultChecked, not controlled live checkedness. Use the native form attribute for an external association. Native label/input content is adopted without cloning; omitted chrome is generated once around surviving content. Hosts have neither roles nor tab stops.</p>
+      <p>RadioGroup requires a nonempty first direct legend and one complete light-DOM native group. Members need real labels, explicit nonempty unique string values, one common nonempty name and one actual form owner. Empty groups read value/name/form as null; null clears selection. Unknown, empty, duplicate or non-string keys are rejected. Unresolved form targets, mixed owners, same-name/form outside peers and mismatched nested groups are explicit errors. Disabled selected members are still selected but are not successful form controls.</p>
+      <p>Group value is computed from checked members, never cached. Its value attribute requests selection once when applied; property writes and reconnect do not reapply stale attributes. Removing the selected member does not choose a replacement. Refresh validates late/reordered/nested content and clears errors. Direct native peer changes retain browser exclusivity even when invalid scope makes group reads/writes throw; remove the conflict and refresh to read the actual remaining selection.</p>
+      <p>Native input then change bubble once from the selected radio. The old peer receives no synthetic change. The group emits one non-bubbling m:radio-group-change afterward with value; reset, cancelled activation and programmatic writes do not emit it. m:radio-group-error carries message; error retains automatic validation failures. Removing a group cancels queued notifications; reconnect preserves controls, defaults, listeners and authored content.</p>
+      <p>m-bind on Radio/RadioButton binds boolean checked; explicit m-bind-property="value" binds the native submission string. RadioGroup binds the computed string/null value through its group event; unmigrated Switch keeps its existing bridge. Prefer a group value binding when representing exclusive selection.</p>
+      <p>ESM imports markup-ui-core.js and markup-ui-native-radio.js. Classic loading is core, native-radio, then markup-ui-radio.global.js; MarkupUIRadio exposes Radio, RadioGroup, RadioButton and registerRadio. The private native-radio dependency is also used by unmigrated Rate and registers nothing. There is no public createRadioGroup helper, text-input engine, aggregate or another family's constructor in this graph.</p>
+      <p>Use canonical size and group status attributes, not the archived data-size/data-status configuration. Native .m-radio/.m-radio-button/.m-radio-group skins remain for authored controls. --m-radio-* and shared theme tokens customize color, font, dimensions and focus. Existing colors, four-pixel button seams, native pressed/focus/disabled painting, RTL and forced colors remain; no animation needs a reduced-motion replacement. Interactive radios are prohibited in passive Collapse, Tooltip and Dropdown labels.</p>
+    </section>
+    <section id="radio-api"></section>
   </main>
 </body>
 </html>

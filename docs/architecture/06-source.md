@@ -60,6 +60,12 @@ The former public group helper is replaced, not wrapped or duplicated. Its nativ
 symbol remains a concrete boundary with DataTable and Tree selection. Checkbox does not import the
 text-specific `native-input.ts` engine; no hypothetical Radio/Switch sharing chunk is emitted.
 
+Radio and RadioButton's direct native accessors live in `src/components/radio/radio.ts`;
+`group.ts` owns the canonical fieldset wrapper and lifecycle. The internal
+`src/components/native-radio.ts` retains actual native group validation/ownership also used
+by unmigrated Rate. It has no registration constructors, text-input code or public helper
+package export. Selected Radio and Rate entries share this dependency explicitly.
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed
