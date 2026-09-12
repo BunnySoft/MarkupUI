@@ -14,7 +14,9 @@ export function renderComponentApi(target, elements) {
     const wrapper = document.createElement("div")
     wrapper.className = "component-api-scroll"
     const table = document.createElement("table")
-    table.append(text("caption", title))
+    const caption = text("caption", title)
+    caption.id = `api-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`
+    table.append(caption)
     const head = document.createElement("thead")
     const header = document.createElement("tr")
     for (const column of columns) {
@@ -48,7 +50,9 @@ export function renderComponentApi(target, elements) {
     if (!meta?.type || !meta.properties || !Array.isArray(meta.regions)) throw new TypeError("Element metadata is unavailable.")
     const section = document.createElement("article")
     section.dataset.apiType = meta.type
-    section.append(text("h3", `${meta.type} <${meta.web.primary}>`))
+    const heading = text("h3", `${meta.type} <${meta.web.primary}>`)
+    heading.id = `api-${meta.web.primary}`
+    section.append(heading)
     table(section, `${meta.type} properties`,
       ["Property", "Type", "Default", "Access", "Attribute", "Rules"],
       Object.values(meta.properties).map(property => [

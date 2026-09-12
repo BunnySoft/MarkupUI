@@ -9,16 +9,6 @@ export class MLayout extends MElement {
   }
 }
 
-export class MCard extends MLayout {
-  public override connectedCallback(): void {
-    super.connectedCallback()
-    this.toggleAttribute(
-      "structured",
-      this.querySelector(":scope > m-card-header,:scope > m-card-content,:scope > m-card-footer") !== null,
-    )
-  }
-}
-
 export class MProgress extends MElement {
   public static get observedAttributes(): string[] { return ["value", "max"] }
   private bar?: HTMLElement

@@ -21,8 +21,6 @@ export const widgetElementNames = [
   "m-input-number",
   "m-color-picker",
   "m-rating",
-  "m-carousel",
-  "m-carousel-item",
   "m-transfer",
   "m-cascader",
 ] as const
@@ -119,48 +117,6 @@ export const widgetsPlugin: MPlugin<MarkupUIApi> = {
         })
         this.setAttribute("role", "radiogroup")
         this.replaceChildren(...buttons)
-      }
-    }
-
-    class MCarousel extends Base {
-      private index = 0
-      private viewport: HTMLElement | undefined
-      public connectedCallback(): void {
-        if (this.viewport !== undefined) return
-        const items = [...this.querySelectorAll<HTMLElement>(":scope > m-carousel-item")]
-        this.viewport = this.ownerDocument.createElement("div")
-        this.viewport.dataset.mCarouselViewport = ""
-        this.viewport.append(...items)
-        const controls = this.ownerDocument.createElement("div")
-        controls.dataset.mCarouselControls = ""
-        const previous = this.ownerDocument.createElement("button")
-        previous.type = "button"
-        previous.textContent = "Previous"
-        previous.addEventListener("click", () => this.previous())
-        const next = this.ownerDocument.createElement("button")
-        next.type = "button"
-        next.textContent = "Next"
-        next.addEventListener("click", () => this.next())
-        controls.append(previous, next)
-        this.replaceChildren(this.viewport, controls)
-        this.index = Math.max(0, Math.min(this.numberAttribute("index", 0), items.length - 1))
-        this.update()
-      }
-      public next(): void { this.select(this.index + 1) }
-      public previous(): void { this.select(this.index - 1) }
-      public select(index: number): void {
-        const count = this.viewport?.childElementCount ?? 0
-        if (count === 0) return
-        this.index = (index + count) % count
-        this.update()
-        this.dispatchEvent(new CustomEvent("m:change", { bubbles: true, detail: this.index }))
-      }
-      private update(): void {
-        this.viewport?.querySelectorAll<HTMLElement>(":scope > m-carousel-item")
-          .forEach((item, index) => {
-            item.hidden = index !== this.index
-            item.setAttribute("aria-hidden", String(index !== this.index))
-          })
       }
     }
 
@@ -294,8 +250,6 @@ export const widgetsPlugin: MPlugin<MarkupUIApi> = {
       MInputNumber,
       MColorPicker,
       MRating,
-      MCarousel,
-      class extends Base {},
       MTransfer,
       MCascader,
     ] as const

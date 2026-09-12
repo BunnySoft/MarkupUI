@@ -1,5 +1,9 @@
 # Divider
 
+The CSS-only authoring surface below is historical. Use the direct ViewElement
+[Divider demo and API](../../../demo/components/divider.html) for current authoring,
+loading and independent title/heading semantics.
+
 > **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
 
 **Migration status: 🟢 Verified retained native HTML/CSS scope.**
@@ -309,4 +313,4 @@ through coordinator selection, then Space, Grid and Layout; later content remain
 
 ## Current documentation
 
-[Read the current design](../../elements/contracts/06-divider.md).
+[Read the current demo and API](../../../demo/components/divider.html).

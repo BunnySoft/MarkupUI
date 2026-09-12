@@ -7,12 +7,12 @@ implementation completion claim.
 | Order | Contract | Scope | Design status |
 | ---: | --- | --- | --- |
 | 1 | [Avatar demo and API](../../demo/components/avatar.html) | Image, text/icon, resources and named fallback content. | Implemented with direct runtime access and generated demo docs. |
-| 2 | [Button](../../demo/components/button.html) | Activation, naming, content and ButtonGroup. | ViewElement implemented; payload acceptance pending. |
-| 3 | [Card](contracts/03-card.md) | Named regions, presentation and close intent. | Draft. |
-| 4 | [Carousel](contracts/04-carousel.md) | Paged items, navigation, identity and autoplay. | Draft. |
-| 5 | [Collapse](contracts/05-collapse.md) | Keyed disclosure, accordion behavior and focus. | Draft. |
-| 6 | [Divider](contracts/06-divider.md) | Visual or semantic separation. | Draft. |
-| 7 | [Dropdown](contracts/07-dropdown.md) | Temporary command/navigation hierarchy. | Draft. |
+| 2 | [Button](../../demo/components/button.html) | Activation, naming, content and ButtonGroup. | Implemented and accepted with direct runtime access. |
+| 3 | [Card demo and API](../../demo/components/card.html) | Named regions, presentation and close intent. | Implemented with direct runtime access and generated demo docs. |
+| 4 | [Carousel demo and API](../../demo/components/carousel.html) | Native paging, named regions, identity and safe autoplay. | Direct runtime and generated demo docs implemented; validation recorded with the change. |
+| 5 | [Collapse demo and API](../../demo/components/collapse.html) | Keyed native disclosures, named regions, accordion and focus. | Implemented and accepted with approved payload ceilings. |
+| 6 | [Divider demo and API](../../demo/components/divider.html) | Native rule semantics with independent title/heading content. | Direct ViewElement implementation with generated demo API. |
+| 7 | [Dropdown demo and API](../../demo/components/dropdown.html) | Native command/navigation hierarchy and named regions. | Direct ViewElement implementation with approved payload ceilings. |
 
 Avatar proves direct properties, resources, content and state without requiring a new
 form, collection or overlay subsystem. Complete each family, including companions and

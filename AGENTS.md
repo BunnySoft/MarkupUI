@@ -5,6 +5,7 @@ Before changing source or build packaging, read:
 1. [Source layout and ownership](docs/architecture/06-source.md)
 2. [Core and component delivery](docs/architecture/07-modules.md)
 3. The relevant [Element Contract](docs/elements/README.md)
+4. [Component development guide](docs/elements/04-development.md)
 
 Keep implementation in the existing `src` areas. Shared runtime extraction changes build
 packaging, not the ownership of component code. Consumers must be able to load the small

@@ -50,21 +50,21 @@ export function createPopoverController(
   const view = document?.defaultView
   if (!view || !(trigger instanceof view.HTMLElement) || !(panel instanceof view.HTMLElement)
     || panel.ownerDocument !== document || panel === trigger || panel.contains(trigger)) {
-    throw new TypeError("Popover requires separate native HTML trigger/panel nodes in one document.")
+    throw new TypeError("Use separate HTML trigger/panel nodes in one document.")
   }
   const mode = options.trigger ?? "click"
   const panelId = panel.id
   const placement = options.placement ?? "bottom"
   if (!["click", "hover", "focus", "manual"].includes(mode)
     || !/^(top|bottom|left|right)(-start|-end)?$/.test(placement)
-    || !["auto", "fallback"].includes(options.positioning ?? "auto")) throw new TypeError("Invalid Popover mode or placement.")
+    || !["auto", "fallback"].includes(options.positioning ?? "auto")) throw new TypeError("Invalid mode or placement.")
   for (const value of [options.delay, options.duration, options.gap, options.margin]) {
     if (value !== undefined && (!Number.isFinite(value) || value < 0 || value > 60_000)) {
-      throw new RangeError("Popover timing/geometry must be finite and between 0 and 60000.")
+      throw new RangeError("Timing/geometry must be finite in 0..60000.")
     }
   }
   for (const value of [options.flip, options.disabled]) {
-    if (value !== undefined && typeof value !== "boolean") throw new TypeError("Popover flags must be boolean.")
+    if (value !== undefined && typeof value !== "boolean") throw new TypeError("flags must be boolean.")
   }
   const geometry: PlacementOptions = {
     placement, gap: options.gap ?? 8, margin: options.margin ?? 8,
@@ -74,11 +74,14 @@ export function createPopoverController(
   const delay = options.delay ?? 100
   const duration = options.duration ?? 100
   const aria = ownedWrites()
+  const openingPaint = ownedWrites()
   const supported = typeof panel.showPopover === "function" && typeof panel.hidePopover === "function"
   let connected = false
   let disabled = options.disabled ?? false
   let timer = 0, frame = 0, generation = 0
   let active = false
+  let openingEvent: Event | undefined
+  let openingHadStyle = true
   let observer: MutationObserver | undefined
   let resize: ResizeObserver | undefined
   let cleanup: (() => void) | undefined
@@ -99,6 +102,8 @@ export function createPopoverController(
   }
   function stopActive() {
     clearTimer()
+    if (openingEvent?.eventPhase) openingEvent.preventDefault()
+    openingEvent = undefined
     view!.cancelAnimationFrame(frame)
     frame = 0
     resize?.disconnect()
@@ -107,6 +112,10 @@ export function createPopoverController(
     observer = undefined
     for (const remove of activeBindings.splice(0)) remove()
     positioner.clear()
+    openingPaint.restore()
+    // Positioning writes can inherit the style attribute created by the paint guard.
+    if (!openingHadStyle && panel.getAttribute("style") === "") panel.removeAttribute("style")
+    openingHadStyle = true
     pointers.clear()
     active = false
   }
@@ -154,9 +163,10 @@ export function createPopoverController(
     }
   }
   function schedulePosition() {
+    const current = generation
     if (!frame) frame = view!.requestAnimationFrame(() => {
       frame = 0
-      controller.syncPosition()
+      if (current === generation) reconcile()
     })
   }
   function reconcile() {
@@ -217,20 +227,20 @@ export function createPopoverController(
       || !panel.id || panel.id !== panelId || /\s/.test(panel.id) || document!.getElementById(panel.id) !== panel
       || [...document!.querySelectorAll("[id]")].filter(node => node.id === panel.id).length !== 1
       || !panel.classList.contains("m-popover") || !["auto", "manual"].includes(panel.getAttribute("popover") ?? "")
-      || panel.hasAttribute("hidden")) throw new TypeError("Popover needs connected light-DOM, a unique ID, .m-popover and popover=auto|manual; no hidden.")
-    if (trigger.closest("m-popover") || panel.closest("m-popover")) throw new TypeError("Do not bind native Popover inside legacy m-popover anatomy.")
+      || panel.hasAttribute("hidden")) throw new TypeError("Use connected light-DOM, a unique ID, .m-popover, popover=auto|manual and no hidden.")
+    if (trigger.closest("m-popover") || panel.closest("m-popover")) throw new TypeError("No legacy m-popover nesting.")
     const parentPopover = trigger.parentElement?.closest("[popover]")
-    if (parentPopover && !parentPopover.contains(panel)) throw new TypeError("Keep nested panels inside their parent; portalled nesting is unsupported.")
+    if (parentPopover && !parentPopover.contains(panel)) throw new TypeError("No portalled nesting.")
     if (mode === "click") {
       if (!(trigger instanceof view!.HTMLButtonElement) || trigger.type !== "button"
         || trigger.getAttribute("popovertarget") !== panel.id
         || !["", "toggle"].includes(trigger.getAttribute("popovertargetaction") ?? "")) {
-        throw new TypeError("Click Popover needs type=button and a matching popovertarget toggle.")
+        throw new TypeError("Use type=button with a matching popovertarget toggle.")
       }
     } else {
-      if (trigger.hasAttribute("popovertarget")) throw new TypeError("Only click mode owns a declarative popovertarget.")
+      if (trigger.hasAttribute("popovertarget")) throw new TypeError("Only click mode supports popovertarget.")
       if (mode !== "manual" && !trigger.matches("button, input:not([type=hidden]), select, textarea, a[href]")) {
-        throw new TypeError("Use a native focusable control or link.")
+        throw new TypeError("Use a native focusable trigger.")
       }
     }
   }
@@ -261,7 +271,7 @@ export function createPopoverController(
       else stopActive()
     },
     setShow(show) {
-      if (typeof show !== "boolean") throw new TypeError("setShow requires a boolean.")
+      if (typeof show !== "boolean") throw new TypeError("show must be boolean.")
       if (show) return controller.open()
       controller.close()
       return false
@@ -272,6 +282,8 @@ export function createPopoverController(
         controller.close()
         return false
       }
+      openingEvent = undefined
+      openingPaint.restore()
       return true
     },
     connect() {
@@ -297,9 +309,18 @@ export function createPopoverController(
         if (event.target !== panel) return
         const opening = (event as ToggleEvent).newState === "open"
         if (opening && unavailable()) event.preventDefault()
-        if (!opening) stopActive()
-        const current = generation
-        view!.queueMicrotask(() => { if (current === generation) reconcile() })
+        if (opening && !event.defaultPrevented) {
+          openingEvent = event
+          openingHadStyle = panel.hasAttribute("style")
+          // Keep native autofocus available while suppressing unpositioned paint.
+          openingPaint.style(panel, "animation-name", "none")
+          openingPaint.style(panel, "opacity", "0")
+          openingPaint.style(panel, "pointer-events", "none")
+          observeLifecycle()
+        } else if (!opening) {
+          stopActive()
+        }
+        schedulePosition()
       })
       listen(panel, "toggle", event => { if (event.target === panel) reconcile() })
       if (mode === "hover" || mode === "focus") {

@@ -2,6 +2,7 @@
 
 **Implementation rule for contributors and AI agents:** follow the existing source layout.
 Do not create a parallel component tree or move working logic merely to change bundle output.
+Use the [component development guide](../elements/04-development.md) for the end-to-end workflow.
 
 ## Source areas
 

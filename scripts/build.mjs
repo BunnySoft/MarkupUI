@@ -27,10 +27,13 @@ const shared = {
 }
 const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image", "popover", "tooltip", "popconfirm", "dropdown", "menu", "tabs", "collapse", "anchor", "back-top", "pagination", "steps", "loading-bar", "dialog", "modal", "drawer", "message", "notification", "collapse-transition", "input", "checkbox", "radio", "switch", "select", "input-number", "slider", "rate", "form"]
 const classicEntries = { progress: "global.ts", popover: "global.ts", tooltip: "global.ts", popconfirm: "global.ts", dropdown: "global.ts", menu: "global.ts", tabs: "global.ts", collapse: "global.ts", anchor: "global.ts", "back-top": "global.ts", pagination: "global.ts", steps: "global.ts", "loading-bar": "global.ts", dialog: "global.ts", modal: "global.ts", drawer: "global.ts", message: "global.ts", notification: "global.ts", "collapse-transition": "global.ts", input: "global.ts", checkbox: "global.ts", radio: "global.ts", switch: "global.ts", select: "global.ts", "input-number": "global.ts", slider: "global.ts", rate: "global.ts" }
-const styleOnlyComponents = ["typography", "icon", "gradient-text", "ellipsis", "page-header", "divider", "flex", "space", "grid", "layout", "list", "descriptions", "timeline", "breadcrumb", "thing", "table", "affix", "result", "code", "scrollbar", "float-button", "global-style"]
+const styleOnlyComponents = ["typography", "icon", "gradient-text", "ellipsis", "page-header", "flex", "space", "grid", "layout", "list", "descriptions", "timeline", "breadcrumb", "thing", "table", "affix", "result", "code", "scrollbar", "float-button", "global-style"]
 classicEntries.avatar = "global.ts"
 classicEntries.button = "global.ts"
-const viewComponents = new Map([["avatar", 8_500], ["button", 9_500]])
+classicEntries.card = "global.ts"
+components.push("divider")
+classicEntries.divider = "global.ts"
+const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000]])
 await generateComponentApi(root, [...viewComponents.keys()])
 
 function corePlugin(format) {
@@ -194,7 +197,10 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
     await writeFile(output, code)
   } else if (name === "tooltip" || name === "popconfirm" || name === "dropdown") {
     const base = await readFile(resolve(root, "src", "components", "popover", "popover.css"), "utf8")
-    await writeFile(output, `${base}\n${await readFile(source, "utf8")}`)
+    const css = `${base}\n${await readFile(source, "utf8")}`
+    await writeFile(output, name === "dropdown" ? (await transform(css, {
+      loader: "css", minifyWhitespace: true, minifySyntax: false, legalComments: "none",
+    })).code : css)
   } else if (name === "dialog" || name === "modal" || name === "drawer") {
     const base = await readFile(resolve(root, "src", "components", "dialog", "native.css"), "utf8")
     await writeFile(output, `${base}\n${await readFile(source, "utf8")}`)
@@ -392,6 +398,8 @@ const bundleBudgets = {
   "markup-ui-gradient-text.css": 1_500,
   "markup-ui-ellipsis.css": 1_500,
   "markup-ui-page-header.css": 1_500,
+  "markup-ui-divider.js": 3_000,
+  "markup-ui-divider.global.js": 3_000,
   "markup-ui-divider.css": 1_500,
   "markup-ui-flex.css": 1_000,
   "markup-ui-space.css": 1_000,
@@ -423,17 +431,17 @@ const bundleBudgets = {
   "markup-ui-popconfirm.js": 6_500,
   "markup-ui-popconfirm.global.js": 6_500,
   "markup-ui-popconfirm.css": 1_250,
-  "markup-ui-dropdown.js": 9_000,
-  "markup-ui-dropdown.global.js": 9_000,
-  "markup-ui-dropdown.css": 1_750,
+  "markup-ui-dropdown.js": 13_000,
+  "markup-ui-dropdown.global.js": 13_000,
+  "markup-ui-dropdown.css": 1_850,
   "markup-ui-menu.js": 6_000,
   "markup-ui-menu.global.js": 6_000,
   "markup-ui-menu.css": 1_250,
   "markup-ui-tabs.js": 6_000,
   "markup-ui-tabs.global.js": 6_000,
   "markup-ui-tabs.css": 1_750,
-  "markup-ui-collapse.js": 4_000,
-  "markup-ui-collapse.global.js": 4_000,
+  "markup-ui-collapse.js": 6_500,
+  "markup-ui-collapse.global.js": 6_500,
   "markup-ui-collapse.css": 1_000,
   "markup-ui-anchor.js": 4_500,
   "markup-ui-anchor.global.js": 4_500,

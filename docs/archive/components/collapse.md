@@ -1,5 +1,8 @@
 # Collapse and CollapseItem: native disclosures
 
+The helper API below is historical and no longer exported by the family entry.
+Use the [current Collapse demo and API](../../../demo/components/collapse.html).
+
 > **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
 
 **🟢 Verified for the retained native details/summary scope.**
@@ -292,4 +295,4 @@ is claimed. P3 remains in progress. **Next: Anchor, then Back Top.**
 
 ## Current documentation
 
-[Read the current design](../../elements/contracts/05-collapse.md).
+[Read the current demo and API](../../../demo/components/collapse.html).

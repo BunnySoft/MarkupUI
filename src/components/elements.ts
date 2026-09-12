@@ -4,7 +4,7 @@ import { MAutocomplete, MCheckbox, MForm, MFormItem, MInput, MRadio, MRadioGroup
 import { MAccordionItem, MInclude } from "./dynamic.js"
 import { MDialog, MDrawer, MPopover, MTooltip } from "./overlays.js"
 import { MMenu, MMenuItem, MPagination, MSteps, MTabs, MTab, MDescriptions, MDescriptionItem, MStatistic, MTree, MTreeNode } from "./navigation.js"
-import { MCard, MEmpty, MLayout, MProgress, MSkeleton, MTag } from "./content.js"
+import { MEmpty, MLayout, MProgress, MSkeleton, MTag } from "./content.js"
 import { builtInStyles } from "./styles.js"
 
 const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = [
@@ -24,14 +24,9 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-wrap", class extends MLayout {}],
   ["m-center", class extends MLayout {}],
   ["m-spacer", class extends MLayout { public override connectedCallback(): void { super.connectedCallback(); this.style.flex = "1" } }],
-  ["m-card", MCard],
-  ["m-card-header", class extends MElement {}],
-  ["m-card-content", class extends MElement {}],
-  ["m-card-footer", class extends MElement {}],
   ["m-alert", class extends MElement {}],
   ["m-badge", class extends MElement {}],
   ["m-tag", MTag],
-  ["m-divider", class extends MElement { public connectedCallback(): void { this.setAttribute("role", "separator"); this.setAttribute("aria-orientation", this.hasAttribute("vertical") ? "vertical" : "horizontal") } }],
   ["m-progress", MProgress],
   ["m-skeleton", MSkeleton],
   ["m-empty", MEmpty],

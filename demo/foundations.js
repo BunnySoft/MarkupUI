@@ -7,6 +7,7 @@ document.getElementById("load-legacy").addEventListener("click", async (event) =
   button.disabled = true
   try {
     await import("../dist/markup-ui.js")
+    await import("../dist/markup-ui-card.js")
     document.getElementById("status").textContent = "Legacy behavior loaded; preset CSS still controls the page theme."
   } catch (error) {
     button.disabled = false

@@ -10,6 +10,12 @@
     <link id="m-advanced-styles" rel="stylesheet" href="../dist/markup-ui-advanced.css">
     <link id="m-widgets-styles" rel="stylesheet" href="../dist/markup-ui-widgets.css">
     <link rel="stylesheet" href="../dist/markup-ui-avatar.css">
+    <link rel="stylesheet" href="../dist/markup-ui-card.css">
+    <script type="module" src="../dist/markup-ui-card.js"></script>
+    <link rel="stylesheet" href="../dist/markup-ui-carousel.css">
+    <script type="module" src="../dist/markup-ui-carousel.js"></script>
+    <link rel="stylesheet" href="../dist/markup-ui-divider.css">
+    <script type="module" src="../dist/markup-ui-divider.js"></script>
     <link rel="stylesheet" href="./legacy.css">
     <script type="module" src="../dist/markup-ui-avatar.js"></script>
     <link rel="stylesheet" href="../dist/markup-ui-button.css">
@@ -790,7 +796,10 @@
                 <m-card>
                   <m-stack gap="md">
                     <m-heading level="3">Carousel</m-heading>
-                    <m-carousel id="widget-carousel">
+                    <m-text>Carousel is loaded separately from the widgets plugin.
+                      <a href="./components/carousel.html">Current API and examples</a></m-text>
+                    <m-carousel id="widget-carousel" aria-label="MarkupUI highlights">
+                      <m-carousel-viewport id="widget-carousel-viewport" tabindex="0" aria-label="Highlight slides">
                       <m-carousel-item>
                         <m-heading level="3">Native components</m-heading>
                       </m-carousel-item>
@@ -798,8 +807,14 @@
                         <m-heading level="3">Optional plugins</m-heading>
                       </m-carousel-item>
                       <m-carousel-item>
-                        <m-heading level="3">Zero runtime dependencies</m-heading>
+                        <m-heading level="3">One shared core</m-heading>
                       </m-carousel-item>
+                      </m-carousel-viewport>
+                      <m-carousel-controls hidden>
+                        <button type="button" data-part="prev">Previous</button>
+                        <button type="button" data-part="next">Next</button>
+                      </m-carousel-controls>
+                      <m-carousel-readout>Scroll through slides.</m-carousel-readout>
                     </m-carousel>
                   </m-stack>
                 </m-card>

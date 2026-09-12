@@ -126,6 +126,97 @@ afterEach(() => {
 })
 
 describe("Popover native visibility ownership (native API mocked, not browser certification)", () => {
+  it("keeps native opening unpainted until its first positioned frame, even if the opening microtask runs while closed", async () => {
+    const { panel, controller } = bind({ positioning: "fallback" })
+    panel.dispatchEvent(Object.assign(new Event("beforetoggle", { cancelable: true }), { newState: "open" }))
+    await Promise.resolve()
+    expect(controller.show).toBe(false)
+    expect(panel.style.opacity).toBe("0")
+    expect(panel.style.animationName).toBe("none")
+    expect(panel.style.pointerEvents).toBe("none")
+    expect(panel.style.visibility).toBe("")
+    expect(panel.style.left).toBe("")
+    open.add(panel)
+    expect(panel.style.opacity).toBe("0")
+    vi.advanceTimersToNextFrame()
+    expect(panel.style.left).toBe("170px")
+    expect(panel.style.top).toBe("238px")
+    expect(panel.style.opacity).toBe("")
+    expect(panel.style.animationName).toBe("")
+    expect(panel.style.pointerEvents).toBe("")
+    panel.dispatchEvent(new Event("toggle"))
+    expect(controller.show).toBe(true)
+  })
+  it("positions API openings under the same paint guard before returning", () => {
+    const { panel, controller } = bind({ positioning: "fallback" })
+    const measure = vi.fn(() => {
+      expect(panel.style.opacity).toBe("0")
+      expect(panel.style.animationName).toBe("none")
+      return rect(0, 0, 160, 80)
+    })
+    panel.getBoundingClientRect = () => {
+      if (!panel.style.left) return measure()
+      return rect(170, 238, 160, 80)
+    }
+    expect(controller.open()).toBe(true)
+    expect(measure).toHaveBeenCalledOnce()
+    expect(panel.style.left).toBe("170px")
+    expect(panel.style.opacity).toBe("")
+  })
+  it("restores canceled native opening without erasing authored animation longhands", () => {
+    const { panel, controller } = bind()
+    panel.style.opacity = ".8"
+    panel.style.animationDuration = "2s"
+    panel.style.animationTimingFunction = "linear"
+    panel.addEventListener("beforetoggle", event => event.preventDefault())
+    panel.showPopover()
+    expect(controller.show).toBe(false)
+    expect(panel.style.opacity).toBe("0")
+    vi.advanceTimersToNextFrame()
+    expect(panel.style.opacity).toBe("0.8")
+    expect(panel.style.animationName).toBe("")
+    expect(panel.style.animationDuration).toBe("2s")
+    expect(panel.style.animationTimingFunction).toBe("linear")
+    expect(panel.style.pointerEvents).toBe("")
+  })
+  it("cancels an in-progress native opening when its owner disconnects", () => {
+    const { panel, controller } = bind()
+    panel.addEventListener("beforetoggle", () => controller.disconnect())
+    panel.showPopover()
+    vi.runAllTimers()
+    expect(controller.show).toBe(false)
+    expect(controller.connected).toBe(false)
+    expect(panel.hasAttribute("style")).toBe(false)
+  })
+  it("preserves later author paint edits when a pending opening is disposed", () => {
+    const { panel, controller } = bind()
+    panel.style.opacity = ".8"
+    panel.dispatchEvent(Object.assign(new Event("beforetoggle", { cancelable: true }), { newState: "open" }))
+    panel.style.opacity = ".4"
+    controller.disconnect()
+    vi.runAllTimers()
+    expect(panel.style.opacity).toBe("0.4")
+    expect(panel.style.animationName).toBe("")
+    expect(panel.style.pointerEvents).toBe("")
+  })
+  it("removes the paint guard if initial positioning fails", () => {
+    const { panel, controller } = bind()
+    panel.getBoundingClientRect = () => rect(0, 0, 0, 0)
+    expect(controller.open()).toBe(false)
+    expect(panel.hasAttribute("style")).toBe(false)
+    vi.runAllTimers()
+    expect(controller.show).toBe(false)
+  })
+  it.each([false, true])("restores the original style-attribute presence (%s) after opening and closing", hadStyle => {
+    const { trigger, panel } = nodes()
+    if (hadStyle) panel.setAttribute("style", "")
+    const controller = createPopover(trigger, panel)
+    controllers.push(controller)
+    controller.open()
+    controller.close()
+    expect(panel.hasAttribute("style")).toBe(hadStyle)
+    expect(panel.getAttribute("style")).toBe(hadStyle ? "" : null)
+  })
   it("opens, closes, reports actual state and retains every authored node/listener", () => {
     const { trigger, panel, controller } = bind()
     const child = panel.firstChild
@@ -231,7 +322,7 @@ describe("Popover native visibility ownership (native API mocked, not browser ce
     expect(controller.show).toBe(false)
     expect(panel.hasAttribute("style")).toBe(false)
   })
-  it("releases active positioning and queued microtasks on disconnect", async () => {
+  it("releases active positioning and queued frames on disconnect", async () => {
     const { controller, panel, trigger } = bind()
     controller.open()
     window.dispatchEvent(new Event("resize"))

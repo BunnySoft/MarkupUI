@@ -331,4 +331,4 @@ The next component is selected and coordinated separately after this component's
 
 ## Current documentation
 
-[Read the current design](../../elements/contracts/03-card.md).
+[Read the current API and usage reference](../../../demo/components/card.html).

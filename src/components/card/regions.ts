@@ -1,11 +1,25 @@
-export class MCardCover extends HTMLElement {}
+import { ViewElement } from "../../core/index.js"
 
-export class MCardHeader extends HTMLElement {}
+export class CardCover extends ViewElement {
+  public static readonly tag = "m-card-cover"
+}
 
-export class MCardHeaderExtra extends HTMLElement {}
+export class CardHeader extends ViewElement {
+  public static readonly tag = "m-card-header"
+}
 
-export class MCardContent extends HTMLElement {}
+export class CardHeaderExtra extends ViewElement {
+  public static readonly tag = "m-card-header-extra"
+}
 
-export class MCardFooter extends HTMLElement {}
+export class CardContent extends ViewElement {
+  public static readonly tag = "m-card-content"
+}
 
-export class MCardAction extends HTMLElement {}
+export class CardFooter extends ViewElement {
+  public static readonly tag = "m-card-footer"
+}
+
+export class CardAction extends ViewElement {
+  public static readonly tag = "m-card-action"
+}

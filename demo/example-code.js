@@ -5,6 +5,26 @@ export function createExampleCodeViewers(
   const examples = [...document.querySelectorAll("[data-demo-example]")]
   let sourceDocument
   let sourceRequest
+  const documentationLinks = [...document.querySelectorAll('.component-docs-nav a[href^="#"]')]
+
+  function revealSetup(hash) {
+    const setup = document.getElementById(hash.slice(1))?.closest("details.component-setup")
+    if (setup) setup.open = true
+  }
+
+  function onDocumentationClick(event) {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey
+      || event.shiftKey || event.altKey) return
+    revealSetup(event.currentTarget.hash)
+  }
+
+  function onHashChange() {
+    revealSetup(view.location.hash)
+  }
+
+  for (const link of documentationLinks) link.addEventListener("click", onDocumentationClick)
+  view.addEventListener("hashchange", onHashChange)
+  onHashChange()
 
   async function loadSource() {
     if (sourceDocument) return sourceDocument
@@ -204,6 +224,8 @@ export function createExampleCodeViewers(
 
   return {
     disconnect() {
+      for (const link of documentationLinks) link.removeEventListener("click", onDocumentationClick)
+      view.removeEventListener("hashchange", onHashChange)
       for (const { toggle, onToggle } of listeners) {
         toggle.removeEventListener("click", onToggle)
       }

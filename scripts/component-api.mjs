@@ -58,7 +58,8 @@ export async function generateComponentApi(root, families) {
     const nullable = parts.some(part => part.flags & ts.TypeFlags.Null)
     const values = parts.filter(part => part.flags & ts.TypeFlags.StringLiteral).map(part => part.value)
     const number = parts.some(part => part.flags & ts.TypeFlags.NumberLike)
-    const kind = number ? values.length ? "size" : "number"
+    const array = checker.isArrayType(type) || checker.isTupleType(type)
+    const kind = array ? "array" : number ? values.length ? "size" : "number"
       : values.length ? "enum"
         : parts.some(part => part.flags & ts.TypeFlags.BooleanLike) ? "boolean"
           : parts.some(part => part.flags & ts.TypeFlags.StringLike) ? "string" : "object"
@@ -78,6 +79,18 @@ export async function generateComponentApi(root, families) {
       result.default = method === "choiceAttribute" ? literal(helper.arguments[2])
         : method === "booleanAttribute" || method === "numberAttribute" ? literal(helper.arguments[1])
           : method === "hasAttribute" ? false : null
+      const returned = getter.body?.statements.find(ts.isReturnStatement)?.expression
+      if (method === "getAttribute" && returned && ts.isBinaryExpression(returned)
+        && [ts.SyntaxKind.QuestionQuestionToken, ts.SyntaxKind.BarBarToken].includes(returned.operatorToken.kind)) {
+        result.default = literal(returned.right)
+      }
+    }
+    const defaults = tags(getter, "default")
+    if (defaults.length) {
+      if (defaults.length !== 1 || !writable || helper || !array) throw new Error(`@default requires a property-only writable array: ${name}.`)
+      const value = JSON.parse(defaults[0])
+      if (!Array.isArray(value) || value.length) throw new Error(`Only an explicit empty-array @default is supported: ${name}.`)
+      result.default = value
     }
     for (const [tag, key] of [["min", "min"], ["max", "max"], ["minExclusive", "min"]]) {
       const value = tags(getter, tag)[0]

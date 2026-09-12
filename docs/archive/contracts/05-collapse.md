@@ -1,5 +1,10 @@
 # 5. Collapse Element Contract
 
+**Historical planning record.** Collapse, CollapseItem and the three named region
+classes now use direct `ViewElement` APIs over a native disclosure renderer.
+The [Collapse demo and API](../../../demo/components/collapse.html) documents current
+behavior and pending payload acceptance. The decisions below record the original draft.
+
 Present keyed sections that expand and collapse.
 
 **Draft.** Web `Collapse` and `CollapseItem` use `ViewElement`.
@@ -56,5 +61,5 @@ inside the Web renderer.
 
 ## References
 
-- [Previous disclosure implementation](../../archive/components/collapse.md)
-- [Default-style comparison](../../archive/styling/components/collapse.md)
+- [Previous disclosure implementation](../components/collapse.md)
+- [Default-style comparison](../styling/components/collapse.md)

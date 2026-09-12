@@ -5,6 +5,11 @@ import { components, componentGroups } from "../demo/catalog.js"
 import { createComponentBrowser } from "../demo/app.js"
 import { createExampleCodeViewers } from "../demo/example-code.js"
 import { renderComponentApi, loadComponentApi } from "../demo/component-api.js"
+import { createComponentOutline } from "../demo/component-outline.js"
+import { generateComponentApi } from "../scripts/component-api.mjs"
+import * as cardRuntime from "../src/components/card/index.js"
+import { createSwitch } from "../src/components/switch/index.js"
+import { createTabs } from "../src/components/tabs/index.js"
 
 const html = readFileSync(resolve("demo", "index.html"), "utf8")
 const css = readFileSync(resolve("demo", "app.css"), "utf8")
@@ -64,6 +69,32 @@ describe("metadata-based component documentation", () => {
     expect(docs.generatedFrom).toContain("documentation only")
   })
 
+  it("extracts Card literal fallback defaults, direct choices, region tags and native event flags", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["card"])
+    const card = docs.elements.find((element: { type: string }) => element.type === "Card")
+    expect(docs.elements).toHaveLength(7)
+    expect(card.properties.title).toMatchObject({ default: "", attribute: "title", type: "string" })
+    expect(card.properties.closeLabel).toMatchObject({ default: "Close card", attribute: "close-label" })
+    expect(card.properties.size).toMatchObject({ default: "medium", values: ["small", "medium", "large", "huge"] })
+    expect(card.properties.closable).toMatchObject({ default: false, encoding: "presence" })
+    expect(card.properties.closeFocusable).toMatchObject({ default: true, encoding: "boolean" })
+    expect(card.properties.segmentedContent).toMatchObject({ default: null, nullable: true, values: ["", "true", "false", "soft"] })
+    expect(card.regions.map((region: { element: string }) => region.element)).toEqual([
+      "m-card-cover", "m-card-header", "m-card-header-extra", "m-card-content", "m-card-footer", "m-card-action",
+    ])
+    expect(card.events).toEqual([{
+      name: "Close", web: "m:close", bubbles: true, cancelable: true, composed: false,
+      detail: { originalEvent: "MouseEvent" },
+    }])
+    expect(card.states).toEqual(["structured"])
+    expect(card.actions).toEqual([])
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.querySelectorAll("[data-api-type]")).toHaveLength(7)
+    expect(target.textContent).toContain("Close card")
+    expect(target.textContent).toContain("m-card-header-extra")
+  })
+
   it("renders API data without constructing components or inserting executable markup", () => {
     const target = document.createElement("div")
     const meta = {
@@ -87,7 +118,492 @@ describe("metadata-based component documentation", () => {
   })
 })
 
+describe("Carousel documentation and composition", () => {
+  it("extracts direct numeric constraints, read-only snapshots and the canonical family without runtime metadata", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["carousel"])
+    expect(docs.elements.map((element: { type: string }) => element.type)).toEqual([
+      "Carousel", "CarouselViewport", "CarouselItem", "CarouselControls", "CarouselReadout",
+    ])
+    const carousel = docs.elements[0]
+    expect(carousel.properties.currentIndex).toMatchObject({ attribute: "current-index", default: 0, integer: true, writable: true })
+    expect(carousel.properties.interval).toMatchObject({ default: 5000, min: 1000, max: 2147483647, integer: true })
+    expect(carousel.properties.direction).toMatchObject({ default: "horizontal", values: ["horizontal", "vertical"] })
+    expect(carousel.properties.gap).toMatchObject({ attribute: "gap", type: "number", default: 0, min: 0, writable: true })
+    expect(carousel.properties.loop).toMatchObject({ default: true, encoding: "boolean" })
+    expect(carousel.properties.state).toMatchObject({ attribute: null, writable: false, type: "object" })
+    expect(carousel.properties.state).not.toHaveProperty("default")
+    expect(carousel.properties.items).not.toHaveProperty("default")
+    expect(carousel.properties).not.toHaveProperty("controller")
+    expect(carousel.actions).toEqual(["to", "previous", "next", "play", "pause", "reset", "refresh"])
+    expect(carousel.events).toEqual([{
+      name: "CurrentChanged", web: "m:current-changed", bubbles: true, cancelable: false, composed: false,
+      detail: { index: "number", previousIndex: "number", item: "HTMLElement | null", previousItem: "HTMLElement | null",
+        reason: '"api" | "control" | "autoplay" | "scroll" | "refresh"' },
+    }])
+    expect(carousel.regions.map((region: { name: string }) => region.name)).toEqual(["viewport", "items", "controls", "readout"])
+    const item = docs.elements.find((element: { type: string }) => element.type === "CarouselItem")
+    expect(item.properties.key).toMatchObject({ default: null, attribute: "key", nullable: true })
+    expect(item.properties.index).not.toHaveProperty("default")
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.querySelectorAll("[data-api-type]")).toHaveLength(5)
+    expect(target.textContent).toContain("m:current-changed")
+  })
+
+  it("loads core before classic Carousel and documents actual native anatomy and unsupported modes", () => {
+    const parsed = new DOMParser().parseFromString(carouselHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src")!)
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-carousel.global.js"))
+    expect(parsed.querySelector('script[src="./carousel.js"]')?.getAttribute("type")).toBe("module")
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("#carousel-api")).not.toBeNull()
+    expect(parsed.querySelectorAll("m-carousel").length).toBeGreaterThanOrEqual(8)
+    expect(parsed.querySelector("m-carousel")!.hasAttribute("class")).toBe(false)
+    expect(parsed.querySelector("m-carousel.parity-carousel,m-carousel-item.text-slide")).toBeNull()
+    expect(carouselHtml).toContain("This Web styling example")
+    for (const root of parsed.querySelectorAll("m-carousel")) {
+      expect(root.getAttribute("aria-label")).toBeTruthy()
+      expect(root.querySelectorAll(":scope > m-carousel-viewport[tabindex='0'][id]")).toHaveLength(1)
+      expect(root.querySelectorAll("m-carousel-readout")).toHaveLength(1)
+      expect(root.querySelector("m-carousel-controls")?.hasAttribute("hidden")).toBe(true)
+      if (root.hasAttribute("autoplay")) expect(root.querySelector('button[type="button"][data-part="toggle"]')).not.toBeNull()
+    }
+    const source = readFileSync(resolve("demo", "components", "carousel.js"), "utf8")
+    expect(source).toContain('new URL("../api/carousel.json", import.meta.url)')
+    expect(source.replaceAll("import.meta.url", "")).not.toContain(".meta")
+    expect(source).not.toContain(".controller")
+    expect(source).not.toContain('import "../../dist')
+    expect(parsed.querySelector('[data-demo-example="space-between"] m-carousel[gap="20"]')).not.toBeNull()
+    for (const example of parsed.querySelectorAll("[data-demo-example]")) {
+      expect(example.querySelector("m-carousel")).not.toBeNull()
+    }
+    expect(parsed.querySelector(".native-carousel-strip,.native-card-carousel")).toBeNull()
+    expect(parsed.querySelectorAll("#unsupported [data-demo-example]")).toHaveLength(0)
+    expect(parsed.querySelector("#unsupported-heading")?.textContent).toBe("Not implemented")
+    expect(carouselHtml).not.toContain("data-carousel-")
+  })
+
+  it("waits for DOMContentLoaded and wires direct requests, refresh and detach/reconnect", async () => {
+    const parsed = new DOMParser().parseFromString(carouselHtml, "text/html")
+    document.body.replaceChildren(document.importNode(parsed.querySelector("main")!, true))
+    const root = document.getElementById("api-carousel") as HTMLElement & {
+      currentIndex: number; disabled: boolean; state: object; items: Element[]; reset(): void; refresh(): void
+    }
+    Object.assign(root, {
+      currentIndex: 1, disabled: false, state: { targetIndex: null, total: 3 },
+      items: [...root.querySelectorAll("m-carousel-item")], reset: vi.fn(), refresh: vi.fn(),
+    })
+    const docs = JSON.parse(readFileSync(resolve("demo", "api", "carousel.json"), "utf8"))
+    const fetch = vi.fn(async () => ({ ok: true, json: async () => docs }))
+    vi.stubGlobal("MarkupUICarousel", {})
+    vi.stubGlobal("fetch", fetch)
+    const ready = vi.spyOn(document, "readyState", "get").mockReturnValue("loading")
+    try {
+      await import("../demo/components/carousel.js")
+      expect(fetch).not.toHaveBeenCalled()
+      document.dispatchEvent(new Event("DOMContentLoaded"))
+      await Promise.resolve()
+      await Promise.resolve()
+      expect(fetch).toHaveBeenCalledOnce()
+      document.querySelector<HTMLButtonElement>("[data-api-request]")!.click()
+      expect(root.currentIndex).toBe(2)
+      document.querySelector<HTMLButtonElement>("[data-api-reorder]")!.click()
+      expect(root.refresh).toHaveBeenCalledOnce()
+      expect(root.querySelector("m-carousel-viewport")!.firstElementChild).toBe(root.items[2])
+      document.querySelector<HTMLButtonElement>("[data-api-reset]")!.click()
+      expect(root.reset).toHaveBeenCalledOnce()
+      document.querySelector<HTMLButtonElement>("[data-api-disable]")!.click()
+      expect(root.disabled).toBe(true)
+      const detach = document.querySelector<HTMLButtonElement>("[data-api-detach]")!
+      detach.click()
+      expect(root.isConnected).toBe(false)
+      expect(document.querySelector<HTMLButtonElement>("[data-api-request]")!.disabled).toBe(true)
+      detach.click()
+      expect(document.getElementById("api-carousel")).toBe(root)
+      expect(document.querySelector("[data-api-status]")!.textContent).toContain("Settled: 2")
+    } finally {
+      ready.mockRestore()
+    }
+  })
+})
+
+describe("Collapse documentation and composition", () => {
+  it("extracts property-only readonly arrays and only explicitly documented empty defaults", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["collapse"])
+    expect(docs.elements.map((element: { type: string }) => element.type)).toEqual([
+      "Collapse", "CollapseItem", "CollapseHeader", "CollapseHeaderExtra", "CollapseContent",
+    ])
+    const root = docs.elements[0]
+    expect(root.properties.expandedKeys).toMatchObject({ type: "array", typeName: "readonly string[]", attribute: null, writable: true })
+    expect(root.properties.expandedKeys).not.toHaveProperty("default")
+    expect(root.properties.defaultExpandedKeys).toMatchObject({ type: "array", attribute: null, writable: true, default: [] })
+    expect(root.properties.items).toMatchObject({ type: "array", typeName: "readonly CollapseItem[]", writable: false })
+    expect(root.properties.items).not.toHaveProperty("default")
+    expect(root.properties.accordion).toMatchObject({ encoding: "presence", default: false })
+    expect(root.actions).toEqual(["expand", "collapse", "toggle", "reset", "refresh"])
+    expect(root.events.map((event: { web: string }) => event.web)).toEqual(["m:error", "m:header-activated", "m:expanded-changed"])
+    expect(root.events.every((event: { bubbles: boolean; cancelable: boolean; composed: boolean }) => event.bubbles && !event.cancelable && !event.composed)).toBe(true)
+    expect(root.events[2].detail.expandedKeys).toBe("readonly string[]")
+    expect(root.events[2].detail.item).toBe("CollapseItem")
+    const item = docs.elements[1]
+    expect(item.properties.expanded.writable).toBe(false)
+    expect(item.properties.expanded).not.toHaveProperty("default")
+    expect(item.regions.map((region: { element: string }) => region.element)).toEqual(["m-collapse-header", "m-collapse-header-extra", "m-collapse-content"])
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.querySelectorAll("[data-api-type]")).toHaveLength(5)
+    expect(target.textContent).toContain("array")
+    expect(target.textContent).toContain("m:expanded-changed")
+  })
+  it("loads core before Collapse classic and authors only canonical public regions", () => {
+    const parsed = new DOMParser().parseFromString(collapseHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src")!)
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-collapse.global.js"))
+    expect(parsed.querySelector('script[src="./collapse.js"]')?.getAttribute("type")).toBe("module")
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("#collapse-api")).not.toBeNull()
+    expect(parsed.querySelectorAll("m-collapse").length).toBeGreaterThan(10)
+    expect(parsed.querySelectorAll("m-collapse details,m-collapse summary,[data-collapse]")).toHaveLength(0)
+    for (const item of parsed.querySelectorAll("m-collapse-item")) {
+      expect(item.getAttribute("key")).toBeTruthy()
+      expect(item.querySelectorAll(":scope > m-collapse-header")).toHaveLength(1)
+      expect(item.querySelectorAll(":scope > m-collapse-content")).toHaveLength(1)
+      expect(item.querySelector("m-collapse-header button")).toBeNull()
+    }
+    const script = readFileSync(resolve("demo", "components", "collapse.js"), "utf8")
+    expect(script).toContain('new URL("../api/collapse.json", import.meta.url)')
+    expect(script.replaceAll("import.meta.url", "")).not.toContain(".meta")
+    expect(script).not.toContain("createCollapse")
+    expect(script).toContain("DOMContentLoaded")
+  })
+  it("initializes defaults and direct actions after DOMContentLoaded without exposing a helper", async () => {
+    const parsed = new DOMParser().parseFromString(collapseHtml, "text/html")
+    document.body.replaceChildren(document.importNode(parsed.querySelector("main")!, true))
+    const roots = [...document.querySelectorAll<HTMLElement>("m-collapse")]
+    for (const root of roots) Object.assign(root, {
+      expandedKeys: [], defaultExpandedKeys: [], state: "ready",
+      reset: vi.fn(), collapse: vi.fn(), toggle: vi.fn(),
+    })
+    const fetch = vi.fn(async () => ({ ok: true, json: async () => JSON.parse(readFileSync("demo\\api\\collapse.json", "utf8")) }))
+    vi.stubGlobal("fetch", fetch)
+    vi.stubGlobal("MarkupUICollapse", {})
+    const ready = vi.spyOn(document, "readyState", "get").mockReturnValue("loading")
+    try {
+      await import("../demo/components/collapse.js")
+      expect(fetch).not.toHaveBeenCalled()
+      document.dispatchEvent(new Event("DOMContentLoaded"))
+      await Promise.resolve()
+      expect(fetch).toHaveBeenCalledOnce()
+      const defaults = document.getElementById("default-collapse") as HTMLElement & { expandedKeys: string[]; defaultExpandedKeys: string[]; reset(): void }
+      expect(defaults.defaultExpandedKeys).toEqual(["red", "amber"])
+      expect(defaults.reset).toHaveBeenCalledOnce()
+      document.querySelector<HTMLButtonElement>("[data-default-expand]")!.click()
+      expect(defaults.expandedKeys).toEqual(["green"])
+      document.querySelector<HTMLButtonElement>("[data-default-reset]")!.click()
+      expect(defaults.reset).toHaveBeenCalledTimes(2)
+      const retained = document.getElementById("retained-collapse")!
+      const detach = document.querySelector<HTMLButtonElement>("[data-retained-detach]")!
+      detach.click()
+      expect(retained.isConnected).toBe(false)
+      detach.click()
+      expect(document.getElementById("retained-collapse")).toBe(retained)
+      document.querySelector<HTMLButtonElement>("[data-trigger-extra]")!.click()
+      expect(document.querySelector("[data-trigger-status]")!.textContent).toContain("without toggling")
+    } finally { ready.mockRestore() }
+  })
+})
+
+describe("Divider documentation and composition", () => {
+  it("extracts the five direct properties and primary title region without runtime metadata", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["divider"])
+    expect(docs.elements).toHaveLength(1)
+    const divider = docs.elements[0]
+    expect(divider.type).toBe("Divider")
+    expect(Object.keys(divider.properties)).toEqual(["orientation", "dashed", "titlePlacement", "semantic", "label"])
+    expect(divider.properties.orientation).toMatchObject({ default: "horizontal", values: ["horizontal", "vertical"], attribute: "orientation" })
+    expect(divider.properties.titlePlacement).toMatchObject({ default: "center", values: ["start", "center", "end"], attribute: "title-placement" })
+    expect(divider.properties.dashed).toMatchObject({ default: false, encoding: "presence" })
+    expect(divider.properties.semantic).toMatchObject({ default: true, encoding: "boolean" })
+    expect(divider.properties.label).toMatchObject({ default: null, nullable: true, attribute: "label" })
+    expect(divider.regions).toEqual([{ name: "title", accepts: ["text", "noninteractive heading"], min: 0, max: 1 }])
+    expect(divider.events).toEqual([])
+    expect(divider.actions).toEqual([])
+    expect(divider.states).toEqual(["titled", "decorative"])
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.querySelectorAll("[data-api-type]")).toHaveLength(1)
+    expect(target.textContent).toContain("authored content")
+  })
+
+  it("loads core before Divider classic, preserves headings and replaces CSS-only authoring", () => {
+    const parsed = new DOMParser().parseFromString(dividerHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src")!)
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-divider.global.js"))
+    expect(parsed.querySelector('script[src="./divider.js"]')?.getAttribute("type")).toBe("module")
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("#divider-api")).not.toBeNull()
+    expect(parsed.querySelectorAll("m-divider").length).toBeGreaterThan(8)
+    expect(parsed.querySelector(".m-divider,hr,[role=separator]")).toBeNull()
+    for (const heading of parsed.querySelectorAll("m-divider > :is(h2,h3)")) {
+      expect(heading.closest("[aria-hidden]")).toBeNull()
+    }
+    const source = readFileSync("demo\\components\\divider.js", "utf8")
+    expect(source).toContain('new URL("../api/divider.json", import.meta.url)')
+    expect(source.replaceAll("import.meta.url", "")).not.toContain(".meta")
+    expect(source).toContain("DOMContentLoaded")
+    const legacy = readFileSync("demo\\legacy.html", "utf8")
+    expect(legacy).toContain('href="../dist/markup-ui-divider.css"')
+    expect(legacy).toContain('src="../dist/markup-ui-divider.js"')
+  })
+
+  it("initializes its property controls at DOMContentLoaded and preserves the live heading on reconnect", async () => {
+    const parsed = new DOMParser().parseFromString(dividerHtml, "text/html")
+    document.body.replaceChildren(document.importNode(parsed.querySelector("main")!, true))
+    const divider = document.getElementById("live-divider") as HTMLElement & {
+      orientation: string; titlePlacement: string; semantic: boolean; dashed: boolean; label: string | null
+    }
+    Object.assign(divider, { orientation: "horizontal", titlePlacement: "center", semantic: true, dashed: false, label: "Live rule" })
+    const heading = document.getElementById("divider-live-heading")!
+    const fetch = vi.fn(async () => ({ ok: true, json: async () => JSON.parse(readFileSync("demo\\api\\divider.json", "utf8")) }))
+    vi.stubGlobal("MarkupUIDivider", {})
+    vi.stubGlobal("fetch", fetch)
+    const ready = vi.spyOn(document, "readyState", "get").mockReturnValue("loading")
+    try {
+      await import("../demo/components/divider.js")
+      expect(fetch).not.toHaveBeenCalled()
+      document.dispatchEvent(new Event("DOMContentLoaded"))
+      await Promise.resolve()
+      expect(fetch).toHaveBeenCalledOnce()
+      const orientation = document.getElementById("divider-orientation") as HTMLSelectElement
+      orientation.value = "vertical"
+      orientation.dispatchEvent(new Event("change"))
+      expect(divider.orientation).toBe("vertical")
+      const semantic = document.getElementById("divider-semantic") as HTMLInputElement
+      semantic.checked = false
+      semantic.dispatchEvent(new Event("change"))
+      expect(divider.semantic).toBe(false)
+      document.getElementById("divider-clear-label")!.click()
+      expect(divider.label).toBeNull()
+      document.getElementById("divider-update-title")!.click()
+      expect(heading.textContent).toBe("Live heading 1")
+      document.getElementById("divider-detach")!.click()
+      expect(divider.isConnected).toBe(false)
+      document.getElementById("divider-detach")!.click()
+      expect(document.getElementById("divider-live-heading")).toBe(heading)
+      expect(document.getElementById("divider-status")!.textContent).toContain("Connected; vertical; decorative")
+    } finally { ready.mockRestore() }
+  })
+})
+
+describe("Dropdown documentation and composition", () => {
+  it("extracts the canonical family, direct defaults, finite timings and native event details", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["dropdown"])
+    expect(docs.elements.map((element: { type: string }) => element.type)).toEqual([
+      "Dropdown", "DropdownTrigger", "DropdownMenu", "DropdownItem", "DropdownGroup", "DropdownDivider",
+    ])
+    const root = docs.elements[0]
+    expect(root.properties.value).toMatchObject({ default: null, nullable: true, attribute: "value" })
+    expect(root.properties.disabled).toMatchObject({ default: false, encoding: "presence" })
+    expect(root.properties.placement).toMatchObject({ default: "bottom" })
+    expect(root.properties.placement.values).toHaveLength(12)
+    expect(root.properties.submenuDelay).toMatchObject({ default: 100, min: 0, max: 60000, integer: false })
+    expect(root.properties.submenuDuration.default).toBe(150)
+    expect(root.properties.typeaheadDuration.default).toBe(500)
+    for (const property of ["show", "state", "items"]) {
+      expect(root.properties[property].writable).toBe(false)
+      expect(root.properties[property]).not.toHaveProperty("default")
+    }
+    expect(root.actions).toEqual(["open", "close", "toggle", "select", "refresh", "syncPosition"])
+    expect(root.events.map((event: { web: string }) => event.web).sort()).toEqual(["m:error", "m:open-changed", "m:selection-requested"])
+    expect(root.events.every((event: { bubbles: boolean; cancelable: boolean; composed: boolean }) => event.bubbles && !event.cancelable && !event.composed)).toBe(true)
+    const selection = root.events.find((event: { web: string }) => event.web === "m:selection-requested")
+    expect(selection.detail).toMatchObject({ item: "DropdownItem", path: "readonly string[]", source: '"native"', originalEvent: "MouseEvent" })
+    const menu = docs.elements.find((element: { type: string }) => element.type === "DropdownMenu")
+    expect(menu.properties.size).toMatchObject({ default: null, nullable: true, values: ["small", "medium", "large", "huge"] })
+    expect(menu.properties.animated).toMatchObject({ default: false, encoding: "presence" })
+    const item = docs.elements.find((element: { type: string }) => element.type === "DropdownItem")
+    expect(item.properties.selected.writable).toBe(false)
+    expect(item.properties.selected).not.toHaveProperty("default")
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.querySelectorAll("[data-api-type]")).toHaveLength(6)
+    expect(target.textContent).toContain("m:selection-requested")
+  })
+
+  it("loads core before Dropdown classic and uses canonical regions with native action owners", () => {
+    const parsed = new DOMParser().parseFromString(dropdownHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src")!)
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-dropdown.global.js"))
+    expect(parsed.querySelector('script[src="./dropdown.js"]')?.getAttribute("type")).toBe("module")
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("#dropdown-api")).not.toBeNull()
+    expect(parsed.querySelectorAll("m-dropdown").length).toBeGreaterThan(10)
+    expect(parsed.querySelector("[data-dropdown-menu],[data-dropdown-item]")).toBeNull()
+    for (const trigger of parsed.querySelectorAll("m-dropdown-trigger")) expect(trigger.querySelectorAll(':scope > button[type="button"]')).toHaveLength(1)
+    for (const item of parsed.querySelectorAll("m-dropdown-item")) {
+      expect(item.getAttribute("key")).toBeTruthy()
+      expect(item.querySelectorAll(':scope > button[type="button"],:scope > a[href]')).toHaveLength(1)
+    }
+    const source = readFileSync("demo\\components\\dropdown.js", "utf8")
+    expect(source).toContain('new URL("../api/dropdown.json", import.meta.url)')
+    expect(source.replaceAll("import.meta.url", "")).not.toContain(".meta")
+    expect(source).not.toContain("createDropdown")
+    expect(source).not.toContain(".controller")
+  })
+
+  it("initializes direct page actions after DOMContentLoaded and retains native listeners across reconnect", async () => {
+    const parsed = new DOMParser().parseFromString(dropdownHtml, "text/html")
+    document.body.replaceChildren(document.importNode(parsed.querySelector("main")!, true))
+    const roots = [...document.querySelectorAll("m-dropdown")]
+    for (const root of roots) Object.assign(root, { disabled: false, show: false, state: "closed", value: null, toggle: vi.fn(), select: vi.fn(), refresh: vi.fn(), items: [...root.querySelectorAll("m-dropdown-item")] })
+    const fetch = vi.fn(async () => ({ ok: true, json: async () => JSON.parse(readFileSync("demo\\api\\dropdown.json", "utf8")) }))
+    vi.stubGlobal("fetch", fetch)
+    vi.stubGlobal("MarkupUIDropdown", {})
+    const ready = vi.spyOn(document, "readyState", "get").mockReturnValue("loading")
+    try {
+      await import("../demo/components/dropdown.js")
+      expect(fetch).not.toHaveBeenCalled()
+      document.dispatchEvent(new Event("DOMContentLoaded"))
+      await Promise.resolve()
+      expect(fetch).toHaveBeenCalledOnce()
+      const manual = document.getElementById("manual-toggle-dropdown") as HTMLElement & { toggle(): void; disabled: boolean }
+      document.querySelector<HTMLButtonElement>("[data-manual-toggle]")!.click()
+      expect(manual.toggle).toHaveBeenCalledOnce()
+      document.querySelector<HTMLButtonElement>("[data-root-disabled]")!.click()
+      expect(manual.disabled).toBe(true)
+      const root = document.getElementById("lifecycle-dropdown") as HTMLElement & { select(key: string): void; refresh(): void }
+      const action = document.getElementById("listener-action")!
+      const status = root.closest("[data-demo-example]")!.querySelector("[data-dropdown-status]")!
+      action.click()
+      expect(status.textContent).toContain("Native listener ran 1")
+      document.querySelector<HTMLButtonElement>("[data-select-last]")!.click()
+      expect(root.select).toHaveBeenCalledWith("last")
+      document.querySelector<HTMLButtonElement>("[data-add-item]")!.click()
+      expect(root.refresh).toHaveBeenCalledOnce()
+      const detach = document.querySelector<HTMLButtonElement>("[data-detach]")!
+      detach.click()
+      expect(root.isConnected).toBe(false)
+      detach.click()
+      expect(document.getElementById("listener-action")).toBe(action)
+      action.click()
+      expect(status.textContent).toContain("Native listener ran 2")
+      const cancel = new MouseEvent("click", { bubbles: true, cancelable: true })
+      document.getElementById("cancel-action")!.dispatchEvent(cancel)
+      expect(cancel.defaultPrevented).toBe(true)
+    } finally { ready.mockRestore() }
+  })
+})
+
+describe("Card documentation and composition", () => {
+  it("loads core first, uses generated tables and keeps valid loading/tabs region markup", () => {
+    const parsed = new DOMParser().parseFromString(cardHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src")!)
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-card.global.js"))
+    expect(parsed.querySelector('script[src="./card.js"]')?.getAttribute("type")).toBe("module")
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("#card-api")).not.toBeNull()
+    expect(parsed.querySelector("#loading-card > m-card-content > [data-loaded-content]")).not.toBeNull()
+    expect(parsed.querySelector("#loading-card > m-card-content > [data-loading-content]")).not.toBeNull()
+    expect(parsed.querySelector(".custom-card > m-card-content #custom-tabs [data-tabs-panels]")).not.toBeNull()
+    expect(parsed.querySelector(".task-card > m-card-content + m-card-footer")).not.toBeNull()
+    expect(parsed.querySelectorAll(".task-card > m-card-content > p")).toHaveLength(20)
+    expect(parsed.querySelectorAll("#custom-tabs [data-tabs-list] > button")).toHaveLength(2)
+    expect(cardHtml).not.toContain("data-m-card")
+  })
+
+  it("initializes after DOMContentLoaded with existing Switch/Tabs controllers and generated API", async () => {
+    const parsed = new DOMParser().parseFromString(cardHtml, "text/html")
+    document.body.replaceChildren(document.importNode(parsed.querySelector("main")!, true))
+    const docs = JSON.parse(readFileSync(resolve("demo", "api", "card.json"), "utf8"))
+    const owners: Array<{ disconnect(): void }> = []
+    const switchFactory = vi.fn((root: HTMLElement) => {
+      const owner = createSwitch(root)
+      owners.push(owner)
+      return owner
+    })
+    const tabsFactory = vi.fn((root: HTMLElement) => {
+      const owner = createTabs(root)
+      owners.push(owner)
+      return owner
+    })
+    vi.stubGlobal("MarkupUICard", cardRuntime)
+    vi.stubGlobal("MarkupUISwitch", { createSwitch: switchFactory })
+    vi.stubGlobal("MarkupUITabs", { createTabs: tabsFactory })
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, json: async () => docs })))
+    const ready = vi.spyOn(document, "readyState", "get").mockReturnValue("loading")
+    try {
+      await import("../demo/components/card.js")
+      expect(switchFactory).not.toHaveBeenCalled()
+      document.dispatchEvent(new Event("DOMContentLoaded"))
+      await vi.waitFor(() => expect(document.querySelectorAll("#card-api [data-api-type]")).toHaveLength(7))
+      expect(switchFactory).toHaveBeenCalledOnce()
+      expect(tabsFactory).toHaveBeenCalledOnce()
+      const card = document.querySelector("#closable-card")!
+      card.querySelector<HTMLButtonElement>("[data-part=close]")!.click()
+      expect(document.querySelector("#close-message")?.textContent).toBe("Card Close")
+      expect(card.isConnected).toBe(true)
+      const loading = document.querySelector<HTMLInputElement>("#loading-control")!
+      loading.click()
+      expect(document.querySelector("#loading-card")?.getAttribute("aria-busy")).toBe("false")
+      expect(document.querySelector<HTMLElement>("#loading-card m-card-content > [data-loaded-content]")!.hidden).toBe(false)
+      document.querySelector<HTMLButtonElement>("#rocklife-tab")!.click()
+      await vi.waitFor(() => expect(document.querySelector("#rocklife-tab")?.getAttribute("aria-selected")).toBe("true"))
+      document.dispatchEvent(new Event("DOMContentLoaded"))
+      expect(tabsFactory).toHaveBeenCalledOnce()
+    } finally {
+      for (const owner of owners) owner.disconnect()
+      ready.mockRestore()
+    }
+  })
+
+  it("keeps static consumers on canonical regions and legacy consumers explicitly load Card", () => {
+    for (const file of ["config-provider", "global-style"]) {
+      const html = readFileSync(resolve("demo", "components", `${file}.html`), "utf8")
+      const parsed = new DOMParser().parseFromString(html, "text/html")
+      expect(parsed.querySelectorAll("m-card > m-card-content").length).toBeGreaterThan(0)
+      expect(html).not.toContain("data-m-card")
+      expect(parsed.querySelector('link[href="../../dist/markup-ui-card.css"]')).not.toBeNull()
+    }
+    expect(readFileSync(resolve("demo", "legacy.html"), "utf8")).toContain('src="../dist/markup-ui-card.js"')
+    expect(readFileSync(resolve("demo", "foundations.js"), "utf8")).toContain('import("../dist/markup-ui-card.js")')
+  })
+})
+
 describe("component-by-component demo browser", () => {
+  it("builds a responsive outline from examples and generated API headings, then disconnects cleanly", async () => {
+    document.body.innerHTML = avatarHtml.slice(avatarHtml.indexOf("<body>") + 6, avatarHtml.indexOf("</body>"))
+    const outline = createComponentOutline()
+    try {
+      const panel = document.querySelector<HTMLDetailsElement>(".component-outline > details")!
+      expect(panel.open).toBe(true)
+      expect(document.querySelector('.component-outline a[href="#size-heading"]')?.textContent).toBe("Size")
+      const docs = JSON.parse(readFileSync(resolve("demo", "api", "avatar.json"), "utf8"))
+      renderComponentApi(document.getElementById("avatar-api"), docs.elements)
+      await Promise.resolve()
+      expect(document.querySelector('.component-outline a[href="#api-m-avatar"]')?.textContent).toBe("Avatar")
+      expect(document.querySelector('.component-outline a[href="#api-avatar-properties"]')?.textContent).toBe("properties")
+      for (const link of document.querySelectorAll<HTMLAnchorElement>(".component-outline a")) {
+        expect(document.getElementById(link.hash.slice(1))).not.toBeNull()
+      }
+      expect(document.querySelectorAll('.component-outline [aria-current="location"]')).toHaveLength(1)
+      Object.defineProperty(media, "matches", { value: true, configurable: true })
+      mediaListener?.()
+      expect(panel.open).toBe(false)
+      panel.open = true
+      expect(document.querySelector('.component-outline a[href="#loading-heading"]')).toBeNull()
+      const link = document.querySelector<HTMLAnchorElement>('.component-outline a[href="#size-heading"]')!
+      document.querySelector(".component-outline nav")!.addEventListener("click", event => event.preventDefault())
+      link.dispatchEvent(new MouseEvent("click", { bubbles: true, button: 0, cancelable: true }))
+      expect(panel.open).toBe(false)
+      expect(document.activeElement).toBe(document.getElementById("size-heading"))
+    } finally {
+      outline.disconnect()
+    }
+    expect(document.querySelector(".component-outline")).toBeNull()
+    expect(document.querySelector(".has-outline")).toBeNull()
+    expect(media.removeEventListener).toHaveBeenCalledWith("change", expect.any(Function))
+  })
+
   it("lists exactly the 96 existing standalone pages without group pages", () => {
     const files = readdirSync(resolve("demo", "components")).filter(file => file.endsWith(".html")).sort()
     expect(components).toHaveLength(96)
@@ -110,6 +626,34 @@ describe("component-by-component demo browser", () => {
     expect(frame.src).toContain("/demo/components/avatar.html")
     expect(frame.title).toBe("Avatar examples")
     expect(document.querySelectorAll('[aria-current="page"]')).toHaveLength(1)
+    expect(document.querySelector<HTMLElement>("#component-note")!.hidden).toBe(true)
+    expect(document.querySelector(".component-toolbar")).toBeNull()
+    expect(document.querySelector(".site-header #standalone-link")).not.toBeNull()
+    frame.dispatchEvent(new Event("load"))
+    expect(document.querySelector<HTMLElement>("#page-status")!.hidden).toBe(true)
+  })
+
+  it("reveals setup from documentation links and deep links, then removes its listeners", () => {
+    document.body.innerHTML = avatarHtml.slice(avatarHtml.indexOf("<body>") + 6, avatarHtml.indexOf("</body>"))
+    history.replaceState(null, "", "/demo/components/avatar.html#loading")
+    const viewers = createExampleCodeViewers()
+    const setup = document.querySelector<HTMLDetailsElement>(".component-setup")!
+    const link = document.querySelector<HTMLAnchorElement>('.component-docs-nav a[href="#loading"]')!
+    link.addEventListener("click", event => event.preventDefault())
+    expect(setup.open).toBe(true)
+    setup.open = false
+    link.dispatchEvent(new MouseEvent("click", { button: 0, ctrlKey: true, cancelable: true }))
+    expect(setup.open).toBe(false)
+    link.dispatchEvent(new MouseEvent("click", { button: 0, cancelable: true }))
+    expect(setup.open).toBe(true)
+    setup.open = false
+    window.dispatchEvent(new HashChangeEvent("hashchange"))
+    expect(setup.open).toBe(true)
+    viewers.disconnect()
+    setup.open = false
+    link.dispatchEvent(new MouseEvent("click", { button: 0, cancelable: true }))
+    window.dispatchEvent(new HashChangeEvent("hashchange"))
+    expect(setup.open).toBe(false)
   })
 
   it("adds one literal code viewer to each pinned Avatar example", async () => {
@@ -154,12 +698,27 @@ describe("component-by-component demo browser", () => {
     ["Avatar", avatarHtml, ["size", "shape", "color", "badge", "icon", "content-size", "fallback", "group", "lazy", "show-debug"]],
     ["Button", buttonHtml, ["basic", "secondary", "tertiary", "quaternary", "dashed", "size", "text", "tag", "disabled", "icon", "events", "shape", "ghost", "loading", "color", "group", "icon-button", "popover"]],
     ["Card", cardHtml, ["basic", "size", "cover", "hoverable", "slots", "border", "segment", "closable", "no-title", "content-scrollable", "loading", "custom-style", "embedded"]],
-    ["Carousel", carouselHtml, ["basic", "arrow", "autoplay", "dots", "vertical", "space-between", "slides-per-view", "slides-per-view-auto", "centered", "effect", "transition-name", "hover", "keyboard", "mousewheel", "simulate-drag", "custom-arrow-and-dots", "custom-card", "custom-dots"]],
+    ["Carousel", carouselHtml, ["basic", "arrow", "autoplay", "dots", "vertical", "space-between", "hover", "keyboard", "custom-arrow-and-dots", "custom-dots"]],
     ["Collapse", collapseHtml, ["basic", "arrow-placement", "accordion", "nested", "display-directive", "item-header-click", "customize-icon", "default-expanded", "header-extra", "disabled", "trigger-areas"]],
     ["Divider", dividerHtml, ["basic", "content", "vertical"]],
     ["Dropdown", dropdownHtml, ["basic", "icon", "trigger", "cascade", "arrow", "placement", "size", "batch-render", "manual-position", "render", "option-props", "render-option"]],
-  ])("mirrors the pinned %s demo inventory with per-example code controls", (_name, sourceHtml, expected) => {
+  ])("keeps the supported %s demo inventory with per-example code controls", (_name, sourceHtml, expected) => {
     document.body.innerHTML = sourceHtml.slice(sourceHtml.indexOf("<body>") + 6, sourceHtml.indexOf("</body>"))
+    const setup = document.querySelector<HTMLDetailsElement>(".component-setup")!
+    expect(setup.open).toBe(false)
+    expect(setup.querySelector("summary")?.textContent).toBe("Setup code")
+    expect([...setup.children].map(element => element.tagName)).toEqual(["SUMMARY", "PRE", "A"])
+    expect(setup.querySelector("a")?.getAttribute("href")).toBe("../setup.html")
+    const snippet = new DOMParser().parseFromString(setup.querySelector("code")!.textContent!, "text/html")
+    const family = _name.toLowerCase()
+    expect(snippet.querySelector("link")?.getAttribute("href")).toBe(`./dist/markup-ui-${family}.css`)
+    expect([...snippet.querySelectorAll("script")].map(script => script.getAttribute("src"))).toEqual([
+      "./dist/markup-ui-core.global.js", `./dist/markup-ui-${family}.global.js`,
+    ])
+    expect(document.querySelector(".component-docs-nav a")?.textContent).toBe("Examples")
+    for (const link of document.querySelectorAll<HTMLAnchorElement>(".component-docs-nav a")) {
+      expect(document.getElementById(link.hash.slice(1))).not.toBeNull()
+    }
     const viewers = createExampleCodeViewers()
     expect([...document.querySelectorAll<HTMLElement>("[data-demo-example]")]
       .map(example => example.dataset.demoExample)).toEqual(expected)
@@ -171,8 +730,26 @@ describe("component-by-component demo browser", () => {
     history.replaceState(null, "", "/demo/?component=tree-select")
     browser = createComponentBrowser()
     expect(browser.current).toBe("tree-select")
-    expect(document.querySelector("#component-title")?.textContent).toBe("Tree Select")
+    expect(document.title).toBe("Tree Select - MarkupUI")
+    expect(document.querySelector<HTMLIFrameElement>("#component-frame")!.title).toBe("Tree Select examples")
     expect(document.querySelector<HTMLAnchorElement>("#standalone-link")!.href).toContain("/demo/components/tree-select.html")
+  })
+
+  it("keeps shared loading and styling instructions on one standalone setup page", () => {
+    const source = readFileSync(resolve("demo", "setup.html"), "utf8")
+    const guide = new DOMParser().parseFromString(source, "text/html")
+    expect(guide.querySelector("h1")?.textContent).toBe("Setup")
+    expect([...guide.querySelectorAll("main > section")].map(section => section.id)).toEqual([
+      "classic", "modules", "styles", "local",
+    ])
+    expect(guide.querySelector("script")).toBeNull()
+    expect(guide.querySelector('link[href="./component-api.css"]')).not.toBeNull()
+    expect(guide.querySelector(".component-docs-nav a")?.getAttribute("href")).toBe("./")
+    for (const link of guide.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')) {
+      expect(guide.getElementById(link.getAttribute("href")!.slice(1))).not.toBeNull()
+    }
+    expect(source).toContain("pnpm build")
+    expect(source).toContain("pnpm demo")
   })
 
   it("navigates one component at a time and restores the component on browser history changes", () => {
@@ -182,7 +759,7 @@ describe("component-by-component demo browser", () => {
     expect(location.search).toBe("?component=button")
     expect(browser.current).toBe("button")
     expect(document.querySelector('a[aria-current="page"]')?.textContent).toBe("Button")
-    expect(document.activeElement?.id).toBe("component-title")
+    expect(document.activeElement?.id).toBe("component-frame")
     expect(document.querySelector("#component-frame")).not.toBe(previousFrame)
     history.replaceState(null, "", "/demo/?component=avatar")
     window.dispatchEvent(new PopStateEvent("popstate"))
@@ -225,7 +802,8 @@ describe("component-by-component demo browser", () => {
     expect(document.querySelector<HTMLIFrameElement>("#component-frame")!.src).toBe("about:blank")
     expect(document.querySelector<HTMLElement>("#component-frame")!.hidden).toBe(true)
     expect(document.querySelectorAll('[aria-current="page"]')).toHaveLength(0)
-    expect(document.querySelector("#component-title")?.textContent).toBe("Component not found")
+    expect(document.querySelector("#page-status")?.textContent).toContain("Component not found")
+    expect(document.title).toBe("Component not found - MarkupUI")
   })
 
   it("uses an accessible mobile navigation toggle without hidden focusable menus", () => {
@@ -252,6 +830,7 @@ describe("component-by-component demo browser", () => {
     history.replaceState(null, "", "/demo/?component=qr-code")
     browser = createComponentBrowser()
     expect(document.querySelector("#component-note")?.textContent).toContain("exclusion")
+    expect(document.querySelector<HTMLElement>("#component-note")!.hidden).toBe(false)
   })
 
   it("loads MarkupUI shell controls and keeps legacy styles before showcase overrides", () => {
@@ -263,7 +842,8 @@ describe("component-by-component demo browser", () => {
     expect(html.indexOf('markup-ui-core.global.js')).toBeLessThan(html.indexOf('markup-ui-button.global.js'))
     expect(buttonHtml.indexOf('markup-ui-core.global.js')).toBeLessThan(buttonHtml.indexOf('markup-ui-button.global.js'))
     expect(buttonHtml).toContain('id="button-api"')
-    expect(css).toContain("min-block-size: 42px")
+    expect(css).toContain("min-block-size: 34px")
+    expect(css).toContain(".component-link { min-block-size: 42px; }")
     expect(css).toContain('.component-link[aria-current="page"]')
     expect(exampleCodeCss).toContain("grid-template-columns: minmax(0, 1fr)")
     expect(exampleCodeCss).not.toContain("repeat(2")

@@ -1,5 +1,10 @@
 # 3. Card Element Contract
 
+**Historical planning record.** Card and all six region classes now extend the thin
+shared `ViewElement` with direct typed APIs. The authoritative usage and API reference
+is the [Card demo](../../../demo/components/card.html). The unresolved decisions below
+record the original draft, not the implemented finite contract.
+
 Group related content and supporting regions on one surface.
 
 **Draft.** Web `Card : ViewElement`; element: `m-card`.
@@ -63,5 +68,5 @@ Card and its region classes use direct typed APIs; `Card` registers as `m-card`.
 
 ## References
 
-- [Previous implementation and API comparison](../../archive/components/card.md)
-- [Default-style comparison](../../archive/styling/components/card.md)
+- [Previous implementation and API comparison](../components/card.md)
+- [Default-style comparison](../styling/components/card.md)

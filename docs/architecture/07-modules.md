@@ -1,6 +1,6 @@
 # 7. Small core and selectable components
 
-**Implemented for the shared core and Avatar; Button is migrated with payload acceptance pending.
+**Implemented for the shared core and all seven initial families, with approved payload ceilings.
 The rollout continues component-by-component.**
 Follow the useful jQuery/plugin pattern: load one small core, then only the features the
 application needs. This is a packaging and extension pattern, not a dependency on jQuery.
@@ -59,10 +59,13 @@ avoiding unused features. Do not claim a saving by excluding required dependency
 The build manifest and API documentation must agree on dependency files and total costs.
 Keep approved budgets unless a measured change is explicitly accepted.
 
-The implemented entries are `@dataengine/markup-ui/core`, `@dataengine/markup-ui/avatar`
-and `@dataengine/markup-ui/button` (Button payload acceptance pending).
+The implemented entries are `@dataengine/markup-ui/core`, `@dataengine/markup-ui/avatar`,
+`@dataengine/markup-ui/button`, `@dataengine/markup-ui/card`, `@dataengine/markup-ui/carousel`,
+`@dataengine/markup-ui/collapse`, `@dataengine/markup-ui/divider` and `@dataengine/markup-ui/dropdown`.
 ESM uses `markup-ui-core.js`; classic scripts load `markup-ui-core.global.js` before
-`markup-ui-avatar.global.js` or `markup-ui-button.global.js`.
+`markup-ui-avatar.global.js`, `markup-ui-button.global.js`, `markup-ui-card.global.js`,
+`markup-ui-carousel.global.js`, `markup-ui-collapse.global.js`, `markup-ui-divider.global.js`
+or `markup-ui-dropdown.global.js`.
 See the [API guide](../api/README.md) for exact exports and usage.
 
 ## References

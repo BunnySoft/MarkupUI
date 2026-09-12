@@ -27,13 +27,13 @@ not claim complete API parity.
 
 | Naive UI route | MarkupUI control or replacement | Current form | Contract |
 | --- | --- | --- | --- |
-| [Avatar](../components/avatar.md) | `Avatar`, `AvatarGroup` | Canonical Web behavior; metadata reflection pending | [Design reference](../contracts/01-avatar.md) |
-| [Button](../components/button.md) | `Button`, `ButtonGroup` | Transitional Web controls and definitions | [Archived draft](../contracts/02-button.md) |
-| [Card](../components/card.md) | `Card` plus six named regions | Transitional Web control and region definitions | [Draft](../../elements/contracts/03-card.md) |
-| [Carousel](../components/carousel.md) | `Carousel`, `CarouselItem` plus viewport/controls/readout | Transitional Web control over native scroll snap | [Draft](../../elements/contracts/04-carousel.md) |
-| [Collapse](../components/collapse.md) | `Collapse`, `CollapseItem` | Native disclosure helper; canonical controls pending | [Draft](../../elements/contracts/05-collapse.md) |
-| [Divider](../components/divider.md) | `Divider` | Native/CSS separator; canonical control pending | [Draft](../../elements/contracts/06-divider.md) |
-| [Dropdown](../components/dropdown.md) | `Dropdown`, item/group/divider structure | Native command-menu helper; canonical controls pending | [Draft](../../elements/contracts/07-dropdown.md) |
+| [Avatar](../components/avatar.md) | `Avatar`, `AvatarGroup` | Historical Avatar implementation | [Current demo and API](../../../demo/components/avatar.html) |
+| [Button](../components/button.md) | `Button`, `ButtonGroup` | Historical Button implementation | [Current demo and API](../../../demo/components/button.html) |
+| [Card](../components/card.md) | `Card` plus six named regions | Historical Card implementation | [Current demo and API](../../../demo/components/card.html) |
+| [Carousel](../components/carousel.md) | `Carousel`, `CarouselItem` plus viewport/controls/readout | Historical native scroll-snap implementation | [Current demo and API](../../../demo/components/carousel.html) |
+| [Collapse](../components/collapse.md) | `Collapse`, `CollapseItem` and named regions | Historical native disclosure helper | [Current demo and API](../../../demo/components/collapse.html) |
+| [Divider](../components/divider.md) | `Divider` | Historical CSS-only separator | [Current demo and API](../../../demo/components/divider.html) |
+| [Dropdown](../components/dropdown.md) | `Dropdown` and trigger/menu/item/group/divider classes | Historical native command-menu helper | [Current demo and API](../../../demo/components/dropdown.html) |
 | [Ellipsis](../components/ellipsis.md) | `Ellipsis` | Native CSS truncation/disclosure composition | Backlog |
 | [Gradient Text](../components/gradient-text.md) | `GradientText` | Native text with CSS and readable fallback | Backlog |
 | [Icon](../components/icon.md) | `Icon`, `IconWrapper` | Authored icon content and CSS; no asset runtime | Backlog |

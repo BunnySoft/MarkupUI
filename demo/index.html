@@ -23,8 +23,14 @@
       </m-button>
       <a class="brand" href="./"><span class="brand-icon" aria-hidden="true">M</span>MarkupUI</a>
       <span class="header-caption">Components</span>
-      <a class="repository-link" href="https://github.com/BunnySoft/MarkupUI"
-        target="_blank" rel="noopener noreferrer">GitHub</a>
+      <div class="header-actions">
+        <a id="standalone-link" class="standalone-link" target="_blank"
+          rel="noopener noreferrer" aria-label="Open standalone" title="Open standalone" hidden>
+          <span class="standalone-label">Open standalone</span><span aria-hidden="true">↗</span>
+        </a>
+        <a class="repository-link" href="https://github.com/BunnySoft/MarkupUI"
+          target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
     </header>
     <div class="browser-layout">
       <aside id="component-sidebar" class="component-sidebar">
@@ -41,16 +47,6 @@
         <p id="component-count" class="component-count" role="status"></p>
       </aside>
       <main id="component-workspace" class="component-workspace">
-        <header class="component-toolbar">
-          <div>
-            <p id="component-category" class="component-category">Components</p>
-            <h1 id="component-title" tabindex="-1">Choose a component</h1>
-          </div>
-          <div class="toolbar-actions">
-            <a id="standalone-link" class="standalone-link" target="_blank"
-              rel="noopener noreferrer" hidden>Open standalone ↗</a>
-          </div>
-        </header>
         <p id="component-note" class="component-note">
           Each page loads only its own examples and assets.
         </p>

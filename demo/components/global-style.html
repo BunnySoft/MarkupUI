@@ -51,9 +51,9 @@
       <section id="local-scope" class="example-frame" data-example-palette="dark" lang="en" dir="rtl">
         <h2 id="scope-title" tabindex="-1">A scoped dark section is not the document theme</h2>
         <p>This scope reuses the accepted configuration demo's token subset. Its dark colors and RTL do not propagate upward into body.</p>
-        <m-card data-m-card><div data-m-card-content>
+        <m-card data-part="card"><m-card-content>
           <h3>Existing Card stylesheet</h3><p>The Card consumes supported scoped tokens, not an injected Global Style provider.</p>
-        </div></m-card>
+        </m-card-content></m-card>
         <section class="example-frame" id="nested-scope"><h3>Nested native scope</h3><p>No local palette: retain the actual ancestor's tokens.</p></section>
       </section>
     </div>

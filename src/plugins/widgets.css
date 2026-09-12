@@ -17,10 +17,6 @@ m-rating{gap:2px}
 m-rating>button{padding:0;border:0;background:transparent;color:var(--m-border);font-size:24px;cursor:pointer;transition:color var(--m-motion-fast) var(--m-ease),transform var(--m-motion-fast) var(--m-ease)}
 m-rating>button:hover{transform:scale(1.12)}
 m-rating>button[data-active]{color:#f59e0b}
-m-carousel{display:block;overflow:hidden;border:1px solid var(--m-border);border-radius:var(--m-radius-md)}
-m-carousel>[data-m-carousel-viewport]{position:relative;min-height:180px}
-m-carousel-item{display:grid;position:absolute;inset:0;padding:var(--m-space-lg);background:var(--m-bg-surface);animation:m-enter var(--m-motion) var(--m-ease);place-items:center}
-m-carousel>[data-m-carousel-controls]{display:flex;justify-content:space-between;padding:var(--m-space-sm);border-top:1px solid var(--m-border)}
 m-transfer{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:var(--m-space-sm)}
 m-transfer>[data-m-transfer-list]{display:flex;min-height:180px;padding:var(--m-space-xs);border:1px solid var(--m-border);border-radius:var(--m-radius-md);background:var(--m-bg-surface);flex-direction:column;gap:2px}
 m-transfer>[data-m-transfer-list]>button{min-height:32px;padding:0 8px;border:0;border-radius:var(--m-radius-md);background:transparent;color:var(--m-text-primary);text-align:left;cursor:pointer;transition:color var(--m-motion-fast) var(--m-ease),background-color var(--m-motion-fast) var(--m-ease)}

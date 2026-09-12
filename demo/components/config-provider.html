@@ -37,12 +37,12 @@
     <div class="example-columns">
       <section id="config-scope" class="example-frame" data-example-palette="dark" lang="en" dir="ltr">
         <h2 lang="en">Outer scope</h2>
-        <m-card data-m-card id="outer-card">
-          <div data-m-card-content>
+        <m-card data-part="card" id="outer-card">
+          <m-card-content>
             <p lang="en">Card uses shared surface, text and border tokens.</p>
             <m-button data-part="button" type="primary" lang="en"><button type="button" data-part="control">Native button</button></m-button>
             <label lang="en">Native date <input type="date" value="2026-09-09"></label>
-          </div>
+          </m-card-content>
         </m-card>
         <div class="m-loading-bar" data-loading-bar data-outer-loading>
           <progress max="100" value="25" aria-label="Outer local work" lang="en">25%</progress>
@@ -50,11 +50,11 @@
         </div>
         <section id="config-nested" class="example-frame">
           <h3 lang="en">Nested scope: inherits unless explicitly chosen</h3>
-          <m-card data-m-card id="nested-card"><div data-m-card-content>
+          <m-card data-part="card" id="nested-card"><m-card-content>
             <p lang="en">No theme attribute means no light reset.</p>
             <m-button data-part="button" type="primary" lang="en"><button type="button" data-part="control">Inherited accent</button></m-button>
             <m-button data-part="button" type="primary" class="example-author-accent" lang="en"><button type="button" data-part="control">Author override</button></m-button>
-          </div></m-card>
+          </m-card-content></m-card>
         </section>
         <button type="button" data-open-modal hidden lang="en">Open native modal inside this scope</button>
         <dialog id="config-modal" aria-labelledby="config-modal-title">
@@ -69,10 +69,10 @@
       </section>
       <section id="config-sibling" class="example-frame" data-example-palette="light" lang="en" dir="ltr">
         <h2>Independent light sibling</h2>
-        <m-card data-m-card id="sibling-card"><div data-m-card-content>
+        <m-card data-part="card" id="sibling-card"><m-card-content>
           <p>No inherited settings from the adjacent dark scope.</p>
           <m-button data-part="button" type="primary"><button type="button" data-part="control">Sibling accent</button></m-button>
-        </div></m-card>
+        </m-card-content></m-card>
         <div class="m-loading-bar" data-loading-bar data-sibling-loading>
           <progress max="100" value="60" aria-label="Sibling local work">60%</progress>
           <span data-loading-bar-status lang="en">Authored sibling progress: 60 of 100.</span>

@@ -16,6 +16,11 @@ import { advancedElementNames, advancedPlugin } from "../src/plugins/advanced.js
 import { widgetElementNames, widgetsPlugin } from "../src/plugins/widgets.js"
 import "../src/components/avatar/index.js"
 import { Button } from "../src/components/button/index.js"
+import { Card } from "../src/components/card/index.js"
+import { Carousel } from "../src/components/carousel/index.js"
+import { Collapse } from "../src/components/collapse/index.js"
+import { Divider } from "../src/components/divider/index.js"
+import { Dropdown } from "../src/components/dropdown/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -37,6 +42,10 @@ describe("native elements", () => {
     expect(document.getElementById("m-styles")).not.toBeNull()
     expect(m.elements.names).toEqual(builtInElementNames)
     expect(new Set(builtInElementNames).size).toBe(builtInElementNames.length)
+    expect(builtInElementNames.some(name => name === "m-collapse" || name.startsWith("m-collapse-"))).toBe(false)
+    expect(customElements.get("m-collapse")).toBe(Collapse)
+    expect(builtInElementNames.some(name => name === "m-dropdown" || name.startsWith("m-dropdown-"))).toBe(false)
+    expect(customElements.get("m-dropdown")).toBe(Dropdown)
     const styles = document.getElementById("m-styles")?.textContent ?? ""
     expect(styles).toContain("--m-control-height")
     expect(styles).toContain(":focus-visible")
@@ -81,7 +90,8 @@ describe("native elements", () => {
     }
     const closeEvents = vi.fn()
     dialog.addEventListener("m:close", closeEvents)
-    expect(card?.hasAttribute("structured")).toBe(true)
+    expect(card).toBeInstanceOf(Card)
+    expect(card?.getAttribute("data-state")).toBe("structured")
     dialog.open()
     expect(document.querySelector("m-dialog dialog")?.hasAttribute("open")).toBe(true)
     document.querySelector("m-dialog m-button")?.dispatchEvent(
@@ -102,7 +112,10 @@ describe("native elements", () => {
       <m-tag closable>Ready</m-tag>
       <m-button-group><m-button>One</m-button><m-button>Two</m-button></m-button-group>`
     expect(document.querySelector("m-avatar")?.getAttribute("role")).toBe("img")
-    expect(document.querySelector("m-divider")?.getAttribute("role")).toBe("separator")
+    expect(customElements.get("m-divider")).toBe(Divider)
+    expect(builtInElementNames).not.toContain("m-divider")
+    expect(document.querySelector("m-divider")?.hasAttribute("role")).toBe(false)
+    expect(document.querySelector("m-divider > hr")?.getAttribute("aria-orientation")).toBe("horizontal")
     expect(document.querySelector("m-progress")?.getAttribute("aria-valuenow")).toBe("25")
     expect(
       (document.querySelector("m-progress > [data-m-bar]") as HTMLElement | null)?.style.width,
@@ -413,17 +426,17 @@ describe("unified API and plugins", () => {
 
   it("installs the optional widgets plugin", () => {
     m.use(widgetsPlugin)
-    expect(widgetElementNames).toHaveLength(11)
+    expect(widgetElementNames).toHaveLength(9)
+    expect(widgetElementNames.some(name => String(name).startsWith("m-carousel"))).toBe(false)
+    expect(builtInElementNames.some(name => name.startsWith("m-carousel"))).toBe(false)
+    expect(customElements.get("m-carousel")).toBe(Carousel)
+    expect(document.getElementById("m-widgets-styles")?.textContent).not.toContain("m-carousel")
     document.body.innerHTML = `
       <m-breadcrumb><m-breadcrumb-item>Home</m-breadcrumb-item></m-breadcrumb>
       <m-timeline><m-timeline-item>Created</m-timeline-item></m-timeline>
       <m-input-number value="2" min="0" max="5"></m-input-number>
       <m-color-picker value="#ff0000"></m-color-picker>
       <m-rating value="3"></m-rating>
-      <m-carousel>
-        <m-carousel-item>One</m-carousel-item>
-        <m-carousel-item>Two</m-carousel-item>
-      </m-carousel>
       <m-transfer></m-transfer>
       <m-cascader></m-cascader>`
     expect(document.querySelector("m-breadcrumb")?.getAttribute("aria-label")).toBe("Breadcrumb")
@@ -434,10 +447,6 @@ describe("unified API and plugins", () => {
       .toBe("#ff0000")
     expect(document.querySelectorAll("m-rating button[data-active]")).toHaveLength(3)
     expect(document.querySelectorAll("m-rating button[selected]")).toHaveLength(1)
-    const carousel = document.querySelector("m-carousel") as HTMLElement & { next(): void }
-    carousel.next()
-    expect(document.querySelectorAll("m-carousel-item:not([hidden])")).toHaveLength(1)
-
     const transfer = document.querySelector("m-transfer") as HTMLElement & {
       options: readonly { label: string; value: string }[]
       value: string[]

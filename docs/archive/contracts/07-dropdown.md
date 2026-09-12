@@ -1,5 +1,11 @@
 # 7. Dropdown Element Contract
 
+**Historical planning record.** Dropdown and its trigger/menu/item/group/divider
+classes now expose direct `ViewElement` APIs around retained native menu/Popover
+mechanics. The [Dropdown demo and API](../../../demo/components/dropdown.html)
+documents current behavior and pending payload approval. The decisions below are
+the original draft, not additional implemented capabilities.
+
 Present a temporary hierarchy of commands or navigation destinations.
 
 **Draft.** Web `Dropdown : ViewElement`, with `DropdownItem`, `DropdownGroup`, `DropdownDivider`.
@@ -67,5 +73,5 @@ Popover mechanics in the Web renderer.
 
 ## References
 
-- [Previous menu implementation](../../archive/components/dropdown.md)
-- [Default-style comparison](../../archive/styling/components/dropdown.md)
+- [Previous menu implementation](../components/dropdown.md)
+- [Default-style comparison](../styling/components/dropdown.md)

@@ -310,6 +310,10 @@
     "./grid/style.css": "./dist/markup-ui-grid.css",
     "./space/style.css": "./dist/markup-ui-space.css",
     "./flex/style.css": "./dist/markup-ui-flex.css",
+    "./divider": {
+      "types": "./dist/components/divider/index.d.ts",
+      "import": "./dist/markup-ui-divider.js"
+    },
     "./divider/style.css": "./dist/markup-ui-divider.css",
     "./page-header/style.css": "./dist/markup-ui-page-header.css",
     "./ellipsis/style.css": "./dist/markup-ui-ellipsis.css",

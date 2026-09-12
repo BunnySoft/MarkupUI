@@ -1,47 +1,30 @@
-import type { PlatformComponentDefinition } from "../../platform/component.js"
+export const carouselDirections = ["horizontal", "vertical"] as const
+export type CarouselDirection = typeof carouselDirections[number]
 
-export const carouselDefinition = {
-  type: "Carousel",
-  web: {
-    primary: "m-carousel",
-  },
-  capabilities: [
-    "carousel.current-index",
-    "carousel.direction",
-    "carousel.navigation",
-    "carousel.autoplay",
-    "carousel.native-scroll",
-  ],
-} as const satisfies PlatformComponentDefinition
+export function validateCarouselGap(value: number): number {
+  if (!Number.isFinite(value) || value < 0) {
+    throw new RangeError("gap must be finite and nonnegative.")
+  }
+  return value
+}
 
-export const carouselViewportDefinition = {
-  type: "CarouselViewport",
-  web: {
-    primary: "m-carousel-viewport",
-  },
-  capabilities: ["carousel-region.viewport"],
-} as const satisfies PlatformComponentDefinition
+export interface CarouselCurrentChangedDetail {
+  readonly index: number
+  readonly previousIndex: number
+  readonly item: HTMLElement | null
+  readonly previousItem: HTMLElement | null
+  readonly reason: "api" | "control" | "autoplay" | "scroll" | "refresh"
+}
 
-export const carouselItemDefinition = {
-  type: "CarouselItem",
-  web: {
-    primary: "m-carousel-item",
-  },
-  capabilities: ["carousel-region.item", "carousel-item.identity"],
-} as const satisfies PlatformComponentDefinition
-
-export const carouselControlsDefinition = {
-  type: "CarouselControls",
-  web: {
-    primary: "m-carousel-controls",
-  },
-  capabilities: ["carousel-region.controls"],
-} as const satisfies PlatformComponentDefinition
-
-export const carouselReadoutDefinition = {
-  type: "CarouselReadout",
-  web: {
-    primary: "m-carousel-readout",
-  },
-  capabilities: ["carousel-region.readout"],
-} as const satisfies PlatformComponentDefinition
+export interface CarouselState {
+  readonly currentIndex: number
+  readonly targetIndex: number | null
+  readonly defaultIndex: number
+  readonly total: number
+  readonly direction: CarouselDirection
+  readonly playing: boolean
+  readonly paused: boolean
+  readonly pauseReasons: readonly string[]
+  readonly disabled: boolean
+  readonly ready: boolean
+}

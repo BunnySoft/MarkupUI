@@ -1,81 +1,59 @@
-import "../../dist/markup-ui-carousel.js"
+import { loadComponentApi } from "../component-api.js"
 
-const controllers = new Map()
+function initialize() {
+  if (!globalThis.MarkupUICarousel) throw new Error("Carousel runtime did not load.")
+  void loadComponentApi(document.getElementById("carousel-api"), new URL("../api/carousel.json", import.meta.url))
 
-for (const root of document.querySelectorAll("[data-demo-carousel]")) {
-  const controller = root.controller
-  controller.set({
-    autoplay: root.hasAttribute("data-autoplay"),
-    interval: 3000,
-    direction: root.dataset.direction ?? "horizontal",
-    keyboard: root.hasAttribute("data-keyboard") || !root.hasAttribute("data-keyboard-disabled"),
-  })
-  controllers.set(root, controller)
-
-  if (root.hasAttribute("data-hover-dots")) {
-    for (const indicator of root.querySelectorAll("[data-carousel-to]")) {
-      const show = () => controller.to(Number(indicator.dataset.carouselTo))
+  for (const root of document.querySelectorAll("m-carousel[data-hover-dots]")) {
+    for (const indicator of root.querySelectorAll('[data-part="to"]')) {
+      const show = () => root.to(Number(indicator.dataset.index))
       indicator.addEventListener("pointerenter", show)
       indicator.addEventListener("focus", show)
     }
   }
 
-  if (root.hasAttribute("data-custom-readout")) {
-    const count = root.querySelector("[data-custom-count]")
-    const update = () => { count.textContent = `${controller.getCurrentIndex() + 1} / ${controller.slides.length}` }
-    root.addEventListener("m:carousel-change", update)
+  const dots = document.querySelector(".dots-demo")
+  const options = document.querySelector("[data-dots-options]")
+  options.addEventListener("click", event => {
+    const button = event.target.closest("button")
+    if (!button || !options.contains(button)) return
+    const attribute = button.hasAttribute("data-dot-type") ? "data-dot-type" : "data-dot-direction"
+    if (attribute === "data-dot-type") dots.dataset.dotType = button.dataset.dotType
+    else dots.direction = button.dataset.dotDirection
+    for (const option of options.querySelectorAll(`[${attribute}]`)) option.setAttribute("aria-pressed", String(option === button))
+  })
+
+  const root = document.getElementById("api-carousel")
+  const mount = document.getElementById("lifecycle-mount")
+  const status = document.querySelector("[data-api-status]")
+  function update() {
+    status.textContent = root.isConnected
+      ? `Settled: ${root.currentIndex}; requested target: ${root.state.targetIndex ?? "none"}; items: ${root.state.total}; disabled: ${root.disabled}.`
+      : `Detached; retained settled index: ${root.currentIndex}. Timers and listeners are stopped.`
+    for (const button of document.querySelectorAll("[data-api-request],[data-api-reset],[data-api-reorder],[data-api-disable]")) button.disabled = !root.isConnected
+  }
+  root.addEventListener("m:current-changed", update)
+  document.querySelector("[data-api-request]").addEventListener("click", () => { root.currentIndex = 2; update() })
+  document.querySelector("[data-api-reset]").addEventListener("click", () => { root.reset(); update() })
+  document.querySelector("[data-api-reorder]").addEventListener("click", () => {
+    const item = root.items[root.currentIndex]
+    if (item) root.querySelector("m-carousel-viewport").prepend(item)
+    root.refresh()
     update()
-  }
-}
-
-function selectButton(group, selected) {
-  for (const button of group.querySelectorAll("m-button")) {
-    button.setAttribute("type", button === selected ? "primary" : "default")
-  }
-}
-
-const dotsRoot = document.querySelector(".dots-demo")
-const dotsController = controllers.get(dotsRoot)
-const dotsOptions = document.querySelector("[data-dots-options]")
-
-dotsOptions.addEventListener("click", event => {
-  const button = event.target.closest("m-button")
-  if (!button) return
-  if (button.hasAttribute("data-dot-type")) {
-    dotsRoot.dataset.dotType = button.dataset.dotType
-    selectButton(button.closest("m-button-group"), button)
-  } else if (button.hasAttribute("data-dot-placement")) {
-    dotsRoot.dataset.dotPlacement = button.dataset.dotPlacement
-    selectButton(button.closest("m-button-group"), button)
-  } else if (button.hasAttribute("data-dot-direction")) {
-    const direction = button.dataset.dotDirection
-    dotsController.set({ direction })
-    selectButton(button.closest("m-button-group"), button)
-  } else if (button.hasAttribute("data-toggle-arrows")) {
-    dotsRoot.toggleAttribute("data-show-arrows")
-    button.querySelector("[data-toggle-label]").textContent = dotsRoot.hasAttribute("data-show-arrows")
-      ? "Hide arrow"
-      : "Show arrow"
-  }
-})
-
-const effectStatus = document.querySelector("[data-effect-status]")
-for (const button of document.querySelectorAll("[data-effect]")) {
-  button.addEventListener("click", () => {
-    selectButton(button.closest("m-button-group"), button)
-    effectStatus.textContent = button.dataset.effect === "slide"
-      ? "Slide uses native scroll-snap."
-      : `${button.textContent.trim()} remains an intentionally omitted transform/transition effect.`
   })
-}
-
-const keyboardRoot = document.querySelector(".keyboard-carousel")
-const keyboardController = controllers.get(keyboardRoot)
-for (const button of document.querySelectorAll("[data-keyboard-direction]")) {
-  button.addEventListener("click", () => {
-    keyboardController.set({ direction: button.dataset.keyboardDirection })
-    selectButton(button.closest("m-button-group"), button)
+  document.querySelector("[data-api-disable]").addEventListener("click", event => {
+    root.disabled = !root.disabled
+    event.currentTarget.setAttribute("aria-pressed", String(root.disabled))
+    update()
   })
+  document.querySelector("[data-api-detach]").addEventListener("click", event => {
+    if (root.isConnected) root.remove()
+    else mount.append(root)
+    event.currentTarget.setAttribute("aria-pressed", String(!root.isConnected))
+    update()
+  })
+  update()
 }
 
-window.carouselParity = { controllers }
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initialize, { once: true })
+else initialize()

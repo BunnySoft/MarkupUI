@@ -9,7 +9,7 @@ is not automatically a delivered API.
 | Folder | Read it to |
 | --- | --- |
 | [architecture](architecture/README.md) | Understand the system boundaries, Web/native profiles, rewrite and metadata design. |
-| [api](api/README.md) | Use the implemented shared core and Avatar family. |
+| [api](api/README.md) | Use the implemented shared core and component demo/API pages. |
 | [elements](elements/README.md) | Find an element's contract, unresolved decisions and place in the inventory. |
 | [binding](binding/README.md) | Understand optional data binding, scopes, templates and composition. |
 | [styling](styling/README.md) | Understand theme resources, CSS ownership and visual review requirements. |
@@ -22,6 +22,8 @@ Numbered filenames give the reading order within each topic.
 
 Contributors and AI agents must read the [source layout](architecture/06-source.md) and
 [module delivery rules](architecture/07-modules.md) before changing source or packaging.
+Follow the [component development guide](elements/04-development.md) for the step-by-step
+implementation, demo documentation and acceptance workflow.
 Shared bundle extraction does not justify a second source tree. End users must be able
 to take the core and only the component/plugin JS and CSS they use.
 

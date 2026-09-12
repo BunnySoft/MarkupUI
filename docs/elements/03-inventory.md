@@ -12,12 +12,12 @@ families establish the pattern; the remaining contracts must be defined before i
 | Family | Elements / scope | Contract |
 | --- | --- | --- |
 | Avatar | `Avatar`, `AvatarGroup` | [Demo and API](../../demo/components/avatar.html) |
-| Button | `Button`, `ButtonGroup` | [Demo and metadata API](../../demo/components/button.html); payload acceptance pending. |
-| Card | `Card` plus six named regions | [Draft](contracts/03-card.md) |
-| Carousel | `Carousel`, `CarouselItem` plus viewport/elements/readout | [Draft](contracts/04-carousel.md) |
-| Collapse | `Collapse`, `CollapseItem` | [Draft](contracts/05-collapse.md) |
-| Divider | `Divider` | [Draft](contracts/06-divider.md) |
-| Dropdown | `Dropdown`, item/group/divider structure | [Draft](contracts/07-dropdown.md) |
+| Button | `Button`, `ButtonGroup` | [Demo and API](../../demo/components/button.html) |
+| Card | `Card` plus six named regions | [Demo and API](../../demo/components/card.html) |
+| Carousel | `Carousel`, `CarouselViewport`, `CarouselItem`, `CarouselControls`, `CarouselReadout` | [Demo and API](../../demo/components/carousel.html) |
+| Collapse | `Collapse`, `CollapseItem`, `CollapseHeader`, `CollapseHeaderExtra`, `CollapseContent` | [Demo and API](../../demo/components/collapse.html) |
+| Divider | `Divider`; primary content supplies an independent title fragment | [Demo and API](../../demo/components/divider.html) |
+| Dropdown | `Dropdown`, `DropdownTrigger`, `DropdownMenu`, `DropdownItem`, `DropdownGroup`, `DropdownDivider` | [Demo and API](../../demo/components/dropdown.html) |
 | Ellipsis | `Ellipsis` | Contract pending |
 | Gradient Text | `GradientText` | Contract pending |
 | Icon | `Icon`, `IconWrapper` | Contract pending |

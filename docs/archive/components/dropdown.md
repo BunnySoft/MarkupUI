@@ -1,5 +1,9 @@
 # Dropdown: authored command menus
 
+The helper surface below is historical and no longer exported by the component entry.
+Use the [current Dropdown demo and API](../../../demo/components/dropdown.html) for
+canonical classes, native action ownership, shared-core loading and payload status.
+
 > **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
 
 **🟢 Verified for the retained native command-menu scope.**
@@ -340,4 +344,4 @@ ESM/classic are **8,767/8,840 gzip bytes** under the same 9,000-byte ceilings; C
 
 ## Current documentation
 
-[Read the current design](../../elements/contracts/07-dropdown.md).
+[Read the current demo and API](../../../demo/components/dropdown.html).

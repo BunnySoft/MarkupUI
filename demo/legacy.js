@@ -357,7 +357,7 @@ async function installDemoCards() {
     const liveCards = topLevelCards(livePanel)
     const sourceCards = topLevelCards(sourcePanel)
     liveCards.forEach((card, index) => {
-      if (card.querySelector(":scope > .demo-card-tools")) return
+      if (card.querySelector(".demo-card-tools")) return
       card.classList.add("demo-card")
       const source = document.createElement("m-code")
       source.id = `demo-source-${panelName}-${index + 1}`
@@ -382,7 +382,8 @@ async function installDemoCards() {
       copy.setAttribute("m-param-target", `#${source.id}`)
       copy.textContent = "Copy"
       tools.append(spacer, toggle, copy)
-      card.append(tools, source)
+      const content = card.querySelector(":scope > m-card-content, :scope > [data-part=content]") ?? card
+      content.append(tools, source)
     })
   })
   updateOutline()

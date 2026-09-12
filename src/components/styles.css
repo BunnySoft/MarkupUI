@@ -48,8 +48,6 @@ m-alert{display:block;padding:var(--m-space-sm) var(--m-space-md);border-left:3p
 m-badge{display:inline-flex;align-items:center;min-height:20px;padding:0 6px;border-radius:999px;background:var(--m-bg-muted);color:var(--m-text-secondary);font-size:12px}
 m-tag{display:inline-flex;align-items:center;gap:var(--m-space-xs);min-height:24px;padding:0 8px;border:1px solid var(--m-border);border-radius:var(--m-radius-md);background:var(--m-bg-muted);color:var(--m-text-primary);font-size:12px}
 m-tag>[data-m-close]{display:inline-grid;width:16px;height:16px;padding:0;border:0;border-radius:50%;background:transparent;color:inherit;cursor:pointer;place-items:center}
-m-divider{display:block;border-top:1px solid var(--m-border)}
-m-divider[vertical]{display:inline-block;align-self:stretch;border-top:0;border-left:1px solid var(--m-border)}
 m-progress{display:block;overflow:hidden;height:8px;border-radius:999px;background:var(--m-bg-muted)}
 m-progress>[data-m-bar]{display:block;height:100%;border-radius:inherit;background:var(--m-color-primary);transition:width .2s ease}
 m-skeleton{display:block;min-height:1em;border-radius:var(--m-radius-md);background:linear-gradient(90deg,var(--m-bg-muted),color-mix(in srgb,var(--m-border) 70%,var(--m-bg-muted)),var(--m-bg-muted));background-size:200% 100%;animation:m-skeleton 1.4s ease infinite}

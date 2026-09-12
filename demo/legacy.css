@@ -326,7 +326,7 @@ m-field m-select {
   background: var(--m-bg-muted);
 }
 
-m-card[structured] > .demo-card-tools {
+m-card > :is(m-card-content, [data-part="content"]) > .demo-card-tools {
   margin: 0;
 }
 
@@ -347,7 +347,7 @@ m-card[structured] > .demo-card-tools {
   white-space: pre;
 }
 
-m-card[structured] > .demo-source {
+m-card > :is(m-card-content, [data-part="content"]) > .demo-source {
   margin: 0;
 }
 

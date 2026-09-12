@@ -1,5 +1,10 @@
 # 4. Carousel Element Contract
 
+**Historical planning record.** Carousel and its four region/item classes now extend
+the shared `ViewElement` with direct typed APIs. The authoritative usage and API reference
+is the [Carousel demo](../../../demo/components/carousel.html). The pending decisions
+below record the original draft, not the implemented native scroll-snap contract.
+
 Present an ordered collection through one current paged view.
 
 **Draft.** Web `Carousel` and `CarouselItem` use `ViewElement`; root: `m-carousel`.
@@ -65,5 +70,5 @@ remain renderer-owned rather than becoming portable action semantics.
 
 ## References
 
-- [Previous implementation and scroll behavior](../../archive/components/carousel.md)
-- [Default-style comparison](../../archive/styling/components/carousel.md)
+- [Previous implementation and scroll behavior](../components/carousel.md)
+- [Default-style comparison](../styling/components/carousel.md)

@@ -30,12 +30,12 @@ describe("CSS and theme sources", () => {
   })
 
   it("preserves the approved runtime CSS baselines exactly", () => {
-    // Core includes the reviewed Avatar and Button corrections; see docs/archive/styling/components/.
-    // Core also uses the canonical Avatar shape attribute; other baselines are unchanged.
+    // Core includes Avatar/Button corrections and no longer styles the replaced basic Divider.
+    // Widgets no longer includes the competing Carousel; its styles ship with the canonical family.
     expect(runtimeStyles.map(hash)).toEqual([
-      "e78aefa8e41c93bc2a1b075e94ed45baf669a817ceb037531df63d1d015bca88",
+      "dbf63d6438202ce3149a3bc0d44fbbca2ac74afdd97590a80c12454cc2fa4fc4",
       "6fd15d4f89081eaad05bc6391936ead49357aa4bd990202327146d93811957fd",
-      "cea995255d1cee151797540cea2970790ab58bffc20056be1917d71a4b4bb575",
+      "56589c4fe8c5e7eac2d32b092a054cfaee8448a00995d19432991488331c15c4",
     ])
   })
 

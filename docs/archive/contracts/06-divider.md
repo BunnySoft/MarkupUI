@@ -1,5 +1,10 @@
 # 6. Divider Element Contract
 
+**Historical planning record.** Divider now uses a direct `ViewElement` API with
+primary title content and an independent native rule owner. The authoritative reference
+is the [Divider demo and API](../../../demo/components/divider.html).
+The open decisions below record the original draft, not the implemented behavior.
+
 Separate related content visually and, when requested, semantically.
 
 **Draft.** Web `Divider : ViewElement`; element: `m-divider`.
@@ -46,5 +51,5 @@ The internal primitive remains inspectable, but is not the public contract.
 
 ## References
 
-- [Previous separator implementation](../../archive/components/divider.md)
-- [Default-style comparison](../../archive/styling/components/divider.md)
+- [Previous separator implementation](../components/divider.md)
+- [Default-style comparison](../styling/components/divider.md)

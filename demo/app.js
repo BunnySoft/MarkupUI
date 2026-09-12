@@ -7,13 +7,11 @@ export function createComponentBrowser(document = globalThis.document, view = gl
   const search = document.getElementById("component-search")
   const empty = document.getElementById("no-results")
   const count = document.getElementById("component-count")
-  const title = document.getElementById("component-title")
-  const category = document.getElementById("component-category")
   const standalone = document.getElementById("standalone-link")
   const note = document.getElementById("component-note")
   const status = document.getElementById("page-status")
   let frame = document.getElementById("component-frame")
-  if ([navigation, sidebar, toggle, search, empty, count, title, category, standalone,
+  if ([navigation, sidebar, toggle, search, empty, count, standalone,
     note, status, frame].some(node => !node)) {
     throw new Error("Component browser markup is incomplete.")
   }
@@ -116,14 +114,13 @@ export function createComponentBrowser(document = globalThis.document, view = gl
     }
     if (!component) {
       current = null
-      title.textContent = "Component not found"
-      category.textContent = "Components"
       note.textContent = "Choose a component from the navigation."
+      note.hidden = false
       standalone.hidden = true
       frame.removeAttribute("aria-busy")
       navigateFrame("about:blank", true)
       status.hidden = false
-      status.textContent = "The requested component is not in this catalog."
+      status.textContent = "Component not found. The requested component is not in this catalog."
       document.title = "Component not found - MarkupUI"
       return
     }
@@ -134,13 +131,12 @@ export function createComponentBrowser(document = globalThis.document, view = gl
       view.history[historyMode === "push" ? "pushState" : "replaceState"](null, "", url)
     }
     const url = new URL(`./components/${slug}.html`, document.baseURI)
-    title.textContent = component.name
-    category.textContent = component.category
     standalone.href = url.href
     standalone.hidden = false
     note.textContent = alternatives.has(slug)
       ? "This page documents a native alternative or explicit API exclusion, not full upstream compatibility."
       : "Current standalone examples. This page loads its own component styles and scripts."
+    note.hidden = !alternatives.has(slug)
     document.title = `${component.name} - MarkupUI`
     if (current !== slug) {
       current = slug
@@ -152,7 +148,7 @@ export function createComponentBrowser(document = globalThis.document, view = gl
     }
     menuOpen = false
     updateNavigation()
-    if (focus) title.focus({ preventScroll: true })
+    if (focus) frame.focus({ preventScroll: true })
   }
 
   function onClick(event) {

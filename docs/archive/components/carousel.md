@@ -2,6 +2,9 @@
 
 > **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
 
+The public native helper, M-prefixed classes and platform definitions below have been
+retired. Use the [current Carousel demo and API](../../../demo/components/carousel.html).
+
 **🟢 Verified retained single-slide-per-view scope.** The canonical Custom Element owns
 the existing native scroll-snap controller while keeping every authored slide in light
 DOM. Native scrolling owns touch, trackpad and wheel; there is no duplicate model tree,
@@ -261,4 +264,4 @@ other P6 routes are unchanged.
 
 ## Current documentation
 
-[Read the current design](../../elements/contracts/04-carousel.md).
+[Read the current demo and API](../../../demo/components/carousel.html).
