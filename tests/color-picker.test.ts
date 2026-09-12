@@ -3,7 +3,7 @@ import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createColorPicker } from "../src/components/color-picker/index.js"
-import { createInput } from "../src/components/input/index.js"
+import { createInput } from "../src/components/native-input.js"
 import { createForm } from "../src/components/form/index.js"
 
 const helpers: { disconnect(): void }[] = []

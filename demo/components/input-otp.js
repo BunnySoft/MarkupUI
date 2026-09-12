@@ -1,5 +1,7 @@
+import { createInput } from "../../dist/markup-ui-native-input.js"
+
 const field = document.querySelector("#otp"), form = document.querySelector("#verification")
-const input = MarkupUIInput.createInput(document.querySelector("#otp-input"))
+const input = createInput(document.querySelector("#otp-input"))
 const otp = MarkupUIInputOtp.createInputOtp(field, { status: document.querySelector("#otp-status") })
 const coordinator = MarkupUIForm.createForm(form, { items: [{
   key: "code", controls: [field], element: document.querySelector("#otp-item"), feedback: document.querySelector("#otp-error"),

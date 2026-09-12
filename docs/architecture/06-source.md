@@ -46,6 +46,14 @@ Add files for real boundaries, not to satisfy a template. A complex reusable con
 may remain separate; a small region does not automatically need its own file.
 Do not create provider, source, adapter and manager layers around every element.
 
+Input's four public classes live in `src/components/input/input.ts`. The internal
+`src/components/native-input.ts` owns shared clear/reveal/count, native-event and cleanup
+mechanics used by Input and unmigrated native-control compositions. It has no registration
+or public package helper export; selected builds account for its shared dependency explicitly.
+Input's source-declared native-field base shares real editing mechanics and direct accessors.
+The documentation extractor follows that source inheritance up to (but not through)
+`ViewElement`, so each concrete class documents its complete API without runtime reflection.
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed

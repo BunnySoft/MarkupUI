@@ -1,13 +1,25 @@
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createInput } from "../src/components/input/index.js"
-import type { InputController, InputOptions } from "../src/components/input/index.js"
+import { createInput } from "../src/components/native-input.js"
+import type { InputController, InputOptions } from "../src/components/native-input.js"
+import { Input, Textarea, InputGroup, InputGroupLabel } from "../src/components/input/index.js"
+import * as inputApi from "../src/components/input/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const helpers: InputController[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 15))
 function fixture(id = "title-root", options: InputOptions = {}) {
   const parsed = new DOMParser().parseFromString(readFileSync(join("demo", "components", "input.html"), "utf8"), "text/html")
+  // Keep the original shared-controller fixture distinct from the canonical element cases below.
+  for (const host of parsed.querySelectorAll("m-input,m-textarea,m-input-group,m-input-group-label")) {
+    const node = parsed.createElement("div")
+    for (const { name, value } of host.attributes) node.setAttribute(name, value)
+    node.classList.add(host.localName === "m-textarea" ? "m-input" : host.localName)
+    if (host.matches("m-input,m-textarea")) node.setAttribute("data-input", "")
+    node.replaceChildren(...host.childNodes)
+    host.replaceWith(node)
+  }
   document.body.append(document.importNode(parsed.querySelector("main")!, true))
   const root = document.getElementById(id)!
   const control = root.querySelector<HTMLInputElement | HTMLTextAreaElement>("[data-input-control]")!
@@ -78,7 +90,7 @@ describe("authored Input ownership", () => {
   it("guards root ownership across separately loaded module copies", async () => {
     const { root, helper } = fixture()
     vi.resetModules()
-    const separate = await import("../src/components/input/index.js")
+    const separate = await import("../src/components/native-input.js")
     expect(() => separate.createInput(root)).toThrow("owner")
     helper.disconnect()
     helpers.push(separate.createInput(root))
@@ -314,6 +326,251 @@ describe("password reveal safety", () => {
     reveal.click(); await flush()
     expect(control.type).toBe("password")
   })
+
+  })
+
+  describe("canonical Input family", () => {
+    async function input(markup = '<m-input aria-label="Field" name="entry" value="Default" clearable show-count></m-input>') {
+      document.body.innerHTML = `<form id="canonical-form">${markup}</form>`
+      await flush()
+      const root = document.querySelector<Input>("m-input")!
+      return { root, control: root.native, form: document.querySelector("form")! }
+    }
+
+    it("registers exactly the canonical own-tag classes and no helper export", () => {
+      expect(inputApi).not.toHaveProperty("createInput")
+      for (const Type of [Input, Textarea, InputGroup, InputGroupLabel]) {
+        expect(Object.hasOwn(Type, "tag")).toBe(true)
+        expect(customElements.get(Type.tag)).toBe(Type)
+        expect(new Type()).toBeInstanceOf(ViewElement)
+      }
+    })
+
+    it("creates one native owner and exposes native defaults, not a second focusable form control", async () => {
+      const { root, control } = await input()
+      expect(root.querySelectorAll("input,textarea")).toHaveLength(1)
+      expect(control.name).toBe("entry")
+      expect(root.size).toBe("medium")
+      expect(root.status).toBeNull()
+      expect(root.type).toBe("text")
+      expect(root.maxLength).toBe(-1)
+      expect(root.disabled).toBe(false)
+      expect(root.willValidate).toBe(true)
+      expect(root.getAttribute("role")).toBeNull()
+      expect(root.hasAttribute("tabindex")).toBe(false)
+    })
+
+    it("preserves authored control identity, listeners, dirty value and backward selection", async () => {
+      const root = new Input()
+      root.innerHTML = '<span>Prefix</span><input aria-label="Original" value="Default"><span>Suffix</span>'
+      const original = root.querySelector("input")!
+      original.value = "Authored edit"; original.setSelectionRange(1, 5, "backward")
+      const listener = vi.fn(); original.addEventListener("input", listener)
+      document.body.append(root); await flush()
+      root.size = "small"; root.status = "warning"; root.round = true
+      expect(root.native).toBe(original)
+      expect(root.value).toBe("Authored edit")
+      expect(root.defaultValue).toBe("Default")
+      expect([original.selectionStart, original.selectionEnd, original.selectionDirection]).toEqual([1, 5, "backward"])
+      original.dispatchEvent(new InputEvent("input", { bubbles: true }))
+      expect(listener).toHaveBeenCalledOnce()
+      expect(root.querySelectorAll("span")).toHaveLength(2)
+    })
+
+    it("keeps property writes silent and value attributes/defaults subject to the native dirty flag", async () => {
+      const { root, control, form } = await input()
+      const events = vi.fn(); root.addEventListener("input", events); root.addEventListener("change", events)
+      root.setAttribute("value", "Pristine")
+      expect(root.value).toBe("Pristine")
+      root.value = "Live"
+      root.setAttribute("value", "Next")
+      expect(root.value).toBe("Live")
+      expect(control.defaultValue).toBe("Next")
+      root.defaultValue = "Default again"
+      form.reset(); await flush()
+      expect(root.value).toBe("Default again")
+      expect(root.querySelector("[data-input-count]")?.textContent).toBe("13")
+      expect(events).not.toHaveBeenCalled()
+    })
+
+    it("uses native Textarea textContent/defaultValue and rows without replacing descendants", async () => {
+      document.body.innerHTML = '<form><m-textarea aria-label="Notes" value="Host default" clearable autosize show-count><textarea rows="3">Authored default</textarea></m-textarea></form>'
+      await flush()
+      const root = document.querySelector<Textarea>("m-textarea")!, native = root.native
+      expect(root.value).toBe("Host default")
+      expect(root.defaultValue).toBe("Host default")
+      expect(root.rows).toBe(3)
+      root.value = "Live"
+      root.setAttribute("value", "Next reset")
+      expect(root.value).toBe("Live")
+      document.querySelector("form")!.reset(); await flush()
+      expect(root.value).toBe("Next reset")
+      expect(root.native).toBe(native)
+      root.rows = 4
+      expect(native.rows).toBe(4)
+      root.autosize = false
+      expect(native.classList.contains("m-input__autosize")).toBe(false)
+    })
+
+    it("forwards disconnected writes and pre-upgrade own properties without losing defaults", async () => {
+      const root = new Input()
+      Object.defineProperty(root, "value", { value: "Pre-upgrade live", writable: true, configurable: true })
+      root.setAttribute("value", "Attribute default")
+      document.body.append(root); await flush()
+      expect(Object.hasOwn(root, "value")).toBe(false)
+      expect(root.value).toBe("Pre-upgrade live")
+      const native = root.native
+      root.remove(); root.value = "Disconnected"; root.defaultValue = "New default"; root.name = "late"
+      root.setAttribute("placeholder", "Offline")
+      document.body.append(root); await flush()
+      expect(root.native).toBe(native)
+      expect([root.value, root.defaultValue, root.name, root.placeholder]).toEqual(["Disconnected", "New default", "late", "Offline"])
+    })
+
+    it("forwards pre-first-connection attributes after the native owner was materialized", async () => {
+      const root = new Input()
+      root.value = "Live"
+      const native = root.native
+      root.setAttribute("value", "New default")
+      root.setAttribute("name", "late")
+      root.setAttribute("placeholder", "Before connection")
+      root.setAttribute("maxlength", "20")
+      root.setAttribute("readonly", "")
+      expect([root.value, root.defaultValue, root.name, root.placeholder, root.maxLength, root.readOnly]).toEqual(["Live", "New default", "late", "Before connection", 20, true])
+      document.body.append(root); await flush()
+      expect(root.native).toBe(native)
+      expect(root.value).toBe("Live")
+      expect(root.defaultValue).toBe("New default")
+    })
+
+    it.each(["text", "password", "search", "email", "tel", "url"] as const)("supports %s on the same native owner", async type => {
+      const { root, control } = await input()
+      root.type = type
+      expect(root.type).toBe(type)
+      expect(root.native).toBe(control)
+      expect(root.defaultValue).toBe("Default")
+    })
+
+    it("rejects invalid property values before mutating native or host state", async () => {
+      const { root } = await input()
+      for (const write of [
+        () => { root.type = "date" as never }, () => { root.value = null as never },
+        () => { root.disabled = "false" as never }, () => { root.size = "invalid" as never },
+        () => { root.status = "default" as never }, () => { root.maxLength = -1 },
+        () => { root.minLength = 1.5 }, () => { root.showPassword = true },
+        () => { root.formatCount = (() => 7) as never },
+      ]) {
+        const before = root.outerHTML
+        expect(write).toThrow()
+        expect(root.outerHTML).toBe(before)
+      }
+    })
+
+    it("validates initialization and disconnected formatter output before changing authored controls", () => {
+      const root = new Input()
+      root.innerHTML = '<input aria-label="Original" value="Original">'
+      root.setAttribute("name", "Changed")
+      root.setAttribute("maxlength", "-2")
+      const before = root.innerHTML
+      expect(() => root.native).toThrow()
+      expect(root.innerHTML).toBe(before)
+      const empty = new Input()
+      expect(() => { empty.formatCount = (() => 5) as never }).toThrow()
+      expect(empty.childNodes).toHaveLength(0)
+    })
+
+    it("uses native validation, custom errors, FormData, disabled fieldset and first legend", async () => {
+      const { root, control, form } = await input('<fieldset><legend>Controls</legend><m-input aria-label="Field" name="entry" required clearable value="Default"></m-input></fieldset>')
+      root.value = ""
+      expect(root.validity.valueMissing).toBe(true)
+      expect(root.checkValidity()).toBe(false)
+      root.value = "Valid"; root.setCustomValidity("Local error")
+      expect(root.validationMessage).toBe("Local error")
+      root.setCustomValidity("")
+      expect(root.checkValidity()).toBe(true)
+      expect(new FormData(form).getAll("entry")).toEqual(["Valid"])
+      root.readOnly = true
+      expect(new FormData(form).get("entry")).toBe("Valid")
+      root.readOnly = false
+      const fieldset = document.querySelector("fieldset")!
+      fieldset.disabled = true; await flush()
+      expect(root.disabled).toBe(false)
+      expect(control.matches(":disabled")).toBe(true)
+      expect(new FormData(form).has("entry")).toBe(false)
+      expect(root.clear()).toBe(false)
+      fieldset.querySelector("legend")!.append(root); await flush()
+      expect(control.matches(":disabled")).toBe(false)
+      expect(new FormData(form).get("entry")).toBe("Valid")
+    })
+
+    it("keeps composition/caret and native event ordering without duplicate host notifications", async () => {
+      const { root, control } = await input()
+      const events: string[] = []
+      for (const name of ["input", "change", "m:input", "m:change", "m:input-clear"]) root.addEventListener(name, () => events.push(name))
+      control.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }))
+      control.value = "日本"; control.setSelectionRange(1, 1)
+      control.dispatchEvent(new InputEvent("input", { bubbles: true, isComposing: true, data: "本" }))
+      expect(() => { root.value = "Overwrite" }).toThrow("composing")
+      expect(root.clear()).toBe(false)
+      expect(control.selectionStart).toBe(1)
+      control.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true }))
+      expect(events).toEqual(["input"])
+      events.length = 0
+      expect(root.clear()).toBe(true)
+      expect(events).toEqual(["input", "change", "m:input-clear"])
+    })
+
+    it("preserves active composition when decorations/formatter change and does not observe its own count text", async () => {
+      const { root, control } = await input()
+      control.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }))
+      control.value = "Draft"; control.setSelectionRange(2, 2)
+      root.clearable = false
+      root.clearable = true
+      let calls = 0
+      root.formatCount = () => String(++calls)
+      await flush()
+      expect(calls).toBeLessThan(10)
+      expect(root.clear()).toBe(false)
+      expect(() => { root.value = "Overwrite" }).toThrow("composing")
+      expect([control.value, control.selectionStart]).toEqual(["Draft", 2])
+      control.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true }))
+      expect(root.clear()).toBe(true)
+    })
+
+    it("rejects stale clear/reveal work after reset and reconnect, including canceled reset", async () => {
+      const { root, control, form } = await input('<m-input type="password" value="Default" aria-label="Secret" show-password clearable></m-input>')
+      const clear = root.querySelector<HTMLButtonElement>("[data-input-clear]")!, reveal = root.querySelector<HTMLButtonElement>("[data-input-reveal]")!
+      clear.click(); reveal.click(); form.reset(); await flush()
+      expect([root.value, control.type]).toEqual(["Default", "password"])
+      root.value = "Keep"
+      form.addEventListener("reset", event => event.preventDefault(), { once: true })
+      form.reset(); await flush()
+      expect(root.value).toBe("Keep")
+      clear.click(); reveal.click(); root.remove(); form.append(root); await flush()
+      expect([root.value, control.type]).toEqual(["Keep", "password"])
+      expect(root.native).toBe(control)
+      expect(root.querySelectorAll("[data-input-clear]")).toHaveLength(1)
+    })
+
+    it("supports late decorations, group content and reconnect without discarding authored nodes", async () => {
+      const { root, control, form } = await input()
+      const suffix = document.createElement("span"); suffix.textContent = "Late"
+      root.append(suffix); await flush()
+      root.clearable = false; root.showCount = false; await flush()
+      expect(root.querySelector("[data-input-clear]")).toBeNull()
+      expect(root.contains(suffix)).toBe(true)
+      root.remove(); form.append(root); await flush()
+      expect(root.native).toBe(control)
+      expect(root.contains(suffix)).toBe(true)
+      const group = new InputGroup(), label = new InputGroupLabel()
+      label.innerHTML = '<label for="owned">Native label</label>'
+      group.append(label, root); form.append(group); await flush()
+      expect(group.querySelector("label")?.getAttribute("for")).toBe("owned")
+      expect(group.querySelector("input")).toBe(control)
+      expect(group.hasAttribute("role")).toBe(false)
+    })
+  })
+describe("password concealment and cleanup", () => {
   it.each(["pointercancel", "blur", "pagehide", "beforeprint", "Escape", "readonly", "disabled", "remove", "disconnect", "hidden"])("masks on %s", async reason => {
     const { control, root, reveal, helper } = fixture("secret-root")
     reveal.click(); await flush()

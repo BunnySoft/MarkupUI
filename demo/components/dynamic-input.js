@@ -1,3 +1,5 @@
+import { createInput } from "../../dist/markup-ui-native-input.js"
+
 const root = document.querySelector("#properties"), form = document.querySelector("#settings")
 const state = document.querySelector("#state"), outcome = document.querySelector("#outcome")
 let rejectNext = false, resources = 0
@@ -8,7 +10,7 @@ const collection = MarkupUIDynamicInput.createDynamicInput(root, {
   },
   connect(row, { onCleanup }) {
     for (const wrapper of row.querySelectorAll("[data-input]")) {
-      const helper = MarkupUIInput.createInput(wrapper); resources++
+      const helper = createInput(wrapper); resources++
       onCleanup(() => { helper.disconnect(); resources-- })
     }
   },

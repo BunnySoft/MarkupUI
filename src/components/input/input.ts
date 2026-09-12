@@ -1,264 +1,277 @@
-export type InputControl = HTMLInputElement | HTMLTextAreaElement
-export interface InputCount { value: string; length: number; maxLength: number | null }
-export interface InputOptions { formatCount?: (count: InputCount) => string }
-export interface InputController {
-  readonly control: InputControl
-  readonly connected: boolean
-  refresh(): void
-  setValue(value: string, options?: { emit?: boolean }): void
-  clear(): boolean
-  disconnect(): void
+import { ViewElement } from "../../core/index.js"
+import { createInput } from "../native-input.js"
+import type { InputControl, InputController, InputCount } from "../native-input.js"
+
+export type InputType = "text" | "password" | "search" | "email" | "tel" | "url"
+export type InputSize = "tiny" | "small" | "medium" | "large"
+export type InputStatus = "success" | "warning" | "error"
+const types = ["text", "password", "search", "email", "tel", "url"] as const
+const sizes = ["tiny", "small", "medium", "large"] as const
+const statuses = ["success", "warning", "error"] as const
+
+function text(value: string): void {
+  if (typeof value !== "string") throw new TypeError("Expected a string.")
+}
+function length(value: number): void {
+  if (!Number.isInteger(value) || value < 0 || value > 2147483647) throw new RangeError("Expected a nonnegative 32-bit integer.")
 }
 
-const owner = Symbol.for("markup-ui.input.owner")
-type Owned = Element & { [owner]?: InputController }
-const textTypes = new Set(["text", "password", "search", "email", "tel", "url"])
-interface Attribute { node: Element; name: string; before: string | null; base: string | null; last: string | null }
+/** Shared native editing mechanics, not a property dispatcher or form engine. */
+abstract class NativeField extends ViewElement {
+  private control?: InputControl
+  private controller: InputController | undefined
+  private initialized = false
+  private observer?: MutationObserver
+  private generated = new Map<string, HTMLElement>()
+  private anatomy: Element[] = []
+  private formatter: ((count: InputCount) => string) | undefined
+  private generation = 0
+  private autosizeOwned = false
 
-/** Enhances one authored native field; never creates or replaces a form control. */
-export function createInput(root: HTMLElement, options: InputOptions = {}): InputController {
-  const document = root?.ownerDocument, view = document?.defaultView
-  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".m-input[data-input]")
-    || !root.isConnected || root.getRootNode() !== document || root.hasAttribute("role") || root.hasAttribute("tabindex")) {
-    throw new TypeError("Input needs a connected light-DOM .m-input[data-input] without role or tabindex.")
+  public connectedCallback(): void {
+    const generation = ++this.generation
+    if (!this.initialized) { this.upgradeProperties(); this.initialized = true }
+    queueMicrotask(() => { if (this.isConnected && generation === this.generation) this.refresh() })
   }
-  if (!options || typeof options !== "object" || Object.keys(options).some(key => key !== "formatCount")
-    || options.formatCount !== undefined && typeof options.formatCount !== "function") throw new TypeError("Unsupported Input options.")
-  if ((root as Owned)[owner]) throw new Error("Input root already has an owner.")
-  const own = (node: Element) => node.closest("[data-input]") === root
-  function one(selector: string, required = false): HTMLElement | null {
-    const nodes = [...root.querySelectorAll<HTMLElement>(selector)].filter(own)
-    if (nodes.length > 1 || required && nodes.length !== 1) throw new TypeError(`Input needs ${required ? "one" : "at most one"} ${selector}.`)
-    return nodes[0] ?? null
+  public disconnectedCallback(): void {
+    this.generation++
+    this.observer?.disconnect()
+    this.controller?.disconnect()
+    this.controller = undefined
   }
-  const field = one("[data-input-control]", true)
-  if (!(field instanceof view.HTMLInputElement || field instanceof view.HTMLTextAreaElement)
-    || field instanceof view.HTMLInputElement && !textTypes.has(field.type)) throw new TypeError("Input helpers support textarea and text/password/search/email/tel/url only.")
-  const control: InputControl = field
-  if ((control as Owned)[owner]) throw new Error("Native control already has an Input owner.")
-  const clearButton = one("[data-input-clear]") as HTMLButtonElement | null
-  const revealButton = one("[data-input-reveal]") as HTMLButtonElement | null
-  const count = one("[data-input-count]")
-  function named(node: HTMLElement): boolean {
-    const ids = node.getAttribute("aria-labelledby")?.trim().split(/\s+/)
-    if (ids?.length) return ids.every(id => !!document!.getElementById(id)?.textContent?.trim())
-    return !!(node.getAttribute("aria-label")?.trim()
-      || [...(node as InputControl).labels ?? []].some(label => label.textContent?.trim())
-      || node.localName === "button" && [...node.childNodes].some(child => child.nodeType === 3
-        ? child.textContent?.trim() : child instanceof view!.HTMLElement && !child.hidden
-          && child.getAttribute("aria-hidden") !== "true" && child.textContent?.trim()))
-  }
-  function valid(): boolean {
-    return root.isConnected && root.getRootNode() === document && root.matches(".m-input[data-input]")
-      && !root.hasAttribute("role") && !root.hasAttribute("tabindex")
-      && [control, clearButton, revealButton, count].every(node => !node || root.contains(node) && own(node))
-      && [clearButton, revealButton].every(button => !button || button.localName === "button"
-        && button.getAttribute("type")?.toLowerCase() === "button" && !button.hasAttribute("role")
-        && !button.hasAttribute("popovertarget") && !button.hasAttribute("commandfor")
-        && !button.parentElement?.closest("label, button, a[href], summary"))
-      && (control instanceof view!.HTMLTextAreaElement || textTypes.has(control.type))
-  }
-  function anatomy() {
-    if (!valid() || !named(control) || control.hasAttribute("role")) throw new TypeError("Keep the authored native field named and in its original Input root.")
-    for (const button of [clearButton, revealButton]) if (button && (!(button instanceof view!.HTMLButtonElement)
-      || button.getAttribute("type")?.toLowerCase() !== "button" || !named(button)
-      || button.hasAttribute("role") || button.getAttribute("aria-hidden") === "true"
-      || button.hasAttribute("popovertarget") || button.hasAttribute("commandfor")
-      || button.parentElement?.closest("label, button, a[href], summary")
-      || button.querySelector("a, button, input, select, textarea, [tabindex], [contenteditable], [role]"))) {
-      throw new TypeError("Input actions need named type=button controls outside labels and other interactive elements.")
+  public attributeChangedCallback(name: string): void {
+    if (!this.initialized && !this.control) return
+    if (["size", "status", "round", "borderless", "clearable", "show-password", "show-count", "autosize"].includes(name)) {
+      if (this.initialized && this.isConnected) this.refresh()
+    } else {
+      const control = this.field()
+      this.forward(control, name)
+      this.controller?.refresh()
     }
-    if (count && (count.localName !== "span" || count.children.length || count.hasAttribute("aria-live")
-      || count.hasAttribute("role"))) throw new TypeError("Input count needs a text-only span, not a live region.")
   }
-  anatomy()
-  if (revealButton && (!(control instanceof view.HTMLInputElement) || control.type !== "password")) {
-    throw new TypeError("Password reveal requires an authored input[type=password].")
+  protected field(): InputControl {
+    const kind = this.localName === "m-textarea" ? "textarea" : "input"
+    const fields = [...this.querySelectorAll<InputControl>("input,textarea")].filter(node => node.closest("m-input,m-textarea") === this)
+    if (fields.length > 1 || fields[0] && fields[0].localName !== kind) throw new TypeError(`Expected one native ${kind}.`)
+    if (this.control && this.contains(this.control)) return this.control
+    const control = fields[0] ?? this.ownerDocument.createElement(kind)
+    if (kind === "input" && !types.includes((this.getAttribute("type") ?? control.getAttribute("type")?.toLowerCase() ?? "text") as InputType)) throw new RangeError("Unsupported Input type.")
+    const attributes = ["value", "name", "placeholder", "disabled", "readonly", "required", "minlength", "maxlength", "form", "autocomplete", "inputmode", "aria-label", "aria-labelledby", "aria-describedby", "aria-invalid", ...(kind === "input" ? ["pattern", "type"] : ["rows", "cols", "wrap"])]
+    for (const name of attributes) this.validateAttribute(name, this.getAttribute(name))
+    this.control = control
+    for (const name of attributes) if (this.hasAttribute(name)) this.forward(control, name)
+    control.setAttribute("data-input-control", "")
+    if (!fields.length) this.append(control)
+    return control
   }
-  let connected = true, composing = false, visible = false, generation = 0
-  const attributes: Attribute[] = []
-  const removers: (() => void)[] = []
-  const timers = new Set<number>()
-  let countBefore = count?.textContent ?? "", countLast = countBefore
-  const formatter = options.formatCount ?? ((data: InputCount) => `${data.length}${data.maxLength === null ? "" : ` / ${data.maxLength}`}`)
-  function countText(): string {
-    const text = formatter({ value: control.value, length: control.value.length, maxLength: control.maxLength < 0 ? null : control.maxLength })
-    if (typeof text !== "string") throw new TypeError("formatCount must return plain text.")
-    return text
-  }
-  if (count) countText()
-  function lease(node: Element, name: string, enhancement = false) {
-    const before = node.getAttribute(name)
-    attributes.push({ node, name, before, base: enhancement ? null : before, last: before })
-  }
-  for (const button of [clearButton, revealButton]) if (button) {
-    lease(button, "hidden", true)
-    lease(button, "disabled")
-  }
-  if (revealButton) { lease(revealButton, "aria-pressed"); lease(control, "type") }
-  function attribute(node: Element, name: string) { return attributes.find(item => item.node === node && item.name === name)! }
-  function write(node: Element, name: string, value: string | null) {
-    const item = attribute(node, name)
-    if (node.getAttribute(name) !== value) {
-      if (value === null) node.removeAttribute(name)
-      else node.setAttribute(name, value)
-    }
-    item.last = value
-  }
-  function mark(records: MutationRecord[]) {
-    for (const record of records) {
-      const item = attributes.find(item => item.node === record.target && item.name === record.attributeName)
-      if (item) {
-        item.before = item.base = item.last = item.node.getAttribute(item.name)
-        if (item.node === control && item.name === "type") visible = false
+  private validateAttribute(name: string, value: string | null): void {
+    if (name === "type" && value !== null && !types.includes(value as InputType)) throw new RangeError("Unsupported Input type.")
+    if (name === "minlength" || name === "maxlength" || name === "rows" || name === "cols") {
+      if (value !== null) {
+        if (!value.trim()) throw new RangeError(`Invalid ${name}.`)
+        length(Number(value))
+        if ((name === "rows" || name === "cols") && Number(value) === 0) throw new RangeError(`Invalid ${name}.`)
       }
     }
   }
-  const observer = new view.MutationObserver(records => {
-    mark(records)
-    if (!valid()) { disconnect(); return }
-    refresh()
-  })
-  function pause() { mark(observer.takeRecords()); observer.disconnect() }
-  function observe() {
-    if (!connected) return
-    observer.observe(root, { subtree: true, childList: true, attributes: true,
-      attributeFilter: ["disabled", "readonly", "hidden", "inert", "type", "maxlength", "value", "form", "aria-pressed"] })
-    // Ancestor changes include fieldset inheritance, the first-legend exception, and removal/moves.
-    for (let node = root.parentElement; node; node = node.parentElement) {
-      observer.observe(node, { childList: true, attributes: true, attributeFilter: ["disabled", "hidden", "inert"] })
+  private forward(control: InputControl, name: string): void {
+    const value = this.getAttribute(name)
+    this.validateAttribute(name, value)
+    if (name === "value" && control instanceof HTMLTextAreaElement) control.defaultValue = value ?? ""
+    else if (value === null) control.removeAttribute(name)
+    else control.setAttribute(name, value)
+  }
+  /** Live native value. Silent writes leave defaultValue and the host value attribute unchanged. */
+  public get value(): string { return this.field().value }
+  public set value(value: string) {
+    text(value)
+    if (this.controller?.connected) this.controller.setValue(value)
+    else this.field().value = value
+  }
+  /** Native reset default; changing it follows the native dirty-value flag, without input/change events. */
+  public get defaultValue(): string { return this.field().defaultValue }
+  public set defaultValue(value: string) { text(value); this.field().defaultValue = value; this.controller?.refresh() }
+  /** Native name; only the native control participates in FormData. */
+  public get name(): string { return this.field().name }
+  public set name(value: string) { text(value); this.field().name = value }
+  public get placeholder(): string { return this.field().placeholder }
+  public set placeholder(value: string) { text(value); this.field().placeholder = value }
+  /** Own disabled flag, not inherited fieldset disabledness. Use native.matches(":disabled") for effective state. */
+  public get disabled(): boolean { return this.field().disabled }
+  public set disabled(value: boolean) { this.setBooleanAttribute("disabled", value); this.field().disabled = value; this.controller?.refresh() }
+  public get readOnly(): boolean { return this.field().readOnly }
+  public set readOnly(value: boolean) { this.setBooleanAttribute("readonly", value); this.field().readOnly = value; this.controller?.refresh() }
+  public get required(): boolean { return this.field().required }
+  public set required(value: boolean) { this.setBooleanAttribute("required", value); this.field().required = value }
+  /** Native -1 means no maximum; remove the maxlength attribute to restore absence. */
+  public get maxLength(): number { return this.field().maxLength }
+  public set maxLength(value: number) { length(value); this.field().maxLength = value; this.controller?.refresh() }
+  /** Native -1 means no minimum; remove the minlength attribute to restore absence. */
+  public get minLength(): number { return this.field().minLength }
+  public set minLength(value: number) { length(value); this.field().minLength = value }
+  public get form(): HTMLFormElement | null { return this.field().form }
+  public get validity(): ValidityState { return this.field().validity }
+  public get validationMessage(): string { return this.field().validationMessage }
+  public get willValidate(): boolean { return this.field().willValidate }
+  public get size(): InputSize { return this.choiceAttribute("size", sizes, "medium") }
+  public set size(value: InputSize) { this.setChoiceAttribute("size", value, sizes) }
+  public get status(): InputStatus | null { return this.choiceAttribute("status", statuses, null) }
+  public set status(value: InputStatus | null) { this.setNullableChoiceAttribute("status", value, statuses) }
+  public get borderless(): boolean { return this.hasAttribute("borderless") }
+  public set borderless(value: boolean) { this.setBooleanAttribute("borderless", value) }
+  public get clearable(): boolean { return this.hasAttribute("clearable") }
+  public set clearable(value: boolean) { this.setBooleanAttribute("clearable", value) }
+  public get showCount(): boolean { return this.hasAttribute("show-count") }
+  public set showCount(value: boolean) { this.setBooleanAttribute("show-count", value) }
+  /** Optional plain-text count formatter. Undefined restores UTF-16 length / native maximum. */
+  public get formatCount(): ((count: InputCount) => string) | undefined { return this.formatter }
+  public set formatCount(value: ((count: InputCount) => string) | undefined) {
+    if (value !== undefined && typeof value !== "function") throw new TypeError("Expected a count formatter.")
+    const control = this.control ?? this.querySelector<InputControl>("input,textarea")
+    const current = control?.value ?? "", maxLength = control?.maxLength ?? -1
+    if (value && typeof value({ value: current, length: current.length, maxLength: maxLength < 0 ? null : maxLength }) !== "string") throw new TypeError("Count must be plain text.")
+    this.formatter = value
+    this.controller?.disconnect()
+    if (this.isConnected) this.refresh()
+  }
+  public override focus(options?: FocusOptions): void { this.field().focus(options) }
+  public override blur(): void { this.field().blur() }
+  public select(): void { this.field().select() }
+  public setSelectionRange(start: number | null, end: number | null, direction?: "forward" | "backward" | "none"): void { this.field().setSelectionRange(start, end, direction) }
+  public setRangeText(replacement: string): void
+  public setRangeText(replacement: string, start: number, end: number, mode?: SelectionMode): void
+  public setRangeText(replacement: string, start?: number, end?: number, mode?: SelectionMode): void {
+    if (arguments.length === 1) this.field().setRangeText(replacement)
+    else {
+      if (arguments.length < 3) throw new TypeError("Provide both selection endpoints.")
+      this.field().setRangeText(replacement, start!, end!, mode)
     }
+    this.controller?.refresh()
   }
-  function editable() {
-    return connected && valid() && !composing && !control.matches(":disabled") && !control.readOnly
-      && !control.closest("[hidden], [inert]")
-  }
-  function mask() {
-    if (!visible) return
-    const item = attribute(control, "type")
-    if (control.getAttribute("type") === item.last) switchType(item.base)
-    visible = false
-  }
-  function switchType(type: string | null) {
-    const start = control.selectionStart, end = control.selectionEnd, direction = control.selectionDirection
-    write(control, "type", type)
-    if (start !== null && end !== null) {
-      try { control.setSelectionRange(start, end, direction ?? undefined) } catch { /* Some native types cannot select. */ }
+  public checkValidity(): boolean { return this.field().checkValidity() }
+  public reportValidity(): boolean { return this.field().reportValidity() }
+  public setCustomValidity(message: string): void { text(message); this.field().setCustomValidity(message) }
+  /** User-intent action: input, then change, then m:input-clear({previous}), only when editable and nonempty. */
+  public clear(): boolean { if (this.isConnected) this.refresh(); return this.controller?.clear() ?? false }
+  /** Refresh decorations after direct native property writes; never changes native value or selection. */
+  public refresh(): void {
+    if (!this.isConnected) return
+    const size = this.size, status = this.status
+    if (this.hasAttribute("role") || this.hasAttribute("tabindex")) throw new TypeError("The native field owns semantics and focus.")
+    const control = this.field()
+    this.observer?.disconnect()
+    this.classList.add("m-input")
+    this.setAttribute("data-input", "")
+    this.dataset.size = size
+    if (status === null) delete this.dataset.status
+    else this.dataset.status = status
+    this.toggleAttribute("data-round", this.hasAttribute("round"))
+    this.toggleAttribute("data-borderless", this.borderless)
+    if (control.localName === "textarea") {
+      if (this.hasAttribute("autosize") && !control.classList.contains("m-input__autosize")) {
+        control.classList.add("m-input__autosize"); this.autosizeOwned = true
+      } else if (!this.hasAttribute("autosize") && this.autosizeOwned) {
+        control.classList.remove("m-input__autosize"); this.autosizeOwned = false
+      }
     }
-  }
-  function refresh() {
-    if (!connected) return
-    pause()
-    if (!valid()) { disconnect(); return }
-    const canEdit = editable()
-    if (control.matches(":disabled") || control.readOnly || control.closest("[hidden], [inert]")
-      || revealButton && (attribute(revealButton, "disabled").base !== null || attribute(revealButton, "hidden").base !== null
-        || revealButton.closest("[hidden], [inert]")
-        || revealButton.closest("fieldset:disabled") && revealButton.matches(":disabled"))) mask()
-    for (const button of [clearButton, revealButton]) if (button) {
-      const hidden = attribute(button, "hidden"), disabled = attribute(button, "disabled")
-      const unsupported = button === revealButton && !visible && (control as HTMLInputElement).type !== "password"
-      const hide = hidden.base !== null || button === clearButton && !control.value || unsupported
-      if (hide && document!.activeElement === button && canEdit) {
-        control.focus({ preventScroll: true })
-        if (!connected) return
+    for (const [part, enabled, label] of [
+      ["clear", this.clearable, "Clear"],
+      ["reveal", this.hasAttribute("show-password"), "Show password"],
+      ["count", this.showCount, ""],
+    ] as const) {
+      const previous = this.generated.get(part)
+      if (!enabled && previous) { previous.remove(); this.generated.delete(part) }
+      if (enabled && !this.querySelector(`[data-input-${part}]`)) {
+        const node = this.ownerDocument.createElement(part === "count" ? "span" : "button")
+        node.setAttribute(`data-input-${part}`, "")
+        node.textContent = label
+        if (node instanceof HTMLButtonElement) { node.type = "button"; node.hidden = true }
+        this.generated.set(part, node)
+        this.append(node)
       }
-      write(button, "hidden", hide ? hidden.base ?? "" : null)
-      write(button, "disabled", !canEdit || unsupported ? disabled.base ?? "" : disabled.base)
     }
-    if (revealButton) write(revealButton, "aria-pressed", String(visible))
-    try {
-      if (count) {
-        if (count.textContent !== countLast) countBefore = count.textContent ?? ""
-        const text = countText()
-        if (count.textContent !== text) count.textContent = text
-        countLast = text
-      }
-    } finally { observe() }
-  }
-  function notify() {
-    control.dispatchEvent(new view!.Event("input", { bubbles: true, composed: true }))
-    control.dispatchEvent(new view!.Event("change", { bubbles: true }))
-  }
-  function setValue(value: string, emitOptions: { emit?: boolean } = {}) {
-    refresh()
-    if (!connected) throw new Error("Input is disconnected.")
-    if (typeof value !== "string") throw new TypeError("setValue needs a string; native defaults are separate.")
-    if (composing) throw new view!.DOMException("Do not replace a composing value.", "InvalidStateError")
-    const previous = control.value
-    control.value = value
-    refresh()
-    if (emitOptions.emit && control.value !== previous) notify()
-  }
-  function clear(): boolean {
-    if (!editable() || !control.value) return false
-    const previous = control.value
-    if (document!.activeElement === clearButton) control.focus({ preventScroll: true })
-    if (!editable()) return false
-    setValue("")
-    notify()
-    control.dispatchEvent(new view!.CustomEvent("m:input-clear", { bubbles: true, detail: { previous } }))
-    return true
-  }
-  function listen(node: EventTarget, type: string, handler: EventListener, capture = false) {
-    node.addEventListener(type, handler, capture)
-    removers.push(() => node.removeEventListener(type, handler, capture))
-  }
-  function conceal() {
-    if (!connected) return
-    generation++
-    pause(); mask(); refresh()
-  }
-  function later(callback: () => void) {
-    const id = view!.setTimeout(() => { timers.delete(id); if (connected) callback() }, 0)
-    timers.add(id)
-  }
-  listen(control, "input", refresh)
-  listen(control, "change", refresh)
-  listen(control, "compositionstart", () => { composing = true; refresh() })
-  listen(control, "compositionend", () => { composing = false; refresh() })
-  if (clearButton) listen(clearButton, "click", event => {
-    later(() => { if (!event.defaultPrevented && !clearButton.disabled && !clearButton.hidden && !clearButton.matches(":disabled")) clear() })
-  })
-  if (revealButton) listen(revealButton, "click", event => {
-    const pending = generation
-    later(() => {
-      pause()
-      if (pending === generation && !event.defaultPrevented && editable() && !revealButton.disabled && !revealButton.hidden
-        && !revealButton.matches(":disabled") && (visible || (control as HTMLInputElement).type === "password")) {
-        if (visible) mask()
-        else { switchType("text"); visible = true }
-      }
-      refresh()
+    const anatomy = this.parts()
+    if (!this.controller?.connected || anatomy.length !== this.anatomy.length || anatomy.some((node, index) => node !== this.anatomy[index])) {
+      const composing = this.controller?.composing ?? false
+      this.controller?.disconnect()
+      this.controller = createInput(this, this.formatter ? { formatCount: this.formatter } : {}, false, composing)
+      this.anatomy = anatomy
+    } else this.controller.refresh()
+    this.observer ??= new MutationObserver(() => {
+      const parts = this.parts()
+      if (parts.length !== this.anatomy.length || parts.some((node, index) => node !== this.anatomy[index])) this.refresh()
     })
-  })
-  listen(root, "focusout", event => { if (!root.contains((event as FocusEvent).relatedTarget as Node | null)) conceal() })
-  listen(root, "keydown", event => { if ((event as KeyboardEvent).key === "Escape") conceal() })
-  listen(root, "pointercancel", conceal)
-  listen(view, "blur", conceal)
-  listen(view, "pagehide", conceal)
-  listen(view, "beforeprint", conceal)
-  listen(document!, "visibilitychange", () => { if (document!.hidden) conceal() })
-  listen(document!, "reset", event => {
-    if (event.target !== control.form) return
-    // A task runs after the browser's reset default action, including cancelled resets.
-    later(() => { if (!event.defaultPrevented) { composing = false; conceal() } else refresh() })
-  }, true)
-  function disconnect() {
-    if (!connected) return
-    pause(); mask()
-    connected = false
-    removers.splice(0).forEach(remove => remove())
-    timers.forEach(id => view!.clearTimeout(id)); timers.clear()
-    for (const item of attributes.reverse()) if (item.node.getAttribute(item.name) === item.last) {
-      if (item.before === null) item.node.removeAttribute(item.name)
-      else item.node.setAttribute(item.name, item.before)
-    }
-    if (count?.textContent === countLast) count.textContent = countBefore
-    for (const node of [root, control] as Owned[]) if (node[owner] === controller) delete node[owner]
+    this.observer.observe(this, { childList: true, subtree: true })
   }
-  const controller: InputController = { control, get connected() { return connected }, refresh, setValue, clear, disconnect }
-  for (const node of [root, control]) Object.defineProperty(node, owner, { value: controller, configurable: true })
-  try { refresh() } catch (error) { disconnect(); throw error }
-  return controller
+  private parts(): Element[] { return [...this.querySelectorAll("input,textarea,[data-input-control],[data-input-clear],[data-input-reveal],[data-input-count]")] }
+}
+
+/**
+ * Native text-family input, optionally with authored prefix/suffix and clear/reveal/count controls.
+ * @region {"name":"content","accepts":["one native input","prefix/suffix phrasing","native action buttons","count span"],"min":0,"max":null}
+ */
+export class Input extends NativeField {
+  public static readonly tag = "m-input"
+  public static readonly observedAttributes: readonly string[] = ["value", "name", "placeholder", "disabled", "readonly", "required", "minlength", "maxlength", "form", "autocomplete", "inputmode", "pattern", "type", "aria-label", "aria-labelledby", "aria-describedby", "aria-invalid", "size", "status", "round", "borderless", "clearable", "show-password", "show-count"]
+  public get native(): HTMLInputElement { return this.field() as HTMLInputElement }
+  /** Native type (text while revealed). Changing supported types retains the same native input. */
+  public get type(): InputType {
+    const value = this.native.getAttribute("type")?.toLowerCase() ?? "text"
+    if (!types.includes(value as InputType)) throw new RangeError("Unsupported Input type.")
+    return value as InputType
+  }
+  public set type(value: InputType) {
+    if (!types.includes(value)) throw new RangeError("Unsupported Input type.")
+    this.setStringAttribute("type", value)
+    this.native.type = value
+  }
+  public get showPassword(): boolean { return this.hasAttribute("show-password") }
+  public set showPassword(value: boolean) {
+    if (value && this.native.type !== "password") throw new RangeError("Password reveal requires password type.")
+    this.setBooleanAttribute("show-password", value)
+  }
+  public get round(): boolean { return this.hasAttribute("round") }
+  public set round(value: boolean) { this.setBooleanAttribute("round", value) }
+}
+
+/**
+ * Native multiline editing. Autosize uses CSS field-sizing; rows and vertical resize remain the fallback.
+ * @region {"name":"content","accepts":["one native textarea","prefix/suffix phrasing","native clear button","count span"],"min":0,"max":null}
+ */
+export class Textarea extends NativeField {
+  public static readonly tag = "m-textarea"
+  public static readonly observedAttributes: readonly string[] = ["value", "name", "placeholder", "disabled", "readonly", "required", "minlength", "maxlength", "form", "autocomplete", "inputmode", "rows", "cols", "wrap", "aria-label", "aria-labelledby", "aria-describedby", "aria-invalid", "size", "status", "borderless", "clearable", "show-count", "autosize"]
+  public get native(): HTMLTextAreaElement { return this.field() as HTMLTextAreaElement }
+  public get rows(): number { return this.native.rows }
+  public set rows(value: number) { length(value); if (!value) throw new RangeError("Rows must be positive."); this.native.rows = value }
+  public get autosize(): boolean { return this.hasAttribute("autosize") }
+  public set autosize(value: boolean) { this.setBooleanAttribute("autosize", value) }
+}
+
+/** @region {"name":"content","accepts":["Input","Textarea","InputGroupLabel","native controls"],"min":0,"max":null} */
+export class InputGroup extends ViewElement {
+  public static readonly tag = "m-input-group"
+  public static readonly observedAttributes = []
+  public connectedCallback(): void { this.upgradeProperties(); this.classList.add("m-input-group") }
+}
+
+/**
+ * Native labels inside this presentation region keep their own for association.
+ * @region {"name":"content","accepts":["phrasing","native label"],"min":0,"max":null}
+ */
+export class InputGroupLabel extends ViewElement {
+  public static readonly tag = "m-input-group-label"
+  public static readonly observedAttributes = ["size", "borderless"]
+  public connectedCallback(): void { this.upgradeProperties(); this.render() }
+  public attributeChangedCallback(): void { if (this.isConnected) this.render() }
+  public get size(): InputSize { return this.choiceAttribute("size", sizes, "medium") }
+  public set size(value: InputSize) { this.setChoiceAttribute("size", value, sizes) }
+  public get borderless(): boolean { return this.hasAttribute("borderless") }
+  public set borderless(value: boolean) { this.setBooleanAttribute("borderless", value) }
+  private render(): void {
+    const size = this.size
+    this.classList.add("m-input-group-label")
+    this.dataset.size = size
+    this.toggleAttribute("data-borderless", this.borderless)
+  }
 }

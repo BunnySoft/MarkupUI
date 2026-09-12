@@ -4,7 +4,7 @@ import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createForm } from "../src/components/form/index.js"
 import type { FormController, FormItemOptions, FormValidator, FormValidatorResult } from "../src/components/form/index.js"
-import { createInput } from "../src/components/input/index.js"
+import { createInput } from "../src/components/native-input.js"
 import { createRate } from "../src/components/rate/index.js"
 
 const helpers: { disconnect(): void }[] = []

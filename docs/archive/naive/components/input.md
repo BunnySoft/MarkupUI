@@ -8,7 +8,7 @@ with explicit omissions. Not upstream/Vue/Form-validation parity.**
 ## Baseline and target
 
 [Legacy forms.ts](../../../../src/components/forms.ts) remains unchanged. The new optional
-[native helper](../../../../src/components/input/input.ts) enhances authored fields without
+[native helper](../../../../src/components/native-input.ts) enhances authored fields without
 registering Custom Elements, replacing controls or adding proxy submission values.
 [Canonical loading/anatomy/mapping/evidence](../../components/input.md) and the separate
 [local demo](../../../../demo/components/input.html) define the accepted contract.

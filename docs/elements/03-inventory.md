@@ -39,7 +39,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Dynamic Input | `DynamicInput` | Contract pending |
 | Dynamic Tags | `DynamicTags` | Contract pending |
 | Form | `Form`, `FormItem`, `FormItemGi` | Contract pending |
-| Input | `Input`, `Textarea`, `InputGroup`, `InputGroupLabel` | Contract pending |
+| Input | `Input`, `Textarea`, `InputGroup`, `InputGroupLabel`; native editing/form owners | [Demo and API](../../demo/components/input.html) |
 | Input Number | `InputNumber` | Contract pending |
 | Input OTP | `InputOtp` | Contract pending |
 | Mention | `Mention` | Contract pending |

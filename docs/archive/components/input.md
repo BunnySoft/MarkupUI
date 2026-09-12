@@ -1,6 +1,9 @@
 # Input: authored native fields
 
 > **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
+> **Current replacement:** [Input family demo and source-generated API](../../../demo/components/input.html).
+> Public `createInput`/controller exports and legacy `MInput`/`MTextarea` have been removed.
+> Shared native mechanics and CSS remain internal dependencies for unmigrated compositions.
 
 **🟢 Verified for the retained native Input/textarea/InputGroup/InputGroupLabel scope.**
 This is the first P4 control contract, not Form validation or Vue API parity.

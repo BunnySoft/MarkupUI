@@ -46,7 +46,24 @@ export async function generateComponentApi(root, families) {
         && current.expression.expression.kind === ts.SyntaxKind.ThisKeyword) result.push(current)
       ts.forEachChild(current, visit)
     }
+
     visit(node)
+    return result
+  }
+
+  // Follow source-declared component bases, stopping before the shared Web base.
+  function componentMembers(node) {
+    const result = [...node.members]
+    const base = node.heritageClauses?.find(clause => clause.token === ts.SyntaxKind.ExtendsKeyword)?.types[0]
+    if (base && base.expression.getText() !== "ViewElement") {
+      let symbol = checker.getSymbolAtLocation(base.expression)
+      if (symbol?.flags & ts.SymbolFlags.Alias) symbol = checker.getAliasedSymbol(symbol)
+      const declaration = symbol?.valueDeclaration
+      if (declaration && ts.isClassDeclaration(declaration)) {
+        const own = new Set(node.members.map(member => member.name?.getText()))
+        result.push(...componentMembers(declaration).filter(member => !own.has(member.name?.getText())))
+      }
+    }
     return result
   }
 
@@ -74,6 +91,8 @@ export async function generateComponentApi(root, families) {
         : helper?.expression.name.text === "booleanAttribute" ? "boolean" : null,
       values, min: null, max: null, exclusiveMin: false, integer: tags(getter, "integer").length > 0,
     }
+    const description = ts.displayPartsToString(checker.getSymbolAtLocation(getter.name)?.getDocumentationComment(checker))
+    if (description) result.description = description
     if (writable && helper) {
       const method = helper.expression.name.text
       result.default = method === "choiceAttribute" ? literal(helper.arguments[2])
@@ -116,8 +135,9 @@ export async function generateComponentApi(root, families) {
         const tag = node.members.find(member => ts.isPropertyDeclaration(member) && member.name.getText() === "tag"
           && member.modifiers?.some(modifier => modifier.kind === ts.SyntaxKind.StaticKeyword))
         if (!tag) continue
-        const properties = node.members.filter(member => ts.isGetAccessorDeclaration(member) && visible(member))
-          .map(member => property(member, node.members))
+        const members = componentMembers(node)
+        const properties = members.filter(member => ts.isGetAccessorDeclaration(member) && visible(member))
+          .map(member => property(member, members))
         const events = new Map()
         for (const call of calls(node)) {
           if (call.expression.name.text !== "emit" || !ts.isStringLiteral(call.arguments[0])) continue
@@ -153,9 +173,9 @@ export async function generateComponentApi(root, families) {
           type: node.name.text, web: { primary: literal(tag.initializer) },
           properties: Object.fromEntries(properties.map(property => [property.name, property])),
           regions, events: [...events.values()], capabilities: [],
-          actions: node.members.filter(member => ts.isMethodDeclaration(member) && visible(member)
+          actions: [...new Set(members.filter(member => ts.isMethodDeclaration(member) && visible(member)
             && !["connectedCallback", "disconnectedCallback", "attributeChangedCallback"].includes(member.name.getText()))
-            .map(member => member.name.getText()),
+            .map(member => member.name.getText()))],
           states: properties.find(property => property.name === "state")?.values ?? tags(node, "states").flatMap(value => value.split(/\s+/)),
           source: relative(root, source.fileName).split(sep).join("/"),
         })

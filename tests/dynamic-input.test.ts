@@ -4,7 +4,7 @@ import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createDynamicInput } from "../src/components/dynamic-input/index.js"
 import type { DynamicInputOptions } from "../src/components/dynamic-input/index.js"
-import { createInput } from "../src/components/input/index.js"
+import { createInput } from "../src/components/native-input.js"
 import { createForm } from "../src/components/form/index.js"
 
 const helpers: { disconnect(): void }[] = []

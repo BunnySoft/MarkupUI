@@ -309,8 +309,8 @@ widgetCascader?.addEventListener("m:change", (event) => {
   if (target) target.textContent = event.detail.join(" / ")
 })
 
-document.querySelector("#component-search")?.addEventListener("m:input", (event) => {
-  const query = String(event.detail ?? "").trim().toLowerCase()
+document.querySelector("#component-search")?.addEventListener("input", (event) => {
+  const query = event.currentTarget.value.trim().toLowerCase()
   const items = [...document.querySelectorAll(".sidebar-item")]
   let visible = 0
   items.forEach((item) => {

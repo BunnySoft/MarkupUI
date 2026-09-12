@@ -76,6 +76,7 @@ function assignValue(element: Element, property: string, value: StateValue): voi
     element.toggleAttribute("disabled", Boolean(value))
     return
   }
+  if (property === "value" && element.matches("m-input,m-textarea") && Reflect.get(element, property) === value) return
   Reflect.set(element, property, value)
 }
 
@@ -101,17 +102,17 @@ export function bind(root: ParentNode, store: MStore): () => void {
       disposers.push(store.subscribe(path, update))
     }
     if (twoWayPath) {
+      const nativeField = element.matches("m-input,m-textarea") && twoWayProperty === "value"
+      const events = nativeField ? ["input", "change"] : ["m:input", "m:change"]
       const listener = (event: Event) => {
-        if (event.target !== element) return
+        if (event.target !== (nativeField ? element.querySelector("[data-input-control]") : element)) return
         const detail = (event as CustomEvent).detail
-        const value = detail !== undefined ? detail : Reflect.get(element, twoWayProperty)
+        const value = !nativeField && detail !== undefined ? detail : Reflect.get(element, twoWayProperty)
         store.set(twoWayPath, value)
       }
-      element.addEventListener("m:input", listener)
-      element.addEventListener("m:change", listener)
+      events.forEach(name => element.addEventListener(name, listener))
       disposers.push(() => {
-        element.removeEventListener("m:input", listener)
-        element.removeEventListener("m:change", listener)
+        events.forEach(name => element.removeEventListener(name, listener))
       })
     }
   }

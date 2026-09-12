@@ -37,7 +37,7 @@ classicEntries.icon = "global.ts"
 classicEntries.typography = "global.ts"
 classicEntries.space = "global.ts"
 classicEntries.flex = "global.ts"
-const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750]])
+const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500]])
 await generateComponentApi(root, [...viewComponents.keys()])
 
 function corePlugin(format) {
@@ -55,6 +55,17 @@ function corePlugin(format) {
             throw new Error("Load compatible markup-ui-core.global.js before component scripts.");
           }
           export const { ViewElement } = core;
+        `,
+      }))
+      builder.onResolve({ filter: /native-input\.js$/ }, () =>
+        format === "esm" ? { path: "./markup-ui-native-input.js", external: true }
+          : { path: "native-input", namespace: "markupui-native-input" })
+      builder.onLoad({ filter: /.*/, namespace: "markupui-native-input" }, () => ({
+        loader: "js",
+        contents: `
+          const native = globalThis[Symbol.for("markup-ui.native-input")];
+          if (!native || typeof native.createInput !== "function") throw new Error("Load markup-ui-native-input.global.js before Input.");
+          export const { createInput } = native;
         `,
       }))
     },
@@ -118,6 +129,12 @@ components.push("marquee")
 classicEntries.marquee = "global.ts"
 
 await Promise.all([
+  ...["esm", "iife"].map(format => build({
+    ...shared,
+    entryPoints: [resolve(root, "src", "components", format === "esm" ? "native-input.ts" : "native-input.global.ts")],
+    format, minify: true,
+    outfile: resolve(dist, `markup-ui-native-input${format === "esm" ? ".js" : ".global.js"}`),
+  })),
   build({
     ...shared,
     entryPoints: [resolve(root, "src", "core", "index.ts")],
@@ -472,6 +489,9 @@ const bundleBudgets = {
   "markup-ui-loading-bar.css": 1_250,
 }
 const bundles = {}
+// Shared native mechanics retain the previous Input helper's per-file ceilings.
+bundleBudgets["markup-ui-native-input.js"] = 4_000
+bundleBudgets["markup-ui-native-input.global.js"] = 4_000
 
 for (const [name, budget] of Object.entries(bundleBudgets)) {
   const content = await readFile(resolve(dist, name))
@@ -490,6 +510,7 @@ for (const name of [...components, ...styleOnlyComponents]) {
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       const file = `markup-ui-${name}${suffix}`
       const dependencies = viewComponents.has(name) ? [`markup-ui-core${suffix}`] : []
+      if (name === "input") dependencies.push(`markup-ui-native-input${suffix}`)
       const runtimeBudget = viewComponents.get(name)
       const runtimeGzipBytes = bundles[file].gzipBytes
         + dependencies.reduce((total, dependency) => total + bundles[dependency].gzipBytes, 0)

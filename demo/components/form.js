@@ -1,7 +1,9 @@
+import { createInput } from "../../dist/markup-ui-native-input.js"
+
 const form = document.querySelector("#profile")
 const field = id => document.getElementById(id)
 const status = field("status"), submission = field("submission")
-const input = MarkupUIInput.createInput(field("name-input"))
+const input = createInput(field("name-input"))
 const item = (key, controls, validator) => ({
   key, controls, element: field(`${key}-item`), feedback: field(`${key}-error`),
   ...(validator ? { validator } : {}),

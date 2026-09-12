@@ -52,6 +52,30 @@ afterEach(() => {
 })
 
 describe("metadata-based component documentation", () => {
+  it("extracts the full inherited Input API without invented native defaults or duplicate overloads", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["input"])
+    expect(docs.elements.map((element: { type: string }) => element.type)).toEqual(["Input", "Textarea", "InputGroup", "InputGroupLabel"])
+    const [input, textarea] = docs.elements
+    for (const element of [input, textarea]) {
+      expect(element.properties.value).toMatchObject({ writable: true, typeName: "string", attribute: null })
+      expect(element.properties.value).not.toHaveProperty("default")
+      expect(element.properties.value.description).toContain("Live native")
+      expect(element.properties.defaultValue).not.toHaveProperty("default")
+      expect(element.properties.form).toMatchObject({ writable: false, nullable: true, typeName: "HTMLFormElement | null" })
+      expect(element.properties.size.default).toBe("medium")
+      expect(element.properties.disabled).not.toHaveProperty("default")
+      expect(element.actions).toContain("clear")
+      expect(element.actions.filter((action: string) => action === "setRangeText")).toHaveLength(1)
+      expect(element.actions).not.toContain("upgradeProperties")
+    }
+    expect(input.properties.native.typeName).toBe("HTMLInputElement")
+    expect(textarea.properties.native.typeName).toBe("HTMLTextAreaElement")
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.textContent).toContain("HTMLInputElement")
+    expect(target.textContent).toContain("Live native")
+  })
+
   it("loads documentation separately and surfaces request errors", async () => {
     const target = document.createElement("div")
     vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 404 })))

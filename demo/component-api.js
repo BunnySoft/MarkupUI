@@ -56,9 +56,10 @@ export function renderComponentApi(target, elements) {
     table(section, `${meta.type} properties`,
       ["Property", "Type", "Default", "Access", "Attribute", "Rules"],
       Object.values(meta.properties).map(property => [
-        property.name, property.type + (property.nullable ? " or null" : ""),
+        property.name, property.type + (property.typeName && property.typeName !== property.type
+          ? ` (${property.typeName})` : property.nullable ? " or null" : ""),
         Object.hasOwn(property, "default") ? JSON.stringify(property.default) : property.writable ? "not specified" : "computed",
-        property.writable ? "read/write" : "read-only", property.attribute ?? "-", rules(property),
+        property.writable ? "read/write" : "read-only", property.attribute ?? "-", [rules(property), property.description].filter(Boolean).join(" "),
       ]))
     table(section, `${meta.type} content regions`, ["Region", "Content", "Count", "Element"],
       meta.regions.map(region => [region.name, region.accepts.join(", "), `${region.min}..${region.max ?? "unbounded"}`, region.element ?? "authored content"]))

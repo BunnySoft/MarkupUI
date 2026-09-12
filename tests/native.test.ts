@@ -22,6 +22,7 @@ import { Collapse } from "../src/components/collapse/index.js"
 import { Divider } from "../src/components/divider/index.js"
 import { Dropdown } from "../src/components/dropdown/index.js"
 import { Heading, Link } from "../src/components/typography/index.js"
+import { Input } from "../src/components/input/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -47,6 +48,8 @@ describe("native elements", () => {
     expect(customElements.get("m-collapse")).toBe(Collapse)
     expect(builtInElementNames.some(name => name === "m-dropdown" || name.startsWith("m-dropdown-"))).toBe(false)
     expect(customElements.get("m-dropdown")).toBe(Dropdown)
+    expect(customElements.get("m-input")).toBe(Input)
+    for (const tag of ["m-input", "m-textarea", "m-input-group", "m-input-group-label"]) expect(builtInElementNames).not.toContain(tag)
     const styles = document.getElementById("m-styles")?.textContent ?? ""
     expect(styles).toContain("--m-control-height")
     expect(styles).toContain(":focus-visible")
@@ -55,13 +58,14 @@ describe("native elements", () => {
     expect(styles).not.toContain("translateY(1px)")
   })
 
-  it("provides semantic content primitives", () => {
+  it("provides semantic content primitives", async () => {
     document.body.innerHTML = `
       <m-main>
         <m-heading level="1">Title</m-heading>
         <m-text>Read the <m-link href="#more">details</m-link>.</m-text>
         <m-field label="Name"><m-input></m-input></m-field>
       </m-main>`
+    await Promise.resolve()
     expect(document.querySelector("m-main")?.getAttribute("role")).toBe("main")
     expect(document.querySelector("m-heading > h1")?.textContent).toBe("Title")
     expect(document.querySelector("m-heading")?.hasAttribute("role")).toBe(false)
@@ -522,6 +526,27 @@ describe("themes", () => {
 })
 
 describe("optional state and actions", () => {
+  it("binds canonical native editing and composition without echoing writes or consuming child action events", async () => {
+    const store = createStore({ name: "Original" })
+    document.body.innerHTML = '<m-input aria-label="Name" m-bind="name" clearable><span>Suffix</span></m-input>'
+    const dispose = bind(document.body, store)
+    await Promise.resolve()
+    const input = document.querySelector<Input>("m-input")!, control = input.native
+    control.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }))
+    control.value = "日本"; control.setSelectionRange(1, 1)
+    control.dispatchEvent(new InputEvent("input", { bubbles: true, isComposing: true }))
+    expect(store.get("name")).toBe("日本")
+    expect(control.selectionStart).toBe(1)
+    control.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true }))
+    input.querySelector("span")!.dispatchEvent(new Event("input", { bubbles: true }))
+    expect(store.get("name")).toBe("日本")
+    input.clear()
+    expect(store.get("name")).toBe("")
+    dispose()
+    control.value = "Unbound"; control.dispatchEvent(new Event("input", { bubbles: true }))
+    expect(store.get("name")).toBe("")
+  })
+
   it("binds state to native custom elements", () => {
     const store = createStore({ customer: { name: "Ada" } })
     document.body.innerHTML = `

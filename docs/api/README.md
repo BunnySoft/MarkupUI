@@ -15,6 +15,7 @@ in the target inventory.
 10. [Typography demo and API](../../demo/components/typography.html): typed text presentation, rich documents and native heading/paragraph/link/list/quote owners.
 11. [Space demo and API](../../demo/components/space.html): typed spacing, alignment and wrapping of author-owned native content.
 12. [Flex demo and API](../../demo/components/flex.html): native flex alignment, visual reversal and typed gaps without generated items.
+13. [Input demo and API](../../demo/components/input.html): Input, Textarea, InputGroup and InputGroupLabel; native editing/defaults/forms, clear/reveal/count and lifecycle.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
@@ -35,12 +36,19 @@ maintain a second Markdown copy of their API tables or usage examples.
 | Use Typography and its seven companions | `@dataengine/markup-ui/typography` and its CSS; ESM imports core automatically. Import `Text as TypographyText` when native DOM Text is also needed. |
 | Use Space | `@dataengine/markup-ui/space` and its CSS; ESM imports core automatically. |
 | Use Flex | `@dataengine/markup-ui/flex` and its CSS; ESM imports core automatically. |
+| Use Input/Textarea and groups | `@dataengine/markup-ui/input` and its CSS; ESM imports core and internal native-field mechanics automatically. Public exports are the four classes, `registerInput`, `InputType`, `InputSize`, `InputStatus` and `InputCount`. |
 | Use classic scripts | Core first, then the selected component scripts and CSS. |
 
 No jQuery dependency, query wrapper, state/binding runtime or all-components bundle is
 required for the direct ViewElement component families. The new binding/template runtime remains a separate planned feature.
 Choose one core format/version for the application; do not mix independently loaded ESM
 and classic cores.
+
+Input classic scripts require `markup-ui-core.global.js`, then
+`markup-ui-native-input.global.js`, then `markup-ui-input.global.js`. The dependency is
+internal shared mechanics, not the former public `createInput` helper. The manifest includes
+all runtime dependencies and CSS; selecting Input does not select Button, Icon, Typography,
+the aggregate or a form/binding engine.
 
 ## References
 

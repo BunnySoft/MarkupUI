@@ -119,6 +119,10 @@ execute it. If extraction cannot determine a value, improve the supported patter
 state the limitation—do not invent a value or restore runtime metadata.
 
 Generated `demo/api` files are build output. Do not edit them manually.
+The extractor follows source-declared component base classes (stopping at `ViewElement`)
+and includes getter documentation in the rules column. Native-owner accessors may have
+computed/default state that cannot be inferred statically: document native absence, dirty-value
+and form-association semantics in source/page prose rather than inventing default metadata.
 When the family is complete, update catalog/inventory links to its demo and move its
 planning contract to the archive with a link to the current page.
 

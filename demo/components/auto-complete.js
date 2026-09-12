@@ -1,6 +1,8 @@
+import { createInput } from "../../dist/markup-ui-native-input.js"
+
 const form = document.querySelector("#places"), city = document.querySelector("#city")
 const events = document.querySelector("#events"), submission = document.querySelector("#submission")
-const input = MarkupUIInput.createInput(document.querySelector("#city-input"))
+const input = createInput(document.querySelector("#city-input"))
 const coordinator = MarkupUIForm.createForm(form, { items: [{
   key: "city", controls: [city], element: document.querySelector("#city-item"), feedback: document.querySelector("#city-error"),
 }] })

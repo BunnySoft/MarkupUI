@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { createInputOtp } from "../src/components/input-otp/index.js"
 import type { InputOtpOptions } from "../src/components/input-otp/index.js"
-import { createInput } from "../src/components/input/index.js"
+import { createInput } from "../src/components/native-input.js"
 import { createForm } from "../src/components/form/index.js"
 
 const helpers: { disconnect(): void }[] = []

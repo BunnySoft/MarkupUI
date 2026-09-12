@@ -1,37 +1,5 @@
 import { MElement } from "../core/element.js"
 
-export class MInput extends MElement {
-  private control?: HTMLInputElement
-  public connectedCallback(): void {
-    if (this.control !== undefined) return
-    this.control = this.ownerDocument.createElement("input")
-    for (const name of ["name", "placeholder", "type", "value", "aria-label"]) {
-      const value = this.getAttribute(name)
-      if (value !== null) this.control.setAttribute(name, value)
-    }
-    this.control.addEventListener("input", () => this.emit("input", this.control?.value))
-    this.control.addEventListener("change", () => this.emit("change", this.control?.value))
-    this.replaceChildren(this.control)
-  }
-  public get value(): string { return this.control?.value ?? "" }
-  public set value(value: string) { if (this.control !== undefined) this.control.value = value }
-}
-
-export class MTextarea extends MElement {
-  private control?: HTMLTextAreaElement
-  public connectedCallback(): void {
-    if (this.control !== undefined) return
-    this.control = this.ownerDocument.createElement("textarea")
-    this.control.placeholder = this.getAttribute("placeholder") ?? ""
-    this.control.value = this.getAttribute("value") ?? ""
-    this.control.addEventListener("input", () => this.emit("input", this.control?.value))
-    this.control.addEventListener("change", () => this.emit("change", this.control?.value))
-    this.replaceChildren(this.control)
-  }
-  public get value(): string { return this.control?.value ?? "" }
-  public set value(value: string) { if (this.control !== undefined) this.control.value = value }
-}
-
 export class MSelect extends MElement {
   private control?: HTMLSelectElement
   public connectedCallback(): void {
