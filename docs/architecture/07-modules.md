@@ -1,6 +1,6 @@
 # 7. Small core and selectable components
 
-**Implemented for the shared core, all seven initial families, Icon and Typography, with explicit payload ceilings.
+**Implemented for the shared core, all seven initial families, Icon, Typography and Space, with explicit payload ceilings.
 The rollout continues component-by-component.**
 Follow the useful jQuery/plugin pattern: load one small core, then only the features the
 application needs. This is a packaging and extension pattern, not a dependency on jQuery.
@@ -61,12 +61,12 @@ Keep approved budgets unless a measured change is explicitly accepted.
 
 The implemented entries are `@dataengine/markup-ui/core`, `@dataengine/markup-ui/avatar`,
 `@dataengine/markup-ui/button`, `@dataengine/markup-ui/card`, `@dataengine/markup-ui/carousel`,
-`@dataengine/markup-ui/collapse`, `@dataengine/markup-ui/divider`, `@dataengine/markup-ui/dropdown`
-`@dataengine/markup-ui/icon` and `@dataengine/markup-ui/typography`.
+`@dataengine/markup-ui/collapse`, `@dataengine/markup-ui/divider`, `@dataengine/markup-ui/dropdown`,
+`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography` and `@dataengine/markup-ui/space`.
 ESM uses `markup-ui-core.js`; classic scripts load `markup-ui-core.global.js` before
 `markup-ui-avatar.global.js`, `markup-ui-button.global.js`, `markup-ui-card.global.js`,
-`markup-ui-carousel.global.js`, `markup-ui-collapse.global.js`, `markup-ui-divider.global.js`
-`markup-ui-dropdown.global.js`, `markup-ui-icon.global.js` or `markup-ui-typography.global.js`.
+`markup-ui-carousel.global.js`, `markup-ui-collapse.global.js`, `markup-ui-divider.global.js`,
+`markup-ui-dropdown.global.js`, `markup-ui-icon.global.js`, `markup-ui-typography.global.js` or `markup-ui-space.global.js`.
 See the [API guide](../api/README.md) for exact exports and usage.
 
 ## References

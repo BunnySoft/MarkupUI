@@ -308,6 +308,10 @@
     "./list/style.css": "./dist/markup-ui-list.css",
     "./layout/style.css": "./dist/markup-ui-layout.css",
     "./grid/style.css": "./dist/markup-ui-grid.css",
+    "./space": {
+      "types": "./dist/components/space/index.d.ts",
+      "import": "./dist/markup-ui-space.js"
+    },
     "./space/style.css": "./dist/markup-ui-space.css",
     "./flex/style.css": "./dist/markup-ui-flex.css",
     "./divider": {

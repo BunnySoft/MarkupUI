@@ -1,33 +1,44 @@
-.m-space {
+m-space {
   --_m-space-row-gap: 8px;
   --_m-space-column-gap: 12px;
+  --_m-space-align: normal;
+  --_m-space-justify: flex-start;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  align-items: var(--m-space-align, normal);
-  justify-content: var(--m-space-justify, flex-start);
+  align-items: var(--m-space-align, var(--_m-space-align));
+  justify-content: var(--m-space-justify, var(--_m-space-justify));
   row-gap: var(--m-space-row-gap, var(--_m-space-row-gap));
   column-gap: var(--m-space-column-gap, var(--_m-space-column-gap));
   min-inline-size: 0;
   max-inline-size: 100%;
   overflow-wrap: anywhere;
 }
-.m-space > * { min-inline-size: 0; }
-.m-space > .m-space-item {
+m-space > * { min-inline-size: 0; }
+m-space > .m-space-item {
   box-sizing: border-box;
   max-inline-size: 100%;
 }
-.m-space[data-size="small"] {
+m-space[size="small"] {
   --_m-space-row-gap: 4px;
   --_m-space-column-gap: 8px;
 }
-.m-space[data-size="large"] {
+m-space[size="large"] {
   --_m-space-row-gap: 12px;
   --_m-space-column-gap: 16px;
 }
-.m-space[data-inline] { display: inline-flex; }
-.m-space[data-vertical] { flex-direction: column; }
-.m-space:is([data-vertical], [data-wrap="false"]) { flex-wrap: nowrap; }
-:where(.m-space, .m-space > *)[hidden]:not([hidden="until-found"]),
-template.m-space,
-.m-space > template { display: none !important; }
+m-space[inline] { display: inline-flex; }
+m-space[vertical] { flex-direction: column; }
+m-space:is([vertical], [wrap="false"]) { flex-wrap: nowrap; }
+m-space[align="start"] { --_m-space-align: flex-start; }
+m-space[align="end"] { --_m-space-align: flex-end; }
+m-space[align="center"] { --_m-space-align: center; }
+m-space[align="baseline"] { --_m-space-align: baseline; }
+m-space[align="stretch"] { --_m-space-align: stretch; }
+m-space[justify="end"] { --_m-space-justify: flex-end; }
+m-space[justify="center"] { --_m-space-justify: center; }
+m-space[justify="space-between"] { --_m-space-justify: space-between; }
+m-space[justify="space-around"] { --_m-space-justify: space-around; }
+m-space[justify="space-evenly"] { --_m-space-justify: space-evenly; }
+:where(m-space, m-space > *)[hidden]:not([hidden="until-found"]),
+m-space > template { display: none !important; }

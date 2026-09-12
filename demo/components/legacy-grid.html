@@ -8,12 +8,14 @@
   <link rel="stylesheet" href="../../dist/markup-ui-flex.css">
   <link rel="stylesheet" href="../../dist/markup-ui-space.css">
   <link rel="stylesheet" href="legacy-grid.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-space.global.js"></script>
 </head>
 <body>
   <main id="legacy-grid-example">
     <h1>Replace Legacy Row/Col with authored native layout</h1>
-    <p>These containers load the existing Grid, Flex and Space stylesheets. They do
-      not parse legacy props, breakpoint strings or Vue slots. Application CSS owns
+    <p>These containers load Grid/Flex CSS and canonical Space with its shared core,
+      family runtime and CSS. They do not parse legacy props, breakpoint strings or Vue slots. Application CSS owns
       the 48rem viewport and 30rem container thresholds below.</p>
     <nav class="m-flex migration-nav" aria-label="Native migration examples">
       <a href="#spans-title">Spans and native form</a>
@@ -44,10 +46,10 @@
             <label>Excluded value <input name="excluded" value="Not submitted"></label>
           </fieldset>
         </div>
-        <div id="form-actions" class="m-space" data-size="small">
-          <button class="m-space-item" type="reset" id="reset-notes">Reset native notes</button>
-          <a class="m-space-item" href="#layout-notes">Read form and ordering limits</a>
-        </div>
+        <m-space id="form-actions" size="small">
+          <button type="reset" id="reset-notes">Reset native notes</button>
+          <a href="#layout-notes">Read form and ordering limits</a>
+        </m-space>
       </form>
       <p>The hidden item occupies no layout/tab stop, but its named field remains
         in FormData. The disabled fieldset does not. No submit button is authored;

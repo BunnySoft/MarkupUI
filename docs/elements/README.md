@@ -24,7 +24,7 @@ Separate a defined or approved contract from implemented and validated code.
 All seven initial families use the thin shared core and source-generated demo API data.
 Avatar, Button, Card, Carousel, Collapse, Divider and Dropdown are implemented with
 approved payload ceilings.
-Icon and IconWrapper also follow this pattern; the inventory links to their current demo/API page.
+Icon/IconWrapper, Typography and Space also follow this pattern; the inventory links to their current demo/API pages.
 The initial batch establishes the pattern; the remaining inventory requires its own
 contracts and dependency-aware implementation sequence.
 

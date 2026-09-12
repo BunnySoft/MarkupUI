@@ -1,5 +1,8 @@
 # Space
 
+> The implemented ViewElement family now lives in the [Space demo and generated API](../../../demo/components/space.html).
+> The historical CSS-only audit below preserves layout evidence, not the current loading or property contract.
+
 > **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
 
 **Migration status: 🟢 Verified retained native CSS/item-composition scope.**
