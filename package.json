@@ -315,6 +315,10 @@
       "import": "./dist/markup-ui-breadcrumb.js"
     },
     "./breadcrumb/style.css": "./dist/markup-ui-breadcrumb.css",
+    "./timeline": {
+      "types": "./dist/components/timeline/index.d.ts",
+      "import": "./dist/markup-ui-timeline.js"
+    },
     "./timeline/style.css": "./dist/markup-ui-timeline.css",
     "./descriptions": {
       "types": "./dist/components/descriptions/index.d.ts",

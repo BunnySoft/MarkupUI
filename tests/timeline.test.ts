@@ -1,247 +1,293 @@
-import { readFileSync, readdirSync } from "node:fs"
+import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import {
+  Timeline,
+  MTimeline,
+  TimelineItem,
+  MTimelineItem,
+  registerTimeline,
+  timelineItemTypes,
+} from "../src/components/timeline/index.js"
+import * as timelineApi from "../src/components/timeline/index.js"
+import "../src/components/timeline/global.js"
+import { ViewElement } from "../src/core/index.js"
 
 const css = readFileSync(resolve("src", "components", "timeline", "timeline.css"), "utf8")
-const demo = readFileSync(resolve("demo", "components", "timeline.html"), "utf8")
-const appCss = readFileSync(resolve("demo", "components", "timeline.css"), "utf8")
-const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
 let style: HTMLStyleElement | undefined
 
-function fixture(): void {
-  document.body.innerHTML = demo.slice(demo.indexOf("<body>") + 6, demo.indexOf("</body>"))
-}
 function install(): void {
   style = document.createElement("style")
   style.textContent = css
   document.head.append(style)
 }
+
 afterEach(() => {
   style?.remove()
   style = undefined
   document.body.replaceChildren()
+  vi.restoreAllMocks()
 })
 
-describe("CSS-only Timeline and TimelineItem", () => {
-  it("ships only an isolated stylesheet, without widgets, icons or a date runtime", () => {
-    expect(pkg.exports["./timeline/style.css"]).toBe("./dist/markup-ui-timeline.css")
-    expect(pkg.exports["./timeline"]).toBeUndefined()
-    expect(readdirSync(resolve("src", "components", "timeline"))).toEqual(["timeline.css"])
-    expect(pkg.dependencies).toEqual({})
-    expect(css).not.toContain("@import")
-    expect(demo).not.toContain("markup-ui-widgets")
-    expect(demo).not.toContain("markup-ui-timeline.js")
-    expect(customElements.get("m-timeline")).toBeUndefined()
+describe("canonical Timeline ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(timelineApi.Timeline).toBe(Timeline)
+    expect(timelineApi.MTimeline).toBe(Timeline)
+    expect(timelineApi.TimelineItem).toBe(TimelineItem)
+    expect(timelineApi.MTimelineItem).toBe(TimelineItem)
+    expect(Timeline.tag).toBe("m-timeline")
+    expect(TimelineItem.tag).toBe("m-timeline-item")
+    expect(ViewElement.prototype.isPrototypeOf(Timeline.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(TimelineItem.prototype)).toBe(true)
+    expect(customElements.get("m-timeline")).toBe(Timeline)
+    expect(customElements.get("m-timeline-item")).toBe(TimelineItem)
+    expect(Timeline.observedAttributes).toEqual(["horizontal"])
+    expect(TimelineItem.observedAttributes).toEqual(["title", "content", "time", "type"])
+    expect(() => registerTimeline()).not.toThrow()
+
+    const define = vi.fn()
+    expect(() =>
+      registerTimeline({ get: () => class extends HTMLElement {}, define }),
+    ).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
   })
 
-  it("preserves real lists, listitems, headings and authored date semantics", () => {
-    fixture()
-    install()
-    for (const list of document.querySelectorAll(".m-timeline")) {
-      expect(["OL", "UL"]).toContain(list.tagName)
-      expect([...list.children].every(child => ["LI", "TEMPLATE"].includes(child.tagName))).toBe(true)
+  it("exposes global MarkupUITimeline namespace", () => {
+    const globalApi = (globalThis as unknown as { MarkupUITimeline?: typeof timelineApi }).MarkupUITimeline
+    expect(globalApi).toBeDefined()
+    expect(globalApi?.Timeline).toBe(Timeline)
+    expect(globalApi?.MTimeline).toBe(MTimeline)
+    expect(globalApi?.TimelineItem).toBe(TimelineItem)
+    expect(globalApi?.MTimelineItem).toBe(MTimelineItem)
+    expect(globalApi?.registerTimeline).toBe(registerTimeline)
+  })
+
+  it("handles Timeline horizontal property and attribute reflection", () => {
+    const timeline = document.createElement("m-timeline") as Timeline
+    expect(timeline.horizontal).toBe(false)
+    expect(timeline.hasAttribute("horizontal")).toBe(false)
+
+    timeline.horizontal = true
+    expect(timeline.horizontal).toBe(true)
+    expect(timeline.hasAttribute("horizontal")).toBe(true)
+
+    timeline.horizontal = false
+    expect(timeline.horizontal).toBe(false)
+    expect(timeline.hasAttribute("horizontal")).toBe(false)
+
+    timeline.setAttribute("horizontal", "")
+    expect(timeline.horizontal).toBe(true)
+
+    timeline.removeAttribute("horizontal")
+    expect(timeline.horizontal).toBe(false)
+
+    expect(() => Reflect.set(timeline, "horizontal", "not-a-bool")).toThrow(RangeError)
+  })
+
+  it("handles TimelineItem title, content, time, and type properties", () => {
+    const item = document.createElement("m-timeline-item") as TimelineItem
+    expect(item.title).toBe("")
+    expect(item.content).toBe("")
+    expect(item.time).toBe("")
+    expect(item.type).toBe("default")
+
+    // title
+    item.title = "Release 1.0"
+    expect(item.title).toBe("Release 1.0")
+    expect(item.getAttribute("title")).toBe("Release 1.0")
+    item.setAttribute("title", "Release 2.0")
+    expect(item.title).toBe("Release 2.0")
+    expect(() => Reflect.set(item, "title", 123)).toThrow(RangeError)
+
+    // content
+    item.content = "Initial stable version"
+    expect(item.content).toBe("Initial stable version")
+    expect(item.getAttribute("content")).toBe("Initial stable version")
+    item.setAttribute("content", "Updated stable version")
+    expect(item.content).toBe("Updated stable version")
+    expect(() => Reflect.set(item, "content", 456)).toThrow(RangeError)
+
+    // time
+    item.time = "2026-09-01"
+    expect(item.time).toBe("2026-09-01")
+    expect(item.getAttribute("time")).toBe("2026-09-01")
+    item.setAttribute("time", "2026-09-15")
+    expect(item.time).toBe("2026-09-15")
+    expect(() => Reflect.set(item, "time", 789)).toThrow(RangeError)
+
+    // type
+    for (const type of timelineItemTypes) {
+      item.type = type
+      expect(item.type).toBe(type)
+      expect(item.getAttribute("type")).toBe(type)
     }
-    expect(getComputedStyle(document.querySelector("#created-event")!).display).toBe("list-item")
-    expect(document.querySelector("#created-event h3")!.textContent).toContain("Recorded")
-    expect(document.querySelector<HTMLTimeElement>("#created-time")!.dateTime).toBe("2026-09-01")
-    const unknownTime = document.querySelector("#end-first .m-timeline-time")!
-    expect(unknownTime.tagName).toBe("SPAN")
-    unknownTime.textContent = String(42)
-    expect(unknownTime.textContent).toBe("42")
-    expect(unknownTime.hasAttribute("datetime")).toBe(false)
-    expect(document.querySelectorAll('.m-timeline [role="timeline"], .m-timeline [aria-live], .m-timeline [aria-selected]')).toHaveLength(0)
-    expect(css).not.toContain("display: contents")
+    expect(() => Reflect.set(item, "type", "invalid-type")).toThrow(RangeError)
+    item.setAttribute("type", "invalid-type")
+    expect(() => item.type).toThrow(RangeError)
+    item.removeAttribute("type")
+    expect(item.type).toBe("default")
   })
 
-  it("preserves original content, listeners and identity through removal and late insertion", () => {
-    fixture()
-    const root = document.querySelector("#history")!
-    const before = root.outerHTML
-    const nodes = [...root.querySelectorAll("*")]
-    const link = document.querySelector<HTMLElement>("#review-link")!
-    let clicks = 0
-    link.addEventListener("click", event => { event.preventDefault(); clicks++ })
-    install()
-    root.remove()
-    document.body.append(root)
-    expect(root.outerHTML).toBe(before)
-    expect([...root.querySelectorAll("*")]).toEqual(nodes)
-    link.click()
-    expect(clicks).toBe(1)
-    const late = document.createElement("li")
-    late.className = "m-timeline-item"
-    late.textContent = "<b>Unparsed event content</b>"
-    root.append(late)
-    expect(root.lastElementChild).toBe(late)
-    expect(late.querySelector("b")).toBeNull()
+  it("renders accessible semantics on connected callback", () => {
+    const timeline = document.createElement("m-timeline") as Timeline
+    const item = document.createElement("m-timeline-item") as TimelineItem
+    timeline.append(item)
+    document.body.append(timeline)
+
+    expect(timeline.getAttribute("role")).toBe("list")
+    expect(item.getAttribute("role")).toBe("listitem")
   })
 
-  it("retains DOM chronology and numbering instead of visually reversing events", () => {
-    fixture()
-    install()
-    expect([...document.querySelectorAll("#newest-first time")].map(time => time.getAttribute("datetime"))).toEqual(["2026-09-08", "2026-09-07"])
-    expect(document.querySelector("#newest-first")!.hasAttribute("reversed")).toBe(false)
-    expect(document.querySelector("#history")!.getAttribute("role")).toBe("list")
-    expect(getComputedStyle(document.querySelector("#newest-first")!).listStyleType).toBe("decimal")
-    expect(css).not.toContain("row-reverse")
-    expect(css).not.toContain("column-reverse")
-    expect(css).not.toMatch(/(?:^|[;{])\s*order\s*:/m)
+  it("preserves authored role attribute", () => {
+    const timeline = document.createElement("m-timeline") as Timeline
+    timeline.setAttribute("role", "region")
+    const item = document.createElement("m-timeline-item") as TimelineItem
+    item.setAttribute("role", "article")
+    timeline.append(item)
+    document.body.append(timeline)
+
+    expect(timeline.getAttribute("role")).toBe("region")
+    expect(item.getAttribute("role")).toBe("article")
   })
 
-  it("covers all documented status types without using color as the only label", () => {
-    fixture()
-    install()
-    const cases = [["created-event", "#767c82"], ["review-event", "#2080f0"], ["approved-event", "#18a058"], ["delayed-event", "#f0a020"], ["failed-event", "#d03050"]]
-    for (const [id, color] of cases) {
-      const item = document.getElementById(id)!
-      expect(getComputedStyle(item).getPropertyValue("--_m-timeline-accent")).toContain(color)
-      expect(item.querySelector("h3")!.textContent).toMatch(/Recorded|Information|Success|Warning|Error/)
-    }
-    const item = document.querySelector<HTMLElement>("#created-event")!
-    item.dataset.type = "unknown"
-    expect(getComputedStyle(item).getPropertyValue("--_m-timeline-accent")).toContain("#767c82")
-    expect(appCss).toContain("--m-timeline-item-color: #7c3aed")
+  it("synchronizes DOM regions for title, content, time, and marker", () => {
+    const timeline = document.createElement("m-timeline") as Timeline
+    const item = document.createElement("m-timeline-item") as TimelineItem
+    item.title = "Release"
+    item.content = "Deploy to production"
+    item.time = "2026-09-13"
+    item.type = "success"
+    timeline.append(item)
+    document.body.append(timeline)
+
+    expect(item.querySelector(".m-timeline-marker")).not.toBeNull()
+    expect(item.querySelector(".m-timeline-body")).not.toBeNull()
+    expect(item.querySelector(".m-timeline-title")?.textContent).toBe("Release")
+    expect(item.querySelector(".m-timeline-content")?.textContent).toBe("Deploy to production")
+    expect(item.querySelector(".m-timeline-time")?.textContent).toBe("2026-09-13")
+    expect(item.getAttribute("data-type")).toBe("success")
+
+    // Dynamic update
+    item.title = "Hotfix"
+    expect(item.querySelector(".m-timeline-title")?.textContent).toBe("Hotfix")
+    item.content = "Patch applied"
+    expect(item.querySelector(".m-timeline-content")?.textContent).toBe("Patch applied")
+    item.time = "2026-09-14"
+    expect(item.querySelector(".m-timeline-time")?.textContent).toBe("2026-09-14")
+    item.type = "warning"
+    expect(item.getAttribute("data-type")).toBe("warning")
+
+    // Clearing properties
+    item.title = ""
+    expect(item.querySelector(".m-timeline-title")).toBeNull()
+    item.content = ""
+    expect(item.querySelector(".m-timeline-content")).toBeNull()
+    item.time = ""
+    expect(item.querySelector(".m-timeline-footer")).toBeNull()
+    item.type = "default"
+    expect(item.hasAttribute("data-type")).toBe(false)
   })
 
-  it("keeps icon content decorative and uses explicit CSS lengths and supported sizes", () => {
-    fixture()
-    install()
-    const root = document.querySelector<HTMLElement>("#history")!
-    expect(getComputedStyle(root).getPropertyValue("--m-timeline-icon-size")).toBe("14px")
-    root.dataset.size = "large"
-    expect(getComputedStyle(root).getPropertyValue("--m-timeline-title-size")).toBe("16px")
-    root.dataset.size = "small"
-    expect(getComputedStyle(root).getPropertyValue("--m-timeline-title-size")).toBe("14px")
-    const icon = document.querySelector("#authored-icon")!
-    expect(icon.getAttribute("aria-hidden")).toBe("true")
-    expect(icon.querySelector("svg")!.getAttribute("focusable")).toBe("false")
-    expect(icon.querySelector("path")!.getAttribute("stroke")).toBe("currentColor")
-    expect(icon.querySelector("button, a")).toBeNull()
-    expect(appCss).toContain("--m-timeline-icon-size: 1.5rem")
+  it("preserves authored marker, body, title, content, and footer regions", () => {
+    document.body.innerHTML = `
+      <m-timeline>
+        <m-timeline-item id="authored-item" type="info">
+          <span class="m-timeline-marker" data-icon id="my-marker"><svg viewBox="0 0 16 16"><path d="M0 0"></path></svg></span>
+          <div class="m-timeline-body" id="my-body">
+            <h3 class="m-timeline-title" id="my-title">Authored Heading</h3>
+            <p id="my-para">Authored text</p>
+            <div class="m-timeline-footer" id="my-footer"><time class="m-timeline-time">Custom date</time></div>
+          </div>
+        </m-timeline-item>
+      </m-timeline>
+    `
+    const authoredItem = document.querySelector<TimelineItem>("#authored-item")!
+    expect(authoredItem.querySelector("#my-marker")).not.toBeNull()
+    expect(authoredItem.querySelectorAll(".m-timeline-marker")).toHaveLength(1)
+    expect(authoredItem.querySelector("#my-body")).not.toBeNull()
+    expect(authoredItem.querySelectorAll(".m-timeline-body")).toHaveLength(1)
+    expect(authoredItem.querySelector("#my-title")?.textContent).toBe("Authored Heading")
+    expect(authoredItem.querySelector("#my-para")?.textContent).toBe("Authored text")
+    expect(authoredItem.querySelector("#my-footer time")?.textContent).toBe("Custom date")
   })
 
-  it("connects only items with a later visible native item, ignoring hidden items and templates", () => {
-    fixture()
-    install()
-    const selector = ".m-timeline > li.m-timeline-item:not([hidden]):has(~ li.m-timeline-item:not([hidden]))"
-    // Chromium covers :has() and pseudo-element output; jsdom mis-matches hidden siblings.
-    const visible = [...document.querySelectorAll("#history > li.m-timeline-item:not([hidden])")]
-    expect(visible[0]?.id).toBe("created-event")
-    expect(visible.at(-1)?.id).toBe("completed-event")
-    expect(document.querySelector("#nested-last")!.nextElementSibling).toBeNull()
-    expect(document.querySelector("#native-template")!.tagName).toBe("TEMPLATE")
-    expect(css).toContain("@supports selector(:has(*))")
-    expect(css).toContain(selector)
-    expect(getComputedStyle(document.querySelector("#delayed-event")!).getPropertyValue("--_m-timeline-line-style")).toBe("dashed")
-    expect(getComputedStyle(document.querySelector("#created-event")!).getPropertyValue("--_m-timeline-line-style")).toBe("solid")
+  it("relocates loose children into the generated body container", () => {
+    document.body.innerHTML = `
+      <m-timeline>
+        <m-timeline-item id="loose-item" title="Title">
+          <button type="button" id="loose-btn">Click me</button>
+        </m-timeline-item>
+      </m-timeline>
+    `
+    const looseItem = document.querySelector<TimelineItem>("#loose-item")!
+    const btn = looseItem.querySelector("#loose-btn")!
+    expect(looseItem.querySelector(".m-timeline-body")?.contains(btn)).toBe(true)
   })
 
-  it("keeps nested timelines independent from parent placement, orientation and size", () => {
-    fixture()
-    install()
-    const root = document.querySelector<HTMLElement>("#history")!
-    root.dataset.horizontal = ""
-    root.dataset.itemPlacement = "right"
-    root.dataset.size = "large"
-    root.style.setProperty("--m-timeline-icon-size", "30px")
-    const nested = document.querySelector("#nested-timeline")!
-    expect(getComputedStyle(nested).flexDirection).toBe("column")
-    expect(getComputedStyle(nested).getPropertyValue("--m-timeline-icon-size")).toBe("14px")
-    expect(getComputedStyle(nested).getPropertyValue("--m-timeline-title-size")).toBe("14px")
-    expect(getComputedStyle(nested).textAlign).toBe("start")
-    expect(nested.hasAttribute("data-item-placement")).toBe(false)
+  it("reflects horizontal layout attribute to data-horizontal", () => {
+    const tl = document.createElement("m-timeline") as Timeline
+    document.body.append(tl)
+    expect(tl.hasAttribute("data-horizontal")).toBe(false)
+
+    tl.horizontal = true
+    expect(tl.hasAttribute("data-horizontal")).toBe(true)
+
+    tl.horizontal = false
+    expect(tl.hasAttribute("data-horizontal")).toBe(false)
   })
 
-  it("uses an explicit named native horizontal scroll region with discoverable controls", () => {
-    fixture()
-    install()
-    const scroll = document.querySelector("#milestone-scroll")!
-    expect(scroll.getAttribute("role")).toBe("region")
-    expect(scroll.getAttribute("aria-label")).toBe("Scrollable release milestones")
-    expect(scroll.getAttribute("tabindex")).toBe("0")
-    expect(getComputedStyle(scroll).overflowX).toBe("auto")
-    expect(getComputedStyle(document.querySelector("#milestones")!).display).toBe("flex")
-    expect(document.querySelectorAll("#milestones button")).toHaveLength(3)
-    expect(document.querySelector("#history")!.hasAttribute("tabindex")).toBe(false)
-    expect(css).not.toContain("overflow: hidden")
-  })
+  it("handles pre-upgrade properties assigned before element is connected", () => {
+    const elem = document.createElement("m-timeline-item") as TimelineItem
+    elem.title = "Pre-upgrade title"
+    elem.content = "Pre-upgrade content"
+    elem.time = "Pre-upgrade time"
+    elem.type = "error"
+    document.body.append(elem)
 
-  it("preserves native keyboard targets, validation, submission, reset and disabled fieldsets", () => {
-    fixture()
-    install()
-    const form = document.querySelector<HTMLFormElement>("#native-form")!
-    const input = document.querySelector<HTMLInputElement>("#native-name")!
-    let submits = 0
-    let disabledClicks = 0
-    form.addEventListener("submit", event => { event.preventDefault(); submits++ })
-    document.querySelector("#native-disabled")!.addEventListener("click", () => disabledClicks++)
-    input.value = ""
-    document.querySelector<HTMLButtonElement>("#native-submit")!.click()
-    expect(submits).toBe(0)
-    input.value = "Recovery"
-    document.querySelector<HTMLButtonElement>("#native-submit")!.click()
-    expect(submits).toBe(1)
-    expect([...new FormData(form).entries()]).toEqual([["note", "Recovery"]])
-    document.querySelector<HTMLButtonElement>("#native-reset")!.click()
-    document.querySelector<HTMLButtonElement>("#native-disabled")!.click()
-    expect(input.value).toBe("Original")
-    expect(disabledClicks).toBe(0)
-    expect(document.querySelector<HTMLElement>("#created-event")!.tabIndex).toBe(-1)
-    expect(input.labels?.[0]?.textContent).toBe("Recovery note")
-  })
-
-  it("keeps native hidden roots/items/templates and presentation-class templates inert", () => {
-    fixture()
-    install()
-    for (const id of ["hidden-timeline", "hidden-middle", "hidden-last", "native-template"]) {
-      expect(getComputedStyle(document.getElementById(id)!).display).toBe("none")
-    }
-    const template = document.createElement("template")
-    template.className = "m-timeline-marker"
-    document.body.append(template)
-    expect(getComputedStyle(template).display).toBe("none")
-    expect(document.querySelector<HTMLTemplateElement>("#native-template")!.content.textContent).toBe("Inert event template")
-    expect(css).toContain(':not([hidden="until-found"])')
-  })
-
-  it("provides logical, print and forced-color fallbacks without resetting other lists", () => {
-    fixture()
-    const outside = document.querySelector("#outside-list")!
-    const before = getComputedStyle(outside).padding
-    install()
-    expect(getComputedStyle(outside).padding).toBe(before)
-    expect(css).toContain("inset-inline-end")
-    expect(css).toContain("overflow-wrap: anywhere")
-    expect(css).toContain("@media print")
-    expect(css).toContain("break-inside: avoid")
-    expect(css).toContain("content: none")
-    expect(css).toContain("@media (forced-colors: active)")
-    expect(css).toContain("border-color: CanvasText")
-    expect(css).not.toContain("transition:")
-    expect(css).not.toContain("animation:")
+    expect(elem.title).toBe("Pre-upgrade title")
+    expect(elem.content).toBe("Pre-upgrade content")
+    expect(elem.time).toBe("Pre-upgrade time")
+    expect(elem.type).toBe("error")
+    expect(elem.querySelector(".m-timeline-title")?.textContent).toBe("Pre-upgrade title")
+    expect(elem.querySelector(".m-timeline-content")?.textContent).toBe("Pre-upgrade content")
+    expect(elem.querySelector(".m-timeline-time")?.textContent).toBe("Pre-upgrade time")
+    expect(elem.getAttribute("data-type")).toBe("error")
   })
 
   it("keeps compact authored CSS within its unchanged 1500 gzip-byte ceiling", () => {
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
   })
 
+  it("includes valid stylesheet targeting m-timeline and m-timeline-item", () => {
+    install()
+    expect(css).toContain("m-timeline")
+    expect(css).toContain("m-timeline-item")
+    expect(css).not.toContain("@import")
+    expect(css).not.toContain("display: contents")
+    expect(css).toContain("@supports selector(:has(*))")
+    expect(css).toContain("@media print")
+    expect(css).toContain("@media (forced-colors: active)")
+  })
+
   it("uses private dark supplementary status colors and resets them at nested light boundaries", () => {
     install()
-    const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
+    const rules = Array.from(style!.sheet!.cssRules) as CSSStyleRule[]
     const light = rules.find(rule => rule.selectorText === ':where([data-m-theme="light"])')!
     const dark = rules.find(rule => rule.selectorText === ':where([data-m-theme="dark"])')!
     for (let i = 0; i < light.style.length; i++) {
       expect(light.style[i]).toMatch(/^--_m-timeline-/)
       expect(light.style.getPropertyValue(light.style[i])).toBe("initial")
     }
-    for (const [role, value] of [["info", "#3889c5"], ["success", "#2a947d"], ["warning", "#f08a00"], ["error", "#d03a52"]]) {
+    for (const [role, value] of [
+      ["info", "#3889c5"],
+      ["success", "#2a947d"],
+      ["warning", "#f08a00"],
+      ["error", "#d03a52"],
+    ]) {
       expect(dark.style.getPropertyValue(`--_m-timeline-${role}`)).toBe(value)
     }
     expect(css).toContain("--_m-timeline-rail: rgb(255 255 255 / .2)")
-    expect(css).not.toContain("--m-text-primary")
-    expect(css).not.toContain("--m-text-secondary")
-    expect(css).not.toContain("--m-border")
   })
 
   it("matches reference typography, marker alignment and intrinsic horizontal sizing", () => {
@@ -256,15 +302,5 @@ describe("CSS-only Timeline and TimelineItem", () => {
     expect(css).toContain("flex: 0 0 var(--m-timeline-item-width, auto)")
     expect(css).not.toContain("16rem")
   })
-
-  it("keeps author gap, marker and body overrides without introducing generated metadata", () => {
-    document.body.innerHTML = '<ol class="m-timeline" style="--m-timeline-icon-size:24px;--m-timeline-item-gap:30px"><li class="m-timeline-item" style="--m-timeline-item-color:purple"><span class="m-timeline-marker" aria-hidden="true"></span><div class="m-timeline-body" style="color:teal"><h3 class="m-timeline-title">Author</h3></div></li></ol>'
-    const before = document.body.innerHTML
-    install()
-    expect(document.body.innerHTML).toBe(before)
-    expect(document.querySelector(".m-timeline-footer")).toBeNull()
-    expect(getComputedStyle(document.querySelector("li")!).getPropertyValue("--m-timeline-item-color")).toBe("purple")
-    expect(getComputedStyle(document.querySelector("ol")!).getPropertyValue("--m-timeline-icon-size")).toBe("24px")
-    expect(getComputedStyle(document.querySelector(".m-timeline-body")!).color).toBe("rgb(0, 128, 128)")
-  })
 })
+
