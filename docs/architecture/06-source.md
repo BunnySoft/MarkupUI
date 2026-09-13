@@ -101,6 +101,13 @@ and never inspect, measure or replace children. Existing native `.m-grid` CSS co
 supported; the competing aggregate `MGrid` is removed while pending Layout aliases remain.
 See the [Grid demo/API](../../demo/components/grid.html) for the native CSS scope.
 
+Layout's direct shell properties live in `src/components/layout/layout.ts`; `regions.ts`
+owns `LayoutHeader`, `LayoutContent`, `LayoutFooter` and `LayoutSider`. Its pure `model.ts`
+tag predicate defines the five layout tags without importing constructors or registration.
+Layout elements use native CSS flex shells, borders, sidebar placement, embedded backgrounds
+and positioning without measuring children or creating synthetic landmarks. Competing aggregate
+`MLayout` is removed from `content.ts`. See the [Layout demo/API](../../demo/components/layout.html).
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed

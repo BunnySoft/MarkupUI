@@ -52,6 +52,30 @@ afterEach(() => {
 })
 
 describe("metadata-based component documentation", () => {
+  it("extracts Layout and companion regions without inventing collapse or scrollbar APIs", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["layout"])
+    expect(docs.elements.map((element: any) => element.type)).toEqual([
+      "Layout", "LayoutHeader", "LayoutContent", "LayoutFooter", "LayoutSider",
+    ])
+    const [layout, header, content, footer, sider] = docs.elements
+    expect(layout.properties.hasSider).toMatchObject({ default: false, encoding: "presence", attribute: "has-sider" })
+    expect(layout.properties.embedded).toMatchObject({ default: false, encoding: "presence", attribute: "embedded" })
+    expect(layout.properties.position).toMatchObject({ default: "static", attribute: "position" })
+    expect(header.properties.bordered).toMatchObject({ default: false, encoding: "presence", attribute: "bordered" })
+    expect(header.properties.inverted).toMatchObject({ default: false, encoding: "presence", attribute: "inverted" })
+    expect(content.properties.embedded).toMatchObject({ default: false, encoding: "presence", attribute: "embedded" })
+    expect(footer.properties.bordered).toMatchObject({ default: false, encoding: "presence", attribute: "bordered" })
+    expect(sider.properties.side).toMatchObject({ default: "start", attribute: "side" })
+    expect(sider.properties.width).toMatchObject({ default: null, nullable: true, min: 0 })
+    expect(sider.properties.collapsedWidth).toMatchObject({ default: null, nullable: true, min: 0 })
+    expect(sider.properties.collapsed).toMatchObject({ default: false, encoding: "presence" })
+    for (const element of docs.elements) { expect(element.actions).toEqual([]); expect(element.events).toEqual([]) }
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.textContent).toContain("LayoutSider")
+    expect(target.textContent).toContain("m-layout-header")
+  })
+
   it("extracts Grid configured values and native placement without inventing responsive or offset APIs", async () => {
     const [docs] = await generateComponentApi(resolve("."), ["grid"])
     expect(docs.elements.map((element: any) => element.type)).toEqual(["Grid", "GridItem"])

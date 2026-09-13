@@ -1,8 +1,8 @@
 # Layout and companion regions
 
-> **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
+> **Historical reference.** Preserved from the previous documentation layout. The active ViewElement implementation and API are documented on the [Layout demo and API](../../../demo/components/layout.html) page.
 
-**Migration status: 🟢 Verified for the retained native scope.**
+**Migration status: 🟢 Migrated to ViewElement.**
 Layout, Content, Header, Footer and Sider are CSS-only compositions of ordinary HTML.
 There is no component controller, registration, provider, custom scrollbar or generated
 application shell.
@@ -224,4 +224,4 @@ that the new coordinated build has already passed.
 
 ## Current documentation
 
-[Read the current design](../../elements/03-inventory.md).
+See the active [Layout demo and API](../../../demo/components/layout.html) and [element inventory](../../elements/03-inventory.md).

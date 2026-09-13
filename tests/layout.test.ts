@@ -1,13 +1,26 @@
-import { readFileSync, readdirSync } from "node:fs"
-import { resolve } from "node:path"
+import { readFileSync } from "node:fs"
 import { gzipSync } from "node:zlib"
-import { afterEach, describe, expect, it } from "vitest"
+import { createContext, runInContext } from "node:vm"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import {
+  Layout,
+  LayoutContent,
+  LayoutFooter,
+  LayoutHeader,
+  LayoutSider,
+  isLayoutElement,
+  layoutPositions,
+  registerLayout,
+  siderSides,
+} from "../src/components/layout/index.js"
+import * as layoutApi from "../src/components/layout/index.js"
+import { ViewElement } from "../src/core/index.js"
 
-const css = readFileSync(resolve("src", "components", "layout", "layout.css"), "utf8")
-const demo = readFileSync(resolve("demo", "components", "layout.html"), "utf8")
-const appCss = readFileSync(resolve("demo", "components", "layout.css"), "utf8")
-const app = readFileSync(resolve("demo", "components", "layout.js"), "utf8")
-const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
+const css = readFileSync("src\\components\\layout\\layout.css", "utf8")
+const demo = readFileSync("demo\\components\\layout.html", "utf8")
+const appCss = readFileSync("demo\\components\\layout.css", "utf8")
+const app = readFileSync("demo\\components\\layout.js", "utf8")
+const pkg = JSON.parse(readFileSync("package.json", "utf8"))
 let style: HTMLStyleElement | undefined
 
 function fixture(): void {
@@ -22,16 +35,176 @@ afterEach(() => {
   style?.remove()
   style = undefined
   document.body.replaceChildren()
+  vi.restoreAllMocks()
 })
 
-describe("CSS-only native Layout", () => {
-  it("ships only CSS with no registration, provider or scrollbar dependency", () => {
-    expect(pkg.exports["./layout/style.css"]).toBe("./dist/markup-ui-layout.css")
-    expect(pkg.exports["./layout"]).toBeUndefined()
-    expect(readdirSync(resolve("src", "components", "layout"))).toEqual(["layout.css"])
-    expect(css).not.toContain("@import")
-    expect(demo).not.toContain("markup-ui-layout.js")
-    expect(customElements.get("m-layout")).toBeUndefined()
+describe("direct native Layout family", () => {
+  it("registers exactly the family with own tags, shared core and atomic conflicts", () => {
+    expect(Object.keys(layoutApi).sort()).toEqual([
+      "Layout",
+      "LayoutContent",
+      "LayoutFooter",
+      "LayoutHeader",
+      "LayoutSider",
+      "isLayoutElement",
+      "layoutPositions",
+      "registerLayout",
+      "siderSides",
+    ])
+    const classes = [Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider]
+    for (const type of classes) {
+      expect(Object.hasOwn(type, "tag")).toBe(true)
+      expect(type.prototype instanceof ViewElement).toBe(true)
+      expect(customElements.get(type.tag)).toBe(type)
+      expect("meta" in type).toBe(false)
+    }
+    expect(Layout.observedAttributes).toEqual(["has-sider", "embedded", "position"])
+    expect(LayoutContent.observedAttributes).toEqual(["embedded", "position"])
+    expect(LayoutHeader.observedAttributes).toEqual(["bordered", "inverted", "position"])
+    expect(LayoutFooter.observedAttributes).toEqual(["bordered", "inverted", "position"])
+    expect(LayoutSider.observedAttributes).toEqual(["bordered", "inverted", "position", "side", "width", "collapsed-width", "collapsed"])
+
+    const define = vi.fn()
+    expect(() => registerLayout({ get: name => name === "m-layout-sider" ? class extends HTMLElement {} : undefined, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerLayout()).not.toThrow()
+  })
+
+  it("retains native defaults, flow positioning and null dimensions", () => {
+    const layout = new Layout()
+    const content = new LayoutContent()
+    const header = new LayoutHeader()
+    const footer = new LayoutFooter()
+    const sider = new LayoutSider()
+
+    expect([layout.hasSider, layout.embedded, layout.position]).toEqual([false, false, "static"])
+    expect([content.embedded, content.position]).toEqual([false, "static"])
+    expect([header.bordered, header.inverted, header.position]).toEqual([false, false, "static"])
+    expect([footer.bordered, footer.inverted, footer.position]).toEqual([false, false, "static"])
+    expect([sider.bordered, sider.inverted, sider.position, sider.side, sider.width, sider.collapsedWidth, sider.collapsed]).toEqual([
+      false, false, "static", "start", null, null, false,
+    ])
+
+    layout.append(header, sider, content, footer)
+    document.body.append(layout)
+    install()
+
+    expect(layout.attributes).toHaveLength(0)
+    expect(content.attributes).toHaveLength(0)
+    expect(header.attributes).toHaveLength(0)
+    expect(footer.attributes).toHaveLength(0)
+    expect(sider.attributes).toHaveLength(0)
+
+    const layoutStyle = getComputedStyle(layout)
+    expect(layoutStyle.display).toBe("flex")
+    expect(layoutStyle.flexDirection).toBe("column")
+    expect(getComputedStyle(sider).inlineSize).toBe("var(--_m-layout-sider-width, var(--m-layout-sider-width, 272px))")
+  })
+
+  it("accepts typed choices and validates setters before mutation", () => {
+    const layout = new Layout()
+    layout.hasSider = true
+    expect(layout.hasSider).toBe(true)
+    expect(layout.getAttribute("has-sider")).toBe("")
+    layout.hasSider = false
+    expect(layout.hasSider).toBe(false)
+    expect(layout.hasAttribute("has-sider")).toBe(false)
+
+    layout.embedded = true
+    expect(layout.embedded).toBe(true)
+    expect(layout.getAttribute("embedded")).toBe("")
+    layout.embedded = false
+    expect(layout.hasAttribute("embedded")).toBe(false)
+
+    for (const pos of layoutPositions) {
+      layout.position = pos
+      expect(layout.position).toBe(pos)
+      expect(layout.getAttribute("position")).toBe(pos)
+    }
+
+    expect(() => { (layout as any).hasSider = "yes" }).toThrow(RangeError)
+    expect(() => { (layout as any).embedded = 123 }).toThrow(RangeError)
+    expect(() => { (layout as any).position = "fixed" }).toThrow(RangeError)
+
+    const sider = new LayoutSider()
+    sider.bordered = true
+    expect(sider.bordered).toBe(true)
+    sider.inverted = true
+    expect(sider.inverted).toBe(true)
+    sider.collapsed = true
+    expect(sider.collapsed).toBe(true)
+
+    for (const side of siderSides) {
+      sider.side = side
+      expect(sider.side).toBe(side)
+      expect(sider.getAttribute("side")).toBe(side)
+    }
+    expect(() => { (sider as any).side = "left" }).toThrow(RangeError)
+
+    sider.width = 300
+    expect(sider.width).toBe(300)
+    expect(sider.getAttribute("width")).toBe("300")
+    sider.width = null
+    expect(sider.width).toBeNull()
+    expect(sider.hasAttribute("width")).toBe(false)
+
+    sider.collapsedWidth = 60
+    expect(sider.collapsedWidth).toBe(60)
+    expect(sider.getAttribute("collapsed-width")).toBe("60")
+    sider.collapsedWidth = null
+    expect(sider.collapsedWidth).toBeNull()
+    expect(sider.hasAttribute("collapsed-width")).toBe(false)
+
+    expect(() => { sider.width = -10 }).toThrow(RangeError)
+    expect(() => { sider.width = NaN }).toThrow(RangeError)
+    expect(() => { sider.collapsedWidth = -5 }).toThrow(RangeError)
+  })
+
+  it("replays pre-upgrade properties in prototype order", () => {
+    const element = document.createElement("m-layout") as Layout
+    element.hasSider = true
+    element.embedded = true
+    element.position = "absolute"
+    document.body.append(element)
+    expect(element.hasSider).toBe(true)
+    expect(element.embedded).toBe(true)
+    expect(element.position).toBe("absolute")
+    expect(element.getAttribute("has-sider")).toBe("")
+    expect(element.getAttribute("embedded")).toBe("")
+    expect(element.getAttribute("position")).toBe("absolute")
+
+    const siderEl = document.createElement("m-layout-sider") as LayoutSider
+    siderEl.bordered = true
+    siderEl.side = "end"
+    siderEl.width = 250
+    document.body.append(siderEl)
+    expect(siderEl.bordered).toBe(true)
+    expect(siderEl.side).toBe("end")
+    expect(siderEl.width).toBe(250)
+    expect(siderEl.style.getPropertyValue("--_m-layout-sider-width")).toBe("250px")
+  })
+
+  it("writes sider dimensions via owned styles and restores on disconnect", () => {
+    const sider = new LayoutSider()
+    sider.width = 320
+    sider.collapsedWidth = 64
+    document.body.append(sider)
+    expect(sider.style.getPropertyValue("--_m-layout-sider-width")).toBe("320px")
+    expect(sider.style.getPropertyValue("--_m-layout-sider-collapsed-width")).toBe("64px")
+
+    sider.remove()
+    expect(sider.style.getPropertyValue("--_m-layout-sider-width")).toBe("")
+    expect(sider.style.getPropertyValue("--_m-layout-sider-collapsed-width")).toBe("")
+  })
+
+  it("identifies layout elements with isLayoutElement", () => {
+    expect(isLayoutElement(new Layout())).toBe(true)
+    expect(isLayoutElement(new LayoutHeader())).toBe(true)
+    expect(isLayoutElement(new LayoutContent())).toBe(true)
+    expect(isLayoutElement(new LayoutFooter())).toBe(true)
+    expect(isLayoutElement(new LayoutSider())).toBe(true)
+    expect(isLayoutElement(document.createElement("div"))).toBe(false)
+    expect(isLayoutElement(document.createElement("m-grid"))).toBe(false)
   })
 
   it("preserves authored landmarks, content and native element identity", () => {
@@ -219,5 +392,98 @@ describe("CSS-only native Layout", () => {
     expect(getComputedStyle(header).color).toBe("rgb(128, 0, 128)")
     expect(getComputedStyle(header).backgroundColor).toBe("rgb(255, 255, 240)")
     expect(getComputedStyle(header).getPropertyValue("--m-layout-background")).toBe("ivory")
+  })
+})
+
+describe("Layout documentation and selected delivery", () => {
+  it("generates the exact configured API and defaults from source", () => {
+    const docs = JSON.parse(readFileSync("demo\\api\\layout.json", "utf8"))
+    expect(docs.elements.map((element: any) => element.type)).toEqual([
+      "Layout", "LayoutHeader", "LayoutContent", "LayoutFooter", "LayoutSider",
+    ])
+    const [layout, header, content, footer, sider] = docs.elements
+    expect(Object.keys(layout.properties)).toEqual(["hasSider", "embedded", "position"])
+    expect(layout.properties.hasSider).toMatchObject({ default: false, encoding: "presence", attribute: "has-sider" })
+    expect(layout.properties.embedded).toMatchObject({ default: false, encoding: "presence", attribute: "embedded" })
+    expect(layout.properties.position).toMatchObject({ default: "static", attribute: "position" })
+
+    expect(Object.keys(header.properties)).toEqual(["bordered", "inverted", "position"])
+    expect(header.properties.bordered).toMatchObject({ default: false, encoding: "presence", attribute: "bordered" })
+    expect(header.properties.inverted).toMatchObject({ default: false, encoding: "presence", attribute: "inverted" })
+
+    expect(Object.keys(content.properties)).toEqual(["embedded", "position"])
+    expect(content.properties.embedded).toMatchObject({ default: false, encoding: "presence", attribute: "embedded" })
+
+    expect(Object.keys(footer.properties)).toEqual(["bordered", "inverted", "position"])
+    expect(footer.properties.bordered).toMatchObject({ default: false, encoding: "presence", attribute: "bordered" })
+
+    expect(Object.keys(sider.properties)).toEqual(["bordered", "inverted", "position", "side", "width", "collapsedWidth", "collapsed"])
+    expect(sider.properties.side).toMatchObject({ default: "start", attribute: "side" })
+    expect(sider.properties.width).toMatchObject({ default: null, nullable: true, min: 0 })
+    expect(sider.properties.collapsedWidth).toMatchObject({ default: null, nullable: true, min: 0 })
+    expect(sider.properties.collapsed).toMatchObject({ default: false, encoding: "presence" })
+
+    for (const el of docs.elements) {
+      expect(el.events).toEqual([])
+      expect(el.actions).toEqual([])
+    }
+  })
+
+  it("uses shared demo/API/code/outline assets and real canonical examples", () => {
+    const parsed = new DOMParser().parseFromString(demo, "text/html")
+    expect(parsed.querySelector("main[data-demo-page].component-docs #layout-api")).not.toBeNull()
+    const examples = parsed.querySelectorAll("[data-demo-example]")
+    expect(examples.length).toBeGreaterThanOrEqual(5)
+    for (const example of examples) {
+      expect(example.querySelector("[data-demo-header] h2[id]")).not.toBeNull()
+      expect(example.querySelector("[data-demo-preview]")).not.toBeNull()
+    }
+    const setup = parsed.querySelector("details.component-setup")!
+    expect(setup.querySelector("code")!.textContent!.split("\n")).toHaveLength(3)
+    expect(setup.querySelector("a")!.getAttribute("href")).toBe("../setup.html")
+    for (const asset of ["../example-code.css", "../component-api.css", "../component-outline.js"]) expect(demo).toContain(asset)
+    expect(readFileSync("demo\\components\\layout.js", "utf8")).toContain("loadComponentApi")
+  })
+
+  it("ships exactly core plus Layout, fails without core and rejects duplicate classic registration", () => {
+    expect(pkg.exports["./layout"]).toEqual({ types: "./dist/components/layout/index.d.ts", import: "./dist/markup-ui-layout.js" })
+    expect(pkg.exports["./layout/style.css"]).toBe("./dist/markup-ui-layout.css")
+    const script = readFileSync("dist\\markup-ui-layout.global.js", "utf8")
+    expect(() => runInContext(script, createContext({ HTMLElement }))).toThrow("Load compatible markup-ui-core.global.js")
+
+    const entries = new Map<string, unknown>()
+    const context = createContext({
+      HTMLElement,
+      customElements: {
+        get: (name: string) => entries.get(name),
+        define: (name: string, type: unknown) => entries.set(name, type),
+      },
+    })
+    runInContext(readFileSync("dist\\markup-ui-core.global.js", "utf8"), context)
+    runInContext(script, context)
+    expect([...entries.keys()].sort()).toEqual([
+      "m-layout",
+      "m-layout-content",
+      "m-layout-footer",
+      "m-layout-header",
+      "m-layout-sider",
+    ])
+    expect(() => runInContext(script, context)).toThrow("already defined")
+    const esm = readFileSync("dist\\markup-ui-layout.js", "utf8")
+    expect(esm).toContain('"./markup-ui-core.js"')
+    expect(esm).not.toMatch(/MutationObserver|ResizeObserver/)
+  })
+
+  it("accounts for delivery payload, manifest and build budgets", () => {
+    const manifest = JSON.parse(readFileSync("dist\\manifest.json", "utf8"))
+    for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]] as const) {
+      const payload = manifest.componentPayloads.layout[mode]
+      expect(payload.file).toBe(`markup-ui-layout${suffix}`)
+      expect(payload.dependencies).toEqual([`markup-ui-core${suffix}`])
+      expect(payload.gzipBytes).toBeLessThanOrEqual(2000)
+      expect(payload.runtimeGzipBytes).toBeLessThanOrEqual(3000)
+      expect(payload.runtimeBudget).toBe(3000)
+      expect(payload.totalGzipBytes).toBe(payload.runtimeGzipBytes + manifest.componentPayloads.layout.cssGzipBytes)
+    }
   })
 })

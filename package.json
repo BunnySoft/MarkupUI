@@ -306,6 +306,10 @@
     "./timeline/style.css": "./dist/markup-ui-timeline.css",
     "./descriptions/style.css": "./dist/markup-ui-descriptions.css",
     "./list/style.css": "./dist/markup-ui-list.css",
+    "./layout": {
+      "types": "./dist/components/layout/index.d.ts",
+      "import": "./dist/markup-ui-layout.js"
+    },
     "./layout/style.css": "./dist/markup-ui-layout.css",
     "./grid": {
       "types": "./dist/components/grid/index.d.ts",

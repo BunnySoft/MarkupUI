@@ -54,6 +54,11 @@ The implementation retains native association, submission/reset and the existing
 validation/feedback coordinator. FormItem is a native label/control/fieldset layout and
 mapping boundary, not a schema or a second validation engine.
 
+Layout/LayoutHeader/LayoutContent/LayoutFooter/LayoutSider use native flex shells, borders,
+sidebar placement, embedded backgrounds, positioning and original children, backed by
+native CSS layout, scrolling and details disclosure.
+See the [Layout demo/API](../../demo/components/layout.html).
+
 ## References
 
 - [Previous implementation guides](../archive/components/README.md)

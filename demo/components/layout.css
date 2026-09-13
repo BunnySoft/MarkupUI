@@ -12,15 +12,16 @@ section { margin-block-end: 2rem; }
 .rtl-shell { --m-layout-sider-width: 180px; }
 .absolute-container { position: relative; block-size: 220px; }
 .absolute-content { padding-block: 4rem; }
+.demo-controls { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block: 1rem; }
 input, button { box-sizing: border-box; max-inline-size: 100%; font: inherit; }
 button { padding: .35rem .65rem; }
 nav a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid #087443; outline-offset: 2px; }
 @media (max-width: 40rem) {
-  .demo-body[data-has-sider], .rtl-shell[data-has-sider] { flex-direction: column; }
-  .demo-body > .m-layout-sider, .rtl-shell > .m-layout-sider { inline-size: 100%; }
+  .demo-body[data-has-sider], .demo-body[has-sider], .rtl-shell[data-has-sider], .rtl-shell[has-sider] { flex-direction: column; }
+  .demo-body > .m-layout-sider, .demo-body > m-layout-sider, .rtl-shell > .m-layout-sider, .rtl-shell > m-layout-sider { inline-size: 100%; }
 }
 @media print {
   .absolute-container { block-size: auto; }
-  .absolute-container [data-position="absolute"] { position: static; }
+  .absolute-container [data-position="absolute"], .absolute-container [position="absolute"] { position: static; }
   .absolute-content { padding-block: 1rem; }
 }

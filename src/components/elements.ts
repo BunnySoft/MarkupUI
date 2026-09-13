@@ -4,7 +4,7 @@ import { MAutocomplete, MSlider } from "./forms.js"
 import { MAccordionItem, MInclude } from "./dynamic.js"
 import { MDialog, MDrawer, MPopover, MTooltip } from "./overlays.js"
 import { MMenu, MMenuItem, MPagination, MSteps, MTabs, MTab, MDescriptions, MDescriptionItem, MStatistic, MTree, MTreeNode } from "./navigation.js"
-import { MEmpty, MLayout, MProgress, MSkeleton, MTag } from "./content.js"
+import { MEmpty, MProgress, MSkeleton, MTag } from "./content.js"
 import { builtInStyles } from "./styles.js"
 
 const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = [
@@ -14,11 +14,11 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-main", class extends MSemantic { public override connectedCallback(): void { this.setAttribute("data-role", "main"); super.connectedCallback() } }],
   ["m-section", class extends MSemantic {}],
   ["m-field", MField],
-  ["m-stack", class extends MLayout {}],
-  ["m-row", class extends MLayout {}],
-  ["m-wrap", class extends MLayout {}],
-  ["m-center", class extends MLayout {}],
-  ["m-spacer", class extends MLayout { public override connectedCallback(): void { super.connectedCallback(); this.style.flex = "1" } }],
+  ["m-stack", class extends MElement {}],
+  ["m-row", class extends MElement {}],
+  ["m-wrap", class extends MElement {}],
+  ["m-center", class extends MElement {}],
+  ["m-spacer", class extends MElement { public connectedCallback(): void { this.style.flex = "1" } }],
   ["m-alert", class extends MElement {}],
   ["m-badge", class extends MElement {}],
   ["m-tag", MTag],

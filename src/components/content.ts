@@ -1,14 +1,5 @@
 import { MElement } from "../core/element.js"
 
-export class MLayout extends MElement {
-  public connectedCallback(): void {
-    const basis = this.getAttribute("basis")
-    const overflow = this.getAttribute("overflow")
-    if (basis !== null) this.style.flexBasis = basis
-    if (overflow !== null) this.style.overflow = overflow
-  }
-}
-
 export class MProgress extends MElement {
   public static get observedAttributes(): string[] { return ["value", "max"] }
   private bar?: HTMLElement
