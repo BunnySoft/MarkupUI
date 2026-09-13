@@ -158,6 +158,14 @@ and direct trigger/panel adoption while preserving existing `createTooltip` expo
 The legacy aggregate `MTooltip` is removed from `overlays.ts` and `elements.ts`.
 See the [Tooltip demo/API](../../demo/components/tooltip.html).
 
+Alert's direct properties and notice mechanics live in `src/components/alert/alert.ts`,
+with pure types and detail contracts in `model.ts`.
+Alert extends `ViewElement` and registers only `m-alert`,
+providing notice types, safe title fallback, semantic SVG icons, adopted regions,
+and cancellable close intent while preserving native content, action nodes and listeners.
+The legacy aggregate `["m-alert", ...]` is removed from `elements.ts`.
+See the [Alert demo/API](../../demo/components/alert.html).
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed

@@ -31,6 +31,7 @@ in the target inventory.
 26. [Skeleton demo and API](../../demo/components/skeleton.html): Skeleton; placeholder shapes, repeated bar groups, text and dimension normalization.
 27. [Popover demo and API](../../demo/components/popover.html): Popover, PopoverTrigger, PopoverContent; direct trigger/panel adoption, 12 directional placements, hover/focus/click/manual modes, collision flipping.
 28. [Tooltip demo and API](../../demo/components/tooltip.html): Tooltip, TooltipTrigger, TooltipContent; noninteractive contextual descriptions, text attribute, 12 directional placements, hover/focus triggering, collision flipping.
+29. [Alert demo and API](../../demo/components/alert.html): Alert; notice types, safe title fallback, semantic SVG icons, adopted regions and cancellable close intent.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
@@ -66,6 +67,7 @@ maintain a second Markdown copy of their API tables or usage examples.
 | Use Skeleton | `@dataengine/markup-ui/skeleton` and its CSS; ESM imports only core. Public exports are `Skeleton`, `MSkeleton`, `registerSkeleton`, `skeletonSizes`, `SkeletonPresetSize`, `SkeletonSize` and `SkeletonValidationError`. Classic order is `markup-ui-core.global.js`, then `markup-ui-skeleton.global.js`. |
 | Use Popover and its regions | `@dataengine/markup-ui/popover` and its CSS; ESM imports only core. Public exports are `Popover`, `PopoverTrigger`, `PopoverContent`, `registerPopover`, `createPopover`, `createPopoverPositioner`, `createPopoverController`, `PopoverController`, `PopoverOptions`, `PopoverPlacement`, `PopoverTriggerMode`, `popoverPlacements` and `popoverTriggers`. Classic order is `markup-ui-core.global.js`, then `markup-ui-popover.global.js`. |
 | Use Tooltip and its regions | `@dataengine/markup-ui/tooltip` and its CSS; ESM imports only core. Public exports are `Tooltip`, `TooltipTrigger`, `TooltipContent`, `registerTooltip`, `createTooltip`, `TooltipController`, `TooltipOptions`, `TooltipPlacement`, `tooltipPlacements` and `isTooltipElement`. Classic order is `markup-ui-core.global.js`, then `markup-ui-tooltip.global.js`. |
+| Use Alert | `@dataengine/markup-ui/alert` and its CSS; ESM imports only core. Public exports are `Alert`, `MAlert`, `registerAlert`, `alertTypes`, `AlertType` and `AlertCloseDetail`. Classic order is `markup-ui-core.global.js`, then `markup-ui-alert.global.js`. |
 | Use classic scripts | Core first, then the selected component scripts and CSS. |
 
 No jQuery dependency, query wrapper, state/binding runtime or all-components bundle is

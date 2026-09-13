@@ -95,7 +95,7 @@ families establish the pattern; the remaining contracts must be defined before i
 
 | Family | Elements / scope | Contract |
 | --- | --- | --- |
-| Alert | `Alert` | Contract pending |
+| Alert | `Alert`; notice types, safe title fallback, semantic SVG icons, adopted regions and cancellable close intent | [Demo and API](../../demo/components/alert.html) |
 | Badge | `Badge`; passive counts, caps, dot/processing indicators, placements and native targets | [Demo and API](../../demo/components/badge.html) |
 | Dialog | `Dialog` | Contract pending |
 | Drawer | `Drawer`, `DrawerContent` | Contract pending |

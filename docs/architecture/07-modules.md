@@ -273,6 +273,19 @@ core-inclusive runtime**, and the existing **1,250 CSS**. Current measured ESM/c
 costs are 6,537/6,722 bytes, core-inclusive runtime costs are 7,520/7,762 bytes, and CSS is
 1,206 bytes (8,726/8,968 including CSS). All budget checks remain fail-fast.
 
+## Alert delivery
+
+Alert and its canonical `Alert` class (aliased as `MAlert`) select core plus one family entry and CSS.
+ESM imports `markup-ui-core.js`; classic order is `markup-ui-core.global.js`, then
+`markup-ui-alert.global.js`, with `markup-ui-alert.css`. The legacy aggregate no longer defines
+`m-alert` in `src/components/elements.ts`. Alert provides semantic notice types, safe title fallback,
+decorative vector icons, adopted content regions, and cancellable close intent without automatic removal.
+
+Alert's measured-budget ceilings are **2,500 gzip bytes per JS format**, **3,500 for
+core-inclusive runtime**, and the existing **2,000 CSS**. Current measured ESM/classic family
+costs are 2,229/2,412 bytes, core-inclusive runtime costs are 3,212/3,452 bytes, and CSS is
+1,689 bytes (4,901/5,141 including CSS). All budget checks remain fail-fast.
+
 ## References
 
 - [Plugin support source](../../src/core/plugin.ts)

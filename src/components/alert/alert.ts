@@ -1,10 +1,17 @@
+import { ViewElement } from "../../core/index.js"
+import { alertTypes } from "./model.js"
+import type { AlertCloseDetail, AlertType } from "./model.js"
+
+export type { AlertCloseDetail, AlertType } from "./model.js"
+export { alertTypes } from "./model.js"
+
 const circle = "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Z"
-const icons: Readonly<Record<string, string>> = {
+const icons: Readonly<Record<string, string>> = Object.freeze(Object.assign(Object.create(null), {
   info: "M12 1.714a10.286 10.286 0 1 0 0 20.572 10.286 10.286 0 0 0 0-20.572ZM12 5.786a1.071 1.071 0 1 0 0 2.142 1.071 1.071 0 0 0 0-2.142ZM12 9.429a.857.857 0 0 0-.857.857v6.857a.857.857 0 0 0 1.714 0v-6.857A.857.857 0 0 0 12 9.429Z",
   success: circle + "m-4.3 10.1a.625.625 0 0 0 0 .9l2.25 2.25a.625.625 0 0 0 .9 0l5.5-5.5a.625.625 0 0 0-.9-.9l-5.05 5.05-1.8-1.8a.625.625 0 0 0-.9 0Z",
   warning: circle + "M12 7a1 1 0 0 0-1 1v5a1 1 0 0 0 2 0V8a1 1 0 0 0-1-1Zm0 8a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z",
   error: circle + "m-3.05 6.05a.625.625 0 0 0-.9.9L11.1 12l-3.05 3.05a.625.625 0 0 0 .9.9L12 12.9l3.05 3.05a.625.625 0 0 0 .9-.9L12.9 12l3.05-3.05a.625.625 0 0 0-.9-.9L12 11.1Z",
-}
+}))
 const inert = "template,script,style"
 
 function graphic(document: Document, path: string, close = false): SVGSVGElement {
@@ -24,10 +31,20 @@ function graphic(document: Document, path: string, close = false): SVGSVGElement
   return svg
 }
 
-export interface AlertCloseDetail { originalEvent: MouseEvent }
-
-export class MAlert extends HTMLElement {
-  public static get observedAttributes(): string[] { return ["title", "type", "show-icon", "closable", "close-label"] }
+/**
+ * An alert notice with semantic type icons, safe title fallback, and cancellable close intent.
+ * @region {"name":"header","accepts":["text","heading"],"min":0,"max":1}
+ * @region {"name":"content","accepts":["content","controls"],"min":0,"max":1}
+ * @region {"name":"icon","accepts":["icon"],"min":0,"max":1}
+ * @region {"name":"actions","accepts":["controls"],"min":0,"max":1}
+ * @region {"name":"body","accepts":["regions","content"],"min":0,"max":1}
+ * @event {"name":"Close","web":"m:close","bubbles":true,"cancelable":true,"composed":false,"detail":{"originalEvent":"MouseEvent"}}
+ */
+export class Alert extends ViewElement {
+  public static readonly tag = "m-alert"
+  public static get observedAttributes(): string[] {
+    return ["title", "type", "show-icon", "closable", "close-label", "bordered"]
+  }
 
   private body: HTMLElement | undefined
   private generatedBody: HTMLElement | undefined
@@ -41,13 +58,7 @@ export class MAlert extends HTMLElement {
   public connectedCallback(): void {
     if (!this.upgraded) {
       this.upgraded = true
-      for (const name of ["title", "type", "showIcon", "bordered", "closable", "closeLabel"]) {
-        if (Object.prototype.hasOwnProperty.call(this, name)) {
-          const value: unknown = Reflect.get(this, name)
-          Reflect.deleteProperty(this, name)
-          Reflect.set(this, name, value)
-        }
-      }
+      this.upgradeProperties()
     }
     this.dataset.mAlert = ""
     this.observer ??= new MutationObserver(() => this.synchronize())
@@ -59,17 +70,51 @@ export class MAlert extends HTMLElement {
     this.closeButton?.removeEventListener("click", this.onClose)
   }
 
-  public attributeChangedCallback(): void { if (this.isConnected) this.synchronize() }
-  public get type(): string { return this.getAttribute("type") ?? "default" }
-  public set type(value: string) { this.setAttribute("type", value) }
-  public get showIcon(): boolean { return this.getAttribute("show-icon") !== "false" }
-  public set showIcon(value: boolean) { this.setAttribute("show-icon", String(value)) }
-  public get bordered(): boolean { return this.getAttribute("bordered") !== "false" }
-  public set bordered(value: boolean) { this.setAttribute("bordered", String(value)) }
-  public get closable(): boolean { return this.hasAttribute("closable") }
-  public set closable(value: boolean) { this.toggleAttribute("closable", value) }
-  public get closeLabel(): string { return this.getAttribute("close-label")?.trim() || "Close alert" }
-  public set closeLabel(value: string) { this.setAttribute("close-label", value) }
+  public attributeChangedCallback(): void {
+    if (this.isConnected) this.synchronize()
+  }
+
+  public override get title(): string {
+    return this.getAttribute("title") ?? ""
+  }
+  public override set title(value: string | undefined | null) {
+    this.setStringAttribute("title", value ?? null)
+  }
+
+  public get type(): AlertType {
+    return this.choiceAttribute("type", alertTypes, "default")
+  }
+  public set type(value: AlertType) {
+    this.setChoiceAttribute("type", value, alertTypes)
+  }
+
+  public get showIcon(): boolean {
+    return this.booleanAttribute("show-icon", true)
+  }
+  public set showIcon(value: boolean) {
+    this.setBooleanAttribute("show-icon", value, false)
+  }
+
+  public get bordered(): boolean {
+    return this.booleanAttribute("bordered", true)
+  }
+  public set bordered(value: boolean) {
+    this.setBooleanAttribute("bordered", value, false)
+  }
+
+  public get closable(): boolean {
+    return this.hasAttribute("closable")
+  }
+  public set closable(value: boolean) {
+    this.setBooleanAttribute("closable", value)
+  }
+
+  public get closeLabel(): string {
+    return this.getAttribute("close-label")?.trim() || "Close alert"
+  }
+  public set closeLabel(value: string) {
+    this.setStringAttribute("close-label", value)
+  }
 
   private direct(parent: Element, name: string, except?: Element): Element | undefined {
     return [...parent.children].find((node) =>
@@ -174,7 +219,9 @@ export class MAlert extends HTMLElement {
         this.closeButton.dataset.mAlertClose = ""
         this.closeButton.append(graphic(this.ownerDocument, "M2.5 2.5l7 7m0-7-7 7", true))
       }
-      if (this.closeButton.getAttribute("aria-label") !== this.closeLabel) this.closeButton.setAttribute("aria-label", this.closeLabel)
+      if (this.closeButton.getAttribute("aria-label") !== this.closeLabel) {
+        this.closeButton.setAttribute("aria-label", this.closeLabel)
+      }
       if (this.lastElementChild !== this.closeButton) this.append(this.closeButton)
       this.closeButton.addEventListener("click", this.onClose)
     } else {
@@ -182,10 +229,12 @@ export class MAlert extends HTMLElement {
       this.closeButton?.remove()
       this.closeButton = undefined
     }
-    if (this.isConnected) this.observer?.observe(this, {
-      childList: true, subtree: true, characterData: true, attributes: true,
-      attributeFilter: ["data-m-alert-body", "data-m-alert-header", "data-m-alert-content", "data-m-alert-icon"],
-    })
+    if (this.isConnected) {
+      this.observer?.observe(this, {
+        childList: true, subtree: true, characterData: true, attributes: true,
+        attributeFilter: ["data-m-alert-body", "data-m-alert-header", "data-m-alert-content", "data-m-alert-icon"],
+      })
+    }
   }
 
   private readonly onClose = (event: MouseEvent): void => {
@@ -195,3 +244,5 @@ export class MAlert extends HTMLElement {
     }))
   }
 }
+
+export const MAlert = Alert

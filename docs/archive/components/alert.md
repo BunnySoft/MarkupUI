@@ -1,6 +1,6 @@
 # Alert
 
-> **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
+> **Historical reference.** Preserved from the previous documentation layout. Alert has been migrated to the direct `ViewElement` contract (`Alert`, `MAlert`). Current API documentation and live examples are maintained at [demo/components/alert.html](../../demo/components/alert.html).
 
 **Migration status: 🟢 Verified for the retained native scope below.**
 Alert preserves authored notice content and provides optional native close intent. Appearance

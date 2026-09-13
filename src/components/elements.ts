@@ -19,7 +19,6 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-wrap", class extends MElement {}],
   ["m-center", class extends MElement {}],
   ["m-spacer", class extends MElement { public connectedCallback(): void { this.style.flex = "1" } }],
-  ["m-alert", class extends MElement {}],
   ["m-progress", MProgress],
   ["m-option", class extends MElement {}],
   ["m-autocomplete", MAutocomplete],

@@ -94,6 +94,11 @@ text attribute for simple text descriptions, hover/focus triggering, collision f
 and adopted regions for trigger and panel content, backed by the browser top-layer Popover API and anchored positioning.
 See the [Tooltip demo/API](../../demo/components/tooltip.html).
 
+Alert/MAlert uses direct properties, notice types, safe title fallback,
+semantic SVG icons, adopted regions for custom icons, headers, content and actions,
+and cancellable close intent without automatic removal, leaving announcement policies native.
+See the [Alert demo/API](../../demo/components/alert.html).
+
 ## References
 
 - [Previous implementation guides](../archive/components/README.md)

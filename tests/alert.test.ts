@@ -1,17 +1,17 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { MAlert, registerAlert } from "../src/components/alert/index.js"
-import type { AlertCloseDetail } from "../src/components/alert/index.js"
-import { registerElements } from "../src/components/elements.js"
+import { Alert, MAlert, registerAlert } from "../src/components/alert/index.js"
+import type { AlertCloseDetail, AlertType } from "../src/components/alert/index.js"
+import { builtInElementNames, registerElements } from "../src/components/elements.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
-function alert(markup = "<m-alert>Notice</m-alert>"): MAlert {
+function alert(markup = "<m-alert>Notice</m-alert>"): Alert {
   document.body.innerHTML = markup
   const element = document.querySelector("m-alert")
-  if (!(element instanceof MAlert)) throw new Error("Alert was not upgraded")
+  if (!(element instanceof Alert)) throw new Error("Alert was not upgraded")
   return element
 }
-function close(element: MAlert): HTMLButtonElement {
+function close(element: Alert): HTMLButtonElement {
   return element.querySelector<HTMLButtonElement>(":scope > [data-m-alert-close]")!
 }
 
@@ -115,8 +115,7 @@ describe("standalone Alert", () => {
       paths.add(svg.querySelector("path")!.getAttribute("d")!)
     }
     expect(paths.size).toBe(4)
-    element.type = "constructor"
-    expect(element.querySelector("[data-m-alert-icon]")).toBeNull()
+    expect(() => { (element as unknown as { type: string }).type = "constructor" }).toThrow(RangeError)
     element.type = "default"
     expect(element.querySelector("[data-m-alert-icon]")).toBeNull()
   })
@@ -406,13 +405,19 @@ describe("standalone Alert", () => {
     expect(document.querySelector("style,[style]")).toBeNull()
   })
 
+  it("exports canonical Alert with backwards-compatible MAlert alias", () => {
+    expect(Alert.tag).toBe("m-alert")
+    expect(MAlert).toBe(Alert)
+  })
+
   it("reports conflicts and preserves rich definitions when the aggregate loads afterward", () => {
     expect(() => registerAlert()).not.toThrow()
     const define = vi.fn()
-    expect(() => registerAlert({ get: () => class extends HTMLElement {}, define })).toThrow("before the legacy MarkupUI bundle")
+    expect(() => registerAlert({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
     expect(define).not.toHaveBeenCalled()
     registerElements(customElements)
-    expect(customElements.get("m-alert")).toBe(MAlert)
+    expect(customElements.get("m-alert")).toBe(Alert)
+    expect(builtInElementNames).not.toContain("m-alert")
     expect(alert("<m-alert closable>Body</m-alert>").querySelector("button")).not.toBeNull()
   })
 })

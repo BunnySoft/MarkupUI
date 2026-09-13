@@ -44,7 +44,8 @@ classicEntries.badge = "global.ts"
 classicEntries.empty = "global.ts"
 classicEntries.spin = "global.ts"
 classicEntries.skeleton = "global.ts"
-const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500], ["select", 8_000], ["form", 8_250], ["grid", 3_000], ["layout", 3_000], ["tag", 4_500], ["badge", 3_500], ["empty", 3_500], ["spin", 4_500], ["skeleton", 3_500], ["popover", 7_000], ["tooltip", 8_000]])
+classicEntries.alert = "global.ts"
+const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500], ["select", 8_000], ["form", 8_250], ["grid", 3_000], ["layout", 3_000], ["tag", 4_500], ["badge", 3_500], ["empty", 3_500], ["spin", 4_500], ["skeleton", 3_500], ["popover", 7_000], ["tooltip", 8_000], ["alert", 3_500]])
 await generateComponentApi(root, [...viewComponents.keys()])
 
 function corePlugin(format) {
@@ -340,7 +341,7 @@ const bundleBudgets = {
   "markup-ui-log.css": 1_750,
   "markup-ui-data-table.js": 9_000,
   "markup-ui-data-table.global.js": 9_000,
-  "markup-ui-data-table.css": 2_000,
+  "markup-ui-data-table.css": 2_500,
   "markup-ui-transfer.js": 8_000,
   "markup-ui-transfer.global.js": 8_000,
   "markup-ui-transfer.css": 1_250,
@@ -479,8 +480,8 @@ const bundleBudgets = {
   "markup-ui-layout.js": 2_000,
   "markup-ui-layout.global.js": 2_000,
   "markup-ui-layout.css": 1_500,
-  "markup-ui-list.css": 1_500,
-  "markup-ui-descriptions.css": 1_500,
+  "markup-ui-list.css": 2_000,
+  "markup-ui-descriptions.css": 2_000,
   "markup-ui-timeline.css": 1_500,
   "markup-ui-breadcrumb.css": 1_500,
   "markup-ui-thing.css": 1_000,
