@@ -1,16 +1,16 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { MEmpty, registerEmpty } from "../src/components/empty/index.js"
-import { registerElements } from "../src/components/elements.js"
+import { Empty, MEmpty, registerEmpty } from "../src/components/empty/index.js"
+import { builtInElementNames, registerElements } from "../src/components/elements.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
-function empty(markup = "<m-empty></m-empty>"): MEmpty {
+function empty(markup = "<m-empty></m-empty>"): Empty {
   document.body.innerHTML = markup
   const element = document.querySelector("m-empty")
-  if (!(element instanceof MEmpty)) throw new Error("Empty was not upgraded")
+  if (!(element instanceof Empty)) throw new Error("Empty was not upgraded")
   return element
 }
-function description(element: MEmpty): Element {
+function description(element: Empty): Element {
   return element.querySelector(":scope > [data-m-empty-description]:not(template,script,style)")!
 }
 
@@ -70,7 +70,7 @@ describe("standalone Empty", () => {
   })
 
   it("preserves authored description nodes, heading semantics and listeners ahead of fallback props", () => {
-    const element = document.createElement("m-empty") as MEmpty
+    const element = document.createElement("m-empty") as Empty
     element.description = "Fallback"
     const heading = document.createElement("h2")
     heading.textContent = "No reports"
@@ -313,9 +313,9 @@ describe("standalone Empty", () => {
 
   it("honors pre-definition properties and external CSS separation", () => {
     document.body.innerHTML = "<test-late-empty></test-late-empty>"
-    const element = document.querySelector("test-late-empty") as MEmpty
+    const element = document.querySelector("test-late-empty") as Empty
     Object.assign(element, { description: "Late", showDescription: false, showIcon: false, size: "huge", icon: "?" })
-    customElements.define("test-late-empty", class extends MEmpty {})
+    customElements.define("test-late-empty", class extends Empty {})
     expect(element.description).toBe("Late")
     expect(description(element).textContent).toBe("Late")
     expect(element.showDescription || element.showIcon).toBe(false)
@@ -326,13 +326,19 @@ describe("standalone Empty", () => {
     expect(document.querySelector("style,[style]")).toBeNull()
   })
 
+  it("exports canonical Empty with backwards-compatible MEmpty alias", () => {
+    expect(Empty.tag).toBe("m-empty")
+    expect(MEmpty).toBe(Empty)
+  })
+
   it("reports collisions and preserves rich registration when the legacy aggregate follows", () => {
     expect(() => registerEmpty()).not.toThrow()
     const define = vi.fn()
-    expect(() => registerEmpty({ get: () => class extends HTMLElement {}, define })).toThrow("before the legacy MarkupUI bundle")
+    expect(() => registerEmpty({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
     expect(define).not.toHaveBeenCalled()
     registerElements(customElements)
-    expect(customElements.get("m-empty")).toBe(MEmpty)
+    expect(customElements.get("m-empty")).toBe(Empty)
+    expect(builtInElementNames).not.toContain("m-empty")
     expect(description(empty()).textContent).toBe("No Data")
   })
 })

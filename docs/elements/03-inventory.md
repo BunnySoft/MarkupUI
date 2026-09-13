@@ -62,7 +62,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Code | `Code` | Contract pending |
 | Data Table | `DataTable` | Contract pending |
 | Descriptions | `Descriptions`, `DescriptionItem` | Contract pending |
-| Empty | `Empty` | Contract pending |
+| Empty | `Empty`; readable fallback text, optional icons, size variants and adopted regions | [Demo and API](../../demo/components/empty.html) |
 | Image | `Image` and preview/group composition | Contract pending |
 | List | `List`, `ListItem` | Contract pending |
 | Log | `Log` | Contract pending |

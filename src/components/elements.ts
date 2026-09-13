@@ -4,7 +4,7 @@ import { MAutocomplete, MSlider } from "./forms.js"
 import { MAccordionItem, MInclude } from "./dynamic.js"
 import { MDialog, MDrawer, MPopover, MTooltip } from "./overlays.js"
 import { MMenu, MMenuItem, MPagination, MSteps, MTabs, MTab, MDescriptions, MDescriptionItem, MStatistic, MTree, MTreeNode } from "./navigation.js"
-import { MEmpty, MProgress, MSkeleton } from "./content.js"
+import { MProgress, MSkeleton } from "./content.js"
 import { builtInStyles } from "./styles.js"
 
 const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = [
@@ -22,7 +22,6 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-alert", class extends MElement {}],
   ["m-progress", MProgress],
   ["m-skeleton", MSkeleton],
-  ["m-empty", MEmpty],
   ["m-spin", class extends MElement { public connectedCallback(): void { this.setAttribute("role", "status"); this.setAttribute("aria-label", this.getAttribute("label") ?? "Loading") } }],
   ["m-option", class extends MElement {}],
   ["m-autocomplete", MAutocomplete],

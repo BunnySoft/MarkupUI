@@ -26,6 +26,7 @@ const iconHtml = readFileSync(resolve("demo", "components", "icon.html"), "utf8"
 const typographyHtml = readFileSync(resolve("demo", "components", "typography.html"), "utf8")
 const tagHtml = readFileSync(resolve("demo", "components", "tag.html"), "utf8")
 const badgeHtml = readFileSync(resolve("demo", "components", "badge.html"), "utf8")
+const emptyHtml = readFileSync(resolve("demo", "components", "empty.html"), "utf8")
 let browser: ReturnType<typeof createComponentBrowser> | undefined
 let media: MediaQueryList
 let mediaListener: (() => void) | undefined
@@ -112,6 +113,40 @@ describe("metadata-based component documentation", () => {
     const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
     expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-badge.global.js"))
     expect(parsed.querySelector("main[data-demo-page].component-docs #badge-api")).not.toBeNull()
+    expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("details.component-setup")).not.toBeNull()
+    for (const example of parsed.querySelectorAll("[data-demo-example]")) {
+      expect(example.querySelector("[data-demo-header] h2[id]")).not.toBeNull()
+      expect(example.querySelector("[data-demo-preview]")).not.toBeNull()
+    }
+  })
+
+  it("extracts Empty properties, choices and visibility features without inventing runtime metadata", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["empty"])
+    expect(docs.elements).toHaveLength(1)
+    const [empty] = docs.elements
+    expect(empty.type).toBe("Empty")
+    expect(empty.web.primary).toBe("m-empty")
+    expect(empty.properties.description).toMatchObject({ attribute: "description", default: "No Data" })
+    expect(empty.properties.showDescription).toMatchObject({ default: true, encoding: "boolean", attribute: "show-description" })
+    expect(empty.properties.showIcon).toMatchObject({ default: true, encoding: "boolean", attribute: "show-icon" })
+    expect(empty.properties.size).toMatchObject({ default: "medium", values: ["small", "medium", "large", "huge"], attribute: "size" })
+    expect(empty.properties.icon).toMatchObject({ default: "", attribute: "icon" })
+    expect(empty.actions).toEqual([])
+    expect(empty.events).toEqual([])
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.textContent).toContain("Empty")
+    expect(target.textContent).toContain("No Data")
+  })
+
+  it("structures Empty demo with standard scaffold and explicit shared-core loading", () => {
+    const parsed = new DOMParser().parseFromString(emptyHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-empty.global.js"))
+    expect(parsed.querySelector("main[data-demo-page].component-docs #empty-api")).not.toBeNull()
     expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
     expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
     expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()

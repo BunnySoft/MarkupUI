@@ -26,6 +26,7 @@ in the target inventory.
 21. [Layout demo and API](../../demo/components/layout.html): Layout, LayoutHeader, LayoutContent, LayoutFooter and LayoutSider; native flex shells, borders, sidebar placement, embedded and positioning properties, native scrolling and details disclosure.
 22. [Tag demo and API](../../demo/components/tag.html): Tag; checkable toggle button, closable intent, native content, sizes and types.
 23. [Badge demo and API](../../demo/components/badge.html): Badge; passive counts, caps, dot/processing indicators, placements and native targets.
+24. [Empty demo and API](../../demo/components/empty.html): Empty; readable fallback text, optional icons, size variants and adopted regions.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
@@ -56,6 +57,7 @@ maintain a second Markdown copy of their API tables or usage examples.
 | Use Select | `@dataengine/markup-ui/select` and its CSS; ESM imports core and internal native-select mechanics. Public exports are `Select`, `registerSelect`, `SelectValue`, `SelectSize` and `SelectStatus`. |
 | Use Tag | `@dataengine/markup-ui/tag` and its CSS; ESM imports only core. Public exports are `Tag`, `MTag`, `registerTag`, `TagSize`, `TagType` and `TagCloseDetail`. Classic order is `markup-ui-core.global.js`, then `markup-ui-tag.global.js`. |
 | Use Badge | `@dataengine/markup-ui/badge` and its CSS; ESM imports only core. Public exports are `Badge`, `MBadge`, `registerBadge`, `BadgePlacement` and `BadgeType`. Classic order is `markup-ui-core.global.js`, then `markup-ui-badge.global.js`. |
+| Use Empty | `@dataengine/markup-ui/empty` and its CSS; ESM imports only core. Public exports are `Empty`, `MEmpty`, `registerEmpty`, `emptySizes` and `EmptySize`. Classic order is `markup-ui-core.global.js`, then `markup-ui-empty.global.js`. |
 | Use classic scripts | Core first, then the selected component scripts and CSS. |
 
 No jQuery dependency, query wrapper, state/binding runtime or all-components bundle is

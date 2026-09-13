@@ -37,16 +37,3 @@ export class MSkeleton extends MElement {
     if (height) this.style.height = height
   }
 }
-
-export class MEmpty extends MElement {
-  public connectedCallback(): void {
-    if (this.childElementCount > 0) return
-    const icon = this.ownerDocument.createElement("span")
-    icon.dataset.mEmptyIcon = ""
-    icon.setAttribute("aria-hidden", "true")
-    icon.textContent = this.getAttribute("icon") ?? "◇"
-    const text = this.ownerDocument.createElement("span")
-    text.textContent = this.getAttribute("description") ?? "No data"
-    this.append(icon, text)
-  }
-}

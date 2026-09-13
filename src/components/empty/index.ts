@@ -1,12 +1,12 @@
-export { MEmpty } from "./empty.js"
-import { MEmpty } from "./empty.js"
+export { Empty, MEmpty } from "./empty.js"
+export { emptySizes } from "./model.js"
+export type { EmptySize } from "./model.js"
+
+import { Empty } from "./empty.js"
+import { ViewElement } from "../../core/index.js"
 
 export function registerEmpty(registry: Pick<CustomElementRegistry, "get" | "define"> = customElements): void {
-  const existing = registry.get("m-empty")
-  if (existing && existing !== MEmpty) {
-    throw new Error("'m-empty' is already defined. Load the Empty component before the legacy MarkupUI bundle.")
-  }
-  if (!existing) registry.define("m-empty", MEmpty)
+  ViewElement.register([Empty], registry)
 }
 
 if (typeof customElements !== "undefined") registerEmpty()

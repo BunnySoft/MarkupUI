@@ -69,6 +69,11 @@ dot and processing indicators, logical placements, tabular digit cell formatting
 and original target content, backed by external CSS positioning and theme tokens.
 See the [Badge demo/API](../../demo/components/badge.html).
 
+Empty/MEmpty uses direct properties, readable fallback text, original decorative vector
+illustrations, size variants, and adopted regions for custom icons, descriptions, and
+recovery actions, leaving interactive headings, forms, and announcements native.
+See the [Empty demo/API](../../demo/components/empty.html).
+
 ## References
 
 - [Previous implementation guides](../archive/components/README.md)

@@ -33,6 +33,7 @@ import { Grid, GridItem } from "../src/components/grid/index.js"
 import { Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider } from "../src/components/layout/index.js"
 import { Tag } from "../src/components/tag/index.js"
 import { Badge } from "../src/components/badge/index.js"
+import { Empty } from "../src/components/empty/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -155,6 +156,8 @@ describe("native elements", () => {
       (document.querySelector("m-progress > [data-m-bar]") as HTMLElement | null)?.style.width,
     ).toBe("50%")
     expect(document.querySelector("m-skeleton")?.getAttribute("aria-hidden")).toBe("true")
+    expect(customElements.get("m-empty")).toBe(Empty)
+    expect(builtInElementNames).not.toContain("m-empty")
     expect(document.querySelector("m-empty")?.textContent).toContain("No rows")
     expect(document.querySelector("m-tag > [data-m-close]")).not.toBeNull()
     expect(document.querySelector("m-button-group")?.getAttribute("role")).toBe("group")

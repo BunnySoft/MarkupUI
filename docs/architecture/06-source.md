@@ -121,6 +121,13 @@ placements while preserving authored target nodes, listeners, focus and native f
 The legacy aggregate `["m-badge", class extends MElement {}]` is removed from `elements.ts`.
 See the [Badge demo/API](../../demo/components/badge.html).
 
+Empty's direct properties and fallback mechanics live in `src/components/empty/empty.ts`,
+with pure types in `model.ts`. Empty extends `ViewElement` and registers only `m-empty`,
+generating readable fallback text and decorative vector illustrations while adopting
+authored icon, description and extra regions.
+The legacy aggregate `MEmpty` is removed from `content.ts` and `elements.ts`.
+See the [Empty demo/API](../../demo/components/empty.html).
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed
