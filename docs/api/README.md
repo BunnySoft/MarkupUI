@@ -71,6 +71,7 @@ in the target inventory.
 66. [Anchor demo and API](../../demo/components/anchor.html): Anchor, AnchorLink; scroll spy, section tracking, sticky navigation, and change events.
 67. [Back Top demo and API](../../demo/components/back-top.html): BackTop; animated scroll-to-top floating button, visibility thresholds, and custom offsets.
 68. [Affix demo and API](../../demo/components/affix.html): Affix; sticky viewport positioning, offset thresholds, and affix state change events.
+69. [Loading Bar demo and API](../../demo/components/loading-bar.html): LoadingBar; top-level animated loading indicators, error states, and finish transitions.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

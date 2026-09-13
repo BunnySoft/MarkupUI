@@ -1,8 +1,11 @@
 import { readFileSync } from "node:fs"
-import { join } from "node:path"
+import { join, resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createLoadingBar } from "../src/components/loading-bar/index.js"
+import { createLoadingBar, LoadingBar, MLoadingBar, loadingBar, registerLoadingBar, loadingBarStatuses } from "../src/components/loading-bar/index.js"
+import * as loadingBarApi from "../src/components/loading-bar/index.js"
+import { ViewElement } from "../src/core/index.js"
+import { generateComponentApi } from "../scripts/component-api.mjs"
 import type { LoadingBarController, LoadingBarOptions } from "../src/components/loading-bar/index.js"
 
 const controllers: LoadingBarController[] = []
@@ -406,5 +409,238 @@ describe("validated passive anatomy and packaging", () => {
     const source = readFileSync(join("src", "components", "loading-bar", "loading-bar.ts"), "utf8")
     expect(css).toContain("prefers-reduced-motion"); expect(css).toContain("forced-colors"); expect(css).toContain("@media print")
     expect(source).not.toMatch(/innerHTML|setInterval|requestAnimationFrame|fetch\(|\.style\./)
+  })
+})
+
+describe("canonical LoadingBar ViewElement", () => {
+  it("exports canonical own-tag ViewElement and registers m-loading-bar", () => {
+    expect(LoadingBar.tag).toBe("m-loading-bar")
+    expect(MLoadingBar).toBe(LoadingBar)
+    expect(ViewElement.prototype.isPrototypeOf(LoadingBar.prototype)).toBe(true)
+    expect(customElements.get("m-loading-bar")).toBe(LoadingBar)
+    expect(LoadingBar.observedAttributes).toEqual(["status", "loading"])
+    expect(loadingBarApi.LoadingBar).toBe(LoadingBar)
+    expect(loadingBarApi.MLoadingBar).toBe(LoadingBar)
+    expect(loadingBarApi.loadingBar).toBe(loadingBar)
+
+    expect(() => registerLoadingBar()).not.toThrow()
+    const define = vi.fn()
+    expect(() => registerLoadingBar({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("handles status property defaults, attributes, and validation", () => {
+    const bar = document.createElement("m-loading-bar") as LoadingBar
+    document.body.append(bar)
+    expect(bar.status).toBe("none")
+    expect(bar.loading).toBe(false)
+    expect(bar.getAttribute("data-loading-bar-state")).toBe("idle")
+
+    bar.status = "loading"
+    expect(bar.status).toBe("loading")
+    expect(bar.getAttribute("status")).toBe("loading")
+    expect(bar.loading).toBe(true)
+    expect(bar.getAttribute("data-loading-bar-state")).toBe("loading")
+
+    bar.status = "finish"
+    expect(bar.status).toBe("finish")
+    expect(bar.getAttribute("status")).toBe("finish")
+    expect(bar.loading).toBe(false)
+    expect(bar.getAttribute("data-loading-bar-state")).toBe("success")
+
+    bar.status = "error"
+    expect(bar.status).toBe("error")
+    expect(bar.getAttribute("status")).toBe("error")
+    expect(bar.loading).toBe(false)
+    expect(bar.getAttribute("data-loading-bar-state")).toBe("error")
+
+    bar.status = "none"
+    expect(bar.status).toBe("none")
+    expect(bar.getAttribute("status")).toBe("none")
+    expect(bar.loading).toBe(false)
+    expect(bar.getAttribute("data-loading-bar-state")).toBe("idle")
+
+    bar.setAttribute("status", "loading")
+    expect(bar.status).toBe("loading")
+    expect(bar.loading).toBe(true)
+
+    bar.setAttribute("status", "finish")
+    expect(bar.status).toBe("finish")
+    expect(bar.loading).toBe(false)
+
+    bar.setAttribute("status", "error")
+    expect(bar.status).toBe("error")
+    expect(bar.loading).toBe(false)
+
+    bar.removeAttribute("status")
+    expect(bar.status).toBe("none")
+
+    expect(() => { (bar as any).status = "invalid" }).toThrow(RangeError)
+    bar.setAttribute("status", "invalid")
+    expect(() => bar.status).toThrow(RangeError)
+  })
+
+  it("handles loading property defaults, attributes, and validation", () => {
+    const bar = document.createElement("m-loading-bar") as LoadingBar
+    document.body.append(bar)
+    expect(bar.loading).toBe(false)
+
+    bar.loading = true
+    expect(bar.loading).toBe(true)
+    expect(bar.hasAttribute("loading")).toBe(true)
+    expect(bar.status).toBe("loading")
+
+    bar.loading = false
+    expect(bar.loading).toBe(false)
+    expect(bar.hasAttribute("loading")).toBe(false)
+    expect(bar.status).toBe("none")
+
+    expect(() => { (bar as any).loading = "invalid" }).toThrow(RangeError)
+  })
+
+  it("provides start(), finish(), and error() service methods on element", () => {
+    const bar = document.createElement("m-loading-bar") as LoadingBar
+    document.body.append(bar)
+
+    bar.start()
+    expect(bar.status).toBe("loading")
+    expect(bar.loading).toBe(true)
+    expect(bar.getAttribute("data-loading-bar-state")).toBe("loading")
+
+    bar.finish()
+    expect(bar.status).toBe("finish")
+    expect(bar.loading).toBe(false)
+    expect(bar.getAttribute("data-loading-bar-state")).toBe("success")
+
+    bar.error()
+    expect(bar.status).toBe("error")
+    expect(bar.loading).toBe(false)
+    expect(bar.getAttribute("data-loading-bar-state")).toBe("error")
+  })
+
+  it("supports programmatic loadingBar service", () => {
+    loadingBar.start()
+    const bar = document.querySelector<LoadingBar>("m-loading-bar.m-loading-bar--fixed")
+    expect(bar).not.toBeNull()
+    expect(bar?.status).toBe("loading")
+    expect(bar?.loading).toBe(true)
+
+    loadingBar.finish()
+    expect(bar?.status).toBe("finish")
+    expect(bar?.loading).toBe(false)
+
+    loadingBar.error()
+    expect(bar?.status).toBe("error")
+    expect(bar?.loading).toBe(false)
+
+    bar?.remove()
+  })
+
+  it("renders inner progress and reflects status in DOM", () => {
+    const bar = document.createElement("m-loading-bar") as LoadingBar
+    document.body.append(bar)
+
+    expect(bar.classList.contains("m-loading-bar")).toBe(true)
+    expect(bar.dataset.part).toBe("loading-bar")
+    expect(bar.dataset.mLoadingBar).toBe("")
+    expect(bar.hasAttribute("data-loading-bar")).toBe(true)
+
+    const progress = bar.querySelector("progress")
+    expect(progress).not.toBeNull()
+    expect(progress?.getAttribute("aria-label")).toBe("Loading")
+
+    // Custom authored progress preservation
+    const custom = document.createElement("m-loading-bar") as LoadingBar
+    const authoredProgress = document.createElement("progress")
+    authoredProgress.id = "custom-progress"
+    authoredProgress.setAttribute("aria-label", "Custom work")
+    custom.append(authoredProgress)
+    document.body.append(custom)
+
+    expect(custom.querySelectorAll("progress")).toHaveLength(1)
+    expect(custom.querySelector("progress")?.id).toBe("custom-progress")
+    expect(custom.querySelector("progress")?.getAttribute("aria-label")).toBe("Custom work")
+  })
+
+  it("emits m:change event when status changes", () => {
+    const bar = document.createElement("m-loading-bar") as LoadingBar
+    const changeSpy = vi.fn()
+    bar.addEventListener("m:change", changeSpy)
+    document.body.append(bar)
+
+    bar.start()
+    expect(changeSpy).toHaveBeenCalledTimes(1)
+    expect(changeSpy.mock.calls[0]![0].detail).toEqual({ status: "loading" })
+
+    bar.finish()
+    expect(changeSpy).toHaveBeenCalledTimes(2)
+    expect(changeSpy.mock.calls[1]![0].detail).toEqual({ status: "finish" })
+
+    bar.error()
+    expect(changeSpy).toHaveBeenCalledTimes(3)
+    expect(changeSpy.mock.calls[2]![0].detail).toEqual({ status: "error" })
+  })
+
+  it("replays pre-upgrade properties upon connection", () => {
+    const customName = "m-test-loading-bar-preupgrade"
+    const bar = document.createElement(customName) as LoadingBar
+    bar.status = "loading"
+    document.body.append(bar)
+
+    customElements.define(customName, class extends LoadingBar {})
+    expect(bar.status).toBe("loading")
+    expect(bar.loading).toBe(true)
+    expect(bar.getAttribute("data-loading-bar-state")).toBe("loading")
+  })
+
+  it("extracts LoadingBar API metadata matching specification", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["loading-bar"])
+    expect(docs.elements).toHaveLength(1)
+
+    const [barDoc] = docs.elements
+    expect(barDoc!.type).toBe("LoadingBar")
+    expect(barDoc!.web.primary).toBe("m-loading-bar")
+    expect(barDoc!.properties.status).toMatchObject({
+      name: "status",
+      type: "enum",
+      default: "none",
+      attribute: "status",
+      values: ["loading", "error", "finish", "none"],
+    })
+    expect(barDoc!.properties.loading).toMatchObject({
+      name: "loading",
+      type: "boolean",
+      default: false,
+      attribute: "loading",
+      encoding: "boolean",
+    })
+    expect(barDoc!.actions).toEqual(expect.arrayContaining(["start", "finish", "error"]))
+    expect(barDoc!.events).toContainEqual(expect.objectContaining({
+      name: "Change",
+      web: "m:change",
+      bubbles: true,
+      cancelable: false,
+      composed: false,
+      detail: { status: "string" },
+    }))
+    expect(barDoc!.regions).toHaveLength(1)
+    expect(barDoc!.states).toEqual(["loading", "error", "finish", "none"])
+  }, 15000)
+
+  it("structures Loading Bar demo page with standard scaffold and explicit shared-core loading", () => {
+    const loadingBarHtml = readFileSync(resolve("demo", "components", "loading-bar.html"), "utf8")
+    const parsed = new DOMParser().parseFromString(loadingBarHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-loading-bar.global.js"))
+    expect(parsed.querySelector("main[data-demo-page].component-docs #loading-bar-api")).not.toBeNull()
+    expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("details.component-setup")).not.toBeNull()
+    for (const example of parsed.querySelectorAll("[data-demo-example]")) {
+      expect(example.querySelector("[data-demo-header] h2[id]")).not.toBeNull()
+      expect(example.querySelector("[data-demo-preview]")).not.toBeNull()
+    }
+    expect(parsed.querySelector("#inline-bar")).not.toBeNull()
   })
 })

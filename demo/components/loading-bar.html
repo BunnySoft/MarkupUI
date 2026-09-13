@@ -3,45 +3,111 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Loading Bar</title>
+  <title>Loading Bar - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-loading-bar.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./loading-bar.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-loading-bar.global.js"></script>
-  <script defer src="./loading-bar.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./loading-bar.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <header><h1>Root-owned Loading Bar</h1><p>Local demonstrations only. Unknown work has no percentage; measured values come from explicit application calls. No network activity or global request tracking.</p></header>
-  <main>
-    <section><h2>Independent inline operation</h2>
-      <div class="m-loading-bar" data-loading-bar id="inline-bar">
-        <label for="inline-progress">Local report preparation</label>
-        <progress id="inline-progress" max="100" value="25" aria-describedby="inline-status">25%</progress>
-        <span id="inline-status" data-loading-bar-status>Native baseline: 25 of 100 supplied by the author.</span>
-      </div>
-      <div class="demo-controls" id="controls" hidden>
-        <button type="button" id="start">Start unknown work</button>
-        <button type="button" id="measure">Report measured 40 of 100</button>
-        <button type="button" id="finish">Finish</button>
-        <button type="button" id="error">Report error</button>
-        <button type="button" id="stop">Stop UI only</button>
-        <button type="button" id="restart">Start, finish, restart immediately</button>
-        <button type="button" id="reset">Disconnect and reconnect</button>
+  <main data-demo-page class="component-docs">
+    <h1>Loading Bar</h1>
+    <p>Global or local progress rail indicating page navigation, asynchronous actions, and long-running background tasks.</p>
+    <nav class="component-docs-nav" aria-label="Loading Bar documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary>Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-loading-bar.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-loading-bar.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header><div><h2 id="basic-heading">Declarative Loading Bar element</h2><p>Using the canonical m-loading-bar element with status and loading controls.</p></div></header>
+      <div data-demo-preview>
+        <m-loading-bar id="element-bar" status="loading"></m-loading-bar>
+        <div class="demo-controls" id="element-controls">
+          <m-button id="elem-start">Start</m-button>
+          <m-button id="elem-finish">Finish</m-button>
+          <m-button id="elem-error">Error</m-button>
+          <m-button id="elem-reset">Reset</m-button>
+        </div>
       </div>
     </section>
-    <section><h2>Independent fixed surface</h2><p>The second bar does not share the first bar's timers or state.</p>
-      <div class="m-loading-bar m-loading-bar--fixed" data-loading-bar id="fixed-bar" hidden>
-        <progress max="1" aria-label="Separate local operation" aria-describedby="fixed-status">Unknown amount</progress>
-        <span id="fixed-status" data-loading-bar-status>Separate operation ready.</span>
-      </div>
-      <div class="demo-controls" id="fixed-controls" hidden>
-        <button type="button" id="fixed-start">Start second bar</button>
-        <button type="button" id="fixed-finish">Finish second bar</button>
-        <button type="button" id="fixed-error">Error second bar, then hide</button>
+
+    <section data-demo-example="service" aria-labelledby="service-heading">
+      <header data-demo-header><div><h2 id="service-heading">Programmatic loading bar service</h2><p>Triggering the global top-level loading bar with start, finish, and error methods.</p></div></header>
+      <div data-demo-preview>
+        <div class="demo-controls" id="service-controls">
+          <m-button id="service-start">Start global bar</m-button>
+          <m-button id="service-finish">Finish global bar</m-button>
+          <m-button id="service-error">Error global bar</m-button>
+        </div>
       </div>
     </section>
-    <form id="native-form"><label>Unrelated focus/form control <input id="outside-input" name="note" value="Preserved"></label><button type="submit">Native submit</button></form>
+
+    <section data-demo-example="inline" aria-labelledby="inline-heading">
+      <header data-demo-header><div><h2 id="inline-heading">Independent inline operation</h2><p>Authored inline progress element controlled via Loading Bar controller.</p></div></header>
+      <div data-demo-preview>
+        <div class="m-loading-bar" data-loading-bar id="inline-bar">
+          <label for="inline-progress">Local report preparation</label>
+          <progress id="inline-progress" max="100" value="25" aria-describedby="inline-status">25%</progress>
+          <span id="inline-status" data-loading-bar-status>Native baseline: 25 of 100 supplied by the author.</span>
+        </div>
+        <div class="demo-controls" id="controls">
+          <m-button id="start">Start unknown work</m-button>
+          <m-button id="measure">Report measured 40 of 100</m-button>
+          <m-button id="finish">Finish</m-button>
+          <m-button id="error">Report error</m-button>
+          <m-button id="stop">Stop UI only</m-button>
+          <m-button id="restart">Start, finish, restart immediately</m-button>
+          <m-button id="reset">Disconnect and reconnect</m-button>
+        </div>
+      </div>
+    </section>
+
+    <section data-demo-example="fixed" aria-labelledby="fixed-heading">
+      <header data-demo-header><div><h2 id="fixed-heading">Independent fixed surface</h2><p>The second bar does not share the first bar's timers or state.</p></div></header>
+      <div data-demo-preview>
+        <div class="m-loading-bar m-loading-bar--fixed" data-loading-bar id="fixed-bar">
+          <progress max="1" aria-label="Separate local operation" aria-describedby="fixed-status">Unknown amount</progress>
+          <span id="fixed-status" data-loading-bar-status>Separate operation ready.</span>
+        </div>
+        <div class="demo-controls" id="fixed-controls">
+          <m-button id="fixed-start">Start second bar</m-button>
+          <m-button id="fixed-finish">Finish second bar</m-button>
+          <m-button id="fixed-error">Error second bar, then hide</m-button>
+        </div>
+      </div>
+    </section>
+
+    <form id="native-form"><label>Unrelated focus/form control <input id="outside-input" name="note" value="Preserved"></label><m-button attr-type="submit">Native submit</m-button></form>
     <output id="events">Without JavaScript, the labelled native progress example remains meaningful.</output>
     <p id="limits">UI stop/restart is not cancellation of external work. Applications own concurrent operations and their results.</p>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="loading-bar-api">
+        <p>Loading API documentation.</p>
+      </div>
+    </section>
   </main>
 </body>
 </html>
