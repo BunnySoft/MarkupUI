@@ -84,6 +84,11 @@ size presets, dimension normalization, and inert decorative bar generation, leav
 application busy state and loading transitions native.
 See the [Skeleton demo/API](../../demo/components/skeleton.html).
 
+Popover/PopoverTrigger/PopoverContent use direct properties, 12 directional placements,
+click/hover/focus/manual modes, collision flipping, arrow decoration, and adopted regions
+for trigger and panel content, backed by the browser top-layer Popover API and anchored positioning.
+See the [Popover demo/API](../../demo/components/popover.html).
+
 ## References
 
 - [Previous implementation guides](../archive/components/README.md)

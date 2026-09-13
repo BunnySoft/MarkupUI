@@ -1,6 +1,6 @@
 # Popover: native nonmodal floating content
 
-> **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
+> **Historical reference.** Preserved from the previous documentation layout. Popover has been migrated to the direct `ViewElement` contract (`Popover`, `PopoverTrigger`, `PopoverContent`). Current API documentation and live examples are maintained at [demo/components/popover.html](../../demo/components/popover.html).
 
 **🟢 Verified for the retained native scope; not Naive UI/Vue API parity.**
 An optional, dependency-free helper supplies timing, local placement and teardown around

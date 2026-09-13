@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createPopover } from "../src/components/popover/index.js"
+import { createPopover, Popover, PopoverTrigger, PopoverContent, registerPopover } from "../src/components/popover/index.js"
 import { createPopoverPositioner, ownedWrites } from "../src/components/popover/position.js"
 import type { PopoverController, PopoverOptions } from "../src/components/popover/index.js"
 
@@ -593,5 +593,134 @@ describe("local viewport positioning and external distribution", () => {
     expect(source).not.toContain("innerHTML")
     expect(source).not.toContain('"keydown"')
     expect(source).not.toContain('"click" ,')
+  })
+})
+
+describe("Popover custom element contract", () => {
+  it("registers canonical Popover and companion regions", () => {
+    expect(customElements.get("m-popover")).toBe(Popover)
+    expect(customElements.get("m-popover-trigger")).toBe(PopoverTrigger)
+    expect(customElements.get("m-popover-content")).toBe(PopoverContent)
+    expect(Popover.tag).toBe("m-popover")
+    expect(PopoverTrigger.tag).toBe("m-popover-trigger")
+    expect(PopoverContent.tag).toBe("m-popover-content")
+    expect(typeof registerPopover).toBe("function")
+  })
+
+  it("exposes direct typed accessors with defaults", () => {
+    const element = document.createElement("m-popover") as Popover
+    document.body.append(element)
+    expect(element.trigger).toBe("click")
+    expect(element.placement).toBe("bottom")
+    expect(element.delay).toBe(100)
+    expect(element.duration).toBe(100)
+    expect(element.gap).toBe(8)
+    expect(element.margin).toBe(8)
+    expect(element.flip).toBe(true)
+    expect(element.disabled).toBe(false)
+    expect(element.arrow).toBe(false)
+    expect(element.animated).toBe(true)
+    expect(element.show).toBe(false)
+
+    element.trigger = "hover"
+    expect(element.trigger).toBe("hover")
+    expect(element.getAttribute("trigger")).toBe("hover")
+
+    element.placement = "top-start"
+    expect(element.placement).toBe("top-start")
+    expect(element.getAttribute("placement")).toBe("top-start")
+
+    element.delay = 200
+    expect(element.delay).toBe(200)
+
+    element.duration = 250
+    expect(element.duration).toBe(250)
+
+    element.gap = 12
+    expect(element.gap).toBe(12)
+
+    element.margin = 16
+    expect(element.margin).toBe(16)
+
+    element.flip = false
+    expect(element.flip).toBe(false)
+
+    element.disabled = true
+    expect(element.disabled).toBe(true)
+    expect(element.hasAttribute("disabled")).toBe(true)
+
+    element.arrow = true
+    expect(element.arrow).toBe(true)
+    expect(element.hasAttribute("arrow")).toBe(true)
+
+    element.animated = false
+    expect(element.animated).toBe(false)
+
+    expect(() => { element.delay = -1 }).toThrow(RangeError)
+    expect(() => { element.gap = 70000 }).toThrow(RangeError)
+    expect(() => { element.trigger = "invalid" as any }).toThrow(RangeError)
+    expect(() => { element.placement = "invalid" as any }).toThrow(RangeError)
+  })
+
+  it("synchronizes with companion regions and handles open/close/toggle", () => {
+    const popover = document.createElement("m-popover") as Popover
+    popover.innerHTML = `
+      <m-popover-trigger>
+        <button type="button">Trigger</button>
+      </m-popover-trigger>
+      <m-popover-content>
+        <p>Content</p>
+      </m-popover-content>
+    `
+    const trigger = popover.querySelector("button")!
+    const panel = popover.querySelector("m-popover-content")!
+    trigger.getBoundingClientRect = () => rect(200, 200, 100, 30)
+    panel.getBoundingClientRect = () => rect(0, 0, 160, 80)
+
+    document.body.append(popover)
+    expect(panel.classList.contains("m-popover")).toBe(true)
+    expect(panel.id).toBeTruthy()
+    expect(trigger.getAttribute("popovertarget")).toBe(panel.id)
+
+    expect(popover.open()).toBe(true)
+    expect(popover.show).toBe(true)
+
+    popover.close()
+    expect(popover.show).toBe(false)
+
+    expect(popover.toggle()).toBe(true)
+    expect(popover.show).toBe(true)
+
+    expect(popover.toggle()).toBe(false)
+    expect(popover.show).toBe(false)
+
+    popover.arrow = true
+    expect(panel.classList.contains("m-popover--arrow")).toBe(true)
+
+    popover.animated = false
+    expect(panel.classList.contains("m-popover--animated")).toBe(false)
+
+    popover.open()
+    expect(popover.show).toBe(true)
+    popover.disabled = true
+    expect(popover.show).toBe(false)
+  })
+
+  it("supports direct trigger and panel children without companion wrappers", () => {
+    const popover = document.createElement("m-popover") as Popover
+    popover.innerHTML = `
+      <button type="button">Direct action</button>
+      <div class="m-popover">Direct panel</div>
+    `
+    const trigger = popover.querySelector("button")!
+    const panel = popover.querySelector("div")!
+    trigger.getBoundingClientRect = () => rect(200, 200, 100, 30)
+    panel.getBoundingClientRect = () => rect(0, 0, 160, 80)
+
+    document.body.append(popover)
+    expect(popover.open()).toBe(true)
+    expect(popover.show).toBe(true)
+    popover.close()
+    expect(popover.show).toBe(false)
   })
 })

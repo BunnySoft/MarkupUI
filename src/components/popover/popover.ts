@@ -45,6 +45,7 @@ export function createPopoverController(
   panel: HTMLElement,
   options: PopoverOptions,
   semantics?: PopoverSemantics,
+  allowWrapper = false,
 ): PopoverController {
   const document = trigger?.ownerDocument
   const view = document?.defaultView
@@ -228,7 +229,7 @@ export function createPopoverController(
       || [...document!.querySelectorAll("[id]")].filter(node => node.id === panel.id).length !== 1
       || !panel.classList.contains("m-popover") || !["auto", "manual"].includes(panel.getAttribute("popover") ?? "")
       || panel.hasAttribute("hidden")) throw new TypeError("Use connected light-DOM, a unique ID, .m-popover, popover=auto|manual and no hidden.")
-    if (trigger.closest("m-popover") || panel.closest("m-popover")) throw new TypeError("No legacy m-popover nesting.")
+    if (!allowWrapper && (trigger.closest("m-popover") || panel.closest("m-popover"))) throw new TypeError("No legacy m-popover nesting.")
     const parentPopover = trigger.parentElement?.closest("[popover]")
     if (parentPopover && !parentPopover.contains(panel)) throw new TypeError("No portalled nesting.")
     if (mode === "click") {

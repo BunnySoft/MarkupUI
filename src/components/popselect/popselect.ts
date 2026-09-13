@@ -1,5 +1,5 @@
-import { createPopover } from "../popover/index.js"
-import type { PopoverController, PopoverOptions } from "../popover/index.js"
+import { createPopover } from "../popover/popover.js"
+import type { PopoverController, PopoverOptions } from "../popover/popover.js"
 import { ownedWrites } from "../popover/position.js"
 import { createSelect } from "../native-select.js"
 import type { SelectController, SelectValue } from "../native-select.js"

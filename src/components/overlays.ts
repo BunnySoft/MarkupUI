@@ -70,52 +70,5 @@ export class MTooltip extends MElement {
   }
 }
 
-export class MPopover extends MElement {
-  private trigger: HTMLElement | undefined
-  private content: HTMLElement | undefined
-  private readonly onClick = (): void => {
-    if (this.content?.hidden === false) this.close()
-    else this.open()
-  }
-  private readonly onPointerDown = (event: Event): void => {
-    if (!this.contains(event.target as Node)) this.close()
-  }
-  private readonly onKeyDown = (event: KeyboardEvent): void => {
-    if (event.key === "Escape") this.close()
-  }
-  public connectedCallback(): void {
-    this.trigger = this.querySelector<HTMLElement>(":scope > m-popover-trigger") ?? undefined
-    this.content = this.querySelector<HTMLElement>(":scope > m-popover-content") ?? undefined
-    if (this.trigger === undefined || this.content === undefined) return
-    this.content.hidden = true
-    this.trigger.setAttribute("aria-expanded", "false")
-    this.trigger.addEventListener("click", this.onClick)
-    this.ownerDocument.addEventListener("pointerdown", this.onPointerDown)
-    this.ownerDocument.addEventListener("keydown", this.onKeyDown)
-  }
-  public disconnectedCallback(): void {
-    this.trigger?.removeEventListener("click", this.onClick)
-    this.ownerDocument.removeEventListener("pointerdown", this.onPointerDown)
-    this.ownerDocument.removeEventListener("keydown", this.onKeyDown)
-  }
-  public open(): void {
-    if (this.trigger === undefined || this.content === undefined) return
-    this.content.hidden = false
-    this.trigger.setAttribute("aria-expanded", "true")
-    positionFloating(
-      this.trigger,
-      this.content,
-      (this.getAttribute("placement") as FloatingPlacement | null) ?? "bottom",
-    )
-    this.emit("open")
-  }
-  public close(): void {
-    if (this.content === undefined) return
-    this.content.hidden = true
-    this.trigger?.setAttribute("aria-expanded", "false")
-    this.emit("close")
-  }
-}
-
 export class MDialog extends MModal {}
 export class MDrawer extends MModal {}

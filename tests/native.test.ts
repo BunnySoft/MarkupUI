@@ -36,6 +36,7 @@ import { Badge } from "../src/components/badge/index.js"
 import { Empty } from "../src/components/empty/index.js"
 import { Spin } from "../src/components/spin/index.js"
 import { Skeleton } from "../src/components/skeleton/index.js"
+import { Popover } from "../src/components/popover/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -64,10 +65,12 @@ describe("native elements", () => {
     expect(customElements.get("m-input")).toBe(Input)
     expect(customElements.get("m-select")).toBe(Select)
     expect(builtInElementNames).not.toContain("m-select")
-    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton]) {
+    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover]) {
       expect(customElements.get(Type.tag)).toBe(Type)
       expect(builtInElementNames).not.toContain(Type.tag)
     }
+    expect(builtInElementNames).not.toContain("m-popover-trigger")
+    expect(builtInElementNames).not.toContain("m-popover-content")
     expect(customElements.get("m-checkbox")).toBe(Checkbox)
     expect(customElements.get("m-checkbox-group")).toBe(CheckboxGroup)
     expect(builtInElementNames).not.toContain("m-checkbox")
@@ -220,10 +223,13 @@ describe("native elements", () => {
     tooltip?.dispatchEvent(new MouseEvent("mouseenter"))
     expect(document.querySelector("[data-m-tooltip]")?.hasAttribute("hidden")).toBe(false)
 
-    document.querySelector("m-popover-trigger")?.dispatchEvent(
-      new MouseEvent("click", { bubbles: true }),
-    )
-    expect(document.querySelector("m-popover-content")?.hasAttribute("hidden")).toBe(false)
+    const popover = document.querySelector("m-popover") as Popover
+    expect(popover).toBeInstanceOf(Popover)
+    expect(customElements.get("m-popover")).toBe(Popover)
+    expect(builtInElementNames).not.toContain("m-popover")
+    expect(popover.trigger).toBe("click")
+    expect(popover.placement).toBe("bottom")
+    expect(popover.show).toBe(false)
   })
 
   it("provides managed message and notification services", () => {

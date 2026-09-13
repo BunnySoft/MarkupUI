@@ -29,6 +29,7 @@ const badgeHtml = readFileSync(resolve("demo", "components", "badge.html"), "utf
 const emptyHtml = readFileSync(resolve("demo", "components", "empty.html"), "utf8")
 const spinHtml = readFileSync(resolve("demo", "components", "spin.html"), "utf8")
 const skeletonHtml = readFileSync(resolve("demo", "components", "skeleton.html"), "utf8")
+const popoverHtml = readFileSync(resolve("demo", "components", "popover.html"), "utf8")
 let browser: ReturnType<typeof createComponentBrowser> | undefined
 let media: MediaQueryList
 let mediaListener: (() => void) | undefined
@@ -233,6 +234,51 @@ describe("metadata-based component documentation", () => {
     const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
     expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-skeleton.global.js"))
     expect(parsed.querySelector("main[data-demo-page].component-docs #skeleton-api")).not.toBeNull()
+    expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("details.component-setup")).not.toBeNull()
+    for (const example of parsed.querySelectorAll("[data-demo-example]")) {
+      expect(example.querySelector("[data-demo-header] h2[id]")).not.toBeNull()
+      expect(example.querySelector("[data-demo-preview]")).not.toBeNull()
+    }
+  })
+
+  it("extracts Popover properties, placements, timing and companion regions without inventing runtime metadata", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["popover"])
+    expect(docs.elements).toHaveLength(3)
+    const [popover, trigger, content] = docs.elements
+    expect(popover.type).toBe("Popover")
+    expect(popover.web.primary).toBe("m-popover")
+    expect(popover.properties.trigger).toMatchObject({ default: "click", attribute: "trigger", values: ["click", "hover", "focus", "manual"] })
+    expect(popover.properties.placement).toMatchObject({ default: "bottom", attribute: "placement" })
+    expect(popover.properties.delay).toMatchObject({ default: 100, attribute: "delay", integer: true, min: 0, max: 60000 })
+    expect(popover.properties.duration).toMatchObject({ default: 100, attribute: "duration", integer: true, min: 0, max: 60000 })
+    expect(popover.properties.gap).toMatchObject({ default: 8, attribute: "gap", min: 0, max: 60000 })
+    expect(popover.properties.margin).toMatchObject({ default: 8, attribute: "margin", min: 0, max: 60000 })
+    expect(popover.properties.flip).toMatchObject({ default: true, encoding: "boolean", attribute: "flip" })
+    expect(popover.properties.disabled).toMatchObject({ default: false, encoding: "presence", attribute: "disabled" })
+    expect(popover.properties.arrow).toMatchObject({ default: false, encoding: "presence", attribute: "arrow" })
+    expect(popover.properties.animated).toMatchObject({ default: true, encoding: "boolean", attribute: "animated" })
+    expect(popover.properties.show).toMatchObject({ writable: false, attribute: null })
+    expect(popover.actions).toEqual(["open", "close", "toggle"])
+    expect(popover.events).toEqual([])
+    expect(popover.regions.map((r: { name: string }) => r.name)).toEqual(["trigger", "content"])
+    expect(trigger.type).toBe("PopoverTrigger")
+    expect(trigger.web.primary).toBe("m-popover-trigger")
+    expect(content.type).toBe("PopoverContent")
+    expect(content.web.primary).toBe("m-popover-content")
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.textContent).toContain("Popover")
+    expect(target.textContent).toContain("m-popover-trigger")
+  })
+
+  it("structures Popover demo with standard scaffold and explicit shared-core loading", () => {
+    const parsed = new DOMParser().parseFromString(popoverHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-popover.global.js"))
+    expect(parsed.querySelector("main[data-demo-page].component-docs #popover-api")).not.toBeNull()
     expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
     expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
     expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()

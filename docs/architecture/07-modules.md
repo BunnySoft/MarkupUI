@@ -247,6 +247,19 @@ core-inclusive runtime**, and the existing **1,500 CSS**. Current measured ESM/c
 costs are 1,743/1,911 bytes, core-inclusive runtime costs are 2,506/2,670 bytes, and CSS is
 912 bytes (3,418/3,582 including CSS). All budget checks remain fail-fast.
 
+## Popover delivery
+
+Popover and its companion regions (`PopoverTrigger`, `PopoverContent`) select core plus one family entry and CSS.
+ESM imports `markup-ui-core.js`; classic order is `markup-ui-core.global.js`, then
+`markup-ui-popover.global.js`, with `markup-ui-popover.css`. The legacy aggregate no longer defines
+`m-popover` in `src/components/elements.ts`. Popover provides 12 directional placements,
+click/hover/focus/manual modes, collision flipping, arrow decoration, and adopted regions for trigger and panel content.
+
+Popover's measured-budget ceilings are **5,750 gzip bytes for ESM**, **6,000 for Classic**,
+**7,000 for core-inclusive runtime**, and the existing **1,000 CSS**. Current measured ESM/classic family
+costs are 5,379/5,551 bytes, core-inclusive runtime costs are 6,362/6,591 bytes, and CSS is
+958 bytes (7,320/7,549 including CSS). All budget checks remain fail-fast.
+
 ## References
 
 - [Plugin support source](../../src/core/plugin.ts)

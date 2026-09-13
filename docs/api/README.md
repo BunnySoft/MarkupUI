@@ -29,6 +29,7 @@ in the target inventory.
 24. [Empty demo and API](../../demo/components/empty.html): Empty; readable fallback text, optional icons, size variants and adopted regions.
 25. [Spin demo and API](../../demo/components/spin.html): Spin; customizable size, delay, stroke, wrapped content adoption, custom icons and descriptions.
 26. [Skeleton demo and API](../../demo/components/skeleton.html): Skeleton; placeholder shapes, repeated bar groups, text and dimension normalization.
+27. [Popover demo and API](../../demo/components/popover.html): Popover, PopoverTrigger, PopoverContent; direct trigger/panel adoption, 12 directional placements, hover/focus/click/manual modes, collision flipping.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
@@ -62,6 +63,7 @@ maintain a second Markdown copy of their API tables or usage examples.
 | Use Empty | `@dataengine/markup-ui/empty` and its CSS; ESM imports only core. Public exports are `Empty`, `MEmpty`, `registerEmpty`, `emptySizes` and `EmptySize`. Classic order is `markup-ui-core.global.js`, then `markup-ui-empty.global.js`. |
 | Use Spin | `@dataengine/markup-ui/spin` and its CSS; ESM imports only core. Public exports are `Spin`, `MSpin`, `registerSpin`, `spinSizes`, `SpinPresetSize`, `SpinSize` and `SpinValidationError`. Classic order is `markup-ui-core.global.js`, then `markup-ui-spin.global.js`. |
 | Use Skeleton | `@dataengine/markup-ui/skeleton` and its CSS; ESM imports only core. Public exports are `Skeleton`, `MSkeleton`, `registerSkeleton`, `skeletonSizes`, `SkeletonPresetSize`, `SkeletonSize` and `SkeletonValidationError`. Classic order is `markup-ui-core.global.js`, then `markup-ui-skeleton.global.js`. |
+| Use Popover and its regions | `@dataengine/markup-ui/popover` and its CSS; ESM imports only core. Public exports are `Popover`, `PopoverTrigger`, `PopoverContent`, `registerPopover`, `createPopover`, `createPopoverPositioner`, `createPopoverController`, `PopoverController`, `PopoverOptions`, `PopoverPlacement`, `PopoverTriggerMode`, `popoverPlacements` and `popoverTriggers`. Classic order is `markup-ui-core.global.js`, then `markup-ui-popover.global.js`. |
 | Use classic scripts | Core first, then the selected component scripts and CSS. |
 
 No jQuery dependency, query wrapper, state/binding runtime or all-components bundle is

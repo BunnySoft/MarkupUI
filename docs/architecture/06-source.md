@@ -142,6 +142,14 @@ and inert decorative bar generation.
 The legacy aggregate `MSkeleton` is removed from `content.ts` and `elements.ts`.
 See the [Skeleton demo/API](../../demo/components/skeleton.html).
 
+Popover's direct properties and floating content mechanics live in `src/components/popover/popover-element.ts`,
+with pure types in `model.ts` and companion regions `PopoverTrigger` and `PopoverContent` in `regions.ts`.
+Popover extends `ViewElement` and registers `m-popover`, `m-popover-trigger`, and `m-popover-content`,
+providing 12 directional placements, click/hover/focus/manual modes, collision flipping, arrow decoration,
+and direct trigger/panel adoption while preserving existing `createPopover` and positioning exports.
+The legacy aggregate `MPopover` is removed from `overlays.ts` and `elements.ts`.
+See the [Popover demo/API](../../demo/components/popover.html).
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed

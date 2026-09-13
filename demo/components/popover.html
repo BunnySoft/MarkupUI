@@ -3,75 +3,168 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Popover</title>
+  <title>Popover - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-popover.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-space.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./popover.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-popover.global.js"></script>
-  <script defer src="./popover.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-space.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./popover.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <h1>Native nonmodal Popover</h1>
-  <p>Native buttons own click, Tab, Escape and outside dismissal. No focus trap or generated role. Without Popover support the panels remain readable in flow.</p>
-  <main>
-    <section>
-      <h2>Click and nested content</h2>
-      <form id="demo-form">
-        <label>Native required field <input name="note" required value="Retained input"></label>
-        <button type="button" id="click-trigger" popovertarget="click-panel" aria-controls="author-note" aria-describedby="author-note">Click information</button>
-        <span id="author-note">A nonmodal authored panel.</span>
-        <button type="submit" id="submit-button">Submit form</button>
-        <button type="reset" id="reset-button">Reset form</button>
-        <div class="m-popover m-popover--arrow m-popover--animated" popover="auto" id="click-panel" aria-labelledby="click-heading">
-          <header><h2 id="click-heading">Authored heading</h2></header>
-          <p id="preserved">This node and its listeners are never replaced.</p>
-          <label>Panel field <input name="panel-note" value="Still in the form"></label>
-          <a href="#destination" id="panel-link">Normal link</a>
-          <button type="button" id="nested-trigger" popovertarget="nested-panel">Nested panel</button>
-          <div class="m-popover" popover="auto" id="nested-panel" aria-label="Nested information">
-            <p>Escape dismisses this child before its parent.</p>
-            <button type="button" popovertarget="nested-panel" popovertargetaction="hide">Close child</button>
-          </div>
-          <footer><button type="button" id="close-click" popovertarget="click-panel" popovertargetaction="hide">Close information</button></footer>
+  <main data-demo-page class="component-docs">
+    <h1>Popover</h1>
+    <m-p>Interactive nonmodal floating content positioned relative to an authored trigger.</m-p>
+    <nav class="component-docs-nav" aria-label="Popover documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#popover-api">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary>Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-popover.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-popover.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header><div><h2 id="basic-heading">Click and nested content</h2><m-p>Click trigger with top-layer nonmodal content, arrows and nested popovers.</m-p></div></header>
+      <div data-demo-preview>
+        <m-space wrap align="center">
+          <m-popover id="popover-basic" arrow>
+            <m-popover-trigger>
+              <m-button type="primary">Click information</m-button>
+            </m-popover-trigger>
+            <m-popover-content id="basic-content">
+              <m-p>This is rich popover content displayed in top-layer.</m-p>
+              <m-popover id="popover-nested" placement="right-start">
+                <m-popover-trigger>
+                  <m-button size="small">Nested popover</m-button>
+                </m-popover-trigger>
+                <m-popover-content id="nested-content">
+                  <m-p>Nested popover escapes its parent container.</m-p>
+                </m-popover-content>
+              </m-popover>
+            </m-popover-content>
+          </m-popover>
+        </m-space>
+      </div>
+    </section>
+
+    <section data-demo-example="modes" aria-labelledby="modes-heading">
+      <header data-demo-header><div><h2 id="modes-heading">Hover and focus triggers</h2><m-p>Hover mode with delay/duration timing, and native focus triggering.</m-p></div></header>
+      <div data-demo-preview>
+        <m-space wrap align="center">
+          <m-popover id="popover-hover" trigger="hover" delay="100" duration="150" arrow>
+            <m-popover-trigger>
+              <m-button>Hover me (100ms delay)</m-button>
+            </m-popover-trigger>
+            <m-popover-content id="hover-content">
+              <m-p>Hovered content stays open across the gap.</m-p>
+            </m-popover-content>
+          </m-popover>
+
+          <m-popover id="popover-focus" trigger="focus" arrow>
+            <m-popover-trigger>
+              <m-button>Focus me</m-button>
+            </m-popover-trigger>
+            <m-popover-content id="focus-content">
+              <m-p>Focus triggers open on focusin and close on focusout.</m-p>
+            </m-popover-content>
+          </m-popover>
+        </m-space>
+      </div>
+    </section>
+
+    <section data-demo-example="placement" aria-labelledby="placement-heading">
+      <header data-demo-header><div><h2 id="placement-heading">Placements and collision flip</h2><m-p>12 directional placements with automatic collision detection and flipping.</m-p></div></header>
+      <div data-demo-preview>
+        <m-space wrap align="center" class="placement-grid">
+          <m-popover placement="top" arrow>
+            <m-popover-trigger><m-button>Top</m-button></m-popover-trigger>
+            <m-popover-content><m-p>Placement: top</m-p></m-popover-content>
+          </m-popover>
+          <m-popover placement="bottom" arrow>
+            <m-popover-trigger><m-button>Bottom</m-button></m-popover-trigger>
+            <m-popover-content><m-p>Placement: bottom</m-p></m-popover-content>
+          </m-popover>
+          <m-popover placement="left" arrow>
+            <m-popover-trigger><m-button>Left</m-button></m-popover-trigger>
+            <m-popover-content><m-p>Placement: left</m-p></m-popover-content>
+          </m-popover>
+          <m-popover placement="right" arrow>
+            <m-popover-trigger><m-button>Right</m-button></m-popover-trigger>
+            <m-popover-content><m-p>Placement: right</m-p></m-popover-content>
+          </m-popover>
+        </m-space>
+      </div>
+    </section>
+
+    <section data-demo-example="manual" aria-labelledby="manual-heading">
+      <header data-demo-header><div><h2 id="manual-heading">Manual visibility and API methods</h2><m-p>Programmatic control via open, close, and toggle methods.</m-p></div></header>
+      <div data-demo-preview>
+        <m-space wrap align="center">
+          <m-popover id="popover-manual" trigger="manual" arrow>
+            <m-popover-trigger>
+              <m-button id="manual-trigger-btn">Target element</m-button>
+            </m-popover-trigger>
+            <m-popover-content id="manual-content">
+              <m-p>Programmatically controlled popover panel.</m-p>
+              <m-button id="manual-inner-close" size="small">Close from inside</m-button>
+            </m-popover-content>
+          </m-popover>
+        </m-space>
+        <m-space class="controls" wrap align="center">
+          <m-button id="manual-open">open()</m-button>
+          <m-button id="manual-close">close()</m-button>
+          <m-button id="manual-toggle">toggle()</m-button>
+          <m-text id="manual-state" role="status">State: closed</m-text>
+        </m-space>
+      </div>
+    </section>
+
+    <section data-demo-example="form" aria-labelledby="form-heading">
+      <header data-demo-header><div><h2 id="form-heading">Interactive form in popover</h2><m-p>Form inputs inside popovers stay native and focusable.</m-p></div></header>
+      <div data-demo-preview>
+        <m-popover id="popover-form" arrow>
+          <m-popover-trigger>
+            <m-button type="info">Filter options</m-button>
+          </m-popover-trigger>
+          <m-popover-content id="form-content">
+            <m-p><m-text strong>Filter settings</m-text></m-p>
+            <input id="filter-input" placeholder="Keyword...">
+            <m-space class="controls" justify="end">
+              <m-button id="filter-reset" size="small">Reset</m-button>
+              <m-button id="filter-apply" type="primary" size="small">Apply</m-button>
+            </m-space>
+          </m-popover-content>
+        </m-popover>
+      </div>
+    </section>
+
+    <section data-demo-example="static" aria-labelledby="static-heading">
+      <header data-demo-header><div><h2 id="static-heading">CSS-only native popover surface</h2><m-p>The .m-popover stylesheet applies directly to native popover elements without custom element registration.</m-p></div></header>
+      <div data-demo-preview>
+        <div class="m-popover static-preview">
+          <m-p>Static .m-popover surface with audited padding, border, and shadows.</m-p>
         </div>
-      </form>
-    </section>
-    <section class="modes">
-      <h2>Hover and focus</h2>
-      <button type="button" id="hover-trigger">Hover or focus (100/150ms)</button>
-      <div class="m-popover m-popover--arrow" popover="auto" id="hover-panel">
-        <p>Cross the gap without flicker. Tab can reach this content.</p>
-        <a href="#destination" id="hover-link">Hover panel link</a>
-      </div>
-      <a href="#destination" id="focus-trigger">Focus me; clicking still navigates</a>
-      <div class="m-popover" popover="auto" id="focus-panel">
-        <p>Focus can move from the link into this panel.</p>
-        <button type="button" id="focus-action">Ordinary action</button>
       </div>
     </section>
-    <section>
-      <h2>Manual visibility, explicit close</h2>
-      <button type="button" id="manual-trigger">Application open request</button>
-      <div class="m-popover" popover="manual" id="manual-panel">
-        <p>Manual panels do not light-dismiss or close on Escape; use this close action.</p>
-        <button type="button" id="manual-close">Close manual panel</button>
-      </div>
-    </section>
-    <section>
-      <h2>Scroll clipping, RTL and edge flip</h2>
-      <div class="scroll-box" id="scroll-box" dir="rtl">
-        <div class="scroll-content">
-          <button type="button" id="edge-trigger" popovertarget="edge-panel">RTL start</button>
-          <div class="m-popover m-popover--arrow edge-panel" popover="auto" id="edge-panel">
-            <p>Forced local fallback. Top-layer content escapes this scroll box, but a completely clipped trigger closes it.</p>
-          </div>
-        </div>
-      </div>
-      <button type="button" id="edge-bottom" popovertarget="bottom-panel">Bottom edge flip</button>
-      <div class="m-popover" popover="auto" id="bottom-panel"><p>The preferred bottom placement flips above when space is insufficient.</p></div>
-    </section>
-    <p id="destination">Ordinary navigation destination.</p>
-    <button type="button" id="outside">Outside focus target</button>
-    <output id="event-log" aria-live="polite"></output>
+
+    <section id="popover-api"></section>
   </main>
 </body>
 </html>

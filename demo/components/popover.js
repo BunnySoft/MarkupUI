@@ -1,24 +1,54 @@
-const { createPopover } = window.MarkupUIPopover
-const node = id => document.getElementById(id)
-const bind = (trigger, panel, options) => createPopover(node(trigger), node(panel), options)
-const controllers = {
-  click: bind("click-trigger", "click-panel"),
-  nested: bind("nested-trigger", "nested-panel", { placement: "right-start" }),
-  hover: bind("hover-trigger", "hover-panel", { trigger: "hover", delay: 100, duration: 150 }),
-  focus: bind("focus-trigger", "focus-panel", { trigger: "focus" }),
-  manual: bind("manual-trigger", "manual-panel", { trigger: "manual" }),
-  edge: bind("edge-trigger", "edge-panel", { placement: "bottom-start", positioning: "fallback" }),
-  bottom: bind("edge-bottom", "bottom-panel", { placement: "bottom" }),
-}
-node("manual-trigger").addEventListener("click", () => controllers.manual.open())
-node("manual-close").addEventListener("click", () => controllers.manual.close())
-node("demo-form").addEventListener("submit", event => {
-  event.preventDefault()
-  node("event-log").value = `Submitted ${new FormData(event.currentTarget).get("note")}`
-})
-for (const panel of document.querySelectorAll(".m-popover")) {
-  panel.addEventListener("toggle", event => {
-    if (event.target === panel) node("event-log").value = `${panel.id}: ${panel.matches(":popover-open") ? "open" : "closed"}`
+import { loadComponentApi } from "../component-api.js"
+
+function initialize() {
+  const api = globalThis.MarkupUIPopover
+  if (!api) throw new Error("Popover runtime did not load.")
+  void loadComponentApi(document.getElementById("popover-api"), new URL("../api/popover.json", import.meta.url))
+
+  const manualPopover = document.getElementById("popover-manual")
+  const manualState = document.getElementById("manual-state")
+
+  function updateManualState() {
+    if (manualState && manualPopover) {
+      manualState.textContent = `State: ${manualPopover.show ? "open" : "closed"}`
+    }
+  }
+
+  document.getElementById("manual-open")?.addEventListener("click", () => {
+    manualPopover?.open()
+    updateManualState()
   })
+  document.getElementById("manual-close")?.addEventListener("click", () => {
+    manualPopover?.close()
+    updateManualState()
+  })
+  document.getElementById("manual-toggle")?.addEventListener("click", () => {
+    manualPopover?.toggle()
+    updateManualState()
+  })
+  document.getElementById("manual-inner-close")?.addEventListener("click", () => {
+    manualPopover?.close()
+    updateManualState()
+  })
+
+  const formPopover = document.getElementById("popover-form")
+  const filterInput = document.getElementById("filter-input")
+  document.getElementById("filter-reset")?.addEventListener("click", () => {
+    if (filterInput) filterInput.value = ""
+  })
+  document.getElementById("filter-apply")?.addEventListener("click", () => {
+    formPopover?.close()
+  })
+
+  for (const panel of document.querySelectorAll("m-popover-content")) {
+    panel.addEventListener("toggle", () => {
+      updateManualState()
+    })
+  }
 }
-window.popoverDemo = controllers
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initialize)
+} else {
+  initialize()
+}
