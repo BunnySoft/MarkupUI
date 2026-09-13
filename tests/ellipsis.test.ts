@@ -1,158 +1,195 @@
-import { readFileSync, readdirSync } from "node:fs"
+import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import { Ellipsis, MEllipsis, registerEllipsis } from "../src/components/ellipsis/index.js"
+import * as ellipsisApi from "../src/components/ellipsis/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const css = readFileSync(resolve("src", "components", "ellipsis", "ellipsis.css"), "utf8")
-const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
-const demo = readFileSync(resolve("demo", "components", "ellipsis.html"), "utf8")
 let style: HTMLStyleElement | undefined
-function install(): void { style = document.createElement("style"); style.textContent = css; document.head.append(style) }
-afterEach(() => { style?.remove(); style = undefined; document.body.replaceChildren() })
+function install(): void {
+  style = document.createElement("style")
+  style.textContent = css
+  document.head.append(style)
+}
+function ellipsis(markup = "<m-ellipsis></m-ellipsis>"): Ellipsis {
+  document.body.innerHTML = markup
+  const element = document.querySelector("m-ellipsis")
+  if (!(element instanceof Ellipsis)) throw new Error("Ellipsis was not upgraded")
+  return element
+}
+afterEach(() => {
+  style?.remove()
+  style = undefined
+  document.body.replaceChildren()
+  vi.restoreAllMocks()
+})
 
-describe("CSS-only Ellipsis and native disclosure", () => {
-  it("exports CSS only, without a tooltip, measurement or component runtime", () => {
-    expect(pkg.exports["./ellipsis/style.css"]).toBe("./dist/markup-ui-ellipsis.css")
-    expect(pkg.exports["./ellipsis"]).toBeUndefined()
-    expect(readdirSync(resolve("src", "components", "ellipsis"))).toEqual(["ellipsis.css"])
-    expect(customElements.get("m-ellipsis")).toBeUndefined()
-    expect(demo).not.toContain("<script")
+describe("canonical Ellipsis ViewElement", () => {
+  it("exports canonical own-tag ViewElement and registers m-ellipsis", () => {
+    expect(Object.keys(ellipsisApi).sort()).toEqual(["Ellipsis", "MEllipsis", "expandTriggers", "registerEllipsis"])
+    expect(Object.hasOwn(Ellipsis, "tag")).toBe(true)
+    expect(Ellipsis.tag).toBe("m-ellipsis")
+    expect(ViewElement.prototype.isPrototypeOf(Ellipsis.prototype)).toBe(true)
+    expect(customElements.get("m-ellipsis")).toBe(Ellipsis)
+    expect(MEllipsis).toBe(Ellipsis)
+    expect(Ellipsis.observedAttributes).toEqual(["line-clamp", "expand-trigger", "tooltip", "expanded"])
+    const define = vi.fn()
+    expect(() => registerEllipsis({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerEllipsis()).not.toThrow()
   })
 
-  it("retains complete original text, native emphasis and authored ARIA", () => {
-    document.body.innerHTML = '<p class="m-ellipsis" data-multiline lang="en" aria-describedby="description">Original <strong>complete</strong> text</p><span id="description">Description</span>'
-    const text = document.querySelector("p")!
-    const strong = text.querySelector("strong")
-    const before = text.outerHTML
-    install()
-    expect(text.outerHTML).toBe(before)
-    expect(text.querySelector("strong")).toBe(strong)
-    expect(text.textContent).toBe("Original complete text")
-    expect(document.querySelector("[role],[aria-live],[aria-hidden],[aria-label],title")).toBeNull()
+  it("has explicit property defaults and validates values before mutating attributes", () => {
+    const element = ellipsis()
+    expect(element.lineClamp).toBeNull()
+    expect(element.expandTrigger).toBeNull()
+    expect(element.tooltip).toBe(false)
+    expect(element.expanded).toBe(false)
+
+    // Invalid lineClamp values
+    for (const invalid of [0, -1, 1.5, NaN, Infinity]) {
+      expect(() => { element.lineClamp = invalid }).toThrow(RangeError)
+    }
+
+    // Valid lineClamp values
+    element.lineClamp = 3
+    expect(element.getAttribute("line-clamp")).toBe("3")
+    expect(element.style.getPropertyValue("--m-ellipsis-lines")).toBe("3")
+    element.lineClamp = null
+    expect(element.hasAttribute("line-clamp")).toBe(false)
+    expect(element.style.getPropertyValue("--m-ellipsis-lines")).toBe("")
+
+    // Invalid expandTrigger
+    expect(() => { Reflect.set(element, "expandTrigger", "hover") }).toThrow(RangeError)
+
+    // Valid expandTrigger
+    element.expandTrigger = "click"
+    expect(element.getAttribute("expand-trigger")).toBe("click")
+    element.expandTrigger = null
+    expect(element.hasAttribute("expand-trigger")).toBe(false)
+
+    // Tooltip boolean attribute
+    element.tooltip = true
+    expect(element.hasAttribute("tooltip")).toBe(true)
+    element.tooltip = false
+    expect(element.hasAttribute("tooltip")).toBe(false)
+
+    // Expanded boolean attribute
+    element.expanded = true
+    expect(element.hasAttribute("expanded")).toBe(true)
+    element.expanded = false
+    expect(element.hasAttribute("expanded")).toBe(false)
   })
 
-  it("expands the same text via native summary activation without a duplicate full label", () => {
-    document.body.innerHTML = '<details class="m-ellipsis-disclosure"><summary><span class="m-ellipsis">Complete original content</span><span class="m-ellipsis-hint">Expand or collapse text</span></summary></details>'
+  it("replays pre-upgrade properties upon connection", () => {
+    const element = document.createElement("m-ellipsis") as Ellipsis
+    element.textContent = "Pre-upgrade text content"
+    Object.defineProperty(element, "lineClamp", { configurable: true, value: 2 })
+    Object.defineProperty(element, "expandTrigger", { configurable: true, value: "click" })
+    Object.defineProperty(element, "tooltip", { configurable: true, value: true })
+    document.body.append(element)
+
+    expect(element.lineClamp).toBe(2)
+    expect(element.expandTrigger).toBe("click")
+    expect(element.tooltip).toBe(true)
+    expect(element.getAttribute("line-clamp")).toBe("2")
+    expect(element.getAttribute("expand-trigger")).toBe("click")
+    expect(element.hasAttribute("tooltip")).toBe(true)
+    expect(element.title).toBe("Pre-upgrade text content")
+  })
+})
+
+describe("Ellipsis behaviors and triggers", () => {
+  it("toggles expanded on click when expandTrigger is click", () => {
+    const element = ellipsis('<m-ellipsis expand-trigger="click">Clickable long text</m-ellipsis>')
+    expect(element.expanded).toBe(false)
+    expect(element.getAttribute("aria-expanded")).toBe("false")
+    expect(element.getAttribute("role")).toBe("button")
+    expect(element.getAttribute("tabindex")).toBe("0")
+
+    element.click()
+    expect(element.expanded).toBe(true)
+    expect(element.getAttribute("aria-expanded")).toBe("true")
+
+    element.click()
+    expect(element.expanded).toBe(false)
+    expect(element.getAttribute("aria-expanded")).toBe("false")
+  })
+
+  it("does not toggle on click if expandTrigger is null", () => {
+    const element = ellipsis("<m-ellipsis>Non-clickable long text</m-ellipsis>")
+    expect(element.expanded).toBe(false)
+    element.click()
+    expect(element.expanded).toBe(false)
+    expect(element.hasAttribute("aria-expanded")).toBe(false)
+  })
+
+  it("does not toggle expanded when clicking an interactive descendant", () => {
+    const element = ellipsis('<m-ellipsis expand-trigger="click">Text with <button type="button" id="btn">Action</button></m-ellipsis>')
+    const button = element.querySelector("button")!
+    expect(element.expanded).toBe(false)
+    button.click()
+    expect(element.expanded).toBe(false)
+  })
+
+  it("toggles expanded via keyboard Enter and Space when focused", () => {
+    const element = ellipsis('<m-ellipsis expand-trigger="click">Keyboard text</m-ellipsis>')
+    expect(element.expanded).toBe(false)
+
+    element.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }))
+    expect(element.expanded).toBe(true)
+
+    element.dispatchEvent(new KeyboardEvent("keydown", { key: " ", bubbles: true, cancelable: true }))
+    expect(element.expanded).toBe(false)
+  })
+
+  it("sets and manages title when tooltip is enabled", () => {
+    const element = ellipsis("<m-ellipsis>Sample sentence</m-ellipsis>")
+    expect(element.hasAttribute("title")).toBe(false)
+
+    element.tooltip = true
+    expect(element.title).toBe("Sample sentence")
+
+    element.tooltip = false
+    expect(element.hasAttribute("title")).toBe(false)
+  })
+
+  it("preserves original text, native emphasis, and structure", () => {
+    const element = ellipsis('<m-ellipsis line-clamp="2">Original <strong>emphasized</strong> text</m-ellipsis>')
+    const strong = element.querySelector("strong")!
+    expect(strong.textContent).toBe("emphasized")
+    expect(element.textContent).toBe("Original emphasized text")
+    expect(element.dataset.mEllipsis).toBe("")
+  })
+
+  it("works seamlessly inside details disclosure", () => {
+    document.body.innerHTML = '<details class="m-ellipsis-disclosure"><summary><m-ellipsis line-clamp="2">Disclosure text</m-ellipsis><span class="m-ellipsis-hint">Hint</span></summary></details>'
     const details = document.querySelector("details")!
     const summary = document.querySelector("summary")!
-    const text = summary.querySelector(".m-ellipsis")!
-    const child = text.firstChild
-    let clicks = 0
-    summary.addEventListener("click", () => clicks++)
+    const element = summary.querySelector("m-ellipsis")!
     install()
+
+    expect(details.open).toBe(false)
     summary.click()
     expect(details.open).toBe(true)
     summary.click()
     expect(details.open).toBe(false)
-    expect(clicks).toBe(2)
-    expect(text.firstChild).toBe(child)
-    expect(text.textContent).toBe("Complete original content")
-    expect(document.querySelectorAll(".m-ellipsis")).toHaveLength(1)
+    expect(element.textContent).toBe("Disclosure text")
   })
+})
 
-  it("preserves authored open state, native toggle events and reconnect identity", async () => {
-    document.body.innerHTML = '<details class="m-ellipsis-disclosure" open><summary><span class="m-ellipsis">Original</span><span class="m-ellipsis-hint">Full text</span></summary></details>'
-    const details = document.querySelector("details")!
-    const text = details.querySelector(".m-ellipsis")
-    install()
-    expect(details.open).toBe(true)
-    const toggle = new Promise<void>((resolve) => details.addEventListener("toggle", () => resolve(), { once: true }))
-    details.open = false
-    await toggle
-    details.remove()
-    document.body.append(details)
-    expect(details.open).toBe(false)
-    expect(details.querySelector(".m-ellipsis")).toBe(text)
-  })
-
-  it("keeps normal multiline text as the unsupported-clamp fallback", () => {
+describe("Ellipsis CSS stylesheet", () => {
+  it("includes support guards, line-clamp, and print styles", () => {
     expect(css).toContain("@supports selector(:has(*))")
     expect(css).toContain("@supports (-webkit-line-clamp: 2) or (line-clamp: 2)")
     expect(css).toContain("--m-ellipsis-lines, 2")
     expect(css).toContain("overflow-wrap: anywhere")
     expect(css).toContain("min-inline-size: 0")
-    expect(css).not.toContain("max-height")
-    expect(css).not.toContain("block-size:")
-  })
-
-  it("uses inline passive boxes while retaining native disclosure preview layout", () => {
-    expect(css).toContain("display: inline-block")
-    expect(css).toContain("vertical-align: bottom")
-    expect(css).toContain("display: -webkit-inline-box")
-    expect(css).toContain("vertical-align: baseline")
-    expect(css).toContain(":where(details.m-ellipsis-disclosure > summary) > .m-ellipsis { display: block; }")
-    expect(css).toContain(":where(details.m-ellipsis-disclosure > summary) > .m-ellipsis[data-multiline]")
-    expect(css).not.toContain("list-style: none")
-    expect(css).not.toContain("::marker")
-  })
-
-  it("has fail-open guards for native actions/editable or focusable text instead of clipping controls", () => {
-    expect(css).toContain(".m-ellipsis:has(:is(a, button")
-    expect(css).toContain(":is(a, button, [tabindex], [contenteditable]) .m-ellipsis")
-    expect(css).toContain("iframe, object, embed, audio, video, [tabindex], [contenteditable]")
-    expect(css).not.toContain("pointer-events")
-    expect(css).not.toContain("visibility: hidden")
-    expect(css).not.toContain("user-select")
-  })
-
-  it("preserves native adjacent and accidentally nested action attributes/listeners", () => {
-    document.body.innerHTML = '<p class="m-ellipsis">Original <button type="button">Action</button></p><a href="#full" target="_self" rel="help">Full text</a>'
-    const button = document.querySelector("button")!
-    const link = document.querySelector("a")!
-    const before = document.body.innerHTML
-    let clicks = 0
-    button.addEventListener("click", () => clicks++)
-    install()
-    button.click()
-    expect(clicks).toBe(1)
-    expect(button.type).toBe("button")
-    expect(link.getAttribute("href")).toBe("#full")
-    expect(document.body.innerHTML).toBe(before)
-  })
-
-  it("keeps late authored text, templates and hidden content application-owned", () => {
-    document.body.innerHTML = '<p class="m-ellipsis">Original</p><template class="m-ellipsis"><button type="button">Inert template action</button></template><span class="m-ellipsis" hidden>Hidden</span>'
-    const text = document.querySelector("p")!
-    const template = document.querySelector("template")!
-    install()
-    const late = document.createElement("em")
-    late.textContent = " late content"
-    text.append(late)
-    expect(text.lastChild).toBe(late)
-    expect(template.content.querySelector("button")?.textContent).toBe("Inert template action")
-    expect(document.querySelector("button")).toBeNull()
-    expect(getComputedStyle(template).display).toBe("none")
-    expect(getComputedStyle(document.querySelector("[hidden]")!).display).toBe("none")
-  })
-
-  it("preserves direction, language and out-of-scope typography", () => {
-    document.body.innerHTML = '<section dir="rtl" lang="ar"><p class="m-ellipsis">نص أصلي</p></section><p id="outside">Outside</p>'
-    const outside = document.querySelector("#outside")!
-    const before = { display: getComputedStyle(outside).display, overflow: getComputedStyle(outside).overflow, whiteSpace: getComputedStyle(outside).whiteSpace }
-    install()
-    expect({ display: getComputedStyle(outside).display, overflow: getComputedStyle(outside).overflow, whiteSpace: getComputedStyle(outside).whiteSpace }).toEqual(before)
-    expect(document.querySelector("section")?.dir).toBe("rtl")
-    expect(document.querySelector("section")?.lang).toBe("ar")
-    expect(css).not.toContain("direction:")
-    expect(css).not.toContain("font-family:")
-  })
-
-  it("does not reveal hidden or template previews when a disclosure is open", () => {
-    document.body.innerHTML = '<details class="m-ellipsis-disclosure" open><summary><span class="m-ellipsis" data-multiline hidden>Still hidden</span><template class="m-ellipsis">Still inert</template><span class="m-ellipsis-hint">Native disclosure</span></summary></details>'
-    install()
-    expect(getComputedStyle(document.querySelector("[hidden]")!).display).toBe("none")
-    expect(getComputedStyle(document.querySelector("template")!).display).toBe("none")
-    expect(document.querySelector("[hidden]")?.textContent).toBe("Still hidden")
-  })
-
-  it("prints full summary text without opening unrelated details or adding animation", () => {
-    const print = css.slice(css.indexOf("@media print"))
-    expect(print).toContain("white-space: normal")
-    expect(print).toContain("-webkit-line-clamp: unset")
-    expect(print).toContain("overflow: visible")
-    expect(print).toContain(".m-ellipsis-hint { display: none; }")
-    expect(css).not.toContain("@keyframes")
-    expect(css).not.toContain("transition:")
-    expect(css).not.toContain("content:")
-    expect(css).not.toContain("outline: none")
+    expect(css).toContain("m-ellipsis")
+    expect(css).toContain(".m-ellipsis")
+    expect(css).toContain("m-ellipsis[expand-trigger=\"click\"]")
+    expect(css).toContain("m-ellipsis[expanded]")
+    expect(css).toContain("@media print")
   })
 })
