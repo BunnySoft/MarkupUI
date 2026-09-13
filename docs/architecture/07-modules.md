@@ -1,6 +1,6 @@
 # 7. Small core and selectable components
 
-**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex, Input, Checkbox, Radio, Switch and InputNumber, with explicit payload ceilings.
+**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex, Input, Checkbox, Radio, Switch, InputNumber and Select, with explicit payload ceilings.
 The rollout continues component-by-component.**
 Follow the useful jQuery/plugin pattern: load one small core, then only the features the
 application needs. This is a packaging and extension pattern, not a dependency on jQuery.
@@ -62,7 +62,7 @@ Keep approved budgets unless a measured change is explicitly accepted.
 The implemented entries are `@dataengine/markup-ui/core`, `@dataengine/markup-ui/avatar`,
 `@dataengine/markup-ui/button`, `@dataengine/markup-ui/card`, `@dataengine/markup-ui/carousel`,
 `@dataengine/markup-ui/collapse`, `@dataengine/markup-ui/divider`, `@dataengine/markup-ui/dropdown`,
-`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography`, `@dataengine/markup-ui/space`, `@dataengine/markup-ui/flex`, `@dataengine/markup-ui/input`, `@dataengine/markup-ui/checkbox`, `@dataengine/markup-ui/radio`, `@dataengine/markup-ui/switch` and `@dataengine/markup-ui/input-number`.
+`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography`, `@dataengine/markup-ui/space`, `@dataengine/markup-ui/flex`, `@dataengine/markup-ui/input`, `@dataengine/markup-ui/checkbox`, `@dataengine/markup-ui/radio`, `@dataengine/markup-ui/switch`, `@dataengine/markup-ui/input-number` and `@dataengine/markup-ui/select`.
 ESM uses `markup-ui-core.js`; classic scripts load `markup-ui-core.global.js` before
 `markup-ui-avatar.global.js`, `markup-ui-button.global.js`, `markup-ui-card.global.js`,
 `markup-ui-carousel.global.js`, `markup-ui-collapse.global.js`, `markup-ui-divider.global.js`,
@@ -118,6 +118,23 @@ public factory and widgets-plugin constructor. No native-input/native-radio chun
 component constructors are required. The manifest lists exactly core plus family per format.
 User-approved ceilings are 4,000 gzip bytes for each JS format and 5,500 for combined
 core-plus-family runtime; CSS stays at 1,000. No other ceiling is increased.
+
+Select imports core and `markup-ui-native-select.js`. Classic order is core,
+`markup-ui-native-select.global.js`, then `markup-ui-select.global.js`, with Select CSS.
+Only `Select`/`registerSelect` are public runtime exports; only `m-select` is registered.
+The internal native dependency has two real existing consumers, TreeSelect and Popselect,
+which now import that dependency rather than the obsolete public Select helper. It contains
+no registrations or core copy. Their classic scripts load native-select first; their ESM
+entries import it automatically. Neither consumer requires core or Select registration.
+
+Select keeps the existing 4,000-byte per-format JS ceilings and 1,000-byte CSS ceiling.
+The native-select files have 4,000-byte ceilings, retaining the old native helper budget;
+Select's new combined core-plus-native-plus-family runtime ceiling is 8,000. The manifest
+counts all three runtime files and CSS. TreeSelect/Popselect retain every existing per-file
+JS/CSS ceiling, with new dependency-inclusive runtime ceilings of 10,500/11,000 respectively.
+These new totals account for separate-file gzip overhead rather than hiding the shared cost.
+No sibling ceiling, including InputNumber's tight 3,998-byte classic/1,000-byte CSS outputs,
+is changed.
 
 ## References
 

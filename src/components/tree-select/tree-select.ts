@@ -1,5 +1,5 @@
-import { createSelect } from "../select/select.js"
-import type { SelectController } from "../select/select.js"
+import { createSelect } from "../native-select.js"
+import type { SelectController } from "../native-select.js"
 import { readTreeHierarchy, treeLabel } from "../tree/hierarchy.js"
 import type { TreeNode } from "../tree/hierarchy.js"
 

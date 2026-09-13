@@ -5,7 +5,7 @@ import { gzipSync } from "node:zlib"
 import { createTreeSelect } from "../src/components/tree-select/index.js"
 import type { TreeSelectController, TreeSelectOptions } from "../src/components/tree-select/index.js"
 import { createTree } from "../src/components/tree/index.js"
-import { createSelect } from "../src/components/select/index.js"
+import { createSelect } from "../src/components/native-select.js"
 import { createForm } from "../src/components/form/index.js"
 
 const controllers: TreeSelectController[] = []

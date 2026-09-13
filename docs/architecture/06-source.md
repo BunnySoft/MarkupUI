@@ -77,6 +77,15 @@ and string state, native defaults, validity and forms. Its detached probe uses n
 stepping with the actual value-attribute grid base. The former factory and widgets-plugin
 registration are removed; no Input/Radio engine or additional shared chunk is imported.
 
+Select's canonical native-owner API lives in `src/components/select/select.ts`. The internal
+`src/components/native-select.ts` retains actual option validation, silent value writes,
+literal filtering, clear actions and native lifecycle mechanics already used by both
+TreeSelect and Popselect. This is a real existing consumer boundary, not a budget-only
+split: neither consumer imports Select registration or core. Its classic symbol is private;
+there is no public `createSelect`/`SelectController` facade. Select does not clone native
+options or retain the aggregate's legacy `MSelect` registration. The remaining `m-option`
+belongs only to unmigrated Autocomplete, not Select.
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed

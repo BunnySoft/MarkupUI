@@ -77,6 +77,11 @@ function assignValue(element: Element, property: string, value: StateValue): voi
     return
   }
   if (property === "value" && element.matches("m-input,m-textarea,m-input-number") && Reflect.get(element, property) === value) return
+  if (property === "value" && element.matches("m-select")) {
+    const current = Reflect.get(element, property) as unknown
+    if (current === value || Array.isArray(current) && Array.isArray(value)
+      && current.length === value.length && current.every((key, index) => key === value[index])) return
+  }
   Reflect.set(element, property, value)
 }
 
@@ -104,8 +109,8 @@ export function bind(root: ParentNode, store: MStore): () => void {
     if (twoWayPath) {
       const nativeCheckbox = element.matches("m-checkbox,m-switch")
       const nativeRadio = element.matches("m-radio,m-radio-button")
-      const nativeNumber = element.matches("m-input-number")
-      const nativeField = nativeCheckbox || nativeRadio || element.matches("m-input,m-textarea,m-input-number") && twoWayProperty === "value"
+      const nativeNumber = element.matches("m-input-number,m-select")
+      const nativeField = nativeCheckbox || nativeRadio || element.matches("m-input,m-textarea,m-input-number,m-select") && twoWayProperty === "value"
       const checkboxGroup = element.matches("m-checkbox-group") && twoWayProperty === "value"
       const radioGroup = element.matches("m-radio-group") && twoWayProperty === "value"
       const events = nativeCheckbox || nativeRadio ? ["change"] : nativeField ? ["input", "change"] : checkboxGroup ? ["m:checkbox-group-change"] : radioGroup ? ["m:radio-group-change"] : ["m:input", "m:change"]

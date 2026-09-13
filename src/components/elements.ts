@@ -1,6 +1,6 @@
 import { MElement } from "../core/element.js"
 import { MApp, MField, MGrid, MSemantic, MTheme } from "./foundation.js"
-import { MAutocomplete, MForm, MFormItem, MSelect, MSlider } from "./forms.js"
+import { MAutocomplete, MForm, MFormItem, MSlider } from "./forms.js"
 import { MAccordionItem, MInclude } from "./dynamic.js"
 import { MDialog, MDrawer, MPopover, MTooltip } from "./overlays.js"
 import { MMenu, MMenuItem, MPagination, MSteps, MTabs, MTab, MDescriptions, MDescriptionItem, MStatistic, MTree, MTreeNode } from "./navigation.js"
@@ -27,7 +27,6 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-empty", MEmpty],
   ["m-spin", class extends MElement { public connectedCallback(): void { this.setAttribute("role", "status"); this.setAttribute("aria-label", this.getAttribute("label") ?? "Loading") } }],
   ["m-option", class extends MElement {}],
-  ["m-select", MSelect],
   ["m-autocomplete", MAutocomplete],
   ["m-slider", MSlider],
   ["m-form-item", MFormItem],

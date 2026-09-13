@@ -1,2 +1,6 @@
-export { createSelect } from "./select.js"
-export type { SelectController, SelectValue } from "./select.js"
+import { ViewElement } from "../../core/index.js"
+import { Select } from "./select.js"
+export { Select } from "./select.js"
+export type { SelectValue, SelectSize, SelectStatus } from "./select.js"
+export function registerSelect(): void { ViewElement.register([Select]) }
+registerSelect()

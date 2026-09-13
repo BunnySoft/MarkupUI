@@ -29,13 +29,13 @@ describe("Select native field defaults", () => {
     const root = rules.find(rule => rule.selectorText === ".m-select")!
     expect(root.style.getPropertyValue("--_select-font")).toBe("14px")
     expect(root.style.getPropertyValue("--_select-height")).toBe("34px")
-    const tiny = rules.find(rule => rule.selectorText === ".m-select[data-size=tiny]")!
-    const large = rules.find(rule => rule.selectorText === ".m-select[data-size=large]")!
+    const tiny = rules.find(rule => rule.selectorText === ".m-select[size=tiny]")!
+    const large = rules.find(rule => rule.selectorText === ".m-select[size=large]")!
     expect(tiny.style.getPropertyValue("--_select-font")).toBe("12px")
     expect(tiny.style.getPropertyValue("--_select-height")).toBe("22px")
     expect(large.style.getPropertyValue("--_select-font")).toBe("15px")
     expect(large.style.getPropertyValue("--_select-height")).toBe("40px")
-    for (const rule of rules.filter(rule => /^\.m-select\[(data-size|data-status|data-borderless)/.test(rule.selectorText ?? ""))) {
+    for (const rule of rules.filter(rule => /^\.m-select\[(size|status|borderless)/.test(rule.selectorText ?? ""))) {
       for (let i = 0; i < rule.style.length; i++) expect(rule.style[i]).toMatch(/^--_select-/)
     }
   })
@@ -53,7 +53,7 @@ describe("Select native field defaults", () => {
   })
 
   it("preserves original options, groups, values and explicit author padding", () => {
-    document.body.innerHTML = '<div class="m-select" data-size="large" data-status="error" style="--m-select-font:18px;--m-select-pad:7px 13px;--m-select-border:purple"><select data-select-control multiple size="4"><option value="a" selected>Alpha</option><optgroup label="Group" disabled><option value="b" selected>Beta</option></optgroup></select></div>'
+    document.body.innerHTML = '<div class="m-select" size="large" status="error" style="--m-select-font:18px;--m-select-pad:7px 13px;--m-select-border:purple"><select data-select-control multiple size="4"><option value="a" selected>Alpha</option><optgroup label="Group" disabled><option value="b" selected>Beta</option></optgroup></select></div>'
     const select = document.querySelector("select")!
     const before = select.outerHTML
     install()
@@ -78,7 +78,7 @@ describe("Select native field defaults", () => {
   it("does not repaint borderless or disabled fields as hovered editable fields", () => {
     const rules = install()
     const interactive = rules.find(rule => rule.selectorText?.includes(":is(:hover,:focus)"))!
-    expect(interactive.selectorText).toContain(".m-select:not([data-borderless])")
+    expect(interactive.selectorText).toContain(".m-select:not([borderless])")
     expect(interactive.selectorText).toContain(":not(:disabled)")
     expect(interactive.style.getPropertyValue("border-color")).toContain("--m-select-focus")
   })

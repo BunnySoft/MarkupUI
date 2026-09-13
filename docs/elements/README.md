@@ -24,7 +24,7 @@ Separate a defined or approved contract from implemented and validated code.
 All seven initial families use the thin shared core and source-generated demo API data.
 Avatar, Button, Card, Carousel, Collapse, Divider and Dropdown are implemented with
 approved payload ceilings.
-Icon/IconWrapper, Typography, Space, Flex, Input, Checkbox, Radio, Switch and InputNumber also follow this pattern; the inventory links to their current demo/API pages.
+Icon/IconWrapper, Typography, Space, Flex, Input, Checkbox, Radio, Switch, InputNumber and Select also follow this pattern; the inventory links to their current demo/API pages.
 Input retains one actual native input/textarea as the editing, validation, focus and form owner.
 Checkbox retains native checkbox/label and fieldset/legend owners; CheckboxGroup value is
 computed live selection, not configured state with an empty-array default.
@@ -36,6 +36,11 @@ InputNumber retains one native number owner, nullable numeric value versus expos
 native constraint/step-grid interpretation and reversible optional native step/clear buttons.
 It imports only core, with approved 4,000-byte per-format JS and 5,500-byte combined-runtime
 ceilings; CSS retains its 1,000-byte ceiling.
+Select retains one native select with original options/optgroups, live string/null/array
+selection, option defaults, native keyboard/forms and optional literal list-filter/clear helpers.
+It shares internal native-selection mechanics with the existing TreeSelect/Popselect consumers;
+those consumers are not migrated or registered by Select. Each Select JS ceiling remains
+4,000 bytes and CSS remains 1,000; the core-inclusive runtime ceiling is 8,000.
 The initial batch establishes the pattern; the remaining inventory requires its own
 contracts and dependency-aware implementation sequence.
 

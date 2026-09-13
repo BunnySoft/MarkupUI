@@ -1,8 +1,8 @@
 import { createPopover } from "../popover/index.js"
 import type { PopoverController, PopoverOptions } from "../popover/index.js"
 import { ownedWrites } from "../popover/position.js"
-import { createSelect } from "../select/index.js"
-import type { SelectController, SelectValue } from "../select/index.js"
+import { createSelect } from "../native-select.js"
+import type { SelectController, SelectValue } from "../native-select.js"
 
 export interface PopselectOptions extends Pick<PopoverOptions, "placement" | "gap" | "margin" | "flip" | "positioning"> {
   emptyText?: string

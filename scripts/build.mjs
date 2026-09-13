@@ -37,13 +37,24 @@ classicEntries.icon = "global.ts"
 classicEntries.typography = "global.ts"
 classicEntries.space = "global.ts"
 classicEntries.flex = "global.ts"
-const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500]])
+const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500], ["select", 8_000]])
 await generateComponentApi(root, [...viewComponents.keys()])
 
 function corePlugin(format) {
   return {
     name: "shared-element-core",
     setup(builder) {
+      builder.onResolve({ filter: /native-select\.js$/ }, () =>
+        format === "esm" ? { path: "./markup-ui-native-select.js", external: true }
+          : { path: "native-select", namespace: "markupui-native-select" })
+      builder.onLoad({ filter: /.*/, namespace: "markupui-native-select" }, () => ({
+        loader: "js",
+        contents: `
+          const native = globalThis[Symbol.for("markup-ui.native-select")];
+          if (!native || typeof native.createSelect !== "function") throw new Error("Load markup-ui-native-select.global.js before Select, TreeSelect or Popselect.");
+          export const { createSelect, selectOptions, selectValue, setSelectValue } = native;
+        `,
+      }))
       builder.onResolve({ filter: /core\/(?:view-element|index)\.js$/ }, () =>
         format === "esm" ? { path: "./markup-ui-core.js", external: true }
           : { path: "core", namespace: "markupui-core" })
@@ -142,6 +153,12 @@ classicEntries.marquee = "global.ts"
 await Promise.all([
   ...["esm", "iife"].map(format => build({
     ...shared,
+    entryPoints: [resolve(root, "src", "components", format === "esm" ? "native-select.ts" : "native-select.global.ts")],
+    format, minify: true,
+    outfile: resolve(dist, `markup-ui-native-select${format === "esm" ? ".js" : ".global.js"}`),
+  })),
+  ...["esm", "iife"].map(format => build({
+    ...shared,
     entryPoints: [resolve(root, "src", "components", format === "esm" ? "native-radio.ts" : "native-radio.global.ts")],
     format, minify: true,
     outfile: resolve(dist, `markup-ui-native-radio${format === "esm" ? ".js" : ".global.js"}`),
@@ -205,7 +222,7 @@ await Promise.all([
       ...shared,
       entryPoints: [resolve(root, "src", "components", name, "index.ts")],
       format: "esm",
-      plugins: viewComponents.has(name) || name === "rate" ? [corePlugin("esm")] : [],
+      plugins: viewComponents.has(name) || ["rate", "tree-select", "popselect"].includes(name) ? [corePlugin("esm")] : [],
       minify: true,
       outfile: resolve(dist, `markup-ui-${name}.js`),
     }),
@@ -213,7 +230,7 @@ await Promise.all([
       ...shared,
       entryPoints: [resolve(root, "src", "components", name, classicEntries[name] ?? "index.ts")],
       format: "iife",
-      plugins: viewComponents.has(name) || name === "rate" ? [corePlugin("iife")] : [],
+      plugins: viewComponents.has(name) || ["rate", "tree-select", "popselect"].includes(name) ? [corePlugin("iife")] : [],
       globalName: classicEntries[name] ? undefined : `MarkupUI${name[0].toUpperCase()}${name.slice(1)}`,
       minify: true,
       outfile: resolve(dist, `markup-ui-${name}.global.js`),
@@ -511,6 +528,9 @@ bundleBudgets["markup-ui-native-input.js"] = 4_000
 bundleBudgets["markup-ui-native-input.global.js"] = 4_000
 bundleBudgets["markup-ui-native-radio.js"] = 2_000
 bundleBudgets["markup-ui-native-radio.global.js"] = 2_000
+// Existing Select mechanics are shared by the real TreeSelect and Popselect compositions.
+bundleBudgets["markup-ui-native-select.js"] = 4_000
+bundleBudgets["markup-ui-native-select.global.js"] = 4_000
 
 for (const [name, budget] of Object.entries(bundleBudgets)) {
   const content = await readFile(resolve(dist, name))
@@ -531,7 +551,8 @@ for (const name of [...components, ...styleOnlyComponents]) {
       const dependencies = viewComponents.has(name) ? [`markup-ui-core${suffix}`] : []
       if (name === "input") dependencies.push(`markup-ui-native-input${suffix}`)
       if (name === "radio" || name === "rate") dependencies.push(`markup-ui-native-radio${suffix}`)
-      const runtimeBudget = viewComponents.get(name) ?? (name === "rate" ? 5_000 : undefined)
+      if (["select", "tree-select", "popselect"].includes(name)) dependencies.push(`markup-ui-native-select${suffix}`)
+      const runtimeBudget = viewComponents.get(name) ?? (name === "rate" ? 5_000 : name === "tree-select" ? 10_500 : name === "popselect" ? 11_000 : undefined)
       const runtimeGzipBytes = bundles[file].gzipBytes
         + dependencies.reduce((total, dependency) => total + bundles[dependency].gzipBytes, 0)
       payload[mode] = {

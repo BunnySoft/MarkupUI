@@ -219,7 +219,7 @@ describe("Tooltip description semantics over shared native Popover", () => {
     "<iframe></iframe>", "<x-widget></x-widget>", "<script>void 0</script>",
     "<label for='external-submit'>Forwarded action</label>",
     "<m-checkbox>Interactive checkbox</m-checkbox>",
-    "<m-radio>Radio</m-radio>", "<m-radio-button>RadioButton</m-radio-button>", "<m-radio-group>Group</m-radio-group>",
+    "<m-radio>Radio</m-radio>", "<m-radio-button>RadioButton</m-radio-button>", "<m-radio-group>Group</m-radio-group>", "<m-select>Select</m-select>",
   ])("rejects interactive/custom content %s without modifying it", markup => {
     const { trigger, panel } = nodes()
     panel.innerHTML = `Description ${markup}`

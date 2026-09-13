@@ -52,6 +52,27 @@ afterEach(() => {
 })
 
 describe("metadata-based component documentation", () => {
+  it("extracts Select's native selection API and all events without invented defaults", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["select"])
+    expect(docs.elements).toHaveLength(1)
+    const select = docs.elements[0]
+    expect(select.web.primary).toBe("m-select")
+    expect(select.properties.value).toMatchObject({ writable: true, nullable: true })
+    expect(select.properties.native.typeName).toBe("HTMLSelectElement")
+    expect(select.properties.options.typeName).toBe("HTMLOptionsCollection")
+    expect(select.properties.selectedOptions.writable).toBe(false)
+    expect(select.properties.selectedIndex).toMatchObject({ min: -2147483648, max: 2147483647, integer: true })
+    expect(select.properties.listSize).toMatchObject({ min: 0, max: 2147483647, integer: true })
+    for (const key of ["value", "selectedIndex", "options", "multiple", "listSize", "form"]) expect(select.properties[key]).not.toHaveProperty("default")
+    expect(select.properties).not.toHaveProperty("defaultValue")
+    expect(select.properties.size.default).toBe("medium")
+    expect(select.properties.status.default).toBeNull()
+    expect(select.properties.borderless.default).toBe(false)
+    expect(select.actions).toEqual(["focus", "blur", "checkValidity", "reportValidity", "setCustomValidity", "showPicker", "add", "item", "namedItem", "remove", "setFilter", "clear", "refresh"])
+    expect(select.events).toHaveLength(5)
+    expect(select.events).toContainEqual({ name: "Invalid", web: "invalid", bubbles: false, cancelable: true, composed: false })
+    expect(select.events.find((event: { web: string }) => event.web === "m:select-clear").detail).toEqual({ previous: "SelectValue" })
+  })
   it("extracts the complete InputNumber native-owner API without private members or invented defaults", async () => {
     const [docs] = await generateComponentApi(resolve("."), ["input-number"])
     expect(docs.elements).toHaveLength(1)

@@ -20,6 +20,7 @@ in the target inventory.
 15. [Radio demo and API](../../demo/components/radio.html): Radio, RadioGroup and RadioButton; native exclusivity, checked/default state, forms and computed group selection.
 16. [Switch demo and API](../../demo/components/switch.html): one binary native owner, checked/default state, focus-safe loading, forms, labels and lifecycle.
 17. [InputNumber demo and API](../../demo/components/input-number.html): nullable numeric value, native drafts/default strings, constraints, step/clear intent, forms and lifecycle.
+18. [Select demo and API](../../demo/components/select.html): native string/null/array selection, option defaults, lists, forms, literal filtering and lifecycle.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
@@ -45,6 +46,7 @@ maintain a second Markdown copy of their API tables or usage examples.
 | Use Radio/RadioGroup/RadioButton | `@dataengine/markup-ui/radio` and its CSS; ESM imports core and internal native-radio mechanics. Public exports are the three classes, `registerRadio`, `RadioSize`, `RadioStatus` and `RadioGroupChange`. |
 | Use Switch | `@dataengine/markup-ui/switch` and its CSS; ESM imports only core. Public exports are `Switch`, `registerSwitch`, `SwitchSize` and `SwitchStatus`. |
 | Use InputNumber | `@dataengine/markup-ui/input-number` and its CSS; ESM imports only core. Public exports are `InputNumber`, `registerInputNumber`, `InputNumberState`, `InputNumberSize` and `InputNumberStatus`. |
+| Use Select | `@dataengine/markup-ui/select` and its CSS; ESM imports core and internal native-select mechanics. Public exports are `Select`, `registerSelect`, `SelectValue`, `SelectSize` and `SelectStatus`. |
 | Use classic scripts | Core first, then the selected component scripts and CSS. |
 
 No jQuery dependency, query wrapper, state/binding runtime or all-components bundle is
@@ -84,6 +86,14 @@ InputNumber classic loading is `markup-ui-core.global.js`, then
 registration are removed. Explicitly select this family; it does not require another
 component/native engine. The optional state bridge uses number/null `value` and native
 input/change events, skipping equal-value writes so a browser-owned bad-input draft survives.
+
+Select classic loading is `markup-ui-core.global.js`, `markup-ui-native-select.global.js`,
+then `markup-ui-select.global.js`. The internal dependency also serves existing TreeSelect/
+Popselect compositions without importing Select registration. The public factory/controller
+and aggregate `MSelect` are removed; native `option`/`optgroup` replace the old cloning
+`m-option` path. Optional binding uses string/null/array `value` and only the owned native
+input/change events, avoiding equal-value feedback writes. Reset defaults remain native
+`option.defaultSelected`, not a fabricated Select `defaultValue`.
 
 ## References
 

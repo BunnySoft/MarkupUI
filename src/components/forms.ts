@@ -1,31 +1,5 @@
 import { MElement } from "../core/element.js"
 
-export class MSelect extends MElement {
-  private control?: HTMLSelectElement
-  public connectedCallback(): void {
-    if (this.control !== undefined) return
-    const options = [...this.querySelectorAll(":scope > option,:scope > m-option")].map((source) => {
-      if (source instanceof HTMLOptionElement) return source.cloneNode(true)
-      const option = this.ownerDocument.createElement("option")
-      option.textContent = source.textContent
-      for (const name of ["value", "label"]) {
-        const value = source.getAttribute(name)
-        if (value !== null) option.setAttribute(name, value)
-      }
-      option.disabled = source.hasAttribute("disabled")
-      option.selected = source.hasAttribute("selected")
-      return option
-    })
-    this.control = this.ownerDocument.createElement("select")
-    this.control.replaceChildren(...options)
-    this.control.value = this.getAttribute("value") ?? ""
-    this.control.addEventListener("change", () => this.emit("change", this.control?.value))
-    this.replaceChildren(this.control)
-  }
-  public get value(): string { return this.control?.value ?? "" }
-  public set value(value: string) { if (this.control !== undefined) this.control.value = value }
-}
-
 export class MAutocomplete extends MElement {
   private control?: HTMLInputElement
   public connectedCallback(): void {

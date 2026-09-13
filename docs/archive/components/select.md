@@ -1,6 +1,9 @@
 # Select: native options, explicit clear and literal list filtering
 
 > **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
+> **Current implemented reference:** [Select demo and source-generated API](../../../demo/components/select.html).
+> The canonical `Select`/`m-select` replaces this archived public helper and legacy `MSelect`.
+> TreeSelect and Popselect now share internal native-select mechanics without importing Select registration.
 
 **🟢 Verified for the retained P4 native Select scope. Rich P5 combobox surfaces are
 explicitly omitted, not implemented by native typeahead.** The authored select, options

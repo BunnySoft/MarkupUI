@@ -27,6 +27,7 @@ import { Checkbox, CheckboxGroup } from "../src/components/checkbox/index.js"
 import { Radio, RadioGroup, RadioButton } from "../src/components/radio/index.js"
 import { Switch } from "../src/components/switch/index.js"
 import { InputNumber } from "../src/components/input-number/index.js"
+import { Select } from "../src/components/select/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -53,6 +54,8 @@ describe("native elements", () => {
     expect(builtInElementNames.some(name => name === "m-dropdown" || name.startsWith("m-dropdown-"))).toBe(false)
     expect(customElements.get("m-dropdown")).toBe(Dropdown)
     expect(customElements.get("m-input")).toBe(Input)
+    expect(customElements.get("m-select")).toBe(Select)
+    expect(builtInElementNames).not.toContain("m-select")
     expect(customElements.get("m-checkbox")).toBe(Checkbox)
     expect(customElements.get("m-checkbox-group")).toBe(CheckboxGroup)
     expect(builtInElementNames).not.toContain("m-checkbox")
@@ -355,9 +358,9 @@ describe("native elements", () => {
         <m-tab title="Two">Second</m-tab>
       </m-tabs>
       <m-accordion><m-accordion-item title="Details">Body</m-accordion-item></m-accordion>
-      <m-select value="b">
-        <m-option value="a">A</m-option>
-        <m-option value="b">B</m-option>
+      <m-select aria-label="Choice">
+        <option value="a">A</option>
+        <option value="b" selected>B</option>
       </m-select>`
     const tabs = document.querySelector("m-tabs") as HTMLElement & { select(index: number): void }
     const panels = [...document.querySelectorAll("m-tab")] as HTMLElement[]

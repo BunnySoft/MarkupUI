@@ -30,10 +30,10 @@ describe("CSS and theme sources", () => {
   })
 
   it("preserves the approved runtime CSS baselines exactly", () => {
-    // Core includes Avatar/Button corrections; migrated Divider/Icon/Typography/Input/Checkbox/Radio/Switch styles are family-owned.
+    // Core includes Avatar/Button corrections; migrated Divider/Icon/Typography/Input/Checkbox/Radio/Switch/Select styles are family-owned.
     // Widgets no longer includes competing Carousel/InputNumber styles; they ship with their canonical families.
     expect(runtimeStyles.map(hash)).toEqual([
-      "cc335a3f944d0280a962e505cafceb7e4cebaa332646e21a2310b833df3c88c1",
+      "81134d97b2a9227d95b1f619a0b86628d1bb9b9960370a8e2209534cda4f22a9",
       "6fd15d4f89081eaad05bc6391936ead49357aa4bd990202327146d93811957fd",
       "4637afb81d2725d398c54c328378aacd8ac6ee2f8818085dc674c0532f089e07",
     ])
