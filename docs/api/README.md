@@ -51,6 +51,8 @@ in the target inventory.
 46. [Result demo and API](../../demo/components/result.html): Result, ResultHeader, ResultContent, ResultFooter; status pages (403, 404, 500, success, info, warning, error) with actions.
 47. [Image demo and API](../../demo/components/image.html): Image, ImageGroup; responsive image display, object-fit, preview modals, and load/error events.
 48. [Date Picker demo and API](../../demo/components/date-picker.html): DatePicker; date, datetime, daterange inputs, formatting, and clearable controls.
+49. [Time Picker demo and API](../../demo/components/time-picker.html): TimePicker; time inputs, formatting, stepping, and clearable controls.
+50. [Upload demo and API](../../demo/components/upload.html): Upload, UploadDragger, UploadTrigger, UploadFileList; drag-and-drop file upload, file listings, and status management.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

@@ -48,10 +48,10 @@ families establish the pattern; the remaining contracts must be defined before i
 | Select | `Select`; native single/multiple selection, options/defaults, labels and forms | [Demo and API](../../demo/components/select.html) |
 | Slider | `Slider` | Contract pending |
 | Switch | `Switch`; binary native checked/default state, loading, labels and forms | [Demo and API](../../demo/components/switch.html) |
-| Time Picker | `TimePicker` | Contract pending |
+| Time Picker | `TimePicker` | [Demo and API](../../demo/components/time-picker.html) |
 | Transfer | `Transfer` | Contract pending |
 | Tree Select | `TreeSelect` | Contract pending |
-| Upload | `Upload`, `UploadTrigger`, `UploadDragger` | Contract pending |
+| Upload | `Upload`, `UploadTrigger`, `UploadDragger` | [Demo and API](../../demo/components/upload.html) |
 
 ## Data Display (19)
 

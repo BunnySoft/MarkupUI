@@ -59,6 +59,7 @@ import { Result, ResultHeader, ResultContent, ResultFooter } from "../src/compon
 import { Image, ImageGroup } from "../src/components/image/index.js"
 import { DatePicker } from "../src/components/date-picker/index.js"
 import { TimePicker } from "../src/components/time-picker/index.js"
+import { Upload, UploadDragger, UploadTrigger, UploadFileList } from "../src/components/upload/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -87,7 +88,7 @@ describe("native elements", () => {
     expect(customElements.get("m-input")).toBe(Input)
     expect(customElements.get("m-select")).toBe(Select)
     expect(builtInElementNames).not.toContain("m-select")
-    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader, Ellipsis, Tabs, Tab, TabPane, Menu, MenuItem, MenuGroup, MenuDivider, Submenu, Pagination, Dialog, DialogHeader, DialogBody, DialogFooter, DialogAction, Modal, ModalHeader, ModalBody, ModalFooter, ModalAction, Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, Popconfirm, PopconfirmTrigger, PopconfirmPanel, Message, MessageContainer, Notification, NotificationContainer, Progress, Result, ResultHeader, ResultContent, ResultFooter, Image, ImageGroup, DatePicker, TimePicker]) {
+    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader, Ellipsis, Tabs, Tab, TabPane, Menu, MenuItem, MenuGroup, MenuDivider, Submenu, Pagination, Dialog, DialogHeader, DialogBody, DialogFooter, DialogAction, Modal, ModalHeader, ModalBody, ModalFooter, ModalAction, Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, Popconfirm, PopconfirmTrigger, PopconfirmPanel, Message, MessageContainer, Notification, NotificationContainer, Progress, Result, ResultHeader, ResultContent, ResultFooter, Image, ImageGroup, DatePicker, TimePicker, Upload, UploadDragger, UploadTrigger, UploadFileList]) {
       expect(customElements.get(Type.tag)).toBe(Type)
       expect(builtInElementNames).not.toContain(Type.tag)
     }

@@ -1,5 +1,16 @@
+import { readFileSync } from "node:fs"
+import { resolve } from "node:path"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createUpload } from "../src/components/upload/index.js"
+import {
+  createUpload,
+  Upload,
+  UploadDragger,
+  UploadTrigger,
+  UploadFileList,
+  registerUpload,
+} from "../src/components/upload/index.js"
+import { ViewElement } from "../src/core/index.js"
+import { generateComponentApi } from "../scripts/component-api.mjs"
 import type { UploadContext, UploadController, UploadOptions, UploadResponse } from "../src/components/upload/index.js"
 
 // jsdom lacks DataTransfer. Preserve its real FileList implementation so native
@@ -419,5 +430,284 @@ describe("Upload disposal, callback guards and native fallback", () => {
   it.each([{ maxFiles: 0 }, { maxFiles: 101 }, { maxFileBytes: -1 }, { concurrency: 0 }, { concurrency: 5 }, { selection: "merge" }, { beforeUpload: () => false }])("rejects unsupported configuration %j", options => {
     const { root } = fixture({}, false)
     expect(() => createUpload(root, options as UploadOptions)).toThrow()
+  })
+})
+
+describe("canonical Upload ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers m-upload and companion elements", () => {
+    expect(Upload.tag).toBe("m-upload")
+    expect(UploadDragger.tag).toBe("m-upload-dragger")
+    expect(UploadTrigger.tag).toBe("m-upload-trigger")
+    expect(UploadFileList.tag).toBe("m-upload-file-list")
+    expect(ViewElement.prototype.isPrototypeOf(Upload.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(UploadDragger.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(UploadTrigger.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(UploadFileList.prototype)).toBe(true)
+    expect(customElements.get("m-upload")).toBe(Upload)
+    expect(customElements.get("m-upload-dragger")).toBe(UploadDragger)
+    expect(customElements.get("m-upload-trigger")).toBe(UploadTrigger)
+    expect(customElements.get("m-upload-file-list")).toBe(UploadFileList)
+    expect(Upload.observedAttributes).toEqual(["action", "accept", "multiple", "disabled", "name", "directory"])
+    expect(typeof registerUpload).toBe("function")
+  })
+
+  it("initializes default attributes and reflects properties", () => {
+    const upload = document.createElement("m-upload") as Upload
+    document.body.append(upload)
+    expect(upload.action).toBe("")
+    expect(upload.accept).toBe("")
+    expect(upload.multiple).toBe(false)
+    expect(upload.disabled).toBe(false)
+    expect(upload.name).toBe("")
+    expect(upload.directory).toBe(false)
+    expect(upload.fileList).toEqual([])
+    expect(upload.files).toEqual([])
+
+    upload.action = "/upload"
+    expect(upload.action).toBe("/upload")
+    expect(upload.getAttribute("action")).toBe("/upload")
+
+    upload.accept = ".png,.jpg"
+    expect(upload.accept).toBe(".png,.jpg")
+    expect(upload.getAttribute("accept")).toBe(".png,.jpg")
+
+    upload.multiple = true
+    expect(upload.multiple).toBe(true)
+    expect(upload.hasAttribute("multiple")).toBe(true)
+
+    upload.disabled = true
+    expect(upload.disabled).toBe(true)
+    expect(upload.hasAttribute("disabled")).toBe(true)
+
+    upload.name = "avatar"
+    expect(upload.name).toBe("avatar")
+    expect(upload.getAttribute("name")).toBe("avatar")
+
+    upload.directory = true
+    expect(upload.directory).toBe(true)
+    expect(upload.hasAttribute("directory")).toBe(true)
+
+    upload.multiple = false
+    expect(upload.multiple).toBe(false)
+    expect(upload.hasAttribute("multiple")).toBe(false)
+
+    upload.disabled = false
+    expect(upload.disabled).toBe(false)
+    expect(upload.hasAttribute("disabled")).toBe(false)
+
+    upload.directory = false
+    expect(upload.directory).toBe(false)
+    expect(upload.hasAttribute("directory")).toBe(false)
+  })
+
+  it("synchronizes attributes with the internal native file input", () => {
+    const upload = document.createElement("m-upload") as Upload
+    upload.action = "/api/upload"
+    upload.accept = ".csv"
+    upload.multiple = true
+    upload.disabled = true
+    upload.name = "dataFile"
+    upload.directory = true
+    document.body.append(upload)
+
+    const input = upload.querySelector<HTMLInputElement>("input[type='file']")!
+    expect(input).not.toBeNull()
+    expect(input.accept).toBe(".csv")
+    expect(input.multiple).toBe(true)
+    expect(input.disabled).toBe(true)
+    expect(input.name).toBe("dataFile")
+    expect(input.hasAttribute("webkitdirectory")).toBe(true)
+
+    upload.accept = ".txt"
+    expect(input.accept).toBe(".txt")
+
+    upload.disabled = false
+    expect(input.disabled).toBe(false)
+
+    upload.multiple = false
+    expect(input.multiple).toBe(false)
+  })
+
+  it("opens file chooser via UploadTrigger and respects disabled state", () => {
+    const upload = document.createElement("m-upload") as Upload
+    const trigger = document.createElement("m-upload-trigger") as UploadTrigger
+    const button = document.createElement("button")
+    button.textContent = "Select"
+    trigger.append(button)
+    upload.append(trigger)
+    document.body.append(upload)
+
+    const input = upload.querySelector<HTMLInputElement>("input[type='file']")!
+    const clickSpy = vi.spyOn(input, "click")
+
+    trigger.click()
+    expect(clickSpy).toHaveBeenCalledTimes(1)
+
+    upload.disabled = true
+    trigger.click()
+    expect(clickSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it("handles file change events and emits m:change", () => {
+    const upload = document.createElement("m-upload") as Upload
+    const fileListElem = document.createElement("m-upload-file-list") as UploadFileList
+    upload.append(fileListElem)
+    document.body.append(upload)
+
+    const input = upload.querySelector<HTMLInputElement>("input[type='file']")!
+    const changeListener = vi.fn()
+    upload.addEventListener("m:change", changeListener)
+
+    const testFile = new File(["sample content"], "sample.txt", { type: "text/plain" })
+    const transfer = new Transfer()
+    transfer.items.add(testFile)
+    input.files = transfer.files
+
+    input.dispatchEvent(new Event("change", { bubbles: true }))
+    expect(changeListener).toHaveBeenCalledTimes(1)
+    const detail = changeListener.mock.calls[0]![0].detail
+    expect(detail.fileList).toHaveLength(1)
+    expect(detail.fileList[0].name).toBe("sample.txt")
+    expect(upload.fileList).toHaveLength(1)
+    expect(upload.fileList[0]!.name).toBe("sample.txt")
+    expect(fileListElem.children.length).toBe(1)
+    expect(fileListElem.textContent).toContain("sample.txt")
+  })
+
+  it("handles dragover, dragleave and drop on UploadDragger", () => {
+    const upload = document.createElement("m-upload") as Upload
+    upload.multiple = true
+    const dragger = document.createElement("m-upload-dragger") as UploadDragger
+    const fileListElem = document.createElement("m-upload-file-list") as UploadFileList
+    upload.append(dragger, fileListElem)
+    document.body.append(upload)
+
+    const dragOverEvent = new Event("dragover", { bubbles: true, cancelable: true })
+    dragger.dispatchEvent(dragOverEvent)
+    expect(dragOverEvent.defaultPrevented).toBe(true)
+    expect(dragger.dataset.dragover).toBe("true")
+
+    const dragLeaveEvent = new Event("dragleave", { bubbles: true })
+    dragger.dispatchEvent(dragLeaveEvent)
+    expect(dragger.dataset.dragover).toBeUndefined()
+
+    const changeListener = vi.fn()
+    upload.addEventListener("m:change", changeListener)
+
+    const testFile = new File(["dropped content"], "drop.txt", { type: "text/plain" })
+    const transfer = new Transfer()
+    transfer.items.add(testFile)
+
+    const dropEvent = new Event("drop", { bubbles: true, cancelable: true })
+    Object.defineProperty(dropEvent, "dataTransfer", { value: transfer })
+    dragger.dispatchEvent(dropEvent)
+
+    expect(dropEvent.defaultPrevented).toBe(true)
+    expect(dragger.dataset.dragover).toBeUndefined()
+    expect(changeListener).toHaveBeenCalledTimes(1)
+    expect(upload.fileList).toHaveLength(1)
+    expect(upload.fileList[0]!.name).toBe("drop.txt")
+    expect(fileListElem.textContent).toContain("drop.txt")
+  })
+
+  it("ignores drag and drop when disabled", () => {
+    const upload = document.createElement("m-upload") as Upload
+    upload.disabled = true
+    const dragger = document.createElement("m-upload-dragger") as UploadDragger
+    upload.append(dragger)
+    document.body.append(upload)
+
+    const changeListener = vi.fn()
+    upload.addEventListener("m:change", changeListener)
+
+    const dragOverEvent = new Event("dragover", { bubbles: true, cancelable: true })
+    dragger.dispatchEvent(dragOverEvent)
+    expect(dragger.dataset.dragover).toBeUndefined()
+
+    const dropEvent = new Event("drop", { bubbles: true, cancelable: true })
+    const transfer = new Transfer()
+    transfer.items.add(new File(["x"], "ignored.txt"))
+    Object.defineProperty(dropEvent, "dataTransfer", { value: transfer })
+    dragger.dispatchEvent(dropEvent)
+
+    expect(changeListener).not.toHaveBeenCalled()
+    expect(upload.fileList).toHaveLength(0)
+  })
+
+  it("supports clearing selected files", () => {
+    const upload = document.createElement("m-upload") as Upload
+    const fileListElem = document.createElement("m-upload-file-list") as UploadFileList
+    upload.append(fileListElem)
+    document.body.append(upload)
+
+    upload.handleDroppedFiles([new File(["test"], "test.txt", { type: "text/plain" })])
+    expect(upload.fileList).toHaveLength(1)
+    expect(fileListElem.children.length).toBe(1)
+
+    upload.clear()
+    expect(upload.fileList).toHaveLength(0)
+    expect(fileListElem.children.length).toBe(0)
+  })
+
+  it("adopts authored native file input inside m-upload", () => {
+    const upload = document.createElement("m-upload") as Upload
+    const customInput = document.createElement("input")
+    customInput.type = "file"
+    customInput.name = "customField"
+    customInput.accept = ".json"
+    upload.append(customInput)
+    document.body.append(upload)
+
+    const inputs = upload.querySelectorAll("input[type='file']")
+    expect(inputs).toHaveLength(1)
+    expect(inputs[0]).toBe(customInput)
+    expect(customInput.name).toBe("customField")
+    expect(customInput.accept).toBe(".json")
+  })
+
+  it("extracts Upload properties, regions and events via generateComponentApi", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["upload"])
+    expect(docs.elements).toHaveLength(4)
+    const [upload, trigger, dragger, fileList] = docs.elements
+    expect(upload.type).toBe("Upload")
+    expect(upload.web.primary).toBe("m-upload")
+    expect(upload.properties.action).toMatchObject({ default: "", attribute: "action" })
+    expect(upload.properties.accept).toMatchObject({ default: "", attribute: "accept" })
+    expect(upload.properties.multiple).toMatchObject({ default: false, encoding: "presence", attribute: "multiple" })
+    expect(upload.properties.disabled).toMatchObject({ default: false, encoding: "presence", attribute: "disabled" })
+    expect(upload.properties.name).toMatchObject({ default: "", attribute: "name" })
+    expect(upload.properties.directory).toMatchObject({ default: false, encoding: "presence", attribute: "directory" })
+    expect(upload.events).toContainEqual({
+      name: "Change",
+      web: "m:change",
+      bubbles: true,
+      cancelable: false,
+      composed: false,
+      detail: { fileList: "Array" },
+    })
+    expect(upload.regions.map((r: { name: string }) => r.name)).toEqual(["trigger", "dragger", "fileList"])
+
+    expect(trigger.type).toBe("UploadTrigger")
+    expect(trigger.web.primary).toBe("m-upload-trigger")
+    expect(dragger.type).toBe("UploadDragger")
+    expect(dragger.web.primary).toBe("m-upload-dragger")
+    expect(fileList.type).toBe("UploadFileList")
+    expect(fileList.web.primary).toBe("m-upload-file-list")
+  }, 15000)
+
+  it("structures Upload demo page with standard scaffold and explicit shared-core loading", () => {
+    const uploadHtml = readFileSync(resolve("demo", "components", "upload.html"), "utf8")
+    const parsed = new DOMParser().parseFromString(uploadHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-upload.global.js"))
+    expect(parsed.querySelector("main[data-demo-page].component-docs #upload-api")).not.toBeNull()
+    expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("details.component-setup")).not.toBeNull()
+    for (const example of parsed.querySelectorAll("[data-demo-example]")) {
+      expect(example.querySelector("[data-demo-header] h2[id]")).not.toBeNull()
+      expect(example.querySelector("[data-demo-preview]")).not.toBeNull()
+    }
   })
 })
