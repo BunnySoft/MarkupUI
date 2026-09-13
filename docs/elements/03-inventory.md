@@ -120,7 +120,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Layout | `Layout`, `LayoutHeader`, `LayoutContent`, `LayoutFooter`, `LayoutSider`; native flex shells, borders, sidebar placement and positioning | [Demo and API](../../demo/components/layout.html) |
 | Grid | `Grid`, `GridItem`; native tracks, original children and optional absolute placement | [Demo and API](../../demo/components/grid.html) |
 | Space | `Space` | [Demo and API](../../demo/components/space.html) |
-| Split | `Split` and pane/separator regions | Contract pending |
+| Split | `Split` and pane/separator regions | [Demo and API](../../demo/components/split.html) |
 
 ## Utility (2)
 

@@ -1,75 +1,110 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Native Split · MarkupUI</title>
+  <title>Split - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-split.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./split.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-split.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script type="module" src="./split.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Split: two native panes, one owned separator</h1>
-    <p id="resize-help">Drag the handle, or focus it and use physical Arrow keys.
-      Shift uses a 100px coarse step; normal arrows use 10px. Home/End choose first-pane
-      min/max. Escape cancels an active drag. Horizontal means side-by-side panes with a
-      vertical separator; vertical means top/bottom panes with a horizontal separator.</p>
-    <div class="controls" data-enhancement hidden>
-      <label>Arrangement <select data-direction><option value="horizontal">Side by side</option><option value="vertical">Top and bottom</option></select></label>
-      <label><input type="checkbox" data-rtl>RTL (first pane on the right when side by side)</label>
-      <label><input type="checkbox" data-disabled>Disable resizing, not fields</label>
-      <label>CSS zoom <select data-zoom><option value="1">100%</option><option value="2">200%</option></select></label>
-      <button type="button" data-action="quarter">25% preference</button>
-      <button type="button" data-action="pixels">240px preference</button>
-      <button type="button" data-action="reset">Reset layout size</button>
-      <button type="button" data-action="default">Set future reset to 180px</button>
-      <button type="button" data-action="collapse-first">Collapse first</button>
-      <button type="button" data-action="collapse-second">Collapse second</button>
-      <button type="button" data-action="reveal">Reveal both</button>
-      <button type="button" data-action="infeasible">Too-small mixed bounds</button>
-      <button type="button" data-action="normal">Restore feasible bounds</button>
-      <button type="button" data-action="invalid">Create a hidden required error</button>
-      <button type="button" data-action="quiet">Quiet validity only</button>
-      <button type="button" data-action="disconnect">Disconnect to static layout</button>
-    </div>
-    <form id="split-form" novalidate>
-      <div class="geometry-stage" id="stage">
-        <section class="m-split" data-split id="editor-split">
-          <section data-split-pane="1" id="editor-pane" aria-labelledby="editor-title">
-            <div class="pane-content">
-              <h2 id="editor-title">Primary editor</h2>
-              <p>Original native controls and this selectable text remain the same nodes.</p>
-              <label>Required title <input id="title-field" name="title" value="Retained title" required></label>
-              <label>Native mode <select name="mode"><option>Draft</option><option>Published</option></select></label>
-              <label>Native notes <textarea name="notes" rows="3">Keep current edits while resizing.</textarea></label>
-              <a href="#after-splits">Go to the outside footer</a>
-            </div>
-          </section>
-          <div data-split-handle hidden aria-label="Resize primary editor" aria-describedby="resize-help"></div>
-          <section data-split-pane="2" id="preview-pane" aria-labelledby="preview-title">
-            <div class="pane-content">
-              <h2 id="preview-title">Preview and nested Split</h2>
-              <section class="m-split" data-split data-split-direction="vertical" id="detail-split">
-                <section data-split-pane="1" id="summary-pane" aria-label="Nested summary"><div class="pane-content"><p>Nested top pane. Its separator has an independent owner.</p><button type="button" data-note-action data-enhancement hidden>Update native title</button></div></section>
-                <div data-split-handle hidden aria-label="Resize nested summary" aria-describedby="resize-help"></div>
-                <section data-split-pane="2" id="details-pane" aria-label="Nested details"><div class="pane-content"><label>Native detail <input name="detail" value="Still a real field"></label><p>Hidden/inert collapsed fields still submit and validate.</p><template><span>Native inert template</span></template></div></section>
-              </section>
-            </div>
-          </section>
-        </section>
+  <main data-demo-page class="component-docs">
+    <h1>Split</h1>
+    <p>A resizable split pane container dividing available space between two content panes with customizable direction, size ratio, and boundary constraints.</p>
+    <nav class="component-docs-nav" aria-label="Split documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-split.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-split.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header><div><h2 id="basic-heading">Basic horizontal split</h2><p>Side-by-side panes separated by an interactive resize handle.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-split id="basic-split" style="height: 200px; border: 1px solid #e0e0e6;">
+          <m-split-pane style="padding: 1rem;">
+            <h3>Primary Pane</h3>
+            <p>Content for the first pane.</p>
+          </m-split-pane>
+          <m-split-pane style="padding: 1rem;">
+            <h3>Secondary Pane</h3>
+            <p>Content for the second pane.</p>
+          </m-split-pane>
+        </m-split>
       </div>
-      <p><button type="submit" data-enhancement hidden disabled>Reveal first invalid pane, validate and inspect FormData</button>
-        <button type="reset">Native field reset (not layout)</button></p>
-    </form>
-    <pre id="feedback" aria-label="Split state and local interaction">Without JavaScript both native panes remain visible in static layout. No fake resizable handle is exposed.</pre>
-    <footer id="after-splits">
-      <label>Outside focus target <input id="outside-field" value="Resizing must not steal this focus"></label>
-      <p>Only the handle gets pointer capture, touch-action and user-select rules. No body
-        cursor/selection override, renderer, drag dependency or layout store is installed.</p>
-    </footer>
-    <noscript><p>Static panes, fields, links, text selection and native field reset remain
-      usable. Pointer/keyboard resizing and the application submit gate require JavaScript.</p></noscript>
+    </section>
+
+    <section data-demo-example="vertical" aria-labelledby="vertical-heading">
+      <header data-demo-header><div><h2 id="vertical-heading">Vertical split</h2><p>Top and bottom panes divided by a horizontal separator handle.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-split direction="vertical" id="vertical-split" style="height: 250px; border: 1px solid #e0e0e6;">
+          <m-split-pane style="padding: 1rem;">
+            <h3>Top Pane</h3>
+            <p>Content positioned above the separator.</p>
+          </m-split-pane>
+          <m-split-pane style="padding: 1rem;">
+            <h3>Bottom Pane</h3>
+            <p>Content positioned below the separator.</p>
+          </m-split-pane>
+        </m-split>
+      </div>
+    </section>
+
+    <section data-demo-example="bounds" aria-labelledby="bounds-heading">
+      <header data-demo-header><div><h2 id="bounds-heading">Configured size and constraints</h2><p>Initial 30% pane size bounded between min 0.2 and max 0.8.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-split size="0.3" min="0.2" max="0.8" id="constrained-split" style="height: 200px; border: 1px solid #e0e0e6;">
+          <m-split-pane style="padding: 1rem;">
+            <h3>30% Pane</h3>
+            <p>Cannot shrink below 20% or exceed 80%.</p>
+          </m-split-pane>
+          <m-split-pane style="padding: 1rem;">
+            <h3>Flexible Pane</h3>
+            <p>Adapts to available space.</p>
+          </m-split-pane>
+        </m-split>
+      </div>
+    </section>
+
+    <section data-demo-example="disabled" aria-labelledby="disabled-heading">
+      <header data-demo-header><div><h2 id="disabled-heading">Disabled split</h2><p>Resizing handle is inert and non-interactive.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-split disabled size="0.4" id="disabled-split" style="height: 200px; border: 1px solid #e0e0e6;">
+          <m-split-pane style="padding: 1rem;">
+            <h3>Disabled Left</h3>
+            <p>Handle cannot be dragged or adjusted.</p>
+          </m-split-pane>
+          <m-split-pane style="padding: 1rem;">
+            <h3>Disabled Right</h3>
+            <p>Content remains accessible.</p>
+          </m-split-pane>
+        </m-split>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="split-api"><p>Loading API documentation.</p></div>
+    </section>
   </main>
 </body>
 </html>

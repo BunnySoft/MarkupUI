@@ -2,7 +2,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
-import { createSplit } from "../src/components/split/index.js"
+import { createSplit, Split, SplitPane, registerSplit } from "../src/components/split/index.js"
+import * as splitApi from "../src/components/split/index.js"
+import { ViewElement } from "../src/core/index.js"
+import { generateComponentApi } from "../scripts/component-api.mjs"
 import { splitMeasure, splitBounds } from "../src/components/split/model.js"
 import type { SplitController, SplitOptions } from "../src/components/split/index.js"
 
@@ -376,3 +379,262 @@ describe("lifecycle, reentrancy and native ownership", () => {
     expect(outer.helper.connected).toBe(true)
   })
 })
+
+describe("canonical Split ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(splitApi.Split).toBe(Split)
+    expect(splitApi.SplitPane).toBe(SplitPane)
+    expect(Split.tag).toBe("m-split")
+    expect(SplitPane.tag).toBe("m-split-pane")
+    expect(ViewElement.prototype.isPrototypeOf(Split.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(SplitPane.prototype)).toBe(true)
+    expect(customElements.get("m-split")).toBe(Split)
+    expect(customElements.get("m-split-pane")).toBe(SplitPane)
+    expect(Split.observedAttributes).toEqual(["direction", "size", "min", "max", "disabled"])
+    expect(() => registerSplit()).not.toThrow()
+  })
+
+  it("handles typed properties and defaults on Split", () => {
+    const split = document.createElement("m-split") as Split
+    expect(split.direction).toBe("horizontal")
+    expect(split.size).toBe(0.5)
+    expect(split.min).toBe(0.1)
+    expect(split.max).toBe(0.9)
+    expect(split.disabled).toBe(false)
+
+    split.direction = "vertical"
+    expect(split.direction).toBe("vertical")
+    expect(split.getAttribute("direction")).toBe("vertical")
+
+    split.direction = "horizontal"
+    expect(split.direction).toBe("horizontal")
+    expect(split.getAttribute("direction")).toBe("horizontal")
+
+    expect(() => { split.direction = "diagonal" as never }).toThrow(RangeError)
+
+    split.size = 0.3
+    expect(split.size).toBe(0.3)
+    expect(split.getAttribute("size")).toBe("0.3")
+
+    expect(() => { split.size = NaN }).toThrow(RangeError)
+    expect(() => { split.size = "bad" as never }).toThrow(RangeError)
+
+    split.min = 0.2
+    expect(split.min).toBe(0.2)
+    expect(split.getAttribute("min")).toBe("0.2")
+
+    expect(() => { split.min = Infinity }).toThrow(RangeError)
+
+    split.max = 0.8
+    expect(split.max).toBe(0.8)
+    expect(split.getAttribute("max")).toBe("0.8")
+
+    expect(() => { split.max = NaN }).toThrow(RangeError)
+
+    split.disabled = true
+    expect(split.disabled).toBe(true)
+    expect(split.hasAttribute("disabled")).toBe(true)
+
+    split.disabled = false
+    expect(split.disabled).toBe(false)
+    expect(split.hasAttribute("disabled")).toBe(false)
+  })
+
+  it("handles companion SplitPane element", () => {
+    const pane = document.createElement("m-split-pane") as SplitPane
+    document.body.append(pane)
+    expect(pane.dataset.part).toBe("pane")
+    pane.remove()
+  })
+
+  it("renders structure, panes, and handle on connection", () => {
+    const split = document.createElement("m-split") as Split
+    const pane1 = document.createElement("m-split-pane") as SplitPane
+    pane1.id = "p1"
+    pane1.textContent = "Left Pane"
+    const pane2 = document.createElement("m-split-pane") as SplitPane
+    pane2.id = "p2"
+    pane2.textContent = "Right Pane"
+
+    split.append(pane1, pane2)
+    document.body.append(split)
+
+    expect(split.classList.contains("m-split")).toBe(true)
+    expect(split.getAttribute("data-split-direction")).toBe("horizontal")
+    expect(split.getAttribute("data-split-layout")).toBe("ready")
+    expect(pane1.getAttribute("data-split-pane")).toBe("1")
+    expect(pane2.getAttribute("data-split-pane")).toBe("2")
+    expect(split.panes).toHaveLength(2)
+
+    const handle = split.querySelector<HTMLElement>("[data-split-handle]")
+    expect(handle).not.toBeNull()
+    expect(handle?.getAttribute("role")).toBe("separator")
+    expect(handle?.tabIndex).toBe(0)
+    expect(handle?.getAttribute("aria-orientation")).toBe("vertical")
+    expect(handle?.getAttribute("aria-valuenow")).toBe("50")
+    expect(handle?.getAttribute("aria-valuemin")).toBe("10")
+    expect(handle?.getAttribute("aria-valuemax")).toBe("90")
+    expect(handle?.getAttribute("aria-disabled")).toBe("false")
+    expect(handle?.getAttribute("aria-controls")).toBe("p1")
+
+    split.direction = "vertical"
+    expect(split.getAttribute("data-split-direction")).toBe("vertical")
+    expect(handle?.getAttribute("aria-orientation")).toBe("horizontal")
+
+    split.disabled = true
+    expect(split.hasAttribute("data-split-disabled")).toBe(true)
+    expect(handle?.getAttribute("aria-disabled")).toBe("true")
+    expect(handle?.tabIndex).toBe(-1)
+
+    split.disabled = false
+    expect(split.hasAttribute("data-split-disabled")).toBe(false)
+    expect(handle?.getAttribute("aria-disabled")).toBe("false")
+    expect(handle?.tabIndex).toBe(0)
+
+    split.remove()
+  })
+
+  it("emits m:change event on keyboard interaction", () => {
+    const split = document.createElement("m-split") as Split
+    const pane1 = document.createElement("m-split-pane") as SplitPane
+    const pane2 = document.createElement("m-split-pane") as SplitPane
+    split.append(pane1, pane2)
+    document.body.append(split)
+
+    const changeSpy = vi.fn()
+    split.addEventListener("m:change", changeSpy)
+
+    const handle = split.querySelector<HTMLElement>("[data-split-handle]")!
+    handle.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true, cancelable: true }))
+    expect(changeSpy).toHaveBeenCalled()
+    expect(changeSpy.mock.calls[0]![0].detail.size).toBeGreaterThan(0.5)
+
+    handle.dispatchEvent(new KeyboardEvent("keydown", { key: "End", bubbles: true, cancelable: true }))
+    expect(split.size).toBe(0.9)
+    expect(changeSpy.mock.calls.at(-1)![0].detail.size).toBe(0.9)
+
+    handle.dispatchEvent(new KeyboardEvent("keydown", { key: "Home", bubbles: true, cancelable: true }))
+    expect(split.size).toBe(0.1)
+    expect(changeSpy.mock.calls.at(-1)![0].detail.size).toBe(0.1)
+
+    split.disabled = true
+    changeSpy.mockClear()
+    handle.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true, cancelable: true }))
+    expect(changeSpy).not.toHaveBeenCalled()
+
+    split.remove()
+  })
+
+  it("emits m:change event on pointer drag interaction", () => {
+    const split = document.createElement("m-split") as Split
+    const pane1 = document.createElement("m-split-pane") as SplitPane
+    const pane2 = document.createElement("m-split-pane") as SplitPane
+    split.append(pane1, pane2)
+    document.body.append(split)
+
+    split.getBoundingClientRect = () => new DOMRect(0, 0, 500, 300)
+
+    const changeSpy = vi.fn()
+    split.addEventListener("m:change", changeSpy)
+
+    const handle = split.querySelector<HTMLElement>("[data-split-handle]")!
+    handle.dispatchEvent(new Pointer("pointerdown", { bubbles: true, cancelable: true, clientX: 250, clientY: 50, button: 0, isPrimary: true }))
+    expect(split.hasAttribute("data-split-dragging")).toBe(true)
+
+    document.dispatchEvent(new Pointer("pointermove", { bubbles: true, cancelable: true, clientX: 350, clientY: 50, isPrimary: true }))
+    expect(changeSpy).toHaveBeenCalled()
+    expect(split.size).toBe(0.7)
+
+    document.dispatchEvent(new Pointer("pointerup", { bubbles: true, cancelable: true, clientX: 350, clientY: 50, isPrimary: true }))
+    expect(split.hasAttribute("data-split-dragging")).toBe(false)
+
+    split.remove()
+  })
+
+  it("extracts Split and SplitPane API metadata matching specification", async () => {
+    vi.useRealTimers()
+    try {
+      const [docs] = await generateComponentApi(resolve("."), ["split"])
+      expect(docs.elements).toHaveLength(2)
+
+      const [splitDoc, paneDoc] = docs.elements
+      expect(splitDoc!.type).toBe("Split")
+      expect(splitDoc!.web.primary).toBe("m-split")
+      expect(splitDoc!.properties.direction).toMatchObject({
+        name: "direction",
+        type: "enum",
+        values: ["horizontal", "vertical"],
+        default: "horizontal",
+        attribute: "direction",
+        readable: true,
+        writable: true,
+      })
+      expect(splitDoc!.properties.size).toMatchObject({
+        name: "size",
+        type: "number",
+        default: 0.5,
+        attribute: "size",
+        readable: true,
+        writable: true,
+      })
+      expect(splitDoc!.properties.min).toMatchObject({
+        name: "min",
+        type: "number",
+        default: 0.1,
+        attribute: "min",
+        readable: true,
+        writable: true,
+      })
+      expect(splitDoc!.properties.max).toMatchObject({
+        name: "max",
+        type: "number",
+        default: 0.9,
+        attribute: "max",
+        readable: true,
+        writable: true,
+      })
+      expect(splitDoc!.properties.disabled).toMatchObject({
+        name: "disabled",
+        type: "boolean",
+        default: false,
+        attribute: "disabled",
+        encoding: "presence",
+        readable: true,
+        writable: true,
+      })
+      expect(splitDoc!.events).toEqual([
+        {
+          name: "Change",
+          web: "m:change",
+          bubbles: true,
+          cancelable: false,
+          composed: false,
+          detail: { size: "number" },
+        },
+      ])
+      expect(splitDoc!.regions).toEqual([
+        {
+          name: "panes",
+          element: "m-split-pane",
+          accepts: ["SplitPane"],
+          min: 0,
+          max: null,
+        },
+      ])
+
+      expect(paneDoc!.type).toBe("SplitPane")
+      expect(paneDoc!.web.primary).toBe("m-split-pane")
+      expect(paneDoc!.regions).toEqual([
+        {
+          name: "content",
+          accepts: ["native flow", "text", "components"],
+          min: 0,
+          max: null,
+        },
+      ])
+    } finally {
+      vi.useFakeTimers()
+    }
+  }, 20000)
+})
+

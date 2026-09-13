@@ -76,6 +76,7 @@ in the target inventory.
 71. [Virtual List demo and API](../../demo/components/virtual-list.html): VirtualList; fixed-window large list virtualization, keying, and scroll preservation.
 72. [Code demo and API](../../demo/components/code.html): Code; syntax-highlighted code blocks, line numbers, and word wrap.
 73. [Highlight demo and API](../../demo/components/highlight.html): Highlight; keyword text highlighting, case sensitivity options, and semantic mark wrappers.
+74. [Split demo and API](../../demo/components/split.html): Split, SplitPane; resizable split panes, horizontal and vertical orientation, and drag handles.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

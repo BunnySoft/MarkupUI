@@ -83,6 +83,7 @@ import { InfiniteScroll } from "../src/components/infinite-scroll/index.js"
 import { VirtualList } from "../src/components/virtual-list/index.js"
 import { Code } from "../src/components/code/index.js"
 import { Highlight } from "../src/components/highlight/index.js"
+import { Split, SplitPane } from "../src/components/split/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -111,7 +112,7 @@ describe("native elements", () => {
     expect(customElements.get("m-input")).toBe(Input)
     expect(customElements.get("m-select")).toBe(Select)
     expect(builtInElementNames).not.toContain("m-select")
-    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader, Ellipsis, Tabs, Tab, TabPane, Menu, MenuItem, MenuGroup, MenuDivider, Submenu, Pagination, Dialog, DialogHeader, DialogBody, DialogFooter, DialogAction, Modal, ModalHeader, ModalBody, ModalFooter, ModalAction, Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, Popconfirm, PopconfirmTrigger, PopconfirmPanel, Message, MessageContainer, Notification, NotificationContainer, Progress, Result, ResultHeader, ResultContent, ResultFooter, Image, ImageGroup, DatePicker, TimePicker, Upload, UploadDragger, UploadTrigger, UploadFileList, AutoComplete, AutoCompleteAlias, Slider, Rate, InputOtp, Popselect, PopselectTrigger, PopselectPanel, Tree, TreeNode, TreeSelect, Cascader, DataTable, Calendar, DynamicInput, DynamicTags, Steps, Step, Timeline, TimelineItem, Statistic, Anchor, AnchorLink, BackTop, Affix, LoadingBar, InfiniteScroll, VirtualList, Code, Highlight]) {
+    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader, Ellipsis, Tabs, Tab, TabPane, Menu, MenuItem, MenuGroup, MenuDivider, Submenu, Pagination, Dialog, DialogHeader, DialogBody, DialogFooter, DialogAction, Modal, ModalHeader, ModalBody, ModalFooter, ModalAction, Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, Popconfirm, PopconfirmTrigger, PopconfirmPanel, Message, MessageContainer, Notification, NotificationContainer, Progress, Result, ResultHeader, ResultContent, ResultFooter, Image, ImageGroup, DatePicker, TimePicker, Upload, UploadDragger, UploadTrigger, UploadFileList, AutoComplete, AutoCompleteAlias, Slider, Rate, InputOtp, Popselect, PopselectTrigger, PopselectPanel, Tree, TreeNode, TreeSelect, Cascader, DataTable, Calendar, DynamicInput, DynamicTags, Steps, Step, Timeline, TimelineItem, Statistic, Anchor, AnchorLink, BackTop, Affix, LoadingBar, InfiniteScroll, VirtualList, Code, Highlight, Split, SplitPane]) {
       expect(customElements.get(Type.tag)).toBe(Type)
       expect(builtInElementNames).not.toContain(Type.tag)
     }
