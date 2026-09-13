@@ -64,6 +64,7 @@ in the target inventory.
 59. [Data Table demo and API](../../demo/components/data-table.html): DataTable; tabular data presentation, bordered/striped variants, and pagination integration.
 60. [Calendar demo and API](../../demo/components/calendar.html): Calendar; monthly and yearly calendar grids, date selection, and navigation controls.
 61. [Dynamic Input demo and API](../../demo/components/dynamic-input.html): DynamicInput; dynamic row list insertion, removal, reordering, and change events.
+62. [Dynamic Tags demo and API](../../demo/components/dynamic-tags.html): DynamicTags; interactive tag creation, deletion, maximum limits, and change events.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
