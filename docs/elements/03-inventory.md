@@ -100,7 +100,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Dialog | `Dialog` | [Demo and API](../../demo/components/dialog.html) |
 | Drawer | `Drawer`, `DrawerContent` | [Demo and API](../../demo/components/drawer.html) |
 | Marquee | `Marquee` | Contract pending |
-| Message | `Message` service/control | Contract pending |
+| Message | `Message` service/control | [Demo and API](../../demo/components/message.html) |
 | Modal | `Modal` | [Demo and API](../../demo/components/modal.html) |
 | Notification | `Notification` | Contract pending |
 | Popconfirm | `Popconfirm` | [Demo and API](../../demo/components/popconfirm.html) |

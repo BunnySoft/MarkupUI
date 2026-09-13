@@ -29,7 +29,6 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-statistic", MStatistic],
   ["m-tree", MTree],
   ["m-tree-node", MTreeNode],
-  ["m-message", class extends MElement {}],
   ["m-notification", class extends MElement {}],
   ["m-include", MInclude],
 ]

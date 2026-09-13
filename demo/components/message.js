@@ -1,37 +1,43 @@
-const api = window.MarkupUIMessage
-const trigger = document.querySelector("#create")
-const fixed = api.createMessageOwner(document.querySelector("#fixed-host"), { max: 3, closable: true, keepAliveOnHover: true, focusFallback: trigger })
-const inline = api.createMessageOwner(document.querySelector("#inline-host"), { max: 2, closable: true, template: document.querySelector("#message-template"), focusFallback: document.querySelector("#interactive") })
-const inside = api.createMessageOwner(document.querySelector("#inside-host"), { max: 2, closable: true, focusFallback: document.querySelector("#inside-create") })
-const modal = window.MarkupUIModal.createModal(document.querySelector("#local-modal"))
-const events = document.querySelector("#events")
-const operationError = document.querySelector("#operation-error")
-let last
-let sequence = 0
-function run(action, errorRegion = operationError) {
-  errorRegion.textContent = ""
-  try { action() } catch (error) { errorRegion.textContent = error.message }
+import { loadComponentApi } from "../component-api.js"
+
+function initialize() {
+  const api = globalThis.MarkupUIMessage
+  if (!api) throw new Error("Message runtime did not load.")
+  void loadComponentApi(document.getElementById("message-api"), new URL("../api/message.json", import.meta.url))
+
+  const { message } = api
+  const status = document.getElementById("service-status")
+
+  document.getElementById("btn-info")?.addEventListener("click", () => {
+    message.info("This is an informational message.")
+    if (status) status.textContent = "Triggered info message."
+  })
+  document.getElementById("btn-success")?.addEventListener("click", () => {
+    message.success("Operation completed successfully!")
+    if (status) status.textContent = "Triggered success message."
+  })
+  document.getElementById("btn-warning")?.addEventListener("click", () => {
+    message.warning("Warning: Please check your settings.")
+    if (status) status.textContent = "Triggered warning message."
+  })
+  document.getElementById("btn-error")?.addEventListener("click", () => {
+    message.error("Error: Something went wrong.")
+    if (status) status.textContent = "Triggered error message."
+  })
+  document.getElementById("btn-loading")?.addEventListener("click", () => {
+    message.loading("Loading data, please wait...")
+    if (status) status.textContent = "Triggered loading message."
+  })
+  document.getElementById("btn-closable")?.addEventListener("click", () => {
+    message.create("Closable message notice", { closable: true, duration: 5000 })
+    if (status) status.textContent = "Triggered closable message."
+  })
+  document.getElementById("btn-destroy")?.addEventListener("click", () => {
+    message.destroyAll()
+    if (status) status.textContent = "Destroyed all active messages."
+  })
 }
-document.querySelector("#controls").hidden = false
-document.querySelector("#kinds").addEventListener("click", event => {
-  const kind = event.target.closest("[data-kind]")?.dataset.kind
-  if (!kind) return
-  run(() => { last = kind === "loading" ? fixed.loading(`Local work ${++sequence} remains pending.`) : fixed[kind](`Local message ${++sequence}: plain text, not evaluated HTML.`, { duration: Number(document.querySelector("#duration").value) }) })
-})
-document.querySelector("#placement").addEventListener("change", event => { document.querySelector("#fixed-host").dataset.feedbackPlacement = event.target.value })
-document.querySelector("#update").addEventListener("click", () => run(() => last?.update({ type: "success", content: "Caller explicitly completed the local work.", duration: Number(document.querySelector("#duration").value) })))
-document.querySelector("#destroy-last").addEventListener("click", () => last?.destroy())
-document.querySelector("#clear").addEventListener("click", () => fixed.destroyAll())
-document.querySelector("#callback-error").addEventListener("click", () => run(() => { last = fixed.warning("Closing this item fails locally.", { duration: 0, onClose: () => { throw new Error("Simulated close failure") } }) }))
-document.querySelector("#callback-async-error").addEventListener("click", () => run(() => { last = fixed.info("An async onClose is not a veto.", { duration: 0, onClose: async () => { throw new Error("Simulated late notification failure") } }) }))
-document.querySelector("#interactive").addEventListener("click", () => run(() => {
-  const message = inline.info("Focus anywhere in this message protects it from automatic expiry.", { duration: 2000 })
-  message.element.querySelector("form").addEventListener("submit", event => { event.preventDefault(); events.textContent = "Local native form validated and submitted without navigation." })
-}))
-document.querySelector("#open-modal").addEventListener("click", event => modal.showModal(event.currentTarget))
-document.querySelector("#inside-create").addEventListener("click", () => run(() => inside.success("This owner lives inside the native modal."), document.querySelector("#inside-error")))
-for (const root of document.querySelectorAll(".m-message-host")) {
-  root.addEventListener("m:message-remove", event => { events.textContent = `${root.id}: ${event.detail.reason}` })
-  root.addEventListener("m:message-error", event => { event.preventDefault(); events.textContent = `${root.id}: ${event.detail.stale ? "stale " : ""}${event.detail.error.message}` })
-}
-window.messageDemo = { fixed, inline, inside, modal, get last() { return last } }
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initialize, { once: true })
+else initialize()
+

@@ -45,6 +45,7 @@ in the target inventory.
 40. [Modal demo and API](../../demo/components/modal.html): Modal, ModalHeader, ModalBody, ModalFooter, ModalAction; modal dialogs, backdrop masking, custom widths, and escape cancellation.
 41. [Drawer demo and API](../../demo/components/drawer.html): Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter; sliding side sheets, placements, custom dimensions, and dismiss controls.
 42. [Popconfirm demo and API](../../demo/components/popconfirm.html): Popconfirm, PopconfirmTrigger, PopconfirmPanel; confirmation popover, custom action labels, and cancellation events.
+43. [Message demo and API](../../demo/components/message.html): Message, MessageContainer; global feedback messages, status types, auto-dismiss timers, and placement control.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

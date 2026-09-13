@@ -2,8 +2,9 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createMessageOwner } from "../src/components/message/index.js"
+import { createMessageOwner, Message, MessageContainer, message, createMessage, registerMessage } from "../src/components/message/index.js"
 import type { MessageOwner, MessageOwnerOptions, MessageType } from "../src/components/message/index.js"
+import { ViewElement } from "../src/core/index.js"
 import { createFeedbackExpiry } from "../src/components/feedback/expiry.js"
 import { showMessage, clearOverlays } from "../src/overlay/index.js"
 
@@ -48,9 +49,9 @@ describe("Root-owned native Message", () => {
     expect(pkg.dependencies).toEqual({})
     expect(source).not.toContain("innerHTML")
     expect(source).not.toMatch(/from ".*(?:modal|popover|dialog|overlay)/)
-    expect(customElements.get("m-message")).toBeUndefined()
+    expect(customElements.get("m-message")).toBe(Message)
   })
-  it.each(["default", "info", "success", "warning", "error", "loading"] as MessageType[])("renders literal %s content and visible semantic words without item live regions", type => {
+  it.each(["default", "info", "success", "warning", "error", "loading"] as (MessageType | "default")[])("renders literal %s content and visible semantic words without item live regions", type => {
     const root = fixture(); const o = owner({}, root)
     const message = type === "default" ? o.create("<img onerror=bad>") : o[type]("<img onerror=bad>")
     expect(message.type).toBe(type)
@@ -474,3 +475,87 @@ describe("Templates, semantics and legacy compatibility", () => {
     expect(gzipSync(`${base}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(1750)
   })
 })
+
+describe("canonical Message ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers m-message and m-message-container", () => {
+    expect(Message.tag).toBe("m-message")
+    expect(MessageContainer.tag).toBe("m-message-container")
+    expect(ViewElement.prototype.isPrototypeOf(Message.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(MessageContainer.prototype)).toBe(true)
+    expect(customElements.get("m-message")).toBe(Message)
+    expect(customElements.get("m-message-container")).toBe(MessageContainer)
+    expect(Message.observedAttributes).toEqual(["type", "content", "duration", "closable"])
+    expect(MessageContainer.observedAttributes).toEqual(["placement"])
+  })
+
+  it("handles typed properties, attributes, and closable behavior", () => {
+    document.body.innerHTML = `<m-message type="warning" content="Warning alert" closable></m-message>`
+    const msg = document.querySelector("m-message") as Message
+    expect(msg.type).toBe("warning")
+    expect(msg.content).toBe("Warning alert")
+    expect(msg.duration).toBe(3000)
+    expect(msg.closable).toBe(true)
+
+    const closeBtn = msg.querySelector<HTMLButtonElement>("[data-message-close]")
+    expect(closeBtn).not.toBeNull()
+
+    const closeSpy = vi.fn()
+    msg.addEventListener("m:close", closeSpy)
+
+    closeBtn!.click()
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "Warning alert" })
+    expect(msg.isConnected).toBe(false)
+  })
+
+  it("supports programmatic message service helper", () => {
+    const infoMsg = message.info("Info message")
+    expect(infoMsg).toBeInstanceOf(Message)
+    expect(infoMsg.type).toBe("info")
+    expect(infoMsg.content).toBe("Info message")
+    expect(infoMsg.isConnected).toBe(true)
+
+    const container = document.querySelector("m-message-container") as MessageContainer
+    expect(container).not.toBeNull()
+    expect(container.messages).toContain(infoMsg)
+
+    const successMsg = message.success("Success message")
+    expect(successMsg.type).toBe("success")
+
+    const warningMsg = message.warning("Warning message")
+    expect(warningMsg.type).toBe("warning")
+
+    const errorMsg = message.error("Error message")
+    expect(errorMsg.type).toBe("error")
+
+    const loadingMsg = message.loading("Loading message")
+    expect(loadingMsg.type).toBe("loading")
+    expect(loadingMsg.duration).toBe(0)
+
+    message.destroyAll()
+    expect(container.messages).toHaveLength(0)
+  })
+
+  it("auto-dismisses when duration expires", async () => {
+    const msg = document.createElement("m-message") as Message
+    msg.content = "Temporary"
+    msg.duration = 500
+    document.body.append(msg)
+    expect(msg.isConnected).toBe(true)
+
+    await advance(499)
+    expect(msg.isConnected).toBe(true)
+
+    await advance(1)
+    expect(msg.isConnected).toBe(false)
+  })
+
+  it("supports createMessage helper", () => {
+    const msg = createMessage("Created", { type: "error", closable: true })
+    expect(msg).toBeInstanceOf(Message)
+    expect(msg.content).toBe("Created")
+    expect(msg.type).toBe("error")
+    expect(msg.closable).toBe(true)
+  })
+})
+
