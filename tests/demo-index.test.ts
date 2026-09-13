@@ -28,6 +28,7 @@ const tagHtml = readFileSync(resolve("demo", "components", "tag.html"), "utf8")
 const badgeHtml = readFileSync(resolve("demo", "components", "badge.html"), "utf8")
 const emptyHtml = readFileSync(resolve("demo", "components", "empty.html"), "utf8")
 const spinHtml = readFileSync(resolve("demo", "components", "spin.html"), "utf8")
+const skeletonHtml = readFileSync(resolve("demo", "components", "skeleton.html"), "utf8")
 let browser: ReturnType<typeof createComponentBrowser> | undefined
 let media: MediaQueryList
 let mediaListener: (() => void) | undefined
@@ -192,6 +193,46 @@ describe("metadata-based component documentation", () => {
     const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
     expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-spin.global.js"))
     expect(parsed.querySelector("main[data-demo-page].component-docs #spin-api")).not.toBeNull()
+    expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("details.component-setup")).not.toBeNull()
+    for (const example of parsed.querySelectorAll("[data-demo-example]")) {
+      expect(example.querySelector("[data-demo-header] h2[id]")).not.toBeNull()
+      expect(example.querySelector("[data-demo-preview]")).not.toBeNull()
+    }
+  })
+
+  it("extracts Skeleton properties, presets and repetition features without inventing runtime metadata", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["skeleton"])
+    expect(docs.elements).toHaveLength(1)
+    const [skeleton] = docs.elements
+    expect(skeleton.type).toBe("Skeleton")
+    expect(skeleton.web.primary).toBe("m-skeleton")
+    expect(skeleton.properties.width).toMatchObject({ default: null, attribute: "width" })
+    expect(skeleton.properties.height).toMatchObject({ default: null, attribute: "height" })
+    expect(skeleton.properties.repeat).toMatchObject({ default: null, attribute: "repeat", integer: true, min: 0, max: 100 })
+    expect(skeleton.properties.size).toMatchObject({ default: null, values: ["small", "medium", "large"], attribute: "size" })
+    expect(skeleton.properties.text).toMatchObject({ default: false, encoding: "presence", attribute: "text" })
+    expect(skeleton.properties.round).toMatchObject({ default: false, encoding: "presence", attribute: "round" })
+    expect(skeleton.properties.circle).toMatchObject({ default: false, encoding: "presence", attribute: "circle" })
+    expect(skeleton.properties.animated).toMatchObject({ default: true, encoding: "boolean", attribute: "animated" })
+    expect(skeleton.properties.sharp).toMatchObject({ default: true, encoding: "boolean", attribute: "sharp" })
+    expect(skeleton.properties.valid).toMatchObject({ writable: false, attribute: null })
+    expect(skeleton.properties.validationErrors).toMatchObject({ writable: false, attribute: null })
+    expect(skeleton.actions).toEqual([])
+    expect(skeleton.events).toEqual([])
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.textContent).toContain("Skeleton")
+    expect(target.textContent).toContain("repeat")
+  })
+
+  it("structures Skeleton demo with standard scaffold and explicit shared-core loading", () => {
+    const parsed = new DOMParser().parseFromString(skeletonHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-skeleton.global.js"))
+    expect(parsed.querySelector("main[data-demo-page].component-docs #skeleton-api")).not.toBeNull()
     expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
     expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
     expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()

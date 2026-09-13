@@ -62,11 +62,11 @@ Keep approved budgets unless a measured change is explicitly accepted.
 The implemented entries are `@dataengine/markup-ui/core`, `@dataengine/markup-ui/avatar`,
 `@dataengine/markup-ui/button`, `@dataengine/markup-ui/card`, `@dataengine/markup-ui/carousel`,
 `@dataengine/markup-ui/collapse`, `@dataengine/markup-ui/divider`, `@dataengine/markup-ui/dropdown`,
-`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography`, `@dataengine/markup-ui/space`, `@dataengine/markup-ui/flex`, `@dataengine/markup-ui/input`, `@dataengine/markup-ui/checkbox`, `@dataengine/markup-ui/radio`, `@dataengine/markup-ui/switch`, `@dataengine/markup-ui/input-number`, `@dataengine/markup-ui/select`, `@dataengine/markup-ui/form`, `@dataengine/markup-ui/grid`, `@dataengine/markup-ui/layout`, `@dataengine/markup-ui/tag`, `@dataengine/markup-ui/badge`, `@dataengine/markup-ui/empty` and `@dataengine/markup-ui/spin`.
+`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography`, `@dataengine/markup-ui/space`, `@dataengine/markup-ui/flex`, `@dataengine/markup-ui/input`, `@dataengine/markup-ui/checkbox`, `@dataengine/markup-ui/radio`, `@dataengine/markup-ui/switch`, `@dataengine/markup-ui/input-number`, `@dataengine/markup-ui/select`, `@dataengine/markup-ui/form`, `@dataengine/markup-ui/grid`, `@dataengine/markup-ui/layout`, `@dataengine/markup-ui/tag`, `@dataengine/markup-ui/badge`, `@dataengine/markup-ui/empty`, `@dataengine/markup-ui/spin` and `@dataengine/markup-ui/skeleton`.
 ESM uses `markup-ui-core.js`; classic scripts load `markup-ui-core.global.js` before
 `markup-ui-avatar.global.js`, `markup-ui-button.global.js`, `markup-ui-card.global.js`,
 `markup-ui-carousel.global.js`, `markup-ui-collapse.global.js`, `markup-ui-divider.global.js`,
-`markup-ui-dropdown.global.js`, `markup-ui-icon.global.js`, `markup-ui-typography.global.js`, `markup-ui-space.global.js`, `markup-ui-flex.global.js`, `markup-ui-grid.global.js`, `markup-ui-layout.global.js`, `markup-ui-tag.global.js`, `markup-ui-badge.global.js`, `markup-ui-empty.global.js` or `markup-ui-spin.global.js`.
+`markup-ui-dropdown.global.js`, `markup-ui-icon.global.js`, `markup-ui-typography.global.js`, `markup-ui-space.global.js`, `markup-ui-flex.global.js`, `markup-ui-grid.global.js`, `markup-ui-layout.global.js`, `markup-ui-tag.global.js`, `markup-ui-badge.global.js`, `markup-ui-empty.global.js`, `markup-ui-spin.global.js` or `markup-ui-skeleton.global.js`.
 See the [API guide](../api/README.md) for exact exports and usage.
 
 Input additionally imports `markup-ui-native-input.js`, the internal native-field mechanics
@@ -233,6 +233,19 @@ Spin's measured-budget ceilings are **3,500 gzip bytes per JS format**, **4,500 
 core-inclusive runtime**, and the existing **2,000 CSS**. Current measured ESM/classic family
 costs are 3,019/3,187 bytes, core-inclusive runtime costs are 4,002/4,227 bytes, and CSS is
 1,183 bytes (5,185/5,410 including CSS). All budget checks remain fail-fast.
+
+## Skeleton delivery
+
+Skeleton and its canonical `Skeleton` class (aliased as `MSkeleton`) select core plus one family entry and CSS.
+ESM imports `markup-ui-core.js`; classic order is `markup-ui-core.global.js`, then
+`markup-ui-skeleton.global.js`, with `markup-ui-skeleton.css`. The legacy aggregate no longer defines
+`m-skeleton` in `src/components/elements.ts`. Skeleton provides customizable dimensions, bounded
+repetition, size presets, shape variants, and inert decorative placeholder generation.
+
+Skeleton's measured-budget ceilings are **2,500 gzip bytes per JS format**, **3,500 for
+core-inclusive runtime**, and the existing **1,500 CSS**. Current measured ESM/classic family
+costs are 1,743/1,911 bytes, core-inclusive runtime costs are 2,506/2,670 bytes, and CSS is
+912 bytes (3,418/3,582 including CSS). All budget checks remain fail-fast.
 
 ## References
 

@@ -79,6 +79,11 @@ delay cancellation, original SVG geometry, wrapped content adoption, and adopted
 for custom icons and descriptions, leaving focus and wrapped interaction native.
 See the [Spin demo/API](../../demo/components/spin.html).
 
+Skeleton/MSkeleton uses direct properties, placeholder shapes, bounded repetition,
+size presets, dimension normalization, and inert decorative bar generation, leaving
+application busy state and loading transitions native.
+See the [Skeleton demo/API](../../demo/components/skeleton.html).
+
 ## References
 
 - [Previous implementation guides](../archive/components/README.md)

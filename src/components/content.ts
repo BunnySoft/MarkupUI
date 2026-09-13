@@ -27,13 +27,3 @@ export class MProgress extends MElement {
     if (this.bar !== undefined) this.bar.style.width = `${percent}%`
   }
 }
-
-export class MSkeleton extends MElement {
-  public connectedCallback(): void {
-    this.setAttribute("aria-hidden", "true")
-    const width = this.getAttribute("width")
-    const height = this.getAttribute("height")
-    if (width) this.style.width = width
-    if (height) this.style.height = height
-  }
-}

@@ -28,6 +28,7 @@ in the target inventory.
 23. [Badge demo and API](../../demo/components/badge.html): Badge; passive counts, caps, dot/processing indicators, placements and native targets.
 24. [Empty demo and API](../../demo/components/empty.html): Empty; readable fallback text, optional icons, size variants and adopted regions.
 25. [Spin demo and API](../../demo/components/spin.html): Spin; customizable size, delay, stroke, wrapped content adoption, custom icons and descriptions.
+26. [Skeleton demo and API](../../demo/components/skeleton.html): Skeleton; placeholder shapes, repeated bar groups, text and dimension normalization.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
@@ -60,6 +61,7 @@ maintain a second Markdown copy of their API tables or usage examples.
 | Use Badge | `@dataengine/markup-ui/badge` and its CSS; ESM imports only core. Public exports are `Badge`, `MBadge`, `registerBadge`, `BadgePlacement` and `BadgeType`. Classic order is `markup-ui-core.global.js`, then `markup-ui-badge.global.js`. |
 | Use Empty | `@dataengine/markup-ui/empty` and its CSS; ESM imports only core. Public exports are `Empty`, `MEmpty`, `registerEmpty`, `emptySizes` and `EmptySize`. Classic order is `markup-ui-core.global.js`, then `markup-ui-empty.global.js`. |
 | Use Spin | `@dataengine/markup-ui/spin` and its CSS; ESM imports only core. Public exports are `Spin`, `MSpin`, `registerSpin`, `spinSizes`, `SpinPresetSize`, `SpinSize` and `SpinValidationError`. Classic order is `markup-ui-core.global.js`, then `markup-ui-spin.global.js`. |
+| Use Skeleton | `@dataengine/markup-ui/skeleton` and its CSS; ESM imports only core. Public exports are `Skeleton`, `MSkeleton`, `registerSkeleton`, `skeletonSizes`, `SkeletonPresetSize`, `SkeletonSize` and `SkeletonValidationError`. Classic order is `markup-ui-core.global.js`, then `markup-ui-skeleton.global.js`. |
 | Use classic scripts | Core first, then the selected component scripts and CSS. |
 
 No jQuery dependency, query wrapper, state/binding runtime or all-components bundle is

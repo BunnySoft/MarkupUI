@@ -135,6 +135,13 @@ and custom icon and description slotting.
 The legacy aggregate `["m-spin", ...]` is removed from `elements.ts`.
 See the [Spin demo/API](../../demo/components/spin.html).
 
+Skeleton's direct properties and bar group generation live in `src/components/skeleton/skeleton.ts`,
+with pure types in `model.ts`. Skeleton extends `ViewElement` and registers only `m-skeleton`,
+providing placeholder shapes, bounded repetition, size presets, dimension normalization,
+and inert decorative bar generation.
+The legacy aggregate `MSkeleton` is removed from `content.ts` and `elements.ts`.
+See the [Skeleton demo/API](../../demo/components/skeleton.html).
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed

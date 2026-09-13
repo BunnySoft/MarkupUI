@@ -1,6 +1,6 @@
 # Skeleton
 
-> **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
+> **Historical reference.** Preserved from the previous documentation layout. Skeleton has been migrated to the direct `ViewElement` contract (`Skeleton`, aliased as `MSkeleton`). Current API documentation and live examples are maintained at [demo/components/skeleton.html](../../demo/components/skeleton.html).
 
 **Migration status: 🟢 Verified for the retained native/CSS scope below.**
 Skeleton creates bounded decorative placeholder spans. CSS owns shape, dimensions and motion;

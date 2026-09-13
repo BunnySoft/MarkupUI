@@ -1,19 +1,19 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { MSkeleton, registerSkeleton } from "../src/components/skeleton/index.js"
-import { registerElements } from "../src/components/elements.js"
+import { Skeleton, MSkeleton, registerSkeleton } from "../src/components/skeleton/index.js"
+import { builtInElementNames, registerElements } from "../src/components/elements.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
-function skeleton(markup = "<m-skeleton></m-skeleton>"): MSkeleton {
+function skeleton(markup = "<m-skeleton></m-skeleton>"): Skeleton {
   document.body.innerHTML = markup
   const element = document.querySelector("m-skeleton")
-  if (!(element instanceof MSkeleton)) throw new Error("Skeleton was not upgraded")
+  if (!(element instanceof Skeleton)) throw new Error("Skeleton was not upgraded")
   return element
 }
-function group(element: MSkeleton): HTMLElement {
+function group(element: Skeleton): HTMLElement {
   return element.querySelector(":scope > [data-m-skeleton-group]")!
 }
-function bars(element: MSkeleton): Element[] {
+function bars(element: Skeleton): Element[] {
   return [...group(element).querySelectorAll(":scope > [data-m-skeleton-item]")]
 }
 
@@ -308,10 +308,16 @@ describe("standalone Skeleton", () => {
   it("reports registration conflicts and preserves enhanced definitions before the aggregate", () => {
     expect(() => registerSkeleton()).not.toThrow()
     const define = vi.fn()
-    expect(() => registerSkeleton({ get: () => class extends HTMLElement {}, define })).toThrow("before the legacy MarkupUI bundle")
+    expect(() => registerSkeleton({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
     expect(define).not.toHaveBeenCalled()
     registerElements(customElements)
-    expect(customElements.get("m-skeleton")).toBe(MSkeleton)
+    expect(customElements.get("m-skeleton")).toBe(Skeleton)
+    expect(builtInElementNames).not.toContain("m-skeleton")
     expect(bars(skeleton())).toHaveLength(1)
+  })
+
+  it("exports canonical Skeleton with backwards-compatible MSkeleton alias", () => {
+    expect(Skeleton.tag).toBe("m-skeleton")
+    expect(MSkeleton).toBe(Skeleton)
   })
 })

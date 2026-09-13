@@ -35,6 +35,7 @@ import { Tag } from "../src/components/tag/index.js"
 import { Badge } from "../src/components/badge/index.js"
 import { Empty } from "../src/components/empty/index.js"
 import { Spin } from "../src/components/spin/index.js"
+import { Skeleton } from "../src/components/skeleton/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -63,7 +64,7 @@ describe("native elements", () => {
     expect(customElements.get("m-input")).toBe(Input)
     expect(customElements.get("m-select")).toBe(Select)
     expect(builtInElementNames).not.toContain("m-select")
-    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin]) {
+    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton]) {
       expect(customElements.get(Type.tag)).toBe(Type)
       expect(builtInElementNames).not.toContain(Type.tag)
     }
@@ -157,7 +158,9 @@ describe("native elements", () => {
     expect(
       (document.querySelector("m-progress > [data-m-bar]") as HTMLElement | null)?.style.width,
     ).toBe("50%")
-    expect(document.querySelector("m-skeleton")?.getAttribute("aria-hidden")).toBe("true")
+    expect(customElements.get("m-skeleton")).toBe(Skeleton)
+    expect(builtInElementNames).not.toContain("m-skeleton")
+    expect(document.querySelector("m-skeleton > [data-m-skeleton-group]")?.getAttribute("aria-hidden")).toBe("true")
     expect(customElements.get("m-empty")).toBe(Empty)
     expect(builtInElementNames).not.toContain("m-empty")
     expect(document.querySelector("m-empty")?.textContent).toContain("No rows")
