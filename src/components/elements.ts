@@ -20,7 +20,6 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-center", class extends MElement {}],
   ["m-spacer", class extends MElement { public connectedCallback(): void { this.style.flex = "1" } }],
   ["m-alert", class extends MElement {}],
-  ["m-badge", class extends MElement {}],
   ["m-progress", MProgress],
   ["m-skeleton", MSkeleton],
   ["m-empty", MEmpty],

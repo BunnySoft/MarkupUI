@@ -1,12 +1,11 @@
-export { MBadge } from "./badge.js"
-import { MBadge } from "./badge.js"
+export { Badge, MBadge } from "./badge.js"
+export type { BadgePlacement, BadgeType } from "./model.js"
+
+import { Badge } from "./badge.js"
+import { ViewElement } from "../../core/index.js"
 
 export function registerBadge(registry: Pick<CustomElementRegistry, "get" | "define"> = customElements): void {
-  const existing = registry.get("m-badge")
-  if (existing && existing !== MBadge) {
-    throw new Error("'m-badge' is already defined. Load the Badge component before the legacy MarkupUI bundle.")
-  }
-  if (!existing) registry.define("m-badge", MBadge)
+  ViewElement.register([Badge], registry)
 }
 
 if (typeof customElements !== "undefined") registerBadge()

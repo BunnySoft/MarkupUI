@@ -1,18 +1,18 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { MBadge, registerBadge } from "../src/components/badge/index.js"
-import { registerElements } from "../src/components/elements.js"
+import { Badge, MBadge, registerBadge } from "../src/components/badge/index.js"
+import { builtInElementNames, registerElements } from "../src/components/elements.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
-function badge(markup = '<m-badge value="12"></m-badge>'): MBadge {
+function badge(markup = '<m-badge value="12"></m-badge>'): Badge {
   document.body.innerHTML = markup
   const element = document.querySelector("m-badge")
-  if (!(element instanceof MBadge)) throw new Error("Badge was not upgraded")
+  if (!(element instanceof Badge)) throw new Error("Badge was not upgraded")
   return element
 }
-function number(element: MBadge): HTMLSpanElement {
+function number(element: Badge): HTMLSpanElement {
   return element.querySelector<HTMLSpanElement>("[data-m-badge-number]")!
 }
 
@@ -183,7 +183,7 @@ describe("standalone Badge", () => {
 
   it("preserves target nodes, listeners, names, focus and native form behavior", () => {
     const form = document.createElement("form")
-    const element = document.createElement("m-badge") as MBadge
+    const element = document.createElement("m-badge") as Badge
     element.value = 5
     const target = document.createElement("button")
     target.type = "submit"
@@ -244,7 +244,7 @@ describe("standalone Badge", () => {
   })
 
   it("adopts custom value content ahead of count/cap/zero rules without cloning", () => {
-    const element = document.createElement("m-badge") as MBadge
+    const element = document.createElement("m-badge") as Badge
     element.value = 0
     element.max = 0
     const content = document.createElement("span")
@@ -393,19 +393,25 @@ describe("standalone Badge", () => {
     expect(element.placement).toBe("bottom-start")
   })
 
+  it("exports canonical Badge with backwards-compatible MBadge alias", () => {
+    expect(Badge.tag).toBe("m-badge")
+    expect(MBadge).toBe(Badge)
+  })
+
   it("injects no styles or shadow DOM and reports registration conflicts", () => {
     const element = badge()
     expect(element.shadowRoot).toBeNull()
     expect(document.querySelector("style,[style]")).toBeNull()
     expect(() => registerBadge()).not.toThrow()
     const define = vi.fn()
-    expect(() => registerBadge({ get: () => class extends HTMLElement {}, define })).toThrow("before the legacy MarkupUI bundle")
+    expect(() => registerBadge({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
     expect(define).not.toHaveBeenCalled()
   })
 
-  it("retains rich registration when the legacy aggregate is registered", () => {
+  it("removes legacy Badge from aggregate element registrations", () => {
     registerElements(customElements)
-    expect(customElements.get("m-badge")).toBe(MBadge)
+    expect(customElements.get("m-badge")).toBe(Badge)
+    expect(builtInElementNames).not.toContain("m-badge")
     const element = badge('<m-badge value="3">Inbox</m-badge>')
     expect(number(element).textContent).toBe("3")
     expect(element.dataset.mBadgeMode).toBe("attached")

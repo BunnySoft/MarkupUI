@@ -1,6 +1,6 @@
 # Badge
 
-> **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
+> **Historical reference.** Preserved from the previous documentation layout. Badge has been migrated to the direct `ViewElement` contract (`Badge`, aliased as `MBadge`). Current API documentation and live examples are maintained at [demo/components/badge.html](../../demo/components/badge.html).
 
 **Migration status: 🟢 Verified for the retained native scope below.**
 Badge preserves authored targets and value content. Its small optional controller formats

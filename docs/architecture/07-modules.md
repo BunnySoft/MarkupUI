@@ -62,11 +62,11 @@ Keep approved budgets unless a measured change is explicitly accepted.
 The implemented entries are `@dataengine/markup-ui/core`, `@dataengine/markup-ui/avatar`,
 `@dataengine/markup-ui/button`, `@dataengine/markup-ui/card`, `@dataengine/markup-ui/carousel`,
 `@dataengine/markup-ui/collapse`, `@dataengine/markup-ui/divider`, `@dataengine/markup-ui/dropdown`,
-`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography`, `@dataengine/markup-ui/space`, `@dataengine/markup-ui/flex`, `@dataengine/markup-ui/input`, `@dataengine/markup-ui/checkbox`, `@dataengine/markup-ui/radio`, `@dataengine/markup-ui/switch`, `@dataengine/markup-ui/input-number`, `@dataengine/markup-ui/select`, `@dataengine/markup-ui/form`, `@dataengine/markup-ui/grid`, `@dataengine/markup-ui/layout` and `@dataengine/markup-ui/tag`.
+`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography`, `@dataengine/markup-ui/space`, `@dataengine/markup-ui/flex`, `@dataengine/markup-ui/input`, `@dataengine/markup-ui/checkbox`, `@dataengine/markup-ui/radio`, `@dataengine/markup-ui/switch`, `@dataengine/markup-ui/input-number`, `@dataengine/markup-ui/select`, `@dataengine/markup-ui/form`, `@dataengine/markup-ui/grid`, `@dataengine/markup-ui/layout`, `@dataengine/markup-ui/tag` and `@dataengine/markup-ui/badge`.
 ESM uses `markup-ui-core.js`; classic scripts load `markup-ui-core.global.js` before
 `markup-ui-avatar.global.js`, `markup-ui-button.global.js`, `markup-ui-card.global.js`,
 `markup-ui-carousel.global.js`, `markup-ui-collapse.global.js`, `markup-ui-divider.global.js`,
-`markup-ui-dropdown.global.js`, `markup-ui-icon.global.js`, `markup-ui-typography.global.js`, `markup-ui-space.global.js`, `markup-ui-flex.global.js`, `markup-ui-grid.global.js`, `markup-ui-layout.global.js` or `markup-ui-tag.global.js`.
+`markup-ui-dropdown.global.js`, `markup-ui-icon.global.js`, `markup-ui-typography.global.js`, `markup-ui-space.global.js`, `markup-ui-flex.global.js`, `markup-ui-grid.global.js`, `markup-ui-layout.global.js`, `markup-ui-tag.global.js` or `markup-ui-badge.global.js`.
 See the [API guide](../api/README.md) for exact exports and usage.
 
 Input additionally imports `markup-ui-native-input.js`, the internal native-field mechanics
@@ -193,6 +193,19 @@ Tag's measured-budget ceilings are **3,500 gzip bytes per JS format**, **4,500 f
 core-inclusive runtime**, and the existing **2,500 CSS**. Current measured ESM/classic family
 costs are 2,348/2,514 bytes, core-inclusive runtime costs are 3,330/3,553 bytes, and CSS is
 2,273 bytes (5,603/5,826 including CSS). All budget checks remain fail-fast.
+
+## Badge delivery
+
+Badge and its canonical `Badge` class (aliased as `MBadge`) select core plus one family entry and CSS.
+ESM imports `markup-ui-core.js`; classic order is `markup-ui-core.global.js`, then
+`markup-ui-badge.global.js`, with `markup-ui-badge.css`. The legacy aggregate no longer defines
+`m-badge` in `src/components/elements.ts`. Badge formats passive counts, caps, dot/processing
+indicators, and logical placements over native target elements.
+
+Badge's measured-budget ceilings are **2,500 gzip bytes per JS format**, **3,500 for
+core-inclusive runtime**, and the existing **2,000 CSS**. Current measured ESM/classic family
+costs are 1,501/1,676 bytes, core-inclusive runtime costs are 2,484/2,716 bytes, and CSS is
+1,273 bytes (3,757/3,989 including CSS). All budget checks remain fail-fast.
 
 ## References
 

@@ -96,7 +96,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Family | Elements / scope | Contract |
 | --- | --- | --- |
 | Alert | `Alert` | Contract pending |
-| Badge | `Badge` | Contract pending |
+| Badge | `Badge`; passive counts, caps, dot/processing indicators, placements and native targets | [Demo and API](../../demo/components/badge.html) |
 | Dialog | `Dialog` | Contract pending |
 | Drawer | `Drawer`, `DrawerContent` | Contract pending |
 | Marquee | `Marquee` | Contract pending |

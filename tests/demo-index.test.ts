@@ -25,6 +25,7 @@ const dropdownHtml = readFileSync(resolve("demo", "components", "dropdown.html")
 const iconHtml = readFileSync(resolve("demo", "components", "icon.html"), "utf8")
 const typographyHtml = readFileSync(resolve("demo", "components", "typography.html"), "utf8")
 const tagHtml = readFileSync(resolve("demo", "components", "tag.html"), "utf8")
+const badgeHtml = readFileSync(resolve("demo", "components", "badge.html"), "utf8")
 let browser: ReturnType<typeof createComponentBrowser> | undefined
 let media: MediaQueryList
 let mediaListener: (() => void) | undefined
@@ -80,6 +81,45 @@ describe("metadata-based component documentation", () => {
     renderComponentApi(target, docs.elements)
     expect(target.textContent).toContain("Tag")
     expect(target.textContent).toContain("m:close")
+  })
+
+  it("extracts Badge properties, choices and visibility features without inventing runtime metadata", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["badge"])
+    expect(docs.elements).toHaveLength(1)
+    const [badge] = docs.elements
+    expect(badge.type).toBe("Badge")
+    expect(badge.web.primary).toBe("m-badge")
+    expect(badge.properties.value).toMatchObject({ attribute: "value", default: null })
+    expect(badge.properties.max).toMatchObject({ attribute: "max", default: null, min: 0 })
+    expect(badge.properties.dot).toMatchObject({ default: false, encoding: "presence" })
+    expect(badge.properties.show).toMatchObject({ default: true, encoding: "boolean", attribute: "show" })
+    expect(badge.properties.showZero).toMatchObject({ default: false, encoding: "presence", attribute: "show-zero" })
+    expect(badge.properties.processing).toMatchObject({ default: false, encoding: "presence" })
+    expect(badge.properties.type).toMatchObject({ default: "default", values: ["default", "error", "primary", "info", "success", "warning"], attribute: "type" })
+    expect(badge.properties.placement).toMatchObject({ default: "top-end", values: ["top-start", "top-end", "bottom-start", "bottom-end"], attribute: "placement" })
+    expect(badge.properties.decorative).toMatchObject({ default: false, encoding: "presence" })
+    expect(badge.properties.indicator).toMatchObject({ writable: false, attribute: null })
+    expect(badge.actions).toEqual([])
+    expect(badge.events).toEqual([])
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.textContent).toContain("Badge")
+    expect(target.textContent).toContain("top-start")
+  })
+
+  it("structures Badge demo with standard scaffold and explicit shared-core loading", () => {
+    const parsed = new DOMParser().parseFromString(badgeHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-badge.global.js"))
+    expect(parsed.querySelector("main[data-demo-page].component-docs #badge-api")).not.toBeNull()
+    expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("details.component-setup")).not.toBeNull()
+    for (const example of parsed.querySelectorAll("[data-demo-example]")) {
+      expect(example.querySelector("[data-demo-header] h2[id]")).not.toBeNull()
+      expect(example.querySelector("[data-demo-preview]")).not.toBeNull()
+    }
   })
 
   it("extracts Layout and companion regions without inventing collapse or scrollbar APIs", async () => {

@@ -64,6 +64,11 @@ closable intent without automatic removal, sizes, types, rounded and borderless 
 and original phrasing content.
 See the [Tag demo/API](../../demo/components/tag.html).
 
+Badge/MBadge uses direct properties, passive counts, caps, overflow suffixes,
+dot and processing indicators, logical placements, tabular digit cell formatting,
+and original target content, backed by external CSS positioning and theme tokens.
+See the [Badge demo/API](../../demo/components/badge.html).
+
 ## References
 
 - [Previous implementation guides](../archive/components/README.md)

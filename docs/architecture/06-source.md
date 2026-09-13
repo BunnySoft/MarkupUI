@@ -114,6 +114,13 @@ only `m-tag`, adopting native buttons for checkable or closable mode while leavi
 noninteractive. Competing aggregate `MTag` is removed from `content.ts` and `elements.ts`.
 See the [Tag demo/API](../../demo/components/tag.html).
 
+Badge's direct properties and indicator mechanics live in `src/components/badge/badge.ts`,
+with pure types in `model.ts`. Badge extends `ViewElement` and registers only `m-badge`,
+formatting passive counts, caps, overflow suffixes, dot/processing indicators and logical
+placements while preserving authored target nodes, listeners, focus and native form behavior.
+The legacy aggregate `["m-badge", class extends MElement {}]` is removed from `elements.ts`.
+See the [Badge demo/API](../../demo/components/badge.html).
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed

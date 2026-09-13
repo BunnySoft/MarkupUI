@@ -3,68 +3,104 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Badge</title>
+  <title>Badge - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-badge.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./badge.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-badge.global.js"></script>
-  <script defer src="./badge.js"></script>
+  <script type="module" src="./badge.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Badge: passive counts and preserved native targets</h1>
-    <p>Badge formats and positions an indicator. Target names and announcements remain explicitly owned by the application.</p>
-    <section aria-labelledby="dynamic-heading">
-      <h2 id="dynamic-heading">Dynamic count with a separately named native action</h2>
-      <form id="message-form">
-        <m-badge id="unread" value="12" max="99" decorative>
-          <button id="inbox" type="submit" aria-label="Inbox, 12 unread messages">Inbox</button>
-        </m-badge>
-      </form>
-      <p id="unread-status" role="status">12 unread messages.</p>
-      <p id="submit-status" role="status">0 native submissions.</p>
-      <div class="examples">
-        <button type="button" id="increment">Add one</button>
-        <button type="button" id="zero">Set zero</button>
-        <button type="button" id="overflow">Set 105</button>
-        <label><input type="checkbox" id="show-zero"> Show zero</label>
-        <label><input type="checkbox" id="show-indicator" checked> Show indicator</label>
-        <button type="button" id="reconnect">Reconnect Badge</button>
+  <main data-demo-page class="component-docs">
+    <h1>Badge</h1>
+    <p>Passive counts, status dots, and custom value indicators over target elements. Target names and announcements remain explicitly owned by the application.</p>
+    <nav class="component-docs-nav" aria-label="Badge documentation">
+      <a href="#dynamic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#badge-api">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary>Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-badge.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-badge.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="dynamic" aria-labelledby="dynamic-heading">
+      <header data-demo-header><div><h2 id="dynamic-heading">Dynamic count with a separately named native action</h2><p>Interactive counts with overflow capping and zero handling. Programmatic updates remain silent; author-owned accessible labels stay synchronized.</p></div></header>
+      <div data-demo-preview>
+        <form id="message-form">
+          <m-badge id="unread" value="12" max="99" decorative>
+            <button id="inbox" type="submit" aria-label="Inbox, 12 unread messages">Inbox</button>
+          </m-badge>
+        </form>
+        <p id="unread-status" role="status">12 unread messages.</p>
+        <p id="submit-status" role="status">0 native submissions.</p>
+        <div class="examples">
+          <button type="button" id="increment">Add one</button>
+          <button type="button" id="zero">Set zero</button>
+          <button type="button" id="overflow">Set 105</button>
+          <label><input type="checkbox" id="show-zero"> Show zero</label>
+          <label><input type="checkbox" id="show-indicator" checked> Show indicator</label>
+          <button type="button" id="reconnect">Reconnect Badge</button>
+        </div>
       </div>
     </section>
-    <section aria-labelledby="values-heading">
-      <h2 id="values-heading">Standalone values and a CSS-only native badge</h2>
-      <div class="examples" id="types">
-        <m-badge value="8"> </m-badge>
-        <m-badge value="8" type="success"></m-badge>
-        <m-badge value="8" type="error"></m-badge>
-        <m-badge value="8" type="warning"></m-badge>
-        <m-badge value="8" type="info"></m-badge>
-        <m-badge value="NEW" class="brand"></m-badge>
-        <span class="m-badge-value">CSS only</span>
-      </div>
-      <p>Signed balance: <m-badge id="negative" value="-3" show-zero></m-badge></p>
-      <p>Authored status: <m-badge id="custom-value" value="0"><span data-m-badge-value><strong>Ready</strong></span></m-badge></p>
-      <p>Background job running <m-badge id="processing" dot processing decorative type="success"></m-badge></p>
-    </section>
-    <section aria-labelledby="placement-heading">
-      <h2 id="placement-heading">Logical placement and external CSS offsets</h2>
-      <div class="examples placements">
-        <m-badge value="3" placement="top-start" decorative><button type="button">Top start</button></m-badge>
-        <m-badge value="3" placement="top-end" decorative><button type="button">Top end</button></m-badge>
-        <m-badge value="3" placement="bottom-start" decorative><button type="button">Bottom start</button></m-badge>
-        <m-badge value="3" placement="bottom-end" decorative><button type="button">Bottom end</button></m-badge>
-        <m-badge id="offset-badge" value="3" class="offset" decorative><button type="button">Inset offset</button></m-badge>
-        <m-badge id="rtl-badge" value="3" dir="rtl" decorative><button type="button">RTL end</button></m-badge>
-      </div>
-      <p>Large external CSS sizing: <m-badge id="large-badge" value="1000" class="large"></m-badge></p>
-    </section>
-    <section aria-labelledby="native-heading">
-      <h2 id="native-heading">Disabled and described targets remain native</h2>
-      <div class="examples">
-        <m-badge value="4" decorative><button type="button" disabled aria-label="Disabled inbox, 4 unread">Disabled inbox</button></m-badge>
-        <m-badge id="described-badge"><button type="button" aria-describedby="badge-description">Notifications</button><span data-m-badge-value id="badge-description">New</span></m-badge>
+
+    <section data-demo-example="values" aria-labelledby="values-heading">
+      <header data-demo-header><div><h2 id="values-heading">Standalone values and a CSS-only native badge</h2><p>Default error palette alongside primary, info, success and warning types, plus custom background styling and static CSS-only pills.</p></div></header>
+      <div data-demo-preview>
+        <div class="examples" id="types">
+          <m-badge value="8"> </m-badge>
+          <m-badge value="8" type="primary"></m-badge>
+          <m-badge value="8" type="info"></m-badge>
+          <m-badge value="8" type="success"></m-badge>
+          <m-badge value="8" type="warning"></m-badge>
+          <m-badge value="8" type="error"></m-badge>
+          <m-badge value="NEW" class="brand"></m-badge>
+          <span class="m-badge-value">CSS only</span>
+        </div>
+        <p>Signed balance: <m-badge id="negative" value="-3" show-zero></m-badge></p>
+        <p>Authored status: <m-badge id="custom-value" value="0"><span data-m-badge-value><strong>Ready</strong></span></m-badge></p>
+        <p>Background job running <m-badge id="processing" dot processing decorative type="success"></m-badge></p>
       </div>
     </section>
+
+    <section data-demo-example="placement" aria-labelledby="placement-heading">
+      <header data-demo-header><div><h2 id="placement-heading">Logical placement and external CSS offsets</h2><p>Four logical corner anchors with RTL awareness and external CSS offset custom properties.</p></div></header>
+      <div data-demo-preview>
+        <div class="examples placements">
+          <m-badge value="3" placement="top-start" decorative><button type="button">Top start</button></m-badge>
+          <m-badge value="3" placement="top-end" decorative><button type="button">Top end</button></m-badge>
+          <m-badge value="3" placement="bottom-start" decorative><button type="button">Bottom start</button></m-badge>
+          <m-badge value="3" placement="bottom-end" decorative><button type="button">Bottom end</button></m-badge>
+          <m-badge id="offset-badge" value="3" class="offset" decorative><button type="button">Inset offset</button></m-badge>
+          <m-badge id="rtl-badge" value="3" dir="rtl" decorative><button type="button">RTL end</button></m-badge>
+        </div>
+        <p>Large external CSS sizing: <m-badge id="large-badge" value="1000" class="large"></m-badge></p>
+      </div>
+    </section>
+
+    <section data-demo-example="native" aria-labelledby="native-heading">
+      <header data-demo-header><div><h2 id="native-heading">Disabled and described targets remain native</h2><p>Native target disabled state, focus management and accessible descriptions remain unaffected by the indicator.</p></div></header>
+      <div data-demo-preview>
+        <div class="examples">
+          <m-badge value="4" decorative><button type="button" disabled aria-label="Disabled inbox, 4 unread">Disabled inbox</button></m-badge>
+          <m-badge id="described-badge"><button type="button" aria-describedby="badge-description">Notifications</button><span data-m-badge-value id="badge-description">New</span></m-badge>
+        </div>
+      </div>
+    </section>
+
+    <section id="badge-api"></section>
   </main>
 </body>
 </html>
