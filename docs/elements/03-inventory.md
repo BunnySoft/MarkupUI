@@ -107,7 +107,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Popover | `Popover`, `PopoverTrigger`, `PopoverContent`; direct trigger/panel adoption, 12 directional placements, hover/focus/click/manual modes, collision flipping | [Demo and API](../../demo/components/popover.html) |
 | Popselect | `Popselect` | Contract pending |
 | Progress | `Progress` | [Demo and API](../../demo/components/progress.html) |
-| Result | `Result` and named regions | Contract pending |
+| Result | `Result` and named regions | [Demo and API](../../demo/components/result.html) |
 | Skeleton | `Skeleton`; placeholder shapes, repeated bar groups, text and dimension normalization | [Demo and API](../../demo/components/skeleton.html) |
 | Spin | `Spin`; customizable size, delay, stroke, wrapped content adoption, custom icons and descriptions | [Demo and API](../../demo/components/spin.html) |
 | Tooltip | `Tooltip`, `TooltipTrigger`, `TooltipContent`; noninteractive contextual descriptions, text attribute, 12 directional placements, hover/focus triggering, collision flipping | [Demo and API](../../demo/components/tooltip.html) |

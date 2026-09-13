@@ -1,66 +1,137 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Result</title>
+  <title>Result - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-result.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./result.css">
-  <script defer src="./result.js"></script>
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-result.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./result.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <header id="home"><h1>Native Result</h1><p>Authored outcomes, original simple artwork and real recovery actions. No HTTP handling or result renderer is loaded.</p></header>
-  <main>
-    <section class="m-result demo-panel" data-status="error" aria-labelledby="retry-title" id="recovery-result">
-      <div class="m-result-icon" aria-hidden="true" id="recovery-icon"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="m8 8 8 8m0-8-8 8" stroke="currentColor" stroke-width="2"></path></svg></div>
-      <div class="m-result-header"><h2 class="m-result-title" id="retry-title">Error — request not saved</h2><p class="m-result-description" id="retry-description">Review the recovery address and choose an action. Nothing is retried automatically.</p></div>
-      <div class="m-result-content" id="recovery-content">
-        <form id="retry-form"><label for="recovery-email">Recovery email</label><input id="recovery-email" name="email" type="email" required value="reader@example.test"><fieldset disabled><legend>Read-only options</legend><label><input type="checkbox" name="notify" checked> Notify the team</label></fieldset></form>
-        <p id="attempt-feedback">No request has been sent by this demonstration.</p>
-      </div>
-      <div class="m-result-footer" id="recovery-actions"><button type="submit" form="retry-form" id="retry-action">Retry request</button><button type="reset" form="retry-form" id="reset-action">Reset form</button><a href="#home" id="home-link">Return home</a><button type="button" disabled id="disabled-action">Unavailable action</button></div>
-    </section>
+  <main data-demo-page class="component-docs">
+    <h1>Result</h1>
+    <p>Displays an outcome indicator with semantic statuses, error codes, and recovery actions.</p>
+    <nav class="component-docs-nav" aria-label="Result documentation">
+      <a href="#basic-title">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-result.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-result.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
 
-    <section aria-labelledby="variants-heading">
-      <h2 id="variants-heading">Named outcomes and all four sizes</h2>
-      <div class="outcome-grid">
-        <div class="m-result demo-panel" data-status="info" data-size="small" id="info-result"><div class="m-result-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="M12 10v7" stroke="currentColor" stroke-width="2"></path><circle cx="12" cy="6.5" r="1" fill="currentColor"></circle></svg></div><div class="m-result-header"><h3 class="m-result-title">Information — review pending</h3><p class="m-result-description">Small. The visible message carries the meaning.</p></div></div>
-        <div class="m-result demo-panel" data-status="success" id="success-result"><div class="m-result-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="m6 12 4 4 8-9" fill="none" stroke="currentColor" stroke-width="2"></path></svg></div><div class="m-result-header"><h3 class="m-result-title">Success — settings saved</h3><p class="m-result-description">Medium is the default size.</p></div></div>
-        <div class="m-result demo-panel" data-status="warning" data-size="large" id="warning-result"><div class="m-result-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2 23 22H1Z" fill="none" stroke="currentColor" stroke-width="1.5"></path><path d="M12 8v7" stroke="currentColor" stroke-width="2"></path><circle cx="12" cy="18" r="1" fill="currentColor"></circle></svg></div><div class="m-result-header"><h3 class="m-result-title">Warning — review required</h3><p class="m-result-description">Large. Color is decoration, not the only status cue.</p></div></div>
-        <div class="m-result demo-panel" data-status="error" data-size="huge" id="error-result"><div class="m-result-icon" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="m8 8 8 8m0-8-8 8" stroke="currentColor" stroke-width="2"></path></svg></div><div class="m-result-header"><h3 class="m-result-title">Error — operation failed</h3><p class="m-result-description">Huge. Heading levels remain authored.</p></div></div>
-      </div>
-    </section>
-
-    <section aria-labelledby="codes-heading">
-      <h2 id="codes-heading">Authored code-labelled outcomes</h2>
-      <div class="outcome-grid">
-        <div class="m-result demo-panel" data-status="404" data-size="small" id="not-found-result"><div class="m-result-icon" aria-hidden="true"><span class="m-result-symbol">404</span></div><div class="m-result-header"><h3 class="m-result-title">404 — content not found</h3><p class="m-result-description">The application supplied this message; no response status is inspected.</p></div><div class="m-result-footer"><a href="#home">Return home</a></div></div>
-        <div class="m-result demo-panel" data-status="403" data-size="small" id="forbidden-result"><div class="m-result-icon" aria-hidden="true"><span class="m-result-symbol">403</span></div><div class="m-result-header"><h3 class="m-result-title">403 — access not granted</h3><p class="m-result-description">Permission and navigation policy stay in application code.</p></div></div>
-        <div class="m-result demo-panel" data-status="500" data-size="small" id="server-result"><div class="m-result-icon" aria-hidden="true"><span class="m-result-symbol">500</span></div><div class="m-result-header"><h3 class="m-result-title">500 — service unavailable</h3><p class="m-result-description">No automatic retry, timer or generated action.</p></div></div>
-        <div class="m-result demo-panel" data-status="418" data-size="small" id="teapot-result"><div class="m-result-icon" aria-hidden="true"><span class="m-result-symbol">418</span></div><div class="m-result-header"><h3 class="m-result-title">418 — example outcome</h3><p class="m-result-description">An authored code symbol replaces bundled illustrations.</p></div></div>
+    <section data-demo-example="basic" aria-labelledby="basic-title">
+      <header data-demo-header><div><h2 id="basic-title">Basic result</h2><p>Default outcome indicator with title, description and actions.</p></div></header>
+      <div data-demo-preview>
+        <m-result status="info" title="Information" description="Review the details before submitting your changes.">
+          <m-result-footer>
+            <m-button><m-text>Got it</m-text></m-button>
+          </m-result-footer>
+        </m-result>
       </div>
     </section>
 
-    <section aria-labelledby="custom-heading">
-      <h2 id="custom-heading">Custom artwork, alignment and nested content</h2>
-      <div class="m-result demo-panel start-aligned" data-status="warning" dir="rtl" id="custom-result">
-        <div class="m-result-icon" id="custom-icon"><svg viewBox="0 0 40 40" role="img" aria-labelledby="emblem-title" focusable="false"><title id="emblem-title">Project emblem</title><rect x="3" y="3" width="34" height="34" rx="6" fill="none" stroke="currentColor" stroke-width="2"></rect><path d="m10 20 7 7 13-15" fill="none" stroke="currentColor" stroke-width="2"></path></svg></div>
-        <div class="m-result-header"><h3 class="m-result-title">Warning — custom illustration</h3><p class="m-result-description">AnUnbrokenAuthoredOutcomeDescriptionThatMustWrapWithoutClippingOrGeneratedEllipsis0123456789</p></div>
-        <div class="m-result-content">
-          <div class="m-result nested-result" id="nested-result"><div class="m-result-header"><h4 class="m-result-title">Information — nested note</h4><p class="m-result-description">Independent default size, status palette and alignment.</p></div></div>
+    <section data-demo-example="statuses" aria-labelledby="statuses-title">
+      <header data-demo-header><div><h2 id="statuses-title">Semantic statuses</h2><p>Success, warning, and error status variations.</p></div></header>
+      <div data-demo-preview>
+        <m-result status="success" title="Success" description="The configuration has been saved successfully.">
+          <m-result-footer>
+            <m-button><m-text>Continue</m-text></m-button>
+          </m-result-footer>
+        </m-result>
+        <m-result status="warning" title="Warning" description="Your session will expire in 5 minutes.">
+          <m-result-footer>
+            <m-button><m-text>Extend Session</m-text></m-button>
+          </m-result-footer>
+        </m-result>
+        <m-result status="error" title="Error" description="An error occurred while saving your changes.">
+          <m-result-footer>
+            <m-button><m-text>Try Again</m-text></m-button>
+          </m-result-footer>
+        </m-result>
+      </div>
+    </section>
+
+    <section data-demo-example="http-codes" aria-labelledby="http-codes-title">
+      <header data-demo-header><div><h2 id="http-codes-title">HTTP error codes</h2><p>Predefined HTTP outcome statuses: 403, 404, and 500.</p></div></header>
+      <div data-demo-preview>
+        <m-result status="403" title="403 Forbidden" description="You do not have permission to view this page.">
+          <m-result-footer>
+            <m-button><m-text>Back to Home</m-text></m-button>
+          </m-result-footer>
+        </m-result>
+        <m-result status="404" title="404 Not Found" description="The requested resource could not be located.">
+          <m-result-footer>
+            <m-button><m-text>Back to Home</m-text></m-button>
+          </m-result-footer>
+        </m-result>
+        <m-result status="500" title="500 Server Error" description="The server encountered an error and could not complete your request.">
+          <m-result-footer>
+            <m-button><m-text>Back to Home</m-text></m-button>
+          </m-result-footer>
+        </m-result>
+      </div>
+    </section>
+
+    <section data-demo-example="custom-regions" aria-labelledby="custom-regions-title">
+      <header data-demo-header><div><h2 id="custom-regions-title">Custom regions and content</h2><p>Structured layout using header, content, and footer companion elements.</p></div></header>
+      <div data-demo-preview>
+        <m-result status="info">
+          <m-result-header>
+            <h2 class="m-result-title">Custom Outcome Header</h2>
+            <m-p class="m-result-description">Detailed authored outcome description.</m-p>
+          </m-result-header>
+          <m-result-content>
+            <m-p>Additional details and context can be placed directly inside the content region.</m-p>
+          </m-result-content>
+          <m-result-footer>
+            <m-button><m-text>Primary Action</m-text></m-button>
+            <m-button><m-text>Secondary Action</m-text></m-button>
+          </m-result-footer>
+        </m-result>
+      </div>
+    </section>
+
+    <section data-demo-example="interactive" aria-labelledby="interactive-title">
+      <header data-demo-header><div><h2 id="interactive-title">Interactive controls</h2><p>Dynamically change status and title via properties.</p></div></header>
+      <div data-demo-preview>
+        <m-result id="interactive-result" status="info" title="Processing Request" description="Waiting for user input.">
+          <m-result-footer>
+            <m-button id="action-btn"><m-text>Take Action</m-text></m-button>
+          </m-result-footer>
+        </m-result>
+        <div class="demo-tools">
+          <m-button id="btn-success"><m-text>Set Success</m-text></m-button>
+          <m-button id="btn-warning"><m-text>Set Warning</m-text></m-button>
+          <m-button id="btn-error"><m-text>Set Error</m-text></m-button>
+          <m-button id="btn-404"><m-text>Set 404</m-text></m-button>
         </div>
-        <div class="m-result-footer"><a href="#home">Return to the beginning</a></div>
+        <m-p id="interactive-status" role="status">Status: info</m-p>
       </div>
-      <div class="m-result demo-panel" id="image-result"><div class="m-result-icon"><img id="authored-image" width="48" height="48" alt="Project archive symbol" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Crect x='4' y='8' width='40' height='32' rx='3' fill='%230369a1'/%3E%3Cpath d='M4 18h40M18 26h12' stroke='white' stroke-width='3'/%3E%3C/svg%3E"></div><div class="m-result-header"><h3 class="m-result-title">Information — authored image</h3><p class="m-result-description">Image attributes, namespace and alternative text are not rewritten.</p></div></div>
     </section>
 
-    <section aria-labelledby="sparse-heading">
-      <h2 id="sparse-heading">Missing and hidden regions</h2>
-      <div class="m-result demo-panel" id="text-result"><div class="m-result-header"><h3 class="m-result-title">Information — no illustration required</h3><p class="m-result-description">Readable without an icon or generated fallback.</p></div></div>
-      <div class="m-result demo-panel" id="hidden-regions"><div class="m-result-icon" hidden><span class="m-result-symbol">!</span></div><div class="m-result-header"><h3 class="m-result-title">Visible authored title</h3><p class="m-result-description" hidden>Hidden description</p></div><div class="m-result-content" hidden>Hidden content</div><div class="m-result-footer" hidden><button type="button">Hidden action</button></div><template class="m-result-icon" id="native-template">Inert icon template</template></div>
-      <div class="m-result" id="empty-result"></div>
-      <div class="m-result" hidden id="hidden-result"><div class="m-result-footer"><button type="button">Hidden root action</button></div></div>
-      <p id="outside-content">Ordinary content outside Result.</p>
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="result-api"><p>Loading API documentation.</p></div>
     </section>
   </main>
 </body>

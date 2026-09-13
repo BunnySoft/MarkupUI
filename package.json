@@ -293,6 +293,10 @@
     "./float-button/style.css": "./dist/markup-ui-float-button.css",
     "./scrollbar/style.css": "./dist/markup-ui-scrollbar.css",
     "./code/style.css": "./dist/markup-ui-code.css",
+    "./result": {
+      "types": "./dist/components/result/index.d.ts",
+      "import": "./dist/markup-ui-result.js"
+    },
     "./result/style.css": "./dist/markup-ui-result.css",
     "./affix/style.css": "./dist/markup-ui-affix.css",
     "./highlight": {
