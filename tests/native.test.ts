@@ -48,6 +48,7 @@ import { Ellipsis } from "../src/components/ellipsis/index.js"
 import { Tabs, Tab, TabPane } from "../src/components/tabs/index.js"
 import { Menu, MenuItem, MenuGroup, MenuDivider, Submenu } from "../src/components/menu/index.js"
 import { Pagination } from "../src/components/pagination/index.js"
+import { Dialog, DialogHeader, DialogBody, DialogFooter, DialogAction } from "../src/components/dialog/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -76,7 +77,7 @@ describe("native elements", () => {
     expect(customElements.get("m-input")).toBe(Input)
     expect(customElements.get("m-select")).toBe(Select)
     expect(builtInElementNames).not.toContain("m-select")
-    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader, Ellipsis, Tabs, Tab, TabPane, Menu, MenuItem, MenuGroup, MenuDivider, Submenu, Pagination]) {
+    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader, Ellipsis, Tabs, Tab, TabPane, Menu, MenuItem, MenuGroup, MenuDivider, Submenu, Pagination, Dialog, DialogHeader, DialogBody, DialogFooter, DialogAction]) {
       expect(customElements.get(Type.tag)).toBe(Type)
       expect(builtInElementNames).not.toContain(Type.tag)
     }
@@ -137,21 +138,18 @@ describe("native elements", () => {
       </m-app>`
     await Promise.resolve()
     const card = document.querySelector("m-card")
-    const dialog = document.querySelector("m-dialog") as HTMLElement & {
-      open(): void
-      close(): void
-    }
+    const dialog = document.querySelector("m-dialog") as Dialog
     const closeEvents = vi.fn()
     dialog.addEventListener("m:close", closeEvents)
     expect(card).toBeInstanceOf(Card)
     expect(card?.getAttribute("data-state")).toBe("structured")
-    dialog.open()
-    expect(document.querySelector("m-dialog dialog")?.hasAttribute("open")).toBe(true)
+    dialog.showModal()
+    expect(dialog.open).toBe(true)
     document.querySelector("m-dialog m-button")?.dispatchEvent(
       new MouseEvent("click", { bubbles: true }),
     )
     await Promise.resolve()
-    expect(document.querySelector("m-dialog dialog")?.hasAttribute("open")).toBe(false)
+    expect(dialog.open).toBe(false)
     expect(closeEvents).toHaveBeenCalledOnce()
   })
 

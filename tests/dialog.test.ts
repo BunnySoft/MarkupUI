@@ -2,8 +2,9 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createDialog, createDialogOwner, createNativeDialog } from "../src/components/dialog/index.js"
+import { createDialog, createDialogOwner, createNativeDialog, Dialog, DialogAction, DialogBody, DialogFooter, DialogHeader, registerDialog } from "../src/components/dialog/index.js"
 import type { DialogController, DialogOptions, DialogOwner, NativeDialogController } from "../src/components/dialog/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const handles: (NativeDialogController | DialogOwner)[] = []
 const proto = HTMLDialogElement.prototype
@@ -68,7 +69,7 @@ describe("Dialog native lifetime", () => {
     expect(pkg.exports["./dialog"].import).toBe("./dist/markup-ui-dialog.js")
     expect(pkg.exports["./dialog/style.css"]).toBe("./dist/markup-ui-dialog.css")
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("m-dialog")).toBeUndefined()
+    expect(customElements.get("m-dialog")).toBe(Dialog)
   })
   it("retains authored native nodes, roles, descriptions and form values", () => {
     const dialog = fixture()
@@ -584,5 +585,161 @@ describe("Explicit template owners and CSS", () => {
       .toBe(".m-dialog :where(button){padding:16px 28px}")
     expect(normalizeCSS(".m-dialog :where(button){padding:16px 28px}"))
       .not.toBe(normalizeCSS(".m-dialog:where(button){padding:16px28px}"))
+  })
+})
+
+describe("canonical Dialog ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers dialog elements", () => {
+    expect(Dialog.tag).toBe("m-dialog")
+    expect(DialogHeader.tag).toBe("m-dialog-header")
+    expect(DialogBody.tag).toBe("m-dialog-body")
+    expect(DialogFooter.tag).toBe("m-dialog-footer")
+    expect(DialogAction.tag).toBe("m-dialog-action")
+    expect(ViewElement.prototype.isPrototypeOf(Dialog.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(DialogHeader.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(DialogBody.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(DialogFooter.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(DialogAction.prototype)).toBe(true)
+    expect(customElements.get("m-dialog")).toBe(Dialog)
+    expect(customElements.get("m-dialog-header")).toBe(DialogHeader)
+    expect(customElements.get("m-dialog-body")).toBe(DialogBody)
+    expect(customElements.get("m-dialog-footer")).toBe(DialogFooter)
+    expect(customElements.get("m-dialog-action")).toBe(DialogAction)
+    expect(Dialog.observedAttributes).toEqual(["open", "title", "closable", "mask-closable", "type"])
+
+    const define = vi.fn()
+    expect(() => registerDialog({ get: name => name === "m-dialog" ? class extends HTMLElement {} : undefined, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerDialog()).not.toThrow()
+  })
+
+  it("handles typed properties, attributes and defaults", () => {
+    const dialog = document.createElement("m-dialog") as Dialog
+    document.body.append(dialog)
+    expect(dialog.open).toBe(false)
+    expect(dialog.title).toBe("")
+    expect(dialog.closable).toBe(false)
+    expect(dialog.maskClosable).toBe(true)
+    expect(dialog.type).toBe("default")
+
+    dialog.title = "Test Dialog"
+    expect(dialog.title).toBe("Test Dialog")
+    expect(dialog.getAttribute("title")).toBe("Test Dialog")
+
+    dialog.type = "warning"
+    expect(dialog.type).toBe("warning")
+    expect(dialog.getAttribute("type")).toBe("warning")
+
+    dialog.closable = true
+    expect(dialog.closable).toBe(true)
+    expect(dialog.hasAttribute("closable")).toBe(true)
+
+    dialog.maskClosable = false
+    expect(dialog.maskClosable).toBe(false)
+    expect(dialog.getAttribute("mask-closable")).toBe("false")
+
+    dialog.maskClosable = true
+    expect(dialog.maskClosable).toBe(true)
+
+    expect(() => { (dialog as any).type = "invalid" }).toThrow(RangeError)
+  })
+
+  it("opens with showModal() and closes with close(), emitting m:close", () => {
+    document.body.innerHTML = `<m-dialog title="Test Modal"><p>Content</p></m-dialog>`
+    const dialog = document.querySelector("m-dialog") as Dialog
+    expect(dialog.open).toBe(false)
+    expect(dialog.hidden).toBe(true)
+
+    const closeSpy = vi.fn()
+    dialog.addEventListener("m:close", closeSpy)
+
+    dialog.showModal()
+    expect(dialog.open).toBe(true)
+    expect(dialog.hasAttribute("open")).toBe(true)
+    expect(dialog.hidden).toBe(false)
+
+    dialog.close("confirmed")
+    expect(dialog.open).toBe(false)
+    expect(dialog.hidden).toBe(true)
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "confirmed" })
+  })
+
+  it("handles closable close button and supports m:cancel event prevention", () => {
+    document.body.innerHTML = `<m-dialog title="Closable Dialog" closable open><p>Content</p></m-dialog>`
+    const dialog = document.querySelector("m-dialog") as Dialog
+    expect(dialog.open).toBe(true)
+
+    const closeButton = dialog.querySelector<HTMLButtonElement>("[data-dialog-action='close']")
+    expect(closeButton).not.toBeNull()
+
+    const cancelSpy = vi.fn((e: CustomEvent) => e.preventDefault())
+    dialog.addEventListener("m:cancel", cancelSpy)
+
+    closeButton!.click()
+    expect(cancelSpy).toHaveBeenCalledOnce()
+    expect(cancelSpy.mock.calls[0][0].detail).toEqual({ value: "close" })
+    expect(dialog.open).toBe(true)
+
+    dialog.removeEventListener("m:cancel", cancelSpy)
+    closeButton!.click()
+    expect(dialog.open).toBe(false)
+  })
+
+  it("handles maskClosable dismiss and respects mask-closable=false", () => {
+    document.body.innerHTML = `<m-dialog open mask-closable="true"><p>Content</p></m-dialog>`
+    const dialog = document.querySelector("m-dialog") as Dialog
+    expect(dialog.open).toBe(true)
+
+    const cancelSpy = vi.fn()
+    dialog.addEventListener("m:cancel", cancelSpy)
+
+    dialog.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    expect(cancelSpy).toHaveBeenCalledOnce()
+    expect(cancelSpy.mock.calls[0][0].detail).toEqual({ value: "mask" })
+    expect(dialog.open).toBe(false)
+
+    dialog.maskClosable = false
+    dialog.showModal()
+    expect(dialog.open).toBe(true)
+    cancelSpy.mockClear()
+
+    dialog.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    expect(cancelSpy).not.toHaveBeenCalled()
+    expect(dialog.open).toBe(true)
+  })
+
+  it("handles Escape key cancellation", () => {
+    document.body.innerHTML = `<m-dialog open><p>Content</p></m-dialog>`
+    const dialog = document.querySelector("m-dialog") as Dialog
+
+    const cancelSpy = vi.fn()
+    dialog.addEventListener("m:cancel", cancelSpy)
+
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }))
+    expect(cancelSpy).toHaveBeenCalledOnce()
+    expect(cancelSpy.mock.calls[0][0].detail).toEqual({ value: "escape" })
+    expect(dialog.open).toBe(false)
+  })
+
+  it("supports structured light-DOM companion elements", () => {
+    document.body.innerHTML = `
+      <m-dialog open>
+        <m-dialog-header><h3>Custom Header</h3></m-dialog-header>
+        <m-dialog-body><p>Custom Body</p></m-dialog-body>
+        <m-dialog-footer>
+          <m-dialog-action><button id="btn">Action</button></m-dialog-action>
+        </m-dialog-footer>
+      </m-dialog>`
+    const dialog = document.querySelector("m-dialog") as Dialog
+    const header = dialog.querySelector("m-dialog-header") as DialogHeader
+    const body = dialog.querySelector("m-dialog-body") as DialogBody
+    const footer = dialog.querySelector("m-dialog-footer") as DialogFooter
+    const action = dialog.querySelector("m-dialog-action") as DialogAction
+
+    expect(header.getAttribute("data-dialog-header")).toBe("")
+    expect(body.getAttribute("data-dialog-content")).toBe("")
+    expect(footer.getAttribute("data-dialog-actions")).toBe("")
+    expect(action.dataset.part).toBe("action")
   })
 })
