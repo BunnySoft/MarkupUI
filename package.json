@@ -292,6 +292,10 @@
     "./image/style.css": "./dist/markup-ui-image.css",
     "./float-button/style.css": "./dist/markup-ui-float-button.css",
     "./scrollbar/style.css": "./dist/markup-ui-scrollbar.css",
+    "./code": {
+      "types": "./dist/components/code/index.d.ts",
+      "import": "./dist/markup-ui-code.js"
+    },
     "./code/style.css": "./dist/markup-ui-code.css",
     "./result": {
       "types": "./dist/components/result/index.d.ts",

@@ -12,6 +12,7 @@
   --_m-code-number-token: #d19a66;
   --_m-code-comment: #5c6370;
 }
+:where(m-code),
 code.m-code,
 pre.m-code-block {
   font-family: var(--m-code-font-family, var(--m-typography-mono-font, v-mono, SFMono-Regular, Menlo, Consolas, Courier, monospace));
@@ -25,6 +26,7 @@ pre.m-code-block {
   background: var(--m-code-background, transparent);
   box-shadow: inset 0 0 0 1px var(--m-code-border-color, transparent);
 }
+:where(m-code),
 code.m-code {
   display: inline;
   padding: 0;
@@ -58,6 +60,8 @@ pre.m-code-block > code.m-code {
   word-break: inherit;
   counter-reset: m-code-line;
 }
+:where(m-code)[word-wrap],
+:where(m-code)[data-word-wrap],
 pre.m-code-block[data-word-wrap] {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -100,12 +104,12 @@ pre.m-code-block:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 2px;
 }
-:where(.m-code, .m-code-block, .m-code-line, .m-code-number)[hidden]:not([hidden="until-found"]),
+:where(m-code, .m-code, .m-code-block, .m-code-line, .m-code-number)[hidden]:not([hidden="until-found"]),
 template.m-code,
 template.m-code-block,
 .m-code > template { display: none !important; }
 @media (forced-colors: active) {
-  code.m-code, pre.m-code-block, .m-code .m-code-token, .m-code-line > .m-code-number {
+  :where(m-code), code.m-code, pre.m-code-block, .m-code .m-code-token, .m-code-line > .m-code-number {
     color: CanvasText;
     background: Canvas;
     border-color: CanvasText;
