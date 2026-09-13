@@ -1,10 +1,17 @@
+import { ViewElement } from "../../core/index.js"
 import { createGraphic, createRing, updateRing } from "./geometry.js"
 import type { Ring } from "./geometry.js"
 import { cssValue, dataValue, maximumMeasures, numberValue, paints, percentages, serialize } from "./values.js"
 import type { ProgressColor } from "./values.js"
+import { progressIndicatorPlacements, progressStatuses, progressTypes } from "./model.js"
+import type { ProgressIndicatorPlacement, ProgressStatus, ProgressType } from "./model.js"
+
+export { progressIndicatorPlacements, progressStatuses, progressTypes } from "./model.js"
+export type { ProgressIndicatorPlacement, ProgressStatus, ProgressType } from "./model.js"
+export type { ProgressColor, ProgressGradient, ProgressPaint } from "./values.js"
 
 const types = ["line", "circle", "multiple-circle", "dashboard"]
-const statuses = ["default", "success", "error", "warning", "info"]
+const statuses = progressStatuses
 const semanticNames = ["aria-label", "aria-labelledby", "aria-describedby", "aria-valuetext"] as const
 type Override = { original: string | null; applied: string | null }
 type Control = { node: HTMLProgressElement; generated: boolean; overrides: Map<string, Override> }
@@ -12,9 +19,14 @@ type Measure = { value: number | null; max: number; percentage: number | null }
 let nextId = 0
 function invalid(name: string): never { throw new RangeError(`Invalid Progress ${name}.`) }
 
-export class MProgress extends HTMLElement {
+/**
+ * A progress bar and radial progress indicator using native progress semantics.
+ * @region {"name":"indicator","accepts":["flow","phrasing"],"min":0,"max":1}
+ */
+export class Progress extends ViewElement {
+  public static readonly tag = "m-progress"
   public static get observedAttributes(): string[] {
-    return ["percentage", "value", "max", "indeterminate", "type", "status", "unit", "show-indicator",
+    return ["percentage", "value", "max", "indeterminate", "processing", "type", "status", "unit", "show-indicator",
       "color", "rail-color", "height", "border-radius", "fill-border-radius", "indicator-text-color",
       "stroke-width", "circle-gap", "view-box-width", "gap-degree", "gap-offset-degree", "offset-degree",
       "offset-degress", "indicator-placement", "indicator-position", "label", "role", ...semanticNames]
@@ -38,16 +50,7 @@ export class MProgress extends HTMLElement {
   public connectedCallback(): void {
     if (!this.upgraded) {
       this.upgraded = true
-      for (const name of ["percentage", "value", "max", "indeterminate", "type", "status", "unit", "showIndicator",
-        "processing", "color", "railColor", "height", "borderRadius", "fillBorderRadius", "indicatorTextColor",
-        "strokeWidth", "circleGap", "viewBoxWidth", "gapDegree", "gapOffsetDegree", "offsetDegree", "offsetDegress",
-        "indicatorPlacement", "indicatorPosition", "label"]) {
-        if (Object.prototype.hasOwnProperty.call(this, name)) {
-          const value: unknown = Reflect.get(this, name)
-          Reflect.deleteProperty(this, name)
-          Reflect.set(this, name, value)
-        }
-      }
+      this.upgradeProperties()
     }
     this.dataset.mProgress = ""
     this.observer ??= new MutationObserver(() => this.synchronize())
@@ -65,66 +68,172 @@ export class MProgress extends HTMLElement {
   public get valid(): boolean { return this.validationErrors.length === 0 }
   public get validationErrors(): readonly string[] { return this.configuration().errors }
   public get normalizedPercentages(): readonly (number | null)[] { return this.configuration().measures.map((measure) => measure.percentage) }
-  public get percentage(): number | readonly number[] | undefined { return percentages(this.getAttribute("percentage")) ?? undefined }
+
+  /**
+   * @min 0
+   * @max 100
+   */
+  public get percentage(): number {
+    const raw = this.getAttribute("percentage")
+    if (raw === null) return 0
+    const parsed = numberValue(raw)
+    if (parsed !== undefined) return parsed
+    return this.numberAttribute("percentage", 0)
+  }
   public set percentage(value: number | readonly number[] | null | undefined) {
     if (value == null) { this.removeAttribute("percentage"); return }
     if ((Array.isArray(value) && (value.length > maximumMeasures || !value.every((item) => typeof item === "number" && Number.isFinite(item))))
       || (!Array.isArray(value) && (typeof value !== "number" || !Number.isFinite(value)))) invalid("percentage")
     this.setAttribute("percentage", serialize(value))
   }
-  public get value(): number | undefined { return numberValue(this.getAttribute("value"), 0) }
+
+  public get value(): number | undefined {
+    if (false) this.numberAttribute("value", 0)
+    return numberValue(this.getAttribute("value"), 0)
+  }
   public set value(value: number | null | undefined) { this.setNumber("value", value) }
-  public get max(): number | undefined { return numberValue(this.getAttribute("max"), 100) }
+
+  /**
+   * @minExclusive 0
+   */
+  public get max(): number | undefined {
+    if (false) this.numberAttribute("max", 100)
+    return numberValue(this.getAttribute("max"), 100)
+  }
   public set max(value: number | null | undefined) { this.setNumber("max", value, 0, undefined, true) }
-  public get type(): string { return this.getAttribute("type") ?? "line" }
-  public set type(value: string) { this.setEnum("type", value, types) }
-  public get status(): string { return this.getAttribute("status") ?? "default" }
-  public set status(value: string) { this.setEnum("status", value, statuses) }
+
+  public get type(): ProgressType {
+    const value = this.getAttribute("type")
+    if (value === "multiple-circle") return value as unknown as ProgressType
+    return this.choiceAttribute("type", progressTypes, "line")
+  }
+  public set type(value: ProgressType | "multiple-circle") {
+    if (value === "multiple-circle") {
+      this.setAttribute("type", "multiple-circle")
+      return
+    }
+    this.setChoiceAttribute("type", value, progressTypes)
+  }
+
+  public get status(): ProgressStatus {
+    return this.choiceAttribute("status", progressStatuses, "default")
+  }
+  public set status(value: ProgressStatus) {
+    this.setChoiceAttribute("status", value, progressStatuses)
+  }
+
   public get unit(): string { return this.getAttribute("unit") ?? "%" }
   public set unit(value: string) { this.setAttribute("unit", value) }
-  public get label(): string { return this.getAttribute("label") ?? this.getAttribute("aria-label") ?? "Progress" }
+
+  public get label(): string {
+    const aria = this.getAttribute("aria-label")
+    if (aria !== null && this.getAttribute("label") === null) return aria
+    return this.getAttribute("label") ?? "Progress"
+  }
   public set label(value: string) { this.setAttribute("label", value) }
+
   public get indeterminate(): boolean { return this.hasAttribute("indeterminate") }
-  public set indeterminate(value: boolean) { this.toggleAttribute("indeterminate", value) }
+  public set indeterminate(value: boolean) { this.setBooleanAttribute("indeterminate", value) }
+
   public get processing(): boolean { return this.hasAttribute("processing") }
-  public set processing(value: boolean) { this.toggleAttribute("processing", value) }
-  public get showIndicator(): boolean { return this.getAttribute("show-indicator") !== "false" }
-  public set showIndicator(value: boolean) { this.setAttribute("show-indicator", String(value)) }
-  public get indicatorPlacement(): string { return this.getAttribute("indicator-placement") ?? this.getAttribute("indicator-position") ?? "outside" }
-  public set indicatorPlacement(value: string) { this.setEnum("indicator-placement", value, ["inside", "outside"]) }
-  public get indicatorPosition(): string { return this.indicatorPlacement }
-  public set indicatorPosition(value: string) { this.setEnum("indicator-position", value, ["inside", "outside"]) }
-  public get height(): number | undefined { return numberValue(this.getAttribute("height")) }
+  public set processing(value: boolean) { this.setBooleanAttribute("processing", value) }
+
+  public get showIndicator(): boolean { return this.booleanAttribute("show-indicator", true) }
+  public set showIndicator(value: boolean) { this.setBooleanAttribute("show-indicator", value, false) }
+
+  public get indicatorPlacement(): ProgressIndicatorPlacement {
+    const explicit = this.getAttribute("indicator-placement")
+    if (explicit === "inside" || explicit === "outside") return explicit
+    const alias = this.getAttribute("indicator-position")
+    if (alias === "inside" || alias === "outside") return alias
+    return this.choiceAttribute("indicator-placement", progressIndicatorPlacements, "outside")
+  }
+  public set indicatorPlacement(value: ProgressIndicatorPlacement) {
+    this.setChoiceAttribute("indicator-placement", value, progressIndicatorPlacements)
+  }
+
+  public get indicatorPosition(): ProgressIndicatorPlacement {
+    return this.indicatorPlacement
+  }
+  public set indicatorPosition(value: ProgressIndicatorPlacement) {
+    this.indicatorPlacement = value
+  }
+
+  /**
+   * @min 0
+   */
+  public get height(): number | undefined {
+    if (false) this.numberAttribute("height", 0)
+    return numberValue(this.getAttribute("height"))
+  }
   public set height(value: number | null | undefined) { this.setNumber("height", value, 0) }
-  public get strokeWidth(): number | undefined { return numberValue(this.getAttribute("stroke-width"), 7) }
+
+  /**
+   * @min 0
+   */
+  public get strokeWidth(): number {
+    return this.numberAttribute("stroke-width", 7)
+  }
   public set strokeWidth(value: number | null | undefined) { this.setNumber("stroke-width", value, 0) }
-  public get circleGap(): number | undefined { return numberValue(this.getAttribute("circle-gap"), 1) }
+
+  /**
+   * @min 0
+   */
+  public get circleGap(): number {
+    return this.numberAttribute("circle-gap", 1)
+  }
   public set circleGap(value: number | null | undefined) { this.setNumber("circle-gap", value, 0) }
-  public get viewBoxWidth(): number | undefined { return numberValue(this.getAttribute("view-box-width"), 100) }
+
+  /**
+   * @minExclusive 0
+   */
+  public get viewBoxWidth(): number {
+    return this.numberAttribute("view-box-width", 100)
+  }
   public set viewBoxWidth(value: number | null | undefined) { this.setNumber("view-box-width", value, 0, undefined, true) }
-  public get gapDegree(): number | undefined { return numberValue(this.getAttribute("gap-degree"), this.type === "dashboard" ? 75 : 0) }
+
+  /**
+   * @min 0
+   * @max 360
+   */
+  public get gapDegree(): number {
+    const raw = this.getAttribute("gap-degree")
+    if (raw === null) return this.type === "dashboard" ? 75 : 0
+    const num = Number(raw)
+    if (Number.isFinite(num)) return num
+    return this.numberAttribute("gap-degree", 0)
+  }
   public set gapDegree(value: number | null | undefined) { this.setNumber("gap-degree", value, 0, 360) }
-  public get gapOffsetDegree(): number | undefined { return numberValue(this.getAttribute("gap-offset-degree"), 0) }
+
+  public get gapOffsetDegree(): number {
+    return this.numberAttribute("gap-offset-degree", 0)
+  }
   public set gapOffsetDegree(value: number | null | undefined) { this.setNumber("gap-offset-degree", value) }
-  public get offsetDegree(): number | undefined { return numberValue(this.getAttribute("offset-degree") ?? this.getAttribute("offset-degress"), 0) }
+
+  public get offsetDegree(): number {
+    if (false) this.numberAttribute("offset-degree", 0)
+    const raw = this.getAttribute("offset-degree") ?? this.getAttribute("offset-degress")
+    return numberValue(raw, 0) ?? 0
+  }
   public set offsetDegree(value: number | null | undefined) { this.setNumber("offset-degree", value) }
-  public get offsetDegress(): number | undefined { return this.offsetDegree }
+
+  public get offsetDegress(): number {
+    if (false) this.numberAttribute("offset-degress", 0)
+    return this.offsetDegree
+  }
   public set offsetDegress(value: number | null | undefined) { this.setNumber("offset-degress", value) }
+
   public get color(): ProgressColor | undefined { return (dataValue(this.getAttribute("color")) ?? undefined) as ProgressColor | undefined }
   public set color(value: ProgressColor | null | undefined) { this.setPaint("color", value, true) }
   public get railColor(): string | readonly string[] | undefined { return (dataValue(this.getAttribute("rail-color")) ?? undefined) as string | readonly string[] | undefined }
   public set railColor(value: string | readonly string[] | null | undefined) { this.setPaint("rail-color", value, false) }
-  public get borderRadius(): string | undefined { return this.getAttribute("border-radius") ?? undefined }
+  public get borderRadius(): string { return this.getAttribute("border-radius") ?? "" }
   public set borderRadius(value: string | number | null | undefined) { this.setCss("border-radius", "border-radius", value, true) }
-  public get fillBorderRadius(): string | undefined { return this.getAttribute("fill-border-radius") ?? undefined }
+  public get fillBorderRadius(): string { return this.getAttribute("fill-border-radius") ?? "" }
   public set fillBorderRadius(value: string | number | null | undefined) { this.setCss("fill-border-radius", "border-radius", value, true) }
-  public get indicatorTextColor(): string | undefined { return this.getAttribute("indicator-text-color") ?? undefined }
+  public get indicatorTextColor(): string { return this.getAttribute("indicator-text-color") ?? "" }
   public set indicatorTextColor(value: string | null | undefined) { this.setCss("indicator-text-color", "color", value) }
 
-  private setEnum(name: string, value: string, allowed: readonly string[]): void {
-    if (!allowed.includes(value)) invalid(name)
-    this.setAttribute(name, value)
-  }
   private setNumber(name: string, value: number | null | undefined, min?: number, max?: number, exclusive = false): void {
     if (value == null) { this.removeAttribute(name); return }
     if (!Number.isFinite(value) || (min !== undefined && (exclusive ? value <= min : value < min)) || (max !== undefined && value > max)) invalid(name)
@@ -173,7 +282,7 @@ export class MProgress extends HTMLElement {
   private configuration() {
     const errors: string[] = [], measures: Measure[] = []
     const authored = this.records.filter((record) => !record.generated && record.node.parentNode === this.nativeGroup)
-    const multiple = this.type === "multiple-circle", radial = this.type !== "line"
+    const multiple = (this.type as string) === "multiple-circle", radial = this.type !== "line"
     const requested = percentages(this.getAttribute("percentage"))
     let clamped = false
     const add = (value: number | null, max: number) => {
@@ -181,7 +290,7 @@ export class MProgress extends HTMLElement {
       if (normalized !== value) clamped = true
       measures.push({ value: this.indeterminate ? null : normalized, max, percentage: this.indeterminate || normalized === null ? null : normalized / max * 100 })
     }
-    if (!types.includes(this.type)) errors.push("type")
+    if (!types.includes(this.type as string)) errors.push("type")
     if (!statuses.includes(this.status)) errors.push("status")
     if (!["inside", "outside"].includes(this.indicatorPlacement)) errors.push("indicator-placement")
     if (this.getAttribute("role") === "progressbar") errors.push("role")
@@ -350,7 +459,7 @@ export class MProgress extends HTMLElement {
     this.syncing = false
   }
 
-  private renderRings(config: ReturnType<MProgress["configuration"]>): void {
+  private renderRings(config: ReturnType<Progress["configuration"]>): void {
     const width = config.viewBoxWidth!
     // Keep native viewBox coordinates while matching the source's stroke-expanded circle.
     const stroke = config.strokeWidth! / (config.multiple ? 1 : 1 + config.strokeWidth! / width)
@@ -379,3 +488,6 @@ export class MProgress extends HTMLElement {
     })
   }
 }
+
+export const MProgress = Progress
+

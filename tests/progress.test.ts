@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { MProgress, registerProgress } from "../src/components/progress/index.js"
+import { Progress, MProgress, registerProgress } from "../src/components/progress/index.js"
 import { registerElements } from "../src/components/elements.js"
+import { ViewElement } from "../src/core/index.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
@@ -411,10 +412,85 @@ describe("standalone Progress", () => {
   it("reports collisions and preserves the enhanced definition before the legacy aggregate", () => {
     expect(() => registerProgress()).not.toThrow()
     const define = vi.fn()
-    expect(() => registerProgress({ get: () => class extends HTMLElement {}, define })).toThrow("before the legacy MarkupUI bundle")
+    expect(() => registerProgress({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
     expect(define).not.toHaveBeenCalled()
     registerElements(customElements)
     expect(customElements.get("m-progress")).toBe(MProgress)
     expect(progress().controls).toHaveLength(1)
+  })
+})
+
+describe("canonical Progress ViewElement", () => {
+  it("exports canonical own-tag ViewElement and registers m-progress", () => {
+    expect(Progress.tag).toBe("m-progress")
+    expect(MProgress).toBe(Progress)
+    expect(ViewElement.prototype.isPrototypeOf(Progress.prototype)).toBe(true)
+    expect(customElements.get("m-progress")).toBe(Progress)
+    expect(Progress.observedAttributes).toContain("percentage")
+    expect(Progress.observedAttributes).toContain("type")
+    expect(Progress.observedAttributes).toContain("status")
+    expect(Progress.observedAttributes).toContain("show-indicator")
+    expect(Progress.observedAttributes).toContain("indicator-placement")
+    expect(Progress.observedAttributes).toContain("processing")
+    const define = vi.fn()
+    expect(() => registerProgress({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerProgress()).not.toThrow()
+  })
+
+  it("handles typed properties, default values and validates inputs", () => {
+    const element = document.createElement("m-progress") as Progress
+    expect(element.type).toBe("line")
+    expect(element.percentage).toBe(0)
+    expect(element.status).toBe("default")
+    expect(element.showIndicator).toBe(true)
+    expect(element.indicatorPlacement).toBe("outside")
+    expect(element.processing).toBe(false)
+
+    // type
+    element.type = "circle"
+    expect(element.type).toBe("circle")
+    expect(element.getAttribute("type")).toBe("circle")
+    element.type = "dashboard"
+    expect(element.type).toBe("dashboard")
+    expect(() => { (element as any).type = "invalid" }).toThrow(RangeError)
+
+    // percentage
+    element.percentage = 75
+    expect(element.percentage).toBe(75)
+    expect(element.getAttribute("percentage")).toBe("75")
+
+    // status
+    element.status = "success"
+    expect(element.status).toBe("success")
+    expect(element.getAttribute("status")).toBe("success")
+    element.status = "error"
+    expect(element.status).toBe("error")
+    element.status = "warning"
+    expect(element.status).toBe("warning")
+    element.status = "info"
+    expect(element.status).toBe("info")
+    expect(() => { (element as any).status = "invalid" }).toThrow(RangeError)
+
+    // showIndicator
+    element.showIndicator = false
+    expect(element.showIndicator).toBe(false)
+    expect(element.getAttribute("show-indicator")).toBe("false")
+    element.showIndicator = true
+    expect(element.showIndicator).toBe(true)
+
+    // indicatorPlacement
+    element.indicatorPlacement = "inside"
+    expect(element.indicatorPlacement).toBe("inside")
+    expect(element.getAttribute("indicator-placement")).toBe("inside")
+    expect(() => { (element as any).indicatorPlacement = "invalid" }).toThrow(RangeError)
+
+    // processing
+    element.processing = true
+    expect(element.processing).toBe(true)
+    expect(element.hasAttribute("processing")).toBe(true)
+    element.processing = false
+    expect(element.processing).toBe(false)
+    expect(element.hasAttribute("processing")).toBe(false)
   })
 })

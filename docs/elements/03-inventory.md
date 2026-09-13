@@ -106,7 +106,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Popconfirm | `Popconfirm` | [Demo and API](../../demo/components/popconfirm.html) |
 | Popover | `Popover`, `PopoverTrigger`, `PopoverContent`; direct trigger/panel adoption, 12 directional placements, hover/focus/click/manual modes, collision flipping | [Demo and API](../../demo/components/popover.html) |
 | Popselect | `Popselect` | Contract pending |
-| Progress | `Progress` | Contract pending |
+| Progress | `Progress` | [Demo and API](../../demo/components/progress.html) |
 | Result | `Result` and named regions | Contract pending |
 | Skeleton | `Skeleton`; placeholder shapes, repeated bar groups, text and dimension normalization | [Demo and API](../../demo/components/skeleton.html) |
 | Spin | `Spin`; customizable size, delay, stroke, wrapped content adoption, custom icons and descriptions | [Demo and API](../../demo/components/spin.html) |

@@ -54,6 +54,7 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter } from ".
 import { Popconfirm, PopconfirmTrigger, PopconfirmPanel } from "../src/components/popconfirm/index.js"
 import { Message, MessageContainer } from "../src/components/message/index.js"
 import { Notification, NotificationContainer } from "../src/components/notification/index.js"
+import { Progress } from "../src/components/progress/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -82,7 +83,7 @@ describe("native elements", () => {
     expect(customElements.get("m-input")).toBe(Input)
     expect(customElements.get("m-select")).toBe(Select)
     expect(builtInElementNames).not.toContain("m-select")
-    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader, Ellipsis, Tabs, Tab, TabPane, Menu, MenuItem, MenuGroup, MenuDivider, Submenu, Pagination, Dialog, DialogHeader, DialogBody, DialogFooter, DialogAction, Modal, ModalHeader, ModalBody, ModalFooter, ModalAction, Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, Popconfirm, PopconfirmTrigger, PopconfirmPanel, Message, MessageContainer, Notification, NotificationContainer]) {
+    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader, Ellipsis, Tabs, Tab, TabPane, Menu, MenuItem, MenuGroup, MenuDivider, Submenu, Pagination, Dialog, DialogHeader, DialogBody, DialogFooter, DialogAction, Modal, ModalHeader, ModalBody, ModalFooter, ModalAction, Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, Popconfirm, PopconfirmTrigger, PopconfirmPanel, Message, MessageContainer, Notification, NotificationContainer, Progress]) {
       expect(customElements.get(Type.tag)).toBe(Type)
       expect(builtInElementNames).not.toContain(Type.tag)
     }
@@ -173,10 +174,11 @@ describe("native elements", () => {
     expect(builtInElementNames).not.toContain("m-divider")
     expect(document.querySelector("m-divider")?.hasAttribute("role")).toBe(false)
     expect(document.querySelector("m-divider > hr")?.getAttribute("aria-orientation")).toBe("horizontal")
-    expect(document.querySelector("m-progress")?.getAttribute("aria-valuenow")).toBe("25")
-    expect(
-      (document.querySelector("m-progress > [data-m-bar]") as HTMLElement | null)?.style.width,
-    ).toBe("50%")
+    expect(customElements.get("m-progress")).toBe(Progress)
+    expect(builtInElementNames).not.toContain("m-progress")
+    const prog = document.querySelector("m-progress") as Progress
+    expect(prog.controls[0]?.value).toBe(25)
+    expect(prog.controls[0]?.max).toBe(50)
     expect(customElements.get("m-skeleton")).toBe(Skeleton)
     expect(builtInElementNames).not.toContain("m-skeleton")
     expect(document.querySelector("m-skeleton > [data-m-skeleton-group]")?.getAttribute("aria-hidden")).toBe("true")

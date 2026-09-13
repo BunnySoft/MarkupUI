@@ -3,7 +3,6 @@ import { MApp, MField, MSemantic, MTheme } from "./foundation.js"
 import { MAutocomplete, MSlider } from "./forms.js"
 import { MAccordionItem, MInclude } from "./dynamic.js"
 import { MSteps, MStatistic, MTree, MTreeNode } from "./navigation.js"
-import { MProgress } from "./content.js"
 import { builtInStyles } from "./styles.js"
 
 const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = [
@@ -18,7 +17,6 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-wrap", class extends MElement {}],
   ["m-center", class extends MElement {}],
   ["m-spacer", class extends MElement { public connectedCallback(): void { this.style.flex = "1" } }],
-  ["m-progress", MProgress],
   ["m-option", class extends MElement {}],
   ["m-autocomplete", MAutocomplete],
   ["m-slider", MSlider],

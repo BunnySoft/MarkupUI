@@ -47,6 +47,7 @@ in the target inventory.
 42. [Popconfirm demo and API](../../demo/components/popconfirm.html): Popconfirm, PopconfirmTrigger, PopconfirmPanel; confirmation popover, custom action labels, and cancellation events.
 43. [Message demo and API](../../demo/components/message.html): Message, MessageContainer; global feedback messages, status types, auto-dismiss timers, and placement control.
 44. [Notification demo and API](../../demo/components/notification.html): Notification, NotificationContainer; passive floating notifications, descriptions, auto-dismiss timers, and placements.
+45. [Progress demo and API](../../demo/components/progress.html): Progress; line, circle and dashboard progress indicators, percentages, custom colors, and processing states.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

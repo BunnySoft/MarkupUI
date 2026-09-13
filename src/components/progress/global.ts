@@ -1,3 +1,6 @@
-import { MProgress, registerProgress } from "./index.js"
+import * as progress from "./index.js"
 
-Object.assign(globalThis, { MarkupUIProgress: { MProgress, registerProgress } })
+const target = globalThis as typeof globalThis & { MarkupUIProgress?: typeof progress }
+if (target.MarkupUIProgress !== undefined) throw new Error("MarkupUIProgress is already defined.")
+target.MarkupUIProgress = progress
+
