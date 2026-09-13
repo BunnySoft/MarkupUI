@@ -68,6 +68,7 @@ in the target inventory.
 63. [Steps demo and API](../../demo/components/steps.html): Steps, Step; step progress indicators, sequential navigation, and status tracking.
 64. [Timeline demo and API](../../demo/components/timeline.html): Timeline, TimelineItem; chronological event logs, custom node types, and horizontal/vertical layouts.
 65. [Statistic demo and API](../../demo/components/statistic.html): Statistic; numeric metrics, prefixes, suffixes, labels, and tabular formatting.
+66. [Anchor demo and API](../../demo/components/anchor.html): Anchor, AnchorLink; scroll spy, section tracking, sticky navigation, and change events.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

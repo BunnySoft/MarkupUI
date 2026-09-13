@@ -37,8 +37,9 @@ const linkOwners = new WeakMap<HTMLAnchorElement, LinkOwner>()
 export function createAnchor(nav: HTMLElement, options: AnchorOptions = {}): AnchorController {
   const document = nav?.ownerDocument
   const view = document?.defaultView
-  if (!view || !(nav instanceof view.HTMLElement) || nav.localName !== "nav"
-    || !nav.matches(".m-anchor[data-anchor]")) throw new TypeError("Anchor needs an authored nav.m-anchor[data-anchor].")
+  const canonical = nav?.localName === "m-anchor"
+  if (!view || !(nav instanceof view.HTMLElement) || (!canonical && (nav.localName !== "nav"
+    || !nav.matches(".m-anchor[data-anchor]")))) throw new TypeError("Anchor needs an authored nav.m-anchor[data-anchor].")
   for (const key of Object.keys(options)) if (!["root", "bound", "offset", "ignoreGap"].includes(key)) throw new TypeError(`Unsupported Anchor option: ${key}.`)
   const bound = options.bound ?? 12, offset = options.offset ?? 0
   for (const value of [bound, offset]) if (!Number.isFinite(value) || value < 0 || value > 60_000) throw new RangeError("Anchor bound/offset must be finite from 0 to 60000.")
@@ -58,7 +59,7 @@ export function createAnchor(nav: HTMLElement, options: AnchorOptions = {}): Anc
   const removers: (() => void)[] = []
   const own = (node: Element) => node.closest("[data-anchor]") === nav
   function validateNav() {
-    if (nav.ownerDocument !== document || nav.getRootNode() !== document || !nav.matches(".m-anchor[data-anchor]")
+    if (nav.ownerDocument !== document || nav.getRootNode() !== document || (!canonical && !nav.matches(".m-anchor[data-anchor]"))
       || ![null, "navigation"].includes(nav.getAttribute("role"))) throw new TypeError("Anchor requires its original native navigation boundary.")
   }
   function visible(element: HTMLElement) {
@@ -238,7 +239,7 @@ export function createAnchor(nav: HTMLElement, options: AnchorOptions = {}): Anc
       if (!nav.isConnected || nav.getRootNode() !== document || !context.connected
         || ![null, "navigation"].includes(nav.getAttribute("role"))) throw new TypeError("Anchor needs connected native navigation, not menu/tab roles.")
       const labels = nav.getAttribute("aria-labelledby")?.trim().split(/\s+/).filter(Boolean)
-      if (!(labels?.length ? labels.every(id => document!.getElementById(id)?.textContent?.trim()) : nav.getAttribute("aria-label")?.trim())) throw new TypeError("Name the authored Anchor navigation.")
+      if (!(labels?.length ? labels.every(id => document!.getElementById(id)?.textContent?.trim()) : (nav.getAttribute("aria-label")?.trim() || canonical))) throw new TypeError("Name the authored Anchor navigation.")
       if (owners.has(nav)) throw new Error("Anchor root already has an active controller.")
       owners.set(nav, controller)
       connected = true
