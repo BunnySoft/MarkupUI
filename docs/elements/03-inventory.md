@@ -50,7 +50,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Switch | `Switch`; binary native checked/default state, loading, labels and forms | [Demo and API](../../demo/components/switch.html) |
 | Time Picker | `TimePicker` | [Demo and API](../../demo/components/time-picker.html) |
 | Transfer | `Transfer` | Contract pending |
-| Tree Select | `TreeSelect` | Contract pending |
+| Tree Select | `TreeSelect` | [Demo and API](../../demo/components/tree-select.html) |
 | Upload | `Upload`, `UploadTrigger`, `UploadDragger` | [Demo and API](../../demo/components/upload.html) |
 
 ## Data Display (19)

@@ -2,8 +2,9 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
-import { createTreeSelect } from "../src/components/tree-select/index.js"
+import { TreeSelect, registerTreeSelect, createTreeSelect } from "../src/components/tree-select/index.js"
 import type { TreeSelectController, TreeSelectOptions } from "../src/components/tree-select/index.js"
+import { ViewElement } from "../src/core/index.js"
 import { createTree } from "../src/components/tree/index.js"
 import { createSelect } from "../src/components/native-select.js"
 import { coordinateForm as createForm } from "../src/components/form/controller.js"
@@ -321,3 +322,136 @@ describe("ownership, bounded data and native handoff", () => {
     }
   })
 })
+
+describe("canonical TreeSelect ViewElement", () => {
+  it("registers only its own ViewElement and rejects conflicting definitions", () => {
+    expect(TreeSelect.prototype).toBeInstanceOf(ViewElement)
+    expect(customElements.get("m-tree-select")).toBe(TreeSelect)
+    expect(TreeSelect.tag).toBe("m-tree-select")
+    const define = vi.fn()
+    registerTreeSelect({ get: () => undefined, define })
+    expect(define.mock.calls.map(call => call[0])).toEqual(["m-tree-select"])
+    expect(() => registerTreeSelect({ get: () => HTMLElement, define })).toThrow("different")
+  })
+
+  it("exposes canonical observedAttributes and default property values", () => {
+    expect(TreeSelect.observedAttributes).toEqual(["value", "placeholder", "disabled", "clearable", "multiple", "checkable"])
+    const element = new TreeSelect()
+    expect(element.value).toBeNull()
+    expect(element.placeholder).toBeNull()
+    expect(element.disabled).toBe(false)
+    expect(element.clearable).toBe(false)
+    expect(element.multiple).toBe(false)
+    expect(element.checkable).toBe(false)
+  })
+
+  it("reflects properties to attributes and validates values", () => {
+    const element = new TreeSelect()
+
+    element.value = "folder-1"
+    expect(element.getAttribute("value")).toBe("folder-1")
+    element.value = null
+    expect(element.hasAttribute("value")).toBe(false)
+
+    element.placeholder = "Select an item"
+    expect(element.getAttribute("placeholder")).toBe("Select an item")
+    element.placeholder = null
+    expect(element.hasAttribute("placeholder")).toBe(false)
+
+    element.disabled = true
+    expect(element.hasAttribute("disabled")).toBe(true)
+    element.disabled = false
+    expect(element.hasAttribute("disabled")).toBe(false)
+
+    element.clearable = true
+    expect(element.hasAttribute("clearable")).toBe(true)
+    element.clearable = false
+    expect(element.hasAttribute("clearable")).toBe(false)
+
+    element.multiple = true
+    expect(element.hasAttribute("multiple")).toBe(true)
+    element.multiple = false
+    expect(element.hasAttribute("multiple")).toBe(false)
+
+    element.checkable = true
+    expect(element.hasAttribute("checkable")).toBe(true)
+    element.checkable = false
+    expect(element.hasAttribute("checkable")).toBe(false)
+  })
+
+  it("generates native select control and synchronizes properties", () => {
+    const element = new TreeSelect()
+    element.placeholder = "Choose node"
+    element.value = "node-1"
+    document.body.append(element)
+
+    expect(element.classList.contains("m-tree-select")).toBe(true)
+    const select = element.querySelector<HTMLSelectElement>("select[data-select-control]")!
+    expect(select).not.toBeNull()
+    expect(select.value).toBe("node-1")
+
+    element.disabled = true
+    expect(select.disabled).toBe(true)
+    element.disabled = false
+    expect(select.disabled).toBe(false)
+
+    element.multiple = true
+    expect(select.multiple).toBe(true)
+
+    element.placeholder = "New placeholder"
+    const placeholderOption = select.querySelector<HTMLOptionElement>("option[data-tree-select-placeholder]")
+    expect(placeholderOption?.textContent).toBe("New placeholder")
+  })
+
+  it("emits m:change event when native select changes", () => {
+    const element = new TreeSelect()
+    document.body.append(element)
+    const select = element.querySelector<HTMLSelectElement>("select")!
+    const listener = vi.fn()
+    element.addEventListener("m:change", listener)
+
+    const opt = document.createElement("option")
+    opt.value = "item-2"
+    opt.textContent = "Item 2"
+    select.append(opt)
+    select.value = "item-2"
+    select.dispatchEvent(new Event("change", { bubbles: true }))
+
+    expect(listener).toHaveBeenCalledOnce()
+    expect(listener.mock.calls[0][0].detail).toEqual({ value: "item-2" })
+    expect(element.value).toBe("item-2")
+  })
+
+  it("supports clearable and clear method", () => {
+    const element = new TreeSelect()
+    element.clearable = true
+    element.value = "item-1"
+    document.body.append(element)
+
+    const clearBtn = element.querySelector<HTMLButtonElement>("button[data-tree-select-clear]")!
+    expect(clearBtn).not.toBeNull()
+
+    const listener = vi.fn()
+    element.addEventListener("m:change", listener)
+
+    clearBtn.click()
+    expect(element.value).toBeNull()
+    expect(listener).toHaveBeenCalledOnce()
+    expect(listener.mock.calls[0][0].detail).toEqual({ value: "" })
+  })
+
+  it("delegates focus and blur to the child control", () => {
+    const element = new TreeSelect()
+    document.body.append(element)
+    const select = element.querySelector<HTMLSelectElement>("select")!
+    const focusSpy = vi.spyOn(select, "focus")
+    const blurSpy = vi.spyOn(select, "blur")
+
+    element.focus()
+    expect(focusSpy).toHaveBeenCalledOnce()
+
+    element.blur()
+    expect(blurSpy).toHaveBeenCalledOnce()
+  })
+})
+
