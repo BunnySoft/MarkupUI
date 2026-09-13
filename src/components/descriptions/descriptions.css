@@ -12,8 +12,9 @@
   --_m-descriptions-header: #26262a;
   --_m-descriptions-border: #2d2d30;
 }
-:where(dl.m-descriptions) {
+:where(m-descriptions, dl.m-descriptions) {
   --m-descriptions-columns: 3;
+  --_m-descriptions-columns: initial;
   --_m-descriptions-label-align: left;
   --_m-descriptions-padding-block: 12px;
   --_m-descriptions-padding-inline: 16px;
@@ -23,7 +24,7 @@
   --_m-descriptions-cell-inline: 0px;
   --_m-descriptions-weight: var(--m-font-weight-strong, 500);
   display: grid;
-  grid-template-columns: repeat(var(--m-descriptions-columns), minmax(0, 1fr));
+  grid-template-columns: repeat(var(--_m-descriptions-columns, var(--m-descriptions-columns)), minmax(0, 1fr));
   grid-auto-flow: row;
   gap: var(--m-descriptions-gap, var(--_m-descriptions-row-gap) 0px);
   margin: 0;
@@ -34,40 +35,64 @@
   overflow-wrap: anywhere;
   color: var(--m-descriptions-color, var(--_m-descriptions-text, #333639));
 }
-:where(dl.m-descriptions[data-size="small"]) {
+:where(m-descriptions[size="small"], m-descriptions[data-size="small"], dl.m-descriptions[data-size="small"]) {
   --_m-descriptions-padding-block: 8px;
   --_m-descriptions-padding-inline: 12px;
   --_m-descriptions-font-size: var(--m-font-size-small, 14px);
 }
-:where(dl.m-descriptions[data-size="large"]) {
+:where(m-descriptions[size="large"], m-descriptions[data-size="large"], dl.m-descriptions[data-size="large"]) {
   --_m-descriptions-padding-block: 16px;
   --_m-descriptions-padding-inline: 24px;
   --_m-descriptions-font-size: var(--m-font-size-large, 15px);
 }
-:where(dl.m-descriptions[data-bordered]) {
+:where(m-descriptions[bordered], m-descriptions[data-bordered], dl.m-descriptions[data-bordered]) {
   --_m-descriptions-cell-block: var(--_m-descriptions-padding-block);
   --_m-descriptions-cell-inline: var(--_m-descriptions-padding-inline);
   --_m-descriptions-row-gap: 0px;
   --_m-descriptions-weight: 400;
 }
-:where(dl.m-descriptions[data-label-align="left"]) { --_m-descriptions-label-align: left; }
-:where(dl.m-descriptions[data-label-align="center"]) { --_m-descriptions-label-align: center; }
-:where(dl.m-descriptions[data-label-align="right"]) { --_m-descriptions-label-align: right; }
-:where(dl.m-descriptions > div.m-description-item) {
+:where(m-descriptions[label-align="left"], m-descriptions[data-label-align="left"], dl.m-descriptions[data-label-align="left"]) { --_m-descriptions-label-align: left; }
+:where(m-descriptions[label-align="center"], m-descriptions[data-label-align="center"], dl.m-descriptions[data-label-align="center"]) { --_m-descriptions-label-align: center; }
+:where(m-descriptions[label-align="right"], m-descriptions[data-label-align="right"], dl.m-descriptions[data-label-align="right"]) { --_m-descriptions-label-align: right; }
+:where(m-descriptions > .m-descriptions-header, m-descriptions > [data-part="header"]) {
+  grid-column: 1 / -1;
+  font-weight: var(--m-font-weight-strong, 500);
+  font-size: var(--m-descriptions-title-font-size, 16px);
+  line-height: var(--m-descriptions-line-height, 1.5);
+  margin-block-end: var(--m-descriptions-padding-block, 12px);
+  color: var(--m-descriptions-label-color, var(--_m-descriptions-label, #1f2225));
+}
+:where(m-descriptions > m-description-item, dl.m-descriptions > div.m-description-item) {
   --m-description-span: 1;
+  --_m-description-span: initial;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto 1fr;
-  grid-column: span var(--m-description-span);
+  grid-column: span var(--_m-description-span, var(--m-description-span));
   box-sizing: border-box;
   min-inline-size: 0;
   background: var(--m-descriptions-background, transparent);
 }
-:where(dl.m-descriptions[data-bordered][data-label-placement="left"] > div.m-description-item) {
+:where(
+  m-descriptions[bordered][label-placement="left"] > m-description-item,
+  m-descriptions[bordered][data-label-placement="left"] > m-description-item,
+  m-descriptions[data-bordered][label-placement="left"] > m-description-item,
+  m-descriptions[data-bordered][data-label-placement="left"] > m-description-item,
+  dl.m-descriptions[data-bordered][data-label-placement="left"] > div.m-description-item
+) {
   grid-template-columns: var(--m-descriptions-label-width, minmax(0, 1fr)) minmax(0, 2fr);
   grid-template-rows: auto;
 }
-:where(dl.m-descriptions > div.m-description-item > dt, dl.m-descriptions > div.m-description-item > dd) {
+:where(
+  dl.m-descriptions > div.m-description-item > dt,
+  dl.m-descriptions > div.m-description-item > dd,
+  m-descriptions > m-description-item > dt,
+  m-descriptions > m-description-item > dd,
+  m-descriptions > m-description-item > [data-part="label"],
+  m-descriptions > m-description-item > [data-part="content"],
+  m-descriptions > m-description-item > .m-description-item-label,
+  m-descriptions > m-description-item > .m-description-item-content
+) {
   box-sizing: border-box;
   min-inline-size: 0;
   margin: 0;
@@ -76,59 +101,148 @@
   font-size: var(--m-descriptions-font-size, var(--_m-descriptions-font-size));
   transition: color .3s cubic-bezier(.4,0,.2,1), background-color .3s cubic-bezier(.4,0,.2,1), border-color .3s cubic-bezier(.4,0,.2,1);
 }
-:where(dl.m-descriptions > div.m-description-item > dt) {
+:where(
+  dl.m-descriptions > div.m-description-item > dt,
+  m-descriptions > m-description-item > dt,
+  m-descriptions > m-description-item > [data-part="label"],
+  m-descriptions > m-description-item > .m-description-item-label
+) {
   font-weight: var(--m-descriptions-label-weight, var(--_m-descriptions-weight));
   text-align: var(--m-descriptions-label-align, var(--_m-descriptions-label-align));
   color: var(--m-descriptions-label-color, var(--_m-descriptions-label, #1f2225));
 }
-:where(dl.m-descriptions > div.m-description-item > dd) {
+:where(
+  dl.m-descriptions > div.m-description-item > dd,
+  m-descriptions > m-description-item > dd,
+  m-descriptions > m-description-item > [data-part="content"],
+  m-descriptions > m-description-item > .m-description-item-content
+) {
   text-align: var(--m-descriptions-content-align, start);
 }
-:where(dl.m-descriptions[data-bordered] > div.m-description-item) {
+:where(
+  m-descriptions[bordered] > m-description-item,
+  m-descriptions[data-bordered] > m-description-item,
+  dl.m-descriptions[data-bordered] > div.m-description-item
+) {
   border: 1px solid var(--m-descriptions-border-color, var(--_m-descriptions-border, #efeff5));
   border-radius: var(--m-descriptions-border-radius, 3px);
   background: var(--m-descriptions-background, var(--_m-descriptions-surface, #fff));
 }
-:where(dl.m-descriptions[data-bordered] > div.m-description-item > dt) {
+:where(
+  m-descriptions[bordered] > m-description-item > dt,
+  m-descriptions[bordered] > m-description-item > [data-part="label"],
+  m-descriptions[bordered] > m-description-item > .m-description-item-label,
+  m-descriptions[data-bordered] > m-description-item > dt,
+  m-descriptions[data-bordered] > m-description-item > [data-part="label"],
+  m-descriptions[data-bordered] > m-description-item > .m-description-item-label,
+  dl.m-descriptions[data-bordered] > div.m-description-item > dt
+) {
   border-block-end: 1px solid var(--m-descriptions-border-color, var(--_m-descriptions-border, #efeff5));
   background: var(--m-descriptions-label-background, var(--_m-descriptions-header, #fafafc));
 }
-:where(dl.m-descriptions[data-bordered][data-label-placement="left"] > div.m-description-item > dt) {
+:where(
+  m-descriptions[bordered][label-placement="left"] > m-description-item > dt,
+  m-descriptions[bordered][label-placement="left"] > m-description-item > [data-part="label"],
+  m-descriptions[bordered][label-placement="left"] > m-description-item > .m-description-item-label,
+  m-descriptions[bordered][data-label-placement="left"] > m-description-item > dt,
+  m-descriptions[bordered][data-label-placement="left"] > m-description-item > [data-part="label"],
+  m-descriptions[bordered][data-label-placement="left"] > m-description-item > .m-description-item-label,
+  m-descriptions[data-bordered][label-placement="left"] > m-description-item > dt,
+  m-descriptions[data-bordered][label-placement="left"] > m-description-item > [data-part="label"],
+  m-descriptions[data-bordered][label-placement="left"] > m-description-item > .m-description-item-label,
+  m-descriptions[data-bordered][data-label-placement="left"] > m-description-item > dt,
+  m-descriptions[data-bordered][data-label-placement="left"] > m-description-item > [data-part="label"],
+  m-descriptions[data-bordered][data-label-placement="left"] > m-description-item > .m-description-item-label,
+  dl.m-descriptions[data-bordered][data-label-placement="left"] > div.m-description-item > dt
+) {
   border-block-end: 0;
   border-inline-end: 1px solid var(--m-descriptions-border-color, var(--_m-descriptions-border, #efeff5));
 }
-:where(dl.m-descriptions[data-label-placement="left"]:not([data-bordered]) > div.m-description-item) { display: block; font-size: 0; }
-:where(dl.m-descriptions[data-label-placement="left"]:not([data-bordered]) > div.m-description-item > dt,
-  dl.m-descriptions[data-label-placement="left"]:not([data-bordered]) > div.m-description-item > dd) { display: inline-block; vertical-align: top; }
-:where(dl.m-descriptions[data-label-placement="left"]:not([data-bordered]) > div.m-description-item > dt) {
+:where(
+  m-descriptions[label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item,
+  m-descriptions[data-label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item,
+  dl.m-descriptions[data-label-placement="left"]:not([data-bordered]) > div.m-description-item
+) { display: block; font-size: 0; }
+:where(
+  m-descriptions[label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item > dt,
+  m-descriptions[label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item > dd,
+  m-descriptions[label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item > [data-part="label"],
+  m-descriptions[label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item > [data-part="content"],
+  m-descriptions[label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item > .m-description-item-label,
+  m-descriptions[label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item > .m-description-item-content,
+  dl.m-descriptions[data-label-placement="left"]:not([data-bordered]) > div.m-description-item > dt,
+  dl.m-descriptions[data-label-placement="left"]:not([data-bordered]) > div.m-description-item > dd
+) { display: inline-block; vertical-align: top; }
+:where(
+  m-descriptions[label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item > dt,
+  m-descriptions[label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item > [data-part="label"],
+  m-descriptions[label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item > .m-description-item-label,
+  dl.m-descriptions[data-label-placement="left"]:not([data-bordered]) > div.m-description-item > dt
+) {
   display: inline;
   font-weight: var(--m-descriptions-label-weight, inherit);
   color: var(--m-descriptions-label-color, inherit);
   text-align: var(--m-descriptions-label-align, inherit);
 }
 :where(.m-descriptions-separator) { display: none; }
-:where(dl.m-descriptions[data-label-placement="left"]:not([data-bordered]) > div.m-description-item > dt > .m-descriptions-separator) {
+:where(
+  dl.m-descriptions[data-label-placement="left"]:not([data-bordered]) > div.m-description-item > dt > .m-descriptions-separator,
+  m-descriptions[label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item > dt > .m-descriptions-separator,
+  m-descriptions[label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item > [data-part="label"] > .m-descriptions-separator,
+  m-descriptions[label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item > .m-description-item-label > .m-descriptions-separator,
+  m-descriptions[data-label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item > dt > .m-descriptions-separator,
+  m-descriptions[data-label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item > [data-part="label"] > .m-descriptions-separator,
+  m-descriptions[data-label-placement="left"]:not([bordered]):not([data-bordered]) > m-description-item > .m-description-item-label > .m-descriptions-separator
+) {
   display: inline-block;
   margin-inline: 2px 8px;
 }
-:where(.m-descriptions, .m-description-item, .m-descriptions-separator)[hidden]:not([hidden="until-found"]),
-:where(dl.m-descriptions > div.m-description-item > dt, dl.m-descriptions > div.m-description-item > dd)[hidden]:not([hidden="until-found"]),
-template:where(.m-descriptions, .m-description-item),
-dl.m-descriptions > template {
+:where(m-descriptions, m-description-item, .m-descriptions, .m-description-item, .m-descriptions-separator)[hidden]:not([hidden="until-found"]),
+:where(
+  dl.m-descriptions > div.m-description-item > dt,
+  dl.m-descriptions > div.m-description-item > dd,
+  m-descriptions > m-description-item > dt,
+  m-descriptions > m-description-item > dd,
+  m-descriptions > m-description-item > [data-part="label"],
+  m-descriptions > m-description-item > [data-part="content"],
+  m-descriptions > m-description-item > .m-description-item-label,
+  m-descriptions > m-description-item > .m-description-item-content
+)[hidden]:not([hidden="until-found"]),
+template:where(m-descriptions, m-description-item, .m-descriptions, .m-description-item),
+dl.m-descriptions > template,
+m-descriptions > template {
   display: none !important;
 }
 @media (forced-colors: active) {
-  :where(dl.m-descriptions, dl.m-descriptions > div.m-description-item, dl.m-descriptions > div.m-description-item > dt) {
+  :where(
+    dl.m-descriptions,
+    dl.m-descriptions > div.m-description-item,
+    dl.m-descriptions > div.m-description-item > dt,
+    m-descriptions,
+    m-descriptions > m-description-item,
+    m-descriptions > m-description-item > dt,
+    m-descriptions > m-description-item > [data-part="label"],
+    m-descriptions > m-description-item > .m-description-item-label
+  ) {
     color: CanvasText;
     background: Canvas;
     border-color: CanvasText;
   }
 }
 @media print {
-  :where(dl.m-descriptions > div.m-description-item) {
+  :where(dl.m-descriptions > div.m-description-item, m-descriptions > m-description-item) {
     break-inside: avoid;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  :where(dl.m-descriptions > div.m-description-item > dt, dl.m-descriptions > div.m-description-item > dd) { transition: none; }
+  :where(
+    dl.m-descriptions > div.m-description-item > dt,
+    dl.m-descriptions > div.m-description-item > dd,
+    m-descriptions > m-description-item > dt,
+    m-descriptions > m-description-item > dd,
+    m-descriptions > m-description-item > [data-part="label"],
+    m-descriptions > m-description-item > [data-part="content"],
+    m-descriptions > m-description-item > .m-description-item-label,
+    m-descriptions > m-description-item > .m-description-item-content
+  ) { transition: none; }
 }

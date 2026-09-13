@@ -34,6 +34,7 @@ in the target inventory.
 29. [Alert demo and API](../../demo/components/alert.html): Alert; notice types, safe title fallback, semantic SVG icons, adopted regions and cancellable close intent.
 30. [List demo and API](../../demo/components/list.html): List and ListItem; bordered, size variants, hoverable/clickable items, prefix/suffix and native list semantics.
 31. [Table demo and API](../../demo/components/table.html): Table; bordered/striped/single-line table presentations and native table markup.
+32. [Descriptions demo and API](../../demo/components/descriptions.html): Descriptions and DescriptionItem; bordered, column count, responsive grid and label placement.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

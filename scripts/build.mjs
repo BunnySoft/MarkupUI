@@ -27,11 +27,11 @@ const shared = {
 }
 const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image", "popover", "tooltip", "popconfirm", "dropdown", "menu", "tabs", "collapse", "anchor", "back-top", "pagination", "steps", "loading-bar", "dialog", "modal", "drawer", "message", "notification", "collapse-transition", "input", "checkbox", "radio", "switch", "select", "input-number", "slider", "rate", "form"]
 const classicEntries = { progress: "global.ts", popover: "global.ts", tooltip: "global.ts", popconfirm: "global.ts", dropdown: "global.ts", menu: "global.ts", tabs: "global.ts", collapse: "global.ts", anchor: "global.ts", "back-top": "global.ts", pagination: "global.ts", steps: "global.ts", "loading-bar": "global.ts", dialog: "global.ts", modal: "global.ts", drawer: "global.ts", message: "global.ts", notification: "global.ts", "collapse-transition": "global.ts", input: "global.ts", checkbox: "global.ts", radio: "global.ts", switch: "global.ts", select: "global.ts", "input-number": "global.ts", slider: "global.ts", rate: "global.ts" }
-const styleOnlyComponents = ["gradient-text", "ellipsis", "page-header", "descriptions", "timeline", "breadcrumb", "thing", "affix", "result", "code", "scrollbar", "float-button", "global-style"]
+const styleOnlyComponents = ["gradient-text", "ellipsis", "page-header", "timeline", "breadcrumb", "thing", "affix", "result", "code", "scrollbar", "float-button", "global-style"]
 classicEntries.avatar = "global.ts"
 classicEntries.button = "global.ts"
 classicEntries.card = "global.ts"
-components.push("divider", "icon", "typography", "space", "flex", "grid", "layout", "list", "table")
+components.push("divider", "icon", "typography", "space", "flex", "grid", "layout", "list", "table", "descriptions")
 classicEntries.divider = "global.ts"
 classicEntries.icon = "global.ts"
 classicEntries.typography = "global.ts"
@@ -47,7 +47,8 @@ classicEntries.skeleton = "global.ts"
 classicEntries.alert = "global.ts"
 classicEntries.list = "global.ts"
 classicEntries.table = "global.ts"
-const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500], ["select", 8_000], ["form", 8_250], ["grid", 3_000], ["layout", 3_000], ["tag", 4_500], ["badge", 3_500], ["empty", 3_500], ["spin", 4_500], ["skeleton", 3_500], ["popover", 7_000], ["tooltip", 8_000], ["alert", 3_500], ["list", 3_500], ["table", 3_000]])
+classicEntries.descriptions = "global.ts"
+const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500], ["select", 8_000], ["form", 8_250], ["grid", 3_000], ["layout", 3_000], ["tag", 4_500], ["badge", 3_500], ["empty", 3_500], ["spin", 4_500], ["skeleton", 3_500], ["popover", 7_000], ["tooltip", 8_000], ["alert", 3_500], ["list", 3_500], ["table", 3_000], ["descriptions", 3_500]])
 await generateComponentApi(root, [...viewComponents.keys()])
 
 function corePlugin(format) {
@@ -485,6 +486,8 @@ const bundleBudgets = {
   "markup-ui-list.js": 2_500,
   "markup-ui-list.global.js": 2_500,
   "markup-ui-list.css": 2_000,
+  "markup-ui-descriptions.js": 2_500,
+  "markup-ui-descriptions.global.js": 2_500,
   "markup-ui-descriptions.css": 2_000,
   "markup-ui-timeline.css": 1_500,
   "markup-ui-breadcrumb.css": 1_500,

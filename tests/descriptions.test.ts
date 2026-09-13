@@ -1,266 +1,326 @@
-import { readFileSync, readdirSync } from "node:fs"
+import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { gzipSync } from "node:zlib"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import { DescriptionItem, Descriptions, registerDescriptions } from "../src/components/descriptions/index.js"
+import * as descriptionsApi from "../src/components/descriptions/index.js"
+import { descriptionsLabelPlacements, descriptionsSizes } from "../src/components/descriptions/model.js"
+import { ViewElement } from "../src/core/index.js"
 
 const css = readFileSync(resolve("src", "components", "descriptions", "descriptions.css"), "utf8")
-const demo = readFileSync(resolve("demo", "components", "descriptions.html"), "utf8")
-const appCss = readFileSync(resolve("demo", "components", "descriptions.css"), "utf8")
-const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
 let style: HTMLStyleElement | undefined
 
-function fixture(): void {
-  document.body.innerHTML = demo.slice(demo.indexOf("<body>") + 6, demo.indexOf("</body>"))
-}
 function install(): void {
   style = document.createElement("style")
   style.textContent = css
   document.head.append(style)
 }
+
 afterEach(() => {
   style?.remove()
   style = undefined
   document.body.replaceChildren()
+  vi.restoreAllMocks()
 })
 
-describe("CSS-only Descriptions and DescriptionItem", () => {
-  it("ships only CSS without a provider, renderer, custom element or dependency", () => {
-    expect(pkg.exports["./descriptions/style.css"]).toBe("./dist/markup-ui-descriptions.css")
-    expect(pkg.exports["./descriptions"]).toBeUndefined()
-    expect(readdirSync(resolve("src", "components", "descriptions"))).toEqual(["descriptions.css"])
-    expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("m-descriptions")).toBeUndefined()
-    expect(css).not.toContain("@import")
-    expect(demo).not.toContain("markup-ui-descriptions.js")
-  })
-
-  it("uses legal dl groups with term/definition pairs and headings outside the list", () => {
-    fixture()
-    install()
-    for (const list of document.querySelectorAll(".m-descriptions")) {
-      expect(list.tagName).toBe("DL")
-      for (const group of list.children) {
-        if (group.tagName === "TEMPLATE") continue
-        expect(group.tagName).toBe("DIV")
-        expect([...group.children].map(child => child.tagName)).toEqual(["DT", "DD"])
-      }
+describe("canonical Descriptions and DescriptionItem", () => {
+  it("registers canonical tags extending ViewElement and exposes the family API", () => {
+    expect(Object.keys(descriptionsApi).sort()).toEqual([
+      "DescriptionItem",
+      "Descriptions",
+      "MDescriptionItem",
+      "MDescriptions",
+      "registerDescriptions",
+    ])
+    for (const type of [Descriptions, DescriptionItem]) {
+      expect(Object.hasOwn(type, "tag")).toBe(true)
+      expect(type.prototype instanceof ViewElement).toBe(true)
+      expect(customElements.get(type.tag)).toBe(type)
     }
-    expect(document.querySelector("#project-heading")!.closest("dl")).toBeNull()
-    expect(document.querySelector("#project-details")!.getAttribute("aria-labelledby")).toBe("project-heading")
-    expect(document.querySelectorAll(".m-descriptions [role], .m-descriptions [tabindex]")).toHaveLength(0)
-    expect(css).not.toContain("display: contents")
+    expect(Descriptions.tag).toBe("m-descriptions")
+    expect(DescriptionItem.tag).toBe("m-description-item")
+    expect(Descriptions.observedAttributes).toEqual(["title", "bordered", "column", "columns", "size", "label-placement"])
+    expect(DescriptionItem.observedAttributes).toEqual(["label", "span"])
+
+    const define = vi.fn()
+    expect(() => registerDescriptions({ get: name => name === "m-description-item" ? class extends HTMLElement {} : undefined, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerDescriptions()).not.toThrow()
   })
 
-  it("preserves authored content, listeners and identity through style changes and reconnection", () => {
-    fixture()
-    const root = document.querySelector("#project-details")!
-    const before = root.outerHTML
-    const nodes = [...root.querySelectorAll("*")]
-    const action = document.querySelector<HTMLButtonElement>("#review-project")!
+  it("has expected default property values", () => {
+    const list = new Descriptions()
+    const item = new DescriptionItem()
+    expect(list.title).toBe("")
+    expect(list.bordered).toBe(false)
+    expect(list.column).toBe(3)
+    expect(list.size).toBe("medium")
+    expect(list.labelPlacement).toBe("top")
+    expect(item.label).toBeNull()
+    expect(item.span).toBe(1)
+  })
+
+  it("validates and reflects bordered boolean presence attribute", () => {
+    const list = new Descriptions()
+    document.body.append(list)
+    expect(list.bordered).toBe(false)
+    expect(list.hasAttribute("bordered")).toBe(false)
+
+    list.bordered = true
+    expect(list.bordered).toBe(true)
+    expect(list.hasAttribute("bordered")).toBe(true)
+
+    list.bordered = false
+    expect(list.bordered).toBe(false)
+    expect(list.hasAttribute("bordered")).toBe(false)
+
+    expect(() => Reflect.set(list, "bordered", "true")).toThrow(RangeError)
+    expect(() => Reflect.set(list, "bordered", 123)).toThrow(RangeError)
+  })
+
+  it("validates and reflects column count with default of 3", () => {
+    const list = new Descriptions()
+    document.body.append(list)
+    expect(list.column).toBe(3)
+
+    list.column = 4
+    expect(list.column).toBe(4)
+    expect(list.getAttribute("column")).toBe("4")
+
+    list.setAttribute("column", "2")
+    expect(list.column).toBe(2)
+
+    list.removeAttribute("column")
+    list.setAttribute("columns", "5")
+    expect(list.column).toBe(5)
+
+    expect(() => { list.column = 0 }).toThrow(RangeError)
+    expect(() => { list.column = -2 }).toThrow(RangeError)
+    expect(() => { list.column = 1.5 }).toThrow(RangeError)
+    expect(() => { list.column = NaN }).toThrow(RangeError)
+  })
+
+  it("validates and reflects size attribute", () => {
+    const list = new Descriptions()
+    document.body.append(list)
+    expect(list.size).toBe("medium")
+
+    for (const size of descriptionsSizes) {
+      list.size = size
+      expect(list.size).toBe(size)
+      expect(list.getAttribute("size")).toBe(size)
+    }
+
+    expect(() => Reflect.set(list, "size", "huge")).toThrow(RangeError)
+    expect(() => Reflect.set(list, "size", "")).toThrow(RangeError)
+
+    list.removeAttribute("size")
+    expect(list.size).toBe("medium")
+  })
+
+  it("validates and reflects labelPlacement attribute", () => {
+    const list = new Descriptions()
+    document.body.append(list)
+    expect(list.labelPlacement).toBe("top")
+
+    for (const placement of descriptionsLabelPlacements) {
+      list.labelPlacement = placement
+      expect(list.labelPlacement).toBe(placement)
+      expect(list.getAttribute("label-placement")).toBe(placement)
+    }
+
+    expect(() => Reflect.set(list, "labelPlacement", "right")).toThrow(RangeError)
+    expect(() => Reflect.set(list, "labelPlacement", "bottom")).toThrow(RangeError)
+
+    list.removeAttribute("label-placement")
+    expect(list.labelPlacement).toBe("top")
+  })
+
+  it("validates and reflects DescriptionItem span", () => {
+    const item = new DescriptionItem()
+    document.body.append(item)
+    expect(item.span).toBe(1)
+
+    item.span = 3
+    expect(item.span).toBe(3)
+    expect(item.getAttribute("span")).toBe("3")
+
+    expect(() => { item.span = 0 }).toThrow(RangeError)
+    expect(() => { item.span = -1 }).toThrow(RangeError)
+    expect(() => { item.span = 2.5 }).toThrow(RangeError)
+
+    item.removeAttribute("span")
+    expect(item.span).toBe(1)
+  })
+
+  it("rejects invalid authored attributes on property read", () => {
+    const list = new Descriptions()
+    const item = new DescriptionItem()
+
+    for (const val of ["0", "-1", "1.5", "invalid", ""]) {
+      list.setAttribute("column", val)
+      expect(() => list.column).toThrow(RangeError)
+    }
+    list.removeAttribute("column")
+
+    list.setAttribute("size", "unknown")
+    expect(() => list.size).toThrow(RangeError)
+    list.removeAttribute("size")
+
+    list.setAttribute("label-placement", "bottom")
+    expect(() => list.labelPlacement).toThrow(RangeError)
+    list.removeAttribute("label-placement")
+
+    for (const val of ["0", "-1", "2.5", "not-a-number", ""]) {
+      item.setAttribute("span", val)
+      expect(() => item.span).toThrow(RangeError)
+    }
+    item.removeAttribute("span")
+  })
+
+  it("validates and reflects DescriptionItem label", () => {
+    const item = new DescriptionItem()
+    document.body.append(item)
+    expect(item.label).toBeNull()
+
+    item.label = "Username"
+    expect(item.label).toBe("Username")
+    expect(item.getAttribute("label")).toBe("Username")
+
+    item.label = null
+    expect(item.label).toBeNull()
+    expect(item.hasAttribute("label")).toBe(false)
+
+    expect(() => Reflect.set(item, "label", 123)).toThrow(RangeError)
+    expect(() => Reflect.set(item, "label", true)).toThrow(RangeError)
+  })
+
+  it("generates and cleans up header element when title is assigned", () => {
+    const list = new Descriptions()
+    document.body.append(list)
+    expect(list.querySelector("[data-part='header']")).toBeNull()
+
+    list.title = "User Details"
+    const header = list.querySelector<HTMLElement>("[data-part='header']")
+    expect(header).not.toBeNull()
+    expect(header?.textContent).toBe("User Details")
+    expect(header?.classList.contains("m-descriptions-header")).toBe(true)
+
+    list.title = "Updated Title"
+    expect(list.querySelector("[data-part='header']")?.textContent).toBe("Updated Title")
+
+    list.title = undefined
+    expect(list.querySelector("[data-part='header']")).toBeNull()
+  })
+
+  it("gives authored header precedence over generated title", () => {
+    const list = new Descriptions()
+    const customHeader = document.createElement("header")
+    customHeader.textContent = "Authored Header"
+    list.append(customHeader)
+    document.body.append(list)
+
+    list.title = "Fallback Title"
+    expect(list.querySelector("[data-part='header']")).toBeNull()
+    expect(list.contains(customHeader)).toBe(true)
+    expect(customHeader.textContent).toBe("Authored Header")
+  })
+
+  it("generates label and wraps loose content in DescriptionItem", () => {
+    const item = new DescriptionItem()
+    item.label = "Name"
+    item.textContent = "Morgan Chen"
+    document.body.append(item)
+
+    const labelEl = item.querySelector("[data-part='label']")
+    expect(labelEl).not.toBeNull()
+    expect(labelEl?.textContent).toBe("Name")
+
+    const contentEl = item.querySelector("[data-part='content']")
+    expect(contentEl).not.toBeNull()
+    expect(contentEl?.textContent).toBe("Morgan Chen")
+
+    item.label = "Full Name"
+    expect(item.querySelector("[data-part='label']")?.textContent).toBe("Full Name")
+  })
+
+  it("preserves authored dt/dd or custom parts in DescriptionItem", () => {
+    const item = new DescriptionItem()
+    const dt = document.createElement("dt")
+    dt.textContent = "Authored Term"
+    const dd = document.createElement("dd")
+    dd.textContent = "Authored Definition"
+    item.append(dt, dd)
+    document.body.append(item)
+
+    expect(item.querySelector("[data-part='label']")).toBeNull()
+    expect(item.querySelector("[data-part='content']")).toBeNull()
+    expect(item.firstElementChild).toBe(dt)
+    expect(item.lastElementChild).toBe(dd)
+  })
+
+  it("applies inline style leases and restores them upon disconnect", () => {
+    const list = new Descriptions()
+    list.column = 4
+    const item = new DescriptionItem()
+    item.span = 2
+    list.append(item)
+    document.body.append(list)
+
+    expect(list.style.getPropertyValue("--_m-descriptions-columns")).toBe("4")
+    expect(item.style.getPropertyValue("--_m-description-span")).toBe("2")
+
+    list.remove()
+    expect(list.style.getPropertyValue("--_m-descriptions-columns")).toBe("")
+    expect(item.style.getPropertyValue("--_m-description-span")).toBe("")
+  })
+
+  it("survives reconnection preserving identity and children", () => {
+    const list = new Descriptions()
+    list.title = "Project"
+    const item = new DescriptionItem()
+    item.label = "Status"
+    const btn = document.createElement("button")
+    btn.type = "button"
+    btn.textContent = "Click"
     let clicks = 0
-    action.addEventListener("click", () => clicks++)
-    install()
-    root.remove()
-    document.body.append(root)
-    expect(root.outerHTML).toBe(before)
-    expect([...root.querySelectorAll("*")]).toEqual(nodes)
-    action.click()
+    btn.addEventListener("click", () => clicks++)
+    item.append(btn)
+    list.append(item)
+    document.body.append(list)
+
+    list.remove()
+    document.body.append(list)
+
+    btn.click()
     expect(clicks).toBe(1)
-    const group = document.createElement("div")
-    group.className = "m-description-item"
-    const term = document.createElement("dt")
-    const value = document.createElement("dd")
-    term.textContent = "Late term"
-    value.textContent = "<script>Plain text</script>"
-    group.append(term, value)
-    root.append(group)
-    expect(root.lastElementChild).toBe(group)
-    expect(value.querySelector("script")).toBeNull()
+    expect(list.querySelector("[data-part='header']")?.textContent).toBe("Project")
+    expect(item.querySelector("[data-part='label']")?.textContent).toBe("Status")
   })
 
-  it("uses three columns and one-column spans by default with sparse native placement", () => {
-    fixture()
+  it("applies CSS rules to both m-descriptions and dl.m-descriptions", () => {
     install()
-    const root = document.querySelector<HTMLElement>("#project-details")!
-    const item = document.querySelector<HTMLElement>("#summary-item")!
-    expect(getComputedStyle(root).display).toBe("grid")
-    expect(getComputedStyle(root).getPropertyValue("--m-descriptions-columns")).toBe("3")
-    expect(getComputedStyle(item).getPropertyValue("--m-description-span")).toBe("1")
-    root.style.setProperty("--m-descriptions-columns", "2")
-    item.style.setProperty("--m-description-span", "2")
-    expect(getComputedStyle(root).getPropertyValue("--m-descriptions-columns")).toBe("2")
-    expect(getComputedStyle(item).getPropertyValue("--m-description-span")).toBe("2")
-    expect(css).toContain("grid-auto-flow: row")
-    expect(css).not.toContain("dense")
-    expect(css).not.toMatch(/(?:^|[;{])\s*order\s*:/m)
-    expect(css).not.toContain("colspan")
-  })
+    const customList = new Descriptions()
+    customList.bordered = true
+    const customItem = new DescriptionItem()
+    customList.append(customItem)
+    document.body.append(customList)
 
-  it("switches top labels to logical horizontal pairs without reordering", () => {
-    fixture()
-    install()
-    const root = document.querySelector<HTMLElement>("#project-details")!
-    const item = document.querySelector("#owner-item")!
-    expect(getComputedStyle(item).gridTemplateColumns).toBe("minmax(0, 1fr)")
-    root.dataset.labelPlacement = "left"
-    expect(getComputedStyle(item).display).toBe("block")
-    root.dataset.bordered = ""
-    expect(getComputedStyle(item).display).toBe("grid")
-    expect(getComputedStyle(item).gridTemplateColumns).toContain("--m-descriptions-label-width")
-    expect([...item.children].map(node => node.tagName)).toEqual(["DT", "DD"])
-    expect(css).toContain("border-inline-end")
-    expect(css).not.toContain("row-reverse")
-  })
+    const dlList = document.createElement("dl")
+    dlList.className = "m-descriptions"
+    dlList.dataset.bordered = ""
+    const divItem = document.createElement("div")
+    divItem.className = "m-description-item"
+    const dt = document.createElement("dt")
+    const dd = document.createElement("dd")
+    divItem.append(dt, dd)
+    dlList.append(divItem)
+    document.body.append(dlList)
 
-  it("keeps density, label alignment and application content alignment in CSS", () => {
-    fixture()
-    install()
-    const root = document.querySelector<HTMLElement>("#project-details")!
-    expect(getComputedStyle(root).getPropertyValue("--_m-descriptions-padding-block")).toBe("12px")
-    root.dataset.size = "small"
-    expect(getComputedStyle(root).getPropertyValue("--_m-descriptions-padding-block")).toBe("8px")
-    root.dataset.size = "large"
-    expect(getComputedStyle(root).getPropertyValue("--_m-descriptions-padding-block")).toBe("16px")
-    root.dataset.size = "unknown"
-    expect(getComputedStyle(root).getPropertyValue("--_m-descriptions-padding-block")).toBe("12px")
-    root.dataset.labelAlign = "right"
-    expect(getComputedStyle(root).getPropertyValue("--_m-descriptions-label-align")).toBe("right")
-    expect(appCss).toContain("--m-descriptions-content-align: center")
-  })
-
-  it("renders separators only from authored text in unbordered horizontal terms", () => {
-    fixture()
-    install()
-    const separator = document.querySelector("#colon-separator")!
-    expect(separator.textContent).toBe(":")
-    expect(separator.getAttribute("aria-hidden")).toBe("true")
-    expect(document.querySelector("#custom-separator")!.textContent).toBe("—")
-    const selector = 'dl.m-descriptions[data-label-placement="left"]:not([data-bordered]) > div.m-description-item > dt > .m-descriptions-separator'
-    expect(separator.matches(selector)).toBe(true)
-    expect(document.querySelector("#rtl-term .m-descriptions-separator")!.matches(selector)).toBe(false)
-    expect(css).toContain(selector)
-    expect(css).not.toContain("content:")
-  })
-
-  it("keeps native validation, submission, disabled fieldsets and reset behavior", () => {
-    fixture()
-    install()
-    const form = document.querySelector<HTMLFormElement>("#native-form")!
-    const input = document.querySelector<HTMLInputElement>("#native-name")!
-    let submits = 0
-    let disabledClicks = 0
-    form.addEventListener("submit", event => { event.preventDefault(); submits++ })
-    document.querySelector("#native-disabled")!.addEventListener("click", () => disabledClicks++)
-    input.value = ""
-    document.querySelector<HTMLButtonElement>("#native-submit")!.click()
-    expect(submits).toBe(0)
-    input.value = "Edited"
-    document.querySelector<HTMLButtonElement>("#native-submit")!.click()
-    expect(submits).toBe(1)
-    expect([...new FormData(form).entries()]).toEqual([["name", "Edited"]])
-    document.querySelector<HTMLButtonElement>("#native-reset")!.click()
-    expect(input.value).toBe("Original")
-    document.querySelector<HTMLButtonElement>("#native-disabled")!.click()
-    expect(disabledClicks).toBe(0)
-    expect(input.labels?.[0]?.textContent).toBe("Project name")
-  })
-
-  it("preserves native hidden roots, groups, definitions and inert templates", () => {
-    fixture()
-    install()
-    for (const id of ["hidden-descriptions", "hidden-item", "native-template"]) {
-      expect(getComputedStyle(document.getElementById(id)!).display).toBe("none")
-    }
-    const value = document.querySelector<HTMLElement>("#owner-item dd")!
-    value.hidden = true
-    expect(getComputedStyle(value).display).toBe("none")
-    const template = document.querySelector<HTMLTemplateElement>("#native-template")!
-    expect(template.content.querySelector("dt")!.textContent).toBe("Inert term")
-    expect(css).toContain(':not([hidden="until-found"])')
-  })
-
-  it("does not generate empty terms, placeholders or duplicate title content", () => {
-    fixture()
-    install()
-    expect(document.querySelector("#empty-term-item dt")!.textContent).toBe("")
-    expect(document.querySelector("#empty-descriptions")!.children).toHaveLength(0)
-    expect(document.querySelectorAll("#project-heading")).toHaveLength(1)
-    expect(document.querySelectorAll(".m-descriptions [aria-live], .m-descriptions [aria-selected]")).toHaveLength(0)
-  })
-
-  it("isolates nested description settings and leaves ordinary dt/dd presentation alone", () => {
-    fixture()
-    const outside = document.querySelector("#outside-descriptions dd")!
-    const margin = getComputedStyle(outside).margin
-    install()
-    const parent = document.querySelector<HTMLElement>("#project-details")!
-    parent.style.setProperty("--m-descriptions-columns", "6")
-    parent.dataset.labelPlacement = "left"
-    parent.dataset.labelAlign = "right"
-    const nested = document.querySelector("#nested-details")!
-    expect(getComputedStyle(nested).getPropertyValue("--m-descriptions-columns")).toBe("3")
-    expect(getComputedStyle(nested).getPropertyValue("--_m-descriptions-label-align")).toBe("left")
-    expect(getComputedStyle(nested.firstElementChild!).gridTemplateColumns).toBe("minmax(0, 1fr)")
-    expect(getComputedStyle(outside).margin).toBe(margin)
-  })
-
-  it("provides author-controlled responsive span resets plus print and forced-color fallbacks", () => {
-    expect(appCss).toContain("@media (max-width: 40rem)")
-    expect(appCss).toContain(".responsive-descriptions > .m-description-item { --m-description-span: 1; }")
-    expect(appCss).toContain(".span-all { grid-column: 1 / -1; }")
-    expect(css).toContain("overflow-wrap: anywhere")
-    expect(css).toContain("@media print")
-    expect(css).toContain("break-inside: avoid")
-    expect(css).toContain("@media (forced-colors: active)")
-    expect(css).toContain("color: CanvasText")
-    expect(css).toContain("transition: color .3s cubic-bezier(.4,0,.2,1)")
-    expect(css).toContain("@media (prefers-reduced-motion: reduce)")
-    expect(css).toContain("transition: none")
-  })
-
-  it("keeps audited density, typography and palette roles within the existing CSS ceiling", () => {
-    expect(css).toContain("var(--m-font-size-small, 14px)")
-    expect(css).toContain("var(--m-font-size-medium, 14px)")
-    expect(css).toContain("var(--m-font-size-large, 15px)")
-    expect(css).toContain("--_m-descriptions-padding-inline: 24px")
-    expect(css).toContain("var(--m-font-weight-strong, 500)")
-    expect(css).toContain("--_m-descriptions-weight: 400")
-    expect(css).toContain("font-weight: var(--m-descriptions-label-weight, inherit)")
-    expect(css).toContain("var(--m-descriptions-line-height, var(--m-line-height, 1.6))")
-    expect(css).toContain("var(--m-descriptions-label-color, var(--_m-descriptions-label, #1f2225))")
-    expect(css).toContain("var(--m-descriptions-color, var(--_m-descriptions-text, #333639))")
-    expect(css).toContain("var(--m-descriptions-border-radius, 3px)")
-    expect(css).toContain("#efeff5")
-    expect(css).toContain("#fafafc")
-    expect(css).toContain("#26262a")
-    expect(css).toContain("#2d2d30")
-    expect(css).not.toContain("--m-text-primary")
-    expect(css).not.toContain("--m-bg-surface")
-    expect(css).toContain("margin-inline: 2px 8px")
-    expect(css).toContain("background: var(--m-descriptions-background, transparent)")
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
-    install()
-    const media = [...style!.sheet!.cssRules]
-      .filter(rule => rule.type === CSSRule.MEDIA_RULE)
-      .map(rule => (rule as CSSMediaRule).media.mediaText)
-    expect(media).toContain("(prefers-reduced-motion: reduce)")
-  })
-
-  it("preserves local author tokens while size, border and placement presets change", () => {
-    fixture()
-    const root = document.querySelector<HTMLElement>("#project-details")!
-    root.style.cssText = "--m-descriptions-font-size:20px;--m-descriptions-line-height:1.5;--m-descriptions-padding-block:4px;--m-descriptions-label-align:center;--m-descriptions-color:rgb(1,2,3)"
-    const authored = root.getAttribute("style")
-    const item = root.querySelector(".m-description-item")!
-    const nodes = [...item.children]
-    install()
-    root.dataset.size = "large"
-    root.dataset.bordered = ""
-    root.dataset.labelPlacement = "left"
-    root.dataset.labelAlign = "right"
-    expect(root.getAttribute("style")).toBe(authored)
-    expect(getComputedStyle(root).getPropertyValue("--m-descriptions-label-align")).toBe("center")
-    expect([...item.children]).toEqual(nodes)
-    expect(item.querySelector("[style],script")).toBeNull()
+    const customListStyle = getComputedStyle(customList)
+    const dlListStyle = getComputedStyle(dlList)
+    expect(customListStyle.display).toBe("grid")
+    expect(dlListStyle.display).toBe("grid")
+    expect(customListStyle.getPropertyValue("--m-descriptions-columns")).toBe("3")
+    expect(dlListStyle.getPropertyValue("--m-descriptions-columns")).toBe("3")
   })
 })

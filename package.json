@@ -308,6 +308,10 @@
     "./thing/style.css": "./dist/markup-ui-thing.css",
     "./breadcrumb/style.css": "./dist/markup-ui-breadcrumb.css",
     "./timeline/style.css": "./dist/markup-ui-timeline.css",
+    "./descriptions": {
+      "types": "./dist/components/descriptions/index.d.ts",
+      "import": "./dist/markup-ui-descriptions.js"
+    },
     "./descriptions/style.css": "./dist/markup-ui-descriptions.css",
     "./list": {
       "types": "./dist/components/list/index.d.ts",

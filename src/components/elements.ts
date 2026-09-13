@@ -3,7 +3,7 @@ import { MApp, MField, MSemantic, MTheme } from "./foundation.js"
 import { MAutocomplete, MSlider } from "./forms.js"
 import { MAccordionItem, MInclude } from "./dynamic.js"
 import { MDialog, MDrawer } from "./overlays.js"
-import { MMenu, MMenuItem, MPagination, MSteps, MTabs, MTab, MDescriptions, MDescriptionItem, MStatistic, MTree, MTreeNode } from "./navigation.js"
+import { MMenu, MMenuItem, MPagination, MSteps, MTabs, MTab, MStatistic, MTree, MTreeNode } from "./navigation.js"
 import { MProgress } from "./content.js"
 import { builtInStyles } from "./styles.js"
 
@@ -32,8 +32,6 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-pagination", MPagination],
   ["m-steps", MSteps],
   ["m-step", class extends MElement {}],
-  ["m-descriptions", MDescriptions],
-  ["m-description-item", MDescriptionItem],
   ["m-statistic", MStatistic],
   ["m-tree", MTree],
   ["m-tree-node", MTreeNode],

@@ -3,92 +3,146 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Descriptions</title>
+  <title>Descriptions - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-descriptions.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./descriptions.css">
-  <script defer src="./descriptions.js"></script>
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-descriptions.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./descriptions.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <header>
-    <h1>Native Descriptions and DescriptionItem</h1>
-    <p>Real terms and definitions, with CSS columns and authored values. No component JavaScript.</p>
-  </header>
-  <main>
-    <section aria-labelledby="project-heading">
-      <h2 id="project-heading">Project details</h2>
-      <dl class="m-descriptions responsive-descriptions" aria-labelledby="project-heading" id="project-details">
-        <div class="m-description-item" hidden id="hidden-item"><dt>Hidden term</dt><dd><button type="button">Hidden action</button></dd></div>
-        <template class="m-description-item" id="native-template"><div class="m-description-item"><dt>Inert term</dt><dd>Inert value</dd></div></template>
-        <div class="m-description-item" id="owner-item"><dt>Owner</dt><dd><a href="#contact" id="owner-link">Morgan Chen</a></dd></div>
-        <div class="m-description-item" id="status-item"><dt>Status</dt><dd>Under review</dd></div>
-        <div class="m-description-item"><dt>Reference</dt><dd><code>PRJ-2048</code></dd></div>
-        <div class="m-description-item span-two" id="summary-item">
-          <dt>Summary</dt><dd><p>A two-column definition, not a table colspan or an automatically expanded last item.</p><button type="button" id="review-project">Request project review</button></dd>
+  <main data-demo-page class="component-docs">
+    <m-heading level="1"><h1>Descriptions</h1></m-heading>
+    <m-p>Display multiple fields in groups, with configurable columns, borders, sizes, and label placements.</m-p>
+    <nav class="component-docs-nav" aria-label="Descriptions documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#descriptions-api">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-descriptions.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-descriptions.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="basic-heading">Basic</h2>
+          <m-p>A basic descriptions list with 3 columns by default.</m-p>
         </div>
-        <div class="m-description-item" id="date-item"><dt>Updated</dt><dd><time datetime="2026-09-08">8 September 2026</time></dd></div>
-        <div class="m-description-item span-two" id="long-item">
-          <dt>AnUnbrokenAuthoredTermThatNeedsToWrapWithoutAClippedLabel</dt>
-          <dd>AnUnbrokenAuthoredValueThatNeedsToWrapAcrossNarrowColumnsWithoutOverflow0123456789</dd>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <m-descriptions title="User Info" id="basic-descriptions">
+          <m-description-item label="Username"><m-text>Morgan Chen</m-text></m-description-item>
+          <m-description-item label="Telephone"><m-text>18100000000</m-text></m-description-item>
+          <m-description-item label="Live"><m-text>Hangzhou, Zhejiang</m-text></m-description-item>
+          <m-description-item label="Remark"><m-text>School</m-text></m-description-item>
+          <m-description-item label="Address" span="2"><m-text>No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China</m-text></m-description-item>
+        </m-descriptions>
+      </div>
+    </section>
+
+    <section data-demo-example="bordered" aria-labelledby="bordered-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="bordered-heading">Bordered</h2>
+          <m-p>Descriptions with borders around items and headers.</m-p>
         </div>
-        <div class="m-description-item" id="empty-term-item"><dt></dt><dd>An intentionally empty source term; no label is generated.</dd></div>
-        <div class="m-description-item span-all" id="nested-item">
-          <dt>Contact details</dt>
-          <dd>
-            <dl class="m-descriptions nested-descriptions" data-bordered data-size="small" id="nested-details">
-              <div class="m-description-item"><dt>Channel</dt><dd id="contact">Project discussion</dd></div>
-              <div class="m-description-item"><dt>Availability</dt><dd>Weekdays</dd></div>
-            </dl>
-          </dd>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <m-descriptions title="Project Details" bordered id="bordered-descriptions">
+          <m-description-item label="Owner"><m-text id="owner-text">Morgan Chen</m-text></m-description-item>
+          <m-description-item label="Status"><m-text>Under review</m-text></m-description-item>
+          <m-description-item label="Reference"><m-text>PRJ-2048</m-text></m-description-item>
+          <m-description-item label="Summary" span="2">
+            <m-p>A two-column definition, with interactive controls.</m-p>
+            <m-button id="review-project">Request project review</m-button>
+          </m-description-item>
+          <m-description-item label="Updated"><m-text>2026-09-08</m-text></m-description-item>
+        </m-descriptions>
+        <m-p id="action-status" role="status"></m-p>
+      </div>
+    </section>
+
+    <section data-demo-example="size" aria-labelledby="size-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="size-heading">Sizes and density</h2>
+          <m-p>Small, medium, and large density variants.</m-p>
         </div>
-      </dl>
-      <p id="action-status" role="status"></p>
+      </header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <m-descriptions title="Small size" size="small" bordered id="small-descriptions">
+          <m-description-item label="Breakfast"><m-text>Apple</m-text></m-description-item>
+          <m-description-item label="Lunch"><m-text>Salad</m-text></m-description-item>
+          <m-description-item label="Dinner"><m-text>Soup</m-text></m-description-item>
+        </m-descriptions>
+        <m-descriptions title="Large size" size="large" bordered id="large-descriptions">
+          <m-description-item label="Breakfast"><m-text>Apple</m-text></m-description-item>
+          <m-description-item label="Lunch"><m-text>Salad</m-text></m-description-item>
+          <m-description-item label="Dinner"><m-text>Soup</m-text></m-description-item>
+        </m-descriptions>
+      </div>
     </section>
 
-    <section aria-labelledby="horizontal-heading">
-      <h2 id="horizontal-heading">Bordered, horizontal and RTL</h2>
-      <dl class="m-descriptions horizontal-descriptions responsive-descriptions" data-bordered data-label-placement="left" data-label-align="right" data-size="large" dir="rtl" aria-labelledby="horizontal-heading" id="horizontal-details">
-        <div class="m-description-item" id="rtl-item"><dt id="rtl-term">Plan<span class="m-descriptions-separator" aria-hidden="true">:</span></dt><dd id="rtl-definition">Professional</dd></div>
-        <div class="m-description-item"><dt>Capacity</dt><dd>20 projects</dd></div>
-        <div class="m-description-item span-two" id="wide-item"><dt>Notes</dt><dd>Each native term/definition group has an independent border. Reading order is unchanged.</dd></div>
-      </dl>
+    <section data-demo-example="placement" aria-labelledby="placement-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="placement-heading">Horizontal label placement</h2>
+          <m-p>Place labels to the left of their values with <code class="m-code">label-placement="left"</code>.</m-p>
+        </div>
+      </header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <m-descriptions title="Horizontal bordered" label-placement="left" bordered column="2" id="horizontal-descriptions">
+          <m-description-item label="Plan"><m-text>Professional</m-text></m-description-item>
+          <m-description-item label="Capacity"><m-text>20 projects</m-text></m-description-item>
+          <m-description-item label="Notes" span="2"><m-text>Each term and definition group maintains an inline horizontal relationship.</m-text></m-description-item>
+        </m-descriptions>
+      </div>
     </section>
 
-    <section aria-labelledby="separator-heading">
-      <h2 id="separator-heading">Authored separators and alignment</h2>
-      <dl class="m-descriptions horizontal-descriptions responsive-descriptions" data-label-placement="left" data-label-align="center" data-size="small" aria-labelledby="separator-heading" id="separator-details">
-        <div class="m-description-item"><dt>Language<span class="m-descriptions-separator" aria-hidden="true" id="colon-separator">:</span></dt><dd>English</dd></div>
-        <div class="m-description-item"><dt>Region<span class="m-descriptions-separator" aria-hidden="true" id="custom-separator">—</span></dt><dd>Local</dd></div>
-      </dl>
+    <section data-demo-example="live" aria-labelledby="live-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="live-heading">Interactive updates</h2>
+          <m-p>Dynamically update columns, size, borders, and label placement.</m-p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <m-descriptions title="Dynamic descriptions" id="live-descriptions" bordered>
+          <m-description-item label="Language"><m-text>TypeScript</m-text></m-description-item>
+          <m-description-item label="Framework"><m-text>MarkupUI</m-text></m-description-item>
+          <m-description-item label="License"><m-text>MIT</m-text></m-description-item>
+        </m-descriptions>
+        <div class="demo-actions">
+          <m-button id="toggle-bordered">Toggle bordered</m-button>
+          <m-button id="cycle-size">Cycle size</m-button>
+          <m-button id="toggle-placement">Toggle placement</m-button>
+          <m-button id="reconnect-descriptions">Reconnect</m-button>
+        </div>
+        <m-p id="live-status" role="status">Bordered: true, Size: medium, Placement: top</m-p>
+      </div>
     </section>
 
-    <section aria-labelledby="form-heading">
-      <h2 id="form-heading">Native controls in definitions</h2>
-      <form id="native-form">
-        <dl class="m-descriptions single-description" data-bordered aria-labelledby="form-heading" id="form-details">
-          <div class="m-description-item">
-            <dt><label for="native-name">Project name</label></dt>
-            <dd class="demo-actions">
-              <input id="native-name" name="name" value="Original" required>
-              <button type="submit" id="native-submit">Save project</button>
-              <button type="reset" id="native-reset">Reset project</button>
-              <button type="button" disabled id="native-disabled">Unavailable action</button>
-            </dd>
-          </div>
-          <div class="m-description-item">
-            <dt>Publishing</dt>
-            <dd><fieldset disabled><legend>Read-only settings</legend><label><input type="checkbox" name="publish" checked> Publish</label></fieldset></dd>
-          </div>
-        </dl>
-      </form>
-      <p id="form-status" role="status"></p>
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="descriptions-api" aria-live="polite"></div>
     </section>
-
-    <section aria-labelledby="empty-heading">
-      <h2 id="empty-heading">Empty and ordinary descriptions</h2>
-      <dl class="m-descriptions" id="empty-descriptions"></dl>
-      <dl id="outside-descriptions"><dt>Unstyled term</dt><dd>Unstyled definition</dd></dl>
-    </section>
-    <dl class="m-descriptions" hidden id="hidden-descriptions"><div class="m-description-item"><dt>Hidden root term</dt><dd>Hidden root value</dd></div></dl>
   </main>
 </body>
 </html>
