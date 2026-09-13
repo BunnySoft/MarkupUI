@@ -31,6 +31,7 @@ import { Select } from "../src/components/select/index.js"
 import { Form, FormItem, FormItemGi } from "../src/components/form/index.js"
 import { Grid, GridItem } from "../src/components/grid/index.js"
 import { Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider } from "../src/components/layout/index.js"
+import { Tag } from "../src/components/tag/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -59,7 +60,7 @@ describe("native elements", () => {
     expect(customElements.get("m-input")).toBe(Input)
     expect(customElements.get("m-select")).toBe(Select)
     expect(builtInElementNames).not.toContain("m-select")
-    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider]) {
+    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag]) {
       expect(customElements.get(Type.tag)).toBe(Type)
       expect(builtInElementNames).not.toContain(Type.tag)
     }

@@ -108,6 +108,12 @@ Layout elements use native CSS flex shells, borders, sidebar placement, embedded
 and positioning without measuring children or creating synthetic landmarks. Competing aggregate
 `MLayout` is removed from `content.ts`. See the [Layout demo/API](../../demo/components/layout.html).
 
+Tag's direct properties and checkable/closable mechanics live in `src/components/tag/tag.ts`,
+with pure types and detail contracts in `model.ts`. Tag extends `ViewElement` and registers
+only `m-tag`, adopting native buttons for checkable or closable mode while leaving passive tags
+noninteractive. Competing aggregate `MTag` is removed from `content.ts` and `elements.ts`.
+See the [Tag demo/API](../../demo/components/tag.html).
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed

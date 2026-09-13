@@ -1,6 +1,6 @@
 # Tag
 
-> **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
+> **Historical reference.** Preserved from the previous documentation layout. Tag has been migrated to the direct `ViewElement` contract (`Tag`, aliased as `MTag`). Current API documentation and live examples are maintained at [demo/components/tag.html](../../demo/components/tag.html).
 
 **Migration status: 🟢 Complete and verified for the retained native scope below.**
 Tag is an optional, dependency-free module. Passive tags use ordinary text/span content;

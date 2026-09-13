@@ -3,71 +3,117 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Tag</title>
+  <title>Tag - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-tag.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./tag.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-tag.global.js"></script>
-  <script defer src="./tag.js"></script>
+  <script type="module" src="./tag.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Tag: passive labels and native optional interactions</h1>
-    <p>This page loads only Tag. Checking uses a native toggle button; closing emits intent without removing the tag.</p>
-    <section aria-labelledby="types-heading">
-      <h2 id="types-heading">Types, sizes and appearance</h2>
-      <div class="examples" id="types">
-        <m-tag>Default</m-tag><m-tag type="primary">Primary</m-tag>
-        <m-tag type="info">Info</m-tag><m-tag type="success">Success</m-tag>
-        <m-tag type="warning">Warning</m-tag><m-tag type="error">Error</m-tag>
-      </div>
-      <div class="examples" id="sizes">
-        <m-tag size="tiny">Tiny</m-tag><m-tag size="small">Small</m-tag>
-        <m-tag size="medium">Medium</m-tag><m-tag size="large">Large</m-tag>
-        <m-tag round strong>Round and strong</m-tag>
-        <m-tag bordered="false">Borderless</m-tag>
-        <m-tag class="brand">Custom CSS colors</m-tag>
-      </div>
-    </section>
-    <section aria-labelledby="check-heading">
-      <h2 id="check-heading">Checkable native controls</h2>
-      <form id="tag-form">
-        <div class="examples">
-          <m-tag id="topic" checkable type="error"><button type="button"><span data-m-tag-icon aria-hidden="true">★</span><strong id="topic-label">Design</strong></button></m-tag>
-          <m-tag id="checked-topic" checkable checked>Checked</m-tag>
-          <m-tag id="disabled-topic" checkable disabled>Disabled</m-tag>
-          <m-tag id="combined-topic" checkable closable>Checkable overrides closable</m-tag>
+  <main data-demo-page class="component-docs">
+    <h1>Tag</h1>
+    <p>Passive status labels and optional checkable or closable native controls. Checkable tags use a native button toggle with aria-pressed; closable tags emit cancelable close intent without removing authored content.</p>
+    <nav class="component-docs-nav" aria-label="Tag documentation">
+      <a href="#types-title">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#tag-api">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary>Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-tag.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-tag.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="types" aria-labelledby="types-title">
+      <header data-demo-header><div><h2 id="types-title">Types, themes and palettes</h2><p>Default neutral styling alongside primary, info, success, warning and error semantic types. Palette colors adapt across light and dark themes.</p></div></header>
+      <div data-demo-preview>
+        <div class="demo-row" id="types">
+          <m-tag>Default</m-tag>
+          <m-tag type="primary">Primary</m-tag>
+          <m-tag type="info">Info</m-tag>
+          <m-tag type="success">Success</m-tag>
+          <m-tag type="warning">Warning</m-tag>
+          <m-tag type="error">Error</m-tag>
         </div>
-      </form>
-      <p id="change-status" role="status">0 changes; Design is unchecked.</p>
-      <p id="form-status" role="status">0 submissions.</p>
-      <div class="controls">
-        <button type="button" id="assign-checked">Assign checked silently</button>
-        <button type="button" id="toggle-disabled">Toggle Design disabled</button>
-        <button type="button" id="reconnect-topic">Reconnect Design</button>
       </div>
     </section>
-    <section aria-labelledby="close-heading">
-      <h2 id="close-heading">Close intent and click propagation</h2>
-      <div class="examples">
-        <m-tag id="closable-tag" closable close-label="Remove project label">Project</m-tag>
-        <m-tag id="disabled-close" closable disabled>Disabled close</m-tag>
-      </div>
-      <label><input type="checkbox" id="propagate-close"> Allow the original close click to bubble</label>
-      <p id="close-status" role="status">0 close requests; Project remains visible.</p>
-      <p id="click-status" role="status">0 tag click callbacks.</p>
-    </section>
-    <section aria-labelledby="content-heading">
-      <h2 id="content-heading">Authored content, icon and avatar</h2>
-      <div class="examples">
-        <m-tag id="avatar-tag" round>
-          <span data-m-tag-avatar aria-hidden="true"><img alt="" width="24" height="24" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Crect width='24' height='24' fill='%232080f0'/%3E%3C/svg%3E"></span>
-          Ada
-        </m-tag>
-        <m-tag id="icon-tag"><span data-m-tag-icon aria-hidden="true">✓</span>Verified</m-tag>
-        <m-tag id="icon-priority"><span data-m-tag-avatar aria-hidden="true">A</span><span data-m-tag-icon aria-hidden="true">★</span>Icon takes precedence</m-tag>
-        <m-tag checkable aria-label="Favorite"><span data-m-tag-icon aria-hidden="true">★</span></m-tag>
+
+    <section data-demo-example="sizes" aria-labelledby="sizes-title">
+      <header data-demo-header><div><h2 id="sizes-title">Sizes and shapes</h2><p>Four preset sizes from tiny 16px to large 34px, with round pill radius, borderless styling and strong weight.</p></div></header>
+      <div data-demo-preview>
+        <div class="demo-row" id="sizes">
+          <m-tag size="tiny">Tiny</m-tag>
+          <m-tag size="small">Small</m-tag>
+          <m-tag size="medium">Medium</m-tag>
+          <m-tag size="large">Large</m-tag>
+          <m-tag round strong>Round and strong</m-tag>
+          <m-tag bordered="false">Borderless</m-tag>
+          <m-tag class="brand">Custom CSS colors</m-tag>
+        </div>
       </div>
     </section>
+
+    <section data-demo-example="check" aria-labelledby="check-title">
+      <header data-demo-header><div><h2 id="check-title">Checkable native controls</h2><p>Checkable tags wrap or adopt a native button toggle. Activation flips checked and emits bubbling m:change. Checkable mode takes precedence over closable.</p></div></header>
+      <div data-demo-preview>
+        <form id="tag-form">
+          <div class="demo-row">
+            <m-tag id="topic" checkable type="error"><button type="button"><span data-m-tag-icon aria-hidden="true">★</span><strong id="topic-label">Design</strong></button></m-tag>
+            <m-tag id="checked-topic" checkable checked>Checked</m-tag>
+            <m-tag id="disabled-topic" checkable disabled>Disabled</m-tag>
+            <m-tag id="combined-topic" checkable closable>Checkable overrides closable</m-tag>
+          </div>
+        </form>
+        <p id="change-status" role="status">0 changes; Design is unchecked.</p>
+        <p id="form-status" role="status">0 submissions.</p>
+        <div class="demo-tools">
+          <button type="button" id="assign-checked">Assign checked silently</button>
+          <button type="button" id="toggle-disabled">Toggle Design disabled</button>
+          <button type="button" id="reconnect-topic">Reconnect Design</button>
+        </div>
+      </div>
+    </section>
+
+    <section data-demo-example="close" aria-labelledby="close-title">
+      <header data-demo-header><div><h2 id="close-title">Close intent and click propagation</h2><p>Closable tags append a focusable native close button. Clicking emits cancelable m:close without removing content from the document.</p></div></header>
+      <div data-demo-preview>
+        <div class="demo-row">
+          <m-tag id="closable-tag" closable close-label="Remove project label">Project</m-tag>
+          <m-tag id="disabled-close" closable disabled>Disabled close</m-tag>
+        </div>
+        <label><input type="checkbox" id="propagate-close"> Allow the original close click to bubble</label>
+        <p id="close-status" role="status">0 close requests; Project remains visible.</p>
+        <p id="click-status" role="status">0 tag click callbacks.</p>
+      </div>
+    </section>
+
+    <section data-demo-example="content" aria-labelledby="content-title">
+      <header data-demo-header><div><h2 id="content-title">Authored content, icon and avatar</h2><p>Tags preserve original phrasing content, icons and avatar images without synthetic wrapper components.</p></div></header>
+      <div data-demo-preview>
+        <div class="demo-row">
+          <m-tag id="avatar-tag" round>
+            <span data-m-tag-avatar aria-hidden="true"><img alt="" width="24" height="24" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Crect width='24' height='24' fill='%232080f0'/%3E%3C/svg%3E"></span>
+            Ada
+          </m-tag>
+          <m-tag id="icon-tag"><span data-m-tag-icon aria-hidden="true">✓</span>Verified</m-tag>
+          <m-tag id="icon-priority"><span data-m-tag-avatar aria-hidden="true">A</span><span data-m-tag-icon aria-hidden="true">★</span>Icon takes precedence</m-tag>
+          <m-tag checkable aria-label="Favorite"><span data-m-tag-icon aria-hidden="true">★</span></m-tag>
+        </div>
+      </div>
+    </section>
+
+    <section id="tag-api"></section>
   </main>
 </body>
 </html>

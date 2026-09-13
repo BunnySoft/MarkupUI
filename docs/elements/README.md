@@ -59,6 +59,11 @@ sidebar placement, embedded backgrounds, positioning and original children, back
 native CSS layout, scrolling and details disclosure.
 See the [Layout demo/API](../../demo/components/layout.html).
 
+Tag/MTag uses direct properties, checkable native toggle buttons with aria-pressed,
+closable intent without automatic removal, sizes, types, rounded and borderless styling,
+and original phrasing content.
+See the [Tag demo/API](../../demo/components/tag.html).
+
 ## References
 
 - [Previous implementation guides](../archive/components/README.md)

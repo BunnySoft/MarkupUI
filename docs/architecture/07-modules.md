@@ -1,6 +1,6 @@
 # 7. Small core and selectable components
 
-**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex, Input, Checkbox, Radio, Switch, InputNumber, Select, Form, Grid and Layout, with explicit payload ceilings.
+**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex, Input, Checkbox, Radio, Switch, InputNumber, Select, Form, Grid, Layout and Tag, with explicit payload ceilings.
 The rollout continues component-by-component.**
 Follow the useful jQuery/plugin pattern: load one small core, then only the features the
 application needs. This is a packaging and extension pattern, not a dependency on jQuery.
@@ -62,11 +62,11 @@ Keep approved budgets unless a measured change is explicitly accepted.
 The implemented entries are `@dataengine/markup-ui/core`, `@dataengine/markup-ui/avatar`,
 `@dataengine/markup-ui/button`, `@dataengine/markup-ui/card`, `@dataengine/markup-ui/carousel`,
 `@dataengine/markup-ui/collapse`, `@dataengine/markup-ui/divider`, `@dataengine/markup-ui/dropdown`,
-`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography`, `@dataengine/markup-ui/space`, `@dataengine/markup-ui/flex`, `@dataengine/markup-ui/input`, `@dataengine/markup-ui/checkbox`, `@dataengine/markup-ui/radio`, `@dataengine/markup-ui/switch`, `@dataengine/markup-ui/input-number`, `@dataengine/markup-ui/select`, `@dataengine/markup-ui/form`, `@dataengine/markup-ui/grid` and `@dataengine/markup-ui/layout`.
+`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography`, `@dataengine/markup-ui/space`, `@dataengine/markup-ui/flex`, `@dataengine/markup-ui/input`, `@dataengine/markup-ui/checkbox`, `@dataengine/markup-ui/radio`, `@dataengine/markup-ui/switch`, `@dataengine/markup-ui/input-number`, `@dataengine/markup-ui/select`, `@dataengine/markup-ui/form`, `@dataengine/markup-ui/grid`, `@dataengine/markup-ui/layout` and `@dataengine/markup-ui/tag`.
 ESM uses `markup-ui-core.js`; classic scripts load `markup-ui-core.global.js` before
 `markup-ui-avatar.global.js`, `markup-ui-button.global.js`, `markup-ui-card.global.js`,
 `markup-ui-carousel.global.js`, `markup-ui-collapse.global.js`, `markup-ui-divider.global.js`,
-`markup-ui-dropdown.global.js`, `markup-ui-icon.global.js`, `markup-ui-typography.global.js`, `markup-ui-space.global.js`, `markup-ui-flex.global.js`, `markup-ui-grid.global.js` or `markup-ui-layout.global.js`.
+`markup-ui-dropdown.global.js`, `markup-ui-icon.global.js`, `markup-ui-typography.global.js`, `markup-ui-space.global.js`, `markup-ui-flex.global.js`, `markup-ui-grid.global.js`, `markup-ui-layout.global.js` or `markup-ui-tag.global.js`.
 See the [API guide](../api/README.md) for exact exports and usage.
 
 Input additionally imports `markup-ui-native-input.js`, the internal native-field mechanics
@@ -180,6 +180,19 @@ Layout's measured-budget ceilings are **2,000 gzip bytes per JS format**, **3,00
 core-inclusive runtime**, and the existing **1,500 CSS**. Current measured ESM/classic family
 costs are 1,294/1,459 bytes, core-inclusive runtime costs are 2,277/2,499 bytes, and CSS is
 1,180 bytes (3,457/3,679 including CSS). All budget checks remain fail-fast.
+
+## Tag delivery
+
+Tag and its canonical `Tag` class (aliased as `MTag`) select core plus one family entry and CSS.
+ESM imports `markup-ui-core.js`; classic order is `markup-ui-core.global.js`, then
+`markup-ui-tag.global.js`, with `markup-ui-tag.css`. The legacy aggregate no longer defines
+`MTag` in `src/components/content.ts`. Checkable mode wraps or adopts native buttons with `aria-pressed`;
+closable emits `m:close` intent without removing content.
+
+Tag's measured-budget ceilings are **3,500 gzip bytes per JS format**, **4,500 for
+core-inclusive runtime**, and the existing **2,500 CSS**. Current measured ESM/classic family
+costs are 2,348/2,514 bytes, core-inclusive runtime costs are 3,330/3,553 bytes, and CSS is
+2,273 bytes (5,603/5,826 including CSS). All budget checks remain fail-fast.
 
 ## References
 

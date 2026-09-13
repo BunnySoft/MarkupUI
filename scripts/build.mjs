@@ -39,7 +39,8 @@ classicEntries.space = "global.ts"
 classicEntries.flex = "global.ts"
 classicEntries.grid = "global.ts"
 classicEntries.layout = "global.ts"
-const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500], ["select", 8_000], ["form", 8_250], ["grid", 3_000], ["layout", 3_000]])
+classicEntries.tag = "global.ts"
+const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500], ["select", 8_000], ["form", 8_250], ["grid", 3_000], ["layout", 3_000], ["tag", 4_500]])
 await generateComponentApi(root, [...viewComponents.keys()])
 
 function corePlugin(format) {

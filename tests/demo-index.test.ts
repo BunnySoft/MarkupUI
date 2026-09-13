@@ -24,6 +24,7 @@ const dividerHtml = readFileSync(resolve("demo", "components", "divider.html"), 
 const dropdownHtml = readFileSync(resolve("demo", "components", "dropdown.html"), "utf8")
 const iconHtml = readFileSync(resolve("demo", "components", "icon.html"), "utf8")
 const typographyHtml = readFileSync(resolve("demo", "components", "typography.html"), "utf8")
+const tagHtml = readFileSync(resolve("demo", "components", "tag.html"), "utf8")
 let browser: ReturnType<typeof createComponentBrowser> | undefined
 let media: MediaQueryList
 let mediaListener: (() => void) | undefined
@@ -52,6 +53,35 @@ afterEach(() => {
 })
 
 describe("metadata-based component documentation", () => {
+  it("extracts Tag properties, events and checkable/closable features without inventing runtime metadata", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["tag"])
+    expect(docs.elements).toHaveLength(1)
+    const [tag] = docs.elements
+    expect(tag.type).toBe("Tag")
+    expect(tag.web.primary).toBe("m-tag")
+    expect(tag.properties.checkable).toMatchObject({ default: false, encoding: "presence" })
+    expect(tag.properties.checked).toMatchObject({ default: false, encoding: "presence" })
+    expect(tag.properties.closable).toMatchObject({ default: false, encoding: "presence" })
+    expect(tag.properties.disabled).toMatchObject({ default: false, encoding: "presence" })
+    expect(tag.properties.closeLabel).toMatchObject({ default: "Remove tag", attribute: "close-label" })
+    expect(tag.properties.triggerClickOnClose).toMatchObject({ default: false, encoding: "presence", attribute: "trigger-click-on-close" })
+    expect(tag.properties.bordered).toMatchObject({ default: true, encoding: "boolean", attribute: "bordered" })
+    expect(tag.properties.round).toMatchObject({ default: false, encoding: "presence" })
+    expect(tag.properties.strong).toMatchObject({ default: false, encoding: "presence" })
+    expect(tag.properties.size).toMatchObject({ default: "medium", values: ["tiny", "small", "medium", "large"], attribute: "size" })
+    expect(tag.properties.type).toMatchObject({ default: "default", values: ["default", "primary", "info", "success", "warning", "error"], attribute: "type" })
+    expect(tag.actions).toEqual(["click", "focus", "blur"])
+    expect(tag.events.map((e: any) => e.web).sort()).toEqual(["m:change", "m:close"])
+    const closeEvent = tag.events.find((e: any) => e.web === "m:close")
+    expect(closeEvent).toMatchObject({ bubbles: true, cancelable: true })
+    const changeEvent = tag.events.find((e: any) => e.web === "m:change")
+    expect(changeEvent).toMatchObject({ bubbles: true, cancelable: false })
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.textContent).toContain("Tag")
+    expect(target.textContent).toContain("m:close")
+  })
+
   it("extracts Layout and companion regions without inventing collapse or scrollbar APIs", async () => {
     const [docs] = await generateComponentApi(resolve("."), ["layout"])
     expect(docs.elements.map((element: any) => element.type)).toEqual([
@@ -887,6 +917,7 @@ describe("component-by-component demo browser", () => {
     ["Dropdown", dropdownHtml, ["basic", "icon", "trigger", "cascade", "arrow", "placement", "size", "batch-render", "manual-position", "render", "option-props", "render-option"]],
     ["Icon", iconHtml, ["paint", "size", "depth", "wrapper", "live"]],
     ["Typography", typographyHtml, ["levels", "text", "alignment", "lists", "links", "rtl", "scope", "live"]],
+    ["Tag", tagHtml, ["types", "sizes", "check", "close", "content"]],
   ])("keeps the supported %s demo inventory with per-example code controls", (_name, sourceHtml, expected) => {
     document.body.innerHTML = sourceHtml.slice(sourceHtml.indexOf("<body>") + 6, sourceHtml.indexOf("</body>"))
     const setup = document.querySelector<HTMLDetailsElement>(".component-setup")!

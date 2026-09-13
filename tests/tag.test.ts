@@ -1,17 +1,17 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { MTag, registerTag } from "../src/components/tag/index.js"
+import { Tag, MTag, registerTag } from "../src/components/tag/index.js"
 import type { TagCloseDetail } from "../src/components/tag/index.js"
-import { registerElements } from "../src/components/elements.js"
+import { builtInElementNames, registerElements } from "../src/components/elements.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
-function tag(markup = "<m-tag>Topic</m-tag>"): MTag {
+function tag(markup = "<m-tag>Topic</m-tag>"): Tag {
   document.body.innerHTML = markup
   const element = document.querySelector("m-tag")
-  if (!(element instanceof MTag)) throw new Error("Tag was not upgraded")
+  if (!(element instanceof Tag)) throw new Error("Tag was not upgraded")
   return element
 }
-function close(element: MTag): HTMLButtonElement {
+function close(element: Tag): HTMLButtonElement {
   return element.querySelector<HTMLButtonElement>("[data-m-tag-close]")!
 }
 
@@ -393,19 +393,25 @@ describe("standalone Tag", () => {
     expect(changes).not.toHaveBeenCalled()
   })
 
+  it("exports canonical Tag with backwards-compatible MTag alias", () => {
+    expect(Tag.tag).toBe("m-tag")
+    expect(MTag).toBe(Tag)
+  })
+
   it("keeps runtime styles external and rejects conflicting registration", () => {
     const element = tag("<m-tag round strong type=primary>Topic</m-tag>")
     expect(element.shadowRoot).toBeNull()
     expect(document.querySelector("style,[style]")).toBeNull()
     expect(() => registerTag()).not.toThrow()
     const define = vi.fn()
-    expect(() => registerTag({ get: () => class extends HTMLElement {}, define })).toThrow("before the legacy MarkupUI bundle")
+    expect(() => registerTag({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
     expect(define).not.toHaveBeenCalled()
   })
 
-  it("retains rich registration when the aggregate is registered afterward", () => {
+  it("removes legacy Tag from aggregate element registrations", () => {
     registerElements(customElements)
-    expect(customElements.get("m-tag")).toBe(MTag)
+    expect(customElements.get("m-tag")).toBe(Tag)
+    expect(builtInElementNames).not.toContain("m-tag")
     const element = tag("<m-tag closable>Topic</m-tag>")
     expect(element.querySelector(":scope > [data-m-close]")).not.toBeNull()
   })

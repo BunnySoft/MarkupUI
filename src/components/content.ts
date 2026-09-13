@@ -50,19 +50,3 @@ export class MEmpty extends MElement {
     this.append(icon, text)
   }
 }
-
-export class MTag extends MElement {
-  public connectedCallback(): void {
-    if (!this.hasAttribute("closable") || this.querySelector(":scope > [data-m-close]") !== null) return
-    const button = this.ownerDocument.createElement("button")
-    button.type = "button"
-    button.dataset.mClose = ""
-    button.setAttribute("aria-label", this.getAttribute("close-label") ?? "Remove")
-    button.textContent = "×"
-    button.addEventListener("click", (event) => {
-      event.stopPropagation()
-      this.emit("close")
-    })
-    this.append(button)
-  }
-}

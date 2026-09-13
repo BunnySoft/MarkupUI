@@ -1,11 +1,24 @@
+import { ViewElement } from "../../core/index.js"
+import { tagSizes, tagTypes } from "./model.js"
+import type { TagCloseDetail, TagSize, TagType } from "./model.js"
+
+export type { TagCloseDetail, TagSize, TagType } from "./model.js"
+
 type Override = { original: string | null; applied: string | null }
 const labels = ["aria-label", "aria-labelledby", "aria-describedby"] as const
 
-export interface TagCloseDetail { originalEvent: MouseEvent }
-
-export class MTag extends HTMLElement {
+/**
+ * A status/label tag with optional checkable or closable behavior.
+ * @states checkable closable
+ */
+export class Tag extends ViewElement {
+  public static readonly tag = "m-tag"
   public static get observedAttributes(): string[] {
-    return ["checkable", "checked", "closable", "disabled", "close-label", ...labels]
+    return [
+      "checkable", "checked", "closable", "disabled", "close-label",
+      "trigger-click-on-close", "bordered", "round", "strong", "size", "type",
+      ...labels,
+    ]
   }
 
   private content: HTMLSpanElement | undefined
@@ -19,13 +32,7 @@ export class MTag extends HTMLElement {
   public connectedCallback(): void {
     if (!this.upgraded) {
       this.upgraded = true
-      for (const name of ["checkable", "checked", "closable", "disabled", "closeLabel", "triggerClickOnClose", "bordered", "round", "strong", "size", "type"]) {
-        if (Object.prototype.hasOwnProperty.call(this, name)) {
-          const value: unknown = Reflect.get(this, name)
-          Reflect.deleteProperty(this, name)
-          Reflect.set(this, name, value)
-        }
-      }
+      this.upgradeProperties()
     }
     this.dataset.mTag = ""
     this.addEventListener("click", this.guardActivation, true)
@@ -61,27 +68,27 @@ export class MTag extends HTMLElement {
     else super.blur()
   }
   public get checkable(): boolean { return this.hasAttribute("checkable") }
-  public set checkable(value: boolean) { this.toggleAttribute("checkable", value) }
+  public set checkable(value: boolean) { this.setBooleanAttribute("checkable", value) }
   public get checked(): boolean { return this.hasAttribute("checked") }
-  public set checked(value: boolean) { this.toggleAttribute("checked", value) }
+  public set checked(value: boolean) { this.setBooleanAttribute("checked", value) }
   public get closable(): boolean { return this.hasAttribute("closable") }
-  public set closable(value: boolean) { this.toggleAttribute("closable", value) }
+  public set closable(value: boolean) { this.setBooleanAttribute("closable", value) }
   public get disabled(): boolean { return this.hasAttribute("disabled") }
-  public set disabled(value: boolean) { this.toggleAttribute("disabled", value) }
+  public set disabled(value: boolean) { this.setBooleanAttribute("disabled", value) }
   public get closeLabel(): string { return this.getAttribute("close-label")?.trim() || "Remove tag" }
-  public set closeLabel(value: string) { this.setAttribute("close-label", value) }
+  public set closeLabel(value: string) { this.setStringAttribute("close-label", value) }
   public get triggerClickOnClose(): boolean { return this.hasAttribute("trigger-click-on-close") }
-  public set triggerClickOnClose(value: boolean) { this.toggleAttribute("trigger-click-on-close", value) }
-  public get bordered(): boolean { return this.getAttribute("bordered") !== "false" }
-  public set bordered(value: boolean) { this.setAttribute("bordered", String(value)) }
+  public set triggerClickOnClose(value: boolean) { this.setBooleanAttribute("trigger-click-on-close", value) }
+  public get bordered(): boolean { return this.booleanAttribute("bordered", true) }
+  public set bordered(value: boolean) { this.setBooleanAttribute("bordered", value, false) }
   public get round(): boolean { return this.hasAttribute("round") }
-  public set round(value: boolean) { this.toggleAttribute("round", value) }
+  public set round(value: boolean) { this.setBooleanAttribute("round", value) }
   public get strong(): boolean { return this.hasAttribute("strong") }
-  public set strong(value: boolean) { this.toggleAttribute("strong", value) }
-  public get size(): string { return this.getAttribute("size") ?? "medium" }
-  public set size(value: string) { this.setAttribute("size", value) }
-  public get type(): string { return this.getAttribute("type") ?? "default" }
-  public set type(value: string) { this.setAttribute("type", value) }
+  public set strong(value: boolean) { this.setBooleanAttribute("strong", value) }
+  public get size(): TagSize { return this.choiceAttribute("size", tagSizes, "medium") }
+  public set size(value: TagSize) { this.setChoiceAttribute("size", value, tagSizes) }
+  public get type(): TagType { return this.choiceAttribute("type", tagTypes, "default") }
+  public set type(value: TagType) { this.setChoiceAttribute("type", value, tagTypes) }
 
   private synchronize(): void {
     this.observer?.disconnect()
@@ -181,15 +188,13 @@ export class MTag extends HTMLElement {
   private readonly onToggle = (event: MouseEvent): void => {
     if (!this.checkable || this.disabled || event.defaultPrevented || this.toggleButton?.matches(":disabled")) return
     this.checked = !this.checked
-    this.dispatchEvent(new CustomEvent<boolean>("m:change", { bubbles: true, detail: this.checked }))
+    this.emit("m:change", this.checked, { bubbles: true })
   }
 
   private readonly onClose = (event: MouseEvent): void => {
     if (!this.triggerClickOnClose) event.stopPropagation()
     if (this.disabled || this.closeButton?.matches(":disabled")) return
-    this.dispatchEvent(new CustomEvent<TagCloseDetail>("m:close", {
-      bubbles: true, cancelable: true, detail: { originalEvent: event },
-    }))
+    this.emit<TagCloseDetail>("m:close", { originalEvent: event }, { bubbles: true, cancelable: true })
   }
 
   private manage(name: string, value: string | null | undefined): void {
@@ -212,3 +217,5 @@ export class MTag extends HTMLElement {
     else if (current !== value) control.setAttribute(name, value)
   }
 }
+
+export { Tag as MTag }

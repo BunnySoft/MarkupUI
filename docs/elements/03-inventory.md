@@ -22,7 +22,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Gradient Text | `GradientText` | Contract pending |
 | Icon | `Icon`, `IconWrapper` | [Demo and API](../../demo/components/icon.html) |
 | Page Header | `PageHeader` and named regions | Contract pending |
-| Tag | `Tag` | Contract pending |
+| Tag | `Tag`; checkable toggle button, closable intent, native content, sizes and types | [Demo and API](../../demo/components/tag.html) |
 | Typography | `Typography`, `Text`, `Paragraph`, `Heading`, `Link`, `Blockquote`, `UnorderedList`, `OrderedList`; native importance/deletion/code and list items | [Demo and API](../../demo/components/typography.html) |
 | Watermark | `Watermark` | Contract pending |
 | Float Button | `FloatButton`, `FloatButtonGroup` | Contract pending |
