@@ -102,7 +102,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Marquee | `Marquee` | Contract pending |
 | Message | `Message` service/control | [Demo and API](../../demo/components/message.html) |
 | Modal | `Modal` | [Demo and API](../../demo/components/modal.html) |
-| Notification | `Notification` | Contract pending |
+| Notification | `Notification` | [Demo and API](../../demo/components/notification.html) |
 | Popconfirm | `Popconfirm` | [Demo and API](../../demo/components/popconfirm.html) |
 | Popover | `Popover`, `PopoverTrigger`, `PopoverContent`; direct trigger/panel adoption, 12 directional placements, hover/focus/click/manual modes, collision flipping | [Demo and API](../../demo/components/popover.html) |
 | Popselect | `Popselect` | Contract pending |

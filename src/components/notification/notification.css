@@ -8,6 +8,7 @@
   margin-inline: 0;
 }
 
+m-notification,
 .m-notification {
   --m-notification-accent: light-dark(#2080f0, #70c0e8);
   display: grid;
@@ -30,14 +31,17 @@
   overflow-wrap: anywhere;
 }
 
+m-notification[type="success"],
 .m-notification[data-notification-type="success"] {
   --m-notification-accent: light-dark(#18a058, #63e2b7);
 }
 
+m-notification[type="warning"],
 .m-notification[data-notification-type="warning"] {
   --m-notification-accent: light-dark(#f0a020, #f2c97d);
 }
 
+m-notification[type="error"],
 .m-notification[data-notification-type="error"] {
   --m-notification-accent: light-dark(#d03050, #e88080);
 }
@@ -183,6 +187,55 @@
   .m-notification [data-notification-error] {
     border-color: CanvasText;
   }
+}
+
+m-notification-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: fixed;
+  z-index: var(--m-feedback-z-index, 1000);
+  pointer-events: none;
+  box-sizing: border-box;
+  max-inline-size: 100%;
+  width: min(var(--m-feedback-width, 365px), calc(100% - 2rem));
+}
+
+m-notification-container > m-notification {
+  pointer-events: auto;
+}
+
+m-notification-container[placement="top-right"],
+m-notification-container:not([placement]) {
+  top: max(1rem, env(safe-area-inset-top));
+  right: 1rem;
+}
+
+m-notification-container[placement="top-left"] {
+  top: max(1rem, env(safe-area-inset-top));
+  left: 1rem;
+}
+
+m-notification-container[placement="bottom-right"] {
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  right: 1rem;
+}
+
+m-notification-container[placement="bottom-left"] {
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  left: 1rem;
+}
+
+m-notification-container[placement="top"] {
+  top: max(1rem, env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+m-notification-container[placement="bottom"] {
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 @media print {

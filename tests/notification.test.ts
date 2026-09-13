@@ -2,8 +2,9 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createNotificationOwner } from "../src/components/notification/index.js"
+import { createNotificationOwner, Notification, NotificationContainer, notification, registerNotification } from "../src/components/notification/index.js"
 import type { NotificationOwner, NotificationOwnerOptions } from "../src/components/notification/index.js"
+import { ViewElement } from "../src/core/index.js"
 import { createMessageOwner } from "../src/components/message/index.js"
 import { showNotification, clearOverlays } from "../src/overlay/index.js"
 import { createFeedbackAttributes } from "../src/components/feedback/attributes.js"
@@ -85,7 +86,7 @@ describe("Native Notification content and semantic policy", () => {
     expect(pkg.dependencies).toEqual({})
     expect(source).not.toContain("innerHTML")
     expect(source).not.toMatch(/from ".*(?:message|modal|dialog|popover|overlay)/)
-    expect(customElements.get("m-notification")).toBeUndefined()
+    expect(customElements.get("m-notification")).toBe(Notification)
   })
   it.each(["create", "info", "success", "warning", "error"] as const)("retains %s text and visible kind without inferred heading levels or clickable cards", method => {
     const root = fixture(); const o = owner({}, root)
@@ -417,3 +418,163 @@ describe("Guarded Notification close decisions", () => {
     expect(css).not.toContain("@keyframes")
   })
 })
+
+describe("canonical Notification ViewElement", () => {
+  it("exports canonical ViewElement classes and registers custom elements", () => {
+    expect(Notification.tag).toBe("m-notification")
+    expect(NotificationContainer.tag).toBe("m-notification-container")
+    expect(ViewElement.prototype.isPrototypeOf(Notification.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(NotificationContainer.prototype)).toBe(true)
+    expect(customElements.get("m-notification")).toBe(Notification)
+    expect(customElements.get("m-notification-container")).toBe(NotificationContainer)
+    expect(Notification.observedAttributes).toEqual(["title", "description", "content", "type", "duration", "closable"])
+    expect(NotificationContainer.observedAttributes).toEqual(["placement"])
+    expect(() => registerNotification()).not.toThrow()
+  })
+
+  it("handles Notification default properties and reflected attributes", () => {
+    const el = document.createElement("m-notification") as Notification
+    expect(el.title).toBe("")
+    expect(el.description).toBe("")
+    expect(el.content).toBe("")
+    expect(el.type).toBe("default")
+    expect(el.duration).toBe(4500)
+    expect(el.closable).toBe(false)
+
+    el.title = "Alert Title"
+    expect(el.getAttribute("title")).toBe("Alert Title")
+    expect(el.title).toBe("Alert Title")
+
+    el.description = "Alert Description"
+    expect(el.getAttribute("description")).toBe("Alert Description")
+    expect(el.description).toBe("Alert Description")
+
+    el.content = "Detailed Content"
+    expect(el.getAttribute("content")).toBe("Detailed Content")
+    expect(el.content).toBe("Detailed Content")
+
+    el.type = "success"
+    expect(el.getAttribute("type")).toBe("success")
+    expect(el.type).toBe("success")
+
+    el.duration = 3000
+    expect(el.getAttribute("duration")).toBe("3000")
+    expect(el.duration).toBe(3000)
+
+    el.closable = true
+    expect(el.hasAttribute("closable")).toBe(true)
+    expect(el.closable).toBe(true)
+
+    el.closable = false
+    expect(el.hasAttribute("closable")).toBe(false)
+    expect(el.closable).toBe(false)
+
+    expect(() => { el.type = "invalid" as any }).toThrow(RangeError)
+    expect(() => { el.duration = NaN }).toThrow(RangeError)
+  })
+
+  it("handles NotificationContainer placement property and choices", () => {
+    const container = document.createElement("m-notification-container") as NotificationContainer
+    expect(container.placement).toBe("top-right")
+
+    for (const place of ["top-left", "bottom-right", "bottom-left", "top", "bottom"] as const) {
+      container.placement = place
+      expect(container.getAttribute("placement")).toBe(place)
+      expect(container.placement).toBe(place)
+    }
+
+    expect(() => { container.placement = "center" as any }).toThrow(RangeError)
+  })
+
+  it("renders structured elements when connected with attributes", () => {
+    const el = document.createElement("m-notification") as Notification
+    el.title = "Important Notice"
+    el.description = "Brief summary"
+    el.content = "Full content details"
+    el.type = "warning"
+    el.closable = true
+    document.body.append(el)
+
+    expect(el.querySelector("[data-notification-title]")?.textContent).toBe("Important Notice")
+    expect(el.querySelector("[data-notification-description]")?.textContent).toBe("Brief summary")
+    expect(el.querySelector("[data-notification-content]")?.textContent).toBe("Full content details")
+    expect(el.querySelector("[data-notification-kind]")?.textContent).toBe("Warning")
+    expect(el.querySelector("[data-notification-close]")).not.toBeNull()
+  })
+
+  it("emits m:close event and removes element when closed", () => {
+    const el = document.createElement("m-notification") as Notification
+    el.title = "Closing Item"
+    el.closable = true
+    document.body.append(el)
+
+    const closeSpy = vi.fn()
+    el.addEventListener("m:close", closeSpy)
+
+    const closeBtn = el.querySelector<HTMLButtonElement>("[data-notification-close]")!
+    expect(closeBtn).not.toBeNull()
+    closeBtn.click()
+
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "Closing Item" })
+    expect(el.isConnected).toBe(false)
+  })
+
+  it("supports notification service helper methods", () => {
+    const item = notification.create({
+      title: "Service Test",
+      description: "From service",
+      content: "Service content",
+      type: "info",
+      closable: true,
+    })
+    expect(item instanceof Notification).toBe(true)
+    expect(item.title).toBe("Service Test")
+    expect(item.type).toBe("info")
+    expect(item.isConnected).toBe(true)
+
+    const infoItem = notification.info({ title: "Info Notice" })
+    expect(infoItem.type).toBe("info")
+
+    const successItem = notification.success({ title: "Success Notice" })
+    expect(successItem.type).toBe("success")
+
+    const warningItem = notification.warning({ title: "Warning Notice" })
+    expect(warningItem.type).toBe("warning")
+
+    const errorItem = notification.error({ title: "Error Notice" })
+    expect(errorItem.type).toBe("error")
+
+    notification.destroyAll()
+    expect(document.querySelectorAll("m-notification")).toHaveLength(0)
+  })
+
+  it("dismisses automatically when duration elapses", async () => {
+    const item = notification.create({
+      title: "Timer Item",
+      duration: 300,
+    })
+    expect(item.isConnected).toBe(true)
+    await advance(300)
+    expect(item.isConnected).toBe(false)
+  })
+
+  it("pauses dismiss timer on mouseenter and resumes on mouseleave", async () => {
+    const item = notification.create({
+      title: "Hover Timer Item",
+      duration: 400,
+    })
+    expect(item.isConnected).toBe(true)
+    await advance(200)
+    expect(item.isConnected).toBe(true)
+
+    item.dispatchEvent(new MouseEvent("mouseenter"))
+    await advance(300)
+    expect(item.isConnected).toBe(true)
+
+    item.dispatchEvent(new MouseEvent("mouseleave"))
+    await advance(200)
+    expect(item.isConnected).toBe(false)
+  })
+})
+
