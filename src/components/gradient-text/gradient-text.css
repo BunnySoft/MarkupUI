@@ -22,6 +22,7 @@
   --_m-gradient-error-start: #e88080;
   --_m-gradient-error-end: #d03a52;
 }
+m-gradient-text,
 .m-gradient-text {
   --_m-gradient-color: var(--m-color-primary, #18a058);
   /* Composite the light fade so the solid safety underpaint cannot darken it. */
@@ -36,24 +37,31 @@
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
+m-gradient-text[type="info"],
+m-gradient-text[data-type="info"],
 .m-gradient-text[data-type="info"] {
   --_m-gradient-color: var(--m-color-info, #2080f0);
   --_m-gradient-from: var(--_m-gradient-info-start, var(--_m-gradient-light-start));
   --_m-gradient-to: var(--_m-gradient-info-end, var(--_m-gradient-color));
   --_m-gradient-fallback: var(--_m-gradient-info-start, #154f99);
 }
+m-gradient-text[type="success"],
+m-gradient-text[data-type="success"],
 .m-gradient-text[data-type="success"] {
   --_m-gradient-color: var(--m-color-success, #18a058);
   --_m-gradient-from: var(--_m-gradient-success-start, var(--_m-gradient-light-start));
   --_m-gradient-to: var(--_m-gradient-success-end, var(--_m-gradient-color));
   --_m-gradient-fallback: var(--_m-gradient-success-start, #17583b);
 }
+m-gradient-text[type="warning"],
+m-gradient-text[data-type="warning"],
 .m-gradient-text[data-type="warning"] {
   --_m-gradient-color: var(--m-color-warning, #f0a020);
   --_m-gradient-from: var(--_m-gradient-warning-start, var(--_m-gradient-light-start));
   --_m-gradient-to: var(--_m-gradient-warning-end, var(--_m-gradient-color));
   --_m-gradient-fallback: var(--_m-gradient-warning-start, #754600);
 }
+m-gradient-text:is([data-type="error"], [data-type="danger"], [type="error"], [type="danger"]),
 .m-gradient-text:is([data-type="error"], [data-type="danger"]) {
   --_m-gradient-color: var(--m-color-error, #d03050);
   --_m-gradient-from: var(--_m-gradient-error-start, var(--_m-gradient-light-start));
@@ -61,6 +69,7 @@
   --_m-gradient-fallback: var(--_m-gradient-error-start, #941d36);
 }
 @supports ((background-clip: text) or (-webkit-background-clip: text)) and (-webkit-text-fill-color: transparent) {
+  m-gradient-text,
   .m-gradient-text {
     display: inline-block;
     max-inline-size: 100%;
@@ -71,21 +80,26 @@
     -webkit-text-fill-color: transparent;
   }
 }
-.m-gradient-text :not(.m-gradient-text) { -webkit-text-fill-color: currentColor; }
+.m-gradient-text :not(.m-gradient-text),
+m-gradient-text :not(m-gradient-text) { -webkit-text-fill-color: currentColor; }
+m-gradient-text::selection,
 .m-gradient-text::selection {
   color: HighlightText;
   -webkit-text-fill-color: HighlightText;
   background: Highlight;
 }
 @media (forced-colors: active) {
+  m-gradient-text,
   .m-gradient-text {
     background: none !important;
     color: CanvasText !important;
     -webkit-text-fill-color: currentColor !important;
   }
-  a.m-gradient-text[href] { color: LinkText !important; }
+  a.m-gradient-text[href],
+  a:is(m-gradient-text, .m-gradient-text)[href] { color: LinkText !important; }
 }
 @media print {
+  m-gradient-text,
   .m-gradient-text {
     background: none !important;
     color: #000 !important;

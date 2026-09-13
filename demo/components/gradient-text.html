@@ -3,47 +3,89 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Gradient Text — CSS only</title>
+  <title>Gradient Text - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-gradient-text.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./gradient-text.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-gradient-text.global.js"></script>
+  <script type="module" src="./gradient-text.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1 class="m-gradient-text" id="heading">Gradient decoration on a real native heading</h1>
-    <p>No JavaScript, generated text, image asset, role or live announcer is required. Solid text remains the fallback.</p>
-    <section aria-labelledby="types-heading">
-      <h2 id="types-heading">Types and author-controlled size/weight</h2>
-      <div class="examples" id="types">
-        <span class="m-gradient-text">Primary</span>
-        <span class="m-gradient-text" data-type="info">Information</span>
-        <span class="m-gradient-text" data-type="success">Success</span>
-        <span class="m-gradient-text" data-type="warning">Warning</span>
-        <span class="m-gradient-text" data-type="error">Error</span>
-        <span class="m-gradient-text" data-type="danger">Source danger alias</span>
-      </div>
-      <p><span class="m-gradient-text custom-size" id="sized">External CSS sets native font size and weight.</span></p>
+  <main data-demo-page class="component-docs">
+    <h1>Gradient Text</h1>
+    <p>Text container with styled gradient background clipping and accessible fallback.</p>
+    <nav class="component-docs-nav" aria-label="Gradient Text documentation">
+      <a href="#examples">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-gradient-text.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-gradient-text.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <div id="examples">
+      <section data-demo-example="types" aria-labelledby="types-heading">
+        <header data-demo-header><div><h2 id="types-heading">Types</h2><p>Semantic types applying preset gradient color palettes.</p></div></header>
+        <div data-demo-preview>
+          <div class="examples" id="types">
+            <m-gradient-text type="primary">Primary</m-gradient-text>
+            <m-gradient-text type="info">Information</m-gradient-text>
+            <m-gradient-text type="success">Success</m-gradient-text>
+            <m-gradient-text type="warning">Warning</m-gradient-text>
+            <m-gradient-text type="error">Error</m-gradient-text>
+            <m-gradient-text type="danger">Danger</m-gradient-text>
+          </div>
+        </div>
+      </section>
+
+      <section data-demo-example="size-weight" aria-labelledby="size-weight-heading">
+        <header data-demo-header><div><h2 id="size-weight-heading">Size and weight</h2><p>Configuring font size and font weight via element attributes.</p></div></header>
+        <div data-demo-preview>
+          <div class="examples">
+            <m-gradient-text size="24px" weight="600">24px Bold 600</m-gradient-text>
+            <m-gradient-text size="32px" weight="800" type="info">32px Heavy 800</m-gradient-text>
+            <m-gradient-text size="1.25rem" weight="400" type="success">1.25rem Normal</m-gradient-text>
+          </div>
+        </div>
+      </section>
+
+      <section data-demo-example="custom-gradients" aria-labelledby="custom-heading">
+        <header data-demo-header><div><h2 id="custom-heading">Custom gradients and fallbacks</h2><p>Author-selected CSS gradient tokens and images.</p></div></header>
+        <div data-demo-preview>
+          <p><m-gradient-text class="custom-gradient" id="custom">Two author-selected colors at 90 degrees</m-gradient-text></p>
+          <p><m-gradient-text class="custom-image" id="image">A native multi-stop CSS gradient</m-gradient-text></p>
+          <p><m-gradient-text class="no-image" id="no-image">A missing gradient still leaves solid clipped text.</m-gradient-text></p>
+        </div>
+      </section>
+
+      <section data-demo-example="nested-content" aria-labelledby="content-heading">
+        <header data-demo-header><div><h2 id="content-heading">Native content and nested text</h2><p>Phrasing content and native semantics are preserved.</p></div></header>
+        <div data-demo-preview>
+          <p class="narrow"><m-gradient-text id="wrapping">LongUnbrokenSelectableGradientTextThatWrapsInsideANarrowNativeContainer</m-gradient-text></p>
+          <p><m-gradient-text id="nested">Gradient parent with <strong id="strong">native strong text</strong>,
+            <code id="code">nativeCode()</code> and <a id="nested-link" href="#destination">a normal native link</a>.
+            Non-gradient descendants retain their ordinary text fill.</m-gradient-text></p>
+          <p><a class="m-gradient-text" id="gradient-link" href="#destination" target="_self" rel="help">Native gradient link with visible underline and focus</a></p>
+          <p id="destination" tabindex="-1">Native destination.</p>
+        </div>
+      </section>
+    </div>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="gradient-text-api"><p>Loading API documentation.</p></div>
     </section>
-    <section aria-labelledby="gradient-heading">
-      <h2 id="gradient-heading">External gradient colors and angles</h2>
-      <p><span class="m-gradient-text custom-gradient" id="custom">Two author-selected colors at 90 degrees</span></p>
-      <p><span class="m-gradient-text custom-image" id="image">A native multi-stop CSS gradient</span></p>
-      <p><span class="m-gradient-text no-image" id="no-image">A missing gradient still leaves solid clipped text.</span></p>
-      <p>Print preview uses ordinary black foreground text, so disabling background graphics does not remove the words.</p>
-    </section>
-    <section aria-labelledby="content-heading">
-      <h2 id="content-heading">Native content, selection and nested text</h2>
-      <p class="narrow"><span class="m-gradient-text" id="wrapping">LongUnbrokenSelectableGradientTextThatWrapsInsideANarrowNativeContainer</span></p>
-      <p><span class="m-gradient-text" id="nested">Gradient parent with <strong id="strong">native strong text</strong>,
-        <code id="code">nativeCode()</code> and <a id="nested-link" href="#destination">a normal native link</a>.
-        Non-gradient descendants retain their ordinary text fill.</span></p>
-      <p><a class="m-gradient-text" id="gradient-link" href="#destination" target="_self" rel="help">Native gradient link with visible underline and focus</a></p>
-      <p id="destination" tabindex="-1">Native destination.</p>
-    </section>
-    <section dir="rtl" lang="ar" aria-labelledby="rtl-heading">
-      <h2 id="rtl-heading">نص متدرج</h2>
-      <p><span class="m-gradient-text" data-type="info" id="rtl-text">نص عربي أصلي قابل للتحديد</span></p>
-    </section>
-    <p id="outside">Outside the opt-in, ordinary text and native semantics are unchanged.</p>
   </main>
 </body>
 </html>

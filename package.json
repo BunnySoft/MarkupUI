@@ -373,6 +373,10 @@
       "import": "./dist/markup-ui-ellipsis.js"
     },
     "./ellipsis/style.css": "./dist/markup-ui-ellipsis.css",
+    "./gradient-text": {
+      "types": "./dist/components/gradient-text/index.d.ts",
+      "import": "./dist/markup-ui-gradient-text.js"
+    },
     "./gradient-text/style.css": "./dist/markup-ui-gradient-text.css",
     "./icon": {
       "types": "./dist/components/icon/index.d.ts",

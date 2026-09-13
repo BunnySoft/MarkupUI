@@ -19,7 +19,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Divider | `Divider`; primary content supplies an independent title fragment | [Demo and API](../../demo/components/divider.html) |
 | Dropdown | `Dropdown`, `DropdownTrigger`, `DropdownMenu`, `DropdownItem`, `DropdownGroup`, `DropdownDivider` | [Demo and API](../../demo/components/dropdown.html) |
 | Ellipsis | `Ellipsis` | [Demo and API](../../demo/components/ellipsis.html) |
-| Gradient Text | `GradientText` | Contract pending |
+| Gradient Text | `GradientText` | [Demo and API](../../demo/components/gradient-text.html) |
 | Icon | `Icon`, `IconWrapper` | [Demo and API](../../demo/components/icon.html) |
 | Page Header | `PageHeader` and named regions | [Demo and API](../../demo/components/page-header.html) |
 | Tag | `Tag`; checkable toggle button, closable intent, native content, sizes and types | [Demo and API](../../demo/components/tag.html) |
