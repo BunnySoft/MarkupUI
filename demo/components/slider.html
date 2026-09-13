@@ -3,75 +3,143 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Slider and two-track pair</title>
+  <title>Slider - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-slider.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./slider.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-slider.global.js"></script>
-  <script defer src="./slider.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./slider.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Slider: native movement, defaults and values</h1>
-    <p>Native ranges own dragging, Arrow keys, Home/End, clamping, reset and submission. The helper updates non-live readouts, not a custom gesture or tooltip engine.</p>
-    <form id="ranges" action="slider.html" method="get">
-      <label for="volume">Volume (no value attribute: native midpoint default)</label>
-      <div class="m-slider" data-slider id="volume-root">
-        <input data-slider-control id="volume" type="range" name="volume" min="0" max="100" step="5" list="volume-marks">
-        <output data-slider-output for="volume" aria-live="off" hidden>50</output>
-        <datalist id="volume-marks"><option value="0" label="Low"></option><option value="50" label="Middle"></option><option value="100" label="High"></option></datalist>
-        <div class="m-slider__marks" aria-hidden="true"><span>0 — Low</span><span>50</span><span>100 — High</span></div>
-      </div>
-      <fieldset class="m-slider-pair" data-slider-pair id="window-pair" aria-describedby="pair-help">
-        <legend>Window endpoints: two independent native tracks</legend>
-        <p id="pair-help">Crossing is allowed and reported, not silently sorted. Bounds stay authored; there is no shared-track dual-thumb behavior or hidden tuple value.</p>
-        <div class="m-slider-pair__fields">
-          <div class="m-slider">
-            <label for="start">Start minutes</label>
-            <input data-slider-control id="start" type="range" name="start" min="0" max="100" step="1" value="20">
-            <output data-slider-output for="start" aria-live="off" hidden>20</output>
-          </div>
-          <div class="m-slider">
-            <label for="end">End minutes</label>
-            <input data-slider-control id="end" type="range" name="end" min="0" max="100" step="1" value="80">
-            <output data-slider-output for="end" aria-live="off" hidden>80</output>
-          </div>
+  <main data-demo-page class="component-docs">
+    <h1>Slider</h1>
+    <p>Range slider component supporting horizontal, vertical, and reverse directions with native range semantics.</p>
+    <nav class="component-docs-nav" aria-label="Slider documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary>Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-slider.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-slider.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header><div><h2 id="basic-heading">Basic slider</h2><p>Horizontal range slider with min, max, step, and value properties.</p></div></header>
+      <div data-demo-preview>
+        <label for="demo-slider"><m-text>Volume control (0 to 100)</m-text></label>
+        <m-slider id="demo-slider" value="50" min="0" max="100" step="5">
+          <output for="demo-slider">50</output>
+        </m-slider>
+        <m-p id="slider-status">Value: 50</m-p>
+        <div class="demo-tools">
+          <m-button id="set-min">Set to min</m-button>
+          <m-button id="set-max">Set to max</m-button>
+          <m-button id="step-up">Step up (+5)</m-button>
+          <m-button id="step-down">Step down (-5)</m-button>
         </div>
-      </fieldset>
-      <label for="balance">Reversed horizontal balance (input dir=rtl)</label>
-      <div class="m-slider" data-slider id="balance-root">
-        <input data-slider-control id="balance" type="range" name="balance" min="-10" max="10" step="0.5" value="0" dir="rtl">
-        <output data-slider-output for="balance" aria-live="off" hidden>0</output>
       </div>
-      <label for="vertical">Vertical level (native writing-mode, high at top)</label>
-      <div class="m-slider" data-slider data-vertical id="vertical-root">
-        <input data-slider-control id="vertical" type="range" name="vertical" min="0" max="1" step="0.1" value="0.5" dir="rtl">
-        <output data-slider-output for="vertical" aria-live="off" hidden>0.5</output>
+    </section>
+
+    <section data-demo-example="modes" aria-labelledby="modes-heading">
+      <header data-demo-header><div><h2 id="modes-heading">Vertical, reverse and disabled</h2><p>Vertical orientation, reverse direction (RTL), and disabled state.</p></div></header>
+      <div data-demo-preview>
+        <label for="vert-s"><m-text>Vertical level</m-text></label>
+        <m-slider id="vert-s" vertical value="30" min="0" max="100"></m-slider>
+        <label for="rev-s"><m-text>Reversed direction</m-text></label>
+        <m-slider id="rev-s" reverse value="70" min="0" max="100"></m-slider>
+        <label for="dis-s"><m-text>Disabled state</m-text></label>
+        <m-slider id="dis-s" disabled value="40" min="0" max="100"></m-slider>
       </div>
-      <label for="external-range">Associated with another form</label>
-      <div class="m-slider" data-slider id="external-root">
-        <input data-slider-control id="external-range" type="range" name="external" form="other-ranges" min="0" max="10" value="3">
-        <output data-slider-output for="external-range" form="other-ranges" aria-live="off" hidden>3</output>
+    </section>
+
+    <section data-demo-example="native" aria-labelledby="native-heading">
+      <header data-demo-header><div><h2 id="native-heading">Native movement, defaults and two-track pair</h2><p>Native ranges own dragging, Arrow keys, Home/End, clamping, reset and submission. The helper updates non-live readouts, not a custom gesture or tooltip engine.</p></div></header>
+      <div data-demo-preview>
+        <form id="ranges" action="slider.html" method="get">
+          <label for="volume">Volume (no value attribute: native midpoint default)</label>
+          <div class="m-slider" data-slider id="volume-root">
+            <input data-slider-control id="volume" type="range" name="volume" min="0" max="100" step="5" list="volume-marks">
+            <output data-slider-output for="volume" aria-live="off" hidden>50</output>
+            <datalist id="volume-marks"><option value="0" label="Low"></option><option value="50" label="Middle"></option><option value="100" label="High"></option></datalist>
+            <div class="m-slider__marks" aria-hidden="true"><span>0 — Low</span><span>50</span><span>100 — High</span></div>
+          </div>
+          <fieldset class="m-slider-pair" data-slider-pair id="window-pair" aria-describedby="pair-help">
+            <legend>Window endpoints: two independent native tracks</legend>
+            <m-p id="pair-help">Crossing is allowed and reported, not silently sorted. Bounds stay authored; there is no shared-track dual-thumb behavior or hidden tuple value.</m-p>
+            <div class="m-slider-pair__fields">
+              <div class="m-slider">
+                <label for="start">Start minutes</label>
+                <input data-slider-control id="start" type="range" name="start" min="0" max="100" step="1" value="20">
+                <output data-slider-output for="start" aria-live="off" hidden>20</output>
+              </div>
+              <div class="m-slider">
+                <label for="end">End minutes</label>
+                <input data-slider-control id="end" type="range" name="end" min="0" max="100" step="1" value="80">
+                <output data-slider-output for="end" aria-live="off" hidden>80</output>
+              </div>
+            </div>
+          </fieldset>
+          <label for="balance">Reversed horizontal balance (input dir=rtl)</label>
+          <div class="m-slider" data-slider id="balance-root">
+            <input data-slider-control id="balance" type="range" name="balance" min="-10" max="10" step="0.5" value="0" dir="rtl">
+            <output data-slider-output for="balance" aria-live="off" hidden>0</output>
+          </div>
+          <label for="vertical">Vertical level (native writing-mode, high at top)</label>
+          <div class="m-slider" data-slider data-vertical id="vertical-root">
+            <input data-slider-control id="vertical" type="range" name="vertical" min="0" max="1" step="0.1" value="0.5" dir="rtl">
+            <output data-slider-output for="vertical" aria-live="off" hidden>0.5</output>
+          </div>
+          <label for="external-range">Associated with another form</label>
+          <div class="m-slider" data-slider id="external-root">
+            <input data-slider-control id="external-range" type="range" name="external" form="other-ranges" min="0" max="10" value="3">
+            <output data-slider-output for="external-range" form="other-ranges" aria-live="off" hidden>3</output>
+          </div>
+          <label for="plain-range">CSS-only range, no helper</label>
+          <div class="m-slider"><input data-slider-control id="plain-range" type="range" name="plain" min="0" max="10" value="2"></div>
+          <input type="hidden" name="local" value="only">
+          <m-p><button type="submit">Inspect native submission / local GET fallback</button> <button type="reset">Native reset</button></m-p>
+        </form>
+        <form id="other-ranges"><button type="reset">Reset external range only</button></form>
+        <div class="demo-tools">
+          <m-button id="narrow">Set pair to 65 / 75</m-button>
+          <m-button id="cross">Set crossed pair 90 / 10</m-button>
+          <m-button id="defaults">Set pair defaults 15 / 85</m-button>
+          <m-button id="disabled">Toggle native pair fieldset disabled</m-button>
+          <m-button id="clamp">Silent volume setValue(999)</m-button>
+          <m-button id="bounds">Toggle volume max 60 / 100</m-button>
+          <m-button id="cancel">Cancel next reset</m-button>
+          <m-button id="rtl">Toggle page RTL</m-button>
+          <m-button id="disconnect">Disconnect helpers</m-button>
+        </div>
+        <m-p id="state">Without JS, native ranges and datalist ticks remain usable; live text readouts stay hidden.</m-p>
+        <m-p id="events">Pair commits: 0</m-p>
+        <pre id="submission">No submission yet.</pre>
       </div>
-      <label for="plain-range">CSS-only range, no helper</label>
-      <div class="m-slider"><input data-slider-control id="plain-range" type="range" name="plain" min="0" max="10" value="2"></div>
-      <input type="hidden" name="local" value="only">
-      <p><button type="submit">Inspect native submission / local GET fallback</button> <button type="reset">Native reset</button></p>
-    </form>
-    <form id="other-ranges"><button type="reset">Reset external range only</button></form>
-    <div class="demo-tools">
-      <button type="button" id="narrow">Set pair to 65 / 75</button>
-      <button type="button" id="cross">Set crossed pair 90 / 10</button>
-      <button type="button" id="defaults">Set pair defaults 15 / 85</button>
-      <button type="button" id="disabled">Toggle native pair fieldset disabled</button>
-      <button type="button" id="clamp">Silent volume setValue(999)</button>
-      <button type="button" id="bounds">Toggle volume max 60 / 100</button>
-      <button type="button" id="cancel">Cancel next reset</button>
-      <button type="button" id="rtl">Toggle page RTL</button>
-      <button type="button" id="disconnect">Disconnect helpers</button>
-    </div>
-    <p id="state">Without JS, native ranges and datalist ticks remain usable; live text readouts stay hidden.</p>
-    <p id="events">Pair commits: 0</p>
-    <pre id="submission">No submission yet.</pre>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="slider-api">
+        <p>Loading API documentation.</p>
+      </div>
+    </section>
   </main>
 </body>
 </html>
+

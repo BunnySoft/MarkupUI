@@ -1,6 +1,5 @@
 import { MElement } from "../core/element.js"
 import { MApp, MField, MSemantic, MTheme } from "./foundation.js"
-import { MSlider } from "./forms.js"
 import { MAccordionItem, MInclude } from "./dynamic.js"
 import { MSteps, MStatistic, MTree, MTreeNode } from "./navigation.js"
 import { builtInStyles } from "./styles.js"
@@ -18,7 +17,6 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-center", class extends MElement {}],
   ["m-spacer", class extends MElement { public connectedCallback(): void { this.style.flex = "1" } }],
   ["m-option", class extends MElement {}],
-  ["m-slider", MSlider],
   ["m-accordion", class extends MElement {}],
   ["m-accordion-item", MAccordionItem],
   ["m-steps", MSteps],
