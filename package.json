@@ -306,6 +306,10 @@
     },
     "./table/style.css": "./dist/markup-ui-table.css",
     "./thing/style.css": "./dist/markup-ui-thing.css",
+    "./breadcrumb": {
+      "types": "./dist/components/breadcrumb/index.d.ts",
+      "import": "./dist/markup-ui-breadcrumb.js"
+    },
     "./breadcrumb/style.css": "./dist/markup-ui-breadcrumb.css",
     "./timeline/style.css": "./dist/markup-ui-timeline.css",
     "./descriptions": {

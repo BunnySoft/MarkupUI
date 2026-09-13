@@ -35,6 +35,7 @@ in the target inventory.
 30. [List demo and API](../../demo/components/list.html): List and ListItem; bordered, size variants, hoverable/clickable items, prefix/suffix and native list semantics.
 31. [Table demo and API](../../demo/components/table.html): Table; bordered/striped/single-line table presentations and native table markup.
 32. [Descriptions demo and API](../../demo/components/descriptions.html): Descriptions and DescriptionItem; bordered, column count, responsive grid and label placement.
+33. [Breadcrumb demo and API](../../demo/components/breadcrumb.html): Breadcrumb and BreadcrumbItem; navigation landmark, customizable separators, items and link semantics.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

@@ -10,9 +10,14 @@
   --_m-breadcrumb-hover: rgb(255 255 255 / .12);
   --_m-breadcrumb-pressed: rgb(255 255 255 / .08);
 }
-:where(nav.m-breadcrumb) {
+:where(m-breadcrumb, nav.m-breadcrumb) {
   --m-breadcrumb-gap: 8px;
   box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  row-gap: var(--m-breadcrumb-gap);
+  column-gap: 0;
   min-inline-size: 0;
   max-inline-size: 100%;
   font-size: var(--m-breadcrumb-font-size, var(--m-font-size, 14px));
@@ -36,14 +41,14 @@
   min-inline-size: 0;
   max-inline-size: 100%;
 }
-:where(nav.m-breadcrumb > .m-breadcrumb-list > li.m-breadcrumb-item > .m-breadcrumb-row) {
+:where(m-breadcrumb-item, nav.m-breadcrumb > .m-breadcrumb-list > li.m-breadcrumb-item > .m-breadcrumb-row) {
   display: inline-flex;
   align-items: center;
   min-inline-size: 0;
   max-inline-size: 100%;
   vertical-align: top;
 }
-:where(.m-breadcrumb-row > .m-breadcrumb-link) {
+:where(.m-breadcrumb-row > .m-breadcrumb-link, m-breadcrumb-item > .m-breadcrumb-link) {
   box-sizing: border-box;
   min-inline-size: 0;
   max-inline-size: 100%;
@@ -51,31 +56,38 @@
   border-radius: var(--m-breadcrumb-radius, 3px);
   white-space: normal;
 }
-:where(.m-breadcrumb-row > a.m-breadcrumb-link[href]) {
+:where(.m-breadcrumb-row > a.m-breadcrumb-link[href], m-breadcrumb-item > a.m-breadcrumb-link[href]) {
   color: var(--m-breadcrumb-link-color, inherit);
   text-decoration: none;
 }
-:where(.m-breadcrumb-row > a.m-breadcrumb-link[href]:not([aria-current="page"]):hover) {
+:where(.m-breadcrumb-row > a.m-breadcrumb-link[href]:not([aria-current="page"]):hover,
+       m-breadcrumb-item > a.m-breadcrumb-link[href]:not([aria-current="page"]):hover) {
   color: var(--m-breadcrumb-hover-color, var(--m-breadcrumb-link-color, var(--_m-breadcrumb-active, #333639)));
   background-color: var(--m-breadcrumb-hover-background, var(--_m-breadcrumb-hover, rgb(46 51 56 / .09)));
 }
-:where(.m-breadcrumb-row > a.m-breadcrumb-link[href]:not([aria-current="page"]):active) {
+:where(.m-breadcrumb-row > a.m-breadcrumb-link[href]:not([aria-current="page"]):active,
+       m-breadcrumb-item > a.m-breadcrumb-link[href]:not([aria-current="page"]):active) {
   color: var(--m-breadcrumb-pressed-color, var(--m-breadcrumb-link-color, var(--_m-breadcrumb-active, #333639)));
   background-color: var(--m-breadcrumb-pressed-background, var(--_m-breadcrumb-pressed, rgb(46 51 56 / .13)));
 }
-:where(.m-breadcrumb-row > a.m-breadcrumb-link[href]):focus-visible {
+:where(.m-breadcrumb-row > a.m-breadcrumb-link[href]:focus-visible,
+       m-breadcrumb-item > a.m-breadcrumb-link[href]:focus-visible) {
   outline: 2px solid currentColor;
   outline-offset: 2px;
 }
-:where(.m-breadcrumb-row > .m-breadcrumb-link[aria-current="page"]) {
+:where(.m-breadcrumb-row > .m-breadcrumb-link[aria-current="page"],
+       m-breadcrumb-item > .m-breadcrumb-link[aria-current="page"],
+       m-breadcrumb-item[aria-current="page"] > .m-breadcrumb-link) {
   color: var(--m-breadcrumb-current-color, var(--_m-breadcrumb-active, #333639));
   font-weight: var(--m-breadcrumb-current-weight, 400);
 }
 :where(.m-breadcrumb-row > span.m-breadcrumb-link[aria-disabled="true"],
-  .m-breadcrumb-row > a.m-breadcrumb-link:not([href])[aria-disabled="true"]) {
+  .m-breadcrumb-row > a.m-breadcrumb-link:not([href])[aria-disabled="true"],
+  m-breadcrumb-item > span.m-breadcrumb-link[aria-disabled="true"],
+  m-breadcrumb-item > a.m-breadcrumb-link:not([href])[aria-disabled="true"]) {
   color: var(--m-breadcrumb-disabled-color, var(--_m-breadcrumb-text, #767c82));
 }
-:where(.m-breadcrumb-row > .m-breadcrumb-separator) {
+:where(.m-breadcrumb-row > .m-breadcrumb-separator, m-breadcrumb-item > .m-breadcrumb-separator) {
   display: none;
   flex: 0 0 auto;
   align-items: center;
@@ -83,11 +95,11 @@
   color: var(--m-breadcrumb-separator-color, var(--_m-breadcrumb-text, #767c82));
   user-select: none;
 }
-:where(.m-breadcrumb-row > .m-breadcrumb-separator:empty) {
+:where(.m-breadcrumb-row > .m-breadcrumb-separator:empty, m-breadcrumb-item > .m-breadcrumb-separator:empty) {
   inline-size: .5em;
   justify-content: center;
 }
-:where(.m-breadcrumb-row > .m-breadcrumb-separator:empty)::before {
+:where(.m-breadcrumb-row > .m-breadcrumb-separator:empty, m-breadcrumb-item > .m-breadcrumb-separator:empty)::before {
   content: "";
   block-size: .875em;
   border-inline-start: 1px solid currentColor;
@@ -98,26 +110,31 @@
   block-size: .875em;
 }
 @supports selector(:has(*)) {
-  :where(nav.m-breadcrumb > .m-breadcrumb-list > li.m-breadcrumb-item:not([hidden]):has(~ li.m-breadcrumb-item:not([hidden])) > .m-breadcrumb-row > .m-breadcrumb-separator) {
+  :where(nav.m-breadcrumb > .m-breadcrumb-list > li.m-breadcrumb-item:not([hidden]):has(~ li.m-breadcrumb-item:not([hidden])) > .m-breadcrumb-row > .m-breadcrumb-separator,
+         m-breadcrumb > m-breadcrumb-item:not([hidden]):has(~ m-breadcrumb-item:not([hidden])) > .m-breadcrumb-separator,
+         m-breadcrumb-item:not([hidden]):has(~ m-breadcrumb-item:not([hidden])) > .m-breadcrumb-separator) {
     display: inline-flex;
   }
 }
-:where(nav.m-breadcrumb > .m-breadcrumb-list > li.m-breadcrumb-item[data-show-separator="false"] > .m-breadcrumb-row > .m-breadcrumb-separator) {
+:where(nav.m-breadcrumb > .m-breadcrumb-list > li.m-breadcrumb-item[data-show-separator="false"] > .m-breadcrumb-row > .m-breadcrumb-separator,
+       m-breadcrumb-item[data-show-separator="false"] > .m-breadcrumb-separator) {
   display: none;
 }
-:where(.m-breadcrumb, .m-breadcrumb-list, .m-breadcrumb-item, .m-breadcrumb-row, .m-breadcrumb-link, .m-breadcrumb-separator)[hidden]:not([hidden="until-found"]),
-template:where(.m-breadcrumb, .m-breadcrumb-list, .m-breadcrumb-item, .m-breadcrumb-row),
+:where(m-breadcrumb, m-breadcrumb-item, .m-breadcrumb, .m-breadcrumb-list, .m-breadcrumb-item, .m-breadcrumb-row, .m-breadcrumb-link, .m-breadcrumb-separator)[hidden]:not([hidden="until-found"]),
+template:where(m-breadcrumb, m-breadcrumb-item, .m-breadcrumb, .m-breadcrumb-list, .m-breadcrumb-item, .m-breadcrumb-row),
 .m-breadcrumb-list > template {
   display: none !important;
 }
 @media (forced-colors: active) {
-  :where(.m-breadcrumb-row > a.m-breadcrumb-link[href]) { color: LinkText; }
-  :where(.m-breadcrumb-row > .m-breadcrumb-link[aria-current="page"], .m-breadcrumb-row > .m-breadcrumb-separator) { color: CanvasText; }
+  :where(.m-breadcrumb-row > a.m-breadcrumb-link[href], m-breadcrumb-item > a.m-breadcrumb-link[href]) { color: LinkText; }
+  :where(.m-breadcrumb-row > .m-breadcrumb-link[aria-current="page"], m-breadcrumb-item > .m-breadcrumb-link[aria-current="page"], .m-breadcrumb-row > .m-breadcrumb-separator, m-breadcrumb-item > .m-breadcrumb-separator) { color: CanvasText; }
   :where(.m-breadcrumb-row > span.m-breadcrumb-link[aria-disabled="true"],
-    .m-breadcrumb-row > a.m-breadcrumb-link:not([href])[aria-disabled="true"]) { color: GrayText; }
+    .m-breadcrumb-row > a.m-breadcrumb-link:not([href])[aria-disabled="true"],
+    m-breadcrumb-item > span.m-breadcrumb-link[aria-disabled="true"],
+    m-breadcrumb-item > a.m-breadcrumb-link:not([href])[aria-disabled="true"]) { color: GrayText; }
 }
 @media print {
-  :where(nav.m-breadcrumb > .m-breadcrumb-list > li.m-breadcrumb-item) {
+  :where(nav.m-breadcrumb > .m-breadcrumb-list > li.m-breadcrumb-item, m-breadcrumb-item) {
     break-inside: avoid;
   }
 }

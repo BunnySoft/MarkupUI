@@ -84,7 +84,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Affix | `Affix` | Contract pending |
 | Anchor | `Anchor`, `AnchorLink` | Contract pending |
 | Back Top | `BackTop` | Contract pending |
-| Breadcrumb | `Breadcrumb`, `BreadcrumbItem` | Contract pending |
+| Breadcrumb | `Breadcrumb`, `BreadcrumbItem` | [Demo and API](../../demo/components/breadcrumb.html) |
 | Loading Bar | `LoadingBar` | Contract pending |
 | Menu | `Menu`, `MenuItem` and hierarchy | Contract pending |
 | Pagination | `Pagination` | Contract pending |
