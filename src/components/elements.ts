@@ -1,7 +1,7 @@
 import { MElement } from "../core/element.js"
 import { MApp, MField, MSemantic, MTheme } from "./foundation.js"
 import { MAccordionItem, MInclude } from "./dynamic.js"
-import { MSteps, MStatistic, MTree, MTreeNode } from "./navigation.js"
+import { MSteps, MStatistic } from "./navigation.js"
 import { builtInStyles } from "./styles.js"
 
 const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = [
@@ -22,8 +22,6 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-steps", MSteps],
   ["m-step", class extends MElement {}],
   ["m-statistic", MStatistic],
-  ["m-tree", MTree],
-  ["m-tree-node", MTreeNode],
   ["m-include", MInclude],
 ]
 

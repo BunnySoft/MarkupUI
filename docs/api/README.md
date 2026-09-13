@@ -58,6 +58,7 @@ in the target inventory.
 53. [Rate demo and API](../../demo/components/rate.html): Rate; star rating, half-star selection, clearable states, and custom counts.
 54. [Input OTP demo and API](../../demo/components/input-otp.html): InputOtp; segmented one-time password inputs, character masking, and completion events.
 55. [Popselect demo and API](../../demo/components/popselect.html): Popselect, PopselectTrigger, PopselectPanel; popover selection, custom triggers, and value change events.
+56. [Tree demo and API](../../demo/components/tree.html): Tree, TreeNode; hierarchical trees, checkbox selection, expand/collapse, and selection events.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
