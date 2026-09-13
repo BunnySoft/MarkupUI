@@ -1,7 +1,10 @@
 import { readFileSync } from "node:fs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createPopconfirm } from "../src/components/popconfirm/index.js"
+import {
+  createPopconfirm, Popconfirm, PopconfirmTrigger, PopconfirmPanel, registerPopconfirm,
+} from "../src/components/popconfirm/index.js"
 import type { PopconfirmController, PopconfirmOptions } from "../src/components/popconfirm/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 describe("audited Popconfirm presentation", () => {
   const css = readFileSync("src/components/popconfirm/popconfirm.css", "utf8")
@@ -610,3 +613,230 @@ describe("inline fallback, shared geometry and distribution", () => {
     expect(source).not.toContain("customElements")
   })
 })
+
+function setupPopconfirmRects(el: HTMLElement) {
+  for (const node of [el, ...el.querySelectorAll<HTMLElement>("*")]) {
+    node.getBoundingClientRect = () => rect(200, 200, 100, 30)
+  }
+}
+
+describe("canonical Popconfirm ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers m-popconfirm, m-popconfirm-trigger, m-popconfirm-panel", () => {
+    expect(Popconfirm.tag).toBe("m-popconfirm")
+    expect(PopconfirmTrigger.tag).toBe("m-popconfirm-trigger")
+    expect(PopconfirmPanel.tag).toBe("m-popconfirm-panel")
+    expect(ViewElement.prototype.isPrototypeOf(Popconfirm.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(PopconfirmTrigger.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(PopconfirmPanel.prototype)).toBe(true)
+    expect(customElements.get("m-popconfirm")).toBe(Popconfirm)
+    expect(customElements.get("m-popconfirm-trigger")).toBe(PopconfirmTrigger)
+    expect(customElements.get("m-popconfirm-panel")).toBe(PopconfirmPanel)
+    expect(Popconfirm.observedAttributes).toEqual([
+      "title", "positive-text", "negative-text", "placement", "disabled", "show",
+    ])
+    expect(() => registerPopconfirm()).not.toThrow()
+  })
+
+  it("handles typed properties, attributes, and defaults", () => {
+    const el = document.createElement("m-popconfirm") as Popconfirm
+    document.body.append(el)
+    expect(el.title).toBe("")
+    expect(el.positiveText).toBe("Confirm")
+    expect(el.negativeText).toBe("Cancel")
+    expect(el.placement).toBe("top")
+    expect(el.disabled).toBe(false)
+    expect(el.show).toBe(false)
+
+    el.title = "Delete this?"
+    expect(el.getAttribute("title")).toBe("Delete this?")
+    expect(el.title).toBe("Delete this?")
+
+    el.positiveText = "Yes"
+    expect(el.getAttribute("positive-text")).toBe("Yes")
+    expect(el.positiveText).toBe("Yes")
+
+    el.negativeText = "No"
+    expect(el.getAttribute("negative-text")).toBe("No")
+    expect(el.negativeText).toBe("No")
+
+    el.placement = "bottom"
+    expect(el.getAttribute("placement")).toBe("bottom")
+    expect(el.placement).toBe("bottom")
+
+    el.disabled = true
+    expect(el.hasAttribute("disabled")).toBe(true)
+    expect(el.disabled).toBe(true)
+
+    el.setAttribute("title", "New Title")
+    expect(el.title).toBe("New Title")
+
+    el.setAttribute("positive-text", "OK")
+    expect(el.positiveText).toBe("OK")
+
+    el.setAttribute("negative-text", "Dismiss")
+    expect(el.negativeText).toBe("Dismiss")
+
+    el.setAttribute("placement", "left")
+    expect(el.placement).toBe("left")
+
+    el.removeAttribute("disabled")
+    expect(el.disabled).toBe(false)
+  })
+
+  it("generates panel anatomy and synchronizes native trigger", async () => {
+    document.body.innerHTML = `
+      <m-popconfirm title="Are you sure?" positive-text="Proceed" negative-text="Abort">
+        <button type="button" id="test-trigger">Click me</button>
+      </m-popconfirm>`
+    await flush()
+    const popconfirm = document.querySelector("m-popconfirm") as Popconfirm
+    setupPopconfirmRects(popconfirm)
+    const trigger = document.getElementById("test-trigger") as HTMLButtonElement
+    const panel = popconfirm.querySelector("m-popconfirm-panel") as PopconfirmPanel
+    expect(panel).not.toBeNull()
+    expect(panel.classList.contains("m-popover")).toBe(true)
+    expect(panel.classList.contains("m-popconfirm")).toBe(true)
+    expect(panel.getAttribute("role")).toBe("dialog")
+    expect(panel.getAttribute("aria-modal")).toBe("false")
+    expect(panel.getAttribute("aria-label")).toBe("Are you sure?")
+    expect(trigger.getAttribute("popovertarget")).toBe(panel.id)
+
+    const content = panel.querySelector("[data-popconfirm-content]") as HTMLElement
+    expect(content.textContent).toBe("Are you sure?")
+    expect(panel.getAttribute("aria-describedby")).toContain(content.id)
+
+    const positive = panel.querySelector("[data-popconfirm-positive]") as HTMLButtonElement
+    const negative = panel.querySelector("[data-popconfirm-negative]") as HTMLButtonElement
+    expect(positive.textContent).toBe("Proceed")
+    expect(negative.textContent).toBe("Abort")
+
+    const pending = panel.querySelector("[data-popconfirm-pending]") as HTMLElement
+    const error = panel.querySelector("[data-popconfirm-error]") as HTMLElement
+    const complete = panel.querySelector("[data-popconfirm-complete]") as HTMLElement
+    expect(pending.hidden).toBe(true)
+    expect(error.hidden).toBe(true)
+    expect(complete.hidden).toBe(true)
+  })
+
+  it("integrates companion regions and supports open/close/toggle methods", async () => {
+    document.body.innerHTML = `
+      <m-popconfirm title="Companion confirm" placement="bottom">
+        <m-popconfirm-trigger>
+          <button type="button">Trigger</button>
+        </m-popconfirm-trigger>
+        <m-popconfirm-panel>
+          <p>Custom companion panel content.</p>
+        </m-popconfirm-panel>
+      </m-popconfirm>`
+    await flush()
+    const popconfirm = document.querySelector("m-popconfirm") as Popconfirm
+    setupPopconfirmRects(popconfirm)
+    expect(popconfirm.show).toBe(false)
+
+    expect(popconfirm.open()).toBe(true)
+    expect(popconfirm.show).toBe(true)
+
+    popconfirm.close()
+    expect(popconfirm.show).toBe(false)
+
+    expect(popconfirm.toggle()).toBe(true)
+    expect(popconfirm.show).toBe(true)
+
+    expect(popconfirm.toggle()).toBe(false)
+    expect(popconfirm.show).toBe(false)
+
+    popconfirm.show = true
+    expect(popconfirm.show).toBe(true)
+    popconfirm.show = false
+    expect(popconfirm.show).toBe(false)
+  })
+
+  it("dispatches m:positive-click and closes when allowed", async () => {
+    document.body.innerHTML = `
+      <m-popconfirm title="Confirm action">
+        <button type="button">Trigger</button>
+      </m-popconfirm>`
+    await flush()
+    const popconfirm = document.querySelector("m-popconfirm") as Popconfirm
+    setupPopconfirmRects(popconfirm)
+    const positive = popconfirm.querySelector("[data-popconfirm-positive]") as HTMLButtonElement
+    const spy = vi.fn()
+    popconfirm.addEventListener("m:positive-click", spy)
+
+    popconfirm.open()
+    expect(popconfirm.show).toBe(true)
+
+    positive.click()
+    await flush()
+    expect(spy).toHaveBeenCalledOnce()
+    expect(spy.mock.calls[0]![0].detail).toEqual({ value: "Confirm" })
+    expect(popconfirm.show).toBe(false)
+  })
+
+  it("prevents closing when m:positive-click is cancelled", async () => {
+    document.body.innerHTML = `
+      <m-popconfirm title="Confirm action">
+        <button type="button">Trigger</button>
+      </m-popconfirm>`
+    await flush()
+    const popconfirm = document.querySelector("m-popconfirm") as Popconfirm
+    setupPopconfirmRects(popconfirm)
+    const positive = popconfirm.querySelector("[data-popconfirm-positive]") as HTMLButtonElement
+    popconfirm.addEventListener("m:positive-click", event => event.preventDefault())
+
+    popconfirm.open()
+    expect(popconfirm.show).toBe(true)
+
+    positive.click()
+    await flush()
+    expect(popconfirm.show).toBe(true)
+  })
+
+  it("dispatches m:negative-click and closes when allowed, stays open when cancelled", async () => {
+    document.body.innerHTML = `
+      <m-popconfirm title="Confirm action" negative-text="Dismiss">
+        <button type="button">Trigger</button>
+      </m-popconfirm>`
+    await flush()
+    const popconfirm = document.querySelector("m-popconfirm") as Popconfirm
+    setupPopconfirmRects(popconfirm)
+    const negative = popconfirm.querySelector("[data-popconfirm-negative]") as HTMLButtonElement
+    const spy = vi.fn()
+    popconfirm.addEventListener("m:negative-click", spy)
+
+    popconfirm.open()
+    expect(popconfirm.show).toBe(true)
+
+    negative.click()
+    await flush()
+    expect(spy).toHaveBeenCalledOnce()
+    expect(spy.mock.calls[0]![0].detail).toEqual({ value: "Dismiss" })
+    expect(popconfirm.show).toBe(false)
+
+    popconfirm.addEventListener("m:negative-click", event => event.preventDefault())
+    popconfirm.open()
+    negative.click()
+    await flush()
+    expect(popconfirm.show).toBe(true)
+  })
+
+  it("closes and disables trigger when popconfirm is disabled", async () => {
+    document.body.innerHTML = `
+      <m-popconfirm title="Action">
+        <button type="button" id="dis-trigger">Trigger</button>
+      </m-popconfirm>`
+    await flush()
+    const popconfirm = document.querySelector("m-popconfirm") as Popconfirm
+    setupPopconfirmRects(popconfirm)
+    const trigger = document.getElementById("dis-trigger") as HTMLButtonElement
+
+    popconfirm.open()
+    expect(popconfirm.show).toBe(true)
+
+    popconfirm.disabled = true
+    expect(popconfirm.show).toBe(false)
+    expect(trigger.disabled).toBe(true)
+    expect(popconfirm.open()).toBe(false)
+  })
+})
+

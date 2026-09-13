@@ -25,7 +25,7 @@ export function createPopconfirm(trigger: HTMLElement, panel: HTMLElement, optio
   const view = document?.defaultView
   if (!view || !(trigger instanceof view.HTMLButtonElement) || trigger.type !== "button"
     || !(panel instanceof view.HTMLElement) || panel.ownerDocument !== document
-    || !["div", "section", "article", "aside", "span"].includes(panel.localName)) {
+    || !["div", "section", "article", "aside", "span", "m-popconfirm-panel"].includes(panel.localName)) {
     throw new TypeError("Popconfirm needs a native type=button trigger and HTML panel in one document.")
   }
   if (!["click", "manual"].includes(options.trigger ?? "click") || "delay" in options || "duration" in options) {

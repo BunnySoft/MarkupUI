@@ -103,7 +103,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Message | `Message` service/control | Contract pending |
 | Modal | `Modal` | [Demo and API](../../demo/components/modal.html) |
 | Notification | `Notification` | Contract pending |
-| Popconfirm | `Popconfirm` | Contract pending |
+| Popconfirm | `Popconfirm` | [Demo and API](../../demo/components/popconfirm.html) |
 | Popover | `Popover`, `PopoverTrigger`, `PopoverContent`; direct trigger/panel adoption, 12 directional placements, hover/focus/click/manual modes, collision flipping | [Demo and API](../../demo/components/popover.html) |
 | Popselect | `Popselect` | Contract pending |
 | Progress | `Progress` | Contract pending |
