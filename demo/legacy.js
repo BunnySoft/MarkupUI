@@ -201,13 +201,14 @@ m.actions.register("demo.copy-source", async ({ parameters }) => {
 })
 
 m.actions.register("demo.save", async ({ store: actionStore }) => {
-  const form = document.querySelector("#profile-form")
-  if (typeof form?.validate === "function" && !form.validate()) return
+  const result = await validateProfile()
+  if (result.status !== "valid" || !result.current) return
   actionStore?.set("form.busy", true)
   actionStore?.set("form.saved", false)
   record("saving profile")
   await new Promise((resolve) => setTimeout(resolve, 500))
   actionStore?.set("form.busy", false)
+  if (!result.current) return
   actionStore?.set("form.saved", true)
   record("profile saved")
 })
@@ -271,16 +272,15 @@ m.actions.register("demo.plugin", () => {
 })
 
 const profileForm = document.querySelector("#profile-form")
-profileForm?.addEventListener("m:valid", () => {
-  store?.set("form.valid", true)
-  store?.set("form.invalid", false)
-  record("form validation passed")
-})
-profileForm?.addEventListener("m:invalid", () => {
-  store?.set("form.valid", false)
-  store?.set("form.invalid", true)
-  record("form validation failed")
-})
+async function validateProfile() {
+  const result = await profileForm.validate()
+  const valid = result.status === "valid" && result.current
+  store?.set("form.valid", valid)
+  store?.set("form.invalid", !valid)
+  record(valid ? "form validation passed" : "form validation failed")
+  return result
+}
+m.actions.register("validate", async () => { await validateProfile() })
 
 document.querySelector("#demo-tag")?.addEventListener("m:close", (event) => {
   event.currentTarget?.remove()

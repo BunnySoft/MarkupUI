@@ -26,6 +26,12 @@
     <script type="module" src="../dist/markup-ui-switch.js"></script>
     <link rel="stylesheet" href="../dist/markup-ui-input-number.css">
     <script type="module" src="../dist/markup-ui-input-number.js"></script>
+    <link rel="stylesheet" href="../dist/markup-ui-form.css">
+    <script type="module" src="../dist/markup-ui-form.js"></script>
+    <link rel="stylesheet" href="../dist/markup-ui-select.css">
+    <script type="module" src="../dist/markup-ui-select.js"></script>
+    <link rel="stylesheet" href="../dist/markup-ui-radio.css">
+    <script type="module" src="../dist/markup-ui-radio.js"></script>
     <link rel="stylesheet" href="./legacy.css">
     <script type="module" src="../dist/markup-ui-avatar.js"></script>
     <link rel="stylesheet" href="../dist/markup-ui-button.css">
@@ -393,28 +399,30 @@
                 <m-card>
                   <m-form id="profile-form">
                     <m-stack gap="md">
-                      <m-form-item
-                        label="Display name"
-                        required
-                        minlength="3"
-                        required-message="Enter a display name."
-                      >
+                      <m-form-item key="name">
+                        <label class="m-form-item__label" for="profile-name">Display name</label>
                         <m-input
                           name="name"
+                          required minlength="3"
                           m-bind="form.name"
                           placeholder="Enter your name"
-                        ></m-input>
+                        ><input id="profile-name"></m-input>
+                        <p class="m-form-item__feedback" id="profile-name-error" hidden></p>
                       </m-form-item>
 
-                      <m-form-item label="Role" required>
-                        <m-select name="role" m-bind="form.role" value="developer">
-                          <m-option value="developer">Developer</m-option>
-                          <m-option value="designer">Designer</m-option>
-                          <m-option value="analyst">Analyst</m-option>
+                      <m-form-item key="role">
+                        <label class="m-form-item__label" for="profile-role">Role</label>
+                        <m-select name="role" m-bind="form.role" required>
+                          <select id="profile-role">
+                          <option value="developer" selected>Developer</option>
+                          <option value="designer">Designer</option>
+                          <option value="analyst">Analyst</option>
+                          </select>
                         </m-select>
                       </m-form-item>
 
-                      <m-form-item label="City">
+                      <m-form-item>
+                        <label class="m-form-item__label">City
                         <m-autocomplete
                           name="city"
                           m-bind="form.city"
@@ -424,31 +432,36 @@
                           <m-option value="New York">New York</m-option>
                           <m-option value="Singapore">Singapore</m-option>
                         </m-autocomplete>
+                        </label>
                       </m-form-item>
 
-                      <m-form-item label="Plan" required>
+                      <m-form-item key="plan">
                         <m-radio-group m-bind="form.plan">
-                          <m-radio value="starter">Starter</m-radio>
-                          <m-radio value="professional">Professional</m-radio>
-                          <m-radio value="enterprise">Enterprise</m-radio>
+                          <legend>Plan</legend>
+                          <m-radio name="profile-plan" value="starter" required>Starter</m-radio>
+                          <m-radio name="profile-plan" value="professional">Professional</m-radio>
+                          <m-radio name="profile-plan" value="enterprise">Enterprise</m-radio>
                         </m-radio-group>
                       </m-form-item>
 
-                      <m-form-item label="Confidence">
+                      <m-form-item>
+                        <label class="m-form-item__label">Confidence
                         <m-slider
                           m-bind="form.confidence"
                           min="0"
                           max="100"
                           step="5"
                         ></m-slider>
+                        </label>
                       </m-form-item>
 
-                      <m-form-item label="Notes">
+                      <m-form-item>
+                        <label class="m-form-item__label" for="profile-notes">Notes</label>
                         <m-textarea
                           name="notes"
                           m-bind="form.notes"
                           placeholder="What are you building?"
-                        ></m-textarea>
+                        ><textarea id="profile-notes"></textarea></m-textarea>
                       </m-form-item>
 
                       <m-wrap gap="lg">
@@ -719,13 +732,13 @@
                 <m-card>
                   <m-stack gap="md">
                     <m-heading level="3">Date and time</m-heading>
-                    <m-form-item label="Date">
+                    <m-form-item><span class="m-form-item__label">Date</span>
                       <m-date-picker value="2026-08-26"></m-date-picker>
                     </m-form-item>
-                    <m-form-item label="Time">
+                    <m-form-item><span class="m-form-item__label">Time</span>
                       <m-time-picker value="18:30"></m-time-picker>
                     </m-form-item>
-                    <m-form-item label="Upload CSV">
+                    <m-form-item><span class="m-form-item__label">Upload CSV</span>
                       <m-upload accept=".csv" multiple></m-upload>
                     </m-form-item>
                   </m-stack>
@@ -789,13 +802,13 @@
                 <m-card>
                   <m-stack gap="md">
                     <m-heading level="3">Number, color, and rating</m-heading>
-                    <m-form-item label="Quantity">
+                    <m-form-item><span class="m-form-item__label">Quantity</span>
                       <m-input-number id="widget-number" value="2" min="0" max="10" aria-label="Quantity"></m-input-number>
                     </m-form-item>
-                    <m-form-item label="Accent">
+                    <m-form-item><span class="m-form-item__label">Accent</span>
                       <m-color-picker id="widget-color" value="#10b981"></m-color-picker>
                     </m-form-item>
-                    <m-form-item label="Rating">
+                    <m-form-item><span class="m-form-item__label">Rating</span>
                       <m-rating id="widget-rating" value="4"></m-rating>
                     </m-form-item>
                   </m-stack>

@@ -1,11 +1,15 @@
 import { createInput } from "../../dist/markup-ui-native-input.js"
+import { Form } from "../../dist/markup-ui-form.js"
 
 const form = document.querySelector("#places"), city = document.querySelector("#city")
 const events = document.querySelector("#events"), submission = document.querySelector("#submission")
 const input = createInput(document.querySelector("#city-input"))
-const coordinator = MarkupUIForm.createForm(form, { items: [{
+const coordinator = new Form()
+form.before(coordinator); coordinator.append(form)
+coordinator.items = [{
   key: "city", controls: [city], element: document.querySelector("#city-item"), feedback: document.querySelector("#city-error"),
-}] })
+}]
+coordinator.refresh()
 const choices = [
   { value: "London", label: "United Kingdom" }, { value: "Lisbon", label: "Portugal" },
   { value: "Lyon", label: "France" }, { value: "Paris", label: "France" }, { value: "Tokyo", label: "Japan" },

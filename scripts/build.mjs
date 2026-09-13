@@ -37,7 +37,7 @@ classicEntries.icon = "global.ts"
 classicEntries.typography = "global.ts"
 classicEntries.space = "global.ts"
 classicEntries.flex = "global.ts"
-const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500], ["select", 8_000]])
+const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500], ["select", 8_000], ["form", 8_250]])
 await generateComponentApi(root, [...viewComponents.keys()])
 
 function corePlugin(format) {
@@ -241,7 +241,7 @@ await Promise.all([
 await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
   const source = resolve(root, "src", "components", name, `${name}.css`)
   const output = resolve(dist, `markup-ui-${name}.css`)
-  if (name === "button" || name === "checkbox" || name === "radio") {
+  if (name === "button" || name === "checkbox" || name === "radio" || name === "form") {
     // Preserve authored CSS syntax while trimming distribution whitespace.
     const { code } = await transform(await readFile(source, "utf8"), {
       loader: "css",
@@ -371,8 +371,8 @@ const bundleBudgets = {
   "markup-ui-auto-complete.js": 4_500,
   "markup-ui-auto-complete.global.js": 4_500,
   "markup-ui-auto-complete.css": 1_000,
-  "markup-ui-form.js": 5_000,
-  "markup-ui-form.global.js": 5_000,
+  "markup-ui-form.js": 7_000,
+  "markup-ui-form.global.js": 7_000,
   "markup-ui-form.css": 1_250,
   "markup-ui-rate.js": 4_000,
   "markup-ui-rate.global.js": 4_000,

@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { createTimePicker, isTimePickerSupported } from "../src/components/time-picker/index.js"
 import { isDatePickerTypeSupported, createDatePicker } from "../src/components/date-picker/index.js"
 import type { NativeDateType } from "../src/components/date-picker/index.js"
-import { createForm } from "../src/components/form/index.js"
+import { coordinateForm as createForm } from "../src/components/form/controller.js"
 
 const helpers: { disconnect(): void }[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 20))

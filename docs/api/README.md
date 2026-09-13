@@ -21,6 +21,7 @@ in the target inventory.
 16. [Switch demo and API](../../demo/components/switch.html): one binary native owner, checked/default state, focus-safe loading, forms, labels and lifecycle.
 17. [InputNumber demo and API](../../demo/components/input-number.html): nullable numeric value, native drafts/default strings, constraints, step/clear intent, forms and lifecycle.
 18. [Select demo and API](../../demo/components/select.html): native string/null/array selection, option defaults, lists, forms, literal filtering and lifecycle.
+19. [Form demo and API](../../demo/components/form.html): native form association, submission/reset, item layout and abortable validation.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

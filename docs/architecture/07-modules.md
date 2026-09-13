@@ -1,6 +1,6 @@
 # 7. Small core and selectable components
 
-**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex, Input, Checkbox, Radio, Switch, InputNumber and Select, with explicit payload ceilings.
+**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex, Input, Checkbox, Radio, Switch, InputNumber, Select and Form, with explicit payload ceilings.
 The rollout continues component-by-component.**
 Follow the useful jQuery/plugin pattern: load one small core, then only the features the
 application needs. This is a packaging and extension pattern, not a dependency on jQuery.
@@ -135,6 +135,21 @@ JS/CSS ceiling, with new dependency-inclusive runtime ceilings of 10,500/11,000 
 These new totals account for separate-file gzip overhead rather than hiding the shared cost.
 No sibling ceiling, including InputNumber's tight 3,998-byte classic/1,000-byte CSS outputs,
 is changed.
+
+## Form delivery
+
+Form selects only core plus the family entry; the existing validation coordinator stays
+inside that entry. ESM imports `markup-ui-core.js`. Classic order is
+`markup-ui-core.global.js`, then `markup-ui-form.global.js`, with `markup-ui-form.css`.
+The three registered classes are Form, FormItem and FormItemGi. FormItemGi uses the existing
+`.m-form-grid` CSS semantics, not Grid registration. Demo Input/Switch assets are additional
+example selections, not Form dependencies.
+
+The approved Form ceilings are **7,000 gzip bytes per JavaScript format**, **8,250 including
+shared core**, and **1,250 for CSS**. Current measured ESM/classic family costs are 6,376/6,547,
+core-inclusive runtime costs are 7,359/7,587, and CSS is 1,152.
+The coordinator remains inside the family rather than being split solely to fit a per-file gate.
+Budget failures stop the build before its delivery manifest is written.
 
 ## References
 

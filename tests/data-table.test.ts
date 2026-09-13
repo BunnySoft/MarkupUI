@@ -4,7 +4,7 @@ import { join } from "node:path"
 import { gzipSync } from "node:zlib"
 import { createDataTable } from "../src/components/data-table/index.js"
 import type { DataTableController, DataTableOptions } from "../src/components/data-table/index.js"
-import { createForm } from "../src/components/form/index.js"
+import { coordinateForm as createForm } from "../src/components/form/controller.js"
 import { CheckboxGroup } from "../src/components/checkbox/index.js"
 
 const controllers: DataTableController[] = []

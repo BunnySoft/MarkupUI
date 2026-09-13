@@ -1,8 +1,12 @@
 import { createInput } from "../../dist/markup-ui-native-input.js"
+import { Form } from "../../dist/markup-ui-form.js"
 
 const editor = document.querySelector("#message"), form = document.querySelector("#compose-form")
 const entry = createInput(document.querySelector("#message-input"))
-const validation = MarkupUIForm.createForm(form, { items: [{ key: "message", controls: [editor], feedback: document.querySelector("#message-error") }] })
+const validation = new Form()
+form.before(validation); validation.append(form)
+validation.items = [{ key: "message", controls: [editor], feedback: document.querySelector("#message-error") }]
+validation.refresh()
 const people = [{ value: "alice", label: "Alice Example" }, { value: "alex", label: "Alex Example" }, { value: "blocked", label: "Unavailable person", disabled: true }]
 const topics = [{ value: "docs", label: "docs" }, { value: "forms", label: "forms" }, { value: "native", label: "native" }]
 const mention = MarkupUIMention.createMention(editor, {

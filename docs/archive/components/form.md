@@ -1,6 +1,8 @@
 # Form, FormItem and FormItemGi
 
-> **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
+> **Historical reference.** The factory and legacy registrations described below have been replaced.
+> See the current [Form/FormItem/FormItemGi demo and source-generated API](../../../demo/components/form.html).
+> This archived page is not the current design; use the linked demo/API for the completed rewrite.
 
 **🟢 Verified retained native scope:** optional `createForm`, explicit item/field/feedback mappings,
 native Constraint Validation, small abortable custom checks and external item/grid CSS.

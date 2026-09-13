@@ -38,7 +38,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Date Picker | `DatePicker` | Contract pending |
 | Dynamic Input | `DynamicInput` | Contract pending |
 | Dynamic Tags | `DynamicTags` | Contract pending |
-| Form | `Form`, `FormItem`, `FormItemGi` | Contract pending |
+| Form | `Form`, `FormItem`, `FormItemGi` | [Demo and API](../../demo/components/form.html) |
 | Input | `Input`, `Textarea`, `InputGroup`, `InputGroupLabel`; native editing/form owners | [Demo and API](../../demo/components/input.html) |
 | Input Number | `InputNumber`; nullable live number, native drafts/defaults/stepping, labels and forms | [Demo and API](../../demo/components/input-number.html) |
 | Input OTP | `InputOtp` | Contract pending |

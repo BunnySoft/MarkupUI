@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { createDynamicTags } from "../src/components/dynamic-tags/index.js"
 import type { DynamicTagsOptions } from "../src/components/dynamic-tags/index.js"
 import { createDynamicInput } from "../src/components/dynamic-input/index.js"
-import { createForm } from "../src/components/form/index.js"
+import { coordinateForm as createForm } from "../src/components/form/controller.js"
 
 const helpers: { disconnect(): void }[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 25))

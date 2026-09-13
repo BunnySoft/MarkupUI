@@ -86,6 +86,14 @@ there is no public `createSelect`/`SelectController` facade. Select does not clo
 options or retain the aggregate's legacy `MSelect` registration. The remaining `m-option`
 belongs only to unmigrated Autocomplete, not Select.
 
+Form's native-owner API lives in `src/components/form/form.ts`, with FormItem
+and FormItemGi in `item.ts`. `controller.ts` retains the existing explicit native-field
+validation coordinator, including snapshots, abortable local validators and reversible
+feedback. It is bundled into Form, not emitted as a budget-only shared dependency.
+`FormLayout` only shares the family's two presentation accessors; it is not a provider.
+The old aggregate MForm/MFormItem classes and public factory are removed. Native labels,
+legends, controls and forms remain the semantic owners; see the [demo/API](../../demo/components/form.html).
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed

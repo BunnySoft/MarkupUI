@@ -44,6 +44,12 @@ those consumers are not migrated or registered by Select. Each Select JS ceiling
 The initial batch establishes the pattern; the remaining inventory requires its own
 contracts and dependency-aware implementation sequence.
 
+Form/FormItem/FormItemGi are implemented with a [native-owner demo/API](../../demo/components/form.html)
+and explicitly accounted shared-core delivery.
+The implementation retains native association, submission/reset and the existing abortable
+validation/feedback coordinator. FormItem is a native label/control/fieldset layout and
+mapping boundary, not a schema or a second validation engine.
+
 ## References
 
 - [Previous implementation guides](../archive/components/README.md)

@@ -1,6 +1,10 @@
+import { Form } from "../../dist/markup-ui-form.js"
+
 const root = document.querySelector("#accent-picker"), form = document.querySelector("#appearance")
 const helper = MarkupUIColorPicker.createColorPicker(root)
-const validation = MarkupUIForm.createForm(form, { items: [] })
+const validation = new Form()
+form.before(validation); validation.append(form)
+validation.items = []; validation.refresh()
 const events = document.querySelector("#events"), output = document.querySelector("#submission")
 let inputs = 0, changes = 0
 helper.control.addEventListener("input", () => { inputs++; events.textContent = `Color input events: ${inputs}; change events: ${changes}. Not framework confirm/complete callbacks.` })

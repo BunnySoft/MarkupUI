@@ -3,8 +3,8 @@ import { createCascader } from "../src/components/cascader/index.js"
 import type { CascaderController, CascaderOptions } from "../src/components/cascader/index.js"
 import type { TreeLoadResult } from "../src/components/tree/index.js"
 import { createTree } from "../src/components/tree/index.js"
-import { createSelect } from "../src/components/select/index.js"
-import { createForm } from "../src/components/form/index.js"
+import { createSelect } from "../src/components/native-select.js"
+import { coordinateForm as createForm } from "../src/components/form/controller.js"
 
 const helpers: CascaderController[] = []
 const wait = () => new Promise(resolve => setTimeout(resolve, 20))

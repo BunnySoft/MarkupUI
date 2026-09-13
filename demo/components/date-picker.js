@@ -1,3 +1,5 @@
+import { Form } from "../../dist/markup-ui-form.js"
+
 const form = document.querySelector("#planning"), events = document.querySelector("#events")
 const pickers = new Map(), unsupported = []
 for (const root of document.querySelectorAll("[data-date-picker]")) {
@@ -11,11 +13,14 @@ document.querySelector("#capabilities").textContent = unsupported.length
   ? `Unsupported native modes: ${[...new Set(unsupported)].join(", ")}. Those fields remain native/text fallback; no equivalent calendar validation is claimed.`
   : "Native date/month/week/datetime-local parsing and numeric ordering probes passed. No native popup UI or timezone conversion is claimed."
 const trip = pickers.get("trip")
-const validation = MarkupUIForm.createForm(form, { items: trip ? [{
+const validation = new Form()
+form.before(validation); validation.append(form)
+validation.items = trip ? [{
   key: "trip", controls: trip.inputs, feedback: document.querySelector("#trip-error"),
   validator: () => trip.state.partial ? { message: "Complete both date endpoints." }
     : trip.state.ordered === false ? { message: "End date must not precede start." } : null,
-}] : [] })
+}] : []
+validation.refresh()
 function apply(id, value) { pickers.get(id)?.setValue(value); validation.refresh() }
 document.querySelector("#today").addEventListener("click", () => {
   const local = new Date()

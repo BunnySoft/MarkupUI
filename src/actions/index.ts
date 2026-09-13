@@ -67,8 +67,8 @@ registerAction("close", ({ element, parameters }) => {
   if (typeof method === "function") Reflect.apply(method, target, [])
 })
 
-registerAction("validate", ({ element }) => {
+registerAction("validate", async ({ element }) => {
   const form = element.closest("m-form")
   const method = form === null ? undefined : Reflect.get(form, "validate")
-  if (typeof method === "function") Reflect.apply(method, form, [])
+  if (typeof method === "function") await Reflect.apply(method, form, [])
 })

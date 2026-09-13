@@ -4,8 +4,8 @@ import { join } from "node:path"
 import { gzipSync } from "node:zlib"
 import { createTransfer } from "../src/components/transfer/index.js"
 import type { TransferController, TransferOptions } from "../src/components/transfer/index.js"
-import { createSelect } from "../src/components/select/index.js"
-import { createForm } from "../src/components/form/index.js"
+import { createSelect } from "../src/components/native-select.js"
+import { coordinateForm as createForm } from "../src/components/form/controller.js"
 
 const helpers: TransferController[] = []
 const wait = () => new Promise(resolve => setTimeout(resolve, 20))

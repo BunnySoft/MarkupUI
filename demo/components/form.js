@@ -1,15 +1,17 @@
-import { createInput } from "../../dist/markup-ui-native-input.js"
+import "../../dist/markup-ui-input.js"
 import "../../dist/markup-ui-switch.js"
+import "../../dist/markup-ui-form.js"
+import { loadComponentApi } from "../component-api.js"
 
 const form = document.querySelector("#profile")
 const field = id => document.getElementById(id)
 const status = field("status"), submission = field("submission")
-const input = createInput(field("name-input"))
 const item = (key, controls, validator) => ({
   key, controls, element: field(`${key}-item`), feedback: field(`${key}-error`),
   ...(validator ? { validator } : {}),
 })
-const helper = MarkupUIForm.createForm(form, { items: [
+const helper = field("profile-root")
+helper.items = [
   item("consent", [field("consent-switch").native]),
   item("name", [field("name")], ({ fields, signal }) => new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
@@ -28,7 +30,8 @@ const helper = MarkupUIForm.createForm(form, { items: [
   item("topics", [...form.querySelectorAll('input[name="topics[]"]')], ({ fields, controls }) =>
     fields.some(entry => controls.includes(entry.control) && entry.eligible && entry.checked)
       ? null : { message: "Choose at least one enabled topic." }),
-] })
+]
+helper.refresh()
 let intent = 0, submissions = 0
 function announce(result) {
   status.textContent = result.status === "aborted" || !result.current ? "Validation cancelled; check the current values."
@@ -67,9 +70,14 @@ field("cancel").addEventListener("click", () => {
 })
 field("rtl").addEventListener("click", () => { document.documentElement.dir = document.documentElement.dir === "rtl" ? "ltr" : "rtl" })
 field("disconnect").addEventListener("click", () => {
-  ++intent; helper.disconnect(); input.disconnect()
+  ++intent; helper.disconnect()
   form.removeEventListener("submit", onSubmit)
   status.textContent = "Helpers disconnected. Native controls, values, defaults and validation remain."
   for (const id of ["validate", "report", "restore", "cancel", "disconnect"]) field(id).hidden = true
 })
 for (const id of ["validate", "report", "restore", "cancel", "disconnect"]) field(id).hidden = false
+field("external-form").addEventListener("submit", event => {
+  event.preventDefault()
+  field("external-status").textContent = JSON.stringify([...new FormData(event.currentTarget, event.submitter)])
+})
+await loadComponentApi(document.querySelector("#form-api"), "../api/form.json")

@@ -1,3 +1,5 @@
+import { Form } from "../../dist/markup-ui-form.js"
+
 const form = document.querySelector("#schedule"), events = document.querySelector("#events")
 const supported = MarkupUITimePicker.isTimePickerSupported(document), pickers = new Map()
 if (supported) for (const root of document.querySelectorAll("[data-time-picker]")) {
@@ -5,7 +7,9 @@ if (supported) for (const root of document.querySelectorAll("[data-time-picker]"
   root.addEventListener("m:time-picker-clear", () => { events.textContent = "Native time cleared; empty is not a hidden null or midnight value." })
   root.addEventListener("m:time-picker-error", () => { events.textContent = "Unsupported native time anatomy/value; fields were not silently normalized." })
 }
-const validation = MarkupUIForm.createForm(form, { items: [] })
+const validation = new Form()
+form.before(validation); validation.append(form)
+validation.items = []; validation.refresh()
 const meeting = pickers.get("meeting")
 document.querySelector("#capability").textContent = supported
   ? `Native parsing/precision probes passed. showPicker method present: ${typeof meeting.control.showPicker === "function"}. No chooser UI/open-state/format guarantee is inferred.`

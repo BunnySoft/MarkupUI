@@ -1,4 +1,5 @@
 import { createInput } from "../../dist/markup-ui-native-input.js"
+import { Form } from "../../dist/markup-ui-form.js"
 
 const root = document.querySelector("#properties"), form = document.querySelector("#settings")
 const state = document.querySelector("#state"), outcome = document.querySelector("#outcome")
@@ -15,7 +16,9 @@ const collection = MarkupUIDynamicInput.createDynamicInput(root, {
     }
   },
 })
-const coordinator = MarkupUIForm.createForm(form, { items: [] })
+const coordinator = new Form()
+form.before(coordinator); coordinator.append(form)
+coordinator.items = []; coordinator.refresh()
 function summary() {
   state.textContent = `Rows: ${collection.rows.map(row => row.key).join(", ")}. Bounds: ${collection.min}–${collection.max}. Active Input resources: ${resources}.`
 }

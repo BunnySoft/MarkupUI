@@ -1,5 +1,5 @@
 import { createPopselect } from "../../dist/markup-ui-popselect.js"
-import { createForm } from "../../dist/markup-ui-form.js"
+import { Form } from "../../dist/markup-ui-form.js"
 
 const formElement = document.querySelector("#preferences-form")
 const feedback = document.querySelector("#feedback")
@@ -7,7 +7,10 @@ const single = createPopselect(document.querySelector("#work-mode"), { placement
 const multiple = createPopselect(document.querySelector("#channels"), { placement: "bottom-start" })
 const nested = createPopselect(document.querySelector("#nested"), { placement: "right-start" })
 const choices = [single, multiple, nested]
-const form = createForm(formElement, { items: choices.map(choice => ({ key: choice.control.name, controls: [choice.control] })) })
+const form = new Form()
+formElement.before(form); form.append(formElement)
+form.items = choices.map(choice => ({ key: choice.control.name, controls: [choice.control] }))
+form.refresh()
 let changes = 0, additions = 0
 const show = detail => { feedback.textContent = JSON.stringify(detail, null, 2) }
 const value = choice => choice.connected ? choice.value : choice.control.multiple

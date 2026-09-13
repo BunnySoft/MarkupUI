@@ -6,7 +6,7 @@ import { createTreeSelect } from "../src/components/tree-select/index.js"
 import type { TreeSelectController, TreeSelectOptions } from "../src/components/tree-select/index.js"
 import { createTree } from "../src/components/tree/index.js"
 import { createSelect } from "../src/components/native-select.js"
-import { createForm } from "../src/components/form/index.js"
+import { coordinateForm as createForm } from "../src/components/form/controller.js"
 
 const controllers: TreeSelectController[] = []
 const pickerCss = readFileSync(resolve("src", "components", "tree-select", "tree-select.css"), "utf8")

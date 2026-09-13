@@ -22,8 +22,6 @@
 m-app,m-header,m-main,m-section,m-stack,m-row,m-wrap,m-center,m-grid,m-card,m-card-header,m-card-content,m-card-footer,m-include,m-tabs,m-tab,m-accordion,m-accordion-item,m-alert,m-field,m-form,m-form-item,m-dialog-header,m-dialog-content,m-dialog-footer,m-drawer-header,m-drawer-content,m-drawer-footer,m-divider,m-progress,m-skeleton,m-avatar,m-empty,m-tag,m-button,m-button-group,m-tooltip,m-popover,m-popover-trigger,m-popover-content,m-spin,m-message,m-notification,m-overlay-host,m-menu,m-menu-item,m-pagination,m-steps,m-step,m-list,m-list-item,m-descriptions,m-description-item,m-statistic,m-tree,m-tree-node{box-sizing:border-box;min-width:0;min-height:0}
 m-header,m-main,m-section,m-field{display:block}
 m-field{display:grid;gap:var(--m-space-xs)}m-field>[data-m-label]{font-size:.875em;font-weight:600}
-m-form{display:block}m-form-item{display:grid;gap:var(--m-space-xs)}m-form-item>[data-m-label]{font-size:.875em;font-weight:600}m-form-item>[data-m-error]{color:#dc2626;font-size:.75em}m-form-item[invalid] m-autocomplete>input{border-color:#dc2626}
-m-form-item[invalid] :is(m-input,m-textarea){--m-input-border:#dc2626;--m-input-focus:#dc2626}
 m-stack,m-row,m-wrap,m-center{display:flex}
 m-stack{flex-direction:column}m-row{flex-direction:row}m-wrap{flex-wrap:wrap}m-center{align-items:center;justify-content:center}m-grid{display:grid}
 [gap="xs"]{gap:var(--m-space-xs)}[gap="sm"]{gap:var(--m-space-sm)}[gap="md"]{gap:var(--m-space-md)}[gap="lg"]{gap:var(--m-space-lg)}

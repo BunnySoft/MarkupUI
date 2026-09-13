@@ -1,3 +1,5 @@
+import { Form } from "../../dist/markup-ui-form.js"
+
 const root = document.querySelector("#topics"), form = document.querySelector("#tags-form")
 const editor = document.querySelector("#draft"), events = document.querySelector("#events")
 const tags = MarkupUIDynamicTags.createDynamicTags(root, {
@@ -7,10 +9,13 @@ const tags = MarkupUIDynamicTags.createDynamicTags(root, {
     return value
   },
 })
-const validation = MarkupUIForm.createForm(form, { items: [{
+const validation = new Form()
+form.before(validation); validation.append(form)
+validation.items = [{
   key: "tags", controls: [editor], feedback: document.querySelector("#tags-error"),
   validator: () => tags.values.length ? null : { message: "Add at least one tag before this local inspection." },
-}] })
+}]
+validation.refresh()
 let changes = 0, intent = 0
 root.addEventListener("m:dynamic-tags-change", event => {
   validation.refresh()

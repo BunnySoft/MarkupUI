@@ -1,11 +1,15 @@
 import { createInput } from "../../dist/markup-ui-native-input.js"
+import { Form } from "../../dist/markup-ui-form.js"
 
 const field = document.querySelector("#otp"), form = document.querySelector("#verification")
 const input = createInput(document.querySelector("#otp-input"))
 const otp = MarkupUIInputOtp.createInputOtp(field, { status: document.querySelector("#otp-status") })
-const coordinator = MarkupUIForm.createForm(form, { items: [{
+const coordinator = new Form()
+form.before(coordinator); coordinator.append(form)
+coordinator.items = [{
   key: "code", controls: [field], element: document.querySelector("#otp-item"), feedback: document.querySelector("#otp-error"),
-}] })
+}]
+coordinator.refresh()
 let completions = 0
 field.addEventListener("m:input-otp-complete", () => {
   document.querySelector("#completion").textContent = `Completion signals: ${++completions}. Format only; no authentication or submission.`

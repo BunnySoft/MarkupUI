@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { createMention } from "../src/components/mention/index.js"
 import type { MentionOption, MentionOptions } from "../src/components/mention/index.js"
 import { createInput } from "../src/components/native-input.js"
-import { createForm } from "../src/components/form/index.js"
+import { coordinateForm as createForm } from "../src/components/form/controller.js"
 
 const helpers: { disconnect(): void }[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 20))

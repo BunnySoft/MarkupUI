@@ -28,6 +28,7 @@ import { Radio, RadioGroup, RadioButton } from "../src/components/radio/index.js
 import { Switch } from "../src/components/switch/index.js"
 import { InputNumber } from "../src/components/input-number/index.js"
 import { Select } from "../src/components/select/index.js"
+import { Form, FormItem, FormItemGi } from "../src/components/form/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -56,6 +57,10 @@ describe("native elements", () => {
     expect(customElements.get("m-input")).toBe(Input)
     expect(customElements.get("m-select")).toBe(Select)
     expect(builtInElementNames).not.toContain("m-select")
+    for (const Type of [Form, FormItem, FormItemGi]) {
+      expect(customElements.get(Type.tag)).toBe(Type)
+      expect(builtInElementNames).not.toContain(Type.tag)
+    }
     expect(customElements.get("m-checkbox")).toBe(Checkbox)
     expect(customElements.get("m-checkbox-group")).toBe(CheckboxGroup)
     expect(builtInElementNames).not.toContain("m-checkbox")
@@ -223,8 +228,10 @@ describe("native elements", () => {
   it("supports form validation and advanced selection controls", async () => {
     document.body.innerHTML = `
       <m-form>
-        <m-form-item label="Name" required minlength="3">
-          <m-input></m-input>
+        <m-form-item key="name">
+          <label for="native-name">Name</label>
+          <m-input required minlength="3"><input id="native-name"></m-input>
+          <p class="m-form-item__feedback" id="native-error" hidden></p>
         </m-form-item>
       </m-form>
       <m-radio-group value="b">
@@ -238,12 +245,13 @@ describe("native elements", () => {
         <m-option value="Grace">Grace</m-option>
       </m-autocomplete>`
     await Promise.resolve()
-    const form = document.querySelector("m-form") as HTMLElement & { validate(): boolean }
+    await new Promise(resolve => setTimeout(resolve, 0))
+    const form = document.querySelector("m-form") as Form
     const input = document.querySelector("m-input") as HTMLElement & { value: string }
-    expect(form.validate()).toBe(false)
-    expect(document.querySelector("m-form-item")?.hasAttribute("invalid")).toBe(true)
+    expect((await form.validate()).status).toBe("invalid")
+    expect(document.querySelector("m-form-item")?.getAttribute("data-form-status")).toBe("error")
     input.value = "Ada"
-    expect(form.validate()).toBe(true)
+    expect((await form.validate()).status).toBe("valid")
     const radios = [...document.querySelectorAll("m-radio")] as Array<HTMLElement & {
       checked: boolean
     }>
@@ -669,15 +677,17 @@ describe("optional state and actions", () => {
     radio.dispatchEvent(new CustomEvent("m:change", { detail: false })); expect(store.get("checked")).toBe(true)
     dispose(); radio.checked = false; radio.click(); expect(changes).toHaveBeenCalledTimes(2)
   })
-  it("validates canonical RadioGroup selection through the retained form-item bridge", async () => {
-    document.body.innerHTML = '<m-form><m-form-item label="Plan" required><m-radio-group><legend>Plan</legend><m-radio name="plan" value="basic">Basic</m-radio></m-radio-group></m-form-item></m-form>'
-    await Promise.resolve()
-    const form = document.querySelector("m-form") as HTMLElement & { validate(): boolean }
+  it("validates actual RadioGroup native participants through canonical FormItem", async () => {
+    document.body.innerHTML = '<m-form><m-form-item key="plan"><m-radio-group><legend>Plan</legend><m-radio name="plan" value="basic" required>Basic</m-radio></m-radio-group><p class="m-form-item__feedback" id="plan-error" hidden></p></m-form-item></m-form>'
+    await new Promise(resolve => setTimeout(resolve, 0))
+    const form = document.querySelector("m-form") as Form
     const group = document.querySelector<RadioGroup>("m-radio-group")!
-    expect(form.validate()).toBe(false); expect(group.native.getAttribute("aria-invalid")).toBe("true")
-    expect(group.native.getAttribute("aria-describedby")).toBeTruthy()
+    const control = group.querySelector<Radio>("m-radio")!.native
+    expect((await form.validate()).status).toBe("invalid"); expect(control.getAttribute("aria-invalid")).toBe("true")
+    expect(control.getAttribute("aria-describedby")).toBe("plan-error")
+    expect(group.native.hasAttribute("aria-invalid")).toBe(false)
     group.value = "basic"
-    expect(form.validate()).toBe(true); expect(group.native.getAttribute("aria-invalid")).toBe("false")
+    expect((await form.validate()).status).toBe("valid"); expect(control.hasAttribute("aria-invalid")).toBe(false)
   })
   it("binds only the owning RadioGroup and reads native value rather than event detail", async () => {
     document.body.innerHTML = `<m-radio-group m-bind="outer"><legend>Outer</legend>
@@ -712,18 +722,18 @@ describe("optional state and actions", () => {
     expect(store.get("enabled")).toBe(false)
     dispose(); box.click(); expect(store.get("enabled")).toBe(false)
   })
-  it("keeps legacy FormItem validation on checked and forwards native error descriptions", async () => {
-    document.body.innerHTML = '<m-form><m-form-item label="Consent" required><m-checkbox value="yes">Consent</m-checkbox></m-form-item></m-form>'
-    await Promise.resolve()
-    const form = document.querySelector("m-form") as HTMLElement & { validate(): boolean }
+  it("keeps canonical FormItem validation on native checked state and error descriptions", async () => {
+    document.body.innerHTML = '<m-form><m-form-item key="consent"><m-checkbox value="yes" required>Consent</m-checkbox><p class="m-form-item__feedback" id="consent-error" hidden></p></m-form-item></m-form>'
+    await new Promise(resolve => setTimeout(resolve, 0))
+    const form = document.querySelector("m-form") as Form
     const box = document.querySelector<Checkbox>("m-checkbox")!
-    expect(form.validate()).toBe(false)
+    expect((await form.validate()).status).toBe("invalid")
     expect(box.native.getAttribute("aria-invalid")).toBe("true")
-    expect(box.native.getAttribute("aria-describedby")).toBe(document.querySelector("[data-m-error]")!.id)
+    expect(box.native.getAttribute("aria-describedby")).toBe("consent-error")
     expect(box.value).toBe("yes")
     box.checked = true
-    expect(form.validate()).toBe(true)
-    expect(box.native.getAttribute("aria-invalid")).toBe("false")
+    expect((await form.validate()).status).toBe("valid")
+    expect(box.native.hasAttribute("aria-invalid")).toBe(false)
   })
   it("binds explicit Checkbox submission value and computed group selection without child leakage", async () => {
     document.body.innerHTML = `<m-checkbox m-bind="submission" m-bind-property="value" checked>String</m-checkbox>

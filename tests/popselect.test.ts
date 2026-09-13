@@ -5,7 +5,7 @@ import { createPopselect } from "../src/components/popselect/index.js"
 import type { PopselectController, PopselectOptions } from "../src/components/popselect/index.js"
 import { createSelect } from "../src/components/native-select.js"
 import { createPopover } from "../src/components/popover/index.js"
-import { createForm } from "../src/components/form/index.js"
+import { coordinateForm as createForm } from "../src/components/form/controller.js"
 
 describe("audited Popselect context styles", () => {
   const css = readFileSync("src/components/popselect/popselect.css", "utf8")
