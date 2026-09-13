@@ -41,7 +41,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Form | `Form`, `FormItem`, `FormItemGi` | [Demo and API](../../demo/components/form.html) |
 | Input | `Input`, `Textarea`, `InputGroup`, `InputGroupLabel`; native editing/form owners | [Demo and API](../../demo/components/input.html) |
 | Input Number | `InputNumber`; nullable live number, native drafts/defaults/stepping, labels and forms | [Demo and API](../../demo/components/input-number.html) |
-| Input OTP | `InputOtp` | Contract pending |
+| Input OTP | `InputOtp` | [Demo and API](../../demo/components/input-otp.html) |
 | Mention | `Mention` | Contract pending |
 | Radio | `Radio`, `RadioGroup`, `RadioButton`; native exclusivity, labels, forms and computed selection | [Demo and API](../../demo/components/radio.html) |
 | Rate | `Rate` | [Demo and API](../../demo/components/rate.html) |

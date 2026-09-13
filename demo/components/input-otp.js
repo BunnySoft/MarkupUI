@@ -1,39 +1,57 @@
-import { createInput } from "../../dist/markup-ui-native-input.js"
-import { Form } from "../../dist/markup-ui-form.js"
+import { loadComponentApi } from "../component-api.js"
 
-const field = document.querySelector("#otp"), form = document.querySelector("#verification")
-const input = createInput(document.querySelector("#otp-input"))
-const otp = MarkupUIInputOtp.createInputOtp(field, { status: document.querySelector("#otp-status") })
-const coordinator = new Form()
-form.before(coordinator); coordinator.append(form)
-coordinator.items = [{
-  key: "code", controls: [field], element: document.querySelector("#otp-item"), feedback: document.querySelector("#otp-error"),
-}]
-coordinator.refresh()
-let completions = 0
-field.addEventListener("m:input-otp-complete", () => {
-  document.querySelector("#completion").textContent = `Completion signals: ${++completions}. Format only; no authentication or submission.`
-})
-function inspect(event) {
-  event.preventDefault()
-  const fields = new FormData(form, event.submitter)
-  document.querySelector("#submission").textContent = `Local submission prevented. Named code fields: ${fields.getAll("code").length}. No code sent, logged or displayed.`
+function initialize() {
+  const api = globalThis.MarkupUIInputOtp
+  if (!api) throw new Error("InputOtp runtime did not load.")
+  void loadComponentApi(document.getElementById("input-otp-api"), new URL("../api/input-otp.json", import.meta.url))
+
+  const basicOtp = document.getElementById("basic-otp")
+  const basicStatus = document.getElementById("basic-status")
+  const completeStatus = document.getElementById("complete-status")
+  const clearBasic = document.getElementById("clear-basic")
+  const fillBasic = document.getElementById("fill-basic")
+
+  if (basicOtp) {
+    basicOtp.addEventListener("m:change", event => {
+      const detail = event.detail
+      if (basicStatus) basicStatus.textContent = `Current value: ${detail?.value || "(empty)"}`
+      if (completeStatus && !detail?.value) completeStatus.textContent = "Status: Incomplete"
+    })
+    basicOtp.addEventListener("m:complete", event => {
+      const detail = event.detail
+      if (completeStatus) completeStatus.textContent = `Status: Complete (${detail?.value})`
+    })
+  }
+
+  clearBasic?.addEventListener("click", () => {
+    if (basicOtp) {
+      basicOtp.clear()
+      if (basicStatus) basicStatus.textContent = "Current value: (empty)"
+      if (completeStatus) completeStatus.textContent = "Status: Incomplete"
+    }
+  })
+
+  fillBasic?.addEventListener("click", () => {
+    if (basicOtp) {
+      basicOtp.value = "123456"
+      if (basicStatus) basicStatus.textContent = "Current value: 123456"
+      if (completeStatus) completeStatus.textContent = "Status: Complete (123456)"
+    }
+  })
+
+  const maskOtp = document.getElementById("mask-otp")
+  const toggleMask = document.getElementById("toggle-mask")
+  toggleMask?.addEventListener("click", () => {
+    if (maskOtp) maskOtp.mask = !maskOtp.mask
+  })
+
+  const disabledOtp = document.getElementById("disabled-otp")
+  const toggleDisabled = document.getElementById("toggle-disabled")
+  toggleDisabled?.addEventListener("click", () => {
+    if (disabledOtp) disabledOtp.disabled = !disabledOtp.disabled
+  })
 }
-form.addEventListener("submit", inspect)
-function refresh() { input.refresh(); otp.refresh(); coordinator.refresh() }
-document.querySelector("#dummy").addEventListener("click", () => { input.setValue("001234"); refresh() })
-document.querySelector("#clear").addEventListener("click", () => { input.setValue(""); refresh() })
-document.querySelector("#mask").addEventListener("click", () => {
-  field.type = field.type === "password" ? "text" : "password"; refresh()
-})
-document.querySelector("#readonly").addEventListener("click", () => { field.readOnly = !field.readOnly; refresh() })
-document.querySelector("#disable").addEventListener("click", () => { field.disabled = !field.disabled; refresh() })
-document.querySelector("#cancel").addEventListener("click", () => { form.addEventListener("reset", event => event.preventDefault(), { once: true }) })
-document.querySelector("#validate").addEventListener("click", () => coordinator.reportValidity())
-document.querySelector("#rtl").addEventListener("click", () => { document.documentElement.dir = document.documentElement.dir === "rtl" ? "ltr" : "rtl" })
-const tools = ["dummy", "clear", "mask", "readonly", "disable", "cancel", "validate", "disconnect"]
-document.querySelector("#disconnect").addEventListener("click", () => {
-  otp.disconnect(); input.disconnect(); coordinator.disconnect(); form.removeEventListener("submit", inspect)
-  tools.forEach(id => { document.getElementById(id).hidden = true })
-})
-tools.forEach(id => { document.getElementById(id).hidden = false })
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initialize, { once: true })
+else initialize()
+
