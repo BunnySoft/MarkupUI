@@ -50,7 +50,7 @@ export function createVirtualList<T>(viewport: HTMLElement, options: VirtualList
   const document = viewport?.ownerDocument, view = document?.defaultView
   if (!view || !(viewport instanceof view.HTMLElement) || !viewport.isConnected
     || viewport.getRootNode() !== document
-    || !["div", "section"].includes(viewport.localName)
+    || !["div", "section", "m-virtual-list"].includes(viewport.localName)
     || !viewport.classList.contains("m-virtual-list")) throw new TypeError("Use a connected native div/section.m-virtual-list viewport.")
   if (!options || typeof options !== "object" || Array.isArray(options)
     || Object.keys(options).some(key => !["items", "rowSize", "overscan", "key", "render", "update", "dispose"].includes(key))

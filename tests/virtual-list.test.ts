@@ -2,7 +2,10 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createVirtualList, virtualWindow } from "../src/components/virtual-list/index.js"
+import { VirtualList, createVirtualList, registerVirtualList, virtualWindow } from "../src/components/virtual-list/index.js"
+import * as virtualListApi from "../src/components/virtual-list/index.js"
+import { ViewElement } from "../src/core/index.js"
+import { generateComponentApi } from "../scripts/component-api.mjs"
 import type { VirtualListController, VirtualListOptions } from "../src/components/virtual-list/index.js"
 
 interface Item { id: number; text: string }
@@ -333,5 +336,180 @@ describe("failure, scheduling and teardown", () => {
     const a = fixture(), b = fixture(); a.helper.scrollTo({ index: 50000 })
     expect(b.helper.state.start).toBe(0); a.root.remove()
     expect(() => a.helper.refresh()).toThrow("anatomy"); expect(b.helper.connected).toBe(true)
+  })
+})
+
+describe("canonical VirtualList ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(virtualListApi.VirtualList).toBe(VirtualList)
+    expect(VirtualList.tag).toBe("m-virtual-list")
+    expect(ViewElement.prototype.isPrototypeOf(VirtualList.prototype)).toBe(true)
+    expect(customElements.get("m-virtual-list")).toBe(VirtualList)
+    expect(VirtualList.observedAttributes).toEqual(["item-size", "height"])
+    expect(() => registerVirtualList()).not.toThrow()
+
+    const define = vi.fn()
+    expect(() =>
+      registerVirtualList({
+        get: name => (name === "m-virtual-list" ? (class extends HTMLElement {} as any) : undefined),
+        define,
+      }),
+    ).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("handles typed properties, defaults and validation", () => {
+    const list = document.createElement("m-virtual-list") as VirtualList
+    expect(list).toBeInstanceOf(VirtualList)
+    expect(list.itemSize).toBe(40)
+    expect(list.height).toBe("")
+
+    list.itemSize = 50
+    expect(list.itemSize).toBe(50)
+    expect(list.getAttribute("item-size")).toBe("50")
+
+    list.setAttribute("item-size", "32")
+    expect(list.itemSize).toBe(32)
+
+    list.removeAttribute("item-size")
+    expect(list.itemSize).toBe(40)
+
+    expect(() => { list.itemSize = -10 }).toThrow(RangeError)
+    expect(() => { list.itemSize = NaN }).toThrow(RangeError)
+    expect(() => { (list as any).itemSize = "invalid" }).toThrow(RangeError)
+
+    list.setAttribute("item-size", "not-a-number")
+    expect(() => list.itemSize).toThrow(RangeError)
+    list.removeAttribute("item-size")
+
+    list.height = "320px"
+    expect(list.height).toBe("320px")
+    expect(list.getAttribute("height")).toBe("320px")
+
+    list.height = 200
+    expect(list.height).toBe("200")
+    expect(list.getAttribute("height")).toBe("200")
+
+    list.height = ""
+    expect(list.height).toBe("")
+    expect(list.hasAttribute("height")).toBe(false)
+
+    expect(() => { (list as any).height = {} }).toThrow(RangeError)
+  })
+
+  it("synchronizes class, dataset and CSS variables on mount and attribute changes", () => {
+    const list = document.createElement("m-virtual-list") as VirtualList
+    list.height = "300px"
+    list.itemSize = 48
+    document.body.append(list)
+
+    expect(list.classList.contains("m-virtual-list")).toBe(true)
+    expect(list.dataset.mVirtualList).toBe("")
+    expect(list.style.getPropertyValue("--m-virtual-list-height")).toBe("300px")
+    expect(list.style.getPropertyValue("--m-virtual-row-size")).toBe("48px")
+
+    list.height = "400px"
+    expect(list.style.getPropertyValue("--m-virtual-list-height")).toBe("400px")
+
+    list.height = 250
+    expect(list.style.getPropertyValue("--m-virtual-list-height")).toBe("250px")
+
+    list.itemSize = 36
+    expect(list.style.getPropertyValue("--m-virtual-row-size")).toBe("36px")
+
+    list.removeAttribute("height")
+    expect(list.style.getPropertyValue("--m-virtual-list-height")).toBe("")
+
+    list.remove()
+  })
+
+  it("works seamlessly with createVirtualList on an m-virtual-list element", () => {
+    const root = document.createElement("m-virtual-list") as VirtualList
+    root.height = "320px"
+    root.itemSize = 32
+    root.style.overflowY = "auto"
+    root.innerHTML = '<ul class="m-virtual-list__items"></ul>'
+    document.body.append(root)
+
+    Object.defineProperty(root, "clientHeight", { get: () => 320, configurable: true })
+    const list = root.firstElementChild as HTMLUListElement
+    Object.defineProperty(list, "offsetHeight", { get: () => Math.round(Number.parseFloat(list.style.height || "0")), configurable: true })
+    Object.defineProperty(root, "scrollHeight", { get: () => Math.max(320, list.offsetHeight), configurable: true })
+
+    const helper = createVirtualList(root, {
+      items: data(10),
+      rowSize: 32,
+      key: item => item.id,
+      render,
+      update: (el, item) => { el.textContent = item.text },
+    })
+    helpers.push(helper)
+
+    expect(helper.connected).toBe(true)
+    expect(helper.state.count).toBe(10)
+    expect(helper.state.mounted).toBe(10)
+    expect(root.style.getPropertyValue("--m-virtual-row-size")).toBe("32px")
+    expect(list.children).toHaveLength(10)
+    helper.disconnect()
+  })
+
+  it("structures VirtualList demo page with standard scaffold and explicit setup", () => {
+    const html = readFileSync(resolve("demo", "components", "virtual-list.html"), "utf8")
+    const parsed = new DOMParser().parseFromString(html, "text/html")
+    const main = parsed.querySelector("main[data-demo-page].component-docs")
+    expect(main).not.toBeNull()
+    expect(parsed.querySelector("h1")?.textContent).toBe("Virtual List")
+    const nav = parsed.querySelector("nav.component-docs-nav")
+    expect(nav).not.toBeNull()
+    expect(nav?.textContent).toContain("Examples")
+    expect(nav?.textContent).toContain("Setup")
+    expect(nav?.textContent).toContain("API")
+    expect(parsed.querySelector("details.component-setup#required-files")).not.toBeNull()
+    expect(parsed.querySelector("#virtual-list-api")).not.toBeNull()
+
+    const previews = parsed.querySelectorAll("[data-demo-preview]")
+    expect(previews.length).toBeGreaterThanOrEqual(1)
+    for (const preview of previews) {
+      expect(preview.querySelector("m-virtual-list, m-button")).not.toBeNull()
+    }
+  })
+
+  it("extracts VirtualList properties, regions and events via generateComponentApi", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["virtual-list"])
+    expect(docs.elements).toHaveLength(1)
+    const [vl] = docs.elements
+    expect(vl.type).toBe("VirtualList")
+    expect(vl.web.primary).toBe("m-virtual-list")
+    expect(vl.properties.itemSize).toMatchObject({
+      name: "itemSize",
+      type: "number",
+      default: 40,
+      attribute: "item-size",
+      readable: true,
+      writable: true,
+    })
+    expect(vl.properties.height).toMatchObject({
+      name: "height",
+      type: "string",
+      default: "",
+      attribute: "height",
+      readable: true,
+      writable: true,
+    })
+    expect(vl.events).toContainEqual({
+      name: "VirtualListError",
+      web: "m:virtual-list-error",
+      bubbles: true,
+      cancelable: false,
+      composed: false,
+    })
+    expect(vl.regions).toEqual([
+      {
+        name: "items",
+        accepts: ["ul", "ol", "content"],
+        min: 0,
+        max: 1,
+      },
+    ])
   })
 })
