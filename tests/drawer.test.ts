@@ -2,10 +2,14 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createDrawer, createDrawerOwner } from "../src/components/drawer/index.js"
+import {
+  createDrawer, createDrawerOwner,
+  Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, registerDrawer,
+} from "../src/components/drawer/index.js"
 import { createModal } from "../src/components/modal/index.js"
 import { createNativeDialog } from "../src/components/dialog/native.js"
-import type { DrawerController, DrawerOptions } from "../src/components/drawer/index.js"
+import type { DrawerController, DrawerOptions, DrawerPlacement } from "../src/components/drawer/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const handles: { dispose(): void }[] = []
 const proto = HTMLDialogElement.prototype
@@ -64,8 +68,8 @@ describe("Drawer and CSS-only DrawerContent", () => {
     expect(pkg.dependencies).toEqual({})
     expect(source).toContain("../modal/modal.js")
     expect(source).not.toContain("dialog/dialog.js")
-    expect(customElements.get("m-drawer")).toBeUndefined()
-    expect(customElements.get("m-drawer-content")).toBeUndefined()
+    expect(customElements.get("m-drawer")).toBe(Drawer)
+    expect(customElements.get("m-drawer-content")).toBe(DrawerContent)
   })
   it("retains authored header/body/footer, heading level, listeners, descriptions and form values", () => {
     const d = fixture(); const heading = d.querySelector("h3")!; heading.id = "title"
@@ -345,3 +349,177 @@ describe("Drawer backdrop and template owners", () => {
     expect(gzipSync(`${native}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(1500)
   })
 })
+
+describe("canonical Drawer ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers m-drawer and companion elements", () => {
+    expect(Drawer.tag).toBe("m-drawer")
+    expect(DrawerContent.tag).toBe("m-drawer-content")
+    expect(DrawerHeader.tag).toBe("m-drawer-header")
+    expect(DrawerBody.tag).toBe("m-drawer-body")
+    expect(DrawerFooter.tag).toBe("m-drawer-footer")
+    expect(ViewElement.prototype.isPrototypeOf(Drawer.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(DrawerContent.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(DrawerHeader.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(DrawerBody.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(DrawerFooter.prototype)).toBe(true)
+    expect(customElements.get("m-drawer")).toBe(Drawer)
+    expect(customElements.get("m-drawer-content")).toBe(DrawerContent)
+    expect(customElements.get("m-drawer-header")).toBe(DrawerHeader)
+    expect(customElements.get("m-drawer-body")).toBe(DrawerBody)
+    expect(customElements.get("m-drawer-footer")).toBe(DrawerFooter)
+    expect(Drawer.observedAttributes).toEqual(["open", "placement", "title", "closable", "mask-closable", "width", "height"])
+    expect(typeof registerDrawer).toBe("function")
+  })
+
+  it("handles typed properties, defaults and validation", () => {
+    const drawer = document.createElement("m-drawer") as Drawer
+    document.body.append(drawer)
+    expect(drawer.open).toBe(false)
+    expect(drawer.placement).toBe("right")
+    expect(drawer.title).toBe("")
+    expect(drawer.closable).toBe(false)
+    expect(drawer.maskClosable).toBe(true)
+    expect(drawer.width).toBeNull()
+    expect(drawer.height).toBeNull()
+
+    drawer.placement = "left"
+    expect(drawer.placement).toBe("left")
+    expect(drawer.getAttribute("placement")).toBe("left")
+
+    drawer.placement = "top"
+    expect(drawer.placement).toBe("top")
+
+    drawer.placement = "bottom"
+    expect(drawer.placement).toBe("bottom")
+
+    expect(() => { (drawer as any).placement = "invalid" }).toThrow(RangeError)
+
+    drawer.title = "Profile Settings"
+    expect(drawer.title).toBe("Profile Settings")
+    expect(drawer.getAttribute("title")).toBe("Profile Settings")
+
+    drawer.closable = true
+    expect(drawer.closable).toBe(true)
+    expect(drawer.hasAttribute("closable")).toBe(true)
+
+    drawer.maskClosable = false
+    expect(drawer.maskClosable).toBe(false)
+    expect(drawer.getAttribute("mask-closable")).toBe("false")
+
+    drawer.width = "400px"
+    expect(drawer.width).toBe("400px")
+    expect(drawer.getAttribute("width")).toBe("400px")
+
+    drawer.width = null
+    expect(drawer.width).toBeNull()
+    expect(drawer.hasAttribute("width")).toBe(false)
+
+    drawer.height = "50%"
+    expect(drawer.height).toBe("50%")
+    expect(drawer.getAttribute("height")).toBe("50%")
+
+    drawer.height = null
+    expect(drawer.height).toBeNull()
+    expect(drawer.hasAttribute("height")).toBe(false)
+  })
+
+  it("supports show() and close() methods and emits m:close event", () => {
+    const drawer = document.createElement("m-drawer") as Drawer
+    drawer.title = "My Drawer"
+    document.body.append(drawer)
+
+    expect(drawer.open).toBe(false)
+    const closeSpy = vi.fn()
+    drawer.addEventListener("m:close", closeSpy)
+
+    drawer.show()
+    expect(drawer.open).toBe(true)
+    expect(drawer.hasAttribute("open")).toBe(true)
+
+    drawer.close("programmatic")
+    expect(drawer.open).toBe(false)
+    expect(drawer.hasAttribute("open")).toBe(false)
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "programmatic" })
+
+    // Calling close when already closed does not re-emit
+    drawer.close()
+    expect(closeSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it("renders close button when closable is true and closes on click", () => {
+    const drawer = document.createElement("m-drawer") as Drawer
+    drawer.title = "Closable Drawer"
+    drawer.closable = true
+    drawer.open = true
+    document.body.append(drawer)
+
+    const closeBtn = drawer.querySelector<HTMLButtonElement>("[data-part=close]")
+    expect(closeBtn).not.toBeNull()
+
+    const closeSpy = vi.fn()
+    drawer.addEventListener("m:close", closeSpy)
+
+    closeBtn!.click()
+    expect(drawer.open).toBe(false)
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "close" })
+  })
+
+  it("closes on mask click when maskClosable is true and ignores when false", () => {
+    const drawer = document.createElement("m-drawer") as Drawer
+    drawer.open = true
+    document.body.append(drawer)
+
+    const mask = drawer.querySelector<HTMLElement>("[data-part=mask]")
+    expect(mask).not.toBeNull()
+
+    const closeSpy = vi.fn()
+    drawer.addEventListener("m:close", closeSpy)
+
+    mask!.click()
+    expect(drawer.open).toBe(false)
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "mask" })
+
+    // When maskClosable is false
+    drawer.maskClosable = false
+    drawer.show()
+    const newMask = drawer.querySelector<HTMLElement>("[data-part=mask]")!
+    newMask.click()
+    expect(drawer.open).toBe(true)
+    expect(closeSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it("closes on Escape key press", () => {
+    const drawer = document.createElement("m-drawer") as Drawer
+    drawer.open = true
+    document.body.append(drawer)
+
+    const closeSpy = vi.fn()
+    drawer.addEventListener("m:close", closeSpy)
+
+    drawer.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }))
+    expect(drawer.open).toBe(false)
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "escape" })
+  })
+
+  it("supports companion regions m-drawer-content, header, body, footer", () => {
+    document.body.innerHTML = `
+      <m-drawer placement="right" open>
+        <m-drawer-content>
+          <m-drawer-header>Authored Header</m-drawer-header>
+          <m-drawer-body><p>Authored Body</p></m-drawer-body>
+          <m-drawer-footer><button id="footer-btn">Submit</button></m-drawer-footer>
+        </m-drawer-content>
+      </m-drawer>`
+    const drawer = document.querySelector("m-drawer") as Drawer
+    expect(drawer.open).toBe(true)
+    expect(drawer.querySelector("m-drawer-content")).not.toBeNull()
+    expect(drawer.querySelector("m-drawer-header")?.textContent).toContain("Authored Header")
+    expect(drawer.querySelector("m-drawer-body")?.textContent).toContain("Authored Body")
+    expect(drawer.querySelector("m-drawer-footer")?.textContent).toContain("Submit")
+  })
+})
+
