@@ -290,6 +290,10 @@
       "import": "./dist/markup-ui-image.js"
     },
     "./image/style.css": "./dist/markup-ui-image.css",
+    "./float-button": {
+      "types": "./dist/components/float-button/index.d.ts",
+      "import": "./dist/markup-ui-float-button.js"
+    },
     "./float-button/style.css": "./dist/markup-ui-float-button.css",
     "./scrollbar/style.css": "./dist/markup-ui-scrollbar.css",
     "./code": {

@@ -3,67 +3,191 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Float Button</title>
+  <title>Float Button - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-float-button.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./float-button.css">
-  <script defer src="./float-button.js"></script>
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-float-button.global.js"></script>
+  <script type="module" src="./float-button.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <header id="home"><h1>Native Float Button and Group</h1><p>Real buttons/links, explicit CSS placement and browser-owned popover disclosure. No component JavaScript.</p></header>
-  <main>
-    <section aria-labelledby="actions-heading">
-      <h2 id="actions-heading">Native actions and description content</h2>
-      <div class="demo-row">
-        <button type="button" class="m-float-button" data-position="relative" aria-label="Record an action" id="single-action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2"></path></svg></button>
-        <a class="m-float-button" data-position="relative" data-shape="square" data-type="primary" href="#home" id="home-action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 11 9-8 9 8v10h-7v-7h-4v7H3Z" fill="none" stroke="currentColor" stroke-width="2"></path></svg><span class="m-float-description">Home</span></a>
-        <button type="button" class="m-float-button demo-badge-button" data-position="relative" aria-label="Notifications, 3 unread" aria-describedby="badge-help" id="badge-action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 17h14l-2-3V9a5 5 0 0 0-10 0v5ZM10 20h4" fill="none" stroke="currentColor" stroke-width="2"></path></svg><span class="demo-badge" aria-hidden="true">3</span></button>
-      </div>
-      <p id="badge-help">The count and this visible help text are authored composition, not Badge or Tooltip props.</p>
-      <p id="action-feedback"></p>
-    </section>
+  <main data-demo-page class="component-docs">
+    <header id="home">
+      <h1>Float Button</h1>
+      <p>Floating button and group components for primary, quick, or fixed-position actions.</p>
+    </header>
+    <nav class="component-docs-nav" aria-label="Float Button documentation">
+      <a href="#examples">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-float-button.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-float-button.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
 
-    <section aria-labelledby="form-heading">
-      <h2 id="form-heading">Square group and native form semantics</h2>
-      <form id="native-form"><label for="native-name">Project name</label><input id="native-name" name="project" value="Original" required>
-        <div class="m-float-group" data-position="relative" data-shape="square" role="group" aria-label="Project form actions" id="form-group">
-          <button type="submit" class="m-float-button" data-type="primary" id="native-submit"><span class="m-float-description">Save</span></button>
-          <button type="reset" class="m-float-button" id="native-reset"><span class="m-float-description">Reset</span></button>
-          <button type="button" class="m-float-button" disabled id="native-disabled"><span class="m-float-description">Locked</span></button>
-          <template class="m-float-button" id="native-template">Inert authored template</template>
-          <button type="button" class="m-float-button" hidden id="hidden-group-action">Hidden action</button>
-        </div>
-      </form>
-      <p id="form-feedback"></p>
-    </section>
-
-    <section aria-labelledby="placement-heading">
-      <h2 id="placement-heading">Absolute positioning with an authored containing block</h2>
-      <div class="absolute-container" id="absolute-container" dir="rtl">
-        <p>Logical end is physically left in this RTL example. Reading order is unchanged.</p>
-        <div class="m-float-group absolute-actions" data-position="absolute" role="group" aria-label="Local actions" id="absolute-group">
-          <a class="m-float-button" href="#home" aria-label="Local home" id="absolute-home"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 11 9-8 9 8v10h-7v-7h-4v7H3Z" fill="none" stroke="currentColor" stroke-width="2"></path></svg></a>
-          <button type="button" class="m-float-button" disabled aria-label="Unavailable local action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2"></path></svg></button>
-        </div>
-      </div>
-    </section>
-    <section aria-labelledby="popover-heading">
-      <h2 id="popover-heading">Native quick actions</h2>
-      <p>Use the fixed corner trigger. Escape, outside click and the close command are native popover behavior. Without Popover support, the group is visible here and the unavailable disclosure commands are hidden.</p>
-      <p id="toggle-feedback"></p>
-      <div class="demo-dock" id="quick-dock">
-        <button type="button" class="m-float-button m-float-trigger" data-type="primary" popovertarget="quick-panel" aria-label="Quick actions" id="quick-trigger"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2"></path></svg></button>
-        <div class="m-float-panel" popover="auto" role="group" aria-label="Quick action controls" id="quick-panel">
-          <div class="m-float-group" data-position="relative" data-shape="square" role="group" aria-label="Available quick actions" id="quick-group">
-            <button type="button" class="m-float-button" popovertarget="quick-panel" popovertargetaction="hide" id="record-action">Record action</button>
-            <a class="m-float-button" href="#home" id="panel-home">Go home</a>
-            <button type="button" class="m-float-button" disabled id="panel-disabled">Unavailable</button>
-            <button type="button" class="m-float-button m-float-popover-command" popovertarget="quick-panel" popovertargetaction="hide" id="close-panel">Close actions</button>
+    <div id="examples">
+      <section data-demo-example="basic" aria-labelledby="basic-heading">
+        <header data-demo-header>
+          <div>
+            <h2 id="basic-heading">Basic float buttons</h2>
+            <p>Floating buttons with default circle shape and semantic types.</p>
+          </div>
+        </header>
+        <div data-demo-preview>
+          <div class="demo-row">
+            <m-float-button data-position="relative" aria-label="Default action">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2"></path></svg>
+            </m-float-button>
+            <m-float-button data-position="relative" type="primary" shape="square">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 11 9-8 9 8v10h-7v-7h-4v7H3Z" fill="none" stroke="currentColor" stroke-width="2"></path></svg>
+              <span class="m-float-description">Home</span>
+            </m-float-button>
+            <m-float-button data-position="relative" type="info" aria-label="Info action">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"></circle><path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2"></path></svg>
+            </m-float-button>
+            <m-float-button data-position="relative" type="success" aria-label="Success action">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="2" fill="none"></path></svg>
+            </m-float-button>
+            <m-float-button data-position="relative" type="warning" aria-label="Warning action">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 9v4M12 17h.01" stroke="currentColor" stroke-width="2"></path></svg>
+            </m-float-button>
+            <m-float-button data-position="relative" type="error" aria-label="Error action">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2"></path></svg>
+            </m-float-button>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section data-demo-example="group" aria-labelledby="group-heading">
+        <header data-demo-header>
+          <div>
+            <h2 id="group-heading">Float button group</h2>
+            <p>Group multiple float buttons with shared shape and layout.</p>
+          </div>
+        </header>
+        <div data-demo-preview>
+          <m-float-button-group data-position="relative" shape="square" aria-label="Quick tools">
+            <m-float-button type="primary"><span class="m-float-description">Add</span></m-float-button>
+            <m-float-button><span class="m-float-description">Edit</span></m-float-button>
+            <m-float-button><span class="m-float-description">Find</span></m-float-button>
+          </m-float-button-group>
+        </div>
+      </section>
+
+      <section data-demo-example="offsets" aria-labelledby="offsets-heading">
+        <header data-demo-header>
+          <div>
+            <h2 id="offsets-heading">Configured offsets</h2>
+            <p>Float buttons can configure right and bottom offsets.</p>
+          </div>
+        </header>
+        <div data-demo-preview>
+          <p>Buttons with custom right and bottom offsets.</p>
+          <m-float-button data-position="relative" right="24px" bottom="24px" type="primary" aria-label="Custom offset action">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2"></path></svg>
+          </m-float-button>
+        </div>
+      </section>
+
+      <section data-demo-example="actions" aria-labelledby="actions-heading">
+        <header data-demo-header>
+          <div>
+            <h2 id="actions-heading">Native actions and description content</h2>
+            <p>Real buttons and links with explicit CSS placement and descriptions.</p>
+          </div>
+        </header>
+        <div data-demo-preview>
+          <div class="demo-row">
+            <button type="button" class="m-float-button" data-position="relative" aria-label="Record an action" id="single-action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2"></path></svg></button>
+            <a class="m-float-button" data-position="relative" data-shape="square" data-type="primary" href="#home" id="home-action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 11 9-8 9 8v10h-7v-7h-4v7H3Z" fill="none" stroke="currentColor" stroke-width="2"></path></svg><span class="m-float-description">Home</span></a>
+            <button type="button" class="m-float-button demo-badge-button" data-position="relative" aria-label="Notifications, 3 unread" aria-describedby="badge-help" id="badge-action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 17h14l-2-3V9a5 5 0 0 0-10 0v5ZM10 20h4" fill="none" stroke="currentColor" stroke-width="2"></path></svg><span class="demo-badge" aria-hidden="true">3</span></button>
+          </div>
+          <p id="badge-help">The count and this visible help text are authored composition, not Badge or Tooltip props.</p>
+          <p id="action-feedback"></p>
+        </div>
+      </section>
+
+      <section data-demo-example="form" aria-labelledby="form-heading">
+        <header data-demo-header>
+          <div>
+            <h2 id="form-heading">Square group and native form semantics</h2>
+            <p>Native buttons and reset/submit controls within a square group.</p>
+          </div>
+        </header>
+        <div data-demo-preview>
+          <form id="native-form"><label for="native-name">Project name</label><input id="native-name" name="project" value="Original" required>
+            <div class="m-float-group" data-position="relative" data-shape="square" role="group" aria-label="Project form actions" id="form-group">
+              <button type="submit" class="m-float-button" data-type="primary" id="native-submit"><span class="m-float-description">Save</span></button>
+              <button type="reset" class="m-float-button" id="native-reset"><span class="m-float-description">Reset</span></button>
+              <button type="button" class="m-float-button" disabled id="native-disabled"><span class="m-float-description">Locked</span></button>
+              <template class="m-float-button" id="native-template">Inert authored template</template>
+              <button type="button" class="m-float-button" hidden id="hidden-group-action">Hidden action</button>
+            </div>
+          </form>
+          <p id="form-feedback"></p>
+        </div>
+      </section>
+
+      <section data-demo-example="placement" aria-labelledby="placement-heading">
+        <header data-demo-header>
+          <div>
+            <h2 id="placement-heading">Absolute positioning with an authored containing block</h2>
+            <p>Logical end is physically left in this RTL example. Reading order is unchanged.</p>
+          </div>
+        </header>
+        <div data-demo-preview>
+          <div class="absolute-container" id="absolute-container" dir="rtl">
+            <p>Logical end is physically left in this RTL example. Reading order is unchanged.</p>
+            <div class="m-float-group absolute-actions" data-position="absolute" role="group" aria-label="Local actions" id="absolute-group">
+              <a class="m-float-button" href="#home" aria-label="Local home" id="absolute-home"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 11 9-8 9 8v10h-7v-7h-4v7H3Z" fill="none" stroke="currentColor" stroke-width="2"></path></svg></a>
+              <button type="button" class="m-float-button" disabled aria-label="Unavailable local action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2"></path></svg></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section data-demo-example="popover" aria-labelledby="popover-heading">
+        <header data-demo-header>
+          <div>
+            <h2 id="popover-heading">Native quick actions</h2>
+            <p>Use the fixed corner trigger. Escape, outside click and the close command are native popover behavior. Without Popover support, the group is visible here and the unavailable disclosure commands are hidden.</p>
+          </div>
+        </header>
+        <div data-demo-preview>
+          <p id="toggle-feedback"></p>
+          <div class="demo-dock" id="quick-dock">
+            <button type="button" class="m-float-button m-float-trigger" data-type="primary" popovertarget="quick-panel" aria-label="Quick actions" id="quick-trigger"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2"></path></svg></button>
+            <div class="m-float-panel" popover="auto" role="group" aria-label="Quick action controls" id="quick-panel">
+              <div class="m-float-group" data-position="relative" data-shape="square" role="group" aria-label="Available quick actions" id="quick-group">
+                <button type="button" class="m-float-button" popovertarget="quick-panel" popovertargetaction="hide" id="record-action">Record action</button>
+                <a class="m-float-button" href="#home" id="panel-home">Go home</a>
+                <button type="button" class="m-float-button" disabled id="panel-disabled">Unavailable</button>
+                <button type="button" class="m-float-button m-float-popover-command" popovertarget="quick-panel" popovertargetaction="hide" id="close-panel">Close actions</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
     <section class="long-content"><h2>Underlying content remains reachable</h2><p>The application reserves an inline-end gutter and bottom space for its fixed trigger. It uses no giant global z-index or invisible duplicate controls.</p><a href="#form-heading" id="outside-link">Return to project form</a></section>
     <button type="button" class="m-float-button" hidden id="hidden-float">Hidden floating action</button>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="float-button-api"><p>Loading API documentation.</p></div>
+    </section>
   </main>
 </body>
 </html>

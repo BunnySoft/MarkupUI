@@ -25,7 +25,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Tag | `Tag`; checkable toggle button, closable intent, native content, sizes and types | [Demo and API](../../demo/components/tag.html) |
 | Typography | `Typography`, `Text`, `Paragraph`, `Heading`, `Link`, `Blockquote`, `UnorderedList`, `OrderedList`; native importance/deletion/code and list items | [Demo and API](../../demo/components/typography.html) |
 | Watermark | `Watermark` | [Demo and API](../../demo/components/watermark.html) |
-| Float Button | `FloatButton`, `FloatButtonGroup` | Contract pending |
+| Float Button | `FloatButton`, `FloatButtonGroup` | [Demo and API](../../demo/components/float-button.html) |
 
 ## Data Input (21)
 
