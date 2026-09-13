@@ -29,7 +29,7 @@ export async function generateComponentApi(root, families) {
   }
 
   function visible(member) {
-    return !member.modifiers?.some(modifier => [
+    return !(member.name && ts.isPrivateIdentifier(member.name)) && !member.modifiers?.some(modifier => [
       ts.SyntaxKind.PrivateKeyword, ts.SyntaxKind.ProtectedKeyword, ts.SyntaxKind.StaticKeyword,
     ].includes(modifier.kind))
   }
@@ -174,8 +174,9 @@ export async function generateComponentApi(root, families) {
         }
         for (const declaration of inheritedEvents(node)) {
           const event = JSON.parse(declaration)
-          if (typeof event.name !== "string" || !["input", "change", "invalid"].includes(event.web)
-            || ["bubbles", "cancelable", "composed"].some(flag => typeof event[flag] !== "boolean")) throw new Error(`Invalid native @event on ${node.name.text}.`)
+          if (typeof event.name !== "string" || !["input", "change", "invalid"].includes(event.web) && !/^m:[a-z]+(?:-[a-z]+)*$/.test(event.web)
+            || event.detail !== undefined && (event.detail === null || typeof event.detail !== "object" || Array.isArray(event.detail) || Object.values(event.detail).some(type => typeof type !== "string"))
+            || ["bubbles", "cancelable", "composed"].some(flag => typeof event[flag] !== "boolean")) throw new Error(`Invalid native-owner @event on ${node.name.text}.`)
           events.set(event.web, event)
         }
         const regions = tags(node, "region").map(value => {

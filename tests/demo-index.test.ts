@@ -52,6 +52,27 @@ afterEach(() => {
 })
 
 describe("metadata-based component documentation", () => {
+  it("extracts the complete InputNumber native-owner API without private members or invented defaults", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["input-number"])
+    expect(docs.elements).toHaveLength(1)
+    const number = docs.elements[0]
+    expect(number.web.primary).toBe("m-input-number")
+    expect(Object.keys(number.properties)).toHaveLength(22)
+    expect(number.properties.value).toMatchObject({ writable: true, nullable: true, typeName: "number | null" })
+    expect(number.properties.native.typeName).toBe("HTMLInputElement")
+    for (const key of ["value", "defaultValue", "text", "min", "max", "step", "form", "state", "disabled"]) expect(number.properties[key]).not.toHaveProperty("default")
+    expect(number.properties.size.default).toBe("medium")
+    expect(number.actions).toEqual(["focus", "blur", "checkValidity", "reportValidity", "setCustomValidity", "stepUp", "stepDown", "clear", "refresh"])
+    expect(number.actions.some((action: string) => action.startsWith("#"))).toBe(false)
+    expect(number.events).toContainEqual({ name: "Input", web: "input", bubbles: true, cancelable: false, composed: true })
+    expect(number.events).toContainEqual({ name: "Invalid", web: "invalid", bubbles: false, cancelable: true, composed: false })
+    expect(number.events.find((event: { web: string }) => event.web === "m:input-number-clear").detail).toEqual({ previous: "{ value: number | null; text: string; badInput: boolean }" })
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.textContent).toContain("InputNumber")
+    expect(target.textContent).toContain("Bad-input")
+  })
+
   it("extracts the full inherited Input API without invented native defaults or duplicate overloads", async () => {
     const [docs] = await generateComponentApi(resolve("."), ["input"])
     expect(docs.elements.map((element: { type: string }) => element.type)).toEqual(["Input", "Textarea", "InputGroup", "InputGroupLabel"])

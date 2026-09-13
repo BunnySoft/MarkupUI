@@ -18,7 +18,6 @@ export const widgetElementNames = [
   "m-breadcrumb-item",
   "m-timeline",
   "m-timeline-item",
-  "m-input-number",
   "m-color-picker",
   "m-rating",
   "m-transfer",
@@ -33,42 +32,6 @@ export const widgetsPlugin: MPlugin<MarkupUIApi> = {
     class MBreadcrumb extends Base {
       public connectedCallback(): void {
         this.setAttribute("aria-label", this.getAttribute("label") ?? "Breadcrumb")
-      }
-    }
-
-    class MInputNumber extends Base {
-      private control: HTMLInputElement | undefined
-      public connectedCallback(): void {
-        if (this.control !== undefined) return
-        const decrement = this.ownerDocument.createElement("button")
-        decrement.type = "button"
-        decrement.textContent = "−"
-        decrement.setAttribute("aria-label", "Decrease")
-        const increment = this.ownerDocument.createElement("button")
-        increment.type = "button"
-        increment.textContent = "+"
-        increment.setAttribute("aria-label", "Increase")
-        this.control = this.ownerDocument.createElement("input")
-        this.control.type = "number"
-        for (const name of ["value", "min", "max", "step", "name", "aria-label"]) {
-          const value = this.getAttribute(name)
-          if (value !== null) this.control.setAttribute(name, value)
-        }
-        decrement.addEventListener("click", () => this.step(-1))
-        increment.addEventListener("click", () => this.step(1))
-        this.control.addEventListener("input", () => this.emitValue("input"))
-        this.control.addEventListener("change", () => this.emitValue("change"))
-        this.replaceChildren(decrement, this.control, increment)
-      }
-      public get value(): number { return this.control?.valueAsNumber ?? 0 }
-      public set value(value: number) { if (this.control !== undefined) this.control.valueAsNumber = Number(value) }
-      private step(direction: -1 | 1): void {
-        if (this.control === undefined) return
-        direction === 1 ? this.control.stepUp() : this.control.stepDown()
-        this.emitValue("change")
-      }
-      private emitValue(name: string): void {
-        this.dispatchEvent(new CustomEvent(`m:${name}`, { bubbles: true, detail: this.value }))
       }
     }
 
@@ -247,7 +210,6 @@ export const widgetsPlugin: MPlugin<MarkupUIApi> = {
       class extends Base {},
       class extends Base {},
       class extends Base {},
-      MInputNumber,
       MColorPicker,
       MRating,
       MTransfer,

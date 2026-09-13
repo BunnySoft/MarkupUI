@@ -26,6 +26,7 @@ import { Input } from "../src/components/input/index.js"
 import { Checkbox, CheckboxGroup } from "../src/components/checkbox/index.js"
 import { Radio, RadioGroup, RadioButton } from "../src/components/radio/index.js"
 import { Switch } from "../src/components/switch/index.js"
+import { InputNumber } from "../src/components/input-number/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -448,7 +449,10 @@ describe("unified API and plugins", () => {
 
   it("installs the optional widgets plugin", () => {
     m.use(widgetsPlugin)
-    expect(widgetElementNames).toHaveLength(9)
+    expect(widgetElementNames).toHaveLength(8)
+    expect(widgetElementNames).not.toContain("m-input-number")
+    expect(customElements.get("m-input-number")).toBe(InputNumber)
+    expect(document.getElementById("m-widgets-styles")?.textContent).not.toContain("m-input-number")
     expect(widgetElementNames.some(name => String(name).startsWith("m-carousel"))).toBe(false)
     expect(builtInElementNames.some(name => name.startsWith("m-carousel"))).toBe(false)
     expect(customElements.get("m-carousel")).toBe(Carousel)
@@ -456,14 +460,14 @@ describe("unified API and plugins", () => {
     document.body.innerHTML = `
       <m-breadcrumb><m-breadcrumb-item>Home</m-breadcrumb-item></m-breadcrumb>
       <m-timeline><m-timeline-item>Created</m-timeline-item></m-timeline>
-      <m-input-number value="2" min="0" max="5"></m-input-number>
+      <m-input-number value="2" min="0" max="5" aria-label="Quantity"></m-input-number>
       <m-color-picker value="#ff0000"></m-color-picker>
       <m-rating value="3"></m-rating>
       <m-transfer></m-transfer>
       <m-cascader></m-cascader>`
     expect(document.querySelector("m-breadcrumb")?.getAttribute("aria-label")).toBe("Breadcrumb")
-    const number = document.querySelector("m-input-number") as HTMLElement & { value: number }
-    document.querySelector<HTMLElement>('m-input-number [aria-label="Increase"]')?.click()
+    const number = document.querySelector("m-input-number") as InputNumber
+    number.stepUp()
     expect(number.value).toBe(3)
     expect((document.querySelector("m-color-picker") as HTMLElement & { value: string }).value)
       .toBe("#ff0000")

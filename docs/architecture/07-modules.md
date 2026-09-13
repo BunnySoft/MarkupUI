@@ -1,6 +1,6 @@
 # 7. Small core and selectable components
 
-**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex, Input, Checkbox, Radio and Switch, with explicit payload ceilings.
+**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex, Input, Checkbox, Radio, Switch and InputNumber, with explicit payload ceilings.
 The rollout continues component-by-component.**
 Follow the useful jQuery/plugin pattern: load one small core, then only the features the
 application needs. This is a packaging and extension pattern, not a dependency on jQuery.
@@ -62,7 +62,7 @@ Keep approved budgets unless a measured change is explicitly accepted.
 The implemented entries are `@dataengine/markup-ui/core`, `@dataengine/markup-ui/avatar`,
 `@dataengine/markup-ui/button`, `@dataengine/markup-ui/card`, `@dataengine/markup-ui/carousel`,
 `@dataengine/markup-ui/collapse`, `@dataengine/markup-ui/divider`, `@dataengine/markup-ui/dropdown`,
-`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography`, `@dataengine/markup-ui/space`, `@dataengine/markup-ui/flex`, `@dataengine/markup-ui/input`, `@dataengine/markup-ui/checkbox`, `@dataengine/markup-ui/radio` and `@dataengine/markup-ui/switch`.
+`@dataengine/markup-ui/icon`, `@dataengine/markup-ui/typography`, `@dataengine/markup-ui/space`, `@dataengine/markup-ui/flex`, `@dataengine/markup-ui/input`, `@dataengine/markup-ui/checkbox`, `@dataengine/markup-ui/radio`, `@dataengine/markup-ui/switch` and `@dataengine/markup-ui/input-number`.
 ESM uses `markup-ui-core.js`; classic scripts load `markup-ui-core.global.js` before
 `markup-ui-avatar.global.js`, `markup-ui-button.global.js`, `markup-ui-card.global.js`,
 `markup-ui-carousel.global.js`, `markup-ui-collapse.global.js`, `markup-ui-divider.global.js`,
@@ -110,6 +110,14 @@ than importing Input/Radio or a second controller. Existing per-file gzip ceilin
 runtime and CSS; combined runtime has a 4,500-byte ceiling in either format. CheckboxGroup
 excludes Switch-owned native controls, and the aggregate no longer registers or styles the
 legacy MSwitch. Select Switch explicitly in applications that previously used that entry.
+
+InputNumber imports only core. Classic loading is `markup-ui-core.global.js` followed by
+`markup-ui-input-number.global.js`, with `markup-ui-input-number.css`. The entry registers
+only `m-input-number` and exports `InputNumber`/`registerInputNumber`; it replaces both the
+public factory and widgets-plugin constructor. No native-input/native-radio chunk or other
+component constructors are required. The manifest lists exactly core plus family per format.
+User-approved ceilings are 4,000 gzip bytes for each JS format and 5,500 for combined
+core-plus-family runtime; CSS stays at 1,000. No other ceiling is increased.
 
 ## References
 

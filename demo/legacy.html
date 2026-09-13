@@ -24,6 +24,8 @@
     <script type="module" src="../dist/markup-ui-checkbox.js"></script>
     <link rel="stylesheet" href="../dist/markup-ui-switch.css">
     <script type="module" src="../dist/markup-ui-switch.js"></script>
+    <link rel="stylesheet" href="../dist/markup-ui-input-number.css">
+    <script type="module" src="../dist/markup-ui-input-number.js"></script>
     <link rel="stylesheet" href="./legacy.css">
     <script type="module" src="../dist/markup-ui-avatar.js"></script>
     <link rel="stylesheet" href="../dist/markup-ui-button.css">
@@ -788,7 +790,7 @@
                   <m-stack gap="md">
                     <m-heading level="3">Number, color, and rating</m-heading>
                     <m-form-item label="Quantity">
-                      <m-input-number id="widget-number" value="2" min="0" max="10"></m-input-number>
+                      <m-input-number id="widget-number" value="2" min="0" max="10" aria-label="Quantity"></m-input-number>
                     </m-form-item>
                     <m-form-item label="Accent">
                       <m-color-picker id="widget-color" value="#10b981"></m-color-picker>

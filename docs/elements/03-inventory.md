@@ -40,7 +40,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Dynamic Tags | `DynamicTags` | Contract pending |
 | Form | `Form`, `FormItem`, `FormItemGi` | Contract pending |
 | Input | `Input`, `Textarea`, `InputGroup`, `InputGroupLabel`; native editing/form owners | [Demo and API](../../demo/components/input.html) |
-| Input Number | `InputNumber` | Contract pending |
+| Input Number | `InputNumber`; nullable live number, native drafts/defaults/stepping, labels and forms | [Demo and API](../../demo/components/input-number.html) |
 | Input OTP | `InputOtp` | Contract pending |
 | Mention | `Mention` | Contract pending |
 | Radio | `Radio`, `RadioGroup`, `RadioButton`; native exclusivity, labels, forms and computed selection | [Demo and API](../../demo/components/radio.html) |

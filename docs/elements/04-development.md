@@ -124,8 +124,10 @@ and includes getter documentation in the rules column. Native-owner accessors ma
 computed/default state that cannot be inferred statically: document native absence, dirty-value
 and form-association semantics in source/page prose rather than inventing default metadata.
 Native-owner objects do not infer attribute mappings from incidental setup calls. A source
-`@event` JSON hint may document native `input`, `change` or `invalid` with explicit name,
-Web name and boolean bubbles/cancelable/composed flags; it never dispatches an event.
+`@event` JSON hint may document native `input`, `change` or `invalid`, or an explicitly
+dispatched `m:*` custom event, with name, Web name and boolean bubbles/cancelable/composed
+flags. Optional custom-event detail maps field names to source type strings. The hint
+never dispatches an event. Private `#` members are excluded from the public API.
 Inherited emitted events are extracted from source members just like properties and actions.
 When the family is complete, update catalog/inventory links to its demo and move its
 planning contract to the archive with a link to the current page.

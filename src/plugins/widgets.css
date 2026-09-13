@@ -5,13 +5,7 @@ m-breadcrumb-item:not(:last-child)::after{content:"/";color:var(--m-border)}
 m-timeline{display:block}
 m-timeline-item{position:relative;display:block;margin-left:8px;padding:0 0 var(--m-space-lg) 20px;border-left:1px solid var(--m-border)}
 m-timeline-item::before{content:"";position:absolute;top:4px;left:-5px;width:9px;height:9px;border-radius:50%;background:var(--m-color-primary)}
-m-input-number,m-color-picker,m-rating{display:inline-flex}
-m-input-number{align-items:stretch}
-m-input-number>input{width:100%;min-height:var(--m-control-height);padding:0 10px;border:1px solid var(--m-border);background:var(--m-bg-surface);color:var(--m-text-primary);font:inherit}
-m-input-number>button{width:32px;border:1px solid var(--m-border);background:var(--m-bg-muted);color:var(--m-text-primary);cursor:pointer;transition:color var(--m-motion-fast) var(--m-ease),background-color var(--m-motion-fast) var(--m-ease)}
-m-input-number>button:hover{background:var(--m-bg-hover);color:var(--m-color-primary)}
-m-input-number>button:first-child{border-radius:var(--m-radius-md) 0 0 var(--m-radius-md)}
-m-input-number>button:last-child{border-radius:0 var(--m-radius-md) var(--m-radius-md) 0}
+m-color-picker,m-rating{display:inline-flex}
 m-color-picker>input{width:42px;height:32px;padding:2px;border:1px solid var(--m-border);border-radius:var(--m-radius-md);background:var(--m-bg-surface)}
 m-rating{gap:2px}
 m-rating>button{padding:0;border:0;background:transparent;color:var(--m-border);font-size:24px;cursor:pointer;transition:color var(--m-motion-fast) var(--m-ease),transform var(--m-motion-fast) var(--m-ease)}

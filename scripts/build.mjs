@@ -37,7 +37,7 @@ classicEntries.icon = "global.ts"
 classicEntries.typography = "global.ts"
 classicEntries.space = "global.ts"
 classicEntries.flex = "global.ts"
-const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500]])
+const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500]])
 await generateComponentApi(root, [...viewComponents.keys()])
 
 function corePlugin(format) {
@@ -363,8 +363,8 @@ const bundleBudgets = {
   "markup-ui-slider.js": 3_500,
   "markup-ui-slider.global.js": 3_500,
   "markup-ui-slider.css": 1_000,
-  "markup-ui-input-number.js": 3_500,
-  "markup-ui-input-number.global.js": 3_500,
+  "markup-ui-input-number.js": 4_000,
+  "markup-ui-input-number.global.js": 4_000,
   "markup-ui-input-number.css": 1_000,
   "markup-ui-select.js": 4_000,
   "markup-ui-select.global.js": 4_000,

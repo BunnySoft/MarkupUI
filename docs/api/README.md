@@ -19,6 +19,7 @@ in the target inventory.
 14. [Checkbox demo and API](../../demo/components/checkbox.html): Checkbox and CheckboxGroup; native checked/default/mixed state, labels, form ownership and live selection constraints.
 15. [Radio demo and API](../../demo/components/radio.html): Radio, RadioGroup and RadioButton; native exclusivity, checked/default state, forms and computed group selection.
 16. [Switch demo and API](../../demo/components/switch.html): one binary native owner, checked/default state, focus-safe loading, forms, labels and lifecycle.
+17. [InputNumber demo and API](../../demo/components/input-number.html): nullable numeric value, native drafts/default strings, constraints, step/clear intent, forms and lifecycle.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
@@ -43,6 +44,7 @@ maintain a second Markdown copy of their API tables or usage examples.
 | Use Checkbox/CheckboxGroup | `@dataengine/markup-ui/checkbox` and its CSS; ESM imports only core. Public exports are the two classes, `registerCheckbox`, `CheckboxSize`, `CheckboxStatus`, `CheckboxGroupOptions` and `CheckboxGroupChange`. |
 | Use Radio/RadioGroup/RadioButton | `@dataengine/markup-ui/radio` and its CSS; ESM imports core and internal native-radio mechanics. Public exports are the three classes, `registerRadio`, `RadioSize`, `RadioStatus` and `RadioGroupChange`. |
 | Use Switch | `@dataengine/markup-ui/switch` and its CSS; ESM imports only core. Public exports are `Switch`, `registerSwitch`, `SwitchSize` and `SwitchStatus`. |
+| Use InputNumber | `@dataengine/markup-ui/input-number` and its CSS; ESM imports only core. Public exports are `InputNumber`, `registerInputNumber`, `InputNumberState`, `InputNumberSize` and `InputNumberStatus`. |
 | Use classic scripts | Core first, then the selected component scripts and CSS. |
 
 No jQuery dependency, query wrapper, state/binding runtime or all-components bundle is
@@ -76,6 +78,12 @@ There is no public `createSwitch` helper, competing aggregate registration or na
 native-radio dependency. Select the canonical family explicitly. The optional state bridge
 keeps boolean `m-bind` on `checked`, with explicit `m-bind-property="value"` for the native
 submission string. Loading is an explicit flag, not a promise or checked-update guard.
+
+InputNumber classic loading is `markup-ui-core.global.js`, then
+`markup-ui-input-number.global.js`. The archived `createInputNumber` controller and widgets
+registration are removed. Explicitly select this family; it does not require another
+component/native engine. The optional state bridge uses number/null `value` and native
+input/change events, skipping equal-value writes so a browser-owned bad-input draft survives.
 
 ## References
 

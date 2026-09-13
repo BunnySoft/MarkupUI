@@ -2,6 +2,9 @@
 
 > **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
 
+Current implementation: [canonical InputNumber demo and source-generated API](../../../demo/components/input-number.html).
+The factory/controller and legacy widgets-plugin MInputNumber described below have been removed.
+
 **🟢 Verified for the retained native scope.** An authored `input[type=number]` owns
 editing, exposed string/numeric value, defaults, constraints, keyboard/wheel and forms.
 The optional helper supplies labelled custom step/clear actions and derived availability,

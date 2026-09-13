@@ -71,6 +71,12 @@ Switch's direct native accessors and existing reversible loading mechanics live 
 focus behavior; authored controls and content survive lifecycle changes. There is no
 separate helper facade, async request engine or speculative shared native-control bundle.
 
+InputNumber's direct accessors and retained native stepping/action leases live together in
+`src/components/input-number/input-number.ts`. The real number input owns drafts, numeric
+and string state, native defaults, validity and forms. Its detached probe uses native
+stepping with the actual value-attribute grid base. The former factory and widgets-plugin
+registration are removed; no Input/Radio engine or additional shared chunk is imported.
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed
