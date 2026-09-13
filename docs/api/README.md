@@ -78,6 +78,7 @@ in the target inventory.
 73. [Highlight demo and API](../../demo/components/highlight.html): Highlight; keyword text highlighting, case sensitivity options, and semantic mark wrappers.
 74. [Split demo and API](../../demo/components/split.html): Split, SplitPane; resizable split panes, horizontal and vertical orientation, and drag handles.
 75. [Gradient Text demo and API](../../demo/components/gradient-text.html): GradientText; vibrant gradient text styling, predefined color types, custom sizes, and weights.
+76. [Watermark demo and API](../../demo/components/watermark.html): Watermark; security watermark overlay, canvas text/image patterns, and fullscreen protection.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

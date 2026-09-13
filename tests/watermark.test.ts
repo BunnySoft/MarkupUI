@@ -2,7 +2,9 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createWatermark } from "../src/components/watermark/index.js"
+import { createWatermark, Watermark, MWatermark, registerWatermark } from "../src/components/watermark/index.js"
+import * as watermarkApi from "../src/components/watermark/index.js"
+import { ViewElement } from "../src/core/index.js"
 import type { WatermarkController, WatermarkSettings } from "../src/components/watermark/index.js"
 
 let controllers: WatermarkController[] = [], contexts: ReturnType<typeof context>[] = []
@@ -330,3 +332,169 @@ describe("Watermark lifetime, native resize and restoration", () => {
     expect(() => createWatermark(bad.root)).toThrow(/empty direct/)
   })
 })
+
+describe("canonical Watermark ViewElement", () => {
+  it("exports canonical own-tag ViewElement and registers m-watermark", () => {
+    expect(Object.keys(watermarkApi).sort()).toEqual(["MWatermark", "Watermark", "createWatermark", "registerWatermark"])
+    expect(Object.hasOwn(Watermark, "tag")).toBe(true)
+    expect(Watermark.tag).toBe("m-watermark")
+    expect(MWatermark).toBe(Watermark)
+    expect(ViewElement.prototype.isPrototypeOf(Watermark.prototype)).toBe(true)
+    expect(customElements.get("m-watermark")).toBe(Watermark)
+    expect(Watermark.observedAttributes).toEqual(["content", "cross", "fullscreen", "width", "height", "z-index", "rotate"])
+    const define = vi.fn()
+    expect(() => registerWatermark({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerWatermark()).not.toThrow()
+  })
+
+  it("has explicit property defaults and validates values before mutating attributes", () => {
+    const element = new Watermark()
+    expect(element.content).toBe("")
+    expect(element.cross).toBe(false)
+    expect(element.fullscreen).toBe(false)
+    expect(element.width).toBe(160)
+    expect(element.height).toBe(80)
+    expect(element.zIndex).toBe(10)
+    expect(element.rotate).toBe(0)
+
+    element.content = "STAMP"
+    expect(element.content).toBe("STAMP")
+    expect(element.getAttribute("content")).toBe("STAMP")
+    element.content = null
+    expect(element.content).toBe("")
+    expect(element.hasAttribute("content")).toBe(false)
+
+    element.cross = true
+    expect(element.cross).toBe(true)
+    expect(element.hasAttribute("cross")).toBe(true)
+    element.cross = false
+    expect(element.cross).toBe(false)
+    expect(element.hasAttribute("cross")).toBe(false)
+    expect(() => { (element as any).cross = "invalid" }).toThrow(RangeError)
+
+    element.fullscreen = true
+    expect(element.fullscreen).toBe(true)
+    expect(element.hasAttribute("fullscreen")).toBe(true)
+    element.fullscreen = false
+    expect(element.fullscreen).toBe(false)
+    expect(element.hasAttribute("fullscreen")).toBe(false)
+    expect(() => { (element as any).fullscreen = 123 }).toThrow(RangeError)
+
+    element.width = 300
+    expect(element.width).toBe(300)
+    expect(element.getAttribute("width")).toBe("300")
+    for (const invalid of [0, -1, 1025, NaN, Infinity, "100" as any]) {
+      expect(() => { element.width = invalid }).toThrow(RangeError)
+    }
+    element.setAttribute("width", "invalid")
+    expect(() => element.width).toThrow(RangeError)
+    element.setAttribute("width", "0")
+    expect(() => element.width).toThrow(RangeError)
+    element.removeAttribute("width")
+    expect(element.width).toBe(160)
+
+    element.height = 150
+    expect(element.height).toBe(150)
+    expect(element.getAttribute("height")).toBe("150")
+    for (const invalid of [0, -1, 1025, NaN, Infinity, "50" as any]) {
+      expect(() => { element.height = invalid }).toThrow(RangeError)
+    }
+    element.setAttribute("height", "invalid")
+    expect(() => element.height).toThrow(RangeError)
+    element.removeAttribute("height")
+    expect(element.height).toBe(80)
+
+    element.zIndex = 50
+    expect(element.zIndex).toBe(50)
+    expect(element.getAttribute("z-index")).toBe("50")
+    for (const invalid of [1.5, NaN, Infinity, -3000000000, 3000000000]) {
+      expect(() => { element.zIndex = invalid }).toThrow(RangeError)
+    }
+    element.setAttribute("z-index", "invalid")
+    expect(() => element.zIndex).toThrow(RangeError)
+    element.removeAttribute("z-index")
+    expect(element.zIndex).toBe(10)
+
+    element.rotate = -45
+    expect(element.rotate).toBe(-45)
+    expect(element.getAttribute("rotate")).toBe("-45")
+    for (const invalid of [-361, 361, NaN, Infinity]) {
+      expect(() => { element.rotate = invalid }).toThrow(RangeError)
+    }
+    element.setAttribute("rotate", "invalid")
+    expect(() => element.rotate).toThrow(RangeError)
+    element.removeAttribute("rotate")
+    expect(element.rotate).toBe(0)
+  })
+
+  it("replays pre-upgrade properties upon connection", () => {
+    const element = document.createElement("m-watermark") as Watermark
+    Object.defineProperty(element, "content", { configurable: true, value: "PRE-UPGRADE" })
+    Object.defineProperty(element, "cross", { configurable: true, value: true })
+    Object.defineProperty(element, "fullscreen", { configurable: true, value: true })
+    Object.defineProperty(element, "width", { configurable: true, value: 250 })
+    Object.defineProperty(element, "height", { configurable: true, value: 125 })
+    Object.defineProperty(element, "zIndex", { configurable: true, value: 99 })
+    Object.defineProperty(element, "rotate", { configurable: true, value: -15 })
+    document.body.append(element)
+
+    expect(element.content).toBe("PRE-UPGRADE")
+    expect(element.cross).toBe(true)
+    expect(element.fullscreen).toBe(true)
+    expect(element.width).toBe(250)
+    expect(element.height).toBe(125)
+    expect(element.zIndex).toBe(99)
+    expect(element.rotate).toBe(-15)
+    expect(element.getAttribute("content")).toBe("PRE-UPGRADE")
+    expect(element.hasAttribute("cross")).toBe(true)
+    expect(element.hasAttribute("fullscreen")).toBe(true)
+    expect(element.getAttribute("width")).toBe("250")
+    expect(element.getAttribute("height")).toBe("125")
+    expect(element.getAttribute("z-index")).toBe("99")
+    expect(element.getAttribute("rotate")).toBe("-15")
+  })
+
+  it("creates and synchronizes decorative overlay on connection", () => {
+    const element = document.createElement("m-watermark") as Watermark
+    element.content = "PROTECTED"
+    element.cross = true
+    document.body.append(element)
+
+    expect(element.classList.contains("m-watermark")).toBe(true)
+    expect(element.dataset.mWatermark).toBe("")
+    const overlay = element.querySelector<HTMLDivElement>("[data-watermark-overlay]")
+    expect(overlay).not.toBeNull()
+    expect(overlay?.getAttribute("aria-hidden")).toBe("true")
+    expect(overlay?.hidden).toBe(false)
+    expect(overlay?.style.getPropertyValue("--m-watermark-z-index")).toBe("10")
+    expect(overlay?.style.getPropertyValue("--m-watermark-image")).toContain("url(")
+
+    element.fullscreen = true
+    expect(overlay?.hasAttribute("data-watermark-fullscreen")).toBe(true)
+
+    element.content = ""
+    expect(overlay?.hidden).toBe(true)
+    element.remove()
+  })
+
+  it("preserves authored overlay element if already present", () => {
+    document.body.innerHTML = '<m-watermark content="TEST"><div data-watermark-overlay hidden aria-hidden="true" id="my-overlay"></div><p>Content</p></m-watermark>'
+    const element = document.querySelector<Watermark>("m-watermark")!
+    expect(element.querySelector("#my-overlay")).not.toBeNull()
+    expect(element.querySelectorAll("[data-watermark-overlay]")).toHaveLength(1)
+  })
+
+  it("dispatches m:watermark-state event", () => {
+    const element = document.createElement("m-watermark") as Watermark
+    const states: any[] = []
+    element.addEventListener("m:watermark-state", (event: any) => states.push(event.detail))
+    element.content = "EMIT TEST"
+    document.body.append(element)
+
+    expect(states.length).toBeGreaterThan(0)
+    expect(states[states.length - 1].phase).toBe("ready")
+    expect(states[states.length - 1].hasTile).toBe(true)
+  })
+})
+

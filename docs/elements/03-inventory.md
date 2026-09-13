@@ -24,7 +24,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Page Header | `PageHeader` and named regions | [Demo and API](../../demo/components/page-header.html) |
 | Tag | `Tag`; checkable toggle button, closable intent, native content, sizes and types | [Demo and API](../../demo/components/tag.html) |
 | Typography | `Typography`, `Text`, `Paragraph`, `Heading`, `Link`, `Blockquote`, `UnorderedList`, `OrderedList`; native importance/deletion/code and list items | [Demo and API](../../demo/components/typography.html) |
-| Watermark | `Watermark` | Contract pending |
+| Watermark | `Watermark` | [Demo and API](../../demo/components/watermark.html) |
 | Float Button | `FloatButton`, `FloatButtonGroup` | Contract pending |
 
 ## Data Input (21)
