@@ -2,8 +2,9 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createDynamicInput } from "../src/components/dynamic-input/index.js"
+import { DynamicInput, registerDynamicInput, createDynamicInput } from "../src/components/dynamic-input/index.js"
 import type { DynamicInputOptions } from "../src/components/dynamic-input/index.js"
+import { ViewElement } from "../src/core/index.js"
 import { createInput } from "../src/components/native-input.js"
 import { coordinateForm as createForm } from "../src/components/form/controller.js"
 
@@ -425,3 +426,256 @@ describe("reset, nested scopes and explicit Form/Input resources", () => {
     helper.disconnect(); expect(resources).toBe(0); expect(form.querySelectorAll('input[name="items[]"]')).toHaveLength(2)
   })
 })
+
+describe("canonical DynamicInput ViewElement", () => {
+  it("registers only its own ViewElement and rejects conflicting definitions", () => {
+    expect(DynamicInput.prototype).toBeInstanceOf(ViewElement)
+    expect(customElements.get("m-dynamic-input")).toBe(DynamicInput)
+    expect(DynamicInput.tag).toBe("m-dynamic-input")
+    const define = vi.fn()
+    registerDynamicInput({ get: () => undefined, define })
+    expect(define.mock.calls.map(call => call[0])).toEqual(["m-dynamic-input"])
+    expect(() => registerDynamicInput({ get: () => HTMLElement, define })).toThrow("different")
+  })
+
+  it("exposes canonical observedAttributes and default property values", () => {
+    expect(DynamicInput.observedAttributes).toEqual(["min", "max", "disabled"])
+    const dynamicInput = new DynamicInput()
+    expect(dynamicInput.min).toBe(0)
+    expect(dynamicInput.max).toBe(20)
+    expect(dynamicInput.disabled).toBe(false)
+  })
+
+  it("reflects properties to attributes and validates bounds", () => {
+    const dynamicInput = new DynamicInput()
+    dynamicInput.min = 2
+    expect(dynamicInput.getAttribute("min")).toBe("2")
+    expect(dynamicInput.min).toBe(2)
+
+    dynamicInput.max = 10
+    expect(dynamicInput.getAttribute("max")).toBe("10")
+    expect(dynamicInput.max).toBe(10)
+
+    dynamicInput.disabled = true
+    expect(dynamicInput.hasAttribute("disabled")).toBe(true)
+    expect(dynamicInput.disabled).toBe(true)
+
+    dynamicInput.disabled = false
+    expect(dynamicInput.hasAttribute("disabled")).toBe(false)
+    expect(dynamicInput.disabled).toBe(false)
+
+    dynamicInput.setAttribute("min", "4")
+    expect(dynamicInput.min).toBe(4)
+
+    dynamicInput.setAttribute("max", "12")
+    expect(dynamicInput.max).toBe(12)
+
+    dynamicInput.setAttribute("disabled", "")
+    expect(dynamicInput.disabled).toBe(true)
+
+    expect(() => { (dynamicInput as any).min = -1 }).toThrow(RangeError)
+    expect(() => { (dynamicInput as any).max = 0 }).toThrow(RangeError)
+  })
+
+  it("generates default container, template, and add button when connected empty", () => {
+    const dynamicInput = new DynamicInput()
+    document.body.append(dynamicInput)
+
+    expect(dynamicInput.classList.contains("m-dynamic-input")).toBe(true)
+    expect(dynamicInput.querySelector("[data-dynamic-rows]")).not.toBeNull()
+    expect(dynamicInput.querySelector("template[data-dynamic-template]")).not.toBeNull()
+    const addBtn = dynamicInput.querySelector<HTMLButtonElement>("[data-dynamic-add]")
+    expect(addBtn).not.toBeNull()
+    expect(addBtn?.disabled).toBe(false)
+  })
+
+  it("adopts authored template, rows, and buttons", () => {
+    const el = document.createElement("m-dynamic-input") as DynamicInput
+    el.innerHTML = `
+      <div class="m-dynamic-input__rows" data-dynamic-rows>
+        <div class="m-dynamic-input__row" data-dynamic-row data-dynamic-key="row-1">
+          <input value="Initial row">
+          <button type="button" data-dynamic-action="remove" hidden>Remove</button>
+        </div>
+      </div>
+      <template data-dynamic-template>
+        <div class="m-dynamic-input__row" data-dynamic-row>
+          <input value="">
+          <button type="button" data-dynamic-action="remove" hidden>Remove</button>
+        </div>
+      </template>
+      <button type="button" data-dynamic-add hidden>Add row</button>
+    `
+    document.body.append(el)
+
+    expect(el.getRows()).toHaveLength(1)
+    expect(el.getValues()).toEqual(["Initial row"])
+    const removeBtn = el.querySelector<HTMLButtonElement>("[data-dynamic-action=remove]")!
+    expect(removeBtn.hidden).toBe(false)
+  })
+
+  it("adds rows and emits m:change event with array value detail", () => {
+    const el = new DynamicInput()
+    document.body.append(el)
+    const listener = vi.fn()
+    el.addEventListener("m:change", listener)
+
+    const row = el.add()
+    expect(row).not.toBeNull()
+    expect(el.getRows()).toHaveLength(1)
+    expect(listener).toHaveBeenCalledOnce()
+    expect(listener.mock.calls[0][0].detail).toEqual({ value: [""] })
+
+    const input = row!.querySelector<HTMLInputElement>("input")!
+    input.value = "Updated item"
+    input.dispatchEvent(new Event("change", { bubbles: true }))
+
+    expect(listener).toHaveBeenCalledTimes(2)
+    expect(listener.mock.calls[1][0].detail).toEqual({ value: ["Updated item"] })
+  })
+
+  it("respects max limit and disables add button", () => {
+    const el = new DynamicInput()
+    el.max = 2
+    document.body.append(el)
+
+    expect(el.add()).not.toBeNull()
+    expect(el.add()).not.toBeNull()
+    expect(el.getRows()).toHaveLength(2)
+
+    expect(el.add()).toBeNull()
+    expect(el.getRows()).toHaveLength(2)
+
+    const addBtn = el.querySelector<HTMLButtonElement>("[data-dynamic-add]")!
+    expect(addBtn.disabled).toBe(true)
+  })
+
+  it("respects min limit and disables remove button", () => {
+    const el = new DynamicInput()
+    el.min = 1
+    document.body.append(el)
+
+    // Because min=1, connectedCallback ensured 1 row exists
+    expect(el.getRows()).toHaveLength(1)
+    const row = el.getRows()[0]!
+
+    // Cannot remove below min of 1
+    expect(el.remove(row)).toBe(false)
+    expect(el.getRows()).toHaveLength(1)
+
+    const removeBtn = row.querySelector<HTMLButtonElement>("[data-dynamic-action=remove]")!
+    expect(removeBtn.disabled).toBe(true)
+
+    // Increase row count then remove
+    el.add()
+    expect(el.getRows()).toHaveLength(2)
+    expect(removeBtn.disabled).toBe(false)
+
+    expect(el.remove(row)).toBe(true)
+    expect(el.getRows()).toHaveLength(1)
+  })
+
+  it("moves rows and emits m:change", () => {
+    const el = new DynamicInput()
+    document.body.append(el)
+
+    const row1 = el.add()!
+    const row2 = el.add()!
+    row1.querySelector<HTMLInputElement>("input")!.value = "First"
+    row2.querySelector<HTMLInputElement>("input")!.value = "Second"
+    expect(el.getValues()).toEqual(["First", "Second"])
+
+    const listener = vi.fn()
+    el.addEventListener("m:change", listener)
+
+    expect(el.move(0, 1)).toBe(true)
+    expect(el.getValues()).toEqual(["Second", "First"])
+    expect(listener).toHaveBeenCalledOnce()
+    expect(listener.mock.calls[0][0].detail).toEqual({ value: ["Second", "First"] })
+
+    // Boundary check
+    expect(el.move(0, 5)).toBe(false)
+    expect(el.move(0, 0)).toBe(false)
+  })
+
+  it("handles button click delegations for add, remove, and move", () => {
+    const el = new DynamicInput()
+    document.body.append(el)
+
+    const addBtn = el.querySelector<HTMLButtonElement>("[data-dynamic-add]")!
+    addBtn.click()
+    expect(el.getRows()).toHaveLength(1)
+
+    const row1 = el.getRows()[0]!
+    const rowAddBtn = row1.querySelector<HTMLButtonElement>("[data-dynamic-action=add]")!
+    rowAddBtn.click()
+    expect(el.getRows()).toHaveLength(2)
+
+    const row2 = el.getRows()[1]!
+    row1.querySelector<HTMLInputElement>("input")!.value = "Alpha"
+    row2.querySelector<HTMLInputElement>("input")!.value = "Beta"
+
+    const upBtn = row2.querySelector<HTMLButtonElement>("[data-dynamic-action=up]")!
+    upBtn.click()
+    expect(el.getValues()).toEqual(["Beta", "Alpha"])
+
+    const downBtn = el.getRows()[0]!.querySelector<HTMLButtonElement>("[data-dynamic-action=down]")!
+    downBtn.click()
+    expect(el.getValues()).toEqual(["Alpha", "Beta"])
+
+    const removeBtn = el.getRows()[1]!.querySelector<HTMLButtonElement>("[data-dynamic-action=remove]")!
+    removeBtn.click()
+    expect(el.getRows()).toHaveLength(1)
+    expect(el.getValues()).toEqual(["Alpha"])
+  })
+
+  it("handles disabled state across buttons and controls", () => {
+    const el = new DynamicInput()
+    document.body.append(el)
+    el.add()
+
+    el.disabled = true
+    const addBtn = el.querySelector<HTMLButtonElement>("[data-dynamic-add]")!
+    const input = el.querySelector<HTMLInputElement>("input")!
+    expect(addBtn.disabled).toBe(true)
+    expect(input.disabled).toBe(true)
+
+    // Clicking disabled button should not add row
+    addBtn.click()
+    expect(el.getRows()).toHaveLength(1)
+
+    el.disabled = false
+    expect(addBtn.disabled).toBe(false)
+    expect(input.disabled).toBe(false)
+  })
+
+  it("upgrades properties assigned before connection", () => {
+    const unmounted = document.createElement("m-dynamic-input") as DynamicInput
+    unmounted.min = 2
+    unmounted.max = 6
+    unmounted.disabled = true
+    document.body.append(unmounted)
+
+    expect(unmounted.min).toBe(2)
+    expect(unmounted.max).toBe(6)
+    expect(unmounted.disabled).toBe(true)
+    expect(unmounted.getRows()).toHaveLength(2)
+  })
+
+  it("delegates focus and blur to the input elements", () => {
+    const el = new DynamicInput()
+    document.body.append(el)
+    const row = el.add()!
+    const input = row.querySelector<HTMLInputElement>("input")!
+    const focusSpy = vi.spyOn(input, "focus")
+    const blurSpy = vi.spyOn(input, "blur")
+
+    el.focus()
+    expect(focusSpy).toHaveBeenCalledOnce()
+
+    input.focus()
+    el.blur()
+    expect(blurSpy).toHaveBeenCalledOnce()
+  })
+})
+

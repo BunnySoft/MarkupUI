@@ -36,7 +36,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Color Picker | `ColorPicker` | Contract pending |
 | Checkbox | `Checkbox`, `CheckboxGroup`; native checkedness, labels, forms and computed selection | [Demo and API](../../demo/components/checkbox.html) |
 | Date Picker | `DatePicker` | [Demo and API](../../demo/components/date-picker.html) |
-| Dynamic Input | `DynamicInput` | Contract pending |
+| Dynamic Input | `DynamicInput` | [Demo and API](../../demo/components/dynamic-input.html) |
 | Dynamic Tags | `DynamicTags` | Contract pending |
 | Form | `Form`, `FormItem`, `FormItemGi` | [Demo and API](../../demo/components/form.html) |
 | Input | `Input`, `Textarea`, `InputGroup`, `InputGroupLabel`; native editing/form owners | [Demo and API](../../demo/components/input.html) |
