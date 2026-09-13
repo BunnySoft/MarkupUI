@@ -73,7 +73,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Time | `Time` | Contract pending |
 | Timeline | `Timeline`, `TimelineItem` | [Demo and API](../../demo/components/timeline.html) |
 | Tree | `Tree`, `TreeNode` | [Demo and API](../../demo/components/tree.html) |
-| Infinite Scroll | `InfiniteScroll` | Contract pending |
+| Infinite Scroll | `InfiniteScroll` | [Demo and API](../../demo/components/infinite-scroll.html) |
 | Highlight | `Highlight` | Contract pending |
 | Heatmap | `Heatmap` | Contract pending |
 
