@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { gzipSync } from "node:zlib"
-import { createPopselect } from "../src/components/popselect/index.js"
+import { createPopselect, Popselect, PopselectTrigger, PopselectPanel, registerPopselect } from "../src/components/popselect/index.js"
 import type { PopselectController, PopselectOptions } from "../src/components/popselect/index.js"
+import { ViewElement } from "../src/core/index.js"
 import { createSelect } from "../src/components/native-select.js"
 import { createPopover } from "../src/components/popover/index.js"
 import { coordinateForm as createForm } from "../src/components/form/controller.js"
@@ -368,3 +369,194 @@ describe("refresh, fallback and ownership", () => {
     expect(control.value).toBe("a"); expect(panel.hasAttribute("popover")).toBe(false)
   })
 })
+
+function setupPopselectRects(el: HTMLElement) {
+  for (const node of [el, ...el.querySelectorAll<HTMLElement>("*")]) {
+    node.getBoundingClientRect = () => new DOMRect(200, 200, 100, 30)
+  }
+}
+
+describe("canonical Popselect ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers m-popselect, m-popselect-trigger, m-popselect-panel", () => {
+    expect(Popselect.tag).toBe("m-popselect")
+    expect(PopselectTrigger.tag).toBe("m-popselect-trigger")
+    expect(PopselectPanel.tag).toBe("m-popselect-panel")
+    expect(ViewElement.prototype.isPrototypeOf(Popselect.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(PopselectTrigger.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(PopselectPanel.prototype)).toBe(true)
+    expect(customElements.get("m-popselect")).toBe(Popselect)
+    expect(customElements.get("m-popselect-trigger")).toBe(PopselectTrigger)
+    expect(customElements.get("m-popselect-panel")).toBe(PopselectPanel)
+    expect(Popselect.observedAttributes).toEqual([
+      "value", "placeholder", "disabled", "placement", "multiple", "trigger",
+    ])
+    expect(() => registerPopselect()).not.toThrow()
+  })
+
+  it("handles typed properties, attributes, and defaults", () => {
+    const el = document.createElement("m-popselect") as Popselect
+    document.body.append(el)
+    expect(el.value).toBe("")
+    expect(el.placeholder).toBe("")
+    expect(el.disabled).toBe(false)
+    expect(el.placement).toBe("bottom-start")
+    expect(el.multiple).toBe(false)
+    expect(el.trigger).toBe("click")
+
+    el.value = "option1"
+    expect(el.getAttribute("value")).toBe("option1")
+    expect(el.value).toBe("option1")
+
+    el.placeholder = "Select fruit"
+    expect(el.getAttribute("placeholder")).toBe("Select fruit")
+    expect(el.placeholder).toBe("Select fruit")
+
+    el.placement = "top"
+    expect(el.getAttribute("placement")).toBe("top")
+    expect(el.placement).toBe("top")
+
+    el.disabled = true
+    expect(el.hasAttribute("disabled")).toBe(true)
+    expect(el.disabled).toBe(true)
+
+    el.multiple = true
+    expect(el.hasAttribute("multiple")).toBe(true)
+    expect(el.multiple).toBe(true)
+
+    el.trigger = "hover"
+    expect(el.getAttribute("trigger")).toBe("hover")
+    expect(el.trigger).toBe("hover")
+
+    el.setAttribute("value", "new-val")
+    expect(el.value).toBe("new-val")
+
+    el.setAttribute("placeholder", "choose")
+    expect(el.placeholder).toBe("choose")
+
+    el.setAttribute("placement", "bottom")
+    expect(el.placement).toBe("bottom")
+
+    el.removeAttribute("disabled")
+    expect(el.disabled).toBe(false)
+
+    el.removeAttribute("multiple")
+    expect(el.multiple).toBe(false)
+
+    el.setAttribute("trigger", "click")
+    expect(el.trigger).toBe("click")
+  })
+
+  it("generates panel anatomy and synchronizes native trigger and options", async () => {
+    document.body.innerHTML = `
+      <m-popselect value="b" placeholder="Select an option">
+        <button type="button" id="test-trigger">Choose</button>
+        <option value="a">Alpha</option>
+        <option value="b">Beta</option>
+        <option value="c">Charlie</option>
+      </m-popselect>`
+    await turn()
+    const popselect = document.querySelector("m-popselect") as Popselect
+    const trigger = document.getElementById("test-trigger") as HTMLButtonElement
+    const panel = popselect.querySelector("m-popselect-panel") as PopselectPanel
+    expect(panel).not.toBeNull()
+    expect(panel.classList.contains("m-popover")).toBe(true)
+    expect(panel.classList.contains("m-popselect-panel")).toBe(true)
+    expect(panel.getAttribute("role")).toBe("region")
+    expect(panel.getAttribute("aria-label")).toBe("Select an option")
+    expect(trigger.getAttribute("popovertarget")).toBe(panel.id)
+
+    const select = panel.querySelector("select") as HTMLSelectElement
+    expect(select).not.toBeNull()
+    expect(select.options.length).toBe(3)
+    expect(select.value).toBe("b")
+
+    const done = panel.querySelector("[data-popselect-done]") as HTMLButtonElement
+    expect(done).not.toBeNull()
+    expect(done.getAttribute("popovertarget")).toBe(panel.id)
+  })
+
+  it("integrates companion regions and supports open/close/toggle methods", async () => {
+    document.body.innerHTML = `
+      <m-popselect placeholder="Companion test">
+        <m-popselect-trigger>
+          <button type="button" id="companion-trigger">Trigger</button>
+        </m-popselect-trigger>
+        <m-popselect-panel>
+          <select id="companion-select">
+            <option value="1">One</option>
+            <option value="2">Two</option>
+          </select>
+        </m-popselect-panel>
+      </m-popselect>`
+    await turn()
+    const popselect = document.querySelector("m-popselect") as Popselect
+    setupPopselectRects(popselect)
+    const panel = popselect.querySelector("m-popselect-panel") as HTMLElement
+    expect(panel).not.toBeNull()
+    expect(popselect.open()).toBe(true)
+    expect(panel.matches(":popover-open")).toBe(true)
+    popselect.close()
+    expect(panel.matches(":popover-open")).toBe(false)
+    popselect.toggle()
+    expect(panel.matches(":popover-open")).toBe(true)
+    popselect.toggle()
+    expect(panel.matches(":popover-open")).toBe(false)
+  })
+
+  it("dispatches m:change event when selection changes", async () => {
+    document.body.innerHTML = `
+      <m-popselect value="1">
+        <button type="button">Trigger</button>
+        <option value="1">One</option>
+        <option value="2">Two</option>
+      </m-popselect>`
+    await turn()
+    const popselect = document.querySelector("m-popselect") as Popselect
+    setupPopselectRects(popselect)
+    const select = popselect.querySelector("select") as HTMLSelectElement
+    const changeHandler = vi.fn()
+    popselect.addEventListener("m:change", changeHandler)
+
+    select.value = "2"
+    select.dispatchEvent(new Event("change", { bubbles: true }))
+
+    expect(changeHandler).toHaveBeenCalledOnce()
+    const event = changeHandler.mock.calls[0][0] as CustomEvent
+    expect(event.detail).toEqual({ value: "2" })
+    expect(popselect.value).toBe("2")
+  })
+
+  it("synchronizes disabled state to trigger, select, and controller", async () => {
+    document.body.innerHTML = `
+      <m-popselect disabled>
+        <button type="button" id="dis-trigger">Trigger</button>
+        <option value="1">One</option>
+      </m-popselect>`
+    await turn()
+    const popselect = document.querySelector("m-popselect") as Popselect
+    setupPopselectRects(popselect)
+    const trigger = document.getElementById("dis-trigger") as HTMLButtonElement
+    const select = popselect.querySelector("select") as HTMLSelectElement
+    expect(popselect.disabled).toBe(true)
+    expect(trigger.disabled).toBe(true)
+    expect(select.disabled).toBe(true)
+    expect(popselect.open()).toBe(false)
+
+    popselect.disabled = false
+    expect(trigger.disabled).toBe(false)
+    expect(select.disabled).toBe(false)
+  })
+
+  it("generates a default trigger when no trigger is authored", async () => {
+    document.body.innerHTML = `
+      <m-popselect placeholder="Select choice">
+        <option value="1">One</option>
+      </m-popselect>`
+    await turn()
+    const popselect = document.querySelector("m-popselect") as Popselect
+    const trigger = popselect.querySelector("button.m-popselect-trigger") as HTMLButtonElement
+    expect(trigger).not.toBeNull()
+    expect(trigger.textContent).toBe("Select choice")
+  })
+})
+
