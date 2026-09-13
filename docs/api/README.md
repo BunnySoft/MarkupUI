@@ -33,6 +33,7 @@ in the target inventory.
 28. [Tooltip demo and API](../../demo/components/tooltip.html): Tooltip, TooltipTrigger, TooltipContent; noninteractive contextual descriptions, text attribute, 12 directional placements, hover/focus triggering, collision flipping.
 29. [Alert demo and API](../../demo/components/alert.html): Alert; notice types, safe title fallback, semantic SVG icons, adopted regions and cancellable close intent.
 30. [List demo and API](../../demo/components/list.html): List and ListItem; bordered, size variants, hoverable/clickable items, prefix/suffix and native list semantics.
+31. [Table demo and API](../../demo/components/table.html): Table; bordered/striped/single-line table presentations and native table markup.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

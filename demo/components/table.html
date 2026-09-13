@@ -1,96 +1,160 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Table</title>
+  <title>Table - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-table.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./table.css">
-  <script defer src="./table.js"></script>
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-table.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./table.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <header>
-    <h1>Native Table, not Data Table</h1>
-    <p>Authored captions, headers, cells and controls. No row renderer, sorting, selection or virtualization.</p>
-  </header>
-  <main>
-    <section aria-labelledby="report-heading">
-      <h2 id="report-heading">Captioned report and native form</h2>
-      <p id="scroll-help">Scroll horizontally or Tab to reach controls in the Actions column.</p>
-      <div class="m-table-scroll" tabindex="0" role="region" aria-labelledby="report-caption" aria-describedby="scroll-help" id="report-scroll">
-        <table class="m-table wide-table" data-single-line="false" data-striped id="report-table">
-          <caption id="report-caption">Project capacity report</caption>
-          <colgroup><col class="project-column"></colgroup>
-          <colgroup span="2" class="hours-columns" id="hours-colgroup"></colgroup>
-          <colgroup><col class="actions-column"></colgroup>
-          <thead id="report-head">
-            <tr id="header-first"><th scope="col" rowspan="2" id="project-column-header">Project</th><th scope="colgroup" colspan="2" id="hours-header">Hours</th><th scope="col" rowspan="2" id="actions-header">Actions</th></tr>
-            <tr id="header-second"><th scope="col" id="planned-header">Planned</th><th scope="col" id="actual-header">Actual</th></tr>
-          </thead>
-          <tbody id="report-body">
-            <tr hidden id="hidden-first"><th scope="row">Hidden first project</th><td>0</td><td>0</td><td>Hidden</td></tr>
-            <template id="native-template"><tr><th scope="row">Inert project</th><td>0</td><td>0</td><td>Inert</td></tr></template>
-            <tr id="alpha-row">
-              <th scope="row" id="alpha-header">Alpha</th>
-              <td headers="alpha-header hours-header planned-header" class="numeric" id="alpha-planned">40</td>
-              <td headers="alpha-header hours-header actual-header" class="numeric">36</td>
-              <td headers="alpha-header actions-header">
-                <form id="note-form">
-                  <label for="note">Note for Alpha</label>
-                  <input id="note" name="note" value="Original" required>
-                  <div class="cell-actions">
-                    <button type="submit" id="native-submit">Save note</button>
-                    <button type="reset" id="native-reset">Reset note</button>
-                    <button type="button" disabled id="native-disabled">Unavailable action</button>
-                  </div>
-                  <fieldset disabled><legend>Read-only settings</legend><label><input type="checkbox" name="publish" checked> Publish now</label></fieldset>
-                </form>
-              </td>
-            </tr>
-            <tr hidden id="hidden-middle"><th scope="row">Hidden middle project</th><td>0</td><td>0</td><td><button type="button">Hidden action</button></td></tr>
-            <tr id="beta-row">
-              <th scope="row" id="beta-header">Beta</th>
-              <td headers="beta-header hours-header planned-header" class="numeric" id="beta-planned">32</td>
-              <td headers="beta-header hours-header actual-header" class="numeric">28</td>
-              <td headers="beta-header actions-header">
-                <table id="nested-plain"><caption>Local note metadata</caption><tbody><tr><th scope="row">Source</th><td>Manual</td></tr><tr><th scope="row">Review</th><td>Complete</td></tr></tbody></table>
-                <a href="#footnotes" id="beta-details">Beta details</a>
-              </td>
-            </tr>
-            <tr hidden id="hidden-last"><th scope="row">Hidden last project</th><td>0</td><td>0</td><td>Hidden</td></tr>
-          </tbody>
-          <tfoot><tr id="total-row"><th scope="row" id="total-header">Reported total</th><td headers="total-header planned-header" class="numeric">72</td><td headers="total-header actual-header" class="numeric">64</td><td>Authored totals, not calculated by Table.</td></tr></tfoot>
-        </table>
+  <main data-demo-page class="component-docs">
+    <m-heading level="1">Table</m-heading>
+    <m-p>Authored captions, headers, cells and controls with native semantic structure. No row renderer, synthetic data grid, or virtual scrolling runtime.</m-p>
+    <nav class="component-docs-nav" aria-label="Table documentation">
+      <a href="#report-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-table.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-table.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="report" aria-labelledby="report-heading">
+      <header data-demo-header><div><h2 id="report-heading">Captioned report and native form</h2><m-p id="scroll-help">Scroll horizontally or Tab to reach controls in the Actions column.</m-p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <div class="m-table-scroll" tabindex="0" role="region" aria-labelledby="report-caption" aria-describedby="scroll-help" id="report-scroll">
+          <m-table class="wide-table" single-line="false" striped id="report-table">
+            <table class="wide-table">
+              <caption id="report-caption"><m-heading level="3">Project capacity report</m-heading></caption>
+              <colgroup><col class="project-column"></colgroup>
+              <colgroup span="2" class="hours-columns" id="hours-colgroup"></colgroup>
+              <colgroup><col class="actions-column"></colgroup>
+              <thead id="report-head">
+                <tr id="header-first"><th scope="col" rowspan="2" id="project-column-header"><m-text strong>Project</m-text></th><th scope="colgroup" colspan="2" id="hours-header"><m-text strong>Hours</m-text></th><th scope="col" rowspan="2" id="actions-header"><m-text strong>Actions</m-text></th></tr>
+                <tr id="header-second"><th scope="col" id="planned-header"><m-text strong>Planned</m-text></th><th scope="col" id="actual-header"><m-text strong>Actual</m-text></th></tr>
+              </thead>
+              <tbody id="report-body">
+                <tr hidden id="hidden-first"><th scope="row">Hidden first project</th><td>0</td><td>0</td><td>Hidden</td></tr>
+                <template id="native-template"><tr><th scope="row">Inert project</th><td>0</td><td>0</td><td>Inert</td></tr></template>
+                <tr id="alpha-row">
+                  <th scope="row" id="alpha-header">Alpha</th>
+                  <td headers="alpha-header hours-header planned-header" class="numeric" id="alpha-planned">40</td>
+                  <td headers="alpha-header hours-header actual-header" class="numeric">36</td>
+                  <td headers="alpha-header actions-header">
+                    <form id="note-form">
+                      <label for="note"><m-text>Note for Alpha</m-text></label>
+                      <input id="note" name="note" value="Original" required>
+                      <div class="cell-actions">
+                        <m-button attr-type="submit" id="native-submit" type="primary">Save note</m-button>
+                        <m-button attr-type="reset" id="native-reset">Reset note</m-button>
+                        <m-button attr-type="button" disabled id="native-disabled">Unavailable action</m-button>
+                      </div>
+                      <fieldset disabled><legend><m-text>Read-only settings</m-text></legend><label><input type="checkbox" name="publish" checked> <m-text>Publish now</m-text></label></fieldset>
+                    </form>
+                  </td>
+                </tr>
+                <tr hidden id="hidden-middle"><th scope="row">Hidden middle project</th><td>0</td><td>0</td><td><m-button attr-type="button">Hidden action</m-button></td></tr>
+                <tr id="beta-row">
+                  <th scope="row" id="beta-header">Beta</th>
+                  <td headers="beta-header hours-header planned-header" class="numeric" id="beta-planned">32</td>
+                  <td headers="beta-header hours-header actual-header" class="numeric">28</td>
+                  <td headers="beta-header actions-header">
+                    <table id="nested-plain"><caption>Local note metadata</caption><tbody><tr><th scope="row">Source</th><td>Manual</td></tr><tr><th scope="row">Review</th><td>Complete</td></tr></tbody></table>
+                    <a href="#footnotes" id="beta-details">Beta details</a>
+                  </td>
+                </tr>
+                <tr hidden id="hidden-last"><th scope="row">Hidden last project</th><td>0</td><td>0</td><td>Hidden</td></tr>
+              </tbody>
+              <tfoot><tr id="total-row"><th scope="row" id="total-header"><m-text strong>Reported total</m-text></th><td headers="total-header planned-header" class="numeric">72</td><td headers="total-header actual-header" class="numeric">64</td><td><m-text>Authored totals, not calculated by Table.</m-text></td></tr></tfoot>
+            </table>
+          </m-table>
+        </div>
+        <m-p id="form-status" role="status"></m-p>
       </div>
-      <p id="form-status" role="status"></p>
     </section>
 
-    <section aria-labelledby="variants-heading">
-      <h2 id="variants-heading">Border flags and explicit native widths</h2>
-      <div class="m-table-scroll" tabindex="0" role="region" aria-labelledby="attribute-caption">
-        <table class="m-table" width="360" id="attribute-table"><caption id="attribute-caption">Defaults; native width 360</caption><colgroup><col width="120"><col></colgroup><thead><tr><th scope="col">Item</th><th scope="col" align="right">Value</th></tr></thead><tbody><tr><th scope="row">First</th><td align="right" id="aligned-cell">12</td></tr><tr><th scope="row">Second</th><td align="right">24</td></tr></tbody></table>
-      </div>
-      <div class="m-table-scroll" tabindex="0" role="region" aria-labelledby="columns-caption">
-        <table class="m-table" data-bordered="false" data-single-column data-single-line="false" id="columns-table"><caption id="columns-caption">Column separators, no body row dividers, bottom edge retained</caption><thead><tr><th scope="col">Item</th><th scope="col">Value</th></tr></thead><tbody><tr><th scope="row">First</th><td>12</td></tr><tr><th scope="row">Second</th><td>24</td></tr></tbody></table>
-      </div>
-      <div class="m-table-scroll" tabindex="0" role="region" aria-labelledby="bare-caption">
-        <table class="m-table" data-bordered="false" data-bottom-bordered="false" data-single-column data-striped data-size="small" id="bare-table"><caption id="bare-caption">Small, striped, no enclosing/bottom/body-row borders</caption><thead><tr><th scope="col">Item</th><th scope="col">Value</th></tr></thead><tbody><tr><th scope="row">First</th><td>12</td></tr><tr><th scope="row">Second</th><td>24</td></tr></tbody></table>
+    <section data-demo-example="variants" aria-labelledby="variants-heading">
+      <header data-demo-header><div><h2 id="variants-heading">Border flags and explicit native widths</h2></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <div class="m-table-scroll" tabindex="0" role="region" aria-labelledby="attribute-caption">
+          <m-table id="attribute-table" width="360">
+            <table width="360">
+              <caption id="attribute-caption"><m-heading level="4">Defaults; native width 360</m-heading></caption>
+              <colgroup><col width="120"><col></colgroup>
+              <thead><tr><th scope="col"><m-text strong>Item</m-text></th><th scope="col" align="right"><m-text strong>Value</m-text></th></tr></thead>
+              <tbody><tr><th scope="row">First</th><td align="right" id="aligned-cell">12</td></tr><tr><th scope="row">Second</th><td align="right">24</td></tr></tbody>
+            </table>
+          </m-table>
+        </div>
+        <div class="m-table-scroll" tabindex="0" role="region" aria-labelledby="columns-caption">
+          <m-table id="columns-table" bordered="false" single-column single-line="false">
+            <table>
+              <caption id="columns-caption"><m-heading level="4">Column separators, no body row dividers, bottom edge retained</m-heading></caption>
+              <thead><tr><th scope="col"><m-text strong>Item</m-text></th><th scope="col"><m-text strong>Value</m-text></th></tr></thead>
+              <tbody><tr><th scope="row">First</th><td align="right">12</td></tr><tr><th scope="row">Second</th><td align="right">24</td></tr></tbody>
+            </table>
+          </m-table>
+        </div>
+        <div class="m-table-scroll" tabindex="0" role="region" aria-labelledby="bare-caption">
+          <m-table id="bare-table" bordered="false" bottom-bordered="false" single-column striped size="small">
+            <table>
+              <caption id="bare-caption"><m-heading level="4">Small, striped, no enclosing/bottom/body-row borders</m-heading></caption>
+              <thead><tr><th scope="col"><m-text strong>Item</m-text></th><th scope="col"><m-text strong>Value</m-text></th></tr></thead>
+              <tbody><tr><th scope="row">First</th><td align="right">12</td></tr><tr><th scope="row">Second</th><td align="right">24</td></tr></tbody>
+            </table>
+          </m-table>
+        </div>
       </div>
     </section>
 
-    <section aria-labelledby="span-heading">
-      <h2 id="span-heading">Large, RTL and native spanning cells</h2>
-      <div class="m-table-scroll" tabindex="0" role="region" aria-labelledby="span-caption" dir="rtl">
-        <table class="m-table" data-size="large" data-single-line="false" id="span-table">
-          <caption id="span-caption">Team work log</caption>
-          <thead><tr><th scope="col" id="team-column">Team</th><th scope="col" id="work-column">Work</th><th scope="col" id="hours-column">Hours</th></tr></thead>
-          <tbody><tr id="span-first-row"><th scope="rowgroup" rowspan="2" id="team-a">Team A</th><td headers="team-a work-column" id="design-cell">Design</td><td headers="team-a hours-column">2</td></tr><tr id="span-second-row"><td headers="team-a work-column" id="build-cell">Build</td><td headers="team-a hours-column">3</td></tr></tbody>
-          <tfoot><tr><th scope="row" colspan="2" id="span-total">Team A total</th><td headers="span-total hours-column">5</td></tr></tfoot>
-        </table>
+    <section data-demo-example="span" aria-labelledby="span-heading">
+      <header data-demo-header><div><h2 id="span-heading">Large, RTL and native spanning cells</h2></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <div class="m-table-scroll" tabindex="0" role="region" aria-labelledby="span-caption" dir="rtl">
+          <m-table id="span-table" size="large" single-line="false">
+            <table>
+              <caption id="span-caption"><m-heading level="4">Team work log</m-heading></caption>
+              <thead><tr><th scope="col" id="team-column"><m-text strong>Team</m-text></th><th scope="col" id="work-column"><m-text strong>Work</m-text></th><th scope="col" id="hours-column"><m-text strong>Hours</m-text></th></tr></thead>
+              <tbody><tr id="span-first-row"><th scope="rowgroup" rowspan="2" id="team-a">Team A</th><td headers="team-a work-column" id="design-cell">Design</td><td headers="team-a hours-column">2</td></tr><tr id="span-second-row"><td headers="team-a work-column" id="build-cell">Build</td><td headers="team-a hours-column">3</td></tr></tbody>
+              <tfoot><tr><th scope="row" colspan="2" id="span-total">Team A total</th><td headers="span-total hours-column">5</td></tr></tfoot>
+            </table>
+          </m-table>
+        </div>
       </div>
     </section>
-    <section id="footnotes"><h2>Native content remains native</h2><p>Header associations, spans, captions, form controls and data are authored. No hover/select/sort behavior is added.</p><table id="outside-table"><caption>Unstyled table</caption><tbody><tr><th scope="row">Outside</th><td>Unmodified native cell</td></tr></tbody></table></section>
-    <table class="m-table" hidden id="hidden-table"><caption>Hidden table</caption><tbody><tr><td>Hidden content</td></tr></tbody></table>
+
+    <section data-demo-example="native" id="footnotes" aria-labelledby="footnotes-heading">
+      <header data-demo-header><div><h2 id="footnotes-heading">Native content remains native</h2><m-p>Header associations, spans, captions, form controls and data are authored. No hover/select/sort behavior is added.</m-p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <table id="outside-table"><caption>Unstyled table</caption><tbody><tr><th scope="row">Outside</th><td>Unmodified native cell</td></tr></tbody></table>
+      </div>
+    </section>
+    <m-table hidden id="hidden-table"><table><caption>Hidden table</caption><tbody><tr><td>Hidden content</td></tr></tbody></table></m-table>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="table-api"><p>Loading API documentation.</p></div>
+    </section>
   </main>
 </body>
 </html>
