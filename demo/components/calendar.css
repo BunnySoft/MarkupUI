@@ -1,5 +1,12 @@
 body { margin: 0; font: 1rem/1.5 system-ui, sans-serif; color: #1d2d42; background: #f3f6fa; }
 main { max-inline-size: 68rem; margin-inline: auto; padding: 1.5rem; }
+[data-demo-preview] {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--m-bg-surface, #fff);
+  color: var(--m-text-primary, #333);
+}
 .demo-controls { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; margin-block: 1rem; }
 label { display: block; margin-block: .6rem; }
 input, select, button { font: inherit; max-inline-size: 100%; }

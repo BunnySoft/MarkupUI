@@ -57,7 +57,7 @@ families establish the pattern; the remaining contracts must be defined before i
 
 | Family | Elements / scope | Contract |
 | --- | --- | --- |
-| Calendar | `Calendar` | Contract pending |
+| Calendar | `Calendar` | [Demo and API](../../demo/components/calendar.html) |
 | Countdown | `Countdown` | Contract pending |
 | Code | `Code` | Contract pending |
 | Data Table | `DataTable` | [Demo and API](../../demo/components/data-table.html) |
