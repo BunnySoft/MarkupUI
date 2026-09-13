@@ -1,9 +1,10 @@
 import { readFileSync } from "node:fs"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createMenu } from "../src/components/menu/index.js"
+import { createMenu, Menu, MenuItem, MenuGroup, MenuDivider, Submenu, registerMenu } from "../src/components/menu/index.js"
 import type { MenuController, MenuOptions } from "../src/components/menu/index.js"
 import { createMenuKeyboard, menuEntryAvailable } from "../src/components/dropdown/keyboard.js"
+import { ViewElement } from "../src/core/index.js"
 
 const controllers: MenuController[] = []
 let sequence = 0
@@ -553,5 +554,72 @@ describe("native selection, refresh and cleanup", () => {
     expect(css).toContain("--m-menu-collapsed-width,12rem")
     expect(css).not.toMatch(/(?:^|[;{])\s*content:/)
     expect(css).not.toContain("overflow:hidden")
+  })
+})
+
+describe("canonical Menu ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers menu elements", () => {
+    expect(Menu.tag).toBe("m-menu")
+    expect(MenuItem.tag).toBe("m-menu-item")
+    expect(MenuGroup.tag).toBe("m-menu-group")
+    expect(MenuDivider.tag).toBe("m-menu-divider")
+    expect(Submenu.tag).toBe("m-submenu")
+    expect(ViewElement.prototype.isPrototypeOf(Menu.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(MenuItem.prototype)).toBe(true)
+    expect(customElements.get("m-menu")).toBe(Menu)
+    expect(customElements.get("m-menu-item")).toBe(MenuItem)
+    expect(Menu.observedAttributes).toEqual(["value", "mode", "collapsed", "accordion"])
+    expect(MenuItem.observedAttributes).toEqual(["value", "disabled", "selected", "href"])
+  })
+
+  it("handles typed properties, selection and change events", () => {
+    document.body.innerHTML = `
+      <m-menu mode="vertical" value="two">
+        <m-menu-item value="one">Item One</m-menu-item>
+        <m-menu-item value="two">Item Two</m-menu-item>
+        <m-menu-item value="three" disabled>Item Three</m-menu-item>
+      </m-menu>`
+    const menu = document.querySelector("m-menu") as Menu
+    expect(menu.mode).toBe("vertical")
+    expect(menu.value).toBe("two")
+    expect(menu.items).toHaveLength(3)
+    expect(menu.items[1]!.hasAttribute("selected")).toBe(true)
+    expect(menu.items[2]!.disabled).toBe(true)
+
+    const changeSpy = vi.fn()
+    menu.addEventListener("m:change", changeSpy)
+
+    menu.items[0]!.click()
+    expect(menu.value).toBe("one")
+    expect(menu.items[0]!.hasAttribute("selected")).toBe(true)
+    expect(menu.items[1]!.hasAttribute("selected")).toBe(false)
+    expect(changeSpy).toHaveBeenCalledOnce()
+    expect(changeSpy.mock.calls[0][0].detail).toMatchObject({ value: "one", previous: "two" })
+
+    // Clicking disabled item does nothing
+    menu.items[2]!.click()
+    expect(menu.value).toBe("one")
+    expect(changeSpy).toHaveBeenCalledOnce()
+
+    menu.mode = "horizontal"
+    expect(menu.getAttribute("mode")).toBe("horizontal")
+    expect(menu.dataset.menuMode).toBe("horizontal")
+
+    menu.collapsed = true
+    expect(menu.hasAttribute("collapsed")).toBe(true)
+    expect(menu.classList.contains("m-menu--collapsed")).toBe(true)
+  })
+
+  it("supports keyboard navigation between items", () => {
+    document.body.innerHTML = `
+      <m-menu>
+        <m-menu-item value="a">Alpha</m-menu-item>
+        <m-menu-item value="b">Beta</m-menu-item>
+      </m-menu>`
+    const menu = document.querySelector("m-menu") as Menu
+    const items = menu.items
+    items[0]!.focus()
+    items[0]!.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }))
+    expect(document.activeElement).toBe(items[1])
   })
 })

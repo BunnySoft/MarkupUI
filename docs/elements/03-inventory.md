@@ -86,7 +86,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Back Top | `BackTop` | Contract pending |
 | Breadcrumb | `Breadcrumb`, `BreadcrumbItem` | [Demo and API](../../demo/components/breadcrumb.html) |
 | Loading Bar | `LoadingBar` | Contract pending |
-| Menu | `Menu`, `MenuItem` and hierarchy | Contract pending |
+| Menu | `Menu`, `MenuItem` and hierarchy | [Demo and API](../../demo/components/menu.html) |
 | Pagination | `Pagination` | Contract pending |
 | Steps | `Steps`, `Step` | Contract pending |
 | Tabs | `Tabs`, `Tab`, `TabPane` | [Demo and API](../../demo/components/tabs.html) |
