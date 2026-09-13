@@ -44,7 +44,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Input OTP | `InputOtp` | Contract pending |
 | Mention | `Mention` | Contract pending |
 | Radio | `Radio`, `RadioGroup`, `RadioButton`; native exclusivity, labels, forms and computed selection | [Demo and API](../../demo/components/radio.html) |
-| Rate | `Rate` | Contract pending |
+| Rate | `Rate` | [Demo and API](../../demo/components/rate.html) |
 | Select | `Select`; native single/multiple selection, options/defaults, labels and forms | [Demo and API](../../demo/components/select.html) |
 | Slider | `Slider` | [Demo and API](../../demo/components/slider.html) |
 | Switch | `Switch`; binary native checked/default state, loading, labels and forms | [Demo and API](../../demo/components/switch.html) |
