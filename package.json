@@ -347,6 +347,10 @@
       "import": "./dist/markup-ui-divider.js"
     },
     "./divider/style.css": "./dist/markup-ui-divider.css",
+    "./page-header": {
+      "types": "./dist/components/page-header/index.d.ts",
+      "import": "./dist/markup-ui-page-header.js"
+    },
     "./page-header/style.css": "./dist/markup-ui-page-header.css",
     "./ellipsis/style.css": "./dist/markup-ui-ellipsis.css",
     "./gradient-text/style.css": "./dist/markup-ui-gradient-text.css",

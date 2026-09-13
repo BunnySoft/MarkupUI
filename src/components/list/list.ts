@@ -25,6 +25,7 @@ export class List extends ViewElement {
       this.upgraded = true
       this.upgradeProperties()
     }
+    if (!this.hasAttribute("role")) this.setAttribute("role", "list")
     this.dataset.part = "list"
     this.observer ??= new MutationObserver(() => this.synchronize())
     this.synchronize()

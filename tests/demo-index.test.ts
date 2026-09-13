@@ -31,6 +31,7 @@ const spinHtml = readFileSync(resolve("demo", "components", "spin.html"), "utf8"
 const skeletonHtml = readFileSync(resolve("demo", "components", "skeleton.html"), "utf8")
 const popoverHtml = readFileSync(resolve("demo", "components", "popover.html"), "utf8")
 const tooltipHtml = readFileSync(resolve("demo", "components", "tooltip.html"), "utf8")
+const alertHtml = readFileSync(resolve("demo", "components", "alert.html"), "utf8")
 let browser: ReturnType<typeof createComponentBrowser> | undefined
 let media: MediaQueryList
 let mediaListener: (() => void) | undefined
@@ -335,6 +336,45 @@ describe("metadata-based component documentation", () => {
     }
   })
 
+  it("extracts Alert properties, types and companion regions without inventing runtime metadata", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["alert"])
+    expect(docs.elements).toHaveLength(1)
+    const alert = docs.elements[0]
+    expect(alert.type).toBe("Alert")
+    expect(alert.web.primary).toBe("m-alert")
+    expect(alert.properties.type).toMatchObject({ default: "default", attribute: "type", values: ["default", "info", "success", "warning", "error"] })
+    expect(alert.properties.showIcon).toMatchObject({ default: true, encoding: "boolean", attribute: "show-icon" })
+    expect(alert.properties.bordered).toMatchObject({ default: true, encoding: "boolean", attribute: "bordered" })
+    expect(alert.properties.closable).toMatchObject({ default: false, encoding: "presence", attribute: "closable" })
+    expect(alert.properties.closeLabel).toMatchObject({ default: "Close alert", attribute: "close-label" })
+    expect(alert.properties.title).toMatchObject({ default: "", attribute: "title" })
+    expect(alert.actions).toEqual([])
+    expect(alert.events).toEqual([{
+      name: "Close", web: "m:close", bubbles: true, cancelable: true, composed: false,
+      detail: { originalEvent: "MouseEvent" },
+    }])
+    expect(alert.regions.map((r: { name: string }) => r.name)).toEqual(["header", "content", "icon", "actions", "body"])
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.textContent).toContain("Alert")
+    expect(target.textContent).toContain("m:close")
+  }, 15000)
+
+  it("structures Alert demo with standard scaffold and explicit shared-core loading", () => {
+    const parsed = new DOMParser().parseFromString(alertHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-alert.global.js"))
+    expect(parsed.querySelector("main[data-demo-page].component-docs #alert-api")).not.toBeNull()
+    expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("details.component-setup")).not.toBeNull()
+    for (const example of parsed.querySelectorAll("[data-demo-example]")) {
+      expect(example.querySelector("[data-demo-header] h2[id]")).not.toBeNull()
+      expect(example.querySelector("[data-demo-preview]")).not.toBeNull()
+    }
+  })
+
   it("extracts Layout and companion regions without inventing collapse or scrollbar APIs", async () => {
     const [docs] = await generateComponentApi(resolve("."), ["layout"])
     expect(docs.elements.map((element: any) => element.type)).toEqual([
@@ -510,7 +550,7 @@ describe("metadata-based component documentation", () => {
     renderComponentApi(target, [meta])
     expect(target.querySelectorAll("[data-api-type]")).toHaveLength(1)
   })
-})
+}, 15000)
 
 describe("Typography documentation and composition", () => {
   it("extracts eight concrete elements, direct defaults and native properties without adding a schema", async () => {

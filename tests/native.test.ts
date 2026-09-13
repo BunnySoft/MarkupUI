@@ -38,6 +38,12 @@ import { Spin } from "../src/components/spin/index.js"
 import { Skeleton } from "../src/components/skeleton/index.js"
 import { Popover } from "../src/components/popover/index.js"
 import { Tooltip } from "../src/components/tooltip/index.js"
+import { Alert } from "../src/components/alert/index.js"
+import { List, ListItem } from "../src/components/list/index.js"
+import { Table } from "../src/components/table/index.js"
+import { Descriptions, DescriptionItem } from "../src/components/descriptions/index.js"
+import { Breadcrumb, BreadcrumbItem } from "../src/components/breadcrumb/index.js"
+import { PageHeader } from "../src/components/page-header/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -66,7 +72,7 @@ describe("native elements", () => {
     expect(customElements.get("m-input")).toBe(Input)
     expect(customElements.get("m-select")).toBe(Select)
     expect(builtInElementNames).not.toContain("m-select")
-    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip]) {
+    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader]) {
       expect(customElements.get(Type.tag)).toBe(Type)
       expect(builtInElementNames).not.toContain(Type.tag)
     }

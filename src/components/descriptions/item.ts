@@ -79,11 +79,12 @@ export class DescriptionItem extends ViewElement {
     if (authoredLabel) {
       this.generatedLabel?.remove()
       this.generatedLabel = undefined
-    } else if (label !== undefined) {
+    } else if (label !== null) {
       if (!this.generatedLabel) {
         this.generatedLabel = this.ownerDocument.createElement("span")
         this.generatedLabel.className = "m-description-item-label"
         this.generatedLabel.dataset.part = "label"
+        this.generatedLabel.dataset.mLabel = ""
       }
       if (this.generatedLabel.textContent !== label) {
         this.generatedLabel.textContent = label
