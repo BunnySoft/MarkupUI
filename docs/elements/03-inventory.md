@@ -60,7 +60,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Calendar | `Calendar` | Contract pending |
 | Countdown | `Countdown` | Contract pending |
 | Code | `Code` | Contract pending |
-| Data Table | `DataTable` | Contract pending |
+| Data Table | `DataTable` | [Demo and API](../../demo/components/data-table.html) |
 | Descriptions | `Descriptions`, `DescriptionItem` | [Demo and API](../../demo/components/descriptions.html) |
 | Empty | `Empty`; readable fallback text, optional icons, size variants and adopted regions | [Demo and API](../../demo/components/empty.html) |
 | Image | `Image` and preview/group composition | [Demo and API](../../demo/components/image.html) |

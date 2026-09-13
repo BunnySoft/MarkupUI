@@ -61,6 +61,7 @@ in the target inventory.
 56. [Tree demo and API](../../demo/components/tree.html): Tree, TreeNode; hierarchical trees, checkbox selection, expand/collapse, and selection events.
 57. [Tree Select demo and API](../../demo/components/tree-select.html): TreeSelect; dropdown tree selection, multi-select, and clearable controls.
 58. [Cascader demo and API](../../demo/components/cascader.html): Cascader; multi-level cascading dropdowns, custom separators, and hover/click triggers.
+59. [Data Table demo and API](../../demo/components/data-table.html): DataTable; tabular data presentation, bordered/striped variants, and pagination integration.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

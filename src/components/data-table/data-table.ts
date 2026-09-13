@@ -64,7 +64,7 @@ const scopes: readonly string[] = ["page", "filtered", "all"]
 export function createDataTable(root: HTMLElement, options: DataTableOptions): DataTableController {
   const document = root?.ownerDocument, view = document?.defaultView
   if (!view || !(root instanceof view.HTMLElement) || !root.matches(".m-data-table[data-data-table]")
-    || !["div", "section"].includes(root.localName) || (root as Owned)[owner]) throw new TypeError("Use an unowned native div/section.m-data-table[data-data-table].")
+    || !["div", "section", "m-data-table"].includes(root.localName) || (root as Owned)[owner]) throw new TypeError("Use an unowned native div/section.m-data-table[data-data-table].")
   const token = {}
   function object(value: unknown, keys: readonly string[]) {
     if (!value || typeof value !== "object" || Array.isArray(value)

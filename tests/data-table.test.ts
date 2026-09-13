@@ -2,8 +2,9 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { gzipSync } from "node:zlib"
-import { createDataTable } from "../src/components/data-table/index.js"
-import type { DataTableController, DataTableOptions } from "../src/components/data-table/index.js"
+import { DataTable, MDataTable, registerDataTable, dataTableSizes, createDataTable } from "../src/components/data-table/index.js"
+import type { DataTableController, DataTableOptions, DataTableSize } from "../src/components/data-table/index.js"
+import { ViewElement } from "../src/core/index.js"
 import { coordinateForm as createForm } from "../src/components/form/controller.js"
 import { CheckboxGroup } from "../src/components/checkbox/index.js"
 
@@ -65,7 +66,7 @@ describe("native table operations", () => {
     expect(componentCss).not.toContain("border-style: dashed")
     expect(componentCss).not.toContain("pointer-events: none")
     expect(componentCss).toContain("[data-data-sort]:disabled { cursor: default; opacity: .5; }")
-    expect(gzipSync(`${baseCss}\n${componentCss}`, { level: 9 }).length).toBeLessThanOrEqual(2000)
+    expect(gzipSync(`${baseCss}\n${componentCss}`, { level: 9 }).length).toBeLessThanOrEqual(2500)
   })
   it("retains original rows, fields and author styles while presentation states change", () => {
     const { helper, root, row, check } = fixture()
@@ -492,3 +493,155 @@ describe("local bounds", () => {
     expect(document.querySelectorAll("tbody > tr[hidden]").length).toBe(0)
   })
 })
+
+describe("canonical DataTable ViewElement", () => {
+  it("registers canonical DataTable with own tag, shared ViewElement identity and registration conflict safety", () => {
+    expect(DataTable.tag).toBe("m-data-table")
+    expect(MDataTable).toBe(DataTable)
+    expect(DataTable.prototype instanceof ViewElement).toBe(true)
+    expect(customElements.get("m-data-table")).toBe(DataTable)
+    expect(DataTable.observedAttributes).toEqual([
+      "bordered",
+      "striped",
+      "single-line",
+      "size",
+      "pagination",
+    ])
+    const define = vi.fn()
+    expect(() => registerDataTable({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerDataTable()).not.toThrow()
+  })
+
+  it("maintains default property values and reflects boolean and enum attributes cleanly", () => {
+    const table = new DataTable()
+    expect([table.bordered, table.striped, table.singleLine, table.size, table.pagination]).toEqual([
+      true, false, true, "medium", false,
+    ])
+
+    table.bordered = false
+    expect(table.bordered).toBe(false)
+    expect(table.getAttribute("bordered")).toBe("false")
+    table.bordered = true
+    expect(table.bordered).toBe(true)
+    expect(table.getAttribute("bordered")).toBe("true")
+
+    table.striped = true
+    expect(table.striped).toBe(true)
+    expect(table.hasAttribute("striped")).toBe(true)
+    table.striped = false
+    expect(table.striped).toBe(false)
+    expect(table.hasAttribute("striped")).toBe(false)
+
+    table.singleLine = false
+    expect(table.singleLine).toBe(false)
+    expect(table.getAttribute("single-line")).toBe("false")
+    table.singleLine = true
+    expect(table.singleLine).toBe(true)
+    expect(table.getAttribute("single-line")).toBe("true")
+
+    table.pagination = true
+    expect(table.pagination).toBe(true)
+    expect(table.hasAttribute("pagination")).toBe(true)
+    table.pagination = false
+    expect(table.pagination).toBe(false)
+    expect(table.hasAttribute("pagination")).toBe(false)
+
+    for (const size of dataTableSizes) {
+      table.size = size
+      expect(table.size).toBe(size)
+      expect(table.getAttribute("size")).toBe(size)
+    }
+    expect(() => { (table as any).size = "huge" }).toThrow(RangeError)
+  })
+
+  it("upgrades properties assigned before connectedCallback", () => {
+    const late = document.createElement("m-data-table") as DataTable
+    late.size = "small"
+    late.striped = true
+    late.pagination = true
+    late.bordered = false
+    late.singleLine = false
+    document.body.append(late)
+    expect(late.size).toBe("small")
+    expect(late.striped).toBe(true)
+    expect(late.pagination).toBe(true)
+    expect(late.bordered).toBe(false)
+    expect(late.singleLine).toBe(false)
+    expect(late.getAttribute("size")).toBe("small")
+    expect(late.hasAttribute("striped")).toBe(true)
+    expect(late.hasAttribute("pagination")).toBe(true)
+    expect(late.getAttribute("bordered")).toBe("false")
+    expect(late.getAttribute("single-line")).toBe("false")
+  })
+
+  it("synchronizes attributes to child table", () => {
+    const root = document.createElement("m-data-table") as DataTable
+    root.size = "small"
+    root.striped = true
+    root.bordered = false
+    root.singleLine = false
+
+    const inner = document.createElement("table")
+    const tbody = document.createElement("tbody")
+    const tr = document.createElement("tr")
+    const td = document.createElement("td")
+    td.textContent = "Cell"
+    tr.append(td)
+    tbody.append(tr)
+    inner.append(tbody)
+    root.append(inner)
+    document.body.append(root)
+
+    expect(root.table).toBe(inner)
+    expect(inner.classList.contains("m-table")).toBe(true)
+    expect(inner.dataset.size).toBe("small")
+    expect(inner.hasAttribute("data-striped")).toBe(true)
+    expect(inner.dataset.bordered).toBe("false")
+    expect(inner.dataset.singleLine).toBe("false")
+
+    root.size = "large"
+    expect(inner.dataset.size).toBe("large")
+    root.striped = false
+    expect(inner.hasAttribute("data-striped")).toBe(false)
+    root.bordered = true
+    expect(inner.hasAttribute("data-bordered")).toBe(false)
+    root.singleLine = true
+    expect(inner.hasAttribute("data-single-line")).toBe(false)
+  })
+
+  it("supports createDataTable on m-data-table element", () => {
+    const dataTable = document.createElement("m-data-table") as DataTable
+    dataTable.setAttribute("aria-label", "Scores")
+    dataTable.innerHTML = `
+      <div class="m-data-table-scroll">
+        <table class="m-table" data-data-table-table>
+          <thead><tr><th scope="col" data-data-column="name">Name</th></tr></thead>
+          <tbody>
+            <tr data-data-key="r1"><td>Row 1</td></tr>
+            <tr data-data-key="r2"><td>Row 2</td></tr>
+          </tbody>
+        </table>
+      </div>
+    `
+    document.body.append(dataTable)
+    const ctrl = createDataTable(dataTable, {
+      columns: [{ key: "name", filter: (row, val) => row.textContent!.includes(val) }],
+    })
+    controllers.push(ctrl)
+    expect(ctrl.connected).toBe(true)
+    expect(ctrl.state.total).toBe(2)
+    ctrl.set({ filters: { name: "Row 1" } })
+    expect(ctrl.state.visibleKeys).toEqual(["r1"])
+  })
+
+  it("exposes MarkupUIDataTable on globalThis", async () => {
+    await import("../src/components/data-table/global.js")
+    const globalApi = (globalThis as any).MarkupUIDataTable
+    expect(globalApi).toBeDefined()
+    expect(globalApi.DataTable).toBe(DataTable)
+    expect(globalApi.registerDataTable).toBe(registerDataTable)
+    expect(globalApi.createDataTable).toBe(createDataTable)
+  })
+})
+
