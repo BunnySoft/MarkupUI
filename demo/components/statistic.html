@@ -1,62 +1,95 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Statistic</title>
+  <title>Statistic - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-statistic.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./statistic.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-statistic.global.js"></script>
-  <script defer src="./statistic.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script type="module" src="./statistic.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Statistic: passive values and native content</h1>
-    <p>No formatter, number-animation or provider runtime is loaded. Text remains exactly the text the application supplied.</p>
-    <section aria-labelledby="values-heading">
-      <h2 id="values-heading">Legacy attributes, zero and literal strings</h2>
-      <div class="examples">
-        <m-statistic label="Revenue" value="12345.60" prefix="$" suffix="USD" tabular-nums></m-statistic>
-        <m-statistic label="Zero is a value" value="0"></m-statistic>
-        <m-statistic label="Leading zeros" value="0012"></m-statistic>
-        <m-statistic label="Unknown supplied as text" value="N/A"></m-statistic>
-        <m-statistic label="Missing value"></m-statistic>
+  <main data-demo-page class="component-docs">
+    <h1>Statistic</h1>
+    <p>Displays numbers, metrics, labels, and affixes with passive semantics and authored regions.</p>
+    <nav class="component-docs-nav" aria-label="Statistic documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-statistic.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-statistic.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header><div><h2 id="basic-heading">Basic statistic</h2><p>Passive values, affixes, and tabular figures.</p></div></header>
+      <div data-demo-preview>
+        <div class="examples">
+          <m-statistic label="Revenue" value="12345.60" prefix="$" suffix="USD" tabular-nums></m-statistic>
+          <m-statistic label="Active Users" value="1,234"></m-statistic>
+          <m-statistic label="Growth" value="+12.5" suffix="%"></m-statistic>
+          <m-statistic label="Zero is a value" value="0"></m-statistic>
+          <m-statistic label="Unknown" value="N/A"></m-statistic>
+        </div>
       </div>
     </section>
-    <section aria-labelledby="authored-heading">
-      <h2 id="authored-heading">Authored headings, values, prefix and suffix</h2>
-      <form id="metric-form">
-        <m-statistic id="authored" role="group" aria-labelledby="metric-label" tabular-nums>
-          <h3 data-m-statistic-label id="metric-label">Active users</h3>
-          <span data-m-statistic-prefix aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M3 14 8 9l4 3 5-7" fill="none" stroke="currentColor" stroke-width="2"></path></svg></span>
-          <strong id="authored-value">128</strong>
-          <span data-m-statistic-suffix><a id="details-link" href="#native-heading">people</a><button type="button" id="details-action">Details</button><button type="submit" id="submit-action">Submit metric</button></span>
-        </m-statistic>
-      </form>
-      <div class="controls">
-        <button type="button" id="override">Set property value to zero</button>
-        <button type="button" id="blank">Set explicit empty value</button>
-        <button type="button" id="restore">Restore authored value</button>
-        <button type="button" id="tabular">Toggle tabular figures</button>
-        <button type="button" id="reconnect">Reconnect Statistic</button>
+
+    <section data-demo-example="authored" aria-labelledby="authored-heading">
+      <header data-demo-header><div><h2 id="authored-heading">Authored regions and controls</h2><p>Authored headings, custom prefix/suffix icons, links, and action buttons.</p></div></header>
+      <div data-demo-preview>
+        <form id="metric-form">
+          <m-statistic id="authored" role="group" aria-labelledby="metric-label" tabular-nums>
+            <h3 data-m-statistic-label id="metric-label">Active users</h3>
+            <span data-m-statistic-prefix aria-hidden="true"><svg viewBox="0 0 20 20" width="16" height="16"><path d="M3 14 8 9l4 3 5-7" fill="none" stroke="currentColor" stroke-width="2"></path></svg></span>
+            <strong id="authored-value">128</strong>
+            <span data-m-statistic-suffix><a id="details-link" href="#authored-heading">people</a> <button type="button" id="details-action">Details</button> <button type="submit" id="submit-action">Submit metric</button></span>
+          </m-statistic>
+        </form>
+        <div class="controls">
+          <button type="button" id="override">Set value to 0</button>
+          <button type="button" id="blank">Set empty value</button>
+          <button type="button" id="restore">Restore authored</button>
+          <button type="button" id="tabular">Toggle tabular figures</button>
+          <button type="button" id="reconnect">Reconnect</button>
+        </div>
+        <p id="action-status" role="status">0 detail actions.</p>
+        <p id="submit-status" role="status">0 native submissions.</p>
       </div>
-      <p id="action-status" role="status">0 detail actions.</p>
-      <p id="submit-status" role="status">0 native submissions.</p>
     </section>
-    <section aria-labelledby="format-heading">
-      <h2 id="format-heading">Application-owned native Intl formatting</h2>
-      <m-statistic id="formatted" label="Localized amount" suffix="EUR" tabular-nums></m-statistic>
-      <div class="controls"><button type="button" id="german">German format</button><button type="button" id="english">English format</button></div>
-      <p>Intl runs in the application script. Statistic receives the resulting string without parsing separators or changing units.</p>
+
+    <section data-demo-example="intl" aria-labelledby="intl-heading">
+      <header data-demo-header><div><h2 id="intl-heading">Application Intl formatting</h2><p>Intl runs in the application script; Statistic receives the resulting string.</p></div></header>
+      <div data-demo-preview>
+        <m-statistic id="formatted" label="Localized amount" suffix="EUR" tabular-nums></m-statistic>
+        <div class="controls">
+          <button type="button" id="german">German format</button>
+          <button type="button" id="english">English format</button>
+        </div>
+      </div>
     </section>
-    <section aria-labelledby="native-heading">
-      <h2 id="native-heading">Native description list without JavaScript</h2>
-      <dl class="m-statistic" tabular-nums>
-        <dt data-m-statistic-label>Archived reports</dt>
-        <dd data-m-statistic-display><span data-m-statistic-value>42</span><span data-m-statistic-suffix>reports</span></dd>
-      </dl>
-      <p>Static semantic HTML plus CSS is enough. Live announcements or animated numbers are separate application decisions.</p>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="statistic-api"><p>Loading API documentation.</p></div>
     </section>
   </main>
 </body>
 </html>
+

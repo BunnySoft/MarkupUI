@@ -1,26 +1,28 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { MStatistic, registerStatistic } from "../src/components/statistic/index.js"
+import { Statistic, MStatistic, registerStatistic } from "../src/components/statistic/index.js"
+import * as statisticApi from "../src/components/statistic/index.js"
 import { registerElements } from "../src/components/elements.js"
+import { ViewElement } from "../src/core/index.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
-function statistic(markup = "<m-statistic></m-statistic>"): MStatistic {
+function statistic(markup = "<m-statistic></m-statistic>"): Statistic {
   document.body.innerHTML = markup
   const element = document.querySelector("m-statistic")
-  if (!(element instanceof MStatistic)) throw new Error("Statistic was not upgraded")
+  if (!(element instanceof Statistic)) throw new Error("Statistic was not upgraded")
   return element
 }
-function region(element: MStatistic, name: string): HTMLElement {
+function region(element: Statistic, name: string): HTMLElement {
   return element.querySelector<HTMLElement>(name === "label"
     ? ":scope > [data-m-statistic-label]"
     : `:scope > [data-m-statistic-display] > [data-m-statistic-${name}]`)!
 }
-function text(element: MStatistic, name: string): HTMLElement {
+function text(element: Statistic, name: string): HTMLElement {
   return region(element, name).querySelector<HTMLElement>(":scope > [data-m-statistic-text]")!
 }
-function slot(element: MStatistic, name: string): HTMLElement {
+function slot(element: Statistic, name: string): HTMLElement {
   return region(element, name).querySelector<HTMLElement>(":scope > [data-m-statistic-slot]")!
 }
 
@@ -82,8 +84,8 @@ describe("standalone Statistic", () => {
 
   it("does not turn missing values into zero or fabricate semantics", () => {
     const element = statistic()
-    expect(element.value).toBeUndefined()
-    expect(element.label).toBeUndefined()
+    expect(element.value).toBeNull()
+    expect(element.label).toBeNull()
     expect(region(element, "value").hidden).toBe(true)
     expect(region(element, "label").hidden).toBe(true)
     expect(element.textContent).toBe("")
@@ -110,7 +112,7 @@ describe("standalone Statistic", () => {
     }
     element.value = undefined
     expect(region(element, "value").hidden).toBe(true)
-    expect(element.value).toBeUndefined()
+    expect(element.value).toBeNull()
   })
 
   it("rejects nonfinite numeric assignments before changing the current value", () => {
@@ -139,7 +141,7 @@ describe("standalone Statistic", () => {
   })
 
   it("preserves authored headings/value nodes and listeners", () => {
-    const element = document.createElement("m-statistic") as MStatistic
+    const element = document.createElement("m-statistic") as Statistic
     const heading = document.createElement("h3")
     heading.dataset.mStatisticLabel = ""
     heading.id = "heading"
@@ -306,16 +308,16 @@ describe("standalone Statistic", () => {
 
   it("upgrades pre-definition props silently and writes no inline styles", () => {
     document.body.innerHTML = "<test-late-statistic><strong>Fallback</strong></test-late-statistic>"
-    const element = document.querySelector("test-late-statistic") as MStatistic
+    const element = document.querySelector("test-late-statistic") as Statistic
     const fallback = element.querySelector("strong")
     const event = vi.fn()
     for (const name of ["change", "input", "m:change"]) element.addEventListener(name, event)
     Object.assign(element, { label: "Users", value: 0, valuePrefix: "~", valueSuffix: "people", tabularNums: true })
-    customElements.define("test-late-statistic", class extends MStatistic {})
+    customElements.define("test-late-statistic", class extends Statistic {})
     expect(text(element, "value").textContent).toBe("0")
     expect(element.tabularNums).toBe(true)
     expect(element.contains(fallback)).toBe(true)
-    expect(element.prefix).toBeNull()
+    expect(element.prefix).toBe("~")
     expect(event).not.toHaveBeenCalled()
     expect(document.querySelector("style,[style]")).toBeNull()
     expect(element.shadowRoot).toBeNull()
@@ -324,10 +326,122 @@ describe("standalone Statistic", () => {
   it("reports collisions and keeps enhanced registration before the legacy aggregate", () => {
     expect(() => registerStatistic()).not.toThrow()
     const define = vi.fn()
-    expect(() => registerStatistic({ get: () => class extends HTMLElement {}, define })).toThrow("before the legacy MarkupUI bundle")
+    expect(() => registerStatistic({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
     expect(define).not.toHaveBeenCalled()
     registerElements(customElements)
-    expect(customElements.get("m-statistic")).toBe(MStatistic)
+    expect(customElements.get("m-statistic")).toBe(Statistic)
     expect(text(statistic('<m-statistic value="0"></m-statistic>'), "value").textContent).toBe("0")
   })
 })
+
+describe("canonical Statistic ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(statisticApi.Statistic).toBe(Statistic)
+    expect(statisticApi.MStatistic).toBe(Statistic)
+    expect(Statistic.tag).toBe("m-statistic")
+    expect(ViewElement.prototype.isPrototypeOf(Statistic.prototype)).toBe(true)
+    expect(customElements.get("m-statistic")).toBe(Statistic)
+    expect(Statistic.observedAttributes).toEqual(["label", "value", "prefix", "suffix", "tabular-nums"])
+    expect(() => registerStatistic()).not.toThrow()
+    const define = vi.fn()
+    expect(() => registerStatistic({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("handles label, value, prefix, suffix property defaults and reflection", () => {
+    const element = statistic()
+    expect(element.label).toBeNull()
+    expect(element.value).toBeNull()
+    expect(element.prefix).toBeNull()
+    expect(element.suffix).toBeNull()
+    expect(element.tabularNums).toBe(false)
+
+    element.label = "Active Users"
+    expect(element.label).toBe("Active Users")
+    expect(element.getAttribute("label")).toBe("Active Users")
+
+    element.value = "1,234"
+    expect(element.value).toBe("1,234")
+    expect(element.getAttribute("value")).toBe("1,234")
+
+    element.prefix = "~"
+    expect(element.prefix).toBe("~")
+    expect(element.getAttribute("prefix")).toBe("~")
+
+    element.suffix = "people"
+    expect(element.suffix).toBe("people")
+    expect(element.getAttribute("suffix")).toBe("people")
+
+    element.tabularNums = true
+    expect(element.tabularNums).toBe(true)
+    expect(element.hasAttribute("tabular-nums")).toBe(true)
+
+    element.label = null
+    expect(element.label).toBeNull()
+    expect(element.hasAttribute("label")).toBe(false)
+
+    element.value = null
+    expect(element.value).toBeNull()
+    expect(element.hasAttribute("value")).toBe(false)
+
+    element.prefix = null
+    expect(element.prefix).toBeNull()
+    expect(element.hasAttribute("prefix")).toBe(false)
+
+    element.suffix = null
+    expect(element.suffix).toBeNull()
+    expect(element.hasAttribute("suffix")).toBe(false)
+
+    element.tabularNums = false
+    expect(element.tabularNums).toBe(false)
+    expect(element.hasAttribute("tabular-nums")).toBe(false)
+  })
+
+  it("handles numeric values and rejects invalid assignments", () => {
+    const element = statistic()
+    element.value = 42
+    expect(element.value).toBe("42")
+    expect(element.getAttribute("value")).toBe("42")
+
+    for (const invalid of [NaN, Infinity, -Infinity]) {
+      expect(() => { element.value = invalid }).toThrow(RangeError)
+    }
+
+    for (const invalid of [true, false, {}, []]) {
+      expect(() => { element.value = invalid as never }).toThrow(TypeError)
+      expect(() => { element.label = invalid as never }).toThrow(TypeError)
+      expect(() => { element.prefix = invalid as never }).toThrow(TypeError)
+      expect(() => { element.suffix = invalid as never }).toThrow(TypeError)
+    }
+  })
+
+  it("replays pre-upgrade properties upon connection", () => {
+    const element = document.createElement("m-statistic") as Statistic
+    Object.defineProperty(element, "label", { configurable: true, value: "Pre Label" })
+    Object.defineProperty(element, "value", { configurable: true, value: "100" })
+    Object.defineProperty(element, "prefix", { configurable: true, value: "$" })
+    Object.defineProperty(element, "suffix", { configurable: true, value: "USD" })
+    Object.defineProperty(element, "tabularNums", { configurable: true, value: true })
+    document.body.append(element)
+
+    expect(element.label).toBe("Pre Label")
+    expect(element.value).toBe("100")
+    expect(element.prefix).toBe("$")
+    expect(element.suffix).toBe("USD")
+    expect(element.tabularNums).toBe(true)
+    expect(element.getAttribute("label")).toBe("Pre Label")
+    expect(element.getAttribute("value")).toBe("100")
+    expect(element.getAttribute("prefix")).toBe("$")
+    expect(element.getAttribute("suffix")).toBe("USD")
+    expect(element.hasAttribute("tabular-nums")).toBe(true)
+  })
+
+  it("exposes MarkupUIStatistic on globalThis", async () => {
+    await import("../src/components/statistic/global.js")
+    const target = globalThis as typeof globalThis & { MarkupUIStatistic?: typeof statisticApi }
+    expect(target.MarkupUIStatistic).toBeDefined()
+    expect(target.MarkupUIStatistic?.Statistic).toBe(Statistic)
+    expect(target.MarkupUIStatistic?.registerStatistic).toBe(registerStatistic)
+  })
+})
+

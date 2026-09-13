@@ -1,7 +1,6 @@
 import { MElement } from "../core/element.js"
 import { MApp, MField, MSemantic, MTheme } from "./foundation.js"
 import { MAccordionItem, MInclude } from "./dynamic.js"
-import { MStatistic } from "./navigation.js"
 import { builtInStyles } from "./styles.js"
 
 const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = [
@@ -19,7 +18,6 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-option", class extends MElement {}],
   ["m-accordion", class extends MElement {}],
   ["m-accordion-item", MAccordionItem],
-  ["m-statistic", MStatistic],
   ["m-include", MInclude],
 ]
 
