@@ -94,6 +94,13 @@ feedback. It is bundled into Form, not emitted as a budget-only shared dependenc
 The old aggregate MForm/MFormItem classes and public factory are removed. Native labels,
 legends, controls and forms remain the semantic owners; see the [demo/API](../../demo/components/form.html).
 
+Grid's direct layout properties live in `src/components/grid/grid.ts`; `item.ts` owns the
+optional column span/start. Its pure `model.ts` tag predicate permits passive composition
+without importing constructors or registration. Both elements reuse reversible style writes
+and never inspect, measure or replace children. Existing native `.m-grid` CSS consumers remain
+supported; the competing aggregate `MGrid` is removed while pending Layout aliases remain.
+See the [Grid demo/API](../../demo/components/grid.html) for the native CSS scope.
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed

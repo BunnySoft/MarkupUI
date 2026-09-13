@@ -1,5 +1,5 @@
 import { MElement } from "../core/element.js"
-import { MApp, MField, MGrid, MSemantic, MTheme } from "./foundation.js"
+import { MApp, MField, MSemantic, MTheme } from "./foundation.js"
 import { MAutocomplete, MSlider } from "./forms.js"
 import { MAccordionItem, MInclude } from "./dynamic.js"
 import { MDialog, MDrawer, MPopover, MTooltip } from "./overlays.js"
@@ -29,7 +29,6 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-option", class extends MElement {}],
   ["m-autocomplete", MAutocomplete],
   ["m-slider", MSlider],
-  ["m-grid", MGrid],
   ["m-tabs", MTabs],
   ["m-tab", MTab],
   ["m-accordion", class extends MElement {}],

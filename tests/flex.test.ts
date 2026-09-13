@@ -398,7 +398,8 @@ describe("Flex CSS, demo and selected delivery", () => {
     expect(esm).not.toContain("m-space")
     const aggregate = readFileSync("src\\components\\elements.ts", "utf8")
     expect(aggregate).not.toContain('"m-flex"')
-    for (const alias of ["m-row", "m-stack", "m-wrap", "m-grid"]) expect(aggregate).toContain(`"${alias}"`)
+    for (const alias of ["m-row", "m-stack", "m-wrap"]) expect(aggregate).toContain(`"${alias}"`)
+    expect(aggregate).not.toContain('"m-grid"')
     for (const name of ["collapse", "dropdown", "tooltip"]) {
       const source = readFileSync(`dist\\markup-ui-${name}.js`, "utf8")
       expect(source).not.toContain("registerFlex")

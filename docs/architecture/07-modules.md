@@ -1,6 +1,6 @@
 # 7. Small core and selectable components
 
-**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex, Input, Checkbox, Radio, Switch, InputNumber, Select and Form, with explicit payload ceilings.
+**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex, Input, Checkbox, Radio, Switch, InputNumber, Select, Form and Grid, with explicit payload ceilings.
 The rollout continues component-by-component.**
 Follow the useful jQuery/plugin pattern: load one small core, then only the features the
 application needs. This is a packaging and extension pattern, not a dependency on jQuery.
@@ -150,6 +150,23 @@ shared core**, and **1,250 for CSS**. Current measured ESM/classic family costs 
 core-inclusive runtime costs are 7,359/7,587, and CSS is 1,152.
 The coordinator remains inside the family rather than being split solely to fit a per-file gate.
 Budget failures stop the build before its delivery manifest is written.
+
+## Grid delivery
+
+Grid/GridItem select core plus one family entry and CSS. ESM imports `markup-ui-core.js`;
+classic order is `markup-ui-core.global.js`, then `markup-ui-grid.global.js`, with
+`markup-ui-grid.css`. No Grid constructor is bundled in passive Collapse/Dropdown/Tooltip
+consumers: they import only the pure tag predicate. FormItemGi has no Grid dependency.
+The legacy aggregate no longer registers MGrid; its showcase selects the canonical family.
+Pending Layout aliases and native `.m-grid` CSS consumers are retained.
+
+Grid's new measured-budget ceilings are **1,750 gzip bytes per JS format**, **3,000 for
+core-inclusive runtime**, and the existing **1,500 CSS**. Output is 1,449/1,555
+family bytes, 2,432/2,595 core-inclusive bytes, and 613 CSS bytes (3,045/3,208 including CSS).
+Passive Grid support increased Tooltip classic output to **5,014 bytes**, exceeding its
+5,000-byte limit by 14; its authorized ceiling is now **5,100**. Tooltip ESM remains
+4,941 against 5,000, with no extra runtime dependency. All other existing budgets stay
+unchanged. The failed budget run wrote no delivery manifest; budget checks remain fail-fast.
 
 ## References
 

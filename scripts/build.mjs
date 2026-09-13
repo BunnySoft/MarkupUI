@@ -27,17 +27,18 @@ const shared = {
 }
 const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image", "popover", "tooltip", "popconfirm", "dropdown", "menu", "tabs", "collapse", "anchor", "back-top", "pagination", "steps", "loading-bar", "dialog", "modal", "drawer", "message", "notification", "collapse-transition", "input", "checkbox", "radio", "switch", "select", "input-number", "slider", "rate", "form"]
 const classicEntries = { progress: "global.ts", popover: "global.ts", tooltip: "global.ts", popconfirm: "global.ts", dropdown: "global.ts", menu: "global.ts", tabs: "global.ts", collapse: "global.ts", anchor: "global.ts", "back-top": "global.ts", pagination: "global.ts", steps: "global.ts", "loading-bar": "global.ts", dialog: "global.ts", modal: "global.ts", drawer: "global.ts", message: "global.ts", notification: "global.ts", "collapse-transition": "global.ts", input: "global.ts", checkbox: "global.ts", radio: "global.ts", switch: "global.ts", select: "global.ts", "input-number": "global.ts", slider: "global.ts", rate: "global.ts" }
-const styleOnlyComponents = ["gradient-text", "ellipsis", "page-header", "grid", "layout", "list", "descriptions", "timeline", "breadcrumb", "thing", "table", "affix", "result", "code", "scrollbar", "float-button", "global-style"]
+const styleOnlyComponents = ["gradient-text", "ellipsis", "page-header", "layout", "list", "descriptions", "timeline", "breadcrumb", "thing", "table", "affix", "result", "code", "scrollbar", "float-button", "global-style"]
 classicEntries.avatar = "global.ts"
 classicEntries.button = "global.ts"
 classicEntries.card = "global.ts"
-components.push("divider", "icon", "typography", "space", "flex")
+components.push("divider", "icon", "typography", "space", "flex", "grid")
 classicEntries.divider = "global.ts"
 classicEntries.icon = "global.ts"
 classicEntries.typography = "global.ts"
 classicEntries.space = "global.ts"
 classicEntries.flex = "global.ts"
-const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500], ["select", 8_000], ["form", 8_250]])
+classicEntries.grid = "global.ts"
+const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500], ["select", 8_000], ["form", 8_250], ["grid", 3_000]])
 await generateComponentApi(root, [...viewComponents.keys()])
 
 function corePlugin(format) {
@@ -279,6 +280,8 @@ await emitStylesheets(root, dist)
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-grid.js": 1_750,
+  "markup-ui-grid.global.js": 1_750,
   "markup-ui-flex.js": 1_500,
   "markup-ui-flex.global.js": 1_500,
   "markup-ui-typography.js": 6_000,
@@ -489,7 +492,7 @@ const bundleBudgets = {
   "markup-ui-popover.global.js": 4_000,
   "markup-ui-popover.css": 1_000,
   "markup-ui-tooltip.js": 5_000,
-  "markup-ui-tooltip.global.js": 5_000,
+  "markup-ui-tooltip.global.js": 5_100,
   "markup-ui-tooltip.css": 1_250,
   "markup-ui-popconfirm.js": 6_500,
   "markup-ui-popconfirm.global.js": 6_500,

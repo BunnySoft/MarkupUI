@@ -32,6 +32,8 @@
     <script type="module" src="../dist/markup-ui-select.js"></script>
     <link rel="stylesheet" href="../dist/markup-ui-radio.css">
     <script type="module" src="../dist/markup-ui-radio.js"></script>
+    <link rel="stylesheet" href="../dist/markup-ui-grid.css">
+    <script type="module" src="../dist/markup-ui-grid.js"></script>
     <link rel="stylesheet" href="./legacy.css">
     <script type="module" src="../dist/markup-ui-avatar.js"></script>
     <link rel="stylesheet" href="../dist/markup-ui-button.css">
@@ -88,7 +90,7 @@
             </m-wrap>
           </m-section>
 
-          <m-grid class="summary-grid" columns="repeat(4, minmax(0, 1fr))" gap="md">
+          <m-grid class="summary-grid" columns="repeat(4, minmax(0, 1fr))" row-gap="12" column-gap="12">
             <m-card class="summary-card">
               <strong>92+</strong>
               <m-text>built-in elements</m-text>
@@ -107,7 +109,7 @@
             </m-card>
           </m-grid>
 
-          <m-grid class="showcase-workspace" columns="240px minmax(0, 1fr) 180px" gap="lg">
+          <m-grid class="showcase-workspace" columns="240px minmax(0, 1fr) 180px" row-gap="16" column-gap="16">
             <m-card class="showcase-sidebar">
               <m-stack class="sidebar-list" gap="xs" role="navigation" aria-label="Demo sections">
                 <m-text class="sidebar-title">Components</m-text>
@@ -178,7 +180,7 @@
                 </m-text>
               </m-stack>
 
-              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" row-gap="12" column-gap="12">
                 <m-card>
                   <m-stack gap="md">
                     <m-heading level="3">Stack and row</m-heading>
@@ -218,7 +220,7 @@
               <m-card>
                 <m-stack gap="md">
                   <m-heading level="3">CSS Grid</m-heading>
-                  <m-grid class="mini-grid" columns="repeat(3, minmax(0, 1fr))" gap="sm">
+                  <m-grid class="mini-grid" columns="repeat(3, minmax(0, 1fr))" row-gap="8" column-gap="8">
                     <m-center>One</m-center>
                     <m-center>Two</m-center>
                     <m-center>Three</m-center>
@@ -302,7 +304,7 @@
                 </m-stack>
               </m-card>
 
-              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" row-gap="12" column-gap="12">
                 <m-card>
                   <m-stack gap="sm">
                     <m-heading level="3">Typography</m-heading>
@@ -332,7 +334,7 @@
                 </m-card>
               </m-grid>
 
-              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" row-gap="12" column-gap="12">
                 <m-card>
                   <m-card-header>
                     <m-heading level="3">Compound card anatomy</m-heading>
@@ -395,7 +397,7 @@
                 </m-text>
               </m-stack>
 
-              <m-grid class="form-grid" columns="minmax(0, 1.2fr) minmax(280px, .8fr)" gap="md">
+              <m-grid class="form-grid" columns="minmax(0, 1.2fr) minmax(280px, .8fr)" row-gap="12" column-gap="12">
                 <m-card>
                   <m-form id="profile-form">
                     <m-stack gap="md">
@@ -574,7 +576,7 @@
                 </m-text>
               </m-stack>
 
-              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" row-gap="12" column-gap="12">
                 <m-card>
                   <m-tabs>
                     <m-tab title="Overview" selected>
@@ -613,7 +615,7 @@
                 </m-card>
               </m-grid>
 
-              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" row-gap="12" column-gap="12">
                 <m-card>
                   <m-stack gap="md">
                     <m-heading level="3">Menu and pagination</m-heading>
@@ -642,7 +644,7 @@
                 </m-card>
               </m-grid>
 
-              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" row-gap="12" column-gap="12">
                 <m-card>
                   <m-stack gap="md">
                     <m-heading level="3">Tree</m-heading>
@@ -684,14 +686,14 @@
               <m-card>
                 <m-stack gap="md">
                   <m-heading level="3">Descriptions and statistics</m-heading>
-                  <m-grid class="two-column-grid" columns="1.4fr .6fr" gap="md">
+                  <m-grid class="two-column-grid" columns="1.4fr .6fr" row-gap="12" column-gap="12">
                     <m-descriptions columns="2">
                       <m-description-item label="Package">MarkupUI</m-description-item>
                       <m-description-item label="Version">0.11.0</m-description-item>
                       <m-description-item label="Runtime">Browser native</m-description-item>
                       <m-description-item label="Dependencies">Zero</m-description-item>
                     </m-descriptions>
-                    <m-grid columns="repeat(2,minmax(0,1fr))" gap="md">
+                    <m-grid columns="repeat(2,minmax(0,1fr))" row-gap="12" column-gap="12">
                       <m-statistic label="Components" value="75" suffix="+"></m-statistic>
                       <m-statistic label="Runtime deps" value="0"></m-statistic>
                     </m-grid>
@@ -728,7 +730,7 @@
                 </m-stack>
               </m-card>
 
-              <m-grid class="two-column-grid" columns="repeat(2,minmax(0,1fr))" gap="md">
+              <m-grid class="two-column-grid" columns="repeat(2,minmax(0,1fr))" row-gap="12" column-gap="12">
                 <m-card>
                   <m-stack gap="md">
                     <m-heading level="3">Date and time</m-heading>
@@ -782,7 +784,7 @@
                 </m-text>
               </m-stack>
 
-              <m-grid class="two-column-grid" columns="repeat(2,minmax(0,1fr))" gap="md">
+              <m-grid class="two-column-grid" columns="repeat(2,minmax(0,1fr))" row-gap="12" column-gap="12">
                 <m-card>
                   <m-stack gap="md">
                     <m-heading level="3">Breadcrumb and timeline</m-heading>
@@ -815,7 +817,7 @@
                 </m-card>
               </m-grid>
 
-              <m-grid class="two-column-grid" columns="repeat(2,minmax(0,1fr))" gap="md">
+              <m-grid class="two-column-grid" columns="repeat(2,minmax(0,1fr))" row-gap="12" column-gap="12">
                 <m-card>
                   <m-stack gap="md">
                     <m-heading level="3">Carousel</m-heading>
@@ -883,7 +885,7 @@
                 <m-heading level="2">Global and scoped CSS tokens</m-heading>
               </m-stack>
 
-              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" row-gap="12" column-gap="12">
                 <m-card>
                   <m-stack gap="md">
                     <m-heading level="3">Global theme</m-heading>
@@ -931,7 +933,7 @@
                 </m-text>
               </m-stack>
 
-              <m-grid class="runtime-grid" columns="repeat(3, minmax(0, 1fr))" gap="md">
+              <m-grid class="runtime-grid" columns="repeat(3, minmax(0, 1fr))" row-gap="12" column-gap="12">
                 <m-card>
                   <m-stack gap="md">
                     <m-heading level="3">Drawer</m-heading>
@@ -983,7 +985,7 @@
                 </m-card>
               </m-grid>
 
-              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" row-gap="12" column-gap="12">
                 <m-card>
                   <m-stack gap="md">
                     <m-heading level="3">Message service</m-heading>
@@ -1020,7 +1022,7 @@
                 <m-heading level="2">Actions, plugins, query, security, and includes</m-heading>
               </m-stack>
 
-              <m-grid class="runtime-grid" columns="repeat(3, minmax(0, 1fr))" gap="md">
+              <m-grid class="runtime-grid" columns="repeat(3, minmax(0, 1fr))" row-gap="12" column-gap="12">
                 <m-card>
                   <m-stack gap="md">
                     <m-heading level="3">Named actions</m-heading>
@@ -1060,7 +1062,7 @@
                 </m-card>
               </m-grid>
 
-              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" gap="md">
+              <m-grid class="two-column-grid" columns="repeat(2, minmax(0, 1fr))" row-gap="12" column-gap="12">
                 <m-card>
                   <m-stack gap="md">
                     <m-row align="center">
@@ -1100,7 +1102,7 @@
             m-visible="panels.distribution"
           >
             <m-card>
-              <m-grid class="distribution-grid" columns="1fr 1fr" gap="lg">
+              <m-grid class="distribution-grid" columns="1fr 1fr" row-gap="16" column-gap="16">
                 <m-stack gap="sm">
                   <m-badge>ES module</m-badge>
                   <m-heading level="3">Modern browser loading</m-heading>

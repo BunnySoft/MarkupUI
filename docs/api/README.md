@@ -22,6 +22,7 @@ in the target inventory.
 17. [InputNumber demo and API](../../demo/components/input-number.html): nullable numeric value, native drafts/default strings, constraints, step/clear intent, forms and lifecycle.
 18. [Select demo and API](../../demo/components/select.html): native string/null/array selection, option defaults, lists, forms, literal filtering and lifecycle.
 19. [Form demo and API](../../demo/components/form.html): native form association, submission/reset, item layout and abortable validation.
+20. [Grid demo and API](../../demo/components/grid.html): native CSS tracks, gaps, item alignment, optional column span/start and original children.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
@@ -42,6 +43,7 @@ maintain a second Markdown copy of their API tables or usage examples.
 | Use Typography and its seven companions | `@dataengine/markup-ui/typography` and its CSS; ESM imports core automatically. Import `Text as TypographyText` when native DOM Text is also needed. |
 | Use Space | `@dataengine/markup-ui/space` and its CSS; ESM imports core automatically. |
 | Use Flex | `@dataengine/markup-ui/flex` and its CSS; ESM imports core automatically. |
+| Use Grid/GridItem | `@dataengine/markup-ui/grid` and its CSS; ESM imports only core. Public exports are `Grid`, `GridItem`, `registerGrid`, `GridAlign` and `GridJustify`. Classic order is `markup-ui-core.global.js`, then `markup-ui-grid.global.js`. |
 | Use Input/Textarea and groups | `@dataengine/markup-ui/input` and its CSS; ESM imports core and internal native-field mechanics automatically. Public exports are the four classes, `registerInput`, `InputType`, `InputSize`, `InputStatus` and `InputCount`. |
 | Use Checkbox/CheckboxGroup | `@dataengine/markup-ui/checkbox` and its CSS; ESM imports only core. Public exports are the two classes, `registerCheckbox`, `CheckboxSize`, `CheckboxStatus`, `CheckboxGroupOptions` and `CheckboxGroupChange`. |
 | Use Radio/RadioGroup/RadioButton | `@dataengine/markup-ui/radio` and its CSS; ESM imports core and internal native-radio mechanics. Public exports are the three classes, `registerRadio`, `RadioSize`, `RadioStatus` and `RadioGroupChange`. |

@@ -1,6 +1,9 @@
 # Grid and GridItem
 
-> **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
+> **Historical reference.** The CSS-only implementation below is superseded by the
+> [current Grid/GridItem demo and source-generated API](../../../demo/components/grid.html).
+> The current family uses canonical ViewElements and shared-core ESM/classic delivery;
+> relative-offset packing remains outside the retained native CSS scope.
 
 **Migration status: 🟢 Verified retained native CSS/disclosure scope.**
 **Architecture: CSS-only.** Native Grid handles tracks, spans, gaps and auto-placement;

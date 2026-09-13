@@ -3,6 +3,7 @@ import { isIconElement } from "../icon/model.js"
 import { isTypographyInline } from "../typography/model.js"
 import { isSpaceElement } from "../space/model.js"
 import { isFlexElement } from "../flex/model.js"
+import { isGridElement } from "../grid/model.js"
 import type { PopoverController, PopoverOptions } from "../popover/popover.js"
 
 export type TooltipOptions = Omit<PopoverOptions, "trigger">
@@ -31,7 +32,7 @@ export function createTooltip(trigger: HTMLElement, panel: HTMLElement, options:
     for (const node of [panel, ...panel.querySelectorAll("*")]) {
       const role = node === panel ? null : node.getAttribute("role")
       if (node.matches(interactive) || (role && !["img", "none", "presentation"].includes(role))
-        || node.localName.includes("-") && !isIconElement(node) && !isTypographyInline(node) && !isSpaceElement(node) && !isFlexElement(node) || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)) {
+        || node.localName.includes("-") && !isIconElement(node) && !isTypographyInline(node) && !isSpaceElement(node) && !isFlexElement(node) && !isGridElement(node) || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)) {
         throw new TypeError("Tooltip content must be noninteractive; use Popover.")
       }
     }

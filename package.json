@@ -307,6 +307,10 @@
     "./descriptions/style.css": "./dist/markup-ui-descriptions.css",
     "./list/style.css": "./dist/markup-ui-list.css",
     "./layout/style.css": "./dist/markup-ui-layout.css",
+    "./grid": {
+      "types": "./dist/components/grid/index.d.ts",
+      "import": "./dist/markup-ui-grid.js"
+    },
     "./grid/style.css": "./dist/markup-ui-grid.css",
     "./space": {
       "types": "./dist/components/space/index.d.ts",

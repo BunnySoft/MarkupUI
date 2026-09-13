@@ -41,6 +41,10 @@ selection, option defaults, native keyboard/forms and optional literal list-filt
 It shares internal native-selection mechanics with the existing TreeSelect/Popselect consumers;
 those consumers are not migrated or registered by Select. Each Select JS ceiling remains
 4,000 bytes and CSS remains 1,000; the core-inclusive runtime ceiling is 8,000.
+Grid/GridItem use native CSS tracks and original children, with typed columns, gaps,
+item alignment and optional absolute column span/start. Responsiveness, rows, flow and
+visual order remain authored Web CSS; there is no relative-offset packing engine.
+See the [Grid demo/API](../../demo/components/grid.html). FormItemGi remains independent.
 The initial batch establishes the pattern; the remaining inventory requires its own
 contracts and dependency-aware implementation sequence.
 

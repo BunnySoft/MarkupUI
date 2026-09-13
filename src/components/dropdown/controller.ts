@@ -3,6 +3,7 @@ import { isIconElement } from "../icon/model.js"
 import { isTypographyInline } from "../typography/model.js"
 import { isSpaceElement } from "../space/model.js"
 import { isFlexElement } from "../flex/model.js"
+import { isGridElement } from "../grid/model.js"
 import type { PopoverController, PopoverOptions } from "../popover/popover.js"
 import { ownedWrites } from "../popover/position.js"
 import { createMenuKeyboard, menuEntryAvailable } from "./keyboard.js"
@@ -374,7 +375,7 @@ export function createDropdown(trigger: HTMLElement, menu: HTMLElement, options:
           ? ["group"] : node.localName === "li" || node.matches(dividerSelector) ? ["none", "presentation", "separator"] : ["none", "presentation", "img"]
         if (node.matches(interactive) && !elements.includes(node)
           || role !== null && !allowedRole.includes(role)
-          || node.localName.includes("-") && !isIconElement(node) && !isTypographyInline(node) && !isSpaceElement(node) && !isFlexElement(node) && !(canonical && ["m-dropdown-item", "m-dropdown-group", "m-dropdown-divider"].includes(node.localName))
+          || node.localName.includes("-") && !isIconElement(node) && !isTypographyInline(node) && !isSpaceElement(node) && !isFlexElement(node) && !isGridElement(node) && !(canonical && ["m-dropdown-item", "m-dropdown-group", "m-dropdown-divider"].includes(node.localName))
           || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)) {
           throw new TypeError("Dropdown content cannot contain arbitrary interactive controls or custom widgets.")
         }

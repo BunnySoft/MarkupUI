@@ -2,16 +2,6 @@ import { installActions } from "../actions/index.js"
 import { MElement } from "../core/element.js"
 import { bind, createStore, type MStore } from "../state/index.js"
 import { theme } from "../theme/index.js"
-import { MLayout } from "./content.js"
-
-export class MGrid extends MLayout {
-  public override connectedCallback(): void {
-    super.connectedCallback()
-    const columns = this.getAttribute("columns")
-    if (columns !== null) this.style.gridTemplateColumns = columns
-  }
-}
-
 export class MTheme extends MElement {
   public static get observedAttributes(): string[] { return ["name"] }
   public connectedCallback(): void {

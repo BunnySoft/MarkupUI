@@ -52,6 +52,24 @@ afterEach(() => {
 })
 
 describe("metadata-based component documentation", () => {
+  it("extracts Grid configured values and native placement without inventing responsive or offset APIs", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["grid"])
+    expect(docs.elements.map((element: any) => element.type)).toEqual(["Grid", "GridItem"])
+    const [grid, item] = docs.elements
+    expect(grid.properties.cols).toMatchObject({ default: 24, min: 1, integer: true })
+    expect(grid.properties.columns).toMatchObject({ default: null, nullable: true })
+    expect(grid.properties.rowGap).toMatchObject({ default: null, attribute: "row-gap", min: 0 })
+    expect(grid.properties.justify.description).toContain("justify-items")
+    expect(item.properties.start).toMatchObject({ default: null, min: 1, integer: true })
+    expect(item.properties.start.description).toContain("not relative offset")
+    expect(grid.properties).not.toHaveProperty("responsive")
+    expect(item.properties).not.toHaveProperty("offset")
+    for (const element of docs.elements) { expect(element.actions).toEqual([]); expect(element.events).toEqual([]) }
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.textContent).toContain("GridItem")
+    expect(target.textContent).toContain("Absolute positive column line")
+  })
   it("extracts Select's native selection API and all events without invented defaults", async () => {
     const [docs] = await generateComponentApi(resolve("."), ["select"])
     expect(docs.elements).toHaveLength(1)

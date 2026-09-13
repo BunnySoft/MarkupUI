@@ -118,7 +118,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | --- | --- | --- |
 | Flex | `Flex` | [Demo and API](../../demo/components/flex.html) |
 | Layout | Layout, header, main, section and sider elements | Contract pending |
-| Grid | `Grid`, `GridItem` | Contract pending |
+| Grid | `Grid`, `GridItem`; native tracks, original children and optional absolute placement | [Demo and API](../../demo/components/grid.html) |
 | Space | `Space` | [Demo and API](../../demo/components/space.html) |
 | Split | `Split` and pane/separator regions | Contract pending |
 
