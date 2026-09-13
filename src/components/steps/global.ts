@@ -1,5 +1,5 @@
-import { createSteps } from "./index.js"
+import * as steps from "./index.js"
 
-const target = globalThis as typeof globalThis & { MarkupUISteps?: { createSteps: typeof createSteps } }
-if (target.MarkupUISteps !== undefined) throw new Error("MarkupUISteps is already defined; no API was replaced.")
-target.MarkupUISteps = { createSteps }
+const target = globalThis as typeof globalThis & { MarkupUISteps?: typeof steps }
+if (target.MarkupUISteps !== undefined) throw new Error("MarkupUISteps is already defined.")
+target.MarkupUISteps = steps

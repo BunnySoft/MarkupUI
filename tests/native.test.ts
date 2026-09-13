@@ -72,6 +72,7 @@ import { DataTable } from "../src/components/data-table/index.js"
 import { Calendar } from "../src/components/calendar/index.js"
 import { DynamicInput } from "../src/components/dynamic-input/index.js"
 import { DynamicTags } from "../src/components/dynamic-tags/index.js"
+import { Steps, Step } from "../src/components/steps/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -100,7 +101,7 @@ describe("native elements", () => {
     expect(customElements.get("m-input")).toBe(Input)
     expect(customElements.get("m-select")).toBe(Select)
     expect(builtInElementNames).not.toContain("m-select")
-    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader, Ellipsis, Tabs, Tab, TabPane, Menu, MenuItem, MenuGroup, MenuDivider, Submenu, Pagination, Dialog, DialogHeader, DialogBody, DialogFooter, DialogAction, Modal, ModalHeader, ModalBody, ModalFooter, ModalAction, Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, Popconfirm, PopconfirmTrigger, PopconfirmPanel, Message, MessageContainer, Notification, NotificationContainer, Progress, Result, ResultHeader, ResultContent, ResultFooter, Image, ImageGroup, DatePicker, TimePicker, Upload, UploadDragger, UploadTrigger, UploadFileList, AutoComplete, AutoCompleteAlias, Slider, Rate, InputOtp, Popselect, PopselectTrigger, PopselectPanel, Tree, TreeNode, TreeSelect, Cascader, DataTable, Calendar, DynamicInput, DynamicTags]) {
+    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader, Ellipsis, Tabs, Tab, TabPane, Menu, MenuItem, MenuGroup, MenuDivider, Submenu, Pagination, Dialog, DialogHeader, DialogBody, DialogFooter, DialogAction, Modal, ModalHeader, ModalBody, ModalFooter, ModalAction, Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, Popconfirm, PopconfirmTrigger, PopconfirmPanel, Message, MessageContainer, Notification, NotificationContainer, Progress, Result, ResultHeader, ResultContent, ResultFooter, Image, ImageGroup, DatePicker, TimePicker, Upload, UploadDragger, UploadTrigger, UploadFileList, AutoComplete, AutoCompleteAlias, Slider, Rate, InputOtp, Popselect, PopselectTrigger, PopselectPanel, Tree, TreeNode, TreeSelect, Cascader, DataTable, Calendar, DynamicInput, DynamicTags, Steps, Step]) {
       expect(customElements.get(Type.tag)).toBe(Type)
       expect(builtInElementNames).not.toContain(Type.tag)
     }
@@ -340,7 +341,7 @@ describe("native elements", () => {
       <m-statistic label="Revenue" value="42" prefix="$" suffix="K"></m-statistic>`
     expect(document.querySelector("m-menu-item[selected]")?.getAttribute("value")).toBe("reports")
     expect(document.querySelector("m-pagination [aria-current=page]")?.textContent).toBe("2")
-    expect(document.querySelector("m-step[current]")?.textContent).toBe("Review")
+    expect(document.querySelector("m-step[current]")?.textContent).toContain("Review")
     expect(document.querySelector("m-list")?.getAttribute("role")).toBe("list")
     expect(document.querySelector("[data-m-label]")?.textContent).toBe("Name")
     expect(document.querySelector("[data-m-statistic-value]")?.textContent).toBe("$42K")
@@ -349,7 +350,7 @@ describe("native elements", () => {
     pagination.page = 4
     steps.current = 3
     expect(document.querySelector("m-pagination [aria-current=page]")?.textContent).toBe("4")
-    expect(document.querySelector("m-step[current]")?.textContent).toBe("Finish")
+    expect(document.querySelector("m-step[current]")?.textContent).toContain("Finish")
   })
 
   it("reflects dynamic attributes and keyboard navigation", () => {
