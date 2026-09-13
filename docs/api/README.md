@@ -75,6 +75,7 @@ in the target inventory.
 70. [Infinite Scroll demo and API](../../demo/components/infinite-scroll.html): InfiniteScroll; scroll boundary detection, threshold triggers, and asynchronous loading.
 71. [Virtual List demo and API](../../demo/components/virtual-list.html): VirtualList; fixed-window large list virtualization, keying, and scroll preservation.
 72. [Code demo and API](../../demo/components/code.html): Code; syntax-highlighted code blocks, line numbers, and word wrap.
+73. [Highlight demo and API](../../demo/components/highlight.html): Highlight; keyword text highlighting, case sensitivity options, and semantic mark wrappers.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

@@ -1,9 +1,19 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
-import { afterEach, describe, expect, it } from "vitest"
-import { HIGHLIGHT_LIMITS, findHighlightRanges, highlightText } from "../src/components/highlight/index.js"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import {
+  HIGHLIGHT_LIMITS,
+  Highlight,
+  MHighlight,
+  createHighlight,
+  findHighlightRanges,
+  highlightText,
+  registerHighlight,
+} from "../src/components/highlight/index.js"
+import * as highlightApi from "../src/components/highlight/index.js"
 import type { HighlightMatchOptions, HighlightOptions } from "../src/components/highlight/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const css = readFileSync(resolve("src", "components", "highlight", "highlight.css"), "utf8")
 const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
@@ -15,7 +25,10 @@ function surface(text = "Previous content"): HTMLSpanElement {
   document.body.append(element)
   return element
 }
-afterEach(() => document.body.replaceChildren())
+afterEach(() => {
+  document.body.replaceChildren()
+  vi.restoreAllMocks()
+})
 
 describe("bounded literal Highlight matching", () => {
   it("uses case-insensitive matching by default and original half-open offsets", () => {
@@ -311,14 +324,217 @@ describe("native owned Highlight surface", () => {
     selection.removeAllRanges()
   })
 
-  it("ships optional ESM/classic helpers and standalone mark CSS with no registration", () => {
+  it("ships optional ESM/classic helpers and standalone mark CSS", () => {
     expect(pkg.exports["./highlight"].import).toBe("./dist/markup-ui-highlight.js")
     expect(pkg.exports["./highlight"].types).toBe("./dist/components/highlight/index.d.ts")
     expect(pkg.exports["./highlight/style.css"]).toBe("./dist/markup-ui-highlight.css")
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("m-highlight")).toBeUndefined()
+    expect(customElements.get("m-highlight")).toBe(Highlight)
     expect(css).toContain("@media (forced-colors: active)")
     expect(css).toContain("@media print")
     expect(css).not.toContain("@import")
   })
 })
+
+describe("canonical Highlight ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(highlightApi.Highlight).toBe(Highlight)
+    expect(highlightApi.MHighlight).toBe(MHighlight)
+    expect(Highlight.tag).toBe("m-highlight")
+    expect(ViewElement.prototype.isPrototypeOf(Highlight.prototype)).toBe(true)
+    expect(customElements.get("m-highlight")).toBe(Highlight)
+    expect(Highlight.observedAttributes).toEqual(["text", "keywords", "case-sensitive"])
+    expect(() => registerHighlight()).not.toThrow()
+    const define = vi.fn()
+    expect(() => registerHighlight({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("handles text property defaults, attributes, and validation", () => {
+    const element = document.createElement("m-highlight") as Highlight
+    document.body.append(element)
+    expect(element.text).toBe("")
+
+    element.text = "Hello world"
+    expect(element.text).toBe("Hello world")
+    expect(element.getAttribute("text")).toBe("Hello world")
+
+    element.setAttribute("text", "From attribute")
+    expect(element.text).toBe("From attribute")
+
+    element.removeAttribute("text")
+    expect(element.text).toBe("")
+
+    expect(() => { element.text = 123 as unknown as string }).toThrow(TypeError)
+    expect(() => { element.text = "x".repeat(HIGHLIGHT_LIMITS.textLength + 1) }).toThrow(RangeError)
+  })
+
+  it("handles keywords property defaults, attributes, validation, array vs string", () => {
+    const element = document.createElement("m-highlight") as Highlight
+    document.body.append(element)
+    expect(element.keywords).toBe("")
+
+    element.keywords = ["atlas", "test"]
+    expect(element.keywords).toEqual(["atlas", "test"])
+    expect(element.getAttribute("keywords")).toBe('["atlas","test"]')
+
+    element.keywords = "single"
+    expect(element.keywords).toBe("single")
+    expect(element.getAttribute("keywords")).toBe("single")
+
+    element.setAttribute("keywords", '["json", "keyword"]')
+    expect(element.keywords).toEqual(["json", "keyword"])
+
+    element.setAttribute("keywords", "plain")
+    expect(element.keywords).toBe("plain")
+
+    element.removeAttribute("keywords")
+    expect(element.keywords).toBe("")
+
+    expect(() => { element.keywords = 123 as unknown as string }).toThrow(TypeError)
+    expect(() => { element.keywords = [123] as unknown as string[] }).toThrow(TypeError)
+    expect(() => { element.keywords = Array.from({ length: HIGHLIGHT_LIMITS.patternCount + 1 }, () => "a") }).toThrow(RangeError)
+    expect(() => { element.keywords = ["x".repeat(HIGHLIGHT_LIMITS.patternCharacters + 1)] }).toThrow(RangeError)
+  })
+
+  it("handles caseSensitive property defaults, attributes, and validation", () => {
+    const element = document.createElement("m-highlight") as Highlight
+    document.body.append(element)
+    expect(element.caseSensitive).toBe(false)
+    expect(element.hasAttribute("case-sensitive")).toBe(false)
+
+    element.caseSensitive = true
+    expect(element.caseSensitive).toBe(true)
+    expect(element.hasAttribute("case-sensitive")).toBe(true)
+
+    element.caseSensitive = false
+    expect(element.caseSensitive).toBe(false)
+    expect(element.hasAttribute("case-sensitive")).toBe(false)
+
+    element.setAttribute("case-sensitive", "")
+    expect(element.caseSensitive).toBe(true)
+
+    element.removeAttribute("case-sensitive")
+    expect(element.caseSensitive).toBe(false)
+
+    expect(() => { element.caseSensitive = "true" as unknown as boolean }).toThrow(RangeError)
+  })
+
+  it("replays pre-upgrade properties upon connection", () => {
+    const element = document.createElement("m-highlight") as Highlight
+    Object.defineProperty(element, "text", { configurable: true, value: "Atlas atlas" })
+    Object.defineProperty(element, "keywords", { configurable: true, value: ["Atlas"] })
+    Object.defineProperty(element, "caseSensitive", { configurable: true, value: true })
+    document.body.append(element)
+
+    expect(element.text).toBe("Atlas atlas")
+    expect(element.keywords).toEqual(["Atlas"])
+    expect(element.caseSensitive).toBe(true)
+    expect(element.getAttribute("text")).toBe("Atlas atlas")
+    expect(element.getAttribute("keywords")).toBe('["Atlas"]')
+    expect(element.hasAttribute("case-sensitive")).toBe(true)
+    expect(element.querySelectorAll("mark")).toHaveLength(1)
+    expect(element.querySelector("mark")!.textContent).toBe("Atlas")
+  })
+
+  it("renders marks and updates dynamically on property/attribute changes", () => {
+    const element = document.createElement("m-highlight") as Highlight
+    element.text = "Atlas and atlas."
+    element.keywords = ["atlas"]
+    document.body.append(element)
+
+    expect(element.querySelectorAll("mark")).toHaveLength(2)
+
+    element.caseSensitive = true
+    expect(element.querySelectorAll("mark")).toHaveLength(1)
+    expect(element.querySelector("mark")!.textContent).toBe("atlas")
+
+    element.keywords = []
+    expect(element.querySelectorAll("mark")).toHaveLength(0)
+    expect(element.textContent).toBe("Atlas and atlas.")
+
+    element.text = ""
+    expect(element.childNodes).toHaveLength(0)
+  })
+
+  it("renders child textContent when text attribute is not set", () => {
+    const element = document.createElement("m-highlight") as Highlight
+    element.textContent = "Searching for needle in haystack"
+    element.keywords = ["needle"]
+    document.body.append(element)
+
+    expect(element.querySelectorAll("mark")).toHaveLength(1)
+    expect(element.querySelector("mark")!.textContent).toBe("needle")
+  })
+
+  it("supports createHighlight helper", () => {
+    const element = createHighlight({ text: "Hello world", keywords: ["world"] })
+    expect(element).toBeInstanceOf(Highlight)
+    expect(element.text).toBe("Hello world")
+    expect(element.keywords).toEqual(["world"])
+    document.body.append(element)
+    expect(element.querySelectorAll("mark")).toHaveLength(1)
+    expect(element.querySelector("mark")!.textContent).toBe("world")
+  })
+
+  it("exposes MarkupUIHighlight global", async () => {
+    await import("../src/components/highlight/global.js")
+    const globalApi = (globalThis as unknown as { MarkupUIHighlight?: typeof highlightApi }).MarkupUIHighlight
+    expect(globalApi).toBeDefined()
+    expect(globalApi?.Highlight).toBe(Highlight)
+    expect(globalApi?.registerHighlight).toBe(registerHighlight)
+  })
+
+  it("generates component API documentation matching the ViewElement specification", () => {
+    const docs = JSON.parse(readFileSync(resolve("demo", "api", "highlight.json"), "utf8"))
+    expect(docs.elements).toHaveLength(1)
+    const [element] = docs.elements
+    expect(element.type).toBe("Highlight")
+    expect(element.web.primary).toBe("m-highlight")
+    expect(element.properties.text).toMatchObject({
+      name: "text",
+      type: "string",
+      typeName: "string",
+      attribute: "text",
+      default: "",
+      nullable: false,
+      writable: true,
+    })
+    expect(element.properties.keywords).toMatchObject({
+      name: "keywords",
+      type: "string",
+      typeName: "string | readonly string[]",
+      attribute: "keywords",
+      default: "",
+      nullable: false,
+      writable: true,
+    })
+    expect(element.properties.caseSensitive).toMatchObject({
+      name: "caseSensitive",
+      type: "boolean",
+      typeName: "boolean",
+      attribute: "case-sensitive",
+      default: false,
+      nullable: false,
+      writable: true,
+    })
+    expect(element.regions).toEqual([
+      { name: "content", accepts: ["phrasing content"], min: 0, max: null },
+    ])
+    expect(element.events).toEqual([])
+    expect(element.actions).toEqual([])
+  })
+
+  it("renders API documentation in demo element", async () => {
+    const { renderComponentApi } = await import("../demo/component-api.js")
+    const docs = JSON.parse(readFileSync(resolve("demo", "api", "highlight.json"), "utf8"))
+    const container = document.createElement("div")
+    renderComponentApi(container, docs.elements)
+    expect(container.textContent).toContain("Highlight")
+    expect(container.textContent).toContain("m-highlight")
+    expect(container.textContent).toContain("text")
+    expect(container.textContent).toContain("keywords")
+    expect(container.textContent).toContain("case-sensitive")
+  })
+})
+
