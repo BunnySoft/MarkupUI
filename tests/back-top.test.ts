@@ -2,8 +2,10 @@ import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createBackTop } from "../src/components/back-top/index.js"
+import { createBackTop, BackTop, MBackTop, registerBackTop } from "../src/components/back-top/index.js"
+import * as backTopApi from "../src/components/back-top/index.js"
 import type { BackTopController, BackTopOptions } from "../src/components/back-top/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const controllers: BackTopController[] = []
 function nodes(link = false) {
@@ -418,3 +420,162 @@ describe("validation, ownership and cleanup", () => {
     expect(action.getAttribute("aria-label")).toBe("Back to top")
   })
 })
+
+describe("canonical BackTop ViewElement", () => {
+  it("exports canonical own-tag ViewElement and registers m-back-top", () => {
+    expect(Object.keys(backTopApi).sort()).toEqual(["BackTop", "MBackTop", "createBackTop", "registerBackTop"])
+    expect(Object.hasOwn(BackTop, "tag")).toBe(true)
+    expect(BackTop.tag).toBe("m-back-top")
+    expect(ViewElement.prototype.isPrototypeOf(BackTop.prototype)).toBe(true)
+    expect(customElements.get("m-back-top")).toBe(BackTop)
+    expect(MBackTop).toBe(BackTop)
+    expect(BackTop.observedAttributes).toEqual(["visibility-height", "right", "bottom", "target", "listen-to"])
+
+    const define = vi.fn()
+    expect(() => registerBackTop({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerBackTop()).not.toThrow()
+  })
+
+  it("has explicit property defaults and validates values before mutating attributes", () => {
+    const element = new BackTop()
+    expect(element.visibilityHeight).toBe(400)
+    expect(element.right).toBeNull()
+    expect(element.bottom).toBeNull()
+
+    // Valid visibilityHeight values
+    element.visibilityHeight = 250
+    expect(element.visibilityHeight).toBe(250)
+    expect(element.getAttribute("visibility-height")).toBe("250")
+
+    // Invalid visibilityHeight values
+    for (const invalid of [-1, -100, NaN, Infinity, "200" as unknown as number, null as unknown as number, undefined as unknown as number]) {
+      expect(() => { element.visibilityHeight = invalid }).toThrow(RangeError)
+    }
+
+    // Invalid attribute throws on read
+    element.setAttribute("visibility-height", "invalid")
+    expect(() => element.visibilityHeight).toThrow(RangeError)
+    element.setAttribute("visibility-height", "-50")
+    expect(() => element.visibilityHeight).toThrow(RangeError)
+    element.removeAttribute("visibility-height")
+    expect(element.visibilityHeight).toBe(400)
+
+    // Valid right and bottom values
+    element.right = "40px"
+    expect(element.right).toBe("40px")
+    expect(element.getAttribute("right")).toBe("40px")
+    expect(element.style.getPropertyValue("--m-back-top-inline-end")).toBe("40px")
+
+    element.bottom = "50px"
+    expect(element.bottom).toBe("50px")
+    expect(element.getAttribute("bottom")).toBe("50px")
+    expect(element.style.getPropertyValue("--m-back-top-block-end")).toBe("50px")
+
+    // Null removes attribute and CSS property
+    element.right = null
+    expect(element.right).toBeNull()
+    expect(element.hasAttribute("right")).toBe(false)
+    expect(element.style.getPropertyValue("--m-back-top-inline-end")).toBe("")
+
+    element.bottom = null
+    expect(element.bottom).toBeNull()
+    expect(element.hasAttribute("bottom")).toBe(false)
+    expect(element.style.getPropertyValue("--m-back-top-block-end")).toBe("")
+
+    // Invalid right and bottom types throw RangeError
+    for (const invalid of [123 as unknown as string, true as unknown as string, {} as unknown as string]) {
+      expect(() => { element.right = invalid }).toThrow(RangeError)
+      expect(() => { element.bottom = invalid }).toThrow(RangeError)
+    }
+  })
+
+  it("sets up connected attributes, roles, and default icon rendering", () => {
+    const element = document.createElement("m-back-top") as BackTop
+    document.body.append(element)
+
+    expect(element.dataset.mBackTop).toBe("")
+    expect(element.classList.contains("m-back-top")).toBe(true)
+    expect(element.classList.contains("m-back-top--fixed")).toBe(true)
+    expect(element.getAttribute("role")).toBe("button")
+    expect(element.getAttribute("tabindex")).toBe("0")
+    expect(element.getAttribute("aria-label")).toBe("Back to top")
+    expect(element.querySelector(".m-back-top-icon svg")).not.toBeNull()
+  })
+
+  it("preserves authored content without rendering the default icon", () => {
+    const custom = document.createElement("m-back-top") as BackTop
+    custom.textContent = "Return to top"
+    document.body.append(custom)
+
+    expect(custom.querySelector(".m-back-top-icon")).toBeNull()
+    expect(custom.textContent).toBe("Return to top")
+  })
+
+  it("emits m:click event with originalEvent detail and scrolls to top on click", () => {
+    const element = document.createElement("m-back-top") as BackTop
+    document.body.append(element)
+
+    const clickHandler = vi.fn()
+    element.addEventListener("m:click", clickHandler)
+    const scrollSpy = vi.spyOn(window, "scrollTo").mockImplementation(() => {})
+
+    element.click()
+    expect(clickHandler).toHaveBeenCalledTimes(1)
+    expect(clickHandler.mock.calls[0]![0].detail).toHaveProperty("originalEvent")
+    expect(clickHandler.mock.calls[0]![0].detail.originalEvent).toBeInstanceOf(MouseEvent)
+    expect(scrollSpy).toHaveBeenCalledWith(expect.objectContaining({ top: 0 }))
+  })
+
+  it("cancels scrollToTop if m:click is defaultPrevented", () => {
+    const element = document.createElement("m-back-top") as BackTop
+    document.body.append(element)
+
+    element.addEventListener("m:click", event => event.preventDefault(), { once: true })
+    const scrollSpy = vi.spyOn(window, "scrollTo").mockImplementation(() => {})
+
+    element.click()
+    expect(scrollSpy).not.toHaveBeenCalled()
+  })
+
+  it("updates visibility on scroll and keeps visible when focused", () => {
+    const element = document.createElement("m-back-top") as BackTop
+    element.visibilityHeight = 300
+    document.body.append(element)
+
+    // Initially scrollTop = 0 < 300
+    expect(element.hasAttribute("data-back-top-hidden")).toBe(true)
+
+    // Scroll window past threshold
+    vi.spyOn(window, "scrollY", "get").mockReturnValue(350)
+    window.dispatchEvent(new Event("scroll"))
+    expect(element.hasAttribute("data-back-top-hidden")).toBe(false)
+
+    // Scroll window back below threshold
+    vi.spyOn(window, "scrollY", "get").mockReturnValue(100)
+    window.dispatchEvent(new Event("scroll"))
+    expect(element.hasAttribute("data-back-top-hidden")).toBe(true)
+
+    // When focused, stays visible even below threshold
+    element.focus()
+    expect(element.hasAttribute("data-back-top-hidden")).toBe(false)
+
+    // On blur, hides again
+    element.blur()
+    expect(element.hasAttribute("data-back-top-hidden")).toBe(true)
+  })
+
+  it("supports keyboard activation via Enter and Space", () => {
+    vi.spyOn(window, "scrollTo").mockImplementation(() => {})
+    const element = document.createElement("m-back-top") as BackTop
+    document.body.append(element)
+
+    const clickSpy = vi.spyOn(element, "click")
+    element.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }))
+    expect(clickSpy).toHaveBeenCalledTimes(1)
+
+    element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }))
+    expect(clickSpy).toHaveBeenCalledTimes(2)
+  })
+})
+

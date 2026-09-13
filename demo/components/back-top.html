@@ -3,38 +3,68 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Back Top</title>
+  <title>Back Top - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-back-top.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./back-top.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-back-top.global.js"></script>
-  <script defer src="./back-top.js"></script>
+  <script type="module" src="./back-top.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <header id="page-top"><h1>Native Back Top</h1><p>Scroll down 180 pixels. Fragment links keep native URL, focus and history; buttons scroll only their explicit root.</p><a href="#examples" id="skip">Go to local examples</a></header>
-  <main>
-    <section class="long-section"><h2>Read first</h2><p>No generated content, portal or scroll animation engine. This section deliberately leaves enough space for native scrolling.</p></section>
-    <section id="examples">
-      <h2>Independent reader</h2>
-      <div id="reader" class="reader" role="region" aria-label="Local reader" tabindex="0">
-        <div class="wide-content">
-          <h3 id="reader-top">Reader start</h3><p>Horizontal scroll is preserved by the explicit button.</p>
-          <div class="reader-space"><p>Long local content for testing vertical and horizontal native scrolling.</p></div>
-          <p id="reader-bottom">Reader end. <a href="#reader-top" id="reader-native-top">Native return link, usable without JavaScript</a></p>
-        </div>
+  <main data-demo-page class="component-docs">
+    <h1>Back Top</h1>
+    <p>A back-to-top button that smoothly scrolls a container or page to the top when clicked.</p>
+    <nav class="component-docs-nav" aria-label="Back Top documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-back-top.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-back-top.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header><div><h2 id="basic-heading">Basic usage</h2><p>Default back-to-top button that appears after scrolling down 400 pixels.</p></div></header>
+      <div data-demo-preview>
+        <p>Scroll down the page to reveal the Back Top button at the bottom-right corner.</p>
+        <m-back-top id="basic-back-top"></m-back-top>
       </div>
-      <form id="reader-form">
-        <button class="m-back-top m-back-top--square" id="reader-action" type="button" aria-controls="reader" hidden><span aria-hidden="true">↑</span> Reader top</button>
-        <button type="button" id="reader-end">Scroll reader to end</button>
-        <button type="button" id="cancel-next">Cancel next reader-top click</button>
-        <label>Unrelated input <input id="preserved-input" value="Native form state"></label>
-      </form>
-      <p>Focused enhanced actions stay visible at the top until blur. No automatic focus movement or live announcement.</p>
-      <output id="state">Native links are available; optional enhancement not connected yet.</output>
     </section>
-    <section class="long-section"><h2>More local content</h2><p>Resize, zoom or change direction to inspect logical placement.</p><a href="#page-top" class="m-back-top m-back-top--square" id="plain-top">Always-visible native top link</a></section>
+
+    <section data-demo-example="threshold" aria-labelledby="threshold-heading">
+      <header data-demo-header><div><h2 id="threshold-heading">Custom visibility height</h2><p>Specify a custom threshold like 100 pixels to display earlier.</p></div></header>
+      <div data-demo-preview>
+        <p>This button becomes visible after scrolling only 100 pixels.</p>
+        <m-back-top id="threshold-back-top" visibility-height="100" right="100px" bottom="40px"></m-back-top>
+      </div>
+    </section>
+
+    <section data-demo-example="custom" aria-labelledby="custom-heading">
+      <header data-demo-header><div><h2 id="custom-heading">Custom content and offset</h2><p>Authored text or custom icon with configured offsets.</p></div></header>
+      <div data-demo-preview>
+        <p>Custom labeled button positioned 160px from the right.</p>
+        <m-back-top id="custom-back-top" visibility-height="50" right="160px" bottom="40px">
+          <span>Top</span>
+        </m-back-top>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="back-top-api"><p>Loading API documentation.</p></div>
+    </section>
   </main>
-  <footer><p>End of local document.</p><button type="button" id="after">Ordinary focus destination</button></footer>
-  <a class="m-back-top m-back-top--fixed" href="#page-top" id="page-action"><span aria-hidden="true">↑</span> Top</a>
-  <button class="m-back-top m-back-top--fixed m-back-top--square page-button" type="button" id="page-button" hidden><span aria-hidden="true">↑</span> Scroll page</button>
 </body>
 </html>

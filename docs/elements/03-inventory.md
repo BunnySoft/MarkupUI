@@ -83,7 +83,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | --- | --- | --- |
 | Affix | `Affix` | Contract pending |
 | Anchor | `Anchor`, `AnchorLink` | [Demo and API](../../demo/components/anchor.html) |
-| Back Top | `BackTop` | Contract pending |
+| Back Top | `BackTop` | [Demo and API](../../demo/components/back-top.html) |
 | Breadcrumb | `Breadcrumb`, `BreadcrumbItem` | [Demo and API](../../demo/components/breadcrumb.html) |
 | Loading Bar | `LoadingBar` | Contract pending |
 | Menu | `Menu`, `MenuItem` and hierarchy | [Demo and API](../../demo/components/menu.html) |
