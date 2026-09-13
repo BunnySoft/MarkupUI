@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createTabs } from "../src/components/tabs/index.js"
+import { createTabs, Tabs, Tab, TabPane, registerTabs } from "../src/components/tabs/index.js"
 import type { TabsController, TabsOptions } from "../src/components/tabs/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const controllers: TabsController[] = []
 let sequence = 0
@@ -576,5 +577,84 @@ describe("add/close, refresh and distribution", () => {
     expect(css).toContain("forced-colors")
     expect(css).toContain("@media print")
     expect(css).not.toContain(":has(")
+  })
+})
+
+describe("canonical Tabs ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers m-tabs, m-tab, m-tab-pane", () => {
+    expect(Tabs.tag).toBe("m-tabs")
+    expect(Tab.tag).toBe("m-tab")
+    expect(TabPane.tag).toBe("m-tab-pane")
+    expect(ViewElement.prototype.isPrototypeOf(Tabs.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(Tab.prototype)).toBe(true)
+    expect(Tab.prototype.isPrototypeOf(TabPane.prototype)).toBe(true)
+    expect(customElements.get("m-tabs")).toBe(Tabs)
+    expect(customElements.get("m-tab")).toBe(Tab)
+    expect(customElements.get("m-tab-pane")).toBe(TabPane)
+    expect(Tabs.observedAttributes).toEqual(["value", "placement", "type", "size", "activation", "animated"])
+    expect(Tab.observedAttributes).toEqual(["title", "name", "disabled", "closable"])
+  })
+
+  it("handles typed properties, attributes, and panels switching", () => {
+    document.body.innerHTML = `
+      <m-tabs type="card" placement="top">
+        <m-tab title="First" name="first">First content</m-tab>
+        <m-tab title="Second" name="second">Second content</m-tab>
+        <m-tab title="Third" name="third" disabled>Third content</m-tab>
+      </m-tabs>`
+    const tabs = document.querySelector("m-tabs") as Tabs
+    expect(tabs.type).toBe("card")
+    expect(tabs.placement).toBe("top")
+    expect(tabs.size).toBe("medium")
+    expect(tabs.activation).toBe("automatic")
+    expect(tabs.animated).toBe(false)
+    expect(tabs.panes).toHaveLength(3)
+
+    expect(tabs.panes[0]!.hidden).toBe(false)
+    expect(tabs.panes[1]!.hidden).toBe(true)
+    expect(tabs.panes[2]!.hidden).toBe(true)
+
+    const buttons = [...tabs.querySelectorAll<HTMLButtonElement>("[role=tab]")]
+    expect(buttons).toHaveLength(3)
+    expect(buttons[0]!.textContent).toBe("First")
+    expect(buttons[1]!.textContent).toBe("Second")
+    expect(buttons[2]!.disabled).toBe(true)
+
+    const changeSpy = vi.fn()
+    tabs.addEventListener("m:change", changeSpy)
+
+    tabs.select("second")
+    expect(tabs.panes[0]!.hidden).toBe(true)
+    expect(tabs.panes[1]!.hidden).toBe(false)
+    expect(tabs.value).toBe("second")
+    expect(changeSpy).toHaveBeenCalledOnce()
+    expect(changeSpy.mock.calls[0][0].detail).toMatchObject({ value: "second", previous: "first" })
+
+    tabs.placement = "bottom"
+    expect(tabs.getAttribute("placement")).toBe("bottom")
+    expect(tabs.dataset.tabsPlacement).toBe("bottom")
+
+    tabs.type = "segment"
+    expect(tabs.getAttribute("type")).toBe("segment")
+    expect(tabs.dataset.tabsType).toBe("segment")
+
+    tabs.animated = true
+    expect(tabs.hasAttribute("animated")).toBe(true)
+    expect(tabs.classList.contains("m-tabs--animated")).toBe(true)
+  })
+
+  it("supports keyboard arrow navigation between tabs", () => {
+    document.body.innerHTML = `
+      <m-tabs>
+        <m-tab title="Alpha">Alpha body</m-tab>
+        <m-tab title="Beta">Beta body</m-tab>
+      </m-tabs>`
+    const tabs = document.querySelector("m-tabs") as Tabs
+    const buttons = [...tabs.querySelectorAll<HTMLButtonElement>("[role=tab]")]
+    buttons[0]!.focus()
+    buttons[0]!.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }))
+    expect(document.activeElement).toBe(buttons[1])
+    expect(buttons[1]!.getAttribute("aria-selected")).toBe("true")
+    expect(tabs.panes[1]!.hidden).toBe(false)
   })
 })

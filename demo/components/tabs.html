@@ -1,71 +1,140 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI authored Tabs, Tab and TabPane</title>
+  <title>Tabs - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-tabs.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-tag.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./tabs.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-tabs.global.js"></script>
-  <script defer src="./tabs.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer src="../../dist/markup-ui-tag.global.js"></script>
+  <script type="module" src="./tabs.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <h1>Authored Tabs and preserved panes</h1>
-  <p>Buttons become real tabs only when enhanced. Without JavaScript all titled panes remain readable. Guards and add/close examples are local only.</p>
-  <label>Local leave guard <select id="guard-mode"><option value="allow">Allow</option><option value="deny">Return false</option><option value="reject">Reject</option><option value="slow">Allow after 700ms</option><option value="slow-reject">Reject after 700ms</option></select></label>
-  <form id="demo-form">
-    <div class="m-tabs m-tabs--animated" data-tabs data-tabs-type="card" data-tabs-placement="top" id="main-tabs">
-      <div data-tabs-bar>
-        <span data-tabs-prefix>Draft</span>
-        <div data-tabs-list aria-label="Draft views">
-          <button type="button" data-tabs-tab data-tabs-key="overview" data-tabs-target="overview-pane" data-tabs-closable id="overview-tab">Overview</button>
-          <button type="button" data-tabs-tab data-tabs-key="details" data-tabs-target="details-pane" data-tabs-closable id="details-tab"><span id="preserved-tab-label">Details</span></button>
-          <button type="button" data-tabs-tab data-tabs-key="history" data-tabs-target="history-pane" id="history-tab">History</button>
-          <button type="button" data-tabs-tab data-tabs-key="unavailable" data-tabs-target="unavailable-pane" id="unavailable-tab" disabled>Unavailable</button>
+  <main data-demo-page class="component-docs">
+    <h1>Tabs</h1>
+    <p>Direct tabbed navigation and content container managing active panels, styles, and keyboard interaction.</p>
+    <nav class="component-docs-nav" aria-label="Tabs documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-tabs.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-tabs.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header><div><h2 id="basic-heading">Basic line tabs</h2><p>Default line tabs with authored panels and automatic panel disclosure.</p></div></header>
+      <div data-demo-preview>
+        <m-tabs id="basic-tabs">
+          <m-tab title="Overview" name="overview">
+            <m-p>Overview panel content with preserved native elements.</m-p>
+          </m-tab>
+          <m-tab title="Specifications" name="specs">
+            <m-p>Technical specifications and configuration details.</m-p>
+          </m-tab>
+          <m-tab title="History" name="history">
+            <m-p>Revision log and historical records.</m-p>
+          </m-tab>
+          <m-tab title="Disabled" name="disabled" disabled>
+            <m-p>Disabled panel is never selected.</m-p>
+          </m-tab>
+        </m-tabs>
+      </div>
+    </section>
+
+    <section data-demo-example="card-segment" aria-labelledby="styles-heading">
+      <header data-demo-header><div><h2 id="styles-heading">Card and segment styles</h2><p>Alternative card and segment styles for compact navigation.</p></div></header>
+      <div data-demo-preview>
+        <m-tabs type="card" id="card-tabs">
+          <m-tab title="Design" name="design">
+            <m-p>Card style tabs provide clean boundaries suitable for nested containers.</m-p>
+          </m-tab>
+          <m-tab title="Code" name="code">
+            <m-p>Direct property access without intermediate controllers.</m-p>
+          </m-tab>
+          <m-tab title="Preview" name="preview">
+            <m-p>All panels retain their DOM state without rerendering.</m-p>
+          </m-tab>
+        </m-tabs>
+        <div style="margin-block-start: 16px;">
+          <m-tabs type="segment" id="segment-tabs">
+            <m-tab title="Daily" name="daily">
+              <m-p>Daily metrics and aggregated statistics.</m-p>
+            </m-tab>
+            <m-tab title="Weekly" name="weekly">
+              <m-p>Weekly summary report.</m-p>
+            </m-tab>
+            <m-tab title="Monthly" name="monthly">
+              <m-p>Monthly trend analysis.</m-p>
+            </m-tab>
+          </m-tabs>
         </div>
-        <span data-tabs-suffix>Local preview</span>
       </div>
-      <div data-tabs-panels>
-        <section data-tabs-pane id="overview-pane"><h2>Overview</h2><label>Retained draft <input id="retained-input" name="draft" value="Original local draft"></label><p id="preserved-pane-text">This pane and its listeners are never recreated.</p></section>
-        <section data-tabs-pane id="details-pane">
-          <h2>Details</h2>
-          <div class="m-tabs" data-tabs data-tabs-type="segment" id="nested-tabs">
-            <div data-tabs-bar><div data-tabs-list aria-label="Detail subviews"><button type="button" data-tabs-tab data-tabs-key="alpha" data-tabs-target="alpha-pane" id="alpha-tab">Alpha</button><button type="button" data-tabs-tab data-tabs-key="beta" data-tabs-target="beta-pane" id="beta-tab">Beta</button></div></div>
-            <div data-tabs-panels><section data-tabs-pane id="alpha-pane"><h3>Alpha details</h3><input aria-label="Nested retained input" value="Nested state"></section><section data-tabs-pane id="beta-pane"><h3>Beta details</h3><a href="#destination">Ordinary pane link</a></section></div>
-            <div data-tabs-messages><p data-tabs-empty hidden>No detail views available.</p><p data-tabs-status role="status" hidden>Checking detail switch.</p><p data-tabs-error role="alert" hidden>Detail switch failed.</p></div>
-          </div>
-        </section>
-        <section data-tabs-pane id="history-pane"><h2>History</h2><p>Local history content.</p></section>
-        <section data-tabs-pane id="unavailable-pane"><h2>Unavailable view</h2><p>Readable without enhancement; the enhanced tab is disabled.</p></section>
+    </section>
+
+    <section data-demo-example="placements" aria-labelledby="placements-heading">
+      <header data-demo-header><div><h2 id="placements-heading">Placements and animated transitions</h2><p>Tabs placed at top, bottom, left, or right with smooth animated transitions.</p></div></header>
+      <div data-demo-preview>
+        <m-tabs placement="left" animated id="vertical-tabs">
+          <m-tab title="Profile" name="profile">
+            <m-p>Manage personal profile information and user settings.</m-p>
+          </m-tab>
+          <m-tab title="Security" name="security">
+            <m-p>Two-factor authentication, sessions, and recovery passwords.</m-p>
+          </m-tab>
+          <m-tab title="Notifications" name="notifications">
+            <m-p>Email alerts and in-app notification preferences.</m-p>
+          </m-tab>
+        </m-tabs>
       </div>
-      <div data-tabs-messages>
-        <p data-tabs-empty hidden>No draft views are available.</p>
-        <p data-tabs-status role="status" hidden>Checking whether the current view can be left. Other tab requests may supersede this check.</p>
-        <p data-tabs-error role="alert" hidden>The local view switch failed. Choose another guard outcome and retry.</p>
+    </section>
+
+    <section data-demo-example="interactive" aria-labelledby="interactive-heading">
+      <header data-demo-header><div><h2 id="interactive-heading">Interactive selection and events</h2><p>Programmatic selection and listening for m:change events.</p></div></header>
+      <div data-demo-preview>
+        <m-tabs id="interactive-tabs">
+          <m-tab title="First View" name="v1">
+            <m-p>First active view.</m-p>
+          </m-tab>
+          <m-tab title="Second View" name="v2">
+            <m-p>Second active view.</m-p>
+          </m-tab>
+          <m-tab title="Third View" name="v3">
+            <m-p>Third active view.</m-p>
+          </m-tab>
+        </m-tabs>
+        <m-p id="tabs-status" role="status">Current tab: v1</m-p>
+        <div class="controls" style="display: flex; gap: 8px; margin-block-start: 12px;">
+          <m-button id="btn-v1">Select View 1</m-button>
+          <m-button id="btn-v2">Select View 2</m-button>
+          <m-button id="btn-v3">Select View 3</m-button>
+        </div>
       </div>
-      <div data-tabs-actions>
-        <button type="button" data-tabs-add id="add-view">Add local view</button>
-        <button type="button" data-tabs-close="overview" id="close-overview">Close Overview</button>
-        <button type="button" data-tabs-close="details" id="close-details">Close Details</button>
-      </div>
-    </div>
-    <button type="submit" id="submit-form">Ordinary form submit</button>
-    <button type="reset" id="reset-form">Reset form</button>
-  </form>
-  <section>
-    <h2>Manual activation and logical start placement</h2>
-    <div class="m-tabs" data-tabs data-tabs-placement="start" data-tabs-type="line" id="manual-tabs">
-      <div data-tabs-bar><div data-tabs-list aria-label="Manual reference views"><button type="button" data-tabs-tab data-tabs-key="one" data-tabs-target="one-pane" id="one-tab">One</button><button type="button" data-tabs-tab data-tabs-key="two" data-tabs-target="two-pane" id="two-tab">Two</button><button type="button" data-tabs-tab data-tabs-key="three" data-tabs-target="three-pane" id="three-tab">Three with a longer authored label</button></div></div>
-      <div data-tabs-panels><section data-tabs-pane id="one-pane"><h3>One</h3><p>Arrows move focus; Enter or Space activates.</p></section><section data-tabs-pane id="two-pane"><h3>Two</h3><p>Manual reference content.</p></section><section data-tabs-pane id="three-pane"><h3>Three</h3><p>Third manual reference.</p></section></div>
-      <div data-tabs-messages><p data-tabs-empty hidden>No manual views available.</p><p data-tabs-status role="status" hidden>Checking switch.</p><p data-tabs-error role="alert" hidden>Switch failed.</p></div>
-    </div>
-  </section>
-  <p id="destination">Native link destination, not a router.</p>
-  <button type="button" id="outside">Outside focus target</button>
-  <output id="event-log" aria-live="polite">No user change yet.</output>
-  <template id="pair-template">
-    <button type="button" data-tabs-tab data-tabs-closable></button>
-    <section data-tabs-pane><h2></h2><p>Application-cloned local pane; no renderer is involved.</p></section>
-  </template>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="tabs-api"><p>Loading API documentation.</p></div>
+    </section>
+  </main>
 </body>
 </html>

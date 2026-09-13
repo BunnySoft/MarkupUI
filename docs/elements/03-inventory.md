@@ -89,7 +89,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Menu | `Menu`, `MenuItem` and hierarchy | Contract pending |
 | Pagination | `Pagination` | Contract pending |
 | Steps | `Steps`, `Step` | Contract pending |
-| Tabs | `Tabs`, `Tab`, `TabPane` | Contract pending |
+| Tabs | `Tabs`, `Tab`, `TabPane` | [Demo and API](../../demo/components/tabs.html) |
 
 ## Feedback (16)
 

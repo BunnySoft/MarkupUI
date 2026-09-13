@@ -38,6 +38,7 @@ in the target inventory.
 33. [Breadcrumb demo and API](../../demo/components/breadcrumb.html): Breadcrumb and BreadcrumbItem; navigation landmark, customizable separators, items and link semantics.
 34. [Page Header demo and API](../../demo/components/page-header.html): Page Header; page title, subtitle, back action, extra and content regions.
 35. [Ellipsis demo and API](../../demo/components/ellipsis.html): Ellipsis; direct text truncation, line-clamping, click-to-expand disclosure and tooltip.
+36. [Tabs demo and API](../../demo/components/tabs.html): Tabs, Tab, TabPane; line/card/segment styles, placements, panel disclosure, and keyboard navigation.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

@@ -45,6 +45,7 @@ import { Descriptions, DescriptionItem } from "../src/components/descriptions/in
 import { Breadcrumb, BreadcrumbItem } from "../src/components/breadcrumb/index.js"
 import { PageHeader } from "../src/components/page-header/index.js"
 import { Ellipsis } from "../src/components/ellipsis/index.js"
+import { Tabs, Tab, TabPane } from "../src/components/tabs/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -73,7 +74,7 @@ describe("native elements", () => {
     expect(customElements.get("m-input")).toBe(Input)
     expect(customElements.get("m-select")).toBe(Select)
     expect(builtInElementNames).not.toContain("m-select")
-    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader, Ellipsis]) {
+    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader, Ellipsis, Tabs, Tab, TabPane]) {
       expect(customElements.get(Type.tag)).toBe(Type)
       expect(builtInElementNames).not.toContain(Type.tag)
     }
