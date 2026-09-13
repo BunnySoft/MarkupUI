@@ -42,6 +42,7 @@ in the target inventory.
 37. [Menu demo and API](../../demo/components/menu.html): Menu, MenuItem, MenuGroup, MenuDivider, Submenu; vertical and horizontal navigation, selection, groups, and keyboard shortcuts.
 38. [Pagination demo and API](../../demo/components/pagination.html): Pagination; page navigation, page size configuration, item counting, and windowed page slots.
 39. [Dialog demo and API](../../demo/components/dialog.html): Dialog, DialogHeader, DialogBody, DialogFooter, DialogAction; modal and modeless dialogs, types, safe actions, and cancellation.
+40. [Modal demo and API](../../demo/components/modal.html): Modal, ModalHeader, ModalBody, ModalFooter, ModalAction; modal dialogs, backdrop masking, custom widths, and escape cancellation.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

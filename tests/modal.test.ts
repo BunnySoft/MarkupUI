@@ -2,9 +2,19 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createModal, createModalOwner } from "../src/components/modal/index.js"
+import {
+  createModal,
+  createModalOwner,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalAction,
+  registerModal,
+} from "../src/components/modal/index.js"
 import { createNativeDialog } from "../src/components/dialog/native.js"
 import type { ModalController, ModalOptions } from "../src/components/modal/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const handles: { dispose(): void }[] = []
 const proto = HTMLDialogElement.prototype
@@ -70,7 +80,7 @@ describe("Generic native Modal", () => {
     expect(source).toContain("../dialog/native.js")
     expect(source).not.toContain("../dialog/dialog.js")
     expect(source).not.toContain("createDialog(")
-    expect(customElements.get("m-modal")).toBeUndefined()
+    expect(customElements.get("m-modal")).toBe(Modal)
   })
   it("keeps native content, headings, description and form nodes untouched", () => {
     const d = fixture()
@@ -461,3 +471,195 @@ describe("Explicit native template ownership", () => {
     expect(gzipSync(`${native}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(1250)
   })
 })
+
+describe("canonical Modal ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers modal elements", () => {
+    expect(Modal.tag).toBe("m-modal")
+    expect(ModalHeader.tag).toBe("m-modal-header")
+    expect(ModalBody.tag).toBe("m-modal-body")
+    expect(ModalFooter.tag).toBe("m-modal-footer")
+    expect(ModalAction.tag).toBe("m-modal-action")
+    expect(ViewElement.prototype.isPrototypeOf(Modal.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ModalHeader.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ModalBody.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ModalFooter.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ModalAction.prototype)).toBe(true)
+    expect(customElements.get("m-modal")).toBe(Modal)
+    expect(customElements.get("m-modal-header")).toBe(ModalHeader)
+    expect(customElements.get("m-modal-body")).toBe(ModalBody)
+    expect(customElements.get("m-modal-footer")).toBe(ModalFooter)
+    expect(customElements.get("m-modal-action")).toBe(ModalAction)
+    expect(Modal.observedAttributes).toEqual(["open", "title", "closable", "mask-closable", "width"])
+    expect(typeof registerModal).toBe("function")
+  })
+
+  it("handles typed properties, attributes, and defaults", () => {
+    const modal = document.createElement("m-modal") as Modal
+    expect(modal.open).toBe(false)
+    expect(modal.title).toBe("")
+    expect(modal.closable).toBe(false)
+    expect(modal.maskClosable).toBe(true)
+    expect(modal.width).toBeNull()
+
+    modal.title = "Test Dialog"
+    expect(modal.title).toBe("Test Dialog")
+    expect(modal.getAttribute("title")).toBe("Test Dialog")
+
+    modal.closable = true
+    expect(modal.closable).toBe(true)
+    expect(modal.hasAttribute("closable")).toBe(true)
+    modal.closable = false
+    expect(modal.closable).toBe(false)
+    expect(modal.hasAttribute("closable")).toBe(false)
+
+    modal.maskClosable = false
+    expect(modal.maskClosable).toBe(false)
+    expect(modal.getAttribute("mask-closable")).toBe("false")
+    modal.maskClosable = true
+    expect(modal.maskClosable).toBe(true)
+
+    modal.width = "500px"
+    expect(modal.width).toBe("500px")
+    expect(modal.getAttribute("width")).toBe("500px")
+    modal.width = null
+    expect(modal.width).toBeNull()
+    expect(modal.hasAttribute("width")).toBe(false)
+  })
+
+  it("supports showModal, close, and dispatches cancel and close events", () => {
+    document.body.innerHTML = `
+      <m-modal title="Active Modal" closable>
+        <m-modal-body>Body text</m-modal-body>
+        <m-modal-footer>
+          <m-modal-action><button id="btn-ok">OK</button></m-modal-action>
+        </m-modal-footer>
+      </m-modal>`
+    const modal = document.querySelector("m-modal") as Modal
+    expect(modal.open).toBe(false)
+
+    const closeSpy = vi.fn()
+    const cancelSpy = vi.fn()
+    modal.addEventListener("m:close", closeSpy)
+    modal.addEventListener("m:cancel", cancelSpy)
+
+    modal.showModal()
+    expect(modal.open).toBe(true)
+
+    modal.close("custom-result")
+    expect(modal.open).toBe(false)
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "custom-result" })
+  })
+
+  it("handles cancel event prevention", () => {
+    document.body.innerHTML = `<m-modal title="Veto Modal"></m-modal>`
+    const modal = document.querySelector("m-modal") as Modal
+    modal.showModal()
+    expect(modal.open).toBe(true)
+
+    modal.addEventListener("m:cancel", (e: Event) => {
+      e.preventDefault()
+    })
+
+    const dialog = modal.querySelector("dialog")!
+    const cancelEvent = new Event("cancel", { cancelable: true })
+    dialog.dispatchEvent(cancelEvent)
+
+    expect(cancelEvent.defaultPrevented).toBe(true)
+    expect(modal.open).toBe(true)
+  })
+
+  it("handles closable close button click", () => {
+    document.body.innerHTML = `<m-modal title="Closable Modal" closable><p>Content</p></m-modal>`
+    const modal = document.querySelector("m-modal") as Modal
+    modal.showModal()
+    expect(modal.open).toBe(true)
+
+    const closeBtn = modal.querySelector<HTMLButtonElement>("button[data-modal-close], .m-modal__close")
+    expect(closeBtn).not.toBeNull()
+
+    const closeSpy = vi.fn()
+    modal.addEventListener("m:close", closeSpy)
+    closeBtn!.click()
+
+    expect(modal.open).toBe(false)
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "close" })
+  })
+
+  it("handles mask-closable backdrop click", () => {
+    document.body.innerHTML = `<m-modal title="Mask Modal" mask-closable><p>Content</p></m-modal>`
+    const modal = document.querySelector("m-modal") as Modal
+    modal.showModal()
+    expect(modal.open).toBe(true)
+
+    const dialog = modal.querySelector("dialog")!
+    vi.spyOn(dialog, "getBoundingClientRect").mockReturnValue({
+      left: 100, top: 100, right: 300, bottom: 300, width: 200, height: 200, x: 100, y: 100, toJSON: () => {}
+    } as DOMRect)
+
+    // Click outside dialog (x: 10, y: 10)
+    const downEvent = new MouseEvent("pointerdown", { bubbles: true, cancelable: true, clientX: 10, clientY: 10, button: 0 })
+    Object.defineProperties(downEvent, { pointerId: { value: 1 }, isPrimary: { value: true } })
+    dialog.dispatchEvent(downEvent)
+
+    const upEvent = new MouseEvent("pointerup", { bubbles: true, cancelable: true, clientX: 10, clientY: 10, button: 0 })
+    Object.defineProperties(upEvent, { pointerId: { value: 1 }, isPrimary: { value: true } })
+    dialog.dispatchEvent(upEvent)
+
+    expect(modal.open).toBe(false)
+  })
+
+  it("does not close on backdrop click when mask-closable is false", () => {
+    document.body.innerHTML = `<m-modal title="No Mask Close" mask-closable="false"><p>Content</p></m-modal>`
+    const modal = document.querySelector("m-modal") as Modal
+    modal.showModal()
+    expect(modal.open).toBe(true)
+
+    const dialog = modal.querySelector("dialog")!
+    vi.spyOn(dialog, "getBoundingClientRect").mockReturnValue({
+      left: 100, top: 100, right: 300, bottom: 300, width: 200, height: 200, x: 100, y: 100, toJSON: () => {}
+    } as DOMRect)
+
+    // Click outside dialog (x: 10, y: 10)
+    const downEvent = new MouseEvent("pointerdown", { bubbles: true, cancelable: true, clientX: 10, clientY: 10, button: 0 })
+    Object.defineProperties(downEvent, { pointerId: { value: 1 }, isPrimary: { value: true } })
+    dialog.dispatchEvent(downEvent)
+
+    const upEvent = new MouseEvent("pointerup", { bubbles: true, cancelable: true, clientX: 10, clientY: 10, button: 0 })
+    Object.defineProperties(upEvent, { pointerId: { value: 1 }, isPrimary: { value: true } })
+    dialog.dispatchEvent(upEvent)
+
+    expect(modal.open).toBe(true)
+  })
+
+  it("synchronizes companion regions into native dialog and sets attributes", () => {
+    document.body.innerHTML = `
+      <m-modal title="Structured Modal">
+        <m-modal-header><h2 data-modal-title>Header Area</h2></m-modal-header>
+        <m-modal-body><p>Body Area</p></m-modal-body>
+        <m-modal-footer>
+          <m-modal-action><button>Confirm</button></m-modal-action>
+        </m-modal-footer>
+      </m-modal>`
+    const modal = document.querySelector("m-modal") as Modal
+    const dialog = modal.querySelector("dialog")!
+    expect(dialog).not.toBeNull()
+    expect(dialog.classList.contains("m-native-dialog")).toBe(true)
+    expect(dialog.classList.contains("m-modal")).toBe(true)
+
+    const header = modal.querySelector("m-modal-header")!
+    const body = modal.querySelector("m-modal-body")!
+    const footer = modal.querySelector("m-modal-footer")!
+    const action = modal.querySelector("m-modal-action")!
+
+    expect(header.parentElement).toBe(dialog)
+    expect(body.parentElement).toBe(dialog)
+    expect(footer.parentElement).toBe(dialog)
+    expect(header.hasAttribute("data-modal-header")).toBe(true)
+    expect(body.hasAttribute("data-modal-content")).toBe(true)
+    expect(footer.hasAttribute("data-modal-footer")).toBe(true)
+    expect(action.hasAttribute("data-modal-action")).toBe(true)
+  })
+})
+
