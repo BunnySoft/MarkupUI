@@ -35,7 +35,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Cascader | `Cascader` | Contract pending |
 | Color Picker | `ColorPicker` | Contract pending |
 | Checkbox | `Checkbox`, `CheckboxGroup`; native checkedness, labels, forms and computed selection | [Demo and API](../../demo/components/checkbox.html) |
-| Date Picker | `DatePicker` | Contract pending |
+| Date Picker | `DatePicker` | [Demo and API](../../demo/components/date-picker.html) |
 | Dynamic Input | `DynamicInput` | Contract pending |
 | Dynamic Tags | `DynamicTags` | Contract pending |
 | Form | `Form`, `FormItem`, `FormItemGi` | [Demo and API](../../demo/components/form.html) |
