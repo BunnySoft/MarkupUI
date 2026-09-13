@@ -1,4 +1,4 @@
-:where(.m-affix) {
+:where(m-affix, .m-affix) {
   --m-affix-block-start: auto;
   --m-affix-block-end: auto;
   --m-affix-z-index: 1;
@@ -9,10 +9,10 @@
   box-sizing: border-box;
   min-inline-size: 0;
 }
-:where(.m-affix)[hidden]:not([hidden="until-found"]),
+:where(m-affix, .m-affix)[hidden]:not([hidden="until-found"]),
 template.m-affix { display: none !important; }
 @media print {
-  :where(.m-affix) {
+  :where(m-affix, .m-affix) {
     position: static !important;
     inset-block: auto !important;
     inset-inline: auto !important;

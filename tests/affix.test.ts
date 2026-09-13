@@ -1,7 +1,11 @@
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import { Affix, MAffix, registerAffix } from "../src/components/affix/index.js"
+import * as affixApi from "../src/components/affix/index.js"
+import type { AffixChangeDetail } from "../src/components/affix/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const css = readFileSync(resolve("src", "components", "affix", "affix.css"), "utf8")
 const demo = readFileSync(resolve("demo", "components", "affix.html"), "utf8")
@@ -22,15 +26,13 @@ afterEach(() => {
   style?.remove()
   style = undefined
   document.body.replaceChildren()
+  vi.restoreAllMocks()
 })
 
 describe("CSS-native sticky Affix", () => {
-  it("ships only CSS with no fixed-position controller, observer or registration", () => {
+  it("ships native sticky CSS with no fixed or absolute positions", () => {
     expect(pkg.exports["./affix/style.css"]).toBe("./dist/markup-ui-affix.css")
-    expect(pkg.exports["./affix"]).toBeUndefined()
-    expect(readdirSync(resolve("src", "components", "affix"))).toEqual(["affix.css"])
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("m-affix")).toBeUndefined()
     expect(css).not.toContain("@import")
     expect(css).not.toContain("position: fixed")
     expect(css).not.toContain("position: absolute")
@@ -177,5 +179,215 @@ describe("CSS-native sticky Affix", () => {
     expect(outer.getAttribute("style")).toBe(authored)
     expect(outer.firstElementChild).toBe(inner)
     expect(inner.textContent).toBe("Authored content")
+  })
+})
+
+describe("canonical Affix ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(affixApi.Affix).toBe(Affix)
+    expect(affixApi.MAffix).toBe(MAffix)
+    expect(Affix.tag).toBe("m-affix")
+    expect(ViewElement.prototype.isPrototypeOf(Affix.prototype)).toBe(true)
+    expect(customElements.get("m-affix")).toBe(Affix)
+    expect(Affix.observedAttributes).toEqual(["offset-top", "offset-bottom"])
+    expect(() => registerAffix()).not.toThrow()
+    const define = vi.fn()
+    expect(() => registerAffix({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("handles offsetTop property defaults, attributes, validation, and CSS custom property synchronization", () => {
+    const element = document.createElement("m-affix") as Affix
+    document.body.append(element)
+    expect(element.offsetTop).toBeNull()
+    expect(element.style.getPropertyValue("--m-affix-block-start")).toBe("")
+
+    element.offsetTop = 20
+    expect(element.offsetTop).toBe(20)
+    expect(element.getAttribute("offset-top")).toBe("20")
+    expect(element.style.getPropertyValue("--m-affix-block-start")).toBe("20px")
+
+    element.offsetTop = null
+    expect(element.offsetTop).toBeNull()
+    expect(element.hasAttribute("offset-top")).toBe(false)
+    expect(element.style.getPropertyValue("--m-affix-block-start")).toBe("")
+
+    element.setAttribute("offset-top", "15")
+    expect(element.offsetTop).toBe(15)
+    expect(element.style.getPropertyValue("--m-affix-block-start")).toBe("15px")
+
+    element.removeAttribute("offset-top")
+    expect(element.offsetTop).toBeNull()
+    expect(element.style.getPropertyValue("--m-affix-block-start")).toBe("")
+
+    expect(() => { element.offsetTop = NaN }).toThrow(RangeError)
+    expect(() => { element.offsetTop = Infinity }).toThrow(RangeError)
+    element.setAttribute("offset-top", "invalid")
+    expect(() => element.offsetTop).toThrow(RangeError)
+  })
+
+  it("handles offsetBottom property defaults, attributes, validation, and CSS custom property synchronization", () => {
+    const element = document.createElement("m-affix") as Affix
+    document.body.append(element)
+    expect(element.offsetBottom).toBeNull()
+    expect(element.style.getPropertyValue("--m-affix-block-end")).toBe("")
+
+    element.offsetBottom = 30
+    expect(element.offsetBottom).toBe(30)
+    expect(element.getAttribute("offset-bottom")).toBe("30")
+    expect(element.style.getPropertyValue("--m-affix-block-end")).toBe("30px")
+
+    element.offsetBottom = null
+    expect(element.offsetBottom).toBeNull()
+    expect(element.hasAttribute("offset-bottom")).toBe(false)
+    expect(element.style.getPropertyValue("--m-affix-block-end")).toBe("")
+
+    element.setAttribute("offset-bottom", "45")
+    expect(element.offsetBottom).toBe(45)
+    expect(element.style.getPropertyValue("--m-affix-block-end")).toBe("45px")
+
+    element.removeAttribute("offset-bottom")
+    expect(element.offsetBottom).toBeNull()
+    expect(element.style.getPropertyValue("--m-affix-block-end")).toBe("")
+
+    expect(() => { element.offsetBottom = NaN }).toThrow(RangeError)
+    expect(() => { element.offsetBottom = Infinity }).toThrow(RangeError)
+    element.setAttribute("offset-bottom", "invalid")
+    expect(() => element.offsetBottom).toThrow(RangeError)
+  })
+
+  it("replays pre-upgrade properties upon connection", () => {
+    const element = document.createElement("m-affix") as Affix
+    Object.defineProperty(element, "offsetTop", { configurable: true, value: 50 })
+    Object.defineProperty(element, "offsetBottom", { configurable: true, value: 100 })
+    document.body.append(element)
+
+    expect(element.offsetTop).toBe(50)
+    expect(element.offsetBottom).toBe(100)
+    expect(element.getAttribute("offset-top")).toBe("50")
+    expect(element.getAttribute("offset-bottom")).toBe("100")
+    expect(element.style.getPropertyValue("--m-affix-block-start")).toBe("50px")
+    expect(element.style.getPropertyValue("--m-affix-block-end")).toBe("100px")
+  })
+
+  it("emits m:change event when affixed state transitions", () => {
+    const element = document.createElement("m-affix") as Affix
+    element.offsetTop = 20
+    document.body.append(element)
+
+    const change = vi.fn()
+    element.addEventListener("m:change", change)
+
+    // Sticking: element top <= offsetTop
+    vi.spyOn(element, "getBoundingClientRect").mockReturnValue({
+      top: 10, bottom: 50, left: 0, right: 100, width: 100, height: 40,
+    } as DOMRect)
+    element.update()
+
+    expect(change).toHaveBeenCalledTimes(1)
+    const event = change.mock.calls[0]![0] as CustomEvent<AffixChangeDetail>
+    expect(event.detail).toEqual({ affixed: true })
+    expect(event.bubbles).toBe(true)
+    expect(event.cancelable).toBe(false)
+    expect(event.composed).toBe(false)
+
+    // Unsticking: element top > offsetTop
+    vi.spyOn(element, "getBoundingClientRect").mockReturnValue({
+      top: 100, bottom: 140, left: 0, right: 100, width: 100, height: 40,
+    } as DOMRect)
+    element.update()
+
+    expect(change).toHaveBeenCalledTimes(2)
+    expect((change.mock.calls[1]![0] as CustomEvent<AffixChangeDetail>).detail).toEqual({ affixed: false })
+
+    // No change should not fire event
+    element.update()
+    expect(change).toHaveBeenCalledTimes(2)
+  })
+
+  it("emits m:change with bottom offset sticking", () => {
+    const element = document.createElement("m-affix") as Affix
+    element.offsetBottom = 30
+    document.body.append(element)
+
+    const change = vi.fn()
+    element.addEventListener("m:change", change)
+
+    // Sticking at bottom: viewport bottom - element bottom <= offsetBottom
+    vi.spyOn(element, "getBoundingClientRect").mockReturnValue({
+      top: 740, bottom: 780, left: 0, right: 100, width: 100, height: 40,
+    } as DOMRect)
+    element.update()
+
+    expect(change).toHaveBeenCalledWith(expect.objectContaining({ detail: { affixed: true } }))
+  })
+
+  it("cleans up scroll and resize listeners when disconnected", () => {
+    const element = document.createElement("m-affix") as Affix
+    document.body.append(element)
+    const removeListener = vi.spyOn(window, "removeEventListener")
+    element.remove()
+    expect(removeListener).toHaveBeenCalledWith("scroll", expect.any(Function))
+    expect(removeListener).toHaveBeenCalledWith("resize", expect.any(Function))
+  })
+
+  it("exposes MarkupUIAffix global", async () => {
+    await import("../src/components/affix/global.js")
+    const globalApi = (globalThis as any).MarkupUIAffix
+    expect(globalApi).toBeDefined()
+    expect(globalApi.Affix).toBe(Affix)
+    expect(globalApi.registerAffix).toBe(registerAffix)
+  })
+
+  it("generates component API documentation matching the ViewElement specification", () => {
+    const docs = JSON.parse(readFileSync(resolve("demo", "api", "affix.json"), "utf8"))
+    expect(docs.elements).toHaveLength(1)
+    const [element] = docs.elements
+    expect(element.type).toBe("Affix")
+    expect(element.web.primary).toBe("m-affix")
+    expect(element.properties.offsetTop).toMatchObject({
+      name: "offsetTop",
+      type: "number",
+      typeName: "number | null",
+      attribute: "offset-top",
+      default: null,
+      nullable: true,
+      writable: true,
+    })
+    expect(element.properties.offsetBottom).toMatchObject({
+      name: "offsetBottom",
+      type: "number",
+      typeName: "number | null",
+      attribute: "offset-bottom",
+      default: null,
+      nullable: true,
+      writable: true,
+    })
+    expect(element.regions).toEqual([
+      { name: "content", accepts: ["flow content"], min: 0, max: null },
+    ])
+    expect(element.events).toEqual([
+      {
+        name: "Change",
+        web: "m:change",
+        bubbles: true,
+        cancelable: false,
+        composed: false,
+        detail: { affixed: "boolean" },
+      },
+    ])
+    expect(element.actions).toEqual(["update"])
+  })
+
+  it("renders API documentation in demo element", async () => {
+    const { renderComponentApi } = await import("../demo/component-api.js")
+    const docs = JSON.parse(readFileSync(resolve("demo", "api", "affix.json"), "utf8"))
+    const container = document.createElement("div")
+    renderComponentApi(container, docs.elements)
+    expect(container.textContent).toContain("Affix")
+    expect(container.textContent).toContain("m-affix")
+    expect(container.textContent).toContain("offset-top")
+    expect(container.textContent).toContain("offset-bottom")
+    expect(container.textContent).toContain("m:change")
   })
 })

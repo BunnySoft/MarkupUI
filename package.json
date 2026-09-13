@@ -298,6 +298,10 @@
       "import": "./dist/markup-ui-result.js"
     },
     "./result/style.css": "./dist/markup-ui-result.css",
+    "./affix": {
+      "types": "./dist/components/affix/index.d.ts",
+      "import": "./dist/markup-ui-affix.js"
+    },
     "./affix/style.css": "./dist/markup-ui-affix.css",
     "./highlight": {
       "types": "./dist/components/highlight/index.d.ts",

@@ -81,7 +81,7 @@ families establish the pattern; the remaining contracts must be defined before i
 
 | Family | Elements / scope | Contract |
 | --- | --- | --- |
-| Affix | `Affix` | Contract pending |
+| Affix | `Affix` | [Demo and API](../../demo/components/affix.html) |
 | Anchor | `Anchor`, `AnchorLink` | [Demo and API](../../demo/components/anchor.html) |
 | Back Top | `BackTop` | [Demo and API](../../demo/components/back-top.html) |
 | Breadcrumb | `Breadcrumb`, `BreadcrumbItem` | [Demo and API](../../demo/components/breadcrumb.html) |

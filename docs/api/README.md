@@ -70,6 +70,7 @@ in the target inventory.
 65. [Statistic demo and API](../../demo/components/statistic.html): Statistic; numeric metrics, prefixes, suffixes, labels, and tabular formatting.
 66. [Anchor demo and API](../../demo/components/anchor.html): Anchor, AnchorLink; scroll spy, section tracking, sticky navigation, and change events.
 67. [Back Top demo and API](../../demo/components/back-top.html): BackTop; animated scroll-to-top floating button, visibility thresholds, and custom offsets.
+68. [Affix demo and API](../../demo/components/affix.html): Affix; sticky viewport positioning, offset thresholds, and affix state change events.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
