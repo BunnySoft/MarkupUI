@@ -2,7 +2,8 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createTimePicker, isTimePickerSupported } from "../src/components/time-picker/index.js"
+import { TimePicker, registerTimePicker, timePickerSizes, createTimePicker, isTimePickerSupported } from "../src/components/time-picker/index.js"
+import { ViewElement } from "../src/core/index.js"
 import { isDatePickerTypeSupported, createDatePicker } from "../src/components/date-picker/index.js"
 import type { NativeDateType } from "../src/components/date-picker/index.js"
 import { coordinateForm as createForm } from "../src/components/form/controller.js"
@@ -262,5 +263,183 @@ describe("safe actions, ownership and Form coexistence", () => {
     expect(control.getAttribute("aria-describedby")).toBe("feedback")
     helper.setValue("12:00"); validation.refresh(); helper.disconnect(); validation.disconnect()
     expect(control.hasAttribute("aria-describedby")).toBe(false)
+  })
+})
+
+describe("canonical TimePicker ViewElement", () => {
+  it("registers only its own ViewElement and rejects conflicting definitions", () => {
+    expect(TimePicker.prototype).toBeInstanceOf(ViewElement)
+    expect(customElements.get("m-time-picker")).toBe(TimePicker)
+    expect(TimePicker.tag).toBe("m-time-picker")
+    const define = vi.fn()
+    registerTimePicker({ get: () => undefined, define })
+    expect(define.mock.calls.map(call => call[0])).toEqual(["m-time-picker"])
+    expect(() => registerTimePicker({ get: () => HTMLElement, define })).toThrow("different")
+  })
+
+  it("exposes canonical observedAttributes and default property values", () => {
+    expect(TimePicker.observedAttributes).toEqual(["value", "placeholder", "format", "clearable", "disabled", "step", "size"])
+    const picker = new TimePicker()
+    expect(picker.value).toBeNull()
+    expect(picker.placeholder).toBeNull()
+    expect(picker.format).toBeNull()
+    expect(picker.clearable).toBe(false)
+    expect(picker.disabled).toBe(false)
+    expect(picker.step).toBeNull()
+    expect(picker.size).toBe("medium")
+  })
+
+  it("reflects properties to attributes and validates values", () => {
+    const picker = new TimePicker()
+    picker.value = "09:30"
+    expect(picker.getAttribute("value")).toBe("09:30")
+    picker.value = null
+    expect(picker.hasAttribute("value")).toBe(false)
+
+    picker.placeholder = "Select time"
+    expect(picker.getAttribute("placeholder")).toBe("Select time")
+    picker.placeholder = null
+    expect(picker.hasAttribute("placeholder")).toBe(false)
+
+    picker.format = "HH:mm"
+    expect(picker.getAttribute("format")).toBe("HH:mm")
+    picker.format = null
+    expect(picker.hasAttribute("format")).toBe(false)
+
+    picker.clearable = true
+    expect(picker.hasAttribute("clearable")).toBe(true)
+    picker.clearable = false
+    expect(picker.hasAttribute("clearable")).toBe(false)
+
+    picker.disabled = true
+    expect(picker.hasAttribute("disabled")).toBe(true)
+    picker.disabled = false
+    expect(picker.hasAttribute("disabled")).toBe(false)
+
+    picker.step = "1"
+    expect(picker.getAttribute("step")).toBe("1")
+    picker.step = null
+    expect(picker.hasAttribute("step")).toBe(false)
+
+    for (const size of timePickerSizes) {
+      picker.size = size
+      expect(picker.getAttribute("size")).toBe(size)
+    }
+    expect(() => { (picker as any).size = "invalid" }).toThrow(RangeError)
+  })
+
+  it("generates native time input and synchronizes properties", () => {
+    const picker = new TimePicker()
+    picker.placeholder = "Choose time"
+    picker.value = "09:30"
+    picker.step = "1"
+    document.body.append(picker)
+
+    expect(picker.classList.contains("m-time-picker")).toBe(true)
+    const input = picker.querySelector<HTMLInputElement>("input[data-time-control]")!
+    expect(input).not.toBeNull()
+    expect(input.type).toBe("time")
+    expect(input.value).toBe("09:30")
+    expect(input.placeholder).toBe("Choose time")
+    expect(input.step).toBe("1")
+
+    picker.disabled = true
+    expect(input.disabled).toBe(true)
+
+    picker.value = "14:15"
+    expect(input.value).toBe("14:15")
+
+    picker.placeholder = "New placeholder"
+    expect(input.placeholder).toBe("New placeholder")
+
+    picker.step = "0.001"
+    expect(input.step).toBe("0.001")
+
+    picker.size = "large"
+    expect(picker.getAttribute("data-size")).toBe("large")
+  })
+
+  it("emits m:change event when native input changes", () => {
+    const picker = new TimePicker()
+    document.body.append(picker)
+    const input = picker.querySelector<HTMLInputElement>("input")!
+    const listener = vi.fn()
+    picker.addEventListener("m:change", listener)
+
+    input.value = "15:45"
+    input.dispatchEvent(new Event("change", { bubbles: true }))
+
+    expect(listener).toHaveBeenCalledOnce()
+    expect(listener.mock.calls[0][0].detail).toEqual({ value: "15:45" })
+    expect(picker.value).toBe("15:45")
+  })
+
+  it("supports clearable and clear() method", () => {
+    const picker = new TimePicker()
+    picker.clearable = true
+    picker.value = "09:30"
+    document.body.append(picker)
+
+    const input = picker.querySelector<HTMLInputElement>("input")!
+    expect(input.value).toBe("09:30")
+
+    const clearBtn = picker.querySelector<HTMLButtonElement>("[data-time-clear]")!
+    expect(clearBtn).not.toBeNull()
+    expect(clearBtn.hidden).toBe(false)
+
+    const listener = vi.fn()
+    picker.addEventListener("m:change", listener)
+
+    clearBtn.click()
+
+    expect(picker.value).toBeNull()
+    expect(input.value).toBe("")
+    expect(listener).toHaveBeenCalledOnce()
+    expect(listener.mock.calls[0][0].detail).toEqual({ value: "" })
+
+    picker.value = "11:00"
+    expect(input.value).toBe("11:00")
+    picker.clear()
+    expect(picker.value).toBeNull()
+    expect(input.value).toBe("")
+    expect(listener).toHaveBeenCalledTimes(2)
+  })
+
+  it("adopts authored native inputs", () => {
+    const picker = document.createElement("m-time-picker") as TimePicker
+    picker.innerHTML = '<input data-time-control id="custom-field" type="time" value="09:30">'
+    document.body.append(picker)
+
+    const input = picker.querySelector<HTMLInputElement>("#custom-field")!
+    expect(input).not.toBeNull()
+    expect(picker.querySelectorAll("input")).toHaveLength(1)
+    expect(picker.value).toBeNull()
+    picker.value = "10:30"
+    expect(input.value).toBe("10:30")
+  })
+
+  it("delegates focus and blur to the native input", () => {
+    const picker = new TimePicker()
+    document.body.append(picker)
+    const input = picker.querySelector<HTMLInputElement>("input")!
+    const focusSpy = vi.spyOn(input, "focus")
+    const blurSpy = vi.spyOn(input, "blur")
+
+    picker.focus()
+    expect(focusSpy).toHaveBeenCalledOnce()
+
+    picker.blur()
+    expect(blurSpy).toHaveBeenCalledOnce()
+  })
+
+  it("upgrades properties assigned before connection", () => {
+    const picker = document.createElement("m-time-picker") as TimePicker
+    picker.value = "12:00"
+    picker.size = "large"
+    picker.clearable = true
+    document.body.append(picker)
+
+    expect(picker.value).toBe("12:00")
+    expect(picker.size).toBe("large")
   })
 })
