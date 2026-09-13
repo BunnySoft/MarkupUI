@@ -60,6 +60,7 @@ in the target inventory.
 55. [Popselect demo and API](../../demo/components/popselect.html): Popselect, PopselectTrigger, PopselectPanel; popover selection, custom triggers, and value change events.
 56. [Tree demo and API](../../demo/components/tree.html): Tree, TreeNode; hierarchical trees, checkbox selection, expand/collapse, and selection events.
 57. [Tree Select demo and API](../../demo/components/tree-select.html): TreeSelect; dropdown tree selection, multi-select, and clearable controls.
+58. [Cascader demo and API](../../demo/components/cascader.html): Cascader; multi-level cascading dropdowns, custom separators, and hover/click triggers.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

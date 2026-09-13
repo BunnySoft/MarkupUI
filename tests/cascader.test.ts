@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createCascader } from "../src/components/cascader/index.js"
+import { Cascader, registerCascader, cascaderExpandTriggers, createCascader } from "../src/components/cascader/index.js"
 import type { CascaderController, CascaderOptions } from "../src/components/cascader/index.js"
+import { ViewElement } from "../src/core/index.js"
 import type { TreeLoadResult } from "../src/components/tree/index.js"
 import { createTree } from "../src/components/tree/index.js"
 import { createSelect } from "../src/components/native-select.js"
@@ -390,3 +391,139 @@ describe("scope, failure gates and teardown", () => {
     expect(parent.querySelector("[data-tree-list]")!.children).toHaveLength(0)
   })
 })
+
+describe("canonical Cascader ViewElement", () => {
+  it("registers only its own ViewElement and rejects conflicting definitions", () => {
+    expect(Cascader.prototype).toBeInstanceOf(ViewElement)
+    expect(customElements.get("m-cascader")).toBe(Cascader)
+    expect(Cascader.tag).toBe("m-cascader")
+    const define = vi.fn()
+    registerCascader({ get: () => undefined, define })
+    expect(define.mock.calls.map(call => call[0])).toEqual(["m-cascader"])
+    expect(() => registerCascader({ get: () => HTMLElement, define })).toThrow("different")
+  })
+
+  it("exposes canonical observedAttributes and default property values", () => {
+    expect(Cascader.observedAttributes).toEqual([
+      "value",
+      "placeholder",
+      "disabled",
+      "clearable",
+      "expand-trigger",
+      "separator",
+    ])
+    const cascader = new Cascader()
+    expect(cascader.value).toBeNull()
+    expect(cascader.placeholder).toBeNull()
+    expect(cascader.disabled).toBe(false)
+    expect(cascader.clearable).toBe(false)
+    expect(cascader.expandTrigger).toBe("click")
+    expect(cascader.separator).toBe(" / ")
+  })
+
+  it("reflects properties to attributes and validates values", () => {
+    const cascader = new Cascader()
+    cascader.value = "paris"
+    expect(cascader.getAttribute("value")).toBe("paris")
+    cascader.value = null
+    expect(cascader.hasAttribute("value")).toBe(false)
+
+    cascader.placeholder = "Select destination"
+    expect(cascader.getAttribute("placeholder")).toBe("Select destination")
+    cascader.placeholder = null
+    expect(cascader.hasAttribute("placeholder")).toBe(false)
+
+    cascader.disabled = true
+    expect(cascader.hasAttribute("disabled")).toBe(true)
+    cascader.disabled = false
+    expect(cascader.hasAttribute("disabled")).toBe(false)
+
+    cascader.clearable = true
+    expect(cascader.hasAttribute("clearable")).toBe(true)
+    cascader.clearable = false
+    expect(cascader.hasAttribute("clearable")).toBe(false)
+
+    for (const trigger of cascaderExpandTriggers) {
+      cascader.expandTrigger = trigger
+      expect(cascader.getAttribute("expand-trigger")).toBe(trigger)
+    }
+    expect(() => { (cascader as any).expandTrigger = "invalid" }).toThrow(RangeError)
+
+    cascader.separator = " → "
+    expect(cascader.getAttribute("separator")).toBe(" → ")
+    expect(cascader.separator).toBe(" → ")
+  })
+
+  it("generates native control and synchronizes properties", () => {
+    const cascader = new Cascader()
+    cascader.placeholder = "Choose location"
+    cascader.value = "paris"
+    document.body.append(cascader)
+
+    expect(cascader.classList.contains("m-cascader")).toBe(true)
+    const control = cascader.querySelector<HTMLInputElement>("input[data-cascader-control]")!
+    expect(control).not.toBeNull()
+    expect(control.value).toBe("paris")
+    expect(control.placeholder).toBe("Choose location")
+
+    cascader.disabled = true
+    expect(control.disabled).toBe(true)
+
+    cascader.value = "lyon"
+    expect(control.value).toBe("lyon")
+
+    cascader.placeholder = "New placeholder"
+    expect(control.placeholder).toBe("New placeholder")
+  })
+
+  it("emits m:change event when native control changes", () => {
+    const cascader = new Cascader()
+    document.body.append(cascader)
+    const control = cascader.querySelector<HTMLInputElement>("input")!
+    const listener = vi.fn()
+    cascader.addEventListener("m:change", listener)
+
+    control.value = "nyc"
+    control.dispatchEvent(new Event("change", { bubbles: true }))
+
+    expect(listener).toHaveBeenCalledOnce()
+    expect(listener.mock.calls[0]![0].detail).toEqual({ value: "nyc" })
+    expect(cascader.value).toBe("nyc")
+  })
+
+  it("supports clear method and clearable button", () => {
+    const cascader = new Cascader()
+    cascader.value = "paris"
+    cascader.clearable = true
+    document.body.append(cascader)
+
+    const clearBtn = cascader.querySelector<HTMLButtonElement>("button[data-cascader-clear]")!
+    expect(clearBtn).not.toBeNull()
+    expect(clearBtn.hidden).toBe(false)
+
+    const listener = vi.fn()
+    cascader.addEventListener("m:change", listener)
+
+    cascader.clear()
+    expect(cascader.value).toBeNull()
+    expect(listener).toHaveBeenCalledOnce()
+    expect(listener.mock.calls[0]![0].detail).toEqual({ value: "" })
+    const control = cascader.querySelector<HTMLInputElement>("input")!
+    expect(control.value).toBe("")
+  })
+
+  it("supports focus and blur delegation", () => {
+    const cascader = new Cascader()
+    document.body.append(cascader)
+    const control = cascader.querySelector<HTMLInputElement>("input")!
+    const focusSpy = vi.spyOn(control, "focus")
+    const blurSpy = vi.spyOn(control, "blur")
+
+    cascader.focus()
+    expect(focusSpy).toHaveBeenCalledOnce()
+
+    cascader.blur()
+    expect(blurSpy).toHaveBeenCalledOnce()
+  })
+})
+
