@@ -1,6 +1,6 @@
 # Spin
 
-> **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
+> **Historical reference.** Preserved from the previous documentation layout. Spin has been migrated to the direct `ViewElement` contract (`Spin`, aliased as `MSpin`). Current API documentation and live examples are maintained at [demo/components/spin.html](../../demo/components/spin.html).
 
 **Migration status: 🟢 Verified for the retained native scope below.**
 Spin supplies a decorative graphic, optional native description and a narrowly owned display

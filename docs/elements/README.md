@@ -74,6 +74,11 @@ illustrations, size variants, and adopted regions for custom icons, descriptions
 recovery actions, leaving interactive headings, forms, and announcements native.
 See the [Empty demo/API](../../demo/components/empty.html).
 
+Spin/MSpin uses direct properties, customizable size presets or numeric dimensions,
+delay cancellation, original SVG geometry, wrapped content adoption, and adopted regions
+for custom icons and descriptions, leaving focus and wrapped interaction native.
+See the [Spin demo/API](../../demo/components/spin.html).
+
 ## References
 
 - [Previous implementation guides](../archive/components/README.md)

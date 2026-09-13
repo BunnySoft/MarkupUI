@@ -128,6 +128,13 @@ authored icon, description and extra regions.
 The legacy aggregate `MEmpty` is removed from `content.ts` and `elements.ts`.
 See the [Empty demo/API](../../demo/components/empty.html).
 
+Spin's direct properties and timing mechanics live in `src/components/spin/spin.ts`,
+with pure types in `model.ts`. Spin extends `ViewElement` and registers only `m-spin`,
+providing customizable sizes, delay cancellation, stroke geometry, wrapped content adoption,
+and custom icon and description slotting.
+The legacy aggregate `["m-spin", ...]` is removed from `elements.ts`.
+See the [Spin demo/API](../../demo/components/spin.html).
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed

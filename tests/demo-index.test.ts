@@ -27,6 +27,7 @@ const typographyHtml = readFileSync(resolve("demo", "components", "typography.ht
 const tagHtml = readFileSync(resolve("demo", "components", "tag.html"), "utf8")
 const badgeHtml = readFileSync(resolve("demo", "components", "badge.html"), "utf8")
 const emptyHtml = readFileSync(resolve("demo", "components", "empty.html"), "utf8")
+const spinHtml = readFileSync(resolve("demo", "components", "spin.html"), "utf8")
 let browser: ReturnType<typeof createComponentBrowser> | undefined
 let media: MediaQueryList
 let mediaListener: (() => void) | undefined
@@ -147,6 +148,50 @@ describe("metadata-based component documentation", () => {
     const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
     expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-empty.global.js"))
     expect(parsed.querySelector("main[data-demo-page].component-docs #empty-api")).not.toBeNull()
+    expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("details.component-setup")).not.toBeNull()
+    for (const example of parsed.querySelectorAll("[data-demo-example]")) {
+      expect(example.querySelector("[data-demo-header] h2[id]")).not.toBeNull()
+      expect(example.querySelector("[data-demo-preview]")).not.toBeNull()
+    }
+  })
+
+  it("extracts Spin properties, presets and timing features without inventing runtime metadata", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["spin"])
+    expect(docs.elements).toHaveLength(1)
+    const [spin] = docs.elements
+    expect(spin.type).toBe("Spin")
+    expect(spin.web.primary).toBe("m-spin")
+    expect(spin.properties.show).toMatchObject({ default: true, encoding: "boolean", attribute: "show" })
+    expect(spin.properties.rotate).toMatchObject({ default: true, encoding: "boolean", attribute: "rotate" })
+    expect(spin.properties.description).toMatchObject({ default: null, attribute: "description" })
+    expect(spin.properties.label).toMatchObject({ default: "Loading", attribute: "label" })
+    expect(spin.properties.size).toMatchObject({ default: null, values: ["small", "medium", "large"], attribute: "size", min: 0 })
+    expect(spin.properties.delay).toMatchObject({ default: null, attribute: "delay", integer: true })
+    expect(spin.properties.radius).toMatchObject({ default: null, attribute: "radius", min: 0, exclusiveMin: true })
+    expect(spin.properties.scale).toMatchObject({ default: null, attribute: "scale", min: 0, exclusiveMin: true })
+    expect(spin.properties.strokeWidth).toMatchObject({ default: null, attribute: "stroke-width", min: 0 })
+    expect(spin.properties.stroke).toMatchObject({ default: null, attribute: "stroke" })
+    expect(spin.properties.active).toMatchObject({ writable: false, attribute: null })
+    expect(spin.properties.valid).toMatchObject({ writable: false, attribute: null })
+    expect(spin.properties.validationErrors).toMatchObject({ writable: false, attribute: null })
+    expect(spin.properties.contentElement).toMatchObject({ writable: false, attribute: null })
+    expect(spin.properties.indicatorElement).toMatchObject({ writable: false, attribute: null })
+    expect(spin.actions).toEqual([])
+    expect(spin.events).toEqual([])
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.textContent).toContain("Spin")
+    expect(target.textContent).toContain("Loading")
+  })
+
+  it("structures Spin demo with standard scaffold and explicit shared-core loading", () => {
+    const parsed = new DOMParser().parseFromString(spinHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-spin.global.js"))
+    expect(parsed.querySelector("main[data-demo-page].component-docs #spin-api")).not.toBeNull()
     expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
     expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
     expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()

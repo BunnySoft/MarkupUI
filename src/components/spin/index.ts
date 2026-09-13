@@ -1,13 +1,11 @@
-export { MSpin } from "./spin.js"
-export type { SpinValidationError } from "./spin.js"
-import { MSpin } from "./spin.js"
+export { Spin, MSpin, spinSizes } from "./spin.js"
+export type { SpinPresetSize, SpinSize, SpinValidationError } from "./model.js"
+
+import { Spin } from "./spin.js"
+import { ViewElement } from "../../core/index.js"
 
 export function registerSpin(registry: Pick<CustomElementRegistry, "get" | "define"> = customElements): void {
-  const existing = registry.get("m-spin")
-  if (existing && existing !== MSpin) {
-    throw new Error("'m-spin' is already defined. Load the Spin component before the legacy MarkupUI bundle.")
-  }
-  if (!existing) registry.define("m-spin", MSpin)
+  ViewElement.register([Spin], registry)
 }
 
 if (typeof customElements !== "undefined") registerSpin()

@@ -109,7 +109,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Progress | `Progress` | Contract pending |
 | Result | `Result` and named regions | Contract pending |
 | Skeleton | `Skeleton` | Contract pending |
-| Spin | `Spin` | Contract pending |
+| Spin | `Spin`; customizable size, delay, stroke, wrapped content adoption, custom icons and descriptions | [Demo and API](../../demo/components/spin.html) |
 | Tooltip | `Tooltip` | Contract pending |
 
 ## Layout (5)

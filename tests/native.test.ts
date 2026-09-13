@@ -34,6 +34,7 @@ import { Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider } from "
 import { Tag } from "../src/components/tag/index.js"
 import { Badge } from "../src/components/badge/index.js"
 import { Empty } from "../src/components/empty/index.js"
+import { Spin } from "../src/components/spin/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -62,7 +63,7 @@ describe("native elements", () => {
     expect(customElements.get("m-input")).toBe(Input)
     expect(customElements.get("m-select")).toBe(Select)
     expect(builtInElementNames).not.toContain("m-select")
-    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge]) {
+    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin]) {
       expect(customElements.get(Type.tag)).toBe(Type)
       expect(builtInElementNames).not.toContain(Type.tag)
     }
@@ -144,6 +145,7 @@ describe("native elements", () => {
       <m-progress value="25" max="50"></m-progress>
       <m-skeleton width="100px" height="20px"></m-skeleton>
       <m-empty description="No rows"></m-empty>
+      <m-spin description="Loading rows"></m-spin>
       <m-tag closable>Ready</m-tag>
       <m-button-group><m-button>One</m-button><m-button>Two</m-button></m-button-group>`
     expect(document.querySelector("m-avatar")?.getAttribute("role")).toBe("img")
@@ -159,6 +161,9 @@ describe("native elements", () => {
     expect(customElements.get("m-empty")).toBe(Empty)
     expect(builtInElementNames).not.toContain("m-empty")
     expect(document.querySelector("m-empty")?.textContent).toContain("No rows")
+    expect(customElements.get("m-spin")).toBe(Spin)
+    expect(builtInElementNames).not.toContain("m-spin")
+    expect(document.querySelector("m-spin")?.textContent).toContain("Loading rows")
     expect(document.querySelector("m-tag > [data-m-close]")).not.toBeNull()
     expect(document.querySelector("m-button-group")?.getAttribute("role")).toBe("group")
   })

@@ -22,7 +22,6 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-alert", class extends MElement {}],
   ["m-progress", MProgress],
   ["m-skeleton", MSkeleton],
-  ["m-spin", class extends MElement { public connectedCallback(): void { this.setAttribute("role", "status"); this.setAttribute("aria-label", this.getAttribute("label") ?? "Loading") } }],
   ["m-option", class extends MElement {}],
   ["m-autocomplete", MAutocomplete],
   ["m-slider", MSlider],

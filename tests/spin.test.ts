@@ -1,16 +1,16 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { MSpin, registerSpin } from "../src/components/spin/index.js"
-import { registerElements } from "../src/components/elements.js"
+import { Spin, MSpin, registerSpin } from "../src/components/spin/index.js"
+import { builtInElementNames, registerElements } from "../src/components/elements.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.useRealTimers(); vi.restoreAllMocks() })
 
-function spin(markup = "<m-spin></m-spin>"): MSpin {
+function spin(markup = "<m-spin></m-spin>"): Spin {
   document.body.innerHTML = markup
   const element = document.querySelector("m-spin")
-  if (!(element instanceof MSpin)) throw new Error("Spin was not upgraded")
+  if (!(element instanceof Spin)) throw new Error("Spin was not upgraded")
   return element
 }
-function wrapped(delay = 100): MSpin {
+function wrapped(delay = 100): Spin {
   return spin(`<m-spin delay="${delay}"><div data-m-spin-content><button type="button">Action</button></div></m-spin>`)
 }
 
@@ -422,10 +422,16 @@ describe("standalone Spin", () => {
   it("reports explicit collisions and preserves enhanced definitions before the aggregate", () => {
     expect(() => registerSpin()).not.toThrow()
     const define = vi.fn()
-    expect(() => registerSpin({ get: () => class extends HTMLElement {}, define })).toThrow("before the legacy MarkupUI bundle")
+    expect(() => registerSpin({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
     expect(define).not.toHaveBeenCalled()
     registerElements(customElements)
-    expect(customElements.get("m-spin")).toBe(MSpin)
+    expect(customElements.get("m-spin")).toBe(Spin)
+    expect(builtInElementNames).not.toContain("m-spin")
     expect(spin().active).toBe(true)
+  })
+
+  it("exports canonical Spin with backwards-compatible MSpin alias", () => {
+    expect(Spin.tag).toBe("m-spin")
+    expect(MSpin).toBe(Spin)
   })
 })
