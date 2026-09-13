@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createTooltip } from "../src/components/tooltip/index.js"
+import { createTooltip, Tooltip, TooltipTrigger, TooltipContent, registerTooltip } from "../src/components/tooltip/index.js"
 import { createPopover } from "../src/components/popover/index.js"
 import type { TooltipController, TooltipOptions } from "../src/components/tooltip/index.js"
 
@@ -520,5 +520,161 @@ describe("Tooltip lifecycle, validation and shared placement", () => {
     expect(source).not.toContain("getBoundingClientRect")
     expect(source).not.toContain("innerHTML")
     expect(source).not.toContain("customElements")
+  })
+})
+
+describe("Tooltip custom element contract", () => {
+  it("registers canonical Tooltip and companion regions", () => {
+    expect(customElements.get("m-tooltip")).toBe(Tooltip)
+    expect(customElements.get("m-tooltip-trigger")).toBe(TooltipTrigger)
+    expect(customElements.get("m-tooltip-content")).toBe(TooltipContent)
+    expect(Tooltip.tag).toBe("m-tooltip")
+    expect(TooltipTrigger.tag).toBe("m-tooltip-trigger")
+    expect(TooltipContent.tag).toBe("m-tooltip-content")
+    expect(typeof registerTooltip).toBe("function")
+  })
+
+  it("exposes direct typed accessors with defaults", () => {
+    const element = document.createElement("m-tooltip") as Tooltip
+    document.body.append(element)
+    expect(element.placement).toBe("top")
+    expect(element.delay).toBe(100)
+    expect(element.duration).toBe(100)
+    expect(element.gap).toBe(8)
+    expect(element.margin).toBe(8)
+    expect(element.flip).toBe(true)
+    expect(element.disabled).toBe(false)
+    expect(element.arrow).toBe(false)
+    expect(element.animated).toBe(true)
+    expect(element.show).toBe(false)
+    expect(element.text).toBe("")
+
+    element.placement = "bottom-start"
+    expect(element.placement).toBe("bottom-start")
+    expect(element.getAttribute("placement")).toBe("bottom-start")
+
+    element.delay = 200
+    expect(element.delay).toBe(200)
+
+    element.duration = 250
+    expect(element.duration).toBe(250)
+
+    element.gap = 12
+    expect(element.gap).toBe(12)
+
+    element.margin = 16
+    expect(element.margin).toBe(16)
+
+    element.flip = false
+    expect(element.flip).toBe(false)
+
+    element.disabled = true
+    expect(element.disabled).toBe(true)
+    expect(element.hasAttribute("disabled")).toBe(true)
+
+    element.arrow = true
+    expect(element.arrow).toBe(true)
+    expect(element.hasAttribute("arrow")).toBe(true)
+
+    element.animated = false
+    expect(element.animated).toBe(false)
+
+    element.text = "Helpful tip"
+    expect(element.text).toBe("Helpful tip")
+    expect(element.getAttribute("text")).toBe("Helpful tip")
+
+    expect(() => { element.delay = -1 }).toThrow(RangeError)
+    expect(() => { element.gap = 70000 }).toThrow(RangeError)
+    expect(() => { element.placement = "invalid" as any }).toThrow(RangeError)
+  })
+
+  it("synchronizes with companion regions and handles open/close/toggle", () => {
+    const tooltip = document.createElement("m-tooltip") as Tooltip
+    tooltip.innerHTML = `
+      <m-tooltip-trigger>
+        <button type="button">Trigger</button>
+      </m-tooltip-trigger>
+      <m-tooltip-content>
+        Description content
+      </m-tooltip-content>
+    `
+    const trigger = tooltip.querySelector("button")!
+    const panel = tooltip.querySelector("m-tooltip-content")!
+    trigger.getBoundingClientRect = () => rect(200, 200, 100, 30)
+    panel.getBoundingClientRect = () => rect(0, 0, 160, 50)
+
+    document.body.append(tooltip)
+    expect(panel.classList.contains("m-tooltip")).toBe(true)
+    expect(panel.classList.contains("m-popover")).toBe(true)
+    expect(panel.id).toBeTruthy()
+    expect(trigger.getAttribute("aria-describedby")).toBe(panel.id)
+
+    expect(tooltip.open()).toBe(true)
+    expect(tooltip.show).toBe(true)
+
+    tooltip.close()
+    expect(tooltip.show).toBe(false)
+
+    expect(tooltip.toggle()).toBe(true)
+    expect(tooltip.show).toBe(true)
+
+    expect(tooltip.toggle()).toBe(false)
+    expect(tooltip.show).toBe(false)
+
+    tooltip.arrow = true
+    expect(panel.classList.contains("m-popover--arrow")).toBe(true)
+
+    tooltip.animated = false
+    expect(panel.classList.contains("m-popover--animated")).toBe(false)
+
+    tooltip.open()
+    expect(tooltip.show).toBe(true)
+    tooltip.disabled = true
+    expect(tooltip.show).toBe(false)
+  })
+
+  it("supports text attribute and direct trigger/panel children", () => {
+    const tooltip = document.createElement("m-tooltip") as Tooltip
+    tooltip.setAttribute("text", "Text-only tooltip")
+    const button = document.createElement("button")
+    button.type = "button"
+    button.textContent = "Action"
+    button.getBoundingClientRect = () => rect(200, 200, 100, 30)
+    tooltip.append(button)
+    document.body.append(tooltip)
+
+    const panel = tooltip.querySelector("[role=tooltip]") as HTMLElement
+    expect(panel).not.toBeNull()
+    panel.getBoundingClientRect = () => rect(0, 0, 160, 50)
+
+    expect(tooltip.open()).toBe(true)
+    expect(tooltip.show).toBe(true)
+    expect(panel.textContent).toBe("Text-only tooltip")
+    expect(button.getAttribute("aria-describedby")).toBe(panel.id)
+
+    tooltip.text = "Updated text"
+    expect(panel.textContent).toBe("Updated text")
+
+    tooltip.close()
+    expect(tooltip.show).toBe(false)
+  })
+
+  it("supports direct trigger and panel children without companion wrappers", () => {
+    const tooltip = document.createElement("m-tooltip") as Tooltip
+    tooltip.innerHTML = `
+      <button type="button">Direct action</button>
+      <span role="tooltip">Direct panel</span>
+    `
+    const trigger = tooltip.querySelector("button")!
+    const panel = tooltip.querySelector("span")!
+    trigger.getBoundingClientRect = () => rect(200, 200, 100, 30)
+    panel.getBoundingClientRect = () => rect(0, 0, 160, 50)
+
+    document.body.append(tooltip)
+    expect(tooltip.open()).toBe(true)
+    expect(tooltip.show).toBe(true)
+    expect(trigger.getAttribute("aria-describedby")).toBe(panel.id)
+    tooltip.close()
+    expect(tooltip.show).toBe(false)
   })
 })

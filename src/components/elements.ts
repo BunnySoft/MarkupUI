@@ -2,7 +2,7 @@ import { MElement } from "../core/element.js"
 import { MApp, MField, MSemantic, MTheme } from "./foundation.js"
 import { MAutocomplete, MSlider } from "./forms.js"
 import { MAccordionItem, MInclude } from "./dynamic.js"
-import { MDialog, MDrawer, MTooltip } from "./overlays.js"
+import { MDialog, MDrawer } from "./overlays.js"
 import { MMenu, MMenuItem, MPagination, MSteps, MTabs, MTab, MDescriptions, MDescriptionItem, MStatistic, MTree, MTreeNode } from "./navigation.js"
 import { MProgress } from "./content.js"
 import { builtInStyles } from "./styles.js"
@@ -48,7 +48,6 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-drawer-header", class extends MElement {}],
   ["m-drawer-content", class extends MElement {}],
   ["m-drawer-footer", class extends MElement {}],
-  ["m-tooltip", MTooltip],
   ["m-message", class extends MElement {}],
   ["m-notification", class extends MElement {}],
   ["m-include", MInclude],

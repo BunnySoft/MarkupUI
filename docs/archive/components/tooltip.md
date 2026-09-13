@@ -1,6 +1,6 @@
 # Tooltip: a noninteractive description
 
-> **Historical reference.** Preserved from the previous documentation layout. This page is not the current design or a completion claim for the ViewElement rewrite.
+> **Historical reference.** Preserved from the previous documentation layout. Tooltip has been migrated to the direct `ViewElement` contract (`Tooltip`, `TooltipTrigger`, `TooltipContent`). Current API documentation and live examples are maintained at [demo/components/tooltip.html](../../demo/components/tooltip.html).
 
 **🟢 Verified for the retained native descriptive scope, not inherited Popover parity.**
 Authored short text/markup is linked to a meaningful native trigger with aria-describedby.

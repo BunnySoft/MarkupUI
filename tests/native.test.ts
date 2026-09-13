@@ -37,6 +37,7 @@ import { Empty } from "../src/components/empty/index.js"
 import { Spin } from "../src/components/spin/index.js"
 import { Skeleton } from "../src/components/skeleton/index.js"
 import { Popover } from "../src/components/popover/index.js"
+import { Tooltip } from "../src/components/tooltip/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -65,12 +66,14 @@ describe("native elements", () => {
     expect(customElements.get("m-input")).toBe(Input)
     expect(customElements.get("m-select")).toBe(Select)
     expect(builtInElementNames).not.toContain("m-select")
-    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover]) {
+    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip]) {
       expect(customElements.get(Type.tag)).toBe(Type)
       expect(builtInElementNames).not.toContain(Type.tag)
     }
     expect(builtInElementNames).not.toContain("m-popover-trigger")
     expect(builtInElementNames).not.toContain("m-popover-content")
+    expect(builtInElementNames).not.toContain("m-tooltip-trigger")
+    expect(builtInElementNames).not.toContain("m-tooltip-content")
     expect(customElements.get("m-checkbox")).toBe(Checkbox)
     expect(customElements.get("m-checkbox-group")).toBe(CheckboxGroup)
     expect(builtInElementNames).not.toContain("m-checkbox")
@@ -219,9 +222,13 @@ describe("native elements", () => {
     await Promise.resolve()
     expect(document.querySelector("m-drawer dialog")?.hasAttribute("open")).toBe(false)
 
-    const tooltip = document.querySelector("m-tooltip")
-    tooltip?.dispatchEvent(new MouseEvent("mouseenter"))
-    expect(document.querySelector("[data-m-tooltip]")?.hasAttribute("hidden")).toBe(false)
+    const tooltip = document.querySelector("m-tooltip") as Tooltip
+    expect(tooltip).toBeInstanceOf(Tooltip)
+    expect(customElements.get("m-tooltip")).toBe(Tooltip)
+    expect(builtInElementNames).not.toContain("m-tooltip")
+    expect(tooltip.placement).toBe("top")
+    expect(tooltip.text).toBe("Helpful")
+    expect(tooltip.show).toBe(false)
 
     const popover = document.querySelector("m-popover") as Popover
     expect(popover).toBeInstanceOf(Popover)

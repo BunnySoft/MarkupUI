@@ -89,6 +89,11 @@ click/hover/focus/manual modes, collision flipping, arrow decoration, and adopte
 for trigger and panel content, backed by the browser top-layer Popover API and anchored positioning.
 See the [Popover demo/API](../../demo/components/popover.html).
 
+Tooltip/TooltipTrigger/TooltipContent use direct properties, 12 directional placements,
+text attribute for simple text descriptions, hover/focus triggering, collision flipping, arrow decoration,
+and adopted regions for trigger and panel content, backed by the browser top-layer Popover API and anchored positioning.
+See the [Tooltip demo/API](../../demo/components/tooltip.html).
+
 ## References
 
 - [Previous implementation guides](../archive/components/README.md)

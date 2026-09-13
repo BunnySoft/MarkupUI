@@ -260,6 +260,19 @@ Popover's measured-budget ceilings are **5,750 gzip bytes for ESM**, **6,000 for
 costs are 5,379/5,551 bytes, core-inclusive runtime costs are 6,362/6,591 bytes, and CSS is
 958 bytes (7,320/7,549 including CSS). All budget checks remain fail-fast.
 
+## Tooltip delivery
+
+Tooltip and its companion regions (`TooltipTrigger`, `TooltipContent`) select core plus one family entry and CSS.
+ESM imports `markup-ui-core.js`; classic order is `markup-ui-core.global.js`, then
+`markup-ui-tooltip.global.js`, with `markup-ui-tooltip.css`. The legacy aggregate no longer defines
+`m-tooltip` in `src/components/elements.ts`. Tooltip provides noninteractive contextual descriptions,
+text attribute, 12 directional placements, hover/focus triggering, collision flipping, arrow decoration, and adopted regions for trigger and panel content.
+
+Tooltip's measured-budget ceilings are **7,000 gzip bytes per JS format**, **8,000 for
+core-inclusive runtime**, and the existing **1,250 CSS**. Current measured ESM/classic family
+costs are 6,537/6,722 bytes, core-inclusive runtime costs are 7,520/7,762 bytes, and CSS is
+1,206 bytes (8,726/8,968 including CSS). All budget checks remain fail-fast.
+
 ## References
 
 - [Plugin support source](../../src/core/plugin.ts)

@@ -3,69 +3,163 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI descriptive Tooltip</title>
+  <title>Tooltip - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-tooltip.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-space.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-input.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-popover.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./tooltip.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-popover.global.js"></script>
   <script defer src="../../dist/markup-ui-tooltip.global.js"></script>
-  <script defer src="./tooltip.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-space.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer src="../../dist/markup-ui-native-input.global.js"></script>
+  <script defer src="../../dist/markup-ui-input.global.js"></script>
+  <script type="module" src="./tooltip.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <h1>Descriptive, noninteractive Tooltip</h1>
-  <p>Important instructions stay visible. These supplementary descriptions support hover and keyboard focus, not actions or menus.</p>
-  <main>
-    <section>
-      <h2>Native form and description ownership</h2>
-      <p id="permanent-help">Save submits the current form. This instruction is always visible.</p>
-      <form id="tip-form">
-        <label>Draft name <input id="draft" name="draft" value="Field notes" required></label>
-        <button type="submit" id="save" aria-describedby="permanent-help">Save draft</button>
-        <span class="m-popover m-tooltip m-popover--arrow m-popover--animated" role="tooltip" popover="manual" id="save-tip">Only the current <strong id="preserved-description">draft</strong> is saved.</span>
-        <button type="reset" id="reset">Reset</button>
-      </form>
-      <a id="ordinary-link" href="#destination">Read the destination</a>
-      <span class="m-popover m-tooltip" role="tooltip" popover="manual" id="link-tip">Navigates to the destination on this page.</span>
-      <button type="button" id="outside">Outside focus target</button>
-      <output id="form-log" aria-live="polite"></output>
-    </section>
-    <section>
-      <h2>Independent descriptions and pointer travel</h2>
-      <button type="button" id="hover-trigger">Hover or focus</button>
-      <span class="m-popover m-tooltip m-popover--arrow" role="tooltip" popover="manual" id="hover-tip">The pointer may move onto this text. Escape hides it until a new trigger entry.</span>
-      <button type="button" id="peer-trigger">Another description</button>
-      <span class="m-popover m-tooltip" role="tooltip" popover="manual" id="peer-tip">A second manual tooltip does not dismiss its peer.</span>
-      <button type="button" id="request-show">Application show request</button>
-      <button type="button" id="request-hide">Application hide request</button>
-    </section>
-    <section>
-      <h2>Tooltip inside a native Popover</h2>
-      <button type="button" id="popover-trigger" popovertarget="parent-panel">Open rich content</button>
-      <div class="m-popover" popover="auto" id="parent-panel" aria-label="Rich content example">
-        <p>Actions belong in this Popover, not in a tooltip.</p>
-        <button type="button" id="nested-trigger">An ordinary action</button>
-        <span class="m-popover m-tooltip" role="tooltip" popover="manual" id="nested-tip">Supplementary description inside the parent.</span>
-        <button type="button" id="parent-close" popovertarget="parent-panel" popovertargetaction="hide">Close rich content</button>
+  <main data-demo-page class="component-docs">
+    <h1>Tooltip</h1>
+    <m-p>Noninteractive contextual description positioned relative to an authored trigger.</m-p>
+    <nav class="component-docs-nav" aria-label="Tooltip documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#tooltip-api">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary>Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-tooltip.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-tooltip.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header><div><h2 id="basic-heading">Basic hover and focus trigger</h2><m-p>Contextual description with top-layer nonmodal display, arrows, and timing.</m-p></div></header>
+      <div data-demo-preview>
+        <m-space wrap align="center">
+          <m-tooltip id="tooltip-basic" text="This is a supplementary description." arrow>
+            <m-button type="primary">Hover or focus me</m-button>
+          </m-tooltip>
+          <m-tooltip id="tooltip-rich" arrow>
+            <m-tooltip-trigger>
+              <m-button>Companion regions</m-button>
+            </m-tooltip-trigger>
+            <m-tooltip-content id="basic-content">
+              <m-text strong>Notice:</m-text> <m-text>Rich phrasing content inside companion regions.</m-text>
+            </m-tooltip-content>
+          </m-tooltip>
+        </m-space>
       </div>
     </section>
-    <section>
-      <h2>Disabled control: explicit accessible alternative</h2>
-      <button type="button" disabled>Export unavailable</button>
-      <button type="button" id="disabled-help">Why export is unavailable</button>
-      <span class="m-popover m-tooltip" role="tooltip" popover="manual" id="disabled-tip">Finish the visible required draft field first.</span>
-      <p>Export requires a complete draft. This requirement never depends on a disabled button receiving focus.</p>
+
+    <section data-demo-example="form" aria-labelledby="form-heading">
+      <header data-demo-header><div><h2 id="form-heading">Native form and description ownership</h2><m-p>Trigger links to tooltip description via aria-describedby without disturbing form semantics.</m-p></div></header>
+      <div data-demo-preview>
+        <m-space direction="vertical" gap="12">
+          <m-p id="permanent-help">Draft saves the current form. This instruction is always visible.</m-p>
+          <m-space wrap align="center">
+            <m-input id="draft-input" value="Field notes" placeholder="Draft title"></m-input>
+            <m-tooltip id="save-tooltip" text="Only the current draft is saved." arrow>
+              <m-button type="primary" id="save-btn">Save draft</m-button>
+            </m-tooltip>
+            <m-tooltip id="link-tooltip" text="Navigates to the destination section." arrow>
+              <m-link id="ordinary-link" href="#destination">Read destination</m-link>
+            </m-tooltip>
+          </m-space>
+        </m-space>
+      </div>
     </section>
-    <section>
-      <h2>Scroll boundary and RTL</h2>
-      <div class="scroll-box" id="scroll-box" dir="rtl">
-        <div class="scroll-content">
-          <button type="button" id="edge-trigger">RTL start</button>
-          <span class="m-popover m-tooltip m-popover--arrow" role="tooltip" popover="manual" id="edge-tip">A short description with RTL start alignment.</span>
+
+    <section data-demo-example="placement" aria-labelledby="placement-heading">
+      <header data-demo-header><div><h2 id="placement-heading">Placements and collision flip</h2><m-p>Directional placements with automatic collision detection and flipping.</m-p></div></header>
+      <div data-demo-preview>
+        <m-space wrap align="center" class="placement-grid">
+          <m-tooltip placement="top" text="Placement: top" arrow>
+            <m-button>Top</m-button>
+          </m-tooltip>
+          <m-tooltip placement="bottom" text="Placement: bottom" arrow>
+            <m-button>Bottom</m-button>
+          </m-tooltip>
+          <m-tooltip placement="left" text="Placement: left" arrow>
+            <m-button>Left</m-button>
+          </m-tooltip>
+          <m-tooltip placement="right" text="Placement: right" arrow>
+            <m-button>Right</m-button>
+          </m-tooltip>
+        </m-space>
+      </div>
+    </section>
+
+    <section data-demo-example="manual" aria-labelledby="manual-heading">
+      <header data-demo-header><div><h2 id="manual-heading">Manual visibility and API methods</h2><m-p>Programmatic control via open, close, and toggle methods.</m-p></div></header>
+      <div data-demo-preview>
+        <m-space wrap align="center">
+          <m-tooltip id="tooltip-manual" text="Programmatically controlled tooltip panel." arrow>
+            <m-button id="manual-trigger-btn">Target element</m-button>
+          </m-tooltip>
+        </m-space>
+        <m-space class="controls" wrap align="center">
+          <m-button id="manual-open">open()</m-button>
+          <m-button id="manual-close">close()</m-button>
+          <m-button id="manual-toggle">toggle()</m-button>
+          <m-text id="manual-state" role="status">State: closed</m-text>
+        </m-space>
+      </div>
+    </section>
+
+    <section data-demo-example="disabled" aria-labelledby="disabled-heading">
+      <header data-demo-header><div><h2 id="disabled-heading">Disabled control accessible alternative</h2><m-p>Tooltips require keyboard-reachable triggers; disabled controls use a separate accessible help button.</m-p></div></header>
+      <div data-demo-preview>
+        <m-space wrap align="center">
+          <m-button disabled>Export unavailable</m-button>
+          <m-tooltip id="tooltip-disabled" text="Finish the visible required draft field first." arrow>
+            <m-button id="disabled-help">Why export is unavailable</m-button>
+          </m-tooltip>
+        </m-space>
+        <m-p>Export requires a complete draft. This requirement never depends on a disabled button receiving focus.</m-p>
+      </div>
+    </section>
+
+    <section data-demo-example="popover" aria-labelledby="popover-heading">
+      <header data-demo-header><div><h2 id="popover-heading">Tooltip inside a Popover</h2><m-p>Tooltips can be nested inside Popover panels without conflict.</m-p></div></header>
+      <div data-demo-preview>
+        <m-popover id="parent-popover" arrow>
+          <m-popover-trigger>
+            <m-button type="info">Open rich popover</m-button>
+          </m-popover-trigger>
+          <m-popover-content id="popover-panel">
+            <m-p>Actions belong in this Popover, not in a tooltip.</m-p>
+            <m-tooltip text="Supplementary description inside the parent." arrow>
+              <m-button size="small">An ordinary action</m-button>
+            </m-tooltip>
+          </m-popover-content>
+        </m-popover>
+      </div>
+    </section>
+
+    <section data-demo-example="static" aria-labelledby="static-heading">
+      <header data-demo-header><div><h2 id="static-heading">CSS-only native tooltip surface</h2><m-p>The .m-tooltip stylesheet applies directly to native elements without custom element registration.</m-p></div></header>
+      <div data-demo-preview>
+        <div class="m-popover m-tooltip static-preview">
+          <m-text>Static .m-tooltip surface with audited dark palette and clip overflow.</m-text>
         </div>
       </div>
     </section>
-    <p id="destination">Ordinary link destination.</p>
-    <button type="button" id="bottom-trigger">Bottom edge description</button>
-    <span class="m-popover m-tooltip" role="tooltip" popover="manual" id="bottom-tip">The preferred bottom placement flips above.</span>
+
+    <m-p id="destination">Ordinary link destination anchor.</m-p>
+    <section id="tooltip-api"></section>
   </main>
 </body>
 </html>

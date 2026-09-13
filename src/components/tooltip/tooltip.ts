@@ -12,7 +12,7 @@ export type TooltipController = PopoverController
 const interactive = "a, area, label, button, input, select, textarea, summary, details, iframe, object, embed, audio[controls], video[controls], [tabindex], [autofocus], [contenteditable]:not([contenteditable=false])"
 const attributes = ["role", "href", "tabindex", "autofocus", "contenteditable", "controls", "aria-hidden", "class"]
 
-export function createTooltip(trigger: HTMLElement, panel: HTMLElement, options: TooltipOptions = {}): TooltipController {
+export function createTooltip(trigger: HTMLElement, panel: HTMLElement, options: TooltipOptions = {}, allowWrapper = false): TooltipController {
   const document = trigger?.ownerDocument
   const view = document?.defaultView
   if (!view || !(trigger instanceof view.HTMLElement) || !(panel instanceof view.HTMLElement)
@@ -32,11 +32,11 @@ export function createTooltip(trigger: HTMLElement, panel: HTMLElement, options:
     for (const node of [panel, ...panel.querySelectorAll("*")]) {
       const role = node === panel ? null : node.getAttribute("role")
       if (node.matches(interactive) || (role && !["img", "none", "presentation"].includes(role))
-        || node.localName.includes("-") && !isIconElement(node) && !isTypographyInline(node) && !isSpaceElement(node) && !isFlexElement(node) && !isGridElement(node) || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)) {
+        || (node.localName.includes("-") && node.localName !== "m-tooltip-content" && !isIconElement(node) && !isTypographyInline(node) && !isSpaceElement(node) && !isFlexElement(node) && !isGridElement(node)) || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)) {
         throw new TypeError("Tooltip content must be noninteractive; use Popover.")
       }
     }
-    if (trigger.closest("m-tooltip")) throw new TypeError("No Tooltip inside legacy m-tooltip.")
+    if (!allowWrapper && trigger.closest("m-tooltip")) throw new TypeError("No Tooltip inside legacy m-tooltip.")
   }
   function connect() {
     suppressed = false
@@ -84,7 +84,7 @@ export function createTooltip(trigger: HTMLElement, panel: HTMLElement, options:
   }
   core = createPopoverController(trigger, panel, { ...options, trigger: "hover", placement: options.placement ?? "top" }, {
     validate, connect, attributes, errorEvent: "m:tooltip-error",
-  })
+  }, allowWrapper)
   return {
     get supported() { return core.supported },
     get connected() { return core.connected },

@@ -110,7 +110,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Result | `Result` and named regions | Contract pending |
 | Skeleton | `Skeleton`; placeholder shapes, repeated bar groups, text and dimension normalization | [Demo and API](../../demo/components/skeleton.html) |
 | Spin | `Spin`; customizable size, delay, stroke, wrapped content adoption, custom icons and descriptions | [Demo and API](../../demo/components/spin.html) |
-| Tooltip | `Tooltip` | Contract pending |
+| Tooltip | `Tooltip`, `TooltipTrigger`, `TooltipContent`; noninteractive contextual descriptions, text attribute, 12 directional placements, hover/focus triggering, collision flipping | [Demo and API](../../demo/components/tooltip.html) |
 
 ## Layout (5)
 

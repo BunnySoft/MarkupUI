@@ -30,6 +30,7 @@ const emptyHtml = readFileSync(resolve("demo", "components", "empty.html"), "utf
 const spinHtml = readFileSync(resolve("demo", "components", "spin.html"), "utf8")
 const skeletonHtml = readFileSync(resolve("demo", "components", "skeleton.html"), "utf8")
 const popoverHtml = readFileSync(resolve("demo", "components", "popover.html"), "utf8")
+const tooltipHtml = readFileSync(resolve("demo", "components", "tooltip.html"), "utf8")
 let browser: ReturnType<typeof createComponentBrowser> | undefined
 let media: MediaQueryList
 let mediaListener: (() => void) | undefined
@@ -279,6 +280,51 @@ describe("metadata-based component documentation", () => {
     const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
     expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-popover.global.js"))
     expect(parsed.querySelector("main[data-demo-page].component-docs #popover-api")).not.toBeNull()
+    expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("details.component-setup")).not.toBeNull()
+    for (const example of parsed.querySelectorAll("[data-demo-example]")) {
+      expect(example.querySelector("[data-demo-header] h2[id]")).not.toBeNull()
+      expect(example.querySelector("[data-demo-preview]")).not.toBeNull()
+    }
+  })
+
+  it("extracts Tooltip properties, placements, timing and companion regions without inventing runtime metadata", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["tooltip"])
+    expect(docs.elements).toHaveLength(3)
+    const [trigger, content, tooltip] = docs.elements
+    expect(tooltip.type).toBe("Tooltip")
+    expect(tooltip.web.primary).toBe("m-tooltip")
+    expect(tooltip.properties.placement).toMatchObject({ default: "top", attribute: "placement" })
+    expect(tooltip.properties.delay).toMatchObject({ default: 100, attribute: "delay", integer: true, min: 0, max: 60000 })
+    expect(tooltip.properties.duration).toMatchObject({ default: 100, attribute: "duration", integer: true, min: 0, max: 60000 })
+    expect(tooltip.properties.gap).toMatchObject({ default: 8, attribute: "gap", min: 0, max: 60000 })
+    expect(tooltip.properties.margin).toMatchObject({ default: 8, attribute: "margin", min: 0, max: 60000 })
+    expect(tooltip.properties.flip).toMatchObject({ default: true, encoding: "boolean", attribute: "flip" })
+    expect(tooltip.properties.disabled).toMatchObject({ default: false, encoding: "presence", attribute: "disabled" })
+    expect(tooltip.properties.arrow).toMatchObject({ default: false, encoding: "presence", attribute: "arrow" })
+    expect(tooltip.properties.animated).toMatchObject({ default: true, encoding: "boolean", attribute: "animated" })
+    expect(tooltip.properties.show).toMatchObject({ writable: false, attribute: null })
+    expect(tooltip.properties.text).toMatchObject({ default: "", attribute: "text" })
+    expect(tooltip.actions).toEqual(["open", "close", "toggle"])
+    expect(tooltip.events).toEqual([])
+    expect(tooltip.regions.map((r: { name: string }) => r.name)).toEqual(["trigger", "content"])
+    expect(trigger.type).toBe("TooltipTrigger")
+    expect(trigger.web.primary).toBe("m-tooltip-trigger")
+    expect(content.type).toBe("TooltipContent")
+    expect(content.web.primary).toBe("m-tooltip-content")
+    const target = document.createElement("div")
+    renderComponentApi(target, docs.elements)
+    expect(target.textContent).toContain("Tooltip")
+    expect(target.textContent).toContain("m-tooltip-trigger")
+  })
+
+  it("structures Tooltip demo with standard scaffold and explicit shared-core loading", () => {
+    const parsed = new DOMParser().parseFromString(tooltipHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-tooltip.global.js"))
+    expect(parsed.querySelector("main[data-demo-page].component-docs #tooltip-api")).not.toBeNull()
     expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
     expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
     expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()

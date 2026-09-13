@@ -150,6 +150,14 @@ and direct trigger/panel adoption while preserving existing `createPopover` and 
 The legacy aggregate `MPopover` is removed from `overlays.ts` and `elements.ts`.
 See the [Popover demo/API](../../demo/components/popover.html).
 
+Tooltip's direct properties and contextual description mechanics live in `src/components/tooltip/tooltip-element.ts`,
+with pure types in `model.ts` and companion regions `TooltipTrigger` and `TooltipContent` in `regions.ts`.
+Tooltip extends `ViewElement` and registers `m-tooltip`, `m-tooltip-trigger`, and `m-tooltip-content`,
+providing 12 directional placements, text attribute, hover/focus triggering, collision flipping, arrow decoration,
+and direct trigger/panel adoption while preserving existing `createTooltip` exports.
+The legacy aggregate `MTooltip` is removed from `overlays.ts` and `elements.ts`.
+See the [Tooltip demo/API](../../demo/components/tooltip.html).
+
 ## Shared-runtime boundary
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed
