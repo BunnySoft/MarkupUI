@@ -1,5 +1,6 @@
-import { createAutoComplete } from "./index.js"
+import * as api from "./index.js"
 
-const target = globalThis as typeof globalThis & { MarkupUIAutoComplete?: { createAutoComplete: typeof createAutoComplete } }
+const target = globalThis as typeof globalThis & { MarkupUIAutoComplete?: typeof api }
 if (target.MarkupUIAutoComplete !== undefined) throw new Error("MarkupUIAutoComplete is already defined; no API was replaced.")
-target.MarkupUIAutoComplete = { createAutoComplete }
+target.MarkupUIAutoComplete = api
+

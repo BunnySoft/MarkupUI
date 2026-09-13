@@ -53,6 +53,7 @@ in the target inventory.
 48. [Date Picker demo and API](../../demo/components/date-picker.html): DatePicker; date, datetime, daterange inputs, formatting, and clearable controls.
 49. [Time Picker demo and API](../../demo/components/time-picker.html): TimePicker; time inputs, formatting, stepping, and clearable controls.
 50. [Upload demo and API](../../demo/components/upload.html): Upload, UploadDragger, UploadTrigger, UploadFileList; drag-and-drop file upload, file listings, and status management.
+51. [Auto Complete demo and API](../../demo/components/auto-complete.html): AutoComplete; input suggestions, datalist integration, and clearable controls.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

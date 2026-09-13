@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createAutoComplete } from "../src/components/auto-complete/index.js"
+import { createAutoComplete, AutoComplete, MAutocomplete, registerAutoComplete } from "../src/components/auto-complete/index.js"
 import type { AutoCompleteLoader, AutoCompleteOptions, AutoCompleteSuggestion } from "../src/components/auto-complete/index.js"
+import { ViewElement } from "../src/core/index.js"
 import { createInput } from "../src/components/native-input.js"
 import { coordinateForm as createForm } from "../src/components/form/controller.js"
 
@@ -314,5 +315,268 @@ describe("native reset and concrete Input/Form composition", () => {
     helper.disconnect(); helper.disconnect(); await flush()
     expect(load).not.toHaveBeenCalled(); expect(document.activeElement?.id).toBe("outside")
     await expect(helper.query()).rejects.toThrow("disconnected")
+  })
+})
+
+describe("canonical AutoComplete ViewElement", () => {
+  it("registers canonical AutoComplete and MAutocomplete custom elements extending ViewElement", () => {
+    expect(customElements.get("m-auto-complete")).toBe(AutoComplete)
+    expect(customElements.get("m-autocomplete")).toBe(MAutocomplete)
+    expect(AutoComplete.prototype instanceof ViewElement).toBe(true)
+    expect(MAutocomplete.prototype instanceof AutoComplete).toBe(true)
+    expect(AutoComplete.tag).toBe("m-auto-complete")
+    expect(MAutocomplete.tag).toBe("m-autocomplete")
+  })
+
+  it("creates elements with default properties and applies CSS classes", () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    document.body.append(element)
+    expect(element instanceof AutoComplete).toBe(true)
+    expect(element.value).toBe("")
+    expect(element.placeholder).toBe("")
+    expect(element.disabled).toBe(false)
+    expect(element.clearable).toBe(false)
+    expect(element.size).toBe("medium")
+    expect(element.classList.contains("m-auto-complete")).toBe(true)
+    expect(element.dataset.size).toBe("medium")
+  })
+
+  it("generates input and field wrapper if none provided", () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    document.body.append(element)
+    const input = element.querySelector("input")
+    expect(input).not.toBeNull()
+    expect(input?.hasAttribute("data-auto-complete-control")).toBe(true)
+    const field = element.querySelector(".m-auto-complete__field")
+    expect(field).not.toBeNull()
+    expect(field?.contains(input)).toBe(true)
+  })
+
+  it("synchronizes value property, attribute, and internal input", () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    document.body.append(element)
+    const input = element.querySelector("input")!
+    element.value = "Berlin"
+    expect(element.value).toBe("Berlin")
+    expect(element.getAttribute("value")).toBe("Berlin")
+    expect(input.value).toBe("Berlin")
+
+    element.setAttribute("value", "Madrid")
+    expect(element.value).toBe("Madrid")
+    expect(input.value).toBe("Madrid")
+  })
+
+  it("synchronizes placeholder property and attribute", () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    document.body.append(element)
+    const input = element.querySelector("input")!
+    element.placeholder = "Search cities..."
+    expect(element.placeholder).toBe("Search cities...")
+    expect(element.getAttribute("placeholder")).toBe("Search cities...")
+    expect(input.placeholder).toBe("Search cities...")
+
+    element.setAttribute("placeholder", "New hint")
+    expect(element.placeholder).toBe("New hint")
+    expect(input.placeholder).toBe("New hint")
+  })
+
+  it("synchronizes disabled property and attribute", () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    document.body.append(element)
+    const input = element.querySelector("input")!
+    element.disabled = true
+    expect(element.disabled).toBe(true)
+    expect(element.hasAttribute("disabled")).toBe(true)
+    expect(input.disabled).toBe(true)
+
+    element.disabled = false
+    expect(element.disabled).toBe(false)
+    expect(element.hasAttribute("disabled")).toBe(false)
+    expect(input.disabled).toBe(false)
+
+    element.setAttribute("disabled", "")
+    expect(element.disabled).toBe(true)
+    expect(input.disabled).toBe(true)
+
+    element.removeAttribute("disabled")
+    expect(element.disabled).toBe(false)
+    expect(input.disabled).toBe(false)
+  })
+
+  it("controls clearable property, attribute, and clear button", () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    element.clearable = true
+    element.value = "Draft"
+    document.body.append(element)
+    const clearBtn = element.querySelector<HTMLButtonElement>("[data-auto-complete-clear]")
+    expect(clearBtn).not.toBeNull()
+    expect(clearBtn?.hidden).toBe(false)
+
+    element.value = ""
+    expect(clearBtn?.hidden).toBe(true)
+
+    element.value = "Active"
+    expect(clearBtn?.hidden).toBe(false)
+
+    element.disabled = true
+    expect(clearBtn?.hidden).toBe(true)
+    element.disabled = false
+    expect(clearBtn?.hidden).toBe(false)
+  })
+
+  it("supports size attribute and rejects invalid sizes", () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    document.body.append(element)
+    element.size = "small"
+    expect(element.size).toBe("small")
+    expect(element.getAttribute("size")).toBe("small")
+    expect(element.dataset.size).toBe("small")
+
+    element.size = "large"
+    expect(element.size).toBe("large")
+    expect(element.getAttribute("size")).toBe("large")
+    expect(element.dataset.size).toBe("large")
+
+    expect(() => { (element as any).size = "huge" }).toThrow(RangeError)
+  })
+
+  it("adopts authored input, datalist, and options", () => {
+    document.body.innerHTML = `
+      <m-auto-complete id="custom">
+        <div class="m-auto-complete__field">
+          <input id="custom-input" list="custom-list" value="Rome">
+        </div>
+        <datalist id="custom-list">
+          <option value="Rome">Italy</option>
+          <option value="Milan">Italy</option>
+        </datalist>
+      </m-auto-complete>`
+    const element = document.querySelector<AutoComplete>("#custom")!
+    expect(element.value).toBe("Rome")
+    const input = element.querySelector<HTMLInputElement>("#custom-input")!
+    expect(input.value).toBe("Rome")
+    expect(input.list?.id).toBe("custom-list")
+    expect(input.list?.options.length).toBe(2)
+  })
+
+  it("converts child option and m-option elements into a datalist", () => {
+    document.body.innerHTML = `
+      <m-auto-complete id="fruits">
+        <option value="Apple">Apple</option>
+        <m-option value="Banana" label="Banana"></m-option>
+      </m-auto-complete>`
+    const element = document.querySelector<AutoComplete>("#fruits")!
+    const datalist = element.querySelector("datalist")
+    expect(datalist).not.toBeNull()
+    const input = element.querySelector("input")!
+    expect(input.getAttribute("list")).toBe(datalist?.id)
+    expect(datalist?.options.length).toBe(2)
+    expect(datalist?.options[0]?.value).toBe("Apple")
+    expect(datalist?.options[1]?.value).toBe("Banana")
+    expect(datalist?.options[1]?.label).toBe("Banana")
+  })
+
+  it("emits m:change event when input changes or clear() is called", () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    document.body.append(element)
+    const listener = vi.fn()
+    element.addEventListener("m:change", listener)
+
+    const input = element.querySelector("input")!
+    input.value = "New text"
+    input.dispatchEvent(new Event("change", { bubbles: true }))
+    expect(listener).toHaveBeenCalledOnce()
+    const event = listener.mock.calls[0]![0] as CustomEvent
+    expect(event.detail.value).toBe("New text")
+    expect(event.bubbles).toBe(true)
+    expect(event.cancelable).toBe(false)
+    expect(event.composed).toBe(false)
+
+    listener.mockClear()
+    element.clear()
+    expect(listener).toHaveBeenCalledOnce()
+    expect((listener.mock.calls[0]![0] as CustomEvent).detail.value).toBe("")
+    expect(element.value).toBe("")
+    expect(input.value).toBe("")
+  })
+
+  it("emits m:select event when input matches a datalist option", () => {
+    document.body.innerHTML = `
+      <m-auto-complete id="select-test">
+        <option value="London">London</option>
+        <option value="Paris">Paris</option>
+      </m-auto-complete>`
+    const element = document.querySelector<AutoComplete>("#select-test")!
+    const selectListener = vi.fn()
+    element.addEventListener("m:select", selectListener)
+
+    const input = element.querySelector("input")!
+    input.value = "Paris"
+    input.dispatchEvent(new Event("input", { bubbles: true }))
+
+    expect(selectListener).toHaveBeenCalledOnce()
+    const event = selectListener.mock.calls[0]![0] as CustomEvent
+    expect(event.detail.value).toBe("Paris")
+    expect(event.bubbles).toBe(true)
+    expect(event.cancelable).toBe(false)
+    expect(event.composed).toBe(false)
+  })
+
+  it("clicking clear button clears value and emits m:change", () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    element.clearable = true
+    element.value = "Clear me"
+    document.body.append(element)
+
+    const changeListener = vi.fn()
+    element.addEventListener("m:change", changeListener)
+
+    const clearBtn = element.querySelector<HTMLButtonElement>("[data-auto-complete-clear]")!
+    expect(clearBtn).not.toBeNull()
+    clearBtn.click()
+
+    expect(element.value).toBe("")
+    expect(changeListener).toHaveBeenCalledOnce()
+    expect((changeListener.mock.calls[0]![0] as CustomEvent).detail.value).toBe("")
+  })
+
+  it("delegates focus and blur to internal input", () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    document.body.append(element)
+    const input = element.querySelector("input")!
+
+    element.focus()
+    expect(document.activeElement).toBe(input)
+
+    element.blur()
+    expect(document.activeElement).not.toBe(input)
+  })
+
+  it("works with alias m-autocomplete element", () => {
+    const element = document.createElement("m-autocomplete") as MAutocomplete
+    document.body.append(element)
+    expect(element instanceof AutoComplete).toBe(true)
+    expect(element instanceof MAutocomplete).toBe(true)
+    expect(element.value).toBe("")
+    element.value = "Alias value"
+    expect(element.value).toBe("Alias value")
+    expect(element.querySelector("input")?.value).toBe("Alias value")
+  })
+
+  it("upgrades properties assigned before connectedCallback", () => {
+    const element = document.createElement("m-auto-complete") as AutoComplete
+    element.value = "Pre-connect"
+    element.placeholder = "Pre-placeholder"
+    element.disabled = true
+    element.clearable = true
+    element.size = "large"
+    document.body.append(element)
+
+    expect(element.value).toBe("Pre-connect")
+    expect(element.placeholder).toBe("Pre-placeholder")
+    expect(element.disabled).toBe(true)
+    expect(element.clearable).toBe(true)
+    expect(element.size).toBe("large")
+    expect(element.querySelector("input")?.value).toBe("Pre-connect")
   })
 })

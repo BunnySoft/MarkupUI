@@ -1,63 +1,138 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Auto Complete</title>
+  <title>Auto Complete - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-auto-complete.css">
-  <link rel="stylesheet" href="../../dist/markup-ui-input.css">
-  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./auto-complete.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-auto-complete.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
   <script type="module" src="./auto-complete.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-<main>
-  <h1>Auto Complete: native suggestions, always free text</h1>
-  <p>The browser owns suggestion matching, popup presentation and keyboard behavior. Selecting a native suggestion cannot reliably be distinguished from typing that same value. This page does not fabricate a select event.</p>
-  <form id="places" class="m-form" action="auto-complete.html" method="get">
-    <div class="m-auto-complete m-form-item" id="city-item">
-      <label for="city">City (required, not restricted to suggestions)</label>
-      <div class="m-auto-complete__field m-input" data-input id="city-input">
-        <span aria-hidden="true">⌕</span>
-        <input id="city" name="address.city" list="cities" value="London" required autocomplete="off" maxlength="80" data-input-control aria-describedby="city-help city-count">
-        <span id="city-count" data-input-count>6 / 80</span>
-        <button type="button" data-input-clear hidden>Clear city</button>
+  <main data-demo-page class="component-docs">
+    <h1>Auto Complete</h1>
+    <p>A text input component providing dynamic suggestions and autocomplete options.</p>
+    <nav class="component-docs-nav" aria-label="Auto Complete documentation">
+      <a href="#basic-title">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-auto-complete.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-auto-complete.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="basic-title">Basic</h2>
+          <p>Standard auto complete with options suggestions.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <m-auto-complete id="basic-auto-complete" placeholder="Type a city...">
+          <option value="London">United Kingdom</option>
+          <option value="Paris">France</option>
+          <option value="Tokyo">Japan</option>
+          <option value="New York">United States</option>
+        </m-auto-complete>
+        <m-p id="basic-output">Current value: </m-p>
       </div>
-      <datalist id="cities">
-        <option value="London" label="United Kingdom"></option>
-        <option value="Paris" label="France"></option>
-        <option value="Tokyo" label="Japan"></option>
-      </datalist>
-      <p id="city-help">Authored suggestions work without JavaScript. Enhanced local queries wait 120ms and simulate a 200ms load. Try “error” for a local failure, “slow” for a delayed result, or “none” for an empty result.</p>
-      <p id="suggestion-status" class="m-auto-complete__status">Authored suggestions; no loader has run.</p>
-      <p id="city-error" class="m-form-item__feedback" hidden></p>
-    </div>
-    <div class="m-auto-complete">
-      <label for="shared-one">Static shared suggestion list</label>
-      <div class="m-auto-complete__field"><input id="shared-one" name="shared[]" list="shared-list"></div>
-      <label for="shared-two">Second native consumer of the same static list</label>
-      <div class="m-auto-complete__field"><input id="shared-two" name="shared[]" list="shared-list"></div>
-      <datalist id="shared-list"><option value="HTML"></option><option value="CSS"></option></datalist>
-      <p>Shared static datalists need no helper; an asynchronous writer requires exclusive ownership.</p>
-    </div>
-    <div class="actions">
-      <button type="submit" name="intent" value="save">Inspect native submission</button>
-      <button type="reset">Native reset</button>
-      <button type="button" id="query" hidden>Query current city</button>
-      <button type="button" id="validate" hidden>Validate native form</button>
-    </div>
-  </form>
-  <div class="actions">
-    <button type="button" id="silent" hidden>Silent Input setter + explicit refresh</button>
-    <button type="button" id="disable" hidden>Toggle city disabled</button>
-    <button type="button" id="readonly" hidden>Toggle city readonly</button>
-    <button type="button" id="cancel" hidden>Cancel next reset</button>
-    <button type="button" id="rtl">Toggle RTL</button>
-    <button type="button" id="disconnect" hidden>Disconnect helpers</button>
-  </div>
-  <p id="events">No enhanced query results yet.</p>
-  <pre id="submission">No submission yet. No backend requests.</pre>
-</main>
+    </section>
+
+    <section data-demo-example="clearable" aria-labelledby="clearable-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="clearable-title">Clearable</h2>
+          <p>Auto complete with clear button to reset input value.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <m-auto-complete id="clearable-auto-complete" placeholder="Select framework..." value="Vue" clearable>
+          <option value="React">React</option>
+          <option value="Vue">Vue</option>
+          <option value="Angular">Angular</option>
+          <option value="Svelte">Svelte</option>
+        </m-auto-complete>
+        <m-button id="set-clearable-btn">Set Value</m-button>
+      </div>
+    </section>
+
+    <section data-demo-example="sizes" aria-labelledby="sizes-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="sizes-title">Sizes</h2>
+          <p>Small, medium, and large size options.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <m-auto-complete size="small" placeholder="Small size">
+          <option value="Option 1">Option 1</option>
+          <option value="Option 2">Option 2</option>
+        </m-auto-complete>
+        <m-auto-complete size="medium" placeholder="Medium size">
+          <option value="Option 1">Option 1</option>
+          <option value="Option 2">Option 2</option>
+        </m-auto-complete>
+        <m-auto-complete size="large" placeholder="Large size">
+          <option value="Option 1">Option 1</option>
+          <option value="Option 2">Option 2</option>
+        </m-auto-complete>
+      </div>
+    </section>
+
+    <section data-demo-example="states" aria-labelledby="states-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="states-title">Disabled State</h2>
+          <p>Disabled auto complete input preventing user interaction.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <m-auto-complete id="disabled-auto-complete" placeholder="Disabled" disabled value="Fixed value"></m-auto-complete>
+        <m-button id="toggle-disabled-btn">Toggle Disabled</m-button>
+      </div>
+    </section>
+
+    <section data-demo-example="alias" aria-labelledby="alias-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="alias-title">Alias Element</h2>
+          <p>Using the m-autocomplete alias element.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <m-autocomplete placeholder="Using m-autocomplete alias...">
+          <option value="Apple">Apple</option>
+          <option value="Banana">Banana</option>
+          <option value="Cherry">Cherry</option>
+        </m-autocomplete>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="auto-complete-api">
+        <p>Loading API documentation.</p>
+      </div>
+    </section>
+  </main>
 </body>
 </html>

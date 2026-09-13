@@ -31,7 +31,7 @@ families establish the pattern; the remaining contracts must be defined before i
 
 | Family | Elements / scope | Contract |
 | --- | --- | --- |
-| Auto Complete | `AutoComplete` | Contract pending |
+| Auto Complete | `AutoComplete` | [Demo and API](../../demo/components/auto-complete.html) |
 | Cascader | `Cascader` | Contract pending |
 | Color Picker | `ColorPicker` | Contract pending |
 | Checkbox | `Checkbox`, `CheckboxGroup`; native checkedness, labels, forms and computed selection | [Demo and API](../../demo/components/checkbox.html) |
