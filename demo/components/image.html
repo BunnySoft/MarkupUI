@@ -1,65 +1,125 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Image and group preview</title>
+  <title>Image - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-image.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./image.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-image.global.js"></script>
-  <script defer src="./image.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./image.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <header><h1>Native Image and dialog preview</h1><p>Original image/link nodes stay authored. The optional helper owns only its cloned dialog and explicit loading/fallback state.</p></header>
-  <main>
-    <section aria-labelledby="gallery-heading">
-      <h2 id="gallery-heading">Linked responsive images</h2>
-      <button type="button" id="open-gallery">Open the first gallery image</button>
-      <div data-image-group id="gallery">
-        <div class="gallery-grid">
-          <figure class="m-image-frame" data-image-frame id="first-frame">
-            <a data-image-preview href="./image.first.svg" id="first-link">
-              <picture><source media="(min-width: 40rem)" srcset="./image.first.svg 1x, ./image.first.svg?scale=2 2x"><img class="m-image" id="responsive-image" src="./image.first.svg" srcset="./image.first.svg 1x, ./image.first.svg?scale=2 2x" sizes="(max-width: 40rem) 160px, 200px" width="200" height="125" alt="Amber mountains beneath a sun" decoding="async" referrerpolicy="no-referrer" crossorigin="anonymous"></picture>
-            </a>
-            <figcaption>First authored landscape.</figcaption>
-            <p data-image-placeholder>Native image loading; the original link remains available.</p>
-            <p data-image-error hidden>The thumbnail could not load.</p>
-          </figure>
-          <figure class="m-image-frame" data-image-frame>
-            <a data-image-preview href="./image.second.svg" id="second-link"><img class="m-image" src="./image.second.svg" width="200" height="125" alt="Blue waves" decoding="async"></a>
-            <figcaption>Second authored landscape.</figcaption><p data-image-error hidden>The thumbnail could not load.</p>
-          </figure>
-          <figure class="m-image-frame" data-image-frame id="fallback-frame">
-            <a data-image-preview href="./image.fallback.svg" id="fallback-link"><img class="m-image" id="fallback-image" src="./image.missing.svg" data-image-fallback="./image.fallback.svg" width="200" height="125" alt="Fallback landscape placeholder"></a>
-            <figcaption>A one-attempt fallback for a plain src image.</figcaption><p data-image-placeholder>Loading uses the original nonzero image box.</p><p data-image-error hidden>The primary thumbnail failed; any configured fallback is attempted once.</p>
-          </figure>
-        </div>
-        <p><a data-image-preview data-preview-disabled href="./image.first.svg" id="disabled-preview">Open original without enhancement</a> · <a data-image-preview target="_blank" rel="noopener" href="./image.second.svg" id="external-preview">Original in another tab</a></p>
-        <div data-image-group id="nested-gallery">
-          <h3>Independent nested group</h3>
-          <a data-image-preview href="./image.second.svg" id="nested-link"><img class="m-image" src="./image.second.svg" width="120" height="75" alt="Nested blue wave image"></a>
-          <template data-image-preview-template><dialog aria-label="Nested image preview"><header><h2>Nested preview</h2><button type="button" data-image-close>Close image preview</button></header><p data-image-position></p><div data-image-stage><img data-image-full alt="" decoding="async" referrerpolicy="no-referrer"></div><p data-image-preview-error hidden>The preview image could not load.</p><div data-image-toolbar><button type="button" data-image-prev>Previous image</button><button type="button" data-image-next>Next image</button><a data-image-original target="_blank" rel="noopener noreferrer">Open original</a></div></dialog></template>
-        </div>
-        <template data-image-preview-template id="gallery-template">
-          <dialog aria-label="Image preview">
-            <header><h2>Image preview</h2><button type="button" data-image-close>Close image preview</button></header>
-            <p data-image-position></p>
-            <div data-image-stage><img data-image-full alt="" decoding="async" referrerpolicy="no-referrer"></div>
-            <p data-image-preview-error hidden>The preview image could not load. The original link remains available.</p>
-            <div data-image-toolbar><button type="button" data-image-prev>Previous image</button><button type="button" data-image-next>Next image</button><a data-image-original target="_blank" rel="noopener noreferrer">Open original</a></div>
-          </dialog>
-        </template>
-      </div>
-      <p id="gallery-feedback"></p>
-    </section>
-    <section aria-labelledby="lazy-heading" class="lazy-section">
-      <h2 id="lazy-heading">Native lazy image keeps its box</h2>
-      <div data-image-group id="lazy-gallery">
-        <figure class="m-image-frame" data-image-frame id="lazy-frame"><a data-image-preview href="./image.first.svg" id="lazy-link"><img class="m-image" id="lazy-image" src="./image.first.svg?lazy=1" loading="lazy" decoding="async" width="200" height="125" alt="Lazy amber mountains"></a><figcaption>A reserved native image box, never hidden to implement loading.</figcaption><p data-image-placeholder>Native lazy loading may wait for the browser viewport threshold.</p><p data-image-error hidden>The lazy image could not load.</p></figure>
-        <template data-image-preview-template><dialog aria-label="Lazy image preview"><header><h2>Lazy image preview</h2><button type="button" data-image-close>Close image preview</button></header><p data-image-position></p><div data-image-stage><img data-image-full alt="" decoding="async"></div><p data-image-preview-error hidden>The preview image could not load.</p><div data-image-toolbar><a data-image-original target="_blank" rel="noopener noreferrer">Open original</a></div></dialog></template>
+  <main data-demo-page class="component-docs">
+    <h1>Image</h1>
+    <p>Display images with responsive sizing, object-fit control, bounded fallback, and preview modals.</p>
+    <nav class="component-docs-nav" aria-label="Image documentation">
+      <a href="#basic-title">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-image.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-image.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-title">
+      <header data-demo-header><div><h2 id="basic-title">Basic image</h2><p>Display an image with explicit source and dimensions.</p></div></header>
+      <div data-demo-preview>
+        <m-image src="./image.first.svg" alt="Amber mountains" width="200" height="125"></m-image>
       </div>
     </section>
-    <div data-image-group hidden id="hidden-gallery"><a data-image-preview href="./image.first.svg"><img class="m-image" width="100" height="60" alt="Hidden authored image" src="./image.first.svg"></a></div>
+
+    <section data-demo-example="object-fit" aria-labelledby="fit-title">
+      <header data-demo-header><div><h2 id="fit-title">Object fit modes</h2><p>Support for fill, contain, cover, none, and scale-down.</p></div></header>
+      <div data-demo-preview>
+        <div class="fit-container">
+          <div>
+            <m-p><m-text strong>Fill</m-text></m-p>
+            <m-image src="./image.first.svg" alt="Fill" object-fit="fill" width="120" height="120"></m-image>
+          </div>
+          <div>
+            <m-p><m-text strong>Contain</m-text></m-p>
+            <m-image src="./image.first.svg" alt="Contain" object-fit="contain" width="120" height="120"></m-image>
+          </div>
+          <div>
+            <m-p><m-text strong>Cover</m-text></m-p>
+            <m-image src="./image.first.svg" alt="Cover" object-fit="cover" width="120" height="120"></m-image>
+          </div>
+          <div>
+            <m-p><m-text strong>None</m-text></m-p>
+            <m-image src="./image.first.svg" alt="None" object-fit="none" width="120" height="120"></m-image>
+          </div>
+          <div>
+            <m-p><m-text strong>Scale down</m-text></m-p>
+            <m-image src="./image.first.svg" alt="Scale down" object-fit="scale-down" width="120" height="120"></m-image>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section data-demo-example="fallback" aria-labelledby="fallback-title">
+      <header data-demo-header><div><h2 id="fallback-title">Fallback image</h2><p>Provide fallback-src to gracefully recover from load failures.</p></div></header>
+      <div data-demo-preview>
+        <m-image id="fallback-image" src="./image.missing.svg" fallback-src="./image.fallback.svg" alt="Fallback demo" width="200" height="125"></m-image>
+        <m-p id="fallback-status">Status: Fallback image loaded</m-p>
+      </div>
+    </section>
+
+    <section data-demo-example="preview" aria-labelledby="preview-title">
+      <header data-demo-header><div><h2 id="preview-title">Preview modal</h2><p>Click image to open modal preview, or disable preview with preview="false".</p></div></header>
+      <div data-demo-preview>
+        <div class="fit-container">
+          <div>
+            <m-p><m-text strong>Preview enabled</m-text></m-p>
+            <m-image id="preview-image" src="./image.first.svg" preview-src="./image.first.svg" alt="Click to preview" width="200" height="125"></m-image>
+          </div>
+          <div>
+            <m-p><m-text strong>Preview disabled</m-text></m-p>
+            <m-image src="./image.second.svg" alt="Preview disabled" width="200" height="125" preview="false"></m-image>
+          </div>
+        </div>
+        <div class="demo-tools">
+          <m-button id="open-preview"><m-text>Open preview</m-text></m-button>
+        </div>
+      </div>
+    </section>
+
+    <section data-demo-example="group" aria-labelledby="group-title">
+      <header data-demo-header><div><h2 id="group-title">Image group</h2><p>Group multiple images together for coordinated gallery preview.</p></div></header>
+      <div data-demo-preview>
+        <m-image-group id="gallery-group">
+          <m-image src="./image.first.svg" alt="Amber mountains" width="160" height="100"></m-image>
+          <m-image src="./image.second.svg" alt="Blue waves" width="160" height="100"></m-image>
+          <m-image src="./image.fallback.svg" alt="Fallback landscape" width="160" height="100"></m-image>
+        </m-image-group>
+        <div class="demo-tools">
+          <m-button id="open-gallery"><m-text>Open gallery preview</m-text></m-button>
+        </div>
+        <m-p id="gallery-status">Gallery ready</m-p>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="image-api"><p>Loading API documentation.</p></div>
+    </section>
   </main>
 </body>
 </html>

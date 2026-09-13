@@ -63,7 +63,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Data Table | `DataTable` | Contract pending |
 | Descriptions | `Descriptions`, `DescriptionItem` | [Demo and API](../../demo/components/descriptions.html) |
 | Empty | `Empty`; readable fallback text, optional icons, size variants and adopted regions | [Demo and API](../../demo/components/empty.html) |
-| Image | `Image` and preview/group composition | Contract pending |
+| Image | `Image` and preview/group composition | [Demo and API](../../demo/components/image.html) |
 | List | `List`, `ListItem` | [Demo and API](../../demo/components/list.html) |
 | Log | `Log` | Contract pending |
 | Number Animation | `NumberAnimation` | Contract pending |

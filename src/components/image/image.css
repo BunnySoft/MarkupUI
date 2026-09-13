@@ -4,6 +4,30 @@
   object-fit: var(--m-image-fit, fill);
   border-radius: inherit;
 }
+:where(m-image) {
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  max-inline-size: 100%;
+  border-radius: inherit;
+}
+:where(m-image > img) {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: 100%;
+  object-fit: var(--m-image-fit, fill);
+  border-radius: inherit;
+}
+:where(m-image[preview]:not([preview="false"])) {
+  cursor: pointer;
+}
+:where(m-image-group) {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--m-image-group-gap, 8px);
+  align-items: center;
+}
 :where(.m-image-frame) {
   margin: 0;
   min-inline-size: 0;

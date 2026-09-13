@@ -49,6 +49,7 @@ in the target inventory.
 44. [Notification demo and API](../../demo/components/notification.html): Notification, NotificationContainer; passive floating notifications, descriptions, auto-dismiss timers, and placements.
 45. [Progress demo and API](../../demo/components/progress.html): Progress; line, circle and dashboard progress indicators, percentages, custom colors, and processing states.
 46. [Result demo and API](../../demo/components/result.html): Result, ResultHeader, ResultContent, ResultFooter; status pages (403, 404, 500, success, info, warning, error) with actions.
+47. [Image demo and API](../../demo/components/image.html): Image, ImageGroup; responsive image display, object-fit, preview modals, and load/error events.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
