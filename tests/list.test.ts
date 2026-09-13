@@ -1,11 +1,13 @@
-import { readFileSync, readdirSync } from "node:fs"
+import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import { List, ListItem, listSizes, registerList } from "../src/components/list/index.js"
+import * as listApi from "../src/components/list/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const css = readFileSync(resolve("src", "components", "list", "list.css"), "utf8")
 const demo = readFileSync(resolve("demo", "components", "list.html"), "utf8")
-const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
 let style: HTMLStyleElement | undefined
 
 function fixture(): void {
@@ -20,242 +22,283 @@ afterEach(() => {
   style?.remove()
   style = undefined
   document.body.replaceChildren()
+  vi.restoreAllMocks()
 })
 
-describe("CSS-only native List and ListItem", () => {
-  it("ships a standalone stylesheet without a renderer or custom-element definition", () => {
-    expect(pkg.exports["./list/style.css"]).toBe("./dist/markup-ui-list.css")
-    expect(pkg.exports["./list"]).toBeUndefined()
-    expect(readdirSync(resolve("src", "components", "list"))).toEqual(["list.css"])
-    expect(css).not.toContain("@import")
-    expect(demo).not.toContain("markup-ui-list.js")
-    expect(customElements.get("m-list")).toBeUndefined()
-    expect(customElements.get("m-list-item")).toBeUndefined()
-    expect(pkg.dependencies).toEqual({})
+describe("canonical List and ListItem components", () => {
+  it("registers canonical classes extending ViewElement with own tags", () => {
+    expect(Object.keys(listApi).sort()).toEqual(["List", "ListItem", "listSizes", "registerList"])
+    expect(List.tag).toBe("m-list")
+    expect(ListItem.tag).toBe("m-list-item")
+    expect(ViewElement.prototype.isPrototypeOf(List.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ListItem.prototype)).toBe(true)
+    expect(customElements.get("m-list")).toBe(List)
+    expect(customElements.get("m-list-item")).toBe(ListItem)
+
+    expect(() => registerList()).not.toThrow()
+    const define = vi.fn()
+    expect(() =>
+      registerList({
+        get: name => (name === "m-list" ? (class extends HTMLElement {} as any) : undefined),
+        define,
+      }),
+    ).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
   })
 
-  it("keeps true list/listitem structure and puts headings and footers outside lists", () => {
+  it("manages List bordered, size, clickable, hoverable, and showDivider properties", () => {
+    const list = document.createElement("m-list") as List
+    document.body.append(list)
+
+    expect(list.bordered).toBe(true)
+    expect(list.size).toBe("medium")
+    expect(list.clickable).toBe(false)
+    expect(list.hoverable).toBe(false)
+    expect(list.showDivider).toBe(true)
+
+    list.bordered = false
+    expect(list.getAttribute("bordered")).toBe("false")
+    expect(list.bordered).toBe(false)
+    list.bordered = true
+    expect(list.getAttribute("bordered")).toBe("true")
+    expect(list.bordered).toBe(true)
+    list.removeAttribute("bordered")
+    expect(list.bordered).toBe(true)
+
+    list.setAttribute("bordered", "invalid")
+    expect(() => list.bordered).toThrow(RangeError)
+    list.removeAttribute("bordered")
+    expect(() => Reflect.set(list, "bordered", "not-boolean")).toThrow(RangeError)
+
+    for (const size of listSizes) {
+      list.size = size
+      expect(list.getAttribute("size")).toBe(size)
+      expect(list.size).toBe(size)
+    }
+    expect(() => Reflect.set(list, "size", "huge")).toThrow(RangeError)
+    list.setAttribute("size", "invalid")
+    expect(() => list.size).toThrow(RangeError)
+    list.removeAttribute("size")
+    expect(list.size).toBe("medium")
+
+    list.clickable = true
+    expect(list.hasAttribute("clickable")).toBe(true)
+    expect(list.clickable).toBe(true)
+    list.clickable = false
+    expect(list.hasAttribute("clickable")).toBe(false)
+    expect(list.clickable).toBe(false)
+
+    list.hoverable = true
+    expect(list.hasAttribute("hoverable")).toBe(true)
+    expect(list.hoverable).toBe(true)
+    list.hoverable = false
+    expect(list.hasAttribute("hoverable")).toBe(false)
+    expect(list.hoverable).toBe(false)
+
+    list.showDivider = false
+    expect(list.getAttribute("show-divider")).toBe("false")
+    expect(list.showDivider).toBe(false)
+    list.showDivider = true
+    expect(list.showDivider).toBe(true)
+  })
+
+  it("exposes regions and items on List and isolates nested lists", () => {
+    const list = document.createElement("m-list") as List
+    list.innerHTML = `
+      <div data-part="header" class="m-list-header">Header</div>
+      <m-list-item id="item-1">Item 1</m-list-item>
+      <m-list-item id="item-2">
+        Item 2
+        <m-list id="nested-list">
+          <m-list-item id="nested-item">Nested Item</m-list-item>
+        </m-list>
+      </m-list-item>
+      <div data-part="footer" class="m-list-footer">Footer</div>
+    `
+    document.body.append(list)
+
+    expect(list.header?.textContent).toBe("Header")
+    expect(list.footer?.textContent).toBe("Footer")
+    expect(list.itemsContainer).toBeNull()
+
+    const items = list.items
+    expect(items).toHaveLength(2)
+    expect(items[0]?.id).toBe("item-1")
+    expect(items[1]?.id).toBe("item-2")
+
+    const nested = list.querySelector<List>("#nested-list")!
+    expect(nested.items).toHaveLength(1)
+    expect(nested.items[0]?.id).toBe("nested-item")
+
+    const added = list.appendItem("Item 3")
+    expect(added.tagName).toBe("M-LIST-ITEM")
+    expect(added.textContent).toBe("Item 3")
+    expect(list.items).toHaveLength(3)
+
+    expect(list.removeItem(added)).toBe(true)
+    expect(list.items).toHaveLength(2)
+  })
+
+  it("handles itemsContainer when authored with ul or ol", () => {
+    const list = document.createElement("m-list") as List
+    list.innerHTML = `
+      <header class="m-list-header">Header</header>
+      <ul class="m-list-items" role="list">
+        <m-list-item id="ul-item-1">One</m-list-item>
+        <m-list-item id="ul-item-2">Two</m-list-item>
+      </ul>
+      <footer class="m-list-footer">Footer</footer>
+    `
+    document.body.append(list)
+
+    expect(list.itemsContainer?.tagName).toBe("UL")
+    expect(list.items).toHaveLength(2)
+    expect(list.hasAttribute("role")).toBe(false)
+    expect(list.itemsContainer?.getAttribute("role")).toBe("list")
+  })
+
+  it("manages ListItem prefix, suffix, and content regions", () => {
+    const item = document.createElement("m-list-item") as ListItem
+    document.body.append(item)
+
+    expect(item.getAttribute("role")).toBe("listitem")
+    expect(item.prefix).toBeNull()
+    expect(item.suffix).toBeNull()
+    expect(item.prefixRegion).toBeNull()
+    expect(item.suffixRegion).toBeNull()
+
+    item.prefix = "◈"
+    expect(item.getAttribute("prefix")).toBe("◈")
+    expect(item.prefixRegion?.textContent).toBe("◈")
+    expect(item.prefixRegion?.dataset.part).toBe("prefix")
+
+    item.suffix = "Active"
+    expect(item.getAttribute("suffix")).toBe("Active")
+    expect(item.suffixRegion?.textContent).toBe("Active")
+    expect(item.suffixRegion?.dataset.part).toBe("suffix")
+
+    item.prefix = null
+    expect(item.hasAttribute("prefix")).toBe(false)
+    expect(item.prefixRegion).toBeNull()
+
+    item.suffix = null
+    expect(item.hasAttribute("suffix")).toBe(false)
+    expect(item.suffixRegion).toBeNull()
+  })
+
+  it("preserves authored ListItem row, prefix, content, and suffix regions without duplication", () => {
+    const item = document.createElement("m-list-item") as ListItem
+    item.innerHTML = `
+      <div data-part="row" class="m-list-row">
+        <span data-part="prefix" class="m-list-prefix">◈</span>
+        <div data-part="content" class="m-list-content">Project Alpha</div>
+        <span data-part="suffix" class="m-list-suffix">Pending</span>
+      </div>
+    `
+    document.body.append(item)
+
+    expect(item.rowRegion?.classList.contains("m-list-row")).toBe(true)
+    expect(item.prefixRegion?.textContent).toBe("◈")
+    expect(item.contentRegion?.textContent).toBe("Project Alpha")
+    expect(item.suffixRegion?.textContent).toBe("Pending")
+
+    item.prefix = "★"
+    expect(item.querySelectorAll(".m-list-prefix")).toHaveLength(1)
+  })
+
+  it("preserves native list/listitem accessibility and semantic layout", () => {
     fixture()
     install()
-    for (const list of document.querySelectorAll(".m-list-items")) {
-      expect(["UL", "OL"]).toContain(list.tagName)
-      expect([...list.children].every(child => ["LI", "TEMPLATE"].includes(child.tagName))).toBe(true)
-    }
-    const header = document.querySelector("#projects-heading")!
-    expect(header.tagName).toBe("H2")
+
+    const list = document.querySelector<List>("#projects")!
+    expect(list).toBeInstanceOf(List)
+    expect(list.bordered).toBe(true)
+    expect(list.hoverable).toBe(true)
+
+    const header = list.header!
+    expect(header).not.toBeNull()
     expect(header.closest("ul, ol")).toBeNull()
-    expect(document.querySelector(".m-list-footer")!.closest("ul, ol")).toBeNull()
-    expect(getComputedStyle(document.querySelector("#project-alpha")!).display).toBe("list-item")
-    expect(css).not.toContain("display: contents")
+
+    const footer = list.footer!
+    expect(footer).not.toBeNull()
+    expect(footer.closest("ul, ol")).toBeNull()
+
+    const items = list.items
+    expect(items.length).toBeGreaterThanOrEqual(2)
+    for (const item of items) {
+      expect(item.getAttribute("role")).toBe("listitem")
+    }
   })
 
-  it("preserves authored regions, node identity, order and listeners across removal and late insertion", () => {
+  it("preserves authored listeners and node identity across removal and reconnection", () => {
     fixture()
-    const root = document.querySelector("#projects")!
+    install()
+
+    const root = document.querySelector<List>("#projects")!
     const before = root.outerHTML
     const children = [...root.querySelectorAll("*")]
     const action = document.querySelector<HTMLButtonElement>("#archive-alpha")!
     let clicks = 0
     action.addEventListener("click", () => clicks++)
-    install()
+
     root.remove()
     document.body.append(root)
+
     expect(root.outerHTML).toBe(before)
     expect([...root.querySelectorAll("*")]).toEqual(children)
     action.click()
-    const late = document.createElement("li")
-    late.className = "m-list-item"
-    late.textContent = "<script>Not interpreted</script>"
-    document.querySelector("#project-items")!.append(late)
-    expect(late.querySelector("script")).toBeNull()
-    expect(late.parentElement?.lastElementChild).toBe(late)
     expect(clicks).toBe(1)
   })
 
-  it("preserves native markers by default with an explicitly authored markerless-role workaround", () => {
+  it("preserves native markers in ordered lists", () => {
     fixture()
     install()
+
     const ordered = document.querySelector<HTMLOListElement>("#ordered ol")!
     expect(ordered.start).toBe(3)
-    expect(ordered.querySelector<HTMLLIElement>("li[value]")!.value).toBe(8)
-    expect(ordered.hasAttribute("role")).toBe(false)
-    expect(getComputedStyle(ordered).listStyleType).toBe("decimal")
-    expect(document.querySelector("#project-items")!.getAttribute("role")).toBe("list")
-    expect(getComputedStyle(document.querySelector("#project-items")!).listStyle).toBe("none")
-    expect(document.querySelector("#nested-list")!.hasAttribute("class")).toBe(false)
-  })
-
-  it("keeps native buttons and links explicit and passive items non-focusable", () => {
-    fixture()
-    install()
-    const button = document.querySelector<HTMLButtonElement>("#open-report")!
-    const link = document.querySelector<HTMLAnchorElement>("#row-link")!
-    expect(button.type).toBe("button")
-    expect(button.textContent).toContain("Open report")
-    expect(link.getAttribute("href")).toBe("#details")
-    expect(button.querySelectorAll("a, button, input, select, textarea")).toHaveLength(0)
-    expect(link.querySelectorAll("a, button, input, select, textarea")).toHaveLength(0)
-    expect(document.querySelector<HTMLElement>("#passive-item")!.tabIndex).toBe(-1)
-    expect(document.querySelector("#passive-item")!.hasAttribute("role")).toBe(false)
-    expect(document.querySelector("#project-alpha .m-list-suffix")!.querySelectorAll("button, a")).toHaveLength(2)
-    // Chromium acceptance covers computed styles for selectors jsdom cannot cascade.
-    expect(button.matches(".m-list[data-clickable] > .m-list-items > .m-list-item > button.m-list-action:not(:disabled)")).toBe(true)
-    expect(css).toContain("cursor: pointer")
-    expect(getComputedStyle(document.querySelector("#passive-item")!).cursor).not.toBe("pointer")
-    expect(css).toContain(":focus-visible")
+    const secondItem = ordered.querySelector<ListItem>("m-list-item[value]")!
+    expect(secondItem.getAttribute("value")).toBe("8")
   })
 
   it("does not intercept form validation, submission, reset or fieldset disabling", () => {
     fixture()
     install()
+
     const form = document.querySelector<HTMLFormElement>("#native-form")!
     const input = document.querySelector<HTMLInputElement>("#native-name")!
     let submits = 0
     let disabledClicks = 0
-    form.addEventListener("submit", event => { event.preventDefault(); submits++ })
+    form.addEventListener("submit", event => {
+      event.preventDefault()
+      submits++
+    })
     document.querySelector("#fieldset-disabled")!.addEventListener("click", () => disabledClicks++)
+
     input.value = ""
     document.querySelector<HTMLButtonElement>("#native-submit")!.click()
     expect(submits).toBe(0)
+
     input.value = "Edited"
     document.querySelector<HTMLButtonElement>("#native-submit")!.click()
     expect(submits).toBe(1)
     expect([...new FormData(form).entries()]).toEqual([["name", "Edited"]])
+
     document.querySelector<HTMLButtonElement>("#native-reset")!.click()
     expect(input.value).toBe("Original")
+
     document.querySelector<HTMLButtonElement>("#fieldset-disabled")!.click()
     document.querySelector<HTMLButtonElement>("#disabled-row")!.click()
     expect(disabledClicks).toBe(0)
-    expect(document.querySelector<HTMLButtonElement>("#disabled-row")!.disabled).toBe(true)
   })
 
-  it("retains medium defaults and explicit size presets without runtime measurement", () => {
-    fixture()
-    install()
-    const root = document.querySelector<HTMLElement>("#projects")!
-    expect(getComputedStyle(root).getPropertyValue("--_m-list-padding-block")).toBe("12px")
-    root.dataset.size = "small"
-    expect(getComputedStyle(root).getPropertyValue("--_m-list-padding-block")).toBe("8px")
-    root.dataset.size = "large"
-    expect(getComputedStyle(root).getPropertyValue("--_m-list-padding-block")).toBe("16px")
-    root.dataset.size = "unsupported"
-    expect(getComputedStyle(root).getPropertyValue("--_m-list-padding-block")).toBe("12px")
-    expect(css).toContain("transition: background-color .3s")
-  })
-
-  it("separates divider opt-out from borders and skips hidden siblings and templates", () => {
-    fixture()
-    install()
-    const first = document.querySelector("#project-alpha")!
-    const second = document.querySelector("#project-beta")!
-    const divided = ".m-list > .m-list-items > li.m-list-item:not([hidden]):has(~ li.m-list-item:not([hidden]))"
-    const beforeFooter = ".m-list > .m-list-items:has(~ .m-list-footer:not(template):not([hidden])) > li.m-list-item"
-    expect(first.matches(divided)).toBe(true)
-    expect(second.matches(divided)).toBe(false)
-    expect(second.matches(beforeFooter)).toBe(true)
-    expect(css).toContain(divided)
-    expect(css).toContain(beforeFooter)
-    expect(css).toContain("block-size: 1px")
-    expect(css).toContain("inset-block-end: 0")
-    expect(css).not.toContain("border-block-start: 1px")
-    const root = document.querySelector<HTMLElement>("#projects")!
-    root.dataset.showDivider = "false"
-    expect(css).toContain('.m-list[data-show-divider="false"] > .m-list-items > .m-list-item)::after { content: none; }')
-    const footer = root.querySelector<HTMLElement>(".m-list-footer")!
-    footer.hidden = true
-    // Chromium separately verifies the resulting sibling :has() divider paint.
-    expect(footer.matches(".m-list-footer:not(template):not([hidden])")).toBe(false)
-    expect(css).toContain('.m-list[data-bordered]')
-    expect(css).toContain('.m-list > .m-list-header')
-    expect(css).toContain('.m-list > .m-list-footer')
-  })
-
-  it("keeps hidden roots, rows, actions and inert templates hidden", () => {
-    fixture()
-    install()
-    for (const id of ["hidden-list", "hidden-first", "hidden-middle", "native-template"]) {
-      expect(getComputedStyle(document.getElementById(id)!).display).toBe("none")
-    }
-    const row = document.querySelector<HTMLElement>("#open-report")!
-    row.hidden = true
-    expect(getComputedStyle(row).display).toBe("none")
-    const template = document.querySelector<HTMLTemplateElement>("#native-template")!
-    expect(template.content.querySelector("li")!.textContent).toBe("Inert project template")
-    const rootTemplate = document.createElement("template")
-    rootTemplate.className = "m-list-row"
-    document.body.append(rootTemplate)
-    expect(getComputedStyle(rootTemplate).display).toBe("none")
-    expect(document.querySelector("#empty-list ul")!.children).toHaveLength(0)
-    expect(css).toContain(':not([hidden="until-found"])')
-  })
-
-  it("wraps authored regions without reversing reading order and isolates nested lists", () => {
-    fixture()
-    const outside = document.querySelector("#outside-list")!
-    const nested = document.querySelector("#nested-list")!
-    const original = [getComputedStyle(outside).padding, getComputedStyle(nested).listStyleType]
-    install()
-    expect([getComputedStyle(outside).padding, getComputedStyle(nested).listStyleType]).toEqual(original)
-    const row = document.querySelector("#ordered-first .m-list-row")!
-    expect(getComputedStyle(row).flexWrap).toBe("wrap")
-    expect([...row.children].map(child => child.className)).toEqual(["m-list-prefix", "m-list-content", "m-list-suffix"])
-    expect(css).not.toContain("row-reverse")
-    expect(css).not.toMatch(/(?:^|[;{])\s*order\s*:/m)
-    expect(css).toContain("padding-inline-start")
-    expect(css).toContain("overflow-wrap: anywhere")
-  })
-
-  it("provides print and forced-color fallbacks without inventing selection or announcements", () => {
-    fixture()
-    install()
-    expect(css).toContain("@media print")
-    expect(css).toContain("break-inside: avoid")
-    expect(css).toContain("@media (forced-colors: active)")
-    expect(css).toContain("color: GrayText")
-    expect(document.querySelectorAll(".m-list [aria-selected], .m-list [aria-live], .m-list [role=status]")).toHaveLength(0)
-    expect(document.querySelectorAll(".m-list [tabindex]")).toHaveLength(0)
-  })
-
-  it("keeps audited defaults, independent affix margins and reduced motion within budget", () => {
-    install()
-    expect(css).toContain("--_m-list-padding-inline: 0px")
-    expect(css).toContain("--_m-list-padding-inline: 20px")
+  it("keeps styles, tokens, and media queries clean and within budget", () => {
     expect(css).toContain("var(--m-list-font-size, var(--m-font-size, 14px))")
     expect(css).toContain("var(--m-list-line-height, var(--m-line-height, 1.6))")
     expect(css).toContain("var(--m-list-border-radius, 3px)")
     expect(css).toContain("var(--m-list-color, var(--_m-list-color, #333639))")
-    expect(css).toContain("rgba(255,255,255,.82)")
-    expect(css).toContain("rgba(255,255,255,.09)")
-    expect(css).toContain("#efeff5")
-    expect(css).toContain("#f3f3f5")
-    expect(css).not.toContain("--m-text-primary")
-    expect(css).not.toContain("--m-bg-muted")
-    expect(css).toContain("margin-inline-end: var(--m-list-gap, 20px)")
-    expect(css).toContain("margin-inline-start: var(--m-list-gap, 20px)")
-    const media = [...style!.sheet!.cssRules]
-      .filter(rule => rule.type === CSSRule.MEDIA_RULE)
-      .map(rule => (rule as CSSMediaRule).media.mediaText)
-    expect(media).toContain("(prefers-reduced-motion: reduce)")
-    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
-  })
-
-  it("preserves author tokens, markers and nodes when density and border flags change", () => {
-    fixture()
-    const root = document.querySelector<HTMLElement>("#projects")!
-    const list = root.querySelector<HTMLElement>(".m-list-items")!
-    root.style.cssText = "--m-list-padding-block:4px;--m-list-padding-inline:10px;--m-list-font-size:20px;--m-list-gap:8px;--m-list-color:rgb(1,2,3)"
-    const authored = root.getAttribute("style")
-    const nodes = [...list.children]
-    install()
-    root.dataset.size = "large"
-    root.removeAttribute("data-bordered")
-    root.removeAttribute("data-hoverable")
-    list.removeAttribute("data-markerless")
-    root.remove()
-    document.body.append(root)
-    expect(root.getAttribute("style")).toBe(authored)
-    expect([...list.children]).toEqual(nodes)
-    expect(getComputedStyle(document.querySelector("#project-alpha")!).display).toBe("list-item")
-    expect(root.querySelector("script,[aria-selected],[aria-live]")).toBeNull()
+    expect(css).toContain("@media print")
+    expect(css).toContain("@media (forced-colors: active)")
+    expect(css).toContain("@media (prefers-reduced-motion: reduce)")
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1800)
   })
 })

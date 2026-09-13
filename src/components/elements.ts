@@ -32,8 +32,6 @@ const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = 
   ["m-pagination", MPagination],
   ["m-steps", MSteps],
   ["m-step", class extends MElement {}],
-  ["m-list", class extends MElement { public connectedCallback(): void { this.setAttribute("role", "list") } }],
-  ["m-list-item", class extends MElement { public connectedCallback(): void { this.setAttribute("role", "listitem") } }],
   ["m-descriptions", MDescriptions],
   ["m-description-item", MDescriptionItem],
   ["m-statistic", MStatistic],

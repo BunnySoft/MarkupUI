@@ -64,7 +64,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Descriptions | `Descriptions`, `DescriptionItem` | Contract pending |
 | Empty | `Empty`; readable fallback text, optional icons, size variants and adopted regions | [Demo and API](../../demo/components/empty.html) |
 | Image | `Image` and preview/group composition | Contract pending |
-| List | `List`, `ListItem` | Contract pending |
+| List | `List`, `ListItem` | [Demo and API](../../demo/components/list.html) |
 | Log | `Log` | Contract pending |
 | Number Animation | `NumberAnimation` | Contract pending |
 | Statistic | `Statistic` | Contract pending |

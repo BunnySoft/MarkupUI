@@ -305,6 +305,10 @@
     "./breadcrumb/style.css": "./dist/markup-ui-breadcrumb.css",
     "./timeline/style.css": "./dist/markup-ui-timeline.css",
     "./descriptions/style.css": "./dist/markup-ui-descriptions.css",
+    "./list": {
+      "types": "./dist/components/list/index.d.ts",
+      "import": "./dist/markup-ui-list.js"
+    },
     "./list/style.css": "./dist/markup-ui-list.css",
     "./layout": {
       "types": "./dist/components/layout/index.d.ts",
