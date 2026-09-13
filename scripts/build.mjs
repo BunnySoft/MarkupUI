@@ -51,7 +51,7 @@ classicEntries.descriptions = "global.ts"
 classicEntries.breadcrumb = "global.ts"
 classicEntries["page-header"] = "global.ts"
 classicEntries.ellipsis = "global.ts"
-const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500], ["select", 8_000], ["form", 8_250], ["grid", 3_000], ["layout", 3_000], ["tag", 4_500], ["badge", 3_500], ["empty", 3_500], ["spin", 4_500], ["skeleton", 3_500], ["popover", 7_000], ["tooltip", 8_000], ["alert", 3_500], ["list", 3_500], ["table", 3_000], ["descriptions", 3_500], ["breadcrumb", 3_000], ["page-header", 3_500], ["ellipsis", 3_000], ["tabs", 8_500], ["menu", 8_500]])
+const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500], ["select", 8_000], ["form", 8_250], ["grid", 3_000], ["layout", 3_000], ["tag", 4_500], ["badge", 3_500], ["empty", 3_500], ["spin", 4_500], ["skeleton", 3_500], ["popover", 7_000], ["tooltip", 8_000], ["alert", 3_500], ["list", 3_500], ["table", 3_000], ["descriptions", 3_500], ["breadcrumb", 3_000], ["page-header", 3_500], ["ellipsis", 3_000], ["tabs", 8_500], ["menu", 8_500], ["pagination", 8_500]])
 await generateComponentApi(root, [...viewComponents.keys()])
 
 function corePlugin(format) {
@@ -542,8 +542,8 @@ const bundleBudgets = {
   "markup-ui-back-top.js": 3_500,
   "markup-ui-back-top.global.js": 3_500,
   "markup-ui-back-top.css": 1_000,
-  "markup-ui-pagination.js": 5_500,
-  "markup-ui-pagination.global.js": 5_500,
+  "markup-ui-pagination.js": 6_500,
+  "markup-ui-pagination.global.js": 6_500,
   "markup-ui-pagination.css": 1_250,
   "markup-ui-steps.js": 4_000,
   "markup-ui-steps.global.js": 4_000,

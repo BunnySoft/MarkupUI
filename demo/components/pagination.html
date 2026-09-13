@@ -1,51 +1,94 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Pagination</title>
+  <title>Pagination - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-pagination.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./pagination.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-pagination.global.js"></script>
-  <script defer src="./pagination.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./pagination.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <header><h1>Native Pagination, local state only</h1><p>No network fetch, URL rewrite or client router. The server-style fallback links target local examples.</p></header>
-  <main>
-    <form id="native-form">
-      <nav class="m-pagination" data-pagination id="pager" aria-label="Example result pages">
-        <span id="prefix">Local results:</span>
-        <div data-pagination-fallback>
-          <a href="#local-one" aria-current="page" id="server-one">Page 1</a>
-          <a href="#local-two" id="server-two">Page 2</a>
+  <main data-demo-page class="component-docs">
+    <h1>Pagination</h1>
+    <p>Direct responsive page navigation with numeric bounds, windowed items, and state management.</p>
+    <nav class="component-docs-nav" aria-label="Pagination documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-pagination.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-pagination.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header><div><h2 id="basic-heading">Declarative pagination</h2><p>Custom element m-pagination with page and count attributes.</p></div></header>
+      <div data-demo-preview>
+        <m-pagination page="2" count="10" id="declarative-pager"></m-pagination>
+        <m-p id="pager-status" role="status" style="margin-block-start: 12px;">Current page: 2</m-p>
+      </div>
+    </section>
+
+    <section data-demo-example="controller" aria-labelledby="controller-heading">
+      <header data-demo-header><div><h2 id="controller-heading">Authored template with controller</h2><p>Server-rendered fallback with progressive enhancement controller.</p></div></header>
+      <div data-demo-preview>
+        <form id="native-form">
+          <nav class="m-pagination" data-pagination id="pager" aria-label="Example result pages">
+            <span id="prefix">Local results:</span>
+            <div data-pagination-fallback>
+              <a href="#local-one" aria-current="page" id="server-one">Page 1</a>
+              <a href="#local-two" id="server-two">Page 2</a>
+            </div>
+            <div class="m-pagination__controls" data-pagination-enhancement hidden>
+              <button type="button" data-pagination-previous>Previous</button>
+              <div data-pagination-pages></div>
+              <button type="button" data-pagination-next>Next</button>
+              <label>Items per page <select data-pagination-size name="page-size"><option value="10">10 items</option><option value="25">25 items</option><option value="100">100 items</option></select></label>
+              <label>Go to page <input data-pagination-jump type="number" name="page-draft"></label>
+              <button data-pagination-go type="button">Go</button>
+              <span>of <span data-pagination-count>0</span> pages</span>
+            </div>
+            <span id="suffix">No automatic data loading</span>
+            <template data-pagination-page><button type="button"><span class="m-pagination__visually-hidden">Page </span><span data-pagination-number></span></button></template>
+            <template data-pagination-gap><button type="button"><span aria-hidden="true">…</span><span class="m-pagination__visually-hidden">Jump to page <span data-pagination-number></span></span></button></template>
+          </nav>
+          <p><label>Unrelated form input <input id="outside-input" name="notes" value="Preserved"></label></p>
+        </form>
+        <div class="demo-controls" style="display: flex; flex-wrap: wrap; gap: 8px; margin-block-start: 12px;">
+          <m-button id="shrink">Shrink to 12 items</m-button>
+          <m-button id="empty">Empty results</m-button>
+          <m-button id="huge">One trillion pages</m-button>
+          <m-button id="reset">Restore 237 items</m-button>
+          <m-button id="simple">Toggle simple view</m-button>
+          <m-button id="disabled">Toggle disabled</m-button>
+          <m-button id="cancel">Cancel next user request</m-button>
         </div>
-        <div class="m-pagination__controls" data-pagination-enhancement hidden>
-          <button type="button" data-pagination-previous>Previous</button>
-          <div data-pagination-pages></div>
-          <button type="button" data-pagination-next>Next</button>
-          <label>Items per page <select data-pagination-size name="page-size"><option value="10">10 items</option><option value="25">25 items</option><option value="100">100 items</option></select></label>
-          <label>Go to page <input data-pagination-jump type="number" name="page-draft"></label>
-          <button data-pagination-go type="button">Go</button>
-          <span>of <span data-pagination-count>0</span> pages</span>
-        </div>
-        <span id="suffix">No automatic data loading</span>
-        <template data-pagination-page><button type="button"><span class="m-pagination__visually-hidden">Page </span><span data-pagination-number></span></button></template>
-        <template data-pagination-gap><button type="button"><span aria-hidden="true">…</span><span class="m-pagination__visually-hidden">Jump to page <span data-pagination-number></span></span></button></template>
-      </nav>
-      <p><label>Unrelated form input <input id="outside-input" name="notes" value="Preserved"></label></p>
-    </form>
-    <div class="demo-controls">
-      <button type="button" id="shrink">Shrink to 12 items</button>
-      <button type="button" id="empty">Empty results</button>
-      <button type="button" id="huge">One trillion pages</button>
-      <button type="button" id="reset">Restore 237 items</button>
-      <button type="button" id="simple">Toggle simple view</button>
-      <button type="button" id="disabled">Toggle disabled</button>
-      <button type="button" id="cancel">Cancel next user request</button>
-    </div>
-    <output id="state">JavaScript is optional; native local fallback links are usable.</output>
-    <section id="local-one"><h2>Local example one</h2><p>The demo reports paging state without fetching or replacing this authored content.</p></section>
-    <section id="local-two"><h2>Local example two</h2><p>Without JavaScript, server-rendered links could point to actual page URLs instead of these local fragments.</p></section>
+        <output id="state" style="display: block; margin-block-start: 12px;">JavaScript is optional; native local fallback links are usable.</output>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="pagination-api"><p>Loading API documentation.</p></div>
+    </section>
   </main>
 </body>
 </html>

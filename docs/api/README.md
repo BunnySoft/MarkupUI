@@ -40,6 +40,7 @@ in the target inventory.
 35. [Ellipsis demo and API](../../demo/components/ellipsis.html): Ellipsis; direct text truncation, line-clamping, click-to-expand disclosure and tooltip.
 36. [Tabs demo and API](../../demo/components/tabs.html): Tabs, Tab, TabPane; line/card/segment styles, placements, panel disclosure, and keyboard navigation.
 37. [Menu demo and API](../../demo/components/menu.html): Menu, MenuItem, MenuGroup, MenuDivider, Submenu; vertical and horizontal navigation, selection, groups, and keyboard shortcuts.
+38. [Pagination demo and API](../../demo/components/pagination.html): Pagination; page navigation, page size configuration, item counting, and windowed page slots.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

@@ -47,6 +47,7 @@ import { PageHeader } from "../src/components/page-header/index.js"
 import { Ellipsis } from "../src/components/ellipsis/index.js"
 import { Tabs, Tab, TabPane } from "../src/components/tabs/index.js"
 import { Menu, MenuItem, MenuGroup, MenuDivider, Submenu } from "../src/components/menu/index.js"
+import { Pagination } from "../src/components/pagination/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
@@ -75,7 +76,7 @@ describe("native elements", () => {
     expect(customElements.get("m-input")).toBe(Input)
     expect(customElements.get("m-select")).toBe(Select)
     expect(builtInElementNames).not.toContain("m-select")
-    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader, Ellipsis, Tabs, Tab, TabPane, Menu, MenuItem, MenuGroup, MenuDivider, Submenu]) {
+    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader, Ellipsis, Tabs, Tab, TabPane, Menu, MenuItem, MenuGroup, MenuDivider, Submenu, Pagination]) {
       expect(customElements.get(Type.tag)).toBe(Type)
       expect(builtInElementNames).not.toContain(Type.tag)
     }

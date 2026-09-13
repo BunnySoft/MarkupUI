@@ -1,9 +1,10 @@
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createPagination } from "../src/components/pagination/index.js"
+import { createPagination, Pagination, registerPagination } from "../src/components/pagination/index.js"
 import { pageWindow, paginationState } from "../src/components/pagination/model.js"
 import type { PaginationOptions, PaginationController } from "../src/components/pagination/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const controllers: PaginationController[] = []
 function fixture() {
@@ -313,5 +314,52 @@ describe("focus, ownership and lifecycle", () => {
     const foreign = document.createElement("span"); foreign.textContent = "Author addition"; region.append(foreign)
     expect(() => controller.page = 1).toThrow(/exclusively/)
     expect(region.contains(foreign)).toBe(true)
+  })
+})
+
+describe("canonical Pagination ViewElement", () => {
+  it("exports canonical own-tag ViewElement and registers m-pagination", () => {
+    expect(Pagination.tag).toBe("m-pagination")
+    expect(ViewElement.prototype.isPrototypeOf(Pagination.prototype)).toBe(true)
+    expect(customElements.get("m-pagination")).toBe(Pagination)
+    expect(Pagination.observedAttributes).toEqual(["page", "page-size", "page-count", "item-count", "count", "disabled", "simple"])
+  })
+
+  it("handles typed properties, page navigation and change events", () => {
+    document.body.innerHTML = `<m-pagination page="2" page-count="5"></m-pagination>`
+    const pager = document.querySelector("m-pagination") as Pagination
+    expect(pager.page).toBe(2)
+    expect(pager.pageCount).toBe(5)
+    expect(pager.pageSize).toBe(10)
+    expect(pager.disabled).toBe(false)
+    expect(pager.simple).toBe(false)
+
+    const buttons = [...pager.querySelectorAll<HTMLButtonElement>("button")]
+    expect(buttons.length).toBeGreaterThan(0)
+    const currentBtn = pager.querySelector("[aria-current=page]")
+    expect(currentBtn?.textContent).toBe("2")
+
+    const changeSpy = vi.fn()
+    pager.addEventListener("m:change", changeSpy)
+
+    pager.page = 4
+    expect(pager.page).toBe(4)
+    expect(pager.getAttribute("page")).toBe("4")
+    expect(pager.querySelector("[aria-current=page]")?.textContent).toBe("4")
+    expect(changeSpy).toHaveBeenCalledOnce()
+    expect(changeSpy.mock.calls[0][0].detail).toMatchObject({ page: 4, pageSize: 10 })
+
+    pager.disabled = true
+    expect(pager.hasAttribute("disabled")).toBe(true)
+    const disabledButtons = [...pager.querySelectorAll<HTMLButtonElement>("button:disabled")]
+    expect(disabledButtons.length).toBe(pager.querySelectorAll("button").length)
+  })
+
+  it("calculates pageCount from itemCount and pageSize", () => {
+    document.body.innerHTML = `<m-pagination item-count="45" page-size="10"></m-pagination>`
+    const pager = document.querySelector("m-pagination") as Pagination
+    expect(pager.pageCount).toBe(5)
+    pager.pageSize = 20
+    expect(pager.pageCount).toBe(3)
   })
 })
