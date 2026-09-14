@@ -33,7 +33,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | --- | --- | --- |
 | Auto Complete | `AutoComplete` | [Demo and API](../../demo/components/auto-complete.html) |
 | Cascader | `Cascader` | [Demo and API](../../demo/components/cascader.html) |
-| Color Picker | `ColorPicker` | Contract pending |
+| Color Picker | `ColorPicker` | [Demo and API](../../demo/components/color-picker.html) |
 | Checkbox | `Checkbox`, `CheckboxGroup`; native checkedness, labels, forms and computed selection | [Demo and API](../../demo/components/checkbox.html) |
 | Date Picker | `DatePicker` | [Demo and API](../../demo/components/date-picker.html) |
 | Dynamic Input | `DynamicInput` | [Demo and API](../../demo/components/dynamic-input.html) |

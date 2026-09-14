@@ -80,6 +80,7 @@ in the target inventory.
 75. [Gradient Text demo and API](../../demo/components/gradient-text.html): GradientText; vibrant gradient text styling, predefined color types, custom sizes, and weights.
 76. [Watermark demo and API](../../demo/components/watermark.html): Watermark; security watermark overlay, canvas text/image patterns, and fullscreen protection.
 77. [Float Button demo and API](../../demo/components/float-button.html): FloatButton, FloatButtonGroup; floating action buttons, circle/square shapes, and positioning.
+78. [Color Picker demo and API](../../demo/components/color-picker.html): ColorPicker; color inputs, hex/rgba values, alpha channel support, and change events.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

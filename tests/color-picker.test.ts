@@ -2,7 +2,9 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createColorPicker } from "../src/components/color-picker/index.js"
+import * as colorPickerApi from "../src/components/color-picker/index.js"
+import { ColorPicker, MColorPicker, registerColorPicker, createColorPicker } from "../src/components/color-picker/index.js"
+import { ViewElement } from "../src/core/index.js"
 import { createInput } from "../src/components/native-input.js"
 import { coordinateForm as createForm } from "../src/components/form/controller.js"
 
@@ -305,3 +307,166 @@ describe("Color Picker default styles", () => {
     expect(css).not.toContain("appearance:")
   })
 })
+
+describe("canonical ColorPicker ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(colorPickerApi.ColorPicker).toBe(ColorPicker)
+    expect(colorPickerApi.MColorPicker).toBe(MColorPicker)
+    expect(ColorPicker.tag).toBe("m-color-picker")
+    expect(ViewElement.prototype.isPrototypeOf(ColorPicker.prototype)).toBe(true)
+    expect(customElements.get("m-color-picker")).toBe(ColorPicker)
+    expect(ColorPicker.observedAttributes).toEqual(["value", "disabled", "show-alpha"])
+    expect(() => registerColorPicker()).not.toThrow()
+    const define = vi.fn()
+    expect(() => registerColorPicker({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("initializes with canonical default values", () => {
+    const picker = document.createElement("m-color-picker") as ColorPicker
+    document.body.append(picker)
+    expect(picker.value).toBe("#000000")
+    expect(picker.disabled).toBe(false)
+    expect(picker.showAlpha).toBe(false)
+  })
+
+  it("generates an inner native color control when none is authored", () => {
+    const picker = document.createElement("m-color-picker") as ColorPicker
+    document.body.append(picker)
+    expect(picker.classList.contains("m-color-picker")).toBe(true)
+    const control = picker.querySelector("input[type=color]") as HTMLInputElement
+    expect(control).not.toBeNull()
+    expect(control.hasAttribute("data-color-control")).toBe(true)
+    expect(control.classList.contains("m-color-picker__control")).toBe(true)
+    expect(control.value).toBe("#000000")
+    expect(control.disabled).toBe(false)
+  })
+
+  it("adopts an authored native color input", () => {
+    const picker = document.createElement("m-color-picker") as ColorPicker
+    const authored = document.createElement("input")
+    authored.type = "color"
+    authored.value = "#336699"
+    authored.disabled = true
+    picker.append(authored)
+    document.body.append(picker)
+    expect(picker.value).toBe("#336699")
+    expect(picker.disabled).toBe(true)
+    expect(authored.classList.contains("m-color-picker__control")).toBe(true)
+  })
+
+  it("reflects property changes to attributes and control", () => {
+    const picker = document.createElement("m-color-picker") as ColorPicker
+    document.body.append(picker)
+    const control = picker.querySelector("input") as HTMLInputElement
+
+    picker.value = "#112233"
+    expect(picker.getAttribute("value")).toBe("#112233")
+    expect(picker.value).toBe("#112233")
+    expect(control.value).toBe("#112233")
+
+    picker.setAttribute("value", "#445566")
+    expect(picker.value).toBe("#445566")
+    expect(control.value).toBe("#445566")
+
+    picker.disabled = true
+    expect(picker.hasAttribute("disabled")).toBe(true)
+    expect(picker.disabled).toBe(true)
+    expect(control.disabled).toBe(true)
+
+    picker.disabled = false
+    expect(picker.hasAttribute("disabled")).toBe(false)
+    expect(picker.disabled).toBe(false)
+    expect(control.disabled).toBe(false)
+
+    picker.showAlpha = true
+    expect(picker.hasAttribute("show-alpha")).toBe(true)
+    expect(picker.showAlpha).toBe(true)
+    expect(picker.hasAttribute("data-show-alpha")).toBe(true)
+
+    picker.showAlpha = false
+    expect(picker.hasAttribute("show-alpha")).toBe(false)
+    expect(picker.showAlpha).toBe(false)
+    expect(picker.hasAttribute("data-show-alpha")).toBe(false)
+  })
+
+  it("emits m:change event when native color control changes or inputs", () => {
+    const picker = document.createElement("m-color-picker") as ColorPicker
+    document.body.append(picker)
+    const control = picker.querySelector("input") as HTMLInputElement
+    const changes: string[] = []
+    picker.addEventListener("m:change", ((event: CustomEvent<{ value: string }>) => {
+      expect(event.bubbles).toBe(true)
+      expect(event.cancelable).toBe(false)
+      expect(event.composed).toBe(false)
+      changes.push(event.detail.value)
+    }) as EventListener)
+
+    control.value = "#abcdef"
+    control.dispatchEvent(new Event("change", { bubbles: true }))
+    expect(picker.value).toBe("#abcdef")
+    expect(changes).toEqual(["#abcdef"])
+
+    control.value = "#123456"
+    control.dispatchEvent(new Event("input", { bubbles: true }))
+    expect(picker.value).toBe("#123456")
+    expect(changes).toEqual(["#abcdef", "#123456"])
+  })
+
+  it("delegates focus and blur to the child control", () => {
+    const picker = document.createElement("m-color-picker") as ColorPicker
+    document.body.append(picker)
+    const control = picker.querySelector("input") as HTMLInputElement
+    const focusSpy = vi.spyOn(control, "focus")
+    const blurSpy = vi.spyOn(control, "blur")
+
+    picker.focus()
+    expect(focusSpy).toHaveBeenCalledOnce()
+
+    picker.blur()
+    expect(blurSpy).toHaveBeenCalledOnce()
+  })
+
+  it("synchronizes output text when data-color-output exists", () => {
+    const picker = document.createElement("m-color-picker") as ColorPicker
+    const output = document.createElement("span")
+    output.setAttribute("data-color-output", "")
+    output.hidden = true
+    picker.append(output)
+    document.body.append(picker)
+
+    picker.value = "#008844"
+    expect(output.textContent).toBe("#008844")
+    expect(output.hidden).toBe(false)
+  })
+
+  it("replays pre-upgrade properties upon connection", () => {
+    const picker = document.createElement("m-color-picker") as ColorPicker
+    picker.value = "#aabbcc"
+    picker.disabled = true
+    picker.showAlpha = true
+    document.body.append(picker)
+
+    expect(picker.value).toBe("#aabbcc")
+    expect(picker.disabled).toBe(true)
+    expect(picker.showAlpha).toBe(true)
+    expect(picker.getAttribute("value")).toBe("#aabbcc")
+    expect(picker.hasAttribute("disabled")).toBe(true)
+    expect(picker.hasAttribute("show-alpha")).toBe(true)
+  })
+
+  it("handles form reset to restore default value", async () => {
+    const form = document.createElement("form")
+    const picker = document.createElement("m-color-picker") as ColorPicker
+    picker.setAttribute("value", "#336699")
+    form.append(picker)
+    document.body.append(form)
+
+    picker.value = "#ff0000"
+    expect(picker.value).toBe("#ff0000")
+    form.reset()
+    await flush()
+    expect(picker.value).toBe("#336699")
+  })
+})
+
