@@ -66,7 +66,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Image | `Image` and preview/group composition | [Demo and API](../../demo/components/image.html) |
 | List | `List`, `ListItem` | [Demo and API](../../demo/components/list.html) |
 | Log | `Log` | [Demo and API](../../demo/components/log.html) |
-| Number Animation | `NumberAnimation` | Contract pending |
+| Number Animation | `NumberAnimation` | [Demo and API](../../demo/components/number-animation.html) |
 | Statistic | `Statistic` | [Demo and API](../../demo/components/statistic.html) |
 | Table | `Table` | [Demo and API](../../demo/components/table.html) |
 | Thing | `Thing` and named regions | Contract pending |

@@ -2,8 +2,10 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createNumberAnimation, formatAnimatedNumber, interpolateNumber } from "../src/components/number-animation/index.js"
+import { createNumberAnimation, formatAnimatedNumber, interpolateNumber, NumberAnimation, MNumberAnimation, registerNumberAnimation } from "../src/components/number-animation/index.js"
+import * as numberAnimationApi from "../src/components/number-animation/index.js"
 import type { NumberAnimationController, NumberAnimationOptions } from "../src/components/number-animation/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const helpers: NumberAnimationController[] = []
 let now = 0, sequence = 0, hidden = false, frames: Map<number, FrameRequestCallback>
@@ -335,3 +337,163 @@ describe("Number Animation failures, reentrancy and lifetime", () => {
     expect(() => createNumberAnimation(other.element)).toThrow(/Countdown/)
   })
 })
+
+describe("canonical NumberAnimation ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(numberAnimationApi.NumberAnimation).toBe(NumberAnimation)
+    expect(numberAnimationApi.MNumberAnimation).toBe(NumberAnimation)
+    expect(NumberAnimation.tag).toBe("m-number-animation")
+    expect(ViewElement.prototype.isPrototypeOf(NumberAnimation.prototype)).toBe(true)
+    expect(customElements.get("m-number-animation")).toBe(NumberAnimation)
+    expect(NumberAnimation.observedAttributes).toEqual(["from", "to", "duration", "precision"])
+    expect(() => registerNumberAnimation()).not.toThrow()
+    const define = vi.fn()
+    expect(() => registerNumberAnimation({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("initializes with canonical default values", () => {
+    const element = document.createElement("m-number-animation") as NumberAnimation
+    expect(element.from).toBe(0)
+    expect(element.to).toBe(0)
+    expect(element.duration).toBe(1000)
+    expect(element.precision).toBe(0)
+  })
+
+  it("reflects property updates to attributes", () => {
+    const element = document.createElement("m-number-animation") as NumberAnimation
+    element.from = 10
+    expect(element.from).toBe(10)
+    expect(element.getAttribute("from")).toBe("10")
+
+    element.to = 100
+    expect(element.to).toBe(100)
+    expect(element.getAttribute("to")).toBe("100")
+
+    element.duration = 2000
+    expect(element.duration).toBe(2000)
+    expect(element.getAttribute("duration")).toBe("2000")
+
+    element.precision = 2
+    expect(element.precision).toBe(2)
+    expect(element.getAttribute("precision")).toBe("2")
+  })
+
+  it("reflects attribute updates to properties", () => {
+    const element = document.createElement("m-number-animation") as NumberAnimation
+    element.setAttribute("from", "25")
+    expect(element.from).toBe(25)
+
+    element.setAttribute("to", "250")
+    expect(element.to).toBe(250)
+
+    element.setAttribute("duration", "500")
+    expect(element.duration).toBe(500)
+
+    element.setAttribute("precision", "1")
+    expect(element.precision).toBe(1)
+  })
+
+  it("validates input ranges and types", () => {
+    const element = document.createElement("m-number-animation") as NumberAnimation
+    expect(() => { element.from = NaN }).toThrow(RangeError)
+    expect(() => { element.from = Infinity }).toThrow(RangeError)
+    expect(() => { element.from = "10" as never }).toThrow(RangeError)
+
+    expect(() => { element.to = NaN }).toThrow(RangeError)
+    expect(() => { element.to = -Infinity }).toThrow(RangeError)
+
+    expect(() => { element.duration = -1 }).toThrow(RangeError)
+    expect(() => { element.duration = NaN }).toThrow(RangeError)
+
+    expect(() => { element.precision = -1 }).toThrow(RangeError)
+    expect(() => { element.precision = 21 }).toThrow(RangeError)
+    expect(() => { element.precision = 1.5 }).toThrow(RangeError)
+  })
+
+  it("animates numeric values and emits m:finish event on completion", () => {
+    const element = document.createElement("m-number-animation") as NumberAnimation
+    element.from = 0
+    element.to = 100
+    element.duration = 1000
+    const finish = vi.fn()
+    element.addEventListener("m:finish", finish)
+
+    document.body.append(element)
+    expect(frames.size).toBe(1)
+    expect(element.textContent).toBe("0")
+
+    frame(500)
+    expect(element.textContent).not.toBe("0")
+    expect(element.textContent).not.toBe("100")
+    expect(finish).not.toHaveBeenCalled()
+
+    frame(1000)
+    expect(element.textContent).toBe("100")
+    expect(finish).toHaveBeenCalledOnce()
+    const event = finish.mock.calls[0]![0] as CustomEvent
+    expect(event.detail).toEqual({ value: 100 })
+    expect(event.bubbles).toBe(true)
+    expect(event.cancelable).toBe(false)
+    expect(event.composed).toBe(false)
+  })
+
+  it("formats numbers with specified precision", () => {
+    const element = document.createElement("m-number-animation") as NumberAnimation
+    element.from = 0
+    element.to = 50.5
+    element.precision = 2
+    element.duration = 0
+
+    document.body.append(element)
+    expect(element.textContent).toBe("50.50")
+  })
+
+  it("preserves authored prefix and updates span[data-number-text] target", () => {
+    document.body.innerHTML = '<m-number-animation from="0" to="100" duration="0"><strong>Total: </strong><span data-number-text>0</span></m-number-animation>'
+    const element = document.querySelector("m-number-animation") as NumberAnimation
+    expect(element.querySelector("strong")?.textContent).toBe("Total: ")
+    expect(element.querySelector("[data-number-text]")?.textContent).toBe("100")
+  })
+
+  it("supports play, pause and reset controls", () => {
+    const element = document.createElement("m-number-animation") as NumberAnimation
+    element.from = 10
+    element.to = 50
+    element.duration = 1000
+    document.body.append(element)
+
+    frame(500)
+    element.pause()
+    element.reset()
+    expect(element.textContent).toBe("10")
+  })
+
+  it("finishes immediately when reduced motion is preferred", () => {
+    media.matches = true
+    const finish = vi.fn()
+    const element = document.createElement("m-number-animation") as NumberAnimation
+    element.from = 0
+    element.to = 200
+    element.duration = 1000
+    element.addEventListener("m:finish", finish)
+
+    document.body.append(element)
+    expect(element.textContent).toBe("200")
+    expect(finish).toHaveBeenCalledOnce()
+    expect((finish.mock.calls[0]![0] as CustomEvent).detail).toEqual({ value: 200 })
+  })
+
+  it("cleans up animation frames on disconnect", () => {
+    const element = document.createElement("m-number-animation") as NumberAnimation
+    element.from = 0
+    element.to = 100
+    element.duration = 1000
+    document.body.append(element)
+    expect(frames.size).toBe(1)
+
+    element.remove()
+    expect(cancelAnimationFrame).toHaveBeenCalled()
+  })
+})
+
