@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./marquee.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-marquee.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -43,14 +45,14 @@
       <header data-demo-header><div><h2 id="examples-heading">Basic Marquee</h2><p>Horizontal overflow traversal with speed and pause-on-hover options.</p></div></header>
       <div data-demo-preview>
         <m-marquee id="demo-marquee" speed="50" pause-on-hover>
-          <strong>Notice:</strong> This is a continuous announcement that scrolls smoothly across the screen while remaining fully accessible with native scrolling.
+          <m-strong>Notice:</m-strong> This is a continuous announcement that scrolls smoothly across the screen while remaining fully accessible with native scrolling.
         </m-marquee>
-        <div class="demo-tools">
+        <m-box class="demo-tools">
           <m-button id="marquee-play">Play</m-button>
           <m-button id="marquee-pause">Pause</m-button>
           <m-button id="marquee-speed-up">Speed up</m-button>
           <m-button id="marquee-speed-down">Slow down</m-button>
-        </div>
+        </m-box>
       </div>
     </section>
 
@@ -58,7 +60,7 @@
       <header data-demo-header><div><h2 id="reverse-heading">Reversed direction</h2><p>Marquee scrolling in reverse direction with custom speed.</p></div></header>
       <div data-demo-preview>
         <m-marquee id="reverse-marquee" speed="60" reverse>
-          <span>Reversed direction scrolling text moves from left to right across the viewport.</span>
+          <m-span>Reversed direction scrolling text moves from left to right across the viewport.</m-span>
         </m-marquee>
       </div>
     </section>
@@ -67,7 +69,7 @@
       <header data-demo-header><div><h2 id="rich-heading">Rich phrasing content</h2><p>Marquee with native emphasis, tags, and images retained in a single original track.</p></div></header>
       <div data-demo-preview>
         <m-marquee id="rich-marquee" speed="40">
-          <span><img src="./marquee.svg" width="40" height="24" alt="MarkupUI icon"> <strong>Announcement:</strong> MarkupUI provides <em>accessible</em> Web Components with zero runtime dependencies.</span>
+          <m-span><img src="./marquee.svg" width="40" height="24" alt="MarkupUI icon"> <m-strong>Announcement:</m-strong> MarkupUI provides <m-em>accessible</m-em> Web Components with zero runtime dependencies.</m-span>
         </m-marquee>
       </div>
     </section>

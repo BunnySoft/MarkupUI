@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./image.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-image.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -49,28 +51,28 @@
     <section data-demo-example="object-fit" aria-labelledby="fit-title">
       <header data-demo-header><div><h2 id="fit-title">Object fit modes</h2><p>Support for fill, contain, cover, none, and scale-down.</p></div></header>
       <div data-demo-preview>
-        <div class="fit-container">
-          <div>
+        <m-box class="fit-container">
+          <m-box>
             <m-p><m-text strong>Fill</m-text></m-p>
             <m-image src="./image.first.svg" alt="Fill" object-fit="fill" width="120" height="120"></m-image>
-          </div>
-          <div>
+          </m-box>
+          <m-box>
             <m-p><m-text strong>Contain</m-text></m-p>
             <m-image src="./image.first.svg" alt="Contain" object-fit="contain" width="120" height="120"></m-image>
-          </div>
-          <div>
+          </m-box>
+          <m-box>
             <m-p><m-text strong>Cover</m-text></m-p>
             <m-image src="./image.first.svg" alt="Cover" object-fit="cover" width="120" height="120"></m-image>
-          </div>
-          <div>
+          </m-box>
+          <m-box>
             <m-p><m-text strong>None</m-text></m-p>
             <m-image src="./image.first.svg" alt="None" object-fit="none" width="120" height="120"></m-image>
-          </div>
-          <div>
+          </m-box>
+          <m-box>
             <m-p><m-text strong>Scale down</m-text></m-p>
             <m-image src="./image.first.svg" alt="Scale down" object-fit="scale-down" width="120" height="120"></m-image>
-          </div>
-        </div>
+          </m-box>
+        </m-box>
       </div>
     </section>
 
@@ -85,19 +87,19 @@
     <section data-demo-example="preview" aria-labelledby="preview-title">
       <header data-demo-header><div><h2 id="preview-title">Preview modal</h2><p>Click image to open modal preview, or disable preview with preview="false".</p></div></header>
       <div data-demo-preview>
-        <div class="fit-container">
-          <div>
+        <m-box class="fit-container">
+          <m-box>
             <m-p><m-text strong>Preview enabled</m-text></m-p>
             <m-image id="preview-image" src="./image.first.svg" preview-src="./image.first.svg" alt="Click to preview" width="200" height="125"></m-image>
-          </div>
-          <div>
+          </m-box>
+          <m-box>
             <m-p><m-text strong>Preview disabled</m-text></m-p>
             <m-image src="./image.second.svg" alt="Preview disabled" width="200" height="125" preview="false"></m-image>
-          </div>
-        </div>
-        <div class="demo-tools">
+          </m-box>
+        </m-box>
+        <m-box class="demo-tools">
           <m-button id="open-preview"><m-text>Open preview</m-text></m-button>
-        </div>
+        </m-box>
       </div>
     </section>
 
@@ -109,9 +111,9 @@
           <m-image src="./image.second.svg" alt="Blue waves" width="160" height="100"></m-image>
           <m-image src="./image.fallback.svg" alt="Fallback landscape" width="160" height="100"></m-image>
         </m-image-group>
-        <div class="demo-tools">
+        <m-box class="demo-tools">
           <m-button id="open-gallery"><m-text>Open gallery preview</m-text></m-button>
-        </div>
+        </m-box>
         <m-p id="gallery-status">Gallery ready</m-p>
       </div>
     </section>

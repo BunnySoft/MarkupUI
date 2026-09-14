@@ -48,7 +48,9 @@
       </header>
       <div data-demo-preview>
         <m-dynamic-tags id="basic-tags"></m-dynamic-tags>
-        <m-p id="basic-status" role="status" style="margin-block-start: 12px;">Tags: none</m-p>
+        <m-box margin="12 0 0 0">
+          <m-p id="basic-status" role="status">Tags: none</m-p>
+        </m-box>
       </div>
     </section>
 
@@ -60,20 +62,20 @@
         </div>
       </header>
       <div data-demo-preview>
-        <div style="display: grid; gap: 16px;">
-          <div>
+        <m-box display="grid" gap="16">
+          <m-box>
             <m-p>Small</m-p>
             <m-dynamic-tags size="small" id="small-tags"></m-dynamic-tags>
-          </div>
-          <div>
+          </m-box>
+          <m-box>
             <m-p>Medium</m-p>
             <m-dynamic-tags size="medium" id="medium-tags"></m-dynamic-tags>
-          </div>
-          <div>
+          </m-box>
+          <m-box>
             <m-p>Large</m-p>
             <m-dynamic-tags size="large" id="large-tags"></m-dynamic-tags>
-          </div>
-        </div>
+          </m-box>
+        </m-box>
       </div>
     </section>
 
@@ -86,7 +88,9 @@
       </header>
       <div data-demo-preview>
         <m-dynamic-tags max="3" id="max-tags"></m-dynamic-tags>
-        <m-p style="margin-block-start: 8px;">Maximum 3 tags allowed.</m-p>
+        <m-box margin="8 0 0 0">
+          <m-p>Maximum 3 tags allowed.</m-p>
+        </m-box>
       </div>
     </section>
 
@@ -99,9 +103,9 @@
       </header>
       <div data-demo-preview>
         <m-dynamic-tags disabled id="disabled-tags"></m-dynamic-tags>
-        <div style="margin-block-start: 12px;">
+        <m-box margin="12 0 0 0">
           <m-button id="toggle-disabled">Toggle Disabled</m-button>
-        </div>
+        </m-box>
       </div>
     </section>
 

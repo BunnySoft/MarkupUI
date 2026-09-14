@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./input-otp.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-input-otp.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -50,10 +52,10 @@
         <m-input-otp id="basic-otp"></m-input-otp>
         <m-p id="basic-status">Current value: (empty)</m-p>
         <m-p id="complete-status">Status: Incomplete</m-p>
-        <div class="demo-tools">
+        <m-box class="demo-tools">
           <m-button id="clear-basic">Clear</m-button>
           <m-button id="fill-basic">Set 123456</m-button>
-        </div>
+        </m-box>
       </div>
     </section>
 
@@ -67,9 +69,9 @@
       <div data-demo-preview>
         <m-text>4-digit masked code:</m-text>
         <m-input-otp id="mask-otp" length="4" mask value="1234"></m-input-otp>
-        <div class="demo-tools">
+        <m-box class="demo-tools">
           <m-button id="toggle-mask">Toggle Mask</m-button>
-        </div>
+        </m-box>
       </div>
     </section>
 
@@ -81,15 +83,15 @@
         </div>
       </header>
       <div data-demo-preview>
-        <div class="demo-row">
+        <m-box class="demo-row">
           <m-input-otp size="small" value="123456"></m-input-otp>
           <m-input-otp size="medium" value="123456"></m-input-otp>
           <m-input-otp size="large" value="123456"></m-input-otp>
-        </div>
+        </m-box>
         <m-input-otp id="disabled-otp" disabled value="654321"></m-input-otp>
-        <div class="demo-tools">
+        <m-box class="demo-tools">
           <m-button id="toggle-disabled">Toggle Disabled</m-button>
-        </div>
+        </m-box>
       </div>
     </section>
 

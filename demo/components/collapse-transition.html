@@ -8,12 +8,16 @@
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-collapse-transition.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./collapse-transition.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-collapse-transition.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script type="module" src="./collapse-transition.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -38,12 +42,12 @@
     <section data-demo-example="basic" aria-labelledby="basic-heading">
       <header data-demo-header><div><h2 id="basic-heading">Basic usage</h2><p>Toggle content visibility with smooth height and fade animation.</p></div></header>
       <div data-demo-preview>
-        <button type="button" id="toggle-button" aria-expanded="true">Toggle content</button>
+        <m-button id="toggle-button" aria-expanded="true">Toggle content</m-button>
         <m-collapse-transition id="basic-transition">
-          <div data-collapse-transition-content class="panel-content">
-            <h3>Authored content</h3>
-            <p>Content smoothly expands and collapses using Web Animations.</p>
-          </div>
+          <m-box data-collapse-transition-content class="panel-content">
+            <m-h3>Authored content</m-h3>
+            <m-p>Content smoothly expands and collapses using Web Animations.</m-p>
+          </m-box>
         </m-collapse-transition>
       </div>
     </section>
@@ -51,12 +55,12 @@
     <section data-demo-example="collapsed" aria-labelledby="collapsed-heading">
       <header data-demo-header><div><h2 id="collapsed-heading">Initially collapsed</h2><p>Content hidden initially via show="false".</p></div></header>
       <div data-demo-preview>
-        <button type="button" id="toggle-collapsed" aria-expanded="false">Show content</button>
+        <m-button id="toggle-collapsed" aria-expanded="false">Show content</m-button>
         <m-collapse-transition id="collapsed-transition" show="false" hidden>
-          <div data-collapse-transition-content class="panel-content">
-            <h3>Initially hidden content</h3>
-            <p>This content was collapsed on load.</p>
-          </div>
+          <m-box data-collapse-transition-content class="panel-content">
+            <m-h3>Initially hidden content</m-h3>
+            <m-p>This content was collapsed on load.</m-p>
+          </m-box>
         </m-collapse-transition>
       </div>
     </section>

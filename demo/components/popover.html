@@ -9,14 +9,18 @@
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-popover.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-input.css">
   <link rel="stylesheet" href="../../dist/markup-ui-space.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./popover.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-popover.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-input.global.js"></script>
   <script defer src="../../dist/markup-ui-space.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
   <script type="module" src="./popover.js"></script>
@@ -145,7 +149,7 @@
           </m-popover-trigger>
           <m-popover-content id="form-content">
             <m-p><m-text strong>Filter settings</m-text></m-p>
-            <input id="filter-input" placeholder="Keyword...">
+            <m-input id="filter-input" placeholder="Keyword..."></m-input>
             <m-space class="controls" justify="end">
               <m-button id="filter-reset" size="small">Reset</m-button>
               <m-button id="filter-apply" type="primary" size="small">Apply</m-button>
@@ -158,9 +162,9 @@
     <section data-demo-example="static" aria-labelledby="static-heading">
       <header data-demo-header><div><h2 id="static-heading">CSS-only native popover surface</h2><m-p>The .m-popover stylesheet applies directly to native popover elements without custom element registration.</m-p></div></header>
       <div data-demo-preview>
-        <div class="m-popover static-preview">
+        <m-box class="m-popover static-preview">
           <m-p>Static .m-popover surface with audited padding, border, and shadows.</m-p>
-        </div>
+        </m-box>
       </div>
     </section>
 

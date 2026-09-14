@@ -137,12 +137,12 @@
           <m-p id="live-paragraph"><p><label>Preserved form state <input id="live-input" value="Edit me"></label>
             <m-link id="live-link" href="#link-target">Native link</m-link></p></m-p>
         </m-typography>
-        <div data-live-controls>
-          <button type="button" id="change-level">Toggle level</button>
-          <button type="button" id="change-tone">Toggle tone</button>
-          <button type="button" id="reconnect-typography">Reconnect</button>
-          <span id="typography-status" role="status">Level: 2; tone: default</span>
-        </div>
+        <m-box data-live-controls display="flex" wrap="wrap" gap="8">
+          <m-button id="change-level">Toggle level</m-button>
+          <m-button id="change-tone">Toggle tone</m-button>
+          <m-button id="reconnect-typography">Reconnect</m-button>
+          <m-span id="typography-status" role="status">Level: 2; tone: default</m-span>
+        </m-box>
       </div>
     </section>
     <section aria-labelledby="api-heading">

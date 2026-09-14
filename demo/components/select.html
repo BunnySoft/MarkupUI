@@ -8,10 +8,15 @@
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-select.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./select.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script type="module" src="../../dist/markup-ui-select.js"></script>
   <script type="module" src="./select.js"></script>
   <script type="module" src="../example-code.js"></script>
@@ -33,7 +38,7 @@
     <section data-demo-example="single" aria-labelledby="single-title">
       <header data-demo-header><div><h2 id="single-title">Single, empty and placeholder</h2><p>A selected empty string is not null. The first marked empty option is a native placeholder; null means selectedIndex -1 and no submission.</p></div></header>
       <div data-demo-preview>
-        <label for="language">Language (native required)</label>
+        <m-label for="language">Language (native required)</m-label>
         <m-select id="language-root">
           <span aria-hidden="true">⌘</span>
           <select id="language" name="language" form="selection-form" required>
@@ -46,13 +51,13 @@
           </select>
           <button data-select-clear type="button" hidden>Clear language</button>
         </m-select>
-        <div class="demo-tools">
-          <button type="button" id="assign">Silent value = TypeScript</button>
-          <button type="button" id="none">Silent value = null</button>
-          <button type="button" id="picker">Request native showPicker</button>
-        </div>
-        <p id="picker-result">No picker request. The platform owns closing; there is no hidePicker API.</p>
-        <p id="events">Language events: input 0, change 0, clear 0</p>
+        <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+          <m-button id="assign">Silent value = TypeScript</m-button>
+          <m-button id="none">Silent value = null</m-button>
+          <m-button id="picker">Request native showPicker</m-button>
+        </m-box>
+        <m-p id="picker-result">No picker request. The platform owns closing; there is no hidePicker API.</m-p>
+        <m-p id="events">Language events: input 0, change 0, clear 0</m-p>
       </div>
     </section>
     <section data-demo-example="multiple" aria-labelledby="multiple-title">
@@ -61,11 +66,11 @@
         <fieldset id="tool-fieldset">
           <legend>Tools</legend>
           <m-select id="tools-root" size="small">
-            <div data-select-search hidden>
-              <label for="tool-filter">Filter option/group text</label>
+            <m-box data-select-search hidden>
+              <m-label for="tool-filter">Filter option/group text</m-label>
               <input data-select-filter id="tool-filter" type="search" form="selection-form" aria-controls="tools" autocomplete="off">
-            </div>
-            <label for="tools">Native multiple tools</label>
+            </m-box>
+            <m-label for="tools">Native multiple tools</m-label>
             <select id="tools" name="tools" form="selection-form" multiple size="7" aria-describedby="filter-help">
               <optgroup label="Web">
                 <option value="html" selected>HTML</option>
@@ -82,22 +87,22 @@
               </optgroup>
             </select>
             <button data-select-clear type="button" hidden>Clear all tools</button>
-            <p data-select-empty hidden>No matching options. Selected choices are kept visible.</p>
+            <m-p data-select-empty hidden>No matching options. Selected choices are kept visible.</m-p>
           </m-select>
         </fieldset>
-        <p id="filter-help">Disabled selected options/groups are included in value and selectedOptions but excluded from native FormData. listSize is native row count; size="small" changes only visual field dimensions.</p>
-        <div class="demo-tools">
-          <button type="button" id="filter">Silent literal filter: CSS</button>
-          <button type="button" id="fieldset">Toggle disabled tool fieldset</button>
-          <button type="button" id="rtl">Toggle RTL</button>
-          <button type="button" id="theme">Toggle dark theme</button>
-        </div>
+        <m-p id="filter-help">Disabled selected options/groups are included in value and selectedOptions but excluded from native FormData. listSize is native row count; size="small" changes only visual field dimensions.</m-p>
+        <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+          <m-button id="filter">Silent literal filter: CSS</m-button>
+          <m-button id="fieldset">Toggle disabled tool fieldset</m-button>
+          <m-button id="rtl">Toggle RTL</m-button>
+          <m-button id="theme">Toggle dark theme</m-button>
+        </m-box>
       </div>
     </section>
     <section data-demo-example="forms" aria-labelledby="forms-title">
       <header data-demo-header><div><h2 id="forms-title">Defaults, forms and validity</h2><p>There is no Select defaultValue. option.defaultSelected and selected attributes are reset defaults; live writes follow native dirty selectedness. Only native form owners submit.</p></div></header>
       <div data-demo-preview>
-        <label for="external-select">External form association (no placeholder)</label>
+        <m-label for="external-select">External form association (no placeholder)</m-label>
         <m-select id="external-root" size="large">
           <select id="external-select" name="external" form="other-form">
             <option value="a" selected>External A</option>
@@ -110,13 +115,13 @@
           <m-select name="blocked" form="selection-form" aria-label="Disabled fieldset choice" status="warning"><select aria-label="Disabled fieldset choice"><option value="excluded" selected>Excluded by fieldset</option></select></m-select>
         </fieldset>
         <input type="hidden" form="selection-form" name="local" value="only">
-        <div class="demo-tools">
+        <m-box class="demo-tools">
           <button type="submit" form="selection-form">Validate and inspect FormData</button>
           <button type="reset" form="selection-form">Native reset</button>
-          <button type="button" id="default">Make Rust the reset default</button>
-          <button type="button" id="cancel">Cancel next reset</button>
-          <button type="button" id="mode">Toggle external multiple mode</button>
-        </div>
+          <m-button type="button" id="default">Make Rust the reset default</m-button>
+          <m-button type="button" id="cancel">Cancel next reset</m-button>
+          <m-button type="button" id="mode">Toggle external multiple mode</m-button>
+        </m-box>
         <pre id="submission">No submission yet. This demo does not send data to a service.</pre>
       </div>
     </section>
@@ -124,12 +129,12 @@
       <header data-demo-header><div><h2 id="lifecycle-title">Options, late adoption and reconnect</h2><p>Surviving authored options, optgroups, labels and listeners are never cloned. A generated native select can adopt one late authored select; incompatible pending values are rejected, not discarded.</p></div></header>
       <div data-demo-preview>
         <m-select id="late-root" aria-label="Late authored choice" name="late" form="selection-form" borderless></m-select>
-        <div class="demo-tools">
-          <button type="button" id="add">Append native option</button>
-          <button type="button" id="adopt">Adopt authored select</button>
-          <button type="button" id="reconnect">Disconnect, write, reconnect language</button>
-        </div>
-        <p id="lifecycle-state">No replacement yet.</p>
+        <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+          <m-button id="add">Append native option</m-button>
+          <m-button id="adopt">Adopt authored select</m-button>
+          <m-button id="reconnect">Disconnect, write, reconnect language</m-button>
+        </m-box>
+        <m-p id="lifecycle-state">No replacement yet.</m-p>
         <pre id="state">Authored native fields work before the API loads.</pre>
       </div>
     </section>

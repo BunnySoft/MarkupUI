@@ -8,11 +8,15 @@
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-highlight.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./highlight.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-highlight.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script type="module" src="./highlight.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -55,31 +59,31 @@
 [a+b]
 x
 😀</textarea>
-              <div class="editor-actions">
+              <m-box class="editor-actions" display="flex" wrap="wrap" gap="8">
                 <label><input id="case-sensitive" type="checkbox"> Case sensitive</label>
                 <label for="palette">Mark appearance</label>
                 <select id="palette"><option value="">Default</option><option value="demo-match">Custom class</option></select>
-                <button type="submit" id="apply-highlight">Apply matching</button>
-                <button type="button" id="clear-patterns">Clear patterns</button>
-              </div>
+                <m-button type="submit" id="apply-highlight">Apply matching</m-button>
+                <m-button id="clear-patterns">Clear patterns</m-button>
+              </m-box>
             </fieldset>
           </form>
-          <noscript><p>Automatic matching controls require JavaScript. Authored marks and navigation remain readable.</p></noscript>
-          <h3 id="preview-heading">Preview</h3>
-          <p id="feedback">Seven authored fallback marks; matching starts when the optional helper loads.</p>
-          <p id="error-message"></p>
+          <noscript><m-p>Automatic matching controls require JavaScript. Authored marks and navigation remain readable.</m-p></noscript>
+          <m-h3 id="preview-heading">Preview</m-h3>
+          <m-p id="feedback">Seven authored fallback marks; matching starts when the optional helper loads.</m-p>
+          <m-p id="error-message"></m-p>
           <span class="m-highlight preview" id="preview"><mark class="m-highlight-mark">Atlas</mark> and <mark class="m-highlight-mark">atlas</mark>. Literal <mark class="m-highlight-mark">[a+b]</mark> stays te<mark class="m-highlight-mark">x</mark>t. &lt;b&gt;not HTML&lt;/b&gt;. İ<mark class="m-highlight-mark">x</mark> <mark class="m-highlight-mark">x</mark> <mark class="m-highlight-mark">😀</mark>.</span>
-          <p>Updates intentionally replace this span's children. Do not put unrelated rich content or child listeners inside it.</p>
+          <m-p>Updates intentionally replace this span's children. Do not put unrelated rich content or child listeners inside it.</m-p>
         </div>
       </section>
 
       <section data-demo-example="native" aria-labelledby="native-heading">
         <header data-demo-header><div><h2 id="native-heading">Authored marks without JavaScript</h2><p>Native marks and links remain ordinary readable text.</p></div></header>
         <div data-demo-preview>
-          <p>A <mark class="m-highlight-mark" id="static-mark">native mark</mark> remains ordinary readable text.</p>
-          <p><a href="#native-heading" id="native-link">Open <span class="m-highlight" id="link-surface">Atlas notes</span></a> — the link and its listeners remain outside the owned text surface.</p>
-          <p dir="rtl" id="rtl-example"><span class="m-highlight" id="rtl-surface">بحث Atlas بحث</span></p>
-          <p>Case-insensitive matching uses Unicode simple case folding, not locale-specific expansion or normalization.</p>
+          <m-p>A <mark class="m-highlight-mark" id="static-mark">native mark</mark> remains ordinary readable text.</m-p>
+          <m-p><a href="#native-heading" id="native-link">Open <span class="m-highlight" id="link-surface">Atlas notes</span></a> — the link and its listeners remain outside the owned text surface.</m-p>
+          <m-p dir="rtl" id="rtl-example"><span class="m-highlight" id="rtl-surface">بحث Atlas بحث</span></m-p>
+          <m-p>Case-insensitive matching uses Unicode simple case folding, not locale-specific expansion or normalization.</m-p>
         </div>
       </section>
     </div>

@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-icon.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
@@ -16,6 +17,7 @@
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-icon.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script type="module" src="./icon.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -70,18 +72,18 @@
       <div class="demo-preview" data-demo-preview>
         <m-icon-wrapper aria-hidden="true"><m-icon>+</m-icon></m-icon-wrapper>
         <m-icon-wrapper size="40" aria-hidden="true" style="--m-icon-wrapper-radius:50%;--m-icon-wrapper-background:#edf0fa;--m-icon-wrapper-color:#7040a0"><m-icon size="24">✓</m-icon></m-icon-wrapper>
-        <button type="button" aria-label="Save"><m-icon size="24" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 13 4 4L20 5"></path></svg></m-icon></button>
-        <a href="#behavior-heading" aria-label="Icon behavior"><m-icon-wrapper size="40" aria-hidden="true"><m-icon size="24">→</m-icon></m-icon-wrapper></a>
+        <m-button aria-label="Save"><m-icon size="24" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m5 13 4 4L20 5"></path></svg></m-icon></m-button>
+        <m-a href="#behavior-heading" aria-label="Icon behavior"><m-icon-wrapper size="40" aria-hidden="true"><m-icon size="24">→</m-icon></m-icon-wrapper></m-a>
       </div>
     </section>
     <section data-demo-example="live" aria-labelledby="live-heading">
       <header data-demo-header><div><h2 id="live-heading">Direct properties and reconnect</h2><p>Updates preserve the original SVG and its listeners. Null size returns control to inherited or authored styles.</p></div></header>
       <div class="demo-preview" data-demo-preview>
         <m-icon id="live-icon" size="32" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"></circle><path d="M12 6v12M6 12h12"></path></svg></m-icon>
-        <button type="button" id="change-size">Toggle size</button>
-        <button type="button" id="reset-size">Reset size</button>
-        <button type="button" id="reconnect-icon">Reconnect</button>
-        <span id="icon-status" role="status">Size: 32</span>
+        <m-button id="change-size">Toggle size</m-button>
+        <m-button id="reset-size">Reset size</m-button>
+        <m-button id="reconnect-icon">Reconnect</m-button>
+        <m-span id="icon-status" role="status">Size: 32</m-span>
       </div>
     </section>
     <section aria-labelledby="api-heading">

@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-transfer.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
@@ -16,6 +17,7 @@
   <link rel="stylesheet" href="./transfer.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-transfer.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script type="module" src="./transfer.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -47,7 +49,9 @@
           <option value="item-4">Item 4</option>
           <option value="item-5">Item 5</option>
         </m-transfer>
-        <p id="basic-status" role="status" style="margin-block-start: 12px;">Target members: none</p>
+        <m-box margin="12 0 0 0">
+          <m-p id="basic-status" role="status">Target members: none</m-p>
+        </m-box>
       </div>
     </section>
 
@@ -55,32 +59,32 @@
       <header data-demo-header><div><h2 id="custom-heading">Custom titles and pre-selected items</h2><p>Custom source and target titles with pre-populated target members.</p></div></header>
       <div data-demo-preview>
         <m-transfer id="custom-transfer" source-title="Available permissions" target-title="Granted permissions">
-          <div data-transfer-columns>
-            <div data-transfer-pane data-pane="source">
-              <h3 data-transfer-title="source">Available permissions</h3>
+          <m-box data-transfer-columns>
+            <m-box data-transfer-pane data-pane="source">
+              <m-h3 data-transfer-title="source">Available permissions</m-h3>
               <label><input type="search" data-transfer-filter="source" placeholder="Filter permissions" aria-label="Filter source"></label>
               <label><select data-transfer-source multiple size="6">
                 <option value="read">Read access</option>
                 <option value="write">Write access</option>
                 <option value="delete">Delete access</option>
               </select></label>
-              <p data-transfer-count="source"></p>
-            </div>
-            <div data-transfer-actions>
-              <button type="button" data-transfer-action="add" aria-label="Move selected to target">→</button>
-              <button type="button" data-transfer-action="remove" aria-label="Move selected to source">←</button>
-              <button type="button" data-transfer-action="add-all" aria-label="Move all to target">⇥</button>
-              <button type="button" data-transfer-action="remove-all" aria-label="Move all to source">⇤</button>
-            </div>
-            <div data-transfer-pane data-pane="target">
-              <h3 data-transfer-title="target">Granted permissions</h3>
+              <m-p data-transfer-count="source"></m-p>
+            </m-box>
+            <m-box data-transfer-actions>
+              <m-button data-transfer-action="add" aria-label="Move selected to target">→</m-button>
+              <m-button data-transfer-action="remove" aria-label="Move selected to source">←</m-button>
+              <m-button data-transfer-action="add-all" aria-label="Move all to target">⇥</m-button>
+              <m-button data-transfer-action="remove-all" aria-label="Move all to source">⇤</m-button>
+            </m-box>
+            <m-box data-transfer-pane data-pane="target">
+              <m-h3 data-transfer-title="target">Granted permissions</m-h3>
               <label><input type="search" data-transfer-filter="target" placeholder="Filter permissions" aria-label="Filter target"></label>
               <label><select data-transfer-target multiple size="6">
                 <option value="admin">Admin access</option>
               </select></label>
-              <p data-transfer-count="target"></p>
-            </div>
-          </div>
+              <m-p data-transfer-count="target"></m-p>
+            </m-box>
+          </m-box>
         </m-transfer>
       </div>
     </section>
@@ -101,9 +105,9 @@
         <form id="members-form">
           <fieldset class="m-transfer" data-transfer data-transfer-name="members[]" data-transfer-required id="transfer">
             <legend>Project access membership</legend>
-            <div data-transfer-columns>
+            <m-box data-transfer-columns>
               <section data-transfer-pane>
-                <h2>Source</h2>
+                <m-h2>Source</m-h2>
                 <label>Filter source<input type="search" data-transfer-filter="source" placeholder="Match source labels"></label>
                 <label>Highlight pending additions<select data-transfer-source multiple size="7">
                   <option value="alpha" selected>Alpha access</option>
@@ -112,7 +116,7 @@
                   <option value="locked-source" disabled>Locked source item</option>
                 </select></label>
                 <output data-transfer-count="source">4 available</output>
-                <div class="stage-actions">
+                <m-box class="stage-actions">
                   <button type="button" data-transfer-action="select-source" hidden>Highlight source matches</button>
                   <button type="button" data-transfer-action="clear-source" hidden>Clear source highlights</button>
                 </div>

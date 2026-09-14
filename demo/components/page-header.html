@@ -13,10 +13,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-breadcrumb.css">
   <link rel="stylesheet" href="../../dist/markup-ui-tag.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./page-header.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-page-header.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -51,8 +53,8 @@
             <m-breadcrumb-item href="#workspace"><m-text>Workspace</m-text></m-breadcrumb-item>
             <m-breadcrumb-item aria-current="page"><m-text>Project</m-text></m-breadcrumb-item>
           </m-breadcrumb>
-          <div class="m-page-header-main">
-            <div class="m-page-header-lead">
+          <m-box class="m-page-header-main">
+            <m-box class="m-page-header-lead">
               <m-button slot="back" class="m-page-header-back" id="destination-back">
                 <svg class="back-graphic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M20 12H4m7-7-7 7 7 7"></path></svg>
                 <m-text>Back</m-text>
@@ -63,22 +65,22 @@
                   <path d="M9 27V13h7l4 5h11v9Z" fill="#175fbb"></path>
                 </svg>
               </span>
-              <div class="m-page-header-titles">
+              <m-box class="m-page-header-titles">
                 <m-heading level="1" class="m-page-header-title" id="project-title"><h1>Project migration</h1></m-heading>
                 <m-p class="m-page-header-subtitle">One native heading, original content and explicit navigation</m-p>
-              </div>
-            </div>
-            <div class="m-page-header-extra">
+              </m-box>
+            </m-box>
+            <m-box class="m-page-header-extra">
               <m-tag type="info">Draft</m-tag>
               <m-button type="primary">Action</m-button>
-            </div>
-          </div>
-          <div class="m-page-header-content">
+            </m-box>
+          </m-box>
+          <m-box class="m-page-header-content">
             <m-p>Page header organizes page metadata and navigation cleanly across desktop and mobile screens.</m-p>
-          </div>
-          <div class="m-page-header-footer">
+          </m-box>
+          <m-box class="m-page-header-footer">
             <m-text>Footer information remains ordinary authored content.</m-text>
-          </div>
+          </m-box>
         </m-page-header>
       </div>
     </section>
@@ -91,9 +93,9 @@
             <svg class="back-graphic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M20 12H4m7-7-7 7 7 7"></path></svg>
             <m-text>Back</m-text>
           </m-button>
-          <div slot="extra" class="m-page-header-extra">
+          <m-box slot="extra" class="m-page-header-extra">
             <m-tag type="success">Active</m-tag>
-          </div>
+          </m-box>
           <m-p>Main content automatically wrapped into the content region.</m-p>
         </m-page-header>
         <m-p id="back-status" role="status">Back event received: 0 times.</m-p>
@@ -110,30 +112,30 @@
       <div data-demo-preview>
         <form id="record-form">
           <m-page-header class="panel" id="record-header">
-            <div class="m-page-header-main">
-              <div class="m-page-header-lead">
+            <m-box class="m-page-header-main">
+              <m-box class="m-page-header-lead">
                 <m-button slot="back" class="m-page-header-back" id="application-back">
                   <svg class="back-graphic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M20 12H4m7-7-7 7 7 7"></path></svg>
                   <m-text>Application back</m-text>
                 </m-button>
-                <div class="m-page-header-titles">
-                  <m-heading level="2" class="m-page-header-title" id="record-title"><h2>Record details</h2></m-heading>
+                <m-box class="m-page-header-titles">
+                  <m-heading level="2" class="m-page-header-title" id="record-title"><m-h2>Record details</m-h2></m-heading>
                   <m-p class="m-page-header-subtitle">Edit record attributes below</m-p>
-                </div>
-              </div>
-              <div class="m-page-header-extra">
+                </m-box>
+              </m-box>
+              <m-box class="m-page-header-extra">
                 <m-button attr-type="submit" id="save-record">Save</m-button>
                 <m-button attr-type="reset" id="reset-record">Reset</m-button>
                 <m-button disabled id="disabled-action">Unavailable</m-button>
-              </div>
-            </div>
-            <div class="m-page-header-content">
-              <label for="record-name">Record name</label>
+              </m-box>
+            </m-box>
+            <m-box class="m-page-header-content">
+              <m-label for="record-name">Record name</m-label>
               <input id="record-name" name="name" value="Initial record" required>
-            </div>
-            <div class="m-page-header-footer">
+            </m-box>
+            <m-box class="m-page-header-footer">
               <m-p id="application-result" role="status">No application action yet.</m-p>
-            </div>
+            </m-box>
           </m-page-header>
         </form>
       </div>
@@ -143,20 +145,20 @@
       <header data-demo-header><div><h2 id="static-heading">CSS-only native composition</h2><p>Header using class-based markup without custom element dependency.</p></div></header>
       <div data-demo-preview>
         <header class="m-page-header panel" id="static-header">
-          <div class="m-page-header-main">
-            <div class="m-page-header-lead">
-              <div class="m-page-header-titles">
-                <m-heading level="2" class="m-page-header-title"><h2>Static CSS Header</h2></m-heading>
+          <m-box class="m-page-header-main">
+            <m-box class="m-page-header-lead">
+              <m-box class="m-page-header-titles">
+                <m-heading level="2" class="m-page-header-title"><m-h2>Static CSS Header</m-h2></m-heading>
                 <m-p class="m-page-header-subtitle">Pure CSS class composition</m-p>
-              </div>
-            </div>
-            <div class="m-page-header-extra">
+              </m-box>
+            </m-box>
+            <m-box class="m-page-header-extra">
               <m-tag>Static</m-tag>
-            </div>
-          </div>
-          <div class="m-page-header-content">
+            </m-box>
+          </m-box>
+          <m-box class="m-page-header-content">
             <m-p>CSS styles apply cleanly to both m-page-header elements and .m-page-header classes.</m-p>
-          </div>
+          </m-box>
         </header>
       </div>
     </section>

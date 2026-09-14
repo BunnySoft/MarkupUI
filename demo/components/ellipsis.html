@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./ellipsis.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-ellipsis.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
@@ -55,11 +57,11 @@
           <m-ellipsis id="clamped-dynamic" line-clamp="2" class="bounded">A longer description uses two lines when line-clamp is configured. The complete text stays in the DOM, including <m-text strong>important native emphasis</m-text>. Authors can configure line clamping for any positive count.</m-ellipsis>
         </m-p>
         <m-p id="clamp-status" role="status">Current clamp: 2 lines</m-p>
-        <div class="examples">
+        <m-box class="examples">
           <m-button id="clamp-1">1 line</m-button>
           <m-button id="clamp-2">2 lines</m-button>
           <m-button id="clamp-3">3 lines</m-button>
-        </div>
+        </m-box>
       </div>
     </section>
 
@@ -70,9 +72,9 @@
           <m-ellipsis id="click-expand" line-clamp="2" expand-trigger="click" class="bounded">Click this text or activate it with Enter/Space to expand or collapse it. The complete content is retained in one node without duplicate hidden labels or external overlays.</m-ellipsis>
         </m-p>
         <m-p id="expand-status" role="status">Expanded: false</m-p>
-        <div class="examples">
+        <m-box class="examples">
           <m-button id="toggle-expand">Toggle programmatically</m-button>
-        </div>
+        </m-box>
       </div>
     </section>
 
@@ -88,29 +90,29 @@
     <section data-demo-example="disclosure" aria-labelledby="disclosure-heading">
       <header data-demo-header><div><h2 id="disclosure-heading">Native disclosure</h2><p>Zero-JS semantic disclosure using details and summary for full accessibility.</p></div></header>
       <div data-demo-preview>
-        <details class="m-ellipsis-disclosure bounded" id="single-disclosure">
-          <summary id="single-summary">
+        <m-details class="m-ellipsis-disclosure bounded" id="single-disclosure">
+          <m-summary id="single-summary">
             <m-ellipsis id="disclosure-ellipsis">This is the complete original sentence, kept in one native text node even when its visual presentation is abbreviated.</m-ellipsis>
-            <span class="m-ellipsis-hint">Expand or collapse full text</span>
-          </summary>
-        </details>
-        <details class="m-ellipsis-disclosure bounded" id="multi-disclosure">
-          <summary id="multi-summary">
+            <m-span class="m-ellipsis-hint">Expand or collapse full text</m-span>
+          </m-summary>
+        </m-details>
+        <m-details class="m-ellipsis-disclosure bounded" id="multi-disclosure">
+          <m-summary id="multi-summary">
             <m-ellipsis line-clamp="2" id="multi">A longer description uses two lines in native disclosure. The complete text stays here, including <m-text strong>important native emphasis</m-text>. Open this disclosure to read or select all of it.</m-ellipsis>
-            <span class="m-ellipsis-hint">Expand or collapse description</span>
-          </summary>
-        </details>
+            <m-span class="m-ellipsis-hint">Expand or collapse description</m-span>
+          </m-summary>
+        </m-details>
       </div>
     </section>
 
     <section data-demo-example="rtl" aria-labelledby="rtl-heading">
       <header data-demo-header><div><h2 id="rtl-heading">RTL and native direction</h2><p>Native text direction and language preservation.</p></div></header>
       <div data-demo-preview>
-        <div dir="rtl" lang="ar">
+        <m-box dir="rtl" lang="ar">
           <m-p>
             <m-ellipsis id="rtl-ellipsis" class="bounded">هذا نص عربي كامل يحتفظ باتجاهه ومحتواه الأصلي ويمكن قراءته بالكامل دون تشويه الاتجاه أو فقدان الحروف</m-ellipsis>
           </m-p>
-        </div>
+        </m-box>
       </div>
     </section>
 

@@ -8,11 +8,22 @@
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-watermark.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-input.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-input-number.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-checkbox.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./watermark.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-watermark.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-input.global.js"></script>
+  <script defer src="../../dist/markup-ui-input-number.global.js"></script>
+  <script defer src="../../dist/markup-ui-checkbox.global.js"></script>
   <script type="module" src="./watermark.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -44,9 +55,9 @@
         </header>
         <div data-demo-preview>
           <m-watermark content="CONFIDENTIAL" class="watermark-card">
-            <h3>Internal Document</h3>
-            <p>Select this original text through the decorative overlay. Links, controls, selection and copy remain native.</p>
-            <p>Repetition is a CSS background overlay rather than a DOM grid of stamp elements.</p>
+            <m-h3>Internal Document</m-h3>
+            <m-p>Select this original text through the decorative overlay. Links, controls, selection and copy remain native.</m-p>
+            <m-p>Repetition is a CSS background overlay rather than a DOM grid of stamp elements.</m-p>
           </m-watermark>
         </div>
       </section>
@@ -60,9 +71,9 @@
         </header>
         <div data-demo-preview>
           <m-watermark content="INTERNAL DRAFT" cross rotate="-24" width="220" height="120" class="watermark-card">
-            <h3>Alternating Cross Pattern</h3>
-            <p>The cross attribute offsets adjacent tile rows for a staggered watermark layout.</p>
-            <p>Rotation is applied around the tile center with bounded geometry.</p>
+            <m-h3>Alternating Cross Pattern</m-h3>
+            <m-p>The cross attribute offsets adjacent tile rows for a staggered watermark layout.</m-p>
+            <m-p>Rotation is applied around the tile center with bounded geometry.</m-p>
           </m-watermark>
         </div>
       </section>
@@ -76,17 +87,21 @@
         </header>
         <div data-demo-preview>
           <m-watermark id="dynamic-watermark" content="LOCAL DRAFT" rotate="-20" class="watermark-card">
-            <form id="sample-form">
-              <label>Draft title <input id="draft-title" value="Project proposal"></label>
-              <label>Notes <textarea rows="3">Native controls and typing remain unaffected by the overlay.</textarea></label>
+            <m-form id="sample-form">
+              <m-label for="draft-title">Draft title</m-label>
+              <m-input id="draft-title" value="Project proposal"></m-input>
+              <m-label for="draft-notes">Notes</m-label>
+              <m-textarea id="draft-notes" rows="3" value="Native controls and typing remain unaffected by the overlay."></m-textarea>
               <m-button id="count-button">Native action count: 0</m-button>
-            </form>
+            </m-form>
           </m-watermark>
           <m-box class="controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
-            <label>Content <input id="content-input" value="LOCAL DRAFT"></label>
-            <label>Rotate <input id="rotate-input" type="number" value="-20" min="-360" max="360"></label>
-            <label><input id="cross-input" type="checkbox"> Cross pattern</label>
-            <label><input id="fullscreen-input" type="checkbox"> Viewport fullscreen</label>
+            <m-label for="content-input">Content</m-label>
+            <m-input id="content-input" value="LOCAL DRAFT"></m-input>
+            <m-label for="rotate-input">Rotate</m-label>
+            <m-input-number id="rotate-input" value="-20" min="-360" max="360"></m-input-number>
+            <m-checkbox id="cross-input">Cross pattern</m-checkbox>
+            <m-checkbox id="fullscreen-input">Viewport fullscreen</m-checkbox>
           </m-box>
         </div>
       </section>

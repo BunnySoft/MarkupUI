@@ -8,10 +8,15 @@
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-radio.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./radio.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script type="module" src="../../dist/markup-ui-radio.js"></script>
   <script type="module" src="./radio.js"></script>
   <script type="module" src="../example-code.js"></script>
@@ -31,8 +36,8 @@
       <section data-demo-example="standalone" aria-labelledby="standalone-title">
         <header data-demo-header><div><h2 id="standalone-title">Standalone native peers</h2><p>A group element is optional. Radios with the same native name and form owner are exclusive without a component selection engine.</p></div></header>
         <div data-demo-preview>
-          <m-radio><label class="m-radio"><input id="news-on" type="radio" name="news" value="on" checked><span>News on</span></label></m-radio>
-          <m-radio><label class="m-radio"><input id="news-off" type="radio" name="news" value="off"><span>News off</span></label></m-radio>
+          <m-radio><m-label class="m-radio"><input id="news-on" type="radio" name="news" value="on" checked><span>News on</span></m-label></m-radio>
+          <m-radio><m-label class="m-radio"><input id="news-off" type="radio" name="news" value="off"><span>News off</span></m-label></m-radio>
         </div>
       </section>
       <section data-demo-example="group" aria-labelledby="group-title">
@@ -41,34 +46,34 @@
           <m-radio-group id="plans">
             <fieldset class="m-radio-group" aria-describedby="plan-help">
               <legend>Required plan</legend>
-              <p id="plan-help">One shared native name and actual form owner. The group value reads current checkedness, not its original attributes.</p>
-              <div class="m-radio-group__items" id="plan-items">
-                <m-radio id="basic-root"><label class="m-radio"><input data-radio id="basic" type="radio" name="plan" value="basic" required checked><span>Basic</span></label></m-radio>
-                <m-radio id="pro-root"><label class="m-radio"><input data-radio id="pro" type="radio" name="plan" value="pro"><span>Professional with a longer wrapping label</span></label></m-radio>
-                <m-radio><label class="m-radio"><input data-radio id="locked" type="radio" name="plan" value="locked" disabled><span>Author-disabled plan</span></label></m-radio>
-                <m-radio hidden><label class="m-radio"><input data-radio id="hidden-plan" type="radio" name="plan" value="hidden"><span>Authored hidden option (not a proxy)</span></label></m-radio>
-              </div>
-              <template id="plan-template"><m-radio><label class="m-radio"><input data-radio type="radio" name="plan" value="team"><span>Team, cloned by the application</span></label></m-radio></template>
+              <m-p id="plan-help">One shared native name and actual form owner. The group value reads current checkedness, not its original attributes.</m-p>
+              <m-box class="m-radio-group__items" id="plan-items">
+                <m-radio id="basic-root"><m-label class="m-radio"><input data-radio id="basic" type="radio" name="plan" value="basic" required checked><span>Basic</span></m-label></m-radio>
+                <m-radio id="pro-root"><m-label class="m-radio"><input data-radio id="pro" type="radio" name="plan" value="pro"><span>Professional with a longer wrapping label</span></m-label></m-radio>
+                <m-radio><m-label class="m-radio"><input data-radio id="locked" type="radio" name="plan" value="locked" disabled><span>Author-disabled plan</span></m-label></m-radio>
+                <m-radio hidden><m-label class="m-radio"><input data-radio id="hidden-plan" type="radio" name="plan" value="hidden"><span>Authored hidden option (not a proxy)</span></m-label></m-radio>
+              </m-box>
+              <template id="plan-template"><m-radio><m-label class="m-radio"><input data-radio type="radio" name="plan" value="team"><span>Team, cloned by the application</span></m-label></m-radio></template>
               <m-radio-group id="billing" size="small">
                 <fieldset class="m-radio-group">
                   <legend>Nested group with a different native name</legend>
-                  <m-radio><label class="m-radio"><input data-radio id="bill-monthly" type="radio" name="billing" value="monthly" checked><span>Monthly billing</span></label></m-radio>
-                  <m-radio><label class="m-radio"><input data-radio id="bill-yearly" type="radio" name="billing" value="yearly"><span>Yearly billing</span></label></m-radio>
+                  <m-radio><m-label class="m-radio"><input data-radio id="bill-monthly" type="radio" name="billing" value="monthly" checked><span>Monthly billing</span></m-label></m-radio>
+                  <m-radio><m-label class="m-radio"><input data-radio id="bill-yearly" type="radio" name="billing" value="yearly"><span>Yearly billing</span></m-label></m-radio>
                 </fieldset>
               </m-radio-group>
             </fieldset>
           </m-radio-group>
-          <div class="demo-tools">
-            <button type="button" id="silent">Silent value = "pro"</button>
-            <button type="button" id="clear">Silent clear selection</button>
-            <button type="button" id="default">Make Pro the next reset default</button>
-            <button type="button" id="add">Clone Team and refresh</button>
-            <button type="button" id="remove">Remove selected plan and refresh</button>
-            <button type="button" id="disabled">Toggle Plans disabled</button>
-            <button type="button" id="reconnect">Disconnect and reconnect Plans</button>
-          </div>
-          <p id="state">Native selection works before JavaScript; the live group API initializes after loading.</p>
-          <p id="events">Accepted plan changes: 0</p>
+          <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+            <m-button id="silent">Silent value = "pro"</m-button>
+            <m-button id="clear">Silent clear selection</m-button>
+            <m-button id="default">Make Pro the next reset default</m-button>
+            <m-button id="add">Clone Team and refresh</m-button>
+            <m-button id="remove">Remove selected plan and refresh</m-button>
+            <m-button id="disabled">Toggle Plans disabled</m-button>
+            <m-button id="reconnect">Disconnect and reconnect Plans</m-button>
+          </m-box>
+          <m-p id="state">Native selection works before JavaScript; the live group API initializes after loading.</m-p>
+          <m-p id="events">Accepted plan changes: 0</m-p>
         </div>
       </section>
       <section data-demo-example="buttons" aria-labelledby="buttons-title">
@@ -77,16 +82,16 @@
           <m-radio-group id="layouts" size="large">
             <fieldset class="m-radio-group">
               <legend>Layout</legend>
-              <div class="m-radio-group__buttons">
-                <m-radio-button><label class="m-radio-button"><input data-radio id="layout-grid" type="radio" name="layout" value="grid" checked><span>Grid</span></label></m-radio-button>
-                <m-radio-button><label class="m-radio-button"><input data-radio id="layout-list" type="radio" name="layout" value="list"><span>List</span></label></m-radio-button>
-                <m-radio-button><label class="m-radio-button"><input data-radio id="layout-compact" type="radio" name="layout" value="compact" disabled><span>Compact (disabled)</span></label></m-radio-button>
-              </div>
+              <m-box class="m-radio-group__buttons">
+                <m-radio-button><m-label class="m-radio-button"><input data-radio id="layout-grid" type="radio" name="layout" value="grid" checked><span>Grid</span></m-label></m-radio-button>
+                <m-radio-button><m-label class="m-radio-button"><input data-radio id="layout-list" type="radio" name="layout" value="list"><span>List</span></m-label></m-radio-button>
+                <m-radio-button><m-label class="m-radio-button"><input data-radio id="layout-compact" type="radio" name="layout" value="compact" disabled><span>Compact (disabled)</span></m-label></m-radio-button>
+              </m-box>
             </fieldset>
           </m-radio-group>
-          <label>Button size <select id="size"><option>small</option><option>medium</option><option selected>large</option></select></label>
-          <button type="button" id="rtl">Toggle RTL</button>
-          <button type="button" id="theme">Toggle dark preview</button>
+          <m-label>Button size <select id="size"><option>small</option><option>medium</option><option selected>large</option></select></m-label>
+          <m-button type="button" id="rtl">Toggle RTL</m-button>
+          <m-button type="button" id="theme">Toggle dark preview</m-button>
         </div>
       </section>
       <section data-demo-example="external" aria-labelledby="external-title">
@@ -95,13 +100,13 @@
           <m-radio-group id="external">
             <fieldset class="m-radio-group">
               <legend>Same plan name, different actual form owner</legend>
-              <m-radio><label class="m-radio"><input data-radio id="external-monthly" type="radio" name="plan" value="monthly" form="alternate" checked><span>External monthly</span></label></m-radio>
-              <m-radio><label class="m-radio"><input data-radio id="external-yearly" type="radio" name="plan" value="yearly" form="alternate"><span>External yearly</span></label></m-radio>
+              <m-radio><m-label class="m-radio"><input data-radio id="external-monthly" type="radio" name="plan" value="monthly" form="alternate" checked><span>External monthly</span></m-label></m-radio>
+              <m-radio><m-label class="m-radio"><input data-radio id="external-yearly" type="radio" name="plan" value="yearly" form="alternate"><span>External yearly</span></m-label></m-radio>
             </fieldset>
           </m-radio-group>
-          <div id="peer-region"></div>
-          <template id="peer-template"><label class="m-radio"><input type="radio" name="plan" value="outside"><span>Conflicting outside native peer: still browser-owned</span></label></template>
-          <button type="button" id="peer">Toggle conflicting outside peer</button>
+          <m-box id="peer-region"></m-box>
+          <template id="peer-template"><m-label class="m-radio"><input type="radio" name="plan" value="outside"><span>Conflicting outside native peer: still browser-owned</span></m-label></template>
+          <m-button type="button" id="peer">Toggle conflicting outside peer</m-button>
         </div>
       </section>
       <section data-demo-example="forms" aria-labelledby="forms-title">
@@ -110,7 +115,7 @@
           <input type="hidden" name="local" value="only">
           <button type="submit">Inspect native FormData</button>
           <button type="reset">Native reset</button>
-          <button type="button" id="cancel">Cancel next reset</button>
+          <m-button type="button" id="cancel">Cancel next reset</m-button>
           <pre id="submission">No submission yet.</pre>
         </div>
       </section>
@@ -120,8 +125,8 @@
       <header data-demo-header><div><h2 id="fieldset-title">Disabled fieldset and first legend</h2><p>Native effective disabledness includes enclosing fieldsets. The first legend's radio remains operable. The Radio disabled property reports only its own flag.</p></div></header>
       <div data-demo-preview>
         <fieldset class="m-radio-group" disabled>
-          <legend><m-radio><label class="m-radio"><input id="legend-radio" type="radio" name="legend-radio" value="allowed"><span>Native first-legend exception</span></label></m-radio></legend>
-          <m-radio><label class="m-radio"><input id="disabled-radio" type="radio" name="legend-radio" value="blocked"><span>Disabled fieldset member</span></label></m-radio>
+          <legend><m-radio><m-label class="m-radio"><input id="legend-radio" type="radio" name="legend-radio" value="allowed"><span>Native first-legend exception</span></m-label></m-radio></legend>
+          <m-radio><m-label class="m-radio"><input id="disabled-radio" type="radio" name="legend-radio" value="blocked"><span>Disabled fieldset member</span></m-label></m-radio>
         </fieldset>
       </div>
     </section>

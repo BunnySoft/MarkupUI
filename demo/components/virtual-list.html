@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./virtual-list.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-virtual-list.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -47,16 +49,16 @@
         </div>
       </header>
       <div data-demo-preview>
-        <div class="tools" id="tools" hidden>
-          <m-button id="start"><button type="button">First</button></m-button>
-          <m-button id="middle"><button type="button">Middle (50,001)</button></m-button>
-          <m-button id="end"><button type="button">Last</button></m-button>
-          <m-button id="resize"><button type="button">Toggle 160/320px</button></m-button>
-          <m-button id="hide"><button type="button">Hide/show viewport</button></m-button>
-          <m-button id="update"><button type="button">Update visible text</button></m-button>
-          <m-button id="rtl"><button type="button">Toggle RTL</button></m-button>
-          <m-button id="disconnect"><button type="button">Disconnect both lists</button></m-button>
-        </div>
+        <m-box class="tools" id="tools" hidden display="flex" wrap="wrap" gap="8">
+          <m-button id="start">First</m-button>
+          <m-button id="middle">Middle (50,001)</m-button>
+          <m-button id="end">Last</m-button>
+          <m-button id="resize">Toggle 160/320px</m-button>
+          <m-button id="hide">Hide/show viewport</m-button>
+          <m-button id="update">Update visible text</m-button>
+          <m-button id="rtl">Toggle RTL</m-button>
+          <m-button id="disconnect">Disconnect both lists</m-button>
+        </m-box>
         <m-virtual-list id="large" class="m-virtual-list" height="320px" item-size="32" aria-labelledby="basic-heading" hidden>
           <ol class="m-virtual-list__items" aria-labelledby="basic-heading" role="list"></ol>
         </m-virtual-list>
@@ -76,15 +78,15 @@
           <m-virtual-list id="editors" class="m-virtual-list" height="192px" item-size="48" aria-labelledby="editor-heading" hidden>
             <ul class="m-virtual-list__items" aria-labelledby="editor-heading" role="list"></ul>
           </m-virtual-list>
-          <div id="editor-tools" class="tools" hidden>
-            <m-button id="edit-end"><button type="button">Scroll editors to end</button></m-button>
-            <m-button id="reverse"><button type="button">Reverse stable keys</button></m-button>
-            <m-button id="remove-first"><button type="button">Remove key 0</button></m-button>
-            <m-button><button type="submit">Inspect mounted FormData</button></m-button>
-          </div>
+          <m-box id="editor-tools" class="tools" hidden display="flex" wrap="wrap" gap="8">
+            <m-button id="edit-end">Scroll editors to end</m-button>
+            <m-button id="reverse">Reverse stable keys</m-button>
+            <m-button id="remove-first">Remove key 0</m-button>
+            <m-button type="submit">Inspect mounted FormData</m-button>
+          </m-box>
         </form>
         <pre id="submission"></pre>
-        <p id="events"></p>
+        <m-p id="events"></m-p>
       </div>
     </section>
 

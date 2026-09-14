@@ -12,10 +12,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./dynamic-input.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-dynamic-input.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -49,31 +51,31 @@
       </header>
       <div data-demo-preview>
         <m-dynamic-input id="basic-dynamic-input" min="1" max="5">
-          <div class="m-dynamic-input__rows" data-dynamic-rows>
-            <div class="m-dynamic-input__row" data-dynamic-row data-dynamic-key="row-1">
-              <div class="m-dynamic-input__fields">
-                <label>Item <span class="m-input" data-input><input data-input-control name="items[]" value="First item" placeholder="Enter item"></span></label>
-              </div>
-              <div class="m-dynamic-input__actions">
+          <m-box class="m-dynamic-input__rows" data-dynamic-rows>
+            <m-box class="m-dynamic-input__row" data-dynamic-row data-dynamic-key="row-1">
+              <m-box class="m-dynamic-input__fields">
+                <m-label>Item <span class="m-input" data-input><input data-input-control name="items[]" value="First item" placeholder="Enter item"></span></m-label>
+              </m-box>
+              <m-box class="m-dynamic-input__actions">
                 <button type="button" data-dynamic-action="up">Up</button>
                 <button type="button" data-dynamic-action="down">Down</button>
                 <button type="button" data-dynamic-action="add">Add</button>
                 <button type="button" data-dynamic-action="remove">Remove</button>
-              </div>
-            </div>
-          </div>
+              </m-box>
+            </m-box>
+          </m-box>
           <template data-dynamic-template>
-            <div class="m-dynamic-input__row" data-dynamic-row>
-              <div class="m-dynamic-input__fields">
-                <label>Item <span class="m-input" data-input><input data-input-control name="items[]" value="" placeholder="Enter item"></span></label>
-              </div>
-              <div class="m-dynamic-input__actions">
+            <m-box class="m-dynamic-input__row" data-dynamic-row>
+              <m-box class="m-dynamic-input__fields">
+                <m-label>Item <span class="m-input" data-input><input data-input-control name="items[]" value="" placeholder="Enter item"></span></m-label>
+              </m-box>
+              <m-box class="m-dynamic-input__actions">
                 <button type="button" data-dynamic-action="up">Up</button>
                 <button type="button" data-dynamic-action="down">Down</button>
                 <button type="button" data-dynamic-action="add">Add</button>
                 <button type="button" data-dynamic-action="remove">Remove</button>
-              </div>
-            </div>
+              </m-box>
+            </m-box>
           </template>
           <button type="button" data-dynamic-add>Add item</button>
         </m-dynamic-input>
@@ -90,31 +92,31 @@
       </header>
       <div data-demo-preview>
         <m-dynamic-input id="disabled-dynamic-input" min="1" max="3" disabled>
-          <div class="m-dynamic-input__rows" data-dynamic-rows>
-            <div class="m-dynamic-input__row" data-dynamic-row data-dynamic-key="disabled-1">
-              <div class="m-dynamic-input__fields">
-                <label>Locked <span class="m-input" data-input><input data-input-control name="locked[]" value="Locked item"></span></label>
-              </div>
-              <div class="m-dynamic-input__actions">
+          <m-box class="m-dynamic-input__rows" data-dynamic-rows>
+            <m-box class="m-dynamic-input__row" data-dynamic-row data-dynamic-key="disabled-1">
+              <m-box class="m-dynamic-input__fields">
+                <m-label>Locked <span class="m-input" data-input><input data-input-control name="locked[]" value="Locked item"></span></m-label>
+              </m-box>
+              <m-box class="m-dynamic-input__actions">
                 <button type="button" data-dynamic-action="remove">Remove</button>
-              </div>
-            </div>
-          </div>
+              </m-box>
+            </m-box>
+          </m-box>
           <template data-dynamic-template>
-            <div class="m-dynamic-input__row" data-dynamic-row>
-              <div class="m-dynamic-input__fields">
-                <label>Locked <span class="m-input" data-input><input data-input-control name="locked[]" value=""></span></label>
-              </div>
-              <div class="m-dynamic-input__actions">
+            <m-box class="m-dynamic-input__row" data-dynamic-row>
+              <m-box class="m-dynamic-input__fields">
+                <m-label>Locked <span class="m-input" data-input><input data-input-control name="locked[]" value=""></span></m-label>
+              </m-box>
+              <m-box class="m-dynamic-input__actions">
                 <button type="button" data-dynamic-action="remove">Remove</button>
-              </div>
-            </div>
+              </m-box>
+            </m-box>
           </template>
           <button type="button" data-dynamic-add>Add locked item</button>
         </m-dynamic-input>
-        <div class="demo-tools">
+        <m-box class="demo-tools">
           <m-button id="toggle-disabled">Toggle Disabled</m-button>
-        </div>
+        </m-box>
       </div>
     </section>
 

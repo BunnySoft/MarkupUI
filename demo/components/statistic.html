@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./statistic.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-statistic.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script type="module" src="./statistic.js"></script>
@@ -41,13 +43,13 @@
     <section data-demo-example="basic" aria-labelledby="basic-heading">
       <header data-demo-header><div><h2 id="basic-heading">Basic statistic</h2><p>Passive values, affixes, and tabular figures.</p></div></header>
       <div data-demo-preview>
-        <div class="examples">
+        <m-box class="examples">
           <m-statistic label="Revenue" value="12345.60" prefix="$" suffix="USD" tabular-nums></m-statistic>
           <m-statistic label="Active Users" value="1,234"></m-statistic>
           <m-statistic label="Growth" value="+12.5" suffix="%"></m-statistic>
           <m-statistic label="Zero is a value" value="0"></m-statistic>
           <m-statistic label="Unknown" value="N/A"></m-statistic>
-        </div>
+        </m-box>
       </div>
     </section>
 
@@ -56,10 +58,10 @@
       <div data-demo-preview>
         <form id="metric-form">
           <m-statistic id="authored" role="group" aria-labelledby="metric-label" tabular-nums>
-            <h3 data-m-statistic-label id="metric-label">Active users</h3>
+            <m-h3 data-m-statistic-label id="metric-label">Active users</m-h3>
             <m-span data-m-statistic-prefix aria-hidden="true"><svg viewBox="0 0 20 20" width="16" height="16"><path d="M3 14 8 9l4 3 5-7" fill="none" stroke="currentColor" stroke-width="2"></path></svg></m-span>
             <m-strong id="authored-value">128</m-strong>
-            <m-span data-m-statistic-suffix><a id="details-link" href="#authored-heading">people</a> <m-button id="details-action">Details</m-button> <m-button type="submit" id="submit-action">Submit metric</m-button></m-span>
+            <m-span data-m-statistic-suffix><m-a id="details-link" href="#authored-heading">people</m-a> <m-button id="details-action">Details</m-button> <m-button type="submit" id="submit-action">Submit metric</m-button></m-span>
           </m-statistic>
         </form>
         <m-box class="controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
@@ -69,8 +71,8 @@
           <m-button id="tabular">Toggle tabular figures</m-button>
           <m-button id="reconnect">Reconnect</m-button>
         </m-box>
-        <p id="action-status" role="status">0 detail actions.</p>
-        <p id="submit-status" role="status">0 native submissions.</p>
+        <m-p id="action-status" role="status">0 detail actions.</m-p>
+        <m-p id="submit-status" role="status">0 native submissions.</m-p>
       </div>
     </section>
 

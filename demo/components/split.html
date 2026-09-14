@@ -40,14 +40,18 @@
     <section data-demo-example="basic" aria-labelledby="basic-heading">
       <header data-demo-header><div><h2 id="basic-heading">Basic horizontal split</h2><p>Side-by-side panes separated by an interactive resize handle.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <m-split id="basic-split" style="height: 200px; border: 1px solid #e0e0e6;">
-          <m-split-pane style="padding: 1rem;">
-            <h3>Primary Pane</h3>
-            <p>Content for the first pane.</p>
+        <m-split id="basic-split">
+          <m-split-pane>
+            <m-box padding="16">
+              <m-heading level="3">Primary Pane</m-heading>
+              <m-p>Content for the first pane.</m-p>
+            </m-box>
           </m-split-pane>
-          <m-split-pane style="padding: 1rem;">
-            <h3>Secondary Pane</h3>
-            <p>Content for the second pane.</p>
+          <m-split-pane>
+            <m-box padding="16">
+              <m-heading level="3">Secondary Pane</m-heading>
+              <m-p>Content for the second pane.</m-p>
+            </m-box>
           </m-split-pane>
         </m-split>
       </div>
@@ -56,14 +60,18 @@
     <section data-demo-example="vertical" aria-labelledby="vertical-heading">
       <header data-demo-header><div><h2 id="vertical-heading">Vertical split</h2><p>Top and bottom panes divided by a horizontal separator handle.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <m-split direction="vertical" id="vertical-split" style="height: 250px; border: 1px solid #e0e0e6;">
-          <m-split-pane style="padding: 1rem;">
-            <h3>Top Pane</h3>
-            <p>Content positioned above the separator.</p>
+        <m-split direction="vertical" id="vertical-split">
+          <m-split-pane>
+            <m-box padding="16">
+              <m-heading level="3">Top Pane</m-heading>
+              <m-p>Content positioned above the separator.</m-p>
+            </m-box>
           </m-split-pane>
-          <m-split-pane style="padding: 1rem;">
-            <h3>Bottom Pane</h3>
-            <p>Content positioned below the separator.</p>
+          <m-split-pane>
+            <m-box padding="16">
+              <m-heading level="3">Bottom Pane</m-heading>
+              <m-p>Content positioned below the separator.</m-p>
+            </m-box>
           </m-split-pane>
         </m-split>
       </div>
@@ -72,14 +80,18 @@
     <section data-demo-example="bounds" aria-labelledby="bounds-heading">
       <header data-demo-header><div><h2 id="bounds-heading">Configured size and constraints</h2><p>Initial 30% pane size bounded between min 0.2 and max 0.8.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <m-split size="0.3" min="0.2" max="0.8" id="constrained-split" style="height: 200px; border: 1px solid #e0e0e6;">
-          <m-split-pane style="padding: 1rem;">
-            <h3>30% Pane</h3>
-            <p>Cannot shrink below 20% or exceed 80%.</p>
+        <m-split size="0.3" min="0.2" max="0.8" id="constrained-split">
+          <m-split-pane>
+            <m-box padding="16">
+              <m-heading level="3">30% Pane</m-heading>
+              <m-p>Cannot shrink below 20% or exceed 80%.</m-p>
+            </m-box>
           </m-split-pane>
-          <m-split-pane style="padding: 1rem;">
-            <h3>Flexible Pane</h3>
-            <p>Adapts to available space.</p>
+          <m-split-pane>
+            <m-box padding="16">
+              <m-heading level="3">Flexible Pane</m-heading>
+              <m-p>Adapts to available space.</m-p>
+            </m-box>
           </m-split-pane>
         </m-split>
       </div>
@@ -88,14 +100,18 @@
     <section data-demo-example="disabled" aria-labelledby="disabled-heading">
       <header data-demo-header><div><h2 id="disabled-heading">Disabled split</h2><p>Resizing handle is inert and non-interactive.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <m-split disabled size="0.4" id="disabled-split" style="height: 200px; border: 1px solid #e0e0e6;">
-          <m-split-pane style="padding: 1rem;">
-            <h3>Disabled Left</h3>
-            <p>Handle cannot be dragged or adjusted.</p>
+        <m-split disabled size="0.4" id="disabled-split">
+          <m-split-pane>
+            <m-box padding="16">
+              <m-heading level="3">Disabled Left</m-heading>
+              <m-p>Handle cannot be dragged or adjusted.</m-p>
+            </m-box>
           </m-split-pane>
-          <m-split-pane style="padding: 1rem;">
-            <h3>Disabled Right</h3>
-            <p>Content remains accessible.</p>
+          <m-split-pane>
+            <m-box padding="16">
+              <m-heading level="3">Disabled Right</m-heading>
+              <m-p>Content remains accessible.</m-p>
+            </m-box>
           </m-split-pane>
         </m-split>
       </div>

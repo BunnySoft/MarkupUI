@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-collapse.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
@@ -16,6 +17,7 @@
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-collapse.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script type="module" src="./collapse.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -71,7 +73,7 @@
           <m-collapse-item key="one"><m-collapse-header>Outer section</m-collapse-header>
             <m-collapse-content>
               <m-collapse id="inner-collapse" accordion aria-label="Inner sections">
-                <m-collapse-item key="one"><m-collapse-header>Inner first</m-collapse-header><m-collapse-content><label>Inner note <input value="Retained when the outer closes"></label></m-collapse-content></m-collapse-item>
+                <m-collapse-item key="one"><m-collapse-header>Inner first</m-collapse-header><m-collapse-content><m-label>Inner note <input value="Retained when the outer closes"></m-label></m-collapse-content></m-collapse-item>
                 <m-collapse-item key="two"><m-collapse-header>Inner second</m-collapse-header><m-collapse-content>Independent expansion</m-collapse-content></m-collapse-item>
               </m-collapse>
             </m-collapse-content>
@@ -83,13 +85,13 @@
     <section data-demo-example="display-directive" aria-labelledby="display-heading">
       <header data-demo-header><div><h2 id="display-heading">Retained DOM and reconnect</h2><p>There is no conditional-rendering directive. Edit this input, close the item or detach/reconnect the group.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
-        <div><button type="button" data-retained-close>Close via API</button> <button type="button" data-retained-detach>Detach / reconnect</button></div>
-        <div id="retained-mount">
+        <m-box display="flex" gap="8"><m-button data-retained-close>Close via API</m-button> <m-button data-retained-detach>Detach / reconnect</m-button></m-box>
+        <m-box id="retained-mount">
           <m-collapse id="retained-collapse">
-            <m-collapse-item key="note"><m-collapse-header>Editable retained content</m-collapse-header><m-collapse-content><label>Note <input value="Edit me"></label></m-collapse-content></m-collapse-item>
+            <m-collapse-item key="note"><m-collapse-header>Editable retained content</m-collapse-header><m-collapse-content><m-label>Note <input value="Edit me"></m-label></m-collapse-content></m-collapse-item>
           </m-collapse>
-        </div>
-        <p class="demo-status" data-retained-status role="status">Native content is retained.</p>
+        </m-box>
+        <m-p class="demo-status" data-retained-status role="status">Native content is retained.</m-p>
       </div>
     </section>
     <section data-demo-example="item-header-click" aria-labelledby="click-heading">
@@ -100,7 +102,7 @@
           <m-collapse-item key="silver"><m-collapse-header>Silver</m-collapse-header><m-collapse-content>Good</m-collapse-content></m-collapse-item>
           <m-collapse-item key="gold"><m-collapse-header>Gold</m-collapse-header><m-collapse-content>Excellent</m-collapse-content></m-collapse-item>
         </m-collapse>
-        <p class="demo-status" data-header-status role="status">No header interaction.</p>
+        <m-p class="demo-status" data-header-status role="status">No header interaction.</m-p>
       </div>
     </section>
     <section data-demo-example="customize-icon" aria-labelledby="icon-heading">
@@ -114,32 +116,32 @@
     <section data-demo-example="default-expanded" aria-labelledby="default-heading">
       <header data-demo-header><div><h2 id="default-heading">Key collections and defaults</h2><p>These are typed properties, never serialized attributes. Reset is explicit after initialization.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
-        <div><button type="button" data-default-expand>Expand green</button> <button type="button" data-default-reset>Reset to red + amber</button></div>
+        <m-box display="flex" gap="8"><m-button data-default-expand>Expand green</m-button> <m-button data-default-reset>Reset to red + amber</m-button></m-box>
         <m-collapse id="default-collapse">
           <m-collapse-item key="green"><m-collapse-header>Green light</m-collapse-header><m-collapse-content>Pass</m-collapse-content></m-collapse-item>
           <m-collapse-item key="red"><m-collapse-header>Red light</m-collapse-header><m-collapse-content>Stop</m-collapse-content></m-collapse-item>
           <m-collapse-item key="amber"><m-collapse-header>Amber light</m-collapse-header><m-collapse-content>Warning</m-collapse-content></m-collapse-item>
         </m-collapse>
-        <p class="demo-status" data-default-status role="status"></p>
+        <m-p class="demo-status" data-default-status role="status"></m-p>
       </div>
     </section>
     <section data-demo-example="header-extra" aria-labelledby="extra-heading">
       <header data-demo-header><div><h2 id="extra-heading">Header extra actions</h2><p>Extras are siblings of details, not descendants of summary. Native button types retain their form semantics.</p></div></header>
       <div class="demo-preview" data-demo-preview>
         <m-collapse id="extra-collapse">
-          <m-collapse-item key="one"><m-collapse-header>Independent action</m-collapse-header><m-collapse-header-extra><button type="button" data-extra-name="one">Extra</button></m-collapse-header-extra><m-collapse-content>Clicking Extra does not expand this content.</m-collapse-content></m-collapse-item>
+          <m-collapse-item key="one"><m-collapse-header>Independent action</m-collapse-header><m-collapse-header-extra><m-button size="small" data-extra-name="one">Extra</m-button></m-collapse-header-extra><m-collapse-content>Clicking Extra does not expand this content.</m-collapse-content></m-collapse-item>
           <m-collapse-item key="two"><m-collapse-header>Independent information</m-collapse-header><m-collapse-header-extra>Updated today</m-collapse-header-extra><m-collapse-content>Extra information stays visible when closed.</m-collapse-content></m-collapse-item>
         </m-collapse>
-        <p class="demo-status" data-extra-status role="status">No extra action.</p>
+        <m-p class="demo-status" data-extra-status role="status">No extra action.</m-p>
       </div>
     </section>
     <section data-demo-example="disabled" aria-labelledby="disabled-heading">
       <header data-demo-header><div><h2 id="disabled-heading">Disabled user activation</h2><p>The header remains readable and focusable. Explicit application actions may still open disabled items.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
-        <button type="button" data-disabled-toggle>Toggle disabled item programmatically</button>
+        <m-button data-disabled-toggle>Toggle disabled item programmatically</m-button>
         <m-collapse id="disabled-collapse">
           <m-collapse-item key="enabled"><m-collapse-header>Enabled header</m-collapse-header><m-collapse-content>Normal native disclosure</m-collapse-content></m-collapse-item>
-          <m-collapse-item key="disabled" disabled><m-collapse-header>Disabled header</m-collapse-header><m-collapse-content><label>Still usable content <input value="Not disabled by the header"></label></m-collapse-content></m-collapse-item>
+          <m-collapse-item key="disabled" disabled><m-collapse-header>Disabled header</m-collapse-header><m-collapse-content><m-label>Still usable content <input value="Not disabled by the header"></m-label></m-collapse-content></m-collapse-item>
         </m-collapse>
       </div>
     </section>
@@ -147,9 +149,9 @@
       <header data-demo-header><div><h2 id="trigger-heading">Trigger areas</h2><p>Header and decorative arrow share native summary activation. There is no separate arrow-only trigger mode.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
         <m-collapse id="trigger-collapse">
-          <m-collapse-item key="one"><m-collapse-header>Main label and arrow</m-collapse-header><m-collapse-header-extra><button type="button" data-trigger-extra>Extra action</button></m-collapse-header-extra><m-collapse-content>Content controlled by the summary</m-collapse-content></m-collapse-item>
+          <m-collapse-item key="one"><m-collapse-header>Main label and arrow</m-collapse-header><m-collapse-header-extra><m-button size="small" data-trigger-extra>Extra action</m-button></m-collapse-header-extra><m-collapse-content>Content controlled by the summary</m-collapse-content></m-collapse-item>
         </m-collapse>
-        <p class="demo-status" data-trigger-status role="status">No trigger interaction.</p>
+        <m-p class="demo-status" data-trigger-status role="status">No trigger interaction.</m-p>
       </div>
     </section>
 

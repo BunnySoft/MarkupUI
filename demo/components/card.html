@@ -12,10 +12,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-tabs.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./card.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-card.global.js"></script>
   <script defer src="../../dist/markup-ui-switch.global.js"></script>
   <script defer src="../../dist/markup-ui-tabs.global.js"></script>
@@ -108,7 +110,7 @@
       <div class="demo-preview" data-demo-preview>
         <m-card>
           <m-card-header>
-            <h3>Card Slots Demo</h3>
+            <m-h3>Card Slots Demo</m-h3>
             <m-card-header-extra>#header-extra</m-card-header-extra>
           </m-card-header>
           <m-card-content>Card Content</m-card-content>
@@ -142,7 +144,7 @@
       <div class="demo-preview" data-demo-preview>
         <m-card segmented-content segmented-footer="soft">
           <m-card-header>
-            <h3>Card Segmented Demo</h3>
+            <m-h3>Card Segmented Demo</m-h3>
             <m-card-header-extra>#header-extra</m-card-header-extra>
           </m-card-header>
           <m-card-content>Card Content</m-card-content>
@@ -190,7 +192,7 @@
       </header>
       <div class="demo-preview" data-demo-preview>
         <m-card class="task-card" content-scrollable segmented>
-          <m-card-header><h3>Task List</h3></m-card-header>
+          <m-card-header><m-h3>Task List</m-h3></m-card-header>
           <m-card-content tabindex="0" role="region" aria-label="Scrollable task list">
             <p>Task 1: only content area scrolls.</p>
             <p>Task 2: only content area scrolls.</p>
@@ -237,22 +239,22 @@
             <span data-loaded-content hidden>Lorem Ipsum</span>
           </m-card-header>
           <m-card-content>
-            <div class="skeleton-lines" data-loading-content aria-label="Loading card content">
+            <m-box class="skeleton-lines" data-loading-content aria-label="Loading card content">
               <span class="skeleton"></span>
               <span class="skeleton"></span>
               <span class="skeleton"></span>
               <span class="skeleton"></span>
               <span class="skeleton"></span>
               <span class="skeleton"></span>
-            </div>
-            <div data-loaded-content hidden>
+            </m-box>
+            <m-box data-loaded-content hidden>
               Lorem ipsum dolor sit amet,<br>
               consectetur adipiscing elit,<br>
               sed do eiusmod tempor incididunt<br>
               ut labore et dolore magna aliqua.<br>
               Ut enim ad minim veniam,<br>
               quis nostrud exercitation ullamco
-            </div>
+            </m-box>
           </m-card-content>
         </m-card>
       </div>

@@ -13,10 +13,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-input.css">
   <link rel="stylesheet" href="../../dist/markup-ui-popover.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./tooltip.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-popover.global.js"></script>
   <script defer src="../../dist/markup-ui-tooltip.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
@@ -152,9 +154,9 @@
     <section data-demo-example="static" aria-labelledby="static-heading">
       <header data-demo-header><div><h2 id="static-heading">CSS-only native tooltip surface</h2><m-p>The .m-tooltip stylesheet applies directly to native elements without custom element registration.</m-p></div></header>
       <div data-demo-preview>
-        <div class="m-popover m-tooltip static-preview">
+        <m-box class="m-popover m-tooltip static-preview">
           <m-text>Static .m-tooltip surface with audited dark palette and clip overflow.</m-text>
-        </div>
+        </m-box>
       </div>
     </section>
 

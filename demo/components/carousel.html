@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-carousel.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
@@ -16,6 +17,7 @@
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-carousel.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script type="module" src="./carousel.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -88,12 +90,12 @@
     <section data-demo-example="dots" aria-labelledby="dots-heading">
       <header data-demo-header><div><h2 id="dots-heading">Custom indicators and direction</h2><p>This Web styling example uses application CSS for indicator shapes. Direction is a component property.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
-        <div class="option-groups" data-dots-options>
-          <button type="button" data-dot-type="dot" aria-pressed="true">Dots</button>
-          <button type="button" data-dot-type="line" aria-pressed="false">Lines</button>
-          <button type="button" data-dot-direction="horizontal" aria-pressed="true">Horizontal</button>
-          <button type="button" data-dot-direction="vertical" aria-pressed="false">Vertical</button>
-        </div>
+        <m-box class="option-groups" data-dots-options display="flex" wrap="wrap" gap="8">
+          <m-button data-dot-type="dot" aria-pressed="true">Dots</m-button>
+          <m-button data-dot-type="line" aria-pressed="false">Lines</m-button>
+          <m-button data-dot-direction="horizontal" aria-pressed="true">Horizontal</m-button>
+          <m-button data-dot-direction="vertical" aria-pressed="false">Vertical</m-button>
+        </m-box>
         <m-carousel class="dots-demo" aria-label="Configurable indicators">
           <m-carousel-viewport id="dots-viewport" tabindex="0" aria-label="Indicator slides">
             <m-carousel-item><img src="./carousel-1.svg" alt="Blue landscape"></m-carousel-item>
@@ -191,14 +193,14 @@
     <section data-demo-example="custom-dots" aria-labelledby="custom-dots-heading">
       <header data-demo-header><div><h2 id="custom-dots-heading">Readout, direct API and reconnect</h2><p>Edit the input, navigate, reorder or detach/reconnect. Selected identity and input state are retained.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
-        <div class="option-groups">
-          <button type="button" data-api-request>Request index 2</button>
-          <button type="button" data-api-reset>Reset to default</button>
-          <button type="button" data-api-reorder>Move current item first</button>
-          <button type="button" data-api-disable aria-pressed="false">Toggle disabled</button>
-          <button type="button" data-api-detach aria-pressed="false">Detach / reconnect</button>
-        </div>
-        <div id="lifecycle-mount">
+        <m-box class="option-groups" display="flex" wrap="wrap" gap="8">
+          <m-button data-api-request>Request index 2</m-button>
+          <m-button data-api-reset>Reset to default</m-button>
+          <m-button data-api-reorder>Move current item first</m-button>
+          <m-button data-api-disable aria-pressed="false">Toggle disabled</m-button>
+          <m-button data-api-detach aria-pressed="false">Detach / reconnect</m-button>
+        </m-box>
+        <m-box id="lifecycle-mount">
           <m-carousel id="api-carousel" current-index="1" default-index="0" aria-label="Lifecycle carousel">
             <m-carousel-viewport id="custom-dots-viewport" tabindex="0" aria-label="Lifecycle slides">
               <m-carousel-item key="first"><label>First note <input value="First"></label></m-carousel-item>
@@ -208,8 +210,8 @@
             <m-carousel-controls hidden><button type="button" data-part="prev">Previous</button><button type="button" data-part="next">Next</button></m-carousel-controls>
             <m-carousel-readout>Scroll through slides.</m-carousel-readout>
           </m-carousel>
-        </div>
-        <p data-api-status aria-live="polite">Waiting for initialization.</p>
+        </m-box>
+        <m-p data-api-status aria-live="polite">Waiting for initialization.</m-p>
       </div>
     </section>
 

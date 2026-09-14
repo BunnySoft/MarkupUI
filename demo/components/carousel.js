@@ -15,7 +15,7 @@ function initialize() {
   const dots = document.querySelector(".dots-demo")
   const options = document.querySelector("[data-dots-options]")
   options.addEventListener("click", event => {
-    const button = event.target.closest("button")
+    const button = event.target.closest("m-button, button")
     if (!button || !options.contains(button)) return
     const attribute = button.hasAttribute("data-dot-type") ? "data-dot-type" : "data-dot-direction"
     if (attribute === "data-dot-type") dots.dataset.dotType = button.dataset.dotType

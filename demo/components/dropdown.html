@@ -10,10 +10,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-dropdown.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./dropdown.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-dropdown.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script type="module" src="./dropdown.js"></script>
@@ -53,7 +55,7 @@
             </m-dropdown-group>
           </m-dropdown-menu>
         </m-dropdown>
-        <p id="basic-result" class="demo-status" data-dropdown-status role="status">No selection.</p>
+        <m-p id="basic-result" class="demo-status" data-dropdown-status role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="icon" aria-labelledby="icon-heading">
@@ -67,7 +69,7 @@
             <m-dropdown-item key="logout" label="Log out"><button type="button"><span slot="icon" aria-hidden="true">↪</span> Log out</button></m-dropdown-item>
           </m-dropdown-menu>
         </m-dropdown>
-        <p class="demo-status" data-dropdown-status role="status">No selection.</p>
+        <m-p class="demo-status" data-dropdown-status role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="trigger" aria-labelledby="trigger-heading">
@@ -82,7 +84,7 @@
         </m-dropdown>
         <button type="button" data-manual-toggle>Toggle via API</button>
         <button type="button" data-root-disabled aria-pressed="false">Toggle disabled</button>
-        <p class="demo-status" data-dropdown-status role="status">No selection.</p>
+        <m-p class="demo-status" data-dropdown-status role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="cascade" aria-labelledby="cascade-heading">
@@ -105,7 +107,7 @@
             </m-dropdown-item>
           </m-dropdown-menu>
         </m-dropdown>
-        <p id="cascade-result" class="demo-status" data-dropdown-status role="status">No selection.</p>
+        <m-p id="cascade-result" class="demo-status" data-dropdown-status role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="arrow" aria-labelledby="arrow-heading">
@@ -118,7 +120,7 @@
             <m-dropdown-item key="second"><button type="button">Second action</button></m-dropdown-item>
           </m-dropdown-menu>
         </m-dropdown>
-        <p class="demo-status" data-dropdown-status role="status">No selection.</p>
+        <m-p class="demo-status" data-dropdown-status role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="placement" aria-labelledby="placement-heading">
@@ -139,7 +141,7 @@
             </m-dropdown-item>
           </m-dropdown-menu>
         </m-dropdown>
-        <p class="demo-status" data-dropdown-status role="status">No selection.</p>
+        <m-p class="demo-status" data-dropdown-status role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="size" aria-labelledby="size-heading">
@@ -149,7 +151,7 @@
         <m-dropdown><m-dropdown-trigger><button type="button">Medium</button></m-dropdown-trigger><m-dropdown-menu label="Medium actions" size="medium"><m-dropdown-item key="one"><button type="button">Medium action</button></m-dropdown-item></m-dropdown-menu></m-dropdown>
         <m-dropdown><m-dropdown-trigger><button type="button">Large</button></m-dropdown-trigger><m-dropdown-menu label="Large actions" size="large"><m-dropdown-item key="one"><button type="button">Large action</button></m-dropdown-item></m-dropdown-menu></m-dropdown>
         <m-dropdown><m-dropdown-trigger><button type="button">Huge inverted</button></m-dropdown-trigger><m-dropdown-menu label="Huge actions" size="huge" inverted><m-dropdown-item key="one"><button type="button">Huge action</button></m-dropdown-item></m-dropdown-menu></m-dropdown>
-        <p class="demo-status" data-dropdown-status role="status">No selection.</p>
+        <m-p class="demo-status" data-dropdown-status role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="batch-render" aria-labelledby="batch-heading">
@@ -165,13 +167,13 @@
             </m-dropdown-group>
           </m-dropdown-menu>
         </m-dropdown>
-        <p id="batch-result" class="demo-status" data-dropdown-status role="status">No selection.</p>
+        <m-p id="batch-result" class="demo-status" data-dropdown-status role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="manual-position" aria-labelledby="manual-heading">
       <header data-demo-header><div><h2 id="manual-heading">Movable native trigger</h2><p>Right-click the area to move a real visible button. This is application positioning, not a virtual-anchor API.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <div class="manual-area" id="manual-area">
+        <m-box class="manual-area" id="manual-area">
           <m-dropdown id="position-dropdown">
             <m-dropdown-trigger><button class="movable-trigger" type="button">Movable trigger</button></m-dropdown-trigger>
             <m-dropdown-menu label="Movable trigger actions">
@@ -179,8 +181,8 @@
               <m-dropdown-item key="second"><button type="button">Second action</button></m-dropdown-item>
             </m-dropdown-menu>
           </m-dropdown>
-        </div>
-        <p class="demo-status" data-dropdown-status role="status">The visible button also works with keyboard activation.</p>
+        </m-box>
+        <m-p class="demo-status" data-dropdown-status role="status">The visible button also works with keyboard activation.</m-p>
       </div>
     </section>
     <section data-demo-example="render" aria-labelledby="render-heading">
@@ -189,17 +191,17 @@
         <m-dropdown>
           <m-dropdown-trigger><button type="button">Office actions</button></m-dropdown-trigger>
           <m-dropdown-menu label="Office actions">
-            <m-dropdown-item key="profile" label="Office worker profile"><button class="profile-label" type="button"><img src="./avatar.svg" alt=""><span><strong>Office Worker</strong><small>Open the profile</small></span></button></m-dropdown-item>
+            <m-dropdown-item key="profile" label="Office worker profile"><button class="profile-label" type="button"><img src="./avatar.svg" alt=""><span><m-strong>Office Worker</m-strong><m-small>Open the profile</m-small></span></button></m-dropdown-item>
             <m-dropdown-item key="messages"><button type="button">Read group messages</button></m-dropdown-item>
           </m-dropdown-menu>
         </m-dropdown>
-        <p class="demo-status" data-dropdown-status role="status">No selection.</p>
+        <m-p class="demo-status" data-dropdown-status role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="option-props" aria-labelledby="props-heading">
       <header data-demo-header><div><h2 id="props-heading">Native listeners, value and reconnect</h2><p>Original action handlers run before the queued selection notification. Cancel the original click to decline selection.</p></div></header>
       <div class="demo-preview trigger-row" data-demo-preview>
-        <div id="lifecycle-mount">
+        <m-box id="lifecycle-mount">
           <m-dropdown id="lifecycle-dropdown" value="first">
             <m-dropdown-trigger><button type="button">Lifecycle actions</button></m-dropdown-trigger>
             <m-dropdown-menu label="Lifecycle actions">
@@ -208,11 +210,11 @@
               <m-dropdown-item key="last"><button type="button">Last action</button></m-dropdown-item>
             </m-dropdown-menu>
           </m-dropdown>
-        </div>
+        </m-box>
         <button type="button" data-select-last>Select last without activation</button>
         <button type="button" data-add-item>Add a native item</button>
         <button type="button" data-detach>Detach / reconnect</button>
-        <p class="demo-status" data-dropdown-status role="status">No action.</p>
+        <m-p class="demo-status" data-dropdown-status role="status">No action.</m-p>
       </div>
     </section>
     <section data-demo-example="render-option" aria-labelledby="render-option-heading">
@@ -225,7 +227,7 @@
             <m-dropdown-item key="external"><a href="#render-option-heading" target="_blank" title="Open in a separate browsing context">Open separately</a></m-dropdown-item>
           </m-dropdown-menu>
         </m-dropdown>
-        <p class="demo-status" data-dropdown-status role="status">External-target activation is not consumed as selection.</p>
+        <m-p class="demo-status" data-dropdown-status role="status">External-target activation is not consumed as selection.</m-p>
       </div>
     </section>
 

@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-slider.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
@@ -17,7 +18,7 @@
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-slider.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
-  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script type="module" src="./slider.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -42,28 +43,28 @@
     <section data-demo-example="basic" aria-labelledby="basic-heading">
       <header data-demo-header><div><h2 id="basic-heading">Basic slider</h2><p>Horizontal range slider with min, max, step, and value properties.</p></div></header>
       <div data-demo-preview>
-        <label for="demo-slider"><m-text>Volume control (0 to 100)</m-text></label>
+        <m-label for="demo-slider"><m-text>Volume control (0 to 100)</m-text></m-label>
         <m-slider id="demo-slider" value="50" min="0" max="100" step="5">
           <output for="demo-slider">50</output>
         </m-slider>
         <m-p id="slider-status">Value: 50</m-p>
-        <div class="demo-tools">
+        <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
           <m-button id="set-min">Set to min</m-button>
           <m-button id="set-max">Set to max</m-button>
           <m-button id="step-up">Step up (+5)</m-button>
           <m-button id="step-down">Step down (-5)</m-button>
-        </div>
+        </m-box>
       </div>
     </section>
 
     <section data-demo-example="modes" aria-labelledby="modes-heading">
       <header data-demo-header><div><h2 id="modes-heading">Vertical, reverse and disabled</h2><p>Vertical orientation, reverse direction (RTL), and disabled state.</p></div></header>
       <div data-demo-preview>
-        <label for="vert-s"><m-text>Vertical level</m-text></label>
+        <m-label for="vert-s"><m-text>Vertical level</m-text></m-label>
         <m-slider id="vert-s" vertical value="30" min="0" max="100"></m-slider>
-        <label for="rev-s"><m-text>Reversed direction</m-text></label>
+        <m-label for="rev-s"><m-text>Reversed direction</m-text></m-label>
         <m-slider id="rev-s" reverse value="70" min="0" max="100"></m-slider>
-        <label for="dis-s"><m-text>Disabled state</m-text></label>
+        <m-label for="dis-s"><m-text>Disabled state</m-text></m-label>
         <m-slider id="dis-s" disabled value="40" min="0" max="100"></m-slider>
       </div>
     </section>
@@ -72,51 +73,51 @@
       <header data-demo-header><div><h2 id="native-heading">Native movement, defaults and two-track pair</h2><p>Native ranges own dragging, Arrow keys, Home/End, clamping, reset and submission. The helper updates non-live readouts, not a custom gesture or tooltip engine.</p></div></header>
       <div data-demo-preview>
         <form id="ranges" action="slider.html" method="get">
-          <label for="volume">Volume (no value attribute: native midpoint default)</label>
-          <div class="m-slider" data-slider id="volume-root">
+          <m-label for="volume">Volume (no value attribute: native midpoint default)</m-label>
+          <m-box class="m-slider" data-slider id="volume-root">
             <input data-slider-control id="volume" type="range" name="volume" min="0" max="100" step="5" list="volume-marks">
             <output data-slider-output for="volume" aria-live="off" hidden>50</output>
             <datalist id="volume-marks"><option value="0" label="Low"></option><option value="50" label="Middle"></option><option value="100" label="High"></option></datalist>
-            <div class="m-slider__marks" aria-hidden="true"><span>0 — Low</span><span>50</span><span>100 — High</span></div>
-          </div>
+            <m-box class="m-slider__marks" aria-hidden="true"><span>0 — Low</span><span>50</span><span>100 — High</span></m-box>
+          </m-box>
           <fieldset class="m-slider-pair" data-slider-pair id="window-pair" aria-describedby="pair-help">
             <legend>Window endpoints: two independent native tracks</legend>
             <m-p id="pair-help">Crossing is allowed and reported, not silently sorted. Bounds stay authored; there is no shared-track dual-thumb behavior or hidden tuple value.</m-p>
-            <div class="m-slider-pair__fields">
-              <div class="m-slider">
-                <label for="start">Start minutes</label>
+            <m-box class="m-slider-pair__fields">
+              <m-box class="m-slider">
+                <m-label for="start">Start minutes</m-label>
                 <input data-slider-control id="start" type="range" name="start" min="0" max="100" step="1" value="20">
                 <output data-slider-output for="start" aria-live="off" hidden>20</output>
-              </div>
-              <div class="m-slider">
-                <label for="end">End minutes</label>
+              </m-box>
+              <m-box class="m-slider">
+                <m-label for="end">End minutes</m-label>
                 <input data-slider-control id="end" type="range" name="end" min="0" max="100" step="1" value="80">
                 <output data-slider-output for="end" aria-live="off" hidden>80</output>
-              </div>
-            </div>
+              </m-box>
+            </m-box>
           </fieldset>
-          <label for="balance">Reversed horizontal balance (input dir=rtl)</label>
-          <div class="m-slider" data-slider id="balance-root">
+          <m-label for="balance">Reversed horizontal balance (input dir=rtl)</m-label>
+          <m-box class="m-slider" data-slider id="balance-root">
             <input data-slider-control id="balance" type="range" name="balance" min="-10" max="10" step="0.5" value="0" dir="rtl">
             <output data-slider-output for="balance" aria-live="off" hidden>0</output>
-          </div>
-          <label for="vertical">Vertical level (native writing-mode, high at top)</label>
-          <div class="m-slider" data-slider data-vertical id="vertical-root">
+          </m-box>
+          <m-label for="vertical">Vertical level (native writing-mode, high at top)</m-label>
+          <m-box class="m-slider" data-slider data-vertical id="vertical-root">
             <input data-slider-control id="vertical" type="range" name="vertical" min="0" max="1" step="0.1" value="0.5" dir="rtl">
             <output data-slider-output for="vertical" aria-live="off" hidden>0.5</output>
-          </div>
-          <label for="external-range">Associated with another form</label>
-          <div class="m-slider" data-slider id="external-root">
+          </m-box>
+          <m-label for="external-range">Associated with another form</m-label>
+          <m-box class="m-slider" data-slider id="external-root">
             <input data-slider-control id="external-range" type="range" name="external" form="other-ranges" min="0" max="10" value="3">
             <output data-slider-output for="external-range" form="other-ranges" aria-live="off" hidden>3</output>
-          </div>
-          <label for="plain-range">CSS-only range, no helper</label>
-          <div class="m-slider"><input data-slider-control id="plain-range" type="range" name="plain" min="0" max="10" value="2"></div>
+          </m-box>
+          <m-label for="plain-range">CSS-only range, no helper</m-label>
+          <m-box class="m-slider"><input data-slider-control id="plain-range" type="range" name="plain" min="0" max="10" value="2"></m-box>
           <input type="hidden" name="local" value="only">
           <m-p><button type="submit">Inspect native submission / local GET fallback</button> <button type="reset">Native reset</button></m-p>
         </form>
         <form id="other-ranges"><button type="reset">Reset external range only</button></form>
-        <div class="demo-tools">
+        <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
           <m-button id="narrow">Set pair to 65 / 75</m-button>
           <m-button id="cross">Set crossed pair 90 / 10</m-button>
           <m-button id="defaults">Set pair defaults 15 / 85</m-button>
@@ -126,7 +127,7 @@
           <m-button id="cancel">Cancel next reset</m-button>
           <m-button id="rtl">Toggle page RTL</m-button>
           <m-button id="disconnect">Disconnect helpers</m-button>
-        </div>
+        </m-box>
         <m-p id="state">Without JS, native ranges and datalist ticks remain usable; live text readouts stay hidden.</m-p>
         <m-p id="events">Pair commits: 0</m-p>
         <pre id="submission">No submission yet.</pre>

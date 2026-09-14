@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-divider.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
@@ -16,6 +17,7 @@
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-divider.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script type="module" src="./divider.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -51,43 +53,43 @@
     <section data-demo-example="content" aria-labelledby="content-heading">
       <header data-demo-header><div><h2 id="content-heading">Title content and independent headings</h2><p>Primary content is one preserved title fragment, never placed inside the native hr.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
-        <m-divider title-placement="start"><span>Start</span></m-divider>
-        <m-divider id="heading-divider" label="Start of settings"><h2 id="divider-real-heading">Settings heading</h2></m-divider>
-        <m-divider title-placement="end" dashed><span>End</span></m-divider>
-        <m-divider id="decorative-divider" semantic="false"><h3 id="divider-decorative-heading">Independent decorative heading</h3></m-divider>
+        <m-divider title-placement="start"><m-span>Start</m-span></m-divider>
+        <m-divider id="heading-divider" label="Start of settings"><m-h2 id="divider-real-heading">Settings heading</m-h2></m-divider>
+        <m-divider title-placement="end" dashed><m-span>End</m-span></m-divider>
+        <m-divider id="decorative-divider" semantic="false"><m-h3 id="divider-decorative-heading">Independent decorative heading</m-h3></m-divider>
         <m-divider class="narrow-divider">AnOriginalLongUnbrokenCaptionThatWrapsWithoutClippingOrReplacingItsText</m-divider>
-        <div class="divider-options">
-          <label>Orientation <select id="divider-orientation"><option value="horizontal">Horizontal</option><option value="vertical">Vertical</option></select></label>
-          <label>Title placement <select id="divider-placement"><option value="start">Start</option><option value="center" selected>Center</option><option value="end">End</option></select></label>
-          <label><input id="divider-semantic" type="checkbox" checked> Semantic rule</label>
-          <label><input id="divider-dashed" type="checkbox"> Dashed</label>
-          <label>Rule label <input id="divider-label" value="Live rule"></label>
-          <button id="divider-clear-label" type="button">Clear rule label</button>
-          <button id="divider-update-title" type="button">Update existing heading</button>
-          <button id="divider-detach" type="button">Detach / reconnect</button>
-        </div>
-        <div id="divider-live-mount">
-          <m-divider id="live-divider" label="Live rule"><h3 id="divider-live-heading">Live heading</h3></m-divider>
-        </div>
-        <p id="divider-status" class="demo-status" role="status"></p>
+        <m-box class="divider-options" display="flex" wrap="wrap" gap="8">
+          <m-label>Orientation <select id="divider-orientation"><option value="horizontal">Horizontal</option><option value="vertical">Vertical</option></select></m-label>
+          <m-label>Title placement <select id="divider-placement"><option value="start">Start</option><option value="center" selected>Center</option><option value="end">End</option></select></m-label>
+          <m-label><input id="divider-semantic" type="checkbox" checked> Semantic rule</m-label>
+          <m-label><input id="divider-dashed" type="checkbox"> Dashed</m-label>
+          <m-label>Rule label <input id="divider-label" value="Live rule"></m-label>
+          <m-button id="divider-clear-label">Clear rule label</m-button>
+          <m-button id="divider-update-title">Update existing heading</m-button>
+          <m-button id="divider-detach">Detach / reconnect</m-button>
+        </m-box>
+        <m-box id="divider-live-mount">
+          <m-divider id="live-divider" label="Live rule"><m-h3 id="divider-live-heading">Live heading</m-h3></m-divider>
+        </m-box>
+        <m-p id="divider-status" class="demo-status" role="status"></m-p>
       </div>
     </section>
 
     <section data-demo-example="vertical" aria-labelledby="vertical-heading">
       <header data-demo-header><div><h2 id="vertical-heading">Vertical</h2><p>The title stays next to the vertical rule. There is no tab stop, drag handle or splitter behavior.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
-        <div class="inline-dividers">
+        <m-box class="inline-dividers">
           <a id="divider-before-link" href="#content-heading">Before</a>
           <m-divider orientation="vertical" semantic="false"></m-divider>
           <a id="divider-after-link" href="#api-heading">After</a>
-        </div>
-        <div class="inline-dividers">
-          <m-divider id="vertical-heading-divider" orientation="vertical" label="Action groups"><h3 id="divider-vertical-heading">Vertical heading</h3></m-divider>
+        </m-box>
+        <m-box class="inline-dividers">
+          <m-divider id="vertical-heading-divider" orientation="vertical" label="Action groups"><m-h3 id="divider-vertical-heading">Vertical heading</m-h3></m-divider>
           <m-divider orientation="vertical" semantic="false" dashed><span>Visible decorative caption</span></m-divider>
-        </div>
-        <div class="inline-dividers" dir="rtl">
+        </m-box>
+        <m-box class="inline-dividers" dir="rtl">
           <m-divider orientation="vertical" title-placement="start" label="RTL group"><span>RTL caption</span></m-divider>
-        </div>
+        </m-box>
       </div>
     </section>
 

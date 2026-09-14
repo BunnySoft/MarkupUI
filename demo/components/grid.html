@@ -7,10 +7,14 @@
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../../dist/markup-ui-grid.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./grid.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-grid.global.js"></script>
   <script type="module" src="./grid.js"></script>
   <script type="module" src="../example-code.js"></script>
@@ -36,15 +40,15 @@
           <m-grid-item id="fixed-first">One</m-grid-item>
           <m-grid-item span="2" id="fixed-wide">Two-column span</m-grid-item>
           <m-grid-item id="fixed-last">Four</m-grid-item>
-          <p id="plain-child">A plain native child is not filtered out.</p>
+          <m-p id="plain-child">A plain native child is not filtered out.</m-p>
         </m-grid>
         <m-grid columns="5rem minmax(0, 1fr)" column-gap="10" id="tracks"><m-grid-item>Fixed track</m-grid-item><m-grid-item>Native flexible track</m-grid-item></m-grid>
         <m-grid cols="4" column-gap="12" row-gap="8" align="center" justify="center" id="aligned"><m-grid-item>Item</m-grid-item></m-grid>
-      </div>
-      <p>Align/justify position items within their cells, not the tracks. This preview's 96px auto rows are Web styling.</p>
+      </m-box>
+      <m-p>Align/justify position items within their cells, not the tracks. This preview's 96px auto rows are Web styling.</m-p>
     </section>
     <section data-demo-example="placement" aria-labelledby="placement-title">
-      <header data-demo-header><h2 id="placement-title">Absolute start is not relative offset</h2></header>
+      <header data-demo-header><m-h2 id="placement-title">Absolute start is not relative offset</m-h2></header>
       <div data-demo-preview class="demo-preview">
         <m-grid cols="4" column-gap="12" row-gap="8" id="absolute">
           <m-grid-item span="2">Two tracks first</m-grid-item>
@@ -56,32 +60,32 @@
           <m-grid-item aria-hidden="true" id="authored-spacer"></m-grid-item>
           <m-grid-item id="after-spacer">One explicit empty track before this item</m-grid-item>
         </m-grid>
-      </div>
-      <p>A spacer is a separate authored item and can wrap separately; it is not atomic offset-plus-span packing. No relative offset API, clamping or span-zero hiding is claimed.</p>
+      </m-box>
+      <m-p>A spacer is a separate authored item and can wrap separately; it is not atomic offset-plus-span packing. No relative offset API, clamping or span-zero hiding is claimed.</m-p>
     </section>
     <section data-demo-example="responsive" aria-labelledby="responsive-title">
-      <header data-demo-header><h2 id="responsive-title">Web styling: container versus screen responsiveness</h2></header>
+      <header data-demo-header><m-h2 id="responsive-title">Web styling: container versus screen responsiveness</m-h2></header>
       <div data-demo-preview class="demo-preview">
-        <div class="m-grid-container self-frame" id="query-container">
+        <m-box class="m-grid-container self-frame" id="query-container">
           <m-grid class="self-grid" id="self-grid">
             <m-grid-item class="self-feature" id="self-feature">The query targets this descendant grid and its item.</m-grid-item>
             <m-grid-item>Original second item</m-grid-item>
             <a class="wide-only" href="#result" id="wide-link">Optional wide-view result link</a>
           </m-grid>
-        </div>
-        <p><a href="#result" id="always-result">The result destination is always available here.</a></p>
+        </m-box>
+        <m-p><a href="#result" id="always-result">The result destination is always available here.</a></m-p>
         <m-grid class="screen-grid" id="screen-grid"><m-grid-item class="screen-feature">Viewport-query feature</m-grid-item><m-grid-item>Screen item</m-grid-item><m-grid-item>Screen item</m-grid-item></m-grid>
-      </div>
-      <p>Authored media/container queries, not responsive strings or breakpoint properties. The bounded wrapper is independently authored; it never queries itself. Unsupported queries retain the single-column container baseline.</p>
+      </m-box>
+      <m-p>Authored media/container queries, not responsive strings or breakpoint properties. The bounded wrapper is independently authored; it never queries itself. Unsupported queries retain the single-column container baseline.</m-p>
     </section>
     <section data-demo-example="nested" aria-labelledby="nested-title">
-      <header data-demo-header><h2 id="nested-title">Independent nested grids and hidden items</h2></header>
+      <header data-demo-header><m-h2 id="nested-title">Independent nested grids and hidden items</m-h2></header>
       <div data-demo-preview class="demo-preview">
         <m-grid cols="4" column-gap="12" row-gap="8" id="outer-grid">
           <m-grid-item span="2"><m-grid cols="2" column-gap="4" row-gap="4" id="inner-grid"><m-grid-item id="inner-first">Inner one</m-grid-item><m-grid-item>Inner two</m-grid-item></m-grid></m-grid-item>
           <m-grid-item>Outer peer</m-grid-item>
         </m-grid>
-        <m-grid cols="4" column-gap="12" row-gap="8" id="hidden-items"><m-grid-item>Visible first</m-grid-item><button type="button" hidden id="hidden-item">Hidden native item</button><m-grid-item id="visible-second">Visible second</m-grid-item><template id="native-template"><span>Inert authored template</span></template></m-grid>
+        <m-grid cols="4" column-gap="12" row-gap="8" id="hidden-items"><m-grid-item>Visible first</m-grid-item><m-button type="button" hidden id="hidden-item">Hidden native item</m-button><m-grid-item id="visible-second">Visible second</m-grid-item><template id="native-template"><span>Inert authored template</span></template></m-grid>
         <m-grid hidden id="hidden-root"><button type="button">Hidden root action</button></m-grid>
       </div>
     </section>
@@ -89,34 +93,34 @@
       <header data-demo-header><h2 id="collapse-title">Authored preview and real native disclosure</h2></header>
       <div data-demo-preview class="demo-preview">
         <m-grid cols="2" column-gap="12" row-gap="8" id="preview-grid"><a href="#result" id="preview-link">Visible preview result</a><m-grid-item>Application-selected preview item</m-grid-item></m-grid>
-        <details class="m-grid-disclosure" id="more-results">
-          <summary id="more-summary">Show or hide remaining results</summary>
+        <m-details class="m-grid-disclosure" id="more-results">
+          <m-summary id="more-summary">Show or hide remaining results</m-summary>
           <m-grid cols="2" column-gap="12" row-gap="8" id="extra-grid">
             <a href="#result" id="extra-link">Additional result</a>
-            <label class="field">Additional field <input id="extra-field" value="Original"></label>
+            <m-label class="field">Additional field <input id="extra-field" value="Original"></m-label>
           </m-grid>
-        </details>
+        </m-details>
         <a href="#result" id="after-disclosure">Next native action</a>
         <m-grid cols="4" column-gap="12" row-gap="8" id="trailing-grid"><m-grid-item>First</m-grid-item><m-grid-item>Second</m-grid-item><m-grid-item id="trailing-action"><a href="#result">Authored final action on its own row</a></m-grid-item></m-grid>
-      </div>
-      <p>Native details hides its body; these are two explicit Grids, not a collapsed-row algorithm. The DOM-last action uses Web CSS grid-column: 1 / -1, not an overflow-aware suffix.</p>
+      </m-box>
+      <m-p>Native details hides its body; these are two explicit Grids, not a collapsed-row algorithm. The DOM-last action uses Web CSS grid-column: 1 / -1, not an overflow-aware suffix.</m-p>
     </section>
     <section data-demo-example="native" aria-labelledby="native-title">
-      <header data-demo-header><h2 id="native-title">Native lists, forms and reading order</h2></header>
+      <header data-demo-header><m-h2 id="native-title">Native lists, forms and reading order</m-h2></header>
       <div data-demo-preview class="demo-preview">
         <m-grid cols="1"><ol type="A" id="native-list"><li><a href="#result" id="list-first">Native list item</a></li><li><a href="#result" id="list-second">Native list item</a></li></ol></m-grid>
         <form method="get" action="./grid.html#result" id="native-form">
           <m-grid id="form-grid">
-            <label class="field" for="native-name">Name <input name="name" id="native-name" value="Original" required></label>
-            <div class="native-actions"><button type="submit" id="native-submit">Submit</button><button type="reset" id="native-reset">Reset</button><button type="button" disabled id="native-disabled">Unavailable</button><a href="#result" id="native-link">Native link</a></div>
+            <m-label class="field" for="native-name">Name <input name="name" id="native-name" value="Original" required></m-label>
+            <m-box class="native-actions"><m-button type="submit" id="native-submit">Submit</m-button><m-button type="reset" id="native-reset">Reset</m-button><m-button type="button" disabled id="native-disabled">Unavailable</m-button><a href="#result" id="native-link">Native link</a></m-box>
           </m-grid>
         </form>
-        <p id="result" tabindex="-1">Native result destination; GET form submission returns to this example.</p>
-      </div>
-      <p>Keep li directly inside ol/ul and Grid inside the real form. Grid never creates a form/list owner or changes native defaults, focus, submission or disabled behavior.</p>
+        <m-p id="result" tabindex="-1">Native result destination; GET form submission returns to this example.</m-p>
+      </m-box>
+      <m-p>Keep li directly inside ol/ul and Grid inside the real form. Grid never creates a form/list owner or changes native defaults, focus, submission or disabled behavior.</m-p>
     </section>
     <section data-demo-example="direction" dir="rtl" lang="ar" aria-labelledby="rtl-title">
-      <header data-demo-header><h2 id="rtl-title">شبكة أصلية · RTL</h2></header>
+      <header data-demo-header><m-h2 id="rtl-title">شبكة أصلية · RTL</m-h2></header>
       <div data-demo-preview class="demo-preview"><m-grid cols="4" column-gap="12" row-gap="8" id="rtl-grid"><m-grid-item id="rtl-first">الأول</m-grid-item><m-grid-item span="2" id="rtl-wide">عنصر واسع</m-grid-item><m-grid-item>الأخير</m-grid-item></m-grid></div>
     </section>
     <section data-demo-example="web" aria-labelledby="web-title">
@@ -125,15 +129,15 @@
         <m-grid class="column-flow" id="column-flow"><m-grid-item>One</m-grid-item><m-grid-item>Two</m-grid-item><m-grid-item>Three</m-grid-item></m-grid>
         <m-grid class="vertical-writing" cols="3" column-gap="12" row-gap="8" id="writing"><m-grid-item id="writing-first">One</m-grid-item><m-grid-item>Two</m-grid-item><m-grid-item>Three</m-grid-item></m-grid>
         <m-grid class="auto-fit" id="auto-fit"><m-grid-item>Responsive one</m-grid-item><m-grid-item>Responsive two</m-grid-item><m-grid-item>Responsive three</m-grid-item></m-grid>
-        <m-grid class="visual-order" cols="2" id="visual-order"><button type="button" id="order-first">DOM first</button><button type="button" id="order-second">DOM second</button></m-grid>
-      </div>
-      <p>Default flow is row, with no explicit rows and native auto-sized implicit rows. CSS owns grid-template-rows, grid-auto-flow, auto-fit, row placement and order; no extra component APIs or breakpoint engine are invented. Visual order never changes DOM, reading or Tab order.</p>
+        <m-grid class="visual-order" cols="2" id="visual-order"><m-button type="button" id="order-first">DOM first</m-button><m-button type="button" id="order-second">DOM second</m-button></m-grid>
+      </m-box>
+      <m-p>Default flow is row, with no explicit rows and native auto-sized implicit rows. CSS owns grid-template-rows, grid-auto-flow, auto-fit, row placement and order; no extra component APIs or breakpoint engine are invented. Visual order never changes DOM, reading or Tab order.</m-p>
     </section>
     <section data-demo-example="live" aria-labelledby="live-title">
-      <header data-demo-header><h2 id="live-title">Direct updates and reconnect</h2></header>
+      <header data-demo-header><m-h2 id="live-title">Direct updates and reconnect</m-h2></header>
       <div data-demo-preview class="demo-preview">
-        <m-grid cols="2" id="live-grid"><input aria-label="Preserved input" value="Edit me"><button type="button" id="live-action">Native action</button></m-grid>
-        <button type="button" id="change-gap">Toggle column gap</button><button type="button" id="reset-gap">Style default</button><button type="button" id="reconnect-grid">Reconnect</button>
+        <m-grid cols="2" id="live-grid"><input aria-label="Preserved input" value="Edit me"><m-button type="button" id="live-action">Native action</m-button></m-grid>
+        <m-button type="button" id="change-gap">Toggle column gap</m-button><m-button type="button" id="reset-gap">Style default</m-button><m-button type="button" id="reconnect-grid">Reconnect</m-button>
         <output id="grid-status">Column gap: style default</output>
       </div>
     </section>

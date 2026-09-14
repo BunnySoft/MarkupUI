@@ -42,7 +42,8 @@ export const componentGroups = [
     ["scrollbar", "Scrollbar"], ["virtual-list", "Virtual List"],
   ] },
   { name: "Config Components", items: [
-    ["config-provider", "Config Provider"], ["element", "Element"], ["global-style", "Global Style"],
+    ["config-provider", "Config Provider"], ["element", "Element"],
+    ["elements", "Element Matrix"], ["global-style", "Global Style"],
   ] },
   { name: "Deprecated Components", items: [["legacy-transfer", "Legacy Transfer"]] },
 ]

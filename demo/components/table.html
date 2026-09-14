@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./table.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-table.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -42,7 +44,7 @@
     <section data-demo-example="report" aria-labelledby="report-heading">
       <header data-demo-header><div><h2 id="report-heading">Captioned report and native form</h2><m-p id="scroll-help">Scroll horizontally or Tab to reach controls in the Actions column.</m-p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <div class="m-table-scroll" tabindex="0" role="region" aria-labelledby="report-caption" aria-describedby="scroll-help" id="report-scroll">
+        <m-box class="m-table-scroll" tabindex="0" role="region" aria-labelledby="report-caption" aria-describedby="scroll-help" id="report-scroll">
           <m-table class="wide-table" single-line="false" striped id="report-table">
             <table class="wide-table">
               <caption id="report-caption"><m-heading level="3">Project capacity report</m-heading></caption>
@@ -62,14 +64,14 @@
                   <td headers="alpha-header hours-header actual-header" class="numeric">36</td>
                   <td headers="alpha-header actions-header">
                     <form id="note-form">
-                      <label for="note"><m-text>Note for Alpha</m-text></label>
+                      <m-label for="note"><m-text>Note for Alpha</m-text></m-label>
                       <input id="note" name="note" value="Original" required>
-                      <div class="cell-actions">
+                      <m-box class="cell-actions">
                         <m-button attr-type="submit" id="native-submit" type="primary">Save note</m-button>
                         <m-button attr-type="reset" id="native-reset">Reset note</m-button>
                         <m-button attr-type="button" disabled id="native-disabled">Unavailable action</m-button>
-                      </div>
-                      <fieldset disabled><legend><m-text>Read-only settings</m-text></legend><label><input type="checkbox" name="publish" checked> <m-text>Publish now</m-text></label></fieldset>
+                      </m-box>
+                      <fieldset disabled><legend><m-text>Read-only settings</m-text></legend><m-label><input type="checkbox" name="publish" checked> <m-text>Publish now</m-text></m-label></fieldset>
                     </form>
                   </td>
                 </tr>
@@ -88,7 +90,7 @@
               <tfoot><tr id="total-row"><th scope="row" id="total-header"><m-text strong>Reported total</m-text></th><td headers="total-header planned-header" class="numeric">72</td><td headers="total-header actual-header" class="numeric">64</td><td><m-text>Authored totals, not calculated by Table.</m-text></td></tr></tfoot>
             </table>
           </m-table>
-        </div>
+        </m-box>
         <m-p id="form-status" role="status"></m-p>
       </div>
     </section>
@@ -96,7 +98,7 @@
     <section data-demo-example="variants" aria-labelledby="variants-heading">
       <header data-demo-header><div><h2 id="variants-heading">Border flags and explicit native widths</h2></div></header>
       <div class="demo-preview" data-demo-preview>
-        <div class="m-table-scroll" tabindex="0" role="region" aria-labelledby="attribute-caption">
+        <m-box class="m-table-scroll" tabindex="0" role="region" aria-labelledby="attribute-caption">
           <m-table id="attribute-table" width="360">
             <table width="360">
               <caption id="attribute-caption"><m-heading level="4">Defaults; native width 360</m-heading></caption>
@@ -105,8 +107,8 @@
               <tbody><tr><th scope="row">First</th><td align="right" id="aligned-cell">12</td></tr><tr><th scope="row">Second</th><td align="right">24</td></tr></tbody>
             </table>
           </m-table>
-        </div>
-        <div class="m-table-scroll" tabindex="0" role="region" aria-labelledby="columns-caption">
+        </m-box>
+        <m-box class="m-table-scroll" tabindex="0" role="region" aria-labelledby="columns-caption">
           <m-table id="columns-table" bordered="false" single-column single-line="false">
             <table>
               <caption id="columns-caption"><m-heading level="4">Column separators, no body row dividers, bottom edge retained</m-heading></caption>
@@ -114,8 +116,8 @@
               <tbody><tr><th scope="row">First</th><td align="right">12</td></tr><tr><th scope="row">Second</th><td align="right">24</td></tr></tbody>
             </table>
           </m-table>
-        </div>
-        <div class="m-table-scroll" tabindex="0" role="region" aria-labelledby="bare-caption">
+        </m-box>
+        <m-box class="m-table-scroll" tabindex="0" role="region" aria-labelledby="bare-caption">
           <m-table id="bare-table" bordered="false" bottom-bordered="false" single-column striped size="small">
             <table>
               <caption id="bare-caption"><m-heading level="4">Small, striped, no enclosing/bottom/body-row borders</m-heading></caption>
@@ -123,14 +125,14 @@
               <tbody><tr><th scope="row">First</th><td align="right">12</td></tr><tr><th scope="row">Second</th><td align="right">24</td></tr></tbody>
             </table>
           </m-table>
-        </div>
+        </m-box>
       </div>
     </section>
 
     <section data-demo-example="span" aria-labelledby="span-heading">
       <header data-demo-header><div><h2 id="span-heading">Large, RTL and native spanning cells</h2></div></header>
       <div class="demo-preview" data-demo-preview>
-        <div class="m-table-scroll" tabindex="0" role="region" aria-labelledby="span-caption" dir="rtl">
+        <m-box class="m-table-scroll" tabindex="0" role="region" aria-labelledby="span-caption" dir="rtl">
           <m-table id="span-table" size="large" single-line="false">
             <table>
               <caption id="span-caption"><m-heading level="4">Team work log</m-heading></caption>
@@ -139,7 +141,7 @@
               <tfoot><tr><th scope="row" colspan="2" id="span-total">Team A total</th><td headers="span-total hours-column">5</td></tr></tfoot>
             </table>
           </m-table>
-        </div>
+        </m-box>
       </div>
     </section>
 

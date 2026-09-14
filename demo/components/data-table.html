@@ -12,10 +12,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./data-table.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-table.global.js"></script>
   <script defer src="../../dist/markup-ui-data-table.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
@@ -50,14 +52,14 @@
       </header>
       <div data-demo-preview>
         <m-data-table id="demo-data-table" bordered striped size="small" pagination>
-          <div class="m-data-table-controls">
+          <m-box class="m-data-table-controls">
             <label>Filter <input type="search" data-data-filter="name" placeholder="Search by name..."></label>
             <label>Size <select data-data-page-size><option value="2" selected>2</option><option value="all">All</option></select></label>
             <m-button attr-type="button" data-data-page="previous" hidden>Previous</m-button>
             <m-button attr-type="button" data-data-page="next" hidden>Next</m-button>
             <span data-data-count></span>
-          </div>
-          <div class="m-data-table-scroll" tabindex="0" role="region" aria-label="Project scores table">
+          </m-box>
+          <m-box class="m-data-table-scroll" tabindex="0" role="region" aria-label="Project scores table">
             <table class="m-table" data-data-table-table data-data-sticky-header>
               <caption>Project scores</caption>
               <thead>
@@ -77,9 +79,9 @@
                 <tr><th scope="row" colspan="2">Page total</th><td><span data-data-summary="total">50</span></td></tr>
               </tfoot>
             </table>
-          </div>
-          <p data-data-empty hidden>No matching rows</p>
-          <p data-data-loading hidden>Loading data...</p>
+          </m-box>
+          <m-p data-data-empty hidden>No matching rows</m-p>
+          <m-p data-data-loading hidden>Loading data...</m-p>
         </m-data-table>
         <m-p id="feedback">No user table operations yet.</m-p>
       </div>
@@ -94,7 +96,7 @@
       </header>
       <div data-demo-preview>
         <m-data-table bordered striped single-line size="medium">
-          <div class="m-data-table-scroll">
+          <m-box class="m-data-table-scroll">
             <table class="m-table">
               <thead>
                 <tr><th scope="col">Task</th><th scope="col">Priority</th><th scope="col">Status</th></tr>
@@ -105,7 +107,7 @@
                 <tr><th scope="row">Component tests</th><td>Medium</td><td>Pending</td></tr>
               </tbody>
             </table>
-          </div>
+          </m-box>
         </m-data-table>
       </div>
     </section>

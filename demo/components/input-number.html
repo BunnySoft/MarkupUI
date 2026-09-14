@@ -8,10 +8,15 @@
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-input-number.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./input-number.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script type="module" src="../../dist/markup-ui-input-number.js"></script>
   <script type="module" src="./input-number.js"></script>
   <script type="module" src="../example-code.js"></script>
@@ -32,7 +37,7 @@
       <section data-demo-example="native" aria-labelledby="native-title">
         <header data-demo-header><div><h2 id="native-title">Nullable value and native drafts</h2><p>Try typing 0.15 or 2: off-grid and out-of-range values remain invalid, not clamped. A bad-input draft may expose an empty string without being empty.</p></div></header>
         <div data-demo-preview>
-          <label for="quantity">Quantity (required, 0 to 1, step 0.1)</label>
+          <m-label for="quantity">Quantity (required, 0 to 1, step 0.1)</m-label>
           <m-input-number id="quantity-root">
             <span aria-hidden="true">±</span>
             <input data-number-control id="quantity" type="number" form="numbers" name="quantity" value="0.1" min="0" max="1" step="0.1" required aria-describedby="quantity-help">
@@ -41,16 +46,16 @@
             <button data-number-clear type="button" hidden>Clear quantity</button>
             <span>units</span>
           </m-input-number>
-          <p id="quantity-help">Native keyboard arrows and spinners remain available. The state below distinguishes nullable value, exposed text, empty and badInput.</p>
-          <div class="demo-tools">
-            <button type="button" id="off-grid">Silent value 0.15</button>
-            <button type="button" id="out-of-range">Silent value 2</button>
-            <button type="button" id="blank">Silent null / empty</button>
-            <button type="button" id="readonly">Toggle readonly</button>
-            <button type="button" id="bounds">Toggle max 0.3 / 1</button>
-          </div>
+          <m-p id="quantity-help">Native keyboard arrows and spinners remain available. The state below distinguishes nullable value, exposed text, empty and badInput.</m-p>
+          <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+            <m-button id="off-grid">Silent value 0.15</m-button>
+            <m-button id="out-of-range">Silent value 2</m-button>
+            <m-button id="blank">Silent null / empty</m-button>
+            <m-button id="readonly">Toggle readonly</m-button>
+            <m-button id="bounds">Toggle max 0.3 / 1</m-button>
+          </m-box>
           <pre id="state">Native fields work before the API loads.</pre>
-          <p id="events">Quantity events: input 0, change 0, clear 0</p>
+          <m-p id="events">Quantity events: input 0, change 0, clear 0</m-p>
         </div>
       </section>
       <section data-demo-example="stepping" aria-labelledby="stepping-title">
@@ -58,7 +63,7 @@
         <div data-demo-preview>
           <fieldset id="grid-fieldset">
             <legend>Native fieldset (including its first-legend exception)</legend>
-            <label for="grid-number">Grid (default 0.15, step 0.2, no min)</label>
+            <m-label for="grid-number">Grid (default 0.15, step 0.2, no min)</m-label>
             <m-input-number id="grid-root" size="small">
               <button data-number-decrement type="button" hidden>Decrease grid</button>
               <input data-number-control id="grid-number" type="number" form="numbers" name="grid" value="0.15" step="0.2">
@@ -66,26 +71,26 @@
               <button data-number-clear type="button" hidden>Clear grid</button>
             </m-input-number>
           </fieldset>
-          <label for="any-number">Any-step number</label>
+          <m-label for="any-number">Any-step number</m-label>
           <m-input-number id="any-root" round status="warning">
             <input data-number-control id="any-number" type="number" form="numbers" name="any" value="2.5" step="any">
             <button data-number-decrement type="button" hidden>Decrease any-step</button>
             <button data-number-increment type="button" hidden>Increase any-step</button>
             <button data-number-clear type="button" hidden>Clear any-step</button>
           </m-input-number>
-          <div class="demo-tools">
-            <button type="button" id="fieldset">Toggle disabled fieldset</button>
-            <button type="button" id="any-step">Try unsupported step</button>
-            <button type="button" id="rtl">Toggle RTL</button>
-            <button type="button" id="theme">Toggle dark theme</button>
-          </div>
-          <p id="step-error">No explicit stepping error requested.</p>
+          <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+            <m-button id="fieldset">Toggle disabled fieldset</m-button>
+            <m-button id="any-step">Try unsupported step</m-button>
+            <m-button id="rtl">Toggle RTL</m-button>
+            <m-button id="theme">Toggle dark theme</m-button>
+          </m-box>
+          <m-p id="step-error">No explicit stepping error requested.</m-p>
         </div>
       </section>
       <section data-demo-example="forms" aria-labelledby="forms-title">
         <header data-demo-header><div><h2 id="forms-title">Native defaults, reset and FormData</h2><p>value is a live number or null; defaultValue is the native reset string. Silent writes retain the native dirty-value flag. The form attribute chooses actual native form ownership; readonly submits and disabled does not.</p></div></header>
         <div data-demo-preview>
-          <label for="external-number">External form owner</label>
+          <m-label for="external-number">External form owner</m-label>
           <m-input-number id="external-root" size="large">
             <input data-number-control id="external-number" type="number" name="external" form="other-numbers" value="10" min="4" max="20" step="2">
             <button data-number-decrement type="button" hidden>Decrease external</button>
@@ -93,12 +98,12 @@
           </m-input-number>
           <m-input-number id="plain-root" size="tiny" form="numbers" name="plain" value="3" min="0" aria-label="Generated native number"></m-input-number>
           <input type="hidden" form="numbers" name="local" value="only">
-          <div class="demo-tools">
+          <m-box class="demo-tools">
             <button type="submit" form="numbers">Inspect native FormData</button>
             <button type="reset" form="numbers">Native reset</button>
-            <button type="button" id="defaults">Set quantity defaultValue to 0.4</button>
-            <button type="button" id="cancel">Cancel next reset</button>
-          </div>
+            <m-button type="button" id="defaults">Set quantity defaultValue to 0.4</m-button>
+            <m-button type="button" id="cancel">Cancel next reset</m-button>
+          </m-box>
           <pre id="submission">No submission yet. This demo does not send data to a service.</pre>
         </div>
       </section>
@@ -106,11 +111,11 @@
         <header data-demo-header><div><h2 id="lifecycle-title">Late owner and reconnect</h2><p>A generated native owner may be replaced by one authored number input. Pending public writes survive adoption. Surviving authored nodes, labels and listeners are never rebuilt.</p></div></header>
         <div data-demo-preview>
           <m-input-number id="late-root" form="numbers" name="late" aria-label="Late authored number"></m-input-number>
-          <div class="demo-tools">
-            <button type="button" id="adopt">Adopt authored input</button>
-            <button type="button" id="reconnect">Disconnect, write, reconnect quantity</button>
-          </div>
-          <p id="lifecycle-state">No replacement yet.</p>
+          <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+            <m-button id="adopt">Adopt authored input</m-button>
+            <m-button id="reconnect">Disconnect, write, reconnect quantity</m-button>
+          </m-box>
+          <m-p id="lifecycle-state">No replacement yet.</m-p>
         </div>
       </section>
     <form id="other-numbers"><button type="reset">Reset external number only</button></form>

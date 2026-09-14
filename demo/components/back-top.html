@@ -9,10 +9,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-back-top.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./back-top.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-back-top.global.js"></script>
   <script type="module" src="./back-top.js"></script>
   <script type="module" src="../example-code.js"></script>
@@ -38,7 +40,7 @@
     <section data-demo-example="basic" aria-labelledby="basic-heading">
       <header data-demo-header><div><h2 id="basic-heading">Basic usage</h2><p>Default back-to-top button that appears after scrolling down 400 pixels.</p></div></header>
       <div data-demo-preview>
-        <p>Scroll down the page to reveal the Back Top button at the bottom-right corner.</p>
+        <m-p>Scroll down the page to reveal the Back Top button at the bottom-right corner.</m-p>
         <m-back-top id="basic-back-top"></m-back-top>
       </div>
     </section>
@@ -46,7 +48,7 @@
     <section data-demo-example="threshold" aria-labelledby="threshold-heading">
       <header data-demo-header><div><h2 id="threshold-heading">Custom visibility height</h2><p>Specify a custom threshold like 100 pixels to display earlier.</p></div></header>
       <div data-demo-preview>
-        <p>This button becomes visible after scrolling only 100 pixels.</p>
+        <m-p>This button becomes visible after scrolling only 100 pixels.</m-p>
         <m-back-top id="threshold-back-top" visibility-height="100" right="100px" bottom="40px"></m-back-top>
       </div>
     </section>
@@ -54,9 +56,9 @@
     <section data-demo-example="custom" aria-labelledby="custom-heading">
       <header data-demo-header><div><h2 id="custom-heading">Custom content and offset</h2><p>Authored text or custom icon with configured offsets.</p></div></header>
       <div data-demo-preview>
-        <p>Custom labeled button positioned 160px from the right.</p>
+        <m-p>Custom labeled button positioned 160px from the right.</m-p>
         <m-back-top id="custom-back-top" visibility-height="50" right="160px" bottom="40px">
-          <span>Top</span>
+          <m-span>Top</m-span>
         </m-back-top>
       </div>
     </section>

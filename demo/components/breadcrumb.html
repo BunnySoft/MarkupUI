@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./breadcrumb.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-breadcrumb.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -74,13 +76,13 @@
           <m-breadcrumb-item href="#library"><m-text>Library</m-text></m-breadcrumb-item>
           <m-breadcrumb-item aria-current="page"><m-text>Data</m-text></m-breadcrumb-item>
         </m-breadcrumb>
-        <div class="demo-tools">
+        <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
           <m-button id="set-slash"><m-text>Separator: /</m-text></m-button>
           <m-button id="set-chevron"><m-text>Separator: &gt;</m-text></m-button>
           <m-button id="set-arrow"><m-text>Separator: →</m-text></m-button>
           <m-button id="add-item"><m-text>Add Item</m-text></m-button>
-        </div>
-        <p id="interactive-status" role="status">Ready</p>
+        </m-box>
+        <m-p id="interactive-status" role="status">Ready</m-p>
       </div>
     </section>
 

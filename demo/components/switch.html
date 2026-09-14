@@ -8,10 +8,15 @@
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-switch.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./switch.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script type="module" src="../../dist/markup-ui-switch.js"></script>
   <script type="module" src="./switch.js"></script>
   <script type="module" src="../example-code.js"></script>
@@ -41,15 +46,15 @@
             </span>
             <span data-switch-loading hidden aria-hidden="true">Working…</span>
           </label></m-switch>
-          <p id="alerts-help">Checked submits “enabled”; unchecked submits nothing. Loading is an explicit local flag, not a pending network request or asynchronous checked-update guard.</p>
-          <div class="demo-tools">
-            <button type="button" id="busy">Toggle loading</button>
-            <button type="button" id="silent">Silent checked toggle</button>
-            <button type="button" id="default">Change defaultChecked</button>
-            <button type="button" id="token">Change submission string</button>
-          </div>
-          <p id="state">The component API initializes after loading.</p>
-          <p id="events">Native alerts events: input 0, change 0</p>
+          <m-p id="alerts-help">Checked submits “enabled”; unchecked submits nothing. Loading is an explicit local flag, not a pending network request or asynchronous checked-update guard.</m-p>
+          <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+            <m-button id="busy">Toggle loading</m-button>
+            <m-button id="silent">Silent checked toggle</m-button>
+            <m-button id="default">Change defaultChecked</m-button>
+            <m-button id="token">Change submission string</m-button>
+          </m-box>
+          <m-p id="state">The component API initializes after loading.</m-p>
+          <m-p id="events">Native alerts events: input 0, change 0</m-p>
         </div>
       </section>
       <section data-demo-example="sizes" aria-labelledby="sizes-title">
@@ -65,11 +70,11 @@
             </label></m-switch>
           </fieldset>
           <m-switch id="disabled-switch" disabled checked>Author-disabled setting</m-switch>
-          <div class="demo-tools">
-            <button type="button" id="fieldset">Toggle disabled fieldset</button>
-            <button type="button" id="rtl">Toggle RTL</button>
-            <button type="button" id="theme">Toggle dark theme</button>
-          </div>
+          <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+            <m-button id="fieldset">Toggle disabled fieldset</m-button>
+            <m-button id="rtl">Toggle RTL</m-button>
+            <m-button id="theme">Toggle dark theme</m-button>
+          </m-box>
         </div>
       </section>
       <section data-demo-example="forms" aria-labelledby="forms-title">
@@ -82,11 +87,11 @@
           </label></m-switch>
           <m-switch id="required-switch" status="warning" name="consent" value="yes" required>Required local consent (native constraint)</m-switch>
           <input type="hidden" name="local" value="only">
-          <div class="demo-tools">
+          <m-box class="demo-tools">
             <button type="submit">Inspect native FormData</button>
             <button type="reset">Native reset</button>
             <button type="button" id="cancel">Cancel next reset</button>
-          </div>
+          </m-box>
           <pre id="submission">No submission yet.</pre>
         </div>
       </section>
@@ -94,11 +99,11 @@
         <header data-demo-header><div><h2 id="lifecycle-title">Late content and reconnect</h2><p>Authored controls, label nodes, native values and listeners survive refresh and reconnect. An authored control may replace a generated one. Disconnected property writes work; reconnect does not replay stale checked attributes.</p></div></header>
         <div data-demo-preview>
           <m-switch id="late-switch" name="late">Generated control, surviving label content</m-switch>
-          <div class="demo-tools">
-            <button type="button" id="adopt">Adopt an authored checkbox</button>
-            <button type="button" id="reconnect">Disconnect, write checked, reconnect</button>
-          </div>
-          <p id="lifecycle-state">No replacement yet.</p>
+          <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+            <m-button id="adopt">Adopt an authored checkbox</m-button>
+            <m-button id="reconnect">Disconnect, write checked, reconnect</m-button>
+          </m-box>
+          <m-p id="lifecycle-state">No replacement yet.</m-p>
         </div>
       </section>
     </form>

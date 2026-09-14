@@ -6,7 +6,8 @@ button { padding: .3rem .5rem; }
 fieldset { min-inline-size: 0; border: 1px solid #afbecf; }
 .demo-controls:not([hidden]) { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; }
 .demo-controls label { max-inline-size: 100%; }
-.m-infinite-scroll { --m-infinite-scroll-height: 12rem; }
+.m-infinite-scroll { --m-infinite-scroll-height: 12rem; block-size: 200px; overflow-y: auto; }
+#basic-list, #distance-list, #disabled-scroll ul { margin: 0; padding: 0 16px; list-style: none; }
 .m-infinite-scroll[data-scroll-mode="page"] > .m-infinite-scroll__viewport { max-block-size: none; overflow: visible; }
 [data-infinite-content] { padding-inline-start: 1.5rem; margin-block: 0; }
 [data-infinite-content] > li { padding-block: .5rem; border-block-end: 1px solid #d4dbe5; }

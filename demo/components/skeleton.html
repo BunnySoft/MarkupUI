@@ -9,14 +9,18 @@
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-skeleton.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-input.css">
   <link rel="stylesheet" href="../../dist/markup-ui-space.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./skeleton.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-skeleton.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-input.global.js"></script>
   <script defer src="../../dist/markup-ui-space.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
   <script type="module" src="./skeleton.js"></script>
@@ -49,17 +53,17 @@
           <m-skeleton id="round" width="120" height="32" round></m-skeleton>
           <m-skeleton id="circle" width="48" height="20" circle></m-skeleton>
         </m-space>
-        <div class="preset-grid" id="presets">
+        <m-box class="preset-grid" id="presets">
           <m-skeleton size="small"></m-skeleton>
           <m-skeleton size="medium"></m-skeleton>
           <m-skeleton size="large"></m-skeleton>
-        </div>
+        </m-box>
         <m-p>Inline text: <m-skeleton id="text-line" text class="text-line"></m-skeleton> remains aligned with native text.</m-p>
-        <div class="percentage-box"><m-skeleton id="percentage" width="50%" height="12px"></m-skeleton></div>
-        <div class="percentage-box"><m-skeleton id="percentage-circle" width="25%" circle></m-skeleton></div>
-        <div class="percentage-box"><m-skeleton id="calculated" width="calc(100% - 40px)" height="16px"></m-skeleton></div>
+        <m-box class="percentage-box"><m-skeleton id="percentage" width="50%" height="12px"></m-skeleton></m-box>
+        <m-box class="percentage-box"><m-skeleton id="percentage-circle" width="25%" circle></m-skeleton></m-box>
+        <m-box class="percentage-box"><m-skeleton id="calculated" width="calc(100% - 40px)" height="16px"></m-skeleton></m-box>
         <m-p>Each row below is 25% of a definite 200px containing height.</m-p>
-        <div class="relative-height-box"><m-skeleton id="relative-height" width="120px" height="25%" repeat="3"></m-skeleton></div>
+        <m-box class="relative-height-box"><m-skeleton id="relative-height" width="120px" height="25%" repeat="3"></m-skeleton></m-box>
       </div>
     </section>
 
@@ -68,7 +72,7 @@
       <div data-demo-preview>
         <m-skeleton id="repeated" repeat="3" class="rows"></m-skeleton>
         <m-space class="controls" wrap align="center">
-          <label>Repeat (0–100) <input id="repeat-input" type="text" value="3"></label>
+          <m-label>Repeat (0–100) <m-input id="repeat-input" value="3"></m-input></m-label>
           <m-button id="apply-repeat">Apply attribute</m-button>
           <m-button id="toggle-animation">Toggle animation</m-button>
         </m-space>
@@ -80,10 +84,10 @@
       <header data-demo-header><div><h2 id="owner-heading">Application-owned loading transition</h2><m-p>The application controls busy state and swaps between placeholder and content.</m-p></div></header>
       <div data-demo-preview id="content-owner" aria-busy="true">
         <m-skeleton id="loading-placeholder" repeat="2" class="rows"></m-skeleton>
-        <div id="loaded-content" hidden>
+        <m-box id="loaded-content" hidden>
           <m-p>Actual content is outside the Skeleton placeholder.</m-p>
           <m-button id="content-action">Native content action</m-button>
-        </div>
+        </m-box>
         <m-p id="loading-status" role="status">Loading the profile.</m-p>
         <m-space class="controls">
           <m-button id="toggle-loading">Toggle application loading</m-button>

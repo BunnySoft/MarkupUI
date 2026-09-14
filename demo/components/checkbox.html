@@ -8,10 +8,15 @@
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-checkbox.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./checkbox.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script type="module" src="../../dist/markup-ui-checkbox.js"></script>
   <script type="module" src="./checkbox.js"></script>
   <script type="module" src="../example-code.js"></script>
@@ -41,26 +46,26 @@
           <m-checkbox-group id="topics" min="1" max="2">
             <fieldset class="m-checkbox-group" aria-describedby="topic-rule">
               <legend>Topics</legend>
-              <p id="topic-rule">Retain one to two selections. Disabled selected members count toward limits but do not submit. Limits cancel native activation; they are not form validation and never disable successful fields.</p>
-              <div class="m-checkbox-group__items" id="topic-items">
+              <m-p id="topic-rule">Retain one to two selections. Disabled selected members count toward limits but do not submit. Limits cancel native activation; they are not form validation and never disable successful fields.</m-p>
+              <m-box class="m-checkbox-group__items" id="topic-items">
                 <m-checkbox id="alpha-root"><label class="m-checkbox"><input data-checkbox id="alpha" type="checkbox" name="topics" form="choices-form" value="alpha" checked><span>Alpha</span></label></m-checkbox>
                 <m-checkbox id="beta-root"><label class="m-checkbox"><input data-checkbox id="beta" type="checkbox" name="topics" form="choices-form" value="beta"><span>Beta</span></label></m-checkbox>
                 <m-checkbox><label class="m-checkbox"><input data-checkbox id="gamma" type="checkbox" name="topics" form="choices-form" value="gamma"><span>Gamma with a long wrapping native label</span></label></m-checkbox>
                 <m-checkbox><label class="m-checkbox"><input data-checkbox id="locked" type="checkbox" name="topics" form="choices-form" value="locked" disabled><span>Author-disabled topic</span></label></m-checkbox>
-              </div>
+              </m-box>
               <template id="topic-template"><m-checkbox><label class="m-checkbox"><input data-checkbox id="delta" type="checkbox" name="topics" form="choices-form" value="delta"><span>Delta (authored template)</span></label></m-checkbox></template>
             </fieldset>
           </m-checkbox-group>
-          <div class="demo-tools">
-            <button type="button" id="silent">Silent value = ["beta"]</button>
-            <button type="button" id="default">Change Alpha defaultChecked</button>
-            <button type="button" id="add">Add Delta and refresh</button>
-            <button type="button" id="limits">Toggle max two / three</button>
-            <button type="button" id="toggle-fieldset">Toggle Topics disabled</button>
-            <button type="button" id="reconnect">Disconnect and reconnect Topics</button>
-          </div>
-          <p id="state">Group limits initialize with JavaScript.</p>
-          <p id="event-count">Accepted group changes: 0</p>
+          <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+            <m-button id="silent">Silent value = ["beta"]</m-button>
+            <m-button id="default">Change Alpha defaultChecked</m-button>
+            <m-button id="add">Add Delta and refresh</m-button>
+            <m-button id="limits">Toggle max two / three</m-button>
+            <m-button id="toggle-fieldset">Toggle Topics disabled</m-button>
+            <m-button id="reconnect">Disconnect and reconnect Topics</m-button>
+          </m-box>
+          <m-p id="state">Group limits initialize with JavaScript.</m-p>
+          <m-p id="event-count">Accepted group changes: 0</m-p>
         </div>
       </section>
       <section data-demo-example="nesting" aria-labelledby="nesting-title">
@@ -87,7 +92,7 @@
           <form id="choices-form" method="get" action="checkbox.html">
           <button type="submit">Inspect FormData</button>
           <button type="reset">Native reset</button>
-          <button type="button" id="cancel">Cancel next reset</button>
+          <m-button id="cancel">Cancel next reset</m-button>
           <pre id="submission">No submission yet.</pre>
           </form>
         </div>

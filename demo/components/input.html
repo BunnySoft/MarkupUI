@@ -8,10 +8,15 @@
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-input.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./input.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script type="module" src="../../dist/markup-ui-core.js"></script>
   <script type="module" src="../../dist/markup-ui-input.js"></script>
   <script type="module" src="./input.js"></script>
@@ -33,20 +38,20 @@
       <section data-demo-example="editing" aria-labelledby="editing-title">
         <header data-demo-header><div><h2 id="editing-title">Native editing, defaults and count</h2><p>Author the native control to retain its identity, labels and browser state. Clear and count are optional enhancements.</p></div></header>
         <div data-demo-preview>
-          <label for="title">Title (required)</label>
+          <m-label for="title">Title (required)</m-label>
           <m-input id="title-root" clearable show-count>
             <span class="m-input__affix" aria-hidden="true">✎</span>
             <input data-input-control id="title" name="title" value="Native draft" required minlength="2" maxlength="24" autocomplete="off" inputmode="text" aria-describedby="title-help title-count">
             <button data-input-clear type="button" hidden aria-label="Clear title">Clear</button>
             <span data-input-count id="title-count">Count available with JavaScript</span>
           </m-input>
-          <p id="title-help">Native constraints and count use UTF-16 code units. Count is not a live announcement. Native value writes are silent; use the host value property to refresh decorations too.</p>
+          <m-p id="title-help">Native constraints and count use UTF-16 code units. Count is not a live announcement. Native value writes are silent; use the host value property to refresh decorations too.</m-p>
         </div>
       </section>
       <section data-demo-example="password" aria-labelledby="password-title">
         <header data-demo-header><div><h2 id="password-title">Password reveal and clear</h2><p>Selection survives reveal. Escape, focus leaving, reset, hidden/disabled/readonly and disconnect conceal the password. Actions pause during composition.</p></div></header>
         <div data-demo-preview>
-          <label for="secret">Dummy password (not submitted)</label>
+          <m-label for="secret">Dummy password (not submitted)</m-label>
           <m-input id="secret-root" type="password" show-password clearable>
             <input data-input-control id="secret" type="password" value="dummy-only" autocomplete="off">
             <button data-input-reveal type="button" hidden>Show password</button>
@@ -57,7 +62,7 @@
       <section data-demo-example="multiline" aria-labelledby="multiline-title">
         <header data-demo-header><div><h2 id="multiline-title">Textarea and CSS autosize</h2><p>Two to six lines through Web style tokens. Without field-sizing support, native rows and manual vertical resize remain; no measuring mirror.</p></div></header>
         <div data-demo-preview>
-          <label for="notes">Notes</label>
+          <m-label for="notes">Notes</m-label>
           <m-textarea id="notes-root" autosize clearable show-count>
             <textarea data-input-control class="m-input__autosize" id="notes" name="notes" rows="3" maxlength="240" aria-describedby="notes-count">Two native
 lines</textarea>
@@ -71,18 +76,18 @@ lines</textarea>
         <div data-demo-preview>
           <fieldset id="controls-fieldset">
             <legend>Native fieldset</legend>
-            <label for="field">Editable fieldset member</label>
+            <m-label for="field">Editable fieldset member</m-label>
             <m-input id="field-root" size="small" clearable>
               <input data-input-control id="field" name="field" value="Member">
               <button data-input-clear type="button" hidden>Clear member</button>
             </m-input>
           </fieldset>
-          <label for="read">Readonly, round and large</label>
+          <m-label for="read">Readonly, round and large</m-label>
           <m-input id="read-root" round size="large">
             <input data-input-control id="read" name="read" value="Copy this" readonly>
             <button data-input-clear type="button" hidden>Clear readonly</button>
           </m-input>
-          <label for="warning">Warning is presentation, not validation</label>
+          <m-label for="warning">Warning is presentation, not validation</m-label>
           <m-input id="warning-root" status="warning" size="tiny">
             <input data-input-control id="warning" name="warning" placeholder="Native placeholder">
             <span class="m-input__affix">Review later</span>
@@ -93,10 +98,10 @@ lines</textarea>
         <header data-demo-header><div><h2 id="group-title">InputGroup and native labels</h2><p>Wrapping, independently named endpoints with the existing 4px gap; no merged semantic owner, invented compact mode or automatic label association.</p></div></header>
         <div data-demo-preview>
           <m-input-group id="pair">
-            <m-input-group-label><label for="from">From</label></m-input-group-label>
+            <m-input-group-label><m-label for="from">From</m-label></m-input-group-label>
             <m-input size="small"><input data-input-control id="from" name="from" value="A"></m-input>
             <m-input-group-label aria-hidden="true">→</m-input-group-label>
-            <m-input-group-label><label for="to">To</label></m-input-group-label>
+            <m-input-group-label><m-label for="to">To</m-label></m-input-group-label>
             <m-input size="small"><input data-input-control id="to" name="to" value="B"></m-input>
             <m-input-group-label>km</m-input-group-label>
           </m-input-group>
@@ -105,15 +110,15 @@ lines</textarea>
       <section data-demo-example="forms" aria-labelledby="forms-title">
         <header data-demo-header><div><h2 id="forms-title">FormData, reset and constraint validation</h2><p>Only named native controls submit. Readonly is included; disabled is excluded. The external field belongs to the other form.</p></div></header>
         <div data-demo-preview>
-          <label for="external">Associated with the other form</label>
+          <m-label for="external">Associated with the other form</m-label>
           <m-input id="external-root" status="success" show-count>
             <input data-input-control id="external" name="external" form="other" value="Other default">
             <span data-input-count>Count available with JavaScript</span>
           </m-input>
           <input type="hidden" name="token" value="local-only">
-          <p><button type="submit">Inspect native submission locally</button> <button type="reset">Native reset</button> <button type="button" id="validate">Report title validity</button></p>
+          <m-p><button type="submit">Inspect native submission locally</button> <button type="reset">Native reset</button> <m-button type="button" id="validate">Report title validity</m-button></m-p>
           <pre id="submission">Nothing submitted.</pre>
-          <p id="events">Title events: input 0, change 0, clear 0</p>
+          <m-p id="events">Title events: input 0, change 0, clear 0</m-p>
         </div>
       </section>
     </form>
@@ -122,17 +127,17 @@ lines</textarea>
       <header data-demo-header><div><h2 id="lifecycle-title">Direct properties, late content and reconnect</h2><p>Silent value writes do not change defaults. Reconnect retains the native owner and authored descendants; stale action tasks cannot edit the reconnected field.</p></div></header>
       <div data-demo-preview>
         <m-input id="generated" aria-label="Generated native field" value="Created natively" clearable show-count></m-input>
-        <div class="demo-tools">
-          <button type="button" id="toggle-fieldset">Toggle disabled fieldset</button>
-          <button type="button" id="toggle-readonly">Toggle title readonly</button>
-          <button type="button" id="toggle-rtl">Toggle RTL</button>
-          <button type="button" id="programmatic">Silent host value</button>
-          <button type="button" id="new-default">Change next reset default</button>
-          <button type="button" id="cancel-reset">Cancel next reset</button>
-          <button type="button" id="reconnect">Reconnect title</button>
-          <button type="button" id="late-content">Append suffix</button>
-        </div>
-        <p id="lifecycle-status" role="status">Native owner retained.</p>
+        <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+          <m-button id="toggle-fieldset">Toggle disabled fieldset</m-button>
+          <m-button id="toggle-readonly">Toggle title readonly</m-button>
+          <m-button id="toggle-rtl">Toggle RTL</m-button>
+          <m-button id="programmatic">Silent host value</m-button>
+          <m-button id="new-default">Change next reset default</m-button>
+          <m-button id="cancel-reset">Cancel next reset</m-button>
+          <m-button id="reconnect">Reconnect title</m-button>
+          <m-button id="late-content">Append suffix</m-button>
+        </m-box>
+        <m-p id="lifecycle-status" role="status">Native owner retained.</m-p>
       </div>
     </section>
     <section aria-labelledby="api-heading"><h2 id="api-heading">API</h2><div id="input-api"><p>Loading API documentation.</p></div></section>

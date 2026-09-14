@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./empty.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-empty.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -42,12 +44,12 @@
     <section data-demo-example="sizes" aria-labelledby="sizes-heading">
       <header data-demo-header><div><h2 id="sizes-heading">Original decorative illustration and sizes</h2><m-p>Small, medium, large and huge sizes with responsive geometry and dynamic localization.</m-p></div></header>
       <div data-demo-preview>
-        <div class="grid" id="sizes">
+        <m-box class="grid" id="sizes">
           <m-empty size="small" description="Small"></m-empty>
           <m-empty size="medium" description="Medium"></m-empty>
           <m-empty size="large" description="Large"></m-empty>
           <m-empty size="huge" description="Huge"></m-empty>
-        </div>
+        </m-box>
         <m-empty id="fallback"></m-empty>
         <m-box class="controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
           <m-button id="localize">Use localized text</m-button>
@@ -64,9 +66,9 @@
         <form id="report-form">
           <m-empty id="authored" description="Fallback must not replace authored content" role="region" aria-labelledby="empty-heading">
             <svg data-m-empty-icon aria-hidden="true" focusable="false" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="M8 12h8" stroke="currentColor" stroke-width="2"></path></svg>
-            <m-box data-m-empty-description><m-heading level="3"><h3 id="empty-heading">No reports yet</h3></m-heading><m-p>Create a report or browse the examples.</m-p></m-box>
+            <m-box data-m-empty-description><m-heading level="3"><m-h3 id="empty-heading">No reports yet</m-h3></m-heading><m-p>Create a report or browse the examples.</m-p></m-box>
             <m-box data-m-empty-extra>
-              <label>Report name <input id="report-name" name="report" value="Draft"></label>
+              <m-label>Report name <input id="report-name" name="report" value="Draft"></m-label>
               <m-button attr-type="submit" id="create-report">Create report</m-button>
               <m-button attr-type="reset" id="reset-report">Reset name</m-button>
               <m-button id="browse">Browse examples</m-button>
@@ -89,7 +91,7 @@
       <header data-demo-header><div><h2 id="template-heading">Application-owned native template cloning</h2><m-p>Templates remain inert until cloned and inserted by application code.</m-p></div></header>
       <div data-demo-preview>
         <template id="empty-template">
-          <m-heading level="3" data-m-empty-description><h3>No saved searches</h3></m-heading>
+          <m-heading level="3" data-m-empty-description><m-h3>No saved searches</m-h3></m-heading>
           <m-box data-m-empty-extra><m-button id="template-action">Create saved search</m-button></m-box>
         </template>
         <m-empty id="template-target" description="Template has not been cloned yet"></m-empty>
@@ -104,8 +106,8 @@
       <header data-demo-header><div><h2 id="static-heading">CSS-only native empty state</h2><m-p>Static empty states using ordinary HTML elements and the external stylesheet without JavaScript.</m-p></div></header>
       <div data-demo-preview>
         <section class="m-empty compact" data-size="small">
-          <m-heading level="3" data-m-empty-description><h3>No archived reports</h3></m-heading>
-          <div data-m-empty-extra><m-a href="#authored-heading">Create your first report</m-a></div>
+          <m-heading level="3" data-m-empty-description><m-h3>No archived reports</m-h3></m-heading>
+          <m-box data-m-empty-extra><m-a href="#authored-heading">Create your first report</m-a></m-box>
         </section>
         <m-p>This native section needs no Custom Element or JavaScript. If announcements are needed, author one suitable native live region rather than duplicating it automatically.</m-p>
       </div>

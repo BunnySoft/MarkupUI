@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./steps.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-steps.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -82,7 +84,7 @@
           <m-step title="Step 3" description="Testing and QA."></m-step>
           <m-step title="Step 4" description="Deployment." disabled></m-step>
         </m-steps>
-        <p id="interactive-status" role="status">Current step: 1</p>
+        <m-p id="interactive-status" role="status">Current step: 1</m-p>
         <m-box class="demo-controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
           <m-button id="prev-step">Previous</m-button>
           <m-button id="next-step">Next</m-button>
@@ -98,48 +100,48 @@
         <form id="native-form">
           <ol class="m-steps" data-steps id="steps" aria-label="Example progress">
             <li class="m-step" data-step id="details" data-step-status="finish">
-              <div class="m-step__layout"><span class="m-step__icon" aria-hidden="true">✓</span><div class="m-step__body">
-                <h2 data-step-title>Details</h2><span data-step-status-text>Completed</span><p>Explicitly completed by the application, not inferred from order.</p>
+              <m-box class="m-step__layout"><span class="m-step__icon" aria-hidden="true">✓</span><m-box class="m-step__body">
+                <m-h2 data-step-title>Details</m-h2><span data-step-status-text>Completed</span><m-p>Explicitly completed by the application, not inferred from order.</m-p>
                 <button type="button" data-step-action hidden>Select details</button>
-              </div></div>
+              </m-box></m-box>
             </li>
             <li class="m-step" data-step id="review" aria-current="step">
-              <div class="m-step__layout"><span class="m-step__icon" aria-hidden="true">○</span><div class="m-step__body">
-                <h2 data-step-title>Review</h2><span data-step-status-text>In progress</span><p>Changing current does not imply earlier work succeeded.</p>
+              <m-box class="m-step__layout"><span class="m-step__icon" aria-hidden="true">○</span><m-box class="m-step__body">
+                <m-h2 data-step-title>Review</m-h2><span data-step-status-text>In progress</span><m-p>Changing current does not imply earlier work succeeded.</m-p>
                 <button type="button" data-step-action hidden>Select review</button>
-              </div></div>
+              </m-box></m-box>
             </li>
             <li class="m-step" data-step id="approval" data-step-status="error">
-              <div class="m-step__layout"><span class="m-step__icon" aria-hidden="true">!</span><div class="m-step__body">
-                <h2 data-step-title>Approval</h2><span data-step-status-text>Error</span><p>Explicit error state overrides positional/current styling. Selection is blocked natively.</p>
+              <m-box class="m-step__layout"><span class="m-step__icon" aria-hidden="true">!</span><m-box class="m-step__body">
+                <m-h2 data-step-title>Approval</m-h2><span data-step-status-text>Error</span><m-p>Explicit error state overrides positional/current styling. Selection is blocked natively.</m-p>
                 <button type="button" data-step-action disabled hidden>Select approval</button>
                 <ol class="m-steps m-steps--vertical m-steps--small" data-steps id="nested" aria-label="Independent approval details">
-                  <li class="m-step" data-step><div class="m-step__layout"><div class="m-step__body"><h3 data-step-title>Policy review</h3><span data-step-status-text>Waiting</span></div></div></li>
-                  <li class="m-step" data-step data-step-status="finish"><div class="m-step__layout"><div class="m-step__body"><h3 data-step-title>Identity check</h3><span data-step-status-text>Completed</span></div></div></li>
+                  <li class="m-step" data-step><m-box class="m-step__layout"><m-box class="m-step__body"><m-h3 data-step-title>Policy review</m-h3><span data-step-status-text>Waiting</span></m-box></m-box></li>
+                  <li class="m-step" data-step data-step-status="finish"><m-box class="m-step__layout"><m-box class="m-step__body"><m-h3 data-step-title>Identity check</m-h3><span data-step-status-text>Completed</span></m-box></m-box></li>
                 </ol>
-              </div></div>
+              </m-box></m-box>
             </li>
             <li class="m-step" data-step id="publish">
-              <div class="m-step__layout"><span class="m-step__icon" aria-hidden="true">○</span><div class="m-step__body">
-                <h2 data-step-title>Publish</h2><span data-step-status-text>Waiting</span><p><a href="#native-note" id="native-link">Read the native destination</a></p>
+              <m-box class="m-step__layout"><span class="m-step__icon" aria-hidden="true">○</span><m-box class="m-step__body">
+                <m-h2 data-step-title>Publish</m-h2><span data-step-status-text>Waiting</span><m-p><a href="#native-note" id="native-link">Read the native destination</a></m-p>
                 <button type="button" data-step-action hidden>Select publish</button>
-              </div></div>
+              </m-box></m-box>
             </li>
-            <template id="extra-step"><li class="m-step" data-step><div class="m-step__layout"><div class="m-step__body"><h2 data-step-title>Additional authored step</h2><span data-step-status-text>Waiting</span><button type="button" data-step-action>Select additional step</button></div></div></li></template>
+            <template id="extra-step"><li class="m-step" data-step><m-box class="m-step__layout"><m-box class="m-step__body"><m-h2 data-step-title>Additional authored step</m-h2><span data-step-status-text>Waiting</span><button type="button" data-step-action>Select additional step</button></m-box></m-box></li></template>
           </ol>
-          <label>Unrelated native form value <input id="outside-input" value="Preserved"></label>
-          <button type="submit" id="save">Save unrelated form</button>
+          <m-label>Unrelated native form value <input id="outside-input" value="Preserved"></m-label>
+          <m-button type="submit" id="save">Save unrelated form</m-button>
         </form>
-        <div class="demo-controls">
-          <button type="button" id="before">Before first</button><button type="button" id="after">After last</button>
-          <button type="button" id="unset">Clear current</button><button type="button" id="status">Toggle current error</button>
-          <button type="button" id="finish-review">Mark review completed</button><button type="button" id="hide-last">Toggle last visible step</button>
-          <button type="button" id="insert">Insert authored step before current</button><button type="button" id="remove">Remove current step</button>
-          <button type="button" id="direction">Toggle vertical</button><button type="button" id="placement">Toggle icon/content placement</button>
-          <button type="button" id="reject">Reject next selection</button>
-        </div>
+        <m-box class="demo-controls">
+          <m-button type="button" id="before">Before first</m-button><m-button type="button" id="after">After last</m-button>
+          <m-button type="button" id="unset">Clear current</m-button><m-button type="button" id="status">Toggle current error</m-button>
+          <m-button type="button" id="finish-review">Mark review completed</m-button><m-button type="button" id="hide-last">Toggle last visible step</m-button>
+          <m-button type="button" id="insert">Insert authored step before current</m-button><m-button type="button" id="remove">Remove current step</m-button>
+          <m-button type="button" id="direction">Toggle vertical</m-button><m-button type="button" id="placement">Toggle icon/content placement</m-button>
+          <m-button type="button" id="reject">Reject next selection</m-button>
+        </m-box>
         <output id="state">Native list and links remain useful without JavaScript.</output>
-        <section id="native-note"><h2>Native destination</h2><p>Links retain native focus/hash/history and modified-click behavior.</p></section>
+        <section id="native-note"><m-h2>Native destination</m-h2><m-p>Links retain native focus/hash/history and modified-click behavior.</m-p></section>
       </div>
     </section>
 

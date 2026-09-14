@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./progress.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-progress.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -66,7 +68,7 @@
     <section data-demo-example="radial" aria-labelledby="radial-heading">
       <header data-demo-header><div><h2 id="radial-heading">Circle, dashboard, offsets and multiple measures</h2><p>Radial decorative SVG visualizations including circle, dashboard arc, angular offsets and multiple circle measures.</p></div></header>
       <div data-demo-preview>
-        <div class="radials">
+        <m-box class="radials">
           <m-progress id="circle" type="circle" percentage="55" label="Circle upload"></m-progress>
           <m-progress id="dashboard" type="dashboard" percentage="70" label="Dashboard completion"></m-progress>
           <m-progress id="offset" type="circle" percentage="40" offset-degree="90" gap-degree="60" gap-offset-degree="30" label="Offset arc"></m-progress>
@@ -75,7 +77,7 @@
             <progress max="100" value="65" aria-label="Network"></progress>
             <progress max="100" value="90" aria-label="Index"></progress>
           </m-progress>
-        </div>
+        </m-box>
       </div>
     </section>
 
@@ -83,12 +85,12 @@
       <header data-demo-header><div><h2 id="appearance-heading">Gradients, rails, status and authored indicator</h2><p>Custom gradient stops, status color palettes, and custom slotted indicator content.</p></div></header>
       <div data-demo-preview>
         <m-progress id="gradient-line" percentage="65" label="Gradient line"></m-progress>
-        <div class="radials">
+        <m-box class="radials">
           <m-progress id="gradient-circle" type="circle" percentage="65" label="Gradient circle"></m-progress>
           <m-progress percentage="85" type="circle" status="warning" label="Warning completion"></m-progress>
           <m-progress percentage="20" type="circle" status="error" label="Failed transfer" aria-valuetext="Transfer failed at twenty percent"></m-progress>
-        </div>
-        <m-progress id="custom-indicator" percentage="30" label="Downloaded data"><strong id="custom-text">3 of 10 MB</strong></m-progress>
+        </m-box>
+        <m-progress id="custom-indicator" percentage="30" label="Downloaded data"><m-strong id="custom-text">3 of 10 MB</m-strong></m-progress>
         <m-p>The status choice is explicit; reaching 100% does not generate a success state or change application busy state.</m-p>
       </div>
     </section>

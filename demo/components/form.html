@@ -13,6 +13,11 @@
   <link rel="stylesheet" href="../../dist/markup-ui-form.css">
   <link rel="stylesheet" href="../../dist/markup-ui-input.css">
   <link rel="stylesheet" href="../../dist/markup-ui-switch.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script type="module" src="../../dist/markup-ui-switch.js"></script>
   <link rel="stylesheet" href="./form.css">
   <script type="module" src="../../dist/markup-ui-form.js"></script>
@@ -42,55 +47,55 @@
         <input id="name" name="profile.name" value="Ada" required minlength="2" maxlength="32" data-input-control aria-describedby="name-help name-count">
         <span id="name-count" data-input-count>3 / 32</span>
       </m-input>
-      <p id="name-help">Try “reserved” for a local asynchronous error. Editing any form field cancels outstanding checks.</p>
-      <p class="m-form-item__feedback" id="name-error" hidden></p>
+      <m-p id="name-help">Try “reserved” for a local asynchronous error. Editing any form field cancels outstanding checks.</m-p>
+      <m-p class="m-form-item__feedback" id="name-error" hidden></m-p>
     </m-form-item>
     <m-form-item key="consent" id="consent-item">
       <m-switch id="consent-switch" name="consent" value="yes" checked required>Required native Switch consent</m-switch>
-      <p class="m-form-item__feedback" id="consent-error" hidden></p>
+      <m-p class="m-form-item__feedback" id="consent-error" hidden></m-p>
     </m-form-item>
-    <div class="m-form-grid">
+    <m-box class="m-form-grid">
       <m-form-item-gi key="email" id="email-item">
         <label class="m-form-item__label" for="email">Email (required)</label>
         <input id="email" type="email" name="contact[email]" value="ada@example.test" required>
-        <p class="m-form-item__feedback" id="email-error" hidden></p>
+        <m-p class="m-form-item__feedback" id="email-error" hidden></m-p>
       </m-form-item-gi>
       <m-form-item-gi key="confirm" id="confirm-item">
         <label class="m-form-item__label" for="confirm">Confirm email (required)</label>
         <input id="confirm" type="email" name="contact[confirm]" value="ada@example.test" required>
-        <p class="m-form-item__feedback" id="confirm-error" hidden></p>
+        <m-p class="m-form-item__feedback" id="confirm-error" hidden></m-p>
       </m-form-item-gi>
       <m-form-item-gi key="topics" span="full">
       <fieldset class="m-form-item" id="topics-item">
         <legend>Topics — choose at least one for the enhanced check</legend>
-        <div><label><input type="checkbox" name="topics[]" value="html" checked> HTML</label>
-          <label><input type="checkbox" name="topics[]" value="css"> CSS</label></div>
-        <p class="m-form-item__feedback" id="topics-error" hidden></p>
+        <m-box><label><input type="checkbox" name="topics[]" value="html" checked> HTML</label>
+          <label><input type="checkbox" name="topics[]" value="css"> CSS</label></m-box>
+        <m-p class="m-form-item__feedback" id="topics-error" hidden></m-p>
       </fieldset>
       </m-form-item-gi>
-    </div>
+    </m-box>
     <fieldset disabled>
       <legend>Disabled native fields <label>Legend exception <input name="legend" value="included"></label></legend>
       <label>Locked value <input name="locked" required value=""></label>
     </fieldset>
     <label>Read-only reference <input name="reference" readonly value="local-only"></label>
-    <div class="actions">
+    <m-box class="actions">
       <button type="submit" name="intent" value="save">Validate and inspect save</button>
       <button type="submit" name="intent" value="draft" formnovalidate>Inspect draft (skip checks)</button>
       <button type="reset">Native reset</button>
       <button type="button" id="validate" hidden>Validate without submission or focus</button>
       <button type="button" id="report" hidden>Report native constraints</button>
-    </div>
+    </m-box>
   </form>
   </m-form>
   <label>External form-associated note <input id="note" form="profile" name='notes[0].text' value="outside"></label>
-  <div class="actions">
-    <button type="button" id="restore" hidden>Restore owned feedback</button>
-    <button type="button" id="cancel" hidden>Cancel next reset</button>
-    <button type="button" id="rtl">Toggle RTL</button>
-    <button type="button" id="disconnect" hidden>Disconnect helpers</button>
-  </div>
-  <p id="status" role="status">Native constraints remain enabled. No backend requests.</p>
+  <m-box class="actions" display="flex" wrap="wrap" gap="8">
+    <m-button id="restore" hidden>Restore owned feedback</m-button>
+    <m-button id="cancel" hidden>Cancel next reset</m-button>
+    <m-button id="rtl">Toggle RTL</m-button>
+    <m-button id="disconnect" hidden>Disconnect helpers</m-button>
+  </m-box>
+  <m-p id="status" role="status">Native constraints remain enabled. No backend requests.</m-p>
   <pre id="submission">No submission yet.</pre>
     </div>
   </section>
@@ -104,9 +109,9 @@
       <m-form-item key="external">
         <label class="m-form-item__label" for="external-value">External required value</label>
         <input id="external-value" name="external" form="external-form" required value="Default">
-        <p class="m-form-item__feedback" id="external-error" hidden></p>
+        <m-p class="m-form-item__feedback" id="external-error" hidden></m-p>
       </m-form-item>
-      <p id="external-status" role="status">Submit is inspected locally. Reset restores the external native default.</p>
+      <m-p id="external-status" role="status">Submit is inspected locally. Reset restores the external native default.</m-p>
     </div>
   </section>
   <section aria-labelledby="behavior-title">

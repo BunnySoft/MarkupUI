@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./result.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-result.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -97,7 +99,7 @@
       <div data-demo-preview>
         <m-result status="info">
           <m-result-header>
-            <h2 class="m-result-title">Custom Outcome Header</h2>
+            <m-h2 class="m-result-title">Custom Outcome Header</m-h2>
             <m-p class="m-result-description">Detailed authored outcome description.</m-p>
           </m-result-header>
           <m-result-content>
@@ -119,12 +121,12 @@
             <m-button id="action-btn"><m-text>Take Action</m-text></m-button>
           </m-result-footer>
         </m-result>
-        <div class="demo-tools">
+        <m-box class="demo-tools">
           <m-button id="btn-success"><m-text>Set Success</m-text></m-button>
           <m-button id="btn-warning"><m-text>Set Warning</m-text></m-button>
           <m-button id="btn-error"><m-text>Set Error</m-text></m-button>
           <m-button id="btn-404"><m-text>Set 404</m-text></m-button>
-        </div>
+        </m-box>
         <m-p id="interactive-status" role="status">Status: info</m-p>
       </div>
     </section>

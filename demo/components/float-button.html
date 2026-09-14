@@ -8,10 +8,14 @@
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-float-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./float-button.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-float-button.global.js"></script>
   <script type="module" src="./float-button.js"></script>
   <script type="module" src="../example-code.js"></script>
@@ -45,7 +49,7 @@
           </div>
         </header>
         <div data-demo-preview>
-          <div class="demo-row">
+          <m-box class="demo-row">
             <m-float-button data-position="relative" aria-label="Default action">
               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2"></path></svg>
             </m-float-button>
@@ -65,7 +69,7 @@
             <m-float-button data-position="relative" type="error" aria-label="Error action">
               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2"></path></svg>
             </m-float-button>
-          </div>
+          </m-box>
         </div>
       </section>
 
@@ -93,7 +97,7 @@
           </div>
         </header>
         <div data-demo-preview>
-          <p>Buttons with custom right and bottom offsets.</p>
+          <m-p>Buttons with custom right and bottom offsets.</m-p>
           <m-float-button data-position="relative" right="24px" bottom="24px" type="primary" aria-label="Custom offset action">
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2"></path></svg>
           </m-float-button>
@@ -108,13 +112,13 @@
           </div>
         </header>
         <div data-demo-preview>
-          <div class="demo-row">
-            <button type="button" class="m-float-button" data-position="relative" aria-label="Record an action" id="single-action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2"></path></svg></button>
+          <m-box class="demo-row">
+            <m-button type="button" class="m-float-button" data-position="relative" aria-label="Record an action" id="single-action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2"></path></svg></m-button>
             <a class="m-float-button" data-position="relative" data-shape="square" data-type="primary" href="#home" id="home-action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 11 9-8 9 8v10h-7v-7h-4v7H3Z" fill="none" stroke="currentColor" stroke-width="2"></path></svg><span class="m-float-description">Home</span></a>
-            <button type="button" class="m-float-button demo-badge-button" data-position="relative" aria-label="Notifications, 3 unread" aria-describedby="badge-help" id="badge-action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 17h14l-2-3V9a5 5 0 0 0-10 0v5ZM10 20h4" fill="none" stroke="currentColor" stroke-width="2"></path></svg><span class="demo-badge" aria-hidden="true">3</span></button>
-          </div>
-          <p id="badge-help">The count and this visible help text are authored composition, not Badge or Tooltip props.</p>
-          <p id="action-feedback"></p>
+            <m-button type="button" class="m-float-button demo-badge-button" data-position="relative" aria-label="Notifications, 3 unread" aria-describedby="badge-help" id="badge-action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 17h14l-2-3V9a5 5 0 0 0-10 0v5ZM10 20h4" fill="none" stroke="currentColor" stroke-width="2"></path></svg><span class="demo-badge" aria-hidden="true">3</span></m-button>
+          </m-box>
+          <m-p id="badge-help">The count and this visible help text are authored composition, not Badge or Tooltip props.</m-p>
+          <m-p id="action-feedback"></m-p>
         </div>
       </section>
 
@@ -126,16 +130,16 @@
           </div>
         </header>
         <div data-demo-preview>
-          <form id="native-form"><label for="native-name">Project name</label><input id="native-name" name="project" value="Original" required>
-            <div class="m-float-group" data-position="relative" data-shape="square" role="group" aria-label="Project form actions" id="form-group">
-              <button type="submit" class="m-float-button" data-type="primary" id="native-submit"><span class="m-float-description">Save</span></button>
-              <button type="reset" class="m-float-button" id="native-reset"><span class="m-float-description">Reset</span></button>
-              <button type="button" class="m-float-button" disabled id="native-disabled"><span class="m-float-description">Locked</span></button>
+          <form id="native-form"><m-label for="native-name">Project name</m-label><input id="native-name" name="project" value="Original" required>
+            <m-box class="m-float-group" data-position="relative" data-shape="square" role="group" aria-label="Project form actions" id="form-group">
+              <m-button type="submit" class="m-float-button" data-type="primary" id="native-submit"><span class="m-float-description">Save</span></m-button>
+              <m-button type="reset" class="m-float-button" id="native-reset"><span class="m-float-description">Reset</span></m-button>
+              <m-button type="button" class="m-float-button" disabled id="native-disabled"><span class="m-float-description">Locked</span></m-button>
               <template class="m-float-button" id="native-template">Inert authored template</template>
-              <button type="button" class="m-float-button" hidden id="hidden-group-action">Hidden action</button>
-            </div>
+              <m-button type="button" class="m-float-button" hidden id="hidden-group-action">Hidden action</m-button>
+            </m-box>
           </form>
-          <p id="form-feedback"></p>
+          <m-p id="form-feedback"></m-p>
         </div>
       </section>
 
@@ -147,13 +151,13 @@
           </div>
         </header>
         <div data-demo-preview>
-          <div class="absolute-container" id="absolute-container" dir="rtl">
-            <p>Logical end is physically left in this RTL example. Reading order is unchanged.</p>
-            <div class="m-float-group absolute-actions" data-position="absolute" role="group" aria-label="Local actions" id="absolute-group">
+          <m-box class="absolute-container" id="absolute-container" dir="rtl">
+            <m-p>Logical end is physically left in this RTL example. Reading order is unchanged.</m-p>
+            <m-box class="m-float-group absolute-actions" data-position="absolute" role="group" aria-label="Local actions" id="absolute-group">
               <a class="m-float-button" href="#home" aria-label="Local home" id="absolute-home"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 11 9-8 9 8v10h-7v-7h-4v7H3Z" fill="none" stroke="currentColor" stroke-width="2"></path></svg></a>
               <button type="button" class="m-float-button" disabled aria-label="Unavailable local action"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2"></path></svg></button>
-            </div>
-          </div>
+            </m-box>
+          </m-box>
         </div>
       </section>
 
@@ -165,18 +169,18 @@
           </div>
         </header>
         <div data-demo-preview>
-          <p id="toggle-feedback"></p>
-          <div class="demo-dock" id="quick-dock">
-            <button type="button" class="m-float-button m-float-trigger" data-type="primary" popovertarget="quick-panel" aria-label="Quick actions" id="quick-trigger"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2"></path></svg></button>
-            <div class="m-float-panel" popover="auto" role="group" aria-label="Quick action controls" id="quick-panel">
-              <div class="m-float-group" data-position="relative" data-shape="square" role="group" aria-label="Available quick actions" id="quick-group">
-                <button type="button" class="m-float-button" popovertarget="quick-panel" popovertargetaction="hide" id="record-action">Record action</button>
+          <m-p id="toggle-feedback"></m-p>
+          <m-box class="demo-dock" id="quick-dock">
+            <m-button type="button" class="m-float-button m-float-trigger" data-type="primary" popovertarget="quick-panel" aria-label="Quick actions" id="quick-trigger"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2"></path></svg></m-button>
+            <m-box class="m-float-panel" popover="auto" role="group" aria-label="Quick action controls" id="quick-panel">
+              <m-box class="m-float-group" data-position="relative" data-shape="square" role="group" aria-label="Available quick actions" id="quick-group">
+                <m-button type="button" class="m-float-button" popovertarget="quick-panel" popovertargetaction="hide" id="record-action">Record action</m-button>
                 <a class="m-float-button" href="#home" id="panel-home">Go home</a>
-                <button type="button" class="m-float-button" disabled id="panel-disabled">Unavailable</button>
-                <button type="button" class="m-float-button m-float-popover-command" popovertarget="quick-panel" popovertargetaction="hide" id="close-panel">Close actions</button>
-              </div>
-            </div>
-          </div>
+                <m-button type="button" class="m-float-button" disabled id="panel-disabled">Unavailable</m-button>
+                <m-button type="button" class="m-float-button m-float-popover-command" popovertarget="quick-panel" popovertargetaction="hide" id="close-panel">Close actions</m-button>
+              </m-box>
+            </m-box>
+          </m-box>
         </div>
       </section>
     </div>

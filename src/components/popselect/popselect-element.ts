@@ -227,6 +227,7 @@ export class Popselect extends ViewElement {
           child !== this.generatedPanel &&
           child.localName !== "m-popselect-panel" &&
           child.localName !== "option" &&
+          child.localName !== "m-option" &&
           child.localName !== "optgroup" &&
           child.localName !== "select" &&
           !(child.classList.contains("m-popover") || child.classList.contains("m-popselect-panel")) &&
@@ -314,14 +315,24 @@ export class Popselect extends ViewElement {
         }
       }
 
-      const directOptions = [...this.children].filter(c => c.localName === "option" || c.localName === "optgroup")
-      for (const opt of directOptions) {
-        selectControl.append(opt)
+      const isOption = (c: Element) => c.localName === "option" || c.localName === "optgroup" || c.localName === "m-option"
+      const appendOption = (opt: Element) => {
+        if (opt.localName === "m-option") {
+          const nativeOpt = this.ownerDocument.createElement("option")
+          nativeOpt.value = opt.getAttribute("value") ?? opt.textContent?.trim() ?? ""
+          if (opt.hasAttribute("selected")) nativeOpt.selected = true
+          nativeOpt.textContent = opt.textContent
+          selectControl!.append(nativeOpt)
+          opt.remove()
+        } else {
+          selectControl!.append(opt)
+        }
       }
-      const panelOptions = [...panel.children].filter(c => c.localName === "option" || c.localName === "optgroup")
-      for (const opt of panelOptions) {
-        selectControl.append(opt)
-      }
+
+      const directOptions = [...this.children].filter(isOption)
+      for (const opt of directOptions) appendOption(opt)
+      const panelOptions = [...panel.children].filter(isOption)
+      for (const opt of panelOptions) appendOption(opt)
 
       let done = panel.querySelector<HTMLButtonElement>("[data-popselect-done]")
       if (!done) {

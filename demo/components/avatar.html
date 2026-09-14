@@ -13,10 +13,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-slider.css">
   <link rel="stylesheet" href="../../dist/markup-ui-icon.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./avatar.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-avatar.global.js"></script>
   <script defer src="../../dist/markup-ui-badge.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
@@ -124,14 +126,14 @@
         </div>
       </header>
       <div class="demo-preview vertical" data-demo-preview>
-        <div class="demo-preview">
-          <m-avatar><span data-content-name>Oasis</span></m-avatar>
-          <m-avatar shape="circle"><span data-content-name>Oasis</span></m-avatar>
-        </div>
-        <label for="content-name">Content</label>
-        <div class="m-input">
+        <m-box class="demo-preview">
+          <m-avatar><m-span data-content-name>Oasis</m-span></m-avatar>
+          <m-avatar shape="circle"><m-span data-content-name>Oasis</m-span></m-avatar>
+        </m-box>
+        <m-label for="content-name">Content</m-label>
+        <m-box class="m-input">
           <input data-input-control id="content-name" value="Oasis">
-        </div>
+        </m-box>
       </div>
     </section>
 
@@ -179,11 +181,11 @@
         </div>
       </header>
       <div class="demo-preview vertical" data-demo-preview>
-        <p>Use <code class="m-code">loading="lazy"</code> alone</p>
+        <m-p>Use <code class="m-code">loading="lazy"</code> alone</m-p>
         <m-avatar loading="lazy" src="./avatar.svg" label="Lazy profile"></m-avatar>
-        <p>Use <code class="m-code">loading="lazy"</code> in a scrolling container</p>
-        <div id="image-scroll-container" class="lazy-scroll">
-          <div class="lazy-stack">
+        <m-p>Use <code class="m-code">loading="lazy"</code> in a scrolling container</m-p>
+        <m-box id="image-scroll-container" class="lazy-scroll">
+          <m-box class="lazy-stack">
             <m-avatar size="small" loading="lazy" src="./avatar.svg?1" label="Lazy profile 1"></m-avatar>
             <m-avatar size="small" loading="lazy" src="./avatar-alt.svg?2" label="Lazy profile 2"></m-avatar>
             <m-avatar size="small" loading="lazy" src="./avatar.svg?3" label="Lazy profile 3"></m-avatar>
@@ -195,8 +197,8 @@
             <m-avatar size="small" loading="lazy" src="./avatar.svg?10" label="Lazy profile 10"></m-avatar>
             <m-avatar size="small" loading="lazy" src="data:image/png;base64,invalid"
               fallback-src="./avatar-alt.svg" label="Lazy fallback profile"></m-avatar>
-          </div>
-        </div>
+          </m-box>
+        </m-box>
       </div>
     </section>
 
@@ -208,18 +210,18 @@
         </div>
       </header>
       <div class="demo-preview vertical" data-demo-preview>
-        <div class="demo-preview">
+        <m-box class="demo-preview">
           <m-button id="debug-toggle" type="primary">Toggle</m-button>
-          <m-avatar id="debug-show" hidden><span data-debug-name>Oasis111</span></m-avatar>
-          <span id="debug-if-anchor"></span>
+          <m-avatar id="debug-show" hidden><m-span data-debug-name>Oasis111</m-span></m-avatar>
+          <m-span id="debug-if-anchor"></m-span>
           <template id="debug-if-template">
-            <m-avatar shape="circle"><span data-debug-name>Oasis111</span></m-avatar>
+            <m-avatar shape="circle"><m-span data-debug-name>Oasis111</m-span></m-avatar>
           </template>
-        </div>
-        <label for="debug-name">Content</label>
-        <div class="m-input">
+        </m-box>
+        <m-label for="debug-name">Content</m-label>
+        <m-box class="m-input">
           <input data-input-control id="debug-name" value="Oasis111">
-        </div>
+        </m-box>
       </div>
     </section>
     <section aria-labelledby="api-heading">

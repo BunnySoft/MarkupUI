@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./timeline.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-timeline.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -70,11 +72,11 @@
           <m-timeline-item id="interactive-item-1" type="info" title="Current Step" content="In progress" time="Today"></m-timeline-item>
           <m-timeline-item id="interactive-item-2" type="default" title="Next Step" content="Pending" time="Tomorrow"></m-timeline-item>
         </m-timeline>
-        <div class="demo-tools">
+        <m-box class="demo-tools">
           <m-button id="btn-toggle-horizontal"><m-text>Toggle Horizontal</m-text></m-button>
           <m-button id="btn-cycle-type"><m-text>Cycle Type</m-text></m-button>
-        </div>
-        <p id="action-status" role="status">Horizontal: false, Type: info</p>
+        </m-box>
+        <m-p id="action-status" role="status">Horizontal: false, Type: info</m-p>
       </div>
     </section>
 

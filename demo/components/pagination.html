@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./pagination.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-pagination.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -43,7 +45,9 @@
       <header data-demo-header><div><h2 id="basic-heading">Declarative pagination</h2><p>Custom element m-pagination with page and count attributes.</p></div></header>
       <div data-demo-preview>
         <m-pagination page="2" count="10" id="declarative-pager"></m-pagination>
-        <m-p id="pager-status" role="status" style="margin-block-start: 12px;">Current page: 2</m-p>
+        <m-box margin="12 0 0 0">
+          <m-p id="pager-status" role="status">Current page: 2</m-p>
+        </m-box>
       </div>
     </section>
 
@@ -53,24 +57,24 @@
         <form id="native-form">
           <nav class="m-pagination" data-pagination id="pager" aria-label="Example result pages">
             <span id="prefix">Local results:</span>
-            <div data-pagination-fallback>
+            <m-box data-pagination-fallback>
               <a href="#local-one" aria-current="page" id="server-one">Page 1</a>
               <a href="#local-two" id="server-two">Page 2</a>
-            </div>
-            <div class="m-pagination__controls" data-pagination-enhancement hidden>
+            </m-box>
+            <m-box class="m-pagination__controls" data-pagination-enhancement hidden>
               <button type="button" data-pagination-previous>Previous</button>
-              <div data-pagination-pages></div>
+              <m-box data-pagination-pages></m-box>
               <button type="button" data-pagination-next>Next</button>
-              <label>Items per page <select data-pagination-size name="page-size"><option value="10">10 items</option><option value="25">25 items</option><option value="100">100 items</option></select></label>
-              <label>Go to page <input data-pagination-jump type="number" name="page-draft"></label>
+              <m-label>Items per page <select data-pagination-size name="page-size"><option value="10">10 items</option><option value="25">25 items</option><option value="100">100 items</option></select></m-label>
+              <m-label>Go to page <input data-pagination-jump type="number" name="page-draft"></m-label>
               <button data-pagination-go type="button">Go</button>
               <span>of <span data-pagination-count>0</span> pages</span>
-            </div>
+            </m-box>
             <span id="suffix">No automatic data loading</span>
             <template data-pagination-page><button type="button"><span class="m-pagination__visually-hidden">Page </span><span data-pagination-number></span></button></template>
             <template data-pagination-gap><button type="button"><span aria-hidden="true">…</span><span class="m-pagination__visually-hidden">Jump to page <span data-pagination-number></span></span></button></template>
           </nav>
-          <p><label>Unrelated form input <input id="outside-input" name="notes" value="Preserved"></label></p>
+          <m-p><m-label>Unrelated form input <input id="outside-input" name="notes" value="Preserved"></m-label></m-p>
         </form>
         <m-box class="demo-controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
           <m-button id="shrink">Shrink to 12 items</m-button>
@@ -81,7 +85,9 @@
           <m-button id="disabled">Toggle disabled</m-button>
           <m-button id="cancel">Cancel next user request</m-button>
         </m-box>
-        <output id="state" style="display: block; margin-block-start: 12px;">JavaScript is optional; native local fallback links are usable.</output>
+        <m-box margin="12 0 0 0">
+          <output id="state">JavaScript is optional; native local fallback links are usable.</output>
+        </m-box>
       </div>
     </section>
 

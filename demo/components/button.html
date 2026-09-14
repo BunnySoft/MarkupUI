@@ -8,10 +8,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./button.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script type="module" src="./button.js"></script>
   <script type="module" src="../example-code.js"></script>
@@ -288,13 +290,13 @@
       </header>
       <div class="demo-preview vertical" data-demo-preview>
         <m-button id="event-button">Click Me</m-button>
-        <p id="event-message" class="demo-message" role="status" aria-live="polite"></p>
+        <m-p id="event-message" class="demo-message" role="status" aria-live="polite"></m-p>
         <form id="button-form">
-          <label>Title <input name="title" required value="Draft"></label>
+          <m-label>Title <input name="title" required value="Draft"></m-label>
           <m-button type="primary"><button name="action" value="save">Save form</button></m-button>
           <m-button attr-type="reset">Reset form</m-button>
         </form>
-        <p id="form-message" class="demo-message" role="status" aria-live="polite"></p>
+        <m-p id="form-message" class="demo-message" role="status" aria-live="polite"></m-p>
       </div>
     </section>
 

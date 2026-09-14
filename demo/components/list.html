@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./list.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-list.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -104,40 +106,40 @@
       </header>
       <div class="demo-preview" data-demo-preview>
         <m-list bordered hoverable id="projects">
-          <div data-part="header" class="m-list-header">
+          <m-box data-part="header" class="m-list-header">
             <m-heading level="2">Projects</m-heading>
             <m-p>Multiple actions stay outside any row-wide control.</m-p>
-          </div>
+          </m-box>
           <ul class="m-list-items" data-markerless role="list" aria-labelledby="projects-heading" id="project-items">
             <m-list-item hidden id="hidden-first">Hidden first item</m-list-item>
             <template class="m-list-item" id="native-template"><m-list-item>Inert project template</m-list-item></template>
             <m-list-item id="project-alpha">
-              <div data-part="row" class="m-list-row">
+              <m-box data-part="row" class="m-list-row">
                 <m-text data-part="prefix" class="m-list-prefix" aria-hidden="true">◈</m-text>
-                <div data-part="content" class="m-list-content">
+                <m-box data-part="content" class="m-list-content">
                   <m-heading level="3"><m-link href="#details" id="project-link">Alpha report</m-link></m-heading>
                   <m-p>Native content and listeners remain in place.</m-p>
                   <ul id="nested-list"><m-list-item>Reviewed</m-list-item><m-list-item>Ready to publish</m-list-item></ul>
-                </div>
-                <div data-part="suffix" class="m-list-suffix m-list-actions">
-                  <m-button id="archive-alpha"><button type="button" id="archive-alpha">Archive Alpha</button></m-button>
+                </m-box>
+                <m-box data-part="suffix" class="m-list-suffix m-list-actions">
+                  <m-button id="archive-alpha"><m-button type="button" id="archive-alpha">Archive Alpha</m-button></m-button>
                   <m-link href="#details">Alpha details</m-link>
-                </div>
-              </div>
+                </m-box>
+              </m-box>
             </m-list-item>
             <m-list-item hidden id="hidden-middle">Hidden middle item</m-list-item>
             <m-list-item id="project-beta">
-              <div data-part="row" class="m-list-row">
+              <m-box data-part="row" class="m-list-row">
                 <m-text data-part="prefix" class="m-list-prefix" aria-hidden="true">◇</m-text>
-                <div data-part="content" class="m-list-content">
+                <m-box data-part="content" class="m-list-content">
                   <m-heading level="3">Beta import</m-heading>
                   <m-p class="long-content">AnUnbrokenAuthoredProjectIdentifierThatMustWrapWithoutClippingAtNarrowWidths0123456789</m-p>
-                </div>
-                <div data-part="suffix" class="m-list-suffix"><m-text>Pending review</m-text></div>
-              </div>
+                </m-box>
+                <m-box data-part="suffix" class="m-list-suffix"><m-text>Pending review</m-text></m-box>
+              </m-box>
             </m-list-item>
           </ul>
-          <div data-part="footer" class="m-list-footer">Two visible projects; this footer is not a list item.</div>
+          <m-box data-part="footer" class="m-list-footer">Two visible projects; this footer is not a list item.</m-box>
         </m-list>
         <m-p id="action-status" role="status"></m-p>
       </div>
@@ -166,7 +168,7 @@
               </m-link>
             </m-list-item>
             <m-list-item>
-              <m-button class="m-list-row m-list-action" disabled><button type="button" class="m-list-row m-list-action" disabled id="disabled-row"><m-text class="m-list-content">Unavailable report</m-text></button></m-button>
+              <m-button class="m-list-row m-list-action" disabled><m-button type="button" class="m-list-row m-list-action" disabled id="disabled-row"><m-text class="m-list-content">Unavailable report</m-text></m-button></m-button>
             </m-list-item>
             <m-list-item id="passive-item">A passive item is not a button, even in a clickable list.</m-list-item>
           </ul>
@@ -186,20 +188,20 @@
           <m-list bordered size="large" id="form-list">
             <ul class="m-list-items" aria-labelledby="form-heading">
               <m-list-item>
-                <div class="m-list-row">
-                  <label class="m-list-prefix" for="native-name">Report name</label>
+                <m-box class="m-list-row">
+                  <m-label class="m-list-prefix" for="native-name">Report name</m-label>
                   <input class="m-list-content" id="native-name" name="name" value="Original" required>
-                  <div class="m-list-suffix m-list-actions">
-                    <m-button attr-type="submit"><button type="submit" id="native-submit">Save report</button></m-button>
-                    <m-button attr-type="reset"><button type="reset" id="native-reset">Reset report</button></m-button>
-                  </div>
-                </div>
+                  <m-box class="m-list-suffix m-list-actions">
+                    <m-button attr-type="submit"><m-button type="submit" id="native-submit">Save report</m-button></m-button>
+                    <m-button attr-type="reset"><m-button type="reset" id="native-reset">Reset report</m-button></m-button>
+                  </m-box>
+                </m-box>
               </m-list-item>
               <m-list-item>
                 <fieldset disabled>
                   <legend>Read-only publishing settings</legend>
-                  <label><input type="checkbox" name="publish" checked> Publish report</label>
-                  <m-button><button type="button" id="fieldset-disabled">Publish</button></m-button>
+                  <m-label><input type="checkbox" name="publish" checked> Publish report</m-label>
+                  <m-button><m-button type="button" id="fieldset-disabled">Publish</m-button></m-button>
                 </fieldset>
               </m-list-item>
             </ul>
@@ -220,11 +222,11 @@
         <m-list bordered show-divider="false" dir="rtl" id="ordered">
           <ol class="m-list-items" start="3" aria-labelledby="ordered-heading">
             <m-list-item id="ordered-first">
-              <div class="m-list-row">
+              <m-box class="m-list-row">
                 <m-text class="m-list-prefix" id="rtl-prefix">First</m-text>
                 <m-text class="m-list-content">Native numbering remains meaningful.</m-text>
                 <m-text class="m-list-suffix" id="rtl-suffix">Last</m-text>
-              </div>
+              </m-box>
             </m-list-item>
             <m-list-item value="8">The authored value overrides the next number.</m-list-item>
           </ol>

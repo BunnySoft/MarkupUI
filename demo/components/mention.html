@@ -49,9 +49,9 @@
       <div data-demo-preview>
         <m-mention id="basic-mention" prefix="@">
           <textarea class="m-mention__editor" placeholder="Type @ to mention someone..."></textarea>
-          <option value="alice">alice</option>
-          <option value="alex">alex</option>
-          <option value="bob">bob</option>
+          <m-option value="alice">alice</m-option>
+          <m-option value="alex">alex</m-option>
+          <m-option value="bob">bob</m-option>
         </m-mention>
         <m-p id="basic-output">Selected: (none)</m-p>
       </div>
@@ -67,9 +67,9 @@
       <div data-demo-preview>
         <m-mention id="tag-mention" prefix="#">
           <input class="m-mention__editor" type="text" placeholder="Type # for tags...">
-          <option value="announcements">announcements</option>
-          <option value="general">general</option>
-          <option value="random">random</option>
+          <m-option value="announcements">announcements</m-option>
+          <m-option value="general">general</m-option>
+          <m-option value="random">random</m-option>
         </m-mention>
         <m-p id="tag-output">Selected: (none)</m-p>
       </div>
@@ -86,9 +86,9 @@
         <m-mention id="disabled-mention" disabled value="Fixed value">
           <textarea class="m-mention__editor" disabled>Disabled mention editor</textarea>
         </m-mention>
-        <div style="margin-block-start: 8px;">
+        <m-box margin="8 0 0 0">
           <m-button id="toggle-disabled-btn">Toggle Disabled</m-button>
-        </div>
+        </m-box>
       </div>
     </section>
 

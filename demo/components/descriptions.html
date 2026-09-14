@@ -11,10 +11,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./descriptions.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-descriptions.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -129,12 +131,12 @@
           <m-description-item label="Framework"><m-text>MarkupUI</m-text></m-description-item>
           <m-description-item label="License"><m-text>MIT</m-text></m-description-item>
         </m-descriptions>
-        <div class="demo-actions">
+        <m-box class="demo-actions">
           <m-button id="toggle-bordered">Toggle bordered</m-button>
           <m-button id="cycle-size">Cycle size</m-button>
           <m-button id="toggle-placement">Toggle placement</m-button>
           <m-button id="reconnect-descriptions">Reconnect</m-button>
-        </div>
+        </m-box>
         <m-p id="live-status" role="status">Bordered: true, Size: medium, Placement: top</m-p>
       </div>
     </section>

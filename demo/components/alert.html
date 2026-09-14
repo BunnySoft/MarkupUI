@@ -13,10 +13,12 @@
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-input.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./alert.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-alert.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-space.global.js"></script>
@@ -47,13 +49,13 @@
     <section data-demo-example="types" aria-labelledby="types-heading">
       <header data-demo-header><div><h2 id="types-heading">Types and readable severity</h2><m-p>Neutral appearance alongside info, success, warning and error types.</m-p></div></header>
       <div data-demo-preview>
-        <m-space direction="vertical" gap="12" style="width: 100%;">
+        <m-box display="flex" direction="column" gap="12" width="100%">
           <m-alert title="Default notice"><m-text>Neutral appearance; no empty icon is created.</m-text></m-alert>
           <m-alert type="info" title="Information"><m-text>Your changes can be reviewed before submission.</m-text></m-alert>
           <m-alert type="success" title="Success"><m-text>Your report was saved.</m-text></m-alert>
           <m-alert type="warning" title="Warning"><m-text>Your session will expire soon.</m-text></m-alert>
           <m-alert type="error" title="Error"><m-text>The report could not be saved.</m-text></m-alert>
-        </m-space>
+        </m-box>
       </div>
     </section>
 
@@ -63,18 +65,18 @@
         <form id="notice-form">
           <m-alert id="notice" type="warning" closable close-label="Dismiss save warning" role="region" aria-labelledby="notice-heading">
             <m-text data-m-alert-icon aria-hidden="true">⚑</m-text>
-            <header data-m-alert-header><m-heading level="3" id="notice-heading">Warning: review before retrying</m-heading></header>
-            <div data-m-alert-content>
+            <m-box data-m-alert-header><m-heading level="3" id="notice-heading">Warning: review before retrying</m-heading></m-box>
+            <m-box data-m-alert-content>
               <m-p id="notice-copy">The original action, input and content nodes are preserved.</m-p>
               <m-space align="center" gap="8">
-                <label for="notice-input"><m-text>Note</m-text></label>
+                <m-label for="notice-input"><m-text>Note</m-text></m-label>
                 <m-input id="notice-input" name="note" value="Draft"></m-input>
               </m-space>
-              <div data-m-alert-actions>
+              <m-box data-m-alert-actions>
                 <m-button type="primary" id="retry">Retry save</m-button>
                 <m-button id="details">View details</m-button>
-              </div>
-            </div>
+              </m-box>
+            </m-box>
           </m-alert>
         </form>
         <m-p id="close-status" role="status">0 close requests; the notice remains visible.</m-p>
@@ -92,7 +94,7 @@
     <section data-demo-example="live" aria-labelledby="live-heading">
       <header data-demo-header><div><h2 id="live-heading">Explicit native announcement choices</h2><m-p>The following roles are authored in HTML. Badge, Alert and other components do not create competing announcers for them.</m-p></div></header>
       <div data-demo-preview>
-        <m-space direction="vertical" gap="12" style="width: 100%;">
+        <m-box display="flex" direction="column" gap="12" width="100%">
           <m-alert id="polite-notice" type="info" role="status" aria-live="polite" aria-atomic="true">
             <m-p data-m-alert-content id="polite-copy">Ready to check for saved changes.</m-p>
           </m-alert>
@@ -104,17 +106,17 @@
             <m-button id="show-urgent">Show authored urgent notice</m-button>
           </m-space>
           <m-p><m-text class="muted">Actual spoken timing varies by browser and assistive technology; this demo does not certify announcements.</m-text></m-p>
-        </m-space>
+        </m-box>
       </div>
     </section>
 
     <section data-demo-example="static" aria-labelledby="static-heading">
       <header data-demo-header><div><h2 id="static-heading">Native CSS-only notice and appearance controls</h2><m-p>Static CSS layout, borderless presentation, and bidirectional awareness.</m-p></div></header>
       <div data-demo-preview>
-        <m-space direction="vertical" gap="12" style="width: 100%;">
+        <m-box display="flex" direction="column" gap="12" width="100%">
           <section class="m-alert" data-type="info" id="static-notice">
-            <span data-m-alert-icon aria-hidden="true">ⓘ</span>
-            <div data-m-alert-body><m-heading level="3" data-m-alert-header>CSS-only information</m-heading><m-p data-m-alert-content>This native section needs no Custom Element controller.</m-p></div>
+            <m-span data-m-alert-icon aria-hidden="true">ⓘ</m-span>
+            <m-box data-m-alert-body><m-heading level="3" data-m-alert-header>CSS-only information</m-heading><m-p data-m-alert-content>This native section needs no Custom Element controller.</m-p></div>
           </section>
           <m-alert id="borderless" type="success" bordered="false" show-icon="false" title="Borderless, no icon"><m-text>The same readable notice with simpler presentation.</m-text></m-alert>
           <m-alert id="rtl-notice" type="warning" dir="rtl" closable title="RTL notice"><m-text>Logical icon and close positioning follows direction.</m-text></m-alert>

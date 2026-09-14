@@ -19,6 +19,7 @@ platform bases while following the same contracts.
 | 5. [Development metadata](05-meta.md) | Generate demo API data from source without adding it to the runtime. |
 | 6. [Source layout](06-source.md) | Follow the existing code ownership and component-family pattern. |
 | 7. [Core and selectable components](07-modules.md) | Load shared runtime once and only the features an application uses. |
+| 8. [Typed class and style model](08-view-element-styles.md) | Universal typed class and style representation on ViewElement for cross-platform rendering. |
 
 ## Main decisions
 
