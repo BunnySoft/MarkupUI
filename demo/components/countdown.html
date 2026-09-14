@@ -1,66 +1,95 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Native elapsed Countdown · MarkupUI</title>
+  <title>Countdown - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-countdown.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./countdown.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-countdown.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script type="module" src="./countdown.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Countdown: elapsed time, not an alarm service</h1>
-    <p>These examples use monotonic elapsed milliseconds. Pausing freezes the remaining
-      duration; hiding/selecting/focusing the display only pauses its paint. Hidden
-      elapsed time still counts. Completion makes no request, sound, navigation or focus move.</p>
-    <div class="controls" data-enhancement hidden>
-      <label>Future reset duration (ms) <input id="duration" type="number" min="0" max="31536000000" step="1" value="10000"></label>
-      <label>New main remaining value (ms) <input id="value" type="number" min="0" max="31536000000" step="1" value="5000"></label>
-      <label>Display precision <select id="precision"><option>0</option><option>1</option><option>2</option><option>3</option></select></label>
-      <label>Minimum paint interval (ms) <input id="interval" type="number" min="50" max="60000" step="1" value="100"></label>
-      <label><input id="custom-format" type="checkbox">Main literal unit words</label>
-      <label><input id="format-failure" type="checkbox">Main formatter fails at zero</label>
-      <label><input id="finish-failure" type="checkbox">Main finish hook throws</label>
-      <button type="button" id="settings">Apply future duration / formatting</button>
-      <button type="button" id="replace">Replace main remaining (new run)</button>
-      <button type="button" id="start">Start/resume all</button>
-      <button type="button" id="pause">Pause all elapsed time</button>
-      <button type="button" id="reset">Reset all to their future durations</button>
-      <button type="button" id="zero">Run zero duration on main</button>
-      <button type="button" id="refresh">Refresh/acknowledge errors</button>
-      <button type="button" id="hide">Hide/show visible examples</button>
-      <label><input id="rtl" type="checkbox">RTL</label>
-      <label><input id="zoom" type="checkbox">CSS zoom 200%</label>
-      <button type="button" id="disconnect">Disconnect all</button>
-    </div>
-    <section id="examples" aria-label="Elapsed countdown examples">
-      <article>
-        <h2>Main text display</h2>
-        <time class="m-countdown" id="main-countdown" data-countdown role="timer" aria-live="off" tabindex="0" datetime="PT10S"><strong>Remaining: </strong><span data-countdown-text>00:00:10</span></time>
-        <p>The timer role and live=off are explicitly authored, not injected. Focus or
-          select the text while running: its display holds but the elapsed run continues.</p>
-      </article>
-      <article>
-        <h2>Authored native unit markup</h2>
-        <time class="m-countdown" id="unit-countdown" data-countdown role="timer" aria-live="off" tabindex="0" datetime="PT10S"><span data-countdown-units><span><span data-countdown-hours>00</span><abbr title="hours">h</abbr></span><span><span data-countdown-minutes>00</span><abbr title="minutes">m</abbr></span><span><span data-countdown-seconds>10</span><span data-countdown-fraction>.000</span><abbr title="seconds">s</abbr></span></span></time>
-        <p>Four existing Text nodes update; unit labels and other authored nodes/listeners remain.</p>
-      </article>
-    </section>
-    <details id="hidden-example">
-      <summary>Initially hidden countdown (starts with the other examples)</summary>
-      <time class="m-countdown" id="hidden-countdown" data-countdown role="timer" aria-live="off" datetime="PT10S">00:00:10</time>
-      <p>Opening this section shows the current elapsed result, not a replay of hidden ticks.</p>
+  <main data-demo-page class="component-docs">
+    <h1>Countdown</h1>
+    <p>Elapsed countdown component for displaying remaining time derived from monotonic timestamps toward zero.</p>
+    <nav class="component-docs-nav" aria-label="Countdown documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-countdown.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-countdown.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
     </details>
-    <p id="completion" aria-live="polite" aria-atomic="true">Completion announcements are application-owned and separate from each display.</p>
-    <form id="native-form">
-      <label>Independent native field <input id="title" name="title" value="Countdown must not change this"></label>
-      <button type="reset">Reset this native field only</button>
-    </form>
-    <pre id="feedback" aria-label="Countdown state and errors">No JavaScript: readable static ten-second duration fallbacks remain, with no dead enhancement controls.</pre>
-    <footer><label>Outside focus target <input id="outside" value="Completion must not focus me"></label>
-      <p>Precision is display precision, not an update-rate or alarm-accuracy guarantee.
-        This helper does not accept absolute wall-clock deadlines or time zones.</p></footer>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header><div><h2 id="basic-heading">Basic countdown</h2><p>Elapsed time toward zero with start, pause, and reset controls.</p></div></header>
+      <div data-demo-preview>
+        <m-countdown id="basic-countdown" duration="86400000"></m-countdown>
+        <div class="controls" style="margin-block-start: 1rem;">
+          <button type="button" id="basic-start">Start</button>
+          <button type="button" id="basic-pause">Pause</button>
+          <button type="button" id="basic-reset">Reset</button>
+        </div>
+      </div>
+    </section>
+
+    <section data-demo-example="precision" aria-labelledby="precision-heading">
+      <header data-demo-header><div><h2 id="precision-heading">Display precision</h2><p>Displays millisecond fractions up to three decimal places.</p></div></header>
+      <div data-demo-preview>
+        <div class="examples">
+          <m-countdown duration="60000" precision="0"></m-countdown>
+          <m-countdown duration="60000" precision="1"></m-countdown>
+          <m-countdown duration="60000" precision="2"></m-countdown>
+          <m-countdown duration="60000" precision="3"></m-countdown>
+        </div>
+      </div>
+    </section>
+
+    <section data-demo-example="units" aria-labelledby="units-heading">
+      <header data-demo-header><div><h2 id="units-heading">Authored unit targets</h2><p>Four explicit hour, minute, second, and fraction targets with custom unit labels.</p></div></header>
+      <div data-demo-preview>
+        <m-countdown id="unit-countdown" duration="3661234" precision="2">
+          <span data-countdown-units>
+            <span><span data-countdown-hours>01</span><abbr title="hours">h</abbr></span>
+            <span><span data-countdown-minutes>01</span><abbr title="minutes">m</abbr></span>
+            <span><span data-countdown-seconds>01</span><abbr title="seconds">s</abbr></span>
+            <span data-countdown-fraction>.24</span>
+          </span>
+        </m-countdown>
+      </div>
+    </section>
+
+    <section data-demo-example="text" aria-labelledby="text-heading">
+      <header data-demo-header><div><h2 id="text-heading">Text target with preserved markup</h2><p>Preserves surrounding authored markup while updating the text target.</p></div></header>
+      <div data-demo-preview>
+        <m-countdown duration="10000">
+          <strong>Remaining: </strong><span data-countdown-text>00:00:10</span>
+        </m-countdown>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="countdown-api"><p>Loading API documentation.</p></div>
+    </section>
   </main>
 </body>
 </html>
+

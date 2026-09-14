@@ -83,6 +83,7 @@ in the target inventory.
 78. [Color Picker demo and API](../../demo/components/color-picker.html): ColorPicker; color inputs, hex/rgba values, alpha channel support, and change events.
 79. [Mention demo and API](../../demo/components/mention.html): Mention; user mentions, suggestions dropdown, prefix triggers, and selection events.
 80. [Transfer demo and API](../../demo/components/transfer.html): Transfer; dual-list transfer component, item movement, and change events.
+81. [Countdown demo and API](../../demo/components/countdown.html): Countdown; countdown timer, active toggling, precision controls, and finish events.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

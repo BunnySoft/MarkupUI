@@ -2,9 +2,11 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createCountdown, formatCountdown } from "../src/components/countdown/index.js"
+import { Countdown, MCountdown, registerCountdown, createCountdown, formatCountdown } from "../src/components/countdown/index.js"
+import * as countdownApi from "../src/components/countdown/index.js"
 import type { CountdownController, CountdownOptions } from "../src/components/countdown/index.js"
 import { maximumDuration } from "../src/components/countdown/format.js"
+import { ViewElement } from "../src/core/index.js"
 
 const helpers: CountdownController[] = []
 let hidden = false
@@ -343,3 +345,141 @@ describe("Countdown default styles", () => {
     expect(css).not.toContain("transition")
   })
 })
+
+describe("canonical Countdown ViewElement", () => {
+  it("exports canonical ViewElement classes and registers m-countdown", () => {
+    expect(Countdown.tag).toBe("m-countdown")
+    expect(MCountdown).toBe(Countdown)
+    expect(countdownApi.Countdown).toBe(Countdown)
+    expect(countdownApi.MCountdown).toBe(Countdown)
+    expect(ViewElement.prototype.isPrototypeOf(Countdown.prototype)).toBe(true)
+    expect(customElements.get("m-countdown")).toBe(Countdown)
+    expect(Countdown.observedAttributes).toEqual(["duration", "active", "precision"])
+    expect(typeof registerCountdown).toBe("function")
+    const define = vi.fn()
+    expect(() => registerCountdown({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerCountdown()).not.toThrow()
+  })
+
+  it("handles typed properties, default values and validates inputs", () => {
+    const element = document.createElement("m-countdown") as Countdown
+    expect(element.duration).toBe(0)
+    expect(element.active).toBe(true)
+    expect(element.precision).toBe(0)
+
+    // duration
+    element.duration = 10000
+    expect(element.duration).toBe(10000)
+    expect(element.getAttribute("duration")).toBe("10000")
+    expect(() => { element.duration = -1 }).toThrow(RangeError)
+    expect(() => { element.duration = NaN }).toThrow(RangeError)
+    expect(() => { element.duration = Infinity }).toThrow(RangeError)
+
+    // active
+    element.active = false
+    expect(element.active).toBe(false)
+    expect(element.getAttribute("active")).toBe("false")
+    element.active = true
+    expect(element.active).toBe(true)
+    expect(element.getAttribute("active")).toBe("true")
+    expect(() => { (element as any).active = "invalid" }).toThrow(RangeError)
+
+    // precision
+    element.precision = 2
+    expect(element.precision).toBe(2)
+    expect(element.getAttribute("precision")).toBe("2")
+    element.precision = 0
+    expect(element.precision).toBe(0)
+    expect(element.getAttribute("precision")).toBe("0")
+    expect(() => { element.precision = -1 }).toThrow(RangeError)
+    expect(() => { element.precision = 4 }).toThrow(RangeError)
+    expect(() => { element.precision = 1.5 }).toThrow(RangeError)
+  })
+
+  it("renders formatted countdown text and counts down when active", () => {
+    const element = document.createElement("m-countdown") as Countdown
+    element.duration = 5000
+    document.body.append(element)
+    expect(element.classList.contains("m-countdown")).toBe(true)
+    expect(element.textContent).toBe("00:00:05")
+
+    vi.advanceTimersByTime(2000)
+    expect(element.textContent).toBe("00:00:03")
+
+    element.pause()
+    expect(element.active).toBe(false)
+    vi.advanceTimersByTime(5000)
+    expect(element.textContent).toBe("00:00:03")
+
+    element.start()
+    expect(element.active).toBe(true)
+    vi.advanceTimersByTime(3000)
+    expect(element.textContent).toBe("00:00:00")
+  })
+
+  it("emits m:finish event when countdown reaches zero", () => {
+    const element = document.createElement("m-countdown") as Countdown
+    element.duration = 3000
+    const finishSpy = vi.fn()
+    element.addEventListener("m:finish", finishSpy)
+    document.body.append(element)
+
+    vi.advanceTimersByTime(1000)
+    expect(finishSpy).not.toHaveBeenCalled()
+
+    vi.advanceTimersByTime(2000)
+    expect(finishSpy).toHaveBeenCalledOnce()
+    expect(finishSpy.mock.calls[0]![0].detail).toEqual({ value: 0 })
+    expect(element.textContent).toBe("00:00:00")
+  })
+
+  it("supports reset to duration and handles active zero asynchronously", () => {
+    const element = document.createElement("m-countdown") as Countdown
+    element.duration = 2000
+    document.body.append(element)
+
+    vi.advanceTimersByTime(2000)
+    expect(element.textContent).toBe("00:00:00")
+
+    element.reset()
+    expect(element.textContent).toBe("00:00:02")
+    vi.advanceTimersByTime(2000)
+    expect(element.textContent).toBe("00:00:00")
+
+    // Active zero
+    const finishSpy = vi.fn()
+    const zeroElement = document.createElement("m-countdown") as Countdown
+    zeroElement.duration = 0
+    zeroElement.addEventListener("m:finish", finishSpy)
+    document.body.append(zeroElement)
+    expect(finishSpy).not.toHaveBeenCalled()
+    vi.advanceTimersByTime(100)
+    expect(finishSpy).toHaveBeenCalledOnce()
+  })
+
+  it("supports data-countdown-text target and unit targets", () => {
+    // data-countdown-text target
+    const textHost = document.createElement("m-countdown") as Countdown
+    textHost.duration = 4000
+    textHost.innerHTML = '<strong>Time: </strong><span data-countdown-text>00:00:04</span>'
+    document.body.append(textHost)
+    expect(textHost.querySelector("strong")!.textContent).toBe("Time: ")
+    expect(textHost.querySelector("[data-countdown-text]")!.textContent).toBe("00:00:04")
+    vi.advanceTimersByTime(1000)
+    expect(textHost.querySelector("strong")!.textContent).toBe("Time: ")
+    expect(textHost.querySelector("[data-countdown-text]")!.textContent).toBe("00:00:03")
+
+    // unit targets
+    const unitHost = document.createElement("m-countdown") as Countdown
+    unitHost.duration = 3661234
+    unitHost.precision = 2
+    unitHost.innerHTML = '<span data-countdown-units><span data-countdown-hours>01</span>h<span data-countdown-minutes>01</span>m<span data-countdown-seconds>01</span>s<span data-countdown-fraction>.24</span></span>'
+    document.body.append(unitHost)
+    expect(unitHost.querySelector("[data-countdown-hours]")!.textContent).toBe("01")
+    expect(unitHost.querySelector("[data-countdown-minutes]")!.textContent).toBe("01")
+    expect(unitHost.querySelector("[data-countdown-seconds]")!.textContent).toBe("01")
+    expect(unitHost.querySelector("[data-countdown-fraction]")!.textContent).toBe(".24")
+  })
+})
+
