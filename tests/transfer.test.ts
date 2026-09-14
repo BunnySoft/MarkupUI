@@ -2,10 +2,12 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { gzipSync } from "node:zlib"
-import { createTransfer } from "../src/components/transfer/index.js"
-import type { TransferController, TransferOptions } from "../src/components/transfer/index.js"
+import { createTransfer, Transfer, MTransfer, registerTransfer } from "../src/components/transfer/index.js"
+import * as transferApi from "../src/components/transfer/index.js"
+import type { TransferController, TransferOptions, TransferChangeDetail } from "../src/components/transfer/index.js"
 import { createSelect } from "../src/components/native-select.js"
 import { coordinateForm as createForm } from "../src/components/form/controller.js"
+import { ViewElement } from "../src/core/index.js"
 
 const helpers: TransferController[] = []
 const wait = () => new Promise(resolve => setTimeout(resolve, 20))
@@ -385,3 +387,285 @@ describe("ownership, teardown and failure", () => {
     expect(helper.connected).toBe(false); expect([...target.options].map(option => option.value)).toEqual(["fixed", "z", "a"])
   })
 })
+
+describe("canonical Transfer ViewElement", () => {
+  it("exports canonical own-tag ViewElement and registers m-transfer", () => {
+    expect(transferApi.Transfer).toBe(Transfer)
+    expect(transferApi.MTransfer).toBe(MTransfer)
+    expect(MTransfer).toBe(Transfer)
+    expect(transferApi.createTransfer).toBe(createTransfer)
+    expect(typeof transferApi.registerTransfer).toBe("function")
+    expect(Object.hasOwn(Transfer, "tag")).toBe(true)
+    expect(Transfer.tag).toBe("m-transfer")
+    expect(ViewElement.prototype.isPrototypeOf(Transfer.prototype)).toBe(true)
+    expect(customElements.get("m-transfer")).toBe(Transfer)
+    expect(Transfer.observedAttributes).toEqual(["source-title", "target-title", "disabled"])
+
+    const define = vi.fn()
+    expect(() => registerTransfer({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerTransfer()).not.toThrow()
+  })
+
+  it("handles sourceTitle, targetTitle, and disabled properties, attributes, and validation", () => {
+    const element = new Transfer()
+    expect(element.sourceTitle).toBe("")
+    expect(element.targetTitle).toBe("")
+    expect(element.disabled).toBe(false)
+
+    // Valid property values
+    element.sourceTitle = "Available"
+    expect(element.sourceTitle).toBe("Available")
+    expect(element.getAttribute("source-title")).toBe("Available")
+
+    element.targetTitle = "Selected"
+    expect(element.targetTitle).toBe("Selected")
+    expect(element.getAttribute("target-title")).toBe("Selected")
+
+    element.disabled = true
+    expect(element.disabled).toBe(true)
+    expect(element.hasAttribute("disabled")).toBe(true)
+
+    // Setting null / false removes attribute
+    element.sourceTitle = null
+    expect(element.sourceTitle).toBe("")
+    expect(element.hasAttribute("source-title")).toBe(false)
+
+    element.targetTitle = null
+    expect(element.targetTitle).toBe("")
+    expect(element.hasAttribute("target-title")).toBe(false)
+
+    element.disabled = false
+    expect(element.disabled).toBe(false)
+    expect(element.hasAttribute("disabled")).toBe(false)
+
+    // Attribute changes reflect to properties
+    element.setAttribute("source-title", "Left")
+    expect(element.sourceTitle).toBe("Left")
+    element.removeAttribute("source-title")
+    expect(element.sourceTitle).toBe("")
+
+    element.setAttribute("target-title", "Right")
+    expect(element.targetTitle).toBe("Right")
+    element.removeAttribute("target-title")
+    expect(element.targetTitle).toBe("")
+
+    element.setAttribute("disabled", "")
+    expect(element.disabled).toBe(true)
+    element.removeAttribute("disabled")
+    expect(element.disabled).toBe(false)
+
+    // Invalid property assignments throw RangeError
+    expect(() => { (element as any).sourceTitle = 123 }).toThrow(RangeError)
+    expect(() => { (element as any).targetTitle = 456 }).toThrow(RangeError)
+    expect(() => { (element as any).disabled = "invalid" }).toThrow(RangeError)
+  })
+
+  it("replays pre-upgrade properties upon connection", () => {
+    const element = document.createElement("m-transfer") as Transfer
+    Object.defineProperty(element, "sourceTitle", { configurable: true, value: "Pre Source" })
+    Object.defineProperty(element, "targetTitle", { configurable: true, value: "Pre Target" })
+    Object.defineProperty(element, "disabled", { configurable: true, value: true })
+    document.body.append(element)
+
+    expect(element.sourceTitle).toBe("Pre Source")
+    expect(element.targetTitle).toBe("Pre Target")
+    expect(element.disabled).toBe(true)
+    expect(element.getAttribute("source-title")).toBe("Pre Source")
+    expect(element.getAttribute("target-title")).toBe("Pre Target")
+    expect(element.hasAttribute("disabled")).toBe(true)
+  })
+
+  it("renders default double-column structure and synchronizes titles", () => {
+    const element = document.createElement("m-transfer") as Transfer
+    element.sourceTitle = "Source List"
+    element.targetTitle = "Target List"
+    document.body.append(element)
+
+    const sourceTitle = element.querySelector("[data-transfer-title='source']")
+    const targetTitle = element.querySelector("[data-transfer-title='target']")
+    expect(sourceTitle?.textContent).toBe("Source List")
+    expect(targetTitle?.textContent).toBe("Target List")
+
+    element.sourceTitle = "New Source"
+    element.targetTitle = "New Target"
+    expect(sourceTitle?.textContent).toBe("New Source")
+    expect(targetTitle?.textContent).toBe("New Target")
+  })
+
+  it("moves items between panes and emits m:change event with target values", () => {
+    const element = document.createElement("m-transfer") as Transfer
+    element.innerHTML = `
+      <option value="1">Item 1</option>
+      <option value="2">Item 2</option>
+      <option value="3">Item 3</option>
+    `
+    document.body.append(element)
+
+    const sourceSelect = element.querySelector<HTMLSelectElement>("select[data-transfer-source]")!
+    const targetSelect = element.querySelector<HTMLSelectElement>("select[data-transfer-target]")!
+    expect(sourceSelect.options).toHaveLength(3)
+    expect(targetSelect.options).toHaveLength(0)
+
+    const change = vi.fn()
+    element.addEventListener("m:change", change)
+
+    // Select items 1 and 2, moveToTarget
+    sourceSelect.options[0]!.selected = true
+    sourceSelect.options[1]!.selected = true
+    element.moveToTarget()
+
+    expect(sourceSelect.options).toHaveLength(1)
+    expect(targetSelect.options).toHaveLength(2)
+    expect([...targetSelect.options].map(o => o.value)).toEqual(["1", "2"])
+    expect(change).toHaveBeenCalledTimes(1)
+    const event1 = change.mock.calls[0]![0] as CustomEvent<TransferChangeDetail>
+    expect(event1.detail).toEqual({ value: ["1", "2"] })
+    expect(event1.bubbles).toBe(true)
+    expect(event1.cancelable).toBe(false)
+    expect(event1.composed).toBe(false)
+
+    // Select item 1 in target, moveToSource
+    targetSelect.options[0]!.selected = true
+    element.moveToSource()
+
+    expect(sourceSelect.options).toHaveLength(2)
+    expect(targetSelect.options).toHaveLength(1)
+    expect([...targetSelect.options].map(o => o.value)).toEqual(["2"])
+    expect(change).toHaveBeenCalledTimes(2)
+    const event2 = change.mock.calls[1]![0] as CustomEvent<TransferChangeDetail>
+    expect(event2.detail).toEqual({ value: ["2"] })
+
+    // moveAllToTarget
+    element.moveAllToTarget()
+    expect(sourceSelect.options).toHaveLength(0)
+    expect(targetSelect.options).toHaveLength(3)
+    expect([...targetSelect.options].map(o => o.value)).toEqual(["2", "3", "1"])
+    expect(change).toHaveBeenCalledTimes(3)
+
+    // moveAllToSource
+    element.moveAllToSource()
+    expect(sourceSelect.options).toHaveLength(3)
+    expect(targetSelect.options).toHaveLength(0)
+    expect(change).toHaveBeenCalledTimes(4)
+    expect(change.mock.calls[3]![0].detail).toEqual({ value: [] })
+  })
+
+  it("triggers moves via action buttons in the DOM", () => {
+    const element = document.createElement("m-transfer") as Transfer
+    element.innerHTML = `
+      <option value="a">A</option>
+      <option value="b">B</option>
+    `
+    document.body.append(element)
+
+    const sourceSelect = element.querySelector<HTMLSelectElement>("select[data-transfer-source]")!
+    const targetSelect = element.querySelector<HTMLSelectElement>("select[data-transfer-target]")!
+    const addAllBtn = element.querySelector<HTMLButtonElement>("button[data-transfer-action='add-all']")!
+    const removeAllBtn = element.querySelector<HTMLButtonElement>("button[data-transfer-action='remove-all']")!
+
+    addAllBtn.click()
+    expect(targetSelect.options).toHaveLength(2)
+    expect(sourceSelect.options).toHaveLength(0)
+
+    removeAllBtn.click()
+    expect(sourceSelect.options).toHaveLength(2)
+    expect(targetSelect.options).toHaveLength(0)
+  })
+
+  it("filters items based on filter input", () => {
+    const element = document.createElement("m-transfer") as Transfer
+    element.innerHTML = `
+      <option value="apple">Apple</option>
+      <option value="banana">Banana</option>
+    `
+    document.body.append(element)
+
+    const sourceSelect = element.querySelector<HTMLSelectElement>("select[data-transfer-source]")!
+    const filterInput = element.querySelector<HTMLInputElement>("input[data-transfer-filter='source']")!
+
+    filterInput.value = "app"
+    filterInput.dispatchEvent(new Event("input", { bubbles: true }))
+
+    expect(sourceSelect.options[0]!.hidden).toBe(false)
+    expect(sourceSelect.options[1]!.hidden).toBe(true)
+
+    filterInput.value = ""
+    filterInput.dispatchEvent(new Event("input", { bubbles: true }))
+
+    expect(sourceSelect.options[0]!.hidden).toBe(false)
+    expect(sourceSelect.options[1]!.hidden).toBe(false)
+  })
+
+  it("disables internal controls and blocks moves when disabled is true", () => {
+    const element = document.createElement("m-transfer") as Transfer
+    element.innerHTML = `<option value="1">Item 1</option>`
+    element.disabled = true
+    document.body.append(element)
+
+    const sourceSelect = element.querySelector<HTMLSelectElement>("select[data-transfer-source]")!
+    const targetSelect = element.querySelector<HTMLSelectElement>("select[data-transfer-target]")!
+    const addBtn = element.querySelector<HTMLButtonElement>("button[data-transfer-action='add']")!
+
+    expect(sourceSelect.disabled).toBe(true)
+    expect(targetSelect.disabled).toBe(true)
+    expect(addBtn.disabled).toBe(true)
+
+    const change = vi.fn()
+    element.addEventListener("m:change", change)
+
+    sourceSelect.options[0]!.selected = true
+    addBtn.click()
+    element.moveToTarget()
+
+    expect(sourceSelect.options).toHaveLength(1)
+    expect(targetSelect.options).toHaveLength(0)
+    expect(change).not.toHaveBeenCalled()
+
+    // Enable again
+    element.disabled = false
+    expect(sourceSelect.disabled).toBe(false)
+    expect(targetSelect.disabled).toBe(false)
+    expect(addBtn.disabled).toBe(false)
+
+    element.moveToTarget()
+    expect(targetSelect.options).toHaveLength(1)
+    expect(change).toHaveBeenCalledTimes(1)
+  })
+
+  it("exposes MarkupUITransfer global", async () => {
+    await import("../src/components/transfer/global.js")
+    const globalApi = (globalThis as any).MarkupUITransfer
+    expect(globalApi).toBeDefined()
+    expect(globalApi.Transfer.tag).toBe("m-transfer")
+    expect(globalApi.MTransfer).toBe(globalApi.Transfer)
+    expect(typeof globalApi.createTransfer).toBe("function")
+    expect(typeof globalApi.registerTransfer).toBe("function")
+  })
+
+  it("renders API documentation in demo element", async () => {
+    const { renderComponentApi } = await import("../demo/component-api.js")
+    const docs = JSON.parse(readFileSync(join("demo", "api", "transfer.json"), "utf8"))
+    const container = document.createElement("div")
+    renderComponentApi(container, docs.elements)
+    expect(container.textContent).toContain("Transfer")
+    expect(container.textContent).toContain("m-transfer")
+    expect(container.textContent).toContain("source-title")
+    expect(container.textContent).toContain("target-title")
+    expect(container.textContent).toContain("m:change")
+  })
+
+  it("validates demo page structure and links", () => {
+    const demoHtml = readFileSync(join("demo", "components", "transfer.html"), "utf8")
+    expect(demoHtml).toContain("data-demo-page")
+    expect(demoHtml).toContain('class="component-docs"')
+    expect(demoHtml).toContain("<h1>Transfer</h1>")
+    expect(demoHtml).toContain('href="#basic-heading"')
+    expect(demoHtml).toContain('href="#required-files"')
+    expect(demoHtml).toContain('href="#api-heading"')
+    expect(demoHtml).toContain('id="required-files"')
+    expect(demoHtml).toContain("data-demo-preview")
+    expect(demoHtml).toContain('id="transfer-api"')
+  })
+})
+
