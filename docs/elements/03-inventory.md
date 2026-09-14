@@ -126,7 +126,7 @@ families establish the pattern; the remaining contracts must be defined before i
 
 | Family | Elements / scope | Contract |
 | --- | --- | --- |
-| Collapse Transition | `CollapseTransition` | Contract pending |
+| Collapse Transition | `CollapseTransition` | [Demo and API](../../demo/components/collapse-transition.html) |
 | Virtual List | `VirtualList` | [Demo and API](../../demo/components/virtual-list.html) |
 
 ## Non-element surfaces

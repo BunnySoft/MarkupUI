@@ -90,6 +90,7 @@ in the target inventory.
 85. [Heatmap demo and API](../../demo/components/heatmap.html): Heatmap; 2D matrix data visualization, color scales, and cell tooltips.
 86. [Thing demo and API](../../demo/components/thing.html): Thing, ThingHeader, ThingAvatar, ThingContent, ThingFooter, ThingAction; compound entity cards, actions, and headers.
 87. [Marquee demo and API](../../demo/components/marquee.html): Marquee; infinite scrolling ticker, hover pause controls, and speed settings.
+88. [Collapse Transition demo and API](../../demo/components/collapse-transition.html): CollapseTransition; smooth height collapse animations and visibility toggles.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

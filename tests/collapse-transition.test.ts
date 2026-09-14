@@ -1,8 +1,11 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createCollapseTransition } from "../src/components/collapse-transition/index.js"
+import { CollapseTransition, MCollapseTransition, registerCollapseTransition, createCollapseTransition } from "../src/components/collapse-transition/index.js"
+import * as collapseTransitionApi from "../src/components/collapse-transition/index.js"
 import type { CollapseTransitionController, CollapseTransitionOptions } from "../src/components/collapse-transition/index.js"
+import { ViewElement } from "../src/core/index.js"
+import { generateComponentApi } from "../scripts/component-api.mjs"
 
 const controllers: CollapseTransitionController[] = []
 const animations: FakeAnimation[] = []
@@ -65,12 +68,11 @@ afterEach(() => {
 })
 
 describe("Native Collapse Transition", () => {
-  it("packages separately and does not register tags or make Collapse depend on it", () => {
+  it("packages separately and does not make Collapse depend on it", () => {
     const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
     expect(pkg.exports["./collapse-transition"].import).toBe("./dist/markup-ui-collapse-transition.js")
     expect(pkg.exports["./collapse-transition/style.css"]).toBe("./dist/markup-ui-collapse-transition.css")
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("m-collapse-transition")).toBeUndefined()
     expect(readFileSync(resolve("src", "components", "collapse", "collapse.ts"), "utf8")).not.toContain("collapse-transition")
   })
   it("honors authored initial hidden/open state without hooks or remounting", () => {
@@ -366,3 +368,137 @@ describe("Interruption, hooks and focus ownership", () => {
     expect(c.connected).toBe(false); expect(c.lastError).toBeNull()
   })
 })
+
+describe("canonical CollapseTransition ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(collapseTransitionApi.CollapseTransition).toBe(CollapseTransition)
+    expect(collapseTransitionApi.MCollapseTransition).toBe(MCollapseTransition)
+    expect(collapseTransitionApi.createCollapseTransition).toBe(createCollapseTransition)
+    expect(CollapseTransition.tag).toBe("m-collapse-transition")
+    expect(ViewElement.prototype.isPrototypeOf(CollapseTransition.prototype)).toBe(true)
+    expect(customElements.get("m-collapse-transition")).toBe(CollapseTransition)
+    expect(CollapseTransition.observedAttributes).toEqual(["show"])
+    expect(() => registerCollapseTransition()).not.toThrow()
+    const define = vi.fn()
+    expect(() => registerCollapseTransition({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("handles show property defaults, attributes, validation, and toggling", () => {
+    const element = document.createElement("m-collapse-transition") as CollapseTransition
+    expect(element.show).toBe(true)
+    expect(element.hasAttribute("show")).toBe(false)
+
+    element.show = false
+    expect(element.show).toBe(false)
+    expect(element.getAttribute("show")).toBe("false")
+
+    element.show = true
+    expect(element.show).toBe(true)
+    expect(element.getAttribute("show")).toBe("true")
+
+    element.setAttribute("show", "false")
+    expect(element.show).toBe(false)
+
+    element.removeAttribute("show")
+    expect(element.show).toBe(true)
+
+    // Non-boolean assignment throws RangeError
+    expect(() => { (element as any).show = "invalid" }).toThrow(RangeError)
+    expect(() => { (element as any).show = null }).toThrow(RangeError)
+    expect(() => { (element as any).show = 123 }).toThrow(RangeError)
+
+    // Invalid attribute throws on read
+    element.setAttribute("show", "not-a-boolean")
+    expect(() => element.show).toThrow(RangeError)
+  })
+
+  it("supports toggle action", () => {
+    const element = document.createElement("m-collapse-transition") as CollapseTransition
+    expect(element.show).toBe(true)
+    element.toggle()
+    expect(element.show).toBe(false)
+    element.toggle()
+    expect(element.show).toBe(true)
+  })
+
+  it("sets up connected element with class and dataset", () => {
+    const element = document.createElement("m-collapse-transition") as CollapseTransition
+    element.innerHTML = '<div data-collapse-transition-content><p>Content</p></div>'
+    document.body.append(element)
+
+    expect(element.classList.contains("m-collapse-transition")).toBe(true)
+    expect(element.dataset.mCollapseTransition).toBe("")
+    expect(element.hidden).toBe(false)
+
+    element.show = false
+    expect(element.show).toBe(false)
+  })
+
+  it("replays pre-upgrade properties upon connection", () => {
+    const element = document.createElement("m-collapse-transition") as CollapseTransition
+    Object.defineProperty(element, "show", { configurable: true, value: false })
+    element.innerHTML = '<div data-collapse-transition-content><p>Content</p></div>'
+    document.body.append(element)
+
+    expect(element.show).toBe(false)
+    expect(element.getAttribute("show")).toBe("false")
+  })
+
+  it("exposes MarkupUICollapseTransition global", async () => {
+    await import("../src/components/collapse-transition/global.js")
+    const globalApi = (globalThis as any).MarkupUICollapseTransition
+    expect(globalApi).toBeDefined()
+    expect(globalApi.CollapseTransition).toBe(CollapseTransition)
+    expect(globalApi.registerCollapseTransition).toBe(registerCollapseTransition)
+    expect(globalApi.createCollapseTransition).toBe(createCollapseTransition)
+  })
+
+  it("generates component API documentation matching the ViewElement specification", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["collapse-transition"])
+    expect(docs.elements).toHaveLength(1)
+    const [element] = docs.elements
+    expect(element.type).toBe("CollapseTransition")
+    expect(element.web.primary).toBe("m-collapse-transition")
+    expect(element.properties.show).toMatchObject({
+      name: "show",
+      type: "boolean",
+      typeName: "boolean",
+      attribute: "show",
+      encoding: "boolean",
+      default: true,
+      nullable: false,
+      readable: true,
+      writable: true,
+    })
+    expect(element.regions).toEqual([
+      { name: "content", accepts: ["flow content"], min: 0, max: null },
+    ])
+    expect(element.events).toEqual([
+      {
+        name: "CollapseTransitionError",
+        web: "m:collapse-transition-error",
+        bubbles: false,
+        cancelable: true,
+        composed: false,
+        detail: {
+          error: "unknown",
+          phase: "string",
+          stale: "boolean",
+        },
+      },
+    ])
+  }, 20000)
+
+  it("renders API documentation in demo element", async () => {
+    const { renderComponentApi } = await import("../demo/component-api.js")
+    const docs = JSON.parse(readFileSync(resolve("demo", "api", "collapse-transition.json"), "utf8"))
+    const container = document.createElement("div")
+    renderComponentApi(container, docs.elements)
+    expect(container.textContent).toContain("CollapseTransition")
+    expect(container.textContent).toContain("m-collapse-transition")
+    expect(container.textContent).toContain("show")
+    expect(container.textContent).toContain("m:collapse-transition-error")
+  })
+})
+
