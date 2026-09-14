@@ -112,10 +112,11 @@ families establish the pattern; the remaining contracts must be defined before i
 | Spin | `Spin`; customizable size, delay, stroke, wrapped content adoption, custom icons and descriptions | [Demo and API](../../demo/components/spin.html) |
 | Tooltip | `Tooltip`, `TooltipTrigger`, `TooltipContent`; noninteractive contextual descriptions, text attribute, 12 directional placements, hover/focus triggering, collision flipping | [Demo and API](../../demo/components/tooltip.html) |
 
-## Layout (5)
+## Layout (6)
 
 | Family | Elements / scope | Contract |
 | --- | --- | --- |
+| Box | `Box`, `Div`, `Span`, `Label` and primitives | [Demo and API](../../demo/components/box.html) |
 | Flex | `Flex` | [Demo and API](../../demo/components/flex.html) |
 | Layout | `Layout`, `LayoutHeader`, `LayoutContent`, `LayoutFooter`, `LayoutSider`; native flex shells, borders, sidebar placement and positioning | [Demo and API](../../demo/components/layout.html) |
 | Grid | `Grid`, `GridItem`; native tracks, original children and optional absolute placement | [Demo and API](../../demo/components/grid.html) |

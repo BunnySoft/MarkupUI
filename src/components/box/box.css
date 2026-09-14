@@ -1,0 +1,86 @@
+m-box,
+m-div {
+  display: block;
+  box-sizing: border-box;
+}
+
+m-box[display="inline-block"], m-div[display="inline-block"] { display: inline-block; }
+m-box[display="flex"], m-div[display="flex"] { display: flex; }
+m-box[display="inline-flex"], m-div[display="inline-flex"] { display: inline-flex; }
+m-box[display="grid"], m-div[display="grid"] { display: grid; }
+m-box[display="none"], m-div[display="none"] { display: none; }
+
+m-box[direction="row"], m-div[direction="row"] { flex-direction: row; }
+m-box[direction="column"], m-div[direction="column"] { flex-direction: column; }
+m-box[direction="row-reverse"], m-div[direction="row-reverse"] { flex-direction: row-reverse; }
+m-box[direction="column-reverse"], m-div[direction="column-reverse"] { flex-direction: column-reverse; }
+
+m-box[wrap], m-div[wrap] { flex-wrap: wrap; }
+
+m-box[align="start"], m-div[align="start"] { align-items: flex-start; }
+m-box[align="center"], m-div[align="center"] { align-items: center; }
+m-box[align="end"], m-div[align="end"] { align-items: flex-end; }
+m-box[align="stretch"], m-div[align="stretch"] { align-items: stretch; }
+m-box[align="baseline"], m-div[align="baseline"] { align-items: baseline; }
+
+m-box[justify="start"], m-div[justify="start"] { justify-content: flex-start; }
+m-box[justify="center"], m-div[justify="center"] { justify-content: center; }
+m-box[justify="end"], m-div[justify="end"] { justify-content: flex-end; }
+m-box[justify="space-between"], m-div[justify="space-between"] { justify-content: space-between; }
+m-box[justify="space-around"], m-div[justify="space-around"] { justify-content: space-around; }
+m-box[justify="space-evenly"], m-div[justify="space-evenly"] { justify-content: space-evenly; }
+
+m-span {
+  display: inline;
+}
+m-span[display="inline-block"] {
+  display: inline-block;
+}
+
+m-label {
+  display: inline-block;
+  cursor: pointer;
+}
+
+m-label[required]::after {
+  content: " *";
+  color: var(--m-color-error, #d03050);
+}
+
+m-footer {
+  display: block;
+}
+
+m-article {
+  display: block;
+}
+
+m-strong {
+  display: inline;
+  font-weight: bold;
+}
+
+m-em {
+  display: inline;
+  font-style: italic;
+}
+
+m-small {
+  display: inline;
+  font-size: 0.85em;
+}
+
+m-pre {
+  display: block;
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+
+m-details {
+  display: block;
+}
+
+m-summary {
+  display: list-item;
+  cursor: pointer;
+}

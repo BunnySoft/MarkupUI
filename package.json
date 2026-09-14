@@ -361,6 +361,11 @@
       "import": "./dist/markup-ui-space.js"
     },
     "./space/style.css": "./dist/markup-ui-space.css",
+    "./box": {
+      "types": "./dist/components/box/index.d.ts",
+      "import": "./dist/markup-ui-box.js"
+    },
+    "./box/style.css": "./dist/markup-ui-box.css",
     "./flex": {
       "types": "./dist/components/flex/index.d.ts",
       "import": "./dist/markup-ui-flex.js"
