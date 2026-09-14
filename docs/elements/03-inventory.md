@@ -75,7 +75,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Tree | `Tree`, `TreeNode` | [Demo and API](../../demo/components/tree.html) |
 | Infinite Scroll | `InfiniteScroll` | [Demo and API](../../demo/components/infinite-scroll.html) |
 | Highlight | `Highlight` | [Demo and API](../../demo/components/highlight.html) |
-| Heatmap | `Heatmap` | Contract pending |
+| Heatmap | `Heatmap` | [Demo and API](../../demo/components/heatmap.html) |
 
 ## Navigation (9)
 

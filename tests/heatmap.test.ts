@@ -2,8 +2,10 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { buildHeatmap, createHeatmap, heatmapLevel } from "../src/components/heatmap/index.js"
+import { Heatmap, MHeatmap, buildHeatmap, createHeatmap, heatmapLevel, registerHeatmap } from "../src/components/heatmap/index.js"
+import * as heatmapApi from "../src/components/heatmap/index.js"
 import type { HeatmapController, HeatmapOptions } from "../src/components/heatmap/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const helpers: HeatmapController[] = []
 const data = [{ date: "2024-02-01", value: -5 }, { date: "2024-02-10", value: 0 }, { date: "2024-02-29", value: 10 }]
@@ -316,3 +318,170 @@ describe("Heatmap default styles", () => {
     expect(css).not.toContain("@import")
   })
 })
+
+describe("canonical Heatmap ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(heatmapApi.Heatmap).toBe(Heatmap)
+    expect(heatmapApi.MHeatmap).toBe(MHeatmap)
+    expect(Heatmap.tag).toBe("m-heatmap")
+    expect(ViewElement.prototype.isPrototypeOf(Heatmap.prototype)).toBe(true)
+    expect(customElements.get("m-heatmap")).toBe(Heatmap)
+    expect(Heatmap.observedAttributes).toEqual(["rows", "columns"])
+    expect(() => registerHeatmap()).not.toThrow()
+    const define = vi.fn()
+    expect(() => registerHeatmap({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("handles rows property defaults, attributes, and validation", () => {
+    const element = document.createElement("m-heatmap") as Heatmap
+    document.body.append(element)
+    expect(element.rows).toBe(7)
+
+    element.rows = 5
+    expect(element.rows).toBe(5)
+    expect(element.getAttribute("rows")).toBe("5")
+
+    element.setAttribute("rows", "10")
+    expect(element.rows).toBe(10)
+
+    expect(() => { element.rows = NaN }).toThrow(RangeError)
+    expect(() => { element.rows = Infinity }).toThrow(RangeError)
+    expect(() => { element.rows = 0 }).toThrow(RangeError)
+    expect(() => { element.rows = -1 }).toThrow(RangeError)
+    element.setAttribute("rows", "invalid")
+    expect(() => element.rows).toThrow(RangeError)
+  })
+
+  it("handles columns property defaults, attributes, and validation", () => {
+    const element = document.createElement("m-heatmap") as Heatmap
+    document.body.append(element)
+    expect(element.columns).toBe(12)
+
+    element.columns = 20
+    expect(element.columns).toBe(20)
+    expect(element.getAttribute("columns")).toBe("20")
+
+    element.setAttribute("columns", "52")
+    expect(element.columns).toBe(52)
+
+    expect(() => { element.columns = NaN }).toThrow(RangeError)
+    expect(() => { element.columns = Infinity }).toThrow(RangeError)
+    expect(() => { element.columns = 0 }).toThrow(RangeError)
+    expect(() => { element.columns = -1 }).toThrow(RangeError)
+    element.setAttribute("columns", "invalid")
+    expect(() => element.columns).toThrow(RangeError)
+  })
+
+  it("replays pre-upgrade properties upon connection", () => {
+    const element = document.createElement("m-heatmap") as Heatmap
+    Object.defineProperty(element, "rows", { configurable: true, value: 5 })
+    Object.defineProperty(element, "columns", { configurable: true, value: 10 })
+    document.body.append(element)
+
+    expect(element.rows).toBe(5)
+    expect(element.columns).toBe(10)
+    expect(element.getAttribute("rows")).toBe("5")
+    expect(element.getAttribute("columns")).toBe("10")
+  })
+
+  it("renders grid rows and columns when no authored content is present", () => {
+    const element = document.createElement("m-heatmap") as Heatmap
+    element.rows = 5
+    element.columns = 10
+    document.body.append(element)
+
+    const table = element.querySelector("table")
+    expect(table).not.toBeNull()
+    const trs = element.querySelectorAll("tbody tr")
+    expect(trs).toHaveLength(5)
+    expect(trs[0]!.querySelectorAll("td")).toHaveLength(10)
+
+    element.columns = 8
+    expect(element.querySelectorAll("tbody tr")[0]!.querySelectorAll("td")).toHaveLength(8)
+  })
+
+  it("preserves authored table content without overwrite", () => {
+    const element = document.createElement("m-heatmap") as Heatmap
+    element.innerHTML = "<table><tbody><tr><td>Authored</td></tr></tbody></table>"
+    document.body.append(element)
+
+    expect(element.querySelectorAll("td")).toHaveLength(1)
+    expect(element.querySelector("td")!.textContent).toBe("Authored")
+  })
+
+  it("supports refresh method to update rendered structure", () => {
+    const element = document.createElement("m-heatmap") as Heatmap
+    document.body.append(element)
+    expect(element.querySelectorAll("tbody tr")).toHaveLength(7)
+
+    element.setAttribute("rows", "4")
+    element.refresh()
+    expect(element.querySelectorAll("tbody tr")).toHaveLength(4)
+  })
+
+  it("exposes MarkupUIHeatmap global", async () => {
+    await import("../src/components/heatmap/global.js")
+    const globalApi = (globalThis as unknown as { MarkupUIHeatmap?: typeof heatmapApi }).MarkupUIHeatmap
+    expect(globalApi).toBeDefined()
+    expect(globalApi?.Heatmap).toBe(Heatmap)
+    expect(globalApi?.registerHeatmap).toBe(registerHeatmap)
+    expect(globalApi?.createHeatmap).toBe(createHeatmap)
+  })
+
+  it("generates component API documentation matching the ViewElement specification", () => {
+    const docs = JSON.parse(readFileSync(resolve("demo", "api", "heatmap.json"), "utf8"))
+    expect(docs.elements).toHaveLength(1)
+    const [element] = docs.elements
+    expect(element.type).toBe("Heatmap")
+    expect(element.web.primary).toBe("m-heatmap")
+    expect(element.properties.rows).toMatchObject({
+      name: "rows",
+      type: "number",
+      typeName: "number",
+      attribute: "rows",
+      default: 7,
+      nullable: false,
+      writable: true,
+    })
+    expect(element.properties.columns).toMatchObject({
+      name: "columns",
+      type: "number",
+      typeName: "number",
+      attribute: "columns",
+      default: 12,
+      nullable: false,
+      writable: true,
+    })
+    expect(element.regions).toEqual([
+      { name: "content", accepts: ["table", "legend", "content"], min: 0, max: null },
+    ])
+    expect(element.events).toContainEqual({
+      name: "HeatmapChange",
+      web: "m:heatmap-change",
+      bubbles: true,
+      cancelable: false,
+      composed: false,
+    })
+    expect(element.events).toContainEqual({
+      name: "HeatmapExplore",
+      web: "m:heatmap-explore",
+      bubbles: true,
+      cancelable: false,
+      composed: false,
+    })
+    expect(element.actions).toEqual(["refresh"])
+  })
+
+  it("renders API documentation in demo element", async () => {
+    const { renderComponentApi } = await import("../demo/component-api.js")
+    const docs = JSON.parse(readFileSync(resolve("demo", "api", "heatmap.json"), "utf8"))
+    const container = document.createElement("div")
+    renderComponentApi(container, docs.elements)
+    expect(container.textContent).toContain("Heatmap")
+    expect(container.textContent).toContain("m-heatmap")
+    expect(container.textContent).toContain("rows")
+    expect(container.textContent).toContain("columns")
+  })
+})
+
