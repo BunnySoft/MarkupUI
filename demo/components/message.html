@@ -41,30 +41,30 @@
     <section data-demo-example="types" aria-labelledby="types-heading">
       <header data-demo-header><div><h2 id="types-heading">Message types</h2><p>Messages provide brief feedback with different semantic types.</p></div></header>
       <div data-demo-preview>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
+        <m-box display="flex" direction="column" gap="8">
           <m-message type="info" content="Informational message notice" duration="0"></m-message>
           <m-message type="success" content="Success: Operation completed successfully" duration="0"></m-message>
           <m-message type="warning" content="Warning: Please check your input" duration="0"></m-message>
           <m-message type="error" content="Error: Failed to process request" duration="0"></m-message>
           <m-message type="loading" content="Loading data, please wait..." duration="0"></m-message>
-        </div>
+        </m-box>
       </div>
     </section>
 
     <section data-demo-example="closable" aria-labelledby="closable-heading">
       <header data-demo-header><div><h2 id="closable-heading">Closable messages</h2><p>Messages can display a dismiss button for user-triggered dismissal.</p></div></header>
       <div data-demo-preview>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
+        <m-box display="flex" direction="column" gap="8">
           <m-message type="info" content="Closable information message" closable duration="0"></m-message>
           <m-message type="warning" content="Closable warning notice" closable duration="0"></m-message>
-        </div>
+        </m-box>
       </div>
     </section>
 
     <section data-demo-example="service" aria-labelledby="service-heading">
       <header data-demo-header><div><h2 id="service-heading">Programmatic message service</h2><p>Trigger message toasts globally using the message service helper.</p></div></header>
       <div data-demo-preview>
-        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <m-box display="flex" wrap="wrap" gap="8">
           <m-button id="btn-info">Info</m-button>
           <m-button id="btn-success">Success</m-button>
           <m-button id="btn-warning">Warning</m-button>
@@ -72,7 +72,7 @@
           <m-button id="btn-loading">Loading</m-button>
           <m-button id="btn-closable">Closable</m-button>
           <m-button id="btn-destroy">Destroy all</m-button>
-        </div>
+        </m-box>
         <m-p id="service-status" style="margin-block-start: 12px;">Click a button to display a message notification.</m-p>
       </div>
     </section>

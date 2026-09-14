@@ -42,11 +42,11 @@
       <header data-demo-header><div><h2 id="basic-heading">Basic countdown</h2><p>Elapsed time toward zero with start, pause, and reset controls.</p></div></header>
       <div data-demo-preview>
         <m-countdown id="basic-countdown" duration="86400000"></m-countdown>
-        <div class="controls" style="margin-block-start: 1rem;">
-          <button type="button" id="basic-start">Start</button>
-          <button type="button" id="basic-pause">Pause</button>
-          <button type="button" id="basic-reset">Reset</button>
-        </div>
+        <m-box class="controls" display="flex" gap="8" margin="16 0 0 0">
+          <m-button id="basic-start">Start</m-button>
+          <m-button id="basic-pause">Pause</m-button>
+          <m-button id="basic-reset">Reset</m-button>
+        </m-box>
       </div>
     </section>
 

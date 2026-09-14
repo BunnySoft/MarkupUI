@@ -42,17 +42,19 @@
     <section data-demo-example="vertical" aria-labelledby="vertical-heading">
       <header data-demo-header><div><h2 id="vertical-heading">Vertical navigation menu</h2><p>Default vertical menu with items, groups, and dividers.</p></div></header>
       <div data-demo-preview>
-        <m-menu mode="vertical" value="dashboard" id="vertical-demo-menu" style="max-inline-size: 240px;">
-          <m-menu-item value="dashboard">Dashboard</m-menu-item>
-          <m-menu-item value="analytics">Analytics</m-menu-item>
-          <m-menu-divider></m-menu-divider>
-          <m-menu-group title="Administration">
-            <m-menu-item value="users">Users</m-menu-item>
-            <m-menu-item value="roles">Roles</m-menu-item>
-            <m-menu-item value="settings">Settings</m-menu-item>
-            <m-menu-item value="billing" disabled>Billing (disabled)</m-menu-item>
-          </m-menu-group>
-        </m-menu>
+        <m-box width="240">
+          <m-menu mode="vertical" value="dashboard" id="vertical-demo-menu">
+            <m-menu-item value="dashboard">Dashboard</m-menu-item>
+            <m-menu-item value="analytics">Analytics</m-menu-item>
+            <m-menu-divider></m-menu-divider>
+            <m-menu-group title="Administration">
+              <m-menu-item value="users">Users</m-menu-item>
+              <m-menu-item value="roles">Roles</m-menu-item>
+              <m-menu-item value="settings">Settings</m-menu-item>
+              <m-menu-item value="billing" disabled>Billing (disabled)</m-menu-item>
+            </m-menu-group>
+          </m-menu>
+        </m-box>
       </div>
     </section>
 
@@ -71,18 +73,20 @@
     <section data-demo-example="interactive" aria-labelledby="interactive-heading">
       <header data-demo-header><div><h2 id="interactive-heading">Interactive selection and events</h2><p>Listening to m:change events and updating menu selection dynamically.</p></div></header>
       <div data-demo-preview>
-        <m-menu id="interactive-menu" value="mail" style="max-inline-size: 240px;">
-          <m-menu-item value="mail">Inbox</m-menu-item>
-          <m-menu-item value="starred">Starred</m-menu-item>
-          <m-menu-item value="sent">Sent Mail</m-menu-item>
-          <m-menu-item value="trash">Trash</m-menu-item>
-        </m-menu>
+        <m-box width="240">
+          <m-menu id="interactive-menu" value="mail">
+            <m-menu-item value="mail">Inbox</m-menu-item>
+            <m-menu-item value="starred">Starred</m-menu-item>
+            <m-menu-item value="sent">Sent Mail</m-menu-item>
+            <m-menu-item value="trash">Trash</m-menu-item>
+          </m-menu>
+        </m-box>
         <m-p id="menu-status" role="status" style="margin-block-start: 12px;">Selected: mail</m-p>
-        <div class="controls" style="display: flex; gap: 8px; margin-block-start: 12px;">
+        <m-box display="flex" gap="8" margin="12 0 0 0">
           <m-button id="select-inbox">Select Inbox</m-button>
           <m-button id="select-starred">Select Starred</m-button>
           <m-button id="select-trash">Select Trash</m-button>
-        </div>
+        </m-box>
       </div>
     </section>
 

@@ -49,12 +49,12 @@
           <m-empty size="huge" description="Huge"></m-empty>
         </div>
         <m-empty id="fallback"></m-empty>
-        <div class="controls">
+        <m-box class="controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
           <m-button id="localize">Use localized text</m-button>
           <m-button id="restore-description">Restore default text</m-button>
           <m-button id="glyph">Use legacy text glyph</m-button>
           <m-button id="illustration">Restore illustration</m-button>
-        </div>
+        </m-box>
       </div>
     </section>
 
@@ -64,24 +64,24 @@
         <form id="report-form">
           <m-empty id="authored" description="Fallback must not replace authored content" role="region" aria-labelledby="empty-heading">
             <svg data-m-empty-icon aria-hidden="true" focusable="false" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="M8 12h8" stroke="currentColor" stroke-width="2"></path></svg>
-            <div data-m-empty-description><m-heading level="3"><h3 id="empty-heading">No reports yet</h3></m-heading><m-p>Create a report or browse the examples.</m-p></div>
-            <div data-m-empty-extra>
+            <m-box data-m-empty-description><m-heading level="3"><h3 id="empty-heading">No reports yet</h3></m-heading><m-p>Create a report or browse the examples.</m-p></m-box>
+            <m-box data-m-empty-extra>
               <label>Report name <input id="report-name" name="report" value="Draft"></label>
               <m-button attr-type="submit" id="create-report">Create report</m-button>
               <m-button attr-type="reset" id="reset-report">Reset name</m-button>
               <m-button id="browse">Browse examples</m-button>
               <m-a id="help-link" href="#static-heading">Empty-state help</m-a>
-            </div>
+            </m-box>
           </m-empty>
         </form>
         <m-p id="form-status" role="status">0 submissions.</m-p>
         <m-p id="action-status" role="status">0 browse actions.</m-p>
-        <div class="controls">
+        <m-box class="controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
           <m-button id="toggle-description">Toggle description</m-button>
           <m-button id="toggle-icon">Toggle icon</m-button>
           <m-button id="toggle-extra">Toggle native extra hidden</m-button>
           <m-button id="reconnect">Reconnect empty state</m-button>
-        </div>
+        </m-box>
       </div>
     </section>
 
@@ -90,12 +90,12 @@
       <div data-demo-preview>
         <template id="empty-template">
           <m-heading level="3" data-m-empty-description><h3>No saved searches</h3></m-heading>
-          <div data-m-empty-extra><m-button id="template-action">Create saved search</m-button></div>
+          <m-box data-m-empty-extra><m-button id="template-action">Create saved search</m-button></m-box>
         </template>
         <m-empty id="template-target" description="Template has not been cloned yet"></m-empty>
-        <div class="controls">
+        <m-box class="controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
           <m-button id="clone-template">Clone native template</m-button>
-        </div>
+        </m-box>
         <m-p id="template-status" role="status">0 template actions.</m-p>
       </div>
     </section>

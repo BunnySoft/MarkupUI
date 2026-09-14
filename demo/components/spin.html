@@ -70,13 +70,13 @@
         </form>
         <m-p id="request-status" role="status">No request active.</m-p>
         <m-p id="submit-status" role="status">0 native submissions.</m-p>
-        <div class="controls">
+        <m-box class="controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
           <m-button id="start-request">Start request</m-button>
           <m-button id="finish-request">Finish request</m-button>
           <m-button id="short-request">Complete a brief request</m-button>
           <m-button id="reconnect">Reconnect Spin</m-button>
           <label><input type="checkbox" id="block-content"> Application uses native inert during the request</label>
-        </div>
+        </m-box>
         <m-p>Blocking is demo application policy, not a Spin prop. The demo restores the content's original inert/busy state when it finishes the request.</m-p>
       </div>
     </section>

@@ -57,18 +57,18 @@
         <form id="metric-form">
           <m-statistic id="authored" role="group" aria-labelledby="metric-label" tabular-nums>
             <h3 data-m-statistic-label id="metric-label">Active users</h3>
-            <span data-m-statistic-prefix aria-hidden="true"><svg viewBox="0 0 20 20" width="16" height="16"><path d="M3 14 8 9l4 3 5-7" fill="none" stroke="currentColor" stroke-width="2"></path></svg></span>
-            <strong id="authored-value">128</strong>
-            <span data-m-statistic-suffix><a id="details-link" href="#authored-heading">people</a> <button type="button" id="details-action">Details</button> <button type="submit" id="submit-action">Submit metric</button></span>
+            <m-span data-m-statistic-prefix aria-hidden="true"><svg viewBox="0 0 20 20" width="16" height="16"><path d="M3 14 8 9l4 3 5-7" fill="none" stroke="currentColor" stroke-width="2"></path></svg></m-span>
+            <m-strong id="authored-value">128</m-strong>
+            <m-span data-m-statistic-suffix><a id="details-link" href="#authored-heading">people</a> <m-button id="details-action">Details</m-button> <m-button type="submit" id="submit-action">Submit metric</m-button></m-span>
           </m-statistic>
         </form>
-        <div class="controls">
-          <button type="button" id="override">Set value to 0</button>
-          <button type="button" id="blank">Set empty value</button>
-          <button type="button" id="restore">Restore authored</button>
-          <button type="button" id="tabular">Toggle tabular figures</button>
-          <button type="button" id="reconnect">Reconnect</button>
-        </div>
+        <m-box class="controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
+          <m-button id="override">Set value to 0</m-button>
+          <m-button id="blank">Set empty value</m-button>
+          <m-button id="restore">Restore authored</m-button>
+          <m-button id="tabular">Toggle tabular figures</m-button>
+          <m-button id="reconnect">Reconnect</m-button>
+        </m-box>
         <p id="action-status" role="status">0 detail actions.</p>
         <p id="submit-status" role="status">0 native submissions.</p>
       </div>
@@ -78,10 +78,10 @@
       <header data-demo-header><div><h2 id="intl-heading">Application Intl formatting</h2><p>Intl runs in the application script; Statistic receives the resulting string.</p></div></header>
       <div data-demo-preview>
         <m-statistic id="formatted" label="Localized amount" suffix="EUR" tabular-nums></m-statistic>
-        <div class="controls">
-          <button type="button" id="german">German format</button>
-          <button type="button" id="english">English format</button>
-        </div>
+        <m-box class="controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
+          <m-button id="german">German format</m-button>
+          <m-button id="english">English format</m-button>
+        </m-box>
       </div>
     </section>
 

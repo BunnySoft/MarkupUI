@@ -34,7 +34,7 @@ export const componentGroups = [
     ["tooltip", "Tooltip"],
   ] },
   { name: "Layout Components", items: [
-    ["flex", "Flex"], ["layout", "Layout"], ["legacy-grid", "Legacy Grid"], ["grid", "Grid"],
+    ["box", "Box"], ["flex", "Flex"], ["layout", "Layout"], ["legacy-grid", "Legacy Grid"], ["grid", "Grid"],
     ["space", "Space"], ["split", "Split"],
   ] },
   { name: "Utility Components", items: [

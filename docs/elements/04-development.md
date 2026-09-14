@@ -98,6 +98,21 @@ Use `demo/component-api.js` and `component-api.css` to present generated API dat
 Load `../api/<family>.json` from the page module after the runtime is ready.
 Do not maintain another Markdown API table or make the production component load that JSON.
 
+## 7. Cross-platform element and attribute portability
+
+MarkupUI is designed to be self-contained and portable across web and native targets (such as SwiftUI, Flutter, and CLI terminals).
+
+1. **Use `m-*` elements instead of raw HTML**:
+   - Containers: Use `<m-box>` (or `<m-div>`) instead of raw `<div>`.
+   - Text & Phrasing: Use `<m-span>`, `<m-strong>`, `<m-em>`, `<m-small>`, `<m-pre>`, `<m-p>`, `<m-text>` instead of raw HTML tags.
+   - Form Labels: Use `<m-label for="...">` instead of `<label>`.
+   - Disclosure: Use `<m-details>` and `<m-summary>` instead of raw `<details>` and `<summary>`.
+
+2. **Declarative layout attributes over ad-hoc classes/styles**:
+   - Use declarative attributes on `<m-box>`: `display`, `direction`, `align`, `justify`, `wrap`, `gap`, `padding`, `margin`, `width`, `height`.
+   - Native targets map these attributes directly to native layout primitives (e.g. `VStack`/`HStack` in SwiftUI, `Column`/`Row` in Flutter) without parsing CSS stylesheets or style strings.
+
+
 Use `main[data-demo-page].component-docs` and an API container named `<family>-api`.
 The shared documentation stylesheet owns page spacing and cards; keep family demo CSS
 focused on its previews. Standard examples must not require layout-only helper classes on public

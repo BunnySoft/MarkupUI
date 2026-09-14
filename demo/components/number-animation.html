@@ -42,16 +42,16 @@
       <header data-demo-header><div><h2 id="basic-heading">Basic animation</h2><p>Smooth numeric animation with configurable bounds.</p></div></header>
       <div data-demo-preview>
         <m-number-animation id="demo-basic" from="0" to="1000" duration="1500"></m-number-animation>
-        <div class="controls" style="margin-block-start: 8px;">
+        <m-box class="controls" margin="8 0 0 0">
           <m-button id="play-btn">Replay</m-button>
-        </div>
+        </m-box>
       </div>
     </section>
 
     <section data-demo-example="precision" aria-labelledby="precision-heading">
       <header data-demo-header><div><h2 id="precision-heading">Precision and currency</h2><p>Animated values with fractional precision.</p></div></header>
       <div data-demo-preview>
-        <span>$</span><m-number-animation id="demo-precision" from="0" to="2500.5" duration="2000" precision="2"></m-number-animation>
+        <m-span>$</m-span><m-number-animation id="demo-precision" from="0" to="2500.5" duration="2000" precision="2"></m-number-animation>
       </div>
     </section>
 

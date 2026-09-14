@@ -1110,14 +1110,14 @@ describe("component-by-component demo browser", () => {
     expect(media.removeEventListener).toHaveBeenCalledWith("change", expect.any(Function))
   })
 
-  it("lists exactly the 96 existing standalone pages without group pages", () => {
+  it("lists exactly the 97 existing standalone pages without group pages", () => {
     const files = readdirSync(resolve("demo", "components")).filter(file => file.endsWith(".html")).sort()
-    expect(components).toHaveLength(96)
-    expect(new Set(components.map(item => item.slug)).size).toBe(96)
+    expect(components).toHaveLength(97)
+    expect(new Set(components.map(item => item.slug)).size).toBe(97)
     expect(components.map(item => `${item.slug}.html`).sort()).toEqual(files)
     expect(componentGroups).toHaveLength(9)
     browser = createComponentBrowser()
-    expect(document.querySelectorAll("a[data-component]")).toHaveLength(96)
+    expect(document.querySelectorAll("a[data-component]")).toHaveLength(97)
     expect(document.querySelectorAll(".nav-group")).toHaveLength(9)
     expect(document.querySelector("#component-navigation details")).toBeNull()
   })
@@ -1298,7 +1298,7 @@ describe("component-by-component demo browser", () => {
     const visible = [...document.querySelectorAll<HTMLLIElement>(".nav-group li")].filter(item => !item.hidden)
     expect(visible).toHaveLength(1)
     expect(visible[0]?.textContent).toBe("Avatar")
-    expect(document.querySelector("#component-count")?.textContent).toBe("1 of 96 components")
+    expect(document.querySelector("#component-count")?.textContent).toBe("1 of 97 components")
     search.value = "no component matches this"
     search.dispatchEvent(new Event("input"))
     expect(document.querySelector<HTMLElement>("#no-results")!.hidden).toBe(false)

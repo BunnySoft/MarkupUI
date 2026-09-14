@@ -48,16 +48,16 @@
         <m-progress id="processing" percentage="65" processing label="Processing report"></m-progress>
         <m-progress id="unknown" indeterminate label="Unknown completion"></m-progress>
         <m-progress id="named-native" percentage="30">
-          <label data-m-progress-label for="native-range"><m-text>Native labelled range</m-text></label>
+          <m-label data-m-progress-label for="native-range"><m-text>Native labelled range</m-text></m-label>
           <progress id="native-range" max="10" value="3"></progress>
         </m-progress>
-        <div class="controls">
+        <m-box class="controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
           <m-button id="advance">Advance upload</m-button>
           <m-button id="toggle-unknown">Toggle indeterminate</m-button>
           <m-button id="toggle-indicator">Toggle visual indicator</m-button>
           <m-button id="invalid-max">Set invalid legacy max</m-button>
           <m-button id="restore-max">Restore legacy max</m-button>
-        </div>
+        </m-box>
         <m-p id="value-status" role="status">Upload is 40%.</m-p>
         <m-p id="validation-status" role="status">Legacy range is valid.</m-p>
       </div>
@@ -96,12 +96,12 @@
     <section data-demo-example="native" aria-labelledby="native-heading">
       <header data-demo-header><div><h2 id="native-heading">Native HTML without any component</h2><p>Native progress elements operate independently of component wrappers.</p></div></header>
       <div data-demo-preview>
-        <label for="plain-progress"><m-text>Static native upload</m-text></label>
+        <m-label for="plain-progress"><m-text>Static native upload</m-text></m-label>
         <progress id="plain-progress" value="35" max="100">35%</progress>
         <m-p>Application controls belong beside progress, not inside a progressbar or decorative SVG.</m-p>
-        <div class="controls">
+        <m-box class="controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
           <m-button id="reconnect">Reconnect upload component</m-button>
-        </div>
+        </m-box>
       </div>
     </section>
 
