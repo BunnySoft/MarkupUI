@@ -1,3 +1,5 @@
+import { ViewElement } from "../../core/index.js"
+
 export const MAX_LOG_LINES = 10_000
 export const MAX_LOG_CHARACTERS = 1_000_000
 export const MAX_LOG_LINE_LENGTH = 16_384
@@ -63,8 +65,12 @@ type Owned = Node & { [owner]?: object }
 /** Bounded, fully mounted native text records. No parser, virtual window or transport. */
 export function createLog(root: HTMLElement, options: LogOptions = {}): LogController {
   const document = root?.ownerDocument, view = document?.defaultView
+  if (view && root instanceof view.HTMLElement && root.localName === "m-log") {
+    root.classList.add("m-log")
+    root.dataset.log = ""
+  }
   if (!view || !(root instanceof view.HTMLElement) || !root.matches(".m-log[data-log]")
-    || !["div", "section"].includes(root.localName) || (root as Owned)[owner]) throw new TypeError("Log needs an unowned native div/section.m-log[data-log].")
+    || !["div", "section", "m-log"].includes(root.localName) || (root as Owned)[owner]) throw new TypeError("Log needs an unowned native div/section.m-log[data-log].")
   function object(value: unknown, allowed: readonly string[]) {
     if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).some(key => !allowed.includes(key))) throw new TypeError("Unsupported Log configuration.")
   }
@@ -303,6 +309,7 @@ export function createLog(root: HTMLElement, options: LogOptions = {}): LogContr
   function disconnect() {
     if (!connected) return
     connected = false; generation++; revision++; silentTop = null; observer?.disconnect()
+    delete (root as OwnedController)[controllerRef]
     viewport.removeEventListener("scroll", scroll)
     for (const record of attributes) if (record.node.getAttribute(record.name) === record.last) {
       if (record.before === null) record.node.removeAttribute(record.name); else record.node.setAttribute(record.name, record.before)
@@ -327,7 +334,7 @@ export function createLog(root: HTMLElement, options: LogOptions = {}): LogContr
       observer.observe(viewport)
     }
   } catch (cause) { disconnect(); throw cause }
-  return {
+  const controller: LogController = {
     viewport, output,
     get connected() { return connected }, get error() { return error },
     get text() { return rows.map(row => row.text).join("\n") },
@@ -361,4 +368,187 @@ export function createLog(root: HTMLElement, options: LogOptions = {}): LogContr
     },
     refresh, disconnect
   }
+  ;(root as OwnedController)[controllerRef] = controller
+  return controller
 }
+
+const controllerRef = Symbol.for("markup-ui.log.controller")
+type OwnedController = HTMLElement & { [controllerRef]?: LogController }
+
+/**
+ * A log viewer for bounded, fully retained native text records.
+ * @region {"name":"content","accepts":["flow content"],"min":0,"max":null}
+ * @event {"name":"LogEdge","web":"m:log-edge","bubbles":true,"cancelable":false,"composed":false,"detail":{"position":"string"}}
+ * @event {"name":"LogError","web":"m:log-error","bubbles":true,"cancelable":false,"composed":false}
+ */
+export class Log extends ViewElement {
+  public static readonly tag = "m-log"
+  public static get observedAttributes(): string[] {
+    return ["line-height", "rows", "trim"]
+  }
+
+  private upgraded = false
+
+  public connectedCallback(): void {
+    if (!this.upgraded) {
+      this.upgraded = true
+      this.upgradeProperties()
+    }
+    this.dataset.mLog = ""
+    this.dataset.log = ""
+    this.classList.add("m-log")
+    this.ensureAnatomy()
+    this.synchronize()
+  }
+
+  public disconnectedCallback(): void {
+  }
+
+  public attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
+    if (oldValue === newValue || !this.isConnected) return
+    if (name === "line-height" || name === "rows") {
+      this.synchronize()
+    }
+  }
+
+  /**
+   * Line height multiplier for log rows.
+   * @min 0
+   */
+  public get lineHeight(): number {
+    return this.numberAttribute("line-height", 1.25)
+  }
+  public set lineHeight(value: number) {
+    if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) {
+      throw new RangeError("lineHeight must be a positive number.")
+    }
+    this.setAttribute("line-height", String(value))
+    this.style.setProperty("--m-log-line-height", String(value))
+  }
+
+  /**
+   * Number of visible log rows.
+   * @min 1
+   * @integer
+   */
+  public get rows(): number {
+    return this.numberAttribute("rows", 15)
+  }
+  public set rows(value: number) {
+    if (!Number.isSafeInteger(value) || value < 1) {
+      throw new RangeError("rows must be a positive integer.")
+    }
+    this.setAttribute("rows", String(value))
+    this.style.setProperty("--m-log-rows", String(value))
+  }
+
+  /**
+   * Whether to trim displayed line whitespace.
+   */
+  public get trim(): boolean {
+    return this.hasAttribute("trim")
+  }
+  public set trim(value: boolean) {
+    this.setBooleanAttribute("trim", value)
+  }
+
+  public override scrollTo(options?: LogScrollOptions | ScrollToOptions): void
+  public override scrollTo(x: number, y: number): void
+  public override scrollTo(
+    optionsOrX?: LogScrollOptions | ScrollToOptions | number,
+    y?: number,
+  ): void {
+    const controller = (this as OwnedController)[controllerRef]
+    if (typeof optionsOrX === "number") {
+      const top = typeof y === "number" ? y : optionsOrX
+      if (controller) {
+        controller.scrollTo({ top })
+      } else {
+        const viewport = this.querySelector<HTMLPreElement>("[data-log-viewport]")
+        if (viewport) viewport.scrollTop = top
+        if (typeof super.scrollTo === "function") {
+          super.scrollTo(optionsOrX, y as number)
+        }
+      }
+      return
+    }
+    if (optionsOrX && typeof optionsOrX === "object") {
+      if ("position" in optionsOrX) {
+        if (optionsOrX.position !== "top" && optionsOrX.position !== "bottom") {
+          throw new TypeError("scrollTo position must be 'top' or 'bottom'.")
+        }
+        if (controller) {
+          controller.scrollTo(optionsOrX as LogScrollOptions)
+        } else {
+          const viewport = this.querySelector<HTMLPreElement>("[data-log-viewport]")
+          if (viewport) {
+            viewport.scrollTop = optionsOrX.position === "bottom"
+              ? Math.max(0, viewport.scrollHeight - viewport.clientHeight)
+              : 0
+          }
+        }
+        return
+      }
+      if ("top" in optionsOrX && !("left" in optionsOrX)) {
+        if (typeof optionsOrX.top !== "number" || !Number.isFinite(optionsOrX.top)) {
+          throw new TypeError("scrollTo top must be a finite number.")
+        }
+        if (controller) {
+          controller.scrollTo(optionsOrX as LogScrollOptions)
+        } else {
+          const viewport = this.querySelector<HTMLPreElement>("[data-log-viewport]")
+          if (viewport) viewport.scrollTop = optionsOrX.top
+        }
+        return
+      }
+    }
+    if (typeof super.scrollTo === "function") {
+      super.scrollTo(optionsOrX as ScrollToOptions)
+    }
+  }
+
+  private ensureAnatomy(): void {
+    let viewport = this.querySelector<HTMLPreElement>(":scope > [data-log-viewport]")
+    if (!viewport) {
+      viewport = this.ownerDocument.createElement("pre")
+      viewport.className = "m-code-block"
+      viewport.setAttribute("data-log-viewport", "")
+      viewport.setAttribute("tabindex", "0")
+      viewport.setAttribute("role", "region")
+      viewport.setAttribute("aria-label", "Log")
+      const code = this.ownerDocument.createElement("code")
+      code.className = "m-code"
+      code.setAttribute("data-log-output", "")
+      const loose = [...this.childNodes].filter(node => node !== viewport)
+      if (loose.length) {
+        code.append(...loose)
+      }
+      viewport.append(code)
+      this.append(viewport)
+    }
+  }
+
+  private synchronize(): void {
+    if (this.hasAttribute("line-height")) {
+      try {
+        this.style.setProperty("--m-log-line-height", String(this.lineHeight))
+      } catch {
+        // Retain authored attributes without throwing in lifecycle
+      }
+    } else {
+      this.style.removeProperty("--m-log-line-height")
+    }
+
+    if (this.hasAttribute("rows")) {
+      try {
+        this.style.setProperty("--m-log-rows", String(this.rows))
+      } catch {
+        // Retain authored attributes without throwing in lifecycle
+      }
+    } else {
+      this.style.removeProperty("--m-log-rows")
+    }
+  }
+}
+
+export const MLog = Log

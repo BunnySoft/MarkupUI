@@ -65,7 +65,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Empty | `Empty`; readable fallback text, optional icons, size variants and adopted regions | [Demo and API](../../demo/components/empty.html) |
 | Image | `Image` and preview/group composition | [Demo and API](../../demo/components/image.html) |
 | List | `List`, `ListItem` | [Demo and API](../../demo/components/list.html) |
-| Log | `Log` | Contract pending |
+| Log | `Log` | [Demo and API](../../demo/components/log.html) |
 | Number Animation | `NumberAnimation` | Contract pending |
 | Statistic | `Statistic` | [Demo and API](../../demo/components/statistic.html) |
 | Table | `Table` | [Demo and API](../../demo/components/table.html) |

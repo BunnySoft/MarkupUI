@@ -84,6 +84,7 @@ in the target inventory.
 79. [Mention demo and API](../../demo/components/mention.html): Mention; user mentions, suggestions dropdown, prefix triggers, and selection events.
 80. [Transfer demo and API](../../demo/components/transfer.html): Transfer; dual-list transfer component, item movement, and change events.
 81. [Countdown demo and API](../../demo/components/countdown.html): Countdown; countdown timer, active toggling, precision controls, and finish events.
+82. [Log demo and API](../../demo/components/log.html): Log; terminal and streaming log viewer, auto-scroll, row limits, and trim controls.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

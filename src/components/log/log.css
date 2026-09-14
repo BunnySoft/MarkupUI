@@ -1,5 +1,7 @@
 /* The build composes native Code CSS; these rules only configure the log viewport. */
+m-log,
 .m-log {
+  display: block;
   --m-code-font-size: var(--m-log-font-size, 14px);
   --m-code-line-height: var(--m-log-line-height, 1.25);
   --m-code-padding: var(--m-log-padding, 0px);
@@ -7,7 +9,7 @@
   --m-code-gutter: var(--m-log-gutter);
   min-inline-size: 0;
 }
-.m-log > pre.m-code-block[data-log-viewport] {
+:is(m-log, .m-log) > pre.m-code-block[data-log-viewport] {
   position: relative;
   block-size: var(--m-log-height, calc(var(--m-log-rows, 15) * 1lh + 2 * var(--m-log-padding, 0px)));
   block-size: var(--m-log-height, calc(round(nearest, var(--m-log-rows, 15) * 1lh, 1px) + 2 * var(--m-log-padding, 0px)));
@@ -15,14 +17,15 @@
   scroll-behavior: auto;
 }
 @media screen {
-  .m-log > pre.m-code-block[data-log-viewport]:not([data-word-wrap]) {
+  :is(m-log, .m-log) > pre.m-code-block[data-log-viewport]:not([data-word-wrap]) {
     white-space: var(--m-log-white-space, pre-wrap);
     word-break: var(--m-log-word-break, break-word);
   }
 }
-.m-log > [data-log-loading] { margin-block: .5rem; }
+:is(m-log, .m-log) > [data-log-loading] { margin-block: .5rem; }
 @media print {
+  m-log,
   .m-log { color-scheme: light; color: CanvasText; background: Canvas; }
-  .m-log :is(pre.m-code-block, code.m-code) { color: CanvasText; background: transparent; }
-  .m-log > [data-log-loading] { display: none; }
+  :is(m-log, .m-log) :is(pre.m-code-block, code.m-code) { color: CanvasText; background: transparent; }
+  :is(m-log, .m-log) > [data-log-loading] { display: none; }
 }
