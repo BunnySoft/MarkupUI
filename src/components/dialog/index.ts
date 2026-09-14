@@ -15,5 +15,5 @@ export function registerDialog(registry: Pick<CustomElementRegistry, "get" | "de
   ViewElement.register([Dialog, DialogHeader, DialogBody, DialogFooter, DialogAction], registry)
 }
 
-if (typeof customElements !== "undefined") registerDialog()
+if (typeof customElements !== "undefined" && !customElements.get(Dialog.tag)) registerDialog()
 

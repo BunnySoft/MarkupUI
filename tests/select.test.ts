@@ -417,7 +417,7 @@ describe("canonical Select direct API", () => {
       expect(select.runtimeGzipBytes).toBeLessThanOrEqual(8000)
       expect(manifest.bundles[select.file].budget).toBe(4000)
       expect(manifest.bundles[`markup-ui-native-select${suffix}`].budget).toBe(4000)
-      for (const consumer of ["tree-select", "popselect"]) expect(manifest.componentPayloads[consumer][mode!].dependencies).toEqual([`markup-ui-native-select${suffix}`])
+      for (const consumer of ["tree-select", "popselect"]) expect(manifest.componentPayloads[consumer][mode!].dependencies).toEqual([`markup-ui-core${suffix}`, `markup-ui-native-select${suffix}`])
     }
     expect(manifest.bundles["markup-ui-select.css"].budget).toBe(1000)
     const esm = readFileSync(join("dist", "markup-ui-select.js"), "utf8")

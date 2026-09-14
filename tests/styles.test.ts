@@ -98,8 +98,8 @@ describe("CSS and theme sources", () => {
     expect(manifest.componentPayloads.typography.esm.runtimeGzipBytes).toBe(
       manifest.bundles["markup-ui-typography.js"].gzipBytes + manifest.bundles["markup-ui-core.js"].gzipBytes,
     )
-    expect(manifest.componentPayloads.code.esm).toBeUndefined()
-    expect(manifest.componentPayloads.list.classic).toBeUndefined()
+    expect(manifest.componentPayloads.code.esm).toBeDefined()
+    expect(manifest.componentPayloads.list.classic).toBeDefined()
     expect(manifest.componentPayloads.equation).toBeUndefined()
   })
 

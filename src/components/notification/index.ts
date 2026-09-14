@@ -16,4 +16,4 @@ export function registerNotification(registry: Pick<CustomElementRegistry, "get"
   ViewElement.register([Notification, NotificationContainer], registry)
 }
 
-if (typeof customElements !== "undefined") registerNotification()
+if (typeof customElements !== "undefined" && !customElements.get(Notification.tag)) registerNotification()

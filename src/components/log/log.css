@@ -26,6 +26,7 @@ m-log,
 @media print {
   m-log,
   .m-log { color-scheme: light; color: CanvasText; background: Canvas; }
-  :is(m-log, .m-log) :is(pre.m-code-block, code.m-code) { color: CanvasText; background: transparent; }
+  m-log :is(pre.m-code-block, code.m-code) { color: CanvasText; background: transparent; }
+  .m-log :is(pre.m-code-block, code.m-code) { color: CanvasText; background: transparent; }
   :is(m-log, .m-log) > [data-log-loading] { display: none; }
 }

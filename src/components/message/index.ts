@@ -26,5 +26,5 @@ export function registerMessage(
   ViewElement.register([Message, MessageContainer], registry)
 }
 
-if (typeof customElements !== "undefined") registerMessage()
+if (typeof customElements !== "undefined" && !customElements.get(Message.tag)) registerMessage()
 

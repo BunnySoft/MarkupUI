@@ -13,5 +13,5 @@ export function registerModal(registry: Pick<CustomElementRegistry, "get" | "def
   ViewElement.register([Modal, ModalHeader, ModalBody, ModalFooter, ModalAction], registry)
 }
 
-if (typeof customElements !== "undefined") registerModal()
+if (typeof customElements !== "undefined" && !customElements.get(Modal.tag)) registerModal()
 

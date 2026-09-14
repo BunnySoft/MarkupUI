@@ -491,7 +491,7 @@ describe("source API and selected delivery", () => {
       expect(payload.dependencies).toEqual([`markup-ui-core${suffix}`, `markup-ui-native-radio${suffix}`])
       expect(payload.runtimeGzipBytes).toBeLessThanOrEqual(payload.runtimeBudget)
       expect(manifest.bundles[`markup-ui-radio${suffix}`].budget).toBe(3000)
-      expect(manifest.componentPayloads.rate[format].dependencies).toEqual([`markup-ui-native-radio${suffix}`])
+      expect(manifest.componentPayloads.rate[format].dependencies).toEqual([`markup-ui-core${suffix}`, `markup-ui-native-radio${suffix}`])
     }
     expect(manifest.bundles["markup-ui-radio.css"].budget).toBe(1250)
     expect(manifest.componentPayloads.radio.cssGzipBytes).toBeLessThanOrEqual(1250)
