@@ -81,6 +81,7 @@ in the target inventory.
 76. [Watermark demo and API](../../demo/components/watermark.html): Watermark; security watermark overlay, canvas text/image patterns, and fullscreen protection.
 77. [Float Button demo and API](../../demo/components/float-button.html): FloatButton, FloatButtonGroup; floating action buttons, circle/square shapes, and positioning.
 78. [Color Picker demo and API](../../demo/components/color-picker.html): ColorPicker; color inputs, hex/rgba values, alpha channel support, and change events.
+79. [Mention demo and API](../../demo/components/mention.html): Mention; user mentions, suggestions dropdown, prefix triggers, and selection events.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.

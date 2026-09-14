@@ -2,8 +2,9 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createMention } from "../src/components/mention/index.js"
+import { createMention, Mention, MMention, registerMention } from "../src/components/mention/index.js"
 import type { MentionOption, MentionOptions } from "../src/components/mention/index.js"
+import { ViewElement } from "../src/core/index.js"
 import { createInput } from "../src/components/native-input.js"
 import { coordinateForm as createForm } from "../src/components/form/controller.js"
 
@@ -339,3 +340,216 @@ describe("owned panel lifetime and native boundaries", () => {
     control.focus(); expect((await helper.query()).status).toBe("updated")
   })
 })
+
+describe("canonical Mention ViewElement", () => {
+  it("registers canonical Mention custom element extending ViewElement", () => {
+    expect(customElements.get("m-mention")).toBe(Mention)
+    expect(Mention.prototype instanceof ViewElement).toBe(true)
+    expect(Mention.tag).toBe("m-mention")
+    expect(MMention).toBe(Mention)
+    registerMention()
+    expect(customElements.get("m-mention")).toBe(Mention)
+  })
+
+  it("creates elements with default properties and applies CSS classes", () => {
+    const element = document.createElement("m-mention") as Mention
+    document.body.append(element)
+    expect(element instanceof Mention).toBe(true)
+    expect(element.value).toBe("")
+    expect(element.prefix).toBe("@")
+    expect(element.disabled).toBe(false)
+    expect(element.classList.contains("m-mention")).toBe(true)
+  })
+
+  it("generates fallback textarea and panel if none provided", () => {
+    const element = document.createElement("m-mention") as Mention
+    document.body.append(element)
+    const textarea = element.querySelector("textarea")
+    expect(textarea).not.toBeNull()
+    expect(textarea?.classList.contains("m-mention__editor")).toBe(true)
+
+    const panel = element.querySelector("section")
+    expect(panel).not.toBeNull()
+    expect(panel?.classList.contains("m-mention__panel")).toBe(true)
+    expect(panel?.getAttribute("aria-label")).toBe("Mention choices")
+    expect(panel?.hidden).toBe(true)
+
+    const optionsList = panel?.querySelector("[data-mention-options]")
+    expect(optionsList).not.toBeNull()
+  })
+
+  it("adopts authored textarea and authored panel", () => {
+    document.body.innerHTML = `
+      <m-mention id="test-mention" prefix="@">
+        <textarea id="custom-editor" class="m-mention__editor" placeholder="Type here..."></textarea>
+        <section id="custom-panel" class="m-mention__panel" aria-label="Choices" hidden>
+          <ul data-mention-options></ul>
+          <p data-mention-status>Idle</p>
+        </section>
+      </m-mention>
+    `
+    const element = document.getElementById("test-mention") as Mention
+    const textarea = element.querySelector<HTMLTextAreaElement>("#custom-editor")
+    const panel = element.querySelector<HTMLElement>("#custom-panel")
+    expect(textarea).not.toBeNull()
+    expect(panel).not.toBeNull()
+  })
+
+  it("synchronizes value property, attribute, and internal control", () => {
+    const element = document.createElement("m-mention") as Mention
+    document.body.append(element)
+    const textarea = element.querySelector("textarea")!
+
+    element.value = "Hello @alice"
+    expect(element.value).toBe("Hello @alice")
+    expect(element.getAttribute("value")).toBe("Hello @alice")
+    expect(textarea.value).toBe("Hello @alice")
+
+    element.setAttribute("value", "Changed text")
+    expect(element.value).toBe("Changed text")
+    expect(textarea.value).toBe("Changed text")
+  })
+
+  it("synchronizes prefix property and attribute", () => {
+    const element = document.createElement("m-mention") as Mention
+    document.body.append(element)
+
+    expect(element.prefix).toBe("@")
+    element.prefix = "#"
+    expect(element.prefix).toBe("#")
+    expect(element.getAttribute("prefix")).toBe("#")
+
+    element.setAttribute("prefix", "$")
+    expect(element.prefix).toBe("$")
+  })
+
+  it("synchronizes disabled property, attribute, and internal control", () => {
+    const element = document.createElement("m-mention") as Mention
+    document.body.append(element)
+    const textarea = element.querySelector("textarea")!
+
+    element.disabled = true
+    expect(element.disabled).toBe(true)
+    expect(element.hasAttribute("disabled")).toBe(true)
+    expect(textarea.disabled).toBe(true)
+
+    element.disabled = false
+    expect(element.disabled).toBe(false)
+    expect(element.hasAttribute("disabled")).toBe(false)
+    expect(textarea.disabled).toBe(false)
+
+    element.setAttribute("disabled", "")
+    expect(element.disabled).toBe(true)
+    expect(textarea.disabled).toBe(true)
+
+    element.removeAttribute("disabled")
+    expect(element.disabled).toBe(false)
+    expect(textarea.disabled).toBe(false)
+  })
+
+  it("updates value attribute and property on user input", () => {
+    const element = document.createElement("m-mention") as Mention
+    document.body.append(element)
+    const textarea = element.querySelector("textarea")!
+
+    textarea.value = "Typed message"
+    textarea.dispatchEvent(new Event("input", { bubbles: true }))
+
+    expect(element.value).toBe("Typed message")
+    expect(element.getAttribute("value")).toBe("Typed message")
+  })
+
+  it("parses option children and emits m:select upon selection", async () => {
+    document.body.innerHTML = `
+      <m-mention id="mention-with-options" prefix="@">
+        <textarea class="m-mention__editor"></textarea>
+        <option value="alice">alice</option>
+        <option value="bob">bob</option>
+      </m-mention>
+    `
+    const element = document.getElementById("mention-with-options") as Mention
+    const textarea = element.querySelector("textarea")!
+
+    const selectSpy = vi.fn()
+    element.addEventListener("m:select", selectSpy)
+
+    caret(textarea, "Hello @al", 9)
+    const queryResult = await element.query()
+    expect(queryResult?.status).toBe("updated")
+    expect(queryResult?.count).toBe(1)
+
+    const selected = element.select("alice")
+    expect(selected).toBe(true)
+    expect(textarea.value).toBe("Hello @alice ")
+
+    expect(selectSpy).toHaveBeenCalledOnce()
+    const customEvent = selectSpy.mock.calls[0]![0] as CustomEvent<{ value: string }>
+    expect(customEvent.type).toBe("m:select")
+    expect(customEvent.detail).toEqual({ value: "alice" })
+    expect(customEvent.bubbles).toBe(true)
+    expect(customEvent.cancelable).toBe(false)
+    expect(customEvent.composed).toBe(false)
+  })
+
+  it("supports programmatic setOptions, close, and refresh", async () => {
+    const element = document.createElement("m-mention") as Mention
+    document.body.append(element)
+    element.setOptions([
+      { value: "carol", label: "carol" },
+      { value: "dave", label: "dave" },
+    ])
+
+    const textarea = element.querySelector("textarea")!
+    caret(textarea, "@ca", 3)
+    const res = await element.query()
+    expect(res?.status).toBe("updated")
+    expect(res?.count).toBe(1)
+
+    element.close()
+    const panel = element.querySelector("section")!
+    expect(panel.hidden).toBe(true)
+
+    element.refresh()
+  })
+
+  it("supports custom prefix like # for hashtags", async () => {
+    document.body.innerHTML = `
+      <m-mention id="hash-mention" prefix="#">
+        <input class="m-mention__editor" type="text">
+        <option value="tech">tech</option>
+        <option value="news">news</option>
+      </m-mention>
+    `
+    const element = document.getElementById("hash-mention") as Mention
+    const input = element.querySelector("input")!
+    const selectSpy = vi.fn()
+    element.addEventListener("m:select", selectSpy)
+
+    caret(input, "Tag #te", 7)
+    const res = await element.query()
+    expect(res?.status).toBe("updated")
+    expect(res?.count).toBe(1)
+
+    expect(element.select("tech")).toBe(true)
+    expect(input.value).toBe("Tag #tech ")
+    expect(selectSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        detail: { value: "tech" },
+      }),
+    )
+  })
+
+  it("cleans up on disconnect and reconnects cleanly", () => {
+    const element = document.createElement("m-mention") as Mention
+    document.body.append(element)
+    expect(element.querySelector("textarea")).not.toBeNull()
+
+    element.remove()
+    expect(element.isConnected).toBe(false)
+
+    document.body.append(element)
+    expect(element.isConnected).toBe(true)
+    expect(element.querySelector("textarea")).not.toBeNull()
+  })
+})
+

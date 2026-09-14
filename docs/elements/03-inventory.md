@@ -42,7 +42,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Input | `Input`, `Textarea`, `InputGroup`, `InputGroupLabel`; native editing/form owners | [Demo and API](../../demo/components/input.html) |
 | Input Number | `InputNumber`; nullable live number, native drafts/defaults/stepping, labels and forms | [Demo and API](../../demo/components/input-number.html) |
 | Input OTP | `InputOtp` | [Demo and API](../../demo/components/input-otp.html) |
-| Mention | `Mention` | Contract pending |
+| Mention | `Mention` | [Demo and API](../../demo/components/mention.html) |
 | Radio | `Radio`, `RadioGroup`, `RadioButton`; native exclusivity, labels, forms and computed selection | [Demo and API](../../demo/components/radio.html) |
 | Rate | `Rate` | [Demo and API](../../demo/components/rate.html) |
 | Select | `Select`; native single/multiple selection, options/defaults, labels and forms | [Demo and API](../../demo/components/select.html) |
