@@ -70,7 +70,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Statistic | `Statistic` | [Demo and API](../../demo/components/statistic.html) |
 | Table | `Table` | [Demo and API](../../demo/components/table.html) |
 | Thing | `Thing` and named regions | Contract pending |
-| Time | `Time` | Contract pending |
+| Time | `Time` | [Demo and API](../../demo/components/time.html) |
 | Timeline | `Timeline`, `TimelineItem` | [Demo and API](../../demo/components/timeline.html) |
 | Tree | `Tree`, `TreeNode` | [Demo and API](../../demo/components/tree.html) |
 | Infinite Scroll | `InfiniteScroll` | [Demo and API](../../demo/components/infinite-scroll.html) |

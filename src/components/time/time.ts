@@ -4,8 +4,8 @@ import type { FormattedTime, TimeFormatOptions, TimeInput } from "./format.js"
 
 export interface TimeBindingOptions extends TimeFormatOptions {
   time: TimeInput
-  live?: boolean
-  clock?: () => number
+  live?: boolean | undefined
+  clock?: (() => number) | undefined
 }
 export interface TimeState {
   readonly time: number

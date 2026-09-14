@@ -86,6 +86,7 @@ in the target inventory.
 81. [Countdown demo and API](../../demo/components/countdown.html): Countdown; countdown timer, active toggling, precision controls, and finish events.
 82. [Log demo and API](../../demo/components/log.html): Log; terminal and streaming log viewer, auto-scroll, row limits, and trim controls.
 83. [Number Animation demo and API](../../demo/components/number-animation.html): NumberAnimation; animated numerical transitions, easing, precision formatting, and finish events.
+84. [Time demo and API](../../demo/components/time.html): Time; relative and formatted time display, timezone options, and automatic updates.
 
 Implemented component pages under `demo/components` are the end-user reference. Do not
 maintain a second Markdown copy of their API tables or usage examples.
