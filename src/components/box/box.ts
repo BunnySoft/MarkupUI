@@ -136,59 +136,7 @@ export class Box extends ViewElement {
   }
 
   private syncStyles(): void {
-    if (this.hasAttribute("gap")) {
-      const g = this.getAttribute("gap")!
-      this.style.gap = /^\d+$/.test(g) ? `${g}px` : g
-    } else {
-      this.style.gap = ""
-    }
-
-    if (this.hasAttribute("padding")) {
-      const p = this.getAttribute("padding")!
-      this.style.padding = /^\d+$/.test(p) ? `${p}px` : p
-    } else {
-      this.style.padding = ""
-    }
-
-    if (this.hasAttribute("margin")) {
-      const m = this.getAttribute("margin")!
-      this.style.margin = /^\d+$/.test(m) ? `${m}px` : m
-    } else {
-      this.style.margin = ""
-    }
-
-    if (this.hasAttribute("width")) {
-      const w = this.getAttribute("width")!
-      this.style.width = /^\d+$/.test(w) ? `${w}px` : w
-    } else {
-      this.style.width = ""
-    }
-
-    if (this.hasAttribute("height")) {
-      const h = this.getAttribute("height")!
-      this.style.height = /^\d+$/.test(h) ? `${h}px` : h
-    } else {
-      this.style.height = ""
-    }
-
-    if (this.hasAttribute("background")) {
-      this.style.background = this.getAttribute("background")!
-    } else {
-      this.style.background = ""
-    }
-
-    if (this.hasAttribute("border")) {
-      this.style.border = this.getAttribute("border")!
-    } else {
-      this.style.border = ""
-    }
-
-    if (this.hasAttribute("border-radius")) {
-      const r = this.getAttribute("border-radius")!
-      this.style.borderRadius = /^\d+$/.test(r) ? `${r}px` : r
-    } else {
-      this.style.borderRadius = ""
-    }
+    this.syncAllLayoutStyles()
   }
 }
 

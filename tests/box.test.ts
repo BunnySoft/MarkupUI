@@ -120,4 +120,30 @@ describe("canonical Box and Primitives ViewElements", () => {
     summary.click()
     expect(details.open).toBe(false)
   })
+
+  it("handles typed viewStyle and semantic classTokens on ViewElement", () => {
+    document.body.innerHTML = `<m-box class="surface-card tone-primary" gap="12" direction="column"></m-box>`
+    const box = document.querySelector("m-box") as Box
+
+    expect(box.classTokens).toEqual(["surface-card", "tone-primary"])
+    box.classTokens = ["surface-elevated", "tone-success"]
+    expect(box.className).toBe("surface-elevated tone-success")
+
+    expect(box.viewStyle.gap).toBe("12")
+    expect(box.viewStyle.direction).toBe("column")
+
+    box.viewStyle = {
+      gap: 24,
+      direction: "row",
+      padding: 16,
+      display: "flex",
+    }
+    expect(box.getAttribute("gap")).toBe("24")
+    expect(box.getAttribute("direction")).toBe("row")
+    expect(box.getAttribute("padding")).toBe("16")
+    expect(box.getAttribute("display")).toBe("flex")
+    expect(box.style.gap).toBe("24px")
+    expect(box.style.padding).toBe("16px")
+    expect(box.style.flexDirection).toBe("row")
+  })
 })
