@@ -69,7 +69,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Number Animation | `NumberAnimation` | [Demo and API](../../demo/components/number-animation.html) |
 | Statistic | `Statistic` | [Demo and API](../../demo/components/statistic.html) |
 | Table | `Table` | [Demo and API](../../demo/components/table.html) |
-| Thing | `Thing` and named regions | Contract pending |
+| Thing | `Thing` and named regions | [Demo and API](../../demo/components/thing.html) |
 | Time | `Time` | [Demo and API](../../demo/components/time.html) |
 | Timeline | `Timeline`, `TimelineItem` | [Demo and API](../../demo/components/timeline.html) |
 | Tree | `Tree`, `TreeNode` | [Demo and API](../../demo/components/tree.html) |

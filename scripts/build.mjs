@@ -27,11 +27,11 @@ const shared = {
 }
 const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image", "popover", "tooltip", "popconfirm", "dropdown", "menu", "tabs", "collapse", "anchor", "back-top", "pagination", "steps", "loading-bar", "dialog", "modal", "drawer", "message", "notification", "collapse-transition", "input", "checkbox", "radio", "switch", "select", "input-number", "slider", "rate", "form"]
 const classicEntries = { progress: "global.ts", popover: "global.ts", tooltip: "global.ts", popconfirm: "global.ts", dropdown: "global.ts", menu: "global.ts", tabs: "global.ts", collapse: "global.ts", anchor: "global.ts", "back-top": "global.ts", pagination: "global.ts", steps: "global.ts", "loading-bar": "global.ts", dialog: "global.ts", modal: "global.ts", drawer: "global.ts", message: "global.ts", notification: "global.ts", "collapse-transition": "global.ts", input: "global.ts", checkbox: "global.ts", radio: "global.ts", switch: "global.ts", select: "global.ts", "input-number": "global.ts", slider: "global.ts", rate: "global.ts" }
-const styleOnlyComponents = ["thing", "scrollbar", "global-style"]
+const styleOnlyComponents = ["scrollbar", "global-style"]
 classicEntries.avatar = "global.ts"
 classicEntries.button = "global.ts"
 classicEntries.card = "global.ts"
-components.push("divider", "icon", "typography", "space", "flex", "grid", "layout", "list", "table", "descriptions", "breadcrumb", "page-header", "ellipsis", "result", "timeline", "affix", "code", "gradient-text", "float-button")
+components.push("divider", "icon", "typography", "space", "flex", "grid", "layout", "list", "table", "descriptions", "breadcrumb", "page-header", "ellipsis", "result", "timeline", "affix", "code", "gradient-text", "float-button", "thing")
 classicEntries.divider = "global.ts"
 classicEntries.icon = "global.ts"
 classicEntries.typography = "global.ts"
@@ -57,7 +57,8 @@ classicEntries.affix = "global.ts"
 classicEntries.code = "global.ts"
 classicEntries["gradient-text"] = "global.ts"
 classicEntries["float-button"] = "global.ts"
-const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500], ["select", 8_000], ["form", 8_250], ["grid", 3_000], ["layout", 3_000], ["tag", 4_500], ["badge", 3_500], ["empty", 3_500], ["spin", 4_500], ["skeleton", 3_500], ["popover", 7_000], ["tooltip", 8_000], ["alert", 3_500], ["list", 3_500], ["table", 3_000], ["descriptions", 3_500], ["breadcrumb", 3_000], ["page-header", 3_500], ["ellipsis", 3_000], ["tabs", 8_500], ["menu", 8_500], ["pagination", 8_500], ["dialog", 8_500], ["modal", 8_500], ["drawer", 8_500], ["popconfirm", 9_500], ["message", 8_500], ["notification", 9_500], ["progress", 8_500], ["result", 3_500], ["image", 7_000], ["date-picker", 7_000], ["time-picker", 7_000], ["upload", 10_500], ["auto-complete", 6_000], ["slider", 5_500], ["rate", 8_000], ["input-otp", 5_000], ["popselect", 14_500], ["tree", 11_500], ["tree-select", 13_000], ["cascader", 11_500], ["data-table", 10_000], ["calendar", 10_500], ["dynamic-input", 8_500], ["dynamic-tags", 13_500], ["steps", 7_000], ["timeline", 3_500], ["statistic", 3_000], ["anchor", 7_000], ["back-top", 6_500], ["affix", 3_500], ["loading-bar", 5_500], ["infinite-scroll", 7_000], ["virtual-list", 6_000], ["code", 3_500], ["highlight", 3_500], ["split", 9_000], ["gradient-text", 3_500], ["watermark", 8_500], ["float-button", 4_500], ["color-picker", 6_500], ["mention", 8_000], ["transfer", 10_000], ["countdown", 7_000], ["log", 7_000], ["number-animation", 7_500], ["time", 7_000], ["heatmap", 10_000]])
+classicEntries.thing = "global.ts"
+const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_000], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 7_500], ["checkbox", 4_750], ["radio", 5_500], ["switch", 4_500], ["input-number", 5_500], ["select", 8_000], ["form", 8_250], ["grid", 3_000], ["layout", 3_000], ["tag", 4_500], ["badge", 3_500], ["empty", 3_500], ["spin", 4_500], ["skeleton", 3_500], ["popover", 7_000], ["tooltip", 8_000], ["alert", 3_500], ["list", 3_500], ["table", 3_000], ["descriptions", 3_500], ["breadcrumb", 3_000], ["page-header", 3_500], ["ellipsis", 3_000], ["tabs", 8_500], ["menu", 8_500], ["pagination", 8_500], ["dialog", 8_500], ["modal", 8_500], ["drawer", 8_500], ["popconfirm", 9_500], ["message", 8_500], ["notification", 9_500], ["progress", 8_500], ["result", 3_500], ["image", 7_000], ["date-picker", 7_000], ["time-picker", 7_000], ["upload", 10_500], ["auto-complete", 6_000], ["slider", 5_500], ["rate", 8_000], ["input-otp", 5_000], ["popselect", 14_500], ["tree", 11_500], ["tree-select", 13_000], ["cascader", 11_500], ["data-table", 10_000], ["calendar", 10_500], ["dynamic-input", 8_500], ["dynamic-tags", 13_500], ["steps", 7_000], ["timeline", 3_500], ["statistic", 3_000], ["anchor", 7_000], ["back-top", 6_500], ["affix", 3_500], ["loading-bar", 5_500], ["infinite-scroll", 7_000], ["virtual-list", 6_000], ["code", 3_500], ["highlight", 3_500], ["split", 9_000], ["gradient-text", 3_500], ["watermark", 8_500], ["float-button", 4_500], ["color-picker", 6_500], ["mention", 8_000], ["transfer", 10_000], ["countdown", 7_000], ["log", 7_000], ["number-animation", 7_500], ["time", 7_000], ["heatmap", 10_000], ["thing", 3_500]])
 await generateComponentApi(root, [...viewComponents.keys()])
 
 function corePlugin(format) {
@@ -510,6 +511,8 @@ const bundleBudgets = {
   "markup-ui-breadcrumb.js": 2_000,
   "markup-ui-breadcrumb.global.js": 2_000,
   "markup-ui-breadcrumb.css": 1_500,
+  "markup-ui-thing.js": 2_500,
+  "markup-ui-thing.global.js": 2_500,
   "markup-ui-thing.css": 1_000,
   "markup-ui-table.js": 2_000,
   "markup-ui-table.global.js": 2_000,

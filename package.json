@@ -321,6 +321,10 @@
       "import": "./dist/markup-ui-table.js"
     },
     "./table/style.css": "./dist/markup-ui-table.css",
+    "./thing": {
+      "types": "./dist/components/thing/index.d.ts",
+      "import": "./dist/markup-ui-thing.js"
+    },
     "./thing/style.css": "./dist/markup-ui-thing.css",
     "./breadcrumb": {
       "types": "./dist/components/breadcrumb/index.d.ts",

@@ -1,7 +1,25 @@
 import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import {
+  Thing,
+  MThing,
+  ThingAvatar,
+  MThingAvatar,
+  ThingHeader,
+  MThingHeader,
+  ThingContent,
+  MThingContent,
+  ThingFooter,
+  MThingFooter,
+  ThingAction,
+  MThingAction,
+  registerThing,
+} from "../src/components/thing/index.js"
+import * as thingApi from "../src/components/thing/index.js"
+import { ViewElement } from "../src/core/index.js"
+import { generateComponentApi } from "../scripts/component-api.mjs"
 
 const css = readFileSync(resolve("src", "components", "thing", "thing.css"), "utf8")
 const compactCss = css.replace(/\s+/g, "")
@@ -21,15 +39,21 @@ afterEach(() => {
   style?.remove()
   style = undefined
   document.body.replaceChildren()
+  vi.restoreAllMocks()
 })
 
 describe("CSS-only native Thing", () => {
   it("ships isolated CSS without a Card/List/PageHeader runtime or artificial constructor", () => {
     expect(pkg.exports["./thing/style.css"]).toBe("./dist/markup-ui-thing.css")
-    expect(pkg.exports["./thing"]).toBeUndefined()
-    expect(readdirSync(resolve("src", "components", "thing"))).toEqual(["thing.css"])
+    expect(pkg.exports["./thing"].import).toBe("./dist/markup-ui-thing.js")
+    expect(readdirSync(resolve("src", "components", "thing")).sort()).toEqual([
+      "global.ts",
+      "index.ts",
+      "regions.ts",
+      "thing.css",
+      "thing.ts",
+    ])
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("m-thing")).toBeUndefined()
     expect(css).not.toContain("@import")
     expect(demo).not.toContain("markup-ui-card")
     expect(demo).not.toContain("markup-ui-list")
@@ -250,5 +274,149 @@ describe("CSS-only native Thing", () => {
     expect(root.getAttribute("style")).toBe(local)
     expect(root.querySelector("h2")).toBe(heading)
     expect(root.querySelector("[role],[aria-live],script")).toBeNull()
+  })
+})
+
+describe("canonical Thing ViewElement", () => {
+  it("exports canonical ViewElement classes and registers m-thing and companion elements", () => {
+    expect(thingApi.Thing).toBe(Thing)
+    expect(thingApi.MThing).toBe(Thing)
+    expect(thingApi.ThingHeader).toBe(ThingHeader)
+    expect(thingApi.MThingHeader).toBe(ThingHeader)
+    expect(thingApi.ThingAvatar).toBe(ThingAvatar)
+    expect(thingApi.MThingAvatar).toBe(ThingAvatar)
+    expect(thingApi.ThingContent).toBe(ThingContent)
+    expect(thingApi.MThingContent).toBe(ThingContent)
+    expect(thingApi.ThingFooter).toBe(ThingFooter)
+    expect(thingApi.MThingFooter).toBe(ThingFooter)
+    expect(thingApi.ThingAction).toBe(ThingAction)
+    expect(thingApi.MThingAction).toBe(ThingAction)
+
+    expect(Thing.tag).toBe("m-thing")
+    expect(ThingHeader.tag).toBe("m-thing-header")
+    expect(ThingAvatar.tag).toBe("m-thing-avatar")
+    expect(ThingContent.tag).toBe("m-thing-content")
+    expect(ThingFooter.tag).toBe("m-thing-footer")
+    expect(ThingAction.tag).toBe("m-thing-action")
+
+    expect(ViewElement.prototype.isPrototypeOf(Thing.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ThingHeader.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ThingAvatar.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ThingContent.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ThingFooter.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ThingAction.prototype)).toBe(true)
+
+    expect(customElements.get("m-thing")).toBe(Thing)
+    expect(customElements.get("m-thing-header")).toBe(ThingHeader)
+    expect(customElements.get("m-thing-avatar")).toBe(ThingAvatar)
+    expect(customElements.get("m-thing-content")).toBe(ThingContent)
+    expect(customElements.get("m-thing-footer")).toBe(ThingFooter)
+    expect(customElements.get("m-thing-action")).toBe(ThingAction)
+
+    expect(Thing.observedAttributes).toEqual(["title", "description"])
+    expect(typeof registerThing).toBe("function")
+    expect(() => registerThing()).not.toThrow()
+
+    const define = vi.fn()
+    expect(() =>
+      registerThing({ get: () => class extends HTMLElement {}, define }),
+    ).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("handles title and description property defaults, reflections, and validation", () => {
+    const element = document.createElement("m-thing") as Thing
+    expect(element.title).toBe("")
+    expect(element.description).toBe("")
+
+    element.title = "Project Alpha"
+    expect(element.title).toBe("Project Alpha")
+    expect(element.getAttribute("title")).toBe("Project Alpha")
+
+    element.description = "A sophisticated web application."
+    expect(element.description).toBe("A sophisticated web application.")
+    expect(element.getAttribute("description")).toBe("A sophisticated web application.")
+
+    element.setAttribute("title", "Project Beta")
+    expect(element.title).toBe("Project Beta")
+
+    element.setAttribute("description", "An updated description.")
+    expect(element.description).toBe("An updated description.")
+
+    element.removeAttribute("title")
+    expect(element.title).toBe("")
+
+    element.removeAttribute("description")
+    expect(element.description).toBe("")
+
+    expect(() => Reflect.set(element, "title", 123)).toThrow(RangeError)
+    expect(() => Reflect.set(element, "description", 456)).toThrow(RangeError)
+  })
+
+  it("synchronizes generated title and description nodes when properties are set", () => {
+    const element = document.createElement("m-thing") as Thing
+    document.body.append(element)
+    expect(element.children).toHaveLength(0)
+
+    element.title = "Generated Title"
+    const header = element.querySelector("m-thing-header")
+    expect(header).not.toBeNull()
+    const titleSpan = header?.querySelector(".m-thing-title")
+    expect(titleSpan?.textContent).toBe("Generated Title")
+
+    element.description = "Generated Description"
+    const desc = element.querySelector(".m-thing-description")
+    expect(desc).not.toBeNull()
+    expect(desc?.textContent).toBe("Generated Description")
+
+    element.title = "Updated Title"
+    expect(titleSpan?.textContent).toBe("Updated Title")
+
+    element.description = "Updated Description"
+    expect(desc?.textContent).toBe("Updated Description")
+
+    element.title = ""
+    expect(element.querySelector(".m-thing-title")).toBeNull()
+
+    element.description = ""
+    expect(element.querySelector(".m-thing-description")).toBeNull()
+  })
+
+  it("replays pre-upgrade properties upon connection", () => {
+    const element = document.createElement("m-thing") as Thing
+    Object.defineProperty(element, "title", { configurable: true, value: "Pre Title" })
+    Object.defineProperty(element, "description", { configurable: true, value: "Pre Description" })
+    document.body.append(element)
+
+    expect(element.title).toBe("Pre Title")
+    expect(element.description).toBe("Pre Description")
+    expect(element.getAttribute("title")).toBe("Pre Title")
+    expect(element.getAttribute("description")).toBe("Pre Description")
+  })
+
+  it("exposes MarkupUIThing on globalThis", async () => {
+    await import("../src/components/thing/global.js")
+    const target = globalThis as typeof globalThis & { MarkupUIThing?: typeof thingApi }
+    expect(target.MarkupUIThing).toBeDefined()
+    expect(target.MarkupUIThing?.Thing).toBe(Thing)
+    expect(target.MarkupUIThing?.registerThing).toBe(registerThing)
+  })
+
+  it("extracts Thing properties and regions via generateComponentApi", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["thing"])
+    expect(docs).toBeDefined()
+    const thingElement = docs.elements.find(e => e.type === "Thing")
+    expect(thingElement).toBeDefined()
+    expect(thingElement?.web.primary).toBe("m-thing")
+    expect(thingElement?.properties.title).toBeDefined()
+    expect(thingElement?.properties.title.type).toBe("string")
+    expect(thingElement?.properties.title.default).toBe("")
+    expect(thingElement?.properties.description).toBeDefined()
+    expect(thingElement?.properties.description.type).toBe("string")
+    expect(thingElement?.properties.description.default).toBe("")
+    expect(thingElement?.regions).toHaveLength(5)
+    for (const regionName of ["avatar", "header", "content", "footer", "action"]) {
+      expect(thingElement?.regions.some(r => r.name === regionName)).toBe(true)
+    }
   })
 })
