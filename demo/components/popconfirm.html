@@ -3,80 +3,110 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Popconfirm</title>
+  <title>Popconfirm - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-popconfirm.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./popconfirm.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-popconfirm.global.js"></script>
-  <script defer src="../../dist/markup-ui-popover.global.js"></script>
-  <script defer src="./popconfirm.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./popconfirm.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <h1>Native nonmodal confirmation</h1>
-  <p>All actions below are local simulations. No backend, deletion, payment or external request is performed.</p>
-  <noscript><p>The local confirmation callbacks need JavaScript. No draft is changed when scripting is unavailable.</p></noscript>
-  <main>
-    <section>
-      <h2>Promise outcomes and native form ownership</h2>
-      <form id="demo-form">
-        <label>Draft title <input id="draft-title" name="draft" value="Local draft" required></label>
-        <button type="button" id="main-trigger" popovertarget="main-panel">Review local preview</button>
-        <button type="submit" id="submit-form">Submit ordinary form</button>
-        <button type="reset" id="reset-form">Reset form</button>
-        <div class="mui-popover mui-popconfirm mui-popover--arrow mui-popover--animated" id="main-panel" popover="auto" role="dialog" aria-labelledby="main-heading" aria-describedby="main-description">
-          <h2 id="main-heading"><span data-popconfirm-icon aria-hidden="true">?</span>Update this local preview?</h2>
-          <p id="main-description" data-popconfirm-content>The draft itself is not sent anywhere. This original <strong id="preserved-text">description</strong> stays authored.</p>
-          <label>Simulated positive result
-            <select id="outcome"><option value="success">Success after 450ms</option><option value="false">Return false and stay open</option><option value="reject">Reject with an error</option><option value="slow">Slow success after 1400ms</option><option value="slow-reject">Slow rejection after 1400ms</option></select>
-          </label>
-          <div data-popconfirm-actions>
-            <button type="button" data-popconfirm-negative id="main-negative">Keep draft</button>
-            <button type="button" data-popconfirm-positive id="main-positive"><span aria-hidden="true">✓</span> Update preview</button>
-          </div>
-          <p data-popconfirm-pending role="status" hidden>Working locally. Escape or clicking outside may dismiss this panel.</p>
-          <p data-popconfirm-error role="alert" hidden>The local simulation failed. Choose another outcome and try again.</p>
-          <p data-popconfirm-complete role="status" hidden>The inline decision completed. No popup support was required.</p>
-        </div>
-      </form>
-      <button type="button" id="outside">Outside focus target</button>
-      <output id="result-log" aria-live="polite">No local action yet.</output>
-    </section>
-    <section>
-      <h2>Nested confirmation with custom native action markup</h2>
-      <button type="button" id="parent-trigger" popovertarget="parent-panel">Open rich parent</button>
-      <div class="mui-popover" id="parent-panel" popover="auto" aria-label="Local parent panel">
-        <p>This parent is a regular Popover.</p>
-        <button type="button" id="nested-trigger" popovertarget="nested-panel">Review nested choice</button>
-        <div class="mui-popover mui-popconfirm" id="nested-panel" popover="auto" role="dialog" aria-label="Nested local choice" aria-describedby="nested-description">
-          <p id="nested-description" data-popconfirm-content>Apply this local display preference?</p>
-          <footer data-popconfirm-actions><span><button type="button" data-popconfirm-negative>Leave unchanged</button></span><strong><button type="button" data-popconfirm-positive>Apply locally</button></strong></footer>
-          <p data-popconfirm-pending role="status" hidden>Checking the local choice.</p>
-          <p data-popconfirm-error role="alert" hidden>The local choice could not be applied.</p>
-          <p data-popconfirm-complete role="status" hidden>The inline local choice finished.</p>
-        </div>
-        <button type="button" popovertarget="parent-panel" popovertargetaction="hide">Close parent</button>
+  <main data-demo-page class="component-docs">
+    <h1>Popconfirm</h1>
+    <p>A popconfirm component for displaying confirmation dialogs next to triggers.</p>
+    <nav class="component-docs-nav" aria-label="Popconfirm documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary>Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-popconfirm.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-popconfirm.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header><div><h2 id="basic-heading">Basic confirmation</h2><p>Click trigger with confirmation dialog and positive/negative actions.</p></div></header>
+      <div data-demo-preview>
+        <m-popconfirm id="popconfirm-basic" title="Are you sure you want to delete this task?">
+          <m-popconfirm-trigger>
+            <m-button>Delete task</m-button>
+          </m-popconfirm-trigger>
+        </m-popconfirm>
       </div>
     </section>
-    <section>
-      <h2>RTL scroll boundary</h2>
-      <div id="scroll-box" class="scroll-box" dir="rtl"><div class="scroll-content">
-        <button type="button" id="edge-trigger" popovertarget="edge-panel">RTL local choice</button>
-        <div class="mui-popover mui-popconfirm" id="edge-panel" popover="auto" role="dialog" aria-label="RTL local choice" aria-describedby="edge-description">
-          <p id="edge-description" data-popconfirm-content>Keep this native alignment?</p>
-          <div data-popconfirm-actions><button type="button" data-popconfirm-negative>Cancel</button><button type="button" data-popconfirm-positive>Keep alignment</button></div>
-          <p data-popconfirm-pending role="status" hidden>Checking locally.</p>
-          <p data-popconfirm-error role="alert" hidden>Local check failed.</p>
-          <p data-popconfirm-complete role="status" hidden>Inline check completed.</p>
-        </div>
-      </div></div>
+
+    <section data-demo-example="custom-text" aria-labelledby="custom-text-heading">
+      <header data-demo-header><div><h2 id="custom-text-heading">Custom action text</h2><p>Custom positive and negative button labels with title.</p></div></header>
+      <div data-demo-preview>
+        <m-popconfirm id="popconfirm-custom" title="Save changes before leaving?" positive-text="Save" negative-text="Discard">
+          <m-popconfirm-trigger>
+            <m-button>Leave page</m-button>
+          </m-popconfirm-trigger>
+        </m-popconfirm>
+      </div>
     </section>
-    <button type="button" id="bottom-trigger" popovertarget="bottom-panel">Bottom edge confirmation</button>
-    <div class="mui-popover mui-popconfirm" id="bottom-panel" popover="auto" role="dialog" aria-label="Edge local choice" aria-describedby="bottom-description">
-      <p id="bottom-description" data-popconfirm-content>Apply the edge example?</p>
-      <div data-popconfirm-actions><button type="button" data-popconfirm-negative>No</button><button type="button" data-popconfirm-positive>Yes, locally</button></div>
-      <p data-popconfirm-pending role="status" hidden>Checking locally.</p>
-      <p data-popconfirm-error role="alert" hidden>Local check failed.</p>
-      <p data-popconfirm-complete role="status" hidden>Inline check completed.</p>
-    </div>
+
+    <section data-demo-example="placement" aria-labelledby="placement-heading">
+      <header data-demo-header><div><h2 id="placement-heading">Placements</h2><p>Placement options positioning the confirmation relative to the trigger.</p></div></header>
+      <div data-demo-preview>
+        <m-popconfirm placement="top" title="Top placement">
+          <m-popconfirm-trigger><m-button>Top</m-button></m-popconfirm-trigger>
+        </m-popconfirm>
+        <m-popconfirm placement="bottom" title="Bottom placement">
+          <m-popconfirm-trigger><m-button>Bottom</m-button></m-popconfirm-trigger>
+        </m-popconfirm>
+        <m-popconfirm placement="left" title="Left placement">
+          <m-popconfirm-trigger><m-button>Left</m-button></m-popconfirm-trigger>
+        </m-popconfirm>
+        <m-popconfirm placement="right" title="Right placement">
+          <m-popconfirm-trigger><m-button>Right</m-button></m-popconfirm-trigger>
+        </m-popconfirm>
+      </div>
+    </section>
+
+    <section data-demo-example="companion-panel" aria-labelledby="companion-panel-heading">
+      <header data-demo-header><div><h2 id="companion-panel-heading">Companion panel region</h2><p>Rich authored content inside m-popconfirm-panel companion element.</p></div></header>
+      <div data-demo-preview>
+        <m-popconfirm id="popconfirm-panel-demo" title="Confirm deletion">
+          <m-popconfirm-trigger>
+            <m-button>Delete with panel</m-button>
+          </m-popconfirm-trigger>
+          <m-popconfirm-panel>
+            <m-p data-popconfirm-content id="custom-panel-desc">All associated data will be permanently removed.</m-p>
+          </m-popconfirm-panel>
+        </m-popconfirm>
+      </div>
+    </section>
+
+    <section data-demo-example="disabled" aria-labelledby="disabled-heading">
+      <header data-demo-header><div><h2 id="disabled-heading">Disabled state</h2><p>Disabled Popconfirm prevents opening confirmation.</p></div></header>
+      <div data-demo-preview>
+        <m-popconfirm id="popconfirm-disabled" title="Disabled confirm" disabled>
+          <m-popconfirm-trigger>
+            <m-button disabled>Disabled popconfirm</m-button>
+          </m-popconfirm-trigger>
+        </m-popconfirm>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="popconfirm-api"><p>Loading API documentation.</p></div>
+    </section>
   </main>
 </body>
 </html>

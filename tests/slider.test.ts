@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createSlider, createSliderPair } from "../src/components/slider/index.js"
+import { Slider, registerSlider, createSlider, createSliderPair } from "../src/components/slider/index.js"
 import type { SliderController, SliderPairController, SliderOptions, SliderPairChange } from "../src/components/slider/index.js"
 
 const helpers: Array<SliderController | SliderPairController> = []
@@ -26,10 +26,10 @@ afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); docu
 describe("Slider stylesheet contract", () => {
   const css = readFileSync(join("src", "components", "slider", "slider.css"), "utf8")
   it("keeps author tokens authoritative and uses the supplementary dark accent", () => {
-    expect(css).not.toMatch(/--mui-slider-[\w-]+\s*:/)
-    expect(css).toMatch(/data-mui-theme="?dark"?/)
+    expect(css).not.toMatch(/--m-slider-[\w-]+\s*:/)
+    expect(css).toMatch(/data-m-theme="?dark"?/)
     expect(css).toContain("#2a947d")
-    expect(css).not.toContain("var(--mui-text-primary")
+    expect(css).not.toContain("var(--m-text-primary")
   })
   it("retains native rail/thumb painting and room for intrinsic datalist ticks", () => {
     expect(css).not.toMatch(/appearance\s*:|slider-thumb|slider-runnable-track|range-thumb|range-track|position:\s*absolute/)
@@ -37,7 +37,7 @@ describe("Slider stylesheet contract", () => {
     expect(css).not.toMatch(/(?:^|[;{])\s*block-size:\s*18px/)
   })
   it("includes pair padding in authored widths without a global reset", () => {
-    expect(css).toMatch(/\.mui-slider,\s*\.mui-slider-pair\s*\{[^}]*box-sizing:\s*border-box/)
+    expect(css).toMatch(/\.m-slider,\s*\.m-slider-pair\s*\{[^}]*box-sizing:\s*border-box/)
     expect(css).toMatch(/\[data-slider-control\]\s*\{[^}]*box-sizing:\s*border-box/)
   })
   it("keeps native contrast and focus visible in forced colors and print", () => {
@@ -50,7 +50,7 @@ describe("Slider stylesheet contract", () => {
   })
   it("preserves vertical length, hidden readouts and instant motion policy", () => {
     expect(css).toMatch(/writing-mode:\s*vertical-lr/)
-    expect(css).toMatch(/inline-size:\s*var\(--mui-slider-length,\s*12rem\)/)
+    expect(css).toMatch(/inline-size:\s*var\(--m-slider-length,\s*12rem\)/)
     expect(css).toMatch(/\[hidden\][^{]*\{[^}]*display:\s*none\s*!important/)
     expect(css).not.toMatch(/(?:animation|transition)(?:-[a-z]+)?\s*:/)
   })
@@ -80,9 +80,9 @@ describe("native slider ownership", () => {
     expect(event).toHaveBeenCalledTimes(1)
   })
   it("does not register or upgrade the legacy slider", () => {
-    const before = customElements.get("mui-slider")
+    const before = customElements.get("m-slider")
     single()
-    expect(customElements.get("mui-slider")).toBe(before)
+    expect(customElements.get("m-slider")).toBe(before)
   })
   it("rejects duplicate and cross-module owners and permits explicit recreation", async () => {
     const { root, helper } = single()
@@ -202,7 +202,7 @@ describe("two-track pair contract", () => {
   it("uses one aggregate notification per native committed change, never setter/reset events", async () => {
     const { root, helper, start, form } = pair()
     const changes: SliderPairChange[] = [], native = vi.fn()
-    root.addEventListener("mui:slider-pair-change", event => changes.push((event as CustomEvent).detail))
+    root.addEventListener("m:slider-pair-change", event => changes.push((event as CustomEvent).detail))
     start.addEventListener("input", native); start.addEventListener("change", native)
     helper.setValue([65, 75]); form.reset(); await flush()
     expect(changes).toEqual([])
@@ -215,7 +215,7 @@ describe("two-track pair contract", () => {
   })
   it("requires explicit rebinding if the endpoint order changes", () => {
     const { root, helper, end } = pair()
-    root.querySelector(".mui-slider-pair__fields")!.prepend(end.parentElement!)
+    root.querySelector(".m-slider-pair__fields")!.prepend(end.parentElement!)
     expect(() => helper.refresh()).toThrow("order changed")
   })
 })
@@ -302,7 +302,7 @@ describe("native forms and lifetime", () => {
   })
   it("disconnects removed roots and cancels pending aggregate notifications", async () => {
     const { root, helper, start } = pair()
-    const change = vi.fn(); root.addEventListener("mui:slider-pair-change", change)
+    const change = vi.fn(); root.addEventListener("m:slider-pair-change", change)
     start.valueAsNumber = 40
     start.dispatchEvent(new Event("change", { bubbles: true }))
     root.remove(); await flush()
@@ -312,3 +312,188 @@ describe("native forms and lifetime", () => {
     expect(() => helper.setValue([10, 20])).toThrow("disconnected")
   })
 })
+
+describe("canonical Slider ViewElement", () => {
+  it("is registered with CustomElementRegistry as m-slider and extends ViewElement", () => {
+    expect(customElements.get("m-slider")).toBe(Slider)
+    expect(Slider.tag).toBe("m-slider")
+    const slider = document.createElement("m-slider")
+    expect(slider).toBeInstanceOf(Slider)
+  })
+
+  it("initializes with canonical default values", () => {
+    const slider = document.createElement("m-slider") as Slider
+    document.body.append(slider)
+    expect(slider.min).toBe(0)
+    expect(slider.max).toBe(100)
+    expect(slider.step).toBe(1)
+    expect(slider.value).toBe(0)
+    expect(slider.disabled).toBe(false)
+    expect(slider.vertical).toBe(false)
+    expect(slider.reverse).toBe(false)
+  })
+
+  it("generates an inner native range control when none is authored", () => {
+    const slider = document.createElement("m-slider") as Slider
+    document.body.append(slider)
+    const control = slider.querySelector("input[type=range]") as HTMLInputElement
+    expect(control).not.toBeNull()
+    expect(control.hasAttribute("data-slider-control")).toBe(true)
+    expect(control.min).toBe("0")
+    expect(control.max).toBe("100")
+    expect(control.step).toBe("1")
+    expect(control.value).toBe("0")
+    expect(control.disabled).toBe(false)
+  })
+
+  it("adopts an authored native range input", () => {
+    const slider = document.createElement("m-slider") as Slider
+    const authored = document.createElement("input")
+    authored.type = "range"
+    authored.min = "10"
+    authored.max = "50"
+    authored.step = "2"
+    authored.value = "24"
+    authored.disabled = true
+    slider.append(authored)
+    document.body.append(slider)
+    expect(slider.min).toBe(10)
+    expect(slider.max).toBe(50)
+    expect(slider.step).toBe(2)
+    expect(slider.value).toBe(24)
+    expect(slider.disabled).toBe(true)
+  })
+
+  it("reflects property changes to attributes and control", () => {
+    const slider = document.createElement("m-slider") as Slider
+    document.body.append(slider)
+
+    slider.value = 42
+    expect(slider.getAttribute("value")).toBe("42")
+    expect(slider.value).toBe(42)
+
+    slider.min = 10
+    expect(slider.getAttribute("min")).toBe("10")
+    expect(slider.min).toBe(10)
+
+    slider.max = 200
+    expect(slider.getAttribute("max")).toBe("200")
+    expect(slider.max).toBe(200)
+
+    slider.step = 5
+    expect(slider.getAttribute("step")).toBe("5")
+    expect(slider.step).toBe(5)
+
+    slider.disabled = true
+    expect(slider.hasAttribute("disabled")).toBe(true)
+    expect(slider.disabled).toBe(true)
+    slider.disabled = false
+    expect(slider.hasAttribute("disabled")).toBe(false)
+    expect(slider.disabled).toBe(false)
+
+    slider.vertical = true
+    expect(slider.hasAttribute("vertical")).toBe(true)
+    expect(slider.vertical).toBe(true)
+    expect(slider.hasAttribute("data-vertical")).toBe(true)
+    slider.vertical = false
+    expect(slider.hasAttribute("vertical")).toBe(false)
+    expect(slider.hasAttribute("data-vertical")).toBe(false)
+
+    slider.reverse = true
+    expect(slider.hasAttribute("reverse")).toBe(true)
+    expect(slider.reverse).toBe(true)
+    const ctrl = slider.querySelector("input")!
+    expect(ctrl.dir).toBe("rtl")
+    slider.reverse = false
+    expect(slider.hasAttribute("reverse")).toBe(false)
+    expect(ctrl.hasAttribute("dir")).toBe(false)
+  })
+
+  it("validates numeric property assignments", () => {
+    const slider = document.createElement("m-slider") as Slider
+    document.body.append(slider)
+    expect(() => { slider.value = NaN }).toThrow(RangeError)
+    expect(() => { slider.value = Infinity }).toThrow(RangeError)
+    expect(() => { slider.min = NaN }).toThrow(RangeError)
+    expect(() => { slider.max = Infinity }).toThrow(RangeError)
+    expect(() => { slider.step = 0 }).toThrow(RangeError)
+    expect(() => { slider.step = -1 }).toThrow(RangeError)
+  })
+
+  it("dispatches m:change event when control value changes", () => {
+    const slider = document.createElement("m-slider") as Slider
+    document.body.append(slider)
+    const listener = vi.fn()
+    slider.addEventListener("m:change", listener)
+
+    const input = slider.querySelector("input")!
+    input.value = "60"
+    input.dispatchEvent(new Event("input", { bubbles: true }))
+
+    expect(listener).toHaveBeenCalledTimes(1)
+    const event = listener.mock.calls[0][0] as CustomEvent
+    expect(event.detail).toEqual({ value: 60 })
+    expect(event.bubbles).toBe(true)
+    expect(event.cancelable).toBe(false)
+    expect(event.composed).toBe(false)
+    expect(slider.value).toBe(60)
+  })
+
+  it("supports stepUp and stepDown methods", () => {
+    const slider = document.createElement("m-slider") as Slider
+    document.body.append(slider)
+    slider.value = 50
+    slider.step = 5
+    const listener = vi.fn()
+    slider.addEventListener("m:change", listener)
+
+    slider.stepUp()
+    expect(slider.value).toBe(55)
+    expect(listener).toHaveBeenCalledWith(expect.objectContaining({ detail: { value: 55 } }))
+
+    slider.stepDown()
+    expect(slider.value).toBe(50)
+    expect(listener).toHaveBeenCalledWith(expect.objectContaining({ detail: { value: 50 } }))
+  })
+
+  it("synchronizes output element inside m-slider", () => {
+    const slider = document.createElement("m-slider") as Slider
+    const output = document.createElement("output")
+    output.setAttribute("data-slider-output", "")
+    slider.append(output)
+    document.body.append(slider)
+
+    slider.value = 75
+    expect(output.value).toBe("75")
+    expect(output.hidden).toBe(false)
+  })
+
+  it("delegates focus and blur to control", () => {
+    const slider = document.createElement("m-slider") as Slider
+    document.body.append(slider)
+    const ctrl = slider.querySelector("input")!
+    const focusSpy = vi.spyOn(ctrl, "focus")
+    const blurSpy = vi.spyOn(ctrl, "blur")
+
+    slider.focus()
+    expect(focusSpy).toHaveBeenCalled()
+
+    slider.blur()
+    expect(blurSpy).toHaveBeenCalled()
+  })
+
+  it("synchronizes with form reset", async () => {
+    const form = document.createElement("form")
+    const slider = document.createElement("m-slider") as Slider
+    form.append(slider)
+    document.body.append(form)
+
+    slider.value = 80
+    expect(slider.value).toBe(80)
+
+    form.reset()
+    await flush()
+    expect(slider.value).toBe(0)
+  })
+})
+

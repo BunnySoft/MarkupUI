@@ -38,15 +38,15 @@ export function connectExample(scope) {
     preview.textContent = "Previous preview cleared. Membership is not automatically serialized after disconnect."
     inspect()
   }
-  root.addEventListener("mui:transfer-change", event => {
+  root.addEventListener("m:transfer-change", event => {
     events.textContent = `User move to ${event.detail.to}: ${event.detail.moved.join(", ")}. Target membership: ${event.detail.value.join(", ")}.`
     inspect()
   }, { signal })
-  root.addEventListener("mui:transfer-stage", () => {
+  root.addEventListener("m:transfer-stage", () => {
     events.textContent = "Native highlights changed; target membership did not."
     inspect()
   }, { signal })
-  root.addEventListener("mui:transfer-error", event => { events.textContent = `Transfer error: ${String(event.detail.error)}`; inspect() }, { signal })
+  root.addEventListener("m:transfer-error", event => { events.textContent = `Transfer error: ${String(event.detail.error)}`; inspect() }, { signal })
   root.addEventListener("input", () => queueMicrotask(() => { if (connected) inspect() }), { signal })
   form.addEventListener("reset", () => {
     clearTimeout(resetTimer)

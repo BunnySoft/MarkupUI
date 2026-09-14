@@ -7,7 +7,7 @@ export interface MenuEntry {
 
 export function menuEntryAvailable(element: HTMLElement, menu: HTMLElement): boolean {
   const view = menu.ownerDocument.defaultView!
-  if (!element.isConnected || element.matches(":disabled") || element.closest("[hidden], [inert]")) return false
+  if (!element.isConnected || element.matches(":disabled") || element.getAttribute("aria-disabled") === "true" || element.closest("[hidden], [inert]")) return false
   for (let node: HTMLElement | null = element; node && node !== menu; node = node.parentElement) {
     if (node.localName === "details" && !(node as HTMLDetailsElement).open
       && !(node.firstElementChild?.localName === "summary" && node.firstElementChild.contains(element))) return false

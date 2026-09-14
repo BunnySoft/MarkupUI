@@ -2,7 +2,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
-import { createSplit } from "../src/components/split/index.js"
+import { createSplit, Split, SplitPane, registerSplit } from "../src/components/split/index.js"
+import * as splitApi from "../src/components/split/index.js"
+import { ViewElement } from "../src/core/index.js"
+import { generateComponentApi } from "../scripts/component-api.mjs"
 import { splitMeasure, splitBounds } from "../src/components/split/model.js"
 import type { SplitController, SplitOptions } from "../src/components/split/index.js"
 
@@ -26,7 +29,7 @@ class Resize {
 const wait = () => vi.advanceTimersByTimeAsync(40)
 function fixture(options: SplitOptions = {}, geometry = { width: 400, height: 240, x: 1, y: 1 }) {
   const id = ++sequence, form = document.createElement("form")
-  form.innerHTML = `<section class="mui-split" data-split style="width:400px;padding:10px;border:2px solid;column-gap:4px;row-gap:4px;direction:ltr">
+  form.innerHTML = `<section class="m-split" data-split style="width:400px;padding:10px;border:2px solid;column-gap:4px;row-gap:4px;direction:ltr">
     <section data-split-pane="1" id="pane-one-${id}" aria-label="Primary pane"><div><label>First field<input name="first" value="kept" required></label><span>Selectable text</span></div></section>
     <div data-split-handle hidden aria-label="Resize primary pane"></div>
     <section data-split-pane="2" id="pane-two-${id}" aria-label="Secondary pane"><div><label>Second field<input name="second" value="also kept"></label><template><p>Inert</p></template></div></section>
@@ -44,8 +47,8 @@ function fixture(options: SplitOptions = {}, geometry = { width: 400, height: 24
   root.getBoundingClientRect = () => new DOMRect(100, 100, dimensions.width * dimensions.x, dimensions.height * dimensions.y)
   handle.getBoundingClientRect = () => {
     const horizontal = root.getAttribute("data-split-direction") !== "vertical", rtl = getComputedStyle(root).direction === "rtl"
-    const size = Number.parseFloat(root.style.getPropertyValue("--mui-split-first")) || 0
-    const bar = Number.parseFloat(root.style.getPropertyValue("--mui-split-handle-size")) || 12
+    const size = Number.parseFloat(root.style.getPropertyValue("--m-split-first")) || 0
+    const bar = Number.parseFloat(root.style.getPropertyValue("--m-split-handle-size")) || 12
     if (horizontal) return new DOMRect(100 + (rtl ? dimensions.width - 12 - size - 4 - bar : 12 + size + 4) * dimensions.x, 100 + 12 * dimensions.y, bar * dimensions.x, (dimensions.height - 24) * dimensions.y)
     return new DOMRect(100 + 12 * dimensions.x, 100 + (12 + size + 4) * dimensions.y, (dimensions.width - 24) * dimensions.x, bar * dimensions.y)
   }
@@ -92,9 +95,9 @@ describe("Split default styles", () => {
   })
 
   it("retains the accessible 12px track and public handle overrides", () => {
-    expect(css).toContain("var(--mui-split-handle-size, 12px)")
-    expect(css).toContain("var(--mui-split-handle-border, transparent)")
-    expect(css).toContain("var(--mui-split-handle-active")
+    expect(css).toContain("var(--m-split-handle-size, 12px)")
+    expect(css).toContain("var(--m-split-handle-border, transparent)")
+    expect(css).toContain("var(--m-split-handle-active")
   })
 
   it("supports forced colors, reduced motion and print", () => {
@@ -120,7 +123,7 @@ describe("explicit Split sizes and native geometry", () => {
   })
   it("uses separate current/default sizes and a silent explicit reset", () => {
     const { helper, root } = fixture({ defaultSize: .25, size: "100px" }), changed = vi.fn()
-    root.addEventListener("mui:split-change", changed)
+    root.addEventListener("m:split-change", changed)
     helper.setDefaultSize("80px"); expect(helper.size).toBe("100px"); helper.reset(); expect(helper.size).toBe("80px")
     expect(helper.state.defaultSize).toBe("80px"); expect(changed).not.toHaveBeenCalled()
   })
@@ -212,7 +215,7 @@ describe("keyboard parity, bounds and collapse safety", () => {
   })
   it("disabling retains geometry and named form fields without keyboard changes", () => {
     const { helper, handle, key, form } = fixture({ size: "100px" }), change = vi.fn()
-    helper.element.addEventListener("mui:split-change", change); helper.set({ disabled: true }); key("End")
+    helper.element.addEventListener("m:split-change", change); helper.set({ disabled: true }); key("End")
     expect(helper.state.pixels).toBe(100); expect(handle.hidden).toBe(false); expect(handle.getAttribute("aria-disabled")).toBe("true")
     expect(new FormData(form).get("first")).toBe("kept"); expect(change).not.toHaveBeenCalled()
   })
@@ -239,8 +242,8 @@ describe("scoped pointer capture and final samples", () => {
   })
   it("uses the final pointerup position even when the last move frame has not run", () => {
     const { helper, pointer, root } = fixture({ size: "100px" }), events: string[] = []
-    root.addEventListener("mui:split-change", () => events.push(`change:${helper.size}`))
-    root.addEventListener("mui:split-drag-end", () => events.push(`end:${helper.size}`))
+    root.addEventListener("m:split-change", () => events.push(`change:${helper.size}`))
+    root.addEventListener("m:split-drag-end", () => events.push(`end:${helper.size}`))
     const down = pointer("pointerdown")
     pointer("pointermove", 0, { clientX: down.clientX + 20, clientY: down.clientY })
     pointer("pointerup", 0, { clientX: down.clientX + 60, clientY: down.clientY })
@@ -264,7 +267,7 @@ describe("scoped pointer capture and final samples", () => {
   })
   it.each(["pointercancel", "lostpointercapture", "Escape"] as const)("rolls back on %s with capture and end cleanup", async reason => {
     const { helper, handle, pointer, key, root } = fixture({ size: "100px" }), ended = vi.fn()
-    root.addEventListener("mui:split-drag-end", ended)
+    root.addEventListener("m:split-drag-end", ended)
     const down = pointer("pointerdown"); pointer("pointermove", 0, { clientX: down.clientX + 40, clientY: down.clientY }); await wait()
     expect(helper.size).toBe("140px")
     if (reason === "Escape") key("Escape")
@@ -295,15 +298,15 @@ describe("lifecycle, reentrancy and native ownership", () => {
   })
   it("allows a start listener to disable safely without stale capture or movement", () => {
     const { helper, root, handle, pointer } = fixture(), ended = vi.fn()
-    root.addEventListener("mui:split-drag-start", () => helper.set({ disabled: true }))
-    root.addEventListener("mui:split-drag-end", ended)
+    root.addEventListener("m:split-drag-start", () => helper.set({ disabled: true }))
+    root.addEventListener("m:split-drag-end", ended)
     pointer("pointerdown"); pointer("pointerup", 100)
     expect(helper.state.dragging).toBe(false); expect(handle.hasPointerCapture(1)).toBe(false); expect(helper.size).toBe(.5); expect(ended).toHaveBeenCalledOnce()
   })
   it("does not apply stale pointerup/end after a change listener replaces the size", () => {
     const { helper, root, pointer } = fixture({ size: "100px" }), ended = vi.fn()
-    root.addEventListener("mui:split-change", () => helper.set({ size: "80px" }), { once: true })
-    root.addEventListener("mui:split-drag-end", ended)
+    root.addEventListener("m:split-change", () => helper.set({ size: "80px" }), { once: true })
+    root.addEventListener("m:split-drag-end", ended)
     const down = pointer("pointerdown"); pointer("pointerup", 0, { clientX: down.clientX + 50, clientY: down.clientY })
     expect(helper.size).toBe("80px"); expect(ended).toHaveBeenCalledOnce()
   })
@@ -314,7 +317,7 @@ describe("lifecycle, reentrancy and native ownership", () => {
   })
   it("cleans up a failed native capture without announcing a successful drag", () => {
     const { helper, handle, pointer, root } = fixture(), start = vi.fn(), errors = vi.fn()
-    root.addEventListener("mui:split-drag-start", start); root.addEventListener("mui:split-error", errors)
+    root.addEventListener("m:split-drag-start", start); root.addEventListener("m:split-error", errors)
     Object.defineProperty(handle, "setPointerCapture", { configurable: true, value: () => { throw new DOMException("Capture failed", "NotFoundError") } })
     pointer("pointerdown")
     expect(helper.connected).toBe(false); expect(handle.hidden).toBe(true)
@@ -322,9 +325,9 @@ describe("lifecycle, reentrancy and native ownership", () => {
   })
   it("lets an explicit update during cancellation win without a stale second end event", async () => {
     const { helper, pointer, root } = fixture({ size: "100px" }), ended = vi.fn()
-    root.addEventListener("mui:split-drag-end", ended)
+    root.addEventListener("m:split-drag-end", ended)
     const down = pointer("pointerdown"); pointer("pointermove", 0, { clientX: down.clientX + 30, clientY: down.clientY }); await wait()
-    root.addEventListener("mui:split-change", event => { if ((event as CustomEvent).detail.source === "cancel") helper.set({ size: "80px" }) })
+    root.addEventListener("m:split-change", event => { if ((event as CustomEvent).detail.source === "cancel") helper.set({ size: "80px" }) })
     pointer("pointercancel")
     expect(helper.size).toBe("80px"); expect(ended).toHaveBeenCalledOnce()
   })
@@ -356,8 +359,8 @@ describe("lifecycle, reentrancy and native ownership", () => {
   it("restores only owned attributes/styles and retains original data on disposal", async () => {
     const { helper, root, pane1, handle, pointer } = fixture({ size: "100px" }), nodes = [...pane1.childNodes]
     const down = pointer("pointerdown"); pointer("pointermove", 0, { clientX: down.clientX + 50, clientY: down.clientY })
-    root.style.setProperty("--mui-split-first", "77px"); helper.disconnect(); await wait()
-    expect(root.style.getPropertyValue("--mui-split-first")).toBe("77px"); expect(handle.hidden).toBe(true)
+    root.style.setProperty("--m-split-first", "77px"); helper.disconnect(); await wait()
+    expect(root.style.getPropertyValue("--m-split-first")).toBe("77px"); expect(handle.hidden).toBe(true)
     expect(pane1.hidden).toBe(false); expect(pane1.hasAttribute("inert")).toBe(false); expect([...pane1.childNodes]).toEqual(nodes)
     expect(handle.hasAttribute("role")).toBe(false); expect(helper.state.status).toBe("disconnected")
   })
@@ -376,3 +379,262 @@ describe("lifecycle, reentrancy and native ownership", () => {
     expect(outer.helper.connected).toBe(true)
   })
 })
+
+describe("canonical Split ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(splitApi.Split).toBe(Split)
+    expect(splitApi.SplitPane).toBe(SplitPane)
+    expect(Split.tag).toBe("m-split")
+    expect(SplitPane.tag).toBe("m-split-pane")
+    expect(ViewElement.prototype.isPrototypeOf(Split.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(SplitPane.prototype)).toBe(true)
+    expect(customElements.get("m-split")).toBe(Split)
+    expect(customElements.get("m-split-pane")).toBe(SplitPane)
+    expect(Split.observedAttributes).toEqual(["direction", "size", "min", "max", "disabled"])
+    expect(() => registerSplit()).not.toThrow()
+  })
+
+  it("handles typed properties and defaults on Split", () => {
+    const split = document.createElement("m-split") as Split
+    expect(split.direction).toBe("horizontal")
+    expect(split.size).toBe(0.5)
+    expect(split.min).toBe(0.1)
+    expect(split.max).toBe(0.9)
+    expect(split.disabled).toBe(false)
+
+    split.direction = "vertical"
+    expect(split.direction).toBe("vertical")
+    expect(split.getAttribute("direction")).toBe("vertical")
+
+    split.direction = "horizontal"
+    expect(split.direction).toBe("horizontal")
+    expect(split.getAttribute("direction")).toBe("horizontal")
+
+    expect(() => { split.direction = "diagonal" as never }).toThrow(RangeError)
+
+    split.size = 0.3
+    expect(split.size).toBe(0.3)
+    expect(split.getAttribute("size")).toBe("0.3")
+
+    expect(() => { split.size = NaN }).toThrow(RangeError)
+    expect(() => { split.size = "bad" as never }).toThrow(RangeError)
+
+    split.min = 0.2
+    expect(split.min).toBe(0.2)
+    expect(split.getAttribute("min")).toBe("0.2")
+
+    expect(() => { split.min = Infinity }).toThrow(RangeError)
+
+    split.max = 0.8
+    expect(split.max).toBe(0.8)
+    expect(split.getAttribute("max")).toBe("0.8")
+
+    expect(() => { split.max = NaN }).toThrow(RangeError)
+
+    split.disabled = true
+    expect(split.disabled).toBe(true)
+    expect(split.hasAttribute("disabled")).toBe(true)
+
+    split.disabled = false
+    expect(split.disabled).toBe(false)
+    expect(split.hasAttribute("disabled")).toBe(false)
+  })
+
+  it("handles companion SplitPane element", () => {
+    const pane = document.createElement("m-split-pane") as SplitPane
+    document.body.append(pane)
+    expect(pane.dataset.part).toBe("pane")
+    pane.remove()
+  })
+
+  it("renders structure, panes, and handle on connection", () => {
+    const split = document.createElement("m-split") as Split
+    const pane1 = document.createElement("m-split-pane") as SplitPane
+    pane1.id = "p1"
+    pane1.textContent = "Left Pane"
+    const pane2 = document.createElement("m-split-pane") as SplitPane
+    pane2.id = "p2"
+    pane2.textContent = "Right Pane"
+
+    split.append(pane1, pane2)
+    document.body.append(split)
+
+    expect(split.classList.contains("m-split")).toBe(true)
+    expect(split.getAttribute("data-split-direction")).toBe("horizontal")
+    expect(split.getAttribute("data-split-layout")).toBe("ready")
+    expect(pane1.getAttribute("data-split-pane")).toBe("1")
+    expect(pane2.getAttribute("data-split-pane")).toBe("2")
+    expect(split.panes).toHaveLength(2)
+
+    const handle = split.querySelector<HTMLElement>("[data-split-handle]")
+    expect(handle).not.toBeNull()
+    expect(handle?.getAttribute("role")).toBe("separator")
+    expect(handle?.tabIndex).toBe(0)
+    expect(handle?.getAttribute("aria-orientation")).toBe("vertical")
+    expect(handle?.getAttribute("aria-valuenow")).toBe("50")
+    expect(handle?.getAttribute("aria-valuemin")).toBe("10")
+    expect(handle?.getAttribute("aria-valuemax")).toBe("90")
+    expect(handle?.getAttribute("aria-disabled")).toBe("false")
+    expect(handle?.getAttribute("aria-controls")).toBe("p1")
+
+    split.direction = "vertical"
+    expect(split.getAttribute("data-split-direction")).toBe("vertical")
+    expect(handle?.getAttribute("aria-orientation")).toBe("horizontal")
+
+    split.disabled = true
+    expect(split.hasAttribute("data-split-disabled")).toBe(true)
+    expect(handle?.getAttribute("aria-disabled")).toBe("true")
+    expect(handle?.tabIndex).toBe(-1)
+
+    split.disabled = false
+    expect(split.hasAttribute("data-split-disabled")).toBe(false)
+    expect(handle?.getAttribute("aria-disabled")).toBe("false")
+    expect(handle?.tabIndex).toBe(0)
+
+    split.remove()
+  })
+
+  it("emits m:change event on keyboard interaction", () => {
+    const split = document.createElement("m-split") as Split
+    const pane1 = document.createElement("m-split-pane") as SplitPane
+    const pane2 = document.createElement("m-split-pane") as SplitPane
+    split.append(pane1, pane2)
+    document.body.append(split)
+
+    const changeSpy = vi.fn()
+    split.addEventListener("m:change", changeSpy)
+
+    const handle = split.querySelector<HTMLElement>("[data-split-handle]")!
+    handle.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true, cancelable: true }))
+    expect(changeSpy).toHaveBeenCalled()
+    expect(changeSpy.mock.calls[0]![0].detail.size).toBeGreaterThan(0.5)
+
+    handle.dispatchEvent(new KeyboardEvent("keydown", { key: "End", bubbles: true, cancelable: true }))
+    expect(split.size).toBe(0.9)
+    expect(changeSpy.mock.calls.at(-1)![0].detail.size).toBe(0.9)
+
+    handle.dispatchEvent(new KeyboardEvent("keydown", { key: "Home", bubbles: true, cancelable: true }))
+    expect(split.size).toBe(0.1)
+    expect(changeSpy.mock.calls.at(-1)![0].detail.size).toBe(0.1)
+
+    split.disabled = true
+    changeSpy.mockClear()
+    handle.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true, cancelable: true }))
+    expect(changeSpy).not.toHaveBeenCalled()
+
+    split.remove()
+  })
+
+  it("emits m:change event on pointer drag interaction", () => {
+    const split = document.createElement("m-split") as Split
+    const pane1 = document.createElement("m-split-pane") as SplitPane
+    const pane2 = document.createElement("m-split-pane") as SplitPane
+    split.append(pane1, pane2)
+    document.body.append(split)
+
+    split.getBoundingClientRect = () => new DOMRect(0, 0, 500, 300)
+
+    const changeSpy = vi.fn()
+    split.addEventListener("m:change", changeSpy)
+
+    const handle = split.querySelector<HTMLElement>("[data-split-handle]")!
+    handle.dispatchEvent(new Pointer("pointerdown", { bubbles: true, cancelable: true, clientX: 250, clientY: 50, button: 0, isPrimary: true }))
+    expect(split.hasAttribute("data-split-dragging")).toBe(true)
+
+    document.dispatchEvent(new Pointer("pointermove", { bubbles: true, cancelable: true, clientX: 350, clientY: 50, isPrimary: true }))
+    expect(changeSpy).toHaveBeenCalled()
+    expect(split.size).toBe(0.7)
+
+    document.dispatchEvent(new Pointer("pointerup", { bubbles: true, cancelable: true, clientX: 350, clientY: 50, isPrimary: true }))
+    expect(split.hasAttribute("data-split-dragging")).toBe(false)
+
+    split.remove()
+  })
+
+  it("extracts Split and SplitPane API metadata matching specification", async () => {
+    vi.useRealTimers()
+    try {
+      const [docs] = await generateComponentApi(resolve("."), ["split"])
+      expect(docs.elements).toHaveLength(2)
+
+      const [splitDoc, paneDoc] = docs.elements
+      expect(splitDoc!.type).toBe("Split")
+      expect(splitDoc!.web.primary).toBe("m-split")
+      expect(splitDoc!.properties.direction).toMatchObject({
+        name: "direction",
+        type: "enum",
+        values: ["horizontal", "vertical"],
+        default: "horizontal",
+        attribute: "direction",
+        readable: true,
+        writable: true,
+      })
+      expect(splitDoc!.properties.size).toMatchObject({
+        name: "size",
+        type: "number",
+        default: 0.5,
+        attribute: "size",
+        readable: true,
+        writable: true,
+      })
+      expect(splitDoc!.properties.min).toMatchObject({
+        name: "min",
+        type: "number",
+        default: 0.1,
+        attribute: "min",
+        readable: true,
+        writable: true,
+      })
+      expect(splitDoc!.properties.max).toMatchObject({
+        name: "max",
+        type: "number",
+        default: 0.9,
+        attribute: "max",
+        readable: true,
+        writable: true,
+      })
+      expect(splitDoc!.properties.disabled).toMatchObject({
+        name: "disabled",
+        type: "boolean",
+        default: false,
+        attribute: "disabled",
+        encoding: "presence",
+        readable: true,
+        writable: true,
+      })
+      expect(splitDoc!.events).toEqual([
+        {
+          name: "Change",
+          web: "m:change",
+          bubbles: true,
+          cancelable: false,
+          composed: false,
+          detail: { size: "number" },
+        },
+      ])
+      expect(splitDoc!.regions).toEqual([
+        {
+          name: "panes",
+          element: "m-split-pane",
+          accepts: ["SplitPane"],
+          min: 0,
+          max: null,
+        },
+      ])
+
+      expect(paneDoc!.type).toBe("SplitPane")
+      expect(paneDoc!.web.primary).toBe("m-split-pane")
+      expect(paneDoc!.regions).toEqual([
+        {
+          name: "content",
+          accepts: ["native flow", "text", "components"],
+          min: 0,
+          max: null,
+        },
+      ])
+    } finally {
+      vi.useFakeTimers()
+    }
+  }, 20000)
+})
+

@@ -1,15 +1,18 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { createLog, MAX_LOG_LINES, MAX_LOG_CHARACTERS, MAX_LOG_LINE_LENGTH } from "../src/components/log/index.js"
+import { createLog, Log, MLog, registerLog, MAX_LOG_LINES, MAX_LOG_CHARACTERS, MAX_LOG_LINE_LENGTH } from "../src/components/log/index.js"
+import * as logApi from "../src/components/log/index.js"
 import type { LogController, LogOptions } from "../src/components/log/index.js"
+import { ViewElement } from "../src/core/index.js"
+import { generateComponentApi } from "../scripts/component-api.mjs"
 
 const helpers: LogController[] = []
 const sample = (count = 10) => Array.from({ length: count }, (_, index) => `Line ${index}`).join("\n")
 function fixture(options: LogOptions = {}, text = "one\ntwo\nthree") {
   const root = document.createElement("section")
-  root.className = "mui-log"; root.dataset.log = ""
-  root.innerHTML = '<label>Unrelated<input name="outside" value="native"></label><pre class="mui-code-block" data-log-viewport role="region" tabindex="0" aria-label="Local log"><code class="mui-code" data-log-output></code></pre><p data-log-loading hidden>Loading locally</p><button type="button">Outside action</button>'
+  root.className = "m-log"; root.dataset.log = ""
+  root.innerHTML = '<label>Unrelated<input name="outside" value="native"></label><pre class="m-code-block" data-log-viewport role="region" tabindex="0" aria-label="Local log"><code class="m-code" data-log-output></code></pre><p data-log-loading hidden>Loading locally</p><button type="button">Outside action</button>'
   const pre = root.querySelector("pre")!, code = root.querySelector("code")!
   code.textContent = text
   document.body.append(root)
@@ -21,9 +24,9 @@ function fixture(options: LogOptions = {}, text = "one\ntwo\nthree") {
     scrollTop: { configurable: true, get: () => scroll, set: (value: number) => { scroll = Math.max(0, Math.min(value, Math.max(0, pre.scrollHeight - height))) } },
   })
   vi.spyOn(HTMLElement.prototype, "offsetTop", "get").mockImplementation(function (this: HTMLElement) {
-    return this.classList.contains("mui-code-line") ? [...this.parentElement!.children].indexOf(this) * 20 : 0
+    return this.classList.contains("m-code-line") ? [...this.parentElement!.children].indexOf(this) * 20 : 0
   })
-  vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockImplementation(function (this: HTMLElement) { return this.classList.contains("mui-code-line") ? 20 : 60 })
+  vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockImplementation(function (this: HTMLElement) { return this.classList.contains("m-code-line") ? 20 : 60 })
   const helper = createLog(root, options); helpers.push(helper)
   function resize(nextHeight: number, nextWidth = width) { height = nextHeight; width = nextWidth; helper.refresh() }
   function select(index: number, start = 0, end = 3) {
@@ -100,7 +103,7 @@ describe("literal Log records", () => {
   })
   it("keeps decorative number markers empty and source selection free of digits", () => {
     const { helper, code } = fixture()
-    for (const node of code.querySelectorAll(".mui-code-number")) { expect(node.textContent).toBe(""); expect(node.getAttribute("aria-hidden")).toBe("true") }
+    for (const node of code.querySelectorAll(".m-code-number")) { expect(node.textContent).toBe(""); expect(node.getAttribute("aria-hidden")).toBe("true") }
     const range = document.createRange(); range.selectNodeContents(code)
     expect(range.toString()).toBe(helper.text)
   })
@@ -250,7 +253,7 @@ describe("selection and scroll context", () => {
 describe("edge notifications and lifecycle", () => {
   it("reports edge transitions only, without wheel interception or repeated scroll spam", () => {
     const { root, pre } = fixture({ text: sample() }), edges: string[] = []
-    root.addEventListener("mui:log-edge", event => edges.push((event as CustomEvent).detail.position))
+    root.addEventListener("m:log-edge", event => edges.push((event as CustomEvent).detail.position))
     pre.scrollTop = 40; pre.dispatchEvent(new Event("scroll"))
     pre.scrollTop = 140; pre.dispatchEvent(new Event("scroll")); pre.dispatchEvent(new Event("scroll"))
     pre.dispatchEvent(new WheelEvent("wheel", { deltaY: 1 }))
@@ -259,7 +262,7 @@ describe("edge notifications and lifecycle", () => {
   })
   it("supports silent helper scrolling and suppresses follow-generated edge events", () => {
     const { helper, pre, root } = fixture({ text: sample(), follow: true }), listener = vi.fn()
-    root.addEventListener("mui:log-edge", listener)
+    root.addEventListener("m:log-edge", listener)
     helper.scrollTo({ position: "bottom", silent: true }); pre.dispatchEvent(new Event("scroll"))
     helper.append("\nnew"); pre.dispatchEvent(new Event("scroll"))
     expect(listener).not.toHaveBeenCalled()
@@ -268,7 +271,7 @@ describe("edge notifications and lifecycle", () => {
   })
   it("does not suppress a different native scroll position behind a pending silent target", () => {
     const { helper, pre, root } = fixture({ text: sample() }), listener = vi.fn()
-    root.addEventListener("mui:log-edge", listener)
+    root.addEventListener("m:log-edge", listener)
     helper.scrollTo({ position: "bottom", silent: true }); pre.scrollTop = 0; pre.dispatchEvent(new Event("scroll"))
     expect(listener).toHaveBeenCalledOnce()
   })
@@ -277,7 +280,7 @@ describe("edge notifications and lifecycle", () => {
     pre.scrollTop = 40; pre.dispatchEvent(new Event("scroll"))
     Object.defineProperty(pre, "clientHeight", { configurable: true, get: () => 300 })
     Object.defineProperty(pre, "scrollHeight", { configurable: true, get: () => 300 })
-    root.addEventListener("mui:log-edge", event => {
+    root.addEventListener("m:log-edge", event => {
       positions.push((event as CustomEvent).detail.position)
       if (action === "append") helper.append("\nupdated")
       else helper[action]()
@@ -354,7 +357,7 @@ describe("edge notifications and lifecycle", () => {
       disconnect = disconnect
     })
     const { helper, root, code } = fixture(), errors = vi.fn()
-    root.addEventListener("mui:log-error", errors)
+    root.addEventListener("m:log-error", errors)
     code.append(document.createTextNode("foreign")); callback!([], {} as ResizeObserver)
     expect(errors).toHaveBeenCalledOnce(); expect(helper.error).toBeInstanceOf(Error)
     helper.disconnect(); expect(disconnect).toHaveBeenCalledOnce()
@@ -365,8 +368,267 @@ describe("edge notifications and lifecycle", () => {
     const source = readFileSync(resolve("src", "components", "log", "log.ts"), "utf8")
     const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
     expect(pkg.exports["./log/style.css"]).toBe("./dist/markup-ui-log.css"); expect(pkg.dependencies).toEqual({})
-    expect(css).toContain("overflow-anchor: none"); expect(css).toContain("--mui-log-rows")
+    expect(css).toContain("overflow-anchor: none"); expect(css).toContain("--m-log-rows")
     expect(source).not.toContain("requestAnimationFrame"); expect(source).not.toContain("setInterval"); expect(source).not.toContain("innerHTML")
     expect(source).not.toContain("virtual-list")
+  })
+})
+
+describe("canonical Log ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(logApi.Log).toBe(Log)
+    expect(logApi.MLog).toBe(MLog)
+    expect(MLog).toBe(Log)
+    expect(Log.tag).toBe("m-log")
+    expect(ViewElement.prototype.isPrototypeOf(Log.prototype)).toBe(true)
+    expect(customElements.get("m-log")).toBe(Log)
+    expect(Log.observedAttributes).toEqual(["line-height", "rows", "trim"])
+    expect(() => registerLog()).not.toThrow()
+    const define = vi.fn()
+    expect(() => registerLog({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("handles typed properties, attributes and defaults on Log", () => {
+    const element = document.createElement("m-log") as Log
+    expect(element.lineHeight).toBe(1.25)
+    expect(element.rows).toBe(15)
+    expect(element.trim).toBe(false)
+
+    element.lineHeight = 1.6
+    expect(element.lineHeight).toBe(1.6)
+    expect(element.getAttribute("line-height")).toBe("1.6")
+
+    element.rows = 24
+    expect(element.rows).toBe(24)
+    expect(element.getAttribute("rows")).toBe("24")
+
+    element.trim = true
+    expect(element.trim).toBe(true)
+    expect(element.hasAttribute("trim")).toBe(true)
+
+    element.trim = false
+    expect(element.trim).toBe(false)
+    expect(element.hasAttribute("trim")).toBe(false)
+
+    for (const invalid of [-1, 0, NaN, Infinity, -Infinity, "abc" as any]) {
+      expect(() => { element.lineHeight = invalid }).toThrow(RangeError)
+    }
+
+    for (const invalid of [-5, 0, 1.5, NaN, Infinity, "10" as any]) {
+      expect(() => { element.rows = invalid }).toThrow(RangeError)
+    }
+
+    for (const invalid of ["true" as any, 1 as any, null as any]) {
+      expect(() => { element.trim = invalid }).toThrow(RangeError)
+    }
+
+    element.setAttribute("line-height", "invalid")
+    expect(() => element.lineHeight).toThrow(RangeError)
+    element.removeAttribute("line-height")
+    expect(element.lineHeight).toBe(1.25)
+
+    element.setAttribute("rows", "notanumber")
+    expect(() => element.rows).toThrow(RangeError)
+    element.removeAttribute("rows")
+    expect(element.rows).toBe(15)
+  })
+
+  it("replays pre-upgrade properties upon connection", () => {
+    const element = document.createElement("m-log") as Log
+    Object.defineProperty(element, "lineHeight", { configurable: true, value: 1.75 })
+    Object.defineProperty(element, "rows", { configurable: true, value: 30 })
+    Object.defineProperty(element, "trim", { configurable: true, value: true })
+    document.body.append(element)
+
+    expect(element.lineHeight).toBe(1.75)
+    expect(element.rows).toBe(30)
+    expect(element.trim).toBe(true)
+    expect(element.getAttribute("line-height")).toBe("1.75")
+    expect(element.getAttribute("rows")).toBe("30")
+    expect(element.hasAttribute("trim")).toBe(true)
+    expect(element.style.getPropertyValue("--m-log-line-height")).toBe("1.75")
+    expect(element.style.getPropertyValue("--m-log-rows")).toBe("30")
+  })
+
+  it("synchronizes CSS custom properties with attributes", () => {
+    const element = document.createElement("m-log") as Log
+    document.body.append(element)
+
+    element.lineHeight = 2
+    expect(element.style.getPropertyValue("--m-log-line-height")).toBe("2")
+    element.rows = 18
+    expect(element.style.getPropertyValue("--m-log-rows")).toBe("18")
+
+    element.removeAttribute("line-height")
+    expect(element.style.getPropertyValue("--m-log-line-height")).toBe("")
+    element.removeAttribute("rows")
+    expect(element.style.getPropertyValue("--m-log-rows")).toBe("")
+  })
+
+  it("sets up connected classes, dataset and ensures passive pre/code anatomy when unauthored", () => {
+    const element = document.createElement("m-log") as Log
+    document.body.append(element)
+
+    expect(element.classList.contains("m-log")).toBe(true)
+    expect(element.dataset.mLog).toBe("")
+    expect(element.dataset.log).toBe("")
+    const viewport = element.querySelector<HTMLPreElement>("[data-log-viewport]")
+    const output = element.querySelector<HTMLElement>("[data-log-output]")
+    expect(viewport).not.toBeNull()
+    expect(output).not.toBeNull()
+    expect(viewport?.getAttribute("role")).toBe("region")
+    expect(viewport?.getAttribute("tabindex")).toBe("0")
+    expect(viewport?.parentElement).toBe(element)
+    expect(output?.parentElement).toBe(viewport)
+  })
+
+  it("preserves authored pre and code anatomy", () => {
+    const element = document.createElement("m-log") as Log
+    const pre = document.createElement("pre")
+    pre.className = "m-code-block"
+    pre.setAttribute("data-log-viewport", "")
+    pre.setAttribute("role", "region")
+    pre.setAttribute("tabindex", "0")
+    pre.setAttribute("aria-label", "Custom log")
+    const code = document.createElement("code")
+    code.className = "m-code"
+    code.setAttribute("data-log-output", "")
+    code.textContent = "Authored log line"
+    pre.append(code)
+    element.append(pre)
+    document.body.append(element)
+
+    expect(element.querySelector("[data-log-viewport]")).toBe(pre)
+    expect(element.querySelector("[data-log-output]")).toBe(code)
+    expect(code.textContent).toBe("Authored log line")
+  })
+
+  it("supports scrollTo method with positions, numbers and objects", () => {
+    const element = document.createElement("m-log") as Log
+    document.body.append(element)
+    const viewport = element.querySelector<HTMLPreElement>("[data-log-viewport]")!
+    let scroll = 0
+    Object.defineProperties(viewport, {
+      clientHeight: { configurable: true, value: 100 },
+      scrollHeight: { configurable: true, value: 500 },
+      scrollTop: { configurable: true, get: () => scroll, set: (v: number) => { scroll = v } },
+    })
+
+    element.scrollTo({ position: "bottom" })
+    expect(viewport.scrollTop).toBe(400)
+
+    element.scrollTo({ position: "top" })
+    expect(viewport.scrollTop).toBe(0)
+
+    element.scrollTo({ top: 150 })
+    expect(viewport.scrollTop).toBe(150)
+
+    element.scrollTo(0, 75)
+    expect(viewport.scrollTop).toBe(75)
+
+    expect(() => element.scrollTo({ position: "invalid" as any })).toThrow(TypeError)
+    expect(() => element.scrollTo({ top: NaN as any })).toThrow(TypeError)
+  })
+
+  it("can be controlled by createLog and integrates scrollTo", () => {
+    const element = document.createElement("m-log") as Log
+    const pre = document.createElement("pre")
+    pre.className = "m-code-block"
+    pre.setAttribute("data-log-viewport", "")
+    pre.setAttribute("role", "region")
+    pre.setAttribute("tabindex", "0")
+    pre.setAttribute("aria-label", "Managed log")
+    const code = document.createElement("code")
+    code.className = "m-code"
+    code.setAttribute("data-log-output", "")
+    code.textContent = "line 1\nline 2\nline 3"
+    pre.append(code)
+    element.append(pre)
+    document.body.append(element)
+
+    let scroll = 0
+    Object.defineProperties(pre, {
+      clientHeight: { configurable: true, value: 60 },
+      scrollHeight: { configurable: true, value: 300 },
+      scrollTop: { configurable: true, get: () => scroll, set: (v: number) => { scroll = v } },
+    })
+    const controller = createLog(element)
+    helpers.push(controller)
+
+    expect(controller.text).toBe("line 1\nline 2\nline 3")
+    element.scrollTo({ position: "bottom" })
+    expect(pre.scrollTop).toBe(240)
+    element.scrollTo({ position: "top" })
+    expect(pre.scrollTop).toBe(0)
+  })
+
+  it("extracts Log API metadata matching specification via generateComponentApi", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["log"])
+    expect(docs.elements).toHaveLength(1)
+    const logDoc = docs.elements[0]!
+    expect(logDoc.type).toBe("Log")
+    expect(logDoc.web.primary).toBe("m-log")
+    expect(logDoc.properties.lineHeight).toMatchObject({
+      name: "lineHeight",
+      type: "number",
+      default: 1.25,
+      attribute: "line-height",
+      readable: true,
+      writable: true,
+    })
+    expect(logDoc.properties.rows).toMatchObject({
+      name: "rows",
+      type: "number",
+      default: 15,
+      attribute: "rows",
+      readable: true,
+      writable: true,
+      integer: true,
+      min: 1,
+    })
+    expect(logDoc.properties.trim).toMatchObject({
+      name: "trim",
+      type: "boolean",
+      default: false,
+      attribute: "trim",
+      encoding: "presence",
+      readable: true,
+      writable: true,
+    })
+    expect(logDoc.actions).toContain("scrollTo")
+    expect(logDoc.regions).toEqual([
+      { name: "content", accepts: ["flow content"], min: 0, max: null },
+    ])
+    expect(logDoc.events).toEqual([
+      { name: "LogEdge", web: "m:log-edge", bubbles: true, cancelable: false, composed: false, detail: { position: "string" } },
+      { name: "LogError", web: "m:log-error", bubbles: true, cancelable: false, composed: false },
+    ])
+  })
+
+  it("structures Log demo with standard scaffold and explicit shared-core loading", () => {
+    const demoHtml = readFileSync(resolve("demo", "components", "log.html"), "utf8")
+    const parsed = new DOMParser().parseFromString(demoHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-log.global.js"))
+    expect(parsed.querySelector("main[data-demo-page].component-docs #log-api")).not.toBeNull()
+    expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("details.component-setup")).not.toBeNull()
+    for (const example of parsed.querySelectorAll("[data-demo-example]")) {
+      expect(example.querySelector("[data-demo-header] h2[id]")).not.toBeNull()
+      expect(example.querySelector("[data-demo-preview]")).not.toBeNull()
+    }
+  })
+
+  it("exposes MarkupUILog on globalThis", async () => {
+    await import("../src/components/log/global.js")
+    const target = globalThis as typeof globalThis & { MarkupUILog?: typeof logApi }
+    expect(target.MarkupUILog).toBeDefined()
+    expect(target.MarkupUILog?.Log).toBe(Log)
+    expect(target.MarkupUILog?.MLog).toBe(MLog)
+    expect(target.MarkupUILog?.registerLog).toBe(registerLog)
+    expect(target.MarkupUILog?.createLog).toBe(createLog)
   })
 })

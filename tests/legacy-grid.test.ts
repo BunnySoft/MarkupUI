@@ -2,6 +2,8 @@ import { existsSync, readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
+import "../src/components/space/index.js"
+import "../src/components/flex/index.js"
 
 const html = readFileSync(resolve("demo", "components", "legacy-grid.html"), "utf8")
 const css = readFileSync(resolve("demo", "components", "legacy-grid.css"), "utf8")
@@ -18,7 +20,7 @@ function fixture() {
 afterEach(() => { sheet?.remove(); sheet = undefined; document.body.replaceChildren(); vi.restoreAllMocks() })
 
 describe("Legacy Grid resolved through shipped native layout CSS", () => {
-  it("loads the real modern assets without a legacy runtime, export, dependency or script", () => {
+  it("loads native Grid CSS and canonical Flex/Space without a legacy-grid runtime or export", () => {
     const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
     const manifest = JSON.parse(readFileSync(resolve("dist", "manifest.json"), "utf8"))
     const parsed = new DOMParser().parseFromString(html, "text/html")
@@ -34,7 +36,10 @@ describe("Legacy Grid resolved through shipped native layout CSS", () => {
     expect(pkg.exports["./legacy-grid/style.css"]).toBeUndefined()
     expect(existsSync(resolve("src", "components", "legacy-grid"))).toBe(false)
     expect(Object.keys(manifest.bundles).some(name => name.includes("legacy-grid"))).toBe(false)
-    expect(html).not.toMatch(/<script|<style|\sstyle=|<mui-|<n-row|<n-col/)
+    expect([...parsed.querySelectorAll("script")].map(node => node.getAttribute("src"))).toEqual([
+      "../../dist/markup-ui-core.global.js", "../../dist/markup-ui-flex.global.js", "../../dist/markup-ui-space.global.js",
+    ])
+    expect(html).not.toMatch(/<style|\sstyle=|<m-(?!space|flex)|<n-row|<n-col/)
   })
   it("uses original semantic native containers, direct items and real form labels", () => {
     const root = fixture()
@@ -47,26 +52,26 @@ describe("Legacy Grid resolved through shipped native layout CSS", () => {
   it("keeps compact spans valid and declares actual viewport changes instead of legacy breakpoint props", () => {
     const root = fixture(), grid = getComputedStyle(root.querySelector("#span-grid")!), first = getComputedStyle(root.querySelector("#first-cell")!)
     expect(grid.display).toBe("grid")
-    expect(grid.getPropertyValue("--mui-grid-cols").trim()).toBe("1")
-    expect(first.getPropertyValue("--mui-grid-span").trim()).toBe("1")
+    expect(grid.getPropertyValue("--m-grid-cols").trim()).toBe("1")
+    expect(first.getPropertyValue("--m-grid-span").trim()).toBe("1")
     expect(css).toContain("@media (min-width: 48rem)")
-    expect(css).toContain(".migration-columns { --mui-grid-cols: 24; }")
-    expect(css).toContain(".first-column { --mui-grid-span: 8; }")
-    expect(css).toContain(".second-column { --mui-grid-span: 16; }")
+    expect(css).toContain(".migration-columns { --m-grid-cols: 24; }")
+    expect(css).toContain(".first-column { --m-grid-span: 8; }")
+    expect(css).toContain(".second-column { --m-grid-span: 16; }")
     expect(root.querySelector("[xs], [sm], [md], [lg], [xl], [xxl], [span], [offset], [push], [pull]")).toBeNull()
   })
   it("uses explicit native x/y gaps rather than negative row margins and half-gutter padding", () => {
     const root = fixture(), grid = getComputedStyle(root.querySelector("#span-grid")!)
-    expect(grid.getPropertyValue("--mui-grid-x-gap").trim()).toBe("12px")
-    expect(grid.getPropertyValue("--mui-grid-y-gap").trim()).toBe("8px")
+    expect(grid.getPropertyValue("--m-grid-x-gap").trim()).toBe("12px")
+    expect(grid.getPropertyValue("--m-grid-y-gap").trim()).toBe("8px")
     expect(css).not.toMatch(/margin-(?:left|right)\s*:|calc\(100%\s*\+/)
   })
   it("keeps inner defaults separate from outer item spans and gaps", () => {
     const root = fixture(), nested = root.querySelector("#nested-grid")!, child = nested.firstElementChild!
-    expect(getComputedStyle(nested).getPropertyValue("--mui-grid-cols").trim()).toBe("2")
-    expect(getComputedStyle(nested).getPropertyValue("--mui-grid-x-gap").trim()).toBe("4px")
-    expect(getComputedStyle(child).getPropertyValue("--mui-grid-span").trim()).toBe("1")
-    expect(getComputedStyle(child).getPropertyValue("--mui-grid-start").trim()).toBe("auto")
+    expect(getComputedStyle(nested).getPropertyValue("--m-grid-cols").trim()).toBe("2")
+    expect(getComputedStyle(nested).getPropertyValue("--m-grid-x-gap").trim()).toBe("4px")
+    expect(getComputedStyle(child).getPropertyValue("--m-grid-span").trim()).toBe("1")
+    expect(getComputedStyle(child).getPropertyValue("--m-grid-start").trim()).toBe("auto")
   })
   it("authors a noninteractive spacer and separately identifies absolute start line 3", () => {
     const root = fixture(), spacer = root.querySelector("#authored-spacer")!
@@ -75,8 +80,8 @@ describe("Legacy Grid resolved through shipped native layout CSS", () => {
     expect(spacer.hasAttribute("tabindex")).toBe(false)
     expect(spacer.nextElementSibling?.id).toBe("after-spacer")
     expect(getComputedStyle(spacer).display).toBe("none")
-    expect(css).toContain(".start-three { --mui-grid-start: 3; }")
-    expect(css).not.toContain("--mui-grid-offset")
+    expect(css).toContain(".start-three { --m-grid-start: 3; }")
+    expect(css).not.toContain("--m-grid-offset")
     expect(root.querySelector("#absolute-third")!.previousElementSibling!.id).toBe("start-first")
   })
   it("queries descendant grids through actual independent named container wrappers", () => {
@@ -84,20 +89,20 @@ describe("Legacy Grid resolved through shipped native layout CSS", () => {
     for (const name of ["wide", "compact"]) {
       const wrapper = root.querySelector(`#${name}-container`)!, grid = root.querySelector(`#${name}-query`)!
       expect(grid.parentElement).toBe(wrapper)
-      expect(wrapper.classList.contains("mui-grid-container")).toBe(true)
-      expect(wrapper.classList.contains("mui-grid")).toBe(false)
-      expect(getComputedStyle(grid).getPropertyValue("--mui-grid-cols").trim()).toBe("1")
+      expect(wrapper.classList.contains("m-grid-container")).toBe(true)
+      expect(wrapper.classList.contains("m-grid")).toBe(false)
+      expect(getComputedStyle(grid).getPropertyValue("--m-grid-cols").trim()).toBe("1")
     }
     expect(css).toContain("@supports (container-type: inline-size)")
     expect(css).toContain("@container migration (min-width: 30rem)")
-    expect(css).toContain(".query-feature { --mui-grid-span: 2; }")
+    expect(css).toContain(".query-feature { --m-grid-span: 2; }")
   })
   it("uses actual Flex/Space rules for native navigation and form actions", () => {
     const root = fixture()
-    expect(getComputedStyle(root.querySelector("nav")!).display).toBe("flex")
+    expect(getComputedStyle(root.querySelector("nav > m-flex")!).display).toBe("flex")
     expect(getComputedStyle(root.querySelector("#form-actions")!).display).toBe("flex")
     expect(root.querySelector("#reset-notes")!.parentElement!.children).toHaveLength(2)
-    expect(getComputedStyle(root.querySelector("#form-actions")!).getPropertyValue("--_mui-space-column-gap").trim()).toBe("8px")
+    expect(getComputedStyle(root.querySelector("#form-actions")!).getPropertyValue("--_m-space-column-gap").trim()).toBe("8px")
   })
   it("keeps hidden items out of layout but not FormData, unlike native disabled fields", () => {
     const root = fixture(), hidden = root.querySelector("#hidden-cell")!
@@ -125,7 +130,7 @@ describe("Legacy Grid resolved through shipped native layout CSS", () => {
     expect(css).not.toMatch(/(?:^|[;{])\s*(?:order|left|right|transform|grid-row)\s*:|row-reverse|column-reverse|\bdense\b/)
     const first = root.querySelector("#first-cell")!
     first.setAttribute("span", "12"); first.setAttribute("push", "4")
-    expect(getComputedStyle(first).getPropertyValue("--mui-grid-span").trim()).toBe("1")
+    expect(getComputedStyle(first).getPropertyValue("--m-grid-span").trim()).toBe("1")
   })
   it("keeps native disclosure content and local destinations valid without script", () => {
     const root = fixture(), details = root.querySelector("details")!, extra = details.querySelector("a")
@@ -137,30 +142,30 @@ describe("Legacy Grid resolved through shipped native layout CSS", () => {
     expect(css).not.toMatch(/@import|@font-face|url\(|@keyframes/)
   })
   it("retains pinned zero-gutter 24-way defaults and public author tokens", () => {
-    document.body.innerHTML = '<div class="mui-grid" id="default-row"><div class="mui-grid-item" id="default-col">Original</div></div>'
+    document.body.innerHTML = '<div class="m-grid" id="default-row"><div class="m-grid-item" id="default-col">Original</div></div>'
     sheet = document.createElement("style")
     sheet.textContent = readFileSync(resolve("src", "components", "grid", "grid.css"), "utf8")
     document.head.append(sheet)
     const root = document.querySelector<HTMLElement>("#default-row")!
     const child = document.querySelector<HTMLElement>("#default-col")!
     expect(getComputedStyle(root).display).toBe("grid")
-    expect(getComputedStyle(root).getPropertyValue("--mui-grid-cols").trim()).toBe("24")
-    expect(getComputedStyle(root).getPropertyValue("--mui-grid-x-gap").trim()).toBe("0px")
-    expect(getComputedStyle(root).getPropertyValue("--mui-grid-y-gap").trim()).toBe("0px")
-    expect(getComputedStyle(root).getPropertyValue("--mui-grid-align").trim()).toBe("normal")
-    expect(getComputedStyle(root).getPropertyValue("--mui-grid-justify").trim()).toBe("normal")
-    expect(getComputedStyle(child).getPropertyValue("--mui-grid-span").trim()).toBe("1")
-    expect(getComputedStyle(child).getPropertyValue("--mui-grid-start").trim()).toBe("auto")
-    root.style.cssText = "--mui-grid-cols:3;--mui-grid-tracks:80px minmax(0,1fr);--mui-grid-x-gap:7px;--mui-grid-y-gap:5px;--mui-grid-align:center;--mui-grid-justify:end"
-    child.style.cssText = "--mui-grid-span:2;--mui-grid-start:2"
-    expect(getComputedStyle(root).getPropertyValue("--mui-grid-cols").trim()).toBe("3")
-    expect(getComputedStyle(root).getPropertyValue("--mui-grid-tracks").trim()).toBe("80px minmax(0,1fr)")
-    expect(getComputedStyle(root).getPropertyValue("--mui-grid-x-gap").trim()).toBe("7px")
-    expect(getComputedStyle(root).getPropertyValue("--mui-grid-y-gap").trim()).toBe("5px")
-    expect(getComputedStyle(root).getPropertyValue("--mui-grid-align").trim()).toBe("center")
-    expect(getComputedStyle(root).getPropertyValue("--mui-grid-justify").trim()).toBe("end")
-    expect(getComputedStyle(child).getPropertyValue("--mui-grid-span").trim()).toBe("2")
-    expect(getComputedStyle(child).getPropertyValue("--mui-grid-start").trim()).toBe("2")
+    expect(getComputedStyle(root).getPropertyValue("--m-grid-cols").trim()).toBe("24")
+    expect(getComputedStyle(root).getPropertyValue("--m-grid-x-gap").trim()).toBe("0px")
+    expect(getComputedStyle(root).getPropertyValue("--m-grid-y-gap").trim()).toBe("0px")
+    expect(getComputedStyle(root).getPropertyValue("--m-grid-align").trim()).toBe("normal")
+    expect(getComputedStyle(root).getPropertyValue("--m-grid-justify").trim()).toBe("normal")
+    expect(getComputedStyle(child).getPropertyValue("--m-grid-span").trim()).toBe("1")
+    expect(getComputedStyle(child).getPropertyValue("--m-grid-start").trim()).toBe("auto")
+    root.style.cssText = "--m-grid-cols:3;--m-grid-tracks:80px minmax(0,1fr);--m-grid-x-gap:7px;--m-grid-y-gap:5px;--m-grid-align:center;--m-grid-justify:end"
+    child.style.cssText = "--m-grid-span:2;--m-grid-start:2"
+    expect(getComputedStyle(root).getPropertyValue("--m-grid-cols").trim()).toBe("3")
+    expect(getComputedStyle(root).getPropertyValue("--m-grid-tracks").trim()).toBe("80px minmax(0,1fr)")
+    expect(getComputedStyle(root).getPropertyValue("--m-grid-x-gap").trim()).toBe("7px")
+    expect(getComputedStyle(root).getPropertyValue("--m-grid-y-gap").trim()).toBe("5px")
+    expect(getComputedStyle(root).getPropertyValue("--m-grid-align").trim()).toBe("center")
+    expect(getComputedStyle(root).getPropertyValue("--m-grid-justify").trim()).toBe("end")
+    expect(getComputedStyle(child).getPropertyValue("--m-grid-span").trim()).toBe("2")
+    expect(getComputedStyle(child).getPropertyValue("--m-grid-start").trim()).toBe("2")
   })
   it("keeps reused layout CSS within the existing build ceilings without a Legacy Grid asset", () => {
     const ceilings = { grid: 1500, flex: 1000, space: 1000 }

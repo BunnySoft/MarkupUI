@@ -1,5 +1,6 @@
-import { createSlider, createSliderPair } from "./index.js"
+import * as slider from "./index.js"
 
-const target = globalThis as typeof globalThis & { MarkupUISlider?: { createSlider: typeof createSlider; createSliderPair: typeof createSliderPair } }
+const target = globalThis as typeof globalThis & { MarkupUISlider?: typeof slider }
 if (target.MarkupUISlider !== undefined) throw new Error("MarkupUISlider is already defined; no API was replaced.")
-target.MarkupUISlider = { createSlider, createSliderPair }
+target.MarkupUISlider = slider
+

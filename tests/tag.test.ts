@@ -1,23 +1,23 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { MuiTag, registerTag } from "../src/components/tag/index.js"
+import { Tag, MTag, registerTag } from "../src/components/tag/index.js"
 import type { TagCloseDetail } from "../src/components/tag/index.js"
-import { registerElements } from "../src/components/elements.js"
+import { builtInElementNames, registerElements } from "../src/components/elements.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
-function tag(markup = "<mui-tag>Topic</mui-tag>"): MuiTag {
+function tag(markup = "<m-tag>Topic</m-tag>"): Tag {
   document.body.innerHTML = markup
-  const element = document.querySelector("mui-tag")
-  if (!(element instanceof MuiTag)) throw new Error("Tag was not upgraded")
+  const element = document.querySelector("m-tag")
+  if (!(element instanceof Tag)) throw new Error("Tag was not upgraded")
   return element
 }
-function close(element: MuiTag): HTMLButtonElement {
-  return element.querySelector<HTMLButtonElement>("[data-mui-tag-close]")!
+function close(element: Tag): HTMLButtonElement {
+  return element.querySelector<HTMLButtonElement>("[data-m-tag-close]")!
 }
 
 describe("standalone Tag", () => {
   it("keeps the decorative vector close glyph stable across visual state changes", () => {
-    const element = tag("<mui-tag closable>Topic</mui-tag>")
+    const element = tag("<m-tag closable>Topic</m-tag>")
     const button = close(element)
     const icon = button.querySelector("svg")
     for (const [name, value] of [["size", "tiny"], ["type", "warning"], ["round", ""], ["strong", ""], ["bordered", "false"]]) {
@@ -32,10 +32,10 @@ describe("standalone Tag", () => {
   })
 
   it("treats SVG close descendants as native close intent without host activation", () => {
-    const element = tag("<mui-tag closable>Topic</mui-tag>")
+    const element = tag("<m-tag closable>Topic</m-tag>")
     const intent = vi.fn()
     const hostClick = vi.fn()
-    element.addEventListener("mui:close", intent)
+    element.addEventListener("m:close", intent)
     element.addEventListener("click", hostClick)
     const path = close(element).querySelector("path")!
     const event = new MouseEvent("click", { bubbles: true, cancelable: true })
@@ -49,7 +49,7 @@ describe("standalone Tag", () => {
   })
 
   it("uses a passive native span and preserves authored nodes and listeners", () => {
-    const element = document.createElement("mui-tag") as MuiTag
+    const element = document.createElement("m-tag") as MTag
     const label = document.createElement("strong")
     label.textContent = "Topic"
     const listener = vi.fn()
@@ -65,7 +65,7 @@ describe("standalone Tag", () => {
   })
 
   it("adopts an authored content span and leaves templates inert", () => {
-    const element = tag('<mui-tag><span data-mui-tag-content><strong>Label</strong></span><template><button>Inert</button></template></mui-tag>')
+    const element = tag('<m-tag><span data-m-tag-content><strong>Label</strong></span><template><button>Inert</button></template></m-tag>')
     expect(element.contentElement?.firstElementChild?.localName).toBe("strong")
     expect(element.querySelector("template")?.parentElement).toBe(element)
     expect(element.querySelector("button")).toBeNull()
@@ -75,9 +75,9 @@ describe("standalone Tag", () => {
   })
 
   it("uses a native aria-pressed toggle and emits the new boolean once", () => {
-    const element = tag("<mui-tag checkable>Topic</mui-tag>")
+    const element = tag("<m-tag checkable>Topic</m-tag>")
     const changes = vi.fn()
-    element.addEventListener("mui:change", changes)
+    element.addEventListener("m:change", changes)
     expect(element.control?.type).toBe("button")
     expect(element.control?.getAttribute("aria-pressed")).toBe("false")
     element.click()
@@ -92,9 +92,9 @@ describe("standalone Tag", () => {
   })
 
   it("keeps programmatic assignments and attribute changes silent", () => {
-    const element = tag("<mui-tag checkable>Topic</mui-tag>")
+    const element = tag("<m-tag checkable>Topic</m-tag>")
     const change = vi.fn()
-    element.addEventListener("mui:change", change)
+    element.addEventListener("m:change", change)
     element.checked = true
     element.removeAttribute("checked")
     element.setAttribute("checked", "")
@@ -103,9 +103,9 @@ describe("standalone Tag", () => {
   })
 
   it("does not synthesize keyboard activation or cancel native defaults", () => {
-    const element = tag("<mui-tag checkable>Topic</mui-tag>")
+    const element = tag("<m-tag checkable>Topic</m-tag>")
     const changes = vi.fn()
-    element.addEventListener("mui:change", changes)
+    element.addEventListener("m:change", changes)
     for (const key of ["Enter", " "]) {
       const event = new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true })
       element.control!.dispatchEvent(event)
@@ -115,14 +115,14 @@ describe("standalone Tag", () => {
   })
 
   it("honors click cancellation before toggle handling", () => {
-    const element = tag("<mui-tag checkable>Topic</mui-tag>")
+    const element = tag("<m-tag checkable>Topic</m-tag>")
     element.addEventListener("click", (event) => event.preventDefault(), { capture: true })
     element.click()
     expect(element.checked).toBe(false)
   })
 
   it("adopts an authored native button without nesting or losing its listeners", () => {
-    const element = document.createElement("mui-tag") as MuiTag
+    const element = document.createElement("m-tag") as MTag
     element.checkable = true
     const native = document.createElement("button")
     native.type = "submit"
@@ -144,7 +144,7 @@ describe("standalone Tag", () => {
   })
 
   it("adopts a late authored button and moves prior generated label nodes into it", async () => {
-    const element = tag("<mui-tag checkable><strong>Original</strong></mui-tag>")
+    const element = tag("<m-tag checkable><strong>Original</strong></m-tag>")
     const original = element.querySelector("strong")
     const native = document.createElement("button")
     native.textContent = "New"
@@ -157,17 +157,17 @@ describe("standalone Tag", () => {
   })
 
   it("rejects interactive label descendants before generating a nested button root", () => {
-    const element = document.createElement("mui-tag") as MuiTag
+    const element = document.createElement("m-tag") as MTag
     element.innerHTML = '<span><a href="#topic">Topic</a></span>'
     element.checkable = true
     expect(() => element.connectedCallback()).toThrow("Checkable Tag labels must be noninteractive")
-    expect(element.querySelector("[data-mui-tag-toggle]")).toBeNull()
+    expect(element.querySelector("[data-m-tag-toggle]")).toBeNull()
     expect(element.querySelector("a")?.getAttribute("href")).toBe("#topic")
     element.disconnectedCallback()
   })
 
   it("switches generated checkable/passive modes without replacing icon/avatar/content nodes", () => {
-    const element = tag('<mui-tag><span data-mui-tag-avatar aria-hidden="true"><img alt="" src="avatar.png"></span><span data-mui-tag-icon aria-hidden="true">+</span><strong>Label</strong></mui-tag>')
+    const element = tag('<m-tag><span data-m-tag-avatar aria-hidden="true"><img alt="" src="avatar.png"></span><span data-m-tag-icon aria-hidden="true">+</span><strong>Label</strong></m-tag>')
     const nodes = [...element.contentElement!.childNodes]
     for (let i = 0; i < 3; i++) {
       element.checkable = true
@@ -180,10 +180,10 @@ describe("standalone Tag", () => {
   })
 
   it("blocks disabled native, programmatic and synthetic descendant activation", () => {
-    const element = tag("<mui-tag checkable disabled><span>Topic</span></mui-tag>")
+    const element = tag("<m-tag checkable disabled><span>Topic</span></m-tag>")
     const change = vi.fn()
     const click = vi.fn()
-    element.addEventListener("mui:change", change)
+    element.addEventListener("m:change", change)
     element.control!.addEventListener("click", click)
     expect(element.control!.disabled).toBe(true)
     expect(element.control!.tabIndex).toBe(-1)
@@ -200,7 +200,7 @@ describe("standalone Tag", () => {
   })
 
   it("restores authored disabled/type/ARIA/tab order and observes native changes", async () => {
-    const element = tag('<mui-tag checkable disabled aria-label="Override"><button type="reset" aria-pressed="mixed" aria-label="Original" tabindex="2">Topic</button></mui-tag>')
+    const element = tag('<m-tag checkable disabled aria-label="Override"><button type="reset" aria-pressed="mixed" aria-label="Original" tabindex="2">Topic</button></m-tag>')
     const native = element.control!
     native.type = "submit"
     native.setAttribute("aria-label", "Updated")
@@ -218,7 +218,7 @@ describe("standalone Tag", () => {
   })
 
   it("retains authored disabled state after host state is removed", () => {
-    const element = tag('<mui-tag checkable disabled><button disabled>Topic</button></mui-tag>')
+    const element = tag('<m-tag checkable disabled><button disabled>Topic</button></m-tag>')
     element.disabled = false
     expect(element.control!.disabled).toBe(true)
     element.checkable = false
@@ -226,7 +226,7 @@ describe("standalone Tag", () => {
   })
 
   it("delegates focus to the native checkable control without a host tab stop", () => {
-    const element = tag("<mui-tag checkable>Topic</mui-tag>")
+    const element = tag("<m-tag checkable>Topic</m-tag>")
     element.focus()
     expect(document.activeElement).toBe(element.control)
     expect(element.hasAttribute("tabindex")).toBe(false)
@@ -238,10 +238,10 @@ describe("standalone Tag", () => {
   })
 
   it("emits a cancellable bubbling close intent without removing or hiding the tag", () => {
-    const element = tag("<mui-tag closable>Topic</mui-tag>")
+    const element = tag("<m-tag closable>Topic</m-tag>")
     const intent = vi.fn((event: Event) => event.preventDefault())
     const click = vi.fn()
-    element.addEventListener("mui:close", intent)
+    element.addEventListener("m:close", intent)
     element.addEventListener("click", click)
     close(element).click()
     expect(intent).toHaveBeenCalledOnce()
@@ -253,7 +253,7 @@ describe("standalone Tag", () => {
   })
 
   it("allows native close click propagation only when explicitly requested", () => {
-    const element = tag("<mui-tag closable>Topic</mui-tag>")
+    const element = tag("<m-tag closable>Topic</m-tag>")
     const click = vi.fn()
     element.addEventListener("click", click)
     element.triggerClickOnClose = true
@@ -266,13 +266,13 @@ describe("standalone Tag", () => {
   })
 
   it("suppresses close in checkable mode, without nesting interactive roots", () => {
-    const element = tag("<mui-tag checkable closable>Topic</mui-tag>")
-    expect(element.querySelector("[data-mui-tag-close]")).toBeNull()
+    const element = tag("<m-tag checkable closable>Topic</m-tag>")
+    expect(element.querySelector("[data-m-tag-close]")).toBeNull()
     expect(element.querySelectorAll("button")).toHaveLength(1)
     element.click()
     expect(element.checked).toBe(true)
     element.checkable = false
-    expect(element.querySelector("[data-mui-tag-toggle]")).toBeNull()
+    expect(element.querySelector("[data-m-tag-toggle]")).toBeNull()
     expect(element.querySelectorAll("button")).toHaveLength(1)
     expect(close(element).parentElement).toBe(element)
     close(element).click()
@@ -280,10 +280,10 @@ describe("standalone Tag", () => {
   })
 
   it("does not inadvertently toggle when close intent changes the tag into checkable mode", () => {
-    const element = tag("<mui-tag closable trigger-click-on-close>Topic</mui-tag>")
-    element.addEventListener("mui:close", () => { element.checkable = true })
+    const element = tag("<m-tag closable trigger-click-on-close>Topic</m-tag>")
+    element.addEventListener("m:close", () => { element.checkable = true })
     const change = vi.fn()
-    element.addEventListener("mui:change", change)
+    element.addEventListener("m:change", change)
     close(element).click()
     expect(element.checkable).toBe(true)
     expect(element.checked).toBe(false)
@@ -291,9 +291,9 @@ describe("standalone Tag", () => {
   })
 
   it("provides a native close name with dynamic localization and disabled state", () => {
-    const element = tag("<mui-tag closable disabled>Topic</mui-tag>")
+    const element = tag("<m-tag closable disabled>Topic</m-tag>")
     const intent = vi.fn()
-    element.addEventListener("mui:close", intent)
+    element.addEventListener("m:close", intent)
     expect(close(element).type).toBe("button")
     expect(close(element).getAttribute("aria-label")).toBe("Remove tag")
     const icon = close(element).querySelector("svg")
@@ -313,7 +313,7 @@ describe("standalone Tag", () => {
   })
 
   it("never submits forms through checkable/close controls and honors disabled fieldsets", () => {
-    const element = tag("<form><fieldset disabled><mui-tag checkable>Topic</mui-tag></fieldset><mui-tag closable>Other</mui-tag></form>")
+    const element = tag("<form><fieldset disabled><m-tag checkable>Topic</m-tag></fieldset><m-tag closable>Other</m-tag></form>")
     const submit = vi.fn((event: Event) => event.preventDefault())
     document.querySelector("form")!.addEventListener("submit", submit)
     element.click()
@@ -322,16 +322,16 @@ describe("standalone Tag", () => {
     document.querySelector("fieldset")!.disabled = false
     element.click()
     expect(element.checked).toBe(true)
-    close(document.querySelectorAll("mui-tag")[1] as MuiTag).click()
+    close(document.querySelectorAll("m-tag")[1] as MTag).click()
     expect(submit).not.toHaveBeenCalled()
   })
 
   it("cleans up observers and listeners while disconnected and reconnects once", async () => {
-    const element = tag("<mui-tag checkable>Topic</mui-tag>")
+    const element = tag("<m-tag checkable>Topic</m-tag>")
     const native = element.control!
     const label = element.contentElement!
     const changes = vi.fn()
-    element.addEventListener("mui:change", changes)
+    element.addEventListener("m:change", changes)
     element.remove()
     native.click()
     element.checked = true
@@ -347,10 +347,10 @@ describe("standalone Tag", () => {
   })
 
   it("removes stale close listeners after toggling closable and disconnecting", () => {
-    const element = tag("<mui-tag closable>Topic</mui-tag>")
+    const element = tag("<m-tag closable>Topic</m-tag>")
     const native = close(element)
     const intent = vi.fn()
-    element.addEventListener("mui:close", intent)
+    element.addEventListener("m:close", intent)
     element.remove()
     native.click()
     expect(intent).not.toHaveBeenCalled()
@@ -363,7 +363,7 @@ describe("standalone Tag", () => {
   })
 
   it("handles replaced/late content without resurrecting discarded nodes", async () => {
-    const element = tag("<mui-tag checkable><strong>Old</strong></mui-tag>")
+    const element = tag("<m-tag checkable><strong>Old</strong></m-tag>")
     const old = element.control!
     element.innerHTML = "<em>New</em>"
     await Promise.resolve()
@@ -373,16 +373,16 @@ describe("standalone Tag", () => {
     element.append(" late")
     await Promise.resolve()
     expect(element.contentElement!.textContent).toBe("New late")
-    expect(old.hasAttribute("data-mui-tag-toggle")).toBe(false)
+    expect(old.hasAttribute("data-m-tag-toggle")).toBe(false)
   })
 
   it("upgrades reflected properties before definition without fabricating changes", () => {
     document.body.innerHTML = "<test-late-tag>Late</test-late-tag>"
-    const element = document.querySelector("test-late-tag") as MuiTag
+    const element = document.querySelector("test-late-tag") as MTag
     const changes = vi.fn()
-    element.addEventListener("mui:change", changes)
+    element.addEventListener("m:change", changes)
     Object.assign(element, { checkable: true, checked: true, disabled: true, closable: true, type: "info", size: "large", round: true, strong: true, bordered: false, closeLabel: "Dismiss", triggerClickOnClose: true })
-    customElements.define("test-late-tag", class extends MuiTag {})
+    customElements.define("test-late-tag", class extends MTag {})
     expect(element.control?.getAttribute("aria-pressed")).toBe("true")
     expect(element.control?.disabled).toBe(true)
     expect(element.round && element.strong && element.triggerClickOnClose).toBe(true)
@@ -393,20 +393,26 @@ describe("standalone Tag", () => {
     expect(changes).not.toHaveBeenCalled()
   })
 
+  it("exports canonical Tag with backwards-compatible MTag alias", () => {
+    expect(Tag.tag).toBe("m-tag")
+    expect(MTag).toBe(Tag)
+  })
+
   it("keeps runtime styles external and rejects conflicting registration", () => {
-    const element = tag("<mui-tag round strong type=primary>Topic</mui-tag>")
+    const element = tag("<m-tag round strong type=primary>Topic</m-tag>")
     expect(element.shadowRoot).toBeNull()
     expect(document.querySelector("style,[style]")).toBeNull()
     expect(() => registerTag()).not.toThrow()
     const define = vi.fn()
-    expect(() => registerTag({ get: () => class extends HTMLElement {}, define })).toThrow("before the legacy MarkupUI bundle")
+    expect(() => registerTag({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
     expect(define).not.toHaveBeenCalled()
   })
 
-  it("retains rich registration when the aggregate is registered afterward", () => {
+  it("removes legacy Tag from aggregate element registrations", () => {
     registerElements(customElements)
-    expect(customElements.get("mui-tag")).toBe(MuiTag)
-    const element = tag("<mui-tag closable>Topic</mui-tag>")
-    expect(element.querySelector(":scope > [data-mui-close]")).not.toBeNull()
+    expect(customElements.get("m-tag")).toBe(Tag)
+    expect(builtInElementNames).not.toContain("m-tag")
+    const element = tag("<m-tag closable>Topic</m-tag>")
+    expect(element.querySelector(":scope > [data-m-close]")).not.toBeNull()
   })
 })

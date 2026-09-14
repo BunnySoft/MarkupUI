@@ -1,17 +1,19 @@
-body {
-  max-inline-size: 58rem;
-  margin: 2rem auto;
-  padding-inline: 1rem;
-  font: 1rem/1.5 system-ui, sans-serif;
-  overflow-wrap: anywhere;
-  color: #18181b;
-  background: #fafafa;
+[data-demo-preview] {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--m-bg-surface, #fff);
+  color: var(--m-text-primary, #333);
 }
-main > section { margin-block: 2rem; }
-h2, p { margin-block: 0 .75rem; }
-.demo-icon { inline-size: 1em; block-size: 1em; vertical-align: -.125em; }
-.nested-breadcrumb { margin-block-start: .75rem; }
-#parent-breadcrumb { --mui-breadcrumb-gap: 1rem; }
-@media print {
-  body { max-inline-size: none; margin: 0; background: transparent; }
+
+.demo-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.demo-icon {
+  inline-size: 1em;
+  block-size: 1em;
+  vertical-align: -.125em;
 }

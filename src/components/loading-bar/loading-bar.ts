@@ -23,7 +23,7 @@ const phases: LoadingBarState[] = ["idle", "loading", "success", "error"]
 
 export function createLoadingBar(root: HTMLElement, options: LoadingBarOptions = {}): LoadingBarController {
   const document = root?.ownerDocument, view = document?.defaultView
-  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".mui-loading-bar[data-loading-bar]")) throw new TypeError("Loading Bar needs an authored .mui-loading-bar[data-loading-bar] root.")
+  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".m-loading-bar[data-loading-bar]")) throw new TypeError("Loading Bar needs an authored .m-loading-bar[data-loading-bar] root.")
   if (!options || typeof options !== "object" || Array.isArray(options)) throw new TypeError("Loading Bar options must be an object.")
   for (const key of Object.keys(options)) if (!["finishDelay", "errorDelay", "labels"].includes(key)) throw new TypeError(`Unsupported Loading Bar option: ${key}.`)
   const finishDelay = options.finishDelay === undefined ? 600 : options.finishDelay
@@ -72,7 +72,7 @@ export function createLoadingBar(root: HTMLElement, options: LoadingBarOptions =
     return max
   }
   function validate() {
-    if (root.getRootNode() !== document || !root.matches(".mui-loading-bar[data-loading-bar]")
+    if (root.getRootNode() !== document || !root.matches(".m-loading-bar[data-loading-bar]")
       || root.querySelector("[data-loading-bar]")) throw new TypeError("Use a connected light-DOM Loading Bar root, not nested status surfaces.")
     if (root.querySelectorAll("progress").length !== 1 || !root.contains(progress)
       || root.querySelectorAll("[data-loading-bar-status]").length !== 1 || root.querySelector("[data-loading-bar-status]") !== status
@@ -100,7 +100,7 @@ export function createLoadingBar(root: HTMLElement, options: LoadingBarOptions =
   }
   function fault(error: unknown) {
     controller.disconnect()
-    root.dispatchEvent(new view!.CustomEvent("mui:loading-bar-fault", { detail: { error } }))
+    root.dispatchEvent(new view!.CustomEvent("m:loading-bar-fault", { detail: { error } }))
   }
   function paint(next: LoadingBarState, value: number | null, notify = true) {
     const previous = state
@@ -120,7 +120,7 @@ export function createLoadingBar(root: HTMLElement, options: LoadingBarOptions =
         try { ready(); paint("idle", null) } catch (error) { fault(error) }
       }, delay)
     }
-    if (notify && previous !== next) root.dispatchEvent(new view!.CustomEvent("mui:loading-bar-change", { detail: { state: next, previous } }))
+    if (notify && previous !== next) root.dispatchEvent(new view!.CustomEvent("m:loading-bar-change", { detail: { state: next, previous } }))
   }
   function terminal(next: "success" | "error") {
     ready()

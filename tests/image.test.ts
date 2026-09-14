@@ -1,8 +1,9 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createImagePreview } from "../src/components/image/index.js"
+import { createImagePreview, Image, ImageGroup, MImage, MImageGroup, registerImage } from "../src/components/image/index.js"
 import type { ImagePreviewController } from "../src/components/image/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const controllers: ImagePreviewController[] = []
 const css = readFileSync(resolve("src", "components", "image", "image.css"), "utf8")
@@ -65,8 +66,8 @@ describe("native Image/group preview helper", () => {
     expect(pkg.exports["./image"].import).toBe("./dist/markup-ui-image.js")
     expect(pkg.exports["./image/style.css"]).toBe("./dist/markup-ui-image.css")
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("mui-image")).toBeUndefined()
-    expect(customElements.get("mui-image-group")).toBeUndefined()
+    expect(customElements.get("m-image")).toBe(Image)
+    expect(customElements.get("m-image-group")).toBe(ImageGroup)
     expect(css).not.toContain("@import")
   })
 
@@ -161,7 +162,7 @@ describe("native Image/group preview helper", () => {
   it("wraps group navigation in authored eligible order with explicit event notifications", () => {
     const root = fixture()
     const events: string[] = []
-    for (const name of ["mui:image-open", "mui:image-change", "mui:image-next", "mui:image-prev", "mui:image-close"]) {
+    for (const name of ["m:image-open", "m:image-change", "m:image-next", "m:image-prev", "m:image-close"]) {
       root.addEventListener(name, () => events.push(name))
     }
     const controller = enhance(root)
@@ -173,9 +174,9 @@ describe("native Image/group preview helper", () => {
     expect(controller.prev()).toBe(true)
     expect(controller.current).toBe(1)
     controller.close()
-    expect(events).toContain("mui:image-next")
-    expect(events).toContain("mui:image-prev")
-    expect(events).toContain("mui:image-close")
+    expect(events).toContain("m:image-next")
+    expect(events).toContain("m:image-prev")
+    expect(events).toContain("m:image-close")
   })
 
   it("supports validated imperative current/show updates without a framework prop bridge", () => {
@@ -312,7 +313,7 @@ describe("native Image/group preview helper", () => {
     expect(document.activeElement).toBe(button)
   })
 
-  it("leaves original native links after disconnect and never registers a custom element", () => {
+  it("leaves original native links after disconnect and retains custom element registration", () => {
     const root = fixture()
     const controller = enhance(root)
     const first = root.querySelector<HTMLAnchorElement>("#first")!
@@ -320,7 +321,7 @@ describe("native Image/group preview helper", () => {
     controller.disconnect()
     expect(clickWithoutNavigation(first)).toBe(false)
     expect(first.href).toBe("https://example.test/first.svg")
-    expect(customElements.get("mui-image-group")).toBeUndefined()
+    expect(customElements.get("m-image-group")).toBe(ImageGroup)
   })
 
   it("preserves authored hidden toolbar defaults and closes an externally hidden dialog", async () => {
@@ -426,9 +427,9 @@ describe("bounded native thumbnail fallback", () => {
 
   describe("audited Image presentation", () => {
     it("retains responsive native thumbnails and inherits authored thumbnail rounding", () => {
-      expect(css).toContain(":where(img.mui-image)")
+      expect(css).toContain(":where(img.m-image)")
       expect(css).toContain("max-inline-size: 100%")
-      expect(css).toContain("object-fit: var(--mui-image-fit, fill)")
+      expect(css).toContain("object-fit: var(--m-image-fit, fill)")
       expect(css).toContain("border-radius: inherit")
       expect(css).not.toContain("cursor: zoom-in")
     })
@@ -440,17 +441,17 @@ describe("bounded native thumbnail fallback", () => {
       expect(css).toContain("max-block-size: min(100%, calc(100vh - 32px))")
       expect(css).toContain("margin: auto")
       expect(css).toContain("[data-image-stage] { position: fixed; inset: 0;")
-      expect(css).toContain("background: var(--mui-image-preview-background, transparent)")
-      expect(css).toContain("background: var(--mui-image-backdrop, #0000004d)")
+      expect(css).toContain("background: var(--m-image-preview-background, transparent)")
+      expect(css).toContain("background: var(--m-image-backdrop, #0000004d)")
       expect(css).not.toContain("65vh")
     })
 
     it("uses scoped light/dark chrome without assigning public theme overrides", () => {
-      expect(css).toContain(':where([data-mui-theme="dark"]) { --_mui-image-color: #ffffffd1; }')
-      expect(css).toContain(':where([data-mui-theme="light"]) { --_mui-image-color: initial; }')
-      expect(css).toContain("var(--mui-image-preview-color, var(--_mui-image-color, #ffffffe6))")
-      expect(css).toContain("var(--mui-image-toolbar-background, #00000059)")
-      expect(css).not.toMatch(/(?:^|[;{])\s*--mui-image-[\w-]+\s*:/m)
+      expect(css).toContain(':where([data-m-theme="dark"]) { --_m-image-color: #ffffffd1; }')
+      expect(css).toContain(':where([data-m-theme="light"]) { --_m-image-color: initial; }')
+      expect(css).toContain("var(--m-image-preview-color, var(--_m-image-color, #ffffffe6))")
+      expect(css).toContain("var(--m-image-toolbar-background, #00000059)")
+      expect(css).not.toMatch(/(?:^|[;{])\s*--m-image-[\w-]+\s*:/m)
     })
 
     it("matches toolbar surface geometry while retaining wrap, native focus and disabled controls", () => {
@@ -538,3 +539,189 @@ describe("bounded native thumbnail fallback", () => {
     expect(image.src).toBe("https://example.test/other-fallback.svg")
   })
 })
+
+function imageElement(markup = "<m-image></m-image>"): Image {
+  document.body.innerHTML = markup
+  const element = document.querySelector("m-image")
+  if (!(element instanceof Image)) throw new Error("Image was not upgraded")
+  return element
+}
+
+describe("canonical Image ViewElement", () => {
+  it("exports canonical own-tag ViewElement and registers m-image and m-image-group", () => {
+    expect(Image.tag).toBe("m-image")
+    expect(ImageGroup.tag).toBe("m-image-group")
+    expect(MImage).toBe(Image)
+    expect(MImageGroup).toBe(ImageGroup)
+    expect(ViewElement.prototype.isPrototypeOf(Image.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ImageGroup.prototype)).toBe(true)
+    expect(customElements.get("m-image")).toBe(Image)
+    expect(customElements.get("m-image-group")).toBe(ImageGroup)
+    expect(Image.observedAttributes).toEqual(["src", "alt", "width", "height", "preview", "preview-src", "fallback-src", "object-fit"])
+    const define = vi.fn()
+    expect(() => registerImage({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerImage()).not.toThrow()
+  })
+
+  it("has explicit property defaults and validates values before mutating attributes", () => {
+    const element = imageElement()
+    expect(element.src).toBe("")
+    expect(element.alt).toBe("")
+    expect(element.width).toBeNull()
+    expect(element.height).toBeNull()
+    expect(element.preview).toBe(true)
+    expect(element.previewSrc).toBeNull()
+    expect(element.fallbackSrc).toBeNull()
+    expect(element.objectFit).toBe("fill")
+
+    element.src = "https://example.test/photo.jpg"
+    expect(element.getAttribute("src")).toBe("https://example.test/photo.jpg")
+    expect(element.src).toBe("https://example.test/photo.jpg")
+
+    element.alt = "Sample photo"
+    expect(element.getAttribute("alt")).toBe("Sample photo")
+    expect(element.alt).toBe("Sample photo")
+
+    element.width = "300"
+    expect(element.getAttribute("width")).toBe("300")
+    expect(element.width).toBe("300")
+    element.width = null
+    expect(element.hasAttribute("width")).toBe(false)
+    expect(element.width).toBeNull()
+
+    element.height = "200"
+    expect(element.getAttribute("height")).toBe("200")
+    expect(element.height).toBe("200")
+    element.height = null
+    expect(element.hasAttribute("height")).toBe(false)
+    expect(element.height).toBeNull()
+
+    element.preview = false
+    expect(element.getAttribute("preview")).toBe("false")
+    expect(element.preview).toBe(false)
+    element.preview = true
+    expect(element.getAttribute("preview")).toBe("true")
+    expect(element.preview).toBe(true)
+
+    element.previewSrc = "https://example.test/full.jpg"
+    expect(element.getAttribute("preview-src")).toBe("https://example.test/full.jpg")
+    expect(element.previewSrc).toBe("https://example.test/full.jpg")
+    element.previewSrc = null
+    expect(element.hasAttribute("preview-src")).toBe(false)
+    expect(element.previewSrc).toBeNull()
+
+    element.fallbackSrc = "https://example.test/fallback.jpg"
+    expect(element.getAttribute("fallback-src")).toBe("https://example.test/fallback.jpg")
+    expect(element.fallbackSrc).toBe("https://example.test/fallback.jpg")
+    element.fallbackSrc = null
+    expect(element.hasAttribute("fallback-src")).toBe(false)
+    expect(element.fallbackSrc).toBeNull()
+
+    expect(() => { Reflect.set(element, "objectFit", "invalid") }).toThrow(RangeError)
+
+    for (const fit of ["contain", "cover", "none", "scale-down", "fill"] as const) {
+      element.objectFit = fit
+      expect(element.getAttribute("object-fit")).toBe(fit)
+      expect(element.objectFit).toBe(fit)
+    }
+  })
+
+  it("replays pre-upgrade properties upon connection", () => {
+    const element = document.createElement("m-image") as Image
+    Object.defineProperty(element, "src", { configurable: true, value: "https://example.test/pre.jpg" })
+    Object.defineProperty(element, "alt", { configurable: true, value: "Pre alt" })
+    Object.defineProperty(element, "preview", { configurable: true, value: false })
+    Object.defineProperty(element, "objectFit", { configurable: true, value: "cover" })
+    document.body.append(element)
+
+    expect(element.src).toBe("https://example.test/pre.jpg")
+    expect(element.alt).toBe("Pre alt")
+    expect(element.preview).toBe(false)
+    expect(element.objectFit).toBe("cover")
+    expect(element.getAttribute("src")).toBe("https://example.test/pre.jpg")
+    expect(element.getAttribute("alt")).toBe("Pre alt")
+    expect(element.getAttribute("preview")).toBe("false")
+    expect(element.getAttribute("object-fit")).toBe("cover")
+  })
+
+  it("dispatches m:load event when image loads successfully", () => {
+    const element = imageElement('<m-image src="https://example.test/photo.jpg" alt="Photo"></m-image>')
+    const events: CustomEvent[] = []
+    element.addEventListener("m:load", (event) => events.push(event as CustomEvent))
+
+    const img = element.querySelector("img")!
+    img.dispatchEvent(new Event("load"))
+
+    expect(events).toHaveLength(1)
+    expect(events[0]!.type).toBe("m:load")
+    expect(events[0]!.detail.src).toBe("https://example.test/photo.jpg")
+    expect(events[0]!.bubbles).toBe(true)
+  })
+
+  it("dispatches m:error and falls back to fallbackSrc when image fails", () => {
+    const element = imageElement('<m-image src="https://example.test/missing.jpg" fallback-src="https://example.test/fallback.jpg" alt="Missing"></m-image>')
+    const errors: CustomEvent[] = []
+    element.addEventListener("m:error", (event) => errors.push(event as CustomEvent))
+
+    const img = element.querySelector("img")!
+    img.dispatchEvent(new Event("error"))
+    expect(img.src).toBe("https://example.test/fallback.jpg")
+    expect(errors).toHaveLength(0)
+
+    img.dispatchEvent(new Event("error"))
+    expect(errors).toHaveLength(1)
+    expect(errors[0]!.detail.src).toBe("https://example.test/fallback.jpg")
+  })
+
+  it("opens and closes preview modal for single image", () => {
+    const element = imageElement('<m-image src="https://example.test/photo.jpg" alt="Photo" preview-src="https://example.test/full.jpg"></m-image>')
+    expect(element.openPreview()).toBe(true)
+
+    const dialog = element.querySelector("dialog.m-image-preview")!
+    expect(dialog).not.toBeNull()
+    expect(dialog.getAttribute("aria-label")).toBe("Image preview")
+
+    const fullImg = dialog.querySelector<HTMLImageElement>("img[data-image-full]")!
+    expect(fullImg.src).toBe("https://example.test/full.jpg")
+    expect(fullImg.alt).toBe("Photo")
+
+    element.closePreview()
+    expect(dialog.open).toBe(false)
+  })
+
+  it("does not open preview when preview property is false", () => {
+    const element = imageElement('<m-image src="https://example.test/photo.jpg" preview="false"></m-image>')
+    expect(element.openPreview()).toBe(false)
+    expect(element.querySelector("dialog")).toBeNull()
+  })
+
+  it("coordinates gallery preview across m-image-group", () => {
+    document.body.innerHTML = `
+      <m-image-group id="grp">
+        <m-image src="https://example.test/1.jpg" alt="First"></m-image>
+        <m-image src="https://example.test/2.jpg" alt="Second"></m-image>
+      </m-image-group>
+    `
+    const group = document.querySelector("m-image-group") as ImageGroup
+    expect(group.images).toHaveLength(2)
+
+    expect(group.open(0)).toBe(true)
+    expect(group.current).toBe(0)
+
+    const dialog = group.querySelector("dialog.m-image-preview")!
+    expect(dialog).not.toBeNull()
+    expect(dialog.querySelector("[data-image-position]")?.textContent).toBe("Image 1 of 2")
+
+    expect(group.next()).toBe(true)
+    expect(group.current).toBe(1)
+    expect(dialog.querySelector("[data-image-position]")?.textContent).toBe("Image 2 of 2")
+
+    expect(group.prev()).toBe(true)
+    expect(group.current).toBe(0)
+
+    group.close()
+    expect(dialog.open).toBe(false)
+  })
+})
+

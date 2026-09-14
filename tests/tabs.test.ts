@@ -1,14 +1,15 @@
 import { readFileSync } from "node:fs"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createTabs } from "../src/components/tabs/index.js"
+import { createTabs, Tabs, Tab, TabPane, registerTabs } from "../src/components/tabs/index.js"
 import type { TabsController, TabsOptions } from "../src/components/tabs/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const controllers: TabsController[] = []
 let sequence = 0
 function nodes() {
   const id = `tabs-${sequence++}`
   const root = document.createElement("div")
-  root.className = "mui-tabs"
+  root.className = "m-tabs"
   root.setAttribute("data-tabs", "")
   root.innerHTML = `
     <div data-tabs-bar><span data-tabs-prefix>Prefix</span><div data-tabs-list aria-label="Local views">
@@ -131,7 +132,7 @@ describe("authored Tabs, Tab and TabPane contracts", () => {
     const beforeLeave = vi.fn(() => true)
     const { root, controller } = bind({ beforeLeave })
     const change = vi.fn()
-    root.addEventListener("mui:tabs-change", change)
+    root.addEventListener("m:tabs-change", change)
     controller.value = "two"
     await flush()
     expect(beforeLeave).not.toHaveBeenCalled()
@@ -271,7 +272,7 @@ describe("before-leave guards and stale requests", () => {
     const hook = vi.fn(() => false)
     const { root, tab, pane, controller } = bind({ beforeLeave: hook })
     const changes = vi.fn()
-    root.addEventListener("mui:tabs-change", changes)
+    root.addEventListener("m:tabs-change", changes)
     tab("two").click()
     await flush()
     expect(hook).toHaveBeenCalledWith("two", "one")
@@ -281,7 +282,7 @@ describe("before-leave guards and stale requests", () => {
     expect(changes).not.toHaveBeenCalled()
     const other = bind({ beforeLeave: () => true })
     const silent = vi.fn()
-    other.root.addEventListener("mui:tabs-change", silent)
+    other.root.addEventListener("m:tabs-change", silent)
     expect(await other.controller.select("two")).toBe(true)
     expect(silent).not.toHaveBeenCalled()
   })
@@ -310,7 +311,7 @@ describe("before-leave guards and stale requests", () => {
     const guard = () => { if (mode === "throw") throw error; return mode === "reject" ? Promise.reject(error) : "yes" as unknown as boolean }
     const { root, tab, error: region, controller } = bind({ beforeLeave: guard })
     const failures: unknown[] = []
-    root.addEventListener("mui:tabs-error", event => failures.push((event as CustomEvent).detail))
+    root.addEventListener("m:tabs-error", event => failures.push((event as CustomEvent).detail))
     tab("two").click()
     await flush()
     await expect(controller.lastRequest).rejects.toThrow()
@@ -341,7 +342,7 @@ describe("before-leave guards and stale requests", () => {
     const pending = deferred()
     const { tab, controller, root } = bind({ beforeLeave: () => pending.promise })
     const change = vi.fn()
-    root.addEventListener("mui:tabs-change", change)
+    root.addEventListener("m:tabs-change", change)
     tab("two").click()
     await flush()
     controller.value = "three"
@@ -354,7 +355,7 @@ describe("before-leave guards and stale requests", () => {
     const old = deferred()
     const { tab, root, error, controller } = bind({ beforeLeave: next => next === "two" ? old.promise : true })
     const failures: unknown[] = []
-    root.addEventListener("mui:tabs-error", event => failures.push((event as CustomEvent).detail))
+    root.addEventListener("m:tabs-error", event => failures.push((event as CustomEvent).detail))
     tab("two").click()
     await flush()
     const promise = controller.lastRequest
@@ -464,8 +465,8 @@ describe("add/close, refresh and distribution", () => {
   it("emits add/close intent only, never creates or destroys application DOM", async () => {
     const { root, tab } = bind()
     const add = vi.fn(), close = vi.fn()
-    root.addEventListener("mui:tabs-add", add)
-    root.addEventListener("mui:tabs-close", close)
+    root.addEventListener("m:tabs-add", add)
+    root.addEventListener("m:tabs-close", close)
     const count = root.querySelectorAll("[data-tabs-tab]").length
     ;(root.querySelector("[data-tabs-add]") as HTMLButtonElement).click()
     ;(root.querySelector("[data-tabs-close]") as HTMLButtonElement).click()
@@ -479,7 +480,7 @@ describe("add/close, refresh and distribution", () => {
   })
   it("recovers selection/focus when the application removes a closable active pair", async () => {
     const { root, tab, pane, controller } = bind()
-    root.addEventListener("mui:tabs-close", () => {
+    root.addEventListener("m:tabs-close", () => {
       tab("one").remove()
       pane("one").remove()
       root.querySelector("[data-tabs-close]")!.remove()
@@ -511,7 +512,7 @@ describe("add/close, refresh and distribution", () => {
   it("detects invalid dynamic associations, disconnects and restores readable panes", async () => {
     const { root, tab, pane, controller } = bind()
     const errors = vi.fn()
-    root.addEventListener("mui:tabs-error", errors)
+    root.addEventListener("m:tabs-error", errors)
     tab("two").setAttribute("data-tabs-target", "missing")
     await flush()
     expect(controller.connected).toBe(false)
@@ -522,7 +523,7 @@ describe("add/close, refresh and distribution", () => {
     const { root, controller } = bind()
     const close = root.querySelector<HTMLButtonElement>("[data-tabs-close]")!
     const intents = vi.fn()
-    root.addEventListener("mui:tabs-close", intents)
+    root.addEventListener("m:tabs-close", intents)
     close.addEventListener("click", () => {
       close.setAttribute("data-tabs-close", "two")
       controller.refresh()
@@ -576,5 +577,84 @@ describe("add/close, refresh and distribution", () => {
     expect(css).toContain("forced-colors")
     expect(css).toContain("@media print")
     expect(css).not.toContain(":has(")
+  })
+})
+
+describe("canonical Tabs ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers m-tabs, m-tab, m-tab-pane", () => {
+    expect(Tabs.tag).toBe("m-tabs")
+    expect(Tab.tag).toBe("m-tab")
+    expect(TabPane.tag).toBe("m-tab-pane")
+    expect(ViewElement.prototype.isPrototypeOf(Tabs.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(Tab.prototype)).toBe(true)
+    expect(Tab.prototype.isPrototypeOf(TabPane.prototype)).toBe(true)
+    expect(customElements.get("m-tabs")).toBe(Tabs)
+    expect(customElements.get("m-tab")).toBe(Tab)
+    expect(customElements.get("m-tab-pane")).toBe(TabPane)
+    expect(Tabs.observedAttributes).toEqual(["value", "placement", "type", "size", "activation", "animated"])
+    expect(Tab.observedAttributes).toEqual(["title", "name", "disabled", "closable"])
+  })
+
+  it("handles typed properties, attributes, and panels switching", () => {
+    document.body.innerHTML = `
+      <m-tabs type="card" placement="top">
+        <m-tab title="First" name="first">First content</m-tab>
+        <m-tab title="Second" name="second">Second content</m-tab>
+        <m-tab title="Third" name="third" disabled>Third content</m-tab>
+      </m-tabs>`
+    const tabs = document.querySelector("m-tabs") as Tabs
+    expect(tabs.type).toBe("card")
+    expect(tabs.placement).toBe("top")
+    expect(tabs.size).toBe("medium")
+    expect(tabs.activation).toBe("automatic")
+    expect(tabs.animated).toBe(false)
+    expect(tabs.panes).toHaveLength(3)
+
+    expect(tabs.panes[0]!.hidden).toBe(false)
+    expect(tabs.panes[1]!.hidden).toBe(true)
+    expect(tabs.panes[2]!.hidden).toBe(true)
+
+    const buttons = [...tabs.querySelectorAll<HTMLButtonElement>("[role=tab]")]
+    expect(buttons).toHaveLength(3)
+    expect(buttons[0]!.textContent).toBe("First")
+    expect(buttons[1]!.textContent).toBe("Second")
+    expect(buttons[2]!.disabled).toBe(true)
+
+    const changeSpy = vi.fn()
+    tabs.addEventListener("m:change", changeSpy)
+
+    tabs.select("second")
+    expect(tabs.panes[0]!.hidden).toBe(true)
+    expect(tabs.panes[1]!.hidden).toBe(false)
+    expect(tabs.value).toBe("second")
+    expect(changeSpy).toHaveBeenCalledOnce()
+    expect(changeSpy.mock.calls[0][0].detail).toMatchObject({ value: "second", previous: "first" })
+
+    tabs.placement = "bottom"
+    expect(tabs.getAttribute("placement")).toBe("bottom")
+    expect(tabs.dataset.tabsPlacement).toBe("bottom")
+
+    tabs.type = "segment"
+    expect(tabs.getAttribute("type")).toBe("segment")
+    expect(tabs.dataset.tabsType).toBe("segment")
+
+    tabs.animated = true
+    expect(tabs.hasAttribute("animated")).toBe(true)
+    expect(tabs.classList.contains("m-tabs--animated")).toBe(true)
+  })
+
+  it("supports keyboard arrow navigation between tabs", () => {
+    document.body.innerHTML = `
+      <m-tabs>
+        <m-tab title="Alpha">Alpha body</m-tab>
+        <m-tab title="Beta">Beta body</m-tab>
+      </m-tabs>`
+    const tabs = document.querySelector("m-tabs") as Tabs
+    const buttons = [...tabs.querySelectorAll<HTMLButtonElement>("[role=tab]")]
+    buttons[0]!.focus()
+    buttons[0]!.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }))
+    expect(document.activeElement).toBe(buttons[1])
+    expect(buttons[1]!.getAttribute("aria-selected")).toBe("true")
+    expect(tabs.panes[1]!.hidden).toBe(false)
   })
 })

@@ -1,88 +1,100 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native navigation Menu</title>
+  <title>Menu - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-menu.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./menu.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-menu.global.js"></script>
-  <script defer src="./menu.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./menu.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <h1>Native navigation Menu</h1>
-  <p>This is site navigation, not an ARIA menu/menubar. Tab, links and details/summary remain native; optional arrow/typeahead shortcuts do not remove Tab stops.</p>
-  <main>
-    <section>
-      <h2>Vertical navigation and native overall disclosure</h2>
-      <form id="demo-form">
-        <label>Local note <input id="note" name="note" value="Local example" required></label>
-        <nav class="mui-menu" data-menu data-menu-mode="vertical" id="vertical-menu" aria-label="Documentation">
-          <details data-menu-collapse open id="nav-disclosure">
-            <summary id="nav-summary"><span data-menu-icon aria-hidden="true">☰</span> Browse documentation</summary>
-            <ul data-menu-list>
-              <li><a data-menu-item data-menu-key="home" href="#home" id="home-link" aria-current="page">Home</a></li>
-              <li><details data-menu-branch data-menu-key="guide" id="guide">
-                <summary id="guide-summary">Guide</summary>
-                <ul data-menu-list>
-                  <li><a data-menu-item data-menu-key="install" href="#installation" id="install-link">Installation</a></li>
-                  <li><a data-menu-item data-menu-key="examples" href="#examples" id="examples-link">Examples</a></li>
-                  <li><details data-menu-branch data-menu-key="advanced" id="advanced">
-                    <summary id="advanced-summary">Advanced</summary>
-                    <ul data-menu-list>
-                      <li><a data-menu-item data-menu-key="performance" href="#performance" id="performance-link">Performance</a></li>
-                      <li><a data-menu-item data-menu-key="separate" href="#examples" target="_blank" id="separate-link">Separate examples</a></li>
-                    </ul>
-                  </details></li>
-                </ul>
-              </details></li>
-              <li data-menu-divider data-menu-key="divider"></li>
-              <li><span data-menu-group-label id="account-label">Account and local actions</span>
-                <ul data-menu-group data-menu-key="account-group" aria-labelledby="account-label">
-                  <li><details data-menu-branch data-menu-key="settings" id="settings">
-                    <summary id="settings-summary" data-menu-label="Settings"><span data-menu-icon aria-hidden="true">⚙</span> Settings</summary>
-                    <ul data-menu-list><li><a data-menu-item data-menu-key="profile" href="#profile" id="profile-link">Profile</a></li></ul>
-                  </details></li>
-                  <li><button type="button" data-menu-item data-menu-key="preview" id="preview-action"><span id="preserved-label">Preview locally</span><span data-menu-extra aria-hidden="true">local only</span></button></li>
-                  <li><button type="button" data-menu-item data-menu-key="unavailable" disabled id="unavailable">Unavailable action</button></li>
-                </ul>
-              </li>
-              <li><details data-menu-branch data-menu-key="restricted" inert>
-                <summary>Unavailable branch</summary>
-                <ul data-menu-list><li><a data-menu-item data-menu-key="restricted-child" href="#home">Unavailable destination</a></li></ul>
-              </details></li>
-            </ul>
-          </details>
-        </nav>
-        <button type="submit" id="submit-form">Ordinary submit</button>
-        <button type="reset" id="reset-form">Reset</button>
-      </form>
-      <button type="button" id="show-performance">Reveal Performance, without navigation</button>
-      <button type="button" id="toggle-collapse">Toggle overall disclosure</button>
-      <button type="button" id="toggle-accordion">Toggle accordion</button>
-      <button type="button" id="outside">Outside focus target</button>
-      <output id="event-log" aria-live="polite">No navigation selection.</output>
+  <main data-demo-page class="component-docs">
+    <h1>Menu</h1>
+    <p>Direct navigation and action menu supporting vertical and horizontal layouts, groups, dividers, and keyboard navigation.</p>
+    <nav class="component-docs-nav" aria-label="Menu documentation">
+      <a href="#vertical-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-menu.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-menu.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="vertical" aria-labelledby="vertical-heading">
+      <header data-demo-header><div><h2 id="vertical-heading">Vertical navigation menu</h2><p>Default vertical menu with items, groups, and dividers.</p></div></header>
+      <div data-demo-preview>
+        <m-box width="240">
+          <m-menu mode="vertical" value="dashboard" id="vertical-demo-menu">
+            <m-menu-item value="dashboard">Dashboard</m-menu-item>
+            <m-menu-item value="analytics">Analytics</m-menu-item>
+            <m-menu-divider></m-menu-divider>
+            <m-menu-group title="Administration">
+              <m-menu-item value="users">Users</m-menu-item>
+              <m-menu-item value="roles">Roles</m-menu-item>
+              <m-menu-item value="settings">Settings</m-menu-item>
+              <m-menu-item value="billing" disabled>Billing (disabled)</m-menu-item>
+            </m-menu-group>
+          </m-menu>
+        </m-box>
+      </div>
     </section>
-    <section>
-      <h2>Horizontal, wrapping navigation</h2>
-      <nav class="mui-menu mui-menu--inverted mui-menu--compact" data-menu data-menu-mode="horizontal" id="horizontal-menu" aria-label="Horizontal local navigation">
-        <ul data-menu-list>
-          <li><a data-menu-item data-menu-key="h-home" href="#home" id="h-home">Home</a></li>
-          <li><details data-menu-branch data-menu-key="h-guide" id="h-guide">
-            <summary id="h-summary">Guide</summary>
-            <ul data-menu-list><li><a data-menu-item data-menu-key="h-install" href="#installation" id="h-install">Installation</a></li><li><a data-menu-item data-menu-key="h-examples" href="#examples" id="h-examples">Examples</a></li></ul>
-          </details></li>
-          <li><a data-menu-item data-menu-key="h-profile" href="#profile" id="h-profile">Profile</a></li>
-        </ul>
-      </nav>
+
+    <section data-demo-example="horizontal" aria-labelledby="horizontal-heading">
+      <header data-demo-header><div><h2 id="horizontal-heading">Horizontal menu</h2><p>Horizontal navbar layout suitable for top-level headers.</p></div></header>
+      <div data-demo-preview>
+        <m-menu mode="horizontal" value="home" id="horizontal-demo-menu">
+          <m-menu-item value="home">Home</m-menu-item>
+          <m-menu-item value="docs">Documentation</m-menu-item>
+          <m-menu-item value="components">Components</m-menu-item>
+          <m-menu-item value="community">Community</m-menu-item>
+        </m-menu>
+      </div>
     </section>
-    <section id="destinations">
-      <h2>Native destinations</h2>
-      <p id="home">Home remains the authored current page; selection alone does not change aria-current.</p>
-      <p id="installation">Installation destination.</p>
-      <p id="examples">Examples destination.</p>
-      <p id="performance">Performance destination.</p>
-      <p id="profile">Profile destination.</p>
+
+    <section data-demo-example="interactive" aria-labelledby="interactive-heading">
+      <header data-demo-header><div><h2 id="interactive-heading">Interactive selection and events</h2><p>Listening to m:change events and updating menu selection dynamically.</p></div></header>
+      <div data-demo-preview>
+        <m-box width="240">
+          <m-menu id="interactive-menu" value="mail">
+            <m-menu-item value="mail">Inbox</m-menu-item>
+            <m-menu-item value="starred">Starred</m-menu-item>
+            <m-menu-item value="sent">Sent Mail</m-menu-item>
+            <m-menu-item value="trash">Trash</m-menu-item>
+          </m-menu>
+        </m-box>
+        <m-box margin="12 0 0 0">
+          <m-p id="menu-status" role="status">Selected: mail</m-p>
+        </m-box>
+        <m-box display="flex" gap="8" margin="12 0 0 0">
+          <m-button id="select-inbox">Select Inbox</m-button>
+          <m-button id="select-starred">Select Starred</m-button>
+          <m-button id="select-trash">Select Trash</m-button>
+        </m-box>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="menu-api"><p>Loading API documentation.</p></div>
     </section>
   </main>
 </body>

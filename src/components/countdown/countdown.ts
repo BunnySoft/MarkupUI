@@ -229,12 +229,12 @@ export function createCountdown(element: HTMLElement, options: CountdownOptions 
     if (!connected) return
     if (!intact()) { disconnect(); return }
     if (stamp !== version || run !== runId) {
-      if (phase === "finish") element.dispatchEvent(new win.CustomEvent("mui:countdown-error", { bubbles: true, detail: Object.freeze({ error: failure, phase, runId: run, stale: true }) }))
+      if (phase === "finish") element.dispatchEvent(new win.CustomEvent("m:countdown-error", { bubbles: true, detail: Object.freeze({ error: failure, phase, runId: run, stale: true }) }))
       return
     }
     stop(); error = failure; errorPhase = phase
     if (phase !== "finish") pending = true
-    element.dispatchEvent(new win.CustomEvent("mui:countdown-error", { bubbles: true, detail: Object.freeze({ error: failure, phase, runId: run }) }))
+    element.dispatchEvent(new win.CustomEvent("m:countdown-error", { bubbles: true, detail: Object.freeze({ error: failure, phase, runId: run }) }))
   }
   function publish(info: CountdownDisplay, due: boolean) {
     if (!intact()) { disconnect(); return }
@@ -243,11 +243,11 @@ export function createCountdown(element: HTMLElement, options: CountdownOptions 
     if (finishedNow) completed = true
     const changed = paint(info), stamp = version, run = runId
     schedule(info.remaining)
-    if (changed) element.dispatchEvent(new win.CustomEvent("mui:countdown-update", { bubbles: true, detail: state() }))
+    if (changed) element.dispatchEvent(new win.CustomEvent("m:countdown-update", { bubbles: true, detail: state() }))
     if (!intact()) { disconnect(); return }
     if (!connected || stamp !== version || run !== runId || !finishedNow) return
     const detail: CountdownFinish = Object.freeze({ runId: run, initialValue, value: 0 })
-    element.dispatchEvent(new win.CustomEvent("mui:countdown-finish", { bubbles: true, detail }))
+    element.dispatchEvent(new win.CustomEvent("m:countdown-finish", { bubbles: true, detail }))
     if (!intact()) { disconnect(); return }
     if (!connected || stamp !== version || run !== runId) return
     try {
@@ -309,7 +309,7 @@ export function createCountdown(element: HTMLElement, options: CountdownOptions 
       } else stop()
     } else if (settings.active && !completed && (paintingPaused || pending)) tick()
     else if (pending && planned && paint(planned)) {
-      element.dispatchEvent(new win.CustomEvent("mui:countdown-update", { bubbles: true, detail: state() }))
+      element.dispatchEvent(new win.CustomEvent("m:countdown-update", { bubbles: true, detail: state() }))
     }
   }
   function listen(node: EventTarget, name: string, fn: EventListener, capture = false) {

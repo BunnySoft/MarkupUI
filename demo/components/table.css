@@ -14,7 +14,7 @@ button, input, fieldset { box-sizing: border-box; min-inline-size: 0; max-inline
 button { white-space: normal; overflow-wrap: anywhere; }
 fieldset { margin: .5rem 0 0; }
 .cell-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-block-start: .5rem; }
-.mui-table-scroll { margin-block: 1rem; }
+.m-table-scroll { margin-block: 1rem; }
 #report-scroll { max-inline-size: 42rem; border: 1px solid #a1a1aa; }
 .wide-table { min-inline-size: 56rem; }
 .project-column { width: 12rem; }

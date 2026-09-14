@@ -1,19 +1,19 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { MuiBadge, registerBadge } from "../src/components/badge/index.js"
-import { registerElements } from "../src/components/elements.js"
+import { Badge, MBadge, registerBadge } from "../src/components/badge/index.js"
+import { builtInElementNames, registerElements } from "../src/components/elements.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
-function badge(markup = '<mui-badge value="12"></mui-badge>'): MuiBadge {
+function badge(markup = '<m-badge value="12"></m-badge>'): Badge {
   document.body.innerHTML = markup
-  const element = document.querySelector("mui-badge")
-  if (!(element instanceof MuiBadge)) throw new Error("Badge was not upgraded")
+  const element = document.querySelector("m-badge")
+  if (!(element instanceof Badge)) throw new Error("Badge was not upgraded")
   return element
 }
-function number(element: MuiBadge): HTMLSpanElement {
-  return element.querySelector<HTMLSpanElement>("[data-mui-badge-number]")!
+function number(element: Badge): HTMLSpanElement {
+  return element.querySelector<HTMLSpanElement>("[data-m-badge-number]")!
 }
 
 describe("standalone Badge", () => {
@@ -22,14 +22,14 @@ describe("standalone Badge", () => {
     expect(element.value).toBe("12")
     expect(number(element).textContent).toBe("12")
     expect(element.indicator?.hidden).toBe(false)
-    expect(element.dataset.muiBadgeMode).toBe("standalone")
-    expect(element.dataset.muiBadgeState).toBe("value")
+    expect(element.dataset.mBadgeMode).toBe("standalone")
+    expect(element.dataset.mBadgeState).toBe("value")
     expect(element.querySelector("[role],[tabindex],[aria-live],[aria-label]")).toBeNull()
     expect(element.hasAttribute("role") || element.hasAttribute("tabindex")).toBe(false)
   })
 
   it("caps numeric and numeric-string values without changing their source", () => {
-    const element = badge('<mui-badge value="105" max="99"></mui-badge>')
+    const element = badge('<m-badge value="105" max="99"></m-badge>')
     expect(number(element).textContent).toBe("99+")
     expect(element.value).toBe("105")
     element.value = 200
@@ -41,9 +41,9 @@ describe("standalone Badge", () => {
   })
 
   it("gives integer counts and overflow suffixes stable digit cells without a transition renderer", () => {
-    const element = badge('<mui-badge value="105" max="99"></mui-badge>')
+    const element = badge('<m-badge value="105" max="99"></m-badge>')
     expect([...number(element).children].map((digit) => digit.textContent)).toEqual(["9", "9", "+"])
-    expect(number(element).querySelectorAll("[data-mui-badge-digit]")).toHaveLength(3)
+    expect(number(element).querySelectorAll("[data-m-badge-digit]")).toHaveLength(3)
     element.max = undefined
     element.value = "001"
     expect(number(element).textContent).toBe("001")
@@ -63,9 +63,9 @@ describe("standalone Badge", () => {
   })
 
   it("switches formatting modes when capped and literal values have the same displayed text", () => {
-    const element = badge('<mui-badge value="105" max="99"></mui-badge>')
+    const element = badge('<m-badge value="105" max="99"></m-badge>')
     const content = number(element)
-    expect(content.querySelectorAll("[data-mui-badge-digit]")).toHaveLength(3)
+    expect(content.querySelectorAll("[data-m-badge-digit]")).toHaveLength(3)
     element.value = "99+"
     expect(content.textContent).toBe("99+")
     expect(content.childElementCount).toBe(0)
@@ -78,7 +78,7 @@ describe("standalone Badge", () => {
 
     element.value = 105
     expect(content.textContent).toBe("99+")
-    expect(content.querySelectorAll("[data-mui-badge-digit]")).toHaveLength(3)
+    expect(content.querySelectorAll("[data-m-badge-digit]")).toHaveLength(3)
     const cells = [...content.children]
     element.value = 200
     element.show = false
@@ -90,7 +90,7 @@ describe("standalone Badge", () => {
   })
 
   it("retains authored Badge tokens through formatting, dot changes and reconnection", () => {
-    const element = badge('<mui-badge value="5" style="--mui-badge-size:28px;--mui-badge-font-size:16px;--mui-badge-font-family:monospace;--mui-badge-background:rgb(1,2,3);--mui-badge-offset-x:6px"></mui-badge>')
+    const element = badge('<m-badge value="5" style="--m-badge-size:28px;--m-badge-font-size:16px;--m-badge-font-family:monospace;--m-badge-background:rgb(1,2,3);--m-badge-offset-x:6px"></m-badge>')
     const authored = element.getAttribute("style")
     element.value = 105
     element.max = 99
@@ -106,26 +106,26 @@ describe("standalone Badge", () => {
   it("keeps the audited geometry, theme fallback roles and reduced-motion styling external", () => {
     const css = readFileSync(resolve("src", "components", "badge", "badge.css"), "utf8")
     expect(css).toContain('inline-size: .6em')
-    expect(css).toContain('block-size: var(--mui-badge-size, 18px)')
-    expect(css).toContain('line-height: var(--mui-badge-size, 18px)')
-    expect(css).toContain('border-radius: var(--mui-badge-radius, 9px)')
-    expect(css).toContain('z-index: var(--mui-badge-z-index, 2)')
+    expect(css).toContain('block-size: var(--m-badge-size, 18px)')
+    expect(css).toContain('line-height: var(--m-badge-size, 18px)')
+    expect(css).toContain('border-radius: var(--m-badge-radius, 9px)')
+    expect(css).toContain('z-index: var(--m-badge-z-index, 2)')
     expect(css).toContain('inset-inline-start: 100%')
     expect(css).toContain('overflow: hidden')
     for (const [role, color] of [["error", "#d03a52"], ["success", "#2a947d"], ["warning", "#f08a00"], ["info", "#3889c5"]]) {
-      expect(css).toContain(`var(--mui-color-${role}-suppl, ${color})`)
+      expect(css).toContain(`var(--m-color-${role}-suppl, ${color})`)
     }
-    expect(css).toContain(':where([data-mui-theme="light"])')
-    expect(css).toContain(':where([data-mui-theme="dark"])')
-    expect(css).toContain('var(--mui-badge-font-family, var(--mui-font-family, v-sans')
-    expect(css).toContain('4.5px var(--mui-badge-background')
+    expect(css).toContain(':where([data-m-theme="light"])')
+    expect(css).toContain(':where([data-m-theme="dark"])')
+    expect(css).toContain('var(--m-badge-font-family, var(--m-font-family, v-sans')
+    expect(css).toContain('4.5px var(--m-badge-background')
     expect(css).toContain('@media (prefers-reduced-motion: reduce)')
     expect(css).toContain('transition: none')
     expect(css).toContain('animation: none; content: none')
   })
 
   it("handles zero and negative counts explicitly", () => {
-    const element = badge('<mui-badge value="0"></mui-badge>')
+    const element = badge('<m-badge value="0"></m-badge>')
     expect(element.indicator?.hidden).toBe(true)
     element.showZero = true
     expect(element.indicator?.hidden).toBe(false)
@@ -140,7 +140,7 @@ describe("standalone Badge", () => {
   })
 
   it("preserves decimal text and caps decimal/exponent numeric representations", () => {
-    const element = badge('<mui-badge value="2.5"></mui-badge>')
+    const element = badge('<m-badge value="2.5"></m-badge>')
     expect(number(element).textContent).toBe("2.5")
     element.value = "1e3"
     element.max = 10
@@ -183,7 +183,7 @@ describe("standalone Badge", () => {
 
   it("preserves target nodes, listeners, names, focus and native form behavior", () => {
     const form = document.createElement("form")
-    const element = document.createElement("mui-badge") as MuiBadge
+    const element = document.createElement("m-badge") as Badge
     element.value = 5
     const target = document.createElement("button")
     target.type = "submit"
@@ -205,11 +205,11 @@ describe("standalone Badge", () => {
     expect(document.activeElement).toBe(target)
     expect(click).toHaveBeenCalledOnce()
     expect(submit).toHaveBeenCalledOnce()
-    expect(element.dataset.muiBadgeMode).toBe("attached")
+    expect(element.dataset.mBadgeMode).toBe("attached")
   })
 
   it("hides only the indicator when show is false", () => {
-    const element = badge('<mui-badge value="5"><button type="button">Inbox</button></mui-badge>')
+    const element = badge('<m-badge value="5"><button type="button">Inbox</button></m-badge>')
     element.show = false
     expect(element.indicator?.hidden).toBe(true)
     expect(element.hidden).toBe(false)
@@ -220,8 +220,8 @@ describe("standalone Badge", () => {
   })
 
   it("shows a dot independently of value and restores the original count when cleared", () => {
-    const element = badge('<mui-badge dot value="0"></mui-badge>')
-    expect(element.dataset.muiBadgeState).toBe("dot")
+    const element = badge('<m-badge dot value="0"></m-badge>')
+    expect(element.dataset.mBadgeState).toBe("dot")
     expect(element.indicator?.hidden).toBe(false)
     expect(number(element).hidden).toBe(true)
     element.value = 9
@@ -234,7 +234,7 @@ describe("standalone Badge", () => {
   })
 
   it("does not use processing alone as a visibility trigger", () => {
-    const element = badge("<mui-badge processing></mui-badge>")
+    const element = badge("<m-badge processing></m-badge>")
     expect(element.indicator?.hidden).toBe(true)
     element.dot = true
     expect(element.indicator?.hidden).toBe(false)
@@ -244,11 +244,11 @@ describe("standalone Badge", () => {
   })
 
   it("adopts custom value content ahead of count/cap/zero rules without cloning", () => {
-    const element = document.createElement("mui-badge") as MuiBadge
+    const element = document.createElement("m-badge") as Badge
     element.value = 0
     element.max = 0
     const content = document.createElement("span")
-    content.setAttribute("data-mui-badge-value", "")
+    content.setAttribute("data-m-badge-value", "")
     content.textContent = "New"
     const listener = vi.fn()
     content.addEventListener("click", listener)
@@ -260,14 +260,14 @@ describe("standalone Badge", () => {
     content.click()
     expect(listener).toHaveBeenCalledOnce()
     element.value = 999
-    expect(element.querySelector("[data-mui-badge-value]")).toBe(content)
+    expect(element.querySelector("[data-m-badge-value]")).toBe(content)
     expect(content.textContent).toBe("New")
-    expect(element.dataset.muiBadgeMode).toBe("standalone")
+    expect(element.dataset.mBadgeMode).toBe("standalone")
   })
 
   it("preserves authored custom accessibility and hidden state when switching to a dot", () => {
-    const element = badge('<mui-badge><span data-mui-badge-value id="status" role="status" aria-live="polite">New</span></mui-badge>')
-    const content = element.querySelector<HTMLElement>("[data-mui-badge-value]")!
+    const element = badge('<m-badge><span data-m-badge-value id="status" role="status" aria-live="polite">New</span></m-badge>')
+    const content = element.querySelector<HTMLElement>("[data-m-badge-value]")!
     element.dot = true
     expect(content.hidden).toBe(false)
     expect(content.parentElement?.hidden).toBe(true)
@@ -279,7 +279,7 @@ describe("standalone Badge", () => {
   })
 
   it("decorates only the indicator, never the wrapped action", () => {
-    const element = badge('<mui-badge value="5" decorative><button type="button" aria-label="Inbox, 5 unread">Inbox</button></mui-badge>')
+    const element = badge('<m-badge value="5" decorative><button type="button" aria-label="Inbox, 5 unread">Inbox</button></m-badge>')
     expect(element.indicator?.getAttribute("aria-hidden")).toBe("true")
     expect(element.hasAttribute("aria-hidden")).toBe(false)
     expect(element.querySelector("button")?.hasAttribute("aria-hidden")).toBe(false)
@@ -289,19 +289,19 @@ describe("standalone Badge", () => {
   })
 
   it("keeps templates inert and default text readable without inventing a count", () => {
-    const element = badge("<mui-badge>Inbox<template><button>Inert</button></template></mui-badge>")
+    const element = badge("<m-badge>Inbox<template><button>Inert</button></template></m-badge>")
     expect(element.indicator?.hidden).toBe(true)
     expect(element.firstChild?.textContent).toBe("Inbox")
     expect(element.querySelector("template")?.parentElement).toBe(element)
     expect(element.querySelector("button")).toBeNull()
-    expect(element.dataset.muiBadgeMode).toBe("attached")
+    expect(element.dataset.mBadgeMode).toBe("attached")
   })
 
   it("does not treat an inert value-marked template as rendered value content", () => {
-    const element = badge("<mui-badge><template data-mui-badge-value><span>Inert value</span></template></mui-badge>")
+    const element = badge("<m-badge><template data-m-badge-value><span>Inert value</span></template></m-badge>")
     expect(element.querySelector("template")?.parentElement).toBe(element)
     expect(element.indicator?.hidden).toBe(true)
-    expect(element.dataset.muiBadgeMode).toBe("standalone")
+    expect(element.dataset.mBadgeMode).toBe("standalone")
   })
 
   it("handles late/replaced targets without replacing the indicator", async () => {
@@ -311,7 +311,7 @@ describe("standalone Badge", () => {
     target.textContent = "Inbox"
     element.prepend(target)
     await Promise.resolve()
-    expect(element.dataset.muiBadgeMode).toBe("attached")
+    expect(element.dataset.mBadgeMode).toBe("attached")
     const replacement = document.createElement("a")
     replacement.href = "#inbox"
     replacement.textContent = "Messages"
@@ -321,29 +321,29 @@ describe("standalone Badge", () => {
     expect(replacement.parentElement).toBe(element)
     replacement.remove()
     await Promise.resolve()
-    expect(element.dataset.muiBadgeMode).toBe("standalone")
+    expect(element.dataset.mBadgeMode).toBe("standalone")
   })
 
   it("reclassifies late/changed value markers and restores generated values", async () => {
     const element = badge()
     const content = document.createElement("span")
-    content.setAttribute("data-mui-badge-value", "")
+    content.setAttribute("data-m-badge-value", "")
     content.textContent = "New"
     element.append(content)
     await Promise.resolve()
     expect(number(element).hidden).toBe(true)
     expect(element.indicator?.contains(content)).toBe(true)
-    content.removeAttribute("data-mui-badge-value")
+    content.removeAttribute("data-m-badge-value")
     await Promise.resolve()
     expect(content.parentElement).toBe(element)
-    expect(element.dataset.muiBadgeMode).toBe("attached")
+    expect(element.dataset.mBadgeMode).toBe("attached")
     expect(number(element).hidden).toBe(false)
     expect(number(element).textContent).toBe("12")
   })
 
   it("does not resurrect removed authored values when all host children are replaced", async () => {
-    const element = badge('<mui-badge value="5"><span data-mui-badge-value>Old</span></mui-badge>')
-    const old = element.querySelector("[data-mui-badge-value]")!
+    const element = badge('<m-badge value="5"><span data-m-badge-value>Old</span></m-badge>')
+    const old = element.querySelector("[data-m-badge-value]")!
     const indicator = element.indicator
     const target = document.createElement("button")
     target.textContent = "New target"
@@ -352,7 +352,7 @@ describe("standalone Badge", () => {
     expect(element.indicator).not.toBe(indicator)
     expect(element.contains(old)).toBe(false)
     expect(number(element).textContent).toBe("5")
-    expect(element.querySelectorAll("[data-mui-badge-indicator]")).toHaveLength(1)
+    expect(element.querySelectorAll("[data-m-badge-indicator]")).toHaveLength(1)
   })
 
   it("disconnects observation and reconnects without duplicating or losing nodes", async () => {
@@ -365,13 +365,13 @@ describe("standalone Badge", () => {
     document.body.append(element)
     expect(element.indicator).toBe(indicator)
     expect(number(element).textContent).toBe("15")
-    expect(element.querySelectorAll("[data-mui-badge-indicator]")).toHaveLength(1)
+    expect(element.querySelectorAll("[data-m-badge-indicator]")).toHaveLength(1)
   })
 
   it("keeps property assignment silent and never alters target disabled state", () => {
-    const element = badge('<mui-badge value="5"><button type="button" disabled>Inbox</button></mui-badge>')
+    const element = badge('<m-badge value="5"><button type="button" disabled>Inbox</button></m-badge>')
     const notification = vi.fn()
-    for (const name of ["click", "change", "input", "mui:change"]) element.addEventListener(name, notification)
+    for (const name of ["click", "change", "input", "m:change"]) element.addEventListener(name, notification)
     element.value = 9
     element.show = false
     element.max = 3
@@ -383,14 +383,19 @@ describe("standalone Badge", () => {
 
   it("preserves pre-definition properties", () => {
     document.body.innerHTML = "<test-late-badge></test-late-badge>"
-    const element = document.querySelector("test-late-badge") as MuiBadge
+    const element = document.querySelector("test-late-badge") as MBadge
     Object.assign(element, { value: 12, max: 9, show: true, showZero: true, dot: false, processing: true, decorative: true, type: "info", placement: "bottom-start" })
-    customElements.define("test-late-badge", class extends MuiBadge {})
+    customElements.define("test-late-badge", class extends MBadge {})
     expect(number(element).textContent).toBe("9+")
     expect(element.indicator?.getAttribute("aria-hidden")).toBe("true")
     expect(element.showZero && element.processing).toBe(true)
     expect(element.type).toBe("info")
     expect(element.placement).toBe("bottom-start")
+  })
+
+  it("exports canonical Badge with backwards-compatible MBadge alias", () => {
+    expect(Badge.tag).toBe("m-badge")
+    expect(MBadge).toBe(Badge)
   })
 
   it("injects no styles or shadow DOM and reports registration conflicts", () => {
@@ -399,15 +404,16 @@ describe("standalone Badge", () => {
     expect(document.querySelector("style,[style]")).toBeNull()
     expect(() => registerBadge()).not.toThrow()
     const define = vi.fn()
-    expect(() => registerBadge({ get: () => class extends HTMLElement {}, define })).toThrow("before the legacy MarkupUI bundle")
+    expect(() => registerBadge({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
     expect(define).not.toHaveBeenCalled()
   })
 
-  it("retains rich registration when the legacy aggregate is registered", () => {
+  it("removes legacy Badge from aggregate element registrations", () => {
     registerElements(customElements)
-    expect(customElements.get("mui-badge")).toBe(MuiBadge)
-    const element = badge('<mui-badge value="3">Inbox</mui-badge>')
+    expect(customElements.get("m-badge")).toBe(Badge)
+    expect(builtInElementNames).not.toContain("m-badge")
+    const element = badge('<m-badge value="3">Inbox</m-badge>')
     expect(number(element).textContent).toBe("3")
-    expect(element.dataset.muiBadgeMode).toBe("attached")
+    expect(element.dataset.mBadgeMode).toBe("attached")
   })
 })

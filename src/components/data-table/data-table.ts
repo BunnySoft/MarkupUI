@@ -63,8 +63,8 @@ const scopes: readonly string[] = ["page", "filtered", "all"]
 /** Enhances original native rows; never renders cells or serializes application data. */
 export function createDataTable(root: HTMLElement, options: DataTableOptions): DataTableController {
   const document = root?.ownerDocument, view = document?.defaultView
-  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".mui-data-table[data-data-table]")
-    || !["div", "section"].includes(root.localName) || (root as Owned)[owner]) throw new TypeError("Use an unowned native div/section.mui-data-table[data-data-table].")
+  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".m-data-table[data-data-table]")
+    || !["div", "section", "m-data-table"].includes(root.localName) || (root as Owned)[owner]) throw new TypeError("Use an unowned native div/section.m-data-table[data-data-table].")
   const token = {}
   function object(value: unknown, keys: readonly string[]) {
     if (!value || typeof value !== "object" || Array.isArray(value)
@@ -82,7 +82,7 @@ export function createDataTable(root: HTMLElement, options: DataTableOptions): D
     return nodes[0] ?? null
   }
   const tableNode = one("table[data-data-table-table]", true)
-  if (!(tableNode instanceof view.HTMLTableElement) || !tableNode.classList.contains("mui-table")) throw new TypeError("Author a real table.mui-table[data-data-table-table].")
+  if (!(tableNode instanceof view.HTMLTableElement) || !tableNode.classList.contains("m-table")) throw new TypeError("Author a real table.m-table[data-data-table-table].")
   const table = tableNode, bodyNode = table.tBodies[0], headNode = table.tHead
   if (!bodyNode || !headNode) throw new TypeError("Author native thead and tbody.")
   const body = bodyNode, head = headNode
@@ -199,7 +199,7 @@ export function createDataTable(root: HTMLElement, options: DataTableOptions): D
   const anatomy = [table, head, body, ...headers.values(), ...sortButtons.keys(), ...filters.values(), ...pages.keys(), size, count, empty, loading, all, ...summaries.map(item => item.node)].filter((node): node is HTMLElement => !!node)
   function collect(): Row[] {
     if (!root.isConnected || root.getRootNode() !== document || root.hasAttribute("role")
-      || !root.matches(".mui-data-table[data-data-table]") || !table.classList.contains("mui-table")
+      || !root.matches(".m-data-table[data-data-table]") || !table.classList.contains("m-table")
       || one("table[data-data-table-table]", true) !== table || table.tHead !== head || table.tBodies.length !== 1 || table.tBodies[0] !== body
       || head.rows.length !== 1 || head.rows[0]!.cells.length < 1 || head.rows[0]!.cells.length > 64
       || head.rows[0]!.cells.length !== headerCells.length || [...head.rows[0]!.cells].some((cell, index) => cell !== headerCells[index])
@@ -425,12 +425,12 @@ export function createDataTable(root: HTMLElement, options: DataTableOptions): D
     checked([...keys])
   }
   function notify(source: DataTableChange["source"], event: Event) {
-    if (connected) root.dispatchEvent(new view!.CustomEvent<DataTableChange>("mui:data-table-change", { bubbles: true, detail: { source, state: state(), event } }))
+    if (connected) root.dispatchEvent(new view!.CustomEvent<DataTableChange>("m:data-table-change", { bubbles: true, detail: { source, state: state(), event } }))
   }
   function attempt(action: () => void) {
     try { action() } catch (cause) {
       error = cause
-      root.dispatchEvent(new view!.CustomEvent("mui:data-table-error", { bubbles: true, detail: { error: cause } }))
+      root.dispatchEvent(new view!.CustomEvent("m:data-table-error", { bubbles: true, detail: { error: cause } }))
     }
   }
   function click(event: Event) {

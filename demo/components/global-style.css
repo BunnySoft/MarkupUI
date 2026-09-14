@@ -7,7 +7,7 @@
 html[data-global-style-scheme="light"] { color-scheme: light; }
 html[data-global-style-scheme="dark"] { color-scheme: dark; }
 html[data-global-style-scheme="native"] { color-scheme: normal; }
-html[data-global-style-type] { --mui-font-family: Georgia, serif; --mui-font-size: 18px; --mui-line-height: 1.7; }
-html[data-global-style-colors] { --mui-bg-page: Lavender; --mui-text-primary: MidnightBlue; }
+html[data-global-style-type] { --m-font-family: Georgia, serif; --m-font-size: 18px; --m-line-height: 1.7; }
+html[data-global-style-colors] { --m-bg-page: Lavender; --m-text-primary: MidnightBlue; }
 body[data-global-style-author] { margin: 12px; padding: 8px; font-family: monospace; background-color: Honeydew; color: DarkGreen; }
 @media print { #global-style-example [data-demo-controls] { display: none; } }

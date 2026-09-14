@@ -1,21 +1,39 @@
-const { createTooltip } = window.MarkupUITooltip
-const node = id => document.getElementById(id)
-const bind = (trigger, panel, options) => createTooltip(node(trigger), node(panel), options)
-const controllers = {
-  save: bind("save", "save-tip"),
-  link: bind("ordinary-link", "link-tip"),
-  hover: bind("hover-trigger", "hover-tip", { delay: 120, duration: 180 }),
-  peer: bind("peer-trigger", "peer-tip"),
-  nested: bind("nested-trigger", "nested-tip"),
-  disabledHelp: bind("disabled-help", "disabled-tip"),
-  edge: bind("edge-trigger", "edge-tip", { placement: "bottom-start", positioning: "fallback" }),
-  bottom: bind("bottom-trigger", "bottom-tip", { placement: "bottom" }),
+import { loadComponentApi } from "../component-api.js"
+
+function initialize() {
+  const api = globalThis.MarkupUITooltip
+  if (!api) throw new Error("Tooltip runtime did not load.")
+  void loadComponentApi(document.getElementById("tooltip-api"), new URL("../api/tooltip.json", import.meta.url))
+
+  const manualTooltip = document.getElementById("tooltip-manual")
+  const manualState = document.getElementById("manual-state")
+
+  function updateManualState() {
+    if (manualState && manualTooltip) {
+      manualState.textContent = `State: ${manualTooltip.show ? "open" : "closed"}`
+    }
+  }
+
+  document.getElementById("manual-open")?.addEventListener("click", () => {
+    manualTooltip?.open()
+    updateManualState()
+  })
+  document.getElementById("manual-close")?.addEventListener("click", () => {
+    manualTooltip?.close()
+    updateManualState()
+  })
+  document.getElementById("manual-toggle")?.addEventListener("click", () => {
+    manualTooltip?.toggle()
+    updateManualState()
+  })
+
+  for (const tip of document.querySelectorAll("m-tooltip")) {
+    tip.addEventListener("toggle", updateManualState, true)
+  }
 }
-controllers.parent = window.MarkupUIPopover.createPopover(node("popover-trigger"), node("parent-panel"))
-node("request-show").addEventListener("click", () => controllers.hover.open())
-node("request-hide").addEventListener("click", () => controllers.hover.close())
-node("tip-form").addEventListener("submit", event => {
-  event.preventDefault()
-  node("form-log").value = `Saved ${new FormData(event.currentTarget).get("draft")}`
-})
-window.tooltipDemo = controllers
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initialize)
+} else {
+  initialize()
+}

@@ -1,90 +1,155 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Select</title>
+  <title>Select - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-select.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./select.css">
-  <script defer src="../../dist/markup-ui-select.global.js"></script>
-  <script defer src="./select.js"></script>
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script type="module" src="../../dist/markup-ui-select.js"></script>
+  <script type="module" src="./select.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Select: keep the native control and its options</h1>
-    <p>Single dropdown and multiple/native lists, not a replacement combobox. The optional literal filter is outside the list. Selected choices stay visible even when they do not match.</p>
-    <form id="selection-form" action="select.html" method="get">
-      <label for="language">Language (native required)</label>
-      <div class="mui-select" data-select id="language-root">
-        <span class="mui-select__affix" aria-hidden="true">⌘</span>
-        <select data-select-control id="language" name="language" required>
-          <option data-select-placeholder value="" disabled selected>Choose a language</option>
-          <optgroup label="Languages">
-            <option value="typescript">TypeScript</option>
-            <option value="rust">Rust</option>
-            <option value="go">Go</option>
-          </optgroup>
-        </select>
-        <button data-select-clear type="button" hidden>Clear language</button>
-      </div>
-      <fieldset id="tool-fieldset">
-        <legend>Native multiple list and independent filter</legend>
-        <div class="mui-select" data-select id="tools-root" data-size="small">
-          <div data-select-search hidden>
-            <label for="tool-filter">Filter option/group text</label>
-            <input data-select-filter id="tool-filter" type="search" aria-controls="tools" autocomplete="off">
-          </div>
-          <label for="tools">Tools (Ctrl/Command or Shift for native multiple selection)</label>
-          <select data-select-control id="tools" name="tools" multiple size="7" aria-describedby="filter-help">
-            <optgroup label="Web">
-              <option value="html" selected>HTML</option>
-              <option value="css">CSS</option>
-              <option value="js">JavaScript</option>
-            </optgroup>
-            <optgroup label="Locked group" disabled>
-              <option value="server" selected>Server</option>
-              <option value="database">Database</option>
-            </optgroup>
-            <optgroup label="Older tools">
-              <option value="legacy" disabled selected>Legacy (disabled option)</option>
-              <option value="archive" hidden>Author-hidden archive</option>
+  <main data-demo-page class="component-docs">
+    <h1>Select</h1>
+    <p>Native single dropdowns and multiple lists. The select, options and optgroups own selection, keyboard, focus, validation and submitted values; there is no replacement combobox.</p>
+    <details class="component-setup" id="required-files">
+      <summary>Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-select.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-native-select.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-select.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+    <form id="selection-form" action="select.html" method="get"></form>
+    <section data-demo-example="single" aria-labelledby="single-title">
+      <header data-demo-header><div><h2 id="single-title">Single, empty and placeholder</h2><p>A selected empty string is not null. The first marked empty option is a native placeholder; null means selectedIndex -1 and no submission.</p></div></header>
+      <div data-demo-preview>
+        <m-label for="language">Language (native required)</m-label>
+        <m-select id="language-root">
+          <span aria-hidden="true">⌘</span>
+          <select id="language" name="language" form="selection-form" required>
+            <option data-select-placeholder value="" disabled selected>Choose a language</option>
+            <optgroup label="Languages">
+              <option value="typescript">TypeScript</option>
+              <option value="rust">Rust</option>
+              <option value="go">Go</option>
             </optgroup>
           </select>
-          <button data-select-clear type="button" hidden>Clear all tools</button>
-          <p data-select-empty hidden>No matching options. Selected choices are kept visible.</p>
-        </div>
-        <p id="filter-help">Filtering hides only unselected nonmatches. Disabled selected options/groups remain selected but are not successful form values.</p>
-      </fieldset>
-      <label for="external-select">Associated with the other form (no placeholder)</label>
-      <div class="mui-select" data-select id="external-root" data-size="large">
-        <select data-select-control id="external-select" name="external" form="other-form">
-          <option value="a" selected>External A</option>
-          <option value="b">External B</option>
-        </select>
-        <button data-select-clear type="button" hidden>Clear external choice</button>
+          <button data-select-clear type="button" hidden>Clear language</button>
+        </m-select>
+        <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+          <m-button id="assign">Silent value = TypeScript</m-button>
+          <m-button id="none">Silent value = null</m-button>
+          <m-button id="picker">Request native showPicker</m-button>
+        </m-box>
+        <m-p id="picker-result">No picker request. The platform owns closing; there is no hidePicker API.</m-p>
+        <m-p id="events">Language events: input 0, change 0, clear 0</m-p>
       </div>
-      <input type="hidden" name="local" value="only">
-      <p><button type="submit">Inspect native submission / local GET fallback</button> <button type="reset">Native reset</button></p>
-    </form>
+    </section>
+    <section data-demo-example="multiple" aria-labelledby="multiple-title">
+      <header data-demo-header><div><h2 id="multiple-title">Multiple list and literal filter</h2><p>Use Ctrl/Command or Shift for native multiple selection. The optional external input filters literal option/group text, not remote search or virtualization. Selected nonmatches remain visible.</p></div></header>
+      <div data-demo-preview>
+        <fieldset id="tool-fieldset">
+          <legend>Tools</legend>
+          <m-select id="tools-root" size="small">
+            <m-box data-select-search hidden>
+              <m-label for="tool-filter">Filter option/group text</m-label>
+              <input data-select-filter id="tool-filter" type="search" form="selection-form" aria-controls="tools" autocomplete="off">
+            </m-box>
+            <m-label for="tools">Native multiple tools</m-label>
+            <select id="tools" name="tools" form="selection-form" multiple size="7" aria-describedby="filter-help">
+              <optgroup label="Web">
+                <option value="html" selected>HTML</option>
+                <option value="css">CSS</option>
+                <option value="js">JavaScript</option>
+              </optgroup>
+              <optgroup label="Locked group" disabled>
+                <option value="server" selected>Server</option>
+                <option value="database">Database</option>
+              </optgroup>
+              <optgroup label="Older tools">
+                <option value="legacy" disabled selected>Legacy (disabled option)</option>
+                <option value="archive" hidden>Author-hidden archive</option>
+              </optgroup>
+            </select>
+            <button data-select-clear type="button" hidden>Clear all tools</button>
+            <m-p data-select-empty hidden>No matching options. Selected choices are kept visible.</m-p>
+          </m-select>
+        </fieldset>
+        <m-p id="filter-help">Disabled selected options/groups are included in value and selectedOptions but excluded from native FormData. listSize is native row count; size="small" changes only visual field dimensions.</m-p>
+        <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+          <m-button id="filter">Silent literal filter: CSS</m-button>
+          <m-button id="fieldset">Toggle disabled tool fieldset</m-button>
+          <m-button id="rtl">Toggle RTL</m-button>
+          <m-button id="theme">Toggle dark theme</m-button>
+        </m-box>
+      </div>
+    </section>
+    <section data-demo-example="forms" aria-labelledby="forms-title">
+      <header data-demo-header><div><h2 id="forms-title">Defaults, forms and validity</h2><p>There is no Select defaultValue. option.defaultSelected and selected attributes are reset defaults; live writes follow native dirty selectedness. Only native form owners submit.</p></div></header>
+      <div data-demo-preview>
+        <m-label for="external-select">External form association (no placeholder)</m-label>
+        <m-select id="external-root" size="large">
+          <select id="external-select" name="external" form="other-form">
+            <option value="a" selected>External A</option>
+            <option value="b">External B</option>
+          </select>
+          <button data-select-clear type="button" hidden>Clear external choice</button>
+        </m-select>
+        <fieldset disabled>
+          <legend>First-legend exception <m-select name="legend" form="selection-form" aria-label="Legend choice" size="tiny"><select aria-label="Legend choice"><option value="enabled" selected>Enabled inside first legend</option></select></m-select></legend>
+          <m-select name="blocked" form="selection-form" aria-label="Disabled fieldset choice" status="warning"><select aria-label="Disabled fieldset choice"><option value="excluded" selected>Excluded by fieldset</option></select></m-select>
+        </fieldset>
+        <input type="hidden" form="selection-form" name="local" value="only">
+        <m-box class="demo-tools">
+          <button type="submit" form="selection-form">Validate and inspect FormData</button>
+          <button type="reset" form="selection-form">Native reset</button>
+          <m-button type="button" id="default">Make Rust the reset default</m-button>
+          <m-button type="button" id="cancel">Cancel next reset</m-button>
+          <m-button type="button" id="mode">Toggle external multiple mode</m-button>
+        </m-box>
+        <pre id="submission">No submission yet. This demo does not send data to a service.</pre>
+      </div>
+    </section>
+    <section data-demo-example="lifecycle" aria-labelledby="lifecycle-title">
+      <header data-demo-header><div><h2 id="lifecycle-title">Options, late adoption and reconnect</h2><p>Surviving authored options, optgroups, labels and listeners are never cloned. A generated native select can adopt one late authored select; incompatible pending values are rejected, not discarded.</p></div></header>
+      <div data-demo-preview>
+        <m-select id="late-root" aria-label="Late authored choice" name="late" form="selection-form" borderless></m-select>
+        <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+          <m-button id="add">Append native option</m-button>
+          <m-button id="adopt">Adopt authored select</m-button>
+          <m-button id="reconnect">Disconnect, write, reconnect language</m-button>
+        </m-box>
+        <m-p id="lifecycle-state">No replacement yet.</m-p>
+        <pre id="state">Authored native fields work before the API loads.</pre>
+      </div>
+    </section>
     <form id="other-form"><button type="reset">Reset external choice only</button></form>
-    <div class="demo-tools">
-      <button type="button" id="assign">Silent setValue(TypeScript)</button>
-      <button type="button" id="none">Single no-selection (null)</button>
-      <button type="button" id="default">Make Rust the reset default</button>
-      <button type="button" id="filter">Silent filter: CSS</button>
-      <button type="button" id="add">Append authored option and refresh</button>
-      <button type="button" id="fieldset">Toggle disabled tool fieldset</button>
-      <button type="button" id="mode">Disconnect/rebind external multiple mode</button>
-      <button type="button" id="picker">Request native showPicker</button>
-      <button type="button" id="cancel">Cancel next reset</button>
-      <button type="button" id="rtl">Toggle RTL</button>
-      <button type="button" id="disconnect">Disconnect helpers</button>
-    </div>
-    <template id="option-template"><option value="python">Python</option></template>
-    <p id="state">Without JS, native options, labels, reset and submission still work.</p>
-    <p id="picker-result">No picker request. There is no hidePicker API.</p>
-    <p id="events">Language events: input 0, change 0, clear 0</p>
-    <pre id="submission">No submission yet.</pre>
+    <section aria-labelledby="behavior-title">
+      <h2 id="behavior-title">Behavior, accessibility and delivery</h2>
+      <p>Select extends the shared ViewElement and registers only m-select. Author one native select, or direct native option/optgroup nodes which are moved into a generated select. Give the native owner a label, aria-label or resolved aria-labelledby. Host naming/description/invalid ARIA and name, form, disabled, required, multiple, autocomplete attributes forward on adoption and later host changes. list-size maps to native size. Direct native accessors do not reflect back to the host. Do not add a host role/tabindex or put Select in passive headers, Tooltip content, Dropdown labels or interactive wrappers. Native readonly and a replacement m-option are not supported.</p>
+      <p>Every option requires an explicit unique native string value, including "". Direct options or one direct optgroup level with nonempty labels are supported. Duplicate/missing keys, unknown API values, wrong-mode values and repeated array keys throw. Single value is string or null; multiple value is a DOM-order string array, not an empty-array configuration default. Disabled choices can be selected programmatically. Native collections remain live; late insertion, removal and reorder follow native selectedness and never resurrect missing keys. value/selectedIndex writes are silent; use options and option.defaultSelected for defaults. No host value/defaultValue/placeholder string is invented: the native marked first empty option supplies placeholder text and clear behavior.</p>
+      <p>Absent native state is value=null for an empty select, selectedIndex=-1, listSize=0, name="", multiple/disabled/required=false, form=null outside forms, and empty native collections. A nonempty single dropdown normally selects its first enabled option unless native defaults say otherwise. Logical size defaults to medium, status to null and borderless to false. checkValidity, reportValidity, setCustomValidity, focus, blur, add, item, namedItem and showPicker delegate to the native owner. remove(index) removes a native option; remove() removes the host. The browser owns picker availability, user-activation exceptions, keyboard/typeahead, constraint validation and invalid focus.</p>
+      <p>Native input, change and invalid retain their targets, order and flags without m:input/m:change aliases. Programmatic value writes, option changes and reset emit no input/change. clear() is explicit user intent: it emits untrusted input, then change, then noncancelable m:select-clear({previous}) once on a real editable change. Clear selects the marked placeholder or null in single mode, [] in multiple. Disabled/fieldset, hidden/inert and advisory aria-disabled/aria-readonly guard clear. Cancel the optional named type=button click, including at a later bubbling listener, to cancel its deferred action. Native invalid is non-bubbling and cancelable; listen on native or capture it.</p>
+      <p>The optional labelled external text/search input requires a native list (multiple or native size ≥ 2). Filtering is literal and case-insensitive; selected nonmatches stay visible, author-hidden options remain hidden, and IME drafts are not replaced. refresh() updates helpers after direct native property writes. Disconnect releases observers, listeners, queued clears/reset work and only owned helper visibility/disabled attributes. Reconnect retains native state. Errors surface through error and non-bubbling m:select-error; correct anatomy and refresh to recover. Mode changes use the browser's own selectedness transition, not a custom keyboard engine.</p>
+      <p>ESM imports core and markup-ui-native-select.js. Classic order is core, native-select, select. The internal native dependency is also used by the existing TreeSelect and Popselect compositions; it registers nothing and exposes no public factory facade. Those compositions are not Select dependencies. No Input/Dropdown/Popover/aggregate constructor or runtime metadata is loaded. Optional m-bind supports string/null/arrays and native input/change; it is not a dependency.</p>
+      <p>The .m-select native skin and --m-select-* author overrides retain 22/28/34/40px visual minimums, native list height and arrows, visible focus, disabled/status colors, logical RTL layout and light/dark/forced-color/print behavior. Native optgroups retain platform row/group boundaries. There is no custom popup sizing, virtualization or animation. Canonical size/status/borderless replace archived data-* styling.</p>
+    </section>
+    <section id="select-api"></section>
   </main>
 </body>
 </html>

@@ -2,7 +2,10 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createTime, formatTime } from "../src/components/time/index.js"
+import { Time, MTime, registerTime, timeTypes, createTime, formatTime } from "../src/components/time/index.js"
+import * as timeApi from "../src/components/time/index.js"
+import "../src/components/time/global.js"
+import { ViewElement } from "../src/core/index.js"
 import type { TimeBindingOptions, TimeController, TimeFormatOptions, TimeInput } from "../src/components/time/index.js"
 import { minTime, maxTime } from "../src/components/time/format.js"
 
@@ -10,7 +13,7 @@ const helpers: TimeController[] = []
 let hidden = false
 function fixture(options: TimeBindingOptions = { time: 0 }, bind = true, rich = false) {
   const host = document.createElement("div")
-  host.innerHTML = `<time class="mui-time" data-time datetime="1970-01-01T00:00:00.000Z">${rich ? '<strong>Updated: </strong><span data-time-text>Authored epoch</span>' : "Authored epoch"}</time><input name="other" value="kept" aria-label="Outside">`
+  host.innerHTML = `<time class="m-time" data-time datetime="1970-01-01T00:00:00.000Z">${rich ? '<strong>Updated: </strong><span data-time-text>Authored epoch</span>' : "Authored epoch"}</time><input name="other" value="kept" aria-label="Outside">`
   document.body.append(host)
   const element = host.querySelector("time")!, target = element.querySelector<HTMLElement>("[data-time-text]") ?? element
   const text = target.firstChild as Text
@@ -234,7 +237,7 @@ describe("Time meaningful live refresh and cleanup", () => {
   })
   it("pauses for document invisibility and catches up once on return", () => {
     const { helper, text } = fixture({ time: 0, type: "relative", live: true }), change = vi.fn()
-    helper.element.addEventListener("mui:time-change", change)
+    helper.element.addEventListener("m:time-change", change)
     hidden = true; document.dispatchEvent(new Event("visibilitychange"))
     expect(vi.getTimerCount()).toBe(0)
     vi.advanceTimersByTime(120000); expect(text.data).toBe("in 0 seconds")
@@ -274,7 +277,7 @@ describe("Time meaningful live refresh and cleanup", () => {
   it("keeps the previous pair on automatic clock failure and stops retry polling", () => {
     let broken = false
     const clock = vi.fn(() => broken ? NaN : Date.now()), { helper, text, element } = fixture({ time: 0, type: "relative", live: true, clock }), error = vi.fn()
-    element.addEventListener("mui:time-error", error); const before = text.data
+    element.addEventListener("m:time-error", error); const before = text.data
     broken = true; vi.advanceTimersByTime(1000)
     expect(error).toHaveBeenCalledOnce(); expect(text.data).toBe(before); expect(helper.state.error).toBeInstanceOf(Error)
     expect(vi.getTimerCount()).toBe(0)
@@ -286,7 +289,7 @@ describe("Time meaningful live refresh and cleanup", () => {
     const { helper, element } = fixture({ time: 0, type: "relative", live: true, clock: () => { action(); return Date.now() } })
     action = () => helper.set({ time: 1000 })
     expect(() => helper.refresh()).toThrow(/reenter/)
-    action = () => {}; element.addEventListener("mui:time-change", () => helper.set({ time: 10000, type: "datetime", live: false }), { once: true })
+    action = () => {}; element.addEventListener("m:time-change", () => helper.set({ time: 10000, type: "datetime", live: false }), { once: true })
     vi.advanceTimersByTime(1000); expect(helper.state.time).toBe(10000); expect(vi.getTimerCount()).toBe(0)
     helper.set({ type: "relative", live: true }); action = () => helper.disconnect()
     helper.refresh(); expect(helper.connected).toBe(false); expect(vi.getTimerCount()).toBe(0)
@@ -314,3 +317,195 @@ describe("Time meaningful live refresh and cleanup", () => {
     expect(() => createTime(plain.element, { time: 0 })).toThrow(/Text node/)
   })
 })
+
+describe("canonical Time ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(timeApi.Time).toBe(Time)
+    expect(timeApi.MTime).toBe(MTime)
+    expect(MTime).toBe(Time)
+    expect(Time.tag).toBe("m-time")
+    expect(ViewElement.prototype.isPrototypeOf(Time.prototype)).toBe(true)
+    expect(customElements.get("m-time")).toBe(Time)
+    expect(Time.observedAttributes).toEqual(["time", "format", "type"])
+    expect(typeof timeApi.createTime).toBe("function")
+    expect(typeof timeApi.formatTime).toBe("function")
+    expect(() => registerTime()).not.toThrow()
+
+    const define = vi.fn()
+    expect(() => registerTime({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("exposes global MarkupUITime namespace", () => {
+    const globalApi = (globalThis as any).MarkupUITime
+    expect(globalApi).toBeDefined()
+    expect(globalApi.Time).toBe(Time)
+    expect(globalApi.MTime).toBe(MTime)
+    expect(globalApi.registerTime).toBe(registerTime)
+    expect(globalApi.createTime).toBe(createTime)
+    expect(globalApi.formatTime).toBe(formatTime)
+  })
+
+  it("exposes canonical observedAttributes and default property values", () => {
+    const element = document.createElement("m-time") as Time
+    expect(element.time).toBe("")
+    expect(element.format).toBe("")
+    expect(element.type).toBe("datetime")
+  })
+
+  it("reflects properties to attributes and validates values", () => {
+    const element = document.createElement("m-time") as Time
+
+    // time property
+    element.time = 1704067200000
+    expect(element.getAttribute("time")).toBe("1704067200000")
+    element.time = "2024-01-01"
+    expect(element.getAttribute("time")).toBe("2024-01-01")
+    element.time = null
+    expect(element.hasAttribute("time")).toBe(false)
+    expect(() => { element.time = NaN }).toThrow(RangeError)
+    expect(() => { element.time = Infinity }).toThrow(RangeError)
+    expect(() => { (element as any).time = {} }).toThrow(TypeError)
+
+    // format property
+    element.format = "yyyy-MM-dd"
+    expect(element.getAttribute("format")).toBe("yyyy-MM-dd")
+    expect(element.format).toBe("yyyy-MM-dd")
+    element.format = null
+    expect(element.hasAttribute("format")).toBe(false)
+
+    // type property
+    for (const type of timeTypes) {
+      element.type = type
+      expect(element.type).toBe(type)
+      expect(element.getAttribute("type")).toBe(type)
+    }
+    expect(() => { (element as any).type = "invalid" }).toThrow(RangeError)
+    element.setAttribute("type", "invalid")
+    expect(() => element.type).toThrow(RangeError)
+    element.removeAttribute("type")
+    expect(element.type).toBe("datetime")
+  })
+
+  it("replays pre-upgrade properties upon connection", () => {
+    const element = document.createElement("m-time") as Time
+    Object.defineProperty(element, "time", { configurable: true, value: 1704067200000 })
+    Object.defineProperty(element, "format", { configurable: true, value: "yyyy-MM-dd" })
+    Object.defineProperty(element, "type", { configurable: true, value: "date" })
+    document.body.append(element)
+
+    expect(element.getAttribute("time")).toBe("1704067200000")
+    expect(element.getAttribute("format")).toBe("yyyy-MM-dd")
+    expect(element.getAttribute("type")).toBe("date")
+    expect(element.textContent).toBe("2024-01-01")
+  })
+
+  it("synchronizes formatted output and datetime attribute on connection and updates", () => {
+    const element = document.createElement("m-time") as Time
+    element.time = 0
+    element.type = "date"
+    document.body.append(element)
+
+    expect(element.getAttribute("datetime")).toBe("1970-01-01T00:00:00.000Z")
+    expect(element.textContent).toContain("1970")
+
+    element.time = 1704067200000
+    expect(element.getAttribute("datetime")).toBe("2024-01-01T00:00:00.000Z")
+    expect(element.textContent).toContain("2024")
+
+    element.type = "datetime"
+    expect(element.textContent).toContain("2024")
+    expect(element.textContent).toContain("00:00:00")
+  })
+
+  it("supports custom date/time format patterns", () => {
+    const element = document.createElement("m-time") as Time
+    element.time = 1704067200000
+    element.format = "yyyy-MM-dd"
+    document.body.append(element)
+
+    const date = new Date(1704067200000)
+    const expected = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+    expect(element.textContent).toBe(expected)
+
+    element.format = "yyyy/MM/dd"
+    const expectedSlash = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")}`
+    expect(element.textContent).toBe(expectedSlash)
+  })
+
+  it("supports relative time formatting and emits m:time-change events", () => {
+    const element = document.createElement("m-time") as Time
+    const change = vi.fn()
+    element.addEventListener("m:time-change", change)
+    element.time = 0
+    element.type = "relative"
+    document.body.append(element)
+
+    expect(change).toHaveBeenCalled()
+    expect(element.textContent).toBeTruthy()
+    const detail = change.mock.calls[0]![0].detail
+    expect(detail.datetime).toBe("1970-01-01T00:00:00.000Z")
+    expect(detail.time).toBe(0)
+  })
+
+  it("preserves authored text when time is not provided", () => {
+    const host = document.createElement("div")
+    host.innerHTML = "<m-time>January 1, 2024</m-time>"
+    document.body.append(host)
+    const element = host.querySelector("m-time") as Time
+
+    expect(element.textContent).toBe("January 1, 2024")
+    element.time = 0
+    expect(element.textContent).toContain("1970")
+  })
+
+  it("cleans up boundary timer on disconnect", () => {
+    const element = document.createElement("m-time") as Time
+    element.time = 0
+    element.type = "relative"
+    document.body.append(element)
+
+    const count = vi.getTimerCount()
+    expect(count).toBeGreaterThanOrEqual(1)
+    element.remove()
+    expect(vi.getTimerCount()).toBe(count - 1)
+  })
+
+  it("generates component API documentation matching the ViewElement specification", () => {
+    const docs = JSON.parse(readFileSync(resolve("demo", "api", "time.json"), "utf8"))
+    expect(docs.elements).toHaveLength(1)
+    const [element] = docs.elements
+    expect(element.type).toBe("Time")
+    expect(element.web.primary).toBe("m-time")
+    expect(element.properties.time).toMatchObject({
+      name: "time",
+      type: "number",
+      typeName: "string | number",
+      attribute: "time",
+      default: "",
+      writable: true,
+    })
+    expect(element.properties.format).toMatchObject({
+      name: "format",
+      type: "string",
+      typeName: "string",
+      attribute: "format",
+      default: "",
+      writable: true,
+    })
+    expect(element.properties.type).toMatchObject({
+      name: "type",
+      type: "enum",
+      typeName: "TimeDisplayType",
+      values: expect.arrayContaining(["relative", "date", "datetime"]),
+      attribute: "type",
+      default: "datetime",
+      writable: true,
+    })
+    expect(element.regions).toEqual([
+      { name: "content", accepts: ["text", "phrasing"], min: 0, max: null },
+    ])
+    expect(element.events.some((e: any) => e.web === "m:time-change")).toBe(true)
+  })
+})
+

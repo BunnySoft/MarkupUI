@@ -128,7 +128,7 @@ export function createTimePicker(root: HTMLElement): TimePickerController {
   }
   function report(reason: unknown) {
     error = reason
-    root.dispatchEvent(new view!.CustomEvent("mui:time-picker-error", { detail: { error: reason } }))
+    root.dispatchEvent(new view!.CustomEvent("m:time-picker-error", { detail: { error: reason } }))
   }
   function settleReset() {
     if (!reset || reset.eventPhase !== 0) return
@@ -173,7 +173,7 @@ export function createTimePicker(root: HTMLElement): TimePickerController {
         const change = new view!.Event("change", { bubbles: true }); generated.add(change); control.dispatchEvent(change)
       }
       settleReset()
-      if (connected && generation === version && control.value === "") root.dispatchEvent(new view!.CustomEvent("mui:time-picker-clear", { detail: { value: "" } }))
+      if (connected && generation === version && control.value === "") root.dispatchEvent(new view!.CustomEvent("m:time-picker-clear", { detail: { value: "" } }))
     }
     return true
   }

@@ -3,77 +3,128 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Alert</title>
+  <title>Alert - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-alert.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-space.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-input.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./alert.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-alert.global.js"></script>
-  <script defer src="./alert.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-space.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer src="../../dist/markup-ui-native-input.global.js"></script>
+  <script defer src="../../dist/markup-ui-input.global.js"></script>
+  <script type="module" src="./alert.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Alert: authored notices, explicit announcements and native close intent</h1>
-    <p>Static notices do not become assertive live regions automatically. Applications choose native role/live settings and own actual removal.</p>
+  <main data-demo-page class="component-docs">
+    <m-heading level="1">Alert</m-heading>
+    <m-p>Authored notices, explicit announcements and native close intent.</m-p>
+    <nav class="component-docs-nav" aria-label="Alert documentation">
+      <a href="#types-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#alert-api">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary>Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-alert.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-alert.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
 
-    <section aria-labelledby="types-heading">
-      <h2 id="types-heading">Types and readable severity</h2>
-      <div class="examples" id="types">
-        <mui-alert title="Default notice">Neutral appearance; no empty icon is created.</mui-alert>
-        <mui-alert type="info" title="Information">Your changes can be reviewed before submission.</mui-alert>
-        <mui-alert type="success" title="Success">Your report was saved.</mui-alert>
-        <mui-alert type="warning" title="Warning">Your session will expire soon.</mui-alert>
-        <mui-alert type="error" title="Error">The report could not be saved.</mui-alert>
+    <section data-demo-example="types" aria-labelledby="types-heading">
+      <header data-demo-header><div><h2 id="types-heading">Types and readable severity</h2><m-p>Neutral appearance alongside info, success, warning and error types.</m-p></div></header>
+      <div data-demo-preview>
+        <m-box display="flex" direction="column" gap="12" width="100%">
+          <m-alert title="Default notice"><m-text>Neutral appearance; no empty icon is created.</m-text></m-alert>
+          <m-alert type="info" title="Information"><m-text>Your changes can be reviewed before submission.</m-text></m-alert>
+          <m-alert type="success" title="Success"><m-text>Your report was saved.</m-text></m-alert>
+          <m-alert type="warning" title="Warning"><m-text>Your session will expire soon.</m-text></m-alert>
+          <m-alert type="error" title="Error"><m-text>The report could not be saved.</m-text></m-alert>
+        </m-box>
       </div>
     </section>
 
-    <section aria-labelledby="close-heading">
-      <h2 id="close-heading">Authored regions, actions and close policy</h2>
-      <form id="notice-form">
-        <mui-alert id="notice" type="warning" closable close-label="Dismiss save warning" role="region" aria-labelledby="notice-heading">
-          <span data-mui-alert-icon aria-hidden="true">⚑</span>
-          <header data-mui-alert-header><h3 id="notice-heading">Warning: review before retrying</h3></header>
-          <div data-mui-alert-content>
-            <p id="notice-copy">The original action, input and content nodes are preserved.</p>
-            <label>Note <input id="notice-input" name="note" value="Draft"></label>
-            <div data-mui-alert-actions><button type="submit" id="retry">Retry save</button><button type="button" id="details">View details</button></div>
-          </div>
-        </mui-alert>
-      </form>
-      <p id="close-status" role="status">0 close requests; the notice remains visible.</p>
-      <p id="submit-status" role="status">0 submissions.</p>
-      <p id="action-status" role="status">0 detail actions.</p>
-      <div class="controls">
-        <button type="button" id="toggle-icon">Toggle icon</button>
-        <button type="button" id="toggle-close">Toggle closable</button>
-        <button type="button" id="reconnect">Reconnect notice</button>
-        <button type="button" id="toggle-border">Toggle border</button>
+    <section data-demo-example="close" aria-labelledby="close-heading">
+      <header data-demo-header><div><h2 id="close-heading">Authored regions, actions and close policy</h2><m-p>Preserves authored header, content, icon and action elements with native close intent.</m-p></div></header>
+      <div data-demo-preview>
+        <form id="notice-form">
+          <m-alert id="notice" type="warning" closable close-label="Dismiss save warning" role="region" aria-labelledby="notice-heading">
+            <m-text data-m-alert-icon aria-hidden="true">⚑</m-text>
+            <m-box data-m-alert-header><m-heading level="3" id="notice-heading">Warning: review before retrying</m-heading></m-box>
+            <m-box data-m-alert-content>
+              <m-p id="notice-copy">The original action, input and content nodes are preserved.</m-p>
+              <m-space align="center" gap="8">
+                <m-label for="notice-input"><m-text>Note</m-text></m-label>
+                <m-input id="notice-input" name="note" value="Draft"></m-input>
+              </m-space>
+              <m-box data-m-alert-actions>
+                <m-button type="primary" id="retry">Retry save</m-button>
+                <m-button id="details">View details</m-button>
+              </m-box>
+            </m-box>
+          </m-alert>
+        </form>
+        <m-p id="close-status" role="status">0 close requests; the notice remains visible.</m-p>
+        <m-p id="submit-status" role="status">0 submissions.</m-p>
+        <m-p id="action-status" role="status">0 detail actions.</m-p>
+        <m-space wrap gap="8" class="controls">
+          <m-button id="toggle-icon">Toggle icon</m-button>
+          <m-button id="toggle-close">Toggle closable</m-button>
+          <m-button id="reconnect">Reconnect notice</m-button>
+          <m-button id="toggle-border">Toggle border</m-button>
+        </m-space>
       </div>
     </section>
 
-    <section aria-labelledby="live-heading">
-      <h2 id="live-heading">Explicit native announcement choices</h2>
-      <p>The following roles are authored in HTML. Badge, Alert and other components do not create competing announcers for them.</p>
-      <mui-alert id="polite-notice" type="info" role="status" aria-live="polite" aria-atomic="true">
-        <p data-mui-alert-content id="polite-copy">Ready to check for saved changes.</p>
-      </mui-alert>
-      <mui-alert id="urgent-notice" type="error" role="alert" aria-atomic="true" hidden>
-        <p data-mui-alert-content id="urgent-copy">Your connection was lost. Save a local copy before leaving.</p>
-      </mui-alert>
-      <div class="controls">
-        <button type="button" id="update-status">Update polite status</button>
-        <button type="button" id="show-urgent">Show authored urgent notice</button>
+    <section data-demo-example="live" aria-labelledby="live-heading">
+      <header data-demo-header><div><h2 id="live-heading">Explicit native announcement choices</h2><m-p>The following roles are authored in HTML. Badge, Alert and other components do not create competing announcers for them.</m-p></div></header>
+      <div data-demo-preview>
+        <m-box display="flex" direction="column" gap="12" width="100%">
+          <m-alert id="polite-notice" type="info" role="status" aria-live="polite" aria-atomic="true">
+            <m-p data-m-alert-content id="polite-copy">Ready to check for saved changes.</m-p>
+          </m-alert>
+          <m-alert id="urgent-notice" type="error" role="alert" aria-atomic="true" hidden>
+            <m-p data-m-alert-content id="urgent-copy">Your connection was lost. Save a local copy before leaving.</m-p>
+          </m-alert>
+          <m-space wrap gap="8" class="controls">
+            <m-button id="update-status">Update polite status</m-button>
+            <m-button id="show-urgent">Show authored urgent notice</m-button>
+          </m-space>
+          <m-p><m-text class="muted">Actual spoken timing varies by browser and assistive technology; this demo does not certify announcements.</m-text></m-p>
+        </m-box>
       </div>
-      <p>Actual spoken timing varies by browser and assistive technology; this demo does not certify announcements.</p>
     </section>
 
-    <section aria-labelledby="static-heading">
-      <h2 id="static-heading">Native CSS-only notice and appearance controls</h2>
-      <section class="mui-alert" data-type="info" id="static-notice">
-        <span data-mui-alert-icon aria-hidden="true">ⓘ</span>
-        <div data-mui-alert-body><h3 data-mui-alert-header>CSS-only information</h3><p data-mui-alert-content>This native section needs no Custom Element controller.</p></div>
-      </section>
-      <mui-alert id="borderless" type="success" bordered="false" show-icon="false" title="Borderless, no icon">The same readable notice with simpler presentation.</mui-alert>
-      <mui-alert id="rtl-notice" type="warning" dir="rtl" closable title="RTL notice">Logical icon and close positioning follows direction.</mui-alert>
+    <section data-demo-example="static" aria-labelledby="static-heading">
+      <header data-demo-header><div><h2 id="static-heading">Native CSS-only notice and appearance controls</h2><m-p>Static CSS layout, borderless presentation, and bidirectional awareness.</m-p></div></header>
+      <div data-demo-preview>
+        <m-box display="flex" direction="column" gap="12" width="100%">
+          <section class="m-alert" data-type="info" id="static-notice">
+            <m-span data-m-alert-icon aria-hidden="true">ⓘ</m-span>
+            <m-box data-m-alert-body><m-heading level="3" data-m-alert-header>CSS-only information</m-heading><m-p data-m-alert-content>This native section needs no Custom Element controller.</m-p></div>
+          </section>
+          <m-alert id="borderless" type="success" bordered="false" show-icon="false" title="Borderless, no icon"><m-text>The same readable notice with simpler presentation.</m-text></m-alert>
+          <m-alert id="rtl-notice" type="warning" dir="rtl" closable title="RTL notice"><m-text>Logical icon and close positioning follows direction.</m-text></m-alert>
+        </m-space>
+      </div>
     </section>
+
+    <section id="alert-api"></section>
   </main>
 </body>
 </html>

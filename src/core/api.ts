@@ -9,30 +9,30 @@ import {
   registerElement,
   registerElements,
 } from "../components/elements.js"
-import { MuiElement } from "./element.js"
-import { installPlugin, isPluginInstalled, type MuiPlugin } from "./plugin.js"
+import { MElement } from "./element.js"
+import { installPlugin, isPluginInstalled, type MPlugin } from "./plugin.js"
 import { clearOverlays, showMessage, showNotification } from "../overlay/index.js"
 import {
   extendQuery,
-  MuiQuery,
+  MQuery,
   query,
   setHtml,
 } from "../query/index.js"
 import { isSafeUri, sanitizeHtml } from "../security/index.js"
-import { bind, createStore, MuiStore } from "../state/index.js"
+import { bind, createStore, MStore } from "../state/index.js"
 import { theme } from "../theme/index.js"
 
 export interface MarkupUIApi {
-  (target: string | Element | Iterable<Element>): MuiQuery
+  (target: string | Element | Iterable<Element>): MQuery
   readonly version: string
-  readonly fn: typeof MuiQuery.prototype
+  readonly fn: typeof MQuery.prototype
   readonly query: typeof query
-  readonly use: (plugin: MuiPlugin<MarkupUIApi>) => MarkupUIApi
+  readonly use: (plugin: MPlugin<MarkupUIApi>) => MarkupUIApi
   readonly plugins: {
     readonly installed: typeof isPluginInstalled
   }
   readonly elements: {
-    readonly Base: typeof MuiElement
+    readonly Base: typeof MElement
     readonly names: readonly string[]
     readonly register: typeof registerElement
     readonly registerAll: typeof registerElements
@@ -46,7 +46,7 @@ export interface MarkupUIApi {
   readonly state: {
     readonly create: typeof createStore
     readonly bind: typeof bind
-    readonly Store: typeof MuiStore
+    readonly Store: typeof MStore
   }
   readonly theme: typeof theme
   readonly message: {
@@ -67,21 +67,21 @@ export interface MarkupUIApi {
   }
 }
 
-const callable = (target: string | Element | Iterable<Element>): MuiQuery => query(target)
+const callable = (target: string | Element | Iterable<Element>): MQuery => query(target)
 
-export const mui = Object.assign(callable, {
+export const m = Object.assign(callable, {
   version: "0.11.0",
-  fn: MuiQuery.prototype,
+  fn: MQuery.prototype,
   query,
-  use(plugin: MuiPlugin<MarkupUIApi>): MarkupUIApi {
-    installPlugin(plugin, mui)
-    return mui
+  use(plugin: MPlugin<MarkupUIApi>): MarkupUIApi {
+    installPlugin(plugin, m)
+    return m
   },
   plugins: {
     installed: isPluginInstalled,
   },
   elements: {
-    Base: MuiElement,
+    Base: MElement,
     names: builtInElementNames,
     register: registerElement,
     registerAll: registerElements,
@@ -95,7 +95,7 @@ export const mui = Object.assign(callable, {
   state: {
     create: createStore,
     bind,
-    Store: MuiStore,
+    Store: MStore,
   },
   theme,
   message: {

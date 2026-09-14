@@ -1,18 +1,8 @@
 import { installActions } from "../actions/index.js"
-import { MuiElement } from "../core/element.js"
-import { bind, createStore, type MuiStore } from "../state/index.js"
+import { MElement } from "../core/element.js"
+import { bind, createStore, type MStore } from "../state/index.js"
 import { theme } from "../theme/index.js"
-import { MuiLayout } from "./content.js"
-
-export class MuiGrid extends MuiLayout {
-  public override connectedCallback(): void {
-    super.connectedCallback()
-    const columns = this.getAttribute("columns")
-    if (columns !== null) this.style.gridTemplateColumns = columns
-  }
-}
-
-export class MuiTheme extends MuiElement {
+export class MTheme extends MElement {
   public static get observedAttributes(): string[] { return ["name"] }
   public connectedCallback(): void {
     this.applyTheme()
@@ -26,43 +16,22 @@ export class MuiTheme extends MuiElement {
   }
 }
 
-export class MuiSemantic extends MuiElement {
+export class MSemantic extends MElement {
   public connectedCallback(): void {
     const role = this.getAttribute("data-role")
     if (role) this.setAttribute("role", role)
   }
 }
 
-export class MuiHeading extends MuiElement {
+export class MField extends MElement {
   public connectedCallback(): void {
-    const level = Math.max(1, Math.min(6, Number(this.getAttribute("level")) || 2))
-    this.setAttribute("role", "heading")
-    this.setAttribute("aria-level", String(level))
-  }
-}
-
-export class MuiLink extends MuiElement {
-  public connectedCallback(): void {
-    if (this.querySelector(":scope > a") !== null) return
-    const anchor = this.ownerDocument.createElement("a")
-    for (const name of ["href", "target", "rel", "aria-label"]) {
-      const value = this.getAttribute(name)
-      if (value !== null) anchor.setAttribute(name, value)
-    }
-    while (this.firstChild !== null) anchor.append(this.firstChild)
-    this.append(anchor)
-  }
-}
-
-export class MuiField extends MuiElement {
-  public connectedCallback(): void {
-    if (this.querySelector(":scope > [data-mui-label]") !== null) return
+    if (this.querySelector(":scope > [data-m-label]") !== null) return
     const text = this.getAttribute("label")
     if (!text) return
     const label = this.ownerDocument.createElement("span")
-    label.dataset.muiLabel = ""
+    label.dataset.mLabel = ""
     label.textContent = text
-    const control = this.querySelector("mui-input,mui-textarea,mui-select")
+    const control = this.querySelector("m-input,m-textarea,m-select")
     if (control !== null && !control.hasAttribute("aria-label")) {
       control.setAttribute("aria-label", text)
       control.querySelector("input,textarea,select")?.setAttribute("aria-label", text)
@@ -71,8 +40,8 @@ export class MuiField extends MuiElement {
   }
 }
 
-export class MuiApp extends MuiElement {
-  public store: MuiStore = createStore()
+export class MApp extends MElement {
+  public store: MStore = createStore()
   private disposeActions?: () => void
   private readonly bindingDisposers: Array<() => void> = []
   private observer?: MutationObserver
@@ -90,12 +59,12 @@ export class MuiApp extends MuiElement {
   private initialize(): void {
     if (!this.isConnected || this.observer !== undefined) return
     const state = this.querySelector<HTMLScriptElement>(
-      ':scope > script[type="application/json"][data-mui-state]',
+      ':scope > script[type="application/json"][data-m-state]',
     )
     if (state?.textContent?.trim()) {
       const parsed: unknown = JSON.parse(state.textContent)
       if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
-        throw new Error("mui-app state must be a JSON object.")
+        throw new Error("m-app state must be a JSON object.")
       }
       this.store = createStore(parsed as Record<string, unknown>)
       state.remove()

@@ -1,11 +1,50 @@
-body { margin: 2rem; font: 1rem/1.5 system-ui, sans-serif; background: #f6f8fc; color: #172030; }
-main { max-width: 65rem; }
-section { margin-block: 2rem; }
-button, input { font: inherit; }
-button:not([data-menu-item]) { margin: .3rem; padding: .4rem .7rem; }
-label { display: block; margin-block: .5rem; }
-#vertical-menu { max-inline-size: 25rem; }
-#horizontal-menu { max-inline-size: 45rem; }
-output { display: block; min-block-size: 1.5em; }
-#outside { position: fixed; top: 8px; right: 8px; }
-@media (max-width: 30rem) { body { margin: 1rem; } }
+m-menu {
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+}
+m-menu[mode="horizontal"] {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+m-menu-item {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+}
+m-menu-item:hover:not([disabled]) {
+  background: var(--m-color-fill-secondary, rgba(0, 0, 0, 0.06));
+}
+m-menu-item[selected] {
+  color: var(--m-color-primary, #18a058);
+  font-weight: 500;
+  background: var(--m-color-fill-primary, rgba(24, 160, 88, 0.1));
+}
+m-menu-item[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+m-menu-divider {
+  display: block;
+  block-size: 1px;
+  background: var(--m-color-border, #e0e0e6);
+  margin-block: 6px;
+}
+m-menu-group {
+  display: block;
+  margin-block-start: 8px;
+}
+m-menu-group::before {
+  content: attr(title);
+  display: block;
+  font-size: 12px;
+  color: var(--m-color-text-secondary, #999);
+  padding: 4px 12px;
+  text-transform: uppercase;
+}
+.controls m-button {
+  min-inline-size: 100px;
+}

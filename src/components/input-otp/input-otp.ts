@@ -121,7 +121,7 @@ export function createInputOtp(input: HTMLInputElement, options: InputOtpOptions
       if (input.value !== value || !sameBoundary(before, boundary())) { refresh(); return }
       const full = structural(), notify = full && !completed && before.available
       completed = full; observed = boundary(); present()
-      if (notify) input.dispatchEvent(new view!.CustomEvent("mui:input-otp-complete", {
+      if (notify) input.dispatchEvent(new view!.CustomEvent("m:input-otp-complete", {
         detail: Object.freeze({ length, characters }),
       }))
     }, 0)

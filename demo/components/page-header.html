@@ -1,99 +1,172 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Page Header — native composition</title>
+  <title>Page Header - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-page-header.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-breadcrumb.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-tag.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./page-header.css">
-  <script src="./page-header.js" defer></script>
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script defer src="../../dist/markup-ui-page-header.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer src="../../dist/markup-ui-breadcrumb.global.js"></script>
+  <script defer src="../../dist/markup-ui-tag.global.js"></script>
+  <script type="module" src="./page-header.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <header class="mui-page-header panel" id="page-banner">
-    <nav class="mui-page-header-header breadcrumb" aria-label="Breadcrumb">
-      <a href="#workspace">Workspace</a><span aria-hidden="true"> / </span><span aria-current="page">Project</span>
+  <main data-demo-page class="component-docs">
+    <h1>Page Header</h1>
+    <p>Displays page-level title, subtitle, breadcrumb navigation, avatar, action controls, content, and footer.</p>
+    <nav class="component-docs-nav" aria-label="Page Header documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
     </nav>
-    <div class="mui-page-header-main">
-      <div class="mui-page-header-lead">
-        <a class="mui-page-header-back" id="destination-back" href="#workspace" target="_self" rel="help">
-          <svg class="back-graphic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M20 12H4m7-7-7 7 7 7"></path></svg>
-          <span>Workspace</span>
-        </a>
-        <span class="mui-page-header-avatar" aria-hidden="true">
-          <svg width="40" height="40" viewBox="0 0 40 40" focusable="false">
-            <rect width="40" height="40" rx="8" fill="#e6eef9"></rect>
-            <path d="M9 27V13h7l4 5h11v9Z" fill="#175fbb"></path>
-          </svg>
-        </span>
-        <div class="mui-page-header-titles">
-          <h1 class="mui-page-header-title" id="project-title">Project migration</h1>
-          <p class="mui-page-header-subtitle">One native heading, original content and explicit navigation</p>
-        </div>
-      </div>
-      <div class="mui-page-header-extra">
-        <a href="#record">Edit example record</a>
-        <span>Draft</span>
-      </div>
-    </div>
-    <div class="mui-page-header-content">
-      <p>Page Header is CSS-only. This top-level native header is the page banner by HTML context, not a library-added role.</p>
-    </div>
-    <div class="mui-page-header-footer">Footer information remains ordinary authored content.</div>
-  </header>
-  <main>
-    <section id="workspace" tabindex="-1" aria-labelledby="workspace-title">
-      <h2 id="workspace-title">Workspace destination</h2>
-      <p>The back link has a known native href; it does not guess browser history.</p>
-    </section>
-    <form id="record-form">
-      <article id="record" aria-labelledby="record-title">
-        <header class="mui-page-header panel" id="record-header">
-          <div class="mui-page-header-main">
-            <div class="mui-page-header-lead">
-              <button class="mui-page-header-back" type="button" id="application-back">
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-page-header.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-page-header.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header><div><h2 id="basic-heading">Basic page header</h2><p>Page header with breadcrumb navigation, avatar, title, subtitle, extra actions, and content.</p></div></header>
+      <div data-demo-preview>
+        <m-page-header class="panel" id="page-banner">
+          <m-breadcrumb slot="header" class="m-page-header-header" aria-label="Breadcrumb">
+            <m-breadcrumb-item href="#workspace"><m-text>Workspace</m-text></m-breadcrumb-item>
+            <m-breadcrumb-item aria-current="page"><m-text>Project</m-text></m-breadcrumb-item>
+          </m-breadcrumb>
+          <m-box class="m-page-header-main">
+            <m-box class="m-page-header-lead">
+              <m-button slot="back" class="m-page-header-back" id="destination-back">
                 <svg class="back-graphic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M20 12H4m7-7-7 7 7 7"></path></svg>
-                <span>Application back action</span>
-              </button>
-              <div class="mui-page-header-titles">
-                <h2 class="mui-page-header-title" id="record-title">AnExtremelyLongOriginalRecordTitleThatWrapsWithoutClippingOrReplacingItsNativeHeading</h2>
-                <p class="mui-page-header-subtitle">This nested header is not another page banner.</p>
-              </div>
-            </div>
-            <div class="mui-page-header-extra">
-              <button type="submit" id="save-record">Save</button>
-              <button type="reset" id="reset-record">Reset</button>
-              <button type="button" disabled id="disabled-action">Unavailable</button>
-            </div>
-          </div>
-          <div class="mui-page-header-content">
-            <label for="record-name">Record name</label>
-            <input id="record-name" name="name" value="Initial record" required>
-          </div>
-          <div class="mui-page-header-footer">
-            <p>The application back button records its ordinary native click; it does not submit or navigate automatically.</p>
-            <output id="application-result" for="record-name" aria-label="Application action result">No application action yet.</output>
-          </div>
+                <m-text>Back</m-text>
+              </m-button>
+              <span slot="avatar" class="m-page-header-avatar" aria-hidden="true">
+                <svg width="40" height="40" viewBox="0 0 40 40" focusable="false">
+                  <rect width="40" height="40" rx="8" fill="#e6eef9"></rect>
+                  <path d="M9 27V13h7l4 5h11v9Z" fill="#175fbb"></path>
+                </svg>
+              </span>
+              <m-box class="m-page-header-titles">
+                <m-heading level="1" class="m-page-header-title" id="project-title"><h1>Project migration</h1></m-heading>
+                <m-p class="m-page-header-subtitle">One native heading, original content and explicit navigation</m-p>
+              </m-box>
+            </m-box>
+            <m-box class="m-page-header-extra">
+              <m-tag type="info">Draft</m-tag>
+              <m-button type="primary">Action</m-button>
+            </m-box>
+          </m-box>
+          <m-box class="m-page-header-content">
+            <m-p>Page header organizes page metadata and navigation cleanly across desktop and mobile screens.</m-p>
+          </m-box>
+          <m-box class="m-page-header-footer">
+            <m-text>Footer information remains ordinary authored content.</m-text>
+          </m-box>
+        </m-page-header>
+      </div>
+    </section>
+
+    <section data-demo-example="dynamic" aria-labelledby="dynamic-heading">
+      <header data-demo-header><div><h2 id="dynamic-heading">Dynamic properties and back event</h2><p>Page header updated via title and subtitle properties, with back event handling.</p></div></header>
+      <div data-demo-preview>
+        <m-page-header class="panel" id="dynamic-header" title="Dynamic Page Header" subtitle="Configured with title and subtitle properties">
+          <m-button slot="back" class="m-page-header-back" id="dynamic-back">
+            <svg class="back-graphic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M20 12H4m7-7-7 7 7 7"></path></svg>
+            <m-text>Back</m-text>
+          </m-button>
+          <m-box slot="extra" class="m-page-header-extra">
+            <m-tag type="success">Active</m-tag>
+          </m-box>
+          <m-p>Main content automatically wrapped into the content region.</m-p>
+        </m-page-header>
+        <m-p id="back-status" role="status">Back event received: 0 times.</m-p>
+        <m-box class="controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
+          <m-button id="change-title">Change title</m-button>
+          <m-button id="change-subtitle">Change subtitle</m-button>
+          <m-button id="reset-titles">Reset titles</m-button>
+        </m-box>
+      </div>
+    </section>
+
+    <section data-demo-example="form" aria-labelledby="form-heading">
+      <header data-demo-header><div><h2 id="form-heading">Form header</h2><p>Page header inside a form with submission and reset actions.</p></div></header>
+      <div data-demo-preview>
+        <form id="record-form">
+          <m-page-header class="panel" id="record-header">
+            <m-box class="m-page-header-main">
+              <m-box class="m-page-header-lead">
+                <m-button slot="back" class="m-page-header-back" id="application-back">
+                  <svg class="back-graphic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M20 12H4m7-7-7 7 7 7"></path></svg>
+                  <m-text>Application back</m-text>
+                </m-button>
+                <m-box class="m-page-header-titles">
+                  <m-heading level="2" class="m-page-header-title" id="record-title"><m-h2>Record details</m-h2></m-heading>
+                  <m-p class="m-page-header-subtitle">Edit record attributes below</m-p>
+                </m-box>
+              </m-box>
+              <m-box class="m-page-header-extra">
+                <m-button attr-type="submit" id="save-record">Save</m-button>
+                <m-button attr-type="reset" id="reset-record">Reset</m-button>
+                <m-button disabled id="disabled-action">Unavailable</m-button>
+              </m-box>
+            </m-box>
+            <m-box class="m-page-header-content">
+              <m-label for="record-name">Record name</m-label>
+              <input id="record-name" name="name" value="Initial record" required>
+            </m-box>
+            <m-box class="m-page-header-footer">
+              <m-p id="application-result" role="status">No application action yet.</m-p>
+            </m-box>
+          </m-page-header>
+        </form>
+      </div>
+    </section>
+
+    <section data-demo-example="static" aria-labelledby="static-heading">
+      <header data-demo-header><div><h2 id="static-heading">CSS-only native composition</h2><p>Header using class-based markup without custom element dependency.</p></div></header>
+      <div data-demo-preview>
+        <header class="m-page-header panel" id="static-header">
+          <m-box class="m-page-header-main">
+            <m-box class="m-page-header-lead">
+              <m-box class="m-page-header-titles">
+                <m-heading level="2" class="m-page-header-title"><m-h2>Static CSS Header</m-h2></m-heading>
+                <m-p class="m-page-header-subtitle">Pure CSS class composition</m-p>
+              </m-box>
+            </m-box>
+            <m-box class="m-page-header-extra">
+              <m-tag>Static</m-tag>
+            </m-box>
+          </m-box>
+          <m-box class="m-page-header-content">
+            <m-p>CSS styles apply cleanly to both m-page-header elements and .m-page-header classes.</m-p>
+          </m-box>
         </header>
-      </article>
-    </form>
-    <article dir="rtl" lang="ar" aria-labelledby="rtl-title">
-      <header class="mui-page-header panel" id="rtl-header">
-        <div class="mui-page-header-main">
-          <div class="mui-page-header-lead">
-            <a class="mui-page-header-back" id="rtl-back" href="#workspace">
-              <svg class="back-graphic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M20 12H4m7-7-7 7 7 7"></path></svg>
-              <span>رجوع</span>
-            </a>
-            <div class="mui-page-header-titles">
-              <h2 class="mui-page-header-title" id="rtl-title">عنوان أصلي لصفحة المشروع</h2>
-              <p class="mui-page-header-subtitle">ترتيب المحتوى واتجاهه يحددهما المستند</p>
-            </div>
-          </div>
-          <div class="mui-page-header-extra"><a href="#record">تحرير</a></div>
-        </div>
-      </header>
-    </article>
-    <p id="outside">Outside the opt-in, native headings, links and document styles stay unchanged.</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="page-header-api"><p>Loading API documentation.</p></div>
+    </section>
   </main>
 </body>
 </html>

@@ -2,7 +2,10 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createVirtualList, virtualWindow } from "../src/components/virtual-list/index.js"
+import { VirtualList, createVirtualList, registerVirtualList, virtualWindow } from "../src/components/virtual-list/index.js"
+import * as virtualListApi from "../src/components/virtual-list/index.js"
+import { ViewElement } from "../src/core/index.js"
+import { generateComponentApi } from "../scripts/component-api.mjs"
 import type { VirtualListController, VirtualListOptions } from "../src/components/virtual-list/index.js"
 
 interface Item { id: number; text: string }
@@ -14,8 +17,8 @@ describe("Virtual List default styles", () => {
   const css = readFileSync(resolve("src", "components", "virtual-list", "virtual-list.css"), "utf8")
 
   it("keeps fixed-window geometry within its unchanged ceiling", () => {
-    expect(css).toContain("height: var(--mui-virtual-list-height)")
-    expect(css).toContain("height: var(--mui-virtual-row-size)")
+    expect(css).toContain("height: var(--m-virtual-list-height)")
+    expect(css).toContain("height: var(--m-virtual-row-size)")
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
   })
 
@@ -33,9 +36,9 @@ describe("Virtual List default styles", () => {
 
 function fixture(options: Partial<VirtualListOptions<Item>> = {}, height = 320) {
   const root = document.createElement("div")
-  root.className = "mui-virtual-list"
-  root.style.cssText = "--mui-virtual-list-height:320px;overflow-y:auto"
-  root.innerHTML = '<ul class="mui-virtual-list__items"></ul>'
+  root.className = "m-virtual-list"
+  root.style.cssText = "--m-virtual-list-height:320px;overflow-y:auto"
+  root.innerHTML = '<ul class="m-virtual-list__items"></ul>'
   document.body.append(root)
   let measuredHeight = height
   Object.defineProperty(root, "clientHeight", { get: () => measuredHeight, configurable: true })
@@ -173,8 +176,8 @@ describe("data, keys and native ownership", () => {
     expect(list.children).toHaveLength(1); expect(list.firstElementChild).toBe(extra)
   })
   it("requires explicit viewport sizing, external scrolling CSS and no vertical padding", () => {
-    for (const style of ["", "--mui-virtual-list-height:100%;overflow-y:auto",
-      "--mui-virtual-list-height:320px;overflow-y:hidden", "--mui-virtual-list-height:320px;overflow-y:auto;padding-top:1px"]) {
+    for (const style of ["", "--m-virtual-list-height:100%;overflow-y:auto",
+      "--m-virtual-list-height:320px;overflow-y:hidden", "--m-virtual-list-height:320px;overflow-y:auto;padding-top:1px"]) {
       const { root, helper } = fixture({ items: [] }); helper.disconnect(); root.style.cssText = style
       expect(() => createVirtualList(root, { items: [], rowSize: 32, key: item => item, render: () => document.createElement("li"), update: vi.fn() })).toThrow()
     }
@@ -230,20 +233,20 @@ describe("failure, scheduling and teardown", () => {
     }, dispose })).toThrow("factory failure")
     expect(dispose).toHaveBeenCalledTimes(4)
     expect(nodes.every(node => !node.parentNode)).toBe(true)
-    expect(document.querySelectorAll(".mui-virtual-list__items > li")).toHaveLength(0)
+    expect(document.querySelectorAll(".m-virtual-list__items > li")).toHaveLength(0)
   })
   it("fails closed on updater errors; never advertises partially updated success", () => {
     const dispose = vi.fn(), { helper, list, root } = fixture({
       items: data(4), dispose, update: (element, item) => { element.textContent = "partial"; if (item.id === 1) throw new Error("update failure") },
     })
-    const error = vi.fn(); root.addEventListener("mui:virtual-list-error", error)
+    const error = vi.fn(); root.addEventListener("m:virtual-list-error", error)
     expect(() => helper.setItems(data(4))).toThrow("update failure")
     expect(helper.connected).toBe(false); expect(helper.error).toBeInstanceOf(Error)
     expect(list.children).toHaveLength(0); expect(dispose).toHaveBeenCalledTimes(4); expect(error).toHaveBeenCalledOnce()
   })
   it("surfaces thrown undefined rather than treating it as successful cleanup", () => {
     const { helper, list, root } = fixture({ items: data(1), update: () => { throw undefined } })
-    const error = vi.fn(); root.addEventListener("mui:virtual-list-error", error)
+    const error = vi.fn(); root.addEventListener("m:virtual-list-error", error)
     let caught = false
     try { helper.setItems(data(1)) } catch (cause) { caught = true; expect(cause).toBeUndefined() }
     expect(caught).toBe(true); expect(helper.connected).toBe(false)
@@ -293,8 +296,8 @@ describe("failure, scheduling and teardown", () => {
   it("reports asynchronous failures without leaving listeners or rows alive", () => {
     let callback: FrameRequestCallback | undefined
     vi.spyOn(window, "requestAnimationFrame").mockImplementation(value => { callback = value; return 1 })
-    const { root, helper, list } = fixture(), error = vi.fn(); root.addEventListener("mui:virtual-list-error", error)
-    root.dispatchEvent(new Event("scroll")); root.style.removeProperty("--mui-virtual-list-height")
+    const { root, helper, list } = fixture(), error = vi.fn(); root.addEventListener("m:virtual-list-error", error)
+    root.dispatchEvent(new Event("scroll")); root.style.removeProperty("--m-virtual-list-height")
     callback!(0)
     expect(error).toHaveBeenCalledOnce(); expect(helper.connected).toBe(false); expect(list.children).toHaveLength(0)
   })
@@ -316,12 +319,12 @@ describe("failure, scheduling and teardown", () => {
     const nodes: HTMLLIElement[] = [], { helper, root, list } = fixture({ items: data(2), render: item => {
       const row = render(item); row.style.top = "8px"; row.setAttribute("aria-posinset", "77"); nodes.push(row); return row
     } })
-    root.style.setProperty("--mui-virtual-row-size", "99px"); root.setAttribute("tabindex", "5")
+    root.style.setProperty("--m-virtual-row-size", "99px"); root.setAttribute("tabindex", "5")
     helper.disconnect()
-    expect(root.style.getPropertyValue("--mui-virtual-row-size")).toBe("99px")
+    expect(root.style.getPropertyValue("--m-virtual-row-size")).toBe("99px")
     expect(root.getAttribute("tabindex")).toBe("5"); expect(list.style.height).toBe("")
     expect(nodes[0]!.style.top).toBe("8px"); expect(nodes[0]!.getAttribute("aria-posinset")).toBe("77")
-    expect(nodes[0]!.classList.contains("mui-virtual-list__row")).toBe(false)
+    expect(nodes[0]!.classList.contains("m-virtual-list__row")).toBe(false)
   })
   it("compares the browser's serialized large CSS length when restoring owned spacer height", () => {
     const { helper, list } = fixture(), read = list.style.getPropertyValue.bind(list.style)
@@ -333,5 +336,180 @@ describe("failure, scheduling and teardown", () => {
     const a = fixture(), b = fixture(); a.helper.scrollTo({ index: 50000 })
     expect(b.helper.state.start).toBe(0); a.root.remove()
     expect(() => a.helper.refresh()).toThrow("anatomy"); expect(b.helper.connected).toBe(true)
+  })
+})
+
+describe("canonical VirtualList ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(virtualListApi.VirtualList).toBe(VirtualList)
+    expect(VirtualList.tag).toBe("m-virtual-list")
+    expect(ViewElement.prototype.isPrototypeOf(VirtualList.prototype)).toBe(true)
+    expect(customElements.get("m-virtual-list")).toBe(VirtualList)
+    expect(VirtualList.observedAttributes).toEqual(["item-size", "height"])
+    expect(() => registerVirtualList()).not.toThrow()
+
+    const define = vi.fn()
+    expect(() =>
+      registerVirtualList({
+        get: name => (name === "m-virtual-list" ? (class extends HTMLElement {} as any) : undefined),
+        define,
+      }),
+    ).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("handles typed properties, defaults and validation", () => {
+    const list = document.createElement("m-virtual-list") as VirtualList
+    expect(list).toBeInstanceOf(VirtualList)
+    expect(list.itemSize).toBe(40)
+    expect(list.height).toBe("")
+
+    list.itemSize = 50
+    expect(list.itemSize).toBe(50)
+    expect(list.getAttribute("item-size")).toBe("50")
+
+    list.setAttribute("item-size", "32")
+    expect(list.itemSize).toBe(32)
+
+    list.removeAttribute("item-size")
+    expect(list.itemSize).toBe(40)
+
+    expect(() => { list.itemSize = -10 }).toThrow(RangeError)
+    expect(() => { list.itemSize = NaN }).toThrow(RangeError)
+    expect(() => { (list as any).itemSize = "invalid" }).toThrow(RangeError)
+
+    list.setAttribute("item-size", "not-a-number")
+    expect(() => list.itemSize).toThrow(RangeError)
+    list.removeAttribute("item-size")
+
+    list.height = "320px"
+    expect(list.height).toBe("320px")
+    expect(list.getAttribute("height")).toBe("320px")
+
+    list.height = 200
+    expect(list.height).toBe("200")
+    expect(list.getAttribute("height")).toBe("200")
+
+    list.height = ""
+    expect(list.height).toBe("")
+    expect(list.hasAttribute("height")).toBe(false)
+
+    expect(() => { (list as any).height = {} }).toThrow(RangeError)
+  })
+
+  it("synchronizes class, dataset and CSS variables on mount and attribute changes", () => {
+    const list = document.createElement("m-virtual-list") as VirtualList
+    list.height = "300px"
+    list.itemSize = 48
+    document.body.append(list)
+
+    expect(list.classList.contains("m-virtual-list")).toBe(true)
+    expect(list.dataset.mVirtualList).toBe("")
+    expect(list.style.getPropertyValue("--m-virtual-list-height")).toBe("300px")
+    expect(list.style.getPropertyValue("--m-virtual-row-size")).toBe("48px")
+
+    list.height = "400px"
+    expect(list.style.getPropertyValue("--m-virtual-list-height")).toBe("400px")
+
+    list.height = 250
+    expect(list.style.getPropertyValue("--m-virtual-list-height")).toBe("250px")
+
+    list.itemSize = 36
+    expect(list.style.getPropertyValue("--m-virtual-row-size")).toBe("36px")
+
+    list.removeAttribute("height")
+    expect(list.style.getPropertyValue("--m-virtual-list-height")).toBe("")
+
+    list.remove()
+  })
+
+  it("works seamlessly with createVirtualList on an m-virtual-list element", () => {
+    const root = document.createElement("m-virtual-list") as VirtualList
+    root.height = "320px"
+    root.itemSize = 32
+    root.style.overflowY = "auto"
+    root.innerHTML = '<ul class="m-virtual-list__items"></ul>'
+    document.body.append(root)
+
+    Object.defineProperty(root, "clientHeight", { get: () => 320, configurable: true })
+    const list = root.firstElementChild as HTMLUListElement
+    Object.defineProperty(list, "offsetHeight", { get: () => Math.round(Number.parseFloat(list.style.height || "0")), configurable: true })
+    Object.defineProperty(root, "scrollHeight", { get: () => Math.max(320, list.offsetHeight), configurable: true })
+
+    const helper = createVirtualList(root, {
+      items: data(10),
+      rowSize: 32,
+      key: item => item.id,
+      render,
+      update: (el, item) => { el.textContent = item.text },
+    })
+    helpers.push(helper)
+
+    expect(helper.connected).toBe(true)
+    expect(helper.state.count).toBe(10)
+    expect(helper.state.mounted).toBe(10)
+    expect(root.style.getPropertyValue("--m-virtual-row-size")).toBe("32px")
+    expect(list.children).toHaveLength(10)
+    helper.disconnect()
+  })
+
+  it("structures VirtualList demo page with standard scaffold and explicit setup", () => {
+    const html = readFileSync(resolve("demo", "components", "virtual-list.html"), "utf8")
+    const parsed = new DOMParser().parseFromString(html, "text/html")
+    const main = parsed.querySelector("main[data-demo-page].component-docs")
+    expect(main).not.toBeNull()
+    expect(parsed.querySelector("h1")?.textContent).toBe("Virtual List")
+    const nav = parsed.querySelector("nav.component-docs-nav")
+    expect(nav).not.toBeNull()
+    expect(nav?.textContent).toContain("Examples")
+    expect(nav?.textContent).toContain("Setup")
+    expect(nav?.textContent).toContain("API")
+    expect(parsed.querySelector("details.component-setup#required-files")).not.toBeNull()
+    expect(parsed.querySelector("#virtual-list-api")).not.toBeNull()
+
+    const previews = parsed.querySelectorAll("[data-demo-preview]")
+    expect(previews.length).toBeGreaterThanOrEqual(1)
+    for (const preview of previews) {
+      expect(preview.querySelector("m-virtual-list, m-button")).not.toBeNull()
+    }
+  })
+
+  it("extracts VirtualList properties, regions and events via generateComponentApi", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["virtual-list"])
+    expect(docs.elements).toHaveLength(1)
+    const [vl] = docs.elements
+    expect(vl.type).toBe("VirtualList")
+    expect(vl.web.primary).toBe("m-virtual-list")
+    expect(vl.properties.itemSize).toMatchObject({
+      name: "itemSize",
+      type: "number",
+      default: 40,
+      attribute: "item-size",
+      readable: true,
+      writable: true,
+    })
+    expect(vl.properties.height).toMatchObject({
+      name: "height",
+      type: "string",
+      default: "",
+      attribute: "height",
+      readable: true,
+      writable: true,
+    })
+    expect(vl.events).toContainEqual({
+      name: "VirtualListError",
+      web: "m:virtual-list-error",
+      bubbles: true,
+      cancelable: false,
+      composed: false,
+    })
+    expect(vl.regions).toEqual([
+      {
+        name: "items",
+        accepts: ["ul", "ol", "content"],
+        min: 0,
+        max: 1,
+      },
+    ])
   })
 })

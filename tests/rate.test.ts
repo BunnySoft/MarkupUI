@@ -1,9 +1,10 @@
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createRate } from "../src/components/rate/index.js"
-import { createRadioGroup } from "../src/components/radio/index.js"
+import { createRate, Rate, MRate, registerRate } from "../src/components/rate/index.js"
+import { createRadioGroup } from "../src/components/native-radio.js"
 import type { RateController, RateOptions } from "../src/components/rate/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const helpers: RateController[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 15))
@@ -23,7 +24,7 @@ describe("native bounded rating choices", () => {
   it("preserves original controls, labels, stars, defaults and listeners", () => {
     const { root, helper, input } = fixture()
     helper.disconnect()
-    const three = input("3"), label = three.labels![0], star = label!.querySelector(".mui-rate__glyph")
+    const three = input("3"), label = three.labels![0], star = label!.querySelector(".m-rate__glyph")
     three.checked = false; input("4").checked = true
     const before = root.querySelectorAll("input").length, changed = vi.fn()
     input("2").addEventListener("change", changed)
@@ -31,7 +32,7 @@ describe("native bounded rating choices", () => {
     expect(enhanced.value).toBe(4)
     expect(input("3")).toBe(three)
     expect(three.labels![0]).toBe(label)
-    expect(label!.querySelector(".mui-rate__glyph")).toBe(star)
+    expect(label!.querySelector(".m-rate__glyph")).toBe(star)
     expect(three.defaultChecked).toBe(true)
     expect(root.querySelectorAll("input")).toHaveLength(before)
     input("2").click()
@@ -49,10 +50,10 @@ describe("native bounded rating choices", () => {
     helper.disconnect()
     helpers.push(other.createRate(root))
   })
-  it("does not register the legacy mui-rating name", () => {
-    const before = customElements.get("mui-rating")
+  it("does not register the legacy m-rating name", () => {
+    const before = customElements.get("m-rating")
     fixture()
-    expect(customElements.get("mui-rating")).toBe(before)
+    expect(customElements.get("m-rating")).toBe(before)
   })
   it.each([0, 11, -1, 2.5, Infinity, NaN])("rejects unbounded/invalid count %j without rendering choices", count => {
     const { root, helper } = fixture()
@@ -80,7 +81,7 @@ describe("native bounded rating choices", () => {
   it("requires hidden decorative glyphs, not interactive or naming content", () => {
     const { root, helper } = fixture()
     helper.disconnect()
-    root.querySelector(".mui-rate__glyph")!.removeAttribute("aria-hidden")
+    root.querySelector(".m-rate__glyph")!.removeAttribute("aria-hidden")
     expect(() => createRate(root)).toThrow("aria-hidden")
   })
 })
@@ -125,8 +126,8 @@ describe("half values, zero/null and native events", () => {
     const { root, helper, input } = fixture()
     const native = vi.fn(), aggregate = vi.fn(), duplicate = vi.fn()
     input("4").addEventListener("change", native)
-    root.addEventListener("mui:radio-group-change", aggregate)
-    root.addEventListener("mui:rate-change", duplicate)
+    root.addEventListener("m:radio-group-change", aggregate)
+    root.addEventListener("m:rate-change", duplicate)
     input("4").labels![0]!.click(); await flush()
     input("4").click(); await flush()
     expect(helper.value).toBe(4)
@@ -137,7 +138,7 @@ describe("half values, zero/null and native events", () => {
   it("keeps programmatic updates/refresh and numeric readout formatting silent and safe", () => {
     const { root, helper, output, input } = fixture("quality", { formatValue: value => `<${value ?? "none"}>` })
     const changed = vi.fn()
-    root.addEventListener("change", changed); root.addEventListener("mui:radio-group-change", changed)
+    root.addEventListener("change", changed); root.addEventListener("m:radio-group-change", changed)
     helper.setValue(4); helper.refresh()
     expect(output.textContent).toBe("<4>")
     expect(output.children).toHaveLength(0)
@@ -152,8 +153,8 @@ describe("clear and readonly/disabled policy", () => {
     const { root, helper, clear, input, form } = fixture()
     const native = vi.fn(), group = vi.fn(), cleared = vi.fn()
     root.addEventListener("input", native); root.addEventListener("change", native)
-    root.addEventListener("mui:radio-group-change", group)
-    root.addEventListener("mui:rate-clear", cleared)
+    root.addEventListener("m:radio-group-change", group)
+    root.addEventListener("m:rate-clear", cleared)
     clear.focus(); clear.click(); await flush()
     expect(helper.value).toBeNull()
     expect(document.activeElement).toBe(input("3"))
@@ -215,7 +216,7 @@ describe("Radio boundary/reset/lifetime reuse", () => {
   })
   it("preserves native checked defaults and cancellation without user change events", async () => {
     const { root, helper, form, input } = fixture()
-    const changed = vi.fn(); root.addEventListener("mui:radio-group-change", changed)
+    const changed = vi.fn(); root.addEventListener("m:radio-group-change", changed)
     helper.setValue(4)
     form.reset(); await flush()
     expect(helper.value).toBe(3)
@@ -243,7 +244,7 @@ describe("Radio boundary/reset/lifetime reuse", () => {
   })
   it("reports late invalid numeric keys without creating missing controls", async () => {
     const { root, helper, input } = fixture()
-    const errors = vi.fn(); root.addEventListener("mui:rate-error", errors)
+    const errors = vi.fn(); root.addEventListener("m:rate-error", errors)
     input("2").value = "9"; await flush()
     expect(errors).toHaveBeenCalledTimes(1)
     expect(() => helper.refresh()).toThrow("ascending")
@@ -265,9 +266,200 @@ describe("Radio boundary/reset/lifetime reuse", () => {
   })
   it("disposes removed roots and cancels pending radio notifications", async () => {
     const { root, helper, input } = fixture()
-    const changed = vi.fn(); root.addEventListener("mui:radio-group-change", changed)
+    const changed = vi.fn(); root.addEventListener("m:radio-group-change", changed)
     input("4").click(); root.remove(); await flush()
     expect(helper.connected).toBe(false)
     expect(changed).not.toHaveBeenCalled()
   })
 })
+
+describe("canonical Rate ViewElement", () => {
+  it("exports canonical own-tag ViewElement and registers m-rate", () => {
+    expect(Rate.tag).toBe("m-rate")
+    expect(MRate).toBe(Rate)
+    expect(ViewElement.prototype.isPrototypeOf(Rate.prototype)).toBe(true)
+    expect(customElements.get("m-rate")).toBe(Rate)
+    expect(Rate.observedAttributes).toEqual([
+      "value",
+      "count",
+      "allow-half",
+      "disabled",
+      "readonly",
+      "clearable",
+      "size",
+    ])
+    const define = vi.fn()
+    expect(() => registerRate({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerRate()).not.toThrow()
+  })
+
+  it("handles typed properties, default values and validates inputs", () => {
+    const element = document.createElement("m-rate") as Rate
+    expect(element.value).toBe(0)
+    expect(element.count).toBe(5)
+    expect(element.allowHalf).toBe(false)
+    expect(element.disabled).toBe(false)
+    expect(element.readonly).toBe(false)
+    expect(element.clearable).toBe(false)
+    expect(element.size).toBe("medium")
+
+    // value
+    element.value = 4
+    expect(element.value).toBe(4)
+    expect(element.getAttribute("value")).toBe("4")
+    expect(() => { element.value = NaN }).toThrow(RangeError)
+    expect(() => { element.value = -1 }).toThrow(RangeError)
+
+    // count
+    element.count = 8
+    expect(element.count).toBe(8)
+    expect(element.getAttribute("count")).toBe("8")
+    expect(() => { element.count = 0 }).toThrow(RangeError)
+    expect(() => { element.count = -5 }).toThrow(RangeError)
+
+    // allowHalf
+    element.allowHalf = true
+    expect(element.allowHalf).toBe(true)
+    expect(element.hasAttribute("allow-half")).toBe(true)
+    element.allowHalf = false
+    expect(element.allowHalf).toBe(false)
+    expect(element.hasAttribute("allow-half")).toBe(false)
+
+    // disabled
+    element.disabled = true
+    expect(element.disabled).toBe(true)
+    expect(element.hasAttribute("disabled")).toBe(true)
+    element.disabled = false
+    expect(element.disabled).toBe(false)
+    expect(element.hasAttribute("disabled")).toBe(false)
+
+    // readonly
+    element.readonly = true
+    expect(element.readonly).toBe(true)
+    expect(element.hasAttribute("readonly")).toBe(true)
+    element.readonly = false
+    expect(element.readonly).toBe(false)
+    expect(element.hasAttribute("readonly")).toBe(false)
+
+    // clearable
+    element.clearable = true
+    expect(element.clearable).toBe(true)
+    expect(element.hasAttribute("clearable")).toBe(true)
+    element.clearable = false
+    expect(element.clearable).toBe(false)
+    expect(element.hasAttribute("clearable")).toBe(false)
+
+    // size
+    element.size = "small"
+    expect(element.size).toBe("small")
+    expect(element.getAttribute("size")).toBe("small")
+    element.size = "large"
+    expect(element.size).toBe("large")
+    expect(element.getAttribute("size")).toBe("large")
+    expect(() => { (element as any).size = "huge" }).toThrow(RangeError)
+  })
+
+  it("renders choices, reflects selection, and emits change events on interaction", () => {
+    const element = document.createElement("m-rate") as Rate
+    element.value = 3
+    document.body.append(element)
+    expect(element.classList.contains("m-rate")).toBe(true)
+    expect(element.getAttribute("data-rate-cumulative")).toBe("")
+    expect(element.getAttribute("data-size")).toBe("medium")
+
+    const inputs = element.querySelectorAll<HTMLInputElement>("input[type='radio']")
+    expect(inputs).toHaveLength(5)
+    expect(inputs[2]!.checked).toBe(true)
+    expect(inputs[2]!.value).toBe("3")
+
+    const changeSpy = vi.fn()
+    element.addEventListener("m:change", changeSpy)
+
+    inputs[4]!.click()
+    expect(changeSpy).toHaveBeenCalledOnce()
+    expect(changeSpy.mock.calls[0]![0].detail).toEqual({ value: 5 })
+    expect(element.value).toBe(5)
+    expect(inputs[4]!.checked).toBe(true)
+  })
+
+  it("supports clearable action via clear() and clicking active choice", () => {
+    const element = document.createElement("m-rate") as Rate
+    element.clearable = true
+    element.value = 3
+    document.body.append(element)
+
+    const clearBtn = element.querySelector<HTMLButtonElement>("[data-rate-clear]")
+    expect(clearBtn).not.toBeNull()
+    expect(clearBtn!.hidden).toBe(false)
+
+    const changeSpy = vi.fn()
+    element.addEventListener("m:change", changeSpy)
+
+    element.clear()
+    expect(element.value).toBe(0)
+    expect(changeSpy).toHaveBeenCalledOnce()
+    expect(changeSpy.mock.calls[0]![0].detail).toEqual({ value: 0 })
+    expect(clearBtn!.hidden).toBe(true)
+
+    const inputs = element.querySelectorAll<HTMLInputElement>("input[type='radio']")
+    expect([...inputs].every(input => !input.checked)).toBe(true)
+
+    inputs[1]!.click()
+    expect(element.value).toBe(2)
+    expect(changeSpy).toHaveBeenCalledTimes(2)
+
+    const choice2 = inputs[1]!.closest(".m-rate__choice") as HTMLElement
+    choice2.click()
+    expect(element.value).toBe(0)
+    expect(changeSpy).toHaveBeenCalledTimes(3)
+    expect(changeSpy.mock.calls[2]![0].detail).toEqual({ value: 0 })
+  })
+
+  it("supports half-step rating choices with allowHalf", () => {
+    const element = document.createElement("m-rate") as Rate
+    element.allowHalf = true
+    element.count = 3
+    element.value = 1.5
+    document.body.append(element)
+
+    const inputs = element.querySelectorAll<HTMLInputElement>("input[type='radio']")
+    expect(inputs).toHaveLength(6)
+
+    const checked = element.querySelector<HTMLInputElement>("input:checked")
+    expect(checked?.value).toBe("1.5")
+
+    const halfGlyphs = element.querySelectorAll(".m-rate__glyph[data-half]")
+    expect(halfGlyphs).toHaveLength(3)
+  })
+
+  it("blocks user changes when disabled or readonly", () => {
+    const element = document.createElement("m-rate") as Rate
+    element.value = 2
+    element.disabled = true
+    document.body.append(element)
+
+    expect(element.getAttribute("aria-disabled")).toBe("true")
+    const inputs = element.querySelectorAll<HTMLInputElement>("input[type='radio']")
+    expect(inputs[0]!.disabled).toBe(true)
+
+    const changeSpy = vi.fn()
+    element.addEventListener("m:change", changeSpy)
+
+    inputs[3]!.click()
+    expect(changeSpy).not.toHaveBeenCalled()
+
+    element.clear()
+    expect(changeSpy).not.toHaveBeenCalled()
+    expect(element.value).toBe(2)
+
+    element.disabled = false
+    element.readonly = true
+    expect(element.getAttribute("aria-readonly")).toBe("true")
+    expect(inputs[0]!.disabled).toBe(true)
+
+    element.clear()
+    expect(changeSpy).not.toHaveBeenCalled()
+  })
+})
+

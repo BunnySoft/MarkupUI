@@ -1,21 +1,14 @@
-export { MuiAvatar } from "./avatar.js"
-export { MuiAvatarGroup } from "./group.js"
+export { Avatar, AvatarPlaceholder, AvatarFallback } from "./avatar.js"
+export type { AvatarLoadDetail, AvatarErrorDetail } from "./avatar.js"
+export { AvatarGroup } from "./group.js"
+export type { AvatarSize, AvatarShape, AvatarImageFit, AvatarState, AvatarLoading } from "./model.js"
 
-import { MuiAvatar } from "./avatar.js"
-import { MuiAvatarGroup } from "./group.js"
+import { Avatar, AvatarPlaceholder, AvatarFallback } from "./avatar.js"
+import { AvatarGroup } from "./group.js"
+import { ViewElement } from "../../core/index.js"
 
 export function registerAvatar(registry: Pick<CustomElementRegistry, "get" | "define"> = customElements): void {
-  for (const [name, constructor] of [
-    ["mui-avatar", MuiAvatar],
-    ["mui-avatar-group", MuiAvatarGroup],
-  ] as const) {
-    const existing = registry.get(name)
-    if (existing && existing !== constructor) {
-      throw new Error(`'${name}' is already defined. Load the Avatar component before the legacy MarkupUI bundle.`)
-    }
-  }
-  if (!registry.get("mui-avatar")) registry.define("mui-avatar", MuiAvatar)
-  if (!registry.get("mui-avatar-group")) registry.define("mui-avatar-group", MuiAvatarGroup)
+  ViewElement.register([Avatar, AvatarGroup, AvatarPlaceholder, AvatarFallback], registry)
 }
 
 if (typeof customElements !== "undefined") registerAvatar()

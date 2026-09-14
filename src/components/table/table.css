@@ -1,120 +1,188 @@
-:where(table.mui-table) {
-  --_mui-table-padding: 12px;
-  --_mui-table-font-size: 14px;
+:where(m-table:not(:has(> table))) {
+  display: table;
+}
+:where(m-table:has(> table)) {
+  display: block;
+}
+:where(table.m-table, m-table, m-table > table) {
+  --_m-table-padding: 12px;
+  --_m-table-font-size: 14px;
   border-collapse: collapse;
-  border: 1px solid var(--mui-table-border-color, var(--_mui-table-border-color, #efeff5));
-  font-size: var(--mui-table-font-size, var(--_mui-table-font-size));
+  border: 1px solid var(--m-table-border-color, var(--_m-table-border-color, #efeff5));
+  font-size: var(--m-table-font-size, var(--_m-table-font-size));
   font-variant-numeric: tabular-nums;
-  line-height: var(--mui-table-line-height, 1.6);
+  line-height: var(--m-table-line-height, 1.6);
   text-align: start;
-  color: var(--mui-table-color, var(--_mui-table-color, #333639));
-  background: var(--mui-table-background, var(--_mui-table-background, #fff));
+  color: var(--m-table-color, var(--_m-table-color, #333639));
+  background: var(--m-table-background, var(--_m-table-background, #fff));
   overflow-wrap: anywhere;
 }
-:where([data-mui-theme="light"]) {
-  --_mui-table-color: #333639;
-  --_mui-table-header-color: #1f2225;
-  --_mui-table-background: #fff;
-  --_mui-table-header-background: #fafafc;
-  --_mui-table-border-color: #efeff5;
-  --_mui-table-striped-background: #fafafc;
+:where([data-m-theme="light"]) {
+  --_m-table-color: #333639;
+  --_m-table-header-color: #1f2225;
+  --_m-table-background: #fff;
+  --_m-table-header-background: #fafafc;
+  --_m-table-border-color: #efeff5;
+  --_m-table-striped-background: #fafafc;
 }
-:where([data-mui-theme="dark"]) {
-  --_mui-table-color: rgba(255, 255, 255, .82);
-  --_mui-table-header-color: rgba(255, 255, 255, .9);
-  --_mui-table-background: #18181c;
-  --_mui-table-header-background: #26262a;
-  --_mui-table-border-color: #2d2d30;
-  --_mui-table-striped-background: #242427;
+:where([data-m-theme="dark"]) {
+  --_m-table-color: rgba(255, 255, 255, .82);
+  --_m-table-header-color: rgba(255, 255, 255, .9);
+  --_m-table-background: #18181c;
+  --_m-table-header-background: #26262a;
+  --_m-table-border-color: #2d2d30;
+  --_m-table-striped-background: #242427;
 }
-:where(table.mui-table:not([width])) { inline-size: 100%; }
-:where(table.mui-table[data-size="small"]) {
-  --_mui-table-padding: 6px;
+:where(table.m-table:not([width]), m-table:not([width]), m-table > table:not([width])) {
+  inline-size: 100%;
 }
-:where(table.mui-table[data-size="large"]) { --_mui-table-font-size: 15px; }
-:where(table.mui-table > caption) {
+:where(
+  table.m-table[data-size="small"],
+  table.m-table[size="small"],
+  m-table[data-size="small"]:not(:has(> table)),
+  m-table[size="small"]:not(:has(> table))
+) {
+  --_m-table-padding: 6px;
+}
+:where(
+  table.m-table[data-size="large"],
+  table.m-table[size="large"],
+  m-table[data-size="large"]:not(:has(> table)),
+  m-table[size="large"]:not(:has(> table))
+) {
+  --_m-table-font-size: 15px;
+}
+:where(:is(table.m-table, m-table, m-table > table) > caption) {
   padding-block: .5rem;
   font-weight: 600;
 }
-:where(table.mui-table > caption:not([align])) { text-align: start; }
-:where(table.mui-table > :is(thead, tbody, tfoot) > tr > :is(th, td)) {
-  padding: var(--mui-table-cell-padding, var(--_mui-table-padding));
-  border: 0 solid var(--mui-table-border-color, var(--_mui-table-border-color, #efeff5));
+:where(:is(table.m-table, m-table, m-table > table) > caption:not([align])) { text-align: start; }
+:where(:is(table.m-table, m-table, m-table > table) > :is(thead, tbody, tfoot) > tr > :is(th, td)) {
+  padding: var(--m-table-cell-padding, var(--_m-table-padding));
+  border: 0 solid var(--m-table-border-color, var(--_m-table-border-color, #efeff5));
   border-block-end-width: 1px;
-  background: var(--mui-table-background, var(--_mui-table-background, #fff));
+  background: var(--m-table-background, var(--_m-table-background, #fff));
 }
-:where(table.mui-table > :is(thead, tbody, tfoot) > tr > :is(th, td):not([align])) {
+:where(:is(table.m-table, m-table, m-table > table) > :is(thead, tbody, tfoot) > tr > :is(th, td):not([align])) {
   text-align: inherit;
 }
-:where(table.mui-table > :is(thead, tbody, tfoot) > tr > th) {
-  font-weight: var(--mui-table-header-weight, 500);
-  color: var(--mui-table-header-color, var(--mui-table-color, var(--_mui-table-header-color, #1f2225)));
+:where(:is(table.m-table, m-table, m-table > table) > :is(thead, tbody, tfoot) > tr > th) {
+  font-weight: var(--m-table-header-weight, 500);
+  color: var(--m-table-header-color, var(--m-table-color, var(--_m-table-header-color, #1f2225)));
 }
-:where(table.mui-table > thead > tr > :is(th, td)) {
-  background: var(--mui-table-header-background, var(--_mui-table-header-background, #fafafc));
+:where(:is(table.m-table, m-table, m-table > table) > thead > tr > :is(th, td)) {
+  background: var(--m-table-header-background, var(--_m-table-header-background, #fafafc));
 }
-:where(table.mui-table[data-single-line="false"] > :is(thead, tbody, tfoot) > tr > :is(th, td)) {
+:where(
+  table.m-table[data-single-line="false"] > :is(thead, tbody, tfoot) > tr > :is(th, td),
+  table.m-table[single-line="false"] > :is(thead, tbody, tfoot) > tr > :is(th, td),
+  m-table[data-single-line="false"] :is(table, :scope) > :is(thead, tbody, tfoot) > tr > :is(th, td),
+  m-table[single-line="false"] :is(table, :scope) > :is(thead, tbody, tfoot) > tr > :is(th, td)
+) {
   border-inline-end-width: 1px;
 }
-:where(table.mui-table[data-single-column] > :is(tbody, tfoot) > tr > :is(th, td)) {
+:where(
+  table.m-table[data-single-column] > :is(tbody, tfoot) > tr > :is(th, td),
+  table.m-table[single-column] > :is(tbody, tfoot) > tr > :is(th, td),
+  m-table[data-single-column] :is(table, :scope) > :is(tbody, tfoot) > tr > :is(th, td),
+  m-table[single-column] :is(table, :scope) > :is(tbody, tfoot) > tr > :is(th, td)
+) {
   border-block-end-width: 0;
 }
 /* Native collapsed-border conflict resolution also handles cells spanning the perimeter. */
-:where(table.mui-table[data-bordered="false"]) { border-style: hidden; }
-:where(table.mui-table[data-bordered="false"]:not([data-bottom-bordered="false"])) {
-  border-block-end: 1px solid var(--mui-table-border-color, var(--_mui-table-border-color, #efeff5));
+:where(
+  table.m-table[data-bordered="false"],
+  table.m-table[bordered="false"],
+  m-table[data-bordered="false"],
+  m-table[bordered="false"],
+  m-table[data-bordered="false"] > table,
+  m-table[bordered="false"] > table
+) {
+  border-style: hidden;
 }
-:where(table.mui-table[data-striped] > tbody > tr:nth-of-type(even) > :is(th, td)) {
-  background: var(--mui-table-striped-background, var(--_mui-table-striped-background, #fafafc));
+:where(
+  table.m-table[data-bordered="false"]:not([data-bottom-bordered="false"], [bottom-bordered="false"]),
+  table.m-table[bordered="false"]:not([data-bottom-bordered="false"], [bottom-bordered="false"]),
+  m-table[data-bordered="false"]:not([data-bottom-bordered="false"], [bottom-bordered="false"]),
+  m-table[bordered="false"]:not([data-bottom-bordered="false"], [bottom-bordered="false"]),
+  m-table[data-bordered="false"]:not([data-bottom-bordered="false"], [bottom-bordered="false"]) > table,
+  m-table[bordered="false"]:not([data-bottom-bordered="false"], [bottom-bordered="false"]) > table
+) {
+  border-block-end: 1px solid var(--m-table-border-color, var(--_m-table-border-color, #efeff5));
+}
+:where(
+  table.m-table[data-striped] > tbody > tr:nth-of-type(even) > :is(th, td),
+  table.m-table[striped] > tbody > tr:nth-of-type(even) > :is(th, td),
+  m-table[data-striped] :is(table, :scope) > tbody > tr:nth-of-type(even) > :is(th, td),
+  m-table[striped] :is(table, :scope) > tbody > tr:nth-of-type(even) > :is(th, td)
+) {
+  background: var(--m-table-striped-background, var(--_m-table-striped-background, #fafafc));
 }
 @supports selector(:nth-child(2 of tr:not([hidden]))) {
-  :where(table.mui-table[data-striped] > tbody > tr > :is(th, td)) {
-    background: var(--mui-table-background, var(--_mui-table-background, #fff));
+  :where(
+    table.m-table[data-striped] > tbody > tr > :is(th, td),
+    table.m-table[striped] > tbody > tr > :is(th, td),
+    m-table[data-striped] :is(table, :scope) > tbody > tr > :is(th, td),
+    m-table[striped] :is(table, :scope) > tbody > tr > :is(th, td)
+  ) {
+    background: var(--m-table-background, var(--_m-table-background, #fff));
   }
-  :where(table.mui-table[data-striped] > tbody > tr:nth-child(even of tr:not([hidden])) > :is(th, td)) {
-    background: var(--mui-table-striped-background, var(--_mui-table-striped-background, #fafafc));
+  :where(
+    table.m-table[data-striped] > tbody > tr:nth-child(even of tr:not([hidden])) > :is(th, td),
+    table.m-table[striped] > tbody > tr:nth-child(even of tr:not([hidden])) > :is(th, td),
+    m-table[data-striped] :is(table, :scope) > tbody > tr:nth-child(even of tr:not([hidden])) > :is(th, td),
+    m-table[striped] :is(table, :scope) > tbody > tr:nth-child(even of tr:not([hidden])) > :is(th, td)
+  ) {
+    background: var(--m-table-striped-background, var(--_m-table-striped-background, #fafafc));
   }
 }
-:where(table.mui-table, table.mui-table > :is(thead, tbody, tfoot) > tr > :is(th, td)) {
+:where(
+  table.m-table,
+  m-table,
+  m-table > table,
+  :is(table.m-table, m-table, m-table > table) > :is(thead, tbody, tfoot) > tr > :is(th, td)
+) {
   transition: color .3s cubic-bezier(.4, 0, .2, 1), background-color .3s cubic-bezier(.4, 0, .2, 1), border-color .3s cubic-bezier(.4, 0, .2, 1);
 }
-:where(.mui-table-scroll) {
+:where(.m-table-scroll) {
   box-sizing: border-box;
   min-inline-size: 0;
   max-inline-size: 100%;
   padding: .25rem;
   overflow-x: auto;
 }
-:where(.mui-table-scroll):focus-visible {
+:where(.m-table-scroll):focus-visible {
   outline: 2px solid currentColor;
   outline-offset: -2px;
 }
-:where(table.mui-table, .mui-table-scroll)[hidden]:not([hidden="until-found"]),
-table.mui-table > [hidden]:not([hidden="until-found"]),
-table.mui-table > :is(thead, tbody, tfoot) > [hidden]:not([hidden="until-found"]),
-table.mui-table > :is(thead, tbody, tfoot) > tr > [hidden]:not([hidden="until-found"]),
-template.mui-table,
-template.mui-table-scroll,
-table.mui-table > template,
-table.mui-table > :is(thead, tbody, tfoot) > template,
-table.mui-table > :is(thead, tbody, tfoot) > tr > template {
+:where(table.m-table, m-table, .m-table-scroll)[hidden]:not([hidden="until-found"]),
+m-table > [hidden]:not([hidden="until-found"]),
+table.m-table > [hidden]:not([hidden="until-found"]),
+:is(table.m-table, m-table, m-table > table) > :is(thead, tbody, tfoot) > [hidden]:not([hidden="until-found"]),
+:is(table.m-table, m-table, m-table > table) > :is(thead, tbody, tfoot) > tr > [hidden]:not([hidden="until-found"]),
+template.m-table,
+template.m-table-scroll,
+m-table > template,
+table.m-table > template,
+:is(table.m-table, m-table, m-table > table) > :is(thead, tbody, tfoot) > template,
+:is(table.m-table, m-table, m-table > table) > :is(thead, tbody, tfoot) > tr > template {
   display: none !important;
 }
 @media (forced-colors: active) {
-  :where(table.mui-table, table.mui-table > :is(thead, tbody, tfoot) > tr > :is(th, td)) {
+  :where(table.m-table, m-table, m-table > table, :is(table.m-table, m-table, m-table > table) > :is(thead, tbody, tfoot) > tr > :is(th, td)) {
     color: CanvasText;
     background: Canvas;
     border-color: CanvasText;
   }
 }
 @media print {
-  :where(.mui-table-scroll) {
+  :where(.m-table-scroll) {
     overflow: visible !important;
     block-size: auto !important;
     max-block-size: none !important;
   }
-  :where(table.mui-table > :is(thead, tbody, tfoot) > tr) { break-inside: avoid; }
+  :where(:is(table.m-table, m-table, m-table > table) > :is(thead, tbody, tfoot) > tr) { break-inside: avoid; }
 }
 @media (prefers-reduced-motion: reduce) {
-  :where(table.mui-table, table.mui-table > :is(thead, tbody, tfoot) > tr > :is(th, td)) { transition: none; }
+  :where(table.m-table, m-table, m-table > table, :is(table.m-table, m-table, m-table > table) > :is(thead, tbody, tfoot) > tr > :is(th, td)) { transition: none; }
 }

@@ -2,9 +2,9 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
-import { createTree, readTreeHierarchy } from "../src/components/tree/index.js"
+import { createTree, readTreeHierarchy, Tree, TreeNode, registerTree } from "../src/components/tree/index.js"
 import type { TreeController, TreeLoadResult, TreeOptions } from "../src/components/tree/index.js"
-import { createCheckboxGroup } from "../src/components/checkbox/index.js"
+import { CheckboxGroup } from "../src/components/checkbox/index.js"
 
 const helpers: TreeController[] = []
 const treeCss = readFileSync(resolve("src", "components", "tree", "tree.css"), "utf8")
@@ -14,7 +14,7 @@ function markup(key: string, children = "", extra = "", lazy = false) {
 }
 function node(key: string) { const template = document.createElement("template"); template.innerHTML = markup(key); return document.importNode(template.content.firstElementChild!, true) as HTMLLIElement }
 function fixture(options: TreeOptions = {}, html = markup("a", markup("b") + markup("c")) + markup("d")) {
-  const form = document.createElement("form"); form.innerHTML = `<section class="mui-tree" data-tree aria-label="Files"><ul data-tree-list>${html}</ul></section><button type="button" id="outside">Outside</button>`
+  const form = document.createElement("form"); form.innerHTML = `<section class="m-tree" data-tree aria-label="Files"><ul data-tree-list>${html}</ul></section><button type="button" id="outside">Outside</button>`
   document.body.append(form)
   const root = form.querySelector<HTMLElement>("[data-tree]")!, helper = createTree(root, options); helpers.push(helper)
   const references = new Map(helper.nodes.map(node => [node.key, node]))
@@ -32,13 +32,13 @@ afterEach(() => { helpers.splice(0).forEach(helper => { try { helper.disconnect(
 describe("native Tree visual defaults", () => {
   it("keeps reference row metrics within the unchanged CSS budget", () => {
     expect(gzipSync(treeCss, { level: 9 }).length).toBeLessThanOrEqual(1250)
-    expect(treeCss).toContain("--mui-tree-label-height, 24px")
-    expect(treeCss).toContain("--mui-tree-row-padding, 3px")
-    expect(treeCss).toContain("--mui-tree-indent, 24px")
-    expect(treeCss).toContain("--mui-tree-line-height, 1.5")
-    expect(treeCss).toContain("--_mui-tree-pressed: rgba(255,255,255,.05)")
+    expect(treeCss).toContain("--m-tree-label-height, 24px")
+    expect(treeCss).toContain("--m-tree-row-padding, 3px")
+    expect(treeCss).toContain("--m-tree-indent, 24px")
+    expect(treeCss).toContain("--m-tree-line-height, 1.5")
+    expect(treeCss).toContain("--_m-tree-pressed: rgba(255,255,255,.05)")
     expect(treeCss).not.toContain("font-weight: bold")
-    expect(treeCss).toContain(".mui-tree :focus-visible")
+    expect(treeCss).toContain(".m-tree :focus-visible")
   })
   it("styles disabled labels/checks without multiplying container opacity or crossing node barriers", () => {
     expect(treeCss).toContain(":is([data-tree-label],summary):is(:disabled,[aria-disabled=true],[inert],[inert] *)")
@@ -49,7 +49,7 @@ describe("native Tree visual defaults", () => {
     expect(forced).toContain("[data-tree-check]:is(:disabled,[aria-disabled=true],[inert],[inert] *) { opacity: 1; }")
     expect(forced).toContain(":is([data-tree-label],summary):is(:disabled,[aria-disabled=true],[inert],[inert] *) { color: GrayText; }")
     expect(treeCss).not.toContain("[data-tree-disabled]")
-    expect(treeCss).not.toContain(".mui-tree [aria-disabled=true] {")
+    expect(treeCss).not.toContain(".m-tree [aria-disabled=true] {")
   })
   it("retains native checkbox, disclosure and source-order presentation", () => {
     expect(treeCss).toContain("inline-size: 16px")
@@ -130,7 +130,7 @@ describe("native hierarchy, keys and defaults", () => {
 
 describe("selection, cascade, mixed and disabled boundaries", () => {
   it("emits one user selection and no setter/refresh notifications", async () => {
-    const { helper, root, get } = fixture(), event = vi.fn(); root.addEventListener("mui:tree-select", event)
+    const { helper, root, get } = fixture(), event = vi.fn(); root.addEventListener("m:tree-select", event)
     helper.setSelectedKeys(["a"]); helper.refresh(); expect(event).not.toHaveBeenCalled()
     get("d").label.click(); await wait(); expect(helper.selectedKeys).toEqual(["d"]); expect(event).toHaveBeenCalledOnce()
     get("d").label.click(); await wait(); expect(helper.selectedKeys).toEqual([])
@@ -151,7 +151,7 @@ describe("selection, cascade, mixed and disabled boundaries", () => {
   })
   it("cascades real checkedness and derives a real mixed parent with one notification", () => {
     const { helper, get, root, form } = fixture({ cascade: true }), change = vi.fn()
-    root.addEventListener("mui:tree-check", change)
+    root.addEventListener("m:tree-check", change)
     get("a").checkbox!.click()
     expect(helper.getCheckedData().keys).toEqual(["a", "b", "c"]); expect(change).toHaveBeenCalledOnce()
     expect(new FormData(form).getAll("checked")).toEqual(["a", "b", "c"])
@@ -242,7 +242,7 @@ describe("native outline keyboard and focus", () => {
     get("a").summary!.click(); await wait(); expect(get("a").branch!.open).toBe(true)
   })
   it("notifies native expand once and leaves programmatic refresh/setters silent", async () => {
-    const { helper, get, root } = fixture(), event = vi.fn(); root.addEventListener("mui:tree-expand", event)
+    const { helper, get, root } = fixture(), event = vi.fn(); root.addEventListener("m:tree-expand", event)
     helper.setExpandedKeys(["a"]); await wait(); expect(event).not.toHaveBeenCalled()
     get("a").summary!.click(); await wait(); expect(event).toHaveBeenCalledOnce()
     get("a").branch!.open = true; helper.refresh(); await wait(); expect(event).toHaveBeenCalledOnce()
@@ -281,7 +281,7 @@ describe("lazy DOM ownership and async races", () => {
   })
   it("rejects duplicate-key results atomically without disconnecting the healthy outline", async () => {
     const dispose = vi.fn(), { helper, get, root } = fixture({ load: () => ({ nodes: [node("d")], dispose }) }, markup("lazy", "", "", true) + markup("d"))
-    const error = vi.fn(); root.addEventListener("mui:tree-error", error)
+    const error = vi.fn(); root.addEventListener("m:tree-error", error)
     await expect(helper.expand("lazy")).rejects.toThrow("unique")
     expect(get("lazy").list!.children).toHaveLength(0); expect(helper.connected).toBe(true); expect(dispose).toHaveBeenCalledOnce(); expect(error).toHaveBeenCalledOnce()
   })
@@ -346,10 +346,10 @@ describe("refresh, cleanup and independent ownership", () => {
     const { helper, root, get } = fixture()
     vi.resetModules()
     await expect(import("../src/components/tree/index.js").then(api => api.createTree(root))).rejects.toThrow("owner")
-    const fieldset = document.createElement("fieldset"); fieldset.className = "mui-checkbox-group"; fieldset.setAttribute("data-checkbox-group", "")
+    const fieldset = new CheckboxGroup()
     fieldset.innerHTML = "<legend>Shared controls</legend>"; root.parentElement!.append(fieldset); fieldset.append(root)
     get("b").checkbox!.setAttribute("data-checkbox", "")
-    expect(() => createCheckboxGroup(fieldset)).toThrow("owner")
+    expect(() => fieldset.refresh()).toThrow("owner")
     helper.disconnect()
   })
   it("keeps separate and nested roots independent", () => {
@@ -400,3 +400,247 @@ describe("refresh, cleanup and independent ownership", () => {
     expect(signal.aborted).toBe(true); expect(await pending).toBe(false); expect(helper.connected).toBe(false)
   })
 })
+
+describe("canonical Tree ViewElement", () => {
+  it("registers canonical Tree and TreeNode Custom Elements extending ViewElement", () => {
+    expect(customElements.get("m-tree")).toBe(Tree)
+    expect(customElements.get("m-tree-node")).toBe(TreeNode)
+    const tree = new Tree()
+    const node = new TreeNode()
+    expect(tree).toBeInstanceOf(Tree)
+    expect(node).toBeInstanceOf(TreeNode)
+  })
+
+  it("reflects Tree canonical properties and attributes", () => {
+    const tree = new Tree()
+    expect(tree.value).toBeNull()
+    expect(tree.checkable).toBe(false)
+    expect(tree.selectable).toBe(false)
+    expect(tree.cascade).toBe(false)
+    expect(tree.blockLine).toBe(false)
+
+    tree.value = "test-val"
+    expect(tree.getAttribute("value")).toBe("test-val")
+    expect(tree.value).toBe("test-val")
+
+    tree.checkable = true
+    expect(tree.hasAttribute("checkable")).toBe(true)
+    expect(tree.checkable).toBe(true)
+
+    tree.selectable = true
+    expect(tree.hasAttribute("selectable")).toBe(true)
+    expect(tree.selectable).toBe(true)
+
+    tree.cascade = true
+    expect(tree.hasAttribute("cascade")).toBe(true)
+    expect(tree.cascade).toBe(true)
+
+    tree.blockLine = true
+    expect(tree.hasAttribute("block-line")).toBe(true)
+    expect(tree.blockLine).toBe(true)
+  })
+
+  it("reflects TreeNode canonical properties and attributes including title override", () => {
+    const node = new TreeNode()
+    expect(node.value).toBe("")
+    expect(node.title).toBe("")
+    expect(node.disabled).toBe(false)
+    expect(node.expanded).toBe(false)
+    expect(node.checked).toBe(false)
+    expect(node.selected).toBe(false)
+
+    node.value = "item-1"
+    expect(node.getAttribute("value")).toBe("item-1")
+    expect(node.value).toBe("item-1")
+
+    node.title = "Item One"
+    expect(node.getAttribute("title")).toBe("Item One")
+    expect(node.title).toBe("Item One")
+
+    node.disabled = true
+    expect(node.hasAttribute("disabled")).toBe(true)
+    expect(node.disabled).toBe(true)
+
+    node.expanded = true
+    expect(node.hasAttribute("expanded")).toBe(true)
+    expect(node.expanded).toBe(true)
+
+    node.checked = true
+    expect(node.hasAttribute("checked")).toBe(true)
+    expect(node.checked).toBe(true)
+
+    node.selected = true
+    expect(node.hasAttribute("selected")).toBe(true)
+    expect(node.selected).toBe(true)
+  })
+
+  it("renders structure and toggles expansion on branch click", () => {
+    const container = document.createElement("div")
+    container.innerHTML = `
+      <m-tree>
+        <m-tree-node value="p" title="Parent" expanded>
+          <m-tree-node value="c1" title="Child 1"></m-tree-node>
+          <m-tree-node value="c2" title="Child 2"></m-tree-node>
+        </m-tree-node>
+      </m-tree>`
+    document.body.append(container)
+
+    const tree = container.querySelector<Tree>("m-tree")!
+    const parent = container.querySelector<TreeNode>('m-tree-node[value="p"]')!
+    const child1 = container.querySelector<TreeNode>('m-tree-node[value="c1"]')!
+
+    expect(tree.classList.contains("m-tree")).toBe(true)
+    expect(parent.expanded).toBe(true)
+    const childrenGroup = parent.querySelector<HTMLElement>("[data-part='children']")!
+    expect(childrenGroup.hidden).toBe(false)
+
+    // Click parent row to collapse
+    const parentRow = parent.querySelector<HTMLElement>(":scope > [data-part='row']")!
+    parentRow.click()
+    expect(parent.expanded).toBe(false)
+    expect(childrenGroup.hidden).toBe(true)
+
+    // Click again to expand
+    parentRow.click()
+    expect(parent.expanded).toBe(true)
+    expect(childrenGroup.hidden).toBe(false)
+  })
+
+  it("handles selection and dispatches m:select event", () => {
+    const container = document.createElement("div")
+    container.innerHTML = `
+      <m-tree selectable>
+        <m-tree-node value="root" title="Root" expanded>
+          <m-tree-node value="leaf1" title="Leaf 1"></m-tree-node>
+          <m-tree-node value="leaf2" title="Leaf 2"></m-tree-node>
+        </m-tree-node>
+      </m-tree>`
+    document.body.append(container)
+
+    const tree = container.querySelector<Tree>("m-tree")!
+    const leaf1 = container.querySelector<TreeNode>('m-tree-node[value="leaf1"]')!
+    const leaf2 = container.querySelector<TreeNode>('m-tree-node[value="leaf2"]')!
+
+    const selectSpy = vi.fn()
+    tree.addEventListener("m:select", selectSpy)
+
+    leaf1.querySelector<HTMLElement>(":scope > [data-part='row']")!.click()
+    expect(leaf1.selected).toBe(true)
+    expect(tree.value).toBe("leaf1")
+    expect(selectSpy).toHaveBeenCalledOnce()
+    expect(selectSpy).toHaveBeenCalledWith(expect.objectContaining({
+      detail: { value: "leaf1" },
+    }))
+
+    // Programmatic selection via tree.value
+    tree.value = "leaf2"
+    expect(leaf1.selected).toBe(false)
+    expect(leaf2.selected).toBe(true)
+  })
+
+  it("handles checkable and cascade checking with m:check event", () => {
+    const container = document.createElement("div")
+    container.innerHTML = `
+      <m-tree checkable cascade>
+        <m-tree-node value="parent" title="Parent" expanded>
+          <m-tree-node value="child1" title="Child 1"></m-tree-node>
+          <m-tree-node value="child2" title="Child 2"></m-tree-node>
+        </m-tree-node>
+      </m-tree>`
+    document.body.append(container)
+
+    const tree = container.querySelector<Tree>("m-tree")!
+    const parent = container.querySelector<TreeNode>('m-tree-node[value="parent"]')!
+    const child1 = container.querySelector<TreeNode>('m-tree-node[value="child1"]')!
+    const child2 = container.querySelector<TreeNode>('m-tree-node[value="child2"]')!
+
+    const checkSpy = vi.fn()
+    tree.addEventListener("m:check", checkSpy)
+
+    // Check parent -> cascades to children
+    const parentCheckbox = parent.querySelector<HTMLInputElement>("input[type='checkbox']")!
+    parentCheckbox.checked = true
+    parentCheckbox.dispatchEvent(new Event("change", { bubbles: true }))
+
+    expect(parent.checked).toBe(true)
+    expect(child1.checked).toBe(true)
+    expect(child2.checked).toBe(true)
+    expect(checkSpy).toHaveBeenCalledWith(expect.objectContaining({
+      detail: expect.objectContaining({
+        checkedKeys: expect.arrayContaining(["parent", "child1", "child2"]),
+      }),
+    }))
+
+    // Uncheck child1 -> parent becomes indeterminate
+    const child1Checkbox = child1.querySelector<HTMLInputElement>("input[type='checkbox']")!
+    child1Checkbox.checked = false
+    child1Checkbox.dispatchEvent(new Event("change", { bubbles: true }))
+
+    expect(child1.checked).toBe(false)
+    expect(child2.checked).toBe(true)
+    expect(parent.checked).toBe(false)
+    expect(parent.isIndeterminate()).toBe(true)
+  })
+
+  it("supports keyboard navigation on visible nodes", () => {
+    const container = document.createElement("div")
+    container.innerHTML = `
+      <m-tree>
+        <m-tree-node value="node1" title="Node 1" expanded>
+          <m-tree-node value="sub1" title="Sub 1"></m-tree-node>
+        </m-tree-node>
+        <m-tree-node value="node2" title="Node 2"></m-tree-node>
+      </m-tree>`
+    document.body.append(container)
+
+    const tree = container.querySelector<Tree>("m-tree")!
+    const node1 = container.querySelector<TreeNode>('m-tree-node[value="node1"]')!
+    const sub1 = container.querySelector<TreeNode>('m-tree-node[value="sub1"]')!
+    const node2 = container.querySelector<TreeNode>('m-tree-node[value="node2"]')!
+
+    node1.focus()
+    expect(document.activeElement).toBe(node1)
+
+    // ArrowDown moves to sub1
+    tree.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }))
+    expect(document.activeElement).toBe(sub1)
+
+    // ArrowDown moves to node2
+    tree.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }))
+    expect(document.activeElement).toBe(node2)
+
+    // ArrowUp moves back to sub1
+    tree.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowUp", bubbles: true }))
+    expect(document.activeElement).toBe(sub1)
+
+    // Focus node1 and ArrowLeft collapses it
+    node1.focus()
+    expect(node1.expanded).toBe(true)
+    tree.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowLeft", bubbles: true }))
+    expect(node1.expanded).toBe(false)
+
+    // ArrowRight expands it again
+    tree.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }))
+    expect(node1.expanded).toBe(true)
+  })
+
+  it("prevents interaction on disabled nodes", () => {
+    const container = document.createElement("div")
+    container.innerHTML = `
+      <m-tree selectable>
+        <m-tree-node value="disabled-node" title="Disabled" disabled expanded>
+          <m-tree-node value="child" title="Child"></m-tree-node>
+        </m-tree-node>
+      </m-tree>`
+    document.body.append(container)
+
+    const tree = container.querySelector<Tree>("m-tree")!
+    const disabledNode = container.querySelector<TreeNode>("m-tree-node[disabled]")!
+    const row = disabledNode.querySelector<HTMLElement>(":scope > [data-part='row']")!
+
+    row.click()
+    expect(disabledNode.selected).toBe(false)
+    expect(tree.value).toBeNull()
+  })
+})
+

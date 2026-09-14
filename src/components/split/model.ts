@@ -1,4 +1,10 @@
 export type SplitSize = number | `${number}px`
+export const splitDirections = ["horizontal", "vertical"] as const
+export type SplitDirection = (typeof splitDirections)[number]
+
+export interface SplitChangeDetail {
+  readonly size: number
+}
 export interface SplitMeasure { readonly unit: "ratio" | "px"; readonly value: number; readonly size: SplitSize }
 export function splitMeasure(input: unknown): SplitMeasure {
   if (typeof input === "number") {

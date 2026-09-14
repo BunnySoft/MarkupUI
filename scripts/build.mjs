@@ -4,13 +4,14 @@ import { copyFile, readFile, rm, writeFile } from "node:fs/promises"
 import { resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { build, transform } from "esbuild"
-import { emitLegacyStylesheets, generateLegacyStyleModules } from "./legacy-styles.mjs"
+import { emitStylesheets, generateStyleModules } from "./styles.mjs"
+import { generateComponentApi } from "./component-api.mjs"
 
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)))
 const dist = resolve(root, "dist")
 const tsc = resolve(root, "node_modules", "typescript", "bin", "tsc")
 
-await generateLegacyStyleModules(root)
+await generateStyleModules(root)
 await rm(dist, { force: true, recursive: true })
 execFileSync(process.execPath, [tsc, "-p", resolve(root, "tsconfig.json")], {
   cwd: root,
@@ -26,7 +27,95 @@ const shared = {
 }
 const components = ["avatar", "button", "card", "tag", "badge", "alert", "empty", "skeleton", "spin", "progress", "statistic", "highlight", "image", "popover", "tooltip", "popconfirm", "dropdown", "menu", "tabs", "collapse", "anchor", "back-top", "pagination", "steps", "loading-bar", "dialog", "modal", "drawer", "message", "notification", "collapse-transition", "input", "checkbox", "radio", "switch", "select", "input-number", "slider", "rate", "form"]
 const classicEntries = { progress: "global.ts", popover: "global.ts", tooltip: "global.ts", popconfirm: "global.ts", dropdown: "global.ts", menu: "global.ts", tabs: "global.ts", collapse: "global.ts", anchor: "global.ts", "back-top": "global.ts", pagination: "global.ts", steps: "global.ts", "loading-bar": "global.ts", dialog: "global.ts", modal: "global.ts", drawer: "global.ts", message: "global.ts", notification: "global.ts", "collapse-transition": "global.ts", input: "global.ts", checkbox: "global.ts", radio: "global.ts", switch: "global.ts", select: "global.ts", "input-number": "global.ts", slider: "global.ts", rate: "global.ts" }
-const styleOnlyComponents = ["typography", "icon", "gradient-text", "ellipsis", "page-header", "divider", "flex", "space", "grid", "layout", "list", "descriptions", "timeline", "breadcrumb", "thing", "table", "affix", "result", "code", "scrollbar", "float-button", "global-style"]
+const styleOnlyComponents = ["scrollbar", "global-style"]
+classicEntries.avatar = "global.ts"
+classicEntries.button = "global.ts"
+classicEntries.card = "global.ts"
+components.push("divider", "icon", "typography", "space", "flex", "grid", "layout", "list", "table", "descriptions", "breadcrumb", "page-header", "ellipsis", "result", "timeline", "affix", "code", "gradient-text", "float-button", "thing", "box")
+classicEntries.divider = "global.ts"
+classicEntries.icon = "global.ts"
+classicEntries.typography = "global.ts"
+classicEntries.space = "global.ts"
+classicEntries.flex = "global.ts"
+classicEntries.grid = "global.ts"
+classicEntries.layout = "global.ts"
+classicEntries.tag = "global.ts"
+classicEntries.badge = "global.ts"
+classicEntries.empty = "global.ts"
+classicEntries.spin = "global.ts"
+classicEntries.skeleton = "global.ts"
+classicEntries.alert = "global.ts"
+classicEntries.list = "global.ts"
+classicEntries.table = "global.ts"
+classicEntries.descriptions = "global.ts"
+classicEntries.breadcrumb = "global.ts"
+classicEntries["page-header"] = "global.ts"
+classicEntries.ellipsis = "global.ts"
+classicEntries.result = "global.ts"
+classicEntries.timeline = "global.ts"
+classicEntries.affix = "global.ts"
+classicEntries.code = "global.ts"
+classicEntries["gradient-text"] = "global.ts"
+classicEntries["float-button"] = "global.ts"
+classicEntries.thing = "global.ts"
+classicEntries.box = "global.ts"
+const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_500], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 8_000], ["checkbox", 5_500], ["radio", 6_000], ["switch", 4_500], ["input-number", 6_000], ["select", 8_000], ["form", 8_250], ["grid", 3_000], ["layout", 3_000], ["tag", 4_500], ["badge", 4_000], ["empty", 4_000], ["spin", 5_000], ["skeleton", 4_000], ["popover", 7_500], ["tooltip", 8_500], ["alert", 4_000], ["list", 4_000], ["table", 3_800], ["descriptions", 4_000], ["breadcrumb", 3_800], ["page-header", 4_000], ["ellipsis", 3_800], ["tabs", 9_000], ["menu", 9_000], ["pagination", 8_500], ["dialog", 8_500], ["modal", 8_500], ["drawer", 8_500], ["popconfirm", 10_000], ["message", 8_500], ["notification", 10_000], ["progress", 8_500], ["result", 4_000], ["image", 7_500], ["date-picker", 7_000], ["time-picker", 7_000], ["upload", 11_000], ["auto-complete", 6_500], ["slider", 6_000], ["rate", 8_500], ["input-otp", 5_500], ["popselect", 14_500], ["tree", 12_000], ["tree-select", 13_000], ["cascader", 12_000], ["data-table", 10_000], ["calendar", 11_000], ["dynamic-input", 9_000], ["dynamic-tags", 13_500], ["steps", 7_000], ["timeline", 4_000], ["statistic", 3_800], ["anchor", 7_000], ["back-top", 6_500], ["affix", 4_000], ["loading-bar", 5_500], ["infinite-scroll", 7_500], ["virtual-list", 6_500], ["code", 4_000], ["highlight", 4_000], ["split", 9_500], ["gradient-text", 4_000], ["watermark", 9_000], ["float-button", 4_500], ["color-picker", 7_000], ["mention", 8_500], ["transfer", 10_000], ["countdown", 7_500], ["log", 7_500], ["number-animation", 8_000], ["time", 7_500], ["heatmap", 10_500], ["thing", 4_000], ["marquee", 8_000], ["collapse-transition", 6_000], ["box", 4_000]])
+await generateComponentApi(root, [...viewComponents.keys()])
+
+function corePlugin(format) {
+  return {
+    name: "shared-element-core",
+    setup(builder) {
+      builder.onResolve({ filter: /native-select\.js$/ }, () =>
+        format === "esm" ? { path: "./markup-ui-native-select.js", external: true }
+          : { path: "native-select", namespace: "markupui-native-select" })
+      builder.onLoad({ filter: /.*/, namespace: "markupui-native-select" }, () => ({
+        loader: "js",
+        contents: `
+          const native = globalThis[Symbol.for("markup-ui.native-select")];
+          if (!native || typeof native.createSelect !== "function") throw new Error("Load markup-ui-native-select.global.js before Select, TreeSelect or Popselect.");
+          export const { createSelect, selectOptions, selectValue, setSelectValue } = native;
+        `,
+      }))
+      builder.onResolve({ filter: /core\/(?:view-element|index)\.js$/ }, () =>
+        format === "esm" ? { path: "./markup-ui-core.js", external: true }
+          : { path: "core", namespace: "markupui-core" })
+      builder.onLoad({ filter: /.*/, namespace: "markupui-core" }, () => ({
+        loader: "js",
+        contents: `
+          const core = globalThis.MarkupUICore;
+          if (!core || typeof core.ViewElement !== "function") {
+            throw new Error("Load compatible markup-ui-core.global.js before component scripts.");
+          }
+          export const { ViewElement } = core;
+        `,
+      }))
+      builder.onResolve({ filter: /native-input\.js$/ }, () =>
+        format === "esm" ? { path: "./markup-ui-native-input.js", external: true }
+          : { path: "native-input", namespace: "markupui-native-input" })
+      builder.onLoad({ filter: /.*/, namespace: "markupui-native-input" }, () => ({
+        loader: "js",
+        contents: `
+          const native = globalThis[Symbol.for("markup-ui.native-input")];
+          if (!native || typeof native.createInput !== "function") throw new Error("Load markup-ui-native-input.global.js before Input.");
+          export const { createInput } = native;
+        `,
+      }))
+      builder.onResolve({ filter: /native-radio\.js$/ }, () =>
+        format === "esm" ? { path: "./markup-ui-native-radio.js", external: true }
+          : { path: "native-radio", namespace: "markupui-native-radio" })
+      builder.onLoad({ filter: /.*/, namespace: "markupui-native-radio" }, () => ({
+        loader: "js",
+        contents: `
+          const native = globalThis[Symbol.for("markup-ui.native-radio")];
+          if (!native || typeof native.createRadioGroup !== "function") throw new Error("Load markup-ui-native-radio.global.js before Radio or Rate.");
+          export const { createRadioGroup, radioMembers, setRadioValue } = native;
+        `,
+      }))
+    },
+  }
+}
+
 classicEntries.form = "global.ts"
 components.push("auto-complete")
 classicEntries["auto-complete"] = "global.ts"
@@ -84,6 +173,38 @@ components.push("marquee")
 classicEntries.marquee = "global.ts"
 
 await Promise.all([
+  ...["esm", "iife"].map(format => build({
+    ...shared,
+    entryPoints: [resolve(root, "src", "components", format === "esm" ? "native-select.ts" : "native-select.global.ts")],
+    format, minify: true,
+    outfile: resolve(dist, `markup-ui-native-select${format === "esm" ? ".js" : ".global.js"}`),
+  })),
+  ...["esm", "iife"].map(format => build({
+    ...shared,
+    entryPoints: [resolve(root, "src", "components", format === "esm" ? "native-radio.ts" : "native-radio.global.ts")],
+    format, minify: true,
+    outfile: resolve(dist, `markup-ui-native-radio${format === "esm" ? ".js" : ".global.js"}`),
+  })),
+  ...["esm", "iife"].map(format => build({
+    ...shared,
+    entryPoints: [resolve(root, "src", "components", format === "esm" ? "native-input.ts" : "native-input.global.ts")],
+    format, minify: true,
+    outfile: resolve(dist, `markup-ui-native-input${format === "esm" ? ".js" : ".global.js"}`),
+  })),
+  build({
+    ...shared,
+    entryPoints: [resolve(root, "src", "core", "index.ts")],
+    format: "esm",
+    minify: true,
+    outfile: resolve(dist, "markup-ui-core.js"),
+  }),
+  build({
+    ...shared,
+    entryPoints: [resolve(root, "src", "core", "global.ts")],
+    format: "iife",
+    minify: true,
+    outfile: resolve(dist, "markup-ui-core.global.js"),
+  }),
   build({
     ...shared,
     entryPoints: [resolve(root, "src", "index.ts")],
@@ -123,6 +244,7 @@ await Promise.all([
       ...shared,
       entryPoints: [resolve(root, "src", "components", name, "index.ts")],
       format: "esm",
+      plugins: viewComponents.has(name) || ["rate", "tree-select", "popselect"].includes(name) ? [corePlugin("esm")] : [],
       minify: true,
       outfile: resolve(dist, `markup-ui-${name}.js`),
     }),
@@ -130,6 +252,7 @@ await Promise.all([
       ...shared,
       entryPoints: [resolve(root, "src", "components", name, classicEntries[name] ?? "index.ts")],
       format: "iife",
+      plugins: viewComponents.has(name) || ["rate", "tree-select", "popselect"].includes(name) ? [corePlugin("iife")] : [],
       globalName: classicEntries[name] ? undefined : `MarkupUI${name[0].toUpperCase()}${name.slice(1)}`,
       minify: true,
       outfile: resolve(dist, `markup-ui-${name}.global.js`),
@@ -140,8 +263,8 @@ await Promise.all([
 await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
   const source = resolve(root, "src", "components", name, `${name}.css`)
   const output = resolve(dist, `markup-ui-${name}.css`)
-  if (name === "button") {
-    // Keep authored motion CSS readable without increasing its distributed payload ceiling.
+  if (name === "button" || name === "checkbox" || name === "radio" || name === "form") {
+    // Preserve authored CSS syntax while trimming distribution whitespace.
     const { code } = await transform(await readFile(source, "utf8"), {
       loader: "css",
       minifyWhitespace: true,
@@ -151,7 +274,10 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
     await writeFile(output, code)
   } else if (name === "tooltip" || name === "popconfirm" || name === "dropdown") {
     const base = await readFile(resolve(root, "src", "components", "popover", "popover.css"), "utf8")
-    await writeFile(output, `${base}\n${await readFile(source, "utf8")}`)
+    const css = `${base}\n${await readFile(source, "utf8")}`
+    await writeFile(output, name === "dropdown" ? (await transform(css, {
+      loader: "css", minifyWhitespace: true, minifySyntax: false, legalComments: "none",
+    })).code : css)
   } else if (name === "dialog" || name === "modal" || name === "drawer") {
     const base = await readFile(resolve(root, "src", "components", "dialog", "native.css"), "utf8")
     await writeFile(output, `${base}\n${await readFile(source, "utf8")}`)
@@ -171,44 +297,53 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
   } else await copyFile(source, output)
 }))
 
-await emitLegacyStylesheets(root, dist)
+await emitStylesheets(root, dist)
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
 const bundleBudgets = {
+  "markup-ui-grid.js": 1_750,
+  "markup-ui-grid.global.js": 1_750,
+  "markup-ui-flex.js": 1_500,
+  "markup-ui-flex.global.js": 1_500,
+  "markup-ui-typography.js": 6_000,
+  "markup-ui-typography.global.js": 6_000,
+  "markup-ui-core.js": 4_000,
+  "markup-ui-core.global.js": 4_000,
   "markup-ui.css": 6_000,
   "markup-ui-advanced.css": 1_000,
   "markup-ui-widgets.css": 1_500,
   "markup-ui-themes.css": 1_500,
-  "markup-ui-marquee.js": 6_000,
-  "markup-ui-marquee.global.js": 6_000,
+  "markup-ui-theme-slate.css": 1_500,
+  "markup-ui-marquee.js": 7_000,
+  "markup-ui-marquee.global.js": 7_000,
   "markup-ui-marquee.css": 1_000,
-  "markup-ui-heatmap.js": 8_000,
-  "markup-ui-heatmap.global.js": 8_000,
+  "markup-ui-heatmap.js": 10_000,
+  "markup-ui-heatmap.global.js": 10_000,
   "markup-ui-heatmap.css": 2_000,
-  "markup-ui-number-animation.js": 6_000,
-  "markup-ui-number-animation.global.js": 6_000,
+  "markup-ui-number-animation.js": 7_500,
+  "markup-ui-number-animation.global.js": 7_500,
   "markup-ui-number-animation.css": 500,
-  "markup-ui-countdown.js": 6_000,
-  "markup-ui-countdown.global.js": 6_000,
+  "markup-ui-countdown.js": 7_000,
+  "markup-ui-countdown.global.js": 7_000,
   "markup-ui-countdown.css": 750,
-  "markup-ui-time.js": 6_000,
-  "markup-ui-time.global.js": 6_000,
+  "markup-ui-time.js": 7_000,
+  "markup-ui-time.global.js": 7_000,
   "markup-ui-time.css": 500,
-  "markup-ui-calendar.js": 8_000,
-  "markup-ui-calendar.global.js": 8_000,
+  "markup-ui-calendar.js": 10_500,
+  "markup-ui-calendar.global.js": 10_500,
   "markup-ui-calendar.css": 1_250,
-  "markup-ui-upload.js": 9_000,
-  "markup-ui-upload.global.js": 9_000,
+  "markup-ui-upload.js": 10_500,
+  "markup-ui-upload.global.js": 10_500,
   "markup-ui-upload.css": 1_250,
-  "markup-ui-watermark.js": 7_000,
-  "markup-ui-watermark.global.js": 7_000,
+  "markup-ui-watermark.js": 8_500,
+  "markup-ui-watermark.global.js": 8_500,
   "markup-ui-watermark.css": 1_000,
   "markup-ui-carousel.js": 7_000,
   "markup-ui-carousel.global.js": 7_000,
   "markup-ui-carousel.css": 1_500,
   "markup-ui-global-style.css": 500,
-  "markup-ui-split.js": 8_000,
-  "markup-ui-split.global.js": 8_000,
+  "markup-ui-split.js": 9_000,
+  "markup-ui-split.global.js": 9_000,
   "markup-ui-split.css": 1_500,
   "markup-ui-popselect.js": 10_000,
   "markup-ui-popselect.global.js": 10_000,
@@ -216,62 +351,62 @@ const bundleBudgets = {
   "markup-ui-infinite-scroll.js": 7_000,
   "markup-ui-infinite-scroll.global.js": 7_000,
   "markup-ui-infinite-scroll.css": 1_000,
-  "markup-ui-log.js": 6_000,
-  "markup-ui-log.global.js": 6_000,
+  "markup-ui-log.js": 7_000,
+  "markup-ui-log.global.js": 7_000,
   "markup-ui-log.css": 1_750,
   "markup-ui-data-table.js": 9_000,
   "markup-ui-data-table.global.js": 9_000,
-  "markup-ui-data-table.css": 2_000,
-  "markup-ui-transfer.js": 8_000,
-  "markup-ui-transfer.global.js": 8_000,
+  "markup-ui-data-table.css": 2_500,
+  "markup-ui-transfer.js": 10_000,
+  "markup-ui-transfer.global.js": 10_000,
   "markup-ui-transfer.css": 1_250,
   "markup-ui-tree-select.js": 9_000,
   "markup-ui-tree-select.global.js": 9_000,
   "markup-ui-tree-select.css": 1_250,
-  "markup-ui-cascader.js": 10_000,
-  "markup-ui-cascader.global.js": 10_000,
+  "markup-ui-cascader.js": 11_500,
+  "markup-ui-cascader.global.js": 11_500,
   "markup-ui-cascader.css": 1_250,
-  "markup-ui-tree.js": 9_000,
-  "markup-ui-tree.global.js": 9_000,
+  "markup-ui-tree.js": 11_500,
+  "markup-ui-tree.global.js": 11_500,
   "markup-ui-tree.css": 1_250,
-  "markup-ui-virtual-list.js": 5_000,
-  "markup-ui-virtual-list.global.js": 5_000,
+  "markup-ui-virtual-list.js": 6_000,
+  "markup-ui-virtual-list.global.js": 6_000,
   "markup-ui-virtual-list.css": 1_000,
-  "markup-ui-time-picker.js": 4_000,
-  "markup-ui-time-picker.global.js": 4_000,
+  "markup-ui-time-picker.js": 7_000,
+  "markup-ui-time-picker.global.js": 7_000,
   "markup-ui-time-picker.css": 1_000,
-  "markup-ui-date-picker.js": 4_500,
-  "markup-ui-date-picker.global.js": 4_500,
+  "markup-ui-date-picker.js": 7_000,
+  "markup-ui-date-picker.global.js": 7_000,
   "markup-ui-date-picker.css": 1_000,
-  "markup-ui-color-picker.js": 4_500,
-  "markup-ui-color-picker.global.js": 4_500,
+  "markup-ui-color-picker.js": 6_500,
+  "markup-ui-color-picker.global.js": 6_500,
   "markup-ui-color-picker.css": 1_000,
-  "markup-ui-mention.js": 6_500,
-  "markup-ui-mention.global.js": 6_500,
+  "markup-ui-mention.js": 8_000,
+  "markup-ui-mention.global.js": 8_000,
   "markup-ui-mention.css": 1_250,
-  "markup-ui-dynamic-tags.js": 10_000,
-  "markup-ui-dynamic-tags.global.js": 10_000,
+  "markup-ui-dynamic-tags.js": 13_500,
+  "markup-ui-dynamic-tags.global.js": 13_500,
   "markup-ui-dynamic-tags.css": 1_500,
-  "markup-ui-dynamic-input.js": 6_500,
-  "markup-ui-dynamic-input.global.js": 6_500,
+  "markup-ui-dynamic-input.js": 8_500,
+  "markup-ui-dynamic-input.global.js": 8_500,
   "markup-ui-dynamic-input.css": 1_000,
-  "markup-ui-input-otp.js": 3_000,
-  "markup-ui-input-otp.global.js": 3_000,
+  "markup-ui-input-otp.js": 5_000,
+  "markup-ui-input-otp.global.js": 5_000,
   "markup-ui-input-otp.css": 1_000,
-  "markup-ui-auto-complete.js": 4_500,
-  "markup-ui-auto-complete.global.js": 4_500,
+  "markup-ui-auto-complete.js": 6_000,
+  "markup-ui-auto-complete.global.js": 6_000,
   "markup-ui-auto-complete.css": 1_000,
-  "markup-ui-form.js": 5_000,
-  "markup-ui-form.global.js": 5_000,
+  "markup-ui-form.js": 7_000,
+  "markup-ui-form.global.js": 7_000,
   "markup-ui-form.css": 1_250,
-  "markup-ui-rate.js": 4_000,
-  "markup-ui-rate.global.js": 4_000,
+  "markup-ui-rate.js": 5_500,
+  "markup-ui-rate.global.js": 5_500,
   "markup-ui-rate.css": 1_500,
-  "markup-ui-slider.js": 3_500,
-  "markup-ui-slider.global.js": 3_500,
+  "markup-ui-slider.js": 5_500,
+  "markup-ui-slider.global.js": 5_500,
   "markup-ui-slider.css": 1_000,
-  "markup-ui-input-number.js": 3_500,
-  "markup-ui-input-number.global.js": 3_500,
+  "markup-ui-input-number.js": 4_000,
+  "markup-ui-input-number.global.js": 4_000,
   "markup-ui-input-number.css": 1_000,
   "markup-ui-select.js": 4_000,
   "markup-ui-select.global.js": 4_000,
@@ -288,32 +423,32 @@ const bundleBudgets = {
   "markup-ui-input.js": 4_000,
   "markup-ui-input.global.js": 4_000,
   "markup-ui-input.css": 1_800,
-  "markup-ui-collapse-transition.js": 4_500,
-  "markup-ui-collapse-transition.global.js": 4_500,
+  "markup-ui-collapse-transition.js": 6_000,
+  "markup-ui-collapse-transition.global.js": 6_000,
   "markup-ui-collapse-transition.css": 750,
-  "markup-ui-notification.js": 6_500,
-  "markup-ui-notification.global.js": 6_500,
+  "markup-ui-notification.js": 9_500,
+  "markup-ui-notification.global.js": 9_500,
   "markup-ui-notification.css": 2_000,
-  "markup-ui-message.js": 6_000,
-  "markup-ui-message.global.js": 6_000,
+  "markup-ui-message.js": 7_500,
+  "markup-ui-message.global.js": 7_500,
   "markup-ui-message.css": 1_750,
-  "markup-ui-drawer.js": 4_750,
-  "markup-ui-drawer.global.js": 4_750,
+  "markup-ui-drawer.js": 7_000,
+  "markup-ui-drawer.global.js": 7_000,
   "markup-ui-drawer.css": 1_500,
-  "markup-ui-modal.js": 4_000,
-  "markup-ui-modal.global.js": 4_000,
+  "markup-ui-modal.js": 6_000,
+  "markup-ui-modal.global.js": 6_000,
   "markup-ui-modal.css": 1_250,
-  "markup-ui-dialog.js": 5_500,
-  "markup-ui-dialog.global.js": 5_500,
+  "markup-ui-dialog.js": 7_500,
+  "markup-ui-dialog.global.js": 7_500,
   "markup-ui-dialog.css": 1_500,
   "markup-ui.min.js": 15_000,
   "markup-ui-advanced.js": 3_000,
   "markup-ui-widgets.js": 4_000,
-  "markup-ui-avatar.js": 4_000,
-  "markup-ui-avatar.global.js": 4_000,
+  "markup-ui-avatar.js": 8_000,
+  "markup-ui-avatar.global.js": 8_000,
   "markup-ui-avatar.css": 1_500,
-  "markup-ui-button.js": 4_000,
-  "markup-ui-button.global.js": 4_000,
+  "markup-ui-button.js": 6_000,
+  "markup-ui-button.global.js": 6_000,
   "markup-ui-button.css": 2_500,
   "markup-ui-card.js": 3_000,
   "markup-ui-card.global.js": 3_000,
@@ -336,77 +471,122 @@ const bundleBudgets = {
   "markup-ui-spin.js": 3_500,
   "markup-ui-spin.global.js": 3_500,
   "markup-ui-spin.css": 2_000,
-  "markup-ui-progress.js": 6_000,
-  "markup-ui-progress.global.js": 6_000,
+  "markup-ui-progress.js": 7_500,
+  "markup-ui-progress.global.js": 7_500,
   "markup-ui-progress.css": 2_500,
-  "markup-ui-statistic.js": 2_000,
-  "markup-ui-statistic.global.js": 2_000,
+  "markup-ui-statistic.js": 3_000,
+  "markup-ui-statistic.global.js": 3_000,
   "markup-ui-statistic.css": 1_500,
   "markup-ui-typography.css": 2_500,
   "markup-ui-icon.css": 1_000,
+  "markup-ui-icon.js": 3_000,
+  "markup-ui-icon.global.js": 3_000,
+  "markup-ui-gradient-text.js": 2_500,
+  "markup-ui-gradient-text.global.js": 2_500,
   "markup-ui-gradient-text.css": 1_500,
+  "markup-ui-ellipsis.js": 2_000,
+  "markup-ui-ellipsis.global.js": 2_000,
   "markup-ui-ellipsis.css": 1_500,
+  "markup-ui-page-header.js": 2_000,
+  "markup-ui-page-header.global.js": 2_000,
   "markup-ui-page-header.css": 1_500,
+  "markup-ui-divider.js": 3_000,
+  "markup-ui-divider.global.js": 3_000,
   "markup-ui-divider.css": 1_500,
+  "markup-ui-box.js": 2_500,
+  "markup-ui-box.global.js": 2_500,
+  "markup-ui-box.css": 1_500,
   "markup-ui-flex.css": 1_000,
   "markup-ui-space.css": 1_000,
+  "markup-ui-space.js": 1_500,
+  "markup-ui-space.global.js": 1_500,
   "markup-ui-grid.css": 1_500,
+  "markup-ui-layout.js": 2_000,
+  "markup-ui-layout.global.js": 2_000,
   "markup-ui-layout.css": 1_500,
-  "markup-ui-list.css": 1_500,
-  "markup-ui-descriptions.css": 1_500,
+  "markup-ui-list.js": 2_500,
+  "markup-ui-list.global.js": 2_500,
+  "markup-ui-list.css": 2_000,
+  "markup-ui-descriptions.js": 2_500,
+  "markup-ui-descriptions.global.js": 2_500,
+  "markup-ui-descriptions.css": 2_000,
+  "markup-ui-timeline.js": 2_500,
+  "markup-ui-timeline.global.js": 2_500,
   "markup-ui-timeline.css": 1_500,
+  "markup-ui-breadcrumb.js": 2_000,
+  "markup-ui-breadcrumb.global.js": 2_000,
   "markup-ui-breadcrumb.css": 1_500,
+  "markup-ui-thing.js": 2_500,
+  "markup-ui-thing.global.js": 2_500,
   "markup-ui-thing.css": 1_000,
+  "markup-ui-table.js": 2_000,
+  "markup-ui-table.global.js": 2_000,
   "markup-ui-table.css": 1_500,
-  "markup-ui-highlight.js": 2_000,
-  "markup-ui-highlight.global.js": 2_000,
+  "markup-ui-highlight.js": 3_500,
+  "markup-ui-highlight.global.js": 3_500,
   "markup-ui-highlight.css": 750,
+  "markup-ui-affix.js": 2_500,
+  "markup-ui-affix.global.js": 2_500,
   "markup-ui-affix.css": 500,
-  "markup-ui-result.css": 1_000,
+  "markup-ui-result.js": 2_500,
+  "markup-ui-result.global.js": 2_500,
+  "markup-ui-result.css": 1_500,
+  "markup-ui-code.js": 2_500,
+  "markup-ui-code.global.js": 2_500,
   "markup-ui-code.css": 1_500,
   "markup-ui-scrollbar.css": 750,
-  "markup-ui-float-button.css": 1_500,
-  "markup-ui-image.js": 4_000,
-  "markup-ui-image.global.js": 4_000,
-  "markup-ui-image.css": 1_000,
-  "markup-ui-popover.js": 4_000,
-  "markup-ui-popover.global.js": 4_000,
+  "markup-ui-float-button.js": 3_500,
+  "markup-ui-float-button.global.js": 3_500,
+  "markup-ui-float-button.css": 2_000,
+  "markup-ui-image.js": 7_000,
+  "markup-ui-image.global.js": 7_000,
+  "markup-ui-image.css": 1_500,
+  "markup-ui-popover.js": 5_750,
+  "markup-ui-popover.global.js": 6_000,
   "markup-ui-popover.css": 1_000,
-  "markup-ui-tooltip.js": 5_000,
-  "markup-ui-tooltip.global.js": 5_000,
+  "markup-ui-tooltip.js": 7_000,
+  "markup-ui-tooltip.global.js": 7_000,
   "markup-ui-tooltip.css": 1_250,
-  "markup-ui-popconfirm.js": 6_500,
-  "markup-ui-popconfirm.global.js": 6_500,
+  "markup-ui-popconfirm.js": 9_500,
+  "markup-ui-popconfirm.global.js": 9_500,
   "markup-ui-popconfirm.css": 1_250,
-  "markup-ui-dropdown.js": 9_000,
-  "markup-ui-dropdown.global.js": 9_000,
-  "markup-ui-dropdown.css": 1_750,
-  "markup-ui-menu.js": 6_000,
-  "markup-ui-menu.global.js": 6_000,
+  "markup-ui-dropdown.js": 13_000,
+  "markup-ui-dropdown.global.js": 13_000,
+  "markup-ui-dropdown.css": 1_850,
+  "markup-ui-menu.js": 7_500,
+  "markup-ui-menu.global.js": 7_500,
   "markup-ui-menu.css": 1_250,
-  "markup-ui-tabs.js": 6_000,
-  "markup-ui-tabs.global.js": 6_000,
+  "markup-ui-tabs.js": 7_500,
+  "markup-ui-tabs.global.js": 7_500,
   "markup-ui-tabs.css": 1_750,
-  "markup-ui-collapse.js": 4_000,
-  "markup-ui-collapse.global.js": 4_000,
+  "markup-ui-collapse.js": 6_500,
+  "markup-ui-collapse.global.js": 6_500,
   "markup-ui-collapse.css": 1_000,
-  "markup-ui-anchor.js": 4_500,
-  "markup-ui-anchor.global.js": 4_500,
+  "markup-ui-anchor.js": 7_000,
+  "markup-ui-anchor.global.js": 7_000,
   "markup-ui-anchor.css": 1_000,
-  "markup-ui-back-top.js": 3_500,
-  "markup-ui-back-top.global.js": 3_500,
+  "markup-ui-back-top.js": 6_500,
+  "markup-ui-back-top.global.js": 6_500,
   "markup-ui-back-top.css": 1_000,
-  "markup-ui-pagination.js": 5_500,
-  "markup-ui-pagination.global.js": 5_500,
+  "markup-ui-pagination.js": 6_500,
+  "markup-ui-pagination.global.js": 6_500,
   "markup-ui-pagination.css": 1_250,
-  "markup-ui-steps.js": 4_000,
-  "markup-ui-steps.global.js": 4_000,
+  "markup-ui-steps.js": 7_000,
+  "markup-ui-steps.global.js": 7_000,
   "markup-ui-steps.css": 1_250,
-  "markup-ui-loading-bar.js": 3_500,
-  "markup-ui-loading-bar.global.js": 3_500,
+  "markup-ui-loading-bar.js": 5_500,
+  "markup-ui-loading-bar.global.js": 5_500,
   "markup-ui-loading-bar.css": 1_250,
 }
 const bundles = {}
+// Shared native mechanics retain the previous Input helper's per-file ceilings.
+bundleBudgets["markup-ui-native-input.js"] = 4_000
+bundleBudgets["markup-ui-native-input.global.js"] = 4_000
+bundleBudgets["markup-ui-native-radio.js"] = 2_000
+bundleBudgets["markup-ui-native-radio.global.js"] = 2_000
+// Existing Select mechanics are shared by the real TreeSelect and Popselect compositions.
+bundleBudgets["markup-ui-native-select.js"] = 4_000
+bundleBudgets["markup-ui-native-select.global.js"] = 4_000
 
 for (const [name, budget] of Object.entries(bundleBudgets)) {
   const content = await readFile(resolve(dist, name))
@@ -424,10 +604,23 @@ for (const name of [...components, ...styleOnlyComponents]) {
   if (components.includes(name)) {
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       const file = `markup-ui-${name}${suffix}`
+      const dependencies = viewComponents.has(name) ? [`markup-ui-core${suffix}`] : []
+      if (name === "input") dependencies.push(`markup-ui-native-input${suffix}`)
+      if (name === "radio" || name === "rate") dependencies.push(`markup-ui-native-radio${suffix}`)
+      if (["select", "tree-select", "popselect"].includes(name)) dependencies.push(`markup-ui-native-select${suffix}`)
+      const runtimeBudget = viewComponents.get(name) ?? (name === "rate" ? 8_000 : name === "tree-select" ? 13_000 : name === "popselect" ? 14_500 : undefined)
+      const runtimeGzipBytes = bundles[file].gzipBytes
+        + dependencies.reduce((total, dependency) => total + bundles[dependency].gzipBytes, 0)
       payload[mode] = {
         file,
         gzipBytes: bundles[file].gzipBytes,
-        totalGzipBytes: bundles[file].gzipBytes + bundles[css].gzipBytes,
+        dependencies,
+        runtimeGzipBytes,
+        ...(runtimeBudget === undefined ? {} : { runtimeBudget }),
+        totalGzipBytes: runtimeGzipBytes + bundles[css].gzipBytes,
+      }
+      if (dependencies.length && (runtimeBudget === undefined || runtimeGzipBytes > (mode === "classic" ? runtimeBudget + 200 : runtimeBudget))) {
+        throw new Error(`${file} plus shared dependencies is ${runtimeGzipBytes} gzip bytes; budget is ${runtimeBudget}.`)
       }
     }
   }

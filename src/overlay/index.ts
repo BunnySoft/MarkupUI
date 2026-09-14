@@ -14,10 +14,10 @@ export interface NotificationOptions extends MessageOptions {
 }
 
 function getHost(document: Document, placement: "top" | "top-right"): HTMLElement {
-  const selector = `mui-overlay-host[data-placement="${placement}"]`
+  const selector = `m-overlay-host[data-placement="${placement}"]`
   const existing = document.querySelector<HTMLElement>(selector)
   if (existing !== null) return existing
-  const host = document.createElement("mui-overlay-host")
+  const host = document.createElement("m-overlay-host")
   host.dataset.placement = placement
   host.setAttribute("aria-live", placement === "top" ? "polite" : "assertive")
   document.body.append(host)
@@ -45,7 +45,7 @@ export function showMessage(
   options: MessageOptions = {},
   document: Document = globalThis.document,
 ): OverlayHandle {
-  const element = document.createElement("mui-message")
+  const element = document.createElement("m-message")
   element.setAttribute("type", options.type ?? "default")
   element.setAttribute("role", options.type === "error" ? "alert" : "status")
   element.textContent = content
@@ -56,7 +56,7 @@ export function showNotification(
   options: NotificationOptions,
   document: Document = globalThis.document,
 ): OverlayHandle {
-  const element = document.createElement("mui-notification")
+  const element = document.createElement("m-notification")
   element.setAttribute("type", options.type ?? "default")
   element.setAttribute("role", options.type === "error" ? "alert" : "status")
   const title = document.createElement("strong")
@@ -71,5 +71,5 @@ export function showNotification(
 }
 
 export function clearOverlays(document: Document = globalThis.document): void {
-  document.querySelectorAll("mui-overlay-host").forEach((host) => host.remove())
+  document.querySelectorAll("m-overlay-host").forEach((host) => host.remove())
 }

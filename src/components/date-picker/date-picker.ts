@@ -162,7 +162,7 @@ export function createDatePicker(root: HTMLElement): DatePickerController {
   }
   function report(reason: unknown) {
     error = reason
-    root.dispatchEvent(new view!.CustomEvent("mui:date-picker-error", { detail: { error: reason } }))
+    root.dispatchEvent(new view!.CustomEvent("m:date-picker-error", { detail: { error: reason } }))
   }
   function settleReset() {
     if (!reset || reset.eventPhase !== 0) return
@@ -219,7 +219,7 @@ export function createDatePicker(root: HTMLElement): DatePickerController {
       const commit = new view!.Event("change", { bubbles: true }); generated.add(commit); input.dispatchEvent(commit)
     }
     settleReset()
-    if (connected && generation === version && inputs.every(input => input.value === "")) root.dispatchEvent(new view!.CustomEvent("mui:date-picker-clear", { detail: { value: state().value } }))
+    if (connected && generation === version && inputs.every(input => input.value === "")) root.dispatchEvent(new view!.CustomEvent("m:date-picker-clear", { detail: { value: state().value } }))
     return true
   }
   function listen(node: EventTarget, type: string, callback: EventListener, capture = false) {

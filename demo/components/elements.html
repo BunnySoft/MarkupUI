@@ -1,0 +1,1209 @@
+<!doctype html>
+<html lang="en" data-m-theme="slate">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MarkupUI - Element Matrix & Directory</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-theme-slate.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-tag.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-input.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-table.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-tag.global.js"></script>
+  <script defer src="../../dist/markup-ui-input.global.js"></script>
+  <script defer src="../../dist/markup-ui-table.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+</head>
+<body>
+  <m-box display="flex" direction="column" gap="24" padding="24" width="100%">
+    <m-box display="flex" justify="space-between" align="center" wrap="wrap" gap="16">
+      <m-box display="flex" direction="column" gap="4">
+        <m-heading level="1">MarkupUI Element Directory & Type Matrix</m-heading>
+        <m-p>Complete index of all MarkupUI elements, direct HTML mapping flags, and cross-platform targets.</m-p>
+      </m-box>
+      <m-button id="back-to-demos" appearance="secondary">
+        <m-link href="../index.html">← Back to Showcase</m-link>
+      </m-button>
+    </m-box>
+
+    <m-box display="flex" gap="16" wrap="wrap" align="center">
+      <m-input id="search-box" placeholder="Search element tag, HTML tag, or family..." clearable style="min-width: 320px;"></m-input>
+      <m-button-group>
+        <m-button id="filter-all" type="primary">All (138)</m-button>
+        <m-button id="filter-direct">HTML Direct Map (23)</m-button>
+        <m-button id="filter-custom">Custom Element (110)</m-button>
+        <m-button id="filter-companion">Companion Region (5)</m-button>
+      </m-button-group>
+    </m-box>
+
+    <m-table striped bordered single-line="false">
+      <table id="matrix-table" class="m-table">
+        <thead>
+          <tr>
+            <th>Element Tag</th>
+            <th>Type Flag</th>
+            <th>HTML Equivalent</th>
+            <th>Native Target (SwiftUI / Flutter / CLI)</th>
+            <th>Family</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody id="matrix-tbody">
+            <tr data-flag="HTML Direct Map" data-text="<m-box> div Box Generic block/flex/grid container with typed layout attributes VStack / HStack / Box">
+              <td><m-code>&lt;m-box&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>div</m-code></td>
+              <td><m-text>VStack / HStack / Box</m-text></td>
+              <td><m-link href="../components/box.html">Box</m-link></td>
+              <td><m-text>Generic block/flex/grid container with typed layout attributes</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-div> div Box Direct semantic alias to HTML div Box / Container">
+              <td><m-code>&lt;m-div&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>div</m-code></td>
+              <td><m-text>Box / Container</m-text></td>
+              <td><m-link href="../components/box.html">Box</m-link></td>
+              <td><m-text>Direct semantic alias to HTML div</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-span> span Box Generic inline phrasing container Text / Span">
+              <td><m-code>&lt;m-span&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>span</m-code></td>
+              <td><m-text>Text / Span</m-text></td>
+              <td><m-link href="../components/box.html">Box</m-link></td>
+              <td><m-text>Generic inline phrasing container</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-p> p Typography Text paragraph block with normalized spacing Text paragraph">
+              <td><m-code>&lt;m-p&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>p</m-code></td>
+              <td><m-text>Text paragraph</m-text></td>
+              <td><m-link href="../components/typography.html">Typography</m-link></td>
+              <td><m-text>Text paragraph block with normalized spacing</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-label> label Box Form control label with click delegation Label">
+              <td><m-code>&lt;m-label&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>label</m-code></td>
+              <td><m-text>Label</m-text></td>
+              <td><m-link href="../components/box.html">Box</m-link></td>
+              <td><m-text>Form control label with click delegation</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-strong> strong Box Importance / bold weight inline phrasing Bold text">
+              <td><m-code>&lt;m-strong&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>strong</m-code></td>
+              <td><m-text>Bold text</m-text></td>
+              <td><m-link href="../components/box.html">Box</m-link></td>
+              <td><m-text>Importance / bold weight inline phrasing</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-em> em Box Emphasis / italicized inline phrasing Italic text">
+              <td><m-code>&lt;m-em&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>em</m-code></td>
+              <td><m-text>Italic text</m-text></td>
+              <td><m-link href="../components/box.html">Box</m-link></td>
+              <td><m-text>Emphasis / italicized inline phrasing</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-small> small Box Fine print, annotations and side comments Caption text">
+              <td><m-code>&lt;m-small&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>small</m-code></td>
+              <td><m-text>Caption text</m-text></td>
+              <td><m-link href="../components/box.html">Box</m-link></td>
+              <td><m-text>Fine print, annotations and side comments</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-pre> pre Box Preformatted text block preserving whitespace Monospace block">
+              <td><m-code>&lt;m-pre&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>pre</m-code></td>
+              <td><m-text>Monospace block</m-text></td>
+              <td><m-link href="../components/box.html">Box</m-link></td>
+              <td><m-text>Preformatted text block preserving whitespace</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-code> code Code Inline or block code fragment Monospace text">
+              <td><m-code>&lt;m-code&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>code</m-code></td>
+              <td><m-text>Monospace text</m-text></td>
+              <td><m-link href="../components/code.html">Code</m-link></td>
+              <td><m-text>Inline or block code fragment</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-details> details Box Disclosure container with toggle state sync DisclosureGroup">
+              <td><m-code>&lt;m-details&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>details</m-code></td>
+              <td><m-text>DisclosureGroup</m-text></td>
+              <td><m-link href="../components/box.html">Box</m-link></td>
+              <td><m-text>Disclosure container with toggle state sync</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-summary> summary Box Disclosure trigger and header caption Disclosure header">
+              <td><m-code>&lt;m-summary&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>summary</m-code></td>
+              <td><m-text>Disclosure header</m-text></td>
+              <td><m-link href="../components/box.html">Box</m-link></td>
+              <td><m-text>Disclosure trigger and header caption</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-heading> h1-h6 Typography Semantic heading with configurable level 1-6 Heading text">
+              <td><m-code>&lt;m-heading&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>h1-h6</m-code></td>
+              <td><m-text>Heading text</m-text></td>
+              <td><m-link href="../components/typography.html">Typography</m-link></td>
+              <td><m-text>Semantic heading with configurable level 1-6</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-a> a Typography Hyperlink navigation element Link / NavigationLink">
+              <td><m-code>&lt;m-a&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>a</m-code></td>
+              <td><m-text>Link / NavigationLink</m-text></td>
+              <td><m-link href="../components/typography.html">Typography</m-link></td>
+              <td><m-text>Hyperlink navigation element</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-link> a Typography Styled inline hyperlink with routing semantics Link / NavigationLink">
+              <td><m-code>&lt;m-link&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>a</m-code></td>
+              <td><m-text>Link / NavigationLink</m-text></td>
+              <td><m-link href="../components/typography.html">Typography</m-link></td>
+              <td><m-text>Styled inline hyperlink with routing semantics</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-divider> hr Divider Thematic break / separator rule with optional title Divider">
+              <td><m-code>&lt;m-divider&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>hr</m-code></td>
+              <td><m-text>Divider</m-text></td>
+              <td><m-link href="../components/divider.html">Divider</m-link></td>
+              <td><m-text>Thematic break / separator rule with optional title</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-article> article Box Self-contained composition container Container">
+              <td><m-code>&lt;m-article&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>article</m-code></td>
+              <td><m-text>Container</m-text></td>
+              <td><m-link href="../components/box.html">Box</m-link></td>
+              <td><m-text>Self-contained composition container</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-footer> footer Box Footer region for cards or layouts Container">
+              <td><m-code>&lt;m-footer&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>footer</m-code></td>
+              <td><m-text>Container</m-text></td>
+              <td><m-link href="../components/box.html">Box</m-link></td>
+              <td><m-text>Footer region for cards or layouts</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-blockquote> blockquote Typography Block quotation with border highlight Quote block">
+              <td><m-code>&lt;m-blockquote&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>blockquote</m-code></td>
+              <td><m-text>Quote block</m-text></td>
+              <td><m-link href="../components/typography.html">Typography</m-link></td>
+              <td><m-text>Block quotation with border highlight</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-ul> ul Typography Unordered list container VStack list">
+              <td><m-code>&lt;m-ul&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>ul</m-code></td>
+              <td><m-text>VStack list</m-text></td>
+              <td><m-link href="../components/typography.html">Typography</m-link></td>
+              <td><m-text>Unordered list container</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-ol> ol Typography Ordered list container with numbering Ordered list">
+              <td><m-code>&lt;m-ol&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>ol</m-code></td>
+              <td><m-text>Ordered list</m-text></td>
+              <td><m-link href="../components/typography.html">Typography</m-link></td>
+              <td><m-text>Ordered list container with numbering</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-option> option Select / AutoComplete Option item for select, popselect and autocomplete Picker item">
+              <td><m-code>&lt;m-option&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>option</m-code></td>
+              <td><m-text>Picker item</m-text></td>
+              <td><m-link href="../components/select-/-autocomplete.html">Select / AutoComplete</m-link></td>
+              <td><m-text>Option item for select, popselect and autocomplete</m-text></td>
+            </tr>
+            <tr data-flag="HTML Direct Map" data-text="<m-textarea> textarea Input Multiline text editing field TextEditor">
+              <td><m-code>&lt;m-textarea&gt;</m-code></td>
+              <td><m-tag type="success">HTML Direct Map</m-tag></td>
+              <td><m-code>textarea</m-code></td>
+              <td><m-text>TextEditor</m-text></td>
+              <td><m-link href="../components/input.html">Input</m-link></td>
+              <td><m-text>Multiline text editing field</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-avatar> Custom widget Avatar Profile image, icon, or letter avatar with fallback Image / Avatar">
+              <td><m-code>&lt;m-avatar&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Image / Avatar</m-text></td>
+              <td><m-link href="../components/avatar.html">Avatar</m-link></td>
+              <td><m-text>Profile image, icon, or letter avatar with fallback</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-avatar-group> Custom widget Avatar Overlapping group container for multiple avatars HStack of Avatars">
+              <td><m-code>&lt;m-avatar-group&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>HStack of Avatars</m-text></td>
+              <td><m-link href="../components/avatar.html">Avatar</m-link></td>
+              <td><m-text>Overlapping group container for multiple avatars</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-button> Custom widget Button Interactive button with types, sizes, shapes and loading Button">
+              <td><m-code>&lt;m-button&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Button</m-text></td>
+              <td><m-link href="../components/button.html">Button</m-link></td>
+              <td><m-text>Interactive button with types, sizes, shapes and loading</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-button-group> Custom widget Button Segmented button group container ControlGroup / Row">
+              <td><m-code>&lt;m-button-group&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>ControlGroup / Row</m-text></td>
+              <td><m-link href="../components/button.html">Button</m-link></td>
+              <td><m-text>Segmented button group container</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-card> Custom widget Card Container panel with title, cover, and structured sections Card / Panel">
+              <td><m-code>&lt;m-card&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Card / Panel</m-text></td>
+              <td><m-link href="../components/card.html">Card</m-link></td>
+              <td><m-text>Container panel with title, cover, and structured sections</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-carousel> Custom widget Carousel Paged carousel with indicators and autoplay TabView(PageTabViewStyle)">
+              <td><m-code>&lt;m-carousel&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>TabView(PageTabViewStyle)</m-text></td>
+              <td><m-link href="../components/carousel.html">Carousel</m-link></td>
+              <td><m-text>Paged carousel with indicators and autoplay</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-collapse> Custom widget Collapse Accordion / collapsible item group Accordion / List">
+              <td><m-code>&lt;m-collapse&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Accordion / List</m-text></td>
+              <td><m-link href="../components/collapse.html">Collapse</m-link></td>
+              <td><m-text>Accordion / collapsible item group</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-collapse-item> Custom widget Collapse Single collapsible panel item DisclosureGroup">
+              <td><m-code>&lt;m-collapse-item&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>DisclosureGroup</m-text></td>
+              <td><m-link href="../components/collapse.html">Collapse</m-link></td>
+              <td><m-text>Single collapsible panel item</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-collapse-transition> Custom widget Collapse Transition Smooth height animation wrapper Animated visibility">
+              <td><m-code>&lt;m-collapse-transition&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Animated visibility</m-text></td>
+              <td><m-link href="../components/collapse-transition.html">Collapse Transition</m-link></td>
+              <td><m-text>Smooth height animation wrapper</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-dropdown> Custom widget Dropdown Dropdown popup menu triggered by an action Menu">
+              <td><m-code>&lt;m-dropdown&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Menu</m-text></td>
+              <td><m-link href="../components/dropdown.html">Dropdown</m-link></td>
+              <td><m-text>Dropdown popup menu triggered by an action</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-ellipsis> Custom widget Ellipsis Single or multi-line text truncation with tooltip/expand Line-clamped Text">
+              <td><m-code>&lt;m-ellipsis&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Line-clamped Text</m-text></td>
+              <td><m-link href="../components/ellipsis.html">Ellipsis</m-link></td>
+              <td><m-text>Single or multi-line text truncation with tooltip/expand</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-gradient-text> Custom widget Gradient Text Text rendered with clipped gradient fill Text with LinearGradient">
+              <td><m-code>&lt;m-gradient-text&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Text with LinearGradient</m-text></td>
+              <td><m-link href="../components/gradient-text.html">Gradient Text</m-link></td>
+              <td><m-text>Text rendered with clipped gradient fill</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-icon> Custom widget Icon Vector SVG or glyph icon wrapper Image(systemName:)">
+              <td><m-code>&lt;m-icon&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Image(systemName:)</m-text></td>
+              <td><m-link href="../components/icon.html">Icon</m-link></td>
+              <td><m-text>Vector SVG or glyph icon wrapper</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-icon-wrapper> Custom widget Icon Colored circular/square badge background for icons Circle / Rounded background">
+              <td><m-code>&lt;m-icon-wrapper&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Circle / Rounded background</m-text></td>
+              <td><m-link href="../components/icon.html">Icon</m-link></td>
+              <td><m-text>Colored circular/square badge background for icons</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-page-header> Custom widget Page Header Top header with back button, breadcrumb and actions NavigationBar / Header">
+              <td><m-code>&lt;m-page-header&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>NavigationBar / Header</m-text></td>
+              <td><m-link href="../components/page-header.html">Page Header</m-link></td>
+              <td><m-text>Top header with back button, breadcrumb and actions</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-tag> Custom widget Tag Compact label tag with checkable and closable modes Chip / Tag">
+              <td><m-code>&lt;m-tag&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Chip / Tag</m-text></td>
+              <td><m-link href="../components/tag.html">Tag</m-link></td>
+              <td><m-text>Compact label tag with checkable and closable modes</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-typography> Custom widget Typography Typographic wrapper applying design system text styling Text container">
+              <td><m-code>&lt;m-typography&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Text container</m-text></td>
+              <td><m-link href="../components/typography.html">Typography</m-link></td>
+              <td><m-text>Typographic wrapper applying design system text styling</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-watermark> Custom widget Watermark Background security or status watermark tile pattern Overlay pattern">
+              <td><m-code>&lt;m-watermark&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Overlay pattern</m-text></td>
+              <td><m-link href="../components/watermark.html">Watermark</m-link></td>
+              <td><m-text>Background security or status watermark tile pattern</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-float-button> Custom widget Float Button Circular/square floating action button pinned to viewport FloatingActionButton">
+              <td><m-code>&lt;m-float-button&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>FloatingActionButton</m-text></td>
+              <td><m-link href="../components/float-button.html">Float Button</m-link></td>
+              <td><m-text>Circular/square floating action button pinned to viewport</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-float-button-group> Custom widget Float Button Group container for floating action buttons FloatingStack">
+              <td><m-code>&lt;m-float-button-group&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>FloatingStack</m-text></td>
+              <td><m-link href="../components/float-button.html">Float Button</m-link></td>
+              <td><m-text>Group container for floating action buttons</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-auto-complete> Custom widget Auto Complete Text input with autocomplete suggestion list TextField with suggestions">
+              <td><m-code>&lt;m-auto-complete&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>TextField with suggestions</m-text></td>
+              <td><m-link href="../components/auto-complete.html">Auto Complete</m-link></td>
+              <td><m-text>Text input with autocomplete suggestion list</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-cascader> Custom widget Cascader Multi-level hierarchical selection popup Cascading Picker">
+              <td><m-code>&lt;m-cascader&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Cascading Picker</m-text></td>
+              <td><m-link href="../components/cascader.html">Cascader</m-link></td>
+              <td><m-text>Multi-level hierarchical selection popup</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-color-picker> Custom widget Color Picker Color selection with hex, rgb, and alpha support ColorPicker">
+              <td><m-code>&lt;m-color-picker&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>ColorPicker</m-text></td>
+              <td><m-link href="../components/color-picker.html">Color Picker</m-link></td>
+              <td><m-text>Color selection with hex, rgb, and alpha support</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-checkbox> Custom widget Checkbox Binary checkbox with indeterminate state support Toggle / Checkbox">
+              <td><m-code>&lt;m-checkbox&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Toggle / Checkbox</m-text></td>
+              <td><m-link href="../components/checkbox.html">Checkbox</m-link></td>
+              <td><m-text>Binary checkbox with indeterminate state support</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-checkbox-group> Custom widget Checkbox Multi-select checkbox collection with value binding VStack of Toggles">
+              <td><m-code>&lt;m-checkbox-group&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>VStack of Toggles</m-text></td>
+              <td><m-link href="../components/checkbox.html">Checkbox</m-link></td>
+              <td><m-text>Multi-select checkbox collection with value binding</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-date-picker> Custom widget Date Picker Calendar date selection dropdown DatePicker">
+              <td><m-code>&lt;m-date-picker&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>DatePicker</m-text></td>
+              <td><m-link href="../components/date-picker.html">Date Picker</m-link></td>
+              <td><m-text>Calendar date selection dropdown</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-dynamic-input> Custom widget Dynamic Input Editable array of inputs with add/remove/reorder Editable list">
+              <td><m-code>&lt;m-dynamic-input&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Editable list</m-text></td>
+              <td><m-link href="../components/dynamic-input.html">Dynamic Input</m-link></td>
+              <td><m-text>Editable array of inputs with add/remove/reorder</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-dynamic-tags> Custom widget Dynamic Tags Interactive tag list with input creation and removal Editable chip input">
+              <td><m-code>&lt;m-dynamic-tags&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Editable chip input</m-text></td>
+              <td><m-link href="../components/dynamic-tags.html">Dynamic Tags</m-link></td>
+              <td><m-text>Interactive tag list with input creation and removal</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-form> Custom widget Form Form layout and constraint validation controller Form container">
+              <td><m-code>&lt;m-form&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Form container</m-text></td>
+              <td><m-link href="../components/form.html">Form</m-link></td>
+              <td><m-text>Form layout and constraint validation controller</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-form-item> Custom widget Form Form field row binding label, control and feedback FormField row">
+              <td><m-code>&lt;m-form-item&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>FormField row</m-text></td>
+              <td><m-link href="../components/form.html">Form</m-link></td>
+              <td><m-text>Form field row binding label, control and feedback</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-form-item-gi> Custom widget Form Grid-integrated form item cell Grid FormField">
+              <td><m-code>&lt;m-form-item-gi&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Grid FormField</m-text></td>
+              <td><m-link href="../components/form.html">Form</m-link></td>
+              <td><m-text>Grid-integrated form item cell</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-input> Custom widget Input Single-line text input with clear, password and count TextField">
+              <td><m-code>&lt;m-input&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>TextField</m-text></td>
+              <td><m-link href="../components/input.html">Input</m-link></td>
+              <td><m-text>Single-line text input with clear, password and count</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-input-group> Custom widget Input Horizontal composite input group HStack field group">
+              <td><m-code>&lt;m-input-group&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>HStack field group</m-text></td>
+              <td><m-link href="../components/input.html">Input</m-link></td>
+              <td><m-text>Horizontal composite input group</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-input-group-label> Custom widget Input Prefix or suffix label in an input group Field label prefix/suffix">
+              <td><m-code>&lt;m-input-group-label&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Field label prefix/suffix</m-text></td>
+              <td><m-link href="../components/input.html">Input</m-link></td>
+              <td><m-text>Prefix or suffix label in an input group</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-input-number> Custom widget Input Number Numeric input with step buttons, min/max and precision Stepper / NumberField">
+              <td><m-code>&lt;m-input-number&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Stepper / NumberField</m-text></td>
+              <td><m-link href="../components/input-number.html">Input Number</m-link></td>
+              <td><m-text>Numeric input with step buttons, min/max and precision</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-input-otp> Custom widget Input OTP One-time password segmented character boxes PinEntryField">
+              <td><m-code>&lt;m-input-otp&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>PinEntryField</m-text></td>
+              <td><m-link href="../components/input-otp.html">Input OTP</m-link></td>
+              <td><m-text>One-time password segmented character boxes</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-mention> Custom widget Mention Textarea with @ or custom prefix trigger popup MentionEditor">
+              <td><m-code>&lt;m-mention&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>MentionEditor</m-text></td>
+              <td><m-link href="../components/mention.html">Mention</m-link></td>
+              <td><m-text>Textarea with @ or custom prefix trigger popup</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-radio> Custom widget Radio Single exclusive radio option RadioButton">
+              <td><m-code>&lt;m-radio&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>RadioButton</m-text></td>
+              <td><m-link href="../components/radio.html">Radio</m-link></td>
+              <td><m-text>Single exclusive radio option</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-radio-button> Custom widget Radio Button-styled radio option Segmented button">
+              <td><m-code>&lt;m-radio-button&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Segmented button</m-text></td>
+              <td><m-link href="../components/radio.html">Radio</m-link></td>
+              <td><m-text>Button-styled radio option</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-radio-group> Custom widget Radio Radio group managing single selection Picker / RadioGroup">
+              <td><m-code>&lt;m-radio-group&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Picker / RadioGroup</m-text></td>
+              <td><m-link href="../components/radio.html">Radio</m-link></td>
+              <td><m-text>Radio group managing single selection</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-rate> Custom widget Rate Star rating control with half-star increments RatingView (stars)">
+              <td><m-code>&lt;m-rate&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>RatingView (stars)</m-text></td>
+              <td><m-link href="../components/rate.html">Rate</m-link></td>
+              <td><m-text>Star rating control with half-star increments</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-select> Custom widget Select Single or multiple item selection dropdown Picker / Dropdown">
+              <td><m-code>&lt;m-select&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Picker / Dropdown</m-text></td>
+              <td><m-link href="../components/select.html">Select</m-link></td>
+              <td><m-text>Single or multiple item selection dropdown</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-slider> Custom widget Slider Numeric range track with thumb dragging Slider">
+              <td><m-code>&lt;m-slider&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Slider</m-text></td>
+              <td><m-link href="../components/slider.html">Slider</m-link></td>
+              <td><m-text>Numeric range track with thumb dragging</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-switch> Custom widget Switch Two-state toggle switch with loading indicator Toggle / Switch">
+              <td><m-code>&lt;m-switch&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Toggle / Switch</m-text></td>
+              <td><m-link href="../components/switch.html">Switch</m-link></td>
+              <td><m-text>Two-state toggle switch with loading indicator</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-time-picker> Custom widget Time Picker Hours, minutes and seconds selection panel TimePicker">
+              <td><m-code>&lt;m-time-picker&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>TimePicker</m-text></td>
+              <td><m-link href="../components/time-picker.html">Time Picker</m-link></td>
+              <td><m-text>Hours, minutes and seconds selection panel</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-transfer> Custom widget Transfer Dual-column transfer list between available and chosen Dual list transfer">
+              <td><m-code>&lt;m-transfer&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Dual list transfer</m-text></td>
+              <td><m-link href="../components/transfer.html">Transfer</m-link></td>
+              <td><m-text>Dual-column transfer list between available and chosen</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-tree-select> Custom widget Tree Select Tree-structured selection dropdown Hierarchical Picker">
+              <td><m-code>&lt;m-tree-select&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Hierarchical Picker</m-text></td>
+              <td><m-link href="../components/tree-select.html">Tree Select</m-link></td>
+              <td><m-text>Tree-structured selection dropdown</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-upload> Custom widget Upload File upload control with drag-and-drop and progress FilePicker / Dropzone">
+              <td><m-code>&lt;m-upload&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>FilePicker / Dropzone</m-text></td>
+              <td><m-link href="../components/upload.html">Upload</m-link></td>
+              <td><m-text>File upload control with drag-and-drop and progress</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-calendar> Custom widget Calendar Full calendar month grid with event markers CalendarView">
+              <td><m-code>&lt;m-calendar&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>CalendarView</m-text></td>
+              <td><m-link href="../components/calendar.html">Calendar</m-link></td>
+              <td><m-text>Full calendar month grid with event markers</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-countdown> Custom widget Countdown High-precision elapsed/remaining time counter Countdown timer">
+              <td><m-code>&lt;m-countdown&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Countdown timer</m-text></td>
+              <td><m-link href="../components/countdown.html">Countdown</m-link></td>
+              <td><m-text>High-precision elapsed/remaining time counter</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-data-table> Custom widget Data Table Advanced data grid with sorting, filtering, and selection TableView / DataGrid">
+              <td><m-code>&lt;m-data-table&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>TableView / DataGrid</m-text></td>
+              <td><m-link href="../components/data-table.html">Data Table</m-link></td>
+              <td><m-text>Advanced data grid with sorting, filtering, and selection</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-descriptions> Custom widget Descriptions Definition list / property inspector layout Form / KeyValue grid">
+              <td><m-code>&lt;m-descriptions&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Form / KeyValue grid</m-text></td>
+              <td><m-link href="../components/descriptions.html">Descriptions</m-link></td>
+              <td><m-text>Definition list / property inspector layout</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-description-item> Custom widget Descriptions Single labeled key-value item LabeledContent">
+              <td><m-code>&lt;m-description-item&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>LabeledContent</m-text></td>
+              <td><m-link href="../components/descriptions.html">Descriptions</m-link></td>
+              <td><m-text>Single labeled key-value item</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-empty> Custom widget Empty Placeholder for empty or no-data states ContentUnavailableView">
+              <td><m-code>&lt;m-empty&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>ContentUnavailableView</m-text></td>
+              <td><m-link href="../components/empty.html">Empty</m-link></td>
+              <td><m-text>Placeholder for empty or no-data states</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-heatmap> Custom widget Heatmap Calendar/matrix contribution density map Heatmap grid">
+              <td><m-code>&lt;m-heatmap&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Heatmap grid</m-text></td>
+              <td><m-link href="../components/heatmap.html">Heatmap</m-link></td>
+              <td><m-text>Calendar/matrix contribution density map</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-highlight> Custom widget Highlight Text container highlighting search keyword matches Highlighted Text">
+              <td><m-code>&lt;m-highlight&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Highlighted Text</m-text></td>
+              <td><m-link href="../components/highlight.html">Highlight</m-link></td>
+              <td><m-text>Text container highlighting search keyword matches</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-image> Custom widget Image Image element with loading, preview modal and fallback AsyncImage / ImageView">
+              <td><m-code>&lt;m-image&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>AsyncImage / ImageView</m-text></td>
+              <td><m-link href="../components/image.html">Image</m-link></td>
+              <td><m-text>Image element with loading, preview modal and fallback</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-image-group> Custom widget Image Group container enabling cross-image lightbox navigation Gallery preview">
+              <td><m-code>&lt;m-image-group&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Gallery preview</m-text></td>
+              <td><m-link href="../components/image.html">Image</m-link></td>
+              <td><m-text>Group container enabling cross-image lightbox navigation</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-infinite-scroll> Custom widget Infinite Scroll Scroll sentinel triggering progressive page loading LazyVStack with paging">
+              <td><m-code>&lt;m-infinite-scroll&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>LazyVStack with paging</m-text></td>
+              <td><m-link href="../components/infinite-scroll.html">Infinite Scroll</m-link></td>
+              <td><m-text>Scroll sentinel triggering progressive page loading</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-list> Custom widget List Vertical list container with dividers and headers List">
+              <td><m-code>&lt;m-list&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>List</m-text></td>
+              <td><m-link href="../components/list.html">List</m-link></td>
+              <td><m-text>Vertical list container with dividers and headers</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-list-item> Custom widget List Single row item in a list List row">
+              <td><m-code>&lt;m-list-item&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>List row</m-text></td>
+              <td><m-link href="../components/list.html">List</m-link></td>
+              <td><m-text>Single row item in a list</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-log> Custom widget Log High-performance virtualized stream log viewer Terminal / LogView">
+              <td><m-code>&lt;m-log&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Terminal / LogView</m-text></td>
+              <td><m-link href="../components/log.html">Log</m-link></td>
+              <td><m-text>High-performance virtualized stream log viewer</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-marquee> Custom widget Marquee Continuous looping text or content scroller Ticker / Marquee">
+              <td><m-code>&lt;m-marquee&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Ticker / Marquee</m-text></td>
+              <td><m-link href="../components/marquee.html">Marquee</m-link></td>
+              <td><m-text>Continuous looping text or content scroller</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-number-animation> Custom widget Number Animation Smooth animated transition between numbers Animated Text">
+              <td><m-code>&lt;m-number-animation&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Animated Text</m-text></td>
+              <td><m-link href="../components/number-animation.html">Number Animation</m-link></td>
+              <td><m-text>Smooth animated transition between numbers</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-statistic> Custom widget Statistic Dashboard KPI metric value with prefix/suffix Metric card">
+              <td><m-code>&lt;m-statistic&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Metric card</m-text></td>
+              <td><m-link href="../components/statistic.html">Statistic</m-link></td>
+              <td><m-text>Dashboard KPI metric value with prefix/suffix</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-table> Custom widget Table Styled semantic tabular container Table">
+              <td><m-code>&lt;m-table&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Table</m-text></td>
+              <td><m-link href="../components/table.html">Table</m-link></td>
+              <td><m-text>Styled semantic tabular container</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-thing> Custom widget Thing Structured entity card with avatar, title, description, actions Card row / Feed item">
+              <td><m-code>&lt;m-thing&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Card row / Feed item</m-text></td>
+              <td><m-link href="../components/thing.html">Thing</m-link></td>
+              <td><m-text>Structured entity card with avatar, title, description, actions</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-time> Custom widget Time Formatted relative or absolute time display Relative timestamp">
+              <td><m-code>&lt;m-time&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Relative timestamp</m-text></td>
+              <td><m-link href="../components/time.html">Time</m-link></td>
+              <td><m-text>Formatted relative or absolute time display</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-timeline> Custom widget Timeline Vertical chronological activity feed Timeline">
+              <td><m-code>&lt;m-timeline&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Timeline</m-text></td>
+              <td><m-link href="../components/timeline.html">Timeline</m-link></td>
+              <td><m-text>Vertical chronological activity feed</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-timeline-item> Custom widget Timeline Single event node on a timeline Timeline node">
+              <td><m-code>&lt;m-timeline-item&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Timeline node</m-text></td>
+              <td><m-link href="../components/timeline.html">Timeline</m-link></td>
+              <td><m-text>Single event node on a timeline</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-tree> Custom widget Tree Hierarchical folder/node tree with expand and check OutlineGroup">
+              <td><m-code>&lt;m-tree&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>OutlineGroup</m-text></td>
+              <td><m-link href="../components/tree.html">Tree</m-link></td>
+              <td><m-text>Hierarchical folder/node tree with expand and check</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-tree-node> Custom widget Tree Single expandable branch or leaf in a tree TreeNode">
+              <td><m-code>&lt;m-tree-node&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>TreeNode</m-text></td>
+              <td><m-link href="../components/tree.html">Tree</m-link></td>
+              <td><m-text>Single expandable branch or leaf in a tree</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-affix> Custom widget Affix Sticky viewport element pinned at top or bottom offsets Sticky container">
+              <td><m-code>&lt;m-affix&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Sticky container</m-text></td>
+              <td><m-link href="../components/affix.html">Affix</m-link></td>
+              <td><m-text>Sticky viewport element pinned at top or bottom offsets</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-anchor> Custom widget Anchor Scroll-spy navigation bar tracking in-page section targets Table of Contents">
+              <td><m-code>&lt;m-anchor&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Table of Contents</m-text></td>
+              <td><m-link href="../components/anchor.html">Anchor</m-link></td>
+              <td><m-text>Scroll-spy navigation bar tracking in-page section targets</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-anchor-link> Custom widget Anchor Link item inside an anchor navigation bar ToC link">
+              <td><m-code>&lt;m-anchor-link&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>ToC link</m-text></td>
+              <td><m-link href="../components/anchor.html">Anchor</m-link></td>
+              <td><m-text>Link item inside an anchor navigation bar</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-back-top> Custom widget Back Top Button appearing after scrolling to return to top ScrollToTop button">
+              <td><m-code>&lt;m-back-top&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>ScrollToTop button</m-text></td>
+              <td><m-link href="../components/back-top.html">Back Top</m-link></td>
+              <td><m-text>Button appearing after scrolling to return to top</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-breadcrumb> Custom widget Breadcrumb Breadcrumb trail showing hierarchical location Breadcrumb / Path">
+              <td><m-code>&lt;m-breadcrumb&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Breadcrumb / Path</m-text></td>
+              <td><m-link href="../components/breadcrumb.html">Breadcrumb</m-link></td>
+              <td><m-text>Breadcrumb trail showing hierarchical location</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-breadcrumb-item> Custom widget Breadcrumb Single step in a breadcrumb trail Breadcrumb node">
+              <td><m-code>&lt;m-breadcrumb-item&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Breadcrumb node</m-text></td>
+              <td><m-link href="../components/breadcrumb.html">Breadcrumb</m-link></td>
+              <td><m-text>Single step in a breadcrumb trail</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-loading-bar> Custom widget Loading Bar Top-edge linear activity progress bar Indeterminate bar">
+              <td><m-code>&lt;m-loading-bar&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Indeterminate bar</m-text></td>
+              <td><m-link href="../components/loading-bar.html">Loading Bar</m-link></td>
+              <td><m-text>Top-edge linear activity progress bar</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-menu> Custom widget Menu Vertical or horizontal application navigation menu Sidebar / Menu">
+              <td><m-code>&lt;m-menu&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Sidebar / Menu</m-text></td>
+              <td><m-link href="../components/menu.html">Menu</m-link></td>
+              <td><m-text>Vertical or horizontal application navigation menu</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-menu-item> Custom widget Menu Single selectable menu item Menu row">
+              <td><m-code>&lt;m-menu-item&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Menu row</m-text></td>
+              <td><m-link href="../components/menu.html">Menu</m-link></td>
+              <td><m-text>Single selectable menu item</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-menu-group> Custom widget Menu Titled section grouping menu items Menu section">
+              <td><m-code>&lt;m-menu-group&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Menu section</m-text></td>
+              <td><m-link href="../components/menu.html">Menu</m-link></td>
+              <td><m-text>Titled section grouping menu items</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-menu-divider> Custom widget Menu Separator line between menu groups Divider">
+              <td><m-code>&lt;m-menu-divider&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Divider</m-text></td>
+              <td><m-link href="../components/menu.html">Menu</m-link></td>
+              <td><m-text>Separator line between menu groups</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-pagination> Custom widget Pagination Page number selector and jumper controls Pager">
+              <td><m-code>&lt;m-pagination&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Pager</m-text></td>
+              <td><m-link href="../components/pagination.html">Pagination</m-link></td>
+              <td><m-text>Page number selector and jumper controls</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-steps> Custom widget Steps Multi-stage workflow progression indicator StepProgressBar">
+              <td><m-code>&lt;m-steps&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>StepProgressBar</m-text></td>
+              <td><m-link href="../components/steps.html">Steps</m-link></td>
+              <td><m-text>Multi-stage workflow progression indicator</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-step> Custom widget Steps Single milestone step in a multi-stage flow Step node">
+              <td><m-code>&lt;m-step&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Step node</m-text></td>
+              <td><m-link href="../components/steps.html">Steps</m-link></td>
+              <td><m-text>Single milestone step in a multi-stage flow</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-tabs> Custom widget Tabs Tabbed container switching active panels TabView">
+              <td><m-code>&lt;m-tabs&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>TabView</m-text></td>
+              <td><m-link href="../components/tabs.html">Tabs</m-link></td>
+              <td><m-text>Tabbed container switching active panels</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-tab-pane> Custom widget Tabs Single panel of content associated with a tab Tab content">
+              <td><m-code>&lt;m-tab-pane&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Tab content</m-text></td>
+              <td><m-link href="../components/tabs.html">Tabs</m-link></td>
+              <td><m-text>Single panel of content associated with a tab</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-alert> Custom widget Alert Notice banner for informative, warning or error alerts Alert banner">
+              <td><m-code>&lt;m-alert&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Alert banner</m-text></td>
+              <td><m-link href="../components/alert.html">Alert</m-link></td>
+              <td><m-text>Notice banner for informative, warning or error alerts</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-badge> Custom widget Badge Numeric count or status dot overlay for targets Badge overlay">
+              <td><m-code>&lt;m-badge&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Badge overlay</m-text></td>
+              <td><m-link href="../components/badge.html">Badge</m-link></td>
+              <td><m-text>Numeric count or status dot overlay for targets</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-dialog> Custom widget Dialog Modal prompt dialog requiring user confirmation Alert dialog">
+              <td><m-code>&lt;m-dialog&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Alert dialog</m-text></td>
+              <td><m-link href="../components/dialog.html">Dialog</m-link></td>
+              <td><m-text>Modal prompt dialog requiring user confirmation</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-drawer> Custom widget Drawer Sliding side drawer panel from viewport edge Sheet / Slideover">
+              <td><m-code>&lt;m-drawer&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Sheet / Slideover</m-text></td>
+              <td><m-link href="../components/drawer.html">Drawer</m-link></td>
+              <td><m-text>Sliding side drawer panel from viewport edge</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-message> Custom widget Message Temporary floating toast notice Toast notification">
+              <td><m-code>&lt;m-message&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Toast notification</m-text></td>
+              <td><m-link href="../components/message.html">Message</m-link></td>
+              <td><m-text>Temporary floating toast notice</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-modal> Custom widget Modal Full modal overlay dialog window Modal window">
+              <td><m-code>&lt;m-modal&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Modal window</m-text></td>
+              <td><m-link href="../components/modal.html">Modal</m-link></td>
+              <td><m-text>Full modal overlay dialog window</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-notification> Custom widget Notification Desktop/corner floating rich notification card Notification card">
+              <td><m-code>&lt;m-notification&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Notification card</m-text></td>
+              <td><m-link href="../components/notification.html">Notification</m-link></td>
+              <td><m-text>Desktop/corner floating rich notification card</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-popconfirm> Custom widget Popconfirm Action confirmation popover pinned to trigger Confirmation popover">
+              <td><m-code>&lt;m-popconfirm&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Confirmation popover</m-text></td>
+              <td><m-link href="../components/popconfirm.html">Popconfirm</m-link></td>
+              <td><m-text>Action confirmation popover pinned to trigger</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-popover> Custom widget Popover Rich content popover panel pinned to an anchor Popover">
+              <td><m-code>&lt;m-popover&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Popover</m-text></td>
+              <td><m-link href="../components/popover.html">Popover</m-link></td>
+              <td><m-text>Rich content popover panel pinned to an anchor</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-popselect> Custom widget Popselect Selection dropdown rendered inside a popover Picker popover">
+              <td><m-code>&lt;m-popselect&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Picker popover</m-text></td>
+              <td><m-link href="../components/popselect.html">Popselect</m-link></td>
+              <td><m-text>Selection dropdown rendered inside a popover</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-progress> Custom widget Progress Linear or circular percentage progress indicator ProgressView">
+              <td><m-code>&lt;m-progress&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>ProgressView</m-text></td>
+              <td><m-link href="../components/progress.html">Progress</m-link></td>
+              <td><m-text>Linear or circular percentage progress indicator</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-result> Custom widget Result Outcome page for success, 404, 500 and error states Result page">
+              <td><m-code>&lt;m-result&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Result page</m-text></td>
+              <td><m-link href="../components/result.html">Result</m-link></td>
+              <td><m-text>Outcome page for success, 404, 500 and error states</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-skeleton> Custom widget Skeleton Content placeholder simulating data loading Shimmer placeholder">
+              <td><m-code>&lt;m-skeleton&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Shimmer placeholder</m-text></td>
+              <td><m-link href="../components/skeleton.html">Skeleton</m-link></td>
+              <td><m-text>Content placeholder simulating data loading</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-spin> Custom widget Spin Spinning loading indicator wrapper ProgressView(circular)">
+              <td><m-code>&lt;m-spin&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>ProgressView(circular)</m-text></td>
+              <td><m-link href="../components/spin.html">Spin</m-link></td>
+              <td><m-text>Spinning loading indicator wrapper</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-tooltip> Custom widget Tooltip Informational text hover tip Tooltip / Help tag">
+              <td><m-code>&lt;m-tooltip&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Tooltip / Help tag</m-text></td>
+              <td><m-link href="../components/tooltip.html">Tooltip</m-link></td>
+              <td><m-text>Informational text hover tip</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-flex> Custom widget Flex Flexbox layout container with alignment and spacing VStack / HStack">
+              <td><m-code>&lt;m-flex&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>VStack / HStack</m-text></td>
+              <td><m-link href="../components/flex.html">Flex</m-link></td>
+              <td><m-text>Flexbox layout container with alignment and spacing</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-grid> Custom widget Grid 2D CSS grid layout container LazyVGrid / Grid">
+              <td><m-code>&lt;m-grid&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>LazyVGrid / Grid</m-text></td>
+              <td><m-link href="../components/grid.html">Grid</m-link></td>
+              <td><m-text>2D CSS grid layout container</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-grid-item> Custom widget Grid Item cell inside a grid with column spanning Grid cell">
+              <td><m-code>&lt;m-grid-item&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Grid cell</m-text></td>
+              <td><m-link href="../components/grid.html">Grid</m-link></td>
+              <td><m-text>Item cell inside a grid with column spanning</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-layout> Custom widget Layout Full-page header/sider/content layout framework NavigationSplitView">
+              <td><m-code>&lt;m-layout&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>NavigationSplitView</m-text></td>
+              <td><m-link href="../components/layout.html">Layout</m-link></td>
+              <td><m-text>Full-page header/sider/content layout framework</m-text></td>
+            </tr>
+            <tr data-flag="Companion Region" data-text="<m-layout-header> header Layout Top header region of an application layout Header bar">
+              <td><m-code>&lt;m-layout-header&gt;</m-code></td>
+              <td><m-tag type="warning">Companion Region</m-tag></td>
+              <td><m-code>header</m-code></td>
+              <td><m-text>Header bar</m-text></td>
+              <td><m-link href="../components/layout.html">Layout</m-link></td>
+              <td><m-text>Top header region of an application layout</m-text></td>
+            </tr>
+            <tr data-flag="Companion Region" data-text="<m-layout-sider> aside Layout Side navigation panel of an application layout Sidebar">
+              <td><m-code>&lt;m-layout-sider&gt;</m-code></td>
+              <td><m-tag type="warning">Companion Region</m-tag></td>
+              <td><m-code>aside</m-code></td>
+              <td><m-text>Sidebar</m-text></td>
+              <td><m-link href="../components/layout.html">Layout</m-link></td>
+              <td><m-text>Side navigation panel of an application layout</m-text></td>
+            </tr>
+            <tr data-flag="Companion Region" data-text="<m-layout-content> main Layout Main content workspace of an application layout Main workspace">
+              <td><m-code>&lt;m-layout-content&gt;</m-code></td>
+              <td><m-tag type="warning">Companion Region</m-tag></td>
+              <td><m-code>main</m-code></td>
+              <td><m-text>Main workspace</m-text></td>
+              <td><m-link href="../components/layout.html">Layout</m-link></td>
+              <td><m-text>Main content workspace of an application layout</m-text></td>
+            </tr>
+            <tr data-flag="Companion Region" data-text="<m-layout-footer> footer Layout Bottom footer region of an application layout Footer bar">
+              <td><m-code>&lt;m-layout-footer&gt;</m-code></td>
+              <td><m-tag type="warning">Companion Region</m-tag></td>
+              <td><m-code>footer</m-code></td>
+              <td><m-text>Footer bar</m-text></td>
+              <td><m-link href="../components/layout.html">Layout</m-link></td>
+              <td><m-text>Bottom footer region of an application layout</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-space> Custom widget Space Inline or block flex container distributing space between items Stack with spacing">
+              <td><m-code>&lt;m-space&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>Stack with spacing</m-text></td>
+              <td><m-link href="../components/space.html">Space</m-link></td>
+              <td><m-text>Inline or block flex container distributing space between items</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-split> Custom widget Split Draggable split pane container HSplitView / VSplitView">
+              <td><m-code>&lt;m-split&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>HSplitView / VSplitView</m-text></td>
+              <td><m-link href="../components/split.html">Split</m-link></td>
+              <td><m-text>Draggable split pane container</m-text></td>
+            </tr>
+            <tr data-flag="Companion Region" data-text="<m-split-pane> div Split Individual resizable pane in a split container Split pane view">
+              <td><m-code>&lt;m-split-pane&gt;</m-code></td>
+              <td><m-tag type="warning">Companion Region</m-tag></td>
+              <td><m-code>div</m-code></td>
+              <td><m-text>Split pane view</m-text></td>
+              <td><m-link href="../components/split.html">Split</m-link></td>
+              <td><m-text>Individual resizable pane in a split container</m-text></td>
+            </tr>
+            <tr data-flag="Custom Element" data-text="<m-virtual-list> Custom widget Virtual List High-performance viewport virtualized scroller LazyVStack">
+              <td><m-code>&lt;m-virtual-list&gt;</m-code></td>
+              <td><m-tag type="info">Custom Element</m-tag></td>
+              <td><m-code>Custom widget</m-code></td>
+              <td><m-text>LazyVStack</m-text></td>
+              <td><m-link href="../components/virtual-list.html">Virtual List</m-link></td>
+              <td><m-text>High-performance viewport virtualized scroller</m-text></td>
+            </tr>
+        </tbody>
+      </table>
+    </m-table>
+  </m-box>
+
+  <script type="module">
+    const search = document.getElementById("search-box");
+    const filterAll = document.getElementById("filter-all");
+    const filterDirect = document.getElementById("filter-direct");
+    const filterCustom = document.getElementById("filter-custom");
+    const filterCompanion = document.getElementById("filter-companion");
+    const buttons = [filterAll, filterDirect, filterCustom, filterCompanion];
+    const rows = document.querySelectorAll("#matrix-tbody tr");
+    let currentFilter = "all";
+
+    function filterTable() {
+      const q = (search.value || "").toLowerCase().trim();
+      for (const row of rows) {
+        const flag = row.dataset.flag;
+        const text = row.dataset.text.toLowerCase();
+        const matchesFilter = currentFilter === "all" ||
+          (currentFilter === "direct" && flag === "HTML Direct Map") ||
+          (currentFilter === "custom" && flag === "Custom Element") ||
+          (currentFilter === "companion" && flag === "Companion Region");
+        const matchesQuery = !q || text.includes(q);
+        row.hidden = !(matchesFilter && matchesQuery);
+      }
+    }
+
+    search.addEventListener("input", filterTable);
+
+    function setFilter(btn, mode) {
+      buttons.forEach(b => b.removeAttribute("type"));
+      btn.setAttribute("type", "primary");
+      currentFilter = mode;
+      filterTable();
+    }
+
+    filterAll.addEventListener("click", () => setFilter(filterAll, "all"));
+    filterDirect.addEventListener("click", () => setFilter(filterDirect, "direct"));
+    filterCustom.addEventListener("click", () => setFilter(filterCustom, "custom"));
+    filterCompanion.addEventListener("click", () => setFilter(filterCompanion, "companion"));
+  </script>
+</body>
+</html>

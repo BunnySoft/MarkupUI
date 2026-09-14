@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Setup - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="./component-api.css">
+</head>
+<body>
+  <main class="component-docs setup-guide">
+    <h1>Setup</h1>
+    <p>Load the shared core once, then only the components you use. Each component page supplies
+      its exact loading snippet and copyable examples.</p>
+    <nav class="component-docs-nav" aria-label="Setup guide">
+      <a href="./">Components</a>
+      <a href="#classic">Classic scripts</a>
+      <a href="#modules">ES modules</a>
+      <a href="#styles">Styles</a>
+      <a href="#local">Local demo</a>
+    </nav>
+    <section id="classic" aria-labelledby="classic-heading">
+      <h2 id="classic-heading">Classic scripts</h2>
+      <p>Load component CSS, core JavaScript, then component JavaScript. Use <code>defer</code>
+        so the markup is parsed before elements initialize. Avatar is the example here.</p>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-avatar.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-avatar.global.js"&gt;&lt;/script&gt;</code></pre>
+      <p>Additional components need only their own CSS and JavaScript; do not load core again.
+        Classic exports use <code>MarkupUICore</code> and family globals such as <code>MarkupUIAvatar</code>.</p>
+    </section>
+    <section id="modules" aria-labelledby="modules-heading">
+      <h2 id="modules-heading">ES modules</h2>
+      <p>The component module imports core automatically. Keep their generated files together
+        when serving modules directly, and load the CSS separately.</p>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-avatar.css"&gt;
+&lt;script type="module"&gt;
+  import { Avatar } from "./dist/markup-ui-avatar.js"
+&lt;/script&gt;</code></pre>
+      <p>With a bundler, use the package exports and route the stylesheet through your asset pipeline.</p>
+      <pre><code>import { Avatar } from "@dataengine/markup-ui/avatar"
+import "@dataengine/markup-ui/avatar/style.css"</code></pre>
+      <p>Browser entries register their family automatically. Use one compatible core version
+        and one module format per application; do not mix ESM, classic or aggregate copies.</p>
+    </section>
+    <section id="styles" aria-labelledby="styles-heading">
+      <h2 id="styles-heading">Styles and composition</h2>
+      <p>Component styles are required. Themes, document styling, demo code viewers and API tables
+        are separate conveniences, not runtime dependencies. The shared-core components do not
+        require the aggregate library, query helpers or binding services.</p>
+      <p>When copying an example that uses another component, also load that component's files.
+        Demos may include extra Button, Badge, Switch or Tabs assets for controls and composition.</p>
+      <p>HTML classes and CSS custom properties are Web styling tools, not cross-platform behavior
+        APIs. Standard examples keep demo layout styles outside the component markup; custom-style
+        examples identify their Web-specific styling. Native targets use their own mappings of the
+        logical component properties and style resources; this implementation currently targets Web.</p>
+      <p>Use each example's code toggle for its authored markup. Preserve its native controls and
+        required regions. For dynamic content, prepare the complete subtree before connecting it;
+        see the component's behavior section for update and lifecycle rules.</p>
+    </section>
+    <section id="local" aria-labelledby="local-heading">
+      <h2 id="local-heading">Run this demo locally</h2>
+      <pre><code>pnpm build
+pnpm demo</code></pre>
+      <p>Open <a href="./">the component browser</a> through the local HTTP server
+        (port 4173 by default), rather than opening HTML with <code>file://</code>.
+        API JSON is generated for the demos during the build and is not shipped in the component runtime.</p>
+    </section>
+  </main>
+</body>
+</html>

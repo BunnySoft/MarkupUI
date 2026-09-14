@@ -2,15 +2,17 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { buildHeatmap, createHeatmap, heatmapLevel } from "../src/components/heatmap/index.js"
+import { Heatmap, MHeatmap, buildHeatmap, createHeatmap, heatmapLevel, registerHeatmap } from "../src/components/heatmap/index.js"
+import * as heatmapApi from "../src/components/heatmap/index.js"
 import type { HeatmapController, HeatmapOptions } from "../src/components/heatmap/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const helpers: HeatmapController[] = []
 const data = [{ date: "2024-02-01", value: -5 }, { date: "2024-02-10", value: 0 }, { date: "2024-02-29", value: 10 }]
 function fixture(options: HeatmapOptions = {}, bind = true) {
   const form = document.createElement("form")
   form.innerHTML = `<h2 id="heatmap-title">Original <em>activity</em> heading</h2>
-    <section class="mui-heatmap" data-heatmap tabindex="-1" aria-labelledby="heatmap-title">
+    <section class="m-heatmap" data-heatmap tabindex="-1" aria-labelledby="heatmap-title">
       <div data-heatmap-scroll><table data-heatmap-table><caption>Daily data: <span data-heatmap-caption>Authored February</span></caption>
       <thead data-heatmap-head><tr><th scope="col">Date</th><th scope="col">Value</th></tr></thead>
       <tbody data-heatmap-body><tr><td>2024-02-01</td><td>-5</td></tr><tr><td>2024-02-10</td><td>0</td></tr></tbody></table></div>
@@ -140,8 +142,8 @@ describe("Heatmap native table, legend, exploration and identity", () => {
     const { helper, root } = fixture()
     helper.set({ showWeekLabels: false, showMonthLabels: false, showColorIndicator: false })
     const th = root.querySelector('th[scope="row"]')!
-    expect(th.classList.contains("mui-heatmap-visually-hidden")).toBe(false)
-    expect(th.firstElementChild!.classList.contains("mui-heatmap-visually-hidden")).toBe(true)
+    expect(th.classList.contains("m-heatmap-visually-hidden")).toBe(false)
+    expect(th.firstElementChild!.classList.contains("m-heatmap-visually-hidden")).toBe(true)
     expect(root.querySelector("[data-heatmap-bands]")!.hasAttribute("hidden")).toBe(true)
     expect(root.querySelector("[data-heatmap-legend]")!.hasAttribute("hidden")).toBe(false)
     expect(root.querySelectorAll("th[scope=colgroup]")).toHaveLength(0)
@@ -155,7 +157,7 @@ describe("Heatmap native table, legend, exploration and identity", () => {
   })
   it("implements scoped arrows/Home/End/Ctrl edges and native activation without a Tab trap", () => {
     const { helper, root, day, key, detail } = fixture(), activate = vi.fn()
-    root.addEventListener("mui:heatmap-explore", activate)
+    root.addEventListener("m:heatmap-explore", activate)
     day("2024-02-08").focus(); key("2024-02-08", "ArrowDown")
     expect(helper.state.currentDate).toBe("2024-02-09"); expect(detail.textContent).toContain("Missing")
     key("2024-02-09", "ArrowRight"); expect(helper.state.currentDate).toBe("2024-02-16")
@@ -200,10 +202,10 @@ describe("Heatmap native table, legend, exploration and identity", () => {
   it("uses theme/custom/minimum color precedence through validated CSS properties only", () => {
     const colors = ["#111111", "#222222", "#333333", "#444444", "#555555"]
     const { helper, root } = fixture({ colorTheme: "red", activeColors: colors, minimumColor: "#abcdef" })
-    expect(root.style.getPropertyValue("--mui-heatmap-level-0")).toBe("#abcdef")
-    expect(root.style.getPropertyValue("--mui-heatmap-level-4")).toBe("#555555")
+    expect(root.style.getPropertyValue("--m-heatmap-level-0")).toBe("#abcdef")
+    expect(root.style.getPropertyValue("--m-heatmap-level-4")).toBe("#555555")
     helper.set({ activeColors: null, minimumColor: null })
-    expect(root.style.getPropertyValue("--mui-heatmap-level-0")).toBe("")
+    expect(root.style.getPropertyValue("--m-heatmap-level-0")).toBe("")
   })
   it("uses the built-in palette by default and writes named themes only when requested", () => {
     const plain = fixture()
@@ -240,10 +242,10 @@ describe("Heatmap atomic validation and lifetime", () => {
   it("restores original fallback/legend nodes and only still-owned attributes/styles", () => {
     const { helper, root, body, original } = fixture({ activeColors: ["#111111", "#222222", "#333333", "#444444", "#555555"] })
     const callback = vi.fn(); original[0]!.addEventListener("probe", callback)
-    root.style.setProperty("--mui-heatmap-level-0", "#ffffff")
+    root.style.setProperty("--m-heatmap-level-0", "#ffffff")
     helper.disconnect()
     expect([...body.childNodes]).toEqual(original); original[0]!.dispatchEvent(new Event("probe")); expect(callback).toHaveBeenCalledOnce()
-    expect(root.style.getPropertyValue("--mui-heatmap-level-0")).toBe("#ffffff")
+    expect(root.style.getPropertyValue("--m-heatmap-level-0")).toBe("#ffffff")
     expect(root.querySelector("[data-heatmap-bands]")!.textContent).toBe("Authored value legend")
   })
   it("does not overwrite foreign replacement rows, including an empty generated header", () => {
@@ -267,7 +269,7 @@ describe("Heatmap atomic validation and lifetime", () => {
     const { helper, day, root } = fixture(), changed = vi.fn()
     const button = day("2024-02-10"); button.focus()
     button.addEventListener("focus", () => root.remove(), { once: true })
-    root.addEventListener("mui:heatmap-change", changed)
+    root.addEventListener("m:heatmap-change", changed)
     helper.set({ firstDayOfWeek: 6 })
     expect(helper.connected).toBe(false); expect(changed).not.toHaveBeenCalled()
   })
@@ -294,25 +296,192 @@ describe("Heatmap default styles", () => {
   it("defines the pinned built-in and named palettes without replacing public overrides", () => {
     expect(css).toContain("light-dark(#9be9a8, #0d4429)")
     expect(css).toContain("light-dark(#216e39, #39d353)")
-    expect(css).toContain("var(--mui-heatmap-level-1, #c6e48b)")
-    expect(css).toContain("var(--mui-heatmap-level-4, #196127)")
-    expect(css).toContain("var(--mui-heatmap-level-0, light-dark(rgba(46,51,56,.09), rgba(255,255,255,.1)))")
+    expect(css).toContain("var(--m-heatmap-level-1, #c6e48b)")
+    expect(css).toContain("var(--m-heatmap-level-4, #196127)")
+    expect(css).toContain("var(--m-heatmap-level-0, light-dark(rgba(46,51,56,.09), rgba(255,255,255,.1)))")
   })
 
   it("matches pinned type, gap, swatch and radius defaults while retaining native targets", () => {
-    expect(css).toContain("--_mui-heatmap-font-size: 12px")
-    expect(css).toContain("--_mui-heatmap-swatch-size: 11px")
-    expect(css).toContain("--_mui-heatmap-x-gap: 3px")
-    expect(css).toContain("border-radius: var(--mui-heatmap-radius, 2px)")
-    expect(css).toContain("min-inline-size: var(--mui-heatmap-cell-size, var(--_mui-heatmap-cell-size))")
+    expect(css).toContain("--_m-heatmap-font-size: 12px")
+    expect(css).toContain("--_m-heatmap-swatch-size: 11px")
+    expect(css).toContain("--_m-heatmap-x-gap: 3px")
+    expect(css).toContain("border-radius: var(--m-heatmap-radius, 2px)")
+    expect(css).toContain("min-inline-size: var(--m-heatmap-cell-size, var(--_m-heatmap-cell-size))")
   })
 
   it("keeps theme, hidden, reduced-motion, forced-color and print behavior explicit", () => {
-    expect(css).toContain(':where([data-mui-theme="dark"])')
-    expect(css).toContain(".mui-heatmap [hidden] { display: none !important; }")
+    expect(css).toContain(':where([data-m-theme="dark"])')
+    expect(css).toContain(".m-heatmap [hidden] { display: none !important; }")
     expect(css).toContain("@media (prefers-reduced-motion: reduce)")
     expect(css).toContain("@media (forced-colors: active)")
     expect(css).toContain("@media print")
     expect(css).not.toContain("@import")
   })
 })
+
+describe("canonical Heatmap ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(heatmapApi.Heatmap).toBe(Heatmap)
+    expect(heatmapApi.MHeatmap).toBe(MHeatmap)
+    expect(Heatmap.tag).toBe("m-heatmap")
+    expect(ViewElement.prototype.isPrototypeOf(Heatmap.prototype)).toBe(true)
+    expect(customElements.get("m-heatmap")).toBe(Heatmap)
+    expect(Heatmap.observedAttributes).toEqual(["rows", "columns"])
+    expect(() => registerHeatmap()).not.toThrow()
+    const define = vi.fn()
+    expect(() => registerHeatmap({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("handles rows property defaults, attributes, and validation", () => {
+    const element = document.createElement("m-heatmap") as Heatmap
+    document.body.append(element)
+    expect(element.rows).toBe(7)
+
+    element.rows = 5
+    expect(element.rows).toBe(5)
+    expect(element.getAttribute("rows")).toBe("5")
+
+    element.setAttribute("rows", "10")
+    expect(element.rows).toBe(10)
+
+    expect(() => { element.rows = NaN }).toThrow(RangeError)
+    expect(() => { element.rows = Infinity }).toThrow(RangeError)
+    expect(() => { element.rows = 0 }).toThrow(RangeError)
+    expect(() => { element.rows = -1 }).toThrow(RangeError)
+    element.setAttribute("rows", "invalid")
+    expect(() => element.rows).toThrow(RangeError)
+  })
+
+  it("handles columns property defaults, attributes, and validation", () => {
+    const element = document.createElement("m-heatmap") as Heatmap
+    document.body.append(element)
+    expect(element.columns).toBe(12)
+
+    element.columns = 20
+    expect(element.columns).toBe(20)
+    expect(element.getAttribute("columns")).toBe("20")
+
+    element.setAttribute("columns", "52")
+    expect(element.columns).toBe(52)
+
+    expect(() => { element.columns = NaN }).toThrow(RangeError)
+    expect(() => { element.columns = Infinity }).toThrow(RangeError)
+    expect(() => { element.columns = 0 }).toThrow(RangeError)
+    expect(() => { element.columns = -1 }).toThrow(RangeError)
+    element.setAttribute("columns", "invalid")
+    expect(() => element.columns).toThrow(RangeError)
+  })
+
+  it("replays pre-upgrade properties upon connection", () => {
+    const element = document.createElement("m-heatmap") as Heatmap
+    Object.defineProperty(element, "rows", { configurable: true, value: 5 })
+    Object.defineProperty(element, "columns", { configurable: true, value: 10 })
+    document.body.append(element)
+
+    expect(element.rows).toBe(5)
+    expect(element.columns).toBe(10)
+    expect(element.getAttribute("rows")).toBe("5")
+    expect(element.getAttribute("columns")).toBe("10")
+  })
+
+  it("renders grid rows and columns when no authored content is present", () => {
+    const element = document.createElement("m-heatmap") as Heatmap
+    element.rows = 5
+    element.columns = 10
+    document.body.append(element)
+
+    const table = element.querySelector("table")
+    expect(table).not.toBeNull()
+    const trs = element.querySelectorAll("tbody tr")
+    expect(trs).toHaveLength(5)
+    expect(trs[0]!.querySelectorAll("td")).toHaveLength(10)
+
+    element.columns = 8
+    expect(element.querySelectorAll("tbody tr")[0]!.querySelectorAll("td")).toHaveLength(8)
+  })
+
+  it("preserves authored table content without overwrite", () => {
+    const element = document.createElement("m-heatmap") as Heatmap
+    element.innerHTML = "<table><tbody><tr><td>Authored</td></tr></tbody></table>"
+    document.body.append(element)
+
+    expect(element.querySelectorAll("td")).toHaveLength(1)
+    expect(element.querySelector("td")!.textContent).toBe("Authored")
+  })
+
+  it("supports refresh method to update rendered structure", () => {
+    const element = document.createElement("m-heatmap") as Heatmap
+    document.body.append(element)
+    expect(element.querySelectorAll("tbody tr")).toHaveLength(7)
+
+    element.setAttribute("rows", "4")
+    element.refresh()
+    expect(element.querySelectorAll("tbody tr")).toHaveLength(4)
+  })
+
+  it("exposes MarkupUIHeatmap global", async () => {
+    await import("../src/components/heatmap/global.js")
+    const globalApi = (globalThis as unknown as { MarkupUIHeatmap?: typeof heatmapApi }).MarkupUIHeatmap
+    expect(globalApi).toBeDefined()
+    expect(globalApi?.Heatmap).toBe(Heatmap)
+    expect(globalApi?.registerHeatmap).toBe(registerHeatmap)
+    expect(globalApi?.createHeatmap).toBe(createHeatmap)
+  })
+
+  it("generates component API documentation matching the ViewElement specification", () => {
+    const docs = JSON.parse(readFileSync(resolve("demo", "api", "heatmap.json"), "utf8"))
+    expect(docs.elements).toHaveLength(1)
+    const [element] = docs.elements
+    expect(element.type).toBe("Heatmap")
+    expect(element.web.primary).toBe("m-heatmap")
+    expect(element.properties.rows).toMatchObject({
+      name: "rows",
+      type: "number",
+      typeName: "number",
+      attribute: "rows",
+      default: 7,
+      nullable: false,
+      writable: true,
+    })
+    expect(element.properties.columns).toMatchObject({
+      name: "columns",
+      type: "number",
+      typeName: "number",
+      attribute: "columns",
+      default: 12,
+      nullable: false,
+      writable: true,
+    })
+    expect(element.regions).toEqual([
+      { name: "content", accepts: ["table", "legend", "content"], min: 0, max: null },
+    ])
+    expect(element.events).toContainEqual({
+      name: "HeatmapChange",
+      web: "m:heatmap-change",
+      bubbles: true,
+      cancelable: false,
+      composed: false,
+    })
+    expect(element.events).toContainEqual({
+      name: "HeatmapExplore",
+      web: "m:heatmap-explore",
+      bubbles: true,
+      cancelable: false,
+      composed: false,
+    })
+    expect(element.actions).toEqual(["refresh"])
+  })
+
+  it("renders API documentation in demo element", async () => {
+    const { renderComponentApi } = await import("../demo/component-api.js")
+    const docs = JSON.parse(readFileSync(resolve("demo", "api", "heatmap.json"), "utf8"))
+    const container = document.createElement("div")
+    renderComponentApi(container, docs.elements)
+    expect(container.textContent).toContain("Heatmap")
+    expect(container.textContent).toContain("m-heatmap")
+    expect(container.textContent).toContain("rows")
+    expect(container.textContent).toContain("columns")
+  })
+})
+

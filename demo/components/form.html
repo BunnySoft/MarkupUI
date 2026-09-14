@@ -3,68 +3,124 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Form and FormItem</title>
+  <title>Form - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="../../dist/markup-ui-form.css">
   <link rel="stylesheet" href="../../dist/markup-ui-input.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-switch.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script type="module" src="../../dist/markup-ui-switch.js"></script>
   <link rel="stylesheet" href="./form.css">
-  <script defer src="../../dist/markup-ui-input.global.js"></script>
-  <script defer src="../../dist/markup-ui-form.global.js"></script>
-  <script defer src="./form.js"></script>
+  <script type="module" src="../../dist/markup-ui-form.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
+  <script type="module" src="./form.js"></script>
 </head>
 <body>
-<main>
+<main data-demo-page class="component-docs">
   <h1>Form: native controls, explicit validation</h1>
   <p>Required fields use native constraints. Optional local checks simulate a reserved name and matching confirmation, without network requests. No JavaScript: the ordinary GET form and reset still work.</p>
-  <form class="mui-form" id="profile" action="form.html" method="get">
-    <div class="mui-form-item" id="name-item">
-      <label class="mui-form-item__label" for="name">Name <span class="mui-form-item__required" aria-hidden="true">*</span> (required)</label>
-      <div class="mui-form-item__content mui-input" data-input id="name-input">
+  <details class="component-setup" id="required-files">
+    <summary>Setup code</summary>
+    <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-form.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-form.global.js"&gt;&lt;/script&gt;</code></pre>
+    <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+  </details>
+  <section data-demo-example="profile" aria-labelledby="profile-title">
+    <header data-demo-header><div><h2 id="profile-title">Native submission and explicit checks</h2><p>Input and Switch are additional selected families in this example, not Form dependencies. Manual validation does not submit or focus. The application explicitly prevents submission here to inspect real FormData.</p></div></header>
+    <div data-demo-preview>
+  <m-form id="profile-root">
+  <form class="m-form" id="profile" action="form.html" method="get">
+    <m-form-item key="name" id="name-item">
+      <label class="m-form-item__label" for="name">Name <span class="m-form-item__required" aria-hidden="true">*</span> (required)</label>
+      <m-input class="m-form-item__content" id="name-input">
         <input id="name" name="profile.name" value="Ada" required minlength="2" maxlength="32" data-input-control aria-describedby="name-help name-count">
         <span id="name-count" data-input-count>3 / 32</span>
-      </div>
-      <p id="name-help">Try “reserved” for a local asynchronous error. Editing any form field cancels outstanding checks.</p>
-      <p class="mui-form-item__feedback" id="name-error" hidden></p>
-    </div>
-    <div class="mui-form-grid">
-      <div class="mui-form-item mui-form-item-gi" id="email-item">
-        <label class="mui-form-item__label" for="email">Email (required)</label>
+      </m-input>
+      <m-p id="name-help">Try “reserved” for a local asynchronous error. Editing any form field cancels outstanding checks.</m-p>
+      <m-p class="m-form-item__feedback" id="name-error" hidden></m-p>
+    </m-form-item>
+    <m-form-item key="consent" id="consent-item">
+      <m-switch id="consent-switch" name="consent" value="yes" checked required>Required native Switch consent</m-switch>
+      <m-p class="m-form-item__feedback" id="consent-error" hidden></m-p>
+    </m-form-item>
+    <m-box class="m-form-grid">
+      <m-form-item-gi key="email" id="email-item">
+        <label class="m-form-item__label" for="email">Email (required)</label>
         <input id="email" type="email" name="contact[email]" value="ada@example.test" required>
-        <p class="mui-form-item__feedback" id="email-error" hidden></p>
-      </div>
-      <div class="mui-form-item mui-form-item-gi" id="confirm-item">
-        <label class="mui-form-item__label" for="confirm">Confirm email (required)</label>
+        <m-p class="m-form-item__feedback" id="email-error" hidden></m-p>
+      </m-form-item-gi>
+      <m-form-item-gi key="confirm" id="confirm-item">
+        <label class="m-form-item__label" for="confirm">Confirm email (required)</label>
         <input id="confirm" type="email" name="contact[confirm]" value="ada@example.test" required>
-        <p class="mui-form-item__feedback" id="confirm-error" hidden></p>
-      </div>
-      <fieldset class="mui-form-item mui-form-item-gi" id="topics-item" data-form-span="full">
+        <m-p class="m-form-item__feedback" id="confirm-error" hidden></m-p>
+      </m-form-item-gi>
+      <m-form-item-gi key="topics" span="full">
+      <fieldset class="m-form-item" id="topics-item">
         <legend>Topics — choose at least one for the enhanced check</legend>
-        <div><label><input type="checkbox" name="topics[]" value="html" checked> HTML</label>
-          <label><input type="checkbox" name="topics[]" value="css"> CSS</label></div>
-        <p class="mui-form-item__feedback" id="topics-error" hidden></p>
+        <m-box><label><input type="checkbox" name="topics[]" value="html" checked> HTML</label>
+          <label><input type="checkbox" name="topics[]" value="css"> CSS</label></m-box>
+        <m-p class="m-form-item__feedback" id="topics-error" hidden></m-p>
       </fieldset>
-    </div>
+      </m-form-item-gi>
+    </m-box>
     <fieldset disabled>
-      <legend>Disabled native fields</legend>
+      <legend>Disabled native fields <label>Legend exception <input name="legend" value="included"></label></legend>
       <label>Locked value <input name="locked" required value=""></label>
     </fieldset>
     <label>Read-only reference <input name="reference" readonly value="local-only"></label>
-    <div class="actions">
+    <m-box class="actions">
       <button type="submit" name="intent" value="save">Validate and inspect save</button>
       <button type="submit" name="intent" value="draft" formnovalidate>Inspect draft (skip checks)</button>
       <button type="reset">Native reset</button>
       <button type="button" id="validate" hidden>Validate without submission or focus</button>
       <button type="button" id="report" hidden>Report native constraints</button>
-    </div>
+    </m-box>
   </form>
+  </m-form>
   <label>External form-associated note <input id="note" form="profile" name='notes[0].text' value="outside"></label>
-  <div class="actions">
-    <button type="button" id="restore" hidden>Restore owned feedback</button>
-    <button type="button" id="cancel" hidden>Cancel next reset</button>
-    <button type="button" id="rtl">Toggle RTL</button>
-    <button type="button" id="disconnect" hidden>Disconnect helpers</button>
-  </div>
-  <p id="status" role="status">Native constraints remain enabled. No backend requests.</p>
+  <m-box class="actions" display="flex" wrap="wrap" gap="8">
+    <m-button id="restore" hidden>Restore owned feedback</m-button>
+    <m-button id="cancel" hidden>Cancel next reset</m-button>
+    <m-button id="rtl">Toggle RTL</m-button>
+    <m-button id="disconnect" hidden>Disconnect helpers</m-button>
+  </m-box>
+  <m-p id="status" role="status">Native constraints remain enabled. No backend requests.</m-p>
   <pre id="submission">No submission yet.</pre>
+    </div>
+  </section>
+  <section data-demo-example="ownership" aria-labelledby="ownership-title">
+    <header data-demo-header><div><h2 id="ownership-title">External ownership and native validation</h2><p>The native form ID, not the custom host ID, associates external controls. Keyed items are discovered through form.elements, including external items and excluding controls assigned elsewhere.</p></div></header>
+    <div data-demo-preview>
+      <m-form id="external-root"><form id="external-form" action="form.html" method="get">
+        <button name="intent" value="external">Submit external required field</button>
+        <button type="reset">Reset external field</button>
+      </form></m-form>
+      <m-form-item key="external">
+        <label class="m-form-item__label" for="external-value">External required value</label>
+        <input id="external-value" name="external" form="external-form" required value="Default">
+        <m-p class="m-form-item__feedback" id="external-error" hidden></m-p>
+      </m-form-item>
+      <m-p id="external-status" role="status">Submit is inspected locally. Reset restores the external native default.</m-p>
+    </div>
+  </section>
+  <section aria-labelledby="behavior-title">
+    <h2 id="behavior-title">Behavior and ownership</h2>
+    <p>Keep native labels, IDs, fieldsets and legends. Form never generates duplicate accessible names or changes custom validity. Native invalid events do not bubble: observe the native control or capture on its document. Submit and reset keep their native cancellation and ordering.</p>
+    <p><code>requestSubmit(submitter)</code> performs native validation and honors the real submitter’s name/value and overrides. <code>submit()</code> bypasses validation and the submit event. Neither runs asynchronous custom checks automatically. Before application work, check both <code>result.status === "valid"</code> and <code>result.current</code>.</p>
+    <p>FormItemGi retains the existing two-column <code>.m-form-grid</code> CSS layout, full-row span and 40rem responsive collapse. It does not register or require Grid. Native fieldsets keep their border and legend exceptions. Public <code>--m-form-*</code> geometry/color tokens, theme scopes, RTL and forced colors remain CSS-owned.</p>
+  </section>
+  <section id="form-api" aria-label="Form API"></section>
 </main>
 </body>
 </html>

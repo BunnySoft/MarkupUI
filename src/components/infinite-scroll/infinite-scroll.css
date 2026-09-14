@@ -1,15 +1,15 @@
-.mui-infinite-scroll { min-inline-size: 0; }
-.mui-infinite-scroll__viewport {
+.m-infinite-scroll { min-inline-size: 0; }
+.m-infinite-scroll__viewport {
   overflow: auto;
-  max-block-size: var(--mui-infinite-scroll-height, none);
+  max-block-size: var(--m-infinite-scroll-height, none);
 }
-.mui-infinite-scroll__viewport:focus-visible,
-.mui-infinite-scroll [data-infinite-load]:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
-.mui-infinite-scroll [data-infinite-sentinel] { block-size: 1px; inline-size: 100%; pointer-events: none; }
+.m-infinite-scroll__viewport:focus-visible,
+.m-infinite-scroll [data-infinite-load]:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.m-infinite-scroll [data-infinite-sentinel] { block-size: 1px; inline-size: 100%; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) {
-  .mui-infinite-scroll__viewport { scroll-behavior: auto; }
+  .m-infinite-scroll__viewport { scroll-behavior: auto; }
 }
 @media print {
-  .mui-infinite-scroll__viewport { overflow: visible; max-block-size: none; }
-  .mui-infinite-scroll [data-infinite-sentinel] { display: none; }
+  .m-infinite-scroll__viewport { overflow: visible; max-block-size: none; }
+  .m-infinite-scroll [data-infinite-sentinel] { display: none; }
 }

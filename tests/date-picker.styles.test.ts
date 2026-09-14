@@ -13,24 +13,24 @@ function inspect(run: (rules: CSSRule[]) => void) {
 
 describe("Date Picker native field presentation", () => {
   it("keeps measured trigger roles inside the unchanged stylesheet ceiling", () => {
-    for (const height of [28, 34, 40]) expect(css).toContain(`--_mui-date-picker-height: ${height}px`)
-    for (const padding of [10, 12, 14]) expect(css).toContain(`--_mui-date-picker-pad: ${padding}px`)
-    expect(css).toContain("var(--mui-font-size-large,15px)")
+    for (const height of [28, 34, 40]) expect(css).toContain(`--_m-date-picker-height: ${height}px`)
+    for (const padding of [10, 12, 14]) expect(css).toContain(`--_m-date-picker-pad: ${padding}px`)
+    expect(css).toContain("var(--m-font-size-large,15px)")
     expect(css).toContain("light-dark(#333639,rgba(255,255,255,.82))")
     expect(css).toContain("light-dark(#e0e0e6,transparent)")
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
   })
   it("preserves inherited local tokens over private density and shared font/hover defaults", () => {
-    expect(css).not.toMatch(/(?:^|[;{])\s*--mui-date-picker-[\w-]+\s*:/)
+    expect(css).not.toMatch(/(?:^|[;{])\s*--m-date-picker-[\w-]+\s*:/)
     for (const token of ["font-family", "font-size", "line-height", "height", "padding", "gap", "radius", "color", "background", "border-color", "focus-color", "disabled-color", "disabled-background"]) {
-      expect(css).toContain(`var(--mui-date-picker-${token},`)
+      expect(css).toContain(`var(--m-date-picker-${token},`)
     }
-    expect(css).toContain("var(--mui-font-family,")
-    expect(css).toContain("var(--mui-color-primary-hover,")
+    expect(css).toContain("var(--m-font-family,")
+    expect(css).toContain("var(--m-color-primary-hover,")
   })
   it("does not replace native segments, picker artwork, range fields or validity semantics", () => {
     expect(css).not.toMatch(/appearance\s*:|content\s*:|::-webkit|::picker|:invalid|:valid|pointer-events|position\s*:\s*(?:fixed|absolute)/)
-    expect(css).toContain(".mui-date-picker__fields { display: flex; flex-wrap: wrap;")
+    expect(css).toContain(".m-date-picker__fields { display: flex; flex-wrap: wrap;")
     expect(css).toContain("input[data-date-control]")
     expect(css).toContain("[hidden] { display: none !important; }")
   })
@@ -46,12 +46,12 @@ describe("Date Picker native field presentation", () => {
       const print = rules.find(rule => rule.type === CSSRule.MEDIA_RULE && (rule as CSSMediaRule).conditionText === "print") as CSSMediaRule
       expect(print).toBeDefined()
       const root = print.cssRules[0] as CSSStyleRule
-      expect(root.selectorText).toBe(".mui-date-picker")
+      expect(root.selectorText).toBe(".m-date-picker")
       expect(root.style.length).toBe(2)
-      expect(root.style.getPropertyValue("--_mui-date-picker-scheme")).toBe("light")
-      expect(root.style.getPropertyValue("--_mui-date-picker-disabled")).toBe("GrayText")
+      expect(root.style.getPropertyValue("--_m-date-picker-scheme")).toBe("light")
+      expect(root.style.getPropertyValue("--_m-date-picker-disabled")).toBe("GrayText")
       const action = print.cssRules[1] as CSSStyleRule
-      expect(action.style.color).toBe("var(--mui-date-picker-disabled-color,GrayText)")
+      expect(action.style.color).toBe("var(--m-date-picker-disabled-color,GrayText)")
       expect(action.style.opacity).toBe("1")
     })
   })

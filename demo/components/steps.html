@@ -1,62 +1,154 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Steps and Step</title>
+  <title>Steps - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-steps.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./steps.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-steps.global.js"></script>
-  <script defer src="./steps.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./steps.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <header id="intro"><h1>Steps: a progress summary, not a wizard</h1><p>Explicit status is separate from current position. Local buttons request a selection; no form validation, routing or automatic advancement is built in.</p></header>
-  <main>
-    <form id="native-form">
-      <ol class="mui-steps" data-steps id="steps" aria-label="Example progress">
-        <li class="mui-step" data-step id="details" data-step-status="finish">
-          <div class="mui-step__layout"><span class="mui-step__icon" aria-hidden="true">✓</span><div class="mui-step__body">
-            <h2 data-step-title>Details</h2><span data-step-status-text>Completed</span><p>Explicitly completed by the application, not inferred from order.</p>
-            <button type="button" data-step-action hidden>Select details</button>
-          </div></div>
-        </li>
-        <li class="mui-step" data-step id="review" aria-current="step">
-          <div class="mui-step__layout"><span class="mui-step__icon" aria-hidden="true">○</span><div class="mui-step__body">
-            <h2 data-step-title>Review</h2><span data-step-status-text>In progress</span><p>Changing current does not imply earlier work succeeded.</p>
-            <button type="button" data-step-action hidden>Select review</button>
-          </div></div>
-        </li>
-        <li class="mui-step" data-step id="approval" data-step-status="error">
-          <div class="mui-step__layout"><span class="mui-step__icon" aria-hidden="true">!</span><div class="mui-step__body">
-            <h2 data-step-title>Approval</h2><span data-step-status-text>Error</span><p>Explicit error state overrides positional/current styling. Selection is blocked natively.</p>
-            <button type="button" data-step-action disabled hidden>Select approval</button>
-            <ol class="mui-steps mui-steps--vertical mui-steps--small" data-steps id="nested" aria-label="Independent approval details">
-              <li class="mui-step" data-step><div class="mui-step__layout"><div class="mui-step__body"><h3 data-step-title>Policy review</h3><span data-step-status-text>Waiting</span></div></div></li>
-              <li class="mui-step" data-step data-step-status="finish"><div class="mui-step__layout"><div class="mui-step__body"><h3 data-step-title>Identity check</h3><span data-step-status-text>Completed</span></div></div></li>
-            </ol>
-          </div></div>
-        </li>
-        <li class="mui-step" data-step id="publish">
-          <div class="mui-step__layout"><span class="mui-step__icon" aria-hidden="true">○</span><div class="mui-step__body">
-            <h2 data-step-title>Publish</h2><span data-step-status-text>Waiting</span><p><a href="#native-note" id="native-link">Read the native destination</a></p>
-            <button type="button" data-step-action hidden>Select publish</button>
-          </div></div>
-        </li>
-        <template id="extra-step"><li class="mui-step" data-step><div class="mui-step__layout"><div class="mui-step__body"><h2 data-step-title>Additional authored step</h2><span data-step-status-text>Waiting</span><button type="button" data-step-action>Select additional step</button></div></div></li></template>
-      </ol>
-      <label>Unrelated native form value <input id="outside-input" value="Preserved"></label>
-      <button type="submit" id="save">Save unrelated form</button>
-    </form>
-    <div class="demo-controls">
-      <button type="button" id="before">Before first</button><button type="button" id="after">After last</button>
-      <button type="button" id="unset">Clear current</button><button type="button" id="status">Toggle current error</button>
-      <button type="button" id="finish-review">Mark review completed</button><button type="button" id="hide-last">Toggle last visible step</button>
-      <button type="button" id="insert">Insert authored step before current</button><button type="button" id="remove">Remove current step</button>
-      <button type="button" id="direction">Toggle vertical</button><button type="button" id="placement">Toggle icon/content placement</button>
-      <button type="button" id="reject">Reject next selection</button>
-    </div>
-    <output id="state">Native list and links remain useful without JavaScript.</output>
-    <section id="native-note"><h2>Native destination</h2><p>Links retain native focus/hash/history and modified-click behavior.</p></section>
+  <main data-demo-page class="component-docs">
+    <h1>Steps</h1>
+    <p>A progress summary displaying a sequence of steps, tracking status and active position across a workflow.</p>
+    <nav class="component-docs-nav" aria-label="Steps documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-steps.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-steps.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header><div><h2 id="basic-heading">Basic steps</h2><p>Horizontal progress flow with default step status progression.</p></div></header>
+      <div data-demo-preview>
+        <m-steps id="basic-steps" current="2">
+          <m-step title="Verification" description="Submit identity verification."></m-step>
+          <m-step title="Review" description="Under policy and security review."></m-step>
+          <m-step title="Approval" description="Awaiting manager sign-off."></m-step>
+          <m-step title="Completion" description="Account fully activated."></m-step>
+        </m-steps>
+      </div>
+    </section>
+
+    <section data-demo-example="vertical" aria-labelledby="vertical-heading">
+      <header data-demo-header><div><h2 id="vertical-heading">Vertical steps</h2><p>Steps arranged vertically for sidebar or stacked layouts.</p></div></header>
+      <div data-demo-preview>
+        <m-steps id="vertical-steps" vertical current="2">
+          <m-step title="First step" description="Completed initial task."></m-step>
+          <m-step title="Second step" description="Currently in progress."></m-step>
+          <m-step title="Third step" description="Waiting for previous step."></m-step>
+        </m-steps>
+      </div>
+    </section>
+
+    <section data-demo-example="status" aria-labelledby="status-heading">
+      <header data-demo-header><div><h2 id="status-heading">Error status</h2><p>Highlighting an error state on the active step.</p></div></header>
+      <div data-demo-preview>
+        <m-steps id="error-steps" current="2" status="error">
+          <m-step title="Verification" description="Successfully verified."></m-step>
+          <m-step title="Payment" description="Payment processing failed."></m-step>
+          <m-step title="Confirmation" description="Order confirmation."></m-step>
+        </m-steps>
+      </div>
+    </section>
+
+    <section data-demo-example="interactive" aria-labelledby="interactive-heading">
+      <header data-demo-header><div><h2 id="interactive-heading">Interactive navigation</h2><p>Control current step and status dynamically.</p></div></header>
+      <div data-demo-preview>
+        <m-steps id="interactive-steps" current="1">
+          <m-step title="Step 1" description="Initial requirements."></m-step>
+          <m-step title="Step 2" description="Implementation phase."></m-step>
+          <m-step title="Step 3" description="Testing and QA."></m-step>
+          <m-step title="Step 4" description="Deployment." disabled></m-step>
+        </m-steps>
+        <m-p id="interactive-status" role="status">Current step: 1</m-p>
+        <m-box class="demo-controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
+          <m-button id="prev-step">Previous</m-button>
+          <m-button id="next-step">Next</m-button>
+          <m-button id="toggle-vertical">Toggle vertical</m-button>
+          <m-button id="toggle-error">Toggle error</m-button>
+        </m-box>
+      </div>
+    </section>
+
+    <section data-demo-example="progressive" aria-labelledby="progressive-heading">
+      <header data-demo-header><div><h2 id="progressive-heading">Progressive enhancement</h2><p>Native ordered list with explicit authored status and selection buttons.</p></div></header>
+      <div data-demo-preview>
+        <form id="native-form">
+          <ol class="m-steps" data-steps id="steps" aria-label="Example progress">
+            <li class="m-step" data-step id="details" data-step-status="finish">
+              <m-box class="m-step__layout"><span class="m-step__icon" aria-hidden="true">✓</span><m-box class="m-step__body">
+                <m-h2 data-step-title>Details</m-h2><span data-step-status-text>Completed</span><m-p>Explicitly completed by the application, not inferred from order.</m-p>
+                <button type="button" data-step-action hidden>Select details</button>
+              </m-box></m-box>
+            </li>
+            <li class="m-step" data-step id="review" aria-current="step">
+              <m-box class="m-step__layout"><span class="m-step__icon" aria-hidden="true">○</span><m-box class="m-step__body">
+                <m-h2 data-step-title>Review</m-h2><span data-step-status-text>In progress</span><m-p>Changing current does not imply earlier work succeeded.</m-p>
+                <button type="button" data-step-action hidden>Select review</button>
+              </m-box></m-box>
+            </li>
+            <li class="m-step" data-step id="approval" data-step-status="error">
+              <m-box class="m-step__layout"><span class="m-step__icon" aria-hidden="true">!</span><m-box class="m-step__body">
+                <m-h2 data-step-title>Approval</m-h2><span data-step-status-text>Error</span><m-p>Explicit error state overrides positional/current styling. Selection is blocked natively.</m-p>
+                <button type="button" data-step-action disabled hidden>Select approval</button>
+                <ol class="m-steps m-steps--vertical m-steps--small" data-steps id="nested" aria-label="Independent approval details">
+                  <li class="m-step" data-step><m-box class="m-step__layout"><m-box class="m-step__body"><m-h3 data-step-title>Policy review</m-h3><span data-step-status-text>Waiting</span></m-box></m-box></li>
+                  <li class="m-step" data-step data-step-status="finish"><m-box class="m-step__layout"><m-box class="m-step__body"><m-h3 data-step-title>Identity check</m-h3><span data-step-status-text>Completed</span></m-box></m-box></li>
+                </ol>
+              </m-box></m-box>
+            </li>
+            <li class="m-step" data-step id="publish">
+              <m-box class="m-step__layout"><span class="m-step__icon" aria-hidden="true">○</span><m-box class="m-step__body">
+                <m-h2 data-step-title>Publish</m-h2><span data-step-status-text>Waiting</span><m-p><a href="#native-note" id="native-link">Read the native destination</a></m-p>
+                <button type="button" data-step-action hidden>Select publish</button>
+              </m-box></m-box>
+            </li>
+            <template id="extra-step"><li class="m-step" data-step><m-box class="m-step__layout"><m-box class="m-step__body"><m-h2 data-step-title>Additional authored step</m-h2><span data-step-status-text>Waiting</span><button type="button" data-step-action>Select additional step</button></m-box></m-box></li></template>
+          </ol>
+          <m-label>Unrelated native form value <input id="outside-input" value="Preserved"></m-label>
+          <m-button type="submit" id="save">Save unrelated form</m-button>
+        </form>
+        <m-box class="demo-controls">
+          <m-button type="button" id="before">Before first</m-button><m-button type="button" id="after">After last</m-button>
+          <m-button type="button" id="unset">Clear current</m-button><m-button type="button" id="status">Toggle current error</m-button>
+          <m-button type="button" id="finish-review">Mark review completed</m-button><m-button type="button" id="hide-last">Toggle last visible step</m-button>
+          <m-button type="button" id="insert">Insert authored step before current</m-button><m-button type="button" id="remove">Remove current step</m-button>
+          <m-button type="button" id="direction">Toggle vertical</m-button><m-button type="button" id="placement">Toggle icon/content placement</m-button>
+          <m-button type="button" id="reject">Reject next selection</m-button>
+        </m-box>
+        <output id="state">Native list and links remain useful without JavaScript.</output>
+        <section id="native-note"><m-h2>Native destination</m-h2><m-p>Links retain native focus/hash/history and modified-click behavior.</m-p></section>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="steps-api"><p>Loading API documentation.</p></div>
+    </section>
   </main>
 </body>
 </html>

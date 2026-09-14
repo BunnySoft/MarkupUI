@@ -1,34 +1,34 @@
 /* Composed native Popover and Select styles precede this small layout layer. */
-.mui-popselect { min-inline-size: 0; }
-.mui-popselect [data-popselect-value] { overflow-wrap: anywhere; }
-.mui-popover[data-popselect-panel]:not([popover]) { width: 100%; max-width: 100%; }
-.mui-popover[data-popselect-panel] > .mui-select {
+.m-popselect { min-inline-size: 0; }
+.m-popselect [data-popselect-value] { overflow-wrap: anywhere; }
+.m-popover[data-popselect-panel]:not([popover]) { width: 100%; max-width: 100%; }
+.m-popover[data-popselect-panel] > .m-select {
   display: grid;
   align-items: start;
 }
-.mui-popover[data-popselect-panel] .mui-select {
-  color: var(--mui-select-color, inherit);
-  font-family: var(--mui-font-family, inherit);
-  font-size: var(--mui-select-font, var(--_ps-font, var(--_select-font, 14px)));
+.m-popover[data-popselect-panel] .m-select {
+  color: var(--m-select-color, inherit);
+  font-family: var(--m-font-family, inherit);
+  font-size: var(--m-select-font, var(--_ps-font, var(--_select-font, 14px)));
   line-height: 1.5;
 }
-.mui-popover[data-popselect-panel] [data-select-control] {
-  padding: var(--mui-select-pad, var(--_ps-pad, .5rem));
+.m-popover[data-popselect-panel] [data-select-control] {
+  padding: var(--m-select-pad, var(--_ps-pad, .5rem));
 }
-.mui-popover[data-popselect-panel] [data-select-control]:not(:disabled) {
-  background-color: var(--mui-select-background, transparent);
+.m-popover[data-popselect-panel] [data-select-control]:not(:disabled) {
+  background-color: var(--m-select-background, transparent);
 }
-.mui-popselect [data-popselect-trigger],
-.mui-popover [data-popselect-done] { font: inherit; padding: .375rem .625rem; }
-.mui-popselect [data-popselect-trigger]:focus-visible,
-.mui-popover [data-popselect-done]:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
-.mui-popselect [data-popselect-trigger][aria-disabled="true"] { cursor: not-allowed; }
-.mui-popselect[data-size="small"] { --_ps-font: 14px; --_ps-pad: .25rem; }
-.mui-popselect[data-size="large"] { --_ps-font: 15px; --_ps-pad: .75rem; }
+.m-popselect [data-popselect-trigger],
+.m-popover [data-popselect-done] { font: inherit; padding: .375rem .625rem; }
+.m-popselect [data-popselect-trigger]:focus-visible,
+.m-popover [data-popselect-done]:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.m-popselect [data-popselect-trigger][aria-disabled="true"] { cursor: not-allowed; }
+.m-popselect[data-size="small"] { --_ps-font: 14px; --_ps-pad: .25rem; }
+.m-popselect[data-size="large"] { --_ps-font: 15px; --_ps-pad: .75rem; }
 @media (forced-colors: active), print {
-  .mui-popselect .mui-popover[data-popselect-panel] [data-select-control] { background-color: Canvas; }
+  .m-popselect .m-popover[data-popselect-panel] [data-select-control] { background-color: Canvas; }
 }
 @media print {
-  .mui-popselect [data-popselect-trigger],
-  .mui-popover [data-popselect-done] { display: none; }
+  .m-popselect [data-popselect-trigger],
+  .m-popover [data-popselect-done] { display: none; }
 }

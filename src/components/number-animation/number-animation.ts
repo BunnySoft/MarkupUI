@@ -219,18 +219,18 @@ export function createNumberAnimation(element: HTMLElement, options: NumberAnima
     if (!connected) return
     if (!intact()) { disconnect(); return }
     if (stamp !== version || id !== run.id) {
-      if (phase === "finish") element.dispatchEvent(new win.CustomEvent("mui:number-animation-error", { bubbles: true, detail: Object.freeze({ error: failure, phase, runId: id, stale: true }) }))
+      if (phase === "finish") element.dispatchEvent(new win.CustomEvent("m:number-animation-error", { bubbles: true, detail: Object.freeze({ error: failure, phase, runId: id, stale: true }) }))
       return
     }
     stop(); error = failure; errorPhase = phase
     if (phase !== "finish") { run.elapsed = run.sampledElapsed; run.mode = "paused"; settings.active = false }
-    element.dispatchEvent(new win.CustomEvent("mui:number-animation-error", { bubbles: true, detail: Object.freeze({ error: failure, phase, runId: id }) }))
+    element.dispatchEvent(new win.CustomEvent("m:number-animation-error", { bubbles: true, detail: Object.freeze({ error: failure, phase, runId: id }) }))
   }
   function notifyFinish(stamp: number, id: number) {
     if (!connected || version !== stamp || run.id !== id) return
     if (!intact()) { disconnect(); return }
     const detail: NumberAnimationFinish = Object.freeze({ runId: id, from: run.from, to: run.to, value: run.to })
-    element.dispatchEvent(new win.CustomEvent("mui:number-animation-finish", { bubbles: true, detail }))
+    element.dispatchEvent(new win.CustomEvent("m:number-animation-finish", { bubbles: true, detail }))
     if (!intact()) { disconnect(); return }
     if (!connected || version !== stamp || run.id !== id) return
     try {
@@ -260,7 +260,7 @@ export function createNumberAnimation(element: HTMLElement, options: NumberAnima
     if (finish) { run.mode = "finished"; run.elapsed = run.duration }
     const changed = paint(sample), stamp = version, id = run.id
     schedule()
-    if (changed) element.dispatchEvent(new win.CustomEvent("mui:number-animation-update", { bubbles: true, detail: state() }))
+    if (changed) element.dispatchEvent(new win.CustomEvent("m:number-animation-update", { bubbles: true, detail: state() }))
     if (finish) notifyFinish(stamp, id)
   }
   function tick() {

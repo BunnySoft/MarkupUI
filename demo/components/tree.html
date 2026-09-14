@@ -1,79 +1,192 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>MarkupUI native Tree outline</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tree - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-tree.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./tree.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-tree.global.js"></script>
-  <script defer src="./tree.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./tree.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-<main>
-  <h1>Native hierarchy, not a virtual ARIA tree</h1>
-  <p>Details disclose real nested lists. Selection buttons and named checkboxes are separate.
-    Arrow/Home/End/typeahead shortcuts enhance labels; native Tab, checkbox Space, button Enter
-    and links stay native. No-JS still has readable lists, disclosure and native checkboxes;
-    custom selection buttons start disabled.</p>
-  <form id="files-form">
-    <section class="mui-tree" data-tree data-tree-lines id="files" aria-labelledby="files-title">
-      <h2 id="files-title">Project files</h2>
-      <ul data-tree-list role="list">
-        <li data-tree-key="project">
-          <div data-tree-row><button type="button" data-tree-label data-tree-select data-tree-enable disabled>Project</button><label><input type="checkbox" data-tree-check name="files" value="project">Include Project</label></div>
-          <details data-tree-branch open>
-            <summary>Project contents</summary>
-            <ul data-tree-list role="list">
-              <li data-tree-key="readme"><div data-tree-row><button type="button" data-tree-label data-tree-select data-tree-enable disabled>README</button><label><input type="checkbox" data-tree-check name="files" value="readme" checked>Include README</label><a href="#destination">Open README help</a></div></li>
-              <li data-tree-key="notes"><div data-tree-row><button type="button" data-tree-label data-tree-select data-tree-enable disabled>Notes</button><label><input type="checkbox" data-tree-check name="files" value="notes">Include Notes</label></div></li>
-              <li data-tree-key="locked" data-tree-disabled><div data-tree-row><button type="button" data-tree-label data-tree-select disabled>Locked item</button><label><input type="checkbox" data-tree-check name="files" value="locked" disabled>Include Locked</label></div></li>
-            </ul>
-          </details>
-        </li>
-        <li data-tree-key="remote">
-          <div data-tree-row><button type="button" data-tree-label data-tree-select data-tree-enable disabled>Remote examples</button><label><input type="checkbox" data-tree-check name="files" value="remote">Include Remote</label></div>
-          <details data-tree-branch data-tree-lazy>
-            <summary>Load remote examples (local simulation)</summary>
-            <p>JavaScript supplies at most two native rows; no network requests. Unknown children cannot be cascade-checked.</p>
-            <ul data-tree-list role="list"></ul>
-          </details>
-        </li>
-        <li data-tree-key="links" data-tree-group>
-          <div data-tree-row><span data-tree-label>Reference links</span></div>
-          <details data-tree-branch><summary>Reference links</summary><ul data-tree-list role="list">
-            <li data-tree-key="help"><div data-tree-row><a data-tree-label href="#destination">Documentation</a></div></li>
-          </ul></details>
-        </li>
-      </ul>
+  <main data-demo-page class="component-docs">
+    <h1>Tree</h1>
+    <p>A hierarchical tree outline component supporting disclosure, selection, and checkbox cascades.</p>
+    <nav class="component-docs-nav" aria-label="Tree documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-tree.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-tree.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="basic-heading">Basic</h2>
+          <p>A hierarchical tree structure with expandable and collapsible nodes.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <m-tree id="basic-tree">
+          <m-tree-node value="components" title="Components" expanded>
+            <m-tree-node value="general" title="General" expanded>
+              <m-tree-node value="button" title="Button"></m-tree-node>
+              <m-tree-node value="icon" title="Icon"></m-tree-node>
+              <m-tree-node value="typography" title="Typography"></m-tree-node>
+            </m-tree-node>
+            <m-tree-node value="navigation" title="Navigation">
+              <m-tree-node value="breadcrumb" title="Breadcrumb"></m-tree-node>
+              <m-tree-node value="menu" title="Menu"></m-tree-node>
+              <m-tree-node value="pagination" title="Pagination"></m-tree-node>
+            </m-tree-node>
+            <m-tree-node value="feedback" title="Feedback">
+              <m-tree-node value="alert" title="Alert"></m-tree-node>
+              <m-tree-node value="dialog" title="Dialog"></m-tree-node>
+              <m-tree-node value="spin" title="Spin"></m-tree-node>
+            </m-tree-node>
+          </m-tree-node>
+          <m-tree-node value="docs" title="Documentation">
+            <m-tree-node value="guide" title="Quick Start"></m-tree-node>
+            <m-tree-node value="api" title="API Reference"></m-tree-node>
+          </m-tree-node>
+        </m-tree>
+      </div>
     </section>
-    <button>Inspect native FormData</button><button type="reset">Reset native checks</button>
-  </form>
-  <div class="tools" id="tools" hidden>
-    <button id="select" type="button">Select Notes silently</button>
-    <button id="check" type="button">Check Project silently</button>
-    <button id="reveal" type="button">Reveal Notes</button>
-    <button id="rename" type="button">Rename Notes and refresh</button>
-    <button id="race" type="button">Start then collapse lazy branch</button>
-    <button id="retry" type="button">Load/retry remote</button>
-    <label><input id="ignore-abort" type="checkbox">Simulate late result despite abort</label>
-    <label><input id="duplicate" type="checkbox">Return duplicate key</label>
-    <button id="rtl" type="button">Toggle RTL</button>
-    <button id="disconnect" type="button">Disconnect enhancements</button>
-  </div>
-  <output id="state" aria-label="Observed hierarchy state"></output>
-  <p id="events" role="status"></p>
-  <pre id="submission"></pre>
-  <section class="mui-tree" data-tree id="independent" aria-labelledby="independent-title">
-    <h2 id="independent-title">Independent single selection, no cascade</h2>
-    <ul data-tree-list role="list">
-      <li data-tree-key="one"><div data-tree-row><button type="button" data-tree-label data-tree-select data-tree-enable disabled>One</button><label><input type="checkbox" data-tree-check name="independent" value="one">Check One</label></div></li>
-      <li data-tree-key="two"><div data-tree-row><button type="button" data-tree-label data-tree-select data-tree-enable disabled>Two</button></div></li>
-    </ul>
-  </section>
-  <h2 id="destination" tabindex="-1">Authored link destination</h2>
-  <p>Native links keep their href and browser behavior. Tree selection does not submit a hidden value.</p>
-  <template id="lazy-row"><li><div data-tree-row><button type="button" data-tree-label data-tree-select></button><label><input type="checkbox" data-tree-check name="files"><span></span></label></div></li></template>
-</main>
+
+    <section data-demo-example="selectable" aria-labelledby="selectable-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="selectable-heading">Selectable</h2>
+          <p>Selectable tree nodes emit selection events and update the current value.</p>
+        </div>
+      </header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <m-tree selectable id="selectable-tree" value="doc-1">
+          <m-tree-node value="folder-1" title="Documents" expanded>
+            <m-tree-node value="doc-1" title="Proposal.pdf" selected></m-tree-node>
+            <m-tree-node value="doc-2" title="Report.docx"></m-tree-node>
+          </m-tree-node>
+          <m-tree-node value="folder-2" title="Images">
+            <m-tree-node value="img-1" title="Logo.png"></m-tree-node>
+            <m-tree-node value="img-2" title="Banner.jpg"></m-tree-node>
+          </m-tree-node>
+        </m-tree>
+        <m-p id="selection-status"><m-text>Selected: doc-1</m-text></m-p>
+      </div>
+    </section>
+
+    <section data-demo-example="checkable" aria-labelledby="checkable-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="checkable-heading">Checkable with cascade</h2>
+          <p>Cascade checkbox selection between parent and child nodes with mixed state indication.</p>
+        </div>
+      </header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <m-tree checkable cascade id="checkable-tree">
+          <m-tree-node value="src" title="src" expanded>
+            <m-tree-node value="components" title="components" expanded>
+              <m-tree-node value="tree" title="tree"></m-tree-node>
+              <m-tree-node value="button" title="button"></m-tree-node>
+            </m-tree-node>
+            <m-tree-node value="core" title="core"></m-tree-node>
+          </m-tree-node>
+          <m-tree-node value="tests" title="tests">
+            <m-tree-node value="tree-test" title="tree.test.ts"></m-tree-node>
+          </m-tree-node>
+        </m-tree>
+        <m-p id="checkable-status"><m-text>Checked: none</m-text></m-p>
+      </div>
+    </section>
+
+    <section data-demo-example="block-line" aria-labelledby="block-line-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="block-line-heading">Block line</h2>
+          <p>Block line mode stretches row items across the full container width.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <m-tree block-line selectable id="block-line-tree">
+          <m-tree-node value="admin" title="Administration" expanded>
+            <m-tree-node value="users" title="Users"></m-tree-node>
+            <m-tree-node value="roles" title="Roles"></m-tree-node>
+          </m-tree-node>
+          <m-tree-node value="settings" title="Settings"></m-tree-node>
+        </m-tree>
+      </div>
+    </section>
+
+    <section data-demo-example="disabled" aria-labelledby="disabled-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="disabled-heading">Disabled nodes</h2>
+          <p>Disabled nodes prevent selection and checkbox interaction.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <m-tree checkable selectable id="disabled-tree">
+          <m-tree-node value="active" title="Active Group" expanded>
+            <m-tree-node value="item-1" title="Enabled Item"></m-tree-node>
+            <m-tree-node value="item-2" title="Disabled Item" disabled></m-tree-node>
+          </m-tree-node>
+          <m-tree-node value="locked" title="Locked Group" disabled expanded>
+            <m-tree-node value="item-3" title="Locked Item" disabled></m-tree-node>
+          </m-tree-node>
+        </m-tree>
+      </div>
+    </section>
+
+    <section data-demo-example="actions" aria-labelledby="actions-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="actions-heading">Interactive actions</h2>
+          <p>Programmatic control over expansion and value selection.</p>
+        </div>
+      </header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <m-box display="flex" gap="8">
+          <m-button id="btn-select-components">Select Components</m-button>
+          <m-button id="btn-expand-all">Expand all</m-button>
+          <m-button id="btn-collapse-all">Collapse all</m-button>
+        </m-box>
+        <m-tree selectable id="actions-tree" value="components">
+          <m-tree-node value="components" title="Components" expanded>
+            <m-tree-node value="ui" title="UI Elements">
+              <m-tree-node value="button" title="Button"></m-tree-node>
+            </m-tree-node>
+          </m-tree-node>
+          <m-tree-node value="utils" title="Utilities">
+            <m-tree-node value="date" title="Date Formatter"></m-tree-node>
+          </m-tree-node>
+        </m-tree>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="tree-api"><p>Loading API documentation.</p></div>
+    </section>
+  </main>
 </body>
 </html>

@@ -1,18 +1,23 @@
 <!doctype html>
-<html lang="en" data-mui-theme="light">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Button parity demos</title>
+  <title>Button - MarkupUI</title>
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./button.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
-  <script defer src="./button.js"></script>
+  <script type="module" src="./button.js"></script>
   <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
   <svg class="icon-sprite" aria-hidden="true">
@@ -28,29 +33,41 @@
       <path d="M14 8l4 4-4 4M18 12H7M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5"></path>
     </symbol>
   </svg>
-  <main data-demo-page>
+  <main data-demo-page class="component-docs">
     <h1>Button</h1>
-    <p>MarkupUI equivalents of the eighteen Button demos from pinned Naive UI 2.45.3,
-      in the same order and with equivalent labels, data and interaction.</p>
+    <p>Native buttons and links with appearance, shape, loading and grouping.</p>
+    <nav class="component-docs-nav" aria-label="Button documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+      <a href="#behavior">Behavior and accessibility</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-button.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-button.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
 
     <section data-demo-example="basic" aria-labelledby="basic-heading">
       <header data-demo-header>
         <div>
           <h2 id="basic-heading">Basic</h2>
-          <p>There are <code class="mui-code">default</code>, <code class="mui-code">primary</code>,
-            <code class="mui-code">tertiary</code>, <code class="mui-code">info</code>,
-            <code class="mui-code">success</code>, <code class="mui-code">warning</code> and
-            <code class="mui-code">error</code> button types.</p>
+          <p>There are <code class="m-code">default</code>, <code class="m-code">primary</code>,
+            <code class="m-code">tertiary</code>, <code class="m-code">info</code>,
+            <code class="m-code">success</code>, <code class="m-code">warning</code> and
+            <code class="m-code">error</code> button types.</p>
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-button>Default</mui-button>
-        <mui-button type="tertiary">Tertiary</mui-button>
-        <mui-button type="primary">Primary</mui-button>
-        <mui-button type="info">Info</mui-button>
-        <mui-button type="success">Success</mui-button>
-        <mui-button type="warning">Warning</mui-button>
-        <mui-button type="error">Error</mui-button>
+        <m-button>Default</m-button>
+        <m-button type="tertiary">Tertiary</m-button>
+        <m-button type="primary">Primary</m-button>
+        <m-button type="info">Info</m-button>
+        <m-button type="success">Success</m-button>
+        <m-button type="warning">Warning</m-button>
+        <m-button type="error">Error</m-button>
       </div>
     </section>
 
@@ -59,37 +76,37 @@
         <div><h2 id="secondary-heading">Secondary button</h2></div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-button strong secondary>Default</mui-button>
-        <mui-button strong secondary type="tertiary">Tertiary</mui-button>
-        <mui-button strong secondary type="primary">Primary</mui-button>
-        <mui-button strong secondary type="info">Info</mui-button>
-        <mui-button strong secondary type="success">Success</mui-button>
-        <mui-button strong secondary type="warning">Warning</mui-button>
-        <mui-button strong secondary type="error">Error</mui-button>
-        <mui-button strong secondary round>Default</mui-button>
-        <mui-button strong secondary round type="primary">Primary</mui-button>
-        <mui-button strong secondary round type="info">Info</mui-button>
-        <mui-button strong secondary round type="success">Success</mui-button>
-        <mui-button strong secondary round type="warning">Warning</mui-button>
-        <mui-button strong secondary round type="error">Error</mui-button>
-        <mui-button strong secondary circle aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
-        <mui-button strong secondary circle type="primary" aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
-        <mui-button strong secondary circle type="info" aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
-        <mui-button strong secondary circle type="success" aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
-        <mui-button strong secondary circle type="warning" aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
-        <mui-button strong secondary circle type="error" aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
+        <m-button strong appearance="secondary">Default</m-button>
+        <m-button strong appearance="secondary" type="tertiary">Tertiary</m-button>
+        <m-button strong appearance="secondary" type="primary">Primary</m-button>
+        <m-button strong appearance="secondary" type="info">Info</m-button>
+        <m-button strong appearance="secondary" type="success">Success</m-button>
+        <m-button strong appearance="secondary" type="warning">Warning</m-button>
+        <m-button strong appearance="secondary" type="error">Error</m-button>
+        <m-button strong appearance="secondary" shape="round">Default</m-button>
+        <m-button strong appearance="secondary" shape="round" type="primary">Primary</m-button>
+        <m-button strong appearance="secondary" shape="round" type="info">Info</m-button>
+        <m-button strong appearance="secondary" shape="round" type="success">Success</m-button>
+        <m-button strong appearance="secondary" shape="round" type="warning">Warning</m-button>
+        <m-button strong appearance="secondary" shape="round" type="error">Error</m-button>
+        <m-button strong appearance="secondary" shape="circle" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button strong appearance="secondary" shape="circle" type="primary" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button strong appearance="secondary" shape="circle" type="info" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button strong appearance="secondary" shape="circle" type="success" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button strong appearance="secondary" shape="circle" type="warning" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button strong appearance="secondary" shape="circle" type="error" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
       </div>
     </section>
 
@@ -98,36 +115,36 @@
         <div><h2 id="tertiary-heading">Tertiary button</h2></div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-button tertiary>Default</mui-button>
-        <mui-button tertiary type="primary">Primary</mui-button>
-        <mui-button tertiary type="info">Info</mui-button>
-        <mui-button tertiary type="success">Success</mui-button>
-        <mui-button tertiary type="warning">Warning</mui-button>
-        <mui-button tertiary type="error">Error</mui-button>
-        <mui-button tertiary round>Default</mui-button>
-        <mui-button tertiary round type="primary">Primary</mui-button>
-        <mui-button tertiary round type="info">Info</mui-button>
-        <mui-button tertiary round type="success">Success</mui-button>
-        <mui-button tertiary round type="warning">Warning</mui-button>
-        <mui-button tertiary round type="error">Error</mui-button>
-        <mui-button tertiary circle aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
-        <mui-button tertiary circle type="primary" aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
-        <mui-button tertiary circle type="info" aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
-        <mui-button tertiary circle type="success" aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
-        <mui-button tertiary circle type="warning" aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
-        <mui-button tertiary circle type="error" aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
+        <m-button appearance="tertiary">Default</m-button>
+        <m-button appearance="tertiary" type="primary">Primary</m-button>
+        <m-button appearance="tertiary" type="info">Info</m-button>
+        <m-button appearance="tertiary" type="success">Success</m-button>
+        <m-button appearance="tertiary" type="warning">Warning</m-button>
+        <m-button appearance="tertiary" type="error">Error</m-button>
+        <m-button appearance="tertiary" shape="round">Default</m-button>
+        <m-button appearance="tertiary" shape="round" type="primary">Primary</m-button>
+        <m-button appearance="tertiary" shape="round" type="info">Info</m-button>
+        <m-button appearance="tertiary" shape="round" type="success">Success</m-button>
+        <m-button appearance="tertiary" shape="round" type="warning">Warning</m-button>
+        <m-button appearance="tertiary" shape="round" type="error">Error</m-button>
+        <m-button appearance="tertiary" shape="circle" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button appearance="tertiary" shape="circle" type="primary" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button appearance="tertiary" shape="circle" type="info" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button appearance="tertiary" shape="circle" type="success" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button appearance="tertiary" shape="circle" type="warning" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button appearance="tertiary" shape="circle" type="error" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
       </div>
     </section>
 
@@ -136,36 +153,36 @@
         <div><h2 id="quaternary-heading">Quaternary button</h2></div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-button quaternary>Default</mui-button>
-        <mui-button quaternary type="primary">Primary</mui-button>
-        <mui-button quaternary type="info">Info</mui-button>
-        <mui-button quaternary type="success">Success</mui-button>
-        <mui-button quaternary type="warning">Warning</mui-button>
-        <mui-button quaternary type="error">Error</mui-button>
-        <mui-button quaternary round>Default</mui-button>
-        <mui-button quaternary round type="primary">Primary</mui-button>
-        <mui-button quaternary round type="info">Info</mui-button>
-        <mui-button quaternary round type="success">Success</mui-button>
-        <mui-button quaternary round type="warning">Warning</mui-button>
-        <mui-button quaternary round type="error">Error</mui-button>
-        <mui-button quaternary circle aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
-        <mui-button quaternary circle type="primary" aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
-        <mui-button quaternary circle type="info" aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
-        <mui-button quaternary circle type="success" aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
-        <mui-button quaternary circle type="warning" aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
-        <mui-button quaternary circle type="error" aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
+        <m-button appearance="quaternary">Default</m-button>
+        <m-button appearance="quaternary" type="primary">Primary</m-button>
+        <m-button appearance="quaternary" type="info">Info</m-button>
+        <m-button appearance="quaternary" type="success">Success</m-button>
+        <m-button appearance="quaternary" type="warning">Warning</m-button>
+        <m-button appearance="quaternary" type="error">Error</m-button>
+        <m-button appearance="quaternary" shape="round">Default</m-button>
+        <m-button appearance="quaternary" shape="round" type="primary">Primary</m-button>
+        <m-button appearance="quaternary" shape="round" type="info">Info</m-button>
+        <m-button appearance="quaternary" shape="round" type="success">Success</m-button>
+        <m-button appearance="quaternary" shape="round" type="warning">Warning</m-button>
+        <m-button appearance="quaternary" shape="round" type="error">Error</m-button>
+        <m-button appearance="quaternary" shape="circle" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button appearance="quaternary" shape="circle" type="primary" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button appearance="quaternary" shape="circle" type="info" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button appearance="quaternary" shape="circle" type="success" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button appearance="quaternary" shape="circle" type="warning" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button appearance="quaternary" shape="circle" type="error" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
       </div>
     </section>
 
@@ -173,16 +190,16 @@
       <header data-demo-header>
         <div>
           <h2 id="dashed-heading">Dashed</h2>
-          <p>Use <code class="mui-code">dashed</code> to show a dashed button.</p>
+          <p>Use <code class="m-code">appearance="dashed"</code> to show a dashed button.</p>
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-button dashed>Default</mui-button>
-        <mui-button type="primary" dashed>Primary</mui-button>
-        <mui-button type="info" dashed>Info</mui-button>
-        <mui-button type="success" dashed>Success</mui-button>
-        <mui-button type="warning" dashed>Warning</mui-button>
-        <mui-button type="error" dashed>Error</mui-button>
+        <m-button appearance="dashed">Default</m-button>
+        <m-button type="primary" appearance="dashed">Primary</m-button>
+        <m-button type="info" appearance="dashed">Info</m-button>
+        <m-button type="success" appearance="dashed">Success</m-button>
+        <m-button type="warning" appearance="dashed">Warning</m-button>
+        <m-button type="error" appearance="dashed">Error</m-button>
       </div>
     </section>
 
@@ -190,15 +207,15 @@
       <header data-demo-header>
         <div>
           <h2 id="size-heading">Size</h2>
-          <p>Buttons can be <code class="mui-code">tiny</code>, <code class="mui-code">small</code>,
-            <code class="mui-code">medium</code> and <code class="mui-code">large</code> in size.</p>
+          <p>Buttons can be <code class="m-code">tiny</code>, <code class="m-code">small</code>,
+            <code class="m-code">medium</code> and <code class="m-code">large</code> in size.</p>
         </div>
       </header>
       <div class="demo-preview align-baseline" data-demo-preview>
-        <mui-button size="tiny">Small Small</mui-button>
-        <mui-button size="small">Small</mui-button>
-        <mui-button size="medium">Not Small</mui-button>
-        <mui-button size="large">Not Not Small</mui-button>
+        <m-button size="tiny">Small Small</m-button>
+        <m-button size="small">Small</m-button>
+        <m-button size="medium">Not Small</m-button>
+        <m-button size="large">Not Not Small</m-button>
       </div>
     </section>
 
@@ -210,10 +227,10 @@
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-button text>
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#train-outline"></use></svg>
+        <m-button appearance="text">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#train-outline"></use></svg>
           The Engine is Still Spitting Smoke
-        </mui-button>
+        </m-button>
       </div>
     </section>
 
@@ -221,13 +238,13 @@
       <header data-demo-header>
         <div>
           <h2 id="tag-heading">Tag</h2>
-          <p>You can render buttons with different tags. For example <code class="mui-code">&lt;a /&gt;</code>.</p>
+          <p>You can render buttons with different tags. For example <code class="m-code">&lt;a /&gt;</code>.</p>
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-button text type="primary">
+        <m-button appearance="text" type="primary">
           <a href="https://anyway.fm/news.php" target="_blank" rel="noopener">Anyway.News</a>
-        </mui-button>
+        </m-button>
       </div>
     </section>
 
@@ -239,7 +256,7 @@
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-button disabled>Disabled</mui-button>
+        <m-button disabled>Disabled</m-button>
       </div>
     </section>
 
@@ -248,18 +265,18 @@
         <div>
           <h2 id="icon-heading">Icon</h2>
           <p>Icons can be used in buttons. MarkupUI uses authored
-            <code class="mui-code">data-mui-button-icon</code> content.</p>
+            <code class="m-code">data-part="icon"</code> content.</p>
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-button>
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
+        <m-button>
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
           +100$
-        </mui-button>
-        <mui-button icon-placement="right">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button icon-placement="right">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
           +100$
-        </mui-button>
+        </m-button>
       </div>
     </section>
 
@@ -267,12 +284,19 @@
       <header data-demo-header>
         <div>
           <h2 id="events-heading">Events</h2>
-          <p>Handle events of buttons.</p>
+          <p>Listen for ordinary native <code>click</code>. Native form validation, reset,
+            submitter identity and form data are preserved.</p>
         </div>
       </header>
       <div class="demo-preview vertical" data-demo-preview>
-        <mui-button id="event-button">Click Me</mui-button>
-        <p id="event-message" class="demo-message" role="status" aria-live="polite"></p>
+        <m-button id="event-button">Click Me</m-button>
+        <m-p id="event-message" class="demo-message" role="status" aria-live="polite"></m-p>
+        <form id="button-form">
+          <m-label>Title <input name="title" required value="Draft"></m-label>
+          <m-button type="primary"><button name="action" value="save">Save form</button></m-button>
+          <m-button attr-type="reset">Reset form</m-button>
+        </form>
+        <m-p id="form-message" class="demo-message" role="status" aria-live="polite"></m-p>
       </div>
     </section>
 
@@ -284,11 +308,11 @@
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-button circle aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
-        <mui-button round>Round</mui-button>
-        <mui-button>Rect</mui-button>
+        <m-button shape="circle" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button shape="round">Round</m-button>
+        <m-button>Rect</m-button>
       </div>
     </section>
 
@@ -300,12 +324,12 @@
         </div>
       </header>
       <div class="demo-preview ghost-preview" data-demo-preview>
-        <mui-button ghost>Default</mui-button>
-        <mui-button type="primary" ghost>Primary</mui-button>
-        <mui-button type="info" ghost>Info</mui-button>
-        <mui-button type="success" ghost>Success</mui-button>
-        <mui-button type="warning" ghost>Warning</mui-button>
-        <mui-button type="error" ghost>Error</mui-button>
+        <m-button appearance="ghost">Default</m-button>
+        <m-button type="primary" appearance="ghost">Primary</m-button>
+        <m-button type="info" appearance="ghost">Info</m-button>
+        <m-button type="success" appearance="ghost">Success</m-button>
+        <m-button type="warning" appearance="ghost">Warning</m-button>
+        <m-button type="error" appearance="ghost">Error</m-button>
       </div>
     </section>
 
@@ -313,15 +337,16 @@
       <header data-demo-header>
         <div>
           <h2 id="loading-heading">Loading</h2>
-          <p>Buttons can have loading states.</p>
+          <p>Click either button to load for two seconds. Loading prevents activation, exposes
+            <code>aria-busy</code> on the native control, and retains the label and icon nodes.</p>
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-button data-loading-button>
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
+        <m-button data-loading-button>
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
           Click Me
-        </mui-button>
-        <mui-button data-loading-button icon-placement="left">Click Me</mui-button>
+        </m-button>
+        <m-button data-loading-button icon-placement="left">Click Me</m-button>
       </div>
     </section>
 
@@ -333,30 +358,30 @@
         </div>
       </header>
       <div class="demo-preview align-center" data-demo-preview>
-        <mui-button class="custom-color custom-purple">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
+        <m-button class="custom-color custom-purple">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
           #8a2be2
-        </mui-button>
-        <mui-button class="custom-color custom-pink">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button class="custom-color custom-pink">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
           #ff69b4
-        </mui-button>
-        <mui-button ghost class="custom-purple">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button appearance="ghost" class="custom-purple">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
           #8a2be2
-        </mui-button>
-        <mui-button ghost class="custom-pink">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button appearance="ghost" class="custom-pink">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
           #ff69b4
-        </mui-button>
-        <mui-button text class="custom-purple">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button appearance="text" class="custom-purple">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
           #8a2be2
-        </mui-button>
-        <mui-button text class="custom-pink">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
+        <m-button appearance="text" class="custom-pink">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
           #ff69b4
-        </mui-button>
+        </m-button>
       </div>
     </section>
 
@@ -364,66 +389,68 @@
       <header data-demo-header>
         <div>
           <h2 id="group-heading">Button group</h2>
-          <p>Buttons can be grouped.</p>
+          <p>Groups lay out ordered Buttons without changing their actions or tab stops.
+            <code>vertical</code> selects vertical orientation; absence means horizontal.
+            Group size is inherited only by children without their own size.</p>
         </div>
       </header>
       <div class="demo-preview groups-preview" data-demo-preview>
-        <mui-button-group vertical aria-label="Live a sufficient life">
-          <mui-button round>
-            <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#log-in-outline"></use></svg>
+        <m-button-group vertical aria-label="Live a sufficient life">
+          <m-button shape="round">
+            <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#log-in-outline"></use></svg>
             Live a
-          </mui-button>
-          <mui-button ghost>
-            <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#log-in-outline"></use></svg>
+          </m-button>
+          <m-button appearance="ghost">
+            <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#log-in-outline"></use></svg>
             Sufficient
-          </mui-button>
-          <mui-button>
-            <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#log-in-outline"></use></svg>
+          </m-button>
+          <m-button>
+            <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#log-in-outline"></use></svg>
             Life
-          </mui-button>
-        </mui-button-group>
-        <mui-button-group vertical size="large" aria-label="With enough happiness">
-          <mui-button>
-            <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#log-in-outline"></use></svg>
+          </m-button>
+        </m-button-group>
+        <m-button-group vertical size="large" aria-label="With enough happiness">
+          <m-button>
+            <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#log-in-outline"></use></svg>
             With
-          </mui-button>
-          <mui-button>
-            <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#log-in-outline"></use></svg>
+          </m-button>
+          <m-button>
+            <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#log-in-outline"></use></svg>
             Enough
-          </mui-button>
-          <mui-button ghost round>
-            <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#log-in-outline"></use></svg>
+          </m-button>
+          <m-button appearance="ghost" shape="round">
+            <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#log-in-outline"></use></svg>
             Happiness
-          </mui-button>
-        </mui-button-group>
-        <mui-button-group size="small" aria-label="Life is good">
-          <mui-button round>
-            <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#log-in-outline"></use></svg>
+          </m-button>
+        </m-button-group>
+        <m-button-group size="small" aria-label="Life is good">
+          <m-button shape="round">
+            <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#log-in-outline"></use></svg>
             Life
-          </mui-button>
-          <mui-button>
-            <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#log-in-outline"></use></svg>
+          </m-button>
+          <m-button>
+            <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#log-in-outline"></use></svg>
             Is
-          </mui-button>
-          <mui-button>
-            <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#log-in-outline"></use></svg>
+          </m-button>
+          <m-button>
+            <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#log-in-outline"></use></svg>
             Good
-          </mui-button>
-        </mui-button-group>
-        <mui-button-group aria-label="Eat one more apple">
-          <mui-button ghost>
-            <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#log-in-outline"></use></svg>
+          </m-button>
+        </m-button-group>
+        <m-button-group aria-label="Eat one more apple">
+          <m-button appearance="ghost">
+            <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#log-in-outline"></use></svg>
             Eat
-          </mui-button>
-          <mui-button ghost>
-            <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#log-in-outline"></use></svg>
+          </m-button>
+          <m-button appearance="ghost">
+            <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#log-in-outline"></use></svg>
             One More
-          </mui-button>
-          <mui-button round>
-            <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#log-in-outline"></use></svg>
+          </m-button>
+          <m-button shape="round">
+            <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#log-in-outline"></use></svg>
             Apple
-          </mui-button>
-        </mui-button-group>
+          </m-button>
+        </m-button-group>
       </div>
     </section>
 
@@ -432,13 +459,13 @@
         <div>
           <h2 id="icon-button-heading">Use icons as buttons</h2>
           <p>Sometimes you may want to use an icon as a button and customize its size.
-            You can use the <code class="mui-code">text</code> treatment and icon size custom property.</p>
+            You can use <code class="m-code">appearance="text"</code> and the icon size custom property.</p>
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-button text class="large-icon-button" aria-label="Cash">
-          <svg class="button-icon" data-mui-button-icon aria-hidden="true"><use href="#cash-outline"></use></svg>
-        </mui-button>
+        <m-button appearance="text" class="large-icon-button" aria-label="Cash">
+          <svg class="button-icon" data-part="icon" aria-hidden="true"><use href="#cash-outline"></use></svg>
+        </m-button>
       </div>
     </section>
 
@@ -452,10 +479,73 @@
       </header>
       <div class="demo-preview" data-demo-preview>
         <span class="disabled-tooltip-trigger" tabindex="0" aria-describedby="disabled-tooltip">
-          <mui-button disabled>Disabled button as div</mui-button>
+          <m-button disabled>Disabled native button</m-button>
           <span id="disabled-tooltip" class="demo-tooltip" role="tooltip">Lpsum</span>
         </span>
       </div>
+    </section>
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <p>These tables load build-generated documentation from <code>demo/api/button.json</code>.
+        Component getters, setters and methods run directly; no metadata engine is shipped.</p>
+      <div id="button-api"></div>
+    </section>
+    <section id="behavior" aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Behavior and accessibility</h2>
+      <h3>One native owner</h3>
+      <p>Author one direct <code>button</code> or <code>a</code>, or provide phrasing content
+        and Button creates a native <code>button type="button"</code>. Content is moved, not
+        cloned. Do not nest interactive controls inside it. The wrapper has no button role
+        or tab stop. <code>control</code> is the read-only Web reference to that native owner
+        (null before connection); it is not portable metadata.</p>
+      <p><code>click()</code>, <code>focus(options?)</code> and <code>blur()</code> delegate to
+        that owner. Keyboard activation is browser-owned: Button does not synthesize a
+        second event. Listen for native <code>click</code> (a MouseEvent/PointerEvent), not
+        <code>m:click</code>. Native event propagation and cancellation apply; preventing
+        click's default prevents submission/navigation. There is no custom activation payload.</p>
+      <h3>Tone, appearance and shape</h3>
+      <p><code>type</code> is semantic tone, <code>appearance</code> is one visual treatment,
+        and <code>shape</code> is one geometry choice. Secondary, tertiary, quaternary,
+        ghost, dashed and text treatments remain available, as do round and circle shapes,
+        borders, strong text, block sizing and CSS color/icon overrides.
+        <code>variant</code>, <code>type="text"</code>, and overlapping appearance/shape
+        boolean switches are not aliases. Use <code>appearance="text"</code> instead.</p>
+      <h3>Names and icons</h3>
+      <p>Text normally supplies the accessible name. For an icon-only control, supply
+        <code>label</code>, host <code>aria-label</code>/<code>aria-labelledby</code>, or a
+        name on the native control. <code>label</code> overrides the host's aria-label;
+        native aria-labelledby still follows the browser's naming precedence.
+        Removing overrides restores authored labels.</p>
+      <p>Mark at most one direct decorative icon <code>data-part="icon" aria-hidden="true"</code>
+        on the native owner or in the wrapper's content; <code>icon-placement</code> changes
+        its visual side, not DOM order. Other <code>data-part</code>/<code>data-state</code>
+        markers are owner-scoped implementation details, not additional component elements.
+        The hidden spinner replaces icon presentation only; loading retains node identity,
+        listeners and the accessible name.</p>
+      <h3>Forms, links and disabled/loading</h3>
+      <p>An authored native button keeps its type (including HTML's default submit) and
+        attributes. Explicit host <code>attr-type</code> and form inputs override the native
+        equivalents; removing them restores authored values. <code>form</code> on Button
+        is an optional form ID, not an HTMLFormElement; use <code>control.form</code> for
+        the native form owner. Forwarded name/value, action, method, encoding, target and
+        no-validation inputs only affect native buttons. Validation and submitter form
+        data remain browser-owned.</p>
+      <p>For links author <code>&lt;a href="…" target="…" rel="…"&gt;</code>. Disabled/loading
+        temporarily remove href, suppress click/auxclick and exclude the control from
+        sequential focus; authored attributes, including live edits, are restored afterward.
+        Native disabled buttons and disabled fieldsets are honored, including the browser's
+        first-legend exception. Disabled/loading <code>focus()</code> does nothing.
+        <code>focusable="false"</code> alone only excludes sequential navigation:
+        programmatic focus remains available.</p>
+      <p>Presence booleans such as disabled/loading are true whenever present, even if the
+        attribute text is "false"; remove them or assign false. Bordered/focusable use explicit
+        true/false encoding and default to true. Optional form values and group size use null
+        for absence. Invalid property values throw; invalid markup is rejected when read or
+        synchronized rather than silently selecting a fallback.</p>
+      <p>Group naming uses native <code>aria-label</code>/<code>aria-labelledby</code>.
+        Group size defaults to null (no override); no roving-tabindex or toolbar keyboard
+        model is introduced. Loading motion respects reduced-motion settings, and focus
+        indicators support forced colors.</p>
     </section>
   </main>
 </body>

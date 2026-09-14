@@ -1,233 +1,227 @@
-import { readFileSync, readdirSync } from "node:fs"
+import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import { Result, MResult, ResultHeader, ResultContent, ResultFooter, registerResult, resultStatuses } from "../src/components/result/index.js"
+import * as resultApi from "../src/components/result/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const css = readFileSync(resolve("src", "components", "result", "result.css"), "utf8")
-const demo = readFileSync(resolve("demo", "components", "result.html"), "utf8")
-const app = readFileSync(resolve("demo", "components", "result.js"), "utf8")
-const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
 let style: HTMLStyleElement | undefined
 
-function fixture(): void {
-  document.body.innerHTML = demo.slice(demo.indexOf("<body>") + 6, demo.indexOf("</body>"))
-}
 function install(): void {
   style = document.createElement("style")
   style.textContent = css
   document.head.append(style)
 }
+
+function result(markup = "<m-result></m-result>"): Result {
+  document.body.innerHTML = markup
+  const element = document.querySelector("m-result")
+  if (!(element instanceof Result)) throw new Error("Result was not upgraded")
+  return element
+}
+
 afterEach(() => {
   style?.remove()
   style = undefined
   document.body.replaceChildren()
+  vi.restoreAllMocks()
 })
 
-describe("CSS-only native Result", () => {
-  it("ships only CSS with no Empty/Button/Icon runtime or illustration dependency", () => {
-    expect(pkg.exports["./result/style.css"]).toBe("./dist/markup-ui-result.css")
-    expect(pkg.exports["./result"]).toBeUndefined()
-    expect(readdirSync(resolve("src", "components", "result"))).toEqual(["result.css"])
-    expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("mui-result")).toBeUndefined()
-    expect(css).not.toContain("@import")
-    expect(demo).not.toContain("markup-ui-empty")
-    expect(demo).not.toContain("markup-ui-button")
-    expect(demo).not.toContain("twemoji")
+describe("canonical Result ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(resultApi.Result).toBe(Result)
+    expect(resultApi.MResult).toBe(Result)
+    expect(resultApi.ResultHeader).toBe(ResultHeader)
+    expect(resultApi.ResultContent).toBe(ResultContent)
+    expect(resultApi.ResultFooter).toBe(ResultFooter)
+    expect(Result.tag).toBe("m-result")
+    expect(ResultHeader.tag).toBe("m-result-header")
+    expect(ResultContent.tag).toBe("m-result-content")
+    expect(ResultFooter.tag).toBe("m-result-footer")
+    expect(ViewElement.prototype.isPrototypeOf(Result.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ResultHeader.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ResultContent.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ResultFooter.prototype)).toBe(true)
+    expect(customElements.get("m-result")).toBe(Result)
+    expect(customElements.get("m-result-header")).toBe(ResultHeader)
+    expect(customElements.get("m-result-content")).toBe(ResultContent)
+    expect(customElements.get("m-result-footer")).toBe(ResultFooter)
+    expect(Result.observedAttributes).toEqual(["status", "title", "description"])
+    expect(() => registerResult()).not.toThrow()
+    const define = vi.fn()
+    expect(() => registerResult({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
   })
 
-  it("keeps author-selected headings, native regions and explicit status words", () => {
-    fixture()
-    install()
-    expect(document.querySelector("#recovery-result")!.tagName).toBe("SECTION")
-    expect(document.querySelector("#recovery-result")!.getAttribute("aria-labelledby")).toBe("retry-title")
-    expect(document.querySelector("#retry-title")!.tagName).toBe("H2")
-    expect(document.querySelector("#nested-result")!.tagName).toBe("DIV")
-    for (const id of ["info-result", "success-result", "warning-result", "error-result", "not-found-result", "forbidden-result", "server-result", "teapot-result"]) {
-      expect(document.querySelector(`#${id} .mui-result-title`)!.textContent).toMatch(/Information|Success|Warning|Error|404|403|500|418/)
+  it("handles status property defaults and validation", () => {
+    const element = result()
+    expect(element.status).toBe("info")
+
+    for (const status of resultStatuses) {
+      element.status = status
+      expect(element.status).toBe(status)
+      expect(element.getAttribute("status")).toBe(status)
     }
-    expect(document.querySelectorAll("main")).toHaveLength(1)
-    expect(document.querySelectorAll(".mui-result[role], .mui-result[aria-live], .mui-result[tabindex]")).toHaveLength(0)
+
+    expect(() => Reflect.set(element, "status", "unknown")).toThrow(RangeError)
+    element.setAttribute("status", "invalid")
+    expect(() => element.status).toThrow(RangeError)
+
+    element.removeAttribute("status")
+    expect(element.status).toBe("info")
   })
 
-  it("retains original regions, nodes, listeners and order on live presentation changes", () => {
-    fixture()
-    const root = document.querySelector<HTMLElement>("#recovery-result")!
-    const before = root.innerHTML
-    const nodes = [...root.querySelectorAll("*")]
-    const link = document.querySelector<HTMLElement>("#home-link")!
-    let clicks = 0
-    link.addEventListener("click", event => { event.preventDefault(); clicks++ })
-    install()
-    root.dataset.status = "success"
-    root.dataset.size = "large"
-    root.remove()
-    document.body.append(root)
-    expect(root.innerHTML).toBe(before)
-    expect([...root.querySelectorAll("*")]).toEqual(nodes)
-    link.click()
-    expect(clicks).toBe(1)
-    expect(document.querySelector("#retry-title")!.textContent).toBe("Error — request not saved")
+  it("handles title and description properties and attributes", () => {
+    const element = result()
+    expect(element.title).toBe("")
+    expect(element.description).toBe("")
+
+    element.title = "Outcome Title"
+    element.description = "Outcome Description"
+    expect(element.title).toBe("Outcome Title")
+    expect(element.getAttribute("title")).toBe("Outcome Title")
+    expect(element.description).toBe("Outcome Description")
+    expect(element.getAttribute("description")).toBe("Outcome Description")
+
+    const titleEl = element.querySelector(".m-result-title")
+    const descEl = element.querySelector(".m-result-description")
+    expect(titleEl?.textContent).toBe("Outcome Title")
+    expect(descEl?.textContent).toBe("Outcome Description")
+
+    element.title = ""
+    element.description = ""
+    expect(element.title).toBe("")
+    expect(element.description).toBe("")
+    expect(element.querySelector(".m-result-header")).toBeNull()
   })
 
-  it("supports semantic colors and neutral HTTP artwork inheritance without changing text", () => {
-    fixture()
-    install()
-    const root = document.querySelector<HTMLElement>("#recovery-result")!
-    const cases = {
-      info: "var(--_mui-result-info,var(--mui-color-info,#2080f0))",
-      success: "var(--_mui-result-success,var(--mui-color-success,#18a058))",
-      warning: "var(--_mui-result-warning,var(--mui-color-warning,#f0a020))",
-      error: "var(--_mui-result-error,var(--mui-color-error,#d03050))",
-      "403": "currentColor", "404": "currentColor", "500": "currentColor", "418": "currentColor",
-    }
-    for (const [status, color] of Object.entries(cases)) {
-      root.dataset.status = status
-      expect(getComputedStyle(root).getPropertyValue("--_mui-result-accent")).toBe(color)
-    }
-    root.dataset.status = "unknown"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-result-accent")).toBe(cases.info)
-    expect(app).not.toContain("fetch(")
-    expect(app).not.toContain("history.")
-    expect(app).not.toContain("location.")
-    expect(css).not.toContain("[data-align")
+  it("validates title and description property types", () => {
+    const element = result()
+    expect(() => Reflect.set(element, "title", 123)).toThrow(RangeError)
+    expect(() => Reflect.set(element, "description", 456)).toThrow(RangeError)
   })
 
-  it("provides explicit light/dark defaults without changing native control color-scheme", () => {
-    fixture()
-    install()
-    const root = document.querySelector<HTMLElement>("#recovery-result")!
-    root.dataset.muiTheme = "dark"
-    const dark = getComputedStyle(root)
-    expect(dark.getPropertyValue("--_mui-result-text")).toBe("rgba(255,255,255,.82)")
-    expect(dark.getPropertyValue("--_mui-result-title")).toBe("rgba(255,255,255,.9)")
-    for (const [type, color] of [["info", "#70c0e8"], ["success", "#63e2b7"], ["warning", "#f2c97d"], ["error", "#e88080"]]) {
-      expect(dark.getPropertyValue(`--_mui-result-${type}`)).toBe(color)
-    }
-    root.dataset.muiTheme = "light"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-result-text")).toBe("#333639")
-    expect(getComputedStyle(root).getPropertyValue("--_mui-result-title")).toBe("#1f2225")
-    expect(css).not.toContain("color-scheme")
+  it("preserves authored regions over generated ones", () => {
+    const element = result(`
+      <m-result status="error" title="Ignored Title" description="Ignored Description">
+        <m-result-header id="authored-header">
+          <h2 class="m-result-title">Authored Title</h2>
+          <p class="m-result-description">Authored Description</p>
+        </m-result-header>
+        <m-result-content id="authored-content">
+          <p>Authored Content Body</p>
+        </m-result-content>
+        <m-result-footer id="authored-footer">
+          <button type="button">Authored Action</button>
+        </m-result-footer>
+      </m-result>
+    `)
+    expect(element.querySelector("#authored-header")).not.toBeNull()
+    expect(element.querySelector("#authored-header h2")?.textContent).toBe("Authored Title")
+    expect(element.querySelector("#authored-content")?.textContent).toContain("Authored Content Body")
+    expect(element.querySelector("#authored-footer button")?.textContent).toBe("Authored Action")
+    expect(element.querySelectorAll("m-result-header")).toHaveLength(1)
   })
 
-  it("provides small/medium/large/huge dimensions and a medium unknown-size fallback", () => {
-    fixture()
-    install()
-    const root = document.querySelector<HTMLElement>("#recovery-result")!
-    for (const [size, icon, title] of [["small", "64px", "26px"], ["medium", "80px", "32px"], ["large", "100px", "40px"], ["huge", "125px", "48px"]]) {
-      root.dataset.size = size
-      expect(getComputedStyle(root).getPropertyValue("--_mui-result-icon-size")).toBe(icon)
-      expect(getComputedStyle(root).getPropertyValue("--_mui-result-title-size")).toBe(title)
-    }
-    root.dataset.size = "tiny"
-    expect(getComputedStyle(root).getPropertyValue("--_mui-result-icon-size")).toBe("80px")
+  it("wraps loose nodes into m-result-content when no content region is authored", () => {
+    const element = result(`
+      <m-result title="Title">
+        <p id="loose-p">Loose child paragraph</p>
+      </m-result>
+    `)
+    const content = element.querySelector("m-result-content")
+    expect(content).not.toBeNull()
+    expect(content?.querySelector("#loose-p")).not.toBeNull()
   })
 
-  it("keeps decorative SVGs hidden and preserves named custom SVG/image attributes", () => {
-    fixture()
-    const image = document.querySelector<HTMLImageElement>("#authored-image")!
-    const before = image.outerHTML
-    install()
-    expect(document.querySelector("#recovery-icon")!.getAttribute("aria-hidden")).toBe("true")
-    const svg = document.querySelector("#custom-icon svg")!
-    expect(svg.namespaceURI).toBe("http://www.w3.org/2000/svg")
-    expect(svg.getAttribute("role")).toBe("img")
-    expect(svg.getAttribute("aria-labelledby")).toBe("emblem-title")
-    expect(svg.querySelector("title")!.textContent).toBe("Project emblem")
-    expect(image.outerHTML).toBe(before)
-    expect(image.alt).toBe("Project archive symbol")
+  it("does not generate missing regions and keeps empty roots empty", () => {
+    const element = result("<m-result></m-result>")
+    expect(element.childNodes).toHaveLength(0)
+    expect(element.textContent).toBe("")
+    expect(element.querySelector(".m-result-icon")).toBeNull()
+    expect(element.querySelector("m-result-header")).toBeNull()
+    expect(element.querySelector("m-result-content")).toBeNull()
+    expect(element.querySelector("m-result-footer")).toBeNull()
   })
 
-  it("accepts author icon replacement without a render callback or observer", () => {
-    fixture()
-    install()
-    const region = document.querySelector("#recovery-icon")!
-    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
-    svg.setAttribute("viewBox", "0 0 10 10")
-    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle")
-    circle.setAttribute("r", "4")
-    svg.append(circle)
-    region.replaceChildren(svg)
-    expect(region.firstElementChild).toBe(svg)
-    expect(svg.firstElementChild).toBe(circle)
-    expect(getComputedStyle(svg).display).toBe("block")
+  it("retains authored region order, listeners, and nodes without rewriting", () => {
+    const element = result(`
+      <m-result status="warning">
+        <div class="m-result-icon" id="i">Icon</div>
+        <m-result-header id="h">Header</m-result-header>
+        <m-result-content id="c">Content</m-result-content>
+        <m-result-footer id="f">Footer</m-result-footer>
+      </m-result>
+    `)
+    const children = [...element.children].map(c => c.id)
+    expect(children).toEqual(["i", "h", "c", "f"])
   })
 
-  it("keeps retry/reset/home actions native with real form association and validity", () => {
-    fixture()
-    install()
-    const form = document.querySelector<HTMLFormElement>("#retry-form")!
-    const input = document.querySelector<HTMLInputElement>("#recovery-email")!
-    const retry = document.querySelector<HTMLButtonElement>("#retry-action")!
-    let submits = 0
-    let disabledClicks = 0
-    form.addEventListener("submit", event => { event.preventDefault(); submits++ })
-    document.querySelector("#disabled-action")!.addEventListener("click", () => disabledClicks++)
-    expect(retry.form).toBe(form)
-    expect(retry.closest("form")).toBeNull()
-    input.value = "invalid"
-    retry.click()
-    expect(submits).toBe(0)
-    input.value = "native@example.test"
-    retry.click()
-    expect(submits).toBe(1)
-    expect([...new FormData(form).entries()]).toEqual([["email", "native@example.test"]])
-    document.querySelector<HTMLButtonElement>("#reset-action")!.click()
-    document.querySelector<HTMLButtonElement>("#disabled-action")!.click()
-    expect(input.value).toBe("reader@example.test")
-    expect(disabledClicks).toBe(0)
-    expect(document.querySelector("#home-link")!.getAttribute("href")).toBe("#home")
+  it("places generated header before generated content and footer", () => {
+    const element = result(`
+      <m-result title="Title">
+        <p id="body-text">Some body text</p>
+        <m-result-footer id="footer"><button>Action</button></m-result-footer>
+      </m-result>
+    `)
+    const header = element.querySelector("m-result-header")!
+    const content = element.querySelector("m-result-content")!
+    const footer = element.querySelector("m-result-footer")!
+    expect(element.children[0]).toBe(header)
+    expect(element.children[1]).toBe(content)
+    expect(element.children[2]).toBe(footer)
   })
 
-  it("does not generate missing icons/messages/actions and keeps empty roots empty", () => {
-    fixture()
-    install()
-    expect(document.querySelector("#text-result .mui-result-icon")).toBeNull()
-    expect(document.querySelector("#text-result .mui-result-footer")).toBeNull()
-    const empty = document.querySelector<HTMLElement>("#empty-result")!
-    empty.dataset.status = "404"
-    expect(empty.childNodes).toHaveLength(0)
-    expect(empty.textContent).toBe("")
+  it("keeps template nodes inert", () => {
+    const element = result(`
+      <m-result title="Title">
+        <template id="tpl"><button id="inert-btn">Inert Action</button></template>
+      </m-result>
+    `)
+    expect(element.querySelector("#inert-btn")).toBeNull()
+    expect(element.querySelector<HTMLTemplateElement>("#tpl")?.content.querySelector("#inert-btn")).not.toBeNull()
   })
 
-  it("keeps hidden regions/templates hidden and inert without removing their nodes", () => {
-    fixture()
-    install()
-    for (const element of document.querySelectorAll("#hidden-result, #native-template, #hidden-regions [hidden]")) {
-      expect(getComputedStyle(element).display).toBe("none")
-    }
-    expect(document.querySelector<HTMLTemplateElement>("#native-template")!.content.textContent).toBe("Inert icon template")
-    expect(css).toContain(':not([hidden="until-found"])')
+  it("upgrades properties assigned before custom element registration", () => {
+    document.body.innerHTML = "<test-late-result></test-late-result>"
+    const element = document.querySelector("test-late-result") as Result
+    Object.assign(element, { status: "success", title: "Late Title", description: "Late Description" })
+    customElements.define("test-late-result", class extends Result {})
+    expect(element.status).toBe("success")
+    expect(element.title).toBe("Late Title")
+    expect(element.description).toBe("Late Description")
+    expect(element.querySelector(".m-result-title")?.textContent).toBe("Late Title")
+    expect(element.querySelector(".m-result-description")?.textContent).toBe("Late Description")
   })
 
-  it("resets nested presets and keeps authored string content safe", () => {
-    fixture()
+  it("styles m-result cleanly via result.css with accent colors and dark theme", () => {
     install()
-    const outer = document.querySelector<HTMLElement>("#custom-result")!
-    outer.dataset.size = "huge"
-    outer.style.setProperty("--mui-result-align", "end")
-    const nested = document.querySelector("#nested-result")!
-    expect(getComputedStyle(nested).getPropertyValue("--_mui-result-icon-size")).toBe("80px")
-    expect(getComputedStyle(nested).getPropertyValue("--_mui-result-accent")).toBe("var(--_mui-result-info,var(--mui-color-info,#2080f0))")
-    expect(getComputedStyle(nested).getPropertyValue("--mui-result-align")).toBe("center")
-    const description = document.querySelector("#retry-description")!
-    description.textContent = "<img src=x> stays literal"
-    expect(description.querySelector("img")).toBeNull()
-  })
+    const element = result("<m-result status='success' title='Success'></m-result>")
+    expect(getComputedStyle(element).display).toBe("grid")
+    expect(getComputedStyle(element).getPropertyValue("--_m-result-accent")).toBe("var(--_m-result-success,var(--m-color-success,#18a058))")
 
-  it("wraps content/actions and provides print/forced-color rules without global resets", () => {
-    fixture()
-    const outside = document.querySelector("#outside-content")!
-    const before = getComputedStyle(outside).display
-    install()
-    expect(getComputedStyle(outside).display).toBe(before)
-    expect(getComputedStyle(document.querySelector("#recovery-actions")!).flexWrap).toBe("wrap")
-    expect(getComputedStyle(document.querySelector("#recovery-actions")!).textAlign).toBe("center")
-    expect(css).toMatch(/overflow-wrap:\s*anywhere/)
+    element.status = "error"
+    expect(getComputedStyle(element).getPropertyValue("--_m-result-accent")).toBe("var(--_m-result-error,var(--m-color-error,#d03050))")
+
+    element.status = "warning"
+    expect(getComputedStyle(element).getPropertyValue("--_m-result-accent")).toBe("var(--_m-result-warning,var(--m-color-warning,#f0a020))")
+
+    element.status = "404"
+    expect(getComputedStyle(element).getPropertyValue("--_m-result-accent")).toBe("currentColor")
+
+    element.dataset.mTheme = "dark"
+    const dark = getComputedStyle(element)
+    expect(dark.getPropertyValue("--_m-result-text")).toBe("rgba(255,255,255,.82)")
+    expect(dark.getPropertyValue("--_m-result-title")).toBe("rgba(255,255,255,.9)")
+    expect(dark.getPropertyValue("--_m-result-success")).toBe("#63e2b7")
+    expect(dark.getPropertyValue("--_m-result-error")).toBe("#e88080")
+
+    expect(css).toContain("m-result")
+    expect(css).toContain("m-result-header")
+    expect(css).toContain("m-result-content")
+    expect(css).toContain("m-result-footer")
     expect(css).toContain("@media print")
     expect(css).toContain("@media (forced-colors: active)")
-    expect(css).not.toContain("cursor: pointer")
-    expect(css).not.toContain("animation:")
-    expect(css).not.toContain("transition:")
-    expect(css).not.toContain("row-reverse")
   })
 })

@@ -82,8 +82,8 @@ export function createNotificationOwner(root: HTMLElement, options: Notification
   const document = root?.ownerDocument
   const view = document?.defaultView
   if (!view || !(root instanceof view.HTMLElement) || !["div", "section", "aside"].includes(root.localName)
-    || root.getRootNode() !== document || !root.classList.contains("mui-notification-host") || root.closest("a, button")) {
-    throw new TypeError("Use a connected light-DOM native .mui-notification-host.")
+    || root.getRootNode() !== document || !root.classList.contains("m-notification-host") || root.closest("a, button")) {
+    throw new TypeError("Use a connected light-DOM native .m-notification-host.")
   }
   const items = root.querySelector<HTMLElement>(":scope > [data-notification-items]")
   const announcer = root.querySelector<HTMLElement>(":scope > [data-notification-announcer]")
@@ -139,7 +139,7 @@ export function createNotificationOwner(root: HTMLElement, options: Notification
     if (!disposed && policy !== "off" && announcement.parentElement === announcer) announcement.textContent = text
   }
   function report(detail: NotificationError, visible = false) {
-    if (root.dispatchEvent(new view!.CustomEvent("mui:notification-error", { detail, cancelable: true })) && !visible) {
+    if (root.dispatchEvent(new view!.CustomEvent("m:notification-error", { detail, cancelable: true })) && !visible) {
       view!.console.error("MarkupUI Notification:", detail.error)
     }
   }
@@ -167,7 +167,7 @@ export function createNotificationOwner(root: HTMLElement, options: Notification
   }
   function available(node: HTMLElement) { return node.isConnected && !node.matches(":disabled") && !node.closest("[hidden], [inert]") }
   function defaults(): HTMLElement {
-    const article = document.createElement("article"); article.className = "mui-notification"
+    const article = document.createElement("article"); article.className = "m-notification"
     const icon = document.createElement("span"); icon.dataset.notificationIcon = ""; icon.setAttribute("aria-hidden", "true")
     const header = document.createElement("header"); header.dataset.notificationHeader = ""
     const kind = document.createElement("strong"); kind.dataset.notificationKind = ""
@@ -194,7 +194,7 @@ export function createNotificationOwner(root: HTMLElement, options: Notification
     let reserved = true
     try {
       const element = template ? document.importNode(template.content.firstElementChild!, true) as HTMLElement : defaults()
-      if (!(element instanceof view!.HTMLElement) || element.localName !== "article" || !element.classList.contains("mui-notification")
+      if (!(element instanceof view!.HTMLElement) || element.localName !== "article" || !element.classList.contains("m-notification")
         || element.hidden || element.hasAttribute("inert") || ![null, "article"].includes(element.getAttribute("role"))
         || element.matches(`${live}, [autofocus], [aria-modal], [contenteditable]:not([contenteditable="false"])`)
         || element.querySelector(`${live}, script, style, iframe, object, embed, dialog, [role="dialog"], [role="alertdialog"], [aria-modal], [autofocus], [contenteditable]:not([contenteditable="false"])`)) {
@@ -321,7 +321,7 @@ export function createNotificationOwner(root: HTMLElement, options: Notification
         if (element.parentElement === items) element.remove()
         if (focused && reason !== "expired" && reason !== "detached" && fallback && available(fallback)
           && !items!.contains(fallback) && document.activeElement === document.body) fallback.focus({ preventScroll: true })
-        emit("mui:notification-remove", { handle, reason })
+        emit("m:notification-remove", { handle, reason })
       }
       function requestClose(): Promise<boolean> {
         scan()
@@ -416,7 +416,7 @@ export function createNotificationOwner(root: HTMLElement, options: Notification
           clock.restart(state.duration, state.keepAliveOnHover)
           announce(summary())
           if (focusHint && document.activeElement === document.body && available(button)) button.focus({ preventScroll: true })
-          if (active() && token === version) emit("mui:notification-update", { handle })
+          if (active() && token === version) emit("m:notification-update", { handle })
         },
         destroy: () => remove("destroy"),
       }
@@ -434,7 +434,7 @@ export function createNotificationOwner(root: HTMLElement, options: Notification
         if (!active() || clearing || ownerEpoch !== creationEpoch) throw new Error("Notification creation was interrupted.")
         clock.restart(state.duration, state.keepAliveOnHover)
         announce(summary())
-        emit("mui:notification-create", { handle })
+        emit("m:notification-create", { handle })
         return handle
       } catch (error) { remove("detached"); throw error }
     } finally { if (reserved) creating-- }

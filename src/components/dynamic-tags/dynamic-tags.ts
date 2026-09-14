@@ -141,12 +141,12 @@ export function createDynamicTags(root: HTMLElement, options: DynamicTagsOptions
   function report(reason: unknown, committed: boolean) {
     error = reason
     present(committed ? "The tag action committed, but resource cleanup failed." : "Tag creation failed; the draft was kept.", "error")
-    root.dispatchEvent(new view!.CustomEvent("mui:dynamic-tags-error", { detail: { error: reason, committed } }))
+    root.dispatchEvent(new view!.CustomEvent("m:dynamic-tags-error", { detail: { error: reason, committed } }))
   }
   function reject(reason: DynamicTagsRejection, message: string): DynamicTagsCommitResult {
     error = null
     present(message, "rejected")
-    root.dispatchEvent(new view!.CustomEvent("mui:dynamic-tags-reject", { detail: Object.freeze({ reason, message }) }))
+    root.dispatchEvent(new view!.CustomEvent("m:dynamic-tags-reject", { detail: Object.freeze({ reason, message }) }))
     return Object.freeze({ status: "rejected", reason })
   }
   function available() {
@@ -181,7 +181,7 @@ export function createDynamicTags(root: HTMLElement, options: DynamicTagsOptions
   }
   function notify(type: "add" | "remove", row: DynamicInputRow) {
     const tag = descriptor(row)
-    root.dispatchEvent(new view!.CustomEvent("mui:dynamic-tags-change", { detail: Object.freeze({
+    root.dispatchEvent(new view!.CustomEvent("m:dynamic-tags-change", { detail: Object.freeze({
       type, tag, tags: api.tags, values: api.values,
     }) }))
   }
@@ -273,12 +273,12 @@ export function createDynamicTags(root: HTMLElement, options: DynamicTagsOptions
       }
     })
   }, true)
-  listen(root, "mui:dynamic-input-error", event => {
+  listen(root, "m:dynamic-input-error", event => {
     if (event.target !== root) return
     const detail = (event as CustomEvent<{ error: unknown; committed: boolean }>).detail
     if (!(detail.error instanceof Rejection)) report(detail.error, detail.committed)
   })
-  listen(root, "mui:dynamic-input-change", event => {
+  listen(root, "m:dynamic-input-change", event => {
     if (event.target !== root) return
     const detail = (event as CustomEvent<{ type: string; row: DynamicInputRow }>).detail
     if (detail.type === "remove") {

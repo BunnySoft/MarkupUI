@@ -33,8 +33,8 @@ type Owned = HTMLElement & { [owner]?: object }
 export function createHeatmap(element: HTMLElement, options: HeatmapOptions = {}): HeatmapController {
   const document = element?.ownerDocument, view = document?.defaultView
   if (!view || !(element instanceof view.HTMLElement) || !["div", "section"].includes(element.localName)
-    || !element.matches(".mui-heatmap[data-heatmap]") || element.getAttribute("tabindex") !== "-1"
-    || !element.isConnected || element.getRootNode() !== document || (element as Owned)[owner]) throw new TypeError("Use an unowned connected native .mui-heatmap[data-heatmap][tabindex='-1'].")
+    || !element.matches(".m-heatmap[data-heatmap]") || element.getAttribute("tabindex") !== "-1"
+    || !element.isConnected || element.getRootNode() !== document || (element as Owned)[owner]) throw new TypeError("Use an unowned connected native .m-heatmap[data-heatmap][tabindex='-1'].")
   const win = view, doc = document!, token = {}, writes = ownedWrites(), palette = ownedWrites()
   const own = (node: Element) => node.closest("[data-heatmap]") === element
   function one(selector: string) {
@@ -138,7 +138,7 @@ export function createHeatmap(element: HTMLElement, options: HeatmapOptions = {}
         const th = tr.firstElementChild!
         const weekText = th.firstElementChild!
         weekText.textContent = data.weekLabels[rowIndex]!
-        weekText.classList.toggle("mui-heatmap-visually-hidden", !next.showWeekLabels)
+        weekText.classList.toggle("m-heatmap-visually-hidden", !next.showWeekLabels)
         for (let column = 0; column < data.weeks; ++column) {
           const day = data.cells[column * 7 + rowIndex]
           if (!day) { if (!sameGrid) { const empty = doc.createElement("td"); empty.textContent = "—"; tr.append(empty) } continue }
@@ -168,7 +168,7 @@ export function createHeatmap(element: HTMLElement, options: HeatmapOptions = {}
         const row = doc.createElement("tr"), corner = doc.createElement("th"); corner.textContent = "Weekday"; row.append(corner)
         for (const start of data.weekStarts) {
           const th = doc.createElement("th"), label = doc.createElement("span"); th.scope = "col"
-          label.className = "mui-heatmap-visually-hidden"; label.textContent = `Week including ${start}`; th.append(label); row.append(th)
+          label.className = "m-heatmap-visually-hidden"; label.textContent = `Week including ${start}`; th.append(label); row.append(th)
         }
         headers.push(row)
       }
@@ -189,8 +189,8 @@ export function createHeatmap(element: HTMLElement, options: HeatmapOptions = {}
       if (!connected) return
       headRows = headers; bodyRows = rows; legendRows = legendNodes; cells = nextCells; settings = next; model = data; bound = true; ++version; error = null
       palette.restore()
-      if (next.activeColors) next.activeColors.forEach((color, i) => palette.style(element, `--mui-heatmap-level-${i}`, color))
-      if (next.minimumColor) palette.style(element, "--mui-heatmap-level-0", next.minimumColor)
+      if (next.activeColors) next.activeColors.forEach((color, i) => palette.style(element, `--m-heatmap-level-${i}`, color))
+      if (next.minimumColor) palette.style(element, "--m-heatmap-level-0", next.minimumColor)
       writes.attr(element, "data-heatmap-theme", next.colorTheme); writes.attr(element, "data-heatmap-size", next.size)
       writes.attr(table, "aria-busy", next.loading ? "true" : "false"); writes.attr(bands, "hidden", next.showColorIndicator ? null : "")
       writeText(caption, data.start ? `${data.start} – ${data.end}` : "No calendar data")
@@ -210,14 +210,14 @@ export function createHeatmap(element: HTMLElement, options: HeatmapOptions = {}
   function set(input: HeatmapSettings) {
     live(); const { next, data } = prepare(input); commit(next, data)
     if (!element.isConnected) { disconnect(); return }
-    if (connected) element.dispatchEvent(new win.CustomEvent("mui:heatmap-change", { bubbles: true, detail: state() }))
+    if (connected) element.dispatchEvent(new win.CustomEvent("m:heatmap-change", { bubbles: true, detail: state() }))
   }
   function explore(date: string) {
     live()
     const cell = model.cells.find(cell => cell?.date === date)
     if (!cell || !cells.has(date)) throw new RangeError("Date is not in the rendered Heatmap.")
     selected(date)
-    element.dispatchEvent(new win.CustomEvent("mui:heatmap-explore", { bubbles: true, detail: cell }))
+    element.dispatchEvent(new win.CustomEvent("m:heatmap-explore", { bubbles: true, detail: cell }))
   }
   function keyboard(event: KeyboardEvent) {
     const button = event.target instanceof win.HTMLButtonElement ? event.target : null
@@ -244,7 +244,7 @@ export function createHeatmap(element: HTMLElement, options: HeatmapOptions = {}
   }
   function report(failure: unknown) {
     error = failure
-    if (connected && element.isConnected) element.dispatchEvent(new win.CustomEvent("mui:heatmap-error", { bubbles: true, detail: Object.freeze({ error: failure }) }))
+    if (connected && element.isConnected) element.dispatchEvent(new win.CustomEvent("m:heatmap-error", { bubbles: true, detail: Object.freeze({ error: failure }) }))
   }
   function listen(node: EventTarget, event: string, callback: EventListener) { node.addEventListener(event, callback); removers.push(() => node.removeEventListener(event, callback)) }
   const observer = new win.MutationObserver(() => { if (!element.isConnected || element.getRootNode() !== doc || !element.contains(table)) disconnect() })

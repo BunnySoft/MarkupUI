@@ -1,138 +1,269 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native List and ListItem</title>
+  <title>List - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-list.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./list.css">
-  <script defer src="./list.js"></script>
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script defer src="../../dist/markup-ui-list.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./list.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <header>
-    <h1>Native List and ListItem</h1>
-    <p>Authored lists, optional regions and real controls. The library loads CSS only.</p>
-  </header>
-  <main>
-    <section aria-labelledby="projects-heading">
-      <div class="mui-list" data-bordered data-hoverable id="projects">
-        <div class="mui-list-header">
+  <main data-demo-page class="component-docs">
+    <h1>List</h1>
+    <p>A structured list container with sizes, borders, dividers, interactive actions, and light-DOM regions.</p>
+    <nav class="component-docs-nav" aria-label="List documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+      <a href="#behavior">Behavior and accessibility</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-list.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-list.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="basic-heading">Basic</h2>
+          <p>A basic list with items.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <m-list class="narrow-list">
+          <m-list-item>First item</m-list-item>
+          <m-list-item>Second item</m-list-item>
+          <m-list-item>Third item</m-list-item>
+        </m-list>
+      </div>
+    </section>
+
+    <section data-demo-example="size" aria-labelledby="size-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="size-heading">Size</h2>
+          <p>List supports <code class="m-code">small</code>, <code class="m-code">medium</code>, and <code class="m-code">large</code> sizes.</p>
+        </div>
+      </header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <m-list size="small">
+          <m-list-item>Small list item 1</m-list-item>
+          <m-list-item>Small list item 2</m-list-item>
+        </m-list>
+        <m-list size="medium">
+          <m-list-item>Medium list item 1</m-list-item>
+          <m-list-item>Medium list item 2</m-list-item>
+        </m-list>
+        <m-list size="large">
+          <m-list-item>Large list item 1</m-list-item>
+          <m-list-item>Large list item 2</m-list-item>
+        </m-list>
+      </div>
+    </section>
+
+    <section data-demo-example="border" aria-labelledby="border-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="border-heading">Border</h2>
+          <p>Lists are bordered by default. Use <code class="m-code">bordered="false"</code> for a borderless list.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <m-list bordered="false" class="narrow-list">
+          <m-list-item>Borderless item 1</m-list-item>
+          <m-list-item>Borderless item 2</m-list-item>
+          <m-list-item>Borderless item 3</m-list-item>
+        </m-list>
+      </div>
+    </section>
+
+    <section data-demo-example="projects" aria-labelledby="projects-heading">
+      <header data-demo-header>
+        <div>
           <h2 id="projects-heading">Projects</h2>
-          <p>Multiple actions stay outside any row-wide control.</p>
+          <p>Header and footer regions with rich items, actions, and nested lists.</p>
         </div>
-        <ul class="mui-list-items" data-markerless role="list" aria-labelledby="projects-heading" id="project-items">
-          <li class="mui-list-item" hidden id="hidden-first">Hidden first item</li>
-          <template class="mui-list-item" id="native-template"><li class="mui-list-item">Inert project template</li></template>
-          <li class="mui-list-item" id="project-alpha">
-            <div class="mui-list-row">
-              <span class="mui-list-prefix" aria-hidden="true">◈</span>
-              <div class="mui-list-content">
-                <h3><a href="#details" id="project-link">Alpha report</a></h3>
-                <p>Native content and listeners remain in place.</p>
-                <ul id="nested-list"><li>Reviewed</li><li>Ready to publish</li></ul>
-              </div>
-              <div class="mui-list-suffix mui-list-actions">
-                <button type="button" id="archive-alpha">Archive Alpha</button>
-                <a href="#details">Alpha details</a>
-              </div>
-            </div>
-          </li>
-          <li class="mui-list-item" hidden id="hidden-middle">Hidden middle item</li>
-          <li class="mui-list-item" id="project-beta">
-            <div class="mui-list-row">
-              <span class="mui-list-prefix" aria-hidden="true">◇</span>
-              <div class="mui-list-content">
-                <h3>Beta import</h3>
-                <p class="long-content">AnUnbrokenAuthoredProjectIdentifierThatMustWrapWithoutClippingAtNarrowWidths0123456789</p>
-              </div>
-              <div class="mui-list-suffix"><span>Pending review</span></div>
-            </div>
-          </li>
-        </ul>
-        <div class="mui-list-footer">Two visible projects; this footer is not a list item.</div>
-      </div>
-      <p id="action-status" role="status"></p>
-    </section>
-
-    <section aria-labelledby="actions-heading">
-      <h2 id="actions-heading">Explicit single-action rows</h2>
-      <div class="mui-list" data-bordered data-clickable data-hoverable data-size="small" id="actions">
-        <ul class="mui-list-items" data-markerless role="list" aria-labelledby="actions-heading">
-          <li class="mui-list-item" id="button-item">
-            <button type="button" class="mui-list-row mui-list-action" id="open-report">
-              <span class="mui-list-prefix" aria-hidden="true">↗</span>
-              <span class="mui-list-content">Open report</span>
-              <span class="mui-list-suffix">Preview</span>
-            </button>
-          </li>
-          <li class="mui-list-item">
-            <a href="#details" class="mui-list-row mui-list-action" id="row-link">
-              <span class="mui-list-content">Read report details</span>
-            </a>
-          </li>
-          <li class="mui-list-item">
-            <button type="button" class="mui-list-row mui-list-action" disabled id="disabled-row">
-              <span class="mui-list-content">Unavailable report</span>
-            </button>
-          </li>
-          <li class="mui-list-item" id="passive-item">A passive item is not a button, even in a clickable list.</li>
-        </ul>
-      </div>
-    </section>
-
-    <section aria-labelledby="form-heading">
-      <h2 id="form-heading">Native form controls</h2>
-      <form id="native-form">
-        <div class="mui-list" data-bordered data-size="large" id="form-list">
-          <ul class="mui-list-items" aria-labelledby="form-heading">
-            <li class="mui-list-item">
-              <div class="mui-list-row">
-                <label class="mui-list-prefix" for="native-name">Report name</label>
-                <input class="mui-list-content" id="native-name" name="name" value="Original" required>
-                <div class="mui-list-suffix mui-list-actions">
-                  <button type="submit" id="native-submit">Save report</button>
-                  <button type="reset" id="native-reset">Reset report</button>
-                </div>
-              </div>
-            </li>
-            <li class="mui-list-item">
-              <fieldset disabled>
-                <legend>Read-only publishing settings</legend>
-                <label><input type="checkbox" name="publish" checked> Publish report</label>
-                <button type="button" id="fieldset-disabled">Publish</button>
-              </fieldset>
-            </li>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <m-list bordered hoverable id="projects">
+          <m-box data-part="header" class="m-list-header">
+            <m-heading level="2">Projects</m-heading>
+            <m-p>Multiple actions stay outside any row-wide control.</m-p>
+          </m-box>
+          <ul class="m-list-items" data-markerless role="list" aria-labelledby="projects-heading" id="project-items">
+            <m-list-item hidden id="hidden-first">Hidden first item</m-list-item>
+            <template class="m-list-item" id="native-template"><m-list-item>Inert project template</m-list-item></template>
+            <m-list-item id="project-alpha">
+              <m-box data-part="row" class="m-list-row">
+                <m-text data-part="prefix" class="m-list-prefix" aria-hidden="true">◈</m-text>
+                <m-box data-part="content" class="m-list-content">
+                  <m-heading level="3"><m-link href="#details" id="project-link">Alpha report</m-link></m-heading>
+                  <m-p>Native content and listeners remain in place.</m-p>
+                  <ul id="nested-list"><m-list-item>Reviewed</m-list-item><m-list-item>Ready to publish</m-list-item></ul>
+                </m-box>
+                <m-box data-part="suffix" class="m-list-suffix m-list-actions">
+                  <m-button id="archive-alpha"><m-button type="button" id="archive-alpha">Archive Alpha</m-button></m-button>
+                  <m-link href="#details">Alpha details</m-link>
+                </m-box>
+              </m-box>
+            </m-list-item>
+            <m-list-item hidden id="hidden-middle">Hidden middle item</m-list-item>
+            <m-list-item id="project-beta">
+              <m-box data-part="row" class="m-list-row">
+                <m-text data-part="prefix" class="m-list-prefix" aria-hidden="true">◇</m-text>
+                <m-box data-part="content" class="m-list-content">
+                  <m-heading level="3">Beta import</m-heading>
+                  <m-p class="long-content">AnUnbrokenAuthoredProjectIdentifierThatMustWrapWithoutClippingAtNarrowWidths0123456789</m-p>
+                </m-box>
+                <m-box data-part="suffix" class="m-list-suffix"><m-text>Pending review</m-text></m-box>
+              </m-box>
+            </m-list-item>
           </ul>
+          <m-box data-part="footer" class="m-list-footer">Two visible projects; this footer is not a list item.</m-box>
+        </m-list>
+        <m-p id="action-status" role="status"></m-p>
+      </div>
+    </section>
+
+    <section data-demo-example="actions" aria-labelledby="actions-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="actions-heading">Explicit single-action rows</h2>
+          <p>Clickable list items with buttons and links.</p>
         </div>
-      </form>
-      <p id="form-status" role="status"></p>
-    </section>
-
-    <section aria-labelledby="ordered-heading">
-      <h2 id="ordered-heading">Ordered markers and logical RTL</h2>
-      <div class="mui-list" data-bordered data-show-divider="false" dir="rtl" id="ordered">
-        <ol class="mui-list-items" start="3" aria-labelledby="ordered-heading">
-          <li class="mui-list-item" id="ordered-first">
-            <div class="mui-list-row">
-              <span class="mui-list-prefix" id="rtl-prefix">First</span>
-              <span class="mui-list-content">Native numbering remains meaningful.</span>
-              <span class="mui-list-suffix" id="rtl-suffix">Last</span>
-            </div>
-          </li>
-          <li class="mui-list-item" value="8">The authored value overrides the next number.</li>
-        </ol>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <m-list bordered clickable hoverable size="small" id="actions">
+          <ul class="m-list-items" data-markerless role="list" aria-labelledby="actions-heading">
+            <m-list-item id="button-item">
+              <m-button class="m-list-row m-list-action" id="open-report">
+                <m-text class="m-list-prefix" aria-hidden="true">↗</m-text>
+                <m-text class="m-list-content">Open report</m-text>
+                <m-text class="m-list-suffix">Preview</m-text>
+              </m-button>
+            </m-list-item>
+            <m-list-item>
+              <m-link href="#details" class="m-list-row m-list-action" id="row-link">
+                <m-text class="m-list-content">Read report details</m-text>
+              </m-link>
+            </m-list-item>
+            <m-list-item>
+              <m-button class="m-list-row m-list-action" disabled><m-button type="button" class="m-list-row m-list-action" disabled id="disabled-row"><m-text class="m-list-content">Unavailable report</m-text></m-button></m-button>
+            </m-list-item>
+            <m-list-item id="passive-item">A passive item is not a button, even in a clickable list.</m-list-item>
+          </ul>
+        </m-list>
       </div>
     </section>
 
-    <section aria-labelledby="details">
-      <h2 id="details">Report details</h2>
-      <p>These targets are ordinary document anchors. The application handles actions, not the list stylesheet.</p>
-      <div class="mui-list" id="empty-list">
-        <ul class="mui-list-items" aria-label="Empty authored list"></ul>
+    <section data-demo-example="form" aria-labelledby="form-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="form-heading">Native form controls</h2>
+          <p>Forms and inputs inside list items with validation and reset.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <form id="native-form">
+          <m-list bordered size="large" id="form-list">
+            <ul class="m-list-items" aria-labelledby="form-heading">
+              <m-list-item>
+                <m-box class="m-list-row">
+                  <m-label class="m-list-prefix" for="native-name">Report name</m-label>
+                  <input class="m-list-content" id="native-name" name="name" value="Original" required>
+                  <m-box class="m-list-suffix m-list-actions">
+                    <m-button attr-type="submit"><m-button type="submit" id="native-submit">Save report</m-button></m-button>
+                    <m-button attr-type="reset"><m-button type="reset" id="native-reset">Reset report</m-button></m-button>
+                  </m-box>
+                </m-box>
+              </m-list-item>
+              <m-list-item>
+                <fieldset disabled>
+                  <legend>Read-only publishing settings</legend>
+                  <m-label><input type="checkbox" name="publish" checked> Publish report</m-label>
+                  <m-button><m-button type="button" id="fieldset-disabled">Publish</m-button></m-button>
+                </fieldset>
+              </m-list-item>
+            </ul>
+          </m-list>
+        </form>
+        <m-p id="form-status" role="status"></m-p>
       </div>
-      <ul id="outside-list"><li>A completely unstyled native list outside the component.</li></ul>
     </section>
-    <div class="mui-list" hidden id="hidden-list"><ul class="mui-list-items"><li class="mui-list-item">Hidden root content</li></ul></div>
+
+    <section data-demo-example="ordered" aria-labelledby="ordered-heading">
+      <header data-demo-header>
+        <div>
+          <h2 id="ordered-heading">Ordered markers and logical RTL</h2>
+          <p>Ordered items with native numbering and logical direction.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <m-list bordered show-divider="false" dir="rtl" id="ordered">
+          <ol class="m-list-items" start="3" aria-labelledby="ordered-heading">
+            <m-list-item id="ordered-first">
+              <m-box class="m-list-row">
+                <m-text class="m-list-prefix" id="rtl-prefix">First</m-text>
+                <m-text class="m-list-content">Native numbering remains meaningful.</m-text>
+                <m-text class="m-list-suffix" id="rtl-suffix">Last</m-text>
+              </m-box>
+            </m-list-item>
+            <m-list-item value="8">The authored value overrides the next number.</m-list-item>
+          </ol>
+        </m-list>
+      </div>
+    </section>
+
+    <section data-demo-example="details" aria-labelledby="details">
+      <header data-demo-header>
+        <div>
+          <h2 id="details">Report details</h2>
+          <p>These targets are ordinary document anchors. The application handles actions, not the list stylesheet.</p>
+        </div>
+      </header>
+      <div class="demo-preview" data-demo-preview>
+        <m-list id="empty-list">
+          <ul class="m-list-items" aria-label="Empty authored list"></ul>
+        </m-list>
+        <ul id="outside-list"><m-list-item>A completely unstyled native list outside the component.</m-list-item></ul>
+      </div>
+    </section>
+
+    <div hidden id="hidden-list"><m-list><ul class="m-list-items"><m-list-item>Hidden root content</m-list-item></ul></m-list></div>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <p>Generated from TypeScript accessors and documentation comments at build time, separately from the runtime. Native HTMLElement properties and methods remain available.</p>
+      <div id="list-api" aria-live="polite"></div>
+    </section>
+
+    <section id="behavior" aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Behavior and accessibility</h2>
+      <h3>Properties and validation</h3>
+      <p><code>bordered</code> defaults to true; setting <code>bordered="false"</code> removes the border. <code>size</code> accepts small, medium, or large. <code>clickable</code> and <code>hoverable</code> are presence attributes. <code>showDivider</code> defaults to true and can be disabled with <code>show-divider="false"</code>.</p>
+      <h3>Accessibility and layout</h3>
+      <p>Lists with direct <code>m-list-item</code> children maintain <code>role="list"</code> on the container and <code>role="listitem"</code> on items. When an explicit items container such as a <code>ul</code> or <code>ol</code> is authored, header and footer stay outside the semantic list. Native ordering, start, and value attributes on ordered lists are fully preserved.</p>
+    </section>
   </main>
 </body>
 </html>

@@ -1,3 +1,13 @@
+import { ViewElement } from "../../core/index.js"
+import {
+  buttonTypes, buttonSizes, buttonAppearances, buttonShapes, buttonAttrTypes,
+  iconPlacements, formMethods, formEncTypes,
+} from "./model.js"
+import type {
+  ButtonType, ButtonSize, ButtonAppearance, ButtonShape, ButtonAttrType,
+  ButtonIconPlacement, ButtonFormMethod, ButtonFormEncType,
+} from "./model.js"
+
 type Control = HTMLButtonElement | HTMLAnchorElement
 type IconElement = HTMLElement | SVGElement
 type Override = { original: string | null; applied: string | null }
@@ -6,15 +16,17 @@ const forwarded = [
   "name", "value", "form", "formaction", "formmethod", "formenctype", "formtarget", "formnovalidate",
   "aria-label", "aria-labelledby", "aria-describedby", "aria-controls", "aria-expanded", "aria-pressed",
 ] as const
-const properties = [
-  "disabled", "loading", "attrType", "type", "variant", "size", "iconPlacement", "focusable", "bordered",
-  "block", "circle", "round", "strong", "secondary", "tertiary", "quaternary", "ghost", "dashed", "text",
-]
-
-/** A light-DOM wrapper; the child button or anchor owns interaction and semantics. */
-export class MuiButton extends HTMLElement {
+/**
+ * A light-DOM wrapper; the native button or anchor owns interaction and semantics.
+ * @region {"name":"content","accepts":["text","phrasing"],"min":0,"max":1}
+ * @region {"name":"icon","accepts":["icon"],"min":0,"max":1}
+ * @states disabled loading
+ */
+export class Button extends ViewElement {
+  public static readonly tag = "m-button"
   public static get observedAttributes(): string[] {
-    return ["disabled", "loading", "attr-type", "focusable", ...forwarded]
+    return ["disabled", "loading", "attr-type", "type", "appearance", "shape", "size",
+      "icon-placement", "focusable", "bordered", "block", "strong", "label", ...forwarded]
   }
 
   private nativeControl: Control | null = null
@@ -33,15 +45,9 @@ export class MuiButton extends HTMLElement {
   public connectedCallback(): void {
     if (!this.upgraded) {
       this.upgraded = true
-      for (const name of properties) {
-        if (Object.prototype.hasOwnProperty.call(this, name)) {
-          const value: unknown = Reflect.get(this, name)
-          Reflect.deleteProperty(this, name)
-          Reflect.set(this, name, value)
-        }
-      }
+      this.upgradeProperties()
     }
-    this.dataset.muiButton = ""
+    this.dataset.part = "button"
     this.addEventListener("click", this.onActivation, true)
     this.addEventListener("auxclick", this.onActivation, true)
     this.addEventListener("click", this.onWave)
@@ -76,43 +82,71 @@ export class MuiButton extends HTMLElement {
   public override blur(): void { this.nativeControl?.blur() }
 
   public get disabled(): boolean { return this.hasAttribute("disabled") }
-  public set disabled(value: boolean) { this.toggleAttribute("disabled", value) }
+  public set disabled(value: boolean) { this.setBooleanAttribute("disabled", value) }
+
   public get loading(): boolean { return this.hasAttribute("loading") }
-  public set loading(value: boolean) { this.toggleAttribute("loading", value) }
-  public get attrType(): string { return this.getAttribute("attr-type") ?? "button" }
-  public set attrType(value: string) { this.setAttribute("attr-type", value) }
-  public get type(): string { return this.getAttribute("type") ?? "default" }
-  public set type(value: string) { this.setAttribute("type", value) }
-  public get variant(): string { return this.getAttribute("variant") ?? "default" }
-  public set variant(value: string) { this.setAttribute("variant", value) }
-  public get size(): string { return this.getAttribute("size") ?? "medium" }
-  public set size(value: string) { this.setAttribute("size", value) }
-  public get iconPlacement(): string { return this.getAttribute("icon-placement") ?? "left" }
-  public set iconPlacement(value: string) { this.setAttribute("icon-placement", value) }
-  public get focusable(): boolean { return this.getAttribute("focusable") !== "false" }
-  public set focusable(value: boolean) { this.setAttribute("focusable", String(value)) }
-  public get bordered(): boolean { return this.getAttribute("bordered") !== "false" }
-  public set bordered(value: boolean) { this.setAttribute("bordered", String(value)) }
+  public set loading(value: boolean) { this.setBooleanAttribute("loading", value) }
+
+  public get attrType(): ButtonAttrType { return this.choiceAttribute("attr-type", buttonAttrTypes, "button") }
+  public set attrType(value: ButtonAttrType) { this.setChoiceAttribute("attr-type", value, buttonAttrTypes) }
+
+  public get type(): ButtonType { return this.choiceAttribute("type", buttonTypes, "default") }
+  public set type(value: ButtonType) { this.setChoiceAttribute("type", value, buttonTypes) }
+
+  public get appearance(): ButtonAppearance { return this.choiceAttribute("appearance", buttonAppearances, "default") }
+  public set appearance(value: ButtonAppearance) { this.setChoiceAttribute("appearance", value, buttonAppearances) }
+
+  public get shape(): ButtonShape { return this.choiceAttribute("shape", buttonShapes, "rectangular") }
+  public set shape(value: ButtonShape) { this.setChoiceAttribute("shape", value, buttonShapes) }
+
+  public get size(): ButtonSize { return this.choiceAttribute("size", buttonSizes, "medium") }
+  public set size(value: ButtonSize) { this.setChoiceAttribute("size", value, buttonSizes) }
+
+  public get iconPlacement(): ButtonIconPlacement { return this.choiceAttribute("icon-placement", iconPlacements, "left") }
+  public set iconPlacement(value: ButtonIconPlacement) { this.setChoiceAttribute("icon-placement", value, iconPlacements) }
+
+  public get focusable(): boolean { return this.booleanAttribute("focusable", true) }
+  public set focusable(value: boolean) { this.setBooleanAttribute("focusable", value, false) }
+
+  public get bordered(): boolean { return this.booleanAttribute("bordered", true) }
+  public set bordered(value: boolean) { this.setBooleanAttribute("bordered", value, false) }
+
   public get block(): boolean { return this.hasAttribute("block") }
-  public set block(value: boolean) { this.toggleAttribute("block", value) }
-  public get circle(): boolean { return this.hasAttribute("circle") }
-  public set circle(value: boolean) { this.toggleAttribute("circle", value) }
-  public get round(): boolean { return this.hasAttribute("round") }
-  public set round(value: boolean) { this.toggleAttribute("round", value) }
+  public set block(value: boolean) { this.setBooleanAttribute("block", value) }
+
   public get strong(): boolean { return this.hasAttribute("strong") }
-  public set strong(value: boolean) { this.toggleAttribute("strong", value) }
-  public get secondary(): boolean { return this.hasAttribute("secondary") }
-  public set secondary(value: boolean) { this.toggleAttribute("secondary", value) }
-  public get tertiary(): boolean { return this.hasAttribute("tertiary") }
-  public set tertiary(value: boolean) { this.toggleAttribute("tertiary", value) }
-  public get quaternary(): boolean { return this.hasAttribute("quaternary") }
-  public set quaternary(value: boolean) { this.toggleAttribute("quaternary", value) }
-  public get ghost(): boolean { return this.hasAttribute("ghost") }
-  public set ghost(value: boolean) { this.toggleAttribute("ghost", value) }
-  public get dashed(): boolean { return this.hasAttribute("dashed") }
-  public set dashed(value: boolean) { this.toggleAttribute("dashed", value) }
-  public get text(): boolean { return this.hasAttribute("text") }
-  public set text(value: boolean) { this.toggleAttribute("text", value) }
+  public set strong(value: boolean) { this.setBooleanAttribute("strong", value) }
+
+  public get label(): string | null { return this.getAttribute("label") }
+  public set label(value: string | null) { this.setStringAttribute("label", value) }
+
+  public get name(): string | null { return this.getAttribute("name") }
+  public set name(value: string | null) { this.setStringAttribute("name", value) }
+
+  public get value(): string | null { return this.getAttribute("value") }
+  public set value(value: string | null) { this.setStringAttribute("value", value) }
+
+  public get form(): string | null { return this.getAttribute("form") }
+  public set form(value: string | null) { this.setStringAttribute("form", value) }
+
+  public get formAction(): string | null { return this.getAttribute("formaction") }
+  public set formAction(value: string | null) { this.setStringAttribute("formaction", value) }
+
+  public get formMethod(): ButtonFormMethod | null {
+    return this.choiceAttribute("formmethod", formMethods, null)
+  }
+  public set formMethod(value: ButtonFormMethod | null) { this.setNullableChoiceAttribute("formmethod", value, formMethods) }
+
+  public get formEnctype(): ButtonFormEncType | null {
+    return this.choiceAttribute("formenctype", formEncTypes, null)
+  }
+  public set formEnctype(value: ButtonFormEncType | null) { this.setNullableChoiceAttribute("formenctype", value, formEncTypes) }
+
+  public get formTarget(): string | null { return this.getAttribute("formtarget") }
+  public set formTarget(value: string | null) { this.setStringAttribute("formtarget", value) }
+
+  public get formNoValidate(): boolean { return this.hasAttribute("formnovalidate") }
+  public set formNoValidate(value: boolean) { this.setBooleanAttribute("formnovalidate", value) }
 
   private get blocked(): boolean {
     return this.disabled || this.loading || Boolean(this.nativeControl?.matches(":disabled"))
@@ -128,15 +162,15 @@ export class MuiButton extends HTMLElement {
   private readonly onWave = (event: Event): void => {
     const control = this.nativeControl
     if (!this.acceptedClicks.delete(event) || !this.isConnected || !control
-      || !event.composedPath().includes(control) || this.text || this.type === "text"
-      || this.secondary || this.tertiary || this.quaternary
+      || !event.composedPath().includes(control)
+      || ["text", "secondary", "tertiary", "quaternary"].includes(this.appearance)
       || this.ownerDocument.defaultView?.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return
-    control.toggleAttribute("data-mui-button-wave", true)
+    this.setState(control, "wave", true)
     const wave = control.getAnimations?.({ subtree: true }).find(animation =>
-      "animationName" in animation && animation.animationName === "mui-button-wave"
+      "animationName" in animation && animation.animationName === "m-button-wave"
       && (animation.effect as KeyframeEffect | null)?.target === control)
     if (!wave) {
-      control.removeAttribute("data-mui-button-wave")
+      this.setState(control, "wave", false)
       return
     }
     this.wave = wave
@@ -151,17 +185,27 @@ export class MuiButton extends HTMLElement {
     const wave = this.wave
     this.wave = undefined
     wave?.cancel()
-    this.nativeControl?.removeAttribute("data-mui-button-wave")
+    if (this.nativeControl) this.setState(this.nativeControl, "wave", false)
   }
 
   private synchronize(): void {
+    void this.attrType
+    void this.type
+    void this.appearance
+    void this.shape
+    void this.size
+    void this.iconPlacement
+    void this.focusable
+    void this.bordered
+    void this.formMethod
+    void this.formEnctype
     this.observer?.disconnect()
-    let control = this.querySelector<Control>(":scope > button:not([data-mui-button-generated]), :scope > a")
+    let control = [...this.querySelectorAll<Control>(":scope > button, :scope > a")]
+      .find(candidate => candidate !== this.generatedControl)
       ?? this.querySelector<Control>(":scope > button")
     if (!control) {
       control = this.ownerDocument.createElement("button")
       control.type = "button"
-      control.dataset.muiButtonGenerated = ""
       this.generatedControl = control
       this.append(control)
     }
@@ -173,7 +217,7 @@ export class MuiButton extends HTMLElement {
         this.generatedControl = null
       }
       this.nativeControl = control
-      control.dataset.muiButtonControl = ""
+      this.manage("data-part", "control")
     }
     // Move, never clone, authored nodes; this also handles children arriving during HTML parsing.
     for (const node of [...this.childNodes]) {
@@ -181,12 +225,12 @@ export class MuiButton extends HTMLElement {
     }
     for (const name of forwarded) {
       if (control instanceof HTMLButtonElement || name.startsWith("aria-")) {
-        this.manage(name, this.getAttribute(name) ?? undefined)
+        this.manage(name, (name === "aria-label" ? this.label ?? this.getAttribute(name) : this.getAttribute(name)) ?? undefined)
       }
     }
     if (control instanceof HTMLButtonElement) {
       this.manage("type", this.hasAttribute("attr-type")
-        ? (["submit", "reset"].includes(this.attrType) ? this.attrType : "button")
+        ? this.attrType
         : undefined)
       this.manage("disabled", this.disabled || this.loading ? "" : undefined)
     } else {
@@ -206,7 +250,7 @@ export class MuiButton extends HTMLElement {
     if (this.loading) {
       if (!this.spinner) {
         this.spinner = this.ownerDocument.createElement("span")
-        this.spinner.dataset.muiButtonSpinner = ""
+        this.spinner.dataset.part = "spinner"
         this.spinner.setAttribute("aria-hidden", "true")
         const svg = this.ownerDocument.createElementNS("http://www.w3.org/2000/svg", "svg")
         svg.setAttribute("width", "100%")
@@ -247,9 +291,9 @@ export class MuiButton extends HTMLElement {
     }
     const hasContent = [...control.childNodes].some(node => node.nodeType === Node.TEXT_NODE
       ? Boolean(node.textContent?.trim())
-      : node instanceof Element && !node.matches("[data-mui-button-icon], [data-mui-button-spinner]"))
-    control.toggleAttribute("data-mui-button-icon-only", !hasContent)
-    const icons = [...control.querySelectorAll<IconElement>(":scope > [data-mui-button-icon]")]
+      : node instanceof Element && !node.matches("[data-part=icon], [data-part=spinner]"))
+    this.setState(control, "icon-only", !hasContent)
+    const icons = [...control.querySelectorAll<IconElement>(":scope > [data-part=icon]")]
     for (const icon of this.icons) if (!icons.includes(icon)) this.finishEntry(icon)
     if (this.ready) {
       for (const icon of icons) if (!this.icons.has(icon) && !this.loading) this.enterIcon(icon)
@@ -260,7 +304,7 @@ export class MuiButton extends HTMLElement {
     if (this.isConnected) {
       this.observer?.observe(this, {
         subtree: true, childList: true, characterData: true, attributes: true,
-        attributeFilter: [...forwarded, "disabled", "type", "tabindex", "aria-disabled", "aria-busy", "href", "role"],
+        attributeFilter: [...forwarded, "disabled", "type", "tabindex", "aria-disabled", "aria-busy", "href", "role", "data-part"],
       })
     }
   }
@@ -275,14 +319,14 @@ export class MuiButton extends HTMLElement {
       || !style.width.endsWith("px") || !Number.isFinite(width) || width <= 0) return
     const record = {
       animations: [] as Animation[], hadStyle: element.hasAttribute("style"), width: style.width,
-      original: element.style.getPropertyValue("--_mui-button-enter-width"),
-      priority: element.style.getPropertyPriority("--_mui-button-enter-width"),
+      original: element.style.getPropertyValue("--_m-button-enter-width"),
+      priority: element.style.getPropertyPriority("--_m-button-enter-width"),
     }
     this.entering.set(element, record)
-    element.style.setProperty("--_mui-button-enter-width", record.width)
-    element.toggleAttribute("data-mui-button-enter", true)
+    element.style.setProperty("--_m-button-enter-width", record.width)
+    this.setState(element, "enter", true)
     const animations = element.getAnimations?.().filter(animation =>
-      "animationName" in animation && String(animation.animationName).startsWith("mui-button-enter-")) ?? []
+      "animationName" in animation && String(animation.animationName).startsWith("m-button-enter-")) ?? []
     if (!animations.length) {
       this.finishEntry(element)
       return
@@ -298,9 +342,9 @@ export class MuiButton extends HTMLElement {
     const record = this.entering.get(element)
     this.entering.delete(element)
     record?.animations.forEach(animation => animation.cancel())
-    element.removeAttribute("data-mui-button-enter")
-    if (record && element.style.getPropertyValue("--_mui-button-enter-width") === record.width) {
-      element.style.setProperty("--_mui-button-enter-width", record.original, record.priority)
+    this.setState(element, "enter", false)
+    if (record && element.style.getPropertyValue("--_m-button-enter-width") === record.width) {
+      element.style.setProperty("--_m-button-enter-width", record.original, record.priority)
       if (!record.hadStyle && !element.getAttribute("style")) element.removeAttribute("style")
     }
   }
@@ -350,14 +394,21 @@ export class MuiButton extends HTMLElement {
     else if (control.getAttribute(name) !== value) control.setAttribute(name, value)
   }
 
+  private setState(element: Element, state: string, active: boolean): void {
+    const states = new Set((element.getAttribute("data-state") ?? "").split(/\s+/).filter(Boolean))
+    if (active) states.add(state)
+    else states.delete(state)
+    if (states.size) element.setAttribute("data-state", [...states].join(" "))
+    else element.removeAttribute("data-state")
+  }
+
   private restoreControl(): void {
     this.stopEntries()
     this.stopWave()
     this.stopMotion()
     if (this.nativeControl) {
       for (const name of this.overrides.keys()) this.manage(name, undefined)
-      this.nativeControl.removeAttribute("data-mui-button-control")
-      this.nativeControl.removeAttribute("data-mui-button-icon-only")
+      this.setState(this.nativeControl, "icon-only", false)
     }
     this.spinner?.remove()
     this.spinner = null

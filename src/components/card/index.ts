@@ -1,14 +1,13 @@
-export { MuiCard } from "./card.js"
-export type { CardCloseDetail } from "./card.js"
+export { Card } from "./card.js"
+export { CardAction, CardContent, CardCover, CardFooter, CardHeader, CardHeaderExtra } from "./regions.js"
+export type { CardSize, CardSegment, CardCloseDetail } from "./model.js"
 
-import { MuiCard } from "./card.js"
+import { Card } from "./card.js"
+import { CardAction, CardContent, CardCover, CardFooter, CardHeader, CardHeaderExtra } from "./regions.js"
+import { ViewElement } from "../../core/index.js"
 
 export function registerCard(registry: Pick<CustomElementRegistry, "get" | "define"> = customElements): void {
-  const existing = registry.get("mui-card")
-  if (existing && existing !== MuiCard) {
-    throw new Error("'mui-card' is already defined. Load the Card component before the legacy MarkupUI bundle.")
-  }
-  if (!existing) registry.define("mui-card", MuiCard)
+  ViewElement.register([Card, CardCover, CardHeader, CardHeaderExtra, CardContent, CardFooter, CardAction], registry)
 }
 
 if (typeof customElements !== "undefined") registerCard()

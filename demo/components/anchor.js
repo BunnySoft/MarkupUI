@@ -1,14 +1,11 @@
-const { createAnchor } = window.MarkupUIAnchor
-const node = id => document.getElementById(id)
-const controllers = {
-  page: createAnchor(node("page-toc"), { offset: 16 }),
-  reader: createAnchor(node("reader-toc"), { root: node("reader"), offset: 8 }),
+import { loadComponentApi } from "../component-api.js"
+
+function initialize() {
+  const api = globalThis.MarkupUIAnchor
+  if (!api) throw new Error("Anchor runtime did not load.")
+  void loadComponentApi(document.getElementById("anchor-api"), new URL("../api/anchor.json", import.meta.url))
 }
-for (const nav of [node("page-toc"), node("reader-toc")]) {
-  nav.addEventListener("mui:anchor-change", event => {
-    node("location-log").value = `${nav.id}: ${event.detail.href ?? "between sections"}`
-  })
-}
-node("scroll-reader-last").addEventListener("click", () => controllers.reader.scrollTo("#reader-last", { behavior: "smooth" }))
-node("reader-top").addEventListener("click", () => node("reader").scrollTo({ top: 0, behavior: "instant" }))
-window.anchorDemo = controllers
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initialize, { once: true })
+else initialize()
+

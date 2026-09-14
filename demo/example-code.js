@@ -5,6 +5,26 @@ export function createExampleCodeViewers(
   const examples = [...document.querySelectorAll("[data-demo-example]")]
   let sourceDocument
   let sourceRequest
+  const documentationLinks = [...document.querySelectorAll('.component-docs-nav a[href^="#"]')]
+
+  function revealSetup(hash) {
+    const setup = document.getElementById(hash.slice(1))?.closest("details.component-setup")
+    if (setup) setup.open = true
+  }
+
+  function onDocumentationClick(event) {
+    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey
+      || event.shiftKey || event.altKey) return
+    revealSetup(event.currentTarget.hash)
+  }
+
+  function onHashChange() {
+    revealSetup(view.location.hash)
+  }
+
+  for (const link of documentationLinks) link.addEventListener("click", onDocumentationClick)
+  view.addEventListener("hashchange", onHashChange)
+  onHashChange()
 
   async function loadSource() {
     if (sourceDocument) return sourceDocument
@@ -24,7 +44,7 @@ export function createExampleCodeViewers(
   function appendToken(parent, type, value) {
     if (!value) return
     const token = document.createElement("span")
-    token.className = "mui-code-token"
+    token.className = "m-code-token"
     token.dataset.codeToken = type
     token.textContent = value
     parent.append(token)
@@ -117,9 +137,9 @@ export function createExampleCodeViewers(
     if (!key || !header) throw new Error("Demo example markup is incomplete.")
 
     const panelId = `demo-code-${key}`
-    const toggle = document.createElement("mui-button")
+    const toggle = document.createElement("m-button")
     toggle.setAttribute("size", "tiny")
-    toggle.setAttribute("text", "")
+    toggle.setAttribute("appearance", "text")
     toggle.dataset.demoCodeToggle = ""
     toggle.setAttribute("aria-controls", panelId)
     toggle.setAttribute("aria-expanded", "false")
@@ -132,7 +152,7 @@ export function createExampleCodeViewers(
     control.setAttribute("aria-label", "Show code")
     control.title = "Show code"
     const icon = document.createElement("span")
-    icon.dataset.muiButtonIcon = ""
+    icon.dataset.part = "icon"
     icon.setAttribute("aria-hidden", "true")
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
     svg.setAttribute("viewBox", "0 0 512 512")
@@ -154,10 +174,10 @@ export function createExampleCodeViewers(
     container.className = "demo-example-code-container"
     container.hidden = true
     const panel = document.createElement("pre")
-    panel.className = "mui-code-block demo-example-code"
+    panel.className = "m-code-block demo-example-code"
     panel.tabIndex = 0
     const code = document.createElement("code")
-    code.className = "mui-code"
+    code.className = "m-code"
     panel.append(code)
     container.append(panel)
     example.append(container)
@@ -204,6 +224,8 @@ export function createExampleCodeViewers(
 
   return {
     disconnect() {
+      for (const link of documentationLinks) link.removeEventListener("click", onDocumentationClick)
+      view.removeEventListener("hashchange", onHashChange)
       for (const { toggle, onToggle } of listeners) {
         toggle.removeEventListener("click", onToggle)
       }

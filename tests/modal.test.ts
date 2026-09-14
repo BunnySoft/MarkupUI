@@ -2,9 +2,19 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createModal, createModalOwner } from "../src/components/modal/index.js"
+import {
+  createModal,
+  createModalOwner,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalAction,
+  registerModal,
+} from "../src/components/modal/index.js"
 import { createNativeDialog } from "../src/components/dialog/native.js"
 import type { ModalController, ModalOptions } from "../src/components/modal/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const handles: { dispose(): void }[] = []
 const proto = HTMLDialogElement.prototype
@@ -17,7 +27,7 @@ const modalCSS = () => readFileSync(resolve("src", "components", "modal", "modal
   .replace(/\[([\w-]+)="([\w-]+)"\]/g, "[$1=$2]").replace(/;}/g, "}").trim()
 function fixture() {
   const root = document.createElement("div")
-  root.innerHTML = `<button type="button" data-opener>Open</button><dialog class="mui-native-dialog mui-modal" aria-label="Project information"><h2 data-modal-title>Project information</h2><p data-modal-content>Authored content</p><form method="dialog"><label>Reference <input required name="reference"></label><button value="saved">Save</button><button value="cancelled" formnovalidate>Cancel</button></form></dialog>`
+  root.innerHTML = `<button type="button" data-opener>Open</button><dialog class="m-native-dialog m-modal" aria-label="Project information"><h2 data-modal-title>Project information</h2><p data-modal-content>Authored content</p><form method="dialog"><label>Reference <input required name="reference"></label><button value="saved">Save</button><button value="cancelled" formnovalidate>Cancel</button></form></dialog>`
   document.body.append(root)
   return root.querySelector("dialog")!
 }
@@ -70,7 +80,7 @@ describe("Generic native Modal", () => {
     expect(source).toContain("../dialog/native.js")
     expect(source).not.toContain("../dialog/dialog.js")
     expect(source).not.toContain("createDialog(")
-    expect(customElements.get("mui-modal")).toBeUndefined()
+    expect(customElements.get("m-modal")).toBe(Modal)
   })
   it("keeps native content, headings, description and form nodes untouched", () => {
     const d = fixture()
@@ -97,7 +107,7 @@ describe("Generic native Modal", () => {
     const c = enhance({}, d); c.showModal(); c.close()
     expect(card.outerHTML).toBe(html)
     expect([...card.querySelectorAll("*")]).toEqual(children)
-    expect(d.querySelector("mui-card")).toBeNull()
+    expect(d.querySelector("m-card")).toBeNull()
   })
   it("returns actual open mode and preserves values across close/reopen", () => {
     const c = enhance(); const input = c.dialog.querySelector("input")!
@@ -302,7 +312,7 @@ describe("Native backdrop policy shared with Modal", () => {
     const c = setup()
     pointer(c, "pointerdown", 0); pointer(c, "pointerup", 0).preventDefault()
     await tick(); expect(c.dialog.open).toBe(true)
-    c.dialog.addEventListener("mui:native-dialog-backdrop", event => event.preventDefault())
+    c.dialog.addEventListener("m:native-dialog-backdrop", event => event.preventDefault())
     pointer(c, "pointerdown", 0); pointer(c, "pointerup", 0)
     await tick(); expect(c.dialog.open).toBe(true)
   })
@@ -341,8 +351,8 @@ describe("Explicit native template ownership", () => {
     const { o } = owner(); const a = o.create(template()); const b = o.create(template())
     const independent = enhance(); independent.showModal()
     const order: string[] = []
-    a.dialog.addEventListener("mui:native-dialog-dispose", () => order.push("a"))
-    b.dialog.addEventListener("mui:native-dialog-dispose", () => order.push("b"))
+    a.dialog.addEventListener("m:native-dialog-dispose", () => order.push("a"))
+    b.dialog.addEventListener("m:native-dialog-dispose", () => order.push("b"))
     o.destroyAll()
     expect(order).toEqual(["b", "a"])
     expect(independent.dialog.open).toBe(true)
@@ -351,8 +361,8 @@ describe("Explicit native template ownership", () => {
     const { o } = owner(); const a = o.create(template()); a.close(); const b = o.create(template()); b.close()
     b.showModal(); a.showModal()
     const order: string[] = []
-    a.dialog.addEventListener("mui:native-dialog-dispose", () => order.push("a"))
-    b.dialog.addEventListener("mui:native-dialog-dispose", () => order.push("b"))
+    a.dialog.addEventListener("m:native-dialog-dispose", () => order.push("a"))
+    b.dialog.addEventListener("m:native-dialog-dispose", () => order.push("b"))
     o.destroyAll()
     expect(order).toEqual(["a", "b"])
   })
@@ -366,7 +376,7 @@ describe("Explicit native template ownership", () => {
   it("blocks reentrant creation during collection teardown", () => {
     const { o } = owner(); const source = template(); const c = o.create(source)
     let blocked = false
-    c.dialog.addEventListener("mui:native-dialog-dispose", () => { try { o.create(source) } catch { blocked = true } })
+    c.dialog.addEventListener("m:native-dialog-dispose", () => { try { o.create(source) } catch { blocked = true } })
     o.dispose()
     expect(blocked).toBe(true)
     expect(o.modals).toHaveLength(0)
@@ -415,15 +425,15 @@ describe("Explicit native template ownership", () => {
   })
   it("separates raw content, authored Card intent and existing Dialog presentation", () => {
     const css = modalCSS()
-    expect(css).toContain("dialog.mui-native-dialog.mui-modal:where(:not(.mui-dialog))")
-    expect(css).toContain("inline-size:var(--mui-modal-width,fit-content)")
-    expect(css).toContain("background:var(--mui-dialog-background,transparent)")
-    expect(css).toContain(":where(:not(.mui-dialog):has(>[data-modal-header],>[data-modal-title]))")
-    expect(css).toContain("padding:var(--mui-modal-padding,19px 24px 20px)")
+    expect(css).toContain("dialog.m-native-dialog.m-modal:where(:not(.m-dialog))")
+    expect(css).toContain("inline-size:var(--m-modal-width,fit-content)")
+    expect(css).toContain("background:var(--m-dialog-background,transparent)")
+    expect(css).toContain(":where(:not(.m-dialog):has(>[data-modal-header],>[data-modal-title]))")
+    expect(css).toContain("padding:var(--m-modal-padding,19px 24px 20px)")
     expect(css).toContain("font-size:18px;font-weight:500")
     expect(css).toContain("[data-modal-content]:last-child{margin-block-end:0}")
-    expect(css).toContain("dialog.mui-modal.mui-dialog{inline-size:var(--mui-modal-width,var(--mui-dialog-width,446px))")
-    expect(css).toContain("padding:var(--mui-modal-padding,16px 28px 20px)")
+    expect(css).toContain("dialog.m-modal.m-dialog{inline-size:var(--m-modal-width,var(--m-dialog-width,446px))")
+    expect(css).toContain("padding:var(--m-modal-padding,16px 28px 20px)")
   })
   it("uses measured neutral surfaces and distinct Card and wrapper shadows", () => {
     const css = modalCSS()
@@ -431,18 +441,18 @@ describe("Explicit native template ownership", () => {
     expect(css).toContain("light-dark(#fff,#2c2c32)")
     expect(css).toContain("0 6px 16px -9px #00000014,0 9px 28px #0000000d,0 12px 48px 16px #00000008")
     expect(css).toContain("0 1px 2px -2px light-dark(#00000014,#0000003d)")
-    expect(css).not.toMatch(/--mui-(?:text-primary|text-secondary|bg-surface|border),/)
-    expect(css).toContain("var(--mui-modal-focus,var(--mui-color-primary,light-dark(#18a058,#63e2b7)))")
+    expect(css).not.toMatch(/--m-(?:text-primary|text-secondary|bg-surface|border),/)
+    expect(css).toContain("var(--m-modal-focus,var(--m-color-primary,light-dark(#18a058,#63e2b7)))")
   })
   it("keeps fixed native modality and sufficient specificity against repeated base styles", () => {
     const css = modalCSS()
-    expect(css).toContain("dialog.mui-modal:modal{position:fixed;inset:0;margin:auto}")
+    expect(css).toContain("dialog.m-modal:modal{position:fixed;inset:0;margin:auto}")
     expect(css).not.toContain("position:relative")
-    expect(css).toContain("dialog.mui-native-dialog.mui-modal::backdrop{background:rgb(0 0 0 / 40%)}")
-    expect(css).toContain("dialog.mui-modal:modal[data-modal-backdrop=transparent]::backdrop{background:transparent}")
-    expect(css).toContain("dialog.mui-modal :focus-visible{outline:2px solid var(--mui-modal-focus")
+    expect(css).toContain("dialog.m-native-dialog.m-modal::backdrop{background:rgb(0 0 0 / 40%)}")
+    expect(css).toContain("dialog.m-modal:modal[data-modal-backdrop=transparent]::backdrop{background:transparent}")
+    expect(css).toContain("dialog.m-modal :focus-visible{outline:2px solid var(--m-modal-focus")
     for (const name of ["width", "padding", "radius", "border", "focus"]) {
-      expect(css).not.toMatch(new RegExp(`--mui-modal-${name}:`))
+      expect(css).not.toMatch(new RegExp(`--m-modal-${name}:`))
     }
   })
   it("retains native control, reduced-motion, forced-color and print safety policies", () => {
@@ -452,8 +462,8 @@ describe("Explicit native template ownership", () => {
     expect(css).toContain("animation:none;transition:none;scroll-behavior:auto")
     expect(css).toContain("border:1px solid CanvasText;box-shadow:none")
     expect(css).toContain("[data-modal-footer]{border-color:CanvasText}")
-    expect(css).toContain("@media print{dialog.mui-native-dialog.mui-modal{box-shadow:none}dialog.mui-native-dialog.mui-modal:modal::backdrop{background:transparent}}")
-    expect(css).toContain("@media print{dialog.mui-modal:modal{position:static;inset:auto;margin:0;max-block-size:none;max-inline-size:100%;box-shadow:none}}")
+    expect(css).toContain("@media print{dialog.m-native-dialog.m-modal{box-shadow:none}dialog.m-native-dialog.m-modal:modal::backdrop{background:transparent}}")
+    expect(css).toContain("@media print{dialog.m-modal:modal{position:static;inset:auto;margin:0;max-block-size:none;max-inline-size:100%;box-shadow:none}}")
   })
   it("keeps the exact production composed CSS within the unchanged gzip ceiling", () => {
     const native = readFileSync(resolve("src", "components", "dialog", "native.css"), "utf8")
@@ -461,3 +471,195 @@ describe("Explicit native template ownership", () => {
     expect(gzipSync(`${native}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(1250)
   })
 })
+
+describe("canonical Modal ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers modal elements", () => {
+    expect(Modal.tag).toBe("m-modal")
+    expect(ModalHeader.tag).toBe("m-modal-header")
+    expect(ModalBody.tag).toBe("m-modal-body")
+    expect(ModalFooter.tag).toBe("m-modal-footer")
+    expect(ModalAction.tag).toBe("m-modal-action")
+    expect(ViewElement.prototype.isPrototypeOf(Modal.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ModalHeader.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ModalBody.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ModalFooter.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(ModalAction.prototype)).toBe(true)
+    expect(customElements.get("m-modal")).toBe(Modal)
+    expect(customElements.get("m-modal-header")).toBe(ModalHeader)
+    expect(customElements.get("m-modal-body")).toBe(ModalBody)
+    expect(customElements.get("m-modal-footer")).toBe(ModalFooter)
+    expect(customElements.get("m-modal-action")).toBe(ModalAction)
+    expect(Modal.observedAttributes).toEqual(["open", "title", "closable", "mask-closable", "width"])
+    expect(typeof registerModal).toBe("function")
+  })
+
+  it("handles typed properties, attributes, and defaults", () => {
+    const modal = document.createElement("m-modal") as Modal
+    expect(modal.open).toBe(false)
+    expect(modal.title).toBe("")
+    expect(modal.closable).toBe(false)
+    expect(modal.maskClosable).toBe(true)
+    expect(modal.width).toBeNull()
+
+    modal.title = "Test Dialog"
+    expect(modal.title).toBe("Test Dialog")
+    expect(modal.getAttribute("title")).toBe("Test Dialog")
+
+    modal.closable = true
+    expect(modal.closable).toBe(true)
+    expect(modal.hasAttribute("closable")).toBe(true)
+    modal.closable = false
+    expect(modal.closable).toBe(false)
+    expect(modal.hasAttribute("closable")).toBe(false)
+
+    modal.maskClosable = false
+    expect(modal.maskClosable).toBe(false)
+    expect(modal.getAttribute("mask-closable")).toBe("false")
+    modal.maskClosable = true
+    expect(modal.maskClosable).toBe(true)
+
+    modal.width = "500px"
+    expect(modal.width).toBe("500px")
+    expect(modal.getAttribute("width")).toBe("500px")
+    modal.width = null
+    expect(modal.width).toBeNull()
+    expect(modal.hasAttribute("width")).toBe(false)
+  })
+
+  it("supports showModal, close, and dispatches cancel and close events", () => {
+    document.body.innerHTML = `
+      <m-modal title="Active Modal" closable>
+        <m-modal-body>Body text</m-modal-body>
+        <m-modal-footer>
+          <m-modal-action><button id="btn-ok">OK</button></m-modal-action>
+        </m-modal-footer>
+      </m-modal>`
+    const modal = document.querySelector("m-modal") as Modal
+    expect(modal.open).toBe(false)
+
+    const closeSpy = vi.fn()
+    const cancelSpy = vi.fn()
+    modal.addEventListener("m:close", closeSpy)
+    modal.addEventListener("m:cancel", cancelSpy)
+
+    modal.showModal()
+    expect(modal.open).toBe(true)
+
+    modal.close("custom-result")
+    expect(modal.open).toBe(false)
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "custom-result" })
+  })
+
+  it("handles cancel event prevention", () => {
+    document.body.innerHTML = `<m-modal title="Veto Modal"></m-modal>`
+    const modal = document.querySelector("m-modal") as Modal
+    modal.showModal()
+    expect(modal.open).toBe(true)
+
+    modal.addEventListener("m:cancel", (e: Event) => {
+      e.preventDefault()
+    })
+
+    const dialog = modal.querySelector("dialog")!
+    const cancelEvent = new Event("cancel", { cancelable: true })
+    dialog.dispatchEvent(cancelEvent)
+
+    expect(cancelEvent.defaultPrevented).toBe(true)
+    expect(modal.open).toBe(true)
+  })
+
+  it("handles closable close button click", () => {
+    document.body.innerHTML = `<m-modal title="Closable Modal" closable><p>Content</p></m-modal>`
+    const modal = document.querySelector("m-modal") as Modal
+    modal.showModal()
+    expect(modal.open).toBe(true)
+
+    const closeBtn = modal.querySelector<HTMLButtonElement>("button[data-modal-close], .m-modal__close")
+    expect(closeBtn).not.toBeNull()
+
+    const closeSpy = vi.fn()
+    modal.addEventListener("m:close", closeSpy)
+    closeBtn!.click()
+
+    expect(modal.open).toBe(false)
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "close" })
+  })
+
+  it("handles mask-closable backdrop click", () => {
+    document.body.innerHTML = `<m-modal title="Mask Modal" mask-closable><p>Content</p></m-modal>`
+    const modal = document.querySelector("m-modal") as Modal
+    modal.showModal()
+    expect(modal.open).toBe(true)
+
+    const dialog = modal.querySelector("dialog")!
+    vi.spyOn(dialog, "getBoundingClientRect").mockReturnValue({
+      left: 100, top: 100, right: 300, bottom: 300, width: 200, height: 200, x: 100, y: 100, toJSON: () => {}
+    } as DOMRect)
+
+    // Click outside dialog (x: 10, y: 10)
+    const downEvent = new MouseEvent("pointerdown", { bubbles: true, cancelable: true, clientX: 10, clientY: 10, button: 0 })
+    Object.defineProperties(downEvent, { pointerId: { value: 1 }, isPrimary: { value: true } })
+    dialog.dispatchEvent(downEvent)
+
+    const upEvent = new MouseEvent("pointerup", { bubbles: true, cancelable: true, clientX: 10, clientY: 10, button: 0 })
+    Object.defineProperties(upEvent, { pointerId: { value: 1 }, isPrimary: { value: true } })
+    dialog.dispatchEvent(upEvent)
+
+    expect(modal.open).toBe(false)
+  })
+
+  it("does not close on backdrop click when mask-closable is false", () => {
+    document.body.innerHTML = `<m-modal title="No Mask Close" mask-closable="false"><p>Content</p></m-modal>`
+    const modal = document.querySelector("m-modal") as Modal
+    modal.showModal()
+    expect(modal.open).toBe(true)
+
+    const dialog = modal.querySelector("dialog")!
+    vi.spyOn(dialog, "getBoundingClientRect").mockReturnValue({
+      left: 100, top: 100, right: 300, bottom: 300, width: 200, height: 200, x: 100, y: 100, toJSON: () => {}
+    } as DOMRect)
+
+    // Click outside dialog (x: 10, y: 10)
+    const downEvent = new MouseEvent("pointerdown", { bubbles: true, cancelable: true, clientX: 10, clientY: 10, button: 0 })
+    Object.defineProperties(downEvent, { pointerId: { value: 1 }, isPrimary: { value: true } })
+    dialog.dispatchEvent(downEvent)
+
+    const upEvent = new MouseEvent("pointerup", { bubbles: true, cancelable: true, clientX: 10, clientY: 10, button: 0 })
+    Object.defineProperties(upEvent, { pointerId: { value: 1 }, isPrimary: { value: true } })
+    dialog.dispatchEvent(upEvent)
+
+    expect(modal.open).toBe(true)
+  })
+
+  it("synchronizes companion regions into native dialog and sets attributes", () => {
+    document.body.innerHTML = `
+      <m-modal title="Structured Modal">
+        <m-modal-header><h2 data-modal-title>Header Area</h2></m-modal-header>
+        <m-modal-body><p>Body Area</p></m-modal-body>
+        <m-modal-footer>
+          <m-modal-action><button>Confirm</button></m-modal-action>
+        </m-modal-footer>
+      </m-modal>`
+    const modal = document.querySelector("m-modal") as Modal
+    const dialog = modal.querySelector("dialog")!
+    expect(dialog).not.toBeNull()
+    expect(dialog.classList.contains("m-native-dialog")).toBe(true)
+    expect(dialog.classList.contains("m-modal")).toBe(true)
+
+    const header = modal.querySelector("m-modal-header")!
+    const body = modal.querySelector("m-modal-body")!
+    const footer = modal.querySelector("m-modal-footer")!
+    const action = modal.querySelector("m-modal-action")!
+
+    expect(header.parentElement).toBe(dialog)
+    expect(body.parentElement).toBe(dialog)
+    expect(footer.parentElement).toBe(dialog)
+    expect(header.hasAttribute("data-modal-header")).toBe(true)
+    expect(body.hasAttribute("data-modal-content")).toBe(true)
+    expect(footer.hasAttribute("data-modal-footer")).toBe(true)
+    expect(action.hasAttribute("data-modal-action")).toBe(true)
+  })
+})
+

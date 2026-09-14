@@ -9,11 +9,11 @@ const code = readFileSync(resolve("src", "components", "code", "code.css"), "utf
 
 describe("audited native Log presentation", () => {
   it("uses fixed reference typography and rounded line-count height without legacy panel insets", () => {
-    expect(css).toContain("--mui-code-font-size: var(--mui-log-font-size, 14px)")
-    expect(css).toContain("--mui-code-line-height: var(--mui-log-line-height, 1.25)")
-    expect(css).toContain("--mui-code-padding: var(--mui-log-padding, 0px)")
-    expect(css).toContain("round(nearest, var(--mui-log-rows, 15) * 1lh, 1px)")
-    expect(css).toContain("block-size: var(--mui-log-height, calc(var(--mui-log-rows, 15) * 1lh")
+    expect(css).toContain("--m-code-font-size: var(--m-log-font-size, 14px)")
+    expect(css).toContain("--m-code-line-height: var(--m-log-line-height, 1.25)")
+    expect(css).toContain("--m-code-padding: var(--m-log-padding, 0px)")
+    expect(css).toContain("round(nearest, var(--m-log-rows, 15) * 1lh, 1px)")
+    expect(css).toContain("block-size: var(--m-log-height, calc(var(--m-log-rows, 15) * 1lh")
     expect(css).not.toContain(".875rem")
     expect(css).not.toContain("+ 2px")
     expect(css).not.toContain("border-style: dashed")
@@ -21,29 +21,29 @@ describe("audited native Log presentation", () => {
 
   it("wraps by default on screen while preserving explicit Code wrap and native nowrap overrides", () => {
     const screen = css.slice(css.indexOf("@media screen"), css.indexOf("@media print"))
-    expect(screen).toContain('pre.mui-code-block[data-log-viewport]:not([data-word-wrap])')
-    expect(screen).toContain("white-space: var(--mui-log-white-space, pre-wrap)")
-    expect(screen).toContain("word-break: var(--mui-log-word-break, break-word)")
-    expect(code).toContain("pre.mui-code-block[data-word-wrap]")
+    expect(screen).toContain('pre.m-code-block[data-log-viewport]:not([data-word-wrap])')
+    expect(screen).toContain("white-space: var(--m-log-white-space, pre-wrap)")
+    expect(screen).toContain("word-break: var(--m-log-word-break, break-word)")
+    expect(code).toContain("pre.m-code-block[data-word-wrap]")
     expect(code).toContain("word-break: break-all")
     expect(css).toContain("overflow-anchor: none")
     expect(css).toContain("scroll-behavior: auto")
   })
 
   it("uses Code's measured digit-count gutter without changing retained empty line anatomy", () => {
-    expect(css).toContain("--mui-code-gutter: var(--mui-log-gutter);")
+    expect(css).toContain("--m-code-gutter: var(--m-log-gutter);")
     expect(css).not.toContain("5ch")
     expect(code).toContain("min-block-size: 1lh")
-    expect(code).toContain("var(--_mui-code-gutter)) + 12px")
+    expect(code).toContain("var(--_m-code-gutter)) + 12px")
     expect(css).not.toContain("content:")
-    expect(css).not.toContain(".mui-code-line")
+    expect(css).not.toContain(".m-code-line")
   })
 
   it("keeps author styles, native text nodes, focus and loading ownership independent of CSS loading", () => {
     const root = document.createElement("section")
-    root.className = "mui-log"; root.dataset.log = ""
-    root.style.cssText = "--mui-log-font-size:19px;--mui-log-gutter:5ch;--mui-code-gutter:4ch;--mui-code-color:purple"
-    root.innerHTML = '<pre class="mui-code-block" data-log-viewport tabindex="0" role="region" aria-label="Log" style="font-size:19px;line-height:2;white-space:pre"><code class="mui-code" data-log-output>first\npartial</code></pre><p data-log-loading hidden>Loading locally</p>'
+    root.className = "m-log"; root.dataset.log = ""
+    root.style.cssText = "--m-log-font-size:19px;--m-log-gutter:5ch;--m-code-gutter:4ch;--m-code-color:purple"
+    root.innerHTML = '<pre class="m-code-block" data-log-viewport tabindex="0" role="region" aria-label="Log" style="font-size:19px;line-height:2;white-space:pre"><code class="m-code" data-log-output>first\npartial</code></pre><p data-log-loading hidden>Loading locally</p>'
     document.body.append(root)
     const pre = root.querySelector("pre")!, output = root.querySelector("code")!
     const rootStyle = root.getAttribute("style"), preStyle = pre.getAttribute("style")
@@ -64,7 +64,7 @@ describe("audited native Log presentation", () => {
       expect(root.querySelector<HTMLElement>("[data-log-loading]")!.hidden).toBe(false)
       expect(getComputedStyle(pre).fontSize).toBe("19px")
       expect(getComputedStyle(pre).whiteSpace).toBe("pre")
-      expect(getComputedStyle(root).getPropertyValue("--mui-code-gutter")).toBe("4ch")
+      expect(getComputedStyle(root).getPropertyValue("--m-code-gutter")).toBe("4ch")
       log.disconnect()
       expect(root.getAttribute("style")).toBe(rootStyle)
       expect(pre.getAttribute("style")).toBe(preStyle)
@@ -76,8 +76,8 @@ describe("audited native Log presentation", () => {
 
   it("provides a Log-local light print surface while retaining full native print and forced-color behavior", () => {
     const print = css.slice(css.indexOf("@media print"))
-    expect(print).toContain(".mui-log { color-scheme: light; color: CanvasText; background: Canvas; }")
-    expect(print).toContain(".mui-log :is(pre.mui-code-block, code.mui-code) { color: CanvasText; background: transparent; }")
+    expect(print).toContain(".m-log { color-scheme: light; color: CanvasText; background: Canvas; }")
+    expect(print).toContain(".m-log :is(pre.m-code-block, code.m-code) { color: CanvasText; background: transparent; }")
     expect(print).toContain("[data-log-loading] { display: none; }")
     expect(code).toContain("block-size: auto !important")
     expect(code).toContain("overflow: visible !important")

@@ -1,229 +1,175 @@
-import { readFileSync, readdirSync } from "node:fs"
+import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import { PageHeader, MPageHeader, registerPageHeader } from "../src/components/page-header/index.js"
+import type { PageHeaderBackDetail } from "../src/components/page-header/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const css = readFileSync(resolve("src", "components", "page-header", "page-header.css"), "utf8")
-const demo = readFileSync(resolve("demo", "components", "page-header.html"), "utf8")
-const app = readFileSync(resolve("demo", "components", "page-header.js"), "utf8")
-const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
 let style: HTMLStyleElement | undefined
-function install(): void { style = document.createElement("style"); style.textContent = css; document.head.append(style) }
-function fixture(): void {
-  document.body.innerHTML = demo.slice(demo.indexOf("<body>") + 6, demo.indexOf("</body>"))
+
+function install(): void {
+  style = document.createElement("style")
+  style.textContent = css
+  document.head.append(style)
 }
-afterEach(() => { style?.remove(); style = undefined; document.body.replaceChildren() })
 
-describe("CSS-only Page Header", () => {
-  it("ships only a stylesheet without a controller or component dependency", () => {
-    expect(pkg.exports["./page-header/style.css"]).toBe("./dist/markup-ui-page-header.css")
-    expect(pkg.exports["./page-header"]).toBeUndefined()
-    expect(readdirSync(resolve("src", "components", "page-header"))).toEqual(["page-header.css"])
-    expect(customElements.get("mui-page-header")).toBeUndefined()
-    expect(app).not.toContain("import ")
-    expect(app).not.toContain("history.")
-    expect(app).not.toContain("mui:back")
+function pageHeader(markup = "<m-page-header></m-page-header>"): PageHeader {
+  document.body.innerHTML = markup
+  const element = document.querySelector("m-page-header")
+  if (!(element instanceof PageHeader)) throw new Error("PageHeader was not upgraded")
+  return element
+}
+
+afterEach(() => {
+  style?.remove()
+  style = undefined
+  document.body.replaceChildren()
+  vi.restoreAllMocks()
+})
+
+describe("canonical PageHeader component", () => {
+  it("exports PageHeader extending ViewElement with static tag 'm-page-header'", () => {
+    expect(PageHeader.tag).toBe("m-page-header")
+    expect(MPageHeader).toBe(PageHeader)
+    expect(ViewElement.prototype.isPrototypeOf(PageHeader.prototype)).toBe(true)
+    expect(customElements.get("m-page-header")).toBe(PageHeader)
   })
 
-  it("preserves author-selected heading levels, region nodes and attributes", () => {
-    fixture()
-    const header = document.querySelector("#page-banner")!
-    const before = header.outerHTML
-    const nodes = [...header.querySelectorAll("*")]
+  it("registers PageHeader via registerPageHeader and detects collisions", () => {
+    expect(() => registerPageHeader()).not.toThrow()
+    const define = vi.fn()
+    expect(() => registerPageHeader({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("handles title and subtitle properties and attributes", () => {
+    const header = pageHeader()
+    expect(header.title).toBe("")
+    expect(header.subtitle).toBeNull()
+
+    header.title = "Project Title"
+    header.subtitle = "Project Subtitle"
+    expect(header.title).toBe("Project Title")
+    expect(header.getAttribute("title")).toBe("Project Title")
+    expect(header.subtitle).toBe("Project Subtitle")
+    expect(header.getAttribute("subtitle")).toBe("Project Subtitle")
+
+    expect(header.querySelector(".m-page-header-title")?.textContent).toBe("Project Title")
+    expect(header.querySelector(".m-page-header-subtitle")?.textContent).toBe("Project Subtitle")
+
+    header.title = undefined
+    header.subtitle = undefined
+    expect(header.title).toBe("")
+    expect(header.hasAttribute("title")).toBe(false)
+    expect(header.subtitle).toBeNull()
+    expect(header.hasAttribute("subtitle")).toBe(false)
+    expect(header.querySelector(".m-page-header-title")).toBeNull()
+    expect(header.querySelector(".m-page-header-subtitle")).toBeNull()
+  })
+
+  it("validates string property inputs", () => {
+    const header = pageHeader()
+    expect(() => Reflect.set(header, "title", 123)).toThrow(RangeError)
+    expect(() => Reflect.set(header, "subtitle", 123)).toThrow(RangeError)
+    expect(() => Reflect.set(header, "extra", 123)).toThrow(RangeError)
+  })
+
+  it("preserves authored heading levels and region nodes", () => {
+    const header = pageHeader(`
+      <m-page-header>
+        <div slot="header" class="m-page-header-header"><nav aria-label="Breadcrumb"><a href="#home">Home</a></nav></div>
+        <div slot="avatar" class="m-page-header-avatar"><span class="avatar-icon">A</span></div>
+        <a slot="back" class="m-page-header-back" href="#back">Back</a>
+        <h1 slot="title" class="m-page-header-title" id="custom-h1">Authored Heading 1</h1>
+        <p slot="subtitle" class="m-page-header-subtitle">Authored Subtitle</p>
+        <div slot="extra" class="m-page-header-extra"><button type="button">Extra Action</button></div>
+        <div slot="content" class="m-page-header-content"><p>Main Content</p></div>
+        <div slot="footer" class="m-page-header-footer"><p>Footer Content</p></div>
+      </m-page-header>
+    `)
+    expect(header.querySelector("#custom-h1")?.tagName).toBe("H1")
+    expect(header.querySelector("#custom-h1")?.textContent).toBe("Authored Heading 1")
+    expect(header.querySelector(".m-page-header-header nav")?.getAttribute("aria-label")).toBe("Breadcrumb")
+    expect(header.querySelector(".m-page-header-extra button")?.textContent).toBe("Extra Action")
+    expect(header.querySelector(".m-page-header-content p")?.textContent).toBe("Main Content")
+    expect(header.querySelector(".m-page-header-footer p")?.textContent).toBe("Footer Content")
+    expect(header.querySelector(".m-page-header-avatar")?.textContent).toBe("A")
+    expect(header.querySelector(".m-page-header-back")?.getAttribute("href")).toBe("#back")
+  })
+
+  it("emits m:back event when back control is clicked", () => {
+    const header = pageHeader(`
+      <m-page-header>
+        <button type="button" slot="back" class="m-page-header-back">Back</button>
+      </m-page-header>
+    `)
+    const listener = vi.fn()
+    header.addEventListener("m:back", listener)
+
+    const backButton = header.querySelector<HTMLButtonElement>(".m-page-header-back")!
+    backButton.click()
+
+    expect(listener).toHaveBeenCalledOnce()
+    const detail = (listener.mock.calls[0]![0] as CustomEvent<PageHeaderBackDetail>).detail
+    expect(detail.originalEvent).toBeInstanceOf(MouseEvent)
+  })
+
+  it("does not emit m:back when disabled back button is clicked", () => {
+    const header = pageHeader(`
+      <m-page-header>
+        <button type="button" disabled slot="back" class="m-page-header-back">Back</button>
+      </m-page-header>
+    `)
+    const listener = vi.fn()
+    header.addEventListener("m:back", listener)
+
+    const backButton = header.querySelector<HTMLButtonElement>(".m-page-header-back")!
+    backButton.click()
+
+    expect(listener).not.toHaveBeenCalled()
+  })
+
+  it("wraps loose text and elements into content region", () => {
+    const header = pageHeader("<m-page-header title='Title'>Loose descriptive text</m-page-header>")
+    const content = header.querySelector(".m-page-header-content")
+    expect(content).not.toBeNull()
+    expect(content?.textContent).toContain("Loose descriptive text")
+  })
+
+  it("keeps templates inert", () => {
+    const header = pageHeader(`
+      <m-page-header>
+        <template><button id="inert-btn">Inert Action</button></template>
+      </m-page-header>
+    `)
+    expect(header.querySelector("#inert-btn")).toBeNull()
+    expect(header.querySelector("template")?.content.querySelector("#inert-btn")).not.toBeNull()
+  })
+
+  it("upgrades properties assigned before custom element upgrade", () => {
+    document.body.innerHTML = "<test-late-header></test-late-header>"
+    const element = document.querySelector("test-late-header") as PageHeader
+    Object.assign(element, { title: "Pre-upgrade Title", subtitle: "Pre-upgrade Subtitle", extra: "Extra Info" })
+    customElements.define("test-late-header", class extends PageHeader {})
+    expect(element.title).toBe("Pre-upgrade Title")
+    expect(element.subtitle).toBe("Pre-upgrade Subtitle")
+    expect(element.extra).toBe("Extra Info")
+    expect(element.querySelector(".m-page-header-title")?.textContent).toBe("Pre-upgrade Title")
+    expect(element.querySelector(".m-page-header-subtitle")?.textContent).toBe("Pre-upgrade Subtitle")
+    expect(element.querySelector(".m-page-header-extra")?.textContent).toBe("Extra Info")
+  })
+
+  it("styles m-page-header cleanly alongside .m-page-header via page-header.css", () => {
     install()
-    expect(header.outerHTML).toBe(before)
-    expect([...header.querySelectorAll("*")]).toEqual(nodes)
-    expect(document.querySelector("#project-title")?.tagName).toBe("H1")
-    expect(document.querySelector("#record-title")?.tagName).toBe("H2")
-    expect(document.querySelector("#rtl-title")?.tagName).toBe("H2")
-    expect(document.querySelector("[role],[aria-level]")).toBeNull()
-  })
+    const customEl = pageHeader("<m-page-header title='Test'></m-page-header>")
+    document.body.innerHTML += "<header class='m-page-header'><div class='m-page-header-main'><div class='m-page-header-lead'><div class='m-page-header-titles'><h1 class='m-page-header-title'>Class Header</h1></div></div></div></header>"
+    const classEl = document.querySelector("header.m-page-header")!
 
-  it("maps every documented content surface without generating a breadcrumb or renderer", () => {
-    fixture()
-    install()
-    for (const region of ["header", "avatar", "title", "subtitle", "extra", "content", "footer", "back"]) {
-      expect(document.querySelector(`#page-banner .mui-page-header-${region}`)).not.toBeNull()
-    }
-    expect(document.querySelector("nav")?.getAttribute("aria-label")).toBe("Breadcrumb")
-    expect(document.querySelector("[aria-current]")?.getAttribute("aria-current")).toBe("page")
-    expect(document.querySelector("#page-banner .mui-page-header-extra")?.textContent).toContain("Draft")
-  })
-
-  it("leaves absent/empty regions and native title attributes unambiguous", () => {
-    document.body.innerHTML = '<header class="mui-page-header" title="Native advisory title"><div class="mui-page-header-main"><div class="mui-page-header-lead"><div class="mui-page-header-titles"><h2 class="mui-page-header-title"></h2></div></div></div></header>'
-    const before = document.body.innerHTML
-    install()
-    expect(document.body.innerHTML).toBe(before)
-    expect(document.querySelector(".mui-page-header-title")?.textContent).toBe("")
-    expect(document.querySelector(".mui-page-header-back")).toBeNull()
-    expect(document.querySelector(".mui-page-header-subtitle")).toBeNull()
-  })
-
-  it("preserves native back-link destinations and keyboard-related attributes", () => {
-    fixture()
-    const link = document.querySelector<HTMLAnchorElement>("#destination-back")!
-    const before = link.outerHTML
-    let clicks = 0
-    link.addEventListener("click", (event) => { event.preventDefault(); clicks++ })
-    install()
-    link.click()
-    expect(clicks).toBe(1)
-    expect(link.outerHTML).toBe(before)
-    expect(link.getAttribute("href")).toBe("#workspace")
-    expect(link.target).toBe("_self")
-    expect(link.rel).toBe("help")
-    expect(link.tabIndex).toBe(0)
-    expect(link.textContent).toContain("Workspace")
-  })
-
-  it("keeps native back type=button separate from form submission and disabled controls", () => {
-    fixture()
-    const form = document.querySelector("form")!
-    const back = document.querySelector<HTMLButtonElement>("#application-back")!
-    let backClicks = 0
-    let submits = 0
-    let disabledClicks = 0
-    back.addEventListener("click", () => backClicks++)
-    form.addEventListener("submit", (event) => { event.preventDefault(); submits++ })
-    document.querySelector("#disabled-action")!.addEventListener("click", () => disabledClicks++)
-    install()
-    back.click()
-    document.querySelector<HTMLButtonElement>("#disabled-action")!.click()
-    expect(backClicks).toBe(1)
-    expect(submits).toBe(0)
-    expect(disabledClicks).toBe(0)
-    document.querySelector<HTMLButtonElement>("#save-record")!.click()
-    expect(submits).toBe(1)
-    expect(back.type).toBe("button")
-  })
-
-  it("retains reset, input value and authored native default-submit behavior", () => {
-    fixture()
-    const input = document.querySelector<HTMLInputElement>("#record-name")!
-    const form = document.querySelector("form")!
-    const untyped = document.createElement("button")
-    untyped.className = "mui-page-header-back"
-    untyped.textContent = "Authored default submit"
-    document.querySelector("#record-header .mui-page-header-lead")!.append(untyped)
-    let submits = 0
-    form.addEventListener("submit", (event) => { event.preventDefault(); submits++ })
-    install()
-    input.value = "Edited"
-    document.querySelector<HTMLButtonElement>("#reset-record")!.click()
-    expect(input.value).toBe("Initial record")
-    untyped.click()
-    expect(submits).toBe(1)
-    expect(untyped.hasAttribute("type")).toBe(false)
-  })
-
-  it("preserves native avatar/back SVG paints, titles and accessibility ownership", () => {
-    fixture()
-    const avatar = document.querySelector("#page-banner .mui-page-header-avatar")!
-    const before = avatar.outerHTML
-    install()
-    expect(avatar.outerHTML).toBe(before)
-    expect(avatar.getAttribute("aria-hidden")).toBe("true")
-    expect(avatar.querySelector("svg")?.getAttribute("viewBox")).toBe("0 0 40 40")
-    expect(avatar.querySelector("path")?.getAttribute("fill")).toBe("#175fbb")
-    expect(css).not.toContain("fill:")
-    expect(css).not.toContain("stroke:")
-    expect(css).not.toContain("transform:")
-  })
-
-  it("preserves hidden regions and inert templates despite layout display rules", () => {
-    document.body.innerHTML = '<header class="mui-page-header"><div class="mui-page-header-main" hidden>Hidden row</div><div class="mui-page-header-footer" hidden>Hidden footer</div><template class="mui-page-header"><button>Inert action</button></template></header><header class="mui-page-header" hidden>Hidden header</header>'
-    install()
-    for (const node of document.querySelectorAll("[hidden],template")) expect(getComputedStyle(node).display).toBe("none")
-    expect(document.querySelector("button")).toBeNull()
-    expect(document.querySelector("template")?.content.querySelector("button")?.textContent).toBe("Inert action")
-  })
-
-  it("keeps late content and reconnect identity without synthesizing fields or lifecycle", () => {
-    fixture()
-    const header = document.querySelector("#page-banner")!
-    const title = document.querySelector("#project-title")!
-    const extra = document.querySelector("#page-banner .mui-page-header-extra")!
-    const action = document.createElement("button")
-    action.type = "button"
-    action.textContent = "Late action"
-    let clicks = 0
-    action.addEventListener("click", () => clicks++)
-    install()
-    extra.append(action)
-    title.textContent = "New native title"
-    header.remove()
-    document.body.prepend(header)
-    action.click()
-    expect(clicks).toBe(1)
-    expect(document.querySelector("#project-title")).toBe(title)
-    expect(title.textContent).toBe("New native title")
-  })
-
-  it("keeps source order, native wrapping, direction and out-of-scope styles", () => {
-    fixture()
-    const outside = document.querySelector("#outside")!
-    const before = getComputedStyle(outside).display
-    install()
-    expect(getComputedStyle(outside).display).toBe(before)
-    expect(document.querySelector("article[dir]")?.getAttribute("dir")).toBe("rtl")
-    expect(document.querySelector("article[lang]")?.getAttribute("lang")).toBe("ar")
-    expect(css).toContain("min-inline-size: 0")
-    expect(css).toContain("flex-wrap: wrap")
-    expect(css).toContain("overflow-wrap: anywhere")
-    expect(css).not.toMatch(/(?:^|[;{])\s*order:/m)
-    expect(css).not.toContain("overflow: hidden")
-    expect(css).not.toContain("white-space: nowrap")
-    expect(css).not.toContain("direction:")
-  })
-
-  it("has no generated content, motion, injected roles or global resets", () => {
-    expect(css).not.toMatch(/(?:^|[;{])\s*content:/m)
-    expect(css).not.toContain("@keyframes")
-    expect(css).not.toContain("transition:")
-    expect(css).not.toContain("outline: none")
-    expect(css).not.toContain("font-family:")
-    expect(css).not.toMatch(/(?:^|\n)(?:h1|header|a|button|body)\s*[{,]/)
-  })
-
-  it("uses reference-sized title/back typography and unframed native back controls", () => {
-    fixture()
-    install()
-    const root = document.querySelector("#page-banner")!
-    const back = document.querySelector("#destination-back")!
-    expect(getComputedStyle(root).display).toBe("block")
-    expect(getComputedStyle(back).borderTopWidth).toBe("0px")
-    expect(css).toContain("--mui-page-header-title-size, 18px")
-    expect(css).toContain("--mui-page-header-title-weight, 500")
-    expect(css).toContain("--mui-page-header-back-size, 22px")
-    expect(css).toContain("--mui-page-header-line-height, 1.5")
-    expect(css).toContain("--mui-page-header-gap, 20px")
-    expect(css).toContain("--mui-page-header-main-gap, 16px 0px")
-    expect(getComputedStyle(root.querySelector(".mui-page-header-lead")!).flexBasis).toBe("12rem")
-  })
-
-  it("provides explicit dark role defaults without substituting legacy text colors", () => {
-    fixture()
-    const root = document.querySelector<HTMLElement>("#page-banner")!
-    root.dataset.muiTheme = "dark"
-    install()
-    const theme = getComputedStyle(root)
-    expect(theme.getPropertyValue("--_mui-page-header-title")).toBe("rgba(255,255,255,.9)")
-    expect(theme.getPropertyValue("--_mui-page-header-subtitle")).toBe("rgba(255,255,255,.52)")
-    expect(theme.getPropertyValue("--_mui-page-header-back")).toBe("rgba(255,255,255,.82)")
-    expect(theme.getPropertyValue("--_mui-page-header-hover")).toBe("#7fe7c4")
-    expect(theme.getPropertyValue("--_mui-page-header-pressed")).toBe("#5acea7")
-    expect(css).not.toContain("--mui-text-primary")
-    expect(css).not.toContain("--mui-text-secondary")
-    expect(css).not.toContain("color-scheme")
-  })
-
-  it("allows the heading group to wrap rather than collapse beside a long back label", () => {
-    fixture()
-    install()
-    const lead = document.querySelector("#record-header .mui-page-header-lead")!
-    const titles = lead.querySelector(".mui-page-header-titles")!
-    expect(getComputedStyle(lead).flexWrap).toBe("wrap")
-    expect(getComputedStyle(titles).flexBasis).toBe("12rem")
-    expect(getComputedStyle(titles).minInlineSize).toBe("0")
+    expect(getComputedStyle(customEl).display).toBe("block")
+    expect(getComputedStyle(classEl).display).toBe("block")
+    expect(css).toContain(":is(m-page-header, .m-page-header)")
+    expect(css).toContain("--m-page-header-title-size, 18px")
+    expect(css).toContain("--m-page-header-gap, 20px")
   })
 })

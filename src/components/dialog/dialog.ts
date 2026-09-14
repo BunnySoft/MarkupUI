@@ -76,7 +76,7 @@ export function createDialog(dialog: HTMLDialogElement, options: DialogOptions =
     } catch (error) {
       const action = active?.action ?? null
       controller.dispose()
-      dialog.dispatchEvent(new view.CustomEvent<DialogError>("mui:dialog-error", { detail: { action, error, stale: false } }))
+      dialog.dispatchEvent(new view.CustomEvent<DialogError>("m:dialog-error", { detail: { action, error, stale: false } }))
     }
   })
   function invalidate() {
@@ -120,7 +120,7 @@ export function createDialog(dialog: HTMLDialogElement, options: DialogOptions =
         stale = !sessionCurrent()
         if (!stale) state.set(errorRegion!, "hidden", null)
       }
-      dialog.dispatchEvent(new view.CustomEvent<DialogError>("mui:dialog-error", { detail: { action, error, stale } }))
+      dialog.dispatchEvent(new view.CustomEvent<DialogError>("m:dialog-error", { detail: { action, error, stale } }))
     })
   }
   function click(event: MouseEvent) {
@@ -133,7 +133,7 @@ export function createDialog(dialog: HTMLDialogElement, options: DialogOptions =
       if (!event.defaultPrevented && native.generation === generation) {
         try { start(button, event) } catch (error) {
           controller.dispose()
-          dialog.dispatchEvent(new view.CustomEvent("mui:dialog-error", {
+          dialog.dispatchEvent(new view.CustomEvent("m:dialog-error", {
             detail: { action: button.dataset.dialogAction, error, stale: false },
           }))
         }
@@ -146,8 +146,8 @@ export function createDialog(dialog: HTMLDialogElement, options: DialogOptions =
     metadata.disconnect()
     invalidate()
     dialog.removeEventListener("click", click)
-    dialog.removeEventListener("mui:native-dialog-session", invalidate)
-    dialog.removeEventListener("mui:native-dialog-dispose", disposeActions)
+    dialog.removeEventListener("m:native-dialog-session", invalidate)
+    dialog.removeEventListener("m:native-dialog-dispose", disposeActions)
   }
   const controller: DialogController = {
     dialog,
@@ -163,8 +163,8 @@ export function createDialog(dialog: HTMLDialogElement, options: DialogOptions =
     dispose() { disposeActions(); native.dispose() },
   }
   dialog.addEventListener("click", click)
-  dialog.addEventListener("mui:native-dialog-session", invalidate)
-  dialog.addEventListener("mui:native-dialog-dispose", disposeActions)
+  dialog.addEventListener("m:native-dialog-session", invalidate)
+  dialog.addEventListener("m:native-dialog-dispose", disposeActions)
   metadata.observe(dialog, { subtree: true, childList: true, attributes: true,
     attributeFilter: ["type", "role", "data-dialog-action", "data-dialog-error", "data-dialog-pending", "command", "commandfor", "popovertarget", "popovertargetaction"],
   })
@@ -234,12 +234,12 @@ export function createDialogOwner(root: HTMLElement): DialogOwner {
         const dispose = owned.dispose
         owned.dispose = () => {
           if (!handles.delete(owned)) return
-          dialog.removeEventListener("mui:native-dialog-dispose", owned.dispose)
+          dialog.removeEventListener("m:native-dialog-dispose", owned.dispose)
           dispose()
           dialog.remove()
         }
         handles.add(owned)
-        dialog.addEventListener("mui:native-dialog-dispose", owned.dispose)
+        dialog.addEventListener("m:native-dialog-dispose", owned.dispose)
         if (options.modal === false) handle.show()
         else handle.showModal()
         if (!handle.connected || disposed) throw new Error("Dialog creation was interrupted.")

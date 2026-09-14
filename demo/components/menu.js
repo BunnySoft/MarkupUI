@@ -1,19 +1,29 @@
-const { createMenu } = window.MarkupUIMenu
-const node = id => document.getElementById(id)
-const controllers = {
-  vertical: createMenu(node("vertical-menu"), { defaultValue: "home", defaultExpandedKeys: ["guide"], accordion: true }),
-  horizontal: createMenu(node("horizontal-menu")),
-}
-for (const root of [node("vertical-menu"), node("horizontal-menu")]) {
-  root.addEventListener("mui:menu-select", event => {
-    node("event-log").value = `Selected ${event.detail.path.join(" > ")}; native href/action remains authored.`
+import { loadComponentApi } from "../component-api.js"
+
+function initialize() {
+  const api = globalThis.MarkupUIMenu
+  if (!api) throw new Error("Menu runtime did not load.")
+  void loadComponentApi(document.getElementById("menu-api"), new URL("../api/menu.json", import.meta.url))
+
+  const interactiveMenu = document.querySelector("#interactive-menu")
+  const menuStatus = document.querySelector("#menu-status")
+
+  interactiveMenu?.addEventListener("m:change", (event) => {
+    if (menuStatus) {
+      menuStatus.textContent = `Selected: ${event.detail.value}`
+    }
+  })
+
+  document.querySelector("#select-inbox")?.addEventListener("click", () => {
+    if (interactiveMenu) interactiveMenu.value = "mail"
+  })
+  document.querySelector("#select-starred")?.addEventListener("click", () => {
+    if (interactiveMenu) interactiveMenu.value = "starred"
+  })
+  document.querySelector("#select-trash")?.addEventListener("click", () => {
+    if (interactiveMenu) interactiveMenu.value = "trash"
   })
 }
-node("show-performance").addEventListener("click", () => controllers.vertical.showOption("performance"))
-node("toggle-collapse").addEventListener("click", () => { controllers.vertical.collapsed = !controllers.vertical.collapsed })
-node("toggle-accordion").addEventListener("click", () => { controllers.vertical.accordion = !controllers.vertical.accordion })
-node("demo-form").addEventListener("submit", event => {
-  event.preventDefault()
-  node("event-log").value = `Ordinary form submitted: ${new FormData(event.currentTarget).get("note")}`
-})
-window.menuDemo = controllers
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initialize, { once: true })
+else initialize()

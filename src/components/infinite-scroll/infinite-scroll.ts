@@ -70,8 +70,8 @@ const messageNames = ["loading", "cancelling", "error", "finished", "disabled", 
 /** Owns load permission/lifetime, never the application's items or transport. */
 export function createInfiniteScroll(element: HTMLElement, options: InfiniteScrollOptions): InfiniteScrollController {
   const document = element?.ownerDocument, view = document?.defaultView
-  if (!view || !(element instanceof view.HTMLElement) || !element.matches(".mui-infinite-scroll[data-infinite-scroll]")
-    || !["div", "section"].includes(element.localName) || (element as Owned)[owner]) throw new TypeError("Use an unowned native div/section.mui-infinite-scroll[data-infinite-scroll].")
+  if (!view || !(element instanceof view.HTMLElement) || !element.matches(".m-infinite-scroll[data-infinite-scroll]")
+    || !["div", "section"].includes(element.localName) || (element as Owned)[owner]) throw new TypeError("Use an unowned native div/section.m-infinite-scroll[data-infinite-scroll].")
   const token = {}, writes = ownedWrites(), supported = typeof view.IntersectionObserver === "function"
   function object(value: unknown, keys: readonly string[]) {
     if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).some(key => !keys.includes(key))) throw new TypeError("Unsupported Infinite Scroll configuration.")
@@ -117,7 +117,7 @@ export function createInfiniteScroll(element: HTMLElement, options: InfiniteScro
       || !available(element) || !available(content) || !available(sentinel) || button.closest("[inert]") !== null
   }
   function validate(next: Required<InfiniteScrollSettings>) {
-    if (!element.isConnected || element.getRootNode() !== document || !element.matches(".mui-infinite-scroll[data-infinite-scroll]")
+    if (!element.isConnected || element.getRootNode() !== document || !element.matches(".m-infinite-scroll[data-infinite-scroll]")
       || element.hasAttribute("role") && element.getAttribute("role") !== "region"
       || nodes.some(node => node !== element && (!element.contains(node) || !own(node)))
       || nodes.some(node => (node as Owned)[owner] && (node as Owned)[owner] !== token)
@@ -193,7 +193,7 @@ export function createInfiniteScroll(element: HTMLElement, options: InfiniteScro
     const signature = JSON.stringify(value)
     if (signature !== lastState) {
       lastState = signature
-      element.dispatchEvent(new view!.CustomEvent("mui:infinite-state", { bubbles: true, detail: value }))
+      element.dispatchEvent(new view!.CustomEvent("m:infinite-state", { bubbles: true, detail: value }))
     }
   }
   function stopIntersection(clear = true) {
@@ -209,7 +209,7 @@ export function createInfiniteScroll(element: HTMLElement, options: InfiniteScro
     failure = { error }
     stopIntersection(false)
     render()
-    if (connected) element.dispatchEvent(new view!.CustomEvent("mui:infinite-error", { bubbles: true, detail: { error, generation } }))
+    if (connected) element.dispatchEvent(new view!.CustomEvent("m:infinite-error", { bubbles: true, detail: { error, generation } }))
   }
   function autoEligible() {
     return connected && settings.automatic && supported && automaticUsed < settings.automaticLimit
@@ -289,7 +289,7 @@ export function createInfiniteScroll(element: HTMLElement, options: InfiniteScro
       failure = { error }
       stopIntersection(false)
       settle(job, { status: "error", error })
-      if (connected && generation === job.generation && failure?.error === error) element.dispatchEvent(new view!.CustomEvent("mui:infinite-error", { bubbles: true, detail: { error, generation: job.generation } }))
+      if (connected && generation === job.generation && failure?.error === error) element.dispatchEvent(new view!.CustomEvent("m:infinite-error", { bubbles: true, detail: { error, generation: job.generation } }))
     }
   }
   function request(reason: InfiniteScrollContext["reason"]): Promise<InfiniteScrollOutcome> {

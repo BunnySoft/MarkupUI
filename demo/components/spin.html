@@ -3,64 +3,102 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Spin</title>
+  <title>Spin - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-spin.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./spin.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-spin.global.js"></script>
-  <script defer src="./spin.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./spin.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Spin: CSS motion and a narrowly owned display delay</h1>
-    <p>Wrapped content stays usable. The application owns actual busy state, announcements and any optional native interaction blocking.</p>
-    <section aria-labelledby="standalone-heading">
-      <h2 id="standalone-heading">Standalone sizes, descriptions and custom native icons</h2>
-      <div class="examples" id="sizes">
-        <mui-spin size="small"></mui-spin>
-        <mui-spin size="medium" description="Loading"></mui-spin>
-        <mui-spin size="large"></mui-spin>
-        <mui-spin size="48" stroke="purple" stroke-width="12" description="Numeric size"></mui-spin>
-      </div>
-      <div class="examples">
-        <mui-spin id="custom" rotate="false"><svg data-mui-spin-icon aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2 22 12 12 22 2 12Z" fill="none" stroke="currentColor" stroke-width="2"></path></svg><span data-mui-spin-description>Custom, not rotating</span></mui-spin>
-        <mui-spin id="named" role="status" aria-label="Uploading files"></mui-spin>
-        <mui-spin id="standalone-hidden-show" show="false" delay="1000" label="Standalone remains visible"></mui-spin>
+  <main data-demo-page class="component-docs">
+    <h1>Spin</h1>
+    <m-p>Loading indicator with customizable size, delay, stroke geometry, wrapped content adoption, custom icons and descriptions.</m-p>
+    <nav class="component-docs-nav" aria-label="Spin documentation">
+      <a href="#sizes-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#spin-api">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary>Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-spin.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-spin.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="sizes" aria-labelledby="sizes-heading">
+      <header data-demo-header><div><h2 id="sizes-heading">Standalone sizes, descriptions and custom native icons</h2><m-p>Standalone spinners with preset or numeric sizes, colors, and custom icon slotting.</m-p></div></header>
+      <div data-demo-preview>
+        <m-box class="examples" id="sizes">
+          <m-spin size="small"></m-spin>
+          <m-spin size="medium" description="Loading"></m-spin>
+          <m-spin size="large"></m-spin>
+          <m-spin size="48" stroke="purple" stroke-width="12" description="Numeric size"></m-spin>
+        </m-box>
+        <m-box class="examples">
+          <m-spin id="custom" rotate="false"><svg data-m-spin-icon aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2 22 12 12 22 2 12Z" fill="none" stroke="currentColor" stroke-width="2"></path></svg><m-text data-m-spin-description>Custom, not rotating</m-text></m-spin>
+          <m-spin id="named" role="status" aria-label="Uploading files"></m-spin>
+          <m-spin id="standalone-hidden-show" show="false" delay="1000" label="Standalone remains visible"></m-spin>
+        </m-box>
       </div>
     </section>
-    <section aria-labelledby="wrapped-heading">
-      <h2 id="wrapped-heading">Native wrapped controls and cancellable delay</h2>
-      <form id="editor-form">
-        <mui-spin id="wrapped" show="false" delay="300" description="Refreshing the report">
-          <div data-mui-spin-content class="panel" id="editor" aria-busy="false">
-            <label>Report title <input id="report-title" name="title" value="Draft"></label>
-            <button type="submit" id="save-report">Save report</button>
-            <button type="reset" id="reset-report">Reset</button>
-          </div>
-        </mui-spin>
-      </form>
-      <p id="request-status" role="status">No request active.</p>
-      <p id="submit-status" role="status">0 native submissions.</p>
-      <div class="controls">
-        <button type="button" id="start-request">Start request</button>
-        <button type="button" id="finish-request">Finish request</button>
-        <button type="button" id="short-request">Complete a brief request</button>
-        <button type="button" id="reconnect">Reconnect Spin</button>
-        <label><input type="checkbox" id="block-content"> Application uses native inert during the request</label>
+
+    <section data-demo-example="wrapped" aria-labelledby="wrapped-heading">
+      <header data-demo-header><div><h2 id="wrapped-heading">Native wrapped controls and cancellable delay</h2><m-p>Wrapped content stays usable while the application owns busy state and interaction blocking.</m-p></div></header>
+      <div data-demo-preview>
+        <form id="editor-form">
+          <m-spin id="wrapped" show="false" delay="300" description="Refreshing the report">
+            <m-box data-m-spin-content class="panel" id="editor" aria-busy="false">
+              <m-label>Report title <input id="report-title" name="title" value="Draft"></m-label>
+              <m-button attr-type="submit" id="save-report">Save report</m-button>
+              <m-button attr-type="reset" id="reset-report">Reset</m-button>
+            </m-box>
+          </m-spin>
+        </form>
+        <m-p id="request-status" role="status">No request active.</m-p>
+        <m-p id="submit-status" role="status">0 native submissions.</m-p>
+        <m-box class="controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
+          <m-button id="start-request">Start request</m-button>
+          <m-button id="finish-request">Finish request</m-button>
+          <m-button id="short-request">Complete a brief request</m-button>
+          <m-button id="reconnect">Reconnect Spin</m-button>
+          <m-label><input type="checkbox" id="block-content"> Application uses native inert during the request</m-label>
+        </m-box>
+        <m-p>Blocking is demo application policy, not a Spin prop. The demo restores the content's original inert/busy state when it finishes the request.</m-p>
       </div>
-      <p>Blocking is demo application policy, not a Spin prop. The demo restores the content's original inert/busy state when it finishes the request.</p>
     </section>
-    <section aria-labelledby="geometry-heading">
-      <h2 id="geometry-heading">Native SVG geometry and CSS-only fallback</h2>
-      <div class="examples">
-        <mui-spin id="geometry" size="56" radius="80" scale="0.8" stroke-width="10" stroke="teal" description="Radius and scale"></mui-spin>
-        <span class="mui-spin">
-          <span data-mui-spin-indicator>
-            <span data-mui-spin-icon-box><svg data-mui-spin-default aria-hidden="true" focusable="false" viewBox="0 0 100 100" fill="none" stroke="currentColor"><circle cx="50" cy="50" r="44" stroke-width="8" pathLength="100" stroke-dasharray="72 28"></circle></svg></span>
-            <span data-mui-spin-description-area data-mui-spin-visible-description>CSS-only loading text</span>
+
+    <section data-demo-example="geometry" aria-labelledby="geometry-heading">
+      <header data-demo-header><div><h2 id="geometry-heading">Native SVG geometry and CSS-only fallback</h2><m-p>Custom radius, scale, stroke geometry and static CSS fallback without JavaScript.</m-p></div></header>
+      <div data-demo-preview>
+        <m-box class="examples">
+          <m-spin id="geometry" size="56" radius="80" scale="0.8" stroke-width="10" stroke="teal" description="Radius and scale"></m-spin>
+          <span class="m-spin">
+            <span data-m-spin-indicator>
+              <span data-m-spin-icon-box><svg data-m-spin-default aria-hidden="true" focusable="false" viewBox="0 0 100 100" fill="none" stroke="currentColor"><circle cx="50" cy="50" r="44" stroke-width="8" pathLength="100" stroke-dasharray="72 28"></circle></svg></span>
+              <span data-m-spin-description-area data-m-spin-visible-description>CSS-only loading text</span>
+            </span>
           </span>
-        </span>
+        </m-box>
       </div>
     </section>
+
+    <section id="spin-api"></section>
   </main>
 </body>
 </html>

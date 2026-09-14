@@ -3,56 +3,123 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Ellipsis — native CSS and disclosure</title>
+  <title>Ellipsis - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-ellipsis.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./ellipsis.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script defer src="../../dist/markup-ui-ellipsis.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script type="module" src="./ellipsis.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Native text truncation and disclosure</h1>
-    <p>Original text, no JavaScript or tooltip. Use the visible native disclosure when readers need the full text on touch or keyboard.</p>
-    <section aria-labelledby="disclosure-heading">
-      <h2 id="disclosure-heading">One copy, native expansion</h2>
-      <details class="mui-ellipsis-disclosure bounded" id="single-disclosure">
-        <summary id="single-summary">
-          <span class="mui-ellipsis" id="single">This is the complete original sentence, kept in one native text node even when its visual presentation is abbreviated.</span>
-          <span class="mui-ellipsis-hint">Expand or collapse full text</span>
-        </summary>
-      </details>
-      <details class="mui-ellipsis-disclosure bounded" id="multi-disclosure">
-        <summary id="multi-summary">
-          <span class="mui-ellipsis" data-multiline id="multi">A longer description uses two lines when the browser supports native clamping. The complete text stays here, including <strong>important native emphasis</strong>. Open this disclosure to read or select all of it without a tooltip or duplicate hidden label. Close it again using the same native control.</span>
-          <span class="mui-ellipsis-hint">Expand or collapse description</span>
-        </summary>
-      </details>
-    </section>
-    <section aria-labelledby="passive-heading">
-      <h2 id="passive-heading">Passive summaries with a visible full-content route</h2>
-      <div class="row">
-        <p class="mui-ellipsis" id="flex-text">A flexible row keeps a very long descriptive sentence within its allocated space while the adjacent native link remains outside the clipping boundary.</p>
-        <a href="#complete-content" id="full-link">Read complete section</a>
+  <main data-demo-page class="component-docs">
+    <h1>Ellipsis</h1>
+    <p>Direct text truncation and native disclosure. Wraps text content with native single-line CSS ellipsis or multiline line-clamping.</p>
+    <nav class="component-docs-nav" aria-label="Ellipsis documentation">
+      <a href="#single-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-ellipsis.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-ellipsis.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="single-line" aria-labelledby="single-heading">
+      <header data-demo-header><div><h2 id="single-heading">Single-line truncation</h2><p>Default inline text truncation with native text-overflow ellipsis.</p></div></header>
+      <div data-demo-preview>
+        <m-p>
+          <m-ellipsis id="single" class="bounded">This is a complete original sentence, kept in one native text node even when its visual presentation is abbreviated.</m-ellipsis>
+        </m-p>
       </div>
-      <div class="grid">
-        <p class="mui-ellipsis three-lines" data-multiline id="grid-text">LongUnbrokenNativeTextStillWrapsWithinTheAvailableInlineSpaceRatherThanForcingTheGridTrackToGrowBeyondItsContainer. Another sentence demonstrates three author-selected lines and automatic response to native layout changes.</p>
-        <span>Adjacent cell</span>
+    </section>
+
+    <section data-demo-example="line-clamp" aria-labelledby="clamp-heading">
+      <header data-demo-header><div><h2 id="clamp-heading">Multi-line clamping</h2><p>Clamping to author-specified line counts using native line-clamp.</p></div></header>
+      <div data-demo-preview>
+        <m-p>
+          <m-ellipsis id="clamped-dynamic" line-clamp="2" class="bounded">A longer description uses two lines when line-clamp is configured. The complete text stays in the DOM, including <m-text strong>important native emphasis</m-text>. Authors can configure line clamping for any positive count.</m-ellipsis>
+        </m-p>
+        <m-p id="clamp-status" role="status">Current clamp: 2 lines</m-p>
+        <m-box class="examples">
+          <m-button id="clamp-1">1 line</m-button>
+          <m-button id="clamp-2">2 lines</m-button>
+          <m-button id="clamp-3">3 lines</m-button>
+        </m-box>
       </div>
-      <p>Use only noninteractive phrasing content inside truncation. An accidentally nested native control below makes this region expand rather than clip its focus target:</p>
-      <p class="mui-ellipsis bounded" id="safe-content">A complete deliberately long sentence before <button type="button" id="safe-button">Native action</button> remains visible; this region is not truncated.</p>
     </section>
-    <section dir="rtl" lang="ar" aria-labelledby="rtl-heading">
-      <h2 id="rtl-heading">نص أصلي</h2>
-      <details class="mui-ellipsis-disclosure bounded" id="rtl-disclosure">
-        <summary id="rtl-summary">
-          <span class="mui-ellipsis" id="rtl">هذا نص عربي كامل يحتفظ باتجاهه ومحتواه الأصلي ويمكن توسيعه باستخدام عنصر إفصاح أصلي دون نسخ النص أو إخفاء عناصر تفاعلية</span>
-          <span class="mui-ellipsis-hint">توسيع النص أو طيه</span>
-        </summary>
-      </details>
+
+    <section data-demo-example="expand-trigger" aria-labelledby="expand-heading">
+      <header data-demo-header><div><h2 id="expand-heading">Click to expand</h2><p>Interactive expansion toggled on click or keyboard activation.</p></div></header>
+      <div data-demo-preview>
+        <m-p>
+          <m-ellipsis id="click-expand" line-clamp="2" expand-trigger="click" class="bounded">Click this text or activate it with Enter/Space to expand or collapse it. The complete content is retained in one node without duplicate hidden labels or external overlays.</m-ellipsis>
+        </m-p>
+        <m-p id="expand-status" role="status">Expanded: false</m-p>
+        <m-box class="examples">
+          <m-button id="toggle-expand">Toggle programmatically</m-button>
+        </m-box>
+      </div>
     </section>
-    <section id="complete-content" tabindex="-1">
-      <h2>Complete section</h2>
-      <p>A destination for the adjacent native link. Applications supply their actual full-content route; a title attribute is not a replacement for accessible disclosure.</p>
+
+    <section data-demo-example="tooltip" aria-labelledby="tooltip-heading">
+      <header data-demo-header><div><h2 id="tooltip-heading">Tooltip on hover</h2><p>Reflects complete content to accessible title for hover inspection.</p></div></header>
+      <div data-demo-preview>
+        <m-p>
+          <m-ellipsis id="tooltip-ellipsis" tooltip class="bounded">Hover over this truncated text to read the full content via native tooltip.</m-ellipsis>
+        </m-p>
+      </div>
     </section>
-    <p id="outside">Outside the opt-in classes, ordinary text remains unchanged.</p>
+
+    <section data-demo-example="disclosure" aria-labelledby="disclosure-heading">
+      <header data-demo-header><div><h2 id="disclosure-heading">Native disclosure</h2><p>Zero-JS semantic disclosure using details and summary for full accessibility.</p></div></header>
+      <div data-demo-preview>
+        <m-details class="m-ellipsis-disclosure bounded" id="single-disclosure">
+          <m-summary id="single-summary">
+            <m-ellipsis id="disclosure-ellipsis">This is the complete original sentence, kept in one native text node even when its visual presentation is abbreviated.</m-ellipsis>
+            <m-span class="m-ellipsis-hint">Expand or collapse full text</m-span>
+          </m-summary>
+        </m-details>
+        <m-details class="m-ellipsis-disclosure bounded" id="multi-disclosure">
+          <m-summary id="multi-summary">
+            <m-ellipsis line-clamp="2" id="multi">A longer description uses two lines in native disclosure. The complete text stays here, including <m-text strong>important native emphasis</m-text>. Open this disclosure to read or select all of it.</m-ellipsis>
+            <m-span class="m-ellipsis-hint">Expand or collapse description</m-span>
+          </m-summary>
+        </m-details>
+      </div>
+    </section>
+
+    <section data-demo-example="rtl" aria-labelledby="rtl-heading">
+      <header data-demo-header><div><h2 id="rtl-heading">RTL and native direction</h2><p>Native text direction and language preservation.</p></div></header>
+      <div data-demo-preview>
+        <m-box dir="rtl" lang="ar">
+          <m-p>
+            <m-ellipsis id="rtl-ellipsis" class="bounded">هذا نص عربي كامل يحتفظ باتجاهه ومحتواه الأصلي ويمكن قراءته بالكامل دون تشويه الاتجاه أو فقدان الحروف</m-ellipsis>
+          </m-p>
+        </m-box>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="ellipsis-api"><p>Loading API documentation.</p></div>
+    </section>
   </main>
 </body>
 </html>

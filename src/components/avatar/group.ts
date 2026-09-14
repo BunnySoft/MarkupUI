@@ -1,16 +1,15 @@
-import { MuiElement } from "../../core/element.js"
+import { ViewElement } from "../../core/index.js"
 
-export class MuiAvatarGroup extends MuiElement {
-  public static get observedAttributes(): string[] { return ["max", "label", "rest-label"] }
+/** @region {"name":"items","accepts":["Avatar"],"min":0,"max":null,"element":"m-avatar"} */
+export class AvatarGroup extends ViewElement {
+  public static readonly tag = "m-avatar-group"
+  public static get observedAttributes(): string[] { return ["max", "vertical", "label", "rest-label"] }
   private observer: MutationObserver | undefined
   private overflow: HTMLDetailsElement | undefined
+  private managedLabel: string | null = null
 
   public connectedCallback(): void {
-    if (Object.prototype.hasOwnProperty.call(this, "max")) {
-      const value: unknown = Reflect.get(this, "max")
-      Reflect.deleteProperty(this, "max")
-      Reflect.set(this, "max", value)
-    }
+    this.upgradeProperties()
     this.synchronize()
     this.observer = new MutationObserver((records) => {
       if (records.some(({ target }) => target === this || target === this.overflow?.lastElementChild)) {
@@ -23,41 +22,61 @@ export class MuiAvatarGroup extends MuiElement {
   public attributeChangedCallback(): void {
     if (this.isConnected) this.synchronize()
   }
-  public get max(): number {
-    const value = this.numberAttribute("max", Infinity)
-    return Math.max(0, Math.floor(value))
+  /**
+   * @min 0
+   * @integer
+   */
+  public get max(): number | null {
+    const value = this.numberAttribute("max", null)
+    if (value !== null && (!Number.isSafeInteger(value) || value < 0)) throw new RangeError("Invalid max.")
+    return value
   }
-  public set max(value: number) {
-    if (value === Infinity) this.removeAttribute("max")
+  public set max(value: number | null) {
+    if (value !== null && (!Number.isSafeInteger(value) || value < 0)) throw new RangeError("Invalid max.")
+    if (value === null) this.removeAttribute("max")
     else this.setAttribute("max", String(value))
   }
+
+  public get vertical(): boolean { return this.hasAttribute("vertical") }
+  public set vertical(value: boolean) { this.setBooleanAttribute("vertical", value) }
+
+  public get label(): string | null { return this.getAttribute("label") }
+  public set label(value: string | null) { this.setStringAttribute("label", value) }
+
+  public get restLabel(): string | null { return this.getAttribute("rest-label") }
+  public set restLabel(value: string | null) { this.setStringAttribute("rest-label", value) }
 
   private synchronize(): void {
     this.observer?.disconnect()
     if (this.overflow?.parentElement !== this) this.overflow = undefined
     this.setAttribute("role", "group")
-    if (this.hasAttribute("label")) this.setAttribute("aria-label", this.getAttribute("label") ?? "")
+    if (!this.hasAttribute("aria-label") || this.getAttribute("aria-label") === this.managedLabel) {
+      if (this.label === null) this.removeAttribute("aria-label")
+      else this.setAttribute("aria-label", this.label)
+      this.managedLabel = this.label
+    }
     const items = [...this.querySelectorAll<HTMLElement>(
-      ":scope > mui-avatar, :scope > [data-mui-avatar-overflow] > [data-mui-avatar-rest] > mui-avatar",
+      ":scope > m-avatar, :scope > [data-part=overflow] > [data-part=rest] > m-avatar",
     )]
-    const visible = items.slice(0, this.max)
-    const remaining = items.slice(this.max)
+    const max = this.max ?? items.length
+    const visible = items.slice(0, max)
+    const remaining = items.slice(max)
 
     if (remaining.length) {
       if (!this.overflow) {
         this.overflow = this.ownerDocument.createElement("details")
-        this.overflow.dataset.muiAvatarOverflow = ""
+        this.overflow.dataset.part = "overflow"
         const summary = this.ownerDocument.createElement("summary")
         const rest = this.ownerDocument.createElement("span")
-        rest.dataset.muiAvatarRest = ""
+        rest.dataset.part = "rest"
         this.overflow.append(summary, rest)
         this.append(this.overflow)
       }
       const summary = this.overflow.querySelector("summary")
-      const rest = this.overflow.querySelector("[data-mui-avatar-rest]")
+      const rest = this.overflow.querySelector(":scope > [data-part=rest]")
       if (summary) {
         summary.textContent = `+${remaining.length}`
-        summary.setAttribute("aria-label", this.getAttribute("rest-label") ?? `${remaining.length} more avatars`)
+        summary.setAttribute("aria-label", this.restLabel ?? `${remaining.length} more avatars`)
       }
       rest?.append(...remaining)
       visible.forEach((item) => this.insertBefore(item, this.overflow ?? null))

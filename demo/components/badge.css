@@ -1,14 +1,46 @@
-:root { font-family: system-ui, sans-serif; color: #242424; background: #fafafa; }
-body { margin: 0; }
-main { max-width: 1000px; margin: auto; padding: 32px; }
-main > section { margin-block: 24px; padding-block: 12px; border-bottom: 1px solid #ddd; }
-h1 { font-size: 1.75rem; }
-h2 { font-size: 1.2rem; }
-.examples { display: flex; align-items: center; flex-wrap: wrap; gap: 24px; margin-block: 20px; }
-.placements { gap: 36px; padding: 16px; }
-button, input { font: inherit; }
-button { padding: 6px 12px; }
-#message-form { padding-block: 16px; }
-.brand { --mui-badge-background: #7040a0; }
-.offset { --mui-badge-offset-x: -6px; --mui-badge-offset-y: 6px; }
-.large { --mui-badge-size: 28px; --mui-badge-font-size: 18px; }
+[data-demo-preview] {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--m-bg-surface, #fff);
+  color: var(--m-text-primary, #333);
+}
+
+.examples {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.placements {
+  gap: 36px;
+  padding: 16px;
+}
+
+[data-demo-preview] button,
+[data-demo-preview] input {
+  font: inherit;
+}
+
+[data-demo-preview] button {
+  padding: 6px 12px;
+}
+
+#message-form {
+  padding-block: 8px;
+}
+
+.brand {
+  --m-badge-background: #7040a0;
+}
+
+.offset {
+  --m-badge-offset-x: -6px;
+  --m-badge-offset-y: 6px;
+}
+
+.large {
+  --m-badge-size: 28px;
+  --m-badge-font-size: 18px;
+}

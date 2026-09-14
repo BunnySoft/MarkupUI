@@ -1,6 +1,6 @@
-export abstract class MuiElement extends HTMLElement {
+export abstract class MElement extends HTMLElement {
   protected emit(name: string, detail?: unknown): void {
-    this.dispatchEvent(new CustomEvent(`mui:${name}`, {
+    this.dispatchEvent(new CustomEvent(`m:${name}`, {
       bubbles: true,
       detail,
     }))

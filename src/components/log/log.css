@@ -1,28 +1,32 @@
 /* The build composes native Code CSS; these rules only configure the log viewport. */
-.mui-log {
-  --mui-code-font-size: var(--mui-log-font-size, 14px);
-  --mui-code-line-height: var(--mui-log-line-height, 1.25);
-  --mui-code-padding: var(--mui-log-padding, 0px);
+m-log,
+.m-log {
+  display: block;
+  --m-code-font-size: var(--m-log-font-size, 14px);
+  --m-code-line-height: var(--m-log-line-height, 1.25);
+  --m-code-padding: var(--m-log-padding, 0px);
   /* An unset Log gutter leaves Code's digit-count fallback available. */
-  --mui-code-gutter: var(--mui-log-gutter);
+  --m-code-gutter: var(--m-log-gutter);
   min-inline-size: 0;
 }
-.mui-log > pre.mui-code-block[data-log-viewport] {
+:is(m-log, .m-log) > pre.m-code-block[data-log-viewport] {
   position: relative;
-  block-size: var(--mui-log-height, calc(var(--mui-log-rows, 15) * 1lh + 2 * var(--mui-log-padding, 0px)));
-  block-size: var(--mui-log-height, calc(round(nearest, var(--mui-log-rows, 15) * 1lh, 1px) + 2 * var(--mui-log-padding, 0px)));
+  block-size: var(--m-log-height, calc(var(--m-log-rows, 15) * 1lh + 2 * var(--m-log-padding, 0px)));
+  block-size: var(--m-log-height, calc(round(nearest, var(--m-log-rows, 15) * 1lh, 1px) + 2 * var(--m-log-padding, 0px)));
   overflow-anchor: none;
   scroll-behavior: auto;
 }
 @media screen {
-  .mui-log > pre.mui-code-block[data-log-viewport]:not([data-word-wrap]) {
-    white-space: var(--mui-log-white-space, pre-wrap);
-    word-break: var(--mui-log-word-break, break-word);
+  :is(m-log, .m-log) > pre.m-code-block[data-log-viewport]:not([data-word-wrap]) {
+    white-space: var(--m-log-white-space, pre-wrap);
+    word-break: var(--m-log-word-break, break-word);
   }
 }
-.mui-log > [data-log-loading] { margin-block: .5rem; }
+:is(m-log, .m-log) > [data-log-loading] { margin-block: .5rem; }
 @media print {
-  .mui-log { color-scheme: light; color: CanvasText; background: Canvas; }
-  .mui-log :is(pre.mui-code-block, code.mui-code) { color: CanvasText; background: transparent; }
-  .mui-log > [data-log-loading] { display: none; }
+  m-log,
+  .m-log { color-scheme: light; color: CanvasText; background: Canvas; }
+  m-log :is(pre.m-code-block, code.m-code) { color: CanvasText; background: transparent; }
+  .m-log :is(pre.m-code-block, code.m-code) { color: CanvasText; background: transparent; }
+  :is(m-log, .m-log) > [data-log-loading] { display: none; }
 }

@@ -15,31 +15,31 @@ describe("Rate default styles", () => {
     withRules(rules => {
       for (const [size, value] of [["small", "16px"], ["medium", "20px"], ["large", "24px"]]) {
         const rule = rules.find(rule => rule.selectorText?.includes(`[data-size="${size}"]`))!
-        expect(rule.style.getPropertyValue("--_mui-rate-size")).toBe(value)
-        expect(rule.style.getPropertyValue("--mui-rate-size")).toBe("")
+        expect(rule.style.getPropertyValue("--_m-rate-size")).toBe(value)
+        expect(rule.style.getPropertyValue("--m-rate-size")).toBe("")
       }
-      const glyph = rules.find(rule => rule.selectorText === ".mui-rate__glyph")!
+      const glyph = rules.find(rule => rule.selectorText === ".m-rate__glyph")!
       expect(glyph.style.getPropertyValue("inline-size")).toBe("")
-      expect(css).toContain("var(--mui-rate-size, var(--_mui-rate-size, 20px))")
+      expect(css).toContain("var(--m-rate-size, var(--_m-rate-size, 20px))")
     })
   })
 
   it("uses the pinned gold/inactive palette and a six-pixel native choice gap", () => {
     withRules(rules => {
-      const dark = rules.find(rule => rule.selectorText === ':where([data-mui-theme="dark"])')!
-      expect(dark.style.getPropertyValue("--_mui-rate-active")).toBe("#ccaa33")
-      expect(dark.style.getPropertyValue("--_mui-rate-muted")).toBe("rgba(255, 255, 255, .2)")
+      const dark = rules.find(rule => rule.selectorText === ':where([data-m-theme="dark"])')!
+      expect(dark.style.getPropertyValue("--_m-rate-active")).toBe("#ccaa33")
+      expect(dark.style.getPropertyValue("--_m-rate-muted")).toBe("rgba(255, 255, 255, .2)")
       expect(css).toContain("#ffcc33")
       expect(css).toContain("#dbdbdf")
-      expect(css).toContain("gap: var(--mui-rate-gap, 6px)")
+      expect(css).toContain("gap: var(--m-rate-gap, 6px)")
     })
   })
 
   it("blocks disabled hover previews without removing checked or cumulative selected color", () => {
-    expect(css).toContain(".mui-rate__choice:hover > input:enabled ~ .mui-rate__glyph")
-    expect(css).toContain(":has(~ .mui-rate__choice:hover > input:enabled)")
-    expect(css).toContain(".mui-rate__choice > input:checked ~ .mui-rate__glyph")
-    expect(css).toContain(":has(~ .mui-rate__choice > input:checked)")
+    expect(css).toContain(".m-rate__choice:hover > input:enabled ~ .m-rate__glyph")
+    expect(css).toContain(":has(~ .m-rate__choice:hover > input:enabled)")
+    expect(css).toContain(".m-rate__choice > input:checked ~ .m-rate__glyph")
+    expect(css).toContain(":has(~ .m-rate__choice > input:checked)")
     expect(css).not.toContain("input:checked:enabled")
   })
 

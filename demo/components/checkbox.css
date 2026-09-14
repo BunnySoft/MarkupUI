@@ -1,8 +1,5 @@
-body { margin: 0; padding: 1rem; color: #17212b; background: #f6f8fa; font: 1rem/1.5 system-ui, sans-serif; }
-main { max-inline-size: 54rem; margin-inline: auto; }
-.mui-checkbox-group { margin-block: 1rem; }
-.demo-tools { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 1rem; }
-button { font: inherit; }
-h1, p, pre { overflow-wrap: anywhere; }
-pre { white-space: pre-wrap; background: white; padding: .5rem; }
+[data-demo-preview] > m-checkbox { margin-block: .25rem; }
+[data-demo-preview] m-checkbox-group m-checkbox-group { margin-block-start: .75rem; }
+[data-demo-preview] .demo-tools { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .75rem; }
+[data-demo-preview] pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 @media print { .demo-tools { display: none; } }

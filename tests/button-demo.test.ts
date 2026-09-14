@@ -1,37 +1,54 @@
 import { readFileSync } from "node:fs"
-import { afterEach, expect, it } from "vitest"
-import type { MuiButton } from "../src/components/button/button.js"
+import { afterEach, expect, it, vi } from "vitest"
+import type { Button } from "../src/components/button/index.js"
 
 afterEach(() => {
   document.body.replaceChildren()
-  document.documentElement.removeAttribute("data-mui-theme")
+  document.documentElement.removeAttribute("data-m-theme")
+  vi.useRealTimers()
+  vi.unstubAllGlobals()
 })
 
-it("binds the authored control before enhancement and preserves demo listeners through upgrade", async () => {
+it("preserves parity-demo listeners through m-button upgrade", async () => {
   const html = readFileSync("demo/components/button.html", "utf8")
   const parsed = new DOMParser().parseFromString(html, "text/html")
   document.body.innerHTML = parsed.body.innerHTML
-  const action = document.querySelector<MuiButton>("#count-action")!
-  const control = action.querySelector<HTMLButtonElement>(":scope > button")!
-  expect(customElements.get("mui-button")).toBeUndefined()
-  expect(action.control).toBeUndefined()
+  const action = document.querySelector<HTMLElement>("#event-button")!
+  expect(customElements.get("m-button")).toBeUndefined()
+  const authoredListener = vi.fn()
+  action.addEventListener("click", authoredListener)
+  action.click()
+  expect(authoredListener).toHaveBeenCalledOnce()
 
+  const api = await import("../src/components/button/index.js")
+  vi.stubGlobal("MarkupUIButton", api)
+  vi.stubGlobal("fetch", vi.fn(async () => ({
+    ok: true,
+    json: async () => JSON.parse(readFileSync("demo/api/button.json", "utf8")),
+  })))
   await import("../demo/components/button.js")
-  control.click()
-  expect(document.querySelector("#click-status")?.textContent).toBe("1 activations.")
-  document.querySelector<HTMLButtonElement>("#toggle-loading")!.click()
-  expect(action.loading).toBe(true)
-
-  await import("../src/components/button/index.js")
-  expect(action.control).toBe(control)
-  expect(control.disabled).toBe(true)
-  document.querySelector<HTMLButtonElement>("#toggle-loading")!.click()
-  expect(control.disabled).toBe(false)
-  control.click()
-  expect(document.querySelector("#click-status")?.textContent).toBe("2 activations.")
-
-  const theme = document.querySelector<HTMLSelectElement>("#button-theme")!
-  theme.value = "dark"
-  theme.dispatchEvent(new Event("change"))
-  expect(document.documentElement.dataset.muiTheme).toBe("dark")
+  if (document.readyState === "loading") document.dispatchEvent(new Event("DOMContentLoaded"))
+  const upgraded = action as Button
+  expect(upgraded.control).not.toBeNull()
+  upgraded.control!.click()
+  expect(document.querySelector("#event-message")?.textContent).toBe("Button Clicked")
+  expect(authoredListener).toHaveBeenCalledTimes(2)
+  await vi.waitFor(() => expect([...document.querySelectorAll("[data-api-type]")].map(node => node.getAttribute("data-api-type")))
+    .toEqual(["Button", "ButtonGroup"]))
+  expect(document.querySelector("#button-api")?.textContent).toContain("appearance")
+  const form = document.querySelector<HTMLFormElement>("#button-form")!
+  ;(form.querySelector("m-button") as Button).click()
+  expect(document.querySelector("#form-message")?.textContent).toBe("Submitted Draft (save)")
+  form.reset()
+  expect(document.querySelector("#form-message")?.textContent).toBe("Form reset")
+  vi.useFakeTimers()
+  const loading = document.querySelector<Button>("[data-loading-button]")!
+  const control = loading.control
+  const icon = loading.querySelector("[data-part=icon]")
+  loading.click()
+  expect(loading.loading).toBe(true)
+  vi.advanceTimersByTime(2000)
+  expect(loading.loading).toBe(false)
+  expect(loading.control).toBe(control)
+  expect(loading.querySelector("[data-part=icon]")).toBe(icon)
 })

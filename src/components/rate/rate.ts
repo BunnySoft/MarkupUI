@@ -1,4 +1,4 @@
-import { createRadioGroup } from "../radio/index.js"
+import { createRadioGroup } from "../native-radio.js"
 
 export interface RateOptions {
   count?: number
@@ -21,7 +21,7 @@ interface Attribute { node: Element; name: string; before: string | null; base: 
 /** Reuses Radio's native name/form/tree contract; it never renders or toggles star proxies. */
 export function createRate(root: HTMLFieldSetElement, options: RateOptions = {}): RateController {
   const document = root?.ownerDocument, view = document?.defaultView
-  if (!view || !(root instanceof view.HTMLFieldSetElement) || !root.matches(".mui-rate[data-rate]")) throw new TypeError("Rate needs an authored native .mui-rate[data-rate] fieldset.")
+  if (!view || !(root instanceof view.HTMLFieldSetElement) || !root.matches(".m-rate[data-rate]")) throw new TypeError("Rate needs an authored native .m-rate[data-rate] fieldset.")
   if (!options || typeof options !== "object" || Array.isArray(options)
     || Object.keys(options).some(key => !["count", "allowHalf", "formatValue"].includes(key))
     || options.count !== undefined && typeof options.count !== "number"
@@ -59,7 +59,7 @@ export function createRate(root: HTMLFieldSetElement, options: RateOptions = {})
     if (output && (!root.contains(output) || output.localName !== "span" || output.children.length
       || output.hasAttribute("role") || output.hasAttribute("tabindex") || output.hasAttribute("aria-live")
       || output.closest("label"))) throw new TypeError("Rate readout needs a separate text-only span without live/interactive semantics.")
-    for (const glyph of root.querySelectorAll(".mui-rate__glyph")) if (own(glyph)
+    for (const glyph of root.querySelectorAll(".m-rate__glyph")) if (own(glyph)
       && (glyph.getAttribute("aria-hidden") !== "true" || glyph.querySelector("[tabindex], [role], input, button, a[href]"))) {
       throw new TypeError("Rate stars/icons must be authored noninteractive aria-hidden decoration.")
     }
@@ -140,7 +140,7 @@ export function createRate(root: HTMLFieldSetElement, options: RateOptions = {})
   }
   function report(reason: unknown, previous: string | null) {
     error = reason instanceof Error ? reason.message : String(reason)
-    if (error !== previous) root.dispatchEvent(new view!.CustomEvent("mui:rate-error", { detail: { message: error } }))
+    if (error !== previous) root.dispatchEvent(new view!.CustomEvent("m:rate-error", { detail: { message: error } }))
   }
   function attemptRefresh() { const previous = error; try { refresh() } catch (reason) { report(reason, previous) } }
   function setValue(score: number | null) {
@@ -162,7 +162,7 @@ export function createRate(root: HTMLFieldSetElement, options: RateOptions = {})
     if (!available(selected)) return false
     const previous = value()
     radio.setValue(null); refresh()
-    if (connected) root.dispatchEvent(new view!.CustomEvent("mui:rate-clear", { detail: { previous, value: null } }))
+    if (connected) root.dispatchEvent(new view!.CustomEvent("m:rate-clear", { detail: { previous, value: null } }))
     return true
   }
   function later(callback: () => void) {

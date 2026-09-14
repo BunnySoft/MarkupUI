@@ -1,30 +1,19 @@
-.mui-collapse{--_mui-collapse-arrow-order:0;--_mui-collapse-padding:0;color:var(--mui-collapse-color,var(--_mui-collapse-text,#333639));font-size:var(--mui-collapse-font-size,14px);overflow-wrap:anywhere;}
-:where([data-mui-theme="light"]){--_mui-collapse-text:initial;--_mui-collapse-title:initial;--_mui-collapse-line:initial;--_mui-collapse-disabled:initial;}
-:where([data-mui-theme="dark"]){--_mui-collapse-text:rgba(255,255,255,.82);--_mui-collapse-title:rgba(255,255,255,.9);--_mui-collapse-line:rgba(255,255,255,.09);--_mui-collapse-disabled:rgba(255,255,255,.38);}
-.mui-collapse:dir(rtl),
-.mui-collapse[data-collapse-arrow-placement="right"]{--_mui-collapse-arrow-order:1;}
-.mui-collapse[data-collapse-arrow-placement="right"]:dir(rtl){--_mui-collapse-arrow-order:0;}
-.mui-collapse[hidden],.mui-collapse [hidden]{display:none !important;}
-.mui-collapse-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;}
-.mui-collapse > :is(.mui-collapse-row,[data-collapse-item]):not([hidden]) ~ :is(.mui-collapse-row,[data-collapse-item]):not([hidden]){--_mui-collapse-padding:16px 0 0;margin-block-start:var(--mui-collapse-item-gap,16px);border-block-start:1px solid var(--mui-collapse-border,var(--_mui-collapse-line,#efeff5));}
-.mui-collapse .mui-collapse{margin-inline-start:32px;}
-.mui-collapse [data-collapse-item] > summary{padding:var(--mui-collapse-header-padding,var(--_mui-collapse-padding));font-weight:var(--mui-collapse-header-weight,400);color:var(--mui-collapse-header-color,var(--mui-collapse-color,var(--_mui-collapse-title,#1f2225)));cursor:pointer;}
-.mui-collapse [data-collapse-item] > summary:focus-visible{outline:2px solid var(--mui-color-info,#2080f0);outline-offset:-2px;}
-.mui-collapse [data-collapse-content]{padding:var(--mui-collapse-content-padding,16px 0 0);}
-.mui-collapse [data-collapse-extra]{padding:var(--mui-collapse-extra-padding,var(--_mui-collapse-padding));display:flex;align-items:center;min-block-size:1lh;}
-.mui-collapse [data-collapse-item][data-collapse-custom-arrow] > summary{display:flex;align-items:center;gap:4px;list-style:none;}
-.mui-collapse [data-collapse-item][data-collapse-custom-arrow] > summary::-webkit-details-marker{display:none;}
-.mui-collapse [data-collapse-arrow]{flex:none;order:var(--_mui-collapse-arrow-order);font-size:var(--mui-collapse-arrow-size,18px);line-height:1;inline-size:1em;block-size:1em;color:var(--mui-collapse-color,var(--_mui-collapse-text,#333639));}
-.mui-collapse [data-collapse-title]{flex:1;min-inline-size:0;}
-.mui-collapse [data-collapse-item][open] > summary .mui-collapse-arrow-rotate{transform:rotate(90deg);}
-.mui-collapse [data-collapse-item][data-collapse-disabled] > summary[aria-disabled="true"],
-.mui-collapse [data-collapse-item][data-collapse-disabled] > summary[aria-disabled="true"] [data-collapse-arrow]{color:var(--mui-collapse-disabled-color,var(--_mui-collapse-disabled,#c2c2c2));cursor:not-allowed;}
-.mui-collapse-arrow-rotate{display:inline-block;direction:ltr;}
-.mui-collapse--arrow-motion .mui-collapse-arrow-rotate{transition:transform 150ms cubic-bezier(.4,0,.2,1);}
-@media (prefers-reduced-motion:reduce),print{.mui-collapse-arrow-rotate{transition:none !important;}
-}
-@media (forced-colors:active){.mui-collapse{--_mui-collapse-text:CanvasText;--_mui-collapse-title:CanvasText;--_mui-collapse-line:CanvasText;--_mui-collapse-disabled:GrayText;color:CanvasText;}
-.mui-collapse [data-collapse-item][data-collapse-disabled] > summary[aria-disabled="true"]{color:GrayText;}
-}
-@media print{.mui-collapse{--_mui-collapse-text:#000;--_mui-collapse-title:#000;--_mui-collapse-line:#000;--_mui-collapse-disabled:#000;color:#000;}
-}
+m-collapse{display:block;--_m-collapse-padding:0;color:var(--m-collapse-color,var(--_m-collapse-text,#333639));font-size:var(--m-collapse-font-size,14px);overflow-wrap:anywhere;}
+:where([data-m-theme="light"]){--_m-collapse-text:initial;--_m-collapse-title:initial;--_m-collapse-line:initial;--_m-collapse-disabled:initial;}
+:where([data-m-theme="dark"]){--_m-collapse-text:rgba(255,255,255,.82);--_m-collapse-title:rgba(255,255,255,.9);--_m-collapse-line:rgba(255,255,255,.09);--_m-collapse-disabled:rgba(255,255,255,.38);}
+m-collapse[hidden],m-collapse [hidden]{display:none !important;}
+m-collapse>m-collapse-item{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;}
+m-collapse>m-collapse-item:not([hidden])~m-collapse-item:not([hidden]){--_m-collapse-padding:16px 0 0;margin-block-start:var(--m-collapse-item-gap,16px);border-block-start:1px solid var(--m-collapse-border,var(--_m-collapse-line,#efeff5));}
+m-collapse-content>m-collapse{margin-inline-start:32px;}
+m-collapse-item>details>summary{display:flex;align-items:center;gap:4px;list-style:none;padding:var(--m-collapse-header-padding,var(--_m-collapse-padding));font-weight:var(--m-collapse-header-weight,400);color:var(--m-collapse-header-color,var(--m-collapse-color,var(--_m-collapse-title,#1f2225)));cursor:pointer;}
+m-collapse-item>details>summary::-webkit-details-marker{display:none;}
+m-collapse-item>details>summary:focus-visible{outline:2px solid var(--m-color-info,#2080f0);outline-offset:-2px;}
+m-collapse-header{display:block;flex:1;min-inline-size:0;}
+m-collapse-content{display:block;padding:var(--m-collapse-content-padding,16px 0 0);}
+m-collapse-item>m-collapse-header-extra{padding:var(--m-collapse-extra-padding,var(--_m-collapse-padding));display:flex;align-items:center;min-block-size:1lh;}
+m-collapse-item>details>summary>[data-part="arrow"]{flex:none;order:var(--m-collapse-arrow-order,0);font-size:var(--m-collapse-arrow-size,18px);line-height:1;inline-size:1em;block-size:1em;direction:ltr;transition:transform 150ms cubic-bezier(.4,0,.2,1);}
+m-collapse-item>details[open]>summary>[data-part="arrow"]{transform:rotate(90deg);}
+m-collapse-item[disabled]>details>summary{color:var(--m-collapse-disabled-color,var(--_m-collapse-disabled,#c2c2c2));cursor:not-allowed;}
+@media (prefers-reduced-motion:reduce),print{m-collapse-item>details>summary>[data-part="arrow"]{transition:none !important;}}
+@media (forced-colors:active){m-collapse{--_m-collapse-text:CanvasText;--_m-collapse-title:CanvasText;--_m-collapse-line:CanvasText;--_m-collapse-disabled:GrayText;}}
+@media print{m-collapse{--_m-collapse-text:#000;--_m-collapse-title:#000;--_m-collapse-line:#000;--_m-collapse-disabled:#000;}}

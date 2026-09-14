@@ -2,8 +2,9 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createDialog, createDialogOwner, createNativeDialog } from "../src/components/dialog/index.js"
+import { createDialog, createDialogOwner, createNativeDialog, Dialog, DialogAction, DialogBody, DialogFooter, DialogHeader, registerDialog } from "../src/components/dialog/index.js"
 import type { DialogController, DialogOptions, DialogOwner, NativeDialogController } from "../src/components/dialog/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const handles: (NativeDialogController | DialogOwner)[] = []
 const proto = HTMLDialogElement.prototype
@@ -23,7 +24,7 @@ function deferred() {
 }
 function fixture() {
   const root = document.createElement("div")
-  root.innerHTML = `<button id="opener">Open</button><dialog class="mui-native-dialog mui-dialog" aria-labelledby="title" aria-describedby="content"><header data-dialog-header><span data-dialog-icon aria-hidden="true">!</span><h2 id="title" data-dialog-title>Review</h2><button type="button" data-dialog-action="close">Close</button></header><div id="content" data-dialog-content>Review this change.</div><p hidden role="alert" data-dialog-error>Action failed. Try again.</p><p hidden role="status" data-dialog-pending>Working…</p><footer data-dialog-actions><button type="button" data-dialog-action="negative">Cancel</button><button type="button" data-dialog-action="positive">Confirm</button></footer><form method="dialog"><label>Name <input name="name" required></label><button value="saved">Save form</button></form></dialog>`
+  root.innerHTML = `<button id="opener">Open</button><dialog class="m-native-dialog m-dialog" aria-labelledby="title" aria-describedby="content"><header data-dialog-header><span data-dialog-icon aria-hidden="true">!</span><h2 id="title" data-dialog-title>Review</h2><button type="button" data-dialog-action="close">Close</button></header><div id="content" data-dialog-content>Review this change.</div><p hidden role="alert" data-dialog-error>Action failed. Try again.</p><p hidden role="status" data-dialog-pending>Working…</p><footer data-dialog-actions><button type="button" data-dialog-action="negative">Cancel</button><button type="button" data-dialog-action="positive">Confirm</button></footer><form method="dialog"><label>Name <input name="name" required></label><button value="saved">Save form</button></form></dialog>`
   document.body.append(root)
   return root.querySelector("dialog")!
 }
@@ -68,7 +69,7 @@ describe("Dialog native lifetime", () => {
     expect(pkg.exports["./dialog"].import).toBe("./dist/markup-ui-dialog.js")
     expect(pkg.exports["./dialog/style.css"]).toBe("./dist/markup-ui-dialog.css")
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("mui-dialog")).toBeUndefined()
+    expect(customElements.get("m-dialog")).toBe(Dialog)
   })
   it("retains authored native nodes, roles, descriptions and form values", () => {
     const dialog = fixture()
@@ -315,7 +316,7 @@ describe("Dialog guarded native decisions", () => {
     const failure = new Error("local failure")
     const c = enhance({ onPositiveClick: () => { if (kind === "throw") throw failure; return Promise.reject(failure) } })
     const error = vi.fn()
-    c.dialog.addEventListener("mui:dialog-error", error)
+    c.dialog.addEventListener("m:dialog-error", error)
     c.showModal(); await act(c)
     await expect(c.lastAction).rejects.toBe(failure)
     expect(c.dialog.open).toBe(true)
@@ -341,7 +342,7 @@ describe("Dialog guarded native decisions", () => {
   })
   it("reports stale rejection without changing the reopened DOM", async () => {
     const task = deferred(); const c = enhance({ onPositiveClick: () => task.promise })
-    const errors = vi.fn(); c.dialog.addEventListener("mui:dialog-error", errors)
+    const errors = vi.fn(); c.dialog.addEventListener("m:dialog-error", errors)
     c.showModal(); await act(c); c.close(); c.showModal()
     const html = c.dialog.outerHTML
     task.reject(new Error("late")); await flush()
@@ -474,7 +475,7 @@ describe("Explicit template owners and CSS", () => {
   it("blocks reentrant creation during owner disposal", () => {
     const a = owner(); const source = template(); const c = a.create(source)
     let rejected = false
-    c.dialog.addEventListener("mui:native-dialog-dispose", () => {
+    c.dialog.addEventListener("m:native-dialog-dispose", () => {
       try { a.create(source) } catch { rejected = true }
     })
     a.dispose()
@@ -523,8 +524,8 @@ describe("Explicit template owners and CSS", () => {
   })
   it("keeps inline content distinct from native surface sizing and uses audited theme roles", () => {
     const css = dialogCSS()
-    expect(css).toContain("inline-size:var(--mui-dialog-width,auto)")
-    expect(css).toContain("dialog.mui-dialog{inline-size:var(--mui-dialog-width,446px)")
+    expect(css).toContain("inline-size:var(--m-dialog-width,auto)")
+    expect(css).toContain("dialog.m-dialog{inline-size:var(--m-dialog-width,446px)")
     expect(css).toContain("padding:16px 28px 20px")
     expect(css).toContain("font-size:18px;font-weight:500")
     expect(css).toContain("margin:8px 0 16px")
@@ -532,44 +533,44 @@ describe("Explicit template owners and CSS", () => {
     expect(css).toContain("light-dark(#333639,#ffffffd1)")
     expect(css).toContain("light-dark(#fff,#2c2c32)")
     for (const type of ["info", "success", "warning", "error"]) {
-      expect(css).toContain(`--mui-color-${type},`)
-      expect(css).toContain(`--mui-color-${type}-hover,`)
+      expect(css).toContain(`--m-color-${type},`)
+      expect(css).toContain(`--m-color-${type}-hover,`)
     }
-    expect(css).not.toMatch(/--mui-(?:text-primary|text-secondary|bg-surface|border),/)
+    expect(css).not.toMatch(/--m-(?:text-primary|text-secondary|bg-surface|border),/)
   })
   it("styles only authored decision buttons and preserves author accents and disabled states", () => {
     const css = dialogCSS()
-    expect(css).toContain('.mui-dialog :where(button)[data-dialog-action]')
+    expect(css).toContain('.m-dialog :where(button)[data-dialog-action]')
     expect(css).toContain('[data-dialog-action=positive]:enabled:hover')
     expect(css).toContain('[data-dialog-action=negative]:enabled:hover')
     expect(css).toContain('[data-dialog-action=close]:enabled:hover')
     expect(css).toContain("--_dialog-disabled:.38")
-    expect(css).toContain("var(--mui-dialog-accent,var(--_dialog-hover))")
-    expect(css).not.toMatch(/--mui-dialog-accent\s*:/)
+    expect(css).toContain("var(--m-dialog-accent,var(--_dialog-hover))")
+    expect(css).not.toMatch(/--m-dialog-accent\s*:/)
     expect(css).toContain(":focus-visible")
     expect(css).toContain(':where(:has([data-dialog-action=close]:not([hidden])))')
   })
   it("leaves native modal positioning to the browser and anchors only nonmodal screen content", () => {
     const css = dialogCSS()
-    expect(css.match(/\.mui-dialog\{([^{}]*)\}/)?.[1]).not.toContain("position:")
-    expect(css).toContain("@media screen{.mui-dialog:not(dialog),dialog.mui-native-dialog.mui-dialog[open]:not(:modal){position:relative}}")
+    expect(css.match(/\.m-dialog\{([^{}]*)\}/)?.[1]).not.toContain("position:")
+    expect(css).toContain("@media screen{.m-dialog:not(dialog),dialog.m-native-dialog.m-dialog[open]:not(:modal){position:relative}}")
     expect(css).toContain("button[data-dialog-action=close]{position:absolute")
     expect(css).not.toMatch(/:modal\{position:(?:absolute|relative)/)
   })
   it("keeps Dialog paint and nonmodal anchoring more specific than repeated native base styles", () => {
     const css = dialogCSS()
     const native = normalizeCSS(readFileSync(resolve("src", "components", "dialog", "native.css"), "utf8"))
-    expect(native).toContain("dialog.mui-native-dialog{")
-    expect(native).toContain("dialog.mui-native-dialog[open]:not(:modal){position:static")
-    expect(native).toContain("dialog.mui-native-dialog[data-native-dialog-inline][open]{display:block;position:static")
-    expect(css).toContain(".mui-dialog,dialog.mui-native-dialog.mui-dialog{color:var(--mui-dialog-color,light-dark(")
-    expect(css).toContain("background:var(--mui-dialog-background,light-dark(")
-    expect(css).toContain("dialog.mui-native-dialog.mui-dialog[open]:not(:modal){position:relative}")
-    expect(css).not.toContain(".mui-dialog,dialog.mui-dialog{")
+    expect(native).toContain("dialog.m-native-dialog{")
+    expect(native).toContain("dialog.m-native-dialog[open]:not(:modal){position:static")
+    expect(native).toContain("dialog.m-native-dialog[data-native-dialog-inline][open]{display:block;position:static")
+    expect(css).toContain(".m-dialog,dialog.m-native-dialog.m-dialog{color:var(--m-dialog-color,light-dark(")
+    expect(css).toContain("background:var(--m-dialog-background,light-dark(")
+    expect(css).toContain("dialog.m-native-dialog.m-dialog[open]:not(:modal){position:relative}")
+    expect(css).not.toContain(".m-dialog,dialog.m-dialog{")
   })
   it("retains explicit reduced-motion overrides and native error/pending feedback", () => {
     const css = dialogCSS()
-    expect(css).toContain("@media(prefers-reduced-motion:reduce){.mui-dialog,.mui-dialog::backdrop{animation:none;transition:none;scroll-behavior:auto}}")
+    expect(css).toContain("@media(prefers-reduced-motion:reduce){.m-dialog,.m-dialog::backdrop{animation:none;transition:none;scroll-behavior:auto}}")
     expect(css).toContain("[data-dialog-error]{border-inline-start:.25rem solid #ac2635;padding-inline-start:.5rem}")
     expect(css).toContain("[data-dialog-pending]{font-weight:600}")
     expect(css).toContain("[data-dialog-error]{border-color:CanvasText}")
@@ -580,9 +581,165 @@ describe("Explicit template owners and CSS", () => {
     expect(gzipSync(`${native}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(1500)
   })
   it("normalizes formatter whitespace without hiding selector or value-token changes", () => {
-    expect(normalizeCSS(".mui-dialog :where(button) { padding: 16px 28px; }"))
-      .toBe(".mui-dialog :where(button){padding:16px 28px}")
-    expect(normalizeCSS(".mui-dialog :where(button){padding:16px 28px}"))
-      .not.toBe(normalizeCSS(".mui-dialog:where(button){padding:16px28px}"))
+    expect(normalizeCSS(".m-dialog :where(button) { padding: 16px 28px; }"))
+      .toBe(".m-dialog :where(button){padding:16px 28px}")
+    expect(normalizeCSS(".m-dialog :where(button){padding:16px 28px}"))
+      .not.toBe(normalizeCSS(".m-dialog:where(button){padding:16px28px}"))
+  })
+})
+
+describe("canonical Dialog ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers dialog elements", () => {
+    expect(Dialog.tag).toBe("m-dialog")
+    expect(DialogHeader.tag).toBe("m-dialog-header")
+    expect(DialogBody.tag).toBe("m-dialog-body")
+    expect(DialogFooter.tag).toBe("m-dialog-footer")
+    expect(DialogAction.tag).toBe("m-dialog-action")
+    expect(ViewElement.prototype.isPrototypeOf(Dialog.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(DialogHeader.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(DialogBody.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(DialogFooter.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(DialogAction.prototype)).toBe(true)
+    expect(customElements.get("m-dialog")).toBe(Dialog)
+    expect(customElements.get("m-dialog-header")).toBe(DialogHeader)
+    expect(customElements.get("m-dialog-body")).toBe(DialogBody)
+    expect(customElements.get("m-dialog-footer")).toBe(DialogFooter)
+    expect(customElements.get("m-dialog-action")).toBe(DialogAction)
+    expect(Dialog.observedAttributes).toEqual(["open", "title", "closable", "mask-closable", "type"])
+
+    const define = vi.fn()
+    expect(() => registerDialog({ get: name => name === "m-dialog" ? class extends HTMLElement {} : undefined, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerDialog()).not.toThrow()
+  })
+
+  it("handles typed properties, attributes and defaults", () => {
+    const dialog = document.createElement("m-dialog") as Dialog
+    document.body.append(dialog)
+    expect(dialog.open).toBe(false)
+    expect(dialog.title).toBe("")
+    expect(dialog.closable).toBe(false)
+    expect(dialog.maskClosable).toBe(true)
+    expect(dialog.type).toBe("default")
+
+    dialog.title = "Test Dialog"
+    expect(dialog.title).toBe("Test Dialog")
+    expect(dialog.getAttribute("title")).toBe("Test Dialog")
+
+    dialog.type = "warning"
+    expect(dialog.type).toBe("warning")
+    expect(dialog.getAttribute("type")).toBe("warning")
+
+    dialog.closable = true
+    expect(dialog.closable).toBe(true)
+    expect(dialog.hasAttribute("closable")).toBe(true)
+
+    dialog.maskClosable = false
+    expect(dialog.maskClosable).toBe(false)
+    expect(dialog.getAttribute("mask-closable")).toBe("false")
+
+    dialog.maskClosable = true
+    expect(dialog.maskClosable).toBe(true)
+
+    expect(() => { (dialog as any).type = "invalid" }).toThrow(RangeError)
+  })
+
+  it("opens with showModal() and closes with close(), emitting m:close", () => {
+    document.body.innerHTML = `<m-dialog title="Test Modal"><p>Content</p></m-dialog>`
+    const dialog = document.querySelector("m-dialog") as Dialog
+    expect(dialog.open).toBe(false)
+    expect(dialog.hidden).toBe(true)
+
+    const closeSpy = vi.fn()
+    dialog.addEventListener("m:close", closeSpy)
+
+    dialog.showModal()
+    expect(dialog.open).toBe(true)
+    expect(dialog.hasAttribute("open")).toBe(true)
+    expect(dialog.hidden).toBe(false)
+
+    dialog.close("confirmed")
+    expect(dialog.open).toBe(false)
+    expect(dialog.hidden).toBe(true)
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "confirmed" })
+  })
+
+  it("handles closable close button and supports m:cancel event prevention", () => {
+    document.body.innerHTML = `<m-dialog title="Closable Dialog" closable open><p>Content</p></m-dialog>`
+    const dialog = document.querySelector("m-dialog") as Dialog
+    expect(dialog.open).toBe(true)
+
+    const closeButton = dialog.querySelector<HTMLButtonElement>("[data-dialog-action='close']")
+    expect(closeButton).not.toBeNull()
+
+    const cancelSpy = vi.fn((e: CustomEvent) => e.preventDefault())
+    dialog.addEventListener("m:cancel", cancelSpy)
+
+    closeButton!.click()
+    expect(cancelSpy).toHaveBeenCalledOnce()
+    expect(cancelSpy.mock.calls[0][0].detail).toEqual({ value: "close" })
+    expect(dialog.open).toBe(true)
+
+    dialog.removeEventListener("m:cancel", cancelSpy)
+    closeButton!.click()
+    expect(dialog.open).toBe(false)
+  })
+
+  it("handles maskClosable dismiss and respects mask-closable=false", () => {
+    document.body.innerHTML = `<m-dialog open mask-closable="true"><p>Content</p></m-dialog>`
+    const dialog = document.querySelector("m-dialog") as Dialog
+    expect(dialog.open).toBe(true)
+
+    const cancelSpy = vi.fn()
+    dialog.addEventListener("m:cancel", cancelSpy)
+
+    dialog.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    expect(cancelSpy).toHaveBeenCalledOnce()
+    expect(cancelSpy.mock.calls[0][0].detail).toEqual({ value: "mask" })
+    expect(dialog.open).toBe(false)
+
+    dialog.maskClosable = false
+    dialog.showModal()
+    expect(dialog.open).toBe(true)
+    cancelSpy.mockClear()
+
+    dialog.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+    expect(cancelSpy).not.toHaveBeenCalled()
+    expect(dialog.open).toBe(true)
+  })
+
+  it("handles Escape key cancellation", () => {
+    document.body.innerHTML = `<m-dialog open><p>Content</p></m-dialog>`
+    const dialog = document.querySelector("m-dialog") as Dialog
+
+    const cancelSpy = vi.fn()
+    dialog.addEventListener("m:cancel", cancelSpy)
+
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }))
+    expect(cancelSpy).toHaveBeenCalledOnce()
+    expect(cancelSpy.mock.calls[0][0].detail).toEqual({ value: "escape" })
+    expect(dialog.open).toBe(false)
+  })
+
+  it("supports structured light-DOM companion elements", () => {
+    document.body.innerHTML = `
+      <m-dialog open>
+        <m-dialog-header><h3>Custom Header</h3></m-dialog-header>
+        <m-dialog-body><p>Custom Body</p></m-dialog-body>
+        <m-dialog-footer>
+          <m-dialog-action><button id="btn">Action</button></m-dialog-action>
+        </m-dialog-footer>
+      </m-dialog>`
+    const dialog = document.querySelector("m-dialog") as Dialog
+    const header = dialog.querySelector("m-dialog-header") as DialogHeader
+    const body = dialog.querySelector("m-dialog-body") as DialogBody
+    const footer = dialog.querySelector("m-dialog-footer") as DialogFooter
+    const action = dialog.querySelector("m-dialog-action") as DialogAction
+
+    expect(header.getAttribute("data-dialog-header")).toBe("")
+    expect(body.getAttribute("data-dialog-content")).toBe("")
+    expect(footer.getAttribute("data-dialog-actions")).toBe("")
+    expect(action.dataset.part).toBe("action")
   })
 })

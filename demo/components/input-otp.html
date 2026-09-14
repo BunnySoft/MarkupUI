@@ -1,55 +1,106 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI single-field Input OTP</title>
+  <title>Input OTP - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-input-otp.css">
-  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./input-otp.css">
-  <script defer src="../../dist/markup-ui-input.global.js"></script>
-  <script defer src="../../dist/markup-ui-form.global.js"></script>
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-input-otp.global.js"></script>
-  <script defer src="./input-otp.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./input-otp.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-<main>
-  <h1>Input OTP: one native field, not six focus stops</h1>
-  <p>Use dummy codes only. Completion reports local format, not authentication or a submit intent. No code is logged, copied to status text, stored or sent.</p>
-  <dialog id="example" aria-labelledby="example-title" open>
-    <h2 id="example-title">Local code-entry example</h2>
-    <p>This nonmodal example uses a native method=dialog form. Without JavaScript, valid submission only closes this dialog: no code enters a URL or network request.</p>
-    <form id="verification" class="mui-form" method="dialog">
-      <div class="mui-form-item" id="otp-item">
-        <label for="otp">Six-digit code (required)</label>
-        <div class="mui-input" data-input id="otp-input">
-          <input id="otp" class="mui-input-otp" data-input-control name="code" type="password"
-                 autocomplete="one-time-code" inputmode="numeric" maxlength="6" pattern="[0-9]{6}" required
-                 aria-describedby="otp-help">
+  <main data-demo-page class="component-docs">
+    <h1>Input OTP</h1>
+    <p>A single-field one-time passcode component that preserves native editing, selection, autofill hints, and forms.</p>
+    <nav class="component-docs-nav" aria-label="Input OTP documentation">
+      <a href="#basic-title">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-input-otp.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-input-otp.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="basic-title">Basic Usage</h2>
+          <p>Standard 6-digit one-time passcode entry with change and completion detection.</p>
         </div>
-        <p id="otp-help">Leading zeroes count. Numeric inputmode is only a keyboard hint. Password masking is presentation, not encryption. SMS autofill depends on your browser and operating system.</p>
-        <p class="mui-input-otp-status" id="otp-status">Enter six ASCII digits in the original field.</p>
-        <p id="otp-error" class="mui-form-item__feedback" hidden></p>
+      </header>
+      <div data-demo-preview>
+        <m-input-otp id="basic-otp"></m-input-otp>
+        <m-p id="basic-status">Current value: (empty)</m-p>
+        <m-p id="complete-status">Status: Incomplete</m-p>
+        <m-box class="demo-tools">
+          <m-button id="clear-basic">Clear</m-button>
+          <m-button id="fill-basic">Set 123456</m-button>
+        </m-box>
       </div>
-      <div class="actions">
-        <button type="submit" name="intent" value="local-demo">Finish local example</button>
-        <button type="reset">Native reset</button>
-        <button type="button" id="validate" hidden>Check native constraints</button>
+    </section>
+
+    <section data-demo-example="length-mask" aria-labelledby="length-mask-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="length-mask-title">Length and Password Masking</h2>
+          <p>Custom passcode length and password masking for sensitive codes.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <m-text>4-digit masked code:</m-text>
+        <m-input-otp id="mask-otp" length="4" mask value="1234"></m-input-otp>
+        <m-box class="demo-tools">
+          <m-button id="toggle-mask">Toggle Mask</m-button>
+        </m-box>
       </div>
-    </form>
-  </dialog>
-  <div class="actions">
-    <button type="button" id="dummy" hidden>Set dummy code silently</button>
-    <button type="button" id="clear" hidden>Clear silently</button>
-    <button type="button" id="mask" hidden>Toggle native masking</button>
-    <button type="button" id="readonly" hidden>Toggle readonly</button>
-    <button type="button" id="disable" hidden>Toggle disabled</button>
-    <button type="button" id="cancel" hidden>Cancel next reset</button>
-    <button type="button" id="rtl">Toggle RTL</button>
-    <button type="button" id="disconnect" hidden>Disconnect helpers</button>
-  </div>
-  <p id="completion">Completion signals: 0. No authentication is performed.</p>
-  <p id="submission">No local submission yet. Submitted codes are never displayed.</p>
-</main>
+    </section>
+
+    <section data-demo-example="sizes" aria-labelledby="sizes-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="sizes-title">Sizes and Disabled State</h2>
+          <p>Small, medium, and large sizes, and disabled user interaction.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <m-box class="demo-row">
+          <m-input-otp size="small" value="123456"></m-input-otp>
+          <m-input-otp size="medium" value="123456"></m-input-otp>
+          <m-input-otp size="large" value="123456"></m-input-otp>
+        </m-box>
+        <m-input-otp id="disabled-otp" disabled value="654321"></m-input-otp>
+        <m-box class="demo-tools">
+          <m-button id="toggle-disabled">Toggle Disabled</m-button>
+        </m-box>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="input-otp-api">
+        <p>Loading API documentation.</p>
+      </div>
+    </section>
+  </main>
 </body>
 </html>

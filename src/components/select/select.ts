@@ -1,259 +1,223 @@
-export type SelectValue = string | null | string[]
-export interface SelectController {
-  readonly control: HTMLSelectElement
-  readonly filter: HTMLInputElement | null
-  readonly connected: boolean
-  readonly error: string | null
-  readonly value: SelectValue
-  setValue(value: string | null | readonly string[]): void
-  setFilter(value: string): void
-  clear(): boolean
-  refresh(): void
-  disconnect(): void
-}
-const owner = Symbol.for("markup-ui.select.owner")
-type Owned = Element & { [owner]?: SelectController }
-interface Attribute { node: Element; name: string; before: string | null; base: string | null; last: string | null }
+import { ViewElement } from "../../core/index.js"
+import { createSelect, selectOptions, selectValue, setSelectValue } from "../native-select.js"
+import type { SelectController, SelectValue } from "../native-select.js"
 
-/** Enhances authored options without replacing the native select or its editing engine. */
-export function createSelect(root: HTMLElement): SelectController {
-  const document = root?.ownerDocument, view = document?.defaultView
-  if (!view || !(root instanceof view.HTMLElement)) throw new TypeError("Select needs an authored root.")
-  if ((root as Owned)[owner]) throw new Error("Select root already has an owner.")
-  const own = (node: Element) => node.closest("[data-select]") === root
-  function one(selector: string, required = false): HTMLElement | null {
-    const nodes = [...root.querySelectorAll<HTMLElement>(selector)].filter(own)
-    if (nodes.length > 1 || required && nodes.length !== 1) throw new TypeError(`Select needs ${required ? "one" : "at most one"} ${selector}.`)
-    return nodes[0] ?? null
+export type { SelectValue } from "../native-select.js"
+export type SelectSize = "tiny" | "small" | "medium" | "large"
+export type SelectStatus = "success" | "warning" | "error"
+const sizes = ["tiny", "small", "medium", "large"] as const
+const statuses = ["success", "warning", "error"] as const
+const nativeAttributes = ["name", "disabled", "required", "multiple", "form", "autocomplete", "aria-label", "aria-labelledby", "aria-describedby", "aria-invalid"]
+function text(value: string): void { if (typeof value !== "string") throw new TypeError("Expected a string.") }
+function boolean(value: boolean): void { if (typeof value !== "boolean") throw new TypeError("Expected a boolean.") }
+function integer(value: number, minimum: number): void {
+  if (!Number.isInteger(value) || value < minimum || value > 2147483647) throw new RangeError("Expected an in-range integer.")
+}
+
+/**
+ * One native select owns selection, keyboard, focus, validation and forms.
+ * Native options/optgroups and authored helper nodes retain identity.
+ * @event {"name":"Input","web":"input","bubbles":true,"cancelable":false,"composed":true}
+ * @event {"name":"Change","web":"change","bubbles":true,"cancelable":false,"composed":false}
+ * @event {"name":"Invalid","web":"invalid","bubbles":false,"cancelable":true,"composed":false}
+ * @event {"name":"Clear","web":"m:select-clear","bubbles":true,"cancelable":false,"composed":false,"detail":{"previous":"SelectValue"}}
+ * @event {"name":"Error","web":"m:select-error","bubbles":false,"cancelable":false,"composed":false,"detail":{"message":"string"}}
+ * @region {"name":"content","accepts":["one native select or direct native options/optgroups","phrasing affixes","named native clear button","labelled external literal filter for a native list","plain empty message"],"min":0,"max":null}
+ */
+export class Select extends ViewElement {
+  public static readonly tag = "m-select"
+  public static readonly observedAttributes = ["name", "disabled", "required", "multiple", "form", "autocomplete", "aria-label", "aria-labelledby", "aria-describedby", "aria-invalid", "size", "status", "borderless", "list-size"]
+  #control?: HTMLSelectElement
+  #generated = false
+  #initialized = false
+  #generation = 0
+  #controller: SelectController | undefined
+  #observer?: MutationObserver
+  #anatomy: Element[] = []
+  #failure: string | null = null
+  #pendingAttributes = new Set<string>()
+  #pendingSelection = false
+
+  public connectedCallback(): void {
+    const generation = ++this.#generation
+    if (!this.#initialized) { this.upgradeProperties(); this.#initialized = true }
+    this.addEventListener("input", this.#onInput)
+    queueMicrotask(() => { if (this.isConnected && generation === this.#generation) this.#attemptRefresh() })
   }
-  const field = one("[data-select-control]", true)
-  if (!(field instanceof view.HTMLSelectElement)) throw new TypeError("Select requires an authored native select.")
-  const control = field, multiple = control.multiple
-  const clearButton = one("[data-select-clear]") as HTMLButtonElement | null
-  const filter = one("[data-select-filter]") as HTMLInputElement | null
-  const search = one("[data-select-search]"), empty = one("[data-select-empty]")
-  if ((control as Owned)[owner] || filter && (filter as Owned)[owner]) throw new Error("Native Select control/filter already has an owner.")
-  let connected = true, composing = false, pattern = "", error: string | null = null
-  let options: HTMLOptionElement[] = [], groups: HTMLOptGroupElement[] = [], placeholder: HTMLOptionElement | null = null
-  const attributes: Attribute[] = [], removers: (() => void)[] = [], tasks = new Set<number>()
-  function label(node: HTMLSelectElement | HTMLInputElement) {
-    return [...node.labels ?? []].some(item => item.textContent?.trim())
+  public disconnectedCallback(): void { this.#generation++; this.#observer?.disconnect(); this.#release(); this.removeEventListener("input", this.#onInput) }
+  #onInput = (event: Event): void => {
+    if (this.#generated && event.target === this.#control) this.#pendingSelection = true
   }
-  function validate() {
-    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".mui-select[data-select]")
-      || root.hasAttribute("role") || root.hasAttribute("tabindex") || root.closest("label, button, a[href], summary")
-      || [control, clearButton, filter, search, empty].some(node => node && (!root.contains(node) || !own(node)))) {
-      throw new TypeError("Keep Select in its connected light-DOM root, outside labels/interactive wrappers, with no wrapper role/tabindex.")
-    }
-    if (!label(control) || control.hasAttribute("role") || control.hasAttribute("readonly")) {
-      throw new TypeError("Use a labelled native select; no replacement role or fictitious readonly attribute.")
-    }
-    if (control.multiple !== multiple) throw new TypeError("Select multiple mode changed; disconnect and create a new controller.")
-    if (clearButton && (!(clearButton instanceof view!.HTMLButtonElement) || clearButton.getAttribute("type")?.toLowerCase() !== "button"
-      || !(clearButton.getAttribute("aria-label")?.trim() || clearButton.textContent?.trim())
-      || clearButton.parentElement?.closest("label, button, a[href], summary") || clearButton.hasAttribute("role")
-      || clearButton.getAttribute("aria-hidden") === "true"
-      || clearButton.hasAttribute("popovertarget") || clearButton.hasAttribute("commandfor")
-      || clearButton.querySelector("input, button, select, textarea, a[href], [tabindex], [contenteditable], [role]"))) {
-      throw new TypeError("Clear requires a named native type=button without nested interaction or other commands.")
-    }
-    if (filter && (!(filter instanceof view!.HTMLInputElement) || !["text", "search"].includes(filter.type)
-      || !label(filter) || filter.hasAttribute("role") || !search?.contains(filter)
-      || search.contains(control) || clearButton && search.contains(clearButton)
-      || !multiple && control.size < 2)) throw new TypeError("Literal filtering needs a labelled native text/search input in data-select-search and a native list (multiple or size >= 2).")
-    if (search && !filter) throw new TypeError("A search enhancement region needs its native filter input.")
-    if (empty && (empty.hasAttribute("aria-live") || empty.hasAttribute("role") || empty.contains(control))) throw new TypeError("Empty content is authored text, not a live popup/validator.")
-    const next = [...control.options], nextGroups = [...control.querySelectorAll("optgroup")]
-    const keys = new Set<string>()
-    for (const option of next) {
-      if (!option.hasAttribute("value") || keys.has(option.value)) throw new TypeError("Every option needs an explicit unique native string value, including an empty-string option.")
-      if (option.parentElement !== control && !(option.parentElement instanceof view!.HTMLOptGroupElement && option.parentElement.parentElement === control)) {
-        throw new TypeError("Use direct options or one native optgroup level.")
+  public attributeChangedCallback(name: string): void {
+    if (this.#control && (nativeAttributes.includes(name) || name === "list-size")) this.#attribute(name === "list-size" ? "size" : name, this.getAttribute(name))
+    if (this.#initialized && this.isConnected) this.#attemptRefresh()
+  }
+  #parts(selector: string): Element[] { return [...this.querySelectorAll(selector)].filter(node => node.closest("m-select,[data-select]") === this) }
+  #release(): void { this.#controller?.disconnect(); this.#controller = undefined }
+  /** Original or generated native owner. No cloned options, hidden form proxy or defaultValue property.
+   * Host native attributes forward on adoption and subsequent host changes, not every refresh.
+   * Replacement during a tracked composing filter draft throws InvalidStateError; end composition and refresh.
+   */
+  public get native(): HTMLSelectElement {
+    const fields = this.#parts("select") as HTMLSelectElement[]
+    const authored = fields.filter(node => !this.#generated || node !== this.#control)
+    if (authored.length > 1 || this.#parts("m-option").length) throw new TypeError("Use one native select and native option/optgroup nodes, not m-option.")
+    let control = this.#control
+    if (!control || !this.contains(control) || this.#generated && authored.length) {
+      if (this.#controller?.composing) throw new DOMException("Do not replace the native owner while its filter is composing.", "InvalidStateError")
+      const previous = this.#generated && control && this.contains(control) ? control : undefined
+      const next = authored[0] ?? this.ownerDocument.createElement("select")
+      const selection = previous && this.#pendingSelection ? selectValue(previous) : undefined
+      const options = [...(previous ? selectOptions(previous) : []), ...selectOptions(next)]
+      if (new Set(options.map(option => option.value)).size !== options.length) throw new TypeError("Replacement options require unique values; keep the original nodes.")
+      for (const name of nativeAttributes) if (this.hasAttribute(name)) next.setAttribute(name, this.getAttribute(name)!)
+      if (this.hasAttribute("list-size")) next.setAttribute("size", this.getAttribute("list-size")!)
+      if (previous) {
+        for (const name of this.#pendingAttributes) {
+          const value = previous.getAttribute(name)
+          if (value === null) next.removeAttribute(name)
+          else next.setAttribute(name, value)
+        }
+        if (selection !== undefined) setSelectValue(next, selection, false, options)
       }
-      keys.add(option.value)
+      this.#release()
+      const focused = previous === this.ownerDocument.activeElement
+      if (previous) {
+        if (previous.compareDocumentPosition(next) & Node.DOCUMENT_POSITION_FOLLOWING) next.prepend(...previous.childNodes)
+        else next.append(...previous.childNodes)
+      }
+      previous?.remove()
+      this.#control = control = next; this.#generated = !authored.length
+      if (selection !== undefined) setSelectValue(control, selection)
+      this.#pendingAttributes.clear(); this.#pendingSelection = false
+      control.setAttribute("data-select-control", "")
+      if (this.#generated) this.prepend(control)
+      if (focused) control.focus()
     }
-    for (const group of nextGroups) if (group.parentElement !== control || !group.label.trim()) throw new TypeError("Use direct optgroups with nonempty native labels.")
-    const placeholders = next.filter(option => option.hasAttribute("data-select-placeholder"))
-    if (placeholders.length > 1 || placeholders.length && (multiple || control.size > 1 || placeholders[0] !== next[0]
-      || placeholders[0]!.parentElement !== control || placeholders[0]!.value !== "")) {
-      throw new TypeError("A placeholder marker needs the first direct empty-value option of a single dropdown.")
+    const options = [...this.children].filter(node => node.localName === "option" || node.localName === "optgroup")
+    if (options.length) {
+      const children = [...this.children], index = children.indexOf(control)
+      control.prepend(...options.filter(node => children.indexOf(node) < index))
+      control.append(...options.filter(node => children.indexOf(node) > index))
     }
-    return { next, nextGroups, placeholder: placeholders[0] ?? null }
+    if (this.#parts("option,optgroup").some(node => node.closest("select") !== control)) throw new TypeError("Options and groups must belong to the native select.")
+    return control
   }
-  function lease(node: Element, name: string, enhancement = false) {
-    let item = attributes.find(item => item.node === node && item.name === name)
-    if (!item) {
-      const before = node.getAttribute(name)
-      item = { node, name, before, base: enhancement ? null : before, last: before }; attributes.push(item)
-    }
-    return item
+  #attribute(name: string, value: string | null): void {
+    const control = this.native
+    if (value === null) control.removeAttribute(name)
+    else control.setAttribute(name, value)
+    if (this.#generated) this.#pendingAttributes.add(name)
   }
-  function write(item: Attribute, value: string | null) {
-    if (item.node.getAttribute(item.name) !== value) {
-      if (value === null) item.node.removeAttribute(item.name)
-      else item.node.setAttribute(item.name, value)
-    }
-    item.last = value
+  /** Native mode, initially false; changing it retains browser selectedness reconciliation. */
+  public get multiple(): boolean { return this.native.multiple }
+  public set multiple(value: boolean) { boolean(value); this.#attribute("multiple", value ? "" : null); if (this.#initialized) this.refresh() }
+  /** Computed single string (including "") or null; multiple uses DOM-order strings[].
+   * Requires explicit unique option values. Unknown/duplicate/wrong-mode writes throw before selection changes.
+   * Silent assignments use native selectedness setters, including equal writes; defaults remain option.defaultSelected.
+   */
+  public get value(): SelectValue { const control = this.native; selectOptions(control); return selectValue(control) }
+  public set value(value: string | null | readonly string[]) {
+    const control = this.native
+    setSelectValue(control, value)
+    this.#pendingSelection = this.#generated
+    this.#controller?.refresh()
   }
-  function restore(item: Attribute) {
-    if (item.node.getAttribute(item.name) === item.last) {
-      if (item.before === null) item.node.removeAttribute(item.name)
-      else item.node.setAttribute(item.name, item.before)
-    }
+  /** Native index, initially -1 for an empty owner. Out-of-range indices produce native no-selection.
+   * @min -2147483648
+   * @max 2147483647
+   * @integer
+   */
+  public get selectedIndex(): number { return this.native.selectedIndex }
+  public set selectedIndex(value: number) {
+    integer(value, -2147483648)
+    this.native.selectedIndex = value
+    this.#pendingSelection = this.#generated
+    this.#controller?.refresh()
   }
-  function mark(records: MutationRecord[]) {
-    for (const record of records) {
-      const item = attributes.find(item => item.node === record.target && item.name === record.attributeName)
-      if (item) item.before = item.base = item.last = item.node.getAttribute(item.name)
-    }
+  /** Live native collections, not copies or a data-options renderer. */
+  public get options(): HTMLOptionsCollection { return this.native.options }
+  public get selectedOptions(): HTMLCollectionOf<HTMLOptionElement> { return this.native.selectedOptions }
+  /** Native visible-row count, initially 0; distinct from logical visual size.
+   * @min 0
+   * @max 2147483647
+   * @integer
+   */
+  public get listSize(): number { return this.native.size }
+  public set listSize(value: number) { integer(value, 0); this.#attribute("size", String(value)); if (this.#initialized) this.refresh() }
+  /** Native name, initially ""; only successful native options enter FormData. */
+  public get name(): string { return this.native.name }
+  public set name(value: string) { text(value); this.#attribute("name", value) }
+  /** Own flag, initially false. Effective state includes fieldset/first-legend rules. */
+  public get disabled(): boolean { return this.native.disabled }
+  public set disabled(value: boolean) { boolean(value); this.#attribute("disabled", value ? "" : null); if (this.#initialized) this.refresh() }
+  /** Native required, initially false; the browser owns placeholder-label-option validity. */
+  public get required(): boolean { return this.native.required }
+  public set required(value: boolean) { boolean(value); this.#attribute("required", value ? "" : null) }
+  public get form(): HTMLFormElement | null { return this.native.form }
+  public get validity(): ValidityState { return this.native.validity }
+  public get validationMessage(): string { return this.native.validationMessage }
+  public get willValidate(): boolean { return this.native.willValidate }
+  public get size(): SelectSize { return this.choiceAttribute("size", sizes, "medium") }
+  public set size(value: SelectSize) { this.setChoiceAttribute("size", value, sizes) }
+  public get status(): SelectStatus | null { return this.choiceAttribute("status", statuses, null) }
+  public set status(value: SelectStatus | null) { this.setNullableChoiceAttribute("status", value, statuses) }
+  public get borderless(): boolean { return this.hasAttribute("borderless") }
+  public set borderless(value: boolean) { this.setBooleanAttribute("borderless", value) }
+  /** Original optional external text/search input; null without authored filtering anatomy. */
+  public get filter(): HTMLInputElement | null { return this.#parts("[data-select-filter]")[0] as HTMLInputElement | undefined ?? null }
+  /** Most recent anatomy/option validation error, otherwise null. */
+  public get error(): string | null { return this.#failure ?? this.#controller?.error ?? null }
+  public override focus(options?: FocusOptions): void { this.native.focus(options) }
+  public override blur(): void { this.native.blur() }
+  public checkValidity(): boolean { return this.native.checkValidity() }
+  public reportValidity(): boolean { return this.native.reportValidity() }
+  public setCustomValidity(message: string): void { text(message); this.native.setCustomValidity(message) }
+  /** Native picker; platform support, transient activation and native exceptions apply. No hidePicker. */
+  public showPicker(): void { this.native.showPicker() }
+  /** Native insertion preserves node/listener identity; invalid keys are reported by refresh. */
+  public add(element: HTMLOptionElement | HTMLOptGroupElement, before?: HTMLElement | number | null): void { this.native.add(element, before); this.refresh() }
+  public item(index: number): HTMLOptionElement | null { return this.native.item(index) }
+  public namedItem(name: string): HTMLOptionElement | null { return this.native.namedItem(name) }
+  /** Native remove(index); without an index removes the host, as HTMLElement.remove(). */
+  public override remove(index?: number): void { if (index === undefined) super.remove(); else { this.native.remove(index); this.refresh() } }
+  /** Silent literal list filter. Requires a connected authored filter; composing drafts cannot be replaced. */
+  public setFilter(value: string): void {
+    text(value); this.refresh()
+    if (!this.#controller) throw new Error("Select has no connected filter.")
+    this.#controller.setFilter(value)
   }
-  const observer = new view.MutationObserver(records => {
-    mark(records)
-    if (!root.isConnected || root.getRootNode() !== document || !root.contains(control)) { disconnect(); return }
-    attemptRefresh()
-  })
-  function pause() { mark(observer.takeRecords()); observer.disconnect() }
-  function observe() {
-    if (!connected) return
-    observer.observe(root, { subtree: true, childList: true, characterData: true, attributes: true,
-      attributeFilter: ["hidden", "disabled", "readonly", "multiple", "size", "value", "selected", "label", "form",
-        "type", "role", "aria-disabled", "aria-readonly", "data-select-placeholder"] })
-    for (let node = root.parentElement; node; node = node.parentElement) observer.observe(node, { childList: true, attributes: true, attributeFilter: ["disabled", "hidden", "inert"] })
-  }
-  function current(): SelectValue {
-    return multiple ? [...control.selectedOptions].map(option => option.value) : control.selectedIndex < 0 ? null : control.value
-  }
-  function canClear() {
-    return connected && !control.matches(":disabled") && !control.hasAttribute("readonly")
-      && control.getAttribute("aria-readonly") !== "true" && control.getAttribute("aria-disabled") !== "true"
-      && !control.closest("[hidden], [inert]")
-  }
-  function hasSelection() { return [...control.selectedOptions].some(option => option !== placeholder) }
-  function refresh() {
-    if (!connected) return
-    pause()
+  /** Explicit user intent: input, change, then m:select-clear({previous}), only for an editable selection.
+   * Single clears to the marked placeholder or null; multiple clears to []. Not a silent setter.
+   */
+  public clear(): boolean { this.refresh(); return this.#controller?.clear() ?? false }
+  /** Reconcile late anatomy/options and helper visibility. Never restore removed values or emit native edits. */
+  public refresh(): void {
+    if (!this.isConnected) return
+    this.#observer?.disconnect()
     try {
-      const state = validate()
-      options = state.next; groups = state.nextGroups; placeholder = state.placeholder; error = null
-      for (let i = attributes.length - 1; i >= 0; i--) {
-        const item = attributes[i]!
-        if ((item.node instanceof view!.HTMLOptionElement || item.node instanceof view!.HTMLOptGroupElement)
-          && !options.includes(item.node as HTMLOptionElement) && !groups.includes(item.node as HTMLOptGroupElement)) {
-          restore(item); attributes.splice(i, 1)
-        }
-      }
-      if (filter && !composing) pattern = filter.value.trim().toLowerCase()
-      let matches = 0
-      for (const option of options) {
-        const group = option.parentElement instanceof view!.HTMLOptGroupElement ? option.parentElement : null
-        const matched = !filter || `${option.label} ${group?.label ?? ""}`.toLowerCase().includes(pattern)
-        const hidden = filter ? lease(option, "hidden") : null
-        if (hidden) write(hidden, hidden.base !== null || !option.selected && !matched ? hidden.base ?? "" : null)
-        if (option !== placeholder && matched && (hidden ? hidden.base === null : !option.hidden)
-          && (!group || (filter ? lease(group, "hidden").base === null : !group.hidden))) matches++
-      }
-      if (filter) for (const group of groups) {
-        const hidden = lease(group, "hidden")
-        write(hidden, hidden.base !== null || !!pattern && [...group.children].filter(node => node instanceof view!.HTMLOptionElement).every(node => (node as HTMLOptionElement).hidden)
-          ? hidden.base ?? "" : null)
-      }
-      if (search) { const hidden = lease(search, "hidden", true); write(hidden, hidden.base) }
-      if (empty) { const hidden = lease(empty, "hidden", true); write(hidden, matches ? hidden.base ?? "" : hidden.base) }
-      if (clearButton) {
-        const hidden = lease(clearButton, "hidden", true), disabled = lease(clearButton, "disabled")
-        const hide = !hasSelection() || hidden.base !== null
-        if (hide && document!.activeElement === clearButton && canClear()) {
-          control.focus({ preventScroll: true }); if (!connected) return
-        }
-        write(hidden, hide ? hidden.base ?? "" : null)
-        write(disabled, canClear() ? disabled.base : disabled.base ?? "")
-      }
-    } catch (reason) {
-      error = reason instanceof Error ? reason.message : String(reason)
-      if (control.multiple !== multiple) disconnect()
-      throw reason
-    } finally { observe() }
-  }
-  function report(reason: unknown, previous: string | null) {
-    error = reason instanceof Error ? reason.message : String(reason)
-    if (previous !== error) root.dispatchEvent(new view!.CustomEvent("mui:select-error", { detail: { message: error } }))
-  }
-  function attemptRefresh() { const previous = error; try { refresh() } catch (reason) { report(reason, previous) } }
-  function setValue(value: string | null | readonly string[]) {
-    if (!connected) throw new Error("Select is disconnected.")
-    refresh()
-    const keys = multiple ? value : value === null ? [] : [value]
-    if (!Array.isArray(keys) || !multiple && Array.isArray(value) || keys.some(key => typeof key !== "string")
-      || new Set(keys).size !== keys.length || keys.some(key => !options.some(option => option.value === key))) {
-      throw new TypeError("Use an existing string/null for single mode or unique existing strings[] for multiple mode.")
+      void this.size; void this.status
+      void this.native
+      this.classList.add("m-select"); this.setAttribute("data-select", "")
+      const anatomy = this.#parts("select,[data-select-control],[data-select-clear],[data-select-filter],[data-select-search],[data-select-empty]")
+      if (!this.#controller?.connected || anatomy.length !== this.#anatomy.length
+        || anatomy.some((node, index) => node !== this.#anatomy[index])) {
+        const composing = this.#controller?.filter === this.filter && this.#controller?.composing || false
+        this.#release()
+        this.#controller = createSelect(this, composing, true)
+        this.#anatomy = anatomy
+      } else this.#controller.refresh()
+      this.#failure = null
+    } catch (reason) { this.#failure = reason instanceof Error ? reason.message : String(reason); throw reason }
+    finally {
+      this.#observer ??= new MutationObserver(() => this.#attemptRefresh())
+      if (this.isConnected) this.#observer.observe(this, { childList: true, subtree: true, attributes: true, attributeFilter: ["multiple"] })
     }
-    if (multiple) {
-      for (const option of options) { const selected = keys.includes(option.value); if (option.selected !== selected) option.selected = selected }
-    } else if (value === null) control.selectedIndex = -1
-    else if (current() !== value) control.value = value as string
-    refresh()
   }
-  function setFilter(value: string) {
-    if (!connected || !filter) throw new Error("Select has no connected filter.")
-    if (typeof value !== "string") throw new TypeError("Filter needs a literal string.")
-    if (composing) throw new view!.DOMException("Do not replace a composing filter draft.", "InvalidStateError")
-    filter.value = value; refresh()
-  }
-  function clear() {
-    refresh()
-    if (!canClear() || !hasSelection()) return false
-    const previous = current()
-    if (document!.activeElement === clearButton) control.focus({ preventScroll: true })
-    if (!canClear()) return false
-    setValue(multiple ? [] : placeholder ? "" : null)
-    control.dispatchEvent(new view!.Event("input", { bubbles: true, composed: true }))
-    control.dispatchEvent(new view!.Event("change", { bubbles: true }))
-    control.dispatchEvent(new view!.CustomEvent("mui:select-clear", { bubbles: true, detail: { previous } }))
-    return true
-  }
-  function later(callback: () => void) {
-    const id = view!.setTimeout(() => { tasks.delete(id); if (connected) callback() }, 0); tasks.add(id)
-  }
-  function listen(node: EventTarget, type: string, callback: EventListener, capture = false) {
-    node.addEventListener(type, callback, capture); removers.push(() => node.removeEventListener(type, callback, capture))
-  }
-  function disconnect() {
-    if (!connected) return
-    pause(); connected = false
-    removers.splice(0).forEach(remove => remove())
-    tasks.forEach(id => view!.clearTimeout(id)); tasks.clear()
-    const active = document!.activeElement
-    if ((filter && active === filter && search && lease(search, "hidden").before !== null
-      || clearButton && active === clearButton && lease(clearButton, "hidden").before !== null)
-      && control.isConnected && !control.matches(":disabled") && !control.closest("[hidden], [inert]")) control.focus({ preventScroll: true })
-    attributes.forEach(restore)
-    for (const node of [root, control, filter] as (Owned | null)[]) if (node?.[owner] === controller) delete node[owner]
-  }
-  const controller: SelectController = {
-    control, filter, get connected() { return connected }, get error() { return error },
-    get value() { if (!connected) throw new Error("Select is disconnected."); validate(); return current() },
-    setValue, setFilter, clear, refresh, disconnect,
-  }
-  validate()
-  for (const node of [root, control, filter]) if (node) Object.defineProperty(node, owner, { value: controller, configurable: true })
-  listen(control, "input", attemptRefresh); listen(control, "change", attemptRefresh)
-  if (clearButton) listen(clearButton, "click", event => later(() => {
-    if (!event.defaultPrevented && !clearButton.disabled && !clearButton.hidden && !clearButton.matches(":disabled")) {
-      const previous = error; try { clear() } catch (reason) { report(reason, previous) }
+  #attemptRefresh(): void {
+    const previous = this.error
+    try { this.refresh() } catch {
+      if (previous !== this.error) this.emit("m:select-error", { message: this.error! }, { bubbles: false })
     }
-  }))
-  if (filter) {
-    listen(filter, "input", event => { if (!(event instanceof view!.InputEvent && event.isComposing)) attemptRefresh() })
-    listen(filter, "compositionstart", () => { composing = true })
-    listen(filter, "compositionend", () => { composing = false; attemptRefresh() })
-    listen(filter, "change", attemptRefresh)
   }
-  listen(document!, "reset", event => {
-    if (event.target === control.form || filter && event.target === filter.form) later(() => {
-      if (!event.defaultPrevented && filter?.form === event.target) composing = false
-      attemptRefresh()
-    })
-  }, true)
-  try { refresh() } catch (reason) { disconnect(); throw reason }
-  return controller
 }

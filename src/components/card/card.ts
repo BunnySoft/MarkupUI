@@ -1,12 +1,21 @@
-const regions = ["cover", "header", "header-extra", "content", "footer", "action"] as const
-const selector = (name: string): string => `mui-card-${name},[data-mui-card-${name}]`
-const regionSelector = regions.map(selector).join(",")
+import { ViewElement } from "../../core/index.js"
+import { cardSizes, cardSegments } from "./model.js"
+import type { CardSize, CardSegment, CardCloseDetail } from "./model.js"
 
-export interface CardCloseDetail {
-  originalEvent: MouseEvent
-}
+const regionSelector = "m-card-cover,m-card-header,m-card-header-extra,m-card-content,m-card-footer,m-card-action"
 
-export class MuiCard extends HTMLElement {
+/**
+ * An application-owned surface with native close intent and light-DOM regions.
+ * @region {"name":"cover","element":"m-card-cover","accepts":["display"],"min":0,"max":1}
+ * @region {"name":"header","element":"m-card-header","accepts":["heading","content"],"min":0,"max":1}
+ * @region {"name":"headerExtra","element":"m-card-header-extra","accepts":["content","controls"],"min":0,"max":1}
+ * @region {"name":"content","element":"m-card-content","accepts":["content","controls"],"min":0,"max":1}
+ * @region {"name":"footer","element":"m-card-footer","accepts":["content","controls"],"min":0,"max":1}
+ * @region {"name":"action","element":"m-card-action","accepts":["actions"],"min":0,"max":1}
+ * @states structured
+ */
+export class Card extends ViewElement {
+  public static readonly tag = "m-card"
   public static get observedAttributes(): string[] { return ["title", "closable", "close-label", "close-focusable"] }
 
   private generatedHeader: HTMLElement | undefined
@@ -19,15 +28,9 @@ export class MuiCard extends HTMLElement {
   public connectedCallback(): void {
     if (!this.upgraded) {
       this.upgraded = true
-      for (const name of ["title", "size", "bordered", "closable", "closeFocusable", "closeLabel", "hoverable", "embedded", "segmented", "contentScrollable"]) {
-        if (Object.prototype.hasOwnProperty.call(this, name)) {
-          const value: unknown = Reflect.get(this, name)
-          Reflect.deleteProperty(this, name)
-          Reflect.set(this, name, value)
-        }
-      }
+      this.upgradeProperties()
     }
-    this.dataset.muiCard = ""
+    this.dataset.part = "card"
     this.observer ??= new MutationObserver(() => this.synchronize())
     this.synchronize()
   }
@@ -41,28 +44,36 @@ export class MuiCard extends HTMLElement {
     if (this.isConnected) this.synchronize()
   }
 
-  public get size(): string { return this.getAttribute("size") ?? "medium" }
-  public set size(value: string) { this.setAttribute("size", value) }
-  public get bordered(): boolean { return this.getAttribute("bordered") !== "false" }
-  public set bordered(value: boolean) { this.setAttribute("bordered", String(value)) }
+  public override get title(): string { return this.getAttribute("title") ?? "" }
+  public override set title(value: string) { this.setStringAttribute("title", value) }
+  public get size(): CardSize { return this.choiceAttribute("size", cardSizes, "medium") }
+  public set size(value: CardSize) { this.setChoiceAttribute("size", value, cardSizes) }
+  public get bordered(): boolean { return this.booleanAttribute("bordered", true) }
+  public set bordered(value: boolean) { this.setBooleanAttribute("bordered", value, false) }
   public get closable(): boolean { return this.hasAttribute("closable") }
-  public set closable(value: boolean) { this.toggleAttribute("closable", value) }
-  public get closeFocusable(): boolean { return this.getAttribute("close-focusable") !== "false" }
-  public set closeFocusable(value: boolean) { this.setAttribute("close-focusable", String(value)) }
+  public set closable(value: boolean) { this.setBooleanAttribute("closable", value) }
+  public get closeFocusable(): boolean { return this.booleanAttribute("close-focusable", true) }
+  public set closeFocusable(value: boolean) { this.setBooleanAttribute("close-focusable", value, false) }
   public get closeLabel(): string { return this.getAttribute("close-label")?.trim() || "Close card" }
-  public set closeLabel(value: string) { this.setAttribute("close-label", value) }
+  public set closeLabel(value: string) { this.setStringAttribute("close-label", value) }
   public get hoverable(): boolean { return this.hasAttribute("hoverable") }
-  public set hoverable(value: boolean) { this.toggleAttribute("hoverable", value) }
+  public set hoverable(value: boolean) { this.setBooleanAttribute("hoverable", value) }
   public get embedded(): boolean { return this.hasAttribute("embedded") }
-  public set embedded(value: boolean) { this.toggleAttribute("embedded", value) }
+  public set embedded(value: boolean) { this.setBooleanAttribute("embedded", value) }
   public get segmented(): boolean { return this.hasAttribute("segmented") }
-  public set segmented(value: boolean) { this.toggleAttribute("segmented", value) }
+  public set segmented(value: boolean) { this.setBooleanAttribute("segmented", value) }
+  public get segmentedContent(): CardSegment | null { return this.choiceAttribute("segmented-content", cardSegments, null) }
+  public set segmentedContent(value: CardSegment | null) { this.setNullableChoiceAttribute("segmented-content", value, cardSegments) }
+  public get segmentedFooter(): CardSegment | null { return this.choiceAttribute("segmented-footer", cardSegments, null) }
+  public set segmentedFooter(value: CardSegment | null) { this.setNullableChoiceAttribute("segmented-footer", value, cardSegments) }
+  public get segmentedAction(): CardSegment | null { return this.choiceAttribute("segmented-action", cardSegments, null) }
+  public set segmentedAction(value: CardSegment | null) { this.setNullableChoiceAttribute("segmented-action", value, cardSegments) }
   public get contentScrollable(): boolean { return this.hasAttribute("content-scrollable") }
-  public set contentScrollable(value: boolean) { this.toggleAttribute("content-scrollable", value) }
+  public set contentScrollable(value: boolean) { this.setBooleanAttribute("content-scrollable", value) }
 
   private region(name: string, except?: HTMLElement): HTMLElement | undefined {
     return [...this.children].find((element): element is HTMLElement =>
-      element instanceof HTMLElement && element !== except && element.matches(selector(name)))
+      element instanceof HTMLElement && element !== except && element.localName === `m-card-${name}`)
   }
 
   private synchronize(): void {
@@ -71,10 +82,10 @@ export class MuiCard extends HTMLElement {
     if (this.generatedContent?.parentNode !== this) this.generatedContent = undefined
 
     let header = this.region("header", this.generatedHeader) ?? this.generatedHeader
-    const extra = this.region("header-extra")
-    if (!header && (this.title || this.closable || extra)) {
+    const extras = [...this.children].filter(element => element.localName === "m-card-header-extra")
+    if (!header && (this.title || this.closable || extras.length)) {
       header = this.ownerDocument.createElement("div")
-      header.dataset.muiCardHeader = ""
+      header.dataset.part = "header"
       this.generatedHeader = header
       const cover = this.region("cover")
       if (cover) cover.after(header)
@@ -89,7 +100,7 @@ export class MuiCard extends HTMLElement {
     if (header && header === this.generatedHeader && this.title) {
       if (!this.generatedTitle) {
         this.generatedTitle = this.ownerDocument.createElement("span")
-        this.generatedTitle.dataset.muiCardTitle = ""
+        this.generatedTitle.dataset.part = "title"
       }
       if (this.generatedTitle.textContent !== this.title) this.generatedTitle.textContent = this.title
       if (this.generatedTitle.parentNode !== header) header.prepend(this.generatedTitle)
@@ -97,14 +108,14 @@ export class MuiCard extends HTMLElement {
       this.generatedTitle?.remove()
       this.generatedTitle = undefined
     }
-    if (header && extra) {
-      header.insertBefore(extra, this.closeButton?.parentNode === header ? this.closeButton : null)
+    if (header) {
+      for (const extra of extras) header.insertBefore(extra, this.closeButton?.parentNode === header ? this.closeButton : null)
     }
     if (this.closable && header) {
       if (!this.closeButton) {
         this.closeButton = this.ownerDocument.createElement("button")
         this.closeButton.type = "button"
-        this.closeButton.dataset.muiCardClose = ""
+        this.closeButton.dataset.part = "close"
         const icon = this.ownerDocument.createElement("span")
         icon.setAttribute("aria-hidden", "true")
         this.closeButton.append(icon)
@@ -132,11 +143,12 @@ export class MuiCard extends HTMLElement {
     }
     const loose = [...this.childNodes].filter((node) =>
       node.nodeType === Node.TEXT_NODE ? Boolean(node.textContent?.trim())
-        : node instanceof Element && !node.matches(`${regionSelector},template,script,style`))
+        : node instanceof Element && node !== this.generatedHeader && node !== this.generatedContent
+          && !node.matches(`${regionSelector},template,script,style`))
     if (loose.length) {
       if (!content) {
         content = this.ownerDocument.createElement("div")
-        content.dataset.muiCardContent = ""
+        content.dataset.part = "content"
         this.generatedContent = content
         this.insertBefore(content, this.region("footer") ?? this.region("action") ?? null)
       }
@@ -146,21 +158,17 @@ export class MuiCard extends HTMLElement {
       this.generatedContent.remove()
       this.generatedContent = undefined
     }
-    this.toggleAttribute("structured", [...this.children].some((element) => element.matches(regionSelector)))
+    this.dataset.state = [...this.children].some(element =>
+      element === this.generatedHeader || element === this.generatedContent || element.matches(regionSelector)) ? "structured" : ""
     if (this.isConnected) {
       this.observer?.observe(this, {
-        childList: true, subtree: true, characterData: true, attributes: true,
-        attributeFilter: regions.map((name) => `data-mui-card-${name}`),
+        childList: true, subtree: true, characterData: true,
       })
     }
   }
 
   private readonly onClose = (event: MouseEvent): void => {
     if (!this.closable || !this.isConnected || this.closeButton?.matches(":disabled")) return
-    this.dispatchEvent(new CustomEvent<CardCloseDetail>("mui:close", {
-      bubbles: true,
-      cancelable: true,
-      detail: { originalEvent: event },
-    }))
+    this.emit<CardCloseDetail>("m:close", { originalEvent: event }, { cancelable: true })
   }
 }

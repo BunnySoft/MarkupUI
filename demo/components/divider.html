@@ -1,66 +1,144 @@
 <!doctype html>
-<html lang="en" data-mui-theme="light">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Divider parity demos</title>
+  <title>Divider - MarkupUI</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-divider.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./divider.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-divider.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script type="module" src="./divider.js"></script>
   <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main data-demo-page>
+  <main data-demo-page class="component-docs">
     <h1>Divider</h1>
-    <p>MarkupUI equivalents of the three Divider demos from pinned Naive UI 2.45.3,
-      in the same order and using native separator semantics.</p>
+    <p>Visual and semantic separators that preserve independent title and heading content.</p>
+    <nav class="component-docs-nav" aria-label="Divider documentation">
+      <a href="#basic-heading">Examples</a><a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a><a href="#behavior">Semantics and lifecycle</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-divider.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-divider.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
 
     <section data-demo-example="basic" aria-labelledby="basic-heading">
-      <header data-demo-header><div><h2 id="basic-heading">Basic</h2></div></header>
+      <header data-demo-header><div><h2 id="basic-heading">Basic</h2><p>Semantic by default; dashed paint does not change semantics.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
-        <span>Oops</span>
-        <hr class="mui-divider">
-        <span>Oops</span>
+        <span>Introduction</span>
+        <m-divider id="basic-divider" label="End of introduction"></m-divider>
+        <span>Details</span>
+        <m-divider dashed></m-divider>
+        <span>Decorative separation below does not add an accessibility announcement.</span>
+        <m-divider semantic="false"></m-divider>
       </div>
     </section>
 
     <section data-demo-example="content" aria-labelledby="content-heading">
-      <header data-demo-header><div><h2 id="content-heading">Title</h2></div></header>
+      <header data-demo-header><div><h2 id="content-heading">Title content and independent headings</h2><p>Primary content is one preserved title fragment, never placed inside the native hr.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
-        <span>Oops</span>
-        <div class="mui-divider mui-divider-captioned" data-placement="left"
-          role="separator" aria-labelledby="left-divider-label">
-          <span class="mui-divider-label" id="left-divider-label" aria-hidden="true">Left</span>
-        </div>
-        <span>Oops</span>
-        <div class="mui-divider mui-divider-captioned" data-placement="right"
-          role="separator" aria-labelledby="right-divider-label">
-          <span class="mui-divider-label" id="right-divider-label" aria-hidden="true">Right</span>
-        </div>
-        <span>Oops</span>
-        <div class="mui-divider mui-divider-captioned" data-dashed
-          role="separator" aria-labelledby="dashed-divider-label">
-          <span class="mui-divider-label" id="dashed-divider-label" aria-hidden="true">Dashed</span>
-        </div>
-        <span>Oops</span>
+        <m-divider title-placement="start"><m-span>Start</m-span></m-divider>
+        <m-divider id="heading-divider" label="Start of settings"><m-h2 id="divider-real-heading">Settings heading</m-h2></m-divider>
+        <m-divider title-placement="end" dashed><m-span>End</m-span></m-divider>
+        <m-divider id="decorative-divider" semantic="false"><m-h3 id="divider-decorative-heading">Independent decorative heading</m-h3></m-divider>
+        <m-divider class="narrow-divider">AnOriginalLongUnbrokenCaptionThatWrapsWithoutClippingOrReplacingItsText</m-divider>
+        <m-box class="divider-options" display="flex" wrap="wrap" gap="8">
+          <m-label>Orientation <select id="divider-orientation"><option value="horizontal">Horizontal</option><option value="vertical">Vertical</option></select></m-label>
+          <m-label>Title placement <select id="divider-placement"><option value="start">Start</option><option value="center" selected>Center</option><option value="end">End</option></select></m-label>
+          <m-label><input id="divider-semantic" type="checkbox" checked> Semantic rule</m-label>
+          <m-label><input id="divider-dashed" type="checkbox"> Dashed</m-label>
+          <m-label>Rule label <input id="divider-label" value="Live rule"></m-label>
+          <m-button id="divider-clear-label">Clear rule label</m-button>
+          <m-button id="divider-update-title">Update existing heading</m-button>
+          <m-button id="divider-detach">Detach / reconnect</m-button>
+        </m-box>
+        <m-box id="divider-live-mount">
+          <m-divider id="live-divider" label="Live rule"><m-h3 id="divider-live-heading">Live heading</m-h3></m-divider>
+        </m-box>
+        <m-p id="divider-status" class="demo-status" role="status"></m-p>
       </div>
     </section>
 
     <section data-demo-example="vertical" aria-labelledby="vertical-heading">
-      <header data-demo-header><div><h2 id="vertical-heading">Vertical</h2></div></header>
-      <div class="demo-preview inline" data-demo-preview>
-        <span>It is</span>
-        <span class="mui-divider" data-orientation="vertical" aria-hidden="true"></span>
-        <span>not clear</span>
-        <span class="mui-divider" data-orientation="vertical" aria-hidden="true"></span>
-        <span>to see, emmm...</span>
+      <header data-demo-header><div><h2 id="vertical-heading">Vertical</h2><p>The title stays next to the vertical rule. There is no tab stop, drag handle or splitter behavior.</p></div></header>
+      <div class="demo-preview vertical" data-demo-preview>
+        <m-box class="inline-dividers">
+          <a id="divider-before-link" href="#content-heading">Before</a>
+          <m-divider orientation="vertical" semantic="false"></m-divider>
+          <a id="divider-after-link" href="#api-heading">After</a>
+        </m-box>
+        <m-box class="inline-dividers">
+          <m-divider id="vertical-heading-divider" orientation="vertical" label="Action groups"><m-h3 id="divider-vertical-heading">Vertical heading</m-h3></m-divider>
+          <m-divider orientation="vertical" semantic="false" dashed><span>Visible decorative caption</span></m-divider>
+        </m-box>
+        <m-box class="inline-dividers" dir="rtl">
+          <m-divider orientation="vertical" title-placement="start" label="RTL group"><span>RTL caption</span></m-divider>
+        </m-box>
       </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <p>Tables load <code>../api/divider.json</code>, generated from TypeScript without constructing
+        components or using runtime metadata. Divider has five direct properties and no actions or control events.</p>
+      <div id="divider-api"><p>Loading API documentation…</p></div>
+    </section>
+    <section id="behavior" aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Semantics, content and lifecycle</h2>
+      <h3>One rule owner, independent title content</h3>
+      <p>Semantic Divider exposes one native hr as the separator owner. The host and generated title
+        container do not receive separator roles or aria-hidden. A trailing painted line is decorative.
+        An authored h1–h6 remains a real, independently accessible heading; plain text is not promoted to a heading.</p>
+      <p><code>semantic = false</code> hides only the rule from accessibility APIs, never the title.
+        The optional <code>label</code> names only that rule. It is not copied from title text and does not replace,
+        label or hide the title. Null removes the rule label; an empty string is an explicit empty label.</p>
+      <p>Author one noninteractive text/heading fragment as primary content. Do not put captions inside hr,
+        and do not add separator roles or aria-hidden to the host. Use semantic and label instead.
+        Divider creates no button, tabindex, keyboard handler, synthetic heading role or live region.
+        Native links and controls around it keep their normal focus order.</p>
+      <h3>Orientation and placement</h3>
+      <p>Orientation changes the native rule's aria-orientation and geometry. Horizontal titles use
+        start/center/end logical placement, respecting surrounding text direction. Vertical titles remain beside
+        the rule; start/end align them toward the start/end of its block extent, while center is the default.
+        Title placement does not shorten a plain untitled divider.</p>
+      <p>Dashed is a presence boolean: set the property false or remove the attribute to disable it.
+        Semantic is a boolean-text attribute with an absent default of true; use <code>semantic="false"</code>
+        for decorative rules. Enum setters reject unsupported values such as left/right or diagonal.</p>
+      <h3>Identity and cleanup</h3>
+      <p>Divider moves, rather than clones, primary nodes into a private title container. Existing headings,
+        text nodes and listeners survive property changes. Late children and text edits are observed.
+        Direct templates, scripts and styles are left in place rather than treated as title content.</p>
+      <p>Disconnect stops observation. Reconnect reuses the same private rule and surviving title nodes,
+        applying properties changed while detached. Replaced or removed authored content is not resurrected.
+        Authored hidden attributes remain the author's responsibility; Divider never hides a meaningful title automatically.</p>
+      <h3>Styling and delivery cost</h3>
+      <p>Defaults retain light rule/text colors #efeff5/#1f2225 and dark white/.09 and white/.9.
+        Captions are 16px/500, block spacing is 24px, inline spacing is 8px and title gap is 12px.
+        Heading semantics are independent from this caption typography; inline author styles remain intact.</p>
+      <p>Override <code>--m-divider-color</code>, <code>--m-divider-text-color</code>,
+        <code>--m-divider-thickness</code>, <code>--m-divider-space</code>, <code>--m-divider-inline-space</code>,
+        <code>--m-divider-label-gap</code>, <code>--m-divider-label-size</code>,
+        <code>--m-divider-label-weight</code> and <code>--m-divider-length</code> as needed.
+        Scope any private part styling to the owning m-divider; parts are not authoring elements.</p>
+      <p>Rules use printable borders, not background images. Forced colors use CanvasText and no motion is added.
+        New JavaScript ceilings are 3,000 gzip bytes per format and 5,000 including core;
+        the existing 1,500-byte CSS ceiling is unchanged. Count core plus component plus CSS for the first load.</p>
     </section>
   </main>
 </body>

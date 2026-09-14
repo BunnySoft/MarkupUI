@@ -1,338 +1,383 @@
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createInputNumber } from "../src/components/input-number/index.js"
-import type { InputNumberController } from "../src/components/input-number/index.js"
+import { InputNumber, registerInputNumber } from "../src/components/input-number/index.js"
+import { ViewElement } from "../src/core/index.js"
+import { bind, createStore } from "../src/state/index.js"
 
-const helpers: InputNumberController[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 15))
 function fixture(id = "quantity-root") {
   const parsed = new DOMParser().parseFromString(readFileSync(join("demo", "components", "input-number.html"), "utf8"), "text/html")
   document.body.append(document.importNode(parsed.querySelector("main")!, true))
-  const beforeCount = document.querySelectorAll("input").length, root = document.getElementById(id)!
-  const helper = createInputNumber(root); helpers.push(helper)
-  return { root, helper, control: helper.control, beforeCount,
+  const root = document.getElementById(id) as InputNumber
+  root.refresh()
+  return { root, control: root.native,
     up: root.querySelector<HTMLButtonElement>("[data-number-increment]")!,
     down: root.querySelector<HTMLButtonElement>("[data-number-decrement]")!,
     clear: root.querySelector<HTMLButtonElement>("[data-number-clear]")!,
     form: document.getElementById("numbers") as HTMLFormElement }
 }
-afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
+afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
-describe("Input Number stylesheet contract", () => {
+describe("Input Number stylesheet and delivery", () => {
   const css = readFileSync(join("src", "components", "input-number", "input-number.css"), "utf8")
-  it("keeps size, round and status defaults private for author tokens", () => {
-    expect(css).not.toMatch(/--mui-number-[\w-]+\s*:/)
+  it("retains private defaults, native spinners and forced-color boundaries", () => {
+    expect(css).not.toMatch(/--m-number-[\w-]+\s*:/)
     for (const height of [22, 28, 34, 40]) expect(css).toMatch(new RegExp(`--_n-h:\\s*${height}px`))
-    expect(css).toMatch(/data-mui-theme="?dark"?/)
-    expect(css).not.toContain("var(--mui-text-primary")
-  })
-  it("does not suppress native spinners, reorder actions or hide the number control", () => {
+    expect(css).toMatch(/data-m-theme="?dark"?/)
+    expect(css).not.toContain("var(--m-text-primary")
     expect(css).not.toMatch(/appearance\s*:|spin-button|[;{]\s*order\s*:|position:\s*absolute|pointer-events:\s*none/)
     expect(css).toMatch(/\[hidden\][^{]*\{[^}]*display:\s*none\s*!important/)
-  })
-  it("does not mistake a bounded stepper for a disabled number field", () => {
     expect(css).toContain(":has([data-number-control]:disabled)")
     expect(css).not.toContain(":has(:disabled)")
-  })
-  it("provides explicit forced-color boundaries and keyboard action focus", () => {
-    const forced = css.split(/@media\s*\(forced-colors:\s*active\)/)[1]?.split("@media print")[0] ?? ""
-    expect(forced).toMatch(/outline:\s*1px solid CanvasText/)
-    expect(forced).toMatch(/outline:\s*2px solid Highlight/)
-    expect(forced).toMatch(/color:\s*GrayText;\s*opacity:\s*1/)
+    expect(css).toMatch(/outline:\s*1px solid CanvasText/)
+    expect(css).toMatch(/outline:\s*2px solid Highlight/)
+    expect(css).toMatch(/color:\s*GrayText;\s*opacity:\s*1/)
     expect(css).toMatch(/button:focus-visible\s*\{[^}]*outline:/)
-  })
-  it("includes frame padding in authored widths and bounds the original native field", () => {
-    expect(css).toMatch(/\.mui-input-number\s*\{[^}]*box-sizing:\s*border-box/)
+    expect(css).toMatch(/\.m-input-number\s*\{[^}]*box-sizing:\s*border-box/)
     expect(css).toMatch(/\[data-number-control\]\s*\{[^}]*max-inline-size:\s*100%/)
+    expect(css).toContain("[size=tiny]"); expect(css).not.toContain("[data-size")
+  })
+  it("registers only one own-tag ViewElement, with explicit conflicts and no factory", async () => {
+    expect(new InputNumber()).toBeInstanceOf(ViewElement)
+    expect(Object.getOwnPropertyDescriptor(InputNumber, "tag")?.value).toBe("m-input-number")
+    expect(customElements.get(InputNumber.tag)).toBe(InputNumber)
+    const registry = new Map<string, CustomElementConstructor>()
+    const define = vi.fn((name, value) => registry.set(name, value))
+    const get = (name: string) => registry.get(name)
+    registerInputNumber({ get, define }); registerInputNumber({ get, define })
+    expect(define).toHaveBeenCalledTimes(1)
+    registry.set(InputNumber.tag, class extends HTMLElement {})
+    expect(() => registerInputNumber({ get, define })).toThrow("different")
+    expect((await import("../src/components/input-number/index.js"))).not.toHaveProperty("createInputNumber")
+    expect("select" in new InputNumber()).toBe(false)
+    expect("setSelectionRange" in new InputNumber()).toBe(false)
+  })
+  it("uses the modern demo/API scaffolding and exact approved budgets", () => {
+    const { root } = fixture()
+    expect(root.localName).toBe("m-input-number")
+    expect(document.querySelector("main[data-demo-page].component-docs")).not.toBeNull()
+    expect(document.querySelectorAll("[data-demo-example]")).toHaveLength(4)
+    expect(document.getElementById("input-number-api")).not.toBeNull()
+    expect(document.querySelector('details.component-setup a[href="../setup.html"]')).not.toBeNull()
+    const build = readFileSync(join("scripts", "build.mjs"), "utf8")
+    expect(build).toContain('["input-number", 5_500]')
+    for (const file of ["js", "global.js"]) expect(build).toContain(`"markup-ui-input-number.${file}": 4_000`)
+    expect(build).toContain('"markup-ui-input-number.css": 1_000')
   })
 })
 
-describe("authored native number ownership", () => {
-  it("preserves control/listeners/labels/defaults and never inserts a stepping probe", () => {
-    const { root, helper, control, beforeCount } = fixture()
-    helper.disconnect()
-    control.value = "0.25"
-    const before = control.outerHTML, label = control.labels![0], listener = vi.fn()
+describe("native owner and public accessors", () => {
+  it("retains authored control, listeners, labels, defaults and no inserted probe", () => {
+    const { root, control } = fixture()
+    const count = document.querySelectorAll("input").length, label = control.labels![0], listener = vi.fn()
+    control.value = "0.25"; const before = control.outerHTML
     control.addEventListener("input", listener)
-    const enhanced = createInputNumber(root); helpers.push(enhanced)
-    expect(enhanced.control).toBe(control)
-    expect(control.outerHTML).toBe(before)
-    expect(control.labels![0]).toBe(label)
-    expect(control.defaultValue).toBe("0.1")
-    expect(enhanced.state.value).toBe(.25)
-    enhanced.refresh(); enhanced.state
-    expect(document.querySelectorAll("input")).toHaveLength(beforeCount)
-    expect(root.querySelectorAll("input")).toHaveLength(1)
-    expect(root.hasAttribute("role")).toBe(false)
-    expect(control.hasAttribute("aria-valuenow")).toBe(false)
+    root.refresh(); root.state
+    expect(root.native).toBe(control); expect(control.outerHTML).toBe(before)
+    expect(control.labels![0]).toBe(label); expect(root.defaultValue).toBe("0.1")
+    expect(root.value).toBe(.25); expect(document.querySelectorAll("input")).toHaveLength(count)
+    expect(root.hasAttribute("role")).toBe(false); expect(control.hasAttribute("aria-valuenow")).toBe(false)
     control.dispatchEvent(new Event("input", { bubbles: true }))
     expect(listener).toHaveBeenCalledTimes(1)
   })
-  it("does not register or replace the legacy widget", () => {
-    const before = customElements.get("mui-input-number")
-    fixture()
-    expect(customElements.get("mui-input-number")).toBe(before)
+  it.each(["text", "range", "hidden"])("rejects a %s owner", type => {
+    const { root, control } = fixture(); control.type = type
+    expect(() => root.refresh()).toThrow("number")
   })
-  it("rejects duplicate/cross-module ownership and allows explicit recreation", async () => {
-    const { root, helper } = fixture()
-    expect(() => createInputNumber(root)).toThrow("owner")
-    vi.resetModules()
-    const other = await import("../src/components/input-number/index.js")
-    expect(() => other.createInputNumber(root)).toThrow("owner")
-    helper.disconnect(); helper.disconnect()
-    helpers.push(other.createInputNumber(root))
-  })
-  it.each(["text", "range", "hidden"])("rejects %s controls instead of parsing text", type => {
-    const { root, helper, control } = fixture()
-    helper.disconnect(); control.type = type
-    expect(() => createInputNumber(root)).toThrow("number")
-  })
-  it("requires real labels and type=button actions outside labels", () => {
-    const { root, helper, control, up } = fixture()
-    helper.disconnect(); up.type = "submit"
-    expect(() => createInputNumber(root)).toThrow("type=button")
+  it("rejects invalid anatomy and recovers explicitly", () => {
+    const { root, control, up } = fixture()
+    up.type = "submit"; expect(() => root.refresh()).toThrow("type=button")
     up.type = "button"; control.labels![0]!.remove()
-    expect(() => createInputNumber(root)).toThrow("labelled")
+    expect(() => root.refresh()).toThrow("labelled")
+    control.setAttribute("aria-label", "Quantity"); root.refresh()
+    const duplicate = control.cloneNode(); root.append(duplicate)
+    expect(() => root.refresh()).toThrow("one")
+    duplicate.remove(); root.refresh(); expect(root.error).toBeNull()
+    root.setAttribute("tabindex", "0"); expect(() => root.refresh()).toThrow("light-DOM")
+    root.removeAttribute("tabindex")
   })
-  it("rejects late duplicate marked inputs rather than silently changing form ownership", () => {
-    const { root, helper, control } = fixture()
-    const duplicate = control.cloneNode()
-    root.append(duplicate)
-    expect(() => helper.refresh()).toThrow("labelled native")
-    duplicate.remove(); helper.refresh()
-    expect(helper.error).toBeNull()
+  it("rejects another native owner before changing its attributes", () => {
+    const { root, control } = fixture()
+    const other = new InputNumber()
+    other.setAttribute("name", "replacement")
+    other.append(control)
+    expect(() => other.native).toThrow("unowned")
+    expect(control.name).toBe("quantity")
+    root.append(control)
+  })
+  it("documents native absence without fabricating defaults", () => {
+    const root = new InputNumber()
+    expect(root.value).toBeNull(); expect(root.text).toBe("")
+    for (const key of ["defaultValue", "name", "placeholder", "min", "max", "step"] as const) expect(root[key]).toBe("")
+    expect(root.size).toBe("medium"); expect(root.status).toBeNull()
+    for (const key of ["disabled", "readOnly", "required", "round", "borderless"] as const) expect(root[key]).toBe(false)
+    expect(root.form).toBeNull(); expect(root.error).toBeNull()
+    expect(() => root.state).toThrow("disconnected")
+  })
+  it.each(["1", NaN, Infinity, -Infinity, undefined, true])("rejects invalid value %j atomically", value => {
+    const { root } = fixture()
+    expect(() => { root.value = value as number }).toThrow("finite")
+    expect(root.value).toBe(.1)
+  })
+  it("validates every public setter before materialization or mutation", () => {
+    const root = new InputNumber()
+    for (const key of ["defaultValue", "min", "max", "step", "name", "placeholder"]) expect(() => Reflect.set(root, key, 2)).toThrow()
+    for (const key of ["disabled", "readOnly", "required", "round", "borderless"]) expect(() => Reflect.set(root, key, "false")).toThrow()
+    expect(() => { root.size = "huge" as never }).toThrow()
+    expect(() => { root.status = "neutral" as never }).toThrow()
+    expect(() => root.setCustomValidity(null as never)).toThrow()
+    expect(root.children).toHaveLength(0); expect(root.attributes).toHaveLength(0)
+  })
+  it("forwards host attributes after early materialization without replay on reconnect", async () => {
+    const root = new InputNumber(), control = root.native
+    root.setAttribute("aria-label", "Early"); root.setAttribute("value", "2")
+    root.setAttribute("min", "1"); root.setAttribute("required", "")
+    expect(control.defaultValue).toBe("2"); expect(control.value).toBe("2"); expect(root.required).toBe(true)
+    root.value = 4; root.setAttribute("value", "3")
+    expect(root.value).toBe(4); expect(root.defaultValue).toBe("3")
+    document.body.append(root); await flush(); root.remove(); root.value = 5
+    document.body.append(root); await flush()
+    expect(root.native).toBe(control); expect(root.value).toBe(5); expect(root.defaultValue).toBe("3")
+    root.removeAttribute("required"); root.removeAttribute("min")
+    expect(root.required).toBe(false); expect(root.min).toBe("")
+  })
+  it("replays pre-upgrade-style own properties before initialization", async () => {
+    const root = new InputNumber()
+    root.innerHTML = '<input type="number" value="2" aria-label="Pending">'
+    for (const [name, value] of Object.entries({ value: 7, defaultValue: "3", min: "1", size: "large", disabled: false })) {
+      Object.defineProperty(root, name, { configurable: true, writable: true, value })
+    }
+    document.body.append(root); await flush()
+    expect(root.value).toBe(7); expect(root.defaultValue).toBe("3"); expect(root.min).toBe("1")
+    expect(root.size).toBe("large"); expect(Object.hasOwn(root, "value")).toBe(false)
+  })
+  it("transfers pending native writes to a late authored owner, retaining its reset default", async () => {
+    const root = new InputNumber()
+    root.setAttribute("aria-label", "Late")
+    root.value = 7; root.min = "1"; root.disabled = false; root.name = "late"
+    const generated = root.native, authored = document.createElement("input")
+    authored.type = "number"; authored.defaultValue = "2"; authored.disabled = true
+    root.append(authored); document.body.append(root); await flush()
+    expect(root.native).toBe(authored); expect(generated.isConnected).toBe(false)
+    expect(root.value).toBe(7); expect(root.defaultValue).toBe("2")
+    expect(root.disabled).toBe(false); expect(root.min).toBe("1"); expect(root.name).toBe("late")
+    expect(root.querySelectorAll("input")).toHaveLength(1)
+  })
+  it("transfers pending default and dirty state independently", () => {
+    const root = new InputNumber(); root.defaultValue = "3"; root.value = null
+    const authored = document.createElement("input")
+    authored.type = "number"; authored.defaultValue = "2"; root.append(authored)
+    expect(root.native.defaultValue).toBe("3"); expect(root.value).toBeNull()
   })
 })
 
-describe("native nullable value, validity and defaults", () => {
-  it("does not turn empty into zero or conflate it with native validity", () => {
-    const { helper, control } = fixture()
-    helper.setValue(null)
-    expect(helper.state).toMatchObject({ value: null, text: "", empty: true, badInput: false, valid: false, valueMissing: true })
-    helper.setValue(0)
-    expect(helper.state).toMatchObject({ value: 0, empty: false, valueMissing: false })
-    expect(control.defaultValue).toBe("0.1")
+describe("native values, constraints and actions", () => {
+  it("keeps null, validity and native reset string distinct", () => {
+    const { root } = fixture()
+    root.value = null
+    expect(root.state).toMatchObject({ value: null, text: "", empty: true, badInput: false, valid: false, valueMissing: true })
+    root.value = 0
+    expect(root.state).toMatchObject({ value: 0, empty: false, valueMissing: false })
+    expect(root.defaultValue).toBe("0.1")
   })
-  it("retains out-of-range and off-grid values without input-time rounding/clamping", () => {
-    const { helper, control } = fixture()
-    helper.setValue(2)
-    expect(helper.state).toMatchObject({ value: 2, rangeOverflow: true, valid: false })
-    control.dispatchEvent(new Event("input", { bubbles: true }))
-    expect(control.valueAsNumber).toBe(2)
-    helper.setValue(.15)
-    expect(helper.state).toMatchObject({ value: .15, stepMismatch: true, valid: false })
-    control.dispatchEvent(new Event("change", { bubbles: true }))
-    expect(control.valueAsNumber).toBe(.15)
+  it("never rounds or clamps finite live values", () => {
+    const { root, control } = fixture()
+    root.value = 2; expect(root.state.rangeOverflow).toBe(true)
+    control.dispatchEvent(new Event("input", { bubbles: true })); expect(root.value).toBe(2)
+    root.value = .15; expect(root.state.stepMismatch).toBe(true)
+    control.dispatchEvent(new Event("change", { bubbles: true })); expect(root.value).toBe(.15)
+    root.min = ""; root.max = ""; root.value = 1e308; expect(root.value).toBe(1e308)
   })
-  it.each(["1", NaN, Infinity, -Infinity, undefined, true])("rejects non-finite/non-number setter %j atomically", value => {
-    const { helper } = fixture()
-    expect(() => helper.setValue(value as number)).toThrow("finite")
-    expect(helper.state.value).toBe(.1)
-  })
-  it("allows finite huge values without pretending to offer arbitrary precision", () => {
-    const { helper, control } = fixture()
-    control.removeAttribute("min"); control.removeAttribute("max")
-    helper.setValue(1e308)
-    expect(helper.state.value).toBe(1e308)
-    expect(Number.isFinite(control.valueAsNumber)).toBe(true)
-  })
-  it("keeps property assignments and explicit refresh silent", () => {
-    const { helper, control } = fixture()
-    const events = vi.fn(); control.addEventListener("input", events); control.addEventListener("change", events)
-    helper.setValue(.4)
-    control.value = "0.7"; helper.refresh()
-    expect(helper.state.value).toBe(.7)
-    expect(events).not.toHaveBeenCalled()
+  it("keeps native property writes, default writes and refresh silent", () => {
+    const { root, control } = fixture(), events = vi.fn()
+    control.addEventListener("input", events); control.addEventListener("change", events)
+    root.value = .4; root.defaultValue = "0.2"; control.value = "0.7"; root.refresh()
+    expect(root.value).toBe(.7); expect(events).not.toHaveBeenCalled()
     expect(Object.hasOwn(control, "value")).toBe(false)
   })
-  it("protects tracked composition without installing a keyboard/value interception engine", () => {
-    const { helper, control, up } = fixture()
+  it("uses native decimal stepping and alignment", () => {
+    const { root } = fixture()
+    expect(root.stepUp()).toBe(true); expect(root.text).toBe("0.2")
+    root.stepUp(); expect(root.text).toBe("0.3")
+    root.stepDown(); expect(root.text).toBe("0.2")
+    root.value = .15; root.stepUp(); expect(root.value).toBe(.2)
+    root.value = .15; root.stepDown(); expect(root.value).toBe(.1)
+    root.value = null; root.stepUp(); expect(root.value).toBe(.1)
+  })
+  it("copies the value attribute as native step-grid base", () => {
+    const { root } = fixture("grid-root")
+    root.value = .3; expect(root.state.stepMismatch).toBe(true)
+    root.stepUp(); expect(root.value).toBe(.35)
+    root.defaultValue = "0.1"; root.value = .3; root.stepUp(); expect(root.value).toBe(.5)
+  })
+  it("preserves text and event counts at numeric no-op limits", () => {
+    const { root, control, up } = fixture(), events = vi.fn()
+    control.value = "1.00"; root.refresh(); control.addEventListener("change", events)
+    expect(up.disabled).toBe(true); expect(root.stepUp()).toBe(false)
+    expect(control.value).toBe("1.00"); expect(events).not.toHaveBeenCalled()
+  })
+  it("surfaces native any-step errors", () => {
+    const { root, up, down } = fixture("any-root")
+    expect(root.state.stepError).toContain("InvalidStateError")
+    expect(up.disabled).toBe(true); expect(down.disabled).toBe(true)
+    expect(() => root.stepUp()).toThrow(); expect(root.value).toBe(2.5)
+  })
+  it("leaves malformed and contradictory constraints to the browser", () => {
+    const { root, up, down } = fixture()
+    root.min = "invalid"; root.max = "invalid"; root.step = "-2"; root.defaultValue = "0"
+    root.value = 2; root.stepUp(); expect(root.value).toBe(3)
+    root.min = "5"; root.max = "1"
+    expect(up.disabled).toBe(true); expect(down.disabled).toBe(true); expect(root.stepUp()).toBe(false)
+  })
+  it("protects composing native drafts, including late adoption", () => {
+    const { root, control, up } = fixture()
     control.dispatchEvent(new CompositionEvent("compositionstart"))
-    expect(up.disabled).toBe(true)
-    expect(helper.step(1)).toBe(false)
-    expect(helper.clear()).toBe(false)
-    expect(() => helper.setValue(.2)).toThrow("composing")
-    expect(control.value).toBe("0.1")
-    control.dispatchEvent(new CompositionEvent("compositionend"))
-    expect(up.disabled).toBe(false)
+    expect(up.disabled).toBe(true); expect(root.stepUp()).toBe(false); expect(root.clear()).toBe(false)
+    expect(() => { root.value = .2 }).toThrow("composing"); expect(root.value).toBe(.1)
+    control.dispatchEvent(new CompositionEvent("compositionend")); expect(up.disabled).toBe(false)
   })
-})
-
-describe("native decimal/grid stepping", () => {
-  it("uses native decimal steps without floating-point addition artifacts", () => {
-    const { helper, control } = fixture()
-    expect(helper.step(1)).toBe(true)
-    expect(control.value).toBe("0.2")
-    expect(helper.step(1)).toBe(true)
-    expect(control.value).toBe("0.3")
-    expect(helper.step(-1)).toBe(true)
-    expect(control.value).toBe("0.2")
+  it("delegates validity and focus to the real owner", () => {
+    const { root, control } = fixture(), invalid = vi.fn()
+    control.addEventListener("invalid", invalid)
+    root.setCustomValidity("Explain"); expect(root.checkValidity()).toBe(false)
+    expect(root.validationMessage).toBe("Explain"); expect(invalid).toHaveBeenCalledOnce()
+    root.setCustomValidity(""); expect(root.reportValidity()).toBe(true)
+    root.focus(); expect(document.activeElement).toBe(control); root.blur(); expect(document.activeElement).not.toBe(control)
   })
-  it("lets native stepping align an off-grid input", () => {
-    const { helper } = fixture()
-    helper.setValue(.15); helper.step(1)
-    expect(helper.state.value).toBe(.2)
-    helper.setValue(.15); helper.step(-1)
-    expect(helper.state.value).toBe(.1)
-  })
-  it("copies the native value-attribute step base into the local probe", () => {
-    const { helper, control } = fixture("grid-root")
-    helper.setValue(.3)
-    expect(control.getAttribute("value")).toBe("0.15")
-    expect(helper.state.stepMismatch).toBe(true)
-    helper.step(1)
-    expect(helper.state.value).toBe(.35)
-    control.defaultValue = "0.1"
-    helper.setValue(.3)
-    helper.step(1)
-    expect(helper.state.value).toBe(.5)
-  })
-  it("disables no-op boundaries and does not normalize text or notify at a numeric no-op", () => {
-    const { helper, control, up } = fixture()
-    control.value = "1.00"; helper.refresh()
-    const events = vi.fn(); control.addEventListener("change", events)
-    expect(up.disabled).toBe(true)
-    expect(helper.step(1)).toBe(false)
-    expect(control.value).toBe("1.00")
-    expect(events).not.toHaveBeenCalled()
-  })
-  it("surfaces step=any native errors and disables unavailable actions", () => {
-    const { helper, control, up, down } = fixture("any-root")
-    expect(helper.state.stepError).toContain("InvalidStateError")
-    expect(up.disabled).toBe(true); expect(down.disabled).toBe(true)
-    expect(() => helper.step(1)).toThrow()
-    expect(control.value).toBe("2.5")
-  })
-  it("leaves malformed/contradictory constraints to native interpretation", () => {
-    const { helper, control, up, down } = fixture()
-    control.min = "invalid"; control.max = "invalid"; control.step = "-2"
-    control.defaultValue = "0"
-    helper.setValue(2); helper.step(1)
-    expect(helper.state.value).toBe(3)
-    control.min = "5"; control.max = "1"; helper.refresh()
-    expect(up.disabled).toBe(true); expect(down.disabled).toBe(true)
-    expect(helper.step(1)).toBe(false)
-    expect(control.valueAsNumber).toBe(3)
-  })
-  it("does not treat blank as zero until an explicit native step is requested", () => {
-    const { helper, control } = fixture()
-    helper.setValue(null)
-    expect(helper.state.value).toBeNull()
-    helper.step(1)
-    expect(control.valueAsNumber).toBe(.1)
-    expect(helper.state.empty).toBe(false)
-  })
-  it("emits one input/change for a real custom step and preserves defaults", async () => {
-    const { up, control } = fixture()
-    const events: string[] = []
-    for (const type of ["input", "change", "mui:change"]) control.addEventListener(type, () => events.push(type))
+  it("emits input/change once for real step intent and no legacy event", async () => {
+    const { up, control } = fixture(), events: string[] = []
+    for (const type of ["input", "change", "m:change"]) control.addEventListener(type, event => {
+      events.push(type); expect(event.target).toBe(control); expect(event.composed).toBe(type === "input")
+    })
     up.click(); await flush()
-    expect(events).toEqual(["input", "change"])
-    expect(control.value).toBe("0.2")
-    expect(control.defaultValue).toBe("0.1")
+    expect(events).toEqual(["input", "change"]); expect(control.value).toBe("0.2"); expect(control.defaultValue).toBe("0.1")
   })
-  it("returns focus to the real field when a boundary disables the active button", async () => {
-    const { helper, control, up } = fixture()
-    helper.setValue(.9)
-    up.focus(); up.click(); await flush()
-    expect(control.valueAsNumber).toBe(1)
-    expect(up.disabled).toBe(true)
-    expect(document.activeElement).toBe(control)
+  it("honors late click cancellation without submitting", async () => {
+    const { root, up, control, form } = fixture(), submit = vi.fn()
+    form.addEventListener("submit", submit); root.addEventListener("click", e => e.preventDefault(), { once: true })
+    up.click(); await flush(); expect(control.value).toBe("0.1"); expect(submit).not.toHaveBeenCalled()
   })
-  it("respects late native click cancellation and never submits", async () => {
-    const { root, up, control, form } = fixture()
-    const submit = vi.fn(); form.addEventListener("submit", submit)
-    root.addEventListener("click", event => event.preventDefault(), { once: true })
-    up.click(); await flush()
-    expect(control.value).toBe("0.1")
-    expect(submit).not.toHaveBeenCalled()
+  it("returns focus when the active action becomes unavailable", async () => {
+    const { root, control, up } = fixture()
+    root.value = .9; up.focus(); up.click(); await flush()
+    expect(root.value).toBe(1); expect(up.disabled).toBe(true); expect(document.activeElement).toBe(control)
   })
-})
-
-describe("native readonly/disabled, clear and lifecycle", () => {
-  it("blocks UI steps/clear for readonly or disabled but allows explicit programmatic assignment", () => {
-    const { helper, control, up } = fixture()
-    control.readOnly = true; helper.refresh()
-    expect(up.disabled).toBe(true)
-    expect(helper.step(1)).toBe(false)
-    expect(helper.clear()).toBe(false)
-    helper.setValue(.4)
-    expect(control.valueAsNumber).toBe(.4)
-    control.readOnly = false; control.disabled = true; helper.refresh()
-    expect(helper.step(-1)).toBe(false)
-    expect(helper.clear()).toBe(false)
-    helper.setValue(.5)
-    expect(control.valueAsNumber).toBe(.5)
-  })
-  it("reflects native fieldset disabling and its first-legend exception", async () => {
-    const { root, helper, control, up } = fixture("grid-root")
-    const fieldset = document.getElementById("grid-fieldset") as HTMLFieldSetElement
-    fieldset.disabled = true; await flush()
-    expect(up.disabled).toBe(true)
-    expect(control.disabled).toBe(false)
-    fieldset.querySelector("legend")!.append(root); await flush()
-    expect(control.matches(":disabled")).toBe(false)
-    expect(up.disabled).toBe(false)
-    expect(helper.step(1)).toBe(true)
-  })
-  it("clear sends input/change/clear once and focuses before hiding its button", async () => {
-    const { helper, clear, control } = fixture()
-    const events: string[] = []
-    for (const type of ["input", "change", "mui:input-number-clear"]) control.addEventListener(type, () => events.push(type))
+  it("clears with exact event order/detail and focus before hiding", async () => {
+    const { root, clear, control } = fixture(), events: string[] = []
+    for (const type of ["input", "change", "m:input-number-clear"]) control.addEventListener(type, event => {
+      events.push(type)
+      if (event instanceof CustomEvent) expect(event.detail).toEqual({ previous: { value: .1, text: "0.1", badInput: false } })
+    })
     clear.focus(); clear.click(); await flush()
-    expect(helper.state.value).toBeNull()
-    expect(clear.hidden).toBe(true)
-    expect(document.activeElement).toBe(control)
-    expect(events).toEqual(["input", "change", "mui:input-number-clear"])
-    expect(helper.clear()).toBe(false)
+    expect(root.value).toBeNull(); expect(clear.hidden).toBe(true); expect(document.activeElement).toBe(control)
+    expect(events).toEqual(["input", "change", "m:input-number-clear"]); expect(root.clear()).toBe(false)
   })
-  it("refreshes changed defaults and cancelled native resets without user notifications", async () => {
-    const { helper, control, form } = fixture()
-    helper.setValue(.7); control.defaultValue = "0.4"
-    const event = vi.fn(); control.addEventListener("change", event)
-    form.reset(); await flush()
-    expect(helper.state.value).toBe(.4)
-    helper.setValue(.8)
-    form.addEventListener("reset", e => e.preventDefault(), { once: true })
-    form.reset(); await flush()
-    expect(helper.state.value).toBe(.8)
-    expect(event).not.toHaveBeenCalled()
+})
+
+describe("native forms, leases and lifecycle", () => {
+  it("blocks readonly/disabled actions but permits silent assignments", () => {
+    const { root, up } = fixture()
+    root.readOnly = true; expect(up.disabled).toBe(true)
+    expect(root.stepUp()).toBe(false); expect(root.clear()).toBe(false); root.value = .4; expect(root.value).toBe(.4)
+    root.readOnly = false; root.disabled = true
+    expect(root.stepDown()).toBe(false); root.value = .5; expect(root.value).toBe(.5)
   })
-  it("follows external form association and changed form IDs", async () => {
-    const { helper, control, form } = fixture("external-root")
-    helper.setValue(14); form.reset(); await flush()
-    expect(helper.state.value).toBe(14)
+  it("retains native fieldset disabling and first-legend exception", async () => {
+    const { root, control, up } = fixture("grid-root"), fieldset = document.getElementById("grid-fieldset") as HTMLFieldSetElement
+    fieldset.disabled = true; await flush(); expect(up.disabled).toBe(true); expect(control.disabled).toBe(false)
+    fieldset.querySelector("legend")!.append(root); await flush()
+    expect(control.matches(":disabled")).toBe(false); expect(up.disabled).toBe(false); expect(root.stepUp()).toBe(true)
+  })
+  it("resets current defaults and honors canceled reset without notifications", async () => {
+    const { root, control, form } = fixture(), event = vi.fn()
+    root.value = .7; root.defaultValue = "0.4"; control.addEventListener("change", event)
+    form.reset(); await flush(); expect(root.value).toBe(.4)
+    root.value = .8; form.addEventListener("reset", e => e.preventDefault(), { once: true })
+    form.reset(); await flush(); expect(root.value).toBe(.8); expect(event).not.toHaveBeenCalled()
+  })
+  it("retains composition through canceled reset but releases it after native reset", async () => {
+    const { root, control, form } = fixture()
+    control.dispatchEvent(new CompositionEvent("compositionstart"))
+    form.addEventListener("reset", event => event.preventDefault(), { once: true })
+    form.reset(); await flush(); expect(() => { root.value = .3 }).toThrow("composing")
+    form.reset(); await flush(); root.value = .3; expect(root.value).toBe(.3)
+  })
+  it("uses actual external form association and current IDs", async () => {
+    const { root, control, form } = fixture("external-root")
+    root.value = 14; form.reset(); await flush(); expect(root.value).toBe(14)
     const other = document.getElementById("other-numbers") as HTMLFormElement
-    other.id = "renamed"; control.setAttribute("form", other.id)
-    other.reset(); await flush()
-    expect(helper.state.value).toBe(10)
+    other.id = "renamed"; control.setAttribute("form", other.id); expect(root.form).toBe(other)
+    other.reset(); await flush(); expect(root.value).toBe(10)
   })
-  it("submits only the real native number string, including readonly but excluding disabled", () => {
-    const { control, helper, form } = fixture()
-    helper.setValue(.3); control.readOnly = true
-    expect(new FormData(form).getAll("quantity")).toEqual(["0.3"])
-    control.disabled = true
-    expect(new FormData(form).has("quantity")).toBe(false)
+  it("submits only native strings, including readonly but excluding disabled", () => {
+    const { root, form } = fixture()
+    root.value = .3; root.readOnly = true; expect(new FormData(form).getAll("quantity")).toEqual(["0.3"])
+    root.disabled = true; expect(new FormData(form).has("quantity")).toBe(false)
   })
-  it("preserves author overrides of derived controls on disposal", async () => {
-    const { helper, control, up, clear } = fixture()
-    helper.setValue(1)
-    up.disabled = true; clear.hidden = true
-    await flush()
-    helper.setValue(.5); helper.disconnect()
-    expect(up.disabled).toBe(true)
-    expect(clear.hidden).toBe(true)
-    expect(control.valueAsNumber).toBe(.5)
-    expect(control.defaultValue).toBe("0.1")
+  it("preserves same-value and later author overrides of action leases", async () => {
+    const { root, up, clear } = fixture()
+    root.value = 1; up.disabled = true; clear.hidden = true; await flush()
+    root.value = .5; root.remove()
+    expect(up.disabled).toBe(true); expect(clear.hidden).toBe(true)
+    expect(root.value).toBe(.5); expect(root.defaultValue).toBe("0.1")
+    document.body.append(root); await flush(); expect(up.disabled).toBe(true); expect(clear.hidden).toBe(true)
   })
-  it("disconnects removed roots and retains the native control state", async () => {
-    const { root, helper, control, up } = fixture()
-    helper.setValue(.5); root.remove(); await flush()
-    expect(helper.connected).toBe(false)
-    expect(control.valueAsNumber).toBe(.5)
-    expect(up.hidden).toBe(true)
-    expect(() => helper.setValue(.2)).toThrow("disconnected")
-    expect(helper.step(1)).toBe(false)
+  it("drops queued actions on disconnect and reconnects without duplicates", async () => {
+    const { root, control, up } = fixture(), events = vi.fn(), parent = root.parentNode!
+    control.addEventListener("change", events); up.click(); root.remove()
+    expect(up.hidden).toBe(true); root.value = .5; expect(root.stepUp()).toBe(false)
+    parent.appendChild(root); await flush()
+    expect(root.native).toBe(control); expect(root.value).toBe(.5); expect(events).not.toHaveBeenCalled()
+    up.click(); await flush(); expect(root.value).toBe(.6); expect(events).toHaveBeenCalledOnce()
+  })
+  it("drops stale actions on reset and removed buttons", async () => {
+    const { root, up, form } = fixture()
+    root.value = .5; up.click(); form.reset(); await flush(); expect(root.value).toBe(.1)
+    up.click(); up.remove(); await flush(); expect(root.value).toBe(.1)
+  })
+  it("does not reinterpret a queued action when the author changes its role", async () => {
+    const { root, up, down } = fixture()
+    up.click()
+    up.removeAttribute("data-number-increment"); down.removeAttribute("data-number-decrement")
+    up.setAttribute("data-number-decrement", ""); down.setAttribute("data-number-increment", "")
+    await flush(); expect(root.value).toBe(.1)
+  })
+  it("cancels clear if focus synchronously disconnects and reconnects the owner", () => {
+    const { root, clear, control } = fixture(), parent = root.parentNode!, events = vi.fn()
+    clear.focus()
+    control.addEventListener("focus", () => { root.remove(); parent.appendChild(root) }, { once: true })
+    control.addEventListener("change", events)
+    expect(root.clear()).toBe(false); expect(root.value).toBe(.1); expect(events).not.toHaveBeenCalled()
+  })
+  it("does not notify a new lifecycle when boundary focus reconnects during stepping", () => {
+    const { root, up, control } = fixture(), parent = root.parentNode!, events = vi.fn()
+    root.value = .9; up.focus()
+    control.addEventListener("focus", () => { root.remove(); parent.appendChild(root) }, { once: true })
+    control.addEventListener("change", events)
+    expect(root.stepUp()).toBe(true); expect(root.value).toBe(1); expect(events).not.toHaveBeenCalled()
+  })
+  it("does not apply a pending generated live value after reset", async () => {
+    const { form } = fixture(), root = new InputNumber()
+    root.setAttribute("aria-label", "Pending"); form.append(root); root.value = 7
+    form.reset(); await flush()
+    const authored = document.createElement("input"); authored.type = "number"; authored.defaultValue = "2"
+    root.append(authored); root.refresh(); expect(root.value).toBe(2)
+  })
+  it("binds number/null through native events and ignores unrelated descendant inputs", () => {
+    const { root, control } = fixture(), store = createStore({ quantity: .4 })
+    root.setAttribute("m-bind", "quantity")
+    const dispose = bind(root, store)
+    expect(root.value).toBe(.4)
+    control.value = ""; control.dispatchEvent(new Event("input", { bubbles: true }))
+    expect(store.get("quantity")).toBeNull()
+    const setter = vi.spyOn(root, "value", "set")
+    store.set("quantity", null); expect(setter).not.toHaveBeenCalled()
+    store.set("quantity", .8); expect(root.value).toBe(.8)
+    root.dispatchEvent(new CustomEvent("m:change", { detail: 2 })); expect(store.get("quantity")).toBe(.8)
+    const inner = new InputNumber(); inner.setAttribute("aria-label", "Independent"); root.prepend(inner)
+    control.value = "0.6"; inner.native.dispatchEvent(new Event("input", { bubbles: true }))
+    expect(store.get("quantity")).toBe(.8)
+    dispose()
   })
 })

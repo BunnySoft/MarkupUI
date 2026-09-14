@@ -7,9 +7,10 @@ button { padding: .3rem .5rem; }
 .controls:not([hidden]) { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin-block: 1rem; }
 .controls label { max-inline-size: 100%; }
 .geometry-stage[data-zoom="2"] { zoom: 2; }
-#editor-split { --mui-split-height: 25rem; --mui-split-gap: 4px; padding: 12px; border: 2px solid #58738c; }
+m-split { border: 1px solid #e0e0e6; }
+#editor-split { --m-split-height: 25rem; --m-split-gap: 4px; padding: 12px; border: 2px solid #58738c; }
 #editor-split[data-narrow] { inline-size: 260px; max-inline-size: 100%; }
-#detail-split { --mui-split-height: 16rem; --mui-split-gap: 2px; padding: 4px; border: 1px solid #899aaa; }
+#detail-split { --m-split-height: 16rem; --m-split-gap: 2px; padding: 4px; border: 1px solid #899aaa; }
 .pane-content { padding: .75rem; }
 .pane-content label { display: block; margin-block: .5rem; }
 .pane-content input, .pane-content textarea { display: block; inline-size: 100%; }

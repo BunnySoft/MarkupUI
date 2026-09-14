@@ -152,7 +152,7 @@ export function createColorPicker(root: HTMLElement): ColorPickerController {
   }
   function fail(reason: unknown) {
     error = reason
-    root.dispatchEvent(new view!.CustomEvent("mui:color-picker-error", { detail: { error: reason } }))
+    root.dispatchEvent(new view!.CustomEvent("m:color-picker-error", { detail: { error: reason } }))
   }
   function settleReset(preserveDraft = false) {
     const previous = reset

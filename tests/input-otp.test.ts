@@ -1,20 +1,21 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createInputOtp } from "../src/components/input-otp/index.js"
-import type { InputOtpOptions } from "../src/components/input-otp/index.js"
-import { createInput } from "../src/components/input/index.js"
-import { createForm } from "../src/components/form/index.js"
+import { createInputOtp, InputOtp, registerInputOtp, inputOtpSizes } from "../src/components/input-otp/index.js"
+import type { InputOtpOptions, InputOtpSize } from "../src/components/input-otp/index.js"
+import { ViewElement } from "../src/core/index.js"
+import { createInput } from "../src/components/native-input.js"
+import { coordinateForm as createForm } from "../src/components/form/controller.js"
 
 const helpers: { disconnect(): void }[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 15))
 function fixture(options: InputOtpOptions = {}, initial = "") {
   const length = options.length ?? 6, characters = options.characters ?? "digits"
-  document.body.innerHTML = `<form id="codes"><label for="code">Code</label><div class="mui-input" data-input id="root">
-    <input class="mui-input-otp" data-input-control id="code" name="code[0].text" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="${length}" pattern="${characters === "digits" ? "[0-9]" : "[A-Za-z0-9]"}{${length}}" required aria-describedby="help"></div>
+  document.body.innerHTML = `<form id="codes"><label for="code">Code</label><div class="m-input" data-input id="root">
+    <input class="m-input-otp" data-input-control id="code" name="code[0].text" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="${length}" pattern="${characters === "digits" ? "[0-9]" : "[A-Za-z0-9]"}{${length}}" required aria-describedby="help"></div>
     <button name="intent" value="local">Continue</button></form><p id="help">Help</p><p id="status">Original status</p><p id="feedback" hidden></p><button id="outside" type="button">Outside</button>`
   const input = document.querySelector<HTMLInputElement>("#code")!, status = document.querySelector<HTMLElement>("#status")!
   input.defaultValue = initial
   const helper = createInputOtp(input, { ...options, status }); helpers.push(helper)
-  const completed = vi.fn(); input.addEventListener("mui:input-otp-complete", completed)
+  const completed = vi.fn(); input.addEventListener("m:input-otp-complete", completed)
   return { helper, input, status, completed, form: document.querySelector("form")! }
 }
 function edit(input: HTMLInputElement, value: string) {
@@ -293,3 +294,185 @@ describe("ownership, cleanup and Form coexistence", () => {
     expect(input.getAttribute("aria-describedby")).toBe("help")
   })
 })
+
+describe("canonical InputOtp ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers input-otp elements", () => {
+    expect(InputOtp.tag).toBe("m-input-otp")
+    expect(ViewElement.prototype.isPrototypeOf(InputOtp.prototype)).toBe(true)
+    expect(customElements.get("m-input-otp")).toBe(InputOtp)
+    expect(InputOtp.observedAttributes).toEqual(["value", "length", "disabled", "mask", "size"])
+
+    const define = vi.fn()
+    expect(() => registerInputOtp({ get: name => name === "m-input-otp" ? class extends HTMLElement {} : undefined, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerInputOtp()).not.toThrow()
+  })
+
+  it("handles typed properties, attributes and defaults", () => {
+    const otp = document.createElement("m-input-otp") as InputOtp
+    document.body.append(otp)
+    expect(otp.value).toBe("")
+    expect(otp.length).toBe(6)
+    expect(otp.disabled).toBe(false)
+    expect(otp.mask).toBe(false)
+    expect(otp.size).toBe("medium")
+
+    otp.value = "123456"
+    expect(otp.value).toBe("123456")
+    expect(otp.getAttribute("value")).toBe("123456")
+
+    otp.length = 4
+    expect(otp.length).toBe(4)
+    expect(otp.getAttribute("length")).toBe("4")
+    expect(() => { (otp as any).length = 0 }).toThrow(RangeError)
+    expect(() => { (otp as any).length = 13 }).toThrow(RangeError)
+    expect(() => { (otp as any).length = 2.5 }).toThrow(RangeError)
+    expect(() => { (otp as any).length = "6" }).toThrow(RangeError)
+
+    otp.disabled = true
+    expect(otp.disabled).toBe(true)
+    expect(otp.hasAttribute("disabled")).toBe(true)
+    otp.disabled = false
+    expect(otp.disabled).toBe(false)
+    expect(otp.hasAttribute("disabled")).toBe(false)
+
+    otp.mask = true
+    expect(otp.mask).toBe(true)
+    expect(otp.hasAttribute("mask")).toBe(true)
+    otp.mask = false
+    expect(otp.mask).toBe(false)
+    expect(otp.hasAttribute("mask")).toBe(false)
+
+    for (const size of inputOtpSizes) {
+      otp.size = size
+      expect(otp.size).toBe(size)
+      expect(otp.getAttribute("size")).toBe(size)
+    }
+    expect(() => { (otp as any).size = "xlarge" }).toThrow(RangeError)
+  })
+
+  it("generates native input and synchronizes attributes and methods", () => {
+    const otp = document.createElement("m-input-otp") as InputOtp
+    otp.value = "1234"
+    otp.length = 4
+    otp.mask = true
+    otp.disabled = true
+    document.body.append(otp)
+
+    const input = otp.querySelector<HTMLInputElement>("input")!
+    expect(input).not.toBeNull()
+    expect(input.classList.contains("m-input-otp")).toBe(true)
+    expect(input.value).toBe("1234")
+    expect(input.maxLength).toBe(4)
+    expect(input.type).toBe("password")
+    expect(input.disabled).toBe(true)
+    expect(otp.native).toBe(input)
+
+    otp.mask = false
+    expect(input.type).toBe("text")
+
+    otp.disabled = false
+    expect(input.disabled).toBe(false)
+
+    otp.length = 8
+    expect(input.maxLength).toBe(8)
+
+    const focusSpy = vi.spyOn(input, "focus")
+    const blurSpy = vi.spyOn(input, "blur")
+    otp.focus()
+    expect(focusSpy).toHaveBeenCalledOnce()
+    otp.blur()
+    expect(blurSpy).toHaveBeenCalledOnce()
+
+    otp.clear()
+    expect(otp.value).toBe("")
+    expect(input.value).toBe("")
+  })
+
+  it("adopts authored native inputs", () => {
+    const otp = document.createElement("m-input-otp") as InputOtp
+    otp.innerHTML = '<input class="m-input-otp" id="custom-otp" value="987654" maxlength="6">'
+    document.body.append(otp)
+
+    const input = otp.querySelector<HTMLInputElement>("#custom-otp")!
+    expect(input).not.toBeNull()
+    expect(otp.querySelectorAll("input")).toHaveLength(1)
+    expect(otp.value).toBe("987654")
+    expect(otp.native).toBe(input)
+
+    otp.value = "112233"
+    expect(input.value).toBe("112233")
+  })
+
+  it("emits m:change and m:complete events with correct contract", () => {
+    const otp = document.createElement("m-input-otp") as InputOtp
+    document.body.append(otp)
+
+    const changeSpy = vi.fn()
+    const completeSpy = vi.fn()
+    otp.addEventListener("m:change", changeSpy)
+    otp.addEventListener("m:complete", completeSpy)
+
+    const input = otp.querySelector<HTMLInputElement>("input")!
+
+    input.value = "123"
+    input.dispatchEvent(new Event("input", { bubbles: true }))
+
+    expect(changeSpy).toHaveBeenCalledOnce()
+    expect(changeSpy.mock.calls[0]![0].detail).toEqual({ value: "123" })
+    expect(changeSpy.mock.calls[0]![0].bubbles).toBe(true)
+    expect(changeSpy.mock.calls[0]![0].cancelable).toBe(false)
+    expect(changeSpy.mock.calls[0]![0].composed).toBe(false)
+    expect(completeSpy).not.toHaveBeenCalled()
+
+    input.value = "123456"
+    input.dispatchEvent(new Event("input", { bubbles: true }))
+
+    expect(changeSpy).toHaveBeenCalledTimes(2)
+    expect(completeSpy).toHaveBeenCalledOnce()
+    expect(completeSpy.mock.calls[0]![0].detail).toEqual({ value: "123456" })
+    expect(completeSpy.mock.calls[0]![0].bubbles).toBe(true)
+    expect(completeSpy.mock.calls[0]![0].cancelable).toBe(false)
+    expect(completeSpy.mock.calls[0]![0].composed).toBe(false)
+
+    // Replacing complete with another complete does not infer new completion
+    input.value = "654321"
+    input.dispatchEvent(new Event("input", { bubbles: true }))
+    expect(changeSpy).toHaveBeenCalledTimes(3)
+    expect(completeSpy).toHaveBeenCalledOnce()
+
+    // Deleting to incomplete rearms completion
+    input.value = "65432"
+    input.dispatchEvent(new Event("input", { bubbles: true }))
+    expect(changeSpy).toHaveBeenCalledTimes(4)
+    expect(completeSpy).toHaveBeenCalledOnce()
+
+    input.value = "654321"
+    input.dispatchEvent(new Event("input", { bubbles: true }))
+    expect(changeSpy).toHaveBeenCalledTimes(5)
+    expect(completeSpy).toHaveBeenCalledTimes(2)
+  })
+
+  it("upgrades properties assigned before connection", () => {
+    const pre = document.createElement("m-input-otp") as InputOtp
+    pre.value = "1234"
+    pre.length = 4
+    pre.disabled = true
+    pre.mask = true
+    pre.size = "small"
+    document.body.append(pre)
+
+    expect(pre.value).toBe("1234")
+    expect(pre.length).toBe(4)
+    expect(pre.disabled).toBe(true)
+    expect(pre.mask).toBe(true)
+    expect(pre.size).toBe("small")
+
+    const preInput = pre.querySelector<HTMLInputElement>("input")!
+    expect(preInput.value).toBe("1234")
+    expect(preInput.maxLength).toBe(4)
+    expect(preInput.disabled).toBe(true)
+    expect(preInput.type).toBe("password")
+  })
+})
+

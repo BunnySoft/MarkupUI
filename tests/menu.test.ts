@@ -1,15 +1,16 @@
 import { readFileSync } from "node:fs"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createMenu } from "../src/components/menu/index.js"
+import { createMenu, Menu, MenuItem, MenuGroup, MenuDivider, Submenu, registerMenu } from "../src/components/menu/index.js"
 import type { MenuController, MenuOptions } from "../src/components/menu/index.js"
 import { createMenuKeyboard, menuEntryAvailable } from "../src/components/dropdown/keyboard.js"
+import { ViewElement } from "../src/core/index.js"
 
 const controllers: MenuController[] = []
 let sequence = 0
 function nodes() {
   const root = document.createElement("nav")
-  root.className = "mui-menu"
+  root.className = "m-menu"
   root.setAttribute("data-menu", "")
   root.setAttribute("aria-label", "Local navigation")
   root.innerHTML = `
@@ -107,8 +108,8 @@ describe("native navigation, defaults and state", () => {
   it("defines live/default precedence without generating selection or synthetic expansion callbacks", async () => {
     const { root, controller } = bind({ value: "preview", defaultValue: "home", expandedKeys: ["settings"], defaultExpandedKeys: ["guide"] })
     const selected = vi.fn(), expanded = vi.fn()
-    root.addEventListener("mui:menu-select", selected)
-    root.addEventListener("mui:change:expanded-keys", expanded)
+    root.addEventListener("m:menu-select", selected)
+    root.addEventListener("m:change:expanded-keys", expanded)
     expect(controller.value).toBe("preview")
     expect(controller.expandedKeys).toEqual(["settings"])
     controller.value = "home"
@@ -209,7 +210,7 @@ describe("shared keyboard shortcuts without roving navigation Tab stops", () => 
   it("excludes self-inert links/summaries and nested inert branches without disabling unrelated rows", async () => {
     const { root, node, summary, branch, controller } = bind({ defaultExpandedKeys: ["guide", "advanced"] })
     const selected = vi.fn()
-    root.addEventListener("mui:menu-select", selected)
+    root.addEventListener("m:menu-select", selected)
     node("home").setAttribute("inert", "")
     summary("guide").setAttribute("inert", "")
     branch("advanced").setAttribute("inert", "")
@@ -358,7 +359,7 @@ describe("native selection, refresh and cleanup", () => {
   it("notifies only accepted unmodified native leaf actions with string/DOM/path detail", async () => {
     const { root, controller, node } = bind()
     const selections: unknown[] = []
-    root.addEventListener("mui:menu-select", event => selections.push((event as CustomEvent).detail))
+    root.addEventListener("m:menu-select", event => selections.push((event as CustomEvent).detail))
     controller.showOption("performance")
     node("performance").click()
     await flush()
@@ -370,7 +371,7 @@ describe("native selection, refresh and cleanup", () => {
   it("honors delegated defaultPrevented and modifier/target links without routing or fake selection", async () => {
     const { root, node, controller } = bind()
     const selected = vi.fn()
-    root.addEventListener("mui:menu-select", selected)
+    root.addEventListener("m:menu-select", selected)
     root.addEventListener("click", event => event.preventDefault())
     node("preview").click()
     node("home").dispatchEvent(new MouseEvent("click", { bubbles: true, ctrlKey: true, cancelable: true }))
@@ -418,7 +419,7 @@ describe("native selection, refresh and cleanup", () => {
   it("preserves an accepted leaf click across routine refresh but revalidates key and node identity", async () => {
     const { root, node, controller } = bind()
     const events: unknown[] = []
-    root.addEventListener("mui:menu-select", event => events.push((event as CustomEvent).detail))
+    root.addEventListener("m:menu-select", event => events.push((event as CustomEvent).detail))
     node("preview").addEventListener("click", () => { node("preview").textContent = "Updated by action" })
     node("preview").click()
     await flush()
@@ -478,7 +479,7 @@ describe("native selection, refresh and cleanup", () => {
   it("releases removed roots and pending selection tasks without modifying detached UI later", async () => {
     const { root, controller, node } = bind()
     const selected = vi.fn()
-    root.addEventListener("mui:menu-select", selected)
+    root.addEventListener("m:menu-select", selected)
     node("preview").click()
     root.remove()
     await flush()
@@ -490,7 +491,7 @@ describe("native selection, refresh and cleanup", () => {
     const { root, controller, node } = bind()
     expect(() => createMenu(root)).toThrow("active controller")
     const errors = vi.fn()
-    root.addEventListener("mui:menu-error", errors)
+    root.addEventListener("m:menu-error", errors)
     ;(node("preview") as HTMLButtonElement).type = "submit"
     await flush()
     expect(controller.connected).toBe(false)
@@ -534,12 +535,12 @@ describe("native selection, refresh and cleanup", () => {
   it("keeps the corrected native visual defaults inside the unchanged stylesheet ceiling", () => {
     const css = readFileSync("src/components/menu/menu.css", "utf8")
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
-    expect(css).toContain("--mui-menu-item-height,42px")
+    expect(css).toContain("--m-menu-item-height,42px")
     expect(css).toContain("font-size:14px")
     expect(css).toContain("line-height:1.75")
     expect(css).toContain("margin-top:6px")
-    expect(css).toContain("--mui-menu-root-indent,32px")
-    expect(css).toContain("--mui-menu-icon-size,20px")
+    expect(css).toContain("--m-menu-root-indent,32px")
+    expect(css).toContain("--m-menu-icon-size,20px")
     expect(css).not.toContain("font-weight:700")
   })
   it("preserves native disclosure, disabled and current-route representations in CSS", () => {
@@ -550,8 +551,75 @@ describe("native selection, refresh and cleanup", () => {
     expect(css.match(/opacity:/g)).toHaveLength(1)
     expect(css).toContain("opacity:.45")
     expect(css).toContain("[aria-current=page]")
-    expect(css).toContain("--mui-menu-collapsed-width,12rem")
+    expect(css).toContain("--m-menu-collapsed-width,12rem")
     expect(css).not.toMatch(/(?:^|[;{])\s*content:/)
     expect(css).not.toContain("overflow:hidden")
+  })
+})
+
+describe("canonical Menu ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers menu elements", () => {
+    expect(Menu.tag).toBe("m-menu")
+    expect(MenuItem.tag).toBe("m-menu-item")
+    expect(MenuGroup.tag).toBe("m-menu-group")
+    expect(MenuDivider.tag).toBe("m-menu-divider")
+    expect(Submenu.tag).toBe("m-submenu")
+    expect(ViewElement.prototype.isPrototypeOf(Menu.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(MenuItem.prototype)).toBe(true)
+    expect(customElements.get("m-menu")).toBe(Menu)
+    expect(customElements.get("m-menu-item")).toBe(MenuItem)
+    expect(Menu.observedAttributes).toEqual(["value", "mode", "collapsed", "accordion"])
+    expect(MenuItem.observedAttributes).toEqual(["value", "disabled", "selected", "href"])
+  })
+
+  it("handles typed properties, selection and change events", () => {
+    document.body.innerHTML = `
+      <m-menu mode="vertical" value="two">
+        <m-menu-item value="one">Item One</m-menu-item>
+        <m-menu-item value="two">Item Two</m-menu-item>
+        <m-menu-item value="three" disabled>Item Three</m-menu-item>
+      </m-menu>`
+    const menu = document.querySelector("m-menu") as Menu
+    expect(menu.mode).toBe("vertical")
+    expect(menu.value).toBe("two")
+    expect(menu.items).toHaveLength(3)
+    expect(menu.items[1]!.hasAttribute("selected")).toBe(true)
+    expect(menu.items[2]!.disabled).toBe(true)
+
+    const changeSpy = vi.fn()
+    menu.addEventListener("m:change", changeSpy)
+
+    menu.items[0]!.click()
+    expect(menu.value).toBe("one")
+    expect(menu.items[0]!.hasAttribute("selected")).toBe(true)
+    expect(menu.items[1]!.hasAttribute("selected")).toBe(false)
+    expect(changeSpy).toHaveBeenCalledOnce()
+    expect(changeSpy.mock.calls[0][0].detail).toMatchObject({ value: "one", previous: "two" })
+
+    // Clicking disabled item does nothing
+    menu.items[2]!.click()
+    expect(menu.value).toBe("one")
+    expect(changeSpy).toHaveBeenCalledOnce()
+
+    menu.mode = "horizontal"
+    expect(menu.getAttribute("mode")).toBe("horizontal")
+    expect(menu.dataset.menuMode).toBe("horizontal")
+
+    menu.collapsed = true
+    expect(menu.hasAttribute("collapsed")).toBe(true)
+    expect(menu.classList.contains("m-menu--collapsed")).toBe(true)
+  })
+
+  it("supports keyboard navigation between items", () => {
+    document.body.innerHTML = `
+      <m-menu>
+        <m-menu-item value="a">Alpha</m-menu-item>
+        <m-menu-item value="b">Beta</m-menu-item>
+      </m-menu>`
+    const menu = document.querySelector("m-menu") as Menu
+    const items = menu.items
+    items[0]!.focus()
+    items[0]!.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }))
+    expect(document.activeElement).toBe(items[1])
   })
 })

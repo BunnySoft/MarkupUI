@@ -1,75 +1,154 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Flex — native CSS only</title>
+  <title>Flex - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-flex.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./flex.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-flex.global.js"></script>
+  <script type="module" src="./flex.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Native Flex without a runtime</h1>
-    <p>Original elements, native layout and DOM order. No child wrappers, role changes, gap detection or JavaScript size parser.</p>
-    <section aria-labelledby="presets-title">
-      <h2 id="presets-title">Pinned spacing presets</h2>
-      <div class="mui-flex measurement" data-size="small" id="small"><span>Small 1</span><span>Small 2</span><span>Small 3</span></div>
-      <div class="mui-flex measurement" id="medium"><span>Med 1</span><span>Med 2</span><span>Med 3</span></div>
-      <div class="mui-flex measurement" data-size="large" id="large"><span>Large 1</span><span>Large 2</span><span>Large 3</span></div>
-    </section>
-    <section aria-labelledby="tuple-title">
-      <h2 id="tuple-title">Tuple axes and native wrapping</h2>
-      <p>The source tuple [20, 6] means column-gap:20px and row-gap:6px. The same CSS gaps apply in a column; they are not swapped.</p>
-      <div class="mui-flex measurement tuple" id="tuple"><span>One</span><span>Two</span><span>Three</span></div>
-      <div class="mui-flex measurement tuple" data-vertical data-wrap="true" id="vertical"><span>One</span><span>Two</span><span>Three</span></div>
-      <p>Vertical mode stays nowrap, matching the pinned source, even with data-wrap="true".</p>
-      <div class="mui-flex measurement no-wrap" data-wrap="false" id="no-wrap"><span>One</span><span>Two</span><span>Three</span></div>
-      <p class="inline-example">Native inline text before <span class="mui-flex" data-inline data-size="small" id="inline"><span>one</span><span>two</span></span> and after.</p>
-    </section>
-    <section aria-labelledby="alignment-title">
-      <h2 id="alignment-title">Native alignment and justification</h2>
-      <div class="mui-flex measurement aligned" id="aligned"><span>First</span><span>Last</span></div>
-    </section>
-    <section aria-labelledby="nested-title">
-      <h2 id="nested-title">Independent nested presets and hidden items</h2>
-      <div class="mui-flex" data-size="large" id="nested-outer">
-        <div class="mui-flex measurement" data-size="small" id="nested-small"><span>A</span><span>B</span></div>
-        <div class="mui-flex measurement" id="nested-medium"><span>C</span><span>D</span></div>
-      </div>
-      <div class="mui-flex measurement" id="hidden-items"><span id="visible-first">First</span><span hidden id="hidden-item">Hidden</span><span id="visible-last">Last</span></div>
-      <div class="mui-flex" data-inline hidden id="hidden-root"><button type="button">Still hidden</button></div>
-      <template class="mui-flex" id="native-template"><span>Application-owned inert template</span></template>
-      <div class="native-grid">
-        <div class="mui-flex" id="nested-grid-flex"><p class="long-copy">AnOriginalUnbrokenTextValueThatWrapsInsideANativeFlexItemWithoutForcingItsGridTrackToOverflow</p></div>
-        <span>Grid cell</span>
+  <main data-demo-page class="component-docs">
+    <h1>Flex</h1>
+    <p>Flex is the shared ViewElement layout frame for native flexbox: typed gaps and native alignment, without generated items, measurement or semantic changes.</p>
+    <nav class="component-docs-nav" aria-label="Flex documentation">
+      <a href="#presets-title">Examples</a><a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a><a href="#behavior">Behavior and accessibility</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-flex.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-flex.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+    <section data-demo-example="presets" aria-labelledby="presets-title">
+      <header data-demo-header><div><h2 id="presets-title">Pinned spacing presets</h2><p>Small 4/8px, medium 8/12px, large 12/16px: row/column gaps, not uniform spacing.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-flex size="small" id="small"><span>S1</span><span>S2</span><span>S3</span></m-flex>
+        <m-flex id="medium"><span>M1</span><span>M2</span><span>M3</span></m-flex>
+        <m-flex size="large" id="large"><span>L1</span><span>L2</span><span>L3</span></m-flex>
       </div>
     </section>
-    <section aria-labelledby="native-title">
-      <h2 id="native-title">Native list markers, actions and forms</h2>
-      <ol class="mui-flex" data-vertical data-size="small" type="A" start="3" id="native-list">
-        <li><a href="#destination" id="list-first">First native list link</a></li>
-        <li><a href="#destination" id="list-second">Second native list link</a></li>
-      </ol>
-      <form class="mui-flex" data-vertical id="native-form" method="get" action="./flex.html#destination">
-        <div class="mui-flex" data-size="small">
-          <label for="native-name">Name</label>
-          <input name="name" id="native-name" value="Original" required>
-        </div>
-        <div class="mui-flex" data-size="small">
-          <button type="submit" id="native-submit">Native submit</button>
-          <button type="reset" id="native-reset">Native reset</button>
-          <button type="button" disabled id="native-disabled">Unavailable</button>
-          <a href="#destination" id="native-link">Native link</a>
-        </div>
-      </form>
-      <p id="destination" tabindex="-1">The form submits through normal GET navigation to this same static example; no application handler is installed.</p>
+    <section data-demo-example="axes" aria-labelledby="axes-title">
+      <header data-demo-header><div><h2 id="axes-title">Independent gaps and native wrapping</h2><p>A source tuple [20, 6] maps to columnGap=20 and rowGap=6. Axes never swap. Columns retain nowrap even with wrap=true.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-flex row-gap="6" column-gap="20" id="tuple"><span>One</span><span>Two</span><span>Three</span></m-flex>
+        <m-flex row-gap="6" column-gap="20" vertical wrap="true" id="vertical"><span>One</span><span>Two</span><span>Three</span></m-flex>
+        <m-flex wrap="false" id="no-wrap"><span>One</span><span>Two</span><span>Three</span></m-flex>
+        <p>Native inline text before <m-flex inline size="small" id="inline"><span>one</span><span>two</span></m-flex> and after.</p>
+      </div>
     </section>
-    <section aria-labelledby="rtl-title" dir="rtl" lang="ar">
-      <h2 id="rtl-title">ترتيب أصلي</h2>
-      <div class="mui-flex measurement" data-size="large" id="rtl"><span id="rtl-first">الأول</span><span id="rtl-second">الثاني</span></div>
-      <p>No row-reverse is required: native document direction defines inline start.</p>
+    <section data-demo-example="alignment" aria-labelledby="alignment-title">
+      <header data-demo-header><div><h2 id="alignment-title">Native alignment and distribution</h2><p>Try every typed keyword. Start/end are native logical positions, not aliases for flex-start/flex-end. Distributed space can exceed the configured gap.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <label>Align <select id="align-choice" aria-controls="aligned"></select></label>
+        <label>Justify <select id="justify-choice" aria-controls="aligned"></select></label>
+        <m-flex align="center" justify="space-between" id="aligned"><span>First</span><span>Middle</span><span>Last</span></m-flex>
+      </div>
     </section>
-    <p id="outside">Outside the opt-in, layout and native semantics remain unchanged.</p>
+    <section data-demo-example="reverse" aria-labelledby="reverse-title">
+      <header data-demo-header><div><h2 id="reverse-title">Orientation and visual reversal</h2><p>Reverse uses native row-reverse/column-reverse. It never moves nodes or changes reading/Tab order; use it only when visual order is not meaningful.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-flex reverse justify="flex-start" id="reverse-row"><span>One</span><span>Two</span><span>Three</span></m-flex>
+        <m-flex vertical reverse justify="flex-start" id="reverse-column"><span>One</span><span>Two</span><span>Three</span></m-flex>
+      </div>
+    </section>
+    <section data-demo-example="nested" aria-labelledby="nested-title">
+      <header data-demo-header><div><h2 id="nested-title">Nesting, text, hidden items and templates</h2><p>Each container has its own preset. Typed gaps do not inherit. Native text forms anonymous flex items; empty items remain real items.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-flex size="large" column-gap="30" id="nested-outer">
+          <m-flex size="small" id="nested-small"><span>A</span><span>B</span></m-flex>
+          <m-flex id="nested-medium"><span>C</span><span>D</span></m-flex>
+        </m-flex>
+        <m-flex id="mixed">Bare text <em>Original emphasis</em><!-- Original comment --><span>Authored group</span></m-flex>
+        <m-flex id="hidden-items"><span id="visible-first">First</span><span hidden id="hidden-item">Hidden</span><span id="visible-last">Last</span></m-flex>
+        <m-flex inline hidden id="hidden-root"><button type="button">Still hidden</button></m-flex>
+        <m-flex><template id="native-template"><span>Application-owned inert template</span></template><span>Visible beside a template</span></m-flex>
+        <div class="native-grid"><m-flex id="nested-grid-flex"><p>AnOriginalUnbrokenTextValueThatWrapsInsideANativeFlexItemWithoutForcingItsGridTrackToOverflow</p></m-flex><span>Grid cell</span></div>
+      </div>
+    </section>
+    <section data-demo-example="native" aria-labelledby="native-title">
+      <header data-demo-header><div><h2 id="native-title">Native lists, controls and forms</h2><p>Flex is not a list/form owner. Keep li directly inside ol/ul; put Flex inside a form, not in place of it.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-flex vertical><ol type="A" start="3" id="native-list"><li><a href="#destination" id="list-first">First native list link</a></li><li><a href="#destination" id="list-second">Second native list link</a></li></ol></m-flex>
+        <form id="native-form" method="get" action="./flex.html#destination">
+          <m-flex vertical id="form-flex">
+            <label>Name <input name="name" id="native-name" value="Original" required></label>
+            <m-flex size="small"><button type="submit" id="native-submit">Native submit</button><button type="reset" id="native-reset">Native reset</button><button type="button" disabled id="native-disabled">Unavailable</button><a href="#destination" id="native-link">Native link</a></m-flex>
+          </m-flex>
+        </form>
+        <p id="destination" tabindex="-1">The form submits through normal GET navigation to this static page; no submission handler is installed.</p>
+      </div>
+    </section>
+    <section data-demo-example="direction" dir="rtl" lang="ar" aria-labelledby="rtl-title">
+      <header data-demo-header><div><h2 id="rtl-title">RTL · ترتيب أصلي</h2><p>Native document direction defines inline start. No reverse is needed for RTL.</p></div></header>
+      <div class="demo-preview" data-demo-preview><m-flex size="large" id="rtl"><span id="rtl-first">الأول</span><span id="rtl-second">الثاني</span></m-flex></div>
+    </section>
+    <section data-demo-example="web" aria-labelledby="web-title">
+      <header data-demo-header><div><h2 id="web-title">Web-specific style resources</h2><p>Native CSS owns relative gaps, safe alignment, wrap-reverse, writing modes and responsive sizing. These explicit custom classes are not portable APIs.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-flex class="vertical-writing" id="writing"><span>One</span><span>Two</span><span>Three</span></m-flex>
+        <m-flex class="custom-flex" id="custom-flex"><span>Style resource</span><span>Responsive gaps</span></m-flex>
+        <m-flex class="reverse-wrap" id="reverse-wrap"><span>One</span><span>Two</span><span>Three</span></m-flex>
+      </div>
+    </section>
+    <section data-demo-example="live" aria-labelledby="live-title">
+      <header data-demo-header><div><h2 id="live-title">Direct updates and reconnect</h2><p>Null restores the preset/style gap. Changing layout preserves authored controls, listeners and focus.</p></div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-flex id="live-flex"><input aria-label="Preserved input" value="Edit me"><button type="button">Native action</button></m-flex>
+        <m-flex size="small"><button type="button" id="change-gap">Toggle gap</button><button type="button" id="reset-gap">Reset gap</button><button type="button" id="reconnect-flex">Reconnect</button></m-flex>
+        <span id="flex-status" role="status">Column gap: preset</span>
+      </div>
+    </section>
+    <section aria-labelledby="api-heading"><h2 id="api-heading">API</h2><div id="flex-api"><p>Loading API documentation.</p></div></section>
+    <section id="behavior" aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Behavior, accessibility and styling</h2>
+      <p>Defaults: vertical=false, inline=false, reverse=false, wrap=true, size=medium, align=normal,
+        justify=start, rowGap=null and columnGap=null. A column always uses nowrap; returning to a row
+        restores the stored wrap preference. Unlike Space, Flex preserves the native alignment vocabulary
+        (including flex-start, flex-end, self-start, self-end, left/right and baseline variants where applicable)
+        and supplies no item-box class. Native start/end and flex-start/flex-end can differ in reversed layouts.</p>
+      <p>vertical, inline and reverse are presence booleans: even text "false" enables them. Remove the attribute
+        or set the property to false to disable. wrap accepts empty/true/false and defaults to true when absent.
+        Invalid properties throw before mutation; invalid attributes throw on validation/read rather than
+        silently default. Gap properties accept null or finite nonnegative numbers, including zero/fractions,
+        mapped to CSS pixels on Web. Numeric attributes require JavaScript; the other layout styles work without it.</p>
+      <p>Native CSS determines layout and responsiveness. The four public tokens --m-flex-row-gap,
+        --m-flex-column-gap, --m-flex-align and --m-flex-justify override preset/keyword CSS. Tokens inherit
+        normally: set them to initial on a nested container to return to its own preset. Explicit typed gaps
+        temporarily own native row-gap/column-gap and do not inherit. Removing a gap or disconnecting restores
+        only still-owned styles, preserving later application edits; reconnect reapplies the typed values.</p>
+      <p>Colors, borders, relative units, safe/unsafe alignment, align-content, item grow/shrink/basis,
+        intrinsic minima, wrap-reverse and media/container queries remain native Web CSS, not parsed style
+        objects or measurement APIs. Direct elements have min-inline-size:0; authors may restore auto for
+        intrinsic content. Text alignment inherits independently of the layout align attribute, and authored
+        text-align still wins. Overflow is never automatically clipped. Modern flex-gap support is required;
+        no support detector, fallback margin system or older-browser polyfill is supplied.</p>
+      <p>Flex creates no wrappers, controls, observers, listeners, roles or tab stops. Text, comments, hidden
+        nodes, templates, late children and nested components remain authored nodes. Templates are inert,
+        ordinary hidden nodes occupy no gap, and hidden=until-found is not converted to ordinary hidden.
+        Focus, native keyboard activation, forms and labels retain their owners. Pre-upgrade properties replay
+        before first rendering; reconnect never duplicates content. Visual reverse does not reverse Tab order.</p>
+      <p>Passive Flex content may appear in Collapse headers, Dropdown labels and Tooltip panels.
+        Those consumers still reject interactive descendants, arbitrary custom widgets and shadow roots;
+        Flex does not loosen their content contracts. Outside those regions, normal interactive content is welcome.</p>
+      <p>The former .m-flex/data-* CSS adapter is replaced by m-flex and the direct attributes shown here.
+        Existing m-row, m-stack, Grid and Layout aliases are not registered or replaced by this family.
+        No provider, item renderer, separator, source tuple/string parser or framework theme-object API is added.</p>
+    </section>
+    <p id="outside">Outside Flex, native content and styles remain unchanged.</p>
   </main>
 </body>
 </html>

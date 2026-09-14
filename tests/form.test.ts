@@ -2,15 +2,18 @@ import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createForm } from "../src/components/form/index.js"
-import type { FormController, FormItemOptions, FormValidator, FormValidatorResult } from "../src/components/form/index.js"
-import { createInput } from "../src/components/input/index.js"
+import { Form, FormItem, FormItemGi } from "../src/components/form/index.js"
+import { coordinateForm as createForm } from "../src/components/form/controller.js"
+import type { FormItemOptions, FormValidator, FormValidatorResult } from "../src/components/form/index.js"
+import { createInput } from "../src/components/native-input.js"
 import { createRate } from "../src/components/rate/index.js"
+import { Checkbox } from "../src/components/checkbox/index.js"
+import { Switch } from "../src/components/switch/index.js"
 
 const helpers: { disconnect(): void }[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 15))
 function fixture(validator?: FormValidator, blur = false) {
-  document.body.innerHTML = `<form id="test"><div class="mui-form-item" id="item">
+  document.body.innerHTML = `<form id="test"><div class="m-form-item" id="item">
     <label for="first">First</label><input id="first" name="a.b[0]" value="seed" aria-describedby="help">
     <span id="help">Help</span><p id="feedback" hidden>Authored feedback</p></div>
     <label for="second">Second</label><input id="second" name="a.b[0]" value="other">
@@ -36,34 +39,252 @@ function deferred() {
 }
 afterEach(() => { helpers.splice(0).reverse().forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
 
+describe("canonical Form family", () => {
+  function canonical() {
+    document.body.innerHTML = `<m-form id="host"><form id="native" action="/save">
+      <m-form-item key="name"><label class="m-form-item__label" for="name">Name</label>
+        <input id="name" name="name" value="seed" required aria-describedby="help">
+        <p id="feedback" class="m-form-item__feedback" hidden>Before</p></m-form-item>
+      <input name="elsewhere" form="other" required><button name="intent" value="save">Save</button>
+      </form></m-form><form id="other"></form>
+      <m-form-item-gi key="outside" span="full"><label for="outside">Outside</label>
+        <input id="outside" name="outside" form="native" required value="external">
+        <p id="outside-error" class="m-form-item__feedback" hidden></p></m-form-item-gi>`
+    const host = document.querySelector<Form>("m-form")!
+    host.refresh()
+    helpers.push(host)
+    return { host, native: host.native, item: document.querySelector<FormItem>("m-form-item")!,
+      field: document.querySelector<HTMLInputElement>("#name")!, outside: document.querySelector<HTMLInputElement>("#outside")! }
+  }
+  it("registers only three own-tag ViewElements and exposes no public factory/controller", async () => {
+    const api = await import("../src/components/form/index.js")
+    expect(Object.keys(api).sort()).toEqual(["Form", "FormItem", "FormItemGi", "registerForm"])
+    for (const Type of [Form, FormItem, FormItemGi]) {
+      expect(Object.hasOwn(Type, "tag")).toBe(true)
+      expect(customElements.get(Type.tag)).toBe(Type)
+    }
+  })
+  it("extracts inherited presentation, native events and real defaults without inventing native state", () => {
+    const data = JSON.parse(readFileSync("demo\\api\\form.json", "utf8"))
+    expect(data.elements.map((element: { type: string }) => element.type)).toEqual(["Form", "FormItem", "FormItemGi"])
+    const [form, item, grid] = data.elements
+    expect(form.properties.validateOnBlur.default).toBe(false)
+    expect(form.properties.inline.default).toBe(false)
+    expect(form.properties.size.default).toBeNull()
+    expect(form.properties.labelPlacement.default).toBeNull()
+    expect(form.properties.enctype.values.sort()).toEqual(["application/x-www-form-urlencoded", "multipart/form-data", "text/plain"])
+    expect(form.properties.native).not.toHaveProperty("default")
+    expect(form.properties.action).not.toHaveProperty("default")
+    expect(item.properties.key.default).toBe("")
+    expect(grid.properties.span).toMatchObject({ default: 1, min: 1, integer: true })
+    expect(form.events.filter((event: { web: string }) => ["submit", "reset", "invalid"].includes(event.web))).toEqual(expect.arrayContaining([
+      expect.objectContaining({ web: "submit", bubbles: true, cancelable: true, composed: false }),
+      expect.objectContaining({ web: "reset", bubbles: true, cancelable: true, composed: false }),
+      expect.objectContaining({ web: "invalid", bubbles: false, cancelable: true, composed: false }),
+    ]))
+  })
+  it("retains native forms, labels, controls and actual external association", async () => {
+    const { host, native, field, outside } = canonical(), label = field.labels![0]
+    expect(host.elements).toBe(native.elements)
+    expect((await host.validate()).status).toBe("valid")
+    expect(new FormData(host.native).get("outside")).toBe("external")
+    outside.value = ""
+    const result = await host.validate()
+    expect(result.issues.map(issue => issue.key)).toEqual(["outside"])
+    expect(host.native).toBe(native); expect(field.labels![0]).toBe(label)
+    expect(document.querySelectorAll("#host form")).toHaveLength(1)
+    expect(host.hasAttribute("role")).toBe(false)
+  })
+  it("retains defaults, typed native properties and does not coerce invalid values", () => {
+    const host = new Form()
+    expect(host.method).toBe("get"); expect(host.enctype).toBe("application/x-www-form-urlencoded")
+    expect(host.autocomplete).toBe(host.native.autocomplete); expect(host.noValidate).toBe(false)
+    expect(host.target).toBe(""); expect(host.items).toBeNull(); expect(host.validateOnBlur).toBe(false)
+    host.action = "/post"; host.method = "post"; host.enctype = "multipart/form-data"
+    host.target = "frame"; host.noValidate = true; host.autocomplete = "off"
+    expect(host.native.getAttribute("action")).toBe("/post"); expect(host.native.method).toBe("post")
+    for (const [key, value] of [["method", "put"], ["enctype", "json"], ["autocomplete", "maybe"], ["noValidate", "false"], ["action", null]]) {
+      expect(() => Reflect.set(host, key, value)).toThrow()
+    }
+    expect(host.method).toBe("post")
+    expect(() => { const item = new FormItemGi(); item.span = 0 }).toThrow()
+  })
+  it("adopts late native content without cloning or replacing current control defaults/listeners", async () => {
+    const host = new Form()
+    host.method = "post"; host.action = "/saved"
+    const input = document.createElement("input"), listener = vi.fn()
+    input.defaultValue = "default"; input.value = "dirty"; input.addEventListener("input", listener)
+    host.append(input); document.body.append(host); host.refresh()
+    const generated = host.native
+    input.focus()
+    const authored = document.createElement("form"); authored.id = "late"
+    authored.setAttribute("data-app", "preserve"); host.append(authored); host.refresh()
+    expect(host.native).toBe(authored); expect(host.querySelectorAll("form")).toHaveLength(1)
+    expect(generated.isConnected).toBe(false); expect(authored.method).toBe("post")
+    expect(authored.getAttribute("action")).toBe("/saved"); expect(authored.getAttribute("data-app")).toBe("preserve")
+    expect(input.value).toBe("dirty"); expect(input.defaultValue).toBe("default"); expect(document.activeElement).toBe(input)
+    input.dispatchEvent(new Event("input")); expect(listener).toHaveBeenCalledOnce()
+    host.remove(); document.body.append(host); await flush()
+    expect(host.native).toBe(authored); expect(host.connected).toBe(true)
+  })
+  it("replays pre-upgrade properties and preserves authored native owner attributes", async () => {
+    const host = new Form()
+    host.innerHTML = '<form id="pre" target="authored"><input name="a" value="initial"></form>'
+    for (const [name, value] of [["method", "post"], ["noValidate", true], ["validateOnBlur", true]]) {
+      Object.defineProperty(host, name, { value, configurable: true, writable: true })
+    }
+    document.body.append(host); await flush()
+    expect(host.native.id).toBe("pre"); expect(host.method).toBe("post")
+    expect(host.target).toBe("authored"); expect(host.noValidate).toBe(true); expect(host.validateOnBlur).toBe(true)
+    expect(Object.hasOwn(host, "method")).toBe(false)
+  })
+  it("keeps developer native attributes and styles through refresh, host removal and reconnect", async () => {
+    const { host, native } = canonical()
+    native.dataset.size = "small"; native.style.setProperty("--m-form-gap", "9px")
+    host.size = "large"; expect(native.dataset.size).toBe("large")
+    native.dataset.size = "medium"; native.action = "/application"; host.refresh()
+    expect(native.dataset.size).toBe("medium")
+    host.size = null; host.remove(); document.body.append(host); await flush()
+    expect(native.dataset.size).toBe("medium"); expect(native.getAttribute("action")).toBe("/application")
+    expect(native.style.getPropertyValue("--m-form-gap")).toBe("9px")
+  })
+  it("uses native methods despite controls named submit/reset/requestSubmit", () => {
+    const { host, native } = canonical(), submitter = native.querySelector("button")!
+    for (const name of ["submit", "reset", "requestSubmit"]) {
+      const input = document.createElement("input"); input.name = name; native.append(input)
+    }
+    const request = vi.spyOn(HTMLFormElement.prototype, "requestSubmit").mockImplementation(() => {})
+    const submit = vi.spyOn(HTMLFormElement.prototype, "submit").mockImplementation(() => {})
+    const reset = vi.spyOn(HTMLFormElement.prototype, "reset").mockImplementation(() => {})
+    host.requestSubmit(submitter); host.submit(); host.reset()
+    expect(request).toHaveBeenCalledExactlyOnceWith(submitter); expect(submit).toHaveBeenCalledOnce(); expect(reset).toHaveBeenCalledOnce()
+  })
+  it("aborts pending item validators on replacement and external reassociation", async () => {
+    const { host, item, outside } = canonical(), pending = deferred()
+    item.validator = () => pending.promise
+    const result = host.validate(); await Promise.resolve()
+    item.validator = () => null
+    expect((await result).status).toBe("aborted")
+    expect((await host.validate()).status).toBe("valid")
+    outside.setAttribute("form", "other"); outside.value = ""; await flush()
+    expect((await host.validate()).status).toBe("valid")
+    expect(outside.hasAttribute("aria-invalid")).toBe(false)
+    pending.resolve({ message: "stale" })
+  })
+  it("invalidates application-dependent results on explicit refresh without native value edits", async () => {
+    const { host, item } = canonical()
+    item.validator = () => ({ message: "External application dependency" })
+    const result = await host.validate()
+    expect(result.current).toBe(true)
+    host.refresh()
+    expect(result.current).toBe(false)
+    expect(item.feedback!.textContent).toBe("Before")
+  })
+  it("preserves native fieldsets/legends and excludes nested item controls from parent mappings", async () => {
+    const { host, native, item, field } = canonical()
+    const fieldset = document.createElement("fieldset"), legend = document.createElement("legend")
+    legend.textContent = "Group"; fieldset.disabled = true
+    const required = document.createElement("input"); required.required = true; required.name = "barred"
+    legend.append(field); fieldset.append(legend, required); item.append(fieldset)
+    const nested = new FormItem(); nested.key = "nested"
+    nested.innerHTML = '<label>Nested <input required name="nested"></label>'
+    item.append(nested); host.refresh()
+    expect(item.native).toBe(fieldset); expect(native.querySelector("legend")).toBe(legend)
+    field.value = ""
+    const result = await host.validate()
+    expect(result.issues.map(issue => issue.key)).toEqual(["name", "nested"])
+    expect(required.willValidate).toBe(false)
+  })
+  it("keeps cancelled resets settled and clears successful reset feedback without changing defaults", async () => {
+    const { host, field, item, native } = canonical()
+    item.validator = () => ({ message: "Local error" }); field.value = "dirty"
+    await host.validate()
+    native.addEventListener("reset", event => event.preventDefault(), { once: true })
+    host.reset(); await flush()
+    expect(field.value).toBe("dirty"); expect(item.feedback!.textContent).toBe("Local error")
+    host.reset(); await flush()
+    expect(field.value).toBe("seed"); expect(item.feedback!.textContent).toBe("Before")
+    expect(field.getAttribute("aria-describedby")).toBe("help")
+  })
+})
+
+describe("canonical Checkbox composition", () => {
+  it("uses the original native owner for form validation, strings and reset", async () => {
+    document.body.innerHTML = '<form><div id="item"><m-checkbox name="consent" value="yes" checked required>Consent</m-checkbox><p id="feedback" hidden></p></div></form>'
+    await flush()
+    const form = document.querySelector("form")!, box = document.querySelector<Checkbox>("m-checkbox")!, native = box.native
+    const helper = createForm(form, { items: [{ key: "consent", controls: [native], feedback: document.getElementById("feedback")!, element: document.getElementById("item")! }] })
+    helpers.push(helper)
+    expect((await helper.validate()).status).toBe("valid")
+    box.checked = false
+    expect((await helper.validate()).status).toBe("invalid")
+    form.reset(); await flush()
+    expect((await helper.validate()).status).toBe("valid")
+    expect(box.native).toBe(native)
+    expect(new FormData(form).get("consent")).toBe("yes")
+  })
+
+  describe("canonical Switch composition", () => {
+    it("uses the original Switch native owner for validation, loading, strings and reset", async () => {
+      document.body.innerHTML = '<form><div id="item"><m-switch name="consent" value="yes" checked required>Consent</m-switch><p id="feedback" hidden></p></div></form>'
+      await flush()
+      const form = document.querySelector("form")!, toggle = document.querySelector<Switch>("m-switch")!, native = toggle.native
+      const helper = createForm(form, { items: [{ key: "consent", controls: [native], feedback: document.getElementById("feedback")!, element: document.getElementById("item")! }] })
+      helpers.push(helper)
+      expect((await helper.validate()).status).toBe("valid")
+      toggle.loading = true; expect(new FormData(form).get("consent")).toBe("yes")
+      toggle.checked = false; expect((await helper.validate()).status).toBe("invalid")
+      form.reset(); await flush()
+      expect((await helper.validate()).status).toBe("valid")
+      expect(toggle.native).toBe(native); expect(toggle.loading).toBe(true)
+    })
+  })
+})
+
 describe("Form stylesheet contract", () => {
+  it("accounts for the complete family and shared core under the approved delivery limits", () => {
+    const manifest = JSON.parse(readFileSync("dist\\manifest.json", "utf8"))
+    const family = manifest.componentPayloads.form
+    expect(family.cssGzipBytes).toBeLessThanOrEqual(1250)
+    for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
+      const payload = family[mode]
+      const core = `markup-ui-core${suffix}`
+      expect(payload.dependencies).toEqual([core])
+      expect(payload.gzipBytes).toBe(gzipSync(readFileSync(`dist\\${payload.file}`), { level: 9 }).length)
+      expect(payload.gzipBytes).toBeLessThanOrEqual(7000)
+      expect(payload.runtimeBudget).toBe(8250)
+      expect(payload.runtimeGzipBytes).toBe(payload.gzipBytes + manifest.bundles[core].gzipBytes)
+      expect(payload.runtimeGzipBytes).toBeLessThanOrEqual(8250)
+      expect(payload.totalGzipBytes).toBe(payload.runtimeGzipBytes + family.cssGzipBytes)
+    }
+  })
   const css = readFileSync(join("src", "components", "form", "form.css"), "utf8")
   it("keeps inherited public geometry and color tokens authoritative", () => {
-    expect(css).not.toMatch(/--mui-form-[\w-]+\s*:/)
-    expect(css).toContain("var(--mui-form-label-align")
-    expect(css).toContain("var(--mui-form-feedback-color")
-    expect(css).not.toContain("var(--mui-text-primary")
-    expect(css).toMatch(/data-mui-theme="?dark"?/)
+    expect(css).not.toMatch(/--m-form-[\w-]+\s*:/)
+    expect(css).toContain("var(--m-form-label-align")
+    expect(css).toContain("var(--m-form-feedback-color")
+    expect(css).not.toContain("var(--m-text-primary")
+    expect(css).toMatch(/data-m-theme="?dark"?/)
     expect(css).toMatch(/@media\s+print\s*\{[^}]*color-scheme:\s*light/)
   })
   it("uses reference label weight and explicit size inheritance without sizing controls", () => {
     expect(css).toMatch(/font-weight:\s*400/)
     for (const height of [24, 26, 28]) expect(css).toMatch(new RegExp(`--_f-lh:\\s*${height}px`))
-    expect(css).toMatch(/:is\(\.mui-form,\s*\.mui-form-item\)\[data-size="?medium"?\]/)
-    expect(css).toMatch(/\.mui-form-item__content:not\(\.mui-input\)\s*\{[^}]*min-block-size:/)
-    expect(css).not.toMatch(/\.mui-input\s*\{[^}]*min-block-size:/)
-    expect(css).not.toMatch(/\.mui-form[^,{]*(?:\s|>|\+|~)(?:input|select|textarea)(?:[\s[.:#,{])/)
+    expect(css).toContain('[size="medium"]')
+    expect(css).toMatch(/\.m-form-item__content:not\(\.m-input\)\s*\{[^}]*min-block-size:/)
+    expect(css).not.toMatch(/\.m-input\s*\{[^}]*min-block-size:/)
+    expect(css).not.toMatch(/\.m-form[^,{]*(?:\s|>|\+|~)(?:input|select|textarea)(?:[\s[.:#,{])/)
   })
   it("reserves hidden feedback space without exposing or generating feedback", () => {
-    expect(css).toMatch(/\.mui-form-item:not\(fieldset\):has\(>\s*\.mui-form-item__feedback\[hidden\]\)\s*\{[^}]*padding-block-end:/)
-    expect(css).toMatch(/\.mui-form-item__feedback:not\(:empty\)\s*\{[^}]*padding-block-start:\s*4px/)
+    expect(css).toMatch(/\.m-form-item:not\(fieldset\):has\(>\s*\.m-form-item__feedback\[hidden\]\)\s*\{[^}]*padding-block-end:/)
+    expect(css).toMatch(/\.m-form-item__feedback:not\(:empty\)\s*\{[^}]*padding-block-start:\s*4px/)
     expect(css).toMatch(/\[hidden\][^{]*\{[^}]*display:\s*none\s*!important/)
     expect(css).not.toMatch(/::before|::after/)
   })
   it("preserves authored content flow, fieldsets and border-box item sizing", () => {
-    const content = css.match(/\.mui-form-item__content\s*\{([^}]*)\}/)?.[1] ?? ""
+    const content = css.match(/\.m-form-item__content\s*\{([^}]*)\}/)?.[1] ?? ""
     expect(content).not.toMatch(/display:/)
-    expect(css).toMatch(/\.mui-form-item\s*\{[^}]*box-sizing:\s*border-box/)
+    expect(css).toMatch(/\.m-form-item\s*\{[^}]*box-sizing:\s*border-box/)
     expect(css).toMatch(/data-label-placement="?left"?[^\n]*:not\(fieldset\)/)
   })
   it("retains pending, forced-color and motion-free presentation", () => {
@@ -71,7 +292,7 @@ describe("Form stylesheet contract", () => {
     expect(css).toMatch(/@media\s*\(forced-colors:\s*active\)/)
     expect(css).toContain("color: CanvasText")
     expect(css).not.toMatch(/(?:animation|transition)(?:-[a-z]+)?\s*:/)
-    expect(gzipSync(css, { level: 9 }).byteLength).toBeLessThanOrEqual(1250)
+    expect(gzipSync(readFileSync("dist\\markup-ui-form.css"), { level: 9 }).byteLength).toBeLessThanOrEqual(1250)
   })
 })
 
@@ -93,10 +314,10 @@ describe("Form native identity and explicit item ownership", () => {
     const { form, first, helper } = fixture()
     expect(() => createForm(form, { items: [] })).toThrow("owner")
     vi.resetModules()
-    const other = await import("../src/components/form/index.js")
-    expect(() => other.createForm(form, { items: [] })).toThrow("owner")
+    const other = await import("../src/components/form/controller.js")
+    expect(() => other.coordinateForm(form, { items: [] })).toThrow("owner")
     helper.disconnect()
-    helpers.push(other.createForm(form, { items: [{ key: "single", controls: [first] }] }))
+    helpers.push(other.coordinateForm(form, { items: [{ key: "single", controls: [first] }] }))
   })
   it("rejects schema/unknown options, duplicate keys, repeated nodes and fieldset anchors", () => {
     const { form, first, helper } = fixture(); helper.disconnect()
@@ -270,13 +491,13 @@ describe("small validators, lifetime and cross-field snapshots", () => {
   })
   it.each([undefined, false, "", {}, { message: "" }, { message: "bad", level: "info" }])("rejects malformed validator result %j explicitly", async value => {
     const { helper, form } = fixture((() => value) as FormValidator), error = vi.fn()
-    form.addEventListener("mui:form-error", error)
+    form.addEventListener("m:form-error", error)
     await expect(helper.validate()).rejects.toThrow("Validator must")
     expect(error).toHaveBeenCalledOnce()
   })
   it("rejects unexpected throws/promises and reports late unexpected failures even after cancellation", async () => {
     const pending = deferred(), { helper, form, first } = fixture(() => pending.promise), error = vi.fn()
-    form.addEventListener("mui:form-error", error)
+    form.addEventListener("m:form-error", error)
     const validation = helper.validate(); await Promise.resolve()
     first.dispatchEvent(new Event("change", { bubbles: true }))
     expect((await validation).status).toBe("aborted")
@@ -286,18 +507,18 @@ describe("small validators, lifetime and cross-field snapshots", () => {
   })
   it("does not treat an uncancelled AbortError as valid success", async () => {
     const { helper, form } = fixture(() => Promise.reject(new DOMException("unexpected", "AbortError")))
-    const error = vi.fn(); form.addEventListener("mui:form-error", error)
+    const error = vi.fn(); form.addEventListener("m:form-error", error)
     await expect(helper.validate()).rejects.toThrow("unexpected"); expect(error).toHaveBeenCalledOnce()
   })
   it("expected signal abort is an aborted result, not a validation success or an error event", async () => {
     const { helper, form } = fixture(({ signal }) => new Promise((_, reject) => signal.addEventListener("abort", () => reject(new DOMException("stop", "AbortError")))))
-    const error = vi.fn(); form.addEventListener("mui:form-error", error)
+    const error = vi.fn(); form.addEventListener("m:form-error", error)
     const validation = helper.validate(); await Promise.resolve(); helper.disconnect()
     expect((await validation).status).toBe("aborted"); await flush(); expect(error).not.toHaveBeenCalled()
   })
   it("surfaces synchronous exceptions and clears pending presentation", async () => {
     const { helper, element, form } = fixture(() => { throw new Error("bug") }), error = vi.fn()
-    form.addEventListener("mui:form-error", error)
+    form.addEventListener("m:form-error", error)
     await expect(helper.validate()).rejects.toThrow("bug"); expect(error).toHaveBeenCalledOnce()
     expect(element.hasAttribute("data-form-status")).toBe(false)
   })
@@ -324,7 +545,7 @@ describe("feedback ownership, blur, reset and companion composition", () => {
   it.each(["form-first", "input-first"])("coexists with Input count/help in %s teardown order", async order => {
     const { helper, form, first, feedback } = fixture(); helper.disconnect()
     const root = document.querySelector<HTMLElement>("#item")!
-    root.classList.add("mui-input"); root.setAttribute("data-input", ""); first.setAttribute("data-input-control", "")
+    root.classList.add("m-input"); root.setAttribute("data-input", ""); first.setAttribute("data-input-control", "")
     const count = document.createElement("span"); count.id = "count"; count.setAttribute("data-input-count", ""); root.append(count)
     first.setAttribute("aria-describedby", "help count")
     const input = createInput(root), coordinator = createForm(form, { items: [{ key: "x", controls: [first], feedback, validator: () => ({ message: "error" }) }] })
@@ -387,7 +608,7 @@ describe("feedback ownership, blur, reset and companion composition", () => {
   it.each([false, true])("aborts on unmapped Rate clear without a readout, external=%s", async external => {
     const pending = deferred(), { helper, form, feedback } = fixture(() => pending.promise)
     const root = document.createElement("fieldset")
-    root.className = "mui-rate mui-radio-group"; root.setAttribute("data-rate", ""); root.setAttribute("data-radio-group", "")
+    root.className = "m-rate m-radio-group"; root.setAttribute("data-rate", ""); root.setAttribute("data-radio-group", "")
     root.innerHTML = `<legend>Unmapped rating</legend><label><input data-radio type="radio" name="rating" value="1" checked ${external ? 'form="test"' : ""}>One</label><label><input data-radio type="radio" name="rating" value="2" ${external ? 'form="test"' : ""}>Two</label>`
     ;(external ? document.body : form).append(root)
     const rate = createRate(root, { count: 2 }); helpers.push(rate)

@@ -1,8 +1,9 @@
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createSteps } from "../src/components/steps/index.js"
+import { createSteps, Steps, Step, registerSteps, stepStatuses } from "../src/components/steps/index.js"
 import type { StepsController, StepsOptions } from "../src/components/steps/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const controllers: StepsController[] = []
 function fixture() {
@@ -32,7 +33,7 @@ describe("Steps current and independent status", () => {
   })
   it("uses explicit current over default and authored state without events", () => {
     const { list, items } = fixture()
-    const event = vi.fn(); list.addEventListener("mui:steps-request", event)
+    const event = vi.fn(); list.addEventListener("m:steps-request", event)
     const controller = createSteps(list, { current: 4, defaultCurrent: 1 })
     controllers.push(controller)
     expect(controller.currentStep).toBe(items[3])
@@ -84,7 +85,7 @@ describe("Steps current and independent status", () => {
 describe("native selection intents, not a wizard", () => {
   it("emits a captured native button intent without automatically selecting", async () => {
     const { list, actions, controller, items } = bind()
-    const request = vi.fn(); list.addEventListener("mui:steps-request", request)
+    const request = vi.fn(); list.addEventListener("m:steps-request", request)
     actions[3]!.click(); await flush()
     expect(controller.current).toBe(2)
     expect(request).toHaveBeenCalledTimes(1)
@@ -93,9 +94,9 @@ describe("native selection intents, not a wizard", () => {
   })
   it("lets the application decline or explicitly accept a request with silent current assignment", async () => {
     const { list, actions, controller } = bind()
-    const request = vi.fn(); list.addEventListener("mui:steps-request", request)
+    const request = vi.fn(); list.addEventListener("m:steps-request", request)
     actions[0]!.click(); await flush(); expect(controller.current).toBe(2)
-    list.addEventListener("mui:steps-request", event => { controller.current = (event as CustomEvent).detail.current }, { once: true })
+    list.addEventListener("m:steps-request", event => { controller.current = (event as CustomEvent).detail.current }, { once: true })
     actions[3]!.click(); await flush(); expect(controller.current).toBe(4)
     expect(request).toHaveBeenCalledTimes(2)
     controller.current = 1
@@ -105,7 +106,7 @@ describe("native selection intents, not a wizard", () => {
   })
   it("honors late synchronous cancellation and native disabled/fieldset state", async () => {
     const { list, actions } = bind()
-    const request = vi.fn(); list.addEventListener("mui:steps-request", request)
+    const request = vi.fn(); list.addEventListener("m:steps-request", request)
     list.addEventListener("click", event => event.preventDefault(), { once: true })
     actions[0]!.click(); actions[2]!.click(); await flush()
     expect(request).not.toHaveBeenCalled()
@@ -118,7 +119,7 @@ describe("native selection intents, not a wizard", () => {
     const { list, actions } = bind(), form = document.createElement("form")
     document.body.append(form); form.append(list)
     const request = vi.fn(), submit = vi.fn(event => event.preventDefault())
-    list.addEventListener("mui:steps-request", request); form.addEventListener("submit", submit)
+    list.addEventListener("m:steps-request", request); form.addEventListener("submit", submit)
     actions[0]!.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }))
     actions[0]!.dispatchEvent(new KeyboardEvent("keydown", { key: " ", bubbles: true }))
     await flush(); expect(request).not.toHaveBeenCalled()
@@ -127,7 +128,7 @@ describe("native selection intents, not a wizard", () => {
   })
   it("leaves native link href/target/modifiers and authored cancellation untouched", async () => {
     const { list, controller } = bind(), link = list.querySelector<HTMLAnchorElement>("#native-link")!
-    const request = vi.fn(); list.addEventListener("mui:steps-request", request)
+    const request = vi.fn(); list.addEventListener("m:steps-request", request)
     link.target = "_blank"
     const event = new MouseEvent("click", { ctrlKey: true, bubbles: true, cancelable: true })
     link.addEventListener("click", event => { expect(event.defaultPrevented).toBe(false); event.preventDefault() })
@@ -138,13 +139,13 @@ describe("native selection intents, not a wizard", () => {
   })
   it.each([{ ctrlKey: true }, { metaKey: true }, { shiftKey: true }, { altKey: true }, { button: 1 }])("does not turn modified activation into selection %j", modifiers => {
     const { list, actions } = bind(), request = vi.fn()
-    list.addEventListener("mui:steps-request", request)
+    list.addEventListener("m:steps-request", request)
     actions[0]!.dispatchEvent(new MouseEvent("click", { bubbles: true, ...modifiers }))
     expect(request).not.toHaveBeenCalled()
   })
   it("invalidates queued work on setter/refresh/disconnect", async () => {
     const { list, actions, controller } = bind(), request = vi.fn()
-    list.addEventListener("mui:steps-request", request)
+    list.addEventListener("m:steps-request", request)
     actions[0]!.click(); controller.current = 3; await flush()
     actions[0]!.click(); controller.refresh(); await flush()
     actions[0]!.click(); controller.disconnect(); await flush()
@@ -152,7 +153,7 @@ describe("native selection intents, not a wizard", () => {
   })
   it("reports stale unrefreshed anatomy rather than dispatching a wrong index", async () => {
     const { list, items, actions, controller } = bind(), error = vi.fn(), request = vi.fn()
-    list.addEventListener("mui:steps-error", error); list.addEventListener("mui:steps-request", request)
+    list.addEventListener("m:steps-error", error); list.addEventListener("m:steps-request", request)
     actions[3]!.click(); list.insertBefore(items[3]!, items[0]!)
     await flush()
     expect(error).toHaveBeenCalledTimes(1); expect(request).not.toHaveBeenCalled()
@@ -232,7 +233,7 @@ describe("native identity, hidden items and ownership", () => {
   })
   it("does not adopt a transferred helper marker as a new list's authored default", () => {
     const { items } = bind({ current: 4 })
-    const list = document.createElement("ol"); list.className = "mui-steps"; list.setAttribute("data-steps", "")
+    const list = document.createElement("ol"); list.className = "m-steps"; list.setAttribute("data-steps", "")
     document.body.append(list); list.append(items[3]!)
     const controller = createSteps(list); controllers.push(controller)
     expect(controller.current).toBeNull()
@@ -272,7 +273,7 @@ describe("native identity, hidden items and ownership", () => {
   })
   it("cleans up and reconnects without duplicate intent handlers", async () => {
     const { list, controller, actions } = bind(), request = vi.fn()
-    list.addEventListener("mui:steps-request", request)
+    list.addEventListener("m:steps-request", request)
     controller.disconnect(); controller.connect(); controller.connect()
     actions[0]!.click(); await flush()
     expect(request).toHaveBeenCalledTimes(1)
@@ -303,3 +304,192 @@ describe("native identity, hidden items and ownership", () => {
     expect(source).not.toMatch(/innerHTML|MutationObserver|ResizeObserver|keydown|setInterval/)
   })
 })
+
+describe("canonical Steps ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers m-steps, m-step", () => {
+    expect(Steps.tag).toBe("m-steps")
+    expect(Step.tag).toBe("m-step")
+    expect(ViewElement.prototype.isPrototypeOf(Steps.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(Step.prototype)).toBe(true)
+    expect(customElements.get("m-steps")).toBe(Steps)
+    expect(customElements.get("m-step")).toBe(Step)
+    expect(Steps.observedAttributes).toEqual(["current", "status", "vertical"])
+    expect(Step.observedAttributes).toEqual(["title", "description", "disabled"])
+    expect(stepStatuses).toEqual(["process", "finish", "error", "wait"])
+    expect(() => registerSteps()).not.toThrow()
+  })
+
+  it("handles typed properties and default values on Steps", () => {
+    const steps = document.createElement("m-steps") as Steps
+    document.body.append(steps)
+
+    expect(steps.current).toBe(1)
+    expect(steps.status).toBe("process")
+    expect(steps.vertical).toBe(false)
+
+    steps.current = 3
+    expect(steps.current).toBe(3)
+    expect(steps.getAttribute("current")).toBe("3")
+
+    steps.setAttribute("current", "4")
+    expect(steps.current).toBe(4)
+
+    steps.status = "finish"
+    expect(steps.status).toBe("finish")
+    expect(steps.getAttribute("status")).toBe("finish")
+
+    steps.vertical = true
+    expect(steps.vertical).toBe(true)
+    expect(steps.hasAttribute("vertical")).toBe(true)
+    expect(steps.classList.contains("m-steps--vertical")).toBe(true)
+
+    steps.vertical = false
+    expect(steps.vertical).toBe(false)
+    expect(steps.hasAttribute("vertical")).toBe(false)
+    expect(steps.classList.contains("m-steps--vertical")).toBe(false)
+
+    expect(() => { steps.current = 0 }).toThrow(RangeError)
+    expect(() => { steps.current = -1 }).toThrow(RangeError)
+    expect(() => { steps.status = "invalid" as unknown as typeof steps.status }).toThrow(RangeError)
+  })
+
+  it("handles typed properties on Step", () => {
+    const step = document.createElement("m-step") as Step
+    document.body.append(step)
+
+    expect(step.title).toBe("")
+    expect(step.description).toBe("")
+    expect(step.disabled).toBe(false)
+
+    step.title = "Verification"
+    expect(step.title).toBe("Verification")
+    expect(step.getAttribute("title")).toBe("Verification")
+
+    step.description = "Submit your documents"
+    expect(step.description).toBe("Submit your documents")
+    expect(step.getAttribute("description")).toBe("Submit your documents")
+
+    step.disabled = true
+    expect(step.disabled).toBe(true)
+    expect(step.hasAttribute("disabled")).toBe(true)
+
+    step.disabled = false
+    expect(step.disabled).toBe(false)
+    expect(step.hasAttribute("disabled")).toBe(false)
+  })
+
+  it("renders child steps and synchronizes step progression", () => {
+    document.body.innerHTML = `
+      <m-steps current="2" status="process">
+        <m-step title="Step 1" description="First description"></m-step>
+        <m-step title="Step 2" description="Second description"></m-step>
+        <m-step title="Step 3" description="Third description"></m-step>
+      </m-steps>`
+    const steps = document.querySelector("m-steps") as Steps
+    expect(steps.steps).toHaveLength(3)
+
+    const [step1, step2, step3] = steps.steps
+    expect(step1!.getAttribute("data-step-state")).toBe("finish")
+    expect(step1!.hasAttribute("data-step-following")).toBe(true)
+    expect(step1!.hasAttribute("aria-current")).toBe(false)
+    expect(step1!.querySelector("[data-step-title]")!.textContent).toBe("Step 1")
+    expect(step1!.querySelector(".m-step__description")!.textContent).toBe("First description")
+    expect(step1!.querySelector("[data-step-status-text]")!.textContent).toBe("Completed")
+    expect(step1!.querySelector(".m-step__icon")!.textContent).toBe("✓")
+
+    expect(step2!.getAttribute("data-step-state")).toBe("process")
+    expect(step2!.hasAttribute("data-step-following")).toBe(true)
+    expect(step2!.getAttribute("aria-current")).toBe("step")
+    expect(step2!.querySelector("[data-step-title]")!.textContent).toBe("Step 2")
+    expect(step2!.querySelector("[data-step-status-text]")!.textContent).toBe("In progress")
+    expect(step2!.querySelector(".m-step__icon")!.textContent).toBe("2")
+
+    expect(step3!.getAttribute("data-step-state")).toBe("wait")
+    expect(step3!.hasAttribute("data-step-following")).toBe(false)
+    expect(step3!.hasAttribute("aria-current")).toBe(false)
+    expect(step3!.querySelector("[data-step-title]")!.textContent).toBe("Step 3")
+    expect(step3!.querySelector("[data-step-status-text]")!.textContent).toBe("Waiting")
+    expect(step3!.querySelector(".m-step__icon")!.textContent).toBe("3")
+  })
+
+  it("supports select(), next(), previous(), and emits m:change", () => {
+    document.body.innerHTML = `
+      <m-steps current="1">
+        <m-step title="Step 1"></m-step>
+        <m-step title="Step 2"></m-step>
+        <m-step title="Step 3"></m-step>
+      </m-steps>`
+    const steps = document.querySelector("m-steps") as Steps
+    const changeSpy = vi.fn()
+    steps.addEventListener("m:change", changeSpy)
+
+    steps.select(2)
+    expect(steps.current).toBe(2)
+    expect(changeSpy).toHaveBeenCalledOnce()
+    expect(changeSpy.mock.calls[0]![0].detail).toEqual({ current: 2 })
+
+    steps.next()
+    expect(steps.current).toBe(3)
+    expect(changeSpy).toHaveBeenCalledTimes(2)
+    expect(changeSpy.mock.calls[1]![0].detail).toEqual({ current: 3 })
+
+    steps.previous()
+    expect(steps.current).toBe(2)
+    expect(changeSpy).toHaveBeenCalledTimes(3)
+    expect(changeSpy.mock.calls[2]![0].detail).toEqual({ current: 2 })
+
+    // Selecting the same step should not re-emit
+    steps.select(2)
+    expect(changeSpy).toHaveBeenCalledTimes(3)
+  })
+
+  it("selects step upon click when enabled and ignores clicks when disabled", () => {
+    document.body.innerHTML = `
+      <m-steps current="1">
+        <m-step title="Step 1"></m-step>
+        <m-step title="Step 2" disabled></m-step>
+        <m-step title="Step 3"></m-step>
+      </m-steps>`
+    const steps = document.querySelector("m-steps") as Steps
+    const changeSpy = vi.fn()
+    steps.addEventListener("m:change", changeSpy)
+
+    const [step1, step2, step3] = steps.steps
+    expect(step2!.hasAttribute("data-step-action-disabled")).toBe(true)
+
+    // Click disabled step - should do nothing
+    step2!.click()
+    expect(steps.current).toBe(1)
+    expect(changeSpy).not.toHaveBeenCalled()
+
+    // Select disabled step programmatically - should do nothing
+    steps.select(2)
+    expect(steps.current).toBe(1)
+    expect(changeSpy).not.toHaveBeenCalled()
+
+    // Click step 3 - should select
+    step3!.click()
+    expect(steps.current).toBe(3)
+    expect(changeSpy).toHaveBeenCalledOnce()
+    expect(changeSpy.mock.calls[0]![0].detail).toEqual({ current: 3 })
+  })
+
+  it("honors step status override and container error status", () => {
+    document.body.innerHTML = `
+      <m-steps current="2" status="error">
+        <m-step title="Step 1"></m-step>
+        <m-step title="Step 2"></m-step>
+        <m-step title="Step 3" data-step-status="finish"></m-step>
+      </m-steps>`
+    const steps = document.querySelector("m-steps") as Steps
+    const [step1, step2, step3] = steps.steps
+
+    expect(step1!.getAttribute("data-step-state")).toBe("finish")
+    expect(step2!.getAttribute("data-step-state")).toBe("error")
+    expect(step2!.querySelector(".m-step__icon")!.textContent).toBe("!")
+    expect(step2!.querySelector("[data-step-status-text]")!.textContent).toBe("Error")
+    expect(step3!.getAttribute("data-step-state")).toBe("finish")
+    expect(step3!.querySelector(".m-step__icon")!.textContent).toBe("✓")
+  })
+})
+

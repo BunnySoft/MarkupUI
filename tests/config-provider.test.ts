@@ -101,18 +101,18 @@ describe("ConfigProvider resolution through native composition", () => {
   it("leaves author settings, controls, listeners and DOM identities intact", () => {
     const root = mount()
     const input = root.querySelector("input")!
-    const button = root.querySelector<HTMLButtonElement>("[data-mui-button-control]")!
+    const button = root.querySelector<HTMLButtonElement>("[data-part=control]")!
     const listener = vi.fn()
     button.addEventListener("click", listener)
     input.value = "2027-01-02"
     choose(root, "[data-palette-control]", "light")
-    root.querySelector<HTMLElement>("#config-scope")!.style.setProperty("--mui-color-primary", "rebeccapurple")
+    root.querySelector<HTMLElement>("#config-scope")!.style.setProperty("--m-color-primary", "rebeccapurple")
     scopes[0].dispose()
     button.click()
     expect(listener).toHaveBeenCalledOnce()
     expect(root.querySelector("input")).toBe(input)
     expect(input.value).toBe("2027-01-02")
-    expect(root.querySelector<HTMLElement>("#config-scope")!.style.getPropertyValue("--mui-color-primary")).toBe("rebeccapurple")
+    expect(root.querySelector<HTMLElement>("#config-scope")!.style.getPropertyValue("--m-color-primary")).toBe("rebeccapurple")
     expect(root.querySelector("#config-scope")!.getAttribute("data-example-palette")).toBe("light")
     choose(root, "[data-palette-control]", "dark")
     expect(root.querySelector("#config-scope")!.getAttribute("data-example-palette")).toBe("light")
@@ -150,10 +150,10 @@ describe("ConfigProvider resolution through native composition", () => {
     theme.register("config-test", { "color-primary": "#123456" })
     theme.apply("config-test", scope)
     choose(root, "[data-palette-control]", "light")
-    expect(scope.style.getPropertyValue("--mui-color-primary")).toBe("#123456")
+    expect(scope.style.getPropertyValue("--m-color-primary")).toBe("#123456")
     scopes[0].dispose()
     expect(theme.current(scope)).toBe("config-test")
-    expect(scope.style.getPropertyValue("--mui-color-primary")).toBe("#123456")
+    expect(scope.style.getPropertyValue("--m-color-primary")).toBe("#123456")
     expect(document.body.style.padding).toBe("7px")
     expect(store).not.toHaveBeenCalled()
   })

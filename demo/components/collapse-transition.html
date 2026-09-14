@@ -3,47 +3,72 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Collapse Transition</title>
+  <title>Collapse Transition - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-collapse-transition.css">
-  <link rel="stylesheet" href="../../dist/markup-ui-collapse.css">
-  <link rel="stylesheet" href="collapse-transition.css">
-  <script src="../../dist/markup-ui-collapse-transition.global.js" defer></script>
-  <script src="collapse-transition.js" defer></script>
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
+  <link rel="stylesheet" href="./collapse-transition.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-collapse-transition.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script type="module" src="./collapse-transition.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Collapse Transition: authored content, optional native motion</h1>
-    <p>No renderer, focus trap, generated heading or change to the native Collapse component.</p>
-    <div id="controls" hidden>
-      <button type="button" id="toggle" aria-controls="panel" aria-expanded="true">Toggle content</button>
-      <button type="button" id="show">Show</button><button type="button" id="hide">Hide</button>
-      <button type="button" id="reverse">Rapid reversal</button>
-      <button type="button" id="finish">Finish motion</button><button type="button" id="cancel">Cancel motion</button>
-      <button type="button" id="grow">Add authored content</button><button type="button" id="dispose">Dispose controller</button>
-      <label><input id="throw-hook" type="checkbox"> Throw in next after-enter hook</label>
-    </div>
-    <p id="status" role="status">Without scripts, the authored content is readable and native controls work.</p>
-    <form id="native-form">
-      <div id="panel" class="mui-collapse-transition">
-        <div data-collapse-transition-content class="panel-content">
-          <h2>Authored heading</h2>
-          <p>All padding and border belong to this inner flow-root. Only the outer wrapper's temporary height is animated.</p>
-          <label>Required reference <input id="reference" required name="reference"></label>
-          <button id="submit" type="submit">Submit local form</button>
-          <button id="inside-hide" type="button">Hide from inside</button>
-          <a href="#baseline">Native local link</a>
-          <div id="extra"></div>
-        </div>
+  <main data-demo-page class="component-docs">
+    <h1>Collapse Transition</h1>
+    <p>Optional native collapse and expand motion for authored content.</p>
+    <nav class="component-docs-nav" aria-label="Collapse Transition documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-collapse-transition.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-collapse-transition.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-heading">
+      <header data-demo-header><div><h2 id="basic-heading">Basic usage</h2><p>Toggle content visibility with smooth height and fade animation.</p></div></header>
+      <div data-demo-preview>
+        <m-button id="toggle-button" aria-expanded="true">Toggle content</m-button>
+        <m-collapse-transition id="basic-transition">
+          <m-box data-collapse-transition-content class="panel-content">
+            <m-h3>Authored content</m-h3>
+            <m-p>Content smoothly expands and collapses using Web Animations.</m-p>
+          </m-box>
+        </m-collapse-transition>
       </div>
-    </form>
-    <h2>Explicit initial appearance</h2>
-    <div id="appearance" class="mui-collapse-transition" hidden>
-      <div data-collapse-transition-content class="panel-content"><p>Explicit show=true/appear=true reveals this authored content with optional motion.</p></div>
-    </div>
-    <h2 id="baseline">Independent native disclosure</h2>
-    <div class="mui-collapse">
-      <details data-collapse-item><summary>Native details remains independent</summary><div data-collapse-content><p>This behavior does not load or depend on the transition helper.</p><input aria-label="Native details field"></div></details>
-    </div>
+    </section>
+
+    <section data-demo-example="collapsed" aria-labelledby="collapsed-heading">
+      <header data-demo-header><div><h2 id="collapsed-heading">Initially collapsed</h2><p>Content hidden initially via show="false".</p></div></header>
+      <div data-demo-preview>
+        <m-button id="toggle-collapsed" aria-expanded="false">Show content</m-button>
+        <m-collapse-transition id="collapsed-transition" show="false" hidden>
+          <m-box data-collapse-transition-content class="panel-content">
+            <m-h3>Initially hidden content</m-h3>
+            <m-p>This content was collapsed on load.</m-p>
+          </m-box>
+        </m-collapse-transition>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="collapse-transition-api"><p>Loading API documentation.</p></div>
+    </section>
   </main>
 </body>
 </html>

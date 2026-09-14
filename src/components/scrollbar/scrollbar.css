@@ -1,41 +1,41 @@
-:where(.mui-scrollbar) {
+:where(.m-scrollbar) {
   box-sizing: border-box;
   min-inline-size: 0;
   min-block-size: 0;
   max-inline-size: 100%;
-  padding: var(--mui-scrollbar-padding, .25rem);
+  padding: var(--m-scrollbar-padding, .25rem);
   overflow: auto;
 }
-:where(.mui-scrollbar > .mui-scrollbar-content) {
+:where(.m-scrollbar > .m-scrollbar-content) {
   box-sizing: border-box;
   min-inline-size: 0;
 }
-:where(.mui-scrollbar):focus-visible {
+:where(.m-scrollbar):focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 2px;
 }
-:where([data-mui-theme="light"]) { --_mui-scrollbar-thumb: rgba(0, 0, 0, .25); }
-:where([data-mui-theme="dark"]) { --_mui-scrollbar-thumb: rgba(255, 255, 255, .2); }
+:where([data-m-theme="light"]) { --_m-scrollbar-thumb: rgba(0, 0, 0, .25); }
+:where([data-m-theme="dark"]) { --_m-scrollbar-thumb: rgba(255, 255, 255, .2); }
 @supports (scrollbar-width: thin) {
-  :where(.mui-scrollbar[data-thin]) { scrollbar-width: thin; }
+  :where(.m-scrollbar[data-thin]) { scrollbar-width: thin; }
 }
 @supports (scrollbar-color: auto) {
-  :where(.mui-scrollbar[data-colored]) {
-    scrollbar-color: var(--mui-scrollbar-thumb-color, var(--_mui-scrollbar-thumb, rgba(0, 0, 0, .25))) var(--mui-scrollbar-track-color, transparent);
+  :where(.m-scrollbar[data-colored]) {
+    scrollbar-color: var(--m-scrollbar-thumb-color, var(--_m-scrollbar-thumb, rgba(0, 0, 0, .25))) var(--m-scrollbar-track-color, transparent);
   }
 }
 @supports (scrollbar-gutter: stable) {
-  :where(.mui-scrollbar[data-stable-gutter]) { scrollbar-gutter: stable; }
+  :where(.m-scrollbar[data-stable-gutter]) { scrollbar-gutter: stable; }
 }
-:where(.mui-scrollbar, .mui-scrollbar-content)[hidden]:not([hidden="until-found"]),
-template.mui-scrollbar,
-.mui-scrollbar > template { display: none !important; }
+:where(.m-scrollbar, .m-scrollbar-content)[hidden]:not([hidden="until-found"]),
+template.m-scrollbar,
+.m-scrollbar > template { display: none !important; }
 @media (forced-colors: active) {
-  :where(.mui-scrollbar[data-colored]) { scrollbar-color: auto; }
-  :where(.mui-scrollbar[data-thin]) { scrollbar-width: auto; }
+  :where(.m-scrollbar[data-colored]) { scrollbar-color: auto; }
+  :where(.m-scrollbar[data-thin]) { scrollbar-width: auto; }
 }
 @media print {
-  :where(.mui-scrollbar) {
+  :where(.m-scrollbar) {
     overflow: visible !important;
     block-size: auto !important;
     min-block-size: 0 !important;

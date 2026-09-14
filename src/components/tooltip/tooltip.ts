@@ -1,4 +1,9 @@
 import { createPopoverController } from "../popover/popover.js"
+import { isIconElement } from "../icon/model.js"
+import { isTypographyInline } from "../typography/model.js"
+import { isSpaceElement } from "../space/model.js"
+import { isFlexElement } from "../flex/model.js"
+import { isGridElement } from "../grid/model.js"
 import type { PopoverController, PopoverOptions } from "../popover/popover.js"
 
 export type TooltipOptions = Omit<PopoverOptions, "trigger">
@@ -7,31 +12,31 @@ export type TooltipController = PopoverController
 const interactive = "a, area, label, button, input, select, textarea, summary, details, iframe, object, embed, audio[controls], video[controls], [tabindex], [autofocus], [contenteditable]:not([contenteditable=false])"
 const attributes = ["role", "href", "tabindex", "autofocus", "contenteditable", "controls", "aria-hidden", "class"]
 
-export function createTooltip(trigger: HTMLElement, panel: HTMLElement, options: TooltipOptions = {}): TooltipController {
+export function createTooltip(trigger: HTMLElement, panel: HTMLElement, options: TooltipOptions = {}, allowWrapper = false): TooltipController {
   const document = trigger?.ownerDocument
   const view = document?.defaultView
   if (!view || !(trigger instanceof view.HTMLElement) || !(panel instanceof view.HTMLElement)
-    || trigger.ownerDocument !== panel.ownerDocument) throw new TypeError("Tooltip needs native nodes in one document.")
-  if ("trigger" in options) throw new TypeError("Tooltip always supports hover and focus; use open/close for manual requests.")
+    || trigger.ownerDocument !== panel.ownerDocument) throw new TypeError("Tooltip needs native nodes sharing a document.")
+  if ("trigger" in options) throw new TypeError("Tooltip always supports hover/focus.")
   let suppressed = false
   let core: PopoverController
   function validate() {
     if (trigger.matches(":disabled") || trigger.tabIndex < 0) {
-      throw new TypeError("Tooltip needs a keyboard-reachable trigger; use a labelled native alternative for disabled controls.")
+      throw new TypeError("Tooltip needs a keyboard-reachable trigger; disabled needs a native alternative.")
     }
-    if (!panel.classList.contains("mui-tooltip") || panel.getAttribute("role") !== "tooltip"
+    if (!panel.classList.contains("m-tooltip") || panel.getAttribute("role") !== "tooltip"
       || panel.getAttribute("popover") !== "manual" || panel.getAttribute("aria-hidden") === "true"
       || trigger.contains(panel) || panel.isContentEditable || !panel.textContent?.trim()) {
-      throw new TypeError("Tooltip requires separate, nonempty .mui-tooltip[role=tooltip][popover=manual] content.")
+      throw new TypeError("Tooltip needs separate nonempty .m-tooltip[role=tooltip][popover=manual].")
     }
     for (const node of [panel, ...panel.querySelectorAll("*")]) {
       const role = node === panel ? null : node.getAttribute("role")
       if (node.matches(interactive) || (role && !["img", "none", "presentation"].includes(role))
-        || node.localName.includes("-") || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)) {
-        throw new TypeError("Tooltip content must be noninteractive; use Popover for actions or custom widgets.")
+        || (node.localName.includes("-") && node.localName !== "m-tooltip-content" && !isIconElement(node) && !isTypographyInline(node) && !isSpaceElement(node) && !isFlexElement(node) && !isGridElement(node)) || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)) {
+        throw new TypeError("Tooltip content must be noninteractive; use Popover.")
       }
     }
-    if (trigger.closest("mui-tooltip")) throw new TypeError("Do not bind Tooltip inside legacy mui-tooltip.")
+    if (!allowWrapper && trigger.closest("m-tooltip")) throw new TypeError("No Tooltip inside legacy m-tooltip.")
   }
   function connect() {
     suppressed = false
@@ -54,7 +59,7 @@ export function createTooltip(trigger: HTMLElement, panel: HTMLElement, options:
       try { validate() } catch (error) {
         event.preventDefault()
         core.disconnect()
-        panel.dispatchEvent(new view!.CustomEvent("mui:tooltip-error", { detail: { error } }))
+        panel.dispatchEvent(new view!.CustomEvent("m:tooltip-error", { detail: { error } }))
         return
       }
       if (suppressed) event.preventDefault()
@@ -78,8 +83,8 @@ export function createTooltip(trigger: HTMLElement, panel: HTMLElement, options:
     }
   }
   core = createPopoverController(trigger, panel, { ...options, trigger: "hover", placement: options.placement ?? "top" }, {
-    validate, connect, attributes, errorEvent: "mui:tooltip-error",
-  })
+    validate, connect, attributes, errorEvent: "m:tooltip-error",
+  }, allowWrapper)
   return {
     get supported() { return core.supported },
     get connected() { return core.connected },

@@ -1,362 +1,228 @@
-export type FormControl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-export type FormValidationControl = FormControl | HTMLButtonElement | HTMLObjectElement | HTMLFieldSetElement | HTMLOutputElement
-export type FormValidationReason = "manual" | "blur" | "submit"
-export interface FormFieldSnapshot {
-  readonly control: FormControl
-  readonly name: string
-  readonly value: string
-  readonly checked: boolean
-  readonly values: readonly string[]
-  readonly files: readonly File[]
-  readonly eligible: boolean
-}
-export interface FormValidatorContext {
-  readonly form: HTMLFormElement
-  readonly key: string
-  readonly controls: readonly FormControl[]
-  readonly fields: readonly FormFieldSnapshot[]
-  readonly signal: AbortSignal
-  readonly reason: FormValidationReason
-}
-export type FormValidatorResult = null | { message: string; level?: "error" | "warning" }
-export type FormValidator = (context: FormValidatorContext) => FormValidatorResult | Promise<FormValidatorResult>
-export interface FormItemOptions {
-  key: string
-  controls: readonly FormControl[]
-  element?: HTMLElement
-  feedback?: HTMLElement
-  validator?: FormValidator
-}
-export interface FormOptions {
-  items: readonly FormItemOptions[]
-  validateOnBlur?: boolean
-}
-export interface FormIssue {
-  readonly key: string | null
-  readonly control: FormValidationControl
-  readonly message: string
-  readonly source: "native" | "custom" | "warning"
-}
-export interface FormValidationResult {
-  readonly status: "valid" | "invalid" | "aborted"
-  readonly issues: readonly FormIssue[]
-  /** Recheck immediately before consuming the result; edits and newer validation invalidate it. */
-  readonly current: boolean
-}
-export interface FormController {
-  readonly form: HTMLFormElement
-  readonly connected: boolean
-  validate(options?: { keys?: readonly string[]; reason?: FormValidationReason }): Promise<FormValidationResult>
-  validateField(key: string): Promise<FormValidationResult>
-  restoreValidation(): void
-  refresh(): void
-  reportValidity(): boolean
-  disconnect(): void
-}
+import { coordinateForm } from "./controller.js"
+import type { FormController, FormItemOptions, FormValidationReason, FormValidationResult, FormControl } from "./controller.js"
+import { FormItem, FormLayout } from "./item.js"
 
-const owner = Symbol.for("markup-ui.form.owner")
-type Owned = Element & { [owner]?: FormController }
-interface Attribute { node: Element; name: string; before: string | null; last: string | null }
-interface Item {
-  key: string
-  controls: readonly FormControl[]
-  element: HTMLElement | undefined
-  feedback: HTMLElement | undefined
-  feedbackId: string | undefined
-  validator: FormValidator | undefined
-  attributes: Attribute[]
-  tokens: Set<FormControl>
-  text: { before: string; last: string } | null
-  pending: boolean
-}
-interface Snapshot { nodes: Element[]; states: string[]; fields: readonly FormFieldSnapshot[] }
+const nativeAttributes = ["action", "method", "enctype", "target", "novalidate", "autocomplete", "name", "accept-charset", "rel"]
+const methods = ["get", "post", "dialog"] as const
+const encodings = ["application/x-www-form-urlencoded", "multipart/form-data", "text/plain"] as const
+function text(value: string): void { if (typeof value !== "string") throw new TypeError("Expected a string.") }
 
-/** Coordinates explicit native fields. Never submits, sets values/defaults, or disables native validation. */
-export function createForm(form: HTMLFormElement, options: FormOptions): FormController {
-  const document = form?.ownerDocument, view = document?.defaultView
-  if (!view || !(form instanceof view.HTMLFormElement) || !form.isConnected || form.getRootNode() !== document) {
-    throw new TypeError("Form needs a connected light-DOM native form.")
+/**
+ * One real native form owns submission, reset and constraint validation.
+ * Custom validation is explicit and never intercepts submission or sets custom validity.
+ * @region {"name":"content","accepts":["one native form","native controls and FormItem/FormItemGi content for a generated form"],"min":0,"max":null}
+ * @event {"name":"Submit","web":"submit","bubbles":true,"cancelable":true,"composed":false}
+ * @event {"name":"Reset","web":"reset","bubbles":true,"cancelable":true,"composed":false}
+ * @event {"name":"Invalid","web":"invalid","bubbles":false,"cancelable":true,"composed":false}
+ * @event {"name":"Error","web":"m:form-error","bubbles":false,"cancelable":false,"composed":false,"detail":{"key":"string | null","error":"unknown"}}
+ */
+export class Form extends FormLayout {
+  public static readonly tag = "m-form"
+  public static readonly observedAttributes = ["action", "method", "enctype", "target", "novalidate", "autocomplete", "name", "accept-charset", "rel", "validate-on-blur", "size", "label-placement", "inline"]
+  #native?: HTMLFormElement
+  #generated = false
+  #initialized = false
+  #observer?: MutationObserver
+  #controller: FormController | undefined
+  #items: readonly FormItemOptions[] | null = null
+  #mapping: readonly FormItemOptions[] = []
+  #blur = false
+  #pending = new Set<string>()
+  #error: unknown = null
+  #paused = false
+  #presentation = new Map<string, { before: string | null; last: string | null }>()
+
+  public connectedCallback(): void {
+    this.#paused = false
+    if (!this.#initialized) { this.upgradeProperties(); this.#initialized = true }
+    queueMicrotask(() => { if (this.isConnected) this.#attempt() })
   }
-  if (!options || Object.keys(options).some(key => !["items", "validateOnBlur"].includes(key))
-    || !Array.isArray(options.items) || options.validateOnBlur !== undefined && typeof options.validateOnBlur !== "boolean") {
-    throw new TypeError("Form needs explicit items and optional validateOnBlur.")
+  public disconnectedCallback(): void { this.disconnect() }
+  public attributeChangedCallback(name: string): void {
+    if (this.#native && nativeAttributes.includes(name)) this.#attribute(name, this.getAttribute(name))
+    if (this.#initialized && this.isConnected) this.#attempt()
   }
-  function isControl(node: unknown): node is FormControl {
-    return node instanceof view!.HTMLInputElement || node instanceof view!.HTMLSelectElement || node instanceof view!.HTMLTextAreaElement
-  }
-  function isValidatable(node: Element): node is FormValidationControl {
-    return isControl(node) || node instanceof view!.HTMLButtonElement || node instanceof view!.HTMLObjectElement
-      || node instanceof view!.HTMLFieldSetElement || node instanceof view!.HTMLOutputElement
-  }
-  const validateOnBlur = options.validateOnBlur ?? false
-  const nodes = new Set<Element>([form]), keys = new Set<string>()
-  const items: Item[] = options.items.map(item => {
-    if (!item || Object.keys(item).some(key => !["key", "controls", "element", "feedback", "validator"].includes(key))
-      || typeof item.key !== "string" || !item.key || keys.has(item.key) || !Array.isArray(item.controls)
-      || !item.controls.length || item.validator !== undefined && typeof item.validator !== "function") {
-      throw new TypeError("Each Form item needs a unique nonempty literal key, controls and an optional validator.")
-    }
-    keys.add(item.key)
-    for (const node of [...item.controls, item.element, item.feedback]) if (node) {
-      if (!(node instanceof view.HTMLElement) || nodes.has(node)) throw new TypeError("Form item nodes must be distinct, with one mapping per control.")
-      nodes.add(node)
-    }
-    if (item.controls.some((control: unknown) => !isControl(control))) throw new TypeError("Map native input/select/textarea, not fieldset validity.")
-    return { key: item.key, controls: Object.freeze([...item.controls]), element: item.element,
-      feedback: item.feedback, feedbackId: item.feedback?.id, validator: item.validator,
-      attributes: [], tokens: new Set(), text: null, pending: false }
-  })
-  function anatomy() {
-    if (!form.isConnected || form.getRootNode() !== document) return false
-    return items.every(item => item.controls.every(control => control.isConnected && control.form === form && control.getRootNode() === document)
-      && (!item.element || item.element.isConnected && item.element.getRootNode() === document)
-      && (!item.feedback || item.feedback.isConnected && item.feedback.getRootNode() === document
-        && ["span", "p", "div"].includes(item.feedback.localName) && !item.feedback.children.length
-        && !!item.feedbackId && !/\s/.test(item.feedbackId) && item.feedback.id === item.feedbackId
-        && [...document!.querySelectorAll("[id]")].filter(node => node.id === item.feedbackId).length === 1
-        && !item.feedback.hasAttribute("role") && !item.feedback.hasAttribute("aria-live")
-        && !item.feedback.hasAttribute("tabindex") && !item.feedback.isContentEditable
-        && !item.feedback.closest("label, button, a[href]")))
-  }
-  if (!anatomy()) throw new TypeError("Keep mapped fields associated with the form and feedback uniquely identified, plain, nonlive and noninteractive.")
-  for (const node of nodes) if ((node as Owned)[owner]) throw new Error("Form node already has an owner.")
-  let connected = true, generation = 0, running: AbortController | null = null
-  const removers: (() => void)[] = []
-  const timers = new Set<number>()
-  function nativeControls() { return [...form.elements].filter(isControl) }
-  function snapshot(): Snapshot {
-    const controls = nativeControls()
-    const fields = Object.freeze(controls.map(control => Object.freeze({
-      control, name: control.name, value: control.value,
-      checked: control instanceof view!.HTMLInputElement && control.checked,
-      values: Object.freeze(control instanceof view!.HTMLSelectElement ? [...control.selectedOptions].map(option => option.value) : [control.value]),
-      files: Object.freeze(control instanceof view!.HTMLInputElement ? [...control.files ?? []] : []),
-      eligible: control.willValidate,
-    })))
-    return { nodes: [form, ...form.elements], fields, states: [
-      String(form.noValidate),
-      ...[...form.elements].map(node => {
-        const control = isControl(node) ? node : null
-        const validity = isValidatable(node) ? node : null
-        return JSON.stringify([
-          [...node.attributes].filter(attr => ["name", "type", "form", "disabled", "readonly", "required", "min", "max", "step", "pattern", "minlength", "maxlength", "multiple", "formnovalidate", "value"].includes(attr.name)).map(attr => [attr.name, attr.value]),
-          control?.value, control?.willValidate, control?.matches(":disabled"),
-          control instanceof view!.HTMLInputElement ? control.checked : null,
-          control instanceof view!.HTMLSelectElement ? [...control.options].map(option => [option.value, option.selected, option.disabled, option.parentElement?.hasAttribute("disabled")]) : null,
-          validity?.willValidate, validity?.validity.customError, validity?.validationMessage,
-        ])
-      }),
-    ] }
-  }
-  function equal(a: Snapshot, b: Snapshot) {
-    return a.nodes.length === b.nodes.length && a.nodes.every((node, index) => node === b.nodes[index])
-      && a.states.every((state, index) => state === b.states[index])
-      && a.fields.every((field, index) => field.files.length === b.fields[index]?.files.length
-        && field.files.every((file, fileIndex) => file === b.fields[index]?.files[fileIndex]))
-  }
-  let observed = snapshot()
-  function write(item: Item, node: Element, name: string, value: string | null) {
-    let record = item.attributes.find(record => record.node === node && record.name === name)
-    const current = node.getAttribute(name)
-    if (!record) { record = { node, name, before: current, last: current }; item.attributes.push(record) }
-    if (current !== record.last) record.before = current
-    if (value === null) node.removeAttribute(name)
-    else node.setAttribute(name, value)
-    record.last = value
-  }
-  function restoreItem(item: Item) {
-    for (const control of item.tokens) {
-      const tokens = (control.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(token => token && token !== item.feedbackId)
-      if (tokens.length) control.setAttribute("aria-describedby", tokens.join(" "))
-      else control.removeAttribute("aria-describedby")
-    }
-    item.tokens.clear()
-    for (const record of item.attributes) if (record.node.getAttribute(record.name) === record.last) {
-      if (record.before === null) record.node.removeAttribute(record.name)
-      else record.node.setAttribute(record.name, record.before)
-    }
-    item.attributes.length = 0
-    if (item.text && item.feedback?.textContent === item.text.last) item.feedback.textContent = item.text.before
-    item.text = null; item.pending = false
-  }
-  function abort() {
-    generation++
-    const previous = running; running = null
-    previous?.abort()
-    for (const item of items) if (item.pending) restoreItem(item)
-  }
-  function restoreValidation() {
-    abort()
-    items.forEach(restoreItem)
-    observed = snapshot()
-  }
-  function refresh() {
-    if (!connected) return
-    restoreValidation()
-    if (!anatomy()) disconnect()
-  }
-  function sync() {
-    if (!connected) return
-    if (!anatomy()) { disconnect(); return }
-    const current = snapshot()
-    if (!equal(observed, current)) restoreValidation()
-  }
-  function present(item: Item, issues: readonly FormIssue[]) {
-    item.pending = false
-    const error = issues.some(issue => issue.source !== "warning")
-    if (item.element) write(item, item.element, "data-form-status", error ? "error" : issues.length ? "warning" : "success")
-    if (!issues.length) return
-    for (const control of item.controls.filter(control => control.willValidate)) {
-      if (error) write(item, control, "aria-invalid", "true")
-      if (item.feedback) {
-        const tokens = (control.getAttribute("aria-describedby") ?? "").split(/\s+/).filter(Boolean)
-        if (!tokens.includes(item.feedbackId!)) {
-          tokens.push(item.feedbackId!); item.tokens.add(control)
-          control.setAttribute("aria-describedby", tokens.join(" "))
+  /** Original or generated form. Give the native form its own ID for external controls.
+   * Host attributes forward only on adoption or host edits; native attributes/styles remain writable.
+   * Forwarded host inputs: action, method, enctype, target, novalidate, autocomplete, name, accept-charset, rel.
+   * Native forms must not be nested. Late authored forms replace only a generated owner.
+   */
+  public get native(): HTMLFormElement {
+    if (this.parentElement?.closest("form,m-form")) throw new TypeError("Do not nest Form or native forms.")
+    const forms = [...this.querySelectorAll<HTMLFormElement>("form")].filter(node => node.closest("m-form") === this)
+    const authored = forms.filter(node => !this.#generated || node !== this.#native)
+    if (authored.length > 1) throw new TypeError("Expected one native form.")
+    const focused = this.contains(this.ownerDocument.activeElement) ? this.ownerDocument.activeElement as HTMLElement : null
+    if (!this.#native || !this.contains(this.#native) || this.#generated && authored.length) {
+      const previous = this.#generated && this.#native && this.contains(this.#native) ? this.#native : undefined
+      const next = authored[0] ?? this.ownerDocument.createElement("form")
+      if (previous?.contains(next)) previous.before(next)
+      for (const name of nativeAttributes) if (this.hasAttribute(name)) next.setAttribute(name, this.getAttribute(name)!)
+      if (previous) {
+        for (const name of this.#pending) {
+          const value = previous.getAttribute(name)
+          if (value === null) next.removeAttribute(name)
+          else next.setAttribute(name, value)
         }
+        next.prepend(...previous.childNodes)
       }
+      this.#controller?.disconnect(); this.#controller = undefined
+      this.#presentation.clear()
+      previous?.remove()
+      this.#native = next; this.#generated = !authored.length; this.#pending.clear()
+      if (this.#generated) this.append(next)
     }
-    if (item.feedback) {
-      const current = item.feedback.textContent ?? ""
-      if (!item.text) item.text = { before: current, last: current }
-      if (current !== item.text.last) item.text.before = current
-      const message = [...new Set(issues.map(issue => issue.message))].join("\n")
-      item.feedback.textContent = message; item.text.last = message
-      write(item, item.feedback, "hidden", null)
+    if (this.#generated) {
+      const nodes = [...this.childNodes], index = nodes.indexOf(this.#native)
+      this.#native.prepend(...nodes.slice(0, index)); this.#native.append(...nodes.slice(index + 1))
     }
+    if (this.#native.querySelector("form,m-form")) throw new TypeError("Do not nest Form or native forms.")
+    if (focused?.isConnected && focused !== this.ownerDocument.activeElement) focused.focus({ preventScroll: true })
+    return this.#native
   }
-  function nativeIssues(controls: readonly FormValidationControl[], key: string | null): FormIssue[] {
-    return controls.filter(control => control.willValidate && !control.validity.valid)
-      .map(control => ({ key, control, message: control.validationMessage, source: "native" }))
+  #attribute(name: string, value: string | null): void {
+    const native = this.native
+    if (value === null) native.removeAttribute(name)
+    else native.setAttribute(name, value)
+    if (this.#generated) this.#pending.add(name)
   }
-  function report(error: unknown, key: string) {
-    form.dispatchEvent(new view!.CustomEvent("mui:form-error", { detail: { key, error } }))
+  /** Resolved native action URL; absence resolves to the document URL. */
+  public get action(): string { return Reflect.get(HTMLFormElement.prototype, "action", this.native) as string }
+  public set action(value: string) { text(value); this.#attribute("action", value) }
+  /** Native method is get when absent. Invalid authored host tokens throw on refresh. */
+  public get method(): "get" | "post" | "dialog" { return Reflect.get(HTMLFormElement.prototype, "method", this.native) as "get" | "post" | "dialog" }
+  public set method(value: "get" | "post" | "dialog") { if (!methods.includes(value)) throw new RangeError("Invalid method."); this.#attribute("method", value) }
+  /** Native encoding is application/x-www-form-urlencoded when absent. */
+  public get enctype(): "application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain" {
+    return Reflect.get(HTMLFormElement.prototype, "enctype", this.native) as "application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain"
   }
-  async function custom(item: Item, context: FormValidatorContext, signal: AbortSignal) {
-    let remove = () => {}
-    const cancelled = new Promise<null>(resolve => {
-      const handler = () => resolve(null)
-      signal.addEventListener("abort", handler, { once: true })
-      remove = () => signal.removeEventListener("abort", handler)
-      if (signal.aborted) resolve(null)
+  public set enctype(value: "application/x-www-form-urlencoded" | "multipart/form-data" | "text/plain") { if (!(encodings as readonly string[]).includes(value)) throw new RangeError("Invalid enctype."); this.#attribute("enctype", value) }
+  /** Native target, initially "". Native submitter formtarget can override it. */
+  public get target(): string { return Reflect.get(HTMLFormElement.prototype, "target", this.native) as string }
+  public set target(value: string) { text(value); this.#attribute("target", value) }
+  /** Native flag initially false. Does not suppress explicit validate/checkValidity/reportValidity. */
+  public get noValidate(): boolean { return Reflect.get(HTMLFormElement.prototype, "noValidate", this.native) as boolean }
+  public set noValidate(value: boolean) { if (typeof value !== "boolean") throw new TypeError("Expected a boolean."); this.#attribute("novalidate", value ? "" : null) }
+  /** Native autocomplete is on when absent. */
+  public get autocomplete(): AutoFillBase { return Reflect.get(HTMLFormElement.prototype, "autocomplete", this.native) as AutoFillBase }
+  public set autocomplete(value: AutoFillBase) { if (!["on", "off"].includes(value)) throw new RangeError("Invalid autocomplete."); this.#attribute("autocomplete", value) }
+  /** Native form name, initially ""; distinct from individual control names. */
+  public get name(): string { return Reflect.get(HTMLFormElement.prototype, "name", this.native) as string }
+  public set name(value: string) { text(value); this.#attribute("name", value) }
+  /** Native accept-charset string, initially ""; encoding support remains browser-owned. */
+  public get acceptCharset(): string { return Reflect.get(HTMLFormElement.prototype, "acceptCharset", this.native) as string }
+  public set acceptCharset(value: string) { text(value); this.#attribute("accept-charset", value) }
+  /** Native relationship tokens, initially "". */
+  public get rel(): string { return Reflect.get(HTMLFormElement.prototype, "rel", this.native) as string }
+  public set rel(value: string) { text(value); this.#attribute("rel", value) }
+  /** Live native association, including external controls and excluding controls owned by another form. */
+  public get elements(): HTMLFormControlsCollection { return Reflect.get(HTMLFormElement.prototype, "elements", this.native) as HTMLFormControlsCollection }
+  public get length(): number { return this.elements.length }
+  public get validateOnBlur(): boolean { return this.hasAttribute("validate-on-blur") }
+  public set validateOnBlur(value: boolean) { this.setBooleanAttribute("validate-on-blur", value) }
+  public get inline(): boolean { return this.hasAttribute("inline") }
+  public set inline(value: boolean) { this.setBooleanAttribute("inline", value) }
+  /** Explicit native mappings, or null (initially) to discover keyed items through actual form association.
+   * Keys are literal, not model paths. No model, schema or automatic submit pipeline is provided.
+   */
+  public get items(): readonly FormItemOptions[] | null { return this.#items }
+  public set items(value: readonly FormItemOptions[] | null) {
+    if (value !== null && (!Array.isArray(value) || value.some(item => !item || !Array.isArray(item.controls)))) throw new TypeError("Expected native item mappings or null.")
+    this.#items = value === null ? null : value.map(item => ({ ...item, controls: [...item.controls] }))
+    this.#controller?.disconnect(); this.#controller = undefined
+    if (this.#initialized && this.isConnected) this.refresh()
+  }
+  /** Validation coordinator state; native methods remain available when disconnected. */
+  public get connected(): boolean { return this.#controller?.connected ?? false }
+  /** Latest anatomy/setup failure, otherwise null. Validator failures reject and emit on the native form. */
+  public get error(): unknown { return this.#error }
+  #collect(): readonly FormItemOptions[] {
+    if (this.#items !== null) return this.#items
+    const groups = new Map<FormItem, FormControl[]>()
+    for (const node of this.elements) {
+      if (!["input", "select", "textarea"].includes(node.localName)) continue
+      const item = node.closest<FormItem>("m-form-item,m-form-item-gi")
+      if (!item?.key) continue
+      const controls = groups.get(item) ?? []
+      controls.push(node as FormControl); groups.set(item, controls)
+    }
+    return [...groups].map(([item, controls]) => {
+      item.refresh()
+      return { key: item.key, controls, element: item.native,
+        ...(item.feedback ? { feedback: item.feedback } : {}), ...(item.validator ? { validator: item.validator } : {}) }
     })
-    const validation = Promise.resolve().then(() => {
-      if (signal.aborted) return null
-      return item.validator!(context)
-    }).then(result => {
-      if (result !== null && (typeof result !== "object" || Array.isArray(result)
-        || Object.keys(result).some(key => !["message", "level"].includes(key))
-        || typeof result.message !== "string" || !result.message.trim()
-        || result.level !== undefined && !["error", "warning"].includes(result.level))) {
-        throw new TypeError("Validator must return null or { message, level?: 'error' | 'warning' }.")
-      }
-      return result
-    }).catch(error => {
-      if (signal.aborted && error instanceof view!.DOMException && error.name === "AbortError") return null
-      report(error, item.key)
-      throw error
-    })
-    try { return await Promise.race([validation, cancelled]) } finally { remove() }
   }
-  async function validate(settings: { keys?: readonly string[]; reason?: FormValidationReason } = {}): Promise<FormValidationResult> {
-    if (!settings || Object.keys(settings).some(key => !["keys", "reason"].includes(key))
-      || settings.keys !== undefined && (!Array.isArray(settings.keys) || settings.keys.some(key => !keys.has(key)))
-      || settings.reason !== undefined && !["manual", "blur", "submit"].includes(settings.reason)) throw new TypeError("Use mapped literal keys and a supported validation reason.")
-    sync()
-    if (!connected) throw new Error("Form is disconnected; recreate changed mappings.")
-    abort()
-    const selected = settings.keys === undefined ? items : items.filter(item => settings.keys!.includes(item.key))
-    selected.forEach(restoreItem)
-    const controller = new view!.AbortController(), signal = controller.signal, version = generation
-    running = controller
-    const before = snapshot()
-    observed = before
-    const current = () => connected && !signal.aborted && generation === version && anatomy() && equal(before, snapshot())
-    function result(status: FormValidationResult["status"], issues: readonly FormIssue[]): FormValidationResult {
-      return Object.freeze({ status, issues: Object.freeze(issues.map(issue => Object.freeze(issue))), get current() { return status !== "aborted" && current() } })
-    }
+  /** Invalidate validation and reconcile native owners, items and associations after application edits.
+   * Explicit mappings must remain valid. Automatic DOM reconciliation does not erase settled feedback.
+   */
+  public refresh(): void { this.#reconcile(true) }
+  #reconcile(reset: boolean): void {
+    if (!this.isConnected) return
+    this.#observer?.disconnect()
     try {
-      const results = await Promise.all(selected.map(async item => {
-        const issues = nativeIssues(item.controls, item.key)
-        const anchor = item.controls.find(control => control.willValidate)
-        if (!issues.length && anchor && item.validator) {
-          item.pending = true
-          if (item.element) write(item, item.element, "data-form-status", "pending")
-          const value = await custom(item, Object.freeze({ form, key: item.key, controls: item.controls,
-            fields: before.fields, signal, reason: settings.reason ?? "manual" }), signal)
-          if (value) issues.push({ key: item.key, control: anchor, message: value.message, source: value.level === "warning" ? "warning" : "custom" })
+      const native = this.native
+      for (const [attribute, allowed] of [["method", methods], ["enctype", encodings], ["autocomplete", ["on", "off"]]] as const) {
+        if (this.hasAttribute(attribute) && !(allowed as readonly string[]).includes(this.getAttribute(attribute)!)) throw new RangeError(`Invalid ${attribute}.`)
+      }
+      native.classList.add("m-form")
+      for (const [attribute, value] of [["data-size", this.size], ["data-label-placement", this.labelPlacement], ["data-inline", this.inline ? "" : null]] as const) {
+        const current = native.getAttribute(attribute), record = this.#presentation.get(attribute)
+        if (value !== null) {
+          if (record?.last === value) continue
+          if (!record || current !== record.last) this.#presentation.set(attribute, { before: current, last: value })
+          else record.last = value
+          if (current !== value) native.setAttribute(attribute, value)
+        } else if (record) {
+          if (current === record.last) {
+            if (record.before === null) native.removeAttribute(attribute)
+            else native.setAttribute(attribute, record.before)
+          }
+          this.#presentation.delete(attribute)
         }
-        return { item, issues }
-      }))
-      if (!current()) {
-        if (generation === version) refresh()
-        return result("aborted", [])
       }
-      const issues = results.flatMap(entry => entry.issues)
-      if (settings.keys === undefined) issues.push(...nativeIssues([...form.elements].filter(isValidatable)
-        .filter(control => !items.some(item => item.controls.some(member => member === control))), null))
-      for (const { item, issues: messages } of results) {
-        present(item, messages)
-      }
-      running = null
-      observed = snapshot()
-      return result(issues.some(issue => issue.source !== "warning") ? "invalid" : "valid", issues)
-    } catch (error) {
-      if (generation === version) restoreValidation()
-      throw error
+      const mapping = this.#collect()
+      const changed = mapping.length !== this.#mapping.length || mapping.some((item, index) => {
+        const previous = this.#mapping[index]!
+        return item.key !== previous.key || item.element !== previous.element || item.feedback !== previous.feedback
+          || item.validator !== previous.validator || item.controls.length !== previous.controls.length
+          || item.controls.some((control, i) => control !== previous.controls[i])
+      })
+      if (!this.#paused && (!this.connected || changed || this.#blur !== this.validateOnBlur)) {
+        this.#controller?.disconnect(); this.#controller = undefined
+        this.#controller = coordinateForm(native, { items: mapping, validateOnBlur: this.validateOnBlur })
+        this.#mapping = mapping; this.#blur = this.validateOnBlur
+      } else if (reset) this.#controller?.refresh()
+      this.#error = null
+    } catch (error) { this.#controller?.disconnect(); this.#controller = undefined; this.#error = error; throw error }
+    finally {
+      this.#observer ??= new MutationObserver(() => this.#attempt())
+      if (!this.#paused) this.#observer.observe(this.ownerDocument, { childList: true, subtree: true, attributes: true, attributeFilter: ["form", "id", "key"] })
     }
   }
-  function listen(node: EventTarget, type: string, listener: EventListener) {
-    node.addEventListener(type, listener, true); removers.push(() => node.removeEventListener(type, listener, true))
-  }
-  const observer = new view.MutationObserver(sync)
-  function disconnect() {
-    if (!connected) return
-    connected = false
-    observer.disconnect(); restoreValidation()
-    removers.splice(0).forEach(remove => remove())
-    timers.forEach(id => view!.clearTimeout(id)); timers.clear()
-    for (const node of nodes) if ((node as Owned)[owner] === api) delete (node as Owned)[owner]
-  }
-  const api: FormController = { form, get connected() { return connected },
-    validate, validateField: key => validate({ keys: [key] }), restoreValidation, refresh, disconnect,
-    reportValidity() {
-      sync()
-      if (!connected) throw new Error("Form is disconnected.")
-      return form.reportValidity()
-    },
-  }
-  for (const node of nodes) Object.defineProperty(node, owner, { value: api, configurable: true })
-  for (const type of ["input", "change", "mui:rate-clear"]) listen(document!, type, event => {
-    const target = event.target
-    if (isControl(target) && target.form === form
-      || target instanceof view!.Element && nativeControls().some(control => target.contains(control))) restoreValidation()
-  })
-  listen(document!, "focusout", event => {
-    if (!validateOnBlur) return
-    sync()
-    if (!connected) return
-    const item = items.find(item => item.controls.includes(event.target as FormControl))
-    if (item && !item.controls.includes((event as FocusEvent).relatedTarget as FormControl)) {
-      // validate reports unexpected validator failures; event-triggered work has no caller promise.
-      void validate({ keys: [item.key], reason: "blur" }).catch(() => {})
+  #attempt(): void {
+    const previous = this.#error
+    try { this.#reconcile(false) } catch (error) {
+      if (String(previous) !== String(error)) this.emit("m:form-error", { key: null, error }, { bubbles: false })
     }
-  })
-  listen(document!, "invalid", event => {
-    const item = items.find(item => item.controls.includes(event.target as FormControl))
-    if (item) { abort(); present(item, nativeIssues(item.controls, item.key)) }
-  })
-  listen(form, "reset", event => {
-    // Cancel work immediately, but preserve settled feedback when reset is cancelled.
-    abort()
-    const version = generation
-    const id = view!.setTimeout(() => {
-      timers.delete(id)
-      if (connected && generation === version && !event.defaultPrevented) refresh()
-    }, 0)
-    timers.add(id)
-  })
-  observer.observe(document!, { subtree: true, childList: true, attributes: true,
-    attributeFilter: ["id", "name", "form", "type", "disabled", "readonly", "required", "min", "max", "step", "pattern", "minlength", "maxlength", "multiple", "selected", "checked", "value", "novalidate", "formnovalidate", "role", "aria-live", "tabindex", "contenteditable"] })
-  return api
+  }
+  /** Frozen snapshots; stale or superseded results cannot authorize later work. Does not focus or submit. */
+  public async validate(options?: { keys?: readonly string[]; reason?: FormValidationReason }): Promise<FormValidationResult> {
+    this.#reconcile(false)
+    if (!this.#controller) throw new Error("Form is disconnected.")
+    return this.#controller.validate(options)
+  }
+  public validateField(key: string): Promise<FormValidationResult> { return this.validate({ keys: [key] }) }
+  public restoreValidation(): void { this.#controller?.restoreValidation() }
+  /** Release validation listeners/feedback, leaving native behavior intact. Reconnecting resumes coordination. */
+  public disconnect(): void { this.#paused = true; this.#observer?.disconnect(); this.#controller?.disconnect(); this.#controller = undefined }
+  public checkValidity(): boolean { this.#reconcile(false); return HTMLFormElement.prototype.checkValidity.call(this.native) }
+  public reportValidity(): boolean { this.#reconcile(false); return HTMLFormElement.prototype.reportValidity.call(this.native) }
+  /** Native interactive submission: constraints, invalid events/focus, then cancelable submit.
+   * Pass a real associated native submit button; its overrides and name/value remain authoritative.
+   */
+  public requestSubmit(submitter?: HTMLElement): void { this.#reconcile(false); HTMLFormElement.prototype.requestSubmit.call(this.native, submitter) }
+  /** Native direct submission bypasses validation and the submit event; no submitter is included. */
+  public submit(): void { HTMLFormElement.prototype.submit.call(this.native) }
+  /** Native cancelable reset, then default state restoration. Never writes current control values itself. */
+  public reset(): void { HTMLFormElement.prototype.reset.call(this.native) }
 }

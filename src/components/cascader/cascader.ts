@@ -60,8 +60,8 @@ type Owned = Element & { [owner]?: object; [selectOwner]?: object; [treeOwner]?:
 /** Projects one authored native hierarchy into a fixed set of native dependent selects. */
 export function createCascader(root: HTMLElement, options: CascaderOptions = {}): CascaderController {
   const document = root?.ownerDocument, view = document?.defaultView
-  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".mui-cascader[data-cascader]")
-    || !["div", "section", "fieldset"].includes(root.localName)) throw new TypeError("Cascader needs an authored native .mui-cascader[data-cascader] root.")
+  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".m-cascader[data-cascader]")
+    || !["div", "section", "fieldset"].includes(root.localName)) throw new TypeError("Cascader needs an authored native .m-cascader[data-cascader] root.")
   if ((root as Owned)[owner]) throw new Error("Cascader already has an owner.")
   if (!options || typeof options !== "object" || Array.isArray(options)
     || Object.keys(options).some(key => !["selection", "value", "defaultValue", "showPath", "separator", "load"].includes(key))
@@ -145,7 +145,7 @@ export function createCascader(root: HTMLElement, options: CascaderOptions = {})
     lease.last = value
   }
   function validateSource(addition?: { list: Element; nodes: readonly HTMLLIElement[] }) {
-    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".mui-cascader[data-cascader]")
+    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".m-cascader[data-cascader]")
       || root.hasAttribute("role") || !root.contains(source) || !own(source)
       || one("[data-cascader-source]", true) !== source
       || query("[data-cascader-column]").length !== columns.length || query("[data-cascader-column]").some((element, level) => element !== columns[level]!.wrapper)
@@ -307,7 +307,7 @@ export function createCascader(root: HTMLElement, options: CascaderOptions = {})
       fault = cause instanceof Error ? cause.message : "Cascader hierarchy is invalid."
       abort(); live(); gate(); text(status, fault)
     }
-    root.dispatchEvent(new view!.CustomEvent("mui:cascader-error", { detail: { error: cause } }))
+    root.dispatchEvent(new view!.CustomEvent("m:cascader-error", { detail: { error: cause } }))
   }
   function run<T>(action: () => T): T {
     guard(); observer.disconnect(); busy = true
@@ -420,7 +420,7 @@ export function createCascader(root: HTMLElement, options: CascaderOptions = {})
     run(() => { generation++; abort(); live(); endReset(); path = keys; fault = ""; resetFault = false; sourceFault = false; paint() })
   }
   function notify(action: "select" | "clear", event?: Event) {
-    if (connected) root.dispatchEvent(new view!.CustomEvent("mui:cascader-change", { detail: { ...snapshot(), action, event } }))
+    if (connected) root.dispatchEvent(new view!.CustomEvent("m:cascader-change", { detail: { ...snapshot(), action, event } }))
   }
   function load(): Promise<boolean> {
     guard()
@@ -485,7 +485,7 @@ export function createCascader(root: HTMLElement, options: CascaderOptions = {})
             attr(node.branch!, "data-tree-lazy", null); hierarchy = next; job = null; paint()
           })
           resolve(true)
-          if (connected) root.dispatchEvent(new view!.CustomEvent("mui:cascader-load", { detail: { ...snapshot(), node, nodes: batch.nodes } }))
+          if (connected) root.dispatchEvent(new view!.CustomEvent("m:cascader-load", { detail: { ...snapshot(), node, nodes: batch.nodes } }))
         } catch (cause) {
           const inserted = insertion.batch
           if (inserted) {

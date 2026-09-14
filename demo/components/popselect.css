@@ -7,7 +7,7 @@ fieldset { min-inline-size: 0; border: 1px solid #abbace; }
 .actions:not([hidden]) { display: flex; flex-wrap: wrap; gap: .75rem; }
 [data-popselect-value] { margin-inline-start: .5rem; }
 [data-popselect-panel] header p { margin-block: .25rem .5rem; }
-[data-popselect-panel] footer > .mui-popselect { margin-block-start: .75rem; }
+[data-popselect-panel] footer > .m-popselect { margin-block-start: .75rem; }
 #feedback { white-space: pre-wrap; overflow-wrap: anywhere; padding: .75rem; border: 1px solid #bac7d6; background: white; }
 #outside-field { inline-size: 29rem; }
 @media print { .actions, #feedback { display: none; } body { background: white; } }

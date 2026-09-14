@@ -4,8 +4,8 @@ import type { FormattedTime, TimeFormatOptions, TimeInput } from "./format.js"
 
 export interface TimeBindingOptions extends TimeFormatOptions {
   time: TimeInput
-  live?: boolean
-  clock?: () => number
+  live?: boolean | undefined
+  clock?: (() => number) | undefined
 }
 export interface TimeState {
   readonly time: number
@@ -129,7 +129,7 @@ export function createTime(element: HTMLTimeElement, options: TimeBindingOptions
     if (text.data !== result.text) text.data = result.text
     lastText = result.text; rendered = result; error = null; pending = false
     schedule()
-    if (changed) element.dispatchEvent(new win.CustomEvent("mui:time-change", { bubbles: true, detail: result }))
+    if (changed) element.dispatchEvent(new win.CustomEvent("m:time-change", { bubbles: true, detail: result }))
   }
   function refresh() {
     live()
@@ -145,7 +145,7 @@ export function createTime(element: HTMLTimeElement, options: TimeBindingOptions
     try { refresh() } catch (failure) {
       if (!connected) return
       stop(); error = failure; pending = true
-      element.dispatchEvent(new win.CustomEvent("mui:time-error", { bubbles: true, detail: Object.freeze({ error: failure }) }))
+      element.dispatchEvent(new win.CustomEvent("m:time-error", { bubbles: true, detail: Object.freeze({ error: failure }) }))
     }
   }
   function set(input: Partial<TimeBindingOptions>, initial = false) {

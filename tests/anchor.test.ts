@@ -1,8 +1,11 @@
 import { readFileSync } from "node:fs"
-import { join } from "node:path"
+import { join, resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createAnchor } from "../src/components/anchor/index.js"
+import { createAnchor, Anchor, AnchorLink, registerAnchor } from "../src/components/anchor/index.js"
+import * as anchorApi from "../src/components/anchor/index.js"
+import { ViewElement } from "../src/core/index.js"
+import { generateComponentApi } from "../scripts/component-api.mjs"
 import { createScrollContext, fragmentId } from "../src/components/anchor/scroll.js"
 import type { AnchorController, AnchorOptions } from "../src/components/anchor/index.js"
 
@@ -17,7 +20,7 @@ function geometry(element: HTMLElement, get: () => DOMRect) {
 function nodes() {
   const suffix = sequence++
   const nav = document.createElement("nav")
-  nav.className = "mui-anchor"
+  nav.className = "m-anchor"
   nav.setAttribute("data-anchor", "")
   nav.setAttribute("aria-label", "Contents")
   const root = document.createElement("div")
@@ -298,7 +301,7 @@ describe("location ownership, observers and cleanup", () => {
   it("notifies actual location changes, never user click or focus events", () => {
     const { nav, root, links, controller } = bind()
     const change = vi.fn(), click = vi.fn()
-    nav.addEventListener("mui:anchor-change", change)
+    nav.addEventListener("m:anchor-change", change)
     nav.addEventListener("click", click)
     links[0]!.focus()
     root.scrollTop = 200
@@ -370,7 +373,7 @@ describe("location ownership, observers and cleanup", () => {
   it("reconciles a newly introduced nested navigation boundary before stale parent writes", async () => {
     const parent = bind()
     const nested = document.createElement("nav")
-    nested.className = "mui-anchor"
+    nested.className = "m-anchor"
     nested.setAttribute("aria-label", "Nested")
     geometry(nested, () => rect(0, 60))
     parent.nav.append(nested)
@@ -451,22 +454,22 @@ describe("location ownership, observers and cleanup", () => {
   })
   it("keeps audited typography, rail, interaction colors and reduced motion within budget", () => {
     const css = readFileSync(join("src", "components", "anchor", "anchor.css"), "utf8")
-    expect(css).toContain("var(--mui-anchor-font-size,13px)")
+    expect(css).toContain("var(--m-anchor-font-size,13px)")
     expect(css).toContain("line-height:1.5")
-    expect(css).toContain("var(--mui-anchor-rail-width,4px)")
-    expect(css).toContain("var(--mui-anchor-indent,16px)")
-    expect(css).toContain("--_mui-anchor-padding:2px 8px")
-    expect(css).toContain("--_mui-anchor-radius:3px")
+    expect(css).toContain("var(--m-anchor-rail-width,4px)")
+    expect(css).toContain("var(--m-anchor-indent,16px)")
+    expect(css).toContain("--_m-anchor-padding:2px 8px")
+    expect(css).toContain("--_m-anchor-radius:3px")
     expect(css).toContain("#333639")
     expect(css).toContain("#dbdbdf")
     expect(css).toContain("rgba(255,255,255,.82)")
     expect(css).toContain("rgba(255,255,255,.2)")
-    expect(css).toContain("var(--mui-color-primary,")
-    expect(css).toContain("var(--mui-color-primary-hover,")
-    expect(css).toContain("var(--mui-color-primary-pressed,")
-    expect(css).toContain("color-mix(in srgb,var(--_mui-anchor-accent) 15%,transparent)")
+    expect(css).toContain("var(--m-color-primary,")
+    expect(css).toContain("var(--m-color-primary-hover,")
+    expect(css).toContain("var(--m-color-primary-pressed,")
+    expect(css).toContain("color-mix(in srgb,var(--_m-anchor-accent) 15%,transparent)")
     expect(css).not.toContain("text-decoration:underline")
-    expect(css).toContain(".mui-anchor a[href]{color:#000;background:transparent}")
+    expect(css).toContain(".m-anchor a[href]{color:#000;background:transparent}")
     const style = document.createElement("style")
     style.textContent = css
     document.head.append(style)
@@ -479,7 +482,7 @@ describe("location ownership, observers and cleanup", () => {
   })
   it("preserves authored styles, hrefs and native focus during current-marker updates", () => {
     const { nav, root, links, controller } = bind()
-    nav.style.cssText = "--mui-anchor-font-size:16px;--mui-anchor-active-color:rgb(1,2,3);--mui-anchor-rail-width:6px"
+    nav.style.cssText = "--m-anchor-font-size:16px;--m-anchor-active-color:rgb(1,2,3);--m-anchor-rail-width:6px"
     const style = nav.getAttribute("style"), hrefs = links.map(link => link.getAttribute("href")), url = document.URL
     links[0]!.focus()
     root.scrollTop = 150
@@ -493,3 +496,279 @@ describe("location ownership, observers and cleanup", () => {
     expect(nav.querySelectorAll("[data-anchor-active]")).toHaveLength(1)
   })
 })
+
+describe("canonical Anchor ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(anchorApi.Anchor).toBe(Anchor)
+    expect(anchorApi.AnchorLink).toBe(AnchorLink)
+    expect(Anchor.tag).toBe("m-anchor")
+    expect(AnchorLink.tag).toBe("m-anchor-link")
+    expect(ViewElement.prototype.isPrototypeOf(Anchor.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(AnchorLink.prototype)).toBe(true)
+    expect(customElements.get("m-anchor")).toBe(Anchor)
+    expect(customElements.get("m-anchor-link")).toBe(AnchorLink)
+    expect(Anchor.observedAttributes).toEqual(["affix", "offset-top", "bound"])
+    expect(AnchorLink.observedAttributes).toEqual(["href", "title"])
+    expect(() => registerAnchor()).not.toThrow()
+  })
+
+  it("handles typed properties and defaults on Anchor", () => {
+    const anchor = document.createElement("m-anchor") as Anchor
+    expect(anchor.affix).toBe(false)
+    expect(anchor.offsetTop).toBe(0)
+    expect(anchor.bound).toBe(12)
+
+    anchor.affix = true
+    expect(anchor.affix).toBe(true)
+    expect(anchor.hasAttribute("affix")).toBe(true)
+
+    anchor.affix = false
+    expect(anchor.affix).toBe(false)
+    expect(anchor.hasAttribute("affix")).toBe(false)
+
+    anchor.setAttribute("affix", "true")
+    expect(anchor.affix).toBe(true)
+
+    anchor.offsetTop = 25
+    expect(anchor.offsetTop).toBe(25)
+    expect(anchor.getAttribute("offset-top")).toBe("25")
+
+    anchor.bound = 30
+    expect(anchor.bound).toBe(30)
+    expect(anchor.getAttribute("bound")).toBe("30")
+  })
+
+  it("handles typed properties and defaults on AnchorLink", () => {
+    const link = document.createElement("m-anchor-link") as AnchorLink
+    expect(link.href).toBe("")
+    expect(link.title).toBe("")
+
+    link.href = "#section-1"
+    expect(link.href).toBe("#section-1")
+    expect(link.getAttribute("href")).toBe("#section-1")
+
+    link.title = "Section 1"
+    expect(link.title).toBe("Section 1")
+    expect(link.getAttribute("title")).toBe("Section 1")
+
+    link.href = null
+    expect(link.href).toBe("")
+    expect(link.hasAttribute("href")).toBe(false)
+  })
+
+  it("renders inner anchor link with href and title", () => {
+    const link = document.createElement("m-anchor-link") as AnchorLink
+    link.href = "#intro"
+    link.title = "Introduction"
+    document.body.append(link)
+
+    const a = link.querySelector<HTMLAnchorElement>("a")
+    expect(a).not.toBeNull()
+    expect(a?.getAttribute("href")).toBe("#intro")
+    expect(a?.textContent).toBe("Introduction")
+    expect(a?.title).toBe("Introduction")
+    expect(a?.classList.contains("m-anchor-link")).toBe(true)
+    expect(a?.dataset.part).toBe("link")
+  })
+
+  it("renders authored children inside the inner anchor link when title is not specified", () => {
+    const link = document.createElement("m-anchor-link") as AnchorLink
+    link.href = "#custom"
+    link.textContent = "Custom Label"
+    document.body.append(link)
+
+    const a = link.querySelector<HTMLAnchorElement>("a")
+    expect(a).not.toBeNull()
+    expect(a?.getAttribute("href")).toBe("#custom")
+    expect(a?.textContent).toBe("Custom Label")
+  })
+
+  it("handles nested m-anchor-link elements outside the parent a tag", () => {
+    const parent = document.createElement("m-anchor-link") as AnchorLink
+    parent.href = "#parent"
+    parent.title = "Parent"
+
+    const child = document.createElement("m-anchor-link") as AnchorLink
+    child.href = "#child"
+    child.title = "Child"
+
+    parent.append(child)
+    document.body.append(parent)
+
+    const parentA = parent.querySelector<HTMLAnchorElement>(":scope > a")
+    const childA = child.querySelector<HTMLAnchorElement>(":scope > a")
+
+    expect(parentA).not.toBeNull()
+    expect(childA).not.toBeNull()
+    expect(parentA?.textContent).toBe("Parent")
+    expect(childA?.textContent).toBe("Child")
+    expect(parentA?.contains(child)).toBe(false)
+  })
+
+  it("toggles sticky class when affix is set", () => {
+    const anchor = document.createElement("m-anchor") as Anchor
+    document.body.append(anchor)
+    expect(anchor.classList.contains("m-anchor--sticky")).toBe(false)
+
+    anchor.affix = true
+    expect(anchor.classList.contains("m-anchor--sticky")).toBe(true)
+
+    anchor.offsetTop = 32
+    expect(anchor.style.getPropertyValue("--m-anchor-sticky-offset")).toBe("32px")
+
+    anchor.affix = false
+    expect(anchor.classList.contains("m-anchor--sticky")).toBe(false)
+  })
+
+  it("tracks active section and emits m:change event on Anchor", () => {
+    const anchor = document.createElement("m-anchor") as Anchor
+    const link1 = document.createElement("m-anchor-link") as AnchorLink
+    link1.href = "#sec1"
+    link1.title = "Section 1"
+    const link2 = document.createElement("m-anchor-link") as AnchorLink
+    link2.href = "#sec2"
+    link2.title = "Section 2"
+    anchor.append(link1, link2)
+
+    const root = document.createElement("div")
+    root.style.overflowY = "auto"
+    Object.defineProperties(root, {
+      clientTop: { configurable: true, value: 1 },
+      clientHeight: { configurable: true, value: 200 },
+      offsetHeight: { configurable: true, value: 202 },
+      scrollHeight: { configurable: true, value: 600 },
+    })
+    const sec1 = document.createElement("section")
+    sec1.id = "sec1"
+    const sec2 = document.createElement("section")
+    sec2.id = "sec2"
+    root.append(sec1, sec2)
+
+    geometry(anchor, () => rect(0, 100))
+    geometry(root, () => rect(100, 202))
+    geometry(sec1, () => rect(101 - root.scrollTop, 100))
+    geometry(sec2, () => rect(251 - root.scrollTop, 100))
+    geometry(link1, () => rect(0, 20))
+    geometry(link2, () => rect(20, 20))
+
+    const changeSpy = vi.fn()
+    anchor.addEventListener("m:change", changeSpy)
+    anchor.setScrollRoot(root)
+
+    document.body.append(anchor, root)
+
+    expect(anchor.getAttribute("role")).toBe("navigation")
+    expect(anchor.getAttribute("aria-label")).toBe("Anchor")
+    expect(anchor.classList.contains("m-anchor")).toBe(true)
+
+    anchor.update()
+    expect(changeSpy).toHaveBeenCalled()
+    expect(changeSpy.mock.calls[0]![0].detail).toEqual({ href: "#sec1" })
+
+    root.scrollTop = 160
+    anchor.update()
+    expect(changeSpy).toHaveBeenCalledTimes(2)
+    expect(changeSpy.mock.calls[1]![0].detail).toEqual({ href: "#sec2" })
+
+    const a2 = link2.querySelector("a")
+    expect(a2?.getAttribute("aria-current")).toBe("location")
+    expect(a2?.hasAttribute("data-anchor-active")).toBe(true)
+  })
+
+  it("extracts Anchor and AnchorLink API metadata matching specification", async () => {
+    const [docs] = await generateComponentApi(resolve("."), ["anchor"])
+    expect(docs.elements).toHaveLength(2)
+
+    const [anchorDoc, linkDoc] = docs.elements
+    expect(anchorDoc!.type).toBe("Anchor")
+    expect(anchorDoc!.web.primary).toBe("m-anchor")
+    expect(anchorDoc!.properties.affix).toMatchObject({
+      name: "affix",
+      type: "boolean",
+      default: false,
+      attribute: "affix",
+      encoding: "boolean",
+      readable: true,
+      writable: true,
+    })
+    expect(anchorDoc!.properties.offsetTop).toMatchObject({
+      name: "offsetTop",
+      type: "number",
+      default: 0,
+      attribute: "offset-top",
+      readable: true,
+      writable: true,
+    })
+    expect(anchorDoc!.properties.bound).toMatchObject({
+      name: "bound",
+      type: "number",
+      default: 12,
+      attribute: "bound",
+      readable: true,
+      writable: true,
+    })
+    expect(anchorDoc!.events).toEqual([
+      {
+        name: "Change",
+        web: "m:change",
+        bubbles: true,
+        cancelable: false,
+        composed: false,
+        detail: { href: "string" },
+      },
+    ])
+    expect(anchorDoc!.regions).toEqual([
+      {
+        name: "links",
+        element: "m-anchor-link",
+        accepts: ["AnchorLink"],
+        min: 0,
+        max: null,
+      },
+    ])
+
+    expect(linkDoc!.type).toBe("AnchorLink")
+    expect(linkDoc!.web.primary).toBe("m-anchor-link")
+    expect(linkDoc!.properties.href).toMatchObject({
+      name: "href",
+      type: "string",
+      default: "",
+      attribute: "href",
+      readable: true,
+      writable: true,
+    })
+    expect(linkDoc!.properties.title).toMatchObject({
+      name: "title",
+      type: "string",
+      default: "",
+      attribute: "title",
+      readable: true,
+      writable: true,
+    })
+    expect(linkDoc!.regions).toEqual([
+      {
+        name: "content",
+        accepts: ["AnchorLink", "text", "flow content"],
+        min: 0,
+        max: null,
+      },
+    ])
+  })
+
+  it("structures Anchor demo with standard scaffold and explicit shared-core loading", () => {
+    const demoHtml = readFileSync(resolve("demo", "components", "anchor.html"), "utf8")
+    const parsed = new DOMParser().parseFromString(demoHtml, "text/html")
+    const scripts = [...parsed.querySelectorAll("script[src]")].map(script => script.getAttribute("src"))
+    expect(scripts.indexOf("../../dist/markup-ui-core.global.js")).toBeLessThan(scripts.indexOf("../../dist/markup-ui-anchor.global.js"))
+    expect(parsed.querySelector("main[data-demo-page].component-docs #anchor-api")).not.toBeNull()
+    expect(parsed.querySelector('script[src="../component-outline.js"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../example-code.css"]')).not.toBeNull()
+    expect(parsed.querySelector('link[href="../component-api.css"]')).not.toBeNull()
+    expect(parsed.querySelector("details.component-setup")).not.toBeNull()
+    for (const example of parsed.querySelectorAll("[data-demo-example]")) {
+      expect(example.querySelector("[data-demo-header] h2[id]")).not.toBeNull()
+      expect(example.querySelector("[data-demo-preview]")).not.toBeNull()
+    }
+  })
+})
+

@@ -25,9 +25,9 @@ export function readTreeHierarchy(root: HTMLElement, addition?: { list: Element;
   const document = root.ownerDocument, view = document.defaultView!
   const references = root.getAttribute("aria-labelledby")?.trim().split(/\s+/)
   const named = references?.length ? references.every(id => document.getElementById(id)?.textContent?.trim()) : !!root.getAttribute("aria-label")?.trim()
-  if (!root.isConnected || root.getRootNode() !== document || !root.matches(".mui-tree[data-tree]")
+  if (!root.isConnected || root.getRootNode() !== document || !root.matches(".m-tree[data-tree]")
     || !["section", "nav", "div"].includes(root.localName) || root.hasAttribute("role")
-    || !named) throw new TypeError("Author a connected named native .mui-tree[data-tree] outline, not an ARIA tree.")
+    || !named) throw new TypeError("Author a connected named native .m-tree[data-tree] outline, not an ARIA tree.")
   const lists = [...root.children].filter(node => node.hasAttribute("data-tree-list"))
   if (lists.length !== 1) throw new TypeError("Author exactly one direct data-tree-list.")
   const nodes: TreeNode[] = [], byKey = new Map<string, TreeNode>()

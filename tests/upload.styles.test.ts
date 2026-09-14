@@ -16,33 +16,33 @@ function withRules(check: (rules: CSSStyleRule[]) => void) {
 describe("Upload default styles", () => {
   it("keeps the source typography and drop geometry locally overridable", () => {
     withRules(rules => {
-      const root = rules.find(rule => rule.selectorText === ".mui-upload")!
-      const drop = rules.find(rule => rule.selectorText === ".mui-upload [data-upload-drop]")!
-      expect(compact(root.style.getPropertyValue("font-size"))).toBe("var(--mui-upload-font-size,14px)")
+      const root = rules.find(rule => rule.selectorText === ".m-upload")!
+      const drop = rules.find(rule => rule.selectorText === ".m-upload [data-upload-drop]")!
+      expect(compact(root.style.getPropertyValue("font-size"))).toBe("var(--m-upload-font-size,14px)")
       expect(root.style.getPropertyValue("line-height")).toBe("1.6")
-      expect(compact(drop.style.getPropertyValue("padding"))).toBe("var(--mui-upload-drop-padding,24px)")
-      expect(compact(drop.style.getPropertyValue("border-radius"))).toBe("var(--mui-upload-radius,3px)")
+      expect(compact(drop.style.getPropertyValue("padding"))).toBe("var(--m-upload-drop-padding,24px)")
+      expect(compact(drop.style.getPropertyValue("border-radius"))).toBe("var(--m-upload-radius,3px)")
       expect(drop.style.getPropertyValue("cursor")).toBe("")
     })
   })
 
   it("resets local dark defaults in nested light scopes without assigning public tokens", () => {
     withRules(rules => {
-      const light = rules.find(rule => compact(rule.selectorText ?? "") === ":where([data-mui-theme=light])")!
-      const dark = rules.find(rule => compact(rule.selectorText ?? "") === ":where([data-mui-theme=dark])")!
+      const light = rules.find(rule => compact(rule.selectorText ?? "") === ":where([data-m-theme=light])")!
+      const dark = rules.find(rule => compact(rule.selectorText ?? "") === ":where([data-m-theme=dark])")!
       for (const token of Array.from({ length: dark.style.length }, (_, i) => dark.style[i]!)) {
-        expect(token.startsWith("--_mui-upload-")).toBe(true)
+        expect(token.startsWith("--_m-upload-")).toBe(true)
         expect(light.style.getPropertyValue(token)).toBe("initial")
       }
-      expect(dark.style.getPropertyValue("--_mui-upload-error")).toBe("#e88080")
-      expect(dark.style.getPropertyValue("--_mui-upload-rail")).toBe("rgba(255,255,255,.12)")
+      expect(dark.style.getPropertyValue("--_m-upload-error")).toBe("#e88080")
+      expect(dark.style.getPropertyValue("--_m-upload-rail")).toBe("rgba(255,255,255,.12)")
     })
   })
 
   it("guards disabled action/drop hover and keeps status text independent of error color", () => {
     contains('button:enabled:not([aria-disabled="true"]):hover')
-    contains('.mui-upload:not(:has(input:disabled)) [data-upload-drop]')
-    contains('.mui-upload li[data-upload-state="error"]:hover')
+    contains('.m-upload:not(:has(input:disabled)) [data-upload-drop]')
+    contains('.m-upload li[data-upload-state="error"]:hover')
     contains('rgba(208,48,80,.06)')
     contains('[data-upload-state="error"] [data-upload-name]')
     expect(css).not.toContain('border-inline-start:')
@@ -50,7 +50,7 @@ describe("Upload default styles", () => {
 
   it("retains complete row actions and gives progress the full row width", () => {
     withRules(rules => {
-      const row = rules.find(rule => compact(rule.selectorText ?? "") === ".mui-upload[data-upload-list]>li")!
+      const row = rules.find(rule => compact(rule.selectorText ?? "") === ".m-upload[data-upload-list]>li")!
       expect(row.style.getPropertyValue("padding")).toBe("6px 12px 6px 6px")
       const full = rules.find(rule => rule.selectorText?.includes("[data-upload-row-actions],"))!
       expect(full.style.getPropertyValue("grid-column")).toBe("1 / -1")
@@ -61,12 +61,12 @@ describe("Upload default styles", () => {
 
   it("only replaces determinate progress paint and avoids a double-composited WebKit rail", () => {
     withRules(rules => {
-      const progress = rules.find(rule => rule.selectorText === ".mui-upload progress[value]")!
-      const rail = rules.find(rule => rule.selectorText === ".mui-upload progress::-webkit-progress-bar")!
+      const progress = rules.find(rule => rule.selectorText === ".m-upload progress[value]")!
+      const rail = rules.find(rule => rule.selectorText === ".m-upload progress::-webkit-progress-bar")!
       expect(progress.style.getPropertyValue("appearance")).toBe("none")
       expect(progress.style.getPropertyValue("block-size")).toBe("2px")
       expect(rail.style.getPropertyValue("background")).toBe("transparent")
-      const base = rules.find(rule => rule.selectorText === ".mui-upload [data-upload-progress]")!
+      const base = rules.find(rule => rule.selectorText === ".m-upload [data-upload-progress]")!
       expect(base.style.getPropertyValue("appearance")).toBe("")
     })
     expect(css).not.toContain("animation:")
@@ -74,7 +74,7 @@ describe("Upload default styles", () => {
 
   it("keeps native file controls/focus, high contrast and printed status readable", () => {
     contains('input[type="file"]::file-selector-button')
-    contains(".mui-upload :focus-visible")
+    contains(".m-upload :focus-visible")
     contains("color: CanvasText !important")
     contains("appearance: auto !important")
     contains("color: black !important; background: white !important")

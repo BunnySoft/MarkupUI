@@ -2,10 +2,14 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createDrawer, createDrawerOwner } from "../src/components/drawer/index.js"
+import {
+  createDrawer, createDrawerOwner,
+  Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, registerDrawer,
+} from "../src/components/drawer/index.js"
 import { createModal } from "../src/components/modal/index.js"
 import { createNativeDialog } from "../src/components/dialog/native.js"
-import type { DrawerController, DrawerOptions } from "../src/components/drawer/index.js"
+import type { DrawerController, DrawerOptions, DrawerPlacement } from "../src/components/drawer/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const handles: { dispose(): void }[] = []
 const proto = HTMLDialogElement.prototype
@@ -18,7 +22,7 @@ const drawerCSS = () => readFileSync(resolve("src", "components", "drawer", "dra
   .replace(/\[([\w-]+)="([\w-]+)"\]/g, "[$1=$2]").replace(/;}/g, "}").trim()
 function fixture() {
   const host = document.createElement("div")
-  host.innerHTML = `<button data-opener type="button">Open</button><dialog class="mui-native-dialog mui-drawer" aria-label="Drawer details"><form class="mui-drawer-content" method="dialog"><header data-drawer-header><h3 data-drawer-title>Authored level three</h3></header><div data-drawer-body tabindex="0" aria-label="Details"><div data-drawer-body-content><label>Reference <input required name="reference"></label><p>Details</p></div></div><footer data-drawer-footer><button value="saved">Save</button><button value="closed" formnovalidate>Close</button><button value="cancelled" formnovalidate>Cancel</button></footer></form></dialog>`
+  host.innerHTML = `<button data-opener type="button">Open</button><dialog class="m-native-dialog m-drawer" aria-label="Drawer details"><form class="m-drawer-content" method="dialog"><header data-drawer-header><h3 data-drawer-title>Authored level three</h3></header><div data-drawer-body tabindex="0" aria-label="Details"><div data-drawer-body-content><label>Reference <input required name="reference"></label><p>Details</p></div></div><footer data-drawer-footer><button value="saved">Save</button><button value="closed" formnovalidate>Close</button><button value="cancelled" formnovalidate>Cancel</button></footer></form></dialog>`
   document.body.append(host)
   return host.querySelector("dialog")!
 }
@@ -64,8 +68,8 @@ describe("Drawer and CSS-only DrawerContent", () => {
     expect(pkg.dependencies).toEqual({})
     expect(source).toContain("../modal/modal.js")
     expect(source).not.toContain("dialog/dialog.js")
-    expect(customElements.get("mui-drawer")).toBeUndefined()
-    expect(customElements.get("mui-drawer-content")).toBeUndefined()
+    expect(customElements.get("m-drawer")).toBe(Drawer)
+    expect(customElements.get("m-drawer-content")).toBe(DrawerContent)
   })
   it("retains authored header/body/footer, heading level, listeners, descriptions and form values", () => {
     const d = fixture(); const heading = d.querySelector("h3")!; heading.id = "title"
@@ -92,7 +96,7 @@ describe("Drawer and CSS-only DrawerContent", () => {
   it("rejects invalid/missing native anatomy and duplicate companion regions", () => {
     for (const fault of ["class", "body", "duplicate", "placement"]) {
       const d = fixture()
-      if (fault === "class") d.classList.remove("mui-drawer")
+      if (fault === "class") d.classList.remove("m-drawer")
       if (fault === "body") d.querySelector("[data-drawer-body]")!.remove()
       if (fault === "duplicate") d.firstElementChild!.append(d.querySelector("header")!.cloneNode(true))
       if (fault === "placement") d.setAttribute("data-drawer-placement", "center")
@@ -251,13 +255,13 @@ describe("Drawer backdrop and template owners", () => {
     const { o } = owner(); const a = o.create(template()); a.close(); const b = o.create(template()); b.close()
     b.showModal(); a.showModal()
     const order: string[] = []
-    a.dialog.addEventListener("mui:native-dialog-dispose", () => order.push("a"))
-    b.dialog.addEventListener("mui:native-dialog-dispose", () => order.push("b"))
+    a.dialog.addEventListener("m:native-dialog-dispose", () => order.push("a"))
+    b.dialog.addEventListener("m:native-dialog-dispose", () => order.push("b"))
     o.destroyAll(); expect(order).toEqual(["a", "b"]); expect(o.drawers).toHaveLength(0)
   })
   it("guards reentrant creation and native focus-triggered owner disposal", () => {
     const { o } = owner(); const c = o.create(template()); let blocked = false
-    c.dialog.addEventListener("mui:native-dialog-dispose", () => { try { o.create(template()) } catch { blocked = true } })
+    c.dialog.addEventListener("m:native-dialog-dispose", () => { try { o.create(template()) } catch { blocked = true } })
     o.dispose(); expect(blocked).toBe(true)
     const other = owner().o
     vi.spyOn(proto, "showModal").mockImplementation(function (this: HTMLDialogElement) { this.open = true; other.dispose() })
@@ -284,8 +288,8 @@ describe("Drawer backdrop and template owners", () => {
   it("ships native edge/body CSS without custom resizer, scroll-lock or animation dependencies", () => {
     const css = drawerCSS()
     for (const name of ["left", "right", "top", "bottom", "inline-start", "inline-end"]) expect(css).toContain(name)
-    expect(css).toContain("height:min(var(--mui-drawer-height")
-    expect(css).toContain("dialog.mui-native-dialog.mui-drawer")
+    expect(css).toContain("height:min(var(--m-drawer-height")
+    expect(css).toContain("dialog.m-native-dialog.m-drawer")
     expect(css).toContain("[data-drawer-body]")
     expect(css).toContain("min-block-size:3rem")
     expect(css).toContain("(max-height:20rem)")
@@ -299,9 +303,9 @@ describe("Drawer backdrop and template owners", () => {
   })
   it("uses measured default dimensions, region padding and header typography", () => {
     const css = drawerCSS()
-    expect(css).toContain("width:min(var(--mui-drawer-width,251px),100%)")
-    expect(css).toContain("height:min(var(--mui-drawer-height,251px),100%)")
-    expect(css).toContain("padding:var(--mui-drawer-padding,16px 24px)")
+    expect(css).toContain("width:min(var(--m-drawer-width,251px),100%)")
+    expect(css).toContain("height:min(var(--m-drawer-height,251px),100%)")
+    expect(css).toContain("padding:var(--m-drawer-padding,16px 24px)")
     expect(css).toContain("font-size:18px;font-weight:500;line-height:1")
     expect(css).toContain("font:inherit;line-height:1.6")
     expect(css).not.toContain("24rem")
@@ -309,35 +313,35 @@ describe("Drawer backdrop and template owners", () => {
   it("keeps physical and logical corner mappings private and author overrides intact", () => {
     const css = drawerCSS()
     expect(css).toContain("--_drawer-radius:initial")
-    expect(css).toContain("border-radius:var(--mui-drawer-radius,var(--_drawer-radius,3px 0 0 3px))")
+    expect(css).toContain("border-radius:var(--m-drawer-radius,var(--_drawer-radius,3px 0 0 3px))")
     expect(css).toContain("[data-drawer-placement=left]{left:0;right:auto;--_drawer-radius:0 3px 3px 0}")
     expect(css).toContain("[data-drawer-placement=inline-start]:dir(ltr),[data-drawer-placement=inline-end]:dir(rtl)")
     expect(css).toContain("[data-drawer-placement=top]{bottom:auto;--_drawer-radius:0 0 3px 3px}")
     expect(css).toContain("[data-drawer-placement=bottom]{top:auto;bottom:0;--_drawer-radius:3px 3px 0 0}")
     for (const name of ["width", "height", "padding", "border", "radius", "color", "background", "focus"]) {
-      expect(css).not.toMatch(new RegExp(`--mui-drawer-${name}:`))
+      expect(css).not.toMatch(new RegExp(`--m-drawer-${name}:`))
     }
   })
   it("uses Drawer-specific neutral paint and mask without weakening repeated-base guards", () => {
     const css = drawerCSS()
-    expect(css).toContain("dialog.mui-native-dialog.mui-drawer{")
+    expect(css).toContain("dialog.m-native-dialog.m-drawer{")
     expect(css).toContain("light-dark(#333639,#ffffffd1)")
     expect(css).toContain("light-dark(#fff,#2c2c32)")
     expect(css).toContain("light-dark(#efeff5,#ffffff17)")
     expect(css).toContain("0 6px 16px -9px #00000014,0 9px 28px #0000000d,0 12px 48px 16px #00000008")
-    expect(css).toContain("dialog.mui-native-dialog.mui-drawer::backdrop{background:rgb(0 0 0 / 30%)}")
-    expect(css).not.toMatch(/--mui-(?:text-primary|text-secondary|bg-surface|border),/)
+    expect(css).toContain("dialog.m-native-dialog.m-drawer::backdrop{background:rgb(0 0 0 / 30%)}")
+    expect(css).not.toMatch(/--m-(?:text-primary|text-secondary|bg-surface|border),/)
   })
   it("preserves fixed modality, control and scrolling safety, and all-mode print resets", () => {
     const css = drawerCSS()
-    expect(css).toContain("dialog.mui-drawer:modal{position:fixed;top:0;bottom:0;right:0;left:auto;height:100%;margin:0}")
+    expect(css).toContain("dialog.m-drawer:modal{position:fixed;top:0;bottom:0;right:0;left:auto;height:100%;margin:0}")
     expect(css).not.toContain("position:relative")
     expect(css).toContain("min-block-size:2.5rem;white-space:normal")
     expect(css).toContain("max-block-size:35%")
     expect(css).toContain("animation:none;transition:none;scroll-behavior:auto")
     expect(css).toContain("border:1px solid CanvasText;box-shadow:none")
-    expect(css).toContain("@media print{dialog.mui-native-dialog.mui-drawer[open]{position:static;inset:auto;width:100%;height:auto;max-block-size:none;margin:0;box-shadow:none}")
-    expect(css).toContain("dialog.mui-native-dialog.mui-drawer::backdrop{background:transparent}")
+    expect(css).toContain("@media print{dialog.m-native-dialog.m-drawer[open]{position:static;inset:auto;width:100%;height:auto;max-block-size:none;margin:0;box-shadow:none}")
+    expect(css).toContain("dialog.m-native-dialog.m-drawer::backdrop{background:transparent}")
   })
   it("keeps exact production composed CSS inside its unchanged gzip ceiling", () => {
     const native = readFileSync(resolve("src", "components", "dialog", "native.css"), "utf8")
@@ -345,3 +349,177 @@ describe("Drawer backdrop and template owners", () => {
     expect(gzipSync(`${native}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(1500)
   })
 })
+
+describe("canonical Drawer ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers m-drawer and companion elements", () => {
+    expect(Drawer.tag).toBe("m-drawer")
+    expect(DrawerContent.tag).toBe("m-drawer-content")
+    expect(DrawerHeader.tag).toBe("m-drawer-header")
+    expect(DrawerBody.tag).toBe("m-drawer-body")
+    expect(DrawerFooter.tag).toBe("m-drawer-footer")
+    expect(ViewElement.prototype.isPrototypeOf(Drawer.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(DrawerContent.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(DrawerHeader.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(DrawerBody.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(DrawerFooter.prototype)).toBe(true)
+    expect(customElements.get("m-drawer")).toBe(Drawer)
+    expect(customElements.get("m-drawer-content")).toBe(DrawerContent)
+    expect(customElements.get("m-drawer-header")).toBe(DrawerHeader)
+    expect(customElements.get("m-drawer-body")).toBe(DrawerBody)
+    expect(customElements.get("m-drawer-footer")).toBe(DrawerFooter)
+    expect(Drawer.observedAttributes).toEqual(["open", "placement", "title", "closable", "mask-closable", "width", "height"])
+    expect(typeof registerDrawer).toBe("function")
+  })
+
+  it("handles typed properties, defaults and validation", () => {
+    const drawer = document.createElement("m-drawer") as Drawer
+    document.body.append(drawer)
+    expect(drawer.open).toBe(false)
+    expect(drawer.placement).toBe("right")
+    expect(drawer.title).toBe("")
+    expect(drawer.closable).toBe(false)
+    expect(drawer.maskClosable).toBe(true)
+    expect(drawer.width).toBeNull()
+    expect(drawer.height).toBeNull()
+
+    drawer.placement = "left"
+    expect(drawer.placement).toBe("left")
+    expect(drawer.getAttribute("placement")).toBe("left")
+
+    drawer.placement = "top"
+    expect(drawer.placement).toBe("top")
+
+    drawer.placement = "bottom"
+    expect(drawer.placement).toBe("bottom")
+
+    expect(() => { (drawer as any).placement = "invalid" }).toThrow(RangeError)
+
+    drawer.title = "Profile Settings"
+    expect(drawer.title).toBe("Profile Settings")
+    expect(drawer.getAttribute("title")).toBe("Profile Settings")
+
+    drawer.closable = true
+    expect(drawer.closable).toBe(true)
+    expect(drawer.hasAttribute("closable")).toBe(true)
+
+    drawer.maskClosable = false
+    expect(drawer.maskClosable).toBe(false)
+    expect(drawer.getAttribute("mask-closable")).toBe("false")
+
+    drawer.width = "400px"
+    expect(drawer.width).toBe("400px")
+    expect(drawer.getAttribute("width")).toBe("400px")
+
+    drawer.width = null
+    expect(drawer.width).toBeNull()
+    expect(drawer.hasAttribute("width")).toBe(false)
+
+    drawer.height = "50%"
+    expect(drawer.height).toBe("50%")
+    expect(drawer.getAttribute("height")).toBe("50%")
+
+    drawer.height = null
+    expect(drawer.height).toBeNull()
+    expect(drawer.hasAttribute("height")).toBe(false)
+  })
+
+  it("supports show() and close() methods and emits m:close event", () => {
+    const drawer = document.createElement("m-drawer") as Drawer
+    drawer.title = "My Drawer"
+    document.body.append(drawer)
+
+    expect(drawer.open).toBe(false)
+    const closeSpy = vi.fn()
+    drawer.addEventListener("m:close", closeSpy)
+
+    drawer.show()
+    expect(drawer.open).toBe(true)
+    expect(drawer.hasAttribute("open")).toBe(true)
+
+    drawer.close("programmatic")
+    expect(drawer.open).toBe(false)
+    expect(drawer.hasAttribute("open")).toBe(false)
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "programmatic" })
+
+    // Calling close when already closed does not re-emit
+    drawer.close()
+    expect(closeSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it("renders close button when closable is true and closes on click", () => {
+    const drawer = document.createElement("m-drawer") as Drawer
+    drawer.title = "Closable Drawer"
+    drawer.closable = true
+    drawer.open = true
+    document.body.append(drawer)
+
+    const closeBtn = drawer.querySelector<HTMLButtonElement>("[data-part=close]")
+    expect(closeBtn).not.toBeNull()
+
+    const closeSpy = vi.fn()
+    drawer.addEventListener("m:close", closeSpy)
+
+    closeBtn!.click()
+    expect(drawer.open).toBe(false)
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "close" })
+  })
+
+  it("closes on mask click when maskClosable is true and ignores when false", () => {
+    const drawer = document.createElement("m-drawer") as Drawer
+    drawer.open = true
+    document.body.append(drawer)
+
+    const mask = drawer.querySelector<HTMLElement>("[data-part=mask]")
+    expect(mask).not.toBeNull()
+
+    const closeSpy = vi.fn()
+    drawer.addEventListener("m:close", closeSpy)
+
+    mask!.click()
+    expect(drawer.open).toBe(false)
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "mask" })
+
+    // When maskClosable is false
+    drawer.maskClosable = false
+    drawer.show()
+    const newMask = drawer.querySelector<HTMLElement>("[data-part=mask]")!
+    newMask.click()
+    expect(drawer.open).toBe(true)
+    expect(closeSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it("closes on Escape key press", () => {
+    const drawer = document.createElement("m-drawer") as Drawer
+    drawer.open = true
+    document.body.append(drawer)
+
+    const closeSpy = vi.fn()
+    drawer.addEventListener("m:close", closeSpy)
+
+    drawer.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }))
+    expect(drawer.open).toBe(false)
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "escape" })
+  })
+
+  it("supports companion regions m-drawer-content, header, body, footer", () => {
+    document.body.innerHTML = `
+      <m-drawer placement="right" open>
+        <m-drawer-content>
+          <m-drawer-header>Authored Header</m-drawer-header>
+          <m-drawer-body><p>Authored Body</p></m-drawer-body>
+          <m-drawer-footer><button id="footer-btn">Submit</button></m-drawer-footer>
+        </m-drawer-content>
+      </m-drawer>`
+    const drawer = document.querySelector("m-drawer") as Drawer
+    expect(drawer.open).toBe(true)
+    expect(drawer.querySelector("m-drawer-content")).not.toBeNull()
+    expect(drawer.querySelector("m-drawer-header")?.textContent).toContain("Authored Header")
+    expect(drawer.querySelector("m-drawer-body")?.textContent).toContain("Authored Body")
+    expect(drawer.querySelector("m-drawer-footer")?.textContent).toContain("Submit")
+  })
+})
+

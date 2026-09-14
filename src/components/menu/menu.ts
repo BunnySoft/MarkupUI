@@ -54,7 +54,7 @@ export function createMenu(root: HTMLElement, options: MenuOptions = {}): MenuCo
   const document = root?.ownerDocument
   const view = document?.defaultView
   if (!view || !(root instanceof view.HTMLElement) || root.localName !== "nav"
-    || !root.hasAttribute("data-menu") || !root.classList.contains("mui-menu")) throw new TypeError("Menu requires an authored nav.mui-menu[data-menu].")
+    || !root.hasAttribute("data-menu") || !root.classList.contains("m-menu")) throw new TypeError("Menu requires an authored nav.m-menu[data-menu].")
   for (const key of Object.keys(options)) if (!allowed.has(key)) throw new TypeError(`Unsupported Menu option: ${key}.`)
   let mode = options.mode ?? root.getAttribute("data-menu-mode") ?? "vertical"
   let value = options.value !== undefined ? options.value : options.defaultValue ?? null
@@ -65,7 +65,7 @@ export function createMenu(root: HTMLElement, options: MenuOptions = {}): MenuCo
     if (flag !== undefined && typeof flag !== "boolean") throw new TypeError("Menu flags must be boolean.")
   }
   if (!Number.isFinite(duration) || duration < 0 || duration > 60_000) throw new RangeError("Menu typeahead duration must be finite from 0 to 60000.")
-  const groupName = `mui-menu-${Math.random().toString(36).slice(2)}`
+  const groupName = `m-menu-${Math.random().toString(36).slice(2)}`
   let connected = false
   let initialized = false
   let generation = 0
@@ -230,11 +230,11 @@ export function createMenu(root: HTMLElement, options: MenuOptions = {}): MenuCo
       paint()
       const path = [current.key]
       for (let parent = current.parent; parent; parent = parent.parent) path.unshift(parent.key)
-      root.dispatchEvent(new view!.CustomEvent<MenuSelection>("mui:menu-select", { detail: { key: current.key, item: current.element, path, event } }))
+      root.dispatchEvent(new view!.CustomEvent<MenuSelection>("m:menu-select", { detail: { key: current.key, item: current.element, path, event } }))
     })
   }
   function parse() {
-    if (!root.isConnected || root.getRootNode() !== document || root.closest("mui-menu") || root.isContentEditable
+    if (!root.isConnected || root.getRootNode() !== document || root.closest("m-menu") || root.isContentEditable
       || root.hasAttribute("contenteditable") && root.getAttribute("contenteditable")?.toLowerCase() !== "false"
       || ![null, "navigation"].includes(root.getAttribute("role"))) throw new TypeError("Menu requires connected light-DOM navigation, not legacy/menu/menubar roles.")
     named(root)
@@ -296,7 +296,7 @@ export function createMenu(root: HTMLElement, options: MenuOptions = {}): MenuCo
       if (entry) closePeers(entry)
     }
     if (!relevant.some(record => record.type === "childList" || record.attributeName !== "open")) return
-    try { controller.refresh() } catch (error) { root.dispatchEvent(new view!.CustomEvent("mui:menu-error", { detail: { error } })) }
+    try { controller.refresh() } catch (error) { root.dispatchEvent(new view!.CustomEvent("m:menu-error", { detail: { error } })) }
   })
   function teardown(preserveTasks = false) {
     connected = false

@@ -5,7 +5,7 @@ function pathParts(path: string): string[] {
   return path.split(".").map((part) => part.trim()).filter(Boolean)
 }
 
-export class MuiStore {
+export class MStore {
   private readonly subscribers = new Map<string, Set<StateSubscriber>>()
 
   public constructor(public readonly state: Record<string, StateValue> = {}) {}
@@ -58,8 +58,8 @@ export class MuiStore {
   }
 }
 
-export function createStore(state: Record<string, StateValue> = {}): MuiStore {
-  return new MuiStore(state)
+export function createStore(state: Record<string, StateValue> = {}): MStore {
+  return new MStore(state)
 }
 
 function assignValue(element: Element, property: string, value: StateValue): void {
@@ -76,10 +76,16 @@ function assignValue(element: Element, property: string, value: StateValue): voi
     element.toggleAttribute("disabled", Boolean(value))
     return
   }
+  if (property === "value" && element.matches("m-input,m-textarea,m-input-number") && Reflect.get(element, property) === value) return
+  if (property === "value" && element.matches("m-select")) {
+    const current = Reflect.get(element, property) as unknown
+    if (current === value || Array.isArray(current) && Array.isArray(value)
+      && current.length === value.length && current.every((key, index) => key === value[index])) return
+  }
   Reflect.set(element, property, value)
 }
 
-export function bind(root: ParentNode, store: MuiStore): () => void {
+export function bind(root: ParentNode, store: MStore): () => void {
   const disposers: Array<() => void> = []
   const elements = [
     ...(root instanceof Element ? [root] : []),
@@ -87,12 +93,12 @@ export function bind(root: ParentNode, store: MuiStore): () => void {
   ]
   for (const element of elements) {
     const bindings: Array<readonly [string, string]> = []
-    const twoWayPath = element.getAttribute("mui-bind")
-    const twoWayProperty = element.getAttribute("mui-bind-property")
-      ?? (element.matches("mui-checkbox,mui-switch,mui-radio") ? "checked" : "value")
+    const twoWayPath = element.getAttribute("m-bind")
+    const twoWayProperty = element.getAttribute("m-bind-property")
+      ?? (element.matches("m-checkbox,m-switch,m-radio,m-radio-button") ? "checked" : "value")
     if (twoWayPath) bindings.push([twoWayProperty, twoWayPath])
     for (const property of ["text", "visible", "disabled"]) {
-      const path = element.getAttribute(`mui-${property}`)
+      const path = element.getAttribute(`m-${property}`)
       if (path) bindings.push([property, path])
     }
     for (const [property, path] of bindings) {
@@ -101,17 +107,22 @@ export function bind(root: ParentNode, store: MuiStore): () => void {
       disposers.push(store.subscribe(path, update))
     }
     if (twoWayPath) {
+      const nativeCheckbox = element.matches("m-checkbox,m-switch")
+      const nativeRadio = element.matches("m-radio,m-radio-button")
+      const nativeNumber = element.matches("m-input-number,m-select")
+      const nativeField = nativeCheckbox || nativeRadio || element.matches("m-input,m-textarea,m-input-number,m-select") && twoWayProperty === "value"
+      const checkboxGroup = element.matches("m-checkbox-group") && twoWayProperty === "value"
+      const radioGroup = element.matches("m-radio-group") && twoWayProperty === "value"
+      const events = nativeCheckbox || nativeRadio ? ["change"] : nativeField ? ["input", "change"] : checkboxGroup ? ["m:checkbox-group-change"] : radioGroup ? ["m:radio-group-change"] : ["m:input", "m:change"]
       const listener = (event: Event) => {
-        if (event.target !== element) return
+        if (event.target !== (nativeField ? nativeNumber ? Reflect.get(element, "native") : element.querySelector(nativeCheckbox ? element.matches("m-switch") ? "[data-switch-control]" : "[data-checkbox]" : nativeRadio ? "[data-radio]" : "[data-input-control]") : element)) return
         const detail = (event as CustomEvent).detail
-        const value = detail !== undefined ? detail : Reflect.get(element, twoWayProperty)
+        const value = !nativeField && !checkboxGroup && !radioGroup && detail !== undefined ? detail : Reflect.get(element, twoWayProperty)
         store.set(twoWayPath, value)
       }
-      element.addEventListener("mui:input", listener)
-      element.addEventListener("mui:change", listener)
+      events.forEach(name => element.addEventListener(name, listener))
       disposers.push(() => {
-        element.removeEventListener("mui:input", listener)
-        element.removeEventListener("mui:change", listener)
+        events.forEach(name => element.removeEventListener(name, listener))
       })
     }
   }

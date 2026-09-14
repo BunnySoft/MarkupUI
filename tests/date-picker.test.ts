@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createDatePicker, isDatePickerTypeSupported } from "../src/components/date-picker/index.js"
-import type { NativeDateType } from "../src/components/date-picker/index.js"
-import { createForm } from "../src/components/form/index.js"
+import { DatePicker, registerDatePicker, datePickerTypes, createDatePicker, isDatePickerTypeSupported } from "../src/components/date-picker/index.js"
+import type { DatePickerType, NativeDateType } from "../src/components/date-picker/index.js"
+import { ViewElement } from "../src/core/index.js"
+import { coordinateForm as createForm } from "../src/components/form/controller.js"
 
 const helpers: { disconnect(): void }[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 20))
@@ -141,7 +142,7 @@ describe("clear, native events, focus and lifetime", () => {
     for (const [index, input] of [first, second].entries()) for (const type of ["input", "change"]) input.addEventListener(type, () => {
       events.push(`${index}:${type}`); expect(first.value).toBe(""); expect(second.value).toBe("")
     })
-    document.querySelector("#root")!.addEventListener("mui:date-picker-clear", clear)
+    document.querySelector("#root")!.addEventListener("m:date-picker-clear", clear)
     expect(helper.clear()).toBe(true); expect(events).toEqual(["0:input", "0:change", "1:input", "1:change"])
     expect(clear).toHaveBeenCalledOnce(); expect(new FormData(form).getAll("when[]")).toEqual(["", ""])
     expect(helper.clear()).toBe(false)
@@ -260,3 +261,197 @@ describe("clear, native events, focus and lifetime", () => {
     helper.disconnect(); validation.disconnect(); expect(first.hasAttribute("aria-describedby")).toBe(false)
   })
 })
+
+describe("canonical DatePicker ViewElement", () => {
+  it("registers only its own ViewElement and rejects conflicting definitions", () => {
+    expect(DatePicker.prototype).toBeInstanceOf(ViewElement)
+    expect(customElements.get("m-date-picker")).toBe(DatePicker)
+    expect(DatePicker.tag).toBe("m-date-picker")
+    const define = vi.fn()
+    registerDatePicker({ get: () => undefined, define })
+    expect(define.mock.calls.map(call => call[0])).toEqual(["m-date-picker"])
+    expect(() => registerDatePicker({ get: () => HTMLElement, define })).toThrow("different")
+  })
+
+  it("exposes canonical observedAttributes and default property values", () => {
+    expect(DatePicker.observedAttributes).toEqual(["value", "type", "placeholder", "clearable", "disabled", "format"])
+    const picker = new DatePicker()
+    expect(picker.value).toBeNull()
+    expect(picker.type).toBe("date")
+    expect(picker.placeholder).toBeNull()
+    expect(picker.clearable).toBe(false)
+    expect(picker.disabled).toBe(false)
+    expect(picker.format).toBeNull()
+  })
+
+  it("reflects properties to attributes and validates values", () => {
+    const picker = new DatePicker()
+    picker.value = "2024-03-01"
+    expect(picker.getAttribute("value")).toBe("2024-03-01")
+    picker.value = null
+    expect(picker.hasAttribute("value")).toBe(false)
+
+    for (const type of datePickerTypes) {
+      picker.type = type
+      expect(picker.getAttribute("type")).toBe(type)
+    }
+    expect(() => { (picker as any).type = "invalid" }).toThrow(RangeError)
+
+    picker.placeholder = "Select date"
+    expect(picker.getAttribute("placeholder")).toBe("Select date")
+    picker.placeholder = null
+    expect(picker.hasAttribute("placeholder")).toBe(false)
+
+    picker.clearable = true
+    expect(picker.hasAttribute("clearable")).toBe(true)
+    picker.clearable = false
+    expect(picker.hasAttribute("clearable")).toBe(false)
+
+    picker.disabled = true
+    expect(picker.hasAttribute("disabled")).toBe(true)
+    picker.disabled = false
+    expect(picker.hasAttribute("disabled")).toBe(false)
+
+    picker.format = "YYYY-MM-DD"
+    expect(picker.getAttribute("format")).toBe("YYYY-MM-DD")
+    picker.format = null
+    expect(picker.hasAttribute("format")).toBe(false)
+  })
+
+  it("generates native date input and synchronizes properties", () => {
+    const picker = new DatePicker()
+    picker.placeholder = "Choose date"
+    picker.value = "2024-02-29"
+    document.body.append(picker)
+
+    expect(picker.classList.contains("m-date-picker")).toBe(true)
+    const input = picker.querySelector<HTMLInputElement>("input[data-date-control]")!
+    expect(input).not.toBeNull()
+    expect(input.type).toBe("date")
+    expect(input.value).toBe("2024-02-29")
+    expect(input.placeholder).toBe("Choose date")
+
+    picker.disabled = true
+    expect(input.disabled).toBe(true)
+
+    picker.value = "2024-05-10"
+    expect(input.value).toBe("2024-05-10")
+
+    picker.placeholder = "New placeholder"
+    expect(input.placeholder).toBe("New placeholder")
+  })
+
+  it("emits m:change event when native input changes", () => {
+    const picker = new DatePicker()
+    document.body.append(picker)
+    const input = picker.querySelector<HTMLInputElement>("input")!
+    const listener = vi.fn()
+    picker.addEventListener("m:change", listener)
+
+    input.value = "2024-07-20"
+    input.dispatchEvent(new Event("change", { bubbles: true }))
+
+    expect(listener).toHaveBeenCalledOnce()
+    expect(listener.mock.calls[0][0].detail).toEqual({ value: "2024-07-20" })
+    expect(picker.value).toBe("2024-07-20")
+  })
+
+  it("supports range types with two inputs", () => {
+    const picker = new DatePicker()
+    picker.type = "daterange"
+    document.body.append(picker)
+
+    const inputs = picker.querySelectorAll<HTMLInputElement>("input[data-date-control]")
+    expect(inputs).toHaveLength(2)
+    expect(inputs[0].type).toBe("date")
+    expect(inputs[1].type).toBe("date")
+
+    picker.value = "2024-01-01,2024-01-15"
+    expect(inputs[0].value).toBe("2024-01-01")
+    expect(inputs[1].value).toBe("2024-01-15")
+
+    const listener = vi.fn()
+    picker.addEventListener("m:change", listener)
+
+    inputs[1].value = "2024-01-20"
+    inputs[1].dispatchEvent(new Event("change", { bubbles: true }))
+
+    expect(listener).toHaveBeenCalledOnce()
+    expect(listener.mock.calls[0][0].detail).toEqual({ value: "2024-01-01,2024-01-20" })
+    expect(picker.value).toBe("2024-01-01,2024-01-20")
+  })
+
+  it("supports clearable and clear() method", () => {
+    const picker = new DatePicker()
+    picker.clearable = true
+    picker.value = "2024-02-29"
+    document.body.append(picker)
+
+    const input = picker.querySelector<HTMLInputElement>("input")!
+    expect(input.value).toBe("2024-02-29")
+
+    const clearBtn = picker.querySelector<HTMLButtonElement>("[data-date-clear]")!
+    expect(clearBtn).not.toBeNull()
+    expect(clearBtn.hidden).toBe(false)
+
+    const listener = vi.fn()
+    picker.addEventListener("m:change", listener)
+
+    clearBtn.click()
+
+    expect(picker.value).toBeNull()
+    expect(input.value).toBe("")
+    expect(listener).toHaveBeenCalledOnce()
+    expect(listener.mock.calls[0][0].detail).toEqual({ value: "" })
+
+    picker.value = "2024-08-01"
+    expect(input.value).toBe("2024-08-01")
+    picker.clear()
+    expect(picker.value).toBeNull()
+    expect(input.value).toBe("")
+    expect(listener).toHaveBeenCalledTimes(2)
+  })
+
+  it("adopts authored native inputs", () => {
+    const picker = document.createElement("m-date-picker") as DatePicker
+    picker.innerHTML = '<input data-date-control id="custom-field" type="date" value="2024-06-01">'
+    document.body.append(picker)
+
+    const input = picker.querySelector<HTMLInputElement>("#custom-field")!
+    expect(input).not.toBeNull()
+    expect(picker.querySelectorAll("input")).toHaveLength(1)
+    expect(picker.value).toBeNull()
+    picker.value = "2024-09-01"
+    expect(input.value).toBe("2024-09-01")
+  })
+
+  it("delegates focus and blur to the native input", () => {
+    const picker = new DatePicker()
+    document.body.append(picker)
+    const input = picker.querySelector<HTMLInputElement>("input")!
+    const focusSpy = vi.spyOn(input, "focus")
+    const blurSpy = vi.spyOn(input, "blur")
+
+    picker.focus()
+    expect(focusSpy).toHaveBeenCalledOnce()
+
+    picker.blur()
+    expect(blurSpy).toHaveBeenCalledOnce()
+  })
+
+  it("upgrades properties assigned before connection", () => {
+    const picker = document.createElement("m-date-picker") as DatePicker
+    picker.value = "2024-12-25"
+    picker.type = "date"
+    picker.clearable = true
+    document.body.append(picker)
+
+    expect(picker.value).toBe("2024-12-25")
+    expect(picker.type).toBe("date")
+    expect(picker.clearable).toBe(true)
+    const input = picker.querySelector<HTMLInputElement>("input")!
+    expect(input.type).toBe("date")
+    expect(input.value).toBe("2024-12-25")
+  })
+})
+

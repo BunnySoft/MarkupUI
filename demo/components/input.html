@@ -1,92 +1,158 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Input acceptance</title>
+  <title>Input - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-input.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./input.css">
-  <script defer src="../../dist/markup-ui-input.global.js"></script>
-  <script defer src="./input.js"></script>
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script type="module" src="../../dist/markup-ui-core.js"></script>
+  <script type="module" src="../../dist/markup-ui-input.js"></script>
+  <script type="module" src="./input.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Input: the authored field owns the value</h1>
-    <p>Local dummy data only. Clear/reveal buttons are hidden without JavaScript. No network or password logging.</p>
+  <main data-demo-page class="component-docs">
+    <h1>Input</h1>
+    <p>Input, Textarea, InputGroup and InputGroupLabel are ViewElements. One actual native input or textarea owns editing, focus, validation and form submission. Local dummy data only; no network or password logging.</p>
+    <details class="component-setup" id="required-files">
+      <summary>Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-input.css"&gt;
+&lt;script type="module" src="./dist/markup-ui-core.js"&gt;&lt;/script&gt;
+&lt;script type="module" src="./dist/markup-ui-input.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
     <form id="entry" action="input.html" method="get">
-      <label for="title">Title (required)</label>
-      <div class="mui-input" data-input id="title-root">
-        <span class="mui-input__affix" aria-hidden="true">✎</span>
-        <input data-input-control id="title" name="title" value="Native draft" required minlength="2" maxlength="24" autocomplete="off" inputmode="text" aria-describedby="title-help title-count">
-        <button data-input-clear type="button" hidden aria-label="Clear title">Clear</button>
-        <span data-input-count id="title-count">Count available with JavaScript</span>
-      </div>
-      <p id="title-help">Native constraints count UTF-16 code units. The count is not a live announcement.</p>
-      <label for="secret">Dummy password (not submitted)</label>
-      <div class="mui-input" data-input id="secret-root">
-        <input data-input-control id="secret" type="password" value="dummy-only" autocomplete="off">
-        <button data-input-reveal type="button" hidden>Show password</button>
-        <button data-input-clear type="button" hidden aria-label="Clear dummy password">Clear</button>
-      </div>
-      <label for="notes">Notes: CSS autosize, two to six lines</label>
-      <div class="mui-input" data-input id="notes-root">
-        <textarea data-input-control class="mui-input__autosize" id="notes" name="notes" rows="3" maxlength="240" aria-describedby="notes-count">Two native
+      <section data-demo-example="editing" aria-labelledby="editing-title">
+        <header data-demo-header><div><h2 id="editing-title">Native editing, defaults and count</h2><p>Author the native control to retain its identity, labels and browser state. Clear and count are optional enhancements.</p></div></header>
+        <div data-demo-preview>
+          <m-label for="title">Title (required)</m-label>
+          <m-input id="title-root" clearable show-count>
+            <span class="m-input__affix" aria-hidden="true">✎</span>
+            <input data-input-control id="title" name="title" value="Native draft" required minlength="2" maxlength="24" autocomplete="off" inputmode="text" aria-describedby="title-help title-count">
+            <button data-input-clear type="button" hidden aria-label="Clear title">Clear</button>
+            <span data-input-count id="title-count">Count available with JavaScript</span>
+          </m-input>
+          <m-p id="title-help">Native constraints and count use UTF-16 code units. Count is not a live announcement. Native value writes are silent; use the host value property to refresh decorations too.</m-p>
+        </div>
+      </section>
+      <section data-demo-example="password" aria-labelledby="password-title">
+        <header data-demo-header><div><h2 id="password-title">Password reveal and clear</h2><p>Selection survives reveal. Escape, focus leaving, reset, hidden/disabled/readonly and disconnect conceal the password. Actions pause during composition.</p></div></header>
+        <div data-demo-preview>
+          <m-label for="secret">Dummy password (not submitted)</m-label>
+          <m-input id="secret-root" type="password" show-password clearable>
+            <input data-input-control id="secret" type="password" value="dummy-only" autocomplete="off">
+            <button data-input-reveal type="button" hidden>Show password</button>
+            <button data-input-clear type="button" hidden aria-label="Clear dummy password">Clear</button>
+          </m-input>
+        </div>
+      </section>
+      <section data-demo-example="multiline" aria-labelledby="multiline-title">
+        <header data-demo-header><div><h2 id="multiline-title">Textarea and CSS autosize</h2><p>Two to six lines through Web style tokens. Without field-sizing support, native rows and manual vertical resize remain; no measuring mirror.</p></div></header>
+        <div data-demo-preview>
+          <m-label for="notes">Notes</m-label>
+          <m-textarea id="notes-root" autosize clearable show-count>
+            <textarea data-input-control class="m-input__autosize" id="notes" name="notes" rows="3" maxlength="240" aria-describedby="notes-count">Two native
 lines</textarea>
-        <button data-input-clear type="button" hidden aria-label="Clear notes">Clear</button>
-        <span data-input-count id="notes-count">Count available with JavaScript</span>
-      </div>
-      <p>Without field-sizing support, rows="3" and manual vertical resize remain. No measuring mirror.</p>
-      <fieldset id="controls-fieldset">
-        <legend>Native fieldset</legend>
-        <label for="field">Editable fieldset member</label>
-        <div class="mui-input" data-input id="field-root" data-size="small">
-          <input data-input-control id="field" name="field" value="Member">
-          <button data-input-clear type="button" hidden>Clear member</button>
+            <button data-input-clear type="button" hidden aria-label="Clear notes">Clear</button>
+            <span data-input-count id="notes-count">Count available with JavaScript</span>
+          </m-textarea>
         </div>
-      </fieldset>
-      <fieldset>
-        <legend>InputGroup / pair: independently named endpoints</legend>
-        <div class="mui-input-group" id="pair">
-          <label class="mui-input-group-label" for="from">From</label>
-          <div class="mui-input" data-size="small"><input data-input-control id="from" name="from" value="A"></div>
-          <span class="mui-input-group-label" aria-hidden="true">→</span>
-          <label class="mui-input-group-label" for="to">To</label>
-          <div class="mui-input" data-size="small"><input data-input-control id="to" name="to" value="B"></div>
-          <span class="mui-input-group-label">km</span>
+      </section>
+      <section data-demo-example="states" aria-labelledby="states-title">
+        <header data-demo-header><div><h2 id="states-title">Native fieldset, readonly and presentation</h2><p>Status is visual, not a validity override. Effective disabled state belongs to the native fieldset, including the first-legend exception.</p></div></header>
+        <div data-demo-preview>
+          <fieldset id="controls-fieldset">
+            <legend>Native fieldset</legend>
+            <m-label for="field">Editable fieldset member</m-label>
+            <m-input id="field-root" size="small" clearable>
+              <input data-input-control id="field" name="field" value="Member">
+              <button data-input-clear type="button" hidden>Clear member</button>
+            </m-input>
+          </fieldset>
+          <m-label for="read">Readonly, round and large</m-label>
+          <m-input id="read-root" round size="large">
+            <input data-input-control id="read" name="read" value="Copy this" readonly>
+            <button data-input-clear type="button" hidden>Clear readonly</button>
+          </m-input>
+          <m-label for="warning">Warning is presentation, not validation</m-label>
+          <m-input id="warning-root" status="warning" size="tiny">
+            <input data-input-control id="warning" name="warning" placeholder="Native placeholder">
+            <span class="m-input__affix">Review later</span>
+          </m-input>
         </div>
-      </fieldset>
-      <label for="read">Readonly, round and large</label>
-      <div class="mui-input" data-input id="read-root" data-round data-size="large">
-        <input data-input-control id="read" name="read" value="Copy this" readonly>
-        <button data-input-clear type="button" hidden>Clear readonly</button>
-      </div>
-      <label for="warning">Warning is presentation, not validation</label>
-      <div class="mui-input" data-status="warning" data-size="tiny">
-        <input data-input-control id="warning" name="warning" placeholder="Native placeholder">
-        <span class="mui-input__affix">Review later</span>
-      </div>
-      <label for="external">Associated with the other form</label>
-      <div class="mui-input" data-input id="external-root" data-status="success">
-        <input data-input-control id="external" name="external" form="other" value="Other default">
-        <span data-input-count>Count available with JavaScript</span>
-      </div>
-      <input type="hidden" name="token" value="local-only">
-      <p><button type="submit">Local GET fallback / inspect submission</button> <button type="reset">Native reset</button></p>
+      </section>
+      <section data-demo-example="group" aria-labelledby="group-title">
+        <header data-demo-header><div><h2 id="group-title">InputGroup and native labels</h2><p>Wrapping, independently named endpoints with the existing 4px gap; no merged semantic owner, invented compact mode or automatic label association.</p></div></header>
+        <div data-demo-preview>
+          <m-input-group id="pair">
+            <m-input-group-label><m-label for="from">From</m-label></m-input-group-label>
+            <m-input size="small"><input data-input-control id="from" name="from" value="A"></m-input>
+            <m-input-group-label aria-hidden="true">→</m-input-group-label>
+            <m-input-group-label><m-label for="to">To</m-label></m-input-group-label>
+            <m-input size="small"><input data-input-control id="to" name="to" value="B"></m-input>
+            <m-input-group-label>km</m-input-group-label>
+          </m-input-group>
+        </div>
+      </section>
+      <section data-demo-example="forms" aria-labelledby="forms-title">
+        <header data-demo-header><div><h2 id="forms-title">FormData, reset and constraint validation</h2><p>Only named native controls submit. Readonly is included; disabled is excluded. The external field belongs to the other form.</p></div></header>
+        <div data-demo-preview>
+          <m-label for="external">Associated with the other form</m-label>
+          <m-input id="external-root" status="success" show-count>
+            <input data-input-control id="external" name="external" form="other" value="Other default">
+            <span data-input-count>Count available with JavaScript</span>
+          </m-input>
+          <input type="hidden" name="token" value="local-only">
+          <m-p><button type="submit">Inspect native submission locally</button> <button type="reset">Native reset</button> <m-button type="button" id="validate">Report title validity</m-button></m-p>
+          <pre id="submission">Nothing submitted.</pre>
+          <m-p id="events">Title events: input 0, change 0, clear 0</m-p>
+        </div>
+      </section>
     </form>
     <form id="other"><button type="reset">Reset associated field only</button></form>
-    <div class="demo-tools">
-      <button type="button" id="toggle-fieldset">Toggle disabled fieldset</button>
-      <button type="button" id="toggle-readonly">Toggle title readonly</button>
-      <button type="button" id="toggle-rtl">Toggle RTL</button>
-      <button type="button" id="programmatic">Silent value + refresh</button>
-      <button type="button" id="new-default">Change default for next reset</button>
-      <button type="button" id="cancel-reset">Cancel next reset</button>
-      <button type="button" id="dispose">Disconnect helpers</button>
-    </div>
-    <h2>Local submission (dummy password has no name)</h2>
-    <pre id="submission">Nothing submitted.</pre>
-    <p id="events">Title events: input 0, change 0, clear 0</p>
-    <details><summary>CSS-only control</summary><label for="plain">Unaffected without any helper</label><div class="mui-input"><input data-input-control id="plain" value="Native"></div></details>
+    <section data-demo-example="lifecycle" aria-labelledby="lifecycle-title">
+      <header data-demo-header><div><h2 id="lifecycle-title">Direct properties, late content and reconnect</h2><p>Silent value writes do not change defaults. Reconnect retains the native owner and authored descendants; stale action tasks cannot edit the reconnected field.</p></div></header>
+      <div data-demo-preview>
+        <m-input id="generated" aria-label="Generated native field" value="Created natively" clearable show-count></m-input>
+        <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+          <m-button id="toggle-fieldset">Toggle disabled fieldset</m-button>
+          <m-button id="toggle-readonly">Toggle title readonly</m-button>
+          <m-button id="toggle-rtl">Toggle RTL</m-button>
+          <m-button id="programmatic">Silent host value</m-button>
+          <m-button id="new-default">Change next reset default</m-button>
+          <m-button id="cancel-reset">Cancel next reset</m-button>
+          <m-button id="reconnect">Reconnect title</m-button>
+          <m-button id="late-content">Append suffix</m-button>
+        </m-box>
+        <m-p id="lifecycle-status" role="status">Native owner retained.</m-p>
+      </div>
+    </section>
+    <section aria-labelledby="api-heading"><h2 id="api-heading">API</h2><div id="input-api"><p>Loading API documentation.</p></div></section>
+    <section aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Behavior, native ownership and Web styling</h2>
+      <p>Input accepts text/password/search/email/tel/url only. Textarea is a separate native kind; changing a supported Input type retains its input node. Converting Input to Textarea is not an API: author a new element and native control, with its own listeners/edit history. Unsupported types and invalid typed values throw, never silently coerce. Native selection methods retain native InvalidStateError behavior for email/url. Browser-specific editing history, autofill and virtual keyboard behavior are not simulated.</p>
+      <p>The native getter exposes the actual HTMLInputElement or HTMLTextAreaElement (creating one if absent). Supply at most one matching native field; do not add a second after materializing native. Prefix/suffix nodes and listeners are retained. A native control may be supplied before connection, including by the HTML parser. The host has no role, tabindex or form internals. Name every native control with a visible native label or host/native aria-label; labels target the native ID, never the wrapper. Keep action buttons outside labels and other interactive content.</p>
+      <p>Host value attributes initialize/update the native default (and current value only while the native dirty-value flag permits). The value property updates only the live native value and is silent. defaultValue changes the native reset default; reset updates count after the browser default action, emits no editing events and respects cancellation. Name, placeholder, lengths and rows properties write native properties; their initial values and absence semantics come from native HTML, not library defaults. Host native attributes are forwarded at initialization and on change; absent host attributes leave authored native attributes alone. Direct native value writes require refresh() for decorations.</p>
+      <p>Supported host native attribute mappings: value, name, placeholder, disabled, readonly, required, minlength, maxlength, form, autocomplete, inputmode and aria-label/labelledby/describedby/invalid; Input also type/pattern, Textarea also rows/cols/wrap. Other native capabilities, including autofocus, spellcheck, inputMode and selectionStart/End/Direction, remain available on native. Native defaults include value/defaultValue/name/placeholder="", disabled/readOnly/required=false, no form when unassociated, lengths=-1 when absent, Input type=text and Textarea rows=2. Authored HTML or browser association determines the actual initial state. Native readonly validity/form getters are computed, not configurable defaults.</p>
+      <p>Ordinary typing/composition/input/change events bubble from the native owner without duplicates or m:input/m:change aliases. Programmatic value/default/type/selection writes do not synthesize editing events. clear() is a user-intent action: when editable and nonempty it sends synthetic noncancelable input (bubbling/composed), change (bubbling), then m:input-clear with {previous} (bubbling). Button actions run in the next task so a later click listener may cancel with preventDefault(). Clear returns focus from its own button to the native field; neither action submits. Reveal emits no editing events. Composition blocks clear/reveal and host value replacement; ordinary native writes retain native semantics.</p>
+      <p>Disconnect releases listeners/observers/tasks, conceals passwords and restores still-owned action/count state, not value or author attributes. Disconnected property writes remain native and silent; reconnect reapplies decorations once. Actions queued before reset/disconnect/focus loss cannot reveal a stale password. Disabled includes native fieldset inheritance, not a duplicate host state. Hidden/inert and readonly block actions. Use reportValidity() for native invalid focus and setCustomValidity() for native custom messages; no parallel form engine is installed.</p>
+      <p>Presentation defaults: size=medium (34px), status=null, borderless/clearable/showCount=false. Input also has round/showPassword=false; Textarea has autosize=false. Presence attributes enable even when text is "false"; remove or assign false to disable. Tiny/small/large are 22/28/40px. Explicit authored data-input-clear/reveal/count nodes also opt into enhancements; boolean properties create/remove only generated decorations and never discard authored ones. formatCount is an optional plain-text function; undefined restores UTF-16 length and native maxlength. Autosize is CSS field-sizing with native resize fallback, not JavaScript measurement.</p>
+      <p>Theme tokens --m-input-* own exact color, radius, font, padding and responsive sizing; --m-input-min-rows/--m-input-max-rows default to 2/8 for CSS autosize. These are Web styling, not portable numeric properties. The demo uses 2/6. Existing dark/light, RTL, forced-color and print safeguards remain; no animation is introduced. Group/label are passive presentation and preserve native labels/buttons and late content. Input itself is interactive and is not accepted in passive Collapse, Tooltip or menu labels.</p>
+      <p>The manifest accounts for Input, shared core and required native-control mechanics. The package exports the four classes, registerInput and public types; the old createInput/controller helpers are internal, not public APIs. Unmigrated controls retain their internal native enhancement and CSS skin without importing Input registration.</p>
+    </section>
   </main>
 </body>
 </html>

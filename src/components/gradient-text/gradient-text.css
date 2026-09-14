@@ -1,92 +1,106 @@
-:where([data-mui-theme="light"]) {
-  --_mui-gradient-primary-start: initial;
-  --_mui-gradient-primary-end: initial;
-  --_mui-gradient-info-start: initial;
-  --_mui-gradient-info-end: initial;
-  --_mui-gradient-success-start: initial;
-  --_mui-gradient-success-end: initial;
-  --_mui-gradient-warning-start: initial;
-  --_mui-gradient-warning-end: initial;
-  --_mui-gradient-error-start: initial;
-  --_mui-gradient-error-end: initial;
+:where([data-m-theme="light"]) {
+  --_m-gradient-primary-start: initial;
+  --_m-gradient-primary-end: initial;
+  --_m-gradient-info-start: initial;
+  --_m-gradient-info-end: initial;
+  --_m-gradient-success-start: initial;
+  --_m-gradient-success-end: initial;
+  --_m-gradient-warning-start: initial;
+  --_m-gradient-warning-end: initial;
+  --_m-gradient-error-start: initial;
+  --_m-gradient-error-end: initial;
 }
-:where([data-mui-theme="dark"]) {
-  --_mui-gradient-primary-start: #63e2b7;
-  --_mui-gradient-primary-end: #2a947d;
-  --_mui-gradient-info-start: #70c0e8;
-  --_mui-gradient-info-end: #3889c5;
-  --_mui-gradient-success-start: #63e2b7;
-  --_mui-gradient-success-end: #2a947d;
-  --_mui-gradient-warning-start: #f2c97d;
-  --_mui-gradient-warning-end: #f08a00;
-  --_mui-gradient-error-start: #e88080;
-  --_mui-gradient-error-end: #d03a52;
+:where([data-m-theme="dark"]) {
+  --_m-gradient-primary-start: #63e2b7;
+  --_m-gradient-primary-end: #2a947d;
+  --_m-gradient-info-start: #70c0e8;
+  --_m-gradient-info-end: #3889c5;
+  --_m-gradient-success-start: #63e2b7;
+  --_m-gradient-success-end: #2a947d;
+  --_m-gradient-warning-start: #f2c97d;
+  --_m-gradient-warning-end: #f08a00;
+  --_m-gradient-error-start: #e88080;
+  --_m-gradient-error-end: #d03a52;
 }
-.mui-gradient-text {
-  --_mui-gradient-color: var(--mui-color-primary, #18a058);
+m-gradient-text,
+.m-gradient-text {
+  --_m-gradient-color: var(--m-color-primary, #18a058);
   /* Composite the light fade so the solid safety underpaint cannot darken it. */
-  --_mui-gradient-light-start: color-mix(in srgb, var(--_mui-gradient-color) 60%, var(--mui-gradient-text-surface, #fff));
-  --_mui-gradient-from: var(--_mui-gradient-primary-start, var(--_mui-gradient-light-start));
-  --_mui-gradient-to: var(--_mui-gradient-primary-end, var(--_mui-gradient-color));
-  --_mui-gradient-fallback: var(--_mui-gradient-primary-start, #17583b);
-  color: var(--mui-gradient-text-fallback, var(--_mui-gradient-fallback));
+  --_m-gradient-light-start: color-mix(in srgb, var(--_m-gradient-color) 60%, var(--m-gradient-text-surface, #fff));
+  --_m-gradient-from: var(--_m-gradient-primary-start, var(--_m-gradient-light-start));
+  --_m-gradient-to: var(--_m-gradient-primary-end, var(--_m-gradient-color));
+  --_m-gradient-fallback: var(--_m-gradient-primary-start, #17583b);
+  color: var(--m-gradient-text-fallback, var(--_m-gradient-fallback));
   -webkit-text-fill-color: currentColor;
-  font-weight: var(--mui-gradient-text-weight, 500);
+  font-weight: var(--m-gradient-text-weight, 500);
   overflow-wrap: anywhere;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
-.mui-gradient-text[data-type="info"] {
-  --_mui-gradient-color: var(--mui-color-info, #2080f0);
-  --_mui-gradient-from: var(--_mui-gradient-info-start, var(--_mui-gradient-light-start));
-  --_mui-gradient-to: var(--_mui-gradient-info-end, var(--_mui-gradient-color));
-  --_mui-gradient-fallback: var(--_mui-gradient-info-start, #154f99);
+m-gradient-text[type="info"],
+m-gradient-text[data-type="info"],
+.m-gradient-text[data-type="info"] {
+  --_m-gradient-color: var(--m-color-info, #2080f0);
+  --_m-gradient-from: var(--_m-gradient-info-start, var(--_m-gradient-light-start));
+  --_m-gradient-to: var(--_m-gradient-info-end, var(--_m-gradient-color));
+  --_m-gradient-fallback: var(--_m-gradient-info-start, #154f99);
 }
-.mui-gradient-text[data-type="success"] {
-  --_mui-gradient-color: var(--mui-color-success, #18a058);
-  --_mui-gradient-from: var(--_mui-gradient-success-start, var(--_mui-gradient-light-start));
-  --_mui-gradient-to: var(--_mui-gradient-success-end, var(--_mui-gradient-color));
-  --_mui-gradient-fallback: var(--_mui-gradient-success-start, #17583b);
+m-gradient-text[type="success"],
+m-gradient-text[data-type="success"],
+.m-gradient-text[data-type="success"] {
+  --_m-gradient-color: var(--m-color-success, #18a058);
+  --_m-gradient-from: var(--_m-gradient-success-start, var(--_m-gradient-light-start));
+  --_m-gradient-to: var(--_m-gradient-success-end, var(--_m-gradient-color));
+  --_m-gradient-fallback: var(--_m-gradient-success-start, #17583b);
 }
-.mui-gradient-text[data-type="warning"] {
-  --_mui-gradient-color: var(--mui-color-warning, #f0a020);
-  --_mui-gradient-from: var(--_mui-gradient-warning-start, var(--_mui-gradient-light-start));
-  --_mui-gradient-to: var(--_mui-gradient-warning-end, var(--_mui-gradient-color));
-  --_mui-gradient-fallback: var(--_mui-gradient-warning-start, #754600);
+m-gradient-text[type="warning"],
+m-gradient-text[data-type="warning"],
+.m-gradient-text[data-type="warning"] {
+  --_m-gradient-color: var(--m-color-warning, #f0a020);
+  --_m-gradient-from: var(--_m-gradient-warning-start, var(--_m-gradient-light-start));
+  --_m-gradient-to: var(--_m-gradient-warning-end, var(--_m-gradient-color));
+  --_m-gradient-fallback: var(--_m-gradient-warning-start, #754600);
 }
-.mui-gradient-text:is([data-type="error"], [data-type="danger"]) {
-  --_mui-gradient-color: var(--mui-color-error, #d03050);
-  --_mui-gradient-from: var(--_mui-gradient-error-start, var(--_mui-gradient-light-start));
-  --_mui-gradient-to: var(--_mui-gradient-error-end, var(--_mui-gradient-color));
-  --_mui-gradient-fallback: var(--_mui-gradient-error-start, #941d36);
+m-gradient-text:is([data-type="error"], [data-type="danger"], [type="error"], [type="danger"]),
+.m-gradient-text:is([data-type="error"], [data-type="danger"]) {
+  --_m-gradient-color: var(--m-color-error, #d03050);
+  --_m-gradient-from: var(--_m-gradient-error-start, var(--_m-gradient-light-start));
+  --_m-gradient-to: var(--_m-gradient-error-end, var(--_m-gradient-color));
+  --_m-gradient-fallback: var(--_m-gradient-error-start, #941d36);
 }
 @supports ((background-clip: text) or (-webkit-background-clip: text)) and (-webkit-text-fill-color: transparent) {
-  .mui-gradient-text {
+  m-gradient-text,
+  .m-gradient-text {
     display: inline-block;
     max-inline-size: 100%;
     background-color: currentColor;
-    background-image: var(--mui-gradient-text-image, linear-gradient(var(--mui-gradient-text-angle, 252deg) in srgb, var(--mui-gradient-text-from, var(--_mui-gradient-from)) 0%, var(--mui-gradient-text-to, var(--_mui-gradient-to)) 100%));
+    background-image: var(--m-gradient-text-image, linear-gradient(var(--m-gradient-text-angle, 252deg) in srgb, var(--m-gradient-text-from, var(--_m-gradient-from)) 0%, var(--m-gradient-text-to, var(--_m-gradient-to)) 100%));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 }
-.mui-gradient-text :not(.mui-gradient-text) { -webkit-text-fill-color: currentColor; }
-.mui-gradient-text::selection {
+.m-gradient-text :not(.m-gradient-text),
+m-gradient-text :not(m-gradient-text) { -webkit-text-fill-color: currentColor; }
+m-gradient-text::selection,
+.m-gradient-text::selection {
   color: HighlightText;
   -webkit-text-fill-color: HighlightText;
   background: Highlight;
 }
 @media (forced-colors: active) {
-  .mui-gradient-text {
+  m-gradient-text,
+  .m-gradient-text {
     background: none !important;
     color: CanvasText !important;
     -webkit-text-fill-color: currentColor !important;
   }
-  a.mui-gradient-text[href] { color: LinkText !important; }
+  a.m-gradient-text[href],
+  a:is(m-gradient-text, .m-gradient-text)[href] { color: LinkText !important; }
 }
 @media print {
-  .mui-gradient-text {
+  m-gradient-text,
+  .m-gradient-text {
     background: none !important;
     color: #000 !important;
     -webkit-text-fill-color: currentColor !important;

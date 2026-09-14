@@ -1,3 +1,10 @@
+import { ViewElement } from "../../core/index.js"
+import { emptySizes } from "./model.js"
+import type { EmptySize } from "./model.js"
+
+export { emptySizes } from "./model.js"
+export type { EmptySize } from "./model.js"
+
 const inert = "template,script,style"
 
 function illustration(document: Document): SVGSVGElement {
@@ -26,8 +33,17 @@ function illustration(document: Document): SVGSVGElement {
   return svg
 }
 
-export class MuiEmpty extends HTMLElement {
-  public static get observedAttributes(): string[] { return ["description", "show-icon", "icon"] }
+/**
+ * An empty-state indicator with readable fallback text, decorative illustration, and adopted regions.
+ * @region {"name":"icon","accepts":["icon"],"min":0,"max":1}
+ * @region {"name":"description","accepts":["text","phrasing"],"min":0,"max":1}
+ * @region {"name":"extra","accepts":["actions","controls"],"min":0,"max":1}
+ */
+export class Empty extends ViewElement {
+  public static readonly tag = "m-empty"
+  public static get observedAttributes(): string[] {
+    return ["description", "show-description", "show-icon", "size", "icon"]
+  }
 
   private generatedDescription: HTMLElement | undefined
   private fallbackText: Text | undefined
@@ -39,41 +55,34 @@ export class MuiEmpty extends HTMLElement {
   public connectedCallback(): void {
     if (!this.upgraded) {
       this.upgraded = true
-      for (const name of ["description", "showDescription", "showIcon", "size", "icon"]) {
-        if (Object.prototype.hasOwnProperty.call(this, name)) {
-          const value: unknown = Reflect.get(this, name)
-          Reflect.deleteProperty(this, name)
-          Reflect.set(this, name, value)
-        }
-      }
+      this.upgradeProperties()
     }
-    this.dataset.muiEmpty = ""
+    this.dataset.mEmpty = ""
     this.observer ??= new MutationObserver(() => this.synchronize())
     this.synchronize()
   }
 
   public disconnectedCallback(): void { this.observer?.disconnect() }
   public attributeChangedCallback(): void { if (this.isConnected) this.synchronize() }
+
   public get description(): string { return this.getAttribute("description") ?? "No Data" }
   public set description(value: string | null | undefined) {
-    if (value == null) this.removeAttribute("description")
-    else this.setAttribute("description", value)
+    this.setStringAttribute("description", value ?? null)
   }
-  public get showDescription(): boolean { return this.getAttribute("show-description") !== "false" }
-  public set showDescription(value: boolean) { this.setAttribute("show-description", String(value)) }
-  public get showIcon(): boolean { return this.getAttribute("show-icon") !== "false" }
-  public set showIcon(value: boolean) { this.setAttribute("show-icon", String(value)) }
-  public get size(): string { return this.getAttribute("size") ?? "medium" }
-  public set size(value: string) { this.setAttribute("size", value) }
+  public get showDescription(): boolean { return this.booleanAttribute("show-description", true) }
+  public set showDescription(value: boolean) { this.setBooleanAttribute("show-description", value, false) }
+  public get showIcon(): boolean { return this.booleanAttribute("show-icon", true) }
+  public set showIcon(value: boolean) { this.setBooleanAttribute("show-icon", value, false) }
+  public get size(): EmptySize { return this.choiceAttribute("size", emptySizes, "medium") }
+  public set size(value: EmptySize) { this.setChoiceAttribute("size", value, emptySizes) }
   public get icon(): string { return this.getAttribute("icon") ?? "" }
   public set icon(value: string | null | undefined) {
-    if (value == null) this.removeAttribute("icon")
-    else this.setAttribute("icon", value)
+    this.setStringAttribute("icon", value ?? null)
   }
 
   private region(name: string, except?: Element): Element | undefined {
     return [...this.children].find((node) =>
-      node !== except && node.hasAttribute(`data-mui-empty-${name}`) && !node.matches(inert))
+      node !== except && node.hasAttribute(`data-m-empty-${name}`) && !node.matches(inert))
   }
 
   private synchronize(): void {
@@ -96,7 +105,7 @@ export class MuiEmpty extends HTMLElement {
     } else if (this.showIcon || this.generatedIcon) {
       if (!this.generatedIcon) {
         this.generatedIcon = this.ownerDocument.createElement("span")
-        this.generatedIcon.dataset.muiEmptyIcon = ""
+        this.generatedIcon.dataset.mEmptyIcon = ""
         this.generatedIcon.setAttribute("aria-hidden", "true")
         this.prepend(this.generatedIcon)
       }
@@ -124,7 +133,7 @@ export class MuiEmpty extends HTMLElement {
     })
     if (!description) {
       this.generatedDescription = this.ownerDocument.createElement("div")
-      this.generatedDescription.dataset.muiEmptyDescription = ""
+      this.generatedDescription.dataset.mEmptyDescription = ""
       description = this.generatedDescription
       this.insertBefore(description, extra ?? null)
     }
@@ -148,7 +157,9 @@ export class MuiEmpty extends HTMLElement {
     if (icon && icon.compareDocumentPosition(description) & Node.DOCUMENT_POSITION_PRECEDING) this.insertBefore(icon, description)
     if (this.isConnected) this.observer?.observe(this, {
       childList: true, subtree: true, characterData: true, attributes: true,
-      attributeFilter: ["data-mui-empty-description", "data-mui-empty-icon", "data-mui-empty-extra"],
+      attributeFilter: ["data-m-empty-description", "data-m-empty-icon", "data-m-empty-extra"],
     })
   }
 }
+
+export { Empty as MEmpty }

@@ -1,11 +1,20 @@
 # Changelog
 
+## 0.13.0
+
+- Replaced the former public prefix with `m-*` Custom Elements, `.m-*` classes,
+  `--m-*` variables, `m:*` events, `data-m-*` attributes and `M*`/`m` JavaScript names.
+- Removed old-prefix compatibility aliases as an intentional breaking 0.x change.
+- Added the platform-neutral component-model and Web-renderer architecture requirements.
+- Migrated Button as the first component with platform metadata and direct `m-button`
+  / `m-button-group` Web rendering.
+
 ## 0.12.0
 
 - Completed the declared dependency-free native migration across all 96 catalog scopes,
   with explicit retained behavior and intentional omission records.
 - Added native form, selection, feedback, collection, temporal, motion, data-display, and
-  specialized helpers while preserving existing `mui-*` compatibility.
+  specialized helpers across the previous Web API.
 - Completed the Naive UI 2.45.3 default-theme audit for all 96 scopes, aligning feasible
   geometry, typography, palettes, states, media behavior, and component-owned defaults.
 - Added per-component audit reports, standalone demos, API/source trackers, and regression
@@ -15,7 +24,7 @@
 
 ## 0.11.0
 
-- Redesigned `mui-button` around Naive UI's button metrics and interaction model.
+- Redesigned `m-button` around Naive UI's button metrics and interaction model.
 - Added semantic types, hierarchy variants, dashed/ghost/text styles, sizes, round/circle/block
   shapes, loading, and stable pseudo-border transitions.
 - Raised the core gzip budget from 14 KB to 15 KB for the complete button system.

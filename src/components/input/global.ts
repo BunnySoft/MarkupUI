@@ -1,5 +1,4 @@
-import { createInput } from "./index.js"
-
-const target = globalThis as typeof globalThis & { MarkupUIInput?: { createInput: typeof createInput } }
-if (target.MarkupUIInput !== undefined) throw new Error("MarkupUIInput is already defined; no API was replaced.")
-target.MarkupUIInput = { createInput }
+import { Input, Textarea, InputGroup, InputGroupLabel, registerInput } from "./index.js"
+const target = globalThis as typeof globalThis & { MarkupUIInput?: typeof import("./index.js") }
+if (target.MarkupUIInput !== undefined) throw new Error("MarkupUIInput is already defined.")
+target.MarkupUIInput = { Input, Textarea, InputGroup, InputGroupLabel, registerInput }

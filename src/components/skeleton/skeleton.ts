@@ -1,6 +1,11 @@
+import { ViewElement } from "../../core/index.js"
+import { skeletonSizes } from "./model.js"
+import type { SkeletonSize, SkeletonValidationError } from "./model.js"
+
+export { skeletonSizes } from "./model.js"
+export type { SkeletonPresetSize, SkeletonSize, SkeletonValidationError } from "./model.js"
+
 const maxRepeat = 100
-const sizes = ["small", "medium", "large"]
-export type SkeletonValidationError = "width" | "height" | "repeat" | "size"
 
 function repeatCount(value: string | null): number | undefined {
   if (value === null) return 1
@@ -24,58 +29,108 @@ function dimension(document: Document, name: "width" | "height", value: string |
   return probe.getPropertyValue(name) || null
 }
 
-export class MuiSkeleton extends HTMLElement {
-  public static get observedAttributes(): string[] { return ["width", "height", "repeat", "size"] }
+/**
+ * A decorative placeholder for loading content, supporting shapes, repetition, and dimension normalization.
+ */
+export class Skeleton extends ViewElement {
+  public static readonly tag = "m-skeleton"
+  public static get observedAttributes(): string[] {
+    return ["width", "height", "repeat", "size", "text", "round", "circle", "animated", "sharp"]
+  }
 
   private group: HTMLSpanElement | undefined
   private bars: HTMLSpanElement[] = []
   private observer: MutationObserver | undefined
+  private ready = false
   private upgraded = false
 
   public connectedCallback(): void {
+    this.ready = false
     if (!this.upgraded) {
       this.upgraded = true
-      for (const name of ["width", "height", "repeat", "size", "text", "round", "circle", "animated", "sharp"]) {
-        if (Object.prototype.hasOwnProperty.call(this, name)) {
-          const value: unknown = Reflect.get(this, name)
-          Reflect.deleteProperty(this, name)
-          Reflect.set(this, name, value)
-        }
-      }
+      this.upgradeProperties()
     }
-    this.dataset.muiSkeleton = ""
+    this.dataset.mSkeleton = ""
     this.observer ??= new MutationObserver(() => this.synchronize())
+    this.ready = true
     this.synchronize()
   }
 
-  public disconnectedCallback(): void { this.observer?.disconnect() }
-  public attributeChangedCallback(): void { if (this.isConnected) this.synchronize() }
-  public get width(): string | undefined { return this.getAttribute("width") ?? undefined }
-  public set width(value: string | number | null | undefined) { this.setDimension("width", value) }
-  public get height(): string | undefined { return this.getAttribute("height") ?? undefined }
-  public set height(value: string | number | null | undefined) { this.setDimension("height", value) }
-  public get repeat(): number | undefined { return repeatCount(this.getAttribute("repeat")) }
+  public disconnectedCallback(): void {
+    this.ready = false
+    this.observer?.disconnect()
+  }
+
+  public attributeChangedCallback(): void {
+    if (this.isConnected && this.ready) this.synchronize()
+  }
+
+  public get width(): string | undefined {
+    const value = this.getAttribute("width")
+    if (value === null) return undefined
+    return value
+  }
+  public set width(value: string | number | null | undefined) {
+    this.setDimension("width", value)
+  }
+
+  public get height(): string | undefined {
+    const value = this.getAttribute("height")
+    if (value === null) return undefined
+    return value
+  }
+  public set height(value: string | number | null | undefined) {
+    this.setDimension("height", value)
+  }
+
+  /**
+   * @min 0
+   * @max 100
+   * @integer
+   */
+  public get repeat(): number | undefined {
+    return repeatCount(this.getAttribute("repeat"))
+  }
   public set repeat(value: string | number | null | undefined) {
-    if (value == null) this.removeAttribute("repeat")
-    else if (repeatCount(String(value)) === undefined) throw new RangeError("Skeleton repeat must be an integer from 0 to 100.")
-    else this.setAttribute("repeat", String(value))
+    if (value == null) {
+      this.removeAttribute("repeat")
+    } else if (repeatCount(String(value)) === undefined) {
+      throw new RangeError("Skeleton repeat must be an integer from 0 to 100.")
+    } else {
+      this.setAttribute("repeat", String(value))
+    }
   }
-  public get size(): string | undefined { return this.getAttribute("size") ?? undefined }
-  public set size(value: string | null | undefined) {
-    if (value == null) this.removeAttribute("size")
-    else if (!sizes.includes(value)) throw new RangeError("Skeleton size must be small, medium or large.")
-    else this.setAttribute("size", value)
+
+  public get size(): SkeletonSize | undefined {
+    const value = this.getAttribute("size")
+    if (value === null) return undefined
+    return value as SkeletonSize
   }
+  public set size(value: SkeletonSize | null | undefined) {
+    if (value == null) {
+      this.removeAttribute("size")
+    } else if (!skeletonSizes.includes(value as any)) {
+      throw new RangeError("Skeleton size must be small, medium or large.")
+    } else {
+      this.setAttribute("size", value)
+    }
+  }
+
   public get text(): boolean { return this.hasAttribute("text") }
-  public set text(value: boolean) { this.toggleAttribute("text", value) }
+  public set text(value: boolean) { this.setBooleanAttribute("text", value, true) }
+
   public get round(): boolean { return this.hasAttribute("round") }
-  public set round(value: boolean) { this.toggleAttribute("round", value) }
+  public set round(value: boolean) { this.setBooleanAttribute("round", value, true) }
+
   public get circle(): boolean { return this.hasAttribute("circle") }
-  public set circle(value: boolean) { this.toggleAttribute("circle", value) }
-  public get animated(): boolean { return this.getAttribute("animated") !== "false" }
-  public set animated(value: boolean) { this.setAttribute("animated", String(value)) }
-  public get sharp(): boolean { return this.getAttribute("sharp") !== "false" }
-  public set sharp(value: boolean) { this.setAttribute("sharp", String(value)) }
+  public set circle(value: boolean) { this.setBooleanAttribute("circle", value, true) }
+
+  public get animated(): boolean { return this.booleanAttribute("animated", true) }
+  public set animated(value: boolean) { this.setBooleanAttribute("animated", value, false) }
+
+  public get sharp(): boolean { return this.booleanAttribute("sharp", true) }
+  public set sharp(value: boolean) { this.setBooleanAttribute("sharp", value, false) }
+
   public get validationErrors(): readonly SkeletonValidationError[] { return this.configuration().errors }
   public get valid(): boolean { return this.validationErrors.length === 0 }
 
@@ -98,30 +153,32 @@ export class MuiSkeleton extends HTMLElement {
     if (width === null) errors.push("width")
     if (height === null) errors.push("height")
     if (count === undefined) errors.push("repeat")
-    if (this.size !== undefined && !sizes.includes(this.size)) errors.push("size")
+    const size = this.getAttribute("size")
+    if (size !== null && !skeletonSizes.includes(size as any)) errors.push("size")
     return { width, height, count, errors }
   }
 
   private synchronize(): void {
+    if (!this.ready || !this.isConnected) return
     this.observer?.disconnect()
     const { width, height, count, errors } = this.configuration()
     for (const [name, value] of [["width", width], ["height", height]] as const) {
-      const property = `--_mui-skeleton-${name}`
+      const property = `--_m-skeleton-${name}`
       if (value == null) this.style.removeProperty(property)
       else if (this.style.getPropertyValue(property) !== value) this.style.setProperty(property, value)
     }
-    if (errors.length) this.setAttribute("data-mui-skeleton-invalid", errors.join(" "))
-    else this.removeAttribute("data-mui-skeleton-invalid")
+    if (errors.length) this.setAttribute("data-m-skeleton-invalid", errors.join(" "))
+    else this.removeAttribute("data-m-skeleton-invalid")
     const relativeHeight = !errors.length && Boolean(count) && typeof height === "string" && /%|(?:var|env)\(/i.test(height)
-    this.toggleAttribute("data-mui-skeleton-relative-height", relativeHeight)
+    this.toggleAttribute("data-m-skeleton-relative-height", relativeHeight)
     if (relativeHeight) {
-      if (this.style.getPropertyValue("--_mui-skeleton-repeat") !== String(count)) this.style.setProperty("--_mui-skeleton-repeat", String(count))
+      if (this.style.getPropertyValue("--_m-skeleton-repeat") !== String(count)) this.style.setProperty("--_m-skeleton-repeat", String(count))
     } else {
-      this.style.removeProperty("--_mui-skeleton-repeat")
+      this.style.removeProperty("--_m-skeleton-repeat")
     }
     if (this.group?.parentNode !== this) {
       this.group = this.ownerDocument.createElement("span")
-      this.group.dataset.muiSkeletonGroup = ""
+      this.group.dataset.mSkeletonGroup = ""
       this.bars = []
       this.prepend(this.group)
     }
@@ -134,7 +191,7 @@ export class MuiSkeleton extends HTMLElement {
       while (this.bars.length > count) this.bars.pop()!.remove()
       while (this.bars.length < count) {
         const bar = this.ownerDocument.createElement("span")
-        bar.dataset.muiSkeletonItem = ""
+        bar.dataset.mSkeletonItem = ""
         group.append(bar)
         this.bars.push(bar)
       }
@@ -142,3 +199,5 @@ export class MuiSkeleton extends HTMLElement {
     if (this.isConnected) this.observer?.observe(this, { childList: true, subtree: true })
   }
 }
+
+export { Skeleton as MSkeleton }

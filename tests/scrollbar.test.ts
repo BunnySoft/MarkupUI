@@ -29,7 +29,7 @@ describe("native-only Scrollbar", () => {
     expect(pkg.exports["./scrollbar"]).toBeUndefined()
     expect(readdirSync(resolve("src", "components", "scrollbar"))).toEqual(["scrollbar.css"])
     expect(pkg.dependencies).toEqual({})
-    expect(customElements.get("mui-scrollbar")).toBeUndefined()
+    expect(customElements.get("m-scrollbar")).toBeUndefined()
     expect(css).not.toContain("@import")
     expect(css).not.toContain("::-webkit-scrollbar")
     expect(demo).not.toContain("data-scrollbar-rail")
@@ -77,7 +77,7 @@ describe("native-only Scrollbar", () => {
     expect(target).toBe(root)
     expect(root.scrollTop).toBe(125)
     expect(root.scrollLeft).toBe(-12)
-    expect(app).not.toContain("mui:scroll")
+    expect(app).not.toContain("m:scroll")
     expect(app).not.toContain(".sync(")
     expect(app).not.toContain("containerRef")
   })
@@ -162,7 +162,7 @@ describe("native-only Scrollbar", () => {
 
   it("does not require a content wrapper or mutate late author children", () => {
     const root = document.createElement("section")
-    root.className = "mui-scrollbar"
+    root.className = "m-scrollbar"
     const button = document.createElement("button")
     button.type = "button"
     button.textContent = "Direct native content"
@@ -171,7 +171,7 @@ describe("native-only Scrollbar", () => {
     install()
     expect(root.firstElementChild).toBe(button)
     expect(root.children).toHaveLength(1)
-    expect(root.querySelector(".mui-scrollbar-content")).toBeNull()
+    expect(root.querySelector(".m-scrollbar-content")).toBeNull()
   })
 
   it("expands for print and restores native forced-color appearance without global resets", () => {
@@ -191,18 +191,18 @@ describe("native-only Scrollbar", () => {
   it("uses the pinned light/dark thumb colors only through the opt-in standards rule", () => {
     install()
     const rules = [...style!.sheet!.cssRules] as CSSStyleRule[]
-    const light = rules.find(rule => rule.selectorText === ':where([data-mui-theme="light"])')!
-    const dark = rules.find(rule => rule.selectorText === ':where([data-mui-theme="dark"])')!
-    expect(light.style.getPropertyValue("--_mui-scrollbar-thumb")).toBe("rgba(0, 0, 0, .25)")
-    expect(dark.style.getPropertyValue("--_mui-scrollbar-thumb")).toBe("rgba(255, 255, 255, .2)")
-    const root = rules.find(rule => rule.selectorText === ":where(.mui-scrollbar)")!
+    const light = rules.find(rule => rule.selectorText === ':where([data-m-theme="light"])')!
+    const dark = rules.find(rule => rule.selectorText === ':where([data-m-theme="dark"])')!
+    expect(light.style.getPropertyValue("--_m-scrollbar-thumb")).toBe("rgba(0, 0, 0, .25)")
+    expect(dark.style.getPropertyValue("--_m-scrollbar-thumb")).toBe("rgba(255, 255, 255, .2)")
+    const root = rules.find(rule => rule.selectorText === ":where(.m-scrollbar)")!
     expect(root.style.getPropertyValue("scrollbar-color")).toBe("")
     expect(root.style.getPropertyValue("scrollbar-width")).toBe("")
   })
 
   it("keeps a transparent default track and gives authored colors precedence", () => {
-    expect(css).toContain("var(--mui-scrollbar-thumb-color, var(--_mui-scrollbar-thumb,")
-    expect(css).toContain("var(--mui-scrollbar-track-color, transparent)")
+    expect(css).toContain("var(--m-scrollbar-thumb-color, var(--_m-scrollbar-thumb,")
+    expect(css).toContain("var(--m-scrollbar-track-color, transparent)")
     expect(css).not.toContain("#71717a")
     expect(css).not.toContain("#e4e4e7")
   })

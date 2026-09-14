@@ -2,8 +2,9 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createMessageOwner } from "../src/components/message/index.js"
+import { createMessageOwner, Message, MessageContainer, message, createMessage, registerMessage } from "../src/components/message/index.js"
 import type { MessageOwner, MessageOwnerOptions, MessageType } from "../src/components/message/index.js"
+import { ViewElement } from "../src/core/index.js"
 import { createFeedbackExpiry } from "../src/components/feedback/expiry.js"
 import { showMessage, clearOverlays } from "../src/overlay/index.js"
 
@@ -16,8 +17,8 @@ const messageCSS = () => readFileSync(resolve("src", "components", "message", "m
 async function advance(ms: number) { vi.advanceTimersByTime(ms); await flush() }
 function fixture() {
   const root = document.createElement("div")
-  root.className = "mui-feedback-host mui-message-host"
-  root.innerHTML = '<ol class="mui-feedback-list" data-message-items aria-label="Messages"></ol><p class="mui-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p>'
+  root.className = "m-feedback-host m-message-host"
+  root.innerHTML = '<ol class="m-feedback-list" data-message-items aria-label="Messages"></ol><p class="m-feedback-announcer" data-message-announcer role="status" aria-atomic="true"></p>'
   document.body.append(root)
   return root
 }
@@ -26,7 +27,7 @@ function owner(options: MessageOwnerOptions = {}, root = fixture()) {
 }
 function template() {
   const t = document.createElement("template")
-  t.innerHTML = '<li class="mui-message"><span data-message-icon aria-hidden="true">◆</span><strong data-message-kind></strong><span data-message-content></span><button type="button" data-message-close aria-label="Dismiss">×</button><p data-message-error hidden>Close failed.</p><div data-message-actions><form><label>Reference <input required></label><button type="submit">Save locally</button></form></div></li>'
+  t.innerHTML = '<li class="m-message"><span data-message-icon aria-hidden="true">◆</span><strong data-message-kind></strong><span data-message-content></span><button type="button" data-message-close aria-label="Dismiss">×</button><p data-message-error hidden>Close failed.</p><div data-message-actions><form><label>Reference <input required></label><button type="submit">Save locally</button></form></div></li>'
   return t
 }
 const close = (element: HTMLElement) => element.querySelector<HTMLButtonElement>("[data-message-close]")!
@@ -48,9 +49,9 @@ describe("Root-owned native Message", () => {
     expect(pkg.dependencies).toEqual({})
     expect(source).not.toContain("innerHTML")
     expect(source).not.toMatch(/from ".*(?:modal|popover|dialog|overlay)/)
-    expect(customElements.get("mui-message")).toBeUndefined()
+    expect(customElements.get("m-message")).toBe(Message)
   })
-  it.each(["default", "info", "success", "warning", "error", "loading"] as MessageType[])("renders literal %s content and visible semantic words without item live regions", type => {
+  it.each(["default", "info", "success", "warning", "error", "loading"] as (MessageType | "default")[])("renders literal %s content and visible semantic words without item live regions", type => {
     const root = fixture(); const o = owner({}, root)
     const message = type === "default" ? o.create("<img onerror=bad>") : o[type]("<img onerror=bad>")
     expect(message.type).toBe(type)
@@ -285,7 +286,7 @@ describe("Explicit close, callback errors and teardown", () => {
   })
   it("surfaces synchronous callback failure and retains the item until update/retry", async () => {
     const root = fixture(); const o = owner({ closable: true }, root); const failure = new Error("Local failure")
-    const errors: CustomEvent[] = []; root.addEventListener("mui:message-error", e => errors.push(e as CustomEvent))
+    const errors: CustomEvent[] = []; root.addEventListener("m:message-error", e => errors.push(e as CustomEvent))
     const h = o.error("Try closing", { duration: 10, onClose: () => { throw failure } })
     close(h.element).click(); await advance(0); await advance(100)
     expect(h.closed).toBe(false); expect(h.lastError).toBe(failure)
@@ -296,7 +297,7 @@ describe("Explicit close, callback errors and teardown", () => {
   })
   it("does not await async onClose but reports late rejection without changing the next message", async () => {
     const root = fixture(); const o = owner({ max: 1, closable: true }, root)
-    const errors: CustomEvent[] = []; root.addEventListener("mui:message-error", e => { e.preventDefault(); errors.push(e as CustomEvent) })
+    const errors: CustomEvent[] = []; root.addEventListener("m:message-error", e => { e.preventDefault(); errors.push(e as CustomEvent) })
     let reject!: (reason: unknown) => void
     const old = o.create("Old", { onClose: () => new Promise<void>((_, no) => { reject = no }), duration: 0 })
     close(old.element).click(); await advance(0); expect(old.closed).toBe(true)
@@ -313,7 +314,7 @@ describe("Explicit close, callback errors and teardown", () => {
   })
   it("does not close a reentrantly updated handle or repaint after reentrant destroy", async () => {
     const root = fixture(); const o = owner({ closable: true }, root)
-    root.addEventListener("mui:message-error", event => event.preventDefault())
+    root.addEventListener("m:message-error", event => event.preventDefault())
     const h = o.create("Old", { duration: 0, onClose: () => h.update({ content: "Replacement" }) })
     close(h.element).click(); await advance(0); expect(h.closed).toBe(false); expect(h.content).toBe("Replacement")
     h.update({ onClose: () => { h.destroy(); throw new Error("After destruction") } })
@@ -337,7 +338,7 @@ describe("Explicit close, callback errors and teardown", () => {
   it("blocks reentrant creation during bulk and terminal teardown", () => {
     const root = fixture(); const o = owner({}, root); o.create("One")
     let rejected = 0
-    root.addEventListener("mui:message-remove", () => { try { o.create("Reentrant") } catch { rejected++ } })
+    root.addEventListener("m:message-remove", () => { try { o.create("Reentrant") } catch { rejected++ } })
     o.destroyAll(); expect(rejected).toBe(1); expect(o.messages).toHaveLength(0)
     o.create("Two"); o.dispose(); expect(rejected).toBe(2); expect(o.connected).toBe(false)
   })
@@ -357,7 +358,7 @@ describe("Explicit close, callback errors and teardown", () => {
   })
   it("preserves replacement author content in the announcer on disposal", async () => {
     const root = fixture(); const o = owner({}, root); o.create("Before")
-    root.addEventListener("mui:message-error", event => event.preventDefault())
+    root.addEventListener("m:message-error", event => event.preventDefault())
     root.querySelector("[data-message-announcer]")!.textContent = "Author replacement"
     await flush(); expect(o.connected).toBe(false)
     expect(root.querySelector("[data-message-announcer]")!.textContent).toBe("Author replacement")
@@ -366,14 +367,14 @@ describe("Explicit close, callback errors and teardown", () => {
     const root = fixture(); const fallback = document.createElement("button"); document.body.append(fallback)
     const o = owner({ closable: true, focusFallback: fallback }, root)
     const h = o.create("Focused"); close(h.element).focus()
-    root.addEventListener("mui:message-error", event => event.preventDefault())
+    root.addEventListener("m:message-error", event => event.preventDefault())
     root.querySelector("[data-message-announcer]")!.textContent = "Author replacement"
     await flush()
     expect(o.connected).toBe(false); expect(document.activeElement).not.toBe(fallback)
   })
   it("detects marker reassignment instead of appending to a stale native list", async () => {
     const root = fixture(); const o = owner({}, root); o.create("Existing")
-    root.addEventListener("mui:message-error", event => event.preventDefault())
+    root.addEventListener("m:message-error", event => event.preventDefault())
     root.querySelector("[data-message-items]")!.removeAttribute("data-message-items")
     const replacement = document.createElement("ol"); replacement.dataset.messageItems = ""; root.append(replacement)
     await flush(); expect(o.connected).toBe(false); expect(replacement.children).toHaveLength(0)
@@ -406,7 +407,7 @@ describe("Templates, semantics and legacy compatibility", () => {
   it("retains legacy safe-text output and keeps legacy clear separate", () => {
     const o = owner(); const h = o.info("Enhanced", { duration: 0 })
     const legacy = showMessage("Legacy <b>text</b>", { type: "success", duration: 0 })
-    expect(legacy.element.outerHTML).toBe('<mui-message type="success" role="status">Legacy &lt;b&gt;text&lt;/b&gt;</mui-message>')
+    expect(legacy.element.outerHTML).toBe('<m-message type="success" role="status">Legacy &lt;b&gt;text&lt;/b&gt;</m-message>')
     expect(legacy.element.parentElement!.getAttribute("aria-live")).toBe("polite")
     clearOverlays(); expect(h.closed).toBe(false)
     o.destroyAll(); expect(h.closed).toBe(true)
@@ -424,33 +425,33 @@ describe("Templates, semantics and legacy compatibility", () => {
   it("retains visible kind/content rows while applying measured intrinsic toast geometry", () => {
     const css = messageCSS()
     expect(css).toContain("inline-size:max-content")
-    expect(css).toContain("max-inline-size:min(var(--mui-feedback-width,720px),100%)")
+    expect(css).toContain("max-inline-size:min(var(--m-feedback-width,720px),100%)")
     expect(css).toContain("padding:10px 20px;border:0;border-radius:3px")
     expect(css).toContain("[data-message-kind]{grid-column:2;grid-row:1}")
     expect(css).toContain("[data-message-content]{grid-column:2;grid-row:2;min-inline-size:0}")
     expect(css).toContain("inline-size:20px;block-size:20px;margin-inline-end:10px")
     expect(css).toContain("grid-template-columns:auto minmax(0,1fr) auto")
-    expect(css).toMatch(/\.mui-message-host\s*>\s*\.mui-feedback-list\{grid-template-columns:minmax\(0,1fr\)\}/)
+    expect(css).toMatch(/\.m-message-host\s*>\s*\.m-feedback-list\{grid-template-columns:minmax\(0,1fr\)\}/)
   })
   it("uses semantic icon roles and correct light/dark surfaces without assigning public overrides", () => {
     const css = messageCSS()
     expect(css).toContain("light-dark(#fff,#48484e)")
     expect(css).toContain("light-dark(#333639,#ffffffd1)")
-    for (const name of ["info", "success", "warning", "error", "primary"]) expect(css).toContain(`--mui-color-${name},`)
-    expect(css).toContain("var(--mui-message-accent,var(--_message-accent))")
-    expect(css).not.toMatch(/--mui-message-(?:accent|color|background):/)
-    expect(css).not.toMatch(/--mui-(?:text-primary|text-secondary|bg-surface|border),/)
+    for (const name of ["info", "success", "warning", "error", "primary"]) expect(css).toContain(`--m-color-${name},`)
+    expect(css).toContain("var(--m-message-accent,var(--_message-accent))")
+    expect(css).not.toMatch(/--m-message-(?:accent|color|background):/)
+    expect(css).not.toMatch(/--m-(?:text-primary|text-secondary|bg-surface|border),/)
   })
   it("scopes fixed placement overrides to Message and preserves scrolling, pointer and print policies", () => {
     const css = messageCSS()
-    expect(css).toContain(".mui-message-host.mui-feedback-host--fixed{top:max(12px,env(safe-area-inset-top))")
-    expect(css).toContain("width:min(var(--mui-feedback-width,720px),calc(100% - 2rem))")
+    expect(css).toContain(".m-message-host.m-feedback-host--fixed{top:max(12px,env(safe-area-inset-top))")
+    expect(css).toContain("width:min(var(--m-feedback-width,720px),calc(100% - 2rem))")
     expect(css).toContain("max-height:min(calc(100% - 2rem),calc(100% - max(12px,env(safe-area-inset-top)) - max(12px,env(safe-area-inset-bottom))))")
-    expect(css).toContain("z-index:var(--mui-feedback-z-index,6000)")
+    expect(css).toContain("z-index:var(--m-feedback-z-index,6000)")
     expect(css).toContain("justify-items:left")
     expect(css).toContain("justify-items:right")
-    expect(css).not.toMatch(/(?:^|})\.mui-feedback-(?:host|list)[{:.]/)
-    expect(css).toContain(".mui-message-host.mui-feedback-host--fixed{position:static;width:auto;max-height:none;margin:0;overflow:visible}")
+    expect(css).not.toMatch(/(?:^|})\.m-feedback-(?:host|list)[{:.]/)
+    expect(css).toContain(".m-message-host.m-feedback-host--fixed{position:static;width:auto;max-height:none;margin:0;overflow:visible}")
   })
   it("preserves native close targets, actions/error feedback and accessible media policies", () => {
     const css = messageCSS()
@@ -458,13 +459,13 @@ describe("Templates, semantics and legacy compatibility", () => {
     expect(css).toContain("[data-message-close]:enabled:hover")
     expect(css).toContain("[data-message-close]:disabled{opacity:.5;cursor:not-allowed}")
     expect(css).toContain("[data-message-actions]{grid-column:1 / -1;display:flex;flex-wrap:wrap")
-    expect(css).toContain("border-inline-start:.25rem solid var(--mui-message-accent,var(--_message-accent))")
+    expect(css).toContain("border-inline-start:.25rem solid var(--m-message-accent,var(--_message-accent))")
     expect(css).toContain("outline-offset:-2px")
-    expect(css).toContain("@media(prefers-reduced-motion:reduce){.mui-message{animation:none;transition:none}}")
+    expect(css).toContain("@media(prefers-reduced-motion:reduce){.m-message{animation:none;transition:none}}")
     expect(css).toContain("border:1px solid CanvasText;box-shadow:none")
     expect(css).toContain("[data-message-error]{border-color:CanvasText}")
     expect(css).toContain("box-shadow:none;break-inside:avoid")
-    expect(css).toContain("@media(max-width:24rem){.mui-message{padding-inline:12px}")
+    expect(css).toContain("@media(max-width:24rem){.m-message{padding-inline:12px}")
     expect(css).toContain("[data-message-content]{grid-column:1 / -1}")
     expect(css).toContain("[data-message-close]{grid-row:3;margin-inline-start:6px}")
   })
@@ -474,3 +475,87 @@ describe("Templates, semantics and legacy compatibility", () => {
     expect(gzipSync(`${base}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(1750)
   })
 })
+
+describe("canonical Message ViewElement", () => {
+  it("exports canonical own-tag ViewElements and registers m-message and m-message-container", () => {
+    expect(Message.tag).toBe("m-message")
+    expect(MessageContainer.tag).toBe("m-message-container")
+    expect(ViewElement.prototype.isPrototypeOf(Message.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(MessageContainer.prototype)).toBe(true)
+    expect(customElements.get("m-message")).toBe(Message)
+    expect(customElements.get("m-message-container")).toBe(MessageContainer)
+    expect(Message.observedAttributes).toEqual(["type", "content", "duration", "closable"])
+    expect(MessageContainer.observedAttributes).toEqual(["placement"])
+  })
+
+  it("handles typed properties, attributes, and closable behavior", () => {
+    document.body.innerHTML = `<m-message type="warning" content="Warning alert" closable></m-message>`
+    const msg = document.querySelector("m-message") as Message
+    expect(msg.type).toBe("warning")
+    expect(msg.content).toBe("Warning alert")
+    expect(msg.duration).toBe(3000)
+    expect(msg.closable).toBe(true)
+
+    const closeBtn = msg.querySelector<HTMLButtonElement>("[data-message-close]")
+    expect(closeBtn).not.toBeNull()
+
+    const closeSpy = vi.fn()
+    msg.addEventListener("m:close", closeSpy)
+
+    closeBtn!.click()
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "Warning alert" })
+    expect(msg.isConnected).toBe(false)
+  })
+
+  it("supports programmatic message service helper", () => {
+    const infoMsg = message.info("Info message")
+    expect(infoMsg).toBeInstanceOf(Message)
+    expect(infoMsg.type).toBe("info")
+    expect(infoMsg.content).toBe("Info message")
+    expect(infoMsg.isConnected).toBe(true)
+
+    const container = document.querySelector("m-message-container") as MessageContainer
+    expect(container).not.toBeNull()
+    expect(container.messages).toContain(infoMsg)
+
+    const successMsg = message.success("Success message")
+    expect(successMsg.type).toBe("success")
+
+    const warningMsg = message.warning("Warning message")
+    expect(warningMsg.type).toBe("warning")
+
+    const errorMsg = message.error("Error message")
+    expect(errorMsg.type).toBe("error")
+
+    const loadingMsg = message.loading("Loading message")
+    expect(loadingMsg.type).toBe("loading")
+    expect(loadingMsg.duration).toBe(0)
+
+    message.destroyAll()
+    expect(container.messages).toHaveLength(0)
+  })
+
+  it("auto-dismisses when duration expires", async () => {
+    const msg = document.createElement("m-message") as Message
+    msg.content = "Temporary"
+    msg.duration = 500
+    document.body.append(msg)
+    expect(msg.isConnected).toBe(true)
+
+    await advance(499)
+    expect(msg.isConnected).toBe(true)
+
+    await advance(1)
+    expect(msg.isConnected).toBe(false)
+  })
+
+  it("supports createMessage helper", () => {
+    const msg = createMessage("Created", { type: "error", closable: true })
+    expect(msg).toBeInstanceOf(Message)
+    expect(msg.content).toBe("Created")
+    expect(msg.type).toBe("error")
+    expect(msg.closable).toBe(true)
+  })
+})
+

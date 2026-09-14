@@ -1,63 +1,63 @@
 import { readFileSync } from "node:fs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createPopover } from "../src/components/popover/index.js"
+import { createPopover, Popover, PopoverTrigger, PopoverContent, registerPopover } from "../src/components/popover/index.js"
 import { createPopoverPositioner, ownedWrites } from "../src/components/popover/position.js"
 import type { PopoverController, PopoverOptions } from "../src/components/popover/index.js"
 
 describe("audited standalone Popover styles", () => {
   const css = readFileSync("src/components/popover/popover.css", "utf8")
-  const surface = css.match(/(\.mui-popover:where\(:not\(\.mui-tooltip\)\))\{([^}]+)\}/)!
+  const surface = css.match(/(\.m-popover:where\(:not\(\.m-tooltip\)\))\{([^}]+)\}/)!
   const standalone = surface[2]!
 
   it("scopes corrected density and palette away from distinct composed skins", () => {
-    expect(standalone).toContain("padding:var(--mui-popover-padding,8px 14px)")
+    expect(standalone).toContain("padding:var(--m-popover-padding,8px 14px)")
     expect(standalone).toContain("border-width:0")
-    expect(standalone).toContain("border-radius:var(--mui-popover-radius,3px)")
-    expect(standalone).toContain("color:var(--mui-popover-color,var(--_pop-c,#333639))")
-    expect(css).toContain("padding:var(--mui-popover-padding,1rem)")
-    expect(css).toContain("border:1px solid var(--mui-popover-border,#8b929e)")
+    expect(standalone).toContain("border-radius:var(--m-popover-radius,3px)")
+    expect(standalone).toContain("color:var(--m-popover-color,var(--_pop-c,#333639))")
+    expect(css).toContain("padding:var(--m-popover-padding,1rem)")
+    expect(css).toContain("border:1px solid var(--m-popover-border,#8b929e)")
   })
 
   it("shares verified popup surfaces while retaining the distinct Tooltip skin", () => {
     const panel = document.createElement("div")
-    for (const skin of ["mui-popconfirm", "mui-dropdown"]) {
-      panel.className = `mui-popover ${skin}`
+    for (const skin of ["m-popconfirm", "m-dropdown"]) {
+      panel.className = `m-popover ${skin}`
       expect(panel.matches(surface[1]!)).toBe(true)
     }
-    panel.className = "mui-popover mui-tooltip"
+    panel.className = "m-popover m-tooltip"
     expect(panel.matches(surface[1]!)).toBe(false)
     const select = document.createElement("div")
-    select.className = "mui-popselect"
-    panel.className = "mui-popover"
+    select.className = "m-popselect"
+    panel.className = "m-popover"
     select.append(panel)
     expect(panel.matches(surface[1]!)).toBe(true)
-    panel.classList.add("mui-tooltip")
+    panel.classList.add("m-tooltip")
     expect(panel.matches(surface[1]!)).toBe(false)
   })
 
   it("preserves inherited author overrides and resets private palette values at light boundaries", () => {
-    expect(standalone).toContain("background:var(--mui-popover-background,var(--_pop-b,#fff))")
-    expect(css).toContain("[data-mui-theme=dark]){--_pop-c: #ffffffd1;--_pop-b: #48484e;")
+    expect(standalone).toContain("background:var(--m-popover-background,var(--_pop-b,#fff))")
+    expect(css).toContain("[data-m-theme=dark]){--_pop-c: #ffffffd1;--_pop-b: #48484e;")
     for (const name of ["--_pop-c", "--_pop-b", "--_pop-s"]) expect(css).toContain(`${name}: initial`)
-    expect(css).not.toMatch(/(?:^|[;{])\s*--mui-popover-[\w-]+\s*:/m)
+    expect(css).not.toMatch(/(?:^|[;{])\s*--m-popover-[\w-]+\s*:/m)
   })
 
   it("retains native scrolling, raw styling and the explicitly inset, noninteractive indicator", () => {
     expect(css).toContain("overflow:auto")
-    expect(css).toContain("--mui-popover-available-width")
-    expect(css).toContain("--mui-popover-available-height")
-    expect(css).toContain(".mui-popover--raw{padding:0;border:0;border-radius:0;box-shadow:none}")
+    expect(css).toContain("--m-popover-available-width")
+    expect(css).toContain("--m-popover-available-height")
+    expect(css).toContain(".m-popover--raw{padding:0;border:0;border-radius:0;box-shadow:none}")
     expect(css).toContain("[data-popover-arrow=visible]:before")
     expect(css).toContain("top:2px;left:calc(50% - .225rem)")
     expect(css).toContain("pointer-events:none")
   })
 
   it("keeps the native motion contract, forced colors and readable print fallback", () => {
-    expect(css).toContain("animation:mui-popover-appear .1s ease-out")
+    expect(css).toContain("animation:m-popover-appear .1s ease-out")
     expect(css).toContain("@media(prefers-reduced-motion:reduce)")
     expect(css).toContain("border:1px solid CanvasText;color:CanvasText;background:Canvas;box-shadow:none")
     expect(css).toContain("@media print")
-    expect(css).toContain("@media screen{:where([data-mui-theme=dark])")
+    expect(css).toContain("@media screen{:where([data-m-theme=dark])")
     expect(css).toContain("display:block!important")
   })
 })
@@ -79,8 +79,8 @@ function nodes(mode: PopoverOptions["trigger"] = "click") {
   const trigger = document.createElement("button")
   trigger.type = "button"
   const panel = document.createElement("div")
-  panel.id = `panel-${document.querySelectorAll(".mui-popover").length}`
-  panel.className = "mui-popover"
+  panel.id = `panel-${document.querySelectorAll(".m-popover").length}`
+  panel.className = "m-popover"
   panel.setAttribute("popover", "auto")
   panel.innerHTML = "<p>Authored content</p><button type='button'>Action</button>"
   if (mode === "click") trigger.setAttribute("popovertarget", panel.id)
@@ -126,6 +126,97 @@ afterEach(() => {
 })
 
 describe("Popover native visibility ownership (native API mocked, not browser certification)", () => {
+  it("keeps native opening unpainted until its first positioned frame, even if the opening microtask runs while closed", async () => {
+    const { panel, controller } = bind({ positioning: "fallback" })
+    panel.dispatchEvent(Object.assign(new Event("beforetoggle", { cancelable: true }), { newState: "open" }))
+    await Promise.resolve()
+    expect(controller.show).toBe(false)
+    expect(panel.style.opacity).toBe("0")
+    expect(panel.style.animationName).toBe("none")
+    expect(panel.style.pointerEvents).toBe("none")
+    expect(panel.style.visibility).toBe("")
+    expect(panel.style.left).toBe("")
+    open.add(panel)
+    expect(panel.style.opacity).toBe("0")
+    vi.advanceTimersToNextFrame()
+    expect(panel.style.left).toBe("170px")
+    expect(panel.style.top).toBe("238px")
+    expect(panel.style.opacity).toBe("")
+    expect(panel.style.animationName).toBe("")
+    expect(panel.style.pointerEvents).toBe("")
+    panel.dispatchEvent(new Event("toggle"))
+    expect(controller.show).toBe(true)
+  })
+  it("positions API openings under the same paint guard before returning", () => {
+    const { panel, controller } = bind({ positioning: "fallback" })
+    const measure = vi.fn(() => {
+      expect(panel.style.opacity).toBe("0")
+      expect(panel.style.animationName).toBe("none")
+      return rect(0, 0, 160, 80)
+    })
+    panel.getBoundingClientRect = () => {
+      if (!panel.style.left) return measure()
+      return rect(170, 238, 160, 80)
+    }
+    expect(controller.open()).toBe(true)
+    expect(measure).toHaveBeenCalledOnce()
+    expect(panel.style.left).toBe("170px")
+    expect(panel.style.opacity).toBe("")
+  })
+  it("restores canceled native opening without erasing authored animation longhands", () => {
+    const { panel, controller } = bind()
+    panel.style.opacity = ".8"
+    panel.style.animationDuration = "2s"
+    panel.style.animationTimingFunction = "linear"
+    panel.addEventListener("beforetoggle", event => event.preventDefault())
+    panel.showPopover()
+    expect(controller.show).toBe(false)
+    expect(panel.style.opacity).toBe("0")
+    vi.advanceTimersToNextFrame()
+    expect(panel.style.opacity).toBe("0.8")
+    expect(panel.style.animationName).toBe("")
+    expect(panel.style.animationDuration).toBe("2s")
+    expect(panel.style.animationTimingFunction).toBe("linear")
+    expect(panel.style.pointerEvents).toBe("")
+  })
+  it("cancels an in-progress native opening when its owner disconnects", () => {
+    const { panel, controller } = bind()
+    panel.addEventListener("beforetoggle", () => controller.disconnect())
+    panel.showPopover()
+    vi.runAllTimers()
+    expect(controller.show).toBe(false)
+    expect(controller.connected).toBe(false)
+    expect(panel.hasAttribute("style")).toBe(false)
+  })
+  it("preserves later author paint edits when a pending opening is disposed", () => {
+    const { panel, controller } = bind()
+    panel.style.opacity = ".8"
+    panel.dispatchEvent(Object.assign(new Event("beforetoggle", { cancelable: true }), { newState: "open" }))
+    panel.style.opacity = ".4"
+    controller.disconnect()
+    vi.runAllTimers()
+    expect(panel.style.opacity).toBe("0.4")
+    expect(panel.style.animationName).toBe("")
+    expect(panel.style.pointerEvents).toBe("")
+  })
+  it("removes the paint guard if initial positioning fails", () => {
+    const { panel, controller } = bind()
+    panel.getBoundingClientRect = () => rect(0, 0, 0, 0)
+    expect(controller.open()).toBe(false)
+    expect(panel.hasAttribute("style")).toBe(false)
+    vi.runAllTimers()
+    expect(controller.show).toBe(false)
+  })
+  it.each([false, true])("restores the original style-attribute presence (%s) after opening and closing", hadStyle => {
+    const { trigger, panel } = nodes()
+    if (hadStyle) panel.setAttribute("style", "")
+    const controller = createPopover(trigger, panel)
+    controllers.push(controller)
+    controller.open()
+    controller.close()
+    expect(panel.hasAttribute("style")).toBe(hadStyle)
+    expect(panel.getAttribute("style")).toBe(hadStyle ? "" : null)
+  })
   it("opens, closes, reports actual state and retains every authored node/listener", () => {
     const { trigger, panel, controller } = bind()
     const child = panel.firstChild
@@ -151,7 +242,7 @@ describe("Popover native visibility ownership (native API mocked, not browser ce
     const { panel, controller } = bind()
     panel.addEventListener("beforetoggle", event => event.preventDefault())
     const notification = vi.fn()
-    panel.addEventListener("mui:change:show", notification)
+    panel.addEventListener("m:change:show", notification)
     expect(controller.open()).toBe(false)
     expect(notification).not.toHaveBeenCalled()
     expect(panel.style.left).toBe("")
@@ -231,7 +322,7 @@ describe("Popover native visibility ownership (native API mocked, not browser ce
     expect(controller.show).toBe(false)
     expect(panel.hasAttribute("style")).toBe(false)
   })
-  it("releases active positioning and queued microtasks on disconnect", async () => {
+  it("releases active positioning and queued frames on disconnect", async () => {
     const { controller, panel, trigger } = bind()
     controller.open()
     window.dispatchEvent(new Event("resize"))
@@ -244,7 +335,7 @@ describe("Popover native visibility ownership (native API mocked, not browser ce
   it("surfaces invalid live anatomy and disconnects rather than keeping stale ID controls", async () => {
     const { controller, panel } = bind()
     const error = vi.fn()
-    panel.addEventListener("mui:popover-error", error)
+    panel.addEventListener("m:popover-error", error)
     controller.open()
     panel.id = "changed"
     await Promise.resolve()
@@ -326,7 +417,7 @@ describe("Popover native visibility ownership (native API mocked, not browser ce
     panel.showPopover()
     expect(() => createPopover(trigger, panel)).toThrow("while closed")
     panel.hidePopover()
-    const legacy = document.createElement("mui-popover")
+    const legacy = document.createElement("m-popover")
     document.body.append(legacy)
     legacy.append(trigger, panel)
     expect(() => createPopover(trigger, panel)).toThrow("legacy")
@@ -434,7 +525,7 @@ describe("local viewport positioning and external distribution", () => {
     vi.stubGlobal("visualViewport", Object.assign(new EventTarget(), { offsetLeft: 100, offsetTop: 100, width: 300, height: 250, scale: 2 }))
     const { controller, panel } = bind()
     controller.open()
-    expect(panel.style.getPropertyValue("--mui-popover-available-width")).toBe("284px")
+    expect(panel.style.getPropertyValue("--m-popover-available-width")).toBe("284px")
     expect(panel.dataset.popoverPositioning).toBe("fallback")
     expect(Number.parseFloat(panel.style.left)).toBeGreaterThanOrEqual(108)
   })
@@ -502,5 +593,134 @@ describe("local viewport positioning and external distribution", () => {
     expect(source).not.toContain("innerHTML")
     expect(source).not.toContain('"keydown"')
     expect(source).not.toContain('"click" ,')
+  })
+})
+
+describe("Popover custom element contract", () => {
+  it("registers canonical Popover and companion regions", () => {
+    expect(customElements.get("m-popover")).toBe(Popover)
+    expect(customElements.get("m-popover-trigger")).toBe(PopoverTrigger)
+    expect(customElements.get("m-popover-content")).toBe(PopoverContent)
+    expect(Popover.tag).toBe("m-popover")
+    expect(PopoverTrigger.tag).toBe("m-popover-trigger")
+    expect(PopoverContent.tag).toBe("m-popover-content")
+    expect(typeof registerPopover).toBe("function")
+  })
+
+  it("exposes direct typed accessors with defaults", () => {
+    const element = document.createElement("m-popover") as Popover
+    document.body.append(element)
+    expect(element.trigger).toBe("click")
+    expect(element.placement).toBe("bottom")
+    expect(element.delay).toBe(100)
+    expect(element.duration).toBe(100)
+    expect(element.gap).toBe(8)
+    expect(element.margin).toBe(8)
+    expect(element.flip).toBe(true)
+    expect(element.disabled).toBe(false)
+    expect(element.arrow).toBe(false)
+    expect(element.animated).toBe(true)
+    expect(element.show).toBe(false)
+
+    element.trigger = "hover"
+    expect(element.trigger).toBe("hover")
+    expect(element.getAttribute("trigger")).toBe("hover")
+
+    element.placement = "top-start"
+    expect(element.placement).toBe("top-start")
+    expect(element.getAttribute("placement")).toBe("top-start")
+
+    element.delay = 200
+    expect(element.delay).toBe(200)
+
+    element.duration = 250
+    expect(element.duration).toBe(250)
+
+    element.gap = 12
+    expect(element.gap).toBe(12)
+
+    element.margin = 16
+    expect(element.margin).toBe(16)
+
+    element.flip = false
+    expect(element.flip).toBe(false)
+
+    element.disabled = true
+    expect(element.disabled).toBe(true)
+    expect(element.hasAttribute("disabled")).toBe(true)
+
+    element.arrow = true
+    expect(element.arrow).toBe(true)
+    expect(element.hasAttribute("arrow")).toBe(true)
+
+    element.animated = false
+    expect(element.animated).toBe(false)
+
+    expect(() => { element.delay = -1 }).toThrow(RangeError)
+    expect(() => { element.gap = 70000 }).toThrow(RangeError)
+    expect(() => { element.trigger = "invalid" as any }).toThrow(RangeError)
+    expect(() => { element.placement = "invalid" as any }).toThrow(RangeError)
+  })
+
+  it("synchronizes with companion regions and handles open/close/toggle", () => {
+    const popover = document.createElement("m-popover") as Popover
+    popover.innerHTML = `
+      <m-popover-trigger>
+        <button type="button">Trigger</button>
+      </m-popover-trigger>
+      <m-popover-content>
+        <p>Content</p>
+      </m-popover-content>
+    `
+    const trigger = popover.querySelector("button")!
+    const panel = popover.querySelector("m-popover-content")!
+    trigger.getBoundingClientRect = () => rect(200, 200, 100, 30)
+    panel.getBoundingClientRect = () => rect(0, 0, 160, 80)
+
+    document.body.append(popover)
+    expect(panel.classList.contains("m-popover")).toBe(true)
+    expect(panel.id).toBeTruthy()
+    expect(trigger.getAttribute("popovertarget")).toBe(panel.id)
+
+    expect(popover.open()).toBe(true)
+    expect(popover.show).toBe(true)
+
+    popover.close()
+    expect(popover.show).toBe(false)
+
+    expect(popover.toggle()).toBe(true)
+    expect(popover.show).toBe(true)
+
+    expect(popover.toggle()).toBe(false)
+    expect(popover.show).toBe(false)
+
+    popover.arrow = true
+    expect(panel.classList.contains("m-popover--arrow")).toBe(true)
+
+    popover.animated = false
+    expect(panel.classList.contains("m-popover--animated")).toBe(false)
+
+    popover.open()
+    expect(popover.show).toBe(true)
+    popover.disabled = true
+    expect(popover.show).toBe(false)
+  })
+
+  it("supports direct trigger and panel children without companion wrappers", () => {
+    const popover = document.createElement("m-popover") as Popover
+    popover.innerHTML = `
+      <button type="button">Direct action</button>
+      <div class="m-popover">Direct panel</div>
+    `
+    const trigger = popover.querySelector("button")!
+    const panel = popover.querySelector("div")!
+    trigger.getBoundingClientRect = () => rect(200, 200, 100, 30)
+    panel.getBoundingClientRect = () => rect(0, 0, 160, 80)
+
+    document.body.append(popover)
+    expect(popover.open()).toBe(true)
+    expect(popover.show).toBe(true)
+    popover.close()
+    expect(popover.show).toBe(false)
   })
 })

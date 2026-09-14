@@ -1,7 +1,7 @@
 {
   "name": "@dataengine/markup-ui",
-  "version": "0.12.0",
-  "description": "Dependency-free browser-native MarkupUI Web Components",
+  "version": "0.13.0",
+  "description": "Platform-neutral MarkupUI with a dependency-free Web Component renderer",
   "type": "module",
   "main": "./dist/markup-ui.js",
   "module": "./dist/markup-ui.js",
@@ -12,6 +12,7 @@
   "exports": {
     "./style.css": "./dist/markup-ui.css",
     "./themes.css": "./dist/markup-ui-themes.css",
+    "./themes/slate.css": "./dist/markup-ui-theme-slate.css",
     "./advanced/style.css": "./dist/markup-ui-advanced.css",
     "./widgets/style.css": "./dist/markup-ui-widgets.css",
     "./marquee": {
@@ -290,31 +291,116 @@
       "import": "./dist/markup-ui-image.js"
     },
     "./image/style.css": "./dist/markup-ui-image.css",
+    "./float-button": {
+      "types": "./dist/components/float-button/index.d.ts",
+      "import": "./dist/markup-ui-float-button.js"
+    },
     "./float-button/style.css": "./dist/markup-ui-float-button.css",
     "./scrollbar/style.css": "./dist/markup-ui-scrollbar.css",
+    "./code": {
+      "types": "./dist/components/code/index.d.ts",
+      "import": "./dist/markup-ui-code.js"
+    },
     "./code/style.css": "./dist/markup-ui-code.css",
+    "./result": {
+      "types": "./dist/components/result/index.d.ts",
+      "import": "./dist/markup-ui-result.js"
+    },
     "./result/style.css": "./dist/markup-ui-result.css",
+    "./affix": {
+      "types": "./dist/components/affix/index.d.ts",
+      "import": "./dist/markup-ui-affix.js"
+    },
     "./affix/style.css": "./dist/markup-ui-affix.css",
     "./highlight": {
       "types": "./dist/components/highlight/index.d.ts",
       "import": "./dist/markup-ui-highlight.js"
     },
     "./highlight/style.css": "./dist/markup-ui-highlight.css",
+    "./table": {
+      "types": "./dist/components/table/index.d.ts",
+      "import": "./dist/markup-ui-table.js"
+    },
     "./table/style.css": "./dist/markup-ui-table.css",
+    "./thing": {
+      "types": "./dist/components/thing/index.d.ts",
+      "import": "./dist/markup-ui-thing.js"
+    },
     "./thing/style.css": "./dist/markup-ui-thing.css",
+    "./breadcrumb": {
+      "types": "./dist/components/breadcrumb/index.d.ts",
+      "import": "./dist/markup-ui-breadcrumb.js"
+    },
     "./breadcrumb/style.css": "./dist/markup-ui-breadcrumb.css",
+    "./timeline": {
+      "types": "./dist/components/timeline/index.d.ts",
+      "import": "./dist/markup-ui-timeline.js"
+    },
     "./timeline/style.css": "./dist/markup-ui-timeline.css",
+    "./descriptions": {
+      "types": "./dist/components/descriptions/index.d.ts",
+      "import": "./dist/markup-ui-descriptions.js"
+    },
     "./descriptions/style.css": "./dist/markup-ui-descriptions.css",
+    "./list": {
+      "types": "./dist/components/list/index.d.ts",
+      "import": "./dist/markup-ui-list.js"
+    },
     "./list/style.css": "./dist/markup-ui-list.css",
+    "./layout": {
+      "types": "./dist/components/layout/index.d.ts",
+      "import": "./dist/markup-ui-layout.js"
+    },
     "./layout/style.css": "./dist/markup-ui-layout.css",
+    "./grid": {
+      "types": "./dist/components/grid/index.d.ts",
+      "import": "./dist/markup-ui-grid.js"
+    },
     "./grid/style.css": "./dist/markup-ui-grid.css",
+    "./space": {
+      "types": "./dist/components/space/index.d.ts",
+      "import": "./dist/markup-ui-space.js"
+    },
     "./space/style.css": "./dist/markup-ui-space.css",
+    "./box": {
+      "types": "./dist/components/box/index.d.ts",
+      "import": "./dist/markup-ui-box.js"
+    },
+    "./box/style.css": "./dist/markup-ui-box.css",
+    "./flex": {
+      "types": "./dist/components/flex/index.d.ts",
+      "import": "./dist/markup-ui-flex.js"
+    },
     "./flex/style.css": "./dist/markup-ui-flex.css",
+    "./divider": {
+      "types": "./dist/components/divider/index.d.ts",
+      "import": "./dist/markup-ui-divider.js"
+    },
     "./divider/style.css": "./dist/markup-ui-divider.css",
+    "./page-header": {
+      "types": "./dist/components/page-header/index.d.ts",
+      "import": "./dist/markup-ui-page-header.js"
+    },
     "./page-header/style.css": "./dist/markup-ui-page-header.css",
+    "./ellipsis": {
+      "types": "./dist/components/ellipsis/index.d.ts",
+      "import": "./dist/markup-ui-ellipsis.js"
+    },
     "./ellipsis/style.css": "./dist/markup-ui-ellipsis.css",
+    "./gradient-text": {
+      "types": "./dist/components/gradient-text/index.d.ts",
+      "import": "./dist/markup-ui-gradient-text.js"
+    },
     "./gradient-text/style.css": "./dist/markup-ui-gradient-text.css",
+    "./icon": {
+      "types": "./dist/components/icon/index.d.ts",
+      "import": "./dist/markup-ui-icon.js"
+    },
     "./icon/style.css": "./dist/markup-ui-icon.css",
+    "./typography": {
+      "types": "./dist/components/typography/index.d.ts",
+      "import": "./dist/markup-ui-typography.js"
+    },
     "./typography/style.css": "./dist/markup-ui-typography.css",
     "./statistic": {
       "types": "./dist/components/statistic/index.d.ts",
@@ -366,6 +452,10 @@
       "import": "./dist/markup-ui-button.js"
     },
     "./button/style.css": "./dist/markup-ui-button.css",
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "import": "./dist/markup-ui-core.js"
+    },
     "./avatar": {
       "types": "./dist/components/avatar/index.d.ts",
       "import": "./dist/markup-ui-avatar.js"

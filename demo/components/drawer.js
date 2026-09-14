@@ -1,44 +1,42 @@
-const surface = document.querySelector("#drawer")
-const events = document.querySelector("#events")
-const drawer = MarkupUIDrawer.createDrawer(surface, { backdropDismiss: true })
-const nested = MarkupUIModal.createModal(document.querySelector("#nested"))
-const owner = MarkupUIDrawer.createDrawerOwner(document.querySelector("#owner-root"))
-const link = document.querySelector("#open")
-document.querySelector("#controls").hidden = false
-link.addEventListener("click", event => {
-  if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey || !drawer.supportsModal) return
-  try { if (drawer.showModal(link) === "modal") event.preventDefault() }
-  catch (error) { events.textContent = error.message }
-})
-document.querySelector("#placement").addEventListener("change", event => { surface.dataset.drawerPlacement = event.target.value })
-document.querySelector("#size").addEventListener("change", event => { surface.dataset.demoSize = event.target.value })
-document.querySelector("#modeless").addEventListener("click", event => {
-  try { events.textContent = `Explicit ${drawer.show(event.currentTarget)} opening.` }
-  catch (error) { events.textContent = error.message }
-})
-document.querySelector("#nested-open").addEventListener("click", event => nested.showModal(event.currentTarget))
-document.querySelector("#spawn").addEventListener("click", () => {
-  try { owner.create(document.querySelector("#drawer-template")) }
-  catch (error) { events.textContent = error.message }
-})
-document.querySelector("#destroy").addEventListener("click", () => owner.destroyAll())
-surface.addEventListener("cancel", event => { if (document.querySelector("#veto").checked) event.preventDefault() })
-surface.addEventListener("close", () => { events.textContent = `Native close returnValue: ${surface.returnValue || "(empty)"}` })
-let operation = 0
-let timer
-const status = document.querySelector("#check-status")
-surface.addEventListener("mui:native-dialog-session", () => {
-  operation++
-  clearTimeout(timer)
-  if (surface.isConnected && status.isConnected) status.textContent = "No local check pending."
-})
-document.querySelector("#check-close").addEventListener("click", () => {
-  const token = ++operation
-  const generation = drawer.generation
-  clearTimeout(timer)
-  status.textContent = "Checking locally…"
-  timer = setTimeout(() => {
-    if (token === operation && drawer.connected && drawer.mode !== "closed" && drawer.generation === generation) drawer.close("checked")
-  }, 400)
-})
-window.drawerDemo = { drawer, nested, owner }
+import { loadComponentApi } from "../component-api.js"
+
+function initialize() {
+  const api = globalThis.MarkupUIDrawer
+  if (!api) throw new Error("Drawer runtime did not load.")
+  void loadComponentApi(document.getElementById("drawer-api"), new URL("../api/drawer.json", import.meta.url))
+
+  // Basic drawer
+  const basicDrawer = document.querySelector("#basic-drawer")
+  document.querySelector("#open-basic")?.addEventListener("click", () => {
+    basicDrawer?.show()
+  })
+
+  // Placements
+  const drawerTop = document.querySelector("#drawer-top")
+  const drawerRight = document.querySelector("#drawer-right")
+  const drawerBottom = document.querySelector("#drawer-bottom")
+  const drawerLeft = document.querySelector("#drawer-left")
+
+  document.querySelector("#open-top")?.addEventListener("click", () => drawerTop?.show())
+  document.querySelector("#open-right")?.addEventListener("click", () => drawerRight?.show())
+  document.querySelector("#open-bottom")?.addEventListener("click", () => drawerBottom?.show())
+  document.querySelector("#open-left")?.addEventListener("click", () => drawerLeft?.show())
+
+  // Custom size
+  const customDrawer = document.querySelector("#custom-size-drawer")
+  document.querySelector("#open-custom-size")?.addEventListener("click", () => customDrawer?.show())
+
+  // Form drawer
+  const formDrawer = document.querySelector("#form-drawer")
+  document.querySelector("#open-form-drawer")?.addEventListener("click", () => formDrawer?.show())
+  document.querySelector("#close")?.addEventListener("click", () => formDrawer?.close("closed"))
+  document.querySelector("#save")?.addEventListener("click", (event) => {
+    const form = document.querySelector("#native-form")
+    if (form && form.checkValidity()) {
+      formDrawer?.close("saved")
+    }
+  })
+}
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initialize, { once: true })
+else initialize()

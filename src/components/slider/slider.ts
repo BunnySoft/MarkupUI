@@ -49,7 +49,7 @@ function bind(root: HTMLElement, count: 1 | 2, options: SliderOptions) {
   }
   function validate() {
     if (!root.isConnected || root.getRootNode() !== document
-      || !root.matches(count === 1 ? ".mui-slider[data-slider]" : "fieldset.mui-slider-pair[data-slider-pair]")
+      || !root.matches(count === 1 ? ".m-slider[data-slider]" : "fieldset.m-slider-pair[data-slider-pair]")
       || root.hasAttribute("role") || root.hasAttribute("tabindex") || root.closest("label, button, a[href], summary")
       || count === 2 && ![...root.children].find(node => node.localName === "legend")?.textContent?.trim()) {
       throw new TypeError("Keep Slider in a connected light-DOM root without a role/tabstop; pairs need a named first fieldset legend.")
@@ -132,7 +132,7 @@ function bind(root: HTMLElement, count: 1 | 2, options: SliderOptions) {
   }
   function report(reason: unknown, previous: string | null) {
     error = reason instanceof Error ? reason.message : String(reason)
-    if (previous !== error) root.dispatchEvent(new view!.CustomEvent("mui:slider-error", { detail: { message: error } }))
+    if (previous !== error) root.dispatchEvent(new view!.CustomEvent("m:slider-error", { detail: { message: error } }))
   }
   function attemptRefresh() { const previous = error; try { refresh() } catch (reason) { report(reason, previous) } }
   function setValues(next: readonly number[]) {
@@ -177,7 +177,7 @@ function bind(root: HTMLElement, count: 1 | 2, options: SliderOptions) {
         if (count === 2) {
           const value = values() as [number, number]
           const detail: SliderPairChange = { value, ordered: value[0] <= value[1], index }
-          later(() => root.dispatchEvent(new view!.CustomEvent("mui:slider-pair-change", { detail })))
+          later(() => root.dispatchEvent(new view!.CustomEvent("m:slider-pair-change", { detail })))
         }
       } catch (reason) { report(reason, previous) }
     })

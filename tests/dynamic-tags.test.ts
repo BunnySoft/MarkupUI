@@ -2,10 +2,11 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createDynamicTags } from "../src/components/dynamic-tags/index.js"
-import type { DynamicTagsOptions } from "../src/components/dynamic-tags/index.js"
+import { createDynamicTags, DynamicTags, registerDynamicTags, dynamicTagsSizes } from "../src/components/dynamic-tags/index.js"
+import type { DynamicTagsOptions, DynamicTagsSize } from "../src/components/dynamic-tags/index.js"
+import { ViewElement } from "../src/core/index.js"
 import { createDynamicInput } from "../src/components/dynamic-input/index.js"
-import { createForm } from "../src/components/form/index.js"
+import { coordinateForm as createForm } from "../src/components/form/controller.js"
 
 const helpers: { disconnect(): void }[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 25))
@@ -30,28 +31,28 @@ describe("default styles", () => {
   const css = readFileSync(resolve("src", "components", "dynamic-tags", "dynamic-tags.css"), "utf8")
 
   it("uses the reference tag size scale and wrapping rhythm within budget", () => {
-    expect(css).toContain("--_mui-tags-height: 28px")
-    expect(css).toContain("--_mui-tags-height: 22px")
-    expect(css).toContain("--_mui-tags-height: 34px")
+    expect(css).toContain("--_m-tags-height: 28px")
+    expect(css).toContain("--_m-tags-height: 22px")
+    expect(css).toContain("--_m-tags-height: 34px")
     expect(css).toContain("gap: 4px 8px")
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
   })
 
   it("keeps native tag values compact without hiding labelled actions", () => {
     expect(css).toContain("field-sizing: content")
-    expect(css).toContain("block-size: calc(var(--_mui-tags-height) - 6px)")
+    expect(css).toContain("block-size: calc(var(--_m-tags-height) - 6px)")
     expect(css).not.toMatch(/text-indent:\s*-\d|font-size:\s*0/)
   })
 
   it("provides semantic light-dark palettes and forced-color controls", () => {
-    expect(css).toContain("--mui-tags-background: light-dark(rgba(32, 128, 240, .1), rgba(112, 192, 232, .16))")
+    expect(css).toContain("--m-tags-background: light-dark(rgba(32, 128, 240, .1), rgba(112, 192, 232, .16))")
     expect(css).toContain("@media (forced-colors: active)")
     expect(css).toContain("background: ButtonFace")
   })
 
   it("prints committed native values without enhancement controls", () => {
     expect(css).toContain("@media print")
-    expect(css).toMatch(/\.mui-dynamic-tags__entry,\s*\n\s*\.mui-dynamic-tags__tag button,\s*\n\s*\.mui-dynamic-tags__status/)
+    expect(css).toMatch(/\.m-dynamic-tags__entry,\s*\n\s*\.m-dynamic-tags__tag button,\s*\n\s*\.m-dynamic-tags__status/)
   })
 })
 
@@ -106,8 +107,8 @@ describe("real native tag values and inherited collection ownership", () => {
     helper.disconnect(); helpers.push(other.createDynamicTags(root))
   })
   it("never creates a Tag custom-element registration or checkable/selected ARIA state", () => {
-    const before = customElements.get("mui-tag"), { root } = fixture()
-    expect(customElements.get("mui-tag")).toBe(before)
+    const before = customElements.get("m-tag"), { root } = fixture()
+    expect(customElements.get("m-tag")).toBe(before)
     expect(root.querySelectorAll("[aria-checked],[aria-pressed],[role=button]")).toHaveLength(0)
   })
   it.each([{ max: 0 }, { max: 101 }, { max: null }, { duplicates: null }, { create: 1 }, { connect: true }, { value: [] }])("rejects unsupported configuration %j", options => {
@@ -157,7 +158,7 @@ describe("commit policy, callbacks and draft safety", () => {
   })
   it("propagates synchronous and asynchronous creator errors without clearing drafts", async () => {
     const { helper, editor, root } = fixture({ create: (() => Promise.reject(new Error("Late callback failure"))) as never })
-    const errors = vi.fn(); root.addEventListener("mui:dynamic-tags-error", errors)
+    const errors = vi.fn(); root.addEventListener("m:dynamic-tags-error", errors)
     editor.value = "draft"; expect(() => helper.commit()).toThrow("strings"); await flush()
     expect(editor.value).toBe("draft"); expect(helper.tags).toHaveLength(2)
     expect(errors.mock.calls.some(call => (call[0] as CustomEvent).detail.error.message === "Late callback failure")).toBe(true)
@@ -187,7 +188,7 @@ describe("commit policy, callbacks and draft safety", () => {
   })
   it("preserves removed tag descriptors even when cleanup detaches value/action children", () => {
     const { helper, root } = fixture({ connect: (row, context) => context.onCleanup(() => { row.replaceChildren() }) })
-    const changed = vi.fn(); root.addEventListener("mui:dynamic-tags-change", changed)
+    const changed = vi.fn(); root.addEventListener("m:dynamic-tags-change", changed)
     const first = helper.tags[0]!
     helper.remove(first.key)
     expect(changed).toHaveBeenCalledOnce(); expect((changed.mock.calls[0]![0] as CustomEvent).detail.tag.control).toBe(first.control)
@@ -216,7 +217,7 @@ describe("commit policy, callbacks and draft safety", () => {
 describe("native editor keys, composition and focus", () => {
   it("commits once through the native button while suppressing the reused raw add handler", async () => {
     const { helper, editor, add, root } = fixture()
-    const changed = vi.fn(); root.addEventListener("mui:dynamic-tags-change", changed)
+    const changed = vi.fn(); root.addEventListener("m:dynamic-tags-change", changed)
     editor.value = "gamma"; add.focus(); add.click(); await flush()
     expect(helper.values).toEqual(["alpha", "beta", "gamma"]); expect(changed).toHaveBeenCalledOnce()
     expect(editor.value).toBe(""); expect(document.activeElement).toBe(editor)
@@ -274,7 +275,7 @@ describe("native editor keys, composition and focus", () => {
 
 describe("native forms, refresh, reset and lifecycle", () => {
   it("keeps direct native assignments/defaults and refresh silent, without replacing existing tag nodes", async () => {
-    const { helper, editor, root } = fixture(), changed = vi.fn(); root.addEventListener("mui:dynamic-tags-change", changed)
+    const { helper, editor, root } = fixture(), changed = vi.fn(); root.addEventListener("m:dynamic-tags-change", changed)
     const tag = helper.tags[0]!
     tag.control.value = "renamed"; editor.value = "draft"; helper.refresh(); await flush()
     expect(helper.tags[0]).toBe(tag); expect(helper.values[0]).toBe("renamed"); expect(tag.control.defaultValue).toBe("alpha")
@@ -292,7 +293,7 @@ describe("native forms, refresh, reset and lifecycle", () => {
   it("never clears an intervening reset-restored draft during collection change notification", async () => {
     const { helper, editor, root, form } = fixture()
     editor.defaultValue = "draft"; editor.value = "draft"
-    root.addEventListener("mui:dynamic-input-change", () => form.reset(), { once: true })
+    root.addEventListener("m:dynamic-input-change", () => form.reset(), { once: true })
     expect(helper.commit().status).toBe("added"); await flush()
     expect(helper.values).toEqual(["alpha", "beta", "draft"]); expect(editor.value).toBe("draft")
   })
@@ -378,5 +379,236 @@ describe("native forms, refresh, reset and lifecycle", () => {
     form.reset(); await flush()
     expect(helper.connected).toBe(false); expect(tag.control.value).toBe("")
     expect(form.querySelectorAll('[data-tags-value]')).toHaveLength(2)
+  })
+})
+
+describe("canonical DynamicTags ViewElement", () => {
+  it("registers only its own canonical tag through shared ViewElement with explicit attributes", () => {
+    expect(DynamicTags.tag).toBe("m-dynamic-tags")
+    expect(DynamicTags.prototype instanceof ViewElement).toBe(true)
+    expect(customElements.get("m-dynamic-tags")).toBe(DynamicTags)
+    expect(DynamicTags.observedAttributes).toEqual(["max", "disabled", "size"])
+
+    const define = vi.fn()
+    registerDynamicTags({ get: () => undefined, define })
+    expect(define.mock.calls.map(call => call[0])).toEqual(["m-dynamic-tags"])
+    expect(() => registerDynamicTags({ get: () => HTMLElement as any, define })).toThrow("different implementation")
+  })
+
+  it("exposes default properties and reflects attribute changes", () => {
+    const tags = new DynamicTags()
+    expect(tags.max).toBe(20)
+    expect(tags.disabled).toBe(false)
+    expect(tags.size).toBe("medium")
+
+    tags.max = 10
+    expect(tags.max).toBe(10)
+    expect(tags.getAttribute("max")).toBe("10")
+
+    tags.disabled = true
+    expect(tags.disabled).toBe(true)
+    expect(tags.hasAttribute("disabled")).toBe(true)
+
+    tags.size = "small"
+    expect(tags.size).toBe("small")
+    expect(tags.getAttribute("size")).toBe("small")
+
+    tags.size = "large"
+    expect(tags.size).toBe("large")
+    expect(tags.getAttribute("size")).toBe("large")
+
+    expect(() => { tags.max = 0 }).toThrow(RangeError)
+    expect(() => { tags.max = -1 }).toThrow(RangeError)
+    expect(() => { (tags as any).size = "huge" }).toThrow(RangeError)
+  })
+
+  it("upgrades properties assigned before connection", () => {
+    const tags = document.createElement("m-dynamic-tags") as DynamicTags
+    tags.max = 5
+    tags.disabled = true
+    tags.size = "small"
+    document.body.append(tags)
+
+    expect(tags.max).toBe(5)
+    expect(tags.disabled).toBe(true)
+    expect(tags.size).toBe("small")
+    expect(tags.getAttribute("max")).toBe("5")
+    expect(tags.hasAttribute("disabled")).toBe(true)
+    expect(tags.getAttribute("size")).toBe("small")
+    expect(tags.classList.contains("m-dynamic-tags")).toBe(true)
+  })
+
+  it("generates DOM structure, supports adding and removing tags, and emits m:change", () => {
+    const tags = new DynamicTags()
+    document.body.append(tags)
+
+    expect(tags.querySelector(".m-dynamic-tags__list")).not.toBeNull()
+    expect(tags.querySelector(".m-dynamic-tags__entry")).not.toBeNull()
+    expect(tags.getTags()).toEqual([])
+
+    const changeSpy = vi.fn()
+    tags.addEventListener("m:change", changeSpy)
+
+    expect(tags.add("alpha")).toBe(true)
+    expect(tags.getTags()).toEqual(["alpha"])
+    expect(changeSpy).toHaveBeenCalledOnce()
+    expect(changeSpy.mock.calls[0][0].detail).toEqual({ value: ["alpha"] })
+
+    expect(tags.add("beta")).toBe(true)
+    expect(tags.getTags()).toEqual(["alpha", "beta"])
+    expect(changeSpy).toHaveBeenCalledTimes(2)
+    expect(changeSpy.mock.calls[1][0].detail).toEqual({ value: ["alpha", "beta"] })
+
+    // Ignore blank tag
+    expect(tags.add("  ")).toBe(false)
+    expect(changeSpy).toHaveBeenCalledTimes(2)
+
+    // Remove by index
+    expect(tags.removeTag(0)).toBe(true)
+    expect(tags.getTags()).toEqual(["beta"])
+    expect(changeSpy).toHaveBeenCalledTimes(3)
+    expect(changeSpy.mock.calls[2][0].detail).toEqual({ value: ["beta"] })
+
+    // Remove by string value
+    expect(tags.removeTag("beta")).toBe(true)
+    expect(tags.getTags()).toEqual([])
+    expect(changeSpy).toHaveBeenCalledTimes(4)
+    expect(changeSpy.mock.calls[3][0].detail).toEqual({ value: [] })
+
+    // Remove non-existent
+    expect(tags.removeTag(99)).toBe(false)
+    expect(tags.removeTag("nonexistent")).toBe(false)
+  })
+
+  it("handles remove button clicks inside tags", () => {
+    const tags = new DynamicTags()
+    document.body.append(tags)
+    tags.add("tag-1")
+    tags.add("tag-2")
+
+    const changeSpy = vi.fn()
+    tags.addEventListener("m:change", changeSpy)
+
+    const removeBtn = tags.querySelector<HTMLButtonElement>(".m-dynamic-tags__tag button")!
+    expect(removeBtn).not.toBeNull()
+    removeBtn.click()
+
+    expect(tags.getTags()).toEqual(["tag-2"])
+    expect(changeSpy).toHaveBeenCalledOnce()
+    expect(changeSpy.mock.calls[0][0].detail).toEqual({ value: ["tag-2"] })
+  })
+
+  it("enforces max limit", () => {
+    const tags = new DynamicTags()
+    tags.max = 2
+    document.body.append(tags)
+
+    expect(tags.add("first")).toBe(true)
+    expect(tags.add("second")).toBe(true)
+    expect(tags.add("third")).toBe(false)
+    expect(tags.getTags()).toEqual(["first", "second"])
+
+    const addBtn = tags.querySelector<HTMLButtonElement>("[data-dynamic-add]")!
+    expect(addBtn.disabled).toBe(true)
+
+    tags.removeTag(0)
+    expect(addBtn.disabled).toBe(false)
+    expect(tags.add("third")).toBe(true)
+    expect(tags.getTags()).toEqual(["second", "third"])
+  })
+
+  it("enforces disabled state on inputs and buttons", () => {
+    const tags = new DynamicTags()
+    document.body.append(tags)
+    tags.add("item")
+
+    tags.disabled = true
+    expect(tags.add("blocked")).toBe(false)
+    expect(tags.removeTag(0)).toBe(false)
+    expect(tags.getTags()).toEqual(["item"])
+
+    const editor = tags.querySelector<HTMLInputElement>("[data-tags-editor]")!
+    const addBtn = tags.querySelector<HTMLButtonElement>("[data-dynamic-add]")!
+    const removeBtn = tags.querySelector<HTMLButtonElement>("[data-dynamic-action='remove']")!
+    expect(editor.disabled).toBe(true)
+    expect(addBtn.disabled).toBe(true)
+    expect(removeBtn.disabled).toBe(true)
+
+    tags.disabled = false
+    expect(editor.disabled).toBe(false)
+    expect(addBtn.disabled).toBe(false)
+    expect(removeBtn.disabled).toBe(false)
+  })
+
+  it("handles clear() method", () => {
+    const tags = new DynamicTags()
+    document.body.append(tags)
+    tags.add("one")
+    tags.add("two")
+
+    const changeSpy = vi.fn()
+    tags.addEventListener("m:change", changeSpy)
+
+    tags.clear()
+    expect(tags.getTags()).toEqual([])
+    expect(changeSpy).toHaveBeenCalledOnce()
+    expect(changeSpy.mock.calls[0][0].detail).toEqual({ value: [] })
+  })
+
+  it("delegates focus and blur to the editor input", () => {
+    const tags = new DynamicTags()
+    document.body.append(tags)
+    const editor = tags.querySelector<HTMLInputElement>("[data-tags-editor]")!
+    const focusSpy = vi.spyOn(editor, "focus")
+    const blurSpy = vi.spyOn(editor, "blur")
+
+    tags.focus()
+    expect(focusSpy).toHaveBeenCalledOnce()
+
+    tags.blur()
+    expect(blurSpy).toHaveBeenCalledOnce()
+  })
+
+  it("supports keyboard Enter and button click to add tags from editor input", () => {
+    const tags = new DynamicTags()
+    document.body.append(tags)
+    const editor = tags.querySelector<HTMLInputElement>("[data-tags-editor]")!
+    const addBtn = tags.querySelector<HTMLButtonElement>("[data-dynamic-add]")!
+
+    editor.value = "from-enter"
+    editor.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }))
+    expect(tags.getTags()).toEqual(["from-enter"])
+    expect(editor.value).toBe("")
+
+    editor.value = "from-click"
+    addBtn.click()
+    expect(tags.getTags()).toEqual(["from-enter", "from-click"])
+    expect(editor.value).toBe("")
+  })
+
+  it("adopts authored tag rows in markup", () => {
+    document.body.innerHTML = `
+      <m-dynamic-tags id="authored-tags">
+        <ul class="m-dynamic-tags__list" data-dynamic-rows>
+          <li class="m-dynamic-tags__tag" data-dynamic-row>
+            <input class="m-dynamic-tags__value" data-tags-value type="text" readonly value="seed1">
+            <button type="button" data-dynamic-action="remove">×</button>
+          </li>
+          <li class="m-dynamic-tags__tag" data-dynamic-row>
+            <input class="m-dynamic-tags__value" data-tags-value type="text" readonly value="seed2">
+            <button type="button" data-dynamic-action="remove">×</button>
+          </li>
+        </ul>
+      </m-dynamic-tags>
+    `
+    const tags = document.querySelector<DynamicTags>("#authored-tags")!
+    expect(tags.getTags()).toEqual(["seed1", "seed2"])
+
+    const changeSpy = vi.fn()
+    tags.addEventListener("m:change", changeSpy)
+    const firstRemoveBtn = tags.querySelector<HTMLButtonElement>(".m-dynamic-tags__tag button")!
+    firstRemoveBtn.click()
+    expect(tags.getTags()).toEqual(["seed2"])
+    expect(changeSpy).toHaveBeenCalledOnce()
   })
 })

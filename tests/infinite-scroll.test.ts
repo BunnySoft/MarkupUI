@@ -2,15 +2,17 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createInfiniteScroll } from "../src/components/infinite-scroll/index.js"
+import { InfiniteScroll, MInfiniteScroll, createInfiniteScroll, registerInfiniteScroll } from "../src/components/infinite-scroll/index.js"
+import * as infiniteScrollApi from "../src/components/infinite-scroll/index.js"
 import type { InfiniteScrollContext, InfiniteScrollController, InfiniteScrollOptions, InfiniteScrollResult } from "../src/components/infinite-scroll/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 describe("Infinite Scroll default styles", () => {
   const css = readFileSync(resolve("src", "components", "infinite-scroll", "infinite-scroll.css"), "utf8")
 
   it("keeps native scrolling and sentinel geometry within the unchanged ceiling", () => {
     expect(css).toContain("overflow: auto")
-    expect(css).toContain("max-block-size: var(--mui-infinite-scroll-height, none)")
+    expect(css).toContain("max-block-size: var(--m-infinite-scroll-height, none)")
     expect(css).toContain("block-size: 1px")
     expect(css).toContain("inline-size: 100%")
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1000)
@@ -63,7 +65,7 @@ function deferred<T>() {
 function fixture(input: Partial<InfiniteScrollOptions> = {}, setup?: (root: HTMLElement) => void) {
   if (!Object.prototype.hasOwnProperty.call(window, "IntersectionObserver")) vi.stubGlobal("IntersectionObserver", Observer)
   const form = document.createElement("form")
-  form.innerHTML = `<section class="mui-infinite-scroll" data-infinite-scroll><h2 id="title">Feed</h2>
+  form.innerHTML = `<section class="m-infinite-scroll" data-infinite-scroll><h2 id="title">Feed</h2>
     <div data-viewport role="region" tabindex="0" aria-labelledby="title" style="overflow-y:auto;height:80px">
       <ul data-infinite-content><li><label>Existing note<input name="note" value="draft"></label><button type="button" data-item-action>Item action</button></li><template><li>Inert template</li></template></ul><div data-infinite-sentinel aria-hidden="true"></div>
     </div><button type="button" data-infinite-load hidden>Load more or retry</button>
@@ -228,7 +230,7 @@ describe("completion, failures and guarded application commit", () => {
   it("surfaces rejection once, halts auto retries and supports a deliberate manual retry", async () => {
     const error = new Error("local failure"), load = vi.fn().mockRejectedValueOnce(error).mockResolvedValue({ added: 1, hasMore: true, commit: () => {} })
     const { helper, root, io, button } = fixture({ load }), listener = vi.fn()
-    root.addEventListener("mui:infinite-error", listener)
+    root.addEventListener("m:infinite-error", listener)
     const outcome = await helper.load(); expect(outcome).toEqual({ status: "error", error }); expect(helper.error).toBe(error)
     io().enter(); await turn(); expect(load).toHaveBeenCalledOnce(); expect(listener).toHaveBeenCalledOnce()
     button.click(); await turn(); expect(load).toHaveBeenCalledTimes(2); expect(helper.error).toBeNull()
@@ -264,8 +266,8 @@ describe("completion, failures and guarded application commit", () => {
   })
   it("does not emit an old error after a state listener resets the failed generation", async () => {
     const { helper, root } = fixture({ load: () => { throw new Error("old") } }), errors = vi.fn()
-    root.addEventListener("mui:infinite-error", errors)
-    root.addEventListener("mui:infinite-state", event => { if ((event as CustomEvent).detail.phase === "error") helper.reset() })
+    root.addEventListener("m:infinite-error", errors)
+    root.addEventListener("m:infinite-state", event => { if ((event as CustomEvent).detail.phase === "error") helper.reset() })
     expect((await helper.load()).status).toBe("error")
     expect(helper.error).toBeNull(); expect(errors).not.toHaveBeenCalled()
   })
@@ -287,7 +289,7 @@ describe("cancellation, native constraints and ownership races", () => {
   it("ignores stale rejection for new state while returning an explicit aborted cause", async () => {
     const task = deferred<InfiniteScrollResult>(), error = new Error("old request")
     const { helper, root } = fixture({ load: () => task.promise }), errors = vi.fn()
-    root.addEventListener("mui:infinite-error", errors)
+    root.addEventListener("m:infinite-error", errors)
     const promise = helper.load(); await turn(); helper.reset({ hasMore: false }); task.reject(error)
     const outcome = await promise
     expect(outcome.status).toBe("aborted"); expect(outcome).toHaveProperty("cause", error)
@@ -320,7 +322,7 @@ describe("cancellation, native constraints and ownership races", () => {
   })
   it("can cancel before the queued loader starts through a loading-state listener", async () => {
     const { helper, root, load } = fixture()
-    root.addEventListener("mui:infinite-state", event => { if ((event as CustomEvent).detail.phase === "loading") helper.set({ disabled: true }) })
+    root.addEventListener("m:infinite-state", event => { if ((event as CustomEvent).detail.phase === "loading") helper.set({ disabled: true }) })
     expect((await helper.load()).status).toBe("aborted"); expect(load).not.toHaveBeenCalled()
   })
   it.each(["disabled", "hidden", "inert"])("honors native %s cancellation without changing native fields", async attribute => {
@@ -376,9 +378,160 @@ describe("cancellation, native constraints and ownership races", () => {
   })
   it("fails changed helper anatomy explicitly instead of adopting a replacement sentinel", async () => {
     const { helper, sentinel, root, load } = fixture(), errors = vi.fn()
-    root.addEventListener("mui:infinite-error", errors)
+    root.addEventListener("m:infinite-error", errors)
     sentinel.replaceWith(sentinel.cloneNode())
     await turn(); expect(helper.state.phase).toBe("error"); expect(errors).toHaveBeenCalled()
     await expect(helper.load()).rejects.toThrow(); expect(load).not.toHaveBeenCalled()
+  })
+})
+
+describe("canonical InfiniteScroll ViewElement", () => {
+  it("exports canonical ViewElement classes and registration", () => {
+    expect(infiniteScrollApi.InfiniteScroll).toBe(InfiniteScroll)
+    expect(infiniteScrollApi.MInfiniteScroll).toBe(MInfiniteScroll)
+    expect(InfiniteScroll.tag).toBe("m-infinite-scroll")
+    expect(ViewElement.prototype.isPrototypeOf(InfiniteScroll.prototype)).toBe(true)
+    expect(customElements.get("m-infinite-scroll")).toBe(InfiniteScroll)
+    expect(MInfiniteScroll).toBe(InfiniteScroll)
+    expect(InfiniteScroll.observedAttributes).toEqual(["distance", "disabled"])
+
+    expect(() => registerInfiniteScroll()).not.toThrow()
+    const define = vi.fn()
+    expect(() => registerInfiniteScroll({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+  })
+
+  it("handles distance property defaults, attributes, validation, and updates", () => {
+    const element = document.createElement("m-infinite-scroll") as InfiniteScroll
+    document.body.append(element)
+    expect(element.distance).toBe(20)
+
+    element.distance = 50
+    expect(element.distance).toBe(50)
+    expect(element.getAttribute("distance")).toBe("50")
+
+    element.setAttribute("distance", "80")
+    expect(element.distance).toBe(80)
+
+    element.removeAttribute("distance")
+    expect(element.distance).toBe(20)
+
+    for (const invalid of [-1, -100, NaN, Infinity, "50" as unknown as number, null as unknown as number, undefined as unknown as number]) {
+      expect(() => { element.distance = invalid }).toThrow(RangeError)
+    }
+
+    element.setAttribute("distance", "invalid")
+    expect(() => element.distance).toThrow(RangeError)
+    element.setAttribute("distance", "-10")
+    expect(() => element.distance).toThrow(RangeError)
+  })
+
+  it("handles disabled property defaults, attributes, and presence encoding", () => {
+    const element = document.createElement("m-infinite-scroll") as InfiniteScroll
+    document.body.append(element)
+    expect(element.disabled).toBe(false)
+    expect(element.hasAttribute("disabled")).toBe(false)
+
+    element.disabled = true
+    expect(element.disabled).toBe(true)
+    expect(element.hasAttribute("disabled")).toBe(true)
+
+    element.disabled = false
+    expect(element.disabled).toBe(false)
+    expect(element.hasAttribute("disabled")).toBe(false)
+
+    element.setAttribute("disabled", "")
+    expect(element.disabled).toBe(true)
+
+    element.removeAttribute("disabled")
+    expect(element.disabled).toBe(false)
+
+    for (const invalid of ["true" as unknown as boolean, 123 as unknown as boolean, null as unknown as boolean]) {
+      expect(() => { element.disabled = invalid }).toThrow(RangeError)
+    }
+  })
+
+  it("replays pre-upgrade properties upon connection", () => {
+    const element = document.createElement("m-infinite-scroll") as InfiniteScroll
+    Object.defineProperty(element, "distance", { configurable: true, value: 45 })
+    Object.defineProperty(element, "disabled", { configurable: true, value: true })
+    document.body.append(element)
+
+    expect(element.distance).toBe(45)
+    expect(element.disabled).toBe(true)
+    expect(element.getAttribute("distance")).toBe("45")
+    expect(element.hasAttribute("disabled")).toBe(true)
+  })
+
+  it("applies class and dataset markers when connected", () => {
+    const element = document.createElement("m-infinite-scroll") as InfiniteScroll
+    document.body.append(element)
+
+    expect(element.dataset.mInfiniteScroll).toBe("")
+    expect(element.classList.contains("m-infinite-scroll")).toBe(true)
+  })
+
+  it("emits m:load event with distance detail", () => {
+    const element = document.createElement("m-infinite-scroll") as InfiniteScroll
+    element.distance = 35
+    document.body.append(element)
+
+    const loadHandler = vi.fn()
+    element.addEventListener("m:load", loadHandler)
+
+    element.triggerLoad()
+    expect(loadHandler).toHaveBeenCalledTimes(1)
+    const event = loadHandler.mock.calls[0]![0] as CustomEvent
+    expect(event.detail).toEqual({ distance: 35 })
+    expect(event.bubbles).toBe(true)
+    expect(event.cancelable).toBe(false)
+    expect(event.composed).toBe(false)
+  })
+
+  it("suppresses load events when disabled", () => {
+    const element = document.createElement("m-infinite-scroll") as InfiniteScroll
+    element.disabled = true
+    document.body.append(element)
+
+    const loadHandler = vi.fn()
+    element.addEventListener("m:load", loadHandler)
+
+    element.triggerLoad()
+    element.check()
+    expect(loadHandler).not.toHaveBeenCalled()
+  })
+
+  it("checks scroll position and triggers load when within distance threshold", () => {
+    const element = document.createElement("m-infinite-scroll") as InfiniteScroll
+    element.distance = 25
+    document.body.append(element)
+
+    const loadHandler = vi.fn()
+    element.addEventListener("m:load", loadHandler)
+
+    Object.defineProperty(element, "scrollHeight", { value: 500, configurable: true })
+    Object.defineProperty(element, "clientHeight", { value: 200, configurable: true })
+
+    // Far from bottom: 500 - 100 - 200 = 200 > 25
+    element.scrollTop = 100
+    element.check()
+    expect(loadHandler).not.toHaveBeenCalled()
+
+    // Near bottom: 500 - 280 - 200 = 20 <= 25
+    element.scrollTop = 280
+    element.check()
+    expect(loadHandler).toHaveBeenCalledTimes(1)
+  })
+
+  it("cleans up scroll listeners on disconnectedCallback", () => {
+    const element = document.createElement("m-infinite-scroll") as InfiniteScroll
+    document.body.append(element)
+
+    const loadHandler = vi.fn()
+    element.addEventListener("m:load", loadHandler)
+
+    element.remove()
+    element.triggerLoad()
+    expect(loadHandler).not.toHaveBeenCalled()
   })
 })

@@ -5,6 +5,6 @@ button { font: inherit; padding: .5rem; }
 .actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: .75rem; }
 pre, p { overflow-wrap: anywhere; }
 pre { white-space: pre-wrap; padding: .75rem; border: 1px solid GrayText; }
-.mui-auto-complete__field { flex-wrap: wrap; }
-.mui-auto-complete__field > input { flex-basis: 10rem; }
+.m-auto-complete__field { flex-wrap: wrap; }
+.m-auto-complete__field > input { flex-basis: 10rem; }
 [hidden] { display: none !important; }

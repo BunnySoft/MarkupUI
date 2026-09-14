@@ -1,51 +1,99 @@
+import { ViewElement } from "../../core/index.js"
+
 const names = ["label", "prefix", "value", "suffix"] as const
 type RegionName = typeof names[number]
 type Region = { area: HTMLDivElement; text: HTMLSpanElement; content: HTMLDivElement }
 const inert = "template,script,style"
 function hide(element: HTMLElement, hidden: boolean): void { if (element.hidden !== hidden) element.hidden = hidden }
 
-export class MuiStatistic extends HTMLElement {
-  public static get observedAttributes(): string[] { return ["label", "value", "prefix", "suffix"] }
+/**
+ * A statistic component for displaying numbers, labels, prefixes, and suffixes.
+ * @region {"name":"label","accepts":["text","heading","content"],"min":0,"max":1}
+ * @region {"name":"prefix","accepts":["text","icon","content"],"min":0,"max":1}
+ * @region {"name":"value","accepts":["text","content"],"min":0,"max":1}
+ * @region {"name":"suffix","accepts":["text","content","controls"],"min":0,"max":1}
+ */
+export class Statistic extends ViewElement {
+  public static readonly tag = "m-statistic"
+  public static get observedAttributes(): string[] { return ["label", "value", "prefix", "suffix", "tabular-nums"] }
 
   private regions = new Map<RegionName, Region>()
   private display: HTMLDivElement | undefined
   private observer: MutationObserver | undefined
-  private ready = false
   private upgraded = false
 
   public connectedCallback(): void {
     if (!this.upgraded) {
       this.upgraded = true
-      for (const name of ["label", "value", "valuePrefix", "valueSuffix", "tabularNums"]) {
-        if (Object.prototype.hasOwnProperty.call(this, name)) {
-          const value: unknown = Reflect.get(this, name)
-          Reflect.deleteProperty(this, name)
-          Reflect.set(this, name, value)
-        }
-      }
+      this.upgradeProperties()
     }
-    this.dataset.muiStatistic = ""
+    this.dataset.mStatistic = ""
     this.observer ??= new MutationObserver(() => this.synchronize())
-    this.ready = true
     this.synchronize()
   }
 
-  public disconnectedCallback(): void { this.ready = false; this.observer?.disconnect() }
-  public attributeChangedCallback(): void { if (this.ready && this.isConnected) this.synchronize() }
-  public get label(): string | undefined { return this.getAttribute("label") ?? undefined }
-  public set label(value: string | null | undefined) { this.assign("label", value) }
-  public get value(): string | undefined { return this.getAttribute("value") ?? undefined }
+  public disconnectedCallback(): void {
+    this.observer?.disconnect()
+  }
+
+  public attributeChangedCallback(): void {
+    if (this.isConnected) this.synchronize()
+  }
+
+  public get label(): string | null {
+    return this.getAttribute("label")
+  }
+  public set label(value: string | null | undefined) {
+    this.assign("label", value)
+  }
+
+  public get value(): string | null {
+    return this.getAttribute("value")
+  }
   public set value(value: string | number | null | undefined) {
-    if (value != null && typeof value !== "string" && typeof value !== "number") throw new TypeError("Statistic value must be a string or number.")
-    if (typeof value === "number" && !Number.isFinite(value)) throw new RangeError("Statistic value must be finite or explicitly authored text.")
+    if (value != null && typeof value !== "string" && typeof value !== "number") {
+      throw new TypeError("Statistic value must be a string or number.")
+    }
+    if (typeof value === "number" && !Number.isFinite(value)) {
+      throw new RangeError("Statistic value must be finite or explicitly authored text.")
+    }
     this.assign("value", value == null ? value : String(value))
   }
-  public get valuePrefix(): string | undefined { return this.getAttribute("prefix") ?? undefined }
-  public set valuePrefix(value: string | null | undefined) { this.assign("prefix", value) }
-  public get valueSuffix(): string | undefined { return this.getAttribute("suffix") ?? undefined }
-  public set valueSuffix(value: string | null | undefined) { this.assign("suffix", value) }
-  public get tabularNums(): boolean { return this.hasAttribute("tabular-nums") }
-  public set tabularNums(value: boolean) { this.toggleAttribute("tabular-nums", value) }
+
+  public override get prefix(): string | null {
+    return this.getAttribute("prefix")
+  }
+  public override set prefix(value: string | null | undefined) {
+    this.assign("prefix", value)
+  }
+
+  public get suffix(): string | null {
+    return this.getAttribute("suffix")
+  }
+  public set suffix(value: string | null | undefined) {
+    this.assign("suffix", value)
+  }
+
+  public get valuePrefix(): string | null {
+    return this.getAttribute("prefix")
+  }
+  public set valuePrefix(value: string | null | undefined) {
+    this.assign("prefix", value)
+  }
+
+  public get valueSuffix(): string | null {
+    return this.getAttribute("suffix")
+  }
+  public set valueSuffix(value: string | null | undefined) {
+    this.assign("suffix", value)
+  }
+
+  public get tabularNums(): boolean {
+    return this.hasAttribute("tabular-nums")
+  }
+  public set tabularNums(value: boolean) {
+    this.setBooleanAttribute("tabular-nums", value)
+  }
 
   private assign(name: string, value: string | null | undefined): void {
     if (value == null) this.removeAttribute(name)
@@ -55,17 +103,21 @@ export class MuiStatistic extends HTMLElement {
 
   private createRegion(name: RegionName): Region {
     const area = this.ownerDocument.createElement("div")
-    area.setAttribute(`data-mui-statistic-${name}`, "")
+    area.setAttribute(`data-m-statistic-${name}`, "")
     const text = this.ownerDocument.createElement("span")
-    text.dataset.muiStatisticText = ""
+    text.dataset.mStatisticText = ""
     const content = this.ownerDocument.createElement("div")
-    content.setAttribute("data-mui-statistic-slot", name)
+    content.setAttribute("data-m-statistic-slot", name)
     area.append(text, content)
     return { area, text, content }
   }
 
   private destination(node: Element): RegionName | undefined {
-    return names.find((name) => node.hasAttribute(`data-mui-statistic-${name}`))
+    return names.find((name) =>
+      node.hasAttribute(`data-m-statistic-${name}`) ||
+      node.getAttribute("data-part") === name ||
+      node.getAttribute("slot") === name,
+    )
   }
 
   private synchronize(): void {
@@ -79,7 +131,8 @@ export class MuiStatistic extends HTMLElement {
       this.display?.remove()
       this.regions.clear()
       this.display = this.ownerDocument.createElement("div")
-      this.display.dataset.muiStatisticDisplay = ""
+      this.display.dataset.mStatisticDisplay = ""
+      this.display.dataset.mStatisticValue = ""
       for (const name of names) this.regions.set(name, this.createRegion(name))
       this.prepend(this.regions.get("label")!.area, this.display)
       this.display.append(...(["prefix", "value", "suffix"] as const).map((name) => this.regions.get(name)!.area))
@@ -109,7 +162,10 @@ export class MuiStatistic extends HTMLElement {
     }
     if (this.isConnected) this.observer?.observe(this, {
       childList: true, subtree: true, characterData: true, attributes: true,
-      attributeFilter: names.map((name) => `data-mui-statistic-${name}`),
+      attributeFilter: [...names.map((name) => `data-m-statistic-${name}`), "data-part", "slot"],
     })
   }
 }
+
+export { Statistic as MStatistic }
+

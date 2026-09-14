@@ -1,15 +1,15 @@
-import { MuiElement } from "../core/element.js"
+import { MElement } from "../core/element.js"
 import { isSafeUri, sanitizeHtml, type HtmlPolicy } from "../security/index.js"
 
-export class MuiAccordionItem extends MuiElement {
+export class MAccordionItem extends MElement {
   public connectedCallback(): void {
-    if (this.querySelector(":scope > [data-mui-header]") !== null) return
+    if (this.querySelector(":scope > [data-m-header]") !== null) return
     const content = this.ownerDocument.createElement("div")
-    content.dataset.muiContent = ""
+    content.dataset.mContent = ""
     while (this.firstChild !== null) content.append(this.firstChild)
     const button = this.ownerDocument.createElement("button")
     button.type = "button"
-    button.dataset.muiHeader = ""
+    button.dataset.mHeader = ""
     button.textContent = this.getAttribute("title") ?? ""
     const expanded = this.hasAttribute("open")
     content.hidden = !expanded
@@ -23,7 +23,7 @@ export class MuiAccordionItem extends MuiElement {
   }
 }
 
-export class MuiInclude extends MuiElement {
+export class MInclude extends MElement {
   public static get observedAttributes(): string[] { return ["src"] }
   private controller?: AbortController
   public connectedCallback(): void { void this.load() }

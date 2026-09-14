@@ -1,3 +1,5 @@
+import { ViewElement } from "../../core/index.js"
+
 export interface HighlightRange {
   readonly start: number
   readonly end: number
@@ -109,8 +111,8 @@ export function highlightText(
   const document = target.ownerDocument
   const fragment = document.createDocumentFragment()
   const className = options.highlightClass
-    ? `mui-highlight-mark ${options.highlightClass}`
-    : "mui-highlight-mark"
+    ? `m-highlight-mark ${options.highlightClass}`
+    : "m-highlight-mark"
   let cursor = 0
   for (const { start, end } of ranges) {
     if (start > cursor) fragment.append(document.createTextNode(text.slice(cursor, start)))
@@ -124,3 +126,167 @@ export function highlightText(
   target.replaceChildren(fragment)
   return ranges
 }
+
+/**
+ * A text container that highlights occurrences of keywords.
+ * @region {"name":"content","accepts":["phrasing content"],"min":0,"max":null}
+ */
+export class Highlight extends ViewElement {
+  public static readonly tag = "m-highlight"
+  public static get observedAttributes(): string[] {
+    return ["text", "keywords", "case-sensitive"]
+  }
+
+  private upgraded = false
+  private rawText: string | undefined
+  private observer: MutationObserver | undefined
+  private keywordsList: readonly string[] | undefined
+
+  public connectedCallback(): void {
+    if (!this.upgraded) {
+      this.upgraded = true
+      this.upgradeProperties()
+    }
+    this.classList.add("m-highlight")
+    this.dataset.mHighlight = ""
+    this.observer ??= new MutationObserver(() => {
+      if (!this.hasAttribute("text")) {
+        this.rawText = this.textContent ?? ""
+        this.render()
+      }
+    })
+    this.render()
+  }
+
+  public disconnectedCallback(): void {
+    this.observer?.disconnect()
+  }
+
+  public attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
+    if (oldValue === newValue) return
+    if (name === "keywords" && this.keywordsList !== undefined) {
+      if (newValue !== JSON.stringify(this.keywordsList)) {
+        this.keywordsList = undefined
+      }
+    }
+    if (this.isConnected) this.render()
+  }
+
+  public get text(): string {
+    return this.getAttribute("text") ?? ""
+  }
+
+  public set text(value: string) {
+    if (typeof value !== "string") throw new TypeError("Highlight text must be a string.")
+    if (value.length > HIGHLIGHT_LIMITS.textLength) {
+      throw new RangeError("Highlight text exceeds 65536 UTF-16 code units.")
+    }
+    this.setAttribute("text", value)
+  }
+
+  public get keywords(): string | readonly string[] {
+    if (this.keywordsList !== undefined) {
+      return this.keywordsList
+    }
+    const raw = this.getAttribute("keywords")
+    if (raw !== null && raw.startsWith("[") && raw.endsWith("]")) {
+      try {
+        const parsed: unknown = JSON.parse(raw)
+        if (Array.isArray(parsed) && parsed.every(item => typeof item === "string")) {
+          return Object.freeze([...parsed])
+        }
+      } catch {
+        // Fall through
+      }
+    }
+    return this.getAttribute("keywords") ?? ""
+  }
+
+  public set keywords(value: string | readonly string[]) {
+    if (typeof value === "string") {
+      this.keywordsList = undefined
+      this.setAttribute("keywords", value)
+    } else if (Array.isArray(value)) {
+      if (value.length > HIGHLIGHT_LIMITS.patternCount) {
+        throw new RangeError("Highlight supports at most 64 input patterns.")
+      }
+      let chars = 0
+      for (const item of value) {
+        if (typeof item !== "string") throw new TypeError("Each Highlight pattern must be a string.")
+        chars += item.length
+      }
+      if (chars > HIGHLIGHT_LIMITS.patternCharacters) {
+        throw new RangeError("Distinct Highlight patterns exceed 4096 UTF-16 code units.")
+      }
+      this.keywordsList = Object.freeze([...value])
+      this.setAttribute("keywords", JSON.stringify(value))
+    } else {
+      throw new TypeError("Highlight keywords must be a string or array of strings.")
+    }
+  }
+
+  public get caseSensitive(): boolean {
+    return this.hasAttribute("case-sensitive")
+  }
+
+  public set caseSensitive(value: boolean) {
+    this.setBooleanAttribute("case-sensitive", value)
+  }
+
+  private render(): void {
+    if (!this.isConnected) return
+    this.observer?.disconnect()
+
+    const text = this.hasAttribute("text")
+      ? (this.getAttribute("text") ?? "")
+      : (this.rawText ??= this.textContent ?? "")
+
+    let patterns: readonly string[] = []
+    if (this.keywordsList !== undefined) {
+      patterns = this.keywordsList
+    } else {
+      const raw = this.getAttribute("keywords") ?? ""
+      if (raw.startsWith("[") && raw.endsWith("]")) {
+        try {
+          const parsed: unknown = JSON.parse(raw)
+          if (Array.isArray(parsed) && parsed.every(item => typeof item === "string")) {
+            patterns = parsed
+          }
+        } catch {
+          // Fall through
+        }
+      }
+      if (patterns.length === 0 && raw) {
+        if (raw.includes("\n")) {
+          patterns = raw.split(/\r?\n/).filter(line => line.length > 0)
+        } else if (raw.includes(",")) {
+          patterns = raw.split(",").map(part => part.trim()).filter(part => part.length > 0)
+        } else {
+          patterns = [raw]
+        }
+      }
+    }
+
+    const ranges = findHighlightRanges(text, patterns, { caseSensitive: this.caseSensitive })
+    const document = this.ownerDocument
+    const fragment = document.createDocumentFragment()
+    let cursor = 0
+    for (const { start, end } of ranges) {
+      if (start > cursor) fragment.append(document.createTextNode(text.slice(cursor, start)))
+      const mark = document.createElementNS("http://www.w3.org/1999/xhtml", "mark")
+      mark.className = "m-highlight-mark"
+      mark.append(document.createTextNode(text.slice(start, end)))
+      fragment.append(mark)
+      cursor = end
+    }
+    if (cursor < text.length) fragment.append(document.createTextNode(text.slice(cursor)))
+    this.replaceChildren(fragment)
+
+    if (!this.hasAttribute("text")) {
+      this.observer?.observe(this, { childList: true, characterData: true, subtree: true })
+    }
+  }
+}
+
+export const MHighlight = Highlight
+

@@ -63,7 +63,7 @@ export function createNativeDialog(dialog: HTMLDialogElement, options: NativeDia
     pointer = null
     if (backdropTimer !== null) view!.clearTimeout(backdropTimer)
     backdropTimer = null
-    dialog.dispatchEvent(new view!.CustomEvent("mui:native-dialog-session"))
+    dialog.dispatchEvent(new view!.CustomEvent("m:native-dialog-session"))
     return token
   }
   function observe() {
@@ -179,7 +179,7 @@ export function createNativeDialog(dialog: HTMLDialogElement, options: NativeDia
       for (const remove of listeners) remove()
       state.restore()
       delete ownedDialog[ownerKey]
-      dialog.dispatchEvent(new view!.CustomEvent("mui:native-dialog-dispose"))
+      dialog.dispatchEvent(new view!.CustomEvent("m:native-dialog-dispose"))
     },
   }
   validate()
@@ -213,7 +213,7 @@ export function createNativeDialog(dialog: HTMLDialogElement, options: NativeDia
           reconcile()
           if (generation !== clickedGeneration || !connected || mode !== "modal"
             || e.defaultPrevented || down.event.defaultPrevented) return
-          const request = new view!.CustomEvent("mui:native-dialog-backdrop", { cancelable: true, detail: { event: e } })
+          const request = new view!.CustomEvent("m:native-dialog-backdrop", { cancelable: true, detail: { event: e } })
           if (dialog.dispatchEvent(request)) controller.requestClose()
         }, 0)
       }

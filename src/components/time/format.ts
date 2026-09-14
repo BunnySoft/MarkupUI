@@ -6,15 +6,15 @@ export type TimeDateOptions = Pick<Intl.DateTimeFormatOptions,
   "dateStyle" | "timeStyle" | "weekday" | "era" | "year" | "month" | "day" | "hour" | "minute" | "second"
   | "fractionalSecondDigits" | "hourCycle" | "hour12" | "timeZoneName">
 export interface TimeFormatOptions {
-  type?: TimeType
-  unit?: TimeUnit
-  locale?: string
-  timeZone?: string
-  to?: TimeInput
-  relativeUnit?: RelativeUnit | "auto"
-  numeric?: "always" | "auto"
-  relativeStyle?: "long" | "short" | "narrow"
-  dateTime?: TimeDateOptions
+  type?: TimeType | undefined
+  unit?: TimeUnit | undefined
+  locale?: string | undefined
+  timeZone?: string | undefined
+  to?: TimeInput | undefined
+  relativeUnit?: RelativeUnit | "auto" | undefined
+  numeric?: "always" | "auto" | undefined
+  relativeStyle?: "long" | "short" | "narrow" | undefined
+  dateTime?: TimeDateOptions | undefined
 }
 export interface FormattedTime {
   readonly text: string

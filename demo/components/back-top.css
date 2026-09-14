@@ -9,6 +9,6 @@ header, footer { background: #e9eff8; }
 form { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; margin-block: 1rem; }
 button, input { font: inherit; }
 output { display: block; min-block-size: 2rem; }
-.page-button { --mui-back-top-block-end: 6.5rem; }
-@media (max-width: 30rem) { .mui-back-top--fixed { --mui-back-top-inline-end: .8rem; } }
+.page-button { --m-back-top-block-end: 6.5rem; }
+@media (max-width: 30rem) { .m-back-top--fixed { --m-back-top-inline-end: .8rem; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }

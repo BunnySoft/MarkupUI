@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" data-mui-theme="light">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Card parity demos</title>
+  <title>Card - MarkupUI</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
@@ -12,20 +12,37 @@
   <link rel="stylesheet" href="../../dist/markup-ui-tabs.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
   <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./card.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-card.global.js"></script>
   <script defer src="../../dist/markup-ui-switch.global.js"></script>
   <script defer src="../../dist/markup-ui-tabs.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
-  <script defer src="./card.js"></script>
+  <script type="module" src="./card.js"></script>
   <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main data-demo-page>
+  <main data-demo-page class="component-docs">
     <h1>Card</h1>
-    <p>MarkupUI equivalents of the thirteen Card demos from pinned Naive UI 2.45.3,
-      in the same order and with equivalent labels, data and interactions.</p>
+    <p>A light-DOM surface with named regions, optional separators and native close intent.</p>
+    <nav class="component-docs-nav" aria-label="Card documentation">
+      <a href="#basic-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+      <a href="#behavior">Behavior and accessibility</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-card.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-card.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
 
     <section data-demo-example="basic" aria-labelledby="basic-heading">
       <header data-demo-header>
@@ -35,7 +52,7 @@
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-card class="narrow-card" title="Card">Card Content</mui-card>
+        <m-card class="narrow-card" title="Card">Card Content</m-card>
       </div>
     </section>
 
@@ -43,15 +60,15 @@
       <header data-demo-header>
         <div>
           <h2 id="size-heading">Size</h2>
-          <p>Card has <code class="mui-code">small</code>, <code class="mui-code">medium</code>,
-            <code class="mui-code">large</code>, <code class="mui-code">huge</code> sizes.</p>
+          <p>Card has <code class="m-code">small</code>, <code class="m-code">medium</code>,
+            <code class="m-code">large</code>, <code class="m-code">huge</code> sizes.</p>
         </div>
       </header>
       <div class="demo-preview vertical" data-demo-preview>
-        <mui-card title="Small Card" size="small">Card Content</mui-card>
-        <mui-card title="Medium Card" size="medium">Card Content</mui-card>
-        <mui-card title="Large Card" size="large">Card Content</mui-card>
-        <mui-card title="Huge Card" size="huge">Card Content</mui-card>
+        <m-card title="Small Card" size="small">Card Content</m-card>
+        <m-card title="Medium Card" size="medium">Card Content</m-card>
+        <m-card title="Large Card" size="large">Card Content</m-card>
+        <m-card title="Huge Card" size="huge">Card Content</m-card>
       </div>
     </section>
 
@@ -63,12 +80,12 @@
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-card class="narrow-card" title="Card with Cover">
-          <div data-mui-card-cover>
+        <m-card class="narrow-card" title="Card with Cover">
+          <m-card-cover>
             <img src="./card-cover.svg" alt="Abstract blue and green portrait illustration" width="600" height="400">
-          </div>
-          <div data-mui-card-content>Card Content</div>
-        </mui-card>
+          </m-card-cover>
+          <m-card-content>Card Content</m-card-content>
+        </m-card>
       </div>
     </section>
 
@@ -79,7 +96,7 @@
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-card class="narrow-card" title="Card" hoverable>Card Content</mui-card>
+        <m-card class="narrow-card" title="Card" hoverable>Card Content</m-card>
       </div>
     </section>
 
@@ -87,19 +104,19 @@
       <header data-demo-header>
         <div>
           <h2 id="slots-heading">Slots</h2>
-          <p>MarkupUI maps the Card slots to authored light-DOM parts.</p>
+          <p>Use canonical <code>m-card-*</code> elements for authored light-DOM regions.</p>
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-card>
-          <header data-mui-card-header>
-            <h3>Card Slots Demo</h3>
-            <span data-mui-card-header-extra>#header-extra</span>
-          </header>
-          <div data-mui-card-content>Card Content</div>
-          <footer data-mui-card-footer>#footer</footer>
-          <div data-mui-card-action>#action</div>
-        </mui-card>
+        <m-card>
+          <m-card-header>
+            <m-h3>Card Slots Demo</m-h3>
+            <m-card-header-extra>#header-extra</m-card-header-extra>
+          </m-card-header>
+          <m-card-content>Card Content</m-card-content>
+          <m-card-footer>#footer</m-card-footer>
+          <m-card-action>#action</m-card-action>
+        </m-card>
       </div>
     </section>
 
@@ -111,7 +128,7 @@
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-card bordered="false" title="Borderless Card">Card Content</mui-card>
+        <m-card bordered="false" title="Borderless Card">Card Content</m-card>
       </div>
     </section>
 
@@ -119,21 +136,21 @@
       <header data-demo-header>
         <div>
           <h2 id="segment-heading">Segmented</h2>
-          <p><code class="mui-code">content</code>, <code class="mui-code">footer</code> can be segmented
-            or <code class="mui-code">soft</code> segmented. <code class="mui-code">action</code> can be
+          <p><code class="m-code">content</code>, <code class="m-code">footer</code> can be segmented
+            or <code class="m-code">soft</code> segmented. <code class="m-code">action</code> can be
             segmented. Segment border will appear at the top of segmented parts.</p>
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-card segmented-content segmented-footer="soft">
-          <header data-mui-card-header>
-            <h3>Card Segmented Demo</h3>
-            <span data-mui-card-header-extra>#header-extra</span>
-          </header>
-          <div data-mui-card-content>Card Content</div>
-          <footer data-mui-card-footer>#footer</footer>
-          <div data-mui-card-action>#action</div>
-        </mui-card>
+        <m-card segmented-content segmented-footer="soft">
+          <m-card-header>
+            <m-h3>Card Segmented Demo</m-h3>
+            <m-card-header-extra>#header-extra</m-card-header-extra>
+          </m-card-header>
+          <m-card-content>Card Content</m-card-content>
+          <m-card-footer>#footer</m-card-footer>
+          <m-card-action>#action</m-card-action>
+        </m-card>
       </div>
     </section>
 
@@ -145,10 +162,10 @@
         </div>
       </header>
       <div class="demo-preview vertical" data-demo-preview>
-        <mui-card id="closable-card" class="narrow-card" title="Card" closable
+        <m-card id="closable-card" class="narrow-card" title="Card" closable
           close-focusable="false" close-label="Close card">
           Card Content
-        </mui-card>
+        </m-card>
         <p id="close-message" class="interaction-message" role="status" aria-live="polite"></p>
       </div>
     </section>
@@ -161,7 +178,7 @@
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-card>No title</mui-card>
+        <m-card>No title</m-card>
       </div>
     </section>
 
@@ -169,14 +186,14 @@
       <header data-demo-header>
         <div>
           <h2 id="content-scrollable-heading">Content Scroll</h2>
-          <p>Enable <code class="mui-code">content-scrollable</code> to keep scrolling inside the content
+          <p>Enable <code class="m-code">content-scrollable</code> to keep scrolling inside the content
             area only. Header and footer stay fixed. It is usually used with a fixed card height.</p>
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-card class="task-card" content-scrollable segmented>
-          <header data-mui-card-header><h3>Task List</h3></header>
-          <div data-mui-card-content tabindex="0" role="region" aria-label="Scrollable task list">
+        <m-card class="task-card" content-scrollable segmented>
+          <m-card-header><m-h3>Task List</m-h3></m-card-header>
+          <m-card-content tabindex="0" role="region" aria-label="Scrollable task list">
             <p>Task 1: only content area scrolls.</p>
             <p>Task 2: only content area scrolls.</p>
             <p>Task 3: only content area scrolls.</p>
@@ -197,9 +214,9 @@
             <p>Task 18: only content area scrolls.</p>
             <p>Task 19: only content area scrolls.</p>
             <p>Task 20: only content area scrolls.</p>
-          </div>
-          <footer data-mui-card-footer>Footer actions stay fixed</footer>
-        </mui-card>
+          </m-card-content>
+          <m-card-footer>Footer actions stay fixed</m-card-footer>
+        </m-card>
       </div>
     </section>
 
@@ -211,35 +228,35 @@
         </div>
       </header>
       <div class="demo-preview vertical" data-demo-preview>
-        <label class="mui-switch" data-switch id="loading-switch">
+        <m-switch id="loading-switch"><label class="m-switch">
           <input data-switch-control id="loading-control" type="checkbox" role="switch" checked
             aria-labelledby="loading-label">
-          <span class="mui-switch__label" id="loading-label">Loading</span>
-        </label>
-        <mui-card id="loading-card" aria-busy="true">
-          <header data-mui-card-header>
+          <span class="m-switch__label" id="loading-label">Loading</span>
+        </label></m-switch>
+        <m-card id="loading-card" aria-busy="true">
+          <m-card-header>
             <span class="skeleton skeleton-heading" data-loading-content aria-label="Loading card title"></span>
             <span data-loaded-content hidden>Lorem Ipsum</span>
-          </header>
-          <div data-mui-card-content>
-            <div class="skeleton-lines" data-loading-content aria-label="Loading card content">
+          </m-card-header>
+          <m-card-content>
+            <m-box class="skeleton-lines" data-loading-content aria-label="Loading card content">
               <span class="skeleton"></span>
               <span class="skeleton"></span>
               <span class="skeleton"></span>
               <span class="skeleton"></span>
               <span class="skeleton"></span>
               <span class="skeleton"></span>
-            </div>
-            <div data-loaded-content hidden>
+            </m-box>
+            <m-box data-loaded-content hidden>
               Lorem ipsum dolor sit amet,<br>
               consectetur adipiscing elit,<br>
               sed do eiusmod tempor incididunt<br>
               ut labore et dolore magna aliqua.<br>
               Ut enim ad minim veniam,<br>
               quis nostrud exercitation ullamco
-            </div>
-          </div>
-        </mui-card>
+            </m-box>
+          </m-card-content>
+        </m-card>
       </div>
     </section>
 
@@ -252,9 +269,9 @@
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-card class="custom-card">
-          <div data-mui-card-content>
-            <div class="mui-tabs custom-tabs" data-tabs data-tabs-type="line" id="custom-tabs">
+        <m-card class="custom-card">
+          <m-card-content>
+            <div class="m-tabs custom-tabs" data-tabs data-tabs-type="line" id="custom-tabs">
               <div data-tabs-bar>
                 <div data-tabs-list aria-label="Lifestyle">
                   <button type="button" id="parklife-tab" data-tabs-tab data-tabs-key="parklife"
@@ -273,8 +290,8 @@
                 <p data-tabs-error role="alert" hidden>Unable to change tab.</p>
               </div>
             </div>
-          </div>
-        </mui-card>
+          </m-card-content>
+        </m-card>
       </div>
     </section>
 
@@ -287,12 +304,67 @@
         </div>
       </header>
       <div class="demo-preview" data-demo-preview>
-        <mui-card class="narrow-card" title="🎸 Rock N' Roll Star" embedded bordered="false">
+        <m-card class="narrow-card" title="🎸 Rock N' Roll Star" embedded bordered="false">
           Tonight I'm a rock 'n' roll star
           <br>
           Tonight I'm a rock 'n' roll star
-        </mui-card>
+        </m-card>
       </div>
+    </section>
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <p>Generated from TypeScript accessors and documentation comments at build time, separately
+        from the runtime. Native HTMLElement properties and methods remain available.</p>
+      <div id="card-api" aria-live="polite"></div>
+    </section>
+    <section id="behavior" aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Behavior and accessibility</h2>
+      <h3>Properties and validation</h3>
+      <p><code>size</code> accepts small, medium, large or huge. Invalid choice or boolean-text
+        attribute values throw on property read; invalid property assignments throw before changing
+        the attribute. Remove an attribute to restore its default. <code>bordered</code> and
+        <code>closeFocusable</code> accept empty/true/false text, defaulting to true.</p>
+      <p><code>closable</code>, <code>hoverable</code>, <code>embedded</code>,
+        <code>segmented</code> and <code>contentScrollable</code> are presence booleans:
+        even the text <code>"false"</code> is present. Assign false or remove the attribute to disable.
+        <code>title</code> is plain text and only supplies a generated header when there is no authored header.
+        <code>closeLabel</code> trims whitespace and falls back to “Close card” when absent or empty.</p>
+      <h3>Region ownership</h3>
+      <p>Author at most one of each region, in cover/header/content/footer/action order.
+        Direct header-extra regions move into the selected header before Close. Existing nested
+        header-extra content stays authored; nested Cards own their own regions.
+        Authored region order is otherwise retained. Duplicate regions are neither merged nor
+        discarded: the first direct header/content receives generated content; use one each.</p>
+      <p>Free-form nodes move, without cloning, into content. A late explicit header/content
+        replaces its generated wrapper and keeps surviving authored nodes and listeners.
+        An explicit header takes precedence over the text title. Templates, scripts and styles are
+        not adopted as content. Reconnection retains authored state and only reinstalls Card's own listeners.</p>
+      <h3>Finite segmentation</h3>
+      <p><code>segmented</code> enables top separators for content, footer and action.
+        Each <code>segmentedContent</code>, <code>segmentedFooter</code> or
+        <code>segmentedAction</code> override accepts null (inherit), "" or "true" (full width),
+        "false" (off), or "soft" (inset). This is a finite attribute contract, not a policy object.
+        CSS follows direct DOM region order and ignores regions with <code>hidden</code>:
+        the first visible region has top spacing but no separator. Use <code>hidden</code>,
+        not arbitrary display rules, to remove a region from separator ordering.</p>
+      <h3>Close intent and semantics</h3>
+      <p>A native <code>button type="button"</code> emits one bubbling, cancelable
+        <code>m:close</code> event with <code>detail.originalEvent</code>. Card never hides or removes
+        itself. Canceling marks the application's intent as vetoed; there is no built-in dismissal
+        to undo. Application listeners should inspect <code>defaultPrevented</code> before dismissal
+        and check <code>event.target</code> when nested Cards bubble events.</p>
+      <pre><code>card.addEventListener("m:close", event =&gt; {
+  if (event.target !== card || event.defaultPrevented) return
+  // Application decides whether and when to dismiss.
+})</code></pre>
+      <p>Native Enter/Space activation, disabled fieldsets and focus behavior remain native.
+        Card adds no landmark, heading level or host tab stop. Supply a meaningful heading,
+        role/name and localized close label as appropriate. Hoverable is visual only.</p>
+      <p>Constrain Card height and set <code>content-scrollable</code> for independent content
+        scrolling. Make authored scroll content keyboard-accessible with a suitable
+        <code>tabindex</code>, role and name, as in the Task List example.
+        Style public <code>m-card-*</code> regions and <code>--m-card-*</code> CSS variables;
+        generated <code>data-part</code>/<code>data-state</code> markers are private and owner-scoped.</p>
     </section>
   </main>
 </body>

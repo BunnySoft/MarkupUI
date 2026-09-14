@@ -1,77 +1,124 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Switch</title>
+  <title>Switch - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-switch.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./switch.css">
-  <script defer src="../../dist/markup-ui-switch.global.js"></script>
-  <script defer src="./switch.js"></script>
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script type="module" src="../../dist/markup-ui-switch.js"></script>
+  <script type="module" src="./switch.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Switch: one native binary control</h1>
-    <p>The native input itself paints the rail and thumb. On/off text is decorative; the accessible setting name stays fixed. Loading cancels native activation without disabling submission or moving focus.</p>
+  <main data-demo-page class="component-docs">
+    <h1>Switch</h1>
+    <p>One binary native checkbox owns the switch role, accessible name, focus and forms. The input itself paints the rail and thumb. Decorative on/off text never replaces the setting name.</p>
+    <details class="component-setup" id="required-files">
+      <summary>Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-switch.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-switch.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
     <form id="settings" method="get" action="switch.html">
-      <p>
-        <label class="mui-switch" data-switch id="alerts-switch">
-          <input data-switch-control id="alerts" type="checkbox" role="switch" name="alerts" value="enabled" checked aria-labelledby="alerts-label" aria-describedby="alerts-help">
-          <span class="mui-switch__label" id="alerts-label">Email alerts</span>
-          <span class="mui-switch__state" aria-hidden="true">
-            <span class="mui-switch__checked-icon">✓</span><span class="mui-switch__on">On</span>
-            <span class="mui-switch__unchecked-icon">×</span><span class="mui-switch__off">Off</span>
-          </span>
-          <span data-switch-loading hidden aria-hidden="true">Working…</span>
-        </label>
-      </p>
-      <p id="alerts-help">Checked submits the string “enabled”. Off submits nothing. No hidden unchecked value. Loading is an explicit local flag, not a network request.</p>
-      <fieldset id="preferences">
-        <legend>Native fieldset</legend>
-        <label class="mui-switch" data-switch id="digest-switch" data-size="small" data-square>
-          <input data-switch-control id="digest" type="checkbox" role="switch" name="digest" value="daily" aria-labelledby="digest-label">
-          <span class="mui-switch__label" id="digest-label">Daily digest with a longer wrapping setting name</span>
-          <span class="mui-switch__state" aria-hidden="true"><span class="mui-switch__icon">✉</span></span>
-          <span data-switch-loading hidden aria-hidden="true">Busy</span>
-        </label>
-      </fieldset>
-      <p>
-        <label class="mui-switch" data-switch id="external-switch" data-size="large">
-          <input data-switch-control id="external-setting" type="checkbox" role="switch" name="external" form="other-settings" value="external-on" checked aria-labelledby="external-label">
-          <span class="mui-switch__label" id="external-label">Externally associated setting</span>
-          <span class="mui-switch__state" aria-hidden="true"><span class="mui-switch__on">Enabled</span><span class="mui-switch__off">Disabled</span></span>
-        </label>
-      </p>
-      <p>
-        <label class="mui-switch" data-switch id="required-switch" data-status="warning">
-          <input data-switch-control id="required-setting" type="checkbox" role="switch" name="consent" value="yes" required aria-labelledby="required-label">
-          <span class="mui-switch__label" id="required-label">Required local consent (native constraint)</span>
-        </label>
-      </p>
-      <p>
-        <label class="mui-switch">
-          <input id="author-disabled" type="checkbox" role="switch" name="disabled-example" value="omitted" disabled checked aria-labelledby="disabled-label">
-          <span class="mui-switch__label" id="disabled-label">Author-disabled CSS-only switch</span>
-        </label>
-      </p>
-      <input type="hidden" name="local" value="only">
-      <p><button type="submit">Inspect native submission / local GET fallback</button> <button type="reset">Native reset</button></p>
+      <section data-demo-example="native" aria-labelledby="native-title">
+        <header data-demo-header><div><h2 id="native-title">Native state, labels and loading</h2><p>Click the setting label or focus its input and press Space. Accepted activation emits native input then change, once each. Loading cancels activation without disabling submission or moving focus.</p></div></header>
+        <div data-demo-preview>
+          <m-switch id="alerts-switch"><label class="m-switch">
+            <input id="alerts" type="checkbox" role="switch" name="alerts" value="enabled" checked aria-labelledby="alerts-label" aria-describedby="alerts-help">
+            <span class="m-switch__label" id="alerts-label">Email alerts</span>
+            <span class="m-switch__state" aria-hidden="true">
+              <span class="m-switch__checked-icon">✓</span><span class="m-switch__on">On</span>
+              <span class="m-switch__unchecked-icon">×</span><span class="m-switch__off">Off</span>
+            </span>
+            <span data-switch-loading hidden aria-hidden="true">Working…</span>
+          </label></m-switch>
+          <m-p id="alerts-help">Checked submits “enabled”; unchecked submits nothing. Loading is an explicit local flag, not a pending network request or asynchronous checked-update guard.</m-p>
+          <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+            <m-button id="busy">Toggle loading</m-button>
+            <m-button id="silent">Silent checked toggle</m-button>
+            <m-button id="default">Change defaultChecked</m-button>
+            <m-button id="token">Change submission string</m-button>
+          </m-box>
+          <m-p id="state">The component API initializes after loading.</m-p>
+          <m-p id="events">Native alerts events: input 0, change 0</m-p>
+        </div>
+      </section>
+      <section data-demo-example="sizes" aria-labelledby="sizes-title">
+        <header data-demo-header><div><h2 id="sizes-title">Sizes, square shape and native disabledness</h2><p>Small 32×18, medium 40×22 and large 48×26 rails retain their native focus and border-box thumb alignment. Disabled fieldsets keep the native first-legend exception.</p></div></header>
+        <div data-demo-preview>
+          <fieldset id="preferences">
+            <legend><m-switch id="legend-switch">First-legend setting</m-switch></legend>
+            <m-switch id="digest-switch" size="small" square><label class="m-switch">
+              <input id="digest" type="checkbox" role="switch" name="digest" value="daily" aria-labelledby="digest-label">
+              <span class="m-switch__label" id="digest-label">Daily digest with a longer wrapping setting name</span>
+              <span class="m-switch__state" aria-hidden="true"><span class="m-switch__icon">✉</span></span>
+              <span data-switch-loading hidden aria-hidden="true">Busy</span>
+            </label></m-switch>
+          </fieldset>
+          <m-switch id="disabled-switch" disabled checked>Author-disabled setting</m-switch>
+          <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+            <m-button id="fieldset">Toggle disabled fieldset</m-button>
+            <m-button id="rtl">Toggle RTL</m-button>
+            <m-button id="theme">Toggle dark theme</m-button>
+          </m-box>
+        </div>
+      </section>
+      <section data-demo-example="forms" aria-labelledby="forms-title">
+        <header data-demo-header><div><h2 id="forms-title">Required, external form and reset</h2><p>checked is a live boolean; defaultChecked is its reset default. value/defaultValue are native submission strings, not booleans. Reset follows actual form ownership and may be canceled. Nothing is sent to a service.</p></div></header>
+        <div data-demo-preview>
+          <m-switch id="external-switch" size="large"><label class="m-switch">
+            <input id="external-setting" type="checkbox" role="switch" name="external" form="other-settings" value="external-on" checked aria-labelledby="external-label">
+            <span class="m-switch__label" id="external-label">Externally associated setting</span>
+            <span class="m-switch__state" aria-hidden="true"><span class="m-switch__on">Enabled</span><span class="m-switch__off">Disabled</span></span>
+          </label></m-switch>
+          <m-switch id="required-switch" status="warning" name="consent" value="yes" required>Required local consent (native constraint)</m-switch>
+          <input type="hidden" name="local" value="only">
+          <m-box class="demo-tools">
+            <button type="submit">Inspect native FormData</button>
+            <button type="reset">Native reset</button>
+            <button type="button" id="cancel">Cancel next reset</button>
+          </m-box>
+          <pre id="submission">No submission yet.</pre>
+        </div>
+      </section>
+      <section data-demo-example="lifecycle" aria-labelledby="lifecycle-title">
+        <header data-demo-header><div><h2 id="lifecycle-title">Late content and reconnect</h2><p>Authored controls, label nodes, native values and listeners survive refresh and reconnect. An authored control may replace a generated one. Disconnected property writes work; reconnect does not replay stale checked attributes.</p></div></header>
+        <div data-demo-preview>
+          <m-switch id="late-switch" name="late">Generated control, surviving label content</m-switch>
+          <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+            <m-button id="adopt">Adopt an authored checkbox</m-button>
+            <m-button id="reconnect">Disconnect, write checked, reconnect</m-button>
+          </m-box>
+          <m-p id="lifecycle-state">No replacement yet.</m-p>
+        </div>
+      </section>
     </form>
     <form id="other-settings"><button type="reset">Reset externally associated setting</button></form>
-    <div class="demo-tools">
-      <button type="button" id="busy">Toggle alerts loading</button>
-      <button type="button" id="silent">Silent setChecked toggle</button>
-      <button type="button" id="default">Change defaultChecked</button>
-      <button type="button" id="token">Change native defaultValue submission string</button>
-      <button type="button" id="fieldset">Toggle disabled fieldset</button>
-      <button type="button" id="cancel">Cancel next reset</button>
-      <button type="button" id="rtl">Toggle RTL</button>
-      <button type="button" id="disconnect">Disconnect helpers</button>
-    </div>
-    <p id="state">No JS: native binary editing, labels and forms still work; loading enhancement is absent.</p>
-    <p id="events">Native alerts events: input 0, change 0</p>
-    <pre id="submission">No submission yet.</pre>
-    <p>There is no mixed switch state. Clear indeterminate before enhancing; refresh reports invalid writes. Checkbox readonly is not a supported state: use disabled or loading.</p>
+    <section aria-labelledby="behavior-title">
+      <h2 id="behavior-title">Behavior, accessibility and dependencies</h2>
+      <p>Switch extends ViewElement and registers only m-switch. It adopts one native checkbox and real native label, generating omitted chrome around surviving text/content. The checkbox alone has role="switch"; the host has neither role nor tab stop. Size defaults to medium, square/loading/disabled/required to false, status to null. Native absence means checked/defaultChecked=false, value="on", defaultValue/name="". Authored defaults, dirty checkedness and actual form ownership take precedence over these absence values.</p>
+      <p>Host checked, value, name, disabled, required, form and naming/description/invalid ARIA attributes forward to the native owner. The checked attribute sets defaultChecked; direct property writes change native state and are silent, including while loading or disabled. The form property is read-only; the form attribute selects an external form. Native input, change and invalid keep their browser targets and flags. click(), focus(), blur(), checkValidity(), reportValidity() and setCustomValidity() delegate to that same owner.</p>
+      <p>loading is a presence flag OR authored aria-busy="true". It leases aria-busy/aria-disabled and optional [data-switch-loading] visibility without changing native disabled, checkedness, defaultChecked or form submission. Reset does not clear explicit loading. Same-value author writes survive cleanup. Disconnect removes owned listeners, queued refresh work and leased busy attributes; reconnect restores the requested loading presentation. error and non-bubbling m:switch-error report invalid binary content; correct it and refresh().</p>
+      <p>There is no mixed Switch state, readonly behavior, checked-update callback, asynchronous guard, promise completion or automatic request cancellation API. Native indeterminate/readonly and host readonly are rejected rather than silently supported. Applications own any asynchronous work and must cancel or ignore stale results after newer writes, reset and disconnect. Completing that work with checked is a silent programmatic write, not a fake user change. Use disabled or loading for the supported activation restrictions.</p>
+      <p>Keep state/icons and loading decorations direct, aria-hidden and noninteractive; use .m-switch__state with .m-switch__on/.m-switch__off and checked/unchecked icon hooks. These CSS regions preserve authored nodes. The stable setting label must not depend on on/off text. Interactive Switch is not permitted inside passive Tooltip, Collapse or Dropdown labels. CheckboxGroup does not own Switch inputs.</p>
+      <p>Optional m-bind retains boolean checked semantics. Explicit m-bind-property="value" binds the native submission string. Binding is not a dependency of Switch. ESM imports only markup-ui-core.js; classic scripts load core then markup-ui-switch.global.js. MarkupUISwitch exposes Switch and registerSwitch, not a controller factory. Do not load both formats in one page. No native-input/native-radio chunk, other component constructor, aggregate or metadata runtime is required.</p>
+      <p>Canonical size/square/status attributes replace archived data-* configuration. The native .m-switch skin and --m-switch-* theme hooks retain light/dark colors, RTL thumb placement and visible dashed loading boundaries. Forced colors and print restore native checkbox painting. There is no animation or transition, including under reduced motion.</p>
+    </section>
+    <section id="switch-api"></section>
   </main>
 </body>
 </html>

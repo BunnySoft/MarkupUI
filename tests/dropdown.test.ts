@@ -1,14 +1,18 @@
 import { readFileSync } from "node:fs"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createDropdown } from "../src/components/dropdown/index.js"
+import { createDropdown } from "../src/components/dropdown/controller.js"
 import { createMenuKeyboard } from "../src/components/dropdown/keyboard.js"
-import type { DropdownController, DropdownOptions } from "../src/components/dropdown/index.js"
+import type { DropdownController, DropdownOptions } from "../src/components/dropdown/controller.js"
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, DropdownGroup, DropdownDivider, registerDropdown } from "../src/components/dropdown/index.js"
+import * as dropdownApi from "../src/components/dropdown/index.js"
+import { ViewElement } from "../src/core/index.js"
+import { createContext, runInContext } from "node:vm"
 
 describe("audited Dropdown styles", () => {
   const css = readFileSync("src/components/dropdown/dropdown.css", "utf8")
 
   it("uses measured menu density without forcing fixed-height or flex-split labels", () => {
-    expect(css).toMatch(/padding:var\(--mui-popover-padding,\s*4px 0\)/)
+    expect(css).toMatch(/padding:var\(--m-popover-padding,\s*4px 0\)/)
     expect(css).toContain("min-height:var(--_dd-h, 34px)")
     expect(css).toContain("--_dd-h: 28px")
     expect(css).toContain("--_dd-h: 40px")
@@ -23,17 +27,20 @@ describe("audited Dropdown styles", () => {
     expect(css).toContain("var(--_dd-alpha, 10%)")
     expect(css).toContain("--_dd-alpha: 15%")
     expect(css).toContain("--_dd-opacity: .38")
-    expect(css).toContain("[data-dropdown-selected]:not(:disabled)")
-    expect(css).toContain("var(--mui-color-primary-suppl, #2a947d)")
+    expect(css).toContain("m-dropdown-item>:is(button,a)[data-state~=selected]:not(:disabled,[aria-disabled=true])")
+    expect(css).toContain("m-dropdown-item>:is(button,a):not(:disabled,[aria-disabled=true]):is(:hover,:focus)")
+    expect(css.indexOf("m-dropdown-item>:is(button,a)[data-state~=selected]"))
+      .toBeGreaterThan(css.indexOf("m-dropdown-item>:is(button,a):not(:disabled,[aria-disabled=true]):is(:hover,:focus)"))
+    expect(css).toContain("var(--m-color-primary-suppl, #2a947d)")
     expect(css).not.toContain("--_dd-line")
   })
 
   it("preserves inherited public overrides and logical label placement", () => {
-    expect(css).not.toMatch(/(?:^|[;{])\s*--mui-(?:dropdown|popover)-[\w-]+\s*:/m)
-    expect(css).toContain("var(--mui-dropdown-item-padding,")
-    expect(css).toContain("var(--mui-dropdown-hover,")
-    expect(css).toContain("var(--mui-dropdown-selected,")
-    expect(css).toContain("[data-dropdown-item]:dir(rtl)")
+    expect(css).not.toMatch(/(?:^|[;{])\s*--m-(?:dropdown|popover)-[\w-]+\s*:/m)
+    expect(css).toContain("var(--m-dropdown-item-padding,")
+    expect(css).toContain("var(--m-dropdown-hover,")
+    expect(css).toContain("var(--m-dropdown-selected,")
+    expect(css).toContain(":is(button,a):dir(rtl)")
     expect(css).toContain("padding-inline:calc(")
     expect(css).toContain("float:inline-end")
   })
@@ -71,7 +78,7 @@ function nodes() {
   trigger.setAttribute("popovertarget", id)
   const menu = document.createElement("ul")
   menu.id = id
-  menu.className = "mui-popover mui-dropdown"
+  menu.className = "m-popover m-dropdown"
   menu.setAttribute("data-dropdown-menu", "")
   menu.setAttribute("popover", "auto")
   menu.setAttribute("aria-label", "Local actions")
@@ -85,7 +92,7 @@ function nodes() {
       <li><button type="button" data-dropdown-item data-dropdown-key="profile">Profile</button></li>
     </ul></li>
     <li><button type="button" data-dropdown-item data-dropdown-key="more" popovertarget="${id}-child">More</button>
-      <ul class="mui-popover mui-dropdown" data-dropdown-menu id="${id}-child" popover="auto" aria-label="More actions">
+      <ul class="m-popover m-dropdown" data-dropdown-menu id="${id}-child" popover="auto" aria-label="More actions">
         <li><button type="button" data-dropdown-item data-dropdown-key="rename">Rename</button></li>
         <li><a href="#destination" data-dropdown-item data-dropdown-key="separate" target="_blank">Separate</a></li>
       </ul>
@@ -107,6 +114,39 @@ function bind(options: DropdownOptions = {}) {
   const controller = createDropdown(pair.trigger, pair.menu, options)
   controllers.push(controller)
   return { ...pair, controller }
+}
+function canonical(options: Partial<Pick<Dropdown, "value" | "disabled" | "placement" | "submenuDelay" | "submenuDuration" | "typeaheadDuration">> = {}, connect = true) {
+  const root = document.createElement("m-dropdown") as Dropdown
+  root.innerHTML = `<m-dropdown-trigger><button type="button">Actions</button></m-dropdown-trigger>
+    <m-dropdown-menu label="Local actions" animated>
+      <m-dropdown-item key="edit"><button type="button">Edit</button></m-dropdown-item>
+      <m-dropdown-item key="disabled" disabled><button type="button">Disabled</button></m-dropdown-item>
+      <m-dropdown-item key="blocked-link" disabled><a href="#blocked-destination">Blocked destination</a></m-dropdown-item>
+      <m-dropdown-item key="preview"><a href="#destination">Preview</a></m-dropdown-item>
+      <m-dropdown-divider></m-dropdown-divider>
+      <m-dropdown-group label="Group">
+        <m-dropdown-item key="print"><button type="button">Print</button></m-dropdown-item>
+        <m-dropdown-item key="profile"><button type="button">Profile</button></m-dropdown-item>
+      </m-dropdown-group>
+      <m-dropdown-item key="more"><button type="button">More <span slot="suffix" aria-hidden="true">›</span></button>
+        <m-dropdown-menu label="More actions">
+          <m-dropdown-item key="rename"><button type="button">Rename</button></m-dropdown-item>
+          <m-dropdown-item key="external"><a href="#destination" target="_blank">External</a></m-dropdown-item>
+        </m-dropdown-menu>
+      </m-dropdown-item>
+    </m-dropdown-menu>`
+  Object.assign(root, options)
+  const trigger = root.querySelector<HTMLButtonElement>("m-dropdown-trigger > button")!
+  const menu = root.querySelector<DropdownMenu>(":scope > m-dropdown-menu")!
+  function measure(element: HTMLElement) {
+    element.getBoundingClientRect = () => rect(200, 250, 250, element.localName === "m-dropdown-menu" ? 220 : 30)
+  }
+  root.querySelectorAll<HTMLElement>("*").forEach(measure)
+  trigger.getBoundingClientRect = () => rect(200, 200, 100, 30)
+  const item = (key: string) => root.querySelector<DropdownItem>(`m-dropdown-item[key="${key}"]`)!
+  const action = (key: string) => item(key).querySelector<HTMLButtonElement | HTMLAnchorElement>(":scope > button,:scope > a")!
+  if (connect) document.body.append(root)
+  return { root, trigger, menu, item, action, measure, child: item("more").querySelector<DropdownMenu>("m-dropdown-menu")! }
 }
 function key(node: HTMLElement, key: string, extra: KeyboardEventInit = {}, type = "keydown") {
   const event = new KeyboardEvent(type, { key, bubbles: true, cancelable: true, ...extra })
@@ -139,6 +179,371 @@ afterEach(() => {
   delete (HTMLElement.prototype as Partial<HTMLElement>).hidePopover
   vi.restoreAllMocks()
   vi.unstubAllGlobals()
+})
+
+describe("direct Dropdown family", () => {
+  it("exports only six own-tag ViewElements and atomic registration", () => {
+    expect(Object.keys(dropdownApi).sort()).toEqual(["Dropdown", "DropdownDivider", "DropdownGroup", "DropdownItem", "DropdownMenu", "DropdownTrigger", "registerDropdown"])
+    for (const type of [Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, DropdownGroup, DropdownDivider]) {
+      expect(ViewElement.prototype.isPrototypeOf(type.prototype)).toBe(true)
+      expect(Object.hasOwn(type, "tag")).toBe(true)
+      expect(customElements.get(type.tag)).toBe(type)
+      expect("meta" in type).toBe(false)
+    }
+    const define = vi.fn()
+    expect(() => registerDropdown({ get: name => name === "m-dropdown" ? class extends HTMLElement {} : undefined, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerDropdown()).not.toThrow()
+  })
+
+  it("validates direct defaults, choices, durations and leaf values before mutation", () => {
+    const detached = document.createElement("m-dropdown") as Dropdown
+    expect(detached.value).toBeNull()
+    expect(detached.disabled).toBe(false)
+    expect(detached.placement).toBe("bottom")
+    expect([detached.submenuDelay, detached.submenuDuration, detached.typeaheadDuration]).toEqual([100, 150, 500])
+    expect(detached.state).toBe("disconnected")
+    for (const property of ["submenuDelay", "submenuDuration", "typeaheadDuration"]) {
+      for (const value of [-1, 60001, NaN, Infinity, "100"]) expect(() => Reflect.set(detached, property, value)).toThrow(RangeError)
+    }
+    expect(() => Reflect.set(detached, "disabled", "false")).toThrow(RangeError)
+    expect(() => Reflect.set(detached, "placement", "diagonal")).toThrow(RangeError)
+    expect(() => Reflect.set(detached, "value", 1)).toThrow(RangeError)
+    const { root } = canonical({ value: "preview" })
+    expect(root.state).toBe("closed")
+    expect(root.value).toBe("preview")
+    expect(() => { root.value = "more" }).toThrow("leaf")
+    expect(() => { root.value = "missing" }).toThrow("leaf")
+    expect(root.value).toBe("preview")
+    root.value = null
+    expect(root.hasAttribute("value")).toBe(false)
+    root.select("edit")
+    expect(root.value).toBe("edit")
+    expect(root.show).toBe(false)
+  })
+
+  it("preserves authored nodes and gives native controls/menu regions the only semantic owners", () => {
+    const { root, trigger, menu, item, action } = canonical({}, false)
+    const original = action("edit"), text = original.firstChild
+    const clicked = vi.fn()
+    original.addEventListener("click", clicked)
+    document.body.append(root)
+    expect(root.state).toBe("closed")
+    expect(action("edit")).toBe(original)
+    expect(original.firstChild).toBe(text)
+    expect(menu.getAttribute("role")).toBe("menu")
+    expect(menu.getAttribute("aria-label")).toBe("Local actions")
+    expect(trigger.getAttribute("popovertarget")).toBe(menu.id)
+    expect(trigger.getAttribute("aria-haspopup")).toBe("menu")
+    expect(item("edit").getAttribute("role")).toBe("none")
+    expect(item("edit").hasAttribute("tabindex")).toBe(false)
+    expect(original.getAttribute("role")).toBe("menuitem")
+    expect(root.querySelector("m-dropdown-group")!.getAttribute("role")).toBe("group")
+    expect(root.querySelector("m-dropdown-divider")!.getAttribute("role")).toBe("separator")
+    expect(root.querySelector("m-dropdown-trigger")!.hasAttribute("tabindex")).toBe(false)
+    root.open()
+    original.click()
+    expect(clicked).toHaveBeenCalledOnce()
+  })
+
+  it("supports arrows, Home/End, typeahead, submenu Escape and native Tab departure", async () => {
+    const { root, trigger, menu, child, action } = canonical()
+    key(trigger, "ArrowDown")
+    expect(root.show).toBe(true)
+    expect(document.activeElement).toBe(action("edit"))
+    key(action("edit"), "ArrowDown")
+    expect(document.activeElement).toBe(action("preview"))
+    key(action("preview"), "p")
+    expect(document.activeElement).toBe(action("print"))
+    key(action("print"), "End")
+    expect(document.activeElement).toBe(action("more"))
+    key(action("more"), "ArrowRight")
+    expect(opened.has(child)).toBe(true)
+    expect(document.activeElement).toBe(action("rename"))
+    key(action("rename"), "Escape")
+    expect(opened.has(child)).toBe(false)
+    expect(opened.has(menu)).toBe(true)
+    expect(document.activeElement).toBe(action("more"))
+    key(action("more"), "Home")
+    expect(document.activeElement).toBe(action("edit"))
+    const outside = document.createElement("button")
+    document.body.append(outside)
+    expect(key(action("edit"), "Tab").defaultPrevented).toBe(false)
+    outside.focus()
+    await flush()
+    expect(root.show).toBe(false)
+    expect(document.activeElement).toBe(outside)
+  })
+
+  it("blocks disabled destinations and authored callbacks without replacing anchors, then restores them", async () => {
+    const { root, item, action } = canonical()
+    const anchor = action("blocked-link") as HTMLAnchorElement
+    const invoked = vi.fn()
+    anchor.addEventListener("click", invoked)
+    expect(anchor.hasAttribute("href")).toBe(false)
+    expect(anchor.getAttribute("aria-disabled")).toBe("true")
+    anchor.click()
+    expect(invoked).not.toHaveBeenCalled()
+    root.value = "blocked-link"
+    expect(item("blocked-link").selected).toBe(true)
+    item("blocked-link").disabled = false
+    expect(anchor.getAttribute("href")).toBe("#blocked-destination")
+    await flush()
+    root.open()
+    anchor.click()
+    await flush()
+    expect(invoked).toHaveBeenCalledOnce()
+    expect(root.value).toBe("blocked-link")
+    expect(action("blocked-link")).toBe(anchor)
+  })
+
+  it("reflects accepted selection after native actions and closure, without stale attribute replay", async () => {
+    const { root, action, item } = canonical({ value: "preview" })
+    const order: string[] = []
+    action("edit").addEventListener("click", () => order.push("native"))
+    root.addEventListener("m:selection-requested", event => {
+      const selected = event as CustomEvent
+      order.push("selection")
+      expect(root.show).toBe(false)
+      expect(root.value).toBe("edit")
+      expect(selected.detail).toMatchObject({ key: "edit", item: item("edit"), path: ["edit"], source: "native" })
+      expect(selected.bubbles).toBe(true)
+      expect(selected.cancelable || selected.composed).toBe(false)
+      expect(Object.isFrozen(selected.detail.path)).toBe(true)
+    })
+    root.open()
+    action("edit").click()
+    expect(order).toEqual(["native"])
+    await flush()
+    expect(order).toEqual(["native", "selection"])
+    expect(root.getAttribute("value")).toBe("edit")
+    root.submenuDelay = 10
+    root.typeaheadDuration = 200
+    root.placement = "top-end"
+    expect(root.value).toBe("edit")
+    root.value = "preview"
+    expect(order).toHaveLength(2)
+  })
+
+  it("honors late canceled/modified/native external-link activations", async () => {
+    const { root, action } = canonical()
+    const selected = vi.fn()
+    root.addEventListener("m:selection-requested", selected)
+    root.open()
+    root.addEventListener("click", event => event.preventDefault(), { once: true })
+    action("edit").click()
+    await flush()
+    expect(root.show).toBe(true)
+    expect(root.value).toBeNull()
+    action("preview").dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, ctrlKey: true }))
+    action("external").dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }))
+    await flush()
+    expect(selected).not.toHaveBeenCalled()
+  })
+
+  it("reports actual root opening and disabled closure with explicit reasons", () => {
+    const { root, trigger } = canonical()
+    const changed = vi.fn()
+    root.addEventListener("m:open-changed", changed)
+    expect(root.open()).toBe(true)
+    expect(changed.mock.calls[0]![0].detail).toEqual({ show: true, reason: "api" })
+    root.disabled = true
+    expect(root.state).toBe("disabled")
+    expect(root.show).toBe(false)
+    expect(trigger.disabled).toBe(true)
+    expect(changed.mock.calls.at(-1)![0].detail).toEqual({ show: false, reason: "disabled" })
+    expect(root.open()).toBe(false)
+    root.disabled = false
+    expect(trigger.disabled).toBe(false)
+    expect(root.show).toBe(false)
+  })
+
+  it("revalidates late nodes, retains keyed value and native controls, and clears removed selections", async () => {
+    const { root, menu, action, item, measure } = canonical({ value: "preview" })
+    const original = action("preview")
+    root.open()
+    const added = document.createElement("m-dropdown-item") as DropdownItem
+    added.key = "late"
+    menu.append(added)
+    await flush()
+    expect(root.state).toBe("pending")
+    menu.showPopover()
+    expect(opened.has(menu)).toBe(false)
+    added.innerHTML = "<button type=button>Late action</button>"
+    added.querySelectorAll<HTMLElement>("*").forEach(measure)
+    await flush()
+    expect(root.state).toBe("closed")
+    expect(root.value).toBe("preview")
+    expect(action("preview")).toBe(original)
+    item("preview").remove()
+    await flush()
+    expect(root.value).toBeNull()
+    root.open()
+    added.querySelector("button")!.click()
+    await flush()
+    expect(root.value).toBe("late")
+  })
+
+  it("recovers focus after content refresh without overwriting closing-listener focus", async () => {
+    const { root, trigger, item, action } = canonical()
+    root.open()
+    action("preview").focus()
+    item("preview").hidden = true
+    await flush()
+    expect(root.show).toBe(false)
+    expect(document.activeElement).toBe(trigger)
+    const outside = document.createElement("button")
+    document.body.append(outside)
+    root.querySelector("m-dropdown-menu")!.addEventListener("beforetoggle", event => {
+      if ((event as ToggleEvent).newState === "closed") outside.focus()
+    })
+    root.open()
+    root.refresh()
+    expect(document.activeElement).toBe(outside)
+  })
+
+  it("cleans up and reconnects without duplicate controls or stale selection callbacks", async () => {
+    const { root, trigger, menu, action } = canonical({ value: "preview" })
+    const original = action("edit")
+    const selected = vi.fn()
+    root.addEventListener("m:selection-requested", selected)
+    root.open()
+    original.click()
+    root.remove()
+    await flush()
+    expect(root.state).toBe("disconnected")
+    expect(trigger.hasAttribute("popovertarget")).toBe(false)
+    expect(menu.hasAttribute("role")).toBe(false)
+    expect(selected).not.toHaveBeenCalled()
+    document.body.append(root)
+    expect(root.value).toBe("preview")
+    expect(action("edit")).toBe(original)
+    root.open()
+    original.click()
+    await flush()
+    expect(selected).toHaveBeenCalledOnce()
+    expect(root.querySelectorAll("m-dropdown-trigger > button")).toHaveLength(1)
+  })
+
+  it("recovers focus after native disabling already blurred an action", async () => {
+    const { root, trigger, action } = canonical()
+    vi.spyOn(document, "hasFocus").mockReturnValue(true)
+    root.open()
+    ;(action("edit") as HTMLButtonElement).disabled = true
+    action("edit").blur()
+    await flush()
+    expect(root.show).toBe(false)
+    expect(document.activeElement).toBe(trigger)
+  })
+
+  it("defers reentrant refresh during native opening without stale active state", async () => {
+    const { root, menu, action } = canonical()
+    menu.addEventListener("beforetoggle", event => {
+      if ((event as ToggleEvent).newState === "open") root.refresh()
+    }, { once: true })
+    expect(root.open()).toBe(false)
+    await flush()
+    expect(root.state).toBe("closed")
+    expect(root.open()).toBe(true)
+    expect(document.activeElement).toBe(action("edit"))
+  })
+
+  it("preserves inline native fallback while still blocking disabled destinations and root commands", async () => {
+    delete (HTMLElement.prototype as Partial<HTMLElement>).showPopover
+    const { root, menu, action } = canonical()
+    expect(root.state).toBe("inline")
+    expect(root.open()).toBe(false)
+    expect(menu.hasAttribute("role") || menu.hasAttribute("popover")).toBe(false)
+    expect(action("preview").getAttribute("href")).toBe("#destination")
+    const invoked = vi.fn()
+    action("edit").addEventListener("click", invoked)
+    root.disabled = true
+    action("edit").click()
+    await flush()
+    expect(invoked).not.toHaveBeenCalled()
+    expect(root.value).toBeNull()
+  })
+
+  it("rejects duplicate keys, arbitrary widgets and invalid native controls with visible error state", async () => {
+    const { root, trigger, action, item } = canonical()
+    const errors = vi.fn()
+    root.addEventListener("m:error", errors)
+    expect(() => { item("edit").key = "preview" }).toThrow("unique")
+    item("edit").setAttribute("key", "preview")
+    expect(() => root.refresh()).toThrow("unique")
+    root.querySelector("m-dropdown-item")!.setAttribute("key", "edit")
+    root.refresh()
+    trigger.type = "submit"
+    expect(() => root.refresh()).toThrow("type=button")
+    trigger.type = "button"
+    root.refresh()
+    action("edit").setAttribute("type", "submit")
+    await flush()
+    expect(root.state).toBe("invalid")
+    expect(errors).toHaveBeenCalled()
+    action("edit").setAttribute("type", "button")
+    await flush()
+    expect(root.state).toBe("closed")
+    action("edit").innerHTML = "<x-interactive>Bad</x-interactive>"
+    expect(() => root.refresh()).toThrow("widgets")
+    expect(root.state).toBe("invalid")
+  })
+
+  it("upgrades own properties before native binding and preserves independent tree ownership", async () => {
+    const first = canonical({}, false)
+    Object.defineProperty(first.root, "value", { configurable: true, value: "preview" })
+    Object.defineProperty(first.root, "submenuDelay", { configurable: true, value: 12 })
+    document.body.append(first.root)
+    await flush()
+    expect(first.root.value).toBe("preview")
+    expect(first.root.submenuDelay).toBe(12)
+    expect(Object.hasOwn(first.root, "value")).toBe(false)
+    const second = canonical()
+    first.root.open()
+    second.root.open()
+    first.root.remove()
+    expect(second.root.show).toBe(true)
+    expect(second.action("edit").getAttribute("role")).toBe("menuitem")
+  })
+})
+
+describe("Dropdown shared-core distribution", () => {
+  it("requires core, registers only its own family and keeps exact base identity", () => {
+    const script = readFileSync("dist\\markup-ui-dropdown.global.js", "utf8")
+    const define = vi.fn()
+    expect(() => runInContext(script, createContext({ HTMLElement, customElements: { get: vi.fn(), define } }))).toThrow("Load compatible markup-ui-core.global.js")
+    expect(define).not.toHaveBeenCalled()
+    const entries = new Map<string, unknown>()
+    const context = createContext({ HTMLElement, customElements: {
+      get: (name: string) => entries.get(name), define: (name: string, constructor: unknown) => entries.set(name, constructor),
+    } })
+    runInContext(readFileSync("dist\\markup-ui-core.global.js", "utf8"), context)
+    runInContext(script, context)
+    expect([...entries.keys()]).toEqual(["m-dropdown-trigger", "m-dropdown-menu", "m-dropdown-item", "m-dropdown-group", "m-dropdown-divider", "m-dropdown"])
+    expect(runInContext("Object.keys(MarkupUIDropdown).sort()", context)).toEqual(Object.keys(dropdownApi).sort())
+    expect(runInContext("Object.values(MarkupUIDropdown).filter(value => Object.hasOwn(value, 'tag')).every(type => MarkupUICore.ViewElement.prototype.isPrototypeOf(type.prototype))", context)).toBe(true)
+    expect(() => runInContext(script, context)).toThrow("already defined")
+    expect(readFileSync("dist\\markup-ui-dropdown.js", "utf8")).toContain("./markup-ui-core.js")
+    for (const name of ["m-avatar", "m-card", "m-carousel", "m-collapse", "m-divider"]) expect(script).not.toContain(`"${name}"`)
+    const build = readFileSync("scripts\\build.mjs", "utf8")
+    expect(build).toContain('["dropdown", 14_000]')
+    expect(build).toContain('"markup-ui-dropdown.js": 13_000')
+    expect(build).toContain('"markup-ui-dropdown.global.js": 13_000')
+    expect(build).toContain('"markup-ui-dropdown.css": 1_850')
+    const manifest = JSON.parse(readFileSync("dist\\manifest.json", "utf8"))
+    const cssBytes = manifest.bundles["markup-ui-dropdown.css"].gzipBytes
+    expect(cssBytes).toBeLessThanOrEqual(1_850)
+    for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
+      const payload = manifest.componentPayloads.dropdown[mode]
+      const core = `markup-ui-core${suffix}`
+      expect(payload.gzipBytes).toBeLessThanOrEqual(13_000)
+      expect(payload.dependencies).toEqual([core])
+      expect(payload.runtimeBudget).toBe(14_000)
+      expect(payload.runtimeGzipBytes).toBe(payload.gzipBytes + manifest.bundles[core].gzipBytes)
+      expect(payload.runtimeGzipBytes).toBeLessThanOrEqual(14_000)
+      expect(payload.totalGzipBytes).toBe(payload.runtimeGzipBytes + cssBytes)
+    }
+  })
 })
 
 describe("authored menu semantics and validation", () => {
@@ -179,7 +584,7 @@ describe("authored menu semantics and validation", () => {
   it("uses string leaf values silently and never creates aria-selected/checked on command menuitems", () => {
     const { menu, edit, controller } = bind({ value: "preview" })
     const selected = vi.fn()
-    menu.addEventListener("mui:dropdown-select", selected)
+    menu.addEventListener("m:dropdown-select", selected)
     expect(controller.value).toBe("preview")
     controller.value = "edit"
     expect(edit.hasAttribute("data-dropdown-selected")).toBe(true)
@@ -210,6 +615,8 @@ describe("authored menu semantics and validation", () => {
     "<input>", "<label for='outside'>Forward action</label>", "<button type='button'>Nested action</button>",
     "<span role='button'>Fake action</span>", "<span tabindex='0'>Focus target</span>",
     "<span contenteditable>Editor</span>", "<x-widget></x-widget>", "<svg><a href='#'>SVG link</a></svg>",
+    "<m-checkbox>Interactive checkbox</m-checkbox>",
+    "<m-radio>Radio</m-radio>", "<m-radio-button>RadioButton</m-radio-button>", "<m-radio-group>Group</m-radio-group>", "<m-select>Select</m-select>",
   ])("rejects interactive/custom menuitem descendants %s", markup => {
     const { trigger, menu, edit } = nodes()
     edit.innerHTML = `Edit ${markup}`
@@ -308,7 +715,7 @@ describe("complete retained scoped menu keyboard behavior", () => {
     const selections = vi.fn()
     edit.addEventListener("click", editClick)
     preview.addEventListener("click", linkClick)
-    menu.addEventListener("mui:dropdown-select", selections)
+    menu.addEventListener("m:dropdown-select", selections)
     controller.open()
     key(edit, "Enter")
     key(edit, " ")
@@ -419,7 +826,7 @@ describe("native selection, submenu intent and lifetime", () => {
   it("notifies only accepted leaf actions with string key, DOM item and owned key path", async () => {
     const { more, item, menu, controller } = bind()
     const selections: unknown[] = []
-    menu.addEventListener("mui:dropdown-select", event => selections.push((event as CustomEvent).detail))
+    menu.addEventListener("m:dropdown-select", event => selections.push((event as CustomEvent).detail))
     controller.open()
     more.focus()
     key(more, "ArrowRight")
@@ -433,7 +840,7 @@ describe("native selection, submenu intent and lifetime", () => {
   it("honors late defaultPrevented and ignores modified/download/external-target selection without blocking navigation", async () => {
     const { edit, preview, item, menu, controller } = bind()
     const select = vi.fn()
-    menu.addEventListener("mui:dropdown-select", select)
+    menu.addEventListener("m:dropdown-select", select)
     controller.open()
     edit.addEventListener("click", event => event.preventDefault())
     edit.click()
@@ -484,7 +891,7 @@ describe("native selection, submenu intent and lifetime", () => {
     const pair = nodes()
     const li = document.createElement("li")
     li.innerHTML = `<button type="button" data-dropdown-item data-dropdown-key="peer" popovertarget="${pair.menu.id}-peer">Peer</button>
-      <ul class="mui-popover mui-dropdown" data-dropdown-menu popover="auto" aria-label="Peer menu" id="${pair.menu.id}-peer">
+      <ul class="m-popover m-dropdown" data-dropdown-menu popover="auto" aria-label="Peer menu" id="${pair.menu.id}-peer">
         <li><button type="button" data-dropdown-item data-dropdown-key="peer-leaf">Peer leaf</button></li></ul>`
     pair.menu.append(li)
     for (const element of li.querySelectorAll<HTMLElement>("*")) element.getBoundingClientRect = () => rect(300, 250, 100, 60)
@@ -502,7 +909,7 @@ describe("native selection, submenu intent and lifetime", () => {
   it("cancels pending pointer openings, selection tasks and typeahead on hide/disconnect/rebind", async () => {
     const { more, child, edit, menu, controller } = bind({ submenuDelay: 20 })
     const select = vi.fn()
-    menu.addEventListener("mui:dropdown-select", select)
+    menu.addEventListener("m:dropdown-select", select)
     controller.open()
     pointer(more, "pointerenter")
     edit.click()
@@ -561,7 +968,7 @@ describe("native selection, submenu intent and lifetime", () => {
   it("rejects invalid dynamic items with an explicit error and no partial active tree", async () => {
     const { menu, edit, controller } = bind()
     const errors = vi.fn()
-    menu.addEventListener("mui:dropdown-error", errors)
+    menu.addEventListener("m:dropdown-error", errors)
     controller.open()
     edit.type = "submit"
     await flush()
@@ -599,7 +1006,7 @@ describe("native selection, submenu intent and lifetime", () => {
   it("does not notify selection after a closing callback disconnects the binding", async () => {
     const { menu, edit, controller } = bind()
     const selected = vi.fn()
-    menu.addEventListener("mui:dropdown-select", selected)
+    menu.addEventListener("m:dropdown-select", selected)
     menu.addEventListener("beforetoggle", event => {
       if ((event as ToggleEvent).newState === "closed") controller.disconnect()
     })
@@ -655,7 +1062,7 @@ describe("native list fallback and distribution", () => {
     const pkg = JSON.parse(readFileSync("package.json", "utf8"))
     expect(pkg.exports["./dropdown"].import).toBe("./dist/markup-ui-dropdown.js")
     expect(readFileSync("scripts/build.mjs", "utf8")).toContain('name === "dropdown"')
-    const source = readFileSync("src/components/dropdown/dropdown.ts", "utf8")
+    const source = readFileSync("src\\components\\dropdown\\controller.ts", "utf8")
     const keyboard = readFileSync("src/components/dropdown/keyboard.ts", "utf8")
     const css = readFileSync("src/components/dropdown/dropdown.css", "utf8")
     expect(source).toContain("createPopover")

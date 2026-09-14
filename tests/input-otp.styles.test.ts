@@ -16,29 +16,29 @@ const selector = (rule: CSSStyleRule) => compact(rule.selectorText ?? "")
 describe("Input OTP single-field default styles", () => {
   it("matches source field heights and font sizes without overwriting public size tokens", () => {
     withRules(rules => {
-      const base = rules.find(rule => selector(rule) === ".mui-input-otp")!
-      expect(compact(base.style.getPropertyValue("block-size"))).toBe("var(--mui-input-otp-height,var(--_mui-otp-height,34px))")
-      expect(compact(base.style.getPropertyValue("font"))).toContain("var(--_mui-otp-font,14px)")
+      const base = rules.find(rule => selector(rule) === ".m-input-otp")!
+      expect(compact(base.style.getPropertyValue("block-size"))).toBe("var(--m-input-otp-height,var(--_m-otp-height,34px))")
+      expect(compact(base.style.getPropertyValue("font"))).toContain("var(--_m-otp-font,14px)")
       for (const [size, height] of [["small", "28px"], ["large", "40px"]]) {
-        const rule = rules.find(rule => selector(rule) === `.mui-input-otp[data-size=${size}]`)!
-        expect(rule.style.getPropertyValue("--_mui-otp-height")).toBe(height)
-        expect(rule.style.getPropertyValue("--mui-input-otp-height")).toBe("")
+        const rule = rules.find(rule => selector(rule) === `.m-input-otp[data-size=${size}]`)!
+        expect(rule.style.getPropertyValue("--_m-otp-height")).toBe(height)
+        expect(rule.style.getPropertyValue("--m-input-otp-height")).toBe("")
       }
-      expect(rules.find(rule => selector(rule) === ".mui-input-otp[data-size=large]")!
-        .style.getPropertyValue("--_mui-otp-font")).toBe("15px")
+      expect(rules.find(rule => selector(rule) === ".m-input-otp[data-size=large]")!
+        .style.getPropertyValue("--_m-otp-font")).toBe("15px")
     })
   })
 
   it("includes the authored character gap in width while preserving native LTR text and block sizing", () => {
     withRules(rules => {
-      const base = rules.find(rule => selector(rule) === ".mui-input-otp")!
+      const base = rules.find(rule => selector(rule) === ".m-input-otp")!
       expect(compact(base.style.getPropertyValue("inline-size")))
-        .toBe("calc(var(--mui-input-otp-length,6)*(1ch+var(--mui-input-otp-gap,8px))+2*var(--mui-input-otp-padding,12px)+2px)")
-      expect(compact(base.style.getPropertyValue("letter-spacing"))).toBe("var(--mui-input-otp-gap,8px)")
+        .toBe("calc(var(--m-input-otp-length,6)*(1ch+var(--m-input-otp-gap,8px))+2*var(--m-input-otp-padding,12px)+2px)")
+      expect(compact(base.style.getPropertyValue("letter-spacing"))).toBe("var(--m-input-otp-gap,8px)")
       expect(base.style.getPropertyValue("direction")).toBe("ltr")
       expect(base.style.getPropertyValue("unicode-bidi")).toBe("isolate")
       expect(base.style.getPropertyValue("max-inline-size")).toBe("100%")
-      expect(rules.find(rule => selector(rule) === ".mui-input-otp[data-block]")!
+      expect(rules.find(rule => selector(rule) === ".m-input-otp[data-block]")!
         .style.getPropertyValue("inline-size")).toBe("100%")
     })
   })
@@ -46,9 +46,9 @@ describe("Input OTP single-field default styles", () => {
   it("selects local light/dark color and shadow defaults, including nested light reset", () => {
     withRules(rules => {
       for (const theme of ["light", "dark"]) {
-        const rule = rules.find(rule => selector(rule) === `:where([data-mui-theme=${theme}])`)!
-        expect(rule.style.getPropertyValue("--_mui-otp-scheme")).toBe(theme)
-        expect(rule.style.getPropertyValue("--_mui-otp-shadow")).toBe(theme === "light" ? "0 0 0 2px" : "0 0 8px 0")
+        const rule = rules.find(rule => selector(rule) === `:where([data-m-theme=${theme}])`)!
+        expect(rule.style.getPropertyValue("--_m-otp-scheme")).toBe(theme)
+        expect(rule.style.getPropertyValue("--_m-otp-shadow")).toBe(theme === "light" ? "0 0 0 2px" : "0 0 8px 0")
       }
     })
     expect(compact(css)).toContain("light-dark(#333639,rgba(255,255,255,.82))")
@@ -58,10 +58,10 @@ describe("Input OTP single-field default styles", () => {
 
   it("preserves the aria-invalid dashed cue without converting local completion into validation success", () => {
     withRules(rules => {
-      const error = rules.find(rule => selector(rule) === ".mui-input-otp[aria-invalid=true]")!
+      const error = rules.find(rule => selector(rule) === ".m-input-otp[aria-invalid=true]")!
       expect(error.style.getPropertyValue("border-style")).toBe("dashed")
-      expect(compact(error.style.getPropertyValue("--_mui-otp-tone"))).toContain("light-dark(#d03050,#e88080)")
-      const complete = rules.find(rule => selector(rule) === ".mui-input-otp-status[data-input-otp-state=complete]")!
+      expect(compact(error.style.getPropertyValue("--_m-otp-tone"))).toContain("light-dark(#d03050,#e88080)")
+      const complete = rules.find(rule => selector(rule) === ".m-input-otp-status[data-input-otp-state=complete]")!
       expect(complete.style.getPropertyValue("font-weight")).toBe("600")
       expect(complete.style.getPropertyValue("color")).toBe("")
     })
@@ -70,11 +70,11 @@ describe("Input OTP single-field default styles", () => {
 
   it("avoids adding a second focus/disabled surface inside the shared Input owner", () => {
     withRules(rules => {
-      const focus = rules.find(rule => selector(rule) === ".mui-input-otp:not([data-input-control]):enabled:focus")!
+      const focus = rules.find(rule => selector(rule) === ".m-input-otp:not([data-input-control]):enabled:focus")!
       expect(focus.style.getPropertyValue("box-shadow")).not.toBe("")
-      const disabled = rules.find(rule => selector(rule) === ".mui-input-otp:not([data-input-control]):disabled")!
+      const disabled = rules.find(rule => selector(rule) === ".m-input-otp:not([data-input-control]):disabled")!
       expect(disabled.style.getPropertyValue("opacity")).toBe("")
-      const outline = rules.find(rule => selector(rule) === ".mui-input-otp:focus-visible")!
+      const outline = rules.find(rule => selector(rule) === ".m-input-otp:focus-visible")!
       expect(outline.style.getPropertyValue("outline")).toBe("2px solid Highlight")
     })
   })
@@ -92,7 +92,7 @@ describe("Input OTP single-field default styles", () => {
       const print = rules.find(rule => rule instanceof CSSMediaRule && rule.conditionText === "print") as CSSMediaRule
       const paint = print.cssRules[0] as CSSStyleRule
       expect(paint.selectorText).toContain("::placeholder")
-      expect(paint.selectorText).toContain(".mui-input-otp-status")
+      expect(paint.selectorText).toContain(".m-input-otp-status")
       expect(paint.style.getPropertyValue("color")).toBe("black")
       expect(paint.style.getPropertyPriority("color")).toBe("important")
       expect(paint.style.getPropertyValue("background")).toBe("white")

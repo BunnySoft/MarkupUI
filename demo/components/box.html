@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en" data-m-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Box and Primitives - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-tag.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
+  <link rel="stylesheet" href="./box.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer src="../../dist/markup-ui-tag.global.js"></script>
+  <script type="module" src="./box.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
+</head>
+<body>
+  <main data-demo-page class="component-docs">
+    <h1>Box and Primitives</h1>
+    <p>Universal container and primitive element mappings replacing raw HTML tags with declarative layout attributes for full cross-platform portability.</p>
+    <nav class="component-docs-nav" aria-label="Box documentation">
+      <a href="#flex-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-box.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-box.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="flex" aria-labelledby="flex-heading">
+      <header data-demo-header><div><h2 id="flex-heading">Flex layout box</h2><p>Declarative flex layout without CSS classes or style strings.</p></div></header>
+      <div data-demo-preview>
+        <m-box display="flex" direction="row" align="center" justify="space-between" wrap gap="16" padding="16" background="#f8fafc" border="1px solid #e2e8f0" border-radius="8">
+          <m-span weight="bold">Dashboard Overview</m-span>
+          <m-box display="flex" gap="8">
+            <m-tag type="success">Active</m-tag>
+            <m-button type="primary">Action</m-button>
+          </m-box>
+        </m-box>
+      </div>
+    </section>
+
+    <section data-demo-example="phrasing" aria-labelledby="phrasing-heading">
+      <header data-demo-header><div><h2 id="phrasing-heading">Phrasing primitives</h2><p>Inline elements mapping raw HTML tags (span, strong, em, small, pre) to m-* equivalents.</p></div></header>
+      <div data-demo-preview>
+        <m-box padding="12" background="#ffffff" border="1px solid #e2e8f0" border-radius="6">
+          <m-p>
+            Here is a paragraph using <m-strong>bold text</m-strong>, <m-em>italic emphasis</m-em>, and <m-small>fine print note</m-small>.
+          </m-p>
+          <m-pre>m-box: declarative container</m-pre>
+        </m-box>
+      </div>
+    </section>
+
+    <section data-demo-example="disclosure" aria-labelledby="disclosure-heading">
+      <header data-demo-header><div><h2 id="disclosure-heading">Disclosure primitives</h2><p>Semantic collapsible details and summary custom elements.</p></div></header>
+      <div data-demo-preview>
+        <m-details>
+          <m-summary><m-strong>Click to toggle details</m-strong></m-summary>
+          <m-box padding="12" margin="8" background="#f1f5f9" border-radius="4">
+            <m-p>This content is disclosed by the native m-details container.</m-p>
+          </m-box>
+        </m-details>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="box-api"><p>Loading API documentation.</p></div>
+    </section>
+  </main>
+</body>
+</html>

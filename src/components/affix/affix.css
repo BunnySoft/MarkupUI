@@ -1,18 +1,18 @@
-:where(.mui-affix) {
-  --mui-affix-block-start: auto;
-  --mui-affix-block-end: auto;
-  --mui-affix-z-index: 1;
+:where(m-affix, .m-affix) {
+  --m-affix-block-start: auto;
+  --m-affix-block-end: auto;
+  --m-affix-z-index: 1;
   position: sticky;
-  inset-block-start: var(--mui-affix-block-start);
-  inset-block-end: var(--mui-affix-block-end);
-  z-index: var(--mui-affix-z-index);
+  inset-block-start: var(--m-affix-block-start);
+  inset-block-end: var(--m-affix-block-end);
+  z-index: var(--m-affix-z-index);
   box-sizing: border-box;
   min-inline-size: 0;
 }
-:where(.mui-affix)[hidden]:not([hidden="until-found"]),
-template.mui-affix { display: none !important; }
+:where(m-affix, .m-affix)[hidden]:not([hidden="until-found"]),
+template.m-affix { display: none !important; }
 @media print {
-  :where(.mui-affix) {
+  :where(m-affix, .m-affix) {
     position: static !important;
     inset-block: auto !important;
     inset-inline: auto !important;

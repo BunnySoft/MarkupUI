@@ -49,8 +49,8 @@ const actions = ["add", "remove", "add-all", "remove-all", "select-source", "sel
 /** Moves original native options. Target membership and native staging are distinct. */
 export function createTransfer(root: HTMLElement, options: TransferOptions = {}): TransferController {
   const document = root?.ownerDocument, view = document?.defaultView
-  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".mui-transfer[data-transfer]")
-    || !["div", "section", "fieldset"].includes(root.localName) || (root as Owned)[owner]) throw new TypeError("Transfer needs an unowned native .mui-transfer[data-transfer] root.")
+  if (!view || !(root instanceof view.HTMLElement) || !root.matches(".m-transfer[data-transfer]")
+    || !["div", "section", "fieldset"].includes(root.localName) || (root as Owned)[owner]) throw new TypeError("Transfer needs an unowned native .m-transfer[data-transfer] root.")
   if (!options || typeof options !== "object" || Array.isArray(options)
     || Object.keys(options).some(key => !["value", "defaultValue", "name", "required"].includes(key))
     || options.name !== undefined && typeof options.name !== "string"
@@ -106,7 +106,7 @@ export function createTransfer(root: HTMLElement, options: TransferOptions = {})
     if (name && form?.[names]?.get(name) && form[names]!.get(name) !== token) throw new Error("Membership name already has another Transfer owner.")
   }
   function collect() {
-    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".mui-transfer[data-transfer]") || root.hasAttribute("role")
+    if (!root.isConnected || root.getRootNode() !== document || !root.matches(".m-transfer[data-transfer]") || root.hasAttribute("role")
       || one("[data-transfer-source]", true) !== source || one("[data-transfer-target]", true) !== target
       || [source, target].some(control => !root.contains(control) || !own(control) || !control.multiple || control.name
         || control.required || control.hasAttribute("role") || control.hasAttribute("readonly") || control.hasAttribute("is") || control.form !== form
@@ -247,7 +247,7 @@ export function createTransfer(root: HTMLElement, options: TransferOptions = {})
   function report(cause: unknown) {
     error = cause; fault = true
     if (connected) { gate(); writeText(status, cause instanceof Error ? cause.message : "Transfer failed.") }
-    root.dispatchEvent(new view!.CustomEvent("mui:transfer-error", { detail: { error: cause } }))
+    root.dispatchEvent(new view!.CustomEvent("m:transfer-error", { detail: { error: cause } }))
   }
   function guard() {
     live(); if (busy || resetEvents.some(event => event.eventPhase !== Event.NONE)) throw new Error("Transfer mutation cannot reenter an active operation/reset dispatch.")
@@ -308,7 +308,7 @@ export function createTransfer(root: HTMLElement, options: TransferOptions = {})
       if (user) focus(destination)
       paint()
     })
-    if (user && connected) root.dispatchEvent(new view!.CustomEvent("mui:transfer-change", { detail: { value: Object.freeze(keys(target)), moved: Object.freeze(moving.map(option => option.value)), to, event } }))
+    if (user && connected) root.dispatchEvent(new view!.CustomEvent("m:transfer-change", { detail: { value: Object.freeze(keys(target)), moved: Object.freeze(moving.map(option => option.value)), to, event } }))
     return moving.length
   }
   function matching(to: TransferSide, selected: boolean, user = false, event?: Event) {
@@ -333,7 +333,7 @@ export function createTransfer(root: HTMLElement, options: TransferOptions = {})
   }
   function change(event: Event) {
     if (event.target !== source && event.target !== target) return
-    try { refresh(); root.dispatchEvent(new view!.CustomEvent("mui:transfer-stage", { detail: { side: event.target === source ? "source" : "target", selected: Object.freeze(staged(event.target as HTMLSelectElement)), event } })) } catch { /* Reported. */ }
+    try { refresh(); root.dispatchEvent(new view!.CustomEvent("m:transfer-stage", { detail: { side: event.target === source ? "source" : "target", selected: Object.freeze(staged(event.target as HTMLSelectElement)), event } })) } catch { /* Reported. */ }
   }
   function filterInput(event: Event) {
     if (event.target !== sourceFilter && event.target !== targetFilter) return

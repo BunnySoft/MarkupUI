@@ -3,68 +3,122 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI Skeleton</title>
+  <title>Skeleton - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-skeleton.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-input.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-space.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./skeleton.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-skeleton.global.js"></script>
-  <script defer src="./skeleton.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-input.global.js"></script>
+  <script defer src="../../dist/markup-ui-space.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./skeleton.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Skeleton: decorative placeholders, not a loading-state controller</h1>
-    <p>The application owns busy state, meaningful status and real content. Only generated placeholder spans are hidden from assistive technology and inert.</p>
-    <section aria-labelledby="geometry-heading">
-      <h2 id="geometry-heading">Native dimensions, shapes and presets</h2>
-      <div class="examples" id="shapes">
-        <mui-skeleton id="rectangle" width="120px" height="32px"></mui-skeleton>
-        <mui-skeleton id="soft" width="120" height="32" sharp="false"></mui-skeleton>
-        <mui-skeleton id="round" width="120" height="32" round></mui-skeleton>
-        <mui-skeleton id="circle" width="48" height="20" circle></mui-skeleton>
+  <main data-demo-page class="component-docs">
+    <h1>Skeleton</h1>
+    <m-p>Decorative placeholder with customizable dimensions, repetition, shapes, and animation for loading states.</m-p>
+    <nav class="component-docs-nav" aria-label="Skeleton documentation">
+      <a href="#geometry-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#skeleton-api">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary>Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-skeleton.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-skeleton.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="geometry" aria-labelledby="geometry-heading">
+      <header data-demo-header><div><h2 id="geometry-heading">Native dimensions, shapes and presets</h2><m-p>Rectangles, soft corners, pills, circles and preset sizes with normalized dimensions.</m-p></div></header>
+      <div data-demo-preview>
+        <m-space class="examples" id="shapes" wrap align="center">
+          <m-skeleton id="rectangle" width="120px" height="32px"></m-skeleton>
+          <m-skeleton id="soft" width="120" height="32" sharp="false"></m-skeleton>
+          <m-skeleton id="round" width="120" height="32" round></m-skeleton>
+          <m-skeleton id="circle" width="48" height="20" circle></m-skeleton>
+        </m-space>
+        <m-box class="preset-grid" id="presets">
+          <m-skeleton size="small"></m-skeleton>
+          <m-skeleton size="medium"></m-skeleton>
+          <m-skeleton size="large"></m-skeleton>
+        </m-box>
+        <m-p>Inline text: <m-skeleton id="text-line" text class="text-line"></m-skeleton> remains aligned with native text.</m-p>
+        <m-box class="percentage-box"><m-skeleton id="percentage" width="50%" height="12px"></m-skeleton></m-box>
+        <m-box class="percentage-box"><m-skeleton id="percentage-circle" width="25%" circle></m-skeleton></m-box>
+        <m-box class="percentage-box"><m-skeleton id="calculated" width="calc(100% - 40px)" height="16px"></m-skeleton></m-box>
+        <m-p>Each row below is 25% of a definite 200px containing height.</m-p>
+        <m-box class="relative-height-box"><m-skeleton id="relative-height" width="120px" height="25%" repeat="3"></m-skeleton></m-box>
       </div>
-      <div class="preset-grid" id="presets">
-        <mui-skeleton size="small"></mui-skeleton>
-        <mui-skeleton size="medium"></mui-skeleton>
-        <mui-skeleton size="large"></mui-skeleton>
+    </section>
+
+    <section data-demo-example="repeat" aria-labelledby="repeat-heading">
+      <header data-demo-header><div><h2 id="repeat-heading">Bounded native repetition and explicit validation</h2><m-p>Repeat attribute accepts integer values from 0 to 100 with fail-fast validation.</m-p></div></header>
+      <div data-demo-preview>
+        <m-skeleton id="repeated" repeat="3" class="rows"></m-skeleton>
+        <m-space class="controls" wrap align="center">
+          <m-label>Repeat (0–100) <m-input id="repeat-input" value="3"></m-input></m-label>
+          <m-button id="apply-repeat">Apply attribute</m-button>
+          <m-button id="toggle-animation">Toggle animation</m-button>
+        </m-space>
+        <m-p id="validation-status" role="status">Valid repeat: 3.</m-p>
       </div>
-      <p>Inline text: <mui-skeleton id="text-line" text class="text-line"></mui-skeleton> remains aligned with native text.</p>
-      <div class="percentage-box"><mui-skeleton id="percentage" width="50%" height="12px"></mui-skeleton></div>
-      <div class="percentage-box"><mui-skeleton id="percentage-circle" width="25%" circle></mui-skeleton></div>
-      <div class="percentage-box"><mui-skeleton id="calculated" width="calc(100% - 40px)" height="16px"></mui-skeleton></div>
-      <p>Each row below is 25% of a definite 200px containing height.</p>
-      <div class="relative-height-box"><mui-skeleton id="relative-height" width="120px" height="25%" repeat="3"></mui-skeleton></div>
     </section>
-    <section aria-labelledby="repeat-heading">
-      <h2 id="repeat-heading">Bounded native repetition and explicit validation</h2>
-      <mui-skeleton id="repeated" repeat="3" class="rows"></mui-skeleton>
-      <div class="controls">
-        <label>Repeat (0–100) <input id="repeat-input" type="text" value="3"></label>
-        <button type="button" id="apply-repeat">Apply attribute</button>
-        <button type="button" id="toggle-animation">Toggle animation</button>
+
+    <section data-demo-example="loading" aria-labelledby="owner-heading">
+      <header data-demo-header><div><h2 id="owner-heading">Application-owned loading transition</h2><m-p>The application controls busy state and swaps between placeholder and content.</m-p></div></header>
+      <div data-demo-preview id="content-owner" aria-busy="true">
+        <m-skeleton id="loading-placeholder" repeat="2" class="rows"></m-skeleton>
+        <m-box id="loaded-content" hidden>
+          <m-p>Actual content is outside the Skeleton placeholder.</m-p>
+          <m-button id="content-action">Native content action</m-button>
+        </m-box>
+        <m-p id="loading-status" role="status">Loading the profile.</m-p>
+        <m-space class="controls">
+          <m-button id="toggle-loading">Toggle application loading</m-button>
+        </m-space>
       </div>
-      <p id="validation-status" role="status">Valid repeat: 3.</p>
     </section>
-    <section id="content-owner" aria-labelledby="owner-heading" aria-busy="true">
-      <h2 id="owner-heading">Application-owned loading transition</h2>
-      <mui-skeleton id="loading-placeholder" repeat="2" class="rows"></mui-skeleton>
-      <div id="loaded-content" hidden><p>Actual content is outside the Skeleton placeholder.</p><button type="button" id="content-action">Native content action</button></div>
-      <p id="loading-status" role="status">Loading the profile.</p>
-      <button type="button" id="toggle-loading">Toggle application loading</button>
+
+    <section data-demo-example="ownership" aria-labelledby="ownership-heading">
+      <header data-demo-header><div><h2 id="ownership-heading">Authored nodes and inert templates stay owned by the application</h2><m-p>Authored children and templates remain outside the decorative placeholder group.</m-p></div></header>
+      <div data-demo-preview>
+        <m-skeleton id="authored" repeat="1" class="rows">
+          <m-p id="authored-caption">Preserved native caption, outside the decorative group.</m-p>
+          <m-button id="authored-action">Native authored action</m-button>
+          <template id="unconsumed-template"><m-button>Inert template control</m-button></template>
+        </m-skeleton>
+        <m-p id="action-status" role="status">0 authored actions.</m-p>
+        <m-space class="controls">
+          <m-button id="reconnect">Reconnect Skeleton</m-button>
+        </m-space>
+      </div>
     </section>
-    <section aria-labelledby="ownership-heading">
-      <h2 id="ownership-heading">Authored nodes and inert templates stay owned by the application</h2>
-      <mui-skeleton id="authored" repeat="1" class="rows">
-        <p id="authored-caption">Preserved native caption, outside the decorative group.</p>
-        <button type="button" id="authored-action">Native authored action</button>
-        <template id="unconsumed-template"><button type="button">Inert template control</button></template>
-      </mui-skeleton>
-      <p id="action-status" role="status">0 authored actions.</p>
-      <button type="button" id="reconnect">Reconnect Skeleton</button>
+
+    <section data-demo-example="static" aria-labelledby="static-heading">
+      <header data-demo-header><div><h2 id="static-heading">CSS-only native placeholder</h2><m-p>A static native span with class m-skeleton needs no Custom Element or JavaScript.</m-p></div></header>
+      <div data-demo-preview>
+        <span id="static-placeholder" class="m-skeleton static-placeholder" aria-hidden="true" inert data-round data-animated="false"></span>
+        <m-p>A static native span needs no Custom Element. It is explicitly decorative and does not hide real content.</m-p>
+      </div>
     </section>
-    <section aria-labelledby="static-heading">
-      <h2 id="static-heading">CSS-only native placeholder</h2>
-      <span id="static-placeholder" class="mui-skeleton static-placeholder" aria-hidden="true" inert data-round data-animated="false"></span>
-      <p>A static native span needs no Custom Element. It is explicitly decorative and does not hide real content.</p>
-    </section>
+
+    <section id="skeleton-api"></section>
   </main>
 </body>
 </html>

@@ -1,12 +1,18 @@
+import "../../dist/markup-ui-input.js"
+import "../../dist/markup-ui-switch.js"
+import "../../dist/markup-ui-form.js"
+import { loadComponentApi } from "../component-api.js"
+
 const form = document.querySelector("#profile")
 const field = id => document.getElementById(id)
 const status = field("status"), submission = field("submission")
-const input = MarkupUIInput.createInput(field("name-input"))
 const item = (key, controls, validator) => ({
   key, controls, element: field(`${key}-item`), feedback: field(`${key}-error`),
   ...(validator ? { validator } : {}),
 })
-const helper = MarkupUIForm.createForm(form, { items: [
+const helper = field("profile-root")
+helper.items = [
+  item("consent", [field("consent-switch").native]),
   item("name", [field("name")], ({ fields, signal }) => new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
       signal.removeEventListener("abort", abort)
@@ -24,14 +30,15 @@ const helper = MarkupUIForm.createForm(form, { items: [
   item("topics", [...form.querySelectorAll('input[name="topics[]"]')], ({ fields, controls }) =>
     fields.some(entry => controls.includes(entry.control) && entry.eligible && entry.checked)
       ? null : { message: "Choose at least one enabled topic." }),
-] })
+]
+helper.refresh()
 let intent = 0, submissions = 0
 function announce(result) {
   status.textContent = result.status === "aborted" || !result.current ? "Validation cancelled; check the current values."
     : result.status === "invalid" ? `Validation failed: ${result.issues.filter(issue => issue.source !== "warning").length} issue(s). Review the field feedback.`
       : "Validation passed. No data sent."
 }
-form.addEventListener("mui:form-error", event => {
+form.addEventListener("m:form-error", event => {
   status.textContent = `Local validator failed unexpectedly: ${event.detail.error instanceof Error ? event.detail.error.message : String(event.detail.error)}`
 })
 function inspect(submitter) {
@@ -50,11 +57,11 @@ async function onSubmit(event) {
     if (ticket !== intent) return
     announce(result)
     if (result.status === "valid" && result.current && (!submitter || submitter.isConnected && submitter.form === form && !submitter.matches(":disabled"))) inspect(submitter)
-  } catch { /* mui:form-error above reports unexpected validator failures; never submit on failure. */ }
+  } catch { /* m:form-error above reports unexpected validator failures; never submit on failure. */ }
 }
 form.addEventListener("submit", onSubmit)
 field("validate").addEventListener("click", async () => {
-  try { announce(await helper.validate()) } catch { /* Reported by mui:form-error. */ }
+  try { announce(await helper.validate()) } catch { /* Reported by m:form-error. */ }
 })
 field("report").addEventListener("click", () => helper.reportValidity())
 field("restore").addEventListener("click", () => { ++intent; helper.restoreValidation(); status.textContent = "Owned feedback restored; values and external custom validity unchanged." })
@@ -63,9 +70,14 @@ field("cancel").addEventListener("click", () => {
 })
 field("rtl").addEventListener("click", () => { document.documentElement.dir = document.documentElement.dir === "rtl" ? "ltr" : "rtl" })
 field("disconnect").addEventListener("click", () => {
-  ++intent; helper.disconnect(); input.disconnect()
+  ++intent; helper.disconnect()
   form.removeEventListener("submit", onSubmit)
   status.textContent = "Helpers disconnected. Native controls, values, defaults and validation remain."
   for (const id of ["validate", "report", "restore", "cancel", "disconnect"]) field(id).hidden = true
 })
 for (const id of ["validate", "report", "restore", "cancel", "disconnect"]) field(id).hidden = false
+field("external-form").addEventListener("submit", event => {
+  event.preventDefault()
+  field("external-status").textContent = JSON.stringify([...new FormData(event.currentTarget, event.submitter)])
+})
+await loadComponentApi(document.querySelector("#form-api"), "../api/form.json")

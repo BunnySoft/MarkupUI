@@ -2,8 +2,10 @@ import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createBackTop } from "../src/components/back-top/index.js"
+import { createBackTop, BackTop, MBackTop, registerBackTop } from "../src/components/back-top/index.js"
+import * as backTopApi from "../src/components/back-top/index.js"
 import type { BackTopController, BackTopOptions } from "../src/components/back-top/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const controllers: BackTopController[] = []
 function nodes(link = false) {
@@ -20,7 +22,7 @@ function nodes(link = false) {
     root.dispatchEvent(new Event("scroll"))
   })
   const action = document.createElement(link ? "a" : "button")
-  action.className = "mui-back-top"
+  action.className = "m-back-top"
   action.textContent = "Return to top"
   if (action instanceof HTMLButtonElement) action.type = "button"
   else {
@@ -51,7 +53,7 @@ describe("Back Top visibility and native focus", () => {
   it("uses inclusive 180px default threshold and no initial callback", () => {
     const { action, root } = nodes()
     const change = vi.fn()
-    action.addEventListener("mui:back-top-update-show", change)
+    action.addEventListener("m:back-top-update-show", change)
     const controller = createBackTop(action, { root })
     controllers.push(controller)
     expect(change).not.toHaveBeenCalled()
@@ -77,7 +79,7 @@ describe("Back Top visibility and native focus", () => {
   it("keeps forced visibility separate from threshold notifications and silent assignments", () => {
     const { action, controller, root } = bind({ show: true })
     const change = vi.fn()
-    action.addEventListener("mui:back-top-update-show", change)
+    action.addEventListener("m:back-top-update-show", change)
     controller.show = false
     expect(controller.visible).toBe(false)
     expect(change).not.toHaveBeenCalled()
@@ -321,7 +323,7 @@ describe("validation, ownership and cleanup", () => {
   it("surfaces automatic invalid-root errors and throws explicit invalid requests", async () => {
     const { action, root, controller } = bind()
     const error = vi.fn()
-    action.addEventListener("mui:back-top-error", error)
+    action.addEventListener("m:back-top-error", error)
     root.style.overflow = "clip"
     root.dispatchEvent(new Event("scroll"))
     await flush()
@@ -333,7 +335,7 @@ describe("validation, ownership and cleanup", () => {
   it("invalidates delayed clicks if authored button type becomes unsafe", async () => {
     const { action, root, controller } = bind({ visibilityHeight: 0 })
     const error = vi.fn()
-    action.addEventListener("mui:back-top-error", error)
+    action.addEventListener("m:back-top-error", error)
     action.click()
     action.setAttribute("type", "submit")
     await flush()
@@ -343,7 +345,7 @@ describe("validation, ownership and cleanup", () => {
   })
   it("allows reentrant threshold listeners to dispose without later writes", () => {
     const { action, root, controller } = bind()
-    action.addEventListener("mui:back-top-update-show", () => controller.disconnect())
+    action.addEventListener("m:back-top-update-show", () => controller.disconnect())
     root.scrollTop = 300
     controller.update()
     expect(controller.connected).toBe(false)
@@ -367,12 +369,12 @@ describe("validation, ownership and cleanup", () => {
   })
   it("keeps audited geometry, author-owned SVG styling and motion inside the CSS ceiling", () => {
     const css = readFileSync(join("src", "components", "back-top", "back-top.css"), "utf8")
-    expect(css).toContain("--_mui-back-top-size:44px")
-    expect(css).toContain("font-size:var(--mui-back-top-icon-size,26px)")
-    expect(css).toContain(".mui-back-top-icon>svg{")
-    expect(css).not.toContain(".mui-back-top-icon svg{")
-    expect(css).toContain("var(--mui-back-top-inline-end,40px)")
-    expect(css).toContain("var(--mui-back-top-block-end,40px)")
+    expect(css).toContain("--_m-back-top-size:44px")
+    expect(css).toContain("font-size:var(--m-back-top-icon-size,26px)")
+    expect(css).toContain(".m-back-top-icon>svg{")
+    expect(css).not.toContain(".m-back-top-icon svg{")
+    expect(css).toContain("var(--m-back-top-inline-end,40px)")
+    expect(css).toContain("var(--m-back-top-block-end,40px)")
     expect(css).toContain("padding:0")
     expect(css).toContain("border:0 solid")
     expect(css).toContain("#333639")
@@ -380,11 +382,11 @@ describe("validation, ownership and cleanup", () => {
     expect(css).toContain("rgba(255,255,255,.82)")
     expect(css).toContain("0 2px 8px rgba(0,0,0,.12)")
     expect(css).toContain("0 2px 12px rgba(0,0,0,.18)")
-    expect(css).toContain("var(--mui-color-primary-hover")
-    expect(css).toContain("var(--mui-color-primary-pressed")
+    expect(css).toContain("var(--m-color-primary-hover")
+    expect(css).toContain("var(--m-color-primary-pressed")
     expect(css).toContain(":not(:disabled,[aria-disabled=true])")
-    expect(css).not.toContain("--mui-back-top-size:")
-    expect(css).not.toContain("--mui-back-top-radius:")
+    expect(css).not.toContain("--m-back-top-size:")
+    expect(css).not.toContain("--m-back-top-radius:")
     expect(css).not.toMatch(/url\(|(?:^|[;{])\s*content\s*:/m)
     const style = document.createElement("style")
     style.textContent = css
@@ -400,8 +402,8 @@ describe("validation, ownership and cleanup", () => {
   it("preserves authored icon nodes and local style tokens through visibility and focus changes", () => {
     const { action, root } = nodes()
     action.setAttribute("aria-label", "Back to top")
-    action.style.cssText = "--mui-back-top-size:60px;--mui-back-top-radius:8px;--mui-back-top-icon-size:30px;--mui-back-top-icon-color:rgb(1,2,3)"
-    action.innerHTML = '<span class="mui-back-top-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v16"/></svg></span>'
+    action.style.cssText = "--m-back-top-size:60px;--m-back-top-radius:8px;--m-back-top-icon-size:30px;--m-back-top-icon-color:rgb(1,2,3)"
+    action.innerHTML = '<span class="m-back-top-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v16"/></svg></span>'
     const icon = action.querySelector("svg")
     const markup = action.innerHTML, style = action.getAttribute("style")
     const controller = createBackTop(action, { root })
@@ -418,3 +420,162 @@ describe("validation, ownership and cleanup", () => {
     expect(action.getAttribute("aria-label")).toBe("Back to top")
   })
 })
+
+describe("canonical BackTop ViewElement", () => {
+  it("exports canonical own-tag ViewElement and registers m-back-top", () => {
+    expect(Object.keys(backTopApi).sort()).toEqual(["BackTop", "MBackTop", "createBackTop", "registerBackTop"])
+    expect(Object.hasOwn(BackTop, "tag")).toBe(true)
+    expect(BackTop.tag).toBe("m-back-top")
+    expect(ViewElement.prototype.isPrototypeOf(BackTop.prototype)).toBe(true)
+    expect(customElements.get("m-back-top")).toBe(BackTop)
+    expect(MBackTop).toBe(BackTop)
+    expect(BackTop.observedAttributes).toEqual(["visibility-height", "right", "bottom", "target", "listen-to"])
+
+    const define = vi.fn()
+    expect(() => registerBackTop({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerBackTop()).not.toThrow()
+  })
+
+  it("has explicit property defaults and validates values before mutating attributes", () => {
+    const element = new BackTop()
+    expect(element.visibilityHeight).toBe(400)
+    expect(element.right).toBeNull()
+    expect(element.bottom).toBeNull()
+
+    // Valid visibilityHeight values
+    element.visibilityHeight = 250
+    expect(element.visibilityHeight).toBe(250)
+    expect(element.getAttribute("visibility-height")).toBe("250")
+
+    // Invalid visibilityHeight values
+    for (const invalid of [-1, -100, NaN, Infinity, "200" as unknown as number, null as unknown as number, undefined as unknown as number]) {
+      expect(() => { element.visibilityHeight = invalid }).toThrow(RangeError)
+    }
+
+    // Invalid attribute throws on read
+    element.setAttribute("visibility-height", "invalid")
+    expect(() => element.visibilityHeight).toThrow(RangeError)
+    element.setAttribute("visibility-height", "-50")
+    expect(() => element.visibilityHeight).toThrow(RangeError)
+    element.removeAttribute("visibility-height")
+    expect(element.visibilityHeight).toBe(400)
+
+    // Valid right and bottom values
+    element.right = "40px"
+    expect(element.right).toBe("40px")
+    expect(element.getAttribute("right")).toBe("40px")
+    expect(element.style.getPropertyValue("--m-back-top-inline-end")).toBe("40px")
+
+    element.bottom = "50px"
+    expect(element.bottom).toBe("50px")
+    expect(element.getAttribute("bottom")).toBe("50px")
+    expect(element.style.getPropertyValue("--m-back-top-block-end")).toBe("50px")
+
+    // Null removes attribute and CSS property
+    element.right = null
+    expect(element.right).toBeNull()
+    expect(element.hasAttribute("right")).toBe(false)
+    expect(element.style.getPropertyValue("--m-back-top-inline-end")).toBe("")
+
+    element.bottom = null
+    expect(element.bottom).toBeNull()
+    expect(element.hasAttribute("bottom")).toBe(false)
+    expect(element.style.getPropertyValue("--m-back-top-block-end")).toBe("")
+
+    // Invalid right and bottom types throw RangeError
+    for (const invalid of [123 as unknown as string, true as unknown as string, {} as unknown as string]) {
+      expect(() => { element.right = invalid }).toThrow(RangeError)
+      expect(() => { element.bottom = invalid }).toThrow(RangeError)
+    }
+  })
+
+  it("sets up connected attributes, roles, and default icon rendering", () => {
+    const element = document.createElement("m-back-top") as BackTop
+    document.body.append(element)
+
+    expect(element.dataset.mBackTop).toBe("")
+    expect(element.classList.contains("m-back-top")).toBe(true)
+    expect(element.classList.contains("m-back-top--fixed")).toBe(true)
+    expect(element.getAttribute("role")).toBe("button")
+    expect(element.getAttribute("tabindex")).toBe("0")
+    expect(element.getAttribute("aria-label")).toBe("Back to top")
+    expect(element.querySelector(".m-back-top-icon svg")).not.toBeNull()
+  })
+
+  it("preserves authored content without rendering the default icon", () => {
+    const custom = document.createElement("m-back-top") as BackTop
+    custom.textContent = "Return to top"
+    document.body.append(custom)
+
+    expect(custom.querySelector(".m-back-top-icon")).toBeNull()
+    expect(custom.textContent).toBe("Return to top")
+  })
+
+  it("emits m:click event with originalEvent detail and scrolls to top on click", () => {
+    const element = document.createElement("m-back-top") as BackTop
+    document.body.append(element)
+
+    const clickHandler = vi.fn()
+    element.addEventListener("m:click", clickHandler)
+    const scrollSpy = vi.spyOn(window, "scrollTo").mockImplementation(() => {})
+
+    element.click()
+    expect(clickHandler).toHaveBeenCalledTimes(1)
+    expect(clickHandler.mock.calls[0]![0].detail).toHaveProperty("originalEvent")
+    expect(clickHandler.mock.calls[0]![0].detail.originalEvent).toBeInstanceOf(MouseEvent)
+    expect(scrollSpy).toHaveBeenCalledWith(expect.objectContaining({ top: 0 }))
+  })
+
+  it("cancels scrollToTop if m:click is defaultPrevented", () => {
+    const element = document.createElement("m-back-top") as BackTop
+    document.body.append(element)
+
+    element.addEventListener("m:click", event => event.preventDefault(), { once: true })
+    const scrollSpy = vi.spyOn(window, "scrollTo").mockImplementation(() => {})
+
+    element.click()
+    expect(scrollSpy).not.toHaveBeenCalled()
+  })
+
+  it("updates visibility on scroll and keeps visible when focused", () => {
+    const element = document.createElement("m-back-top") as BackTop
+    element.visibilityHeight = 300
+    document.body.append(element)
+
+    // Initially scrollTop = 0 < 300
+    expect(element.hasAttribute("data-back-top-hidden")).toBe(true)
+
+    // Scroll window past threshold
+    vi.spyOn(window, "scrollY", "get").mockReturnValue(350)
+    window.dispatchEvent(new Event("scroll"))
+    expect(element.hasAttribute("data-back-top-hidden")).toBe(false)
+
+    // Scroll window back below threshold
+    vi.spyOn(window, "scrollY", "get").mockReturnValue(100)
+    window.dispatchEvent(new Event("scroll"))
+    expect(element.hasAttribute("data-back-top-hidden")).toBe(true)
+
+    // When focused, stays visible even below threshold
+    element.focus()
+    expect(element.hasAttribute("data-back-top-hidden")).toBe(false)
+
+    // On blur, hides again
+    element.blur()
+    expect(element.hasAttribute("data-back-top-hidden")).toBe(true)
+  })
+
+  it("supports keyboard activation via Enter and Space", () => {
+    vi.spyOn(window, "scrollTo").mockImplementation(() => {})
+    const element = document.createElement("m-back-top") as BackTop
+    document.body.append(element)
+
+    const clickSpy = vi.spyOn(element, "click")
+    element.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }))
+    expect(clickSpy).toHaveBeenCalledTimes(1)
+
+    element.dispatchEvent(new KeyboardEvent("keydown", { key: " " }))
+    expect(clickSpy).toHaveBeenCalledTimes(2)
+  })
+})
+

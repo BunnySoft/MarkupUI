@@ -1,64 +1,81 @@
-:where([data-mui-theme="light"]) {
-  --_mui-list-color: initial;
-  --_mui-list-background: initial;
-  --_mui-list-border: initial;
-  --_mui-list-hover: initial;
+:where([data-m-theme="light"]) {
+  --_m-list-color: initial;
+  --_m-list-background: initial;
+  --_m-list-border: initial;
+  --_m-list-hover: initial;
 }
-:where([data-mui-theme="dark"]) {
-  --_mui-list-color: rgba(255,255,255,.82);
-  --_mui-list-background: #18181c;
-  --_mui-list-border: rgba(255,255,255,.09);
-  --_mui-list-hover: rgba(255,255,255,.09);
+:where([data-m-theme="dark"]) {
+  --_m-list-color: rgba(255,255,255,.82);
+  --_m-list-background: #18181c;
+  --_m-list-border: rgba(255,255,255,.09);
+  --_m-list-hover: rgba(255,255,255,.09);
 }
-:where(.mui-list) {
-  --_mui-list-padding-block: 12px;
-  --_mui-list-padding-inline: 0px;
+:where(m-list, .m-list) {
+  display: block;
+  --_m-list-padding-block: 12px;
+  --_m-list-padding-inline: 0px;
   box-sizing: border-box;
   min-inline-size: 0;
-  color: var(--mui-list-color, var(--_mui-list-color, #333639));
-  background: var(--mui-list-background, var(--_mui-list-background, #fff));
-  font-size: var(--mui-list-font-size, var(--mui-font-size, 14px));
-  font-family: var(--mui-list-font-family, var(--mui-font-family, inherit));
-  line-height: var(--mui-list-line-height, var(--mui-line-height, 1.6));
+  color: var(--m-list-color, var(--_m-list-color, #333639));
+  background: var(--m-list-background, var(--_m-list-background, #fff));
+  font-size: var(--m-list-font-size, var(--m-font-size, 14px));
+  font-family: var(--m-list-font-family, var(--m-font-family, inherit));
+  line-height: var(--m-list-line-height, var(--m-line-height, 1.6));
   overflow-wrap: anywhere;
   transition: background-color .3s cubic-bezier(.4,0,.2,1), color .3s cubic-bezier(.4,0,.2,1), border-color .3s cubic-bezier(.4,0,.2,1);
 }
-:where(.mui-list:is([data-bordered], [data-hoverable])) { --_mui-list-padding-inline: 20px; }
-:where(.mui-list[data-size="small"]) {
-  --_mui-list-padding-block: 8px;
-  --_mui-list-padding-inline: 12px;
+:where(m-list:is(:not([bordered="false"]), [hoverable], [data-hoverable]), .m-list:is([data-bordered], [bordered]:not([bordered="false"]), [data-hoverable], [hoverable])) {
+  --_m-list-padding-inline: 20px;
 }
-:where(.mui-list[data-size="large"]) {
-  --_mui-list-padding-block: 16px;
-  --_mui-list-padding-inline: 20px;
+:where(:is(m-list, .m-list):is([data-size="small"], [size="small"])) {
+  --_m-list-padding-block: 8px;
+  --_m-list-padding-inline: 12px;
 }
-:where(.mui-list[data-bordered]) {
-  border: 1px solid var(--mui-list-border-color, var(--_mui-list-border, #efeff5));
-  border-radius: var(--mui-list-border-radius, 3px);
+:where(:is(m-list, .m-list):is([data-size="large"], [size="large"])) {
+  --_m-list-padding-block: 16px;
+  --_m-list-padding-inline: 20px;
 }
-:where(.mui-list > .mui-list-items) {
+:where(m-list:not([bordered="false"]), .m-list[data-bordered], .m-list[bordered]:not([bordered="false"])) {
+  border: 1px solid var(--m-list-border-color, var(--_m-list-border, #efeff5));
+  border-radius: var(--m-list-border-radius, 3px);
+}
+:where(:is(m-list, .m-list) > :is(.m-list-items, [data-part="items"])) {
   margin: 0;
   padding-block: 0;
   padding-inline-start: 1.75rem;
   padding-inline-end: 0;
 }
-:where(.mui-list > .mui-list-items[data-markerless]) {
+:where(:is(m-list, .m-list) > :is(.m-list-items, [data-part="items"])[data-markerless], m-list:not(:has(> :is(ul, ol):not([data-markerless])))) {
   list-style: none;
   padding-inline-start: 0;
 }
-:where(.mui-list > .mui-list-items > .mui-list-item) {
+:where(
+  :is(m-list, .m-list) > :is(.m-list-items, [data-part="items"]) > :is(m-list-item, .m-list-item),
+  :is(m-list, .m-list) > :is(m-list-item, .m-list-item),
+  m-list-item
+) {
   display: list-item;
   position: relative;
   transition: background-color .3s cubic-bezier(.4,0,.2,1), border-color .3s cubic-bezier(.4,0,.2,1);
 }
-:where(.mui-list[data-hoverable] > .mui-list-items > .mui-list-item) { border-radius: var(--mui-list-border-radius, 3px); }
-:where(.mui-list > .mui-list-items > .mui-list-item, .mui-list > .mui-list-header, .mui-list > .mui-list-footer) {
+:where(:is(m-list, .m-list):is([data-hoverable], [hoverable]) :is(m-list-item, .m-list-item)) {
+  border-radius: var(--m-list-border-radius, 3px);
+}
+:where(
+  :is(m-list, .m-list) > :is(.m-list-items, [data-part="items"]) > :is(m-list-item, .m-list-item),
+  :is(m-list, .m-list) > :is(m-list-item, .m-list-item),
+  :is(m-list, .m-list) > :is(.m-list-header, [data-part="header"], m-list-header, header),
+  :is(m-list, .m-list) > :is(.m-list-footer, [data-part="footer"], m-list-footer, footer)
+) {
   box-sizing: border-box;
   min-inline-size: 0;
-  padding-block: var(--mui-list-padding-block, var(--_mui-list-padding-block));
-  padding-inline: var(--mui-list-padding-inline, var(--_mui-list-padding-inline));
+  padding-block: var(--m-list-padding-block, var(--_m-list-padding-block));
+  padding-inline: var(--m-list-padding-inline, var(--_m-list-padding-inline));
 }
-:where(.mui-list > .mui-list-items > li.mui-list-item)::after {
+:where(
+  :is(m-list, .m-list) > :is(.m-list-items, [data-part="items"]) > :is(m-list-item, li.m-list-item),
+  :is(m-list, .m-list) > :is(m-list-item, li.m-list-item)
+)::after {
   content: "";
   position: absolute;
   inset-inline: 0;
@@ -67,37 +84,61 @@
   pointer-events: none;
   transition: background-color .3s cubic-bezier(.4,0,.2,1);
 }
-:where(.mui-list > .mui-list-items > li.mui-list-item:not([hidden]):has(~ li.mui-list-item:not([hidden])),
-  .mui-list > .mui-list-items:has(~ .mui-list-footer:not(template):not([hidden])) > li.mui-list-item)::after {
-  background: var(--mui-list-border-color, var(--_mui-list-border, #efeff5));
+:where(
+  :is(m-list, .m-list) > :is(.m-list-items, [data-part="items"]) > :is(m-list-item, li.m-list-item):not([hidden]):has(~ :is(m-list-item, li.m-list-item):not([hidden])),
+  :is(m-list, .m-list) > :is(m-list-item, li.m-list-item):not([hidden]):has(~ :is(m-list-item, li.m-list-item):not([hidden])),
+  :is(m-list, .m-list) > :is(.m-list-items, [data-part="items"]):has(~ :is(.m-list-footer, [data-part="footer"], m-list-footer, footer):not(template):not([hidden])) > :is(m-list-item, li.m-list-item),
+  :is(m-list, .m-list):has(> :is(.m-list-footer, [data-part="footer"], m-list-footer, footer):not(template):not([hidden])) > :is(m-list-item, li.m-list-item):not([hidden]):last-of-type
+)::after {
+  background: var(--m-list-border-color, var(--_m-list-border, #efeff5));
 }
-:where(.mui-list > .mui-list-header:has(~ .mui-list-items:not([hidden]) > li.mui-list-item:not([hidden])),
-  .mui-list > .mui-list-header:has(~ .mui-list-footer:not(template):not([hidden]))) {
-  border-block-end: 1px solid var(--mui-list-border-color, var(--_mui-list-border, #efeff5));
+:where(
+  :is(m-list, .m-list) > :is(.m-list-header, [data-part="header"], m-list-header, header):has(~ :is(.m-list-items, [data-part="items"]):not([hidden]) > :is(m-list-item, li.m-list-item):not([hidden])),
+  :is(m-list, .m-list) > :is(.m-list-header, [data-part="header"], m-list-header, header):has(~ :is(m-list-item, li.m-list-item):not([hidden])),
+  :is(m-list, .m-list) > :is(.m-list-header, [data-part="header"], m-list-header, header):has(~ :is(.m-list-footer, [data-part="footer"], m-list-footer, footer):not(template):not([hidden]))
+) {
+  border-block-end: 1px solid var(--m-list-border-color, var(--_m-list-border, #efeff5));
 }
-:where(.mui-list > .mui-list-header, .mui-list > .mui-list-footer) { transition: border-color .3s cubic-bezier(.4,0,.2,1); }
-:where(.mui-list[data-show-divider="false"] > .mui-list-items > .mui-list-item)::after { content: none; }
-:where(.mui-list-row, .mui-list-actions) {
+:where(
+  :is(m-list, .m-list) > :is(.m-list-header, [data-part="header"], m-list-header, header),
+  :is(m-list, .m-list) > :is(.m-list-footer, [data-part="footer"], m-list-footer, footer)
+) {
+  transition: border-color .3s cubic-bezier(.4,0,.2,1);
+}
+:where(:is(m-list, .m-list):is([data-show-divider="false"], [show-divider="false"]) :is(m-list-item, .m-list-item))::after {
+  content: none;
+}
+:where(.m-list-row, [data-part="row"], .m-list-actions, [data-part="actions"]) {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   min-inline-size: 0;
 }
-:where(.mui-list-actions) { gap: var(--mui-list-gap, 12px); }
-:where(.mui-list-row > .mui-list-prefix) { margin-inline-end: var(--mui-list-gap, 20px); }
-:where(.mui-list-row > .mui-list-suffix) { margin-inline-start: var(--mui-list-gap, 20px); }
-:where(.mui-list-row > *) {
+:where(.m-list-actions, [data-part="actions"]) {
+  gap: var(--m-list-gap, 12px);
+}
+:where(:is(.m-list-row, [data-part="row"]) > :is(.m-list-prefix, [data-part="prefix"])) {
+  margin-inline-end: var(--m-list-gap, 20px);
+}
+:where(:is(.m-list-row, [data-part="row"]) > :is(.m-list-suffix, [data-part="suffix"])) {
+  margin-inline-start: var(--m-list-gap, 20px);
+}
+:where(:is(.m-list-row, [data-part="row"]) > *) {
   box-sizing: border-box;
   min-inline-size: 0;
   max-inline-size: 100%;
 }
-:where(.mui-list-content) {
+:where(.m-list-content, [data-part="content"]) {
   flex: 1 1 12rem;
 }
-:where(.mui-list-prefix, .mui-list-suffix) {
+:where(.m-list-prefix, [data-part="prefix"], .m-list-suffix, [data-part="suffix"]) {
   flex: 0 1 auto;
 }
-:where(button.mui-list-action, a.mui-list-action[href]) {
+:where(
+  button.m-list-action, a.m-list-action[href],
+  m-button.m-list-action, m-link.m-list-action[href],
+  [data-part="action"]
+) {
   box-sizing: border-box;
   inline-size: 100%;
   padding: 0;
@@ -109,60 +150,74 @@
   white-space: normal;
   overflow-wrap: anywhere;
 }
-:where(a.mui-list-action[href]) {
+:where(a.m-list-action[href], m-link.m-list-action[href]) {
   text-decoration: underline;
   text-underline-offset: .15em;
 }
-:where(button.mui-list-action:disabled) {
+:where(button.m-list-action:disabled, m-button.m-list-action[disabled]) {
   opacity: .6;
 }
-:where(.mui-list[data-clickable] > .mui-list-items > .mui-list-item > button.mui-list-action:not(:disabled),
-  .mui-list[data-clickable] > .mui-list-items > .mui-list-item > a.mui-list-action[href]) {
+:where(
+  :is(m-list, .m-list):is([data-clickable], [clickable]) :is(m-list-item, .m-list-item) > :is(button.m-list-action, a.m-list-action[href], m-button.m-list-action, m-link.m-list-action[href], .m-list-action):not(:disabled):not([disabled])
+) {
   cursor: pointer;
 }
-:where(.mui-list-action):focus-visible {
+:where(.m-list-action):focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 2px;
 }
 @media (hover: hover) {
-  :where(.mui-list[data-hoverable] > .mui-list-items > .mui-list-item:hover) {
-    background: var(--mui-list-hover-background, var(--_mui-list-hover, #f3f3f5));
+  :where(:is(m-list, .m-list):is([data-hoverable], [hoverable]) :is(m-list-item, .m-list-item):hover) {
+    background: var(--m-list-hover-background, var(--_m-list-hover, #f3f3f5));
   }
-  :where(.mui-list[data-hoverable] > .mui-list-items > .mui-list-item:hover)::after { background: transparent; }
+  :where(:is(m-list, .m-list):is([data-hoverable], [hoverable]) :is(m-list-item, .m-list-item):hover)::after {
+    background: transparent;
+  }
 }
-:where(.mui-list, .mui-list-items, .mui-list-item, .mui-list-header, .mui-list-footer,
-  .mui-list-row, .mui-list-prefix, .mui-list-content, .mui-list-suffix, .mui-list-actions, .mui-list-action)[hidden]:not([hidden="until-found"]),
-template:where(.mui-list, .mui-list-items, .mui-list-item, .mui-list-row, .mui-list-actions),
-:where(.mui-list, .mui-list-items, .mui-list-item, .mui-list-row, .mui-list-actions) > template {
+:where(
+  m-list, .m-list, .m-list-items, [data-part="items"], m-list-item, .m-list-item,
+  .m-list-header, [data-part="header"], m-list-header, .m-list-footer, [data-part="footer"], m-list-footer,
+  .m-list-row, [data-part="row"], .m-list-prefix, [data-part="prefix"],
+  .m-list-content, [data-part="content"], .m-list-suffix, [data-part="suffix"],
+  .m-list-actions, [data-part="actions"], .m-list-action, [data-part="action"]
+)[hidden]:not([hidden="until-found"]),
+template:where(m-list, .m-list, .m-list-items, m-list-item, .m-list-item, .m-list-row, .m-list-actions),
+:where(m-list, .m-list, .m-list-items, m-list-item, .m-list-item, .m-list-row, .m-list-actions) > template {
   display: none !important;
 }
 @media (forced-colors: active) {
-  :where(.mui-list) {
-    --_mui-list-border: CanvasText;
+  :where(m-list, .m-list) {
+    --_m-list-border: CanvasText;
     color: CanvasText;
     background: Canvas;
     border-color: CanvasText;
   }
-  :where(.mui-list > .mui-list-header, .mui-list > .mui-list-footer, .mui-list > .mui-list-items > .mui-list-item) {
+  :where(
+    :is(m-list, .m-list) > :is(.m-list-header, [data-part="header"], m-list-header, header),
+    :is(m-list, .m-list) > :is(.m-list-footer, [data-part="footer"], m-list-footer, footer),
+    :is(m-list, .m-list) :is(m-list-item, .m-list-item)
+  ) {
     border-color: CanvasText;
   }
-  :where(button.mui-list-action:disabled) {
+  :where(button.m-list-action:disabled, m-button.m-list-action[disabled]) {
     color: GrayText;
     opacity: 1;
   }
 }
 @media print {
-  :where(.mui-list) {
-    --_mui-list-border: currentColor;
+  :where(m-list, .m-list) {
+    --_m-list-border: currentColor;
     color: #000;
     background: transparent;
   }
-  :where(.mui-list > .mui-list-items > .mui-list-item) {
+  :where(:is(m-list, .m-list) :is(m-list-item, .m-list-item)) {
     break-inside: avoid;
     background: transparent !important;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  :where(.mui-list, .mui-list-header, .mui-list-footer, .mui-list-item),
-  :where(.mui-list-item)::after { transition: none; }
+  :where(m-list, .m-list, .m-list-header, [data-part="header"], m-list-header, .m-list-footer, [data-part="footer"], m-list-footer, m-list-item, .m-list-item),
+  :where(m-list-item, .m-list-item)::after {
+    transition: none;
+  }
 }

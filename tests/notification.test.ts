@@ -2,8 +2,9 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createNotificationOwner } from "../src/components/notification/index.js"
+import { createNotificationOwner, Notification, NotificationContainer, notification, registerNotification } from "../src/components/notification/index.js"
 import type { NotificationOwner, NotificationOwnerOptions } from "../src/components/notification/index.js"
+import { ViewElement } from "../src/core/index.js"
 import { createMessageOwner } from "../src/components/message/index.js"
 import { showNotification, clearOverlays } from "../src/overlay/index.js"
 import { createFeedbackAttributes } from "../src/components/feedback/attributes.js"
@@ -19,8 +20,8 @@ function deferred() {
 }
 function fixture(policy: "polite" | "assertive" | "off" = "polite") {
   const root = document.createElement("div")
-  root.className = "mui-feedback-host mui-notification-host"
-  root.innerHTML = `<div class="mui-feedback-list" data-notification-items></div><p class="mui-feedback-announcer" data-notification-announcer role="${policy === "assertive" ? "alert" : "status"}" aria-atomic="true"${policy === "off" ? ' aria-live="off"' : ""}></p>`
+  root.className = "m-feedback-host m-notification-host"
+  root.innerHTML = `<div class="m-feedback-list" data-notification-items></div><p class="m-feedback-announcer" data-notification-announcer role="${policy === "assertive" ? "alert" : "status"}" aria-atomic="true"${policy === "off" ? ' aria-live="off"' : ""}></p>`
   document.body.append(root)
   return root
 }
@@ -31,7 +32,7 @@ describe("Notification default styles", () => {
   const builtCss = `${feedbackCss}\n${ownCss}`
 
   it("uses the measured reference card metrics within the composed budget", () => {
-    expect(ownCss).toContain("--mui-feedback-width: 365px")
+    expect(ownCss).toContain("--m-feedback-width: 365px")
     expect(ownCss).toContain("padding: 16px")
     expect(ownCss).toContain("border-radius: 3px")
     expect(ownCss).toContain("font-size: 14px")
@@ -64,7 +65,7 @@ function owner(options: NotificationOwnerOptions = {}, root = fixture()) {
 }
 function template() {
   const t = document.createElement("template")
-  t.innerHTML = '<article class="mui-notification" aria-label="Project activity"><span data-notification-avatar aria-hidden="true">AB</span><header data-notification-header><strong data-notification-kind></strong><h3 data-notification-title>Authored level three</h3></header><button type="button" data-notification-close aria-label="Dismiss">×</button><p data-notification-description></p><p data-notification-content>Authored content</p><small data-notification-meta></small><p data-notification-action-text></p><div data-notification-actions><a href="#details">Details</a><form><label>Reference<input required></label><button type="submit">Use locally</button></form></div><p data-notification-pending hidden>Waiting…</p><p data-notification-error hidden>Close failed.</p></article>'
+  t.innerHTML = '<article class="m-notification" aria-label="Project activity"><span data-notification-avatar aria-hidden="true">AB</span><header data-notification-header><strong data-notification-kind></strong><h3 data-notification-title>Authored level three</h3></header><button type="button" data-notification-close aria-label="Dismiss">×</button><p data-notification-description></p><p data-notification-content>Authored content</p><small data-notification-meta></small><p data-notification-action-text></p><div data-notification-actions><a href="#details">Details</a><form><label>Reference<input required></label><button type="submit">Use locally</button></form></div><p data-notification-pending hidden>Waiting…</p><p data-notification-error hidden>Close failed.</p></article>'
   return t
 }
 const close = (element: HTMLElement) => element.querySelector<HTMLButtonElement>("[data-notification-close]")!
@@ -85,7 +86,7 @@ describe("Native Notification content and semantic policy", () => {
     expect(pkg.dependencies).toEqual({})
     expect(source).not.toContain("innerHTML")
     expect(source).not.toMatch(/from ".*(?:message|modal|dialog|popover|overlay)/)
-    expect(customElements.get("mui-notification")).toBeUndefined()
+    expect(customElements.get("m-notification")).toBe(Notification)
   })
   it.each(["create", "info", "success", "warning", "error"] as const)("retains %s text and visible kind without inferred heading levels or clickable cards", method => {
     const root = fixture(); const o = owner({}, root)
@@ -103,7 +104,7 @@ describe("Native Notification content and semantic policy", () => {
     const root = fixture(policy); const o = owner({}, root); o.error({ content: "Visible error words" })
     expect(o.announcement).toBe(policy)
     expect(root.querySelector("[data-notification-announcer]")!.textContent).toBe(policy === "off" ? "" : "Error: Visible error words")
-    expect(root.querySelector(".mui-notification [role=alert]")).toBeNull()
+    expect(root.querySelector(".m-notification [role=alert]")).toBeNull()
   })
   it("preserves authored heading level/name, avatar, native actions/forms and their listeners across updates", () => {
     const t = template(); const original = t.innerHTML; const h = owner({ template: t }).create({ meta: "New meta" })
@@ -211,7 +212,7 @@ describe("Expiry, capacity and owner lifetime", () => {
   it("keeps owners independent and legacy output/clear unchanged", () => {
     const a = owner(); const b = owner(); const h = a.info({ content: "New" }); b.info({ content: "Other" })
     const legacy = showNotification({ title: "Legacy", content: "<b>text</b>", duration: 0 })
-    expect(legacy.element.outerHTML).toBe('<mui-notification type="default" role="status"><strong>Legacy</strong><span>&lt;b&gt;text&lt;/b&gt;</span></mui-notification>')
+    expect(legacy.element.outerHTML).toBe('<m-notification type="default" role="status"><strong>Legacy</strong><span>&lt;b&gt;text&lt;/b&gt;</span></m-notification>')
     clearOverlays(); expect(h.closed).toBe(false)
     a.destroyAll(); expect(b.notifications).toHaveLength(1)
   })
@@ -219,7 +220,7 @@ describe("Expiry, capacity and owner lifetime", () => {
     const root = fixture(); const a = owner({}, root)
     expect(() => owner({}, root)).toThrow()
     a.dispose()
-    root.classList.add("mui-message-host")
+    root.classList.add("m-message-host")
     root.innerHTML = '<ol data-message-items></ol><p data-message-announcer role="status" aria-atomic="true"></p>'
     const message = createMessageOwner(root); owners.push(message)
     message.create("Different consumer")
@@ -235,7 +236,7 @@ describe("Expiry, capacity and owner lifetime", () => {
   })
   it("preserves author announcer replacement and suppresses automatic fallback focus", async () => {
     const root = fixture(); const fallback = document.createElement("button"); document.body.append(fallback)
-    root.addEventListener("mui:notification-error", e => e.preventDefault())
+    root.addEventListener("m:notification-error", e => e.preventDefault())
     const o = owner({ focusFallback: fallback }, root); const h = o.info({ content: "Current" }); close(h.element).focus()
     root.querySelector("[data-notification-announcer]")!.textContent = "Author replacement"
     await flush()
@@ -259,7 +260,7 @@ describe("Guarded Notification close decisions", () => {
   it.each(["throw", "reject"])("surfaces %s, keeps content and exposes a rejecting lastClose promise", async kind => {
     const failure = new Error("Local failure")
     const root = fixture(); const o = owner({}, root)
-    const errors: CustomEvent[] = []; root.addEventListener("mui:notification-error", e => errors.push(e as CustomEvent))
+    const errors: CustomEvent[] = []; root.addEventListener("m:notification-error", e => errors.push(e as CustomEvent))
     const h = o.create({ content: "Failure", duration: 10, onClose: () => { if (kind === "throw") throw failure; return Promise.reject(failure) } })
     await expect(h.requestClose()).rejects.toBe(failure)
     await advance(100)
@@ -300,7 +301,7 @@ describe("Guarded Notification close decisions", () => {
   })
   it("reports stale rejection without repainting or poisoning updated state", async () => {
     const root = fixture(); const task = deferred(); const o = owner({}, root)
-    const errors: CustomEvent[] = []; root.addEventListener("mui:notification-error", e => { e.preventDefault(); errors.push(e as CustomEvent) })
+    const errors: CustomEvent[] = []; root.addEventListener("m:notification-error", e => { e.preventDefault(); errors.push(e as CustomEvent) })
     const h = o.create({ content: "Old", onClose: () => task.promise }); const promise = h.requestClose(); await flush()
     h.update({ content: "New" }); const html = root.innerHTML
     task.reject(new Error("Stale")); await expect(promise).rejects.toThrow("Stale")
@@ -341,7 +342,7 @@ describe("Guarded Notification close decisions", () => {
     const a = o.create({ content: "A", onClose: () => task.promise }); const b = o.create({ content: "B" })
     const promise = a.requestClose(); await flush()
     let blocked = 0
-    root.addEventListener("mui:notification-remove", () => {
+    root.addEventListener("m:notification-remove", () => {
       try { o.create({ content: "No" }) } catch { blocked++ }
       try { b.update({ content: "No" }) } catch { blocked++ }
     })
@@ -417,3 +418,163 @@ describe("Guarded Notification close decisions", () => {
     expect(css).not.toContain("@keyframes")
   })
 })
+
+describe("canonical Notification ViewElement", () => {
+  it("exports canonical ViewElement classes and registers custom elements", () => {
+    expect(Notification.tag).toBe("m-notification")
+    expect(NotificationContainer.tag).toBe("m-notification-container")
+    expect(ViewElement.prototype.isPrototypeOf(Notification.prototype)).toBe(true)
+    expect(ViewElement.prototype.isPrototypeOf(NotificationContainer.prototype)).toBe(true)
+    expect(customElements.get("m-notification")).toBe(Notification)
+    expect(customElements.get("m-notification-container")).toBe(NotificationContainer)
+    expect(Notification.observedAttributes).toEqual(["title", "description", "content", "type", "duration", "closable"])
+    expect(NotificationContainer.observedAttributes).toEqual(["placement"])
+    expect(() => registerNotification()).not.toThrow()
+  })
+
+  it("handles Notification default properties and reflected attributes", () => {
+    const el = document.createElement("m-notification") as Notification
+    expect(el.title).toBe("")
+    expect(el.description).toBe("")
+    expect(el.content).toBe("")
+    expect(el.type).toBe("default")
+    expect(el.duration).toBe(4500)
+    expect(el.closable).toBe(false)
+
+    el.title = "Alert Title"
+    expect(el.getAttribute("title")).toBe("Alert Title")
+    expect(el.title).toBe("Alert Title")
+
+    el.description = "Alert Description"
+    expect(el.getAttribute("description")).toBe("Alert Description")
+    expect(el.description).toBe("Alert Description")
+
+    el.content = "Detailed Content"
+    expect(el.getAttribute("content")).toBe("Detailed Content")
+    expect(el.content).toBe("Detailed Content")
+
+    el.type = "success"
+    expect(el.getAttribute("type")).toBe("success")
+    expect(el.type).toBe("success")
+
+    el.duration = 3000
+    expect(el.getAttribute("duration")).toBe("3000")
+    expect(el.duration).toBe(3000)
+
+    el.closable = true
+    expect(el.hasAttribute("closable")).toBe(true)
+    expect(el.closable).toBe(true)
+
+    el.closable = false
+    expect(el.hasAttribute("closable")).toBe(false)
+    expect(el.closable).toBe(false)
+
+    expect(() => { el.type = "invalid" as any }).toThrow(RangeError)
+    expect(() => { el.duration = NaN }).toThrow(RangeError)
+  })
+
+  it("handles NotificationContainer placement property and choices", () => {
+    const container = document.createElement("m-notification-container") as NotificationContainer
+    expect(container.placement).toBe("top-right")
+
+    for (const place of ["top-left", "bottom-right", "bottom-left", "top", "bottom"] as const) {
+      container.placement = place
+      expect(container.getAttribute("placement")).toBe(place)
+      expect(container.placement).toBe(place)
+    }
+
+    expect(() => { container.placement = "center" as any }).toThrow(RangeError)
+  })
+
+  it("renders structured elements when connected with attributes", () => {
+    const el = document.createElement("m-notification") as Notification
+    el.title = "Important Notice"
+    el.description = "Brief summary"
+    el.content = "Full content details"
+    el.type = "warning"
+    el.closable = true
+    document.body.append(el)
+
+    expect(el.querySelector("[data-notification-title]")?.textContent).toBe("Important Notice")
+    expect(el.querySelector("[data-notification-description]")?.textContent).toBe("Brief summary")
+    expect(el.querySelector("[data-notification-content]")?.textContent).toBe("Full content details")
+    expect(el.querySelector("[data-notification-kind]")?.textContent).toBe("Warning")
+    expect(el.querySelector("[data-notification-close]")).not.toBeNull()
+  })
+
+  it("emits m:close event and removes element when closed", () => {
+    const el = document.createElement("m-notification") as Notification
+    el.title = "Closing Item"
+    el.closable = true
+    document.body.append(el)
+
+    const closeSpy = vi.fn()
+    el.addEventListener("m:close", closeSpy)
+
+    const closeBtn = el.querySelector<HTMLButtonElement>("[data-notification-close]")!
+    expect(closeBtn).not.toBeNull()
+    closeBtn.click()
+
+    expect(closeSpy).toHaveBeenCalledOnce()
+    expect(closeSpy.mock.calls[0][0].detail).toEqual({ value: "Closing Item" })
+    expect(el.isConnected).toBe(false)
+  })
+
+  it("supports notification service helper methods", () => {
+    const item = notification.create({
+      title: "Service Test",
+      description: "From service",
+      content: "Service content",
+      type: "info",
+      closable: true,
+    })
+    expect(item instanceof Notification).toBe(true)
+    expect(item.title).toBe("Service Test")
+    expect(item.type).toBe("info")
+    expect(item.isConnected).toBe(true)
+
+    const infoItem = notification.info({ title: "Info Notice" })
+    expect(infoItem.type).toBe("info")
+
+    const successItem = notification.success({ title: "Success Notice" })
+    expect(successItem.type).toBe("success")
+
+    const warningItem = notification.warning({ title: "Warning Notice" })
+    expect(warningItem.type).toBe("warning")
+
+    const errorItem = notification.error({ title: "Error Notice" })
+    expect(errorItem.type).toBe("error")
+
+    notification.destroyAll()
+    expect(document.querySelectorAll("m-notification")).toHaveLength(0)
+  })
+
+  it("dismisses automatically when duration elapses", async () => {
+    const item = notification.create({
+      title: "Timer Item",
+      duration: 300,
+    })
+    expect(item.isConnected).toBe(true)
+    await advance(300)
+    expect(item.isConnected).toBe(false)
+  })
+
+  it("pauses dismiss timer on mouseenter and resumes on mouseleave", async () => {
+    const item = notification.create({
+      title: "Hover Timer Item",
+      duration: 400,
+    })
+    expect(item.isConnected).toBe(true)
+    await advance(200)
+    expect(item.isConnected).toBe(true)
+
+    item.dispatchEvent(new MouseEvent("mouseenter"))
+    await advance(300)
+    expect(item.isConnected).toBe(true)
+
+    item.dispatchEvent(new MouseEvent("mouseleave"))
+    await advance(200)
+    expect(item.isConnected).toBe(false)
+  })
+})
+

@@ -1,9 +1,10 @@
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createPagination } from "../src/components/pagination/index.js"
+import { createPagination, Pagination, registerPagination } from "../src/components/pagination/index.js"
 import { pageWindow, paginationState } from "../src/components/pagination/model.js"
 import type { PaginationOptions, PaginationController } from "../src/components/pagination/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const controllers: PaginationController[] = []
 function fixture() {
@@ -68,7 +69,7 @@ describe("native controls and local requests", () => {
     const { nav, size } = fixture()
     size.value = "25"
     const changed = vi.fn()
-    nav.addEventListener("mui:pagination-change", changed)
+    nav.addEventListener("m:pagination-change", changed)
     const c = createPagination(nav, { defaultPage: 3, pageCount: 9 })
     controllers.push(c)
     expect(c.state).toMatchObject({ page: 3, pageSize: 25 })
@@ -93,14 +94,14 @@ describe("native controls and local requests", () => {
     nav.addEventListener("click", e => e.preventDefault(), { once: true })
     next.click(); await flush()
     expect(controller.page).toBe(1)
-    nav.addEventListener("mui:pagination-request", e => e.preventDefault(), { once: true })
+    nav.addEventListener("m:pagination-request", e => e.preventDefault(), { once: true })
     next.click(); await flush()
     expect(controller.page).toBe(1)
   })
   it("never fabricates user requests on assignments or total shrink", () => {
     const { nav, controller } = bind({ itemCount: 237, page: 24 })
     const event = vi.fn()
-    nav.addEventListener("mui:pagination-request", event); nav.addEventListener("mui:pagination-change", event)
+    nav.addEventListener("m:pagination-request", event); nav.addEventListener("m:pagination-change", event)
     controller.set({ itemCount: 12 })
     expect(controller.page).toBe(2)
     controller.page = 1
@@ -109,7 +110,7 @@ describe("native controls and local requests", () => {
   it("clamps rather than resetting after size changes and emits one combined snapshot", async () => {
     const { nav, size, controller } = bind({ itemCount: 237, page: 20 })
     const changed = vi.fn()
-    nav.addEventListener("mui:pagination-change", changed)
+    nav.addEventListener("m:pagination-change", changed)
     size.value = "25"; size.dispatchEvent(new Event("change", { bubbles: true }))
     await flush()
     expect(controller.state).toMatchObject({ page: 10, pageSize: 25 })
@@ -118,7 +119,7 @@ describe("native controls and local requests", () => {
   })
   it("restores a cancelled native select to the accepted page size", async () => {
     const { nav, size, controller } = bind({ itemCount: 237 })
-    nav.addEventListener("mui:pagination-request", e => e.preventDefault(), { once: true })
+    nav.addEventListener("m:pagination-request", e => e.preventDefault(), { once: true })
     size.value = "100"; size.dispatchEvent(new Event("change", { bubbles: true }))
     await flush()
     expect(controller.pageSize).toBe(10)
@@ -261,15 +262,15 @@ describe("focus, ownership and lifecycle", () => {
   })
   it("does not apply or emit after a request listener reconfigures or disposes", async () => {
     const { nav, next, controller } = bind({ pageCount: 9 })
-    const changed = vi.fn(); nav.addEventListener("mui:pagination-change", changed)
-    nav.addEventListener("mui:pagination-request", () => { controller.page = 7 }, { once: true })
+    const changed = vi.fn(); nav.addEventListener("m:pagination-change", changed)
+    nav.addEventListener("m:pagination-request", () => { controller.page = 7 }, { once: true })
     next.click(); await flush(); expect(controller.page).toBe(7); expect(changed).not.toHaveBeenCalled()
-    nav.addEventListener("mui:pagination-request", () => controller.disconnect(), { once: true })
+    nav.addEventListener("m:pagination-request", () => controller.disconnect(), { once: true })
     next.click(); await flush(); expect(controller.connected).toBe(false); expect(changed).not.toHaveBeenCalled()
   })
   it("does not restore a stale select after request-time reconnect and author edits", async () => {
     const { nav, size, controller } = bind({ pageCount: 9 })
-    nav.addEventListener("mui:pagination-request", () => {
+    nav.addEventListener("m:pagination-request", () => {
       controller.disconnect(); controller.connect(); size.value = "100"
     }, { once: true })
     size.value = "25"; size.dispatchEvent(new Event("change", { bubbles: true }))
@@ -313,5 +314,52 @@ describe("focus, ownership and lifecycle", () => {
     const foreign = document.createElement("span"); foreign.textContent = "Author addition"; region.append(foreign)
     expect(() => controller.page = 1).toThrow(/exclusively/)
     expect(region.contains(foreign)).toBe(true)
+  })
+})
+
+describe("canonical Pagination ViewElement", () => {
+  it("exports canonical own-tag ViewElement and registers m-pagination", () => {
+    expect(Pagination.tag).toBe("m-pagination")
+    expect(ViewElement.prototype.isPrototypeOf(Pagination.prototype)).toBe(true)
+    expect(customElements.get("m-pagination")).toBe(Pagination)
+    expect(Pagination.observedAttributes).toEqual(["page", "page-size", "page-count", "item-count", "count", "disabled", "simple"])
+  })
+
+  it("handles typed properties, page navigation and change events", () => {
+    document.body.innerHTML = `<m-pagination page="2" page-count="5"></m-pagination>`
+    const pager = document.querySelector("m-pagination") as Pagination
+    expect(pager.page).toBe(2)
+    expect(pager.pageCount).toBe(5)
+    expect(pager.pageSize).toBe(10)
+    expect(pager.disabled).toBe(false)
+    expect(pager.simple).toBe(false)
+
+    const buttons = [...pager.querySelectorAll<HTMLButtonElement>("button")]
+    expect(buttons.length).toBeGreaterThan(0)
+    const currentBtn = pager.querySelector("[aria-current=page]")
+    expect(currentBtn?.textContent).toBe("2")
+
+    const changeSpy = vi.fn()
+    pager.addEventListener("m:change", changeSpy)
+
+    pager.page = 4
+    expect(pager.page).toBe(4)
+    expect(pager.getAttribute("page")).toBe("4")
+    expect(pager.querySelector("[aria-current=page]")?.textContent).toBe("4")
+    expect(changeSpy).toHaveBeenCalledOnce()
+    expect(changeSpy.mock.calls[0][0].detail).toMatchObject({ page: 4, pageSize: 10 })
+
+    pager.disabled = true
+    expect(pager.hasAttribute("disabled")).toBe(true)
+    const disabledButtons = [...pager.querySelectorAll<HTMLButtonElement>("button:disabled")]
+    expect(disabledButtons.length).toBe(pager.querySelectorAll("button").length)
+  })
+
+  it("calculates pageCount from itemCount and pageSize", () => {
+    document.body.innerHTML = `<m-pagination item-count="45" page-size="10"></m-pagination>`
+    const pager = document.querySelector("m-pagination") as Pagination
+    expect(pager.pageCount).toBe(5)
+    pager.pageSize = 20
+    expect(pager.pageCount).toBe(3)
   })
 })

@@ -2,15 +2,16 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createCalendar } from "../src/components/calendar/index.js"
+import { Calendar, calendarModes, createCalendar, registerCalendar } from "../src/components/calendar/index.js"
 import type { CalendarController, CalendarOptions } from "../src/components/calendar/index.js"
 import { carrier, dateString, fromOrdinal, inMonth, lastOrdinal, monthDays, monthIndex, ordinal, parseDate, weekday } from "../src/components/calendar/date.js"
+import { ViewElement } from "../src/core/index.js"
 
 const helpers: CalendarController[] = []
 function fixture(options: CalendarOptions = {}, bind = true) {
   const form = document.createElement("form")
   form.innerHTML = `<h2 id="calendar-heading">Original <em>calendar heading</em></h2>
-    <section class="mui-calendar" data-calendar data-calendar-month="2024-02" tabindex="-1" aria-labelledby="calendar-heading">
+    <section class="m-calendar" data-calendar data-calendar-month="2024-02" tabindex="-1" aria-labelledby="calendar-heading">
       <div data-calendar-controls hidden>
         <button type="button" data-calendar-action="prev-year">Previous year</button>
         <button type="button" data-calendar-action="prev-month">Previous month</button>
@@ -114,7 +115,7 @@ describe("Calendar native table and explicit date-only state", () => {
   })
   it("shows adjacent months and changes panel once when an adjacent available date is selected", () => {
     const { helper, root, day } = fixture(), panels = vi.fn(), changes = vi.fn()
-    root.addEventListener("mui:calendar-panel-change", panels); root.addEventListener("mui:calendar-change", changes)
+    root.addEventListener("m:calendar-panel-change", panels); root.addEventListener("m:calendar-change", changes)
     expect(day("2024-01-29").closest("td")!.hasAttribute("data-calendar-adjacent")).toBe(true)
     day("2024-03-01").click()
     expect(helper.state.panel).toBe("2024-03"); expect(helper.value).toBe("2024-03-01")
@@ -135,7 +136,7 @@ describe("Calendar native table and explicit date-only state", () => {
   })
   it("accepts unavailable programmatic state without allowing unavailable user selection", () => {
     const { helper, root, day } = fixture({ min: "2024-02-10", max: "2024-02-20" }), changed = vi.fn()
-    root.addEventListener("mui:calendar-change", changed)
+    root.addEventListener("m:calendar-change", changed)
     day("2024-02-09").click(); expect(helper.value).toBeNull()
     expect(helper.select("2024-02-21")).toBe(false)
     helper.set({ value: "2024-02-21" }); expect(helper.value).toBe("2024-02-21"); expect(helper.state.selectionAvailable).toBe(false)
@@ -164,7 +165,7 @@ describe("Calendar native table and explicit date-only state", () => {
 describe("Calendar keyboard, bounds, locale and focus", () => {
   it("moves roving focus with arrows/Home/End without selecting or rebuilding the current rows", () => {
     const { helper, root, body, day, key } = fixture(), rows = [...body.rows], changed = vi.fn()
-    root.addEventListener("mui:calendar-change", changed)
+    root.addEventListener("m:calendar-change", changed)
     day("2024-02-28").focus(); key(day("2024-02-28"), "ArrowRight")
     expect(helper.state.focusedDate).toBe("2024-02-29"); expect(document.activeElement).toBe(day("2024-02-29"))
     key(day("2024-02-29"), "Home"); expect(helper.state.focusedDate).toBe("2024-02-26")
@@ -263,7 +264,7 @@ describe("Calendar atomic callbacks and lifetime", () => {
     expect(() => helper.set({ isDateDisabled: (() => Promise.reject(new Error("not synchronous"))) as never })).toThrow(/synchronous/)
     await Promise.resolve(); expect(body.innerHTML).toBe(before)
     let fail = false; helper.set({ isDateDisabled: () => { if (fail) throw new Error("policy changed"); return false } })
-    const error = vi.fn(); root.addEventListener("mui:calendar-error", error); fail = true
+    const error = vi.fn(); root.addEventListener("m:calendar-error", error); fail = true
     action("next-month").click(); expect(helper.state.panel).toBe("2024-02"); expect(error).toHaveBeenCalledOnce()
   })
   it("guards mutations during callbacks and honors callback-driven disconnect", () => {
@@ -276,8 +277,8 @@ describe("Calendar atomic callbacks and lifetime", () => {
   })
   it("suppresses stale value notification after a reentrant panel event changes the state", () => {
     const { helper, root } = fixture(), change = vi.fn()
-    root.addEventListener("mui:calendar-change", change)
-    root.addEventListener("mui:calendar-panel-change", () => helper.set({ value: "2024-04-10" }), { once: true })
+    root.addEventListener("m:calendar-change", change)
+    root.addEventListener("m:calendar-panel-change", () => helper.set({ value: "2024-04-10" }), { once: true })
     helper.select("2024-03-01")
     expect(helper.value).toBe("2024-04-10"); expect(change).not.toHaveBeenCalled()
   })
@@ -348,18 +349,149 @@ describe("Calendar default styles", () => {
   })
 
   it("retains native table and button ownership while matching the measured metrics", () => {
-    expect(css).toContain("font-size: var(--mui-calendar-font-size, 14px)")
-    expect(css).toContain("font-size: var(--mui-calendar-title-size, 22px)")
-    expect(css).toContain("padding: var(--mui-calendar-padding, 10px)")
+    expect(css).toContain("font-size: var(--m-calendar-font-size, 14px)")
+    expect(css).toContain("font-size: var(--m-calendar-title-size, 22px)")
+    expect(css).toContain("padding: var(--m-calendar-padding, 10px)")
     expect(css).toContain("min-block-size: 28px")
     expect(css).toContain("inline-size: 1.8em")
     expect(css).not.toContain("[role=")
   })
 
   it("keeps hidden, forced-color and print behavior explicit", () => {
-    expect(css).toContain(".mui-calendar [hidden] { display: none !important; }")
+    expect(css).toContain(".m-calendar [hidden] { display: none !important; }")
     expect(css).toContain("@media (forced-colors: active)")
     expect(css).toContain("@media print")
-    expect(css).toContain("[data-calendar-controls], .mui-calendar [data-calendar-status] { display: none; }")
+    expect(css).toContain("[data-calendar-controls], .m-calendar [data-calendar-status] { display: none; }")
+  })
+})
+
+describe("canonical Calendar ViewElement", () => {
+  it("registers canonical Calendar with own tag, ViewElement inheritance and registration conflict safety", () => {
+    expect(Calendar.prototype instanceof ViewElement).toBe(true)
+    expect(customElements.get("m-calendar")).toBe(Calendar)
+    expect(Calendar.tag).toBe("m-calendar")
+    const define = vi.fn()
+    registerCalendar({ get: () => undefined, define })
+    expect(define.mock.calls.map(call => call[0])).toEqual(["m-calendar"])
+    expect(() => registerCalendar({ get: () => HTMLElement as any, define })).toThrow("different implementation")
+  })
+
+  it("exposes canonical observedAttributes and default property values", () => {
+    expect(Calendar.observedAttributes).toEqual(["value", "mode"])
+    const calendar = new Calendar()
+    expect(calendar.value).toBeNull()
+    expect(calendar.mode).toBe("month")
+    expect(calendarModes).toEqual(["month", "year"])
+  })
+
+  it("reflects properties to attributes and validates mode choices", () => {
+    const calendar = new Calendar()
+    calendar.value = "2026-09-13"
+    expect(calendar.getAttribute("value")).toBe("2026-09-13")
+    calendar.value = null
+    expect(calendar.hasAttribute("value")).toBe(false)
+
+    calendar.mode = "year"
+    expect(calendar.getAttribute("mode")).toBe("year")
+    calendar.mode = "month"
+    expect(calendar.getAttribute("mode")).toBe("month")
+    expect(() => { (calendar as any).mode = "decade" }).toThrow(RangeError)
+  })
+
+  it("renders month grid, table caption and sets aria-pressed on selected day", () => {
+    const calendar = new Calendar()
+    calendar.value = "2024-02-15"
+    document.body.append(calendar)
+
+    expect(calendar.classList.contains("m-calendar")).toBe(true)
+    const table = calendar.querySelector("table[data-calendar-table]")
+    expect(table).not.toBeNull()
+    const caption = calendar.querySelector("[data-calendar-caption]")
+    expect(caption?.textContent).toBe("February 2024")
+
+    const days = calendar.querySelectorAll<HTMLButtonElement>("button[data-calendar-day]")
+    expect(days).toHaveLength(42)
+
+    const selectedBtn = calendar.querySelector<HTMLButtonElement>('button[data-calendar-date="2024-02-15"]')
+    expect(selectedBtn).not.toBeNull()
+    expect(selectedBtn?.getAttribute("aria-pressed")).toBe("true")
+  })
+
+  it("emits m:change event when a day is selected or clicked", () => {
+    const calendar = new Calendar()
+    calendar.value = "2024-02-10"
+    document.body.append(calendar)
+
+    const listener = vi.fn()
+    calendar.addEventListener("m:change", listener)
+
+    const targetDay = calendar.querySelector<HTMLButtonElement>('button[data-calendar-date="2024-02-20"]')!
+    expect(targetDay).not.toBeNull()
+    targetDay.click()
+
+    expect(listener).toHaveBeenCalledOnce()
+    const event = listener.mock.calls[0]![0] as CustomEvent<{ value: string }>
+    expect(event.detail).toEqual({ value: "2024-02-20" })
+    expect(event.bubbles).toBe(true)
+    expect(event.cancelable).toBe(false)
+    expect(event.composed).toBe(false)
+    expect(calendar.value).toBe("2024-02-20")
+
+    calendar.select("2024-02-25")
+    expect(listener).toHaveBeenCalledTimes(2)
+    expect(calendar.value).toBe("2024-02-25")
+  })
+
+  it("supports navigation via controls and methods", () => {
+    const calendar = new Calendar()
+    calendar.value = "2024-02-15"
+    document.body.append(calendar)
+
+    calendar.next()
+    let caption = calendar.querySelector("[data-calendar-caption]")
+    expect(caption?.textContent).toBe("March 2024")
+
+    calendar.prev()
+    caption = calendar.querySelector("[data-calendar-caption]")
+    expect(caption?.textContent).toBe("February 2024")
+
+    const nextMonthBtn = calendar.querySelector<HTMLButtonElement>('button[data-calendar-action="next-month"]')!
+    nextMonthBtn.click()
+    caption = calendar.querySelector("[data-calendar-caption]")
+    expect(caption?.textContent).toBe("March 2024")
+  })
+
+  it("supports year mode and selecting months", () => {
+    const calendar = new Calendar()
+    calendar.mode = "year"
+    calendar.value = "2024-05"
+    document.body.append(calendar)
+
+    const caption = calendar.querySelector("[data-calendar-caption]")
+    expect(caption?.textContent).toBe("2024")
+
+    const monthBtns = calendar.querySelectorAll<HTMLButtonElement>("button[data-calendar-day]")
+    expect(monthBtns).toHaveLength(12)
+
+    const selectedMonth = calendar.querySelector<HTMLButtonElement>('button[data-calendar-date="2024-05"]')
+    expect(selectedMonth?.getAttribute("aria-pressed")).toBe("true")
+
+    const listener = vi.fn()
+    calendar.addEventListener("m:change", listener)
+
+    const targetMonth = calendar.querySelector<HTMLButtonElement>('button[data-calendar-date="2024-08"]')!
+    targetMonth.click()
+
+    expect(listener).toHaveBeenCalledOnce()
+    expect((listener.mock.calls[0]![0] as CustomEvent<{ value: string }>).detail).toEqual({ value: "2024-08" })
+    expect(calendar.value).toBe("2024-08")
+  })
+
+  it("exports canonical classes, registerCalendar and createCalendar", async () => {
+    const api = await import("../src/components/calendar/index.js")
+    expect(api.Calendar).toBe(Calendar)
+    expect(api.registerCalendar).toBeTypeOf("function")
+    expect(api.createCalendar).toBeTypeOf("function")
+    expect(api.calendarModes).toEqual(["month", "year"])
   })
 })

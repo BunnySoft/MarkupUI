@@ -1,4 +1,4 @@
-.mui-collapse-transition {
+:where(m-collapse-transition, .m-collapse-transition) {
   display: block;
   box-sizing: content-box;
   min-inline-size: 0;
@@ -7,11 +7,12 @@
   padding: 0;
   border: 0;
 }
-.mui-collapse-transition > [data-collapse-transition-content] {
+:where(m-collapse-transition, .m-collapse-transition) > [data-collapse-transition-content] {
   display: flow-root;
   margin: 0;
 }
-.mui-collapse-transition[data-collapse-transition-active] { overflow: clip !important; overflow-y: clip !important; }
-.mui-collapse-transition[hidden] { display: none !important; }
-@media (prefers-reduced-motion: reduce) { .mui-collapse-transition { scroll-behavior: auto; } }
-@media print { .mui-collapse-transition[data-collapse-transition-active] { overflow: visible !important; overflow-y: visible !important; } }
+:where(m-collapse-transition, .m-collapse-transition)[data-collapse-transition-active] { overflow: clip !important; overflow-y: clip !important; }
+:where(m-collapse-transition, .m-collapse-transition)[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) { :where(m-collapse-transition, .m-collapse-transition) { scroll-behavior: auto; } }
+@media print { :where(m-collapse-transition, .m-collapse-transition)[data-collapse-transition-active] { overflow: visible !important; overflow-y: visible !important; } }
+

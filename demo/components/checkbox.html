@@ -1,65 +1,122 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Checkbox and CheckboxGroup</title>
+  <title>Checkbox - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-checkbox.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./checkbox.css">
-  <script defer src="../../dist/markup-ui-checkbox.global.js"></script>
-  <script defer src="./checkbox.js"></script>
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script type="module" src="../../dist/markup-ui-checkbox.js"></script>
+  <script type="module" src="./checkbox.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Checkbox: native checkedness and submission</h1>
-    <p>Native controls and labels work without JavaScript. Group interaction limits require the optional helper; they are not form validation.</p>
-    <form id="choices-form" method="get" action="checkbox.html">
-      <p><label class="mui-checkbox" data-size="large"><input id="terms" type="checkbox" name="terms" value="yes" required><span>Accept this local example (native required)</span></label></p>
-      <p><label class="mui-checkbox"><input id="mixed" type="checkbox" name="mixed" value="checked-mixed" checked><span>Mixed presentation (JS sets indeterminate, checked still submits)</span></label></p>
-      <fieldset class="mui-checkbox-group" data-checkbox-group id="topics" aria-describedby="topic-rule">
-        <legend>Topics</legend>
-        <p id="topic-rule">With enhancement, retain at least one and at most two selections. A disabled selected topic counts but is not submitted. Limits never disable checked fields for submission.</p>
-        <div class="mui-checkbox-group__items" id="topic-items">
-          <label class="mui-checkbox"><input data-checkbox id="alpha" type="checkbox" name="topics" value="alpha" checked><span>Alpha</span></label>
-          <label class="mui-checkbox"><input data-checkbox id="beta" type="checkbox" name="topics" value="beta"><span>Beta</span></label>
-          <label class="mui-checkbox"><input data-checkbox id="gamma" type="checkbox" name="topics" value="gamma"><span>Gamma with a long wrapping native label</span></label>
-          <label class="mui-checkbox"><input data-checkbox id="locked" type="checkbox" name="topics" value="locked" disabled><span>Author-disabled topic</span></label>
+  <main data-demo-page class="component-docs">
+    <h1>Checkbox</h1>
+    <p>Checkbox and CheckboxGroup are ViewElements. Original native checkboxes, labels and fieldsets own activation, mixed presentation, focus, validation and submission. No replacement checkmark, host role or duplicate tab stop.</p>
+    <details class="component-setup" id="required-files">
+      <summary>Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-checkbox.css"&gt;
+&lt;script type="module" src="./dist/markup-ui-checkbox.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+      <section data-demo-example="native" aria-labelledby="native-title">
+        <header data-demo-header><div><h2 id="native-title">Native forms, required and mixed state</h2><p>Author the native input and label to work before loading JavaScript too. Indeterminate is independent of checkedness and never a third submitted value.</p></div></header>
+        <div data-demo-preview>
+          <m-checkbox id="terms-root" size="large"><label class="m-checkbox"><input id="terms" type="checkbox" name="terms" form="choices-form" value="yes" required><span>Accept this local example (native required)</span></label></m-checkbox>
+          <m-checkbox id="mixed-root"><label class="m-checkbox"><input id="mixed" type="checkbox" name="mixed" form="choices-form" value="checked-mixed" checked><span>Mixed presentation (checked still submits)</span></label></m-checkbox>
+          <button type="button" id="toggle-mixed">Toggle indeterminate</button>
         </div>
-        <template id="topic-template"><label class="mui-checkbox"><input data-checkbox type="checkbox" name="topics" value="delta"><span>Delta (authored template)</span></label></template>
-      </fieldset>
-      <fieldset class="mui-checkbox-group" data-checkbox-group id="delivery" data-size="small">
-        <legend>Delivery and nested independent group</legend>
-        <div class="mui-checkbox-group__items">
-          <label class="mui-checkbox"><input data-checkbox id="mail" type="checkbox" name="delivery" value="mail" checked><span>Mail</span></label>
-          <label class="mui-checkbox"><input data-checkbox id="external-choice" type="checkbox" name="external" form="other-form" value="external" checked><span>Associated with the other form</span></label>
+      </section>
+      <section data-demo-example="limits" aria-labelledby="limits-title">
+        <header data-demo-header><div><h2 id="limits-title">Selection limits and live native ownership</h2><p>The group's value is computed from current checked members in DOM order, not stored configuration and not an invented empty-array default. Initially Alpha is selected.</p></div></header>
+        <div data-demo-preview>
+          <m-checkbox-group id="topics" min="1" max="2">
+            <fieldset class="m-checkbox-group" aria-describedby="topic-rule">
+              <legend>Topics</legend>
+              <m-p id="topic-rule">Retain one to two selections. Disabled selected members count toward limits but do not submit. Limits cancel native activation; they are not form validation and never disable successful fields.</m-p>
+              <m-box class="m-checkbox-group__items" id="topic-items">
+                <m-checkbox id="alpha-root"><label class="m-checkbox"><input data-checkbox id="alpha" type="checkbox" name="topics" form="choices-form" value="alpha" checked><span>Alpha</span></label></m-checkbox>
+                <m-checkbox id="beta-root"><label class="m-checkbox"><input data-checkbox id="beta" type="checkbox" name="topics" form="choices-form" value="beta"><span>Beta</span></label></m-checkbox>
+                <m-checkbox><label class="m-checkbox"><input data-checkbox id="gamma" type="checkbox" name="topics" form="choices-form" value="gamma"><span>Gamma with a long wrapping native label</span></label></m-checkbox>
+                <m-checkbox><label class="m-checkbox"><input data-checkbox id="locked" type="checkbox" name="topics" form="choices-form" value="locked" disabled><span>Author-disabled topic</span></label></m-checkbox>
+              </m-box>
+              <template id="topic-template"><m-checkbox><label class="m-checkbox"><input data-checkbox id="delta" type="checkbox" name="topics" form="choices-form" value="delta"><span>Delta (authored template)</span></label></m-checkbox></template>
+            </fieldset>
+          </m-checkbox-group>
+          <m-box class="demo-tools" display="flex" wrap="wrap" gap="8">
+            <m-button id="silent">Silent value = ["beta"]</m-button>
+            <m-button id="default">Change Alpha defaultChecked</m-button>
+            <m-button id="add">Add Delta and refresh</m-button>
+            <m-button id="limits">Toggle max two / three</m-button>
+            <m-button id="toggle-fieldset">Toggle Topics disabled</m-button>
+            <m-button id="reconnect">Disconnect and reconnect Topics</m-button>
+          </m-box>
+          <m-p id="state">Group limits initialize with JavaScript.</m-p>
+          <m-p id="event-count">Accepted group changes: 0</m-p>
         </div>
-        <fieldset class="mui-checkbox-group" data-checkbox-group id="nested">
-          <legend>Independent nested choices</legend>
-          <label class="mui-checkbox"><input data-checkbox id="nested-mail" type="checkbox" name="nested" value="mail"><span>Same key allowed in another group</span></label>
-        </fieldset>
-      </fieldset>
-      <input type="hidden" name="local" value="only">
-      <p><button type="submit">Inspect native submission / local GET fallback</button> <button type="reset">Native reset</button></p>
-    </form>
+      </section>
+      <section data-demo-example="nesting" aria-labelledby="nesting-title">
+        <header data-demo-header><div><h2 id="nesting-title">Independent nested groups and external forms</h2><p>Keys are explicit nonempty strings, unique only within their nearest group. Late, reordered and removed members follow current native DOM state; refresh after silent native checked writes for derived limit ARIA.</p></div></header>
+        <div data-demo-preview>
+          <m-checkbox-group id="delivery" size="small">
+            <fieldset class="m-checkbox-group">
+              <legend>Delivery</legend>
+              <m-checkbox><label class="m-checkbox"><input data-checkbox id="mail" type="checkbox" name="delivery" form="choices-form" value="mail" checked><span>Mail</span></label></m-checkbox>
+              <m-checkbox><label class="m-checkbox"><input data-checkbox id="external-choice" type="checkbox" name="external" form="other-form" value="external" checked><span>Associated with the other form</span></label></m-checkbox>
+              <m-checkbox-group id="nested" max="1">
+                <fieldset class="m-checkbox-group">
+                  <legend>Independent nested choices</legend>
+                  <m-checkbox><label class="m-checkbox"><input data-checkbox id="nested-mail" type="checkbox" name="nested" form="choices-form" value="mail"><span>Same key allowed in another group</span></label></m-checkbox>
+                </fieldset>
+              </m-checkbox-group>
+            </fieldset>
+          </m-checkbox-group>
+        </div>
+      </section>
+      <section data-demo-example="submission" aria-labelledby="submission-title">
+        <header data-demo-header><div><h2 id="submission-title">Native submission and reset</h2><p>Silent checked/group value writes preserve reset defaults and emit no input/change. Changing defaultChecked follows the native dirty flag. Reset preserves native indeterminate behavior. Nothing is sent to a service.</p></div></header>
+        <div data-demo-preview>
+          <form id="choices-form" method="get" action="checkbox.html">
+          <button type="submit">Inspect FormData</button>
+          <button type="reset">Native reset</button>
+          <m-button id="cancel">Cancel next reset</m-button>
+          <pre id="submission">No submission yet.</pre>
+          </form>
+        </div>
+      </section>
     <form id="other-form"><button type="reset">Reset the externally associated choice</button></form>
-    <div class="demo-tools">
-      <button type="button" id="toggle-fieldset">Toggle disabled Topics fieldset</button>
-      <button type="button" id="toggle-mixed">Toggle native indeterminate</button>
-      <button type="button" id="default">Change Alpha defaultChecked</button>
-      <button type="button" id="silent">Silent group setValues</button>
-      <button type="button" id="add">Add Delta and refresh</button>
-      <button type="button" id="limits">Change max between two and three</button>
-      <button type="button" id="cancel">Cancel next reset</button>
-      <button type="button" id="rtl">Toggle RTL</button>
-      <button type="button" id="disconnect">Disconnect group helpers</button>
-    </div>
-    <p id="state">No JS: no group limits or custom events.</p>
-    <p id="event-count">Accepted group changes: 0</p>
-    <pre id="submission">No submission yet.</pre>
-    <fieldset class="mui-checkbox-group" disabled>
-      <legend><label class="mui-checkbox"><input id="legend-choice" type="checkbox" name="legend" value="allowed"><span>Native first-legend exception</span></label></legend>
-      <label class="mui-checkbox"><input id="disabled-field" type="checkbox" name="disabled" value="blocked"><span>Disabled fieldset member</span></label>
-    </fieldset>
+    <section data-demo-example="fieldset" aria-labelledby="fieldset-title">
+      <header data-demo-header><div><h2 id="fieldset-title">Disabled fieldset and first-legend exception</h2><p>Native rules determine effective disabledness. The checkbox's disabled property is only its own flag. Mouse and Space use the same native activation path.</p></div></header>
+      <div data-demo-preview>
+        <fieldset class="m-checkbox-group" disabled>
+          <legend><m-checkbox><label class="m-checkbox"><input id="legend-choice" type="checkbox" name="legend" value="allowed"><span>Native first-legend exception</span></label></m-checkbox></legend>
+          <m-checkbox><label class="m-checkbox"><input id="disabled-field" type="checkbox" name="disabled" value="blocked"><span>Disabled fieldset member</span></label></m-checkbox>
+        </fieldset>
+      </div>
+    </section>
+    <section aria-labelledby="behavior-title">
+      <h2 id="behavior-title">Behavior, dependencies and styling</h2>
+      <p>Checkbox defaults follow the native input: unchecked, not indeterminate, not disabled or required; value is "on" and name is empty when absent. Group min is 0, max is null (unlimited), size is medium and status is null. Group values include prechecked and disabled members; writes outside limits are allowed without clamping so applications can restore or repair state.</p>
+      <p>The checked host attribute sets the native reset default. Use checked for silent live writes and defaultChecked for reset defaults. Native value/name/form changes remain live. The string value is for submission: existing m-bind on Checkbox still binds boolean checked; an explicit m-bind-property="value" binds the submission string. Canonical Radio follows the same native binding rule; Switch retains its existing bridge.</p>
+      <p>Typed writes validate before changing native state. Within a group, Checkbox value rejects empty or duplicate keys; direct native value changes can instead make a group invalid and are reported on refresh. CheckboxGroup value accepts unique existing strings in any order but reads back in DOM order. Append members inside an authored native fieldset, or directly to a group whose fieldset was generated.</p>
+      <p>Native input then change bubble from the native checkbox once per accepted activation. The group emits one non-bubbling m:checkbox-group-change afterward with values, value and actionType. Cancelled clicks emit neither; invalid group members report non-bubbling m:checkbox-group-error with message, and refresh throws. Removing a group cancels queued notifications and releases only owned ARIA; reconnect preserves authored nodes and listeners.</p>
+      <p>ESM imports only markup-ui-core.js. Classic scripts require markup-ui-core.global.js then markup-ui-checkbox.global.js, exposing Checkbox, CheckboxGroup and registerCheckbox on MarkupUICheckbox. No native-input dependency, aggregate, binding engine, renderer helper or other component is required. CSS is markup-ui-checkbox.css. The manifest counts the complete two-file runtime plus CSS.</p>
+      <p>Use native labels and a nonempty first direct legend. Omitted input/fieldset chrome is generated once around surviving authored nodes. Native controls, not hosts, own roles and focus. Interactive Checkbox remains forbidden in passive Collapse, Tooltip and Dropdown labels. The .m-checkbox/.m-checkbox-group skins remain native styling hooks; --m-checkbox-* and shared theme tokens customize color, font, size and focus without changing ownership. Native appearance, RTL, wrapping, forced colors and print are retained; there is no animation requiring a reduced-motion substitute.</p>
+    </section>
+    <section id="checkbox-api"></section>
   </main>
 </body>
 </html>

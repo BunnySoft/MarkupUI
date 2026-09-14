@@ -9,15 +9,15 @@
   background: Canvas;
   overflow-wrap: anywhere;
 }
-#legacy-grid-example .migration-nav { --mui-flex-align: center; --mui-flex-justify: space-between; }
+#legacy-grid-example .migration-nav { --m-flex-align: center; --m-flex-justify: space-between; }
 #legacy-grid-example .migration-columns,
 #legacy-grid-example .four-columns {
-  --mui-grid-cols: 1;
-  --mui-grid-x-gap: 12px;
-  --mui-grid-y-gap: 8px;
+  --m-grid-cols: 1;
+  --m-grid-x-gap: 12px;
+  --m-grid-y-gap: 8px;
 }
-#legacy-grid-example .nested-columns { --mui-grid-cols: 2; --mui-grid-x-gap: 4px; --mui-grid-y-gap: 4px; }
-#legacy-grid-example .query-columns { --mui-grid-cols: 1; --mui-grid-x-gap: 12px; --mui-grid-y-gap: 8px; }
+#legacy-grid-example .nested-columns { --m-grid-cols: 2; --m-grid-x-gap: 4px; --m-grid-y-gap: 4px; }
+#legacy-grid-example .query-columns { --m-grid-cols: 1; --m-grid-x-gap: 12px; --m-grid-y-gap: 8px; }
 #legacy-grid-example .known-spacer { display: none; }
 #legacy-grid-example .migration-container { container-name: migration; margin-block: 1rem; }
 #legacy-grid-example .compact-container { max-inline-size: 20rem; }
@@ -30,19 +30,19 @@
 #legacy-grid-example a { color: LinkText; }
 #legacy-grid-example :focus-visible { outline: 3px solid Highlight; outline-offset: -3px; }
 @media (min-width: 48rem) {
-  #legacy-grid-example .migration-columns { --mui-grid-cols: 24; }
-  #legacy-grid-example .first-column { --mui-grid-span: 8; }
-  #legacy-grid-example .second-column { --mui-grid-span: 16; }
-  #legacy-grid-example .full-column { --mui-grid-span: 24; }
-  #legacy-grid-example .four-columns { --mui-grid-cols: 4; }
-  #legacy-grid-example .two-tracks { --mui-grid-span: 2; }
+  #legacy-grid-example .migration-columns { --m-grid-cols: 24; }
+  #legacy-grid-example .first-column { --m-grid-span: 8; }
+  #legacy-grid-example .second-column { --m-grid-span: 16; }
+  #legacy-grid-example .full-column { --m-grid-span: 24; }
+  #legacy-grid-example .four-columns { --m-grid-cols: 4; }
+  #legacy-grid-example .two-tracks { --m-grid-span: 2; }
   #legacy-grid-example .known-spacer { display: block; }
-  #legacy-grid-example .start-three { --mui-grid-start: 3; }
+  #legacy-grid-example .start-three { --m-grid-start: 3; }
 }
 @supports (container-type: inline-size) {
   @container migration (min-width: 30rem) {
-    #legacy-grid-example .query-columns { --mui-grid-cols: 3; }
-    #legacy-grid-example .query-feature { --mui-grid-span: 2; }
+    #legacy-grid-example .query-columns { --m-grid-cols: 3; }
+    #legacy-grid-example .query-feature { --m-grid-span: 2; }
   }
 }
 @media print {

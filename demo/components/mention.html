@@ -1,63 +1,103 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-m-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MarkupUI native Mention</title>
+  <title>Mention - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-mention.css">
-  <link rel="stylesheet" href="../../dist/markup-ui-input.css">
-  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./mention.css">
-  <script defer src="../../dist/markup-ui-input.global.js"></script>
-  <script defer src="../../dist/markup-ui-form.global.js"></script>
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-mention.global.js"></script>
-  <script defer src="./mention.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script type="module" src="./mention.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-<main>
-  <h1>Mention: native text and explicit choice buttons</h1>
-  <p>The panel is ordinary document flow below its field, not caret-anchored. Type @al or #do, then Tab to a native button and use Enter/Space, or click it. Ordinary editor Enter/Tab/arrows remain native.</p>
-  <dialog id="composer" aria-labelledby="composer-title" open>
-    <h2 id="composer-title">Local composer</h2>
-    <p>Use example text only. Nothing is sent, logged or stored. Without JavaScript, this method=dialog form only closes the local example.</p>
-    <form id="compose-form" method="dialog">
-      <div class="mui-mention">
-        <div class="mui-input" data-input id="message-input">
-          <label for="message">Message (required)</label>
-          <textarea class="mui-mention__editor" data-input-control data-autosize id="message" name="message" rows="4" maxlength="256" required aria-describedby="message-help message-count">Hello </textarea>
-          <span id="message-count" data-input-count>6 / 256</span>
+  <main data-demo-page class="component-docs">
+    <h1>Mention</h1>
+    <p>Suggestions triggered by prefix characters in text inputs and textareas.</p>
+    <nav class="component-docs-nav" aria-label="Mention documentation">
+      <a href="#basic-title">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-mention.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-mention.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="basic" aria-labelledby="basic-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="basic-title">Basic Mention</h2>
+          <p>Standard mention with suggestions triggered by @ prefix.</p>
         </div>
-        <p id="message-help">Prefixes @ and # use the nearest match before the caret. Query starts after one character. Try @fail for a local error or @slow for a delayed result. Text after the caret is preserved.</p>
-        <section class="mui-mention__panel" id="message-panel" aria-labelledby="message-panel-title" hidden>
-          <h3 id="message-panel-title">Message mention choices</h3>
-          <p>Native buttons: Tab to a choice, Enter/Space inserts; Escape closes. No listbox/combobox keyboard mode.</p>
-          <ul class="mui-mention__options" data-mention-options></ul>
-          <p data-mention-status>No search yet.</p>
-        </section>
-        <p class="mui-form-item__feedback" id="message-error" hidden></p>
+      </header>
+      <div data-demo-preview>
+        <m-mention id="basic-mention" prefix="@">
+          <textarea class="m-mention__editor" placeholder="Type @ to mention someone..."></textarea>
+          <m-option value="alice">alice</m-option>
+          <m-option value="alex">alex</m-option>
+          <m-option value="bob">bob</m-option>
+        </m-mention>
+        <m-p id="basic-output">Selected: (none)</m-p>
       </div>
-      <div class="mui-mention">
-        <label for="subject">Subject — static # topics</label>
-        <input class="mui-mention__editor" id="subject" type="text" name="subject" value="Topic " maxlength="80">
-        <section class="mui-mention__panel" id="subject-panel" aria-label="Subject mention choices" hidden>
-          <ul class="mui-mention__options" data-mention-options></ul>
-          <p data-mention-status>No search yet.</p>
-        </section>
+    </section>
+
+    <section data-demo-example="prefix" aria-labelledby="prefix-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="prefix-title">Custom Prefix</h2>
+          <p>Mention triggered by # for tags or topics in a single-line input.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <m-mention id="tag-mention" prefix="#">
+          <input class="m-mention__editor" type="text" placeholder="Type # for tags...">
+          <m-option value="announcements">announcements</m-option>
+          <m-option value="general">general</m-option>
+          <m-option value="random">random</m-option>
+        </m-mention>
+        <m-p id="tag-output">Selected: (none)</m-p>
       </div>
-      <div class="tools">
-        <button type="submit" name="intent" value="local">Inspect locally without displaying text</button>
-        <button type="reset">Native reset</button>
-        <button type="button" id="sample" hidden>Load sample silently, then query</button>
-        <button type="button" id="limit" hidden>Try maxlength rejection</button>
-        <button type="button" id="readonly" hidden>Toggle message readonly</button>
-        <button type="button" id="cancel" hidden>Cancel next reset</button>
-        <button type="button" id="disconnect" hidden>Disconnect helpers</button>
+    </section>
+
+    <section data-demo-example="disabled" aria-labelledby="disabled-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="disabled-title">Disabled State</h2>
+          <p>Disabled mention element preventing user interaction.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <m-mention id="disabled-mention" disabled value="Fixed value">
+          <textarea class="m-mention__editor" disabled>Disabled mention editor</textarea>
+        </m-mention>
+        <m-box margin="8 0 0 0">
+          <m-button id="toggle-disabled-btn">Toggle Disabled</m-button>
+        </m-box>
       </div>
-    </form>
-  </dialog>
-  <button type="button" id="rtl">Toggle RTL</button>
-  <p id="events">No mention selection yet.</p>
-  <p id="submission">Local inspection reports counts only; no text is copied into this output.</p>
-</main>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="mention-api">
+        <p>Loading API documentation.</p>
+      </div>
+    </section>
+  </main>
 </body>
 </html>

@@ -210,7 +210,7 @@ if (root) {
   root.querySelector('[data-operation="loading-finish"]').addEventListener("click", () => run(() => scope.services.loadingBar.finish()))
   root.querySelector('[data-operation="loading-error"]').addEventListener("click", () => run(() => { scope.services.loadingBar.stop(); scope.services.loadingBar.error() }))
   root.querySelector('[data-operation="resolve"]').addEventListener("click", () => run(() => scope.resolveDecisions(true)))
-  for (const name of ["mui:message-error", "mui:notification-error", "mui:dialog-error", "mui:loading-bar-fault"]) {
+  for (const name of ["m:message-error", "m:notification-error", "m:dialog-error", "m:loading-bar-fault"]) {
     root.addEventListener(name, event => { event.preventDefault(); status.textContent = event.detail.error.message }, true)
   }
   updateControls()

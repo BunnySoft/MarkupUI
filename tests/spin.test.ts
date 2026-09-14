@@ -1,24 +1,24 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { MuiSpin, registerSpin } from "../src/components/spin/index.js"
-import { registerElements } from "../src/components/elements.js"
+import { Spin, MSpin, registerSpin } from "../src/components/spin/index.js"
+import { builtInElementNames, registerElements } from "../src/components/elements.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.useRealTimers(); vi.restoreAllMocks() })
 
-function spin(markup = "<mui-spin></mui-spin>"): MuiSpin {
+function spin(markup = "<m-spin></m-spin>"): Spin {
   document.body.innerHTML = markup
-  const element = document.querySelector("mui-spin")
-  if (!(element instanceof MuiSpin)) throw new Error("Spin was not upgraded")
+  const element = document.querySelector("m-spin")
+  if (!(element instanceof Spin)) throw new Error("Spin was not upgraded")
   return element
 }
-function wrapped(delay = 100): MuiSpin {
-  return spin(`<mui-spin delay="${delay}"><div data-mui-spin-content><button type="button">Action</button></div></mui-spin>`)
+function wrapped(delay = 100): Spin {
+  return spin(`<m-spin delay="${delay}"><div data-m-spin-content><button type="button">Action</button></div></m-spin>`)
 }
 
 describe("standalone Spin", () => {
   it("provides a decorative original SVG and readable fallback without automatic live/busy roles", () => {
     const element = spin()
     expect(element.active).toBe(true)
-    expect(element.dataset.muiSpinMode).toBe("standalone")
+    expect(element.dataset.mSpinMode).toBe("standalone")
     const svg = element.querySelector("svg")!
     expect(svg.namespaceURI).toBe("http://www.w3.org/2000/svg")
     expect(svg.getAttribute("aria-hidden")).toBe("true")
@@ -26,14 +26,14 @@ describe("standalone Spin", () => {
     expect(svg.getAttribute("viewBox")).toBe("0 0 200 200")
     expect(svg.querySelector("circle")?.getAttribute("r")).toBe("91")
     expect(svg.querySelector("animate,animateTransform")).toBeNull()
-    expect(element.querySelector("[data-mui-spin-text]")?.textContent).toBe("Loading")
+    expect(element.querySelector("[data-m-spin-text]")?.textContent).toBe("Loading")
     expect(element.hasAttribute("role") || element.hasAttribute("aria-busy") || element.hasAttribute("aria-live")).toBe(false)
     expect(element.querySelector("[role],[aria-live]")).toBeNull()
   })
 
   it("honors the documented standalone show/delay distinction", () => {
     vi.useFakeTimers()
-    const element = spin('<mui-spin show="false" delay="200"></mui-spin>')
+    const element = spin('<m-spin show="false" delay="200"></m-spin>')
     expect(element.show).toBe(false)
     expect(element.active).toBe(true)
     expect(vi.getTimerCount()).toBe(0)
@@ -47,7 +47,7 @@ describe("standalone Spin", () => {
   it("delays only a real wrapped request and activates at the deadline", () => {
     vi.useFakeTimers()
     const element = wrapped()
-    expect(element.dataset.muiSpinState).toBe("waiting")
+    expect(element.dataset.mSpinState).toBe("waiting")
     expect(element.active).toBe(false)
     expect(vi.getTimerCount()).toBe(1)
     vi.advanceTimersByTime(99)
@@ -127,7 +127,7 @@ describe("standalone Spin", () => {
     const element = wrapped()
     element.hidden = true
     expect(vi.getTimerCount()).toBe(0)
-    expect(element.hasAttribute("data-mui-spin-active")).toBe(false)
+    expect(element.hasAttribute("data-m-spin-active")).toBe(false)
     element.hidden = false
     expect(element.active).toBe(false)
     vi.advanceTimersByTime(100)
@@ -143,7 +143,7 @@ describe("standalone Spin", () => {
     element.remove()
     expect(vi.getTimerCount()).toBe(0)
     expect(element.active).toBe(false)
-    expect(element.hasAttribute("data-mui-spin-active")).toBe(false)
+    expect(element.hasAttribute("data-m-spin-active")).toBe(false)
     document.body.append(element)
     expect(element.contentElement).toBe(content)
     expect(element.indicatorElement).toBe(indicator)
@@ -159,19 +159,19 @@ describe("standalone Spin", () => {
     element.show = false
     element.contentElement!.remove()
     await Promise.resolve()
-    expect(element.dataset.muiSpinMode).toBe("standalone")
+    expect(element.dataset.mSpinMode).toBe("standalone")
     expect(element.active).toBe(true)
     expect(vi.getTimerCount()).toBe(0)
     const button = document.createElement("button")
     button.textContent = "Late target"
     element.append(button)
     await Promise.resolve()
-    expect(element.dataset.muiSpinMode).toBe("wrapped")
+    expect(element.dataset.mSpinMode).toBe("wrapped")
     expect(element.active).toBe(false)
   })
 
   it("preserves native targets, input state, classes and all author-owned busy/blocking attributes", () => {
-    const element = spin('<mui-spin show="false"><div data-mui-spin-content class="panel" aria-busy="false" aria-hidden="false" inert><input value="Initial"><button type="button">Action</button></div></mui-spin>')
+    const element = spin('<m-spin show="false"><div data-m-spin-content class="panel" aria-busy="false" aria-hidden="false" inert><input value="Initial"><button type="button">Action</button></div></m-spin>')
     const content = element.contentElement!
     const input = content.querySelector("input")!
     input.value = "Edited"
@@ -187,7 +187,7 @@ describe("standalone Spin", () => {
   })
 
   it("leaves active wrapped controls usable with native form semantics and no focus trap", () => {
-    const element = spin('<form><mui-spin><div data-mui-spin-content><button type="submit">Save</button><button type="reset">Reset</button><input value="Initial"></div></mui-spin></form>')
+    const element = spin('<form><m-spin><div data-m-spin-content><button type="submit">Save</button><button type="reset">Reset</button><input value="Initial"></div></m-spin></form>')
     const content = element.contentElement!
     const submit = vi.fn((event: Event) => event.preventDefault())
     document.querySelector("form")!.addEventListener("submit", submit)
@@ -204,12 +204,12 @@ describe("standalone Spin", () => {
   })
 
   it("adopts raw targets and late explicit content without replacing nodes/listeners", async () => {
-    const element = spin('<mui-spin show="false"><button type="button">Target</button></mui-spin>')
+    const element = spin('<m-spin show="false"><button type="button">Target</button></m-spin>')
     const button = element.querySelector("button")!
     const click = vi.fn()
     button.addEventListener("click", click)
     const content = document.createElement("section")
-    content.dataset.muiSpinContent = ""
+    content.dataset.mSpinContent = ""
     content.textContent = "New"
     element.prepend(content)
     await Promise.resolve()
@@ -217,14 +217,14 @@ describe("standalone Spin", () => {
     expect(content.contains(button)).toBe(true)
     button.click()
     expect(click).toHaveBeenCalledOnce()
-    expect(element.querySelectorAll("[data-mui-spin-content]")).toHaveLength(1)
+    expect(element.querySelectorAll("[data-m-spin-content]")).toHaveLength(1)
   })
 
   it("uses description prop precedence without destroying authored description content or ARIA", () => {
-    const element = spin('<mui-spin description="Override"><span data-mui-spin-description role="status" id="status"><strong>Authored</strong></span></mui-spin>')
-    const description = element.querySelector<HTMLElement>("[data-mui-spin-description]")!
+    const element = spin('<m-spin description="Override"><span data-m-spin-description role="status" id="status"><strong>Authored</strong></span></m-spin>')
+    const description = element.querySelector<HTMLElement>("[data-m-spin-description]")!
     const text = description.querySelector("strong")
-    expect(element.querySelector("[data-mui-spin-text]")?.textContent).toBe("Override")
+    expect(element.querySelector("[data-m-spin-text]")?.textContent).toBe("Override")
     expect(description.parentElement?.hidden).toBe(true)
     expect(description.hidden).toBe(false)
     element.description = null
@@ -235,25 +235,25 @@ describe("standalone Spin", () => {
   })
 
   it("keeps labels safe and avoids duplicate fallback text when a host name is explicitly supplied", () => {
-    const element = spin('<mui-spin role="status" aria-label="Uploading"></mui-spin>')
-    expect(element.querySelector<HTMLElement>("[data-mui-spin-text]")?.hidden).toBe(true)
+    const element = spin('<m-spin role="status" aria-label="Uploading"></m-spin>')
+    expect(element.querySelector<HTMLElement>("[data-m-spin-text]")?.hidden).toBe(true)
     expect(element.getAttribute("role")).toBe("status")
     expect(element.querySelectorAll("[role]")).toHaveLength(0)
     element.removeAttribute("aria-label")
     element.label = "Retrieving"
-    expect(element.querySelector("[data-mui-spin-text]")?.textContent).toBe("Retrieving")
+    expect(element.querySelector("[data-m-spin-text]")?.textContent).toBe("Retrieving")
     element.description = "<img src=x>"
-    expect(element.querySelector("[data-mui-spin-text]")?.textContent).toBe("<img src=x>")
+    expect(element.querySelector("[data-m-spin-text]")?.textContent).toBe("<img src=x>")
     expect(element.querySelector("img")).toBeNull()
     element.description = " "
-    expect(element.querySelector("[data-mui-spin-text]")?.textContent).toBe("Retrieving")
+    expect(element.querySelector("[data-m-spin-text]")?.textContent).toBe("Retrieving")
   })
 
   it("preserves custom SVG/icon nodes and never adds a second default icon", async () => {
-    const element = spin('<mui-spin><svg data-mui-spin-icon role="img" aria-label="Custom symbol" viewBox="0 0 24 24"><circle r="8" cx="12" cy="12"></circle></svg></mui-spin>')
+    const element = spin('<m-spin><svg data-m-spin-icon role="img" aria-label="Custom symbol" viewBox="0 0 24 24"><circle r="8" cx="12" cy="12"></circle></svg></m-spin>')
     const svg = element.querySelector("svg")!
     const circle = svg.querySelector("circle")
-    expect(element.querySelector("[data-mui-spin-default]")).toBeNull()
+    expect(element.querySelector("[data-m-spin-default]")).toBeNull()
     element.rotate = false
     element.size = 48
     expect(element.querySelector("svg")).toBe(svg)
@@ -261,7 +261,7 @@ describe("standalone Spin", () => {
     expect(svg.getAttribute("aria-label")).toBe("Custom symbol")
     svg.remove()
     await Promise.resolve()
-    expect(element.querySelector("[data-mui-spin-default]")).not.toBeNull()
+    expect(element.querySelector("[data-m-spin-default]")).not.toBeNull()
   })
 
   it("applies original SVG radius/scale/stroke geometry and preset stroke defaults", () => {
@@ -287,8 +287,8 @@ describe("standalone Spin", () => {
     expect(Number(circle.getAttribute("pathLength"))).toBeCloseTo(75 / 80 * Math.PI * 200)
     expect(circle.getAttribute("stroke-dasharray")).toBe("567")
     expect(circle.getAttribute("stroke-dashoffset")).toBe("142")
-    expect(circle.hasAttribute("data-mui-spin-arc")).toBe(true)
-    expect(element.style.getPropertyValue("--_mui-spin-size")).toBe("48px")
+    expect(circle.hasAttribute("data-m-spin-arc")).toBe(true)
+    expect(element.style.getPropertyValue("--_m-spin-size")).toBe("48px")
   })
 
   it("normalizes CSS arc motion without SMIL, style injection or replacing the circle", () => {
@@ -307,7 +307,7 @@ describe("standalone Spin", () => {
   })
 
   it("rejects invalid numeric/color property assignments before changing their attributes", () => {
-    const element = spin('<mui-spin size="24" delay="10" stroke="red"></mui-spin>')
+    const element = spin('<m-spin size="24" delay="10" stroke="red"></m-spin>')
     for (const value of [-1, Infinity, NaN, "24px", "tiny"]) {
       expect(() => { element.size = value }).toThrow(RangeError)
       expect(element.getAttribute("size")).toBe("24")
@@ -330,7 +330,7 @@ describe("standalone Spin", () => {
     element.setAttribute("stroke", "not-a-color")
     expect(element.valid).toBe(false)
     expect(element.validationErrors).toEqual(["size", "delay", "stroke-width", "stroke"])
-    expect(element.dataset.muiSpinState).toBe("invalid")
+    expect(element.dataset.mSpinState).toBe("invalid")
     expect(element.active).toBe(false)
     expect(vi.getTimerCount()).toBe(0)
     element.size = "medium"
@@ -355,28 +355,28 @@ describe("standalone Spin", () => {
   })
 
   it("preserves templates inertly and never treats markers on them as rendered regions", () => {
-    const element = spin('<mui-spin><template data-mui-spin-content><button>Inert</button></template><template data-mui-spin-icon><svg></svg></template><template data-mui-spin-description>Inert text</template></mui-spin>')
+    const element = spin('<m-spin><template data-m-spin-content><button>Inert</button></template><template data-m-spin-icon><svg></svg></template><template data-m-spin-description>Inert text</template></m-spin>')
     expect(element.querySelectorAll(":scope > template")).toHaveLength(3)
     expect(element.querySelector("button")).toBeNull()
-    expect(element.dataset.muiSpinMode).toBe("standalone")
-    expect(element.querySelector("[data-mui-spin-text]")?.textContent).toBe("Loading")
+    expect(element.dataset.mSpinMode).toBe("standalone")
+    expect(element.querySelector("[data-m-spin-text]")?.textContent).toBe("Loading")
   })
 
   it("does not resurrect removed authored content or stale custom descriptions on whole replacement", async () => {
-    const element = spin('<mui-spin show="false"><div data-mui-spin-content><strong>Old</strong></div><span data-mui-spin-description>Old description</span></mui-spin>')
+    const element = spin('<m-spin show="false"><div data-m-spin-content><strong>Old</strong></div><span data-m-spin-description>Old description</span></m-spin>')
     const old = element.querySelector("strong")!
     element.innerHTML = '<button type="button">New</button>'
     await Promise.resolve()
     expect(element.contains(old)).toBe(false)
     expect(element.textContent).not.toContain("Old")
-    expect(element.querySelectorAll("[data-mui-spin-indicator]")).toHaveLength(1)
+    expect(element.querySelectorAll("[data-m-spin-indicator]")).toHaveLength(1)
     expect(element.querySelector("button")?.textContent).toBe("New")
   })
 
   it("reclassifies changed region markers without deleting the original node", async () => {
-    const element = spin('<mui-spin show="false"><span data-mui-spin-description>Description</span></mui-spin>')
-    const description = element.querySelector<HTMLElement>("[data-mui-spin-description]")!
-    description.removeAttribute("data-mui-spin-description")
+    const element = spin('<m-spin show="false"><span data-m-spin-description>Description</span></m-spin>')
+    const description = element.querySelector<HTMLElement>("[data-m-spin-description]")!
+    description.removeAttribute("data-m-spin-description")
     await Promise.resolve()
     expect(element.contentElement?.contains(description)).toBe(true)
     expect(element.active).toBe(false)
@@ -385,10 +385,10 @@ describe("standalone Spin", () => {
   it("starts only the final pre-upgrade timing configuration", () => {
     vi.useFakeTimers()
     document.body.innerHTML = "<test-late-spin><button type='button'>Target</button></test-late-spin>"
-    const element = document.querySelector("test-late-spin") as MuiSpin
+    const element = document.querySelector("test-late-spin") as MSpin
     const target = element.querySelector("button")
     Object.assign(element, { show: true, delay: 100, size: 48, strokeWidth: 10, radius: 80, scale: 1, stroke: "blue", description: "Loading data", label: "Fetch", rotate: false })
-    customElements.define("test-late-spin", class extends MuiSpin {})
+    customElements.define("test-late-spin", class extends MSpin {})
     expect(element.active).toBe(false)
     expect(vi.getTimerCount()).toBe(1)
     vi.advanceTimersByTime(100)
@@ -401,7 +401,7 @@ describe("standalone Spin", () => {
   it("keeps assignments silent and uses no style injection or shadow root", () => {
     const element = spin()
     const event = vi.fn()
-    for (const name of ["click", "input", "change", "mui:change"]) element.addEventListener(name, event)
+    for (const name of ["click", "input", "change", "m:change"]) element.addEventListener(name, event)
     element.show = false
     element.description = "Working"
     element.strokeWidth = 12
@@ -412,20 +412,26 @@ describe("standalone Spin", () => {
   })
 
   it("clears only its numeric size variable and preserves unrelated author styling", () => {
-    const element = spin('<mui-spin size="48" style="color: red; --mui-spin-size: 3rem"></mui-spin>')
+    const element = spin('<m-spin size="48" style="color: red; --m-spin-size: 3rem"></m-spin>')
     element.size = "small"
-    expect(element.style.getPropertyValue("--_mui-spin-size")).toBe("")
-    expect(element.style.getPropertyValue("--mui-spin-size")).toBe("3rem")
+    expect(element.style.getPropertyValue("--_m-spin-size")).toBe("")
+    expect(element.style.getPropertyValue("--m-spin-size")).toBe("3rem")
     expect(element.style.color).toBe("red")
   })
 
   it("reports explicit collisions and preserves enhanced definitions before the aggregate", () => {
     expect(() => registerSpin()).not.toThrow()
     const define = vi.fn()
-    expect(() => registerSpin({ get: () => class extends HTMLElement {}, define })).toThrow("before the legacy MarkupUI bundle")
+    expect(() => registerSpin({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
     expect(define).not.toHaveBeenCalled()
     registerElements(customElements)
-    expect(customElements.get("mui-spin")).toBe(MuiSpin)
+    expect(customElements.get("m-spin")).toBe(Spin)
+    expect(builtInElementNames).not.toContain("m-spin")
     expect(spin().active).toBe(true)
+  })
+
+  it("exports canonical Spin with backwards-compatible MSpin alias", () => {
+    expect(Spin.tag).toBe("m-spin")
+    expect(MSpin).toBe(Spin)
   })
 })
