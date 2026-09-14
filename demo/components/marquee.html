@@ -3,62 +3,81 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Native single-track Marquee · MarkupUI</title>
+  <title>Marquee - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-marquee.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./marquee.css">
+  <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-marquee.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
   <script type="module" src="./marquee.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main>
-    <h1>Marquee: one original track, optional motion</h1>
-    <p>Motion is off initially. Static view uses native horizontal scrolling so the
-      full content is always reachable. Hover/focus/select the viewport to stop and read;
-      explicit pause stays paused after those temporary reasons end. Reduced motion,
-      forced colors and print use a wrapped static view.</p>
-    <div class="demo-controls" data-enhancement hidden>
-      <label>Speed (CSS px/s) <input id="speed" type="number" min="1" max="1000" step="1" value="48"></label>
-      <label>First pass <select id="direction"><option value="left">Left</option><option value="right">Right</option></select></label>
-      <label>Passes <select id="iterations"><option>1</option><option>2</option><option>4</option><option value="infinite">Infinite alternating</option></select></label>
-      <label>Initial delay (ms) <input id="delay" type="number" min="0" max="60000" step="1" value="0"></label>
-      <button type="button" id="apply">Apply motion settings</button>
-      <label><input id="narrow" type="checkbox">Narrow viewport</label>
-      <label><input id="wide" type="checkbox">Wide viewport</label>
-      <label><input id="rtl" type="checkbox">RTL content/layout</label>
-      <label><input id="zoom" type="checkbox">CSS zoom 200%</label>
-      <button type="button" id="extra">Add/remove an original native text suffix</button>
-      <button type="button" id="interactive">Add/remove an unsupported control (static fallback)</button>
-      <button type="button" id="hidden-play">Request motion in hidden example</button>
-      <button type="button" id="disconnect">Disconnect all enhancements</button>
-    </div>
-    <section class="m-marquee stage" data-marquee id="main-marquee" aria-labelledby="main-heading">
-      <h2 id="main-heading">Original native announcement</h2>
-      <div data-marquee-viewport tabindex="0" aria-label="Scrollable original announcement">
-        <div data-marquee-content><strong id="original">Original content:</strong> <img src="./marquee.svg" width="56" height="32" alt="Local MarkupUI marker"> This entire sentence remains one original DOM sequence. Native text selection, readable labels, images and listeners stay intact. <em>No duplicate visual track, hidden mirror, obsolete marquee tag or seamless-loop claim.</em></div>
-      </div>
-      <div data-marquee-controls hidden><button type="button" data-marquee-toggle><span data-marquee-label>Play motion</span></button></div>
-      <p data-marquee-status>Static announcement: focus the viewport or use its scrollbar to read all text.</p>
-    </section>
-    <section class="m-marquee stage" data-marquee id="short-marquee" aria-label="Short fitting text example">
-      <div data-marquee-viewport tabindex="0" aria-label="Short static text"><div data-marquee-content>This text fits and needs no motion.</div></div>
-      <div data-marquee-controls hidden><button type="button" data-marquee-toggle><span data-marquee-label>Play motion</span></button></div>
-      <p data-marquee-status>Short readable static content.</p>
-    </section>
-    <details id="hidden-example">
-      <summary>Initially hidden original content</summary>
-      <section class="m-marquee stage" data-marquee id="hidden-marquee" aria-label="Hidden measurement example">
-        <div data-marquee-viewport tabindex="0" aria-label="Hidden example static scroll"><div data-marquee-content>Hidden containers do not guess geometry. On reveal, a ResizeObserver can measure this original long text and start a requested traversal, without adding duplicate content or a per-frame layout loop.</div></div>
-        <div data-marquee-controls hidden><button type="button" data-marquee-toggle><span data-marquee-label>Play motion</span></button></div>
-        <p data-marquee-status>Open and read this native static text.</p>
-      </section>
+  <main data-demo-page class="component-docs">
+    <h1>Marquee</h1>
+    <p>Single-track horizontal overflow traversal with native scrolling fallback, safe pause controls, and media awareness.</p>
+    <nav class="component-docs-nav" aria-label="Marquee documentation">
+      <a href="#examples-heading">Examples</a>
+      <a href="#required-files">Setup</a>
+      <a href="#api-heading">API</a>
+    </nav>
+    <details class="component-setup" id="required-files">
+      <summary>Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-marquee.css"&gt;
+&lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-marquee.global.js"&gt;&lt;/script&gt;</code></pre>
+      <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
     </details>
-    <p id="completion" aria-live="polite">Application-owned finite-motion completion notice.</p>
-    <form id="native-form"><label>Independent native field <input id="title" name="title" value="Motion must not change this"></label>
-      <button type="reset">Reset this native field only</button></form>
-    <pre id="feedback" aria-label="Marquee state and local diagnostics">Without JavaScript, all original content is static and reachable, with no dead motion controls.</pre>
-    <footer><label>Outside focus target <input id="outside" value="Pause must not steal focus"></label>
-      <p>Each pass traverses only the overflow extent; subsequent passes alternate.
-        Resume/reflow restarts from the configured edge. This is not a duplicated seamless
-        ticker, clipping/anchoring engine or a way to make essential content motion-only.</p></footer>
+
+    <section data-demo-example="basic" aria-labelledby="examples-heading">
+      <header data-demo-header><div><h2 id="examples-heading">Basic Marquee</h2><p>Horizontal overflow traversal with speed and pause-on-hover options.</p></div></header>
+      <div data-demo-preview>
+        <m-marquee id="demo-marquee" speed="50" pause-on-hover>
+          <strong>Notice:</strong> This is a continuous announcement that scrolls smoothly across the screen while remaining fully accessible with native scrolling.
+        </m-marquee>
+        <div class="demo-tools">
+          <m-button id="marquee-play">Play</m-button>
+          <m-button id="marquee-pause">Pause</m-button>
+          <m-button id="marquee-speed-up">Speed up</m-button>
+          <m-button id="marquee-speed-down">Slow down</m-button>
+        </div>
+      </div>
+    </section>
+
+    <section data-demo-example="reverse" aria-labelledby="reverse-heading">
+      <header data-demo-header><div><h2 id="reverse-heading">Reversed direction</h2><p>Marquee scrolling in reverse direction with custom speed.</p></div></header>
+      <div data-demo-preview>
+        <m-marquee id="reverse-marquee" speed="60" reverse>
+          <span>Reversed direction scrolling text moves from left to right across the viewport.</span>
+        </m-marquee>
+      </div>
+    </section>
+
+    <section data-demo-example="rich" aria-labelledby="rich-heading">
+      <header data-demo-header><div><h2 id="rich-heading">Rich phrasing content</h2><p>Marquee with native emphasis, tags, and images retained in a single original track.</p></div></header>
+      <div data-demo-preview>
+        <m-marquee id="rich-marquee" speed="40">
+          <span><img src="./marquee.svg" width="40" height="24" alt="MarkupUI icon"> <strong>Announcement:</strong> MarkupUI provides <em>accessible</em> Web Components with zero runtime dependencies.</span>
+        </m-marquee>
+      </div>
+    </section>
+
+    <section aria-labelledby="api-heading">
+      <h2 id="api-heading">API</h2>
+      <div id="marquee-api">
+        <p>Loading API documentation.</p>
+      </div>
+    </section>
   </main>
 </body>
 </html>

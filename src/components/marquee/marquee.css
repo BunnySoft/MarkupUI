@@ -1,4 +1,5 @@
-.m-marquee { min-inline-size: 0; }
+m-marquee,
+.m-marquee { display: block; min-inline-size: 0; }
 .m-marquee [hidden] { display: none !important; }
 .m-marquee > [data-marquee-viewport] {
   position: relative;

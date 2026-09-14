@@ -99,7 +99,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Badge | `Badge`; passive counts, caps, dot/processing indicators, placements and native targets | [Demo and API](../../demo/components/badge.html) |
 | Dialog | `Dialog` | [Demo and API](../../demo/components/dialog.html) |
 | Drawer | `Drawer`, `DrawerContent` | [Demo and API](../../demo/components/drawer.html) |
-| Marquee | `Marquee` | Contract pending |
+| Marquee | `Marquee` | [Demo and API](../../demo/components/marquee.html) |
 | Message | `Message` service/control | [Demo and API](../../demo/components/message.html) |
 | Modal | `Modal` | [Demo and API](../../demo/components/modal.html) |
 | Notification | `Notification` | [Demo and API](../../demo/components/notification.html) |

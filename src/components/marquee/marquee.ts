@@ -8,6 +8,7 @@ export interface MarqueeSettings {
   delay?: number
   playLabel?: string
   pauseLabel?: string
+  pauseOnHover?: boolean
 }
 export type MarqueeOptions = MarqueeSettings
 export interface MarqueeState {
@@ -44,7 +45,7 @@ const contentTags = new Set(["span", "strong", "em", "b", "i", "u", "s", "small"
 /** One original horizontal track. Every stop cancels its transform and exposes native scrolling. */
 export function createMarquee(element: HTMLElement, options: MarqueeOptions = {}): MarqueeController {
   const document = element?.ownerDocument, view = document?.defaultView
-  if (!view || !(element instanceof view.HTMLElement) || !["div", "section"].includes(element.localName)
+  if (!view || !(element instanceof view.HTMLElement) || !["div", "section", "m-marquee"].includes(element.localName)
     || !element.matches(".m-marquee[data-marquee]") || !element.isConnected || element.getRootNode() !== document
     || element.hasAttribute("data-marquee-running") || (element as Owned)[owner]) throw new TypeError("Use an unowned static native .m-marquee[data-marquee] scope, never the obsolete marquee element.")
   const win = view, doc = document!, token = {}, writes = ownedWrites()
@@ -73,7 +74,7 @@ export function createMarquee(element: HTMLElement, options: MarqueeOptions = {}
   const beforeLabel = labelText.data, beforeStatus = status.textContent
   let lastLabel = beforeLabel, lastStatus = beforeStatus, lastNotice = ""
   let settings: Required<MarqueeSettings> = { active: false, speed: 48, direction: "left", iterations: 1, delay: 0,
-    playLabel: "Play motion", pauseLabel: "Pause motion and use static view" }
+    playLabel: "Play motion", pauseLabel: "Pause motion and use static view", pauseOnHover: true }
   let connected = true, applying = false, generation = 0, finished = false, hovering = viewport.matches(":hover")
   let error: unknown = null, failed = false, animation: Animation | null = null, pauseReasons: string[] = []
   let viewportWidth = 0, contentWidth = 0, distance = 0, duration = 0, signature = ""
@@ -84,12 +85,13 @@ export function createMarquee(element: HTMLElement, options: MarqueeOptions = {}
   const nodes = [element, viewport, content, controls, button, label, status]
   function config(input: MarqueeSettings) {
     if (!input || typeof input !== "object" || Array.isArray(input)
-      || Object.keys(input).some(key => !["active", "speed", "direction", "iterations", "delay", "playLabel", "pauseLabel"].includes(key))) throw new TypeError("Unsupported Marquee settings.")
+      || Object.keys(input).some(key => !["active", "speed", "direction", "iterations", "delay", "playLabel", "pauseLabel", "pauseOnHover"].includes(key))) throw new TypeError("Unsupported Marquee settings.")
     const next = { ...settings, ...input }
     if (typeof next.active !== "boolean" || !Number.isFinite(next.speed) || next.speed < 1 || next.speed > 1000
       || !["left", "right"].includes(next.direction) || next.iterations !== "infinite" && (!Number.isInteger(next.iterations) || next.iterations < 1 || next.iterations > 100)
       || !Number.isFinite(next.delay) || next.delay < 0 || next.delay > 60000
-      || [next.playLabel, next.pauseLabel].some(value => typeof value !== "string" || !value.trim() || value.length > 120)) {
+      || [next.playLabel, next.pauseLabel].some(value => typeof value !== "string" || !value.trim() || value.length > 120)
+      || typeof next.pauseOnHover !== "boolean") {
       throw new TypeError("Use speed 1..1000 CSS px/s, left/right, 1..100 passes or infinite, delay 0..60000ms and readable labels.")
     }
     return next
@@ -129,7 +131,7 @@ export function createMarquee(element: HTMLElement, options: MarqueeOptions = {}
     if (forced?.matches) result.push("forced-colors")
     if (print?.matches) result.push("print")
     if (doc.hidden) result.push("document-hidden")
-    if (hovering) result.push("hover")
+    if (hovering && settings.pauseOnHover) result.push("hover")
     if (viewport.contains(doc.activeElement) || doc.activeElement === element) result.push("focus")
     if (selected()) result.push("selection")
     if (content.closest(liveRegion)) result.push("live-region")

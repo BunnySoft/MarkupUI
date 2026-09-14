@@ -2,8 +2,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { gzipSync } from "node:zlib"
-import { createMarquee } from "../src/components/marquee/index.js"
+import { Marquee, MMarquee, registerMarquee, createMarquee } from "../src/components/marquee/index.js"
+import * as marqueeApi from "../src/components/marquee/index.js"
 import type { MarqueeController, MarqueeOptions } from "../src/components/marquee/index.js"
+import { ViewElement } from "../src/core/index.js"
 
 const helpers: MarqueeController[] = []
 let reduce: EventTarget & { matches: boolean }, forced: EventTarget & { matches: boolean }, print: EventTarget & { matches: boolean }
@@ -351,3 +353,126 @@ describe("Marquee ownership, failure and finish", () => {
     expect(next.connected).toBe(true); expect(next.state.phase).toBe("static")
   })
 })
+
+describe("canonical Marquee ViewElement", () => {
+  it("exports canonical own-tag ViewElement and registers m-marquee", () => {
+    expect(Object.hasOwn(Marquee, "tag")).toBe(true)
+    expect(Marquee.tag).toBe("m-marquee")
+    expect(ViewElement.prototype.isPrototypeOf(Marquee.prototype)).toBe(true)
+    expect(customElements.get("m-marquee")).toBe(Marquee)
+    expect(MMarquee).toBe(Marquee)
+    expect(Marquee.observedAttributes).toEqual(["speed", "pause-on-hover", "reverse"])
+    expect(marqueeApi.Marquee).toBe(Marquee)
+    expect(marqueeApi.MMarquee).toBe(Marquee)
+    expect(typeof marqueeApi.registerMarquee).toBe("function")
+    expect(typeof marqueeApi.createMarquee).toBe("function")
+    const define = vi.fn()
+    expect(() => registerMarquee({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect(() => registerMarquee()).not.toThrow()
+  })
+
+  it("initializes with canonical default values and validates properties", () => {
+    const element = document.createElement("m-marquee") as Marquee
+    expect(element.speed).toBe(50)
+    expect(element.pauseOnHover).toBe(true)
+    expect(element.reverse).toBe(false)
+
+    // Invalid speed values
+    for (const invalid of [0, -1, 1001, NaN, Infinity, "50" as any]) {
+      expect(() => { element.speed = invalid }).toThrow(RangeError)
+    }
+
+    // Valid speed values
+    element.speed = 80
+    expect(element.getAttribute("speed")).toBe("80")
+    expect(element.speed).toBe(80)
+
+    // Invalid pauseOnHover
+    expect(() => { Reflect.set(element, "pauseOnHover", "yes") }).toThrow(RangeError)
+
+    // Valid pauseOnHover
+    element.pauseOnHover = false
+    expect(element.getAttribute("pause-on-hover")).toBe("false")
+    expect(element.pauseOnHover).toBe(false)
+    element.pauseOnHover = true
+    expect(element.getAttribute("pause-on-hover")).toBe("true")
+    expect(element.pauseOnHover).toBe(true)
+
+    // Invalid reverse
+    expect(() => { Reflect.set(element, "reverse", "invalid") }).toThrow(RangeError)
+
+    // Valid reverse
+    element.reverse = true
+    expect(element.hasAttribute("reverse")).toBe(true)
+    expect(element.reverse).toBe(true)
+    element.reverse = false
+    expect(element.hasAttribute("reverse")).toBe(false)
+    expect(element.reverse).toBe(false)
+  })
+
+  it("replays pre-upgrade properties upon connection", () => {
+    const element = document.createElement("m-marquee") as Marquee
+    Object.defineProperty(element, "speed", { configurable: true, value: 75 })
+    Object.defineProperty(element, "pauseOnHover", { configurable: true, value: false })
+    Object.defineProperty(element, "reverse", { configurable: true, value: true })
+    document.body.append(element)
+    expect(element.speed).toBe(75)
+    expect(element.pauseOnHover).toBe(false)
+    expect(element.reverse).toBe(true)
+  })
+
+  it("generates internal viewport and content track when none are authored", () => {
+    const element = document.createElement("m-marquee") as Marquee
+    element.innerHTML = "<strong>Notice:</strong> Dynamic scrolling content"
+    document.body.append(element)
+    expect(element.classList.contains("m-marquee")).toBe(true)
+    expect(element.hasAttribute("data-marquee")).toBe(true)
+    const viewport = element.querySelector<HTMLElement>("[data-marquee-viewport]")
+    expect(viewport).not.toBeNull()
+    expect(viewport?.getAttribute("tabindex")).toBe("0")
+    const content = element.querySelector<HTMLElement>("[data-marquee-content]")
+    expect(content).not.toBeNull()
+    expect(content?.textContent).toContain("Dynamic scrolling content")
+    const controls = element.querySelector<HTMLElement>("[data-marquee-controls]")
+    expect(controls).not.toBeNull()
+    const status = element.querySelector<HTMLElement>("[data-marquee-status]")
+    expect(status).not.toBeNull()
+  })
+
+  it("adopts pre-authored viewport, content, controls and status", () => {
+    const element = document.createElement("m-marquee") as Marquee
+    element.setAttribute("aria-label", "Pre-authored")
+    element.innerHTML = '<div data-marquee-viewport tabindex="0" aria-label="Pre-authored viewport"><div data-marquee-content><strong>Authored</strong></div></div><div data-marquee-controls hidden><button type="button" data-marquee-toggle><span data-marquee-label>Play motion</span></button></div><p data-marquee-status>Static content.</p>'
+    document.body.append(element)
+    expect(element.querySelectorAll("[data-marquee-viewport]")).toHaveLength(1)
+    expect(element.querySelectorAll("[data-marquee-content]")).toHaveLength(1)
+    expect(element.querySelectorAll("[data-marquee-controls]")).toHaveLength(1)
+    expect(element.querySelectorAll("[data-marquee-status]")).toHaveLength(1)
+  })
+
+  it("supports play, pause and refresh methods safely", () => {
+    const element = document.createElement("m-marquee") as Marquee
+    element.textContent = "Test safe methods"
+    document.body.append(element)
+    expect(() => element.play()).not.toThrow()
+    expect(() => element.pause()).not.toThrow()
+    expect(() => element.refresh()).not.toThrow()
+  })
+
+  it("reacts to attribute changes", () => {
+    const element = document.createElement("m-marquee") as Marquee
+    document.body.append(element)
+    element.setAttribute("speed", "120")
+    expect(element.speed).toBe(120)
+    element.setAttribute("reverse", "")
+    expect(element.reverse).toBe(true)
+    element.removeAttribute("reverse")
+    expect(element.reverse).toBe(false)
+    element.setAttribute("pause-on-hover", "false")
+    expect(element.pauseOnHover).toBe(false)
+    element.setAttribute("pause-on-hover", "true")
+    expect(element.pauseOnHover).toBe(true)
+  })
+})
+
