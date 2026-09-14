@@ -169,9 +169,46 @@ export function createComponentBrowser(document = globalThis.document, view = gl
       focusControl(toggle)
     }
   }
+
+  const themeSelect = document.getElementById("theme-select")
+
+  function applyTheme(targetTheme) {
+    document.documentElement.dataset.mTheme = targetTheme
+    document.documentElement.setAttribute("data-m-theme", targetTheme)
+    if (themeSelect && themeSelect.value !== targetTheme) {
+      themeSelect.value = targetTheme
+    }
+    try {
+      view.localStorage.setItem("m-theme", targetTheme)
+    } catch {}
+    applyThemeToFrame(targetTheme)
+  }
+
+  function applyThemeToFrame(targetTheme) {
+    try {
+      const doc = frame.contentDocument
+      if (doc && doc.documentElement) {
+        doc.documentElement.dataset.mTheme = targetTheme
+        doc.documentElement.setAttribute("data-m-theme", targetTheme)
+        if (targetTheme.startsWith("slate") && !doc.querySelector('link[href*="markup-ui-theme-slate.css"]')) {
+          const link = doc.createElement("link")
+          link.rel = "stylesheet"
+          link.href = "../../dist/markup-ui-theme-slate.css"
+          doc.head?.append(link)
+        }
+      }
+    } catch {}
+  }
+
+  function onThemeChange() {
+    if (themeSelect) applyTheme(themeSelect.value)
+  }
+
   function onLoad() {
     frame.removeAttribute("aria-busy")
     if (current) status.hidden = true
+    const currentTheme = themeSelect?.value || document.documentElement.dataset.mTheme || "light"
+    applyThemeToFrame(currentTheme)
   }
   function onError() {
     frame.removeAttribute("aria-busy")
@@ -183,10 +220,17 @@ export function createComponentBrowser(document = globalThis.document, view = gl
   search.addEventListener("input", filter)
   toggle.addEventListener("click", onToggle)
   sidebar.addEventListener("keydown", onKeyDown)
+  themeSelect?.addEventListener("change", onThemeChange)
   frame.addEventListener("load", onLoad)
   frame.addEventListener("error", onError)
   view.addEventListener("popstate", onPopState)
   media.addEventListener("change", onMediaChange)
+  try {
+    const saved = view.localStorage?.getItem("m-theme")
+    if (saved && ["light", "dark", "slate", "slate-dark"].includes(saved)) {
+      applyTheme(saved)
+    }
+  } catch {}
   filter()
   updateNavigation()
   select(requestedComponent(), "replace")
@@ -198,6 +242,7 @@ export function createComponentBrowser(document = globalThis.document, view = gl
       search.removeEventListener("input", filter)
       toggle.removeEventListener("click", onToggle)
       sidebar.removeEventListener("keydown", onKeyDown)
+      themeSelect?.removeEventListener("change", onThemeChange)
       frame.removeEventListener("load", onLoad)
       frame.removeEventListener("error", onError)
       view.removeEventListener("popstate", onPopState)

@@ -8,6 +8,8 @@
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../dist/markup-ui-input.css">
+  <link rel="stylesheet" href="../dist/markup-ui-themes.css">
+  <link rel="stylesheet" href="../dist/markup-ui-theme-slate.css">
   <link rel="stylesheet" href="./app.css">
   <script defer src="../dist/markup-ui-core.global.js"></script>
   <script defer src="../dist/markup-ui-button.global.js"></script>
@@ -24,6 +26,13 @@
       <a class="brand" href="./"><span class="brand-icon" aria-hidden="true">M</span>MarkupUI</a>
       <span class="header-caption">Components</span>
       <div class="header-actions">
+        <label for="theme-select" class="visually-hidden">Theme</label>
+        <select id="theme-select" class="theme-select" aria-label="Theme">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+          <option value="slate">Slate</option>
+          <option value="slate-dark">Slate Dark</option>
+        </select>
         <a class="standalone-link" href="./elements.html" target="_blank"
           rel="noopener noreferrer" aria-label="Element Matrix" title="Element Matrix">
           <span class="standalone-label">Element Matrix</span><span aria-hidden="true">↗</span>

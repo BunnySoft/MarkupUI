@@ -11,8 +11,8 @@
 [hidden] { display: none !important; }
 html, body { margin: 0; min-inline-size: 280px; block-size: 100%; }
 body {
-  color: var(--text-color);
-  background: #fff;
+  color: var(--m-text-primary, var(--text-color, #333639));
+  background: var(--m-bg-page, #fff);
   font: 14px/1.6 v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
@@ -24,7 +24,8 @@ a { color: inherit; }
   align-items: center;
   gap: 28px;
   padding-inline: 24px;
-  border-block-end: 1px solid var(--border-color);
+  background: var(--m-bg-surface, #fff);
+  border-block-end: 1px solid var(--m-border, var(--border-color, #efeff5));
 }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 500; text-decoration: none; }
 .brand-icon { display: grid; place-items: center; inline-size: 28px; block-size: 28px; background: var(--primary-color); color: #fff; border-radius: 7px; font-size: 18px; }
@@ -33,8 +34,8 @@ a { color: inherit; }
 .repository-link { font-size: 13px; text-decoration: none; }
 .repository-link:hover, .standalone-link:hover { color: var(--primary-color); }
 .browser-layout { display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); min-block-size: 0; }
-.component-sidebar { min-inline-size: 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #cbd1d8 transparent; border-inline-end: 1px solid var(--border-color); padding-block-end: 24px; background: #fff; }
-.search-box { position: sticky; inset-block-start: 0; z-index: 1; padding: 16px 16px 12px; background: #fff; }
+.component-sidebar { min-inline-size: 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #cbd1d8 transparent; border-inline-end: 1px solid var(--m-border, var(--border-color, #efeff5)); padding-block-end: 24px; background: var(--m-bg-surface, #fff); }
+.search-box { position: sticky; inset-block-start: 0; z-index: 1; padding: 16px 16px 12px; background: var(--m-bg-surface, #fff); }
 .search-box .m-input { inline-size: 100%; }
 .nav-group { margin-block-start: 8px; }
 .nav-group h2 { margin: 0; padding: 12px 20px 6px; color: var(--muted-color); font-size: 12px; font-weight: 400; line-height: 1.6; }
@@ -47,10 +48,11 @@ a { color: inherit; }
 .brand:focus-visible, .repository-link:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 2px; }
 .component-count, .no-results { margin: 16px 24px; color: var(--muted-color); font-size: 12px; }
 .component-workspace { display: flex; flex-direction: column; min-inline-size: 0; min-block-size: 0; }
-.standalone-link { display: inline-flex; align-items: center; justify-content: center; gap: 4px; flex: 0 0 auto; padding: 6px 10px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px; text-decoration: none; }
-.component-note { margin: 0; padding: 10px 32px; border-block-end: 1px solid var(--border-color); color: var(--muted-color); font-size: 12px; }
+.standalone-link { display: inline-flex; align-items: center; justify-content: center; gap: 4px; flex: 0 0 auto; padding: 6px 10px; border: 1px solid var(--m-border, var(--border-color, #efeff5)); border-radius: 6px; font-size: 12px; text-decoration: none; }
+.theme-select { padding: 5px 8px; border: 1px solid var(--m-border, var(--border-color, #efeff5)); border-radius: 6px; background: var(--m-bg-surface, #fff); color: inherit; font: inherit; font-size: 12px; cursor: pointer; }
+.component-note { margin: 0; padding: 10px 32px; border-block-end: 1px solid var(--m-border, var(--border-color, #efeff5)); color: var(--muted-color); font-size: 12px; }
 .page-status { margin: 12px 28px; color: var(--muted-color); }
-#component-frame { display: block; flex: 1 1 auto; inline-size: 100%; min-block-size: 0; border: 0; background: #fff; }
+#component-frame { display: block; flex: 1 1 auto; inline-size: 100%; min-block-size: 0; border: 0; background: var(--m-bg-page, #fff); }
 .visually-hidden { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (max-width: 760px) {
   .site-header { gap: 12px; padding-inline: 16px; }

@@ -9,6 +9,9 @@
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-space.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-input.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
@@ -16,6 +19,9 @@
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-space.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer src="../../dist/markup-ui-input.global.js"></script>
   <script type="module" src="./space.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -39,45 +45,45 @@
       <header data-demo-header><div><h2 id="items-title">Authored groups and mixed content</h2><p>The actual HTML defines each item; bare text and direct native controls are welcome.</p></div></header>
       <div class="demo-preview" data-demo-preview>
         <m-space id="authored-items">
-          <span id="text-item">Plain text in an authored item.</span>
-          <div id="rich-item"><strong>One grouped item</strong><p>Native inline and block content stay together.</p><a href="#destination" id="group-link">Native link</a></div>
-          <span id="styled-item">External CSS owns this item's appearance.</span>
+          <m-span id="text-item">Plain text in an authored item.</m-span>
+          <m-box id="rich-item"><m-strong>One grouped item</m-strong><m-p>Native inline and block content stay together.</m-p><m-a href="#destination" id="group-link">Native link</m-a></m-box>
+          <m-span id="styled-item">External CSS owns this item's appearance.</m-span>
         </m-space>
-        <m-space id="unwrapped">Bare native text <a href="#destination" id="unwrapped-link">Unwrapped link</a><button type="button">Unwrapped button</button></m-space>
+        <m-space id="unwrapped">Bare native text <m-a href="#destination" id="unwrapped-link">Unwrapped link</m-a><m-button>Unwrapped button</m-button></m-space>
       </div>
     </section>
     <section data-demo-example="gaps" aria-labelledby="gaps-title">
       <header data-demo-header><div><h2 id="gaps-title">Presets and independent gaps</h2><p>Small: 4/8px, medium: 8/12px, large: 12/16px (row/column). Flat rowGap and columnGap override one axis at a time.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <m-space size="small" id="small"><span>S1</span><span>S2</span></m-space>
-        <m-space id="medium"><span>M1</span><span>M2</span></m-space>
-        <m-space size="large" id="large"><span>L1</span><span>L2</span></m-space>
-        <m-space row-gap="6" column-gap="20" id="tuple"><span>One</span><span>Two</span><span>Three</span></m-space>
-        <m-space row-gap="6" column-gap="20" vertical wrap="true" id="vertical"><span>One</span><span>Two</span><span>Three</span></m-space>
-        <m-space wrap="false" id="nowrap"><span>One</span><span>Two</span><span>Three</span></m-space>
-        <p>Inline native text <m-space inline size="small" id="inline"><span>one</span><span>two</span></m-space> stays in its paragraph.</p>
-        <m-space align="center" justify="space-between" id="aligned"><span>First</span><span>Last</span></m-space>
+        <m-space size="small" id="small"><m-span>S1</m-span><m-span>S2</m-span></m-space>
+        <m-space id="medium"><m-span>M1</m-span><m-span>M2</m-span></m-space>
+        <m-space size="large" id="large"><m-span>L1</m-span><m-span>L2</m-span></m-space>
+        <m-space row-gap="6" column-gap="20" id="tuple"><m-span>One</m-span><m-span>Two</m-span><m-span>Three</m-span></m-space>
+        <m-space row-gap="6" column-gap="20" vertical wrap="true" id="vertical"><m-span>One</m-span><m-span>Two</m-span><m-span>Three</m-span></m-space>
+        <m-space wrap="false" id="nowrap"><m-span>One</m-span><m-span>Two</m-span><m-span>Three</m-span></m-space>
+        <m-p>Inline native text <m-space inline size="small" id="inline"><m-span>one</m-span><m-span>two</m-span></m-space> stays in its paragraph.</m-p>
+        <m-space align="center" justify="space-between" id="aligned"><m-span>First</m-span><m-span>Last</m-span></m-space>
       </div>
     </section>
     <section data-demo-example="separators" aria-labelledby="separator-title">
       <header data-demo-header><div><h2 id="separator-title">Explicit separators</h2><p>A free separator is an ordinary item and may wrap independently. Author a group to keep related actions together.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <m-space id="separate-items"><span>First</span><span aria-hidden="true" id="free-separator">/</span><span>Second</span></m-space>
+        <m-space id="separate-items"><m-span>First</m-span><m-span aria-hidden="true" id="free-separator">/</m-span><m-span>Second</m-span></m-space>
         <m-space id="paired-items">
-          <m-space inline size="small" id="paired-item"><a href="#destination" id="paired-first">Terms</a><span aria-hidden="true" id="paired-separator">/</span><a href="#destination" id="paired-second">Privacy</a></m-space>
-          <span>The application authored one grouped item.</span>
+          <m-space inline size="small" id="paired-item"><m-a href="#destination" id="paired-first">Terms</m-a><m-span aria-hidden="true" id="paired-separator">/</m-span><m-a href="#destination" id="paired-second">Privacy</m-a></m-space>
+          <m-span>The application authored one grouped item.</m-span>
         </m-space>
       </div>
     </section>
     <section data-demo-example="nested" aria-labelledby="hidden-title">
       <header data-demo-header><div><h2 id="hidden-title">Hidden items and independent nested Space</h2><p>Hide the whole item to remove its gap. Empty authored items still occupy space. Nested presets and typed gaps do not leak.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <m-space id="hidden-items"><span>First</span><span hidden id="hidden-item">Hidden unit</span><span>Last</span></m-space>
-        <m-space id="empty-items"><span id="empty-item"><button type="button" hidden>Hidden inner control</button></span><span>An empty authored group still exists.</span></m-space>
+        <m-space id="hidden-items"><m-span>First</m-span><m-span hidden id="hidden-item">Hidden unit</m-span><m-span>Last</m-span></m-space>
+        <m-space id="empty-items"><span id="empty-item"><button type="button" hidden>Hidden inner control</button></span><m-span>An empty authored group still exists.</m-span></m-space>
         <m-space inline hidden id="hidden-root"><button type="button">Hidden root control</button></m-space>
-        <m-space><template id="item-template"><span>Inert application template</span></template><span>Templates stay inert.</span></m-space>
-        <m-space size="large" column-gap="30" id="nested-outer"><m-space size="small" id="nested-small"><span>A</span><span>B</span></m-space><m-space id="nested-medium"><span>C</span><span>D</span></m-space></m-space>
-        <div class="native-grid"><m-space><div id="long-item">AnOriginalUnbrokenTextValueInsideAnAuthoredItemThatWrapsWithinItsNativeGridTrackWithoutMeasurement</div></m-space><span>Grid cell</span></div>
+        <m-space><template id="item-template"><m-span>Inert application template</m-span></template><m-span>Templates stay inert.</m-span></m-space>
+        <m-space size="large" column-gap="30" id="nested-outer"><m-space size="small" id="nested-small"><m-span>A</m-span><m-span>B</m-span></m-space><m-space id="nested-medium"><m-span>C</m-span><m-span>D</m-span></m-space></m-space>
+        <m-box class="native-grid"><m-space><m-box id="long-item">AnOriginalUnbrokenTextValueInsideAnAuthoredItemThatWrapsWithinItsNativeGridTrackWithoutMeasurement</m-box></m-space><m-span>Grid cell</m-span></m-box>
       </div>
     </section>
     <section data-demo-example="native" aria-labelledby="native-title">
@@ -86,30 +92,30 @@
         <m-space vertical><ol type="A" start="2" id="native-list"><li><a href="#destination" id="list-first">First native list item</a></li><li><a href="#destination" id="list-second">Second native list item</a></li></ol></m-space>
         <form id="native-form" method="get" action="./space.html#destination">
           <m-space vertical>
-            <div class="field"><label for="native-name">Name</label><input id="native-name" name="name" value="Original" required></div>
+            <m-box class="field"><label for="native-name">Name</label><input id="native-name" name="name" value="Original" required></m-box>
             <m-space size="small"><button type="submit" id="native-submit">Native submit</button><button type="reset" id="native-reset">Native reset</button><button type="button" disabled id="native-disabled">Unavailable</button><a href="#destination" id="native-link">Native link</a></m-space>
           </m-space>
         </form>
-        <p id="destination" tabindex="-1">The form uses native GET navigation to this page; no submission handler or router is installed.</p>
+        <m-p id="destination" tabindex="-1">The form uses native GET navigation to this page; no submission handler or router is installed.</m-p>
       </div>
     </section>
     <section data-demo-example="direction" dir="rtl" lang="ar" aria-labelledby="rtl-title">
       <header data-demo-header><div><h2 id="rtl-title">RTL · عناصر أصلية</h2><p>Native direction and DOM order remain unchanged.</p></div></header>
-      <div class="demo-preview" data-demo-preview><m-space size="large" id="rtl"><span id="rtl-first">الأول</span><span id="rtl-second">الثاني</span></m-space></div>
+      <div class="demo-preview" data-demo-preview><m-space size="large" id="rtl"><m-span id="rtl-first">الأول</m-span><m-span id="rtl-second">الثاني</m-span></m-space></div>
     </section>
     <section data-demo-example="web" aria-labelledby="web-title">
       <header data-demo-header><div><h2 id="web-title">Web-specific styling</h2><p>Native writing modes, responsive CSS and style-resource gap units remain available; these classes are not portable behavior APIs.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <m-space class="vertical-writing" id="writing"><span>One</span><span>Two</span><span>Three</span></m-space>
-        <m-space class="custom-space" id="custom-space"><span class="m-space-item">Authored box</span><span class="m-space-item">Style resource gap</span></m-space>
+        <m-space class="vertical-writing" id="writing"><m-span>One</m-span><m-span>Two</m-span><m-span>Three</m-span></m-space>
+        <m-space class="custom-space" id="custom-space"><m-span class="m-space-item">Authored box</m-span><m-span class="m-space-item">Style resource gap</m-span></m-space>
       </div>
     </section>
     <section data-demo-example="live" aria-labelledby="live-title">
       <header data-demo-header><div><h2 id="live-title">Direct properties and reconnect</h2><p>Updates keep child identity, native focus and listeners. Null restores the style/preset gap.</p></div></header>
       <div class="demo-preview" data-demo-preview>
-        <m-space id="live-space"><input aria-label="Preserved input" value="Edit me"><button type="button">Native action</button></m-space>
-        <m-space size="small"><button type="button" id="change-gap">Toggle gap</button><button type="button" id="reset-gap">Reset gap</button><button type="button" id="reconnect-space">Reconnect</button></m-space>
-        <span id="space-status" role="status">Column gap: preset</span>
+        <m-space id="live-space"><m-input aria-label="Preserved input" value="Edit me"></m-input><m-button>Native action</m-button></m-space>
+        <m-space size="small"><m-button id="change-gap">Toggle gap</m-button><m-button id="reset-gap">Reset gap</m-button><m-button id="reconnect-space">Reconnect</m-button></m-space>
+        <m-span id="space-status" role="status">Column gap: preset</m-span>
       </div>
     </section>
     <section aria-labelledby="api-heading"><h2 id="api-heading">API</h2><div id="space-api"><p>Loading API documentation.</p></div></section>

@@ -72,4 +72,6 @@ export async function emitStylesheets(root, dist) {
   }
   const themes = JSON.parse(await readFile(resolve(root, "src/theme/presets.json"), "utf8"))
   await writeFile(resolve(dist, "markup-ui-themes.css"), themeStylesheet(themes))
+  const slateCss = normalizeLines(await readFile(resolve(root, "src/theme/slate.css"), "utf8"))
+  await writeFile(resolve(dist, "markup-ui-theme-slate.css"), slateCss)
 }

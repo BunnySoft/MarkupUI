@@ -1,0 +1,166 @@
+[data-m-theme="slate"],
+:root[data-m-theme="slate"] {
+  color-scheme: light;
+  --m-color-primary: #2563eb;
+  --m-color-primary-hover: #1d4ed8;
+  --m-color-primary-pressed: #1e40af;
+  --m-color-primary-soft: #eff6ff;
+  --m-color-primary-contrast: #ffffff;
+  --m-color-info: #0284c7;
+  --m-color-info-hover: #0369a1;
+  --m-color-info-pressed: #075985;
+  --m-color-success: #16a34a;
+  --m-color-success-hover: #15803d;
+  --m-color-success-pressed: #166534;
+  --m-color-warning: #d97706;
+  --m-color-warning-hover: #b45309;
+  --m-color-warning-pressed: #92400e;
+  --m-color-error: #dc2626;
+  --m-color-error-hover: #b91c1c;
+  --m-color-error-pressed: #991b1b;
+  --m-button-text-color: #0f172a;
+  --m-button-border-color: #cbd5e1;
+  --m-bg-page: #f8fafc;
+  --m-bg-surface: #ffffff;
+  --m-bg-elevated: #ffffff;
+  --m-bg-muted: #f1f5f9;
+  --m-bg-hover: #f8fafc;
+  --m-text-primary: #0f172a;
+  --m-text-secondary: #475569;
+  --m-text-tertiary: #64748b;
+  --m-border: #e2e8f0;
+  --m-border-hover: #94a3b8;
+  --m-focus-ring: rgb(37 99 235 / .25);
+  --m-shadow-color: rgb(15 23 42 / .08);
+}
+
+[data-m-theme="slate-dark"],
+:root[data-m-theme="slate-dark"] {
+  color-scheme: dark;
+  --m-color-primary: #3b82f6;
+  --m-color-primary-hover: #60a5fa;
+  --m-color-primary-pressed: #2563eb;
+  --m-color-primary-soft: #172554;
+  --m-color-primary-contrast: #020617;
+  --m-color-info: #38bdf8;
+  --m-color-info-hover: #7dd3fc;
+  --m-color-info-pressed: #0284c7;
+  --m-color-success: #22c55e;
+  --m-color-success-hover: #4ade80;
+  --m-color-success-pressed: #16a34a;
+  --m-color-warning: #f59e0b;
+  --m-color-warning-hover: #fbbf24;
+  --m-color-warning-pressed: #d97706;
+  --m-color-error: #ef4444;
+  --m-color-error-hover: #f87171;
+  --m-color-error-pressed: #dc2626;
+  --m-button-text-color: #f8fafc;
+  --m-button-border-color: #334155;
+  --m-bg-page: #020617;
+  --m-bg-surface: #0f172a;
+  --m-bg-elevated: #1e293b;
+  --m-bg-muted: #1e293b;
+  --m-bg-hover: #1e293b;
+  --m-text-primary: #f8fafc;
+  --m-text-secondary: #cbd5e1;
+  --m-text-tertiary: #94a3b8;
+  --m-border: #1e293b;
+  --m-border-hover: #334155;
+  --m-focus-ring: rgb(59 130 246 / .35);
+  --m-shadow-color: rgb(0 0 0 / .35);
+}
+
+/* --- Component Level Skinning for Slate (GitHub/Primer-inspired) --- */
+
+/* Buttons */
+:is([data-m-theme="slate"], :root[data-m-theme="slate"]) m-button[data-part=button] > [data-part=control] {
+  border-radius: 6px;
+  font-weight: 500;
+  box-shadow: 0 1px 0 rgba(27, 31, 36, 0.04);
+}
+:is([data-m-theme="slate"], :root[data-m-theme="slate"]) m-button[data-part=button]:not([type]) > [data-part=control] {
+  background: #f6f8fa;
+  border-color: #d0d7de;
+  color: #24292f;
+}
+:is([data-m-theme="slate"], :root[data-m-theme="slate"]) m-button[data-part=button]:not([type]) > [data-part=control]:hover {
+  background: #f3f4f6;
+  border-color: #1b1f2426;
+}
+:is([data-m-theme="slate"], :root[data-m-theme="slate"]) m-button[data-part=button][type="primary"] > [data-part=control] {
+  background: #2563eb;
+  border-color: #1d4ed8;
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+:is([data-m-theme="slate"], :root[data-m-theme="slate"]) m-button[data-part=button][type="primary"] > [data-part=control]:hover {
+  background: #1d4ed8;
+}
+:is([data-m-theme="slate"], :root[data-m-theme="slate"]) m-button[data-part=button][type="success"] > [data-part=control] {
+  background: #16a34a;
+  border-color: #15803d;
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(22, 163, 74, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+:is([data-m-theme="slate"], :root[data-m-theme="slate"]) m-button[data-part=button][type="success"] > [data-part=control]:hover {
+  background: #15803d;
+}
+
+/* Tables */
+:is([data-m-theme="slate"], :root[data-m-theme="slate"]) :is(table.m-table, m-table, m-table > table) {
+  --m-table-border-color: #e2e8f0;
+  --m-table-color: #0f172a;
+  --m-table-header-color: #475569;
+  --m-table-header-background: #f1f5f9;
+  --m-table-striped-background: #f8fafc;
+  border-radius: 8px;
+  overflow: hidden;
+}
+:is([data-m-theme="slate"], :root[data-m-theme="slate"]) :is(table.m-table, m-table, m-table > table) th {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  padding: 12px 16px;
+}
+:is([data-m-theme="slate"], :root[data-m-theme="slate"]) :is(table.m-table, m-table, m-table > table) td {
+  padding: 12px 16px;
+}
+
+/* Tags / Pills */
+:is([data-m-theme="slate"], :root[data-m-theme="slate"]) m-tag[data-m-tag] {
+  --m-tag-radius: 12px;
+  font-weight: 500;
+  font-size: 0.8rem;
+  padding: 2px 10px;
+}
+:is([data-m-theme="slate"], :root[data-m-theme="slate"]) m-tag[data-m-tag][type="success"] {
+  --m-tag-background: #dcfce7;
+  --m-tag-color: #15803d;
+  --m-tag-border: #86efac;
+}
+:is([data-m-theme="slate"], :root[data-m-theme="slate"]) m-tag[data-m-tag][type="info"] {
+  --m-tag-background: #eff6ff;
+  --m-tag-color: #1d4ed8;
+  --m-tag-border: #93c5fd;
+}
+:is([data-m-theme="slate"], :root[data-m-theme="slate"]) m-tag[data-m-tag][type="warning"] {
+  --m-tag-background: #fef3c7;
+  --m-tag-color: #b45309;
+  --m-tag-border: #fde68a;
+}
+:is([data-m-theme="slate"], :root[data-m-theme="slate"]) m-tag[data-m-tag][type="error"] {
+  --m-tag-background: #fee2e2;
+  --m-tag-color: #b91c1c;
+  --m-tag-border: #fca5a5;
+}
+
+/* Monospace Code Chips */
+:is([data-m-theme="slate"], :root[data-m-theme="slate"]) :is(m-code, code.m-code) {
+  --m-code-background: #e0f2fe;
+  --m-code-color: #0284c7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+

@@ -1,21 +1,11 @@
 import type { ViewStyle } from "./style.js"
 
+const layoutMap: Record<string, string> = { direction: "flexDirection", align: "alignItems", justify: "justifyContent", "border-radius": "borderRadius" }
+
 export abstract class ViewElement extends HTMLElement {
-  public static readonly layoutAttributes: readonly string[] = [
-    "display",
-    "direction",
-    "align",
-    "justify",
-    "wrap",
-    "gap",
-    "padding",
-    "margin",
-    "width",
-    "height",
-    "background",
-    "border",
-    "border-radius",
-  ]
+  public static readonly layoutAttributes: readonly string[] = Object.freeze(
+    "display direction align justify wrap gap padding margin width height background border border-radius".split(" "),
+  )
 
   public static register(
     elements: readonly (CustomElementConstructor & { readonly tag: string })[],
@@ -119,19 +109,12 @@ export abstract class ViewElement extends HTMLElement {
    * Synchronize an individual layout attribute to element style.
    * Returns true if the attribute was recognized and handled as a layout attribute.
    */
-  protected syncLayoutStyle(name: string, value: string | null): boolean {
-    const s = this.style as unknown as Record<string, string>
-    const px = (v: string | null) => (v && /^\d+$/.test(v) ? `${v}px` : (v ?? ""))
-    if (name === "gap" || name === "padding" || name === "margin" || name === "width" || name === "height") {
-      s[name] = px(value)
-      return true
-    }
-    if (name === "border-radius") { s.borderRadius = px(value); return true }
-    if (name === "direction") { s.flexDirection = value ?? ""; return true }
-    if (name === "align") { s.alignItems = value ?? ""; return true }
-    if (name === "justify") { s.justifyContent = value ?? ""; return true }
-    if (name === "wrap") { s.flexWrap = value === "" || value === "true" || value === "wrap" ? "wrap" : (value ?? ""); return true }
-    if (name === "display" || name === "background" || name === "border") { s[name] = value ?? ""; return true }
+  protected syncLayoutStyle(n: string, v: string | null): boolean {
+    const s = this.style as unknown as Record<string, string>, px = (x: string | null) => (x && /^\d+$/.test(x) ? `${x}px` : (x ?? ""))
+    if (/^(gap|padding|margin|width|height)$/.test(n)) { s[n] = px(v); return true }
+    if (layoutMap[n]) { s[layoutMap[n]] = n === "border-radius" ? px(v) : (v ?? ""); return true }
+    if (n === "wrap") { s.flexWrap = v === "" || v === "true" || v === "wrap" ? "wrap" : (v ?? ""); return true }
+    if (/^(display|background|border)$/.test(n)) { s[n] = v ?? ""; return true }
     return false
   }
 
@@ -139,18 +122,15 @@ export abstract class ViewElement extends HTMLElement {
    * Synchronize all recognized layout attributes currently present on this element.
    */
   protected syncAllLayoutStyles(): void {
-    for (const attr of ViewElement.layoutAttributes) {
-      this.syncLayoutStyle(attr, this.getAttribute(attr))
-    }
+    for (const a of ViewElement.layoutAttributes) this.syncLayoutStyle(a, this.getAttribute(a))
   }
 
   /**
    * Returns a typed snapshot of the active layout style properties.
    */
   public get viewStyle(): ViewStyle {
-    const o: Record<string, string | boolean | null> = {}
+    const o: Record<string, string | boolean | null> = { wrap: this.hasAttribute("wrap") }
     for (const a of ViewElement.layoutAttributes) o[a === "border-radius" ? "borderRadius" : a] = this.getAttribute(a)
-    o.wrap = this.hasAttribute("wrap")
     return o as ViewStyle
   }
 
@@ -163,7 +143,7 @@ export abstract class ViewElement extends HTMLElement {
       const a = k === "borderRadius" ? "border-radius" : k
       if (ViewElement.layoutAttributes.includes(a)) {
         if (typeof v === "boolean") this.setBooleanAttribute(a, v)
-        else this.setStringAttribute(a, v === null || v === undefined ? null : String(v))
+        else this.setStringAttribute(a, v == null ? null : String(v))
       }
     }
     this.syncAllLayoutStyles()
@@ -176,7 +156,7 @@ export abstract class ViewElement extends HTMLElement {
     return Object.freeze([...this.classList])
   }
 
-  public set classTokens(tokens: readonly string[] | string) {
-    this.className = typeof tokens === "string" ? tokens : Array.isArray(tokens) ? tokens.filter(Boolean).join(" ") : ""
+  public set classTokens(t: readonly string[] | string) {
+    this.className = typeof t === "string" ? t : Array.isArray(t) ? t.filter(Boolean).join(" ") : ""
   }
 }

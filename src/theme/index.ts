@@ -1,6 +1,8 @@
 import { builtInThemeTokens } from "./presets.js"
+import { slateThemeTokens, slateDarkThemeTokens } from "./slate.js"
 
 export type ThemeTokens = Readonly<Record<string, string>>
+export { slateThemeTokens, slateDarkThemeTokens } from "./slate.js"
 
 const themes = new Map<string, ThemeTokens>()
 const subscribers = new Set<(name: string) => void>()
@@ -44,3 +46,8 @@ export const theme = {
 theme.register("light", builtInThemeTokens.light)
 
 theme.register("dark", builtInThemeTokens.dark)
+
+theme.register("slate", slateThemeTokens)
+
+theme.register("slate-dark", slateDarkThemeTokens)
+

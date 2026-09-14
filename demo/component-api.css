@@ -1,5 +1,5 @@
 html { scrollbar-width: thin; scrollbar-color: #cbd1d8 transparent; }
-body { margin: 0; color: #333639; background: #fff; font: 14px/1.6 v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+body { margin: 0; color: var(--m-text-primary, #333639); background: var(--m-bg-page, #fff); font: 14px/1.6 v-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 .component-docs {
   display: block;
   box-sizing: border-box;
@@ -18,9 +18,10 @@ body { margin: 0; color: #333639; background: #fff; font: 14px/1.6 v-sans, syste
 .component-docs > :is(section, details) {
   margin: 20px 0 0;
   padding: 20px;
-  border: 1px solid #e0e0e6;
-  border-radius: 4px;
-  background: #fff;
+  border: 1px solid var(--m-border, #e0e0e6);
+  border-radius: 8px;
+  background: var(--m-bg-surface, #fff);
+  box-shadow: 0 1px 3px var(--m-shadow-color, rgba(0, 0, 0, 0.04));
 }
 .component-docs > [data-demo-example] { margin-block-start: 20px; }
 .component-docs :is([id], [data-demo-example]) { scroll-margin-block-start: 20px; }

@@ -118,4 +118,23 @@ describe("CSS and theme sources", () => {
     expect(() => validateThemes({ light: { color: "red; } body {" }, dark: {} })).toThrow(TypeError)
     expect(() => validateThemes({ light: { color: 1 }, dark: {} })).toThrow(TypeError)
   })
+
+  it("supports the modern Slate theme preset and tokens", () => {
+    const root = document.createElement("section")
+    theme.apply("slate", root)
+    expect(theme.current(root)).toBe("slate")
+    expect(root.style.getPropertyValue("--m-color-primary")).toBe("#2563eb")
+    expect(root.style.getPropertyValue("--m-bg-page")).toBe("#f8fafc")
+    expect(root.style.getPropertyValue("--m-text-primary")).toBe("#0f172a")
+
+    theme.apply("slate-dark", root)
+    expect(theme.current(root)).toBe("slate-dark")
+    expect(root.style.getPropertyValue("--m-color-primary")).toBe("#3b82f6")
+    expect(root.style.getPropertyValue("--m-bg-page")).toBe("#020617")
+
+    const slateCss = read("dist/markup-ui-theme-slate.css")
+    expect(slateCss).toContain('[data-m-theme="slate"]')
+    expect(slateCss).toContain('[data-m-theme="slate-dark"]')
+    expect(slateCss).toContain("--m-color-primary: #2563eb")
+  })
 })
