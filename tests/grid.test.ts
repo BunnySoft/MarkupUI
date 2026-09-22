@@ -423,3 +423,4 @@ describe("Grid documentation and selected delivery", () => {
     expect(readFileSync("src\\components\\form\\item.ts", "utf8")).toContain("No Grid renderer/dependency")
   })
 })
+import "../src/components/box/index.js"

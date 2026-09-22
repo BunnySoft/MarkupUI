@@ -40,18 +40,18 @@
         <m-layout class="demo-shell" id="shell">
           <m-layout-header class="demo-padding" data-bordered bordered id="main-header">Project workspace</m-layout-header>
           <m-layout class="demo-body" data-has-sider has-sider id="shell-body">
-            <details class="m-layout-sider" data-bordered open id="sidebar">
-              <summary id="sidebar-trigger">Menu</summary>
+            <m-details class="m-layout-sider" data-bordered open id="sidebar">
+              <m-summary id="sidebar-trigger">Menu</m-summary>
               <nav aria-label="Project navigation" class="demo-padding">
                 <ul>
                   <li><a href="#workspace" id="navigation-link">Workspace</a></li>
                   <li><a href="#scroll-heading">Activity</a></li>
                 </ul>
               </nav>
-            </details>
+            </m-details>
             <m-layout-content class="demo-padding" id="workspace" aria-labelledby="workspace-heading">
               <m-heading level="3" id="workspace-heading">Workspace</m-heading>
-              <m-p>The sidebar uses native <code>details</code>. Closing it hides its navigation from focus and accessibility traversal.</m-p>
+              <m-p>The portable disclosure uses a native details owner on Web. The form below demonstrates Web interoperability.</m-p>
               <form id="native-form">
                 <label for="native-name">Name</label>
                 <input id="native-name" name="name" value="Original">

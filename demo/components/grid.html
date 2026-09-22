@@ -93,13 +93,13 @@
       <header data-demo-header><m-heading level="2" id="collapse-title">Authored preview and real native disclosure</m-heading></header>
       <m-box data-demo-preview class="demo-preview">
         <m-grid cols="2" column-gap="12" row-gap="8" id="preview-grid"><a href="#result" id="preview-link">Visible preview result</a><m-grid-item>Application-selected preview item</m-grid-item></m-grid>
-        <details class="m-grid-disclosure" id="more-results">
-          <summary id="more-summary">Show or hide remaining results</summary>
+        <m-details class="m-grid-disclosure" id="more-results">
+          <m-summary id="more-summary">Show or hide remaining results</m-summary>
           <m-grid cols="2" column-gap="12" row-gap="8" id="extra-grid">
             <a href="#result" id="extra-link">Additional result</a>
             <label class="field">Additional field <input id="extra-field" value="Original"></label>
           </m-grid>
-        </details>
+        </m-details>
         <a href="#result" id="after-disclosure">Next native action</a>
         <m-grid cols="4" column-gap="12" row-gap="8" id="trailing-grid"><m-grid-item>First</m-grid-item><m-grid-item>Second</m-grid-item><m-grid-item id="trailing-action"><a href="#result">Authored final action on its own row</a></m-grid-item></m-grid>
       </m-box>

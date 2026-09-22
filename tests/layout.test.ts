@@ -15,6 +15,7 @@ import {
 } from "../src/components/layout/index.js"
 import * as layoutApi from "../src/components/layout/index.js"
 import { ViewElement } from "../src/core/index.js"
+import { Details } from "../src/components/box/index.js"
 
 const css = readFileSync("src\\components\\layout\\layout.css", "utf8")
 const demo = readFileSync("demo\\components\\layout.html", "utf8")
@@ -234,7 +235,7 @@ describe("direct native Layout family", () => {
 
   it("adapts collapse to native details open/toggle without copying content", () => {
     fixture()
-    const sidebar = document.querySelector<HTMLDetailsElement>("#sidebar")!
+    const sidebar = document.querySelector<Details>("#sidebar")!
     const link = document.querySelector("#navigation-link")
     install()
     expect(sidebar.open).toBe(true)

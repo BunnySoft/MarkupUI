@@ -21,6 +21,12 @@ to the archive rather than maintaining duplicate component API/usage pages.
 
 ## Status
 
+Box-family primitives now provide native Web semantic owners for portable labels,
+disclosure, articles, footers and phrasing. See the
+[Box demo/API](../../demo/components/box.html) for ownership and lifecycle rules.
+Native keyboard and screen-reader acceptance remains pending; native-target mappings
+are design contracts, not a claim of delivered non-Web renderers.
+
 Chart (`m-chart`) is a [required pre-release feature](contracts/chart.md), not an implemented
 API. Its Web renderer uses Apache ECharts with ECharts-shaped markup. The first batch
 requires Bar, Line/Area, Pie/Doughnut and Scatter, plus all five source forms: property

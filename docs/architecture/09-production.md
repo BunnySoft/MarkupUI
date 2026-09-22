@@ -29,8 +29,9 @@ production readiness. Every supported family needs evidence for its declared con
   ESM/classic loading and shared-core identity work without repository-only files.
 - [ ] Existing dependency-inclusive payload budgets pass; large-data interactions and
   repeated mount/unmount workflows have measured performance and memory results.
-- [ ] CI enforces automated gates. Release notes describe breaking changes, supported
-  environments, capability limitations and migration steps. Publishing is a separate,
+- [ ] CI enforces automated gates. Release notes describe API changes, supported
+  environments and capability limitations. No legacy migration or compatibility code
+  is required for this development-stage library. Publishing is a separate,
   explicitly approved action.
 
 ## Current evidence
@@ -56,10 +57,12 @@ and headings had been changed to HTML instead of using Box and Heading. Portable
 must use the existing `m-box` and `m-heading` renderers. Explicit Web interop fixtures remain
 useful but do not satisfy portable authoring acceptance.
 
-Known primitive-renderer gaps include Label's click-only delegation, Details/Summary's
-attribute-only disclosure, and semantic wrappers without platform owners. Audit these
-against portable contracts, implement their Web semantics without requiring raw HTML from
-authors, and test other target mappings according to the declared support scope.
+The portable primitive implementation now gives Label a real native label, Details/Summary
+native disclosure owners, and Footer/Article/Strong/Em/Small/Pre fixed semantic owners.
+Portable Grid and Layout examples use the disclosure renderer. Focused tests cover
+association, cancellation, disabled behavior, live state, late content and reconnect.
+The [Box demo/API](../../demo/components/box.html) records ownership and limitations;
+browser keyboard and assistive-technology verification is still outstanding.
 
 ## Work order
 

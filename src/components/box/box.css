@@ -81,6 +81,14 @@ m-details {
 }
 
 m-summary {
-  display: list-item;
+  display: contents;
+}
+
+m-details > details > summary {
   cursor: pointer;
 }
+
+:where(m-pre) > pre { margin: 0; font: inherit; white-space: inherit; }
+:where(m-small) > small { font-size: inherit; }
+:where(m-strong) > strong { font-weight: inherit; }
+:where(m-box, m-div, m-span, m-label, m-footer, m-article, m-strong, m-em, m-small, m-pre, m-details, m-summary)[hidden] { display: none !important; }

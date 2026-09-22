@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { afterEach, describe, expect, it } from "vitest"
 import { Heading } from "../src/components/typography/index.js"
-import { Box } from "../src/components/box/index.js"
+import { Box, Details, Summary } from "../src/components/box/index.js"
 
 afterEach(() => { document.body.replaceChildren() })
 
@@ -46,10 +46,11 @@ describe("native-control demo markup", () => {
       expect(heading.closest("section")).toBe(section)
       expect(section.querySelector(":scope > [data-demo-preview]")).toBeInstanceOf(Box)
     }
-    expect(document.querySelector("m-details, m-summary")).toBeNull()
-    const disclosure = document.getElementById(name === "grid" ? "more-results" : "sidebar")!
-    expect(disclosure.localName).toBe("details")
-    expect(disclosure.firstElementChild!.localName).toBe("summary")
+    const disclosure = document.getElementById(name === "grid" ? "more-results" : "sidebar") as Details
+    expect(disclosure).toBeInstanceOf(Details)
+    expect(disclosure.native.localName).toBe("details")
+    expect(disclosure.native.firstElementChild!.localName).toBe("summary")
+    expect(disclosure.native.firstElementChild!.firstElementChild).toBeInstanceOf(Summary)
   })
 
   it.each(["input-number", "select"])("%s loads selected runtimes consistently as ESM", name => {

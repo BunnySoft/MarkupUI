@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-tag.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-input.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./box.css">
@@ -20,6 +21,8 @@
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
   <script defer src="../../dist/markup-ui-tag.global.js"></script>
+  <script defer src="../../dist/markup-ui-native-input.global.js"></script>
+  <script defer src="../../dist/markup-ui-input.global.js"></script>
   <script type="module" src="./box.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -27,7 +30,7 @@
 <body>
   <main data-demo-page class="component-docs">
     <h1>Box and Primitives</h1>
-    <p>Universal container and primitive element mappings replacing raw HTML tags with declarative layout attributes for full cross-platform portability.</p>
+    <p>Portable containers, phrasing, labels and disclosure with native Web semantic owners.</p>
     <nav class="component-docs-nav" aria-label="Box documentation">
       <a href="#flex-heading">Examples</a>
       <a href="#required-files">Setup</a>
@@ -70,7 +73,7 @@
       <header data-demo-header><div><h2 id="disclosure-heading">Disclosure primitives</h2><p>Semantic collapsible details and summary custom elements.</p></div></header>
       <div data-demo-preview>
         <m-details>
-          <m-summary><m-strong>Click to toggle details</m-strong></m-summary>
+          <m-summary><m-strong>Report details</m-strong></m-summary>
           <m-box padding="12" margin="8" background="#f1f5f9" border-radius="4">
             <m-p>This content is disclosed by the native m-details container.</m-p>
           </m-box>
@@ -78,9 +81,35 @@
       </div>
     </section>
 
+    <section data-demo-example="label" aria-labelledby="label-heading">
+      <header data-demo-header><m-heading level="2" id="label-heading">Portable field label</m-heading></header>
+      <m-box data-demo-preview>
+        <m-label for="report-name">Report name</m-label>
+        <m-input id="report-name" name="report-name"></m-input>
+      </m-box>
+      <m-p>On Web, Label creates a native label associated with the field's native control.
+        The public field ID stays on m-input. Input's runtime and styles are additional
+        dependencies of this example, not of Box.</m-p>
+    </section>
+
     <section aria-labelledby="api-heading">
       <h2 id="api-heading">API</h2>
       <div id="box-api"><p>Loading API documentation.</p></div>
+    </section>
+    <section aria-labelledby="ownership-heading">
+      <m-heading level="2" id="ownership-heading">Ownership and lifecycle</m-heading>
+      <m-p>Label, Footer, Article, Strong, Em, Small, Pre and Details create one stable
+        native owner on Web. They move the original content without cloning it. Late
+        content and reconnect retain node identity and listeners. Names and descriptions
+        on these elements are forwarded to their native owners.</m-p>
+      <m-p>Label accepts a public field ID or a native control ID. Wrapping a field
+        also provides native association. Required marks the label; it does not change
+        the field's validation. Native activation owns cancellation and disabled behavior.</m-p>
+      <m-p>Details accepts at most one direct Summary and independent nested disclosures.
+        Its open property reads live native state. The Web renderer creates the direct
+        summary required for keyboard activation and hiding closed content.
+        Native toggle notifications emit m:toggle with an open Boolean.
+        Browser keyboard and assistive-technology acceptance remains a release gate.</m-p>
     </section>
   </main>
 </body>

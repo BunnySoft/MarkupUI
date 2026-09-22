@@ -91,7 +91,7 @@ describe("canonical Box and Primitives ViewElements", () => {
     expect(span.style.fontWeight).toBe("bold")
   })
 
-  it("handles Label target focus and click delegation", () => {
+  it("creates a real Label association with native activation and explicit focus", () => {
     document.body.innerHTML = `
       <m-label for="target-input">Name</m-label>
       <input id="target-input">`
@@ -100,7 +100,10 @@ describe("canonical Box and Primitives ViewElements", () => {
     expect(label.htmlFor).toBe("target-input")
     expect(label.required).toBe(false)
 
-    label.click()
+    expect(label.control).toBe(input)
+    expect(input.labels).toHaveLength(1)
+    expect(input.labels![0]).toBe(label.native)
+    label.focus()
     expect(document.activeElement).toBe(input)
   })
 

@@ -4,6 +4,7 @@ section { margin-block-end: 2rem; }
 .demo-padding { padding: 1rem; }
 .demo-shell, .rtl-shell, .absolute-container { border: 1px solid #a1a1aa; }
 .demo-shell { --m-layout-sider-width: 200px; --m-layout-sider-collapsed-width: 64px; }
+m-details.m-layout-sider:not([open]) { inline-size: var(--m-layout-sider-collapsed-width); }
 .nested-shell { margin-block-start: 1rem; border: 1px solid #a1a1aa; }
 .activity { block-size: 220px; border: 1px solid #a1a1aa; margin-block-start: 1rem; }
 .activity li { padding: 1rem; }
