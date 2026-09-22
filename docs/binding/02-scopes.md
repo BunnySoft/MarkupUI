@@ -17,6 +17,12 @@ Arrays and records remain references to owned data, not hidden JSON copies.
 Resolve paths through the current scope, parent scopes and the root store; reject unsafe
 segments such as `__proto__`, `prototype` and `constructor`.
 
+The implemented store path primitive accepts nonempty dot-separated identifiers and
+canonical numeric child indices, such as `report.rows.0.sales`. It reads own properties
+only, rejects expressions, whitespace and empty segments, preserves existing arrays,
+and rejects writes through scalar values. The scoped binder and template layers remain
+separate delivery work; a safe store path alone does not implement them.
+
 ## Passing data between elements
 
 Data enters a child through an explicit declared property. A parent scope does not become

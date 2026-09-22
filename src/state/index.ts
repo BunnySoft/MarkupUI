@@ -1,9 +1,7 @@
+import { pathParts, readPath } from "./path.js"
+
 export type StateValue = unknown
 export type StateSubscriber = (value: StateValue, path: string) => void
-
-function pathParts(path: string): string[] {
-  return path.split(".").map((part) => part.trim()).filter(Boolean)
-}
 
 export class MStore {
   private readonly subscribers = new Map<string, Set<StateSubscriber>>()
@@ -11,12 +9,7 @@ export class MStore {
   public constructor(public readonly state: Record<string, StateValue> = {}) {}
 
   public get(path: string): StateValue {
-    let value: StateValue = this.state
-    for (const part of pathParts(path)) {
-      if (typeof value !== "object" || value === null) return undefined
-      value = (value as Record<string, StateValue>)[part]
-    }
-    return value
+    return readPath(this.state, path)
   }
 
   public set(path: string, value: StateValue): void {
@@ -24,10 +17,9 @@ export class MStore {
     if (parts.length === 0) throw new Error("State path is required.")
     let target = this.state
     for (const part of parts.slice(0, -1)) {
-      const current = target[part]
-      if (typeof current !== "object" || current === null || Array.isArray(current)) {
-        target[part] = {}
-      }
+      const current = Object.hasOwn(target, part) ? target[part] : undefined
+      if (current === undefined) target[part] = {}
+      else if (typeof current !== "object" || current === null) throw new TypeError("State path crosses a non-object value.")
       target = target[part] as Record<string, StateValue>
     }
     target[parts[parts.length - 1]!] = value
@@ -35,6 +27,7 @@ export class MStore {
   }
 
   public subscribe(path: string, subscriber: StateSubscriber): () => void {
+    pathParts(path)
     const values = this.subscribers.get(path) ?? new Set<StateSubscriber>()
     values.add(subscriber)
     this.subscribers.set(path, values)
