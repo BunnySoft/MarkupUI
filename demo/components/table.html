@@ -64,14 +64,14 @@
                   <td headers="alpha-header hours-header actual-header" class="numeric">36</td>
                   <td headers="alpha-header actions-header">
                     <form id="note-form">
-                      <m-label for="note"><m-text>Note for Alpha</m-text></m-label>
+                      <label for="note"><m-text>Note for Alpha</m-text></label>
                       <input id="note" name="note" value="Original" required>
                       <m-box class="cell-actions">
-                        <m-button attr-type="submit" id="native-submit" type="primary">Save note</m-button>
-                        <m-button attr-type="reset" id="native-reset">Reset note</m-button>
-                        <m-button attr-type="button" disabled id="native-disabled">Unavailable action</m-button>
+                        <button type="submit" id="native-submit">Save note</button>
+                        <button type="reset" id="native-reset">Reset note</button>
+                        <button type="button" disabled id="native-disabled">Unavailable action</button>
                       </m-box>
-                      <fieldset disabled><legend><m-text>Read-only settings</m-text></legend><m-label><input type="checkbox" name="publish" checked> <m-text>Publish now</m-text></m-label></fieldset>
+                      <fieldset disabled><legend><m-text>Read-only settings</m-text></legend><label><input type="checkbox" name="publish" checked> <m-text>Publish now</m-text></label></fieldset>
                     </form>
                   </td>
                 </tr>

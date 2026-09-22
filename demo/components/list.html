@@ -122,7 +122,7 @@
                   <ul id="nested-list"><m-list-item>Reviewed</m-list-item><m-list-item>Ready to publish</m-list-item></ul>
                 </m-box>
                 <m-box data-part="suffix" class="m-list-suffix m-list-actions">
-                  <m-button id="archive-alpha"><m-button type="button" id="archive-alpha">Archive Alpha</m-button></m-button>
+                  <m-button id="archive-alpha">Archive Alpha</m-button>
                   <m-link href="#details">Alpha details</m-link>
                 </m-box>
               </m-box>
@@ -168,7 +168,7 @@
               </m-link>
             </m-list-item>
             <m-list-item>
-              <m-button class="m-list-row m-list-action" disabled><m-button type="button" class="m-list-row m-list-action" disabled id="disabled-row"><m-text class="m-list-content">Unavailable report</m-text></m-button></m-button>
+              <button type="button" class="m-list-row m-list-action" disabled id="disabled-row"><m-text class="m-list-content">Unavailable report</m-text></button>
             </m-list-item>
             <m-list-item id="passive-item">A passive item is not a button, even in a clickable list.</m-list-item>
           </ul>
@@ -189,19 +189,19 @@
             <ul class="m-list-items" aria-labelledby="form-heading">
               <m-list-item>
                 <m-box class="m-list-row">
-                  <m-label class="m-list-prefix" for="native-name">Report name</m-label>
+                  <label class="m-list-prefix" for="native-name">Report name</label>
                   <input class="m-list-content" id="native-name" name="name" value="Original" required>
                   <m-box class="m-list-suffix m-list-actions">
-                    <m-button attr-type="submit"><m-button type="submit" id="native-submit">Save report</m-button></m-button>
-                    <m-button attr-type="reset"><m-button type="reset" id="native-reset">Reset report</m-button></m-button>
+                    <button type="submit" id="native-submit">Save report</button>
+                    <button type="reset" id="native-reset">Reset report</button>
                   </m-box>
                 </m-box>
               </m-list-item>
               <m-list-item>
                 <fieldset disabled>
                   <legend>Read-only publishing settings</legend>
-                  <m-label><input type="checkbox" name="publish" checked> Publish report</m-label>
-                  <m-button><m-button type="button" id="fieldset-disabled">Publish</m-button></m-button>
+                  <label><input type="checkbox" name="publish" checked> Publish report</label>
+                  <button type="button" id="fieldset-disabled">Publish</button>
                 </fieldset>
               </m-list-item>
             </ul>

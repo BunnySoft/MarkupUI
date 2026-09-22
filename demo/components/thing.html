@@ -48,7 +48,7 @@
             <img width="48" height="48" alt="Service emblem" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Crect width='48' height='48' rx='8' fill='%230369a1'/%3E%3Ccircle cx='24' cy='24' r='12' fill='white'/%3E%3C/svg%3E">
           </m-thing-avatar>
           <m-thing-header>
-            <m-h3 class="m-thing-title">Online Service</m-h3>
+            <h3 class="m-thing-title">Online Service</h3>
             <m-box class="m-thing-header-extra"><span>Active</span></m-box>
           </m-thing-header>
           <m-thing-content>
@@ -73,7 +73,7 @@
           </m-box>
           <m-box class="m-thing-lead" id="project-lead">
             <header class="m-thing-header" id="project-header">
-              <m-h3 class="m-thing-title" id="project-title"><a href="#project-details" id="project-link">Atlas project</a></m-h3>
+              <h3 class="m-thing-title" id="project-title"><a href="#project-details" id="project-link">Atlas project</a></h3>
               <m-box class="m-thing-header-extra" id="project-extra"><span>Private</span><button type="button" aria-pressed="false" id="follow-project">Follow project</button></m-box>
             </header>
             <m-p class="m-thing-description project-description" id="project-description">A description remains separate from the main content.</m-p>
@@ -105,15 +105,15 @@
         <article class="m-thing demo-panel aligned-thing" data-content-indented dir="rtl" aria-labelledby="beta-title" id="indented-thing">
           <m-box class="m-thing-avatar" id="beta-avatar"><svg width="40" height="40" viewBox="0 0 40 40" role="img" aria-labelledby="beta-symbol-title"><title id="beta-symbol-title">Beta project symbol</title><circle cx="20" cy="20" r="18" fill="#15803d"></circle><path d="m10 20 7 7 13-15" fill="none" stroke="white" stroke-width="3"></path></svg></m-box>
           <m-box class="m-thing-lead" id="beta-lead">
-            <m-box class="m-thing-header"><m-h3 class="m-thing-title" id="beta-title">Beta project with an authored heading</m-h3><m-box class="m-thing-header-extra">Draft</m-box></m-box>
+            <m-box class="m-thing-header"><h3 class="m-thing-title" id="beta-title">Beta project with an authored heading</h3><m-box class="m-thing-header-extra">Draft</m-box></m-box>
             <m-p class="m-thing-description">Content, footer and actions align with this lead region at logical inline-start.</m-p>
           </m-box>
           <m-box class="m-thing-content" id="beta-content">
             <m-p>AnUnbrokenAuthoredContentIdentifierThatMustWrapWithoutClippingAtNarrowWidths0123456789</m-p>
-            <m-box class="m-thing nested-thing" id="nested-thing">
-              <m-box class="m-thing-lead"><m-box class="m-thing-header"><m-h4 class="m-thing-title">Nested note</m-h4></m-box><m-p class="m-thing-description">A generic container, not a new article or generated landmark.</m-p></m-box>
+            <div class="m-thing nested-thing" id="nested-thing">
+              <m-box class="m-thing-lead"><m-box class="m-thing-header"><h4 class="m-thing-title">Nested note</h4></m-box><m-p class="m-thing-description">A generic container, not a new article or generated landmark.</m-p></m-box>
               <m-box class="m-thing-content" id="nested-content"><ul><li>Native list content.</li><li>No inherited indentation flag.</li></ul></m-box>
-            </m-box>
+            </div>
           </m-box>
           <m-box class="m-thing-footer" id="beta-footer">An authored footer region.</m-box>
           <m-box class="m-thing-action" id="beta-action"><a href="#project-details">View Beta details</a></m-box>
@@ -132,7 +132,7 @@
         <m-box class="m-thing demo-panel" id="action-only"><m-box class="m-thing-action"><button type="reset" form="project-form">Reset the main project form</button></m-box></m-box>
         <m-box class="m-thing demo-panel" id="hidden-regions">
           <m-box class="m-thing-avatar" hidden><span>Hidden avatar</span></m-box>
-          <m-box class="m-thing-lead"><m-box class="m-thing-header"><m-h3 class="m-thing-title">Visible title</m-h3><m-box class="m-thing-header-extra" hidden><button type="button">Hidden header action</button></m-box></m-box><m-p class="m-thing-description" hidden>Hidden description</m-p></m-box>
+          <m-box class="m-thing-lead"><m-box class="m-thing-header"><h3 class="m-thing-title">Visible title</h3><m-box class="m-thing-header-extra" hidden><button type="button">Hidden header action</button></m-box></m-box><m-p class="m-thing-description" hidden>Hidden description</m-p></m-box>
           <m-box class="m-thing-content">No unused avatar column is exposed.</m-box>
           <m-box class="m-thing-footer" hidden>Hidden footer</m-box>
           <m-box class="m-thing-action" hidden><button type="button">Hidden action</button></m-box>
@@ -144,7 +144,7 @@
     <section id="project-details" aria-labelledby="details-heading">
       <header data-demo-header><div><h2 id="details-heading">Native list composition</h2><p>A Thing inside a native list item.</p></div></header>
       <div data-demo-preview>
-        <ul id="native-list"><li id="native-list-item"><m-box class="m-thing"><m-box class="m-thing-lead"><m-box class="m-thing-header"><m-h3 class="m-thing-title">A Thing inside a real list item</m-h3></m-box></m-box><m-box class="m-thing-content">List semantics and markers belong to the outer native list.</m-box></m-box></li></ul>
+        <ul id="native-list"><li id="native-list-item"><m-box class="m-thing"><m-box class="m-thing-lead"><m-box class="m-thing-header"><h3 class="m-thing-title">A Thing inside a real list item</h3></m-box></m-box><m-box class="m-thing-content">List semantics and markers belong to the outer native list.</m-box></m-box></li></ul>
         <m-p id="outside-content">Ordinary content outside any Thing.</m-p>
       </div>
     </section>

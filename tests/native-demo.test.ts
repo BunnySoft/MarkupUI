@@ -6,8 +6,10 @@ function demo(name: string): Document {
   return new DOMParser().parseFromString(readFileSync(join("demo", "components", `${name}.html`), "utf8"), "text/html")
 }
 
+const nativeDemos = ["input-number", "select", "slider", "pagination", "float-button", "grid", "layout", "list", "table", "thing"]
+
 describe("native-control demo markup", () => {
-  it.each(["input-number", "select", "slider", "pagination"])("%s retains native label associations", name => {
+  it.each(nativeDemos)("%s retains native label associations", name => {
     const document = demo(name)
     const labels = [...document.querySelectorAll<HTMLLabelElement>("main label")]
     expect(labels.length).toBeGreaterThan(0)
@@ -16,6 +18,32 @@ describe("native-control demo markup", () => {
       expect(label.control, label.outerHTML).not.toBeNull()
       expect(label.control!.labels).toContain(label)
     }
+  })
+
+  it.each(nativeDemos)("%s has unique IDs and no nested action controls", name => {
+    const document = demo(name)
+    const ids = [...document.querySelectorAll("[id]")].map(element => element.id)
+    expect(new Set(ids).size).toBe(ids.length)
+    for (const action of document.querySelectorAll("button, m-button, a[href], m-link")) {
+      expect(action.querySelector("button, m-button, a[href], m-link, input, select, textarea"), action.outerHTML).toBeNull()
+    }
+  })
+
+  it.each(["grid", "layout"])("%s keeps examples separate and uses native headings and disclosures", name => {
+    const document = demo(name)
+    const sections = [...document.querySelectorAll("section[data-demo-example]")]
+    expect(sections.length).toBeGreaterThan(0)
+    for (const section of sections) {
+      expect(section.parentElement!.localName).toBe("main")
+      const heading = document.getElementById(section.getAttribute("aria-labelledby")!)
+      expect(heading!.localName).toBe("h2")
+      expect(heading!.closest("section")).toBe(section)
+      expect(section.querySelector(":scope > [data-demo-preview]")).not.toBeNull()
+    }
+    expect(document.querySelector("m-details, m-summary")).toBeNull()
+    const disclosure = document.getElementById(name === "grid" ? "more-results" : "sidebar")!
+    expect(disclosure.localName).toBe("details")
+    expect(disclosure.firstElementChild!.localName).toBe("summary")
   })
 
   it.each(["input-number", "select"])("%s loads selected runtimes consistently as ESM", name => {
