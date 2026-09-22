@@ -1,6 +1,10 @@
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
-import { describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it } from "vitest"
+import { Heading } from "../src/components/typography/index.js"
+import { Box } from "../src/components/box/index.js"
+
+afterEach(() => { document.body.replaceChildren() })
 
 function demo(name: string): Document {
   return new DOMParser().parseFromString(readFileSync(join("demo", "components", `${name}.html`), "utf8"), "text/html")
@@ -13,10 +17,10 @@ describe("native-control demo markup", () => {
     const document = demo(name)
     const labels = [...document.querySelectorAll<HTMLLabelElement>("main label")]
     expect(labels.length).toBeGreaterThan(0)
-    expect(document.querySelector("main m-label")).toBeNull()
     for (const label of labels) {
-      expect(label.control, label.outerHTML).not.toBeNull()
-      expect(label.control!.labels).toContain(label)
+      const control = label.control
+      expect(control, label.outerHTML).not.toBeNull()
+      expect(control && "labels" in control ? control.labels : null).toContain(label)
     }
   })
 
@@ -29,16 +33,18 @@ describe("native-control demo markup", () => {
     }
   })
 
-  it.each(["grid", "layout"])("%s keeps examples separate and uses native headings and disclosures", name => {
-    const document = demo(name)
+  it.each(["grid", "layout"])("%s uses portable headings and boxes with Web semantic owners", name => {
+    const parsed = demo(name)
+    document.body.append(document.importNode(parsed.querySelector("main")!, true))
     const sections = [...document.querySelectorAll("section[data-demo-example]")]
     expect(sections.length).toBeGreaterThan(0)
     for (const section of sections) {
       expect(section.parentElement!.localName).toBe("main")
-      const heading = document.getElementById(section.getAttribute("aria-labelledby")!)
-      expect(heading!.localName).toBe("h2")
-      expect(heading!.closest("section")).toBe(section)
-      expect(section.querySelector(":scope > [data-demo-preview]")).not.toBeNull()
+      const heading = document.getElementById(section.getAttribute("aria-labelledby")!) as Heading
+      expect(heading).toBeInstanceOf(Heading)
+      expect(heading.native!.localName).toBe("h2")
+      expect(heading.closest("section")).toBe(section)
+      expect(section.querySelector(":scope > [data-demo-preview]")).toBeInstanceOf(Box)
     }
     expect(document.querySelector("m-details, m-summary")).toBeNull()
     const disclosure = document.getElementById(name === "grid" ? "more-results" : "sidebar")!

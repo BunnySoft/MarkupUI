@@ -435,7 +435,7 @@ describe("Layout documentation and selected delivery", () => {
     const examples = parsed.querySelectorAll("[data-demo-example]")
     expect(examples.length).toBeGreaterThanOrEqual(5)
     for (const example of examples) {
-      expect(example.querySelector("[data-demo-header] h2[id]")).not.toBeNull()
+      expect(example.querySelector('[data-demo-header] m-heading[level="2"][id]')).not.toBeNull()
       expect(example.querySelector("[data-demo-preview]")).not.toBeNull()
     }
     const setup = parsed.querySelector("details.component-setup")!

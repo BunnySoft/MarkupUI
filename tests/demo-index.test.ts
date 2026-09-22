@@ -1076,6 +1076,29 @@ describe("Card documentation and composition", () => {
 })
 
 describe("component-by-component demo browser", () => {
+  it("outlines rendered portable headings once, using stable authored IDs", () => {
+    document.body.innerHTML = `<main class="component-docs">
+      <section data-demo-example="portable">
+        <header data-demo-header><m-heading level="2" id="portable-heading">Portable heading</m-heading></header>
+      </section>
+      <section><m-heading level="2" id="portable-api-heading">API</m-heading><m-box id="portable-api"></m-box></section>
+    </main>`
+    const heading = document.getElementById("portable-heading") as typographyRuntime.Heading
+    expect(heading.native!.tagName).toBe("H2")
+    const outline = createComponentOutline()
+    try {
+      expect([...document.querySelectorAll<HTMLAnchorElement>(".component-outline a")].map(link => link.hash))
+        .toEqual(["#portable-heading", "#portable-api-heading"])
+      Object.defineProperty(media, "matches", { value: true, configurable: true })
+      mediaListener?.()
+      document.querySelector(".component-outline nav")!.addEventListener("click", event => event.preventDefault())
+      document.querySelector<HTMLElement>('.component-outline a[href="#portable-heading"]')!.click()
+      expect(document.activeElement).toBe(heading)
+    } finally {
+      outline.disconnect()
+    }
+  })
+
   it("builds a responsive outline from examples and generated API headings, then disconnects cleanly", async () => {
     document.body.innerHTML = avatarHtml.slice(avatarHtml.indexOf("<body>") + 6, avatarHtml.indexOf("</body>"))
     const outline = createComponentOutline()

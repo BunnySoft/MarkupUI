@@ -19,6 +19,8 @@ import {
 } from "../src/components/thing/index.js"
 import * as thingApi from "../src/components/thing/index.js"
 import { ViewElement } from "../src/core/index.js"
+import { Box } from "../src/components/box/index.js"
+import { Heading } from "../src/components/typography/index.js"
 import { generateComponentApi } from "../scripts/component-api.mjs"
 
 const css = readFileSync(resolve("src", "components", "thing", "thing.css"), "utf8")
@@ -67,8 +69,11 @@ describe("CSS-only native Thing", () => {
     install()
     expect(document.querySelector("#project-thing")!.tagName).toBe("ARTICLE")
     expect(document.querySelector("#project-thing")!.getAttribute("aria-labelledby")).toBe("project-title")
-    expect(document.querySelector("#project-title")!.tagName).toBe("H3")
-    expect(document.querySelector("#nested-thing")!.tagName).toBe("DIV")
+    const heading = document.querySelector<Heading>("#project-title")!
+    expect(heading).toBeInstanceOf(Heading)
+    expect(heading.native!.tagName).toBe("H3")
+    expect(heading.native!.querySelector("#project-link")).not.toBeNull()
+    expect(document.querySelector("#nested-thing")).toBeInstanceOf(Box)
     for (const region of ["avatar", "header", "header-extra", "description", "content", "footer", "action"]) {
       expect(document.querySelector(`#project-thing .m-thing-${region}`)).not.toBeNull()
     }

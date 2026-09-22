@@ -54,9 +54,9 @@ export function createComponentOutline(document = globalThis.document, view = gl
   function renderLinks() {
     const list = document.createElement("ol")
     entries = [...main.querySelectorAll(
-      ":scope > [data-demo-example] [data-demo-header] h2, "
-      + ":scope > section > h2, .component-api article > h3, .component-api caption",
-    )].map(target => {
+      ':scope > [data-demo-example] [data-demo-header] :is(h2, m-heading[level="2"]), '
+      + ':scope > section > :is(h2, m-heading[level="2"]), .component-api article > h3, .component-api caption',
+    )].filter(target => !target.matches("m-heading > h2")).map(target => {
       if (!target.id) throw new Error("An outlined documentation heading needs an ID.")
       const item = document.createElement("li")
       const link = document.createElement("a")

@@ -19,6 +19,7 @@ fieldset { margin: .5rem 0 0; }
 .demo-initials { display: inline-block; padding: .25rem; border: 1px solid currentColor; }
 .nested-thing { padding: .5rem; border: 1px dashed #71717a; }
 .m-thing-content > :last-child { margin-block-end: 0; }
+.m-thing-header > m-heading.m-thing-title > :is(h3, h4) { margin: 0; font: inherit; color: inherit; }
 #form-status, #follow-status { min-block-size: 1.5em; }
 @media print {
   body { max-inline-size: none; margin: 0; background: transparent; }

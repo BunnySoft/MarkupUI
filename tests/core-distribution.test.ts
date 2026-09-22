@@ -141,7 +141,9 @@ describe("optional plugin registration boundaries", () => {
         ViewElement.register(elements, registry)
       }
     }
-    const api = { ...m, elements: { ...m.elements, Base: PluginBase } } as typeof m
+    const api = Object.assign((...args: Parameters<typeof m>) => m(...args), m, {
+      elements: { ...m.elements, Base: PluginBase },
+    })
     plugin.install(api)
     expect([...entries.keys()]).toEqual(names)
     for (const constructor of entries.values()) expect(constructor.prototype).toBeInstanceOf(ViewElement)

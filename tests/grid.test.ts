@@ -6,6 +6,8 @@ import { Grid, GridItem, registerGrid } from "../src/components/grid/index.js"
 import * as gridApi from "../src/components/grid/index.js"
 import { gridAlignments, gridJustifications } from "../src/components/grid/model.js"
 import { ViewElement } from "../src/core/index.js"
+import { Box } from "../src/components/box/index.js"
+import "../src/components/typography/index.js"
 import { validateHeader } from "../src/components/collapse/controller.js"
 import { Collapse } from "../src/components/collapse/index.js"
 import { Dropdown } from "../src/components/dropdown/index.js"
@@ -203,7 +205,8 @@ describe("direct native Grid and GridItem", () => {
     fixture()
     const wrapper = document.querySelector("#query-container")!, grid = document.querySelector("#self-grid")!
     expect(grid.parentElement).toBe(wrapper)
-    expect(wrapper.localName).toBe("div")
+    expect(wrapper).toBeInstanceOf(Box)
+    expect(wrapper.classList.contains("m-grid-container")).toBe(true)
     expect(appCss).toContain("@container example-grid (min-width: 30rem)")
     expect(appCss).toContain("@media (min-width: 48rem)")
     expect(appCss).toContain("grid-template-rows: 40px 40px")
@@ -356,7 +359,7 @@ describe("Grid documentation and selected delivery", () => {
     const examples = parsed.querySelectorAll("[data-demo-example]")
     expect(examples.length).toBeGreaterThanOrEqual(8)
     for (const example of examples) {
-      expect(example.querySelector("[data-demo-header] h2[id]")).not.toBeNull()
+      expect(example.querySelector('[data-demo-header] m-heading[level="2"][id]')).not.toBeNull()
       expect(example.querySelector("[data-demo-preview] m-grid")).not.toBeNull()
       if (!["web", "responsive"].includes(example.getAttribute("data-demo-example")!)) expect(example.querySelector("m-grid[class],m-grid-item[class]")).toBeNull()
     }

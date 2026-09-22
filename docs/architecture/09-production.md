@@ -9,6 +9,10 @@ production readiness. Every supported family needs evidence for its declared con
   versions. No unexplained failures, unhandled errors or skipped acceptance tests.
 - [ ] Every shipped family has an approved contract and matching implementation, generated
   API documentation and working examples. Experimental or deferred features are identified.
+- [ ] Public examples use the cross-platform `m-*` vocabulary. Native HTML is confined to
+  the Web renderer and explicitly Web-specific interoperability/fallback examples.
+  Primitive renderers provide real semantics; renaming tags or forwarding clicks is not
+  sufficient. Tests validate both portable source markup and platform output.
 - [ ] Deliver and validate [Chart (`m-chart`)](../elements/contracts/chart.md) with an optional
   Apache ECharts Web renderer, ECharts-shaped declarative configuration, all first-batch
   chart types and all five data-source forms. Chart is required before release, not deferred.
@@ -40,18 +44,30 @@ The first hardening change restores Input's authored native labels and uses ESM
 consistently in its demo. All 78 Input tests pass, including two new demo acceptance
 tests. The prior run had 52 Input failures. Browser acceptance remains outstanding.
 
-Failure clusters include Input, InputNumber, Select, Slider, Pagination, Layout, Grid,
-FloatButton, List, Table and Thing, plus delivery assertions in Dropdown and Flex.
-Determine whether each failure is a product defect, invalid example or stale assertion
-against its contract before changing it. Do not weaken validation or raise budgets merely
-to make the suite green.
+The September 22, 2026 hardening run on Windows / Node 22.12.0 passed all 4,582 tests
+with two Vitest workers, no failed or skipped tests. Source typecheck and build passed.
+Control and native-interoperability examples were repaired; both runtime formats now
+enforce exact dependency-inclusive budgets without the former 200-byte classic allowance.
+This run precedes the portable-heading/container correction and is not cross-platform
+or browser acceptance. Browser automation failed before connection.
+
+Native-only test expectations also exposed an architectural regression: generic containers
+and headings had been changed to HTML instead of using Box and Heading. Portable examples
+must use the existing `m-box` and `m-heading` renderers. Explicit Web interop fixtures remain
+useful but do not satisfy portable authoring acceptance.
+
+Known primitive-renderer gaps include Label's click-only delegation, Details/Summary's
+attribute-only disclosure, and semantic wrappers without platform owners. Audit these
+against portable contracts, implement their Web semantics without requiring raw HTML from
+authors, and test other target mappings according to the declared support scope.
 
 ## Work order
 
-1. Restore native-control correctness and valid examples, starting with Input, then
-   InputNumber, Select, Slider and Pagination. Add regressions for the actual defect.
-2. Resolve the remaining layout, semantic-content and delivery failures. Audit Box
-   primitives used in place of native labels, buttons, headings and disclosures.
+1. Finish the portable primitive contracts and renderers, starting with labels, disclosure
+   and semantic structure. Keep `m-*` public authoring and validate native Web output.
+   Do not substitute HTML just to satisfy a test's hard-coded tag expectation.
+2. Audit remaining examples and tests for platform leakage. Keep native-interoperability
+   tests separate from portable acceptance, preserving labels, forms, focus and semantics.
 3. Audit retained foundation/dynamic elements and optional plugins beyond base-class
    inheritance: properties, lifecycle, events and ownership.
 4. Implement the required [Chart contract](../elements/contracts/chart.md): Bar, Line/Area,

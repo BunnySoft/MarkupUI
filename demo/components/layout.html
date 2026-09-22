@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="../../dist/markup-ui-layout.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
@@ -15,6 +16,7 @@
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
   <script defer src="../../dist/markup-ui-layout.global.js"></script>
   <script type="module" src="./layout.js"></script>
   <script type="module" src="../example-code.js"></script>
@@ -22,7 +24,7 @@
 </head>
 <body>
   <main data-demo-page class="component-docs">
-    <h1>Layout</h1>
+    <m-heading level="1">Layout</m-heading>
     <p>Semantic regions, external CSS, native disclosure and ordinary scrolling. Flexible layout shells, fixed headers and footers, and collapsible sidebars with direct properties.</p>
     <details class="component-setup" id="required-files">
       <summary id="required-files-heading">Setup code</summary>
@@ -33,8 +35,8 @@
     </details>
 
     <section data-demo-example="shell" aria-labelledby="shell-heading">
-      <header data-demo-header><h2 id="shell-heading">Authored shell and sidebar</h2></header>
-      <div data-demo-preview class="demo-preview">
+      <header data-demo-header><m-heading level="2" id="shell-heading">Authored shell and sidebar</m-heading></header>
+      <m-box data-demo-preview class="demo-preview">
         <m-layout class="demo-shell" id="shell">
           <m-layout-header class="demo-padding" data-bordered bordered id="main-header">Project workspace</m-layout-header>
           <m-layout class="demo-body" data-has-sider has-sider id="shell-body">
@@ -48,7 +50,7 @@
               </nav>
             </details>
             <m-layout-content class="demo-padding" id="workspace" aria-labelledby="workspace-heading">
-              <h3 id="workspace-heading">Workspace</h3>
+              <m-heading level="3" id="workspace-heading">Workspace</m-heading>
               <m-p>The sidebar uses native <code>details</code>. Closing it hides its navigation from focus and accessibility traversal.</m-p>
               <form id="native-form">
                 <label for="native-name">Name</label>
@@ -65,13 +67,13 @@
           </m-layout>
           <m-layout-footer class="demo-padding" data-bordered bordered>Project footer</m-layout-footer>
         </m-layout>
-      </div>
+      </m-box>
       <m-p id="form-status" role="status"></m-p>
     </section>
 
     <section data-demo-example="scroll" aria-labelledby="scroll-heading">
-      <header data-demo-header><h2 id="scroll-heading">Explicit scrolling and sticky header</h2></header>
-      <div data-demo-preview class="demo-preview">
+      <header data-demo-header><m-heading level="2" id="scroll-heading">Explicit scrolling and sticky header</m-heading></header>
+      <m-box data-demo-preview class="demo-preview">
         <m-p>Only this named, keyboard-focusable region is constrained.</m-p>
         <m-button id="scroll-bottom">Scroll activity to the bottom</m-button>
         <m-box class="m-layout-scroll activity" id="activity" tabindex="0" role="region" aria-labelledby="scroll-heading">
@@ -82,24 +84,24 @@
           </ol>
           <a href="#shell-heading" id="activity-end">Return to workspace</a>
         </m-box>
-      </div>
+      </m-box>
     </section>
 
     <section data-demo-example="rtl" aria-labelledby="rtl-heading">
-      <header data-demo-header><h2 id="rtl-heading">Logical end placement</h2></header>
-      <div data-demo-preview class="demo-preview">
+      <header data-demo-header><m-heading level="2" id="rtl-heading">Logical end placement</m-heading></header>
+      <m-box data-demo-preview class="demo-preview">
         <m-layout class="rtl-shell" data-has-sider has-sider dir="rtl" id="rtl-shell">
           <m-layout-content class="demo-padding">Content first in reading order.</m-layout-content>
           <m-layout-sider class="demo-padding" side="end" data-side="end" bordered data-bordered inverted data-inverted id="end-sidebar">
             <m-p>Sidebar last in reading order.</m-p>
           </m-layout-sider>
         </m-layout>
-      </div>
+      </m-box>
     </section>
 
     <section data-demo-example="absolute" aria-labelledby="absolute-heading">
-      <header data-demo-header><h2 id="absolute-heading">Explicit containing block</h2></header>
-      <div data-demo-preview class="demo-preview">
+      <header data-demo-header><m-heading level="2" id="absolute-heading">Explicit containing block</m-heading></header>
+      <m-box data-demo-preview class="demo-preview">
         <m-box class="absolute-container" id="absolute-container">
           <m-layout data-position="absolute" position="absolute" id="absolute-shell">
             <m-layout-header class="demo-padding" data-position="absolute" position="absolute" data-bordered bordered id="absolute-header">Pinned header</m-layout-header>
@@ -107,12 +109,12 @@
             <m-layout-footer class="demo-padding" data-position="absolute" position="absolute" data-bordered bordered id="absolute-footer">Pinned footer</m-layout-footer>
           </m-layout>
         </m-box>
-      </div>
+      </m-box>
     </section>
 
     <section data-demo-example="interactive" aria-labelledby="interactive-heading">
-      <header data-demo-header><h2 id="interactive-heading">Live properties and sidebar width</h2></header>
-      <div data-demo-preview class="demo-preview">
+      <header data-demo-header><m-heading level="2" id="interactive-heading">Live properties and sidebar width</m-heading></header>
+      <m-box data-demo-preview class="demo-preview">
         <m-layout class="demo-shell" id="live-layout">
           <m-layout-header bordered class="demo-padding" id="live-header">Interactive header</m-layout-header>
           <m-layout has-sider id="live-body">
@@ -130,15 +132,15 @@
           <m-button id="reconnect-layout">Detach and reconnect</m-button>
         </m-box>
         <m-p id="live-status" role="status"></m-p>
-      </div>
+      </m-box>
     </section>
 
-    <div class="m-layout" hidden id="hidden-shell"><button>Hidden control</button></div>
+    <m-box class="m-layout" hidden id="hidden-shell"><button>Hidden control</button></m-box>
     <template class="m-layout" id="native-template"><p>Inert authored template</p></template>
     <p id="outside">An ordinary paragraph outside every layout.</p>
 
     <section id="layout-api" aria-labelledby="api-heading">
-      <h2 id="api-heading">Layout API</h2>
+      <m-heading level="2" id="api-heading">Layout API</m-heading>
     </section>
   </main>
 </body>

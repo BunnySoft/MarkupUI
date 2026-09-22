@@ -13,6 +13,9 @@ Resolve defaults, invalid values, actions/events, content cardinality, focus and
 rules before implementation. Distinguish a logical feature from a Web-only mapping.
 Do not preserve an obsolete API solely as an alias or copy an archived implementation
 without checking the current design.
+The library is in development staging with no legacy consumers to migrate. Change the
+canonical API and its callers together; do not add compatibility shims, dual APIs or
+migration infrastructure to preserve superseded development behavior.
 
 ## 2. Put each responsibility in its existing source area
 
@@ -102,15 +105,22 @@ Do not maintain another Markdown API table or make the production component load
 
 MarkupUI is designed to be self-contained and portable across web and native targets (such as SwiftUI, Flutter, and CLI terminals).
 
-1. **Use `m-*` elements for portable presentation, preserving native semantic owners**:
+1. **Use `m-*` as the public, cross-platform authoring vocabulary**:
    - Containers: Use `<m-box>` (or `<m-div>`) instead of raw `<div>`.
+   - Headings: Use `<m-heading level="1">` through `level="6"`. The Web renderer
+     creates or adopts the corresponding native heading; do not invent `m-h1` aliases.
    - Text & Phrasing: Use `<m-span>`, `<m-strong>`, `<m-em>`, `<m-small>`, `<m-pre>`, `<m-p>`, `<m-text>` instead of raw HTML tags.
-   - Native-control contracts take precedence: keep actual `<label for="...">`, form,
-     fieldset/legend, button and input/select/textarea owners where the contract requires them.
-     A prefixed wrapper or click forwarding alone does not provide native label association,
-     form participation, keyboard activation or disabled behavior.
-   - Preserve native `<details>`/`<summary>` in native-disclosure contracts. A portable
-     wrapper must implement and validate the same semantic behavior before replacing them.
+   - Native semantics are a renderer responsibility, not a reason to replace portable
+     author markup with HTML. The Web renderer must create/adopt the correct semantic
+     owners; other targets map the same logical contract to their own platform controls.
+   - Keep raw HTML only in explicitly Web-specific interoperability/fallback examples,
+     renderer-owned DOM, or documented platform escape hatches. Existing native-owner
+     compositions are Web examples, not the cross-platform authoring contract.
+   - A prefixed wrapper or click forwarding alone does not provide label association,
+     form participation, keyboard activation, disabled behavior or disclosure semantics.
+     Missing behavior is an implementation gap to fix and validate before release.
+   - Test both portable authored markup and resulting platform semantics. Do not require
+     a literal `div` or `h3` in public markup when Box or Heading provides the contract.
 
 2. **Declarative layout attributes over ad-hoc classes/styles**:
    - Use declarative attributes on `<m-box>`: `display`, `direction`, `align`, `justify`, `wrap`, `gap`, `padding`, `margin`, `width`, `height`.
