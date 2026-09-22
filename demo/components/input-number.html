@@ -14,9 +14,8 @@
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./input-number.css">
-  <script defer src="../../dist/markup-ui-core.global.js"></script>
-  <script defer src="../../dist/markup-ui-button.global.js"></script>
-  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script type="module" src="../../dist/markup-ui-button.js"></script>
+  <script type="module" src="../../dist/markup-ui-box.js"></script>
   <script type="module" src="../../dist/markup-ui-input-number.js"></script>
   <script type="module" src="./input-number.js"></script>
   <script type="module" src="../example-code.js"></script>
@@ -37,7 +36,7 @@
       <section data-demo-example="native" aria-labelledby="native-title">
         <header data-demo-header><div><h2 id="native-title">Nullable value and native drafts</h2><p>Try typing 0.15 or 2: off-grid and out-of-range values remain invalid, not clamped. A bad-input draft may expose an empty string without being empty.</p></div></header>
         <div data-demo-preview>
-          <m-label for="quantity">Quantity (required, 0 to 1, step 0.1)</m-label>
+          <label for="quantity">Quantity (required, 0 to 1, step 0.1)</label>
           <m-input-number id="quantity-root">
             <span aria-hidden="true">±</span>
             <input data-number-control id="quantity" type="number" form="numbers" name="quantity" value="0.1" min="0" max="1" step="0.1" required aria-describedby="quantity-help">
@@ -63,7 +62,7 @@
         <div data-demo-preview>
           <fieldset id="grid-fieldset">
             <legend>Native fieldset (including its first-legend exception)</legend>
-            <m-label for="grid-number">Grid (default 0.15, step 0.2, no min)</m-label>
+            <label for="grid-number">Grid (default 0.15, step 0.2, no min)</label>
             <m-input-number id="grid-root" size="small">
               <button data-number-decrement type="button" hidden>Decrease grid</button>
               <input data-number-control id="grid-number" type="number" form="numbers" name="grid" value="0.15" step="0.2">
@@ -71,7 +70,7 @@
               <button data-number-clear type="button" hidden>Clear grid</button>
             </m-input-number>
           </fieldset>
-          <m-label for="any-number">Any-step number</m-label>
+          <label for="any-number">Any-step number</label>
           <m-input-number id="any-root" round status="warning">
             <input data-number-control id="any-number" type="number" form="numbers" name="any" value="2.5" step="any">
             <button data-number-decrement type="button" hidden>Decrease any-step</button>
@@ -90,7 +89,7 @@
       <section data-demo-example="forms" aria-labelledby="forms-title">
         <header data-demo-header><div><h2 id="forms-title">Native defaults, reset and FormData</h2><p>value is a live number or null; defaultValue is the native reset string. Silent writes retain the native dirty-value flag. The form attribute chooses actual native form ownership; readonly submits and disabled does not.</p></div></header>
         <div data-demo-preview>
-          <m-label for="external-number">External form owner</m-label>
+          <label for="external-number">External form owner</label>
           <m-input-number id="external-root" size="large">
             <input data-number-control id="external-number" type="number" name="external" form="other-numbers" value="10" min="4" max="20" step="2">
             <button data-number-decrement type="button" hidden>Decrease external</button>

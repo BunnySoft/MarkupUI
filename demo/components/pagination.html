@@ -63,10 +63,10 @@
             </m-box>
             <m-box class="m-pagination__controls" data-pagination-enhancement hidden>
               <button type="button" data-pagination-previous>Previous</button>
-              <m-box data-pagination-pages></m-box>
+              <div data-pagination-pages></div>
               <button type="button" data-pagination-next>Next</button>
-              <m-label>Items per page <select data-pagination-size name="page-size"><option value="10">10 items</option><option value="25">25 items</option><option value="100">100 items</option></select></m-label>
-              <m-label>Go to page <input data-pagination-jump type="number" name="page-draft"></m-label>
+              <label>Items per page <select data-pagination-size name="page-size"><option value="10">10 items</option><option value="25">25 items</option><option value="100">100 items</option></select></label>
+              <label>Go to page <input data-pagination-jump type="number" name="page-draft"></label>
               <button data-pagination-go type="button">Go</button>
               <span>of <span data-pagination-count>0</span> pages</span>
             </m-box>
@@ -74,7 +74,7 @@
             <template data-pagination-page><button type="button"><span class="m-pagination__visually-hidden">Page </span><span data-pagination-number></span></button></template>
             <template data-pagination-gap><button type="button"><span aria-hidden="true">…</span><span class="m-pagination__visually-hidden">Jump to page <span data-pagination-number></span></span></button></template>
           </nav>
-          <m-p><m-label>Unrelated form input <input id="outside-input" name="notes" value="Preserved"></m-label></m-p>
+          <m-p><label>Unrelated form input <input id="outside-input" name="notes" value="Preserved"></label></m-p>
         </form>
         <m-box class="demo-controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">
           <m-button id="shrink">Shrink to 12 items</m-button>

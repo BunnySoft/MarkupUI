@@ -61,7 +61,7 @@ describe("Input Number stylesheet and delivery", () => {
     expect(document.getElementById("input-number-api")).not.toBeNull()
     expect(document.querySelector('details.component-setup a[href="../setup.html"]')).not.toBeNull()
     const build = readFileSync(join("scripts", "build.mjs"), "utf8")
-    expect(build).toContain('["input-number", 5_500]')
+    expect(build).toContain('["input-number", 6_000]')
     for (const file of ["js", "global.js"]) expect(build).toContain(`"markup-ui-input-number.${file}": 4_000`)
     expect(build).toContain('"markup-ui-input-number.css": 1_000')
   })
