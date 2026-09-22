@@ -20,6 +20,7 @@ platform bases while following the same contracts.
 | 6. [Source layout](06-source.md) | Follow the existing code ownership and component-family pattern. |
 | 7. [Core and selectable components](07-modules.md) | Load shared runtime once and only the features an application uses. |
 | 8. [Typed class and style model](08-view-element-styles.md) | Universal typed class and style representation on ViewElement for cross-platform rendering. |
+| 9. [Production readiness](09-production.md) | Release gates, known blockers and the hardening work order. |
 
 ## Main decisions
 

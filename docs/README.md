@@ -24,6 +24,8 @@ Contributors and AI agents must read the [source layout](architecture/06-source.
 [module delivery rules](architecture/07-modules.md) before changing source or packaging.
 Follow the [component development guide](elements/04-development.md) for the step-by-step
 implementation, demo documentation and acceptance workflow.
+Use the [production readiness gates](architecture/09-production.md) to track release
+blockers; implemented components are not automatically production-validated.
 Shared bundle extraction does not justify a second source tree. End users must be able
 to take the core and only the component/plugin JS and CSS they use.
 

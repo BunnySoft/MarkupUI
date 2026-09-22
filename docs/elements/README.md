@@ -21,6 +21,11 @@ to the archive rather than maintaining duplicate component API/usage pages.
 
 ## Status
 
+Chart (`m-chart`) is a [required pre-release feature](contracts/chart.md), not an implemented
+API. Its Web renderer uses Apache ECharts with ECharts-shaped markup. The first batch
+requires Bar, Line/Area, Pie/Doughnut and Scatter, plus all five source forms: property
+assignment, scoped binding, JSON attributes, nested JSON and remote JSON.
+
 Separate a defined or approved contract from implemented and validated code.
 All seven initial families use the thin shared core and source-generated demo API data.
 Avatar, Button, Card, Carousel, Collapse, Divider and Dropdown are implemented with

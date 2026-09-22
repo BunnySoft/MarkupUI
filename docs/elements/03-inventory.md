@@ -1,6 +1,7 @@
 # 3. Element inventory
 
-The current rewrite covers **87 retained UI component families**. Companion and
+The inventory covers **89 UI component families**, including the required, not-yet-implemented
+Chart addition. Companion and
 region classes belong to their family's contract; this is not a count of individual classes.
 Every visual target uses `ViewElement` with direct typed property and method behavior.
 
@@ -53,11 +54,12 @@ families establish the pattern; the remaining contracts must be defined before i
 | Tree Select | `TreeSelect` | [Demo and API](../../demo/components/tree-select.html) |
 | Upload | `Upload`, `UploadTrigger`, `UploadDragger` | [Demo and API](../../demo/components/upload.html) |
 
-## Data Display (19)
+## Data Display (20)
 
 | Family | Elements / scope | Contract |
 | --- | --- | --- |
 | Calendar | `Calendar` | [Demo and API](../../demo/components/calendar.html) |
+| Chart | `Chart` (`m-chart`) and ECharts-shaped configuration regions; required before release, not implemented | [Pending contract](contracts/chart.md) |
 | Countdown | `Countdown` | [Demo and API](../../demo/components/countdown.html) |
 | Code | `Code` | [Demo and API](../../demo/components/code.html) |
 | Data Table | `DataTable` | [Demo and API](../../demo/components/data-table.html) |

@@ -3,6 +3,13 @@
 This directory documents all elements available in MarkupUI, categorized by their implementation
 type (**HTML Direct Map** vs. **Custom Element** vs. **Companion Region**) and platform mapping.
 
+## Required additions
+
+[Chart (`m-chart`)](contracts/chart.md) and its ECharts-shaped configuration regions are
+required before the production release but are not yet implemented. They are excluded from
+the available-element counts below; the contract records their first-batch types, five
+data-source forms and outstanding acceptance work.
+
 ## Overview summary
 
 | Type Flag | Count | Purpose |
