@@ -86,11 +86,10 @@ function corePlugin(format) {
       builder.onLoad({ filter: /.*/, namespace: "markupui-core" }, () => ({
         loader: "js",
         contents: `
-          const core = globalThis.MarkupUICore;
-          if (!core || typeof core.ViewElement !== "function") {
-            throw new Error("Load compatible markup-ui-core.global.js before component scripts.");
+          export const ViewElement = globalThis.MarkupUICore?.ViewElement;
+          if (typeof ViewElement !== "function") {
+            throw new Error("Load compatible markup-ui-core.global.js first.");
           }
-          export const { ViewElement } = core;
         `,
       }))
       builder.onResolve({ filter: /native-input\.js$/ }, () =>
@@ -625,7 +624,7 @@ for (const name of [...components, ...styleOnlyComponents]) {
         ...(runtimeBudget === undefined ? {} : { runtimeBudget }),
         totalGzipBytes: runtimeGzipBytes + bundles[css].gzipBytes,
       }
-      if (dependencies.length && (runtimeBudget === undefined || runtimeGzipBytes > (mode === "classic" ? runtimeBudget + 200 : runtimeBudget))) {
+      if (dependencies.length && (runtimeBudget === undefined || runtimeGzipBytes > runtimeBudget)) {
         throw new Error(`${file} plus shared dependencies is ${runtimeGzipBytes} gzip bytes; budget is ${runtimeBudget}.`)
       }
     }

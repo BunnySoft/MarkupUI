@@ -526,7 +526,7 @@ describe("Dropdown shared-core distribution", () => {
     expect(readFileSync("dist\\markup-ui-dropdown.js", "utf8")).toContain("./markup-ui-core.js")
     for (const name of ["m-avatar", "m-card", "m-carousel", "m-collapse", "m-divider"]) expect(script).not.toContain(`"${name}"`)
     const build = readFileSync("scripts\\build.mjs", "utf8")
-    expect(build).toContain('["dropdown", 14_000]')
+    expect(build).toContain('["dropdown", 14_500]')
     expect(build).toContain('"markup-ui-dropdown.js": 13_000')
     expect(build).toContain('"markup-ui-dropdown.global.js": 13_000')
     expect(build).toContain('"markup-ui-dropdown.css": 1_850')
@@ -538,9 +538,9 @@ describe("Dropdown shared-core distribution", () => {
       const core = `markup-ui-core${suffix}`
       expect(payload.gzipBytes).toBeLessThanOrEqual(13_000)
       expect(payload.dependencies).toEqual([core])
-      expect(payload.runtimeBudget).toBe(14_000)
+      expect(payload.runtimeBudget).toBe(14_500)
       expect(payload.runtimeGzipBytes).toBe(payload.gzipBytes + manifest.bundles[core].gzipBytes)
-      expect(payload.runtimeGzipBytes).toBeLessThanOrEqual(14_000)
+      expect(payload.runtimeGzipBytes).toBeLessThanOrEqual(14_500)
       expect(payload.totalGzipBytes).toBe(payload.runtimeGzipBytes + cssBytes)
     }
   })

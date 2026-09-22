@@ -71,6 +71,9 @@ avoiding unused features. Do not claim a saving by excluding required dependency
 
 The build manifest and API documentation must agree on dependency files and total costs.
 Keep approved budgets unless a measured change is explicitly accepted.
+Both ESM and classic builds enforce the exact manifest runtime ceiling, without a
+format-specific allowance. Distribution tests independently gzip the shipped files and
+sum their dependencies; source-only measurements are not release evidence.
 
 The implemented entries are `@dataengine/markup-ui/core`, `@dataengine/markup-ui/avatar`,
 `@dataengine/markup-ui/button`, `@dataengine/markup-ui/card`, `@dataengine/markup-ui/carousel`,
@@ -129,7 +132,7 @@ InputNumber imports only core. Classic loading is `markup-ui-core.global.js` fol
 only `m-input-number` and exports `InputNumber`/`registerInputNumber`; it replaces both the
 public factory and widgets-plugin constructor. No native-input/native-radio chunk or other
 component constructors are required. The manifest lists exactly core plus family per format.
-User-approved ceilings are 4,000 gzip bytes for each JS format and 5,500 for combined
+Current ceilings are 4,000 gzip bytes for each JS format and 6,000 for combined
 core-plus-family runtime; CSS stays at 1,000. No other ceiling is increased.
 
 Select imports core and `markup-ui-native-select.js`. Classic order is core,

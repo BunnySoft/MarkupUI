@@ -108,6 +108,25 @@ describe("root shared-core distribution", () => {
       expect(readFileSync(resolve("src", path), "utf8")).not.toMatch(/\bMElement\b/)
     }
   })
+
+  it("enforces exact dependency-inclusive budgets for every component in both formats", () => {
+    const manifest = JSON.parse(read("manifest.json"))
+    const measure = (file: string) => gzipSync(readFileSync(resolve("dist", file)), { level: 9 }).length
+    for (const [name, payload] of Object.entries(manifest.componentPayloads) as Array<[string, {
+      css: string
+      esm?: { file: string; dependencies: string[]; runtimeGzipBytes: number; runtimeBudget: number; totalGzipBytes: number }
+      classic?: { file: string; dependencies: string[]; runtimeGzipBytes: number; runtimeBudget: number; totalGzipBytes: number }
+    }]>) {
+      for (const mode of ["esm", "classic"] as const) {
+        const entry = payload[mode]
+        if (!entry) continue
+        const runtime = [entry.file, ...entry.dependencies].reduce((total, file) => total + measure(file), 0)
+        expect(entry.runtimeGzipBytes, `${name} ${mode}`).toBe(runtime)
+        expect(entry.totalGzipBytes, `${name} ${mode}`).toBe(runtime + measure(payload.css))
+        if (entry.dependencies.length) expect(runtime, `${name} ${mode}`).toBeLessThanOrEqual(entry.runtimeBudget)
+      }
+    }
+  })
 })
 
 describe("optional plugin registration boundaries", () => {

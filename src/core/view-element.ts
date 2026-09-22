@@ -1,6 +1,6 @@
 import type { ViewStyle } from "./style.js"
 
-const layoutMap: Record<string, string> = { direction: "flexDirection", align: "alignItems", justify: "justifyContent", "border-radius": "borderRadius" }
+const layoutMap: Record<string, string> = { direction: "flex-direction", align: "align-items", justify: "justify-content", wrap: "flex-wrap" }
 
 export abstract class ViewElement extends HTMLElement {
   public static readonly layoutAttributes: readonly string[] = Object.freeze(
@@ -11,20 +11,19 @@ export abstract class ViewElement extends HTMLElement {
     elements: readonly (CustomElementConstructor & { readonly tag: string })[],
     registry: Pick<CustomElementRegistry, "get" | "define"> = customElements,
   ): void {
-    const names = new Set<string>()
-    const entries = elements.map(constructor => {
+    const entries = new Map<string, CustomElementConstructor>()
+    for (const constructor of elements) {
       const name: unknown = Object.getOwnPropertyDescriptor(constructor, "tag")?.value
       if (typeof name !== "string" || !/^m-[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(name)) {
         throw new TypeError("Registration requires an own m-* tag.")
       }
       if (!ViewElement.prototype.isPrototypeOf(constructor.prototype)) throw new TypeError("Registered elements must extend ViewElement.")
-      if (names.has(name)) throw new TypeError(`Duplicate element ${name}.`)
+      if (entries.has(name)) throw new TypeError(`Duplicate element ${name}.`)
       const existing = registry.get(name)
       if (existing && existing !== constructor) throw new Error(`'${name}' is already defined by a different implementation.`)
-      names.add(name)
-      return { name, constructor }
-    })
-    for (const { name, constructor } of entries) {
+      entries.set(name, constructor)
+    }
+    for (const [name, constructor] of entries) {
       if (!registry.get(name)) registry.define(name, constructor)
     }
   }
@@ -77,7 +76,7 @@ export abstract class ViewElement extends HTMLElement {
   protected choiceAttribute<T extends string>(name: string, choices: readonly T[], defaultValue: T | null): T | null {
     const value = this.getAttribute(name)
     if (value === null) return defaultValue
-    for (const choice of choices) if (choice === value) return choice
+    if (choices.includes(value as T)) return value as T
     throw new RangeError(`Invalid ${name}.`)
   }
 
@@ -110,12 +109,12 @@ export abstract class ViewElement extends HTMLElement {
    * Returns true if the attribute was recognized and handled as a layout attribute.
    */
   protected syncLayoutStyle(n: string, v: string | null): boolean {
-    const s = this.style as unknown as Record<string, string>, px = (x: string | null) => (x && /^\d+$/.test(x) ? `${x}px` : (x ?? ""))
-    if (/^(gap|padding|margin|width|height)$/.test(n)) { s[n] = px(v); return true }
-    if (layoutMap[n]) { s[layoutMap[n]] = n === "border-radius" ? px(v) : (v ?? ""); return true }
-    if (n === "wrap") { s.flexWrap = v === "" || v === "true" || v === "wrap" ? "wrap" : (v ?? ""); return true }
-    if (/^(display|background|border)$/.test(n)) { s[n] = v ?? ""; return true }
-    return false
+    if (!ViewElement.layoutAttributes.includes(n)) return false
+    let value = v ?? ""
+    if (/^(gap|padding|margin|width|height|border-radius)$/.test(n) && /^\d+$/.test(value)) value += "px"
+    if (n === "wrap" && (v === "" || v === "true")) value = "wrap"
+    this.style.setProperty(layoutMap[n] ?? n, value)
+    return true
   }
 
   /**
@@ -129,9 +128,9 @@ export abstract class ViewElement extends HTMLElement {
    * Returns a typed snapshot of the active layout style properties.
    */
   public get viewStyle(): ViewStyle {
-    const o: Record<string, string | boolean | null> = { wrap: this.hasAttribute("wrap") }
-    for (const a of ViewElement.layoutAttributes) o[a === "border-radius" ? "borderRadius" : a] = this.getAttribute(a)
-    return o as ViewStyle
+    return Object.fromEntries(ViewElement.layoutAttributes.map(a => [
+      a === "border-radius" ? "borderRadius" : a, this.getAttribute(a),
+    ])) as ViewStyle
   }
 
   /**

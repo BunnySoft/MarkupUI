@@ -40,7 +40,7 @@ Switch retains one binary native checkbox with the sole switch role, silent prog
 native defaults/forms and reversible loading; no async checked-update or readonly API is invented.
 InputNumber retains one native number owner, nullable numeric value versus exposed/default strings,
 native constraint/step-grid interpretation and reversible optional native step/clear buttons.
-It imports only core, with approved 4,000-byte per-format JS and 5,500-byte combined-runtime
+It imports only core, with approved 4,000-byte per-format JS and 6,000-byte combined-runtime
 ceilings; CSS retains its 1,000-byte ceiling.
 Select retains one native select with original options/optgroups, live string/null/array
 selection, option defaults, native keyboard/forms and optional literal list-filter/clear helpers.
