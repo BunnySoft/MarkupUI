@@ -33,6 +33,36 @@ function fixture(id = "title-root", options: InputOptions = {}) {
 }
 afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
 
+describe("Input demo acceptance", () => {
+  const demo = () => new DOMParser().parseFromString(readFileSync(join("demo", "components", "input.html"), "utf8"), "text/html")
+
+  it("names every authored native field through its visible native label", async () => {
+    document.body.append(document.importNode(demo().querySelector("main")!, true))
+    await flush()
+    const fields = [...document.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("[data-input-control][id]")]
+    expect(fields).toHaveLength(9)
+    for (const field of fields) {
+      expect(field.labels).toHaveLength(1)
+      const label = field.labels![0]
+      expect(label.control).toBe(field)
+      expect(label.textContent?.trim()).not.toBe("")
+      expect(field.closest<Input | Textarea>("m-input,m-textarea")!.native).toBe(field)
+    }
+    expect(document.querySelector<Input>("#generated")!.native.getAttribute("aria-label")).toBe("Generated native field")
+  })
+
+  it("uses one ESM core identity for the demo's selected components", () => {
+    const scripts = [...demo().querySelectorAll<HTMLScriptElement>('script[src^="../../dist/"]')]
+    expect(scripts.map(script => script.getAttribute("src"))).toEqual(expect.arrayContaining([
+      "../../dist/markup-ui-input.js", "../../dist/markup-ui-button.js", "../../dist/markup-ui-box.js",
+    ]))
+    for (const script of scripts) {
+      expect(script.type).toBe("module")
+      expect(script.getAttribute("src")).not.toContain(".global.js")
+    }
+  })
+})
+
 describe("Input stylesheet contract", () => {
   const css = readFileSync(join("src", "components", "input", "input.css"), "utf8")
   it("keeps size, status and theme defaults private so inherited author tokens win", () => {

@@ -102,11 +102,15 @@ Do not maintain another Markdown API table or make the production component load
 
 MarkupUI is designed to be self-contained and portable across web and native targets (such as SwiftUI, Flutter, and CLI terminals).
 
-1. **Use `m-*` elements instead of raw HTML**:
+1. **Use `m-*` elements for portable presentation, preserving native semantic owners**:
    - Containers: Use `<m-box>` (or `<m-div>`) instead of raw `<div>`.
    - Text & Phrasing: Use `<m-span>`, `<m-strong>`, `<m-em>`, `<m-small>`, `<m-pre>`, `<m-p>`, `<m-text>` instead of raw HTML tags.
-   - Form Labels: Use `<m-label for="...">` instead of `<label>`.
-   - Disclosure: Use `<m-details>` and `<m-summary>` instead of raw `<details>` and `<summary>`.
+   - Native-control contracts take precedence: keep actual `<label for="...">`, form,
+     fieldset/legend, button and input/select/textarea owners where the contract requires them.
+     A prefixed wrapper or click forwarding alone does not provide native label association,
+     form participation, keyboard activation or disabled behavior.
+   - Preserve native `<details>`/`<summary>` in native-disclosure contracts. A portable
+     wrapper must implement and validate the same semantic behavior before replacing them.
 
 2. **Declarative layout attributes over ad-hoc classes/styles**:
    - Use declarative attributes on `<m-box>`: `display`, `direction`, `align`, `justify`, `wrap`, `gap`, `padding`, `margin`, `width`, `height`.
@@ -147,7 +151,7 @@ Inherited emitted events are extracted from source members just like properties 
 When the family is complete, update catalog/inventory links to its demo and move its
 planning contract to the archive with a link to the current page.
 
-## 7. Validate and finish one family
+## 8. Validate and finish one family
 
 Use the existing component and directly affected fixtures; do not add another test
 framework or silently create a new test project.
