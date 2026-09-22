@@ -1,7 +1,7 @@
 import { execFileSync } from "node:child_process"
 import { gzipSync } from "node:zlib"
 import { copyFile, readFile, rm, writeFile } from "node:fs/promises"
-import { resolve } from "node:path"
+import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { build, transform } from "esbuild"
 import { emitStylesheets, generateStyleModules } from "./styles.mjs"
@@ -77,9 +77,12 @@ function corePlugin(format) {
           export const { createSelect, selectOptions, selectValue, setSelectValue } = native;
         `,
       }))
-      builder.onResolve({ filter: /core\/(?:view-element|index)\.js$/ }, () =>
-        format === "esm" ? { path: "./markup-ui-core.js", external: true }
-          : { path: "core", namespace: "markupui-core" })
+      builder.onResolve({ filter: /(?:^|\/)(?:view-element|index)\.js$/ }, args => {
+        const path = resolve(dirname(args.importer), args.path)
+        if (path !== resolve(root, "src/core/index.js") && path !== resolve(root, "src/core/view-element.js")) return
+        return format === "esm" ? { path: "./markup-ui-core.js", external: true }
+          : { path: "core", namespace: "markupui-core" }
+      })
       builder.onLoad({ filter: /.*/, namespace: "markupui-core" }, () => ({
         loader: "js",
         contents: `
@@ -209,12 +212,14 @@ await Promise.all([
     ...shared,
     entryPoints: [resolve(root, "src", "index.ts")],
     format: "esm",
+    plugins: [corePlugin("esm")],
     outfile: resolve(dist, "markup-ui.js"),
   }),
   build({
     ...shared,
     entryPoints: [resolve(root, "src", "index.ts")],
     format: "esm",
+    plugins: [corePlugin("esm")],
     minify: true,
     outfile: resolve(dist, "markup-ui.min.js"),
   }),
@@ -222,6 +227,7 @@ await Promise.all([
     ...shared,
     entryPoints: [resolve(root, "src", "global.ts")],
     format: "iife",
+    plugins: [corePlugin("iife")],
     minify: true,
     outfile: resolve(dist, "markup-ui.global.js"),
   }),
@@ -627,6 +633,28 @@ for (const name of [...components, ...styleOnlyComponents]) {
   componentPayloads[name] = payload
 }
 
+const entryPayloads = {}
+for (const [name, file, dependencies, css, runtimeBudget] of [
+  ["root", "markup-ui.js", ["markup-ui-core.js"], ["markup-ui.css"]],
+  ["root-minified", "markup-ui.min.js", ["markup-ui-core.js"], ["markup-ui.css"], bundleBudgets["markup-ui.min.js"]],
+  ["root-classic", "markup-ui.global.js", ["markup-ui-core.global.js"], ["markup-ui.css"], bundleBudgets["markup-ui.min.js"]],
+  ["advanced", "markup-ui-advanced.js", ["markup-ui.js", "markup-ui-core.js"], ["markup-ui.css", "markup-ui-advanced.css"]],
+  ["widgets", "markup-ui-widgets.js", ["markup-ui.js", "markup-ui-core.js"], ["markup-ui.css", "markup-ui-widgets.css"]],
+]) {
+  const sizes = await Promise.all([file, ...dependencies].map(async asset =>
+    gzipSync(await readFile(resolve(dist, asset)), { level: 9 }).length))
+  const runtimeGzipBytes = sizes.reduce((total, size) => total + size, 0)
+  const cssGzipBytes = css.reduce((total, asset) => total + bundles[asset].gzipBytes, 0)
+  if (runtimeBudget !== undefined && runtimeGzipBytes > runtimeBudget) {
+    throw new Error(`${file} plus shared core is ${runtimeGzipBytes} gzip bytes; budget is ${runtimeBudget}.`)
+  }
+  entryPayloads[name] = {
+    file, gzipBytes: sizes[0], dependencies, runtimeGzipBytes,
+    ...(runtimeBudget === undefined ? {} : { runtimeBudget }),
+    css, cssGzipBytes, totalGzipBytes: runtimeGzipBytes + cssGzipBytes,
+  }
+}
+
 await writeFile(
   resolve(dist, "manifest.json"),
   `${JSON.stringify({
@@ -634,5 +662,6 @@ await writeFile(
     version: packageJson.version,
     bundles,
     componentPayloads,
+    entryPayloads,
   }, null, 2)}\n`,
 )

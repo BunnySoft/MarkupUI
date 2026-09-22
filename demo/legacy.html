@@ -9,6 +9,15 @@
     <link id="m-styles" rel="stylesheet" href="../dist/markup-ui.css">
     <link id="m-advanced-styles" rel="stylesheet" href="../dist/markup-ui-advanced.css">
     <link id="m-widgets-styles" rel="stylesheet" href="../dist/markup-ui-widgets.css">
+    <link rel="stylesheet" href="../dist/markup-ui-date-picker.css">
+    <link rel="stylesheet" href="../dist/markup-ui-time-picker.css">
+    <link rel="stylesheet" href="../dist/markup-ui-upload.css">
+    <link rel="stylesheet" href="../dist/markup-ui-virtual-list.css">
+    <link rel="stylesheet" href="../dist/markup-ui-breadcrumb.css">
+    <link rel="stylesheet" href="../dist/markup-ui-timeline.css">
+    <link rel="stylesheet" href="../dist/markup-ui-color-picker.css">
+    <link rel="stylesheet" href="../dist/markup-ui-transfer.css">
+    <link rel="stylesheet" href="../dist/markup-ui-cascader.css">
     <link rel="stylesheet" href="../dist/markup-ui-avatar.css">
     <link rel="stylesheet" href="../dist/markup-ui-card.css">
     <script type="module" src="../dist/markup-ui-card.js"></script>
@@ -773,16 +782,17 @@
                     <m-virtual-list
                       id="advanced-virtual-list"
                       height="260px"
-                      item-height="36"
-                    ></m-virtual-list>
+                      item-size="36"
+                    ><ul class="m-virtual-list__items"></ul></m-virtual-list>
                   </m-stack>
                 </m-card>
               </m-grid>
 
               <m-alert>
-                Load with
+                Data grid: load with
                 <code>import { advancedPlugin } from "@dataengine/markup-ui/advanced"</code>
                 and <code>m.use(advancedPlugin)</code>.
+                Date Picker, Time Picker, Upload and Virtual List use their separate component entries and CSS.
               </m-alert>
             </m-stack>
           </m-section>
@@ -884,9 +894,10 @@
               </m-card>
 
               <m-alert>
-                Load with
+                Rating: load with
                 <code>import { widgetsPlugin } from "@dataengine/markup-ui/widgets"</code>
                 and <code>m.use(widgetsPlugin)</code>.
+                Breadcrumb, Timeline, Color Picker, Transfer and Cascader use their separate component entries and CSS.
               </m-alert>
             </m-stack>
           </m-section>
@@ -1132,6 +1143,7 @@
                   <m-badge>Global script</m-badge>
                   <m-heading level="3">Classic script loading</m-heading>
                   <code class="code-block">
+                    &lt;script src="./markup-ui-core.global.js"&gt;&lt;/script&gt;
                     &lt;script src="./markup-ui.global.js"&gt;&lt;/script&gt;
                   </code>
                 </m-stack>

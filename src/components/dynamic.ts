@@ -1,7 +1,8 @@
-import { MElement } from "../core/element.js"
+import { ViewElement } from "../core/index.js"
 import { isSafeUri, sanitizeHtml, type HtmlPolicy } from "../security/index.js"
 
-export class MAccordionItem extends MElement {
+export class AccordionItem extends ViewElement {
+  public static readonly tag = "m-accordion-item"
   public connectedCallback(): void {
     if (this.querySelector(":scope > [data-m-header]") !== null) return
     const content = this.ownerDocument.createElement("div")
@@ -23,7 +24,8 @@ export class MAccordionItem extends MElement {
   }
 }
 
-export class MInclude extends MElement {
+export class Include extends ViewElement {
+  public static readonly tag = "m-include"
   public static get observedAttributes(): string[] { return ["src"] }
   private controller?: AbortController
   public connectedCallback(): void { void this.load() }
@@ -36,7 +38,7 @@ export class MInclude extends MElement {
     if (!src) return
     const policy: HtmlPolicy = { allowedOrigins: [location.origin] }
     if (!isSafeUri(src, policy)) {
-      this.emit("error", new Error(`URL '${src}' is not allowed.`))
+      this.emit("m:error", new Error(`URL '${src}' is not allowed.`))
       return
     }
     this.controller?.abort()
@@ -46,9 +48,9 @@ export class MInclude extends MElement {
       const response = await fetch(src, { signal: this.controller.signal })
       if (!response.ok) throw new Error(`Request failed with HTTP ${response.status}.`)
       this.replaceChildren(sanitizeHtml(await response.text(), this.ownerDocument, policy))
-      this.emit("load")
+      this.emit("m:load", undefined)
     } catch (error) {
-      if ((error as Error).name !== "AbortError") this.emit("error", error)
+      if ((error as Error).name !== "AbortError") this.emit("m:error", error)
     } finally {
       this.removeAttribute("loading")
     }

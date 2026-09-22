@@ -9,6 +9,12 @@ Browser modules can import the served `markup-ui-core.js`. Classic scripts load
 Core registers no UI components and installs no stylesheet. Components share this one base;
 there is no production metadata or decorator API.
 
+The optional package root also exports this same `ViewElement`; `m.elements.Base`
+references it. The replaced `MElement` export and implementation have been removed.
+Use `/core` for extensions that do not need the root's query, state, theme or other services.
+The root ESM entries import `markup-ui-core.js`; classic applications load
+`markup-ui-core.global.js` before `markup-ui.global.js`, then any selected component scripts.
+
 ## Registration
 
 Each public element class declares an own static `tag` string in the `m-*` namespace.
@@ -18,6 +24,11 @@ The registry defaults to the browser's `customElements`.
 Classes must extend the shared base. Invalid or duplicate tags, inherited-only tags and
 conflicting existing constructors fail without partial registration. Re-registering the
 same constructor is idempotent. Class names are not used to infer tags.
+
+The root's `registerElement(name, constructor, registry?)` and `m.elements.register`
+require `name` to match the constructor's own `tag` and delegate to these same checks.
+`registerElements` preflights the complete foundation family before defining any element.
+Root registration does not register the separately selected component catalog.
 
 ## Properties and methods
 

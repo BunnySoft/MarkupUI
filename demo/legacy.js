@@ -1,6 +1,15 @@
 import { m } from "../dist/markup-ui.js?v=11.1"
 import { advancedPlugin } from "../dist/markup-ui-advanced.js?v=11.1"
 import { widgetsPlugin } from "../dist/markup-ui-widgets.js?v=11.1"
+import "../dist/markup-ui-date-picker.js"
+import "../dist/markup-ui-time-picker.js"
+import "../dist/markup-ui-upload.js"
+import "../dist/markup-ui-breadcrumb.js"
+import "../dist/markup-ui-timeline.js"
+import "../dist/markup-ui-color-picker.js"
+import "../dist/markup-ui-transfer.js"
+import "../dist/markup-ui-cascader.js"
+import { createVirtualList } from "../dist/markup-ui-virtual-list.js"
 
 m.use(advancedPlugin)
 m.use(widgetsPlugin)
@@ -59,7 +68,18 @@ advancedGrid.rows = [
 ]
 
 const advancedVirtualList = document.querySelector("#advanced-virtual-list")
-advancedVirtualList.items = Array.from({ length: 10000 }, (_, index) => `Virtual row ${index + 1}`)
+const virtualList = createVirtualList(advancedVirtualList, {
+  items: Array.from({ length: 10000 }, (_, index) => `Virtual row ${index + 1}`),
+  rowSize: 36,
+  key: item => item,
+  render(item) {
+    const row = document.createElement("li")
+    row.textContent = item
+    return row
+  },
+  update(row, item) { row.textContent = item },
+})
+window.addEventListener("pagehide", event => { if (!event.persisted) virtualList.disconnect() })
 
 const widgetTransfer = document.querySelector("#widget-transfer")
 widgetTransfer.options = [

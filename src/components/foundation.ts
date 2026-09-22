@@ -1,8 +1,9 @@
 import { installActions } from "../actions/index.js"
-import { MElement } from "../core/element.js"
+import { ViewElement } from "../core/index.js"
 import { bind, createStore, type MStore } from "../state/index.js"
 import { theme } from "../theme/index.js"
-export class MTheme extends MElement {
+export class Theme extends ViewElement {
+  public static readonly tag = "m-theme"
   public static get observedAttributes(): string[] { return ["name"] }
   public connectedCallback(): void {
     this.applyTheme()
@@ -16,14 +17,15 @@ export class MTheme extends MElement {
   }
 }
 
-export class MSemantic extends MElement {
+export abstract class Semantic extends ViewElement {
   public connectedCallback(): void {
     const role = this.getAttribute("data-role")
     if (role) this.setAttribute("role", role)
   }
 }
 
-export class MField extends MElement {
+export class Field extends ViewElement {
+  public static readonly tag = "m-field"
   public connectedCallback(): void {
     if (this.querySelector(":scope > [data-m-label]") !== null) return
     const text = this.getAttribute("label")
@@ -40,7 +42,8 @@ export class MField extends MElement {
   }
 }
 
-export class MApp extends MElement {
+export class App extends ViewElement {
+  public static readonly tag = "m-app"
   public store: MStore = createStore()
   private disposeActions?: () => void
   private readonly bindingDisposers: Array<() => void> = []

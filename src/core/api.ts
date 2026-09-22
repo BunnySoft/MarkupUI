@@ -9,7 +9,7 @@ import {
   registerElement,
   registerElements,
 } from "../components/elements.js"
-import { MElement } from "./element.js"
+import { ViewElement } from "./index.js"
 import { installPlugin, isPluginInstalled, type MPlugin } from "./plugin.js"
 import { clearOverlays, showMessage, showNotification } from "../overlay/index.js"
 import {
@@ -32,7 +32,7 @@ export interface MarkupUIApi {
     readonly installed: typeof isPluginInstalled
   }
   readonly elements: {
-    readonly Base: typeof MElement
+    readonly Base: typeof ViewElement
     readonly names: readonly string[]
     readonly register: typeof registerElement
     readonly registerAll: typeof registerElements
@@ -81,7 +81,7 @@ export const m = Object.assign(callable, {
     installed: isPluginInstalled,
   },
   elements: {
-    Base: MElement,
+    Base: ViewElement,
     names: builtInElementNames,
     register: registerElement,
     registerAll: registerElements,

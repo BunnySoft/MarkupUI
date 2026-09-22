@@ -1,4 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
+import * as rootApi from "../src/index.js"
+import { ViewElement } from "../src/core/index.js"
 import {
   bind,
   builtInElementNames,
@@ -8,6 +10,7 @@ import {
   m,
   registerAction,
   registerElements,
+  registerElement,
   sanitizeHtml,
   setHtml,
   theme,
@@ -484,6 +487,67 @@ describe("native elements", () => {
 })
 
 describe("unified API and plugins", () => {
+  it("exposes one shared ViewElement base without the replaced base export", () => {
+    expect(rootApi.ViewElement).toBe(ViewElement)
+    expect(rootApi).not.toHaveProperty("MElement")
+    expect(m.elements.Base).toBe(ViewElement)
+    for (const name of builtInElementNames) {
+      const constructor = customElements.get(name)!
+      expect(ViewElement.prototype.isPrototypeOf(constructor.prototype)).toBe(true)
+      expect(Object.getOwnPropertyDescriptor(constructor, "tag")?.value).toBe(name)
+    }
+  })
+
+  it("registers root extensions through the shared own-tag and conflict checks", () => {
+    class Extension extends m.elements.Base {
+      public static readonly tag = "m-root-extension"
+      public get amount(): number { return this.numberAttribute("amount", 1) }
+      public send(): boolean { return this.emit("m:extension", 42, { cancelable: true }) }
+    }
+    registerElement(Extension.tag, Extension)
+    m.elements.Base.register([Extension])
+    const element = new Extension()
+    expect(element.amount).toBe(1)
+    element.setAttribute("amount", "invalid")
+    expect(() => element.amount).toThrow(RangeError)
+    const listener = vi.fn((event: Event) => event.preventDefault())
+    element.addEventListener("m:extension", listener)
+    expect(element.send()).toBe(false)
+    expect(listener).toHaveBeenCalledOnce()
+    expect((listener.mock.calls[0]![0] as CustomEvent).detail).toBe(42)
+    expect(() => registerElement("m-other", Extension)).toThrow("own")
+    class Conflict extends ViewElement { public static readonly tag = Extension.tag }
+    expect(() => registerElement(Conflict.tag, Conflict)).toThrow("different implementation")
+    class Foreign extends HTMLElement { public static readonly tag = "m-foreign" }
+    expect(() => registerElement(Foreign.tag, Foreign)).toThrow("extend ViewElement")
+    class MissingTag extends ViewElement {}
+    expect(() => registerElement("m-missing-tag", MissingTag as typeof Extension)).toThrow()
+  })
+
+  it("preflights all root registrations before defining a conflicting family", () => {
+    const entries = new Map<string, CustomElementConstructor>([["m-include", class extends HTMLElement {}]])
+    const define = vi.fn((name: string, constructor: CustomElementConstructor) => entries.set(name, constructor))
+    expect(() => registerElements({ get: name => entries.get(name), define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
+    expect([...entries.keys()]).toEqual(["m-include"])
+  })
+
+  it("retains the explicit include load/error event names and payloads", async () => {
+    const loaded = vi.fn(), failed = vi.fn()
+    const include = document.createElement("m-include")
+    include.addEventListener("m:load", loaded)
+    include.addEventListener("m:error", failed)
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("<p>Loaded</p>")))
+    include.setAttribute("src", "/fragment")
+    document.body.append(include)
+    await vi.waitFor(() => expect(loaded).toHaveBeenCalledOnce())
+    expect(loaded.mock.calls[0]![0]).toMatchObject({ type: "m:load", bubbles: true })
+    include.setAttribute("src", "javascript:alert(1)")
+    expect(failed).toHaveBeenCalledOnce()
+    expect(failed.mock.calls[0]![0].detail).toBeInstanceOf(Error)
+    vi.unstubAllGlobals()
+  })
+
   it("exposes namespaced services without requiring the query helper", () => {
     expect(m.actions.register).toBe(registerAction)
     expect(m.state.create).toBe(createStore)
@@ -511,7 +575,7 @@ describe("unified API and plugins", () => {
 
   it("installs the optional advanced component plugin", async () => {
     m.use(advancedPlugin)
-    expect(advancedElementNames).toHaveLength(6)
+    expect(advancedElementNames).toEqual(["m-data-column", "m-data-grid"])
     expect(new Set(advancedElementNames).size).toBe(advancedElementNames.length)
     document.body.innerHTML = `
       <m-data-grid>
@@ -536,18 +600,18 @@ describe("unified API and plugins", () => {
       .toBe("2026-08-26")
     expect((document.querySelector("m-time-picker") as HTMLElement & { value: string }).value)
       .toBe("18:30")
-    const virtual = document.querySelector("m-virtual-list") as HTMLElement & {
-      items: readonly unknown[]
+    expect(customElements.get("m-data-grid")!.prototype).toBeInstanceOf(ViewElement)
+    for (const constructor of [DatePicker, TimePicker, Upload, VirtualList]) {
+      expect(customElements.get(constructor.tag)).toBe(constructor)
+      expect(advancedElementNames).not.toContain(constructor.tag)
+      expect(document.getElementById("m-advanced-styles")!.textContent).not.toContain(constructor.tag)
     }
-    virtual.items = Array.from({ length: 100 }, (_, index) => `Row ${index + 1}`)
-    await Promise.resolve()
-    expect(document.querySelectorAll("[data-m-virtual-item]").length).toBeLessThan(20)
     expect(document.querySelector("m-upload input")?.getAttribute("accept")).toBe(".csv")
   })
 
   it("installs the optional widgets plugin", () => {
     m.use(widgetsPlugin)
-    expect(widgetElementNames).toHaveLength(8)
+    expect(widgetElementNames).toEqual(["m-rating"])
     expect(widgetElementNames).not.toContain("m-input-number")
     expect(customElements.get("m-input-number")).toBe(InputNumber)
     expect(document.getElementById("m-widgets-styles")?.textContent).not.toContain("m-input-number")
@@ -571,6 +635,12 @@ describe("unified API and plugins", () => {
       .toBe("#ff0000")
     expect(document.querySelectorAll("m-rating button[data-active]")).toHaveLength(3)
     expect(document.querySelectorAll("m-rating button[selected]")).toHaveLength(1)
+    expect(customElements.get("m-rating")!.prototype).toBeInstanceOf(ViewElement)
+    for (const constructor of [Breadcrumb, BreadcrumbItem, Timeline, TimelineItem, ColorPicker, Transfer, Cascader]) {
+      expect(customElements.get(constructor.tag)).toBe(constructor)
+      expect(widgetElementNames).not.toContain(constructor.tag)
+      expect(document.getElementById("m-widgets-styles")!.textContent).not.toContain(constructor.tag)
+    }
     const transfer = document.querySelector("m-transfer") as HTMLElement & {
       options: readonly { label: string; value: string }[]
       value: string[]
@@ -594,6 +664,24 @@ describe("unified API and plugins", () => {
     }]
     expect(cascader.value).toEqual(["data", "reports"])
     expect(document.querySelectorAll("m-cascader select")).toHaveLength(2)
+  })
+
+  it("validates retained Rating values before mutation and preserves its event contract", () => {
+    m.use(widgetsPlugin)
+    const rating = document.createElement("m-rating") as ViewElement & { value: number }
+    document.body.append(rating)
+    const changed = vi.fn()
+    rating.addEventListener("m:change", changed)
+    rating.value = 2
+    expect(changed).toHaveBeenCalledOnce()
+    expect(changed.mock.calls[0]![0].detail).toBe(2)
+    expect(() => { rating.value = NaN }).toThrow(RangeError)
+    expect(rating.value).toBe(2)
+    expect(changed).toHaveBeenCalledOnce()
+    rating.setAttribute("max", "invalid")
+    expect(() => { rating.value = 3 }).toThrow(RangeError)
+    expect(rating.getAttribute("value")).toBe("2")
+    rating.remove()
   })
 })
 

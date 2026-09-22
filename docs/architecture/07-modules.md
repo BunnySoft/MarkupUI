@@ -46,6 +46,19 @@ or ESM/classic versions of the same component in one page.
 
 ## Payload accounting
 
+The optional root facade now shares the same core as selected components. Its ESM files
+import `markup-ui-core.js`; classic loading is `markup-ui-core.global.js`, then
+`markup-ui.global.js`. Neither root format embeds another base implementation.
+`dist/manifest.json` records these root and optional plugin costs in `entryPayloads`,
+including runtime dependencies and CSS. The existing 15,000-byte minified-root ceiling
+also gates core-inclusive minified ESM and classic runtime; no ceiling is increased.
+
+The optional `advanced` plugin retains only `m-data-grid`/`m-data-column`, and `widgets`
+retains only `m-rating`. They extend the supplied API's `ViewElement` base and register
+atomically. Date Picker, Time Picker, Upload, Virtual List, Breadcrumb, Timeline,
+Color Picker, Transfer and Cascader must be selected through their canonical family
+entries and CSS; plugins no longer register or style competing copies.
+
 | Measurement | Count |
 | --- | --- |
 | First selected component | Shared core, that component, required dependencies and selected CSS. |

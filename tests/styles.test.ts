@@ -32,12 +32,14 @@ describe("CSS and theme sources", () => {
   it("preserves the approved runtime CSS baselines exactly", () => {
     // Core includes Avatar/Button corrections; migrated Divider/Icon/Typography/Input/Checkbox/Radio/Switch/Select styles are family-owned.
     // Grid is family-owned; pending Layout hooks no longer override Grid's item alignment.
-    // Widgets no longer includes competing Carousel/InputNumber styles; they ship with their canonical families.
-    expect(runtimeStyles.map(hash)).toEqual([
-      "0efd1ca1ed76246cb9f2ded7693206a14cd501bca40fb902f9a82f173d95fad6",
-      "6fd15d4f89081eaad05bc6391936ead49357aa4bd990202327146d93811957fd",
-      "4637afb81d2725d398c54c328378aacd8ac6ee2f8818085dc674c0532f089e07",
-    ])
+    expect(hash(builtInStyles)).toBe("0efd1ca1ed76246cb9f2ded7693206a14cd501bca40fb902f9a82f173d95fad6")
+    // Plugin styles retain only their own tags; selected components own their CSS.
+    expect(hash(advancedStyles)).toBe("358ba4510188e24811c91c44b2b59b0498a918979095f852200758a260fb73a0")
+    expect(hash(widgetStyles)).toBe("8ed4cb38ebf8f8f831d6a3c351313b254d093f534850b66f5448bcff371eb06f")
+    expect(advancedStyles).toContain("m-data-grid")
+    expect(widgetStyles).toContain("m-rating")
+    expect(advancedStyles).not.toMatch(/m-date-picker|m-time-picker|m-upload|m-virtual-list/)
+    expect(widgetStyles).not.toMatch(/m-breadcrumb|m-timeline|m-color-picker|m-transfer|m-cascader/)
   })
 
   it("keeps approved built-in theme baselines and generated registrations in sync", () => {

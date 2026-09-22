@@ -24,6 +24,13 @@ Keep TypeScript source in `src` and generated JavaScript/declarations/assets in 
 Relative TypeScript imports use `.js` specifiers, following the existing NodeNext setup.
 Follow surrounding formatting and reuse existing owners/helpers before adding another layer.
 
+`ViewElement` is the sole Web base, including the optional root facade and its retained
+foundation/dynamic elements. `src/core/element.ts` and the unreferenced aggregate
+`content.ts`, `forms.ts`, `navigation.ts` and `overlays.ts` implementations are removed.
+The root exports `ViewElement` and exposes it as `m.elements.Base`; it does not provide
+an `MElement` compatibility alias. Optional plugins keep only their distinct retained
+tags and do not redefine selected component families.
+
 ## Component-family pattern
 
 Avatar is the first proving family. The same responsibilities apply to later components:

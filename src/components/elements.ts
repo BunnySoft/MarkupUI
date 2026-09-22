@@ -1,43 +1,41 @@
-import { MElement } from "../core/element.js"
-import { MApp, MField, MSemantic, MTheme } from "./foundation.js"
-import { MAccordionItem, MInclude } from "./dynamic.js"
+import { ViewElement } from "../core/index.js"
+import { App, Field, Semantic, Theme } from "./foundation.js"
+import { AccordionItem, Include } from "./dynamic.js"
 import { builtInStyles } from "./styles.js"
 
-const definitions: ReadonlyArray<readonly [string, CustomElementConstructor]> = [
-  ["m-app", MApp],
-  ["m-theme", MTheme],
-  ["m-header", class extends MSemantic { public override connectedCallback(): void { this.setAttribute("data-role", "banner"); super.connectedCallback() } }],
-  ["m-main", class extends MSemantic { public override connectedCallback(): void { this.setAttribute("data-role", "main"); super.connectedCallback() } }],
-  ["m-section", class extends MSemantic {}],
-  ["m-field", MField],
-  ["m-stack", class extends MElement {}],
-  ["m-row", class extends MElement {}],
-  ["m-wrap", class extends MElement {}],
-  ["m-center", class extends MElement {}],
-  ["m-spacer", class extends MElement { public connectedCallback(): void { this.style.flex = "1" } }],
-  ["m-option", class extends MElement {}],
-  ["m-accordion", class extends MElement {}],
-  ["m-accordion-item", MAccordionItem],
-  ["m-include", MInclude],
+const definitions = [
+  App,
+  Theme,
+  class Header extends Semantic { public static readonly tag = "m-header"; public override connectedCallback(): void { this.setAttribute("data-role", "banner"); super.connectedCallback() } },
+  class Main extends Semantic { public static readonly tag = "m-main"; public override connectedCallback(): void { this.setAttribute("data-role", "main"); super.connectedCallback() } },
+  class Section extends Semantic { public static readonly tag = "m-section" },
+  Field,
+  class Stack extends ViewElement { public static readonly tag = "m-stack" },
+  class Row extends ViewElement { public static readonly tag = "m-row" },
+  class Wrap extends ViewElement { public static readonly tag = "m-wrap" },
+  class Center extends ViewElement { public static readonly tag = "m-center" },
+  class Spacer extends ViewElement { public static readonly tag = "m-spacer"; public connectedCallback(): void { this.style.flex = "1" } },
+  class Option extends ViewElement { public static readonly tag = "m-option" },
+  class Accordion extends ViewElement { public static readonly tag = "m-accordion" },
+  AccordionItem,
+  Include,
 ]
 
-export const builtInElementNames: readonly string[] = definitions.map(([name]) => name)
+export const builtInElementNames: readonly string[] = definitions.map(constructor => constructor.tag)
 
-export function registerElements(registry: CustomElementRegistry = customElements): void {
-  for (const [name, constructor] of definitions) {
-    registerElement(name, constructor, registry)
-  }
+export function registerElements(registry: Pick<CustomElementRegistry, "get" | "define"> = customElements): void {
+  ViewElement.register(definitions, registry)
 }
 
 export function registerElement(
   name: string,
-  constructor: CustomElementConstructor,
-  registry: CustomElementRegistry = customElements,
+  constructor: CustomElementConstructor & { readonly tag: string },
+  registry: Pick<CustomElementRegistry, "get" | "define"> = customElements,
 ): void {
-  if (!name.startsWith("m-")) {
-    throw new Error("Use a 'm-' element name.")
+  if (name !== constructor.tag) {
+    throw new TypeError("Use the element's own m-* tag.")
   }
-  if (!registry.get(name)) registry.define(name, constructor)
+  ViewElement.register([constructor], registry)
 }
 
 export function installStyles(document: Document = globalThis.document): void {

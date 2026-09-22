@@ -12,7 +12,7 @@ export {
   registerElements,
 } from "./components/elements.js"
 export { m, type MarkupUIApi } from "./core/api.js"
-export { MElement } from "./core/element.js"
+export { ViewElement, type ViewStyle } from "./core/index.js"
 export { positionFloating, type FloatingPlacement } from "./core/position.js"
 export {
   installPlugin,
