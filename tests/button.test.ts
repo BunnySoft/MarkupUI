@@ -40,7 +40,7 @@ describe("audited Button styles", () => {
       process.stdout.write(transformSync(fs.readFileSync(process.argv[1], "utf8"), {
         loader: "css", minifyWhitespace: true, minifySyntax: false, legalComments: "none"
       }).code);
-    `, "src\\components\\button\\button.css"], { encoding: "utf8" })
+    `, "src/components/button/button.css"], { encoding: "utf8" })
     expect(gzipSync(built, { level: 9 }).length).toBeLessThanOrEqual(2500)
   })
 

@@ -3,6 +3,7 @@
   "version": "0.13.0",
   "description": "Platform-neutral MarkupUI with selectable Web Components and optional charting",
   "type": "module",
+  "packageManager": "pnpm@10.28.0",
   "main": "./dist/markup-ui.js",
   "module": "./dist/markup-ui.js",
   "unpkg": "./dist/markup-ui.global.js",
@@ -520,6 +521,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:browser": "node scripts/browser-check.mjs",
+    "test:catalog": "node scripts/browser-check.mjs --catalog",
     "test:package": "node scripts/package-check.mjs"
   },
   "dependencies": {},
@@ -533,7 +535,7 @@
     "vitest": "4.1.11"
   },
   "engines": {
-    "node": ">=20"
+    "node": "^22.12.0 || >=24.0.0"
   },
   "license": "Apache-2.0"
 }

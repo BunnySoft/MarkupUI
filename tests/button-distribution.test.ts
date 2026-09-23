@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from "vitest"
 
 describe("Button shared-core distribution", () => {
   it("requires classic core before registering only its own family", () => {
-    const component = readFileSync("dist\\markup-ui-button.global.js", "utf8")
+    const component = readFileSync("dist/markup-ui-button.global.js", "utf8")
     const define = vi.fn()
     expect(() => runInContext(component, createContext({
       HTMLElement, customElements: { get: vi.fn(), define },
@@ -20,7 +20,7 @@ describe("Button shared-core distribution", () => {
         define: (name: string, constructor: unknown) => { entries.set(name, constructor) },
       },
     })
-    runInContext(readFileSync("dist\\markup-ui-core.global.js", "utf8"), context)
+    runInContext(readFileSync("dist/markup-ui-core.global.js", "utf8"), context)
     expect(entries.size).toBe(0)
     runInContext(component, context)
     expect([...entries.keys()]).toEqual(["m-button", "m-button-group"])
@@ -33,9 +33,9 @@ describe("Button shared-core distribution", () => {
   })
 
   it("externalizes ESM core and excludes other constructors from both component outputs", () => {
-    expect(readFileSync("dist\\markup-ui-button.js", "utf8")).toContain("./markup-ui-core.js")
+    expect(readFileSync("dist/markup-ui-button.js", "utf8")).toContain("./markup-ui-core.js")
     for (const suffix of [".js", ".global.js"]) {
-      const map = JSON.parse(readFileSync(`dist\\markup-ui-button${suffix}.map`, "utf8"))
+      const map = JSON.parse(readFileSync(`dist/markup-ui-button${suffix}.map`, "utf8"))
       expect(map.sources.filter((source: string) => source.includes("/src/"))
         .every((source: string) => source.includes("/src/components/button/"))).toBe(true)
     }
@@ -48,12 +48,12 @@ describe("Button shared-core distribution", () => {
   it.each([["esm", ".js"], ["classic", ".global.js"]])("accounts for the %s core and Button against approved ceilings", (mode, suffix) => {
     const file = `markup-ui-button${suffix}`
     const core = `markup-ui-core${suffix}`
-    const measure = (name: string) => gzipSync(readFileSync(`dist\\${name}`), { level: 9 }).length
+    const measure = (name: string) => gzipSync(readFileSync(`dist/${name}`), { level: 9 }).length
     const runtime = measure(core) + measure(file)
     expect.soft(measure(core)).toBeLessThanOrEqual(4000)
     expect.soft(measure(file)).toBeLessThanOrEqual(6000)
     expect.soft(runtime).toBeLessThanOrEqual(9500)
-    const manifest = JSON.parse(readFileSync("dist\\manifest.json", "utf8"))
+    const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     expect(manifest.componentPayloads.button[mode!]).toMatchObject({
       file, dependencies: [core], runtimeGzipBytes: runtime, runtimeBudget: 9500,
       totalGzipBytes: runtime + measure("markup-ui-button.css"),

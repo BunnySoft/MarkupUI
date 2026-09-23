@@ -124,6 +124,16 @@ classic-script expectation, subsequently corrected in the passing Log fixture.
 Evidence is generated under `.vite/browser` and `.vite/demo-repair-regression.json`.
 Catalog startup coverage is not full interaction or assistive-technology acceptance.
 
+CI is now configured for Windows/Linux/macOS with Node 22.12 and 24, frozen pnpm
+10.28.0 installs, full tests, payload gates and isolated packed consumers. Separate
+Linux jobs enforce the three-engine catalog and dependency audit, with retained failure
+reports/screenshots. Tests no longer use 114 Windows-only filesystem path literals.
+Local frozen installation and the 95-entry packed consumer passed. The integrated
+Windows run passed 4,795 tests with one obsolete FloatButton demo-dependency assertion;
+the corrected assertion now checks actual component dependency manifests and all 29
+FloatButton tests pass. A final integrated run and actual remote CI matrix evidence
+remain required; configuring a workflow is not proof that other operating systems passed.
+
 ## Work order
 
 1. Finish the portable primitive contracts and renderers, starting with labels, disclosure

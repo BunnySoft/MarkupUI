@@ -89,7 +89,7 @@ describe("canonical Form family", () => {
     }
   })
   it("extracts inherited presentation, native events and real defaults without inventing native state", () => {
-    const data = JSON.parse(readFileSync("demo\\api\\form.json", "utf8"))
+    const data = JSON.parse(readFileSync("demo/api/form.json", "utf8"))
     expect(data.elements.map((element: { type: string }) => element.type)).toEqual(["Form", "FormItem", "FormItemGi"])
     const [form, item, grid] = data.elements
     expect(form.properties.validateOnBlur.default).toBe(false)
@@ -267,14 +267,14 @@ describe("canonical Checkbox composition", () => {
 
 describe("Form stylesheet contract", () => {
   it("accounts for the complete family and shared core under the approved delivery limits", () => {
-    const manifest = JSON.parse(readFileSync("dist\\manifest.json", "utf8"))
+    const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     const family = manifest.componentPayloads.form
     expect(family.cssGzipBytes).toBeLessThanOrEqual(1250)
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       const payload = family[mode]
       const core = `markup-ui-core${suffix}`
       expect(payload.dependencies).toEqual([core])
-      expect(payload.gzipBytes).toBe(gzipSync(readFileSync(`dist\\${payload.file}`), { level: 9 }).length)
+      expect(payload.gzipBytes).toBe(gzipSync(readFileSync(`dist/${payload.file}`), { level: 9 }).length)
       expect(payload.gzipBytes).toBeLessThanOrEqual(7000)
       expect(payload.runtimeBudget).toBe(8250)
       expect(payload.runtimeGzipBytes).toBe(payload.gzipBytes + manifest.bundles[core].gzipBytes)
@@ -316,7 +316,7 @@ describe("Form stylesheet contract", () => {
     expect(css).toMatch(/@media\s*\(forced-colors:\s*active\)/)
     expect(css).toContain("color: CanvasText")
     expect(css).not.toMatch(/(?:animation|transition)(?:-[a-z]+)?\s*:/)
-    expect(gzipSync(readFileSync("dist\\markup-ui-form.css"), { level: 9 }).byteLength).toBeLessThanOrEqual(1250)
+    expect(gzipSync(readFileSync("dist/markup-ui-form.css"), { level: 9 }).byteLength).toBeLessThanOrEqual(1250)
   })
 })
 
@@ -617,7 +617,7 @@ describe("feedback ownership, blur, reset and companion composition", () => {
     expect(feedback.textContent).toBe("blur error"); expect(feedback.hasAttribute("aria-live")).toBe(false)
   })
   it("handles nonbubbling Rate clear as a cross-field invalidation without replacing radio state", async () => {
-    const source = readFileSync("demo\\components\\rate.html", "utf8")
+    const source = readFileSync("demo/components/rate.html", "utf8")
     document.body.innerHTML = new DOMParser().parseFromString(source, "text/html").querySelector("main")!.innerHTML
     const root = document.querySelector<HTMLFieldSetElement>("#quality")!, rate = createRate(root)
     const pending = deferred(), radios = [...root.querySelectorAll<HTMLInputElement>("input")]

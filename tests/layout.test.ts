@@ -17,10 +17,10 @@ import * as layoutApi from "../src/components/layout/index.js"
 import { ViewElement } from "../src/core/index.js"
 import { Details } from "../src/components/box/index.js"
 
-const css = readFileSync("src\\components\\layout\\layout.css", "utf8")
-const demo = readFileSync("demo\\components\\layout.html", "utf8")
-const appCss = readFileSync("demo\\components\\layout.css", "utf8")
-const app = readFileSync("demo\\components\\layout.js", "utf8")
+const css = readFileSync("src/components/layout/layout.css", "utf8")
+const demo = readFileSync("demo/components/layout.html", "utf8")
+const appCss = readFileSync("demo/components/layout.css", "utf8")
+const app = readFileSync("demo/components/layout.js", "utf8")
 const pkg = JSON.parse(readFileSync("package.json", "utf8"))
 let style: HTMLStyleElement | undefined
 
@@ -398,7 +398,7 @@ describe("direct native Layout family", () => {
 
 describe("Layout documentation and selected delivery", () => {
   it("generates the exact configured API and defaults from source", () => {
-    const docs = JSON.parse(readFileSync("demo\\api\\layout.json", "utf8"))
+    const docs = JSON.parse(readFileSync("demo/api/layout.json", "utf8"))
     expect(docs.elements.map((element: any) => element.type)).toEqual([
       "Layout", "LayoutHeader", "LayoutContent", "LayoutFooter", "LayoutSider",
     ])
@@ -443,13 +443,13 @@ describe("Layout documentation and selected delivery", () => {
     expect(setup.querySelector("code")!.textContent!.split("\n")).toHaveLength(3)
     expect(setup.querySelector("a")!.getAttribute("href")).toBe("../setup.html")
     for (const asset of ["../example-code.css", "../component-api.css", "../component-outline.js"]) expect(demo).toContain(asset)
-    expect(readFileSync("demo\\components\\layout.js", "utf8")).toContain("loadComponentApi")
+    expect(readFileSync("demo/components/layout.js", "utf8")).toContain("loadComponentApi")
   })
 
   it("ships exactly core plus Layout, fails without core and rejects duplicate classic registration", () => {
     expect(pkg.exports["./layout"]).toEqual({ types: "./dist/components/layout/index.d.ts", import: "./dist/markup-ui-layout.js" })
     expect(pkg.exports["./layout/style.css"]).toBe("./dist/markup-ui-layout.css")
-    const script = readFileSync("dist\\markup-ui-layout.global.js", "utf8")
+    const script = readFileSync("dist/markup-ui-layout.global.js", "utf8")
     expect(() => runInContext(script, createContext({ HTMLElement }))).toThrow("Load compatible markup-ui-core.global.js")
 
     const entries = new Map<string, unknown>()
@@ -460,7 +460,7 @@ describe("Layout documentation and selected delivery", () => {
         define: (name: string, type: unknown) => entries.set(name, type),
       },
     })
-    runInContext(readFileSync("dist\\markup-ui-core.global.js", "utf8"), context)
+    runInContext(readFileSync("dist/markup-ui-core.global.js", "utf8"), context)
     runInContext(script, context)
     expect([...entries.keys()].sort()).toEqual([
       "m-layout",
@@ -470,13 +470,13 @@ describe("Layout documentation and selected delivery", () => {
       "m-layout-sider",
     ])
     expect(() => runInContext(script, context)).toThrow("already defined")
-    const esm = readFileSync("dist\\markup-ui-layout.js", "utf8")
+    const esm = readFileSync("dist/markup-ui-layout.js", "utf8")
     expect(esm).toContain('"./markup-ui-core.js"')
     expect(esm).not.toMatch(/MutationObserver|ResizeObserver/)
   })
 
   it("accounts for delivery payload, manifest and build budgets", () => {
-    const manifest = JSON.parse(readFileSync("dist\\manifest.json", "utf8"))
+    const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]] as const) {
       const payload = manifest.componentPayloads.layout[mode]
       expect(payload.file).toBe(`markup-ui-layout${suffix}`)

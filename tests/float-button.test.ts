@@ -33,7 +33,10 @@ describe("native FloatButton and FloatButtonGroup", () => {
     expect(pkg.exports["./float-button/style.css"]).toBe("./dist/markup-ui-float-button.css")
     expect(pkg.dependencies).toEqual({})
     expect(css).not.toContain("@import")
-    expect(demo).not.toContain("markup-ui-button")
+    const manifest = JSON.parse(readFileSync(resolve("dist", "manifest.json"), "utf8"))
+    expect(manifest.componentPayloads["float-button"].esm.dependencies).toEqual(["markup-ui-core.js"])
+    expect(manifest.componentPayloads["float-button"].classic.dependencies).toEqual(["markup-ui-core.global.js"])
+    expect(demo).toContain("markup-ui-button") // The documentation's source toggle uses Button.
     expect(demo).not.toContain("markup-ui-tooltip")
   })
 

@@ -7,7 +7,7 @@ import * as dividerApi from "../src/components/divider/index.js"
 import { ViewElement } from "../src/core/index.js"
 import { builtInElementNames, registerElements } from "../src/components/elements.js"
 
-const css = readFileSync("src\\components\\divider\\divider.css", "utf8")
+const css = readFileSync("src/components/divider/divider.css", "utf8")
 let style: HTMLStyleElement | undefined
 function install(): void {
   style = document.createElement("style")
@@ -38,7 +38,7 @@ describe("direct Divider API", () => {
     expect("meta" in Divider).toBe(false)
     expect(Divider.observedAttributes).toEqual(["orientation", "dashed", "title-placement", "semantic", "label"])
     expect(builtInElementNames).not.toContain("m-divider")
-    const aggregateCss = readFileSync("src\\components\\styles.css", "utf8")
+    const aggregateCss = readFileSync("src/components/styles.css", "utf8")
     expect(aggregateCss).not.toContain("m-divider{display:block;border-top:")
     expect(aggregateCss).not.toContain("m-divider[vertical]")
     const define = vi.fn()
@@ -312,7 +312,7 @@ describe("Divider presentation and packaging", () => {
     const pkg = JSON.parse(readFileSync("package.json", "utf8"))
     expect(pkg.exports["./divider"]).toEqual({ types: "./dist/components/divider/index.d.ts", import: "./dist/markup-ui-divider.js" })
     expect(pkg.exports["./divider/style.css"]).toBe("./dist/markup-ui-divider.css")
-    const script = readFileSync("dist\\markup-ui-divider.global.js", "utf8")
+    const script = readFileSync("dist/markup-ui-divider.global.js", "utf8")
     const define = vi.fn()
     expect(() => runInContext(script, createContext({ HTMLElement, customElements: { get: vi.fn(), define } }))).toThrow("Load compatible markup-ui-core.global.js")
     expect(define).not.toHaveBeenCalled()
@@ -320,24 +320,24 @@ describe("Divider presentation and packaging", () => {
     const context = createContext({ HTMLElement, customElements: {
       get: (name: string) => entries.get(name), define: (name: string, constructor: unknown) => entries.set(name, constructor),
     } })
-    runInContext(readFileSync("dist\\markup-ui-core.global.js", "utf8"), context)
+    runInContext(readFileSync("dist/markup-ui-core.global.js", "utf8"), context)
     runInContext(script, context)
     expect([...entries.keys()]).toEqual(["m-divider"])
     expect(runInContext("Object.keys(MarkupUIDivider).sort()", context)).toEqual(["Divider", "registerDivider"])
     expect(runInContext("MarkupUICore.ViewElement.prototype.isPrototypeOf(MarkupUIDivider.Divider.prototype)", context)).toBe(true)
     expect(() => runInContext(script, context)).toThrow("already defined")
-    expect(readFileSync("dist\\markup-ui-divider.js", "utf8")).toContain("./markup-ui-core.js")
+    expect(readFileSync("dist/markup-ui-divider.js", "utf8")).toContain("./markup-ui-core.js")
     for (const name of ["m-card", "m-carousel", "m-collapse", "m-avatar", "m-button"]) expect(script).not.toContain(`"${name}"`)
   })
 
   it("stays within the new JS/runtime budgets and unchanged CSS budget with honest manifest accounting", () => {
-    const manifest = JSON.parse(readFileSync("dist\\manifest.json", "utf8"))
+    const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     const payload = manifest.componentPayloads.divider
     expect(manifest.bundles["markup-ui-divider.css"].budget).toBe(1500)
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
-      const component = gzipSync(readFileSync(`dist\\markup-ui-divider${suffix}`), { level: 9 }).length
-      const core = gzipSync(readFileSync(`dist\\markup-ui-core${suffix}`), { level: 9 }).length
-      const styles = gzipSync(readFileSync("dist\\markup-ui-divider.css"), { level: 9 }).length
+      const component = gzipSync(readFileSync(`dist/markup-ui-divider${suffix}`), { level: 9 }).length
+      const core = gzipSync(readFileSync(`dist/markup-ui-core${suffix}`), { level: 9 }).length
+      const styles = gzipSync(readFileSync("dist/markup-ui-divider.css"), { level: 9 }).length
       expect(component).toBeLessThanOrEqual(3000)
       expect(component + core).toBeLessThanOrEqual(5000)
       expect(manifest.bundles[`markup-ui-divider${suffix}`].budget).toBe(3000)

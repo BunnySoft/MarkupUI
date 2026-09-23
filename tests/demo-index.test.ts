@@ -797,7 +797,7 @@ describe("Collapse documentation and composition", () => {
       expandedKeys: [], defaultExpandedKeys: [], state: "ready",
       reset: vi.fn(), collapse: vi.fn(), toggle: vi.fn(),
     })
-    const fetch = vi.fn(async () => ({ ok: true, json: async () => JSON.parse(readFileSync("demo\\api\\collapse.json", "utf8")) }))
+    const fetch = vi.fn(async () => ({ ok: true, json: async () => JSON.parse(readFileSync("demo/api/collapse.json", "utf8")) }))
     vi.stubGlobal("fetch", fetch)
     vi.stubGlobal("MarkupUICollapse", {})
     const ready = vi.spyOn(document, "readyState", "get").mockReturnValue("loading")
@@ -860,11 +860,11 @@ describe("Divider documentation and composition", () => {
     for (const heading of parsed.querySelectorAll("m-divider > :is(h2,h3)")) {
       expect(heading.closest("[aria-hidden]")).toBeNull()
     }
-    const source = readFileSync("demo\\components\\divider.js", "utf8")
+    const source = readFileSync("demo/components/divider.js", "utf8")
     expect(source).toContain('new URL("../api/divider.json", import.meta.url)')
     expect(source.replaceAll("import.meta.url", "")).not.toContain(".meta")
     expect(source).toContain("DOMContentLoaded")
-    const legacy = readFileSync("demo\\legacy.html", "utf8")
+    const legacy = readFileSync("demo/legacy.html", "utf8")
     expect(legacy).toContain('href="../dist/markup-ui-divider.css"')
     expect(legacy).toContain('src="../dist/markup-ui-divider.js"')
   })
@@ -877,7 +877,7 @@ describe("Divider documentation and composition", () => {
     }
     Object.assign(divider, { orientation: "horizontal", titlePlacement: "center", semantic: true, dashed: false, label: "Live rule" })
     const heading = document.getElementById("divider-live-heading")!
-    const fetch = vi.fn(async () => ({ ok: true, json: async () => JSON.parse(readFileSync("demo\\api\\divider.json", "utf8")) }))
+    const fetch = vi.fn(async () => ({ ok: true, json: async () => JSON.parse(readFileSync("demo/api/divider.json", "utf8")) }))
     vi.stubGlobal("MarkupUIDivider", {})
     vi.stubGlobal("fetch", fetch)
     const ready = vi.spyOn(document, "readyState", "get").mockReturnValue("loading")
@@ -957,7 +957,7 @@ describe("Dropdown documentation and composition", () => {
       expect(item.getAttribute("key")).toBeTruthy()
       expect(item.querySelectorAll(':scope > button[type="button"],:scope > a[href]')).toHaveLength(1)
     }
-    const source = readFileSync("demo\\components\\dropdown.js", "utf8")
+    const source = readFileSync("demo/components/dropdown.js", "utf8")
     expect(source).toContain('new URL("../api/dropdown.json", import.meta.url)')
     expect(source.replaceAll("import.meta.url", "")).not.toContain(".meta")
     expect(source).not.toContain("createDropdown")
@@ -969,7 +969,7 @@ describe("Dropdown documentation and composition", () => {
     document.body.replaceChildren(document.importNode(parsed.querySelector("main")!, true))
     const roots = [...document.querySelectorAll("m-dropdown")]
     for (const root of roots) Object.assign(root, { disabled: false, show: false, state: "closed", value: null, toggle: vi.fn(), select: vi.fn(), refresh: vi.fn(), items: [...root.querySelectorAll("m-dropdown-item")] })
-    const fetch = vi.fn(async () => ({ ok: true, json: async () => JSON.parse(readFileSync("demo\\api\\dropdown.json", "utf8")) }))
+    const fetch = vi.fn(async () => ({ ok: true, json: async () => JSON.parse(readFileSync("demo/api/dropdown.json", "utf8")) }))
     vi.stubGlobal("fetch", fetch)
     vi.stubGlobal("MarkupUIDropdown", {})
     const ready = vi.spyOn(document, "readyState", "get").mockReturnValue("loading")

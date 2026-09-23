@@ -38,13 +38,17 @@ Start with the [documentation guide](docs/README.md).
 
 ## Development
 
+Use Node 22.12 or later in the 22.x line, or Node 24+, and the pinned pnpm 10.28.0.
+CI is configured for Windows, Linux and macOS on Node 22/24; browser acceptance runs separately.
+
 | Command | Purpose |
 | --- | --- |
-| `pnpm install` | Install development dependencies. |
+| `pnpm install --frozen-lockfile` | Install the locked development dependencies. |
 | `pnpm build` | Generate distributions and enforce payload budgets. |
 | `pnpm test` | Run the existing test suite; use focused fixtures while changing a component. |
 | `pnpm test:package` | Pack the built files and verify exports, types and imports in an isolated consumer. |
 | `pnpm test:browser` | Verify Chart and primitive workflows in installed Playwright browser engines. |
+| `pnpm test:catalog` | Also check every catalog page and Virtual List scrolling in all three browser engines. |
 | `pnpm demo` | Serve the development examples. |
 
 Implementation remains in separate TypeScript, CSS, shared-type and entry files. No `.mkl`

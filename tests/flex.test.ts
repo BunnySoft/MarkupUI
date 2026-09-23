@@ -11,8 +11,8 @@ import { Collapse } from "../src/components/collapse/index.js"
 import { Dropdown } from "../src/components/dropdown/index.js"
 import { createTooltip } from "../src/components/tooltip/index.js"
 
-const css = readFileSync("src\\components\\flex\\flex.css", "utf8")
-const demo = readFileSync("demo\\components\\flex.html", "utf8")
+const css = readFileSync("src/components/flex/flex.css", "utf8")
+const demo = readFileSync("demo/components/flex.html", "utf8")
 const pkg = JSON.parse(readFileSync("package.json", "utf8"))
 const controllers: { disconnect(): void }[] = []
 let style: HTMLStyleElement | undefined
@@ -256,7 +256,7 @@ describe("direct native Flex", () => {
     expect(clicks).toHaveBeenCalledOnce()
     expect(flex.firstChild).toBe(nested)
     expect(nested.firstChild).toBe(button)
-    expect(readFileSync("src\\components\\flex\\flex.ts", "utf8"))
+    expect(readFileSync("src/components/flex/flex.ts", "utf8"))
       .not.toMatch(/MutationObserver|ResizeObserver|getBoundingClientRect|cloneNode|innerHTML|append|addEventListener/)
   })
 
@@ -339,7 +339,7 @@ describe("Flex CSS, demo and selected delivery", () => {
   })
 
   it("generates precisely the typed API, choices and defaults from source", () => {
-    const docs = JSON.parse(readFileSync("demo\\api\\flex.json", "utf8"))
+    const docs = JSON.parse(readFileSync("demo/api/flex.json", "utf8"))
     expect(docs.elements.map((element: { type: string }) => element.type)).toEqual(["Flex"])
     const element = docs.elements[0], properties = element.properties
     expect(Object.keys(properties)).toEqual(["vertical", "inline", "wrap", "reverse", "size", "align", "justify", "rowGap", "columnGap"])
@@ -367,23 +367,23 @@ describe("Flex CSS, demo and selected delivery", () => {
     expect(setup.querySelector("a")!.getAttribute("href")).toBe("../setup.html")
     expect(setup.children).toHaveLength(3)
     for (const asset of ["../example-code.css", "../component-api.css", "../component-outline.js"]) expect(demo).toContain(asset)
-    expect(readFileSync("demo\\components\\flex.js", "utf8")).toContain("loadComponentApi")
+    expect(readFileSync("demo/components/flex.js", "utf8")).toContain("loadComponentApi")
   })
 
   it("delivers only Flex over core, with measured dependency-aware budgets and explicit conflicts", () => {
     expect(pkg.exports["./flex"]).toEqual({ types: "./dist/components/flex/index.d.ts", import: "./dist/markup-ui-flex.js" })
     expect(pkg.exports["./flex/style.css"]).toBe("./dist/markup-ui-flex.css")
-    const script = readFileSync("dist\\markup-ui-flex.global.js", "utf8")
+    const script = readFileSync("dist/markup-ui-flex.global.js", "utf8")
     expect(() => runInContext(script, createContext({ HTMLElement }))).toThrow("Load compatible markup-ui-core.global.js")
     const entries = new Map<string, unknown>()
     const context = createContext({ HTMLElement, customElements: {
       get: (name: string) => entries.get(name), define: (name: string, type: unknown) => entries.set(name, type),
     } })
-    runInContext(readFileSync("dist\\markup-ui-core.global.js", "utf8"), context)
+    runInContext(readFileSync("dist/markup-ui-core.global.js", "utf8"), context)
     runInContext(script, context)
     expect([...entries.keys()]).toEqual(["m-flex"])
     expect(() => runInContext(script, context)).toThrow("already defined")
-    const manifest = JSON.parse(readFileSync("dist\\manifest.json", "utf8"))
+    const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       const payload = manifest.componentPayloads.flex[mode]
       expect(payload.dependencies).toEqual([`markup-ui-core${suffix}`])
@@ -393,15 +393,15 @@ describe("Flex CSS, demo and selected delivery", () => {
       expect(payload.totalGzipBytes).toBe(payload.runtimeGzipBytes + manifest.componentPayloads.flex.cssGzipBytes)
     }
     expect(manifest.componentPayloads.flex.cssGzipBytes).toBeLessThanOrEqual(1000)
-    const esm = readFileSync("dist\\markup-ui-flex.js", "utf8")
+    const esm = readFileSync("dist/markup-ui-flex.js", "utf8")
     expect(esm).toContain('"./markup-ui-core.js"')
     expect(esm).not.toContain("m-space")
-    const aggregate = readFileSync("src\\components\\elements.ts", "utf8")
+    const aggregate = readFileSync("src/components/elements.ts", "utf8")
     expect(aggregate).not.toContain('"m-flex"')
     for (const alias of ["m-row", "m-stack", "m-wrap"]) expect(aggregate).toContain(`"${alias}"`)
     expect(aggregate).not.toContain('"m-grid"')
     for (const name of ["collapse", "dropdown", "tooltip"]) {
-      const source = readFileSync(`dist\\markup-ui-${name}.js`, "utf8")
+      const source = readFileSync(`dist/markup-ui-${name}.js`, "utf8")
       expect(source).not.toContain("registerFlex")
       expect(source).not.toContain("Flex gaps must")
     }

@@ -653,8 +653,8 @@ describe("focus, refresh and cleanup", () => {
   it("ships CSS-only baseline plus an independent helper with no height/transition/renderer engine", () => {
     const pkg = JSON.parse(readFileSync("package.json", "utf8"))
     expect(pkg.exports["./collapse"].import).toBe("./dist/markup-ui-collapse.js")
-    const source = readFileSync("src\\components\\collapse\\controller.ts", "utf8")
-    const css = readFileSync("src\\components\\collapse\\collapse.css", "utf8")
+    const source = readFileSync("src/components/collapse/controller.ts", "utf8")
+    const css = readFileSync("src/components/collapse/collapse.css", "utf8")
     expect(source).not.toContain("innerHTML")
     expect(source).not.toContain("ResizeObserver")
     expect(source).not.toContain('attributes.attr(item.summary, "aria-expanded"')
@@ -668,7 +668,7 @@ describe("focus, refresh and cleanup", () => {
 
 describe("Collapse shared-core delivery", () => {
   it("requires core, registers only its own family and rejects duplicate classic copies", () => {
-    const script = readFileSync("dist\\markup-ui-collapse.global.js", "utf8")
+    const script = readFileSync("dist/markup-ui-collapse.global.js", "utf8")
     const define = vi.fn()
     expect(() => runInContext(script, createContext({ HTMLElement, customElements: { get: vi.fn(), define } }))).toThrow("Load compatible markup-ui-core.global.js")
     expect(define).not.toHaveBeenCalled()
@@ -677,34 +677,34 @@ describe("Collapse shared-core delivery", () => {
       get: (name: string) => entries.get(name),
       define: (name: string, constructor: unknown) => entries.set(name, constructor),
     } })
-    runInContext(readFileSync("dist\\markup-ui-core.global.js", "utf8"), context)
+    runInContext(readFileSync("dist/markup-ui-core.global.js", "utf8"), context)
     expect(entries.size).toBe(0)
     runInContext(script, context)
     expect([...entries.keys()]).toEqual(["m-collapse-header", "m-collapse-header-extra", "m-collapse-content", "m-collapse-item", "m-collapse"])
     expect(runInContext("Object.keys(MarkupUICollapse).sort()", context)).toEqual(Object.keys(collapseApi).sort())
     expect(runInContext("MarkupUICore.ViewElement.prototype.isPrototypeOf(MarkupUICollapse.Collapse.prototype)", context)).toBe(true)
     expect(() => runInContext(script, context)).toThrow("already defined")
-    expect(readFileSync("dist\\markup-ui-collapse.js", "utf8")).toContain("./markup-ui-core.js")
+    expect(readFileSync("dist/markup-ui-collapse.js", "utf8")).toContain("./markup-ui-core.js")
     for (const tag of ["m-avatar", "m-card", "m-carousel", "m-button", "m-popover"]) expect(script).not.toContain(`"${tag}"`)
   })
   it("accounts for required core and CSS under the approved build policy", () => {
-    const build = readFileSync("scripts\\build.mjs", "utf8")
+    const build = readFileSync("scripts/build.mjs", "utf8")
     expect(build).toContain('["collapse", 8_000]')
     expect(build).toContain('"markup-ui-collapse.js": 6_500')
     expect(build).toContain('"markup-ui-collapse.global.js": 6_500')
     expect(build).toContain('"markup-ui-collapse.css": 1_000')
     for (const suffix of [".js", ".global.js"]) {
-      const component = gzipSync(readFileSync(`dist\\markup-ui-collapse${suffix}`), { level: 9 }).length
-      const core = gzipSync(readFileSync(`dist\\markup-ui-core${suffix}`), { level: 9 }).length
+      const component = gzipSync(readFileSync(`dist/markup-ui-collapse${suffix}`), { level: 9 }).length
+      const core = gzipSync(readFileSync(`dist/markup-ui-core${suffix}`), { level: 9 }).length
       expect(component).toBeLessThanOrEqual(6500)
       expect(component + core).toBeLessThanOrEqual(8000)
     }
-    expect(gzipSync(readFileSync("dist\\markup-ui-collapse.css"), { level: 9 }).length).toBeLessThanOrEqual(1000)
+    expect(gzipSync(readFileSync("dist/markup-ui-collapse.css"), { level: 9 }).length).toBeLessThanOrEqual(1000)
   })
 })
 
 describe("Collapse default styling", () => {
-  const css = readFileSync("src\\components\\collapse\\collapse.css", "utf8")
+  const css = readFileSync("src/components/collapse/collapse.css", "utf8")
   function withRules(check: (rules: CSSStyleRule[]) => void) {
     const style = document.createElement("style")
     style.textContent = css

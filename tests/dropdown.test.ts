@@ -509,7 +509,7 @@ describe("direct Dropdown family", () => {
 
 describe("Dropdown shared-core distribution", () => {
   it("requires core, registers only its own family and keeps exact base identity", () => {
-    const script = readFileSync("dist\\markup-ui-dropdown.global.js", "utf8")
+    const script = readFileSync("dist/markup-ui-dropdown.global.js", "utf8")
     const define = vi.fn()
     expect(() => runInContext(script, createContext({ HTMLElement, customElements: { get: vi.fn(), define } }))).toThrow("Load compatible markup-ui-core.global.js")
     expect(define).not.toHaveBeenCalled()
@@ -517,20 +517,20 @@ describe("Dropdown shared-core distribution", () => {
     const context = createContext({ HTMLElement, customElements: {
       get: (name: string) => entries.get(name), define: (name: string, constructor: unknown) => entries.set(name, constructor),
     } })
-    runInContext(readFileSync("dist\\markup-ui-core.global.js", "utf8"), context)
+    runInContext(readFileSync("dist/markup-ui-core.global.js", "utf8"), context)
     runInContext(script, context)
     expect([...entries.keys()]).toEqual(["m-dropdown-trigger", "m-dropdown-menu", "m-dropdown-item", "m-dropdown-group", "m-dropdown-divider", "m-dropdown"])
     expect(runInContext("Object.keys(MarkupUIDropdown).sort()", context)).toEqual(Object.keys(dropdownApi).sort())
     expect(runInContext("Object.values(MarkupUIDropdown).filter(value => Object.hasOwn(value, 'tag')).every(type => MarkupUICore.ViewElement.prototype.isPrototypeOf(type.prototype))", context)).toBe(true)
     expect(() => runInContext(script, context)).toThrow("already defined")
-    expect(readFileSync("dist\\markup-ui-dropdown.js", "utf8")).toContain("./markup-ui-core.js")
+    expect(readFileSync("dist/markup-ui-dropdown.js", "utf8")).toContain("./markup-ui-core.js")
     for (const name of ["m-avatar", "m-card", "m-carousel", "m-collapse", "m-divider"]) expect(script).not.toContain(`"${name}"`)
-    const build = readFileSync("scripts\\build.mjs", "utf8")
+    const build = readFileSync("scripts/build.mjs", "utf8")
     expect(build).toContain('["dropdown", 14_500]')
     expect(build).toContain('"markup-ui-dropdown.js": 13_000')
     expect(build).toContain('"markup-ui-dropdown.global.js": 13_000')
     expect(build).toContain('"markup-ui-dropdown.css": 1_850')
-    const manifest = JSON.parse(readFileSync("dist\\manifest.json", "utf8"))
+    const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     const cssBytes = manifest.bundles["markup-ui-dropdown.css"].gzipBytes
     expect(cssBytes).toBeLessThanOrEqual(1_850)
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
@@ -1062,7 +1062,7 @@ describe("native list fallback and distribution", () => {
     const pkg = JSON.parse(readFileSync("package.json", "utf8"))
     expect(pkg.exports["./dropdown"].import).toBe("./dist/markup-ui-dropdown.js")
     expect(readFileSync("scripts/build.mjs", "utf8")).toContain('name === "dropdown"')
-    const source = readFileSync("src\\components\\dropdown\\controller.ts", "utf8")
+    const source = readFileSync("src/components/dropdown/controller.ts", "utf8")
     const keyboard = readFileSync("src/components/dropdown/keyboard.ts", "utf8")
     const css = readFileSync("src/components/dropdown/dropdown.css", "utf8")
     expect(source).toContain("createPopover")

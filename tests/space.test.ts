@@ -278,7 +278,7 @@ describe("direct Space", () => {
     expect(clicks).toHaveBeenCalledOnce()
     expect(root.firstChild).toBe(nested)
     expect(nested.firstChild).toBe(button)
-    const source = readFileSync("src\\components\\space\\space.ts", "utf8")
+    const source = readFileSync("src/components/space/space.ts", "utf8")
     expect(source).not.toMatch(/MutationObserver|ResizeObserver|getBoundingClientRect|cloneNode|innerHTML|append|addEventListener/)
   })
 
@@ -348,7 +348,7 @@ describe("Space CSS, demo and selected delivery", () => {
   })
 
   it("generates exactly the direct API/defaults and no actions or runtime metadata", () => {
-    const docs = JSON.parse(readFileSync("demo\\api\\space.json", "utf8"))
+    const docs = JSON.parse(readFileSync("demo/api/space.json", "utf8"))
     expect(docs.elements.map((element: { type: string }) => element.type)).toEqual(["Space"])
     const element = docs.elements[0], properties = element.properties
     expect(Object.keys(properties)).toEqual(["vertical", "inline", "wrap", "size", "align", "justify", "rowGap", "columnGap"])
@@ -380,17 +380,17 @@ describe("Space CSS, demo and selected delivery", () => {
   it("delivers one family over shared core, rejects missing/duplicate core and accounts for exact files", () => {
     expect(pkg.exports["./space"]).toEqual({ types: "./dist/components/space/index.d.ts", import: "./dist/markup-ui-space.js" })
     expect(pkg.exports["./space/style.css"]).toBe("./dist/markup-ui-space.css")
-    const script = readFileSync("dist\\markup-ui-space.global.js", "utf8")
+    const script = readFileSync("dist/markup-ui-space.global.js", "utf8")
     expect(() => runInContext(script, createContext({ HTMLElement }))).toThrow("Load compatible markup-ui-core.global.js")
     const entries = new Map<string, unknown>()
     const context = createContext({ HTMLElement, customElements: {
       get: (name: string) => entries.get(name), define: (name: string, type: unknown) => entries.set(name, type),
     } })
-    runInContext(readFileSync("dist\\markup-ui-core.global.js", "utf8"), context)
+    runInContext(readFileSync("dist/markup-ui-core.global.js", "utf8"), context)
     runInContext(script, context)
     expect([...entries.keys()]).toEqual(["m-space"])
     expect(() => runInContext(script, context)).toThrow("already defined")
-    const manifest = JSON.parse(readFileSync("dist\\manifest.json", "utf8"))
+    const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       const payload = manifest.componentPayloads.space[mode]
       expect(payload.dependencies).toEqual([`markup-ui-core${suffix}`])
@@ -400,10 +400,10 @@ describe("Space CSS, demo and selected delivery", () => {
       expect(payload.totalGzipBytes).toBe(payload.runtimeGzipBytes + manifest.componentPayloads.space.cssGzipBytes)
     }
     expect(manifest.componentPayloads.space.cssGzipBytes).toBeLessThanOrEqual(1000)
-    expect(readFileSync("dist\\markup-ui-space.js", "utf8")).toContain('"./markup-ui-core.js"')
-    expect(readFileSync("src\\components\\elements.ts", "utf8")).not.toContain('"m-space"')
+    expect(readFileSync("dist/markup-ui-space.js", "utf8")).toContain('"./markup-ui-core.js"')
+    expect(readFileSync("src/components/elements.ts", "utf8")).not.toContain('"m-space"')
     for (const name of ["collapse", "dropdown", "tooltip"]) {
-      const source = readFileSync(`dist\\markup-ui-${name}.js`, "utf8")
+      const source = readFileSync(`dist/markup-ui-${name}.js`, "utf8")
       expect(source).not.toContain("registerSpace")
       expect(source).not.toContain("Space gaps must")
     }

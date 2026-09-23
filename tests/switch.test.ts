@@ -328,22 +328,22 @@ describe("lifecycle, ownership and state binding", () => {
 
 describe("Switch selected delivery and source API", () => {
   it("documents the complete direct API without a factory, false native defaults or runtime metadata", () => {
-    const api = JSON.parse(readFileSync("demo\\api\\switch.json", "utf8"))
+    const api = JSON.parse(readFileSync("demo/api/switch.json", "utf8"))
     const element = api.elements[0]
     expect(element.type).toBe("Switch")
     expect(Object.keys(element.properties)).toEqual(expect.arrayContaining(["native", "checked", "defaultChecked", "value", "defaultValue", "loading", "error", "form", "validity"]))
     expect(Object.values(element.events).map((event: unknown) => (event as { web: string }).web)).toEqual(expect.arrayContaining(["input", "change", "invalid", "m:switch-error"]))
-    const source = readFileSync("src\\components\\switch\\switch.ts", "utf8")
+    const source = readFileSync("src/components/switch/switch.ts", "utf8")
     expect(source).not.toContain("createSwitch")
     expect(source).not.toContain("native-input")
-    const manifest = JSON.parse(readFileSync("dist\\manifest.json", "utf8"))
+    const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     expect(JSON.stringify(manifest)).toContain("markup-ui-switch.js")
-    const esm = readFileSync("dist\\markup-ui-switch.js", "utf8")
+    const esm = readFileSync("dist/markup-ui-switch.js", "utf8")
     expect(esm).toContain("./markup-ui-core.js")
     expect(esm).not.toContain("native-radio")
   })
   it("accounts for core, both runtime formats and CSS without changing approved per-file ceilings", () => {
-    const manifest = JSON.parse(readFileSync("dist\\manifest.json", "utf8"))
+    const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     const pkg = JSON.parse(readFileSync("package.json", "utf8"))
     expect(pkg.exports["./switch"]).toEqual({
       types: "./dist/components/switch/index.d.ts", import: "./dist/markup-ui-switch.js",

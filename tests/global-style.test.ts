@@ -50,7 +50,7 @@ describe("Explicit external Global Style", () => {
     expect(existsSync(resolve("dist", "markup-ui-global-style.js"))).toBe(false)
     expect(existsSync(resolve("dist", "markup-ui-global-style.global.js"))).toBe(false)
     expect(customElements.get("m-global-style")).toBeUndefined()
-    for (const path of ["src\\index.ts", "src\\global.ts", "src\\plugins\\advanced.ts", "src\\plugins\\widgets.ts"]) {
+    for (const path of ["src/index.ts", "src/global.ts", "src/plugins/advanced.ts", "src/plugins/widgets.ts"]) {
       expect(readFileSync(resolve(path), "utf8")).not.toContain("global-style")
     }
   })

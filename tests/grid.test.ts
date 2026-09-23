@@ -14,9 +14,9 @@ import { Dropdown } from "../src/components/dropdown/index.js"
 import { createTooltip } from "../src/components/tooltip/index.js"
 import { bind, createStore } from "../src/state/index.js"
 
-const css = readFileSync("src\\components\\grid\\grid.css", "utf8")
-const demo = readFileSync("demo\\components\\grid.html", "utf8")
-const appCss = readFileSync("demo\\components\\grid.css", "utf8")
+const css = readFileSync("src/components/grid/grid.css", "utf8")
+const demo = readFileSync("demo/components/grid.html", "utf8")
+const appCss = readFileSync("demo/components/grid.css", "utf8")
 const pkg = JSON.parse(readFileSync("package.json", "utf8"))
 const controllers: { disconnect(): void }[] = []
 let style: HTMLStyleElement | undefined
@@ -211,7 +211,7 @@ describe("direct native Grid and GridItem", () => {
     expect(appCss).toContain("@media (min-width: 48rem)")
     expect(appCss).toContain("grid-template-rows: 40px 40px")
     expect(appCss).toContain("grid-auto-flow: column")
-    for (const name of ["grid", "item"]) expect(readFileSync(`src\\components\\grid\\${name}.ts`, "utf8"))
+    for (const name of ["grid", "item"]) expect(readFileSync(`src/components/grid/${name}.ts`, "utf8"))
       .not.toMatch(/MutationObserver|ResizeObserver|getBoundingClientRect|cloneNode|innerHTML|append|addEventListener/)
     expect(css).not.toMatch(/@container|@media|dense|reverse|margin-left/)
   })
@@ -339,7 +339,7 @@ describe("passive Grid composition", () => {
 
 describe("Grid documentation and selected delivery", () => {
   it("generates the exact configured API/defaults, no invented rows/flow/events/actions", () => {
-    const docs = JSON.parse(readFileSync("demo\\api\\grid.json", "utf8"))
+    const docs = JSON.parse(readFileSync("demo/api/grid.json", "utf8"))
     expect(docs.elements.map((element: any) => element.type)).toEqual(["Grid", "GridItem"])
     const [grid, item] = docs.elements
     expect(Object.keys(grid.properties)).toEqual(["cols", "columns", "rowGap", "columnGap", "align", "justify"])
@@ -368,26 +368,26 @@ describe("Grid documentation and selected delivery", () => {
     expect(setup.children).toHaveLength(3)
     expect(setup.querySelector("a")!.getAttribute("href")).toBe("../setup.html")
     for (const asset of ["../example-code.css", "../component-api.css", "../component-outline.js"]) expect(demo).toContain(asset)
-    expect(readFileSync("demo\\components\\grid.js", "utf8")).toContain("loadComponentApi")
+    expect(readFileSync("demo/components/grid.js", "utf8")).toContain("loadComponentApi")
   })
 
   it("ships exactly core plus Grid, fails without core and rejects duplicate classic registration", () => {
     expect(pkg.exports["./grid"]).toEqual({ types: "./dist/components/grid/index.d.ts", import: "./dist/markup-ui-grid.js" })
     expect(pkg.exports["./grid/style.css"]).toBe("./dist/markup-ui-grid.css")
-    const script = readFileSync("dist\\markup-ui-grid.global.js", "utf8")
+    const script = readFileSync("dist/markup-ui-grid.global.js", "utf8")
     expect(() => runInContext(script, createContext({ HTMLElement }))).toThrow("Load compatible markup-ui-core.global.js")
     const entries = new Map<string, unknown>()
     const context = createContext({ HTMLElement, customElements: {
       get: (name: string) => entries.get(name), define: (name: string, type: unknown) => entries.set(name, type),
     } })
-    runInContext(readFileSync("dist\\markup-ui-core.global.js", "utf8"), context)
+    runInContext(readFileSync("dist/markup-ui-core.global.js", "utf8"), context)
     runInContext(script, context)
     expect([...entries.keys()]).toEqual(["m-grid", "m-grid-item"])
     expect(() => runInContext(script, context)).toThrow("already defined")
-    const esm = readFileSync("dist\\markup-ui-grid.js", "utf8")
+    const esm = readFileSync("dist/markup-ui-grid.js", "utf8")
     expect(esm).toContain('"./markup-ui-core.js"')
     expect(esm).not.toMatch(/markup-ui-(?:flex|form|popover)|MutationObserver|ResizeObserver/)
-    const manifest = JSON.parse(readFileSync("dist\\manifest.json", "utf8"))
+    const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       const payload = manifest.componentPayloads.grid[mode]
       expect(payload.dependencies).toEqual([`markup-ui-core${suffix}`])
@@ -397,16 +397,16 @@ describe("Grid documentation and selected delivery", () => {
       expect(payload.totalGzipBytes).toBe(payload.runtimeGzipBytes + manifest.componentPayloads.grid.cssGzipBytes)
     }
     expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1500)
-    const aggregate = readFileSync("src\\components\\elements.ts", "utf8")
+    const aggregate = readFileSync("src/components/elements.ts", "utf8")
     expect(aggregate).not.toContain('"m-grid"')
     for (const alias of ["m-row", "m-stack", "m-wrap", "m-center", "m-spacer"]) expect(aggregate).toContain(`"${alias}"`)
     for (const name of ["collapse", "dropdown", "tooltip", "form"]) {
-      expect(readFileSync(`dist\\markup-ui-${name}.js`, "utf8")).not.toMatch(/registerGrid|Grid counts|Expected CSS column tracks/)
+      expect(readFileSync(`dist/markup-ui-${name}.js`, "utf8")).not.toMatch(/registerGrid|Grid counts|Expected CSS column tracks/)
     }
   })
 
   it("updates the legacy consumer's real columns/gaps without migrating Layout or Form grids", () => {
-    const html = readFileSync("demo\\legacy.html", "utf8")
+    const html = readFileSync("demo/legacy.html", "utf8")
     const parsed = new DOMParser().parseFromString(html, "text/html")
     expect(html).toContain("../dist/markup-ui-grid.js")
     expect(parsed.querySelectorAll("m-grid").length).toBe(21)
@@ -416,11 +416,11 @@ describe("Grid documentation and selected delivery", () => {
       expect(grid.getAttribute("row-gap")).toBe(grid.getAttribute("column-gap"))
     }
     expect(parsed.querySelector("m-stack[gap]")).not.toBeNull()
-    expect(readFileSync("src\\components\\foundation.ts", "utf8")).not.toContain("MGrid")
-    const legacyStyles = readFileSync("src\\components\\styles.css", "utf8")
+    expect(readFileSync("src/components/foundation.ts", "utf8")).not.toContain("MGrid")
+    const legacyStyles = readFileSync("src/components/styles.css", "utf8")
     expect(legacyStyles).not.toContain("m-grid{display:grid}")
     expect(legacyStyles).toContain('[align="end"]:not(m-grid)')
-    expect(readFileSync("src\\components\\form\\item.ts", "utf8")).toContain("No Grid renderer/dependency")
+    expect(readFileSync("src/components/form/item.ts", "utf8")).toContain("No Grid renderer/dependency")
   })
 })
 import "../src/components/box/index.js"

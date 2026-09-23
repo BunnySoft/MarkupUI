@@ -196,7 +196,7 @@ describe("passive Icon composition", () => {
 
 describe("Icon styling and distribution", () => {
   it("generates the direct API without a runtime metadata definition", () => {
-    const docs = JSON.parse(readFileSync("demo\\api\\icon.json", "utf8"))
+    const docs = JSON.parse(readFileSync("demo/api/icon.json", "utf8"))
     expect(docs.elements.map((element: { type: string }) => element.type)).toEqual(["Icon", "IconWrapper"])
     expect(docs.elements[0].properties.size).toMatchObject({ attribute: "size", default: null, min: 0, exclusiveMin: true })
     expect(docs.elements[0].properties.depth).toMatchObject({ attribute: "depth", default: null, min: 1, max: 5, integer: true })
@@ -227,18 +227,18 @@ describe("Icon styling and distribution", () => {
   it("delivers only core and Icon with explicit classic core requirements", () => {
     expect(packageJson.exports["./icon"]).toEqual({ types: "./dist/components/icon/index.d.ts", import: "./dist/markup-ui-icon.js" })
     expect(packageJson.exports["./icon/style.css"]).toBe("./dist/markup-ui-icon.css")
-    const script = readFileSync("dist\\markup-ui-icon.global.js", "utf8")
+    const script = readFileSync("dist/markup-ui-icon.global.js", "utf8")
     expect(() => runInContext(script, createContext({ HTMLElement }))).toThrow("Load compatible markup-ui-core.global.js")
     const entries = new Map<string, unknown>()
     const context = createContext({ HTMLElement, customElements: {
       get: (name: string) => entries.get(name),
       define: (name: string, type: unknown) => entries.set(name, type),
     } })
-    runInContext(readFileSync("dist\\markup-ui-core.global.js", "utf8"), context)
+    runInContext(readFileSync("dist/markup-ui-core.global.js", "utf8"), context)
     runInContext(script, context)
     expect([...entries.keys()]).toEqual(["m-icon", "m-icon-wrapper"])
     expect(() => runInContext(script, context)).toThrow("already defined")
-    const manifest = JSON.parse(readFileSync("dist\\manifest.json", "utf8"))
+    const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     for (const [mode, suffix] of [["esm", ".js"], ["classic", ".global.js"]]) {
       const payload = manifest.componentPayloads.icon[mode]
       expect(payload.dependencies).toEqual([`markup-ui-core${suffix}`])

@@ -159,7 +159,7 @@ describe("direct Card API", () => {
 
 describe("Card shared-core distribution", () => {
   it("requires core first, registers only its own classes and shares the exact base", () => {
-    const component = readFileSync("dist\\markup-ui-card.global.js", "utf8")
+    const component = readFileSync("dist/markup-ui-card.global.js", "utf8")
     const define = vi.fn()
     expect(() => runInContext(component, createContext({
       HTMLElement, customElements: { get: vi.fn(), define },
@@ -173,7 +173,7 @@ describe("Card shared-core distribution", () => {
         define: (name: string, constructor: unknown) => { entries.set(name, constructor) },
       },
     })
-    runInContext(readFileSync("dist\\markup-ui-core.global.js", "utf8"), context)
+    runInContext(readFileSync("dist/markup-ui-core.global.js", "utf8"), context)
     expect(entries.size).toBe(0)
     runInContext(component, context)
     expect([...entries.keys()]).toEqual([
@@ -189,12 +189,12 @@ describe("Card shared-core distribution", () => {
   })
 
   it("externalizes ESM core, excludes unrelated runtime sources and packages no documentation", () => {
-    expect(readFileSync("dist\\markup-ui-card.js", "utf8")).toContain("./markup-ui-core.js")
+    expect(readFileSync("dist/markup-ui-card.js", "utf8")).toContain("./markup-ui-core.js")
     for (const suffix of [".js", ".global.js"]) {
-      const map = JSON.parse(readFileSync(`dist\\markup-ui-card${suffix}.map`, "utf8"))
+      const map = JSON.parse(readFileSync(`dist/markup-ui-card${suffix}.map`, "utf8"))
       expect(map.sources.filter((source: string) => source.includes("/src/"))
         .every((source: string) => source.includes("/src/components/card/"))).toBe(true)
-      const code = readFileSync(`dist\\markup-ui-card${suffix}`, "utf8")
+      const code = readFileSync(`dist/markup-ui-card${suffix}`, "utf8")
       expect(code).not.toMatch(/cardDefinition|component-api|__decorate|demo\/api/)
     }
     const pkg = JSON.parse(readFileSync("package.json", "utf8"))
@@ -206,13 +206,13 @@ describe("Card shared-core distribution", () => {
   it.each([["esm", ".js"], ["classic", ".global.js"]])("accounts for %s Card, core and CSS within every unchanged budget", (mode, suffix) => {
     const file = `markup-ui-card${suffix}`
     const core = `markup-ui-core${suffix}`
-    const measure = (name: string) => gzipSync(readFileSync(`dist\\${name}`), { level: 9 }).length
+    const measure = (name: string) => gzipSync(readFileSync(`dist/${name}`), { level: 9 }).length
     const runtime = measure(core) + measure(file)
     expect(measure(core)).toBeLessThanOrEqual(4000)
     expect(measure(file)).toBeLessThanOrEqual(3000)
     expect(measure("markup-ui-card.css")).toBeLessThanOrEqual(2500)
     expect(runtime).toBeLessThanOrEqual(7000)
-    const manifest = JSON.parse(readFileSync("dist\\manifest.json", "utf8"))
+    const manifest = JSON.parse(readFileSync("dist/manifest.json", "utf8"))
     expect(manifest.componentPayloads.card[mode!]).toMatchObject({
       file, dependencies: [core], runtimeGzipBytes: runtime, runtimeBudget: 7000,
       totalGzipBytes: runtime + measure("markup-ui-card.css"),
@@ -516,7 +516,7 @@ describe("native Card close intent", () => {
 })
 
 describe("audited Card styles", () => {
-  const css = readFileSync("src\\components\\card\\card.css", "utf8")
+  const css = readFileSync("src/components/card/card.css", "utf8")
   it("preserves supported tokens, asymmetric size geometry and local palette fallbacks", () => {
     for (const value of [
       "var(--m-card-font-size, var(--m-font-size, 14px))",

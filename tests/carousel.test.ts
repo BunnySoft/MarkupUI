@@ -846,7 +846,7 @@ describe("Carousel default styles", () => {
 
   describe("Carousel shared-core distribution", () => {
     it("requires shared core first and registers only one canonical family with exact base identity", () => {
-      const component = readFileSync("dist\\markup-ui-carousel.global.js", "utf8")
+      const component = readFileSync("dist/markup-ui-carousel.global.js", "utf8")
       const define = vi.fn()
       expect(() => runInContext(component, createContext({ HTMLElement, customElements: { get: vi.fn(), define } }))).toThrow("Load compatible markup-ui-core.global.js")
       expect(define).not.toHaveBeenCalled()
@@ -855,19 +855,19 @@ describe("Carousel default styles", () => {
         get: (name: string) => entries.get(name),
         define: (name: string, constructor: unknown) => { entries.set(name, constructor) },
       } })
-      runInContext(readFileSync("dist\\markup-ui-core.global.js", "utf8"), context)
+      runInContext(readFileSync("dist/markup-ui-core.global.js", "utf8"), context)
       expect(entries.size).toBe(0)
       runInContext(component, context)
       expect([...entries.keys()]).toEqual(["m-carousel", "m-carousel-viewport", "m-carousel-item", "m-carousel-controls", "m-carousel-readout"])
       expect(runInContext("Object.keys(MarkupUICarousel).sort()", context)).toEqual(Object.keys(carouselApi).sort())
       expect(runInContext("MarkupUICore.ViewElement.prototype.isPrototypeOf(MarkupUICarousel.Carousel.prototype)", context)).toBe(true)
       expect(() => runInContext(component, context)).toThrow("already defined")
-      const esm = readFileSync("dist\\markup-ui-carousel.js", "utf8")
+      const esm = readFileSync("dist/markup-ui-carousel.js", "utf8")
       expect(esm).toContain('./markup-ui-core.js')
       for (const name of ["m-card", "m-avatar", "m-button", "m-popover"]) expect(component).not.toContain(`"${name}"`)
       for (const file of ["markup-ui-carousel.js", "markup-ui-carousel.global.js"]) {
-        const componentSize = gzipSync(readFileSync(`dist\\${file}`), { level: 9 }).length
-        const coreSize = gzipSync(readFileSync(`dist\\${file.replace("carousel", "core")}`), { level: 9 }).length
+        const componentSize = gzipSync(readFileSync(`dist/${file}`), { level: 9 }).length
+        const coreSize = gzipSync(readFileSync(`dist/${file.replace("carousel", "core")}`), { level: 9 }).length
         expect(componentSize).toBeLessThanOrEqual(7000)
         expect(coreSize).toBeLessThanOrEqual(4000)
         expect(componentSize + coreSize).toBeLessThanOrEqual(11000)
