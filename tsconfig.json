@@ -3,6 +3,12 @@
     "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "paths": {
+      "echarts/core": ["./node_modules/echarts/types/src/export/core.d.ts"],
+      "echarts/charts": ["./node_modules/echarts/types/src/export/charts.d.ts"],
+      "echarts/components": ["./node_modules/echarts/types/src/export/components.d.ts"],
+      "echarts/renderers": ["./node_modules/echarts/types/src/export/renderers.d.ts"]
+    },
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "rootDir": "src",
     "outDir": "dist",

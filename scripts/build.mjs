@@ -1,6 +1,7 @@
 import { execFileSync } from "node:child_process"
 import { gzipSync } from "node:zlib"
-import { copyFile, readFile, rm, writeFile } from "node:fs/promises"
+import { copyFile, mkdir, readFile, realpath, rm, writeFile } from "node:fs/promises"
+import { createRequire } from "node:module"
 import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { build, transform } from "esbuild"
@@ -59,13 +60,30 @@ classicEntries["gradient-text"] = "global.ts"
 classicEntries["float-button"] = "global.ts"
 classicEntries.thing = "global.ts"
 classicEntries.box = "global.ts"
+components.push("chart")
+classicEntries.chart = "global.ts"
 const viewComponents = new Map([["avatar", 8_500], ["button", 9_500], ["card", 7_000], ["carousel", 11_000], ["collapse", 8_000], ["divider", 5_000], ["dropdown", 14_500], ["icon", 5_000], ["typography", 8_000], ["space", 2_750], ["flex", 2_750], ["input", 8_000], ["checkbox", 5_500], ["radio", 6_000], ["switch", 4_500], ["input-number", 6_000], ["select", 8_000], ["form", 8_250], ["grid", 3_000], ["layout", 3_000], ["tag", 4_500], ["badge", 4_000], ["empty", 4_000], ["spin", 5_000], ["skeleton", 4_000], ["popover", 7_500], ["tooltip", 8_500], ["alert", 4_000], ["list", 4_000], ["table", 3_800], ["descriptions", 4_000], ["breadcrumb", 3_800], ["page-header", 4_000], ["ellipsis", 3_800], ["tabs", 9_000], ["menu", 9_000], ["pagination", 8_500], ["dialog", 8_500], ["modal", 8_500], ["drawer", 8_500], ["popconfirm", 10_000], ["message", 8_500], ["notification", 10_000], ["progress", 8_500], ["result", 4_000], ["image", 7_500], ["date-picker", 7_000], ["time-picker", 7_000], ["upload", 11_000], ["auto-complete", 6_500], ["slider", 6_000], ["rate", 8_500], ["input-otp", 5_500], ["popselect", 14_500], ["tree", 12_000], ["tree-select", 13_000], ["cascader", 12_000], ["data-table", 10_000], ["calendar", 11_000], ["dynamic-input", 9_000], ["dynamic-tags", 13_500], ["steps", 7_000], ["timeline", 4_000], ["statistic", 3_800], ["anchor", 7_000], ["back-top", 6_500], ["affix", 4_000], ["loading-bar", 5_500], ["infinite-scroll", 7_500], ["virtual-list", 6_500], ["code", 4_000], ["highlight", 4_000], ["split", 9_500], ["gradient-text", 4_000], ["watermark", 9_000], ["float-button", 4_500], ["color-picker", 7_000], ["mention", 8_500], ["transfer", 10_000], ["countdown", 7_500], ["log", 7_500], ["number-animation", 8_000], ["time", 7_500], ["heatmap", 10_500], ["thing", 4_000], ["marquee", 8_000], ["collapse-transition", 6_000], ["box", 4_000]])
+// New Chart ceilings are provisional pending release review; existing ceilings are unchanged.
+viewComponents.set("chart", 250_000)
 await generateComponentApi(root, [...viewComponents.keys()])
 
 function corePlugin(format) {
   return {
     name: "shared-element-core",
     setup(builder) {
+      builder.onResolve({ filter: /\/chart\/renderer\.js$|^\.\/renderer\.js$/ }, args => {
+        if (resolve(dirname(args.importer), args.path) !== resolve(root, "src/components/chart/renderer.js")) return
+        return format === "esm" ? { path: "./markup-ui-chart-renderer.js", external: true }
+          : { path: "chart-renderer", namespace: "markupui-chart-renderer" }
+      })
+      builder.onLoad({ filter: /.*/, namespace: "markupui-chart-renderer" }, () => ({
+        loader: "js",
+        contents: `
+          const renderer = globalThis.MarkupUIChartRenderer;
+          if (!renderer) throw new Error("Load markup-ui-chart-renderer.global.js before Chart.");
+          export const { createChartRenderer } = renderer;
+        `,
+      }))
       builder.onResolve({ filter: /native-select\.js$/ }, () =>
         format === "esm" ? { path: "./markup-ui-native-select.js", external: true }
           : { path: "native-select", namespace: "markupui-native-select" })
@@ -187,6 +205,14 @@ components.push("marquee")
 classicEntries.marquee = "global.ts"
 
 await Promise.all([
+  ...["esm", "iife"].map(format => build({
+    ...shared,
+    entryPoints: [resolve(root, "src/components/chart/renderer.ts")],
+    tsconfigRaw: { compilerOptions: {} },
+    format, minify: true, legalComments: "external",
+    ...(format === "iife" ? { globalName: "MarkupUIChartRenderer" } : {}),
+    outfile: resolve(dist, `markup-ui-chart-renderer${format === "esm" ? ".js" : ".global.js"}`),
+  })),
   ...["esm", "iife"].map(format => build({
     ...shared,
     entryPoints: [resolve(root, "src/state/index.ts")],
@@ -324,7 +350,20 @@ await Promise.all([...components, ...styleOnlyComponents].map(async (name) => {
 await emitStylesheets(root, dist)
 
 const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"))
+const echartsRequire = createRequire(await realpath(resolve(root, "node_modules/echarts/package.json")))
+const licenses = resolve(dist, "chart-licenses")
+await mkdir(licenses, { recursive: true })
+await copyFile(resolve(root, "node_modules/echarts/LICENSE"), resolve(licenses, "echarts-LICENSE"))
+await copyFile(resolve(root, "node_modules/echarts/NOTICE"), resolve(licenses, "echarts-NOTICE"))
+await copyFile(resolve(dirname(echartsRequire.resolve("zrender/package.json")), "LICENSE"), resolve(licenses, "zrender-LICENSE"))
+await copyFile(resolve(dirname(echartsRequire.resolve("tslib")), "LICENSE.txt"), resolve(licenses, "tslib-LICENSE.txt"))
+await copyFile(resolve(dirname(echartsRequire.resolve("tslib")), "CopyrightNotice.txt"), resolve(licenses, "tslib-CopyrightNotice.txt"))
 const bundleBudgets = {
+  "markup-ui-chart.js": 12_000,
+  "markup-ui-chart.global.js": 12_000,
+  "markup-ui-chart-renderer.js": 235_000,
+  "markup-ui-chart-renderer.global.js": 235_000,
+  "markup-ui-chart.css": 1_500,
   "markup-ui-grid.js": 1_750,
   "markup-ui-grid.global.js": 1_750,
   "markup-ui-flex.js": 1_500,
@@ -630,6 +669,7 @@ for (const name of [...components, ...styleOnlyComponents]) {
       const file = `markup-ui-${name}${suffix}`
       const dependencies = viewComponents.has(name) ? [`markup-ui-core${suffix}`] : []
       if (name === "input") dependencies.push(`markup-ui-native-input${suffix}`)
+      if (name === "chart") dependencies.push(`markup-ui-chart-renderer${suffix}`)
       if (name === "radio" || name === "rate") dependencies.push(`markup-ui-native-radio${suffix}`)
       if (["select", "tree-select", "popselect"].includes(name)) dependencies.push(`markup-ui-native-select${suffix}`)
       const runtimeBudget = viewComponents.get(name) ?? (name === "rate" ? 8_000 : name === "tree-select" ? 13_000 : name === "popselect" ? 14_500 : undefined)

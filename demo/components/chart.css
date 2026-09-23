@@ -1,0 +1,4 @@
+body { margin: 0; color: #242426; background: #fafafa; font: 16px/1.5 system-ui, sans-serif; }
+[data-demo-preview] { min-inline-size: 0; }
+m-chart { background: #fff; }
+pre { overflow: auto; }

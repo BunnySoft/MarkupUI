@@ -14,7 +14,7 @@ export const componentGroups = [
     ["transfer", "Transfer"], ["tree-select", "Tree Select"], ["upload", "Upload"],
   ] },
   { name: "Data Display Components", items: [
-    ["calendar", "Calendar"], ["countdown", "Countdown"], ["code", "Code"], ["data-table", "Data Table"],
+    ["calendar", "Calendar"], ["chart", "Chart"], ["countdown", "Countdown"], ["code", "Code"], ["data-table", "Data Table"],
     ["descriptions", "Descriptions"], ["empty", "Empty"], ["equation", "Equation"], ["image", "Image"],
     ["list", "List"], ["log", "Log"], ["number-animation", "Number Animation"], ["qr-code", "QR Code"],
     ["statistic", "Statistic"], ["table", "Table"], ["thing", "Thing"], ["time", "Time"],

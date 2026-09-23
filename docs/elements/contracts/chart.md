@@ -1,9 +1,9 @@
 # Chart
 
-**Status: required before the production release; not implemented or validated.**
-The feature scope and ECharts-shaped authoring direction are selected. Detailed property,
-event and update contracts must be settled before implementation. This page is a pending
-contract, not documentation for an available API.
+**Status: implemented Web baseline; required release acceptance remains open.**
+The source and [demo/API](../../../demo/components/chart.html) now implement the first-batch
+types and five source forms. Browser/accessibility/performance acceptance and approval of
+the new renderer-inclusive payload ceiling remain release gates.
 
 Logical identity: `Chart`. Web identity: `<m-chart>`, extending the shared `ViewElement`.
 Apache ECharts is the selected Web renderer, not a dependency of the shared core or
@@ -44,7 +44,7 @@ remains demo-only.
 
 ## 2. Content model and example
 
-The following markup illustrates the required authoring direction. It is not yet executable:
+The following markup uses the implemented declarative configuration:
 
 ```html
 <m-chart aria-label="Monthly sales" style="height: 320px">
@@ -145,9 +145,9 @@ Use reassignment or explicit refresh for application updates, not hidden deep ob
 
 Scoped binding follows the [selected binding language](../../binding/01-language.md):
 paths in an explicitly supplied scope, not JavaScript expressions or global variable lookup.
-The optional scalar binder now assigns actual values through `data-bind-source` within an
-explicit store/root. Its required Chart integration and tests remain a release dependency;
-an inert binding attribute does not satisfy this feature.
+The optional scalar binder assigns actual values through `data-bind-source` within an
+explicit store/root. Dataset tests and the live Chart demo verify reassignment through
+this channel; an inert binding attribute does not satisfy this feature.
 
 Remote loading is a MarkupUI responsibility, separate from ECharts options. `source-path`
 selects response data through a restricted, safe property path; omit it when the response
@@ -176,44 +176,94 @@ unless separately contracted.
   No aggregate dependency, copied core or mandatory ECharts import in unrelated families.
   Keep implementation under `src/components/chart`; extraction does not change ownership.
 
-## 6. Decisions to settle before implementation
+## 6. Implemented baseline decisions
 
-The release requirement is selected; these details still need explicit contracts:
-
-1. Exact supported properties, defaults, boolean encodings, nested regions and cardinalities,
-   including `areaStyle`, radius arrays and stable IDs for dynamic collection updates.
-2. Dataset validation, missing/null/non-finite values, dimensions, source headers, direct
-   series data, and source-switch/refresh behavior.
-3. Event names/payloads, previous-data behavior during loading/errors, retry/timeout policy,
-   URL/origin/credentials rules and response-path grammar.
-4. Compatible ECharts version range, optional dependency packaging, module selection,
-   Canvas/SVG support, theme changes and an approved dependency-inclusive Chart budget.
-5. Direct-option ownership and supported modules, merge/replacement rules, disposal and
-   the boundary for trusted callbacks.
-6. Accessible fallback ownership, browser support and measurable performance limits.
+- ECharts 6.0.0 is pinned and built into an optional renderer asset. No npm production
+  dependency, core import or unrelated-family import makes Chart mandatory. License and
+  notice files ship with the package. NodeNext development typechecking uses ECharts'
+  own unbundled declarations because its rolled-up declarations omit ESM extensions.
+- SVG is the default; Canvas is selectable. Light and dark are the initial themes.
+  Chart height defaults to 320 pixels. A zero-size surface waits for ResizeObserver
+  or explicit resize. Theme/renderer changes recreate the owned instance.
+- Title, tooltip, legend and each Cartesian axis are singletons. Dataset and series
+  are ordered collections, capped at 16 and 32. IDs are optional but unique within a
+  chart. Series accepts one Encode and one Label. Unknown options fail explicitly.
+- Source cells are strings, finite numbers or null. Array rows have equal widths;
+  column arrays have equal lengths. Object rows may omit fields. Dimensions are unique
+  string names; sourceHeader is true, false or auto. Dataset transforms, streaming and
+  declarative series-local data are deferred. Direct option mode covers trusted series
+  data but still requires a separate tableSource.
+- Property and binding share one source channel. JSON attribute, JSON script and remote
+  src are exclusive alternatives. Dispose an active binding before clearSource() and
+  explicit switching. Reassignment or refresh is the update boundary, not deep watching.
+- Remote requests accept only same-origin HTTP(S), omit credentials, reject redirects,
+  require a JSON content type, enforce a streamed 1 MiB limit and time out at 15 seconds.
+  Safe dot paths reject prototype members. Disconnect and switching abort the request;
+  generations prevent stale results. No automatic retry is performed.
+- Reload keeps the last successful data while loading. Errors are explicit; Chart clears
+  its instance and table on validation/loading failure. reload() rejects and emits
+  m:chart-data-error. Dataset changes emit m:chart-data-change. Chart emits m:chart-state,
+  m:chart-error and m:chart-select (seriesIndex, dataIndex, name, value). These custom
+  events bubble, are not cancelable and are not composed. Programmatic writes do not
+  emit selection intent.
+- Each dataset is bounded to 10,000 rows and 64 columns. The native data disclosure
+  includes dataset selection and 50-row table pagination. Accessible naming is required.
+  Direct options require tableSource, keeping the alternative independent of callbacks.
+- Updates use notMerge=true and lazyUpdate=false. Declarative tooltips use rich-text
+  rendering, not HTML. Direct callbacks/options are trusted application code. Animation
+  defaults off and reduced-motion preferences override direct animation requests.
+- New provisional ceilings are 12,000 gzip bytes per Chart wrapper, 235,000 per renderer,
+  250,000 for core+wrapper+renderer, and 1,500 for CSS. These do not increase any existing
+  ceiling and still require release approval. Startup/update/memory measurements and
+  supported-browser acceptance remain mandatory, not inferred from these size caps.
 
 ## 7. Release acceptance
 
 Chart blocks the production release until all of the following pass:
 
-- [ ] Settle the detailed contract and implement all first-batch types and five source forms.
-- [ ] Verify markup-to-option equivalence, property validation, source conflicts, collection
+- [x] Settle the detailed contract and implement all first-batch types and five source forms.
+- [x] Verify markup-to-option equivalence, property validation, source conflicts, collection
   updates/removals, optional binding and direct-option exclusivity.
-- [ ] Test remote success, malformed JSON/data, HTTP errors, cancellation, out-of-order
+- [x] Test remote success, malformed JSON/data, HTTP errors, cancellation, out-of-order
   responses, source changes and disconnect/reconnect.
-- [ ] Verify actual nonblank charts, resize/hidden-to-visible behavior, updates and
+- [x] Verify actual nonblank charts, resize/hidden-to-visible behavior, updates and
   interactions in supported desktop/mobile browser layouts.
 - [ ] Validate accessibility, readable fallback data, theme changes and resource cleanup.
 - [ ] Test selectable ESM/classic delivery and packed consumer exports, with one shared
   ViewElement and no ECharts cost for consumers that do not select Chart.
 - [ ] Approve and enforce measured renderer-inclusive payload/performance budgets without
   increasing unrelated component ceilings.
-- [ ] Publish working examples for every first-batch type and source form, source-generated
+- [x] Publish working examples for every first-batch type and source form, source-generated
   API documentation, loading requirements and supported-option limitations.
 
 Implementation order: Bar establishes the data/adapter/lifecycle contract, followed by
 Line/Area, Pie/Doughnut and Scatter. Partial type coverage or property assignment without
 the other required data-source forms does not satisfy the release gate.
+
+## 8. Recorded verification
+
+September 23, 2026, Windows / Node 22.12.0: all 56 focused Chart tests passed, including
+real ECharts SVG SSR, source cancellation/timeout, pre-upgrade values, reduced motion,
+observer disposal and ESM/classic shared-core delivery. The full suite passed 4,694 tests
+across 127 files, with no failures or skips.
+
+`pnpm test:browser` passed Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 at
+1280x900 and 375x812. Checks cover all six demos, binding/reload, actual selection,
+nonblank SVG/Canvas, resize, theme changes, keyboard data disclosure and portable
+label/disclosure primitives. Screenshots and machine-readable evidence are generated
+under `.vite/browser`; these are headless desktop engines with mobile-sized layouts,
+not real mobile-device or screen-reader acceptance.
+
+The desktop 10,000-row line benchmark repeated mount/update/dispose 20 times per engine.
+Mean mount/update durations were 30/28 ms (Chromium), 39/41 ms (Firefox), and 118/42 ms
+(WebKit). Chromium's post-GC node/listener counts remained 2,275/155 before and after;
+used JS heap increased by 432,328 bytes. These are local observations, not approved
+performance ceilings or proof of no possible leaks.
+
+The dependency audit identified an ECharts 6.0.0 advisory affecting the unbundled Lines
+series; upgrading the vendor remains a release prerequisite. Isolated package verification
+also exposed an unrelated Affix declaration conflict. Neither issue is waived by Chart's
+passing tests.
 
 ## References
 

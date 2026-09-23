@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chart - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-chart.css">
+  <link rel="stylesheet" href="../component-api.css">
+  <link rel="stylesheet" href="../example-code.css">
+  <link rel="stylesheet" href="./chart.css">
+  <script type="module" src="./chart.js"></script>
+  <script type="module" src="../example-code.js"></script>
+  <script type="module" src="../component-outline.js"></script>
+</head>
+<body>
+  <main data-demo-page class="component-docs">
+    <m-heading level="1">Chart</m-heading>
+    <m-p>ECharts-shaped configuration, portable data sources, and an optional Web renderer.</m-p>
+    <details class="component-setup" id="required-files">
+      <summary id="required-files-heading">Setup code</summary>
+      <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-chart.css"&gt;
+&lt;script type="module" src="./dist/markup-ui-chart.js"&gt;&lt;/script&gt;</code></pre>
+      <m-p>ESM imports core and the selected ECharts renderer. Classic order is core,
+        chart-renderer, then chart. Binding is an additional optional dependency only
+        for the scoped example. ECharts and dependency licenses ship in dist/chart-licenses.</m-p>
+      <a href="../setup.html">Shared setup guide</a>
+    </details>
+
+    <section data-demo-example="grouped" aria-labelledby="grouped-heading">
+      <header data-demo-header><m-heading level="2" id="grouped-heading">Grouped bars: nested JSON</m-heading></header>
+      <m-box data-demo-preview>
+        <m-chart aria-label="Monthly sales and costs">
+          <m-chart-title text="Sales and costs"></m-chart-title>
+          <m-chart-tooltip trigger="axis"></m-chart-tooltip>
+          <m-chart-legend></m-chart-legend>
+          <m-chart-dataset id="monthly">
+            <script type="application/json">
+              [{"month":"January","sales":120,"costs":80},{"month":"February","sales":180,"costs":110},{"month":"March","sales":150,"costs":90}]
+            </script>
+          </m-chart-dataset>
+          <m-chart-x-axis type="category"></m-chart-x-axis>
+          <m-chart-y-axis type="value"></m-chart-y-axis>
+          <m-chart-series type="bar" name="Sales" dataset-id="monthly">
+            <m-chart-encode x="month" y="sales"></m-chart-encode>
+          </m-chart-series>
+          <m-chart-series type="bar" name="Costs" dataset-id="monthly">
+            <m-chart-encode x="month" y="costs"></m-chart-encode>
+          </m-chart-series>
+        </m-chart>
+      </m-box>
+    </section>
+
+    <section data-demo-example="horizontal" aria-labelledby="horizontal-heading">
+      <header data-demo-header><m-heading level="2" id="horizontal-heading">Horizontal stacked bars: property source</m-heading></header>
+      <m-box data-demo-preview>
+        <m-chart aria-label="Regional desktop and mobile sales">
+          <m-chart-title text="Regional sales"></m-chart-title>
+          <m-chart-legend></m-chart-legend>
+          <m-chart-tooltip trigger="axis"></m-chart-tooltip>
+          <m-chart-dataset id="regional"></m-chart-dataset>
+          <m-chart-x-axis type="value"></m-chart-x-axis>
+          <m-chart-y-axis type="category"></m-chart-y-axis>
+          <m-chart-series type="bar" name="Desktop" stack="sales" dataset-id="regional">
+            <m-chart-encode x="desktop" y="region"></m-chart-encode>
+          </m-chart-series>
+          <m-chart-series type="bar" name="Mobile" stack="sales" dataset-id="regional">
+            <m-chart-encode x="mobile" y="region"></m-chart-encode>
+          </m-chart-series>
+        </m-chart>
+      </m-box>
+      <pre><code>document.getElementById("regional").source = regionalSales;</code></pre>
+    </section>
+
+    <section data-demo-example="area" aria-labelledby="area-heading">
+      <header data-demo-header><m-heading level="2" id="area-heading">Line and area: scoped binding</m-heading></header>
+      <m-box data-demo-preview>
+        <m-chart id="bound-chart" aria-label="Monthly revenue">
+          <m-chart-title text="Revenue"></m-chart-title>
+          <m-chart-tooltip trigger="axis"></m-chart-tooltip>
+          <m-chart-dataset data-bind-source="report.sales"></m-chart-dataset>
+          <m-chart-x-axis type="category"></m-chart-x-axis>
+          <m-chart-y-axis type="value"></m-chart-y-axis>
+          <m-chart-series type="line" name="Revenue" area-style="{}">
+            <m-chart-encode x="month" y="sales"></m-chart-encode>
+          </m-chart-series>
+        </m-chart>
+        <m-button id="update-sales">Update revenue</m-button>
+      </m-box>
+      <pre><code>const store = createStore({ report: { sales } });
+const stop = bind(document.getElementById("bound-chart"), store);
+store.set("report.sales", nextSales);</code></pre>
+    </section>
+
+    <section data-demo-example="pie" aria-labelledby="pie-heading">
+      <header data-demo-header><m-heading level="2" id="pie-heading">Doughnut: JSON source attribute</m-heading></header>
+      <m-box data-demo-preview>
+        <m-chart aria-label="Sales by channel">
+          <m-chart-title text="Channels"></m-chart-title>
+          <m-chart-tooltip trigger="item"></m-chart-tooltip>
+          <m-chart-dataset source='[{"channel":"Direct","sales":320},{"channel":"Partners","sales":180},{"channel":"Retail","sales":240}]'></m-chart-dataset>
+          <m-chart-series type="pie" name="Sales" radius='["35%","65%"]'>
+            <m-chart-encode item-name="channel" value="sales"></m-chart-encode>
+            <m-chart-label show position="outside"></m-chart-label>
+          </m-chart-series>
+        </m-chart>
+      </m-box>
+    </section>
+
+    <section data-demo-example="scatter" aria-labelledby="scatter-heading">
+      <header data-demo-header><m-heading level="2" id="scatter-heading">Scatter: remote JSON</m-heading></header>
+      <m-box data-demo-preview>
+        <m-chart id="remote-chart" aria-label="Advertising spend and revenue">
+          <m-chart-title text="Spend and revenue"></m-chart-title>
+          <m-chart-tooltip trigger="item"></m-chart-tooltip>
+          <m-chart-dataset id="remote-sales" src="./chart-data.json" source-path="data.rows"></m-chart-dataset>
+          <m-chart-x-axis type="value" name="Spend"></m-chart-x-axis>
+          <m-chart-y-axis type="value" name="Revenue"></m-chart-y-axis>
+          <m-chart-series type="scatter">
+            <m-chart-encode x="spend" y="revenue"></m-chart-encode>
+          </m-chart-series>
+        </m-chart>
+        <m-button id="reload-sales">Reload data</m-button>
+      </m-box>
+    </section>
+
+    <section data-demo-example="direct" aria-labelledby="direct-heading">
+      <header data-demo-header><m-heading level="2" id="direct-heading">Trusted direct options</m-heading></header>
+      <m-box data-demo-preview><m-chart id="direct-chart" aria-label="Quarterly totals"></m-chart></m-box>
+      <m-p>Direct option mode is Web-specific and exclusive with configuration children.
+        Supply tableSource as the readable alternative. It supports the same bundled
+        first-batch series; arbitrary ECharts modules are not included.</m-p>
+    </section>
+
+    <section aria-labelledby="rules-heading">
+      <m-heading level="2" id="rules-heading">Data, updates and accessibility</m-heading>
+      <m-p>One source per dataset: property or scoped binding, JSON attribute, nested JSON,
+        or remote src. Dispose any binding and call clearSource() before switching source
+        kinds. Assign new data or call refresh() after an in-place edit. Null cells are
+        missing values; non-finite numbers, functions, accessors and unsafe keys are rejected.</m-p>
+      <m-p>Remote data is limited to same-origin HTTP(S), JSON content types and 1 MiB.
+        Credentials and redirects are disabled. Requests time out after 15 seconds and
+        are cancelled on source changes and disconnect. reload() reports failure through
+        its rejected promise and the dataset error event. Previous data remains available
+        during reload; a chart configuration or loading error clears the rendered chart.</m-p>
+      <m-p>Each dataset is limited to 10,000 rows and 64 columns; each chart to 16 datasets
+        and 32 series. Data tables use 50-row pages. SVG is the default Web renderer;
+        renderer="canvas" is available. Theme is light or dark. Every chart requires
+        aria-label or aria-labelledby. The built-in data disclosure is keyboard-accessible
+        native markup. Chromium, Firefox and WebKit desktop/mobile-sized checks pass;
+        real-device and screen-reader acceptance is still pending.</m-p>
+      <m-p>Declarative tooltips use ECharts rich-text rendering, not HTML. Direct option
+        callbacks and HTML configuration are trusted application code. Updates replace
+        the full option, so removed collections cannot survive through implicit merging.
+        Core and unrelated components do not import ECharts.</m-p>
+    </section>
+    <section aria-labelledby="api-heading">
+      <m-heading level="2" id="api-heading">API</m-heading>
+      <m-box id="chart-api"></m-box>
+    </section>
+  </main>
+</body>
+</html>

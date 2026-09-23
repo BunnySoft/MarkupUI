@@ -11,12 +11,18 @@ importers:
       '@types/node':
         specifier: ^24.3.0
         version: 24.13.3
+      echarts:
+        specifier: 6.0.0
+        version: 6.0.0
       esbuild:
         specifier: ^0.25.9
         version: 0.25.12
       jsdom:
         specifier: ^26.1.0
         version: 26.1.0
+      playwright:
+        specifier: 1.63.0
+        version: 1.63.0
       typescript:
         specifier: ^5.9.2
         version: 5.9.3
@@ -602,6 +608,9 @@ packages:
     resolution: {integrity: sha1-S3VtjXcKklcwCCXVKiws/5nDo0E=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/deep-eql/-/deep-eql-5.0.2.tgz}
     engines: {node: '>=6'}
 
+  echarts@6.0.0:
+    resolution: {integrity: sha1-KTWqd1HCgtGru/fXGdOXGZoVuec=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/echarts/-/echarts-6.0.0.tgz}
+
   entities@6.0.1:
     resolution: {integrity: sha1-wow0pDN5yn9h0HQTCy9fcCCjBpQ=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/entities/-/entities-6.0.1.tgz}
     engines: {node: '>=0.12'}
@@ -708,6 +717,16 @@ packages:
     resolution: {integrity: sha1-YxM2ADTMs2s9xh7L3/eBIfkP4h8=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/picomatch/-/picomatch-4.0.7.tgz}
     engines: {node: '>=12'}
 
+  playwright-core@1.63.0:
+    resolution: {integrity: sha1-5XZlvDKEbCE6w5oeTVvGIo52s3Y=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/playwright-core/-/playwright-core-1.63.0.tgz}
+    engines: {node: '>=20'}
+    hasBin: true
+
+  playwright@1.63.0:
+    resolution: {integrity: sha1-mbVvn2mxtwxE8Av4Sy/lI0iuJRE=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/playwright/-/playwright-1.63.0.tgz}
+    engines: {node: '>=20'}
+    hasBin: true
+
   postcss@8.5.26:
     resolution: {integrity: sha1-bnUTV4DH4Q3zQzvyJmxVLTXIxiA=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/postcss/-/postcss-8.5.26.tgz}
     engines: {node: ^10 || ^12 || >=14}
@@ -786,6 +805,9 @@ packages:
   tr46@5.1.1:
     resolution: {integrity: sha1-lq6GfN24/bZKScwwWajUKLzyOMo=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/tr46/-/tr46-5.1.1.tgz}
     engines: {node: '>=18'}
+
+  tslib@2.3.0:
+    resolution: {integrity: sha1-gDuM2rPhK6WBpMpByIObuw2ssJ4=, tarball: https://ms-feed-2.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/tslib/-/tslib-2.3.0.tgz}
 
   typescript@5.9.3:
     resolution: {integrity: sha1-W09Z4VMQqxeiFvXWz1PuR27eZw8=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/typescript/-/typescript-5.9.3.tgz}
@@ -912,6 +934,9 @@ packages:
 
   xmlchars@2.2.0:
     resolution: {integrity: sha1-Bg/hvLf5x2/ioX24apvDq4lCEMs=, tarball: https://ms-feed-25.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/xmlchars/-/xmlchars-2.2.0.tgz}
+
+  zrender@6.0.0:
+    resolution: {integrity: sha1-lHB3vGnN6nRBNJhJJ/Ey83J/gHk=, tarball: https://ms-feed-17.pkgs.visualstudio.com/1es-public/_packaging/npm-public/npm/registry/zrender/-/zrender-6.0.0.tgz}
 
 snapshots:
 
@@ -1268,6 +1293,11 @@ snapshots:
 
   deep-eql@5.0.2: {}
 
+  echarts@6.0.0:
+    dependencies:
+      tslib: 2.3.0
+      zrender: 6.0.0
+
   entities@6.0.1: {}
 
   es-module-lexer@1.7.0: {}
@@ -1422,6 +1452,12 @@ snapshots:
 
   picomatch@4.0.7: {}
 
+  playwright-core@1.63.0: {}
+
+  playwright@1.63.0:
+    dependencies:
+      playwright-core: 1.63.0
+
   postcss@8.5.26:
     dependencies:
       nanoid: 3.3.18
@@ -1512,6 +1548,8 @@ snapshots:
   tr46@5.1.1:
     dependencies:
       punycode: 2.3.1
+
+  tslib@2.3.0: {}
 
   typescript@5.9.3: {}
 
@@ -1619,3 +1657,7 @@ snapshots:
   xml-name-validator@5.0.0: {}
 
   xmlchars@2.2.0: {}
+
+  zrender@6.0.0:
+    dependencies:
+      tslib: 2.3.0

@@ -54,5 +54,5 @@ const server = createServer(async (request, response) => {
 })
 
 server.listen(port, "127.0.0.1", () => {
-  console.log(`MarkupUI demo: http://localhost:${port}`)
+  console.log(`MarkupUI demo: http://localhost:${server.address().port}`)
 })

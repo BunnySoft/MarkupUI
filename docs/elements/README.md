@@ -27,10 +27,11 @@ disclosure, articles, footers and phrasing. See the
 Native keyboard and screen-reader acceptance remains pending; native-target mappings
 are design contracts, not a claim of delivered non-Web renderers.
 
-Chart (`m-chart`) is a [required pre-release feature](contracts/chart.md), not an implemented
-API. Its Web renderer uses Apache ECharts with ECharts-shaped markup. The first batch
-requires Bar, Line/Area, Pie/Doughnut and Scatter, plus all five source forms: property
-assignment, scoped binding, JSON attributes, nested JSON and remote JSON.
+Chart (`m-chart`) is a [required pre-release feature](contracts/chart.md) with an implemented
+Web baseline and [demo/API](../../demo/components/chart.html). Its optional Apache ECharts
+renderer supports Bar, Line/Area, Pie/Doughnut and Scatter, plus property assignment,
+scoped binding, JSON attributes, nested JSON and remote JSON. Browser/accessibility,
+performance and payload approval gates remain open.
 
 Separate a defined or approved contract from implemented and validated code.
 All seven initial families use the thin shared core and source-generated demo API data.

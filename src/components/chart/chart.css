@@ -1,0 +1,12 @@
+m-chart { display: block; min-inline-size: 0; color: inherit; }
+m-chart[hidden] { display: none !important; }
+m-chart > [data-part="chart"] { inline-size: 100%; min-inline-size: 0; }
+m-chart > :is(m-chart-title,m-chart-tooltip,m-chart-legend,m-chart-dataset,m-chart-x-axis,m-chart-y-axis,m-chart-series),
+m-chart-series > :is(m-chart-encode,m-chart-label) { display: none !important; }
+m-chart > details { margin-block-start: .75rem; overflow: auto; }
+m-chart > details > summary { cursor: pointer; }
+m-chart > details > table { border-collapse: collapse; inline-size: 100%; margin-block: .5rem; font-variant-numeric: tabular-nums; }
+m-chart > details :is(th,td) { text-align: start; padding: .35rem .5rem; border-block-end: 1px solid currentColor; }
+m-chart > details > :is(button,select) { font: inherit; margin: .5rem; }
+m-chart > details > [hidden] { display: none !important; }
+m-chart > [role="status"]:empty { display: none; }

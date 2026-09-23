@@ -1,0 +1,11 @@
+{
+  "data": {
+    "rows": [
+      {"spend": 20, "revenue": 90},
+      {"spend": 35, "revenue": 125},
+      {"spend": 45, "revenue": 150},
+      {"spend": 60, "revenue": 180},
+      {"spend": 80, "revenue": 240}
+    ]
+  }
+}

@@ -74,6 +74,15 @@ acceptance remain outstanding. This evidence does not approve a production relea
 
 ## Work order
 
+September 23, 2026 Chart baseline: build and all 4,694 tests across 127 files passed.
+The optional renderer, five source forms, first-batch chart types, demos and generated API
+are implemented. Headless Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 passed
+desktop/mobile-sized Chart and portable primitive workflows. The
+[Chart contract](../elements/contracts/chart.md#8-recorded-verification) records exact
+scope and performance observations. Full-family browser and screen-reader acceptance
+remain open. Dependency audit remediation, isolated consumer declaration validation and
+approval of the new Chart budgets are still release blockers.
+
 1. Finish the portable primitive contracts and renderers, starting with labels, disclosure
    and semantic structure. Keep `m-*` public authoring and validate native Web output.
    Do not substitute HTML just to satisfy a test's hard-coded tag expectation.

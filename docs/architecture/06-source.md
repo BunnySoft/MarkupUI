@@ -175,6 +175,13 @@ See the [Alert demo/API](../../demo/components/alert.html).
 
 ## Shared-runtime boundary
 
+Chart lives in `src/components/chart`: `chart.ts` owns the Web renderer lifecycle and
+native data alternative, `config.ts` the concrete option elements, `dataset.ts` sources
+and cancellation, `data.ts` bounded validation/table conversion, `options.ts` the explicit
+ECharts mapping, and `renderer.ts` the selected vendor module registration. The build
+emits that last module separately with licenses and accounts for its full payload.
+Neither state binding nor ECharts is added to core or unrelated components.
+
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed
 properties and ordinary method calls. They use small native conversion helpers where useful,
 not a metadata lookup or generic property dispatcher.
