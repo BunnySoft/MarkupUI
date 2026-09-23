@@ -1,5 +1,6 @@
-import { readFileSync } from "node:fs"
+import { readFileSync, readdirSync } from "node:fs"
 import { join } from "node:path"
+import { JSDOM } from "jsdom"
 import { afterEach, describe, expect, it } from "vitest"
 import { Heading } from "../src/components/typography/index.js"
 import { Box, Details, Summary } from "../src/components/box/index.js"
@@ -11,6 +12,31 @@ function demo(name: string): Document {
 }
 
 const nativeDemos = ["input-number", "select", "slider", "pagination", "float-button", "grid", "layout", "list", "table", "thing"]
+const demoFiles = readdirSync(join("demo", "components")).filter(file => file.endsWith(".html"))
+
+describe("catalog markup integrity", () => {
+  it.each(demoFiles)("%s closes portable elements and uses canonical tags and action attributes", file => {
+    const dom = new JSDOM(readFileSync(join("demo", "components", file), "utf8"), { includeNodeLocations: true })
+    try {
+      function elements(root: ParentNode): Element[] {
+        return [...root.querySelectorAll("*")].flatMap(element => element.localName === "template"
+          ? [element, ...elements((element as HTMLTemplateElement).content)] : [element])
+      }
+      for (const element of elements(dom.window.document)) {
+        if (!element.localName.startsWith("m-")) continue
+        const location = dom.nodeLocation(element)
+        expect(location?.endTag, `${element.localName} at line ${location?.startLine}`).toBeDefined()
+        expect(element.localName).not.toMatch(/^m-(h[1-6]|a|autocomplete)$/)
+        if (element.localName === "m-heading") expect(element.querySelector("m-heading")).toBeNull()
+        if (element.localName === "m-button") {
+          expect(["button", "submit", "reset"]).not.toContain(element.getAttribute("type"))
+        }
+      }
+      const scripts = [...dom.window.document.querySelectorAll<HTMLScriptElement>('script[src*="/dist/"]')]
+      expect(new Set(scripts.map(script => script.type === "module")).size).toBeLessThanOrEqual(1)
+    } finally { dom.window.close() }
+  })
+})
 
 describe("native-control demo markup", () => {
   it.each(nativeDemos)("%s retains native label associations", name => {

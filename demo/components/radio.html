@@ -14,10 +14,14 @@
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./radio.css">
-  <script defer src="../../dist/markup-ui-core.global.js"></script>
-  <script defer src="../../dist/markup-ui-button.global.js"></script>
-  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <script type="module" src="../../dist/markup-ui-core.js"></script>
+  <script type="module" src="../../dist/markup-ui-button.js"></script>
+  <script type="module" src="../../dist/markup-ui-box.js"></script>
+  <script type="module" src="../../dist/markup-ui-native-radio.js"></script>
   <script type="module" src="../../dist/markup-ui-radio.js"></script>
+  <script type="module" src="../../dist/markup-ui-typography.js"></script>
+
   <script type="module" src="./radio.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -90,8 +94,8 @@
             </fieldset>
           </m-radio-group>
           <m-label>Button size <select id="size"><option>small</option><option>medium</option><option selected>large</option></select></m-label>
-          <m-button type="button" id="rtl">Toggle RTL</m-button>
-          <m-button type="button" id="theme">Toggle dark preview</m-button>
+          <m-button attr-type="button" id="rtl">Toggle RTL</m-button>
+          <m-button attr-type="button" id="theme">Toggle dark preview</m-button>
         </div>
       </section>
       <section data-demo-example="external" aria-labelledby="external-title">
@@ -106,7 +110,7 @@
           </m-radio-group>
           <m-box id="peer-region"></m-box>
           <template id="peer-template"><m-label class="m-radio"><input type="radio" name="plan" value="outside"><span>Conflicting outside native peer: still browser-owned</span></m-label></template>
-          <m-button type="button" id="peer">Toggle conflicting outside peer</m-button>
+          <m-button attr-type="button" id="peer">Toggle conflicting outside peer</m-button>
         </div>
       </section>
       <section data-demo-example="forms" aria-labelledby="forms-title">
@@ -115,7 +119,7 @@
           <input type="hidden" name="local" value="only">
           <button type="submit">Inspect native FormData</button>
           <button type="reset">Native reset</button>
-          <m-button type="button" id="cancel">Cancel next reset</m-button>
+          <m-button attr-type="button" id="cancel">Cancel next reset</m-button>
           <pre id="submission">No submission yet.</pre>
         </div>
       </section>

@@ -12,9 +12,14 @@
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./float-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-float-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+
   <script type="module" src="./float-button.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -183,7 +188,7 @@
       </section>
     </div>
 
-    <section class="long-content"><h2>Underlying content remains reachable</h2><p>The application reserves an inline-end gutter and bottom space for its fixed trigger. It uses no giant global z-index or invisible duplicate controls.</p><a href="#form-heading" id="outside-link">Return to project form</a></section>
+    <section class="long-content"><m-heading level="2" id="underlying-content">Underlying content remains reachable</m-heading><p>The application reserves an inline-end gutter and bottom space for its fixed trigger. It uses no giant global z-index or invisible duplicate controls.</p><a href="#form-heading" id="outside-link">Return to project form</a></section>
     <button type="button" class="m-float-button" hidden id="hidden-float">Hidden floating action</button>
 
     <section aria-labelledby="api-heading">

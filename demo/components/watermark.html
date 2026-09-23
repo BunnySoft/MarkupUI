@@ -17,13 +17,18 @@
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./watermark.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-watermark.global.js"></script>
   <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-native-input.global.js"></script>
   <script defer src="../../dist/markup-ui-input.global.js"></script>
   <script defer src="../../dist/markup-ui-input-number.global.js"></script>
   <script defer src="../../dist/markup-ui-checkbox.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
+
   <script type="module" src="./watermark.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -55,7 +60,7 @@
         </header>
         <div data-demo-preview>
           <m-watermark content="CONFIDENTIAL" class="watermark-card">
-            <m-h3>Internal Document</m-h3>
+            <m-heading level="3">Internal Document</m-heading>
             <m-p>Select this original text through the decorative overlay. Links, controls, selection and copy remain native.</m-p>
             <m-p>Repetition is a CSS background overlay rather than a DOM grid of stamp elements.</m-p>
           </m-watermark>
@@ -71,7 +76,7 @@
         </header>
         <div data-demo-preview>
           <m-watermark content="INTERNAL DRAFT" cross rotate="-24" width="220" height="120" class="watermark-card">
-            <m-h3>Alternating Cross Pattern</m-h3>
+            <m-heading level="3">Alternating Cross Pattern</m-heading>
             <m-p>The cross attribute offsets adjacent tile rows for a staggered watermark layout.</m-p>
             <m-p>Rotation is applied around the tile center with bounded geometry.</m-p>
           </m-watermark>

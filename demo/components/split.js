@@ -1,5 +1,5 @@
 import { loadComponentApi } from "../component-api.js"
-import { registerSplit } from "../../src/components/split/index.js"
+import { registerSplit } from "../../dist/markup-ui-split.js"
 
 registerSplit()
 

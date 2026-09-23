@@ -15,12 +15,18 @@
   <link rel="stylesheet" href="../../dist/markup-ui-switch.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-box.css">
-  <script defer src="../../dist/markup-ui-core.global.js"></script>
-  <script defer src="../../dist/markup-ui-button.global.js"></script>
-  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <script type="module" src="../../dist/markup-ui-core.js"></script>
+  <script type="module" src="../../dist/markup-ui-button.js"></script>
+  <script type="module" src="../../dist/markup-ui-box.js"></script>
   <script type="module" src="../../dist/markup-ui-switch.js"></script>
-  <link rel="stylesheet" href="./form.css">
   <script type="module" src="../../dist/markup-ui-form.js"></script>
+  <script type="module" src="../../dist/markup-ui-native-input.js"></script>
+  <script type="module" src="../../dist/markup-ui-input.js"></script>
+  <script type="module" src="../../dist/markup-ui-typography.js"></script>
+
+  <link rel="stylesheet" href="./form.css">
+
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
   <script type="module" src="./form.js"></script>
@@ -48,29 +54,29 @@
         <span id="name-count" data-input-count>3 / 32</span>
       </m-input>
       <m-p id="name-help">Try “reserved” for a local asynchronous error. Editing any form field cancels outstanding checks.</m-p>
-      <m-p class="m-form-item__feedback" id="name-error" hidden></m-p>
+      <m-span class="m-form-item__feedback" id="name-error" hidden></m-span>
     </m-form-item>
     <m-form-item key="consent" id="consent-item">
       <m-switch id="consent-switch" name="consent" value="yes" checked required>Required native Switch consent</m-switch>
-      <m-p class="m-form-item__feedback" id="consent-error" hidden></m-p>
+      <m-span class="m-form-item__feedback" id="consent-error" hidden></m-span>
     </m-form-item>
     <m-box class="m-form-grid">
       <m-form-item-gi key="email" id="email-item">
         <label class="m-form-item__label" for="email">Email (required)</label>
         <input id="email" type="email" name="contact[email]" value="ada@example.test" required>
-        <m-p class="m-form-item__feedback" id="email-error" hidden></m-p>
+        <m-span class="m-form-item__feedback" id="email-error" hidden></m-span>
       </m-form-item-gi>
       <m-form-item-gi key="confirm" id="confirm-item">
         <label class="m-form-item__label" for="confirm">Confirm email (required)</label>
         <input id="confirm" type="email" name="contact[confirm]" value="ada@example.test" required>
-        <m-p class="m-form-item__feedback" id="confirm-error" hidden></m-p>
+        <m-span class="m-form-item__feedback" id="confirm-error" hidden></m-span>
       </m-form-item-gi>
       <m-form-item-gi key="topics" span="full">
       <fieldset class="m-form-item" id="topics-item">
         <legend>Topics — choose at least one for the enhanced check</legend>
         <m-box><label><input type="checkbox" name="topics[]" value="html" checked> HTML</label>
           <label><input type="checkbox" name="topics[]" value="css"> CSS</label></m-box>
-        <m-p class="m-form-item__feedback" id="topics-error" hidden></m-p>
+        <m-span class="m-form-item__feedback" id="topics-error" hidden></m-span>
       </fieldset>
       </m-form-item-gi>
     </m-box>
@@ -109,7 +115,7 @@
       <m-form-item key="external">
         <label class="m-form-item__label" for="external-value">External required value</label>
         <input id="external-value" name="external" form="external-form" required value="Default">
-        <m-p class="m-form-item__feedback" id="external-error" hidden></m-p>
+        <m-span class="m-form-item__feedback" id="external-error" hidden></m-span>
       </m-form-item>
       <m-p id="external-status" role="status">Submit is inspected locally. Reset restores the external native default.</m-p>
     </div>

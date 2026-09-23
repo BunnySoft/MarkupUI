@@ -21,7 +21,9 @@
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer src="../../dist/markup-ui-native-input.global.js"></script>
   <script defer src="../../dist/markup-ui-input.global.js"></script>
+
   <script type="module" src="./space.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -46,10 +48,10 @@
       <div class="demo-preview" data-demo-preview>
         <m-space id="authored-items">
           <m-span id="text-item">Plain text in an authored item.</m-span>
-          <m-box id="rich-item"><m-strong>One grouped item</m-strong><m-p>Native inline and block content stay together.</m-p><m-a href="#destination" id="group-link">Native link</m-a></m-box>
+          <m-box id="rich-item"><m-strong>One grouped item</m-strong><m-p>Native inline and block content stay together.</m-p><m-link href="#destination" id="group-link">Native link</m-link></m-box>
           <m-span id="styled-item">External CSS owns this item's appearance.</m-span>
         </m-space>
-        <m-space id="unwrapped">Bare native text <m-a href="#destination" id="unwrapped-link">Unwrapped link</m-a><m-button>Unwrapped button</m-button></m-space>
+        <m-space id="unwrapped">Bare native text <m-link href="#destination" id="unwrapped-link">Unwrapped link</m-link><m-button>Unwrapped button</m-button></m-space>
       </div>
     </section>
     <section data-demo-example="gaps" aria-labelledby="gaps-title">
@@ -70,7 +72,7 @@
       <div class="demo-preview" data-demo-preview>
         <m-space id="separate-items"><m-span>First</m-span><m-span aria-hidden="true" id="free-separator">/</m-span><m-span>Second</m-span></m-space>
         <m-space id="paired-items">
-          <m-space inline size="small" id="paired-item"><m-a href="#destination" id="paired-first">Terms</m-a><m-span aria-hidden="true" id="paired-separator">/</m-span><m-a href="#destination" id="paired-second">Privacy</m-a></m-space>
+          <m-space inline size="small" id="paired-item"><m-link href="#destination" id="paired-first">Terms</m-link><m-span aria-hidden="true" id="paired-separator">/</m-span><m-link href="#destination" id="paired-second">Privacy</m-link></m-space>
           <m-span>The application authored one grouped item.</m-span>
         </m-space>
       </div>

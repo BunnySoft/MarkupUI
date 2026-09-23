@@ -15,11 +15,14 @@
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./badge.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-badge.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-checkbox.global.js"></script>
   <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+
   <script type="module" src="./badge.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -46,7 +49,7 @@
       <div data-demo-preview>
         <form id="message-form">
           <m-badge id="unread" value="12" max="99" decorative>
-            <m-button id="inbox" type="submit" aria-label="Inbox, 12 unread messages">Inbox</m-button>
+            <m-button id="inbox" attr-type="submit" aria-label="Inbox, 12 unread messages">Inbox</m-button>
           </m-badge>
         </form>
         <m-p id="unread-status" role="status">12 unread messages.</m-p>

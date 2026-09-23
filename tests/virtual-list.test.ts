@@ -15,6 +15,10 @@ const render = (item: Item) => { const li = document.createElement("li"); li.tex
 
 describe("Virtual List default styles", () => {
   const css = readFileSync(resolve("src", "components", "virtual-list", "virtual-list.css"), "utf8")
+  it("gives custom-element viewports block geometry while preserving hidden state", () => {
+    expect(css).toMatch(/\.m-virtual-list\s*\{[^}]*display:\s*block/)
+    expect(css).toMatch(/\.m-virtual-list\[hidden\]\s*\{\s*display:\s*none/)
+  })
 
   it("keeps fixed-window geometry within its unchanged ceiling", () => {
     expect(css).toContain("height: var(--m-virtual-list-height)")

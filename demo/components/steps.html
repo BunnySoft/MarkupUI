@@ -101,47 +101,47 @@
           <ol class="m-steps" data-steps id="steps" aria-label="Example progress">
             <li class="m-step" data-step id="details" data-step-status="finish">
               <m-box class="m-step__layout"><span class="m-step__icon" aria-hidden="true">✓</span><m-box class="m-step__body">
-                <m-h2 data-step-title>Details</m-h2><span data-step-status-text>Completed</span><m-p>Explicitly completed by the application, not inferred from order.</m-p>
+                <m-heading level="2" data-step-title>Details</m-heading><span data-step-status-text>Completed</span><m-p>Explicitly completed by the application, not inferred from order.</m-p>
                 <button type="button" data-step-action hidden>Select details</button>
               </m-box></m-box>
             </li>
             <li class="m-step" data-step id="review" aria-current="step">
               <m-box class="m-step__layout"><span class="m-step__icon" aria-hidden="true">○</span><m-box class="m-step__body">
-                <m-h2 data-step-title>Review</m-h2><span data-step-status-text>In progress</span><m-p>Changing current does not imply earlier work succeeded.</m-p>
+                <m-heading level="2" data-step-title>Review</m-heading><span data-step-status-text>In progress</span><m-p>Changing current does not imply earlier work succeeded.</m-p>
                 <button type="button" data-step-action hidden>Select review</button>
               </m-box></m-box>
             </li>
             <li class="m-step" data-step id="approval" data-step-status="error">
               <m-box class="m-step__layout"><span class="m-step__icon" aria-hidden="true">!</span><m-box class="m-step__body">
-                <m-h2 data-step-title>Approval</m-h2><span data-step-status-text>Error</span><m-p>Explicit error state overrides positional/current styling. Selection is blocked natively.</m-p>
+                <m-heading level="2" data-step-title>Approval</m-heading><span data-step-status-text>Error</span><m-p>Explicit error state overrides positional/current styling. Selection is blocked natively.</m-p>
                 <button type="button" data-step-action disabled hidden>Select approval</button>
                 <ol class="m-steps m-steps--vertical m-steps--small" data-steps id="nested" aria-label="Independent approval details">
-                  <li class="m-step" data-step><m-box class="m-step__layout"><m-box class="m-step__body"><m-h3 data-step-title>Policy review</m-h3><span data-step-status-text>Waiting</span></m-box></m-box></li>
-                  <li class="m-step" data-step data-step-status="finish"><m-box class="m-step__layout"><m-box class="m-step__body"><m-h3 data-step-title>Identity check</m-h3><span data-step-status-text>Completed</span></m-box></m-box></li>
+                  <li class="m-step" data-step><m-box class="m-step__layout"><m-box class="m-step__body"><m-heading level="3" data-step-title>Policy review</m-heading><span data-step-status-text>Waiting</span></m-box></m-box></li>
+                  <li class="m-step" data-step data-step-status="finish"><m-box class="m-step__layout"><m-box class="m-step__body"><m-heading level="3" data-step-title>Identity check</m-heading><span data-step-status-text>Completed</span></m-box></m-box></li>
                 </ol>
               </m-box></m-box>
             </li>
             <li class="m-step" data-step id="publish">
               <m-box class="m-step__layout"><span class="m-step__icon" aria-hidden="true">○</span><m-box class="m-step__body">
-                <m-h2 data-step-title>Publish</m-h2><span data-step-status-text>Waiting</span><m-p><a href="#native-note" id="native-link">Read the native destination</a></m-p>
+                <m-heading level="2" data-step-title>Publish</m-heading><span data-step-status-text>Waiting</span><m-p><a href="#native-note" id="native-link">Read the native destination</a></m-p>
                 <button type="button" data-step-action hidden>Select publish</button>
               </m-box></m-box>
             </li>
-            <template id="extra-step"><li class="m-step" data-step><m-box class="m-step__layout"><m-box class="m-step__body"><m-h2 data-step-title>Additional authored step</m-h2><span data-step-status-text>Waiting</span><button type="button" data-step-action>Select additional step</button></m-box></m-box></li></template>
+            <template id="extra-step"><li class="m-step" data-step><m-box class="m-step__layout"><m-box class="m-step__body"><m-heading level="2" data-step-title>Additional authored step</m-heading><span data-step-status-text>Waiting</span><button type="button" data-step-action>Select additional step</button></m-box></m-box></li></template>
           </ol>
           <m-label>Unrelated native form value <input id="outside-input" value="Preserved"></m-label>
-          <m-button type="submit" id="save">Save unrelated form</m-button>
+          <m-button attr-type="submit" id="save">Save unrelated form</m-button>
         </form>
         <m-box class="demo-controls">
-          <m-button type="button" id="before">Before first</m-button><m-button type="button" id="after">After last</m-button>
-          <m-button type="button" id="unset">Clear current</m-button><m-button type="button" id="status">Toggle current error</m-button>
-          <m-button type="button" id="finish-review">Mark review completed</m-button><m-button type="button" id="hide-last">Toggle last visible step</m-button>
-          <m-button type="button" id="insert">Insert authored step before current</m-button><m-button type="button" id="remove">Remove current step</m-button>
-          <m-button type="button" id="direction">Toggle vertical</m-button><m-button type="button" id="placement">Toggle icon/content placement</m-button>
-          <m-button type="button" id="reject">Reject next selection</m-button>
+          <m-button attr-type="button" id="before">Before first</m-button><m-button attr-type="button" id="after">After last</m-button>
+          <m-button attr-type="button" id="unset">Clear current</m-button><m-button attr-type="button" id="status">Toggle current error</m-button>
+          <m-button attr-type="button" id="finish-review">Mark review completed</m-button><m-button attr-type="button" id="hide-last">Toggle last visible step</m-button>
+          <m-button attr-type="button" id="insert">Insert authored step before current</m-button><m-button attr-type="button" id="remove">Remove current step</m-button>
+          <m-button attr-type="button" id="direction">Toggle vertical</m-button><m-button attr-type="button" id="placement">Toggle icon/content placement</m-button>
+          <m-button attr-type="button" id="reject">Reject next selection</m-button>
         </m-box>
         <output id="state">Native list and links remain useful without JavaScript.</output>
-        <section id="native-note"><m-h2>Native destination</m-h2><m-p>Links retain native focus/hash/history and modified-click behavior.</m-p></section>
+        <section id="native-note"><m-heading level="2">Native destination</m-heading><m-p>Links retain native focus/hash/history and modified-click behavior.</m-p></section>
       </div>
     </section>
 

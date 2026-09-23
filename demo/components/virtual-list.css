@@ -6,7 +6,6 @@ button { padding: .3rem .7rem; }
 .tools { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 1rem; }
 [hidden] { display: none !important; }
 .m-virtual-list { --m-virtual-list-height: 320px; border: 1px solid #607080; background: white; }
-.m-virtual-list.short { --m-virtual-list-height: 160px; }
 .m-virtual-list__row { padding-inline: .5rem; border-bottom: 1px solid #dde3eb; white-space: nowrap; }
 #large .m-virtual-list__row { line-height: 31px; }
 #editors { --m-virtual-list-height: 192px; }

@@ -12,9 +12,16 @@
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./gradient-text.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-gradient-text.global.js"></script>
   <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer src="../../dist/markup-ui-code.global.js"></script>
+  <script defer src="../../dist/markup-ui-button.global.js"></script>
+
   <script type="module" src="./gradient-text.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -76,9 +83,9 @@
         <div data-demo-preview>
           <m-p class="narrow"><m-gradient-text id="wrapping">LongUnbrokenSelectableGradientTextThatWrapsInsideANarrowNativeContainer</m-gradient-text></m-p>
           <m-p><m-gradient-text id="nested">Gradient parent with <m-strong id="strong">native strong text</m-strong>,
-            <m-code id="code">nativeCode()</m-code> and <m-a id="nested-link" href="#destination">a normal native link</m-a>.
+            <m-code id="code">nativeCode()</m-code> and <m-link id="nested-link" href="#destination">a normal native link</m-link>.
             Non-gradient descendants retain their ordinary text fill.</m-gradient-text></m-p>
-          <m-p><m-a class="m-gradient-text" id="gradient-link" href="#destination" target="_self" rel="help">Native gradient link with visible underline and focus</m-a></m-p>
+          <m-p><m-link class="m-gradient-text" id="gradient-link" href="#destination" target="_self" rel="help">Native gradient link with visible underline and focus</m-link></m-p>
           <m-p id="destination" tabindex="-1">Native destination.</m-p>
         </div>
       </section>

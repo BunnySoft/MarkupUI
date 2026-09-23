@@ -1,4 +1,5 @@
 .m-virtual-list {
+  display: block;
   height: var(--m-virtual-list-height);
   max-height: 16384px;
   overflow-y: auto;
@@ -8,6 +9,7 @@
   padding: 0;
   writing-mode: horizontal-tb;
 }
+.m-virtual-list[hidden] { display: none; }
 .m-virtual-list:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 .m-virtual-list > .m-virtual-list__items {
   position: relative;

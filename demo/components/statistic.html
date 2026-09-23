@@ -19,6 +19,8 @@
   <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-statistic.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+
   <script type="module" src="./statistic.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -58,10 +60,10 @@
       <div data-demo-preview>
         <form id="metric-form">
           <m-statistic id="authored" role="group" aria-labelledby="metric-label" tabular-nums>
-            <m-h3 data-m-statistic-label id="metric-label">Active users</m-h3>
+            <m-heading level="3" data-m-statistic-label id="metric-label">Active users</m-heading>
             <m-span data-m-statistic-prefix aria-hidden="true"><svg viewBox="0 0 20 20" width="16" height="16"><path d="M3 14 8 9l4 3 5-7" fill="none" stroke="currentColor" stroke-width="2"></path></svg></m-span>
             <m-strong id="authored-value">128</m-strong>
-            <m-span data-m-statistic-suffix><m-a id="details-link" href="#authored-heading">people</m-a> <m-button id="details-action">Details</m-button> <m-button type="submit" id="submit-action">Submit metric</m-button></m-span>
+            <m-span data-m-statistic-suffix><m-link id="details-link" href="#authored-heading">people</m-link> <m-button id="details-action">Details</m-button> <m-button attr-type="submit" id="submit-action">Submit metric</m-button></m-span>
           </m-statistic>
         </form>
         <m-box class="controls" display="flex" wrap="wrap" gap="8" margin="12 0 0 0">

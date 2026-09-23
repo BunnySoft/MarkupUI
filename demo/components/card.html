@@ -16,12 +16,15 @@
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./card.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-box.global.js"></script>
   <script defer src="../../dist/markup-ui-card.global.js"></script>
   <script defer src="../../dist/markup-ui-switch.global.js"></script>
   <script defer src="../../dist/markup-ui-tabs.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+
   <script type="module" src="./card.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -110,7 +113,7 @@
       <div class="demo-preview" data-demo-preview>
         <m-card>
           <m-card-header>
-            <m-h3>Card Slots Demo</m-h3>
+            <m-heading level="3">Card Slots Demo</m-heading>
             <m-card-header-extra>#header-extra</m-card-header-extra>
           </m-card-header>
           <m-card-content>Card Content</m-card-content>
@@ -144,7 +147,7 @@
       <div class="demo-preview" data-demo-preview>
         <m-card segmented-content segmented-footer="soft">
           <m-card-header>
-            <m-h3>Card Segmented Demo</m-h3>
+            <m-heading level="3">Card Segmented Demo</m-heading>
             <m-card-header-extra>#header-extra</m-card-header-extra>
           </m-card-header>
           <m-card-content>Card Content</m-card-content>
@@ -192,7 +195,7 @@
       </header>
       <div class="demo-preview" data-demo-preview>
         <m-card class="task-card" content-scrollable segmented>
-          <m-card-header><m-h3>Task List</m-h3></m-card-header>
+          <m-card-header><m-heading level="3">Task List</m-heading></m-card-header>
           <m-card-content tabindex="0" role="region" aria-label="Scrollable task list">
             <p>Task 1: only content area scrolls.</p>
             <p>Task 2: only content area scrolls.</p>

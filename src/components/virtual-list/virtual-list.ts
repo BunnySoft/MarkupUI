@@ -117,7 +117,7 @@ export function createVirtualList<T>(viewport: HTMLElement, options: VirtualList
     if (!/^(?:\d+(?:\.\d+)?|\.\d+)px$/.test(size) || Number.parseFloat(size) <= 0
       || Number.parseFloat(size) > MAX_VIEWPORT_HEIGHT || !["auto", "scroll"].includes(style.overflowY)
       || [style.paddingTop, style.paddingBottom].some(value => Number.parseFloat(value || "0") !== 0)) {
-      throw new Error("Load the stylesheet and set --m-virtual-list-height to a positive CSS-pixel length up to 16384px.")
+      throw new Error(`Load the stylesheet and set --m-virtual-list-height to a positive CSS-pixel length up to 16384px. Received height=${JSON.stringify(size)}, overflow-y=${style.overflowY}, padding=${style.paddingTop}/${style.paddingBottom}.`)
     }
     return virtualWindow(items.length, rowSize, viewport.clientHeight, viewport.scrollTop, overscan)
   }

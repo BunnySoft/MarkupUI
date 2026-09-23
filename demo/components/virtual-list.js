@@ -57,7 +57,7 @@ function initialize() {
   action("start", () => list.scrollTo({ position: "top" }))
   action("middle", () => list.scrollTo({ index: 50000 }))
   action("end", () => list.scrollTo({ key: 99999, align: "end" }))
-  action("resize", () => { large.classList.toggle("short"); list.refresh() })
+  action("resize", () => { large.height = large.height === "160px" ? "320px" : "160px"; list.refresh() })
   action("hide", () => { large.hidden = !large.hidden; list.refresh() })
   action("update", () => { for (const item of items) item.text = `Updated item ${item.id + 1}`; list.setItems(items) })
   action("rtl", () => { document.documentElement.dir = document.documentElement.dir === "rtl" ? "ltr" : "rtl" })
@@ -94,6 +94,7 @@ function initialize() {
   window.virtualListDemo = { list, editable, items, get editorItems() { return editorItems }, metrics }
 }
 
-if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initialize, { once: true })
-else initialize()
+// This controller requires loaded viewport styles before its first geometry check.
+if (document.readyState === "complete") initialize()
+else window.addEventListener("load", initialize, { once: true })
 

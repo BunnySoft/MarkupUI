@@ -14,10 +14,14 @@
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./input.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <script type="module" src="../../dist/markup-ui-core.js"></script>
   <script type="module" src="../../dist/markup-ui-button.js"></script>
   <script type="module" src="../../dist/markup-ui-box.js"></script>
-  <script type="module" src="../../dist/markup-ui-core.js"></script>
+  <script type="module" src="../../dist/markup-ui-native-input.js"></script>
   <script type="module" src="../../dist/markup-ui-input.js"></script>
+  <script type="module" src="../../dist/markup-ui-typography.js"></script>
+
   <script type="module" src="./input.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -115,7 +119,7 @@ lines</textarea>
             <span data-input-count>Count available with JavaScript</span>
           </m-input>
           <input type="hidden" name="token" value="local-only">
-          <m-p><button type="submit">Inspect native submission locally</button> <button type="reset">Native reset</button> <m-button type="button" id="validate">Report title validity</m-button></m-p>
+          <m-p><button type="submit">Inspect native submission locally</button> <button type="reset">Native reset</button> <m-button attr-type="button" id="validate">Report title validity</m-button></m-p>
           <pre id="submission">Nothing submitted.</pre>
           <m-p id="events">Title events: input 0, change 0, clear 0</m-p>
         </div>

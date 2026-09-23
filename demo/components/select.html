@@ -14,9 +14,14 @@
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./select.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <script type="module" src="../../dist/markup-ui-core.js"></script>
   <script type="module" src="../../dist/markup-ui-button.js"></script>
   <script type="module" src="../../dist/markup-ui-box.js"></script>
+  <script type="module" src="../../dist/markup-ui-native-select.js"></script>
   <script type="module" src="../../dist/markup-ui-select.js"></script>
+  <script type="module" src="../../dist/markup-ui-typography.js"></script>
+
   <script type="module" src="./select.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -117,9 +122,9 @@
         <m-box class="demo-tools">
           <button type="submit" form="selection-form">Validate and inspect FormData</button>
           <button type="reset" form="selection-form">Native reset</button>
-          <m-button type="button" id="default">Make Rust the reset default</m-button>
-          <m-button type="button" id="cancel">Cancel next reset</m-button>
-          <m-button type="button" id="mode">Toggle external multiple mode</m-button>
+          <m-button attr-type="button" id="default">Make Rust the reset default</m-button>
+          <m-button attr-type="button" id="cancel">Cancel next reset</m-button>
+          <m-button attr-type="button" id="mode">Toggle external multiple mode</m-button>
         </m-box>
         <pre id="submission">No submission yet. This demo does not send data to a service.</pre>
       </div>

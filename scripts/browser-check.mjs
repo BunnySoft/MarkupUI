@@ -3,13 +3,20 @@ import { spawn } from "node:child_process"
 import { mkdir, writeFile } from "node:fs/promises"
 import { resolve } from "node:path"
 import { chromium, firefox, webkit } from "playwright"
+import { components } from "../demo/catalog.js"
 
+const engines = { chromium, firefox, webkit }
+const selectedBrowser = process.argv.find(arg => arg.startsWith("--browser="))?.slice("--browser=".length)
+if (selectedBrowser) assert(Object.hasOwn(engines, selectedBrowser), `Unknown browser: ${selectedBrowser}`)
+const selectedPage = process.argv.find(arg => arg.startsWith("--page="))?.slice("--page=".length)
+if (selectedPage) assert(components.some(component => component.slug === selectedPage), `Unknown page: ${selectedPage}`)
 const output = resolve(".vite/browser")
 await mkdir(output, { recursive: true })
 const server = spawn(process.execPath, ["demo/server.mjs"], {
   env: { ...process.env, PORT: "0" }, windowsHide: true, stdio: ["ignore", "pipe", "pipe"],
 })
 const results = []
+const catalogResults = []
 try {
   const origin = await new Promise((resolveOrigin, reject) => {
     const timeout = setTimeout(() => reject(new Error("Demo server did not start.")), 10_000)
@@ -21,7 +28,8 @@ try {
     })
     server.stderr.on("data", chunk => process.stderr.write(chunk))
   })
-  for (const [name, engine] of Object.entries({ chromium, firefox, webkit })) {
+  for (const [name, engine] of Object.entries(engines)) {
+    if (selectedBrowser && selectedBrowser !== name) continue
     console.log(`Starting ${name}`)
     const browser = await engine.launch({ headless: true, timeout: 30_000 })
     try {
@@ -31,7 +39,7 @@ try {
         try {
           const page = await context.newPage()
           const errors = []
-          page.on("pageerror", error => errors.push(error.message))
+          page.on("pageerror", error => errors.push(error.stack ?? error.message))
           const start = performance.now()
           await page.goto(`${origin}/demo/components/chart.html`)
           await page.waitForFunction(() => document.querySelectorAll("m-chart").length === 6 && [...document.querySelectorAll("m-chart")].every(chart => chart.state === "ready"), null, { timeout: 20_000 })
@@ -134,11 +142,64 @@ try {
           assert.deepEqual(errors, [], `${name}/${layout}: browser errors`)
           results.push({ browser: name, version: browser.version(), layout, readyMs: Math.round(readyMs), charts: geometry, canvasColoredPixels: colored, performance: performanceSample })
           console.log(`${name} ${browser.version()} ${layout}: passed (${Math.round(readyMs)} ms to six ready charts)`)
+          if (process.argv.includes("--catalog")) {
+            const failedResources = []
+            page.on("response", response => {
+              const path = response.url().slice(origin.length)
+              // The Image fallback example deliberately requests this missing local fixture.
+              if (response.status() === 404 && path === "/demo/components/image.missing.svg"
+                && new URL(page.url()).pathname === "/demo/components/image.html") return
+              if (response.url().startsWith(origin) && response.status() >= 400) failedResources.push(`${response.status()} ${path}`)
+            })
+            page.on("requestfailed", request => {
+              if (request.url().startsWith(origin)) failedResources.push(`${request.failure()?.errorText} ${request.url().slice(origin.length)}`)
+            })
+            for (const { slug } of components.filter(component => !selectedPage || selectedPage === component.slug)) {
+              errors.length = 0
+              failedResources.length = 0
+              let failure
+              try {
+                await page.goto(`${origin}/demo/components/${slug}.html`)
+                const api = page.locator(`#${slug}-api`)
+                if (await api.count()) await page.waitForFunction(id => document.getElementById(id).classList.contains("component-api"), `${slug}-api`)
+                assert.deepEqual(errors, [])
+                if (slug === "virtual-list") {
+                  await page.waitForFunction(() => document.querySelector("#large").clientHeight === 320)
+                  await page.locator("#end").click()
+                  await page.waitForFunction(() => document.querySelector("#large").textContent.includes("Item 100000"))
+                  await page.locator("#resize").click()
+                  await page.waitForFunction(() => document.querySelector("#large").clientHeight === 160)
+                  await page.screenshot({ path: resolve(output, `${name}-${layout}-virtual-list.png`) })
+                }
+                await page.evaluate(() => new Promise(resolveFrame => requestAnimationFrame(() => requestAnimationFrame(resolveFrame))))
+                const unregistered = await page.evaluate(() => [...new Set([...document.querySelectorAll("*")]
+                  // Mention parses these hidden configuration nodes; they have no independent renderer.
+                  .filter(node => !node.matches("m-mention > m-option[hidden]"))
+                  .map(node => node.localName).filter(tag => tag.startsWith("m-") && !customElements.get(tag)))])
+                if (unregistered.length) errors.push(`Unregistered: ${unregistered.join(", ")}`)
+                assert.deepEqual([...errors, ...failedResources], [])
+              } catch (error) { failure = [...new Set([error.message, ...errors, ...failedResources])].join("\n") }
+              if (failure && slug === "virtual-list") {
+                failure += "\n" + JSON.stringify(await page.locator(".m-virtual-list").evaluateAll(nodes => nodes.map(node => {
+                  const css = getComputedStyle(node)
+                  return { id: node.id, hidden: node.hidden, size: css.getPropertyValue("--m-virtual-list-height"), overflow: css.overflowY, padding: [css.paddingTop, css.paddingBottom], display: css.display }
+                })))
+              }
+              catalogResults.push({ browser: name, layout, slug, passed: !failure, failure })
+              if (failure) console.log(`${name}/${layout}/${slug}: FAILED ${failure}`)
+            }
+            await writeFile(resolve(output, "catalog-results.json"), JSON.stringify({ date: new Date().toISOString(), results: catalogResults }, null, 2))
+          }
         } finally { await context.close() }
       }
     } finally { await browser.close() }
   }
   await writeFile(resolve(output, "results.json"), JSON.stringify({ date: new Date().toISOString(), results }, null, 2))
+  if (catalogResults.length) {
+    await writeFile(resolve(output, "catalog-results.json"), JSON.stringify({ date: new Date().toISOString(), results: catalogResults }, null, 2))
+    console.log(`Catalog: ${catalogResults.filter(result => result.passed).length}/${catalogResults.length} checks passed`)
+    assert(catalogResults.every(result => result.passed), `${catalogResults.filter(result => !result.passed).length} catalog checks failed; see .vite/browser/catalog-results.json`)
+  }
 } finally {
   server.kill()
   await new Promise(resolveExit => {

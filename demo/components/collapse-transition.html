@@ -14,10 +14,13 @@
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./collapse-transition.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-collapse-transition.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+
   <script type="module" src="./collapse-transition.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -45,7 +48,7 @@
         <m-button id="toggle-button" aria-expanded="true">Toggle content</m-button>
         <m-collapse-transition id="basic-transition">
           <m-box data-collapse-transition-content class="panel-content">
-            <m-h3>Authored content</m-h3>
+            <m-heading level="3">Authored content</m-heading>
             <m-p>Content smoothly expands and collapses using Web Animations.</m-p>
           </m-box>
         </m-collapse-transition>
@@ -58,7 +61,7 @@
         <m-button id="toggle-collapsed" aria-expanded="false">Show content</m-button>
         <m-collapse-transition id="collapsed-transition" show="false" hidden>
           <m-box data-collapse-transition-content class="panel-content">
-            <m-h3>Initially hidden content</m-h3>
+            <m-heading level="3">Initially hidden content</m-heading>
             <m-p>This content was collapsed on load.</m-p>
           </m-box>
         </m-collapse-transition>

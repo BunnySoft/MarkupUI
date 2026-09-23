@@ -14,10 +14,13 @@
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./log.css">
-  <script defer src="../../dist/markup-ui-core.global.js"></script>
-  <script defer src="../../dist/markup-ui-log.global.js"></script>
-  <script defer src="../../dist/markup-ui-button.global.js"></script>
-  <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <script type="module" src="../../dist/markup-ui-core.js"></script>
+  <script type="module" src="../../dist/markup-ui-log.js"></script>
+  <script type="module" src="../../dist/markup-ui-button.js"></script>
+  <script type="module" src="../../dist/markup-ui-box.js"></script>
+  <script type="module" src="../../dist/markup-ui-typography.js"></script>
+
   <script type="module" src="./log.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -64,7 +67,7 @@
 [local] &lt;b&gt;This is literal, not markup.&lt;/b&gt;
 
 [local] Last partial line</code></pre>
-          <m-p data-log-loading hidden>Application reports loading; retained text stays readable.</m-p>
+          <m-span data-log-loading hidden>Application reports loading; retained text stays readable.</m-span>
         </m-log>
         <m-box class="actions" data-enhancement hidden display="flex" wrap="wrap" gap="8">
           <m-button data-action="large">Load 10,000 local lines</m-button>

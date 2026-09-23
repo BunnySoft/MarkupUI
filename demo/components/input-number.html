@@ -14,9 +14,13 @@
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./input-number.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <script type="module" src="../../dist/markup-ui-core.js"></script>
   <script type="module" src="../../dist/markup-ui-button.js"></script>
   <script type="module" src="../../dist/markup-ui-box.js"></script>
   <script type="module" src="../../dist/markup-ui-input-number.js"></script>
+  <script type="module" src="../../dist/markup-ui-typography.js"></script>
+
   <script type="module" src="./input-number.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -100,8 +104,8 @@
           <m-box class="demo-tools">
             <button type="submit" form="numbers">Inspect native FormData</button>
             <button type="reset" form="numbers">Native reset</button>
-            <m-button type="button" id="defaults">Set quantity defaultValue to 0.4</m-button>
-            <m-button type="button" id="cancel">Cancel next reset</m-button>
+            <m-button attr-type="button" id="defaults">Set quantity defaultValue to 0.4</m-button>
+            <m-button attr-type="button" id="cancel">Cancel next reset</m-button>
           </m-box>
           <pre id="submission">No submission yet. This demo does not send data to a service.</pre>
         </div>

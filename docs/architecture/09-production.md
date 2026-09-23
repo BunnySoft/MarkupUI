@@ -112,6 +112,18 @@ native text containers. It still rejects child renderers, interactive/live feedb
 unstable IDs. Build and all 75 Form tests pass, including validation, restoration and
 reconnect with both portable tags. Browser-wide demo repairs remain in progress.
 
+The September 23 catalog repair passes all 594 startup checks: 99 pages in Chromium
+153.0.8010.12, Firefox 155.0 and WebKit 26.6 at desktop/mobile-sized viewports. Checks
+require rendered API documentation, registered public elements and no unexpected local
+resource or page errors. Hidden Mention option configuration and the single intentional
+Image fallback 404 are explicit exceptions. Chart/primitive workflows and Virtual List
+scroll-to-end/height changes pass. Virtual List now establishes block geometry and its
+demo waits for loaded styles before strict geometry validation. The targeted three-file
+regression passed 248 tests; the preceding seven-file run passed 397 with one stale
+classic-script expectation, subsequently corrected in the passing Log fixture.
+Evidence is generated under `.vite/browser` and `.vite/demo-repair-regression.json`.
+Catalog startup coverage is not full interaction or assistive-technology acceptance.
+
 ## Work order
 
 1. Finish the portable primitive contracts and renderers, starting with labels, disclosure

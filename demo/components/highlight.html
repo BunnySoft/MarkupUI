@@ -13,10 +13,13 @@
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./highlight.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-highlight.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+
   <script type="module" src="./highlight.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -63,13 +66,13 @@ x
                 <label><input id="case-sensitive" type="checkbox"> Case sensitive</label>
                 <label for="palette">Mark appearance</label>
                 <select id="palette"><option value="">Default</option><option value="demo-match">Custom class</option></select>
-                <m-button type="submit" id="apply-highlight">Apply matching</m-button>
+                <m-button attr-type="submit" id="apply-highlight">Apply matching</m-button>
                 <m-button id="clear-patterns">Clear patterns</m-button>
               </m-box>
             </fieldset>
           </form>
           <noscript><m-p>Automatic matching controls require JavaScript. Authored marks and navigation remain readable.</m-p></noscript>
-          <m-h3 id="preview-heading">Preview</m-h3>
+          <m-heading level="3" id="preview-heading">Preview</m-heading>
           <m-p id="feedback">Seven authored fallback marks; matching starts when the optional helper loads.</m-p>
           <m-p id="error-message"></m-p>
           <span class="m-highlight preview" id="preview"><mark class="m-highlight-mark">Atlas</mark> and <mark class="m-highlight-mark">atlas</mark>. Literal <mark class="m-highlight-mark">[a+b]</mark> stays te<mark class="m-highlight-mark">x</mark>t. &lt;b&gt;not HTML&lt;/b&gt;. İ<mark class="m-highlight-mark">x</mark> <mark class="m-highlight-mark">x</mark> <mark class="m-highlight-mark">😀</mark>.</span>

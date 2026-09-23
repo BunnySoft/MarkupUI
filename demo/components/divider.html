@@ -14,10 +14,13 @@
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./divider.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-divider.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+
   <script type="module" src="./divider.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -54,9 +57,9 @@
       <header data-demo-header><div><h2 id="content-heading">Title content and independent headings</h2><p>Primary content is one preserved title fragment, never placed inside the native hr.</p></div></header>
       <div class="demo-preview vertical" data-demo-preview>
         <m-divider title-placement="start"><m-span>Start</m-span></m-divider>
-        <m-divider id="heading-divider" label="Start of settings"><m-h2 id="divider-real-heading">Settings heading</m-h2></m-divider>
+        <m-divider id="heading-divider" label="Start of settings"><m-heading level="2" id="divider-real-heading">Settings heading</m-heading></m-divider>
         <m-divider title-placement="end" dashed><m-span>End</m-span></m-divider>
-        <m-divider id="decorative-divider" semantic="false"><m-h3 id="divider-decorative-heading">Independent decorative heading</m-h3></m-divider>
+        <m-divider id="decorative-divider" semantic="false"><m-heading level="3" id="divider-decorative-heading">Independent decorative heading</m-heading></m-divider>
         <m-divider class="narrow-divider">AnOriginalLongUnbrokenCaptionThatWrapsWithoutClippingOrReplacingItsText</m-divider>
         <m-box class="divider-options" display="flex" wrap="wrap" gap="8">
           <m-label>Orientation <select id="divider-orientation"><option value="horizontal">Horizontal</option><option value="vertical">Vertical</option></select></m-label>
@@ -69,7 +72,7 @@
           <m-button id="divider-detach">Detach / reconnect</m-button>
         </m-box>
         <m-box id="divider-live-mount">
-          <m-divider id="live-divider" label="Live rule"><m-h3 id="divider-live-heading">Live heading</m-h3></m-divider>
+          <m-divider id="live-divider" label="Live rule"><m-heading level="3" id="divider-live-heading">Live heading</m-heading></m-divider>
         </m-box>
         <m-p id="divider-status" class="demo-status" role="status"></m-p>
       </div>
@@ -84,7 +87,7 @@
           <a id="divider-after-link" href="#api-heading">After</a>
         </m-box>
         <m-box class="inline-dividers">
-          <m-divider id="vertical-heading-divider" orientation="vertical" label="Action groups"><m-h3 id="divider-vertical-heading">Vertical heading</m-h3></m-divider>
+          <m-divider id="vertical-heading-divider" orientation="vertical" label="Action groups"><m-heading level="3" id="divider-vertical-heading">Vertical heading</m-heading></m-divider>
           <m-divider orientation="vertical" semantic="false" dashed><span>Visible decorative caption</span></m-divider>
         </m-box>
         <m-box class="inline-dividers" dir="rtl">

@@ -3,8 +3,6 @@ import { createLog } from "../../dist/markup-ui-log.js"
 import { localLogFixture } from "./log.fixture.js"
 
 function initialize() {
-  const api = globalThis.MarkupUILog
-  if (!api) throw new Error("Log runtime did not load.")
   void loadComponentApi(document.getElementById("log-api"), new URL("../api/log.json", import.meta.url))
 
   const root = document.querySelector("#interactive-log") ?? document.querySelector("[data-log]")
@@ -53,13 +51,13 @@ function initialize() {
     follow: input => log.setFollow(input.checked),
     "trim-display": input => {
       log.setTrim(input.checked)
-      if ("trim" in root) (root as any).trim = input.checked
+      root.trim = input.checked
     },
     wrap: input => { log.viewport.toggleAttribute("data-word-wrap", input.checked); log.refresh() },
     rtl: input => { root.dir = input.checked ? "rtl" : "ltr"; log.refresh() },
     size: input => {
       root.dataset.visibleRows = input.value
-      if ("rows" in root) (root as any).rows = Number(input.value)
+      root.rows = Number(input.value)
       log.refresh()
     },
   }
