@@ -17,6 +17,57 @@ const server = spawn(process.execPath, ["demo/server.mjs"], {
 })
 const results = []
 const catalogResults = []
+async function verifyForm(page, origin, name, layout) {
+  await page.goto(`${origin}/demo/components/form.html`)
+  await page.waitForFunction(() => document.querySelector("#form-api").classList.contains("component-api"))
+  await page.locator("#name").fill("reserved")
+  await page.locator("#validate").click()
+  await page.waitForFunction(() => document.querySelector("#status").textContent.startsWith("Validation failed:"))
+  assert(await page.locator("#name-error").isVisible(), `${name}/${layout}: portable feedback not visible`)
+  assert.match(await page.locator("#name-error").textContent(), /reserved/)
+  assert.equal(await page.locator("#name").getAttribute("aria-invalid"), "true")
+  await page.locator("#name").scrollIntoViewIfNeeded()
+  await page.screenshot({ path: resolve(output, `${name}-${layout}-form-invalid.png`) })
+
+  await page.locator("#name").fill("Ada")
+  await page.locator("#validate").click()
+  await page.waitForFunction(() => document.querySelector("#status").textContent === "Validation passed. No data sent.")
+  assert.equal(await page.locator("#name-error").isVisible(), false)
+  assert.equal(await page.locator("#name").getAttribute("aria-invalid"), null)
+  assert.equal(await page.locator('input[name="locked"]').isDisabled(), true)
+  assert.equal(await page.locator('input[name="legend"]').isEnabled(), true)
+  assert.equal(await page.locator('input[name="reference"]').isEditable(), false)
+  await page.locator("#note").fill("Browser acceptance")
+  await page.getByRole("button", { name: "Validate and inspect save", exact: true }).click()
+  await page.waitForFunction(() => document.querySelector("#submission").textContent.startsWith("{"))
+  const submitted = JSON.parse(await page.locator("#submission").textContent())
+  assert.equal(submitted.submissions, 1)
+  assert.deepEqual(submitted.entries, [
+    ["profile.name", "Ada"], ["consent", "yes"],
+    ["contact[email]", "ada@example.test"], ["contact[confirm]", "ada@example.test"],
+    ["topics[]", "html"], ["legend", "included"], ["reference", "local-only"],
+    ["intent", "save"], ["notes[0].text", "Browser acceptance"],
+  ])
+
+  const consent = page.getByRole("switch", { name: "Required native Switch consent", exact: true })
+  assert.equal(await consent.isChecked(), true)
+  await consent.focus()
+  await page.keyboard.press("Space")
+  assert.equal(await consent.isChecked(), false)
+  await page.locator("#name").fill("Changed")
+  await page.getByRole("button", { name: "Native reset", exact: true }).click()
+  assert.equal(await consent.isChecked(), true)
+  assert.equal(await page.locator("#name").inputValue(), "Ada")
+  assert.equal(await page.locator("#note").inputValue(), "outside")
+
+  await page.locator("#name").fill("Keep cancelled reset")
+  await page.getByRole("button", { name: "Cancel next reset", exact: true }).click()
+  await page.getByRole("button", { name: "Native reset", exact: true }).click()
+  assert.equal(await page.locator("#name").inputValue(), "Keep cancelled reset")
+  await page.getByRole("button", { name: "Native reset", exact: true }).click()
+  assert.equal(await page.locator("#name").inputValue(), "Ada")
+  assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${name}/${layout}: form horizontal overflow`)
+}
 async function verifyHtmlPolicy(page, origin, name) {
   const url = `${origin}/demo/security-check.html`
   await page.route(url, route => route.fulfill({ contentType: "text/html", body: "<!doctype html><title>Security check</title><body></body>" }))
@@ -171,10 +222,11 @@ try {
           assert(await summary.evaluate(node => node.parentElement.open), `${name}/${layout}: disclosure keyboard activation failed`)
           await page.keyboard.press("Space")
           assert.equal(await summary.evaluate(node => node.parentElement.open), false)
+          await verifyForm(page, origin, name, layout)
           await verifyHtmlPolicy(page, origin, name)
           assert.deepEqual(errors, [], `${name}/${layout}: browser errors`)
           results.push({ browser: name, version: browser.version(), layout, readyMs: Math.round(readyMs), charts: geometry, canvasColoredPixels: colored, performance: performanceSample,
-            htmlPolicy: "passed", trustedTypes: name === "chromium" ? "fail-closed verified" : "not tested" })
+            form: "passed", htmlPolicy: "passed", trustedTypes: name === "chromium" ? "fail-closed verified" : "not tested" })
           console.log(`${name} ${browser.version()} ${layout}: passed (${Math.round(readyMs)} ms to six ready charts)`)
           if (process.argv.includes("--catalog")) {
             const failedResources = []

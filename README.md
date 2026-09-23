@@ -51,7 +51,7 @@ CI is configured for Windows, Linux and macOS on Node 22/24; browser acceptance 
 | `pnpm build` | Generate distributions and enforce payload budgets. |
 | `pnpm test` | Run the existing test suite; use focused fixtures while changing a component. |
 | `pnpm test:package` | Pack the built files and verify exports, types and imports in an isolated consumer. |
-| `pnpm test:browser` | Verify Chart and primitive workflows in installed Playwright browser engines. |
+| `pnpm test:browser` | Verify Chart, primitive, Form and HTML-policy workflows in installed Playwright browser engines. |
 | `pnpm test:catalog` | Also check every catalog page and Virtual List scrolling in all three browser engines. |
 | `pnpm demo` | Serve the development examples. |
 
