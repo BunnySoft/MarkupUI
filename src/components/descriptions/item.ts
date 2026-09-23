@@ -134,5 +134,3 @@ export class DescriptionItem extends ViewElement {
     }
   }
 }
-
-export { DescriptionItem as MDescriptionItem }

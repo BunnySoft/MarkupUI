@@ -287,6 +287,3 @@ export class Highlight extends ViewElement {
     }
   }
 }
-
-export const MHighlight = Highlight
-

@@ -1,4 +1,4 @@
-export { Result, MResult } from "./result.js"
+export { Result } from "./result.js"
 export { ResultHeader, ResultContent, ResultFooter } from "./regions.js"
 export { resultStatuses } from "./model.js"
 export type { ResultStatus } from "./model.js"

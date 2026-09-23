@@ -1,4 +1,4 @@
-export { Time, MTime, timeTypes } from "./time-element.js"
+export { Time, timeTypes } from "./time-element.js"
 export type { TimeDisplayType } from "./time-element.js"
 export { formatTime } from "./format.js"
 export { createTime } from "./time.js"

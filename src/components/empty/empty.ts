@@ -161,5 +161,3 @@ export class Empty extends ViewElement {
     })
   }
 }
-
-export { Empty as MEmpty }

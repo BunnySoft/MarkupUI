@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { gzipSync } from "node:zlib"
-import { createTransfer, Transfer, MTransfer, registerTransfer } from "../src/components/transfer/index.js"
+import { createTransfer, Transfer, registerTransfer } from "../src/components/transfer/index.js"
 import * as transferApi from "../src/components/transfer/index.js"
 import type { TransferController, TransferOptions, TransferChangeDetail } from "../src/components/transfer/index.js"
 import { createSelect } from "../src/components/native-select.js"
@@ -391,8 +391,8 @@ describe("ownership, teardown and failure", () => {
 describe("canonical Transfer ViewElement", () => {
   it("exports canonical own-tag ViewElement and registers m-transfer", () => {
     expect(transferApi.Transfer).toBe(Transfer)
-    expect(transferApi.MTransfer).toBe(MTransfer)
-    expect(MTransfer).toBe(Transfer)
+    expect(transferApi).not.toHaveProperty("MTransfer")
+    expect(customElements.get(Transfer.tag)).toBe(Transfer)
     expect(transferApi.createTransfer).toBe(createTransfer)
     expect(typeof transferApi.registerTransfer).toBe("function")
     expect(Object.hasOwn(Transfer, "tag")).toBe(true)
@@ -638,7 +638,7 @@ describe("canonical Transfer ViewElement", () => {
     const globalApi = (globalThis as any).MarkupUITransfer
     expect(globalApi).toBeDefined()
     expect(globalApi.Transfer.tag).toBe("m-transfer")
-    expect(globalApi.MTransfer).toBe(globalApi.Transfer)
+    expect(globalApi).not.toHaveProperty("MTransfer")
     expect(typeof globalApi.createTransfer).toBe("function")
     expect(typeof globalApi.registerTransfer).toBe("function")
   })

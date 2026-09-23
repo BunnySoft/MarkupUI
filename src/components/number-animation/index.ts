@@ -1,4 +1,4 @@
-export { NumberAnimation, NumberAnimation as MNumberAnimation } from "./number-animation-element.js"
+export { NumberAnimation } from "./number-animation-element.js"
 export { createNumberAnimation } from "./number-animation.js"
 export { formatAnimatedNumber, interpolateNumber } from "./number.js"
 export type { NumberFormatSettings } from "./number.js"
@@ -12,4 +12,3 @@ export function registerNumberAnimation(registry: Pick<CustomElementRegistry, "g
 }
 
 if (typeof customElements !== "undefined" && !customElements.get(NumberAnimation.tag)) registerNumberAnimation()
-

@@ -154,5 +154,3 @@ export class Table extends ViewElement {
     }
   }
 }
-
-export { Table as MTable }

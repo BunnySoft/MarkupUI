@@ -251,7 +251,7 @@ export class Countdown extends ViewElement {
   }
 }
 
-export { Countdown as MCountdown }
+
 
 export function registerCountdown(registry: Pick<CustomElementRegistry, "get" | "define"> = customElements): void {
   ViewElement.register([Countdown], registry)

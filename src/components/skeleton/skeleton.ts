@@ -199,5 +199,3 @@ export class Skeleton extends ViewElement {
     if (this.isConnected) this.observer?.observe(this, { childList: true, subtree: true })
   }
 }
-
-export { Skeleton as MSkeleton }

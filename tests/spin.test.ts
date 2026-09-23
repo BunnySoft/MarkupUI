@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { Spin, MSpin, registerSpin } from "../src/components/spin/index.js"
+import { Spin, registerSpin } from "../src/components/spin/index.js"
 import { builtInElementNames, registerElements } from "../src/components/elements.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.useRealTimers(); vi.restoreAllMocks() })
@@ -385,10 +385,10 @@ describe("standalone Spin", () => {
   it("starts only the final pre-upgrade timing configuration", () => {
     vi.useFakeTimers()
     document.body.innerHTML = "<test-late-spin><button type='button'>Target</button></test-late-spin>"
-    const element = document.querySelector("test-late-spin") as MSpin
+    const element = document.querySelector("test-late-spin") as Spin
     const target = element.querySelector("button")
     Object.assign(element, { show: true, delay: 100, size: 48, strokeWidth: 10, radius: 80, scale: 1, stroke: "blue", description: "Loading data", label: "Fetch", rotate: false })
-    customElements.define("test-late-spin", class extends MSpin {})
+    customElements.define("test-late-spin", class extends Spin {})
     expect(element.active).toBe(false)
     expect(vi.getTimerCount()).toBe(1)
     vi.advanceTimersByTime(100)
@@ -430,8 +430,8 @@ describe("standalone Spin", () => {
     expect(spin().active).toBe(true)
   })
 
-  it("exports canonical Spin with backwards-compatible MSpin alias", () => {
+  it("exports canonical Spin without compatibility aliases", () => {
     expect(Spin.tag).toBe("m-spin")
-    expect(MSpin).toBe(Spin)
+    expect(customElements.get(Spin.tag)).toBe(Spin)
   })
 })

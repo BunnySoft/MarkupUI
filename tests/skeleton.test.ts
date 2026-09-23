@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { Skeleton, MSkeleton, registerSkeleton } from "../src/components/skeleton/index.js"
+import { Skeleton, registerSkeleton } from "../src/components/skeleton/index.js"
 import { builtInElementNames, registerElements } from "../src/components/elements.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
@@ -141,7 +141,7 @@ describe("standalone Skeleton", () => {
   })
 
   it("keeps author nodes and listeners outside the decorative group", () => {
-    const element = document.createElement("m-skeleton") as MSkeleton
+    const element = document.createElement("m-skeleton") as Skeleton
     const button = document.createElement("button")
     button.type = "button"
     button.textContent = "Application control"
@@ -292,10 +292,10 @@ describe("standalone Skeleton", () => {
 
   it("handles pre-definition properties with bounded geometry and no replacement of author nodes", () => {
     document.body.innerHTML = "<test-late-skeleton><span>Caption</span></test-late-skeleton>"
-    const element = document.querySelector("test-late-skeleton") as MSkeleton
+    const element = document.querySelector("test-late-skeleton") as Skeleton
     const caption = element.querySelector("span")
     Object.assign(element, { width: 80, height: "2em", repeat: "3", size: "small", text: true, round: true, circle: false, animated: false, sharp: false })
-    customElements.define("test-late-skeleton", class extends MSkeleton {})
+    customElements.define("test-late-skeleton", class extends Skeleton {})
     expect(element.valid).toBe(true)
     expect(bars(element)).toHaveLength(3)
     expect(element.style.getPropertyValue("--_m-skeleton-width")).toBe("80px")
@@ -316,8 +316,8 @@ describe("standalone Skeleton", () => {
     expect(bars(skeleton())).toHaveLength(1)
   })
 
-  it("exports canonical Skeleton with backwards-compatible MSkeleton alias", () => {
+  it("exports canonical Skeleton without compatibility aliases", () => {
     expect(Skeleton.tag).toBe("m-skeleton")
-    expect(MSkeleton).toBe(Skeleton)
+    expect(customElements.get(Skeleton.tag)).toBe(Skeleton)
   })
 })

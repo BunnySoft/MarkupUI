@@ -1,4 +1,4 @@
-export { LoadingBar, MLoadingBar, loadingBarStatuses } from "./loading-bar-element.js"
+export { LoadingBar, loadingBarStatuses } from "./loading-bar-element.js"
 export type { LoadingBarStatus, LoadingBarChangeDetail } from "./loading-bar-element.js"
 export { loadingBar } from "./service.js"
 export { createLoadingBar } from "./loading-bar.js"
@@ -14,4 +14,3 @@ export function registerLoadingBar(
 }
 
 if (typeof customElements !== "undefined" && !customElements.get(LoadingBar.tag)) registerLoadingBar()
-

@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { FloatButton, MFloatButton, FloatButtonGroup, MFloatButtonGroup, registerFloatButton } from "../src/components/float-button/index.js"
+import { FloatButton, FloatButtonGroup, registerFloatButton } from "../src/components/float-button/index.js"
 import * as floatButtonApi from "../src/components/float-button/index.js"
 import type { FloatButtonClickDetail } from "../src/components/float-button/index.js"
 import { ViewElement } from "../src/core/index.js"
@@ -227,11 +227,11 @@ describe("native FloatButton and FloatButtonGroup", () => {
 describe("canonical FloatButton ViewElement", () => {
   it("exports canonical ViewElement classes and registers m-float-button and m-float-button-group", () => {
     expect(floatButtonApi.FloatButton).toBe(FloatButton)
-    expect(floatButtonApi.MFloatButton).toBe(MFloatButton)
-    expect(MFloatButton).toBe(FloatButton)
+    expect(floatButtonApi).not.toHaveProperty("MFloatButton")
+    expect(customElements.get(FloatButton.tag)).toBe(FloatButton)
     expect(floatButtonApi.FloatButtonGroup).toBe(FloatButtonGroup)
-    expect(floatButtonApi.MFloatButtonGroup).toBe(MFloatButtonGroup)
-    expect(MFloatButtonGroup).toBe(FloatButtonGroup)
+    expect(floatButtonApi).not.toHaveProperty("MFloatButtonGroup")
+    expect(customElements.get(FloatButtonGroup.tag)).toBe(FloatButtonGroup)
     expect(FloatButton.tag).toBe("m-float-button")
     expect(FloatButtonGroup.tag).toBe("m-float-button-group")
     expect(ViewElement.prototype.isPrototypeOf(FloatButton.prototype)).toBe(true)

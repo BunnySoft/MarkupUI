@@ -1,4 +1,4 @@
-export { Ellipsis, MEllipsis } from "./ellipsis.js"
+export { Ellipsis } from "./ellipsis.js"
 export { expandTriggers } from "./model.js"
 export type { ExpandTrigger } from "./model.js"
 

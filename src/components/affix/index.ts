@@ -1,4 +1,4 @@
-export { Affix, MAffix } from "./affix.js"
+export { Affix } from "./affix.js"
 export type { AffixChangeDetail } from "./model.js"
 
 import { Affix } from "./affix.js"

@@ -281,5 +281,3 @@ export class Notification extends ViewElement {
     this.close()
   }
 }
-
-export const MNotification = Notification

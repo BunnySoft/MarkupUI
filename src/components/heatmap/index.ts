@@ -1,4 +1,4 @@
-export { Heatmap, MHeatmap } from "./heatmap-element.js"
+export { Heatmap } from "./heatmap-element.js"
 export { createHeatmap } from "./heatmap.js"
 export { buildHeatmap, heatmapLevel } from "./model.js"
 export type { HeatmapDataItem, HeatmapCell, HeatmapSettings, HeatmapOptions, HeatmapModel } from "./model.js"
@@ -12,4 +12,3 @@ export function registerHeatmap(registry: Pick<CustomElementRegistry, "get" | "d
 }
 
 if (typeof customElements !== "undefined" && !customElements.get(Heatmap.tag)) registerHeatmap()
-

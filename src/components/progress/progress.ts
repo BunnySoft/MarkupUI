@@ -488,6 +488,3 @@ export class Progress extends ViewElement {
     })
   }
 }
-
-export const MProgress = Progress
-

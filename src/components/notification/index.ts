@@ -1,5 +1,5 @@
-export { Notification, MNotification } from "./notification-element.js"
-export { NotificationContainer, MNotificationContainer } from "./container.js"
+export { Notification } from "./notification-element.js"
+export { NotificationContainer } from "./container.js"
 export { notification, createNotification } from "./service.js"
 export type { NotificationServiceOptions } from "./service.js"
 export { notificationTypes, notificationPlacements } from "./model.js"

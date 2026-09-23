@@ -163,5 +163,3 @@ export class LoadingBar extends ViewElement {
     }
   }
 }
-
-export const MLoadingBar = LoadingBar

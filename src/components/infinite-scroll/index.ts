@@ -1,4 +1,4 @@
-export { InfiniteScroll, MInfiniteScroll } from "./infinite-scroll-element.js"
+export { InfiniteScroll } from "./infinite-scroll-element.js"
 export type { InfiniteScrollLoadDetail } from "./infinite-scroll-element.js"
 export { createInfiniteScroll } from "./infinite-scroll.js"
 export type {
@@ -20,4 +20,3 @@ export function registerInfiniteScroll(registry: Pick<CustomElementRegistry, "ge
 }
 
 if (typeof customElements !== "undefined") registerInfiniteScroll()
-

@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { InfiniteScroll, MInfiniteScroll, createInfiniteScroll, registerInfiniteScroll } from "../src/components/infinite-scroll/index.js"
+import { InfiniteScroll, createInfiniteScroll, registerInfiniteScroll } from "../src/components/infinite-scroll/index.js"
 import * as infiniteScrollApi from "../src/components/infinite-scroll/index.js"
 import type { InfiniteScrollContext, InfiniteScrollController, InfiniteScrollOptions, InfiniteScrollResult } from "../src/components/infinite-scroll/index.js"
 import { ViewElement } from "../src/core/index.js"
@@ -388,11 +388,11 @@ describe("cancellation, native constraints and ownership races", () => {
 describe("canonical InfiniteScroll ViewElement", () => {
   it("exports canonical ViewElement classes and registration", () => {
     expect(infiniteScrollApi.InfiniteScroll).toBe(InfiniteScroll)
-    expect(infiniteScrollApi.MInfiniteScroll).toBe(MInfiniteScroll)
+    expect(infiniteScrollApi).not.toHaveProperty("MInfiniteScroll")
     expect(InfiniteScroll.tag).toBe("m-infinite-scroll")
     expect(ViewElement.prototype.isPrototypeOf(InfiniteScroll.prototype)).toBe(true)
     expect(customElements.get("m-infinite-scroll")).toBe(InfiniteScroll)
-    expect(MInfiniteScroll).toBe(InfiniteScroll)
+    expect(customElements.get(InfiniteScroll.tag)).toBe(InfiniteScroll)
     expect(InfiniteScroll.observedAttributes).toEqual(["distance", "disabled"])
 
     expect(() => registerInfiniteScroll()).not.toThrow()

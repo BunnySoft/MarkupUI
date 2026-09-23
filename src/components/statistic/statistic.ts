@@ -166,6 +166,3 @@ export class Statistic extends ViewElement {
     })
   }
 }
-
-export { Statistic as MStatistic }
-

@@ -236,5 +236,3 @@ export class ImageGroup extends ViewElement {
     this.originalLink = origLink
   }
 }
-
-export { ImageGroup as MImageGroup }

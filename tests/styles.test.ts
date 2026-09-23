@@ -32,7 +32,9 @@ describe("CSS and theme sources", () => {
   it("preserves the approved runtime CSS baselines exactly", () => {
     // Core includes Avatar/Button corrections; migrated Divider/Icon/Typography/Input/Checkbox/Radio/Switch/Select styles are family-owned.
     // Grid is family-owned; pending Layout hooks no longer override Grid's item alignment.
-    expect(hash(builtInStyles)).toBe("0efd1ca1ed76246cb9f2ded7693206a14cd501bca40fb902f9a82f173d95fad6")
+    // The removed autocomplete alias has no aggregate styling.
+    expect(hash(builtInStyles)).toBe("d077fc7255f88ad04a690b50e068240ab2e748f5dbceb9e24643e94612d24180")
+    expect(builtInStyles).not.toContain("m-autocomplete")
     // Plugin styles retain only their own tags; selected components own their CSS.
     expect(hash(advancedStyles)).toBe("358ba4510188e24811c91c44b2b59b0498a918979095f852200758a260fb73a0")
     expect(hash(widgetStyles)).toBe("8ed4cb38ebf8f8f831d6a3c351313b254d093f534850b66f5448bcff371eb06f")

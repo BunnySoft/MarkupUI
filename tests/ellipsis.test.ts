@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { Ellipsis, MEllipsis, registerEllipsis } from "../src/components/ellipsis/index.js"
+import { Ellipsis, registerEllipsis } from "../src/components/ellipsis/index.js"
 import * as ellipsisApi from "../src/components/ellipsis/index.js"
 import { ViewElement } from "../src/core/index.js"
 
@@ -27,12 +27,12 @@ afterEach(() => {
 
 describe("canonical Ellipsis ViewElement", () => {
   it("exports canonical own-tag ViewElement and registers m-ellipsis", () => {
-    expect(Object.keys(ellipsisApi).sort()).toEqual(["Ellipsis", "MEllipsis", "expandTriggers", "registerEllipsis"])
+    expect(Object.keys(ellipsisApi).sort()).toEqual(["Ellipsis", "expandTriggers", "registerEllipsis"])
     expect(Object.hasOwn(Ellipsis, "tag")).toBe(true)
     expect(Ellipsis.tag).toBe("m-ellipsis")
     expect(ViewElement.prototype.isPrototypeOf(Ellipsis.prototype)).toBe(true)
     expect(customElements.get("m-ellipsis")).toBe(Ellipsis)
-    expect(MEllipsis).toBe(Ellipsis)
+    expect(customElements.get(Ellipsis.tag)).toBe(Ellipsis)
     expect(Ellipsis.observedAttributes).toEqual(["line-clamp", "expand-trigger", "tooltip", "expanded"])
     const define = vi.fn()
     expect(() => registerEllipsis({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")

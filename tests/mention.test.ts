@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createMention, Mention, MMention, registerMention } from "../src/components/mention/index.js"
+import { createMention, Mention, registerMention } from "../src/components/mention/index.js"
 import type { MentionOption, MentionOptions } from "../src/components/mention/index.js"
 import { ViewElement } from "../src/core/index.js"
 import { createInput } from "../src/components/native-input.js"
@@ -346,7 +346,7 @@ describe("canonical Mention ViewElement", () => {
     expect(customElements.get("m-mention")).toBe(Mention)
     expect(Mention.prototype instanceof ViewElement).toBe(true)
     expect(Mention.tag).toBe("m-mention")
-    expect(MMention).toBe(Mention)
+    expect(customElements.get(Mention.tag)).toBe(Mention)
     registerMention()
     expect(customElements.get("m-mention")).toBe(Mention)
   })

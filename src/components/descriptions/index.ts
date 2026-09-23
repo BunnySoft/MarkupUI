@@ -1,5 +1,5 @@
-export { Descriptions, MDescriptions } from "./descriptions.js"
-export { DescriptionItem, MDescriptionItem } from "./item.js"
+export { Descriptions } from "./descriptions.js"
+export { DescriptionItem } from "./item.js"
 export type { DescriptionsLabelPlacement, DescriptionsSize } from "./model.js"
 
 import { ViewElement } from "../../core/index.js"

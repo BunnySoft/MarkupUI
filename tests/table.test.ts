@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { Table, MTable, registerTable, tableSizes } from "../src/components/table/index.js"
+import { Table, registerTable, tableSizes } from "../src/components/table/index.js"
 import * as tableApi from "../src/components/table/index.js"
 import { ViewElement } from "../src/core/index.js"
 import "../src/components/button/index.js"
@@ -29,9 +29,9 @@ afterEach(() => {
 
 describe("canonical Table element", () => {
   it("registers canonical Table with own tag, shared ViewElement identity and registration conflict safety", () => {
-    expect(Object.keys(tableApi).sort()).toEqual(["MTable", "Table", "registerTable", "tableSizes"])
+    expect(Object.keys(tableApi).sort()).toEqual(["Table", "registerTable", "tableSizes"])
     expect(Table.tag).toBe("m-table")
-    expect(MTable).toBe(Table)
+    expect(customElements.get(Table.tag)).toBe(Table)
     expect(Table.prototype instanceof ViewElement).toBe(true)
     expect(customElements.get("m-table")).toBe(Table)
     expect("meta" in Table).toBe(false)

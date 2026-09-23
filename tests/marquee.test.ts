@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { gzipSync } from "node:zlib"
-import { Marquee, MMarquee, registerMarquee, createMarquee } from "../src/components/marquee/index.js"
+import { Marquee, registerMarquee, createMarquee } from "../src/components/marquee/index.js"
 import * as marqueeApi from "../src/components/marquee/index.js"
 import type { MarqueeController, MarqueeOptions } from "../src/components/marquee/index.js"
 import { ViewElement } from "../src/core/index.js"
@@ -360,10 +360,10 @@ describe("canonical Marquee ViewElement", () => {
     expect(Marquee.tag).toBe("m-marquee")
     expect(ViewElement.prototype.isPrototypeOf(Marquee.prototype)).toBe(true)
     expect(customElements.get("m-marquee")).toBe(Marquee)
-    expect(MMarquee).toBe(Marquee)
+    expect(customElements.get(Marquee.tag)).toBe(Marquee)
     expect(Marquee.observedAttributes).toEqual(["speed", "pause-on-hover", "reverse"])
     expect(marqueeApi.Marquee).toBe(Marquee)
-    expect(marqueeApi.MMarquee).toBe(Marquee)
+    expect(marqueeApi).not.toHaveProperty("MMarquee")
     expect(typeof marqueeApi.registerMarquee).toBe("function")
     expect(typeof marqueeApi.createMarquee).toBe("function")
     const define = vi.fn()

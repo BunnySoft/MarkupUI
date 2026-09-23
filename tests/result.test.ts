@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { Result, MResult, ResultHeader, ResultContent, ResultFooter, registerResult, resultStatuses } from "../src/components/result/index.js"
+import { Result, ResultHeader, ResultContent, ResultFooter, registerResult, resultStatuses } from "../src/components/result/index.js"
 import * as resultApi from "../src/components/result/index.js"
 import { ViewElement } from "../src/core/index.js"
 
@@ -31,7 +31,7 @@ afterEach(() => {
 describe("canonical Result ViewElement", () => {
   it("exports canonical ViewElement classes and registration", () => {
     expect(resultApi.Result).toBe(Result)
-    expect(resultApi.MResult).toBe(Result)
+    expect(resultApi).not.toHaveProperty("MResult")
     expect(resultApi.ResultHeader).toBe(ResultHeader)
     expect(resultApi.ResultContent).toBe(ResultContent)
     expect(resultApi.ResultFooter).toBe(ResultFooter)

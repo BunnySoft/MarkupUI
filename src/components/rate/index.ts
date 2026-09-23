@@ -1,4 +1,4 @@
-export { Rate, Rate as MRate, rateSizes } from "./rate-element.js"
+export { Rate, rateSizes } from "./rate-element.js"
 export type { RateSize } from "./rate-element.js"
 export { createRate } from "./rate.js"
 export type { RateController, RateOptions } from "./rate.js"
@@ -11,4 +11,3 @@ export function registerRate(registry: Pick<CustomElementRegistry, "get" | "defi
 }
 
 if (typeof customElements !== "undefined" && !customElements.get(Rate.tag)) registerRate()
-

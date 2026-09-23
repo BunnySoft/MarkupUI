@@ -3,7 +3,7 @@ import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import * as colorPickerApi from "../src/components/color-picker/index.js"
-import { ColorPicker, MColorPicker, registerColorPicker, createColorPicker } from "../src/components/color-picker/index.js"
+import { ColorPicker, registerColorPicker, createColorPicker } from "../src/components/color-picker/index.js"
 import { ViewElement } from "../src/core/index.js"
 import { createInput } from "../src/components/native-input.js"
 import { coordinateForm as createForm } from "../src/components/form/controller.js"
@@ -311,7 +311,7 @@ describe("Color Picker default styles", () => {
 describe("canonical ColorPicker ViewElement", () => {
   it("exports canonical ViewElement classes and registration", () => {
     expect(colorPickerApi.ColorPicker).toBe(ColorPicker)
-    expect(colorPickerApi.MColorPicker).toBe(MColorPicker)
+    expect(colorPickerApi).not.toHaveProperty("MColorPicker")
     expect(ColorPicker.tag).toBe("m-color-picker")
     expect(ViewElement.prototype.isPrototypeOf(ColorPicker.prototype)).toBe(true)
     expect(customElements.get("m-color-picker")).toBe(ColorPicker)

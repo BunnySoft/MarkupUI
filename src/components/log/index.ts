@@ -1,4 +1,4 @@
-export { Log, MLog, createLog, MAX_LOG_LINES, MAX_LOG_CHARACTERS, MAX_LOG_LINE_LENGTH } from "./log.js"
+export { Log, createLog, MAX_LOG_LINES, MAX_LOG_CHARACTERS, MAX_LOG_LINE_LENGTH } from "./log.js"
 export type { LogOptions, LogLine, LogState, LogUpdate, LogScrollOptions, LogController } from "./log.js"
 
 import { Log } from "./log.js"
@@ -9,4 +9,3 @@ export function registerLog(registry: Pick<CustomElementRegistry, "get" | "defin
 }
 
 if (typeof customElements !== "undefined") registerLog()
-

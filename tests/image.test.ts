@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createImagePreview, Image, ImageGroup, MImage, MImageGroup, registerImage } from "../src/components/image/index.js"
+import { createImagePreview, Image, ImageGroup, registerImage } from "../src/components/image/index.js"
 import type { ImagePreviewController } from "../src/components/image/index.js"
 import { ViewElement } from "../src/core/index.js"
 
@@ -551,8 +551,8 @@ describe("canonical Image ViewElement", () => {
   it("exports canonical own-tag ViewElement and registers m-image and m-image-group", () => {
     expect(Image.tag).toBe("m-image")
     expect(ImageGroup.tag).toBe("m-image-group")
-    expect(MImage).toBe(Image)
-    expect(MImageGroup).toBe(ImageGroup)
+    expect(customElements.get(Image.tag)).toBe(Image)
+    expect(customElements.get(ImageGroup.tag)).toBe(ImageGroup)
     expect(ViewElement.prototype.isPrototypeOf(Image.prototype)).toBe(true)
     expect(ViewElement.prototype.isPrototypeOf(ImageGroup.prototype)).toBe(true)
     expect(customElements.get("m-image")).toBe(Image)

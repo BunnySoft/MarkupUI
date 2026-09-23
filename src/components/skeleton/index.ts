@@ -1,4 +1,4 @@
-export { Skeleton, MSkeleton, skeletonSizes } from "./skeleton.js"
+export { Skeleton, skeletonSizes } from "./skeleton.js"
 export type { SkeletonPresetSize, SkeletonSize, SkeletonValidationError } from "./model.js"
 
 import { Skeleton } from "./skeleton.js"

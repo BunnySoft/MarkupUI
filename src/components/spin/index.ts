@@ -1,4 +1,4 @@
-export { Spin, MSpin, spinSizes } from "./spin.js"
+export { Spin, spinSizes } from "./spin.js"
 export type { SpinPresetSize, SpinSize, SpinValidationError } from "./model.js"
 
 import { Spin } from "./spin.js"

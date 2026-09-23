@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs"
 import { join, resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createLoadingBar, LoadingBar, MLoadingBar, loadingBar, registerLoadingBar, loadingBarStatuses } from "../src/components/loading-bar/index.js"
+import { createLoadingBar, LoadingBar, loadingBar, registerLoadingBar, loadingBarStatuses } from "../src/components/loading-bar/index.js"
 import * as loadingBarApi from "../src/components/loading-bar/index.js"
 import { ViewElement } from "../src/core/index.js"
 import { generateComponentApi } from "../scripts/component-api.mjs"
@@ -415,12 +415,12 @@ describe("validated passive anatomy and packaging", () => {
 describe("canonical LoadingBar ViewElement", () => {
   it("exports canonical own-tag ViewElement and registers m-loading-bar", () => {
     expect(LoadingBar.tag).toBe("m-loading-bar")
-    expect(MLoadingBar).toBe(LoadingBar)
+    expect(customElements.get(LoadingBar.tag)).toBe(LoadingBar)
     expect(ViewElement.prototype.isPrototypeOf(LoadingBar.prototype)).toBe(true)
     expect(customElements.get("m-loading-bar")).toBe(LoadingBar)
     expect(LoadingBar.observedAttributes).toEqual(["status", "loading"])
     expect(loadingBarApi.LoadingBar).toBe(LoadingBar)
-    expect(loadingBarApi.MLoadingBar).toBe(LoadingBar)
+    expect(loadingBarApi).not.toHaveProperty("MLoadingBar")
     expect(loadingBarApi.loadingBar).toBe(loadingBar)
 
     expect(() => registerLoadingBar()).not.toThrow()

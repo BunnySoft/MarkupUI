@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { Heatmap, MHeatmap, buildHeatmap, createHeatmap, heatmapLevel, registerHeatmap } from "../src/components/heatmap/index.js"
+import { Heatmap, buildHeatmap, createHeatmap, heatmapLevel, registerHeatmap } from "../src/components/heatmap/index.js"
 import * as heatmapApi from "../src/components/heatmap/index.js"
 import type { HeatmapController, HeatmapOptions } from "../src/components/heatmap/index.js"
 import { ViewElement } from "../src/core/index.js"
@@ -322,7 +322,7 @@ describe("Heatmap default styles", () => {
 describe("canonical Heatmap ViewElement", () => {
   it("exports canonical ViewElement classes and registration", () => {
     expect(heatmapApi.Heatmap).toBe(Heatmap)
-    expect(heatmapApi.MHeatmap).toBe(MHeatmap)
+    expect(heatmapApi).not.toHaveProperty("MHeatmap")
     expect(Heatmap.tag).toBe("m-heatmap")
     expect(ViewElement.prototype.isPrototypeOf(Heatmap.prototype)).toBe(true)
     expect(customElements.get("m-heatmap")).toBe(Heatmap)

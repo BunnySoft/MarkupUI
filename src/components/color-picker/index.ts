@@ -1,4 +1,4 @@
-export { ColorPicker, ColorPicker as MColorPicker } from "./color-picker-element.js"
+export { ColorPicker } from "./color-picker-element.js"
 export { createColorPicker } from "./color-picker.js"
 export type { ColorPickerController } from "./color-picker.js"
 
@@ -10,4 +10,3 @@ export function registerColorPicker(registry: Pick<CustomElementRegistry, "get" 
 }
 
 if (typeof customElements !== "undefined" && !customElements.get(ColorPicker.tag)) registerColorPicker()
-

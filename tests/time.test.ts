@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { Time, MTime, registerTime, timeTypes, createTime, formatTime } from "../src/components/time/index.js"
+import { Time, registerTime, timeTypes, createTime, formatTime } from "../src/components/time/index.js"
 import * as timeApi from "../src/components/time/index.js"
 import "../src/components/time/global.js"
 import { ViewElement } from "../src/core/index.js"
@@ -321,8 +321,8 @@ describe("Time meaningful live refresh and cleanup", () => {
 describe("canonical Time ViewElement", () => {
   it("exports canonical ViewElement classes and registration", () => {
     expect(timeApi.Time).toBe(Time)
-    expect(timeApi.MTime).toBe(MTime)
-    expect(MTime).toBe(Time)
+    expect(timeApi).not.toHaveProperty("MTime")
+    expect(customElements.get(Time.tag)).toBe(Time)
     expect(Time.tag).toBe("m-time")
     expect(ViewElement.prototype.isPrototypeOf(Time.prototype)).toBe(true)
     expect(customElements.get("m-time")).toBe(Time)
@@ -340,7 +340,7 @@ describe("canonical Time ViewElement", () => {
     const globalApi = (globalThis as any).MarkupUITime
     expect(globalApi).toBeDefined()
     expect(globalApi.Time).toBe(Time)
-    expect(globalApi.MTime).toBe(MTime)
+    expect(globalApi).not.toHaveProperty("MTime")
     expect(globalApi.registerTime).toBe(registerTime)
     expect(globalApi.createTime).toBe(createTime)
     expect(globalApi.formatTime).toBe(formatTime)

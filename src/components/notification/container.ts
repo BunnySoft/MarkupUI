@@ -50,5 +50,3 @@ export class NotificationContainer extends ViewElement {
     }
   }
 }
-
-export const MNotificationContainer = NotificationContainer

@@ -206,7 +206,7 @@ costs are 1,294/1,459 bytes, core-inclusive runtime costs are 2,277/2,499 bytes,
 
 ## Tag delivery
 
-Tag and its canonical `Tag` class (aliased as `MTag`) select core plus one family entry and CSS.
+Tag and its canonical `Tag` class select core plus one family entry and CSS.
 ESM imports `markup-ui-core.js`; classic order is `markup-ui-core.global.js`, then
 `markup-ui-tag.global.js`, with `markup-ui-tag.css`. The legacy aggregate no longer defines
 `MTag` in `src/components/content.ts`. Checkable mode wraps or adopts native buttons with `aria-pressed`;
@@ -219,7 +219,7 @@ costs are 2,348/2,514 bytes, core-inclusive runtime costs are 3,330/3,553 bytes,
 
 ## Badge delivery
 
-Badge and its canonical `Badge` class (aliased as `MBadge`) select core plus one family entry and CSS.
+Badge and its canonical `Badge` class select core plus one family entry and CSS.
 ESM imports `markup-ui-core.js`; classic order is `markup-ui-core.global.js`, then
 `markup-ui-badge.global.js`, with `markup-ui-badge.css`. The legacy aggregate no longer defines
 `m-badge` in `src/components/elements.ts`. Badge formats passive counts, caps, dot/processing
@@ -232,7 +232,7 @@ costs are 1,501/1,676 bytes, core-inclusive runtime costs are 2,484/2,716 bytes,
 
 ## Empty delivery
 
-Empty and its canonical `Empty` class (aliased as `MEmpty`) select core plus one family entry and CSS.
+Empty and its canonical `Empty` class select core plus one family entry and CSS.
 ESM imports `markup-ui-core.js`; classic order is `markup-ui-core.global.js`, then
 `markup-ui-empty.global.js`, with `markup-ui-empty.css`. The legacy aggregate no longer defines
 `m-empty` in `src/components/elements.ts`. Empty generates readable fallback text and decorative
@@ -245,7 +245,7 @@ costs are 1,622/1,803 bytes, core-inclusive runtime costs are 2,605/2,843 bytes,
 
 ## Spin delivery
 
-Spin and its canonical `Spin` class (aliased as `MSpin`) select core plus one family entry and CSS.
+Spin and its canonical `Spin` class select core plus one family entry and CSS.
 ESM imports `markup-ui-core.js`; classic order is `markup-ui-core.global.js`, then
 `markup-ui-spin.global.js`, with `markup-ui-spin.css`. The legacy aggregate no longer defines
 `m-spin` in `src/components/elements.ts`. Spin provides customizable size presets or numeric
@@ -259,7 +259,7 @@ costs are 3,019/3,187 bytes, core-inclusive runtime costs are 4,002/4,227 bytes,
 
 ## Skeleton delivery
 
-Skeleton and its canonical `Skeleton` class (aliased as `MSkeleton`) select core plus one family entry and CSS.
+Skeleton and its canonical `Skeleton` class select core plus one family entry and CSS.
 ESM imports `markup-ui-core.js`; classic order is `markup-ui-core.global.js`, then
 `markup-ui-skeleton.global.js`, with `markup-ui-skeleton.css`. The legacy aggregate no longer defines
 `m-skeleton` in `src/components/elements.ts`. Skeleton provides customizable dimensions, bounded
@@ -298,7 +298,7 @@ costs are 6,537/6,722 bytes, core-inclusive runtime costs are 7,520/7,762 bytes,
 
 ## Alert delivery
 
-Alert and its canonical `Alert` class (aliased as `MAlert`) select core plus one family entry and CSS.
+Alert and its canonical `Alert` class select core plus one family entry and CSS.
 ESM imports `markup-ui-core.js`; classic order is `markup-ui-core.global.js`, then
 `markup-ui-alert.global.js`, with `markup-ui-alert.css`. The legacy aggregate no longer defines
 `m-alert` in `src/components/elements.ts`. Alert provides semantic notice types, safe title fallback,

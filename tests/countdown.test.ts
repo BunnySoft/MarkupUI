@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { Countdown, MCountdown, registerCountdown, createCountdown, formatCountdown } from "../src/components/countdown/index.js"
+import { Countdown, registerCountdown, createCountdown, formatCountdown } from "../src/components/countdown/index.js"
 import * as countdownApi from "../src/components/countdown/index.js"
 import type { CountdownController, CountdownOptions } from "../src/components/countdown/index.js"
 import { maximumDuration } from "../src/components/countdown/format.js"
@@ -349,9 +349,9 @@ describe("Countdown default styles", () => {
 describe("canonical Countdown ViewElement", () => {
   it("exports canonical ViewElement classes and registers m-countdown", () => {
     expect(Countdown.tag).toBe("m-countdown")
-    expect(MCountdown).toBe(Countdown)
+    expect(customElements.get(Countdown.tag)).toBe(Countdown)
     expect(countdownApi.Countdown).toBe(Countdown)
-    expect(countdownApi.MCountdown).toBe(Countdown)
+    expect(countdownApi).not.toHaveProperty("MCountdown")
     expect(ViewElement.prototype.isPrototypeOf(Countdown.prototype)).toBe(true)
     expect(customElements.get("m-countdown")).toBe(Countdown)
     expect(Countdown.observedAttributes).toEqual(["duration", "active", "precision"])

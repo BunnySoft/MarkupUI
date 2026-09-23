@@ -1,4 +1,4 @@
-export { Alert, MAlert } from "./alert.js"
+export { Alert } from "./alert.js"
 export type { AlertCloseDetail, AlertType } from "./model.js"
 export { alertTypes } from "./model.js"
 

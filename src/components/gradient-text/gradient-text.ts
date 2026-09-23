@@ -121,5 +121,3 @@ export class GradientText extends ViewElement {
     }
   }
 }
-
-export { GradientText as MGradientText }

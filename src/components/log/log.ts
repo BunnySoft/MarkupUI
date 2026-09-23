@@ -550,5 +550,3 @@ export class Log extends ViewElement {
     }
   }
 }
-
-export const MLog = Log

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createAutoComplete, AutoComplete, MAutocomplete, registerAutoComplete } from "../src/components/auto-complete/index.js"
+import { createAutoComplete, AutoComplete, registerAutoComplete } from "../src/components/auto-complete/index.js"
 import type { AutoCompleteLoader, AutoCompleteOptions, AutoCompleteSuggestion } from "../src/components/auto-complete/index.js"
 import { ViewElement } from "../src/core/index.js"
 import { createInput } from "../src/components/native-input.js"
@@ -319,13 +319,11 @@ describe("native reset and concrete Input/Form composition", () => {
 })
 
 describe("canonical AutoComplete ViewElement", () => {
-  it("registers canonical AutoComplete and MAutocomplete custom elements extending ViewElement", () => {
+  it("registers only canonical AutoComplete extending ViewElement", () => {
     expect(customElements.get("m-auto-complete")).toBe(AutoComplete)
-    expect(customElements.get("m-autocomplete")).toBe(MAutocomplete)
+    expect(customElements.get("m-autocomplete")).toBeUndefined()
     expect(AutoComplete.prototype instanceof ViewElement).toBe(true)
-    expect(MAutocomplete.prototype instanceof AutoComplete).toBe(true)
     expect(AutoComplete.tag).toBe("m-auto-complete")
-    expect(MAutocomplete.tag).toBe("m-autocomplete")
   })
 
   it("creates elements with default properties and applies CSS classes", () => {
@@ -552,15 +550,10 @@ describe("canonical AutoComplete ViewElement", () => {
     expect(document.activeElement).not.toBe(input)
   })
 
-  it("works with alias m-autocomplete element", () => {
-    const element = document.createElement("m-autocomplete") as MAutocomplete
-    document.body.append(element)
-    expect(element instanceof AutoComplete).toBe(true)
-    expect(element instanceof MAutocomplete).toBe(true)
-    expect(element.value).toBe("")
-    element.value = "Alias value"
-    expect(element.value).toBe("Alias value")
-    expect(element.querySelector("input")?.value).toBe("Alias value")
+  it("rejects conflicting canonical registration instead of skipping it", () => {
+    const define = vi.fn()
+    expect(() => registerAutoComplete({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
+    expect(define).not.toHaveBeenCalled()
   })
 
   it("upgrades properties assigned before connectedCallback", () => {

@@ -1,4 +1,4 @@
-export { Badge, MBadge } from "./badge.js"
+export { Badge } from "./badge.js"
 export type { BadgePlacement, BadgeType } from "./model.js"
 
 import { Badge } from "./badge.js"

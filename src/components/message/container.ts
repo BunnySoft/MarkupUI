@@ -58,5 +58,3 @@ export class MessageContainer extends ViewElement {
     }
   }
 }
-
-export const MMessageContainer = MessageContainer

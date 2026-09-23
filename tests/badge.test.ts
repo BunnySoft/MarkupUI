@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { Badge, MBadge, registerBadge } from "../src/components/badge/index.js"
+import { Badge, registerBadge } from "../src/components/badge/index.js"
 import { builtInElementNames, registerElements } from "../src/components/elements.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
@@ -383,9 +383,9 @@ describe("standalone Badge", () => {
 
   it("preserves pre-definition properties", () => {
     document.body.innerHTML = "<test-late-badge></test-late-badge>"
-    const element = document.querySelector("test-late-badge") as MBadge
+    const element = document.querySelector("test-late-badge") as Badge
     Object.assign(element, { value: 12, max: 9, show: true, showZero: true, dot: false, processing: true, decorative: true, type: "info", placement: "bottom-start" })
-    customElements.define("test-late-badge", class extends MBadge {})
+    customElements.define("test-late-badge", class extends Badge {})
     expect(number(element).textContent).toBe("9+")
     expect(element.indicator?.getAttribute("aria-hidden")).toBe("true")
     expect(element.showZero && element.processing).toBe(true)
@@ -393,9 +393,9 @@ describe("standalone Badge", () => {
     expect(element.placement).toBe("bottom-start")
   })
 
-  it("exports canonical Badge with backwards-compatible MBadge alias", () => {
+  it("exports canonical Badge without compatibility aliases", () => {
     expect(Badge.tag).toBe("m-badge")
-    expect(MBadge).toBe(Badge)
+    expect(customElements.get(Badge.tag)).toBe(Badge)
   })
 
   it("injects no styles or shadow DOM and reports registration conflicts", () => {

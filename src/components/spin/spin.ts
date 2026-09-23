@@ -335,5 +335,3 @@ export class Spin extends ViewElement {
     this.dataset.mSpinState = this.invalid ? "invalid" : this.shown ? "visible" : this.timer !== undefined ? "waiting" : "hidden"
   }
 }
-
-export { Spin as MSpin }

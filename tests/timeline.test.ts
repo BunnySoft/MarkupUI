@@ -2,14 +2,7 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import {
-  Timeline,
-  MTimeline,
-  TimelineItem,
-  MTimelineItem,
-  registerTimeline,
-  timelineItemTypes,
-} from "../src/components/timeline/index.js"
+import { Timeline, TimelineItem, registerTimeline, timelineItemTypes } from "../src/components/timeline/index.js"
 import * as timelineApi from "../src/components/timeline/index.js"
 import "../src/components/timeline/global.js"
 import { ViewElement } from "../src/core/index.js"
@@ -33,9 +26,9 @@ afterEach(() => {
 describe("canonical Timeline ViewElement", () => {
   it("exports canonical ViewElement classes and registration", () => {
     expect(timelineApi.Timeline).toBe(Timeline)
-    expect(timelineApi.MTimeline).toBe(Timeline)
+    expect(timelineApi).not.toHaveProperty("MTimeline")
     expect(timelineApi.TimelineItem).toBe(TimelineItem)
-    expect(timelineApi.MTimelineItem).toBe(TimelineItem)
+    expect(timelineApi).not.toHaveProperty("MTimelineItem")
     expect(Timeline.tag).toBe("m-timeline")
     expect(TimelineItem.tag).toBe("m-timeline-item")
     expect(ViewElement.prototype.isPrototypeOf(Timeline.prototype)).toBe(true)
@@ -57,9 +50,9 @@ describe("canonical Timeline ViewElement", () => {
     const globalApi = (globalThis as unknown as { MarkupUITimeline?: typeof timelineApi }).MarkupUITimeline
     expect(globalApi).toBeDefined()
     expect(globalApi?.Timeline).toBe(Timeline)
-    expect(globalApi?.MTimeline).toBe(MTimeline)
+    expect(globalApi).not.toHaveProperty("MTimeline")
     expect(globalApi?.TimelineItem).toBe(TimelineItem)
-    expect(globalApi?.MTimelineItem).toBe(MTimelineItem)
+    expect(globalApi).not.toHaveProperty("MTimelineItem")
     expect(globalApi?.registerTimeline).toBe(registerTimeline)
   })
 

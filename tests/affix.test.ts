@@ -2,7 +2,7 @@ import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { Affix, MAffix, registerAffix } from "../src/components/affix/index.js"
+import { Affix, registerAffix } from "../src/components/affix/index.js"
 import * as affixApi from "../src/components/affix/index.js"
 import type { AffixChangeDetail } from "../src/components/affix/index.js"
 import { ViewElement } from "../src/core/index.js"
@@ -185,7 +185,7 @@ describe("CSS-native sticky Affix", () => {
 describe("canonical Affix ViewElement", () => {
   it("exports canonical ViewElement classes and registration", () => {
     expect(affixApi.Affix).toBe(Affix)
-    expect(affixApi.MAffix).toBe(MAffix)
+    expect(affixApi).not.toHaveProperty("MAffix")
     expect(Affix.tag).toBe("m-affix")
     expect(ViewElement.prototype.isPrototypeOf(Affix.prototype)).toBe(true)
     expect(customElements.get("m-affix")).toBe(Affix)

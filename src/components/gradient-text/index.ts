@@ -1,4 +1,4 @@
-export { GradientText, MGradientText } from "./gradient-text.js"
+export { GradientText } from "./gradient-text.js"
 export { gradientTextTypes } from "./model.js"
 export type { GradientTextType } from "./model.js"
 

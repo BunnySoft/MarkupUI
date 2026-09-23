@@ -268,5 +268,3 @@ export class Image extends ViewElement {
     this.stageImage = fullImg
   }
 }
-
-export { Image as MImage }

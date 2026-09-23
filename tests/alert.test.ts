@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { Alert, MAlert, registerAlert } from "../src/components/alert/index.js"
+import { Alert, registerAlert } from "../src/components/alert/index.js"
 import type { AlertCloseDetail, AlertType } from "../src/components/alert/index.js"
 import { builtInElementNames, registerElements } from "../src/components/elements.js"
 
@@ -17,7 +17,7 @@ function close(element: Alert): HTMLButtonElement {
 
 describe("standalone Alert", () => {
   it("preserves free-form native content and listeners without adding an interactive or live role", () => {
-    const element = document.createElement("m-alert") as MAlert
+    const element = document.createElement("m-alert") as Alert
     const text = document.createTextNode("Notice ")
     const button = document.createElement("button")
     button.type = "button"
@@ -136,7 +136,7 @@ describe("standalone Alert", () => {
   })
 
   it("preserves authored icon identity, listeners and ARIA across type/show changes", () => {
-    const element = document.createElement("m-alert") as MAlert
+    const element = document.createElement("m-alert") as Alert
     const icon = document.createElement("span")
     icon.setAttribute("data-m-alert-icon", "")
     icon.setAttribute("role", "img")
@@ -380,7 +380,7 @@ describe("standalone Alert", () => {
 
   it("does not emit a second parent close for nested alerts", () => {
     const outer = alert('<m-alert closable><m-alert closable>Inner</m-alert></m-alert>')
-    const inner = outer.querySelector("m-alert") as MAlert
+    const inner = outer.querySelector("m-alert") as Alert
     const intent = vi.fn()
     outer.addEventListener("m:close", intent)
     close(inner).click()
@@ -391,10 +391,10 @@ describe("standalone Alert", () => {
 
   it("preserves pre-definition properties and runtime CSS separation", () => {
     document.body.innerHTML = "<test-late-alert><p>Body</p></test-late-alert>"
-    const element = document.querySelector("test-late-alert") as MAlert
+    const element = document.querySelector("test-late-alert") as Alert
     const content = element.querySelector("p")
     Object.assign(element, { title: "Late", type: "success", closable: true, closeLabel: "Dismiss", showIcon: false, bordered: false })
-    customElements.define("test-late-alert", class extends MAlert {})
+    customElements.define("test-late-alert", class extends Alert {})
     expect(element.querySelector("p")).toBe(content)
     expect(element.querySelector("[data-m-alert-header]")?.textContent).toBe("Late")
     expect(element.type).toBe("success")
@@ -405,9 +405,9 @@ describe("standalone Alert", () => {
     expect(document.querySelector("style,[style]")).toBeNull()
   })
 
-  it("exports canonical Alert with backwards-compatible MAlert alias", () => {
+  it("exports canonical Alert without compatibility aliases", () => {
     expect(Alert.tag).toBe("m-alert")
-    expect(MAlert).toBe(Alert)
+    expect(customElements.get(Alert.tag)).toBe(Alert)
   })
 
   it("reports conflicts and preserves rich definitions when the aggregate loads afterward", () => {

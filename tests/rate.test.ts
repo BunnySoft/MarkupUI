@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createRate, Rate, MRate, registerRate } from "../src/components/rate/index.js"
+import { createRate, Rate, registerRate } from "../src/components/rate/index.js"
 import { createRadioGroup } from "../src/components/native-radio.js"
 import type { RateController, RateOptions } from "../src/components/rate/index.js"
 import { ViewElement } from "../src/core/index.js"
@@ -276,7 +276,7 @@ describe("Radio boundary/reset/lifetime reuse", () => {
 describe("canonical Rate ViewElement", () => {
   it("exports canonical own-tag ViewElement and registers m-rate", () => {
     expect(Rate.tag).toBe("m-rate")
-    expect(MRate).toBe(Rate)
+    expect(customElements.get(Rate.tag)).toBe(Rate)
     expect(ViewElement.prototype.isPrototypeOf(Rate.prototype)).toBe(true)
     expect(customElements.get("m-rate")).toBe(Rate)
     expect(Rate.observedAttributes).toEqual([

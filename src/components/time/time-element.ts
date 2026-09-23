@@ -174,5 +174,3 @@ export class Time extends ViewElement {
     }
   }
 }
-
-export { Time as MTime }

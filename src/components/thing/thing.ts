@@ -222,10 +222,3 @@ export class ThingAction extends ViewElement {
     this.classList.add("m-thing-action")
   }
 }
-
-export { Thing as MThing }
-export { ThingAvatar as MThingAvatar }
-export { ThingHeader as MThingHeader }
-export { ThingContent as MThingContent }
-export { ThingFooter as MThingFooter }
-export { ThingAction as MThingAction }

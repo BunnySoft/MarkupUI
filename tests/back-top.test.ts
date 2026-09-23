@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createBackTop, BackTop, MBackTop, registerBackTop } from "../src/components/back-top/index.js"
+import { createBackTop, BackTop, registerBackTop } from "../src/components/back-top/index.js"
 import * as backTopApi from "../src/components/back-top/index.js"
 import type { BackTopController, BackTopOptions } from "../src/components/back-top/index.js"
 import { ViewElement } from "../src/core/index.js"
@@ -423,12 +423,12 @@ describe("validation, ownership and cleanup", () => {
 
 describe("canonical BackTop ViewElement", () => {
   it("exports canonical own-tag ViewElement and registers m-back-top", () => {
-    expect(Object.keys(backTopApi).sort()).toEqual(["BackTop", "MBackTop", "createBackTop", "registerBackTop"])
+    expect(Object.keys(backTopApi).sort()).toEqual(["BackTop", "createBackTop", "registerBackTop"])
     expect(Object.hasOwn(BackTop, "tag")).toBe(true)
     expect(BackTop.tag).toBe("m-back-top")
     expect(ViewElement.prototype.isPrototypeOf(BackTop.prototype)).toBe(true)
     expect(customElements.get("m-back-top")).toBe(BackTop)
-    expect(MBackTop).toBe(BackTop)
+    expect(customElements.get(BackTop.tag)).toBe(BackTop)
     expect(BackTop.observedAttributes).toEqual(["visibility-height", "right", "bottom", "target", "listen-to"])
 
     const define = vi.fn()

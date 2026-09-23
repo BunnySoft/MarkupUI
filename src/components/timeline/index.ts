@@ -1,5 +1,5 @@
-export { Timeline, MTimeline } from "./timeline.js"
-export { TimelineItem, MTimelineItem } from "./item.js"
+export { Timeline } from "./timeline.js"
+export { TimelineItem } from "./item.js"
 export { timelineItemTypes } from "./model.js"
 export type { TimelineItemType } from "./model.js"
 

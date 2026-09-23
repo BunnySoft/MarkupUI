@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { Tag, MTag, registerTag } from "../src/components/tag/index.js"
+import { Tag, registerTag } from "../src/components/tag/index.js"
 import type { TagCloseDetail } from "../src/components/tag/index.js"
 import { builtInElementNames, registerElements } from "../src/components/elements.js"
 
@@ -49,7 +49,7 @@ describe("standalone Tag", () => {
   })
 
   it("uses a passive native span and preserves authored nodes and listeners", () => {
-    const element = document.createElement("m-tag") as MTag
+    const element = document.createElement("m-tag") as Tag
     const label = document.createElement("strong")
     label.textContent = "Topic"
     const listener = vi.fn()
@@ -122,7 +122,7 @@ describe("standalone Tag", () => {
   })
 
   it("adopts an authored native button without nesting or losing its listeners", () => {
-    const element = document.createElement("m-tag") as MTag
+    const element = document.createElement("m-tag") as Tag
     element.checkable = true
     const native = document.createElement("button")
     native.type = "submit"
@@ -157,7 +157,7 @@ describe("standalone Tag", () => {
   })
 
   it("rejects interactive label descendants before generating a nested button root", () => {
-    const element = document.createElement("m-tag") as MTag
+    const element = document.createElement("m-tag") as Tag
     element.innerHTML = '<span><a href="#topic">Topic</a></span>'
     element.checkable = true
     expect(() => element.connectedCallback()).toThrow("Checkable Tag labels must be noninteractive")
@@ -322,7 +322,7 @@ describe("standalone Tag", () => {
     document.querySelector("fieldset")!.disabled = false
     element.click()
     expect(element.checked).toBe(true)
-    close(document.querySelectorAll("m-tag")[1] as MTag).click()
+    close(document.querySelectorAll("m-tag")[1] as Tag).click()
     expect(submit).not.toHaveBeenCalled()
   })
 
@@ -378,11 +378,11 @@ describe("standalone Tag", () => {
 
   it("upgrades reflected properties before definition without fabricating changes", () => {
     document.body.innerHTML = "<test-late-tag>Late</test-late-tag>"
-    const element = document.querySelector("test-late-tag") as MTag
+    const element = document.querySelector("test-late-tag") as Tag
     const changes = vi.fn()
     element.addEventListener("m:change", changes)
     Object.assign(element, { checkable: true, checked: true, disabled: true, closable: true, type: "info", size: "large", round: true, strong: true, bordered: false, closeLabel: "Dismiss", triggerClickOnClose: true })
-    customElements.define("test-late-tag", class extends MTag {})
+    customElements.define("test-late-tag", class extends Tag {})
     expect(element.control?.getAttribute("aria-pressed")).toBe("true")
     expect(element.control?.disabled).toBe(true)
     expect(element.round && element.strong && element.triggerClickOnClose).toBe(true)
@@ -393,9 +393,9 @@ describe("standalone Tag", () => {
     expect(changes).not.toHaveBeenCalled()
   })
 
-  it("exports canonical Tag with backwards-compatible MTag alias", () => {
+  it("exports canonical Tag without compatibility aliases", () => {
     expect(Tag.tag).toBe("m-tag")
-    expect(MTag).toBe(Tag)
+    expect(customElements.get(Tag.tag)).toBe(Tag)
   })
 
   it("keeps runtime styles external and rejects conflicting registration", () => {

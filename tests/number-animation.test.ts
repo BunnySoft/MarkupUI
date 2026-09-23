@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createNumberAnimation, formatAnimatedNumber, interpolateNumber, NumberAnimation, MNumberAnimation, registerNumberAnimation } from "../src/components/number-animation/index.js"
+import { createNumberAnimation, formatAnimatedNumber, interpolateNumber, NumberAnimation, registerNumberAnimation } from "../src/components/number-animation/index.js"
 import * as numberAnimationApi from "../src/components/number-animation/index.js"
 import type { NumberAnimationController, NumberAnimationOptions } from "../src/components/number-animation/index.js"
 import { ViewElement } from "../src/core/index.js"
@@ -341,7 +341,7 @@ describe("Number Animation failures, reentrancy and lifetime", () => {
 describe("canonical NumberAnimation ViewElement", () => {
   it("exports canonical ViewElement classes and registration", () => {
     expect(numberAnimationApi.NumberAnimation).toBe(NumberAnimation)
-    expect(numberAnimationApi.MNumberAnimation).toBe(NumberAnimation)
+    expect(numberAnimationApi).not.toHaveProperty("MNumberAnimation")
     expect(NumberAnimation.tag).toBe("m-number-animation")
     expect(ViewElement.prototype.isPrototypeOf(NumberAnimation.prototype)).toBe(true)
     expect(customElements.get("m-number-animation")).toBe(NumberAnimation)

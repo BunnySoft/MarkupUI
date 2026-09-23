@@ -236,7 +236,7 @@ export class Mention extends ViewElement {
   }
 }
 
-export const MMention = Mention
+
 
 export function registerMention(registry: Pick<CustomElementRegistry, "get" | "define"> = customElements): void {
   if (registry.get(Mention.tag)) return

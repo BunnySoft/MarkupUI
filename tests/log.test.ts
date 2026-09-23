@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { createLog, Log, MLog, registerLog, MAX_LOG_LINES, MAX_LOG_CHARACTERS, MAX_LOG_LINE_LENGTH } from "../src/components/log/index.js"
+import { createLog, Log, registerLog, MAX_LOG_LINES, MAX_LOG_CHARACTERS, MAX_LOG_LINE_LENGTH } from "../src/components/log/index.js"
 import * as logApi from "../src/components/log/index.js"
 import type { LogController, LogOptions } from "../src/components/log/index.js"
 import { ViewElement } from "../src/core/index.js"
@@ -377,8 +377,8 @@ describe("edge notifications and lifecycle", () => {
 describe("canonical Log ViewElement", () => {
   it("exports canonical ViewElement classes and registration", () => {
     expect(logApi.Log).toBe(Log)
-    expect(logApi.MLog).toBe(MLog)
-    expect(MLog).toBe(Log)
+    expect(logApi).not.toHaveProperty("MLog")
+    expect(customElements.get(Log.tag)).toBe(Log)
     expect(Log.tag).toBe("m-log")
     expect(ViewElement.prototype.isPrototypeOf(Log.prototype)).toBe(true)
     expect(customElements.get("m-log")).toBe(Log)
@@ -627,7 +627,7 @@ describe("canonical Log ViewElement", () => {
     const target = globalThis as typeof globalThis & { MarkupUILog?: typeof logApi }
     expect(target.MarkupUILog).toBeDefined()
     expect(target.MarkupUILog?.Log).toBe(Log)
-    expect(target.MarkupUILog?.MLog).toBe(MLog)
+    expect(target.MarkupUILog).not.toHaveProperty("MLog")
     expect(target.MarkupUILog?.registerLog).toBe(registerLog)
     expect(target.MarkupUILog?.createLog).toBe(createLog)
   })

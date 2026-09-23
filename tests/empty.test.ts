@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { Empty, MEmpty, registerEmpty } from "../src/components/empty/index.js"
+import { Empty, registerEmpty } from "../src/components/empty/index.js"
 import { builtInElementNames, registerElements } from "../src/components/elements.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
@@ -326,9 +326,9 @@ describe("standalone Empty", () => {
     expect(document.querySelector("style,[style]")).toBeNull()
   })
 
-  it("exports canonical Empty with backwards-compatible MEmpty alias", () => {
+  it("exports canonical Empty without compatibility aliases", () => {
     expect(Empty.tag).toBe("m-empty")
-    expect(MEmpty).toBe(Empty)
+    expect(customElements.get(Empty.tag)).toBe(Empty)
   })
 
   it("reports collisions and preserves rich registration when the legacy aggregate follows", () => {

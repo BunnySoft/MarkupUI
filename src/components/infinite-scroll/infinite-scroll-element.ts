@@ -160,5 +160,3 @@ export class InfiniteScroll extends ViewElement {
     }
   }
 }
-
-export const MInfiniteScroll = InfiniteScroll

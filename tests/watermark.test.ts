@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { createWatermark, Watermark, MWatermark, registerWatermark } from "../src/components/watermark/index.js"
+import { createWatermark, Watermark, registerWatermark } from "../src/components/watermark/index.js"
 import * as watermarkApi from "../src/components/watermark/index.js"
 import { ViewElement } from "../src/core/index.js"
 import type { WatermarkController, WatermarkSettings } from "../src/components/watermark/index.js"
@@ -335,10 +335,10 @@ describe("Watermark lifetime, native resize and restoration", () => {
 
 describe("canonical Watermark ViewElement", () => {
   it("exports canonical own-tag ViewElement and registers m-watermark", () => {
-    expect(Object.keys(watermarkApi).sort()).toEqual(["MWatermark", "Watermark", "createWatermark", "registerWatermark"])
+    expect(Object.keys(watermarkApi).sort()).toEqual(["Watermark", "createWatermark", "registerWatermark"])
     expect(Object.hasOwn(Watermark, "tag")).toBe(true)
     expect(Watermark.tag).toBe("m-watermark")
-    expect(MWatermark).toBe(Watermark)
+    expect(customElements.get(Watermark.tag)).toBe(Watermark)
     expect(ViewElement.prototype.isPrototypeOf(Watermark.prototype)).toBe(true)
     expect(customElements.get("m-watermark")).toBe(Watermark)
     expect(Watermark.observedAttributes).toEqual(["content", "cross", "fullscreen", "width", "height", "z-index", "rotate"])

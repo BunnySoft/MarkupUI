@@ -2,21 +2,7 @@ import { readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import {
-  Thing,
-  MThing,
-  ThingAvatar,
-  MThingAvatar,
-  ThingHeader,
-  MThingHeader,
-  ThingContent,
-  MThingContent,
-  ThingFooter,
-  MThingFooter,
-  ThingAction,
-  MThingAction,
-  registerThing,
-} from "../src/components/thing/index.js"
+import { Thing, ThingAvatar, ThingHeader, ThingContent, ThingFooter, ThingAction, registerThing } from "../src/components/thing/index.js"
 import * as thingApi from "../src/components/thing/index.js"
 import { ViewElement } from "../src/core/index.js"
 import { Box } from "../src/components/box/index.js"
@@ -285,17 +271,17 @@ describe("CSS-only native Thing", () => {
 describe("canonical Thing ViewElement", () => {
   it("exports canonical ViewElement classes and registers m-thing and companion elements", () => {
     expect(thingApi.Thing).toBe(Thing)
-    expect(thingApi.MThing).toBe(Thing)
+    expect(thingApi).not.toHaveProperty("MThing")
     expect(thingApi.ThingHeader).toBe(ThingHeader)
-    expect(thingApi.MThingHeader).toBe(ThingHeader)
+    expect(thingApi).not.toHaveProperty("MThingHeader")
     expect(thingApi.ThingAvatar).toBe(ThingAvatar)
-    expect(thingApi.MThingAvatar).toBe(ThingAvatar)
+    expect(thingApi).not.toHaveProperty("MThingAvatar")
     expect(thingApi.ThingContent).toBe(ThingContent)
-    expect(thingApi.MThingContent).toBe(ThingContent)
+    expect(thingApi).not.toHaveProperty("MThingContent")
     expect(thingApi.ThingFooter).toBe(ThingFooter)
-    expect(thingApi.MThingFooter).toBe(ThingFooter)
+    expect(thingApi).not.toHaveProperty("MThingFooter")
     expect(thingApi.ThingAction).toBe(ThingAction)
-    expect(thingApi.MThingAction).toBe(ThingAction)
+    expect(thingApi).not.toHaveProperty("MThingAction")
 
     expect(Thing.tag).toBe("m-thing")
     expect(ThingHeader.tag).toBe("m-thing-header")

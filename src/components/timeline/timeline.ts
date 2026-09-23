@@ -43,5 +43,3 @@ export class Timeline extends ViewElement {
     this.toggleAttribute("data-horizontal", this.horizontal)
   }
 }
-
-export { Timeline as MTimeline }

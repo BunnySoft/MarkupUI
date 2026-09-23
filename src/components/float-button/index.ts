@@ -1,7 +1,7 @@
 export { FloatButton } from "./float-button.js"
-export { FloatButton as MFloatButton } from "./float-button.js"
+
 export { FloatButtonGroup } from "./group.js"
-export { FloatButtonGroup as MFloatButtonGroup } from "./group.js"
+
 export type { FloatButtonType, FloatButtonShape, FloatButtonClickDetail } from "./model.js"
 
 import { FloatButton } from "./float-button.js"

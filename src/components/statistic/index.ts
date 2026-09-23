@@ -1,4 +1,4 @@
-export { Statistic, MStatistic } from "./statistic.js"
+export { Statistic } from "./statistic.js"
 
 import { Statistic } from "./statistic.js"
 import { ViewElement } from "../../core/index.js"
@@ -8,4 +8,3 @@ export function registerStatistic(registry: Pick<CustomElementRegistry, "get" | 
 }
 
 if (typeof customElements !== "undefined") registerStatistic()
-

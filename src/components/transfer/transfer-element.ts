@@ -420,5 +420,3 @@ export class Transfer extends ViewElement {
     this.removeEventListener("input", this.onFilterInput)
   }
 }
-
-export { Transfer as MTransfer }

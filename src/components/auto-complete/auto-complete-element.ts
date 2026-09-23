@@ -286,20 +286,9 @@ export class AutoComplete extends ViewElement {
   }
 }
 
-/**
- * AutoComplete alias component.
- * @region {"name":"content","accepts":["input","datalist","phrasing"],"min":0,"max":null}
- */
-export class MAutocomplete extends AutoComplete {
-  public static override readonly tag: string = "m-autocomplete"
-}
-
-export const MAutoComplete = AutoComplete
-export const AutoCompleteAlias = MAutocomplete
 
 export function registerAutoComplete(registry: Pick<CustomElementRegistry, "get" | "define"> = customElements): void {
-  if (registry.get("m-auto-complete") && registry.get("m-autocomplete")) return
-  ViewElement.register([AutoComplete, MAutocomplete], registry)
+  ViewElement.register([AutoComplete], registry)
 }
 
 if (typeof customElements !== "undefined" && !customElements.get(AutoComplete.tag)) registerAutoComplete()

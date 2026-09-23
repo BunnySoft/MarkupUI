@@ -1,4 +1,4 @@
-export { BackTop, MBackTop } from "./back-top-element.js"
+export { BackTop } from "./back-top-element.js"
 export { createBackTop } from "./back-top.js"
 export type { BackTopController, BackTopOptions } from "./back-top.js"
 export type { NativeScrollRoot, NativeScrollBehavior } from "../anchor/scroll.js"
@@ -11,4 +11,3 @@ export function registerBackTop(registry: Pick<CustomElementRegistry, "get" | "d
 }
 
 if (typeof customElements !== "undefined") registerBackTop()
-

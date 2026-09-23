@@ -2,15 +2,7 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import {
-  HIGHLIGHT_LIMITS,
-  Highlight,
-  MHighlight,
-  createHighlight,
-  findHighlightRanges,
-  highlightText,
-  registerHighlight,
-} from "../src/components/highlight/index.js"
+import { HIGHLIGHT_LIMITS, Highlight, createHighlight, findHighlightRanges, highlightText, registerHighlight } from "../src/components/highlight/index.js"
 import * as highlightApi from "../src/components/highlight/index.js"
 import type { HighlightMatchOptions, HighlightOptions } from "../src/components/highlight/index.js"
 import { ViewElement } from "../src/core/index.js"
@@ -339,7 +331,7 @@ describe("native owned Highlight surface", () => {
 describe("canonical Highlight ViewElement", () => {
   it("exports canonical ViewElement classes and registration", () => {
     expect(highlightApi.Highlight).toBe(Highlight)
-    expect(highlightApi.MHighlight).toBe(MHighlight)
+    expect(highlightApi).not.toHaveProperty("MHighlight")
     expect(Highlight.tag).toBe("m-highlight")
     expect(ViewElement.prototype.isPrototypeOf(Highlight.prototype)).toBe(true)
     expect(customElements.get("m-highlight")).toBe(Highlight)

@@ -1,4 +1,4 @@
-export { Tag, MTag } from "./tag.js"
+export { Tag } from "./tag.js"
 export type { TagCloseDetail, TagSize, TagType } from "./model.js"
 
 import { Tag } from "./tag.js"

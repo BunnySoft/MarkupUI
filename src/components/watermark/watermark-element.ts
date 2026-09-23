@@ -273,5 +273,3 @@ export class Watermark extends ViewElement {
     }
   }
 }
-
-export { Watermark as MWatermark }

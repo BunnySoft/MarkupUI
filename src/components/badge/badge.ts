@@ -132,5 +132,3 @@ export class Badge extends ViewElement {
     })
   }
 }
-
-export { Badge as MBadge }

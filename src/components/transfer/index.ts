@@ -1,4 +1,4 @@
-export { Transfer, MTransfer } from "./transfer-element.js"
+export { Transfer } from "./transfer-element.js"
 export type { TransferChangeDetail } from "./transfer-element.js"
 export { createTransfer } from "./transfer.js"
 export type { TransferOptions, TransferState, TransferController, TransferSide } from "./transfer.js"

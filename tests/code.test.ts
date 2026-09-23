@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { Code, MCode, registerCode } from "../src/components/code/index.js"
+import { Code, registerCode } from "../src/components/code/index.js"
 import * as codeApi from "../src/components/code/index.js"
 import { ViewElement } from "../src/core/index.js"
 import { generateComponentApi } from "../scripts/component-api.mjs"
@@ -212,7 +212,7 @@ describe("CSS-only native plain Code", () => {
 describe("canonical Code ViewElement", () => {
   it("exports canonical ViewElement classes and registration", () => {
     expect(codeApi.Code).toBe(Code)
-    expect(codeApi.MCode).toBe(MCode)
+    expect(codeApi).not.toHaveProperty("MCode")
     expect(Code.tag).toBe("m-code")
     expect(ViewElement.prototype.isPrototypeOf(Code.prototype)).toBe(true)
     expect(customElements.get("m-code")).toBe(Code)

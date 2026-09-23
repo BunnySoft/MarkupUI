@@ -72,27 +72,27 @@ sidebar placement, embedded backgrounds, positioning and original children, back
 native CSS layout, scrolling and details disclosure.
 See the [Layout demo/API](../../demo/components/layout.html).
 
-Tag/MTag uses direct properties, checkable native toggle buttons with aria-pressed,
+Tag uses direct properties, checkable native toggle buttons with aria-pressed,
 closable intent without automatic removal, sizes, types, rounded and borderless styling,
 and original phrasing content.
 See the [Tag demo/API](../../demo/components/tag.html).
 
-Badge/MBadge uses direct properties, passive counts, caps, overflow suffixes,
+Badge uses direct properties, passive counts, caps, overflow suffixes,
 dot and processing indicators, logical placements, tabular digit cell formatting,
 and original target content, backed by external CSS positioning and theme tokens.
 See the [Badge demo/API](../../demo/components/badge.html).
 
-Empty/MEmpty uses direct properties, readable fallback text, original decorative vector
+Empty uses direct properties, readable fallback text, original decorative vector
 illustrations, size variants, and adopted regions for custom icons, descriptions, and
 recovery actions, leaving interactive headings, forms, and announcements native.
 See the [Empty demo/API](../../demo/components/empty.html).
 
-Spin/MSpin uses direct properties, customizable size presets or numeric dimensions,
+Spin uses direct properties, customizable size presets or numeric dimensions,
 delay cancellation, original SVG geometry, wrapped content adoption, and adopted regions
 for custom icons and descriptions, leaving focus and wrapped interaction native.
 See the [Spin demo/API](../../demo/components/spin.html).
 
-Skeleton/MSkeleton uses direct properties, placeholder shapes, bounded repetition,
+Skeleton uses direct properties, placeholder shapes, bounded repetition,
 size presets, dimension normalization, and inert decorative bar generation, leaving
 application busy state and loading transitions native.
 See the [Skeleton demo/API](../../demo/components/skeleton.html).
@@ -107,7 +107,7 @@ text attribute for simple text descriptions, hover/focus triggering, collision f
 and adopted regions for trigger and panel content, backed by the browser top-layer Popover API and anchored positioning.
 See the [Tooltip demo/API](../../demo/components/tooltip.html).
 
-Alert/MAlert uses direct properties, notice types, safe title fallback,
+Alert uses direct properties, notice types, safe title fallback,
 semantic SVG icons, adopted regions for custom icons, headers, content and actions,
 and cancellable close intent without automatic removal, leaving announcement policies native.
 See the [Alert demo/API](../../demo/components/alert.html).

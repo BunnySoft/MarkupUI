@@ -191,5 +191,3 @@ export class Result extends ViewElement {
     }
   }
 }
-
-export { Result as MResult }

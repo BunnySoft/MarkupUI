@@ -244,5 +244,3 @@ export class Alert extends ViewElement {
     }))
   }
 }
-
-export const MAlert = Alert

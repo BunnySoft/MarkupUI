@@ -24,13 +24,7 @@ afterEach(() => {
 
 describe("canonical Descriptions and DescriptionItem", () => {
   it("registers canonical tags extending ViewElement and exposes the family API", () => {
-    expect(Object.keys(descriptionsApi).sort()).toEqual([
-      "DescriptionItem",
-      "Descriptions",
-      "MDescriptionItem",
-      "MDescriptions",
-      "registerDescriptions",
-    ])
+    expect(Object.keys(descriptionsApi).sort()).toEqual(["DescriptionItem", "Descriptions", "registerDescriptions"])
     for (const type of [Descriptions, DescriptionItem]) {
       expect(Object.hasOwn(type, "tag")).toBe(true)
       expect(type.prototype instanceof ViewElement).toBe(true)

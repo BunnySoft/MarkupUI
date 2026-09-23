@@ -162,7 +162,7 @@ export class Marquee extends ViewElement {
   }
 }
 
-export const MMarquee = Marquee
+
 
 export function registerMarquee(registry: Pick<CustomElementRegistry, "get" | "define"> = customElements): void {
   ViewElement.register([Marquee], registry)

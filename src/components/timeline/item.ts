@@ -282,5 +282,3 @@ export class TimelineItem extends ViewElement {
     }
   }
 }
-
-export { TimelineItem as MTimelineItem }

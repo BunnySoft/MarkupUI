@@ -121,5 +121,3 @@ export class DataTable extends ViewElement {
     }
   }
 }
-
-export { DataTable as MDataTable }

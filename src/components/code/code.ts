@@ -96,5 +96,3 @@ export class Code extends ViewElement {
     }
   }
 }
-
-export const MCode = Code

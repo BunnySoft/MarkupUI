@@ -1,4 +1,4 @@
-export { CollapseTransition, MCollapseTransition } from "./collapse-transition-element.js"
+export { CollapseTransition } from "./collapse-transition-element.js"
 export { createCollapseTransition } from "./collapse-transition.js"
 export type { CollapseTransitionController, CollapseTransitionError, CollapseTransitionHook, CollapseTransitionHookEvent, CollapseTransitionOptions, CollapseTransitionState } from "./collapse-transition.js"
 
@@ -10,4 +10,3 @@ export function registerCollapseTransition(registry: Pick<CustomElementRegistry,
 }
 
 if (typeof customElements !== "undefined") registerCollapseTransition()
-

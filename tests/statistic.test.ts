@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { Statistic, MStatistic, registerStatistic } from "../src/components/statistic/index.js"
+import { Statistic, registerStatistic } from "../src/components/statistic/index.js"
 import * as statisticApi from "../src/components/statistic/index.js"
 import { registerElements } from "../src/components/elements.js"
 import { ViewElement } from "../src/core/index.js"
@@ -337,7 +337,7 @@ describe("standalone Statistic", () => {
 describe("canonical Statistic ViewElement", () => {
   it("exports canonical ViewElement classes and registration", () => {
     expect(statisticApi.Statistic).toBe(Statistic)
-    expect(statisticApi.MStatistic).toBe(Statistic)
+    expect(statisticApi).not.toHaveProperty("MStatistic")
     expect(Statistic.tag).toBe("m-statistic")
     expect(ViewElement.prototype.isPrototypeOf(Statistic.prototype)).toBe(true)
     expect(customElements.get("m-statistic")).toBe(Statistic)

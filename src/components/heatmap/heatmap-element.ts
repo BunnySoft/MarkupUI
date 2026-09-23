@@ -124,5 +124,3 @@ export class Heatmap extends ViewElement {
     }
   }
 }
-
-export const MHeatmap = Heatmap

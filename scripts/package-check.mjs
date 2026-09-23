@@ -43,7 +43,12 @@ for (const key of ["window", "document", "customElements", "MutationObserver", "
 for (const key of ["getComputedStyle", "requestAnimationFrame", "cancelAnimationFrame"]) globalThis[key] = window[key].bind(window);
 const core = await import("@dataengine/markup-ui/core");
 assert.equal(customElements.get("m-chart"), undefined);
-for (const entry of ${JSON.stringify(entries)}) await import(entry);
+for (const entry of ${JSON.stringify(entries)}) {
+  const api = await import(entry);
+  if (entry !== "@dataengine/markup-ui" && !["state", "query", "advanced", "widgets"].includes(entry.split("/").at(-1))) {
+    assert.equal(Object.keys(api).some(name => /^M[A-Z][a-z]/.test(name)), false, entry + " exports a compatibility alias");
+  }
+}
 const root = await import("@dataengine/markup-ui");
 const chart = await import("@dataengine/markup-ui/chart");
 assert.equal(root.ViewElement, core.ViewElement);

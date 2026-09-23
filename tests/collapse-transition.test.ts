@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { CollapseTransition, MCollapseTransition, registerCollapseTransition, createCollapseTransition } from "../src/components/collapse-transition/index.js"
+import { CollapseTransition, registerCollapseTransition, createCollapseTransition } from "../src/components/collapse-transition/index.js"
 import * as collapseTransitionApi from "../src/components/collapse-transition/index.js"
 import type { CollapseTransitionController, CollapseTransitionOptions } from "../src/components/collapse-transition/index.js"
 import { ViewElement } from "../src/core/index.js"
@@ -372,7 +372,7 @@ describe("Interruption, hooks and focus ownership", () => {
 describe("canonical CollapseTransition ViewElement", () => {
   it("exports canonical ViewElement classes and registration", () => {
     expect(collapseTransitionApi.CollapseTransition).toBe(CollapseTransition)
-    expect(collapseTransitionApi.MCollapseTransition).toBe(MCollapseTransition)
+    expect(collapseTransitionApi).not.toHaveProperty("MCollapseTransition")
     expect(collapseTransitionApi.createCollapseTransition).toBe(createCollapseTransition)
     expect(CollapseTransition.tag).toBe("m-collapse-transition")
     expect(ViewElement.prototype.isPrototypeOf(CollapseTransition.prototype)).toBe(true)

@@ -1,4 +1,4 @@
-export { Watermark, MWatermark } from "./watermark-element.js"
+export { Watermark } from "./watermark-element.js"
 export { createWatermark } from "./watermark.js"
 export type { WatermarkSettings, WatermarkOptions, WatermarkImageContext, WatermarkImageLoader, WatermarkResult, WatermarkState, WatermarkController } from "./watermark.js"
 
@@ -10,4 +10,3 @@ export function registerWatermark(registry: Pick<CustomElementRegistry, "get" | 
 }
 
 if (typeof customElements !== "undefined") registerWatermark()
-

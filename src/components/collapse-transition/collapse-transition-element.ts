@@ -73,5 +73,3 @@ export class CollapseTransition extends ViewElement {
     this.toggleAttribute("hidden", !targetShow)
   }
 }
-
-export const MCollapseTransition = CollapseTransition

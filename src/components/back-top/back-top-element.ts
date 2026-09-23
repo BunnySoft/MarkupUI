@@ -259,5 +259,3 @@ export class BackTop extends ViewElement {
     }
   }
 }
-
-export { BackTop as MBackTop }

@@ -217,5 +217,3 @@ export class Tag extends ViewElement {
     else if (current !== value) control.setAttribute(name, value)
   }
 }
-
-export { Tag as MTag }

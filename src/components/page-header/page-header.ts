@@ -331,5 +331,3 @@ export class PageHeader extends ViewElement {
     }
   }
 }
-
-export { PageHeader as MPageHeader }

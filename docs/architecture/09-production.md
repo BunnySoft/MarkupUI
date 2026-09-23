@@ -98,6 +98,15 @@ the default five-second timeout under concurrent browser work. Its complete 70-t
 fixture passed on isolated rerun; that compiler-based test now has an explicit 15-second
 limit. A final integrated full-suite run is still required.
 
+The public component alias cleanup removes 53 duplicate names and the alternate
+`m-autocomplete` registration. Canonical `AutoComplete` / `m-auto-complete` and all
+other unprefixed classes are the only component API. Callers, classic exports, tests,
+active documentation and obsolete aggregate selectors were updated together. Build and
+the isolated 95-entry consumer check passed, including a new forbidden-alias assertion.
+The affected 49-file run passed 2,103 tests with one expected CSS-baseline mismatch from
+removing the old selector; the updated CSS baseline and absence assertion passed in the
+complete 10-test stylesheet fixture. The final integrated run remains pending.
+
 ## Work order
 
 1. Finish the portable primitive contracts and renderers, starting with labels, disclosure

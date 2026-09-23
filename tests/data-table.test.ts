@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { gzipSync } from "node:zlib"
-import { DataTable, MDataTable, registerDataTable, dataTableSizes, createDataTable } from "../src/components/data-table/index.js"
+import { DataTable, registerDataTable, dataTableSizes, createDataTable } from "../src/components/data-table/index.js"
 import type { DataTableController, DataTableOptions, DataTableSize } from "../src/components/data-table/index.js"
 import { ViewElement } from "../src/core/index.js"
 import { coordinateForm as createForm } from "../src/components/form/controller.js"
@@ -497,7 +497,7 @@ describe("local bounds", () => {
 describe("canonical DataTable ViewElement", () => {
   it("registers canonical DataTable with own tag, shared ViewElement identity and registration conflict safety", () => {
     expect(DataTable.tag).toBe("m-data-table")
-    expect(MDataTable).toBe(DataTable)
+    expect(customElements.get(DataTable.tag)).toBe(DataTable)
     expect(DataTable.prototype instanceof ViewElement).toBe(true)
     expect(customElements.get("m-data-table")).toBe(DataTable)
     expect(DataTable.observedAttributes).toEqual([

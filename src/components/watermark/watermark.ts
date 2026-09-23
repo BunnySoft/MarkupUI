@@ -1,5 +1,5 @@
 import { ownedWrites } from "../popover/position.js"
-export { Watermark, MWatermark } from "./watermark-element.js"
+export { Watermark } from "./watermark-element.js"
 
 export interface WatermarkImageContext {
   readonly signal: AbortSignal

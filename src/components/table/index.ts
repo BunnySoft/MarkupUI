@@ -1,4 +1,4 @@
-export { Table, MTable } from "./table.js"
+export { Table } from "./table.js"
 export { tableSizes } from "./model.js"
 export type { TableSize } from "./model.js"
 

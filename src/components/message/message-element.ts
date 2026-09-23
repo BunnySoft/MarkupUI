@@ -184,5 +184,3 @@ export class Message extends ViewElement {
     this.close()
   }
 }
-
-export const MMessage = Message

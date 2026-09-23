@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { GradientText, MGradientText, registerGradientText } from "../src/components/gradient-text/index.js"
+import { GradientText, registerGradientText } from "../src/components/gradient-text/index.js"
 import * as gradientTextApi from "../src/components/gradient-text/index.js"
 import { ViewElement } from "../src/core/index.js"
 
@@ -118,8 +118,8 @@ describe("CSS-only Gradient Text", () => {
 describe("canonical GradientText ViewElement", () => {
   it("exports canonical ViewElement classes and registration", () => {
     expect(gradientTextApi.GradientText).toBe(GradientText)
-    expect(gradientTextApi.MGradientText).toBe(MGradientText)
-    expect(MGradientText).toBe(GradientText)
+    expect(gradientTextApi).not.toHaveProperty("MGradientText")
+    expect(customElements.get(GradientText.tag)).toBe(GradientText)
     expect(GradientText.tag).toBe("m-gradient-text")
     expect(ViewElement.prototype.isPrototypeOf(GradientText.prototype)).toBe(true)
     expect(customElements.get("m-gradient-text")).toBe(GradientText)

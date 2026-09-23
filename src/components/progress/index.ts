@@ -1,4 +1,4 @@
-export { Progress, MProgress } from "./progress.js"
+export { Progress } from "./progress.js"
 export { progressIndicatorPlacements, progressStatuses, progressTypes } from "./model.js"
 export type { ProgressIndicatorPlacement, ProgressStatus, ProgressType } from "./model.js"
 export type { ProgressColor, ProgressGradient, ProgressPaint } from "./values.js"
@@ -17,4 +17,3 @@ export function createProgress(options: Partial<Progress> = {}): Progress {
 }
 
 if (typeof customElements !== "undefined") registerProgress()
-

@@ -150,5 +150,3 @@ export class Ellipsis extends ViewElement {
     }
   }
 }
-
-export { Ellipsis as MEllipsis }

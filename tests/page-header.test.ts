@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { PageHeader, MPageHeader, registerPageHeader } from "../src/components/page-header/index.js"
+import { PageHeader, registerPageHeader } from "../src/components/page-header/index.js"
 import type { PageHeaderBackDetail } from "../src/components/page-header/index.js"
 import { ViewElement } from "../src/core/index.js"
 
@@ -31,7 +31,7 @@ afterEach(() => {
 describe("canonical PageHeader component", () => {
   it("exports PageHeader extending ViewElement with static tag 'm-page-header'", () => {
     expect(PageHeader.tag).toBe("m-page-header")
-    expect(MPageHeader).toBe(PageHeader)
+    expect(customElements.get(PageHeader.tag)).toBe(PageHeader)
     expect(ViewElement.prototype.isPrototypeOf(PageHeader.prototype)).toBe(true)
     expect(customElements.get("m-page-header")).toBe(PageHeader)
   })

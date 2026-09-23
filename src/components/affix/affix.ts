@@ -181,5 +181,3 @@ export class Affix extends ViewElement {
     this.update()
   }
 }
-
-export const MAffix = Affix

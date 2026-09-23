@@ -1,5 +1,5 @@
-export { Image, MImage } from "./image.js"
-export { ImageGroup, MImageGroup } from "./group.js"
+export { Image } from "./image.js"
+export { ImageGroup } from "./group.js"
 export { imageFits } from "./model.js"
 export type { ImageObjectFit, ImageLoadDetail, ImageErrorDetail } from "./model.js"
 export { createImagePreview, createImage } from "./preview.js"
@@ -14,4 +14,3 @@ export function registerImage(registry: Pick<CustomElementRegistry, "get" | "def
 }
 
 if (typeof customElements !== "undefined") registerImage()
-

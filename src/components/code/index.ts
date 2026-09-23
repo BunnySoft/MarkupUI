@@ -1,4 +1,4 @@
-export { Code, MCode } from "./code.js"
+export { Code } from "./code.js"
 
 import { Code } from "./code.js"
 import { ViewElement } from "../../core/index.js"

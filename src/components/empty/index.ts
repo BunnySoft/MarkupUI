@@ -1,4 +1,4 @@
-export { Empty, MEmpty } from "./empty.js"
+export { Empty } from "./empty.js"
 export { emptySizes } from "./model.js"
 export type { EmptySize } from "./model.js"
 

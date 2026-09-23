@@ -63,7 +63,7 @@ import { Image, ImageGroup } from "../src/components/image/index.js"
 import { DatePicker } from "../src/components/date-picker/index.js"
 import { TimePicker } from "../src/components/time-picker/index.js"
 import { Upload, UploadDragger, UploadTrigger, UploadFileList } from "../src/components/upload/index.js"
-import { AutoComplete, AutoCompleteAlias } from "../src/components/auto-complete/index.js"
+import { AutoComplete } from "../src/components/auto-complete/index.js"
 import { Slider } from "../src/components/slider/index.js"
 import { Rate } from "../src/components/rate/index.js"
 import { InputOtp } from "../src/components/input-otp/index.js"
@@ -130,7 +130,7 @@ describe("native elements", () => {
     expect(customElements.get("m-input")).toBe(Input)
     expect(customElements.get("m-select")).toBe(Select)
     expect(builtInElementNames).not.toContain("m-select")
-    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader, Ellipsis, Tabs, Tab, TabPane, Menu, MenuItem, MenuGroup, MenuDivider, Submenu, Pagination, Dialog, DialogHeader, DialogBody, DialogFooter, DialogAction, Modal, ModalHeader, ModalBody, ModalFooter, ModalAction, Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, Popconfirm, PopconfirmTrigger, PopconfirmPanel, Message, MessageContainer, Notification, NotificationContainer, Progress, Result, ResultHeader, ResultContent, ResultFooter, Image, ImageGroup, DatePicker, TimePicker, Upload, UploadDragger, UploadTrigger, UploadFileList, AutoComplete, AutoCompleteAlias, Slider, Rate, InputOtp, Popselect, PopselectTrigger, PopselectPanel, Tree, TreeNode, TreeSelect, Cascader, DataTable, Calendar, DynamicInput, DynamicTags, Steps, Step, Timeline, TimelineItem, Statistic, Anchor, AnchorLink, BackTop, Affix, LoadingBar, InfiniteScroll, VirtualList, Code, Highlight, Split, SplitPane, GradientText, Watermark, FloatButton, FloatButtonGroup, ColorPicker, Mention, Transfer, Countdown, Log, NumberAnimation, Time, Heatmap, Thing, ThingAvatar, ThingHeader, ThingContent, ThingFooter, ThingAction, Marquee, CollapseTransition, Box, Div, Span, Label, Footer, Article, Strong, Em, Small, Pre, Details, Summary]) {
+    for (const Type of [Form, FormItem, FormItemGi, Grid, GridItem, Layout, LayoutHeader, LayoutContent, LayoutFooter, LayoutSider, Tag, Badge, Empty, Spin, Skeleton, Popover, Tooltip, Alert, List, ListItem, Table, Descriptions, DescriptionItem, Breadcrumb, BreadcrumbItem, PageHeader, Ellipsis, Tabs, Tab, TabPane, Menu, MenuItem, MenuGroup, MenuDivider, Submenu, Pagination, Dialog, DialogHeader, DialogBody, DialogFooter, DialogAction, Modal, ModalHeader, ModalBody, ModalFooter, ModalAction, Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, Popconfirm, PopconfirmTrigger, PopconfirmPanel, Message, MessageContainer, Notification, NotificationContainer, Progress, Result, ResultHeader, ResultContent, ResultFooter, Image, ImageGroup, DatePicker, TimePicker, Upload, UploadDragger, UploadTrigger, UploadFileList, AutoComplete, Slider, Rate, InputOtp, Popselect, PopselectTrigger, PopselectPanel, Tree, TreeNode, TreeSelect, Cascader, DataTable, Calendar, DynamicInput, DynamicTags, Steps, Step, Timeline, TimelineItem, Statistic, Anchor, AnchorLink, BackTop, Affix, LoadingBar, InfiniteScroll, VirtualList, Code, Highlight, Split, SplitPane, GradientText, Watermark, FloatButton, FloatButtonGroup, ColorPicker, Mention, Transfer, Countdown, Log, NumberAnimation, Time, Heatmap, Thing, ThingAvatar, ThingHeader, ThingContent, ThingFooter, ThingAction, Marquee, CollapseTransition, Box, Div, Span, Label, Footer, Article, Strong, Em, Small, Pre, Details, Summary]) {
       expect(customElements.get(Type.tag)).toBe(Type)
       expect(builtInElementNames).not.toContain(Type.tag)
     }
@@ -330,10 +330,10 @@ describe("native elements", () => {
         <m-radio name="selection" value="b">B</m-radio>
       </m-radio-group>
       <m-slider value="25" min="0" max="100"></m-slider>
-      <m-autocomplete value="Ada">
+      <m-auto-complete value="Ada">
         <m-option value="Ada">Ada</m-option>
         <m-option value="Grace">Grace</m-option>
-      </m-autocomplete>`
+      </m-auto-complete>`
     await Promise.resolve()
     await new Promise(resolve => setTimeout(resolve, 0))
     const form = document.querySelector("m-form") as Form
@@ -348,7 +348,7 @@ describe("native elements", () => {
     expect(radios[0]?.checked).toBe(false)
     expect(radios[1]?.checked).toBe(true)
     expect((document.querySelector("m-slider") as HTMLElement & { value: number }).value).toBe(25)
-    expect(document.querySelectorAll("m-autocomplete datalist option")).toHaveLength(2)
+    expect(document.querySelectorAll("m-auto-complete datalist option")).toHaveLength(2)
   })
 
   it("supports navigation and data display components", () => {

@@ -1,17 +1,17 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { Progress, MProgress, registerProgress } from "../src/components/progress/index.js"
+import { Progress, registerProgress } from "../src/components/progress/index.js"
 import { registerElements } from "../src/components/elements.js"
 import { ViewElement } from "../src/core/index.js"
 
 afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
-function progress(markup = '<m-progress label="Upload"></m-progress>'): MProgress {
+function progress(markup = '<m-progress label="Upload"></m-progress>'): Progress {
   document.body.innerHTML = markup
   const element = document.querySelector("m-progress")
-  if (!(element instanceof MProgress)) throw new Error("Progress was not upgraded")
+  if (!(element instanceof Progress)) throw new Error("Progress was not upgraded")
   return element
 }
-function fill(element: MProgress): SVGCircleElement {
+function fill(element: Progress): SVGCircleElement {
   return element.querySelector<SVGCircleElement>("[data-m-progress-fill]")!
 }
 
@@ -280,7 +280,7 @@ describe("standalone Progress", () => {
     const gradient = first.querySelector("linearGradient")!
     expect(["x1", "y1", "x2", "y2"].map((name) => gradient.getAttribute(name))).toEqual(["100%", "100%", "0%", "0%"])
     expect(first.querySelector("[data-m-progress-rail]")?.getAttribute("color")).toBe("silver")
-    const second = document.createElement("m-progress") as MProgress
+    const second = document.createElement("m-progress") as Progress
     second.type = "circle"
     second.percentage = 50
     second.color = { stops: ["red", "blue"] }
@@ -304,7 +304,7 @@ describe("standalone Progress", () => {
   })
 
   it("preserves authored indicator nodes and listeners outside the native progress and decorative SVG", () => {
-    const element = document.createElement("m-progress") as MProgress
+    const element = document.createElement("m-progress") as Progress
     element.percentage = 30
     const indicator = document.createElement("strong")
     indicator.textContent = "3 of 10"
@@ -396,10 +396,10 @@ describe("standalone Progress", () => {
 
   it("supports pre-upgrade properties with native dimensions and no stylesheet injection", () => {
     document.body.innerHTML = '<test-late-progress><strong>Stage</strong></test-late-progress>'
-    const element = document.querySelector("test-late-progress") as MProgress
+    const element = document.querySelector("test-late-progress") as Progress
     const content = element.querySelector("strong")
     Object.assign(element, { type: "circle", percentage: 45, label: "Upload", strokeWidth: 8, gapDegree: 60, gapOffsetDegree: 20, viewBoxWidth: 120, showIndicator: false, processing: true, color: { stops: ["red", "blue"] } })
-    customElements.define("test-late-progress", class extends MProgress {})
+    customElements.define("test-late-progress", class extends Progress {})
     expect(element.valid).toBe(true)
     expect(element.controls[0]?.value).toBe(45)
     expect(element.controls[0]?.getAttribute("aria-label")).toBe("Upload")
@@ -415,7 +415,7 @@ describe("standalone Progress", () => {
     expect(() => registerProgress({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
     expect(define).not.toHaveBeenCalled()
     registerElements(customElements)
-    expect(customElements.get("m-progress")).toBe(MProgress)
+    expect(customElements.get("m-progress")).toBe(Progress)
     expect(progress().controls).toHaveLength(1)
   })
 })
@@ -423,7 +423,7 @@ describe("standalone Progress", () => {
 describe("canonical Progress ViewElement", () => {
   it("exports canonical own-tag ViewElement and registers m-progress", () => {
     expect(Progress.tag).toBe("m-progress")
-    expect(MProgress).toBe(Progress)
+    expect(customElements.get(Progress.tag)).toBe(Progress)
     expect(ViewElement.prototype.isPrototypeOf(Progress.prototype)).toBe(true)
     expect(customElements.get("m-progress")).toBe(Progress)
     expect(Progress.observedAttributes).toContain("percentage")
