@@ -41,16 +41,17 @@ September 23, 2026, Windows / Node 22.12.0 / pnpm 10.28.0:
 | Check | Latest local result |
 | --- | --- |
 | Frozen install | Passed in the existing workspace; not a clean remote-machine install. |
-| Typecheck/build | Passed, including all unchanged existing payload ceilings. |
-| Integrated tests | 4,836 passed across 131 files; zero failed or skipped. |
-| Packed consumer | 95 JavaScript entries, 2,334 files; strict NodeNext types and runtime imports passed. |
-| Browser catalog | 588/588 startup checks: 98 pages, three engines, two viewport sizes. |
+| Typecheck/build | Passed; Chart adapter/runtime ceilings reduced, all other existing ceilings unchanged. |
+| Integrated tests | 4,837 passed across 131 files; zero failed or skipped. |
+| Packed consumer | 95 JavaScript entries, 2,327 files; strict NodeNext types and runtime imports passed without ECharts installed. No vendor assets ship in the package. |
+| Browser catalog | Previous integrated baseline: 588/588 startup checks (98 pages). External-engine change: Chart 6/6 checks across three engines and two viewport sizes. |
 | Browser workflows | Chart, portable primitives, Form, DataGrid, Rating, Virtual List and restricted HTML checks passed in all six engine/layout combinations. Chromium also verified fail-closed Trusted Types enforcement. |
 | Dependency audit | 167 locked dependencies; zero reported advisories. |
 | Element directory | 89 families / 202 tags, plus 15 root and 3 plugin tags; source-data consistency tests passed. |
 | Root runtime gzip | 14,940 bytes minified ESM / 14,848 classic, each below the unchanged 15,000 ceiling. |
 | Optional plugin gzip | Advanced JS/CSS 2,363/458 bytes; Widgets JS/CSS 1,498/420 bytes. Existing ceilings unchanged. |
-| Chart runtime gzip | 212,488 bytes ESM / 212,881 classic including core and renderer; CSS 403 bytes. New ceilings remain provisional. |
+| Chart runtime gzip | 9,079 bytes ESM / 9,522 classic including core and adapter; CSS 403 bytes. Excludes required application-supplied ECharts. Adapter alone: 258/497 bytes. |
+| Demo-only engine gzip | Selected ECharts 6.1.0: 203,661 bytes ESM / 203,838 classic. Combined example runtime: 212,740/213,360 bytes, excluding CSS. Externalization does not remove the engine download. |
 
 Browsers were Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 at 1280x900 and
 375x812. The local reports are `.vite/production-tests.json`,
@@ -59,6 +60,15 @@ Browsers were Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 at 1280x900 
 These are generated evidence, not shipped runtime files. CI is configured but no
 remote matrix result has been recorded for this revision. Headless engines with
 mobile-sized viewports are not real mobile-device or screen-reader acceptance.
+
+Chart now requires explicit `configureChartEngine(echarts)` setup. Its published adapter
+contains no ECharts/zrender source or vendor type imports. Three-engine checks cover ESM
+and classic missing-engine errors without automatic downloads, late configuration/refresh
+recovery with real SVG geometry, and disposal. Existing six-example SVG/Canvas, data-source,
+theme, resize and interaction checks still pass. Demo engines and licenses are generated
+separately under `demo/vendor`. Reduced package-owned ceilings are 1,000 gzip bytes per
+adapter and 15,000 for core+Chart+adapter; wrapper/CSS and unrelated budgets are unchanged.
+Engine-inclusive release budget approval remains open.
 
 The Form workflow now verifies asynchronous invalid/valid feedback in portable
 containers, native FormData including external associated controls and the submitter,

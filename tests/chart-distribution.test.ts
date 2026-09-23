@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process"
-import { readFileSync, readdirSync } from "node:fs"
+import { existsSync, readFileSync, readdirSync } from "node:fs"
 import { resolve } from "node:path"
 import { createContext, runInContext } from "node:vm"
 import { describe, expect, it } from "vitest"
@@ -22,6 +22,12 @@ describe("Chart selected delivery", () => {
       assert.equal(customElements.get("m-chart"), chart.Chart);
       assert.equal(customElements.get("m-app"), undefined);
       assert.equal(customElements.get("m-button"), undefined);
+      const adapter = await import("./dist/markup-ui-chart-renderer.js");
+      assert.equal(chart.configureChartEngine, adapter.configureChartEngine);
+      assert.throws(() => adapter.createChartRenderer(document.createElement("div"), "light", "svg"), /configureChartEngine/);
+      const instance = {};
+      chart.configureChartEngine({ init: () => instance });
+      assert.equal(adapter.createChartRenderer(document.createElement("div"), "light", "svg"), instance);
       window.close();
       console.log("passed");
     `], { encoding: "utf8" })
@@ -46,20 +52,31 @@ describe("Chart selected delivery", () => {
     expect(entries.size).toBe(10)
     expect(runInContext("MarkupUIChart.Chart.prototype instanceof MarkupUICore.ViewElement", context)).toBe(true)
     expect(entries.has("m-button")).toBe(false)
+    expect(runInContext("MarkupUIChart.configureChartEngine === MarkupUIChartRenderer.configureChartEngine", context)).toBe(true)
+    expect(() => runInContext('MarkupUIChartRenderer.createChartRenderer({}, "light", "svg")', context)).toThrow("configureChartEngine")
+    expect(runInContext(`(() => {
+      const instance = {};
+      MarkupUIChart.configureChartEngine({ init: () => instance });
+      return MarkupUIChartRenderer.createChartRenderer({}, "dark", "canvas") === instance;
+    })()`, context)).toBe(true)
   })
 
-  it("keeps vendor code out of core, wrapper and unrelated components and ships licenses", () => {
-    for (const entry of ["core", "button", "chart"]) {
-      const map = JSON.parse(read(`markup-ui-${entry}.js.map`))
+  it("keeps vendor code out of every shipped browser bundle and records external costs", () => {
+    for (const file of readdirSync("dist").filter(file => file.endsWith(".js.map"))) {
+      const map = JSON.parse(read(file))
       expect(map.sources.some((source: string) => /node_modules\/.*(?:echarts|zrender)/.test(source))).toBe(false)
     }
-    const map = JSON.parse(read("markup-ui-chart-renderer.js.map"))
-    expect(map.sources.some((source: string) => source.includes("echarts"))).toBe(true)
-    expect(readdirSync(resolve("dist/chart-licenses")).sort()).toEqual([
-      "echarts-LICENSE", "echarts-NOTICE", "tslib-CopyrightNotice.txt", "tslib-LICENSE.txt", "zrender-LICENSE",
-    ])
+    expect(existsSync("dist/chart-licenses")).toBe(false)
+    expect(read("components/chart/renderer.d.ts")).not.toMatch(/from ["']echarts/)
     const manifest = JSON.parse(read("manifest.json"))
     expect(manifest.componentPayloads.chart.esm.dependencies).toEqual(["markup-ui-core.js", "markup-ui-chart-renderer.js"])
     expect(manifest.componentPayloads.chart.classic.dependencies).toEqual(["markup-ui-core.global.js", "markup-ui-chart-renderer.global.js"])
+    expect(manifest.componentPayloads.chart.externalDependencies).toEqual([{
+      name: "echarts", suppliedBy: "application", includedInPayloadBytes: false,
+      configuration: "configureChartEngine", testedVersion: "6.1.0",
+    }])
+    for (const suffix of [".js", ".global.js"]) {
+      expect(manifest.bundles[`markup-ui-chart-renderer${suffix}`].gzipBytes).toBeLessThan(1000)
+    }
   })
 })

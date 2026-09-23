@@ -25,6 +25,8 @@ for (const [key, entry] of Object.entries(pkg.exports)) {
   if (typeof entry === "object" && entry.import) entries.push(key === "." ? pkg.name : `${pkg.name}/${key.slice(2)}`)
 }
 assert(!pkg.dependencies || !Object.keys(pkg.dependencies).length, "Unexpected mandatory runtime dependencies")
+assert(!packed.files.some(file => /(?:chart-licenses|demo\/vendor|node_modules\/(?:echarts|zrender))/.test(file.path)), "Packed vendor assets")
+await assert.rejects(access(resolve(consumer, "node_modules/echarts")))
 await writeFile(resolve(consumer, "types.ts"), entries.map((entry, index) => `import type * as Entry${index} from ${JSON.stringify(entry)};`).join("\n")
   + `\nexport type Entries = [${entries.map((_, index) => `typeof Entry${index}`).join(",")}];\n`)
 await writeFile(resolve(consumer, "tsconfig.json"), JSON.stringify({
@@ -54,6 +56,9 @@ const chart = await import("@dataengine/markup-ui/chart");
 assert.equal(root.ViewElement, core.ViewElement);
 assert.ok(chart.Chart.prototype instanceof core.ViewElement);
 assert.equal(customElements.get("m-chart"), chart.Chart);
+assert.equal(typeof chart.configureChartEngine, "function");
+assert.throws(() => chart.configureChartEngine({}), /init/);
+chart.configureChartEngine({ init() { throw new Error("Not rendered by import"); } });
 assert.equal("MElement" in root, false);
 window.close();
 console.log("Packed runtime imports passed");

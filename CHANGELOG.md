@@ -6,7 +6,9 @@
   aliases, and retained independently selectable families with shared-core delivery.
 - Added optional ECharts-backed Chart with Bar, Line/Area, Pie/Doughnut and Scatter,
   ECharts-shaped configuration, five data-source forms, SVG/Canvas renderers and a
-  native data-table alternative. ECharts is not loaded by unrelated components.
+  native data-table alternative. ECharts is supplied explicitly by the application using
+  `configureChartEngine(echarts)`, not bundled or automatically downloaded. The lightweight
+  adapter has no vendor declaration dependency; demo-only vendor assets stay out of the package.
 - Added explicit scalar/model binding with safe paths and lifecycle cleanup. Structural
   templates and item scopes are not implemented.
 - Added native semantic owners for portable labels, disclosure and phrasing primitives;

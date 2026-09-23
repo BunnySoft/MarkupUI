@@ -4,6 +4,7 @@ const renderer = vi.hoisted(() => ({
   create: vi.fn(),
 }))
 vi.mock("../src/components/chart/renderer.js", () => ({
+  configureChartEngine: vi.fn(),
   createChartRenderer: (...args: unknown[]) => {
     renderer.create(...args)
     const instance = { setOption: vi.fn(), resize: vi.fn(), dispose: vi.fn(), on: vi.fn() }

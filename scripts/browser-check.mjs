@@ -17,6 +17,65 @@ const server = spawn(process.execPath, ["demo/server.mjs"], {
 })
 const results = []
 const catalogResults = []
+async function verifyExternalChartEngine(page, origin, mode) {
+  const url = `${origin}/demo/chart-engine-${mode}-check.html`
+  await page.route(url, route => route.fulfill({
+    contentType: "text/html",
+    body: '<!doctype html><meta name="viewport" content="width=device-width"><title>External chart engine</title><link rel="stylesheet" href="/dist/markup-ui-chart.css"><body></body>',
+  }))
+  const requests = []
+  const record = request => requests.push(request.url())
+  page.on("request", record)
+  try {
+    await page.goto(url)
+    if (mode === "classic") {
+      for (const entry of ["core", "chart-renderer", "chart"]) {
+        await page.addScriptTag({ url: `${origin}/dist/markup-ui-${entry}.global.js` })
+      }
+    } else await page.evaluate(() => import("/dist/markup-ui-chart.js"))
+    const missing = await page.evaluate(() => {
+      const chart = document.createElement("m-chart")
+      chart.id = "external-chart"
+      chart.setAttribute("aria-label", "External engine sample")
+      chart.tableSource = [["x", "y"], ["A", 2], ["B", 4]]
+      chart.option = {
+        dataset: { source: chart.tableSource },
+        xAxis: { type: "category" }, yAxis: { type: "value" },
+        series: [{ type: "bar" }],
+      }
+      let reportedError
+      chart.addEventListener("m:chart-error", event => { reportedError = event.detail.error.message })
+      document.body.append(chart)
+      chart.refresh()
+      return { state: chart.state, error: chart.error?.message, event: reportedError }
+    })
+    assert.equal(missing.state, "error")
+    assert.match(missing.error, /configureChartEngine/)
+    assert.equal(missing.event, missing.error)
+    assert(!requests.some(url => /echarts|vendor|cdn/.test(url)), "Missing engine must not trigger a download")
+    if (mode === "classic") {
+      await page.addScriptTag({ url: `${origin}/demo/vendor/echarts.global.js` })
+      await page.evaluate(() => {
+        MarkupUIChart.configureChartEngine(echarts)
+        document.getElementById("external-chart").refresh()
+      })
+    } else await page.evaluate(async () => {
+      const echarts = await import("/demo/vendor/echarts.js")
+      const { configureChartEngine } = await import("/dist/markup-ui-chart.js")
+      configureChartEngine(echarts)
+      document.getElementById("external-chart").refresh()
+    })
+    await page.waitForFunction(() => {
+      const chart = document.getElementById("external-chart")
+      return chart.state === "ready" && chart.native.querySelectorAll("svg path").length > 0
+    })
+    assert.equal(await page.locator("#external-chart").evaluate(chart => chart.error), null)
+    await page.locator("#external-chart").evaluate(chart => {
+      chart.remove()
+      if (chart.native.childElementCount) throw new Error("External engine retained disposed DOM")
+    })
+  } finally { page.off("request", record) }
+}
 async function verifyPlugins(page, origin, name, layout) {
   await page.goto(`${origin}/demo/components/plugins.html`)
   const sort = page.getByRole("button", { name: "Score", exact: true })
@@ -175,6 +234,8 @@ try {
           const page = await context.newPage()
           const errors = []
           page.on("pageerror", error => errors.push(error.stack ?? error.message))
+          await verifyExternalChartEngine(page, origin, "esm")
+          await verifyExternalChartEngine(page, origin, "classic")
           const start = performance.now()
           await page.goto(`${origin}/demo/components/chart.html`)
           await page.waitForFunction(() => document.querySelectorAll("m-chart").length === 6 && [...document.querySelectorAll("m-chart")].every(chart => chart.state === "ready"), null, { timeout: 20_000 })

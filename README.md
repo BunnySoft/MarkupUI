@@ -1,8 +1,10 @@
 # MarkupUI
 
 `@dataengine/markup-ui` defines platform-neutral UI elements with selectable Web
-implementations for modern browsers. The optional Chart family uses Apache ECharts;
-unrelated components do not load it.
+implementations for modern browsers. The optional Chart family uses application-supplied
+Apache ECharts via `configureChartEngine(echarts)`; MarkupUI does not bundle or download it.
+The application owns ECharts loading, module registration and licenses. Unrelated components
+require no chart engine. See the [Chart setup examples](demo/components/chart.html#required-files).
 
 **Status: development staging; production release is blocked.** The Web implementation
 includes 89 selectable component families, the optional root facade and plugins.

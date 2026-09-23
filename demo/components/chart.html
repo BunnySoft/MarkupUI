@@ -24,10 +24,33 @@
     <details class="component-setup" id="required-files">
       <summary id="required-files-heading">Setup code</summary>
       <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-chart.css"&gt;
-&lt;script type="module" src="./dist/markup-ui-chart.js"&gt;&lt;/script&gt;</code></pre>
-      <m-p>ESM imports core and the selected ECharts renderer. Classic order is core,
-        chart-renderer, then chart. Binding is an additional optional dependency only
-        for the scoped example. ECharts and dependency licenses ship in dist/chart-licenses.</m-p>
+&lt;script type="module"&gt;
+  import * as echarts from "./vendor/echarts.js";
+  import { configureChartEngine } from "./dist/markup-ui-chart-renderer.js";
+  configureChartEngine(echarts);
+  await import("./dist/markup-ui-chart.js");
+&lt;/script&gt;</code></pre>
+      <m-p>Supply your own ECharts module at the vendor path. ESM imports only core and
+        the small adapter from MarkupUI. This demo builds selected ECharts 6.1.0 modules
+        separately under demo/vendor, with their licenses; they are not published in the package.</m-p>
+      <pre><code>// npm application (bundler)
+import * as echarts from "echarts";
+import { configureChartEngine } from "@dataengine/markup-ui/chart";
+configureChartEngine(echarts);</code></pre>
+      <m-p>For a tree-shaken engine, register BarChart, LineChart, PieChart, ScatterChart,
+        AriaComponent, DatasetComponent, GridComponent, LegendComponent, TitleComponent,
+        TooltipComponent, SVGRenderer and CanvasRenderer using echarts.use before configuration.
+        The application owns its ECharts version, modules, loading and licenses.</m-p>
+      <pre><code>&lt;script src="./vendor/echarts.js"&gt;&lt;/script&gt;
+&lt;script src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script src="./dist/markup-ui-chart-renderer.global.js"&gt;&lt;/script&gt;
+&lt;script&gt;MarkupUIChartRenderer.configureChartEngine(echarts);&lt;/script&gt;
+&lt;script src="./dist/markup-ui-chart.global.js"&gt;&lt;/script&gt;</code></pre>
+      <m-p>The classic vendor path must supply a classic ECharts script. No global discovery
+        or CDN fallback occurs. Missing setup produces state="error" and m:chart-error on render;
+        after late setup, call refresh() on affected charts. Configuration affects future
+        instances, not existing ones. Binding remains an additional optional dependency.
+        Package payload totals exclude the application-supplied ECharts download.</m-p>
       <a href="../setup.html">Shared setup guide</a>
     </details>
 
@@ -132,8 +155,8 @@ store.set("report.sales", nextSales);</code></pre>
       <header data-demo-header><m-heading level="2" id="direct-heading">Trusted direct options</m-heading></header>
       <m-box data-demo-preview><m-chart id="direct-chart" aria-label="Quarterly totals"></m-chart></m-box>
       <m-p>Direct option mode is Web-specific and exclusive with configuration children.
-        Supply tableSource as the readable alternative. It supports the same bundled
-        first-batch series; arbitrary ECharts modules are not included.</m-p>
+        Supply tableSource as the readable alternative. It supports the same first-batch
+        series; adding engine modules does not expand the supported option contract.</m-p>
     </section>
 
     <section aria-labelledby="rules-heading">

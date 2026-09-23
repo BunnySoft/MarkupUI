@@ -179,8 +179,12 @@ See the [Alert demo/API](../../demo/components/alert.html).
 Chart lives in `src/components/chart`: `chart.ts` owns the Web renderer lifecycle and
 native data alternative, `config.ts` the concrete option elements, `dataset.ts` sources
 and cancellation, `data.ts` bounded validation/table conversion, `options.ts` the explicit
-ECharts mapping, and `renderer.ts` the selected vendor module registration. The build
-emits that last module separately with licenses and accounts for its full payload.
+ECharts mapping, and `renderer.ts` the explicit application-supplied engine adapter.
+The build emits that small adapter separately without vendor code or vendor types.
+`configureChartEngine(echarts)` supplies the engine; there is no implicit global lookup
+or download. The demo owns selected vendor registration in `demo/chart-engine.js`, built
+with licenses under ignored `demo/vendor`, outside the published package. Manifest Chart
+costs cover MarkupUI assets and explicitly exclude the required application-owned engine.
 Neither state binding nor ECharts is added to core or unrelated components.
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed

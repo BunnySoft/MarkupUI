@@ -1,9 +1,28 @@
 // @vitest-environment node
-import { describe, expect, it } from "vitest"
-import "../src/components/chart/renderer.js"
-import { init } from "echarts/core"
+import { describe, expect, it, vi } from "vitest"
+import { init } from "../demo/chart-engine.js"
 
-describe("actual optional ECharts renderer", () => {
+describe("application-supplied ECharts renderer", () => {
+  it("requires explicit setup, validates it and forwards instance creation", async () => {
+    vi.resetModules()
+    const { configureChartEngine, createChartRenderer } = await import("../src/components/chart/renderer.js")
+    const element = {} as HTMLElement
+    const instance = { setOption: vi.fn(), resize: vi.fn(), dispose: vi.fn(), on: vi.fn() }
+    const engine = { init: vi.fn(function (this: unknown) { expect(this).toBe(engine); return instance }) }
+    vi.stubGlobal("echarts", engine)
+    try {
+      expect(() => createChartRenderer(element, "light", "svg")).toThrow("configureChartEngine")
+      for (const invalid of [null, undefined, {}, { init: 1 }]) {
+        expect(() => configureChartEngine(invalid as never)).toThrow("init()")
+      }
+      configureChartEngine(engine)
+      expect(createChartRenderer(element, "dark", "canvas")).toBe(instance)
+      expect(engine.init).toHaveBeenCalledWith(element, "dark", { renderer: "canvas" })
+      expect(() => configureChartEngine({} as never)).toThrow()
+      expect(createChartRenderer(element, "light", "svg")).toBe(instance)
+    } finally { vi.unstubAllGlobals() }
+  })
+
   it.each(["bar", "line", "pie", "scatter"])("renders nonempty %s geometry with the selected modules", type => {
     const renderer = init(null, null, { renderer: "svg", ssr: true, width: 640, height: 360 })
     try {

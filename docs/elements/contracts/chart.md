@@ -178,10 +178,17 @@ unless separately contracted.
 
 ## 6. Implemented baseline decisions
 
-- ECharts 6.1.0 is pinned and built into an optional renderer asset. No npm production
-  dependency, core import or unrelated-family import makes Chart mandatory. License and
-  notice files ship with the package. NodeNext development typechecking uses ECharts'
-  own unbundled declarations because its rolled-up declarations omit ESM extensions.
+- The application supplies ECharts explicitly using `configureChartEngine(echarts)`.
+  The optional renderer asset is a small adapter with no vendor code or vendor declaration
+  imports. No mandatory npm dependency, global engine discovery or automatic download is
+  provided. The demo/test engine is pinned to ECharts 6.1.0; selected modules and their
+  licenses are built under demo/vendor, not shipped in the library. The application owns
+  engine loading, version, module registration and licenses.
+- Configure before rendering. An unconfigured nonempty chart with usable dimensions enters
+  error state and emits m:chart-error mentioning configureChartEngine. Late setup requires
+  refresh() on affected charts. Reconfiguration affects future instances only; existing
+  instances retain their normal lifecycle. Invalid configuration rejects without replacing
+  the previously supplied engine. Importing Chart without ECharts remains valid.
 - SVG is the default; Canvas is selectable. Light and dark are the initial themes.
   Chart height defaults to 320 pixels. A zero-size surface waits for ResizeObserver
   or explicit resize. Theme/renderer changes recreate the owned instance.
@@ -212,10 +219,12 @@ unless separately contracted.
 - Updates use notMerge=true and lazyUpdate=false. Declarative tooltips use rich-text
   rendering, not HTML. Direct callbacks/options are trusted application code. Animation
   defaults off and reduced-motion preferences override direct animation requests.
-- New provisional ceilings are 12,000 gzip bytes per Chart wrapper, 235,000 per renderer,
-  250,000 for core+wrapper+renderer, and 1,500 for CSS. These do not increase any existing
-  ceiling and still require release approval. Startup/update/memory measurements and
-  supported-browser acceptance remain mandatory, not inferred from these size caps.
+- Reduced provisional ceilings are 12,000 gzip bytes per Chart wrapper, 1,000 per adapter,
+  15,000 for core+wrapper+adapter, and 1,500 for CSS. Manifest externalDependencies records
+  application-supplied ECharts as excluded from package payload sums. Complete application
+  cost includes that engine; no existing ceiling is increased. Engine-inclusive payload
+  approval, startup/update/memory measurements and supported-browser acceptance remain
+  mandatory, not inferred from the smaller package.
 
 ## 7. Release acceptance
 
@@ -241,6 +250,20 @@ Line/Area, Pie/Doughnut and Scatter. Partial type coverage or property assignmen
 the other required data-source forms does not satisfy the release gate.
 
 ## 8. Recorded verification
+
+September 23, 2026 external-engine revision: 57 focused tests and the complete 4,837-test
+suite across 131 files passed, with zero failures or skips. The published
+adapter is 258/497 gzip bytes (ESM/classic), with core+Chart+adapter totaling 9,079/9,522
+and CSS 403. The required demo-only selected ECharts engine is a separate 203,661/203,838
+gzip bytes; combined example runtime is 212,740/213,360 before CSS. This replaces the
+vendor-inclusive packaging below, not the engine's actual download or release approval.
+The isolated consumer passed 95 entry imports and strict NodeNext declarations across
+2,327 packed files without ECharts installed. All six browser/layout combinations passed
+real ESM/classic engine injection, missing-engine reporting without implicit downloads,
+late setup/refresh recovery and disposal, plus existing SVG/Canvas workflows.
+Chart catalog startup passed 6/6; desktop/mobile screenshots were inspected.
+
+Earlier bundled-engine baseline:
 
 September 23, 2026, Windows / Node 22.12.0: all 56 focused Chart tests passed, including
 real ECharts SVG SSR, source cancellation/timeout, pre-upgrade values, reduced motion,

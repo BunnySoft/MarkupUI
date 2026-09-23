@@ -159,6 +159,27 @@ These new totals account for separate-file gzip overhead rather than hiding the 
 No sibling ceiling, including InputNumber's tight 3,998-byte classic/1,000-byte CSS outputs,
 is changed.
 
+## Chart delivery
+
+Chart selects core, the small `markup-ui-chart-renderer.js` adapter and the family entry,
+plus CSS. No ECharts implementation or declarations ship in MarkupUI. The application
+explicitly supplies an ECharts engine through `configureChartEngine(echarts)` exported
+from `@dataengine/markup-ui/chart`. For served ESM, the adapter file also exposes this
+function so setup can precede Chart registration. Classic order is core, adapter,
+explicit engine configuration, then Chart. Load the application's engine before configuring
+it; MarkupUI does not discover global engines or fetch a CDN fallback.
+
+The application chooses either full ECharts or registered selected modules. The tested demo
+engine is ECharts 6.1.0; see the [Chart setup](../../demo/components/chart.html#required-files)
+for module requirements. The repository build generates demo-only vendor assets and licenses
+outside `dist`; neither they nor ECharts are mandatory package dependencies.
+
+Chart's reduced provisional ceilings are 12,000 gzip bytes per wrapper, 1,000 per adapter,
+15,000 for core+wrapper+adapter, and 1,500 for CSS. The manifest's `externalDependencies`
+explicitly records the engine as application-supplied and excluded from payload byte totals.
+Complete application cost still includes the selected ECharts engine; externalization does
+not eliminate its download. Engine-inclusive performance/payload approval remains a release gate.
+
 ## Form delivery
 
 Form selects only core plus the family entry; the existing validation coordinator stays

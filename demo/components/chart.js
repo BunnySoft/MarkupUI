@@ -1,9 +1,13 @@
 import "../../dist/markup-ui-box.js"
 import "../../dist/markup-ui-typography.js"
 import "../../dist/markup-ui-button.js"
-import "../../dist/markup-ui-chart.js"
+import { configureChartEngine } from "../../dist/markup-ui-chart-renderer.js"
+import * as echarts from "../vendor/echarts.js"
 import { bind, createStore } from "../../dist/markup-ui-state.js"
 import { loadComponentApi } from "../component-api.js"
+
+configureChartEngine(echarts)
+await import("../../dist/markup-ui-chart.js")
 
 document.getElementById("regional").source = {
   region: ["North", "South", "West"],
