@@ -21,6 +21,7 @@ platform bases while following the same contracts.
 | 7. [Core and selectable components](07-modules.md) | Load shared runtime once and only the features an application uses. |
 | 8. [Typed class and style model](08-view-element-styles.md) | Universal typed class and style representation on ViewElement for cross-platform rendering. |
 | 9. [Production readiness](09-production.md) | Release gates, known blockers and the hardening work order. |
+| 10. [JavaScript size optimization](10-size-optimization.md) | Measured baseline, component implementation consolidation, shared delivery and optional full-bundle tasks. |
 
 ## Main decisions
 

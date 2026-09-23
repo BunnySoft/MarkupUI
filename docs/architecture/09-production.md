@@ -228,6 +228,11 @@ the unchanged ceiling. The final 97-page catalog and integrated suite remain pen
 
 ## Work order
 
+The [JavaScript size optimization plan](10-size-optimization.md) is the selected next-thread
+workstream. It prioritizes one canonical behavior implementation per component before
+shared packaging and an optional full bundle. Its tasks are planned, not completed; the
+release blockers below remain open independently.
+
 1. Resolve the binding release scope explicitly. Scalar/model binding is delivered;
    conditional/keyed templates, item/parent scopes, writable keyed routes and a proving
    collection consumer are not. Implement and validate the agreed contract, or obtain

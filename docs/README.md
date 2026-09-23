@@ -27,6 +27,9 @@ Follow the [component development guide](elements/04-development.md) for the ste
 implementation, demo documentation and acceptance workflow.
 Use the [production readiness gates](architecture/09-production.md) to track release
 blockers; implemented components are not automatically production-validated.
+Follow the [JavaScript size optimization plan](architecture/10-size-optimization.md)
+for the next size-reduction work: canonical component implementations first, then
+measured shared delivery and an optional full bundle.
 Shared bundle extraction does not justify a second source tree. End users must be able
 to take the core and only the component/plugin JS and CSS they use.
 
