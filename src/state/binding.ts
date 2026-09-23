@@ -44,7 +44,6 @@ interface Directive {
 }
 
 function directives(element: Element): Directive[] {
-  if (element.hasAttribute("data-if") || element.hasAttribute("data-each")) throw new TypeError("Structural binding is not implemented.")
   const result: Directive[] = []
   const destinations = new Set<string>()
   for (const { name, value: path } of element.attributes) {
@@ -141,6 +140,7 @@ export function bind(root: ParentNode, store: MStore): Binding {
     const present = new Set(elements)
     const planned: Array<{ element: Element; signature: string; entries: Directive[] }> = []
     for (const element of elements) {
+      if (element.hasAttribute("data-if") || element.hasAttribute("data-each")) throw new TypeError("Structural binding is not implemented.")
       const signature = JSON.stringify([...element.attributes].filter(attr => /^(data-bind-|data-model-)/.test(attr.name))
         .map(attr => [attr.name, attr.value]))
       if (signature === records.get(element)?.signature) continue

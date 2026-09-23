@@ -60,7 +60,7 @@ uses this event contract; use separate elements for different owner/event contra
 <m-chart-dataset data-bind-source="report.sales"></m-chart-dataset>
 ```
 
-The Chart line describes its required integration, not a delivered Chart element.
+The Chart line is implemented by the optional Chart family and explicit scalar binder.
 One-way object assignments preserve the actual array/record reference. Values must be
 plain data without functions, accessors, DOM objects, cycles or prototype keys.
 Equal scalar or shallow-array writes are skipped to preserve active native drafts.

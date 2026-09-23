@@ -62,6 +62,18 @@ describe("explicit scoped binding", () => {
     expect(() => bind(template, createStore({ rows: [] }))).toThrow("not implemented")
   })
 
+  it.each(["data-if", "data-each"])("rejects a late %s directive on an already-bound node", directive => {
+    document.body.innerHTML = '<span data-bind-text="name"></span>'
+    const { store, binding } = attach(document.body, { name: "Original" })
+    const span = document.querySelector("span")!
+    span.setAttribute(directive, "rows")
+    expect(() => binding.refresh()).toThrow("not implemented")
+    span.removeAttribute(directive)
+    binding.refresh()
+    store.set("name", "Updated")
+    expect(span.textContent).toBe("Updated")
+  })
+
   it("does not coerce strings into native Boolean state", () => {
     const button = document.createElement("button")
     button.setAttribute("data-bind-disabled", "busy")
