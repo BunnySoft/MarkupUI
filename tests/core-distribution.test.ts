@@ -10,8 +10,14 @@ import { advancedPlugin } from "../src/plugins/advanced.js"
 import { widgetsPlugin } from "../src/plugins/widgets.js"
 
 const read = (name: string) => readFileSync(resolve("dist", name), "utf8")
+const packageVersion = JSON.parse(readFileSync(resolve("package.json"), "utf8")).version
 
 describe("root shared-core distribution", () => {
+  it("reports the package version from source and the build manifest", () => {
+    expect(m.version).toBe(packageVersion)
+    expect(JSON.parse(read("manifest.json")).version).toBe(packageVersion)
+  })
+
   it.each(["markup-ui.js", "markup-ui.min.js"])("shares served ESM identity through %s", file => {
     const output = execFileSync(process.execPath, ["--input-type=module", "-e", `
       import assert from "node:assert/strict";
@@ -22,6 +28,7 @@ describe("root shared-core distribution", () => {
       }
       const core = await import("./dist/markup-ui-core.js");
       const root = await import("./dist/${file}");
+      assert.equal(root.m.version, ${JSON.stringify(packageVersion)});
       const state = await import("./dist/markup-ui-state.js");
       assert.equal(root.createStore, state.createStore);
       assert.equal(root.bind, state.bind);
@@ -75,6 +82,7 @@ describe("root shared-core distribution", () => {
     const scripts = ["markup-ui.global.js", "markup-ui-button.global.js"]
     if (order === "component-first") scripts.reverse()
     for (const script of scripts) runInContext(read(script), context)
+    expect(runInContext("m.version", context)).toBe(packageVersion)
     expect(runInContext("m.elements.Base === MarkupUICore.ViewElement", context)).toBe(true)
     expect(runInContext("m.state.bind === MarkupUIState.bind", context)).toBe(true)
     expect(runInContext("MarkupUIButton.Button.prototype instanceof m.elements.Base", context)).toBe(true)

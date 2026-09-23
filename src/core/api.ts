@@ -70,7 +70,7 @@ export interface MarkupUIApi {
 const callable = (target: string | Element | Iterable<Element>): MQuery => query(target)
 
 export const m = Object.assign(callable, {
-  version: "0.11.0",
+  version: "0.13.0",
   fn: MQuery.prototype,
   query,
   use(plugin: MPlugin<MarkupUIApi>): MarkupUIApi {
