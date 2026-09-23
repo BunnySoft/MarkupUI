@@ -36,6 +36,46 @@ production readiness. Every supported family needs evidence for its declared con
 
 ## Current evidence
 
+September 23, 2026, Windows / Node 22.12.0 / pnpm 10.28.0:
+
+| Check | Latest local result |
+| --- | --- |
+| Frozen install | Passed in the existing workspace; not a clean remote-machine install. |
+| Typecheck/build | Passed, including all unchanged existing payload ceilings. |
+| Integrated tests | 4,819 passed across 129 files; zero failed or skipped. |
+| Packed consumer | 95 JavaScript entries, 2,334 files; strict NodeNext types and runtime imports passed. |
+| Browser catalog | 582/582 startup checks: 97 pages, three engines, two viewport sizes. |
+| Browser workflows | Chart, portable primitives, Form, Virtual List and restricted HTML checks passed in all six engine/layout combinations. Chromium also verified fail-closed Trusted Types enforcement. |
+| Dependency audit | 167 locked dependencies; zero reported advisories. |
+| Element directory | 89 families / 202 tags, plus 15 root and 3 plugin tags; source-data consistency tests passed. |
+| Root runtime gzip | 14,940 bytes minified ESM / 14,848 classic, each below the unchanged 15,000 ceiling. |
+| Chart runtime gzip | 212,488 bytes ESM / 212,881 classic including core and renderer; CSS 403 bytes. New ceilings remain provisional. |
+
+Browsers were Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 at 1280x900 and
+375x812. The local reports are `.vite/production-tests.json`,
+`.vite/package/results.json`, `.vite/browser/results.json` and
+`.vite/browser/catalog-results.json`, with browser screenshots in `.vite/browser`.
+These are generated evidence, not shipped runtime files. CI is configured but no
+remote matrix result has been recorded for this revision. Headless engines with
+mobile-sized viewports are not real mobile-device or screen-reader acceptance.
+
+The Form workflow now verifies asynchronous invalid/valid feedback in portable
+containers, native FormData including external associated controls and the submitter,
+disabled-fieldset/legend and readonly behavior, Switch keyboard activation, default
+reset and cancelled reset in all three engines and both layouts. Screenshots were
+checked at mobile and desktop sizes. These are Web interoperability tests, not proof
+of non-Web form renderers or real-device accessibility.
+
+Scalar binding also rejects unsupported structural directives added after initial
+binding and revalidates text ownership when bound descendants are added, before reusing
+cached scalar directives. Focused regressions cover rejection without attaching new
+subscriptions and successful refresh after the conflicting markup is removed.
+
+## Earlier checkpoints
+
+The following records describe earlier revisions, not the latest gate status above.
+Their test counts and open issues must not be treated as current failures or approvals.
+
 The September 22, 2026 post-ViewElement-migration run recorded 4,303 passing and 225 failing
 tests. Typecheck, build and 63 focused migration/distribution tests passed. Browser
 verification was unavailable. This is a baseline, not a release approval or a current
@@ -153,21 +193,25 @@ the unchanged ceiling. The final 97-page catalog and integrated suite remain pen
 
 ## Work order
 
-1. Finish the portable primitive contracts and renderers, starting with labels, disclosure
-   and semantic structure. Keep `m-*` public authoring and validate native Web output.
-   Do not substitute HTML just to satisfy a test's hard-coded tag expectation.
-2. Audit remaining examples and tests for platform leakage. Keep native-interoperability
-   tests separate from portable acceptance, preserving labels, forms, focus and semantics.
-3. Audit retained foundation/dynamic elements and optional plugins beyond base-class
-   inheritance: properties, lifecycle, events and ownership.
-4. Implement the required [Chart contract](../elements/contracts/chart.md): Bar, Line/Area,
-   Pie/Doughnut and Scatter; property assignment, scoped binding, JSON attributes, nested
-   JSON and remote JSON. Deliver the binding integration and optional ECharts packaging
-   without making either a prerequisite for unrelated components.
-5. Complete browser/accessibility acceptance and security/performance reviews, with
-   explicit supported environments and documented capability fallbacks.
-6. Verify the packed consumer experience, enforce CI gates and reconcile the component
-   inventory before proposing a release.
+1. Resolve the binding release scope explicitly. Scalar/model binding is delivered;
+   conditional/keyed templates, item/parent scopes, writable keyed routes and a proving
+   collection consumer are not. Implement and validate the agreed contract, or obtain
+   an explicit release-scope decision; do not silently mark the planned runtime complete.
+2. Review retained root foundation/dynamic elements and optional plugins beyond shared
+   inheritance: properties, pre-upgrade values, lifecycle, events and ownership.
+   Continue family contract review and separate native Web examples from portable
+   authoring acceptance. A passing startup catalog does not settle these contracts.
+3. Expand representative interaction acceptance beyond Chart, primitives, Form and
+   Virtual List. Run real screen-reader/device/input-mode checks, including IME, RTL,
+   forced colors and zoom; preserve focus, native forms and authored state.
+4. Complete security/performance review across the supported surfaces. Approve Chart's
+   new renderer-inclusive payload ceilings and measured performance targets without
+   increasing any existing component ceiling. Current local observations are not
+   performance approvals or an independent security assessment.
+5. Obtain actual Windows/Linux/macOS and Node 22/24 CI evidence from clean machines.
+   Current local tests and packed-consumer checks do not prove this matrix.
+6. Re-run the automated gates after remaining implementation work, reconcile release
+   notes and obtain release approval. Publishing and pushing require authorization.
 
 Finish and record each bounded change before starting the next. Existing failures remain
 release blockers even when unrelated to the latest change.

@@ -90,8 +90,9 @@ literal filtering, clear actions and native lifecycle mechanics already used by 
 TreeSelect and Popselect. This is a real existing consumer boundary, not a budget-only
 split: neither consumer imports Select registration or core. Its classic symbol is private;
 there is no public `createSelect`/`SelectController` facade. Select does not clone native
-options or retain the aggregate's legacy `MSelect` registration. The remaining `m-option`
-belongs only to unmigrated Autocomplete, not Select.
+options or retain the aggregate's legacy `MSelect` registration. The root facade retains
+`m-option`; some families parse inert option configuration. Select owns native options,
+not an `m-option` renderer.
 
 Form's native-owner API lives in `src/components/form/form.ts`, with FormItem
 and FormItemGi in `item.ts`. `controller.ts` retains the existing explicit native-field
@@ -105,7 +106,7 @@ Grid's direct layout properties live in `src/components/grid/grid.ts`; `item.ts`
 optional column span/start. Its pure `model.ts` tag predicate permits passive composition
 without importing constructors or registration. Both elements reuse reversible style writes
 and never inspect, measure or replace children. Existing native `.m-grid` CSS consumers remain
-supported; the competing aggregate `MGrid` is removed while pending Layout aliases remain.
+supported; competing aggregate implementations and Layout aliases are removed.
 See the [Grid demo/API](../../demo/components/grid.html) for the native CSS scope.
 
 Layout's direct shell properties live in `src/components/layout/layout.ts`; `regions.ts`
@@ -207,8 +208,9 @@ must not define a separate copy of the core or replace an already loaded core.
 
 Shared source files do not automatically produce shared bundles. Implement that boundary
 in `scripts/build.mjs` and the package exports, then account for the actual dependency files.
-The first shared-core outputs are implemented for Avatar. Apply the same boundary when
-migrating later families; do not infer that every existing component already uses it.
+The shared-core boundary is implemented across the 89 selectable families listed in the
+[element directory](../elements/05-element-index.md). Required dependencies and costs are
+recorded per family in the build manifest; shared delivery is not production acceptance.
 
 ## Change checklist
 

@@ -1,7 +1,7 @@
 # 7. Small core and selectable components
 
-**Implemented for the shared core, all seven initial families, Icon, Typography, Space, Flex, Input, Checkbox, Radio, Switch, InputNumber, Select, Form, Grid, Layout and Tag, with explicit payload ceilings.
-The rollout continues component-by-component.**
+**Implemented for the shared core and 89 selectable families, with explicit payload
+ceilings. Chart's new ceilings remain provisional pending release approval.**
 Follow the useful jQuery/plugin pattern: load one small core, then only the features the
 application needs. This is a packaging and extension pattern, not a dependency on jQuery.
 

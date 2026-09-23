@@ -47,7 +47,7 @@ remains demo-only.
 The following markup uses the implemented declarative configuration:
 
 ```html
-<m-chart aria-label="Monthly sales" style="height: 320px">
+<m-chart aria-label="Monthly sales" height="320">
   <m-chart-title text="Monthly sales"></m-chart-title>
   <m-chart-tooltip trigger="axis"></m-chart-tooltip>
   <m-chart-legend></m-chart-legend>
@@ -229,7 +229,7 @@ Chart blocks the production release until all of the following pass:
 - [x] Verify actual nonblank charts, resize/hidden-to-visible behavior, updates and
   interactions in supported desktop/mobile browser layouts.
 - [ ] Validate accessibility, readable fallback data, theme changes and resource cleanup.
-- [ ] Test selectable ESM/classic delivery and packed consumer exports, with one shared
+- [x] Test selectable ESM/classic delivery and packed consumer exports, with one shared
   ViewElement and no ECharts cost for consumers that do not select Chart.
 - [ ] Approve and enforce measured renderer-inclusive payload/performance budgets without
   increasing unrelated component ceilings.
@@ -265,6 +265,13 @@ Lines series. ECharts is now pinned to patched 6.1.0 and the three-engine Chart 
 regression passed again. Vitest is pinned to patched 4.1.11; the subsequent registry audit
 reported zero advisories. The isolated package's Affix declaration conflict is also fixed.
 These fixes do not waive the remaining release acceptance gates.
+
+The final September 23 integrated run passes 4,819 tests across 129 files, with no
+failures or skips. The isolated packed consumer passes all 95 JavaScript entry imports,
+strict NodeNext declarations and export assets across 2,334 packed files. Shared-core
+identity and Chart's optional renderer dependency are checked without an `MElement`
+alias or repository-only declaration dependencies. These checks close the selectable
+delivery/packed-consumer gate, not the human accessibility or budget-approval gates.
 
 ## References
 
