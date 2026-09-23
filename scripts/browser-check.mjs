@@ -279,7 +279,7 @@ try {
           await verifyHtmlPolicy(page, origin, name)
           assert.deepEqual(errors, [], `${name}/${layout}: browser errors`)
           results.push({ browser: name, version: browser.version(), layout, readyMs: Math.round(readyMs), charts: geometry, canvasColoredPixels: colored, performance: performanceSample,
-            form: "passed", htmlPolicy: "passed", trustedTypes: name === "chromium" ? "fail-closed verified" : "not tested" })
+            form: "passed", plugins: "passed", htmlPolicy: "passed", trustedTypes: name === "chromium" ? "fail-closed verified" : "not tested" })
           console.log(`${name} ${browser.version()} ${layout}: passed (${Math.round(readyMs)} ms to six ready charts)`)
           if (process.argv.includes("--catalog")) {
             const failedResources = []

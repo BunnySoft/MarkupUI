@@ -13,6 +13,11 @@
   repaired selected-module demos and removed obsolete migration showcases.
 - Restricted HTML insertion and remote markup loading with explicit trust options,
   bounded responses, cancellation and fail-closed Trusted Types behavior.
+- Hardened the optional DataGrid and Rating plugins: stable native controls and focus,
+  authored-content preservation, bounded data/properties, live updates and reconnect
+  cleanup. Rating programmatic writes are silent; user changes emit `m:change`.
+  Added an interactive plugin demo and three-engine keyboard workflows.
+- Corrected `m.version` to match the package version in source, ESM and classic builds.
 - Renamed Affix offsets to `insetTop` / `insetBottom` and `inset-top` / `inset-bottom`
   to avoid overriding native DOM geometry. No compatibility aliases are provided.
 - Added packed-consumer checks, three-engine browser checks, dependency audit gates and

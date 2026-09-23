@@ -42,13 +42,14 @@ September 23, 2026, Windows / Node 22.12.0 / pnpm 10.28.0:
 | --- | --- |
 | Frozen install | Passed in the existing workspace; not a clean remote-machine install. |
 | Typecheck/build | Passed, including all unchanged existing payload ceilings. |
-| Integrated tests | 4,819 passed across 129 files; zero failed or skipped. |
+| Integrated tests | 4,836 passed across 131 files; zero failed or skipped. |
 | Packed consumer | 95 JavaScript entries, 2,334 files; strict NodeNext types and runtime imports passed. |
-| Browser catalog | 582/582 startup checks: 97 pages, three engines, two viewport sizes. |
-| Browser workflows | Chart, portable primitives, Form, Virtual List and restricted HTML checks passed in all six engine/layout combinations. Chromium also verified fail-closed Trusted Types enforcement. |
+| Browser catalog | 588/588 startup checks: 98 pages, three engines, two viewport sizes. |
+| Browser workflows | Chart, portable primitives, Form, DataGrid, Rating, Virtual List and restricted HTML checks passed in all six engine/layout combinations. Chromium also verified fail-closed Trusted Types enforcement. |
 | Dependency audit | 167 locked dependencies; zero reported advisories. |
 | Element directory | 89 families / 202 tags, plus 15 root and 3 plugin tags; source-data consistency tests passed. |
 | Root runtime gzip | 14,940 bytes minified ESM / 14,848 classic, each below the unchanged 15,000 ceiling. |
+| Optional plugin gzip | Advanced JS/CSS 2,363/458 bytes; Widgets JS/CSS 1,498/420 bytes. Existing ceilings unchanged. |
 | Chart runtime gzip | 212,488 bytes ESM / 212,881 classic including core and renderer; CSS 403 bytes. New ceilings remain provisional. |
 
 Browsers were Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 at 1280x900 and
@@ -71,6 +72,10 @@ binding and revalidates text ownership when bound descendants are added, before 
 cached scalar directives. Focused regressions cover rejection without attaching new
 subscriptions and successful refresh after the conflicting markup is removed.
 
+The root API now reports package version `0.13.0` consistently in source, unminified
+and minified ESM, classic scripts and the build manifest. Distribution regressions
+compare those values with `package.json`.
+
 ### Retained plugin checkpoint
 
 The September 23 DataGrid hardening passes build, 67 focused tests and Chromium,
@@ -79,10 +84,9 @@ focus and accessible names; authored content survives updates, column changes an
 reconnection. Plain bounded rows and safe unique columns are validated before visible
 mutation. Pre-upgrade rows and disconnected listener/observer cleanup are covered.
 The [optional plugin demo](../../demo/components/plugins.html) records the exact baseline
-and limitations. Advanced JS is 2,368 gzip bytes, below its unchanged 3,000-byte ceiling.
-The new demo passed six startup checks; the full catalog and integrated suite above
-still describe the preceding revision, pending a new integrated run. This does not close
-root/plugin contract approval or screen-reader acceptance.
+and limitations. Advanced JS is 2,363 gzip bytes, below its unchanged 3,000-byte ceiling.
+The new demo passed six startup checks and is included in the full catalog and integrated
+suite above. This does not close root/plugin contract approval or screen-reader acceptance.
 
 Rating's follow-up passes build, 73 combined plugin/root/style tests and the same six
 browser/layout combinations. It retains native button identity, silent programmatic
@@ -220,6 +224,10 @@ the unchanged ceiling. The final 97-page catalog and integrated suite remain pen
    an explicit release-scope decision; do not silently mark the planned runtime complete.
 2. Review retained root foundation/dynamic elements and optional plugins beyond shared
    inheritance: properties, pre-upgrade values, lifecycle, events and ownership.
+   DataGrid and Rating now have documented, browser-verified baselines. Remaining concrete
+   root gaps include Theme token cleanup when its name is removed, Field's real native
+   label association and live control adoption, AccordionItem's live open/title updates
+   and listener cleanup, and App's pre-upgrade store ownership.
    Continue family contract review and separate native Web examples from portable
    authoring acceptance. A passing startup catalog does not settle these contracts.
 3. Expand representative interaction acceptance beyond Chart, primitives, Form and
