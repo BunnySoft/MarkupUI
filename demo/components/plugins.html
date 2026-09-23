@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Optional Plugins - MarkupUI</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
+  <link rel="stylesheet" href="../component-api.css">
+  <script type="module" src="./plugins.js"></script>
+</head>
+<body>
+  <main data-demo-page class="component-docs">
+    <m-heading level="1">Optional Plugins</m-heading>
+    <m-p>Retained root plugins are optional Web extensions. They do not replace the selectable
+      DataTable and Rate families. Their bounded behavior below is an implementation baseline,
+      not approval of a portable contract.</m-p>
+    <m-p><a href="../">Components</a> / <a href="../setup.html">Setup</a></m-p>
+    <m-heading level="2" id="data-grid">DataGrid</m-heading>
+    <m-data-grid id="scores">
+      <m-data-column key="name" label="Name" sortable></m-data-column>
+      <m-data-column key="score" label="Score" sortable></m-data-column>
+      <m-p id="grid-note">Team scores</m-p>
+    </m-data-grid>
+    <m-box display="flex" wrap gap="8" margin="12px 0">
+      <m-button id="replace-rows">Replace rows</m-button>
+      <m-button id="toggle-column">Toggle score column</m-button>
+      <m-button id="reconnect-grid">Reconnect grid</m-button>
+    </m-box>
+    <m-p id="grid-status" aria-live="polite">No sort requested.</m-p>
+    <m-heading level="3">Data and ownership</m-heading>
+    <m-p>Assign rows as an array of at most 1,000 plain records, containing strings,
+      finite numbers, booleans or nullish cells. Objects, executable accessors and unsafe
+      prototype keys are rejected before rendering. Missing cells render empty and text
+      is never interpreted as HTML. In-place edits require refresh().</m-p>
+    <m-p>Direct DataColumn children define up to 32 unique, safe, nonempty keys.
+      The key and label string properties and sortable boolean property update the table.
+      Invalid synchronous writes/refreshes throw; invalid observed column changes emit
+      bubbling, noncancelable m:error with the Error as detail and preserve the last valid
+      table. Correcting the configuration resumes rendering.</m-p>
+    <m-p>Sorting uses native buttons and numeric-aware text comparison. Enter, Space or a click
+      toggles ascending/descending order and emits bubbling, noncancelable m:sort with
+      { key, direction }, where direction is asc or desc. Property writes are silent.
+      Removing the sorted column resets sorting. Surviving header buttons retain identity
+      and focus; removing a focused button moves focus to the first remaining sort button.
+      Authored content survives refresh and reconnection. Editing, selection and
+      virtualization are not provided.</m-p>
+    <m-heading level="3">Loading</m-heading>
+    <m-pre>import { m } from "@dataengine/markup-ui"
+import { advancedPlugin } from "@dataengine/markup-ui/advanced"
+m.use(advancedPlugin)
+document.querySelector("m-data-grid").rows = [
+  { name: "Grace", score: 10 }, { name: "Ada", score: 2 }
+]</m-pre>
+    <m-p>The plugin receives the root API and injects only its own CSS. Its package
+      also exposes advanced/style.css. Box, Button and Typography are selected separately for this demo.
+      Loading a standalone family does not require these plugins or the root facade.</m-p>
+  </main>
+</body>
+</html>

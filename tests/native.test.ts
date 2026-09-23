@@ -594,7 +594,7 @@ describe("unified API and plugins", () => {
       { name: "Ada", score: 1 },
     ]
     expect(document.querySelectorAll("m-data-grid tbody tr")).toHaveLength(2)
-    document.querySelector<HTMLElement>("m-data-grid th[sortable]")?.click()
+    document.querySelector<HTMLButtonElement>("m-data-grid th button")?.click()
     expect(document.querySelector("m-data-grid tbody td")?.textContent).toBe("Ada")
     expect((document.querySelector("m-date-picker") as HTMLElement & { value: string }).value)
       .toBe("2026-08-26")

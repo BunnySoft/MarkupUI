@@ -71,6 +71,19 @@ binding and revalidates text ownership when bound descendants are added, before 
 cached scalar directives. Focused regressions cover rejection without attaching new
 subscriptions and successful refresh after the conflicting markup is removed.
 
+### Retained plugin checkpoint
+
+The September 23 DataGrid hardening passes build, 67 focused tests and Chromium,
+Firefox and WebKit workflows in both layouts. Native sort buttons keep their identity,
+focus and accessible names; authored content survives updates, column changes and
+reconnection. Plain bounded rows and safe unique columns are validated before visible
+mutation. Pre-upgrade rows and disconnected listener/observer cleanup are covered.
+The [optional plugin demo](../../demo/components/plugins.html) records the exact baseline
+and limitations. Advanced JS is 2,368 gzip bytes, below its unchanged 3,000-byte ceiling.
+The new demo passed six startup checks; the full catalog and integrated suite above
+still describe the preceding revision, pending a new integrated run. This does not close
+root/plugin contract approval or screen-reader acceptance.
+
 ## Earlier checkpoints
 
 The following records describe earlier revisions, not the latest gate status above.

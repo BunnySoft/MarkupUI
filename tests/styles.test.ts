@@ -36,7 +36,8 @@ describe("CSS and theme sources", () => {
     expect(hash(builtInStyles)).toBe("d077fc7255f88ad04a690b50e068240ab2e748f5dbceb9e24643e94612d24180")
     expect(builtInStyles).not.toContain("m-autocomplete")
     // Plugin styles retain only their own tags; selected components own their CSS.
-    expect(hash(advancedStyles)).toBe("358ba4510188e24811c91c44b2b59b0498a918979095f852200758a260fb73a0")
+    // DataGrid sorts through native buttons with visible focus and direction indicators.
+    expect(hash(advancedStyles)).toBe("45c3e4572504df4d2dbb93aa8b990ba88ad32d2491a475f2b1c75c5bdd32e9a2")
     expect(hash(widgetStyles)).toBe("8ed4cb38ebf8f8f831d6a3c351313b254d093f534850b66f5448bcff371eb06f")
     expect(advancedStyles).toContain("m-data-grid")
     expect(widgetStyles).toContain("m-rating")

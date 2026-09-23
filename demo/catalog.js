@@ -43,7 +43,7 @@ export const componentGroups = [
   ] },
   { name: "Config Components", items: [
     ["config-provider", "Config Provider"], ["element", "Element"],
-    ["elements", "Element Matrix"], ["global-style", "Global Style"],
+    ["elements", "Element Matrix"], ["global-style", "Global Style"], ["plugins", "Optional Plugins"],
   ] },
 ]
 

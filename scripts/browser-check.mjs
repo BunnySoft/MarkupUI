@@ -17,6 +17,33 @@ const server = spawn(process.execPath, ["demo/server.mjs"], {
 })
 const results = []
 const catalogResults = []
+async function verifyPlugins(page, origin, name, layout) {
+  await page.goto(`${origin}/demo/components/plugins.html`)
+  const sort = page.getByRole("button", { name: "Score", exact: true })
+  await sort.waitFor()
+  await sort.focus()
+  await page.keyboard.press("Enter")
+  assert.equal(await page.locator("#scores tbody tr:first-child td:last-child").textContent(), "2")
+  assert.equal(await sort.evaluate(element => document.activeElement === element), true)
+  await page.keyboard.press("Space")
+  assert.equal(await page.locator("#scores th[aria-sort=descending]").textContent(), "Score")
+  assert.equal(await page.locator("#grid-status").textContent(), "score: desc")
+  await page.getByRole("button", { name: "Replace rows", exact: true }).click()
+  assert.equal(await page.locator("#scores tbody tr:first-child td:last-child").textContent(), "25")
+  await page.getByRole("button", { name: "Toggle score column", exact: true }).click()
+  await page.waitForFunction(() => document.querySelectorAll("#scores th").length === 1)
+  await page.getByRole("button", { name: "Toggle score column", exact: true }).click()
+  await sort.waitFor()
+  await page.getByRole("button", { name: "Reconnect grid", exact: true }).click()
+  await sort.focus()
+  await page.keyboard.press("Enter")
+  assert.equal(await page.locator("#scores tbody tr:first-child td:last-child").textContent(), "4")
+  assert.equal(await page.locator("#grid-note").textContent(), "Team scores")
+  assert.equal(await page.locator("#scores table").count(), 1)
+  assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${name}/${layout}: plugin overflow`)
+  await page.locator("#scores").scrollIntoViewIfNeeded()
+  await page.screenshot({ path: resolve(output, `${name}-${layout}-plugins.png`) })
+}
 async function verifyForm(page, origin, name, layout) {
   await page.goto(`${origin}/demo/components/form.html`)
   await page.waitForFunction(() => document.querySelector("#form-api").classList.contains("component-api"))
@@ -223,6 +250,7 @@ try {
           await page.keyboard.press("Space")
           assert.equal(await summary.evaluate(node => node.parentElement.open), false)
           await verifyForm(page, origin, name, layout)
+          await verifyPlugins(page, origin, name, layout)
           await verifyHtmlPolicy(page, origin, name)
           assert.deepEqual(errors, [], `${name}/${layout}: browser errors`)
           results.push({ browser: name, version: browser.version(), layout, readyMs: Math.round(readyMs), charts: geometry, canvasColoredPixels: colored, performance: performanceSample,
