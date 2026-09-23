@@ -1,7 +1,9 @@
 # 1. Binding language
 
-**Design, not a delivered API.** Directive values are paths, not JavaScript expressions.
-The binder operates only under an explicitly supplied root.
+**Scalar and explicit model binding implemented; templates remain design work.**
+Directive values are safe data paths, not JavaScript expressions. Import `bind` and
+`createStore` from `@dataengine/markup-ui/state`. The binder operates only under an
+explicitly supplied root; separate nonoverlapping roots have independent stores.
 
 ## Channels
 
@@ -10,9 +12,10 @@ The binder operates only under an explicitly supplied root.
 | `data-bind-<property>="path"` | State to element | Assign a declared logical property. |
 | `data-bind-attr-<attribute>="path"` | State to Web attribute | Explicit Web-only attribute channel. |
 | `data-bind-text="path"` | State to text | Write literal text, never HTML. |
+| `data-bind-prop-text="path"` | State to element | Explicit escape for a component property named `text`. |
 | `data-model-<property>="path"` | State and element | Two-way property binding with a declared update contract. |
-| `data-if="path"` | State to structure | Create/remove one conditional template instance. |
-| `data-each="path"` with `data-each-key` | Collection to structure | Maintain keyed template instances. |
+| `data-if="path"` | Planned | Create/remove one conditional template instance. |
+| `data-each="path"` with `data-each-key` | Planned | Maintain keyed template instances. |
 
 Kebab-case property suffixes map to logical camel-case names: `data-bind-fallback-src`
 targets `fallbackSrc`. Avatar's accessible name is `label`, so its binding is
@@ -43,13 +46,40 @@ Native input/change events belong to an explicit Web adapter. MarkupUI elements 
 their logical model-update contract; the binder does not guess it from tag names.
 Attribute and text channels are not two-way model destinations.
 
+The first Web adapter declares the event list using `data-model-event="input change"`
+and the owner using `data-model-target="native"` or `"host"` (default). Events must
+originate at that exact owner, not an unrelated descendant. The adapter reads the
+current bound property, never arbitrary event detail. Each declared model property
+uses this event contract; use separate elements for different owner/event contracts.
+
+```html
+<m-input data-model-value="customer.name"
+  data-model-event="input change" data-model-target="native"></m-input>
+<m-radio-group data-model-value="customer.plan"
+  data-model-event="m:radio-group-change"></m-radio-group>
+<m-chart-dataset data-bind-source="report.sales"></m-chart-dataset>
+```
+
+The Chart line describes its required integration, not a delivered Chart element.
+One-way object assignments preserve the actual array/record reference. Values must be
+plain data without functions, accessors, DOM objects, cycles or prototype keys.
+Equal scalar or shallow-array writes are skipped to preserve active native drafts.
+Reassign collections or call the component's explicit refresh after in-place changes.
+
 ## Activation and limits
 
-One root has one binding owner. Initial values, subscriptions and cleanup are installed
-explicitly; no automatic `data-*` activation occurs across the document.
-The reserved text channel and any escape for a property literally named `text` must be
-settled before implementation. Keep direction explicit instead of introducing shorthand
-that changes meaning by element type.
+One root has one binding owner; overlapping roots and duplicate destinations fail.
+`const stop = bind(root, store)` installs initial values, subscriptions and listeners.
+`stop.refresh()` discovers added/removed nodes and changed directives. `stop()` releases
+ownership without reverting DOM or state. Failed initial setup cleans up subscriptions.
+The optional `m-app` explicitly owns its subtree and refreshes on child changes; reconnect
+uses the retained store. No automatic activation occurs across the document.
+
+Text binding cannot own a bound subtree or an executable text container. The attribute
+channel accepts naming/ARIA/data attributes and the documented Boolean presence
+attributes, not URL, style or event-handler sinks. Native property binding is limited to
+ordinary field state and naming properties; component setters own their value validation.
+Old development binding names are removed, without aliases or a compatibility parser.
 
 ## References
 

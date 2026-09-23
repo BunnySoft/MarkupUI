@@ -10,6 +10,10 @@
   "types": "./dist/index.d.ts",
   "sideEffects": true,
   "exports": {
+    "./state": {
+      "types": "./dist/state/index.d.ts",
+      "import": "./dist/markup-ui-state.js"
+    },
     "./style.css": "./dist/markup-ui.css",
     "./themes.css": "./dist/markup-ui-themes.css",
     "./themes/slate.css": "./dist/markup-ui-theme-slate.css",

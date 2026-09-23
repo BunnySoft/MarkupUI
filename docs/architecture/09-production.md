@@ -64,6 +64,14 @@ association, cancellation, disabled behavior, live state, late content and recon
 The [Box demo/API](../../demo/components/box.html) records ownership and limitations;
 browser keyboard and assistive-technology verification is still outstanding.
 
+The September 22, 2026 scalar-binding hardening run on Windows / Node 22.12.0 passed
+all 4,638 tests across 123 files, with zero failed or skipped tests, after a successful
+build. State now rejects unsafe paths and delivers explicit `data-bind-*` / `data-model-*`
+channels without old syntax aliases or component-tag inference. The optional state entry
+is shared by the root facade; selected components remain independent. App reconnect and
+removed-node cleanup are covered. Template/item scopes, Chart integration and browser
+acceptance remain outstanding. This evidence does not approve a production release.
+
 ## Work order
 
 1. Finish the portable primitive contracts and renderers, starting with labels, disclosure

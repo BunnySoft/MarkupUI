@@ -196,7 +196,7 @@
             id="layout"
             class="showcase-section"
             aria-label="Layout components"
-            m-visible="panels.layout"
+            data-bind-hidden="panels.layoutHidden"
           >
             <m-stack gap="md">
               <m-stack class="section-heading">
@@ -264,7 +264,7 @@
             id="content"
             class="showcase-section"
             aria-label="Common components"
-            m-visible="panels.content"
+            data-bind-hidden="panels.contentHidden"
           >
             <m-stack gap="md">
               <m-stack class="section-heading">
@@ -413,7 +413,7 @@
             id="forms"
             class="showcase-section"
             aria-label="Form components"
-            m-visible="panels.forms"
+            data-bind-hidden="panels.formsHidden"
           >
             <m-stack gap="md">
               <m-stack class="section-heading">
@@ -433,15 +433,15 @@
                         <m-input
                           name="name"
                           required minlength="3"
-                          m-bind="form.name"
+                         
                           placeholder="Enter your name"
-                        ><input id="profile-name"></m-input>
+                         data-model-value="form.name" data-model-event="input change" data-model-target="native"><input id="profile-name"></m-input>
                         <p class="m-form-item__feedback" id="profile-name-error" hidden></p>
                       </m-form-item>
 
                       <m-form-item key="role">
                         <label class="m-form-item__label" for="profile-role">Role</label>
-                        <m-select name="role" m-bind="form.role" required>
+                        <m-select name="role" required data-model-value="form.role" data-model-event="input change" data-model-target="native">
                           <select id="profile-role">
                           <option value="developer" selected>Developer</option>
                           <option value="designer">Designer</option>
@@ -454,9 +454,9 @@
                         <label class="m-form-item__label">City
                         <m-autocomplete
                           name="city"
-                          m-bind="form.city"
+                         
                           placeholder="Start typing"
-                        >
+                         data-model-value="form.city" data-model-event="m:change">
                           <m-option value="London">London</m-option>
                           <m-option value="New York">New York</m-option>
                           <m-option value="Singapore">Singapore</m-option>
@@ -465,7 +465,7 @@
                       </m-form-item>
 
                       <m-form-item key="plan">
-                        <m-radio-group m-bind="form.plan">
+                        <m-radio-group data-model-value="form.plan" data-model-event="m:radio-group-change">
                           <legend>Plan</legend>
                           <m-radio name="profile-plan" value="starter" required>Starter</m-radio>
                           <m-radio name="profile-plan" value="professional">Professional</m-radio>
@@ -476,11 +476,11 @@
                       <m-form-item>
                         <label class="m-form-item__label">Confidence
                         <m-slider
-                          m-bind="form.confidence"
+                         
                           min="0"
                           max="100"
                           step="5"
-                        ></m-slider>
+                         data-model-value="form.confidence" data-model-event="m:change"></m-slider>
                         </label>
                       </m-form-item>
 
@@ -488,16 +488,16 @@
                         <label class="m-form-item__label" for="profile-notes">Notes</label>
                         <m-textarea
                           name="notes"
-                          m-bind="form.notes"
+                         
                           placeholder="What are you building?"
-                        ><textarea id="profile-notes"></textarea></m-textarea>
+                         data-model-value="form.notes" data-model-event="input change" data-model-target="native"><textarea id="profile-notes"></textarea></m-textarea>
                       </m-form-item>
 
                       <m-wrap gap="lg">
-                        <m-checkbox id="newsletter" checked m-bind="form.newsletter">
+                        <m-checkbox id="newsletter" checked data-model-checked="form.newsletter" data-model-event="change" data-model-target="native">
                           Receive release notes
                         </m-checkbox>
-                        <m-switch id="notifications" m-bind="form.notifications">
+                        <m-switch id="notifications" data-model-checked="form.notifications" data-model-event="change" data-model-target="native">
                           Enable notifications
                         </m-switch>
                       </m-wrap>
@@ -507,22 +507,22 @@
                         <m-button
                           type="primary"
                           m-action="demo.save"
-                          m-disabled="form.busy"
+                          data-bind-disabled="form.busy"
                         >
                           Save profile
                         </m-button>
                         <m-button m-action="demo.reset">Reset</m-button>
                         <m-spacer></m-spacer>
-                        <m-badge m-visible="form.busy">Saving</m-badge>
+                        <m-badge data-bind-hidden="form.busyHidden">Saving</m-badge>
                       </m-row>
 
-                      <m-alert m-visible="form.valid">
+                      <m-alert data-bind-hidden="form.validHidden">
                         Form validation passed.
                       </m-alert>
-                      <m-alert m-visible="form.invalid">
+                      <m-alert data-bind-hidden="form.invalidHidden">
                         Correct the highlighted fields.
                       </m-alert>
-                      <m-alert m-visible="form.saved">
+                      <m-alert data-bind-hidden="form.savedHidden">
                         Profile saved through a named asynchronous action.
                       </m-alert>
                     </m-stack>
@@ -536,43 +536,43 @@
                       <m-row>
                         <m-text>Name</m-text>
                         <m-spacer></m-spacer>
-                        <strong m-text="form.name"></strong>
+                        <strong data-bind-text="form.name"></strong>
                       </m-row>
                       <m-row>
                         <m-text>Role</m-text>
                         <m-spacer></m-spacer>
-                        <strong m-text="form.role"></strong>
+                        <strong data-bind-text="form.role"></strong>
                       </m-row>
                       <m-row>
                         <m-text>City</m-text>
                         <m-spacer></m-spacer>
-                        <strong m-text="form.city"></strong>
+                        <strong data-bind-text="form.city"></strong>
                       </m-row>
                       <m-row>
                         <m-text>Plan</m-text>
                         <m-spacer></m-spacer>
-                        <strong m-text="form.plan"></strong>
+                        <strong data-bind-text="form.plan"></strong>
                       </m-row>
                       <m-row>
                         <m-text>Confidence</m-text>
                         <m-spacer></m-spacer>
-                        <strong m-text="form.confidence"></strong>
+                        <strong data-bind-text="form.confidence"></strong>
                       </m-row>
                       <m-row>
                         <m-text>Newsletter</m-text>
                         <m-spacer></m-spacer>
-                        <strong m-text="form.newsletter"></strong>
+                        <strong data-bind-text="form.newsletter"></strong>
                       </m-row>
                       <m-row>
                         <m-text>Notifications</m-text>
                         <m-spacer></m-spacer>
-                        <strong m-text="form.notifications"></strong>
+                        <strong data-bind-text="form.notifications"></strong>
                       </m-row>
                     </m-stack>
 
                     <m-alert>
                       Latest event:
-                      <strong m-text="events.latest"></strong>
+                      <strong data-bind-text="events.latest"></strong>
                     </m-alert>
 
                     <m-field label="Lightweight field without validation">
@@ -580,7 +580,7 @@
                     </m-field>
 
                     <code class="code-block">
-                      &lt;m-radio-group m-bind="form.plan"&gt;...&lt;/m-radio-group&gt;
+                      &lt;m-radio-group data-model-value="form.plan" data-model-event="m:radio-group-change"&gt;...&lt;/m-radio-group&gt;
                     </code>
                   </m-stack>
                 </m-card>
@@ -592,7 +592,7 @@
             id="navigation"
             class="showcase-section"
             aria-label="Navigation components"
-            m-visible="panels.navigation"
+            data-bind-hidden="panels.navigationHidden"
           >
             <m-stack gap="md">
               <m-stack class="section-heading">
@@ -653,7 +653,7 @@
                     </m-menu>
                     <m-pagination id="demo-pagination" page="2" count="5"></m-pagination>
                     <m-alert>
-                      Selection: <strong m-text="navigation.selection"></strong>
+                      Selection: <strong data-bind-text="navigation.selection"></strong>
                     </m-alert>
                   </m-stack>
                 </m-card>
@@ -734,7 +734,7 @@
             id="advanced"
             class="showcase-section"
             aria-label="Advanced plugin components"
-            m-visible="panels.advanced"
+            data-bind-hidden="panels.advancedHidden"
           >
             <m-stack gap="md">
               <m-stack class="section-heading">
@@ -801,7 +801,7 @@
             id="widgets"
             class="showcase-section"
             aria-label="Optional widgets plugin"
-            m-visible="panels.widgets"
+            data-bind-hidden="panels.widgetsHidden"
           >
             <m-stack gap="md">
               <m-stack class="section-heading">
@@ -906,7 +906,7 @@
             id="themes"
             class="showcase-section"
             aria-label="Theme components"
-            m-visible="panels.themes"
+            data-bind-hidden="panels.themesHidden"
           >
             <m-stack gap="md">
               <m-stack class="section-heading">
@@ -950,7 +950,7 @@
             id="overlays"
             class="showcase-section"
             aria-label="Overlay and feedback components"
-            m-visible="panels.overlays"
+            data-bind-hidden="panels.overlaysHidden"
           >
             <m-stack gap="md">
               <m-stack class="section-heading">
@@ -1043,7 +1043,7 @@
             id="runtime"
             class="showcase-section"
             aria-label="Runtime features"
-            m-visible="panels.runtime"
+            data-bind-hidden="panels.runtimeHidden"
           >
             <m-stack gap="md">
               <m-stack class="section-heading">
@@ -1060,7 +1060,7 @@
                     </m-text>
                     <m-row align="center" gap="sm">
                       <m-button type="primary" m-action="demo.increment">Increment</m-button>
-                      <m-badge>Count: <strong m-text="metrics.clicks"></strong></m-badge>
+                      <m-badge>Count: <strong data-bind-text="metrics.clicks"></strong></m-badge>
                     </m-row>
                     <code class="code-block">m.actions.register("demo.increment", handler)</code>
                   </m-stack>
@@ -1128,7 +1128,7 @@
             id="distribution"
             class="showcase-section"
             aria-label="Distribution"
-            m-visible="panels.distribution"
+            data-bind-hidden="panels.distributionHidden"
           >
             <m-card>
               <m-grid class="distribution-grid" columns="1fr 1fr" row-gap="16" column-gap="16">
@@ -1144,6 +1144,7 @@
                   <m-heading level="3">Classic script loading</m-heading>
                   <code class="code-block">
                     &lt;script src="./markup-ui-core.global.js"&gt;&lt;/script&gt;
+                    &lt;script src="./markup-ui-state.global.js"&gt;&lt;/script&gt;
                     &lt;script src="./markup-ui.global.js"&gt;&lt;/script&gt;
                   </code>
                 </m-stack>

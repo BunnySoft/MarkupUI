@@ -40,9 +40,11 @@ element or create a private AvatarGroup renderer.
 | Proving element | One approved collection consumer demonstrates real composition and focus behavior. |
 | Expansion | Reuse the proven mechanism; add collection operations or adapters only when required. |
 
-Before implementation, settle the binder entry/budget, text-property escape, model-update
-metadata, key-path grammar, template lookup boundaries and generic focus policy.
-This is a clean rewrite: do not preserve previous binding names as aliases.
+The scalar/model binder ships through the optional state entry, with a 4,000-byte gzip
+ceiling per runtime format. The language page defines the text-property escape and
+explicit Web event-owner adapter; it uses no runtime metadata. Template lookup,
+item scopes, writable keyed routes and generic focus policy remain unimplemented.
+This is a clean rewrite: previous binding names have no aliases.
 
 The binder stays optional. Measure startup, updates, retained memory and payload instead
 of assuming keyed templates are faster. Elements that do not use binding must not load it.

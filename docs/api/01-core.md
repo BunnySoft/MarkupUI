@@ -13,7 +13,8 @@ The optional package root also exports this same `ViewElement`; `m.elements.Base
 references it. The replaced `MElement` export and implementation have been removed.
 Use `/core` for extensions that do not need the root's query, state, theme or other services.
 The root ESM entries import `markup-ui-core.js`; classic applications load
-`markup-ui-core.global.js` before `markup-ui.global.js`, then any selected component scripts.
+`markup-ui-core.global.js` and `markup-ui-state.global.js` before `markup-ui.global.js`,
+then any selected component scripts. Selected components do not require state.
 
 ## Registration
 

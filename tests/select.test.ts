@@ -354,7 +354,7 @@ describe("canonical Select direct API", () => {
     expect(filter.value).toBe("draft")
   })
   it("bridges only the native selection owner, not nested/filter events, with typed values", () => {
-    const { element, control } = canonical(undefined, 'multiple m-bind="choice"')
+    const { element, control } = canonical(undefined, 'multiple data-model-value="choice" data-model-event="input change" data-model-target="native"')
     const store = createStore({ choice: ["b"] }), updates = vi.fn()
     const dispose = bind(element, store); const unsubscribe = store.subscribe("choice", updates)
     expect(element.value).toEqual(["b"])
@@ -369,7 +369,7 @@ describe("canonical Select direct API", () => {
     dispose(); unsubscribe()
   })
   it("does not swallow invalid binding writes", () => {
-    const { element } = canonical(undefined, 'm-bind="choice"')
+    const { element } = canonical(undefined, 'data-bind-value="choice"')
     expect(() => bind(element, createStore({ choice: "missing" }))).toThrow("existing")
     expect(element.value).toBe("a")
   })

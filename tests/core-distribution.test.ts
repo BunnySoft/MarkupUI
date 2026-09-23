@@ -22,6 +22,9 @@ describe("root shared-core distribution", () => {
       }
       const core = await import("./dist/markup-ui-core.js");
       const root = await import("./dist/${file}");
+      const state = await import("./dist/markup-ui-state.js");
+      assert.equal(root.createStore, state.createStore);
+      assert.equal(root.bind, state.bind);
       const button = await import("./dist/markup-ui-button.js");
       assert.equal(root.ViewElement, core.ViewElement);
       assert.equal(root.m.elements.Base, core.ViewElement);
@@ -67,10 +70,13 @@ describe("root shared-core distribution", () => {
     expect(() => runInContext(read("markup-ui.global.js"), context)).toThrow("Load compatible markup-ui-core.global.js")
     expect(define).not.toHaveBeenCalled()
     runInContext(read("markup-ui-core.global.js"), context)
+    expect(() => runInContext(read("markup-ui.global.js"), context)).toThrow("Load markup-ui-state.global.js")
+    runInContext(read("markup-ui-state.global.js"), context)
     const scripts = ["markup-ui.global.js", "markup-ui-button.global.js"]
     if (order === "component-first") scripts.reverse()
     for (const script of scripts) runInContext(read(script), context)
     expect(runInContext("m.elements.Base === MarkupUICore.ViewElement", context)).toBe(true)
+    expect(runInContext("m.state.bind === MarkupUIState.bind", context)).toBe(true)
     expect(runInContext("MarkupUIButton.Button.prototype instanceof m.elements.Base", context)).toBe(true)
     expect(entries.has("m-select")).toBe(false)
     expect(() => runInContext(read("markup-ui.global.js"), context)).toThrow("different implementation")
@@ -81,8 +87,8 @@ describe("root shared-core distribution", () => {
   it("accounts for every root/plugin dependency and selected stylesheet", () => {
     const manifest = JSON.parse(read("manifest.json"))
     const measure = (file: string) => gzipSync(readFileSync(resolve("dist", file)), { level: 9 }).length
-    expect(manifest.entryPayloads.root.dependencies).toEqual(["markup-ui-core.js"])
-    expect(manifest.entryPayloads["root-classic"].dependencies).toEqual(["markup-ui-core.global.js"])
+    expect(manifest.entryPayloads.root.dependencies).toEqual(["markup-ui-core.js", "markup-ui-state.js"])
+    expect(manifest.entryPayloads["root-classic"].dependencies).toEqual(["markup-ui-core.global.js", "markup-ui-state.global.js"])
     for (const payload of Object.values(manifest.entryPayloads) as Array<{
       file: string; dependencies: string[]; runtimeGzipBytes: number; runtimeBudget?: number; css: string[]; totalGzipBytes: number
     }>) {
@@ -92,7 +98,7 @@ describe("root shared-core distribution", () => {
       if (payload.runtimeBudget !== undefined) expect(runtime).toBeLessThanOrEqual(payload.runtimeBudget)
     }
     for (const name of ["advanced", "widgets"]) {
-      expect(manifest.entryPayloads[name].dependencies).toEqual(["markup-ui.js", "markup-ui-core.js"])
+      expect(manifest.entryPayloads[name].dependencies).toEqual(["markup-ui.js", "markup-ui-core.js", "markup-ui-state.js"])
       const map = JSON.parse(read(`markup-ui-${name}.js.map`))
       expect(map.sources.every((source: string) => !source.includes("/components/") && !source.includes("/core/"))).toBe(true)
     }

@@ -144,7 +144,7 @@ the aggregate or a form/binding engine.
 Checkbox classic loading is `markup-ui-core.global.js` then `markup-ui-checkbox.global.js`.
 There is no native-input dependency or public `createCheckboxGroup` controller. The aggregate
 no longer competes for `m-checkbox`; select the canonical Checkbox family explicitly.
-The optional state bridge keeps Checkbox's existing boolean `m-bind` on `checked`;
+The optional state bridge uses explicit `data-model-checked` for Boolean selection;
 `value` is now explicitly the native submission string. CheckboxGroup's `value` is a live
 DOM-order selection, including prechecked and disabled members, rather than a stored default.
 
@@ -153,14 +153,18 @@ then `markup-ui-radio.global.js`. The native-radio dependency is private, regist
 elements, and is also used by unmigrated Rate (which does not require core). There is no
 public `createRadioGroup` helper or text-input dependency. The aggregate no longer
 registers legacy `m-radio`/`m-radio-group`; select the canonical family explicitly.
-The optional bridge keeps Radio/RadioButton boolean `m-bind` on `checked`, explicit
+The optional bridge uses Radio/RadioButton Boolean `data-model-checked`, explicit
 submission-string binding on `value`, and RadioGroup's computed string/null selection.
 
 Switch classic loading is `markup-ui-core.global.js`, then `markup-ui-switch.global.js`.
 There is no public `createSwitch` helper, competing aggregate registration or native-input/
 native-radio dependency. Select the canonical family explicitly. The optional state bridge
-keeps boolean `m-bind` on `checked`, with explicit `m-bind-property="value"` for the native
+uses Boolean `data-model-checked`, with explicit `data-model-value` for the native
 submission string. Loading is an explicit flag, not a promise or checked-update guard.
+
+Models require `data-model-event` and an explicit Web owner when native
+(`data-model-target="native"`). There is no tag-based event inference or legacy binding
+syntax. See [binding language](../binding/01-language.md).
 
 InputNumber classic loading is `markup-ui-core.global.js`, then
 `markup-ui-input-number.global.js`. The archived `createInputNumber` controller and widgets

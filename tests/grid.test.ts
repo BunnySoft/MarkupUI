@@ -271,7 +271,7 @@ describe("direct native Grid and GridItem", () => {
   })
 
   it("uses optional property binding without importing the binding runtime", () => {
-    document.body.innerHTML = '<m-grid m-bind="count" m-bind-property="cols"><m-grid-item m-bind="span" m-bind-property="span">Bound</m-grid-item></m-grid>'
+    document.body.innerHTML = '<m-grid data-bind-cols="count"><m-grid-item data-bind-span="span">Bound</m-grid-item></m-grid>'
     const store = createStore({ count: 3, span: 2 }), dispose = bind(document.body, store)
     expect(document.querySelector<Grid>("m-grid")!.cols).toBe(3)
     expect(document.querySelector<GridItem>("m-grid-item")!.span).toBe(2)

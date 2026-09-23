@@ -48,7 +48,7 @@ abstract class NativeRadio extends ViewElement {
   /** Native reset default; the checked attribute does not control dirty live checkedness. */
   public get defaultChecked(): boolean { return this.native.defaultChecked }
   public set defaultChecked(value: boolean) { boolean(value); this.native.defaultChecked = value }
-  /** Native string submission value, not the legacy boolean m-bind selection. */
+  /** Native string submission value, separate from Boolean checked selection. */
   public get value(): string { return this.native.value }
   public set value(value: string) {
     text(value)

@@ -47,8 +47,9 @@ or ESM/classic versions of the same component in one page.
 ## Payload accounting
 
 The optional root facade now shares the same core as selected components. Its ESM files
-import `markup-ui-core.js`; classic loading is `markup-ui-core.global.js`, then
-`markup-ui.global.js`. Neither root format embeds another base implementation.
+import `markup-ui-core.js` and `markup-ui-state.js`; classic loading is
+`markup-ui-core.global.js`, `markup-ui-state.global.js`, then `markup-ui.global.js`.
+Neither root format embeds another base implementation or private binding owner.
 `dist/manifest.json` records these root and optional plugin costs in `entryPayloads`,
 including runtime dependencies and CSS. The existing 15,000-byte minified-root ceiling
 also gates core-inclusive minified ESM and classic runtime; no ceiling is increased.
@@ -74,6 +75,12 @@ Keep approved budgets unless a measured change is explicitly accepted.
 Both ESM and classic builds enforce the exact manifest runtime ceiling, without a
 format-specific allowance. Distribution tests independently gzip the shipped files and
 sum their dependencies; source-only measurements are not release evidence.
+
+The optional `@dataengine/markup-ui/state` entry provides the store and scalar/model
+binder without core, components, query or the aggregate. Served ESM is
+`markup-ui-state.js`; classic scripts expose `MarkupUIState` from
+`markup-ui-state.global.js`. Each format has a 4,000-byte gzip ceiling. The root facade
+reuses this entry, and its existing dependency-inclusive 15,000-byte ceiling is unchanged.
 
 The implemented entries are `@dataengine/markup-ui/core`, `@dataengine/markup-ui/avatar`,
 `@dataengine/markup-ui/button`, `@dataengine/markup-ui/card`, `@dataengine/markup-ui/carousel`,

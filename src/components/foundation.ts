@@ -1,6 +1,6 @@
 import { installActions } from "../actions/index.js"
 import { ViewElement } from "../core/index.js"
-import { bind, createStore, type MStore } from "../state/index.js"
+import { bind, createStore, type Binding, type MStore } from "../state/index.js"
 import { theme } from "../theme/index.js"
 export class Theme extends ViewElement {
   public static readonly tag = "m-theme"
@@ -45,9 +45,9 @@ export class Field extends ViewElement {
 export class App extends ViewElement {
   public static readonly tag = "m-app"
   public store: MStore = createStore()
-  private disposeActions?: () => void
-  private readonly bindingDisposers: Array<() => void> = []
-  private observer?: MutationObserver
+  private disposeActions: (() => void) | undefined
+  private binding: Binding | undefined
+  private observer: MutationObserver | undefined
 
   public connectedCallback(): void {
     queueMicrotask(() => this.initialize())
@@ -55,8 +55,11 @@ export class App extends ViewElement {
 
   public disconnectedCallback(): void {
     this.observer?.disconnect()
+    this.observer = undefined
     this.disposeActions?.()
-    this.bindingDisposers.splice(0).forEach((dispose) => dispose())
+    this.disposeActions = undefined
+    this.binding?.()
+    this.binding = undefined
   }
 
   private initialize(): void {
@@ -72,15 +75,9 @@ export class App extends ViewElement {
       this.store = createStore(parsed as Record<string, unknown>)
       state.remove()
     }
-    this.bindingDisposers.push(bind(this, this.store))
+    this.binding = bind(this, this.store)
     this.disposeActions = installActions(this, this.store)
-    this.observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        for (const node of mutation.addedNodes) {
-          if (node instanceof Element) this.bindingDisposers.push(bind(node, this.store))
-        }
-      }
-    })
+    this.observer = new MutationObserver(() => this.binding?.refresh())
     this.observer.observe(this, { childList: true, subtree: true })
   }
 }

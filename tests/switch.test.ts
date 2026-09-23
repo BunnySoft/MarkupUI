@@ -311,13 +311,15 @@ describe("lifecycle, ownership and state binding", () => {
     root.click(); expect(root.checked).toBe(false); root.click(); expect(root.checked).toBe(true)
     expect(group.value).toEqual([])
   })
-  it("keeps boolean m-bind semantics and explicit native string value binding", () => {
+  it("binds explicit checked and native submission value models", () => {
     const { root } = fixture()
-    root.setAttribute("m-bind", "enabled")
+    root.setAttribute("data-model-checked", "enabled")
+    root.setAttribute("data-model-event", "change")
+    root.setAttribute("data-model-target", "native")
     const store = createStore({ enabled: false, token: "first" }), dispose = bind(root, store)
     expect(root.checked).toBe(false); root.click(); expect(store.get("enabled")).toBe(true)
     store.set("enabled", false); expect(root.checked).toBe(false); dispose()
-    root.setAttribute("m-bind", "token"); root.setAttribute("m-bind-property", "value")
+    root.removeAttribute("data-model-checked"); root.setAttribute("data-model-value", "token")
     const stop = bind(root, store)
     expect(root.value).toBe("first"); root.value = "second"; root.click()
     expect(store.get("token")).toBe("second"); stop()

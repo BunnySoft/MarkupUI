@@ -79,10 +79,22 @@ function corePlugin(format) {
       }))
       builder.onResolve({ filter: /(?:^|\/)(?:view-element|index)\.js$/ }, args => {
         const path = resolve(dirname(args.importer), args.path)
+        if (path === resolve(root, "src/state/index.js")) {
+          return format === "esm" ? { path: "./markup-ui-state.js", external: true }
+            : { path: "state", namespace: "markupui-state" }
+        }
         if (path !== resolve(root, "src/core/index.js") && path !== resolve(root, "src/core/view-element.js")) return
         return format === "esm" ? { path: "./markup-ui-core.js", external: true }
           : { path: "core", namespace: "markupui-core" }
       })
+      builder.onLoad({ filter: /.*/, namespace: "markupui-state" }, () => ({
+        loader: "js",
+        contents: `
+          const state = globalThis.MarkupUIState;
+          if (!state) throw new Error("Load markup-ui-state.global.js before the root facade.");
+          export const { bind, createStore, MStore } = state;
+        `,
+      }))
       builder.onLoad({ filter: /.*/, namespace: "markupui-core" }, () => ({
         loader: "js",
         contents: `
@@ -175,6 +187,13 @@ components.push("marquee")
 classicEntries.marquee = "global.ts"
 
 await Promise.all([
+  ...["esm", "iife"].map(format => build({
+    ...shared,
+    entryPoints: [resolve(root, "src/state/index.ts")],
+    format, minify: true,
+    ...(format === "iife" ? { globalName: "MarkupUIState" } : {}),
+    outfile: resolve(dist, `markup-ui-state${format === "esm" ? ".js" : ".global.js"}`),
+  })),
   ...["esm", "iife"].map(format => build({
     ...shared,
     entryPoints: [resolve(root, "src", "components", format === "esm" ? "native-select.ts" : "native-select.global.ts")],
@@ -634,11 +653,13 @@ for (const name of [...components, ...styleOnlyComponents]) {
 
 const entryPayloads = {}
 for (const [name, file, dependencies, css, runtimeBudget] of [
-  ["root", "markup-ui.js", ["markup-ui-core.js"], ["markup-ui.css"]],
-  ["root-minified", "markup-ui.min.js", ["markup-ui-core.js"], ["markup-ui.css"], bundleBudgets["markup-ui.min.js"]],
-  ["root-classic", "markup-ui.global.js", ["markup-ui-core.global.js"], ["markup-ui.css"], bundleBudgets["markup-ui.min.js"]],
-  ["advanced", "markup-ui-advanced.js", ["markup-ui.js", "markup-ui-core.js"], ["markup-ui.css", "markup-ui-advanced.css"]],
-  ["widgets", "markup-ui-widgets.js", ["markup-ui.js", "markup-ui-core.js"], ["markup-ui.css", "markup-ui-widgets.css"]],
+  ["state", "markup-ui-state.js", [], [], 4_000],
+  ["state-classic", "markup-ui-state.global.js", [], [], 4_000],
+  ["root", "markup-ui.js", ["markup-ui-core.js", "markup-ui-state.js"], ["markup-ui.css"]],
+  ["root-minified", "markup-ui.min.js", ["markup-ui-core.js", "markup-ui-state.js"], ["markup-ui.css"], bundleBudgets["markup-ui.min.js"]],
+  ["root-classic", "markup-ui.global.js", ["markup-ui-core.global.js", "markup-ui-state.global.js"], ["markup-ui.css"], bundleBudgets["markup-ui.min.js"]],
+  ["advanced", "markup-ui-advanced.js", ["markup-ui.js", "markup-ui-core.js", "markup-ui-state.js"], ["markup-ui.css", "markup-ui-advanced.css"]],
+  ["widgets", "markup-ui-widgets.js", ["markup-ui.js", "markup-ui-core.js", "markup-ui-state.js"], ["markup-ui.css", "markup-ui-widgets.css"]],
 ]) {
   const sizes = await Promise.all([file, ...dependencies].map(async asset =>
     gzipSync(await readFile(resolve(dist, asset)), { level: 9 }).length))

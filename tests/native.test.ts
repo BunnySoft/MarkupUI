@@ -731,7 +731,7 @@ describe("themes", () => {
 describe("optional state and actions", () => {
   it("binds canonical native editing and composition without echoing writes or consuming child action events", async () => {
     const store = createStore({ name: "Original" })
-    document.body.innerHTML = '<m-input aria-label="Name" m-bind="name" clearable><span>Suffix</span></m-input>'
+    document.body.innerHTML = '<m-input aria-label="Name" clearable data-model-value="name" data-model-event="input change" data-model-target="native"><span>Suffix</span></m-input>'
     const dispose = bind(document.body, store)
     await Promise.resolve()
     const input = document.querySelector<Input>("m-input")!, control = input.native
@@ -753,8 +753,8 @@ describe("optional state and actions", () => {
   it("binds state to native custom elements", () => {
     const store = createStore({ customer: { name: "Ada" } })
     document.body.innerHTML = `
-      <m-input m-bind="customer.name"></m-input>
-      <span m-text="customer.name"></span>`
+      <m-input data-model-value="customer.name" data-model-event="input change" data-model-target="native"></m-input>
+      <span data-bind-text="customer.name"></span>`
     const dispose = bind(document.body, store)
     const input = document.querySelector("m-input") as HTMLElement & { value: string }
     expect(input.value).toBe("Ada")
@@ -782,7 +782,7 @@ describe("optional state and actions", () => {
     document.body.innerHTML = `
       <m-app>
         <script type="application/json" data-m-state>{"name":"Ada","saved":false}</script>
-        <span m-text="name"></span>
+        <span data-bind-text="name"></span>
         <m-button m-action="app.save">Save</m-button>
       </m-app>`
     await Promise.resolve()
@@ -803,7 +803,7 @@ describe("optional state and actions", () => {
       store: { set(path: string, value: unknown): void }
     }
     const text = document.createElement("span")
-    text.setAttribute("m-text", "name")
+    text.setAttribute("data-bind-text", "name")
     app.append(text)
     await Promise.resolve()
     expect(text.textContent).toBe("Ada")
@@ -817,8 +817,8 @@ describe("optional state and actions", () => {
         <script type="application/json" data-m-state>
           {"enabled":true,"choice":"b"}
         </script>
-        <m-switch m-bind="enabled">Enabled</m-switch>
-        <m-radio-group m-bind="choice">
+        <m-switch data-model-checked="enabled" data-model-event="change" data-model-target="native">Enabled</m-switch>
+        <m-radio-group data-model-value="choice" data-model-event="m:radio-group-change">
           <legend>Bound selection</legend>
           <m-radio name="bound" value="a">A</m-radio>
           <m-radio name="bound" value="b">B</m-radio>
@@ -838,7 +838,7 @@ describe("optional state and actions", () => {
     expect(app.store.get("choice")).toBe("a")
   })
   it("keeps Radio boolean binding and explicit RadioButton submission value native", async () => {
-    document.body.innerHTML = '<form><m-radio m-bind="checked" name="consent" value="yes" checked>Consent</m-radio><m-radio-button m-bind="key" m-bind-property="value" name="layout" checked>Layout</m-radio-button></form>'
+    document.body.innerHTML = '<form><m-radio name="consent" value="yes" checked data-model-checked="checked" data-model-event="change" data-model-target="native">Consent</m-radio><m-radio-button name="layout" checked data-model-value="key" data-model-event="input change" data-model-target="native">Layout</m-radio-button></form>'
     const radio = document.querySelector<Radio>("m-radio")!, button = document.querySelector<RadioButton>("m-radio-button")!
     const store = createStore({ checked: false, key: "grid" }), dispose = bind(document.body, store)
     await Promise.resolve()
@@ -865,9 +865,9 @@ describe("optional state and actions", () => {
     expect((await form.validate()).status).toBe("valid"); expect(control.hasAttribute("aria-invalid")).toBe(false)
   })
   it("binds only the owning RadioGroup and reads native value rather than event detail", async () => {
-    document.body.innerHTML = `<m-radio-group m-bind="outer"><legend>Outer</legend>
+    document.body.innerHTML = `<m-radio-group data-model-value="outer" data-model-event="m:radio-group-change"><legend>Outer</legend>
       <m-radio name="outer" value="a" checked>A</m-radio><m-radio-button name="outer" value="b">B</m-radio-button>
-      <m-radio-group m-bind="inner"><legend>Inner</legend><m-radio name="inner" value="x" checked>X</m-radio><m-radio name="inner" value="y">Y</m-radio></m-radio-group>
+      <m-radio-group data-model-value="inner" data-model-event="m:radio-group-change"><legend>Inner</legend><m-radio name="inner" value="x" checked>X</m-radio><m-radio name="inner" value="y">Y</m-radio></m-radio-group>
       </m-radio-group>`
     const group = document.querySelector<RadioGroup>("m-radio-group")!, inner = group.querySelector<RadioGroup>("m-radio-group")!
     const store = createStore({ outer: "a", inner: "x" }), dispose = bind(document.body, store)
@@ -880,8 +880,8 @@ describe("optional state and actions", () => {
     dispose(); group.querySelector<Radio>("m-radio[value=a]")!.click(); await new Promise(resolve => setTimeout(resolve, 15))
     expect(store.get("outer")).toBeNull()
   })
-  it("keeps legacy Checkbox boolean binding separate from native submission strings", async () => {
-    document.body.innerHTML = '<form><m-checkbox m-bind="enabled" name="terms" value="yes" checked>Terms</m-checkbox></form>'
+  it("keeps explicit Checkbox boolean binding separate from native submission strings", async () => {
+    document.body.innerHTML = '<form><m-checkbox name="terms" value="yes" checked data-model-checked="enabled" data-model-event="change" data-model-target="native">Terms</m-checkbox></form>'
     await Promise.resolve()
     const box = document.querySelector<Checkbox>("m-checkbox")!, store = createStore({ enabled: false })
     const dispose = bind(document.body, store), changes = vi.fn()
@@ -911,8 +911,8 @@ describe("optional state and actions", () => {
     expect(box.native.hasAttribute("aria-invalid")).toBe(false)
   })
   it("binds explicit Checkbox submission value and computed group selection without child leakage", async () => {
-    document.body.innerHTML = `<m-checkbox m-bind="submission" m-bind-property="value" checked>String</m-checkbox>
-      <m-checkbox-group m-bind="selection"><legend>Choices</legend>
+    document.body.innerHTML = `<m-checkbox checked data-model-value="submission" data-model-event="input change" data-model-target="native">String</m-checkbox>
+      <m-checkbox-group data-model-value="selection" data-model-event="m:checkbox-group-change"><legend>Choices</legend>
         <m-checkbox value="a" checked>A</m-checkbox><m-checkbox value="b">B</m-checkbox>
         <m-checkbox-group><legend>Nested</legend><m-checkbox value="n">Nested</m-checkbox></m-checkbox-group>
       </m-checkbox-group>`

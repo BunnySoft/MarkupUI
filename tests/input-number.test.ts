@@ -366,7 +366,9 @@ describe("native forms, leases and lifecycle", () => {
   })
   it("binds number/null through native events and ignores unrelated descendant inputs", () => {
     const { root, control } = fixture(), store = createStore({ quantity: .4 })
-    root.setAttribute("m-bind", "quantity")
+    root.setAttribute("data-model-value", "quantity")
+    root.setAttribute("data-model-event", "input change")
+    root.setAttribute("data-model-target", "native")
     const dispose = bind(root, store)
     expect(root.value).toBe(.4)
     control.value = ""; control.dispatchEvent(new Event("input", { bubbles: true }))

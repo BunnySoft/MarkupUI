@@ -145,8 +145,9 @@ Use reassignment or explicit refresh for application updates, not hidden deep ob
 
 Scoped binding follows the [selected binding language](../../binding/01-language.md):
 paths in an explicitly supplied scope, not JavaScript expressions or global variable lookup.
-That binding runtime is not implemented. Its required Chart integration is a release
-dependency; an inert binding attribute does not satisfy this feature.
+The optional scalar binder now assigns actual values through `data-bind-source` within an
+explicit store/root. Its required Chart integration and tests remain a release dependency;
+an inert binding attribute does not satisfy this feature.
 
 Remote loading is a MarkupUI responsibility, separate from ECharts options. `source-path`
 selects response data through a restricted, safe property path; omit it when the response

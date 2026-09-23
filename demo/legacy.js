@@ -43,6 +43,12 @@ const panelNames = [
   "distribution",
 ]
 
+// Visibility is an explicit Boolean hidden property, not an expression directive.
+for (const name of ["busy", "saved", "valid", "invalid"]) {
+  store?.set(`form.${name}Hidden`, true)
+  store?.subscribe(`form.${name}`, value => store.set(`form.${name}Hidden`, !value))
+}
+
 store?.set("form.name", "Ada")
 store?.set("form.role", "developer")
 store?.set("form.city", "London")
@@ -118,7 +124,7 @@ function selectPanel(name, scroll = false) {
     workspaceTop = Math.max(0, window.scrollY + workspace.getBoundingClientRect().top - 76)
     window.scrollTo({ top: workspaceTop, behavior: "auto" })
   }
-  panelNames.forEach((panel) => store?.set(`panels.${panel}`, panel === name))
+  panelNames.forEach((panel) => store?.set(`panels.${panel}Hidden`, panel !== name))
   document.querySelectorAll(".sidebar-item").forEach((item) => {
     const active = item.getAttribute("m-param-panel") === name
     item.classList.toggle("active", active)
