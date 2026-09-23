@@ -9,6 +9,7 @@ import { createInput } from "../src/components/native-input.js"
 import { createRate } from "../src/components/rate/index.js"
 import { Checkbox } from "../src/components/checkbox/index.js"
 import { Switch } from "../src/components/switch/index.js"
+import "../src/components/box/index.js"
 
 const helpers: { disconnect(): void }[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 15))
@@ -40,6 +41,29 @@ function deferred() {
 afterEach(() => { helpers.splice(0).reverse().forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
 
 describe("canonical Form family", () => {
+  it.each(["m-span", "m-box"])("preserves portable %s feedback through validation and restoration", async tag => {
+    document.body.innerHTML = `<m-form><m-form-item key="name"><input name="name" required>
+      <${tag} class="m-form-item__feedback" id="portable-feedback" hidden>Before</${tag}>
+      </m-form-item></m-form>`
+    const form = document.querySelector("m-form") as Form
+    const control = document.querySelector("input")!
+    const feedback = document.getElementById("portable-feedback")!
+    form.refresh()
+    expect((await form.validate()).status).toBe("invalid")
+    expect(feedback.hidden).toBe(false)
+    expect(feedback.textContent).toBe(control.validationMessage)
+    expect(control.getAttribute("aria-describedby")).toContain(feedback.id)
+    form.restoreValidation()
+    expect(feedback.hidden).toBe(true)
+    expect(feedback.textContent).toBe("Before")
+    expect(feedback.childElementCount).toBe(0)
+    form.disconnect()
+    form.remove()
+    document.body.append(form)
+    form.refresh()
+    expect(form.connected).toBe(true)
+  })
+
   function canonical() {
     document.body.innerHTML = `<m-form id="host"><form id="native" action="/save">
       <m-form-item key="name"><label class="m-form-item__label" for="name">Name</label>

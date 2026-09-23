@@ -107,6 +107,11 @@ The affected 49-file run passed 2,103 tests with one expected CSS-baseline misma
 removing the old selector; the updated CSS baseline and absence assertion passed in the
 complete 10-test stylesheet fixture. The final integrated run remains pending.
 
+Form feedback now accepts plain portable `m-span` / `m-box` containers alongside its
+native text containers. It still rejects child renderers, interactive/live feedback and
+unstable IDs. Build and all 75 Form tests pass, including validation, restoration and
+reconnect with both portable tags. Browser-wide demo repairs remain in progress.
+
 ## Work order
 
 1. Finish the portable primitive contracts and renderers, starting with labels, disclosure

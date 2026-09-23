@@ -24,6 +24,7 @@ export interface FormItemOptions {
   key: string
   controls: readonly FormControl[]
   element?: HTMLElement
+  /** Plain text feedback: native span/p/div or portable m-span/m-box, without a child renderer. */
   feedback?: HTMLElement
   validator?: FormValidator
 }
@@ -111,7 +112,7 @@ export function coordinateForm(form: HTMLFormElement, options: FormOptions): For
     return items.every(item => item.controls.every(control => control.isConnected && control.form === form && control.getRootNode() === document)
       && (!item.element || item.element.isConnected && item.element.getRootNode() === document)
       && (!item.feedback || item.feedback.isConnected && item.feedback.getRootNode() === document
-        && ["span", "p", "div"].includes(item.feedback.localName) && !item.feedback.children.length
+        && ["span", "p", "div", "m-span", "m-box"].includes(item.feedback.localName) && !item.feedback.children.length
         && !!item.feedbackId && !/\s/.test(item.feedbackId) && item.feedback.id === item.feedbackId
         && [...document!.querySelectorAll("[id]")].filter(node => node.id === item.feedbackId).length === 1
         && !item.feedback.hasAttribute("role") && !item.feedback.hasAttribute("aria-live")
