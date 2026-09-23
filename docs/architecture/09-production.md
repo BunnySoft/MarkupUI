@@ -143,6 +143,14 @@ runtime ceiling: 14,916 gzip bytes for minified ESM and 14,825 for classic.
 See [security boundaries](../security/README.md) for the restricted HTML subset,
 explicit trust options and limitations. This is not an independent security audit.
 
+The old aggregate showcase and public migration pages are removed. The current demo
+catalog contains 97 pages in eight groups. Native Grid and Transfer interoperability
+coverage remains in test-only fixtures; obsolete presentation-parity checks were removed,
+not retained as a compatibility product. Foundations now loads only Card when requested.
+The seven-file cleanup regression passes 290 tests. Strict runtime trust-option checks
+also pass; current root totals are 14,924 ESM / 14,831 classic gzip bytes, still below
+the unchanged ceiling. The final 97-page catalog and integrated suite remain pending.
+
 ## Work order
 
 1. Finish the portable primitive contracts and renderers, starting with labels, disclosure

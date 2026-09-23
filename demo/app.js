@@ -20,7 +20,7 @@ export function createComponentBrowser(document = globalThis.document, view = gl
   const links = new Map()
   const groups = []
   const media = view.matchMedia("(max-width: 760px)")
-  const alternatives = new Set(["equation", "qr-code", "legacy-grid", "legacy-transfer"])
+  const alternatives = new Set(["equation", "qr-code"])
   let menuOpen = false
   let current = null
   const fragment = document.createDocumentFragment()

@@ -6,7 +6,7 @@ function initialize() {
   void loadComponentApi(document.getElementById("progress-api"), new URL("../api/progress.json", import.meta.url))
 
   const upload = document.querySelector("#upload")
-  const legacy = document.querySelector("#legacy")
+  const fileRange = document.querySelector("#file-range")
   const gradientLine = document.querySelector("#gradient-line")
   const gradientCircle = document.querySelector("#gradient-circle")
   const multiple = document.querySelector("#multiple")
@@ -29,14 +29,14 @@ function initialize() {
     if (upload) upload.showIndicator = !upload.showIndicator
   })
   document.querySelector("#invalid-max")?.addEventListener("click", () => {
-    if (!legacy) return
-    legacy.setAttribute("max", "0")
+    if (!fileRange) return
+    fileRange.setAttribute("max", "0")
     const status = document.querySelector("#validation-status")
-    if (status) status.textContent = `Invalid fields: ${legacy.validationErrors.join(", ")}.`
+    if (status) status.textContent = `Invalid fields: ${fileRange.validationErrors.join(", ")}.`
   })
   document.querySelector("#restore-max")?.addEventListener("click", () => {
-    if (!legacy) return
-    legacy.max = 50
+    if (!fileRange) return
+    fileRange.max = 50
     const status = document.querySelector("#validation-status")
     if (status) status.textContent = "Legacy range is valid."
   })

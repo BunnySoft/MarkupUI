@@ -1,0 +1,50 @@
+/* Native interoperability fixture using selected layout assets. */
+#native-grid-example {
+  box-sizing: border-box;
+  max-inline-size: 64rem;
+  margin-inline: auto;
+  padding: 1rem;
+  font: 1rem/1.5 system-ui, sans-serif;
+  color: CanvasText;
+  background: Canvas;
+  overflow-wrap: anywhere;
+}
+#native-grid-example .layout-nav { --m-flex-align: center; --m-flex-justify: space-between; }
+#native-grid-example .authored-columns,
+#native-grid-example .four-columns {
+  --m-grid-cols: 1;
+  --m-grid-x-gap: 12px;
+  --m-grid-y-gap: 8px;
+}
+#native-grid-example .nested-columns { --m-grid-cols: 2; --m-grid-x-gap: 4px; --m-grid-y-gap: 4px; }
+#native-grid-example .query-columns { --m-grid-cols: 1; --m-grid-x-gap: 12px; --m-grid-y-gap: 8px; }
+#native-grid-example .known-spacer { display: none; }
+#native-grid-example .query-container { container-name: layout; margin-block: 1rem; }
+#native-grid-example .compact-container { max-inline-size: 20rem; }
+#native-grid-example .cell { box-sizing: border-box; margin: 0; padding: .5rem; border: 1px solid ButtonBorder; }
+#native-grid-example .cell > h3 { margin-block: 0 .5rem; }
+#native-grid-example fieldset { min-inline-size: 0; }
+#native-grid-example input { box-sizing: border-box; max-inline-size: 100%; min-inline-size: 0; font: inherit; }
+#native-grid-example button { min-block-size: 2.75rem; font: inherit; }
+#native-grid-example #form-actions { margin-block: 1rem; }
+#native-grid-example a { color: LinkText; }
+#native-grid-example :focus-visible { outline: 3px solid Highlight; outline-offset: -3px; }
+@media (min-width: 48rem) {
+  #native-grid-example .authored-columns { --m-grid-cols: 24; }
+  #native-grid-example .first-column { --m-grid-span: 8; }
+  #native-grid-example .second-column { --m-grid-span: 16; }
+  #native-grid-example .full-column { --m-grid-span: 24; }
+  #native-grid-example .four-columns { --m-grid-cols: 4; }
+  #native-grid-example .two-tracks { --m-grid-span: 2; }
+  #native-grid-example .known-spacer { display: block; }
+  #native-grid-example .start-three { --m-grid-start: 3; }
+}
+@supports (container-type: inline-size) {
+  @container layout (min-width: 30rem) {
+    #native-grid-example .query-columns { --m-grid-cols: 3; }
+    #native-grid-example .query-feature { --m-grid-span: 2; }
+  }
+}
+@media print {
+  #native-grid-example { max-inline-size: none; padding: 0; }
+}

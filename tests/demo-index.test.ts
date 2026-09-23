@@ -592,12 +592,6 @@ describe("Typography documentation and composition", () => {
     expect(parsed.querySelector("m-typography[class],m-heading[class],m-text[class],m-p[class]")).toBeNull()
     expect(parsed.body.textContent?.replace(/\s+/g, " ")).toContain("listeners attached to the replaced shell")
     expect(readFileSync(resolve("demo", "components", "typography.js"), "utf8")).toContain('new URL("../api/typography.json", import.meta.url)')
-    const legacy = readFileSync(resolve("demo", "legacy.html"), "utf8")
-    const legacyScript = readFileSync(resolve("demo", "legacy.js"), "utf8")
-    expect(legacy).toContain('src="../dist/markup-ui-typography.js"')
-    expect(legacy).not.toMatch(/<\/?m-(strong|code)(?:\s|>)/)
-    expect(legacyScript).toContain('querySelectorAll("m-heading > h2,m-heading > h3")')
-    expect(legacyScript).not.toContain('createElement("m-code")')
   })
 
   it("loads the API after readiness and exercises properties and reconnect on real elements", async () => {
@@ -864,9 +858,6 @@ describe("Divider documentation and composition", () => {
     expect(source).toContain('new URL("../api/divider.json", import.meta.url)')
     expect(source.replaceAll("import.meta.url", "")).not.toContain(".meta")
     expect(source).toContain("DOMContentLoaded")
-    const legacy = readFileSync("demo/legacy.html", "utf8")
-    expect(legacy).toContain('href="../dist/markup-ui-divider.css"')
-    expect(legacy).toContain('src="../dist/markup-ui-divider.js"')
   })
 
   it("initializes its property controls at DOMContentLoaded and preserves the live heading on reconnect", async () => {
@@ -1062,7 +1053,7 @@ describe("Card documentation and composition", () => {
     }
   })
 
-  it("keeps static consumers on canonical regions and legacy consumers explicitly load Card", () => {
+  it("keeps current consumers on canonical regions and selected Card delivery", () => {
     for (const file of ["config-provider", "global-style"]) {
       const html = readFileSync(resolve("demo", "components", `${file}.html`), "utf8")
       const parsed = new DOMParser().parseFromString(html, "text/html")
@@ -1070,7 +1061,6 @@ describe("Card documentation and composition", () => {
       expect(html).not.toContain("data-m-card")
       expect(parsed.querySelector('link[href="../../dist/markup-ui-card.css"]')).not.toBeNull()
     }
-    expect(readFileSync(resolve("demo", "legacy.html"), "utf8")).toContain('src="../dist/markup-ui-card.js"')
     expect(readFileSync(resolve("demo", "foundations.js"), "utf8")).toContain('import("../dist/markup-ui-card.js")')
   })
 })
@@ -1133,15 +1123,16 @@ describe("component-by-component demo browser", () => {
     expect(media.removeEventListener).toHaveBeenCalledWith("change", expect.any(Function))
   })
 
-  it("lists exactly the 99 existing standalone pages without group pages", () => {
+  it("lists exactly the 97 current standalone pages without migration pages", () => {
     const files = readdirSync(resolve("demo", "components")).filter(file => file.endsWith(".html")).sort()
-    expect(components).toHaveLength(99)
-    expect(new Set(components.map(item => item.slug)).size).toBe(99)
+    expect(components).toHaveLength(97)
+    expect(new Set(components.map(item => item.slug)).size).toBe(97)
+    expect(components.some(item => item.slug.startsWith("legacy-"))).toBe(false)
     expect(components.map(item => `${item.slug}.html`).sort()).toEqual(files)
-    expect(componentGroups).toHaveLength(9)
+    expect(componentGroups).toHaveLength(8)
     browser = createComponentBrowser()
-    expect(document.querySelectorAll("a[data-component]")).toHaveLength(99)
-    expect(document.querySelectorAll(".nav-group")).toHaveLength(9)
+    expect(document.querySelectorAll("a[data-component]")).toHaveLength(97)
+    expect(document.querySelectorAll(".nav-group")).toHaveLength(8)
     expect(document.querySelector("#component-navigation details")).toBeNull()
   })
 
@@ -1321,7 +1312,7 @@ describe("component-by-component demo browser", () => {
     const visible = [...document.querySelectorAll<HTMLLIElement>(".nav-group li")].filter(item => !item.hidden)
     expect(visible).toHaveLength(1)
     expect(visible[0]?.textContent).toBe("Avatar")
-    expect(document.querySelector("#component-count")?.textContent).toBe("1 of 99 components")
+    expect(document.querySelector("#component-count")?.textContent).toBe("1 of 97 components")
     search.value = "no component matches this"
     search.dispatchEvent(new Event("input"))
     expect(document.querySelector<HTMLElement>("#no-results")!.hidden).toBe(false)
@@ -1365,7 +1356,7 @@ describe("component-by-component demo browser", () => {
     expect(document.querySelector<HTMLElement>("#component-note")!.hidden).toBe(false)
   })
 
-  it("loads MarkupUI shell controls and keeps legacy styles before showcase overrides", () => {
+  it("loads selected MarkupUI shell controls and shared documentation styles", () => {
     expect(html).toContain('href="./app.css"')
     expect(html).toContain('src="./app.js"')
     expect(html).toContain('../dist/markup-ui-button.css')
@@ -1387,9 +1378,5 @@ describe("component-by-component demo browser", () => {
     expect(avatarHtml).toContain('markup-ui-code.css')
     expect(avatarHtml).toContain('src="../example-code.js"')
     expect(avatarHtml.match(/data-demo-example=/g)).toHaveLength(10)
-    const legacy = readFileSync(resolve("demo", "legacy.html"), "utf8")
-    expect(legacy.indexOf('id="m-styles"')).toBeLessThan(legacy.indexOf('href="./legacy.css"'))
-    expect(legacy).toContain('src="./legacy.js"')
-    expect(readFileSync(resolve("demo", "legacy.js"), "utf8")).toContain('fetch("./legacy.html")')
   })
 })

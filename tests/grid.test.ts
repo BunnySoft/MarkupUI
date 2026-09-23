@@ -405,21 +405,11 @@ describe("Grid documentation and selected delivery", () => {
     }
   })
 
-  it("updates the legacy consumer's real columns/gaps without migrating Layout or Form grids", () => {
-    const html = readFileSync("demo/legacy.html", "utf8")
-    const parsed = new DOMParser().parseFromString(html, "text/html")
-    expect(html).toContain("../dist/markup-ui-grid.js")
-    expect(parsed.querySelectorAll("m-grid").length).toBe(21)
-    for (const grid of parsed.querySelectorAll("m-grid")) {
-      expect(grid.hasAttribute("columns")).toBe(true)
-      expect(grid.hasAttribute("gap")).toBe(false)
-      expect(grid.getAttribute("row-gap")).toBe(grid.getAttribute("column-gap"))
-    }
-    expect(parsed.querySelector("m-stack[gap]")).not.toBeNull()
+  it("keeps Grid styles and ownership separate from foundation and Form layout", () => {
     expect(readFileSync("src/components/foundation.ts", "utf8")).not.toContain("MGrid")
-    const legacyStyles = readFileSync("src/components/styles.css", "utf8")
-    expect(legacyStyles).not.toContain("m-grid{display:grid}")
-    expect(legacyStyles).toContain('[align="end"]:not(m-grid)')
+    const aggregateStyles = readFileSync("src/components/styles.css", "utf8")
+    expect(aggregateStyles).not.toContain("m-grid{display:grid}")
+    expect(aggregateStyles).toContain('[align="end"]:not(m-grid)')
     expect(readFileSync("src/components/form/item.ts", "utf8")).toContain("No Grid renderer/dependency")
   })
 })

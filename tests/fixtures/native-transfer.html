@@ -3,21 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Legacy Transfer migration: native membership and staging</title>
+  <title>Native Transfer interoperability fixture</title>
   <link rel="stylesheet" href="../../dist/markup-ui-transfer.css">
-  <link rel="stylesheet" href="legacy-transfer.css">
-  <script type="module" src="legacy-transfer.js"></script>
 </head>
 <body>
-  <main id="legacy-transfer-example">
-    <h1>Replace Legacy Transfer with explicit native membership</h1>
-    <p>Every option in Target is a member. Native highlights stage possible moves;
-      they are not the membership value. This example uses the existing Transfer
-      helper, not a deprecated constructor, object-options adapter or virtual renderer.</p>
+  <main id="native-transfer-example">
+    <h1>Native membership and staging</h1>
     <p id="handoff-note">Without enhancement: original lists and highlights remain,
       but movement, filtering, membership reset and membership serialization are unavailable.
       Their controls stay hidden. The staging selects have no names.</p>
-    <form id="migration-form">
+    <form id="interop-form">
       <div class="native-fields">
         <label>Project <input id="project-name" name="project" value="Local project" required></label>
         <label>Application note <input name="note" value="Original native fields"></label>
@@ -60,7 +55,7 @@
         </div>
         <p data-transfer-status role="status"></p>
       </fieldset>
-      <div id="migration-tools" data-demo-enhanced hidden>
+      <div id="interop-tools" data-demo-enhanced hidden>
         <button type="button" id="preview">Inspect real FormData</button>
         <button type="reset" id="reset-membership">Reset membership, highlights and fields</button>
         <button type="button" id="set-value">Set exact target order: Core, Beta, Alpha</button>

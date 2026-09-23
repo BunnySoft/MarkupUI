@@ -34,7 +34,7 @@ export const componentGroups = [
     ["tooltip", "Tooltip"],
   ] },
   { name: "Layout Components", items: [
-    ["box", "Box"], ["flex", "Flex"], ["layout", "Layout"], ["legacy-grid", "Legacy Grid"], ["grid", "Grid"],
+    ["box", "Box"], ["flex", "Flex"], ["layout", "Layout"], ["grid", "Grid"],
     ["space", "Space"], ["split", "Split"],
   ] },
   { name: "Utility Components", items: [
@@ -45,7 +45,6 @@ export const componentGroups = [
     ["config-provider", "Config Provider"], ["element", "Element"],
     ["elements", "Element Matrix"], ["global-style", "Global Style"],
   ] },
-  { name: "Deprecated Components", items: [["legacy-transfer", "Legacy Transfer"]] },
 ]
 
 export const components = componentGroups.flatMap(group =>

@@ -1,16 +1,15 @@
 import { existsSync, readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { connectExample } from "../demo/components/legacy-transfer.js"
+import { connectExample } from "./fixtures/native-transfer.js"
 
-const html = readFileSync(resolve("demo", "components", "legacy-transfer.html"), "utf8")
-const css = readFileSync(resolve("demo", "components", "legacy-transfer.css"), "utf8")
+const html = readFileSync(resolve("tests", "fixtures", "native-transfer.html"), "utf8")
 const connections: ReturnType<typeof connectExample>[] = []
 const wait = () => new Promise(resolve => setTimeout(resolve, 25))
 function fixture(bind = true) {
   const parsed = new DOMParser().parseFromString(html, "text/html")
-  document.body.append(document.importNode(parsed.querySelector("#legacy-transfer-example")!, true))
-  const root = document.querySelector<HTMLElement>("#legacy-transfer-example")!, form = root.querySelector<HTMLFormElement>("form")!
+  document.body.append(document.importNode(parsed.querySelector("#native-transfer-example")!, true))
+  const root = document.querySelector<HTMLElement>("#native-transfer-example")!, form = root.querySelector<HTMLFormElement>("form")!
   const connection = bind ? connectExample(root) : null
   if (connection) connections.push(connection)
   const transfer = connection?.transfer
@@ -34,10 +33,10 @@ afterEach(() => {
   document.body.replaceChildren(); vi.restoreAllMocks(); vi.unstubAllGlobals()
 })
 
-describe("Legacy Transfer explicit replacement using the shipped helper", () => {
+describe("Native Transfer interoperability using the shipped helper", () => {
   it("loads existing ESM/CSS only, with no deprecated export, source or distribution", () => {
     const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8")), manifest = JSON.parse(readFileSync(resolve("dist", "manifest.json"), "utf8"))
-    const script = readFileSync(resolve("demo", "components", "legacy-transfer.js"), "utf8")
+    const script = readFileSync(resolve("tests", "fixtures", "native-transfer.js"), "utf8")
     expect(script).toContain('import { createTransfer } from "../../dist/markup-ui-transfer.js"')
     expect(html).toContain("../../dist/markup-ui-transfer.css")
     expect(pkg.exports["./transfer"].import).toBe("./dist/markup-ui-transfer.js")
@@ -46,20 +45,6 @@ describe("Legacy Transfer explicit replacement using the shipped helper", () => 
     expect(existsSync(resolve("src", "components", "legacy-transfer"))).toBe(false)
     expect(Object.keys(manifest.bundles).some(name => name.includes("legacy-transfer"))).toBe(false)
     expect(script).not.toMatch(/innerHTML|createElement|fetch\(|localStorage|setInterval|requestAnimationFrame/)
-  })
-  it("keeps legacy presentation defaults scoped without replacing native controls or public Transfer tokens", () => {
-    expect(css).toContain("--_m-legacy-transfer-header: rgb(250, 250, 252)")
-    expect(css).toContain("--_m-legacy-transfer-header: rgba(255, 255, 255, .06)")
-    expect(css).toContain("min-block-size: 38px")
-    expect(css).toContain("font-size: var(--m-transfer-title-size, var(--m-transfer-font-size")
-    expect(css).toContain("[data-transfer-pane] > label:has([data-transfer-filter])")
-    expect(css).toContain("[data-transfer-count] { margin: 0; }")
-    expect(css).toContain(":focus-visible:not(.m-transfer *)")
-    expect(css).toMatch(/@media print[\s\S]*color-scheme: light/)
-    expect(css).not.toMatch(/(?:^|[;{\s])--m-transfer-[\w-]+\s*:/m)
-    expect(css).not.toMatch(/appearance\s*:|select\s*\{[^}]*height\s*:/)
-    expect(html).toContain("<select id=\"source-list\" data-transfer-source multiple")
-    expect(html).toContain("<select id=\"target-list\" data-transfer-target multiple")
   })
   it("keeps an honest static no-JS anatomy with no named staging or visible dead controls", () => {
     const { root, form } = fixture(false)

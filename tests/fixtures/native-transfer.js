@@ -1,7 +1,7 @@
 import { createTransfer } from "../../dist/markup-ui-transfer.js"
 
 export function connectExample(scope) {
-  const root = scope.querySelector("#membership"), form = scope.querySelector("#migration-form")
+  const root = scope.querySelector("#membership"), form = scope.querySelector("#interop-form")
   const events = scope.querySelector("#demo-events"), state = scope.querySelector("#membership-state")
   const preview = scope.querySelector("#formdata-preview"), note = scope.querySelector("#handoff-note")
   const enhanced = [...scope.querySelectorAll("[data-demo-enhanced]")]
@@ -34,7 +34,7 @@ export function connectExample(scope) {
     transfer.disconnect()
     enhanced.forEach(node => { node.hidden = true })
     note.textContent = "Disconnected: current native lists/highlights remain. Movement, filtering, membership reset and automatic formdata ownership are released."
-    events.textContent = "No deprecated controller was created; no data is resurrected."
+    events.textContent = "Disconnected; no data is resurrected."
     preview.textContent = "Previous preview cleared. Membership is not automatically serialized after disconnect."
     inspect()
   }
@@ -79,12 +79,4 @@ export function connectExample(scope) {
   note.textContent = "Enhanced: the existing native Transfer helper owns reviewers[] FormData entries. Highlighted options remain staging, not membership."
   inspect()
   return { transfer, inspect, disconnect }
-}
-
-const scope = document.querySelector("#legacy-transfer-example")
-if (scope) {
-  try { window.legacyTransferDemo = connectExample(scope) }
-  catch (error) {
-    scope.querySelector("#demo-events").textContent = `Enhancement unavailable: ${String(error)}. Original static lists remain; no membership serialization is implied.`
-  }
 }

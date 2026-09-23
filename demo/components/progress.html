@@ -42,10 +42,10 @@
     </details>
 
     <section data-demo-example="line" aria-labelledby="line-heading">
-      <header data-demo-header><div><h2 id="line-heading">Linear percentage and legacy value/max</h2><p>Linear percentage tracking with inside and outside indicator placement, processing animation, and indeterminate states.</p></div></header>
+      <header data-demo-header><div><h2 id="line-heading">Linear percentage and value/max ranges</h2><p>Linear percentage tracking with inside and outside indicator placement, processing animation, and indeterminate states.</p></div></header>
       <div data-demo-preview>
         <m-progress id="upload" percentage="40" label="Upload"></m-progress>
-        <m-progress id="legacy" value="25" max="50" label="Processed files"></m-progress>
+        <m-progress id="file-range" value="25" max="50" label="Processed files"></m-progress>
         <m-progress id="inside" percentage="60" indicator-placement="inside" height="24" color="#176b3a" label="Inside indicator"></m-progress>
         <m-progress id="processing" percentage="65" processing label="Processing report"></m-progress>
         <m-progress id="unknown" indeterminate label="Unknown completion"></m-progress>
@@ -57,8 +57,8 @@
           <m-button id="advance">Advance upload</m-button>
           <m-button id="toggle-unknown">Toggle indeterminate</m-button>
           <m-button id="toggle-indicator">Toggle visual indicator</m-button>
-          <m-button id="invalid-max">Set invalid legacy max</m-button>
-          <m-button id="restore-max">Restore legacy max</m-button>
+          <m-button id="invalid-max">Set invalid maximum</m-button>
+          <m-button id="restore-max">Restore maximum</m-button>
         </m-box>
         <m-p id="value-status" role="status">Upload is 40%.</m-p>
         <m-p id="validation-status" role="status">Legacy range is valid.</m-p>

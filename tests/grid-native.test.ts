@@ -5,27 +5,27 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import "../src/components/space/index.js"
 import "../src/components/flex/index.js"
 
-const html = readFileSync(resolve("demo", "components", "legacy-grid.html"), "utf8")
-const css = readFileSync(resolve("demo", "components", "legacy-grid.css"), "utf8")
+const html = readFileSync(resolve("tests", "fixtures", "native-grid.html"), "utf8")
+const css = readFileSync(resolve("tests", "fixtures", "native-grid.css"), "utf8")
 const assets = ["grid", "flex", "space"]
 let sheet: HTMLStyleElement | undefined
 function fixture() {
   const parsed = new DOMParser().parseFromString(html, "text/html")
-  document.body.append(document.importNode(parsed.querySelector("#legacy-grid-example")!, true))
+  document.body.append(document.importNode(parsed.querySelector("#native-grid-example")!, true))
   sheet = document.createElement("style")
   sheet.textContent = assets.map(name => readFileSync(resolve("src", "components", name, `${name}.css`), "utf8")).join("\n") + css.split("@media")[0]
   document.head.append(sheet)
-  return document.querySelector<HTMLElement>("#legacy-grid-example")!
+  return document.querySelector<HTMLElement>("#native-grid-example")!
 }
 afterEach(() => { sheet?.remove(); sheet = undefined; document.body.replaceChildren(); vi.restoreAllMocks() })
 
-describe("Legacy Grid resolved through shipped native layout CSS", () => {
+describe("Native Grid, Flex and Space interoperability", () => {
   it("loads native Grid CSS and canonical Flex/Space without a legacy-grid runtime or export", () => {
     const pkg = JSON.parse(readFileSync(resolve("package.json"), "utf8"))
     const manifest = JSON.parse(readFileSync(resolve("dist", "manifest.json"), "utf8"))
     const parsed = new DOMParser().parseFromString(html, "text/html")
     expect([...parsed.querySelectorAll("link[rel=stylesheet]")].map(node => node.getAttribute("href"))).toEqual([
-      "../../dist/markup-ui-grid.css", "../../dist/markup-ui-flex.css", "../../dist/markup-ui-space.css", "legacy-grid.css",
+      "../../dist/markup-ui-grid.css", "../../dist/markup-ui-flex.css", "../../dist/markup-ui-space.css", "native-grid.css",
     ])
     for (const asset of assets) {
       expect(pkg.exports[`./${asset}/style.css`]).toBe(`./dist/markup-ui-${asset}.css`)
@@ -55,7 +55,7 @@ describe("Legacy Grid resolved through shipped native layout CSS", () => {
     expect(grid.getPropertyValue("--m-grid-cols").trim()).toBe("1")
     expect(first.getPropertyValue("--m-grid-span").trim()).toBe("1")
     expect(css).toContain("@media (min-width: 48rem)")
-    expect(css).toContain(".migration-columns { --m-grid-cols: 24; }")
+    expect(css).toContain(".authored-columns { --m-grid-cols: 24; }")
     expect(css).toContain(".first-column { --m-grid-span: 8; }")
     expect(css).toContain(".second-column { --m-grid-span: 16; }")
     expect(root.querySelector("[xs], [sm], [md], [lg], [xl], [xxl], [span], [offset], [push], [pull]")).toBeNull()
@@ -94,7 +94,7 @@ describe("Legacy Grid resolved through shipped native layout CSS", () => {
       expect(getComputedStyle(grid).getPropertyValue("--m-grid-cols").trim()).toBe("1")
     }
     expect(css).toContain("@supports (container-type: inline-size)")
-    expect(css).toContain("@container migration (min-width: 30rem)")
+    expect(css).toContain("@container layout (min-width: 30rem)")
     expect(css).toContain(".query-feature { --m-grid-span: 2; }")
   })
   it("uses actual Flex/Space rules for native navigation and form actions", () => {
