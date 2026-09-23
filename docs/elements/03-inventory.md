@@ -1,12 +1,13 @@
 # 3. Element inventory
 
-The inventory covers **89 UI component families**, including the required, not-yet-implemented
-Chart addition. Companion and
+The inventory covers **89 UI component families**, including the implemented Chart
+baseline required before release. Companion and
 region classes belong to their family's contract; this is not a count of individual classes.
 Every visual target uses `ViewElement` with direct typed property and method behavior.
 
-A contract link records a design page, not completed implementation. The initial seven
-families establish the pattern; the remaining contracts must be defined before implementation.
+A demo/API link records the current Web surface, not production approval.
+The [element directory](05-element-index.md) lists actual tags, including companion regions.
+Outstanding acceptance work is tracked in the [release gates](../architecture/09-production.md).
 
 ## Common (15)
 
@@ -59,7 +60,7 @@ families establish the pattern; the remaining contracts must be defined before i
 | Family | Elements / scope | Contract |
 | --- | --- | --- |
 | Calendar | `Calendar` | [Demo and API](../../demo/components/calendar.html) |
-| Chart | `Chart` (`m-chart`) and ECharts-shaped configuration regions; required before release, not implemented | [Pending contract](contracts/chart.md) |
+| Chart | `Chart` (`m-chart`) and ECharts-shaped configuration regions; Web baseline implemented, release acceptance pending | [Demo and API](../../demo/components/chart.html), [release contract](contracts/chart.md) |
 | Countdown | `Countdown` | [Demo and API](../../demo/components/countdown.html) |
 | Code | `Code` | [Demo and API](../../demo/components/code.html) |
 | Data Table | `DataTable` | [Demo and API](../../demo/components/data-table.html) |

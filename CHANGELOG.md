@@ -1,5 +1,27 @@
 # Changelog
 
+## Unreleased
+
+- Standardized the Web base on `ViewElement`, removed `MElement` and duplicate component
+  aliases, and retained independently selectable families with shared-core delivery.
+- Added optional ECharts-backed Chart with Bar, Line/Area, Pie/Doughnut and Scatter,
+  ECharts-shaped configuration, five data-source forms, SVG/Canvas renderers and a
+  native data-table alternative. ECharts is not loaded by unrelated components.
+- Added explicit scalar/model binding with safe paths and lifecycle cleanup. Structural
+  templates and item scopes are not implemented.
+- Added native semantic owners for portable labels, disclosure and phrasing primitives;
+  repaired selected-module demos and removed obsolete migration showcases.
+- Restricted HTML insertion and remote markup loading with explicit trust options,
+  bounded responses, cancellation and fail-closed Trusted Types behavior.
+- Renamed Affix offsets to `insetTop` / `insetBottom` and `inset-top` / `inset-bottom`
+  to avoid overriding native DOM geometry. No compatibility aliases are provided.
+- Added packed-consumer checks, three-engine browser checks, dependency audit gates and
+  Windows/Linux/macOS CI configuration. Development requires Node 22.12+ in the 22.x
+  line or Node 24+, with pnpm 10.28.0.
+- Production approval remains pending: remote CI evidence, human accessibility/device
+  acceptance, Chart budget approval and binding release scope are open. Non-Web renderer
+  mappings remain design contracts, not delivered implementations.
+
 ## 0.13.0
 
 - Replaced the former public prefix with `m-*` Custom Elements, `.m-*` classes,

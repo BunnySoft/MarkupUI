@@ -1,6 +1,12 @@
 # Binding and templates
 
-**Status: selected design; the new runtime is not implemented.**
+**Status: explicit scalar/model binding is implemented; structural templates are not.**
+
+The optional state entry supports safe paths, explicit property/attribute/text channels,
+two-way model adapters, nonoverlapping root/store scopes, refresh and disposal.
+`data-if` and `data-each` currently reject use with a structural-binding error.
+Item/parent scopes, keyed reconciliation and a proving collection consumer remain
+delivery work; the template pages describe the selected design, not shipped behavior.
 
 Binding is an optional layer over logical element properties and regions. It must not
 change the meaning of an Element Contract or add runtime cost to unbound components.

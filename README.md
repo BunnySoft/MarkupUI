@@ -1,12 +1,16 @@
 # MarkupUI
 
-`@dataengine/markup-ui` defines platform-neutral UI elements with a dependency-free Web
-implementation for modern browsers.
+`@dataengine/markup-ui` defines platform-neutral UI elements with selectable Web
+implementations for modern browsers. The optional Chart family uses Apache ECharts;
+unrelated components do not load it.
 
-**Status: the full component rewrite is in progress.** The documentation describes the
-latest design, not a claim that every API is implemented. The shared core, Avatar and
-[Button/ButtonGroup](demo/components/button.html) use direct property access and native behavior.
-Documentation data is generated separately for demos. The new binding/template runtime remains planned.
+**Status: development staging; production release is blocked.** The Web implementation
+includes 89 selectable component families, the optional root facade and plugins.
+Components use the shared `ViewElement` base and direct properties; API data is generated
+separately for demos. Explicit scalar/model binding and Chart are implemented.
+Structural templates and item scopes are not implemented. Native-target mappings are
+design contracts, not delivered SwiftUI, Flutter or CLI renderers.
+See the [release evidence and remaining gates](docs/architecture/09-production.md).
 
 ## Design
 
@@ -15,14 +19,14 @@ Documentation data is generated separately for demos. The new binding/template r
 | Web components | Unprefixed classes based on `ViewElement`, registered as `m-*` elements. |
 | Metadata | Development-only data extracted from source; no production metadata lookup. |
 | Content | Explicit regions, preserved authored nodes and native browser semantics. |
-| Binding | Optional, explicit, path-based data flow and keyed templates; no virtual DOM. |
+| Binding | Optional explicit scalar/model data flow; keyed templates remain planned. |
 | Styling | Component CSS and theme resources; short, scoped `data-part` / `data-state` markers. |
-| Migration | One component family at a time, covering the full retained inventory. |
+| Development | One canonical API; no compatibility aliases or migration layer. |
 | Delivery | Small shared core plus independently selectable components/plugins, without a jQuery dependency. |
 
-Every retained Web UI component is included. Pure services, style resources and intentional
-replacements keep explicit dispositions rather than acquiring artificial element wrappers.
-The first seven-component batch establishes the pattern; it is not the end of the rewrite.
+The [element directory](docs/elements/05-element-index.md) lists current family tags
+separately from root/plugin elements. Presence in the directory does not establish
+production acceptance. Services and style resources do not acquire artificial wrappers.
 
 ## Documentation
 
