@@ -543,7 +543,7 @@ describe("unified API and plugins", () => {
     await vi.waitFor(() => expect(loaded).toHaveBeenCalledOnce())
     expect(loaded.mock.calls[0]![0]).toMatchObject({ type: "m:load", bubbles: true })
     include.setAttribute("src", "javascript:alert(1)")
-    expect(failed).toHaveBeenCalledOnce()
+    await vi.waitFor(() => expect(failed).toHaveBeenCalledOnce())
     expect(failed.mock.calls[0]![0].detail).toBeInstanceOf(Error)
     vi.unstubAllGlobals()
   })
@@ -695,7 +695,7 @@ describe("safe HTML", () => {
         <a href="javascript:alert(1)">Unsafe</a>
         <img src="//evil.example/image.png">
         Safe
-      </m-card>`)
+      </m-card>`, { allowMarkupUI: true })
     expect(target.querySelector("script")).toBeNull()
     expect(target.querySelector("style")).toBeNull()
     expect(target.querySelector("m-card")?.hasAttribute("onclick")).toBe(false)
@@ -705,7 +705,7 @@ describe("safe HTML", () => {
   })
 
   it("returns a reusable document fragment", () => {
-    const fragment = sanitizeHtml("<m-row><span>Ready</span></m-row>")
+    const fragment = sanitizeHtml("<m-row><span>Ready</span></m-row>", document, { allowMarkupUI: true })
     expect(fragment.querySelector("m-row")?.textContent).toBe("Ready")
   })
 })

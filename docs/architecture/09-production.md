@@ -134,6 +134,15 @@ the corrected assertion now checks actual component dependency manifests and all
 FloatButton tests pass. A final integrated run and actual remote CI matrix evidence
 remain required; configuring a workflow is not proof that other operating systems passed.
 
+The restricted HTML/remote-loading hardening passes 59 focused security/root tests.
+All three browser engines pass HTML filtering checks in both layouts, and Chromium
+confirms string HTML fails closed under enforced Trusted Types. Include and Query use
+bounded, credential-free, redirect-rejecting requests; cancellation and latest-request
+ownership prevent stale writes. The root remains under its unchanged 15,000-byte
+runtime ceiling: 14,916 gzip bytes for minified ESM and 14,825 for classic.
+See [security boundaries](../security/README.md) for the restricted HTML subset,
+explicit trust options and limitations. This is not an independent security audit.
+
 ## Work order
 
 1. Finish the portable primitive contracts and renderers, starting with labels, disclosure

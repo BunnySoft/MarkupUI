@@ -13,6 +13,7 @@ is not automatically a delivered API.
 | [elements](elements/README.md) | Find an element's contract, unresolved decisions and place in the inventory. |
 | [binding](binding/README.md) | Understand optional data binding, scopes, templates and composition. |
 | [styling](styling/README.md) | Understand theme resources, CSS ownership and visual review requirements. |
+| [security](security/README.md) | Review HTML trust boundaries, remote loading limits and security verification scope. |
 
 New readers should follow Architecture first, then the relevant Element Contract.
 Binding and Styling explain shared rules rather than repeating them in every contract.

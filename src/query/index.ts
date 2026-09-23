@@ -1,6 +1,8 @@
-import { isSafeUri, sanitizeHtml, type HtmlPolicy } from "../security/index.js"
+import { sanitizeHtml, type HtmlPolicy } from "../security/index.js"
+import { requestHtml } from "../security/request.js"
 
 export class MQuery {
+  private controller: AbortController | undefined
   public constructor(private readonly elements: readonly Element[]) {}
 
   public each(callback: (element: Element, index: number) => void): this {
@@ -38,15 +40,20 @@ export class MQuery {
   }
 
   public async load(url: string, policy?: HtmlPolicy): Promise<this> {
-    if (!isSafeUri(url, policy)) throw new Error(`URL '${url}' is not allowed.`)
-    const response = await fetch(url)
-    if (!response.ok) throw new Error(`Request failed with HTTP ${response.status}.`)
-    const html = await response.text()
-    this.elements.forEach((element) => {
-      element.replaceChildren(sanitizeHtml(html, element.ownerDocument, policy))
-    })
-    return this
+    this.cancelLoad()
+    const document = this.elements[0]?.ownerDocument
+    if (!document) return this
+    const controller = this.controller = new AbortController()
+    try {
+      const html = await requestHtml(url, document, policy, controller.signal)
+      if (this.controller === controller) this.elements.forEach(element => {
+        element.replaceChildren(sanitizeHtml(html, element.ownerDocument, policy))
+      })
+      return this
+    } finally { if (this.controller === controller) this.controller = undefined }
   }
+
+  public cancelLoad(): this { this.controller?.abort(); this.controller = undefined; return this }
 }
 
 export function query(target: string | Element | Iterable<Element>): MQuery {

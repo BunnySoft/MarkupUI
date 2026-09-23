@@ -1,5 +1,6 @@
 import { ViewElement } from "../core/index.js"
-import { isSafeUri, sanitizeHtml, type HtmlPolicy } from "../security/index.js"
+import { sanitizeHtml, type HtmlPolicy } from "../security/index.js"
+import { requestHtml } from "../security/request.js"
 
 export class AccordionItem extends ViewElement {
   public static readonly tag = "m-accordion-item"
@@ -27,32 +28,38 @@ export class AccordionItem extends ViewElement {
 export class Include extends ViewElement {
   public static readonly tag = "m-include"
   public static get observedAttributes(): string[] { return ["src"] }
-  private controller?: AbortController
-  public connectedCallback(): void { void this.load() }
-  public disconnectedCallback(): void { this.controller?.abort() }
+  private controller: AbortController | undefined
+  private active = false
+  public get src(): string | null { return this.getAttribute("src") }
+  public set src(value: string | null) { this.setStringAttribute("src", value) }
+  public connectedCallback(): void { this.upgradeProperties(); this.active = true; void this.load() }
+  public disconnectedCallback(): void {
+    this.active = false
+    this.controller?.abort()
+    this.controller = undefined
+    this.removeAttribute("loading")
+  }
   public attributeChangedCallback(name: string, oldValue: string | null, value: string | null): void {
-    if (name === "src" && oldValue !== value && this.isConnected) void this.load()
+    if (name === "src" && oldValue !== value && this.active) void this.load()
   }
   public async load(): Promise<void> {
-    const src = this.getAttribute("src")
-    if (!src) return
-    const policy: HtmlPolicy = { allowedOrigins: [location.origin] }
-    if (!isSafeUri(src, policy)) {
-      this.emit("m:error", new Error(`URL '${src}' is not allowed.`))
-      return
-    }
     this.controller?.abort()
-    this.controller = new AbortController()
+    this.controller = undefined
+    this.removeAttribute("loading")
+    const src = this.src
+    if (!src || !this.isConnected) return
+    const policy: HtmlPolicy = { allowMarkupUI: true }
+    const controller = this.controller = new AbortController()
     this.toggleAttribute("loading", true)
     try {
-      const response = await fetch(src, { signal: this.controller.signal })
-      if (!response.ok) throw new Error(`Request failed with HTTP ${response.status}.`)
-      this.replaceChildren(sanitizeHtml(await response.text(), this.ownerDocument, policy))
+      const html = await requestHtml(src, this.ownerDocument, policy, controller.signal)
+      if (this.controller !== controller || !this.isConnected) return
+      this.replaceChildren(sanitizeHtml(html, this.ownerDocument, policy))
       this.emit("m:load", undefined)
     } catch (error) {
-      if ((error as Error).name !== "AbortError") this.emit("m:error", error)
+      if (this.controller === controller && this.isConnected && (error as Error).name !== "AbortError") this.emit("m:error", error)
     } finally {
-      this.removeAttribute("loading")
+      if (this.controller === controller) { this.controller = undefined; this.removeAttribute("loading") }
     }
   }
 }

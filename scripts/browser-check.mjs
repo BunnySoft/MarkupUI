@@ -17,6 +17,38 @@ const server = spawn(process.execPath, ["demo/server.mjs"], {
 })
 const results = []
 const catalogResults = []
+async function verifyHtmlPolicy(page, origin, name) {
+  const url = `${origin}/demo/security-check.html`
+  await page.route(url, route => route.fulfill({ contentType: "text/html", body: "<!doctype html><title>Security check</title><body></body>" }))
+  await page.goto(url)
+  const filtered = await page.evaluate(async () => {
+    const { sanitizeHtml } = await import("/dist/markup-ui.js")
+    window.markupuiExecuted = 0
+    customElements.define("x-executable", class extends HTMLElement {
+      constructor() { super(); window.markupuiExecuted++ }
+    })
+    const fragment = sanitizeHtml('<svg><a href="javascript:window.markupuiExecuted++">Unsafe</a></svg><x-executable></x-executable><m-include src="/unexpected"></m-include><template><button onclick="window.markupuiExecuted++">Test</button><script>window.markupuiExecuted++</script></template>')
+    const template = fragment.querySelector("template")
+    const clean = !fragment.querySelector("svg,x-executable,m-include") && !template.content.querySelector("script,[onclick]")
+    document.body.append(fragment)
+    document.body.append(template.content.cloneNode(true))
+    document.querySelector("button").click()
+    return clean && window.markupuiExecuted === 0
+  })
+  assert(filtered, `${name}: unsafe HTML reached the live document`)
+  if (name === "chromium") {
+    const strict = `${origin}/demo/trusted-types-check.html`
+    await page.route(strict, route => route.fulfill({
+      contentType: "text/html", body: "<!doctype html><title>Trusted Types check</title><body></body>",
+      headers: { "Content-Security-Policy": "require-trusted-types-for 'script'; trusted-types 'none'" },
+    }))
+    await page.goto(strict)
+    assert(await page.evaluate(async () => {
+      const { sanitizeHtml } = await import("/dist/markup-ui.js")
+      try { sanitizeHtml("<p>Blocked</p>"); return false } catch (error) { return error instanceof TypeError }
+    }), "String HTML must fail closed under Trusted Types enforcement")
+  }
+}
 try {
   const origin = await new Promise((resolveOrigin, reject) => {
     const timeout = setTimeout(() => reject(new Error("Demo server did not start.")), 10_000)
@@ -139,8 +171,10 @@ try {
           assert(await summary.evaluate(node => node.parentElement.open), `${name}/${layout}: disclosure keyboard activation failed`)
           await page.keyboard.press("Space")
           assert.equal(await summary.evaluate(node => node.parentElement.open), false)
+          await verifyHtmlPolicy(page, origin, name)
           assert.deepEqual(errors, [], `${name}/${layout}: browser errors`)
-          results.push({ browser: name, version: browser.version(), layout, readyMs: Math.round(readyMs), charts: geometry, canvasColoredPixels: colored, performance: performanceSample })
+          results.push({ browser: name, version: browser.version(), layout, readyMs: Math.round(readyMs), charts: geometry, canvasColoredPixels: colored, performance: performanceSample,
+            htmlPolicy: "passed", trustedTypes: name === "chromium" ? "fail-closed verified" : "not tested" })
           console.log(`${name} ${browser.version()} ${layout}: passed (${Math.round(readyMs)} ms to six ready charts)`)
           if (process.argv.includes("--catalog")) {
             const failedResources = []
