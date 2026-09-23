@@ -84,6 +84,14 @@ The new demo passed six startup checks; the full catalog and integrated suite ab
 still describe the preceding revision, pending a new integrated run. This does not close
 root/plugin contract approval or screen-reader acceptance.
 
+Rating's follow-up passes build, 73 combined plugin/root/style tests and the same six
+browser/layout combinations. It retains native button identity, silent programmatic
+writes and user-only change notifications, bounded integer values, live maximum/disabled
+updates and reconnect cleanup. It is explicitly a non-form button group, not a native
+radio/form replacement. Mobile and desktop screenshots were checked. Widgets JS/CSS
+measure 1,498/420 gzip bytes against unchanged 4,000/1,500 ceilings. The plugin demo
+documents these limits and the separate Rate family.
+
 ## Earlier checkpoints
 
 The following records describe earlier revisions, not the latest gate status above.

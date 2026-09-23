@@ -633,8 +633,8 @@ describe("unified API and plugins", () => {
     expect(number.value).toBe(3)
     expect((document.querySelector("m-color-picker") as HTMLElement & { value: string }).value)
       .toBe("#ff0000")
-    expect(document.querySelectorAll("m-rating button[data-active]")).toHaveLength(3)
-    expect(document.querySelectorAll("m-rating button[selected]")).toHaveLength(1)
+    expect(document.querySelectorAll('m-rating button[data-state="active"]')).toHaveLength(3)
+    expect(document.querySelectorAll('m-rating button[aria-pressed="true"]')).toHaveLength(1)
     expect(customElements.get("m-rating")!.prototype).toBeInstanceOf(ViewElement)
     for (const constructor of [Breadcrumb, BreadcrumbItem, Timeline, TimelineItem, ColorPicker, Transfer, Cascader]) {
       expect(customElements.get(constructor.tag)).toBe(constructor)
@@ -668,19 +668,20 @@ describe("unified API and plugins", () => {
 
   it("validates retained Rating values before mutation and preserves its event contract", () => {
     m.use(widgetsPlugin)
-    const rating = document.createElement("m-rating") as ViewElement & { value: number }
+    const rating = document.createElement("m-rating") as ViewElement & { value: number; max: number }
     document.body.append(rating)
     const changed = vi.fn()
     rating.addEventListener("m:change", changed)
     rating.value = 2
+    expect(changed).not.toHaveBeenCalled()
+    rating.querySelector<HTMLButtonElement>('button[aria-label="3 of 5"]')!.click()
     expect(changed).toHaveBeenCalledOnce()
-    expect(changed.mock.calls[0]![0].detail).toBe(2)
+    expect(changed.mock.calls[0]![0].detail).toBe(3)
     expect(() => { rating.value = NaN }).toThrow(RangeError)
-    expect(rating.value).toBe(2)
+    expect(rating.value).toBe(3)
     expect(changed).toHaveBeenCalledOnce()
-    rating.setAttribute("max", "invalid")
-    expect(() => { rating.value = 3 }).toThrow(RangeError)
-    expect(rating.getAttribute("value")).toBe("2")
+    expect(() => { rating.max = 2 }).toThrow(RangeError)
+    expect(rating.getAttribute("value")).toBe("3")
     rating.remove()
   })
 })

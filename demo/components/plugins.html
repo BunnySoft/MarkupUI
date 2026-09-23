@@ -58,6 +58,46 @@ document.querySelector("m-data-grid").rows = [
     <m-p>The plugin receives the root API and injects only its own CSS. Its package
       also exposes advanced/style.css. Box, Button and Typography are selected separately for this demo.
       Loading a standalone family does not require these plugins or the root facade.</m-p>
+    <m-heading level="2" id="rating">Rating</m-heading>
+    <m-rating id="review-score" aria-label="Review score" value="3">
+      <m-span id="rating-note">Review:</m-span>
+    </m-rating>
+    <m-box display="flex" wrap gap="8" margin="12px 0">
+      <m-button id="assign-score">Set score to 2</m-button>
+      <m-button id="disable-score">Toggle disabled</m-button>
+      <m-button id="resize-score">Toggle maximum</m-button>
+      <m-button id="reconnect-score">Reconnect rating</m-button>
+    </m-box>
+    <m-p id="rating-status" aria-live="polite">No user change.</m-p>
+    <m-heading level="3">Score selection</m-heading>
+    <m-p>Rating is a non-form group of native score buttons. Give the group an accessible
+      name with aria-label or aria-labelledby. Tab navigates buttons; Enter, Space or a click
+      selects a score. The selected button exposes aria-pressed, not radio semantics.
+      Use the separate Rate family for native radio groups, form submission and validation.</m-p>
+    <m-p>The max property/attribute defaults to 5 and accepts integers from 1 to 10.
+      Value defaults to 0 (unselected), and accepts integers from 0 to max.
+      Set value within the new range before reducing max. Invalid property writes throw
+      before mutation; malformed attributes emit bubbling, noncancelable m:error with the
+      Error as detail and keep the last valid rendering until corrected. No rounding
+      or clamping is performed.</m-p>
+    <m-p>Value and attribute writes are silent. A changed user selection emits bubbling,
+      noncancelable m:change with the numeric score as detail. Selecting the same score
+      again is silent. Disabled is a boolean presence attribute/property; owned buttons
+      also respect a containing native disabled fieldset. Disable does not clear the value.
+      No clear action, half scores, readonly mode or form participation is provided.</m-p>
+    <m-p>Authored nodes and surviving buttons retain identity during updates. If reducing
+      max removes the focused button, focus moves to the last remaining button.
+      Disconnect removes interaction listeners and the renderer-added group role;
+      reconnect restores behavior without duplicating controls.</m-p>
+    <m-pre>import { m } from "@dataengine/markup-ui"
+import { widgetsPlugin } from "@dataengine/markup-ui/widgets"
+m.use(widgetsPlugin)
+// &lt;m-rating aria-label="Review score" value="3" max="5"&gt;&lt;/m-rating&gt;
+document.querySelector("m-rating").value = 2</m-pre>
+    <m-p>Widgets injects only its own CSS; widgets/style.css is also exported.
+      The stylesheet provides a non-color-only selected indicator, visible keyboard
+      focus, reduced-motion and forced-colors rules. Real assistive-technology
+      acceptance remains a release gate.</m-p>
   </main>
 </body>
 </html>

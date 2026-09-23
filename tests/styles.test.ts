@@ -38,7 +38,8 @@ describe("CSS and theme sources", () => {
     // Plugin styles retain only their own tags; selected components own their CSS.
     // DataGrid sorts through native buttons with visible focus and direction indicators.
     expect(hash(advancedStyles)).toBe("45c3e4572504df4d2dbb93aa8b990ba88ad32d2491a475f2b1c75c5bdd32e9a2")
-    expect(hash(widgetStyles)).toBe("8ed4cb38ebf8f8f831d6a3c351313b254d093f534850b66f5448bcff371eb06f")
+    // Rating owns bounded native score buttons with focus, disabled and contrast states.
+    expect(hash(widgetStyles)).toBe("d94f3c71f802fef158801362f3dd49b36256ec09a182d3231bcc125bdd66dde1")
     expect(advancedStyles).toContain("m-data-grid")
     expect(widgetStyles).toContain("m-rating")
     expect(advancedStyles).not.toMatch(/m-date-picker|m-time-picker|m-upload|m-virtual-list/)
