@@ -604,7 +604,7 @@ describe("canonical Log ViewElement", () => {
       { name: "LogEdge", web: "m:log-edge", bubbles: true, cancelable: false, composed: false, detail: { position: "string" } },
       { name: "LogError", web: "m:log-error", bubbles: true, cancelable: false, composed: false },
     ])
-  })
+  }, 15_000)
 
   it("structures Log demo with standard scaffold and explicit shared-core loading", () => {
     const demoHtml = readFileSync(resolve("demo", "components", "log.html"), "utf8")

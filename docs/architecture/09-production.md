@@ -90,6 +90,14 @@ layer or TypeScript suppression. Focused Affix/distribution tests (25) and build
 Packing no longer unexpectedly runs a prepare build; `prepack` owns the normal package
 build, while verification explicitly packs the already-built files with scripts disabled.
 
+Dependency audit remediation on September 23, 2026 pins ECharts 6.1.0 and Vitest 4.1.11.
+The registry audit reports zero advisories after these updates. Build and three-engine
+Chart browser regression passed without increasing any payload ceiling. The first
+Vitest 4 full run passed 4,693 tests; one source-documentation extraction test exceeded
+the default five-second timeout under concurrent browser work. Its complete 70-test Log
+fixture passed on isolated rerun; that compiler-based test now has an explicit 15-second
+limit. A final integrated full-suite run is still required.
+
 ## Work order
 
 1. Finish the portable primitive contracts and renderers, starting with labels, disclosure

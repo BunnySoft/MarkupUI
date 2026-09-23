@@ -178,7 +178,7 @@ unless separately contracted.
 
 ## 6. Implemented baseline decisions
 
-- ECharts 6.0.0 is pinned and built into an optional renderer asset. No npm production
+- ECharts 6.1.0 is pinned and built into an optional renderer asset. No npm production
   dependency, core import or unrelated-family import makes Chart mandatory. License and
   notice files ship with the package. NodeNext development typechecking uses ECharts'
   own unbundled declarations because its rolled-up declarations omit ESM extensions.
@@ -260,10 +260,11 @@ Mean mount/update durations were 30/28 ms (Chromium), 39/41 ms (Firefox), and 11
 used JS heap increased by 432,328 bytes. These are local observations, not approved
 performance ceilings or proof of no possible leaks.
 
-The dependency audit identified an ECharts 6.0.0 advisory affecting the unbundled Lines
-series; upgrading the vendor remains a release prerequisite. Isolated package verification
-also exposed an unrelated Affix declaration conflict. Neither issue is waived by Chart's
-passing tests.
+The initial dependency audit identified an ECharts 6.0.0 advisory affecting the unbundled
+Lines series. ECharts is now pinned to patched 6.1.0 and the three-engine Chart browser
+regression passed again. Vitest is pinned to patched 4.1.11; the subsequent registry audit
+reported zero advisories. The isolated package's Affix declaration conflict is also fixed.
+These fixes do not waive the remaining release acceptance gates.
 
 ## References
 
