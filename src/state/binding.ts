@@ -61,9 +61,6 @@ function directives(element: Element): Directive[] {
         const text = scalar(value)
         if (element.textContent !== text) element.textContent = text
       }
-      if ([...element.querySelectorAll("*")].some(child => [...child.attributes].some(attr => /^(data-bind-|data-model-)/.test(attr.name)))) {
-        throw new TypeError("Text binding cannot own a bound subtree.")
-      }
     } else if (!model && property.startsWith("attr-")) {
       const attribute = property.slice(5)
       if (!/^(?:aria-[a-z-]+|data-(?!bind-|model-)[a-z][a-z0-9-]*|id|title|role|lang|dir)$/.test(attribute) && !booleanAttributes.has(attribute)) {
@@ -140,7 +137,12 @@ export function bind(root: ParentNode, store: MStore): Binding {
     const present = new Set(elements)
     const planned: Array<{ element: Element; signature: string; entries: Directive[] }> = []
     for (const element of elements) {
+      // Tree ownership can change without changing this element's cached scalar directives.
       if (element.hasAttribute("data-if") || element.hasAttribute("data-each")) throw new TypeError("Structural binding is not implemented.")
+      if (element.hasAttribute("data-bind-text") && [...element.querySelectorAll("*")]
+        .some(child => [...child.attributes].some(attr => /^(data-bind-|data-model-)/.test(attr.name)))) {
+        throw new TypeError("Text binding cannot own a bound subtree.")
+      }
       const signature = JSON.stringify([...element.attributes].filter(attr => /^(data-bind-|data-model-)/.test(attr.name))
         .map(attr => [attr.name, attr.value]))
       if (signature === records.get(element)?.signature) continue

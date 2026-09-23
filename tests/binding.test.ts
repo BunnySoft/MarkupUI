@@ -179,6 +179,23 @@ describe("explicit scoped binding", () => {
     expect(document.querySelector("input")).not.toBeNull()
   })
 
+  it("revalidates text ownership when a bound child is added under a cached directive", () => {
+    document.body.innerHTML = '<div data-bind-text="name"></div>'
+    const { store, binding } = attach(document.body, { name: "Original" })
+    const parent = document.querySelector("div")!
+    const child = document.createElement("input")
+    child.setAttribute("data-bind-value", "name")
+    parent.append(child)
+    const subscribe = vi.spyOn(store, "subscribe")
+    expect(() => binding.refresh()).toThrow("subtree")
+    expect(child.parentElement).toBe(parent)
+    expect(subscribe).not.toHaveBeenCalled()
+    child.remove()
+    binding.refresh()
+    store.set("name", "Updated")
+    expect(parent.textContent).toBe("Updated")
+  })
+
   it("rolls back listeners/subscriptions on a failed initial assignment and permits retry", () => {
     document.body.innerHTML = '<span data-bind-text="name"></span><span data-bind-text="bad"></span>'
     const store = createStore({ name: "A", bad: {} })
