@@ -11,7 +11,7 @@ export type { AffixChangeDetail } from "./model.js"
 export class Affix extends ViewElement {
   public static readonly tag = "m-affix"
   public static get observedAttributes(): string[] {
-    return ["offset-top", "offset-bottom"]
+    return ["inset-top", "inset-bottom"]
   }
 
   private upgraded = false
@@ -44,27 +44,25 @@ export class Affix extends ViewElement {
   /**
    * Distance in pixels from the top of the viewport or scroll container before sticking.
    */
-  // @ts-ignore
-  public override get offsetTop(): number | null {
-    return this.numberAttribute("offset-top", null)
+  public get insetTop(): number | null {
+    return this.numberAttribute("inset-top", null)
   }
-  // @ts-ignore
-  public override set offsetTop(value: number | null) {
-    if (value !== null && !Number.isFinite(value)) throw new RangeError("Invalid offset-top.")
-    if (value === null) this.removeAttribute("offset-top")
-    else this.setAttribute("offset-top", String(value))
+  public set insetTop(value: number | null) {
+    if (value !== null && !Number.isFinite(value)) throw new RangeError("Invalid inset-top.")
+    if (value === null) this.removeAttribute("inset-top")
+    else this.setAttribute("inset-top", String(value))
   }
 
   /**
    * Distance in pixels from the bottom of the viewport or scroll container before sticking.
    */
-  public get offsetBottom(): number | null {
-    return this.numberAttribute("offset-bottom", null)
+  public get insetBottom(): number | null {
+    return this.numberAttribute("inset-bottom", null)
   }
-  public set offsetBottom(value: number | null) {
-    if (value !== null && !Number.isFinite(value)) throw new RangeError("Invalid offset-bottom.")
-    if (value === null) this.removeAttribute("offset-bottom")
-    else this.setAttribute("offset-bottom", String(value))
+  public set insetBottom(value: number | null) {
+    if (value !== null && !Number.isFinite(value)) throw new RangeError("Invalid inset-bottom.")
+    if (value === null) this.removeAttribute("inset-bottom")
+    else this.setAttribute("inset-bottom", String(value))
   }
 
   public update(): void {
@@ -77,9 +75,9 @@ export class Affix extends ViewElement {
   }
 
   private synchronize(): void {
-    if (this.hasAttribute("offset-top")) {
+    if (this.hasAttribute("inset-top")) {
       try {
-        const top = this.offsetTop
+        const top = this.insetTop
         if (top !== null) {
           this.style.setProperty("--m-affix-block-start", `${top}px`)
           this.managingTop = true
@@ -92,9 +90,9 @@ export class Affix extends ViewElement {
       this.managingTop = false
     }
 
-    if (this.hasAttribute("offset-bottom")) {
+    if (this.hasAttribute("inset-bottom")) {
       try {
-        const bottom = this.offsetBottom
+        const bottom = this.insetBottom
         if (bottom !== null) {
           this.style.setProperty("--m-affix-block-end", `${bottom}px`)
           this.managingBottom = true
@@ -115,8 +113,8 @@ export class Affix extends ViewElement {
   }
 
   private checkAffixed(): boolean {
-    const top = this.offsetTop
-    const bottom = this.offsetBottom
+    const top = this.insetTop
+    const bottom = this.insetBottom
     if (top === null && bottom === null) return false
 
     const scrollContainer = this.getScrollContainer()

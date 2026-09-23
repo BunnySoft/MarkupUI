@@ -189,96 +189,98 @@ describe("canonical Affix ViewElement", () => {
     expect(Affix.tag).toBe("m-affix")
     expect(ViewElement.prototype.isPrototypeOf(Affix.prototype)).toBe(true)
     expect(customElements.get("m-affix")).toBe(Affix)
-    expect(Affix.observedAttributes).toEqual(["offset-top", "offset-bottom"])
+    expect(Affix.observedAttributes).toEqual(["inset-top", "inset-bottom"])
     expect(() => registerAffix()).not.toThrow()
     const define = vi.fn()
     expect(() => registerAffix({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
     expect(define).not.toHaveBeenCalled()
   })
 
-  it("handles offsetTop property defaults, attributes, validation, and CSS custom property synchronization", () => {
+  it("handles insetTop property defaults, attributes, validation, and CSS custom property synchronization", () => {
     const element = document.createElement("m-affix") as Affix
     document.body.append(element)
-    expect(element.offsetTop).toBeNull()
+    expect(element.insetTop).toBeNull()
+    expect(typeof element.offsetTop).toBe("number")
+    expect(Object.getOwnPropertyDescriptor(Affix.prototype, "offsetTop")).toBeUndefined()
     expect(element.style.getPropertyValue("--m-affix-block-start")).toBe("")
 
-    element.offsetTop = 20
-    expect(element.offsetTop).toBe(20)
-    expect(element.getAttribute("offset-top")).toBe("20")
+    element.insetTop = 20
+    expect(element.insetTop).toBe(20)
+    expect(element.getAttribute("inset-top")).toBe("20")
     expect(element.style.getPropertyValue("--m-affix-block-start")).toBe("20px")
 
-    element.offsetTop = null
-    expect(element.offsetTop).toBeNull()
-    expect(element.hasAttribute("offset-top")).toBe(false)
+    element.insetTop = null
+    expect(element.insetTop).toBeNull()
+    expect(element.hasAttribute("inset-top")).toBe(false)
     expect(element.style.getPropertyValue("--m-affix-block-start")).toBe("")
 
-    element.setAttribute("offset-top", "15")
-    expect(element.offsetTop).toBe(15)
+    element.setAttribute("inset-top", "15")
+    expect(element.insetTop).toBe(15)
     expect(element.style.getPropertyValue("--m-affix-block-start")).toBe("15px")
 
-    element.removeAttribute("offset-top")
-    expect(element.offsetTop).toBeNull()
+    element.removeAttribute("inset-top")
+    expect(element.insetTop).toBeNull()
     expect(element.style.getPropertyValue("--m-affix-block-start")).toBe("")
 
-    expect(() => { element.offsetTop = NaN }).toThrow(RangeError)
-    expect(() => { element.offsetTop = Infinity }).toThrow(RangeError)
-    element.setAttribute("offset-top", "invalid")
-    expect(() => element.offsetTop).toThrow(RangeError)
+    expect(() => { element.insetTop = NaN }).toThrow(RangeError)
+    expect(() => { element.insetTop = Infinity }).toThrow(RangeError)
+    element.setAttribute("inset-top", "invalid")
+    expect(() => element.insetTop).toThrow(RangeError)
   })
 
-  it("handles offsetBottom property defaults, attributes, validation, and CSS custom property synchronization", () => {
+  it("handles insetBottom property defaults, attributes, validation, and CSS custom property synchronization", () => {
     const element = document.createElement("m-affix") as Affix
     document.body.append(element)
-    expect(element.offsetBottom).toBeNull()
+    expect(element.insetBottom).toBeNull()
     expect(element.style.getPropertyValue("--m-affix-block-end")).toBe("")
 
-    element.offsetBottom = 30
-    expect(element.offsetBottom).toBe(30)
-    expect(element.getAttribute("offset-bottom")).toBe("30")
+    element.insetBottom = 30
+    expect(element.insetBottom).toBe(30)
+    expect(element.getAttribute("inset-bottom")).toBe("30")
     expect(element.style.getPropertyValue("--m-affix-block-end")).toBe("30px")
 
-    element.offsetBottom = null
-    expect(element.offsetBottom).toBeNull()
-    expect(element.hasAttribute("offset-bottom")).toBe(false)
+    element.insetBottom = null
+    expect(element.insetBottom).toBeNull()
+    expect(element.hasAttribute("inset-bottom")).toBe(false)
     expect(element.style.getPropertyValue("--m-affix-block-end")).toBe("")
 
-    element.setAttribute("offset-bottom", "45")
-    expect(element.offsetBottom).toBe(45)
+    element.setAttribute("inset-bottom", "45")
+    expect(element.insetBottom).toBe(45)
     expect(element.style.getPropertyValue("--m-affix-block-end")).toBe("45px")
 
-    element.removeAttribute("offset-bottom")
-    expect(element.offsetBottom).toBeNull()
+    element.removeAttribute("inset-bottom")
+    expect(element.insetBottom).toBeNull()
     expect(element.style.getPropertyValue("--m-affix-block-end")).toBe("")
 
-    expect(() => { element.offsetBottom = NaN }).toThrow(RangeError)
-    expect(() => { element.offsetBottom = Infinity }).toThrow(RangeError)
-    element.setAttribute("offset-bottom", "invalid")
-    expect(() => element.offsetBottom).toThrow(RangeError)
+    expect(() => { element.insetBottom = NaN }).toThrow(RangeError)
+    expect(() => { element.insetBottom = Infinity }).toThrow(RangeError)
+    element.setAttribute("inset-bottom", "invalid")
+    expect(() => element.insetBottom).toThrow(RangeError)
   })
 
   it("replays pre-upgrade properties upon connection", () => {
     const element = document.createElement("m-affix") as Affix
-    Object.defineProperty(element, "offsetTop", { configurable: true, value: 50 })
-    Object.defineProperty(element, "offsetBottom", { configurable: true, value: 100 })
+    Object.defineProperty(element, "insetTop", { configurable: true, value: 50 })
+    Object.defineProperty(element, "insetBottom", { configurable: true, value: 100 })
     document.body.append(element)
 
-    expect(element.offsetTop).toBe(50)
-    expect(element.offsetBottom).toBe(100)
-    expect(element.getAttribute("offset-top")).toBe("50")
-    expect(element.getAttribute("offset-bottom")).toBe("100")
+    expect(element.insetTop).toBe(50)
+    expect(element.insetBottom).toBe(100)
+    expect(element.getAttribute("inset-top")).toBe("50")
+    expect(element.getAttribute("inset-bottom")).toBe("100")
     expect(element.style.getPropertyValue("--m-affix-block-start")).toBe("50px")
     expect(element.style.getPropertyValue("--m-affix-block-end")).toBe("100px")
   })
 
   it("emits m:change event when affixed state transitions", () => {
     const element = document.createElement("m-affix") as Affix
-    element.offsetTop = 20
+    element.insetTop = 20
     document.body.append(element)
 
     const change = vi.fn()
     element.addEventListener("m:change", change)
 
-    // Sticking: element top <= offsetTop
+    // Sticking: element top <= insetTop
     vi.spyOn(element, "getBoundingClientRect").mockReturnValue({
       top: 10, bottom: 50, left: 0, right: 100, width: 100, height: 40,
     } as DOMRect)
@@ -291,7 +293,7 @@ describe("canonical Affix ViewElement", () => {
     expect(event.cancelable).toBe(false)
     expect(event.composed).toBe(false)
 
-    // Unsticking: element top > offsetTop
+    // Unsticking: element top > insetTop
     vi.spyOn(element, "getBoundingClientRect").mockReturnValue({
       top: 100, bottom: 140, left: 0, right: 100, width: 100, height: 40,
     } as DOMRect)
@@ -307,13 +309,13 @@ describe("canonical Affix ViewElement", () => {
 
   it("emits m:change with bottom offset sticking", () => {
     const element = document.createElement("m-affix") as Affix
-    element.offsetBottom = 30
+    element.insetBottom = 30
     document.body.append(element)
 
     const change = vi.fn()
     element.addEventListener("m:change", change)
 
-    // Sticking at bottom: viewport bottom - element bottom <= offsetBottom
+    // Sticking at bottom: viewport bottom - element bottom <= insetBottom
     vi.spyOn(element, "getBoundingClientRect").mockReturnValue({
       top: 740, bottom: 780, left: 0, right: 100, width: 100, height: 40,
     } as DOMRect)
@@ -345,20 +347,20 @@ describe("canonical Affix ViewElement", () => {
     const [element] = docs.elements
     expect(element.type).toBe("Affix")
     expect(element.web.primary).toBe("m-affix")
-    expect(element.properties.offsetTop).toMatchObject({
-      name: "offsetTop",
+    expect(element.properties.insetTop).toMatchObject({
+      name: "insetTop",
       type: "number",
       typeName: "number | null",
-      attribute: "offset-top",
+      attribute: "inset-top",
       default: null,
       nullable: true,
       writable: true,
     })
-    expect(element.properties.offsetBottom).toMatchObject({
-      name: "offsetBottom",
+    expect(element.properties.insetBottom).toMatchObject({
+      name: "insetBottom",
       type: "number",
       typeName: "number | null",
-      attribute: "offset-bottom",
+      attribute: "inset-bottom",
       default: null,
       nullable: true,
       writable: true,
@@ -386,8 +388,8 @@ describe("canonical Affix ViewElement", () => {
     renderComponentApi(container, docs.elements)
     expect(container.textContent).toContain("Affix")
     expect(container.textContent).toContain("m-affix")
-    expect(container.textContent).toContain("offset-top")
-    expect(container.textContent).toContain("offset-bottom")
+    expect(container.textContent).toContain("inset-top")
+    expect(container.textContent).toContain("inset-bottom")
     expect(container.textContent).toContain("m:change")
   })
 })

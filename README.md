@@ -43,6 +43,8 @@ Start with the [documentation guide](docs/README.md).
 | `pnpm install` | Install development dependencies. |
 | `pnpm build` | Generate distributions and enforce payload budgets. |
 | `pnpm test` | Run the existing test suite; use focused fixtures while changing a component. |
+| `pnpm test:package` | Pack the built files and verify exports, types and imports in an isolated consumer. |
+| `pnpm test:browser` | Verify Chart and primitive workflows in installed Playwright browser engines. |
 | `pnpm demo` | Serve the development examples. |
 
 Implementation remains in separate TypeScript, CSS, shared-type and entry files. No `.mkl`

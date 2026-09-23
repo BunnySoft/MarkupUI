@@ -72,8 +72,6 @@ is shared by the root facade; selected components remain independent. App reconn
 removed-node cleanup are covered. Template/item scopes, Chart integration and browser
 acceptance remain outstanding. This evidence does not approve a production release.
 
-## Work order
-
 September 23, 2026 Chart baseline: build and all 4,694 tests across 127 files passed.
 The optional renderer, five source forms, first-batch chart types, demos and generated API
 are implemented. Headless Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 passed
@@ -82,6 +80,17 @@ desktop/mobile-sized Chart and portable primitive workflows. The
 scope and performance observations. Full-family browser and screen-reader acceptance
 remain open. Dependency audit remediation, isolated consumer declaration validation and
 approval of the new Chart budgets are still release blockers.
+
+The isolated packed consumer now passes all 95 JavaScript entry imports, all package
+export asset checks and strict NodeNext declaration checking without repository type
+dependencies or skipLibCheck. `pnpm test:package` creates the tarball and consumer
+evidence. It exposed Affix's illegal nullable override of native `offsetTop`; Affix now
+uses `insetTop` / `insetBottom` and `inset-top` / `inset-bottom`, without a compatibility
+layer or TypeScript suppression. Focused Affix/distribution tests (25) and build passed.
+Packing no longer unexpectedly runs a prepare build; `prepack` owns the normal package
+build, while verification explicitly packs the already-built files with scripts disabled.
+
+## Work order
 
 1. Finish the portable primitive contracts and renderers, starting with labels, disclosure
    and semantic structure. Keep `m-*` public authoring and validate native Web output.

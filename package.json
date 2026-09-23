@@ -519,7 +519,8 @@
     "prepack": "pnpm build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:browser": "node scripts/browser-check.mjs"
+    "test:browser": "node scripts/browser-check.mjs",
+    "test:package": "node scripts/package-check.mjs"
   },
   "dependencies": {},
   "devDependencies": {
