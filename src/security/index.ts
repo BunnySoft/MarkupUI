@@ -21,7 +21,7 @@ export function isSafeUri(value: string, policy: HtmlPolicy = {}, base = globalT
     const allowed = policy.allowedOrigins
     return allowed === undefined
       ? url.origin === new URL(base).origin
-      : allowed.includes(url.origin)
+      : Array.isArray(allowed) && allowed.includes(url.origin)
   } catch {
     return false
   }
@@ -41,7 +41,7 @@ export function sanitizeHtml(
   while (pending.length) {
     for (const element of pending.pop()!.querySelectorAll("*")) {
       if (element.namespaceURI !== "http://www.w3.org/1999/xhtml" || element.hasAttribute("is")
-        || !htmlElements.has(element.localName) && !(policy.allowMarkupUI && /^m-[a-z][a-z0-9-]*$/.test(element.localName))) {
+        || !htmlElements.has(element.localName) && !(policy.allowMarkupUI === true && /^m-[a-z][a-z0-9-]*$/.test(element.localName))) {
         element.remove()
         continue
       }

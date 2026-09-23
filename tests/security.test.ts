@@ -39,6 +39,8 @@ describe("restricted HTML policy", () => {
     expect(sanitizeHtml("<m-card onclick='run()'>Content</m-card>", document, { allowMarkupUI: true })
       .querySelector("m-card")!.hasAttribute("onclick")).toBe(false)
     expect(sanitizeHtml("<x-widget>Content</x-widget>", document, { allowMarkupUI: true }).childElementCount).toBe(0)
+    expect(sanitizeHtml("<m-card>Content</m-card>", document, { allowMarkupUI: "false" as never }).childElementCount).toBe(0)
+    expect(isSafeUri("https://trusted.test/", { allowedOrigins: "https://trusted.test/" as never })).toBe(false)
   })
 
   it("removes URL-list, namespace, shadow-root and clobbering attributes", () => {
