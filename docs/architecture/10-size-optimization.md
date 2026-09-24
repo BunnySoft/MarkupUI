@@ -273,7 +273,7 @@ not standing authorization for future pushes.
 | Integrated suite | `node node_modules/vitest/vitest.mjs run --maxWorkers=4`: 4,854 passing in 133 files, no failures/skips. `pnpm size:report --check-regressions` also passed through the package command. |
 | Browser/consumer | `node scripts/package-check.mjs`: 95 entries / 2,327 files, strict NodeNext and runtime imports passed without installed ECharts. `node scripts/browser-check.mjs --catalog --page=dynamic-tags`: 6/6 scoped catalog checks plus existing Chart/Form/plugin/security workflows, Chromium 153.0.8010.12, Firefox 155.0, WebKit 26.6 at 1280x900 and 375x812. Added Enter/button commit, removal, focus and registration assertions; desktop/mobile screenshots inspected. |
 | Limits | This is an import-boundary fix, not S2 behavior unification. The all-catalog browser matrix and separate production-readiness gates remain open. No budget increases, cold-load penalties, export removals or hidden dependency files. |
-| Commit | `:/^fix: isolate Dynamic Tags helper imports$` (Git revision naming this bounded task). |
+| Commit | `7f1fb6b` - `fix: isolate Dynamic Tags helper imports`. |
 
 Measured bytes below are raw / gzip, with each selected dependency counted once.
 Only the two Dynamic Tags browser bundles changed hashes. CSS is unchanged at
