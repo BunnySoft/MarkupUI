@@ -1,6 +1,7 @@
 # 10. JavaScript size optimization plan
 
-Status: planned, not implemented. Recorded September 23, 2026.
+Status: S0 implemented and verified September 24, 2026; S1-S6 remain open.
+Plan recorded September 23, 2026.
 Implementation baseline: `cb00af1` on `main`, package version `0.13.0`.
 The next thread should follow this plan one bounded task at a time.
 
@@ -116,19 +117,19 @@ their relevant evidence; task S0 must make repeatable reporting part of tracked 
 
 ## Execution order
 
-All tasks below remain open. Do not mark a task complete on size measurements alone.
+S0 is complete. Do not mark a task complete on size measurements alone.
 
 ### S0. Reproducible size reporting
 
-- [ ] Add a tracked report command using build manifests and esbuild metafiles.
-- [ ] Measure minified bytes, gzip bytes, entry-only cost and the complete transitive
+- [x] Add a tracked report command using build manifests and esbuild metafiles.
+- [x] Measure minified bytes, gzip bytes, entry-only cost and the complete transitive
   dependency closure for ESM and classic. Keep CSS and external engines separate.
-- [ ] Report all-family totals, largest own implementations, repeated source contributions,
+- [x] Report all-family totals, largest own implementations, repeated source contributions,
   and representative selections: one small component, one complex component, related
   families together, and the whole catalog. Keep exact file lists with each total.
-- [ ] Capture a baseline before changing behavior. Preserve exports in equivalent build
+- [x] Capture a baseline before changing behavior. Preserve exports in equivalent build
   comparisons; label export-removal experiments as diagnostics only.
-- [ ] Retain existing per-file and combined ceilings and add regression reporting.
+- [x] Retain existing per-file and combined ceilings and add regression reporting.
   Do not import a measurement tool or its metadata into production.
 
 ### S1. Remove unintended registration dependencies
@@ -251,11 +252,22 @@ Commit each completed task separately as requested. Do not push automatically in
 thread unless the user requests it. The push accompanying this plan is a handoff operation,
 not standing authorization for future pushes.
 
+### S0 - September 24, 2026
+
+| Field | Evidence |
+| --- | --- |
+| Scope | Reproducible measurement only; no component behavior, public exports or budget changes. |
+| Implementation | `scripts/build.mjs` retains hashed esbuild evidence outside `dist`; `scripts/size-report.mjs` measures actual files, checks transitive dependencies and produces entry/group/source-attribution reports. `size-baseline.json` captures the unchanged implementation before S1. |
+| Size | ESM remains 1,240,182 raw / 414,065 gzip bytes; classic remains 1,266,374 / 427,555 across 89 families and 94 unique files per format. Every entry and dependency-inclusive cost has zero delta. CSS, root/plugins and required ECharts remain separate. Demo-selected ECharts is 594,547 / 203,661 ESM and 594,949 / 203,838 classic bytes. |
+| Verification | `node node_modules/typescript/bin/tsc --noEmit`; `node scripts/build.mjs`; `node scripts/size-report.mjs --write-baseline`; `node scripts/size-report.mjs --check-regressions`; `node node_modules/vitest/vitest.mjs run tests/size-report.test.ts tests/core-distribution.test.ts tests/chart-distribution.test.ts`: 21 passing in 3 files. Final report fixture rerun: 8 passing, including failing growth/export/budget cases. `node scripts/package-check.mjs`: 95 entries / 2,327 files, strict NodeNext and runtime imports passed without installed ECharts. |
+| Limits | Raw source attribution is not gzip savings. Export-name comparison is not behavioral equivalence. Full browser/production acceptance is not claimed for this tooling-only task. |
+| Commit | `:/^build: add reproducible size reporting$` (Git revision naming this bounded task). |
+
 ## Next-thread starting point
 
 1. Read this plan and repository instructions; inspect `git status` and the latest history.
 2. Confirm the Chart external-engine baseline and current distribution measurements.
-3. Start S0, then S1. No optimization source changes have been implemented by this plan.
+3. S0 is complete; start S1. No optimization source changes have been implemented yet.
 4. Proceed family by family through S2/S3 before selecting final shared-bundle boundaries.
 5. Avoid repeatedly running the entire suite during small edits: use focused checks per
    task and the integrated gates at packaging milestones and final acceptance.

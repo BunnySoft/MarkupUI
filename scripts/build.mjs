@@ -1,16 +1,30 @@
 import { execFileSync } from "node:child_process"
+import { createHash } from "node:crypto"
 import { gzipSync } from "node:zlib"
 import { copyFile, mkdir, readFile, realpath, rm, writeFile } from "node:fs/promises"
 import { createRequire } from "node:module"
-import { dirname, resolve } from "node:path"
+import { dirname, relative, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
-import { build, transform } from "esbuild"
+import { build as esbuild, transform, version as esbuildVersion } from "esbuild"
 import { emitStylesheets, generateStyleModules } from "./styles.mjs"
 import { generateComponentApi } from "./component-api.mjs"
 
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)))
 const dist = resolve(root, "dist")
 const tsc = resolve(root, "node_modules", "typescript", "bin", "tsc")
+const buildRecords = []
+const sha256 = content => createHash("sha256").update(content).digest("hex")
+
+async function build(options) {
+  const result = await esbuild({ ...options, absWorkingDir: root, metafile: true })
+  const file = relative(root, options.outfile).replaceAll("\\", "/")
+  buildRecords.push({
+    file, format: options.format === "iife" ? "classic" : options.format,
+    minified: options.minify === true,
+    sha256: sha256(await readFile(options.outfile)),
+    metafile: result.metafile,
+  })
+}
 
 await generateStyleModules(root)
 await rm(dist, { force: true, recursive: true })
@@ -736,3 +750,17 @@ await writeFile(
     entryPayloads,
   }, null, 2)}\n`,
 )
+
+// Build diagnostics stay outside dist and never become a runtime/package dependency.
+let revision = null
+try { revision = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim() }
+catch { /* Source archives need not contain Git metadata. */ }
+const sizeDirectory = resolve(root, ".vite/size")
+await mkdir(sizeDirectory, { recursive: true })
+await writeFile(resolve(sizeDirectory, "build.json"), `${JSON.stringify({
+  schemaVersion: 1,
+  environment: { node: process.version, esbuild: esbuildVersion, platform: process.platform },
+  revision,
+  manifestSha256: sha256(await readFile(resolve(dist, "manifest.json"))),
+  builds: buildRecords.sort((a, b) => a.file.localeCompare(b.file)),
+}, null, 2)}\n`)

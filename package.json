@@ -515,6 +515,7 @@
   },
   "scripts": {
     "build": "node scripts/build.mjs",
+    "size:report": "node scripts/size-report.mjs",
     "check": "pnpm build && pnpm test",
     "demo": "node demo/server.mjs",
     "prepack": "pnpm build",

@@ -330,6 +330,35 @@ core-inclusive runtime**, and the existing **2,000 CSS**. Current measured ESM/c
 costs are 2,229/2,412 bytes, core-inclusive runtime costs are 3,212/3,452 bytes, and CSS is
 1,689 bytes (4,901/5,141 including CSS). All budget checks remain fail-fast.
 
+## Reproducible size reports
+
+After `pnpm build`, run `pnpm size:report` (or `node scripts/size-report.mjs`).
+The build retains esbuild metafiles and output hashes in `.vite/size/build.json`;
+the report is written to `.vite/size/report.json`. Neither file is published.
+The report checks the manifest and output hashes before measuring actual bytes and
+level-9 gzip per file. Stale or missing evidence requires a rebuild.
+
+`docs/architecture/size-baseline.json` is the S0 pre-optimization baseline.
+`pnpm size:report --check-regressions` also rejects raw/gzip increases or changed ESM
+export names relative to it. The default command reports changes without rejecting
+growth within existing ceilings; raising/removing an existing ceiling is still rejected.
+Only an intentional baseline capture uses `--write-baseline`; do not use it to clear a
+regression. `--baseline <file>` and `--output <file>` allow separate experiments.
+
+Each cost has an exact, deduplicated file list. Component costs distinguish entry-only
+from complete transitive runtime and separate CSS. Selections cover Grid, Dropdown,
+dynamic collections, hierarchy, floating controls and all 89 families. Root/plugins
+are separate optional costs; unminified root assets are explicitly marked.
+ESM imports and classic bridge inputs verify component dependencies. The two optional
+plugins also account for their caller-supplied root API dependency.
+
+The report ranks entry gzip and component-owned raw source contributions, and lists
+repeated retained source contributions from metafiles. These raw attributions are
+diagnostics, not removable gzip bytes. ESM export changes are flagged as potentially
+non-equivalent comparisons; unchanged names do not prove behavior equivalence.
+Chart's required application-owned engine remains outside library totals, with the
+built demo engine measured separately as one concrete selection, not a universal cost.
+
 ## References
 
 - [Plugin support source](../../src/core/plugin.ts)
