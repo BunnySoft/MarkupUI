@@ -330,6 +330,19 @@ core-inclusive runtime**, and the existing **2,000 CSS**. Current measured ESM/c
 costs are 2,229/2,412 bytes, core-inclusive runtime costs are 3,212/3,452 bytes, and CSS is
 1,689 bytes (4,901/5,141 including CSS). All budget checks remain fail-fast.
 
+## Dynamic Tags delivery
+
+Dynamic Tags selects core plus its own family entry and CSS. Its helper imports
+collection mechanics and types directly from `dynamic-input/dynamic-input.ts`, not
+Dynamic Input's registering entry. Loading Tags alone does not register
+`m-dynamic-input` or bundle its element class. Selecting both families in either order
+retains each family's canonical constructor and their common core.
+
+S1 leaves the existing element and standalone helper APIs unchanged. Their behavior
+unification is separate S2 work. Dynamic Tags now measures 10,361/10,518 entry gzip
+bytes and 11,784/11,990 including core (ESM/classic); CSS remains 1,148 bytes.
+No runtime dependency file, public export or ceiling changed.
+
 ## Reproducible size reports
 
 After `pnpm build`, run `pnpm size:report` (or `node scripts/size-report.mjs`).

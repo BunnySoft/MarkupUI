@@ -363,6 +363,27 @@ try {
                 const api = page.locator(`#${slug}-api`)
                 if (await api.count()) await page.waitForFunction(id => document.getElementById(id).classList.contains("component-api"), `${slug}-api`)
                 assert.deepEqual(errors, [])
+                if (slug === "dynamic-tags") {
+                  assert.equal(await page.evaluate(() => !!customElements.get("m-dynamic-input")), false,
+                    "Dynamic Tags must not register Dynamic Input")
+                  const tags = page.locator("#basic-tags")
+                  const editor = tags.getByRole("textbox", { name: "New tag", exact: true })
+                  await editor.fill("Distribution check")
+                  await editor.press("Enter")
+                  await page.waitForFunction(() => document.querySelector("#basic-status").textContent.includes("Distribution check"))
+                  assert.equal(await editor.inputValue(), "")
+                  assert.equal(await editor.evaluate(element => document.activeElement === element), true)
+                  await tags.getByRole("button", { name: "Remove Distribution check", exact: true }).click()
+                  await page.waitForFunction(() => document.querySelector("#basic-status").textContent === "Tags: MarkupUI, Web Components")
+                  await editor.fill("Button check")
+                  await tags.getByRole("button", { name: "Add", exact: true }).click()
+                  await page.waitForFunction(() => document.querySelector("#basic-status").textContent.includes("Button check"))
+                  assert.equal(await editor.evaluate(element => document.activeElement === element), true)
+                  assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1),
+                    `${name}/${layout}: Dynamic Tags overflow`)
+                  await tags.scrollIntoViewIfNeeded()
+                  await page.screenshot({ path: resolve(output, `${name}-${layout}-dynamic-tags.png`) })
+                }
                 if (slug === "virtual-list") {
                   await page.waitForFunction(() => document.querySelector("#large").clientHeight === 320)
                   await page.locator("#end").click()

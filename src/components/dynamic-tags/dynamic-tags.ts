@@ -1,5 +1,5 @@
-import { createDynamicInput } from "../dynamic-input/index.js"
-import type { DynamicInputContext, DynamicInputController, DynamicInputRow } from "../dynamic-input/index.js"
+import { createDynamicInput } from "../dynamic-input/dynamic-input.js"
+import type { DynamicInputContext, DynamicInputController, DynamicInputRow } from "../dynamic-input/dynamic-input.js"
 
 export interface DynamicTag extends DynamicInputRow { readonly control: HTMLInputElement }
 export type DynamicTagsRejection = "empty" | "duplicate" | "max" | "invalid" | "composing" | "unavailable" | "stale"

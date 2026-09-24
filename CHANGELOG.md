@@ -20,6 +20,9 @@
   cleanup. Rating programmatic writes are silent; user changes emit `m:change`.
   Added an interactive plugin demo and three-engine keyboard workflows.
 - Corrected `m.version` to match the package version in source, ESM and classic builds.
+- Added reproducible, dependency-inclusive size reports and a pre-optimization baseline
+  without changing payload ceilings. Dynamic Tags now imports collection mechanics
+  directly, avoiding unintended Dynamic Input registration and constructor bundling.
 - Renamed Affix offsets to `insetTop` / `insetBottom` and `inset-top` / `inset-bottom`
   to avoid overriding native DOM geometry. No compatibility aliases are provided.
 - Added packed-consumer checks, three-engine browser checks, dependency audit gates and

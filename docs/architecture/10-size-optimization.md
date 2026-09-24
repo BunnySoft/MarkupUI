@@ -1,6 +1,6 @@
 # 10. JavaScript size optimization plan
 
-Status: S0 implemented and verified September 24, 2026; S1-S6 remain open.
+Status: S0-S1 implemented and verified September 24, 2026; S2-S6 remain open.
 Plan recorded September 23, 2026.
 Implementation baseline: `cb00af1` on `main`, package version `0.13.0`.
 The next thread should follow this plan one bounded task at a time.
@@ -117,7 +117,7 @@ their relevant evidence; task S0 must make repeatable reporting part of tracked 
 
 ## Execution order
 
-S0 is complete. Do not mark a task complete on size measurements alone.
+S0-S1 are complete. Do not mark a task complete on size measurements alone.
 
 ### S0. Reproducible size reporting
 
@@ -134,13 +134,13 @@ S0 is complete. Do not mark a task complete on size measurements alone.
 
 ### S1. Remove unintended registration dependencies
 
-- [ ] Change Dynamic Tags' helper import from `../dynamic-input/index.js` to the actual
+- [x] Change Dynamic Tags' helper import from `../dynamic-input/index.js` to the actual
   helper owner. Import types from their owner as well.
-- [ ] Verify importing Dynamic Tags no longer registers or bundles the Dynamic Input class,
+- [x] Verify importing Dynamic Tags no longer registers or bundles the Dynamic Input class,
   while the existing helper behavior remains intact.
-- [ ] Audit other cross-family `index.js` imports for the same problem. Change only proven
+- [x] Audit other cross-family `index.js` imports for the same problem. Change only proven
   helper/registration boundary mistakes, not legitimate component compositions.
-- [ ] Cover isolated ESM/classic registration, import order, source maps and affected
+- [x] Cover isolated ESM/classic registration, import order, source maps and affected
   behavior. Record the measured saving and commit this bounded fix separately.
 
 ### S2. Unify each component's behavior implementation
@@ -261,13 +261,37 @@ not standing authorization for future pushes.
 | Size | ESM remains 1,240,182 raw / 414,065 gzip bytes; classic remains 1,266,374 / 427,555 across 89 families and 94 unique files per format. Every entry and dependency-inclusive cost has zero delta. CSS, root/plugins and required ECharts remain separate. Demo-selected ECharts is 594,547 / 203,661 ESM and 594,949 / 203,838 classic bytes. |
 | Verification | `node node_modules/typescript/bin/tsc --noEmit`; `node scripts/build.mjs`; `node scripts/size-report.mjs --write-baseline`; `node scripts/size-report.mjs --check-regressions`; `node node_modules/vitest/vitest.mjs run tests/size-report.test.ts tests/core-distribution.test.ts tests/chart-distribution.test.ts`: 21 passing in 3 files. Final report fixture rerun: 8 passing, including failing growth/export/budget cases. `node scripts/package-check.mjs`: 95 entries / 2,327 files, strict NodeNext and runtime imports passed without installed ECharts. |
 | Limits | Raw source attribution is not gzip savings. Export-name comparison is not behavioral equivalence. Full browser/production acceptance is not claimed for this tooling-only task. |
-| Commit | `:/^build: add reproducible size reporting$` (Git revision naming this bounded task). |
+| Commit | `ee1c8c4` - `build: add reproducible size reporting`. |
+
+### S1 - September 24, 2026
+
+| Field | Evidence |
+| --- | --- |
+| Scope | Remove Dynamic Tags' unintended Dynamic Input element registration/bundling. Existing Tags element/helper contracts, native forms, validation, whitespace, duplicate policy and resource cleanup retained. |
+| Implementation | Runtime and type imports now point to `dynamic-input/dynamic-input.ts`. No public exports removed. TypeScript import/export audit found only Popselect's type-only Select barrel reference remaining across family entries; no other runtime boundary mistake was changed. |
+| Verification | `node node_modules/typescript/bin/tsc --noEmit`; `node scripts/build.mjs`; `node scripts/size-report.mjs --check-regressions`; `node node_modules/vitest/vitest.mjs run tests/dynamic-tags-distribution.test.ts tests/dynamic-tags.test.ts tests/dynamic-input.test.ts tests/size-report.test.ts tests/core-distribution.test.ts tests/chart-distribution.test.ts`: 169 passing in 6 files. Isolated ESM/classic checks exercise both import orders, Tags-only registration, shipped helper behavior and sourcemap/metafile/declaration boundaries. |
+| Integrated suite | `node node_modules/vitest/vitest.mjs run --maxWorkers=4`: 4,854 passing in 133 files, no failures/skips. `pnpm size:report --check-regressions` also passed through the package command. |
+| Browser/consumer | `node scripts/package-check.mjs`: 95 entries / 2,327 files, strict NodeNext and runtime imports passed without installed ECharts. `node scripts/browser-check.mjs --catalog --page=dynamic-tags`: 6/6 scoped catalog checks plus existing Chart/Form/plugin/security workflows, Chromium 153.0.8010.12, Firefox 155.0, WebKit 26.6 at 1280x900 and 375x812. Added Enter/button commit, removal, focus and registration assertions; desktop/mobile screenshots inspected. |
+| Limits | This is an import-boundary fix, not S2 behavior unification. The all-catalog browser matrix and separate production-readiness gates remain open. No budget increases, cold-load penalties, export removals or hidden dependency files. |
+| Commit | `:/^fix: isolate Dynamic Tags helper imports$` (Git revision naming this bounded task). |
+
+Measured bytes below are raw / gzip, with each selected dependency counted once.
+Only the two Dynamic Tags browser bundles changed hashes. CSS is unchanged at
+1,148 gzip bytes and is excluded from these JavaScript totals.
+
+| Selection | ESM before | ESM after | Classic before | Classic after |
+| --- | ---: | ---: | ---: | ---: |
+| Dynamic Tags entry | 39,093 / 11,699 | 32,230 / 10,361 | 39,323 / 11,845 | 32,562 / 10,518 |
+| Dynamic Tags + core | 42,605 / 13,122 | 35,742 / 11,784 | 42,959 / 13,317 | 36,198 / 11,990 |
+| Dynamic Input + Tags + core | 64,786 / 20,365 | 57,923 / 19,027 | 65,474 / 20,706 | 58,713 / 19,379 |
+| All 89 families | 1,240,182 / 414,065 | 1,233,319 / 412,727 | 1,266,374 / 427,555 | 1,259,613 / 426,228 |
 
 ## Next-thread starting point
 
 1. Read this plan and repository instructions; inspect `git status` and the latest history.
 2. Confirm the Chart external-engine baseline and current distribution measurements.
-3. S0 is complete; start S1. No optimization source changes have been implemented yet.
+3. S0-S1 are complete; start S2 with Dynamic Tags and its Dynamic Input relationship.
+   Keep the tracked S0 baseline intact for cumulative comparisons.
 4. Proceed family by family through S2/S3 before selecting final shared-bundle boundaries.
 5. Avoid repeatedly running the entire suite during small edits: use focused checks per
    task and the integrated gates at packaging milestones and final acceptance.
