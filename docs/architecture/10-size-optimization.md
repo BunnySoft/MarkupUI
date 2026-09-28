@@ -386,7 +386,7 @@ The all-modular cumulative saving from S0 is only 602 ESM / 594 classic gzip byt
 | Consumer | `node scripts/package-check.mjs`: 95 JS entries / 2,327 files, packed strict NodeNext types and runtime imports passed without installed ECharts. |
 | Size | `node scripts/size-report.mjs --output .vite/size/s2-input.json`: measured results above. Pre-Input report is `.vite/size/pre-input.json`; S0 baseline unchanged. |
 | Limits | Gzip grows, despite raw reduction. No all-catalog, non-Web, zero-failure single-run CI or production acceptance claim. The unchanged-timeout Chart recheck passed after the integrated timeout. Custom field families must load before collection initialization. Template rendering is not binding-plugin structural-template support. |
-| Commit | Verified implementation commit ID recorded after committing this task. |
+| Commit | `59d9d65` - `refactor: unify Dynamic Input element behavior`. |
 
 ## Next-thread starting point
 
