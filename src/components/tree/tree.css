@@ -19,6 +19,7 @@
   --_m-tree-line: rgba(255,255,255,.09);
 }
 .m-tree {
+  display: block;
   font-size: var(--m-tree-font-size, var(--m-font-size, 14px));
   line-height: var(--m-tree-line-height, 1.5);
   overflow-wrap: anywhere;
@@ -26,6 +27,7 @@
 .m-tree [data-tree-list] { list-style: none; margin: 0; padding: 0; padding-inline-start: var(--m-tree-indent, 24px); }
 .m-tree > [data-tree-list] { padding-inline-start: 0; }
 .m-tree [data-tree-key] { margin: 0; }
+.m-tree [data-tree-row] > label > span { position: absolute; clip-path: inset(50%); inline-size: 1px; block-size: 1px; overflow: hidden; }
 .m-tree [data-tree-row] {
   display: flex;
   flex-wrap: wrap;

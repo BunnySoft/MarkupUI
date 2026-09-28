@@ -367,6 +367,24 @@ raw entries shrink 414/415 bytes. The unchanged 9,000-byte combined ceiling pass
 with only thirteen classic bytes of headroom. No shared extraction, budget increase or
 optional aggregate is included in this task.
 
+## Tree delivery
+
+Tree selects core plus one family entry and CSS. Runtime exports are `Tree`,
+`TreeNode` and `registerTree`; no public controller/factory or parser helper is
+required. Registration checks the entire family before defining `m-tree-node`
+and `m-tree`. Public markup remains nested `m-*` elements; Web rendering owns
+the named native section, ul/li, details/summary, links/buttons and labelled checks.
+Lazy loading accepts bounded `TreeItem` data and synchronous disposal, not native
+HTML authoring. Native descriptors remain an explicit Web inspection surface.
+
+ESM entry/runtime gzip costs are 10,352/11,775 bytes; classic costs are
+10,515/11,987. CSS costs 1,186 bytes. The unchanged 12,000-byte runtime ceiling
+leaves only 13 classic bytes of headroom. This reconciliation increases Tree's
+gzip size by 216/201 bytes from the preflight state, despite reducing raw bytes.
+The shared hierarchy parser changes also affect Cascader/Tree Select output,
+but neither family imports Tree's controller, elements or registration. No extra
+mandatory JS file is emitted. See [the measured record](10-size-optimization.md).
+
 ## Calendar delivery
 
 Calendar selects core plus one family entry and CSS, registering only `m-calendar`.

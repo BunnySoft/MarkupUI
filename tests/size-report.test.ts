@@ -137,7 +137,7 @@ describe("built distribution size evidence", () => {
     } finally { await rm(directory, { recursive: true, force: true }) }
   })
 
-  it("produces a deterministic report and supports a strict baseline regression gate", async () => {
+  it("produces a deterministic report against an unchanged baseline", async () => {
     const directory = await mkdtemp(resolve(tmpdir(), "markupui-size-cli-"))
     try {
       const output = resolve(directory, "report.json")
@@ -150,18 +150,23 @@ describe("built distribution size evidence", () => {
       const first = await readFile(output, "utf8")
       run()
       expect(await readFile(output, "utf8")).toBe(first)
-      const file = "dist/markup-ui-grid.js"
-      baseline.files[file].bytes--
-      await writeFile(baselinePath, JSON.stringify(baseline))
-      expect(run).toThrow("Payload regression")
-      baseline.files[file].bytes++
-      baseline.exports[file].push("removedFactory")
-      await writeFile(baselinePath, JSON.stringify(baseline))
-      expect(run).toThrow("Export surface changed")
-      baseline.exports[file].pop()
-      baseline.budgets[`file:${file}`]--
-      await writeFile(baselinePath, JSON.stringify(baseline))
-      expect(run).toThrow("ceilings were raised")
     } finally { await rm(directory, { recursive: true, force: true }) }
   })
+
+  it.each(["Payload regression", "Export surface changed", "ceilings were raised"])(
+    "rejects CLI baseline changes: %s", async message => {
+      const directory = await mkdtemp(resolve(tmpdir(), "markupui-size-cli-"))
+      try {
+        const output = resolve(directory, "report.json"), baselinePath = resolve(directory, "baseline.json")
+        const baseline = baselineSnapshot(await createReport(resolve(".")))
+        const file = "dist/markup-ui-grid.js"
+        if (message === "Payload regression") baseline.files[file].bytes--
+        else if (message === "Export surface changed") baseline.exports[file].push("removedFactory")
+        else baseline.budgets[`file:${file}`]--
+        await writeFile(baselinePath, JSON.stringify(baseline))
+        expect(() => execFileSync(process.execPath, ["scripts/size-report.mjs", "--check-regressions",
+          "--baseline", baselinePath, "--output", output], { encoding: "utf8", stdio: "pipe" })).toThrow(message)
+      } finally { await rm(directory, { recursive: true, force: true }) }
+    },
+  )
 })

@@ -53,7 +53,14 @@
 - Fixed Tree controller races: queued selection clicks no longer overwrite newer
   explicit selection writes or interrupt independent lazy loads. Failed loads now
   reject even when failure cleanup also throws, retaining both errors.
-  Tree element/controller unification and portable native-owner mapping remain pending.
+- Unified Tree/TreeNode interactions through the existing controller. Portable nodes
+  map to native lists, separate buttons/links and disclosure, and labelled form checks.
+  Multiple selection, check strategies, disabled barriers, keyboard/typeahead, native
+  defaults/reset, bounded lazy data, cancellation/disposal and reconnect share one owner.
+  Removed the public Tree factory/parser exports and old element value/check helpers;
+  use `selectedKeys`, `checkedKeys`, `expandedKeys`, `check`, `expand` and `reveal`.
+  Controller events now bubble from the canonical element as `m:tree-*`.
+  Raw size decreases but gzip grows slightly; no payload ceilings are raised.
 - Added packed-consumer checks, three-engine browser checks, dependency audit gates and
   Windows/Linux/macOS CI configuration. Development requires Node 22.12+ in the 22.x
   line or Node 24+, with pnpm 10.28.0.

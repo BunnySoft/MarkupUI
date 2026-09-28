@@ -220,6 +220,17 @@ or native date-input support. Heatmap keeps using this same date utility;
 callers change together, without reconciling Heatmap's element/controller here.
 The carrier is never the public value/instant model.
 
+Tree's `tree-element.ts` and `tree-node.ts` own direct properties and portable
+`m-tree`/`m-tree-node` mapping. `web.ts` constructs the same native node anatomy
+for authored hosts and bounded lazy data. `tree.ts` is the sole selection, cascade,
+disclosure, keyboard, async and cleanup owner. The public factory and duplicate
+element interaction engines are removed. Native list items contain the original
+node hosts; hosts are never direct children of native lists. `hierarchy.ts` recognizes
+that explicit mapping without importing constructors. Cascader and Tree Select
+continue to use the passive hierarchy parser without loading Tree registration.
+Controller attributes are indexed per element and restored through one cleanup path;
+there is no production metadata engine or additional shared-runtime entry.
+
 Documentation tooling reads types, recognized accessor patterns and documentation comments.
 It does not import UI modules, construct elements or execute getters. Keep defaults and
 validation in the implementation; tooling must not invent values it cannot infer.

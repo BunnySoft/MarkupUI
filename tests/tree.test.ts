@@ -2,15 +2,17 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
-import { createTree, readTreeHierarchy, Tree, TreeNode, registerTree } from "../src/components/tree/index.js"
-import type { TreeController, TreeLoadResult, TreeOptions } from "../src/components/tree/index.js"
+import { Tree, TreeNode, registerTree } from "../src/components/tree/index.js"
+import { readTreeHierarchy } from "../src/components/tree/hierarchy.js"
+import { createTree } from "../src/components/tree/tree.js"
+import type { TreeController, TreeLoadResult, TreeOptions } from "../src/components/tree/tree.js"
 import { CheckboxGroup } from "../src/components/checkbox/index.js"
 
 const helpers: TreeController[] = []
 const treeCss = readFileSync(resolve("src", "components", "tree", "tree.css"), "utf8")
 const wait = () => new Promise(resolve => setTimeout(resolve, 20))
-function markup(key: string, children = "", extra = "", lazy = false) {
-  return `<li data-tree-key="${key}" ${extra}><div data-tree-row><button type="button" data-tree-label data-tree-select>${key}</button><label><input type="checkbox" data-tree-check name="checked" value="${key}">Include ${key}</label><a href="#destination">Help ${key}</a></div>${children || lazy ? `<details data-tree-branch ${lazy ? "data-tree-lazy" : ""}><summary>Contents ${key}</summary><ul data-tree-list>${children}</ul></details>` : ""}</li>`
+function markup(key: string, children = "", extra = "", lazy = false, checked = false) {
+  return `<li data-tree-key="${key}" ${extra}><div data-tree-row><button type="button" data-tree-label data-tree-select>${key}</button><label><input type="checkbox" data-tree-check name="checked" value="${key}" ${checked ? "checked" : ""}>Include ${key}</label><a href="#destination">Help ${key}</a></div>${children || lazy ? `<details data-tree-branch ${lazy ? "data-tree-lazy" : ""}><summary>Contents ${key}</summary><ul data-tree-list>${children}</ul></details>` : ""}</li>`
 }
 function node(key: string) { const template = document.createElement("template"); template.innerHTML = markup(key); return document.importNode(template.content.firstElementChild!, true) as HTMLLIElement }
 function fixture(options: TreeOptions = {}, html = markup("a", markup("b") + markup("c")) + markup("d")) {
@@ -104,12 +106,12 @@ describe("native hierarchy, keys and defaults", () => {
     helper.setExpandedKeys(["lazy"]); expect(helper.expandedKeys).toEqual(["lazy"]); expect(helper.loadingKeys).toEqual([])
   })
   it("keeps default/current check keys distinct through native reset", async () => {
-    const { helper, form } = fixture({ defaultCheckedKeys: ["b"], checkedKeys: ["c"] })
+    const { helper, form } = fixture({ checkedKeys: ["c"] }, markup("a", markup("b", "", "", false, true) + markup("c")) + markup("d"))
     expect(helper.getCheckedData().keys).toEqual(["c"]); form.reset(); await wait()
     expect(helper.getCheckedData().keys).toEqual(["b"])
   })
   it("native reset cancellation preserves current checks and independent selection", async () => {
-    const { helper, form } = fixture({ defaultCheckedKeys: ["b"], selectedKeys: ["d"] })
+    const { helper, form } = fixture({ selectedKeys: ["d"] }, markup("a", markup("b", "", "", false, true) + markup("c")) + markup("d"))
     helper.setCheckedKeys(["c"]); form.addEventListener("reset", event => event.preventDefault(), { once: true })
     form.reset(); await wait(); expect(helper.getCheckedData().keys).toEqual(["c"]); expect(helper.selectedKeys).toEqual(["d"])
   })
@@ -412,7 +414,7 @@ describe("refresh, cleanup and independent ownership", () => {
   it("rejects competing Tree and native CheckboxGroup owners across module copies", async () => {
     const { helper, root, get } = fixture()
     vi.resetModules()
-    await expect(import("../src/components/tree/index.js").then(api => api.createTree(root))).rejects.toThrow("owner")
+    await expect(import("../src/components/tree/tree.js").then(api => api.createTree(root))).rejects.toThrow("owner")
     const fieldset = new CheckboxGroup()
     fieldset.innerHTML = "<legend>Shared controls</legend>"; root.parentElement!.append(fieldset); fieldset.append(root)
     get("b").checkbox!.setAttribute("data-checkbox", "")
@@ -480,15 +482,14 @@ describe("canonical Tree ViewElement", () => {
 
   it("reflects Tree canonical properties and attributes", () => {
     const tree = new Tree()
-    expect(tree.value).toBeNull()
+    expect(tree.selectedKeys).toEqual([])
     expect(tree.checkable).toBe(false)
     expect(tree.selectable).toBe(false)
     expect(tree.cascade).toBe(false)
     expect(tree.blockLine).toBe(false)
 
-    tree.value = "test-val"
-    expect(tree.getAttribute("value")).toBe("test-val")
-    expect(tree.value).toBe("test-val")
+    tree.selectedKeys = ["test-val"]
+    expect(tree.selectedKeys).toEqual(["test-val"])
 
     tree.checkable = true
     expect(tree.hasAttribute("checkable")).toBe(true)
@@ -556,24 +557,22 @@ describe("canonical Tree ViewElement", () => {
     const parent = container.querySelector<TreeNode>('m-tree-node[value="p"]')!
     const child1 = container.querySelector<TreeNode>('m-tree-node[value="c1"]')!
 
-    expect(tree.classList.contains("m-tree")).toBe(true)
+    expect(tree.querySelector("section.m-tree[data-tree]")).not.toBeNull()
     expect(parent.expanded).toBe(true)
-    const childrenGroup = parent.querySelector<HTMLElement>("[data-part='children']")!
-    expect(childrenGroup.hidden).toBe(false)
-
-    // Click parent row to collapse
-    const parentRow = parent.querySelector<HTMLElement>(":scope > [data-part='row']")!
-    parentRow.click()
+    const branch = parent.querySelector<HTMLDetailsElement>("details")!
+    const summary = branch.querySelector("summary")!
+    expect(branch.open).toBe(true)
+    summary.click()
     expect(parent.expanded).toBe(false)
-    expect(childrenGroup.hidden).toBe(true)
-
-    // Click again to expand
-    parentRow.click()
+    expect(branch.open).toBe(false)
+    summary.click()
     expect(parent.expanded).toBe(true)
-    expect(childrenGroup.hidden).toBe(false)
+    expect(branch.open).toBe(true)
+    expect(child1.parentElement?.localName).toBe("li")
+    expect(tree.querySelector("[role=tree], [role=treeitem]")).toBeNull()
   })
 
-  it("handles selection and dispatches m:select event", () => {
+  it("handles native selection and dispatches one bubbling controller event", async () => {
     const container = document.createElement("div")
     container.innerHTML = `
       <m-tree selectable>
@@ -589,23 +588,23 @@ describe("canonical Tree ViewElement", () => {
     const leaf2 = container.querySelector<TreeNode>('m-tree-node[value="leaf2"]')!
 
     const selectSpy = vi.fn()
-    tree.addEventListener("m:select", selectSpy)
+    tree.addEventListener("m:tree-select", selectSpy)
 
-    leaf1.querySelector<HTMLElement>(":scope > [data-part='row']")!.click()
+    leaf1.querySelector<HTMLElement>("[data-tree-select]")!.click()
+    await wait()
     expect(leaf1.selected).toBe(true)
-    expect(tree.value).toBe("leaf1")
+    expect(tree.selectedKeys).toEqual(["leaf1"])
     expect(selectSpy).toHaveBeenCalledOnce()
     expect(selectSpy).toHaveBeenCalledWith(expect.objectContaining({
-      detail: { value: "leaf1" },
+      detail: expect.objectContaining({ selectedKeys: ["leaf1"] }),
     }))
 
-    // Programmatic selection via tree.value
-    tree.value = "leaf2"
+    tree.selectedKeys = ["leaf2"]
     expect(leaf1.selected).toBe(false)
     expect(leaf2.selected).toBe(true)
   })
 
-  it("handles checkable and cascade checking with m:check event", () => {
+  it("handles checkable and cascade checking with m:tree-check event", () => {
     const container = document.createElement("div")
     container.innerHTML = `
       <m-tree checkable cascade>
@@ -622,7 +621,7 @@ describe("canonical Tree ViewElement", () => {
     const child2 = container.querySelector<TreeNode>('m-tree-node[value="child2"]')!
 
     const checkSpy = vi.fn()
-    tree.addEventListener("m:check", checkSpy)
+    tree.addEventListener("m:tree-check", checkSpy)
 
     // Check parent -> cascades to children
     const parentCheckbox = parent.querySelector<HTMLInputElement>("input[type='checkbox']")!
@@ -634,7 +633,7 @@ describe("canonical Tree ViewElement", () => {
     expect(child2.checked).toBe(true)
     expect(checkSpy).toHaveBeenCalledWith(expect.objectContaining({
       detail: expect.objectContaining({
-        checkedKeys: expect.arrayContaining(["parent", "child1", "child2"]),
+        keys: expect.arrayContaining(["parent", "child1", "child2"]),
       }),
     }))
 
@@ -646,13 +645,17 @@ describe("canonical Tree ViewElement", () => {
     expect(child1.checked).toBe(false)
     expect(child2.checked).toBe(true)
     expect(parent.checked).toBe(false)
-    expect(parent.isIndeterminate()).toBe(true)
+    expect(parent.indeterminate).toBe(true)
+    child1.checked = true
+    expect(parent.checked).toBe(true)
+    child2.checked = false
+    expect(parent.indeterminate).toBe(true)
   })
 
   it("supports keyboard navigation on visible nodes", () => {
     const container = document.createElement("div")
     container.innerHTML = `
-      <m-tree>
+      <m-tree selectable>
         <m-tree-node value="node1" title="Node 1" expanded>
           <m-tree-node value="sub1" title="Sub 1"></m-tree-node>
         </m-tree-node>
@@ -666,28 +669,29 @@ describe("canonical Tree ViewElement", () => {
     const node2 = container.querySelector<TreeNode>('m-tree-node[value="node2"]')!
 
     node1.focus()
-    expect(document.activeElement).toBe(node1)
+    const target = (host: TreeNode) => host.querySelector<HTMLElement>("[data-tree-label]")!
+    expect(document.activeElement).toBe(target(node1))
 
     // ArrowDown moves to sub1
-    tree.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }))
-    expect(document.activeElement).toBe(sub1)
+    press(target(node1), "ArrowDown")
+    expect(document.activeElement).toBe(target(sub1))
 
     // ArrowDown moves to node2
-    tree.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }))
-    expect(document.activeElement).toBe(node2)
+    press(target(sub1), "ArrowDown")
+    expect(document.activeElement).toBe(target(node2))
 
     // ArrowUp moves back to sub1
-    tree.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowUp", bubbles: true }))
-    expect(document.activeElement).toBe(sub1)
+    press(target(node2), "ArrowUp")
+    expect(document.activeElement).toBe(target(sub1))
 
     // Focus node1 and ArrowLeft collapses it
     node1.focus()
     expect(node1.expanded).toBe(true)
-    tree.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowLeft", bubbles: true }))
+    press(target(node1), "ArrowLeft")
     expect(node1.expanded).toBe(false)
 
     // ArrowRight expands it again
-    tree.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }))
+    press(target(node1), "ArrowRight")
     expect(node1.expanded).toBe(true)
   })
 
@@ -703,11 +707,11 @@ describe("canonical Tree ViewElement", () => {
 
     const tree = container.querySelector<Tree>("m-tree")!
     const disabledNode = container.querySelector<TreeNode>("m-tree-node[disabled]")!
-    const row = disabledNode.querySelector<HTMLElement>(":scope > [data-part='row']")!
+    const row = disabledNode.querySelector<HTMLElement>("[data-tree-label]")!
 
     row.click()
     expect(disabledNode.selected).toBe(false)
-    expect(tree.value).toBeNull()
+    expect(tree.selectedKeys).toEqual([])
   })
 })
 

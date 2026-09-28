@@ -3,22 +3,23 @@ import type { TreeHierarchy, TreeNode } from "./hierarchy.js"
 
 export type TreeCheckStrategy = "all" | "parent" | "child"
 export interface TreeLoadResult { nodes: readonly HTMLLIElement[]; dispose?: () => void }
-export interface TreeOptions {
+export interface TreeOptions<T extends { dispose?: () => void } = TreeLoadResult> {
   multiple?: boolean
   cascade?: boolean
   cancelable?: boolean
   checkStrategy?: TreeCheckStrategy
   defaultExpandAll?: boolean
-  defaultExpandedKeys?: readonly string[]
   expandedKeys?: readonly string[]
-  defaultSelectedKeys?: readonly string[]
   selectedKeys?: readonly string[]
-  defaultCheckedKeys?: readonly string[]
   checkedKeys?: readonly string[]
-  load?: (node: TreeNode, context: { signal: AbortSignal }) => TreeLoadResult | Promise<TreeLoadResult>
+  load?: ((node: TreeNode, context: { signal: AbortSignal }) => T | Promise<T>) | undefined
 }
 export interface TreeData { readonly keys: readonly string[]; readonly nodes: readonly TreeNode[] }
-export interface TreeController {
+export type TreeBehavior<T extends { dispose?: () => void }> = Required<Pick<TreeOptions<T>, "multiple" | "cascade" | "cancelable" | "checkStrategy" | "load">>
+export function validateTreeKeys(keys: readonly string[]): void {
+  if (!Array.isArray(keys) || keys.some(key => typeof key !== "string") || new Set(keys).size !== keys.length) throw new TypeError("Tree keys must be unique strings.")
+}
+export interface TreeController<T extends { dispose?: () => void } = TreeLoadResult> {
   readonly connected: boolean
   readonly error: unknown
   readonly nodes: readonly TreeNode[]
@@ -34,27 +35,26 @@ export interface TreeController {
   reveal(key: string): void
   refresh(): void
   disconnect(): void
+  configure(options: TreeBehavior<T>): void
+  sync(): void
+  focus(options?: FocusOptions): void
+  setNodeChecked(key: string, value: boolean): void
 }
-interface Lease { element: HTMLElement; name: string; before: string | null; last: string | null }
-interface Mixed { control: HTMLInputElement; before: boolean; last: boolean }
+interface Lease { before: string | null; last: string | null }
+interface Mixed { before: boolean; last: boolean }
 interface Load { node: TreeNode; generation: number; abort: AbortController; resolve(value: boolean): void; reject(error: unknown): void; promise: Promise<boolean> }
 const owner = Symbol.for("markup-ui.tree.owner"), checkOwner = Symbol.for("markup-ui.checkbox-group.owner")
 type Owned = Element & { [owner]?: object; [checkOwner]?: object }
 
-export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeController {
-  const document = root?.ownerDocument, view = document?.defaultView
-  if (!view || !(root instanceof view.HTMLElement)) throw new TypeError("Tree requires native markup.")
+export function createTree<T extends { dispose?: () => void } = TreeLoadResult>(
+  root: HTMLElement, options: TreeOptions<T> = {}, prepare?: () => void, events = root,
+  mapLoad?: (result: T) => TreeLoadResult,
+): TreeController<T> {
+  const document = root.ownerDocument, view = document.defaultView!
   if ((root as Owned)[owner]) throw new Error("Tree already has an owner.")
-  const allowed = ["multiple", "cascade", "cancelable", "checkStrategy", "defaultExpandAll", "defaultExpandedKeys",
-    "expandedKeys", "defaultSelectedKeys", "selectedKeys", "defaultCheckedKeys", "checkedKeys", "load"]
-  if (!options || typeof options !== "object" || Array.isArray(options) || Object.keys(options).some(key => !allowed.includes(key))
-    || ["multiple", "cascade", "cancelable", "defaultExpandAll"].some(key => {
-      const value = options[key as keyof TreeOptions]; return value !== undefined && typeof value !== "boolean"
-    }) || options.load !== undefined && typeof options.load !== "function") throw new TypeError("Unsupported Tree options.")
-  const multiple = options.multiple ?? false, cascade = options.cascade ?? false, cancelable = options.cancelable ?? true
-  const strategy = options.checkStrategy === undefined ? "all" : options.checkStrategy, loader = options.load
-  if (!["all", "parent", "child"].includes(strategy)) throw new TypeError("checkStrategy is all, parent or child.")
-  const token = {}, leases: Lease[] = [], mixed = new Map<HTMLInputElement, Mixed>(), owned = new Set<HTMLElement>()
+  let multiple = options.multiple ?? false, cascade = options.cascade ?? false, cancelable = options.cancelable ?? true
+  let strategy = options.checkStrategy === undefined ? "all" : options.checkStrategy, loader = options.load
+  const token = {}, leases = new Map<HTMLElement, Map<string, Lease>>(), mixed = new Map<HTMLInputElement, Mixed>(), owned = new Set<HTMLElement>()
   const knownOpen = new Map<HTMLDetailsElement, boolean>(), jobs = new Map<string, Load>()
   const loaded = new Set<{ result: TreeLoadResult; branch: HTMLDetailsElement }>()
   let index: TreeHierarchy = readTreeHierarchy(root), connected = true, busy = false, generation = 0, selectionVersion = 0, error: unknown = null
@@ -64,30 +64,26 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
   const own = (element: Element) => element.closest("[data-tree]") === root
   function live() { if (!connected) throw new Error("Tree is disconnected.") }
   function guard() {
-    live(); if (busy) throw new Error("Tree hooks may not reenter mutation APIs; disconnect is allowed.")
+    live(); if (busy) throw new Error("Tree hooks cannot reenter mutations.")
     const changes = relevant(observer.takeRecords())
     if (changes.length) { mark(changes); refresh() }
   }
   function report(cause: unknown) {
     error = cause
-    root.dispatchEvent(new view!.CustomEvent("m:tree-error", { detail: { error: cause } }))
+    notify("error", { error: cause })
   }
   function attr(element: HTMLElement, name: string, value: string | null) {
-    let lease = leases.find(item => item.element === element && item.name === name)
-    if (!lease) { lease = { element, name, before: element.getAttribute(name), last: element.getAttribute(name) }; leases.push(lease) }
+    let attributes = leases.get(element)
+    if (!attributes) { attributes = new Map(); leases.set(element, attributes) }
+    let lease = attributes.get(name)
+    if (!lease) { lease = { before: element.getAttribute(name), last: element.getAttribute(name) }; attributes.set(name, lease) }
     else if (element.getAttribute(name) !== lease.last) lease.before = element.getAttribute(name)
     if (value === null) element.removeAttribute(name)
     else element.setAttribute(name, value)
     lease.last = value
   }
-  function restore(lease: Lease) {
-    if (lease.element.getAttribute(lease.name) === lease.last) {
-      if (lease.before === null) lease.element.removeAttribute(lease.name)
-      else lease.element.setAttribute(lease.name, lease.before)
-    }
-  }
   function base(element: HTMLElement, name: string) {
-    const lease = leases.find(item => item.element === element && item.name === name)
+    const lease = leases.get(element)?.get(name)
     return lease ? lease.before : element.getAttribute(name)
   }
   function hint(element: HTMLElement, disabled: boolean) { attr(element, "aria-disabled", disabled ? "true" : base(element, "aria-disabled")) }
@@ -104,8 +100,8 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
     return true
   }
   function visibility() { visible = index.nodes.filter(node => usable(node) && display(node.target!)) }
-  function focus(element: HTMLElement | null) {
-    if (element && connected && display(element)) { element.focus({ preventScroll: true }); live() }
+  function focus(element: HTMLElement | null, options: FocusOptions = { preventScroll: true }) {
+    if (element && connected && display(element)) { element.focus(options); live() }
   }
   function recover() {
     if (recovery || !lastFocused) return
@@ -126,16 +122,19 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
     } finally { recovery = false }
   }
   function keyNodes(keys: readonly string[], predicate: (node: TreeNode) => boolean) {
-    if (!Array.isArray(keys) || keys.some(key => typeof key !== "string") || new Set(keys).size !== keys.length) throw new TypeError("Tree keys must be unique native strings; numbers are not coerced.")
+    validateTreeKeys(keys)
     return keys.map(key => {
       const node = index.byKey.get(key)
-      if (!node || !predicate(node)) throw new RangeError(`Unknown or unavailable Tree key: ${key}.`)
+      if (!node || !predicate(node)) throw new RangeError(`Unavailable Tree key: ${key}.`)
       return node
     })
   }
-  function select(keys: readonly string[]) {
+  function selection(keys: readonly string[]) {
     const selected = new Set(keyNodes(keys, node => node.label.hasAttribute("data-tree-select")))
-    if (!multiple && selected.size > 1) throw new RangeError("Single selection allows at most one key.")
+    if (!multiple && selected.size > 1) throw new RangeError("Multiple keys require multiple mode.")
+    return selected
+  }
+  function select(selected: Set<TreeNode>) {
     for (const node of index.nodes) if (node.label.hasAttribute("data-tree-select")) attr(node.label, "aria-pressed", String(selected.has(node)))
   }
   function derive(write = true) {
@@ -178,8 +177,8 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
       if (cascade) stack.push(...current.children)
     }
   }
-  function checks(keys: readonly string[]) {
-    const wanted = keyNodes(keys, node => !!node.checkbox && !barrier(node) && !(cascade && unknown.has(node)))
+  function checkNodes(keys: readonly string[]) { return keyNodes(keys, node => !!node.checkbox && !barrier(node) && !(cascade && unknown.has(node))) }
+  function checks(wanted: readonly TreeNode[]) {
     for (const node of index.nodes) if (node.checkbox && !barrier(node)) { node.checkbox.checked = false; node.checkbox.indeterminate = false }
     for (const node of wanted) propagate(node, true)
     derive()
@@ -203,53 +202,72 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
     })
     return data(nodes)
   }
-  function releaseResult(result: TreeLoadResult) {
+  function releaseResult(result: { dispose?: () => void }) {
     const cleanup = result?.dispose
     if (typeof cleanup !== "function") return
     const returned: unknown = cleanup()
     if (returned && typeof (returned as Promise<unknown>).then === "function") {
       void Promise.resolve(returned).catch(() => {})
-      throw new TypeError("Loaded-node disposal must be synchronous.")
+      throw new TypeError("Tree disposal must be synchronous.")
     }
   }
   function abortJobs(branch?: HTMLDetailsElement) {
     for (const [key, job] of jobs) if (!branch || branch.contains(job.node.element) || branch === job.node.branch) {
       const wasConnected = connected
       jobs.delete(key); job.abort.abort(); job.resolve(false)
-      if (wasConnected && !connected) throw new Error("Tree disconnected during load cancellation.")
+      if (wasConnected && !connected) throw new Error("Tree is disconnected.")
       if (connected) attr(job.node.branch!, "aria-busy", null)
     }
   }
-  function claim(next: TreeHierarchy) {
+  function owners(next: TreeHierarchy) {
     const candidates = new Set<HTMLElement>([root])
     for (const node of next.nodes) for (const element of [node.element, node.label, node.checkbox, node.branch, node.summary]) if (element) {
       if ((element as Owned)[owner] && (element as Owned)[owner] !== token
-        || element === node.checkbox && (element as Owned)[checkOwner] && (element as Owned)[checkOwner] !== token) throw new Error("Tree node/checkbox already has another owner.")
+        || element === node.checkbox && (element as Owned)[checkOwner] && (element as Owned)[checkOwner] !== token) throw new Error("Tree node already has an owner.")
       candidates.add(element)
     }
-    for (const element of owned) if (!candidates.has(element)) {
-      for (let i = leases.length - 1; i >= 0; i--) if (leases[i]!.element === element) { restore(leases[i]!); leases.splice(i, 1) }
-      if (element instanceof view!.HTMLInputElement) {
-        const lease = mixed.get(element)
-        if (lease && element.indeterminate === lease.last) element.indeterminate = lease.before
-        mixed.delete(element)
-      }
-      if (element instanceof view!.HTMLDetailsElement) knownOpen.delete(element)
-      if ((element as Owned)[owner] === token) delete (element as Owned)[owner]
-      if ((element as Owned)[checkOwner] === token) delete (element as Owned)[checkOwner]
-      owned.delete(element)
-    }
+    return candidates
+  }
+  function claim(next: TreeHierarchy) {
+    const candidates = owners(next)
+    for (const element of owned) if (!candidates.has(element)) release(element)
     for (const element of candidates) { (element as Owned)[owner] = token; owned.add(element) }
     for (const node of next.nodes) {
       if (node.checkbox) {
         (node.checkbox as Owned)[checkOwner] = token
-        if (!mixed.has(node.checkbox)) mixed.set(node.checkbox, { control: node.checkbox, before: node.checkbox.indeterminate, last: node.checkbox.indeterminate })
+        if (!mixed.has(node.checkbox)) mixed.set(node.checkbox, { before: node.checkbox.indeterminate, last: node.checkbox.indeterminate })
       }
       if (node.branch && !knownOpen.has(node.branch)) knownOpen.set(node.branch, node.branch.open)
     }
     index = next
   }
-  function rebuild() { claim(readTreeHierarchy(root)); derive(); visibility(); recover() }
+  function release(element: HTMLElement) {
+    // Mapped labels retain live selection across their element's reconnects.
+    for (const [name, lease] of leases.get(element) ?? []) if ((!prepare || name !== "aria-pressed") && element.getAttribute(name) === lease.last) {
+      if (lease.before === null) element.removeAttribute(name)
+      else element.setAttribute(name, lease.before)
+    }
+    leases.delete(element)
+    if (element instanceof view!.HTMLInputElement) {
+      const lease = mixed.get(element)
+      if (lease && element.indeterminate === lease.last) element.indeterminate = lease.before
+      mixed.delete(element)
+    }
+    if (element instanceof view!.HTMLDetailsElement) knownOpen.delete(element)
+    if ((element as Owned)[owner] === token) delete (element as Owned)[owner]
+    if ((element as Owned)[checkOwner] === token) delete (element as Owned)[checkOwner]
+    owned.delete(element)
+  }
+  function rebuild() {
+    prepare?.()
+    const next = readTreeHierarchy(root)
+    for (const [key, job] of jobs) {
+      const current = next.byKey.get(key)
+      if (current?.element !== job.node.element || nodeDisabled(current) || !current.branch?.open || !current.branch.hasAttribute("data-tree-lazy")) abortJobs(job.node.branch!)
+    }
+    claim(next)
+    derive(); visibility(); recover()
+  }
   function observe() {
     if (!connected) return
     observer.observe(root, { subtree: true, childList: true, characterData: true, attributes: true,
@@ -260,14 +278,16 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
   }
   function mark(records: MutationRecord[]) {
     for (const record of records) if (record.type === "attributes") {
-      const lease = leases.find(lease => lease.element === record.target && lease.name === record.attributeName)
-      if (lease) lease.before = lease.last = lease.element.getAttribute(lease.name)
+      const element = record.target as HTMLElement, name = record.attributeName!
+      const lease = leases.get(element)?.get(name)
+      if (lease) lease.before = lease.last = element.getAttribute(name)
     }
   }
   function relevant(records: MutationRecord[]) {
-    return records.filter(record => record.target === root || (root.contains(record.target)
+    return records.filter(record => !(prepare && record.type === "attributes" && (record.target as Element).localName === "m-tree-node")
+      && (record.target === root || (root.contains(record.target)
       ? !(record.target instanceof view!.Element) || own(record.target)
-      : record.type === "attributes" || [...record.removedNodes].some(node => node === root || node.contains(root))))
+      : record.type === "attributes" || [...record.removedNodes].some(node => node === root || node.contains(root)))))
   }
   const observer = new view.MutationObserver(records => {
     const changes = relevant(records); if (!changes.length || !connected) return
@@ -280,7 +300,7 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
     guard(); mark(relevant(observer.takeRecords())); observer.disconnect(); busy = true
     try { const value = action(); live(); return value }
     catch (cause) {
-      try { disconnect() } catch (cleanup) { cause = new AggregateError([cause, cleanup], "Tree operation and cleanup failed.") }
+      try { disconnect() } catch (cleanup) { cause = new AggregateError([cause, cleanup], "Tree cleanup failed.") }
       report(cause); throw cause
     }
     finally { busy = false; observe() }
@@ -301,7 +321,9 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
     const current = generation, id = view!.setTimeout(() => { timers.delete(id); if (connected && generation === current) action() }, 0)
     timers.add(id)
   }
-  function notify(type: string, detail: object) { if (connected) root.dispatchEvent(new view!.CustomEvent(`m:tree-${type}`, { detail })) }
+  function notify(type: string, detail: object) {
+    if (connected || type === "error") events.dispatchEvent(new view.CustomEvent(`m:tree-${type}`, { bubbles: true, detail }))
+  }
   function setExpanded(keys: readonly string[]) {
     const targets = new Set(keyNodes(keys, node => !!node.branch))
     run(() => {
@@ -316,9 +338,9 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
   }
   function load(node: TreeNode): Promise<boolean> {
     if (!node.branch?.hasAttribute("data-tree-lazy")) return Promise.resolve(true)
-    if (!loader) { const cause = new Error("No Tree loader was supplied."); report(cause); return Promise.reject(cause) }
+    if (!loader) { const cause = new Error("No Tree loader."); report(cause); return Promise.reject(cause) }
     const existing = jobs.get(node.key); if (existing) return existing.promise
-    if (jobs.size >= 8) { const cause = new RangeError("At most eight Tree loads may be pending."); report(cause); return Promise.reject(cause) }
+    if (jobs.size >= 8) { const cause = new RangeError("Tree allows eight pending loads."); report(cause); return Promise.reject(cause) }
     const abort = new view!.AbortController()
     let resolve!: Load["resolve"], reject!: Load["reject"]
     const promise = new Promise<boolean>((yes, no) => { resolve = yes; reject = no })
@@ -330,37 +352,37 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
       if (jobs.get(node.key) !== job) return
       jobs.delete(node.key)
       try { if (connected) { run(() => { attr(node.branch!, "aria-busy", null) }); report(cause) } }
-      catch (cleanup) { cause = new AggregateError([cause, cleanup], "Tree load and cleanup failed.") }
+      catch (cleanup) { cause = new AggregateError([cause, cleanup], "Tree cleanup failed.") }
       finally { reject(cause) }
     }
     try {
       run(() => attr(node.branch!, "aria-busy", "true"))
       busy = true
-      let result: TreeLoadResult | Promise<TreeLoadResult>
+      let result: T | Promise<T>
       try { result = loader(node, { signal: abort.signal }) } finally { busy = false }
-      Promise.resolve(result).then(value => {
-        if (!valid()) { try { releaseResult(value) } catch (cause) { report(cause) }; if (jobs.get(node.key) === job) { abortJobs(node.branch!); }; return }
+      Promise.resolve(result).then(source => {
+        if (!valid()) { try { releaseResult(source) } catch (cause) { report(cause) }; if (jobs.get(node.key) === job) { abortJobs(node.branch!); }; return }
         let inserted = false
+        let value: TreeLoadResult | undefined
         try {
+          value = mapLoad ? mapLoad(source) : source as TreeLoadResult
           if (!value || !Array.isArray(value.nodes) || value.nodes.length > 200
-            || value.dispose !== undefined && typeof value.dispose !== "function") throw new TypeError("Load returns {nodes: fresh native li[], dispose?}, at most 200 roots.")
+            || value.dispose !== undefined && typeof value.dispose !== "function") throw new TypeError("Load requires {nodes: li[], dispose?}, at most 200 roots.")
           const batch: TreeLoadResult = { nodes: Object.freeze([...value.nodes]), ...(value.dispose ? { dispose: value.dispose } : {}) }
           const seen = new Set<Element>(), ids = new Set<string>()
           for (const li of batch.nodes) {
-            if (!(li instanceof view!.HTMLLIElement) || li.ownerDocument !== document || li.parentNode || li.isConnected || (li as Owned)[owner]) throw new TypeError("Lazy nodes must be fresh detached unowned native li elements.")
+            if (!(li instanceof view!.HTMLLIElement) || li.ownerDocument !== document || li.parentNode || li.isConnected || (li as Owned)[owner]) throw new TypeError("Load requires fresh detached unowned li nodes.")
             for (const element of [li, ...li.querySelectorAll("*")]) {
               if (seen.has(element) || seen.size >= 4000 || element.localName.includes("-")
-                || element.matches("script,style,link,iframe,object,embed,[is]")) throw new TypeError("Lazy results must contain at most 4000 safe native elements, with no reused nodes.")
+                || element.matches("script,style,link,iframe,object,embed,[is]")) throw new TypeError("Load requires at most 4000 unique safe native elements.")
               seen.add(element)
               if (element.id) { if (ids.has(element.id) || document!.getElementById(element.id)) throw new TypeError("Lazy row IDs must be unique."); ids.add(element.id) }
             }
           }
           const preview = readTreeHierarchy(root, { list: node.list!, nodes: batch.nodes })
-          for (const next of preview.nodes) for (const element of [next.element, next.label, next.checkbox, next.branch, next.summary]) if (element
-            && ((element as Owned)[owner] && (element as Owned)[owner] !== token
-              || element === next.checkbox && (element as Owned)[checkOwner] && (element as Owned)[checkOwner] !== token)) throw new Error("Lazy node/checkbox already has another owner.")
+          owners(preview)
           const oldCount = index.nodes.length
-          if (preview.nodes.length - oldCount > 200) throw new RangeError("A lazy result may add at most 200 tree nodes.")
+          if (preview.nodes.length - oldCount > 200) throw new RangeError("Load exceeds 200 nodes.")
           run(() => {
             if (!valid()) throw new Error("Tree load was superseded.")
             node.list!.append(...batch.nodes); inserted = true
@@ -371,7 +393,7 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
           })
           jobs.delete(node.key); resolve(true); notify("load", { key: node.key, node: index.byKey.get(node.key), nodes: batch.nodes })
         } catch (cause) {
-          if (!inserted) { try { releaseResult(value) } catch (cleanup) { cause = new AggregateError([cause, cleanup]) } }
+          if (!inserted) { try { releaseResult(value ?? source) } catch (cleanup) { cause = new AggregateError([cause, cleanup]) } }
           failure(cause)
         }
       }, failure).catch(failure)
@@ -405,14 +427,14 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
       || (nodeDisabled(node) || node.label.matches(":disabled")) && node.label.contains(target)
       || nodeDisabled(node) && node.summary?.contains(target)) { event.preventDefault(); return }
     if (!node.label.hasAttribute("data-tree-select") || !node.label.contains(target) || event.button || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return
-    const selection = selectionVersion
+    const version = selectionVersion
     later(() => {
-      if (event.defaultPrevented || selection !== selectionVersion || index.byKey.get(node.key)?.element !== node.element) return
+      if (event.defaultPrevented || version !== selectionVersion || index.byKey.get(node.key)?.element !== node.element) return
       try {
         const keys = new Set(controller.selectedKeys), had = keys.has(node.key)
         if (had && cancelable) keys.delete(node.key)
         else { if (!multiple) keys.clear(); keys.add(node.key) }
-        run(() => select([...keys]))
+        run(() => select(selection([...keys])))
         if (!had || cancelable) notify("select", { key: node.key, selectedKeys: controller.selectedKeys, node, event })
       } catch { /* run reports runtime errors. */ }
     })
@@ -493,56 +515,57 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
     for (const timer of timers) view!.clearTimeout(timer); timers.clear()
     root.removeEventListener("click", click); root.removeEventListener("change", change)
     root.removeEventListener("toggle", toggle, true); root.removeEventListener("keydown", keydown)
-    root.removeEventListener("focusin", focused); document!.removeEventListener("reset", reset, true)
+    root.removeEventListener("focusin", focused); document.removeEventListener("reset", reset, true)
     const errors: unknown[] = []
     for (const entry of loaded) {
       for (const node of entry.result.nodes) node.remove()
       try { releaseResult(entry.result) } catch (cause) { errors.push(cause) }
     }
     loaded.clear()
-    for (const lease of leases) restore(lease)
-    for (const lease of mixed.values()) if (lease.control.indeterminate === lease.last) lease.control.indeterminate = lease.before
-    for (const element of owned) {
-      if ((element as Owned)[owner] === token) delete (element as Owned)[owner]
-      if ((element as Owned)[checkOwner] === token) delete (element as Owned)[checkOwner]
-    }
-    owned.clear()
-    leases.length = 0; mixed.clear(); knownOpen.clear(); unknown.clear(); visible = []; lastFocused = null
+    for (const element of owned) release(element)
+    unknown.clear(); visible = []; lastFocused = null
     index = { nodes: Object.freeze([]), byKey: new Map() }
-    if (errors.length) { const cause = new AggregateError(errors, "Tree load cleanup failed."); report(cause); throw cause }
+    if (errors.length) { const cause = new AggregateError(errors, "Tree cleanup failed."); report(cause); throw cause }
   }
-  const controller: TreeController = {
+  const controller: TreeController<T> = {
     get connected() { return connected }, get error() { return error }, get nodes() { return index.nodes },
     get selectedKeys() { return index.nodes.filter(node => node.label.hasAttribute("data-tree-select") && node.label.getAttribute("aria-pressed") === "true").map(node => node.key) },
     get expandedKeys() { return index.nodes.filter(node => node.branch?.open).map(node => node.key) },
     get loadingKeys() { return [...jobs.keys()] },
     getCheckedData, getIndeterminateData: () => data(index.nodes.filter(node => node.checkbox?.indeterminate)),
-    setSelectedKeys(keys) { guard(); keyNodes(keys, node => node.label.hasAttribute("data-tree-select")); if (!multiple && keys.length > 1) throw new RangeError("Single selection allows at most one key."); run(() => { select(keys); selectionVersion++ }) },
-    setCheckedKeys(keys) { guard(); keyNodes(keys, node => !!node.checkbox && !barrier(node) && !(cascade && unknown.has(node))); run(() => checks(keys)) },
+    setSelectedKeys(keys) { guard(); const selected = selection(keys); run(() => { select(selected); selectionVersion++ }) },
+    setCheckedKeys(keys) { guard(); const wanted = checkNodes(keys); run(() => checks(wanted)) },
     setExpandedKeys(keys) { guard(); setExpanded(keys) }, expand, reveal, refresh, disconnect,
+    sync() { run(rebuild) },
+    focus(options) { guard(); visibility(); focus(visible[0]?.target ?? root, options) },
+    setNodeChecked(key, value) {
+      guard()
+      const node = checkNodes([key])[0]!
+      if (typeof value !== "boolean") throw new TypeError("Checked must be boolean.")
+      run(() => { propagate(node, value); derive() })
+    },
+    configure(settings) {
+      guard()
+      if (settings.multiple === false && controller.selectedKeys.length > 1) throw new RangeError("Clear multiple selections first.")
+      run(() => {
+        multiple = settings.multiple; cascade = settings.cascade
+        cancelable = settings.cancelable; strategy = settings.checkStrategy; loader = settings.load
+        rebuild()
+      })
+    },
   }
   try {
     derive(false)
-    for (const keys of [options.selectedKeys, options.defaultSelectedKeys]) if (keys !== undefined) {
-      keyNodes(keys, node => node.label.hasAttribute("data-tree-select"))
-      if (!multiple && keys.length > 1) throw new RangeError("Single selection allows at most one key.")
-    }
-    for (const keys of [options.checkedKeys, options.defaultCheckedKeys]) if (keys !== undefined) keyNodes(keys, node => !!node.checkbox && !barrier(node) && !(cascade && unknown.has(node)))
-    for (const keys of [options.expandedKeys, options.defaultExpandedKeys]) if (keys !== undefined) keyNodes(keys, node => !!node.branch)
+    const selected = options.selectedKeys === undefined ? null : selection(options.selectedKeys)
+    const checked = options.checkedKeys === undefined ? null : checkNodes(options.checkedKeys)
+    const initial = options.expandedKeys === undefined ? null : new Set(keyNodes(options.expandedKeys, node => !!node.branch))
     run(() => {
       claim(index)
       if (!root.hasAttribute("tabindex")) attr(root, "tabindex", "-1")
       derive()
-      const selected = options.selectedKeys ?? options.defaultSelectedKeys
-      if (selected !== undefined) select(selected)
-      else if (!multiple && controller.selectedKeys.length > 1) throw new RangeError("Multiple authored selections need multiple mode.")
-      if (options.defaultCheckedKeys !== undefined) {
-        checks(options.defaultCheckedKeys)
-        for (const node of index.nodes) if (node.checkbox && !barrier(node)) node.checkbox.defaultChecked = node.checkbox.checked
-      }
-      if (options.checkedKeys !== undefined) checks(options.checkedKeys)
-      const expanded = options.expandedKeys ?? options.defaultExpandedKeys
-      const initial = expanded !== undefined ? new Set(keyNodes(expanded, node => !!node.branch)) : null
+      if (selected) select(selected)
+      else if (!multiple && controller.selectedKeys.length > 1) throw new RangeError("Multiple keys require multiple mode.")
+      if (checked) checks(checked)
       for (const node of index.nodes) if (node.branch) {
         if (initial) node.branch.open = initial.has(node)
         else if (options.defaultExpandAll && !node.branch.hasAttribute("data-tree-lazy") && !nodeDisabled(node)) node.branch.open = true

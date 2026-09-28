@@ -29,7 +29,7 @@ export async function generateComponentApi(root, families) {
   }
 
   function visible(member) {
-    return !(member.name && ts.isPrivateIdentifier(member.name)) && !member.modifiers?.some(modifier => [
+    return !tags(member, "internal").length && !(member.name && ts.isPrivateIdentifier(member.name)) && !member.modifiers?.some(modifier => [
       ts.SyntaxKind.PrivateKeyword, ts.SyntaxKind.ProtectedKeyword, ts.SyntaxKind.StaticKeyword,
     ].includes(modifier.kind))
   }

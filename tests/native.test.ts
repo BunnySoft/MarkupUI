@@ -422,24 +422,22 @@ describe("native elements", () => {
     expect(document.activeElement).toBe(menuItems[1])
   })
 
-  it("supports tree expansion and selection", () => {
+  it("supports tree expansion and selection", async () => {
     document.body.innerHTML = `
-      <m-tree>
-        <m-tree-node label="Analytics" value="analytics" expanded>
-          <m-tree-node label="Reports" value="reports"></m-tree-node>
-          <m-tree-node label="Metrics" value="metrics"></m-tree-node>
+      <m-tree selectable>
+        <m-tree-node title="Analytics" value="analytics" expanded>
+          <m-tree-node title="Reports" value="reports"></m-tree-node>
+          <m-tree-node title="Metrics" value="metrics"></m-tree-node>
         </m-tree-node>
       </m-tree>`
-    const root = document.querySelector("m-tree-node") as HTMLElement & { expanded: boolean }
-    const reports = document.querySelector('m-tree-node[value="reports"]')
+    const root = document.querySelector<TreeNode>("m-tree-node")!
+    const reports = document.querySelector<TreeNode>('m-tree-node[value="reports"]')!
     expect(root.expanded).toBe(true)
-    reports?.querySelector<HTMLElement>("[data-m-tree-row]")?.click()
-    expect(document.querySelector("m-tree") as HTMLElement & { value: string }).toHaveProperty(
-      "value",
-      "reports",
-    )
-    expect(reports?.hasAttribute("selected")).toBe(true)
-    root.querySelector<HTMLElement>(":scope > [data-m-tree-row]")?.click()
+    reports.querySelector<HTMLButtonElement>("[data-tree-select]")!.click()
+    await new Promise(resolve => setTimeout(resolve, 20))
+    expect(document.querySelector<Tree>("m-tree")!.selectedKeys).toEqual(["reports"])
+    expect(reports.selected).toBe(true)
+    root.querySelector<HTMLElement>("summary")!.click()
     expect(root.expanded).toBe(false)
   })
 

@@ -156,7 +156,8 @@ Native-owner objects do not infer attribute mappings from incidental setup calls
 `@event` JSON hint may document native `input`, `change`, `invalid`, `submit` or `reset`, or an explicitly
 dispatched `m:*` custom event, with name, Web name and boolean bubbles/cancelable/composed
 flags. Optional custom-event detail maps field names to source type strings. The hint
-never dispatches an event. Private `#` members are excluded from the public API.
+never dispatches an event. Private `#` members and members marked `@internal`
+are excluded from the generated public API.
 Inherited emitted events are extracted from source members just like properties and actions.
 When the family is complete, update catalog/inventory links to its demo and move its
 planning contract to the archive with a link to the current page.

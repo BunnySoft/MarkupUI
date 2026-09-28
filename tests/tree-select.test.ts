@@ -5,7 +5,7 @@ import { gzipSync } from "node:zlib"
 import { TreeSelect, registerTreeSelect, createTreeSelect } from "../src/components/tree-select/index.js"
 import type { TreeSelectController, TreeSelectOptions } from "../src/components/tree-select/index.js"
 import { ViewElement } from "../src/core/index.js"
-import { createTree } from "../src/components/tree/index.js"
+import { createTree } from "../src/components/tree/tree.js"
 import { createSelect } from "../src/components/native-select.js"
 import { coordinateForm as createForm } from "../src/components/form/controller.js"
 

@@ -15,11 +15,13 @@
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./tree.css">
   <link rel="stylesheet" href="../../dist/markup-ui-box.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-tree.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
   <script defer src="../../dist/markup-ui-box.global.js"></script>
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
 
   <script type="module" src="./tree.js"></script>
   <script type="module" src="../example-code.js"></script>
@@ -84,7 +86,7 @@
         </div>
       </header>
       <div class="demo-preview vertical" data-demo-preview>
-        <m-tree selectable id="selectable-tree" value="doc-1">
+        <m-tree selectable id="selectable-tree" aria-label="Documents">
           <m-tree-node value="folder-1" title="Documents" expanded>
             <m-tree-node value="doc-1" title="Proposal.pdf" selected></m-tree-node>
             <m-tree-node value="doc-2" title="Report.docx"></m-tree-node>
@@ -173,8 +175,8 @@
           <m-button id="btn-expand-all">Expand all</m-button>
           <m-button id="btn-collapse-all">Collapse all</m-button>
         </m-box>
-        <m-tree selectable id="actions-tree" value="components">
-          <m-tree-node value="components" title="Components" expanded>
+        <m-tree selectable id="actions-tree" aria-label="Component actions">
+          <m-tree-node value="components" title="Components" expanded selected>
             <m-tree-node value="ui" title="UI Elements">
               <m-tree-node value="button" title="Button"></m-tree-node>
             </m-tree-node>
@@ -184,6 +186,56 @@
           </m-tree-node>
         </m-tree>
       </div>
+    </section>
+
+    <section data-demo-example="form" aria-labelledby="form-heading">
+      <header data-demo-header><div>
+        <h2 id="form-heading">Multiple selection and native forms</h2>
+        <p>Selection and checked form values are independent. Reset restores checkbox defaults.</p>
+      </div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-form id="tree-form">
+          <m-tree id="form-tree" selectable multiple checkable aria-label="Included files">
+            <m-tree-node value="readme" title="README.md" name="files" checked selected></m-tree-node>
+            <m-tree-node value="license" title="LICENSE" name="files"></m-tree-node>
+          </m-tree>
+          <m-box display="flex" gap="8">
+            <m-button attr-type="submit">Read checked files</m-button>
+            <m-button attr-type="reset">Reset files</m-button>
+          </m-box>
+        </m-form>
+        <m-p id="form-status">Files: readme</m-p>
+      </div>
+    </section>
+
+    <section data-demo-example="lazy" aria-labelledby="lazy-heading">
+      <header data-demo-header><div>
+        <h2 id="lazy-heading">Lazy branches</h2>
+        <p>Load returns node data and an optional synchronous disposer. Closing or removing a branch cancels pending work.</p>
+      </div></header>
+      <div class="demo-preview" data-demo-preview>
+        <m-tree id="lazy-tree" selectable aria-label="Remote files">
+          <m-tree-node value="remote" title="Remote" lazy></m-tree-node>
+        </m-tree>
+        <m-p id="lazy-status">Not loaded</m-p>
+      </div>
+    </section>
+
+    <section aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Behavior and Web mapping</h2>
+      <p>Author <code>m-tree</code> and nested <code>m-tree-node</code>. Web rendering creates a named native outline:
+        lists and list items, separate selection buttons, labelled checkboxes, and details/summary disclosure.
+        Hosts add no ARIA tree roles or extra tab stops. Optional node <code>href</code> maps to a native link;
+        <code>group</code> keeps a branch label static. Phrasing content retains its original nodes and listeners.</p>
+      <p><code>selectedKeys</code>, <code>checkedKeys</code> and <code>expandedKeys</code> are silent live writes.
+        Initial node <code>selected</code>, <code>checked</code> and <code>expanded</code> attributes provide defaults;
+        only checkbox defaults participate in native form reset. Selection defaults to single, checks do not cascade
+        unless requested, and <code>checkStrategy</code> changes reporting, not native checkedness.</p>
+      <p>Arrow keys, Home, End and typeahead move between available native targets. Enter, Space and Tab retain native behavior.
+        Disabled nodes form cascade barriers; enabled descendants remain independent. Unknown lazy descendants prevent complete cascade checks.
+        Load results are bounded to 200 nodes, the full outline to 2,000 nodes and 64 levels, with at most eight pending loads.
+        Native descriptors in <code>nodes</code> and event details are Web interoperability, not required author markup.
+        Invalid native anatomy fails closed. The optional Form and Button families are used only by these examples.</p>
     </section>
 
     <section aria-labelledby="api-heading">
