@@ -1,7 +1,7 @@
 # 10. JavaScript size optimization plan
 
 Status: S0-S1 verified September 24, 2026. S2 Dynamic Tags, Dynamic Input, Calendar and Tree
-and Cascader/Upload reconciliation verified September 28, 2026, with test scope and timing limitations
+and Cascader/Upload/Heatmap reconciliation verified September 28, 2026, with test scope and timing limitations
 recorded below. Remaining S2 families and S3-S6 are open.
 Plan recorded September 23, 2026.
 Implementation baseline: `cb00af1` on `main`, package version `0.13.0`.
@@ -688,18 +688,91 @@ CSS changes from 4,483 / 1,212 to 4,575 / 1,236 raw/gzip bytes, below 1,250.
 | Browser | `node scripts/browser-check.mjs --catalog --page=upload`: 6/6 in Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6, desktop/mobile, plus existing Chart/Form/plugin/security workflows. Real chooser selection, keyboard trigger, progress, cancel/retry, reconnect, portable form submission/reset and flat-file drop pass. Screenshot review exposed the default inline drop-region layout; its block mapping was corrected. |
 | Size | `node scripts/size-report.mjs --output .vite/size/s2-upload.json`, compared with `.vite/size/s2-cascader.json`. No baseline overwrite or ceiling increase. |
 | Limits | No new full-suite, all-catalog or production acceptance claim. Data Table, Heatmap, Tree Select and S3-S6 remain open. |
+| Commit | `f5b43ef` - `refactor: unify Upload element queue behavior`. |
+
+### S2 - Heatmap reconciliation, September 28, 2026
+
+Heatmap's previous element generated an unrelated empty row/column grid. It now
+delegates to the same bounded date/domain model and calendar controller as the
+advanced path. Typed or JSON `data` and `settings` replace arbitrary `rows`/`columns`.
+The renderer owns the native captioned table, seven weekday rows, complete cell
+template, legend and persistent detail/status text. All portable examples author
+only `m-*` content; no native template or table is required.
+
+The public factory/controller exports and unused generic change event are removed.
+Pure model utilities remain meaningful public non-element operations. Date-only
+validation, 366-record/range bounds, missing-versus-zero semantics, deterministic
+domains/thresholds/clamping, locale, optional leading dates, explicit palettes,
+labels, loading and synchronous descriptions remain. The existing controller owns
+all focus/navigation, exploration, guarded updates and cleanup; surviving day
+buttons and focus remain stable. The semantic table, settings and current inspection
+date survive reconnect. Invalid data/settings leave the committed view unchanged.
+Preparation guards also cover disconnected writes and first-connection callbacks,
+before the controller has been assigned, rather than only live controller updates.
+
+Real screenshots exposed a pre-existing selector collision: both the day button
+and its time child matched the small-date font rule. Date selectors now explicitly
+target native time, and browsers verify the button remains 12px. Value text stays
+unbroken inside the horizontally scrollable table, including the missing marker.
+CSS shrinks by four gzip bytes; no ceiling changes.
+
+| Selection (raw / gzip bytes) | Before ESM | After ESM | Before classic | After classic |
+| --- | ---: | ---: | ---: | ---: |
+| Heatmap entry | 21,406 / 8,041 | 22,230 / 8,347 | 21,727 / 8,193 | 22,550 / 8,500 |
+| Heatmap + core | 24,918 / 9,464 | 25,742 / 9,770 | 25,363 / 9,665 | 26,186 / 9,972 |
+| All 89 families / 94 files | 1,234,019 / 413,714 | 1,234,843 / 414,020 | 1,260,299 / 427,212 | 1,261,122 / 427,519 |
+
+Only Heatmap JS/CSS hashes change. CSS is 7,101 raw / 1,668 gzip bytes, previously
+7,123 / 1,672. This closes a capability gap; it is not a gzip saving. Cumulative
+S0 modular savings are now just 45 ESM / 36 classic gzip bytes.
+
+| Field | Verification evidence |
+| --- | --- |
+| Type/build | `node scripts/build.mjs` passes TypeScript/declarations, generated API and unchanged payload gates. |
+| Focused/distribution | `node node_modules/vitest/vitest.mjs run tests/heatmap.test.ts tests/heatmap-distribution.test.ts tests/calendar.test.ts tests/native.test.ts tests/element-directory.test.ts tests/core-distribution.test.ts tests/size-report.test.ts --maxWorkers=1`: 232/232 in 7 files. Covers data bounds, atomic failures, callback reentry/disconnect, authored content, native form neutrality, typed/JSON/pre-upgrade data, stable controls, reconnect and ESM/classic shared identity. |
+| Preparation regression | After adding the offline/initialization guard, `node node_modules/vitest/vitest.mjs run tests/heatmap.test.ts tests/heatmap-distribution.test.ts --maxWorkers=1`: 77/77 in 2 files after rebuilding. Includes reentrant pre-upgrade descriptions in both distributions. |
+| Integrated suite | With source and distribution held stable, `node node_modules/vitest/vitest.mjs run --maxWorkers=1`: 4,985/4,985 passed in 140 files, 489.16 seconds. An earlier run overlapped rebuilding and read stale/missing distribution files; that invalid run is superseded by this clean acceptance, not treated as a Radio regression. |
+| Consumer | `node scripts/package-check.mjs`: 95 JS entries / 2,335 packed files, strict NodeNext types and runtime imports passed without installed ECharts; rerun after the final preparation guard passed. |
+| Browser | `node scripts/browser-check.mjs --catalog --page=heatmap`: 6/6 on Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6, desktop/mobile, plus existing baseline workflows. Checks actual missing/zero cells, Enter/arrow/Ctrl+End navigation, stable focus, live settings/data, clamping, reconnect and 366-day rendering; rerun after the final preparation guard passed. Screenshots inspected; local evidence is `.vite/browser/s2-heatmap-results.json`. |
+| Size | `node scripts/size-report.mjs --output .vite/size/s2-heatmap.json`, compared with `.vite/size/s2-upload.json`; S0 unchanged. |
+| Limits | Data Table, Tree Select and S3-S6 remain open. No all-catalog or separate production-readiness acceptance claim. |
+
+### Data Table integration experiment - not accepted
+
+A local prototype mapped bounded typed columns/rows onto the existing native
+controller, including sorting/filtering, paging, scoped named checks, summaries,
+native defaults/reset and keyed row updates. It removed the public factory and
+the inert element pagination flag. The existing 71 source tests passed after
+canonical fixture updates, but that does not establish full acceptance.
+
+The first build failed at 10,250 ESM entry gzip bytes against its unchanged 9,000
+per-file ceiling; the stricter 10,000 core-inclusive ceiling leaves less room.
+Consolidating duplicated initial/runtime anatomy checks produced an in-memory
+10,080-byte ESM diagnostic, still well above the allowed closure. No ceiling was
+changed, no checks were removed to force a pass, and no mandatory bytes were
+moved to another entry.
+
+The experiment was mechanically reversed only for its four Data Table files,
+restoring the prior source/tests. A generated local patch is retained at
+`.vite/size/data-table-integration-prototype.patch`, based on `f5b43ef`; it is
+ignored diagnostic work, not a published or accepted implementation. Its row
+rollback, schema replacement, callback/reconnect/defaults paths still need dedicated
+element/distribution/browser tests even after a smaller design is established.
+
+Next Data Table work must simplify the combined renderer/controller structure
+before integrating it under the existing ceilings. Do not reapply the prototype
+and call the family complete merely because its focused tests pass.
 
 ## Next-thread starting point
 
 1. Read this plan and repository instructions; inspect `git status` and the latest history.
 2. Confirm the Chart external-engine baseline and current distribution measurements.
-3. S0-S1 and S2 Tags/Input/Calendar/Tree/Cascader/Upload reconciliation are complete; consult their
+3. S0-S1 and S2 Tags/Input/Calendar/Tree/Cascader/Upload/Heatmap reconciliation are complete; consult their
    scoped implementation, integrated-suite, package and browser verification records above.
    Keep S0 intact for cumulative comparisons. The gzip saving remains small. Input's
    and Tree's classic runtimes have only 13 bytes of headroom; Cascader runtime and
    Calendar CSS each have one byte.
-4. Continue with Data Table/Heatmap and the remaining S2 families. Tree Select's independent
-   element/controller gap remains open. Heatmap's date-utility update is not its S2 reconciliation.
+4. Continue with Data Table and Tree Select's independent element/controller gap.
    Finish S2/S3 measurements before selecting final shared-bundle boundaries.
 5. Avoid repeatedly running the entire suite during small edits: use focused checks per
    task and the integrated gates at packaging milestones and final acceptance.

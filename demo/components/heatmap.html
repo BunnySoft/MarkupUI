@@ -12,9 +12,11 @@
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./heatmap.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-heatmap.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-typography.global.js"></script>
 
   <script type="module" src="./heatmap.js"></script>
   <script type="module" src="../example-code.js"></script>
@@ -23,7 +25,7 @@
 <body>
   <main data-demo-page class="component-docs">
     <h1>Heatmap</h1>
-    <p>A calendar-by-week heatmap matrix component displaying values across rows and columns.</p>
+    <p>Bounded calendar data with explicit values, missing dates, numeric bands and a persistent detail view.</p>
     <nav class="component-docs-nav" aria-label="Heatmap documentation">
       <a href="#basic-heading">Examples</a>
       <a href="#required-files">Setup</a>
@@ -42,11 +44,15 @@
         <header data-demo-header>
           <div>
             <h2 id="basic-heading">Basic Heatmap</h2>
-            <p>Heatmap matrix displaying 7 weekday rows and 12 week columns.</p>
+            <p>February data includes negative values, zero, missing dates and a leap day.</p>
           </div>
         </header>
         <div data-demo-preview>
-          <m-heatmap id="basic-heatmap" rows="7" columns="12"></m-heatmap>
+          <m-heatmap id="basic-heatmap" label="February activity"
+            data='[{"date":"2024-02-01","value":-5},{"date":"2024-02-10","value":0},{"date":"2024-02-29","value":10}]'></m-heatmap>
+          <m-button id="update-values">Update values</m-button>
+          <m-button id="toggle-loading">Toggle loading</m-button>
+          <m-p id="heatmap-value">No date explored.</m-p>
         </div>
       </section>
 
@@ -54,14 +60,24 @@
         <header data-demo-header>
           <div>
             <h2 id="year-heading">Year View</h2>
-            <p>Full 52-week calendar heatmap view.</p>
+            <p>A bounded full-year range with sparse observations. Missing dates remain missing rather than zero.</p>
           </div>
         </header>
         <div data-demo-preview>
-          <m-heatmap id="year-heatmap" rows="7" columns="52"></m-heatmap>
+          <m-heatmap id="year-heatmap" label="Year activity"
+            settings='{"range":["2024-01-01","2024-12-31"],"colorTheme":"blue","size":"small"}'
+            data='[{"date":"2024-01-01","value":2},{"date":"2024-06-01","value":5},{"date":"2024-12-31","value":8}]'></m-heatmap>
         </div>
       </section>
     </div>
+
+    <section aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Data and accessibility</h2>
+      <p>Author m-heatmap with typed data/settings or JSON attributes. The Web renderer owns the native captioned table, seven weekday rows, labelled day buttons, legend and nonlive detail text. No native table or cell template is required. Button and Typography are separate demo selections.</p>
+      <p>At most 366 date records and a 366-day range are accepted. Dates are Gregorian YYYY-MM-DD values, not timestamps. Duplicate dates, out-of-range data, nonfinite numbers and asynchronous descriptions are rejected before changing the display.</p>
+      <p>Settings writes merge supplied fields. The numeric domain, four thresholds, locale, weekday start, labels and five-color palette are explicit settings. Equal domains use the midpoint; outside values clamp and remain marked. Loading keeps real displayed data, not invented placeholder values.</p>
+      <p>Arrow keys navigate dates, Home/End move within a weekday row, and Ctrl+Home/End reach the range boundaries. Enter/Space explores a day. Values and missing markers remain readable without color; focus and surviving day controls remain stable during data updates.</p>
+    </section>
 
     <section aria-labelledby="api-heading">
       <h2 id="api-heading">API</h2>

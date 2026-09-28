@@ -38,9 +38,9 @@
 .m-heatmap [data-heatmap-day] { display: flex; flex-direction: column; min-inline-size: var(--m-heatmap-cell-size, var(--_m-heatmap-cell-size)); min-block-size: var(--m-heatmap-cell-size, var(--_m-heatmap-cell-size)); box-sizing: border-box; padding: 4px; font: inherit; color: inherit; background: transparent; border: 1px solid var(--m-heatmap-border, transparent); border-radius: var(--m-heatmap-radius, 2px); cursor: pointer; }
 .m-heatmap[data-heatmap-size="small"] { --_m-heatmap-font-size: 12px; --_m-heatmap-swatch-size: 10px; --_m-heatmap-cell-size: 2.75rem; --_m-heatmap-x-gap: 2px; --_m-heatmap-y-gap: 2px; }
 .m-heatmap[data-heatmap-size="large"] { --_m-heatmap-font-size: 14px; --_m-heatmap-swatch-size: 12px; --_m-heatmap-cell-size: 3.5rem; }
-.m-heatmap [data-heatmap-date], .m-heatmap [data-heatmap-value], .m-heatmap [data-heatmap-code] { display: block; }
-.m-heatmap [data-heatmap-date], .m-heatmap [data-heatmap-code] { font-size: .75em; }
-.m-heatmap [data-heatmap-value] { overflow-wrap: anywhere; max-inline-size: 8rem; font-variant-numeric: tabular-nums; }
+.m-heatmap time[data-heatmap-date], .m-heatmap [data-heatmap-value], .m-heatmap [data-heatmap-code] { display: block; }
+.m-heatmap time[data-heatmap-date], .m-heatmap [data-heatmap-code] { font-size: .75em; }
+.m-heatmap [data-heatmap-value] { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .m-heatmap [data-heatmap-level="0"] { --_m-heatmap-cell-color: var(--_m-heatmap-level-0); }
 .m-heatmap [data-heatmap-level="1"] { --_m-heatmap-cell-color: var(--_m-heatmap-level-1); }
 .m-heatmap [data-heatmap-level="2"] { --_m-heatmap-cell-color: var(--_m-heatmap-level-2); }

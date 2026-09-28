@@ -435,6 +435,17 @@ The capability reconciliation adds 373 gzip bytes per format; it is not a size s
 No mandatory dependency was added, and the native chooser remains available when
 DataTransfer/FileList synchronization cannot be enhanced.
 
+## Heatmap delivery
+
+Heatmap selects core, its complete local family entry and CSS. The public runtime
+exports are `Heatmap`, `registerHeatmap` and the existing pure `buildHeatmap` and
+`heatmapLevel` utilities. The controller/factory is internal. Portable date data and
+settings need no native table/template, Calendar, Chart or external chart engine.
+
+ESM/classic entry gzip is 8,347/8,500 bytes; core-inclusive runtime is 9,770/9,972,
+under the unchanged 10,500 ceiling. CSS is 1,668 gzip bytes. Reconciliation adds
+306/307 JS gzip bytes, with no hidden dependencies or baseline overwrite.
+
 ## Reproducible size reports
 
 After `pnpm build`, run `pnpm size:report` (or `node scripts/size-report.mjs`).

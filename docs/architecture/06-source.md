@@ -247,6 +247,13 @@ selection, transport, progress, cancellation and reset owner. No public factory,
 duplicate file cache or implicit HTTP transport remains. Attribute-only leases stay
 local; Upload no longer bundles unused positioning/style-write mechanics.
 
+Heatmap's `heatmap-element.ts` maps typed date/value data and settings to a native
+captioned table, cell template, legend and detail/status regions. `heatmap.ts` owns
+all calendar rendering, focus/navigation, exploration, palette leases and cleanup;
+`model.ts` remains the bounded pure date/domain model. Arbitrary empty row/column
+rendering and the public factory are removed. Calendar's date utility is passive,
+not a Calendar element or registration dependency.
+
 DOM operations belong in the Web base or component implementation, not documentation
 tooling. Keep component-specific resources, focus, accessibility and cleanup with the
 component. A shared helper needs a demonstrated common responsibility.

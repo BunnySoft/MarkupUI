@@ -18,11 +18,13 @@ export interface HeatmapController {
   readonly table: HTMLTableElement
   readonly connected: boolean
   readonly model: HeatmapModel
+  readonly settings: HeatmapConfig
   readonly state: HeatmapState
   readonly error: unknown
   set(settings: HeatmapSettings): void
   refresh(): void
   explore(date: string): void
+  restoreDate(date: string): void
   disconnect(): void
 }
 interface CellNodes { td: HTMLTableCellElement; button: HTMLButtonElement; date: HTMLTimeElement; value: HTMLElement; code: HTMLElement }
@@ -30,7 +32,7 @@ const owner = Symbol.for("markup-ui.heatmap.owner")
 type Owned = HTMLElement & { [owner]?: object }
 
 /** A bounded calendar-by-week table and persistent native detail view, not a chart engine. */
-export function createHeatmap(element: HTMLElement, options: HeatmapOptions = {}): HeatmapController {
+export function createHeatmap(element: HTMLElement, options: HeatmapOptions = {}, eventTarget = element): HeatmapController {
   const document = element?.ownerDocument, view = document?.defaultView
   if (!view || !(element instanceof view.HTMLElement) || !["div", "section"].includes(element.localName)
     || !element.matches(".m-heatmap[data-heatmap]") || element.getAttribute("tabindex") !== "-1"
@@ -210,16 +212,17 @@ export function createHeatmap(element: HTMLElement, options: HeatmapOptions = {}
   function set(input: HeatmapSettings) {
     live(); const { next, data } = prepare(input); commit(next, data)
     if (!element.isConnected) { disconnect(); return }
-    if (connected) element.dispatchEvent(new win.CustomEvent("m:heatmap-change", { bubbles: true, detail: state() }))
+    if (connected) eventTarget.dispatchEvent(new win.CustomEvent("m:heatmap-change", { bubbles: true, detail: state() }))
   }
   function explore(date: string) {
     live()
     const cell = model.cells.find(cell => cell?.date === date)
     if (!cell || !cells.has(date)) throw new RangeError("Date is not in the rendered Heatmap.")
     selected(date)
-    element.dispatchEvent(new win.CustomEvent("m:heatmap-explore", { bubbles: true, detail: cell }))
+    eventTarget.dispatchEvent(new win.CustomEvent("m:heatmap-explore", { bubbles: true, detail: cell }))
   }
   function keyboard(event: KeyboardEvent) {
+    if (event.defaultPrevented) return
     const button = event.target instanceof win.HTMLButtonElement ? event.target : null
     const date = button?.dataset.heatmapDate, cell = model.cells.find(cell => cell?.date === date)
     if (!date || !cell || cells.get(date)?.button !== button || button.matches(":disabled") || event.altKey || event.metaKey || event.shiftKey || event.isComposing) return
@@ -244,7 +247,7 @@ export function createHeatmap(element: HTMLElement, options: HeatmapOptions = {}
   }
   function report(failure: unknown) {
     error = failure
-    if (connected && element.isConnected) element.dispatchEvent(new win.CustomEvent("m:heatmap-error", { bubbles: true, detail: Object.freeze({ error: failure }) }))
+    if (connected && element.isConnected) eventTarget.dispatchEvent(new win.CustomEvent("m:heatmap-error", { bubbles: true, detail: Object.freeze({ error: failure }) }))
   }
   function listen(node: EventTarget, event: string, callback: EventListener) { node.addEventListener(event, callback); removers.push(() => node.removeEventListener(event, callback)) }
   const observer = new win.MutationObserver(() => { if (!element.isConnected || element.getRootNode() !== doc || !element.contains(table)) disconnect() })
@@ -270,12 +273,13 @@ export function createHeatmap(element: HTMLElement, options: HeatmapOptions = {}
   })
   listen(body, "keydown", event => { try { keyboard(event as KeyboardEvent) } catch (failure) { report(failure) } })
   listen(body, "click", event => {
+    if (event.defaultPrevented) return
     const button = event.target instanceof win.Element ? event.target.closest<HTMLButtonElement>("[data-heatmap-day]") : null
     const date = button?.dataset.heatmapDate
     if (!button || !date || button.matches(":disabled") || cells.get(date)?.button !== button) return
     try { explore(date) } catch (failure) { report(failure) }
   })
   observer.observe(doc.documentElement, { childList: true, subtree: true })
-  return { element, table, get connected() { return connected }, get model() { return model }, get state() { return state() }, get error() { return error },
-    set, refresh: () => set({}), explore, disconnect }
+  return { element, table, get connected() { return connected }, get model() { return model }, get settings() { return settings }, get state() { return state() }, get error() { return error },
+    set, refresh: () => set({}), explore, restoreDate: selected, disconnect }
 }

@@ -2,9 +2,11 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { Heatmap, buildHeatmap, createHeatmap, heatmapLevel, registerHeatmap } from "../src/components/heatmap/index.js"
+import { Heatmap, buildHeatmap, heatmapLevel, registerHeatmap } from "../src/components/heatmap/index.js"
+import { createHeatmap } from "../src/components/heatmap/heatmap.js"
 import * as heatmapApi from "../src/components/heatmap/index.js"
-import type { HeatmapController, HeatmapOptions } from "../src/components/heatmap/index.js"
+import type { HeatmapController } from "../src/components/heatmap/heatmap.js"
+import type { HeatmapOptions } from "../src/components/heatmap/index.js"
 import { ViewElement } from "../src/core/index.js"
 
 const helpers: HeatmapController[] = []
@@ -334,85 +336,145 @@ describe("Heatmap default styles", () => {
 })
 
 describe("canonical Heatmap ViewElement", () => {
+  it("guards descriptor reentry before connection and during first controller initialization", () => {
+    const element = document.createElement("m-heatmap") as Heatmap
+    expect(() => { element.settings = { data, describe: () => { element.data = []; return "nested" } } }).toThrow(/reenter/)
+    expect(element.data).toEqual([])
+    let initializing = false
+    element.settings = { data, describe: () => {
+      if (initializing) expect(() => { element.data = [] }).toThrow(/reenter/)
+      return "Activity"
+    } }
+    initializing = true; document.body.append(element)
+    expect(element.state?.cells).toBe(29)
+    element.settings = { describe: null }
+    expect(element.data).toEqual(data)
+  })
+
+  it("retains authored m-* listeners and inspection state across detach/reconnect", () => {
+    const element = document.createElement("m-heatmap") as Heatmap
+    const note = document.createElement("m-span"), clicked = vi.fn()
+    note.textContent = "Activity note"; note.addEventListener("click", clicked); element.append(note)
+    element.data = data; document.body.append(element)
+    const table = element.native
+    element.explore("2024-02-10")
+    element.remove(); document.body.append(element)
+    expect(element.native).toBe(table)
+    expect(element.state?.currentDate).toBe("2024-02-10")
+    expect(element.querySelectorAll("table")).toHaveLength(1)
+    note.click(); expect(clicked).toHaveBeenCalledOnce()
+    element.focus()
+    expect((document.activeElement as HTMLElement).dataset.heatmapDate).toBe("2024-02-10")
+    element.remove(); element.data = [{ date: "2024-02-29", value: 4 }]; document.body.append(element)
+    expect(element.state?.currentDate).toBe("2024-02-29")
+    expect(element.state?.cells).toBe(1)
+  })
+
+  it("bubbles one exploration from the host without submitting a form or mutating author content", () => {
+    const form = document.createElement("form"), element = document.createElement("m-heatmap") as Heatmap
+    element.data = data; form.append(element); document.body.append(form)
+    const explore = vi.fn(), submit = vi.fn(event => event.preventDefault())
+    element.addEventListener("m:heatmap-explore", explore); form.addEventListener("submit", submit)
+    const button = element.querySelector<HTMLButtonElement>('button[data-heatmap-date="2024-02-10"]')!
+    button.click()
+    expect(explore).toHaveBeenCalledOnce(); expect(explore.mock.calls[0]![0].target).toBe(element)
+    expect(explore.mock.calls[0]![0].detail.value).toBe(0); expect(submit).not.toHaveBeenCalled()
+    button.addEventListener("click", event => event.preventDefault())
+    button.click(); expect(explore).toHaveBeenCalledOnce()
+  })
+
+  it("rejects unsafe configuration atomically and copies mutable data before rendering", () => {
+    const element = document.createElement("m-heatmap") as Heatmap, records = [{ date: "2024-02-10", value: 2 }]
+    element.data = records; records[0]!.value = 9; document.body.append(element)
+    expect(element.data[0]!.value).toBe(2); expect(Object.isFrozen(element.data)).toBe(true)
+    const table = element.native, model = element.model
+    expect(() => { element.settings = { activeColors: ["url(evil)"] } }).toThrow()
+    expect(() => { element.settings = { describe: (() => Promise.resolve("bad")) as never } }).toThrow(/synchronous/)
+    expect(element.model).toBe(model); expect(element.native).toBe(table)
+  })
+
+  it("guards reentry and disconnect during description callbacks", () => {
+    const element = document.createElement("m-heatmap") as Heatmap
+    element.data = data; document.body.append(element)
+    const original = element.model
+    expect(() => { element.settings = { describe: () => { element.refresh(); return "bad" } } }).toThrow(/reenter/)
+    expect(element.model).toBe(original)
+    expect(() => { element.settings = { describe: () => { element.remove(); return "removed" } } }).toThrow(/disconnected/)
+    document.body.append(element)
+    expect(element.settings.describe).toBeNull(); expect(element.state?.cells).toBe(29)
+  })
+
   it("exports canonical ViewElement classes and registration", () => {
     expect(heatmapApi.Heatmap).toBe(Heatmap)
     expect(heatmapApi).not.toHaveProperty("MHeatmap")
     expect(Heatmap.tag).toBe("m-heatmap")
     expect(ViewElement.prototype.isPrototypeOf(Heatmap.prototype)).toBe(true)
     expect(customElements.get("m-heatmap")).toBe(Heatmap)
-    expect(Heatmap.observedAttributes).toEqual(["rows", "columns"])
+    expect(Heatmap.observedAttributes).toEqual(["settings", "data", "label"])
     expect(() => registerHeatmap()).not.toThrow()
     const define = vi.fn()
     expect(() => registerHeatmap({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
     expect(define).not.toHaveBeenCalled()
   })
 
-  it("handles rows property defaults, attributes, and validation", () => {
+  it("renders empty data honestly and maps typed records to real labelled day buttons", () => {
     const element = document.createElement("m-heatmap") as Heatmap
     document.body.append(element)
-    expect(element.rows).toBe(7)
-
-    element.rows = 5
-    expect(element.rows).toBe(5)
-    expect(element.getAttribute("rows")).toBe("5")
-
-    element.setAttribute("rows", "10")
-    expect(element.rows).toBe(10)
-
-    expect(() => { element.rows = NaN }).toThrow(RangeError)
-    expect(() => { element.rows = Infinity }).toThrow(RangeError)
-    expect(() => { element.rows = 0 }).toThrow(RangeError)
-    expect(() => { element.rows = -1 }).toThrow(RangeError)
-    element.setAttribute("rows", "invalid")
-    expect(() => element.rows).toThrow(RangeError)
+    expect(element.data).toEqual([])
+    expect(element.state?.cells).toBe(0)
+    expect(element.querySelector("button")).toBeNull()
+    element.data = data
+    expect(element.state?.cells).toBe(29)
+    expect(element.querySelectorAll("tbody tr")).toHaveLength(7)
+    expect(element.querySelectorAll("button[data-heatmap-date]")).toHaveLength(29)
+    expect(element.querySelector('button[data-heatmap-date="2024-02-10"]')?.getAttribute("aria-label")).toContain("0")
+    expect(element.model?.missingCount).toBe(26)
+    expect(() => { element.data = [{ date: "2024-02-30" }] }).toThrow()
+    expect(element.data).toEqual(data)
   })
 
-  it("handles columns property defaults, attributes, and validation", () => {
+  it("updates settings atomically and retains unchanged day controls and focus", () => {
     const element = document.createElement("m-heatmap") as Heatmap
     document.body.append(element)
-    expect(element.columns).toBe(12)
-
-    element.columns = 20
-    expect(element.columns).toBe(20)
-    expect(element.getAttribute("columns")).toBe("20")
-
-    element.setAttribute("columns", "52")
-    expect(element.columns).toBe(52)
-
-    expect(() => { element.columns = NaN }).toThrow(RangeError)
-    expect(() => { element.columns = Infinity }).toThrow(RangeError)
-    expect(() => { element.columns = 0 }).toThrow(RangeError)
-    expect(() => { element.columns = -1 }).toThrow(RangeError)
-    element.setAttribute("columns", "invalid")
-    expect(() => element.columns).toThrow(RangeError)
+    element.data = data
+    const day = element.querySelector<HTMLButtonElement>('button[data-heatmap-date="2024-02-10"]')!
+    day.focus()
+    element.settings = { domain: [-2, 4], colorTheme: "blue", loading: true }
+    expect(element.querySelector('button[data-heatmap-date="2024-02-10"]')).toBe(day)
+    expect(document.activeElement).toBe(day)
+    expect(element.native?.getAttribute("aria-busy")).toBe("true")
+    expect(element.model?.cells.find(cell => cell?.date === "2024-02-01")?.clamped).toBe("low")
+    const previous = element.settings
+    expect(() => { element.settings = { domain: [3, 2] } }).toThrow()
+    expect(element.settings).toBe(previous)
   })
 
   it("replays pre-upgrade properties upon connection", () => {
     const element = document.createElement("m-heatmap") as Heatmap
-    Object.defineProperty(element, "rows", { configurable: true, value: 5 })
-    Object.defineProperty(element, "columns", { configurable: true, value: 10 })
+    Object.defineProperty(element, "settings", { configurable: true, value: { colorTheme: "blue" } })
+    Object.defineProperty(element, "data", { configurable: true, value: data })
     document.body.append(element)
 
-    expect(element.rows).toBe(5)
-    expect(element.columns).toBe(10)
-    expect(element.getAttribute("rows")).toBe("5")
-    expect(element.getAttribute("columns")).toBe("10")
+    expect(element.settings.colorTheme).toBe("blue")
+    expect(element.data).toEqual(data)
+    expect(element.state?.cells).toBe(29)
   })
 
-  it("renders grid rows and columns when no authored content is present", () => {
+  it("uses JSON date/range attributes instead of arbitrary empty grid dimensions", () => {
     const element = document.createElement("m-heatmap") as Heatmap
-    element.rows = 5
-    element.columns = 10
+    element.setAttribute("settings", JSON.stringify({ range: ["2024-02-01", "2024-02-29"] }))
+    element.setAttribute("data", JSON.stringify(data))
     document.body.append(element)
 
     const table = element.querySelector("table")
     expect(table).not.toBeNull()
     const trs = element.querySelectorAll("tbody tr")
-    expect(trs).toHaveLength(5)
-    expect(trs[0]!.querySelectorAll("td")).toHaveLength(10)
-
-    element.columns = 8
-    expect(element.querySelectorAll("tbody tr")[0]!.querySelectorAll("td")).toHaveLength(8)
+    expect(trs).toHaveLength(7)
+    expect(element.state?.weeks).toBe(5)
+    element.setAttribute("data", JSON.stringify([{ date: "2024-02-10", value: 1 }]))
+    expect(element.state?.numericCount).toBe(1)
+    element.removeAttribute("data")
+    expect(element.state?.missingCount).toBe(29)
   })
 
   it("preserves authored table content without overwrite", () => {
@@ -420,18 +482,18 @@ describe("canonical Heatmap ViewElement", () => {
     element.innerHTML = "<table><tbody><tr><td>Authored</td></tr></tbody></table>"
     document.body.append(element)
 
-    expect(element.querySelectorAll("td")).toHaveLength(1)
+    expect(element.querySelectorAll(":scope > table td")).toHaveLength(1)
     expect(element.querySelector("td")!.textContent).toBe("Authored")
   })
 
   it("supports refresh method to update rendered structure", () => {
     const element = document.createElement("m-heatmap") as Heatmap
     document.body.append(element)
-    expect(element.querySelectorAll("tbody tr")).toHaveLength(7)
-
-    element.setAttribute("rows", "4")
+    element.data = data
+    const day = element.querySelector('button[data-heatmap-date="2024-02-10"]')!
     element.refresh()
-    expect(element.querySelectorAll("tbody tr")).toHaveLength(4)
+    expect(element.querySelector('button[data-heatmap-date="2024-02-10"]')).toBe(day)
+    expect(element.querySelectorAll("tbody tr")).toHaveLength(7)
   })
 
   it("exposes MarkupUIHeatmap global", async () => {
@@ -440,7 +502,7 @@ describe("canonical Heatmap ViewElement", () => {
     expect(globalApi).toBeDefined()
     expect(globalApi?.Heatmap).toBe(Heatmap)
     expect(globalApi?.registerHeatmap).toBe(registerHeatmap)
-    expect(globalApi?.createHeatmap).toBe(createHeatmap)
+    expect(globalApi).not.toHaveProperty("createHeatmap")
   })
 
   it("generates component API documentation matching the ViewElement specification", () => {
@@ -449,26 +511,12 @@ describe("canonical Heatmap ViewElement", () => {
     const [element] = docs.elements
     expect(element.type).toBe("Heatmap")
     expect(element.web.primary).toBe("m-heatmap")
-    expect(element.properties.rows).toMatchObject({
-      name: "rows",
-      type: "number",
-      typeName: "number",
-      attribute: "rows",
-      default: 7,
-      nullable: false,
-      writable: true,
-    })
-    expect(element.properties.columns).toMatchObject({
-      name: "columns",
-      type: "number",
-      typeName: "number",
-      attribute: "columns",
-      default: 12,
-      nullable: false,
-      writable: true,
-    })
+    expect(element.properties.rows).toBeUndefined()
+    expect(element.properties.columns).toBeUndefined()
+    expect(element.properties.data).toBeDefined()
+    expect(element.properties.settings).toBeDefined()
     expect(element.regions).toEqual([
-      { name: "content", accepts: ["table", "legend", "content"], min: 0, max: null },
+      { name: "content", accepts: ["phrasing", "content"], min: 0, max: null },
     ])
     expect(element.events).toContainEqual({
       name: "HeatmapChange",
@@ -484,7 +532,7 @@ describe("canonical Heatmap ViewElement", () => {
       cancelable: false,
       composed: false,
     })
-    expect(element.actions).toEqual(["refresh"])
+    expect(element.actions).toEqual(expect.arrayContaining(["refresh", "explore", "focus"]))
   })
 
   it("renders API documentation in demo element", async () => {
@@ -494,8 +542,8 @@ describe("canonical Heatmap ViewElement", () => {
     renderComponentApi(container, docs.elements)
     expect(container.textContent).toContain("Heatmap")
     expect(container.textContent).toContain("m-heatmap")
-    expect(container.textContent).toContain("rows")
-    expect(container.textContent).toContain("columns")
+    expect(container.textContent).toContain("data")
+    expect(container.textContent).toContain("settings")
   })
 })
 

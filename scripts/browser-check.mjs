@@ -595,6 +595,38 @@ try {
                     ],
                     first: "0001-01-01", last: "9999-12-31", rejected: true,
                   }, "Heatmap date model needs no Document argument or native date input")
+                  const basic = page.locator("#basic-heatmap"), day = basic.locator('button[data-heatmap-date="2024-02-10"]')
+                  assert.equal(await day.evaluate(element => getComputedStyle(element).fontSize), "12px")
+                  assert.equal(await basic.locator("tbody tr").count(), 7)
+                  assert.equal(await basic.locator("button[data-heatmap-date]").count(), 29)
+                  assert.equal(await basic.locator('td[data-heatmap-missing] button[data-heatmap-date="2024-02-11"]').count(), 1)
+                  await day.focus()
+                  await page.keyboard.press("Enter")
+                  assert.equal(await page.locator("#heatmap-value").textContent(), "2024-02-10: 0")
+                  await page.keyboard.press("ArrowRight")
+                  assert.equal(await page.evaluate(() => document.activeElement.dataset.heatmapDate), "2024-02-17")
+                  await page.keyboard.press("Control+End")
+                  assert.equal(await page.evaluate(() => document.activeElement.dataset.heatmapDate), "2024-02-29")
+                  const stable = await basic.evaluate(element => {
+                    const button = element.querySelector('button[data-heatmap-date="2024-02-29"]')
+                    element.settings = { loading: true, domain: [-2, 4] }
+                    return { same: element.querySelector('button[data-heatmap-date="2024-02-29"]') === button,
+                      focus: document.activeElement === button, clamped: element.model.cells.find(cell => cell?.date === "2024-02-29").clamped }
+                  })
+                  assert.deepEqual(stable, { same: true, focus: true, clamped: "high" })
+                  await page.getByRole("button", { name: "Update values", exact: true }).click()
+                  assert.equal(await basic.evaluate(element => element.model.cells.find(cell => cell?.date === "2024-02-10").value), 4)
+                  const reconnect = await basic.evaluate(element => {
+                    const parent = element.parentElement, table = element.native
+                    element.explore("2024-02-10"); element.remove(); parent.append(element)
+                    return { table: element.native === table, date: element.state.currentDate, cells: element.state.cells }
+                  })
+                  assert.deepEqual(reconnect, { table: true, date: "2024-02-10", cells: 29 })
+                  await basic.scrollIntoViewIfNeeded()
+                  await page.screenshot({ path: resolve(output, `${name}-${layout}-heatmap.png`) })
+                  assert.equal(await page.locator("#year-heatmap").evaluate(element => element.state.cells), 366)
+                  assert.equal(await page.locator("m-heatmap[role],m-heatmap[tabindex]").count(), 0)
+                  assert.equal(await page.evaluate(() => !!customElements.get("m-calendar") || !!customElements.get("m-chart")), false)
                 }
                 if (slug === "dynamic-input") {
                   const basic = page.locator("#basic-dynamic-input")

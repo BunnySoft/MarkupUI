@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Replaced Heatmap's empty grid renderer with the canonical date/value controller.
+  Typed or JSON `data`/`settings` on `m-heatmap` now provide bounded calendar data,
+  missing/zero distinctions, numeric bands, palettes, locale, loading, keyboard
+  inspection and persistent details. Removed arbitrary `rows`/`columns` and the
+  public factory; retained the pure model utilities. Day identity/focus survives
+  updates and inspection state survives reconnect. Fixed repeated date-font scaling.
+
 - Unified Upload's native FileList, queue and transport behind `m-upload`. Portable
   trigger/drop/list regions map to labelled native controls, progress and actions.
   Explicit typed transport configuration, bounded selection, cancellation/retry,
