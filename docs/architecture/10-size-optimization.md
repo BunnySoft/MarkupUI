@@ -848,6 +848,44 @@ a large modular size reduction.
 | Browser | `node scripts/browser-check.mjs --catalog --page=data-table`, 6/6 in Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6, desktop/mobile; keyboard sorting, paging, checks, actual submission/reset, filtering, data updates and reconnect. Screenshots inspected. Rerun after final validation changes also passes 6/6. |
 | Size | `.vite/size/s2-data-table.json`, compared with `.vite/size/s2-tree-select.json`; S0 remains frozen. |
 | Limits | S3-S6 and separate production-readiness gates remain open. No new full-suite or all-catalog acceptance claim. |
+| Commit | `4b593b8` - `refactor: unify Data Table around transactional records`. |
+
+### S3 - Local mechanics and Dropdown
+
+S2 already removed duplicate engines/setter paths, stale caches, aliases and repeated
+DOM reconstruction in the listed families. Tags/Input retain distinct authored/generated
+action handling where ownership differs; forcing one handler would lose those boundaries.
+Calendar/Tree/Data Table preparation guards and Upload's ignored-abort ownership remain
+required checks, not candidates for deletion. These families retain one behavior owner.
+
+Dropdown now maps text and passive `m-*` content to stable native trigger/actions.
+`href`, `target` and `download` map navigation; unsafe URI schemes are rejected.
+Submenus remain separate from their buttons. Native action adoption remains an explicit
+Web escape, with one clearly marked demo. Original labels/listeners, disabled destinations,
+native activation/default cancellation, keyboard/typeahead, submenu focus and reconnect
+are retained. The canonical element alone observes menu mutations; the controller no longer
+duplicates that observer. Passive-content and timing checks are shared locally, and
+reconfiguration reuses the already validated direct element properties.
+
+| Selection (raw / gzip bytes) | Before ESM | After ESM | Before classic | After classic |
+| --- | ---: | ---: | ---: | ---: |
+| Dropdown entry | 40,998 / 12,627 | 41,812 / 12,906 | 41,112 / 12,716 | 41,930 / 12,990 |
+| Dropdown + core | 44,510 / 14,050 | 45,324 / 14,329 | 44,748 / 14,188 | 45,566 / 14,462 |
+| All 89 families / 94 files | 1,230,631 / 413,459 | 1,231,445 / 413,738 | 1,256,911 / 426,977 | 1,257,729 / 427,251 |
+
+CSS remains 5,816 / 1,804 raw/gzip bytes. This closes a portable-authoring gap rather
+than claiming a gzip saving. Initial oversized builds were rejected by the unchanged
+13,000-byte entry gate; no budget or dependency changes were made.
+
+| Field | Verification evidence |
+| --- | --- |
+| Build | `node scripts/build.mjs`: passes all existing gates and generated API/declarations. |
+| Focused | `node node_modules/vitest/vitest.mjs run tests/dropdown.test.ts tests/demo-index.test.ts tests/popover.test.ts tests/core-distribution.test.ts tests/size-report.test.ts --maxWorkers=1`: 235/235 in 5 files. |
+| Consumer | `node scripts/package-check.mjs`: 95 JS entries / 2,335 files; strict NodeNext and packed runtime checks pass. |
+| Browser | `node scripts/browser-check.mjs --catalog --page=dropdown`: 6/6 in three engines and both viewport sizes. Exercises real mapped controls, disabled-item skipping, submenu arrows/Escape, selection, late items and reconnect. Initial sequencing failures were fixed by waiting for actual native focus. Screenshot review then exposed a real WebKit mobile nested-anchor offset bug: submenu geometry could be above the viewport despite successful focus. Nested menus now use the existing measured positioning path. The final rerun adds viewport geometry assertions and passes 6/6; corrected screenshots inspected. |
+| Final focused rerun | The focused command above plus `tests/size-sharing.test.ts`: 236/236 in 6 files after the nested-positioning fix. |
+| Size | `.vite/size/s3-dropdown.json`; S0 remains frozen. |
+| Limits | Full integrated acceptance and optional aggregate delivery remain S5-S6 work. |
 
 ## Next-thread starting point
 

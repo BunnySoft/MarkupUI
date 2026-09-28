@@ -56,6 +56,15 @@ const interactive = "a, area, button, input, select, textarea, label, details, s
 const allowedOptions = new Set(["placement", "gap", "margin", "flip", "disabled", "positioning",
   "submenuDelay", "submenuDuration", "typeaheadDuration", "value", "onValue", "onSelect", "onError"])
 
+export function passiveContent(node: Element): boolean {
+  return !node.localName.includes("-") || ["m-span", "m-strong", "m-em", "m-small"].includes(node.localName)
+    || isIconElement(node) || isTypographyInline(node) || isSpaceElement(node) || isFlexElement(node) || isGridElement(node)
+}
+export function dropdownTiming(value: number): number {
+  if (!Number.isFinite(value) || value < 0 || value > 60_000) throw new RangeError("Dropdown timing must be finite between 0 and 60000.")
+  return value
+}
+
 export function createDropdown(trigger: HTMLElement, menu: HTMLElement, options: DropdownOptions = {}): DropdownController {
   const document = trigger?.ownerDocument
   const view = document?.defaultView
@@ -69,12 +78,9 @@ export function createDropdown(trigger: HTMLElement, menu: HTMLElement, options:
   const dividerSelector = canonical ? "m-dropdown-divider" : "[data-dropdown-divider]"
   const keyOf = (element: Element) => canonical ? element.parentElement?.getAttribute("key") : element.getAttribute("data-dropdown-key")
   for (const key of Object.keys(options)) if (!allowedOptions.has(key)) throw new TypeError(`Unsupported Dropdown option: ${key}.`)
-  let delay = options.submenuDelay ?? 100
-  let duration = options.submenuDuration ?? 150
-  let typeaheadDuration = options.typeaheadDuration ?? 500
-  for (const number of [delay, duration, typeaheadDuration]) {
-    if (!Number.isFinite(number) || number < 0 || number > 60_000) throw new RangeError("Dropdown timing must be finite between 0 and 60000.")
-  }
+  let delay = dropdownTiming(options.submenuDelay ?? 100)
+  let duration = dropdownTiming(options.submenuDuration ?? 150)
+  let typeaheadDuration = dropdownTiming(options.typeaheadDuration ?? 500)
   let value = options.value ?? null
   if (value !== null && typeof value !== "string") throw new TypeError("Dropdown values are string keys or null.")
   let disabled = options.disabled ?? false
@@ -327,7 +333,7 @@ export function createDropdown(trigger: HTMLElement, menu: HTMLElement, options:
   }
   function build(initial: boolean) {
     if (!trigger.isConnected || !menu.isConnected || menu.getRootNode() !== document
-      || !menu.matches(menuSelector) || trigger.contains(menu)) throw new TypeError("Dropdown needs connected separate light-DOM trigger/menu anatomy.")
+      || !menu.matches(menuSelector) || trigger.contains(menu)) throw new TypeError("Connect separate light-DOM Dropdown trigger/menu.")
     const menus = [menu, ...menu.querySelectorAll<HTMLElement>(menuSelector)]
     const keys = new Set<string>()
     const records: { menu: HTMLElement; trigger: HTMLButtonElement; elements: HTMLElement[]; labels: string[] }[] = []
@@ -337,7 +343,7 @@ export function createDropdown(trigger: HTMLElement, menu: HTMLElement, options:
         || ![null, "menu"].includes(current.getAttribute("role")) || current.getAttribute("aria-hidden") === "true"
         || current.hasAttribute("aria-modal") || current.isContentEditable
         || current.hasAttribute("contenteditable") && current.getAttribute("contenteditable")?.toLowerCase() !== "false") {
-        throw new TypeError("Dropdown needs .m-popover.m-dropdown lists with popover=auto.")
+        throw new TypeError("Dropdown menus need popover=auto.")
       }
       named(current)
       const parent = current.parentElement?.closest<HTMLElement>(menuSelector)
@@ -375,16 +381,16 @@ export function createDropdown(trigger: HTMLElement, menu: HTMLElement, options:
           ? ["group"] : node.localName === "li" || node.matches(dividerSelector) ? ["none", "presentation", "separator"] : ["none", "presentation", "img"]
         if (node.matches(interactive) && !elements.includes(node)
           || role !== null && !allowedRole.includes(role)
-          || node.localName.includes("-") && !isIconElement(node) && !isTypographyInline(node) && !isSpaceElement(node) && !isFlexElement(node) && !isGridElement(node) && !(canonical && ["m-dropdown-item", "m-dropdown-group", "m-dropdown-divider"].includes(node.localName))
+          || !passiveContent(node) && !(canonical && ["m-dropdown-item", "m-dropdown-group", "m-dropdown-divider"].includes(node.localName))
           || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)) {
-          throw new TypeError("Dropdown content cannot contain arbitrary interactive controls or custom widgets.")
+          throw new TypeError("Dropdown rejects interactive content and custom widgets.")
         }
       }
       for (const list of [current, ...current.querySelectorAll<HTMLElement>(groupSelector)]) {
         if (list !== current && list.closest(menuSelector) !== current) continue
         if (canonical ? [...list.children].some(node => !["m-dropdown-item", "m-dropdown-group", "m-dropdown-divider", "template"].includes(node.localName) && !(list !== current && node.getAttribute("data-part") === "group-label"))
           : !["ul", "ol"].includes(list.localName) || [...list.children].some(node => !["li", "template"].includes(node.localName))) {
-          throw new TypeError("Menu/group lists require authored li wrappers.")
+          throw new TypeError("Invalid Dropdown menu/group children.")
         }
         if (list !== current) named(list)
       }
@@ -392,7 +398,7 @@ export function createDropdown(trigger: HTMLElement, menu: HTMLElement, options:
         if (divider.closest(menuSelector) === current
           && (canonical ? divider.childElementCount > 0 || !!divider.textContent?.trim()
             : divider.localName !== "li" || !!divider.querySelector("[data-dropdown-item], [data-dropdown-menu], [data-dropdown-group]"))) {
-          throw new TypeError("Dropdown dividers must be noninteractive li separators.")
+          throw new TypeError("Dropdown dividers must be empty separators.")
         }
       }
       records.push({ menu: current, trigger: invoker, elements, labels })
@@ -403,6 +409,8 @@ export function createDropdown(trigger: HTMLElement, menu: HTMLElement, options:
         const core = createPopover(record.trigger, record.menu, {
           ...options,
           disabled,
+          // Nested top-layer CSS anchors can use scrolled document coordinates in WebKit.
+          positioning: parent ? "fallback" : options.positioning ?? "auto",
           placement: parent ? view!.getComputedStyle(record.trigger).direction === "rtl" ? "left-start" : "right-start" : options.placement ?? "bottom",
         })
         const state: MenuState = { menu: record.menu, trigger: record.trigger, parent, core, disconnectCore: core.disconnect,
@@ -414,7 +422,7 @@ export function createDropdown(trigger: HTMLElement, menu: HTMLElement, options:
           const position = core.syncPosition
           core.syncPosition = () => {
             const wasOpen = core.show, result = position()
-            if (wasOpen && !result && !disabled && trigger.isConnected) report(new Error("Dropdown positioning is unavailable; the menu was closed."))
+            if (wasOpen && !result && !disabled && trigger.isConnected) report(new Error("Dropdown closed: positioning unavailable."))
             return result
           }
         }
@@ -461,7 +469,7 @@ export function createDropdown(trigger: HTMLElement, menu: HTMLElement, options:
           openState(states[0]!, keyboard.key === "ArrowUp" ? "last" : "first")
         }
       })
-      observer.observe(menu, { subtree: true, childList: true, attributes: true,
+      if (!canonical) observer.observe(menu, { subtree: true, childList: true, attributes: true,
         attributeFilter: ["hidden", "inert", "disabled", "aria-disabled", "data-dropdown-key", "data-dropdown-label",
           "href", "target", "download", "popovertarget", "type", "role", "aria-hidden", "aria-modal", "aria-haspopup", "id",
           "aria-label", "aria-labelledby", "contenteditable", "data-dropdown-item", "data-dropdown-menu", "data-dropdown-group", "dir", "key", "label"] })
@@ -530,14 +538,11 @@ export function createDropdown(trigger: HTMLElement, menu: HTMLElement, options:
     },
     connect() { if (!connected) build(false) },
     configure(next) {
-      const updated = { ...options, ...next }
-      for (const number of [updated.submenuDelay ?? 100, updated.submenuDuration ?? 150, updated.typeaheadDuration ?? 500]) {
-        if (!Number.isFinite(number) || number < 0 || number > 60000) throw new RangeError("Dropdown timing must be finite between 0 and 60000.")
-      }
-      options = updated
-      delay = updated.submenuDelay ?? 100
-      duration = updated.submenuDuration ?? 150
-      typeaheadDuration = updated.typeaheadDuration ?? 500
+      // The canonical element validates these direct properties before reconfiguration.
+      options = { ...options, ...next }
+      delay = options.submenuDelay ?? 100
+      duration = options.submenuDuration ?? 150
+      typeaheadDuration = options.typeaheadDuration ?? 500
       controller.refresh()
     },
     disconnect: destroy,

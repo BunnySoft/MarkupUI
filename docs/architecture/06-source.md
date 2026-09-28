@@ -273,6 +273,12 @@ filtering, paging, summary, selection and reset owner. It receives explicit rend
 references and immutable records; callbacks never need native rows. Preparation completes
 before row/state mutation, without a second staged-DOM rollback engine or public factory.
 
+Dropdown's `regions.ts` maps portable labels and destinations onto stable native actions,
+retaining explicit native adoption. `dropdown.ts` owns the canonical tree's sole mutation
+observer. `controller.ts` retains keyboard/submenu/selection lifecycle and a native-only
+internal observer for independent Web-controller fixtures. Shared passive-content and
+timing validation stays local to Dropdown; there is no additional production entry.
+
 ## Entry and packaging rules
 
 Follow the [small-core/plugin delivery model](07-modules.md).

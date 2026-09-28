@@ -476,6 +476,11 @@ ceilings remain unchanged; no new mandatory dependency is emitted.
 
 ## Reproducible size reports
 
+Dropdown's portable action reconciliation retains core plus one entry and composed CSS.
+ESM/classic entries are 12,906/12,990 gzip bytes, or 14,329/14,462 including core;
+CSS remains 1,804. The 13,000 entry and 14,500 runtime ceilings remain unchanged.
+The optional native adoption example is not a required input contract.
+
 After `pnpm build`, run `pnpm size:report` (or `node scripts/size-report.mjs`).
 The build retains esbuild metafiles and output hashes in `.vite/size/build.json`;
 the report is written to `.vite/size/report.json`. Neither file is published.

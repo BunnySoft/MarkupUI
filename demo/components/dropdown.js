@@ -45,10 +45,7 @@ function initialize() {
   document.querySelector("[data-add-item]").addEventListener("click", () => {
     const item = document.createElement("m-dropdown-item")
     item.key = `added-${root.items.length}`
-    const action = document.createElement("button")
-    action.type = "button"
-    action.textContent = `Added action ${root.items.length}`
-    item.append(action)
+    item.textContent = `Added action ${root.items.length}`
     root.querySelector(":scope > m-dropdown-menu").append(item)
     root.refresh()
     status.textContent = `Added ${item.key}; existing controls retained.`

@@ -1,6 +1,4 @@
-<!doctype html>
-<html lang="en" data-m-theme="light">
-<head>
+<!DOCTYPE html><html lang="en" data-m-theme="light"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dropdown - MarkupUI</title>
@@ -15,18 +13,18 @@
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./dropdown.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
-  <script defer src="../../dist/markup-ui-core.global.js"></script>
-  <script defer src="../../dist/markup-ui-box.global.js"></script>
-  <script defer src="../../dist/markup-ui-dropdown.global.js"></script>
-  <script defer src="../../dist/markup-ui-button.global.js"></script>
-  <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer="" src="../../dist/markup-ui-core.global.js"></script>
+  <script defer="" src="../../dist/markup-ui-box.global.js"></script>
+  <script defer="" src="../../dist/markup-ui-dropdown.global.js"></script>
+  <script defer="" src="../../dist/markup-ui-button.global.js"></script>
+  <script defer="" src="../../dist/markup-ui-typography.global.js"></script>
 
   <script type="module" src="./dropdown.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
 </head>
 <body>
-  <main data-demo-page class="component-docs">
+  <main data-demo-page="" class="component-docs">
     <h1>Dropdown</h1>
     <p>Native command and navigation menus with nested items, keyboard control and focus management.</p>
     <nav class="component-docs-nav" aria-label="Dropdown documentation">
@@ -42,155 +40,155 @@
     </details>
 
     <section data-demo-example="basic" aria-labelledby="basic-heading">
-      <header data-demo-header><div><h2 id="basic-heading">Basic</h2><p>Native actions, real destinations and disabled destinations share one scoped menu.</p></div></header>
-      <div class="demo-preview" data-demo-preview>
+      <header data-demo-header=""><div><h2 id="basic-heading">Basic</h2><p>Native actions, real destinations and disabled destinations share one scoped menu.</p></div></header>
+      <div class="demo-preview" data-demo-preview="">
         <m-dropdown id="basic-dropdown">
-          <m-dropdown-trigger><button type="button">Document actions</button></m-dropdown-trigger>
-          <m-dropdown-menu label="Document actions" animated>
-            <m-dropdown-item key="edit"><button type="button">Edit</button></m-dropdown-item>
-            <m-dropdown-item key="disabled" disabled><button type="button">Disabled command</button></m-dropdown-item>
-            <m-dropdown-item key="disabled-link" disabled><a href="#basic-result">Disabled destination</a></m-dropdown-item>
-            <m-dropdown-item key="preview"><a href="#basic-result">Preview</a></m-dropdown-item>
+          <m-dropdown-trigger>Document actions</m-dropdown-trigger>
+          <m-dropdown-menu label="Document actions" animated="">
+            <m-dropdown-item key="edit">Edit</m-dropdown-item>
+            <m-dropdown-item key="disabled" disabled="">Disabled command</m-dropdown-item>
+            <m-dropdown-item key="disabled-link" disabled="" href="#basic-result">Disabled destination</m-dropdown-item>
+            <m-dropdown-item key="preview" href="#basic-result">Preview</m-dropdown-item>
             <m-dropdown-divider></m-dropdown-divider>
             <m-dropdown-group label="Output">
-              <m-dropdown-item key="print"><button type="button">Print</button></m-dropdown-item>
-              <m-dropdown-item key="profile"><button type="button">Profile</button></m-dropdown-item>
+              <m-dropdown-item key="print">Print</m-dropdown-item>
+              <m-dropdown-item key="profile">Profile</m-dropdown-item>
             </m-dropdown-group>
           </m-dropdown-menu>
         </m-dropdown>
-        <m-p id="basic-result" class="demo-status" data-dropdown-status role="status">No selection.</m-p>
+        <m-p id="basic-result" class="demo-status" data-dropdown-status="" role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="icon" aria-labelledby="icon-heading">
-      <header data-demo-header><div><h2 id="icon-heading">Native icons and search labels</h2><p>Passive icon markup is retained. Item label provides a clean accessible/typeahead name.</p></div></header>
-      <div class="demo-preview" data-demo-preview>
+      <header data-demo-header=""><div><h2 id="icon-heading">Native icons and search labels</h2><p>Passive icon markup is retained. Item label provides a clean accessible/typeahead name.</p></div></header>
+      <div class="demo-preview" data-demo-preview="">
         <m-dropdown>
-          <m-dropdown-trigger><button type="button">Profile actions</button></m-dropdown-trigger>
+          <m-dropdown-trigger>Profile actions</m-dropdown-trigger>
           <m-dropdown-menu label="Profile actions">
-            <m-dropdown-item key="profile" label="Profile"><button type="button"><span slot="icon" aria-hidden="true">◉</span> Profile</button></m-dropdown-item>
-            <m-dropdown-item key="edit" label="Edit profile"><button type="button"><span slot="icon" aria-hidden="true">✎</span> Edit profile</button></m-dropdown-item>
-            <m-dropdown-item key="logout" label="Log out"><button type="button"><span slot="icon" aria-hidden="true">↪</span> Log out</button></m-dropdown-item>
+            <m-dropdown-item key="profile" label="Profile"><m-span slot="icon" aria-hidden="true">◉</m-span> Profile</m-dropdown-item>
+            <m-dropdown-item key="edit" label="Edit profile"><m-span slot="icon" aria-hidden="true">✎</m-span> Edit profile</m-dropdown-item>
+            <m-dropdown-item key="logout" label="Log out"><m-span slot="icon" aria-hidden="true">↪</m-span> Log out</m-dropdown-item>
           </m-dropdown-menu>
         </m-dropdown>
-        <m-p class="demo-status" data-dropdown-status role="status">No selection.</m-p>
+        <m-p class="demo-status" data-dropdown-status="" role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="trigger" aria-labelledby="trigger-heading">
-      <header data-demo-header><div><h2 id="trigger-heading">Native trigger and direct actions</h2><p>Click/Enter/Space remain native. ArrowDown/ArrowUp open at the first/last enabled action.</p></div></header>
-      <div class="demo-preview trigger-row" data-demo-preview>
+      <header data-demo-header=""><div><h2 id="trigger-heading">Native trigger and direct actions</h2><p>Click/Enter/Space remain native. ArrowDown/ArrowUp open at the first/last enabled action.</p></div></header>
+      <div class="demo-preview trigger-row" data-demo-preview="">
         <m-dropdown id="manual-toggle-dropdown">
-          <m-dropdown-trigger><button type="button">Native trigger</button></m-dropdown-trigger>
+          <m-dropdown-trigger>Native trigger</m-dropdown-trigger>
           <m-dropdown-menu label="Direct API actions">
-            <m-dropdown-item key="one"><button type="button">First action</button></m-dropdown-item>
-            <m-dropdown-item key="two"><button type="button">Last action</button></m-dropdown-item>
+            <m-dropdown-item key="one">First action</m-dropdown-item>
+            <m-dropdown-item key="two">Last action</m-dropdown-item>
           </m-dropdown-menu>
         </m-dropdown>
-        <button type="button" data-manual-toggle>Toggle via API</button>
-        <button type="button" data-root-disabled aria-pressed="false">Toggle disabled</button>
-        <m-p class="demo-status" data-dropdown-status role="status">No selection.</m-p>
+        <m-button data-manual-toggle="">Toggle via API</m-button>
+        <m-button data-root-disabled="" aria-pressed="false">Toggle disabled</m-button>
+        <m-p class="demo-status" data-dropdown-status="" role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="cascade" aria-labelledby="cascade-heading">
-      <header data-demo-header><div><h2 id="cascade-heading">Cascade</h2><p>Submenus keep their own native owners. Logical arrows and Escape operate one level at a time.</p></div></header>
-      <div class="demo-preview" data-demo-preview>
+      <header data-demo-header=""><div><h2 id="cascade-heading">Cascade</h2><p>Submenus keep their own native owners. Logical arrows and Escape operate one level at a time.</p></div></header>
+      <div class="demo-preview" data-demo-preview="">
         <m-dropdown id="cascade-dropdown" submenu-delay="100" submenu-duration="150">
-          <m-dropdown-trigger><button type="button">People and actions</button></m-dropdown-trigger>
-          <m-dropdown-menu label="People and actions" animated>
-            <m-dropdown-item key="edit"><button type="button">Edit</button></m-dropdown-item>
-            <m-dropdown-item key="more"><button type="button">More <span slot="suffix" aria-hidden="true">›</span></button>
-              <m-dropdown-menu label="More actions" animated>
-                <m-dropdown-item key="rename"><button type="button">Rename</button></m-dropdown-item>
-                <m-dropdown-item key="share"><button type="button">Share <span slot="suffix" aria-hidden="true">›</span></button>
+          <m-dropdown-trigger>People and actions</m-dropdown-trigger>
+          <m-dropdown-menu label="People and actions" animated="">
+            <m-dropdown-item key="edit">Edit</m-dropdown-item>
+            <m-dropdown-item key="more">More <m-span slot="suffix" aria-hidden="true">›</m-span>
+              <m-dropdown-menu label="More actions" animated="">
+                <m-dropdown-item key="rename">Rename</m-dropdown-item>
+                <m-dropdown-item key="share">Share <m-span slot="suffix" aria-hidden="true">›</m-span>
                   <m-dropdown-menu label="Sharing actions">
-                    <m-dropdown-item key="copy"><button type="button">Copy link</button></m-dropdown-item>
-                    <m-dropdown-item key="external"><a href="#cascade-result" target="_blank">Open separately</a></m-dropdown-item>
+                    <m-dropdown-item key="copy">Copy link</m-dropdown-item>
+                    <m-dropdown-item key="external" href="#cascade-result" target="_blank">Open separately</m-dropdown-item>
                   </m-dropdown-menu>
                 </m-dropdown-item>
               </m-dropdown-menu>
             </m-dropdown-item>
           </m-dropdown-menu>
         </m-dropdown>
-        <m-p id="cascade-result" class="demo-status" data-dropdown-status role="status">No selection.</m-p>
+        <m-p id="cascade-result" class="demo-status" data-dropdown-status="" role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="arrow" aria-labelledby="arrow-heading">
-      <header data-demo-header><div><h2 id="arrow-heading">Arrow and native opening animation</h2><p>Popover paint stays optional, collision-aware and reduced-motion safe.</p></div></header>
-      <div class="demo-preview" data-demo-preview>
+      <header data-demo-header=""><div><h2 id="arrow-heading">Arrow and native opening animation</h2><p>Popover paint stays optional, collision-aware and reduced-motion safe.</p></div></header>
+      <div class="demo-preview" data-demo-preview="">
         <m-dropdown>
-          <m-dropdown-trigger><button type="button">Arrow menu</button></m-dropdown-trigger>
-          <m-dropdown-menu label="Arrow actions" arrow animated>
-            <m-dropdown-item key="first"><button type="button">First action</button></m-dropdown-item>
-            <m-dropdown-item key="second"><button type="button">Second action</button></m-dropdown-item>
+          <m-dropdown-trigger>Arrow menu</m-dropdown-trigger>
+          <m-dropdown-menu label="Arrow actions" arrow="" animated="">
+            <m-dropdown-item key="first">First action</m-dropdown-item>
+            <m-dropdown-item key="second">Second action</m-dropdown-item>
           </m-dropdown-menu>
         </m-dropdown>
-        <m-p class="demo-status" data-dropdown-status role="status">No selection.</m-p>
+        <m-p class="demo-status" data-dropdown-status="" role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="placement" aria-labelledby="placement-heading">
-      <header data-demo-header><div><h2 id="placement-heading">Placement and RTL</h2><p>Retained top/bottom/left/right sides use optional start/end alignment, flip and viewport clamping.</p></div></header>
-      <div class="demo-preview trigger-row" data-demo-preview>
+      <header data-demo-header=""><div><h2 id="placement-heading">Placement and RTL</h2><p>Retained top/bottom/left/right sides use optional start/end alignment, flip and viewport clamping.</p></div></header>
+      <div class="demo-preview trigger-row" data-demo-preview="">
         <m-dropdown placement="bottom-start">
-          <m-dropdown-trigger><button type="button">Bottom start</button></m-dropdown-trigger>
+          <m-dropdown-trigger>Bottom start</m-dropdown-trigger>
           <m-dropdown-menu label="Placed actions">
-            <m-dropdown-item key="one"><button type="button">One</button></m-dropdown-item>
-            <m-dropdown-item key="two"><button type="button">Two</button></m-dropdown-item>
+            <m-dropdown-item key="one">One</m-dropdown-item>
+            <m-dropdown-item key="two">Two</m-dropdown-item>
           </m-dropdown-menu>
         </m-dropdown>
         <m-dropdown id="rtl-dropdown" dir="rtl" placement="bottom-start">
-          <m-dropdown-trigger><button type="button">RTL menu</button></m-dropdown-trigger>
+          <m-dropdown-trigger>RTL menu</m-dropdown-trigger>
           <m-dropdown-menu label="RTL actions">
-            <m-dropdown-item key="more"><button type="button">More <span slot="suffix" aria-hidden="true">‹</span></button>
-              <m-dropdown-menu label="RTL submenu"><m-dropdown-item key="leaf"><button type="button">Leaf action</button></m-dropdown-item></m-dropdown-menu>
+            <m-dropdown-item key="more">More <m-span slot="suffix" aria-hidden="true">‹</m-span>
+              <m-dropdown-menu label="RTL submenu"><m-dropdown-item key="leaf">Leaf action</m-dropdown-item></m-dropdown-menu>
             </m-dropdown-item>
           </m-dropdown-menu>
         </m-dropdown>
-        <m-p class="demo-status" data-dropdown-status role="status">No selection.</m-p>
+        <m-p class="demo-status" data-dropdown-status="" role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="size" aria-labelledby="size-heading">
-      <header data-demo-header><div><h2 id="size-heading">Menu density and inverted skin</h2><p>Local size attributes preserve the retained 28/34/40/46px row densities.</p></div></header>
-      <div class="demo-preview trigger-row" data-demo-preview>
-        <m-dropdown><m-dropdown-trigger><button type="button">Small</button></m-dropdown-trigger><m-dropdown-menu label="Small actions" size="small"><m-dropdown-item key="one"><button type="button">Small action</button></m-dropdown-item></m-dropdown-menu></m-dropdown>
-        <m-dropdown><m-dropdown-trigger><button type="button">Medium</button></m-dropdown-trigger><m-dropdown-menu label="Medium actions" size="medium"><m-dropdown-item key="one"><button type="button">Medium action</button></m-dropdown-item></m-dropdown-menu></m-dropdown>
-        <m-dropdown><m-dropdown-trigger><button type="button">Large</button></m-dropdown-trigger><m-dropdown-menu label="Large actions" size="large"><m-dropdown-item key="one"><button type="button">Large action</button></m-dropdown-item></m-dropdown-menu></m-dropdown>
-        <m-dropdown><m-dropdown-trigger><button type="button">Huge inverted</button></m-dropdown-trigger><m-dropdown-menu label="Huge actions" size="huge" inverted><m-dropdown-item key="one"><button type="button">Huge action</button></m-dropdown-item></m-dropdown-menu></m-dropdown>
-        <m-p class="demo-status" data-dropdown-status role="status">No selection.</m-p>
+      <header data-demo-header=""><div><h2 id="size-heading">Menu density and inverted skin</h2><p>Local size attributes preserve the retained 28/34/40/46px row densities.</p></div></header>
+      <div class="demo-preview trigger-row" data-demo-preview="">
+        <m-dropdown><m-dropdown-trigger>Small</m-dropdown-trigger><m-dropdown-menu label="Small actions" size="small"><m-dropdown-item key="one">Small action</m-dropdown-item></m-dropdown-menu></m-dropdown>
+        <m-dropdown><m-dropdown-trigger>Medium</m-dropdown-trigger><m-dropdown-menu label="Medium actions" size="medium"><m-dropdown-item key="one">Medium action</m-dropdown-item></m-dropdown-menu></m-dropdown>
+        <m-dropdown><m-dropdown-trigger>Large</m-dropdown-trigger><m-dropdown-menu label="Large actions" size="large"><m-dropdown-item key="one">Large action</m-dropdown-item></m-dropdown-menu></m-dropdown>
+        <m-dropdown><m-dropdown-trigger>Huge inverted</m-dropdown-trigger><m-dropdown-menu label="Huge actions" size="huge" inverted=""><m-dropdown-item key="one">Huge action</m-dropdown-item></m-dropdown-menu></m-dropdown>
+        <m-p class="demo-status" data-dropdown-status="" role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="batch-render" aria-labelledby="batch-heading">
-      <header data-demo-header><div><h2 id="batch-heading">Authored groups and destinations</h2><p>No options-array or batch-render engine is required. Groups are named containers, not selectable items.</p></div></header>
-      <div class="demo-preview" data-demo-preview>
+      <header data-demo-header=""><div><h2 id="batch-heading">Authored groups and destinations</h2><p>No options-array or batch-render engine is required. Groups are named containers, not selectable items.</p></div></header>
+      <div class="demo-preview" data-demo-preview="">
         <m-dropdown>
-          <m-dropdown-trigger><button type="button">Grouped links</button></m-dropdown-trigger>
+          <m-dropdown-trigger>Grouped links</m-dropdown-trigger>
           <m-dropdown-menu label="Grouped destinations">
             <m-dropdown-group label="People">
-              <m-dropdown-item key="jay"><a href="#batch-result">Jay Gatsby</a></m-dropdown-item>
-              <m-dropdown-item key="daisy"><a href="#batch-result">Daisy Buchanan</a></m-dropdown-item>
-              <m-dropdown-item key="nick"><a href="#batch-result">Nick Carraway</a></m-dropdown-item>
+              <m-dropdown-item key="jay" href="#batch-result">Jay Gatsby</m-dropdown-item>
+              <m-dropdown-item key="daisy" href="#batch-result">Daisy Buchanan</m-dropdown-item>
+              <m-dropdown-item key="nick" href="#batch-result">Nick Carraway</m-dropdown-item>
             </m-dropdown-group>
           </m-dropdown-menu>
         </m-dropdown>
-        <m-p id="batch-result" class="demo-status" data-dropdown-status role="status">No selection.</m-p>
+        <m-p id="batch-result" class="demo-status" data-dropdown-status="" role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="manual-position" aria-labelledby="manual-heading">
-      <header data-demo-header><div><h2 id="manual-heading">Movable native trigger</h2><p>Right-click the area to move a real visible button. This is application positioning, not a virtual-anchor API.</p></div></header>
-      <div class="demo-preview" data-demo-preview>
+      <header data-demo-header=""><div><h2 id="manual-heading">Movable native trigger</h2><p>Right-click the area to move a real visible button. This is application positioning, not a virtual-anchor API.</p></div></header>
+      <div class="demo-preview" data-demo-preview="">
         <m-box class="manual-area" id="manual-area">
           <m-dropdown id="position-dropdown">
-            <m-dropdown-trigger><button class="movable-trigger" type="button">Movable trigger</button></m-dropdown-trigger>
+            <m-dropdown-trigger class="movable-trigger">Movable trigger</m-dropdown-trigger>
             <m-dropdown-menu label="Movable trigger actions">
-              <m-dropdown-item key="first"><button type="button">First action</button></m-dropdown-item>
-              <m-dropdown-item key="second"><button type="button">Second action</button></m-dropdown-item>
+              <m-dropdown-item key="first">First action</m-dropdown-item>
+              <m-dropdown-item key="second">Second action</m-dropdown-item>
             </m-dropdown-menu>
           </m-dropdown>
         </m-box>
-        <m-p class="demo-status" data-dropdown-status role="status">The visible button also works with keyboard activation.</m-p>
+        <m-p class="demo-status" data-dropdown-status="" role="status">The visible button also works with keyboard activation.</m-p>
       </div>
     </section>
-    <section data-demo-example="render" aria-labelledby="render-heading">
-      <header data-demo-header><div><h2 id="render-heading">Passive native label content</h2><p>Native images/text are preserved inside one action owner. Arbitrary interactive widgets and render callbacks are not supported.</p></div></header>
-      <div class="demo-preview" data-demo-preview>
+    <section data-demo-example="render" data-web-interop aria-labelledby="render-heading">
+      <header data-demo-header=""><div><h2 id="render-heading">Web-only native adoption</h2><p>This explicit Web escape adopts native images and actions. Portable examples use text and passive m-* regions; native controls are not required.</p></div></header>
+      <div class="demo-preview" data-demo-preview="">
         <m-dropdown>
           <m-dropdown-trigger><button type="button">Office actions</button></m-dropdown-trigger>
           <m-dropdown-menu label="Office actions">
@@ -198,39 +196,39 @@
             <m-dropdown-item key="messages"><button type="button">Read group messages</button></m-dropdown-item>
           </m-dropdown-menu>
         </m-dropdown>
-        <m-p class="demo-status" data-dropdown-status role="status">No selection.</m-p>
+        <m-p class="demo-status" data-dropdown-status="" role="status">No selection.</m-p>
       </div>
     </section>
     <section data-demo-example="option-props" aria-labelledby="props-heading">
-      <header data-demo-header><div><h2 id="props-heading">Native listeners, value and reconnect</h2><p>Original action handlers run before the queued selection notification. Cancel the original click to decline selection.</p></div></header>
-      <div class="demo-preview trigger-row" data-demo-preview>
+      <header data-demo-header=""><div><h2 id="props-heading">Native listeners, value and reconnect</h2><p>Original action handlers run before the queued selection notification. Cancel the original click to decline selection.</p></div></header>
+      <div class="demo-preview trigger-row" data-demo-preview="">
         <m-box id="lifecycle-mount">
           <m-dropdown id="lifecycle-dropdown" value="first">
-            <m-dropdown-trigger><button type="button">Lifecycle actions</button></m-dropdown-trigger>
+            <m-dropdown-trigger>Lifecycle actions</m-dropdown-trigger>
             <m-dropdown-menu label="Lifecycle actions">
-              <m-dropdown-item key="first"><button type="button" id="listener-action">Retained listener</button></m-dropdown-item>
-              <m-dropdown-item key="cancel"><button type="button" id="cancel-action">Canceled action</button></m-dropdown-item>
-              <m-dropdown-item key="last"><button type="button">Last action</button></m-dropdown-item>
+              <m-dropdown-item key="first" id="listener-action">Retained listener</m-dropdown-item>
+              <m-dropdown-item key="cancel" id="cancel-action">Canceled action</m-dropdown-item>
+              <m-dropdown-item key="last">Last action</m-dropdown-item>
             </m-dropdown-menu>
           </m-dropdown>
         </m-box>
-        <button type="button" data-select-last>Select last without activation</button>
-        <button type="button" data-add-item>Add a native item</button>
-        <button type="button" data-detach>Detach / reconnect</button>
-        <m-p class="demo-status" data-dropdown-status role="status">No action.</m-p>
+        <m-button data-select-last="">Select last without activation</m-button>
+        <m-button data-add-item="">Add a native item</m-button>
+        <m-button data-detach="">Detach / reconnect</m-button>
+        <m-p class="demo-status" data-dropdown-status="" role="status">No action.</m-p>
       </div>
     </section>
     <section data-demo-example="render-option" aria-labelledby="render-option-heading">
-      <header data-demo-header><div><h2 id="render-option-heading">Native descriptions</h2><p>Native title/description attributes stay on the action, rather than wrapping it in another interactive component.</p></div></header>
-      <div class="demo-preview" data-demo-preview>
+      <header data-demo-header=""><div><h2 id="render-option-heading">Native descriptions</h2><p>Native title/description attributes stay on the action, rather than wrapping it in another interactive component.</p></div></header>
+      <div class="demo-preview" data-demo-preview="">
         <m-dropdown>
-          <m-dropdown-trigger><button type="button">Described actions</button></m-dropdown-trigger>
+          <m-dropdown-trigger>Described actions</m-dropdown-trigger>
           <m-dropdown-menu label="Described actions">
-            <m-dropdown-item key="edit"><button type="button" title="Edit the current document">Edit</button></m-dropdown-item>
-            <m-dropdown-item key="external"><a href="#render-option-heading" target="_blank" title="Open in a separate browsing context">Open separately</a></m-dropdown-item>
+            <m-dropdown-item key="edit" title="Edit the current document">Edit</m-dropdown-item>
+            <m-dropdown-item key="external" href="#render-option-heading" target="_blank" title="Open in a separate browsing context">Open separately</m-dropdown-item>
           </m-dropdown-menu>
         </m-dropdown>
-        <m-p class="demo-status" data-dropdown-status role="status">External-target activation is not consumed as selection.</m-p>
+        <m-p class="demo-status" data-dropdown-status="" role="status">External-target activation is not consumed as selection.</m-p>
       </div>
     </section>
 
@@ -243,10 +241,11 @@
     <section id="behavior" aria-labelledby="behavior-heading">
       <h2 id="behavior-heading">Behavior, accessibility and lifecycle</h2>
       <h3>Concrete native owners</h3>
-      <p>Author one direct DropdownTrigger containing a labelled native type=button, and one direct
-        DropdownMenu. Each DropdownItem contains exactly one native type=button or href anchor, with an
-        optional direct submenu owned by a button. Menus/groups contain only items, groups, dividers and inert templates.
-        Public item nodes and their native controls are never moved, cloned or replaced.</p>
+      <p>Author one direct DropdownTrigger containing text or passive m-* content, and one direct
+        DropdownMenu. DropdownItem maps its content to a native button, or an anchor when href is supplied.
+        Target and download retain native navigation semantics. An optional direct submenu remains outside
+        its action. The renderer moves original label nodes into one stable native owner without cloning them.
+        Direct native action adoption is an explicit Web escape, not required authoring.</p>
       <p>Every menu/group needs a nonempty label or explicit accessible name via aria-label/aria-labelledby.
         Group label creates a private visible label; its group owns the accessible name. Menu labels name the
         menu without adding a visible header. An item label optionally overrides the native action's accessible
@@ -283,7 +282,8 @@
         Root disabled blocks opening and command clicks and closes the tree, but silent value writes remain allowed.</p>
       <p>Root placement retains top/bottom/left/right with optional start/end alignment; top/bottom alignment
         is logical in RTL, while left/right sides are physical. Submenu sides/arrows adapt to RTL. Flip, viewport
-        clamping and supported CSS-anchor positioning retain their native helper behavior, with a measured fallback.
+        clamping and supported CSS-anchor positioning retain their native helper behavior. Nested menus use
+        measured positioning to avoid scrolled top-layer anchor offsets in WebKit.
         Timing properties are finite milliseconds from 0 through 60000, including fractional values.</p>
       <p>Submenu pointer entry waits submenuDelay, departure allows submenuDuration travel grace, and pointer
         intent does not steal keyboard submenu focus. Root opening is native click or an explicit API request;
@@ -316,8 +316,9 @@
       <p>Scoped private parts/states replace old public helper anatomy. Existing Popover/Dropdown color, padding,
         density and selected/disabled tokens retain their precedence, high-contrast and print treatment.
         Required-file totals count core + Dropdown + composed CSS. Approved ceilings are 13,000 gzip bytes
-        per JavaScript file, 1,850 bytes for composed CSS and 14,000 bytes for JavaScript including shared core.</p>
+        per JavaScript file, 1,850 bytes for composed CSS and 14,500 bytes for JavaScript including shared core.</p>
     </section>
   </main>
-</body>
-</html>
+
+
+</body></html>

@@ -182,6 +182,55 @@ afterEach(() => {
 })
 
 describe("direct Dropdown family", () => {
+  it("maps portable labels, links and submenus without native authoring", async () => {
+    const root = new Dropdown()
+    root.innerHTML = `<m-dropdown-trigger><m-span>Actions</m-span></m-dropdown-trigger>
+      <m-dropdown-menu label="Actions">
+        <m-dropdown-item key="edit"><m-strong>Edit</m-strong></m-dropdown-item>
+        <m-dropdown-item key="link" href="#destination" disabled>Destination</m-dropdown-item>
+        <m-dropdown-item key="more">More<m-dropdown-menu label="More">
+          <m-dropdown-item key="leaf">Leaf</m-dropdown-item>
+        </m-dropdown-menu></m-dropdown-item>
+      </m-dropdown-menu>`
+    const text = root.querySelector("m-strong")!, listener = vi.fn()
+    text.addEventListener("retained", listener)
+    document.body.append(root); await flush()
+    expect(root.state).toBe("closed")
+    const trigger = root.querySelector<HTMLButtonElement>("m-dropdown-trigger > button")!
+    const action = root.querySelector<HTMLButtonElement>('m-dropdown-item[key="edit"] > button')!
+    const link = root.querySelector<HTMLAnchorElement>('m-dropdown-item[key="link"] > a')!
+    expect(trigger.type).toBe("button"); expect(action.contains(text)).toBe(true)
+    expect(link.hasAttribute("href")).toBe(false)
+    const item = link.parentElement as DropdownItem
+    item.disabled = false; await flush()
+    expect(link.getAttribute("href")).toBe("#destination")
+    item.href = "#next"; await flush(); expect(link.getAttribute("href")).toBe("#next")
+    expect(() => { item.href = "javascript:alert(1)" }).toThrow("Unsafe")
+    expect(item.href).toBe("#next")
+    action.append(document.createTextNode(" now")); await flush()
+    expect(root.state).toBe("closed")
+    root.remove(); document.body.append(root); await flush()
+    expect(root.querySelector("m-dropdown-trigger > button")).toBe(trigger)
+    expect(root.querySelector('m-dropdown-item[key="edit"] > button')).toBe(action)
+    text.dispatchEvent(new Event("retained")); expect(listener).toHaveBeenCalledOnce()
+    expect(root.querySelectorAll('m-dropdown-item[key="more"] > button')).toHaveLength(1)
+    expect(root.querySelector('m-dropdown-item[key="more"] > m-dropdown-menu')).not.toBeNull()
+  })
+
+  it("absorbs late portable content without adding controls or duplicate observers", async () => {
+    const root = new Dropdown()
+    root.innerHTML = "<m-dropdown-trigger>Actions</m-dropdown-trigger><m-dropdown-menu label='Actions'><m-dropdown-item key='one'>One</m-dropdown-item></m-dropdown-menu>"
+    const observe = vi.spyOn(MutationObserver.prototype, "observe")
+    document.body.append(root); await flush()
+    const menu = root.querySelector("m-dropdown-menu")!, item = root.items[0]!, action = item.querySelector("button")
+    expect(observe.mock.calls.filter(([target]) => target === menu)).toHaveLength(0)
+    const extra = document.createElement("m-span"); extra.textContent = " extra"; item.append(extra)
+    await flush()
+    expect(item.querySelector("button")).toBe(action); expect(extra.parentElement).toBe(action)
+    expect(root.state).toBe("closed")
+    expect(item.querySelectorAll("button")).toHaveLength(1)
+  })
+
   it("exports only six own-tag ViewElements and atomic registration", () => {
     expect(Object.keys(dropdownApi).sort()).toEqual(["Dropdown", "DropdownDivider", "DropdownGroup", "DropdownItem", "DropdownMenu", "DropdownTrigger", "registerDropdown"])
     for (const type of [Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, DropdownGroup, DropdownDivider]) {

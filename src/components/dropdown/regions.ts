@@ -5,6 +5,32 @@ import type { DropdownSize } from "./model.js"
 
 const itemWrites = new WeakMap<DropdownItem, ReturnType<typeof ownedWrites>>()
 const groupLabels = new WeakMap<DropdownGroup, HTMLSpanElement>()
+const actions = new WeakMap<HTMLElement, HTMLButtonElement | HTMLAnchorElement>()
+function destination(value: string | null, document: Document): string | null {
+  if (value !== null && (typeof value !== "string" || !["http:", "https:", "mailto:", "tel:"].includes(new URL(value, document.baseURI).protocol))) throw new TypeError("Unsafe Dropdown destination.")
+  return value
+}
+
+/** Materialize portable content once; direct native controls are an explicit Web escape. */
+export function prepareAction(host: HTMLElement, href: string | null = null): HTMLButtonElement | HTMLAnchorElement | undefined {
+  let action = actions.get(host)
+  if (action?.parentElement !== host) action = undefined
+  const native = host.querySelector<HTMLButtonElement | HTMLAnchorElement>(":scope > button,:scope > a")
+  if (!action && native) return native
+  const content = [...host.childNodes].filter(node => node !== action && !(node instanceof Element && node.matches("m-dropdown-menu,template")))
+  if (!action && !content.some(node => node.textContent?.trim() || node instanceof Element)) return undefined
+  const tag = href === null ? "button" : "a"
+  if (!action || action.localName !== tag) {
+    const next = host.ownerDocument.createElement(tag)
+    if (next instanceof HTMLButtonElement) next.type = "button"
+    if (action) { next.append(...action.childNodes); action.replaceWith(next) }
+    else host.prepend(next)
+    actions.set(host, action = next)
+  }
+  if (content.length) action.append(...content)
+  if (href !== null && action.getAttribute("href") !== href) action.setAttribute("href", href)
+  return action
+}
 
 export function prepareMenuSurface(menu: DropdownMenu): void {
   menu.dataset.part = "menu"
@@ -17,10 +43,10 @@ export function prepareItem(item: DropdownItem): HTMLElement | undefined {
   let writes = itemWrites.get(item)
   if (!writes) { writes = ownedWrites(); itemWrites.set(item, writes) }
   writes.restore()
-  const actions = [...item.children].filter((node): node is HTMLButtonElement | HTMLAnchorElement => node instanceof HTMLButtonElement || node instanceof HTMLAnchorElement)
-  if (actions.length !== 1) return undefined
-  const action = actions[0]!
+  const action = prepareAction(item, item.href)
+  if (!action) return undefined
   writes.attr(action, "data-part", "action")
+  for (const name of ["target", "download"]) if (item.hasAttribute(name)) writes.attr(action, name, item.getAttribute(name))
   if (item.label !== null) writes.attr(action, "aria-label", item.label)
   if (item.disabled) {
     if (action instanceof HTMLButtonElement) writes.attr(action, "disabled", "")
@@ -77,14 +103,15 @@ export class DropdownMenu extends ViewElement {
 }
 
 /**
- * A passive wrapper around one native button or destination anchor.
- * @region {"name":"action","accepts":["native button","native anchor"],"min":1,"max":1}
+ * Portable passive content mapped to one native button or destination anchor.
+ * Direct native controls are a Web-only adoption escape.
+ * @region {"name":"action","accepts":["text","passive m-* content"],"min":1,"max":null}
  * @region {"name":"submenu","element":"m-dropdown-menu","accepts":["DropdownMenu"],"min":0,"max":1}
  * @states selected disabled
  */
 export class DropdownItem extends ViewElement {
   public static readonly tag = "m-dropdown-item"
-  public static readonly observedAttributes = ["disabled", "label"]
+  public static readonly observedAttributes = ["disabled", "label", "href", "target", "download"]
   public connectedCallback(): void {
     this.upgradeProperties()
     this.dataset.part = "item"
@@ -104,6 +131,14 @@ export class DropdownItem extends ViewElement {
   }
   public get disabled(): boolean { return this.hasAttribute("disabled") }
   public set disabled(value: boolean) { this.setBooleanAttribute("disabled", value) }
+  public get href(): string | null { return destination(this.getAttribute("href"), this.ownerDocument) }
+  public set href(value: string | null) {
+    this.setStringAttribute("href", destination(value, this.ownerDocument))
+  }
+  public get target(): string | null { return this.getAttribute("target") }
+  public set target(value: string | null) { this.setStringAttribute("target", value) }
+  public get download(): string | null { return this.getAttribute("download") }
+  public set download(value: string | null) { this.setStringAttribute("download", value) }
   public get label(): string | null { return this.getAttribute("label") }
   public set label(value: string | null) {
     if (value !== null && (typeof value !== "string" || !value.trim())) throw new RangeError("Dropdown label must be nonempty or null.")

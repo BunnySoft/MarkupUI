@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Dropdown now maps portable trigger/item content into stable native actions. `href`,
+  `target` and `download` map navigation semantics without native authoring. Native
+  adoption remains an explicit Web escape. One element observer owns canonical menu
+  refreshes; passive-content and timing checks are shared locally. Existing payload
+  ceilings, keyboard behavior, cancellation and native fallback are retained.
+
 - Unified Data Table behind bounded immutable records and one transactional controller.
   Portable `m-data-table` supplies labelled columns/data without native table authoring.
   Sorting, filtering, pagination, summaries and scoped selection share prepare-before-commit

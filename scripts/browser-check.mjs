@@ -571,6 +571,53 @@ try {
                   await bounded.scrollIntoViewIfNeeded()
                   await page.screenshot({ path: resolve(output, `${name}-${layout}-calendar-bounded.png`) })
                 }
+                if (slug === "dropdown") {
+                  const basic = page.locator("#basic-dropdown"), trigger = basic.locator("m-dropdown-trigger > button")
+                  await trigger.focus()
+                  await page.keyboard.press("ArrowDown")
+                  await page.waitForFunction(() => document.getElementById("basic-dropdown").show)
+                  await page.waitForFunction(() => document.activeElement.matches('#basic-dropdown m-dropdown-item[key="edit"] > button'))
+                  await page.keyboard.press("ArrowDown")
+                  assert.equal(await page.evaluate(() => document.activeElement.textContent.trim()), "Preview")
+                  await page.keyboard.press("Escape")
+                  assert.equal(await trigger.evaluate(node => node === document.activeElement), true)
+                  await trigger.press("Enter")
+                  await page.waitForFunction(() => document.activeElement.matches('#basic-dropdown m-dropdown-item[key="edit"] > button'))
+                  await page.keyboard.press("Enter")
+                  await page.waitForFunction(() => document.getElementById("basic-dropdown").value === "edit")
+                  assert.match(await page.locator("#basic-result").textContent(), /Selected edit/)
+                  const cascade = page.locator("#cascade-dropdown")
+                  await cascade.locator("m-dropdown-trigger > button").scrollIntoViewIfNeeded()
+                  await cascade.locator("m-dropdown-trigger > button").focus()
+                  await page.keyboard.press("ArrowDown")
+                  await page.waitForFunction(() => document.activeElement.matches('#cascade-dropdown m-dropdown-item[key="edit"] > button'))
+                  await page.keyboard.press("ArrowDown")
+                  await page.keyboard.press("ArrowRight")
+                  await page.waitForFunction(() => document.activeElement.matches('#cascade-dropdown m-dropdown-item[key="rename"] > button'))
+                  await page.waitForFunction(() => {
+                    const menu = document.querySelector('#cascade-dropdown m-dropdown-item[key="more"] > m-dropdown-menu')
+                    const style = getComputedStyle(menu)
+                    return menu.matches(":popover-open") && style.visibility === "visible" && Number(style.opacity) === 1
+                  })
+                  const bounds = await cascade.locator('m-dropdown-item[key="more"] > m-dropdown-menu').boundingBox()
+                  assert(bounds && bounds.width > 0 && bounds.height > 0
+                    && bounds.x >= 0 && bounds.y >= 0
+                    && bounds.x + bounds.width <= page.viewportSize().width
+                    && bounds.y + bounds.height <= page.viewportSize().height,
+                  `Submenu must be visible inside viewport: ${JSON.stringify(bounds)}`)
+                  await page.screenshot({ path: resolve(output, `${name}-${layout}-dropdown.png`) })
+                  await page.keyboard.press("Escape")
+                  await page.keyboard.press("Escape")
+                  await page.getByRole("button", { name: "Add a native item", exact: true }).click()
+                  assert.equal(await page.locator('#lifecycle-dropdown m-dropdown-item[key^="added-"] > button').count(), 1)
+                  const retained = await basic.evaluate(root => {
+                    const action = root.querySelector('m-dropdown-item[key="edit"] > button'), parent = root.parentElement
+                    root.remove(); parent.append(root)
+                    return action === root.querySelector('m-dropdown-item[key="edit"] > button')
+                  })
+                  assert(retained)
+                  assert.equal(await page.locator("m-dropdown[role],m-dropdown-trigger[tabindex],m-dropdown-item[tabindex]").count(), 0)
+                }
                 if (slug === "data-table") {
                   const table = page.locator("#demo-data-table")
                   assert.deepEqual(await table.evaluate(element => Array.from(element.state.visibleKeys)), ["alpha", "bravo"])

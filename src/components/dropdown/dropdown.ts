@@ -1,22 +1,17 @@
 import { ViewElement } from "../../core/index.js"
-import { isIconElement } from "../icon/model.js"
-import { isTypographyInline } from "../typography/model.js"
-import { isSpaceElement } from "../space/model.js"
-import { isFlexElement } from "../flex/model.js"
-import { isGridElement } from "../grid/model.js"
 import { ownedWrites } from "../popover/position.js"
-import { createDropdown } from "./controller.js"
+import { createDropdown, dropdownTiming, passiveContent } from "./controller.js"
 import type { DropdownController } from "./controller.js"
 import { menuEntryAvailable } from "./keyboard.js"
-import { DropdownTrigger, DropdownMenu, DropdownItem, DropdownGroup, DropdownDivider, prepareItem, prepareGroup, prepareMenuSurface } from "./regions.js"
+import { DropdownTrigger, DropdownMenu, DropdownItem, DropdownGroup, DropdownDivider, prepareAction, prepareItem, prepareGroup, prepareMenuSurface } from "./regions.js"
 import { dropdownPlacements } from "./model.js"
 import type { DropdownPlacement, DropdownOpenReason, DropdownSelectionDetail, DropdownOpenChangedDetail, DropdownErrorDetail } from "./model.js"
 
 let sequence = 0
 
 /**
- * Authored native actions and owned submenu regions, without a second focus owner.
- * @region {"name":"trigger","element":"m-dropdown-trigger","accepts":["native button"],"min":1,"max":1}
+ * Portable actions and owned submenu regions, without a second focus owner.
+ * @region {"name":"trigger","element":"m-dropdown-trigger","accepts":["text","passive m-* content"],"min":1,"max":1}
  * @region {"name":"menu","element":"m-dropdown-menu","accepts":["DropdownItem","DropdownGroup","DropdownDivider"],"min":1,"max":1}
  */
 export class Dropdown extends ViewElement {
@@ -92,18 +87,18 @@ export class Dropdown extends ViewElement {
   /** @min 0
    * @max 60000
    */
-  public get submenuDelay(): number { return this.timing(this.numberAttribute("submenu-delay", 100)) }
-  public set submenuDelay(value: number) { this.setAttribute("submenu-delay", String(this.timing(value))) }
+  public get submenuDelay(): number { return dropdownTiming(this.numberAttribute("submenu-delay", 100)) }
+  public set submenuDelay(value: number) { this.setAttribute("submenu-delay", String(dropdownTiming(value))) }
   /** @min 0
    * @max 60000
    */
-  public get submenuDuration(): number { return this.timing(this.numberAttribute("submenu-duration", 150)) }
-  public set submenuDuration(value: number) { this.setAttribute("submenu-duration", String(this.timing(value))) }
+  public get submenuDuration(): number { return dropdownTiming(this.numberAttribute("submenu-duration", 150)) }
+  public set submenuDuration(value: number) { this.setAttribute("submenu-duration", String(dropdownTiming(value))) }
   /** @min 0
    * @max 60000
    */
-  public get typeaheadDuration(): number { return this.timing(this.numberAttribute("typeahead-duration", 500)) }
-  public set typeaheadDuration(value: number) { this.setAttribute("typeahead-duration", String(this.timing(value))) }
+  public get typeaheadDuration(): number { return dropdownTiming(this.numberAttribute("typeahead-duration", 500)) }
+  public set typeaheadDuration(value: number) { this.setAttribute("typeahead-duration", String(dropdownTiming(value))) }
   public get show(): boolean { return this.controller?.show ?? false }
   public get state(): "disconnected" | "pending" | "invalid" | "disabled" | "inline" | "open" | "closed" {
     if (!this.isConnected) return "disconnected"
@@ -138,10 +133,6 @@ export class Dropdown extends ViewElement {
   }
   public syncPosition(): boolean { return this.ready().syncPosition() }
 
-  private timing(value: number): number {
-    if (!Number.isFinite(value) || value < 0 || value > 60000) throw new RangeError("Dropdown timing must be finite between 0 and 60000.")
-    return value
-  }
   private ready(): DropdownController {
     if (!this.controller?.connected) throw new Error("Dropdown is not ready.")
     return this.controller
@@ -215,12 +206,18 @@ export class Dropdown extends ViewElement {
         if (strict) throw new TypeError("Dropdown needs one trigger and one menu region.")
         return
       }
-      if (children.length !== 2 || region.children.length !== 1 || !(region.firstElementChild instanceof HTMLButtonElement)) throw new TypeError("Author one direct native type=button inside DropdownTrigger and one root menu.")
-      const trigger = region.firstElementChild
+      const trigger = prepareAction(region)
+      if (!trigger) {
+        this.controller?.disconnect()
+        this.failed = false
+        if (strict) throw new TypeError("Dropdown trigger needs a label.")
+        return
+      }
+      if (children.length !== 2 || region.children.length !== 1 || !(trigger instanceof HTMLButtonElement)) throw new TypeError("Dropdown needs one type=button trigger and root menu.")
       if (!(trigger.textContent?.trim() || trigger.getAttribute("aria-label")?.trim() || trigger.getAttribute("aria-labelledby")?.trim())
-        || trigger.querySelector("button,a,input,select,textarea,label,[tabindex],[contenteditable],m-button")) throw new TypeError("Dropdown trigger needs a noninteractive native label.")
-      if ([...trigger.querySelectorAll("*")].some(node => node.localName.includes("-") && !isIconElement(node) && !isTypographyInline(node) && !isSpaceElement(node) && !isFlexElement(node) && !isGridElement(node) || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)
-        || node.hasAttribute("role") && !["none", "presentation", "img"].includes(node.getAttribute("role")!))) throw new TypeError("Dropdown trigger content must be passive native markup.")
+        || trigger.querySelector("button,a,input,select,textarea,label,[tabindex],[contenteditable],m-button")) throw new TypeError("Dropdown trigger needs a passive label.")
+      if ([...trigger.querySelectorAll("*")].some(node => !passiveContent(node) || node.shadowRoot || ["script", "style", "slot"].includes(node.localName)
+        || node.hasAttribute("role") && !["none", "presentation", "img"].includes(node.getAttribute("role")!))) throw new TypeError("Dropdown trigger content must be passive.")
       const prepareMenu = (panel: DropdownMenu, invoker: HTMLButtonElement): boolean => {
         prepareMenuSurface(panel)
         void panel.size
@@ -235,12 +232,12 @@ export class Dropdown extends ViewElement {
             if (node === label || node instanceof HTMLTemplateElement) continue
             if (node instanceof DropdownGroup) { if (!walk(node)) return false; continue }
             if (node instanceof DropdownDivider) continue
-            if (!(node instanceof DropdownItem)) throw new TypeError("Menus contain only DropdownItem, DropdownGroup, DropdownDivider or inert templates.")
+            if (!(node instanceof DropdownItem)) throw new TypeError("Menus require items, groups, dividers or inert templates.")
             if (!node.key.trim()) return false
             const action = prepareItem(node)
             const submenus = [...node.children].filter((child): child is DropdownMenu => child instanceof DropdownMenu)
             if (!action && node.children.length === 0) return false
-            if (!action || submenus.length > 1 || [...node.children].some(child => child !== action && child !== submenus[0] && !(child instanceof HTMLTemplateElement))) throw new TypeError("DropdownItem needs one native action and at most one submenu.")
+            if (!action || submenus.length > 1 || [...node.children].some(child => child !== action && child !== submenus[0] && !(child instanceof HTMLTemplateElement))) throw new TypeError("DropdownItem needs one action and at most one submenu.")
             if (!(node.label?.trim() || action.getAttribute("aria-label")?.trim() || action.getAttribute("aria-labelledby")?.trim() || action.textContent?.trim())) return false
             if (submenus[0]) {
               if (!(action instanceof HTMLButtonElement)) throw new TypeError("Submenu owners must be native buttons.")
@@ -254,7 +251,7 @@ export class Dropdown extends ViewElement {
       if (!prepareMenu(menu, trigger)) {
         this.controller?.disconnect()
         this.failed = false
-        if (strict) throw new TypeError("Dropdown items need a key and a labelled native action.")
+        if (strict) throw new TypeError("Dropdown items need keys and labels.")
         return
       }
       this.unlistenMenu()
@@ -289,7 +286,7 @@ export class Dropdown extends ViewElement {
       this.intent = undefined
       this.updateState()
       if (this.isConnected) this.observer?.observe(this, { childList: true, subtree: true, characterData: true, attributes: true,
-        attributeFilter: ["key", "label", "disabled", "href", "target", "download", "aria-label", "aria-labelledby", "type", "role", "contenteditable", "hidden", "inert", "id", "dir", "popover", "popovertarget"] })
+        attributeFilter: ["key", "label", "disabled", "href", "target", "download", "aria-label", "aria-labelledby", "aria-disabled", "aria-hidden", "aria-modal", "aria-haspopup", "type", "role", "contenteditable", "hidden", "inert", "id", "dir", "popover", "popovertarget"] })
     }
   }
 }

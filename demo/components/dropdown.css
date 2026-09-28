@@ -6,7 +6,7 @@ m-dropdown-trigger > button:disabled { opacity: .5; cursor: not-allowed; }
 m-dropdown-item > [data-part="action"] > [slot="icon"] { display: inline-block; inline-size: 18px; margin-inline-end: 6px; text-align: center; }
 .manual-area { position: relative; min-block-size: 180px; border: 1px dashed #208050; background: #eaf7ef; }
 .manual-area > m-dropdown { display: block; }
-.movable-trigger { position: absolute; left: 20px; top: 20px; }
+.movable-trigger > button { position: absolute; left: 20px; top: 20px; }
 .profile-label { display: flex !important; align-items: center; gap: 12px; padding: 8px 12px !important; line-height: 1.4 !important; }
 .profile-label img { inline-size: 34px; block-size: 34px; border-radius: 50%; object-fit: cover; }
 .profile-label > span { display: grid; gap: 2px; text-align: start; }

@@ -943,10 +943,14 @@ describe("Dropdown documentation and composition", () => {
     expect(parsed.querySelector("#dropdown-api")).not.toBeNull()
     expect(parsed.querySelectorAll("m-dropdown").length).toBeGreaterThan(10)
     expect(parsed.querySelector("[data-dropdown-menu],[data-dropdown-item]")).toBeNull()
-    for (const trigger of parsed.querySelectorAll("m-dropdown-trigger")) expect(trigger.querySelectorAll(':scope > button[type="button"]')).toHaveLength(1)
+    for (const preview of parsed.querySelectorAll("[data-demo-preview]")) {
+      if (preview.closest("[data-web-interop]")) continue
+      expect([...preview.querySelectorAll("*")].every(node => node.localName.startsWith("m-"))).toBe(true)
+    }
+    for (const trigger of parsed.querySelectorAll("m-dropdown-trigger")) expect(trigger.textContent!.trim()).not.toBe("")
     for (const item of parsed.querySelectorAll("m-dropdown-item")) {
       expect(item.getAttribute("key")).toBeTruthy()
-      expect(item.querySelectorAll(':scope > button[type="button"],:scope > a[href]')).toHaveLength(1)
+      expect(item.textContent!.trim()).not.toBe("")
     }
     const source = readFileSync("demo/components/dropdown.js", "utf8")
     expect(source).toContain('new URL("../api/dropdown.json", import.meta.url)')
