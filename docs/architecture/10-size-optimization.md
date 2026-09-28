@@ -335,7 +335,7 @@ closures are unchanged. The example's optional Form/Button files are not Tags de
 | Consumer | `node scripts/package-check.mjs`: 95 JS entries / 2,327 files, packed strict NodeNext types and runtime imports passed without installed ECharts. |
 | Size | `node scripts/size-report.mjs --output .vite/size/s2-tags.json`: measured results above; default diagnostics flag export/CSS changes. S0 baseline unchanged. |
 | Limits | JS is larger than S1; unification closes element capability gaps but is not a shrink result. Native references/callbacks remain explicit Web-only escape hatches. All-catalog browser, non-Web renderers and separate production-readiness gates remain open. |
-| Commit | Implementation commit recorded in the following documentation-only update. |
+| Commit | `03b1cd6` - `refactor: unify Dynamic Tags element behavior`. |
 
 ## Next-thread starting point
 
