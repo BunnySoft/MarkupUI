@@ -2,7 +2,6 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import {
-  createUpload,
   Upload,
   UploadDragger,
   UploadTrigger,
@@ -11,7 +10,9 @@ import {
 } from "../src/components/upload/index.js"
 import { ViewElement } from "../src/core/index.js"
 import { generateComponentApi } from "../scripts/component-api.mjs"
-import type { UploadContext, UploadController, UploadOptions, UploadResponse } from "../src/components/upload/index.js"
+import { createUpload } from "../src/components/upload/upload.js"
+import type { UploadController } from "../src/components/upload/upload.js"
+import type { UploadContext, UploadOptions, UploadResponse } from "../src/components/upload/index.js"
 
 // jsdom lacks DataTransfer. Preserve its real FileList implementation so native
 // input assignment, reset and FormData are still exercised, not hidden-field mocks.
@@ -434,6 +435,147 @@ describe("Upload disposal, callback guards and native fallback", () => {
 })
 
 describe("canonical Upload ViewElement", () => {
+  function element(options: UploadOptions = {}) {
+    const form = document.createElement("form")
+    const upload = document.createElement("m-upload") as Upload
+    upload.multiple = true; upload.name = "attachments"; upload.options = options
+    upload.innerHTML = "<m-upload-trigger>Browse</m-upload-trigger><m-upload-dragger>Drop files</m-upload-dragger><m-upload-file-list><m-span>Attachments</m-span></m-upload-file-list>"
+    form.append(upload); document.body.append(form)
+    return { upload, form, input: upload.native! }
+  }
+
+  it("maps portable regions to one visible labelled chooser and preserves authored nodes", () => {
+    const { upload, input, form } = element()
+    expect(upload.enhancementError).toBeNull()
+    expect(input.labels?.[0]?.textContent).toContain("Choose files")
+    expect(input.tabIndex).toBe(0); expect(input.hidden).toBe(false)
+    expect(upload.querySelector("m-upload-trigger button")?.getAttribute("type")).toBe("button")
+    const note = upload.querySelector("m-span")!, listener = vi.fn()
+    note.addEventListener("click", listener)
+    upload.addFiles([file()]); upload.clear(); note.dispatchEvent(new Event("click"))
+    expect(listener).toHaveBeenCalledOnce(); expect(note.isConnected).toBe(true)
+    upload.addFiles([file()]); const row = upload.querySelector("li")!
+    upload.label = "Documents"; upload.accept = ".txt"
+    expect(upload.querySelector("li")).toBe(row)
+    expect((new FormData(form).get("attachments") as File).name).toBe("draft.txt")
+    upload.focus(); expect(document.activeElement).toBe(input)
+  })
+
+  it("configures the single owner after connection without replacing rows or resending files", async () => {
+    const { upload, input } = element(), fake = transport()
+    upload.addFiles([file()]); const id = upload.files[0]!.id, row = upload.querySelector("li")
+    upload.options = { transport: fake.send, autoUpload: true, concurrency: 1, maxFiles: 2 }
+    await flush()
+    expect(fake.send).not.toHaveBeenCalled(); expect(upload.querySelector("li")).toBe(row)
+    expect(upload.native).toBe(input); expect(upload.files[0]!.id).toBe(id)
+    expect(() => { upload.options = { maxFileBytes: 1 } }).toThrow(/limits/)
+    expect(upload.options.transport).toBe(fake.send)
+    upload.start()
+    expect(() => { upload.options = {} }).toThrow(/idle/)
+    fake.jobs[0]!.resolve({ status: "finished" }); await upload.whenIdle()
+    expect(upload.files[0]!.status).toBe("finished")
+    upload.options = {}
+    expect(upload.files[0]!.status).toBe("finished")
+  })
+
+  it("retains ownership through ignored-abort settlement and never auto-resends on reconnect", async () => {
+    const fake = transport(), { upload, input, form } = element({ transport: fake.send, autoUpload: true })
+    upload.addFiles([file()]); expect(fake.send).toHaveBeenCalledOnce()
+    const old = fake.jobs[0]!
+    upload.remove(); form.append(upload)
+    expect(old.context.signal.aborted).toBe(true)
+    expect(upload.state?.active).toBe(1); expect(upload.state?.connected).toBe(false)
+    expect(() => upload.start()).toThrow(/unavailable/)
+    expect(old.context.reportProgress(1, 5)).toBe(false)
+    old.resolve({ status: "finished" }); await upload.whenIdle(); await flush()
+    expect(upload.state?.connected).toBe(true); expect(upload.native).toBe(input)
+    expect(upload.files[0]!.status).toBe("pending")
+    expect(fake.send).toHaveBeenCalledOnce()
+    upload.start(); expect(fake.send).toHaveBeenCalledTimes(2)
+    fake.jobs[1]!.resolve({ status: "finished" }); await upload.whenIdle()
+  })
+
+  it("does not reconnect after settlement when the host was removed again", async () => {
+    const fake = transport(), { upload, form } = element({ transport: fake.send })
+    upload.addFiles([file()]); upload.start()
+    upload.remove(); form.append(upload); upload.remove()
+    fake.jobs[0]!.resolve({ status: "finished" }); await flush()
+    expect(upload.state?.connected).toBe(false)
+    form.append(upload)
+    expect(upload.state?.connected).toBe(true); expect(fake.send).toHaveBeenCalledOnce()
+  })
+
+  it("disconnects during a start notification before invoking the transport", async () => {
+    const fake = transport(), { upload, form } = element({ transport: fake.send, autoUpload: true })
+    upload.addEventListener("m:upload-change", event => {
+      expect(event.target).toBe(upload)
+      if ((event as CustomEvent).detail.reason === "start") upload.remove()
+    })
+    upload.addFiles([file()])
+    expect(fake.send).not.toHaveBeenCalled()
+    form.append(upload); await flush()
+    expect(upload.state?.connected).toBe(true); expect(fake.send).not.toHaveBeenCalled()
+  })
+
+  it("preserves a completed request across a cancelled native reset", async () => {
+    const fake = transport(), { upload, form } = element({ transport: fake.send })
+    upload.addFiles([file()]); upload.start()
+    form.addEventListener("reset", event => event.preventDefault())
+    fake.jobs[0]!.resolve({ status: "finished" }); form.reset(); await flush()
+    expect(upload.files[0]!.status).toBe("finished")
+    expect((new FormData(form).get("attachments") as File).name).toBe("draft.txt")
+  })
+
+  it("uses native reset defaults without resurrecting selected files", async () => {
+    const { upload, form, input } = element()
+    upload.addFiles([file()]); form.reset(); input.value = ""; await flush()
+    expect(upload.files).toHaveLength(0)
+    upload.remove(); form.append(upload)
+    expect(upload.files).toHaveLength(0)
+  })
+
+  it("rejects multiple single-mode drops atomically and routes disabled state through native fieldset", () => {
+    const { upload, input } = element()
+    upload.multiple = false
+    expect(upload.addFiles([file("a"), file("b")]).accepted).toBe(false)
+    expect(input.files).toHaveLength(0)
+    upload.disabled = true
+    expect(upload.querySelector("m-upload-trigger button")?.matches(":disabled")).toBe(true)
+    expect(() => upload.addFiles([file()])).toThrow(/disabled/)
+    upload.disabled = false
+    expect(upload.addFiles([file()]).accepted).toBe(true)
+  })
+
+  it("honors canceled native chooser activation and never turns a drag region into a button", async () => {
+    const { upload, input } = element(), clicked = vi.spyOn(input, "click")
+    upload.addEventListener("click", event => event.preventDefault(), { once: true })
+    upload.querySelector<HTMLButtonElement>("m-upload-trigger button")!.click(); await flush()
+    expect(clicked).not.toHaveBeenCalled()
+    upload.querySelector<HTMLElement>("m-upload-dragger")!.click(); await flush()
+    expect(clicked).not.toHaveBeenCalled()
+    expect(upload.querySelector("m-upload-dragger[role],m-upload-dragger[tabindex]")).toBeNull()
+  })
+
+  it("leaves a working native fallback and never fabricates queue files without DataTransfer", () => {
+    vi.stubGlobal("DataTransfer", undefined)
+    const { upload, input, form } = element()
+    expect(upload.enhancementError).toBeInstanceOf(Error); expect(upload.state).toBeNull()
+    expect(input.hidden).toBe(false)
+    expect(upload.querySelector("[data-upload-actions]")?.hasAttribute("hidden")).toBe(true)
+    const selected = new Transfer(); selected.items.add(file()); input.files = selected.files
+    input.dispatchEvent(new Event("change", { bubbles: true }))
+    expect((new FormData(form).get("attachments") as File).name).toBe("draft.txt")
+    expect(upload.files).toHaveLength(0); expect(() => upload.addFiles([file()])).toThrow(/unavailable/)
+  })
+
+  it("keeps nested Upload selections and events with their own controllers", () => {
+    const { upload: outer } = element(), inner = document.createElement("m-upload") as Upload
+    outer.append(inner); inner.addFiles([file("inner")])
+    expect(outer.files).toHaveLength(0); expect(inner.files[0]!.name).toBe("inner")
+    outer.addFiles([file("outer")])
+    expect(outer.files[0]!.name).toBe("outer"); expect(inner.files[0]!.name).toBe("inner")
+  })
+
   it("exports canonical own-tag ViewElements and registers m-upload and companion elements", () => {
     expect(Upload.tag).toBe("m-upload")
     expect(UploadDragger.tag).toBe("m-upload-dragger")
@@ -447,25 +589,21 @@ describe("canonical Upload ViewElement", () => {
     expect(customElements.get("m-upload-dragger")).toBe(UploadDragger)
     expect(customElements.get("m-upload-trigger")).toBe(UploadTrigger)
     expect(customElements.get("m-upload-file-list")).toBe(UploadFileList)
-    expect(Upload.observedAttributes).toEqual(["action", "accept", "multiple", "disabled", "name", "directory"])
+    expect(Upload.observedAttributes).toEqual(["accept", "multiple", "disabled", "name", "directory", "label"])
     expect(typeof registerUpload).toBe("function")
   })
 
   it("initializes default attributes and reflects properties", () => {
     const upload = document.createElement("m-upload") as Upload
     document.body.append(upload)
-    expect(upload.action).toBe("")
     expect(upload.accept).toBe("")
     expect(upload.multiple).toBe(false)
     expect(upload.disabled).toBe(false)
     expect(upload.name).toBe("")
     expect(upload.directory).toBe(false)
-    expect(upload.fileList).toEqual([])
     expect(upload.files).toEqual([])
-
-    upload.action = "/upload"
-    expect(upload.action).toBe("/upload")
-    expect(upload.getAttribute("action")).toBe("/upload")
+    expect(upload.options).toEqual({})
+    expect(upload.label).toBe("Files")
 
     upload.accept = ".png,.jpg"
     expect(upload.accept).toBe(".png,.jpg")
@@ -502,7 +640,6 @@ describe("canonical Upload ViewElement", () => {
 
   it("synchronizes attributes with the internal native file input", () => {
     const upload = document.createElement("m-upload") as Upload
-    upload.action = "/api/upload"
     upload.accept = ".csv"
     upload.multiple = true
     upload.disabled = true
@@ -528,7 +665,7 @@ describe("canonical Upload ViewElement", () => {
     expect(input.multiple).toBe(false)
   })
 
-  it("opens file chooser via UploadTrigger and respects disabled state", () => {
+  it("opens file chooser via a native UploadTrigger button and respects disabled state", async () => {
     const upload = document.createElement("m-upload") as Upload
     const trigger = document.createElement("m-upload-trigger") as UploadTrigger
     const button = document.createElement("button")
@@ -540,15 +677,17 @@ describe("canonical Upload ViewElement", () => {
     const input = upload.querySelector<HTMLInputElement>("input[type='file']")!
     const clickSpy = vi.spyOn(input, "click")
 
-    trigger.click()
+    button.click()
+    await flush()
     expect(clickSpy).toHaveBeenCalledTimes(1)
 
     upload.disabled = true
-    trigger.click()
+    button.click()
+    await flush()
     expect(clickSpy).toHaveBeenCalledTimes(1)
   })
 
-  it("handles file change events and emits m:change", () => {
+  it("handles file change events and emits m:upload-change", () => {
     const upload = document.createElement("m-upload") as Upload
     const fileListElem = document.createElement("m-upload-file-list") as UploadFileList
     upload.append(fileListElem)
@@ -556,7 +695,7 @@ describe("canonical Upload ViewElement", () => {
 
     const input = upload.querySelector<HTMLInputElement>("input[type='file']")!
     const changeListener = vi.fn()
-    upload.addEventListener("m:change", changeListener)
+    upload.addEventListener("m:upload-change", changeListener)
 
     const testFile = new File(["sample content"], "sample.txt", { type: "text/plain" })
     const transfer = new Transfer()
@@ -566,10 +705,10 @@ describe("canonical Upload ViewElement", () => {
     input.dispatchEvent(new Event("change", { bubbles: true }))
     expect(changeListener).toHaveBeenCalledTimes(1)
     const detail = changeListener.mock.calls[0]![0].detail
-    expect(detail.fileList).toHaveLength(1)
-    expect(detail.fileList[0].name).toBe("sample.txt")
-    expect(upload.fileList).toHaveLength(1)
-    expect(upload.fileList[0]!.name).toBe("sample.txt")
+    expect(detail.files).toHaveLength(1)
+    expect(detail.files[0].name).toBe("sample.txt")
+    expect(upload.files).toHaveLength(1)
+    expect(upload.files[0]!.name).toBe("sample.txt")
     expect(fileListElem.children.length).toBe(1)
     expect(fileListElem.textContent).toContain("sample.txt")
   })
@@ -583,16 +722,17 @@ describe("canonical Upload ViewElement", () => {
     document.body.append(upload)
 
     const dragOverEvent = new Event("dragover", { bubbles: true, cancelable: true })
+    Object.defineProperty(dragOverEvent, "dataTransfer", { value: new Transfer() })
     dragger.dispatchEvent(dragOverEvent)
     expect(dragOverEvent.defaultPrevented).toBe(true)
-    expect(dragger.dataset.dragover).toBe("true")
+    expect(dragger.hasAttribute("data-upload-dragover")).toBe(true)
 
     const dragLeaveEvent = new Event("dragleave", { bubbles: true })
     dragger.dispatchEvent(dragLeaveEvent)
-    expect(dragger.dataset.dragover).toBeUndefined()
+    expect(dragger.hasAttribute("data-upload-dragover")).toBe(false)
 
     const changeListener = vi.fn()
-    upload.addEventListener("m:change", changeListener)
+    upload.addEventListener("m:upload-change", changeListener)
 
     const testFile = new File(["dropped content"], "drop.txt", { type: "text/plain" })
     const transfer = new Transfer()
@@ -603,10 +743,10 @@ describe("canonical Upload ViewElement", () => {
     dragger.dispatchEvent(dropEvent)
 
     expect(dropEvent.defaultPrevented).toBe(true)
-    expect(dragger.dataset.dragover).toBeUndefined()
+    expect(dragger.hasAttribute("data-upload-dragover")).toBe(false)
     expect(changeListener).toHaveBeenCalledTimes(1)
-    expect(upload.fileList).toHaveLength(1)
-    expect(upload.fileList[0]!.name).toBe("drop.txt")
+    expect(upload.files).toHaveLength(1)
+    expect(upload.files[0]!.name).toBe("drop.txt")
     expect(fileListElem.textContent).toContain("drop.txt")
   })
 
@@ -618,7 +758,7 @@ describe("canonical Upload ViewElement", () => {
     document.body.append(upload)
 
     const changeListener = vi.fn()
-    upload.addEventListener("m:change", changeListener)
+    upload.addEventListener("m:upload-change", changeListener)
 
     const dragOverEvent = new Event("dragover", { bubbles: true, cancelable: true })
     dragger.dispatchEvent(dragOverEvent)
@@ -631,7 +771,7 @@ describe("canonical Upload ViewElement", () => {
     dragger.dispatchEvent(dropEvent)
 
     expect(changeListener).not.toHaveBeenCalled()
-    expect(upload.fileList).toHaveLength(0)
+    expect(upload.files).toHaveLength(0)
   })
 
   it("supports clearing selected files", () => {
@@ -640,13 +780,13 @@ describe("canonical Upload ViewElement", () => {
     upload.append(fileListElem)
     document.body.append(upload)
 
-    upload.handleDroppedFiles([new File(["test"], "test.txt", { type: "text/plain" })])
-    expect(upload.fileList).toHaveLength(1)
+    upload.addFiles([new File(["test"], "test.txt", { type: "text/plain" })])
+    expect(upload.files).toHaveLength(1)
     expect(fileListElem.children.length).toBe(1)
 
     upload.clear()
-    expect(upload.fileList).toHaveLength(0)
-    expect(fileListElem.children.length).toBe(0)
+    expect(upload.files).toHaveLength(0)
+    expect(fileListElem.querySelector("ul")!.children.length).toBe(0)
   })
 
   it("adopts authored native file input inside m-upload", () => {
@@ -671,7 +811,8 @@ describe("canonical Upload ViewElement", () => {
     const [upload, trigger, dragger, fileList] = docs.elements
     expect(upload.type).toBe("Upload")
     expect(upload.web.primary).toBe("m-upload")
-    expect(upload.properties.action).toMatchObject({ default: "", attribute: "action" })
+    expect(upload.properties.action).toBeUndefined()
+    expect(upload.properties.fileList).toBeUndefined()
     expect(upload.properties.accept).toMatchObject({ default: "", attribute: "accept" })
     expect(upload.properties.multiple).toMatchObject({ default: false, encoding: "presence", attribute: "multiple" })
     expect(upload.properties.disabled).toMatchObject({ default: false, encoding: "presence", attribute: "disabled" })
@@ -679,11 +820,11 @@ describe("canonical Upload ViewElement", () => {
     expect(upload.properties.directory).toMatchObject({ default: false, encoding: "presence", attribute: "directory" })
     expect(upload.events).toContainEqual({
       name: "Change",
-      web: "m:change",
+      web: "m:upload-change",
       bubbles: true,
       cancelable: false,
       composed: false,
-      detail: { fileList: "Array" },
+      detail: { reason: "string", files: "readonly UploadFile[]", state: "UploadState" },
     })
     expect(upload.regions.map((r: { name: string }) => r.name)).toEqual(["trigger", "dragger", "fileList"])
 

@@ -1,5 +1,3 @@
-import { ownedWrites } from "../popover/position.js"
-
 export type UploadStatus = "pending" | "queued" | "uploading" | "cancelling" | "cancelled" | "finished" | "error" | "removed"
 export interface UploadResponse { readonly status: "finished"; readonly response?: unknown }
 export interface UploadContext {
@@ -69,6 +67,7 @@ export interface UploadController {
   readonly connected: boolean
   readonly files: readonly UploadFile[]
   readonly state: UploadState
+  configure(options: UploadOptions): void
   add(files: readonly File[] | FileList, mode?: "append" | "replace"): UploadSelection
   start(id?: string): void
   retry(id: string): void
@@ -105,7 +104,6 @@ interface Job {
   abort: AbortController
   generation: number
   attempt: number
-  invoked: boolean
   failure: unknown
 }
 const owner = Symbol.for("markup-ui.upload.owner")
@@ -117,15 +115,50 @@ const labels: Record<UploadStatus, string> = {
   error: "Failed; retry available", removed: "Removed",
 }
 
+export function uploadSettings(options: UploadOptions) {
+  if (!options || typeof options !== "object" || Array.isArray(options)
+    || Object.keys(options).some(key => !["transport", "selection", "maxFiles", "maxFileBytes", "concurrency", "autoUpload", "drop", "onChange"].includes(key))) throw new TypeError("Unsupported Upload options.")
+  const settings = { selection: "replace", maxFiles: 20, maxFileBytes: 25 * 1024 * 1024, concurrency: 2, autoUpload: false, drop: true, ...options }
+  if (!["replace", "append"].includes(settings.selection) || !Number.isInteger(settings.maxFiles) || settings.maxFiles < 1 || settings.maxFiles > 100
+    || !Number.isSafeInteger(settings.maxFileBytes) || settings.maxFileBytes < 0
+    || !Number.isInteger(settings.concurrency) || settings.concurrency < 1 || settings.concurrency > 4
+    || typeof settings.autoUpload !== "boolean" || typeof settings.drop !== "boolean"
+    || settings.transport !== undefined && typeof settings.transport !== "function"
+    || settings.onChange !== undefined && typeof settings.onChange !== "function"
+    || settings.autoUpload && !settings.transport) throw new TypeError("Use bounded file/count/concurrency settings and explicit function transport/callbacks.")
+  return settings
+}
+
 /** Owns a bounded queue and real FileList membership, never a backend or transport policy. */
-export function createUpload(element: HTMLElement, options: UploadOptions = {}): UploadController {
+export function createUpload(element: HTMLElement, options: UploadOptions = {}, eventTarget = element, startInitial = true): UploadController {
   const document = element?.ownerDocument, view = document?.defaultView
   if (!view || !(element instanceof view.HTMLElement) || !["div", "section"].includes(element.localName)
     || !element.matches(".m-upload[data-upload]") || !element.isConnected || element.getRootNode() !== document
-    || (element as Owned)[owner] || element.closest("m-upload") || element.getAttribute("tabindex") !== "-1") {
+    || (element as Owned)[owner] || element.getAttribute("tabindex") !== "-1") {
     throw new TypeError("Use an unowned connected native .m-upload[data-upload][tabindex='-1'] scope.")
   }
-  const win = view, doc = document!, token = {}, writes = ownedWrites()
+  const win = view, doc = document!, token = {}
+  const leases = new Map<Element, Map<string, { before: string | null; value: string | null }>>()
+  function attribute(node: Element, name: string, value: string | null) {
+    if (value === null) node.removeAttribute(name)
+    else node.setAttribute(name, value)
+  }
+  const writes = {
+    attr(node: Element, name: string, value: string | null) {
+      let fields = leases.get(node)
+      if (!fields) leases.set(node, fields = new Map())
+      let field = fields.get(name)
+      if (!field) fields.set(name, field = { before: node.getAttribute(name), value })
+      field.value = value
+      attribute(node, name, value)
+    },
+    restore() {
+      for (const [node, fields] of leases) for (const [name, field] of fields) {
+        if (node.getAttribute(name) === field.value) attribute(node, name, field.before)
+      }
+      leases.clear()
+    },
+  }
   function named(node: HTMLElement) {
     return !!(node.getAttribute("aria-label")?.trim() || node.getAttribute("aria-labelledby")?.trim().split(/\s+/).every(id => doc.getElementById(id)?.textContent?.trim()))
   }
@@ -175,16 +208,7 @@ export function createUpload(element: HTMLElement, options: UploadOptions = {}):
     return node
   }
   rowTemplate()
-  if (!options || typeof options !== "object" || Array.isArray(options)
-    || Object.keys(options).some(key => !["transport", "selection", "maxFiles", "maxFileBytes", "concurrency", "autoUpload", "drop", "onChange"].includes(key))) throw new TypeError("Unsupported Upload options.")
-  const settings = { selection: "replace", maxFiles: 20, maxFileBytes: 25 * 1024 * 1024, concurrency: 2, autoUpload: false, drop: true, ...options }
-  if (!["replace", "append"].includes(settings.selection) || !Number.isInteger(settings.maxFiles) || settings.maxFiles < 1 || settings.maxFiles > 100
-    || !Number.isSafeInteger(settings.maxFileBytes) || settings.maxFileBytes < 0 || settings.maxFileBytes > Number.MAX_SAFE_INTEGER
-    || !Number.isInteger(settings.concurrency) || settings.concurrency < 1 || settings.concurrency > 4
-    || typeof settings.autoUpload !== "boolean" || typeof settings.drop !== "boolean"
-    || settings.transport !== undefined && typeof settings.transport !== "function"
-    || settings.onChange !== undefined && typeof settings.onChange !== "function"
-    || settings.autoUpload && !settings.transport) throw new TypeError("Use bounded file/count/concurrency settings and explicit function transport/callbacks.")
+  let settings = uploadSettings(options)
   // Probe a detached input only: unsupported synchronization leaves the original chooser untouched.
   try {
     const probe = doc.createElement("input"); probe.type = "file"
@@ -225,13 +249,9 @@ export function createUpload(element: HTMLElement, options: UploadOptions = {}):
       resetPending: resetting, lastError })
   }
   function enable(button: HTMLButtonElement, enabled: boolean, owned = true) {
-    const disabled = !enabled || authoredDisabled.get(button) === true, attribute = (name: string, value: string | null) => {
-      if (owned) writes.attr(button, name, value)
-      else if (value === null) button.removeAttribute(name)
-      else button.setAttribute(name, value)
-    }
-    attribute("disabled", disabled && doc.activeElement !== button ? "" : null)
-    attribute("aria-disabled", disabled ? "true" : null)
+    const disabled = !enabled || authoredDisabled.get(button) === true, write = owned ? writes.attr : attribute
+    write(button, "disabled", disabled && doc.activeElement !== button ? "" : null)
+    write(button, "aria-disabled", disabled ? "true" : null)
   }
   function render(progressOnly = false) {
     if (!connected) return
@@ -268,7 +288,7 @@ export function createUpload(element: HTMLElement, options: UploadOptions = {}):
     else if (phase === "transport") notice = "Transport failed; review the file status."
     render()
     const previous = notifying; notifying = true
-    try { element.dispatchEvent(new win.CustomEvent("m:upload-error", { bubbles: true, detail: Object.freeze({ error, phase, file: entry ? snapshot(entry) : null }) })) }
+    try { eventTarget.dispatchEvent(new win.CustomEvent("m:upload-error", { bubbles: true, detail: Object.freeze({ error, phase, file: entry ? snapshot(entry) : null }) })) }
     finally { notifying = previous }
   }
   function emit(reason: string, entry: Entry | null = null, selection: UploadSelection | null = null) {
@@ -281,7 +301,7 @@ export function createUpload(element: HTMLElement, options: UploadOptions = {}):
     const detail: UploadChange = Object.freeze({ reason, file: entry ? snapshot(entry) : null, files: files(), state: state(), selection })
     const stamp = version, previous = notifying; notifying = true
     try {
-      element.dispatchEvent(new win.CustomEvent("m:upload-change", { bubbles: true, detail }))
+      eventTarget.dispatchEvent(new win.CustomEvent("m:upload-change", { bubbles: true, detail }))
       if (connected && element.isConnected && version === stamp) {
         try {
           const result: unknown = settings.onChange?.(detail)
@@ -336,7 +356,7 @@ export function createUpload(element: HTMLElement, options: UploadOptions = {}):
     } catch (error) {
       // Fail closed rather than leave removed/rejected queue entries in native FormData.
       input.value = ""; lastError = error; disconnect()
-      element.dispatchEvent(new win.CustomEvent("m:upload-error", { bubbles: true, detail: Object.freeze({ error, phase: "synchronization", cleared: true }) }))
+      eventTarget.dispatchEvent(new win.CustomEvent("m:upload-error", { bubbles: true, detail: Object.freeze({ error, phase: "synchronization", cleared: true }) }))
       throw error
     }
   }
@@ -407,7 +427,7 @@ export function createUpload(element: HTMLElement, options: UploadOptions = {}):
     }
     job.entry.loaded = loaded; job.entry.total = total; render(true)
     const previous = notifying; notifying = true
-    try { element.dispatchEvent(new win.CustomEvent("m:upload-progress", { bubbles: true, detail: snapshot(job.entry) })) }
+    try { eventTarget.dispatchEvent(new win.CustomEvent("m:upload-progress", { bubbles: true, detail: snapshot(job.entry) })) }
     finally { notifying = previous }
     return true
   }
@@ -454,10 +474,9 @@ export function createUpload(element: HTMLElement, options: UploadOptions = {}):
       while (connected && !resetting && !blocked() && synchronized() && flights.size < settings.concurrency) {
         const entry = entries.find(item => item.status === "queued")
         if (!entry) break
-        const job: Job = { entry, generation, attempt: ++entry.attempt, abort: new win.AbortController(), invoked: false, failure: null }
+        const job: Job = { entry, generation, attempt: ++entry.attempt, abort: new win.AbortController(), failure: null }
         entry.job = job; entry.status = "uploading"; flights.add(job); emit("start", entry)
         if (!current(job)) { job.abort.abort("not-started"); finish(job, null); continue }
-        job.invoked = true
         let result: UploadResponse | Promise<UploadResponse>
         invoking = true
         try {
@@ -508,6 +527,16 @@ export function createUpload(element: HTMLElement, options: UploadOptions = {}):
   function listen(node: EventTarget, type: string, callback: EventListener, capture = false) {
     node.addEventListener(type, callback, capture); listeners.push(() => node.removeEventListener(type, callback, capture))
   }
+  function configure(options: UploadOptions) {
+    const next = uploadSettings(options)
+    transaction(() => {
+      if (flights.size || entries.some(entry => entry.status === "queued")) throw new Error("Wait for Upload to become idle before configuring it.")
+      if (entries.length > next.maxFiles || entries.some(entry => entry.file.size > next.maxFileBytes)) throw new RangeError("Current files exceed the new Upload limits.")
+      settings = next
+      if (drop) writes.attr(drop, "hidden", settings.drop ? null : "")
+      render()
+    })
+  }
   function handleError(error: unknown) {
     notice = error instanceof Error ? error.message.slice(0, 512) : "Upload operation failed."
     report(error, "operation"); render()
@@ -549,6 +578,7 @@ export function createUpload(element: HTMLElement, options: UploadOptions = {}):
     catch (error) { handleError(error) }
   })
   listen(element, "click", event => {
+    if (event.defaultPrevented) return
     const button = event.target instanceof win.Element ? event.target.closest("button") : null
     if (!(button instanceof win.HTMLButtonElement) || !own(button) || button.matches(":disabled") || button.getAttribute("aria-disabled") === "true") return
     const row = button.closest<HTMLLIElement>("[data-upload-id]")
@@ -580,8 +610,8 @@ export function createUpload(element: HTMLElement, options: UploadOptions = {}):
       finally { resetCompletions.splice(0).forEach(finish => finish()); pump() }
     }, 0)
   }, true)
-  if (drop && settings.drop) {
-    const fileDrag = (event: DragEvent) => event.dataTransfer?.types.includes("Files")
+  if (drop) {
+    const fileDrag = (event: DragEvent) => settings.drop && event.dataTransfer?.types.includes("Files")
     for (const type of ["dragenter", "dragover"]) listen(drop, type, event => {
       const drag = event as DragEvent
       if (!fileDrag(drag)) return
@@ -603,10 +633,10 @@ export function createUpload(element: HTMLElement, options: UploadOptions = {}):
     })
   }
   observer.observe(doc.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ["disabled", "hidden", "inert", "type", "open", "style", "class"] })
-  if (settings.autoUpload) win.queueMicrotask(() => { if (connected && !blocked()) { try { start() } catch (error) { handleError(error) } } })
+  if (startInitial && settings.autoUpload) win.queueMicrotask(() => { if (connected && !blocked()) { try { start() } catch (error) { handleError(error) } } })
   return {
     element, input, list, get connected() { return connected }, get files() { return files() }, get state() { return state() },
-    add, start, retry: id => start(id, true), cancel, remove, clear, refresh,
+    configure, add, start, retry: id => start(id, true), cancel, remove, clear, refresh,
     whenIdle() { return !flights.size && !entries.some(entry => entry.status === "queued") ? Promise.resolve() : new Promise(resolve => idle.add(resolve)) },
     disconnect,
   }

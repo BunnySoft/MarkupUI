@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Unified Upload's native FileList, queue and transport behind `m-upload`. Portable
+  trigger/drop/list regions map to labelled native controls, progress and actions.
+  Explicit typed transport configuration, bounded selection, cancellation/retry,
+  native submission/reset and delayed reconnect are retained. Removed the public
+  factory, inert `action`, duplicate `fileList` and fake dropped-file cache.
+  Unsupported FileList synchronization keeps the visible native chooser usable.
+
 - Unified Cascader through one internal path/defaults/validation controller. Portable
   `m-cascader` accepts bounded typed or JSON options and lazy data; the Web renderer owns
   labelled native dependent selects and form submission. Explicit partial paths,

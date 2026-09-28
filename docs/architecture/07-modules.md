@@ -421,6 +421,20 @@ relative to the Tree task, leaving one classic byte under the unchanged 12,000-b
 runtime ceiling. The passive data helper is bundled locally, not hidden in a new
 dependency file. Tree Select's existing shared parser/native-select boundary is unchanged.
 
+## Upload delivery
+
+Upload selects core plus its family entry and CSS. Its four canonical elements map
+portable regions into native input/list/action semantics without Button or Progress
+registration. The application supplies transport through typed `options`; native Files
+and transport callbacks are explicit Web interoperability. The public factory, inert
+`action`, duplicate `fileList` and competing dropped-file path are removed.
+
+ESM/classic entries cost 9,366/9,525 gzip bytes, or 10,789/10,997 including core.
+The unchanged 11,000 runtime ceiling has three classic bytes of headroom.
+The capability reconciliation adds 373 gzip bytes per format; it is not a size saving.
+No mandatory dependency was added, and the native chooser remains available when
+DataTransfer/FileList synchronization cannot be enhanced.
+
 ## Reproducible size reports
 
 After `pnpm build`, run `pnpm size:report` (or `node scripts/size-report.mjs`).

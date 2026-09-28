@@ -453,6 +453,48 @@ try {
                   assert.equal(await page.locator("m-cascader[role],m-cascader[tabindex]").count(), 0)
                   assert.equal(await page.evaluate(() => !!customElements.get("m-tree") || !!customElements.get("m-select") || !!customElements.get("m-tree-select")), false)
                 }
+                if (slug === "upload") {
+                  const basic = page.locator("#basic-upload")
+                  await basic.locator('input[type="file"]').setInputFiles({ name: "report.txt", mimeType: "text/plain", buffer: Buffer.from("local report") })
+                  assert.equal(await basic.evaluate(element => element.files[0].status), "pending")
+                  const actions = basic.locator("[data-upload-actions]")
+                  await actions.getByRole("button", { name: "Start", exact: true }).click()
+                  await page.waitForFunction(() => document.getElementById("basic-upload").files[0].loaded > 0)
+                  assert.equal(await basic.locator("progress").isVisible(), true)
+                  await basic.scrollIntoViewIfNeeded()
+                  await page.screenshot({ path: resolve(output, `${name}-${layout}-upload.png`) })
+                  await actions.getByRole("button", { name: "Cancel", exact: true }).click()
+                  await page.waitForFunction(() => document.getElementById("basic-upload").files[0].status === "cancelled")
+                  await basic.getByRole("button", { name: "Retry", exact: true }).click()
+                  await page.waitForFunction(() => document.getElementById("basic-upload").files[0].status === "finished")
+                  const reconnected = await basic.evaluate(element => {
+                    const parent = element.parentElement, input = element.native
+                    element.remove(); parent.append(element)
+                    return { same: element.native === input, status: element.files[0].status }
+                  })
+                  assert.deepEqual(reconnected, { same: true, status: "pending" })
+                  const chooser = page.waitForEvent("filechooser")
+                  await basic.getByRole("button", { name: "Select File", exact: true }).focus()
+                  await page.keyboard.press("Enter")
+                  await (await chooser).setFiles({ name: "keyboard.txt", mimeType: "text/plain", buffer: Buffer.from("keyboard") })
+                  assert.equal(await basic.evaluate(element => element.files[0].name), "keyboard.txt")
+                  const form = page.locator("#upload-form"), field = page.locator("#form-upload")
+                  await field.locator('input[type="file"]').setInputFiles({ name: "attachment.txt", mimeType: "text/plain", buffer: Buffer.from("attachment") })
+                  await form.getByRole("button", { name: "Read files", exact: true }).click()
+                  assert.equal(await page.locator("#form-value").textContent(), "Files: attachment.txt")
+                  await form.getByRole("button", { name: "Reset files", exact: true }).click()
+                  await page.waitForFunction(() => document.getElementById("form-upload").files.length === 0)
+                  await page.locator("#dragger-upload").evaluate(element => {
+                    const transfer = new DataTransfer(); transfer.items.add(new File(["flat"], "dropped.txt"))
+                    element.querySelector("m-upload-dragger").dispatchEvent(new DragEvent("drop", { bubbles: true, cancelable: true, dataTransfer: transfer }))
+                    if (element.files[0]?.name !== "dropped.txt") throw new Error("Portable Upload drop did not reach its queue")
+                  })
+                  await page.locator("#dragger-upload").scrollIntoViewIfNeeded()
+                  await page.screenshot({ path: resolve(output, `${name}-${layout}-upload-drop.png`) })
+                  assert.equal(await page.locator("#disabled-upload input").isDisabled(), true)
+                  assert.equal(await page.locator("m-upload[role],m-upload[tabindex],m-upload-dragger[role=button]").count(), 0)
+                  assert.equal(await page.evaluate(() => !!customElements.get("m-popover") || !!customElements.get("m-progress")), false)
+                }
                 if (slug === "calendar") {
                   const basic = page.locator("#basic-calendar")
                   assert.equal(await page.getByRole("group", { name: "Schedule", exact: true }).count(), 1)

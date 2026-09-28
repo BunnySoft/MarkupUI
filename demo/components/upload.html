@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./upload.css">
@@ -18,6 +19,7 @@
   <script defer src="../../dist/markup-ui-upload.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
   <script type="module" src="./upload.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -25,7 +27,7 @@
 <body>
   <main data-demo-page class="component-docs">
     <h1>Upload</h1>
-    <p>Upload files via traditional select or drag-and-drop.</p>
+    <p>Native file selection with a bounded queue and explicit application-supplied transport.</p>
     <nav class="component-docs-nav" aria-label="Upload documentation">
       <a href="#basic-title">Examples</a>
       <a href="#required-files">Setup</a>
@@ -40,27 +42,55 @@
     </details>
 
     <section data-demo-example="basic" aria-labelledby="basic-title">
-      <header data-demo-header><div><h2 id="basic-title">Basic upload</h2><p>Click to select files using a trigger button.</p></div></header>
+      <header data-demo-header><div><h2 id="basic-title">Local transport simulation</h2><p>Select files, start, cancel or retry. This example simulates progress locally and sends no network request.</p></div></header>
       <div data-demo-preview>
-        <m-upload action="/upload" id="basic-upload">
+        <m-upload multiple label="Documents" id="basic-upload">
           <m-upload-trigger>
             <m-button>Select File</m-button>
           </m-upload-trigger>
           <m-upload-file-list></m-upload-file-list>
         </m-upload>
+        <m-p id="upload-status">No files selected.</m-p>
       </div>
     </section>
 
     <section data-demo-example="dragger" aria-labelledby="dragger-title">
-      <header data-demo-header><div><h2 id="dragger-title">Drag and drop</h2><p>Drag files into the drop area or click to browse files.</p></div></header>
+      <header data-demo-header><div><h2 id="dragger-title">Drag and drop</h2><p>Append flat files or use the native chooser. Directory drops are not crawled.</p></div></header>
       <div data-demo-preview>
-        <m-upload action="/upload" multiple id="dragger-upload">
+        <m-upload multiple label="Attachments" id="dragger-upload">
           <m-upload-dragger>
-            <m-p>Click or drag files to this area to upload</m-p>
+            <m-p>Drop files here</m-p>
           </m-upload-dragger>
           <m-upload-file-list></m-upload-file-list>
         </m-upload>
       </div>
+    </section>
+
+    <section data-demo-example="form" aria-labelledby="form-title">
+      <header data-demo-header><div><h2 id="form-title">Native submission and reset</h2><p>Selected files remain in native FormData, including after transport completion. Reset clears the selection.</p></div></header>
+      <div data-demo-preview>
+        <m-form id="upload-form">
+          <m-upload name="attachments" label="Form attachments" multiple id="form-upload"></m-upload>
+          <m-button attr-type="submit">Read files</m-button>
+          <m-button attr-type="reset">Reset files</m-button>
+        </m-form>
+        <m-p id="form-value">Files: none</m-p>
+      </div>
+    </section>
+
+    <section aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Behavior and accessibility</h2>
+      <p>Author Upload and its regions using m-* elements. The Web renderer owns the labelled file input, native buttons, list, progress and fieldset. The optional trigger has native keyboard activation; the drop region is not a button. No hidden-field replacement or file metadata cache substitutes for actual files.</p>
+      <p>Assign <code>options</code> with an explicit <code>transport(file, context)</code>. The context provides an abort signal and byte progress reporting; success requires <code>{status: "finished"}</code>. Cancellation does not undo server effects or free a slot until the request settles. Configure only while idle. Reconnecting never automatically resends retained files.</p>
+      <p>The default selection mode is replace; append and automatic upload are explicit options. File/count/concurrency limits reject whole batches. Accept is a chooser hint, not server-side validation. Without native FileList synchronization the visible chooser remains usable for submission and enhancement controls stay hidden.</p>
+      <p>The demo additionally selects Button, Typography and Form. These are not Upload runtime dependencies. Files, transport callbacks and the <code>native</code> inspection property are Web interoperability surfaces.</p>
+      <pre><code>upload.options = {
+  concurrency: 2,
+  transport: async (file, { signal, reportProgress }) =&gt; {
+    const result = await applicationUpload(file, signal, reportProgress)
+    return { status: "finished", response: result }
+  }
+}</code></pre>
     </section>
 
     <section data-demo-example="disabled" aria-labelledby="disabled-title">

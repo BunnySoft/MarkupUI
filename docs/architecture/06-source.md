@@ -241,6 +241,12 @@ validation, async and cleanup owner; its factory is internal. Passive data valid
 and rendering live in `tree/source.ts`, without Tree registration or a new delivery
 entry. Loaded data uses this same mapping, not a parallel native-DOM loader API.
 
+Upload's `upload-element.ts` maps `m-upload` and its three content regions into native
+fieldset, chooser, queue and actions. The existing `upload.ts` is the sole FileList,
+selection, transport, progress, cancellation and reset owner. No public factory,
+duplicate file cache or implicit HTTP transport remains. Attribute-only leases stay
+local; Upload no longer bundles unused positioning/style-write mechanics.
+
 DOM operations belong in the Web base or component implementation, not documentation
 tooling. Keep component-specific resources, focus, accessibility and cleanup with the
 component. A shared helper needs a demonstrated common responsibility.

@@ -1,7 +1,7 @@
 # 10. JavaScript size optimization plan
 
 Status: S0-S1 verified September 24, 2026. S2 Dynamic Tags, Dynamic Input, Calendar and Tree
-and Cascader reconciliation verified September 28, 2026, with test scope and timing limitations
+and Cascader/Upload reconciliation verified September 28, 2026, with test scope and timing limitations
 recorded below. Remaining S2 families and S3-S6 are open.
 Plan recorded September 23, 2026.
 Implementation baseline: `cb00af1` on `main`, package version `0.13.0`.
@@ -642,16 +642,63 @@ This inventory is not implementation or acceptance evidence:
   for all renderer/queue code. Run source, distribution, FileList/form and three-engine
   interaction checks before calling the family complete.
 
+### S2 - Upload reconciliation, September 28, 2026
+
+The canonical element now delegates to the existing FileList/queue controller. Its
+portable regions map to a native fieldset, labelled visible chooser, real trigger
+button, passive drop area, native list/progress and queue actions. Author content
+and native chooser identity survive updates/reconnect. No native template or list
+markup is needed to use the advanced queue.
+
+One immutable `files` descriptor snapshot replaces the competing File array cache
+and `fileList` alias. `options` supplies explicit transport, limits, selection mode,
+concurrency and synchronous notifications; replacing it is allowed only while idle
+and cannot invalidate current files or resend existing ones. The inert `action`,
+public factory/controller exports and competing dropped-file method are removed.
+The controller emits the same change/progress/error events from the host.
+
+Ignored-abort requests keep their slots and ownership until actual settlement.
+Reconnection waits for that settlement and never automatically resends retained
+native files. Unsupported synchronization leaves the visible native chooser and
+FormData intact, hides enhancement controls and reports an enhancement error,
+without fabricating queue membership. Native reset/cancelled reset, disabled
+fieldset, focused actions and guarded callbacks are covered.
+
+Upload's attribute-only lease map replaces its unused style-write dependency and
+the unused job-invocation flag is removed. These local simplifications keep the
+complete implementation within unchanged budgets; no bytes move into a new entry.
+This is capability reconciliation, not a gzip saving.
+
+| Selection (raw / gzip bytes) | Before ESM | After ESM | Before classic | After classic |
+| --- | ---: | ---: | ---: | ---: |
+| Upload entry | 25,792 / 8,993 | 25,799 / 9,366 | 26,122 / 9,152 | 26,125 / 9,525 |
+| Upload + core | 29,304 / 10,416 | 29,311 / 10,789 | 29,758 / 10,624 | 29,761 / 10,997 |
+| All 89 families / 94 files | 1,234,012 / 413,341 | 1,234,019 / 413,714 | 1,260,296 / 426,839 | 1,260,299 / 427,212 |
+
+Only Upload JS/CSS hashes change. S0 stays frozen, with cumulative modular savings
+now 351/343 gzip bytes. Classic Upload has three bytes under the unchanged 11,000
+runtime ceiling. The initial 11,159-byte build failed correctly before simplification.
+CSS changes from 4,483 / 1,212 to 4,575 / 1,236 raw/gzip bytes, below 1,250.
+
+| Field | Verification evidence |
+| --- | --- |
+| Type/build | `node node_modules/typescript/bin/tsc --noEmit`; `node scripts/build.mjs`: final build passes type generation, generated API and unchanged payload gates. |
+| Focused/distribution | `node node_modules/vitest/vitest.mjs run tests/upload.test.ts tests/upload-distribution.test.ts tests/native.test.ts tests/element-directory.test.ts tests/core-distribution.test.ts tests/size-report.test.ts --maxWorkers=1`: 146/146 passed in 6 files. Includes the original controller safety tests and new canonical mapping, reconfiguration, native submission/reset, delayed settlement, reconnect, fallback and isolated ESM/classic pre-upgrade tests. |
+| Consumer | `node scripts/package-check.mjs`: 95 JS entries / 2,335 packed files, strict NodeNext types and runtime imports passed without installed ECharts. |
+| Browser | `node scripts/browser-check.mjs --catalog --page=upload`: 6/6 in Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6, desktop/mobile, plus existing Chart/Form/plugin/security workflows. Real chooser selection, keyboard trigger, progress, cancel/retry, reconnect, portable form submission/reset and flat-file drop pass. Screenshot review exposed the default inline drop-region layout; its block mapping was corrected. |
+| Size | `node scripts/size-report.mjs --output .vite/size/s2-upload.json`, compared with `.vite/size/s2-cascader.json`. No baseline overwrite or ceiling increase. |
+| Limits | No new full-suite, all-catalog or production acceptance claim. Data Table, Heatmap, Tree Select and S3-S6 remain open. |
+
 ## Next-thread starting point
 
 1. Read this plan and repository instructions; inspect `git status` and the latest history.
 2. Confirm the Chart external-engine baseline and current distribution measurements.
-3. S0-S1 and S2 Tags/Input/Calendar/Tree/Cascader reconciliation are complete; consult their
+3. S0-S1 and S2 Tags/Input/Calendar/Tree/Cascader/Upload reconciliation are complete; consult their
    scoped implementation, integrated-suite, package and browser verification records above.
    Keep S0 intact for cumulative comparisons. The gzip saving remains small. Input's
    and Tree's classic runtimes have only 13 bytes of headroom; Cascader runtime and
    Calendar CSS each have one byte.
-4. Continue with Upload and the remaining S2 families. Tree Select's independent
+4. Continue with Data Table/Heatmap and the remaining S2 families. Tree Select's independent
    element/controller gap remains open. Heatmap's date-utility update is not its S2 reconciliation.
    Finish S2/S3 measurements before selecting final shared-bundle boundaries.
 5. Avoid repeatedly running the entire suite during small edits: use focused checks per

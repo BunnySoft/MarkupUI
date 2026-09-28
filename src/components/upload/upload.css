@@ -2,6 +2,7 @@
 :where([data-m-theme=light]){--_m-upload-text: initial;--_m-upload-border: initial;--_m-upload-drop: initial;--_m-upload-hover: initial;--_m-upload-error: initial;--_m-upload-error-hover: initial;--_m-upload-rail: initial}
 :where([data-m-theme=dark]){--_m-upload-text: rgba(255,255,255,.82);--_m-upload-border: rgba(255,255,255,.24);--_m-upload-drop: rgba(255,255,255,.06);--_m-upload-hover: rgba(255,255,255,.09);--_m-upload-error: #e88080;--_m-upload-error-hover: rgba(232,128,128,.09);--_m-upload-rail: rgba(255,255,255,.12)}
 .m-upload [hidden]{display:none!important}
+.m-upload [data-upload-fields]{min-inline-size:0;margin:0;padding:0;border:0}
 .m-upload input[type=file]{max-inline-size:100%;font:inherit;color:inherit}
 .m-upload input[type=file]::file-selector-button,.m-upload button{min-block-size:var(--m-upload-button-size, 34px);padding:0 14px;font:inherit;color:inherit;background:transparent;border:1px solid var(--m-upload-border, var(--_m-upload-border, #e0e0e6));border-radius:var(--m-upload-radius, 3px)}
 .m-upload button:enabled:not([aria-disabled=true]):hover,.m-upload input[type=file]:enabled::file-selector-button:hover{color:var(--m-upload-action-color, var(--m-color-primary, #18a058));border-color:currentColor}
@@ -17,7 +18,7 @@
 .m-upload progress::-webkit-progress-bar{background:transparent}
 .m-upload progress::-webkit-progress-value{background:var(--m-upload-progress, var(--m-color-info, #2080f0))}
 .m-upload progress::-moz-progress-bar{background:var(--m-upload-progress, var(--m-color-info, #2080f0))}
-.m-upload [data-upload-drop]{box-sizing:border-box;padding:var(--m-upload-drop-padding, 24px);text-align:center;background:var(--m-upload-drop-background, var(--_m-upload-drop, #fafafc));border:1px dashed var(--m-upload-border, var(--_m-upload-border, #e0e0e6));border-radius:var(--m-upload-radius, 3px)}
+.m-upload [data-upload-drop]{display:block;box-sizing:border-box;padding:var(--m-upload-drop-padding, 24px);text-align:center;background:var(--m-upload-drop-background, var(--_m-upload-drop, #fafafc));border:1px dashed var(--m-upload-border, var(--_m-upload-border, #e0e0e6));border-radius:var(--m-upload-radius, 3px)}
 .m-upload:not(:has(input:disabled)) [data-upload-drop]:is(:hover,[data-upload-dragover]){border-color:var(--m-upload-action-color, var(--m-color-primary, #18a058))}
 .m-upload [data-upload-dragover],.m-upload :focus-visible{outline:3px solid var(--m-upload-focus, #175cd3);outline-offset:2px}
 .m-upload :is([aria-disabled=true],button:disabled,input:disabled),.m-upload:has(input:disabled) [data-upload-drop]{opacity:.5}
