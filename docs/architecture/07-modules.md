@@ -482,6 +482,10 @@ CSS remains 1,804. The 13,000 entry and 14,500 runtime ceilings remain unchanged
 The optional native adoption example is not a required input contract.
 
 After `pnpm build`, run `pnpm size:report` (or `node scripts/size-report.mjs`).
+`node scripts/size-sharing.mjs` evaluates explicit sharing candidates without changing
+the distribution. The post-S3 evaluation rejected all six candidates because at least
+one format exceeded an existing single-component runtime ceiling. Combined savings
+alone do not justify new mandatory dependencies.
 The build retains esbuild metafiles and output hashes in `.vite/size/build.json`;
 the report is written to `.vite/size/report.json`. Neither file is published.
 The report checks the manifest and output hashes before measuring actual bytes and

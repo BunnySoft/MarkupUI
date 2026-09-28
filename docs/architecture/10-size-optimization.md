@@ -2,7 +2,8 @@
 
 Status: S0-S1 verified September 24, 2026. S2 Dynamic Tags, Dynamic Input, Calendar and Tree
 and Cascader/Upload/Heatmap/Tree Select reconciliation verified September 28, 2026, with test scope and timing limitations
-recorded below. Data Table reconciliation is also verified below. S3-S6 remain open.
+recorded below. Data Table, local mechanics and the S4 sharing evaluation are verified
+below. S5-S6 remain open.
 Plan recorded September 23, 2026.
 Implementation baseline: `cb00af1` on `main`, package version `0.13.0`.
 The next thread should follow this plan one bounded task at a time.
@@ -157,17 +158,17 @@ Priority order:
 
 For each family:
 
-- [ ] Inventory the element API, standalone factory API, demo behavior and tests. List
+- [x] Inventory the element API, standalone factory API, demo behavior and tests. List
   required features, duplicate behavior and capabilities present on only one path.
-- [ ] Settle one canonical element contract. Required sorting, selection, validation,
+- [x] Settle one canonical element contract. Required sorting, selection, validation,
   asynchronous behavior or accessibility must not disappear as a size optimization.
-- [ ] Keep one implementation of state transitions, validation, rendering, interaction
+- [x] Keep one implementation of state transitions, validation, rendering, interaction
   and cleanup. Use direct element methods or a narrow internal controller as appropriate.
-- [ ] Remove superseded public factories/aliases only after their required behavior has a
+- [x] Remove superseded public factories/aliases only after their required behavior has a
   canonical owner. Update exports, internal callers, demos and generated API together.
-- [ ] Keep genuine optional advanced capabilities out of a basic entry only when their
+- [x] Keep genuine optional advanced capabilities out of a basic entry only when their
   independent contract justifies that split. Do not move mandatory bytes off the ledger.
-- [ ] Verify behavior and publish before/after sizes, including dependencies. Commit each
+- [x] Verify behavior and publish before/after sizes, including dependencies. Commit each
   completed family separately; do not combine the entire list into one rewrite.
 
 ### S3. Simplify component-local mechanics
@@ -176,33 +177,33 @@ Apply within the S2 family work where relevant, then inspect remaining large fam
 particularly Dropdown. Button and Dropdown did not shrink in the export-only experiment,
 so removing helper exports is not their solution.
 
-- [ ] Remove duplicate setter/attribute-callback update paths. Calendar now uses one
+- [x] Remove duplicate setter/attribute-callback update paths. Calendar now uses one
   controller transaction with guarded reflection; inspect the remaining families.
-- [ ] Create stable DOM once where appropriate and update affected regions instead of
+- [x] Create stable DOM once where appropriate and update affected regions instead of
   rebuilding entire controls. Preserve authored nodes, listeners, selection and focus.
-- [ ] Consolidate repeated action handling where event delegation is semantically correct.
+- [x] Consolidate repeated action handling where event delegation is semantically correct.
   Dynamic Tags has separate generated/authored removal handlers to review. Preserve
   nested ownership, composed-event behavior and disconnect/reconnect cleanup.
-- [ ] Remove redundant state caches, repeated validation paths and unnecessary public
+- [x] Remove redundant state caches, repeated validation paths and unnecessary public
   synonyms. Upload's `files` and `fileList` getters are one concrete API-review candidate.
-- [ ] Review internal names, constants and diagnostic text only after structural savings.
+- [x] Review internal names, constants and diagnostic text only after structural savings.
   Do not mangle public/reflected properties or replace helpful errors with opaque failures.
-- [ ] Measure rather than assume smaller source means smaller gzip or faster execution.
+- [x] Measure rather than assume smaller source means smaller gzip or faster execution.
   Do not optimize by removing security, accessibility, cancellation or ownership checks.
 
 ### S4. Share proven reusable code at delivery boundaries
 
-- [ ] Re-measure duplication after S1-S3; removed implementations may change the best
+- [x] Re-measure duplication after S1-S3; removed implementations may change the best
   sharing boundaries.
-- [ ] Evaluate the existing popover controller, owned-write helper, hierarchy operations,
+- [x] Evaluate the existing popover controller, owned-write helper, hierarchy operations,
   native dialog behavior and dynamic collection mechanics as actual shared responsibilities.
-- [ ] Use narrow distribution entries in existing source areas. Do not make a simple
+- [x] Use narrow distribution entries in existing source areas. Do not make a simple
   layout component load the whole positioning or popover implementation for one utility.
-- [ ] Compare single-component and related-group closures in both formats before accepting
+- [x] Compare single-component and related-group closures in both formats before accepting
   an extraction. Explain any cold-load increase; all existing ceilings must still pass.
-- [ ] Update manifest dependencies, classic ordering, ESM imports, demos, consumer tests
+- [x] Update manifest dependencies, classic ordering, ESM imports, demos, consumer tests
   and documentation together. Shared chunks must not register unrelated elements.
-- [ ] Reject automatic chunk proliferation or budget-only extraction without a demonstrated
+- [x] Reject automatic chunk proliferation or budget-only extraction without a demonstrated
   ownership boundary and meaningful overall benefit.
 
 ### S5. Add an optional all-components distribution
@@ -886,6 +887,40 @@ than claiming a gzip saving. Initial oversized builds were rejected by the uncha
 | Final focused rerun | The focused command above plus `tests/size-sharing.test.ts`: 236/236 in 6 files after the nested-positioning fix. |
 | Size | `.vite/size/s3-dropdown.json`; S0 remains frozen. |
 | Limits | Full integrated acceptance and optional aggregate delivery remain S5-S6 work. |
+| Commit | `9cca697` - `refactor: map Dropdown actions and consolidate canonical refresh`. |
+
+### S4 - Explicit sharing evaluation
+
+`node scripts/size-sharing.mjs` repeats six bounded extraction experiments in both
+formats, using the production shared-core bridges, source-map comments, preserved public
+exports and level-9 gzip. It writes only ignored diagnostic evidence; it never changes
+source, `dist`, manifests or S0. `scripts/build-boundaries.mjs` is a tooling extraction
+of the unchanged build plugin, not a production dependency.
+
+Repeated-source counts after S3 are position/owned writes 28, popover controller 5,
+hierarchy 2, dialog native 3, and dynamic collection 2. The report also compares
+Grid, Dropdown, floating controls, hierarchy, collections and dialog groups, with each
+shared dependency counted once.
+
+| Candidate | Combined ESM gzip delta | Combined classic gzip delta | Single-consumer increase ESM / classic | Decision |
+| --- | ---: | ---: | --- | --- |
+| Owned writes only | -6,244 | -5,661 | 164..211 / 414..464 | Reject: Grid/Flex/Dropdown and other classic ceilings fail. |
+| Full positioning | -9,937 | -9,216 | 308..1,340 / 563..1,611 | Reject: simple layouts would load positioning; many ceilings fail. |
+| Popover controller | -10,302 | -10,027 | 617..1,796 / 867..2,037 | Reject: every consumer exceeds its runtime ceiling. |
+| Hierarchy | -701 | -370 | 524..565 / 818..852 | Reject: Tree and Cascader exceed their ceilings. |
+| Native dialog | -2,578 | -2,271 | 488..841 / 741..1,103 | Reject: classic Dialog exceeds 8,500. |
+| Dynamic collections | -4,016 | -3,761 | 443..1,173 / 677..1,418 | Reject: Input and Tags exceed their ceilings. |
+
+These are independent experiments, not additive savings or shipped costs. The
+evaluation deliberately accepts no new modular runtime entry. Consequently there are
+no new manifest dependencies, classic ordering requirements, package exports or demo
+loading changes to reconcile. Existing source ownership, five shared boundaries and
+all ceilings remain intact. The optional S5 aggregate can deduplicate these owners
+inside one file without penalizing existing cold selected-component loads.
+
+`tests/size-sharing.test.ts` verifies all 12 reports, preserved outputs and the frozen
+baseline. It passed in the final 236-test focused run alongside Dropdown/core/size
+checks. Evidence: `.vite/size/sharing.json`; it must be regenerated after later changes.
 
 ## Next-thread starting point
 
@@ -897,7 +932,7 @@ than claiming a gzip saving. Initial oversized builds were rejected by the uncha
    and Tree's classic runtimes have only 13 bytes of headroom; Cascader runtime and
    Calendar CSS each have one byte.
 4. Data Table's independent element/controller gap is closed in the record above.
-   Continue the Dropdown structural audit and S3-S6.
+   Dropdown/local mechanics and the sharing evaluation are complete. Continue S5-S6.
    Finish S2/S3 measurements before selecting final shared-bundle boundaries.
 5. Avoid repeatedly running the entire suite during small edits: use focused checks per
    task and the integrated gates at packaging milestones and final acceptance.
