@@ -487,7 +487,7 @@ The S0 cumulative modular saving is now 1,063 ESM / 1,036 classic gzip bytes.
 | Consumer | `node scripts/package-check.mjs`: 95 JS entries / 2,327 files, packed strict NodeNext types and runtime imports passed without installed ECharts. |
 | Size | `node scripts/size-report.mjs --output .vite/size/s2-tree-preflight.json`, compared with `.vite/size/pre-tree.json`: only Tree's two runtime files change. S0 is unchanged. |
 | Limits | No full-suite or real-browser rerun for this controller-only prerequisite; no rendered DOM/CSS changed. Full `m-*` native-owner mapping, Tree/Cascader unification and their browser interaction acceptance remain open. |
-| Commit | Recorded by the bounded `fix: settle Tree loads and supersede stale selections` commit. |
+| Commit | `b6c62f5` - `fix: settle Tree loads and supersede stale selections`. |
 
 ## Next-thread starting point
 
