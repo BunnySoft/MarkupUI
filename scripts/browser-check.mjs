@@ -571,6 +571,41 @@ try {
                   await bounded.scrollIntoViewIfNeeded()
                   await page.screenshot({ path: resolve(output, `${name}-${layout}-calendar-bounded.png`) })
                 }
+                if (slug === "data-table") {
+                  const table = page.locator("#demo-data-table")
+                  assert.deepEqual(await table.evaluate(element => Array.from(element.state.visibleKeys)), ["alpha", "bravo"])
+                  await table.getByRole("button", { name: "Score", exact: true }).focus()
+                  await page.keyboard.press("Enter")
+                  await page.waitForFunction(() => document.querySelector("#demo-data-table").state.sort?.order === "ascending")
+                  assert.deepEqual(await table.evaluate(element => Array.from(element.state.visibleKeys)), ["bravo", "charlie"])
+                  await table.getByRole("button", { name: "Next", exact: true }).click()
+                  assert.deepEqual(await table.evaluate(element => Array.from(element.state.visibleKeys)), ["alpha", "delta"])
+                  await table.getByRole("checkbox", { name: "Select alpha", exact: true }).check()
+                  await page.getByRole("button", { name: "Submit selection", exact: true }).click()
+                  assert.equal(await page.locator("#submission").textContent(), '[["keys","charlie"],["keys","alpha"]]')
+                  await table.getByRole("searchbox", { name: "Filter Name", exact: true }).fill("Bravo")
+                  await table.getByRole("searchbox", { name: "Filter Name", exact: true }).press("Tab")
+                  await page.waitForFunction(() => document.querySelector("#demo-data-table").state.visibleKeys.join() === "bravo")
+                  await page.getByRole("button", { name: "Reset", exact: true }).click()
+                  await page.waitForFunction(() => document.querySelector("#demo-data-table").state.sort === null)
+                  assert.equal(await table.getByRole("searchbox", { name: "Filter Name", exact: true }).inputValue(), "")
+                  assert.deepEqual(await table.evaluate(element => Array.from(element.state.visibleKeys)), ["alpha", "bravo"])
+                  assert.deepEqual(await table.evaluate(element => Array.from(element.checkedKeys)), ["charlie", "delta"])
+                  const stable = await table.evaluate(element => {
+                    const native = element.native, row = native.querySelector('[data-data-key="alpha"]'), parent = element.parentElement
+                    element.set({ sort: { key: "score", order: "descending" } })
+                    element.remove(); parent.prepend(element)
+                    return { table: element.native === native, row: native.querySelector('[data-data-key="alpha"]') === row,
+                      visible: Array.from(element.state.visibleKeys) }
+                  })
+                  assert.deepEqual(stable, { table: true, row: true, visible: ["delta", "alpha"] })
+                  await page.locator("#update-data").click()
+                  assert.equal(await table.locator('[data-data-key="alpha"] td').last().textContent(), "12")
+                  await table.scrollIntoViewIfNeeded()
+                  await page.screenshot({ path: resolve(output, `${name}-${layout}-data-table.png`) })
+                  assert.equal(await page.locator("m-data-table[role],m-data-table[tabindex]").count(), 0)
+                  assert.equal(await page.evaluate(() => !!customElements.get("m-table") || !!customElements.get("m-checkbox")), false)
+                }
                 if (slug === "tree-select") {
                   const basic = page.locator("#basic-select"), control = basic.locator("select")
                   assert.equal(await control.inputValue(), "readme")

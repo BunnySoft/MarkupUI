@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-table.css">
   <link rel="stylesheet" href="../../dist/markup-ui-data-table.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
@@ -18,7 +19,7 @@
   <link rel="stylesheet" href="./data-table.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-box.global.js"></script>
-  <script defer src="../../dist/markup-ui-table.global.js"></script>
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
   <script defer src="../../dist/markup-ui-data-table.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
@@ -29,7 +30,7 @@
 <body>
   <main data-demo-page class="component-docs">
     <h1>Data Table</h1>
-    <p>A table component enhancing native semantic tables with sorting, filtering, selection, and pagination.</p>
+    <p>Keyed local data with stable native rows, sorting, filtering, scoped selection and pagination.</p>
     <nav class="component-docs-nav" aria-label="Data Table documentation">
       <a href="#basic-title">Examples</a>
       <a href="#required-files">Setup</a>
@@ -51,39 +52,16 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-data-table id="demo-data-table" bordered striped size="small" pagination>
-          <m-box class="m-data-table-controls">
-            <label>Filter <input type="search" data-data-filter="name" placeholder="Search by name..."></label>
-            <label>Size <select data-data-page-size><option value="2" selected>2</option><option value="all">All</option></select></label>
-            <m-button attr-type="button" data-data-page="previous" hidden>Previous</m-button>
-            <m-button attr-type="button" data-data-page="next" hidden>Next</m-button>
-            <span data-data-count></span>
+        <m-form id="scores-form">
+          <m-data-table id="demo-data-table" label="Project scores" bordered striped size="small"></m-data-table>
+          <m-box display="flex" gap="8" wrap>
+            <m-button attr-type="submit">Submit selection</m-button>
+            <m-button attr-type="reset">Reset</m-button>
+            <m-button id="update-data">Update Alpha</m-button>
           </m-box>
-          <m-box class="m-data-table-scroll" tabindex="0" role="region" aria-label="Project scores table">
-            <table class="m-table" data-data-table-table data-data-sticky-header>
-              <caption>Project scores</caption>
-              <thead>
-                <tr>
-                  <th scope="col"><label><input type="checkbox" data-data-check-all data-data-scope="page"> Check page</label></th>
-                  <th scope="col" data-data-column="name">Name</th>
-                  <th scope="col" data-data-column="score">Score <button type="button" data-data-sort="score" hidden>Sort score</button></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr data-data-key="alpha"><td><label><input type="checkbox" data-data-check name="keys" value="alpha">Select Alpha</label></td><th scope="row">Alpha</th><td>10</td></tr>
-                <tr data-data-key="bravo"><td><label><input type="checkbox" data-data-check name="keys" value="bravo">Select Bravo</label></td><th scope="row">Bravo</th><td>2</td></tr>
-                <tr data-data-key="charlie"><td><label><input type="checkbox" data-data-check name="keys" value="charlie" checked>Select Charlie</label></td><th scope="row">Charlie</th><td>8</td></tr>
-                <tr data-data-key="delta"><td><label><input type="checkbox" data-data-check name="keys" value="delta" checked disabled>Select Delta</label></td><th scope="row">Delta</th><td>30</td></tr>
-              </tbody>
-              <tfoot>
-                <tr><th scope="row" colspan="2">Page total</th><td><span data-data-summary="total">50</span></td></tr>
-              </tfoot>
-            </table>
-          </m-box>
-          <m-p data-data-empty hidden>No matching rows</m-p>
-          <m-p data-data-loading hidden>Loading data...</m-p>
-        </m-data-table>
+        </m-form>
         <m-p id="feedback">No user table operations yet.</m-p>
+        <m-p id="submission">No submission</m-p>
       </div>
     </section>
 
@@ -95,21 +73,19 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-data-table bordered striped single-line size="medium">
-          <m-box class="m-data-table-scroll">
-            <table class="m-table">
-              <thead>
-                <tr><th scope="col">Task</th><th scope="col">Priority</th><th scope="col">Status</th></tr>
-              </thead>
-              <tbody>
-                <tr><th scope="row">Architecture review</th><td>High</td><td>Complete</td></tr>
-                <tr><th scope="row">API implementation</th><td>High</td><td>In progress</td></tr>
-                <tr><th scope="row">Component tests</th><td>Medium</td><td>Pending</td></tr>
-              </tbody>
-            </table>
-          </m-box>
-        </m-data-table>
+        <m-data-table bordered striped single-line size="medium" label="Project tasks"
+          options='{"columns":[{"key":"task","label":"Task","filterable":true},{"key":"priority","label":"Priority","sort":"text"},{"key":"status","label":"Status"}]}'
+          data='[{"key":"architecture","values":["Architecture review","High","Complete"]},{"key":"api","values":["API implementation","High","In progress"]},{"key":"tests","values":["Component tests","Medium","Pending"]}]'></m-data-table>
       </div>
+    </section>
+
+    <section aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Data, Forms and Ownership</h2>
+      <p>Public examples author only m-* elements. The Web renderer creates the captioned table, headers, filters, page controls, summary text and scoped native checkboxes. The composed Data Table stylesheet includes Table styling; no Table registration or native template is required.</p>
+      <p>options defines labelled columns, optional text/number sorting, literal filtering, page sizes, selection name/scope and summaries. Custom comparators, predicates and summaries receive immutable data records and must return synchronous finite numbers, booleans and text respectively. They never need an HTML row. JSON attributes support data and callback-free configuration.</p>
+      <p>data supports at most 2,000 unique keyed rows and 64 columns, including the selection column. Sort ties preserve source order. Filtering precedes sorting and paging. Changing data keeps surviving native rows and unchanged cells, including their edits, listeners and focus. A rejected callback leaves committed data and DOM unchanged.</p>
+      <p>Row checked flags establish native reset defaults; checkedKeys represents current selection. Disabled choices are protected. Filtering and paging hide rows without disabling their fields, so hidden selected checkboxes remain successful form controls. Use reveal or revealAll before focusing invalid fields. Loading reports aria-busy without disabling form controls.</p>
+      <p>Disconnect before replacing schema. Reconnect retains live state and the original reset configuration. Native is a Web inspection surface, not a second row data source: update data rather than insert native rows. Form, Button, Box and Typography are additional demo selections, not Data Table dependencies.</p>
     </section>
 
     <section aria-labelledby="api-heading">

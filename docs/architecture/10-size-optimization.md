@@ -2,7 +2,7 @@
 
 Status: S0-S1 verified September 24, 2026. S2 Dynamic Tags, Dynamic Input, Calendar and Tree
 and Cascader/Upload/Heatmap/Tree Select reconciliation verified September 28, 2026, with test scope and timing limitations
-recorded below. Remaining S2 families and S3-S6 are open.
+recorded below. Data Table reconciliation is also verified below. S3-S6 remain open.
 Plan recorded September 23, 2026.
 Implementation baseline: `cb00af1` on `main`, package version `0.13.0`.
 The next thread should follow this plan one bounded task at a time.
@@ -782,6 +782,7 @@ required dependency files change. Cumulative S0 modular savings are 896/886 gzip
 | Browser | `node scripts/browser-check.mjs --catalog --page=tree-select`: 6/6 in Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 at desktop/mobile viewports. Native choice, submit/reset, keyboard clear/focus, multiple filtering, disabled state and data/reconnect identity pass. Screenshots inspected; local evidence is `.vite/browser/s2-tree-select-results.json`. |
 | Size | `node scripts/size-report.mjs --output .vite/size/s2-tree-select.json`, compared with `.vite/size/s2-heatmap.json`. S0 remains frozen. |
 | Limits | Data Table and remaining S3-S6 work remain open. No new full-suite/all-catalog or separate production-readiness acceptance claim. |
+| Commit | `3ce5ad2` - `refactor: unify Tree Select around bounded hierarchy data`. |
 
 ### Data Table integration experiment - not accepted
 
@@ -809,6 +810,45 @@ Next Data Table work must simplify the combined renderer/controller structure
 before integrating it under the existing ceilings. Do not reapply the prototype
 and call the family complete merely because its focused tests pass.
 
+### S2 - Data Table reconciliation
+
+The rejected prototype above is superseded, not reapplied. `m-data-table` now accepts
+bounded immutable typed/JSON records and labelled columns. One internal controller
+computes filters, stable sort, pages and synchronous summaries before DOM mutation;
+callbacks consume records rather than native rows. The renderer passes explicit native
+references to that owner, eliminating the prototype's native-row parsing/rollback work.
+The public factory and inert `pagination` flag are removed.
+
+Sorting, literal/custom filtering, summaries, page/filtered/all selection, disabled
+protection, hidden successful controls, native defaults/reset, cancellation, callback
+reentry/disconnect and tamper checks remain. Keyed updates retain surviving rows, unchanged
+cell edits/listeners and focus. Reconnect preserves reset defaults and clamps retained
+pages after offline data shrink. Schema replacement is disconnected-only. Portable demo
+examples use `m-*`; the renderer owns all table/control HTML.
+
+The browser checks exposed reset ordering: microtasks can precede native form restoration.
+Reset now uses a tracked next-task callback canceled on disconnect. Final validation also
+rejects sparse schema arrays and unsupported schema/column/summary/sort fields.
+
+| Selection (raw / gzip bytes) | Before ESM | After ESM | Before classic | After classic |
+| --- | ---: | ---: | ---: | ---: |
+| Data Table entry | 23,662 / 7,949 | 22,922 / 8,239 | 23,989 / 8,099 | 23,250 / 8,407 |
+| Data Table + core | 27,174 / 9,372 | 26,434 / 9,662 | 27,625 / 9,571 | 26,886 / 9,879 |
+| All 89 families / 94 files | 1,231,371 / 413,169 | 1,230,631 / 413,459 | 1,257,650 / 426,669 | 1,256,911 / 426,977 |
+
+CSS remains 12,313 raw / 2,188 gzip bytes. No dependency or ceiling changes.
+Cumulative S0 savings are 606/578 gzip bytes; closing capability gaps is not claimed as
+a large modular size reduction.
+
+| Field | Verification evidence |
+| --- | --- |
+| Type/build | `node scripts/build.mjs`: TypeScript, declarations, API generation and unchanged payload gates pass. |
+| Focused/distribution | `node node_modules/vitest/vitest.mjs run tests/data-table.test.ts tests/data-table-distribution.test.ts tests/native.test.ts tests/element-directory.test.ts tests/core-distribution.test.ts tests/size-report.test.ts --maxWorkers=1`: 137/137 in 6 files. |
+| Consumer | `node scripts/package-check.mjs`: 95 JS entries / 2,335 files; strict NodeNext types and packed runtime imports pass without installed ECharts. |
+| Browser | `node scripts/browser-check.mjs --catalog --page=data-table`, 6/6 in Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6, desktop/mobile; keyboard sorting, paging, checks, actual submission/reset, filtering, data updates and reconnect. Screenshots inspected. Rerun after final validation changes also passes 6/6. |
+| Size | `.vite/size/s2-data-table.json`, compared with `.vite/size/s2-tree-select.json`; S0 remains frozen. |
+| Limits | S3-S6 and separate production-readiness gates remain open. No new full-suite or all-catalog acceptance claim. |
+
 ## Next-thread starting point
 
 1. Read this plan and repository instructions; inspect `git status` and the latest history.
@@ -818,7 +858,8 @@ and call the family complete merely because its focused tests pass.
    Keep S0 intact for cumulative comparisons. The gzip saving remains small. Input's
    and Tree's classic runtimes have only 13 bytes of headroom; Cascader runtime and
    Calendar CSS each have one byte.
-4. Continue with Data Table's independent element/controller gap.
+4. Data Table's independent element/controller gap is closed in the record above.
+   Continue the Dropdown structural audit and S3-S6.
    Finish S2/S3 measurements before selecting final shared-bundle boundaries.
 5. Avoid repeatedly running the entire suite during small edits: use focused checks per
    task and the integrated gates at packaging milestones and final acceptance.

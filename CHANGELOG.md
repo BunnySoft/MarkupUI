@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Unified Data Table behind bounded immutable records and one transactional controller.
+  Portable `m-data-table` supplies labelled columns/data without native table authoring.
+  Sorting, filtering, pagination, summaries and scoped selection share prepare-before-commit
+  semantics; keyed updates retain surviving native rows, edits, focus and form defaults.
+  Removed the public factory and inert pagination flag. Native reset waits for browser
+  default restoration, and reconnect retains the original reset configuration.
+
 - Unified Tree Select behind bounded typed/JSON hierarchy data and one native-selection
   controller. Removed the hidden native-tree render/parse round trip, public factory,
   inert `checkable` and competing scalar selection path. Portable `m-tree-select` now

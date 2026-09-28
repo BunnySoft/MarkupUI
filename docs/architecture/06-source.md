@@ -267,6 +267,12 @@ DOM operations belong in the Web base or component implementation, not documenta
 tooling. Keep component-specific resources, focus, accessibility and cleanup with the
 component. A shared helper needs a demonstrated common responsibility.
 
+Data Table's `data-table-element.ts` validates typed/JSON column definitions and records,
+constructs native controls and retains keyed rows. `data-table.ts` is the sole sorting,
+filtering, paging, summary, selection and reset owner. It receives explicit renderer
+references and immutable records; callbacks never need native rows. Preparation completes
+before row/state mutation, without a second staged-DOM rollback engine or public factory.
+
 ## Entry and packaging rules
 
 Follow the [small-core/plugin delivery model](07-modules.md).

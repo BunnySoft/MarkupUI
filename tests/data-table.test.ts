@@ -1,647 +1,385 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
-import { join } from "node:path"
 import { gzipSync } from "node:zlib"
-import { DataTable, registerDataTable, dataTableSizes, createDataTable } from "../src/components/data-table/index.js"
-import type { DataTableController, DataTableOptions, DataTableSize } from "../src/components/data-table/index.js"
+import { DataTable, registerDataTable, dataTableSizes } from "../src/components/data-table/index.js"
+import type { DataTableDefinition, DataTableRecord } from "../src/components/data-table/index.js"
 import { ViewElement } from "../src/core/index.js"
-import { coordinateForm as createForm } from "../src/components/form/controller.js"
 import { CheckboxGroup } from "../src/components/checkbox/index.js"
+import { coordinateForm } from "../src/components/form/controller.js"
 
-const controllers: DataTableController[] = []
-const baseCss = readFileSync(join("src", "components", "table", "table.css"), "utf8")
-const componentCss = readFileSync(join("src", "components", "data-table", "data-table.css"), "utf8")
 const settle = () => new Promise(resolve => setTimeout(resolve, 0))
-const numeric = (row: HTMLTableRowElement) => row.querySelector<HTMLInputElement>('[type="number"]')!.valueAsNumber
-const dataRow = (key: string, score: number, extra = "") => `<tr data-data-key="${key}"><td><label><input type="checkbox" data-data-check name="keys" value="${key}" ${extra}>Select ${key}</label></td><th scope="row" id="row-${key}">${key}</th><td headers="row-${key} score"><label>Score ${key}<input type="number" name="score-${key}" value="${score}" required></label><button type="button">Cell action</button></td></tr>`
-function markup(rows = dataRow("a", 10) + dataRow("b", 2) + dataRow("c", 2, "checked") + dataRow("d", 30, "checked disabled")) {
-  return `<section class="m-data-table" data-data-table aria-label="Scores">
-    <div class="m-data-table-controls"><label>Filter<input type="search" data-data-filter="name"></label>
-    <label>Size<select data-data-page-size><option value="2">2</option><option value="all" selected>All</option></select></label>
-    <button type="button" data-data-page="previous" hidden>Previous</button><button type="button" data-data-page="next" hidden>Next</button><span data-data-count></span></div>
-    <div class="m-data-table-scroll" tabindex="0" role="region" aria-label="Scrollable scores">
-    <table class="m-table" data-data-table-table><caption>Scores</caption><thead><tr><th scope="col"><label><input type="checkbox" data-data-check-all data-data-scope="page">Select page</label></th>
-    <th scope="col" data-data-column="name">Name</th><th id="score" scope="col" data-data-column="score">Score<button type="button" data-data-sort="score" hidden>Sort score</button></th></tr></thead>
-    <tbody>${rows}</tbody><tfoot><tr><th scope="row" colspan="2">Page total</th><td><span data-data-summary="total">44</span></td></tr></tfoot></table></div>
-    <p data-data-empty hidden>No matching rows</p><p data-data-loading hidden>Loading</p></section>`
-}
-function fixture(options: Partial<DataTableOptions> = {}, transform?: (root: HTMLElement) => void) {
-  const form = document.createElement("form")
-  form.innerHTML = markup() + '<button type="button" id="outside">Outside</button>'
-  document.body.append(form)
-  const root = form.querySelector<HTMLElement>("[data-data-table]")!
-  transform?.(root)
-  const helper = createDataTable(root, {
-    columns: [
-      { key: "score", compare: (a, b) => numeric(a) - numeric(b) },
-      { key: "name", filter: (row, value) => row.cells[1]!.textContent!.includes(value) },
-    ],
-    summaries: [{ key: "total", scope: "page", value: rows => String(rows.reduce((total, row) => total + numeric(row), 0)) }],
+const data = (): DataTableRecord[] => [
+  { key: "a", values: ["Alpha", 10] }, { key: "b", values: ["Bravo", 2] },
+  { key: "c", values: ["Charlie", 2], checked: true }, { key: "d", values: ["Delta", 30], checked: true, disabled: true },
+]
+function fixture(options: Partial<DataTableDefinition> = {}) {
+  const element = new DataTable(), form = document.createElement("form")
+  element.label = "Scores"
+  element.options = {
+    columns: [{ key: "name", label: "Name", filterable: true }, { key: "score", label: "Score", sort: "number" }],
+    selection: { name: "keys", scope: "page" }, pageSizes: [2, 3],
+    summaries: [{ key: "total", scope: "page", value: rows => String(rows.reduce((sum, row) => sum + Number(row.values[1]), 0)) }],
     ...options,
-  })
-  controllers.push(helper)
-  const row = (key: string) => [...helper.table.tBodies[0]!.rows].find(row => row.dataset.dataKey === key)!
+  }
+  element.data = data(); form.append(element); document.body.append(form)
+  const table = element.native!, root = element.querySelector<HTMLElement>("[data-data-table]")!
+  const row = (key: string) => [...table.tBodies[0]!.rows].find(row => row.dataset.dataKey === key)!
   const check = (key: string) => row(key).querySelector<HTMLInputElement>("[data-data-check]")!
-  const all = root.querySelector<HTMLInputElement>("[data-data-check-all]")!
-  const sort = root.querySelector<HTMLButtonElement>("[data-data-sort]")!
-  const filter = root.querySelector<HTMLInputElement>("[data-data-filter]")!
-  return { form, root, helper, row, check, all, sort, filter }
+  return { element, form, root, table, row, check, all: root.querySelector<HTMLInputElement>("[data-data-check-all]")!,
+    sort: root.querySelector<HTMLButtonElement>("[data-data-sort]")!, filter: root.querySelector<HTMLInputElement>("[data-data-filter]")! }
 }
-afterEach(() => { controllers.splice(0).forEach(helper => helper.disconnect()); document.body.replaceChildren(); vi.restoreAllMocks() })
+afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
-describe("native table operations", () => {
-  it("keeps Data Table-specific defaults within the composed CSS budget without changing Table policy", () => {
-    expect(baseCss).toContain("border-collapse: collapse")
-    expect(baseCss).toContain("--_m-table-padding: 6px")
-    expect(componentCss).toContain('.m-table[data-size="small"] { --_m-table-padding: 8px; }')
-    expect(componentCss).toContain("var(--m-data-table-scroll-padding, 0)")
-    expect(componentCss).toContain("font-variant-numeric: normal")
-    expect(componentCss).toContain("font-weight: var(--m-table-header-weight, 400)")
-    expect(componentCss).toContain("#f7f7fa")
-    expect(componentCss).toContain("#f3f3f7")
-    expect(componentCss).toContain("#26262a")
-    expect(componentCss).toContain("#333337")
-    expect(componentCss).toContain("var(--m-data-table-selected-background, transparent)")
-    expect(componentCss).not.toContain("#e7f2ff")
-    expect(componentCss).not.toContain("border-style: dashed")
-    expect(componentCss).not.toContain("pointer-events: none")
-    expect(componentCss).toContain("[data-data-sort]:disabled { cursor: default; opacity: .5; }")
-    expect(gzipSync(`${baseCss}\n${componentCss}`, { level: 9 }).length).toBeLessThanOrEqual(2500)
+describe("Data Table mapping and structure", () => {
+  it("keeps composed CSS policy within its unchanged budget", () => {
+    const base = readFileSync("src/components/table/table.css", "utf8"), css = readFileSync("src/components/data-table/data-table.css", "utf8")
+    expect(base).toContain("border-collapse: collapse")
+    expect(css).toContain('.m-table[data-size="small"] { --_m-table-padding: 8px; }')
+    expect(css).toContain("var(--m-data-table-scroll-padding, 0)")
+    expect(css).toContain("var(--m-data-table-selected-background, transparent)")
+    expect(css).toContain("font-variant-numeric: normal")
+    expect(css).not.toContain("[aria-sort]")
+    expect(css).toContain("color: GrayText")
+    expect(gzipSync(`${base}\n${css}`, { level: 9 }).length).toBeLessThanOrEqual(2500)
   })
-  it("retains original rows, fields and author styles while presentation states change", () => {
-    const { helper, root, row, check } = fixture()
-    const a = row("a"), field = a.querySelector<HTMLInputElement>('[type="number"]')!
-    root.style.cssText = "--m-data-table-hover-background:rgb(1,2,3);--m-data-table-selected-background:rgb(4,5,6);--m-data-table-color:rgb(7,8,9)"
-    const authored = root.getAttribute("style")
-    const style = document.createElement("style")
-    style.textContent = `${baseCss}\n${componentCss}`
-    document.head.append(style)
-    try {
-      field.value = "8"
-      helper.set({ loading: true, sort: { key: "score", order: "ascending" } })
-      expect(row("a")).toBe(a)
-      expect(field.value).toBe("8")
-      expect(field.disabled).toBe(false)
-      expect(check("d").disabled && check("d").checked).toBe(true)
-      expect(root.getAttribute("style")).toBe(authored)
-      expect(helper.table.getAttribute("role")).toBeNull()
-      expect(helper.table.getAttribute("aria-busy")).toBe("true")
-      expect(root.querySelector("[data-data-loading]")?.textContent).toBe("Loading")
-    } finally { style.remove() }
+  it("registers one canonical shared-base class and rejects conflicts", () => {
+    expect(DataTable.prototype).toBeInstanceOf(ViewElement)
+    expect(customElements.get("m-data-table")).toBe(DataTable)
+    const define = vi.fn()
+    expect(() => registerDataTable({ get: () => HTMLElement, define })).toThrow("different")
+    expect(define).not.toHaveBeenCalled()
+    expect(DataTable.observedAttributes).not.toContain("pagination")
+    expect("pagination" in new DataTable()).toBe(false)
   })
-  it("does not treat aria-sort none as a sorted header and preserves system disabled paint", () => {
-    document.body.innerHTML = '<div class="m-data-table"><div class="m-data-table-scroll"><table class="m-table"><thead><tr><th>Score</th></tr></thead></table></div></div>'
-    const style = document.createElement("style")
-    style.textContent = componentCss
-    document.head.append(style)
-    try {
-      const rules = [...style.sheet!.cssRules]
-      const isStyle = (rule: CSSRule): rule is CSSStyleRule => rule.type === CSSRule.STYLE_RULE
-      const isMedia = (rule: CSSRule): rule is CSSMediaRule => rule.type === CSSRule.MEDIA_RULE
-      const sorted = rules.filter(isStyle).find(rule => rule.style.getPropertyValue("background").includes("--m-data-table-sort-background"))!
-      // jsdom cannot match this combined :is/:has selector; Chromium covers its full live behavior.
-      const stateSelector = sorted.selectorText.replace(/,\s*:has\(>\s*\[data-data-sort\]:not\(\[hidden\],\s*:disabled\)\):hover/, "")
-      expect(stateSelector).not.toContain(":has")
-      expect(sorted.selectorText).not.toContain("[aria-sort]")
-      const header = document.querySelector("th")!
-      for (const value of ["none", "other"]) {
-        header.setAttribute("aria-sort", value)
-        expect(header.matches(stateSelector)).toBe(false)
-      }
-      for (const value of ["ascending", "descending"]) {
-        header.setAttribute("aria-sort", value)
-        expect(header.matches(stateSelector)).toBe(true)
-      }
-      const forced = rules.filter(isMedia).find(rule => rule.conditionText === "(forced-colors: active)")!
-      const disabled = [...forced.cssRules].filter(isStyle).find(rule => rule.selectorText.endsWith("[data-data-sort]:disabled"))!
-      expect(disabled.style.getPropertyValue("opacity")).toBe("1")
-      expect(disabled.style.getPropertyValue("color")).toBe("GrayText")
-    } finally { style.remove() }
+  it("maps data to a captioned native table without native authoring", () => {
+    const { element, table, row } = fixture()
+    expect(table.caption!.textContent).toBe("Scores"); expect(table.getAttribute("role")).toBeNull()
+    expect([...table.tHead!.rows[0]!.cells].every(cell => cell.scope === "col")).toBe(true)
+    expect(row("a").cells[1]!.textContent).toBe("Alpha")
+    expect(table.tFoot!.textContent).toContain("44")
+    expect(element.hasAttribute("role")).toBe(false); expect(element.hasAttribute("tabindex")).toBe(false)
   })
-  it("preserves table, caption, scoped headers, footer spans and associations", () => {
-    const { helper, row } = fixture()
-    expect(helper.table.getAttribute("role")).toBeNull()
-    expect(helper.table.caption!.textContent).toBe("Scores")
-    expect(row("a").cells[2]!.getAttribute("headers")).toBe("row-a score")
-    expect(helper.table.tFoot!.rows[0]!.cells[0]!.colSpan).toBe(2)
+  it("preserves original authored help nodes and native row content across scalar updates", () => {
+    const { element, row, table } = fixture(), help = document.createElement("m-span"), listener = vi.fn()
+    help.textContent = "Help"; help.addEventListener("custom", listener); element.prepend(help)
+    const details = document.createElement("details"); details.open = true; details.textContent = "Native note"; row("a").cells[1]!.append(details)
+    element.size = "small"; element.striped = true; element.bordered = false; element.singleLine = false
+    element.set({ loading: true, sort: { key: "score", order: "descending" } })
+    expect(element.native).toBe(table); expect(details.open).toBe(true); expect(element.contains(help)).toBe(true)
+    help.dispatchEvent(new Event("custom")); expect(listener).toHaveBeenCalledOnce()
+    expect(table.dataset.size).toBe("small"); expect(table.dataset.bordered).toBe("false")
+    expect(table.dataset.singleLine).toBe("false"); expect(table.hasAttribute("data-striped")).toBe(true)
+    for (const size of dataTableSizes) { element.size = size; expect(table.dataset.size).toBe(size) }
   })
-  it("sorts numerically and keeps source-order ties in both directions", () => {
-    const { helper } = fixture()
-    helper.set({ sort: { key: "score", order: "ascending" } }); expect(helper.state.filteredKeys).toEqual(["b", "c", "a", "d"])
-    helper.set({ sort: { key: "score", order: "descending" } }); expect(helper.state.filteredKeys).toEqual(["d", "a", "b", "c"])
+  it("snapshots data and schema, including nested filters and row values", () => {
+    const element = new DataTable(), records = data(), columns = [{ key: "name", label: "Name" }, { key: "score", label: "Score" }]
+    element.options = { columns }; element.data = records
+    columns[0]!.label = "Changed"; Object.assign(records[0]!, { values: ["Changed", 99] })
+    expect(element.options!.columns[0]!.label).toBe("Name"); expect(element.data[0]!.values).toEqual(["Alpha", 10])
+    expect(Object.isFrozen(element.data[0]!.values)).toBe(true)
   })
-  it("restores natural source order after sorted refresh and null sort", () => {
-    const { helper } = fixture()
-    helper.set({ sort: { key: "score", order: "ascending" } }); helper.refresh(); helper.set({ sort: null })
-    expect(helper.state.filteredKeys).toEqual(["a", "b", "c", "d"])
+  it("requires disconnection for schema replacement and permits live data updates", () => {
+    const { element, table, form } = fixture()
+    expect(() => { element.options = { columns: [{ key: "x", label: "X" }] } }).toThrow("Disconnect")
+    expect(element.native).toBe(table)
+    element.remove(); element.data = []; element.options = { columns: [{ key: "x", label: "X" }] }
+    element.data = [{ key: "new", values: ["New"] }]; form.append(element)
+    expect(element.state!.sourceKeys).toEqual(["new"]); expect(element.native).not.toBe(table)
   })
-  it("moves original rows, preserving controls, edits, listeners and details", () => {
-    const { helper, row } = fixture(), a = row("a"), input = a.querySelector<HTMLInputElement>('[type="number"]')!, listener = vi.fn()
-    a.addEventListener("example", listener); input.value = "7"; a.cells[1]!.insertAdjacentHTML("beforeend", "<details open><summary>More</summary>Native detail</details>")
-    helper.set({ sort: { key: "score", order: "ascending" } })
-    expect(row("a")).toBe(a); expect(input.value).toBe("7"); expect(a.querySelector("details")!.open).toBe(true)
-    a.dispatchEvent(new Event("example")); expect(listener).toHaveBeenCalledOnce()
+  it.each([
+    { unknown: true }, { columns: Array(1) },
+    { columns: [{ key: "name", label: "Name", unknown: true }] },
+    { selection: null }, { selection: { name: "keys", scope: "page", unknown: true } },
+    { pageSizes: Array(1) }, { summaries: Array(1) },
+    { summaries: [{ key: "total", scope: "all", value: () => "", unknown: true }] },
+  ])("rejects malformed schema without replacing retained DOM: %j", invalid => {
+    const { element, table } = fixture()
+    element.remove()
+    const before = element.options
+    expect(() => { element.options = { ...before!, ...invalid } as never }).toThrow()
+    expect(element.options).toBe(before); expect(element.native).toBe(table)
   })
-  it("filters before sorting before paging, without unmounting", () => {
-    const { helper, row } = fixture({ pageSize: 2 })
-    helper.set({ sort: { key: "score", order: "ascending" } })
-    expect(helper.state.visibleKeys).toEqual(["b", "c"]); expect(row("a").hidden).toBe(true); expect(row("a").isConnected).toBe(true)
-    helper.set({ page: 2 }); expect(helper.state.visibleKeys).toEqual(["a", "d"])
-    helper.set({ filters: { name: "a" } }); expect(helper.state.visibleKeys).toEqual(["a"]); expect(helper.state.page).toBe(1)
+  it.each([
+    [{ key: "a", values: ["A", 1] }, { key: "a", values: ["B", 2] }],
+    [{ key: "", values: ["A", 1] }], [{ key: "a", values: ["A", NaN] }],
+    [{ key: "a", values: ["A"] }], [{ key: "a", values: ["A", "wrong"] }],
+    [{ key: "a", values: ["A", 1], hidden: "yes" }],
+  ])("rejects malformed data atomically: %j", records => {
+    const { element, table } = fixture(), before = element.data, state = element.state, rows = [...table.rows]
+    expect(() => { element.data = records as never }).toThrow()
+    expect(element.data).toBe(before); expect(element.state).toEqual(state); expect([...table.rows]).toEqual(rows)
   })
-  it("represents filtered empty as page 1 of 0, never selecting an unrelated row", () => {
-    const { helper, root } = fixture({ pageSize: 2 })
-    helper.set({ filters: { name: "missing" } })
-    expect(helper.state.visibleKeys).toEqual([]); expect(helper.state.pageCount).toBe(0); expect(helper.state.page).toBe(1)
+  it("rejects 2001 records before rendering any additional rows", () => {
+    const { element, table } = fixture()
+    expect(() => { element.data = Array.from({ length: 2001 }, (_, i) => ({ key: String(i), values: ["Name", i] })) }).toThrow("2000")
+    expect(table.tBodies[0]!.rows.length).toBe(4)
+  })
+})
+
+describe("data transactions and stable order", () => {
+  it("sorts numerically, preserving source-order ties in both directions", () => {
+    const { element } = fixture()
+    element.set({ sort: { key: "score", order: "ascending" } }); expect(element.state!.filteredKeys).toEqual(["b", "c", "a", "d"])
+    element.set({ sort: { key: "score", order: "descending" } }); expect(element.state!.filteredKeys).toEqual(["d", "a", "b", "c"])
+    element.refresh(); element.set({ sort: null }); expect(element.state!.filteredKeys).toEqual(["a", "b", "c", "d"])
+  })
+  it("filters before sorting before paging without unmounting", () => {
+    const { element, row } = fixture({ pageSize: 2 })
+    element.set({ sort: { key: "score", order: "ascending" } })
+    expect(element.state!.visibleKeys).toEqual(["b", "c"]); expect(row("a").hidden).toBe(true); expect(row("a").isConnected).toBe(true)
+    element.set({ page: 2 }); expect(element.state!.visibleKeys).toEqual(["a", "d"])
+    element.set({ filters: { name: "alpha" } }); expect(element.state!.page).toBe(1); expect(element.state!.visibleKeys).toEqual(["a"])
+  })
+  it("represents an empty result as page 1 of 0 with two stable pager buttons", () => {
+    const { element, root } = fixture({ pageSize: 2 }), buttons = [...root.querySelectorAll("[data-data-page]")]
+    element.set({ filters: { name: "missing" } })
+    expect(element.state!.page).toBe(1); expect(element.state!.pageCount).toBe(0)
     expect(root.querySelector<HTMLElement>("[data-data-empty]")!.hidden).toBe(false)
-    expect(root.querySelector("[data-data-count]")!.textContent).toContain("No matching rows")
+    expect([...root.querySelectorAll("[data-data-page]")]).toEqual(buttons)
   })
-  it("rejects unknown page, column, order and filter keys atomically", () => {
-    const { helper } = fixture({ pageSize: 2 }), before = helper.state
-    for (const value of [{ page: 999999999999 }, { page: 0 }, { pageSize: 0 }, { sort: { key: "missing", order: "ascending" } }, { sort: { key: "score", order: "asc" } }, { filters: { other: "x" } }, { virtualScroll: true }]) {
-      expect(() => helper.set(value as never)).toThrow(); expect(helper.state).toEqual(before)
-    }
+  it.each([{ page: 999999999 }, { page: 0 }, { pageSize: 0 }, { pageSize: 7 }, { sort: { key: "unknown", order: "ascending" } },
+    { sort: { key: "score", order: "asc" } }, { sort: { key: "score", order: "ascending", unknown: true } },
+    { filters: { unknown: "x" } }, { virtualScroll: true }])("rejects invalid state atomically: %j", values => {
+    const { element, table } = fixture({ pageSize: 2 }), before = element.state, rows = [...table.rows]
+    expect(() => element.set(values as never)).toThrow()
+    expect(element.state).toEqual(before); expect([...table.rows]).toEqual(rows)
   })
-  it("keeps fixed-size previous/next controls, not one button per page", () => {
-    const { helper, root } = fixture({ pageSize: 2 })
-    expect(root.querySelectorAll("[data-data-page]").length).toBe(2)
-    expect(root.querySelector<HTMLButtonElement>('[data-data-page="previous"]')!.disabled).toBe(true)
-    helper.set({ page: 2 }); expect(root.querySelector<HTMLButtonElement>('[data-data-page="next"]')!.disabled).toBe(true)
+  it("uses exact data source order after replacements and sorting", () => {
+    const { element, row } = fixture(), original = row("a")
+    element.set({ sort: { key: "score", order: "ascending" } })
+    element.data = [data()[3]!, data()[2]!, data()[1]!, data()[0]!]
+    expect(row("a")).toBe(original); expect(element.state!.visibleKeys).toEqual(["c", "b", "a", "d"])
+    element.set({ sort: null }); expect(element.state!.visibleKeys).toEqual(["d", "c", "b", "a"])
   })
-  it("updates explicit footer scopes using text only", () => {
-    const { helper, root } = fixture({ pageSize: 2, summaries: [{ key: "total", scope: "all", value: rows => `<b>${rows.length}</b>` }] })
-    helper.set({ filters: { name: "a" } })
+  it("clamps shrinking data pages and never resurrects removed rows on reconnect", () => {
+    const { element, row, form } = fixture({ pageSize: 2, page: 2 }), removed = row("c")
+    element.data = [data()[3]!]
+    expect(element.state!.page).toBe(1); expect(element.state!.visibleKeys).toEqual(["d"])
+    element.remove(); form.append(element)
+    expect(removed.isConnected).toBe(false); expect(element.state!.sourceKeys).toEqual(["d"])
+  })
+  it("clamps retained pages after disconnected data updates without clamping invalid initial requests", () => {
+    const { element, form } = fixture({ pageSize: 2, page: 2 })
+    element.remove(); element.data = [data()[0]!]
+    expect(element.state).toBeNull()
+    form.append(element)
+    expect(element.state!.page).toBe(1); expect(element.state!.visibleKeys).toEqual(["a"])
+  })
+  it("retains surviving native cell edits, checkbox dirty state and listeners during data updates", () => {
+    const { element, row, check } = fixture(), a = row("a"), input = document.createElement("input"), listener = vi.fn()
+    input.value = "draft"; a.cells[1]!.append(input); a.addEventListener("custom", listener)
+    element.checkedKeys = ["a", "d"]; const before = check("a")
+    element.data = [...data(), { key: "new", values: ["New", 4] }]
+    expect(row("a")).toBe(a); expect(check("a")).toBe(before); expect(before.checked).toBe(true)
+    expect(input.value).toBe("draft"); expect(input.isConnected).toBe(true)
+    a.dispatchEvent(new Event("custom")); expect(listener).toHaveBeenCalledOnce()
+  })
+  it("updates text cells without HTML interpretation and leaves unrelated cell content intact", () => {
+    const { element, row } = fixture(), untouched = row("b").cells[1]!, child = document.createElement("m-span")
+    untouched.append(child); element.data = [{ ...data()[0]!, values: ["<img src=x>", 3] }, ...data().slice(1)]
+    expect(row("a").cells[1]!.textContent).toBe("<img src=x>"); expect(element.querySelector("img")).toBeNull()
+    expect(untouched.contains(child)).toBe(true)
+  })
+  it("supports prototype-like filter keys literally", () => {
+    const { element, filter } = fixture({ columns: [{ key: "__proto__", label: "Name", filterable: true }, { key: "score", label: "Score", sort: "number" }] })
+    element.set({ filters: { ["__proto__"]: "Alpha" } }); expect(element.state!.visibleKeys).toEqual(["a"])
+    element.set({ filters: {} }); expect(filter.value).toBe(""); expect(element.state!.visibleKeys).toHaveLength(4)
+  })
+  it("respects data-hidden and externally hidden rows, including rejected reveal", () => {
+    const { element, row } = fixture()
+    element.data = [{ ...data()[0]!, hidden: true }, ...data().slice(1)]
+    expect(element.state!.filteredKeys).toEqual(["b", "c", "d"])
+    expect(() => element.reveal("a")).toThrow("hidden")
+    element.data = data(); expect(element.state!.visibleKeys).toContain("a")
+    row("b").hidden = true; element.refresh(); expect(element.state!.filteredKeys).not.toContain("b")
+  })
+  it("computes explicit summary scopes and uses text only", () => {
+    const { element, root } = fixture({ pageSize: 2, summaries: [{ key: "total", scope: "all", value: rows => `<b>${rows.length}</b>` }] })
+    element.set({ filters: { name: "Alpha" } })
     expect(root.querySelector("[data-data-summary]")!.textContent).toBe("<b>4</b>")
     expect(root.querySelector("[data-data-summary] b")).toBeNull()
   })
-  it("leaves native footer rowspans and authored summary associations intact", () => {
-    const { helper } = fixture({}, root => {
-      const foot = root.querySelector("tfoot")!
-      foot.rows[0]!.cells[0]!.rowSpan = 2
-      foot.insertRow().insertCell().textContent = "Second footer value"
-    })
-    const foot = helper.table.tFoot!, first = foot.rows[0]!.cells[0]!
-    helper.set({ sort: { key: "score", order: "descending" }, pageSize: 2 })
-    expect(first.rowSpan).toBe(2); expect(first.colSpan).toBe(2); expect(foot.rows.length).toBe(2)
-  })
-  it("loading is informative aria-busy and native fields remain enabled", () => {
-    const { helper, row, root } = fixture()
-    helper.set({ loading: true })
-    expect(helper.table.getAttribute("aria-busy")).toBe("true")
-    expect(root.querySelector<HTMLElement>("[data-data-loading]")!.hidden).toBe(false)
-    expect(row("a").querySelector<HTMLInputElement>('[type="number"]')!.disabled).toBe(false)
-    helper.set({ loading: false }); expect(helper.table.hasAttribute("aria-busy")).toBe(false)
-  })
 })
 
-describe("identity, structure and refresh", () => {
-  it.each(["duplicate", "missing", "numeric", "group", "colspan", "rowspan", "role", "body"])("rejects unsupported %s anatomy before owning mutations", kind => {
-    expect(() => fixture({}, root => {
-      const table = root.querySelector("table")!, first = table.tBodies[0]!.rows[0]!
-      if (kind === "duplicate") first.dataset.dataKey = "b"
-      if (kind === "missing") first.removeAttribute("data-data-key")
-      if (kind === "numeric") root.querySelector("[data-data-check]")!.setAttribute("value", "different")
-      if (kind === "group") table.tHead!.rows[0]!.cells[0]!.colSpan = 2
-      if (kind === "colspan") first.cells[1]!.colSpan = 2
-      if (kind === "rowspan") first.cells[1]!.rowSpan = 0
-      if (kind === "role") table.setAttribute("role", "grid")
-      if (kind === "body") table.createTBody()
-    })).toThrow()
-  })
-  it("adopts removed/replacement/new rows without resurrecting old nodes or defaults", () => {
-    const { helper, row } = fixture(), removed = row("c")
-    helper.set({ sort: { key: "score", order: "ascending" } })
-    removed.remove(); helper.table.tBodies[0]!.insertAdjacentHTML("afterbegin", dataRow("new", 4)); helper.refresh()
-    expect(helper.state.sourceKeys).toEqual(["a", "b", "d", "new"]); expect(helper.state.checkedKeys).toEqual(["d"])
-    helper.set({ sort: null }); expect(helper.state.visibleKeys).toEqual(["a", "b", "d", "new"])
-    helper.disconnect(); expect(removed.isConnected).toBe(false)
-  })
-  it("explicit sourceOrder is exact, validated atomically and survives sorting", () => {
-    const { helper } = fixture()
-    expect(() => helper.refresh({ sourceOrder: ["a"] })).toThrow()
-    helper.refresh({ sourceOrder: ["d", "c", "b", "a"] }); helper.set({ sort: { key: "score", order: "ascending" } })
-    expect(helper.state.visibleKeys).toEqual(["c", "b", "a", "d"])
-    helper.set({ sort: null }); expect(helper.state.visibleKeys).toEqual(["d", "c", "b", "a"])
-  })
-  it("rejects in-place key mutation and leaves previously committed view state", () => {
-    const { helper, row } = fixture(), before = helper.state
-    row("a").dataset.dataKey = "other"
-    expect(() => helper.refresh()).toThrow("immutable"); expect(helper.state.sourceKeys).toEqual(before.sourceKeys)
-  })
-  it("rejects changed summary/count children without destroying author updates", () => {
-    const { helper, root } = fixture(), count = root.querySelector("[data-data-count]")!
-    count.innerHTML = "<strong>Author replacement</strong>"
-    expect(() => helper.refresh()).toThrow("plain-text"); expect(count.querySelector("strong")!.textContent).toBe("Author replacement")
-  })
-  it("requires rebind for duplicate/new action controls and header replacement", () => {
-    const { helper, root, sort } = fixture(), clone = sort.cloneNode(true)
-    sort.parentElement!.append(clone); expect(() => helper.refresh()).toThrow("anatomy"); clone.parentNode!.removeChild(clone)
-    const header = helper.table.tHead!.rows[0]!.cells[0]!
-    const replacement = header.cloneNode(true); header.replaceWith(replacement)
-    expect(() => helper.refresh()).toThrow()
-    expect(root.querySelector("thead")!.firstElementChild!.firstElementChild).toBe(replacement)
-  })
-  it("supports literal prototype-like filter keys without implicit inherited values", () => {
-    const { helper, filter } = fixture({
-      columns: [{ key: "__proto__", filter: (row, value) => row.cells[1]!.textContent === value }, { key: "score", compare: () => 0 }],
-    }, root => {
-      root.querySelector('[data-data-column="name"]')!.setAttribute("data-data-column", "__proto__")
-      root.querySelector("[data-data-filter]")!.setAttribute("data-data-filter", "__proto__")
-    })
-    helper.set({ filters: { ["__proto__"]: "a" } }); expect(helper.state.visibleKeys).toEqual(["a"])
-    helper.set({ filters: {} }); expect(filter.value).toBe(""); expect(helper.state.visibleKeys).toHaveLength(4)
-  })
-  it("clamps a shrinking refreshed page explicitly to the last surviving page", () => {
-    const { helper, row } = fixture({ pageSize: 2, page: 2 })
-    row("a").remove(); row("b").remove(); row("c").remove(); helper.refresh()
-    expect(helper.state.page).toBe(1); expect(helper.state.visibleKeys).toEqual(["d"])
-  })
-  it("respects author-hidden rows, and unknown/author-hidden reveal is atomic", () => {
-    const { helper, row } = fixture({}, root => { root.querySelector<HTMLElement>('[data-data-key="a"]')!.hidden = true })
-    expect(helper.state.filteredKeys).toEqual(["b", "c", "d"])
-    expect(() => helper.reveal("a")).toThrow("author-hidden"); expect(() => helper.reveal("missing")).toThrow()
-    helper.disconnect(); expect(row("a").hidden).toBe(true)
-  })
-  it("keeps authored inert templates and unrelated nested native tables intact", () => {
-    const { helper, row } = fixture({}, root => {
-      root.querySelector("tbody")!.insertAdjacentHTML("beforeend", '<template><tr><td>Inert</td></tr></template>')
-      root.querySelector('[data-data-key="a"] th')!.insertAdjacentHTML("beforeend", '<table><tbody><tr><td>Nested</td></tr></tbody></table>')
-    })
-    helper.set({ sort: { key: "score", order: "ascending" } })
-    expect(helper.state.total).toBe(4); expect(row("a").querySelector("table")!.querySelector("td")!.textContent).toBe("Nested")
-    expect(helper.table.querySelector("template")!.content.querySelector("tr")).not.toBeNull()
-  })
-  it("protects ownership across repeated binding and CheckboxGroup overlap", () => {
-    const { root } = fixture()
-    expect(() => createDataTable(root, { columns: [] })).toThrow("unowned")
-    const fieldset = new CheckboxGroup()
-    fieldset.innerHTML = '<legend>Native group</legend><label><input type="checkbox" data-checkbox value="a">A</label>'
-    document.body.append(fieldset); fieldset.refresh()
-    expect(() => fixture({}, root => { const check = root.querySelector("[data-data-check]")!; const owned = fieldset.querySelector("input")!; owned.dataset.dataCheck = ""; check.replaceWith(owned) })).toThrow("CheckboxGroup")
-    fieldset.remove()
-  })
-  it("also prevents a later CheckboxGroup from stealing a Data Table checkbox", () => {
-    const { helper, root, check } = fixture()
-    const fieldset = new CheckboxGroup()
-    fieldset.innerHTML = "<legend>Outer checkbox owner</legend>"
-    root.before(fieldset); fieldset.append(root); check("a").dataset.checkbox = ""
-    expect(() => fieldset.refresh()).toThrow("owner")
-    helper.disconnect()
-    fieldset.refresh(); fieldset.remove()
-  })
-  it("keeps nested Data Table owners independent", () => {
-    const parent = fixture(), outerSource = parent.helper.state.sourceKeys
-    const container = document.createElement("div"); parent.row("a").cells[2]!.append(container); container.innerHTML = markup(dataRow("inner", 1))
-    const innerRoot = container.querySelector<HTMLElement>("[data-data-table]")!
-    const inner = createDataTable(innerRoot, { columns: [{ key: "score", compare: () => 0 }, { key: "name", filter: () => true }] }); controllers.push(inner)
-    inner.select("all", true); parent.helper.refresh()
-    expect(parent.helper.state.sourceKeys).toEqual(outerSource); expect(parent.helper.state.checkedKeys).toEqual(["c", "d"]); expect(inner.state.checkedKeys).toEqual(["inner"])
-  })
-})
-
-describe("selection and native forms", () => {
-  it("distinguishes checked row keys from arbitrary native field values", () => {
-    const { helper, form } = fixture()
-    expect(helper.state.checkedKeys).toEqual(["c", "d"])
-    expect(new FormData(form).getAll("keys")).toEqual(["c"])
-    expect(new FormData(form).get("score-a")).toBe("10")
-  })
-  it("scopes page/filtered/all selection explicitly and protects disabled selected rows", () => {
-    const { helper } = fixture({ pageSize: 2 })
-    helper.select("page", true); expect(helper.state.checkedKeys).toEqual(["a", "b", "c", "d"])
-    helper.set({ filters: { name: "a" } }); helper.select("filtered", false)
-    expect(helper.state.checkedKeys).toEqual(["b", "c", "d"])
-    helper.select("all", false); expect(helper.state.checkedKeys).toEqual(["d"])
-    expect(() => helper.setCheckedKeys([])).toThrow("protected")
-  })
-  it("updates actual checkbox defaults independently and derives header mixed state", () => {
-    const { helper, all, check } = fixture()
-    expect(all.indeterminate).toBe(true)
-    helper.setCheckedKeys(["a", "d"]); expect(check("a").checked).toBe(true); expect(check("a").defaultChecked).toBe(false)
-    expect(check("c").defaultChecked).toBe(true); expect(all.indeterminate).toBe(true)
-    expect(() => helper.setCheckedKeys(["d", "unknown"])).toThrow()
-  })
-  it("keeps hidden named fields successful, including hidden selected checkbox values", () => {
-    const { helper, form, row } = fixture({ pageSize: 2 })
+describe("native forms, selection and reset", () => {
+  it("distinguishes checked keys from successful fields, including hidden selected rows", () => {
+    const { element, form, row } = fixture({ pageSize: 2 })
+    expect(element.checkedKeys).toEqual(["c", "d"]); expect(new FormData(form).getAll("keys")).toEqual(["c"])
     expect(row("c").hidden).toBe(true)
-    expect(new FormData(form).getAll("keys")).toEqual(["c"])
-    expect(new FormData(form).get("score-c")).toBe("2")
-    helper.set({ filters: { name: "missing" } }); expect(new FormData(form).get("score-a")).toBe("10")
+    element.set({ filters: { name: "missing" } }); expect(new FormData(form).getAll("keys")).toEqual(["c"])
   })
-  it("requires deliberate reveal before native validation; never silently disables invalid fields", () => {
-    const { helper, form, row } = fixture({ pageSize: 2 }), field = row("c").querySelector<HTMLInputElement>('[type="number"]')!
-    field.value = ""
-    expect(field.willValidate).toBe(true); expect(form.checkValidity()).toBe(false)
-    helper.revealAll(); expect(row("c").hidden).toBe(false); expect(field.disabled).toBe(false); expect(form.reportValidity()).toBe(false)
+  it("scopes page/filtered/all selection and protects disabled selected rows", () => {
+    const { element } = fixture({ pageSize: 2 })
+    element.select("page", true); expect(element.checkedKeys).toEqual(["a", "b", "c", "d"])
+    element.set({ filters: { name: "Alpha" } }); element.select("filtered", false)
+    expect(element.checkedKeys).toEqual(["b", "c", "d"])
+    element.select("all", false); expect(element.checkedKeys).toEqual(["d"])
+    expect(() => { element.checkedKeys = [] }).toThrow("protected")
   })
-  it("revealAll clears stale sort so incomplete numeric edits can be validated", () => {
-    const { helper, row } = fixture({ pageSize: 2 })
-    helper.set({ sort: { key: "score", order: "ascending" } })
-    row("a").querySelector<HTMLInputElement>('[type="number"]')!.value = ""
-    helper.revealAll(); expect(helper.state.sort).toBeNull(); expect(row("a").hidden).toBe(false)
+  it("keeps current checks independent from native reset defaults and mixed header state", async () => {
+    const { element, check, all, form } = fixture(), listener = vi.fn()
+    element.addEventListener("m:data-table-change", listener)
+    element.checkedKeys = ["a", "d"]
+    expect(check("a").defaultChecked).toBe(false); expect(all.indeterminate).toBe(true)
+    check("d").defaultChecked = false; form.reset()
+    expect(() => element.select("all", true)).toThrow("reset")
+    await settle(); expect(element.checkedKeys).toEqual(["c"]); expect(listener).not.toHaveBeenCalled()
   })
-  it("composes existing native Form without a proxy or second data model", async () => {
-    const { helper, form, row } = fixture({ pageSize: 2 }), control = row("c").querySelector<HTMLInputElement>('[type="number"]')!
-    control.value = ""; helper.revealAll()
-    const native = createForm(form, { items: [{ key: "score", controls: [control] }] })
-    const result = await native.validate(); expect(result.status).toBe("invalid"); expect(result.issues[0]!.control).toBe(control)
-    native.disconnect()
-  })
-  it("reveals a known key by clearing filters and choosing its sorted page", () => {
-    const { helper, row } = fixture({ pageSize: 2 })
-    helper.set({ filters: { name: "b" }, sort: { key: "score", order: "ascending" } })
-    expect(helper.reveal("a")).toBe(row("a")); expect(helper.state.page).toBe(2); expect(helper.state.visibleKeys).toEqual(["a", "d"])
-  })
-  it("settles native defaultChecked reset, including disabled defaults, without user notifications", async () => {
-    const { helper, check, form, root, all } = fixture(), change = vi.fn()
-    root.addEventListener("m:data-table-change", change); helper.setCheckedKeys(["a", "d"])
-    check("d").defaultChecked = false
-    form.reset(); expect(() => helper.select("all", true)).toThrow("reset"); await settle()
-    expect(helper.state.checkedKeys).toEqual(["c"]); expect(all.indeterminate).toBe(true); expect(change).not.toHaveBeenCalled()
-  })
-  it("restores native filter defaults and initial sort after reset", async () => {
-    const { helper, filter, form } = fixture({ sort: { key: "score", order: "ascending" } })
-    filter.defaultValue = "a"; helper.set({ filters: { name: "b" }, sort: null })
+  it("preserves original reset sort/filter/page defaults across reconnect", async () => {
+    const { element, filter, form, table } = fixture({ pageSize: 2, sort: { key: "score", order: "ascending" } })
+    filter.defaultValue = "Alpha"; element.set({ pageSize: null, sort: null, filters: { name: "Bravo" } })
+    element.remove(); form.append(element); expect(element.native).toBe(table)
     form.reset(); await settle()
-    expect(helper.state.filters).toEqual({ name: "a" }); expect(helper.state.sort?.order).toBe("ascending")
+    expect(element.state!.sort?.order).toBe("ascending"); expect(element.state!.pageSize).toBe(2)
+    expect(element.state!.filters).toEqual({ name: "Alpha" })
   })
-  it("settles explicit external form associations even without row selection", async () => {
-    const { helper, form, root, row } = fixture({}, root => {
-      root.querySelectorAll("[data-data-check],[data-data-check-all]").forEach(node => node.remove())
-    })
-    form.id = "external"; document.body.append(root)
-    const field = row("a").querySelector<HTMLInputElement>('[type="number"]')!; field.setAttribute("form", form.id)
-    field.value = "99"; helper.refresh(); expect(root.querySelector("[data-data-summary]")!.textContent).toBe("133")
-    form.reset(); await settle()
-    expect(field.value).toBe("10"); expect(root.querySelector("[data-data-summary]")!.textContent).toBe("44")
+  it("honors canceled checkbox activation and native reset", async () => {
+    const { element, check, form } = fixture()
+    element.checkedKeys = ["a", "d"]
+    check("b").addEventListener("click", event => event.preventDefault(), { once: true }); check("b").click()
+    form.addEventListener("reset", event => event.preventDefault(), { once: true }); form.reset(); await settle()
+    expect(element.checkedKeys).toEqual(["a", "d"])
   })
-  it("honors cancelled native resets and canceled checkbox activation", async () => {
-    const { helper, form, check } = fixture()
-    helper.setCheckedKeys(["a", "d"]); form.addEventListener("reset", event => event.preventDefault(), { once: true }); form.reset(); await settle()
-    expect(helper.state.checkedKeys).toEqual(["a", "d"])
-    check("b").addEventListener("click", event => event.preventDefault()); check("b").click(); await settle()
-    expect(helper.state.checkedKeys).toEqual(["a", "d"])
+  it("keeps added native fields successful and requires explicit reveal for validation", async () => {
+    const { element, form, row, table } = fixture({ pageSize: 2 }), input = document.createElement("input")
+    input.name = "edit"; input.required = true; row("c").cells[1]!.append(input)
+    element.set({ loading: true }); expect(table.getAttribute("aria-busy")).toBe("true")
+    expect(input.disabled).toBe(false); expect(new FormData(form).get("edit")).toBe("")
+    expect(form.checkValidity()).toBe(false); element.revealAll(); expect(row("c").hidden).toBe(false)
+    const coordinator = coordinateForm(form, { items: [{ key: "edit", controls: [input] }] })
+    expect((await coordinator.validate()).status).toBe("invalid"); coordinator.disconnect()
+  })
+  it("supports external associations and resets after moving out of a form", async () => {
+    const { element, form, check } = fixture()
+    form.id = "external"; for (const key of ["a", "b", "c", "d"]) check(key).setAttribute("form", form.id)
+    document.body.append(element); element.checkedKeys = ["a", "d"]
+    form.reset(); await settle(); expect(element.checkedKeys).toEqual(["c", "d"])
+  })
+  it("reveals a known key in its sorted page and never invents unknown rows", () => {
+    const { element, row } = fixture({ pageSize: 2 })
+    element.set({ filters: { name: "Bravo" }, sort: { key: "score", order: "ascending" } })
+    expect(element.reveal("a")).toBe(row("a")); expect(element.state!.page).toBe(2)
+    expect(() => element.reveal("missing")).toThrow()
+  })
+  it("protects checkbox ownership from a later CheckboxGroup", () => {
+    const { element, check } = fixture(), group = new CheckboxGroup()
+    group.innerHTML = "<legend>Checks</legend>"; element.before(group); group.append(element)
+    check("a").dataset.checkbox = ""; check("a").id = "owned-check"
+    const label = document.createElement("label"); label.htmlFor = "owned-check"; label.textContent = "Alpha"; check("a").after(label)
+    expect(() => group.refresh()).toThrow("owner")
+    element.disconnectedCallback(); group.refresh(); group.remove()
   })
 })
 
-describe("events, focus and callback failures", () => {
-  it("native header activation cycles one aria-sort and emits one settled event", async () => {
-    const { helper, root, sort } = fixture(), change = vi.fn()
-    root.addEventListener("m:data-table-change", change)
-    sort.click(); await settle(); expect(helper.state.sort?.order).toBe("ascending")
-    expect(helper.table.querySelectorAll("[aria-sort]").length).toBe(1)
-    sort.click(); await settle(); expect(helper.state.sort?.order).toBe("descending")
-    sort.click(); await settle(); expect(helper.state.sort).toBeNull(); expect(helper.table.querySelector("[aria-sort]")).toBeNull()
-    expect(change).toHaveBeenCalledTimes(3)
+describe("events, focus and callback safety", () => {
+  it("cycles one aria-sort with settled host events and honors cancellation", async () => {
+    const { element, sort, table } = fixture(), listener = vi.fn()
+    element.addEventListener("m:data-table-change", listener)
+    sort.addEventListener("click", event => event.preventDefault(), { once: true }); sort.click(); await settle()
+    expect(element.state!.sort).toBeNull()
+    for (const order of ["ascending", "descending", null]) {
+      sort.click(); await settle(); expect(element.state!.sort?.order ?? null).toBe(order)
+      expect(table.querySelectorAll("[aria-sort]").length).toBe(order ? 1 : 0)
+    }
+    expect(listener).toHaveBeenCalledTimes(3); expect(listener.mock.calls[0]![0].target).toBe(element)
   })
-  it("programmatic operations stay silent; user filter/selection/page events are distinct", async () => {
-    const { helper, root, filter, check } = fixture({ pageSize: 2 }), events: string[] = []
-    root.addEventListener("m:data-table-change", event => events.push((event as CustomEvent).detail.source))
-    helper.set({ sort: null }); helper.select("page", true); expect(events).toEqual([])
+  it("programmatic writes are silent; user operations have distinct sources", async () => {
+    const { element, root, check, filter } = fixture({ pageSize: 2 }), events: string[] = []
+    element.addEventListener("m:data-table-change", event => events.push((event as CustomEvent).detail.source))
+    element.select("page", true); element.set({ sort: null }); expect(events).toEqual([])
     root.querySelector<HTMLButtonElement>('[data-data-page="next"]')!.click(); await settle()
-    check("c").click(); filter.value = "a"; filter.dispatchEvent(new Event("change", { bubbles: true }))
+    check("c").click(); filter.value = "Alpha"; filter.dispatchEvent(new Event("change", { bubbles: true }))
     expect(events).toEqual(["page", "selection", "filter"])
   })
-  it("honors canceled sort clicks after dispatch", async () => {
-    const { helper, sort } = fixture()
-    sort.addEventListener("click", event => event.preventDefault()); sort.click(); await settle()
-    expect(helper.state.sort).toBeNull()
+  it("does not let queued actions supersede explicit state writes", async () => {
+    const { element, sort } = fixture()
+    sort.click(); element.set({ sort: { key: "score", order: "descending" } }); await settle()
+    expect(element.state!.sort?.order).toBe("descending")
   })
-  it("preserves a focused input and text selection with insertBefore fallback", () => {
-    const { helper, row } = fixture(), input = document.createElement("input")
-    input.value = "edited"; row("a").cells[2]!.append(input); input.focus(); input.setSelectionRange(1, 4)
-    helper.set({ sort: { key: "score", order: "descending" } })
+  it("preserves focused editors and selection on reorder, recovering focus when a row disappears", () => {
+    const { element, row, root } = fixture(), input = document.createElement("input")
+    input.value = "edited"; row("a").cells[1]!.append(input); input.focus(); input.setSelectionRange(1, 4)
+    element.set({ sort: { key: "score", order: "descending" } })
     expect(document.activeElement).toBe(input); expect(input.selectionStart).toBe(1); expect(input.selectionEnd).toBe(4)
+    element.data = data().slice(1); expect(document.activeElement).toBe(root)
   })
-  it("moves focus to the region if paging hides or refresh removes the focused row", () => {
-    const { helper, row, root } = fixture({ pageSize: 2 }), field = row("a").querySelector<HTMLInputElement>('[type="number"]')!
-    field.focus(); helper.set({ page: 2 }); expect(document.activeElement).toBe(root)
-    const fieldD = row("d").querySelector<HTMLInputElement>('[type="number"]')!; fieldD.focus(); row("d").remove(); helper.refresh()
-    expect(document.activeElement).toBe(root)
-  })
-  it("never steals outside focus on sort or filter changes", () => {
-    const { helper } = fixture(), outside = document.getElementById("outside")!
-    outside.focus(); helper.set({ sort: { key: "score", order: "ascending" }, filters: { name: "a" } })
+  it("does not steal outside focus and does not overwrite composing drafts", () => {
+    const { element, filter } = fixture(), outside = document.createElement("button")
+    document.body.append(outside); outside.focus(); element.set({ sort: { key: "score", order: "ascending" } })
     expect(document.activeElement).toBe(outside)
+    filter.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true })); filter.value = "Bravo"
+    expect(() => element.set({ filters: { name: "Alpha" } })).toThrow("composing")
+    filter.dispatchEvent(new Event("change", { bubbles: true })); expect(element.state!.visibleKeys).toHaveLength(4)
+    filter.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true })); expect(element.state!.visibleKeys).toEqual(["b"])
   })
-  it("does not replace IME drafts until composition settles", () => {
-    const { helper, filter } = fixture()
-    filter.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true })); filter.value = "b"
-    expect(() => helper.set({ filters: { name: "a" } })).toThrow("composing")
-    filter.dispatchEvent(new Event("change", { bubbles: true })); expect(helper.state.visibleKeys).toHaveLength(4)
-    filter.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true })); expect(helper.state.visibleKeys).toEqual(["b"])
-  })
-  it.each(["throw", "nan", "promise", "filter", "summary"])("validates %s callback failure before table or state mutations", kind => {
+  it.each(["throw", "nan", "promise", "filter", "summary"])("prepares %s callback failures before any DOM/data commit", kind => {
     let fail = false
-    const { helper } = fixture({
-      columns: [
-        { key: "score", compare: (a, b) => { if (fail && kind === "throw") throw new Error("compare failed"); return fail && kind === "nan" ? NaN : fail && kind === "promise" ? Promise.resolve(1) as never : numeric(a) - numeric(b) } },
-        { key: "name", filter: () => fail && kind === "filter" ? "truthy" as never : true },
-      ],
-      summaries: [{ key: "total", scope: "page", value: () => { if (fail && kind === "summary") throw new Error("summary failed"); return "OK" } }],
+    const { element, table } = fixture({
+      columns: [{ key: "name", label: "Name", filter: () => fail && kind === "filter" ? "truthy" as never : true },
+        { key: "score", label: "Score", compare: (a, b) => {
+          if (fail && kind === "throw") throw new Error("Failure")
+          return fail && kind === "nan" ? NaN : fail && kind === "promise" ? Promise.resolve(1) as never : Number(a.values[1]) - Number(b.values[1])
+        } }],
+      summaries: [{ key: "total", scope: "page", value: () => { if (fail && kind === "summary") throw new Error("Failure"); return "OK" } }],
     })
-    const before = helper.state, nodes = [...helper.table.tBodies[0]!.rows]; fail = true
-    expect(() => helper.set({ sort: { key: "score", order: "ascending" }, filters: { name: "x" } })).toThrow()
-    expect(helper.state).toEqual(before); expect([...helper.table.tBodies[0]!.rows]).toEqual(nodes); expect(helper.error).not.toBeNull()
+    element.set({ sort: { key: "score", order: "ascending" }, filters: { name: "active" } })
+    const before = element.state, records = element.data, html = table.outerHTML, nodes = [...table.rows]; fail = true
+    expect(() => { element.data = [{ key: "new", values: ["New", 8] }, ...data()] }).toThrow()
+    expect(element.state).toEqual(before); expect(element.data).toBe(records)
+    expect(table.outerHTML).toBe(html); expect([...table.rows]).toEqual(nodes)
   })
-  it("rejects callback reentrancy before any own commit", () => {
-    let again: (() => void) | undefined
-    const { helper } = fixture({ summaries: [{ key: "total", scope: "page", value: () => { again?.(); return "OK" } }] })
-    again = () => helper.set({ sort: null })
-    expect(() => helper.set({ pageSize: 2 })).toThrow("reenter"); expect(helper.state.pageSize).toBeNull()
+  it("guards initialization and live callback reentrancy without a competing facade transaction", () => {
+    let element: DataTable | undefined, reenter = false
+    const target = new DataTable(); target.options = { columns: [{ key: "name", label: "Name" }],
+      summaries: [{ key: "total", scope: "all", value: () => {
+        expect(() => { target.data = [] }).toThrow(/preparation|reenter/)
+        expect(() => { target.size = "small" }).toThrow(/preparation|reenter/)
+        return "OK"
+      } }] }
+    target.data = [{ key: "a", values: ["A"] }]; document.body.append(target)
+    const f = fixture({ summaries: [{ key: "total", scope: "all", value: () => { if (reenter) element!.set({ sort: null }); return "OK" } }] })
+    element = f.element; reenter = true
+    expect(() => element!.set({ pageSize: 2 })).toThrow("reenter"); expect(element.state!.pageSize).toBeNull()
   })
-  it("allows callback disconnect but aborts its stale transaction", () => {
+  it("allows callback disconnect but aborts the stale commit", () => {
     let stop: (() => void) | undefined
-    const { helper, row } = fixture({ summaries: [{ key: "total", scope: "page", value: () => { stop?.(); return "OK" } }] })
-    stop = () => helper.disconnect()
-    expect(() => helper.set({ pageSize: 2 })).toThrow("disconnected")
-    expect(helper.connected).toBe(false); expect(row("c").hidden).toBe(false)
+    const { element, row } = fixture({ summaries: [{ key: "total", scope: "all", value: () => { stop?.(); return "OK" } }] })
+    stop = () => element.remove()
+    expect(() => element.set({ pageSize: 2 })).toThrow("disconnected")
+    expect(row("c").hidden).toBe(false)
   })
-  it("reports user callback failures explicitly without pretending success", async () => {
-    const { helper, root, sort } = fixture({ columns: [{ key: "name", filter: () => true }, { key: "score", compare: () => { throw new Error("bad") } }] })
-    const errors = vi.fn(), changed = vi.fn(); root.addEventListener("m:data-table-error", errors); root.addEventListener("m:data-table-change", changed)
-    sort.click(); await settle()
-    expect(errors).toHaveBeenCalledOnce(); expect(changed).not.toHaveBeenCalled(); expect(helper.state.sort).toBeNull()
+  it("rejects callback changes to native row order and visibility before commit", () => {
+    let mutate: (() => void) | undefined
+    const { element, row } = fixture({ summaries: [{ key: "total", scope: "all", value: () => { mutate?.(); return "OK" } }] })
+    const before = element.state
+    mutate = () => { row("a").hidden = true }
+    expect(() => element.set({ pageSize: 2 })).toThrow("visibility")
+    expect(element.state).toEqual(before)
   })
-  it("retains a rejected native filter draft while the committed rows/state remain unchanged", () => {
-    const { helper, filter, root } = fixture({ columns: [{ key: "name", filter: () => { throw new Error("bad filter") } }, { key: "score", compare: () => 0 }] })
-    const errors = vi.fn(); root.addEventListener("m:data-table-error", errors)
+  it("reports failed user callbacks without a success event, retaining the rejected draft", () => {
+    const { element, filter } = fixture({ columns: [{ key: "name", label: "Name", filter: () => { throw new Error("Bad filter") } }, { key: "score", label: "Score" }] })
+    const errors = vi.fn(), changed = vi.fn()
+    element.addEventListener("m:data-table-error", errors); element.addEventListener("m:data-table-change", changed)
     filter.value = "draft"; filter.dispatchEvent(new Event("change", { bubbles: true }))
-    expect(filter.value).toBe("draft"); expect(helper.state.filters.name).toBe(""); expect(helper.state.visibleKeys).toHaveLength(4)
-    expect(errors).toHaveBeenCalledOnce()
-    helper.set({ filters: null }); expect(filter.value).toBe("")
+    expect(filter.value).toBe("draft"); expect(element.state!.visibleKeys).toHaveLength(4)
+    expect(errors).toHaveBeenCalledOnce(); expect(changed).not.toHaveBeenCalled()
+    element.set({ filters: null }); expect(filter.value).toBe("")
   })
-  it("disconnect retains edits/current check/order, releases hidden rows and never resurrects removed data", () => {
-    const { helper, row, sort, check } = fixture({ pageSize: 2 })
-    helper.set({ sort: { key: "score", order: "ascending" } }); helper.select("all", true)
-    const removed = row("d"); removed.remove()
-    const before = [...helper.table.tBodies[0]!.rows]; helper.disconnect()
-    expect([...helper.table.tBodies[0]!.rows]).toEqual(before); expect(check("a").checked).toBe(true)
-    expect(row("a").hidden).toBe(false); expect(sort.hidden).toBe(true); expect(removed.isConnected).toBe(false)
-    expect(() => helper.refresh()).toThrow("disconnected")
+  it("restores leased attributes on disconnect without discarding external overrides", () => {
+    const { element, row, table } = fixture({ pageSize: 2 })
+    row("c").hidden = false; table.setAttribute("aria-busy", "true")
+    element.disconnectedCallback()
+    expect(row("c").hidden).toBe(false); expect(table.getAttribute("aria-busy")).toBe("true")
+    expect(() => element.refresh()).toThrow("connected")
   })
-  it("preserves externally overridden owned attributes on disconnect", () => {
-    const { helper, row } = fixture({ pageSize: 2 })
-    row("c").hidden = false; helper.table.setAttribute("aria-busy", "true"); helper.disconnect()
-    expect(row("c").hidden).toBe(false); expect(helper.table.getAttribute("aria-busy")).toBe("true")
-  })
-})
-
-describe("local bounds", () => {
-  it("rejects 2001 native rows without partially hiding or adopting them", () => {
-    expect(() => fixture({}, root => { root.querySelector("tbody")!.innerHTML = Array.from({ length: 2001 }, (_, index) => dataRow(`k${index}`, index)).join("") })).toThrow("2000")
-    expect(document.querySelectorAll("tbody > tr[hidden]").length).toBe(0)
+  it.each(["key", "span", "role", "body", "summary", "checkbox"])("rejects native %s corruption before changing committed state", kind => {
+    const { element, table, row, root, check } = fixture(), before = element.state
+    if (kind === "key") row("a").dataset.dataKey = "other"
+    if (kind === "span") row("a").cells[1]!.colSpan = 2
+    if (kind === "role") table.setAttribute("role", "grid")
+    if (kind === "body") table.createTBody()
+    if (kind === "summary") root.querySelector("[data-data-summary]")!.append(document.createElement("strong"))
+    if (kind === "checkbox") check("a").value = "other"
+    expect(() => element.refresh()).toThrow(); expect(element.state).toEqual(before)
   })
 })
-
-describe("canonical DataTable ViewElement", () => {
-  it("registers canonical DataTable with own tag, shared ViewElement identity and registration conflict safety", () => {
-    expect(DataTable.tag).toBe("m-data-table")
-    expect(customElements.get(DataTable.tag)).toBe(DataTable)
-    expect(DataTable.prototype instanceof ViewElement).toBe(true)
-    expect(customElements.get("m-data-table")).toBe(DataTable)
-    expect(DataTable.observedAttributes).toEqual([
-      "bordered",
-      "striped",
-      "single-line",
-      "size",
-      "pagination",
-    ])
-    const define = vi.fn()
-    expect(() => registerDataTable({ get: () => class extends HTMLElement {}, define })).toThrow("different implementation")
-    expect(define).not.toHaveBeenCalled()
-    expect(() => registerDataTable()).not.toThrow()
-  })
-
-  it("maintains default property values and reflects boolean and enum attributes cleanly", () => {
-    const table = new DataTable()
-    expect([table.bordered, table.striped, table.singleLine, table.size, table.pagination]).toEqual([
-      true, false, true, "medium", false,
-    ])
-
-    table.bordered = false
-    expect(table.bordered).toBe(false)
-    expect(table.getAttribute("bordered")).toBe("false")
-    table.bordered = true
-    expect(table.bordered).toBe(true)
-    expect(table.getAttribute("bordered")).toBe("true")
-
-    table.striped = true
-    expect(table.striped).toBe(true)
-    expect(table.hasAttribute("striped")).toBe(true)
-    table.striped = false
-    expect(table.striped).toBe(false)
-    expect(table.hasAttribute("striped")).toBe(false)
-
-    table.singleLine = false
-    expect(table.singleLine).toBe(false)
-    expect(table.getAttribute("single-line")).toBe("false")
-    table.singleLine = true
-    expect(table.singleLine).toBe(true)
-    expect(table.getAttribute("single-line")).toBe("true")
-
-    table.pagination = true
-    expect(table.pagination).toBe(true)
-    expect(table.hasAttribute("pagination")).toBe(true)
-    table.pagination = false
-    expect(table.pagination).toBe(false)
-    expect(table.hasAttribute("pagination")).toBe(false)
-
-    for (const size of dataTableSizes) {
-      table.size = size
-      expect(table.size).toBe(size)
-      expect(table.getAttribute("size")).toBe(size)
-    }
-    expect(() => { (table as any).size = "huge" }).toThrow(RangeError)
-  })
-
-  it("upgrades properties assigned before connectedCallback", () => {
-    const late = document.createElement("m-data-table") as DataTable
-    late.size = "small"
-    late.striped = true
-    late.pagination = true
-    late.bordered = false
-    late.singleLine = false
-    document.body.append(late)
-    expect(late.size).toBe("small")
-    expect(late.striped).toBe(true)
-    expect(late.pagination).toBe(true)
-    expect(late.bordered).toBe(false)
-    expect(late.singleLine).toBe(false)
-    expect(late.getAttribute("size")).toBe("small")
-    expect(late.hasAttribute("striped")).toBe(true)
-    expect(late.hasAttribute("pagination")).toBe(true)
-    expect(late.getAttribute("bordered")).toBe("false")
-    expect(late.getAttribute("single-line")).toBe("false")
-  })
-
-  it("synchronizes attributes to child table", () => {
-    const root = document.createElement("m-data-table") as DataTable
-    root.size = "small"
-    root.striped = true
-    root.bordered = false
-    root.singleLine = false
-
-    const inner = document.createElement("table")
-    const tbody = document.createElement("tbody")
-    const tr = document.createElement("tr")
-    const td = document.createElement("td")
-    td.textContent = "Cell"
-    tr.append(td)
-    tbody.append(tr)
-    inner.append(tbody)
-    root.append(inner)
-    document.body.append(root)
-
-    expect(root.table).toBe(inner)
-    expect(inner.classList.contains("m-table")).toBe(true)
-    expect(inner.dataset.size).toBe("small")
-    expect(inner.hasAttribute("data-striped")).toBe(true)
-    expect(inner.dataset.bordered).toBe("false")
-    expect(inner.dataset.singleLine).toBe("false")
-
-    root.size = "large"
-    expect(inner.dataset.size).toBe("large")
-    root.striped = false
-    expect(inner.hasAttribute("data-striped")).toBe(false)
-    root.bordered = true
-    expect(inner.hasAttribute("data-bordered")).toBe(false)
-    root.singleLine = true
-    expect(inner.hasAttribute("data-single-line")).toBe(false)
-  })
-
-  it("supports createDataTable on m-data-table element", () => {
-    const dataTable = document.createElement("m-data-table") as DataTable
-    dataTable.setAttribute("aria-label", "Scores")
-    dataTable.innerHTML = `
-      <div class="m-data-table-scroll">
-        <table class="m-table" data-data-table-table>
-          <thead><tr><th scope="col" data-data-column="name">Name</th></tr></thead>
-          <tbody>
-            <tr data-data-key="r1"><td>Row 1</td></tr>
-            <tr data-data-key="r2"><td>Row 2</td></tr>
-          </tbody>
-        </table>
-      </div>
-    `
-    document.body.append(dataTable)
-    const ctrl = createDataTable(dataTable, {
-      columns: [{ key: "name", filter: (row, val) => row.textContent!.includes(val) }],
-    })
-    controllers.push(ctrl)
-    expect(ctrl.connected).toBe(true)
-    expect(ctrl.state.total).toBe(2)
-    ctrl.set({ filters: { name: "Row 1" } })
-    expect(ctrl.state.visibleKeys).toEqual(["r1"])
-  })
-
-  it("exposes MarkupUIDataTable on globalThis", async () => {
-    await import("../src/components/data-table/global.js")
-    const globalApi = (globalThis as any).MarkupUIDataTable
-    expect(globalApi).toBeDefined()
-    expect(globalApi.DataTable).toBe(DataTable)
-    expect(globalApi.registerDataTable).toBe(registerDataTable)
-    expect(globalApi.createDataTable).toBe(createDataTable)
-  })
-})
-

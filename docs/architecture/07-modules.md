@@ -461,6 +461,19 @@ dependencies. This saves 851/850 JS gzip bytes relative to the Heatmap state.
 CSS is 802 gzip bytes, down from 840. The 13,000-byte runtime ceiling and all
 per-file ceilings remain unchanged. No new required dependency is introduced.
 
+## Data Table delivery
+
+Data Table selects core plus one complete family entry and composed CSS. Public runtime
+exports are `DataTable`, `dataTableSizes` and `registerDataTable`; the controller/factory
+is internal. Typed/JSON columns and records map to the semantic table, filters, pager,
+summaries and named checkboxes without Table, Input or Checkbox registration.
+Schema replacement requires disconnection; keyed data and state updates remain live.
+
+ESM/classic entries cost 8,239/8,407 gzip bytes, or 9,662/9,879 including core.
+CSS is unchanged at 2,188 gzip bytes. Reconciliation adds 290/308 JS gzip bytes but
+removes 740/739 raw bytes. The existing 9,000 entry, 10,000 runtime and 2,500 CSS
+ceilings remain unchanged; no new mandatory dependency is emitted.
+
 ## Reproducible size reports
 
 After `pnpm build`, run `pnpm size:report` (or `node scripts/size-report.mjs`).
