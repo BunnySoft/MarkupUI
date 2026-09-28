@@ -606,10 +606,41 @@ core-inclusive runtime has one byte of headroom under the unchanged 12,000 ceili
 | Source | `node node_modules/vitest/vitest.mjs run tests/cascader.test.ts tests/cascader-element.test.ts tests/cascader.styles.test.ts --maxWorkers=1`: 71/71 passed after the final source changes. |
 | Distribution | `node node_modules/vitest/vitest.mjs run tests/cascader-distribution.test.ts --maxWorkers=1`: 4/4 passed, including ESM/classic pre-upgrade properties, attribute ordering, native reset, exports, shared core identity, independent registration and declarations/API. |
 | Final focused suite | `node node_modules/vitest/vitest.mjs run tests/cascader.test.ts tests/cascader-element.test.ts tests/cascader-distribution.test.ts tests/cascader.styles.test.ts tests/tree.test.ts tests/tree-distribution.test.ts tests/tree-select.test.ts tests/native.test.ts tests/element-directory.test.ts tests/core-distribution.test.ts tests/size-report.test.ts --maxWorkers=1`: 252/252 passed in 11 files. |
+| Integrated suite | `node node_modules/vitest/vitest.mjs run --maxWorkers=1`: 4,962/4,963 passed in 138 files, 505.35 seconds. The unchanged Thing API extraction fixture exceeded its default 5-second timeout (5,329 ms). `node node_modules/vitest/vitest.mjs run tests/thing.test.ts --maxWorkers=1` then passed 20/20 in isolation. No timeout or assertion was changed; this is not a clean full-suite acceptance claim. |
 | Consumer | `node scripts/package-check.mjs`: 95 JS entries / 2,335 packed files; strict NodeNext types and runtime imports passed without installed ECharts. Four new source-layout passive-renderer JS/declaration/map files are not additional runtime dependencies. |
 | Browser | `node scripts/browser-check.mjs --catalog --page=cascader`: 6/6 in Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 at 1280x900 / 375x812, plus existing Chart/Form/plugin/security checks. Covers partial and complete selection, submission/reset, clear, reconnect identity, lazy data selection and registration isolation. Desktop/mobile screenshots inspected. The initial run exposed the attribute-order upgrade bug and an overly strict label-text locator; both were corrected before the passing run. |
 | Size | `node scripts/size-report.mjs --output .vite/size/s2-cascader.json`, compared with `.vite/size/s2-tree.json`. Default S0 diagnostics still flag intentional export changes and growth; strict equivalence is not claimed. |
 | Limits | No all-catalog, non-Web, human accessibility/device or production acceptance claim. Tree Select's separate element/controller gap, Upload, Data Table, Heatmap and S3-S6 remain open. |
+| Commit | `ce69b0d` - `refactor: unify Cascader element behavior`. |
+
+### Next S2 family - Upload inventory
+
+This inventory is not implementation or acceptance evidence:
+
+- The current element maintains a second `File[]` cache, exposes duplicate `files` and
+  `fileList` getters, truncates multi-file drops in single mode, and can report selected
+  files even when native FileList assignment fails. Its hidden chooser, trigger forwarding
+  and independent drag handlers do not expose the controller's complete native contract.
+  The existing `action` attribute does not implement a transport.
+- The controller already owns bounded all-or-nothing selection, actual FileList
+  synchronization and form submission, stable file IDs, append/replace, concurrent
+  explicit transports, progress, cancellation, retry, reset, focus and cleanup.
+  Move required behavior behind `m-upload`; do not remove it as redundant factory code.
+- Keep native chooser fallback when DataTransfer/FileList assignment is unsupported.
+  Map trigger, dragger, list and native progress/actions within the Web renderer while
+  preserving authored `m-*` content and listeners. Never require native templates,
+  input, ul/li or button markup to access queue behavior.
+- Cancellation does not settle a transport. An ignored-abort job retains its concurrency
+  slot and ownership until it settles. Reconnection must not steal that owner or
+  automatically resend retained native files. Test disconnect-before-start, delayed
+  settlement, canceled reset and stale progress/completion through the element.
+- Resolve one canonical file snapshot API and event contract, remove inert action and
+  duplicate aliases, and update source callers, generated API, demo and package exports
+  together. Explicit transport policy must remain application supplied.
+- Current Upload entry gzip is 8,993/9,152 ESM/classic; core-inclusive costs are
+  10,416/10,624 under 11,000, and CSS is 1,212 bytes. Preserve these ceilings and account
+  for all renderer/queue code. Run source, distribution, FileList/form and three-engine
+  interaction checks before calling the family complete.
 
 ## Next-thread starting point
 
