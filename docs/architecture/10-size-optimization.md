@@ -439,6 +439,56 @@ leaving **one gzip byte** under the unchanged 1,250-byte ceiling. Heatmap CSS re
 | Limits | No all-catalog, full-suite, non-Web, human accessibility/device or production acceptance claim. Native references/callbacks remain Web-only. Remaining family reconciliation and S3-S6 are open. |
 | Commit | `e914f5c` - `refactor: unify Calendar element behavior`. |
 
+### S2 - Tree preflight, September 28, 2026
+
+This is a bounded controller correctness prerequisite, **not completed Tree
+reconciliation**. Inventory confirmed that replacing the factory with the current
+element would discard required behavior:
+
+| Surface | Existing capability and reconciliation requirement |
+| --- | --- |
+| Tree/TreeNode elements | Portable nested nodes, single value, checks/cascade, expanded/disabled state and block-line presentation. They independently implement selection, cascade and keyboard behavior. Generated hosts/rows introduce extra focus targets and do not reuse the controller's native list/disclosure semantics. |
+| Tree controller | Native list/details/button/link/checkbox owners; independent multiple selection/checks; all/parent/child reporting and mixed state; disabled barriers; native names/defaults/reset; typeahead/focus recovery; bounded lazy insertion, abort/dispose and ownership checks. Preserve these capabilities in the canonical element rather than deleting their exports first. |
+| Cascader | Its element has a separate dependent-select implementation and eagerly chooses first children. The controller retains explicit partial paths, leaf/any policy, native defaults/reset reconstruction, validity gates and async cancellation. Its reconciliation is a separate bounded task after Tree. |
+| Tree Select | It and Cascader import `tree/hierarchy.ts`, not Tree registration/controller. Passive hierarchy input is distinct from a live Tree; preserve native selection ownership and do not silently turn passive data into an active Tree. |
+| Public mapping | Retain `m-tree`/`m-tree-node` as public authoring. Native lists, items, disclosure and controls must be generated/adopted within the Web renderer. Resolve node ownership, live/default keys, multiple selection, lazy data mapping and event details before replacing the element. Do not require native HTML or add a compatibility adapter to reach controller-only features. |
+
+Two reproduced controller defects are fixed before that integration:
+
+- A queued selection click could overwrite a newer `setSelectedKeys` write. Explicit
+  validated writes now invalidate older selection intents independently of load generations.
+  Rejected writes do not cancel a valid click; later clicks and consecutive multiple
+  selections still work. A write from a selection listener supersedes remaining queued clicks.
+- If a loader rejected and failure cleanup discovered invalid anatomy, deleting its job
+  before cleanup could leave the returned Promise permanently pending. Rejection now runs
+  in `finally`; an `AggregateError` retains the loader and cleanup failures.
+
+Only Tree's ESM/classic JS hashes change. This fix costs **48 / 59 gzip bytes**; it is
+not a shrink result. Exports, dependency lists, all CSS, Cascader, Tree Select and
+application-supplied ECharts are unchanged. Existing ceilings and S0 remain untouched.
+
+| Selection (raw / gzip bytes) | Before ESM | After ESM | Before classic | After classic |
+| --- | ---: | ---: | ---: | ---: |
+| Tree entry | 32,651 / 10,088 | 32,762 / 10,136 | 32,966 / 10,255 | 33,077 / 10,314 |
+| Tree + core | 36,163 / 11,511 | 36,274 / 11,559 | 36,602 / 11,727 | 36,713 / 11,786 |
+| Tree + Cascader + Tree Select closure | 98,107 / 32,494 | 98,218 / 32,542 | 99,688 / 33,229 | 99,799 / 33,288 |
+| All 89 families / 94 files | 1,234,184 / 412,954 | 1,234,295 / 413,002 | 1,260,475 / 426,460 | 1,260,586 / 426,519 |
+
+Tree CSS remains 3,890 / 1,131 bytes. The unchanged 12,000-byte runtime ceiling
+has 214 classic gzip bytes of headroom, which constrains the pending unification.
+The S0 cumulative modular saving is now 1,063 ESM / 1,036 classic gzip bytes.
+
+| Field | Verification evidence |
+| --- | --- |
+| Scope | Two Tree controller race fixes and the family capability inventory. No element/renderer replacement or public API removal. |
+| Reproduction | New source tests failed before the fix: a queued click replaced newer explicit keys; a rejected loader plus invalid anatomy left the returned Promise unsettled. |
+| Type/build | `node node_modules/typescript/bin/tsc --noEmit`; `node scripts/build.mjs`: passed with unchanged payload ceilings. |
+| Behavior/distribution | `node node_modules/vitest/vitest.mjs run tests/tree-distribution.test.ts tests/tree.test.ts tests/cascader.test.ts tests/cascader.styles.test.ts tests/tree-select.test.ts tests/size-report.test.ts --maxWorkers=1`: 179/179 passed in 6 files. Six added source regressions cover stale/valid/later clicks, listener writes, failure settlement and independent loads. Three distribution checks cover isolated ESM/classic behavior, shared core identity and unchanged passive hierarchy boundaries. The classic fixture uses its own realm's Promise to reproduce the same loader/observer ordering as ESM. |
+| Consumer | `node scripts/package-check.mjs`: 95 JS entries / 2,327 files, packed strict NodeNext types and runtime imports passed without installed ECharts. |
+| Size | `node scripts/size-report.mjs --output .vite/size/s2-tree-preflight.json`, compared with `.vite/size/pre-tree.json`: only Tree's two runtime files change. S0 is unchanged. |
+| Limits | No full-suite or real-browser rerun for this controller-only prerequisite; no rendered DOM/CSS changed. Full `m-*` native-owner mapping, Tree/Cascader unification and their browser interaction acceptance remain open. |
+| Commit | Recorded by the bounded `fix: settle Tree loads and supersede stale selections` commit. |
+
 ## Next-thread starting point
 
 1. Read this plan and repository instructions; inspect `git status` and the latest history.
@@ -446,7 +496,9 @@ leaving **one gzip byte** under the unchanged 1,250-byte ceiling. Heatmap CSS re
 3. S0-S1 and S2 Tags/Input/Calendar reconciliation are complete; consult their records above.
    Keep S0 intact for cumulative comparisons. The gzip saving remains small. Input's
    classic runtime has only 13 bytes of headroom and Calendar CSS only one byte.
-4. Continue with Tree and Cascader, checking Tree Select's shared contracts, then the
+4. Continue Tree element/controller reconciliation from the preflight inventory above;
+   its queued-click and failed-load settlement fixes are prerequisites, not completion.
+   Then handle Cascader, checking Tree Select's shared contracts, followed by the
    remaining S2 families. Heatmap's date-utility update is not its S2 reconciliation.
    Finish S2/S3 measurements before selecting final shared-bundle boundaries.
 5. Avoid repeatedly running the entire suite during small edits: use focused checks per

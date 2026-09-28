@@ -57,7 +57,7 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
   const token = {}, leases: Lease[] = [], mixed = new Map<HTMLInputElement, Mixed>(), owned = new Set<HTMLElement>()
   const knownOpen = new Map<HTMLDetailsElement, boolean>(), jobs = new Map<string, Load>()
   const loaded = new Set<{ result: TreeLoadResult; branch: HTMLDetailsElement }>()
-  let index: TreeHierarchy = readTreeHierarchy(root), connected = true, busy = false, generation = 0, error: unknown = null
+  let index: TreeHierarchy = readTreeHierarchy(root), connected = true, busy = false, generation = 0, selectionVersion = 0, error: unknown = null
   let visible: TreeNode[] = [], unknown = new Set<TreeNode>(), lastFocused: TreeNode | null = null
   let buffer = "", typedAt = 0, recovery = false
   const timers = new Set<number>()
@@ -329,8 +329,9 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
     function failure(cause: unknown) {
       if (jobs.get(node.key) !== job) return
       jobs.delete(node.key)
-      if (connected) { run(() => { attr(node.branch!, "aria-busy", null) }); report(cause) }
-      reject(cause)
+      try { if (connected) { run(() => { attr(node.branch!, "aria-busy", null) }); report(cause) } }
+      catch (cleanup) { cause = new AggregateError([cause, cleanup], "Tree load and cleanup failed.") }
+      finally { reject(cause) }
     }
     try {
       run(() => attr(node.branch!, "aria-busy", "true"))
@@ -404,15 +405,16 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
       || (nodeDisabled(node) || node.label.matches(":disabled")) && node.label.contains(target)
       || nodeDisabled(node) && node.summary?.contains(target)) { event.preventDefault(); return }
     if (!node.label.hasAttribute("data-tree-select") || !node.label.contains(target) || event.button || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) return
+    const selection = selectionVersion
     later(() => {
-      if (event.defaultPrevented || index.byKey.get(node.key)?.element !== node.element) return
+      if (event.defaultPrevented || selection !== selectionVersion || index.byKey.get(node.key)?.element !== node.element) return
       try {
         const keys = new Set(controller.selectedKeys), had = keys.has(node.key)
         if (had && cancelable) keys.delete(node.key)
         else { if (!multiple) keys.clear(); keys.add(node.key) }
-        controller.setSelectedKeys([...keys])
+        run(() => select([...keys]))
         if (!had || cancelable) notify("select", { key: node.key, selectedKeys: controller.selectedKeys, node, event })
-      } catch { /* Direct setter reports runtime errors. */ }
+      } catch { /* run reports runtime errors. */ }
     })
   }
   function change(event: Event) {
@@ -515,7 +517,7 @@ export function createTree(root: HTMLElement, options: TreeOptions = {}): TreeCo
     get expandedKeys() { return index.nodes.filter(node => node.branch?.open).map(node => node.key) },
     get loadingKeys() { return [...jobs.keys()] },
     getCheckedData, getIndeterminateData: () => data(index.nodes.filter(node => node.checkbox?.indeterminate)),
-    setSelectedKeys(keys) { guard(); keyNodes(keys, node => node.label.hasAttribute("data-tree-select")); if (!multiple && keys.length > 1) throw new RangeError("Single selection allows at most one key."); run(() => select(keys)) },
+    setSelectedKeys(keys) { guard(); keyNodes(keys, node => node.label.hasAttribute("data-tree-select")); if (!multiple && keys.length > 1) throw new RangeError("Single selection allows at most one key."); run(() => { select(keys); selectionVersion++ }) },
     setCheckedKeys(keys) { guard(); keyNodes(keys, node => !!node.checkbox && !barrier(node) && !(cascade && unknown.has(node))); run(() => checks(keys)) },
     setExpandedKeys(keys) { guard(); setExpanded(keys) }, expand, reveal, refresh, disconnect,
   }

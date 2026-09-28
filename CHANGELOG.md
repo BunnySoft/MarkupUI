@@ -50,6 +50,10 @@
   Heatmap uses the same strict parser, and `buildHeatmap(options)` no longer accepts an
   unused Document argument. Updated callers without a compatibility overload; Heatmap's
   separate element/controller reconciliation remains pending. Payload ceilings are unchanged.
+- Fixed Tree controller races: queued selection clicks no longer overwrite newer
+  explicit selection writes or interrupt independent lazy loads. Failed loads now
+  reject even when failure cleanup also throws, retaining both errors.
+  Tree element/controller unification and portable native-owner mapping remain pending.
 - Added packed-consumer checks, three-engine browser checks, dependency audit gates and
   Windows/Linux/macOS CI configuration. Development requires Node 22.12+ in the 22.x
   line or Node 24+, with pnpm 10.28.0.
