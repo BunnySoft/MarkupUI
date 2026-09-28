@@ -446,6 +446,21 @@ ESM/classic entry gzip is 8,347/8,500 bytes; core-inclusive runtime is 9,770/9,9
 under the unchanged 10,500 ceiling. CSS is 1,668 gzip bytes. Reconciliation adds
 306/307 JS gzip bytes, with no hidden dependencies or baseline overwrite.
 
+## Tree Select delivery
+
+Tree Select keeps its existing core and internal native-select dependencies. Classic
+order is core, `markup-ui-native-select.global.js`, then `markup-ui-tree-select.global.js`.
+ESM imports both dependencies automatically. Public runtime exports are `TreeSelect`
+and `registerTreeSelect`; no factory, hidden native hierarchy or Tree/Select element
+registration is required. Typed/JSON options provide full paths, groups, leaf/any
+selection, independent multiple values/defaults and filtering. Mode and path settings
+are changed while disconnected; scalar presentation and data updates remain live.
+
+Entries cost 6,288/6,525 gzip bytes (ESM/classic), or 11,316/11,716 including all
+dependencies. This saves 851/850 JS gzip bytes relative to the Heatmap state.
+CSS is 802 gzip bytes, down from 840. The 13,000-byte runtime ceiling and all
+per-file ceilings remain unchanged. No new required dependency is introduced.
+
 ## Reproducible size reports
 
 After `pnpm build`, run `pnpm size:report` (or `node scripts/size-report.mjs`).

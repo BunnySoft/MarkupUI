@@ -32,8 +32,6 @@
 .m-tree-select [data-select-search] { margin-block: 8px; }
 .m-tree-select [data-tree-select-field] [data-select-filter] { font: inherit; box-sizing: border-box; max-inline-size: 100%; padding: 6px; }
 .m-tree-select [data-tree-select-value] { white-space: pre-wrap; }
-.m-tree-select [data-tree-select-source] [data-tree-list] { padding-inline-start: var(--m-tree-select-indent, 24px); }
-.m-tree-select [data-tree-select-source] > [data-tree-list] { padding-inline-start: 0; }
 .m-tree-select :focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
 .m-tree-select [data-tree-select-field] :is([data-select-control],[data-select-filter]):focus-visible { outline-color: var(--m-tree-select-focus-color, var(--m-select-focus, light-dark(#36ad6a, #7fe7c4))); }
 .m-tree-select [hidden] { display: none !important; }

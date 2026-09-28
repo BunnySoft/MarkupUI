@@ -1,457 +1,258 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { readFileSync } from "node:fs"
-import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
-import { TreeSelect, registerTreeSelect, createTreeSelect } from "../src/components/tree-select/index.js"
-import type { TreeSelectController, TreeSelectOptions } from "../src/components/tree-select/index.js"
+import { TreeSelect, registerTreeSelect } from "../src/components/tree-select/index.js"
+import type { TreeSelectItem, TreeSelectSettings } from "../src/components/tree-select/index.js"
+import { createTreeSelect, treeSelectData } from "../src/components/tree-select/tree-select.js"
 import { ViewElement } from "../src/core/index.js"
-import { createTree } from "../src/components/tree/tree.js"
 import { createSelect } from "../src/components/native-select.js"
-import { coordinateForm as createForm } from "../src/components/form/controller.js"
+import { coordinateForm } from "../src/components/form/controller.js"
 
-const controllers: TreeSelectController[] = []
-const pickerCss = readFileSync(resolve("src", "components", "tree-select", "tree-select.css"), "utf8")
+const css = readFileSync("src/components/tree-select/tree-select.css", "utf8")
 const wait = () => new Promise(resolve => setTimeout(resolve, 25))
-function row(key: string, label: string, children = "", extra = "") {
-  return `<li data-tree-key="${key}" ${extra}><div data-tree-row><span data-tree-label>${label}</span></div>${children ? `<details data-tree-branch><summary>${label} children</summary><ul data-tree-list>${children}</ul></details>` : ""}</li>`
-}
-const sourceHTML = () => row("docs", "Documents", row("readme", "README") + row("notes", "Notes"))
-  + row("archive", "Archive", row("archived", "Old file"), "data-tree-disabled") + row("standalone", "Standalone")
-function fixture(options: TreeSelectOptions = {}, config: { multiple?: boolean; filter?: boolean; initial?: string; required?: boolean; source?: string } = {}) {
-  const form = document.createElement("form")
-  form.innerHTML = `<section class="m-tree-select" data-tree-select><section class="m-tree" data-tree data-tree-select-source aria-label="Files"><ul data-tree-list>${config.source ?? sourceHTML()}</ul></section><div class="m-select" data-select data-tree-select-field><label>Files<select data-select-control name="files" ${config.multiple ? "multiple" : ""} ${config.filter || config.multiple ? 'size="5"' : ""} ${config.required !== false ? "required" : ""}>${!config.multiple ? `<option value="" ${config.filter ? "" : "data-select-placeholder"}>Choose file</option>` : ""}<option value="readme" ${config.initial === "readme" ? "selected" : ""}>Documents / README</option><option value="notes" ${config.initial === "notes" ? "selected" : ""}>Documents / Notes</option><option value="standalone" ${config.initial === "standalone" ? "selected" : ""}>Standalone</option></select></label>${config.filter ? '<div data-select-search hidden><label>Filter<input type="search" data-select-filter></label><p data-select-empty hidden>No matches. Selected items remain visible.</p></div>' : ""}</div><p data-tree-select-value></p><p data-tree-select-status></p><button type="button" data-tree-select-clear hidden>Clear files</button></section><button type="button" id="outside">Outside</button>`
-  document.body.append(form)
-  const root = form.querySelector<HTMLElement>("[data-tree-select]")!, source = root.querySelector<HTMLElement>("[data-tree-select-source]")!
-  const control = root.querySelector<HTMLSelectElement>("select")!, original = [...control.options], label = control.labels![0]!
-  const helper = createTreeSelect(root, options); controllers.push(helper)
-  const node = (key: string) => [...source.querySelectorAll<HTMLLIElement>("[data-tree-key]")].find(node => node.dataset.treeKey === key)!
+const items = (): TreeSelectItem[] => [
+  { value: "docs", label: "Documents", children: [{ value: "readme", label: "README" }, { value: "notes", label: "Notes" }] },
+  { value: "archive", label: "Archive", disabled: true, children: [{ value: "archived", label: "Old file" }] },
+  { value: "standalone", label: "Standalone" },
+]
+function fixture(config: { multiple?: boolean; filterable?: boolean; settings?: TreeSelectSettings } = {}) {
+  const form = document.createElement("form"), element = new TreeSelect()
+  element.multiple = config.multiple ?? false; element.filterable = config.filterable ?? false
+  element.settings = config.settings ?? {}; element.options = items()
+  element.name = "files"; element.required = true; element.clearable = true
+  form.append(element); document.body.append(form)
+  const control = element.native!
   const option = (key: string) => [...control.options].find(option => option.value === key)!
-  return { form, root, source, control, original, label, helper, node, option, clear: root.querySelector<HTMLButtonElement>("[data-tree-select-clear]")! }
+  return { form, element, control, option, clear: element.querySelector<HTMLButtonElement>("[data-tree-select-clear]")! }
 }
-afterEach(() => {
-  for (const controller of controllers.splice(0)) { try { controller.disconnect() } catch { /* Fault teardown is asserted separately. */ } }
-  document.body.replaceChildren(); vi.restoreAllMocks()
-})
+afterEach(() => { document.body.replaceChildren(); vi.restoreAllMocks() })
 
-describe("native Tree Select visual defaults", () => {
-  it("keeps four trigger size defaults and native listbox sizing within budget", () => {
-    expect(gzipSync(pickerCss, { level: 9 }).length).toBeLessThanOrEqual(1250)
-    for (const height of [22, 28, 34, 40]) expect(pickerCss).toContain(`--_tree-select-height: ${height}px`)
-    expect(pickerCss).toContain("min-block-size: var(--m-tree-select-height")
-    expect(pickerCss).not.toMatch(/(?:^|[;{])\s*(?:height|block-size):/m)
-    expect(pickerCss).not.toContain("appearance:")
-    expect(pickerCss).not.toContain("input[type=checkbox]")
+describe("Tree Select native visuals and registration", () => {
+  it("keeps native list sizing and palette overrides within budget", () => {
+    expect(gzipSync(css, { level: 9 }).length).toBeLessThanOrEqual(1250)
+    for (const height of [22, 28, 34, 40]) expect(css).toContain(`--_tree-select-height: ${height}px`)
+    for (const token of ["--m-select-border", "--m-select-background", "--m-select-color", "--m-select-focus", "--m-select-pad"]) expect(css).toContain(token)
+    expect(css).not.toMatch(/(?:^|[;{])\s*(?:height|block-size):/m)
+    expect(css).not.toContain("appearance:"); expect(css).not.toContain("position: fixed")
+    expect(css).toContain("color: GrayText !important"); expect(css).toContain("[hidden] { display: none !important; }")
   })
-  it("supports standalone palette defaults and the existing Select author tokens", () => {
-    for (const token of ["--m-select-border", "--m-select-background", "--m-select-color", "--m-select-focus", "--m-select-pad"]) {
-      expect(pickerCss).toContain(token)
-    }
-    expect(pickerCss).toContain("light-dark(#e0e0e6, transparent)")
-    expect(pickerCss).toContain("light-dark(#fafafc, rgba(255,255,255,.06))")
-    expect(pickerCss).toContain("color: GrayText !important")
-    expect(pickerCss).toContain("border-color: CanvasText !important")
-  })
-  it("keeps passive source indentation and native visibility rather than adding a popup", () => {
-    expect(pickerCss).toContain("--m-tree-select-indent, 24px")
-    expect(pickerCss).toContain("[data-tree-select-source] > [data-tree-list] { padding-inline-start: 0; }")
-    expect(pickerCss).toContain("[hidden] { display: none !important; }")
-    expect(pickerCss).not.toContain("position: fixed")
-    expect(pickerCss).not.toContain("@import")
-  })
-})
-
-describe("native hierarchy projection and value policy", () => {
-  it("keeps native selects, labels, options and listeners while showing full paths", () => {
-    const { helper, control, original, label, option } = fixture()
-    const listener = vi.fn(); original[1]!.addEventListener("custom", listener); helper.refresh()
-    expect(control.labels![0]).toBe(label); expect(option("readme")).toBe(original[1])
-    expect(option("readme").textContent).toBe("Documents / README")
-    option("readme").dispatchEvent(new Event("custom")); expect(listener).toHaveBeenCalledOnce()
-    expect(control.getAttribute("role")).toBeNull()
-  })
-  it("uses single native string/null values and complete key paths", () => {
-    const { helper } = fixture()
-    helper.setValue("readme"); expect(helper.value).toBe("readme")
-    expect(helper.state.paths).toEqual([["docs", "readme"]])
-    helper.setValue(null); expect(helper.value).toBeNull(); expect(helper.state.keys).toEqual([])
-  })
-  it("uses independent multiple keys in native DOM order without cascading parents", () => {
-    const { helper, form } = fixture({}, { multiple: true })
-    helper.setValue(["readme", "docs"])
-    expect(helper.value).toEqual(["docs", "readme"])
-    expect(helper.state.paths).toEqual([["docs"], ["docs", "readme"]])
-    expect(new FormData(form).getAll("files")).toEqual(["docs", "readme"])
-  })
-  it("supports leaf-only selection without automatically promoting an empty branch", () => {
-    const { helper, node, control } = fixture({ selection: "leaf" })
-    expect([...control.options].some(option => option.value === "docs")).toBe(false)
-    expect(() => helper.setValue("docs")).toThrow()
-    node("readme").remove(); node("notes").remove(); helper.refresh()
-    expect([...control.options].some(option => option.value === "docs")).toBe(false)
-  })
-  it("allows known branches in any mode and never accepts unknown or numeric keys", () => {
-    const { helper, control } = fixture()
-    helper.setValue("docs")
-    for (const key of ["missing", 1, {}, ["readme"], ""]) expect(() => helper.setValue(key as never)).toThrow()
-    expect(control.value).toBe("docs")
-  })
-  it("requires arrays only in multiple mode and rejects duplicates atomically", () => {
-    const { helper } = fixture({}, { multiple: true })
-    helper.setValue(["readme"])
-    for (const value of [null, "notes", [1], ["readme", "readme"], ["missing"]]) expect(() => helper.setValue(value as never)).toThrow()
-    expect(helper.value).toEqual(["readme"])
-  })
-  it("disables every path beneath a disabled ancestor and prunes newly disabled selections", () => {
-    const { helper, node, option, form } = fixture()
-    expect(option("archived").disabled).toBe(true)
-    expect(() => helper.setValue("archived")).toThrow()
-    helper.setValue("readme"); node("docs").setAttribute("data-tree-disabled", ""); helper.refresh()
-    expect(helper.value).toBeNull(); expect(form.checkValidity()).toBe(false)
-  })
-  it("prunes disabled selected defaults rather than letting required pass with no successful value", () => {
-    const { helper, control, form, node } = fixture({}, { initial: "readme" })
-    node("docs").setAttribute("data-tree-disabled", ""); helper.refresh()
-    expect(helper.value).toBeNull(); expect(control.selectedIndex).toBe(-1)
-    expect(helper.state.unavailableDefaultKeys).toEqual(["readme"])
-    expect(new FormData(form).getAll("files")).toEqual([]); expect(form.checkValidity()).toBe(false)
-  })
-  it("refreshes labels and moved paths while retaining valid key/option identity", () => {
-    const { helper, node, option, source } = fixture({ value: "readme" })
-    const before = option("readme"); node("docs").querySelector("[data-tree-label]")!.textContent = "Manuals"
-    helper.refresh(); expect(before.textContent).toBe("Manuals / README")
-    source.querySelector("[data-tree-list]")!.append(node("readme")); helper.refresh()
-    expect(option("readme")).toBe(before); expect(helper.value).toBe("readme")
-    expect(helper.state.paths).toEqual([["readme"]]); expect(before.textContent).toBe("README")
-  })
-  it("keeps duplicate leaf labels unambiguous through full native paths", () => {
-    const { helper, node, option } = fixture()
-    node("standalone").querySelector("[data-tree-label]")!.textContent = "README"; helper.refresh()
-    expect(option("readme").textContent).toBe("Documents / README")
-    expect(option("standalone").textContent).toBe("README")
-  })
-  it("uses literal labels and optional last-label readout without unsafe HTML", () => {
-    const { helper, node, option, root } = fixture({ showPath: false, separator: " → " })
-    node("readme").querySelector("[data-tree-label]")!.textContent = "<img src=x>"
-    helper.refresh(); helper.setValue("readme")
-    expect(option("readme").textContent).toBe("Documents → <img src=x>")
-    expect(root.querySelector("[data-tree-select-value]")!.textContent).toBe("<img src=x>")
-    expect(root.querySelector("img")).toBeNull()
-  })
-})
-
-describe("native filtering and forms", () => {
-  it("keeps selected nonmatches mounted/visible and FormData unchanged while filtering", () => {
-    const { helper, option, form } = fixture({}, { multiple: true, filter: true })
-    helper.setValue(["readme"]); const before = [...new FormData(form)]
-    helper.setFilter("Standalone")
-    expect(option("readme").selected).toBe(true); expect(option("readme").hidden).toBe(false)
-    expect(option("notes").hidden).toBe(true); expect([...new FormData(form)]).toEqual(before)
-  })
-  it("does not confuse authored CSS-hidden selected values with unsubmitted values", () => {
-    const { helper, option, form } = fixture({}, { multiple: true, filter: true })
-    helper.setValue(["readme"]); option("readme").hidden = true
-    helper.setFilter("zzz")
-    expect(helper.value).toEqual(["readme"]); expect(new FormData(form).getAll("files")).toEqual(["readme"])
-  })
-  it("leaves filter composition to the existing Native Select helper", () => {
-    const { helper } = fixture({}, { filter: true })
-    const filter = helper.filter!
-    filter.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true }))
-    filter.value = "draft"
-    expect(() => helper.setFilter("replace")).toThrow()
-    expect(filter.value).toBe("draft")
-    filter.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true }))
-    helper.setFilter("README"); expect(filter.value).toBe("README")
-  })
-  it("keeps a required single listbox empty instead of accepting its blank placeholder", () => {
-    const { helper, control, form } = fixture({}, { filter: true })
-    expect(control.selectedIndex).toBe(-1); expect(form.checkValidity()).toBe(false)
-    control.selectedIndex = 0; control.dispatchEvent(new Event("change", { bubbles: true }))
-    expect(helper.value).toBeNull(); expect(control.selectedIndex).toBe(-1); expect(form.checkValidity()).toBe(false)
-  })
-  it("honors native multiple required/name/fieldset/FormData behavior", () => {
-    const { helper, root, form, control } = fixture({}, { multiple: true })
-    expect(form.checkValidity()).toBe(false); helper.setValue(["readme", "notes"])
-    expect(form.checkValidity()).toBe(true); expect(control.name).toBe("files")
-    const fieldset = document.createElement("fieldset"); fieldset.disabled = true; form.append(fieldset); fieldset.append(root)
-    helper.refresh(); expect(new FormData(form).getAll("files")).toEqual([])
-    expect(helper.value).toEqual(["readme", "notes"])
-  })
-  it("preserves application custom validity and composes with Native Form", async () => {
-    const { helper, form, control } = fixture()
-    control.setCustomValidity("Application policy")
-    helper.setValue("readme"); expect(control.validationMessage).toBe("Application policy")
-    const validation = createForm(form, { items: [{ key: "files", controls: [control] }] })
-    expect((await validation.validate()).status).toBe("invalid")
-    control.setCustomValidity(""); helper.refresh()
-    expect((await validation.validate()).status).toBe("valid")
-    validation.disconnect()
-  })
-  it("supports explicit external form association without moving names or controls", async () => {
-    const { helper, root, form, control } = fixture({ defaultValue: "readme" })
-    form.id = "external-form"; control.setAttribute("form", form.id); document.body.append(root); helper.refresh()
-    helper.setValue("notes"); form.reset(); await wait()
-    expect(helper.value).toBe("readme"); expect(new FormData(form).getAll("files")).toEqual(["readme"])
-  })
-})
-
-describe("native defaults, refresh and notifications", () => {
-  it("keeps current/default values separate and resets silently", async () => {
-    const { helper, form, root } = fixture({ defaultValue: "readme", value: "notes" }), change = vi.fn()
-    root.addEventListener("m:tree-select-change", change)
-    form.reset(); await wait(); expect(helper.value).toBe("readme")
-    helper.setValue("standalone"); helper.refresh(); expect(change).not.toHaveBeenCalled()
-  })
-  it("preserves current selection and filter on cancelled reset", async () => {
-    const { helper, form } = fixture({ defaultValue: ["readme"] }, { multiple: true, filter: true })
-    helper.setValue(["notes"]); helper.setFilter("Notes")
-    form.addEventListener("reset", event => event.preventDefault(), { once: true })
-    form.reset(); await wait(); expect(helper.value).toEqual(["notes"]); expect(helper.filter!.value).toBe("Notes")
-  })
-  it("restores only surviving multiple defaults without an unrelated replacement", async () => {
-    const { helper, node, form } = fixture({ defaultValue: ["readme", "notes"] }, { multiple: true })
-    helper.setValue(["standalone"]); node("readme").remove()
-    form.reset(); await wait()
-    expect(helper.value).toEqual(["notes"]); expect(helper.state.unavailableDefaultKeys).toEqual(["readme"])
-  })
-  it("clears a missing single default and retains required invalidity", async () => {
-    const { helper, node, control, form } = fixture({ defaultValue: "readme" })
-    node("readme").remove(); form.reset(); await wait()
-    expect(helper.value).toBeNull(); expect(control.selectedIndex).toBe(-1); expect(form.checkValidity()).toBe(false)
-    expect([...control.options].some(option => option.value === "readme")).toBe(false)
-  })
-  it("recognizes native defaultSelected edits and explicit default setter", async () => {
-    const { helper, option, form } = fixture({ defaultValue: "readme" })
-    option("readme").defaultSelected = false; option("notes").defaultSelected = true
-    helper.refresh(); helper.setValue("standalone"); form.reset(); await wait()
-    expect(helper.value).toBe("notes")
-    helper.setDefaultValue("standalone"); expect(helper.value).toBe("notes")
-    form.reset(); await wait(); expect(helper.value).toBe("standalone")
-  })
-  it("does not overwrite a later setter with queued post-reset synchronization", async () => {
-    const { helper, form } = fixture({ defaultValue: "readme" })
-    form.reset(); helper.setValue("notes"); await wait()
-    expect(helper.value).toBe("notes")
-  })
-  it("emits once for native change/clear and never for filtering or setters", async () => {
-    const { helper, control, root, clear } = fixture({}, { filter: true }), change = vi.fn()
-    root.addEventListener("m:tree-select-change", change)
-    helper.setValue("readme"); helper.setFilter("README"); expect(change).not.toHaveBeenCalled()
-    control.value = "notes"; control.dispatchEvent(new Event("change", { bubbles: true }))
-    expect(change).toHaveBeenCalledOnce()
-    clear.click(); await wait(); expect(change).toHaveBeenCalledTimes(2); expect(helper.value).toBeNull()
-  })
-  it("honors cancelled clear and moves focus before hiding the clear action", async () => {
-    const { helper, form, clear, control } = fixture({ value: "readme" })
-    form.addEventListener("click", event => event.preventDefault(), { once: true }); clear.click(); await wait()
-    expect(helper.value).toBe("readme")
-    clear.focus(); helper.clear(); expect(document.activeElement).toBe(control); expect(clear.hidden).toBe(true)
-  })
-})
-
-describe("ownership, bounded data and native handoff", () => {
-  it("rejects active Tree/Select owners and repeated module owners", async () => {
-    const { helper, root, source } = fixture()
-    expect(() => createTree(source)).toThrow("owner")
-    expect(() => createSelect(root.querySelector("[data-tree-select-field]")!)).toThrow("owner")
-    vi.resetModules(); const other = await import("../src/components/tree-select/index.js")
-    expect(() => other.createTreeSelect(root)).toThrow("unowned")
-    helper.disconnect()
-  })
-  it("does not rewrite another Native Select owner's option collection on a rejected bind", () => {
-    const { helper, root, control } = fixture({ value: "notes" }); helper.disconnect()
-    const native = createSelect(root.querySelector("[data-tree-select-field]")!)
-    const replace = vi.spyOn(control, "replaceChildren")
-    expect(() => createTreeSelect(root)).toThrow("owner")
-    expect(replace).not.toHaveBeenCalled(); expect(control.value).toBe("notes")
-    native.disconnect()
-  })
-  it("rejects unknown fallback options, source form controls and duplicate keys before mutation", () => {
-    expect(() => fixture({}, { source: row("x", "X") })).toThrow("fallback")
-    expect(() => fixture({}, { source: sourceHTML() + row("readme", "Duplicate") })).toThrow("unique")
-    expect(() => fixture({}, { source: sourceHTML().replace("Documents</span>", 'Documents</span><input name="hidden-source">') })).toThrow("passive")
-  })
-  it("bounds native source count, depth and full-path labels", () => {
-    expect(() => fixture({}, { source: sourceHTML() + Array.from({ length: 2000 }, (_, i) => row(`x-${i}`, "Extra")).join("") })).toThrow("2000")
-    expect(() => fixture({}, { source: sourceHTML().replace("Documents</span>", `${"x".repeat(2049)}</span>`) })).toThrow("2048")
-  })
-  it("retains keys across replacement/reorder, clears removed keys and refreshes their paths", () => {
-    const { helper, source, node, control } = fixture({ value: "readme" })
-    const option = [...control.options].find(option => option.value === "readme")
-    const replacement = node("readme").cloneNode(true); node("readme").replaceWith(replacement); helper.refresh()
-    expect(helper.value).toBe("readme"); expect([...control.options].find(item => item.value === "readme")).toBe(option)
-    source.querySelector("[data-tree-list]")!.append(replacement); helper.refresh()
-    expect(helper.state.paths).toEqual([["readme"]])
-    replacement.remove(); helper.refresh(); expect(helper.value).toBeNull()
-  })
-  it("keeps nested and separate roots independent with native form ownership", () => {
-    const a = fixture(), b = fixture({}, { multiple: true })
-    b.form.id = "nested-owner"; b.control.setAttribute("form", b.form.id); a.root.append(b.root)
-    a.helper.refresh(); b.helper.refresh(); a.helper.setValue("readme"); b.helper.setValue(["notes"])
-    expect(a.helper.value).toBe("readme"); expect(b.helper.value).toEqual(["notes"])
-  })
-  it("gates corrupted sources until repair without clearing unrelated author DOM", () => {
-    const { helper, node, root, form } = fixture({ value: "readme" })
-    node("notes").dataset.treeKey = "readme"; expect(() => helper.refresh()).toThrow("unique")
-    expect(helper.state.valid).toBe(false); expect(form.checkValidity()).toBe(false)
-    const bad = [...root.querySelectorAll('[data-tree-key="readme"]')][1]!; bad.setAttribute("data-tree-key", "notes")
-    helper.refresh(); expect(helper.value).toBe("readme")
-  })
-  it("hands off current options/selection/defaults instead of undoing edits or resurrecting removed keys", async () => {
-    const { helper, control, form, node, option } = fixture({ defaultValue: ["readme", "notes"] }, { multiple: true, filter: true })
-    helper.setValue(["notes", "standalone"]); helper.setFilter("does not match")
-    const notes = option("notes"); node("readme").remove()
-    helper.disconnect(); await wait()
-    expect([...control.selectedOptions].map(option => option.value)).toEqual(["notes", "standalone"])
-    expect([...control.options].find(option => option.value === "notes")).toBe(notes)
-    expect([...control.options].some(option => option.value === "readme")).toBe(false)
-    expect(notes.hidden).toBe(false)
-    form.reset(); expect([...control.options].filter(option => option.selected).map(option => option.value)).toEqual(["notes"])
-    expect(new FormData(form).getAll("files")).toEqual(["notes"])
-    expect(() => helper.setValue([])).toThrow("disconnected")
-  })
-  it("leaves single selected native value intact after teardown", () => {
-    const { helper, control, form } = fixture({ defaultValue: "readme" })
-    helper.setValue("notes"); helper.disconnect()
-    expect(control.value).toBe("notes"); expect(new FormData(form).get("files")).toBe("notes")
-    expect(() => helper.value).toThrow("disconnected")
-  })
-  it("keeps source updates application-owned and rejects fake lazy/checking options", () => {
-    for (const options of [{ load: () => {} }, { cascade: true }, { checkable: true }, { virtualScroll: true }]) {
-      expect(() => fixture(options as TreeSelectOptions)).toThrow("Unsupported")
-    }
-  })
-})
-
-describe("canonical TreeSelect ViewElement", () => {
-  it("registers only its own ViewElement and rejects conflicting definitions", () => {
+  it("registers only its own ViewElement and rejects conflicts", () => {
     expect(TreeSelect.prototype).toBeInstanceOf(ViewElement)
     expect(customElements.get("m-tree-select")).toBe(TreeSelect)
-    expect(TreeSelect.tag).toBe("m-tree-select")
-    const define = vi.fn()
-    registerTreeSelect({ get: () => undefined, define })
+    const define = vi.fn(); registerTreeSelect({ get: () => undefined, define })
     expect(define.mock.calls.map(call => call[0])).toEqual(["m-tree-select"])
     expect(() => registerTreeSelect({ get: () => HTMLElement, define })).toThrow("different")
+    expect(TreeSelect.observedAttributes).not.toContain("checkable")
+    expect("checkable" in new TreeSelect()).toBe(false)
   })
-
-  it("exposes canonical observedAttributes and default property values", () => {
-    expect(TreeSelect.observedAttributes).toEqual(["value", "placeholder", "disabled", "clearable", "multiple", "checkable"])
-    const element = new TreeSelect()
-    expect(element.value).toBeNull()
-    expect(element.placeholder).toBeNull()
-    expect(element.disabled).toBe(false)
-    expect(element.clearable).toBe(false)
-    expect(element.multiple).toBe(false)
-    expect(element.checkable).toBe(false)
-  })
-
-  it("reflects properties to attributes and validates values", () => {
-    const element = new TreeSelect()
-
-    element.value = "folder-1"
-    expect(element.getAttribute("value")).toBe("folder-1")
-    element.value = null
-    expect(element.hasAttribute("value")).toBe(false)
-
-    element.placeholder = "Select an item"
-    expect(element.getAttribute("placeholder")).toBe("Select an item")
-    element.placeholder = null
-    expect(element.hasAttribute("placeholder")).toBe(false)
-
-    element.disabled = true
-    expect(element.hasAttribute("disabled")).toBe(true)
-    element.disabled = false
-    expect(element.hasAttribute("disabled")).toBe(false)
-
-    element.clearable = true
-    expect(element.hasAttribute("clearable")).toBe(true)
-    element.clearable = false
-    expect(element.hasAttribute("clearable")).toBe(false)
-
-    element.multiple = true
-    expect(element.hasAttribute("multiple")).toBe(true)
-    element.multiple = false
-    expect(element.hasAttribute("multiple")).toBe(false)
-
-    element.checkable = true
-    expect(element.hasAttribute("checkable")).toBe(true)
-    element.checkable = false
-    expect(element.hasAttribute("checkable")).toBe(false)
-  })
-
-  it("generates native select control and synchronizes properties", () => {
-    const element = new TreeSelect()
-    element.placeholder = "Choose node"
-    element.value = "node-1"
-    document.body.append(element)
-
-    expect(element.classList.contains("m-tree-select")).toBe(true)
-    const select = element.querySelector<HTMLSelectElement>("select[data-select-control]")!
-    expect(select).not.toBeNull()
-    expect(select.value).toBe("node-1")
-
-    element.disabled = true
-    expect(select.disabled).toBe(true)
-    element.disabled = false
-    expect(select.disabled).toBe(false)
-
-    element.multiple = true
-    expect(select.multiple).toBe(true)
-
-    element.placeholder = "New placeholder"
-    const placeholderOption = select.querySelector<HTMLOptionElement>("option[data-tree-select-placeholder]")
-    expect(placeholderOption?.textContent).toBe("New placeholder")
-  })
-
-  it("emits m:change event when native select changes", () => {
-    const element = new TreeSelect()
-    document.body.append(element)
-    const select = element.querySelector<HTMLSelectElement>("select")!
-    const listener = vi.fn()
-    element.addEventListener("m:change", listener)
-
-    const opt = document.createElement("option")
-    opt.value = "item-2"
-    opt.textContent = "Item 2"
-    select.append(opt)
-    select.value = "item-2"
-    select.dispatchEvent(new Event("change", { bubbles: true }))
-
-    expect(listener).toHaveBeenCalledOnce()
-    expect(listener.mock.calls[0][0].detail).toEqual({ value: "item-2" })
-    expect(element.value).toBe("item-2")
-  })
-
-  it("supports clearable and clear method", () => {
-    const element = new TreeSelect()
-    element.clearable = true
-    element.value = "item-1"
-    document.body.append(element)
-
-    const clearBtn = element.querySelector<HTMLButtonElement>("button[data-tree-select-clear]")!
-    expect(clearBtn).not.toBeNull()
-
-    const listener = vi.fn()
-    element.addEventListener("m:change", listener)
-
-    clearBtn.click()
-    expect(element.value).toBeNull()
-    expect(listener).toHaveBeenCalledOnce()
-    expect(listener.mock.calls[0][0].detail).toEqual({ value: "" })
-  })
-
-  it("delegates focus and blur to the child control", () => {
-    const element = new TreeSelect()
-    document.body.append(element)
-    const select = element.querySelector<HTMLSelectElement>("select")!
-    const focusSpy = vi.spyOn(select, "focus")
-    const blurSpy = vi.spyOn(select, "blur")
-
-    element.focus()
-    expect(focusSpy).toHaveBeenCalledOnce()
-
-    element.blur()
-    expect(blurSpy).toHaveBeenCalledOnce()
+  it("creates no passive native tree or competing Tree registration", () => {
+    const { element } = fixture()
+    expect(element.querySelector("[data-tree-select-source], [data-tree-list]")).toBeNull()
+    expect(customElements.get("m-tree")).toBeUndefined()
+    expect(customElements.get("m-select")).toBeUndefined()
+    expect(element.hasAttribute("tabindex")).toBe(false); expect(element.hasAttribute("role")).toBe(false)
   })
 })
 
+describe("bounded data and projection", () => {
+  it("preserves native option identity and listeners when labels and paths change", () => {
+    const { element, option, control } = fixture()
+    element.value = "readme"; const before = option("readme"), listener = vi.fn()
+    before.addEventListener("custom", listener)
+    element.options = [{ value: "manuals", label: "Manuals", children: [{ value: "readme", label: "Start" }] }]
+    expect(option("readme")).toBe(before); expect(control).toBe(element.native)
+    expect(before.textContent).toBe("Manuals / Start")
+    expect(element.state.paths).toEqual([["manuals", "readme"]])
+    before.dispatchEvent(new Event("custom")); expect(listener).toHaveBeenCalledOnce()
+  })
+  it("keeps leaf-only empty branches and nonselectable groups distinct", () => {
+    const { element, control } = fixture({ settings: { selection: "leaf" } })
+    expect(() => { element.value = "docs" }).toThrow()
+    element.options = [{ value: "docs", label: "Documents", children: [] }, { value: "group", label: "Group", group: true }]
+    expect([...control.options].map(option => option.value)).toEqual([""])
+  })
+  it("supports any-node selection without promoting descendants or groups", () => {
+    const { element } = fixture()
+    element.value = "docs"; expect(element.state.keys).toEqual(["docs"])
+    element.options = [{ value: "docs", label: "Documents", group: true, children: [{ value: "readme", label: "README" }] }]
+    expect(element.value).toBeNull(); expect(() => { element.value = "docs" }).toThrow()
+    element.value = "readme"; expect(element.state.paths).toEqual([["docs", "readme"]])
+  })
+  it("prunes disabled paths and retains unavailable defaults without successful submission", () => {
+    const { element, form, control } = fixture()
+    element.defaultValue = "readme"; element.value = "readme"
+    element.options = [{ ...items()[0]!, disabled: true }]
+    expect(element.value).toBeNull(); expect(control.selectedIndex).toBe(-1)
+    expect(element.state.unavailableDefaultKeys).toEqual(["readme"])
+    expect(new FormData(form).getAll("files")).toEqual([]); expect(form.checkValidity()).toBe(false)
+    expect(() => { element.value = "readme" }).toThrow()
+  })
+  it("keeps labels literal and supports custom separators and last-label readout", () => {
+    const { element, option } = fixture({ settings: { separator: " > ", showPath: false } })
+    element.options = [{ value: "docs", label: "Documents", children: [{ value: "readme", label: "<img src=x>" }] }]
+    element.value = "readme"
+    expect(option("readme").textContent).toBe("Documents > <img src=x>")
+    expect(element.querySelector("[data-tree-select-value]")!.textContent).toBe("<img src=x>")
+    expect(element.querySelector("img")).toBeNull()
+  })
+  it("snapshots caller data deeply and rejects duplicate keys before mutation", () => {
+    const { element } = fixture(), data = items()
+    element.options = data
+    Object.assign(data[0]!, { label: "Changed" })
+    expect(element.options[0]!.label).toBe("Documents")
+    expect(Object.isFrozen(element.options[0]!.children)).toBe(true)
+    const before = element.options
+    expect(() => { element.options = [...items(), items()[0]!] }).toThrow("unique")
+    expect(element.options).toBe(before)
+  })
+  it("enforces node, depth and path-label bounds", () => {
+    const { element } = fixture()
+    element.value = "readme"
+    const before = element.options
+    expect(() => { element.options = Array.from({ length: 2001 }, (_, i) => ({ value: String(i), label: "Node" })) }).toThrow()
+    let nested: TreeSelectItem = { value: "0", label: "Node" }
+    for (let i = 1; i <= 64; i++) nested = { value: String(i), label: "Node", children: [nested] }
+    expect(() => { element.options = [nested] }).toThrow("64")
+    expect(() => { element.options = [{ value: "a", label: "A".repeat(1024), children: [{ value: "b", label: "B".repeat(1024) }] }] }).toThrow("2048")
+    expect(element.options).toBe(before)
+    expect(element.state.valid).toBe(true); expect(element.value).toBe("readme")
+  })
+  it.each([{ load: () => {} }, { cascade: true }, { checkable: true }, { selection: "bad" }, { separator: "x".repeat(33) }, { showPath: null }])("rejects unsupported settings %j", settings => {
+    expect(() => { new TreeSelect().settings = settings as never }).toThrow()
+  })
+})
+
+describe("native forms, filtering and events", () => {
+  it("keeps required single listboxes empty instead of accepting blank options", () => {
+    const { element, control, form } = fixture({ filterable: true })
+    expect(control.selectedIndex).toBe(-1); expect(form.checkValidity()).toBe(false)
+    control.selectedIndex = 0; control.dispatchEvent(new Event("change", { bubbles: true }))
+    expect(element.value).toBeNull(); expect(control.selectedIndex).toBe(-1)
+    expect(form.checkValidity()).toBe(false)
+  })
+  it("retains selected nonmatches and authored hidden flags while filtering", () => {
+    const { element, option, form } = fixture({ multiple: true, filterable: true })
+    element.value = ["readme"]; const before = [...new FormData(form)]
+    element.setFilter("Standalone")
+    expect(option("readme").selected).toBe(true); expect(option("readme").hidden).toBe(false)
+    expect(option("notes").hidden).toBe(true); expect([...new FormData(form)]).toEqual(before)
+    option("readme").hidden = true; element.setFilter("zzz")
+    expect(element.value).toEqual(["readme"]); expect([...new FormData(form)]).toEqual(before)
+  })
+  it("protects composing drafts and does not confuse disabled fieldsets with lost values", () => {
+    const { element, form } = fixture({ multiple: true, filterable: true })
+    const input = element.querySelector<HTMLInputElement>("[data-select-filter]")!
+    input.dispatchEvent(new CompositionEvent("compositionstart", { bubbles: true })); input.value = "draft"
+    expect(() => element.setFilter("replace")).toThrow("composing")
+    expect(input.value).toBe("draft")
+    input.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true }))
+    element.value = ["readme"]
+    const fieldset = document.createElement("fieldset"); fieldset.disabled = true
+    form.append(fieldset); fieldset.append(element)
+    expect(element.value).toEqual(["readme"]); expect(new FormData(form).getAll("files")).toEqual([])
+  })
+  it("supports external form association established before rebind", async () => {
+    const { element, form, control } = fixture()
+    element.defaultValue = "readme"; element.value = "notes"
+    element.remove(); form.id = "external-form"; control.setAttribute("form", form.id); document.body.append(element)
+    form.reset(); await wait()
+    expect(element.value).toBe("readme"); expect(new FormData(form).getAll("files")).toEqual(["readme"])
+  })
+  it("preserves application validity and composes with the native Form coordinator", async () => {
+    const { element, form, control } = fixture()
+    control.setCustomValidity("Application policy"); element.value = "readme"
+    const validation = coordinateForm(form, { items: [{ key: "files", controls: [control] }] })
+    expect((await validation.validate()).status).toBe("invalid")
+    control.setCustomValidity(""); element.refresh()
+    expect((await validation.validate()).status).toBe("valid"); validation.disconnect()
+  })
+  it("recognizes native defaultSelected edits without overwriting native current selection", async () => {
+    const { element, option, form } = fixture()
+    element.defaultValue = "readme"; element.value = "standalone"
+    option("readme").defaultSelected = false; option("notes").defaultSelected = true
+    const current = element.native!.value
+    element.refresh(); expect(element.value).toBe(current)
+    form.reset(); await wait(); expect(element.value).toBe("notes")
+  })
+  it("captures pending native defaults and disabled overrides before disconnect", async () => {
+    const { element, option, form } = fixture()
+    option("notes").defaultSelected = true; option("readme").disabled = true
+    element.remove(); form.append(element)
+    form.reset(); await wait(); expect(element.value).toBe("notes")
+    expect(() => { element.value = "readme" }).toThrow()
+  })
+  it("does not let queued clear supersede an explicit value write", async () => {
+    const { element, clear } = fixture()
+    element.value = "readme"; clear.click(); element.value = "notes"; await wait()
+    expect(element.value).toBe("notes")
+  })
+  it("emits one host event for native selection and no event for programmatic writes", () => {
+    const { element, control, form } = fixture(), listener = vi.fn()
+    form.addEventListener("m:tree-select-change", listener)
+    element.value = "readme"; expect(listener).not.toHaveBeenCalled()
+    control.value = "notes"; control.dispatchEvent(new Event("change", { bubbles: true }))
+    expect(listener).toHaveBeenCalledOnce()
+    const event = listener.mock.calls[0]![0]
+    expect(event.target).toBe(element); expect(event.detail.action).toBe("select")
+    expect(event.detail.paths).toEqual([["docs", "notes"]])
+    expect(event.cancelable).toBe(false); expect(event.composed).toBe(false)
+  })
+  it("hands off current native options, defaults and submission after disconnect", () => {
+    const { element, form, option, control } = fixture({ multiple: true, filterable: true })
+    element.defaultValue = ["readme", "notes"]; element.value = ["notes", "standalone"]
+    element.setFilter("no match"); const notes = option("notes")
+    element.disconnectedCallback()
+    expect(control.selectedOptions.length).toBe(2); expect(notes.hidden).toBe(false)
+    form.reset(); expect([...new FormData(form)].map(([, value]) => value)).toEqual(["readme", "notes"])
+  })
+})
+
+describe("ownership, corruption and cleanup", () => {
+  it("rejects duplicate Tree Select and Native Select owners", () => {
+    const { element } = fixture(), root = element.querySelector<HTMLElement>("[data-tree-select]")!
+    expect(() => createTreeSelect(root, treeSelectData(items()))).toThrow("unowned")
+    expect(() => createSelect(root.querySelector("[data-tree-select-field]")!)).toThrow("owner")
+  })
+  it("gates native option corruption until repair and cancels submission", () => {
+    const { element, control, option, form } = fixture()
+    element.value = "readme"; const node = option("notes"); node.value = "duplicate"
+    expect(() => element.refresh()).toThrow("projected")
+    expect(control.validity.customError).toBe(true)
+    const event = new Event("submit", { bubbles: true, cancelable: true }); form.dispatchEvent(event)
+    expect(event.defaultPrevented).toBe(true)
+    node.value = "notes"; element.refresh()
+    expect(element.value).toBe("readme"); expect(control.validity.customError).toBe(false)
+  })
+  it("rejects nested control ownership changes and recovers after repair", () => {
+    const { element, control } = fixture()
+    element.value = "readme"; control.setAttribute("role", "combobox")
+    expect(() => element.refresh()).toThrow("role")
+    control.removeAttribute("role"); element.refresh()
+    expect(element.value).toBe("readme"); expect(element.error).toBeNull()
+  })
+  it("blocks reentrant data changes from native focus callbacks", () => {
+    const { element, control, clear } = fixture()
+    element.value = "readme"; clear.focus()
+    let rejected = false
+    control.addEventListener("focus", () => {
+      try { element.options = [] } catch { rejected = true }
+    }, { once: true })
+    element.options = []
+    expect(rejected).toBe(true); expect(element.options).toEqual([])
+  })
+  it("cancels queued actions on disconnect and keeps surviving native options on reconnect", async () => {
+    const { element, control, clear, form, option } = fixture()
+    element.value = "readme"; const before = option("readme")
+    clear.click(); element.remove(); form.append(element); await wait()
+    expect(element.native).toBe(control); expect(option("readme")).toBe(before); expect(element.value).toBe("readme")
+  })
+  it("requires explicit disconnect for native mode changes without partial writes", () => {
+    const { element, form, control } = fixture()
+    expect(() => { element.multiple = true }).toThrow("Disconnect")
+    expect(() => { element.settings = { selection: "leaf" } }).toThrow("Disconnect")
+    expect(control.multiple).toBe(false)
+    element.remove(); element.multiple = true; element.filterable = true
+    element.value = ["readme", "notes"]; form.append(element)
+    expect(element.native).toBe(control); expect(element.value).toEqual(["readme", "notes"])
+  })
+})

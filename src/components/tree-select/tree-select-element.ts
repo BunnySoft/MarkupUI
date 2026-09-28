@@ -1,242 +1,154 @@
 import { ViewElement } from "../../core/index.js"
+import { createTreeSelect, treeSelectData, treeSelectKeys, treeSelectSettings } from "./tree-select.js"
+import type { TreeSelectController, TreeSelectOptions, TreeSelectResume, TreeSelectSettings, TreeSelectState, TreeSelectValue } from "./tree-select.js"
+import type { TreeSelectItem } from "./tree-select.js"
 
 /**
- * TreeSelect component for hierarchical selection.
- * @event {"name":"Change","web":"m:change","bubbles":true,"cancelable":false,"composed":false,"detail":{"value":"string"}}
- * @region {"name":"content","accepts":["tree-node","phrasing"],"min":0,"max":null}
+ * Passive hierarchy data mapped to a labelled native select, without Tree registration.
+ * @event {"name":"Change","web":"m:tree-select-change","bubbles":true,"cancelable":false,"composed":false}
+ * @event {"name":"Error","web":"m:tree-select-error","bubbles":true,"cancelable":false,"composed":false}
  */
 export class TreeSelect extends ViewElement {
   public static readonly tag = "m-tree-select"
-  public static readonly observedAttributes = ["value", "placeholder", "disabled", "clearable", "multiple", "checkable"]
-
-  private initialized = false
-  private boundControl: HTMLSelectElement | undefined
-  private boundClear: HTMLButtonElement | undefined
+  public static readonly observedAttributes = ["options", "settings", "value", "default-value", "label", "name", "placeholder", "disabled", "required", "clearable", "multiple", "filterable"]
+  #controller: TreeSelectController | undefined
+  #initial: TreeSelectOptions = {}
+  #data = treeSelectData([])
+  #settings = treeSelectSettings({})
+  #root: HTMLElement | undefined
+  #control: HTMLSelectElement | undefined
+  #resume: TreeSelectResume | undefined
+  #upgraded = false
+  #reflecting = false
 
   public connectedCallback(): void {
-    if (!this.initialized) {
-      this.initialized = true
-      this.upgradeProperties()
-    }
-    this.classList.add("m-tree-select")
-    this.render()
+    if (!this.#upgraded) { this.#upgraded = true; this.upgradeProperties() }
+    if (!this.#root) this.#create()
+    this.#sync()
+    this.#controller = createTreeSelect(this.#root!, this.#data, { ...this.#settings, ...this.#initial }, this, this.#resume)
+    this.#initial = {}
   }
-
   public disconnectedCallback(): void {
-    this.unbind()
+    if (this.connected) this.#resume = this.#controller!.resume
+    this.#controller?.disconnect()
   }
-
-  public attributeChangedCallback(name: string, _oldValue: string | null, _newValue: string | null): void {
-    if (this.initialized && this.isConnected) {
-      if (name === "multiple") {
-        this.render()
-      } else {
-        this.syncControl()
+  public attributeChangedCallback(name: string, before: string | null, after: string | null): void {
+    if (before === after || this.#reflecting) return
+    try {
+      if (name === "options") this.options = JSON.parse(after ?? "[]")
+      else if (name === "settings") this.settings = JSON.parse(after ?? "{}")
+      else if (name === "value") this.value = this.#parse(after)
+      else if (name === "default-value") this.defaultValue = this.#parse(after)
+      else {
+        if (this.connected && ["multiple", "filterable"].includes(name)) this.#mode()
+        if (this.connected) { this.#sync(); this.refresh() }
       }
+    } catch (error) { this.#reflect(name, before); throw error }
+  }
+  /** Immutable bounded data; lazy loading and cascading checks are not this contract. @default [] */
+  public get options(): readonly TreeSelectItem[] { return this.#data.items }
+  public set options(value: readonly TreeSelectItem[]) {
+    if (this.connected) this.#controller!.assertMutable()
+    const next = treeSelectData(value)
+    if (this.connected) this.#controller!.setData(next)
+    this.#data = next
+  }
+  /** Single key/null or independent multiple keys in native option order. */
+  public get value(): TreeSelectValue { return this.connected ? this.#controller!.value : this.#initial.value !== undefined ? this.#initial.value : this.#resume?.value ?? (this.multiple ? [] : null) }
+  public set value(value: TreeSelectValue) {
+    value = this.#value(value)
+    if (this.connected) this.#controller!.setValue(value)
+    else this.#initial.value = value
+  }
+  /** Independent form-reset target. Unavailable defaults are retained across reconnect. */
+  public get defaultValue(): TreeSelectValue {
+    const keys = this.connected ? this.state.defaultKeys : this.#resume?.defaults ?? []
+    return this.#initial.defaultValue !== undefined ? this.#initial.defaultValue : this.multiple ? keys : keys[0] ?? null
+  }
+  public set defaultValue(value: TreeSelectValue) {
+    value = this.#value(value)
+    if (this.connected) this.#controller!.setDefaultValue(value)
+    else this.#initial.defaultValue = value
+  }
+  public get label(): string { return this.getAttribute("label") ?? "Choices" }
+  public set label(value: string) { this.#text(value); this.setStringAttribute("label", value) }
+  public get name(): string { return this.getAttribute("name") ?? "" }
+  public set name(value: string) { this.setStringAttribute("name", value) }
+  public get placeholder(): string { return this.getAttribute("placeholder") ?? "Choose" }
+  public set placeholder(value: string) { this.#text(value); this.setStringAttribute("placeholder", value) }
+  public get disabled(): boolean { return this.hasAttribute("disabled") }
+  public set disabled(value: boolean) { this.setBooleanAttribute("disabled", value) }
+  public get required(): boolean { return this.hasAttribute("required") }
+  public set required(value: boolean) { this.setBooleanAttribute("required", value) }
+  public get clearable(): boolean { return this.hasAttribute("clearable") }
+  public set clearable(value: boolean) { this.setBooleanAttribute("clearable", value) }
+  /** Disconnect before changing native selection mode. */
+  public get multiple(): boolean { return this.hasAttribute("multiple") }
+  public set multiple(value: boolean) { this.#mode(); this.setBooleanAttribute("multiple", value) }
+  /** Filtering uses a native listbox, never a simulated dropdown. */
+  public get filterable(): boolean { return this.hasAttribute("filterable") }
+  public set filterable(value: boolean) { this.#mode(); this.setBooleanAttribute("filterable", value) }
+  /** Selection/path policy. Disconnect before replacing configuration. */
+  public get settings(): Readonly<Required<TreeSelectSettings>> { return this.#settings }
+  public set settings(value: TreeSelectSettings) { this.#mode(); this.#settings = treeSelectSettings(value) }
+  public get connected(): boolean { return this.#controller?.connected ?? false }
+  public get state(): TreeSelectState { return this.#live().state }
+  public get error(): unknown { return this.#controller?.error ?? null }
+  /** Web-only native form owner. No native markup is required to configure this element. */
+  public get native(): HTMLSelectElement | null { return this.#control ?? null }
+  public setFilter(value: string): void { this.#live().setFilter(value) }
+  public clear(): boolean { return this.#live().clear() }
+  public refresh(): void { if (this.connected) this.#controller!.refresh() }
+  public override focus(options?: FocusOptions): void { this.#control?.focus(options) }
+  public override blur(): void { this.#control?.blur() }
+
+  #live(): TreeSelectController { if (!this.connected) throw new Error("Tree Select is disconnected."); return this.#controller! }
+  #mode(): void { if (this.connected) throw new Error("Disconnect before changing Tree Select mode.") }
+  #text(value: string): void { if (typeof value !== "string" || !value.trim() || value.length > 1024) throw new TypeError("Use a nonempty label of at most 1024 characters.") }
+  #parse(value: string | null): TreeSelectValue { return this.multiple ? JSON.parse(value ?? "[]") : value }
+  #value(value: TreeSelectValue): TreeSelectValue {
+    const keys = treeSelectKeys(value, this.multiple)
+    return this.multiple ? Object.freeze(keys) : value
+  }
+  #reflect(name: string, value: string | null): void {
+    this.#reflecting = true
+    try { this.setStringAttribute(name, value) } finally { this.#reflecting = false }
+  }
+  #sync(): void {
+    this.#text(this.label); this.#text(this.placeholder)
+    const root = this.#root!, control = this.#control!, field = control.closest("[data-tree-select-field]")!
+    root.setAttribute("aria-label", this.label); control.setAttribute("aria-label", this.label)
+    control.name = this.name; control.disabled = this.disabled; control.required = this.required
+    control.multiple = this.multiple; control.size = this.filterable || this.multiple ? 5 : 0
+    let placeholder = control.querySelector<HTMLOptionElement>('option[value=""]')
+    if (this.multiple) placeholder?.remove()
+    else {
+      if (!placeholder) { placeholder = this.ownerDocument.createElement("option"); placeholder.value = ""; control.prepend(placeholder) }
+      placeholder.textContent = this.placeholder; placeholder.toggleAttribute("data-select-placeholder", !this.filterable)
+    }
+    root.querySelector<HTMLButtonElement>("button")!.disabled = !this.clearable || this.disabled
+    let search = field.querySelector<HTMLElement>("[data-select-search]")
+    if (!this.filterable) search?.remove()
+    else if (!search) {
+      search = this.ownerDocument.createElement("div"); search.dataset.selectSearch = ""; search.hidden = true
+      const input = this.ownerDocument.createElement("input"), empty = this.ownerDocument.createElement("p")
+      input.type = "search"; input.dataset.selectFilter = ""; input.setAttribute("aria-label", `Filter ${this.label}`)
+      empty.dataset.selectEmpty = ""; empty.textContent = "No matches"; empty.hidden = true
+      search.append(input, empty); field.append(search)
     }
   }
-
-  public get value(): string | null {
-    return this.getAttribute("value")
-  }
-
-  public set value(value: string | null) {
-    this.setStringAttribute("value", value)
-    if (this.initialized) this.syncControl()
-  }
-
-  public get placeholder(): string | null {
-    return this.getAttribute("placeholder")
-  }
-
-  public set placeholder(value: string | null) {
-    this.setStringAttribute("placeholder", value)
-    if (this.initialized) this.syncControl()
-  }
-
-  public get disabled(): boolean {
-    return this.hasAttribute("disabled")
-  }
-
-  public set disabled(value: boolean) {
-    this.setBooleanAttribute("disabled", value)
-    if (this.initialized) this.syncControl()
-  }
-
-  public get clearable(): boolean {
-    return this.hasAttribute("clearable")
-  }
-
-  public set clearable(value: boolean) {
-    this.setBooleanAttribute("clearable", value)
-    if (this.initialized) this.syncControl()
-  }
-
-  public get multiple(): boolean {
-    return this.hasAttribute("multiple")
-  }
-
-  public set multiple(value: boolean) {
-    this.setBooleanAttribute("multiple", value)
-    if (this.initialized && this.isConnected) this.render()
-  }
-
-  public get checkable(): boolean {
-    return this.hasAttribute("checkable")
-  }
-
-  public set checkable(value: boolean) {
-    this.setBooleanAttribute("checkable", value)
-    if (this.initialized) this.syncControl()
-  }
-
-  public clear(): void {
-    this.value = null
-    const control = this.childControl()
-    if (control) {
-      control.value = ""
+  #create(): void {
+    const doc = this.ownerDocument
+    const make = <K extends keyof HTMLElementTagNameMap>(tag: K, part: string) => {
+      const node = doc.createElement(tag); node.setAttribute(`data-${part}`, ""); return node
     }
-    this.emit<{ value: string }>("m:change", { value: "" }, { bubbles: true, cancelable: false, composed: false })
-  }
-
-  public override focus(options?: FocusOptions): void {
-    const control = this.childControl()
-    control?.focus(options)
-  }
-
-  public override blur(): void {
-    const control = this.childControl()
-    control?.blur()
-  }
-
-  private childControl(): HTMLSelectElement | null {
-    const selects = [...this.querySelectorAll<HTMLSelectElement>("select")].filter(
-      s => s.closest("m-tree-select") === this,
-    )
-    return selects[0] ?? null
-  }
-
-  private unbind(): void {
-    if (this.boundControl) {
-      this.boundControl.removeEventListener("input", this.onControlChange)
-      this.boundControl.removeEventListener("change", this.onControlChange)
-      this.boundControl = undefined
-    }
-    if (this.boundClear) {
-      this.boundClear.removeEventListener("click", this.onClearClick)
-      this.boundClear = undefined
-    }
-  }
-
-  private onControlChange = (): void => {
-    const control = this.childControl()
-    if (control) {
-      const val = control.value || null
-      this.setStringAttribute("value", val)
-      this.emit<{ value: string }>("m:change", { value: val ?? "" }, { bubbles: true, cancelable: false, composed: false })
-    }
-  }
-
-  private onClearClick = (event: MouseEvent): void => {
-    event.preventDefault()
-    this.clear()
-  }
-
-  private render(): void {
-    this.unbind()
-    let control = this.childControl()
-    if (!control) {
-      const field = this.ownerDocument.createElement("div")
-      field.setAttribute("data-tree-select-field", "")
-      control = this.ownerDocument.createElement("select")
-      control.setAttribute("data-select-control", "")
-      field.append(control)
-      this.append(field)
-    } else if (!control.hasAttribute("data-select-control")) {
-      control.setAttribute("data-select-control", "")
-    }
-
-    let clearBtn = this.querySelector<HTMLButtonElement>("[data-tree-select-clear]")
-    if (this.clearable && !clearBtn) {
-      clearBtn = this.ownerDocument.createElement("button")
-      clearBtn.type = "button"
-      clearBtn.setAttribute("data-tree-select-clear", "")
-      clearBtn.setAttribute("aria-label", "Clear selection")
-      clearBtn.textContent = "Clear"
-      this.append(clearBtn)
-    }
-
-    control.addEventListener("input", this.onControlChange)
-    control.addEventListener("change", this.onControlChange)
-    this.boundControl = control
-
-    if (clearBtn) {
-      clearBtn.addEventListener("click", this.onClearClick)
-      this.boundClear = clearBtn
-    }
-
-    this.syncControl()
-  }
-
-  private syncControl(): void {
-    const control = this.childControl()
-    const disabled = this.disabled
-    const placeholder = this.placeholder
-    const val = this.value
-    const multiple = this.multiple
-
-    if (control) {
-      control.disabled = disabled
-      control.multiple = multiple
-
-      let placeholderOption = control.querySelector<HTMLOptionElement>("option[data-tree-select-placeholder]")
-      if (!placeholderOption && control.options.length > 0 && control.options[0]!.value === "") {
-        placeholderOption = control.options[0]!
-      }
-      if (placeholder !== null) {
-        if (!placeholderOption) {
-          placeholderOption = this.ownerDocument.createElement("option")
-          placeholderOption.value = ""
-          placeholderOption.setAttribute("data-tree-select-placeholder", "")
-          control.prepend(placeholderOption)
-        }
-        placeholderOption.textContent = placeholder
-      } else if (placeholderOption && placeholderOption.hasAttribute("data-tree-select-placeholder")) {
-        placeholderOption.remove()
-      }
-
-      if (val !== null) {
-        const matching = [...control.options].find(opt => opt.value === val)
-        if (matching) {
-          matching.selected = true
-        } else {
-          const option = this.ownerDocument.createElement("option")
-          option.value = val
-          option.textContent = val
-          option.selected = true
-          control.append(option)
-        }
-        control.value = val
-      } else {
-        control.value = ""
-      }
-    }
-
-    let clearBtn = this.querySelector<HTMLButtonElement>("[data-tree-select-clear]")
-    if (this.clearable && !clearBtn && this.isConnected) {
-      clearBtn = this.ownerDocument.createElement("button")
-      clearBtn.type = "button"
-      clearBtn.setAttribute("data-tree-select-clear", "")
-      clearBtn.setAttribute("aria-label", "Clear selection")
-      clearBtn.textContent = "Clear"
-      clearBtn.addEventListener("click", this.onClearClick)
-      this.boundClear = clearBtn
-      this.append(clearBtn)
-    }
-
-    if (clearBtn) {
-      clearBtn.disabled = disabled
-      clearBtn.hidden = !this.clearable
-    }
+    const root = this.#root = make("section", "tree-select")
+    root.className = "m-tree-select"
+    const field = make("div", "tree-select-field"), control = this.#control = make("select", "select-control")
+    field.className = "m-select"; field.dataset.select = ""; field.append(control)
+    const readout = make("p", "tree-select-value"), status = make("p", "tree-select-status"), clear = make("button", "tree-select-clear")
+    status.setAttribute("aria-live", "polite")
+    clear.type = "button"; clear.textContent = "Clear"; clear.hidden = true
+    root.append(field, readout, status, clear); this.append(root)
   }
 }

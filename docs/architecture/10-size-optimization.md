@@ -1,7 +1,7 @@
 # 10. JavaScript size optimization plan
 
 Status: S0-S1 verified September 24, 2026. S2 Dynamic Tags, Dynamic Input, Calendar and Tree
-and Cascader/Upload/Heatmap reconciliation verified September 28, 2026, with test scope and timing limitations
+and Cascader/Upload/Heatmap/Tree Select reconciliation verified September 28, 2026, with test scope and timing limitations
 recorded below. Remaining S2 families and S3-S6 are open.
 Plan recorded September 23, 2026.
 Implementation baseline: `cb00af1` on `main`, package version `0.13.0`.
@@ -736,6 +736,52 @@ S0 modular savings are now just 45 ESM / 36 classic gzip bytes.
 | Browser | `node scripts/browser-check.mjs --catalog --page=heatmap`: 6/6 on Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6, desktop/mobile, plus existing baseline workflows. Checks actual missing/zero cells, Enter/arrow/Ctrl+End navigation, stable focus, live settings/data, clamping, reconnect and 366-day rendering; rerun after the final preparation guard passed. Screenshots inspected; local evidence is `.vite/browser/s2-heatmap-results.json`. |
 | Size | `node scripts/size-report.mjs --output .vite/size/s2-heatmap.json`, compared with `.vite/size/s2-upload.json`; S0 unchanged. |
 | Limits | Data Table, Tree Select and S3-S6 remain open. No all-catalog or separate production-readiness acceptance claim. |
+| Commit | `e1f2387` - `refactor: unify Heatmap element calendar behavior`. |
+
+### S2 - Tree Select reconciliation, September 28, 2026
+
+The canonical element now delegates to the native-selection controller using bounded
+immutable hierarchy data. It no longer fabricates choices for unknown values, reduces
+multiple selections to one string, or owns a competing clear/event engine. The inert
+`checkable` flag and public factory/controller exports are removed. Typed or JSON
+`options`, independent `value`/`defaultValue`, and typed/JSON path `settings` expose the
+required behavior through `m-tree-select`; no native HTML authoring is needed.
+
+The first integration retained a hidden native tree and parsed it back into hierarchy
+data. Its ESM closure exceeded 13,000 bytes (13,368 initially; 13,205 after small local
+simplifications). That round trip is now removed, not moved to a hidden dependency:
+one bounded data validator supplies the controller directly. Tree Select no longer
+bundles `tree/hierarchy.ts` or `tree/source.ts`. Cascader and Tree are unchanged.
+Native-source mutation fixtures were replaced by canonical data-update fixtures;
+arbitrary authored native hierarchies are no longer a public input path.
+
+Native select semantics, full-path labels, nonselectable groups, leaf/any selection,
+literal filtering, composition, selected nonmatches, current/default independence,
+unavailable defaults, custom validity, native forms/reset, clear cancellation and
+cleanup remain. Data updates retain surviving native options and listeners. Reconnect
+preserves controls/defaults and does not convert ancestor-derived disabled state into
+an explicit permanent option override. Native option corruption still gates submission
+until repaired; successful recovery now clears the stale error. Mode/path settings
+require disconnection, matching the native controller's fixed-mode ownership contract.
+
+| Selection (raw / gzip bytes) | Before ESM | After ESM | Before classic | After classic |
+| --- | ---: | ---: | ---: | ---: |
+| Tree Select entry | 21,748 / 7,139 | 18,276 / 6,288 | 22,287 / 7,375 | 18,815 / 6,525 |
+| Tree Select + core + native-select | 34,630 / 12,167 | 31,158 / 11,316 | 35,573 / 12,566 | 32,101 / 11,716 |
+| All 89 families / 94 files | 1,234,843 / 414,020 | 1,231,371 / 413,169 | 1,261,122 / 427,519 | 1,257,650 / 426,669 |
+
+CSS changes from 3,308 / 840 to 3,098 / 802 raw/gzip bytes after removing obsolete
+native-source indentation. Only Tree Select JS/CSS hashes change. No ceilings or
+required dependency files change. Cumulative S0 modular savings are 896/886 gzip bytes.
+
+| Field | Verification evidence |
+| --- | --- |
+| Type/build | `node node_modules/typescript/bin/tsc --noEmit`; `node scripts/build.mjs`: passed, including generated API and unchanged payload gates. |
+| Focused/distribution | `node node_modules/vitest/vitest.mjs run tests/tree-select.test.ts tests/tree-select-element.test.ts tests/tree-select-distribution.test.ts tests/select.test.ts tests/popselect.test.ts tests/native.test.ts tests/element-directory.test.ts tests/core-distribution.test.ts tests/size-report.test.ts --maxWorkers=1`: 224/224 in 9 files. Includes ESM/classic pre-upgrade arrays, shared base, dependency closure, data snapshots, host events, native forms/reset, tamper recovery, bounded inputs and reconnect. |
+| Consumer | `node scripts/package-check.mjs`: 95 JS entries / 2,335 packed files; strict NodeNext types and runtime imports pass without installed ECharts. |
+| Browser | `node scripts/browser-check.mjs --catalog --page=tree-select`: 6/6 in Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 at desktop/mobile viewports. Native choice, submit/reset, keyboard clear/focus, multiple filtering, disabled state and data/reconnect identity pass. Screenshots inspected; local evidence is `.vite/browser/s2-tree-select-results.json`. |
+| Size | `node scripts/size-report.mjs --output .vite/size/s2-tree-select.json`, compared with `.vite/size/s2-heatmap.json`. S0 remains frozen. |
+| Limits | Data Table and remaining S3-S6 work remain open. No new full-suite/all-catalog or separate production-readiness acceptance claim. |
 
 ### Data Table integration experiment - not accepted
 
@@ -767,12 +813,12 @@ and call the family complete merely because its focused tests pass.
 
 1. Read this plan and repository instructions; inspect `git status` and the latest history.
 2. Confirm the Chart external-engine baseline and current distribution measurements.
-3. S0-S1 and S2 Tags/Input/Calendar/Tree/Cascader/Upload/Heatmap reconciliation are complete; consult their
+3. S0-S1 and S2 Tags/Input/Calendar/Tree/Cascader/Upload/Heatmap/Tree Select reconciliation are complete; consult their
    scoped implementation, integrated-suite, package and browser verification records above.
    Keep S0 intact for cumulative comparisons. The gzip saving remains small. Input's
    and Tree's classic runtimes have only 13 bytes of headroom; Cascader runtime and
    Calendar CSS each have one byte.
-4. Continue with Data Table and Tree Select's independent element/controller gap.
+4. Continue with Data Table's independent element/controller gap.
    Finish S2/S3 measurements before selecting final shared-bundle boundaries.
 5. Avoid repeatedly running the entire suite during small edits: use focused checks per
    task and the integrated gates at packaging milestones and final acceptance.

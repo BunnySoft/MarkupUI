@@ -571,6 +571,41 @@ try {
                   await bounded.scrollIntoViewIfNeeded()
                   await page.screenshot({ path: resolve(output, `${name}-${layout}-calendar-bounded.png`) })
                 }
+                if (slug === "tree-select") {
+                  const basic = page.locator("#basic-select"), control = basic.locator("select")
+                  assert.equal(await control.inputValue(), "readme")
+                  await control.selectOption("notes")
+                  assert.equal(await page.locator("#basic-value").textContent(), "Selected value: notes")
+                  await page.getByRole("button", { name: "Submit", exact: true }).click()
+                  assert.equal(await page.locator("#form-value").textContent(), '[["file","notes"]]')
+                  await page.getByRole("button", { name: "Reset", exact: true }).click()
+                  await page.waitForFunction(() => document.querySelector("#basic-select").value === "readme")
+                  const clear = basic.getByRole("button", { name: "Clear", exact: true })
+                  await clear.focus(); await page.keyboard.press("Enter")
+                  await page.waitForFunction(() => document.querySelector("#basic-select").value === null)
+                  assert.equal(await control.evaluate(node => document.activeElement === node), true)
+                  const multiple = page.locator("#multiple-select")
+                  await multiple.locator("select").selectOption(["readme", "notes"])
+                  await multiple.getByRole("searchbox").fill("Standalone")
+                  assert.deepEqual(await multiple.evaluate(element => Array.from(element.value)), ["readme", "notes"])
+                  assert.equal(await multiple.locator('option[value="readme"]').evaluate(option => option.hidden), false)
+                  const stable = await multiple.evaluate(element => {
+                    const control = element.native, option = control.querySelector('option[value="notes"]'), parent = element.parentElement
+                    element.defaultValue = ["readme"]
+                    element.options = [{ value: "notes", label: "Updated notes" }]
+                    element.remove(); parent.append(element)
+                    return { control: element.native === control, option: control.querySelector('option[value="notes"]') === option,
+                      value: Array.from(element.value), missing: Array.from(element.state.unavailableDefaultKeys) }
+                  })
+                  assert.deepEqual(stable, { control: true, option: true, value: ["notes"], missing: ["readme"] })
+                  assert.equal(await page.locator("#disabled-select select").isDisabled(), true)
+                  await page.locator("#toggle-disabled").click()
+                  assert.equal(await page.locator("#disabled-select select").isDisabled(), false)
+                  await basic.scrollIntoViewIfNeeded()
+                  await page.screenshot({ path: resolve(output, `${name}-${layout}-tree-select.png`) })
+                  assert.equal(await page.locator("[data-tree-select-source], m-tree-select[role], m-tree-select[tabindex]").count(), 0)
+                  assert.equal(await page.evaluate(() => !!customElements.get("m-tree") || !!customElements.get("m-select")), false)
+                }
                 if (slug === "heatmap") {
                   const data = await page.evaluate(() => {
                     const { buildHeatmap } = window.MarkupUIHeatmap

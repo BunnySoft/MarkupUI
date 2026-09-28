@@ -226,8 +226,9 @@ for authored hosts and bounded lazy data. `tree.ts` is the sole selection, casca
 disclosure, keyboard, async and cleanup owner. The public factory and duplicate
 element interaction engines are removed. Native list items contain the original
 node hosts; hosts are never direct children of native lists. `hierarchy.ts` recognizes
-that explicit mapping without importing constructors. Cascader and Tree Select
-continue to use the passive hierarchy parser without loading Tree registration.
+that explicit mapping without importing constructors. Cascader continues to use the
+passive hierarchy parser without loading Tree registration. Tree Select's later
+reconciliation replaces its native-tree round trip with bounded data.
 Controller attributes are indexed per element and restored through one cleanup path;
 there is no production metadata engine or additional shared-runtime entry.
 
@@ -253,6 +254,14 @@ all calendar rendering, focus/navigation, exploration, palette leases and cleanu
 `model.ts` remains the bounded pure date/domain model. Arbitrary empty row/column
 rendering and the public factory are removed. Calendar's date utility is passive,
 not a Calendar element or registration dependency.
+
+Tree Select's `tree-select-element.ts` owns direct properties and native-select chrome.
+`tree-select.ts` validates bounded hierarchy data and owns projection, live/default
+selection, native validity, notifications and lifecycle, reusing `native-select.ts`
+for native field/filter behavior. There is no hidden native hierarchy, Tree parser,
+Tree registration or public factory. Immutable data updates retain surviving options;
+reconnect retains unavailable defaults and distinguishes explicit option disables
+from ancestor-derived disabled state.
 
 DOM operations belong in the Web base or component implementation, not documentation
 tooling. Keep component-specific resources, focus, accessibility and cleanup with the

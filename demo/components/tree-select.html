@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="../../dist/markup-ui-global-style.css">
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-tree-select.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
@@ -15,6 +16,7 @@
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./tree-select.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
   <script defer src="../../dist/markup-ui-native-select.global.js"></script>
   <script defer src="../../dist/markup-ui-tree-select.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
@@ -27,7 +29,7 @@
 <body>
   <main data-demo-page class="component-docs">
     <h1>Tree Select</h1>
-    <p>A hierarchical selection component combining tree navigation with dropdown select functionality.</p>
+    <p>Bounded hierarchy data projected into a native single or multiple select, with full-path labels and native forms.</p>
     <nav class="component-docs-nav" aria-label="Tree Select documentation">
       <a href="#basic-title">Examples</a>
       <a href="#required-files">Setup</a>
@@ -37,6 +39,7 @@
       <summary id="required-files-heading">Setup code</summary>
       <pre><code>&lt;link rel="stylesheet" href="./dist/markup-ui-tree-select.css"&gt;
 &lt;script defer src="./dist/markup-ui-core.global.js"&gt;&lt;/script&gt;
+&lt;script defer src="./dist/markup-ui-native-select.global.js"&gt;&lt;/script&gt;
 &lt;script defer src="./dist/markup-ui-tree-select.global.js"&gt;&lt;/script&gt;</code></pre>
       <a href="../setup.html" target="_blank" rel="noopener noreferrer">Shared setup guide</a>
     </details>
@@ -49,21 +52,31 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-tree-select id="basic-select" placeholder="Select an item"></m-tree-select>
+        <m-form id="files-form">
+          <m-tree-select id="basic-select" name="file" label="Document" required clearable placeholder="Select an item"
+            options='[{"value":"docs","label":"Documents","children":[{"value":"readme","label":"README"},{"value":"notes","label":"Notes"}]},{"value":"archive","label":"Archive","disabled":true}]'
+            default-value="readme"></m-tree-select>
+          <m-button attr-type="submit">Submit</m-button>
+          <m-button attr-type="reset">Reset</m-button>
+        </m-form>
         <m-p id="basic-value">Selected value: None</m-p>
+        <m-p id="form-value">No submission</m-p>
       </div>
     </section>
 
     <section data-demo-example="multiple" aria-labelledby="multiple-title">
       <header data-demo-header>
         <div>
-          <h2 id="multiple-title">Multiple and Checkable</h2>
-          <p>Support for multiple selections and checkbox-style tree nodes.</p>
+          <h2 id="multiple-title">Multiple and Filtered</h2>
+          <p>Independent selections in native option order. Filtering preserves selected nonmatches; parents never cascade.</p>
         </div>
       </header>
       <div data-demo-preview>
-        <m-tree-select id="multiple-select" multiple placeholder="Select multiple items"></m-tree-select>
-        <m-tree-select id="checkable-select" checkable placeholder="Select with checkboxes"></m-tree-select>
+        <m-tree-select id="multiple-select" multiple filterable clearable label="Documents"
+          options='[{"value":"docs","label":"Documents","group":true,"children":[{"value":"readme","label":"README"},{"value":"notes","label":"Notes"}]},{"value":"standalone","label":"Standalone"}]'
+          default-value='["readme"]'></m-tree-select>
+        <m-tree-select id="leaf-select" settings='{"selection":"leaf","separator":" > "}' label="Leaf document"
+          options='[{"value":"docs","label":"Documents","children":[{"value":"readme","label":"README"},{"value":"notes","label":"Notes"}]}]'></m-tree-select>
       </div>
     </section>
 
@@ -75,10 +88,20 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-tree-select id="clearable-select" value="docs" clearable placeholder="Select item"></m-tree-select>
-        <m-tree-select id="disabled-select" value="docs" disabled placeholder="Disabled tree select"></m-tree-select>
+        <m-tree-select id="clearable-select" value="docs" clearable label="Clearable document" placeholder="Select item"
+          options='[{"value":"docs","label":"Documents"}]'></m-tree-select>
+        <m-tree-select id="disabled-select" value="docs" disabled label="Disabled document" placeholder="Disabled tree select"
+          options='[{"value":"docs","label":"Documents"}]'></m-tree-select>
         <m-button id="toggle-disabled">Toggle Disabled</m-button>
       </div>
+    </section>
+
+    <section aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Behavior and Ownership</h2>
+      <p>Author only m-* elements. The Web renderer owns the native select, filter and clear button; no hidden native tree, active Tree or Select element is required. Options are immutable data snapshots with at most 2,000 unique keys and 64 levels. Groups are not selectable. Lazy loaders and cascading checkboxes are not part of this component.</p>
+      <p>Single values are a string or null; multiple values are independent arrays. Programmatic writes are silent. Native selection and successful clear actions emit m:tree-select-change from the host. defaultValue remains independent from value; reset skips unavailable defaults without choosing unrelated items.</p>
+      <p>Disconnect before changing multiple, filterable or settings. Reconnect preserves the native control and option identity. Live options updates retain surviving keys and focus, prune unavailable selections and preserve missing reset targets. The native property is an explicit Web inspection surface, not portable authoring.</p>
+      <p>Form, Button and Typography are additional selections used by these examples, not Tree Select dependencies. Applications provide their own labels and form names.</p>
     </section>
 
     <section aria-labelledby="api-heading">

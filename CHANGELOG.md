@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Unified Tree Select behind bounded typed/JSON hierarchy data and one native-selection
+  controller. Removed the hidden native-tree render/parse round trip, public factory,
+  inert `checkable` and competing scalar selection path. Portable `m-tree-select` now
+  supports single/multiple values, groups, leaf/any policy, filtering, independent
+  defaults, missing-default diagnostics and native submission/reset. Reconnect preserves
+  controls and surviving options. Native selection/clear events originate from the host.
+
 - Replaced Heatmap's empty grid renderer with the canonical date/value controller.
   Typed or JSON `data`/`settings` on `m-heatmap` now provide bounded calendar data,
   missing/zero distinctions, numeric bands, palettes, locale, loading, keyboard
