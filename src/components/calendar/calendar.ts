@@ -10,6 +10,7 @@ export interface CalendarLabels {
   failed: string
 }
 export interface CalendarSettings {
+  mode?: CalendarMode
   value?: string | null
   defaultValue?: string | null
   panel?: string
@@ -23,8 +24,10 @@ export interface CalendarSettings {
   getDayContent?: ((value: string, parts: CalendarDate) => string) | null
   labels?: Partial<CalendarLabels>
 }
-export type CalendarOptions = CalendarSettings
+export type CalendarMode = "month" | "year"
+export const calendarModes: readonly CalendarMode[] = ["month", "year"]
 export interface CalendarState {
+  readonly mode: CalendarMode
   readonly value: string | null
   readonly defaultValue: string | null
   readonly panel: string
@@ -68,7 +71,7 @@ export interface CalendarController {
   refresh(): void
   disconnect(): void
 }
-type Settings = Omit<Required<CalendarSettings>, "labels"> & { labels: CalendarLabels }
+export type Settings = Omit<Required<CalendarSettings>, "labels"> & { labels: CalendarLabels }
 interface Day {
   value: string
   parts: CalendarDate
@@ -76,6 +79,7 @@ interface Day {
   adjacent: boolean
   label: string
   note: string
+  number: string
 }
 interface Cell {
   node: HTMLTableCellElement
@@ -97,23 +101,57 @@ interface Prepared {
 const owner = Symbol.for("markup-ui.calendar.owner")
 type Owned = HTMLElement & { [owner]?: object }
 const actions = ["prev-month", "next-month", "prev-year", "next-year", "today", "clear"]
-const optionKeys = ["value", "defaultValue", "panel", "today", "min", "max", "firstDayOfWeek", "locale", "disabled", "isDateDisabled", "getDayContent", "labels"]
+const optionKeys = ["mode", "value", "defaultValue", "panel", "today", "min", "max", "firstDayOfWeek", "locale", "disabled", "isDateDisabled", "getDayContent", "labels"]
 const defaultLabels: CalendarLabels = { today: "Today", selected: "Selected", unavailable: "Unavailable", none: "No date selected", failed: "Calendar update failed; previous view retained." }
 
-/** One bounded Gregorian month table; date-only state, no timestamps or form proxy. */
-export function createCalendar(element: HTMLElement, options: CalendarOptions = {}): CalendarController {
+export function calendarDefaults(): Settings {
+  return { mode: "month", value: null, defaultValue: null, panel: "", today: null,
+    min: "0001-01-01", max: "9999-12-31", firstDayOfWeek: 1, locale: "en-US", disabled: false,
+    isDateDisabled: null, getDayContent: null, labels: { ...defaultLabels } }
+}
+function object(value: unknown, keys: readonly string[]) {
+  if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).some(key => !keys.includes(key))) throw new TypeError("Invalid Calendar settings.")
+}
+function valueParts(value: string): CalendarDate {
+  return typeof value === "string" && value.length === 7 ? parseMonth(value) : parseDate(value)
+}
+/** Shared validation for detached element properties and live controller transactions. */
+export function calendarConfig(settings: Settings, input: CalendarSettings, initial = false): Settings {
+  object(input, optionKeys)
+  if (input.labels !== undefined) object(input.labels, Object.keys(defaultLabels))
+  const next = { ...settings, ...input, labels: { ...settings.labels, ...input.labels } }
+  if (initial && input.value === undefined) next.value = next.defaultValue
+  if (input.panel === undefined && input.value !== undefined && input.value !== null) next.panel = input.value.slice(0, 7)
+  if (!next.panel) next.panel = (next.value ?? next.defaultValue ?? next.today)?.slice(0, 7) ?? ""
+  for (const value of [next.value, next.defaultValue]) if (value !== null) valueParts(value)
+  if (next.today !== null) parseDate(next.today)
+  const min = parseDate(next.min), max = parseDate(next.max)
+  if (ordinal(min) > ordinal(max)) throw new RangeError("min must not follow max.")
+  const requested = parseMonth(next.panel)
+  next.panel = dateString(inMonth(Math.max(monthIndex(min), Math.min(monthIndex(max), monthIndex(requested))), 1)).slice(0, 7)
+  if (!calendarModes.includes(next.mode) || !Number.isInteger(next.firstDayOfWeek) || next.firstDayOfWeek < 0 || next.firstDayOfWeek > 6
+    || typeof next.disabled !== "boolean" || typeof next.locale !== "string" || !next.locale || next.locale.length > 128
+    || [next.isDateDisabled, next.getDayContent].some(fn => fn !== null && typeof fn !== "function")
+    || Object.values(next.labels).some(value => typeof value !== "string" || !value.trim() || value.length > 100)) throw new TypeError("Invalid Calendar settings.")
+  Intl.getCanonicalLocales(next.locale)
+  return next
+}
+
+/** Internal Web owner: one bounded Gregorian table, no timestamps or form proxy. */
+export function createCalendar(element: HTMLElement, options: CalendarSettings = {}, onCommit?: (settings: Settings) => void): CalendarController {
   const document = element?.ownerDocument, view = document?.defaultView
-  if (!view || !(element instanceof view.HTMLElement) || !["div", "section"].includes(element.localName)
+  if (!view || !(element instanceof view.HTMLElement) || !["div", "section", "m-calendar"].includes(element.localName)
     || !element.matches(".m-calendar[data-calendar]") || !element.isConnected || element.getRootNode() !== document
-    || element.getAttribute("tabindex") !== "-1" || (element as Owned)[owner]) throw new TypeError("Use an unowned connected native .m-calendar[data-calendar][tabindex='-1'] scope.")
+    || element.getAttribute("tabindex") !== "-1" || (element as Owned)[owner]) throw new TypeError("Use an unowned connected Calendar scope with tabindex=-1.")
   const doc = document!, win = view, token = {}, writes = ownedWrites()
-  const own = (node: Element) => node.closest("[data-calendar]") === element
-  if (!(element.getAttribute("aria-label")?.trim() || element.getAttribute("aria-labelledby")?.trim().split(/\s+/).every(id => doc.getElementById(id)?.textContent?.trim()))) throw new TypeError("Give the native Calendar scope an accessible name.")
-  function one(selector: string) {
-    const nodes = [...element.querySelectorAll<HTMLElement>(selector)].filter(own)
-    if (nodes.length !== 1) throw new TypeError(`Author exactly one ${selector}.`)
-    return nodes[0]!
+  const own = (node: Element) => node.closest("m-calendar,[data-calendar]") === element
+  if (!(element.getAttribute("aria-label")?.trim() || element.getAttribute("aria-labelledby")?.trim().split(/\s+/).every(id => doc.getElementById(id)?.textContent?.trim()))) throw new TypeError("Calendar requires an accessible name.")
+  function part<T extends HTMLElement>(node: Element, selector: string): T {
+    const found = [...node.querySelectorAll(selector)].filter(child => node !== element || own(child))
+    if (found.length !== 1) throw new TypeError(`Calendar needs one ${selector}.`)
+    return found[0] as T
   }
+  const one = (selector: string) => part(element, selector)
   const tableNode = one("[data-calendar-table]"), caption = one("[data-calendar-caption]"),
     headNode = one("[data-calendar-weekdays]"), bodyNode = one("[data-calendar-body]"),
     controls = one("[data-calendar-controls]"), templateNode = one("template[data-calendar-cell]"),
@@ -127,7 +165,7 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
     || [caption, readout, status].some(node => node.childElementCount || !["span", "div", "p"].includes(node.localName)
       || node.hasAttribute("role") || node.hasAttribute("tabindex") || node.hasAttribute("contenteditable"))
     || readout.hasAttribute("aria-live") || [headNode, bodyNode].some(node => node.querySelector("button,input,select,textarea,a[href],[tabindex],[contenteditable]"))) {
-    throw new TypeError("Author a native captioned table with readable noninteractive fallback rows, cell template, hidden controls and separate plain readouts; no grid role.")
+    throw new TypeError("Invalid Calendar table, fallback, controls or readouts.")
   }
   const table = tableNode, head = headNode, body = bodyNode, template = templateNode
   const sourceCell = template.content.firstElementChild
@@ -135,12 +173,7 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
     || sourceCell.hidden || sourceCell.hasAttribute("role") || sourceCell.hasAttribute("id")
     || sourceCell.querySelector("[id],script,style,iframe,object,embed,a,input,select,textarea,form,details,summary,[contenteditable],[tabindex]")
     || [...sourceCell.querySelectorAll("*")].some(node => node.localName.includes("-"))
-    || sourceCell.querySelectorAll("button").length !== 1) throw new TypeError("The cell template is one td with one native day button and noninteractive content; no IDs or form fields.")
-  function part<T extends HTMLElement>(node: Element, selector: string): T {
-    const found = node.querySelectorAll(selector)
-    if (found.length !== 1) throw new TypeError(`Cell template needs one ${selector}.`)
-    return found[0] as T
-  }
+    || sourceCell.querySelectorAll("button").length !== 1) throw new TypeError("Invalid Calendar cell template: one td and one plain day button.")
   const dayButton = part<HTMLButtonElement>(sourceCell, "[data-calendar-day]")
   function buttonValid(button: HTMLElement) {
     return button instanceof win.HTMLButtonElement && button.getAttribute("type") === "button" && !button.hasAttribute("role")
@@ -150,43 +183,23 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
   const numberPart = part(sourceCell, "[data-calendar-number]"), marksPart = part(sourceCell, "[data-calendar-marks]"), notePart = part(sourceCell, "[data-calendar-note]")
   if (!buttonValid(dayButton) || dayButton.disabled || dayButton.hidden || !dayButton.contains(numberPart) || dayButton.contains(marksPart) || dayButton.contains(notePart)
     || [numberPart, marksPart, notePart].some(node => node.childElementCount)
-    || marksPart.contains(notePart) || notePart.contains(marksPart)) throw new TypeError("Put the day number in its type=button; plain status marks and annotation are separate siblings, never nested actions.")
+    || marksPart.contains(notePart) || notePart.contains(marksPart)) throw new TypeError("Invalid Calendar cell parts or button.")
   const buttons = [...controls.querySelectorAll<HTMLButtonElement>("button")]
   if (buttons.some(button => !buttonValid(button) || !(button.textContent?.trim() || button.getAttribute("aria-label")?.trim())
     || !actions.includes(button.dataset.calendarAction ?? "")) || new Set(buttons.map(button => button.dataset.calendarAction)).size !== buttons.length) {
-    throw new TypeError("Author distinct labelled native month/year/today/clear actions.")
+    throw new TypeError("Invalid or duplicate Calendar action buttons.")
   }
-  const nativeDisabled = new WeakMap(buttons.map(button => [button, button.disabled]))
+  const nativeState = new Map(buttons.map(button => [button, { disabled: button.disabled, hidden: button.hidden }]))
   const fallbackHead = [...head.childNodes], fallbackBody = [...body.childNodes]
   const text = new Map<HTMLElement, { before: string | null; last: string | null }>([caption, readout, status].map(node => [node, { before: node.textContent, last: node.textContent }]))
   const prefix = win.crypto.randomUUID?.() ?? Math.random().toString(36).slice(2)
   const removers: (() => void)[] = []
   let connected = true, preparing = false, committing = false, version = 0, error: unknown = null
   let cells = new Map<string, Cell>(), rows: HTMLTableRowElement[] = [], header: HTMLTableRowElement | null = null
-  let settings: Settings = { value: null, defaultValue: null, panel: element.dataset.calendarMonth ?? "",
-    today: null, min: "0001-01-01", max: "9999-12-31", firstDayOfWeek: 1, locale: "en-US", disabled: false,
-    isDateDisabled: null, getDayContent: null, labels: { ...defaultLabels } }
+  let settings: Settings = { ...calendarDefaults(), panel: element.dataset.calendarMonth ?? "" }
   let prepared: Prepared, focusedDate = ""
-  function object(value: unknown, keys: readonly string[]) {
-    if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).some(key => !keys.includes(key))) throw new TypeError("Unsupported Calendar settings.")
-  }
   function config(input: CalendarSettings, initial = false): Settings {
-    object(input, optionKeys)
-    if (input.labels !== undefined) object(input.labels, Object.keys(defaultLabels))
-    const next = { ...settings, ...input, labels: { ...settings.labels, ...input.labels } }
-    if (initial && input.value === undefined) next.value = next.defaultValue
-    if (input.panel === undefined && input.value !== undefined && input.value !== null) next.panel = input.value.slice(0, 7)
-    if (!next.panel) next.panel = (next.value ?? next.defaultValue ?? next.today)?.slice(0, 7) ?? ""
-    for (const value of [next.value, next.defaultValue, next.today]) if (value !== null) parseDate(doc, value)
-    const min = parseDate(doc, next.min), max = parseDate(doc, next.max)
-    if (ordinal(min) > ordinal(max)) throw new RangeError("min must not follow max.")
-    const requested = parseMonth(doc, next.panel)
-    next.panel = dateString(inMonth(Math.max(monthIndex(min), Math.min(monthIndex(max), monthIndex(requested))), 1)).slice(0, 7)
-    if (!Number.isInteger(next.firstDayOfWeek) || next.firstDayOfWeek < 0 || next.firstDayOfWeek > 6
-      || typeof next.disabled !== "boolean" || typeof next.locale !== "string" || !next.locale || next.locale.length > 128
-      || [next.isDateDisabled, next.getDayContent].some(fn => fn !== null && typeof fn !== "function")
-      || Object.values(next.labels).some(value => typeof value !== "string" || !value.trim() || value.length > 100)) throw new TypeError("Use bounded locale/labels, boolean disabled, weekday 0..6 and synchronous callback functions.")
-    return next
+    return calendarConfig(settings, input, initial)
   }
   function anatomy() {
     if (!element.isConnected || element.getRootNode() !== doc || !element.contains(table) || !element.contains(controls)
@@ -195,13 +208,13 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
       || header && (head.childNodes.length !== 1 || head.firstChild !== header)
       || rows.length && (body.childNodes.length !== rows.length || rows.some((row, i) => body.childNodes[i] !== row))) {
       disconnect()
-      throw new Error("Calendar anatomy was replaced or detached; disconnect and rebind.")
+      throw new Error("Calendar anatomy changed; reconnect.")
     }
   }
   function synchronous(value: unknown) {
     if (value && typeof (value as PromiseLike<unknown>).then === "function") {
       void Promise.resolve(value).catch(() => {})
-      throw new TypeError("Calendar date/content callbacks must be synchronous.")
+      throw new TypeError("Calendar callbacks must be synchronous.")
     }
   }
   function prepare(next: Settings, desired: string): Prepared {
@@ -209,13 +222,13 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
     preparing = true
     try {
       anatomy()
-      const panel = parseMonth(doc, next.panel), min = ordinal(parseDate(doc, next.min)), max = ordinal(parseDate(doc, next.max))
+      const panel = parseMonth(next.panel), min = ordinal(parseDate(next.min)), max = ordinal(parseDate(next.max))
       const cache = new Map<string, boolean>()
       const unavailable = (value: string) => {
         if (cache.has(value)) return cache.get(value)!
-        const parts = parseDate(doc, value), coordinate = ordinal(parts)
-        let blocked = coordinate < min || coordinate > max
-        if (!blocked && next.isDateDisabled) {
+        const parts = valueParts(value), coordinate = ordinal(parts), month = value.length === 7
+        let blocked = month ? value < next.min.slice(0, 7) || value > next.max.slice(0, 7) : coordinate < min || coordinate > max
+        if (!month && !blocked && next.isDateDisabled) {
           const result = next.isDateDisabled(value, parts); synchronous(result)
           if (typeof result !== "boolean") throw new TypeError("isDateDisabled must return true or false.")
           blocked = result
@@ -223,26 +236,36 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
         cache.set(value, blocked); return blocked
       }
       const base = { calendar: "gregory", timeZone: "UTC" } as const
-      const monthLabel = new Intl.DateTimeFormat(next.locale, { ...base, year: "numeric", month: "long" })
-      const dateLabel = new Intl.DateTimeFormat(next.locale, { ...base, year: "numeric", month: "long", day: "numeric", weekday: "long" })
+      const yearMode = next.mode === "year"
+      const monthLabel = new Intl.DateTimeFormat(next.locale, { ...base, year: "numeric", ...(!yearMode && { month: "long" }) })
+      const monthName = new Intl.DateTimeFormat(next.locale, { ...base, month: "short" })
+      const dateLabel = new Intl.DateTimeFormat(next.locale, { ...base, year: "numeric", month: "long", ...(!yearMode && { day: "numeric", weekday: "long" } as const) })
       const shortWeek = new Intl.DateTimeFormat(next.locale, { ...base, weekday: "short" }), longWeek = new Intl.DateTimeFormat(next.locale, { ...base, weekday: "long" })
-      if (monthLabel.resolvedOptions().calendar !== "gregory" || monthLabel.resolvedOptions().timeZone !== "UTC") throw new Error("Explicit native Gregorian/UTC formatting is required.")
+      if (monthLabel.resolvedOptions().calendar !== "gregory" || monthLabel.resolvedOptions().timeZone !== "UTC") throw new Error("Gregorian/UTC formatting is required.")
       const first = ordinal(panel) - (weekday(panel) - next.firstDayOfWeek + 7) % 7
-      const days = Array.from({ length: 42 }, (_, i): Day | null => {
+      const days = Array.from({ length: yearMode ? 12 : 42 }, (_, i): Day | null => {
+        if (yearMode) {
+          const parts = { year: panel.year, month: i + 1, date: 1 }, value = dateString(parts).slice(0, 7)
+          return { value, parts, unavailable: unavailable(value), adjacent: false,
+            label: dateLabel.format(carrier(parts)),
+            note: "", number: monthName.format(carrier(parts)) }
+        }
         const coordinate = first + i
         if (coordinate < 0 || coordinate > lastOrdinal) return null
         const parts = fromOrdinal(coordinate), value = dateString(parts), disabled = unavailable(value)
         const note = next.getDayContent ? next.getDayContent(value, parts) : ""
         synchronous(note)
-        if (typeof note !== "string" || note.length > 512) throw new TypeError("getDayContent must return literal text of at most 512 characters.")
-        return { value, parts, unavailable: disabled, adjacent: parts.month !== panel.month || parts.year !== panel.year, label: dateLabel.format(carrier(parts)), note }
+        if (typeof note !== "string" || note.length > 512) throw new TypeError("getDayContent must return text (max 512 characters).")
+        return { value, parts, unavailable: disabled, adjacent: parts.month !== panel.month || parts.year !== panel.year, label: dateLabel.format(carrier(parts)), note, number: String(parts.date) }
       })
       const selectionAvailable = next.value === null ? null : !unavailable(next.value)
       if (!connected || version !== stamp) throw new Error("Calendar was disconnected during preparation.")
       anatomy()
-      const focus = days.some(day => day?.value === desired) ? desired : dateString(inMonth(monthIndex(panel), desired ? parseDate(doc, desired).date : 1))
+      const target = yearMode ? desired.slice(0, 7) : desired.length === 7 ? `${desired}-01` : desired
+      const focus = days.some(day => day?.value === target) ? target : yearMode ? next.panel
+        : dateString(inMonth(monthIndex(panel), desired ? valueParts(desired).date : 1))
       return { settings: next, days, panel, focus, title: monthLabel.format(carrier(panel)), selectionAvailable, unavailable,
-        weekdays: Array.from({ length: 7 }, (_, i) => {
+        weekdays: Array.from({ length: yearMode ? 0 : 7 }, (_, i) => {
           const day = carrier({ year: 2023, month: 1, date: (next.firstDayOfWeek + i) % 7 + 1 })
           return { short: shortWeek.format(day), long: longWeek.format(day) }
         }) }
@@ -253,13 +276,13 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
     if (node.textContent !== value) node.textContent = value
   }
   function state(): CalendarState {
-    return Object.freeze({ value: settings.value, defaultValue: settings.defaultValue, panel: settings.panel,
+    return Object.freeze({ mode: settings.mode, value: settings.value, defaultValue: settings.defaultValue, panel: settings.panel,
       focusedDate, today: settings.today, firstDayOfWeek: settings.firstDayOfWeek, selectionAvailable: prepared.selectionAvailable,
       disabled: !available(), year: prepared.panel.year, month: prepared.panel.month })
   }
   function live() {
     if (!connected) throw new Error("Calendar is disconnected.")
-    if (preparing || committing) throw new Error("Do not reenter Calendar while preparing/committing; disconnect is allowed.")
+    if (preparing || committing) throw new Error("Do not reenter Calendar during an update.")
     anatomy()
   }
   function available() {
@@ -272,16 +295,18 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
     return ![...cells.values()][0]?.button.matches(":disabled")
   }
   function monthTarget(delta: number, source = settings) {
-    return Math.max(monthIndex(parseDate(doc, source.min)), Math.min(monthIndex(parseDate(doc, source.max)), monthIndex(parseMonth(doc, source.panel)) + delta))
+    return Math.max(monthIndex(parseDate(source.min)), Math.min(monthIndex(parseDate(source.max)), monthIndex(parseMonth(source.panel)) + delta))
   }
   function controlsState() {
     for (const button of buttons) {
       const action = button.dataset.calendarAction
+      const authored = nativeState.get(button)!
+      writes.attr(button, "hidden", authored.hidden || settings.mode === "year" && (action === "prev-month" || action === "next-month") ? "" : null)
       const delta = action === "prev-month" ? -1 : action === "next-month" ? 1 : action === "prev-year" ? -12 : 12
-      const disabled = settings.disabled || nativeDisabled.get(button) || (action === "today"
+      const disabled = settings.disabled || authored.disabled || (action === "today"
         ? settings.today === null || settings.today < settings.min || settings.today > settings.max
         : action === "clear" ? settings.value === null : monthTarget(delta) === monthIndex(prepared.panel))
-      writes.attr(button, "disabled", disabled && doc.activeElement !== button ? "" : null)
+      writes.attr(button, "disabled", authored.disabled || disabled && doc.activeElement !== button ? "" : null)
       writes.attr(button, "aria-disabled", disabled ? "true" : null)
     }
   }
@@ -302,25 +327,28 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
     const active = doc.activeElement, activeDate = [...cells].find(([, cell]) => cell.button === active)?.[0]
     committing = true
     try {
-      const sameGrid = rows.length === 6 && next.days.every((day, i) => (day?.value ?? null) === (prepared.days[i]?.value ?? null))
-      const sameHead = header && next.weekdays.every((day, i) => day.short === prepared.weekdays[i]?.short && day.long === prepared.weekdays[i]?.long)
+      const yearMode = next.settings.mode === "year", rowCount = yearMode ? 4 : 6, columns = yearMode ? 3 : 7
+      const sameGrid = rows.length === rowCount && next.days.every((day, i) => (day?.value ?? null) === (prepared.days[i]?.value ?? null))
+      const sameHead = header && next.weekdays.length === prepared.weekdays.length && next.weekdays.every((day, i) => day.short === prepared.weekdays[i]?.short && day.long === prepared.weekdays[i]?.long)
       const nextCells = new Map<string, Cell>(), nextRows: HTMLTableRowElement[] = []
-      for (let row = 0; row < 6; ++row) {
+      for (let row = 0; row < rowCount; ++row) {
         const tr = sameGrid ? rows[row]! : doc.createElement("tr")
-        for (let column = 0; column < 7; ++column) {
-          const day = next.days[row * 7 + column]
+        for (let column = 0; column < columns; ++column) {
+          const day = next.days[row * columns + column]
           if (!day) { if (!sameGrid) { const blank = doc.createElement("td"); blank.textContent = "—"; tr.append(blank) } continue }
           const cell = cellFor(day.value)
-          cell.number.textContent = String(day.parts.date)
+          const selected = day.value === (yearMode ? next.settings.value?.slice(0, 7) : next.settings.value)
+          const current = day.value === (yearMode ? next.settings.today?.slice(0, 7) : next.settings.today)
+          cell.number.textContent = day.number
           cell.button.setAttribute("aria-label", day.label)
-          cell.button.setAttribute("aria-pressed", String(day.value === next.settings.value))
+          cell.button.setAttribute("aria-pressed", String(selected))
           cell.button.setAttribute("aria-disabled", String(day.unavailable || next.settings.disabled))
-          if (day.value === next.settings.today) cell.button.setAttribute("aria-current", "date")
+          if (current) cell.button.setAttribute("aria-current", "date")
           else cell.button.removeAttribute("aria-current")
           cell.node.toggleAttribute("data-calendar-adjacent", day.adjacent)
           cell.marks.setAttribute("aria-hidden", "true")
-          cell.marks.textContent = [day.value === next.settings.today ? next.settings.labels.today : "",
-            day.value === next.settings.value ? next.settings.labels.selected : "", day.unavailable ? next.settings.labels.unavailable : ""].filter(Boolean).join(" · ")
+          cell.marks.textContent = [current ? next.settings.labels.today : "",
+            selected ? next.settings.labels.selected : "", day.unavailable ? next.settings.labels.unavailable : ""].filter(Boolean).join(" · ")
           cell.note.textContent = day.note
           if (day.note) cell.button.setAttribute("aria-describedby", cell.note.id)
           else cell.button.removeAttribute("aria-describedby")
@@ -344,11 +372,14 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
       focusedDate = !focusTarget && activeDate && cells.has(activeDate) ? activeDate : next.focus
       ++version; error = null
       writes.attr(controls, "hidden", null); writes.attr(element, "data-calendar-month", settings.panel)
+      writes.attr(head, "hidden", yearMode ? "" : null)
       writes.attr(status, "aria-live", "polite"); writes.attr(status, "aria-atomic", "true")
       writeText(caption, next.title)
       writeText(readout, settings.value === null ? settings.labels.none
         : `${settings.labels.selected}: ${settings.value}${next.selectionAvailable ? "" : ` · ${settings.labels.unavailable}`}`)
       tabStops(); controlsState()
+      onCommit?.(settings)
+      if (!connected) return
       if ((focusTarget || activeDate) && cells.get(focusedDate)) cells.get(focusedDate)!.button.focus({ preventScroll: reason !== "keyboard" })
       if (!connected) return
       writeText(status, notify && previousPanel !== settings.panel && !activeDate && !focusTarget ? next.title : "")
@@ -360,21 +391,24 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
       element.dispatchEvent(new win.CustomEvent("m:calendar-panel-change", { bubbles: true, detail }))
     }
     if (connected && version === stamp && previousValue !== settings.value) {
-      const parts = settings.value === null ? null : parseDate(doc, settings.value)
-      const detail: CalendarChange = Object.freeze({ value: settings.value, previousValue, year: parts?.year ?? null, month: parts?.month ?? null, date: parts?.date ?? null, reason })
-      element.dispatchEvent(new win.CustomEvent("m:calendar-change", { bubbles: true, detail }))
+      const parts = settings.value === null ? null : valueParts(settings.value)
+      const detail: CalendarChange = Object.freeze({ value: settings.value, previousValue, year: parts?.year ?? null, month: parts?.month ?? null, date: settings.value?.length === 7 ? null : parts?.date ?? null, reason })
+      element.dispatchEvent(new win.CustomEvent("m:change", { bubbles: true, detail }))
     }
   }
   function apply(input: CalendarSettings, reason: string, notify: boolean, desired?: string, focusTarget = false) {
     live()
-    const next = config(input), panel = parseMonth(doc, next.panel)
-    const preferred = desired ?? (focusedDate ? dateString(inMonth(monthIndex(panel), parseDate(doc, focusedDate).date)) : next.value ?? next.today ?? `${next.panel}-01`)
+    const next = config(input), panel = parseMonth(next.panel)
+    const preferred = desired ?? (focusedDate ? dateString(inMonth(monthIndex(panel), valueParts(focusedDate).date)) : next.value ?? next.today ?? `${next.panel}-01`)
     const result = prepare(next, preferred)
     commit(result, reason, notify, focusTarget)
   }
   function select(value: string | null, reason = "api"): boolean {
     live(); if (!available()) return false
-    if (value !== null) parseDate(doc, value)
+    if (value !== null) {
+      if (settings.mode === "year") parseMonth(value)
+      else parseDate(value)
+    }
     const next = config({ value }), result = prepare(next, value ?? focusedDate)
     if (value !== null && result.unavailable(value)) return false
     commit(result, reason, true); return true
@@ -383,7 +417,7 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
     live()
     if (!Number.isSafeInteger(delta) || Math.abs(delta) > 119988) throw new RangeError("Month delta must be a bounded integer.")
     if (!available()) return
-    const target = inMonth(monthTarget(delta), parseDate(doc, focusedDate).date)
+    const target = inMonth(monthTarget(delta, settings.mode === "year" ? { ...settings, panel: focusedDate } : settings), valueParts(focusedDate).date)
     apply({ panel: dateString(target).slice(0, 7) }, reason, true, dateString(target), focusTarget)
   }
   function today(reason = "api") {
@@ -397,19 +431,26 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
     if (!button || cells.get(button.dataset.calendarDate ?? "")?.button !== button || !available() || button.matches(":disabled")
       || event.altKey || event.ctrlKey || event.metaKey || event.isComposing) return
     let delta: number | null = null
-    const parts = parseDate(doc, button.dataset.calendarDate!), rtl = win.getComputedStyle(table).direction === "rtl"
+    const parts = valueParts(button.dataset.calendarDate!), rtl = win.getComputedStyle(table).direction === "rtl"
+    const yearMode = settings.mode === "year"
     if (event.key === "PageUp" || event.key === "PageDown") {
-      event.preventDefault(); moveMonths((event.key === "PageUp" ? -1 : 1) * (event.shiftKey ? 12 : 1), "keyboard", true); return
+      event.preventDefault(); moveMonths((event.key === "PageUp" ? -1 : 1) * (event.shiftKey || yearMode ? 12 : 1), "keyboard", true); return
     }
     if (event.shiftKey) return
     if (event.key === "ArrowLeft") delta = rtl ? 1 : -1
     else if (event.key === "ArrowRight") delta = rtl ? -1 : 1
-    else if (event.key === "ArrowUp") delta = -7
-    else if (event.key === "ArrowDown") delta = 7
-    else if (event.key === "Home") delta = -(weekday(parts) - settings.firstDayOfWeek + 7) % 7
-    else if (event.key === "End") delta = 6 - (weekday(parts) - settings.firstDayOfWeek + 7) % 7
+    else if (event.key === "ArrowUp") delta = yearMode ? -3 : -7
+    else if (event.key === "ArrowDown") delta = yearMode ? 3 : 7
+    else if (event.key === "Home") delta = yearMode ? -(parts.month - 1) % 3 : -(weekday(parts) - settings.firstDayOfWeek + 7) % 7
+    else if (event.key === "End") delta = yearMode ? 2 - (parts.month - 1) % 3 : 6 - (weekday(parts) - settings.firstDayOfWeek + 7) % 7
     if (delta === null) return
     event.preventDefault()
+    if (yearMode) {
+      const target = dateString(inMonth(monthIndex(parts) + delta, 1)).slice(0, 7)
+      if (cells.has(target)) { focusedDate = target; tabStops(); cells.get(target)!.button.focus() }
+      else if (target >= settings.min.slice(0, 7) && target <= settings.max.slice(0, 7)) apply({ panel: target }, "keyboard", true, target, true)
+      return
+    }
     let target = fromOrdinal(Math.max(0, Math.min(lastOrdinal, ordinal(parts) + delta)))
     let panel = dateString(target).slice(0, 7)
     if (panel < settings.min.slice(0, 7) || panel > settings.max.slice(0, 7)) {
@@ -437,7 +478,7 @@ export function createCalendar(element: HTMLElement, options: CalendarOptions = 
     connected = false; ++version
     removal.disconnect(); removers.forEach(remove => remove())
     if ([...cells.values()].some(cell => cell.button === doc.activeElement) && element.isConnected) {
-      element.focus({ preventScroll: true })
+      win.HTMLElement.prototype.focus.call(element, { preventScroll: true })
     }
     if (header?.parentNode === head) header.remove()
     rows.forEach(row => { if (row.parentNode === body) row.remove() })

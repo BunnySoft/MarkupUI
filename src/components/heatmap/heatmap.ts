@@ -102,7 +102,7 @@ export function createHeatmap(element: HTMLElement, options: HeatmapOptions = {}
   function prepare(input: HeatmapSettings) {
     preparing = true; const stamp = version
     try {
-      const next = heatmapConfig(input, settings), data = buildHeatmap(doc, next)
+      const next = heatmapConfig(input, settings), data = buildHeatmap(next)
       if (!connected || stamp !== version) throw new Error("Heatmap was disconnected during preparation.")
       anatomy(); return { next, data }
     } finally { preparing = false }

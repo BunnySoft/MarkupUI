@@ -106,17 +106,17 @@ export function heatmapConfig(input: HeatmapSettings, previous: HeatmapConfig = 
 }
 
 /** Calendar-week model: no local timestamps, gap-to-zero coercion or sparse-range allocation. */
-export function buildHeatmap(document: Document, options: HeatmapSettings = {}): HeatmapModel {
+export function buildHeatmap(options: HeatmapSettings = {}): HeatmapModel {
   const settings = heatmapConfig(options)
   const records = new Map<string, HeatmapDataItem>()
   const coordinates: number[] = []
   for (const item of settings.data) {
-    const parts = parseDate(document, item.date)
+    const parts = parseDate(item.date)
     if (records.has(item.date)) throw new TypeError(`Duplicate date ${item.date}; aggregate before binding.`)
     records.set(item.date, item); coordinates.push(ordinal(parts))
   }
   let start: number | null = null, end: number | null = null
-  if (settings.range) { start = ordinal(parseDate(document, settings.range[0])); end = ordinal(parseDate(document, settings.range[1])) }
+  if (settings.range) { start = ordinal(parseDate(settings.range[0])); end = ordinal(parseDate(settings.range[1])) }
   else if (coordinates.length) { start = Math.min(...coordinates); end = Math.max(...coordinates) }
   if (start !== null && end !== null && (end < start || end - start + 1 > 366)) throw new RangeError("Use an ordered range of at most 366 days.")
   if (start !== null && coordinates.some(value => value < start! || value > end!)) throw new RangeError("Every supplied date must be inside the explicit range.")

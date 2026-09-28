@@ -1,5 +1,3 @@
-import { nativeDateValue } from "../date-picker/native.js"
-
 export interface CalendarDate { readonly year: number; readonly month: number; readonly date: number }
 export const lastOrdinal = 3652058
 export function monthDays(year: number, month: number) {
@@ -30,14 +28,16 @@ export function fromOrdinal(value: number): CalendarDate {
 export function dateString(parts: CalendarDate) {
   return `${String(parts.year).padStart(4, "0")}-${String(parts.month).padStart(2, "0")}-${String(parts.date).padStart(2, "0")}`
 }
-export function parseDate(document: Document, value: unknown): CalendarDate {
-  const parsed = nativeDateValue(document, "date", value).value
-  if (!parsed) throw new TypeError("Use a nonempty canonical YYYY-MM-DD date, not an instant.")
-  return Object.freeze({ year: Number(parsed.slice(0, 4)), month: Number(parsed.slice(5, 7)), date: Number(parsed.slice(8, 10)) })
+export function parseDate(value: unknown): CalendarDate {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) throw new TypeError("Use a canonical YYYY-MM-DD date, not an instant.")
+  const parts = { year: Number(value.slice(0, 4)), month: Number(value.slice(5, 7)), date: Number(value.slice(8, 10)) }
+  // UTC round-trip rejects normalization (e.g. February 30), without requiring a form date input.
+  if (!parts.year || carrier(parts).toISOString().slice(0, 10) !== value) throw new RangeError("Invalid Gregorian date in years 0001-9999.")
+  return Object.freeze(parts)
 }
-export function parseMonth(document: Document, value: unknown) {
+export function parseMonth(value: unknown) {
   if (typeof value !== "string" || !/^\d{4}-\d{2}$/.test(value)) throw new TypeError("panel must be canonical YYYY-MM.")
-  return parseDate(document, `${value}-01`)
+  return parseDate(`${value}-01`)
 }
 export function monthIndex(parts: CalendarDate) { return (parts.year - 1) * 12 + parts.month - 1 }
 export function inMonth(index: number, day: number): CalendarDate {

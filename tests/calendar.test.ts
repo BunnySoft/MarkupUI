@@ -2,10 +2,14 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { Calendar, calendarModes, createCalendar, registerCalendar } from "../src/components/calendar/index.js"
-import type { CalendarController, CalendarOptions } from "../src/components/calendar/index.js"
+import { Calendar, calendarModes, registerCalendar } from "../src/components/calendar/index.js"
+import { createCalendar } from "../src/components/calendar/calendar.js"
+import type { CalendarController, CalendarSettings as CalendarOptions } from "../src/components/calendar/calendar.js"
 import { carrier, dateString, fromOrdinal, inMonth, lastOrdinal, monthDays, monthIndex, ordinal, parseDate, weekday } from "../src/components/calendar/date.js"
 import { ViewElement } from "../src/core/index.js"
+import "../src/components/box/index.js"
+import "../src/components/form/index.js"
+import "../src/components/button/index.js"
 
 const helpers: CalendarController[] = []
 function fixture(options: CalendarOptions = {}, bind = true) {
@@ -67,15 +71,17 @@ describe("Calendar canonical Gregorian arithmetic", () => {
     expect(dateString(fromOrdinal(lastOrdinal))).toBe("9999-12-31")
     expect(() => fromOrdinal(-1)).toThrow(); expect(() => fromOrdinal(lastOrdinal + 1)).toThrow()
   })
-  it("reuses Date Picker native canonical validation, not timestamp inference", () => {
-    expect(parseDate(document, "0001-01-01")).toEqual({ year: 1, month: 1, date: 1 })
-    expect(parseDate(document, "2024-03-10")).toEqual({ year: 2024, month: 3, date: 10 })
-    for (const value of ["", "0000-01-01", "10000-01-01", "1900-02-29", "2024-2-01", "2024-02-30", "2024-01-01Z", 0, new Date()]) {
-      expect(() => parseDate(document, value)).toThrow()
+  it("uses strict native UTC round-trip validation, not timestamp inference or form input capabilities", () => {
+    vi.spyOn(HTMLInputElement.prototype, "type", "get").mockReturnValue("text")
+    expect(parseDate("0001-01-01")).toEqual({ year: 1, month: 1, date: 1 })
+    expect(parseDate("2024-03-10")).toEqual({ year: 2024, month: 3, date: 10 })
+    for (const value of ["", "0000-01-01", "10000-01-01", "1900-02-29", "2024-2-01", "2024-02-30", "2024-01-01Z",
+      "2024-01-01\n", "2024-00-01", "2024-13-01", "2024-01-00", "2024-99-99", 0, new Date()]) {
+      expect(() => parseDate(value)).toThrow()
     }
   })
   it("clamps month/year changes without sticky 31 or invalid leap dates", () => {
-    const jan = parseDate(document, "2024-01-31"), feb = inMonth(monthIndex(jan) + 1, jan.date)
+    const jan = parseDate("2024-01-31"), feb = inMonth(monthIndex(jan) + 1, jan.date)
     expect(dateString(feb)).toBe("2024-02-29")
     expect(dateString(inMonth(monthIndex(feb) + 1, feb.date))).toBe("2024-03-29")
     expect(dateString(inMonth(monthIndex(feb) + 12, feb.date))).toBe("2025-02-28")
@@ -115,7 +121,7 @@ describe("Calendar native table and explicit date-only state", () => {
   })
   it("shows adjacent months and changes panel once when an adjacent available date is selected", () => {
     const { helper, root, day } = fixture(), panels = vi.fn(), changes = vi.fn()
-    root.addEventListener("m:calendar-panel-change", panels); root.addEventListener("m:calendar-change", changes)
+    root.addEventListener("m:calendar-panel-change", panels); root.addEventListener("m:change", changes)
     expect(day("2024-01-29").closest("td")!.hasAttribute("data-calendar-adjacent")).toBe(true)
     day("2024-03-01").click()
     expect(helper.state.panel).toBe("2024-03"); expect(helper.value).toBe("2024-03-01")
@@ -136,7 +142,7 @@ describe("Calendar native table and explicit date-only state", () => {
   })
   it("accepts unavailable programmatic state without allowing unavailable user selection", () => {
     const { helper, root, day } = fixture({ min: "2024-02-10", max: "2024-02-20" }), changed = vi.fn()
-    root.addEventListener("m:calendar-change", changed)
+    root.addEventListener("m:change", changed)
     day("2024-02-09").click(); expect(helper.value).toBeNull()
     expect(helper.select("2024-02-21")).toBe(false)
     helper.set({ value: "2024-02-21" }); expect(helper.value).toBe("2024-02-21"); expect(helper.state.selectionAvailable).toBe(false)
@@ -165,7 +171,7 @@ describe("Calendar native table and explicit date-only state", () => {
 describe("Calendar keyboard, bounds, locale and focus", () => {
   it("moves roving focus with arrows/Home/End without selecting or rebuilding the current rows", () => {
     const { helper, root, body, day, key } = fixture(), rows = [...body.rows], changed = vi.fn()
-    root.addEventListener("m:calendar-change", changed)
+    root.addEventListener("m:change", changed)
     day("2024-02-28").focus(); key(day("2024-02-28"), "ArrowRight")
     expect(helper.state.focusedDate).toBe("2024-02-29"); expect(document.activeElement).toBe(day("2024-02-29"))
     key(day("2024-02-29"), "Home"); expect(helper.state.focusedDate).toBe("2024-02-26")
@@ -277,7 +283,7 @@ describe("Calendar atomic callbacks and lifetime", () => {
   })
   it("suppresses stale value notification after a reentrant panel event changes the state", () => {
     const { helper, root } = fixture(), change = vi.fn()
-    root.addEventListener("m:calendar-change", change)
+    root.addEventListener("m:change", change)
     root.addEventListener("m:calendar-panel-change", () => helper.set({ value: "2024-04-10" }), { once: true })
     helper.select("2024-03-01")
     expect(helper.value).toBe("2024-04-10"); expect(change).not.toHaveBeenCalled()
@@ -377,7 +383,7 @@ describe("canonical Calendar ViewElement", () => {
   })
 
   it("exposes canonical observedAttributes and default property values", () => {
-    expect(Calendar.observedAttributes).toEqual(["value", "mode"])
+    expect(Calendar.observedAttributes).toEqual(["value", "default-value", "mode", "panel", "today", "min", "max", "first-day-of-week", "locale", "disabled"])
     const calendar = new Calendar()
     expect(calendar.value).toBeNull()
     expect(calendar.mode).toBe("month")
@@ -395,7 +401,7 @@ describe("canonical Calendar ViewElement", () => {
     expect(calendar.getAttribute("mode")).toBe("year")
     calendar.mode = "month"
     expect(calendar.getAttribute("mode")).toBe("month")
-    expect(() => { (calendar as any).mode = "decade" }).toThrow(RangeError)
+    expect(() => { (calendar as any).mode = "decade" }).toThrow()
   })
 
   it("renders month grid, table caption and sets aria-pressed on selected day", () => {
@@ -431,7 +437,7 @@ describe("canonical Calendar ViewElement", () => {
 
     expect(listener).toHaveBeenCalledOnce()
     const event = listener.mock.calls[0]![0] as CustomEvent<{ value: string }>
-    expect(event.detail).toEqual({ value: "2024-02-20" })
+    expect(event.detail).toMatchObject({ value: "2024-02-20", previousValue: "2024-02-10", year: 2024, month: 2, date: 20, reason: "user" })
     expect(event.bubbles).toBe(true)
     expect(event.cancelable).toBe(false)
     expect(event.composed).toBe(false)
@@ -483,15 +489,278 @@ describe("canonical Calendar ViewElement", () => {
     targetMonth.click()
 
     expect(listener).toHaveBeenCalledOnce()
-    expect((listener.mock.calls[0]![0] as CustomEvent<{ value: string }>).detail).toEqual({ value: "2024-08" })
+    expect((listener.mock.calls[0]![0] as CustomEvent<{ value: string }>).detail).toMatchObject({ value: "2024-08", date: null })
     expect(calendar.value).toBe("2024-08")
   })
 
-  it("exports canonical classes, registerCalendar and createCalendar", async () => {
+  it("exports only the canonical element, mode values and registration", async () => {
     const api = await import("../src/components/calendar/index.js")
     expect(api.Calendar).toBe(Calendar)
     expect(api.registerCalendar).toBeTypeOf("function")
-    expect(api.createCalendar).toBeTypeOf("function")
+    expect(Object.keys(api).sort()).toEqual(["Calendar", "calendarModes", "registerCalendar"])
     expect(api.calendarModes).toEqual(["month", "year"])
+  })
+})
+
+describe("Calendar unified public behavior", () => {
+  function calendar(settings: CalendarOptions = {}) {
+    const element = new Calendar()
+    element.configure({ value: "2024-02-15", today: "2024-02-10", ...settings })
+    document.body.append(element)
+    const day = (date: string) => element.querySelector<HTMLButtonElement>(`[data-calendar-date="${date}"]`)!
+    const key = (date: string, key: string, extra: KeyboardEventInit = {}) => {
+      day(date).focus()
+      day(date).dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true, ...extra }))
+    }
+    return { element, day, key }
+  }
+
+  it("maps entirely m-* authored content to one native table without a factory or form proxy", async () => {
+    const source = `<m-form><m-calendar value="2024-02-15" today="2024-02-10" aria-label="Schedule"><m-span>Authored note</m-span></m-calendar><m-button attr-type="submit">Save</m-button></m-form>`
+    const template = document.createElement("template")
+    template.innerHTML = source
+    expect([...template.content.querySelectorAll("*")].every(node => node.localName.startsWith("m-"))).toBe(true)
+    const note = template.content.querySelector("m-span")!, listener = vi.fn()
+    note.addEventListener("note-test", listener)
+    document.body.append(template.content)
+    await Promise.resolve()
+    const element = document.querySelector<Calendar>("m-calendar")!
+    expect(element.connected).toBe(true)
+    expect(element.getAttribute("role")).toBe("group")
+    expect(element.getAttribute("aria-label")).toBe("Schedule")
+    expect(element.table).toBeInstanceOf(HTMLTableElement)
+    expect(element.querySelectorAll("table")).toHaveLength(1)
+    expect(element.querySelectorAll("[data-calendar-day][tabindex='0']")).toHaveLength(1)
+    expect([...new FormData(document.querySelector("form")!)]).toEqual([])
+    expect(document.querySelector("m-button button")!.getAttribute("type")).toBe("submit")
+    element.next()
+    expect(element.querySelector("m-span")).toBe(note)
+    note.dispatchEvent(new Event("note-test"))
+    expect(listener).toHaveBeenCalledOnce()
+  })
+
+  it("creates Web chrome without HTML parsing sinks", () => {
+    const inner = vi.spyOn(Element.prototype, "innerHTML", "set").mockImplementation(() => { throw new Error("HTML sink") })
+    const adjacent = vi.spyOn(Element.prototype, "insertAdjacentHTML").mockImplementation(() => { throw new Error("HTML sink") })
+    const { element } = calendar()
+    element.next(); element.mode = "year"; element.prev()
+    expect(inner).not.toHaveBeenCalled(); expect(adjacent).not.toHaveBeenCalled()
+  })
+
+  it("updates once per property/attribute transaction and preserves controls, cells and focus", () => {
+    const getDayContent = vi.fn(() => ""), { element, day } = calendar({ getDayContent })
+    const table = element.table, button = day("2024-02-15"), next = element.querySelector("[data-calendar-action='next-month']")
+    const change = vi.fn()
+    element.addEventListener("m:change", change)
+    button.focus()
+    getDayContent.mockClear()
+    element.value = "2024-02-16"
+    expect(getDayContent).toHaveBeenCalledTimes(42)
+    expect(element.value).toBe(element.getAttribute("value"))
+    expect(element.table).toBe(table); expect(day("2024-02-15")).toBe(button)
+    expect(document.activeElement).toBe(button)
+    getDayContent.mockClear()
+    element.setAttribute("value", "2024-02-17")
+    expect(getDayContent).toHaveBeenCalledTimes(42)
+    expect(change).not.toHaveBeenCalled()
+    expect(element.querySelector("[data-calendar-action='next-month']")).toBe(next)
+  })
+
+  it.each([
+    { value: "2023-02-29" }, { panel: "2024-13" }, { min: "2025-01-01", max: "2024-12-31" },
+    { firstDayOfWeek: 7 }, { mode: "decade" }, { locale: "invalid_locale" }, { disabled: "false" },
+    { getDayContent: () => "a".repeat(513) }, { isDateDisabled: () => undefined },
+  ])("rejects invalid public writes without changing attributes, state or DOM", input => {
+    const { element } = calendar(), state = element.state, html = element.outerHTML
+    expect(() => element.configure(input as CalendarOptions)).toThrow()
+    expect(element.state).toEqual(state); expect(element.outerHTML).toBe(html)
+  })
+
+  it("rolls back invalid direct attributes and keeps the previous rendered state", () => {
+    const { element } = calendar(), before = element.outerHTML
+    const errors = (event: ErrorEvent) => event.preventDefault()
+    window.addEventListener("error", errors)
+    try { element.setAttribute("value", "2024-02-30") } finally { window.removeEventListener("error", errors) }
+    expect(element.outerHTML).toBe(before)
+  })
+
+  it("retains selection across policy changes, safely renders literal notes, and reports user callback failures", () => {
+    let fail = false
+    const { element, day } = calendar({
+      isDateDisabled: value => { if (fail) throw new Error("Policy failed"); return value.endsWith("-16") },
+      getDayContent: () => "<img src=x>",
+    })
+    expect(day("2024-02-16").getAttribute("aria-disabled")).toBe("true")
+    expect(element.select("2024-02-16")).toBe(false)
+    element.value = "2024-02-16"
+    expect(element.state.selectionAvailable).toBe(false)
+    expect(element.querySelector("img")).toBeNull()
+    const error = vi.fn(); element.addEventListener("m:calendar-error", error)
+    fail = true
+    element.querySelector<HTMLButtonElement>("[data-calendar-action='next-month']")!.click()
+    expect(error).toHaveBeenCalledOnce()
+    expect(element.error).toBeInstanceOf(Error)
+    expect(element.panel).toBe("2024-02")
+  })
+
+  it("has one event path and exposes committed properties before panel/value notifications", () => {
+    const { element } = calendar(), events: string[] = [], old = vi.fn()
+    element.addEventListener("m:calendar-change", old)
+    element.addEventListener("m:calendar-panel-change", () => {
+      expect(element.panel).toBe("2024-03"); expect(element.value).toBe("2024-03-01")
+      expect(element.getAttribute("value")).toBe(element.value); events.push("panel")
+    })
+    element.addEventListener("m:change", () => events.push("value"))
+    expect(element.select("2024-03-01")).toBe(true)
+    expect(events).toEqual(["panel", "value"])
+    element.select("2024-03-01")
+    expect(events).toHaveLength(2); expect(old).not.toHaveBeenCalled()
+  })
+
+  it("suppresses stale notifications when a panel listener changes the public value", () => {
+    const { element } = calendar(), change = vi.fn()
+    element.addEventListener("m:change", change)
+    element.addEventListener("m:calendar-panel-change", () => { element.value = "2024-04-10" }, { once: true })
+    element.select("2024-03-01")
+    expect(element.value).toBe("2024-04-10"); expect(change).not.toHaveBeenCalled()
+  })
+
+  it("keeps defaults, current value and panel independent across reset and reconnect", () => {
+    const { element } = calendar({ defaultValue: "2024-01-31" }), table = element.table
+    const controls = element.querySelector("[data-calendar-controls]")
+    element.select("2024-02-20"); element.next()
+    element.remove()
+    expect(element.connected).toBe(false); expect(controls!.hasAttribute("hidden")).toBe(true)
+    document.body.append(element)
+    expect(element.connected).toBe(true); expect(element.value).toBe("2024-02-20"); expect(element.panel).toBe("2024-03")
+    expect(element.table).toBe(table); expect(element.querySelectorAll("[data-calendar-controls]")).toHaveLength(1)
+    element.reset(); expect(element.value).toBe("2024-01-31")
+  })
+
+  it("applies pre-upgrade own properties and initial default without duplicate chrome", () => {
+    const element = new Calendar()
+    Object.defineProperty(element, "defaultValue", { configurable: true, value: "0099-03-01" })
+    Object.defineProperty(element, "todayValue", { configurable: true, value: null })
+    document.body.append(element)
+    expect(Object.hasOwn(element, "defaultValue")).toBe(false)
+    expect(element.value).toBe("0099-03-01"); expect(element.panel).toBe("0099-03")
+    expect(element.querySelector("[aria-current]")).toBeNull()
+    expect(element.today()).toBe(false)
+  })
+
+  it.each([
+    'panel="2024-03" value="2024-02-15" mode="year"',
+    'mode="year" value="2024-02-15" panel="2024-03"',
+  ])("retains explicit panel regardless of initial attribute order: %s", attributes => {
+    document.body.innerHTML = `<m-calendar ${attributes}></m-calendar>`
+    const element = document.querySelector<Calendar>("m-calendar")!
+    expect(element.mode).toBe("year"); expect(element.panel).toBe("2024-03"); expect(element.value).toBe("2024-02-15")
+    expect(element.querySelectorAll("[data-calendar-day]")).toHaveLength(12)
+  })
+
+  it("supports year roving focus, RTL, month selection precision and switching back to days", () => {
+    const { element, day, key } = calendar({ mode: "year", value: "2024-05" }), change = vi.fn()
+    element.addEventListener("m:change", change)
+    key("2024-05", "ArrowDown")
+    expect(element.state.focusedDate).toBe("2024-08")
+    key("2024-08", "PageDown")
+    expect(element.state.focusedDate).toBe("2025-08")
+    element.table!.style.direction = "rtl"
+    key("2025-08", "ArrowLeft")
+    expect(document.activeElement).toBe(day("2025-09"))
+    key("2025-09", "Home"); expect(element.state.focusedDate).toBe("2025-07")
+    key("2025-07", "End"); expect(element.state.focusedDate).toBe("2025-09")
+    expect(change).not.toHaveBeenCalled()
+    day("2025-09").click()
+    expect(element.value).toBe("2025-09")
+    expect(change.mock.calls[0]![0].detail).toMatchObject({ value: "2025-09", date: null })
+    element.mode = "month"
+    expect(element.value).toBe("2025-09")
+    expect(element.querySelectorAll("[data-calendar-day]")).toHaveLength(42)
+    expect(element.querySelector("[data-calendar-weekdays]")!.hasAttribute("hidden")).toBe(false)
+    expect(() => element.select("2025-09")).toThrow()
+    expect(element.select("2025-09-15")).toBe(true)
+    element.mode = "year"
+    expect(element.value).toBe("2025-09-15"); expect(day("2025-09").getAttribute("aria-pressed")).toBe("true")
+  })
+
+  it("bounds year selection by overlapping months without an unbounded day-policy search", () => {
+    const policy = vi.fn(() => true), note = vi.fn(() => "note")
+    const { element, day } = calendar({ mode: "year", value: "2024-02", min: "2024-02-15", max: "2024-05-10", isDateDisabled: policy, getDayContent: note })
+    expect(day("2024-01").getAttribute("aria-disabled")).toBe("true")
+    expect(element.select("2024-01")).toBe(false); expect(element.select("2024-05")).toBe(true)
+    expect(policy).not.toHaveBeenCalled(); expect(note).not.toHaveBeenCalled()
+    element.next(); expect(element.panel).toBe("2024-05")
+    element.configure({ value: "0001-01", min: "0001-01-01", max: "9999-12-31" })
+    element.prev(); expect(element.panel).toBe("0001-01")
+    element.value = "9999-12"; element.next(); expect(element.panel).toBe("9999-12")
+  })
+
+  it("preserves native fieldset disabling and does not steal external focus", () => {
+    const { element, day } = calendar(), fieldset = document.createElement("fieldset"), outside = document.createElement("button")
+    document.body.append(fieldset, outside); fieldset.append(element)
+    outside.focus()
+    element.value = "2024-02-20"; expect(document.activeElement).toBe(outside)
+    fieldset.disabled = true
+    expect(day("2024-02-20").matches(":disabled")).toBe(true)
+    expect(element.select("2024-02-21")).toBe(false)
+    fieldset.disabled = false; element.disabled = true
+    expect(element.select("2024-02-21")).toBe(false)
+    element.disabled = false; expect(element.select("2024-02-21")).toBe(true)
+    element.focus(); expect(document.activeElement).toBe(day(element.state.focusedDate))
+  })
+
+  it("adopts native Web anatomy with the same owner and restores original fallback/listeners", () => {
+    const { root, form, original } = fixture({}, false), element = new Calendar()
+    element.panel = "2024-02"
+    element.setAttribute("aria-labelledby", "calendar-heading")
+    const listener = vi.fn(); original[0]!.addEventListener("fallback-test", listener)
+    element.append(...root.childNodes); root.remove(); form.prepend(element)
+    expect(element.select("2024-02-15")).toBe(true)
+    const controls = element.querySelector("[data-calendar-controls]")
+    element.remove()
+    expect([...element.querySelector("tbody")!.childNodes]).toEqual(original)
+    original[0]!.dispatchEvent(new Event("fallback-test")); expect(listener).toHaveBeenCalledOnce()
+    form.append(element)
+    expect(element.value).toBe("2024-02-15"); expect(element.querySelector("[data-calendar-controls]")).toBe(controls)
+    expect(() => createCalendar(element)).toThrow(/unowned/)
+  })
+
+  it("keeps nested calendars isolated", () => {
+    const outer = new Calendar(), inner = new Calendar()
+    outer.value = "2024-02-15"; inner.value = "2025-03-15"
+    outer.append(inner); document.body.append(outer)
+    expect(outer.connected).toBe(true); expect(inner.connected).toBe(true)
+    inner.next()
+    expect(inner.panel).toBe("2025-04"); expect(outer.panel).toBe("2024-02")
+    expect(outer.table).not.toBe(inner.table)
+  })
+
+  it("preserves adopted action disabled/hidden flags across modes and reconnect", () => {
+    const { root, form, action } = fixture({}, false)
+    const previous = action("prev-month"), clear = action("clear")
+    previous.disabled = true; clear.hidden = true
+    const element = new Calendar()
+    element.value = "2024-02-15"
+    element.append(...root.childNodes); root.remove(); form.append(element)
+    expect(previous.disabled).toBe(true); expect(clear.hidden).toBe(true)
+    element.mode = "year"; element.mode = "month"
+    expect(previous.disabled).toBe(true); expect(clear.hidden).toBe(true)
+    element.remove(); form.append(element)
+    expect(previous.disabled).toBe(true); expect(clear.hidden).toBe(true)
+  })
+
+  it("rejects initialization reentry without acquiring an owner and can retry", () => {
+    const element = new Calendar(), errors: unknown[] = []
+    element.getDayContent = () => { element.value = "2024-02-10"; return "" }
+    const handler = (event: ErrorEvent) => { errors.push(event.error); event.preventDefault() }
+    window.addEventListener("error", handler)
+    try { document.body.append(element) } finally { window.removeEventListener("error", handler) }
+    expect(errors).toHaveLength(1); expect(String(errors[0])).toContain("reenter")
+    expect(element.connected).toBe(false)
+    element.getDayContent = null
+    element.remove(); document.body.append(element)
+    expect(element.connected).toBe(true)
+    expect(element.querySelectorAll("[data-calendar-controls]")).toHaveLength(1)
   })
 })

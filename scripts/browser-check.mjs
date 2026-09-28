@@ -363,6 +363,107 @@ try {
                 const api = page.locator(`#${slug}-api`)
                 if (await api.count()) await page.waitForFunction(id => document.getElementById(id).classList.contains("component-api"), `${slug}-api`)
                 assert.deepEqual(errors, [])
+                if (slug === "calendar") {
+                  const basic = page.locator("#basic-calendar")
+                  assert.equal(await page.getByRole("group", { name: "Schedule", exact: true }).count(), 1)
+                  assert.equal(await page.evaluate(() => !!customElements.get("m-date-picker")), false)
+                  assert.equal(await basic.locator("[data-calendar-day]").count(), 42)
+                  const day = basic.locator('[data-calendar-date="2026-09-15"]')
+                  await day.focus()
+                  await day.press("ArrowRight")
+                  assert.equal(await page.evaluate(() => document.activeElement.dataset.calendarDate), "2026-09-16")
+                  assert.equal(await basic.evaluate(element => element.value), "2026-09-13")
+                  await page.keyboard.press("Enter")
+                  assert.equal(await basic.evaluate(element => element.value), "2026-09-16")
+                  assert.equal(await page.locator("#basic-value").textContent(), "Selected date: 2026-09-16")
+                  await page.keyboard.press("PageDown")
+                  assert.equal(await basic.evaluate(element => element.panel), "2026-10")
+                  await basic.getByRole("button", { name: "Today", exact: true }).click()
+                  assert.equal(await basic.evaluate(element => element.panel), "2026-09")
+                  await basic.getByRole("button", { name: "Clear selection", exact: true }).click()
+                  assert.equal(await basic.evaluate(element => element.value), null)
+                  await basic.scrollIntoViewIfNeeded()
+                  await page.screenshot({ path: resolve(output, `${name}-${layout}-calendar.png`) })
+
+                  const year = page.locator("#year-calendar")
+                  assert.equal(await year.locator("[data-calendar-day]").count(), 12)
+                  const month = year.locator('[data-calendar-date="2026-09"]')
+                  await month.focus()
+                  await month.press("ArrowDown")
+                  assert.equal(await page.evaluate(() => document.activeElement.dataset.calendarDate), "2026-12")
+                  await page.keyboard.press("Space")
+                  assert.equal(await year.evaluate(element => element.value), "2026-12")
+                  await page.keyboard.press("PageDown")
+                  assert.equal(await year.evaluate(element => element.panel), "2027-12")
+                  await year.scrollIntoViewIfNeeded()
+                  await page.screenshot({ path: resolve(output, `${name}-${layout}-calendar-year.png`) })
+                  assert.equal(await year.evaluate(element => {
+                    const previous = element.value
+                    for (const value of ["0000-01-01", "1900-02-29", "2024-02-30", "2024-00-01", "2024-01-01Z"]) {
+                      try { element.value = value; return false } catch { /* Must reject without changing state. */ }
+                      if (element.value !== previous) return false
+                    }
+                    element.value = "0001-01"
+                    element.prev()
+                    if (element.panel !== "0001-01") return false
+                    element.value = "9999-12"
+                    element.next()
+                    if (element.panel !== "9999-12") return false
+                    element.value = previous
+                    return true
+                  }), true, "Calendar validates Gregorian dates without requiring native date inputs")
+
+                  const bounded = page.locator("#bounded-calendar")
+                  assert.equal(await bounded.locator('[data-calendar-date="2026-09-16"]').getAttribute("aria-disabled"), "true")
+                  await bounded.locator('[data-calendar-date="2026-09-17"]').click()
+                  assert.equal(await bounded.evaluate(element => element.value), "2026-09-17")
+                  await page.locator("#reset-calendar").click()
+                  assert.equal(await bounded.evaluate(element => element.value), "2026-09-15")
+                  await page.locator("#toggle-disabled").click()
+                  assert.equal(await bounded.evaluate(element => element.state.disabled), true)
+                  assert.equal(await bounded.locator('[data-calendar-action="next-month"]').isDisabled(), true)
+                  await page.locator("#toggle-disabled").click()
+                  assert.equal(await bounded.evaluate(element => element.state.disabled), false)
+                  assert(await page.locator("#toggle-disabled").evaluate(element => element.contains(document.activeElement) || document.activeElement === document.body),
+                    "Calendar updates must not steal the external button focus")
+                  const identity = await bounded.evaluate(element => {
+                    const table = element.table, parent = element.parentNode, next = element.nextSibling
+                    element.remove()
+                    parent.insertBefore(element, next)
+                    return { connected: element.connected, same: element.table === table, value: element.value,
+                      controls: element.querySelectorAll("[data-calendar-controls]").length }
+                  })
+                  assert.deepEqual(identity, { connected: true, same: true, value: "2026-09-15", controls: 1 })
+                  assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1),
+                    `${name}/${layout}: Calendar page overflow`)
+                  await bounded.scrollIntoViewIfNeeded()
+                  await page.screenshot({ path: resolve(output, `${name}-${layout}-calendar-bounded.png`) })
+                }
+                if (slug === "heatmap") {
+                  const data = await page.evaluate(() => {
+                    const { buildHeatmap } = window.MarkupUIHeatmap
+                    const model = buildHeatmap({ data: [{ date: "2024-02-28", value: 0 }, { date: "2024-03-01", value: null }] })
+                    const rejected = ["0000-01-01", "1900-02-29", "2024-02-30", "2024-13-01", "2024-01-01Z"].every(date => {
+                      try { buildHeatmap({ data: [{ date }] }); return false } catch { return true }
+                    })
+                    return {
+                      empty: buildHeatmap().weeks,
+                      cells: model.cells.filter(Boolean).map(({ date, value, supplied }) => ({ date, value, supplied })),
+                      first: buildHeatmap({ range: ["0001-01-01", "0001-01-01"] }).start,
+                      last: buildHeatmap({ range: ["9999-12-31", "9999-12-31"] }).end,
+                      rejected,
+                    }
+                  })
+                  assert.deepEqual(data, {
+                    empty: 0,
+                    cells: [
+                      { date: "2024-02-28", value: 0, supplied: true },
+                      { date: "2024-02-29", value: null, supplied: false },
+                      { date: "2024-03-01", value: null, supplied: true },
+                    ],
+                    first: "0001-01-01", last: "9999-12-31", rejected: true,
+                  }, "Heatmap date model needs no Document argument or native date input")
+                }
                 if (slug === "dynamic-input") {
                   const basic = page.locator("#basic-dynamic-input")
                   const add = basic.locator("[data-dynamic-add]")

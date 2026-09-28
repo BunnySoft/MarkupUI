@@ -49,7 +49,7 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-calendar id="basic-calendar" value="2026-09-13"></m-calendar>
+        <m-calendar id="basic-calendar" value="2026-09-13" default-value="2026-09-13" today="2026-09-28" aria-label="Schedule"></m-calendar>
         <m-p id="basic-value">Selected date: 2026-09-13</m-p>
       </div>
     </section>
@@ -62,9 +62,69 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-calendar id="year-calendar" mode="year" value="2026-09"></m-calendar>
+        <m-calendar id="year-calendar" mode="year" value="2026-09" today="2026-09-28" aria-label="Planning month"></m-calendar>
         <m-p id="year-value">Selected month: 2026-09</m-p>
       </div>
+    </section>
+
+    <section data-demo-example="bounded" aria-labelledby="bounded-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="bounded-title">Availability and annotations</h2>
+          <p>Bounded dates with Sunday first, literal notes and a synchronous day policy.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <m-calendar id="bounded-calendar" value="2026-09-15" default-value="2026-09-15"
+          today="2026-09-28" min="2026-09-10" max="2026-10-20" first-day-of-week="0"
+          aria-label="Appointment date"></m-calendar>
+        <m-box display="flex" gap="8" wrap>
+          <m-button id="toggle-disabled" label="Disable calendar"></m-button>
+          <m-button id="reset-calendar" label="Reset selection"></m-button>
+        </m-box>
+        <m-p id="bounded-value">Selected date: 2026-09-15</m-p>
+      </div>
+    </section>
+
+    <section aria-labelledby="behavior-title">
+      <h2 id="behavior-title">Behavior and Web mapping</h2>
+      <p>Author <code>m-calendar</code>; the Web renderer exposes a named group and creates one captioned native table,
+        native buttons and plain readouts. Core and Calendar are the only required runtime files.
+        Box, Button and Typography are additional selections for this page, not Calendar dependencies.
+        Existing native Calendar anatomy can be adopted before connection as a Web-only escape hatch;
+        it uses the same validation, ownership and lifecycle, not a second factory.</p>
+      <p><code>value</code> is null, a canonical <code>YYYY-MM-DD</code> date, or a
+        <code>YYYY-MM</code> month. Month view selects days; year view selects months.
+        Switching modes preserves the value's original precision. <code>min</code> and
+        <code>max</code> are inclusive dates within years 0001-9999. A month is available
+        when it overlaps the date interval. Day callbacks do not search or annotate month cells.
+        Validation round-trips the existing native UTC Gregorian carrier and rejects normalization;
+        Calendar does not require browser support for <code>input[type=date]</code>.
+        The carrier is not the public value or a timezone conversion policy.</p>
+      <p>Property writes and <code>configure(settings)</code> are silent and atomic.
+        <code>select</code> emits <code>m:change</code> only when the value changes;
+        panel changes emit <code>m:calendar-panel-change</code> first. Both bubble.
+        The change detail includes value, previousValue, year, month, date and reason;
+        month selections have a null date. Failed user updates retain the previous view
+        and emit <code>m:calendar-error</code>.</p>
+      <p><code>panel</code> is independent of selection. <code>todayValue</code> maps to the
+        <code>today</code> attribute and initially uses the local date at construction;
+        an empty attribute or null disables the marker. <code>today()</code> navigates
+        without selecting. <code>defaultValue</code> maps to <code>default-value</code>;
+        <code>reset()</code> restores it. Calendar is not a named form field and native
+        form reset does not reset its selection.</p>
+      <p>The native day/month buttons use one roving tab stop. Arrow keys move focus,
+        Home/End move within a row, and PageUp/PageDown move the panel; Shift uses years.
+        In year view PageUp/PageDown move by year. Enter/Space retain native button activation.
+        Unavailable dates remain discoverable but cannot be selected. Disabled, native
+        fieldsets, RTL direction, external focus and authored node identity are retained.
+        Month tables scroll within narrow viewports.</p>
+      <p><code>isDateDisabled</code> and <code>getDayContent</code> are synchronous Web callbacks.
+        Annotations are literal text of at most 512 characters, never HTML. Refresh rechecks
+        policy without clearing unavailable selections. Native table/template adoption requires
+        a connected document-root scope, an accessible name, noninteractive fallback content,
+        separate plain number/marks/note parts and distinct labelled type=button actions.
+        Disconnect restores adopted fallback nodes, listeners and still-owned attributes.</p>
     </section>
 
     <section aria-labelledby="api-heading">

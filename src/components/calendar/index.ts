@@ -1,7 +1,6 @@
-export { Calendar, calendarModes } from "./calendar-element.js"
-export type { CalendarMode } from "./calendar-element.js"
-export { createCalendar } from "./calendar.js"
-export type { CalendarSettings, CalendarOptions, CalendarLabels, CalendarState, CalendarChange, CalendarPanelChange, CalendarController } from "./calendar.js"
+export { Calendar } from "./calendar-element.js"
+export { calendarModes } from "./calendar.js"
+export type { CalendarMode, CalendarSettings, CalendarLabels, CalendarState, CalendarChange, CalendarPanelChange } from "./calendar.js"
 export type { CalendarDate } from "./date.js"
 
 import { Calendar } from "./calendar-element.js"
@@ -11,5 +10,5 @@ export function registerCalendar(registry: Pick<CustomElementRegistry, "get" | "
   ViewElement.register([Calendar], registry)
 }
 
-if (typeof customElements !== "undefined" && !customElements.get(Calendar.tag)) registerCalendar()
+if (typeof customElements !== "undefined") registerCalendar()
 

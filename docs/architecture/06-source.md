@@ -209,6 +209,17 @@ imports, generic property engine or new distribution dependency.
 properties and ordinary method calls. They use small native conversion helpers where useful,
 not a metadata lookup or generic property dispatcher.
 
+Calendar's `calendar-element.ts` owns direct properties and the `m-calendar` Web
+mapping; `calendar.ts` is the single internal month/year behavior owner.
+It retains the controller's bounded preparation/commit, keyboard, focus, native
+anatomy validation and cleanup. The public factory and duplicate element renderer
+are removed. `date.ts` validates canonical date-only values by round-tripping its
+existing native UTC Gregorian carrier, without depending on Date Picker registration
+or native date-input support. Heatmap keeps using this same date utility;
+`buildHeatmap(options)` no longer takes an unused Document argument. Its actual
+callers change together, without reconciling Heatmap's element/controller here.
+The carrier is never the public value/instant model.
+
 Documentation tooling reads types, recognized accessor patterns and documentation comments.
 It does not import UI modules, construct elements or execute getters. Keep defaults and
 validation in the implementation; tooling must not invent values it cannot infer.

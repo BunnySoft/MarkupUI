@@ -40,6 +40,16 @@
   the host. Structural changes bubble as `m:change`; field edits/reset remain native.
   Inherited disabling preserves authored flags, and generated row keys are not reused
   across reconnect. These collection fixes also apply to Dynamic Tags.
+- Unified Calendar day/month selection through one internal behavior owner, retaining
+  bounded validation, synchronous annotations/policy, native keyboard/focus, adopted
+  content and reconnect cleanup. Portable `m-calendar` maps to a native Web table/buttons;
+  no native anatomy is required in public markup. Removed the public Calendar factory
+  and old change event; selection emits `m:change`, with panel changes emitted first.
+  Silent `configure`, explicit defaults/reset, bounds and navigation share that owner.
+- Removed native date-input dependence from Calendar's shared Gregorian date parser.
+  Heatmap uses the same strict parser, and `buildHeatmap(options)` no longer accepts an
+  unused Document argument. Updated callers without a compatibility overload; Heatmap's
+  separate element/controller reconciliation remains pending. Payload ceilings are unchanged.
 - Added packed-consumer checks, three-engine browser checks, dependency audit gates and
   Windows/Linux/macOS CI configuration. Development requires Node 22.12+ in the 22.x
   line or Node 24+, with pnpm 10.28.0.

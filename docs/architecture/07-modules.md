@@ -367,6 +367,28 @@ raw entries shrink 414/415 bytes. The unchanged 9,000-byte combined ceiling pass
 with only thirteen classic bytes of headroom. No shared extraction, budget increase or
 optional aggregate is included in this task.
 
+## Calendar delivery
+
+Calendar selects core plus one family entry and CSS, registering only `m-calendar`.
+ESM imports `markup-ui-core.js`; classic order is `markup-ui-core.global.js` then
+`markup-ui-calendar.global.js`. Public runtime exports are `Calendar`, `calendarModes`
+and `registerCalendar`; the public factory is removed. The internal controller owns
+both day and month selection, bounded preparation, keyboard navigation and cleanup.
+Portable markup needs no native table/template or additional component; those are Web
+renderer details. Box/Button/Typography on the demo are extra example selections.
+
+ESM/classic entries measure 8,931/9,097 gzip bytes, or 10,354/10,569 including core.
+This saves 120/111 gzip bytes relative to the pre-Calendar state. CSS grows from
+1,237 to 1,249 bytes, leaving one byte under its unchanged 1,250-byte ceiling.
+The 10,500-byte entry and 11,000-byte runtime ceilings are unchanged. No additional
+dependency is emitted and neither Date Picker nor Popover registration is imported.
+
+Calendar date validation now round-trips its existing native UTC Gregorian carrier
+without requiring native date-input support. The shared utility also reduces Heatmap's
+entry to 8,041/8,193 gzip bytes (9,464/9,665 with core).
+`buildHeatmap(options)` drops its unused Document argument; no compatibility overload
+is retained. This narrow shared-utility change does not complete Heatmap's S2 work.
+
 ## Reproducible size reports
 
 After `pnpm build`, run `pnpm size:report` (or `node scripts/size-report.mjs`).

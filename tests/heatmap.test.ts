@@ -39,7 +39,7 @@ afterEach(() => { helpers.splice(0).forEach(helper => helper.disconnect()); docu
 
 describe("Heatmap explicit calendar data model", () => {
   it("sorts calendar cells by date and distinguishes missing, explicit null and real zero", () => {
-    const model = buildHeatmap(document, { data: [{ date: "2024-02-03", value: 0 }, { date: "2024-02-01", value: null }] })
+    const model = buildHeatmap({ data: [{ date: "2024-02-03", value: 0 }, { date: "2024-02-01", value: null }] })
     const days = model.cells.filter(cell => cell !== null)
     expect(days.map(cell => cell.date)).toEqual(["2024-02-01", "2024-02-02", "2024-02-03"])
     expect(days[0]).toMatchObject({ value: null, supplied: true, level: null })
@@ -48,50 +48,64 @@ describe("Heatmap explicit calendar data model", () => {
     expect(model.domain).toEqual([0, 0]); expect(model.numericCount).toBe(1); expect(model.missingCount).toBe(2)
   })
   it("never creates zero-valued gaps and fills optional leading days as missing only", () => {
-    const plain = buildHeatmap(document, { data: [{ date: "2024-02-01", value: 3 }] })
-    const leading = buildHeatmap(document, { data: [{ date: "2024-02-01", value: 3 }], fillCalendarLeading: true })
+    const plain = buildHeatmap({ data: [{ date: "2024-02-01", value: 3 }] })
+    const leading = buildHeatmap({ data: [{ date: "2024-02-01", value: 3 }], fillCalendarLeading: true })
     expect(plain.cells.filter(Boolean)).toHaveLength(1)
     expect(leading.cells.filter(Boolean)).toHaveLength(4)
     expect(leading.cells[0]).toMatchObject({ date: "2024-01-29", value: null, supplied: false, inRange: false })
     expect(leading.cells.at(-1)).toBeNull()
   })
   it("keeps empty data empty unless an explicit bounded calendar range is provided", () => {
-    expect(buildHeatmap(document).weeks).toBe(0)
-    const model = buildHeatmap(document, { range: ["2024-02-01", "2024-02-29"] })
+    expect(buildHeatmap().weeks).toBe(0)
+    const model = buildHeatmap({ range: ["2024-02-01", "2024-02-29"] })
     expect(model.numericCount).toBe(0); expect(model.missingCount).toBe(29); expect(model.domain).toBeNull()
   })
   it("uses source Monday=0..Sunday=6 numbering through the shared Gregorian primitives", () => {
-    const monday = buildHeatmap(document, { data: [{ date: "2024-02-01", value: 1 }], firstDayOfWeek: 0 })
-    const sunday = buildHeatmap(document, { data: [{ date: "2024-02-01", value: 1 }], firstDayOfWeek: 6 })
+    const monday = buildHeatmap({ data: [{ date: "2024-02-01", value: 1 }], firstDayOfWeek: 0 })
+    const sunday = buildHeatmap({ data: [{ date: "2024-02-01", value: 1 }], firstDayOfWeek: 6 })
     expect(monday.weekLabels[0]).toBe("Monday"); expect(sunday.weekLabels[0]).toBe("Sunday")
     expect(monday.cells.find(Boolean)!.row).toBe(3); expect(sunday.cells.find(Boolean)!.row).toBe(4)
   })
   it("handles leap/century/year1/year9999 without timestamp or timezone inference", () => {
-    const leap = buildHeatmap(document, { range: ["2024-02-28", "2024-03-01"] })
+    const leap = buildHeatmap({ range: ["2024-02-28", "2024-03-01"] })
     expect(leap.cells.filter(Boolean).map(cell => cell!.date)).toEqual(["2024-02-28", "2024-02-29", "2024-03-01"])
-    expect(() => buildHeatmap(document, { data: [{ date: "1900-02-29", value: 1 }] })).toThrow()
-    const first = buildHeatmap(document, { range: ["0001-01-01", "0001-01-07"], firstDayOfWeek: 6, fillCalendarLeading: true })
+    expect(() => buildHeatmap({ data: [{ date: "1900-02-29", value: 1 }] })).toThrow()
+    const first = buildHeatmap({ range: ["0001-01-01", "0001-01-07"], firstDayOfWeek: 6, fillCalendarLeading: true })
     expect(first.cells[0]).toBeNull(); expect(first.cells[1]!.date).toBe("0001-01-01")
     expect(first.cells[1]!.label).toContain("Monday"); expect(first.cells[1]!.label).not.toContain("1901")
-    const last = buildHeatmap(document, { range: ["9999-12-30", "9999-12-31"], fillCalendarLeading: true })
+    const last = buildHeatmap({ range: ["9999-12-30", "9999-12-31"], fillCalendarLeading: true })
     expect(last.cells.filter(Boolean).at(-1)!.date).toBe("9999-12-31")
   })
   it("forces Gregorian/UTC labels despite alternate-calendar locale preferences", () => {
-    const model = buildHeatmap(document, { data: [{ date: "2024-02-29", value: 1 }], locale: "th-TH-u-ca-buddhist" })
+    const model = buildHeatmap({ data: [{ date: "2024-02-29", value: 1 }], locale: "th-TH-u-ca-buddhist" })
     expect(model.cells.find(Boolean)!.label).toContain("2024")
     expect(model.cells.find(Boolean)!.label).not.toContain("2567")
   })
   it("bounds records/range/padded cells before creating a sparse calendar explosion", () => {
-    expect(() => buildHeatmap(document, { data: Array.from({ length: 367 }, () => ({ date: "2024-01-01", value: 1 })) })).toThrow(/366/)
-    expect(() => buildHeatmap(document, { data: [{ date: "0001-01-01" }, { date: "9999-12-31" }] })).toThrow(/366/)
-    const year = buildHeatmap(document, { range: ["2028-01-01", "2028-12-31"], firstDayOfWeek: 6, fillCalendarLeading: true })
+    expect(() => buildHeatmap({ data: Array.from({ length: 367 }, () => ({ date: "2024-01-01", value: 1 })) })).toThrow(/366/)
+    expect(() => buildHeatmap({ data: [{ date: "0001-01-01" }, { date: "9999-12-31" }] })).toThrow(/366/)
+    const year = buildHeatmap({ range: ["2028-01-01", "2028-12-31"], firstDayOfWeek: 6, fillCalendarLeading: true })
     expect(year.weeks).toBe(54); expect(year.cells).toHaveLength(378)
   })
   it("rejects duplicate dates, out-of-range records and floating-to-instant guesses", () => {
-    expect(() => buildHeatmap(document, { data: [{ date: "2024-01-01", value: 1 }, { date: "2024-01-01", value: 2 }] })).toThrow(/Duplicate/)
-    expect(() => buildHeatmap(document, { data: [{ date: "2024-01-01" }], range: ["2024-02-01", "2024-02-02"] })).toThrow(/inside/)
-    expect(() => buildHeatmap(document, { data: [{ timestamp: 0, value: 1 }] as never })).toThrow()
-    expect(() => buildHeatmap(document, { data: [{ date: "2024-01-01T00:00:00Z" }] })).toThrow()
+    expect(() => buildHeatmap({ data: [{ date: "2024-01-01", value: 1 }, { date: "2024-01-01", value: 2 }] })).toThrow(/Duplicate/)
+    expect(() => buildHeatmap({ data: [{ date: "2024-01-01" }], range: ["2024-02-01", "2024-02-02"] })).toThrow(/inside/)
+    expect(() => buildHeatmap({ data: [{ timestamp: 0, value: 1 }] as never })).toThrow()
+    expect(() => buildHeatmap({ data: [{ date: "2024-01-01T00:00:00Z" }] })).toThrow()
+  })
+
+  it("retains strict date validation when native date inputs are unsupported", () => {
+    vi.spyOn(HTMLInputElement.prototype, "type", "get").mockReturnValue("text")
+    const model = buildHeatmap({ range: ["2024-02-28", "2024-03-01"] })
+    expect(model.cells.filter(Boolean).map(cell => cell!.date)).toEqual(["2024-02-28", "2024-02-29", "2024-03-01"])
+    expect(() => buildHeatmap({ data: [{ date: "2024-02-30" }] })).toThrow()
+  })
+
+  it("builds data without creating native DOM", () => {
+    const create = vi.spyOn(document, "createElement").mockImplementation(() => { throw new Error("Unexpected DOM creation") })
+    expect(buildHeatmap().weeks).toBe(0)
+    expect(buildHeatmap({ range: ["2024-02-28", "2024-03-01"] }).cells.filter(Boolean)).toHaveLength(3)
+    expect(create).not.toHaveBeenCalled()
   })
 })
 
@@ -115,13 +129,13 @@ describe("Heatmap numeric domain and deterministic bands", () => {
     expect(heatmapLevel(Number.MIN_VALUE, [0, Number.MIN_VALUE]).position).toBe(1)
   })
   it.each([NaN, Infinity, -Infinity, 1e12 + 1, -1e12 - 1, "2"])("rejects unsupported value %s", value => {
-    expect(() => buildHeatmap(document, { data: [{ date: "2024-01-01", value: value as number }] })).toThrow()
+    expect(() => buildHeatmap({ data: [{ date: "2024-01-01", value: value as number }] })).toThrow()
   })
   it.each([[.2, .2, .6, .8], [0, .4, .6, .8], [.2, .4, .6, 1], [.2, .4, .6], [.2, , .6, .8], [.2, NaN, .6, .8]])("rejects invalid thresholds %j", thresholds => {
-    expect(() => buildHeatmap(document, { thresholds: thresholds as never })).toThrow()
+    expect(() => buildHeatmap({ thresholds: thresholds as never })).toThrow()
   })
   it("does not coerce missing data into an explicit numeric domain", () => {
-    const model = buildHeatmap(document, { data: [{ date: "2024-02-01" }, { date: "2024-02-02", value: null }] })
+    const model = buildHeatmap({ data: [{ date: "2024-02-01" }, { date: "2024-02-02", value: null }] })
     expect(model.domain).toBeNull(); expect(model.cells.filter(Boolean).every(cell => cell!.level === null)).toBe(true)
   })
 })

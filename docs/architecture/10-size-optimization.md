@@ -1,7 +1,7 @@
 # 10. JavaScript size optimization plan
 
-Status: S0-S1 verified September 24, 2026. S2 Dynamic Tags and Dynamic Input
-reconciliation verified September 28, 2026, with the integrated-test timing limitation
+Status: S0-S1 verified September 24, 2026. S2 Dynamic Tags, Dynamic Input and Calendar
+reconciliation verified September 28, 2026, with test scope and timing limitations
 recorded below. Remaining S2 families and S3-S6 are open.
 Plan recorded September 23, 2026.
 Implementation baseline: `cb00af1` on `main`, package version `0.13.0`.
@@ -176,8 +176,8 @@ Apply within the S2 family work where relevant, then inspect remaining large fam
 particularly Dropdown. Button and Dropdown did not shrink in the export-only experiment,
 so removing helper exports is not their solution.
 
-- [ ] Remove duplicate setter/attribute-callback update paths. Calendar currently renders
-  from both paths; ensure each change has one well-defined update owner.
+- [ ] Remove duplicate setter/attribute-callback update paths. Calendar now uses one
+  controller transaction with guarded reflection; inspect the remaining families.
 - [ ] Create stable DOM once where appropriate and update affected regions instead of
   rebuilding entire controls. Preserve authored nodes, listeners, selection and focus.
 - [ ] Consolidate repeated action handling where event delegation is semantically correct.
@@ -388,14 +388,66 @@ The all-modular cumulative saving from S0 is only 602 ESM / 594 classic gzip byt
 | Limits | Gzip grows, despite raw reduction. No all-catalog, non-Web, zero-failure single-run CI or production acceptance claim. The unchanged-timeout Chart recheck passed after the integrated timeout. Custom field families must load before collection initialization. Template rendering is not binding-plugin structural-template support. |
 | Commit | `59d9d65` - `refactor: unify Dynamic Input element behavior`. |
 
+### S2 - Calendar contract decisions, September 28, 2026
+
+Calendar previously had separate element and factory renderers. The element supplied
+day/month selection and local-date defaults; the factory supplied bounded preparation,
+strict anatomy, day policy/annotations, validation rollback, keyboard/focus and cleanup.
+The canonical element now delegates both views to that existing controller. There is no
+second state-transition engine or new shared delivery file.
+
+| Classification | Decision |
+| --- | --- |
+| Keep | Day/month selection, independent panel/today, bounds, first weekday/locale, disabled/native fieldset behavior, synchronous day policy/annotations, defaults/reset, pre-upgrade properties, authored identity, keyboard/focus and reconnect cleanup. |
+| Render-profile mapping | Public examples use only `m-*` elements. `m-calendar` creates a named Web group with one captioned native table, action buttons, cell template and readouts. Native table/template adoption and callbacks remain explicit Web-only interoperability, not required portable authoring. No named form proxy or native form-reset behavior is invented. |
+| Canonical API | Silent properties and atomic `configure(settings)` share validation and commit. `select`, `show`, month/year navigation, `today`, `reset`, `refresh`, state/error and focus delegate to the same owner. `todayValue` maps to `today`; `defaultValue` maps to `default-value`. |
+| Remove | Public `createCalendar`, factory Options/Controller exports, duplicate element renderer/listeners and `m:calendar-change`. The public runtime exports are Calendar, calendarModes and registerCalendar. No compatibility aliases. |
+| Events | Selection changes bubble as `m:change {value,previousValue,year,month,date,reason}`; month values have null date. Panel changes emit first as `m:calendar-panel-change`; reentrant writes suppress stale selection events. Failed user updates retain the previous view and emit `m:calendar-error`. |
+| Correct | Year view uses 12 month cells and three-column navigation; month view retains 42 day cells. A month is available when it overlaps min/max; day hooks do not search or annotate month cells. Mode changes retain original value precision. Parsed attribute order, initialization reentry, authored action flags, stable table/cell identity and external focus are covered. |
+| Date boundary | The existing native UTC Gregorian carrier now validates canonical dates by round-trip, rejecting normalization without requiring native date-input support. This fixes the observed Windows WebKit text-input fallback. Dates remain strings, not timestamps. Heatmap shares this utility and now takes `buildHeatmap(options)`, with actual callers updated and no unused Document parameter/overload. |
+| Defer | Heatmap element/controller reconciliation, Tree/Cascader/Tree Select, Upload, Data Table, remaining S3, shared delivery, full bundle and independent production gates. |
+
+Measured bytes are raw / gzip. Calendar itself saves **120 ESM / 111 classic gzip
+bytes**; the shared date-utility change saves Heatmap another **389 / 390**.
+The combined reduction from the pre-Calendar state is **509 / 501 gzip bytes**.
+The S0 cumulative modular saving is **1,111 / 1,095 gzip bytes**; this is still small.
+Removing factory exports is contract reconciliation, not proof of equivalent behavior
+from export names alone. S0 remains frozen.
+
+| Selection | Before ESM | After ESM | Before classic | After classic |
+| --- | ---: | ---: | ---: | ---: |
+| Calendar entry | 25,560 / 9,051 | 25,375 / 8,931 | 25,883 / 9,208 | 25,697 / 9,097 |
+| Calendar + core | 29,072 / 10,474 | 28,887 / 10,354 | 29,519 / 10,680 | 29,333 / 10,569 |
+| Heatmap entry | 22,443 / 8,430 | 21,406 / 8,041 | 22,764 / 8,583 | 21,727 / 8,193 |
+| Heatmap + core | 25,955 / 9,853 | 24,918 / 9,464 | 26,400 / 10,055 | 25,363 / 9,665 |
+| All 89 families / 94 files | 1,235,406 / 413,463 | 1,234,184 / 412,954 | 1,261,698 / 426,961 | 1,260,475 / 426,460 |
+
+Only Calendar/Heatmap's two JS formats and Calendar CSS change hashes in the size
+report. Core, other families, dependency lists and application-supplied ECharts are
+unchanged. Calendar CSS changes from 4,513 / 1,237 to 4,552 / 1,249 bytes,
+leaving **one gzip byte** under the unchanged 1,250-byte ceiling. Heatmap CSS remains
+7,123 / 1,672. No ceiling is raised and no mandatory bytes move into another file.
+
+| Field | Verification evidence |
+| --- | --- |
+| Type/build | `node node_modules/typescript/bin/tsc --noEmit`; `node scripts/build.mjs`: passed, including generated API and unchanged payload gates. |
+| Focused/distribution | `node node_modules/vitest/vitest.mjs run tests/calendar-distribution.test.ts tests/calendar.test.ts tests/heatmap.test.ts tests/date-picker.test.ts tests/date-picker.styles.test.ts tests/native.test.ts tests/core-distribution.test.ts tests/element-directory.test.ts tests/size-report.test.ts --maxWorkers=1`: 319/319 passed in 9 files. Five Calendar distribution fixtures cover isolated ESM/classic upgrade, constructor conflicts, canonical exports, core-only dependencies, source/declaration boundaries and portable demo/API. |
+| Timing limit | The first focused run overlapped browser work: 318/319 passed, with the unchanged size-report test exceeding its default 5-second timeout. The same full focused command passed after browser completion, without changing timeouts. The entire repository suite was not rerun for this bounded task; the earlier Input integrated limitation remains recorded above. |
+| Consumer | `node scripts/package-check.mjs`: 95 JS entries / 2,327 files, packed strict NodeNext types and runtime imports passed without installed ECharts. |
+| Browser | `node scripts/browser-check.mjs --catalog --page=calendar` and `--page=heatmap`: 6/6 each in Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 at 1280x900 / 375x812, plus the script's Chart/Form/plugin/security checks. Calendar covers native keyboard selection, navigation, clearing, bounds/policy, reset/disabled, naming, reconnect identity and overflow; desktop/mobile screenshots inspected. Heatmap checks the exported data builder, leap dates, year boundaries, invalid dates and zero/null/missing distinctions, not completion of its currently limited element demo. Scoped results retained separately under `.vite/browser`. |
+| Size | `node scripts/size-report.mjs --output .vite/size/s2-calendar.json`; compared with `.vite/size/pre-calendar.json`. Default S0 diagnostics still flag export changes and prior growth; strict equivalence is not claimed. |
+| Limits | No all-catalog, full-suite, non-Web, human accessibility/device or production acceptance claim. Native references/callbacks remain Web-only. Remaining family reconciliation and S3-S6 are open. |
+| Commit | Recorded by the bounded `refactor: unify Calendar element behavior` commit. |
+
 ## Next-thread starting point
 
 1. Read this plan and repository instructions; inspect `git status` and the latest history.
 2. Confirm the Chart external-engine baseline and current distribution measurements.
-3. S0-S1 and S2 Tags/Input reconciliation are complete; consult their records above.
-   Keep S0 intact for cumulative comparisons. The gzip saving remains small, and Input's
-   classic runtime has only 13 bytes of headroom.
-4. Continue with Calendar as the next bounded S2 task, then the remaining families.
+3. S0-S1 and S2 Tags/Input/Calendar reconciliation are complete; consult their records above.
+   Keep S0 intact for cumulative comparisons. The gzip saving remains small. Input's
+   classic runtime has only 13 bytes of headroom and Calendar CSS only one byte.
+4. Continue with Tree and Cascader, checking Tree Select's shared contracts, then the
+   remaining S2 families. Heatmap's date-utility update is not its S2 reconciliation.
    Finish S2/S3 measurements before selecting final shared-bundle boundaries.
 5. Avoid repeatedly running the entire suite during small edits: use focused checks per
    task and the integrated gates at packaging milestones and final acceptance.
