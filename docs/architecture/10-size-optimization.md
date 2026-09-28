@@ -437,7 +437,7 @@ leaving **one gzip byte** under the unchanged 1,250-byte ceiling. Heatmap CSS re
 | Browser | `node scripts/browser-check.mjs --catalog --page=calendar` and `--page=heatmap`: 6/6 each in Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 at 1280x900 / 375x812, plus the script's Chart/Form/plugin/security checks. Calendar covers native keyboard selection, navigation, clearing, bounds/policy, reset/disabled, naming, reconnect identity and overflow; desktop/mobile screenshots inspected. Heatmap checks the exported data builder, leap dates, year boundaries, invalid dates and zero/null/missing distinctions, not completion of its currently limited element demo. Scoped results retained separately under `.vite/browser`. |
 | Size | `node scripts/size-report.mjs --output .vite/size/s2-calendar.json`; compared with `.vite/size/pre-calendar.json`. Default S0 diagnostics still flag export changes and prior growth; strict equivalence is not claimed. |
 | Limits | No all-catalog, full-suite, non-Web, human accessibility/device or production acceptance claim. Native references/callbacks remain Web-only. Remaining family reconciliation and S3-S6 are open. |
-| Commit | Recorded by the bounded `refactor: unify Calendar element behavior` commit. |
+| Commit | `e914f5c` - `refactor: unify Calendar element behavior`. |
 
 ## Next-thread starting point
 
