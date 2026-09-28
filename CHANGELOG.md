@@ -23,6 +23,13 @@
 - Added reproducible, dependency-inclusive size reports and a pre-optimization baseline
   without changing payload ceilings. Dynamic Tags now imports collection mechanics
   directly, avoiding unintended Dynamic Input registration and constructor bundling.
+- Unified Dynamic Tags element behavior with its internal controller, including native
+  forms, exact duplicate policy, IME/stale draft protection and resource cleanup.
+  Portable form examples use only `m-*` components; `name`, `maxlength` and `editor-label`
+  map to renderer-owned controls. Removed the public Tags factory and `getTags()`/`add()`;
+  use `values`, `draft`/`commit()` and stable-key `removeTag()`. Changes bubble as
+  `m:change`; clear emits one change per removed tag. No compatibility aliases.
+  This capability reconciliation increases Tags gzip size slightly; ceilings are unchanged.
 - Renamed Affix offsets to `insetTop` / `insetBottom` and `inset-top` / `inset-bottom`
   to avoid overriding native DOM geometry. No compatibility aliases are provided.
 - Added packed-consumer checks, three-engine browser checks, dependency audit gates and

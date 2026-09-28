@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-dynamic-tags.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
   <link rel="stylesheet" href="../example-code.css">
@@ -18,6 +19,7 @@
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-dynamic-tags.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
   <script defer src="../../dist/markup-ui-box.global.js"></script>
 
@@ -86,7 +88,7 @@
       <header data-demo-header>
         <div>
           <h2 id="max-title">Maximum tags limit</h2>
-          <p>Restrict the maximum number of tags that can be added.</p>
+          <p>At capacity the Add button is disabled, but the draft remains editable and focused.</p>
         </div>
       </header>
       <div data-demo-preview>
@@ -110,6 +112,68 @@
           <m-button id="toggle-disabled">Toggle Disabled</m-button>
         </m-box>
       </div>
+    </section>
+
+    <section data-demo-example="native-form" aria-labelledby="native-form-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="native-form-title">Form composition</h2>
+          <p>The renderer creates one named readonly field per tag. The unnamed draft is not submitted.
+            This example derives uppercase values and rejects exact duplicates.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <m-form id="tags-form">
+          <m-dynamic-tags id="form-tags" name="topics" maxlength="32" editor-label="New topic" duplicates="reject" max="5"></m-dynamic-tags>
+          <m-box display="flex" gap="8" margin="12 0 0 0">
+            <m-button attr-type="submit">Submit</m-button>
+            <m-button attr-type="reset">Reset fields</m-button>
+          </m-box>
+        </m-form>
+        <m-p id="form-feedback">Current tags: ALPHA</m-p>
+      </div>
+    </section>
+
+    <section aria-labelledby="behavior-title">
+      <h2 id="behavior-title">Behavior and ownership</h2>
+      <p>Set <code>draft</code> and call <code>commit()</code> to add a tag.
+        A commit returns added with its tag descriptor, or rejected with a reason.
+        Blank, overlong, invalid, unavailable, composing and stale drafts are retained.
+        Whitespace, case and commas are preserved; the default duplicate policy is allow.
+        Read <code>values</code> for strings and <code>tags</code> for stable keys.
+        <code>removeTag(key)</code> removes one precise key; unknown keys throw.
+        <code>clear()</code> emits one change per removal and stops if cleanup throws.
+        The native <code>remove()</code> still removes the element itself.</p>
+      <p><code>max</code> is an integer from 1 to 100, default 20. Reducing it below the current
+        count or enabling duplicate rejection while duplicates exist is invalid.
+        Property changes do not truncate, normalize or recreate rows.
+        <code>m:change</code> bubbles with value, type and tag; rejection and error events do not bubble.
+        Error details distinguish failures before a commit from cleanup failures after removal.</p>
+      <p>Enter and Add commit; modified/repeated Enter and IME completion do not.
+        Escape cancels a pending commit without clearing the draft. No blur or Backspace removal is implied.
+        Native reset restores the current fields' defaults, not the initial row list, and can be cancelled.
+        Disconnect cancels pending work and disposes row resources; reconnect preserves existing fields and drafts.</p>
+      <p>The optional Web callback <code>createTag</code> synchronously derives a string for future commits.
+        The Web-only <code>connectTag(row, context)</code> hook attaches resources and registers cleanup
+        with <code>context.onCleanup()</code>. It runs for new rows and again on reconnect.
+        Hooks must not return promises, reenter operations, or replace committed value controls.</p>
+      <p>Author the complete form with <code>m-form</code>, <code>m-dynamic-tags</code> and
+        <code>m-button</code>. The Web renderer creates the real form, controls and fieldset;
+        application markup does not need their HTML equivalents.
+        Configure <code>name</code>, <code>maxlength</code> and <code>editor-label</code> on
+        <code>m-dynamic-tags</code>. Defaults are tags[], 128 and New tag. Drafts are unnamed
+        and never submitted. Form and Button are additional selections for this example,
+        not Dynamic Tags dependencies.</p>
+      <details>
+        <summary>Web-only interoperability escape hatch</summary>
+        <p>This is not the portable authoring contract. Existing native forms may supply data-dynamic-rows, data-dynamic-template
+        and hidden data-tags-entry regions inside the element. Rows require stable data-dynamic-key values,
+        one named readonly text field marked data-tags-value, and hidden type=button remove actions.
+        Templates have one unkeyed row and no IDs. Native names, labels, listeners and defaults are retained.
+        The editor must remain unnamed, with maxlength 1-2048 managed through the component while connected.
+        Optional data-tags-status is plain, non-live text. Use the exposed native editor for Web validity
+        and focus integration; no proxy hidden fields or interactive chip roles are created.</p>
+      </details>
     </section>
 
     <section aria-labelledby="api-heading">

@@ -39,7 +39,7 @@ describe("Dynamic Tags registration boundary", () => {
       const tags = await load("dynamic-tags");
       assert.equal(customElements.get("m-dynamic-tags"), tags.DynamicTags);
       assert.ok(tags.DynamicTags.prototype instanceof core.ViewElement);
-      assert.deepEqual(Object.keys(tags).sort(), ["DynamicTags", "createDynamicTags", "dynamicTagsSizes", "registerDynamicTags"]);
+      assert.deepEqual(Object.keys(tags).sort(), ["DynamicTags", "dynamicTagsSizes", "registerDynamicTags"]);
       if (order !== "input-first") assert.equal(customElements.get("m-dynamic-input"), undefined,
         "Dynamic Tags must not register Dynamic Input");
       if (order === "tags-first") input = await load("dynamic-input");
@@ -49,16 +49,18 @@ describe("Dynamic Tags registration boundary", () => {
       }
       assert.deepEqual(registrations.sort(), input ? ["m-dynamic-input", "m-dynamic-tags"] : ["m-dynamic-tags"]);
 
-      // Exercise the shipped helper as well as imports: the native collection owner
-      // must remain present even though its unrelated element class was removed.
+      // Exercise the canonical shipped element, including its internal collection owner.
       const row = '<li data-dynamic-row><input type="text" readonly data-tags-value name="tags[]" aria-label="Tag"><button type="button" data-dynamic-action="remove" hidden>Remove</button></li>';
-      document.body.innerHTML = '<form><fieldset data-dynamic-tags data-dynamic-input><legend>Tags</legend>'
+      const form = document.createElement("form"), root = new tags.DynamicTags();
+      root.innerHTML = '<fieldset><legend>Tags</legend>'
         + '<ul data-dynamic-rows></ul><template data-dynamic-template>' + row + '</template>'
         + '<div data-tags-entry hidden><label for="draft">New tag</label><input id="draft" type="text" data-tags-editor maxlength="32">'
-        + '<button type="button" data-dynamic-add hidden>Add</button></div><p data-tags-status>Ready</p></fieldset></form>';
-      const root = document.querySelector("fieldset"), editor = document.querySelector("#draft");
+        + '<button type="button" data-dynamic-add hidden>Add</button></div><p data-tags-status>Ready</p></fieldset>';
       let cleaned = 0;
-      const helper = tags.createDynamicTags(root, { duplicates: "reject", connect(row, context) { context.onCleanup(() => { cleaned++; }); } });
+      root.duplicates = "reject";
+      root.connectTag = (row, context) => { context.onCleanup(() => { cleaned++; }); };
+      form.append(root); document.body.append(form);
+      const helper = root, editor = root.editor;
       editor.value = "  preserved  ";
       assert.equal(helper.commit().status, "added");
       assert.deepEqual(Array.from(helper.values), ["  preserved  "]);
@@ -67,13 +69,13 @@ describe("Dynamic Tags registration boundary", () => {
       assert.equal(helper.commit().reason, "duplicate");
       assert.equal(editor.value, "  preserved  ");
       if (input) assert.throws(() => input.createDynamicInput(root), /owner/);
-      assert.equal(helper.remove(helper.tags[0].key), true);
+      assert.equal(helper.removeTag(helper.tags[0].key), true);
       assert.equal(cleaned, 1);
-      helper.disconnect();
+      root.remove();
       assert.equal(root.querySelector("[data-tags-entry]").hidden, true);
-      const reconnected = tags.createDynamicTags(root);
-      assert.equal(reconnected.connected, true);
-      reconnected.disconnect();
+      form.append(root);
+      assert.equal(root.connected, true);
+      root.remove();
       window.close();
       console.log("passed");
     `], { encoding: "utf8", stdio: "pipe", timeout: 15000 })

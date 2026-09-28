@@ -176,6 +176,15 @@ See the [Alert demo/API](../../demo/components/alert.html).
 
 ## Shared-runtime boundary
 
+Dynamic Tags' element in `dynamic-tags/dynamic-tags-element.ts` now owns only direct
+properties and native renderer construction. Its internal `dynamic-tags.ts` owns tag
+policy, draft transactions, events and lifecycle; it delegates collection mutation to
+`dynamic-input/dynamic-input.ts`. There is no public Tags factory or second element-side
+add/remove engine. Portable compositions use `m-dynamic-tags`, `m-form` and `m-button`;
+the renderer creates their native owners. Native anatomy and resource callbacks are
+explicit Web-only escape hatches, not required authoring. Dynamic Input's own element
+has not yet been unified with its collection controller.
+
 Chart lives in `src/components/chart`: `chart.ts` owns the Web renderer lifecycle and
 native data alternative, `config.ts` the concrete option elements, `dataset.ts` sources
 and cancellation, `data.ts` bounded validation/table conversion, `options.ts` the explicit

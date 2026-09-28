@@ -18,9 +18,13 @@ export interface DynamicTagsController {
   readonly tags: readonly DynamicTag[]
   readonly values: readonly string[]
   readonly max: number
+  readonly duplicates: "allow" | "reject"
+  readonly maxLength: number
   commit(): DynamicTagsCommitResult
   remove(key: string): boolean
   setMax(max: number): void
+  setDuplicates(policy: "allow" | "reject"): void
+  setMaxLength(length: number): void
   refresh(): void
   disconnect(): void
 }
@@ -36,6 +40,7 @@ interface Intent {
   active: Element | null
   key?: string
   created?: string
+  focusEditor?: boolean
 }
 
 /** Adds only draft policy/editor coordination; Dynamic Input owns row creation, removal and cleanup. */
@@ -48,7 +53,8 @@ export function createDynamicTags(root: HTMLElement, options: DynamicTagsOptions
     || options.duplicates !== undefined && !["allow", "reject"].includes(options.duplicates)
     || options.create !== undefined && typeof options.create !== "function"
     || options.connect !== undefined && typeof options.connect !== "function") throw new TypeError("Use max 1-100, an explicit duplicate policy and synchronous create/connect callbacks.")
-  const duplicates = options.duplicates ?? "allow", create = options.create, connect = options.connect
+  let duplicates = options.duplicates ?? "allow"
+  const create = options.create, connect = options.connect
   const own = (node: Element) => node.closest("[data-dynamic-input]") === root
   function one(selector: string, required = true) {
     const matches = [...root.querySelectorAll<HTMLElement>(selector)].filter(own)
@@ -59,7 +65,8 @@ export function createDynamicTags(root: HTMLElement, options: DynamicTagsOptions
   const container = one("[data-dynamic-rows]")!, templateNode = one("[data-dynamic-template]"), status = one("[data-tags-status]", false)
   if (!(field instanceof view.HTMLInputElement) || !(add instanceof view.HTMLButtonElement) || !(templateNode instanceof view.HTMLTemplateElement)
     || !entry.contains(field) || !entry.contains(add) || entry.contains(container) || !entry.hidden) throw new TypeError("Keep a labelled editor/add entry hidden before enhancement and separate from rows/template.")
-  const editor = field, addButton = add, template = templateNode, maxLength = editor.maxLength
+  const editor = field, addButton = add, template = templateNode
+  let maxLength = editor.maxLength
   const controls = new WeakMap<HTMLElement, HTMLInputElement>(), descriptors = new WeakMap<HTMLElement, DynamicTag>()
   const nodes = [root, editor, entry, ...(status ? [status] : [])]
   for (const node of nodes) if ((node as Owned)[owner]) throw new Error("Dynamic Tags node already has an owner.")
@@ -181,8 +188,8 @@ export function createDynamicTags(root: HTMLElement, options: DynamicTagsOptions
   }
   function notify(type: "add" | "remove", row: DynamicInputRow) {
     const tag = descriptor(row)
-    root.dispatchEvent(new view!.CustomEvent("m:dynamic-tags-change", { detail: Object.freeze({
-      type, tag, tags: api.tags, values: api.values,
+    root.dispatchEvent(new view!.CustomEvent("m:change", { bubbles: true, detail: Object.freeze({
+      type, tag, value: api.values,
     }) }))
   }
   function ready() {
@@ -203,7 +210,8 @@ export function createDynamicTags(root: HTMLElement, options: DynamicTagsOptions
     pending = intent; working = true
     let row: DynamicInputRow | null
     try {
-      if (intent.active === addButton && document!.activeElement === addButton && available()) editor.focus({ preventScroll: true })
+      if ((intent.active === addButton || intent.focusEditor && intent.active === document!.body)
+        && document!.activeElement === intent.active && available()) editor.focus({ preventScroll: true })
       check(intent)
       row = collection!.add()
     }
@@ -237,6 +245,7 @@ export function createDynamicTags(root: HTMLElement, options: DynamicTagsOptions
     settleReset()
     if (event instanceof view!.KeyboardEvent && (event.repeat || event.ctrlKey || event.altKey || event.metaKey || event.shiftKey)) return
     const intent = snapshot()
+    intent.focusEditor = event.currentTarget === addButton
     if (composing || fenced || event instanceof view!.KeyboardEvent && event.isComposing) { reject("composing", "Finish composing before adding a tag; the draft was kept."); return }
     later(() => {
       if (intent.revision !== revision) return
@@ -327,7 +336,19 @@ export function createDynamicTags(root: HTMLElement, options: DynamicTagsOptions
     get tags() { return Object.freeze((collection?.rows ?? []).map(descriptor)) },
     get values() { return Object.freeze(api.tags.map(tag => tag.control.value)) },
     get max() { return collection?.max ?? options.max ?? 20 },
-    commit, remove(key) { ready(); return collection!.remove(key) }, setMax(max) { ready(); collection!.setBounds(0, max); revision++ },
+    get duplicates() { return duplicates }, get maxLength() { return maxLength },
+    commit, remove(key) { ready(); return available() && collection!.remove(key) }, setMax(max) { ready(); collection!.setBounds(0, max); revision++ },
+    setDuplicates(policy) {
+      ready()
+      if (!["allow", "reject"].includes(policy)) throw new TypeError("Use allow or reject.")
+      if (policy === "reject" && new Set(api.values).size !== api.values.length) throw new RangeError("Current tags contain duplicates.")
+      duplicates = policy; revision++
+    },
+    setMaxLength(length) {
+      ready()
+      if (!Number.isInteger(length) || length < 1 || length > 2048 || api.values.some(value => value.length > length)) throw new RangeError("Use maxlength 1-2048 containing current tags.")
+      editor.maxLength = maxLength = length; revision++
+    },
     refresh, disconnect,
   }
   try {

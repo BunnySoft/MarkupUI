@@ -1,6 +1,7 @@
 # 10. JavaScript size optimization plan
 
-Status: S0-S1 implemented and verified September 24, 2026; S2-S6 remain open.
+Status: S0-S1 verified September 24, 2026. S2 Dynamic Tags reconciliation verified
+September 28, 2026. Dynamic Input, remaining S2 families and S3-S6 are open.
 Plan recorded September 23, 2026.
 Implementation baseline: `cb00af1` on `main`, package version `0.13.0`.
 The next thread should follow this plan one bounded task at a time.
@@ -286,12 +287,63 @@ Only the two Dynamic Tags browser bundles changed hashes. CSS is unchanged at
 | Dynamic Input + Tags + core | 64,786 / 20,365 | 57,923 / 19,027 | 65,474 / 20,706 | 58,713 / 19,379 |
 | All 89 families | 1,240,182 / 414,065 | 1,233,319 / 412,727 | 1,266,374 / 427,555 | 1,259,613 / 426,228 |
 
+### S2 - Dynamic Tags contract decisions, September 28, 2026
+
+Inventory found two separate implementations: the element owned simple trimmed
+add/remove/clear and presentation; the factory owned native values/defaults, stable keys,
+duplicate/validity checks, synchronous creation/resources, rollback, IME, stale intents,
+reset cancellation and cleanup. Dynamic Input's controller already supplied the shared
+collection behavior. Only Tags is reconciled here; Input's separate element remains open.
+
+| Classification | Decision |
+| --- | --- |
+| Keep | Bounds, disabled/size, focus, authored-node identity, synchronous hooks, resource cleanup, native forms/defaults, validity, IME, reset cancellation, duplicate policy and precise stable-key removal. |
+| Rename | `getTags()` becomes `values`; `add(text)` becomes `draft = text; commit()` with an explicit added/rejected result; `removeTag(index or value)` becomes `removeTag(key)`. Whitespace/case/comma are retained, not normalized. |
+| Render-profile mapping | Public composition uses `m-form`, `m-dynamic-tags` and `m-button`. Tags maps name/maxlength/editor-label to native owners. Native authored anatomy, editor access and createTag/connectTag callbacks are optional Web-specific interoperability, not the portable vocabulary. |
+| Remove | Public `createDynamicTags`, factory Options/Controller exports, duplicate element-side row mutations/listeners, and `m:dynamic-tags-change`. One controller emits bubbling `m:change {value,type,tag}`; error/rejection events retain their names and nonbubbling flags. |
+| Correct | Max is integer 1-100 and never truncates rows. At capacity only Add is disabled. A native fieldset preserves descendants' authored disabled flags. Clear commits/removes each snapshot key through the collection, emits per removal and stops on cleanup errors. WebKit click focus and generated value sizing are covered. Renderer construction uses direct DOM creation, without HTML parsing sinks. |
+| Defer | Dynamic Input element unification, other S2 families, shared delivery extraction, full bundle and non-Web renderers. No final size-optimization or production acceptance claim. |
+
+The family has one behavioral owner, but closing the former element capability gap and
+adding portable configuration costs **597 ESM / 591 classic gzip bytes relative to S1**.
+This is a contract reconciliation, not a successful shrink result. Continue S3/S4
+measurements without discarding these capabilities or resetting the S0 baseline.
+Default size reporting explicitly flags the removed export and CSS growth; strict
+equivalence reporting is not expected to pass. Existing build ceilings do pass.
+
+Measured bytes are raw / gzip; core is counted once, CSS and the application-supplied
+Chart engine remain separate.
+
+| Selection | S1 ESM | S2 ESM | S1 classic | S2 classic |
+| --- | ---: | ---: | ---: | ---: |
+| Dynamic Tags entry | 32,230 / 10,361 | 34,620 / 10,958 | 32,562 / 10,518 | 34,951 / 11,109 |
+| Tags + core | 35,742 / 11,784 | 38,132 / 12,381 | 36,198 / 11,990 | 38,587 / 12,581 |
+| Input + Tags + core | 57,923 / 19,027 | 60,313 / 19,624 | 58,713 / 19,379 | 61,102 / 19,970 |
+| All 89 families / 94 files | 1,233,319 / 412,727 | 1,235,709 / 413,324 | 1,259,613 / 426,228 | 1,262,002 / 426,819 |
+
+Tags CSS grows from 1,148 to 1,178 gzip bytes, below the unchanged 1,500 ceiling.
+Only Tags' two JS formats and CSS change; core, Input, other families and dependency
+closures are unchanged. The example's optional Form/Button files are not Tags dependencies.
+
+| Field | Verification evidence |
+| --- | --- |
+| Scope | Tags contract reconciliation only, including its reuse of Input collection mechanics. No Input class rewrite, extra dependency, raised ceiling or optional full bundle. |
+| Type/build | `node node_modules/typescript/bin/tsc --noEmit`; `node scripts/build.mjs`: passed, including generated API and existing payload gates. |
+| Focused behavior | `node node_modules/vitest/vitest.mjs run tests/dynamic-tags.test.ts tests/dynamic-input.test.ts`: 152 passing in 2 files. Covers all-m-* composition, native submission/reset, bounds/policy, authored nodes, pre-upgrade properties, hooks/rollback, IME, focus, reconnect, generated accessible names and blocked HTML parsing sinks. |
+| Integrated suite | `node node_modules/vitest/vitest.mjs run --maxWorkers=4`: 4,867 passing in 133 files, zero failures/skips. Includes nine Tags distribution checks for isolated ESM/classic loading, import order, public exports and preserved helper ownership. |
+| Browser | `node scripts/browser-check.mjs --catalog --page=dynamic-tags`: 6/6 scoped catalog checks plus the script's existing workflows, Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 at 1280x900 / 375x812. Enter/button commits, removal, focus, portable form submission/reset and duplicate rejection pass; desktop/mobile screenshots inspected. |
+| Consumer | `node scripts/package-check.mjs`: 95 JS entries / 2,327 files, packed strict NodeNext types and runtime imports passed without installed ECharts. |
+| Size | `node scripts/size-report.mjs --output .vite/size/s2-tags.json`: measured results above; default diagnostics flag export/CSS changes. S0 baseline unchanged. |
+| Limits | JS is larger than S1; unification closes element capability gaps but is not a shrink result. Native references/callbacks remain explicit Web-only escape hatches. All-catalog browser, non-Web renderers and separate production-readiness gates remain open. |
+| Commit | Implementation commit recorded in the following documentation-only update. |
+
 ## Next-thread starting point
 
 1. Read this plan and repository instructions; inspect `git status` and the latest history.
 2. Confirm the Chart external-engine baseline and current distribution measurements.
-3. S0-S1 are complete; start S2 with Dynamic Tags and its Dynamic Input relationship.
-   Keep the tracked S0 baseline intact for cumulative comparisons.
+3. S0-S1 are complete; consult the S2 Tags record above before proceeding.
+   Dynamic Input's element still duplicates its controller; finish that relationship
+   as a separate bounded task before Calendar. Keep S0 intact for cumulative comparisons.
 4. Proceed family by family through S2/S3 before selecting final shared-bundle boundaries.
 5. Avoid repeatedly running the entire suite during small edits: use focused checks per
    task and the integrated gates at packaging milestones and final acceptance.

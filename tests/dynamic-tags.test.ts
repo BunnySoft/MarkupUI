@@ -2,11 +2,15 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { createDynamicTags, DynamicTags, registerDynamicTags, dynamicTagsSizes } from "../src/components/dynamic-tags/index.js"
-import type { DynamicTagsOptions, DynamicTagsSize } from "../src/components/dynamic-tags/index.js"
+import { DynamicTags, registerDynamicTags, dynamicTagsSizes } from "../src/components/dynamic-tags/index.js"
+import type { DynamicTagsSize } from "../src/components/dynamic-tags/index.js"
+import { createDynamicTags } from "../src/components/dynamic-tags/dynamic-tags.js"
+import type { DynamicTagsOptions } from "../src/components/dynamic-tags/dynamic-tags.js"
 import { ViewElement } from "../src/core/index.js"
 import { createDynamicInput } from "../src/components/dynamic-input/index.js"
 import { coordinateForm as createForm } from "../src/components/form/controller.js"
+import { Form } from "../src/components/form/index.js"
+import { Button } from "../src/components/button/index.js"
 
 const helpers: { disconnect(): void }[] = []
 const flush = () => new Promise(resolve => setTimeout(resolve, 25))
@@ -102,7 +106,7 @@ describe("real native tag values and inherited collection ownership", () => {
     const { helper, root } = fixture()
     expect(() => createDynamicInput(root)).toThrow("owner")
     expect(() => createDynamicTags(root)).toThrow()
-    vi.resetModules(); const other = await import("../src/components/dynamic-tags/index.js")
+    vi.resetModules(); const other = await import("../src/components/dynamic-tags/dynamic-tags.js")
     expect(() => other.createDynamicTags(root)).toThrow()
     helper.disconnect(); helpers.push(other.createDynamicTags(root))
   })
@@ -188,7 +192,7 @@ describe("commit policy, callbacks and draft safety", () => {
   })
   it("preserves removed tag descriptors even when cleanup detaches value/action children", () => {
     const { helper, root } = fixture({ connect: (row, context) => context.onCleanup(() => { row.replaceChildren() }) })
-    const changed = vi.fn(); root.addEventListener("m:dynamic-tags-change", changed)
+    const changed = vi.fn(); root.addEventListener("m:change", changed)
     const first = helper.tags[0]!
     helper.remove(first.key)
     expect(changed).toHaveBeenCalledOnce(); expect((changed.mock.calls[0]![0] as CustomEvent).detail.tag.control).toBe(first.control)
@@ -217,7 +221,7 @@ describe("commit policy, callbacks and draft safety", () => {
 describe("native editor keys, composition and focus", () => {
   it("commits once through the native button while suppressing the reused raw add handler", async () => {
     const { helper, editor, add, root } = fixture()
-    const changed = vi.fn(); root.addEventListener("m:dynamic-tags-change", changed)
+    const changed = vi.fn(); root.addEventListener("m:change", changed)
     editor.value = "gamma"; add.focus(); add.click(); await flush()
     expect(helper.values).toEqual(["alpha", "beta", "gamma"]); expect(changed).toHaveBeenCalledOnce()
     expect(editor.value).toBe(""); expect(document.activeElement).toBe(editor)
@@ -275,7 +279,7 @@ describe("native editor keys, composition and focus", () => {
 
 describe("native forms, refresh, reset and lifecycle", () => {
   it("keeps direct native assignments/defaults and refresh silent, without replacing existing tag nodes", async () => {
-    const { helper, editor, root } = fixture(), changed = vi.fn(); root.addEventListener("m:dynamic-tags-change", changed)
+    const { helper, editor, root } = fixture(), changed = vi.fn(); root.addEventListener("m:change", changed)
     const tag = helper.tags[0]!
     tag.control.value = "renamed"; editor.value = "draft"; helper.refresh(); await flush()
     expect(helper.tags[0]).toBe(tag); expect(helper.values[0]).toBe("renamed"); expect(tag.control.defaultValue).toBe("alpha")
@@ -383,11 +387,12 @@ describe("native forms, refresh, reset and lifecycle", () => {
 })
 
 describe("canonical DynamicTags ViewElement", () => {
+  const add = (tags: DynamicTags, value: string) => { tags.draft = value; return tags.commit().status === "added" }
   it("registers only its own canonical tag through shared ViewElement with explicit attributes", () => {
     expect(DynamicTags.tag).toBe("m-dynamic-tags")
     expect(DynamicTags.prototype instanceof ViewElement).toBe(true)
     expect(customElements.get("m-dynamic-tags")).toBe(DynamicTags)
-    expect(DynamicTags.observedAttributes).toEqual(["max", "disabled", "size"])
+    expect(DynamicTags.observedAttributes).toEqual(["max", "disabled", "size", "duplicates", "name", "maxlength", "editor-label"])
 
     const define = vi.fn()
     registerDynamicTags({ get: () => undefined, define })
@@ -444,47 +449,44 @@ describe("canonical DynamicTags ViewElement", () => {
 
     expect(tags.querySelector(".m-dynamic-tags__list")).not.toBeNull()
     expect(tags.querySelector(".m-dynamic-tags__entry")).not.toBeNull()
-    expect(tags.getTags()).toEqual([])
+    expect(tags.values).toEqual([])
 
     const changeSpy = vi.fn()
     tags.addEventListener("m:change", changeSpy)
 
-    expect(tags.add("alpha")).toBe(true)
-    expect(tags.getTags()).toEqual(["alpha"])
+    expect(add(tags, "alpha")).toBe(true)
+    expect(tags.values).toEqual(["alpha"])
     expect(changeSpy).toHaveBeenCalledOnce()
-    expect(changeSpy.mock.calls[0][0].detail).toEqual({ value: ["alpha"] })
+    expect(changeSpy.mock.calls[0][0].detail).toMatchObject({ value: ["alpha"], type: "add" })
 
-    expect(tags.add("beta")).toBe(true)
-    expect(tags.getTags()).toEqual(["alpha", "beta"])
+    expect(add(tags, "beta")).toBe(true)
+    expect(tags.values).toEqual(["alpha", "beta"])
     expect(changeSpy).toHaveBeenCalledTimes(2)
-    expect(changeSpy.mock.calls[1][0].detail).toEqual({ value: ["alpha", "beta"] })
+    expect(changeSpy.mock.calls[1][0].detail).toMatchObject({ value: ["alpha", "beta"] })
 
     // Ignore blank tag
-    expect(tags.add("  ")).toBe(false)
+    expect(add(tags, "  ")).toBe(false)
     expect(changeSpy).toHaveBeenCalledTimes(2)
 
-    // Remove by index
-    expect(tags.removeTag(0)).toBe(true)
-    expect(tags.getTags()).toEqual(["beta"])
+    expect(tags.removeTag(tags.tags[0]!.key)).toBe(true)
+    expect(tags.values).toEqual(["beta"])
     expect(changeSpy).toHaveBeenCalledTimes(3)
-    expect(changeSpy.mock.calls[2][0].detail).toEqual({ value: ["beta"] })
+    expect(changeSpy.mock.calls[2][0].detail).toMatchObject({ value: ["beta"], type: "remove" })
 
-    // Remove by string value
-    expect(tags.removeTag("beta")).toBe(true)
-    expect(tags.getTags()).toEqual([])
+    expect(tags.removeTag(tags.tags[0]!.key)).toBe(true)
+    expect(tags.values).toEqual([])
     expect(changeSpy).toHaveBeenCalledTimes(4)
-    expect(changeSpy.mock.calls[3][0].detail).toEqual({ value: [] })
+    expect(changeSpy.mock.calls[3][0].detail).toMatchObject({ value: [] })
 
     // Remove non-existent
-    expect(tags.removeTag(99)).toBe(false)
-    expect(tags.removeTag("nonexistent")).toBe(false)
+    expect(() => tags.removeTag("nonexistent")).toThrow(RangeError)
   })
 
-  it("handles remove button clicks inside tags", () => {
+  it("handles remove button clicks inside tags", async () => {
     const tags = new DynamicTags()
     document.body.append(tags)
-    tags.add("tag-1")
-    tags.add("tag-2")
+    add(tags, "tag-1")
+    add(tags, "tag-2")
 
     const changeSpy = vi.fn()
     tags.addEventListener("m:change", changeSpy)
@@ -492,10 +494,11 @@ describe("canonical DynamicTags ViewElement", () => {
     const removeBtn = tags.querySelector<HTMLButtonElement>(".m-dynamic-tags__tag button")!
     expect(removeBtn).not.toBeNull()
     removeBtn.click()
+    await flush()
 
-    expect(tags.getTags()).toEqual(["tag-2"])
+    expect(tags.values).toEqual(["tag-2"])
     expect(changeSpy).toHaveBeenCalledOnce()
-    expect(changeSpy.mock.calls[0][0].detail).toEqual({ value: ["tag-2"] })
+    expect(changeSpy.mock.calls[0][0].detail).toMatchObject({ value: ["tag-2"] })
   })
 
   it("enforces max limit", () => {
@@ -503,36 +506,37 @@ describe("canonical DynamicTags ViewElement", () => {
     tags.max = 2
     document.body.append(tags)
 
-    expect(tags.add("first")).toBe(true)
-    expect(tags.add("second")).toBe(true)
-    expect(tags.add("third")).toBe(false)
-    expect(tags.getTags()).toEqual(["first", "second"])
+    expect(add(tags, "first")).toBe(true)
+    expect(add(tags, "second")).toBe(true)
+    expect(add(tags, "third")).toBe(false)
+    expect(tags.values).toEqual(["first", "second"])
+    expect(tags.editor!.matches(":disabled")).toBe(false)
 
     const addBtn = tags.querySelector<HTMLButtonElement>("[data-dynamic-add]")!
     expect(addBtn.disabled).toBe(true)
 
-    tags.removeTag(0)
+    tags.removeTag(tags.tags[0]!.key)
     expect(addBtn.disabled).toBe(false)
-    expect(tags.add("third")).toBe(true)
-    expect(tags.getTags()).toEqual(["second", "third"])
+    expect(add(tags, "third")).toBe(true)
+    expect(tags.values).toEqual(["second", "third"])
   })
 
   it("enforces disabled state on inputs and buttons", () => {
     const tags = new DynamicTags()
     document.body.append(tags)
-    tags.add("item")
+    add(tags, "item")
 
     tags.disabled = true
-    expect(tags.add("blocked")).toBe(false)
-    expect(tags.removeTag(0)).toBe(false)
-    expect(tags.getTags()).toEqual(["item"])
+    expect(add(tags, "blocked")).toBe(false)
+    expect(tags.removeTag(tags.tags[0]!.key)).toBe(false)
+    expect(tags.values).toEqual(["item"])
 
     const editor = tags.querySelector<HTMLInputElement>("[data-tags-editor]")!
     const addBtn = tags.querySelector<HTMLButtonElement>("[data-dynamic-add]")!
     const removeBtn = tags.querySelector<HTMLButtonElement>("[data-dynamic-action='remove']")!
-    expect(editor.disabled).toBe(true)
-    expect(addBtn.disabled).toBe(true)
-    expect(removeBtn.disabled).toBe(true)
+    expect(editor.matches(":disabled")).toBe(true)
+    expect(addBtn.matches(":disabled")).toBe(true)
+    expect(removeBtn.matches(":disabled")).toBe(true)
 
     tags.disabled = false
     expect(editor.disabled).toBe(false)
@@ -543,16 +547,16 @@ describe("canonical DynamicTags ViewElement", () => {
   it("handles clear() method", () => {
     const tags = new DynamicTags()
     document.body.append(tags)
-    tags.add("one")
-    tags.add("two")
+    add(tags, "one")
+    add(tags, "two")
 
     const changeSpy = vi.fn()
     tags.addEventListener("m:change", changeSpy)
 
     tags.clear()
-    expect(tags.getTags()).toEqual([])
-    expect(changeSpy).toHaveBeenCalledOnce()
-    expect(changeSpy.mock.calls[0][0].detail).toEqual({ value: [] })
+    expect(tags.values).toEqual([])
+    expect(changeSpy).toHaveBeenCalledTimes(2)
+    expect(changeSpy.mock.calls[1][0].detail).toMatchObject({ value: [] })
   })
 
   it("delegates focus and blur to the editor input", () => {
@@ -569,7 +573,7 @@ describe("canonical DynamicTags ViewElement", () => {
     expect(blurSpy).toHaveBeenCalledOnce()
   })
 
-  it("supports keyboard Enter and button click to add tags from editor input", () => {
+  it("supports keyboard Enter and button click to add tags from editor input", async () => {
     const tags = new DynamicTags()
     document.body.append(tags)
     const editor = tags.querySelector<HTMLInputElement>("[data-tags-editor]")!
@@ -577,38 +581,275 @@ describe("canonical DynamicTags ViewElement", () => {
 
     editor.value = "from-enter"
     editor.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }))
-    expect(tags.getTags()).toEqual(["from-enter"])
+    await flush()
+    expect(tags.values).toEqual(["from-enter"])
     expect(editor.value).toBe("")
 
     editor.value = "from-click"
     addBtn.click()
-    expect(tags.getTags()).toEqual(["from-enter", "from-click"])
+    await flush()
+    expect(tags.values).toEqual(["from-enter", "from-click"])
     expect(editor.value).toBe("")
   })
 
-  it("adopts authored tag rows in markup", () => {
+  it("adopts authored tag rows in markup", async () => {
     document.body.innerHTML = `
       <m-dynamic-tags id="authored-tags">
         <ul class="m-dynamic-tags__list" data-dynamic-rows>
-          <li class="m-dynamic-tags__tag" data-dynamic-row>
-            <input class="m-dynamic-tags__value" data-tags-value type="text" readonly value="seed1">
-            <button type="button" data-dynamic-action="remove">×</button>
+          <li class="m-dynamic-tags__tag" data-dynamic-row data-dynamic-key="seed-1">
+            <input class="m-dynamic-tags__value" data-tags-value type="text" readonly name="tags[]" value="seed1">
+            <button type="button" data-dynamic-action="remove" hidden>Remove</button>
           </li>
-          <li class="m-dynamic-tags__tag" data-dynamic-row>
-            <input class="m-dynamic-tags__value" data-tags-value type="text" readonly value="seed2">
-            <button type="button" data-dynamic-action="remove">×</button>
+          <li class="m-dynamic-tags__tag" data-dynamic-row data-dynamic-key="seed-2">
+            <input class="m-dynamic-tags__value" data-tags-value type="text" readonly name="tags[]" value="seed2">
+            <button type="button" data-dynamic-action="remove" hidden>Remove</button>
           </li>
         </ul>
       </m-dynamic-tags>
     `
     const tags = document.querySelector<DynamicTags>("#authored-tags")!
-    expect(tags.getTags()).toEqual(["seed1", "seed2"])
+    expect(tags.values).toEqual(["seed1", "seed2"])
 
     const changeSpy = vi.fn()
     tags.addEventListener("m:change", changeSpy)
     const firstRemoveBtn = tags.querySelector<HTMLButtonElement>(".m-dynamic-tags__tag button")!
     firstRemoveBtn.click()
-    expect(tags.getTags()).toEqual(["seed2"])
+    await flush()
+    expect(tags.values).toEqual(["seed2"])
     expect(changeSpy).toHaveBeenCalledOnce()
+  })
+
+  it("replays own pre-upgrade properties before creating controls or invoking hooks", () => {
+    const tags = new DynamicTags(), create = vi.fn(value => value.toUpperCase())
+    for (const [key, value] of Object.entries({ max: 3, duplicates: "reject", size: "small", draft: "seed", createTag: create })) {
+      Object.defineProperty(tags, key, { configurable: true, writable: true, value })
+    }
+    document.body.append(tags)
+    expect(tags.draft).toBe("seed")
+    expect(tags.commit().status).toBe("added")
+    expect(tags.values).toEqual(["SEED"])
+    expect(create).toHaveBeenCalledOnce()
+    expect(tags.getAttribute("max")).toBe("3")
+    expect(tags.dataset.size).toBe("small")
+    expect(Object.hasOwn(tags, "draft")).toBe(false)
+  })
+
+  it("retains native values, successful controls and current defaults through reset", async () => {
+    const form = document.createElement("form"), tags = new DynamicTags()
+    form.append(tags); document.body.append(form)
+    add(tags, "  MiXeD,tag  ")
+    expect(new FormData(form).getAll("tags[]")).toEqual(["  MiXeD,tag  "])
+    const first = tags.tags[0]!, input = first.control
+    expect(input.defaultValue).toBe("  MiXeD,tag  ")
+    input.value = "changed"; tags.draft = "unsubmitted"
+    form.addEventListener("reset", event => event.preventDefault(), { once: true })
+    form.reset(); await flush()
+    expect(input.value).toBe("changed"); expect(tags.draft).toBe("unsubmitted")
+    form.reset(); await flush()
+    expect(tags.tags[0]).toBe(first)
+    expect(tags.values).toEqual(["  MiXeD,tag  "]); expect(tags.draft).toBe("")
+    tags.disabled = true
+    expect(new FormData(form).getAll("tags[]")).toEqual([])
+    tags.disabled = false
+    expect(new FormData(form).getAll("tags[]")).toEqual(["  MiXeD,tag  "])
+  })
+
+  it("updates policy and max without replacing nodes or silently dropping duplicates", () => {
+    const tags = new DynamicTags(); document.body.append(tags)
+    add(tags, "same"); add(tags, "same")
+    const first = tags.tags[0]!
+    expect(() => { tags.duplicates = "reject" }).toThrow(RangeError)
+    expect(tags.duplicates).toBe("allow")
+    expect(() => { tags.max = 1 }).toThrow(RangeError)
+    expect(tags.max).toBe(20)
+    for (const max of [1.5, 101, NaN, Infinity]) expect(() => { tags.max = max }).toThrow(RangeError)
+    tags.removeTag(tags.tags[1]!.key)
+    tags.duplicates = "reject"
+    tags.draft = "same"
+    expect(tags.commit()).toEqual({ status: "rejected", reason: "duplicate" })
+    tags.setAttribute("duplicates", "allow")
+    expect(tags.commit().status).toBe("added")
+    tags.setAttribute("max", "2")
+    tags.draft = "kept"
+    expect(tags.commit()).toEqual({ status: "rejected", reason: "max" })
+    expect(tags.editor!.disabled).toBe(false)
+    expect(tags.tags[0]).toBe(first)
+  })
+
+  it("runs cleanup for rollback, removal and reconnect through the same resource owner", () => {
+    const tags = new DynamicTags(), cleaned = vi.fn(), connected = vi.fn()
+    tags.connectTag = (row, context) => {
+      connected(row)
+      context.onCleanup(cleaned)
+      if (row.querySelector<HTMLInputElement>("input")!.value === "fail") throw new Error("Connection failed")
+    }
+    document.body.append(tags)
+    add(tags, "kept")
+    tags.draft = "fail"
+    expect(() => tags.commit()).toThrow("Connection failed")
+    expect(tags.values).toEqual(["kept"]); expect(tags.draft).toBe("fail")
+    expect(cleaned).toHaveBeenCalledOnce()
+    const control = tags.tags[0]!.control, fieldset = tags.querySelector("fieldset"), editor = tags.editor
+    tags.remove()
+    expect(tags.connected).toBe(false); expect(cleaned).toHaveBeenCalledTimes(2)
+    document.body.append(tags)
+    expect(tags.connected).toBe(true)
+    expect(tags.tags[0]!.control).toBe(control); expect(tags.editor).toBe(editor)
+    expect(tags.querySelector("fieldset")).toBe(fieldset)
+    expect(tags.draft).toBe("fail")
+    expect(connected).toHaveBeenCalledTimes(3)
+    tags.removeTag(tags.tags[0]!.key)
+    expect(cleaned).toHaveBeenCalledTimes(3)
+  })
+
+  it("does not overwrite authored disabled flags, ancestors or nested ownership", async () => {
+    const tags = new DynamicTags(), nested = new DynamicTags()
+    tags.innerHTML = `<fieldset disabled><ul data-dynamic-rows>${row("seed", "alpha")}</ul></fieldset>`
+    const ancestor = tags.firstElementChild!, control = tags.querySelector<HTMLInputElement>("input")!
+    document.body.append(tags)
+    tags.tags[0]!.element.append(nested)
+    await flush()
+    expect(tags.tags[0]!.control).toBe(control)
+    expect(control.closest("fieldset")).toBe(ancestor)
+    tags.disabled = true; tags.disabled = false
+    expect(control.matches(":disabled")).toBe(true)
+    expect(ancestor.hasAttribute("disabled")).toBe(true)
+    expect(tags.values).toEqual(["alpha"]); expect(nested.values).toEqual([])
+    expect(nested.editor!.matches(":disabled")).toBe(true)
+    tags.remove()
+  })
+
+  it("retains IME, stale intent, Escape and disconnect cancellation on the element", async () => {
+    const tags = new DynamicTags(); document.body.append(tags)
+    const editor = tags.editor!, enter = () => editor.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }))
+    tags.draft = "composing"
+    editor.dispatchEvent(new CompositionEvent("compositionstart")); enter()
+    editor.dispatchEvent(new CompositionEvent("compositionend")); enter()
+    await flush(); expect(tags.values).toEqual([])
+    enter(); tags.draft = "newer"; await flush()
+    expect(tags.values).toEqual([]); expect(tags.draft).toBe("newer")
+    enter(); editor.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", cancelable: true }))
+    await flush(); expect(tags.values).toEqual([])
+    enter(); tags.remove(); document.body.append(tags)
+    await flush(); expect(tags.values).toEqual([])
+    const changed = vi.fn(); tags.addEventListener("m:change", changed)
+    enter(); await flush(); expect(changed).toHaveBeenCalledOnce()
+    expect(tags.values).toEqual(["newer"])
+  })
+
+  it("preserves native validity and external focus, and reports nonstring/async hooks", async () => {
+    const tags = new DynamicTags(), outside = document.createElement("button")
+    document.body.append(tags, outside)
+    tags.draft = "draft"; tags.editor!.setCustomValidity("Application rule")
+    expect(tags.commit()).toEqual({ status: "rejected", reason: "invalid" })
+    expect(tags.draft).toBe("draft")
+    tags.editor!.setCustomValidity("")
+    outside.focus()
+    expect(tags.commit().status).toBe("added")
+    expect(document.activeElement).toBe(outside)
+    tags.createTag = (() => Promise.reject(new Error("Late failure"))) as never
+    const failed = vi.fn(); tags.addEventListener("m:dynamic-tags-error", failed)
+    tags.draft = "kept"; expect(() => tags.commit()).toThrow("strings")
+    await flush()
+    expect(tags.values).toEqual(["draft"]); expect(tags.draft).toBe("kept")
+    expect(failed.mock.calls.some(([event]) => event.detail.error.message === "Late failure")).toBe(true)
+    tags.createTag = value => { tags.commit(); return value }
+    expect(() => tags.commit()).toThrow("reenter")
+  })
+
+  it("emits one documented bubbling change and nonbubbling rejection from the owner", () => {
+    const tags = new DynamicTags(); document.body.append(tags)
+    const changed = vi.fn(), rejected = vi.fn()
+    document.body.addEventListener("m:change", changed, { once: true })
+    tags.addEventListener("m:dynamic-tags-reject", rejected)
+    add(tags, "seed")
+    const event = changed.mock.calls[0]![0] as CustomEvent
+    expect(event.target).toBe(tags)
+    expect(event.bubbles).toBe(true); expect(event.cancelable).toBe(false); expect(event.composed).toBe(false)
+    expect(event.detail).toEqual({ type: "add", tag: tags.tags[0], value: ["seed"] })
+    add(tags, "")
+    expect(rejected.mock.calls[0]![0].bubbles).toBe(false)
+  })
+
+  it("builds a working form entirely from m-* authoring with native owners isolated inside", async () => {
+    const authored = `<m-form id="portable-form"><m-dynamic-tags id="portable-tags" name="topics" maxlength="8" editor-label="New topic"></m-dynamic-tags>
+      <m-button id="portable-submit" attr-type="submit">Submit</m-button><m-button id="portable-reset" attr-type="reset">Reset</m-button></m-form>`
+    expect(authored).not.toMatch(/<(?:form|input|button|fieldset|template|ul|li)\b/)
+    document.body.innerHTML = authored
+    await flush()
+    const form = document.querySelector<Form>("#portable-form")!, tags = document.querySelector<DynamicTags>("#portable-tags")!
+    const submit = document.querySelector<Button>("#portable-submit")!, reset = document.querySelector<Button>("#portable-reset")!
+    expect(form).toBeInstanceOf(Form); expect(submit).toBeInstanceOf(Button)
+    expect(tags.editor!.form).toBe(form.native)
+    expect(tags.editor!.getAttribute("aria-label")).toBe("New topic")
+    expect(tags.editor!.maxLength).toBe(8)
+    expect(tags.editor!.hasAttribute("name")).toBe(false)
+    tags.draft = "alpha"; tags.commit()
+    const submitted = vi.fn((event: Event) => event.preventDefault())
+    form.addEventListener("submit", submitted)
+    submit.click()
+    expect(submitted).toHaveBeenCalledOnce()
+    expect(new FormData(form.native).getAll("topics")).toEqual(["alpha"])
+    tags.draft = "toolong!!"
+    expect(tags.commit()).toEqual({ status: "rejected", reason: "invalid" })
+    reset.click(); await flush()
+    expect(tags.draft).toBe("")
+    expect(tags.values).toEqual(["alpha"])
+    tags.name = "labels"
+    tags.maxLength = 12
+    tags.editorLabel = "Add label"
+    tags.draft = "longer label"; tags.commit()
+    expect(new FormData(form.native).getAll("labels")).toEqual(["alpha", "longer label"])
+    expect(new FormData(form.native).has("topics")).toBe(false)
+    expect(tags.editor!.getAttribute("aria-label")).toBe("Add label")
+    expect(() => { tags.maxLength = 3 }).toThrow(RangeError)
+    expect(tags.maxLength).toBe(12)
+    expect(() => { tags.name = "" }).toThrow()
+    expect(() => { tags.editorLabel = " " }).toThrow()
+  })
+
+  it("keeps every demo's authored preview content in the m-* vocabulary", () => {
+    const template = document.createElement("template")
+    template.innerHTML = readFileSync(resolve("demo/components/dynamic-tags.html"), "utf8")
+    const content = [...template.content.querySelectorAll("[data-demo-preview] *")]
+    expect(content.length).toBeGreaterThan(0)
+    expect(content.filter(node => !node.localName.startsWith("m-")).map(node => node.outerHTML)).toEqual([])
+  })
+
+  it("generates native owners without HTML parsing sinks", () => {
+    const setter = vi.spyOn(Element.prototype, "innerHTML", "set").mockImplementation(() => { throw new Error("HTML sink blocked") })
+    const tags = new DynamicTags()
+    document.body.append(tags)
+    expect(add(tags, "<script>text</script>")).toBe(true)
+    expect(tags.values).toEqual(["<script>text</script>"])
+    expect(tags.querySelector("script")).toBeNull()
+    expect(setter).not.toHaveBeenCalled()
+    setter.mockRestore()
+  })
+
+  it("refuses reentrant bounds or policy changes before reflecting attributes", () => {
+    const tags = new DynamicTags(); document.body.append(tags)
+    tags.draft = "draft"
+    for (const change of [() => { tags.max = 4 }, () => { tags.maxLength = 32 }, () => { tags.duplicates = "reject" }]) {
+      tags.createTag = value => { change(); return value }
+      expect(() => tags.commit()).toThrow("reenter")
+      expect(tags.max).toBe(20); expect(tags.maxLength).toBe(128); expect(tags.duplicates).toBe("allow")
+      expect(tags.values).toEqual([])
+    }
+  })
+
+  it("recovers editor focus when a native click leaves body active, but not external focus", async () => {
+    const tags = new DynamicTags(), outside = document.createElement("button")
+    document.body.append(tags, outside)
+    tags.draft = "first"
+    const button = tags.querySelector<HTMLButtonElement>("[data-dynamic-add]")!
+    expect(document.activeElement).toBe(document.body)
+    button.click(); await flush()
+    expect(document.activeElement).toBe(tags.editor)
+    expect(tags.tags[0]!.element.querySelector("button")!.getAttribute("aria-label")).toBe("Remove first")
+    expect(tags.tags[0]!.control.size).toBe(5)
+    outside.focus(); tags.draft = "second"; button.click(); await flush()
+    expect(document.activeElement).toBe(outside)
+    expect(tags.values).toEqual(["first", "second"])
   })
 })

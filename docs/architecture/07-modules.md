@@ -338,10 +338,16 @@ Dynamic Input's registering entry. Loading Tags alone does not register
 `m-dynamic-input` or bundle its element class. Selecting both families in either order
 retains each family's canonical constructor and their common core.
 
-S1 leaves the existing element and standalone helper APIs unchanged. Their behavior
-unification is separate S2 work. Dynamic Tags now measures 10,361/10,518 entry gzip
-bytes and 11,784/11,990 including core (ESM/classic); CSS remains 1,148 bytes.
-No runtime dependency file, public export or ceiling changed.
+S2 unifies Tags through its internal controller and removes the public
+`createDynamicTags` export. The element exposes draft/commit, values/stable keys,
+duplicate policy and Web lifecycle hooks. Form examples are entirely `m-*` authored;
+Form and Button are extra demo selections, not Tags dependencies.
+
+Dynamic Tags measures 10,958/11,109 entry gzip bytes and 12,381/12,581 including core
+(ESM/classic); CSS is 1,178 bytes. Relative to S1 this adds 597/591 JS gzip bytes to
+close the element's capability and portable-configuration gaps, rather than producing
+a size saving. S0 remains the frozen comparison baseline. No runtime dependency file
+or ceiling changed, and unrelated bundles/core are unchanged.
 
 ## Reproducible size reports
 

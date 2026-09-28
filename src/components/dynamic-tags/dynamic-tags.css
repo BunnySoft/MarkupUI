@@ -10,6 +10,15 @@
   min-inline-size: 0;
 }
 
+.m-dynamic-tags__controls {
+  display: grid;
+  gap: .75rem;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
 .m-dynamic-tags__list {
   display: flex;
   flex-wrap: wrap;
@@ -39,7 +48,7 @@
 
 .m-dynamic-tags__value {
   box-sizing: border-box;
-  inline-size: 8ch;
+  inline-size: auto;
   min-inline-size: 2ch;
   max-inline-size: 24ch;
   field-sizing: content;
