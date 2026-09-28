@@ -32,6 +32,14 @@
   This capability reconciliation increases Tags gzip size slightly; ceilings are unchanged.
 - Renamed Affix offsets to `insetTop` / `insetBottom` and `inset-top` / `inset-bottom`
   to avoid overriding native DOM geometry. No compatibility aliases are provided.
+- Unified Dynamic Input row transactions through its existing internal controller.
+  Added `m-dynamic-input-template` for portable multi-field rows, default field
+  `name`/`field-label`, and synchronous Web `initializeRow`/`connectRow` hooks.
+  Removed the public factory and lossy `getValues()`/`getRows()` APIs; use `rows`,
+  `add(index?)`, `move(key, index)` and `removeRow(key)`. Native `remove()` removes
+  the host. Structural changes bubble as `m:change`; field edits/reset remain native.
+  Inherited disabling preserves authored flags, and generated row keys are not reused
+  across reconnect. These collection fixes also apply to Dynamic Tags.
 - Added packed-consumer checks, three-engine browser checks, dependency audit gates and
   Windows/Linux/macOS CI configuration. Development requires Node 22.12+ in the 22.x
   line or Node 24+, with pnpm 10.28.0.

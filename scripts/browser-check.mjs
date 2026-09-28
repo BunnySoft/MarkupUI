@@ -363,6 +363,50 @@ try {
                 const api = page.locator(`#${slug}-api`)
                 if (await api.count()) await page.waitForFunction(id => document.getElementById(id).classList.contains("component-api"), `${slug}-api`)
                 assert.deepEqual(errors, [])
+                if (slug === "dynamic-input") {
+                  const basic = page.locator("#basic-dynamic-input")
+                  const add = basic.locator("[data-dynamic-add]")
+                  await add.click()
+                  await page.waitForFunction(() => document.querySelector("#basic-dynamic-input").rows.length === 2)
+                  const second = basic.getByRole("textbox", { name: "Item", exact: true }).nth(1)
+                  assert.equal(await second.evaluate(element => document.activeElement === element), true, "Add focuses its new field")
+                  await second.fill("Second item")
+                  await basic.locator('[data-dynamic-action="up"]').nth(1).click()
+                  await page.waitForFunction(() => document.querySelector("#basic-dynamic-input input").value === "Second item")
+                  await basic.locator('[data-dynamic-action="remove"]').first().click()
+                  await page.waitForFunction(() => document.querySelector("#basic-dynamic-input").rows.length === 1)
+                  assert.equal(await page.locator("#basic-value").textContent(), "Rows: 1")
+                  const locked = page.locator("#disabled-dynamic-input").getByRole("textbox")
+                  assert.equal(await locked.isDisabled(), true)
+                  await page.locator("#toggle-disabled").click()
+                  assert.equal(await locked.isDisabled(), false)
+                  const form = page.locator("#entries-form"), entries = page.locator("#entries-input")
+                  await entries.getByRole("textbox", { name: "Title", exact: true }).fill("Edited, intact")
+                  await entries.locator("[data-dynamic-add]").click()
+                  await page.waitForFunction(() => document.querySelector("#entries-input").rows.length === 2)
+                  await form.getByRole("button", { name: "Save entries", exact: true }).click()
+                  assert.equal(await page.locator("#entries-value").textContent(),
+                    '[["titles[]","Edited, intact"],["notes[]","Default note"],["titles[]","First item"],["notes[]","Default note"]]')
+                  await form.getByRole("button", { name: "Reset fields", exact: true }).click()
+                  assert.deepEqual(await entries.getByRole("textbox", { name: "Title", exact: true }).evaluateAll(fields => fields.map(field => field.value)), ["First item", "First item"])
+                  const identity = await entries.evaluate(element => {
+                    const row = element.rows[0], input = row.element.querySelector("input"), parent = element.parentNode, before = element.nextSibling
+                    input.value = "Reconnect"
+                    element.remove()
+                    parent.insertBefore(element, before)
+                    return new Promise(resolve => queueMicrotask(() => resolve({
+                      connected: element.connected, same: element.rows[0].element === row.element,
+                      value: input.value, count: element.rows.length,
+                    })))
+                  })
+                  assert.deepEqual(identity, { connected: true, same: true, value: "Reconnect", count: 2 })
+                  assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1),
+                    `${name}/${layout}: Dynamic Input overflow`)
+                  await basic.scrollIntoViewIfNeeded()
+                  await page.screenshot({ path: resolve(output, `${name}-${layout}-dynamic-input.png`) })
+                  await entries.scrollIntoViewIfNeeded()
+                  await page.screenshot({ path: resolve(output, `${name}-${layout}-dynamic-input-template.png`) })
+                }
                 if (slug === "dynamic-tags") {
                   assert.equal(await page.evaluate(() => !!customElements.get("m-dynamic-input")), false,
                     "Dynamic Tags must not register Dynamic Input")

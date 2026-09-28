@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../../dist/markup-ui-themes.css">
   <link rel="stylesheet" href="../../dist/markup-ui-dynamic-input.css">
   <link rel="stylesheet" href="../../dist/markup-ui-input.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
@@ -18,9 +19,12 @@
   <link rel="stylesheet" href="./dynamic-input.css">
   <script defer src="../../dist/markup-ui-core.global.js"></script>
   <script defer src="../../dist/markup-ui-box.global.js"></script>
-  <script defer src="../../dist/markup-ui-dynamic-input.global.js"></script>
+  <script defer src="../../dist/markup-ui-native-input.global.js"></script>
+  <script defer src="../../dist/markup-ui-input.global.js"></script>
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer src="../../dist/markup-ui-dynamic-input.global.js"></script>
   <script type="module" src="./dynamic-input.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -50,36 +54,8 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-dynamic-input id="basic-dynamic-input" min="1" max="5">
-          <m-box class="m-dynamic-input__rows" data-dynamic-rows>
-            <m-box class="m-dynamic-input__row" data-dynamic-row data-dynamic-key="row-1">
-              <m-box class="m-dynamic-input__fields">
-                <m-label>Item <span class="m-input" data-input><input data-input-control name="items[]" value="First item" placeholder="Enter item"></span></m-label>
-              </m-box>
-              <m-box class="m-dynamic-input__actions">
-                <button type="button" data-dynamic-action="up">Up</button>
-                <button type="button" data-dynamic-action="down">Down</button>
-                <button type="button" data-dynamic-action="add">Add</button>
-                <button type="button" data-dynamic-action="remove">Remove</button>
-              </m-box>
-            </m-box>
-          </m-box>
-          <template data-dynamic-template>
-            <m-box class="m-dynamic-input__row" data-dynamic-row>
-              <m-box class="m-dynamic-input__fields">
-                <m-label>Item <span class="m-input" data-input><input data-input-control name="items[]" value="" placeholder="Enter item"></span></m-label>
-              </m-box>
-              <m-box class="m-dynamic-input__actions">
-                <button type="button" data-dynamic-action="up">Up</button>
-                <button type="button" data-dynamic-action="down">Down</button>
-                <button type="button" data-dynamic-action="add">Add</button>
-                <button type="button" data-dynamic-action="remove">Remove</button>
-              </m-box>
-            </m-box>
-          </template>
-          <button type="button" data-dynamic-add>Add item</button>
-        </m-dynamic-input>
-        <m-p id="basic-value">Items: First item</m-p>
+        <m-dynamic-input id="basic-dynamic-input" min="1" max="5" name="items[]" field-label="Item"></m-dynamic-input>
+        <m-p id="basic-value">Rows: 1</m-p>
       </div>
     </section>
 
@@ -91,33 +67,61 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-dynamic-input id="disabled-dynamic-input" min="1" max="3" disabled>
-          <m-box class="m-dynamic-input__rows" data-dynamic-rows>
-            <m-box class="m-dynamic-input__row" data-dynamic-row data-dynamic-key="disabled-1">
-              <m-box class="m-dynamic-input__fields">
-                <m-label>Locked <span class="m-input" data-input><input data-input-control name="locked[]" value="Locked item"></span></m-label>
-              </m-box>
-              <m-box class="m-dynamic-input__actions">
-                <button type="button" data-dynamic-action="remove">Remove</button>
-              </m-box>
-            </m-box>
-          </m-box>
-          <template data-dynamic-template>
-            <m-box class="m-dynamic-input__row" data-dynamic-row>
-              <m-box class="m-dynamic-input__fields">
-                <m-label>Locked <span class="m-input" data-input><input data-input-control name="locked[]" value=""></span></m-label>
-              </m-box>
-              <m-box class="m-dynamic-input__actions">
-                <button type="button" data-dynamic-action="remove">Remove</button>
-              </m-box>
-            </m-box>
-          </template>
-          <button type="button" data-dynamic-add>Add locked item</button>
-        </m-dynamic-input>
-        <m-box class="demo-tools">
-          <m-button id="toggle-disabled">Toggle Disabled</m-button>
-        </m-box>
+        <m-dynamic-input id="disabled-dynamic-input" min="1" max="3" name="locked[]" field-label="Locked item" disabled></m-dynamic-input>
+        <m-button id="toggle-disabled">Toggle Disabled</m-button>
       </div>
+    </section>
+
+    <section data-demo-example="template" aria-labelledby="template-title">
+      <header data-demo-header>
+        <div>
+          <h2 id="template-title">Multiple Fields and Forms</h2>
+          <p>A portable row template with named fields, native submission and reset.</p>
+        </div>
+      </header>
+      <div data-demo-preview>
+        <m-form id="entries-form">
+          <m-dynamic-input id="entries-input" min="1" max="4">
+            <m-dynamic-input-template>
+              <m-label>Title <m-input name="titles[]" value="First item" required></m-input></m-label>
+              <m-label>Note <m-textarea name="notes[]" value="Default note" rows="2"></m-textarea></m-label>
+            </m-dynamic-input-template>
+          </m-dynamic-input>
+          <m-box display="flex" wrap gap="8">
+            <m-button attr-type="submit">Save entries</m-button>
+            <m-button attr-type="reset">Reset fields</m-button>
+          </m-box>
+        </m-form>
+        <m-p id="entries-value" aria-live="polite">Not submitted</m-p>
+      </div>
+    </section>
+
+    <section aria-labelledby="behavior-title">
+      <h2 id="behavior-title">Behavior and Mapping</h2>
+      <p>The default field needs only core and Dynamic Input. The template example additionally
+        selects Input, Box, Form and Button, with their declared dependencies. These are not
+        dependencies of Dynamic Input itself.</p>
+      <p><code>m-dynamic-input-template</code> contains the content of one repeated row.
+        The Web renderer captures it in an inert native template and generates row actions.
+        Load the selected field families before initializing the collection. Do not put IDs,
+        autofocus or initially checked radios in a reusable template; use
+        <code>initializeRow</code> for unique Web ID relationships.</p>
+      <p><code>rows</code> exposes stable keys. Use <code>add(index?)</code>,
+        <code>move(key, index)</code> and <code>removeRow(key)</code>; <code>remove()</code>
+        removes the component itself. Bounds are integers with
+        <code>0 &lt;= min &lt;= max &lt;= 100</code> and max at least 1.
+        Initial generated rows are added up to min through the same lifecycle hooks.
+        Subsequent bound changes must contain the current row count and never allocate or truncate.</p>
+      <p>Structural transactions emit bubbling <code>m:change</code> with
+        <code>{type, row, index, previousIndex, rows}</code>. Field edits and reset retain
+        native events; values are not flattened into comma-separated strings.
+        Disabled prevents native user interaction but does not forbid explicit programmatic transactions.
+        Reset changes current fields to their defaults, not the row set. Cancelled clicks and resets are respected.</p>
+      <p><code>initializeRow</code> runs on a detached new row and <code>connectRow</code>
+        runs when a row connects, including reconnect. Both are synchronous Web-only hooks;
+        register resource disposal with <code>context.onCleanup</code>. Surviving rows, controls,
+        listeners, defaults and keys are retained. Native authored container/template/action anatomy
+        remains an explicit Web interoperability path through the same controller, not the portable contract.</p>
     </section>
 
     <section aria-labelledby="api-heading">

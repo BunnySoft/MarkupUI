@@ -2,8 +2,15 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { gzipSync } from "node:zlib"
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { DynamicInput, registerDynamicInput, createDynamicInput } from "../src/components/dynamic-input/index.js"
-import type { DynamicInputOptions } from "../src/components/dynamic-input/index.js"
+import { DynamicInput, DynamicInputTemplate, registerDynamicInput } from "../src/components/dynamic-input/index.js"
+import { createDynamicInput } from "../src/components/dynamic-input/dynamic-input.js"
+import type { DynamicInputOptions } from "../src/components/dynamic-input/dynamic-input.js"
+import { Input } from "../src/components/input/index.js"
+import "../src/components/box/index.js"
+import "../src/components/form/index.js"
+import "../src/components/button/index.js"
+import "../src/components/radio/index.js"
+import "../src/components/checkbox/index.js"
 import { ViewElement } from "../src/core/index.js"
 import { createInput } from "../src/components/native-input.js"
 import { coordinateForm as createForm } from "../src/components/form/controller.js"
@@ -72,7 +79,7 @@ describe("authored anatomy, bounded keys and native state", () => {
   it("requires stable unique keys and rejects competing module owners", async () => {
     const { helper, root } = fixture()
     expect(() => createDynamicInput(root)).toThrow("owner")
-    vi.resetModules(); const other = await import("../src/components/dynamic-input/index.js")
+    vi.resetModules(); const other = await import("../src/components/dynamic-input/dynamic-input.js")
     expect(() => other.createDynamicInput(root)).toThrow("owner")
     helper.disconnect()
     root.querySelectorAll("[data-dynamic-row]")[1]!.setAttribute("data-dynamic-key", "seed-0")
@@ -428,18 +435,192 @@ describe("reset, nested scopes and explicit Form/Input resources", () => {
 })
 
 describe("canonical DynamicInput ViewElement", () => {
+  it("maps an all-m-* multi-field template to native submission, reset, focus and surviving identity", async () => {
+    document.body.innerHTML = `<m-form><m-dynamic-input min="1" max="3">
+      <m-dynamic-input-template>
+        <m-label>Title <m-input name="titles[]" value="A, B" required></m-input></m-label>
+        <m-label>Note <m-textarea name="notes[]" value="Default"></m-textarea></m-label>
+      </m-dynamic-input-template>
+    </m-dynamic-input><m-button attr-type="submit">Save</m-button><m-button attr-type="reset">Reset</m-button></m-form>`
+    const el = document.querySelector<DynamicInput>("m-dynamic-input")!
+    await flush()
+    expect(el.connected).toBe(true)
+    expect(el.querySelector("m-input")).toBeInstanceOf(Input)
+    const form = document.querySelector("form")!, first = el.rows[0]!, input = control(first.element)
+    expect(new FormData(form).getAll("titles[]")).toEqual(["A, B"])
+    expect(new FormData(form).getAll("notes[]")).toEqual(["Default"])
+    expect(input.labels![0]!.textContent).toBe("Title ")
+    const changed = vi.fn()
+    input.addEventListener("input", changed)
+    input.value = "Edited, intact"
+    input.focus(); input.setSelectionRange(2, 5)
+    const second = el.add()!
+    el.move(first.key, 1)
+    expect(el.rows).toEqual([second, first])
+    expect(document.activeElement).toBe(input)
+    expect([input.selectionStart, input.selectionEnd]).toEqual([2, 5])
+    expect(new FormData(form).getAll("titles[]")).toEqual(["A, B", "Edited, intact"])
+    input.dispatchEvent(new Event("input", { bubbles: true }))
+    expect(changed).toHaveBeenCalledOnce()
+    form.addEventListener("reset", event => event.preventDefault(), { once: true })
+    form.reset(); expect(input.value).toBe("Edited, intact")
+    form.reset(); expect(input.value).toBe("A, B")
+    el.removeRow(second.key)
+    expect(new FormData(form).getAll("titles[]")).toEqual(["A, B"])
+    expect(el.querySelector("m-dynamic-input-template")!.querySelectorAll("input,textarea")).toHaveLength(0)
+    const add = el.querySelector<HTMLButtonElement>("[data-dynamic-add]")!
+    add.focus(); add.click(); await flush()
+    expect(document.activeElement).toBe(control(el.rows[1]!.element))
+    expect(el.error).toBeNull()
+  })
+  it("focuses a click-added field when the browser leaves body active, without stealing outside focus", async () => {
+    const { helper, add } = fixture()
+    expect(document.activeElement).toBe(document.body)
+    add.click(); await flush()
+    expect(document.activeElement).toBe(control(helper.rows[2]!.element))
+    const outside = document.querySelector<HTMLButtonElement>("#outside")!
+    outside.focus(); add.click(); await flush()
+    expect(document.activeElement).toBe(outside)
+  })
+
+  it("exposes detached initialization and connected cleanup with atomic rollback", () => {
+    const el = new DynamicInput(), cleaned = vi.fn(), connected = vi.fn()
+    el.initializeRow = (row, context) => {
+      expect(row.isConnected).toBe(false)
+      context.onCleanup(cleaned)
+      control(row).id = `input-${context.key}`
+    }
+    el.connectRow = (row, context) => {
+      expect(row.isConnected).toBe(true)
+      context.onCleanup(connected)
+    }
+    document.body.append(el)
+    const first = el.add()!
+    expect(control(first.element).id).toBe(`input-${first.key}`)
+    el.initializeRow = (row, context) => {
+      context.onCleanup(cleaned)
+      control(row).id = control(first.element).id
+    }
+    expect(() => el.add()).toThrow("unique")
+    expect(el.rows).toEqual([first])
+    expect(cleaned).toHaveBeenCalledOnce()
+    el.removeRow(first.key)
+    expect(cleaned).toHaveBeenCalledTimes(2)
+    expect(connected).toHaveBeenCalledOnce()
+  })
+
+  it("materializes portable checkbox/radio owners before validation, rejecting checked radios atomically", () => {
+    const form = document.createElement("form"), peer = document.createElement("input"), el = new DynamicInput()
+    peer.type = "radio"; peer.name = "choice"; peer.checked = true
+    el.innerHTML = `<m-dynamic-input-template><m-checkbox name="enabled" checked value="yes">Enabled</m-checkbox><m-radio name="choice" value="new">Choice</m-radio></m-dynamic-input-template>`
+    form.append(peer, el); document.body.append(form)
+    const first = el.add()!
+    expect(new FormData(form).getAll("enabled")).toEqual(["yes"])
+    expect(peer.checked).toBe(true)
+    el.querySelector<DynamicInputTemplate>("m-dynamic-input-template")!.native.content.querySelector("m-radio")!.setAttribute("checked", "")
+    expect(() => el.add()).toThrow("unchecked")
+    expect(el.rows).toEqual([first])
+    expect(peer.checked).toBe(true)
+  })
+
+  it("preserves native removal, draft/defaults, cleanups and stable keys across reconnect", async () => {
+    const el = new DynamicInput(), connect = vi.fn(), cleanup = vi.fn()
+    el.connectRow = (_, context) => { connect(); context.onCleanup(cleanup) }
+    document.body.append(el)
+    const first = el.add()!, removed = el.add()!, input = control(first.element)
+    el.removeRow(removed.key)
+    input.value = "Kept"
+    el.remove()
+    expect(el.isConnected).toBe(false)
+    expect(el.connected).toBe(false)
+    expect(cleanup).toHaveBeenCalledTimes(2)
+    document.body.append(el); await flush()
+    expect(el.rows[0]!.element).toBe(first.element)
+    expect(input.value).toBe("Kept")
+    expect(connect).toHaveBeenCalledTimes(3)
+    expect(el.add()!.key).not.toBe(removed.key)
+    expect(el.querySelectorAll(".m-dynamic-input__controls")).toHaveLength(1)
+    expect(el.querySelectorAll("[data-dynamic-add]")).toHaveLength(1)
+  })
+
+  it("keeps disabled flags and nested ownership through inherited disabling", async () => {
+    const el = new DynamicInput()
+    document.body.append(el)
+    const row = el.add()!, locked = control(row.element)
+    locked.disabled = true
+    const nested = new DynamicInput()
+    row.element.append(nested)
+    const inner = nested.add()!, input = control(inner.element)
+    await flush()
+    el.disabled = true
+    expect(input.matches(":disabled")).toBe(true)
+    expect(input.disabled).toBe(false)
+    el.disabled = false
+    expect(locked.disabled).toBe(true)
+    expect(input.matches(":disabled")).toBe(false)
+    action(inner.element, "add").click(); await flush()
+    expect(nested.rows).toHaveLength(2)
+    expect(el.rows).toHaveLength(1)
+    expect(el.connected).toBe(true)
+  })
+
+  it("preflights scalar bounds without allocating, truncating or reflecting a rejected write", () => {
+    const el = new DynamicInput()
+    document.body.append(el); el.add(); el.add()
+    expect(() => { el.max = 1 }).toThrow()
+    expect(el.hasAttribute("max")).toBe(false)
+    expect(() => { el.min = 3 }).toThrow()
+    expect(el.hasAttribute("min")).toBe(false)
+    el.min = 2; el.max = 2
+    expect(el.rows).toHaveLength(2)
+    expect(el.add()).toBeNull()
+    expect(() => { el.max = 101 }).toThrow()
+  })
+
+  it("replays genuine pre-upgrade configuration and Web hooks", () => {
+    const el = document.createElement("m-dynamic-input") as DynamicInput
+    const hook = vi.fn()
+    Object.defineProperty(el, "min", { configurable: true, value: 2 })
+    Object.defineProperty(el, "name", { configurable: true, value: "entries[]" })
+    Object.defineProperty(el, "initializeRow", { configurable: true, value: hook })
+    document.body.append(el); el.refresh()
+    expect(el.rows).toHaveLength(2)
+    expect(hook).toHaveBeenCalledTimes(2)
+    expect(control(el.rows[0]!.element).name).toBe("entries[]")
+    expect(Object.hasOwn(el, "min")).toBe(false)
+  })
+
+  it("uses direct DOM construction and rejects invalid template IDs/autofocus before insertion", () => {
+    const el = new DynamicInput()
+    vi.spyOn(Element.prototype, "innerHTML", "set").mockImplementation(() => { throw new Error("HTML sink") })
+    document.body.append(el); el.add()
+    const template = el.querySelector("template")!
+    template.content.querySelector("input")!.id = "duplicate"
+    expect(() => el.add()).toThrow("no IDs")
+    expect(el.rows).toHaveLength(1)
+  })
+
+  it("documents public preview authoring entirely with m-* elements", () => {
+    const html = readFileSync(resolve("demo/components/dynamic-input.html"), "utf8")
+    const page = new DOMParser().parseFromString(html, "text/html")
+    for (const preview of page.querySelectorAll("[data-demo-preview]")) {
+      expect([...preview.querySelectorAll("*")].filter(node => !node.localName.startsWith("m-")).map(node => node.localName)).toEqual([])
+    }
+  })
+
   it("registers only its own ViewElement and rejects conflicting definitions", () => {
     expect(DynamicInput.prototype).toBeInstanceOf(ViewElement)
     expect(customElements.get("m-dynamic-input")).toBe(DynamicInput)
     expect(DynamicInput.tag).toBe("m-dynamic-input")
     const define = vi.fn()
     registerDynamicInput({ get: () => undefined, define })
-    expect(define.mock.calls.map(call => call[0])).toEqual(["m-dynamic-input"])
+    expect(define.mock.calls.map(call => call[0])).toEqual(["m-dynamic-input-template", "m-dynamic-input"])
+    expect(customElements.get(DynamicInputTemplate.tag)).toBe(DynamicInputTemplate)
     expect(() => registerDynamicInput({ get: () => HTMLElement, define })).toThrow("different")
   })
 
   it("exposes canonical observedAttributes and default property values", () => {
-    expect(DynamicInput.observedAttributes).toEqual(["min", "max", "disabled"])
+    expect(DynamicInput.observedAttributes).toEqual(["min", "max", "disabled", "name", "field-label"])
     const dynamicInput = new DynamicInput()
     expect(dynamicInput.min).toBe(0)
     expect(dynamicInput.max).toBe(20)
@@ -480,6 +661,7 @@ describe("canonical DynamicInput ViewElement", () => {
   it("generates default container, template, and add button when connected empty", () => {
     const dynamicInput = new DynamicInput()
     document.body.append(dynamicInput)
+    dynamicInput.refresh()
 
     expect(dynamicInput.classList.contains("m-dynamic-input")).toBe(true)
     expect(dynamicInput.querySelector("[data-dynamic-rows]")).not.toBeNull()
@@ -507,14 +689,15 @@ describe("canonical DynamicInput ViewElement", () => {
       <button type="button" data-dynamic-add hidden>Add row</button>
     `
     document.body.append(el)
+    el.refresh()
 
-    expect(el.getRows()).toHaveLength(1)
-    expect(el.getValues()).toEqual(["Initial row"])
+    expect(el.rows).toHaveLength(1)
+    expect(control(el.rows[0]!.element).value).toBe("Initial row")
     const removeBtn = el.querySelector<HTMLButtonElement>("[data-dynamic-action=remove]")!
     expect(removeBtn.hidden).toBe(false)
   })
 
-  it("adds rows and emits m:change event with array value detail", () => {
+  it("emits structural snapshots, leaving field changes as native events", () => {
     const el = new DynamicInput()
     document.body.append(el)
     const listener = vi.fn()
@@ -522,16 +705,17 @@ describe("canonical DynamicInput ViewElement", () => {
 
     const row = el.add()
     expect(row).not.toBeNull()
-    expect(el.getRows()).toHaveLength(1)
+    expect(el.rows).toHaveLength(1)
     expect(listener).toHaveBeenCalledOnce()
-    expect(listener.mock.calls[0][0].detail).toEqual({ value: [""] })
+    expect(listener.mock.calls[0][0].detail).toEqual({ type: "add", row, index: 0, previousIndex: null, rows: [row] })
+    expect(listener.mock.calls[0][0].bubbles).toBe(true)
 
-    const input = row!.querySelector<HTMLInputElement>("input")!
+    const input = control(row!.element)
     input.value = "Updated item"
     input.dispatchEvent(new Event("change", { bubbles: true }))
 
-    expect(listener).toHaveBeenCalledTimes(2)
-    expect(listener.mock.calls[1][0].detail).toEqual({ value: ["Updated item"] })
+    expect(listener).toHaveBeenCalledOnce()
+    expect(input.value).toBe("Updated item")
   })
 
   it("respects max limit and disables add button", () => {
@@ -541,10 +725,10 @@ describe("canonical DynamicInput ViewElement", () => {
 
     expect(el.add()).not.toBeNull()
     expect(el.add()).not.toBeNull()
-    expect(el.getRows()).toHaveLength(2)
+    expect(el.rows).toHaveLength(2)
 
     expect(el.add()).toBeNull()
-    expect(el.getRows()).toHaveLength(2)
+    expect(el.rows).toHaveLength(2)
 
     const addBtn = el.querySelector<HTMLButtonElement>("[data-dynamic-add]")!
     expect(addBtn.disabled).toBe(true)
@@ -554,25 +738,26 @@ describe("canonical DynamicInput ViewElement", () => {
     const el = new DynamicInput()
     el.min = 1
     document.body.append(el)
+    el.refresh()
 
     // Because min=1, connectedCallback ensured 1 row exists
-    expect(el.getRows()).toHaveLength(1)
-    const row = el.getRows()[0]!
+    expect(el.rows).toHaveLength(1)
+    const row = el.rows[0]!
 
     // Cannot remove below min of 1
-    expect(el.remove(row)).toBe(false)
-    expect(el.getRows()).toHaveLength(1)
+    expect(el.removeRow(row.key)).toBe(false)
+    expect(el.rows).toHaveLength(1)
 
-    const removeBtn = row.querySelector<HTMLButtonElement>("[data-dynamic-action=remove]")!
+    const removeBtn = action(row.element, "remove")
     expect(removeBtn.disabled).toBe(true)
 
     // Increase row count then remove
     el.add()
-    expect(el.getRows()).toHaveLength(2)
+    expect(el.rows).toHaveLength(2)
     expect(removeBtn.disabled).toBe(false)
 
-    expect(el.remove(row)).toBe(true)
-    expect(el.getRows()).toHaveLength(1)
+    expect(el.removeRow(row.key)).toBe(true)
+    expect(el.rows).toHaveLength(1)
   })
 
   it("moves rows and emits m:change", () => {
@@ -581,52 +766,60 @@ describe("canonical DynamicInput ViewElement", () => {
 
     const row1 = el.add()!
     const row2 = el.add()!
-    row1.querySelector<HTMLInputElement>("input")!.value = "First"
-    row2.querySelector<HTMLInputElement>("input")!.value = "Second"
-    expect(el.getValues()).toEqual(["First", "Second"])
+    control(row1.element).value = "First"
+    control(row2.element).value = "Second"
 
     const listener = vi.fn()
     el.addEventListener("m:change", listener)
 
-    expect(el.move(0, 1)).toBe(true)
-    expect(el.getValues()).toEqual(["Second", "First"])
+    expect(el.move(row1.key, 1)).toBe(true)
+    expect(el.rows).toEqual([row2, row1])
     expect(listener).toHaveBeenCalledOnce()
-    expect(listener.mock.calls[0][0].detail).toEqual({ value: ["Second", "First"] })
+    expect(listener.mock.calls[0][0].detail).toEqual({ type: "move", row: row1, index: 1, previousIndex: 0, rows: [row2, row1] })
 
     // Boundary check
-    expect(el.move(0, 5)).toBe(false)
-    expect(el.move(0, 0)).toBe(false)
+    expect(() => el.move(row1.key, 5)).toThrow(RangeError)
+    expect(el.move(row1.key, 1)).toBe(false)
   })
 
-  it("handles button click delegations for add, remove, and move", () => {
+  it("handles cancellable button click delegations for add, remove, and move", async () => {
     const el = new DynamicInput()
     document.body.append(el)
+    el.refresh()
 
     const addBtn = el.querySelector<HTMLButtonElement>("[data-dynamic-add]")!
     addBtn.click()
-    expect(el.getRows()).toHaveLength(1)
+    await flush()
+    expect(el.rows).toHaveLength(1)
 
-    const row1 = el.getRows()[0]!
-    const rowAddBtn = row1.querySelector<HTMLButtonElement>("[data-dynamic-action=add]")!
+    const row1 = el.rows[0]!
+    const rowAddBtn = action(row1.element, "add")
     rowAddBtn.click()
-    expect(el.getRows()).toHaveLength(2)
+    await flush()
+    expect(el.rows).toHaveLength(2)
 
-    const row2 = el.getRows()[1]!
-    row1.querySelector<HTMLInputElement>("input")!.value = "Alpha"
-    row2.querySelector<HTMLInputElement>("input")!.value = "Beta"
+    const row2 = el.rows[1]!
+    control(row1.element).value = "Alpha"
+    control(row2.element).value = "Beta"
 
-    const upBtn = row2.querySelector<HTMLButtonElement>("[data-dynamic-action=up]")!
+    const upBtn = action(row2.element, "up")
     upBtn.click()
-    expect(el.getValues()).toEqual(["Beta", "Alpha"])
+    await flush()
+    expect(el.rows).toEqual([row2, row1])
 
-    const downBtn = el.getRows()[0]!.querySelector<HTMLButtonElement>("[data-dynamic-action=down]")!
+    const downBtn = action(el.rows[0]!.element, "down")
     downBtn.click()
-    expect(el.getValues()).toEqual(["Alpha", "Beta"])
+    await flush()
+    expect(el.rows).toEqual([row1, row2])
 
-    const removeBtn = el.getRows()[1]!.querySelector<HTMLButtonElement>("[data-dynamic-action=remove]")!
+    const removeBtn = action(el.rows[1]!.element, "remove")
+    removeBtn.addEventListener("click", event => event.preventDefault(), { once: true })
     removeBtn.click()
-    expect(el.getRows()).toHaveLength(1)
-    expect(el.getValues()).toEqual(["Alpha"])
+    await flush()
+    expect(el.rows).toHaveLength(2)
+    removeBtn.click()
+    await flush()
+    expect(el.rows).toEqual([row1])
   })
 
   it("handles disabled state across buttons and controls", () => {
@@ -637,12 +830,13 @@ describe("canonical DynamicInput ViewElement", () => {
     el.disabled = true
     const addBtn = el.querySelector<HTMLButtonElement>("[data-dynamic-add]")!
     const input = el.querySelector<HTMLInputElement>("input")!
-    expect(addBtn.disabled).toBe(true)
-    expect(input.disabled).toBe(true)
+    expect(addBtn.matches(":disabled")).toBe(true)
+    expect(input.matches(":disabled")).toBe(true)
+    expect(input.disabled).toBe(false)
 
     // Clicking disabled button should not add row
     addBtn.click()
-    expect(el.getRows()).toHaveLength(1)
+    expect(el.rows).toHaveLength(1)
 
     el.disabled = false
     expect(addBtn.disabled).toBe(false)
@@ -655,18 +849,19 @@ describe("canonical DynamicInput ViewElement", () => {
     unmounted.max = 6
     unmounted.disabled = true
     document.body.append(unmounted)
+    unmounted.refresh()
 
     expect(unmounted.min).toBe(2)
     expect(unmounted.max).toBe(6)
     expect(unmounted.disabled).toBe(true)
-    expect(unmounted.getRows()).toHaveLength(2)
+    expect(unmounted.rows).toHaveLength(2)
   })
 
   it("delegates focus and blur to the input elements", () => {
     const el = new DynamicInput()
     document.body.append(el)
     const row = el.add()!
-    const input = row.querySelector<HTMLInputElement>("input")!
+    const input = control(row.element)
     const focusSpy = vi.spyOn(input, "focus")
     const blurSpy = vi.spyOn(input, "blur")
 
@@ -676,6 +871,15 @@ describe("canonical DynamicInput ViewElement", () => {
     input.focus()
     el.blur()
     expect(blurSpy).toHaveBeenCalledOnce()
+  })
+
+  it("can focus immediately after insertion, before the deferred initial render", () => {
+    const el = new DynamicInput()
+    el.min = 1
+    document.body.append(el)
+    el.focus()
+    expect(el.connected).toBe(true)
+    expect(document.activeElement).toBe(control(el.rows[0]!.element))
   })
 })
 

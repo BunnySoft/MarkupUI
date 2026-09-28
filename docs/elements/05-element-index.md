@@ -1,7 +1,7 @@
 # 5. Complete MarkupUI element directory
 
 This directory lists the current Web registration surface: **89 selectable families**
-with **202 distinct tags**, plus **15 root-facade tags** and **3 optional plugin tags**.
+with **203 distinct tags**, plus **15 root-facade tags** and **3 optional plugin tags**.
 Family tags are checked against source-generated `demo/api` data by
 `tests/element-directory.test.ts`. Property/method documentation belongs in the linked
 demo/API pages, not duplicated here.
@@ -46,7 +46,7 @@ Companion/configuration tags belong to the same family, not separate delivery un
 | [divider](../../demo/components/divider.html) | `m-divider` |
 | [drawer](../../demo/components/drawer.html) | `m-drawer`, `m-drawer-content`, `m-drawer-header`, `m-drawer-body`, `m-drawer-footer` |
 | [dropdown](../../demo/components/dropdown.html) | `m-dropdown`, `m-dropdown-trigger`, `m-dropdown-menu`, `m-dropdown-item`, `m-dropdown-group`, `m-dropdown-divider` |
-| [dynamic-input](../../demo/components/dynamic-input.html) | `m-dynamic-input` |
+| [dynamic-input](../../demo/components/dynamic-input.html) | `m-dynamic-input-template`, `m-dynamic-input` |
 | [dynamic-tags](../../demo/components/dynamic-tags.html) | `m-dynamic-tags` |
 | [ellipsis](../../demo/components/ellipsis.html) | `m-ellipsis` |
 | [empty](../../demo/components/empty.html) | `m-empty` |

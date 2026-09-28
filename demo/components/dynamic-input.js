@@ -9,11 +9,17 @@ function initialize() {
   const basicValue = document.getElementById("basic-value")
   if (basicInput && basicValue) {
     basicInput.addEventListener("m:change", event => {
-      const detail = event.detail
-      const values = Array.isArray(detail?.value) ? detail.value.join(", ") : ""
-      basicValue.textContent = `Items: ${values}`
+      if (event.target === basicInput) basicValue.textContent = `Rows: ${event.detail.rows.length}`
     })
   }
+
+  const form = document.getElementById("entries-form")
+  const output = document.getElementById("entries-value")
+  form.addEventListener("submit", event => {
+    event.preventDefault()
+    // FormData is Web-only inspection of the m-form's actual semantic owner.
+    output.textContent = JSON.stringify([...new FormData(form.native)])
+  })
 
   const disabledInput = document.getElementById("disabled-dynamic-input")
   const toggleBtn = document.getElementById("toggle-disabled")

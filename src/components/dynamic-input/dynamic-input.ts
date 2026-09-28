@@ -26,8 +26,13 @@ export interface DynamicInputController {
 interface Row { public: DynamicInputRow; cleanups: (() => void)[] }
 interface Attribute { node: HTMLElement; row: HTMLElement | null; name: string; before: string | null; base: string | null; last: string | null }
 const owner = Symbol.for("markup-ui.dynamic-input.owner")
+const sequenceKey = Symbol.for("markup-ui.dynamic-input.sequence")
 type Owned = Element & { [owner]?: DynamicInputController }
 type Action = "add" | "remove" | "up" | "down"
+
+export function validateBounds(lower: number, upper: number): void {
+  if (!Number.isInteger(lower) || !Number.isInteger(upper) || lower < 0 || upper < 1 || lower > upper || upper > 100) throw new RangeError("Use 0 <= min <= max <= 100, with max at least 1.")
+}
 
 /** Repeats authored native rows, never a value model or an input renderer. */
 export function createDynamicInput(root: HTMLElement, options: DynamicInputOptions = {}): DynamicInputController {
@@ -40,10 +45,7 @@ export function createDynamicInput(root: HTMLElement, options: DynamicInputOptio
     || options.initialize !== undefined && typeof options.initialize !== "function"
     || options.connect !== undefined && typeof options.connect !== "function") throw new TypeError("Unsupported Dynamic Input options.")
   let min = options.min ?? 0, max = options.max ?? 20
-  function bounds(lower: number, upper: number) {
-    if (!Number.isInteger(lower) || !Number.isInteger(upper) || lower < 0 || upper < 1 || lower > upper || upper > 100) throw new RangeError("Use 0 <= min <= max <= 100, with max at least 1.")
-  }
-  bounds(min, max)
+  validateBounds(min, max)
   const own = (node: Element) => node.closest("[data-dynamic-input]") === root
   function one(selector: string) {
     const nodes = [...root.querySelectorAll<HTMLElement>(selector)].filter(own)
@@ -55,7 +57,8 @@ export function createDynamicInput(root: HTMLElement, options: DynamicInputOptio
     || container === templateNode || container.contains(templateNode) || container.contains(addNode)) throw new TypeError("Keep the row container, native template and global add button separate.")
   const template = templateNode, addButton = addNode
   const initialize = options.initialize, connect = options.connect
-  let connected = true, busy = false, sequence = 0, generation = 0, error: unknown = null
+  let connected = true, busy = false, generation = 0, error: unknown = null
+  const sequenced = root as HTMLElement & { [sequenceKey]?: number }
   const attributes: Attribute[] = [], tasks = new Set<number>()
   const initialKeys = new Set<string>(), removers: (() => void)[] = []
   function children() { return [...container.children] as HTMLElement[] }
@@ -83,7 +86,7 @@ export function createDynamicInput(root: HTMLElement, options: DynamicInputOptio
   }
   function rowAnatomy(row: HTMLElement, initial = false) {
     if (!(row instanceof view!.HTMLElement) || !row.hasAttribute("data-dynamic-row")
-      || ["data-dynamic-input", "data-dynamic-action", "data-dynamic-add"].some(name => row.hasAttribute(name))) throw new TypeError("Each direct container child must be a native data-dynamic-row, not a root or action.")
+      || ["data-dynamic-input", "data-dynamic-action", "data-dynamic-add"].some(name => row.hasAttribute(name))) throw new TypeError("Container children must be data-dynamic-row elements, not roots or actions.")
     const seen = new Set<string>()
     for (const node of actions(row)) {
       const action = node.getAttribute("data-dynamic-action")!
@@ -96,7 +99,7 @@ export function createDynamicInput(root: HTMLElement, options: DynamicInputOptio
     for (const nested of scope.querySelectorAll("template")) noIds(nested.content)
   }
   function templateAnatomy() {
-    if (template.content.children.length !== 1) throw new TypeError("The template needs exactly one native row element.")
+    if (template.content.children.length !== 1) throw new TypeError("The template needs exactly one row element.")
     const prototype = template.content.firstElementChild as HTMLElement
     noIds(template.content)
     if (prototype.hasAttribute("data-dynamic-key")) throw new TypeError("Do not author a key on the template row.")
@@ -276,7 +279,8 @@ export function createDynamicInput(root: HTMLElement, options: DynamicInputOptio
     pause(); busy = true
     try { syncActions(skipFocus) } finally { busy = false; observe() }
     error = null
-    root.dispatchEvent(new view!.CustomEvent("m:dynamic-input-change", { detail: Object.freeze({
+    const canonical = root.localName === "m-dynamic-input"
+    root.dispatchEvent(new view!.CustomEvent(canonical ? "m:change" : "m:dynamic-input-change", { bubbles: canonical, detail: Object.freeze({
       type, row: row.public, index, previousIndex, rows: Object.freeze(records.map(record => record.public)),
     }) }))
     return version
@@ -289,7 +293,7 @@ export function createDynamicInput(root: HTMLElement, options: DynamicInputOptio
     let row: Row | null = null
     try {
       let id: string
-      do { id = `row-${++sequence}` } while (initialKeys.has(id) || records.some(record => record.public.key === id))
+      do { sequenced[sequenceKey] = (sequenced[sequenceKey] ?? 0) + 1; id = `row-${sequenced[sequenceKey]}` } while (initialKeys.has(id) || records.some(record => record.public.key === id))
       const fragment = document!.importNode(template.content, true), element = fragment.firstElementChild as HTMLElement
       element.setAttribute("data-dynamic-key", id)
       row = { public: Object.freeze({ key: id, element }), cleanups: [] }
@@ -386,7 +390,7 @@ export function createDynamicInput(root: HTMLElement, options: DynamicInputOptio
     return true
   }
   function setBounds(lower: number, upper: number) {
-    ready(); bounds(lower, upper)
+    ready(); validateBounds(lower, upper)
     if (records.length < lower || records.length > upper) throw new RangeError("New bounds must contain current rows; no implicit allocation/removal.")
     min = lower; max = upper; refresh()
   }
@@ -437,7 +441,7 @@ export function createDynamicInput(root: HTMLElement, options: DynamicInputOptio
         ready()
         if (!available(node)) return
         if (action === "add") {
-          insert(row ? find(row.public.key) + 1 : records.length, active === node ? node : null)
+          insert(row ? find(row.public.key) + 1 : records.length, active === node || active === document!.body ? node : null)
         } else if (action === "remove") remove(row!.public.key)
         else { const index = find(row!.public.key); move(row!.public.key, index + (action === "up" ? -1 : 1)) }
       } catch (reason) { if (error !== reason) report(reason, action, false) }

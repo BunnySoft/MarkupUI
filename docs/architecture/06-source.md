@@ -182,8 +182,8 @@ policy, draft transactions, events and lifecycle; it delegates collection mutati
 `dynamic-input/dynamic-input.ts`. There is no public Tags factory or second element-side
 add/remove engine. Portable compositions use `m-dynamic-tags`, `m-form` and `m-button`;
 the renderer creates their native owners. Native anatomy and resource callbacks are
-explicit Web-only escape hatches, not required authoring. Dynamic Input's own element
-has not yet been unified with its collection controller.
+explicit Web-only escape hatches, not required authoring. Dynamic Input now uses that
+same collection controller through its own canonical element and template mapping.
 
 Chart lives in `src/components/chart`: `chart.ts` owns the Web renderer lifecycle and
 native data alternative, `config.ts` the concrete option elements, `dataset.ts` sources
@@ -195,6 +195,15 @@ or download. The demo owns selected vendor registration in `demo/chart-engine.js
 with licenses under ignored `demo/vendor`, outside the published package. Manifest Chart
 costs cover MarkupUI assets and explicitly exclude the required application-owned engine.
 Neither state binding nor ECharts is added to core or unrelated components.
+
+Dynamic Input's `dynamic-input-element.ts` owns the canonical element and
+`DynamicInputTemplate` region. It maps portable templates and default fields into Web
+owners, delegating all row transactions to the existing `dynamic-input.ts` controller.
+The public factory is removed; Dynamic Tags still imports the controller directly from
+its source owner without registering Input. The controller owns stable keys, bounds,
+transactions, action leases, focus and resource cleanup. Native-field materialization
+uses the selected components' direct `native` accessors, with no runtime constructor
+imports, generic property engine or new distribution dependency.
 
 `src/core/view-element.ts` owns common Web mechanics. Component files own direct typed
 properties and ordinary method calls. They use small native conversion helpers where useful,

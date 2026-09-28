@@ -343,11 +343,29 @@ S2 unifies Tags through its internal controller and removes the public
 duplicate policy and Web lifecycle hooks. Form examples are entirely `m-*` authored;
 Form and Button are extra demo selections, not Tags dependencies.
 
-Dynamic Tags measures 10,958/11,109 entry gzip bytes and 12,381/12,581 including core
-(ESM/classic); CSS is 1,178 bytes. Relative to S1 this adds 597/591 JS gzip bytes to
-close the element's capability and portable-configuration gaps, rather than producing
-a size saving. S0 remains the frozen comparison baseline. No runtime dependency file
-or ceiling changed, and unrelated bundles/core are unchanged.
+After Input reconciliation, Dynamic Tags measures 10,979/11,125 entry gzip bytes and
+12,402/12,597 including core (ESM/classic); CSS is 1,178 bytes. The initial Tags
+reconciliation added 597/591 JS gzip bytes relative to S1 to close the element's
+capability and portable-configuration gaps. Input's shared-controller corrections
+add another 21/16 bytes. These are not size savings. S0 remains the frozen comparison
+baseline. No runtime dependency file or ceiling changed; core and unrelated families
+remain unchanged.
+
+## Dynamic Input delivery
+
+Dynamic Input selects core plus one family entry and CSS, registering only
+`m-dynamic-input` and `m-dynamic-input-template`. The element delegates row transactions
+to its internal controller; the public factory is removed. The template region maps
+portable `m-*` field content to an inert native Web template. Default fields need no
+other component. For custom templates, load the selected field families before Dynamic
+Input initializes; their normal dependencies remain explicit application selections.
+The demo's Box/Input/Form/Button assets are not hidden Input dependencies.
+
+ESM/classic entries measure 7,361/7,515 gzip bytes, or 8,784/8,987 including core.
+CSS is 818 bytes. Compared with the pre-Input state, JS grows 118/126 gzip bytes while
+raw entries shrink 414/415 bytes. The unchanged 9,000-byte combined ceiling passes,
+with only thirteen classic bytes of headroom. No shared extraction, budget increase or
+optional aggregate is included in this task.
 
 ## Reproducible size reports
 

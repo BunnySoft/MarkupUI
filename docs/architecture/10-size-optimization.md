@@ -1,7 +1,8 @@
 # 10. JavaScript size optimization plan
 
-Status: S0-S1 verified September 24, 2026. S2 Dynamic Tags reconciliation verified
-September 28, 2026. Dynamic Input, remaining S2 families and S3-S6 are open.
+Status: S0-S1 verified September 24, 2026. S2 Dynamic Tags and Dynamic Input
+reconciliation verified September 28, 2026, with the integrated-test timing limitation
+recorded below. Remaining S2 families and S3-S6 are open.
 Plan recorded September 23, 2026.
 Implementation baseline: `cb00af1` on `main`, package version `0.13.0`.
 The next thread should follow this plan one bounded task at a time.
@@ -337,14 +338,65 @@ closures are unchanged. The example's optional Form/Button files are not Tags de
 | Limits | JS is larger than S1; unification closes element capability gaps but is not a shrink result. Native references/callbacks remain explicit Web-only escape hatches. All-catalog browser, non-Web renderers and separate production-readiness gates remain open. |
 | Commit | `03b1cd6` - `refactor: unify Dynamic Tags element behavior`. |
 
+### S2 - Dynamic Input contract decisions, September 28, 2026
+
+Input previously had an element-side row engine and a separate controller with stronger
+transactions, ownership, action cancellation, focus and cleanup. The element now delegates
+to that existing controller. Renderer code owns only template/default-field mapping and
+the native disabled fieldset; no distribution extraction is included.
+
+| Classification | Decision |
+| --- | --- |
+| Keep | Stable-key add/remove/move, literal native names and defaults, focus/selection, validation, authored identity/listeners, action cancellation, synchronous hooks, cleanup and reconnect. |
+| Rename | `getRows()` becomes `rows` descriptors; row removal becomes `removeRow(key)`, leaving native `remove()` intact. `add(index?)` returns a descriptor; `move(key,index)` accepts only stable keys. |
+| Render-profile mapping | `m-dynamic-input-template` is the portable row-content region, mapped to an inert native template. Default `name`/`field-label` map to a generated native field. Custom templates compose selected `m-*` fields and labels; native anatomy, row references and `initializeRow`/`connectRow` are explicit Web interoperability. |
+| Remove | Public factory/Options/Controller exports, duplicate element-side mutation/event engine, `syncActions()` and lossy comma-flattening `getValues()`. No compatibility aliases. |
+| Events | Structural transactions emit bubbling `m:change {type,row,index,previousIndex,rows}`. Field edits and resets retain native events. The shared controller retains its private nonbubbling collection notification for Tags, without an element-side event bridge. |
+| Correct | Bounds are integer `0 <= min <= max <= 100`, max at least 1. Generated initial rows use controller transactions up to min; later bounds never allocate or truncate. Inherited fieldset disabling preserves own disabled flags; explicit programmatic transactions remain available. Selected native field owners materialize detached before validation/insertion. Generated keys are not reused after reconnect. Click-add focus handles WebKit's active-body behavior without stealing outside focus. Whole-family registration rejects constructor conflicts without partially registering the template. |
+| Defer | Other S2 families, further S3 simplification, shared delivery, optional full bundle, non-Web renderers and independent production-readiness gates. |
+
+Measured bytes are raw / gzip. This task reduces Input's raw entry bytes but adds
+**118 ESM / 126 classic gzip bytes** relative to the pre-Input state. Shared collection
+corrections add **21 / 16 gzip bytes** to Tags. This is capability reconciliation, not
+a gzip saving. S0 remains frozen; default reporting flags export changes and growth,
+while all unchanged build ceilings pass.
+
+| Selection | Before ESM | After ESM | Before classic | After classic |
+| --- | ---: | ---: | ---: | ---: |
+| Dynamic Input entry | 22,181 / 7,243 | 21,767 / 7,361 | 22,515 / 7,389 | 22,100 / 7,515 |
+| Input + core | 25,693 / 8,666 | 25,279 / 8,784 | 26,151 / 8,861 | 25,736 / 8,987 |
+| Dynamic Tags entry | 34,620 / 10,958 | 34,731 / 10,979 | 34,951 / 11,109 | 35,062 / 11,125 |
+| Tags + core | 38,132 / 12,381 | 38,243 / 12,402 | 38,587 / 12,581 | 38,698 / 12,597 |
+| Input + Tags + core | 60,313 / 19,624 | 60,010 / 19,763 | 61,102 / 19,970 | 60,798 / 20,112 |
+| All 89 families / 94 files | 1,235,709 / 413,324 | 1,235,406 / 413,463 | 1,262,002 / 426,819 | 1,261,698 / 426,961 |
+
+Input CSS grows from 780 to 818 gzip bytes, below its unchanged 1,000 ceiling.
+Tags CSS stays at 1,178 bytes. Core, unrelated families, dependency lists and external
+ECharts accounting are unchanged. Input's classic combined runtime has only **13 bytes**
+of headroom under 9,000; do not raise this ceiling or hide mandatory bytes elsewhere.
+The all-modular cumulative saving from S0 is only 602 ESM / 594 classic gzip bytes.
+
+| Field | Verification evidence |
+| --- | --- |
+| Type/build | `node node_modules/typescript/bin/tsc --noEmit`; `node scripts/build.mjs`: passed, including generated API and unchanged payload gates. |
+| Focused behavior | `node node_modules/vitest/vitest.mjs run tests/dynamic-input.test.ts tests/dynamic-tags.test.ts --maxWorkers=1`: 163 passing in 2 files, including focus immediately after host insertion. |
+| Integrated suite | `node node_modules/vitest/vitest.mjs run --maxWorkers=1`: 4,879 passing / 4,880 tests in 133 files, no skips or assertion failures; one unchanged Chart distribution test exceeded the default 5-second timeout. `node node_modules/vitest/vitest.mjs run tests/chart-distribution.test.ts --maxWorkers=1`: 3/3 passed with the original timeout. Earlier four-worker attempts had additional timing failures and directory order/count mismatches, which were corrected. A zero-failure single full run is not claimed. |
+| Distribution | Eleven Input/Tags distribution fixtures passed in the integrated run: ESM/classic import orders, whole-family conflict rejection, source/declaration boundaries, canonical exports and core-only dependencies. The packed consumer also passed. |
+| Browser | `node scripts/browser-check.mjs --catalog --page=dynamic-input` and `node scripts/browser-check.mjs --catalog --page=dynamic-tags`: 6/6 each in Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 at 1280x900 / 375x812. Input add/move/remove, focus, disabled, portable multi-field submission/reset and reconnect passed, as did Tags workflows and the script's existing checks. Desktop/mobile screenshots inspected; scoped catalog results retained separately under `.vite/browser`. |
+| Consumer | `node scripts/package-check.mjs`: 95 JS entries / 2,327 files, packed strict NodeNext types and runtime imports passed without installed ECharts. |
+| Size | `node scripts/size-report.mjs --output .vite/size/s2-input.json`: measured results above. Pre-Input report is `.vite/size/pre-input.json`; S0 baseline unchanged. |
+| Limits | Gzip grows, despite raw reduction. No all-catalog, non-Web, zero-failure single-run CI or production acceptance claim. The unchanged-timeout Chart recheck passed after the integrated timeout. Custom field families must load before collection initialization. Template rendering is not binding-plugin structural-template support. |
+| Commit | Verified implementation commit ID recorded after committing this task. |
+
 ## Next-thread starting point
 
 1. Read this plan and repository instructions; inspect `git status` and the latest history.
 2. Confirm the Chart external-engine baseline and current distribution measurements.
-3. S0-S1 are complete; consult the S2 Tags record above before proceeding.
-   Dynamic Input's element still duplicates its controller; finish that relationship
-   as a separate bounded task before Calendar. Keep S0 intact for cumulative comparisons.
-4. Proceed family by family through S2/S3 before selecting final shared-bundle boundaries.
+3. S0-S1 and S2 Tags/Input reconciliation are complete; consult their records above.
+   Keep S0 intact for cumulative comparisons. The gzip saving remains small, and Input's
+   classic runtime has only 13 bytes of headroom.
+4. Continue with Calendar as the next bounded S2 task, then the remaining families.
+   Finish S2/S3 measurements before selecting final shared-bundle boundaries.
 5. Avoid repeatedly running the entire suite during small edits: use focused checks per
    task and the integrated gates at packaging milestones and final acceptance.
 

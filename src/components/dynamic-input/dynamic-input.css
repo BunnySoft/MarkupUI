@@ -1,6 +1,8 @@
 :where([data-m-theme="light"]) { --_m-dynamic-input-scheme: light; }
 :where([data-m-theme="dark"]) { --_m-dynamic-input-scheme: dark; }
 .m-dynamic-input { display: grid; gap: 1rem; min-inline-size: 0; color-scheme: var(--_m-dynamic-input-scheme, light); color: var(--m-dynamic-input-color, light-dark(#333639, rgba(255,255,255,.82))); font-size: var(--m-dynamic-input-font-size, 14px); }
+.m-dynamic-input__controls { display: grid; gap: 1rem; min-inline-size: 0; margin: 0; padding: 0; border: 0; }
+m-dynamic-input-template { display: none !important; }
 .m-dynamic-input__rows { display: grid; gap: 10px; min-inline-size: 0; }
 .m-dynamic-input__row { display: flex; flex-wrap: wrap; align-items: end; gap: 20px; min-inline-size: 0; }
 .m-dynamic-input__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; flex: 1 1 24rem; min-inline-size: 0; }
