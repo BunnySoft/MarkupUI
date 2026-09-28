@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
-import { Cascader, registerCascader, cascaderExpandTriggers, createCascader } from "../src/components/cascader/index.js"
-import type { CascaderController, CascaderOptions } from "../src/components/cascader/index.js"
+import { Cascader, registerCascader } from "../src/components/cascader/index.js"
+import { createCascader } from "../src/components/cascader/cascader.js"
+import type { CascaderController, CascaderOptions } from "../src/components/cascader/cascader.js"
 import { ViewElement } from "../src/core/index.js"
-import type { TreeLoadResult } from "../src/components/tree/tree.js"
+import type { CascaderLoadResult as TreeLoadResult } from "../src/components/cascader/index.js"
 import { createTree } from "../src/components/tree/tree.js"
 import { createSelect } from "../src/components/native-select.js"
 import { coordinateForm as createForm } from "../src/components/form/controller.js"
@@ -14,7 +15,8 @@ function sourceNode(key: string, children = "", lazy = false, disabled = false) 
 }
 const sourceHTML = () => sourceNode("eu", sourceNode("fr", sourceNode("paris") + sourceNode("lyon"))) + sourceNode("us", sourceNode("nyc"))
   + sourceNode("island") + sourceNode("lazy", "", true) + sourceNode("blocked", sourceNode("blocked-leaf"), false, true)
-function fresh(key: string) {
+function fresh(key: string) { return { value: key, label: key } }
+function nativeFresh(key: string) {
   const template = document.createElement("template"); template.innerHTML = sourceNode(key)
   return document.importNode(template.content.firstElementChild!, true) as HTMLLIElement
 }
@@ -291,7 +293,7 @@ describe("safe async hierarchy insertion and lifetime", () => {
   it("guards reused keys with actual branch identity and refresh generations", async () => {
     const pending = deferred(), dispose = vi.fn(), { helper, node } = fixture({ load: pending.load })
     helper.setPath(["lazy"]); const promise = helper.load()
-    node("lazy").replaceWith(fresh("lazy")); helper.refresh()
+    node("lazy").replaceWith(nativeFresh("lazy")); helper.refresh()
     expect(await promise).toBe(false); pending.finish({ nodes: [fresh("late")], dispose }); await wait()
     expect(node("lazy").querySelector("[data-tree-key]")).toBeNull(); expect(dispose).toHaveBeenCalledOnce()
   })
@@ -299,12 +301,12 @@ describe("safe async hierarchy insertion and lifetime", () => {
     const dispose = vi.fn(), { helper, node } = fixture({ load: () => ({ nodes: [fresh("paris")], dispose }) })
     helper.setPath(["lazy"]); await expect(helper.load()).rejects.toThrow("unique")
     expect(node("lazy").querySelector("[data-tree-list]")!.children).toHaveLength(0); expect(helper.connected).toBe(true); expect(dispose).toHaveBeenCalledOnce()
-    const foreign = fresh("foreign"); document.body.append(foreign)
-    const other = fixture({ load: () => ({ nodes: [foreign] }) }); other.helper.setPath(["lazy"])
-    await expect(other.helper.load()).rejects.toThrow("fresh"); expect(foreign.parentElement).toBe(document.body)
-    const unsafe = fresh("unsafe"); unsafe.append(document.createElement("input"))
-    const third = fixture({ load: () => ({ nodes: [unsafe] }) }); third.helper.setPath(["lazy"])
-    await expect(third.helper.load()).rejects.toThrow("passive")
+    const foreign = nativeFresh("foreign"); document.body.append(foreign)
+    const other = fixture({ load: () => ({ nodes: [foreign] }) as never }); other.helper.setPath(["lazy"])
+    await expect(other.helper.load()).rejects.toThrow("hierarchy"); expect(foreign.parentElement).toBe(document.body)
+    const unsafe = nativeFresh("unsafe"); unsafe.append(document.createElement("input"))
+    const third = fixture({ load: () => ({ nodes: [unsafe] }) as never }); third.helper.setPath(["lazy"])
+    await expect(third.helper.load()).rejects.toThrow("hierarchy")
   })
   it("handles empty results, any-branch policy and rejected loaders truthfully", async () => {
     const empty = fixture({ load: () => ({ nodes: [] }) })
@@ -317,10 +319,10 @@ describe("safe async hierarchy insertion and lifetime", () => {
     expect(bad.helper.state.valid).toBe(false); expect(bad.helper.state.pending).toBe(false)
   })
   it("snapshots accepted result arrays and callback ownership", async () => {
-    const dispose = vi.fn(), result = { nodes: [fresh("child")], dispose }, foreign = fresh("foreign"); document.body.append(foreign)
+    const dispose = vi.fn(), result = { nodes: [fresh("child")], dispose }, foreign = nativeFresh("foreign"); document.body.append(foreign)
     const { helper, node } = fixture({ load: () => result })
     helper.setPath(["lazy"]); await helper.load()
-    result.nodes.splice(0, 1, foreign); result.dispose = vi.fn(); helper.disconnect()
+    result.nodes.splice(0, 1, foreign as never); result.dispose = vi.fn(); helper.disconnect()
     expect(foreign.isConnected).toBe(true); expect(node("lazy").querySelector("[data-tree-list]")!.children).toHaveLength(0); expect(dispose).toHaveBeenCalledOnce()
   })
   it("disposes returns after loader-triggered disconnect and rejects mutation reentry", async () => {
@@ -337,7 +339,7 @@ describe("scope, failure gates and teardown", () => {
     const { root, helper, source } = fixture()
     expect(() => createTree(source)).toThrow("owner")
     expect(() => createSelect(root.querySelector("[data-cascader-column]")!)).toThrow("owner")
-    vi.resetModules(); const copy = await import("../src/components/cascader/index.js")
+    vi.resetModules(); const copy = await import("../src/components/cascader/cascader.js")
     expect(() => copy.createCascader(root)).toThrow("owner")
     helper.disconnect(); const rebound = copy.createCascader(root); rebound.disconnect()
   })
@@ -382,8 +384,7 @@ describe("scope, failure gates and teardown", () => {
     expect(controls[0]!.validity.customError).toBe(false); expect(() => helper.disconnect()).not.toThrow()
   })
   it("moves source-disclosure focus outside a loaded batch before teardown removes it", async () => {
-    const template = document.createElement("template"); template.innerHTML = sourceNode("group", sourceNode("leaf"))
-    const { helper, node } = fixture({ load: () => ({ nodes: [document.importNode(template.content.firstElementChild!, true) as HTMLLIElement] }) })
+    const { helper, node } = fixture({ load: () => ({ nodes: [{ value: "group", label: "Group", children: [fresh("leaf")] }] }) })
     helper.setPath(["lazy"]); await helper.load()
     const parent = node("lazy").querySelector("details")!; parent.open = true
     node("group").querySelector<HTMLElement>("summary")!.focus(); helper.disconnect()
@@ -405,19 +406,16 @@ describe("canonical Cascader ViewElement", () => {
 
   it("exposes canonical observedAttributes and default property values", () => {
     expect(Cascader.observedAttributes).toEqual([
-      "value",
-      "placeholder",
-      "disabled",
-      "clearable",
-      "expand-trigger",
-      "separator",
+      "options", "value", "default-value", "label", "name", "required", "disabled", "clearable", "placeholder", "selection", "show-path", "separator",
     ])
     const cascader = new Cascader()
     expect(cascader.value).toBeNull()
-    expect(cascader.placeholder).toBeNull()
+    expect(cascader.placeholder).toBe("Choose")
     expect(cascader.disabled).toBe(false)
     expect(cascader.clearable).toBe(false)
-    expect(cascader.expandTrigger).toBe("click")
+    expect(cascader.selection).toBe("leaf")
+    expect(cascader.options).toEqual([])
+    expect(cascader.path).toEqual([])
     expect(cascader.separator).toBe(" / ")
   })
 
@@ -430,8 +428,7 @@ describe("canonical Cascader ViewElement", () => {
 
     cascader.placeholder = "Select destination"
     expect(cascader.getAttribute("placeholder")).toBe("Select destination")
-    cascader.placeholder = null
-    expect(cascader.hasAttribute("placeholder")).toBe(false)
+    expect(() => { cascader.placeholder = "" }).toThrow()
 
     cascader.disabled = true
     expect(cascader.hasAttribute("disabled")).toBe(true)
@@ -443,11 +440,11 @@ describe("canonical Cascader ViewElement", () => {
     cascader.clearable = false
     expect(cascader.hasAttribute("clearable")).toBe(false)
 
-    for (const trigger of cascaderExpandTriggers) {
-      cascader.expandTrigger = trigger
-      expect(cascader.getAttribute("expand-trigger")).toBe(trigger)
+    for (const selection of ["leaf", "any"] as const) {
+      cascader.selection = selection
+      expect(cascader.getAttribute("selection")).toBe(selection)
     }
-    expect(() => { (cascader as any).expandTrigger = "invalid" }).toThrow(RangeError)
+    expect(() => { cascader.selection = "invalid" as never }).toThrow(RangeError)
 
     cascader.separator = " → "
     expect(cascader.getAttribute("separator")).toBe(" → ")
@@ -456,43 +453,46 @@ describe("canonical Cascader ViewElement", () => {
 
   it("generates native control and synchronizes properties", () => {
     const cascader = new Cascader()
+    cascader.options = [{ value: "paris", label: "Paris" }, { value: "lyon", label: "Lyon" }]
     cascader.placeholder = "Choose location"
     cascader.value = "paris"
     document.body.append(cascader)
 
-    expect(cascader.classList.contains("m-cascader")).toBe(true)
-    const control = cascader.querySelector<HTMLInputElement>("input[data-cascader-control]")!
+    expect(cascader.querySelector(".m-cascader")).not.toBeNull()
+    const control = cascader.controls[0]!
     expect(control).not.toBeNull()
     expect(control.value).toBe("paris")
-    expect(control.placeholder).toBe("Choose location")
+    expect(control.options[0]?.textContent).toBe("Choose location")
 
     cascader.disabled = true
-    expect(control.disabled).toBe(true)
+    expect(control.matches(":disabled")).toBe(true)
 
     cascader.value = "lyon"
     expect(control.value).toBe("lyon")
 
     cascader.placeholder = "New placeholder"
-    expect(control.placeholder).toBe("New placeholder")
+    expect(control.options[0]?.textContent).toBe("New placeholder")
   })
 
-  it("emits m:change event when native control changes", () => {
+  it("emits m:cascader-change once when native control changes", () => {
     const cascader = new Cascader()
+    cascader.options = [{ value: "nyc", label: "New York" }]
     document.body.append(cascader)
-    const control = cascader.querySelector<HTMLInputElement>("input")!
+    const control = cascader.controls[0]!
     const listener = vi.fn()
-    cascader.addEventListener("m:change", listener)
+    cascader.addEventListener("m:cascader-change", listener)
 
     control.value = "nyc"
     control.dispatchEvent(new Event("change", { bubbles: true }))
 
     expect(listener).toHaveBeenCalledOnce()
-    expect(listener.mock.calls[0]![0].detail).toEqual({ value: "nyc" })
+    expect(listener.mock.calls[0]![0].detail).toMatchObject({ value: "nyc", path: ["nyc"], complete: true })
     expect(cascader.value).toBe("nyc")
   })
 
   it("supports clear method and clearable button", () => {
     const cascader = new Cascader()
+    cascader.options = [{ value: "paris", label: "Paris" }]
     cascader.value = "paris"
     cascader.clearable = true
     document.body.append(cascader)
@@ -502,20 +502,20 @@ describe("canonical Cascader ViewElement", () => {
     expect(clearBtn.hidden).toBe(false)
 
     const listener = vi.fn()
-    cascader.addEventListener("m:change", listener)
+    cascader.addEventListener("m:cascader-change", listener)
 
     cascader.clear()
     expect(cascader.value).toBeNull()
     expect(listener).toHaveBeenCalledOnce()
-    expect(listener.mock.calls[0]![0].detail).toEqual({ value: "" })
-    const control = cascader.querySelector<HTMLInputElement>("input")!
+    expect(listener.mock.calls[0]![0].detail).toMatchObject({ value: null, path: [], action: "clear" })
+    const control = cascader.controls[0]!
     expect(control.value).toBe("")
   })
 
   it("supports focus and blur delegation", () => {
     const cascader = new Cascader()
     document.body.append(cascader)
-    const control = cascader.querySelector<HTMLInputElement>("input")!
+    const control = cascader.controls[0]!
     const focusSpy = vi.spyOn(control, "focus")
     const blurSpy = vi.spyOn(control, "blur")
 

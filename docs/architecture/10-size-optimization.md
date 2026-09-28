@@ -1,7 +1,7 @@
 # 10. JavaScript size optimization plan
 
 Status: S0-S1 verified September 24, 2026. S2 Dynamic Tags, Dynamic Input, Calendar and Tree
-reconciliation verified September 28, 2026, with test scope and timing limitations
+and Cascader reconciliation verified September 28, 2026, with test scope and timing limitations
 recorded below. Remaining S2 families and S3-S6 are open.
 Plan recorded September 23, 2026.
 Implementation baseline: `cb00af1` on `main`, package version `0.13.0`.
@@ -538,7 +538,7 @@ No ceiling is raised and no mandatory bytes move off the selected-file ledger.
 | Size | `node scripts/size-report.mjs --output .vite/size/s2-tree.json`, compared with `.vite/size/s2-tree-preflight.json`. Default S0 diagnostics report changed exports and growth; strict equivalence is not claimed. |
 | Limits | No all-catalog, non-Web, human accessibility/device or production acceptance claim. Cascader/Tree Select browser interaction is not covered by the Tree run. Native descriptors and callbacks remain explicit Web interoperability. Remaining S2 and S3-S6 are open. |
 
-### Next S2 family - Cascader integration boundary
+### Cascader pre-integration inventory
 
 Re-reading `cascader-element.ts`, `cascader.ts`, the current demo and the native
 fixtures confirms that this is still an implementation gap, not a completed family:
@@ -561,19 +561,67 @@ fixtures confirms that this is still an implementation gap, not a completed fami
   clearing, disabled behavior, submission/reset and lazy loading using `m-*`
   authoring. Its present controls and documentation are not acceptance evidence.
 
-No Cascader implementation/export change is included in the Tree task. Validate
-its source, selected-file distribution and real-browser workflows independently.
+No Cascader implementation/export change was included in the Tree task.
+
+### S2 - Cascader reconciliation, September 28, 2026
+
+`Cascader` now delegates to its existing internal controller; the competing dependent
+select implementation and public factory exports are removed. Typed immutable options
+and JSON attributes replace untyped data. The Web renderer owns the native fieldset,
+legend, labelled columns, source and clear action. Public examples require only `m-*`
+authoring. Native controls/descriptors remain explicitly Web-specific inspection/hooks.
+
+Partial paths never automatically select descendants. Leaf/any selection, native
+validity and names, independent live/default paths, reset reconstruction, clear
+cancellation, focus recovery, ownership and cleanup are retained. Loaded results are
+bounded data (200 nodes per batch, 2,000 total, eight levels), mapped through the same
+passive renderer as initial options, with abort and synchronous disposal. Tree and
+Select registration remain independent. Scalar presentation updates preserve native
+controls and pending loads; disabling cancels a pending load.
+
+Controller cleanup now settles rejected loads even when failure cleanup also throws.
+Explicit writes supersede queued clear actions. Attribute reflection skips identical
+writes so upgrading markup with `value` before `options` cannot consume queued
+initialization callbacks before its data is ready. Per-element attribute indexing,
+shared ancestor-path traversal and removing redundant column containers reduce
+duplicate work without relaxing validation. The unused hover trigger is removed.
+
+This is capability reconciliation, not a gzip saving. Only Cascader runtime/CSS hashes
+change from the completed Tree state. S0 stays frozen, ECharts remains external and
+no ceiling increases. Cumulative S0 savings are now 724 ESM / 716 classic gzip bytes.
+
+| Selection (raw / gzip bytes) | Before ESM | After ESM | Before classic | After classic |
+| --- | ---: | ---: | ---: | ---: |
+| Cascader entry | 30,668 / 10,163 | 30,864 / 10,362 | 30,991 / 10,333 | 31,185 / 10,527 |
+| Cascader + core | 34,180 / 11,586 | 34,376 / 11,785 | 34,627 / 11,805 | 34,821 / 11,999 |
+| Tree + Cascader + Tree Select | 97,739 / 32,682 | 97,935 / 32,881 | 99,315 / 33,414 | 99,509 / 33,608 |
+| All 89 families / 94 files | 1,233,816 / 413,142 | 1,234,012 / 413,341 | 1,260,102 / 426,645 | 1,260,296 / 426,839 |
+
+Cascader CSS changes from 3,177 / 932 to 3,393 / 1,002 bytes. Its classic
+core-inclusive runtime has one byte of headroom under the unchanged 12,000 ceiling.
+
+| Field | Verification evidence |
+| --- | --- |
+| Type/build | `node node_modules/typescript/bin/tsc --noEmit`; `node scripts/build.mjs`: passed, including generated API and existing payload gates. Early builds correctly rejected 12,002/12,005/12,022-byte runtimes before local simplification; budgets were not changed. |
+| Source | `node node_modules/vitest/vitest.mjs run tests/cascader.test.ts tests/cascader-element.test.ts tests/cascader.styles.test.ts --maxWorkers=1`: 71/71 passed after the final source changes. |
+| Distribution | `node node_modules/vitest/vitest.mjs run tests/cascader-distribution.test.ts --maxWorkers=1`: 4/4 passed, including ESM/classic pre-upgrade properties, attribute ordering, native reset, exports, shared core identity, independent registration and declarations/API. |
+| Final focused suite | `node node_modules/vitest/vitest.mjs run tests/cascader.test.ts tests/cascader-element.test.ts tests/cascader-distribution.test.ts tests/cascader.styles.test.ts tests/tree.test.ts tests/tree-distribution.test.ts tests/tree-select.test.ts tests/native.test.ts tests/element-directory.test.ts tests/core-distribution.test.ts tests/size-report.test.ts --maxWorkers=1`: 252/252 passed in 11 files. |
+| Consumer | `node scripts/package-check.mjs`: 95 JS entries / 2,335 packed files; strict NodeNext types and runtime imports passed without installed ECharts. Four new source-layout passive-renderer JS/declaration/map files are not additional runtime dependencies. |
+| Browser | `node scripts/browser-check.mjs --catalog --page=cascader`: 6/6 in Chromium 153.0.8010.12, Firefox 155.0 and WebKit 26.6 at 1280x900 / 375x812, plus existing Chart/Form/plugin/security checks. Covers partial and complete selection, submission/reset, clear, reconnect identity, lazy data selection and registration isolation. Desktop/mobile screenshots inspected. The initial run exposed the attribute-order upgrade bug and an overly strict label-text locator; both were corrected before the passing run. |
+| Size | `node scripts/size-report.mjs --output .vite/size/s2-cascader.json`, compared with `.vite/size/s2-tree.json`. Default S0 diagnostics still flag intentional export changes and growth; strict equivalence is not claimed. |
+| Limits | No all-catalog, non-Web, human accessibility/device or production acceptance claim. Tree Select's separate element/controller gap, Upload, Data Table, Heatmap and S3-S6 remain open. |
 
 ## Next-thread starting point
 
 1. Read this plan and repository instructions; inspect `git status` and the latest history.
 2. Confirm the Chart external-engine baseline and current distribution measurements.
-3. S0-S1 and S2 Tags/Input/Calendar/Tree reconciliation are complete; consult their
+3. S0-S1 and S2 Tags/Input/Calendar/Tree/Cascader reconciliation are complete; consult their
    scoped implementation, integrated-suite, package and browser verification records above.
    Keep S0 intact for cumulative comparisons. The gzip saving remains small. Input's
-   and Tree's classic runtimes have only 13 bytes of headroom; Calendar CSS has one byte.
-4. Continue with Cascader, checking Tree Select's shared contracts, followed by the
-   remaining S2 families. Heatmap's date-utility update is not its S2 reconciliation.
+   and Tree's classic runtimes have only 13 bytes of headroom; Cascader runtime and
+   Calendar CSS each have one byte.
+4. Continue with Upload and the remaining S2 families. Tree Select's independent
+   element/controller gap remains open. Heatmap's date-utility update is not its S2 reconciliation.
    Finish S2/S3 measurements before selecting final shared-bundle boundaries.
 5. Avoid repeatedly running the entire suite during small edits: use focused checks per
    task and the integrated gates at packaging milestones and final acceptance.

@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Unified Cascader through one internal path/defaults/validation controller. Portable
+  `m-cascader` accepts bounded typed or JSON options and lazy data; the Web renderer owns
+  labelled native dependent selects and form submission. Explicit partial paths,
+  leaf/any selection, independent defaults/reset, cancellation and reconnect remain.
+  Removed the public factory and nonfunctional hover-trigger API; user changes bubble
+  as `m:cascader-change`. No Tree/Select registration dependency or payload ceiling increase.
+
 - Standardized the Web base on `ViewElement`, removed `MElement` and duplicate component
   aliases, and retained independently selectable families with shared-core delivery.
 - Added optional ECharts-backed Chart with Bar, Line/Area, Pie/Doughnut and Scatter,

@@ -651,17 +651,18 @@ describe("unified API and plugins", () => {
     transfer.querySelector<HTMLElement>('[aria-label="Move to selected"]')?.click()
     expect(transfer.value).toEqual(["one"])
 
-    const cascader = document.querySelector("m-cascader") as HTMLElement & {
-      options: readonly unknown[]
-      value: string[]
-    }
+    const cascader = document.querySelector("m-cascader") as Cascader
     cascader.options = [{
       label: "Data",
       value: "data",
       children: [{ label: "Reports", value: "reports" }],
     }]
-    expect(cascader.value).toEqual(["data", "reports"])
-    expect(document.querySelectorAll("m-cascader select")).toHaveLength(2)
+    expect(cascader.value).toBeNull()
+    cascader.path = ["data"]
+    expect(cascader.value).toBeNull()
+    cascader.value = "reports"
+    expect(cascader.path).toEqual(["data", "reports"])
+    expect(cascader.controls.filter(control => !control.disabled)).toHaveLength(2)
   })
 
   it("validates retained Rating values before mutation and preserves its event contract", () => {

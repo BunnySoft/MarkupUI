@@ -235,6 +235,12 @@ Documentation tooling reads types, recognized accessor patterns and documentatio
 It does not import UI modules, construct elements or execute getters. Keep defaults and
 validation in the implementation; tooling must not invent values it cannot infer.
 
+Cascader's `cascader-element.ts` maps typed options and the portable host into a native
+fieldset and labelled dependent selects. `cascader.ts` is its only path, defaults,
+validation, async and cleanup owner; its factory is internal. Passive data validation
+and rendering live in `tree/source.ts`, without Tree registration or a new delivery
+entry. Loaded data uses this same mapping, not a parallel native-DOM loader API.
+
 DOM operations belong in the Web base or component implementation, not documentation
 tooling. Keep component-specific resources, focus, accessibility and cleanup with the
 component. A shared helper needs a demonstrated common responsibility.

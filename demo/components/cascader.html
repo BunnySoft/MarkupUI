@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="../../dist/markup-ui-button.css">
   <link rel="stylesheet" href="../../dist/markup-ui-typography.css">
   <link rel="stylesheet" href="../../dist/markup-ui-code.css">
+  <link rel="stylesheet" href="../../dist/markup-ui-form.css">
   <link rel="stylesheet" href="../example-code.css">
   <link rel="stylesheet" href="../component-api.css">
   <link rel="stylesheet" href="./cascader.css">
@@ -18,6 +19,7 @@
   <script defer src="../../dist/markup-ui-cascader.global.js"></script>
   <script defer src="../../dist/markup-ui-button.global.js"></script>
   <script defer src="../../dist/markup-ui-typography.global.js"></script>
+  <script defer src="../../dist/markup-ui-form.global.js"></script>
   <script type="module" src="./cascader.js"></script>
   <script type="module" src="../example-code.js"></script>
   <script type="module" src="../component-outline.js"></script>
@@ -47,7 +49,8 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-cascader id="basic-cascader" placeholder="Select location"></m-cascader>
+        <m-cascader id="basic-cascader" label="Destination" placeholder="Select location"
+          options='[{"value":"eu","label":"Europe","children":[{"value":"fr","label":"France","children":[{"value":"paris","label":"Paris"},{"value":"lyon","label":"Lyon"}]}]},{"value":"us","label":"United States","children":[{"value":"nyc","label":"New York"}]}]'></m-cascader>
         <m-p id="basic-value">Selected: None</m-p>
       </div>
     </section>
@@ -60,21 +63,24 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-cascader id="clearable-cascader" value="paris" clearable placeholder="Choose destination"></m-cascader>
-        <m-cascader id="disabled-cascader" value="lyon" disabled></m-cascader>
+        <m-cascader id="clearable-cascader" value="paris" clearable placeholder="Choose destination"
+          options='[{"value":"fr","label":"France","children":[{"value":"paris","label":"Paris"},{"value":"lyon","label":"Lyon"}]}]'></m-cascader>
+        <m-cascader id="disabled-cascader" value="lyon" disabled
+          options='[{"value":"fr","label":"France","children":[{"value":"paris","label":"Paris"},{"value":"lyon","label":"Lyon"}]}]'></m-cascader>
         <m-button id="toggle-disabled">Toggle Disabled</m-button>
       </div>
     </section>
 
-    <section data-demo-example="trigger" aria-labelledby="trigger-heading">
+    <section data-demo-example="policy" aria-labelledby="policy-heading">
       <header data-demo-header>
         <div>
-          <h2 id="trigger-heading">Expand trigger</h2>
-          <p>Expand options via click or hover trigger mode.</p>
+          <h2 id="policy-heading">Branch selection</h2>
+          <p>Any-node selection can complete a path at a branch. Leaf selection keeps it incomplete.</p>
         </div>
       </header>
       <div data-demo-preview>
-        <m-cascader id="hover-cascader" expand-trigger="hover" placeholder="Hover to expand"></m-cascader>
+        <m-cascader id="policy-cascader" selection="any" label="Category"
+          options='[{"value":"components","label":"Components","children":[{"value":"forms","label":"Forms"},{"value":"navigation","label":"Navigation"}]}]'></m-cascader>
       </div>
     </section>
 
@@ -86,8 +92,46 @@
         </div>
       </header>
       <div data-demo-preview>
-        <m-cascader id="separator-cascader" separator=" → " value="paris"></m-cascader>
+        <m-cascader id="separator-cascader" separator=" → " value="paris"
+          options='[{"value":"fr","label":"France","children":[{"value":"paris","label":"Paris"},{"value":"lyon","label":"Lyon"}]}]'></m-cascader>
       </div>
+    </section>
+
+    <section data-demo-example="form" aria-labelledby="form-heading">
+      <header data-demo-header><div><h2 id="form-heading">Submission and reset</h2>
+        <p>Active columns submit in path order. Reset restores the independent default path.</p></div></header>
+      <div data-demo-preview>
+        <m-form id="cascader-form">
+          <m-cascader id="form-cascader" name="place" label="Place" required clearable default-value="paris"
+            options='[{"value":"fr","label":"France","children":[{"value":"paris","label":"Paris"},{"value":"lyon","label":"Lyon"}]},{"value":"us","label":"United States","children":[{"value":"nyc","label":"New York"}]}]'></m-cascader>
+          <m-button attr-type="submit">Read path</m-button>
+          <m-button attr-type="reset">Reset path</m-button>
+        </m-form>
+        <m-p id="form-value">Path: fr / paris</m-p>
+      </div>
+    </section>
+    <section data-demo-example="lazy" aria-labelledby="lazy-heading">
+      <header data-demo-header><div><h2 id="lazy-heading">Lazy choices</h2>
+        <p>Changing the path or disconnecting cancels pending work. A loaded child is not automatically selected.</p></div></header>
+      <div data-demo-preview>
+        <m-cascader id="lazy-cascader" label="Remote destination" clearable
+          options='[{"value":"remote","label":"Remote","lazy":true},{"value":"local","label":"Local"}]'></m-cascader>
+      </div>
+    </section>
+    <section aria-labelledby="behavior-heading">
+      <h2 id="behavior-heading">Behavior and Web mapping</h2>
+      <p>Author <code>m-cascader</code> with typed <code>options</code> data or its JSON attribute.
+        Web rendering owns a labelled fieldset and up to eight dependent native selects. Public markup
+        requires no native list, select, option or active Tree. Additional content is preserved.</p>
+      <p><code>value</code> is one terminal key or null. <code>path</code> includes incomplete selections;
+        <code>defaultValue</code> is the independent native form reset target. Programmatic writes are silent.
+        User actions emit one bubbling <code>m:cascader-change</code>; native field events remain native.
+        Native select keyboard interaction replaces the former nonfunctional hover-trigger setting.</p>
+      <p>Data is bounded to 2,000 nodes and eight levels, with up to 200 nodes per load. Keys are unique;
+        labels are plain text. Load callbacks receive Web node descriptors and an abort signal, and return
+        data with optional synchronous disposal. Invalid or missing defaults block a successful reset
+        until corrected. Native controls are exposed for explicit Web interoperability. Form and Button
+        are used only by these examples, not required by Cascader.</p>
     </section>
 
     <section aria-labelledby="api-heading">

@@ -1,5 +1,8 @@
 :where([data-m-theme=light]) { --_m-cascader-scheme: light; }
 :where([data-m-theme=dark]) { --_m-cascader-scheme: dark; }
+m-cascader { display: block; min-inline-size: 0; }
+fieldset.m-cascader { margin: 0; padding: 0; border: 0; min-inline-size: 0; }
+fieldset.m-cascader > legend { padding: 0; margin-block-end: .5rem; font-weight: 600; }
 .m-cascader { --_m-cascader-size: var(--m-font-size-medium,14px); --_m-cascader-height: 34px; color-scheme: var(--_m-cascader-scheme,light); font: var(--m-cascader-font-size,var(--_m-cascader-size))/var(--m-cascader-line-height,1.5) var(--m-cascader-font-family,var(--m-font-family,system-ui,sans-serif)); color: var(--m-cascader-color,light-dark(#333639,rgba(255,255,255,.82))); overflow-wrap: anywhere; }
 .m-cascader[data-cascader-size=small] { --_m-cascader-size: var(--m-font-size-small,14px); --_m-cascader-height: 28px; }
 .m-cascader[data-cascader-size=large] { --_m-cascader-size: var(--m-font-size-large,15px); --_m-cascader-height: 40px; }

@@ -407,6 +407,20 @@ entry to 8,041/8,193 gzip bytes (9,464/9,665 with core).
 `buildHeatmap(options)` drops its unused Document argument; no compatibility overload
 is retained. This narrow shared-utility change does not complete Heatmap's S2 work.
 
+## Cascader delivery
+
+Cascader selects core plus its family entry and CSS. Runtime exports are `Cascader`
+and `registerCascader`; the old public factory is removed. Classic order is core then
+`markup-ui-cascader.global.js`. Typed data or JSON on `m-cascader` maps to renderer-owned
+native dependent selects; no Tree or Select registration is required. Form and Button
+in the demo are separate application selections.
+
+The ESM/classic entry costs are 10,362/10,527 gzip bytes, or 11,785/11,999 including
+core. CSS costs 1,002 gzip bytes. Capability reconciliation adds 199/194 JS gzip bytes
+relative to the Tree task, leaving one classic byte under the unchanged 12,000-byte
+runtime ceiling. The passive data helper is bundled locally, not hidden in a new
+dependency file. Tree Select's existing shared parser/native-select boundary is unchanged.
+
 ## Reproducible size reports
 
 After `pnpm build`, run `pnpm size:report` (or `node scripts/size-report.mjs`).

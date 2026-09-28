@@ -8,9 +8,9 @@ function initialize() {
   const basicCascader = document.getElementById("basic-cascader")
   const basicValue = document.getElementById("basic-value")
   if (basicCascader && basicValue) {
-    basicCascader.addEventListener("m:change", event => {
+    basicCascader.addEventListener("m:cascader-change", event => {
       const detail = event.detail
-      basicValue.textContent = `Selected: ${detail?.value || "None"}`
+      basicValue.textContent = `Selected: ${detail.value || "None"}; path: ${detail.path.join(" / ") || "None"}`
     })
   }
 
@@ -21,6 +21,14 @@ function initialize() {
       disabledCascader.disabled = !disabledCascader.disabled
     })
   }
+  document.getElementById("cascader-form").addEventListener("submit", event => {
+    event.preventDefault()
+    document.getElementById("form-value").textContent = `Path: ${new FormData(event.target).getAll("place").join(" / ")}`
+  })
+  document.getElementById("lazy-cascader").load = (_node, { signal }) => new Promise(resolve => {
+    const timer = setTimeout(() => resolve({ nodes: [{ value: "remote-city", label: "Remote City" }] }), 150)
+    signal.addEventListener("abort", () => { clearTimeout(timer); resolve({ nodes: [] }) }, { once: true })
+  })
 }
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initialize, { once: true })
