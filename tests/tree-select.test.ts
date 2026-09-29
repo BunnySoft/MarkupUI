@@ -186,6 +186,27 @@ describe("native forms, filtering and events", () => {
     element.value = "readme"; clear.click(); element.value = "notes"; await wait()
     expect(element.value).toBe("notes")
   })
+  it("preserves a clear requested after native reset but before reset reconciliation", async () => {
+    const { element, form, clear } = fixture()
+    element.defaultValue = "readme"; element.value = "notes"
+    form.reset(); expect(element.value).toBe("readme")
+    clear.click(); await wait()
+    expect(element.value).toBeNull()
+  })
+  it("preserves a native reset requested after a queued clear", async () => {
+    const { element, form, clear } = fixture()
+    element.defaultValue = "readme"; element.value = "notes"
+    clear.click(); form.reset(); await wait()
+    expect(element.value).toBe("readme")
+  })
+  it("finishes reset presentation when the subsequent clear is canceled", async () => {
+    const { element, form, clear } = fixture()
+    element.defaultValue = "readme"; element.value = "notes"
+    clear.addEventListener("click", event => event.preventDefault(), { once: true })
+    form.reset(); clear.click(); await wait()
+    expect(element.value).toBe("readme")
+    expect(element.querySelector("[data-tree-select-value]")!.textContent).toBe("Documents / README")
+  })
   it("emits one host event for native selection and no event for programmatic writes", () => {
     const { element, control, form } = fixture(), listener = vi.fn()
     form.addEventListener("m:tree-select-change", listener)

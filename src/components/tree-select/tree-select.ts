@@ -300,13 +300,13 @@ export function createTreeSelect(root: HTMLElement, data: TreeSelectData, option
     if (!multiple && !value.length && control.size > 1) control.selectedIndex = -1
     projection = choices; fault = false; error = null; present()
   }
-  function refresh() {
+  function refresh(invalidate = true) {
     const before = refreshing; refreshing = true
     try { run(() => {
       const next = plan(); assertProjection()
       const current = nativeKeys()
       if (defaultsChanged) { defaults = defaultKeys(); defaultsChanged = false }
-      generation++
+      if (invalidate) generation++
       apply(next, current)
     }) } finally { refreshing = before }
   }
@@ -345,7 +345,8 @@ export function createTreeSelect(root: HTMLElement, data: TreeSelectData, option
     try { refresh() } catch { return }
     const current = generation, id = view!.setTimeout(() => {
       tasks.delete(id)
-      if (connected && generation === current) { try { refresh() } catch { /* Already reported. */ } }
+      // Reset already invalidated older actions; reconciliation must preserve newer ones.
+      if (connected && generation === current) { try { refresh(false) } catch { /* Already reported. */ } }
     }, 0)
     tasks.add(id)
   }

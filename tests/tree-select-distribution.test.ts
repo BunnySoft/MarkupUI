@@ -26,6 +26,9 @@ describe("selected Tree Select distribution", () => {
       assert.equal(customElements.get("m-tree"),undefined); assert.equal(customElements.get("m-select"),undefined);
       assert.deepEqual(Array.from(element.value),["notes"]);
       assert.deepEqual(Array.from(new window.FormData(form).getAll("files")),["notes"]);
+      form.reset(); element.querySelector("[data-tree-select-clear]").click();
+      await new Promise(resolve=>setTimeout(resolve,30)); assert.deepEqual(Array.from(element.value),[]);
+      element.value=["notes"];
       const control=element.native, notes=control.querySelector('option[value="notes"]');
       element.focus(); element.options=[{value:"docs",label:"Manuals",children:[{value:"notes",label:"Notes"}]}];
       assert.equal(document.activeElement,control); assert.equal(control.querySelector('option[value="notes"]'),notes);
